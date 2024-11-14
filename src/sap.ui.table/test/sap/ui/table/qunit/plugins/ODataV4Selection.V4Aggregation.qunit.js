@@ -15,7 +15,7 @@ sap.ui.define([
 	Table,
 	Column,
 	TableUtils,
-	Fixed,
+	FixedRowMode,
 	ODataV4Selection,
 	V4Aggregation,
 	Text,
@@ -29,10 +29,29 @@ sap.ui.define([
 			new V4Aggregation()
 		],
 		rows: {
-			path: '/BusinessPartners',
+			path: "/BusinessPartners",
 			parameters: {
 				$count: false,
-				$orderby: 'Country desc,Region desc,Segment,AccountResponsible'
+				$orderby: "Country desc,Region desc,Segment,AccountResponsible",
+				$$aggregation: {
+					aggregate: {
+						SalesAmountLocalCurrency: {
+							grandTotal: true,
+							subtotals: true,
+							unit: "LocalCurrency"
+						},
+						SalesNumber: {}
+					},
+					grandTotalAtBottomOnly: true,
+					subtotalsAtBottomOnly: true,
+					group: {
+						AccountResponsible: {},
+						Country_Code: {additionally: ["Country"]},
+						Region: {},
+						Segment: {}
+					},
+					groupLevels: ["Country_Code", "Region", "Segment"]
+				}
 			},
 			suspended: true
 		},
@@ -58,8 +77,9 @@ sap.ui.define([
 			})
 		],
 		models: TableQUnitUtils.createModelForDataAggregationService(),
-		rowMode: new Fixed({
-			rowCount: 5
+		rowMode: new FixedRowMode({
+			rowCount: 5,
+			fixedBottomRowCount: 1
 		}),
 		threshold: 0
 	});
@@ -67,24 +87,6 @@ sap.ui.define([
 	QUnit.module("Selection API", {
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
-				const oV4AggregationPlugin = oTable.getDependents()[1];
-				oV4AggregationPlugin.setPropertyInfos([
-					{key: "SalesAmountLocalCurrency", path: "SalesAmountLocalCurrency", aggregatable: true, unit: "LocalCurrency"},
-					{key: "LocalCurrency", path: "LocalCurrency"},
-					{key: "SalesNumber", path: "SalesNumber", aggregatable: true},
-					{key: "AccountResponsible", path: "AccountResponsible", groupable: true},
-					{key: "Country_Code", path: "Country_Code", groupable: true, text: "Country"},
-					{key: "Country", path: "Country", groupable: true},
-					{key: "Region", path: "Region", groupable: true},
-					{key: "Segment", path: "Segment", groupable: true}
-				]);
-				oV4AggregationPlugin.setAggregationInfo({
-					visible: ["SalesAmountLocalCurrency", "LocalCurrency", "SalesNumber", "AccountResponsible", "Country_Code", "Country", "Region",
-							"Segment"],
-					groupLevels: ["Country_Code", "Region", "Segment"],
-					subtotals: ["SalesAmountLocalCurrency"],
-					grandTotal: ["SalesAmountLocalCurrency"]
-				});
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
@@ -238,24 +240,6 @@ sap.ui.define([
 	QUnit.module("Binding selection API", {
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
-				const oV4AggregationPlugin = oTable.getDependents()[1];
-				oV4AggregationPlugin.setPropertyInfos([
-					{key: "SalesAmountLocalCurrency", path: "SalesAmountLocalCurrency", aggregatable: true, unit: "LocalCurrency"},
-					{key: "LocalCurrency", path: "LocalCurrency"},
-					{key: "SalesNumber", path: "SalesNumber", aggregatable: true},
-					{key: "AccountResponsible", path: "AccountResponsible", groupable: true},
-					{key: "Country_Code", path: "Country_Code", groupable: true, text: "Country"},
-					{key: "Country", path: "Country", groupable: true},
-					{key: "Region", path: "Region", groupable: true},
-					{key: "Segment", path: "Segment", groupable: true}
-				]);
-				oV4AggregationPlugin.setAggregationInfo({
-					visible: ["SalesAmountLocalCurrency", "LocalCurrency", "SalesNumber", "AccountResponsible", "Country_Code", "Country", "Region",
-							"Segment"],
-					groupLevels: ["Country_Code", "Region", "Segment"],
-					subtotals: ["SalesAmountLocalCurrency"],
-					grandTotal: ["SalesAmountLocalCurrency"]
-				});
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
@@ -403,24 +387,6 @@ sap.ui.define([
 	QUnit.module("Header selector icon", {
 		beforeEach: async function() {
 			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
-				const oV4AggregationPlugin = oTable.getDependents()[1];
-				oV4AggregationPlugin.setPropertyInfos([
-					{key: "SalesAmountLocalCurrency", path: "SalesAmountLocalCurrency", aggregatable: true, unit: "LocalCurrency"},
-					{key: "LocalCurrency", path: "LocalCurrency"},
-					{key: "SalesNumber", path: "SalesNumber", aggregatable: true},
-					{key: "AccountResponsible", path: "AccountResponsible", groupable: true},
-					{key: "Country_Code", path: "Country_Code", groupable: true, text: "Country"},
-					{key: "Country", path: "Country", groupable: true},
-					{key: "Region", path: "Region", groupable: true},
-					{key: "Segment", path: "Segment", groupable: true}
-				]);
-				oV4AggregationPlugin.setAggregationInfo({
-					visible: ["SalesAmountLocalCurrency", "LocalCurrency", "SalesNumber", "AccountResponsible", "Country_Code", "Country", "Region",
-							"Segment"],
-					groupLevels: ["Country_Code", "Region", "Segment"],
-					subtotals: ["SalesAmountLocalCurrency"],
-					grandTotal: ["SalesAmountLocalCurrency"]
-				});
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];

@@ -945,7 +945,9 @@ sap.ui.define([
 			var handler = function() {
 
 				oAddRes.then(function() {
-					assert.ok(oSpy.calledOnce, "Request sent for entity with expand");
+					assert.strictEqual(oSpy.callCount, 2, "$metadata and data request");
+					assert.ok(oSpy.args[0][0].requestUri.endsWith("$metadata?sap-value-list=Test"));
+					assert.ok(oSpy.args[1][0].requestUri.endsWith("$batch"));
 					oSpy.reset();
 					//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
 					setTimeout(function() {

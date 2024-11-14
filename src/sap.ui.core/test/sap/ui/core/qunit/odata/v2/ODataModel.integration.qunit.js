@@ -560,6 +560,16 @@ sap.ui.define([
 					: {source : "qunit/odata/v2/data/metadata_hierarchy_maintenance.xml"},
 				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata"
 					: {source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
+				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=none"
+					: {source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
+				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode"
+					: [{
+						code : 503,
+						headers : {"Retry-After" : "42"},
+						ifMatch : () => this.bAnswerWith503
+					}, {
+						source : "qunit/model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"
+					}],
 				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ZUI5_GWSAMPLE_BASIC.annotations.xml"
 					: {source : "qunit/odata/v2/data/ZUI5_GWSAMPLE_BASIC.annotations.xml"},
 				"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata?sap-value-list=GWSAMPLE_BASIC.Contact%2FSex"
@@ -573,6 +583,8 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("fatal").never();
 
+			// whether the next $metadata request should be answered with 503 "Retry-After"
+			this.bAnswerWith503 = false;
 			// Counter for batch requests
 			this.iBatchNo = 0;
 			// Counter for single requests within a batch
@@ -25818,5 +25830,107 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		await this.waitForChanges(assert, "set Filter.NONE");
 
 		assert.strictEqual(oTable.getItems().length, 0);
+	});
+	//*********************************************************************************************
+	// Scenario: React on 503 "Retry-After" error during deferred loading of value help metadata.
+	// The "Retry-After" handler and promise of the ODataModel has to be shared with the ODataMetadata
+	// object which might be created by another ODataModel instance.
+	// a) A first ODataModel instance successfully fetches $metadata w/o value help metadata ("sap-value-list":
+	//   "none") and stores the metadata in the shared metadata cache. A "Retry-After" handler is set, but must
+	//   never be called. Model gets destroyed because no further usage in test.
+	// b) Another ODataModel for the same service reuses the cached metadata.
+	// c) Fetching value help meta data now runs into 503 error.
+	// d) Fetching data via the ODataModel also runs into 503 error and reuses the "Retry-After" promise
+	//    created by the failed value help meta request.
+	// e) Resolving the "Retry-After" promise results in repeated and successful metdadata and data request.
+	// f) Rejecting with an own error results in rejection of the value help promise with the original 503
+	//    error with the message from the own error.
+	// g) Rejecting with error passed to the handler results in rejection of the value help promise with
+	//    the original 503 error.
+	// JIRA: CPOUI5MODELS-1826
+	[true, false, /*c) own error*/null].forEach((bResolve) => {
+		QUnit.test('503 "Retry-After" handling, valuelist metadata: bResolve=' + bResolve, async function (assert) {
+			const sServiceUrl = "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/";
+			const mModelParameters = {metadataUrlParams: {"sap-value-list": "none"}, useBatch: false};
+			// create a model for the same service w/o usage only to have a shared metadata cache created
+			// by another ODataModel than the model with the actual "Retry-After" handler
+			const oModel0 = createModel(sServiceUrl, mModelParameters);
+			oModel0.setRetryAfterHandler("~MustNotBeCalled");
+
+			await oModel0.getMetaModel().loaded();
+
+			const oMetadata0 = oModel0.getMetaModel().getMetadata();
+			oModel0.destroy();
+
+			const oModel = createModel(sServiceUrl, mModelParameters);
+			let iCallbackCounter = 0;
+			let fnReject;
+			let fnResolve;
+			let oRetryAfterError;
+			oModel.setRetryAfterHandler((oError) => {
+				iCallbackCounter += 1;
+				assert.ok(oError instanceof Error);
+				assert.strictEqual(oError.message, "HTTP request failed");
+				assert.ok(oError.retryAfter instanceof Date, "retryAfter is a Date");
+				oRetryAfterError = oError;
+				return new Promise((resolve, reject) => {
+					fnResolve = resolve;
+					fnReject = reject;
+				});
+			});
+			const oMetaModel = oModel.getMetaModel();
+
+			await this.createView(assert, "", oModel);
+
+			await oMetaModel.loaded();
+
+			assert.ok(oMetadata0 && oMetadata0 === oMetaModel.getMetadata(), "b) metadata cache reused");
+
+			const oCompanyCodeMetaContext = oMetaModel.getMetaContext("/Items('~guid')/CompanyCode");
+			this.expectRequest("Items('~guid')/CompanyCode", create503ErrorResponse());
+			this.bAnswerWith503 = true; // $metadata request for valuehelp will be answered with 503
+
+			// code under test c)
+			const pCompanyCodeVH = oMetaModel.getODataValueLists(oCompanyCodeMetaContext);
+			// code under test d)
+			oModel.read("/Items('~guid')/CompanyCode");
+
+			await this.waitForChanges(assert);
+
+			if (bResolve) {
+				this.expectRequest("Items('~guid')/CompanyCode", {results: "42"});
+			} else {
+				this.oLogMock.expects("error")
+					.withArgs(sinon.match(bResolve === false
+						? "Request failed with status code 503" : "own error"));
+			}
+
+			resolveLater(() => { // because of setTimeout in ODataMetaModel#_sendBundledRequest
+				this.bAnswerWith503 = false;
+				if (bResolve) {
+					// code under test e)
+					fnResolve();
+				} else {
+					// code under test f) or g) - reject with own error or error passed to the handler
+					fnReject(bResolve === null ? new Error("own error") : oRetryAfterError);
+				}
+			});
+
+			return pCompanyCodeVH.then((oValueHelp) => {
+				assert.ok(bResolve);
+				assert.strictEqual(oValueHelp[""].CollectionPath.String, "VL_SH_H_T001");
+			}, (oError) => {
+				assert.notOk(bResolve);
+				assert.strictEqual(oError.message,
+					bResolve === false
+						? "Retry-After handler rejected with: HTTP request failed"
+						: "Retry-After handler rejected with: own error",
+					oError.message);
+				// Note: a rejected value list promise is cached, hence no retry for fetching metadata possible
+				assert.strictEqual(oMetaModel.getODataValueLists(oCompanyCodeMetaContext), pCompanyCodeVH);
+			}).finally(() => {
+				assert.strictEqual(iCallbackCounter, 1);
+			});
+		});
 	});
 });

@@ -366,7 +366,9 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.EQ, [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.EQ.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.Value],
@@ -594,7 +596,9 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.NE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.NE.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NE, ["Test"])],
@@ -643,7 +647,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: FilterOperator.LT, value1: "Test"},
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.LT.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.LT, ["<"])],
@@ -680,7 +686,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: FilterOperator.GE, value1: "Test"},
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.NOTLT.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["Test"])],
@@ -728,7 +736,9 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.GT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.GT.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.GT, [">"])],
@@ -765,7 +775,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: FilterOperator.LE, value1: "Test"},
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.NOTGT.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NOTGT, ["Test"])],
@@ -813,7 +825,9 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.LE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.LE.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.LE, ["<="])],
@@ -849,7 +863,9 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.NOTLE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.NOTLE.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["Test"])],
@@ -896,7 +912,9 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.GE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.GE.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.GE, [">="])],
@@ -932,7 +950,9 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.NOTGE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.NOTGE.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NOTGE, ["Test"])],
@@ -980,7 +1000,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
-						type: oStringType
+						type: oStringType,
+						longText: mdcMessageBundle.getText("operators.StartsWith.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.StartsWith, ["*"]), oStringType, FieldDisplay.Description],
@@ -1041,7 +1063,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
-						type: oStringType
+						type: oStringType,
+						longText: mdcMessageBundle.getText("operators.NotStartsWith.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["Test"]), oStringType, FieldDisplay.Description],
@@ -1094,7 +1118,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
-						type: oStringType
+						type: oStringType,
+						longText: mdcMessageBundle.getText("operators.EndsWith.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EndsWith, ["a", "b"]), oStringType, FieldDisplay.Description],
@@ -1126,7 +1152,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
-						type: oStringType
+						type: oStringType,
+						longText: mdcMessageBundle.getText("operators.NotEndsWith.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NotEndsWith, ["Test"]), oStringType, FieldDisplay.Description],
@@ -1169,7 +1197,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: FilterOperator.BT, value1: "Test1", value2: "Test2"},
-						isSingleValue: false
+						isSingleValue: false,
+						longText: mdcMessageBundle.getText("operators.BT.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.BT, ["a", "b"])],
@@ -1222,7 +1252,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: FilterOperator.NB, value1: "Test1", value2: "Test2"},
-						isSingleValue: false
+						isSingleValue: false,
+						longText: mdcMessageBundle.getText("operators.NOTBT.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"])],
@@ -1291,7 +1323,9 @@ sap.ui.define([
 						valid: true,
 						filter:  {path: "test", operator: FilterOperator.Contains, value1: "Test"},
 						isSingleValue: true,
-						type: oStringType
+						type: oStringType,
+						longText: mdcMessageBundle.getText("operators.Contains.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.Contains, ["a", "b"]), oStringType, FieldDisplay.Description],
@@ -1357,7 +1391,9 @@ sap.ui.define([
 						valid: true,
 						filter:  {path: "test", operator: FilterOperator.NotContains, value1: "Test"},
 						isSingleValue: true,
-						type: oStringType
+						type: oStringType,
+						longText: mdcMessageBundle.getText("operators.NotContains.longText"),
+						tokenText: ""
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NotContains, ["Test"]), oStringType, FieldDisplay.Description],
@@ -1402,7 +1438,9 @@ sap.ui.define([
 						valid: true,
 						filter: {path: "test", operator: FilterOperator.EQ, value1: ""},
 						isSingleValue: true,
-						oType: new StringType({}, {nullable: false})
+						oType: new StringType({}, {nullable: false}),
+						longText: mdcMessageBundle.getText("operators.Empty.longText"),
+						tokenText: mdcMessageBundle.getText("operators.Empty.tokenText")
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
@@ -1436,7 +1474,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						filter: {path: "test", operator: FilterOperator.NE, value1: ""},
-						isSingleValue: true
+						isSingleValue: true,
+						longText: mdcMessageBundle.getText("operators.NotEmpty.longText"),
+						tokenText: mdcMessageBundle.getText("operators.NotEmpty.tokenText")
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
@@ -1470,7 +1510,9 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
-						oType: new StringType({}, {nullable: false})
+						oType: new StringType({}, {nullable: false}),
+						longText: mdcMessageBundle.getText("operators.NotEmpty.longText"),
+						tokenText: mdcMessageBundle.getText("operators.NotEmpty.tokenText")
 					}
 				],
 				"MyOperator": [{
@@ -1481,8 +1523,10 @@ sap.ui.define([
 					valid: true,
 					custom: true,
 					filter: {path: "test", operator: FilterOperator.EQ, value1: "Hello World"},
-					isSingleValue: true
-				}
+					isSingleValue: true,
+					longText: "Hello World",
+					tokenText: "Hello"
+					}
 				]
 			};
 		//checking all above Operators for validity
@@ -1530,7 +1574,7 @@ sap.ui.define([
 		const oFormatTest = {
 			[OperatorName.TODAYFROMTO]: [{
 				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6])],
-				formatValue: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText", [4, 6]),
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-4", "+6"]),
 				formatValueCheckValues: ["4", "6"],
 				parsedValue: "46",
 				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6], undefined, undefined, ConditionValidated.NotValidated),
@@ -1538,17 +1582,49 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: false,
 				longText: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_TITLE"),
-				tokenText: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText")
+				tokenText: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT"),
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241014-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959000", "string")}
 			},
 			{
-				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6]), undefined, undefined, true],
-				formatValue: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText", [4, 6]),
-				parseArgs: [mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText", [4, 6]), undefined, undefined, true],
-				parsedValue: "46",
-				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [-4, 6]), undefined, undefined, true],
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["+4", "+6"]),
+				parseArgs: [mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["+4", "+6"]), undefined, undefined, true],
+				parsedValue: "-46",
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [-4, 6], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
-				isSingleValue: false
+				isSingleValue: false,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241022-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959000", "string")}
+			},
+			{
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, -6]), undefined, undefined, true],
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-6", "-4"]),
+				parseArgs: [mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-4", "-6"]), undefined, undefined, true],
+				parsedValue: "6-4",
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [6, -4], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241014-235959000", "string")}
+			},
+			{
+				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [-4, -6])],
+				formatValue: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["-6", "+4"]),
+				parseArgs: [mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT", ["+4", "-6"])],
+				parsedValue: "64",
+				condition: Condition.createCondition(OperatorName.TODAYFROMTO, [6, 4], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241022-235959000", "string")}
 			}],
 
 			[OperatorName.SPECIFICMONTH]: [{

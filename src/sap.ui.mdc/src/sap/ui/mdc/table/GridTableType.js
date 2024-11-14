@@ -142,7 +142,9 @@ sap.ui.define([
 
 			if (!oRowMode) {
 				const RowMode = InnerRowModeMap[vValue] ?? InnerRowModeMap[TableRowCountMode.Auto];
-				const oRowMode = new RowMode();
+				const oRowMode = new RowMode({
+					fixedBottomRowCount: "{= ${$sap.ui.mdc.Table>/@custom/hasGrandTotal} ? 1 : 0}"
+				});
 				oGridTable.setRowMode(oRowMode.setHideEmptyRows?.(bHideEmptyRows) ?? oRowMode);
 			}
 

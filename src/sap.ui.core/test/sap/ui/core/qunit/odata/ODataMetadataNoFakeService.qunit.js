@@ -844,4 +844,72 @@ sap.ui.define([
 		assert.strictEqual(oResult, oPropertyMetadata);
 		assert.deepEqual(oResult, {name: "~property", type: "Edm.String"});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_addUrl", function (assert) {
+		const oMetadata = {_loadMetadata() {}};
+		const oMetadataMock = this.mock(oMetadata);
+		oMetadataMock.expects("_loadMetadata").withExactArgs("~url0", true, "~fnRequest")
+			.resolves("~oResult0");
+		oMetadataMock.expects("_loadMetadata").withExactArgs("~url1", true, "~fnRequest")
+			.resolves("~oResult1");
+
+		// code under test
+		return ODataMetadata.prototype._addUrl.call(oMetadata, ["~url0", "~url1"], "~fnRequest").then((aResults) => {
+			assert.deepEqual(aResults, ["~oResult0", "~oResult1"]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadMetadata, fnRequest supplied", function (assert) {
+		const oMetadata = {
+			bAsync: true,
+			mRequestHandles: [],
+			_createRequest() {},
+			_handleLoaded() {}
+		};
+		const oHelper = {
+			request() {}
+		};
+		this.mock(oMetadata).expects("_createRequest").withExactArgs("~url").returns("~oRequest");
+		const oRequestHandle = {};
+		this.mock(OData).expects("request").never();
+		const oExpectation = this.mock(oHelper).expects("request")
+			.withExactArgs("~oRequest", sinon.match.func, sinon.match.func, sinon.match.same(OData.metadataHandler),
+				/*oHttpClient*/undefined, /*oMetadata*/undefined, /*bSkipHandleTracking*/true)
+			.returns(oRequestHandle);
+
+		// code under test
+		const oPromise = ODataMetadata.prototype._loadMetadata.call(oMetadata, "~url", "~bSuppressEvents",
+				oHelper.request.bind(oHelper)).then((mParams) => {
+			assert.deepEqual(mParams, {
+				eTag: "~eTag",
+				lastModified: "~lastModified",
+				metadataString: "~oBody"
+			});
+		});
+
+		assert.strictEqual(Object.keys(oMetadata.mRequestHandles).length, 1);
+		const sId = Object.keys(oMetadata.mRequestHandles)[0];
+		assert.ok(sId.startsWith("id-"));
+		assert.strictEqual(oMetadata.mRequestHandles[sId], oRequestHandle);
+
+		const oMetadataByDatajs = {dataServices: "~oDataServices"};
+		this.mock(oMetadata).expects("_handleLoaded")
+			.withExactArgs(sinon.match.same(oMetadataByDatajs), sinon.match({
+				eTag: "~eTag",
+				lastModified: "~lastModified",
+				metadataString: "~oBody"
+			}), "~bSuppressEvents");
+
+		// code under test: invoke success handler
+		oExpectation.firstCall.args[1](oMetadataByDatajs, {
+			body: "~oBody",
+			headers: {
+				"Last-Modified": "~lastModified",
+				eTag: "~eTag"
+			}});
+
+		return oPromise;
+	});
 });

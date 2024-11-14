@@ -407,4 +407,37 @@ sap.ui.define([
 		afterRedo: fnConfirm
 	});
 
+	function fnOnAfterActionAddItem(oUiComponent, oViewAfterAction, assert) {
+		const oFB = oViewAfterAction.byId("myFilterBar");
+		assert.ok(oFB);
+
+		if (oFB.getMetadata) {
+			assert.deepEqual(oFB.getFilterItems().length, 3, "expected items found");
+			assert.deepEqual(oFB.getFilterItems()[0].getPropertyKey(), "prop2", "expected item at index 0 found");
+			assert.deepEqual(oFB.getFilterItems()[1].getPropertyKey(), "prop3", "expected item at index 1 found");
+			assert.deepEqual(oFB.getFilterItems()[2].getPropertyKey(), "prop5", "expected item at index 2 found");
+		}
+	}
+
+	elementActionTest("Checking the add filter action.", {
+		xmlView: buildXML(""),
+		action: {
+			name: "settings",
+			controlId: "myFilterBar",
+			parameter: function () {
+				return {
+					changeType: "addFilter",
+					content: {
+						name: "prop5",
+						index: 2
+					}
+				};
+			}
+		},
+		afterAction: fnOnAfterActionAddItem,
+		afterUndo: fnConfirm,
+		afterRedo: fnConfirm
+    });
+
+
 });

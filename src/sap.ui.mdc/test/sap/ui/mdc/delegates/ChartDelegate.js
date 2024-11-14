@@ -236,12 +236,7 @@ sap.ui.define([
             pCreatePropertyInfos = this._createPropertyInfos(oChart, oModel);
         }
 
-        return pCreatePropertyInfos.then(function (aProperties) {
-            if (oChart.data) {
-                oChart.data("$mdcChartPropertyInfo", aProperties);
-            }
-            return aProperties;
-        });
+        return pCreatePropertyInfos;
     };
 
     function onModelContextChange(oEvent, oData) {

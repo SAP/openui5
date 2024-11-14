@@ -14,28 +14,6 @@
 		"clean": "npm x --ws -c 'rimraf --verbose ./dist'",
 		"link-all": "wsrun --serial link",
 		"unlink-all": "wsrun --serial unlink",
-		"karma": "karma start lib/test/karma.conf.js",
-		"karma-all": "run-s -c \"karma:*\"",
-		"karma-coverage-all": "run-s -c \"karma:* -- --coverage\"",
-		"karma-ci-coverage-all": "run-s -c \"karma:* -- --coverage --ci\"",
-		"karma:sap.f": "npm run karma -- --lib=sap.f",
-		"karma:sap.m": "npm run karma -- --lib=sap.m",
-		"karma:sap.tnt": "npm run karma -- --lib=sap.tnt",
-		"karma:sap.ui.codeeditor": "npm run karma -- --lib=sap.ui.codeeditor",
-		"karma:sap.ui.core": "npm run karma -- --lib=sap.ui.core",
-		"karma:sap.ui.documentation": "npm run karma -- --lib=sap.ui.documentation",
-		"karma:sap.ui.dt": "npm run karma -- --lib=sap.ui.dt",
-		"karma:sap.ui.fl": "npm run karma -- --lib=sap.ui.fl",
-		"karma:sap.ui.mdc": "npm run karma -- --lib=sap.ui.mdc",
-		"karma:sap.ui.integration": "npm run karma -- --lib=sap.ui.integration",
-		"karma:sap.ui.layout": "npm run karma -- --lib=sap.ui.layout",
-		"karma:sap.ui.rta": "npm run karma -- --lib=sap.ui.rta",
-		"karma:sap.ui.suite": "npm run karma -- --lib=sap.ui.suite",
-		"karma:sap.ui.support": "npm run karma -- --lib=sap.ui.support",
-		"karma:sap.ui.testrecorder": "npm run karma -- --lib=sap.ui.testrecorder",
-		"karma:sap.ui.table": "npm run karma -- --lib=sap.ui.table",
-		"karma:sap.ui.unified": "npm run karma -- --lib=sap.ui.unified",
-		"karma:sap.uxap": "npm run karma -- --lib=sap.uxap",
 		"generate-cldr": "cd lib/cldr-openui5 && npm start"
 	},
 	"keywords": [
@@ -76,11 +54,6 @@
 		"eslint": "^8.56.0",
 		"glob": "^11.0.0",
 		"http-proxy": "^1.18.1",
-		"karma": "^6.4.2",
-		"karma-chrome-launcher": "^3.2.0",
-		"karma-coverage": "^2.2.1",
-		"karma-junit-reporter": "^2.0.1",
-		"karma-ui5": "^4.0.0",
 		"lit-html": "2.2.2",
 		"moment": "^2.29.4",
 		"node-fetch": "^3.2.10",
@@ -89,11 +62,6 @@
 		"semver": "^7.5.4",
 		"set-cookie-parser": "^2.5.1",
 		"wsrun": "^5.2.0"
-	},
-	"overrides": {
-		"grunt-jsdoc": {
-			"jsdoc": "^4.0.2"
-		}
 	},
 	"workspaces": [
 		"src/*"

@@ -175,6 +175,19 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
+	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties, aPreviousProperties) {
+		PropertyHelperBase.prototype.validateProperty.apply(this, arguments);
+
+		if (oProperty.text && oProperty.unit) {
+			throw new Error("Invalid property definition: A property must not have both a text and a unit.");
+		}
+
+		// TODO: Throw if an aggregatable-only property has a text and if a groupable-only property has a unit?
+	};
+
+	/**
+	 * @inheritDoc
+	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
 

@@ -130,7 +130,7 @@ sap.ui.define([
 	}]);
 
 	const sTableView1 =
-	`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
+		`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
 		<Table p13nMode="Group,Aggregate" id="myTable" delegate='\{name: "odata.v4.TestDelegate"\}'>
 			<columns>
 				<mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name">
@@ -146,27 +146,6 @@ sap.ui.define([
 		</Table>
 	</mvc:View>`;
 
-	const sTableView2 =
-	`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
-		<Table p13nMode="Group,Aggregate" id="myTable" delegate='\{name: "odata.v4.TestDelegate"\}'>
-			<columns>
-				<mdcTable:Column header="column 2" propertyKey="name_country">
-					<m:Text text="{Name}" id="myTable--text2"/>
-				</mdcTable:Column>
-			</columns>
-		</Table>
-	</mvc:View>`;
-
-	function createColumnStateIdMap(oTable, aStates) {
-		const mState = {};
-
-		oTable.getColumns().forEach(function(oColumn, iIndex) {
-			mState[oColumn.getId() + "-innerColumn"] = aStates[iIndex];
-		});
-
-		return mState;
-	}
-
 	function getQuickAction(oMenu, sType) {
 		const oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
 		if (!oQuickActionContainer) {
@@ -179,7 +158,7 @@ sap.ui.define([
 		return sType === "QuickAction" ? aQuickActions : aQuickActions[0];
 	}
 
-	QUnit.module("Initialization of analytics", {
+	QUnit.module("Initialization", {
 		afterEach: function() {
 			if (this.oTable) {
 				this.oFetchProperties.restore();
@@ -209,197 +188,32 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("GridTable; Grouping and aggregation disabled", function(assert) {
+	QUnit.test("GridTable", function(assert) {
 		return this.initTable().then(function(oTable) {
-			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
-				"V4Aggregation plugin is not added to the inner table");
+			assert.ok(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin in inner table");
 			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
 
-	QUnit.test("GridTable; Grouping and aggregation enabled", function(assert) {
+	QUnit.test("TreeTable", function(assert) {
 		return this.initTable({
-			p13nMode: ["Group", "Aggregate"]
+			type: TableType.TreeTable
 		}).then(function(oTable) {
-			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-			assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
-			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
-
-			oTable.setP13nMode();
-			assert.notOk(oPlugin.isActive(), "V4Aggregation plugin is not active");
-
-			oTable.setGroupConditions({
-				groupLevels: [{
-					name: "Name"
-				}]
-			});
-			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
-
-			oTable.setGroupConditions();
-			oTable.setAggregateConditions({
-				SalesAmount: {}
-			});
-			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
-
-			const oGroupHeaderFormatter = sinon.stub(oTable.getControlDelegate(), "formatGroupHeader");
-			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
-			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
-			oGroupHeaderFormatter.restore();
-
+			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin in inner table");
 			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
 
-	QUnit.test("ResponsiveTable; Grouping and aggregation disabled", function(assert) {
+	QUnit.test("ResponsiveTable", function(assert) {
 		return this.initTable({
 			type: TableType.ResponsiveTable
 		}).then(function(oTable) {
-			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
-				"V4Aggregation plugin is not added to the inner table");
+			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin in inner table");
 			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
 
-	QUnit.test("ResponsiveTable; Grouping and aggregation enabled", function(assert) {
-		return this.initTable({
-			type: TableType.ResponsiveTable,
-			p13nMode: ["Group", "Aggregate"]
-		}).then(function(oTable) {
-			assert.notOk(PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
-				"V4Aggregation plugin is not added to the inner table");
-			this.assertFetchPropertyCalls(assert, 1);
-		}.bind(this));
-	});
-
-	QUnit.module("Change table settings", {
-		beforeEach: function() {
-			return this.initTable();
-		},
-		afterEach: function() {
-			this.restoreFetchPropertyMethods();
-
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
-		},
-		initTable: function(mSettings) {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
-
-			this.restoreFetchPropertyMethods();
-			this.oTable = new Table(Object.assign({
-				delegate: {
-					name: "odata.v4.TestDelegate"
-				},
-				p13nMode: ["Group", "Aggregate"]
-			}, mSettings));
-
-			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
-				this.oFetchProperties = sinon.spy(oDelegate, "fetchProperties");
-				return this.oTable._fullyInitialized();
-			}.bind(this)).then(function() {
-				return this.oTable;
-			}.bind(this));
-		},
-		assertFetchPropertyCalls: function(assert, iCallCount) {
-			assert.equal(this.oFetchProperties.callCount, iCallCount, "Delegate.fetchProperties calls");
-		},
-		resetFetchPropertyCalls: function() {
-			this.oFetchProperties.reset();
-		},
-		restoreFetchPropertyMethods: function() {
-			if (this.oFetchProperties) {
-				this.oFetchProperties.restore();
-			}
-		}
-	});
-
-	QUnit.test("Type", function(assert) {
-		const that = this;
-		const oOldPlugin = PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-
-		this.resetFetchPropertyCalls();
-		this.oTable.setType(TableType.ResponsiveTable);
-
-		return this.oTable._fullyInitialized().then(function() {
-			assert.notOk(PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
-				"V4Aggregation plugin is not added to the inner table");
-			that.assertFetchPropertyCalls(assert, 0);
-
-			that.resetFetchPropertyCalls();
-			that.oTable.setType(TableType.Table);
-			return that.oTable._fullyInitialized();
-		}).then(function() {
-			const oPlugin = PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-			assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
-			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
-			assert.notEqual(oPlugin, oOldPlugin, "V4Aggregation plugin is not the same instance");
-			assert.ok(oOldPlugin.bIsDestroyed, "Old V4Aggregation plugin is destroyed");
-
-			const oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
-			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
-			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
-			oGroupHeaderFormatter.restore();
-
-			that.assertFetchPropertyCalls(assert, 0);
-		});
-	});
-
-	QUnit.test("GridTable; p13nMode", function(assert) {
-		const oPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-
-		this.resetFetchPropertyCalls();
-		this.oTable.setP13nMode();
-
-		assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
-		assert.notOk(oPlugin.isActive(), "V4Aggregation plugin is not active");
-		assert.equal(oPlugin, PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
-			"V4Aggregation plugin is the same instance");
-		this.assertFetchPropertyCalls(assert, 0);
-
-		this.oTable.setP13nMode(["Group"]);
-		assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
-		assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
-		assert.equal(oPlugin, PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
-			"V4Aggregation plugin is the same instance");
-		this.assertFetchPropertyCalls(assert, 0);
-	});
-
-	QUnit.test("GridTable; Initial activation of analytical p13n modes", function(assert) {
-		const that = this;
-
-		return this.initTable({
-			p13nMode: []
-		}).then(function() {
-			that.resetFetchPropertyCalls();
-			that.oTable.setP13nMode(["Group"]);
-
-			assert.notOk(PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation"),
-				"V4Aggregation plugin is not yet added to the inner table");
-
-			return new Promise(function(resolve) {
-				new ManagedObjectObserver(function() {
-					resolve();
-				}).observe(that.oTable._oTable, {
-					aggregations: ["dependents"]
-				});
-			});
-		}).then(function() {
-			const oPlugin = PluginBase.getPlugin(that.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-			assert.ok(oPlugin, "V4Aggregation plugin is added to the inner table");
-			assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
-
-			const oGroupHeaderFormatter = sinon.stub(that.oTable.getControlDelegate(), "formatGroupHeader");
-			oPlugin.getGroupHeaderFormatter()("MyContext", "MyProperty");
-			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
-			oGroupHeaderFormatter.restore();
-
-			that.assertFetchPropertyCalls(assert, 0);
-		});
-	});
-
-	QUnit.module("Basic functionality with JsControlTreeModifier", {
+	QUnit.module("Column header menu", {
 		before: function() {
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
@@ -428,12 +242,11 @@ sap.ui.define([
 				filterable: false
 			}]);
 		},
-		beforeEach: function() {
-			return this.createTestObjects().then(function() {
-				return this.oTable.getEngine().getModificationHandler().waitForChanges({
-					element: this.oTable
-				});
-			}.bind(this));
+		beforeEach: async function() {
+			await this.createTestObjects();
+			await this.oTable.getEngine().getModificationHandler().waitForChanges({
+				element: this.oTable
+			});
 		},
 		afterEach: function() {
 			this.destroyTestObjects();
@@ -446,668 +259,488 @@ sap.ui.define([
 			this.oUiComponentContainer = mCreatedApp.container;
 			this.oUiComponentContainer.placeAt("qunit-fixture");
 			this.oTable = mCreatedApp.view.byId("myTable");
-			ControlPersonalizationWriteAPI.restore({
-				selector: this.oTable
-			});
+			this.oTable.setModel(new ODataModel({
+				serviceUrl: "serviceUrl/",
+				operationMode: "Server"
+			}));
 			await this.oTable.initialized();
 			await nextUIUpdate();
 		},
 		destroyTestObjects: function() {
+			ControlPersonalizationWriteAPI.restore({
+				selector: this.oTable
+			});
 			this.oUiComponentContainer.destroy();
 		}
 	});
 
-	QUnit.test("Allowed analytics on column header and tableDelegate API's", async function(assert) {
-		const oTable = this.oTable;
-		const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-		const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+	QUnit.test("Menu items", async function(assert) {
 		let oQuickAction;
+
+		await TableQUnitUtils.openColumnMenu(this.oTable, 0);
+		oQuickAction = getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup");
+		assert.ok(oQuickAction, "The first column has a quick group");
+		assert.equal(oQuickAction.getItems().length, 1, "The quick group has one item");
+		oQuickAction = getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal");
+		assert.ok(oQuickAction, "The first column has a quick total");
 
 		this.oTable.addColumn(new Column({
 			header: "Value",
 			propertyKey: "Value",
 			template: new Text({text: "Value"})
 		}));
-
-		oTable.setAggregateConditions({
-			Country: {}
-		});
-		await oTable.rebind();
-		assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-			visible: ["Name", "Country", "Value"],
-			groupLevels: [],
-			grandTotal: ["Country"],
-			subtotals: ["Country"],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: undefined
-		}), "Plugin#setAggregationInfo call");
-
-		await TableQUnitUtils.openColumnMenu(oTable, 0);
-		oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
-		assert.ok(oQuickAction, "The first column has a quick group");
-		assert.equal(oQuickAction.getItems().length, 1, "The quick group has one item");
-		oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal");
-		assert.ok(oQuickAction, "The first column has a quick total");
-
-		await TableQUnitUtils.openColumnMenu(oTable, 2);
-		oQuickAction = getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup");
+		await nextUIUpdate();
+		await TableQUnitUtils.openColumnMenu(this.oTable, 2);
+		oQuickAction = getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup");
 		assert.strictEqual(oQuickAction.getItems().length, 2, "The last column has complex property with list of two items");
-
-		fSetAggregationSpy.reset();
-		oTable.setGroupConditions({
-			groupLevels: [{
-				name: "Name"
-			}]
-		});
-		await oTable.rebind();
-		assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-			visible: ["Name", "Country", "Value"],
-			groupLevels: ["Name"],
-			grandTotal: ["Country"],
-			subtotals: ["Country"],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: undefined
-		}), "Plugin#setAggregationInfo call");
-
-		fSetAggregationSpy.reset();
-		oTable.insertColumn(new Column({
-			id: "cl"
-		}), 2);
-		await oTable.rebind();
-		assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-			visible: ["Name", "Country", "Value"],
-			groupLevels: ["Name"],
-			grandTotal: ["Country"],
-			subtotals: ["Country"],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: true, grandTotal: true},
-				{subtotals: false, grandTotal: false},
-				{subtotals: true, grandTotal: true},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: undefined
-		}), "Plugin#setAggregationInfo call");
-
-		fSetAggregationSpy.restore();
 	});
 
-	QUnit.test("Grouping enabled on column menu open", function(assert) {
-		const oTable = this.oTable;
-		const done = assert.async();
-
-		oTable._fullyInitialized().then(function() {
-			return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
-			oTable._fullyInitialized().then(function() {
-				const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-				const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				const oDelegate = oTable.getControlDelegate();
-				const fnRebind = oDelegate.rebind;
-
-				oDelegate.rebind = function() {
-					fnRebind.apply(this, arguments);
-					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: ["Name", "Country"],
-						groupLevels: ["Name"],
-						grandTotal: [],
-						subtotals: [],
-						columnState: createColumnStateIdMap(oTable, [
-							{subtotals: false, grandTotal: false},
-							{subtotals: false, grandTotal: false},
-							{subtotals: false, grandTotal: false}
-						]),
-						search: undefined
-					}), "Plugin#setAggregationInfo call");
-					fSetAggregationSpy.restore();
-					oDelegate.rebind = fnRebind;
-					oTable.getEngine().reset(oTable, ["Group"]).then(function() {
-						done();
-					});
-				};
-				getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
-			});
-		});
-	});
-
-	QUnit.test("Aggregation enabled on column menu open", function(assert) {
-		const oTable = this.oTable;
-		const done = assert.async();
-
-		oTable._fullyInitialized().then(function() {
-			return TableQUnitUtils.openColumnMenu(oTable, 1);
-		}).then(function() {
-			oTable._fullyInitialized().then(function() {
-				const oDelegate = oTable.getControlDelegate();
-				const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-				const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				const fnRebind = oDelegate.rebind;
-
-				oDelegate.rebind = function() {
-					fnRebind.apply(this, arguments);
-					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: ["Name", "Country"],
-						groupLevels: [],
-						grandTotal: ["Country"],
-						subtotals: ["Country"],
-						columnState: createColumnStateIdMap(oTable, [
-							{subtotals: false, grandTotal: false},
-							{subtotals: true, grandTotal: true},
-							{subtotals: true, grandTotal: true}
-						]),
-						search: undefined
-					}), "Plugin#setAggregationInfo call");
-					fSetAggregationSpy.restore();
-					oDelegate.rebind = fnRebind;
-					oTable.getEngine().reset(oTable, ["Aggregate"]).then(function() {
-						done();
-					});
-				};
-				getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
-			});
-		});
-	});
-
-	QUnit.test("Grouping and Aggregation on two columns", function(assert) {
-		const oTable = this.oTable;
-		const done = assert.async();
-
-		oTable._fullyInitialized().then(function() {
-			return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
-			const oDelegate = oTable.getControlDelegate();
-			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-			const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-			const fnRebind = oDelegate.rebind;
-
-			oDelegate.rebind = function() {
-				fnRebind.apply(this, arguments);
-				assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-					visible: ["Name", "Country"],
-					groupLevels: ["Name"],
-					grandTotal: [],
-					subtotals: [],
-					columnState: createColumnStateIdMap(oTable, [
-						{subtotals: false, grandTotal: false},
-						{subtotals: false, grandTotal: false},
-						{subtotals: false, grandTotal: false}
-					]),
-					search: undefined
-				}), "Plugin#setAggregationInfo call");
-
-				fSetAggregationSpy.restore();
-				oDelegate.rebind = fnRebind;
-
-				TableQUnitUtils.openColumnMenu(oTable, 1).then(function() {
-					const oDelegate = oTable.getControlDelegate();
-					const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-					const fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-					const fnRebind = oDelegate.rebind;
-
-					oDelegate.rebind = function() {
-						fnRebind.apply(this, arguments);
-						assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-							visible: ["Name", "Country"],
-							groupLevels: ["Name"],
-							grandTotal: ["Country"],
-							subtotals: ["Country"],
-							columnState: createColumnStateIdMap(oTable, [
-								{subtotals: false, grandTotal: false},
-								{subtotals: true, grandTotal: true},
-								{subtotals: true, grandTotal: true}
-							]),
-							search: undefined
-						}), "Plugin#setAggregationInfo call");
-
-						fSetAggregationSpy.restore();
-						oDelegate.rebind = fnRebind;
-						oTable.getEngine().reset(oTable, ["Group", "Aggregate"]).then(function() {
-							done();
-						});
-					};
-
-					getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
+	QUnit.test("Grouping on a column", async function(assert) {
+		await TableQUnitUtils.openColumnMenu(this.oTable, 0);
+		await new Promise((resolve) => {
+			sinon.stub(this.oTable.getControlDelegate(), "updateBinding").callsFake(function(oTable) {
+				const oSetAggregation = sinon.spy(oTable.getRowBinding(), "setAggregation");
+				this.updateBinding.wrappedMethod.apply(this, arguments);
+				assert.equal(oSetAggregation.callCount, 1, "Binding#setAggregation call");
+				sinon.assert.calledWithExactly(oSetAggregation, {
+					aggregate: {},
+					grandTotalAtBottomOnly: true,
+					subtotalsAtBottomOnly: true,
+					group: {Country: {}, Name: {}},
+					groupLevels: ["Name"]
 				});
-			};
-
-			getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
-		});
-	});
-
-	QUnit.test("Grouping and aggregation on the same column", function(assert) {
-		const oTable = this.oTable;
-		let oDelegate, oPlugin, fSetAggregationSpy, fnRebind;
-
-		return oTable._fullyInitialized().then(function() {
-			return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
-			oDelegate = oTable.getControlDelegate();
-			oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-			fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-			fnRebind = oDelegate.rebind;
-
-			return new Promise(function(resolve) {
-				oDelegate.rebind = function() {
-					fnRebind.apply(this, arguments);
-
-					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: ["Name", "Country"],
-						groupLevels: [],
-						grandTotal: ["Name"],
-						subtotals: ["Name"],
-						columnState: createColumnStateIdMap(oTable, [
-							{subtotals: true, grandTotal: true},
-							{subtotals: false, grandTotal: false},
-							{subtotals: true, grandTotal: true}
-						]),
-						search: undefined
-					}), "Plugin#setAggregationInfo call");
-
-					fSetAggregationSpy.reset();
-					oDelegate.rebind = fnRebind;
-					resolve();
-				};
-				getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
+				this.updateBinding.restore();
+				resolve();
 			});
-
-		}).then(function() {
-			return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
-			fSetAggregationSpy.reset();
-
-			return new Promise(function(resolve) {
-				oDelegate.rebind = function() {
-					fnRebind.apply(this, arguments);
-
-					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: ["Name", "Country"],
-						groupLevels: ["Name"],
-						grandTotal: ["Name"],
-						subtotals: ["Name"],
-						columnState: createColumnStateIdMap(oTable, [
-							{subtotals: true, grandTotal: true},
-							{subtotals: false, grandTotal: false},
-							{subtotals: true, grandTotal: true}
-						]),
-						search: undefined
-					}), "Plugin#setAggregationInfo call");
-
-					oDelegate.rebind = fnRebind;
-					resolve();
-				};
-				getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
-			});
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
 		});
 	});
 
-	QUnit.test("getInResultPropertyKeys", async function(assert) {
-		const oTable = this.oTable;
-
-		await oTable.initialized();
-		const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-		const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
-
-		oTable.getControlDelegate().getInResultPropertyKeys = function() {
-			return ["Value"];
-		};
-
-		oTable.setAggregateConditions({
-			SalesAmount: {}
-		});
-
-		await oTable.rebind();
-
-		assert.ok(oSetAggregation.calledOnceWithExactly({
-			visible: ["Name", "Country", "Value"],
-			groupLevels: [],
-			grandTotal: ["SalesAmount"],
-			subtotals: ["SalesAmount"],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: undefined
-		}), "Plugin#setAggregationInfo called with the right getInResultPropertyKeys");
-	});
-
-	QUnit.test("updateBindingInfo", async function(assert) {
-		const oTable = this.oTable;
-		await oTable.initialized();
-
-		oTable.getControlDelegate().getInResultPropertyKeys = function() {
-			return ["Value"];
-		};
-		oTable.setP13nMode(["Column"]);
-
-		const oBindingInfo = {};
-		oTable.getControlDelegate().updateBindingInfo(oTable, oBindingInfo);
-		assert.deepEqual(oBindingInfo, {parameters: {$select: ["Value"]}, sorter: [], filters: [], path: "/Products"},
-			"Correct $select parameter in bindingInfo from aInResultPropertyKeys");
-	});
-
-	QUnit.module("Tests with specific propertyInfos", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				label: "Name",
-				path: "Name",
-				dataType: "String",
-				groupable: true
-			}, {
-				name: "Country",
-				label: "Country",
-				path: "Country",
-				dataType: "String"
-			}, {
-				name: "Value",
-				label: "Value",
-				path: "Value",
-				dataType: "String"
-			}, {
-				name: "name_country",
-				label: "Complex Title & Description",
-				propertyInfos: ["Name", "Country"]
-			}]);
-		},
-		beforeEach: function() {
-			return this.createTestObjects().then(function() {
-				return this.oTable.getEngine().getModificationHandler().waitForChanges({
-					element: this.oTable
+	QUnit.test("Totals on a column", async function(assert) {
+		await TableQUnitUtils.openColumnMenu(this.oTable, 1);
+		await new Promise((resolve) => {
+			sinon.stub(this.oTable.getControlDelegate(), "updateBinding").callsFake(function(oTable) {
+				const oSetAggregation = sinon.spy(oTable.getRowBinding(), "setAggregation");
+				this.updateBinding.wrappedMethod.apply(this, arguments);
+				assert.equal(oSetAggregation.callCount, 1, "Binding#setAggregation call");
+				sinon.assert.calledWithExactly(oSetAggregation, {
+					aggregate: {Country: {grandTotal: true, subtotals: true}},
+					grandTotalAtBottomOnly: true,
+					subtotalsAtBottomOnly: true,
+					group: {Name: {}},
+					groupLevels: []
 				});
-			}.bind(this));
-		},
+				this.updateBinding.restore();
+				resolve();
+			});
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
+		});
+	});
+
+	QUnit.test("Grouping and totals on different columns", async function(assert) {
+		await TableQUnitUtils.openColumnMenu(this.oTable, 0);
+		await new Promise((resolve) => {
+			sinon.stub(this.oTable.getControlDelegate(), "updateBinding").callsFake(function(oTable) {
+				const oSetAggregation = sinon.spy(oTable.getRowBinding(), "setAggregation");
+				this.updateBinding.wrappedMethod.apply(this, arguments);
+				assert.equal(oSetAggregation.callCount, 1, "Binding#setAggregation call");
+				sinon.assert.calledWithExactly(oSetAggregation, {
+					aggregate: {},
+					grandTotalAtBottomOnly: true,
+					subtotalsAtBottomOnly: true,
+					group: {Country: {}, Name: {}},
+					groupLevels: ["Name"]
+				});
+				this.updateBinding.restore();
+				resolve();
+			});
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
+		});
+
+		this.oTable.getRowBinding().setAggregation.resetHistory();
+		await TableQUnitUtils.openColumnMenu(this.oTable, 1);
+		await new Promise((resolve) => {
+			sinon.stub(this.oTable.getControlDelegate(), "updateBinding").callsFake(function(oTable) {
+				this.updateBinding.wrappedMethod.apply(this, arguments);
+				assert.equal(oTable.getRowBinding().setAggregation.callCount, 1, "Binding#setAggregation call");
+				sinon.assert.calledWithExactly(oTable.getRowBinding().setAggregation, {
+					aggregate: {Country: {grandTotal: true, subtotals: true}},
+					grandTotalAtBottomOnly: true,
+					subtotalsAtBottomOnly: true,
+					group: {Name: {}},
+					groupLevels: ["Name"]
+				});
+				this.updateBinding.restore();
+				resolve();
+			});
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
+		});
+	});
+
+	QUnit.test("Grouping and totals on the same column", async function(assert) {
+		await TableQUnitUtils.openColumnMenu(this.oTable, 0);
+		await new Promise((resolve) => {
+			sinon.stub(this.oTable.getControlDelegate(), "updateBinding").callsFake(function(oTable) {
+				const oSetAggregation = sinon.spy(oTable.getRowBinding(), "setAggregation");
+				this.updateBinding.wrappedMethod.apply(this, arguments);
+				assert.equal(oSetAggregation.callCount, 1, "Binding#setAggregation call");
+				sinon.assert.calledWithExactly(oSetAggregation, {
+					aggregate: {Name: {grandTotal: true, subtotals: true}},
+					grandTotalAtBottomOnly: true,
+					subtotalsAtBottomOnly: true,
+					group: {Country: {}},
+					groupLevels: []
+				});
+				this.updateBinding.restore();
+				resolve();
+			});
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getContent()[0].firePress();
+		});
+
+		this.oTable.getRowBinding().setAggregation.resetHistory();
+		await TableQUnitUtils.openColumnMenu(this.oTable, 0);
+		await new Promise((resolve) => {
+			sinon.stub(this.oTable.getControlDelegate(), "updateBinding").callsFake(function(oTable) {
+				this.updateBinding.wrappedMethod.apply(this, arguments);
+				assert.equal(oTable.getRowBinding().setAggregation.callCount, 1, "Binding#setAggregation call");
+				sinon.assert.calledWithExactly(oTable.getRowBinding().setAggregation, {
+					aggregate: {Name: {grandTotal: true, subtotals: true}},
+					grandTotalAtBottomOnly: true,
+					subtotalsAtBottomOnly: true,
+					group: {Country: {}},
+					groupLevels: ["Name"]
+				});
+				this.updateBinding.restore();
+				resolve();
+			});
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getContent()[0].firePress();
+		});
+	});
+
+	QUnit.module("Analytical features", {
+		defaultPropertyInfos: [{
+			key: "Country",
+			path: "CountryPath",
+			label: "Country",
+			dataType: "String",
+			groupable: true,
+			text: "CountryText"
+		}, {
+			key: "CountryText",
+			path: "CountryTextPath",
+			label: "CountryText",
+			dataType: "String"
+		}, {
+			key: "Region",
+			path: "RegionPath",
+			label: "Region",
+			dataType: "String",
+			groupable: true,
+			text: "RegionText"
+		}, {
+			key: "RegionText",
+			path: "RegionTextPath",
+			label: "RegionText",
+			dataType: "String",
+			groupable: true,
+			extension: {
+				additionalProperties: ["Region"]
+			}
+		}, {
+			key: "SalesAmount",
+			path: "SalesAmountPath",
+			label: "SalesAmount",
+			dataType: "String",
+			aggregatable: true,
+			unit: "Currency"
+		}, {
+			key: "Currency",
+			path: "CurrencyPath",
+			label: "Currency",
+			dataType: "String"
+		}, {
+			key: "SalesAmountInLocalCurrency",
+			path: "SalesAmountInLocalCurrencyPath",
+			label: "SalesAmountInLocalCurrency",
+			dataType: "String",
+			aggregatable: true,
+			unit: "Currency",
+			extension: {
+				additionalProperties: ["Country", "Region"]
+			}
+		}],
 		afterEach: function() {
-			this.destroyTestObjects();
+			this.oTable?.destroy();
 		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
-		},
-		createTestObjects: async function() {
-			const mCreatedApp = await createAppEnvironment(sTableView2, "Table");
-			this.oUiComponentContainer = mCreatedApp.container;
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			this.oTable = mCreatedApp.view.byId('myTable');
-			ControlPersonalizationWriteAPI.restore({
-				selector: this.oTable
-			});
-			await this.oTable.initialized();
-			await nextUIUpdate();
-		},
-		destroyTestObjects: function() {
-			this.oUiComponentContainer.destroy();
-		}
-	});
-
-	QUnit.test("Check column header for analytics buttons", function(assert) {
-		const oTable = this.oTable;
-
-		return oTable._fullyInitialized().then(function() {
-			return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
-			assert.ok(getQuickAction(oTable._oColumnHeaderMenu, "QuickGroup"), "The first column has group menu item");
-			assert.notOk(getQuickAction(oTable._oColumnHeaderMenu, "QuickTotal"), "The first column doesn't have an aggregate menu item");
-		});
-	});
-
-	QUnit.module("Column state to plugin", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [
-				{name: "CountryKey", path: "Country", label: "CountryKey", groupable: true, text: "CountryText", dataType: "String"},
-				{name: "CountryText", path: "CountryText", label: "CountryText", groupable: true, dataType: "String"},
-				{name: "CountryKeyAndText", label: "CountryKey+CountryText", propertyInfos: ["CountryKey", "CountryText"]},
-				{name: "SalesAmount", path: "SalesAmount", label: "SalesAmount", unit: "Currency", dataType: "String"},
-				{name: "Currency", path: "Currency", label: "Currency", groupable: true, dataType: "String"},
-				{name: "SalesAmountAndCurrency", label: "SalesAmount+Currency", propertyInfos: ["SalesAmount", "Currency"]},
-				{name: "SalesAmountAndRegion", label: "SalesAmount+Region", propertyInfos: ["SalesAmount", "Region"]},
-				{name: "CurrencyAndRegion", label: "Currency+Region", propertyInfos: ["Currency", "Region"]},
-				{name: "Region", path: "Region", label: "Region", groupable: true, dataType: "String"},
-				{name: "RegionText", path: "RegionText", label: "RegionText", groupable: true, dataType: "String"},
-				{name: "SalesAmountInLocalCurrency", path: "SalesAmountInLocalCurrency", label: "SalesAmountInLocalCurrency", dataType: "String"},
-				{
-					name: "SalesAmountAndSalesAmountInLocalCurrency",
-					label: "SalesAmountAndSalesAmountInLocalCurrency",
-					propertyInfos: ["SalesAmount", "SalesAmountInLocalCurrency"]
+		initTable: async function(mSettings, aVisibleProperties = [
+			"Country", "Region", "SalesAmount"
+		], aPropertyInfos = this.defaultPropertyInfos) {
+			this.oTable = new Table({
+				delegate: {
+					name: "odata.v4.TestDelegate"
 				},
-				{name: "RegionAndRegionText", label: "Region+RegionText", propertyInfos: ["Region", "RegionText"]}
-			]);
-		},
-		beforeEach: function() {
-			return this.createTestObjects().then(function() {
-				this.oTable.destroyColumns();
-				this.oTable.addColumn(new Column({
-					header: "CountryKey",
-					propertyKey: "CountryKey",
-					template: new Text({text: "CountryKey"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "CountryText",
-					propertyKey: "CountryText",
-					template: new Text({text: "CountryText"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "CountryKey+CountryText",
-					propertyKey: "CountryKeyAndText",
-					template: new Text({text: "CountryKey CountryText"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "SalesAmount",
-					propertyKey: "SalesAmount",
-					template: new Text({text: "SalesAmount"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "Currency",
-					propertyKey: "Currency",
-					template: new Text({text: "Currency"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "SalesAmount+Currency",
-					propertyKey: "SalesAmountAndCurrency",
-					template: new Text({text: "SalesAmount Currency"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "SalesAmount+Region",
-					propertyKey: "SalesAmountAndRegion",
-					template: new Text({text: "SalesAmount Region"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "Currency+Region",
-					propertyKey: "CurrencyAndRegion",
-					template: new Text({text: "Currency Region"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "SalesAmount+SalesAmountInLocalCurrency",
-					propertyKey: "SalesAmountAndSalesAmountInLocalCurrency",
-					template: new Text({text: "SalesAmount SalesAmountInLocalCurrency"})
-				}));
-				this.oTable.addColumn(new Column({
-					header: "Region+RegionText",
-					propertyKey: "RegionAndRegionText",
-					template: new Text({text: "Region RegionText"})
-				}));
-				return this.oTable.getEngine().getModificationHandler().waitForChanges({
-					element: this.oTable
-				});
-			}.bind(this));
-		},
-		afterEach: function() {
-			this.destroyTestObjects();
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
-		},
-		createTestObjects: async function() {
-			const mCreatedApp = await createAppEnvironment(sTableView2, "Table");
-			this.oUiComponentContainer = mCreatedApp.container;
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			this.oTable = mCreatedApp.view.byId('myTable');
-			ControlPersonalizationWriteAPI.restore({
-				selector: this.oTable
+				autoBindOnInit: false,
+				p13nMode: ["Group", "Aggregate"],
+				models: new ODataModel({
+					serviceUrl: "serviceUrl/",
+					operationMode: "Server"
+				}),
+				columns: aVisibleProperties.map(function(sPropertyKey) {
+					const oProperty = this.defaultPropertyInfos.find(function(oPropertyInfo) {
+						return oPropertyInfo.key === sPropertyKey;
+					});
+					return new Column({
+						header: oProperty.label,
+						propertyKey: sPropertyKey,
+						template: new Text({text: `{${oProperty.path}}`})
+					});
+				}.bind(this)),
+				...mSettings
 			});
+			TableQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
 			await this.oTable.initialized();
-			await nextUIUpdate();
+			this.observe$$aggregation();
 		},
-		destroyTestObjects: function() {
-			this.oUiComponentContainer.destroy();
+		addColumns: function(aPropertyKeys) {
+			for (const sPropertyKey of aPropertyKeys) {
+				const oProperty = this.oTable.getPropertyHelper().getProperty(sPropertyKey);
+				this.oTable.addColumn(new Column({
+					header: oProperty.label,
+					propertyKey: sPropertyKey,
+					template: new Text({text: `{${oProperty.path}}`})
+				}));
+			}
+		},
+		removeColumns: function(aPropertyKeys) {
+			for (const sPropertyKey of aPropertyKeys) {
+				this.oTable.getColumns().find((oColumn) => oColumn.getPropertyKey() === sPropertyKey).destroy();
+			}
+		},
+		observe$$aggregation: function() {
+			const that = this;
+
+			this.aCollected$$Aggregation = [];
+			sinon.stub(this.oTable._getType(), "bindRows").callsFake(function(oBindingInfo) {
+				that.aCollected$$Aggregation.push({...oBindingInfo.parameters.$$aggregation});
+				this.bindRows.wrappedMethod.apply(this, arguments);
+				sinon.stub(this.getRowBinding(), "setAggregation").callsFake((mAggregation) => {
+					that.aCollected$$Aggregation.push(mAggregation);
+				});
+			});
+		},
+		verify$$aggregation: function(mExpectedAggregation) {
+			QUnit.assert.equal(this.aCollected$$Aggregation.length, 1, "Number of $$aggregation changes");
+			if (this.aCollected$$Aggregation.length === 1) {
+				QUnit.assert.deepEqual(this.aCollected$$Aggregation[0], mExpectedAggregation, "$$aggregation");
+			}
+			this.aCollected$$Aggregation = [];
 		}
 	});
 
-	QUnit.test("Aggregate", async function(assert) {
-		const oTable = this.oTable;
-		const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-		const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
-
-		oTable.setAggregateConditions({
-			SalesAmount: {}
+	QUnit.test("Key properties", async function(assert) {
+		await this.initTable(undefined, undefined, this.defaultPropertyInfos.concat([{
+			key: "ID",
+			path: "IDPath",
+			label: "ID",
+			dataType: "String",
+			groupable: true,
+			isKey: true
+		}, {
+			key: "CustomerID",
+			path: "CustomerIDPath",
+			label: "CustomerID",
+			dataType: "String",
+			isKey: true,
+			groupable: true,
+			text: "CustomerText"
+		}, {
+			key: "CustomerText",
+			path: "CustomerTextPath",
+			label: "CustomerText",
+			dataType: "String",
+			groupable: true
+		}]));
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				IDPath: {},
+				CustomerIDPath: {},
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
 		});
-		await oTable.rebind();
-
-		assert.ok(oSetAggregation.calledOnceWithExactly({
-			visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
-			groupLevels: [],
-			grandTotal: ["SalesAmount"],
-			subtotals: ["SalesAmount"],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: undefined
-		}), "Plugin#setAggregationInfo call");
 	});
 
-	QUnit.test("Group", async function(assert) {
-		const oTable = this.oTable;
-		const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-		const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
-
-		oTable.setGroupConditions({
-			groupLevels: [{
-				name: "CountryKey"
-			}]
+	QUnit.test("Add and remove group levels", async function(assert) {
+		await this.initTable({
+			groupConditions: {
+				groupLevels: [{
+					name: "Country"
+				}]
+			}
 		});
-		await oTable.rebind();
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: ["CountryPath"]
+		});
 
-		assert.ok(oSetAggregation.calledOnceWithExactly({
-			visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
-			groupLevels: ["CountryKey"],
-			grandTotal: [],
-			subtotals: [],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: undefined
-		}), "Plugin#setAggregationInfo call");
+		this.oTable.setGroupConditions();
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
+		});
 	});
 
-	QUnit.test("Group and aggregate", async function(assert) {
-		const oTable = this.oTable;
-		const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-		const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
+	QUnit.test("Add and remove totals", async function(assert) {
+		await this.initTable({
+			aggregateConditions: {
+				SalesAmount: {}
+			}
+		}, ["Country", "Region", "SalesAmount", "Currency"]);
+		const oV4AggregationPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
+		sinon.spy(oV4AggregationPlugin, "declareColumnsHavingTotals");
 
-		oTable.setGroupConditions({
-			groupLevels: [{
-				name: "CountryKey"
-			}]
-		});
-		oTable.setAggregateConditions({
-			SalesAmount: {}
-		});
-		await oTable.rebind();
+		assert.equal(this.oTable._oTable.getRowMode().getFixedBottomRowCount(), 0, "Fixed bottom row count");
+		assert.equal(oV4AggregationPlugin.declareColumnsHavingTotals.callCount, 0, "V4AggregationPlugin#declareColumnsHavingTotals call");
 
-		assert.ok(oSetAggregation.calledOnceWithExactly({
-			visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
-			groupLevels: ["CountryKey"],
-			grandTotal: ["SalesAmount"],
-			subtotals: ["SalesAmount"],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: true, grandTotal: true},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: undefined
-		}), "Plugin#setAggregationInfo call");
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath", grandTotal: true, subtotals: true}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
+		});
+		assert.equal(this.oTable._oTable.getRowMode().getFixedBottomRowCount(), 1, "Fixed bottom row count");
+		assert.ok(oV4AggregationPlugin.declareColumnsHavingTotals.calledOnceWithExactly([
+			this.oTable.getColumns()[2].getInnerColumn(),
+			this.oTable.getColumns()[3].getInnerColumn()
+		]), "V4AggregationPlugin#declareColumnsHavingTotals call");
+
+		oV4AggregationPlugin.declareColumnsHavingTotals.resetHistory();
+		this.oTable.setAggregateConditions();
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
+		});
+		assert.equal(this.oTable._oTable.getRowMode().getFixedBottomRowCount(), 0, "Fixed bottom row count");
+		assert.ok(oV4AggregationPlugin.declareColumnsHavingTotals.calledOnceWithExactly([]), "V4AggregationPlugin#declareColumnsHavingTotals call");
 	});
 
-	QUnit.test("$search", async function(assert) {
-		const oTable = this.oTable;
+	QUnit.test("Group levels and totals", async function(assert) {
+		await this.initTable({
+			aggregateConditions: {
+				SalesAmount: {}
+			},
+			groupConditions: {
+				groupLevels: [{
+					name: "Country"
+				}]
+			}
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath", grandTotal: true, subtotals: true}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: ["CountryPath"]
+		});
+	});
 
-		sinon.stub(oTable.getControlDelegate(), "updateBindingInfo").callsFake(function(oTable, oBindingInfo) {
+	QUnit.test("$search binding parameter", async function(assert) {
+		await this.initTable();
+		sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo").callsFake(function(oTable, oBindingInfo) {
 			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
-			oBindingInfo.parameters["$search"] = "Name";
+			oBindingInfo.parameters["$search"] = "SomeSearchText";
+		});
+		await this.oTable.rebind();
+
+		assert.notOk("$search" in this.oTable._oTable.getBindingInfo("rows").parameters, "$search in the binding info");
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: [],
+			search: "SomeSearchText"
 		});
 
-		await TableQUnitUtils.waitForBindingInfo(oTable);
-		const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-		const oBindRowsSpy = sinon.spy(oTable._oTable, "bindRows");
-		const oSetAggregation = sinon.spy(oPlugin, "setAggregationInfo");
-		oTable.setGroupConditions({groupLevels: [{name: "CountryKey"}]});
-		await oTable.rebind();
-		const oBindingInfo = oTable._oTable.getBindingInfo("rows");
+		this.oTable.getControlDelegate().updateBindingInfo.restore();
+	});
 
-		assert.notOk(oBindingInfo.parameters["$search"], "$search has been removed from the binding info");
-		assert.ok(oBindRowsSpy.calledWithExactly(oBindingInfo), "BindRows of inner table called with oBindingInfo without $search parameter");
-		assert.ok(oSetAggregation.calledOnceWithExactly({
-			visible: ["CountryKey", "CountryText", "SalesAmount", "Currency", "Region", "SalesAmountInLocalCurrency", "RegionText"],
-			groupLevels: ["CountryKey"],
-			grandTotal: [],
-			subtotals: [],
-			columnState: createColumnStateIdMap(oTable, [
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false},
-				{subtotals: false, grandTotal: false}
-			]),
-			search: "Name"
-		}), "Plugin#setAggregationInfo call");
-
-		oTable.getControlDelegate().updateBindingInfo.restore();
+	QUnit.test("#getInResultPropertyKeys", async function(assert) {
+		await this.initTable(undefined, ["Country"], this.defaultPropertyInfos.concat([{
+			key: "NonGroupableAggregatable",
+			path: "NonGroupableAggregatablePath",
+			label: "NonGroupableAggregatable",
+			dataType: "String"
+		}]));
+		sinon.stub(this.oTable.getControlDelegate(), "getInResultPropertyKeys").returns([
+			"Region", "SalesAmountInLocalCurrency", "NonGroupableAggregatable"
+		]);
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountInLocalCurrencyPath: {}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {}
+			},
+			groupLevels: []
+		});
+		this.oTable.getControlDelegate().getInResultPropertyKeys.restore();
 	});
 
 	QUnit.module("#updateBindingInfo", {
@@ -1152,7 +785,7 @@ sap.ui.define([
 	});
 
 	// BCP: 2380131026
-	QUnit.test("Sort invisible property if analytics is enabled", async function(assert) {
+	QUnit.test("Sort invisible property if analytical features are enabled", async function(assert) {
 		await this.initTable({
 			p13nMode: ["Sort", "Filter", "Group", "Aggregate"],
 			columns: [
@@ -1191,12 +824,12 @@ sap.ui.define([
 		];
 
 		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
-		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "Table");
+		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, TableType.Table);
 
-		this.oTable.setType("ResponsiveTable");
+		this.oTable.setType(TableType.ResponsiveTable);
 		aExpectedSorter.push(new Sorter("FirstName_Path", true));
 		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
-		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, "ResponsiveTable");
+		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, TableType.ResponsiveTable);
 	});
 
 	QUnit.test("$$aggregation.expandTo binding parameter", async function(assert) {
@@ -1220,6 +853,21 @@ sap.ui.define([
 		});
 		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
 		assert.deepEqual(oBindingInfo.parameters, {});
+	});
+
+	QUnit.test("#getInResultPropertyKeys", async function(assert) {
+		await this.initTable({
+			type: TableType.ResponsiveTable
+		});
+
+		sinon.stub(this.oTable.getControlDelegate(), "getInResultPropertyKeys").returns(["Name"]);
+		this.oTable.setP13nMode(["Column"]);
+
+		const oBindingInfo = {};
+		this.oTable.getControlDelegate().updateBindingInfo(this.oTable, oBindingInfo);
+		assert.deepEqual(oBindingInfo, {parameters: {$select: ["Name_Path"]}, sorter: [], filters: []});
+
+		this.oTable.getControlDelegate().getInResultPropertyKeys.restore();
 	});
 
 	QUnit.module("#updateBinding", {
@@ -1265,8 +913,6 @@ sap.ui.define([
 			await this.oTable.initialized();
 			await this.oTable.rebind();
 			this.oInnerTable = this.oTable._oTable;
-			this.oSetAggregationInfoSpy = this.spy(PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.V4Aggregation"),
-				"setAggregationInfo");
 			this.oRowBinding = this.oTable.getRowBinding();
 			this.oRebindSpy = this.spy(this.oTable.getControlDelegate(), "rebind");
 			this.oChangeParametersSpy = this.spy(this.oRowBinding, "changeParameters");
@@ -1303,18 +949,9 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
 			aggregate: {},
 			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
 			group: {Name: {additionally: []}},
-			groupLevels: ["Name"],
-			search: undefined,
-			subtotalsAtBottomOnly: true
-		});
-		sinon.assert.calledWithExactly(this.oSetAggregationInfoSpy, {
-			columnState: createColumnStateIdMap(this.oTable, [{grandTotal: true, subtotals: true}]),
-			grandTotal: ["Name"],
-			groupLevels: ["Name"],
-			search: undefined,
-			subtotals: ["Name"],
-			visible: ["Name"]
+			groupLevels: ["Name"]
 		});
 		sinon.assert.callOrder(
 			this.oSuspendSpy,
@@ -1374,35 +1011,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Group", async function(assert) {
-		this.oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
-		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationInfoSpy.firstCall.calledWithMatch({groupLevels: ["Name"]}));
-
-		this.oTable.setGroupConditions();
-		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationInfoSpy.secondCall.calledWithMatch({groupLevels: []}));
-		assert.equal(this.oRebindSpy.callCount, 0);
-
-		// Test grouping on non visible column in ResponsiveTable
 		this.oTable.setType(TableType.ResponsiveTable);
 		await this.oTable.initialized();
 		this.oTable.setGroupConditions({groupLevels: [{name: "Country"}]});
 		await this.oTable.rebind();
 		assert.deepEqual(this.oTable._oTable.getBindingInfo("items").sorter, [], "Column Country is not visible. No sorter applied");
-	});
-
-	QUnit.test("Aggregates", async function(assert) {
-		this.oTable.setAggregateConditions({Name: {}});
-		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationInfoSpy.firstCall.calledWithMatch({
-			grandTotal: ["Name"],
-			subtotals: ["Name"]
-		}));
-
-		this.oTable.setAggregateConditions();
-		await this.oTable.rebind();
-		assert.ok(this.oSetAggregationInfoSpy.secondCall.calledWithMatch({grandTotal: [], subtotals: []}));
-		assert.equal(this.oRebindSpy.callCount, 0);
 	});
 
 	QUnit.test("Parameters", async function(assert) {
@@ -1437,11 +1050,11 @@ sap.ui.define([
 		this.oTable.insertColumn(new Column());
 		await this.oTable.rebind();
 
-		assert.equal(this.oChangeParametersSpy.callCount, 0);
-		assert.equal(this.oFilterSpy.callCount, 0);
-		assert.equal(this.oSortSpy.callCount, 0);
-		assert.equal(this.oSetAggregationSpy.callCount, 1);
-		assert.equal(this.oRebindSpy.callCount, 1);
+		assert.equal(this.oChangeParametersSpy.callCount, 0, "Binding#changeParameter call");
+		assert.equal(this.oFilterSpy.callCount, 0, "Binding#filter call");
+		assert.equal(this.oSortSpy.callCount, 0, "Binding#sort call");
+		assert.equal(this.oSetAggregationSpy.callCount, 0, "Binding#setAggregation call");
+		assert.equal(this.oRebindSpy.callCount, 1, "Delegate#rebind call");
 	});
 
 	QUnit.test("Change path", async function(assert) {
@@ -1600,10 +1213,9 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
 			aggregate: {},
 			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
 			group: {Name: {additionally: []}},
-			groupLevels: [],
-			search: undefined,
-			subtotalsAtBottomOnly: true
+			groupLevels: []
 		});
 
 		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
@@ -1615,10 +1227,9 @@ sap.ui.define([
 		assert.deepEqual(this.oRebindSpy.firstCall.args[1].parameters.$$aggregation, {
 			aggregate: {},
 			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
 			group: {Name: {additionally: []}},
-			groupLevels: [],
-			search: undefined,
-			subtotalsAtBottomOnly: true
+			groupLevels: []
 		}, "$$aggregation parameter");
 	});
 

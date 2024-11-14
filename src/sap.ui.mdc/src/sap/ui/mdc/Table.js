@@ -163,9 +163,9 @@ sap.ui.define([
 	 * @property {boolean} [isKey=false]
 	 *   Defines whether a property is a key or part of a key in the data.
 	 * @property {string} [unit]
-	 *   Key of the unit property that is related to this property.
+	 *   Key of the unit property that is related to this property. A property must not have both a unit and a text.
 	 * @property {string} [text]
-	 *   Key of the text property that is related to this property in a 1:1 relation.
+	 *   Key of the text property that is related to this property in a 1:1 relation. A property must not have both a unit and a text.
 	 * @property {object} [exportSettings]
 	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
 	 * @property {object} [clipboardSettings]
@@ -199,6 +199,8 @@ sap.ui.define([
 	 * @public
 	 */
 
+	// TODO: The extension in PropertyInfo has been discarded as a general concept in MDC, therefore it might be justified to move this typedef to
+	// sap.ui.mdc.odata.v4.TableDelegate. They are tightly coupled and other MDC controls also won't contain multiple PropertyInfo definitions.
 	/**
 	 * @typedef {sap.ui.mdc.table.PropertyInfo} sap.ui.mdc.odata.v4.TablePropertyInfo
 	 *
@@ -233,6 +235,8 @@ sap.ui.define([
 	 *   <li><code>propertyInfos</code> (all referenced properties must be specified)</li>
 	 * </ul>
 	 *
+	 * @property {boolean} [isKey=false]
+	 *   Defines whether a property is a key or part of a key in the data. A key property must be technically groupable.
 	 * @property {boolean} [aggregatable=false]
 	 *   Defines whether the property is aggregatable. A property can only be declared aggregatable if there is a <code>CustomAggregate</code> whose
 	 *   <code>Qualifier</code> is equal to the property key.
@@ -248,7 +252,8 @@ sap.ui.define([
 	 *   <code>aggregatable</code>.
 	 * @property {string[]} [extension.additionalProperties]
 	 *   Properties that are loaded in addition if this property is loaded. These properties must be technically groupable, otherwise they can't be
-	 *   loaded.
+	 *   loaded. All nested additional properties must be listed at root level. For example, if property A references B and B references C, A must
+	 *   also reference C.
 	 *   This attribute is only taken into account if the <code>Aggregate</code> or <code>Group</code> <code>p13nMode</code> is enabled and the
 	 *   table type is {@link sap.ui.mdc.table.GridTableType GridTable}.
 	 *   These properties are not considered for any other functionality, such as export or column width calculation, for example.
@@ -997,7 +1002,9 @@ sap.ui.define([
 		this._setPropertyHelperClass(PropertyHelper);
 		this._setupPropertyInfoStore("propertyInfo");
 
-		this._oManagedObjectModel = new ManagedObjectModel(this);
+		this._oManagedObjectModel = new ManagedObjectModel(this, {
+			hasGrandTotal: false
+		});
 		this._oManagedObjectModel.setDefaultBindingMode(BindingMode.OneWay);
 		this.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table");
 	};

@@ -78,10 +78,21 @@ sap.ui.define([
 
 		const bGroupable = (oProperty.groupable || oProperty.extension?.technicallyGroupable) === true;
 		const bAggregatable = (oProperty.aggregatable || oProperty.extension?.technicallyAggregatable) === true;
+
+		if (oProperty.isKey) {
+			// TODO: This check breaks FE.
+			// if (!bGroupable) {
+			// 	throw new Error("Invalid property definition: A key property must be technically groupable.");
+			// }
+			if (bAggregatable) {
+				throw new Error("Invalid property definition: A key property must not be technically aggregatable.");
+			}
+		}
+
 		const aAdditionalProperties = oProperty.extension?.additionalProperties ?? [];
 
 		if (!bGroupable && !bAggregatable && aAdditionalProperties.length > 0) {
-			throw new Error("Invalid property definition: 'additionalProperties' may not contain property keys if the property is neither"
+			throw new Error("Invalid property definition: 'additionalProperties' must not contain property keys if the property is neither"
 				+ " technically groupable nor technically aggregatable.");
 		}
 
@@ -102,11 +113,26 @@ sap.ui.define([
 
 		if (aAdditionalProperties.length > 0) {
 			if (aAdditionalProperties.includes(oProperty.text)) {
-				throw new Error("Invalid property definition: 'additionalProperties' may not contain the text.");
+				throw new Error("Invalid property definition: 'additionalProperties' must not contain the text.");
 			}
 			if (aAdditionalProperties.includes(oProperty.unit)) {
-				throw new Error("Invalid property definition: 'additionalProperties' may not contain the unit.");
+				throw new Error("Invalid property definition: 'additionalProperties' must not contain the unit.");
 			}
+		}
+
+		const oAllAdditionalProperties = new Set(aAdditionalProperties);
+		for (const sAdditionalPropertyKey of oAllAdditionalProperties) {
+			const oAdditionalProperty = aProperties.find((oProperty) => {
+				return oProperty.key === sAdditionalPropertyKey || oProperty.name === sAdditionalPropertyKey;
+			});
+			const aAdditionalAdditionalProperties = oAdditionalProperty.extension?.additionalProperties ?? [];
+			for (const sAdditionalAdditionalPropertyKey of aAdditionalAdditionalProperties) {
+				oAllAdditionalProperties.add(sAdditionalAdditionalPropertyKey);
+			}
+		}
+		if (oAllAdditionalProperties.difference(new Set(aAdditionalProperties)).size > 0) {
+			throw new Error("Invalid property definition: 'additionalProperties' must contain all nested additionalProperties (additionalProperties"
+				+ " of additionalProperties).");
 		}
 	};
 
@@ -116,6 +142,8 @@ sap.ui.define([
 	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
 
+		// TODO: Don't do that for aggregatable properties - the additionalProperties are meant to be the context-defining properties of the
+		//       CustomAggregate.
 		if (!PropertyHelperBase.isPropertyComplex(oProperty) && oProperty.extension.additionalProperties.length > 0) {
 			oProperty.groupable = false;
 		}
@@ -139,43 +167,6 @@ sap.ui.define([
 		return this.getProperties().filter((oProperty) => {
 			return oProperty.aggregatable;
 		});
-	};
-
-	/**
-	 * Converts the properties to the format expected by the <code>sap.ui.table.plugins.V4Aggregation</code> plugin.
-	 *
-	 * @returns {Object[]} Converted property information.
-	 * @private
-	 */
-	PropertyHelper.prototype.getPropertiesForPlugin = function() {
-		return this.getProperties().reduce((aProperties, oProperty) => {
-			if (oProperty.isComplex()) {
-				return aProperties;
-			}
-
-			const oPropertyForPlugin = {
-				key: oProperty.key,
-				path: oProperty.path,
-				isKey: oProperty.isKey,
-				text: oProperty.text,
-				unit: oProperty.unit,
-				groupable: oProperty.extension.technicallyGroupable,
-				aggregatable: oProperty.extension.technicallyAggregatable,
-				additionalProperties: oProperty.extension.additionalProperties
-			};
-
-			if (oProperty.extension.customAggregate) {
-				oPropertyForPlugin.aggregationDetails = {
-					customAggregate: {
-						contextDefiningProperties: oProperty.extension.customAggregate.contextDefiningProperties
-					}
-				};
-			}
-
-			aProperties.push(oPropertyForPlugin);
-
-			return aProperties;
-		}, []);
 	};
 
 	return PropertyHelper;

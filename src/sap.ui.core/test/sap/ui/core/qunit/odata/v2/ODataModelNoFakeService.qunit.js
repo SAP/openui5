@@ -9519,8 +9519,10 @@ sap.ui.define([
 			const oRequestHandle0 = {};
 
 			// code under test (creates and remembers pRetryAfter)
-			assert.strictEqual(ODataModel.prototype.checkAndProcessRetryAfterError.call(oModel, oRequest0, oErrorResponse0,
-				"~fnSuccess0", "~fnError0", "~oHandler0", "~oHttpClient0", "~oMetadata0", oRequestHandle0), true);
+			assert.strictEqual(
+				ODataModel.prototype.checkAndProcessRetryAfterError.call(oModel, oRequest0, oErrorResponse0, "~fnSuccess0",
+					"~fnError0", "~oHandler0", "~oHttpClient0", "~oMetadata0", oRequestHandle0, "~bSkipHandleTracking"),
+				true);
 
 			assert.strictEqual(oModel.pRetryAfter, pRetryAfter);
 			assert.strictEqual(oModel.oRetryAfterError, "~oRetryAfterError");
@@ -9542,7 +9544,7 @@ sap.ui.define([
 			if (bResolve) {
 				oModelMock.expects("_request")
 					.withExactArgs(sinon.match.same(oRequest0), "~fnSuccess0", "~fnError0", "~oHandler0", "~oHttpClient0",
-						"~oMetadata0")
+						"~oMetadata0", "~bSkipHandleTracking")
 					.callsFake(() => {
 						assert.strictEqual(oModel.pRetryAfter, null, "promise reset before repeated");
 						assert.strictEqual(oModel.oRetryAfterError, null);
@@ -9550,7 +9552,7 @@ sap.ui.define([
 					.returns({abort: "~fnAbort0"});
 				oModelMock.expects("_request")
 					.withExactArgs(sinon.match.same(oRequest1),"~fnSuccess1", "~fnError1", "~oHandler1", "~oHttpClient1",
-						"~oMetadata1")
+						"~oMetadata1", undefined)
 					.callsFake(() => {
 						assert.strictEqual(oModel.pRetryAfter, null);
 						assert.strictEqual(oModel.oRetryAfterError, null);
@@ -9611,7 +9613,7 @@ sap.ui.define([
 
 			// code under test (register for repetition)
 			let oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess", "~fnError",
-				"~oHandler", "~oHttpClient", "~oMetadata");
+				"~oHandler", "~oHttpClient", "~oMetadata", "~bSkipHandleTracking");
 
 			assert.strictEqual(oResult.abort(), undefined, "returned abort() does nothing");
 			const fnOriginalAbort = oResult.abort;
@@ -9620,7 +9622,7 @@ sap.ui.define([
 				oModel._request = () => {};
 				this.mock(oModel).expects("_request")
 					.withExactArgs(sinon.match.same(oRequest), "~fnSuccess", "~fnError", "~oHandler",
-						"~oHttpClient", "~oMetadata")
+						"~oHttpClient", "~oMetadata", "~bSkipHandleTracking")
 					.returns({abort: "~fnAbort"});
 
 				// code under test (resolve -> repeat)
@@ -9678,7 +9680,7 @@ sap.ui.define([
 				const oModelMock = this.mock(oModel);
 				oModelMock.expects("checkAndProcessRetryAfterError")
 					.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse2", "~fnSuccess2", "~fnError2",
-						"~oHandler2", "~oHttpClient2", "~oMetadata2", "~oRequestHandle2")
+						"~oHandler2", "~oHttpClient2", "~oMetadata2", "~oRequestHandle2", undefined)
 					.returns(true);
 
 				oResult = ODataModel.prototype._request.call(oModel, oRequest, "~fnSuccess2", "~fnError2",
@@ -9697,7 +9699,7 @@ sap.ui.define([
 					.returns("~oRequestHandle3");
 				oModelMock.expects("checkAndProcessRetryAfterError")
 					.withExactArgs(sinon.match.same(oRequest), "~oErrorResponse3", "~fnSuccess3", sinon.match.func,
-						"~oHandler3", "~oHttpClient3", "~oMetadata3", "~oRequestHandle3")
+						"~oHandler3", "~oHttpClient3", "~oMetadata3", "~oRequestHandle3", undefined)
 					.returns(false);
 				const oHelper3 = {error() {}};
 				this.mock(oHelper3).expects("error").withExactArgs("~oErrorResponse3");
@@ -9717,6 +9719,43 @@ sap.ui.define([
 
 				assert.deepEqual(oModel.aPendingRequestHandles, ["~oRequestHandle1"]);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach((bSkipHandleTracking) => {
+		QUnit.test(`_request: bSkipHandleTracking = ${bSkipHandleTracking}`, function (assert) {
+			const oModel = {
+				aPendingRequestHandles: ["~oPriorRequestHandle"],
+				checkAndProcessRetryAfterError() {}
+			};
+			const oHelper = {
+				fnError() {}
+			};
+
+			const oExpectation = this.mock(OData).expects("request")
+				.withExactArgs("~oRequest", sinon.match.func, sinon.match.func, "~oHandler", "~oHttpClient", "~oMetadata")
+				.returns("~oRequestHandle");
+			this.mock(oModel).expects("checkAndProcessRetryAfterError")
+				.withExactArgs("~oRequest", "~oErrorResponse", "~fnSuccess", sinon.match((fn) => {
+						return fn === oHelper.fnError;
+					}), "~oHandler", "~oHttpClient", "~oMetadata", "~oRequestHandle", bSkipHandleTracking)
+				.returns(false);
+			this.mock(oHelper).expects("fnError").withExactArgs("~oErrorResponse");
+
+			// code under test
+			ODataModel.prototype._request.call(oModel, "~oRequest", "~fnSuccess", oHelper.fnError, "~oHandler",
+				"~oHttpClient", "~oMetadata", bSkipHandleTracking);
+
+			assert.deepEqual(oModel.aPendingRequestHandles,
+				bSkipHandleTracking
+					? ["~oPriorRequestHandle"]
+					: ["~oPriorRequestHandle", "~oRequestHandle"]);
+
+			// code under test (call error handler to test whether bSkipHandleTracking is passed correctly)
+			oExpectation.firstCall.args[2]("~oErrorResponse");
+
+			assert.deepEqual(oModel.aPendingRequestHandles, ["~oPriorRequestHandle"]);
 		});
 	});
 
@@ -9770,5 +9809,49 @@ sap.ui.define([
 		// code under test
 		assert.ok(ODataModel.getMetadata().isFinal());
 		assert.notOk(ODataModel.extend);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addAnnotationUrl, use ODataModel#_request for fetching via ODataMetadata", function (assert) {
+		const oModel = {
+			oAnnotations: {
+				addSource() {},
+				getData() {}
+			},
+			oMetadata: {
+				_addUrl() {}
+			},
+			_createMetadataUrl() {},
+			_request() {}
+		};
+
+		this.mock(oModel).expects("_createMetadataUrl")
+			.withExactArgs("$metadata")
+			.returns("~metadataUrl");
+		const oExpectation = this.mock(oModel.oMetadata).expects("_addUrl")
+			.withExactArgs(["~metadataUrl"], sinon.match.func)
+			.resolves([{entitySets: ["~entitySet"], metadataString: "~metadataString"}]);
+		const oAnnotationMock = this.mock(oModel.oAnnotations);
+		oAnnotationMock.expects("addSource")
+			.withExactArgs({
+					type: "xml",
+					data: "~metadataString"
+				})
+			.resolves(/*doesn't matter*/);
+		oAnnotationMock.expects("addSource")
+			.withExactArgs(["~someUrl"])
+			.resolves(/*doesn't matter*/);
+		this.mock(oModel.oAnnotations).expects("getData")
+			.withExactArgs()
+			.returns("~getDataResult");
+		this.mock(oModel).expects("_request").on(oModel);
+
+		// code under test
+		return ODataModel.prototype.addAnnotationUrl.call(oModel, ["$metadata", "~someUrl"]).then((oResult) => {
+			assert.deepEqual(oResult, {annotations: "~getDataResult", entitySets: ["~entitySet"]});
+
+			// code under test (#_request called on the right instance)
+			oExpectation.args[0][1]();
+		});
 	});
 });
