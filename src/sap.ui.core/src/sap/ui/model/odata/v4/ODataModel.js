@@ -2888,7 +2888,7 @@ sap.ui.define([
 			// $$canonicalPath is not allowed, binding path and resource path are (almost) identical
 			const oTemporaryBinding = this.mKeepAliveBindingsByPath[oBinding.getResolvedPath()];
 			if (oTemporaryBinding) {
-				return oTemporaryBinding.oCachePromise;
+				return oTemporaryBinding.ready();
 			}
 		}
 		return SyncPromise.resolve();

@@ -3013,7 +3013,7 @@ sap.ui.define([
 		const oModel = this.createModel("", {autoExpandSelect : true});
 
 		oModel.mKeepAliveBindingsByPath["/EMPLOYEES"] = {
-			oCachePromise : "~oCachePromise~"
+			ready : mustBeMocked
 		};
 
 		// code under test
@@ -3031,6 +3031,8 @@ sap.ui.define([
 			getResolvedPath : mustBeMocked
 		};
 		this.mock(oBinding1).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
+		this.mock(oModel.mKeepAliveBindingsByPath["/EMPLOYEES"]).expects("ready").withExactArgs()
+			.returns("~oCachePromise~");
 
 		// code under test
 		assert.strictEqual(oModel.waitForKeepAliveBinding(oBinding1), "~oCachePromise~");

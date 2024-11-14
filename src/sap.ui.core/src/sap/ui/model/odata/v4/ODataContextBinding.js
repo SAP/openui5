@@ -230,8 +230,10 @@ sap.ui.define([
 			return that.refreshDependentBindings("", oGroupLock.getGroupId(), true);
 		}
 
-		oPromise = oMetaModel.fetchObject(sResolvedMetaPath + "/@$ui5.overload")
-			.then(function (aOperationMetadata) {
+		oPromise = SyncPromise.all([
+				oMetaModel.fetchObject(sResolvedMetaPath + "/@$ui5.overload"),
+				this.ready2Inherit()
+			]).then(function ([aOperationMetadata]) {
 				var fnGetEntity, iIndex, sPath;
 
 				if (!aOperationMetadata) {
@@ -644,7 +646,7 @@ sap.ui.define([
 		if (bAction && fnGetEntity) {
 			vEntity = fnGetEntity();
 		}
-		if (bIgnoreETag && !(bAction && oOperationMetadata.$IsBound && vEntity)) {
+		if (bIgnoreETag && !(bAction && oOperationMetadata.$IsBound && vEntity !== null)) {
 			throw new Error("Not a bound action: " + sPath);
 		}
 		if (this.bInheritExpandSelect
@@ -861,7 +863,8 @@ sap.ui.define([
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
-	 *   actions only, since 1.90.0. Ignored if there is no ETag (since 1.93.0).
+	 *   actions only, since 1.90.0. Ignored if there is no ETag (since 1.93.0) unless no data has
+	 *   been read so far (since 1.132.0).
 	 * @param {function(sap.ui.core.message.Message[]):Promise<boolean>} [fnOnStrictHandlingFailed]
 	 *   If this callback is given for an action, the preference "handling=strict" is applied. If
 	 *   the service responds with the HTTP status code 412 and a
@@ -1458,6 +1461,20 @@ sap.ui.define([
 			&& oMetadata.$ReturnType && !oMetadata.$ReturnType.$isCollection
 				&& oMetadata.$EntitySetPath // case 2
 			&& !oMetadata.$EntitySetPath.includes("/"); // case 3
+	};
+
+	/**
+	 * Returns a sync promise that tells whether we are ready to inherit $expand/$select.
+	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A sync promise that resolves without a defined result as soon as we are ready to inherit
+	 *   $expand/$select
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.ready2Inherit = function () {
+		return this.bInheritExpandSelect && this.bRelative && this.oContext.getBinding?.().ready()
+			|| SyncPromise.resolve();
 	};
 
 	/**

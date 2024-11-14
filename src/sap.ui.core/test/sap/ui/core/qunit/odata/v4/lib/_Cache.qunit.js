@@ -11345,11 +11345,12 @@ sap.ui.define([
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), {}, undefined, undefined)
+			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), {"If-Match" : "*"},
+				undefined, undefined)
 			.resolves();
 
 		// code under test
-		return oCache.post(oGroupLock, undefined, undefined, true);
+		return oCache.post(oGroupLock, undefined, /*oEntity*/undefined, /*bIgnoreETag*/true);
 	});
 
 	//*********************************************************************************************

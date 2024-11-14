@@ -59643,6 +59643,113 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create an operation binding for a collection-bound action relative to the header
+	// context of a new list binding that has not yet finished its auto-$expand/$select. See that
+	// $$inheritExpandSelect does not causes issues, but can inherit some hardcoded $select.
+	// SNOW: CS20250010102074
+	//
+	// @see "Fiori Elements Safeguard: Test 2 (Create)" for a similar scenario "but w/o
+	//   $$inheritExpandSelect because nothing can be inherited" :-(
+	// @see "DINC0333115: bound action w/o entity data" for a similar scenario w/ ODCB
+	QUnit.test("CS20250010102074: $$inheritExpandSelect on new ODLB", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+
+		await this.createView(assert, "", oModel);
+
+		const oListBinding = oModel.bindList("/Artists", null, [], [], {$select : "Messages"});
+		const oOperationBinding = oModel.bindContext("special.cases.Create(...)",
+			oListBinding.getHeaderContext(), {$$inheritExpandSelect : true});
+
+		this.expectRequest({
+				method : "POST",
+				payload : {},
+				url : "Artists/special.cases.Create?$select=Messages"
+			}, {
+				ArtistID : "23",
+				IsActiveEntity : false,
+				Messages : []
+			});
+
+		const oReturnValueContext = await oOperationBinding.execute();
+
+		assert.strictEqual(oReturnValueContext.getPath(),
+			"/Artists(ArtistID='23',IsActiveEntity=false)", "some quick check");
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create an operation binding for a bound action relative to a new context where no
+	// data has been loaded. Use $$inheritExpandSelect to inherit some hardcoded $select from the
+	// context's binding while auto-$expand/$select is turned on (but there's no UI). Use
+	// bIgnoreETag to invoke the action unconditionally without a GET request beforehand.
+	// SNOW: DINC0333115
+	QUnit.test("DINC0333115: bound action w/o entity data", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+
+		await this.createView(assert, "", oModel);
+
+		const oContext = oModel.bindContext("/EMPLOYEES('0')", null, {
+			// Note: no doubt $expand would work just fine
+			$select : "__CT__FAKE__Message/__FAKE__Messages"
+		}).getBoundContext();
+		const sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee";
+		const oAction = oModel.bindContext(sAction + "(...)", oContext, {
+			$$inheritExpandSelect : true
+		});
+
+		this.expectRequest({
+				method : "POST",
+				headers : {"If-Match" : "*"},
+				url : "EMPLOYEES('0')/" + sAction + "?$select=__CT__FAKE__Message/__FAKE__Messages",
+				payload : {TeamID : "42"}
+			}, {/* don't care */});
+
+		await Promise.all([
+			oAction.setParameter("TeamID", "42")
+				// code under test
+				.execute("$direct", /*bIgnoreETag*/true),
+			this.waitForChanges(assert)
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create an operation binding for a bound action relative to a navigation property
+	// with a null value. Check that it cannot be invoked with "If-Match:*".
+	// SNOW: DINC0333115
+	QUnit.skip("DINC0333115: bound action on null", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="form" binding="{/EMPLOYEES('1')}">
+	<Text text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/ID}"/>
+</FlexBox>`;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID&$expand=EMPLOYEE_2_TEAM($select=Team_Id"
+				+ ";$expand=TEAM_2_MANAGER($select=ID))", {
+				ID : "1",
+				EMPLOYEE_2_TEAM : null
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oContext = this.oView.byId("form").getBindingContext();
+		const sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam";
+		const oAction = oModel.bindContext("EMPLOYEE_2_TEAM/" + sAction + "(...)", oContext);
+		const sPath = "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/" + sAction + "(...)";
+
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to invoke " + sPath, sinon.match("Not a bound action: " + sPath),
+				sODCB);
+
+		return oAction.setParameter("ManagerID", "42")
+			// code under test
+			.execute("$direct", /*bIgnoreETag*/true)
+			.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, "Not a bound action: " + sPath);
+			});
+	});
+
+	//*********************************************************************************************
 	// Scenario: With binding parameter $$clearSelectionOnFilter set, setting a filter or changing
 	// $filter or $search parameters resets the selection state of all contexts of a list binding.
 	// SNOW: CS20240007001494

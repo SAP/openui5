@@ -1442,12 +1442,15 @@ sap.ui.define([
 			+ " /EntitySet(ID='1')/schema.OverloadedFunction(...)"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("_execute: #" + i + " - " + oFixture.error, function (assert) {
-			var oGroupLock = {
+			var oBinding = this.bindContext(oFixture.path),
+				oGroupLock = {
 					getGroupId : function () {},
 					unlock : function () {}
 				},
 				oMetaModelMock = this.mock(this.oModel.getMetaModel());
 
+			this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+				.returns(SyncPromise.resolve());
 			oMetaModelMock.expects("fetchObject").withExactArgs(oFixture.request)
 				.returns(SyncPromise.resolve(Promise.resolve(oFixture.metadata)));
 			if (oFixture.request2) {
@@ -1462,8 +1465,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.instanceOf(Error), oFixture.metadata2,
 					oFixture.path + "/$Parameter", undefined);
 
-			return this.bindContext(oFixture.path)
-				._execute(oGroupLock) // code under test
+			return oBinding._execute(oGroupLock) // code under test
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
@@ -1524,10 +1526,19 @@ sap.ui.define([
 				sPath = (bRelative ? "" : "/") + "OperationImport(...)",
 				oBinding = this.bindContext(sPath, oBaseContext),
 				oGroupLock = {getGroupId : function () {}},
-				oPromise;
+				oPromise,
+				bReady = false,
+				oReadyPromise = new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bReady = true;
+						resolve();
+					}, 4);
+				});
 
 			this.mock(oBinding).expects("getResolvedPathWithReplacedTransientPredicates")
 				.withExactArgs().returns("/OperationImport(...)");
+			this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+				.returns(oReadyPromise);
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 				.withExactArgs("/OperationImport/@$ui5.overload")
 				.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
@@ -1535,7 +1546,10 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oGroupLock), "/OperationImport(...)",
 					"~oOperationMetadata~", "~mParameters~", undefined, "~bIgnoreETag~",
 					"~fnOnStrictHandlingFailed~")
-				.returns(SyncPromise.resolve("~oResult~"));
+				.callsFake(function () {
+					assert.ok(bReady);
+					return SyncPromise.resolve("~oResult~");
+				});
 			this.mock(oBinding).expects("_fireChange")
 				.withExactArgs({reason : ChangeReason.Change});
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
@@ -1600,6 +1614,8 @@ sap.ui.define([
 				}
 
 				_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+				this.mock(oBinding).expects("ready2Inherit").twice().withExactArgs()
+					.returns(SyncPromise.resolve());
 				this.mock(this.oModel.getMetaModel()).expects("fetchObject").twice()
 					.withExactArgs("/EntitySet/navigation1/" + sOperation + "/@$ui5.overload")
 					.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
@@ -1721,6 +1737,8 @@ sap.ui.define([
 				});
 			}
 
+			this.mock(oBinding).expects("ready2Inherit").thrice().withExactArgs()
+				.returns(SyncPromise.resolve());
 			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
 				.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
@@ -1810,6 +1828,13 @@ sap.ui.define([
 			} : "~oOperationMetadata~",
 			oParentEntity = {},
 			sPath = bNavigationProperty ? "ToTwin" : "name.space.Operation",
+			bReady = false,
+			oReadyPromise = new SyncPromise(function (resolve) {
+				setTimeout(function () {
+					bReady = true;
+					resolve();
+				}, 4);
+			}),
 			oRootBinding = {
 				doReplaceWith : function () {}
 			},
@@ -1817,6 +1842,8 @@ sap.ui.define([
 			oBinding = this.bindContext(sPath + "(...)", oParentContext);
 
 		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
+		this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+			.returns(oReadyPromise);
 		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("/TEAMS/" + sPath + "/@$ui5.overload")
 			.returns(SyncPromise.resolve(Promise.resolve(
@@ -1827,7 +1854,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock), "/TEAMS('42')/" + sPath + "(...)",
 				sinon.match.same(oOperationMetadata), "~mParameters~", sinon.match.func,
 				"~bIgnoreETag~", "~fnOnStrictHandlingFailed~")
-			.returns(Promise.resolve("~oResponseEntity~"));
+			.callsFake(function () {
+				assert.ok(bReady);
+				return Promise.resolve("~oResponseEntity~");
+			});
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oBinding).expects("refreshDependentBindings").withExactArgs("", "groupId", true)
@@ -1860,6 +1890,8 @@ sap.ui.define([
 			oResponseEntity = {};
 
 		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+		this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+			.returns(SyncPromise.resolve());
 		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
 			.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
@@ -1902,6 +1934,8 @@ sap.ui.define([
 				unlock : function () {}
 			};
 
+		this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+			.returns(SyncPromise.resolve());
 		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 			.withExactArgs("/OperationImport/@$ui5.overload")
 			.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
@@ -1942,6 +1976,8 @@ sap.ui.define([
 			oGroupLock = {unlock : function () {}},
 			oModelMock = this.mock(this.oModel);
 
+		this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+			.returns(SyncPromise.resolve());
 		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 			.withExactArgs("/OperationImport/@$ui5.overload")
 			.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
@@ -1995,6 +2031,8 @@ sap.ui.define([
 
 		oError.error = oFixture.error;
 		oError.resourcePath = "~";
+		this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+			.returns(SyncPromise.resolve());
 		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
 			.returns(SyncPromise.resolve([oOperationMetadata]));
@@ -2048,6 +2086,8 @@ sap.ui.define([
 
 		oError.error = oFixture.error;
 		oError.resourcePath = "~";
+		this.mock(oBinding).expects("ready2Inherit").withExactArgs()
+			.returns(SyncPromise.resolve());
 		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 			.withExactArgs("/ActionImport/@$ui5.overload")
 			.returns(SyncPromise.resolve([oOperationMetadata]));
@@ -2732,12 +2772,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach((bNoDataRead) => {
 	["return value context", "returns 'this'", "returns other", ""].forEach(function (sCase) {
-		QUnit.test("createCacheAndRequest: bound action, " + sCase, function (assert) {
+		const sTitle = "createCacheAndRequest: bound action, " + sCase
+			+ ", no data read: " + bNoDataRead;
+
+		QUnit.test(sTitle, function (assert) {
 			var bAutoExpandSelect = {/*false, true*/},
 				oBinding = this.bindContext("n/a(...)"),
 				oDestroyExpectation,
-				oEntity = {},
+				oEntity = bNoDataRead ? undefined : {},
 				oExpectation,
 				fnGetEntity = this.spy(function () {
 					return oEntity;
@@ -2875,6 +2919,7 @@ sap.ui.define([
 			}
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("createCacheAndRequest: $$inheritExpandSelect", function (assert) {
@@ -2991,9 +3036,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[undefined, function () { return null; }].forEach(function (fnGetEntity, i) {
-	QUnit.test("createCacheAndRequest: bIgnoreETag; fnGetEntity #" + i, function (assert) {
+	QUnit.test("createCacheAndRequest: bIgnoreETag; fnGetEntity returns null", function (assert) {
 		var oBinding = this.bindContext("n/a(...)"),
+			fnGetEntity = function () { return null; },
 			oOperationMetadata = {
 				$kind : "Action",
 				$IsBound : true
@@ -3005,7 +3050,6 @@ sap.ui.define([
 				{/*mParameters*/}, fnGetEntity, /*bIgnoreETag*/true);
 		}, new Error("Not a bound action: /Foo(...)"));
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("createCacheAndRequest: Strict handling w/o action", function (assert) {
@@ -5526,5 +5570,62 @@ sap.ui.define([
 
 		// code under test
 		oBinding.doFetchExpandSelectProperties();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ready2Inherit: absolute", function (assert) {
+		const oBinding = this.bindContext("/TEAMS('1')/my.Operation(...)", null, {
+			$$inheritExpandSelect : true
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.ready2Inherit(), SyncPromise.resolve());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ready2Inherit: not relative", function (assert) {
+		const oContext = {
+			getBinding : mustBeMocked, // must not be called
+			getPath : () => "/EMPLOYEES('1')"
+		};
+		const oBinding = this.bindContext("/TEAMS('1')/my.Operation(...)", oContext, {
+			$$inheritExpandSelect : true
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.ready2Inherit(), SyncPromise.resolve());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ready2Inherit: quasi absolute", function (assert) {
+		const oContext = {
+			// NO: getBinding
+			getPath : () => "/EMPLOYEES('1')"
+		};
+		const oBinding = this.bindContext("EMPLOYEE_2_TEAM/my.Operation(...)", oContext, {
+			$$inheritExpandSelect : true
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.ready2Inherit(), SyncPromise.resolve());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ready2Inherit: #ready", function (assert) {
+		const oContext = {
+			getBinding : mustBeMocked,
+			getPath : () => "/EMPLOYEES('1')"
+		};
+		const oBinding = this.bindContext("EMPLOYEE_2_TEAM/my.Operation(...)", oContext, {
+			$$inheritExpandSelect : true
+		});
+		const oParent = {
+			ready : mustBeMocked
+		};
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParent);
+		this.mock(oParent).expects("ready").withExactArgs().returns("~ready~");
+
+		// code under test
+		assert.strictEqual(oBinding.ready2Inherit(), "~ready~");
 	});
 });

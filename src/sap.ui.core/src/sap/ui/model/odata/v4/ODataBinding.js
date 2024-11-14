@@ -1177,6 +1177,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a sync promise that is resolved when this binding is ready to be used (that is, when
+	 * its cache has been determined).
+	 *
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A sync promise that is resolved without a defined result when this binding is ready
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.ready = function () {
+		return this.oCachePromise;
+	};
+
+	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
 	 *
