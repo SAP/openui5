@@ -524,7 +524,7 @@ sap.ui.define([
 
 		oBindingInfo.parameters.$$aggregation = mAggregation;
 
-		const bHasGrandTotal = Object.keys(mAggregation.aggregate).some((sKey) => {
+		const bHasGrandTotal = Object.keys(mAggregation?.aggregate || {}).some((sKey) => {
 			return mAggregation.aggregate[sKey].grandTotal;
 		});
 		oTable.getModel("$sap.ui.mdc.Table").setProperty("/@custom/hasGrandTotal", bHasGrandTotal);
@@ -701,11 +701,11 @@ sap.ui.define([
 				continue;
 			}
 
-			if (oProperty.groupable) {
+			if (oProperty.extension.technicallyGroupable) {
 				mAggregation.group[oProperty.path] = {};
 			}
 
-			if (oProperty.aggregatable) {
+			if (oProperty.extension.technicallyAggregatable) {
 				mAggregation.aggregate[oProperty.path] = {};
 
 				if (aTotaledPropertyKeys.includes(oProperty.key)) {
@@ -732,11 +732,11 @@ sap.ui.define([
 
 			const aAdditionalPropertyPaths = getAdditionalPropertyPaths(oProperty, oPropertyHelper);
 
-			if (oProperty.aggregatable) {
+			if (oProperty.extension.technicallyAggregatable) {
 				for (const sPropertyPath of aAdditionalPropertyPaths) {
 					mAggregation.group[sPropertyPath] = {};
 				}
-			} else if (oProperty.groupable && oProperty.path in mAggregation.group) {
+			} else if (oProperty.extension.technicallyGroupable && oProperty.path in mAggregation.group) {
 				mAggregation.group[oProperty.path].additionally = aAdditionalPropertyPaths;
 			}
 		}
