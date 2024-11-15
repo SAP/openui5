@@ -835,6 +835,7 @@ sap.ui.define([
 		 * @private
 		 */
 		onBeforeRendering: function() {
+			fnRemoveBusyIndicator.call(this);
 			// remove all block-layers to prevent leftover DOM elements and eventhandlers
 			fnRemoveAllBlockLayers.call(this);
 		},
@@ -859,18 +860,29 @@ sap.ui.define([
 				if (iDelay) {
 					this._busyIndicatorDelayedCallId = setTimeout(fnAppendBusyIndicator.bind(this), iDelay);
 				} else {
-					fnAppendBusyIndicator.call(this);
+					// To win against the focus restoration from RenderManager, we have to set focus asynchronously.
+					fnAppendBusyIndicator.call(this, /* bAsyncFocus */ true);
 				}
 			}
 		}
 	};
 
+	function checkAndFocusBlockLayer() {
+		// Move focus to the busy indicator if the focus is currently within the busy control's DOM.
+		if (this._oBusyBlockState && this.getDomRef()?.contains(document.activeElement)) {
+			this._oBusyBlockState.lastFocusPosition = document.activeElement;
+			this._oBusyBlockState.$blockLayer.get(0).focus();
+		}
+	}
+
 	/**
 	 * Add busy indicator to DOM
 	 *
+	 * @param {boolean} [asyncFocus=false] whether focus should be set asynchronously.
+	 * This is need to set the focus after the restoration from RenderManager
 	 * @private
 	 */
-	function fnAppendBusyIndicator() {
+	function fnAppendBusyIndicator(bAsyncFocus) {
 
 		// Only append if busy state is still set
 		if (!this.getBusy()) {
@@ -909,10 +921,10 @@ sap.ui.define([
 			fnAddStandaloneBusyIndicator.call(this);
 		}
 
-		// Move focus to the busy indicator if the focus is currently within the busy control's DOM.
-		if (this.getDomRef().contains(document.activeElement)) {
-			this._oBusyBlockState.lastFocusPosition = document.activeElement;
-			this._oBusyBlockState.$blockLayer.get(0).focus();
+		if (bAsyncFocus) {
+			setTimeout(checkAndFocusBlockLayer.bind(this), 0);
+		} else {
+			checkAndFocusBlockLayer.call(this);
 		}
 	}
 
@@ -988,11 +1000,11 @@ sap.ui.define([
 				fnRemoveAllBlockLayers.call(this);
 
 			} else if (this.getBlocked()) {
-				// Hide animation in shared block layer
-				BlockLayerUtils.toggleAnimationStyle(this._oBlockState || this._oBusyBlockState, false);
-
-				this._oBlockState = this._oBusyBlockState;
-
+				if (this._oBlockState || this._oBusyBlockState) {
+					// Hide animation in shared block layer
+					BlockLayerUtils.toggleAnimationStyle(this._oBlockState || this._oBusyBlockState, false);
+					this._oBlockState = this._oBusyBlockState;
+				}
 			} else if (this._oBusyBlockState) {
 				BlockLayerUtils.unblock(this._oBusyBlockState);
 
