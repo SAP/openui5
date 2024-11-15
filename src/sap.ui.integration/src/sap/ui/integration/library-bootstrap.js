@@ -21,7 +21,12 @@
 			function (_Core, _Lib) {
 				Core = _Core;
 				Lib = _Lib;
+
+				/**
+				 * @deprecated As of version 1.120
+				 */
 				Core.boot();
+
 				Core.ready().then(initTags);
 			});
 	}
