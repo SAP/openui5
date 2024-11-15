@@ -99,6 +99,7 @@ sap.ui.define([
 
 		// 2. set a theme that is no longer supported
 		//    fallback to default (Aug. 2023: "sap_horizon") should be applied
+		// ui5lint-disable-next-line no-deprecated-theme
 		Theming.setTheme("sap_goldreflection");
 
 		await fnAssert(sCalculatedDefaultTheme,
@@ -109,6 +110,7 @@ sap.ui.define([
 
 		// 3. another invalid theme is set
 		//    no further events should be fired after setting another invalid theme
+		// ui5lint-disable-next-line no-deprecated-theme
 		Theming.setTheme("sap_platinum");
 
 		await fnAssert(sCalculatedDefaultTheme,
