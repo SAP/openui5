@@ -1102,4 +1102,17 @@ sap.ui.define([
 		// Cleanup
 		oTB.destroy();
 	});
+	QUnit.module("Edge cases");
+
+	QUnit.test("Preventing error, when focused element is not presented", function(assert) {
+
+		// Arrange
+		var oTB = createToolbar(),
+			bReturnValue;
+
+		// Act
+		bReturnValue = oTB._shouldAllowDefaultBehavior(null);
+
+		assert.strictEqual(bReturnValue, false, "Error caused by unexisting element being called a method to, is prevented");
+	});
 });
