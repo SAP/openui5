@@ -266,14 +266,14 @@ sap.ui.define([
 				 * The object has the following properties:
 				 * <ul>
 				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module. The used delegate module must inherit from
-				 *      {@link module:sap/ui/mdc/TableDelegate TableDelegate}</li>.
+				 *      {@link module:sap/ui/mdc/TableDelegate TableDelegate}.</li>
 				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
 				 * </ul>
 				 * <i>Sample delegate object:</i>
-				 * <pre><code>{
+				 * <pre>{
 				 * 	name: "sap/ui/mdc/TableDelegate",
 				 * 	payload: {}
-				 * }</code></pre>
+				 * }</pre>
 				 *
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * Do not bind or modify the module. This property can only be configured during control initialization.
