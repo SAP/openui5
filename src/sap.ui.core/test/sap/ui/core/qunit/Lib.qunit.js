@@ -761,9 +761,9 @@ sap.ui.define([
 
 	QUnit.test("Unknown apiVersion is rejected", function (assert) {
 		assert.throws(() => {
-			// ui5lint-disable-next-line no-deprecated-api
 			Library.init({
 				name: "bad.apiversion.library",
+				// ui5lint-disable-next-line no-deprecated-api
 				apiVersion: 3
 			});
 		}, /The library 'bad\.apiversion\.library' has defined 'apiVersion: 3', which is an unsupported value/);
