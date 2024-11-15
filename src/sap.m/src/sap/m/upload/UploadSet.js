@@ -780,12 +780,12 @@ sap.ui.define([
 		var sNoDataText = "";
 		var oIllustratedMessage = this.getAggregation("illustratedMessage");
 		if (!sText) {
-			sNoDataText = oIllustratedMessage.getTitle() + " " + this.getUploadEnabled() ? oIllustratedMessage.getDescription() : " ";
+			sNoDataText = oIllustratedMessage.getTitle() + " " + (this.getUploadEnabled() ? oIllustratedMessage.getDescription() : " ");
 		} else if (sText) {
 			if (bIsDescription) {
 				sNoDataText = oIllustratedMessage.getTitle() + " " + sText;
 			} else {
-				sNoDataText = sText + " " + this.getUploadEnabled() ? oIllustratedMessage.getDescription() : " ";
+				sNoDataText = sText + " " + (this.getUploadEnabled() ? oIllustratedMessage.getDescription() : " ");
 			}
 		}
 		return sNoDataText;
