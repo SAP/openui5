@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,browser,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect,protractor*/
 
 describe("sap.m.Carousel", function() {
 	"use strict";
@@ -72,14 +72,14 @@ describe("sap.m.Carousel", function() {
 		_moveToCarousel();
 		// go to last page
 		element(by.id("myCarousel-arrow-next")).click();
-		browser.sleep(1000);
-		element(by.id("myCarousel-arrow-next")).click();
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+
 		// set loop to false
 		element(by.id("RB-No-Loop")).click();
 
 		_moveToCarousel();
 
-                expect(takeScreenshot(myCarousel)).toLookAs("5_1_arrow_visibility_content");
+        expect(takeScreenshot(myCarousel)).toLookAs("5_1_arrow_visibility_content");
 
 		// go back to third page
 		element(by.id("myCarousel-arrow-previous")).click();
