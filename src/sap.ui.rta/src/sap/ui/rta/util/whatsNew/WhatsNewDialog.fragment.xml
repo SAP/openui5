@@ -6,6 +6,7 @@
 	xmlns:util="sap.ui.fl.util">
 	<Dialog
 		id="sapUiRtaWhatsNewDialog"
+		class="sapUiRtaWhatsNewDialog"
 		title="{i18n>TIT_WHATS_NEW_DIALOG}"
 		contentWidth="50rem"
 		contentHeight="33rem"
@@ -20,10 +21,10 @@
 				<pages>
 					<Page enableScrolling="true" showHeader="false">
 						<VBox height="100%" width="100%">
-							<Title text="{whatsNewModel>title}" class="sapUiMediumMarginTop sapUiLargeMarginBegin sapUiTinyMarginBottom" level="H3"/>
-							<f:Card width="44rem" height="24rem" class="sapUiLargeMarginBeginEnd sapUiSmallMarginBottom">
+							<Title text="{whatsNewModel>title}" class="sapUiMediumMarginTop sapUiSmallMarginBegin sapUiTinyMarginBottom" level="H3"/>
+							<f:Card width="100%" height="24rem" class="sapUiSmallMarginBottom">
 								<f:content>
-									<Page showHeader="false" backgroundDesign="Transparent">
+									<Page width="100%" showHeader="false" backgroundDesign="Transparent">
 											<VBox items="{path: 'whatsNewModel>information', templateShareable: false}" class="sapUiSmallMargin">
 												<HBox alignItems="Center" class="sapUiTinyMargin">
 													<FormattedText
