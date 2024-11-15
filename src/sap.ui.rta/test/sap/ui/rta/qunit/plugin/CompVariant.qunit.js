@@ -441,9 +441,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("configure variants", function(assert) {
+			const sPreviousSelectedVarId = "previousSelectedVarId";
 			var sPreviousDefaultVarId = "previousDefaultVariantId";
 			var sNewDefaultVarId = "newDefaultVar";
 			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns(sPreviousDefaultVarId);
+			sandbox.stub(this.oVariantManagementControl, "getCurrentVariantId").returns(sPreviousSelectedVarId);
 			var oNewVariantProperties = {foo: "bar"};
 			var oCreateComponentSpy = sandbox.spy(ContextSharingAPI, "createComponent");
 			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(mPropertyBag, fnCallback) {
@@ -460,6 +462,7 @@ sap.ui.define([
 				assert.deepEqual(oCommand.getNewVariantProperties(), oNewVariantProperties, "the newVariantProperties property is set");
 				assert.strictEqual(oCommand.getNewDefaultVariantId(), sNewDefaultVarId, "the newDefaultVariantId property is set");
 				assert.strictEqual(oCommand.getOldDefaultVariantId(), sPreviousDefaultVarId, "the oldDefaultVariantId property is set");
+				assert.strictEqual(oCommand.getOldSelectedVariantId(), sPreviousSelectedVarId, "the oldSelectedVariantId property is set");
 			});
 
 			var oMenuItem = getContextMenuEntryById.call(this, "CTX_COMP_VARIANT_MANAGE");

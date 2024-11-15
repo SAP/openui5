@@ -103,6 +103,10 @@ sap.ui.define([
 			this.oControl.setDefaultVariantId = oSetDefaultControlStub;
 			var oSetModifiedStub = sandbox.stub();
 			this.oControl.setModified = oSetModifiedStub;
+			var oActivateVariantControlStub = sandbox.stub();
+			this.oControl.activateVariant = oActivateVariantControlStub;
+			var oGetCurrentVariantIdControlStub = sandbox.stub();
+			this.oControl.getCurrentVariantId = oGetCurrentVariantIdControlStub;
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantMetadata").callsFake(function(mPropertyBag) {
 				return mPropertyBag.id;
 			});
@@ -110,7 +114,9 @@ sap.ui.define([
 			var oRevertDefaultFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revertSetDefaultVariantId");
 			var oRemoveVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "removeVariant");
 			var oRevertFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert").callsFake(function(mPropertyBag) {
-				return mPropertyBag.id;
+				return {
+					getId: () => mPropertyBag.id
+				};
 			});
 
 			function assertExecute(oControl) {
@@ -171,7 +177,8 @@ sap.ui.define([
 					}
 				},
 				newDefaultVariantId: "variant3",
-				oldDefaultVariantId: "variant1"
+				oldDefaultVariantId: "variant1",
+				oldSelectedVariantId: "variant1"
 			}, {})
 			.then(function(oCreatedCommand) {
 				oUpdateCommand = oCreatedCommand;
@@ -179,6 +186,8 @@ sap.ui.define([
 				return oUpdateCommand.execute();
 			}).then(function() {
 				assertExecute(this.oControl);
+				assert.equal(oActivateVariantControlStub.callCount, 0, "the control API activateVariant was called");
+				assert.equal(oGetCurrentVariantIdControlStub.callCount, 1, "the control API get current variant id was called once");
 
 				return oUpdateCommand.undo();
 			}.bind(this)).then(function() {
@@ -189,20 +198,29 @@ sap.ui.define([
 				assert.equal(oRevertFlAPIStub.getCall(2).args[0].id, "variant3", "the correct variant id was passed 3");
 
 				assert.equal(oRevertDefaultFlAPIStub.callCount, 1, "the revertSetDefaultVariantId function was called once");
-				assert.equal(oAddControlStub.lastCall.args[0], "variant1", "the correct variant was added");
+				assert.equal(oAddControlStub.lastCall.args[0].getId(), "variant1", "the correct variant was added");
 
 				assert.equal(oAddControlStub.callCount, 1, "the addVariant function on the control was called once");
-				assert.equal(oAddControlStub.lastCall.args[0], "variant1", "the correct variant was added");
+				assert.equal(oAddControlStub.lastCall.args[0].getId(), "variant1", "the correct variant was added");
 
 				assert.equal(oUpdateControlStub.callCount, 4, "the updateVariant function on the control was called twice");
-				assert.equal(oUpdateControlStub.getCall(2).args[0], "variant2", "the correct variant was updated 1");
-				assert.equal(oUpdateControlStub.getCall(3).args[0], "variant3", "the correct variant was updated 2");
+				assert.equal(oUpdateControlStub.getCall(2).args[0].getId(), "variant2", "the correct variant was updated 1");
+				assert.equal(oUpdateControlStub.getCall(3).args[0].getId(), "variant3", "the correct variant was updated 2");
 
 				sandbox.resetHistory();
+
+				oGetCurrentVariantIdControlStub.returns("");
 				return oUpdateCommand.execute();
 			}).then(function() {
 				assertExecute(this.oControl);
-			}.bind(this));
+				assert.equal(oActivateVariantControlStub.callCount, 0, "the control API activateVariant was not called");
+				assert.equal(oGetCurrentVariantIdControlStub.callCount, 1, "the control API get current variant id was called once");
+
+				return oUpdateCommand.undo();
+			}.bind(this)).then(function() {
+				assert.equal(oActivateVariantControlStub.callCount, 1, "the control API activateVariant was called once");
+				assert.equal(oActivateVariantControlStub.getCall(0).args[0], "variant1", "the correct variant was activate");
+			});
 		});
 	});
 });

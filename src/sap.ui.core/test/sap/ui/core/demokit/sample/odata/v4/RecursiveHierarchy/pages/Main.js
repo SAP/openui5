@@ -17,7 +17,7 @@ sap.ui.define([
 		bTreeTable,
 		sViewName = "sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy";
 
-	function checkRow(oTable, bTreeTable0, mDefaults, oExpected, iRowIndex) {
+	function checkRow(oTable, mDefaults, oExpected, iRowIndex) {
 		var oActual,
 			aCells,
 			sDrillState,
@@ -39,7 +39,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (bTreeTable0) {
+		if (bTreeTable) {
 			sDrillState = aCells[0].getBindingContext().getProperty("@$ui5.node.isExpanded");
 			switch (sDrillState) {
 				case true:
@@ -57,7 +57,7 @@ sap.ui.define([
 		}
 
 		oExpected = Object.assign({}, mDefaults, oExpected);
-		oActual = bTreeTable0 ? {
+		oActual = bTreeTable ? {
 			// Note: no good way to extract Level from aCells[0]'s indentation
 			Level : parseInt(aCells[1].getText()),
 			// Note: no stable way to extract DrillState from aCells[0]'s list of CSS classes
@@ -292,7 +292,7 @@ sap.ui.define([
 								Opa5.assert.strictEqual(sResult, vExpected, sComment);
 							} else {
 								SandboxModel.update(vExpected).forEach(
-									checkRow.bind(null, oTable, bTreeTable, mDefaults)
+									checkRow.bind(null, oTable, mDefaults)
 								);
 							}
 						},

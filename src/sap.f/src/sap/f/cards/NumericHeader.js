@@ -53,6 +53,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @extends sap.f.cards.BaseHeader
+	 * @implements sap.f.cards.IHeader
 	 *
 	 * @author SAP SE
 	 * @version ${version}

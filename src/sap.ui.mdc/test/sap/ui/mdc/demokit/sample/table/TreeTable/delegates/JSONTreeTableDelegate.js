@@ -3,7 +3,9 @@ sap.ui.define([
 	"mdc/sample/delegate/JSONTableDelegate",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
-	"mdc/sample/model/metadata/JSONPropertyInfo"
+	"mdc/sample/model/metadata/JSONPropertyInfo",
+	"sap/ui/model/type/Float", // request Float type for property infos
+	"sap/ui/model/type/String" // request String type for property infos
 ], function (
 	JSONTableDelegate,
 	Column,

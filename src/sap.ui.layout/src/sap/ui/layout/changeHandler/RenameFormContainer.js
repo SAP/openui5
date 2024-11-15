@@ -15,7 +15,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.48
 	 * @private
-	 * @experimental Since 1.48. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var RenameFormContainer = { };
 

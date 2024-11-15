@@ -109,6 +109,12 @@ sap.ui.define([
 					multiple: false,
 					visibility: "hidden"
 				}
+			},
+			associations: {
+				/**
+				 * Association with the parent Card that contains this filter.
+				 */
+				card: { type: "sap.ui.integration.widgets.Card", multiple: false }
 			}
 		},
 		renderer: ActionsToolbarRenderer
@@ -131,7 +137,6 @@ sap.ui.define([
 	};
 
 	ActionsToolbar.prototype.exit = function () {
-		this._oCard = null;
 		this._aActions = null;
 		this._oObserver.disconnect();
 		this._oObserver = null;
@@ -178,10 +183,6 @@ sap.ui.define([
 
 		// Make an initial check for 'visible' and 'enabled' for the buttons
 		this._refreshMenuItems().then(this._updateVisibility.bind(this));
-	};
-
-	ActionsToolbar.prototype.setCard = function (oCard) {
-		this._oCard = oCard;
 	};
 
 	ActionsToolbar.prototype._open = function () {
@@ -267,8 +268,8 @@ sap.ui.define([
 					}
 
 					CardActions.fireAction({
-						card: this._oCard,
-						host: this._oCard.getHostInstance(),
+						card: this.getCardInstance(),
+						host: this.getCardInstance().getHostInstance(),
 						action: mCurrSettings,
 						parameters: mCurrSettings.parameters,
 						source: oEvent.getSource()
@@ -402,6 +403,15 @@ sap.ui.define([
 			this.getAggregation("_actionsMenu").close();
 			oToolbar.setEnabled(false);
 		}
+	};
+
+	/**
+	* Gets the card instance of which this element is part of.
+	* @private
+	* @returns {sap.ui.integration.widgets.Card} The card instance.
+	*/
+	ActionsToolbar.prototype.getCardInstance = function () {
+		return Element.getElementById(this.getCard());
 	};
 
 	return ActionsToolbar;

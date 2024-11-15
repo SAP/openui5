@@ -456,14 +456,32 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when stopping rta with bSkipSave is false and dirty changes not exists,", function(assert) {
+			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
+			var oHasDirtyChangesSpy = sandbox.stub(PersistenceWriteAPI, "hasDirtyChanges").returns(false);
+			return this.oRta.stop(/* bSkipSave= */false)
+			.then(function() {
+				assert.equal(oHasDirtyChangesSpy.callCount, 1, "hasDirtyChanges was called");
+				assert.ok(true, "then the promise got resolved");
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
+				assert.ok(oSerializeToLrepSpy.notCalled, "then 'serializeToLrep' was not called");
+			}.bind(this))
+			.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+			.then(function(iNumOfChanges) {
+				assert.equal(iNumOfChanges, 0, "there is no change written");
+			});
+		});
+
 		QUnit.test("when stopping rta with changes and choosing not to save them on the dialog,", function(assert) {
 			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			var oCheckReloadOnExitSpy = sandbox.spy(ReloadManager, "checkReloadOnExit");
+			var oHasDirtyChangesSpy = sandbox.stub(PersistenceWriteAPI, "hasDirtyChanges").returns(true);
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
 			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"));
 
 			return this.oRta.stop(false)
 			.then(function() {
+				assert.equal(oHasDirtyChangesSpy.called, true, "hasDirtyChanges was called");
 				assert.strictEqual(
 					oMessageBoxStub.getCall(0).args[1],
 					"MSG_UNSAVED_CHANGES_ON_CLOSE",
