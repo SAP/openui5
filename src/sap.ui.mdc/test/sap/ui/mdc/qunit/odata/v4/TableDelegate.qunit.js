@@ -423,8 +423,10 @@ sap.ui.define([
 			path: "CountryPath",
 			label: "Country",
 			dataType: "String",
-			groupable: true,
-			text: "CountryText"
+			text: "CountryText",
+			extension: {
+				technicallyGroupable: true
+			}
 		}, {
 			key: "CountryText",
 			path: "CountryTextPath",
@@ -435,15 +437,17 @@ sap.ui.define([
 			path: "RegionPath",
 			label: "Region",
 			dataType: "String",
-			groupable: true,
-			text: "RegionText"
+			text: "RegionText",
+			extension: {
+				technicallyGroupable: true
+			}
 		}, {
 			key: "RegionText",
 			path: "RegionTextPath",
 			label: "RegionText",
 			dataType: "String",
-			groupable: true,
 			extension: {
+				technicallyGroupable: true,
 				additionalProperties: ["Region"]
 			}
 		}, {
@@ -451,8 +455,10 @@ sap.ui.define([
 			path: "SalesAmountPath",
 			label: "SalesAmount",
 			dataType: "String",
-			aggregatable: true,
-			unit: "Currency"
+			unit: "Currency",
+			extension: {
+				technicallyAggregatable: true
+			}
 		}, {
 			key: "Currency",
 			path: "CurrencyPath",
@@ -463,9 +469,9 @@ sap.ui.define([
 			path: "SalesAmountInLocalCurrencyPath",
 			label: "SalesAmountInLocalCurrency",
 			dataType: "String",
-			aggregatable: true,
 			unit: "Currency",
 			extension: {
+				technicallyAggregatable: true,
 				additionalProperties: ["Country", "Region"]
 			}
 		}],
@@ -543,22 +549,28 @@ sap.ui.define([
 			path: "IDPath",
 			label: "ID",
 			dataType: "String",
-			groupable: true,
-			isKey: true
+			isKey: true,
+			extension: {
+				technicallyGroupable: true
+			}
 		}, {
 			key: "CustomerID",
 			path: "CustomerIDPath",
 			label: "CustomerID",
 			dataType: "String",
 			isKey: true,
-			groupable: true,
-			text: "CustomerText"
+			text: "CustomerText",
+			extension: {
+				technicallyGroupable: true
+			}
 		}, {
 			key: "CustomerText",
 			path: "CustomerTextPath",
 			label: "CustomerText",
 			dataType: "String",
-			groupable: true
+			extension: {
+				technicallyGroupable: true
+			}
 		}]));
 		await this.oTable.rebind();
 		this.verify$$aggregation({
@@ -719,13 +731,13 @@ sap.ui.define([
 
 	QUnit.test("#getInResultPropertyKeys", async function(assert) {
 		await this.initTable(undefined, ["Country"], this.defaultPropertyInfos.concat([{
-			key: "NonGroupableAggregatable",
-			path: "NonGroupableAggregatablePath",
-			label: "NonGroupableAggregatable",
+			key: "NotGroupableAndNotAggregatable",
+			path: "NotGroupableAndNotAggregatablePath",
+			label: "NotGroupableAndNotAggregatable",
 			dataType: "String"
 		}]));
 		sinon.stub(this.oTable.getControlDelegate(), "getInResultPropertyKeys").returns([
-			"Region", "SalesAmountInLocalCurrency", "NonGroupableAggregatable"
+			"Region", "SalesAmountInLocalCurrency", "NotGroupableAndNotAggregatable"
 		]);
 		await this.oTable.rebind();
 		this.verify$$aggregation({

@@ -564,6 +564,7 @@ sap.ui.define([
 		let bUserCancelled;
 		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
 		try {
+			bSkipSave ||= !PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()});
 			await waitForPendingActions.call(this);
 			if (!bSkipSave && this.canSave()) {
 				const sAction = await showSaveConfirmation.call(this);

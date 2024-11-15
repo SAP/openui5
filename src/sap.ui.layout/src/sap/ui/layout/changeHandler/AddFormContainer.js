@@ -16,7 +16,6 @@ sap.ui.define([
 		* @alias sap.ui.layout.changeHandler.AddFormContainer
 		* @author SAP SE
 		* @version ${version}
-		* @experimental Since 1.48.0
 		*/
 	var AddGroup = { };
 

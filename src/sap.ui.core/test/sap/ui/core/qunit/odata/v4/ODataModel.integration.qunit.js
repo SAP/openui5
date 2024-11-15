@@ -552,12 +552,12 @@ sap.ui.define([
 	/**
 	 * @param {any|function} [vValue]
 	 *   The value to be returned later or a callback function delivering it
-	 * @param {number} [iDelay=5]
+	 * @param {number} [iDelay]
 	 *   A delay in milliseconds
 	 * @returns {Promise}
 	 *   A promise which resolves with the given value after the given delay
 	 */
-	function resolveLater(vValue, iDelay) {
+	function resolveLater(vValue, iDelay = 0) {
 		return new Promise(function (resolve, reject) {
 			setTimeout(function () {
 				try {
@@ -565,7 +565,7 @@ sap.ui.define([
 				} catch (e) {
 					reject(e);
 				}
-			}, iDelay === undefined ? 5 : iDelay);
+			}, iDelay);
 		});
 	}
 
@@ -1049,7 +1049,7 @@ sap.ui.define([
 			if (Rendering.isPending() || this.oModel && this.oModel.aPrerenderingTasks
 					|| this.aExpectedEvents.length > 0
 					|| Messaging.getMessageModel().getObject("/").length < this.aMessages.length) {
-				setTimeout(this.checkFinish.bind(this, assert), 10);
+				setTimeout(this.checkFinish.bind(this, assert), 4);
 			} else if (this.resolve) {
 				this.resolve();
 				this.resolve = null;
@@ -8277,7 +8277,7 @@ sap.ui.define([
 
 					resolveLater(fnResolve); // must not respond before requestSideEffects
 					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
-				}, 0),
+				}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -9214,7 +9214,7 @@ sap.ui.define([
 			// Note: this MUST not be called before #waitForChanges, probably due to timeout throttling
 			// https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
 			// #reasons_for_delays_longer_than_specified
-			await resolveLater();
+			await resolveLater(null, /*iDelay*/10); // BEWARE of sap-ui-excludeJQueryCompat=true
 
 			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
 			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
@@ -9227,7 +9227,6 @@ sap.ui.define([
 			const oDeletePromise2 = aContexts[2].delete("$single");
 
 			await this.waitForChanges(assert, "3");
-			await resolveLater();
 
 			assert.ok(aContexts[0].isDeleted());
 			assert.ok(aContexts[1].isDeleted());
@@ -9305,7 +9304,7 @@ sap.ui.define([
 			const oDeletePromise4 = aContexts[3].delete("$single");
 
 			await this.waitForChanges(assert, "5");
-			await resolveLater();
+			await resolveLater(null, /*iDelay*/15); // BEWARE of sap-ui-excludeJQueryCompat=true
 
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(aContexts[3].isDeleted());
@@ -9531,7 +9530,7 @@ sap.ui.define([
 		const oPromise = oModel.getMetaModel().requestObject(
 			"/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS/EQUIPMENT_2_PRODUCT/ID/$Type");
 
-		await resolveLater(undefined, /*iDelay*/10); // autoRespondAfter defaults to 10ms
+		await resolveLater(null, /*iDelay*/20); // BEWARE of sap-ui-excludeJQueryCompat=true
 
 		const sExpectedRequestLine
 			= "GET /sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata";
@@ -20243,7 +20242,7 @@ sap.ui.define([
 			// code under test
 			that.oView.byId("form").setBindingContext(oBinding.getBoundContext());
 
-			return resolveLater(null, 0); // expectCanceledError doesn't wait, but we have to wait
+			return resolveLater(); // expectCanceledError doesn't wait, but we have to wait
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
@@ -28621,7 +28620,7 @@ sap.ui.define([
 			oRoot.collapse();
 
 			return Promise.all([
-				resolveLater(undefined, 0), // table update takes a moment
+				resolveLater(), // table update takes a moment
 				that.waitForChanges(assert, "collapse root again")
 			]);
 		}).then(function () {
@@ -28775,7 +28774,7 @@ sap.ui.define([
 			oTable.setFirstVisibleRow(0);
 
 			return Promise.all([
-				resolveLater(undefined, 0), // table update takes a moment
+				resolveLater(), // table update takes a moment
 				that.waitForChanges(assert, "scroll up again")
 			]);
 		}).then(function () {
@@ -33958,7 +33957,7 @@ sap.ui.define([
 
 		oTable.setFirstVisibleRow(3);
 
-		await resolveLater(undefined, 0); // table update takes a moment
+		await resolveLater(); // table update takes a moment
 
 		checkTable("first visible row 3", assert, oTable, [
 			"/EMPLOYEES('Out2')",
@@ -34398,7 +34397,7 @@ sap.ui.define([
 				assert.strictEqual(oTable.getRows()[1].getBindingContext(), oBeta, "unchanged");
 
 				// wait for UI changes caused by "change" event above
-				await resolveLater(undefined, /*iDelay*/1);
+				await resolveLater(null, /*iDelay*/1);
 			}
 
 			checkPersisted(assert, oAlpha);
@@ -36203,7 +36202,7 @@ sap.ui.define([
 		oTable.setFirstVisibleRow(/*3*/ 1);
 
 		await Promise.all([
-			resolveLater(undefined, 0), // table update takes a moment
+			resolveLater(), // table update takes a moment
 			this.waitForChanges(assert, "scroll to 2 (Beta)")
 		]);
 
@@ -39250,7 +39249,7 @@ sap.ui.define([
 			await Promise.all([
 				// code under test
 				oBeta.move({parent : oEta}),
-				resolveLater(undefined, 5), // table update takes a moment
+				resolveLater(), // table update takes a moment
 				this.waitForChanges(assert, "move Beta to Eta")
 			]);
 
@@ -55486,7 +55485,8 @@ sap.ui.define([
 
 			fnRespond();
 
-			return resolveLater(); // avoid timing issues ("Assertion occurred after test finished")
+			// avoid timing issues ("Assertion occurred after test finished")
+			return resolveLater(null, /*iDelay*/5);
 		});
 	});
 
@@ -67291,7 +67291,7 @@ sap.ui.define([
 
 			await Promise.all([
 				this.waitForChanges(assert, "add message"),
-				resolveLater(undefined, 0) // table update takes a moment
+				resolveLater() // table update takes a moment
 			]);
 
 			const oMessageStrip = oTable.getAggregation("_messageStrip");
@@ -67328,7 +67328,7 @@ sap.ui.define([
 
 			await Promise.all([
 				this.waitForChanges(assert, "message is removed and no longer visible"),
-				resolveLater(undefined, 0) // table update takes a moment
+				resolveLater() // table update takes a moment
 			]);
 
 			assert.strictEqual(oMessageStrip.getText(), "");
@@ -67379,7 +67379,7 @@ sap.ui.define([
 
 		await Promise.all([
 			this.waitForChanges(assert, "add message"),
-			resolveLater(undefined, 0) // table update takes a moment
+			resolveLater() // table update takes a moment
 		]);
 
 		const oMessageStrip = oTable.getAggregation("_messageStrip");
@@ -67408,7 +67408,7 @@ sap.ui.define([
 
 		await Promise.all([
 			this.waitForChanges(assert, "message is removed and no longer visible"),
-			resolveLater(undefined, 0) // table update takes a moment
+			resolveLater() // table update takes a moment
 		]);
 
 		assert.strictEqual(oMessageStrip.getText(), "");

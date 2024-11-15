@@ -130,6 +130,11 @@
 					"target": "numericHeader"
 				},
 				{
+					"pattern": "clonedHeader",
+					"name": "clonedHeader",
+					"target": "clonedHeader"
+				},
+				{
 					"pattern": "footer",
 					"name": "footer",
 					"target": "footer"
@@ -404,6 +409,11 @@
 				"numericHeader": {
 					"id": "numericHeader",
 					"name": "NumericHeader",
+					"level": 1
+				},
+				"clonedHeader": {
+					"id": "clonedHeader",
+					"name": "ClonedHeader",
 					"level": 1
 				},
 				"footer": {

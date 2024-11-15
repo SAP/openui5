@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
 	"sap/ui/table/plugins/V4Aggregation",
-	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed"
 ], function(
 	TableQUnitUtils,
 	V4Aggregation,
-	Column,
 	FixedRowMode
 ) {
 	"use strict";
@@ -41,25 +39,9 @@ sap.ui.define([
 			suspended: true
 		},
 		columns: [
-			new Column({
-				label: "Country",
-				template: new Text({text: "{Country}"})
-			}),
-			new Column({
-				label: "Region",
-				template: new Text({text: "{Region}"})
-			}),
-			new Column({
-				label: "SalesAmount",
-				template: new Text({
-					text: "{parts: ['SalesAmountLocalCurrency', 'LocalCurrency', {mode: 'OneTime', path: '/##@@requestCurrencyCodes', " +
-							"targetType: 'any'}], type: 'sap.ui.model.odata.type.Currency', formatOptions: {showMeasure: false}}"
-				})
-			}),
-			new Column({
-				label: "Local Currency",
-				template: new Text({text: "{LocalCurrency}"})
-			})
+			TableQUnitUtils.createTextColumn({label: "Country", text: "Country", bind: true}),
+			TableQUnitUtils.createTextColumn({label: "Region", text: "Region", bind: true}),
+			TableQUnitUtils.createTextColumn({label: "Local Currency", text: "LocalCurrency", bind: true})
 		],
 		models: TableQUnitUtils.createModelForDataAggregationService(),
 		rowMode: new FixedRowMode({

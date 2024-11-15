@@ -52,68 +52,6 @@ sap.ui.define([
 	 * @alias sap.ui.integration.cards.Header
 	 */
 	var Header = FHeader.extend("sap.ui.integration.cards.Header", {
-
-		constructor: function (sId, mConfiguration, oActionsToolbar, oIconFormatter) {
-
-			mConfiguration = mConfiguration || {};
-
-			var mSettings = {
-				title: mConfiguration.title,
-				titleMaxLines: mConfiguration.titleMaxLines,
-				subtitle: mConfiguration.subTitle,
-				subtitleMaxLines: mConfiguration.subTitleMaxLines,
-				dataTimestamp: mConfiguration.dataTimestamp,
-				visible: mConfiguration.visible,
-				wrappingType: mConfiguration.wrappingType
-			};
-
-			if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {
-				mSettings.statusText = mConfiguration.status.text;
-				mSettings.statusVisible = mConfiguration.status.visible;
-			}
-
-			if (mConfiguration.icon) {
-				var vInitials = mConfiguration.icon.initials || mConfiguration.icon.text;
-				var sBackgroundColor = mConfiguration.icon.backgroundColor || (vInitials ? AvatarColor.Accent6 : AvatarColor.Transparent);
-
-				mSettings.iconSrc = mConfiguration.icon.src;
-				mSettings.iconDisplayShape = mConfiguration.icon.shape;
-				mSettings.iconInitials = vInitials;
-				mSettings.iconAlt = mConfiguration.icon.alt;
-				mSettings.iconBackgroundColor = sBackgroundColor;
-				mSettings.iconVisible = mConfiguration.icon.visible;
-				mSettings.iconFitType = mConfiguration.icon.fitType;
-			}
-
-			if (mSettings.iconSrc) {
-				mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
-					return oIconFormatter.formatSrc(sValue);
-				});
-			}
-
-			if (mConfiguration.banner) {
-				mSettings.bannerLines = mConfiguration.banner.map(function (mBannerLine) { // TODO validate that it is an array and with no more than 2 elements
-					var oBannerLine = new Text({
-						text: mBannerLine.text,
-						visible: mBannerLine.visible
-					});
-
-					if (mBannerLine.diminished) {
-						oBannerLine.addStyleClass("sapFCardHeaderBannerLineDiminished");
-					}
-
-					return oBannerLine;
-				});
-			}
-
-			mSettings.toolbar = oActionsToolbar;
-
-			FHeader.call(this, sId, mSettings);
-
-			this._oConfiguration = mConfiguration;
-			this._oIconFormatter = oIconFormatter;
-		},
-
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
@@ -134,6 +72,68 @@ sap.ui.define([
 		},
 		renderer: FHeaderRenderer
 	});
+
+	Header.create = function (sId, mConfiguration, oActionsToolbar, oIconFormatter) {
+		mConfiguration = mConfiguration || {};
+
+		var mSettings = {
+			title: mConfiguration.title,
+			titleMaxLines: mConfiguration.titleMaxLines,
+			subtitle: mConfiguration.subTitle,
+			subtitleMaxLines: mConfiguration.subTitleMaxLines,
+			dataTimestamp: mConfiguration.dataTimestamp,
+			visible: mConfiguration.visible,
+			wrappingType: mConfiguration.wrappingType
+		};
+
+		if (mConfiguration.status && mConfiguration.status.text && !mConfiguration.status.text.format) {
+			mSettings.statusText = mConfiguration.status.text;
+			mSettings.statusVisible = mConfiguration.status.visible;
+		}
+
+		if (mConfiguration.icon) {
+			var vInitials = mConfiguration.icon.initials || mConfiguration.icon.text;
+			var sBackgroundColor = mConfiguration.icon.backgroundColor || (vInitials ? AvatarColor.Accent6 : AvatarColor.Transparent);
+
+			mSettings.iconSrc = mConfiguration.icon.src;
+			mSettings.iconDisplayShape = mConfiguration.icon.shape;
+			mSettings.iconInitials = vInitials;
+			mSettings.iconAlt = mConfiguration.icon.alt;
+			mSettings.iconBackgroundColor = sBackgroundColor;
+			mSettings.iconVisible = mConfiguration.icon.visible;
+			mSettings.iconFitType = mConfiguration.icon.fitType;
+		}
+
+		if (mSettings.iconSrc) {
+			mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
+				return oIconFormatter.formatSrc(sValue);
+			});
+		}
+
+		if (mConfiguration.banner) {
+			mSettings.bannerLines = mConfiguration.banner.map(function (mBannerLine) { // TODO validate that it is an array and with no more than 2 elements
+				var oBannerLine = new Text({
+					text: mBannerLine.text,
+					visible: mBannerLine.visible
+				});
+
+				if (mBannerLine.diminished) {
+					oBannerLine.addStyleClass("sapFCardHeaderBannerLineDiminished");
+				}
+
+				return oBannerLine;
+			});
+		}
+
+		mSettings.toolbar = oActionsToolbar;
+
+		const oHeader = new Header(sId, mSettings);
+
+		oHeader._oConfiguration = mConfiguration;
+		oHeader._oIconFormatter = oIconFormatter;
+
+		return oHeader;
+	};
 
 	Header.prototype.init = function () {
 		FHeader.prototype.init.call(this);

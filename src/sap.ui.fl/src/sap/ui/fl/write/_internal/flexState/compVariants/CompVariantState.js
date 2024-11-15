@@ -734,13 +734,6 @@ sap.ui.define([
 			oVariant.addRevertData(oRevertData);
 		}
 
-		if (sCurrentState === States.LifecycleState.NEW) {
-			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
-			var mCompVariantsMapByPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
-			removeFromCompVariantsMap(oVariant, mCompVariantsMapByPersistencyKey);
-			return oVariant;
-		}
-
 		oVariant.markForDeletion();
 		return oVariant;
 	};
@@ -905,8 +898,11 @@ sap.ui.define([
 					ifVariantClearRevertData(oFlexObject);
 					return updateObjectAndStorage(oFlexObject, oStoredResponse, sParentVersion, mPropertyBag.reference);
 				case States.LifecycleState.DELETED:
-					ifVariantClearRevertData(oFlexObject);
-					return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion, mPropertyBag.reference);
+					if (oFlexObject._sPreviousState !== States.LifecycleState.NEW) {
+						ifVariantClearRevertData(oFlexObject);
+						return deleteObjectAndRemoveFromStorage(oFlexObject, mCompVariantsMapByPersistencyKey, oStoredResponse, sParentVersion, mPropertyBag.reference);
+					}
+					return Promise.resolve();
 				default:
 					return undefined;
 			}
@@ -999,7 +995,8 @@ sap.ui.define([
 		return aEntities.some(function(oFlexObject) {
 			return oFlexObject.getLayer() // oData variants do not have a layer and must not be identified as dirty
 				&& oFlexObject.getState() !== States.LifecycleState.PERSISTED
-				&& oFlexObject.getVariantId?.() !== "*standard*";
+				&& oFlexObject.getVariantId?.() !== "*standard*"
+				&& oFlexObject.getState() !== States.LifecycleState.DELETED;
 		});
 	};
 

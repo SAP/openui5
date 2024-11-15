@@ -2,23 +2,17 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
-	"sap/ui/table/Table",
-	"sap/ui/table/Column",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/plugins/ODataV4Selection",
 	"sap/ui/table/plugins/V4Aggregation",
-	"sap/m/Text",
 	"sap/ui/core/IconPool"
 ], function(
 	TableQUnitUtils,
-	Table,
-	Column,
 	TableUtils,
 	FixedRowMode,
 	ODataV4Selection,
 	V4Aggregation,
-	Text,
 	IconPool
 ) {
 	"use strict";
@@ -56,25 +50,9 @@ sap.ui.define([
 			suspended: true
 		},
 		columns: [
-			new Column({
-				label: "Country",
-				template: new Text({text: "{Country}"})
-			}),
-			new Column({
-				label: "Region",
-				template: new Text({text: "{Region}"})
-			}),
-			new Column({
-				label: "SalesAmount",
-				template: new Text({
-					text: "{parts: ['SalesAmountLocalCurrency', 'LocalCurrency', {mode: 'OneTime', path: '/##@@requestCurrencyCodes', " +
-							"targetType: 'any'}], type: 'sap.ui.model.odata.type.Currency', formatOptions: {showMeasure: false}}"
-				})
-			}),
-			new Column({
-				label: "Local Currency",
-				template: new Text({text: "{LocalCurrency}"})
-			})
+			TableQUnitUtils.createTextColumn({label: "Country", text: "Country", bind: true}),
+			TableQUnitUtils.createTextColumn({label: "Region", text: "Region", bind: true}),
+			TableQUnitUtils.createTextColumn({label: "Local Currency", text: "LocalCurrency", bind: true})
 		],
 		models: TableQUnitUtils.createModelForDataAggregationService(),
 		rowMode: new FixedRowMode({
@@ -86,7 +64,7 @@ sap.ui.define([
 
 	QUnit.module("Selection API", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
+			this.oTable = await TableQUnitUtils.createTable(function(oTable) {
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
@@ -239,7 +217,7 @@ sap.ui.define([
 
 	QUnit.module("Binding selection API", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
+			this.oTable = await TableQUnitUtils.createTable(function(oTable) {
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
@@ -386,7 +364,7 @@ sap.ui.define([
 
 	QUnit.module("Header selector icon", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
+			this.oTable = await TableQUnitUtils.createTable(function(oTable) {
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];

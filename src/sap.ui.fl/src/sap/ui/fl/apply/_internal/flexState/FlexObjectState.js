@@ -270,6 +270,10 @@ sap.ui.define([
 		return aEntities;
 	}
 
+	function isNewChangeDeleted(oFlexObject) {
+		return !(oFlexObject.getState() === States.LifecycleState.DELETED && oFlexObject._sPreviousState === States.LifecycleState.NEW);
+	}
+
 	/**
 	 * Collects modified changes from the different states within the <code>sap.ui.fl</code> library.
 	 * TODO: remove special CompVariant handling
@@ -280,7 +284,9 @@ sap.ui.define([
 	FlexObjectState.getDirtyFlexObjects = function(sReference) {
 		const aCompVariantEntities = getCompVariantEntities(sReference);
 		return oAllDirtyFlexObjectsDataSelector.get({reference: sReference})
-		.concat(aCompVariantEntities.filter((oFlexObject) => oFlexObject.getState() !== States.LifecycleState.PERSISTED));
+		.concat(aCompVariantEntities.filter((oFlexObject) => oFlexObject.getState() !== States.LifecycleState.PERSISTED))
+		// change is not dirty when it is created and deleted in the same session
+		.filter((oFlexObject) => isNewChangeDeleted(oFlexObject));
 	};
 
 	return FlexObjectState;

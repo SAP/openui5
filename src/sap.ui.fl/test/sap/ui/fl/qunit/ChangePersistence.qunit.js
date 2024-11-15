@@ -857,17 +857,15 @@ sap.ui.define([
 				changeType: "addField",
 				selector: {id: "control1"}
 			};
-			var oChange = FlexObjectFactory.createFromFileContent(oChangeContent);
-			FlexObjectManager.deleteFlexObjects({ reference: sReference, flexObjects: [oChange] });
-
+			UIChangeManager.addDirtyChanges(sReference, [oChangeContent], this._oComponentInstance);
+			var aDirtyFlexObjects = FlexObjectState.getDirtyFlexObjects(sReference);
 			assert.strictEqual(
-				FlexObjectState.getDirtyFlexObjects(sReference).length,
-				1,
-				"then one dirty change exists initially"
+				aDirtyFlexObjects.length, 1, "then one dirty change exists initially"
 			);
-			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.equal(this.oRemoveStub.callCount, 1);
-				assert.equal(this.oWriteStub.callCount, 0);
+			aDirtyFlexObjects[0].setState(States.LifecycleState.DELETED);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, true, aDirtyFlexObjects).then(function() {
+				assert.equal(this.oRemoveStub.callCount, 1, "WriteStorage remove is called");
+				assert.equal(this.oWriteStub.callCount, 0, "WriteStorage write not called");
 				assert.strictEqual(
 					FlexObjectState.getDirtyFlexObjects(sReference).length,
 					0,
@@ -890,13 +888,12 @@ sap.ui.define([
 				changeType: "addField",
 				selector: {id: "control2"}
 			});
-			FlexObjectManager.deleteFlexObjects({ reference: sReference, flexObjects: [oChangeNotToBeSaved, oChangeToBeSaved] });
-
+			UIChangeManager.addDirtyChanges(sReference, [oChangeNotToBeSaved, oChangeToBeSaved], this._oComponentInstance);
+			var aDirtyFlexObjects = FlexObjectState.getDirtyFlexObjects(sReference);
 			assert.strictEqual(
-				FlexObjectState.getDirtyFlexObjects(sReference).length,
-				2,
-				"then two dirty changes exist initially"
+				aDirtyFlexObjects.length, 2, "then two dirty changes exist initially"
 			);
+			aDirtyFlexObjects[1].setState(States.LifecycleState.DELETED);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [oChangeToBeSaved], Version.Number.Original)
 			.then(function() {
 				assert.equal(this.oRemoveStub.callCount, 1);

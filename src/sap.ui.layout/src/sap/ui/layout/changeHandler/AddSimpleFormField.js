@@ -76,9 +76,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 *
 	 * @version ${version}
-	 *
-	 * @experimental Since 1.49.0 This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var AddSimpleFormField = BaseAddViaDelegate.createAddViaDelegateChangeHandler({
 		addProperty: function(mPropertyBag) {

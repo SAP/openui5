@@ -580,4 +580,49 @@ sap.ui.define([
 		assert.equal(oHeader.getAggregation("_avatar").getImageFitType(), AvatarImageFitType.Contain, "ImageFitType should be 'Contain'.");
 	});
 
+	QUnit.test("Cloned Numeric Header", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.numericHeader.genericClone"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Project Cloud Transformation",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"dataTimestamp": "2021-03-18T12:00:00Z",
+					"details": "Details, additional information"
+				}
+			}
+		};
+		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oClonedHeader = this.oCard.getCardHeader().clone();
+
+		// Act
+		oClonedHeader.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oClonedHeader.getDomRef(), "Cloned Numeric header should be rendered.");
+		assert.equal(oClonedHeader.getAggregation("_title").getText(), oManifest["sap.card"].header.title, "Cloned header title should be correct.");
+		assert.equal(oClonedHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Cloned header subtitle should be correct.");
+		assert.equal(oClonedHeader.getAggregation("_unitOfMeasurement").getText(), oManifest["sap.card"].header.unitOfMeasurement, "Cloned header unitOfMeasurement should be correct.");
+		assert.equal(oClonedHeader.getAggregation("_details").getText(), oManifest["sap.card"].header.details, "Cloned header details should be correct.");
+		assert.equal(oClonedHeader.getDataTimestamp(), oManifest["sap.card"].header.dataTimestamp, "Cloned header dataTimestamp should be correct.");
+	});
 });
