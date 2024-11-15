@@ -1319,6 +1319,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @param {object} oEvent  - The event object containing the source element that failed to gain focus.
+	 * @returns {void}
+	 */
+	ObjectPageLayout.prototype.onfocusfail = function (oEvent) {
+		var oSourceControl = oEvent.srcControl;
+
+		if (oSourceControl === this.getAggregation("footer") && !oSourceControl.getVisible()) {
+			// skip restoring the focus as the default implementation does not account for
+			// the fact that the toolbar was positioned absolutelly on top of scrollable content
+			// => ends up focusing a control that may not be visible (by being outside the scrollport)
+			// Alternative solution (e.g. focus the first focusable control in the scrollport)
+			// can be added in the future if needed
+			return;
+		}
+
+		Control.prototype.onfocusfail.apply(this, arguments);
+	};
+
+	/**
 	 * Suppresses or enables scrolling
 	 * used to supress scrolling in fullscreen-mode
 	 * (to avoid a problem with scrollbar appearing for a small instance
