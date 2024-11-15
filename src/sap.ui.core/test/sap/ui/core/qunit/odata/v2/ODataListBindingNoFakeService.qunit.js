@@ -3560,25 +3560,27 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachCreateActivate", function (assert) {
-		var oBinding = {attachEvent : function () {}};
+	QUnit.test(`attachCreateActivate, detachCreateActivate`, function (assert) {
+		var oBinding = {
+			attachEvent : function () {},
+			detachEvent : function () {}
+		};
 
 		this.mock(oBinding).expects("attachEvent")
-			.withExactArgs("createActivate", "~fnFunction", "~oListener");
+			.withExactArgs("createActivate", "~fnFunction", "~oListener")
+			.returns("~this");
 
 		// code under test
-		ODataListBinding.prototype.attachCreateActivate.call(oBinding, "~fnFunction", "~oListener");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("detachCreateActivate", function (assert) {
-		var oBinding = {detachEvent : function () {}};
+		assert.strictEqual(ODataListBinding.prototype.attachCreateActivate.call(oBinding, "~fnFunction", "~oListener"),
+			"~this");
 
 		this.mock(oBinding).expects("detachEvent")
-			.withExactArgs("createActivate", "~fnFunction", "~oListener");
+			.withExactArgs("createActivate", "~fnFunction", "~oListener")
+			.returns("~this");
 
 		// code under test
-		ODataListBinding.prototype.detachCreateActivate.call(oBinding, "~fnFunction", "~oListener");
+		assert.strictEqual(ODataListBinding.prototype.detachCreateActivate.call(oBinding, "~fnFunction", "~oListener"),
+			"~this");
 	});
 
 	//*********************************************************************************************

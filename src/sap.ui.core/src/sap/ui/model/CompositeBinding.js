@@ -639,6 +639,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachChange = function(fnFunction, oListener) {
@@ -662,6 +663,7 @@ sap.ui.define([
 				oBinding.attachChange(that.fnChangeHandler);
 			});
 		}
+		return this;
 	};
 
 	/**
@@ -670,6 +672,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachChange = function(fnFunction, oListener) {
@@ -680,6 +683,7 @@ sap.ui.define([
 				oBinding.detachChange(that.fnChangeHandler);
 			});
 		}
+		return this;
 	};
 
 	/**
@@ -692,6 +696,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachDataStateChange = function(fnFunction, oListener) {
@@ -710,6 +715,7 @@ sap.ui.define([
 				oBinding.attachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
+		return this;
 	};
 
 	/**
@@ -718,6 +724,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachDataStateChange = function(fnFunction, oListener) {
@@ -728,6 +735,7 @@ sap.ui.define([
 				oBinding.detachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
+		return this;
 	};
 
 	/**
@@ -740,6 +748,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	CompositeBinding.prototype.attachAggregatedDataStateChange = function(fnFunction, oListener) {
@@ -762,6 +771,7 @@ sap.ui.define([
 				oBinding.attachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
+		return this;
 	};
 
 	/**
@@ -771,6 +781,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	CompositeBinding.prototype.detachAggregatedDataStateChange = function(fnFunction, oListener) {
@@ -781,6 +792,7 @@ sap.ui.define([
 				oBinding.detachEvent("DataStateChange", that.fnDataStateChangeHandler);
 			});
 		}
+		return this;
 	};
 
 	/**

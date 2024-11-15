@@ -218,4 +218,19 @@ sap.ui.define([
 			"object getter returns object for aggregation with altType string,object");
 	});
 }());
+
+	//*********************************************************************************************
+	QUnit.test(`attachChange, detachChange: return this`, function (assert) {
+		const oStaticBindingMock = this.mock(this.static);
+
+		oStaticBindingMock.expects("attachEvent").withExactArgs("change", "~fnFunction", "~oListener").returns("~this");
+
+		// code under test
+		assert.strictEqual(this.static.attachChange("~fnFunction", "~oListener"), "~this");
+
+		oStaticBindingMock.expects("detachEvent").withExactArgs("change", "~fnFunction", "~oListener").returns("~this");
+
+		// code under test
+		assert.strictEqual(this.static.detachChange("~fnFunction", "~oListener"), "~this");
+	});
 });
