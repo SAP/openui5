@@ -1374,4 +1374,30 @@ sap.ui.define([
 		assert.ok(oCompositeDestroyCall.calledAfter(oPart0DestroyCall));
 		assert.ok(oCompositeDestroyCall.calledAfter(oPart1DestroyCall));
 	});
+
+	//*********************************************************************************************
+["AggregatedDataStateChange", "change", "DataStateChange"].forEach((sEvent) => {
+	const sAttach = "attach" + sEvent[0].toUpperCase() + sEvent.slice(1);
+	const sDetach = "detach" + sEvent[0].toUpperCase() + sEvent.slice(1);
+
+	QUnit.test(`${sAttach}, ${sDetach}: return this`, function (assert) {
+		const oCompositeBinding = new CompositeBinding([]);
+		const oCompositeBindingMock = this.mock(oCompositeBinding);
+
+		oCompositeBinding.fnDataStateChangeHandler = function () {};
+		oCompositeBindingMock.expects("attachEvent")
+			.withExactArgs(sEvent, "~fnFunction", "~oListener")
+			.returns("~notUsed");
+
+		// code under test
+		assert.strictEqual(oCompositeBinding[sAttach]("~fnFunction", "~oListener"), oCompositeBinding);
+
+		oCompositeBindingMock.expects("detachEvent")
+			.withExactArgs(sEvent, "~fnFunction", "~oListener")
+			.returns("~notUsed");
+
+		// code under test
+		assert.strictEqual(oCompositeBinding[sDetach]("~fnFunction", "~oListener"), oCompositeBinding);
+	});
+});
 });

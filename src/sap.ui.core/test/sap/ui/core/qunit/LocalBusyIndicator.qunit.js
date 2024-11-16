@@ -212,6 +212,34 @@ sap.ui.define([
 		assert.notOk($LB.attr("aria-busy"), "'aria-busy' attribute should be removed again.");
 	});
 
+	QUnit.test("Focus Restoration after busy control is invalidated", async function(assert) {
+		const $LB = this.oListBox.$();
+		this.oListBox.setBusyIndicatorDelay(0);
+		this.oListBox.focus(); // set initial focus
+
+		this.oListBox.setBusy(true);
+		let oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
+		assert.equal(oBusyIndicatorDOM, document.activeElement, "setBusy(true): Focus moved to busy indicator.");
+		assert.ok($LB.attr("aria-busy"), "'aria-busy' attribute should be defined on the busy control.");
+
+		const oDelegate = {
+			onBeforeRendering() {
+				assert.ok(this.getDomRef()?.contains(document.activeElement), "Focus is set back to the control before the next rendering");
+			}
+		};
+		this.oListBox.addDelegate(oDelegate, false, this.oListBox);
+		this.oListBox.invalidate();
+		await nextUIUpdate();
+
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				oBusyIndicatorDOM = $LB.children('.sapUiLocalBusyIndicator')[0];
+				assert.equal(document.activeElement, oBusyIndicatorDOM, "After rerendering: Focus moved to busy indicator since control is still busy.");
+				resolve();
+			});
+		});
+	});
+
 	QUnit.test("tab chain - busy delay 0", function(assert) {
 		var done = assert.async(),
 			oElem;

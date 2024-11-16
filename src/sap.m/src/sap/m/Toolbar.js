@@ -409,6 +409,9 @@ function(
 	};
 
 	Toolbar.prototype._shouldAllowDefaultBehavior = function(oActiveElement, oEvent) {
+		if (!oActiveElement) {
+			return false;
+		}
 		var sActiveElementName = oActiveElement.getMetadata().getName(),
 			bIsSelectOrCombobox = ["sap.m.Select", "sap.m.ComboBox"].includes(sActiveElementName),
 			bIsUpOrDownArrowKey = [KeyCodes.ARROW_UP, KeyCodes.ARROW_DOWN].includes(oEvent.keyCode),
