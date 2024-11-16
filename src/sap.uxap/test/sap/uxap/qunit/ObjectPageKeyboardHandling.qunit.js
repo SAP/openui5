@@ -10,11 +10,12 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/core/mvc/XMLView",
-	"sap/uxap/ObjectPageLayoutABHelper",
+	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSubSection",
+	"sap/m/OverflowToolbar",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
 ],
-function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes, QUtils, Device, F6Navigation, XMLView, ObjectPageLayoutABHelper, ObjectPageSubSection) {
+function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes, QUtils, Device, F6Navigation, XMLView, ObjectPageLayout, ObjectPageSubSection, OverflowToolbar) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPObjectPageNavigation .sapMITBHead .sapMITBFilter";
@@ -791,5 +792,25 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 			}.bind(this), 500);
 		}.bind(this), 500);
 
+	});
+
+	QUnit.module("onfocusFail");
+
+	QUnit.test("skip restoring focus from footer toolbar if toolbar hidden", function (assert) {
+		var oFooterToolbar = new OverflowToolbar({
+				visible: false
+			}),
+			oObjectPage = new ObjectPageLayout({
+				footer: oFooterToolbar
+			}),
+			oSpy = this.spy(Element.prototype, "onfocusfail");
+
+		// Act
+		oObjectPage.onfocusfail({
+			srcControl: oFooterToolbar
+		});
+
+		// Assert
+		assert.ok(oSpy.notCalled, "restoring focus is skipped");
 	});
 });

@@ -11,7 +11,13 @@
 		contentHeight="33rem"
 		horizontalScrolling="false">
 		<List id="whatsNewOverview" items="{path: 'whatsNewModel>/featureCollection'}" visible="{whatsNewModel>overviewActive}">
-			<StandardListItem description="{whatsNewModel>description}" title="{whatsNewModel>title}" press=".onSelectListItem" type="Active"/>
+			<StandardListItem
+					description="{whatsNewModel>description}"
+					title="{whatsNewModel>title}"
+					press=".onSelectListItem"
+					wrapping="true"
+					wrapCharLimit="10000"
+					type="Active"/>
 		</List>
 		<VBox  id="whatsNewItemPage" visible="{= ${whatsNewModel>overviewActive} === false}">
 			<VBox height="100%" width="100%" >

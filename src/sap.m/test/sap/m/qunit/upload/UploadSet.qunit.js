@@ -581,6 +581,23 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("No data rendering - validate:_setListNoDataText() ", async function(assert) {
+		//Arrange
+		this.oUploadSet.unbindAggregation("items");
+		var sNoDataText = this.oUploadSet._oRb.getText("UPLOAD_SET_NO_DATA_TEXT");
+		var sNoDataDescription = this.oUploadSet._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
+		var sListNoDataText = "";
+
+		await nextUIUpdate();
+		//Assert
+		sListNoDataText = this.oUploadSet._setListNoDataText();
+		assert.equal(sListNoDataText, sNoDataText + " " + sNoDataDescription, "Nodata Text is set in the List");
+		sListNoDataText = this.oUploadSet._setListNoDataText("This is Title", false);
+		assert.equal(sListNoDataText, "This is Title" + " " + sNoDataDescription, "default description is returned for getNoDataDescription");
+		sListNoDataText = this.oUploadSet._setListNoDataText("This is Description", true);
+		assert.equal(sListNoDataText, sNoDataText + " " + "This is Description", "default description is returned for getNoDataDescription");
+	});
+
 	QUnit.test("No data type illustrated message rendering if not set via aggregation", async function (assert) {
 		//Arrange
 		this.oUploadSet.unbindAggregation("items");

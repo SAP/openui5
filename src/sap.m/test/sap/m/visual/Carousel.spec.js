@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,browser,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect,protractor*/
 
 describe("sap.m.Carousel", function() {
 	"use strict";
@@ -68,6 +68,24 @@ describe("sap.m.Carousel", function() {
 		element(by.id("btnReset")).click();
 	});
 
+	it("should check arrows visibility over content", function() {
+		_moveToCarousel();
+		// go to last page
+		element(by.id("myCarousel-arrow-next")).click();
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+
+		// set loop to false
+		element(by.id("RB-No-Loop")).click();
+
+		_moveToCarousel();
+
+        expect(takeScreenshot(myCarousel)).toLookAs("5_1_arrow_visibility_content");
+
+		// go back to third page
+		element(by.id("myCarousel-arrow-previous")).click();
+		element(by.id("myCarousel-arrow-previous")).click();
+	});
+
 	// change arrows position
 	it("should change arrows placement", function() {
 		element(by.id("RB-Indicator")).click();
@@ -77,28 +95,15 @@ describe("sap.m.Carousel", function() {
 	});
 
 	it("should check arrows visibility in the page indicator area", function() {
-		// set loop to false
-		element(by.id("RB-No-Loop")).click();
-		_moveToCarousel();
-
 		// go to last page
 		element(by.id("myCarousel-arrow-next")).click();
 		element(by.id("myCarousel-arrow-next")).click();
 
 		expect(takeScreenshot(myCarousel)).toLookAs("6_1_arrow_visibility_page_ind");
-	});
-
-	it("should check arrows visibility over content", function() {
-		element(by.id("RB-Content")).click();
-		_moveToCarousel();
-
-        expect(takeScreenshot(myCarousel)).toLookAs("5_1_arrow_visibility_content");
 
 		// go back to third page
 		element(by.id("myCarousel-arrow-previous")).click();
 		element(by.id("myCarousel-arrow-previous")).click();
-
-		element(by.id("RB-Indicator")).click();
 	});
 
 	// change page indicator position

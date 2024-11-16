@@ -356,13 +356,15 @@ sap.ui.define([
 	 * @param {object} [oListener]
 	 *   Context object to call the event handler with; defaults to this
 	 *   <code>sap.ui.model.Binding</code> itself
+	 * @returns {this}
+	 *   Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Binding.prototype.attachChange = function(fnFunction, oListener) {
 		if (!this.hasListeners("change")) {
 			this.oModel.addBinding(this);
 		}
-		this.attachEvent("change", fnFunction, oListener);
+		return this.attachEvent("change", fnFunction, oListener);
 	};
 
 	/**
@@ -371,6 +373,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction Function to be called when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Binding.prototype.detachChange = function(fnFunction, oListener) {
@@ -378,6 +381,7 @@ sap.ui.define([
 		if (!this.hasListeners("change")) {
 			this.oModel.removeBinding(this);
 		}
+		return this;
 	};
 
 	/**
@@ -394,10 +398,12 @@ sap.ui.define([
 	 * @param {object} [oListener]
 	 *   Context object to call the event handler with; defaults to this
 	 *   <code>sap.ui.model.Binding</code> itself
+	 * @returns {this}
+	 *   Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Binding.prototype.attachDataStateChange = function(fnFunction, oListener) {
-		this.attachEvent("DataStateChange", fnFunction, oListener);
+		return this.attachEvent("DataStateChange", fnFunction, oListener);
 	};
 
 	/**
@@ -407,10 +413,11 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Binding.prototype.detachDataStateChange = function(fnFunction, oListener) {
-		this.detachEvent("DataStateChange", fnFunction, oListener);
+		return this.detachEvent("DataStateChange", fnFunction, oListener);
 	};
 
 	/**
@@ -427,10 +434,12 @@ sap.ui.define([
 	 * @param {object} [oListener]
 	 *   Context object to call the event handler with; defaults to this
 	 *   <code>sap.ui.model.Binding</code> itself
+	 * @returns {this}
+	 *   Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Binding.prototype.attachAggregatedDataStateChange = function(fnFunction, oListener) {
-		this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
+		return this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
 	};
 
 	/**
@@ -440,10 +449,11 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Binding.prototype.detachAggregatedDataStateChange = function(fnFunction, oListener) {
-		this.detachEvent("AggregatedDataStateChange", fnFunction, oListener);
+		return this.detachEvent("AggregatedDataStateChange", fnFunction, oListener);
 	};
 
 	/**
@@ -469,10 +479,12 @@ sap.ui.define([
 	 * @param {object} [oListener]
 	 *   Context object to call the event handler with; defaults to this
 	 *   <code>sap.ui.model.Binding</code> itself
+	 * @returns {this}
+	 *   Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Binding.prototype.attachDataRequested = function(fnFunction, oListener) {
-		this.attachEvent("dataRequested", fnFunction, oListener);
+		return this.attachEvent("dataRequested", fnFunction, oListener);
 	};
 
 	/**
@@ -481,10 +493,11 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Binding.prototype.detachDataRequested = function(fnFunction, oListener) {
-		this.detachEvent("dataRequested", fnFunction, oListener);
+		return this.detachEvent("dataRequested", fnFunction, oListener);
 	};
 
 	/**
@@ -510,10 +523,12 @@ sap.ui.define([
 	 * @param {object} [oListener]
 	 *   Context object to call the event handler with; defaults to this
 	 *   <code>sap.ui.model.Binding</code> itself
+	 * @returns {this}
+	 *   Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Binding.prototype.attachDataReceived = function(fnFunction, oListener) {
-		this.attachEvent("dataReceived", fnFunction, oListener);
+		return this.attachEvent("dataReceived", fnFunction, oListener);
 	};
 
 	/**
@@ -522,10 +537,11 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction Function to be called when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Binding.prototype.detachDataReceived = function(fnFunction, oListener) {
-		this.detachEvent("dataReceived", fnFunction, oListener);
+		return this.detachEvent("dataReceived", fnFunction, oListener);
 	};
 
 	/**
@@ -716,12 +732,14 @@ sap.ui.define([
 	 * @param {object} [oListener]
 	 *   Context object to call the event handler with; defaults to this
 	 *   <code>sap.ui.model.Binding</code> itself
+	 * @returns {this}
+	 *   Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 * @since 1.105.0
 	 * @ui5-restricted sap.suite.ui.generic.template
 	 */
 	Binding.prototype.attachRefresh = function(fnFunction, oListener) {
-		this.attachEvent("refresh", fnFunction, oListener);
+		return this.attachEvent("refresh", fnFunction, oListener);
 	};
 
 	/**
@@ -730,12 +748,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function.
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 * @since 1.105.0
 	 * @ui5-restricted sap.suite.ui.generic.template
 	 */
 	Binding.prototype.detachRefresh = function(fnFunction, oListener) {
-		this.detachEvent("refresh", fnFunction, oListener);
+		return this.detachEvent("refresh", fnFunction, oListener);
 	};
 
 	/**
