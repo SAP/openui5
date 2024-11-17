@@ -112,7 +112,7 @@ sap.ui.define([
 		"                    text=\"Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win.\"/>" +
 		"            <m:ObjectStatus text=\"In Stock\" state=\"Error\"/>" +
 		"            <m:ObjectStatus title=\"Label\" text=\"In Stock\" state=\"Warning\"/>" +
-		"            <m:ObjectNumber number=\"1000\" numberUnit=\"SOOK\" emphasized=\"false\" state=\"Success\"/>" +
+		"            <m:ObjectNumber number=\"1000\" unit=\"SOOK\" emphasized=\"false\" state=\"Success\"/>" +
 		"            <m:ProgressIndicator" +
 		"                    percentValue=\"30\"" +
 		"                    displayValue=\"30%\"" +
@@ -124,7 +124,7 @@ sap.ui.define([
 		"                            showSeparatorAfter=\"false\"/>" +
 		"                </layout:layoutData>" +
 		"                <m:Label text=\"PC, Unrestricted-Use Stock\"/>" +
-		"                <m:ObjectNumber number=\"219\" numberUnit=\"K\"></m:ObjectNumber>" +
+		"                <m:ObjectNumber number=\"219\" unit=\"K\"></m:ObjectNumber>" +
 		"            </layout:VerticalLayout>" +
 		"            <layout:VerticalLayout>" +
 		"                <layout:layoutData>" +
@@ -133,7 +133,7 @@ sap.ui.define([
 		"                            showSeparatorAfter=\"false\"/>" +
 		"                </layout:layoutData>" +
 		"                <m:Label text=\"PC, Not in Small Size\"/>" +
-		"                <m:ObjectNumber number=\"220\" numberUnit=\"K\"></m:ObjectNumber>" +
+		"                <m:ObjectNumber number=\"220\" unit=\"K\"></m:ObjectNumber>" +
 		"            </layout:VerticalLayout>" +
 		"            <layout:VerticalLayout>" +
 		"                <layout:layoutData>" +
@@ -142,7 +142,7 @@ sap.ui.define([
 		"                            showSeparatorAfter=\"false\"/>" +
 		"                </layout:layoutData>" +
 		"                <m:Label text=\"PC, Not in Medium Size\"/>" +
-		"                <m:ObjectNumber number=\"221\" numberUnit=\"K\"></m:ObjectNumber>" +
+		"                <m:ObjectNumber number=\"221\" unit=\"K\"></m:ObjectNumber>" +
 		"            </layout:VerticalLayout>" +
 		"            <layout:VerticalLayout>" +
 		"                <layout:layoutData>" +
@@ -151,7 +151,7 @@ sap.ui.define([
 		"                            showSeparatorAfter=\"true\"/>" +
 		"                </layout:layoutData>" +
 		"                <m:Label text=\"PC, Not in Large Size\"/>" +
-		"                <m:ObjectNumber number=\"219\" numberUnit=\"K\"></m:ObjectNumber>" +
+		"                <m:ObjectNumber number=\"219\" unit=\"K\"></m:ObjectNumber>" +
 		"            </layout:VerticalLayout>" +
 		"            <m:ObjectAttribute title=\"Label\" text=\"In Stock\"/>" +
 		"            <m:Button icon=\"sap-icon://nurse\"/>" +
@@ -191,7 +191,7 @@ sap.ui.define([
 		"                        <blocks>" +
 		"                            <f:SimpleForm labelSpanL=\"4\" labelSpanM=\"4\"" +
 		"                                          labelSpanS=\"4\" emptySpanL=\"0\" emptySpanM=\"0\" emptySpanS=\"0\"" +
-		"                                          maxContainerCols=\"2\" layout=\"ResponsiveLayout\">" +
+		"                                          maxContainerCols=\"2\" layout=\"ResponsiveGridLayout\">" +
 		"                                <core:Title text=\"Main Payment Method\"/>" +
 		"                                <m:Label text=\"Bank Transfer\"/>" +
 		"                                <layout:VerticalLayout>" +
@@ -201,7 +201,7 @@ sap.ui.define([
 		"                            </f:SimpleForm>" +
 		"                            <f:SimpleForm labelSpanL=\"4\" labelSpanM=\"4\"" +
 		"                                              labelSpanS=\"4\" emptySpanL=\"0\" emptySpanM=\"0\" emptySpanS=\"0\"" +
-		"                                              maxContainerCols=\"2\" layout=\"ResponsiveLayout\">" +
+		"                                              maxContainerCols=\"2\" layout=\"ResponsiveGridLayout\">" +
 		"                                <core:Title text=\"Payment method for Expenses\"/>" +
 		"                                <m:Label text=\"Extra Travel Expenses\"/>" +
 		"                                <m:Text text=\"Cash 100 USD\"/>" +

@@ -1885,7 +1885,7 @@ function(
 			var sTitle = oPage.getTitle();
 			if (sTitle) {
 				sTitle = sTitle.replace(/[_0-9]+$/, '');
-				sTooltip = this._rb.getText('SPLITCONTAINER_NAVBUTTON_TOOLTIP', sTitle);
+				sTooltip = this._rb.getText('SPLITCONTAINER_NAVBUTTON_TOOLTIP', [sTitle]);
 			}
 		}
 
