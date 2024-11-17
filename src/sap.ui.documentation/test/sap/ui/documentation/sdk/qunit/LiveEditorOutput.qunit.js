@@ -8,7 +8,6 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 		sXmlSrc = '<mvc:View\n' +
 			'        controllerName="HelloWorld.App"\n' +
 			'        xmlns:mvc="sap.ui.core.mvc"\n' +
-			'        data-sap-ui-theme="sap_fiori_3"\n' +
 			'        xmlns="sap.m">\n' +
 			'    <Page id="myPage" title="My App"/>\n' +
 			'    <Button\n' +

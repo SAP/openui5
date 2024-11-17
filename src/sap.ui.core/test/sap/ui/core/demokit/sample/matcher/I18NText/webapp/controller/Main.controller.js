@@ -1,8 +1,9 @@
 sap.ui.define([
+	'sap/m/MessageToast',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/resource/ResourceModel'
-], function (Controller, JSONModel, ResourceModel) {
+], function (MessageToast, Controller, JSONModel, ResourceModel) {
 	"use strict";
 
 	return Controller.extend("appUnderTest.controller.Main", {
@@ -28,6 +29,10 @@ sap.ui.define([
 				oBundle = oView.getModel("i18n").getResourceBundle(),
 				sTitle = oBundle.getText("listTitle", [ iCount ]);
 			oView.byId("listTitle").setText(sTitle);
+		},
+
+		onAccept : function() {
+			MessageToast.show("Accept button pressed");
 		}
 	});
 });
