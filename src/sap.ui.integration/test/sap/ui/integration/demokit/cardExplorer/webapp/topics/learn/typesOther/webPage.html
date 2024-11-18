@@ -20,6 +20,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -28,6 +29,7 @@
 					<tr>
 						<td>src</td>
 						<td>string</td>
+						<td></td>
 						<td>Yes</td>
 						<td>The URL of the web page to be embedded.</td>
 						<td>1.33.0</td>
@@ -36,12 +38,15 @@
 					<tr>
 						<td>sandbox</td>
 						<td>string</td>
+						<td>(no value, applies all restrictions)</td>
 						<td>No</td>
 						<td>
 							Determines what restrictions are applied to the content of the embedded page.
 							By default full restrictions are applied. This is the preferred value if the page origin is not trusted.
 							Set this to space-separated tokens to lift particular restrictions.
 							For more detailed documentation and possible tokens read the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#attributes" target="_blank">iframe sandbox attribute documentation</a>.
+							<br>
+							<b>Note:</b> This property is experimental.
 						</td>
 						<td>1.33.0</td>
 						<td>1.90</td>
@@ -49,6 +54,7 @@
 					<tr>
 						<td>omitSandbox</td>
 						<td>boolean</td>
+						<td>false</td>
 						<td>No</td>
 						<td>
 							If set to "true" the "sandbox" attribute will not be added to the iframe. This will remove the default restrictions from the embedded page, which opens a security vulnerability! Do this only if the content of the embedded page is fully trusted.
@@ -63,37 +69,47 @@
 					<tr>
 						<td>minHeight</td>
 						<td><a data-demokit-href="#/api/sap.ui.core.CSSSize" target="_blank">sap.ui.core.CSSSize</a></td>
+						<td>150px</td>
 						<td>No</td>
-						<td>Defines the minimum height of the content. Default value is "150px".</td>
+						<td>Defines the minimum height of the content.</td>
 						<td>1.33.0</td>
 						<td>1.90</td>
 					</tr>
 					<tr>
 						<td>allow</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>
 							Determines what permissions-policy features are available to the content of the embedded page.
 							No features are added by default. This is the recommended behavior when the page origin is not trusted.
 							For more detailed documentation read about <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#allow">iframe property 'allow'</a> and for list of options see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy">Permissions Policy</a>.
-							Note: The option "fullscreen" is not supported on all browsers, consider using the option "allowfullscreen" instead.
+							<br>
+							<b>Note:</b> The option "fullscreen" is not supported on all browsers, consider using the option "allowFullscreen" instead. For specific browser compatibility information, refer to <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy/fullscreen">allow property Permissions Policy</a>.
+							<br>
+							<b>Note:</b> This property is experimental.
 						</td>
 						<td>1.65.0</td>
 						<td>1.126</td>
 					</tr>
 					<tr>
-						<td>allowfullscreen</td>
+						<td>allowFullscreen</td>
 						<td>boolean</td>
+						<td>false</td>
 						<td>No</td>
 						<td>
 							Determines if the web page can activate fullscreen mode by calling requestFullscreen() method.
-							For more information, read the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#allowfullscreen" target="_blank">iframe allowfullscreen attribute documentation</a>.
+							For more information, read the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#allowfullscreen" target="_blank">iframe allowFullscreen attribute documentation</a>.
+							<br>
+							<b>Note:</b> This property is experimental.
 						</td>
 						<td>1.65.0</td>
 						<td>1.126</td>
 					</tr>
 				</table>
 			</div>
+
+			<p><b>Disclaimer:</b> If you change the default values of any of the <em>allow</em>, <em>allowFullscreen</em>, <em>sandbox</em>, or <em>omitSandbox</em> properties, you're responsible for ensuring the secure behavior of the web page.</p>
 
 			<h2 id="example">Example</h2>
 			<p>Define the <code>manifest.json</code> of the card:</p>

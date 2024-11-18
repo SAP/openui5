@@ -2533,8 +2533,8 @@
           "description": "Allow attribute of the iframe",
           "type": "string"
         },
-        "allowfullscreen": {
-          "description": "Allowfullscreen attribute of the iframe",
+        "allowFullscreen": {
+          "description": "AllowFullscreen attribute of the iframe",
           "oneOf": [
             {
               "type": "boolean",
