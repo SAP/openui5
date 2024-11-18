@@ -12,11 +12,11 @@ sap.ui.define([
 	"use strict";
 
 	var mApps = {},
-		mTests = {
-			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
+		mTests = { // the tests run in IFrames where no coverage is checked
+			'qunit/internal/1Ring.qunit.html?hidepassed&realOData=true' : 'full',
 			// realOData=true is appended so that the module is run in variant "POC verification"
-			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.integration&realOData=true' : 'integration',
-			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.realOData&realOData=true' : 'integration'
+			'qunit/internal/1Ring.qunit.html?hidepassed&module=sap.ui.model.odata.v4.ODataModel.integration&realOData=true' : 'integration',
+			'qunit/internal/1Ring.qunit.html?hidepassed&module=sap.ui.model.odata.v4.ODataModel.realOData&realOData=true' : 'integration'
 		};
 
 	function addAppsAndTests(oSuite, sName) {
