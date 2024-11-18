@@ -44,6 +44,38 @@
 				"title": "{title}"
 			},
 			"maxItems": 4
-		}				
+		},
+		"footer": {
+		  "actionsStrip": [
+			{
+			  "type": "ToolbarSpacer"
+			},
+			{
+			  "type": "Link",
+			  "text": "Agenda",
+			  "icon": "sap-icon://action",
+			  "actions": [
+				{
+				  "type": "Navigation",
+				  "parameters": {
+					"url": "{agendaUrl}"
+				  }
+				}
+			  ]
+			},
+			{
+			  "text": "Approve",
+			  "overflowPriority": "High",
+			  "actions": [
+				{
+				  "type": "Custom",
+				  "parameters": {
+					"method": "approve"
+				  }
+				}
+			  ]
+			}
+		  ]
+		}
 	}
 }

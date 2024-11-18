@@ -105,6 +105,8 @@ sap.ui.define([
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
 
+	var SemanticRole = fLibrary.cards.SemanticRole;
+
 	var ActionArea = library.CardActionArea;
 
 	var CardArea = library.CardArea;
@@ -2700,6 +2702,10 @@ sap.ui.define([
 	 * @protected
 	 */
 	Card.prototype.getFocusDomRef = function () {
+		if (this.isInteractive() && this.getSemanticRole() === SemanticRole.ListItem) {
+			return this.getDomRef();
+		}
+
 		var oHeader = this.getCardHeader();
 
 		if (oHeader && oHeader.getFocusDomRef()) {

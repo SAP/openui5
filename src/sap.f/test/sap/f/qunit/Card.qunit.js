@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/f/cards/NumericSideIndicator",
 	"sap/m/BadgeCustomData",
 	"sap/m/library",
+	"sap/f/library",
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/ui/thirdparty/jquery",
@@ -26,6 +27,7 @@ function (
 	CardNumericSideIndicator,
 	BadgeCustomData,
 	mLibrary,
+	fLibrary,
 	Button,
 	Text,
 	jQuery,
@@ -44,6 +46,7 @@ function (
 	const AvatarColor = mLibrary.AvatarColor;
 	const ValueColor = mLibrary.ValueColor;
 	const WrappingType = mLibrary.WrappingType;
+	const SemanticRole = fLibrary.cards.SemanticRole;
 
 	const sLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. Cras quis arcu magna.";
 
@@ -646,6 +649,42 @@ function (
 		} catch (e) {
 			assert.ok(false, "Couldn't render card with custom header. " + e.message);
 		}
+
+		oCard.destroy();
+	});
+
+	QUnit.module("Semantic Role = ListItem");
+
+	QUnit.test("Rendering and press events", async function (assert) {
+		// Arrange
+		var fnCardPressHandler = this.stub();
+		var fnHeaderPressHandler = this.stub();
+
+		var oHeader = new CardHeader({
+			title: "sap.f.Card with Card and Header Action",
+			press: fnHeaderPressHandler
+		});
+
+		var oCard = new Card({
+			semanticRole: SemanticRole.ListItem,
+			header: oHeader,
+			content: [
+				new Text({ text: "Card Content" })
+			],
+			press: fnCardPressHandler
+		});
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(oCard.getDomRef().getAttribute("role"), "listitem", "Card has correct role attribute");
+
+		QUnitUtils.triggerMouseEvent(oHeader.getDomRef(), "tap");
+		assert.ok(fnHeaderPressHandler.callCount === 1, "Card header is clicked and header press event is fired");
+		assert.ok(fnCardPressHandler.callCount === 0, "Card header is clicked and card press event is not fired");
+
+		QUnitUtils.triggerMouseEvent(oCard.getContent().getDomRef(), "tap");
+		assert.ok(fnCardPressHandler.callCount === 1, "Card content is clicked and card press event is fired");
 
 		oCard.destroy();
 	});

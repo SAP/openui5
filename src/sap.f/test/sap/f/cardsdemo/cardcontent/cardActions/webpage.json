@@ -14,38 +14,35 @@
 		}
 	},
 	"sap.card": {
-	  "type": "List",
-	  "data": {
-		"json": {
-		  "items": [
-			{
-			  "title": "Item 1"
-			},
-			{
-			  "title": "Item 2"
-			},
-			{
-			  "title": "Item 3"
-			},
-			{
-			  "title": "Item 4"
-			}
-		  ]
+	  "actions": [{
+		"type": "Navigation",
+		"parameters": {
+		  "url": "https://sap.com",
+		  "target": "_blank"
+		}
+	  }],
+	  "type": "WebPage",
+	  "configuration": {
+		"parameters": {
+		  "minHeight": {
+			"label": "Minimum Content Height",
+			"description": "Minimum height of the content",
+			"type": "string",
+			"value": "25rem"
+		  }
 		}
 	  },
 	  "header": {
-		"title": "No actions on card",
-		"subTitle": "sematicRole - listitem",
-		"titleMaxLines": 1
+		"title": "OpenUI5 Events",
+		"icon": {
+		  "src": "sap-icon://desktop-mobile"
+		}
 	  },
 	  "content": {
-		"data": {
-		  "path": "/items"
-		},
-		"item": {
-		  "title": "{title}"
-		},
-		"maxItems": 4
+		"src": "https://openui5.org/events",
+		"sandbox": "allow-scripts allow-popups allow-downloads",
+		"minHeight": "{parameters>/minHeight/value}",
+		"allowfullscreen": true
 	  },
 	  "footer": {
 		"actionsStrip": [

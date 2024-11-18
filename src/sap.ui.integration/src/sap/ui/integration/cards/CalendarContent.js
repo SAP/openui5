@@ -936,6 +936,10 @@ sap.ui.define([
 			});
 		};
 
+		CalendarContent.prototype.ontap = function (oEvent) {
+			oEvent.stopPropagation();
+		};
+
 		function _getLocaleData() {
 
 			if (!this._oLocaleData) {

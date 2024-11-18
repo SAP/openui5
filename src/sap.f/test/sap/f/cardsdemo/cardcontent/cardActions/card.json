@@ -33,14 +33,7 @@
 			}
 		},
 		"header": {
-			"actions": [{
-				"type": "Navigation",
-				"parameters": {
-					"url": "https://sap.com",
-					"target": "_blank"
-				}
-			}],
-			"title": "Action on card level and header level",
+			"title": "Action on card level",
 			"subTitle": "sematicRole - listitem"
 		},
 		"content": {
@@ -51,6 +44,38 @@
 				"title": "{title}"
 			},
 			"maxItems": 4
-		}				
+		},
+		"footer": {
+		  "actionsStrip": [
+			{
+			  "type": "ToolbarSpacer"
+			},
+			{
+			  "type": "Link",
+			  "text": "Agenda",
+			  "icon": "sap-icon://action",
+			  "actions": [
+				{
+				  "type": "Navigation",
+				  "parameters": {
+					"url": "{agendaUrl}"
+				  }
+				}
+			  ]
+			},
+			{
+			  "text": "Approve",
+			  "overflowPriority": "High",
+			  "actions": [
+				{
+				  "type": "Custom",
+				  "parameters": {
+					"method": "approve"
+				  }
+				}
+			  ]
+			}
+		  ]
+		}
 	}
 }
