@@ -145,5 +145,25 @@
         "text": " Demo Kit: Icon explorer scroll fixed"
       }
     ]
+  },
+  "1.130.1": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "83de81ea0fe877aeec1df24a20506b9c7fcf462f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon only link is now clickable"
+      },
+      {
+        "id": "d3fff94d7ad951bddc6c0c2543a65ce252e89f73",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust grid cell description"
+      },
+      {
+        "id": "b238ceab22184b3433aed5064d9f88de06ae414b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"
+      }
+    ]
   }
 }

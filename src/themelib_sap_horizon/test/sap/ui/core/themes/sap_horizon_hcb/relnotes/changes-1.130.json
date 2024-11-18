@@ -18,5 +18,20 @@
         "text": " Integration Cards: New pagination experience"
       }
     ]
+  },
+  "1.130.1": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "79d87f8d5cf10ce4e39bcc51842bf0f18dfc524d",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed Breadcrumbs item focus clip"
+      },
+      {
+        "id": "05b92d034fe524b2dbf621c0f8d503f8ece8ea6d",
+        "type": "FIX",
+        "text": " m.Table: bottom border in horizon_dark"
+      }
+    ]
   }
 }

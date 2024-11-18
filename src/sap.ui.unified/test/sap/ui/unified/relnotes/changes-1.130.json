@@ -18,5 +18,15 @@
         "text": " sap.ui.unified.CalendarLegend: Filtering of elements by the color property"
       }
     ]
+  },
+  "1.130.1": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "b238ceab22184b3433aed5064d9f88de06ae414b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"
+      }
+    ]
   }
 }
