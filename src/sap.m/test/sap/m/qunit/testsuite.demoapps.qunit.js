@@ -39,13 +39,9 @@ sap.ui.define(function () {
 				group: "IconExplorer",
 				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/iconexplorer/testsuite.qunit&test=unit/unitTests"
 			},
-			"sap/m/demokit/orderbrowser/webapp/test/integration/opaTests": {
+			"sap/m/demokit/orderbrowser/webapp/test/testsuite.qunit.html": {
 				group: "OrderBrowser",
-				page: "test-resources/sap/m/demokit/orderbrowser/webapp/test/integration/opaTests.qunit.html"
-			},
-			"sap/m/demokit/orderbrowser/webapp/test/unit/unitTests": {
-				group: "OrderBrowser",
-				page: "test-resources/sap/m/demokit/orderbrowser/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/m/demokit/orderbrowser/webapp/test/testsuite.qunit.html"
 			},
 
 			// sap.m Templates

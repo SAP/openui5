@@ -73,8 +73,7 @@
 				"desc": "Master-detail app for browsing orders.",
 				"ref": "test-resources/sap/m/demokit/orderbrowser/webapp/test/mockServer.html",
 				"links": {
-					"Run Unit Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/unit/unitTests.qunit.html",
-					"Run Integration Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/integration/opaTests.qunit.html"
+					"Run Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/testsuite.qunit.html"
 				},
 				"category": "Showcase",
 				"config": "test-resources/sap/m/demokit/orderbrowser/demoapp.json"
