@@ -302,5 +302,15 @@
         ]
       }
     ]
+  },
+  "1.96.36": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "4d1f25994aca4f037712d4bca4adf5453f53832b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
+      }
+    ]
   }
 }

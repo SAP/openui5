@@ -94,5 +94,15 @@
         ]
       }
     ]
+  },
+  "1.96.36": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "026ad42c044c66c3d30b0035a4d4405f8241b791",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add tooltip to the up and down arrow buttons"
+      }
+    ]
   }
 }

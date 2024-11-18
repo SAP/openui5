@@ -2014,5 +2014,31 @@
         "text": " sap.m.Link: prevent default before press on mobile"
       }
     ]
+  },
+  "1.96.36": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "a150ac0e0252c9bae39d39854da42f2dcb28855f",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon ignored from screen readers"
+      },
+      {
+        "id": "bf23ceda24888a2b7142d2e6ac0d2bc3f785a4f4",
+        "type": "FIX",
+        "text": " sap.m.Popover: Prevent closing of Popover after lazy loading content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033712"
+          }
+        ]
+      },
+      {
+        "id": "667c17c12b819dc6dfe8a1b09ba9f84949d20322",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      }
+    ]
   }
 }
