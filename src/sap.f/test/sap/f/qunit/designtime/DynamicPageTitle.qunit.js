@@ -55,10 +55,7 @@ function (
 			create: function () {
 				return new DynamicPageTitle({
 					snappedHeading : new Title({text: "This is title"}),
-					expandedHeading : [
-						new Title({text: "This is title"}),
-						new Title({text: "This is title 0.1"})
-					],
+					expandedHeading : new Title({text: "This is an expanded title"}),
 					content : [
 						new Text({text: "Title content 1"}),
 						new Text({text: "Title content 2"}),
