@@ -52,8 +52,7 @@
 					id="F-Object-Display"
 					text="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"
 					state="Information"
-					inverted="true"
-					width="100%"/>
+					inverted="true"/>
 			</mdc:contentDisplay>
 		</mdc:Field>
 

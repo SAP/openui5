@@ -23,7 +23,7 @@
 										press="onLoadProducts" />
 									<Button
 										text="OK"
-										press="onShowMessageBox" />
+										press="onAccept" />
 								</content>
 							</Toolbar>
 						</headerToolbar>

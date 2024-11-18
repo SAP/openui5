@@ -9,12 +9,10 @@ function (
 ) {
 	"use strict";
 
-	var mockView = `<core:View
+	var mockView = `<mvc:View
 			height="100%"
 			xmlns:mvc="sap.ui.core.mvc"
-			xmlns:core="sap.ui.core"
 			xmlns="sap.m"
-			xmlns:layout="sap.ui.layout"
 			xmlns:uxap="sap.uxap">
 
 			<uxap:ObjectPageLayout id="mockObjectPage">
@@ -24,7 +22,7 @@ function (
 					</uxap:ObjectPageSubSection>
 				</uxap:ObjectPageSection>
 			</uxap:ObjectPageLayout>
-		</core:View>`;
+		</mvc:View>`;
 
 
 	QUnit.module("ScrollToEntity", {

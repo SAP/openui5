@@ -12,7 +12,7 @@
 			alignItems="Center">
 			<IllustratedMessage
 				id="notFoundIllustration"
-				type="sapIllus-PageNotFound"
+				illustrationType="sapIllus-PageNotFound"
 				description="{i18n>noObjectFoundText}">
 				<additionalContent>
 					<Button id="link" text="{i18n>backToWorklist}" press=".onLinkPressed" />

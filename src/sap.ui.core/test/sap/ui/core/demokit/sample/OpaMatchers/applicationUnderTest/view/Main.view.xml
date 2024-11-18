@@ -8,8 +8,7 @@
 		</headerContent>
 		<content>
 			<l:HorizontalLayout
-				class="sapUiContentPadding"
-				width="100%">
+				class="sapUiContentPadding">
 				<l:content>
 					<Button
 						text="Button in a Page"

@@ -12,8 +12,7 @@
 			<Button text="Clear Selection" />
 			<DatePicker
 				id="DatePickerOne"
-				placeholder="Enter Date"
-				change="handleChange" />
+				placeholder="Enter Date"/>
 		</Page>
 	</App>
 </mvc:View>
