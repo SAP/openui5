@@ -33,11 +33,11 @@ sap.ui.define(function () {
 			},
 			// "sap/m/demokit/iconExplorer/webapp/test/integration/opaTests": {
 			// 	group: "IconExplorer",
-			// 	page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html"
+			// 	page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/iconexplorer/testsuite.qunit&test=integration/opaTests1"
 			// },
 			"sap/m/demokit/iconExplorer/webapp/test/unit/unitTests": {
 				group: "IconExplorer",
-				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/iconexplorer/testsuite.qunit&test=unit/unitTests"
 			},
 			"sap/m/demokit/orderbrowser/webapp/test/integration/opaTests": {
 				group: "OrderBrowser",
