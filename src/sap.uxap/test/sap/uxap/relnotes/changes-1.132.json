@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "153b96be844e67b76514086283f77f3fba412f1e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Incorrect scrolling prevented"
+      }
+    ]
+  }
+}

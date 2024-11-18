@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "5c45f8281a5f11bf4d6470d497930f857824b0a6",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Console error prevented"
+      }
+    ]
+  }
+}

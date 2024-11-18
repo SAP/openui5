@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "f3234545266216ba236f1e0b7f1c395a5f6ed8a9",
+        "type": "FIX",
+        "text": " core/Control: restore focus before busy control is rerendered"
+      }
+    ]
+  }
+}
