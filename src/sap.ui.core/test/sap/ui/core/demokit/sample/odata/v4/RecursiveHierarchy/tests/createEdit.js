@@ -40,7 +40,7 @@ sap.ui.define([
 		}
 
 		function toggleExpandInRow(iRow, sComment) {
-			When.onTheMainPage.toggleExpandInRow(iRow, sComment);
+			When.onTheMainPage.toggleExpand(iRow, sComment);
 		}
 
 		TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.expandTo", "1");
