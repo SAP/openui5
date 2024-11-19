@@ -136,7 +136,8 @@ sap.ui.define([
 						oView.byId("allList").getItems(),
 						oView.byId("apiList").getItems(),
 						oView.byId("documentationList").getItems(),
-						oView.byId("samplesList").getItems()
+						oView.byId("samplesList").getItems(),
+						oView.byId("externalList").getItems()
 					),
 					iLen = aItems.length,
 					oItem,
@@ -218,6 +219,11 @@ sap.ui.define([
 
 			onExploredLoadMore : function (oEvent) {
 				this.getModel("searchView").setProperty("/visibleExploredLength", oEvent.getParameter("actual"));
+				this._modifyLinks(true);
+			},
+
+			onExternalLoadMore : function (oEvent) {
+				this.getModel("searchView").setProperty("/visibleExternalLength", oEvent.getParameter("actual"));
 				this._modifyLinks(true);
 			},
 
