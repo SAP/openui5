@@ -1020,27 +1020,22 @@ less.Parser = function Parser(env) {
                     }
                 },
 
+                // ##### BEGIN: MODIFIED BY SAP
+                // Removed support for javascript
+
                 //
                 // JavaScript code to be evaluated
                 //
                 //     `window.location.href`
                 //
                 javascript: function () {
-                    var str, j = i, e;
+                    var j = i, e;
 
                     if (input.charAt(j) === '~') { j++; e = true; } // Escaped strings
                     if (input.charAt(j) !== '`') { return; }
-                    if (env.javascriptEnabled !== undefined && !env.javascriptEnabled) {
-                        error("You are using JavaScript, which has been disabled.");
-                    }
-
-                    if (e) { $char('~'); }
-
-                    str = $re(/^`([^`]*)`/);
-                    if (str) {
-                        return new(tree.JavaScript)(str[1], i, e);
-                    }
+                    error("You are using JavaScript, which has been disabled.");
                 }
+                // ##### END: MODIFIED BY SAP
             },
 
             //
@@ -2222,7 +2217,10 @@ tree.functions = {
         }
     },
     e: function (str) {
-        return new(tree.Anonymous)(str instanceof tree.JavaScript ? str.evaluated : str);
+        // ##### BEGIN: MODIFIED BY SAP
+        // Removed handling of tree.JavaScript
+        return new(tree.Anonymous)(str);
+        // ##### END: MODIFIED BY SAP
     },
     escape: function (str) {
         return new(tree.Anonymous)(encodeURI(str.value).replace(/=/g, "%3D").replace(/:/g, "%3A").replace(/#/g, "%23").replace(/;/g, "%3B").replace(/\(/g, "%28").replace(/\)/g, "%29"));
@@ -4137,64 +4135,9 @@ tree.Import.prototype = {
 
 })(require('../tree'));
 
-(function (tree) {
-
-tree.JavaScript = function (string, index, escaped) {
-    this.escaped = escaped;
-    this.expression = string;
-    this.index = index;
-};
-tree.JavaScript.prototype = {
-    type: "JavaScript",
-    eval: function (env) {
-        var result,
-            that = this,
-            context = {};
-
-        var expression = this.expression.replace(/@\{([\w-]+)\}/g, function (_, name) {
-            return tree.jsify(new(tree.Variable)('@' + name, that.index).eval(env));
-        });
-
-        try {
-            expression = new(Function)('return (' + expression + ')');
-        } catch (e) {
-            throw { message: "JavaScript evaluation error: " + e.message + " from `" + expression + "`" ,
-                    index: this.index };
-        }
-
-        var variables = env.frames[0].variables();
-        for (var k in variables) {
-            if (variables.hasOwnProperty(k)) {
-                /*jshint loopfunc:true */
-                context[k.slice(1)] = {
-                    value: variables[k].value,
-                    toJS: function () {
-                        return this.value.eval(env).toCSS();
-                    }
-                };
-            }
-        }
-
-        try {
-            result = expression.call(context);
-        } catch (e) {
-            throw { message: "JavaScript evaluation error: '" + e.name + ': ' + e.message.replace(/["]/g, "'") + "'" ,
-                    index: this.index };
-        }
-        if (typeof(result) === 'number') {
-            return new(tree.Dimension)(result);
-        } else if (typeof(result) === 'string') {
-            return new(tree.Quoted)('"' + result + '"', result, this.escaped, this.index);
-        } else if (Array.isArray(result)) {
-            return new(tree.Anonymous)(result.join(', '));
-        } else {
-            return new(tree.Anonymous)(result);
-        }
-    }
-};
-
-})(require('../tree'));
-
+// ##### BEGIN: MODIFIED BY SAP
+// Removed definition of tree.JavaScript
+// ##### END: MODIFIED BY SAP
 
 (function (tree) {
 
@@ -4818,7 +4761,13 @@ tree.Quoted.prototype = {
     eval: function (env) {
         var that = this;
         var value = this.value.replace(/`([^`]+)`/g, function (_, exp) {
-            return new(tree.JavaScript)(exp, that.index, true).eval(env).value;
+            // ##### BEGIN: MODIFIED BY SAP
+            // Removed support for javascript
+            const error = new Error("You are using JavaScript, which has been disabled.");
+            error.index = that.index;
+            error.type = "Syntax";
+            throw error;
+            // ##### END: MODIFIED BY SAP
         }).replace(/@\{([\w-]+)\}/g, function (_, name) {
             var v = new(tree.Variable)('@' + name, that.index, that.currentFileInfo).eval(env, true);
             return (v instanceof tree.Quoted) ? v.value : v.toCSS();
@@ -5746,7 +5695,9 @@ tree.Variable.prototype = {
         'compress',         // option - whether to compress
         'processImports',   // option - whether to process imports. if false then imports will not be imported
         'syncImport',       // option - whether to import synchronously
-        'javascriptEnabled',// option - whether JavaScript is enabled. if undefined, defaults to true
+        // ##### BEGIN: MODIFIED BY SAP
+        // Removed 'javascriptEnabled'
+        // ##### END: MODIFIED BY SAP
         'mime',             // browser only - mime type for sheet import
         'useFileCache',     // browser only - whether to use the per file session cache
         'currentFileInfo'   // information about the current file - for error reporting and importing and making urls relative etc.
