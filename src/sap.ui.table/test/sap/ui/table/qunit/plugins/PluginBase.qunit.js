@@ -149,9 +149,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Row count constraints", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oPlugin = new TestPlugin();
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				dependents: [this.oPlugin],
 				rowMode: new FixedRowMode()
 			});
@@ -191,10 +191,10 @@ sap.ui.define([
 	/*The following tests should become obsolte when sap.ui.table.plugins.PluginBase inherits in future from sap.m.plugins.PluginBase.*/
 
 	QUnit.module("Static getPlugin", {
-		beforeEach: async function(assert) {
+		beforeEach: function() {
 			this.oPlugin = new TestPlugin();
 			this.oSelectionPlugin = new TestSelectionPlugin();
-			this.oTable = await TableQUnitUtils.createTable();
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oPlugin.destroy();

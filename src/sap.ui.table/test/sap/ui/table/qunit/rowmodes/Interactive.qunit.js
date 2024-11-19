@@ -49,8 +49,8 @@ sap.ui.define([
 			this.mDefaultSettings = TableQUnitUtils.getDefaultSettings();
 			TableQUnitUtils.setDefaultSettings();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCountMode: "Interactive",
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
@@ -72,8 +72,8 @@ sap.ui.define([
 			"The table creates an instance of sap.ui.table.rowmodes.Interactive");
 	});
 
-	QUnit.test("Property getters", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+	QUnit.test("Property getters", function(assert) {
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCountMode: "Interactive",
 			visibleRowCount: 7,
 			fixedRowCount: 1,
@@ -127,7 +127,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCountMode: "Interactive",
 			visibleRowCount: 7
 		});
@@ -219,9 +219,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Get contexts", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			});
 		},
@@ -295,7 +295,7 @@ sap.ui.define([
 	QUnit.module("Resizer", {
 		beforeEach: async function() {
 			const oTitle = new Title({text: "Title", titleStyle: "H3"});
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				extension: oTitle,
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				placeAt: "qunit-fixture",

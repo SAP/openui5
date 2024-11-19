@@ -286,7 +286,7 @@ sap.ui.define([
 
 	QUnit.module("Helper functions", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
 				columns: [
@@ -764,9 +764,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection plugin integration", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oSelectionPlugin = new TableQUnitUtils.TestSelectionPlugin();
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 5
 				}),
@@ -1298,10 +1298,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Arrow Keys", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			renderFocusDummy("FocusDummyBeforeTable");
 
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -1640,8 +1640,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Ctrl+Arrow Keys", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -1697,8 +1697,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Shift+Arrow Keys", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -2089,8 +2089,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Alt+Arrow Keys", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -2131,8 +2131,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Home & End", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -2602,8 +2602,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Ctrl+Home & Ctrl+End ", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -3216,8 +3216,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Shift+Home & Shift+End", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -3253,8 +3253,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Alt+Home & Alt+End", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -3290,8 +3290,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Page Up & Page Down", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -3679,8 +3679,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Ctrl+Page Up & Ctrl+Page Down", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -3716,8 +3716,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Shift+Page Up & Shift+Page Down", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -3753,8 +3753,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > Alt+Page Up & Alt+Page Down", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -4619,8 +4619,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > After changing the DOM structure", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -4766,8 +4766,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction > Shift+Up & Shift+Down (Range Selection)", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -5532,7 +5532,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction > Space & Enter", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: [
@@ -5959,7 +5959,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction > Ctrl+A", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: [
@@ -6033,7 +6033,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction > Ctrl+Shift+A", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: [
@@ -6103,7 +6103,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse)", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [TableQUnitUtils.createTextColumn()],
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(5),
@@ -6175,7 +6175,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction > F4 (Expand/Collapse)", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [TableQUnitUtils.createTextColumn()],
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(5),
@@ -6237,7 +6237,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction > Plus & Minus (Expand/Collapse)", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [TableQUnitUtils.createTextColumn()],
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(5),
@@ -6311,7 +6311,7 @@ sap.ui.define([
 
 	QUnit.module("Interaction > ContextMenu", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [
 					TableQUnitUtils.createTextColumn(),
 					TableQUnitUtils.createInteractiveTextColumn(),
@@ -6430,7 +6430,7 @@ sap.ui.define([
 
 	QUnit.module("Action Mode > Enter and Leave", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModel(8),
 				rowMode: new FixedRowMode({
@@ -6960,8 +6960,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Action Mode > Navigation when some inputs are disabled", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -7152,7 +7152,7 @@ sap.ui.define([
 
 	QUnit.module("Action Mode > Navigation", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModel(8),
 				rowMode: new FixedRowMode({

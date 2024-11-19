@@ -28,7 +28,7 @@ sap.ui.define([
 
 	QUnit.module("Selection API", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(TreeTable, {
+			this.oTable = TableQUnitUtils.createTable(TreeTable, {
 				rows: {
 					path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					parameters: {
@@ -40,17 +40,7 @@ sap.ui.define([
 				models: TableQUnitUtils.createODataModel("/metadata")
 			});
 
-			// The binding is expanding to level 4 in 4 steps. We need to wait for completion before test execution.
-			function waitForLevel4(oTable) {
-				if (oTable.getRows()[3].getLevel() < 4) {
-					return oTable.qunit.whenNextRowsUpdated().then(function() {
-						return waitForLevel4(oTable);
-					});
-				} else {
-					return oTable.qunit.whenRenderingFinished();
-				}
-			}
-			return waitForLevel4(this.oTable);
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();

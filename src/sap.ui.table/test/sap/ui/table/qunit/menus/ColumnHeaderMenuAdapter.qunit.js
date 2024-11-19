@@ -60,14 +60,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("API and Integration", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oMenu1 = new TestMenu();
 			this.oMenu2 = new TestMenu();
 			this.oColumn1 = new Column({template: new Icon()});
 			this.oColumn2 = new Column();
 			this.oColumn1.setHeaderMenu(this.oMenu1.getId());
 			this.oColumn2.setHeaderMenu(this.oMenu2.getId());
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2]
 			});
 		},
@@ -78,25 +78,22 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("activateFor - default adapter", function(assert) {
+	QUnit.test("activateFor - Without headerMenu association", async function(assert) {
 		this.oColumn1.setHeaderMenu();
 		/**
 		 * @deprecated As of Version 1.117
 		 */
-		this.oColumn1._cellPressed = this.oColumn1.getDomRef();
+		await (async () => {
+			await this.oTable.qunit.whenRenderingFinished();
+			this.oColumn1._cellPressed = this.oColumn1.getDomRef();
+		})();
 
-		return ColumnHeaderMenuAdapter.activateFor(this.oColumn1).then(function() {
-			const sDefaultAdapterName = null;
-
-			if (sDefaultAdapterName) {
-				assert.ok(sap.ui.require("sap/ui/table/menus/" + sDefaultAdapterName), "Default adapter loaded");
-			} else {
-				assert.ok(true, "No default adapter available, but the Promise resolved");
-			}
+		await ColumnHeaderMenuAdapter.activateFor(this.oColumn1).then(function() {
+			assert.ok(true, "The Promise resolved");
 		});
 	});
 
-	QUnit.test("activateFor - specific adapter", function(assert) {
+	QUnit.test("activateFor - With headerMenu association", function(assert) {
 		const done = assert.async();
 		const that = this;
 

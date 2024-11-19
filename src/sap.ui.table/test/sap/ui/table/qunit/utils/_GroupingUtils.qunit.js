@@ -37,7 +37,7 @@ sap.ui.define([
 
 	QUnit.module("Determine row type", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: TableQUnitUtils.createTextColumn(),
@@ -90,8 +90,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hierarchy modes", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -223,7 +223,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering", {
 		beforeEach: async function() {
-			this.oTreeTable = await TableQUnitUtils.createTable(TreeTable, {
+			this.oTreeTable = TableQUnitUtils.createTable(TreeTable, {
 				rowMode: new FixedRowMode({
 					rowCount: 12
 				}),

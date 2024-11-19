@@ -44,8 +44,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basics", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
@@ -244,28 +244,29 @@ sap.ui.define([
 
 	QUnit.test("#setSelected", async function(assert) {
 		const oMultiSelectionPlugin = new MultiSelectionPlugin();
-		const that = this;
+
+		await this.oTable.qunit.whenRenderingFinished();
 
 		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [], "Select a row when not assigned to a table");
 
-		that.oTable.addDependent(oMultiSelectionPlugin);
-		oMultiSelectionPlugin.setSelected(that.oTable.getRows()[0], true);
+		this.oTable.addDependent(oMultiSelectionPlugin);
+		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		await TableQUnitUtils.nextEvent("selectionChange", oMultiSelectionPlugin);
 
 		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [0], "Select a row");
-		oMultiSelectionPlugin.setSelected(that.oTable.getRows()[2], true, {range: true});
+		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[2], true, {range: true});
 		await TableQUnitUtils.nextEvent("selectionChange", oMultiSelectionPlugin);
 
 		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [0, 1, 2], "Select a range");
-		oMultiSelectionPlugin.setSelected(that.oTable.getRows()[1], false);
+		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[1], false);
 		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [0, 2], "Deselect a row");
 
 		oMultiSelectionPlugin.clearSelection();
-		that.oTable.getModel().setData();
+		this.oTable.getModel().setData();
 		await this.oTable.qunit.whenRenderingFinished();
 
-		oMultiSelectionPlugin.setSelected(that.oTable.getRows()[0], true);
+		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		await TableQUnitUtils.wait(100);
 
 		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [], "Select a row that is not selectable");
@@ -293,9 +294,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deselect All button", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oMockServer = startMockServer();
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				dependents: [
 					new MultiSelectionPlugin()
 				]
@@ -309,12 +310,13 @@ sap.ui.define([
 
 	QUnit.test("Enable/Disable", function(assert) {
 		const oTable = this.oTable;
-		const $SelectAll = oTable.$("selall");
+		let $SelectAll;
 		const oSelectionPlugin = oTable._getSelectionPlugin();
 		const oIcon = oSelectionPlugin.getAggregation("icon");
 		const oOnBindingChangeSpy = sinon.spy(oSelectionPlugin, "_onBindingChange");
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
+			$SelectAll = oTable.$("selall");
 			assert.ok($SelectAll.attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
 			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
 
@@ -357,11 +359,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Event parameters of internal default selection plugin", async function(assert) {
+	QUnit.test("Event parameters of internal default selection plugin", function(assert) {
 		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable({
+		this.oTable = TableQUnitUtils.createTable({
 			rows: {path: "/"},
 			dependents: [
 				oMultiSelectionPlugin
@@ -388,9 +390,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Multi selection behavior", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oMockServer = startMockServer();
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				dependents: [
 					new MultiSelectionPlugin()
 				],
