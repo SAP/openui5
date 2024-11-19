@@ -386,6 +386,56 @@ sap.ui.define([
 		closeAllMenusAndCheck(assert);
 	});
 
+	QUnit.test("Check navigation between endContent - ARROW_RIGHT and ARROW_LEFT", (assert) => {
+		const oButtonOne = new Button({icon:"sap-icon://open-folder"});
+		const oButtonTwo = new Button({icon:"sap-icon://open-folder"});
+		const oButtonThree = new Button({icon:"sap-icon://open-folder"});
+		const oMenuItemOne = new MenuItem({text: "test1"});
+		const oMenuItemTwo = new MenuItem({
+			text: "test2",
+			endContent: [
+				oButtonOne,
+				oButtonTwo,
+				oButtonThree
+			]
+		});
+		const oMenuItemThree = new MenuItem({text: "test3"});
+
+		const oMenu = new Menu({
+			items: [
+				oMenuItemOne,
+				oMenuItemTwo,
+				oMenuItemThree
+			]
+		});
+		const oEvent = { type: "sapnext", srcControl: oMenuItemTwo, keyCode: KeyCodes.ARROW_RIGHT , preventDefault: () => true, stopPropagation: () => true };
+		openMenu(oMenu, true, assert);
+		checkFocusedItem(oMenuItemOne.getId(), assert);
+		qutils.triggerKeydown(oMenu.getId(), "ARROW_DOWN");
+		checkFocusedItem(oMenuItemTwo.getId(), assert);
+		oMenuItemTwo.onsapnext(oEvent);
+		checkFocusedItem(oButtonOne.getId(), assert);
+		oMenuItemTwo.onsapnext(oEvent);
+		checkFocusedItem(oButtonTwo.getId(), assert);
+		oMenuItemTwo.onsapnext(oEvent);
+		checkFocusedItem(oButtonThree.getId(), assert);
+		oMenuItemTwo.onsapnext(oEvent);
+		checkFocusedItem(oButtonThree.getId(), assert);
+
+		oEvent.type = "sapprevious";
+		oEvent.keyCode = KeyCodes.ARROW_LEFT;
+
+		oMenuItemTwo.onsapprevious(oEvent);
+		checkFocusedItem(oButtonTwo.getId(), assert);
+		oMenuItemTwo.onsapprevious(oEvent);
+		checkFocusedItem(oButtonOne.getId(), assert);
+		oMenuItemTwo.onsapprevious(oEvent);
+		checkFocusedItem(oButtonOne.getId(), assert);
+
+		qutils.triggerKeydown(oMenu.getId(), "ARROW_DOWN");
+		checkFocusedItem(oMenuItemThree.getId(), assert);
+	});
+
 	/* LEFT key should have no effect on a menu with no parent menu */
 	QUnit.test("Check Hover State and LEFT", function(assert) {
 		openRootMenu(false, assert);

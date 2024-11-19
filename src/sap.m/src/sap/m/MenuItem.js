@@ -94,7 +94,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the content that is displayed at the end of a menu item. This aggregation allows for the addition of custom elements, such as icons and buttons.
-				 * @experimental
 	 			 * @since 1.131
 				 */
 				endContent: { type: "sap.ui.core.Control", multiple : true }
