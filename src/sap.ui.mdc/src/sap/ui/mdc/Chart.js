@@ -169,7 +169,7 @@ sap.ui.define([
 					},
 
 					/**
-					 * Enables the legend of the chart.
+					 * Enables the legend of the chart.<br>
 					 * <b>Note:</b> The setter calls <code>setLegendVisible</code> of the delegate class.
 					 *
 					 * @since 1.88
@@ -237,7 +237,7 @@ sap.ui.define([
 
 					/**
 					 * Controls the visibility of the chart tooltip.<br>
-					 * If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the <code>Chart</code> tooltip visible.
+					 * <b>Note:</b> If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the <code>Chart</code> tooltip visible.
 					 *
 					 * @since 1.88
 					 */
@@ -279,15 +279,13 @@ sap.ui.define([
 					 * Specifies the chart metadata.<br>
 					 * <b>Note:</b> This property must not be bound.<br>
 					 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.<br>
-					 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Chart#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/ChartDelegate.fetchProperties fetchProperties} callback
-					 * Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
-					 *
+					 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Chart#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/ChartDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
 					 * <b>Note</b>: For more information about the supported inner elements, see {@link sap.ui.mdc.chart.PropertyInfo PropertyInfo}.
 					 *
 					 * @since 1.99
 					 */
 					propertyInfo: {
-						type: "object", //TODO this should be an object[], but when I change this the TwFb does not start
+						type: "object",
 						defaultValue: []
 					},
 
@@ -330,6 +328,7 @@ sap.ui.define([
 					/**
 					 * This property describes the measures and dimensions visible in the chart.
 					 * Changes in the personalization are also reflected here.
+					 *
 					 * <b>Note:</b>
 					 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
 					 * Any changes of the initial aggregation content might result in undesired effects.
@@ -1535,7 +1534,7 @@ sap.ui.define([
 			this.setAggregation("noData", oControl);
 
 			try {
-				this.getControlDelegate().changedNoDataStruct(this);
+				this.getControlDelegate().changedNoDataStruct(this, oControl);
 			} catch (err) {
 				//This fails when the delegate instance is not yet available.
 				//It is not a problem as the delegate will use getNoData() on init of the chart, thus using the correct noData struct.

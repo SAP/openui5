@@ -11,7 +11,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The <code>Item</code> control for the chart/property metadata used within MDC Chart. An instance can be created to override the default/metadata behavior.
+	 * @class The <code>Item</code> control for the chart/property metadata used within MDC Chart.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @public
@@ -25,14 +25,14 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties: {
 				/**
-				 * The unique identifier of the chart item that reflects the name of the data property in the resulting data set.
+				 * The unique identifier of the chart item that reflects the name of the property in the PropertyInfo.
 				 * @deprecated Since 1.115. Please use <code>propertyKey</code> instead.
 				 */
 				name: {
 					type: "string"
 				},
 				/**
-				 * The unique identifier of the chart item that reflects the name of the data property in the resulting data set.
+				 * The unique identifier of the chart item that reflects the name of property in the PropertyInfo.
 				 *
 				 * @since 1.115
 				 */
@@ -50,8 +50,7 @@ sap.ui.define([
 				 * This is specific for the used chart library.
 				 */
 				type: {
-					type: "string",
-					defaultValue: ""
+					type: "string"
 				},
 				/**
 				 * Specifies the role of the item for the chart (category, axis1...).
