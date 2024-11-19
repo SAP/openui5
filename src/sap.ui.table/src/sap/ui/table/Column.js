@@ -123,6 +123,9 @@ sap.ui.define([
 			 * automatically set to <code>Ascending</code>.
 			 * If this property is <code>true</code> and <code>sortOrder</code> is <code>None</code>, the sort indicator is not shown.
 			 *
+			 * <b>Note:</b> Even though the <code>sorted</code> property has been deprecated, is still required in the UI5 1.x versions to show the sort indicator.
+			 * With UI5 2.x, the <code>sorted</code> property will be removed and the sort indicator will be shown based on the <code>sortOrder</code>.
+			 *
 			 * @deprecated As of version 1.120, replaced by {@link sap.ui.core.SortOrder SortOrder.None} for the <code>sortOrder</code> property
 			 */
 			sorted: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
