@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/util/restricted/_difference",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/each",
@@ -19,15 +20,16 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
-	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -35,6 +37,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
+	_difference,
 	_isEqual,
 	_omit,
 	each,
@@ -51,15 +54,16 @@ sap.ui.define([
 	URLHandler,
 	VariantUtil,
 	FlexObjectFactory,
+	States,
 	DependencyHandler,
 	Switcher,
 	VariantManagementState,
 	FlexObjectState,
 	ManifestUtils,
 	Settings,
+	ControlVariantWriteUtils,
 	UIChangeManager,
 	FlexObjectManager,
-	ControlVariantWriteUtils,
 	ContextBasedAdaptationsAPI,
 	Layer,
 	LayerUtils,
@@ -1238,19 +1242,29 @@ sap.ui.define([
 					oChangeProperties.appComponent = this.oAppComponent;
 				}.bind(this));
 
-				this.addVariantChanges(sVMReference, aConfigurationChangesContent);
-				aVariantsToBeDeleted
-				.forEach((sVariantKey) => {
+				const aNewVariantChanges = this.addVariantChanges(sVMReference, aConfigurationChangesContent);
+				const aVariantDeletionChanges = aVariantsToBeDeleted
+				.map((sVariantKey) => {
 					const oVariant = VariantManagementState.getVariant({
 						reference: this.sFlexReference,
 						vmReference: sVMReference,
 						vReference: sVariantKey
 					});
 					if (oVariant.layer === Layer.USER) {
-						ControlVariantWriteUtils.deleteVariant(this.sFlexReference, sVMReference, sVariantKey);
+						return ControlVariantWriteUtils.deleteVariant(this.sFlexReference, sVMReference, sVariantKey);
 					}
-				});
-				this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false);
+					return [];
+				})
+				.flat();
+				// Save all changes unless they were just added and then removed immediately
+				// or are deleted and still dirty and were thus directly removed from the state
+				const aChanges = [
+					..._difference(aNewVariantChanges, aVariantDeletionChanges),
+					...aVariantDeletionChanges.filter((oChange) => oChange.getState() !== States.LifecycleState.NEW)
+				];
+				// Always pass the pre-defined changes here to avoid that UI changes that are part of the FlexState
+				// are also persisted during variant manage save
+				this.oChangePersistence.saveDirtyChanges(this.oAppComponent, false, aChanges);
 			})();
 		};
 	};

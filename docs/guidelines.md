@@ -100,12 +100,13 @@ But do NOT use hungarian notation for API method parameters: the documentation w
 | <b>i</b>Count      | int                |
 | <b>m</b>Parameters | map / assoc. array |
 | <b>a</b>Entries    | array              |
-| <b>d</b>Today      | date               |
+| <b>d</b>Today      | Date               |
 | <b>f</b>Decimal    | float              |
 | <b>b</b>Enabled    | boolean            |
 | <b>r</b>Pattern    | RegExp             |
 | <b>fn</b>Function  | function           |
 | <b>v</b>Variant    | variant types      |
+| <b>p</b>Dialog     | Promise            |
 
 -   Class names should use CamelCase, starting with an uppercase letter
 -   HTML element IDs starting with `sap-ui-` are reserved for UI5.

@@ -2,12 +2,14 @@
 	{
 		"Title": "Elena Petrova",
 		"Position": "Sales Consultant",
-		"Icon": "./icons/Elena_Petrova.png"
+		"Icon": "./icons/Elena_Petrova.png",
+		"Url": "https://www.sap.com"
 	},
 	{
 		"Title": "John Miller",
 		"Position": "Sales Consultant",
-		"Icon": "./icons/John_Miller.png"
+		"Icon": "./icons/John_Miller.png",
+		"Url": "https://www.sap.com"
 	},
 	{
 		"Title": "Julie Armstrong",

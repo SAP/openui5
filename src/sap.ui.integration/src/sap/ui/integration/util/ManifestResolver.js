@@ -136,9 +136,27 @@ sap.ui.define([
 				Utils.setNestedPropertyValue(oManifest, sManifestPath, oSubConfig);
 			});
 
+			ManifestResolver._makeEnabledAndVisibleBooleans(oManifest);
+
 			return Promise.resolve(JSON.parse(JSON.stringify(oManifest))); // remove undefined values
 		} catch (ex) {
 			return Promise.reject(ex);
+		}
+	};
+
+	ManifestResolver._makeEnabledAndVisibleBooleans = function (oManifest) {
+		for (const sKey in oManifest) {
+			if (!oManifest.hasOwnProperty(sKey)) {
+				continue;
+			}
+
+			const oValue = oManifest[sKey];
+
+			if (oValue && typeof oValue === "object") {
+				ManifestResolver._makeEnabledAndVisibleBooleans(oValue);
+			} else if (sKey === "enabled" || sKey === "visible") {
+				oManifest[sKey] = !!oValue;
+			}
 		}
 	};
 

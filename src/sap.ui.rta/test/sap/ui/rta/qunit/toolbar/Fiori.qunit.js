@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/toolbar/Fiori",
@@ -24,7 +23,6 @@ sap.ui.define([
 	VersionsAPI,
 	VerticalLayout,
 	JSONModel,
-	jQuery,
 	Adaptation,
 	BaseToolbar,
 	Fiori,
@@ -70,12 +68,8 @@ sap.ui.define([
 							getShowLogo() {
 								return true;
 							},
-							$: function() {
-								return {
-									find: function() {
-										return jQuery(this.oImage.getDomRef());
-									}.bind(this)
-								};
+							getDomRef: function() {
+								return this.oImage.getDomRef();
 							}.bind(this)
 						};
 					}.bind(this)

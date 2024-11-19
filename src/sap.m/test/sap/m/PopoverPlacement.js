@@ -42,6 +42,7 @@ sap.ui.define([
 	var oPopover = new Popover("pop1", {
 		placement: mLibrary.PlacementType.Auto,
 		title: "Popover",
+		resizable: true,
 		showHeader: true,
 		beginButton: oBeginButton,
 		endButton: oEndButton,

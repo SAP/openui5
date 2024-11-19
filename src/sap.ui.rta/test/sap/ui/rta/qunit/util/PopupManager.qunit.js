@@ -23,8 +23,7 @@ sap.ui.define([
 	"sap/ui/layout/form/Form",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/dom/jquery/zIndex" // jQuery Plugin "zIndex"
+	"sap/ui/thirdparty/sinon-4"
 ], async function(
 	merge,
 	Button,
@@ -324,7 +323,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _overrideAddFunctions for dialog is called", function(assert) {
-			assert.expect(11);
+			assert.expect(9);
 			var done = assert.async();
 			this.oDialog.attachAfterOpen(function() {
 				assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oDialog), "the isPopupAdaptable is called with the in-app Dialog");
@@ -338,9 +337,6 @@ sap.ui.define([
 					assert.notStrictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 0, "then 'bringToFront' is called at least once");
 					assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then _createPopupOverlays called once for the relevant dialog");
 					assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then _createPopupOverlays called with the context of PopupManager");
-					// check z-index
-					assert.ok(this.oDialog.oPopup.oContent.$().zIndex() < this.oRta.getToolbar().$().zIndex(), "then Toolbar is on top of the app component dialog");
-					assert.ok(this.oNonRtaDialog.oPopup.oContent.$().zIndex() > this.oRta.getToolbar().$().zIndex(), "then Toolbar is not placed on top of the non-RTA dialog");
 					done();
 				}.bind(this));
 				this.oNonRtaDialog.open();

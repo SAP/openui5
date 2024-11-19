@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/fl/api/FlexTestAPI",
-	"sap/ui/thirdparty/jquery"
+	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	RtaQunitUtils,
 	Element,
@@ -28,8 +27,7 @@ sap.ui.define([
 	Stack,
 	RuntimeAuthoring,
 	sinon,
-	FlexTestAPI,
-	jQuery
+	FlexTestAPI
 ) {
 	"use strict";
 
@@ -279,6 +277,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
