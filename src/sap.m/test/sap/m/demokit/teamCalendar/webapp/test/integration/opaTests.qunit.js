@@ -1,17 +1,14 @@
-/* global QUnit */
-
-QUnit.config.autostart = false;
-
-sap.ui.getCore().attachInit(function() {
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"./arrangements/Startup",
+	"./MainJourney"
+], function (Opa5, Startup) {
 	"use strict";
 
-	// ensure 100% height
-	document.documentElement.style.height =
-	document.body.style.height = "100%";
-
-	sap.ui.require([
-		"teamCalendar/test/integration/AllJourneys"
-	], function() {
-		QUnit.start();
+	Opa5.extendConfig({
+		arrangements: new Startup(),
+		viewNamespace: "teamCalendar.view.",
+		autoWait: true
 	});
+
 });
