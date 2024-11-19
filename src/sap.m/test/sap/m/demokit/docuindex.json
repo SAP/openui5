@@ -48,8 +48,7 @@
 				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/mockServer.html",
 				"links": {
 					"View Tutorial": "topic/6a6a621c978145ad9eef2b221d2cf21d",
-					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/integration/opaTests.qunit.html",
-					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/unit/unitTests.qunit.html"
+					"Run Tests": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/testsuite.qunit.html"
 				},
 				"category": "Tutorial",
 				"config": "test-resources/sap/m/demokit/tutorial/worklist/demoapp.json"
