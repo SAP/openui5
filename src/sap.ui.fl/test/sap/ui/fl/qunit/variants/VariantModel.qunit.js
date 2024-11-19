@@ -1454,6 +1454,12 @@ sap.ui.define([
 			const aArgs = oSaveDirtyChangesStub.lastCall.args;
 			assert.strictEqual(aArgs[0], this.oComponent, "the app component was passed");
 			assert.strictEqual(aArgs[1], false, "the second parameter is false");
+			// Changes must be passed in this case to avoid that UI changes are read from the FlexState and persisted as well
+			assert.deepEqual(
+				aArgs[2].length,
+				4,
+				"an array with 4 changes was passed instead of taking the changes directly from the FlexState"
+			);
 			assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 4, "4 changes were added");
 			assert.ok(oDeleteVariantSpy.notCalled, "for the CUSTOMER layer variant, deleteVariant is not called");
 			oVariantManagement.destroy();
@@ -1473,7 +1479,7 @@ sap.ui.define([
 
 			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
 			const oAddVariantChangesSpy = sandbox.spy(this.oModel, "addVariantChanges");
-			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake((oAppComponent, bSkipUpdateCache) => {
+			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake((oAppComponent, bSkipUpdateCache, aChanges) => {
 				assert.strictEqual(oUpdateVariantStub.callCount, 1, "the variant was switched");
 				assert.deepEqual(oUpdateVariantStub.lastCall.args[0], {
 					variantManagementReference: sVMReference,
@@ -1482,6 +1488,7 @@ sap.ui.define([
 				assert.strictEqual(oAppComponent, this.oComponent, "the app component was passed");
 				assert.strictEqual(bSkipUpdateCache, false, "the second parameter is false");
 				assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 1, "1 changes were added");
+				assert.deepEqual(aChanges.length, 1, "an array with 1 change was passed");
 				oVariantManagement.destroy();
 				done();
 			});
@@ -1495,8 +1502,7 @@ sap.ui.define([
 			oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			const oVariantInstance = createVariant(this.oModel.getData()[sVMReference].variants[4]);
 			sandbox.stub(this.oModel, "getVariant").returns({ instance: oVariantInstance });
-			const aFlexObjectsToBeDeleted = ["delete1", "delete2"];
-			const oDeleteVariantStub = sandbox.stub(ControlVariantWriteUtils, "deleteVariant").returns(aFlexObjectsToBeDeleted);
+			const oDeleteVariantSpy = sandbox.spy(ControlVariantWriteUtils, "deleteVariant");
 
 			const oManageParameters = {
 				deleted: ["variant2", "variant3"]
@@ -1504,18 +1510,25 @@ sap.ui.define([
 
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake((oAppComponent, bSkipUpdateCache, aChanges) => {
 				assert.ok(
-					oDeleteVariantStub.calledWith(this.oComponent.name, sVMReference, "variant3"),
+					oDeleteVariantSpy.calledWith(this.oComponent.name, sVMReference, "variant3"),
 					"then the variant and related objects were deleted"
 				);
 				assert.notOk(
-					oDeleteVariantStub.calledWith(this.oComponent.name, sVMReference, "variant2"),
+					oDeleteVariantSpy.calledWith(this.oComponent.name, sVMReference, "variant2"),
 					"then the PUBLIC variant is only hidden and not deleted"
 				);
+
 				assert.strictEqual(
-					aChanges,
-					undefined,
-					"then the changes are not passed to the method but fetched from the state"
+					aChanges.length,
+					1,
+					"then only one change is saved since the rest is dirty and directly removed from FlexState"
 				);
+				assert.strictEqual(
+					aChanges[0].getSelector().id,
+					"variant2",
+					"then only the PUBLIC variant is hidden via setVisible"
+				);
+
 				oVariantManagement.destroy();
 				fnDone();
 			});

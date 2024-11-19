@@ -677,7 +677,8 @@ sap.ui.define([
 						"json": [
 							{
 								"Name": "Comfort Easy",
-								"Icon": "../../images/Woman_avatar_01.png"
+								"Icon": "../../images/Woman_avatar_01.png",
+								"Url": "www.sap.com"
 							},
 							{
 								"Name": "ITelO Vault",
@@ -689,7 +690,16 @@ sap.ui.define([
 						"title": "{Name}",
 						"icon": {
 							"src": "{Icon}"
-						}
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": "{= ${Url}}",
+								"parameters": {
+									"url": "{Url}"
+								}
+							}
+						]
 					}
 				}
 			}
@@ -711,13 +721,29 @@ sap.ui.define([
 									"title": "Comfort Easy",
 									"icon": {
 										"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_01.png"
-									}
+									},
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": true,
+											"parameters": {
+												"url": "www.sap.com"
+											}
+										}
+									]
 								},
 								{
 									"title": "ITelO Vault",
 									"icon": {
 										"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_02.png"
-									}
+									},
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": false,
+											"parameters": { }
+										}
+									]
 								}
 							]
 						}
@@ -1461,6 +1487,7 @@ sap.ui.define([
 				var oExpectedResult = {
 					"headers": [
 						{
+							"icon": {},
 							"title": "First Name",
 							"width": "18%",
 							"hAlign": "Center",

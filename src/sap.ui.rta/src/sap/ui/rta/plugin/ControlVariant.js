@@ -552,25 +552,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prepares overlay for showing a value state message.
-	 * @param {object} oOverlay Overlay which needs be prepared
-	 * @param {string} sValueStateText value state text that needs to be set
-	 * @private
-	 */
-	ControlVariant.prototype._prepareOverlayForValueState = function(oOverlay, sValueStateText) {
-		// Prepare VariantManagement control overlay for valueStateMessage
-		oOverlay.getValueState = function() {
-			return "Error";
-		};
-		oOverlay.getValueStateText = function() {
-			return sValueStateText;
-		};
-		oOverlay.getDomRefForValueStateMessage = function() {
-			return this.$();
-		};
-	};
-
-	/**
 	 * Opens a dialog for Variant configuration.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @returns {Promise} Resolving when the dialog is closed and the command is created

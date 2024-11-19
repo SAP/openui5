@@ -74,7 +74,7 @@ sap.ui.define([
 			height: "100%",
 			renderType: mLibrary.FlexRendertype.Bare,
 			items: [
-				new FlexBox({
+				new FlexBox("flexBox", {
 					height: "100%",
 					renderType: mLibrary.FlexRendertype.Bare,
 					justifyContent: mLibrary.FlexJustifyContent.Center,
@@ -165,9 +165,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("PlacementType Top, OffsetX = 100", async function (assert) {
-		const popover = await openPopover();
+		const popover = Element.getElementById("popover");
 		popover.setOffsetX(100);
 		await nextUIUpdate();
+
+		await openPopover();
 
 		const contentDomRef = popover.getDomRef("cont");
 		const contentWidth = contentDomRef.offsetWidth;
@@ -194,9 +196,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("PlacementType Top, OffsetX = -100", async function (assert) {
-		const popover = await openPopover();
+		const popover = Element.getElementById("popover");
 		popover.setOffsetX(-100);
 		await nextUIUpdate();
+
+		await openPopover();
 
 		const contentDomRef = popover.getDomRef("cont");
 		const contentWidth = contentDomRef.offsetWidth;
@@ -254,10 +258,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("PlacementType Bottom, OffsetX = 100", async function (assert) {
-		const popover = await openPopover();
+		const popover = Element.getElementById("popover");
 		popover.setOffsetX(100);
 		popover.setPlacement(mLibrary.PlacementType.Bottom);
 		await nextUIUpdate();
+
+		await openPopover();
 
 		const contentDomRef = popover.getDomRef("cont");
 		const contentWidth = contentDomRef.offsetWidth;
@@ -284,10 +290,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("PlacementType Bottom, OffsetX = -100", async function (assert) {
-		const popover = await openPopover();
+		const popover = Element.getElementById("popover");
 		popover.setOffsetX(-100);
 		popover.setPlacement(mLibrary.PlacementType.Bottom);
 		await nextUIUpdate();
+
+		await openPopover();
 
 		const contentDomRef = popover.getDomRef("cont");
 		const contentWidth = contentDomRef.offsetWidth;
@@ -561,6 +569,71 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
 		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+	});
+
+	QUnit.test("PlacementType Top, OffsetX = -100, Opener Align = Start", async function (assert) {
+		const popover = Element.getElementById("popover");
+		popover.setShowArrow(true);
+		popover.setOffsetY(0);
+		popover.setOffsetX(-100);
+		popover.setPlacement(mLibrary.PlacementType.Top);
+		Element.getElementById("flexBox").setJustifyContent(mLibrary.FlexJustifyContent.Start);
+		await nextUIUpdate();
+
+		await openPopover();
+
+		const contentDomRef = popover.getDomRef("cont");
+		const contentWidth = contentDomRef.offsetWidth;
+		const contentHeight = contentDomRef.offsetHeight;
+		const popoverOffsetY = popover.getOffsetY();
+
+		assert.ok(popover.getDomRef().classList.contains("sapMPopoverResizeHandleTopRight"), "sapMPopoverResizeHandleTopRight class is added");
+
+		const resizeHandle = getResizeHandle(popover);
+		const boundingRect = resizeHandle.getBoundingClientRect();
+
+		qutils.triggerMouseEvent(resizeHandle, "mousedown", 0, 0, boundingRect.right, boundingRect.top);
+		qutils.triggerMouseEvent(document, "mousemove", 0, 0, boundingRect.right - mouseMoveOffset, boundingRect.top - mouseMoveOffset);
+		qutils.triggerMouseEvent(document, "mouseup");
+
+		await nextUIUpdate();
+
+		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
+		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
+
+		assert.strictEqual(popover.getOffsetX(), 0, "offsetX is correct");
+		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+	});
+
+	QUnit.test("PlacementType Top, OffsetX = 100, Opener Align = End", async function (assert) {
+		const popover = Element.getElementById("popover");
+		popover.setOffsetX(100);
+		Element.getElementById("flexBox").setJustifyContent(mLibrary.FlexJustifyContent.End);
+		await nextUIUpdate();
+
+		await openPopover();
+
+		const contentDomRef = popover.getDomRef("cont");
+		const contentWidth = contentDomRef.offsetWidth;
+		const contentHeight = contentDomRef.offsetHeight;
+		const popoverOffsetY = popover.getOffsetY();
+
+		assert.ok(popover.getDomRef().classList.contains("sapMPopoverResizeHandleTopLeft"), "sapMPopoverResizeHandleTopLeft class is added");
+
+		const resizeHandle = getResizeHandle(popover);
+		const boundingRect = resizeHandle.getBoundingClientRect();
+
+		qutils.triggerMouseEvent(resizeHandle, "mousedown", 0, 0, boundingRect.left, boundingRect.top);
+		qutils.triggerMouseEvent(document, "mousemove", 0, 0, boundingRect.left + mouseMoveOffset, boundingRect.top - mouseMoveOffset);
+		qutils.triggerMouseEvent(document, "mouseup");
+
+		await nextUIUpdate();
+
+		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
+		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
+
+		assert.strictEqual(popover.getOffsetX(), -1, "offsetX is correct");
 		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 });

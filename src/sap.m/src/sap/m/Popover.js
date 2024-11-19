@@ -547,7 +547,7 @@ sap.ui.define([
 				that._deregisterContentResizeHandler();
 				Popup.prototype._applyPosition.call(this, oPosition);
 				that._fnAdjustPositionAndArrow();
-				that._updateResizeHandlerPlacement();
+				that._updateResizeHandlePlacement();
 				that._restoreScrollPosition();
 
 				//register the content resize handler
@@ -1224,15 +1224,37 @@ sap.ui.define([
 		};
 
 		Popover.prototype._getResizeHandlePlacement = function () {
+			if (this._resizeHandlePlacement) {
+				return this._resizeHandlePlacement;
+			}
+
+			const popoverWrapper = this.getDomRef().querySelector(".sapMPopoverWrapper");
+			const opener = this._getOpenByDomRef();
+			const offset = 2;
+
+			const openerRect = opener.getBoundingClientRect();
+			const popoverWrapperRect = popoverWrapper.getBoundingClientRect();
+
+			let openerCX = Math.floor(openerRect.x + openerRect.width / 2);
+			const openerCY = Math.floor(openerRect.y + openerRect.height / 2);
+
+			let popoverCX = Math.floor(popoverWrapperRect.x + popoverWrapperRect.width / 2);
+			const popoverCY = Math.floor(popoverWrapperRect.y + popoverWrapperRect.height / 2);
+
+			if (Localization.getRTL()) {
+				openerCX = -openerCX;
+				popoverCX = -popoverCX;
+			}
+
 			switch (this._getCalculatedPlacement()) {
 				case PlacementType.Left:
-					if (this.getOffsetY() > 0) {
+					if (popoverCY > openerCY + offset) {
 						return "BottomLeft";
 					}
 
 					return "TopLeft";
 				case PlacementType.Right:
-					if (this.getOffsetY() < 0) {
+					if (popoverCY + offset < openerCY) {
 						return "TopRight";
 					}
 
@@ -1242,7 +1264,7 @@ sap.ui.define([
 						return "BottomRight";
 					}
 
-					if (this.getOffsetX() < 0) {
+					if (popoverCX + offset < openerCX) {
 						return "BottomLeft";
 					}
 
@@ -1253,7 +1275,7 @@ sap.ui.define([
 						return "TopRight";
 					}
 
-					if (this.getOffsetX() < 0) {
+					if (popoverCX + offset < openerCX) {
 						return "TopLeft";
 					}
 
@@ -1305,6 +1327,8 @@ sap.ui.define([
 			const isAutoClose = this.oPopup.getAutoClose();
 			this.oPopup.setAutoClose(false);
 
+			this._resizeHandlePlacement = this._getResizeHandlePlacement();
+
 			$d.on("mousemove.sapMPopover", (e) => {
 				this._resize(initial, e);
 			});
@@ -1312,6 +1336,8 @@ sap.ui.define([
 			$d.on("mouseup.sapMPopover", () => {
 				$popover.removeClass("sapMPopoverResizing");
 				$d.off("mouseup.sapMPopover, mousemove.sapMPopover");
+				this._resizeHandlePlacement = null;
+
 				if (this.oPopup) {
 					this.oPopup.setAutoClose(isAutoClose);
 				}
@@ -1322,87 +1348,97 @@ sap.ui.define([
 			this._resized = true;
 
 			const placement = this._getCalculatedPlacement();
-			const resizeHandlerPlacement = this._getResizeHandlePlacement();
+			const resizeHandlePlacement = this._getResizeHandlePlacement();
 			const posParams = initial.posParams;
 			const withinAreaWidth = posParams._fWithinAreaWidth;
 			const withinAreaHeight = posParams._fWithinAreaHeight;
+			const isRTL = Localization.getRTL();
 
 			let dx;
-			let dy;
+			let dy = initial.y - e.pageY;
 			let width;
 			let height;
 			let offsetX;
 			let offsetY;
-			let popoverMarginLeft;
 
-			if (Localization.getRTL()) {
+			if (isRTL) {
 				dx = initial.x - e.pageX;
-				dy = initial.y - e.pageY;
-				popoverMarginLeft = posParams._fPopoverMarginRight;
 			} else {
-				popoverMarginLeft = posParams._fPopoverMarginLeft;
 				dx = e.pageX - initial.x;
-				dy = initial.y - e.pageY;
 			}
+
+			let maxWidthLeftSide;
+			let maxWidthRightSide;
+
+			if (isRTL) {
+				maxWidthRightSide = initial.width + initial.left - posParams._fPopoverMarginLeft;
+				maxWidthLeftSide = withinAreaWidth - initial.left - posParams._fPopoverMarginRight;
+			} else {
+				maxWidthLeftSide = initial.width + initial.left - posParams._fPopoverMarginLeft;
+				maxWidthRightSide = withinAreaWidth - initial.left - posParams._fPopoverMarginRight;
+			}
+
+			const maxHeightTopSide = initial.height + initial.top - posParams._fPopoverMarginTop;
+			const maxHeightBottomSide = withinAreaHeight - initial.footerHeaderHeight - initial.top - posParams._fPopoverMarginBottom;
 
 			if (!this.getShowArrow() && (placement === PlacementType.Top || placement === PlacementType.Bottom)) {
 				if (placement === PlacementType.Bottom) {
 					dy = -dy;
 				}
 
-				this.setContentWidth(Math.max(initial.width + dx, this._minDimensions.width) + 'px');
+				this.setContentWidth(clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide) + 'px');
 				this.setContentHeight(Math.max(initial.height + dy, this._minDimensions.height) + 'px');
 				return;
 			}
 
 			switch (placement) {
 				case PlacementType.Top:
-					height = Math.max(initial.height + dy, this._minDimensions.height);
+					height = clamp(initial.height + dy, this._minDimensions.height, maxHeightTopSide);
 
-					if (resizeHandlerPlacement === "TopRight") {
-						width = clamp(initial.width + dx, this._minDimensions.width, withinAreaWidth - initial.left);
+					if (resizeHandlePlacement === "TopRight") {
+						width = clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide);
 						offsetX = Math.max(0, initial.offsetX + (width - initial.width) / 2);
 					} else { // TopLeft
-						width = clamp(initial.width - dx, this._minDimensions.width, initial.width + initial.left - popoverMarginLeft);
+						width = clamp(initial.width - dx, this._minDimensions.width, maxWidthLeftSide);
 						offsetX = Math.min(-1, initial.offsetX + (initial.width - width) / 2);
 					}
 
 					this.setOffsetX(Math.round(offsetX));
 					break;
 				case PlacementType.Bottom:
-					height = Math.max(initial.height - dy, this._minDimensions.height);
+					height = clamp(initial.height - dy, this._minDimensions.height, maxHeightBottomSide);
 
-					if (resizeHandlerPlacement === "BottomRight") {
-						width = clamp(initial.width + dx, this._minDimensions.width, withinAreaWidth - initial.left);
+					if (resizeHandlePlacement === "BottomRight") {
+						width = clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide);
 						offsetX = Math.max(0, initial.offsetX + (width - initial.width) / 2);
 					} else { // TopLeft
-						width = clamp(initial.width - dx, this._minDimensions.width, initial.width + initial.left - popoverMarginLeft);
+						width = clamp(initial.width - dx, this._minDimensions.width, maxWidthLeftSide);
 						offsetX = Math.min(-1, initial.offsetX + (initial.width - width) / 2);
 					}
 
 					this.setOffsetX(Math.round(offsetX));
 					break;
 				case PlacementType.Left:
-					width = clamp(initial.width - dx, this._minDimensions.width, initial.width + initial.left - popoverMarginLeft);
+					width = clamp(initial.width - dx, this._minDimensions.width, maxWidthLeftSide);
 
-					if (resizeHandlerPlacement === "TopLeft") {
-						height = clamp(initial.height + dy, this._minDimensions.height, initial.height + initial.top - posParams._fPopoverMarginTop);
+					if (resizeHandlePlacement === "TopLeft") {
+						height = clamp(initial.height + dy, this._minDimensions.height, maxHeightTopSide);
 						offsetY = Math.min(0, initial.offsetY + (initial.height - height) / 2);
 					} else { // BottomLeft
-						height = clamp(initial.height - dy, this._minDimensions.height, withinAreaHeight - initial.footerHeaderHeight - initial.top);
+						height = clamp(initial.height - dy, this._minDimensions.height, maxHeightBottomSide);
 						offsetY = Math.max(1, initial.offsetY + (height - initial.height) / 2);
 					}
 
 					this.setOffsetY(Math.round(offsetY));
 					break;
 				case PlacementType.Right:
-					width = clamp(initial.width + dx, this._minDimensions.width, withinAreaWidth - initial.left - this._marginRight);
+					width = clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide);
 
-					if (resizeHandlerPlacement === "TopRight") {
-						height = clamp(initial.height + dy, this._minDimensions.height, initial.height + initial.top - posParams._fPopoverMarginTop);
+					if (resizeHandlePlacement === "TopRight") {
+						height = clamp(initial.height + dy, this._minDimensions.height, maxHeightTopSide);
 						offsetY = Math.min(-1, initial.offsetY + (initial.height - height) / 2);
 					}	else { // BottomRight
-						height = clamp(initial.height - dy, this._minDimensions.height, withinAreaHeight - initial.footerHeaderHeight - initial.top);
+						height = clamp(initial.height - dy, this._minDimensions.height, maxHeightBottomSide);
 						offsetY = Math.max(0, initial.offsetY + (height - initial.height) / 2);
 					}
 
@@ -2281,7 +2317,7 @@ sap.ui.define([
 			this._afterAdjustPositionAndArrowHook();
 		};
 
-		Popover.prototype._updateResizeHandlerPlacement = function () {
+		Popover.prototype._updateResizeHandlePlacement = function () {
 			if (!this.getResizable()) {
 				return;
 			}

@@ -201,14 +201,7 @@ sap.ui.define([
 
 		(oConfiguration.row.columns || []).forEach(function (oColumn) {
 			oColumn = BindingResolver.resolveValue(oColumn, this, this.getBindingContext().getPath());
-
-			aHeaders.push({
-				title: oColumn.title,
-				width: oColumn.width,
-				hAlign: oColumn.hAlign,
-				visible: oColumn.visible,
-				identifier: oColumn.identifier
-			});
+			aHeaders.push(oColumn);
 		}.bind(this));
 
 		aRows.forEach(function (oRow) {

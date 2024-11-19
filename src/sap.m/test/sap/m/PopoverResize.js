@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/core/Element",
 	"sap/m/App",
 	"sap/m/Label",
 	"sap/m/ToolbarSpacer",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	Localization,
 	SimpleForm,
+	Element,
 	App,
 	Label,
 	ToolbarSpacer,
@@ -112,6 +114,20 @@ sap.ui.define([
 				}
 			}),
 			new Label({
+				text: "Opener Horizontal Alignment"
+			}),
+			new SegmentedButton({
+				selectedKey: "Center",
+				items: [
+					new SegmentedButtonItem("openerStart", { text: "Start", key: "Start" }),
+					new SegmentedButtonItem("openerCenter", { text: "Center", key: "Center" }),
+					new SegmentedButtonItem("openerEnd", { text: "End", key: "End" })
+				],
+				selectionChange: (event) => {
+					Element.getElementById("flexBox").setJustifyContent(event.getSource().getSelectedKey());
+				}
+			}),
+			new Label({
 				text: "Show Arrow"
 			}),
 			new Switch("showArrow", {
@@ -138,7 +154,7 @@ sap.ui.define([
 		renderType: mLibrary.FlexRendertype.Bare,
 		items: [
 			simpleForm,
-			new FlexBox({
+			new FlexBox("flexBox", {
 				height: "100%",
 				renderType: mLibrary.FlexRendertype.Bare,
 				justifyContent: mLibrary.FlexJustifyContent.Center,
