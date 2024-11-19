@@ -243,7 +243,7 @@
             <copyright>2011 Zynga Inc.</copyright>
             <pattern>sap/ui/thirdparty/zyngascroll.js</pattern>
         </lib>
-        <lib name="less" displayName="LESS" npmName="less" version="1.6.3" hash="fb7893fd45c3d4c4b43242f7b7879977" homepage="http://lesscss.org/" id="73555000106100001897">
+        <lib name="less" displayName="LESS" npmName="less" version="1.6.3" hash="26074cd440b20e33a647711f18e06ea5" homepage="http://lesscss.org/" id="73555000106100001897">
             <!-- there is also a copy of LESS outside the libraries, listed in the .repo file -->
             <license url="https://raw.github.com/cloudhead/less.js/master/LICENSE" type="Apache-2.0" />
             <copyright>2009-2014, Alexis Sellier</copyright>
