@@ -62,6 +62,11 @@ sap.ui.define([
 	const rRemoveMinusFromZero = /^-(0(?:.0+)?)$/;
 	// A regular expression that can be used to remove trailing zeros from a number
 	const rTrailingZeros = /0+$/;
+	// A regular expression that can be used to remove all RTL characters
+	// see: https://www.unicode.org/reports/tr44/#Bidi_Class_Values (Explicit Formatting Types)
+	const rAllRTLCharacters = /[\u061c\u200e\u200f\u202a\u202b\u202c]/g;
+	// A regular expression that can be used to remove the left-to-right mark character
+	const rLeftToRightMark = /\u200e/;
 
 	/*
 	 * Is used to validate existing grouping separators.
@@ -478,6 +483,46 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks the given format options if decimal padding is allowed and if the decimal padding value is supported.
+	 *
+	 * @param {object} [oFormatOptions]
+	 *   The format options to be checked
+	 * @param {int} [oFormatOptions.decimalPadding]
+	 *   The format option decimal padding
+	 * @param {boolean} [oFormatOptions.showMeasure]
+	 *   The format option show measure
+	 * @param {string} [oFormatOptions.style]
+	 *   The format option style
+	 * @param {boolean} [bDecimalPaddingSupported=true]
+	 *   Whether decimal padding is supported
+	 * @param {boolean} [bShowMeasureMustBeFalse=false]
+	 *   Whether the format option <code>showMeasure</code> must be set to false
+	 * @throws {Error} If decimal padding cannot be used or the given decimal padding value is not supported
+	 *
+	 * @private
+	 * @static
+	 */
+	NumberFormat.checkDecimalPadding = function (oFormatOptions, bDecimalPaddingSupported = true,
+			bShowMeasureMustBeFalse = false) {
+		const iDecimalPadding = oFormatOptions?.decimalPadding;
+		if (!bDecimalPaddingSupported && iDecimalPadding !== undefined) {
+			throw new Error("Unsupported format option: 'decimalPadding' cannot be used with an integer or percent"
+				+ " instance of sap.ui.core.format.NumberFormat");
+		}
+		if (bShowMeasureMustBeFalse && iDecimalPadding && oFormatOptions?.showMeasure !== false) {
+			throw new Error("The format option 'decimalPadding' can only be used if the format option"
+				+ " 'showMeasure' is set to false");
+		}
+		if (iDecimalPadding < 1) {
+			throw new Error("The format option 'decimalPadding' must have a value greater than 0");
+		}
+		if (iDecimalPadding > 0 && (oFormatOptions?.style === "short" || oFormatOptions?.style === "long")) {
+			throw new Error("The format option 'decimalPadding' can only be used if the format option"
+				+ " 'style' is not set to 'short' or 'long'");
+		}
+	};
+
+	/**
 	 * An alias for {@link #getFloatInstance}.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options. See the documentation of
@@ -513,6 +558,16 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
 	 *   If no options are given, default values according to the type and locale settings are used.
+	 * @param {int} [oFormatOptions.decimalPadding]
+	 *   The target length of places after the decimal separator; if the number has fewer decimal places than given in
+	 *   this option, it is padded with whitespaces at the end up to the target length. An additional whitespace
+	 *   character for the decimal separator is added for a number without any decimals.
+	 *   <b>Note:</b> This format option is only allowed if the following conditions apply:
+	 *   <ul>
+	 *     <li>It has a value greater than 0.</li>
+	 *     <li>The <code>oFormatOptions.style</code> format option is <b>not</b> set to <code>"short"</code> or
+	 *         <code>"long"</code>.</li>
+	 *   </ul>
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -578,10 +633,12 @@ sap.ui.define([
 	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
 	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} float instance of the NumberFormat
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 * @static
 	 * @public
 	 */
 	NumberFormat.getFloatInstance = function(oFormatOptions, oLocale) {
+		this.checkDecimalPadding(oFormatOptions);
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.FLOAT);
 
@@ -611,6 +668,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
 	 *   If no options are given, default values according to the type and locale settings are used.
+	 * @param {int} [oFormatOptions.decimalPadding] Not supported.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -679,10 +737,12 @@ sap.ui.define([
 	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
 	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> format option is provided
 	 * @static
 	 * @public
 	 */
 	NumberFormat.getIntegerInstance = function(oFormatOptions, oLocale) {
+		this.checkDecimalPadding(oFormatOptions, false);
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.INTEGER);
 
@@ -758,6 +818,17 @@ sap.ui.define([
 	 *   See the above examples.
 	 *   See also {@link module:sap/base/i18n/Formatting.setCustomCurrencies Formatting.setCustomCurrencies} and
 	 *   {@link module:sap/base/i18n/Formatting.addCustomCurrencies Formatting.addCustomCurrencies}.
+	 * @param {int} [oFormatOptions.decimalPadding]
+	 *   The target length of places after the decimal separator; if the number has fewer decimal places than given in
+	 *   this option, it is padded with whitespaces at the end up to the target length. An additional whitespace
+	 *   character for the decimal separator is added for a number without any decimals.
+	 *   <b>Note:</b> This format option is only allowed if the following conditions apply:
+	 *   <ul>
+	 *     <li>It has a value greater than 0.</li>
+	 *     <li>The <code>FormatOptions.showMeasure</code> format option is set to <code>false</code>.</li>
+	 *     <li>The <code>oFormatOptions.style</code> format option is <b>not</b> set to <code>"short"</code> or
+	 *         <code>"long"</code>.</li>
+	 *   </ul>
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -833,10 +904,12 @@ sap.ui.define([
 	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
 	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} currency instance of the NumberFormat
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 * @static
 	 * @public
 	 */
 	NumberFormat.getCurrencyInstance = function(oFormatOptions, oLocale) {
+		this.checkDecimalPadding(oFormatOptions, true, true);
 		var oFormat = this.createInstance(oFormatOptions, oLocale);
 		var sContext = oFormat.oOriginalFormatOptions && oFormat.oOriginalFormatOptions.currencyContext;
 
@@ -889,6 +962,17 @@ sap.ui.define([
 	 *      "decimals": 2,
 	 *      "precision": 4
 	 *   }}
+	 * @param {int} [oFormatOptions.decimalPadding]
+	 *   The target length of places after the decimal separator; if the number has fewer decimal places than given in
+	 *   this option, it is padded with whitespaces at the end up to the target length. An additional whitespace
+	 *   character for the decimal separator is added for a number without any decimals.
+	 *   <b>Note:</b> This format option is only allowed if the following conditions apply:
+	 *   <ul>
+	 *     <li>It has a value greater than 0.</li>
+	 *     <li>The <code>FormatOptions.showMeasure</code> format option is set to <code>false</code>.</li>
+	 *     <li>The <code>oFormatOptions.style</code> format option is <b>not</b> set to <code>"short"</code> or
+	 *         <code>"long"</code>.</li>
+	 *   </ul>
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -970,10 +1054,12 @@ sap.ui.define([
 	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
 	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 * @static
 	 * @public
 	 */
 	NumberFormat.getUnitInstance = function(oFormatOptions, oLocale) {
+		this.checkDecimalPadding(oFormatOptions, true, true);
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.UNIT);
 
@@ -992,6 +1078,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] The option object, which supports the following parameters.
 	 *   If no options are given, default values according to the type and locale settings are used.
+	 * @param {int} [oFormatOptions.decimalPadding] Not supported.
 	 * @param {int} [oFormatOptions.decimals] defines the number of decimal digits
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -1059,10 +1146,12 @@ sap.ui.define([
 	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
 	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} percentage instance of the NumberFormat
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> format option is provided
 	 * @static
 	 * @public
 	 */
 	NumberFormat.getPercentInstance = function(oFormatOptions, oLocale) {
+		this.checkDecimalPadding(oFormatOptions, false);
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.PERCENT);
 
@@ -1713,6 +1802,10 @@ sap.ui.define([
 			sGroupedIntegerPart = sIntegerPart;
 		}
 
+		const iDecimalPadding = oOptions.decimalPadding || 0;
+		if (iDecimalPadding) {
+			oOptions.minusSign = oOptions.minusSign.replace(rLeftToRightMark, "");
+		}
 		// combine
 		if (bNegative) {
 			sResult = oOptions.minusSign;
@@ -1791,6 +1884,7 @@ sap.ui.define([
 			}
 
 			sResult = this._composeCurrencyResult(sPattern, sResult, sMeasure, {
+				decimalPadding: iDecimalPadding,
 				showMeasure: oOptions.showMeasure,
 				negative: bNegative,
 				minusSign: oOptions.minusSign
@@ -1822,6 +1916,23 @@ sap.ui.define([
 				sPattern = NumberFormat.getDefaultUnitPattern(sMeasure);
 			}
 			sResult = sPattern.replace("{0}", sResult);
+		}
+		let iDecimalPaddingLength = iDecimalPadding - sFractionPart.length;
+		if (iDecimalPaddingLength > 0) {
+			const bNegativeAccounting = sResult[sResult.length - 1] === ")";
+			const sCharPunctuationSpace = "\u2008";
+			if (sFractionPart) {
+				if (bNegativeAccounting) {
+					// the ")" and the CHAR_PUNCTUATION_SPACE u2008 have a combined width close to the width of a
+					// CHAR_FIGURE_SPACE u2007
+					sResult += sCharPunctuationSpace;
+					iDecimalPaddingLength = iDecimalPaddingLength - 1;
+				}
+			} else if (!bNegativeAccounting) {
+				// only add CHAR_PUNCTUATION_SPACE u2008 if there is no ")" at the end
+				sResult += sCharPunctuationSpace;
+			}
+			sResult += "\u2007".repeat(iDecimalPaddingLength); // CHAR_FIGURE_SPACE u2007
 		}
 		return this._addOriginInfo(sResult);
 	};
@@ -1869,19 +1980,17 @@ sap.ui.define([
 
 
 	NumberFormat.prototype._composeCurrencyResult = function(sPattern, sFormattedNumber, sMeasure, oOptions) {
-		var sMinusSign = oOptions.minusSign;
-
-		sPattern = sPattern.replace(/[0#.,]+/, sFormattedNumber);
-
+		let sMinusSign = oOptions.minusSign;
+		let sResult = sPattern.replace(/[0#.,]+/, sFormattedNumber);
 		if (oOptions.showMeasure && sMeasure) {
 			var sPlaceHolder = "\u00a4",
 				mRegex = {
 					"[:digit:]": rDigit,
 					"[[:^S:]&[:^Z:]]": rNotSAndNotZ
 				},
-				iMeasureStart = sPattern.indexOf(sPlaceHolder),
+				iMeasureStart = sResult.indexOf(sPlaceHolder),
 				// determine whether the number is before the measure or after it by comparing the position of measure placeholder with half of the length of the pattern string
-				sPosition = iMeasureStart < sPattern.length / 2 ? "after" : "before",
+				sPosition = iMeasureStart < sResult.length / 2 ? "after" : "before",
 				oSpacingSetting = this.oLocaleData.getCurrencySpacing(sPosition),
 				sCurrencyChar = (sPosition === "after" ? sMeasure.charAt(sMeasure.length - 1) : sMeasure.charAt(0)),
 				sNumberChar,
@@ -1889,9 +1998,10 @@ sap.ui.define([
 				rNumberChar = mRegex[oSpacingSetting.surroundingMatch],
 				iInsertPos;
 
-			sPattern = sPattern.replace(sPlaceHolder, sMeasure);
+			sResult = sResult.replace(sPlaceHolder, sMeasure);
 
-			sNumberChar = (sPosition === "after" ? sPattern.charAt(iMeasureStart + sMeasure.length) : sPattern.charAt(iMeasureStart - 1));
+			sNumberChar = (sPosition === "after" ? sResult.charAt(iMeasureStart + sMeasure.length)
+				: sResult.charAt(iMeasureStart - 1));
 
 			if (rCurrencyChar && rCurrencyChar.test(sCurrencyChar) && rNumberChar && rNumberChar.test(sNumberChar)) {
 				// when both checks are valid, insert the defined space
@@ -1903,7 +2013,7 @@ sap.ui.define([
 				}
 
 				// insert the space char between the measure and the number
-				sPattern = sPattern.slice(0, iInsertPos) + oSpacingSetting.insertBetween + sPattern.slice(iInsertPos);
+				sResult = sResult.slice(0, iInsertPos) + oSpacingSetting.insertBetween + sResult.slice(iInsertPos);
 			} else if (oOptions.negative && sPosition === "after") {
 				// when no space is inserted between measure and number
 				// and when the number is negative and the measure is shown before the number
@@ -1914,15 +2024,17 @@ sap.ui.define([
 				sMinusSign = "\ufeff" + oOptions.minusSign;
 			}
 		} else {
-			// If measure is not shown, also remove whitespace next to the measure symbol
-			sPattern = sPattern.replace(/\s*\u00a4\s*/, "");
+			if (oOptions.decimalPadding > 0) {
+				sResult = sResult.replace(rAllRTLCharacters, "");
+			}
+			sResult = sResult.replace(/\s*\u00a4\s*/, "");
 		}
 
 		if (oOptions.negative) {
-			sPattern = sPattern.replace(/-/, sMinusSign);
+			sResult = sResult.replace(/-/, sMinusSign);
 		}
 
-		return sPattern;
+		return sResult;
 	};
 
 	/**

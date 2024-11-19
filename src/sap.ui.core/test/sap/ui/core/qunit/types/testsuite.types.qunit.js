@@ -67,13 +67,13 @@ sap.ui.define(function () {
 			},
 			NumberFormatCurrencies: {
 				coverage : {
-					only : "sap/ui/core/format/NumberFormatCurrencies"
+					only : "sap/ui/core/format/NumberFormat"
 				},
 				title: "QUnit Page for sap/ui/core/format/NumberFormatCurrencies"
 			},
 			NumberFormatCurrenciesTrailing: {
 				coverage : {
-					only : "sap/ui/core/format/NumberFormatCurrenciesTrailing"
+					only : "sap/ui/core/format/NumberFormat"
 				},
 				title: "QUnit Page for sap/ui/core/format/NumberFormatCurrenciesTrailing"
 			},

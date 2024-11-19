@@ -76,6 +76,7 @@ sap.ui.define([
 	 * @param {array} [aDynamicFormatOptionNames]
 	 *   keys for dynamic format options which are used to map additional binding values, e.g.
 	 *   <code>["decimals"]</code>
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 * @alias sap.ui.model.type.Unit
 	 */
 	var Unit = CompositeType.extend("sap.ui.model.type.Unit", /** @lends sap.ui.model.type.Unit.prototype  */ {

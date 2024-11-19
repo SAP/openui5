@@ -2335,4 +2335,65 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("format: with decimalPadding and showMeasure=false", function (assert) {
+		const oFormat = NumberFormat.getCurrencyInstance(
+			{decimalPadding: 4, preserveDecimals: true, showMeasure: false}, new Locale("de-DE"));
+
+		// code under test
+		assert.strictEqual(oFormat.format(42.12, "EUR"), "42,12" + "\u2007\u2007");
+		assert.strictEqual(oFormat.format(42.1234, "UYW"), "42,1234");
+		assert.strictEqual(oFormat.format(42.12345, "EUR"), "42,12345");
+		assert.strictEqual(oFormat.format(4, "JPY"), "4" + "\u2008\u2007\u2007\u2007\u2007");
+	});
+
+	//*********************************************************************************************
+[
+	"ar", "de" // ar and de differ in the u200e character of the minus sign
+].forEach((sLocale, i) => {
+	QUnit.test(`format: w/ decimalPadding and showMeasure=false - no RTL-characters: ${i + 1} ${sLocale}`,
+			function (assert) {
+		const oFormat = NumberFormat.getCurrencyInstance({decimalPadding: 4, showMeasure: false}, new Locale(sLocale));
+		const sSeparator = oFormat.oLocaleData.getNumberSymbol("decimal");
+		let sMinusSign = oFormat.oLocaleData.getNumberSymbol("minusSign");
+		// if the sMinusSign contains an u200e character, only use the minus sign
+		sMinusSign = sMinusSign[1] || sMinusSign;
+
+		// code under test
+		assert.strictEqual(oFormat.format(42.12, "EUR"), "42" + sSeparator + "12\u2007\u2007");
+		assert.strictEqual(oFormat.format(-42.12, "EUR"), sMinusSign + "42" + sSeparator + "12\u2007\u2007");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("format: w/ decimalPadding and currencyContext=accounting, () for negative values", function (assert) {
+		const oFormat = NumberFormat.getCurrencyInstance(
+			{currencyContext: "accounting", decimalPadding: 5, showMeasure: false}, new Locale("ja"));
+
+		// code under test
+		assert.strictEqual(oFormat.format(-42.12, "EUR"), "(42.12)" + "\u2008\u2007\u2007");
+		assert.strictEqual(oFormat.format(-42.1234, "UYW"), "(42.1234)" + "\u2008");
+		assert.strictEqual(oFormat.format(-42, "JPY"), "(42)" + "\u2007\u2007\u2007\u2007\u2007");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: w/ decimalPadding and currencyContext=accounting, minus sign for negative values",
+			function (assert) {
+		const oFormat = NumberFormat.getCurrencyInstance(
+			{currencyContext: "accounting", decimalPadding: 5, showMeasure: false}, new Locale("it"));
+
+		// code under test
+		assert.strictEqual(oFormat.format(-42.12, "EUR"), "-42,12" + "\u2007\u2007\u2007");
+		assert.strictEqual(oFormat.format(-42.1234, "UYW"), "-42,1234" + "\u2007");
+		assert.strictEqual(oFormat.format(-42, "JPY"), "-42" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: w/o decimal padding but showMeasure=false: keep RTL-characters", function (assert) {
+		const oFormat = NumberFormat.getCurrencyInstance({showMeasure: false}, new Locale("ar"));
+
+		// code under test
+		assert.strictEqual(oFormat.format(42.12, "EUR"), "\u200f42.12\xa0\u202a\u202c");
+	});
 });
