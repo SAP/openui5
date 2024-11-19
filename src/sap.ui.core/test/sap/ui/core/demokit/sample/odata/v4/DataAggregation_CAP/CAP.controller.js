@@ -61,16 +61,16 @@ sap.ui.define([
 						},
 						status : {additionally : ["statusName"]}
 					},
-					groupLevels : ["airline", "ConnectionID", "FlightDate", "status", "TravelID"]
+					groupLevels : ["airline", "ConnectionID", "FlightDate", "status", "TravelID",
+						"BookingDate"]
 				};
 				if (bBookingID) { // leaf level is individual bookings
-					this._oAggregation.group.BookingID = {};
-					this._oAggregation.groupLevels.push("BookingDate");
+					this._oAggregation.groupLevels.push("BookingID");
 				} else { // leaf level shows aggregates
+					// eslint-disable-next-line no-lonely-if
 					if (oTable.getColumns()[10].getLabel().getText() === "Booking ID") {
 						oTable.getColumns()[10].destroy(); // destroy BookingID column
 					}
-					this._oAggregation.group.BookingDate = {};
 				}
 				// enable V4 tree table flag
 				oTable._oProxy._bEnableV4 = true;

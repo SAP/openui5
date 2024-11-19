@@ -700,8 +700,9 @@ sap.ui.define([
 		if (oPICT.bLeaf) {
 			// Note: duplicates do not hurt for key predicate, but order is important
 			aGroupBy = [/*group levels:*/"a", "b", /*sorted:*/"a", "b", "c"];
-		} else { // Note: iLevel === 3
+		} else if (iLevel === 3) {
 			oAggregation.groupLevels.push("c");
+			oAggregation.groupLevels.push("d"); // leaf level (JIRA: CPOUI5ODATAV4-2755)
 		}
 
 		oAggregationCache = _AggregationCache.create(this.oRequestor, "Foo", "",
@@ -1359,7 +1360,8 @@ sap.ui.define([
 		var oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : ["BillToParty"]
+				// Note: a single group level would define the leaf level (JIRA: CPOUI5ODATAV4-2755)
+				groupLevels : ["a", "b"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, oAggregation);
 
@@ -3619,7 +3621,8 @@ sap.ui.define([
 [false, true].forEach(function (bHierarchy) {
 	const oAggregation = bHierarchy
 		? {expandTo : 1, hierarchyQualifier : "X"}
-		: {aggregate : {}, group : {}, groupLevels : ["foo"]};
+		// Note: a single group level would define the leaf level (JIRA: CPOUI5ODATAV4-2755)
+		: {aggregate : {}, group : {}, groupLevels : ["foo", "bar"]};
 
 	QUnit.test(`countDescendants: until end, hierarchy=${bHierarchy}`, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);

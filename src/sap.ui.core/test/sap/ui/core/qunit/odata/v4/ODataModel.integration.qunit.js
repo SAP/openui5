@@ -604,7 +604,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a test with the given title and invokes viewStart with the given parameters.
+	 * Creates a test with the given title and invokes #createView with the given parameters.
 	 *
 	 * @param {string} sTitle The title of the test case
 	 * @param {string} sView The XML snippet of the view
@@ -20128,8 +20128,8 @@ sap.ui.define([
 				group : {
 					BusinessPartnerRole : {}
 				},
-				groupLevels : ["BusinessPartnerRole"]
-			}, "JIRA: CPOUI5ODATAV4-1825");
+				groupLevels : [] // Note: "BusinessPartnerRole" removed from here
+			}, "JIRA: CPOUI5ODATAV4-1825, CPOUI5ODATAV4-2811");
 
 			that.expectEvents(assert, oBinding, [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "filter"}],
@@ -20140,8 +20140,7 @@ sap.ui.define([
 					[, "dataReceived", {data : {}}]
 				])
 				.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
-					+ "&$count=true&$skip=0&$top=100", {
-					"@odata.count" : "2",
+					+ "&$skip=0&$top=100", {
 					value : [{
 						BusinessPartnerRole : "01"
 					}, {
@@ -23005,9 +23004,11 @@ sap.ui.define([
 	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958).
 	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
 	// Support grand total w/ filter on aggregate (JIRA: CPOUI5ODATAV4-713)
+	// Multiple (additional) groups on leaf level (JIRA: CPOUI5ODATAV4-2755)
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var sFilterOnAggregate // JIRA: CPOUI5ODATAV4-713
-			= "groupby((CurrencyCode,LifecycleStatus),filter($these/aggregate(GrossAmount) gt 0))",
+			= "groupby((BillingStatus,CurrencyCode,DeliveryStatus,LifecycleStatus)"
+				+ ",filter($these/aggregate(GrossAmount) gt 0))",
 			oListBinding,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -23022,8 +23023,9 @@ sap.ui.define([
 					NetAmount : {}\
 				},\
 				group : {\
+					BillingStatus : {},\
 					CurrencyCode : {},\
-					LifecycleStatus : {}\
+					DeliveryStatus : {}\
 				},\
 				groupLevels : [\'LifecycleStatus\']\
 			},\
@@ -23040,7 +23042,8 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate + "/concat("
-				+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
+				+ "groupby((BillingStatus,CurrencyCode,DeliveryStatus,LifecycleStatus))"
+					+ "/aggregate($count as UI5__leaves)"
 				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/orderby(LifecycleStatus desc)"
 				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
@@ -23064,7 +23067,8 @@ sap.ui.define([
 
 			assert.strictEqual(oListBinding.getDownloadUrl(), sSalesOrderService + "SalesOrderList"
 				+ "?$apply=" + sFilterOnAggregate.replaceAll(" ", "%20")
-				+ "/groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount,NetAmount))"
+				+ "/groupby((LifecycleStatus,BillingStatus,CurrencyCode,DeliveryStatus)"
+					+ ",aggregate(GrossAmount,NetAmount))"
 				// Note: ordering by 'ItemPosition asc' does not apply, even on leaf level
 				+ "/orderby(LifecycleStatus%20desc)",
 				"CPOUI5ODATAV4-609");
@@ -23082,7 +23086,7 @@ sap.ui.define([
 
 			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "count");
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate
 					+ "/groupby((LifecycleStatus),aggregate(GrossAmount))"
@@ -23101,38 +23105,34 @@ sap.ui.define([
 
 			oTable.setFirstVisibleRow(7);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "scroll to #7");
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$apply=filter(GrossAmount gt 0)/concat("
-					+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
-					+ ",groupby((LifecycleStatus))/orderby(LifecycleStatus desc)"
-					+ "/concat(aggregate($count as UI5__count),top(3)))", {
+			that.expectRequest("SalesOrderList?$count=true"
+					+ "&$orderby=LifecycleStatus desc,ItemPosition asc"
+					+ "&$apply=filter(GrossAmount gt 0)/groupby((LifecycleStatus))"
+					+ "&$skip=0&$top=3", {
+					"@odata.count" : "26",
 					value : [
-						{UI5__leaves : "32", "UI5__leaves@odata.type" : "#Decimal"},
-						{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
 						{LifecycleStatus : "Z"},
 						{LifecycleStatus : "Y"},
 						{LifecycleStatus : "X"}
 					]
 				})
-				.expectChange("count", "32")
-				.expectChange("isExpanded", [false, false, false])
-				.expectChange("isTotal", [false, false, false])
-				.expectChange("level", [1, 1, 1])
+				.expectChange("count", "26")
+				.expectChange("isExpanded", [undefined, undefined, undefined])
+				.expectChange("isTotal", [undefined, undefined, undefined]) // only leaves
+				.expectChange("level", [undefined, undefined, undefined]) // no grouping
 				.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 			oTable.removeColumn(4).destroy(); // GrossAmount
 			oListBinding.setAggregation({
-				group : {
-					// Note: a single group level w/o further groups makes little sense
-					CurrencyCode : {}
-				},
+				// Note: a single group level defines the leaf level (JIRA: CPOUI5ODATAV4-2755)
 				groupLevels : ["LifecycleStatus"]
 			});
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "single group level");
 		}).then(function () {
-			assert.strictEqual(oListBinding.getCount(), 32, "count of leaves");
+			assert.strictEqual(oListBinding.getCount(), 26, "count of leaves");
 
 			assert.throws(function () {
 				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
@@ -23142,17 +23142,15 @@ sap.ui.define([
 			assert.deepEqual(oListBinding.getAggregation(), {
 				aggregate : {},
 				group : {
-					CurrencyCode : {},
 					LifecycleStatus : {}
 				},
-				groupLevels : ["LifecycleStatus"]
-			}, "JIRA: CPOUI5ODATAV4-1825");
+				groupLevels : [] // Note: "LifecycleStatus" removed from here => no visual grouping!
+			}, "JIRA: CPOUI5ODATAV4-1825, CPOUI5ODATAV4-2811");
 
-			// no additional request for same aggregation data
+			// no additional request for same aggregation data (even if it looks slightly different)
 			// code under test (BCP: 2370045709)
 			oListBinding.setAggregation({
 				group : {
-					CurrencyCode : {}
 					// LifecycleStatus : {}
 				},
 				groupLevels : ["LifecycleStatus"]
@@ -23161,7 +23159,6 @@ sap.ui.define([
 			oListBinding.changeParameters({
 				$$aggregation : {
 					group : {
-						CurrencyCode : {}
 						// LifecycleStatus : {}
 					},
 					groupLevels : ["LifecycleStatus"]
@@ -23562,10 +23559,7 @@ sap.ui.define([
 					SalesAmount : {subtotals : true},\
 					SalesNumber : {}\
 				},\
-				group : {\
-					AccountResponsible : {}\
-				},\
-				groupLevels : [\'Region\']\
+				groupLevels : [\'Region\', \'AccountResponsible\']\
 			},\
 			$count : false,\
 			$orderby : \'Region desc,AccountResponsible\'\
@@ -23784,10 +23778,7 @@ sap.ui.define([
 					SalesAmount : {subtotals : true},\
 					SalesNumber : {}\
 				},\
-				group : {\
-					AccountResponsible : {}\
-				},\
-				groupLevels : [\'Region\']\
+				groupLevels : [\'Region\', \'AccountResponsible\']\
 			}\
 		},\
 		filters : {path : \'AccountResponsible\', operator : \'GE\', value1 : \'a\'}}">\
@@ -23995,10 +23986,7 @@ sap.ui.define([
 				SalesAmount : {subtotals : true},\
 				SalesNumber : {}\
 			},\
-			group : {\
-				AccountResponsible : {}\
-			},\
-			groupLevels : [\'Region\']\
+			groupLevels : [\'Region\', \'AccountResponsible\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -24177,10 +24165,7 @@ sap.ui.define([
 					: {grandTotal : true, subtotals : true, unit : \'LocalCurrency\'},\
 				SalesNumber : {grandTotal : true}\
 			},\
-			group : {\
-				Region : {}\
-			},\
-			groupLevels : [\'Country\']\
+			groupLevels : [\'Country\', \'Region\']\
 		},\
 		$count : true,\
 		$orderby : \'Country desc,Region,Currency asc,LocalCurrency desc\'\
@@ -24477,7 +24462,7 @@ sap.ui.define([
 					{grandTotal : true, subtotals : true, unit : \'LocalCurrency\'}\
 			},\
 			grandTotalAtBottomOnly : false,\
-			groupLevels : [\'Country\',\'LocalCurrency\',\'Region\'],\
+			groupLevels : [\'Country\', \'LocalCurrency\', \'Region\'],\
 			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
 		}\
 	}}">\
@@ -24533,9 +24518,9 @@ sap.ui.define([
 					LocalCurrency : {},
 					Region : {}
 				},
-				groupLevels : ["Country", "LocalCurrency", "Region"],
+				groupLevels : ["Country", "LocalCurrency"], // Note: "Region" removed from here
 				subtotalsAtBottomOnly : bSubtotalsAtBottomOnly
-			}, "JIRA: CPOUI5ODATAV4-1825");
+			}, "JIRA: CPOUI5ODATAV4-1825, CPOUI5ODATAV4-2811");
 
 			checkTable("initial state", assert, oTable, [
 				"/BusinessPartners()",
@@ -24641,9 +24626,9 @@ sap.ui.define([
 				[1, true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
 				// Note: "localCurrency" must not disappear here!
 				[3, true, true, 2, "A", "", subtotalAtTop("10"), "EUR"],
-				[undefined, false, true, 3, "A", "a", "1", "EUR"],
-				[undefined, false, true, 3, "A", "b", "2", "EUR"],
-				[undefined, false, true, 3, "A", "c", "3", "EUR"],
+				[undefined, undefined, false, 3, "A", "a", "1", "EUR"],
+				[undefined, undefined, false, 3, "A", "b", "2", "EUR"],
+				[undefined, undefined, false, 3, "A", "c", "3", "EUR"],
 				[undefined, undefined, true, 2, "", "", "10", "EUR"],
 				[undefined, undefined, true, 1, "", "", "10", "EUR"],
 				[undefined, undefined, true, 0, "", "", "3510", ""]
@@ -24704,7 +24689,7 @@ sap.ui.define([
 				}\
 			},\
 			grandTotalAtBottomOnly : false,\
-			groupLevels : [\'Country\',\'LocalCurrency\',\'Region\'],\
+			groupLevels : [\'Country\', \'LocalCurrency\', \'Region\'],\
 			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
 		}\
 	}}">\
@@ -24777,14 +24762,21 @@ sap.ui.define([
 
 			that.expectRequest("BusinessPartners"
 					+ "?$apply=filter(Country eq 'A' and LocalCurrency eq 'EUR')"
-					+ "/groupby((Region))&$count=true&$skip=0&$top=100", {
+					+ "/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
+					+ "&$count=true&$skip=0&$top=100", {
 					"@odata.count" : "3",
 					value : [{
-						Region : "a"
+						LocalCurrency : "EUR",
+						Region : "a",
+						SalesAmountLocalCurrency : "10"
 					}, {
-						Region : "b"
+						LocalCurrency : "EUR",
+						Region : "b",
+						SalesAmountLocalCurrency : "20"
 					}, {
-						Region : "c"
+						LocalCurrency : "EUR",
+						Region : "c",
+						SalesAmountLocalCurrency : "30"
 					}]
 				})
 				.expectChange("level", [,,, 3, 3, 3, 0]);
@@ -24807,9 +24799,9 @@ sap.ui.define([
 				[undefined, true, true, 0, "", "", "3510", ""],
 				[1, true, false, 1, "A", "", "", ""],
 				[3, true, false, 2, "A", "", "", "EUR"],
-				[undefined, false, false, 3, "A", "a", "", "EUR"],
-				[undefined, false, false, 3, "A", "b", "", "EUR"],
-				[undefined, false, false, 3, "A", "c", "", "EUR"],
+				[undefined, undefined, false, 3, "A", "a", "10", "EUR"],
+				[undefined, undefined, false, 3, "A", "b", "20", "EUR"],
+				[undefined, undefined, false, 3, "A", "c", "30", "EUR"],
 				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 
@@ -24851,7 +24843,7 @@ sap.ui.define([
 				SalesNumber : {grandTotal : true}\
 			},\
 			grandTotalAtBottomOnly : true,\
-			groupLevels : [\'Country\',\'Region\'],\
+			groupLevels : [\'Country\', \'Region\'],\
 			subtotalsAtBottomOnly : false\
 		}\
 	}}">\
@@ -24898,10 +24890,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {subtotals : true}\
 			},\
-			group : {\
-				Region : {}\
-			},\
-			groupLevels : [\'Country\']\
+			groupLevels : [\'Country\', \'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -24983,11 +24972,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-378
 	// JIRA: CPOUI5ODATAV4-597
 	//
-	// Show additional text properties for group levels.
-	// JIRA: CPOUI5ODATAV4-680
-	//
-	// Check download URL.
-	// JIRA: CPOUI5ODATAV4-609
+	// Show additional text properties for group levels (JIRA: CPOUI5ODATAV4-680)
+	// Check download URL (JIRA: CPOUI5ODATAV4-609)
+	// Some, but not all, levels present as groups (JIRA: CPOUI5ODATAV4-2755)
 	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
 		var oModel = this.createAggregationModel(),
 			oRowsBinding,
@@ -25002,11 +24989,10 @@ sap.ui.define([
 				SalesNumber : {}\
 			},\
 			group : {\
-				AccountResponsible : {},\
 				Country : {additionally : [\'CountryText\']},\
 				Region : {additionally : [\'RegionText\']}\
 			},\
-			groupLevels : [\'Country\', \'Region\', \'Segment\']\
+			groupLevels : [\'Country\', \'Region\', \'Segment\', \'AccountResponsible\']\
 		},\
 		$orderby : \'RegionText desc\'\
 	}}" threshold="0" visibleRowCount="4">\
@@ -25219,6 +25205,8 @@ sap.ui.define([
 	// Use subtotalsAtBottomOnly w/o subtotals actually being requested. This must not change
 	// anything!
 	// JIRA: CPOUI5ODATAV4-825
+	//
+	// All levels present as groups (JIRA: CPOUI5ODATAV4-2755)
 	QUnit.test("Data Aggregation: additionally via navigation", function (assert) {
 		var oTable,
 			sView = '\
@@ -25235,7 +25223,7 @@ sap.ui.define([
 				},\
 				Name : {additionally : [\'BestFriend/Name\']}\
 			},\
-			groupLevels : [\'IsActiveEntity\', \'Name\'],\
+			groupLevels : [\'IsActiveEntity\', \'Name\', \'ArtistID\'],\
 			subtotalsAtBottomOnly : true\
 		},\
 		$orderby :\
@@ -25375,10 +25363,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {}\
 			},\
-			group : {\
-				AccountResponsible : {}\
-			},\
-			groupLevels : [\'Region\'],\
+			groupLevels : [\'Region\', \'AccountResponsible\'],\
 			subtotalsAtBottomOnly : false\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
@@ -25506,10 +25491,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {subtotals : true}\
 			},\
-			group : {\
-				Segment : {}\
-			},\
-			groupLevels : [\'Country\', \'Region\']\
+			groupLevels : [\'Country\', \'Region\', \'Segment\']\
 		}\
 	}}" threshold="0" visibleRowCount="8">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -25682,10 +25664,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {subtotals : true}\
 			},\
-			group : {\
-				Region : {}\
-			},\
-			groupLevels : [\'Country\']\
+			groupLevels : [\'Country\', \'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -26684,10 +26663,7 @@ sap.ui.define([
 				aggregate : {\
 					SalesNumber : {grandTotal : true, subtotals : true}\
 				},\
-				group : {\
-					Region : {}\
-				},\
-				groupLevels : [\'Country\'],\
+				groupLevels : [\'Country\', \'Region\'],\
 				search : \'covfefe\'\
 			},\
 			$count : true,\
@@ -26938,26 +26914,25 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oListBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
+			that.expectRequest("SalesOrderList"
+					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
 					+ "&$skip=0&$top=100", {
-					"@odata.count" : "1",
-					value : [{LifecycleStatus : "Y"}]
+					value : [{GrossAmount : "2", LifecycleStatus : "Y"}]
 				})
-				.expectChange("grossAmount", [undefined])
+				.expectChange("grossAmount", ["2"])
 				.expectChange("lifecycleStatus", ["Y"]);
 
 			// code under test
 			oListBinding.setAggregation({
 				aggregate : {GrossAmount : {}},
-				groupLevels : ["LifecycleStatus"]
+				group : {LifecycleStatus : {}}
 			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList"
 					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "&$count=true&$skip=0&$top=100", {
-					"@odata.count" : "1",
+					+ "&$skip=0&$top=100", {
 					value : [{GrossAmount : "3", LifecycleStatus : "X"}]
 				})
 				.expectChange("grossAmount", ["3"])
@@ -26966,7 +26941,7 @@ sap.ui.define([
 			// code under test
 			oListBinding.setAggregation({
 				aggregate : {GrossAmount : {subtotals : true}},
-				groupLevels : ["LifecycleStatus"]
+				group : {LifecycleStatus : {}}
 			});
 
 			return that.waitForChanges(assert);
@@ -27010,10 +26985,10 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true&$skip=0&$top=100",
-				{"@odata.count" : "1", value : [{Region : "A"}]})
+		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+				+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]})
 			.expectChange("region", ["A"])
-			.expectChange("salesAmount", [undefined]);
+			.expectChange("salesAmount", ["123"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// expect no request
@@ -27026,24 +27001,24 @@ sap.ui.define([
 				that.waitForChanges(assert, "AccountResponsible (unused)")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
+			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
 				that.waitForChanges(assert, "entity")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
+			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesAmount"}]),
 				that.waitForChanges(assert, "SalesAmount (aggregate)")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
+			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Region"}]),
@@ -27051,16 +27026,16 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
-					{"@odata.count" : "1", value : [{Region : "A"}]});
+					+ "/groupby((Region),aggregate(SalesAmount))&$skip=0&$top=100",
+					{value : [{Region : "A", SalesAmount : "123"}]});
 
 			oBinding.filter(new Filter("Country", FilterOperator.EQ, "US"));
 
 			return that.waitForChanges(assert, "filter");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
-					{"@odata.count" : "1", value : [{Region : "A"}]});
+					+ "/groupby((Region),aggregate(SalesAmount))&$skip=0&$top=100",
+					{value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Country"}]),
@@ -59068,7 +59043,7 @@ make root = ${bMakeRoot}`;
 <Table id="orders" items="{path : \'/SalesOrderList\', parameters : {\
 		$expand : {\
 			SO_2_SOITEM : {\
-				$select : [\'ItemPosition\',\'Note\',\'SalesOrderID\']\
+				$select : [\'ItemPosition\', \'Note\', \'SalesOrderID\']\
 			}\
 		},\
 		$select : \'Note\'\
@@ -71617,7 +71592,7 @@ make root = ${bMakeRoot}`;
 			return Promise.all([
 				checkCanceled(assert, oCreatedTeamContext.created()),
 				checkCanceled(assert, oCreatedEmployeeContext1.created()),
-				// do not check the 2nd context from initial data, expect no "uncaught (in promise)"
+				// do not check the 2nd context from initial data, expect no "Uncaught (in promise)"
 				checkCanceled(assert, oCreatedEmployeeContext3.created()),
 				checkCanceled(assert, oCreatedEmployeeContext4.created()),
 				checkCanceled(assert, oCreatedEquipmentsContext1.created()),

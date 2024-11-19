@@ -271,6 +271,7 @@ sap.ui.define([
 				sLeaves,
 				aMinMaxAggregate = [], // concat(aggregate(???),.) content for min/max or count
 				sSkipTop,
+				aSortedGroups,
 				aSubtotalsAggregate = []; // groupby(.,aggregate(???)) content for subtotals/leaves
 
 			/*
@@ -305,14 +306,19 @@ sap.ui.define([
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
 			oAggregation.groupLevels ??= [];
-			bIsLeafLevel = !iLevel || iLevel > oAggregation.groupLevels.length;
 
 			oAggregation.group ??= {};
 			oAggregation.groupLevels.forEach(function (sGroup) {
 				oAggregation.group[sGroup] ??= {};
 			});
+			aSortedGroups = Object.keys(oAggregation.group).sort();
+			if (aSortedGroups.length === oAggregation.groupLevels.length) {
+				// no other groups than those in groupLevels
+				oAggregation.groupLevels.pop();
+			}
+			bIsLeafLevel = !iLevel || iLevel > oAggregation.groupLevels.length;
 			aGroupBy = bIsLeafLevel
-				? Object.keys(oAggregation.group).sort().filter(function (sGroup) {
+				? aSortedGroups.filter(function (sGroup) {
 					return !oAggregation.groupLevels.includes(sGroup);
 				})
 				: [oAggregation.groupLevels[iLevel - 1]];
@@ -387,8 +393,7 @@ sap.ui.define([
 					sApply += "/" + sSkipTop;
 				}
 				if (iLevel === 1 && mQueryOptions.$$leaves && !bFollowUp) {
-					sLeaves = "groupby(("
-						+ Object.keys(oAggregation.group).sort().join(",")
+					sLeaves = "groupby((" + aSortedGroups.join(",")
 						+ "))/aggregate($count as UI5__leaves)";
 				}
 				delete mQueryOptions.$$leaves;
@@ -400,8 +405,8 @@ sap.ui.define([
 				}
 			}
 			if (mQueryOptions.$$filterOnAggregate) {
-				sApply = "groupby((" + Object.keys(oAggregation.group).sort().join(",")
-					+ "),filter(" + mQueryOptions.$$filterOnAggregate + "))/" + sApply;
+				sApply = "groupby((" + aSortedGroups.join(",") + "),filter("
+					+ mQueryOptions.$$filterOnAggregate + "))/" + sApply;
 				delete mQueryOptions.$$filterOnAggregate;
 			}
 			if (oAggregation.search) {

@@ -4651,7 +4651,10 @@ sap.ui.define([
 	 *   </ul>
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
-	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with:
+	 *   to, be repeated in <code>oAggregation.group</code>. Since 1.132.0, the last group level is
+	 *   interpreted as the leaf level in case there are no other groups than those given here. In
+	 *   that case, {@link #getAggregation} returns a shorter <code>groupLevels</code> list.
+	 *   Group levels cannot be combined with:
 	 *   <ul>
 	 *     <li> filtering for aggregated properties,
 	 *     <li> "$search" (since 1.93.0),
