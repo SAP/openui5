@@ -380,19 +380,20 @@ sap.ui.define([
 			 */
 			filteredTestsFromTestStarterDiscovery = testsFromTestStarterDiscovery.map(function(oTestConfig) {
 				if ( typeof oTestConfig.module !== "string" ) {
-					return;
+					return null;
 				}
 				var match = /^test-resources\/(.*)\/qunit\/(.*)$/.exec(oTestConfig.module);
 				if ( match ) {
 					var libPrefix = findLibPrefix(match[1]);
 					var name = oTestConfig.module.slice("test-resources\/".length + libPrefix.length + 1) + ".js";
+					var oUrl = new URL(oTestConfig.fullpage, document.baseURI);
 					return {
 						lib: libPrefix.replace(/\//g, "."),
 						name: name,
-						url: "../.." + oTestConfig.fullpage
+						url: oUrl.pathname + oUrl.search + oUrl.hash
 					};
 				}
-				return;
+				return null;
 			}).filter(Boolean);
 
 			renderAllTests();
