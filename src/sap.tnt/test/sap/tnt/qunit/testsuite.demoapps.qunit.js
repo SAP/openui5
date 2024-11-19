@@ -11,13 +11,9 @@ sap.ui.define(function () {
 
 		tests: {
 			// sap.tnt demo apps
-			"sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests": {
+			"sap/tnt/demokit/toolpageapp/webapp/test/testsuite.qunit.html": {
 				group: "Shop Administration Tool",
-				page: "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html"
-			},
-			"sap/tnt/demokit/toolpageapp/webapp/test/unit/unitTests": {
-				group: "Shop Administration Tool",
-				page: "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/testsuite.qunit.html"
 			}
 		}
 	};
