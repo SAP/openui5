@@ -1,0 +1,21 @@
+<mvc:View
+    controllerName="sap.ui.demo.illustrationExplorer.controller.IllustrationDetails"
+    displayBlock="true"
+    height="100%"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core">
+    <Page title="{i18n>illustrationDetailsTitle}" titleLevel="H1" showNavButton="true"
+        navButtonPress=".onNavToHome" navButtonTooltip="{i18n>backToHomeTooltip}"
+        class="sapUiDemoIllustrationExplorerDetailsPage sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer">
+        <content>
+            <core:Fragment
+                fragmentName="sap.ui.demo.illustrationExplorer.view.fragments.IllustrationDetailsContent"
+                type="XML" />
+        </content>
+        <footer>
+            <core:Fragment fragmentName="sap.ui.demo.illustrationExplorer.view.fragments.Footer"
+                type="XML" />
+        </footer>
+    </Page>
+</mvc:View>

@@ -1,0 +1,10 @@
+{
+  "name": "illustration-explorer",
+  "private": true,
+  "version": "1.0.0",
+  "author": "SAP SE",
+  "description": "UI5 Tool App - Illustration Explorer",
+  "devDependencies": {
+    "@ui5/cli": "^4"
+  }
+}

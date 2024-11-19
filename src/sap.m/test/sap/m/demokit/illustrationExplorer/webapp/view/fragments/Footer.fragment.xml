@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Toolbar class="sapUiDemoIllustrationExplorerFooter">
+        <FlexBox
+            class="sapUiDemoIllustrationExplorerFooterContentWrapper"
+            width="100%"
+            justifyContent="SpaceBetween"
+            alignItems="Center"
+            wrap="Wrap">
+            <FlexBox alignItems="Center">
+                <Image
+                    class="sapUiTinyMarginEnd"
+                    src="../webapp/images/logo_sap.svg"
+                    alt="SAP Company Logo"
+                    width="3rem"
+                    height="1.5rem" />
+
+                <Text
+                    text="© {app>/currentYear} SAP SE or an SAP affiliate company. All rights reserved." />
+            </FlexBox>
+            <FlexBox>
+                <Link
+                    class="sapUiSmallMarginEnd"
+                    text="{i18n>FOOTER_LEGAL_DISCOLURE}"
+                    href="https://www.sap.com/corporate/en/legal/impressum.html"
+                    target="_blank" />
+                <Link
+                    class="sapUiSmallMarginEnd"
+                    text="{i18n>FOOTER_PRIVACY}"
+                    href="https://www.sap.com/corporate/en/legal/privacy.html"
+                    target="_blank" />
+                <Link
+                    class="sapUiSmallMarginEnd"
+                    text="{i18n>FOOTER_TRADEMARK}"
+                    href="https://www.sap.com/corporate/en/legal/trademark.html"
+                    target="_blank" />
+                <Link
+                    text="{i18n>FOOTER_COPYRIGHT}"
+                    href="https://www.sap.com/corporate/en/legal/copyright.html"
+                    target="_blank" />
+            </FlexBox>
+        </FlexBox>
+    </Toolbar>
+</core:FragmentDefinition>
