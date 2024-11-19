@@ -5,6 +5,7 @@
 	controllerName="sap.f.cardsdemo.controller.CommonCardSettings">
 	<VBox class="sapUiSmallMarginBegin">
 		<SegmentedButton
+				id="density-mode-segmented-button"
 				selectedKey="cozy"
 				selectionChange=".onFormFactorChange"
 				class="VizTestDensityBtn sapUiSmallMargin">
