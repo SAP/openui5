@@ -886,7 +886,7 @@ function(
 			// propagate the selection change to the select aggregation
 			if (this.getHasSelect()) {
 				var oSelectItem = this._findSelectItemFromTabStripItem(oSelectedItem);
-				this.getAggregation('_select').setSelectedItem(oSelectItem);
+				this.getAggregation('_select').setAssociation("selectedItem", oSelectItem, true);
 			}
 
 			return this.setAssociation("selectedItem", oSelectedItem, bNotMobile);
