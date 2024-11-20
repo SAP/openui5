@@ -868,10 +868,10 @@ sap.ui.define([
 	};
 
 	function checkAndFocusBlockLayer() {
-		// Move focus to the busy indicator if the focus is currently within the busy control's DOM.
-		if (this._oBusyBlockState && this.getDomRef()?.contains(document.activeElement)) {
+		if (this._oBusyBlockState && this.getDomRef(this._sBusySection)?.contains(document.activeElement)) {
+			// Move focus to the busy indicator if the focus is currently within the busy control's DOM.
 			this._oBusyBlockState.lastFocusPosition = document.activeElement;
-			this._oBusyBlockState.$blockLayer.get(0).focus();
+			this._oBusyBlockState.$blockLayer.get(0).focus({ preventScroll: true });
 		}
 	}
 
