@@ -157,13 +157,13 @@ sap.ui.define([
 
 		if (mConfiguration.chart) {
 			Microchart.loadDependencies().then(() => {
-				this.setMicroChart(Microchart.create(mConfiguration.chart, true));
+				oHeader.setMicroChart(Microchart.create(mConfiguration.chart, true));
 			});
 
 			if (mConfiguration.sideIndicators) {
-				this.addStyleClass("sapFCardNumericHeaderSIMC");
+				oHeader.addStyleClass("sapFCardNumericHeaderSIMC");
 			} else {
-				this.addStyleClass("sapFCardNumericHeaderMC");
+				oHeader.addStyleClass("sapFCardNumericHeaderMC");
 			}
 		}
 
