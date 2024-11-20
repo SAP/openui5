@@ -3337,7 +3337,7 @@ sap.ui.define([
 		var mCodeListUrl2Promise, oFetchCodeListPromise,
 			oCodeListCacheMock = this.mock(Map.prototype),
 			oCodeListModel = {
-				read : function () {}
+				_read : function () {}
 			},
 			oCodeListModelCache = {
 				/* bFirstCodeListRequested : false */
@@ -3377,7 +3377,11 @@ sap.ui.define([
 			});
 		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns(oCodeListModelCache);
-		oCodeListModelMock.expects("read").withExactArgs("/~Currencies", sinon.match.object)
+		this.mock(ODataModel.prototype._request).expects("bind")
+			.withExactArgs(sinon.match.same(oDataModel))
+			.returns("~_request");
+		oCodeListModelMock.expects("_read")
+			.withExactArgs("/~Currencies", sinon.match.object, undefined, "~_request")
 			.callsFake(function (sPath, mParams) {
 				mParams.error("~error");
 			});
@@ -3512,7 +3516,7 @@ sap.ui.define([
 		var oCachedPromise, mCodeListUrl2Promise, oFetchCodeListPromise, fnResolveReadCalled,
 			oCodeListCacheMock = this.mock(Map.prototype),
 			oCodeListModel = {
-				read : function() {}
+				_read : function() {}
 			},
 			oEntityContainer = {
 				"com.sap.vocabularies.CodeList.v1.~sTerm" : {
@@ -3567,8 +3571,8 @@ sap.ui.define([
 			});
 		this.mock(oMetaModel).expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
-		this.mock(oCodeListModel).expects("read")
-			.withExactArgs("/~CollectionPath", sinon.match.object)
+		this.mock(oCodeListModel).expects("_read")
+			.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
 				assert.deepEqual(mParams.urlParameters, {$skip : 0, $top : 5000});
 				fnResolveReadCalled(mParams.success);
@@ -3631,7 +3635,7 @@ sap.ui.define([
 	QUnit.test("fetchCodeList: exception in _getPropertyNamesForCodeListCustomizing",
 		function (assert) {
 		var oCodeListModel = {
-				read : function() {}
+				_read : function() {}
 			},
 			oEntityContainer = {
 				"com.sap.vocabularies.CodeList.v1.~sTerm" : {
@@ -3650,8 +3654,8 @@ sap.ui.define([
 		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
 		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
-		this.mock(oCodeListModel).expects("read")
-			.withExactArgs("/~CollectionPath", sinon.match.object)
+		this.mock(oCodeListModel).expects("_read")
+			.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
 				mParams.success({results : []});
 				assert.deepEqual(mParams.urlParameters, {$skip : 0, $top : 5000});
@@ -3684,7 +3688,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCodeList: exception within SyncPromise is passed through", function (assert) {
 		var oCodeListModel = {
-				read : function() {}
+				_read : function() {}
 			},
 			oEntityContainer = {
 				"com.sap.vocabularies.CodeList.v1.~sTerm" : {
@@ -3703,8 +3707,8 @@ sap.ui.define([
 		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
 		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
-		this.mock(oCodeListModel).expects("read")
-			.withExactArgs("/~CollectionPath", sinon.match.object)
+		this.mock(oCodeListModel).expects("_read")
+			.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
 				mParams.success({/* no results property causes an error */});
 			});
@@ -3750,7 +3754,7 @@ sap.ui.define([
 		var mCodeListUrl2Promise,
 			oCodeListModel = {
 				destroy : function () {},
-				read : function () {}
+				_read : function () {}
 			},
 			oCodeListModelCache = {bFirstCodeListRequested : false, oModel : oCodeListModel},
 			oCodeListModelMock = this.mock(oCodeListModel),
@@ -3790,7 +3794,8 @@ sap.ui.define([
 
 				return oCodeListModelCache;
 			});
-		oCodeListModelMock.expects("read").withExactArgs("/~" + sFirstCodeList, sinon.match.object)
+		oCodeListModelMock.expects("_read")
+			.withExactArgs("/~" + sFirstCodeList, sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
 				if (bFirstCodeListRequestSuccess) {
 					mParams.success({results : []});
@@ -3825,8 +3830,8 @@ sap.ui.define([
 
 						return oCodeListModelCache;
 					});
-				oCodeListModelMock.expects("read")
-					.withExactArgs("/~" + sSecondCodeList, sinon.match.object)
+				oCodeListModelMock.expects("_read")
+					.withExactArgs("/~" + sSecondCodeList, sinon.match.object, undefined, sinon.match.func)
 					.callsFake(function (sPath, mParams) {
 						if (bSecondCodeListRequestSuccess) {
 							mParams.success({results : []});
@@ -3883,7 +3888,7 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var mCodeListUrl2Promise,
 			oCodeListModel = {
-				read : function () {}
+				_read : function () {}
 			},
 			oCodeListModelCache = {bFirstCodeListRequested : false, oModel : oCodeListModel},
 			oCodeListModelMock = this.mock(oCodeListModel),
@@ -3917,7 +3922,8 @@ sap.ui.define([
 		oMetaModelMock.expects("_getOrCreateSharedModelCache")
 			.withExactArgs()
 			.returns(oCodeListModelCache);
-		oCodeListModelMock.expects("read").withExactArgs("/" + sCodeList, sinon.match.object)
+		oCodeListModelMock.expects("_read")
+			.withExactArgs("/" + sCodeList, sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
 				assert.deepEqual(mParams.urlParameters, oFixture.mReadUrlParams);
 				mParams.success({results : []});
@@ -3940,7 +3946,7 @@ sap.ui.define([
 		var mCodeListUrl2Promise, oFetchCodeListPromise, fnReadCallResolve,
 			oCodeListModel = {
 				destroy : function () {},
-				read : function () {}
+				_read : function () {}
 			},
 			oCodeListCacheMock = this.mock(Map.prototype),
 			oCodeListModelMock = this.mock(oCodeListModel),
@@ -3988,7 +3994,8 @@ sap.ui.define([
 
 				return this.oSharedModelCache;
 			});
-		oCodeListModelMock.expects("read").withExactArgs("/~CollectionPath", sinon.match.object)
+		oCodeListModelMock.expects("_read")
+			.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
 				oCodeListModelMock.expects("destroy").withExactArgs()
 					.callsFake(function () {
