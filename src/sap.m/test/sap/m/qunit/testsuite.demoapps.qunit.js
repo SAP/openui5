@@ -148,13 +148,9 @@ sap.ui.define(function () {
 				group: "Worklist Tutorial",
 				page: "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/unit/unitTests.qunit.html"
 			},
-			"sap/m/demokit/tutorial/walkthrough/38/webapp/test/integration/opaTests": {
+			"sap/m/demokit/tutorial/walkthrough/38/webapp/test/testsuite": {
 				group: "Walkthrough Tutorial",
-				page: "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/integration/opaTests.qunit.html"
-			},
-			"sap/m/demokit/tutorial/walkthrough/38/webapp/test/unit/unitTests": {
-				group: "Walkthrough Tutorial",
-				page: "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/testsuite.qunit.html"
 			}
 		}
 	};
