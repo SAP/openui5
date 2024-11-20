@@ -3,18 +3,22 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-.sapMPopoverArr:after {
+.sapMPopoverArr::after {
 	border-style: solid;
 	border-width: 2px;
 }
 
-.sapMPopoverWithBar > .sapMPopoverArr.sapMPopoverArrUp:after {
-	background-color: @sapUiPageHeaderBackground;
+.sapMPopoverWithBar > .sapMPopoverArr.sapMPopoverArrUp::after {
+	background-color: var(--sapPageHeader_Background);
 }
 
 .sapUiSizeCompact {
-	.sapMPopoverFooter, .sapMPopoverHeader {
-		.sapMIBar, .sapMBar {
+
+	.sapMPopoverFooter,
+	.sapMPopoverHeader {
+
+		.sapMIBar,
+		.sapMBar {
 			height: 2.5rem;
 
 			& > .sapMBarLeft,
@@ -39,10 +43,17 @@
 	}
 }
 
-.sapMPopoverHeader, .sapMPopoverFooter, .sapMPopoverSubHeader {
-	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
-	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+.sapMPopoverHeader,
+.sapMPopoverFooter,
+.sapMPopoverSubHeader {
+
+	.sapUi-Std-PaddingS,
+	.sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL,
+	.sapUi-Std-PaddingXL {
+
 		&.sapMBar {
+
 			.sapMBarMiddle .sapMBarPH {
 				padding-left: 0;
 				padding-right: 0;
@@ -67,21 +78,26 @@
 	}
 }
 
-.sapMPopoverHeader, .sapMPopoverSubHeader {
+.sapMPopoverHeader,
+.sapMPopoverSubHeader {
 	position: relative;
 	z-index: 2;
 
 	.sapMBar {
+
 		.sapMBarContainer {
 			padding-left: 0;
 			padding-right: 0;
 		}
+
 		.sapMBarLeft {
 			padding-left: 1rem;
 		}
+
 		.sapMBarMiddle .sapMBarContainer {
 			padding: 0 1rem;
 		}
+
 		.sapMBarRight {
 			padding-right: 1rem;
 		}
@@ -89,16 +105,16 @@
 }
 
 /* pointing downward arrow */
-.sapMPopoverArrDown:after {
+.sapMPopoverArrDown::after {
 	margin: -0.625rem 0 0 0.125rem;
 }
 
 /* pointing right arrow */
-.sapMPopoverArrRight:after {
+.sapMPopoverArrRight::after {
 	margin: 0.1875rem 0 0 -0.625rem;
 }
 
 /* pointing left arrow */
-.sapMPopoverArrLeft:after {
+.sapMPopoverArrLeft::after {
 	margin: 0.125rem 0 0 0.1875rem;
 }
