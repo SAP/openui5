@@ -991,6 +991,25 @@ sap.ui.define([
 		return {length : iLength, start : iStart};
 	};
 
+	/**
+	 * Removes all occurrences of the origin segment parameters <code>o</code> and <code>mo</code> from the given
+	 * service URL.
+	 *
+	 * @param {string} sServiceURL
+	 *   The OData service base URI without query options as returned by
+	 *   {@link sap.ui.model.odata.v2.ODataModel#getServiceUrl} or
+	 *   {@link sap.ui.model.odata.v4.ODataModel#getServiceUrl}
+	 * @returns {string}
+	 *   The OData service base URI without the origin segment parameters
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.ODataUtils.setOrigin
+	 * @ui5-restricted sap.ui.fl
+	 */
+	ODataUtils.removeOriginSegmentParameters = function (sServiceURL) {
+		return sServiceURL.replaceAll(/(;o=[^\/;]+|;mo)(?=\/|;|$)/g, "");
+	};
+
 	return ODataUtils;
 
 }, /* bExport= */ true);

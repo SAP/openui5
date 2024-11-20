@@ -1166,4 +1166,26 @@ sap.ui.define([
 			assert.strictEqual(ODataUtils._formatValue(oFixture.v, oFixture.t, true, "789"), oFixture.r);
 		});
 	});
+
+	//*********************************************************************************************
+[{
+	input: "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=XYZ_999/",
+	output: "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION/"
+}, {
+	input: "/sap/opu/odata/IWBEP;o=sid(DEMO.134)/TEA_TEST_APPLICATION;o=XYZ_999",
+	output: "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION"
+}, {
+	input: "/sap/opu/odata/IWBEP;mo/TEA_TEST_APPLICATION;mo",
+	output: "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION"
+}, {
+	input: "/sap/opu/odata/IWBEP;mo/TEA_TEST_APPLICATION;o=XYZ_999;ps=foo;va=bar",
+	output: "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;ps=foo;va=bar"
+}].forEach((oFixture, i) => {
+	QUnit.test("removeOriginSegmentParameters o and mo #" + i, function (assert) {
+		// one string argument after service url
+		assert.equal(ODataUtils.removeOriginSegmentParameters(oFixture.input), oFixture.output);
+	});
 });
+});
+
+
