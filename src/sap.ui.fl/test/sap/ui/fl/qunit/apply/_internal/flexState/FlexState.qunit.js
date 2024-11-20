@@ -341,6 +341,84 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when initialize is called multiple times with the same reference without waiting", async function(assert) {
+			assert.expect(3);
+			this.oLoadFlexDataStub.callsFake((mProperties) => {
+				// Simulate the following scenario:
+				// First initialization takes some time and second and third are called before the first one is finished
+				// The second one takes longer than then third one
+				// Expectation is that the initializations still finish in order
+				const oPromise = (mProperties.expectedOrder === 3)
+					? Promise.resolve()
+					: new Promise((resolve) => {
+						setTimeout(() => {
+							resolve();
+						}, 0);
+					});
+				return oPromise.then(() => {
+					assert.strictEqual(
+						this.oLoadFlexDataStub.callCount,
+						mProperties.expectedOrder,
+						"then the initializations are executed in order and wait for each other"
+					);
+					return mEmptyResponse;
+				});
+			});
+			FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				expectedOrder: 1
+			});
+			FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId,
+				expectedOrder: 2
+			});
+			await FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId,
+				expectedOrder: 3
+			});
+		});
+
+		QUnit.test("when initialize is called multiple times with an async callback depending on the state", function(assert) {
+			// This test covers a previous bug where the FlexState was not initialized completly
+			// i.e. it was cleared during the second initialization but the storageResponse was not yet set
+			// because the process was async
+			// This resulted in a failing DataSelector, which is tested here
+
+			const oSecondLoadPromise = new Promise((resolve) => {
+				this.fnResolve = resolve;
+			});
+			this.oLoadFlexDataStub.callsFake(() => {
+				if (this.oLoadFlexDataStub.callCount === 1) {
+					this.fnResolve();
+				}
+				return Promise.resolve(mEmptyResponse);
+			});
+
+			const fnDone = assert.async();
+			FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			})
+			.then(async function() {
+				await oSecondLoadPromise;
+				await Promise.resolve();
+				const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
+				assert.strictEqual(aFlexObjects.length, 0, "then the flex objects can be accessed");
+				fnDone();
+			});
+
+			FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId
+			});
+		});
+
 		QUnit.test("when getUIChanges / getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
 			return FlexState.initialize({
 				reference: "sap.ui.fl.other.reference",
