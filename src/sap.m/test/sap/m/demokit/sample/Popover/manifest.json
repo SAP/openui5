@@ -21,9 +21,10 @@
 		"config": {
 			"sample": {
 				"files": [
-					"view/Popover.view.xml",
 					"controller/Popover.controller.js",
 					"view/Popover.fragment.xml",
+					"view/Popover.view.xml",
+					"view/ResizablePopover.fragment.xml",
 					"manifest.json"
 				]
 			}
