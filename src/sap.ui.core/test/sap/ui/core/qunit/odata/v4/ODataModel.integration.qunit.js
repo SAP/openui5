@@ -2577,6 +2577,12 @@ sap.ui.define([
 
 				return sValue;
 			};
+			if (sControlId.endsWith("__AS_COMPOSITE")) {
+				// "__AS_COMPOSITE" enables an expression binding to be a composite binding (which
+				// is the default behavior in UI5). Without textFragments it becomes a simple
+				// PropertyBinding which doesn't report all actual binding updates
+				oBindingInfo.formatter.textFragments = fnOriginalFormatter?.textFragments;
+			}
 		},
 
 		/**
@@ -75554,6 +75560,17 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2692
 	//
 	// The "separateReceived" event is fired for each separate request (JIRA: CPOUI5ODATAV4-2792)
+	//
+	// While waiting for a separate request, the APIs Context#requestObject and
+	// Context#requestProperty can already be used to retrieve the separate data without sending
+	// additional GET requests. The returned promise will be resolved as soon as the separate
+	// request is processed. In case Context#requestProperty requests multiple properties, one of
+	// which was not provided by the separate request, then this missing property is requested by an
+	// additional GET request. The returned promise is resolved as soon as all requested properties
+	// are available.
+	// See that a simulated busy indicator (by using an expression binding) must be in busy state
+	// when the separate data is missing, and immediately disables if the data is received.
+	// JIRA: CPOUI5ODATAV4-2778
 [false, true].forEach(function (bAutoExpandSelect) {
 	QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -75590,6 +75607,7 @@ make root = ${bMakeRoot}`;
 	<Text id="name" text="{Name}"/>
 	<Text id="publicationCurrency" text="{BestPublication/CurrencyCode}"/>
 	<Text id="friend" text="{BestFriend/Name}"/>
+	<Text id="friendBusy__AS_COMPOSITE" text="{= !%{BestFriend} }"/>
 	<Text id="sibling" text="{SiblingEntity/Name}"/>
 </Table>
 <FlexBox id="details">
@@ -75597,6 +75615,9 @@ make root = ${bMakeRoot}`;
 	<Text id="detailFriendName" text="{BestFriend/Name}"/>
 </FlexBox>`;
 
+		if (bAutoExpandSelect) {
+			this.expectChange("friendBusy__AS_COMPOSITE", true, Number.MIN_SAFE_INTEGER);
+		}
 		let fnResolveBestFriend;
 		let fnResolveSiblingEntity;
 		this.expectRequest({
@@ -75618,8 +75639,10 @@ make root = ${bMakeRoot}`;
 			})
 			.expectChange("name", ["Artist A", "Artist B"])
 			.expectChange("publicationCurrency", ["EUR", "USD"])
-			.expectChange("friend", [null, null])
-			.expectChange("sibling", [null, null])
+			.expectChange("friend", [])
+			// "__AS_COMPOSITE" ensures an expression binding is handled as a composite binding
+			.expectChange("friendBusy__AS_COMPOSITE", [true, true])
+			.expectChange("sibling", [])
 			.expectChange("detailName")
 			.expectChange("detailFriendName")
 			.expectRequest({
@@ -75671,13 +75694,43 @@ make root = ${bMakeRoot}`;
 			assert.deepEqual(aEventParameters, []);
 		};
 
-		this.expectChange("friend", ["Friend A", "Friend B"]);
+		const [oArtistA, oArtistB] = oListBinding.getAllCurrentContexts();
+		// code under test (JIRA: CPOUI5ODATAV4-2778)
+		// use SyncPromise to show that the data will be available synchronously
+		const oFriendAPromise = SyncPromise.resolve(oArtistA.requestObject("BestFriend"));
+		// code under test (JIRA: CPOUI5ODATAV4-2778)
+		const oFriendBPromise = SyncPromise.resolve(oArtistB.requestProperty("BestFriend/Name"));
+
+		this.expectChange("friend", ["Friend A", "Friend B"])
+			.expectChange("friendBusy__AS_COMPOSITE", [false, false]);
 
 		fnResolveBestFriend();
 
 		await this.waitForChanges(assert, "$$separate response: BestFriend");
 
+		assert.deepEqual(oFriendAPromise.getResult(), {
+			ArtistID : "F1",
+			IsActiveEntity : true,
+			Name : "Friend A"
+		});
+		assert.strictEqual(oFriendBPromise.getResult(), "Friend B");
 		checkEvents([{property : "BestFriend", start : 0, length : 2}]);
+
+		this.expectRequest({
+				batchNo : 4,
+				url : "Artists(ArtistID='20',IsActiveEntity=true)/SiblingEntity?custom=foo"
+					+ "&$select=ArtistID,IsActiveEntity,defaultChannel"
+			}, {
+				ArtistID : "S2",
+				IsActiveEntity : true,
+				defaultChannel : "~defaultChannel~"
+			});
+
+		// code under test (JIRA: CPOUI5ODATAV4-2778)
+		const oSiblingBPromise = SyncPromise.resolve(oArtistB.requestProperty([
+			"SiblingEntity/Name",
+			"SiblingEntity/defaultChannel"
+		]));
 
 		this.expectChange("sibling", ["Sibling A", "Sibling B"]);
 
@@ -75685,11 +75738,12 @@ make root = ${bMakeRoot}`;
 
 		await this.waitForChanges(assert, "$$separate response: SiblingEntity");
 
+		assert.deepEqual(oSiblingBPromise.getResult(), ["Sibling B", "~defaultChannel~"]);
 		checkEvents([{property : "SiblingEntity", start : 0, length : 2}]);
 
 		let fnResolveMain;
 		this.expectRequest({
-				batchNo : 4,
+				batchNo : 5,
 				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
 			}, {
@@ -75700,7 +75754,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectRequest({
-				batchNo : 5,
+				batchNo : 6,
 				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
 			}, {
@@ -75711,7 +75765,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectRequest({
-				batchNo : 6,
+				batchNo : 7,
 				url : sMainUrl + "&$skip=2&$top=1"
 			}, new Promise(function (resolve) {
 				fnResolveMain = resolve.bind(null, {
@@ -75735,6 +75789,10 @@ make root = ${bMakeRoot}`;
 		this.expectChange("name", [,, "Artist C"])
 			.expectChange("publicationCurrency", [,, "JPY"])
 			.expectChange("friend", [,, "Friend C"])
+			.expectChange("friendBusy__AS_COMPOSITE", [,, false])
+			// as it is a composite binding, it might get additional change events even though there
+			// is no changed value
+			.expectChange("friendBusy__AS_COMPOSITE", [,, false])
 			.expectChange("sibling", [,, "Sibling C"]);
 
 		fnResolveMain();
@@ -75747,7 +75805,7 @@ make root = ${bMakeRoot}`;
 		]);
 
 		this.expectRequest({
-				batchNo : 7,
+				batchNo : 8,
 				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
 			}, {
@@ -75762,7 +75820,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectRequest({
-				batchNo : 8,
+				batchNo : 9,
 				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
 			}, {
@@ -75777,7 +75835,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectRequest({
-				batchNo : 9,
+				batchNo : 10,
 				url : sMainUrl + "&$skip=3&$top=2"
 			}, {
 				"@odata.count" : "7",
@@ -75796,22 +75854,26 @@ make root = ${bMakeRoot}`;
 			.expectChange("name", [,,, "Artist D", "Artist E"])
 			.expectChange("publicationCurrency", [,,, "DKK", "CZK"])
 			.expectChange("friend", [,,, "Friend D"])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,, false, true])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,, false])
 			.expectChange("sibling", [,,,, "Sibling E"])
 			.expectRequest({
-				batchNo : 10,
+				batchNo : 11,
 				url : "Artists(ArtistID='40',IsActiveEntity=true)?custom=foo&$select=SiblingEntity"
 					+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 			}, {
 				SiblingEntity : {ArtistID : "S4", IsActiveEntity : true, Name : "Sibling D"}
 			})
 			.expectRequest({
-				batchNo : 10,
+				batchNo : 11,
 				url : "Artists(ArtistID='50',IsActiveEntity=true)?custom=foo&$select=BestFriend"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 			}, {
 				BestFriend : {ArtistID : "F5", IsActiveEntity : true, Name : "Friend E"}
 			})
 			.expectChange("friend", [,,,, "Friend E"])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,, false])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,, false])
 			.expectChange("sibling", [,,, "Sibling D"]);
 
 		oTable.requestItems();
@@ -75825,7 +75887,7 @@ make root = ${bMakeRoot}`;
 
 		let fnResolveBestFriend60;
 		this.expectRequest({
-				batchNo : 11,
+				batchNo : 12,
 				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
 			}, new Promise(function (resolve) {
@@ -75838,7 +75900,7 @@ make root = ${bMakeRoot}`;
 				});
 			}))
 			.expectRequest({
-				batchNo : 12,
+				batchNo : 13,
 				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
 			}, {
@@ -75849,7 +75911,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectRequest({
-				batchNo : 13,
+				batchNo : 14,
 				url : sMainUrl + "&$skip=5&$top=1"
 			}, {
 				"@odata.count" : "7",
@@ -75862,7 +75924,7 @@ make root = ${bMakeRoot}`;
 			})
 			.expectChange("name", [,,,,, "Artist F"])
 			.expectChange("publicationCurrency", [,,,,, "CAD"])
-			.expectChange("friend", [,,,,, null])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,,, true])
 			.expectChange("sibling", [,,,,, "Sibling F"]);
 
 		oTable.requestItems(1);
@@ -75872,7 +75934,7 @@ make root = ${bMakeRoot}`;
 		checkEvents([{property : "SiblingEntity", start : 5, length : 1}]);
 
 		this.expectRequest({
-				batchNo : 14,
+				batchNo : 15,
 				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
 			}, {
@@ -75883,7 +75945,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectRequest({
-				batchNo : 15,
+				batchNo : 16,
 				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
 			}, {
@@ -75894,7 +75956,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectRequest({
-				batchNo : 16,
+				batchNo : 17,
 				url : sMainUrl + "&$skip=6&$top=1"
 			}, {
 				"@odata.count" : "7",
@@ -75908,6 +75970,8 @@ make root = ${bMakeRoot}`;
 			.expectChange("name", [,,,,,, "Artist G"])
 			.expectChange("publicationCurrency", [,,,,,, "EUR"])
 			.expectChange("friend", [,,,,,, "Friend G"])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,,,, false])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,,,, false])
 			.expectChange("sibling", [,,,,,, "Sibling G"]);
 
 		oTable.requestItems(1);
@@ -75919,8 +75983,7 @@ make root = ${bMakeRoot}`;
 			{property : "SiblingEntity", start : 6, length : 1}
 		]);
 
-		this.expectChange("detailName", "Artist F")
-			.expectChange("detailFriendName", null);
+		this.expectChange("detailName", "Artist F");
 
 		// code under test
 		this.oView.byId("details").setBindingContext(oTable.getItems()[5].getBindingContext());
@@ -75928,6 +75991,7 @@ make root = ${bMakeRoot}`;
 		await this.waitForChanges(assert, "show item 60 on object page");
 
 		this.expectChange("friend", [,,,,, "Friend F"])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,,, false])
 			.expectChange("detailFriendName", "Friend F");
 
 		fnResolveBestFriend60();
@@ -75988,7 +76052,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectChange("name", ["Artist A", "Artist B"])
-			.expectChange("friend", [null, null]);
+			.expectChange("friend", []);
 
 		await this.createView(assert, sView, oModel);
 
@@ -76052,6 +76116,15 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "refresh binding")
 		]);
 
+		if (bReset) {
+			this.expectCanceledError("Failed to read path"
+						+ " /Artists(ArtistID='10',IsActiveEntity=true)/BestFriend/Name",
+					"$$separate: canceled BestFriend")
+				.expectCanceledError("Failed to read path"
+						+ " /Artists(ArtistID='20',IsActiveEntity=true)/BestFriend/Name",
+					"$$separate: canceled BestFriend");
+		}
+
 		fnResolveBestFriend();
 
 		await this.waitForChanges(assert, "resolve old separate request, ignore response");
@@ -76068,6 +76141,11 @@ make root = ${bMakeRoot}`;
 	// to the "separateReceived" event. Calling preventDefault on this event prevents that this UI5
 	// message is automatically reported to the message model.
 	// JIRA: CPOUI5ODATAV4-2792
+	//
+	// Context#requestObject can be used to wait for the separate data while waiting for the
+	// pending separate GET request. If the separate request fails, the promise returned by
+	// #requestObject is rejected.
+	// JIRA: CPOUI5ODATAV4-2778
 [/*main failed*/false, true].forEach(function (bSeparateFailed) {
 	[false, true].forEach(function (bPreventDefault) {
 		if (!bSeparateFailed && bPreventDefault) {
@@ -76111,12 +76189,15 @@ make root = ${bMakeRoot}`;
 				.withArgs("Failed to get contexts for " + sTeaBusi + "EMPLOYEES with start index 0"
 					+ " and length 2");
 		}
-		const oError = createErrorInsideBatch();
+		let fnReject;
+		const oResponsePromise = new Promise(function (_resolve, reject) {
+			fnReject = reject.bind(null, createErrorInsideBatch());
+		});
 		this.expectRequest({
 				batchNo : 1,
 				url : "EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
 					+ "&$skip=0&$top=2"
-			}, bSeparateFailed ? oError : {
+			}, bSeparateFailed ? oResponsePromise : {
 				value : [{
 					EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
 					ID : "0"
@@ -76136,21 +76217,45 @@ make root = ${bMakeRoot}`;
 					ID : "1",
 					Name : "Employee 1"
 				}]
-			} : oError)
-			.expectMessages(bPreventDefault ? [] : [{
-				code : "CODE",
-				message : "Request intentionally failed",
-				persistent : true,
-				technical : true,
-				type : "Error"
-			}])
+			} : oResponsePromise)
 			.expectChange("name", bSeparateFailed ? ["Employee 0", "Employee 1"] : [])
-			.expectChange("team", bSeparateFailed ? [null, null] : []);
+			.expectChange("team", []);
 
 		await Promise.all([
 			// synchronous #resume leads in some cases to different request order
 			oListBinding.resumeAsync(),
 			this.waitForChanges(assert, "resume binding")
+		]);
+
+		let oEmployee0TeamPromise;
+		if (bSeparateFailed) {
+			const [oEmployee0] = oListBinding.getAllCurrentContexts();
+			// code under test (JIRA: CPOUI5ODATAV4-2778)
+			oEmployee0TeamPromise = oEmployee0.requestObject("EMPLOYEE_2_TEAM").then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+				assert.strictEqual(oError.message, "$$separate: canceled EMPLOYEE_2_TEAM");
+			});
+
+			this.expectCanceledError("Failed to read path /EMPLOYEES('0')/EMPLOYEE_2_TEAM/Name",
+					"$$separate: canceled EMPLOYEE_2_TEAM")
+				.expectCanceledError("Failed to read path /EMPLOYEES('1')/EMPLOYEE_2_TEAM/Name",
+					"$$separate: canceled EMPLOYEE_2_TEAM");
+		}
+		this.expectMessages(bPreventDefault ? [] : [{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
+
+		fnReject();
+
+		await Promise.all([
+			oEmployee0TeamPromise,
+			this.waitForChanges(assert, "reject request")
 		]);
 
 		if (bSeparateFailed) {

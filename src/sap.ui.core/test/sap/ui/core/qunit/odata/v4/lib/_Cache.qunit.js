@@ -2336,6 +2336,8 @@ sap.ui.define([
 		aElements.$byPredicate = {"('2')" : aElements[2]};
 		oCache.aElements = aElements;
 		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
+		let fnResolve;
+		oRange.promise = new SyncPromise(function (resolve) { fnResolve = resolve; });
 
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("('2')/expensive").returns("n/a");
 		this.mock(_Helper).expects("getAnnotationKey").never();
@@ -2343,7 +2345,15 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchLateProperty").never();
 
 		// code under test
-		assert.strictEqual(await oCache.drillDown(aElements, "('2')/expensive"), undefined);
+		const oResultPromise = oCache.drillDown(aElements, "('2')/expensive");
+
+		assert.strictEqual(oResultPromise.isPending(), true);
+
+		aElements[2].expensive = "~result~"; // property loaded in the meantime
+		fnResolve();
+
+		// code under test
+		assert.strictEqual(await oResultPromise, "~result~");
 	});
 });
 
@@ -2358,6 +2368,7 @@ sap.ui.define([
 		aElements.$byPredicate = {"('2')" : aElements[2]};
 		oCache.aElements = aElements;
 		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
+		oRange.promise = "n/a";
 
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("('2')/expensive")
 			.returns("~metaPath~");
@@ -13397,6 +13408,15 @@ sap.ui.define([
 		fnResolveTypes("~types~");
 		await oTypesPromise;
 
+		const oFooRangePromise = oCache.mSeparateProperty2ReadRequest.foo[0].promise;
+		const oBarRangePromise = oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+		assert.ok(oFooRangePromise.isPending());
+		assert.ok(oBarRangePromise.isPending());
+
+		// delete promise as it is no longer needed, makes it easier to compare the read ranges
+		delete oCache.mSeparateProperty2ReadRequest.foo[0].promise;
+		delete oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+
 		// simulate other simultaneous request ranges, proof the deleting index is dynamic
 		oCache.mSeparateProperty2ReadRequest.foo.push("~range~");
 		oCache.mSeparateProperty2ReadRequest.bar.unshift("~range~");
@@ -13449,6 +13469,14 @@ sap.ui.define([
 			sinon.assert.callCount(fnSeparateReceived, 1);
 			sinon.assert.calledWithExactly(fnSeparateReceived, "bar", 3, 5);
 			fnSeparateReceived.resetHistory();
+			assert.strictEqual(await oBarRangePromise, undefined); // resolved with no value
+		} else {
+			await oBarRangePromise.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+				assert.strictEqual(oError.message, "$$separate: canceled bar");
+			});
 		}
 
 		const oFooResult = {value : ["foo0", "unknown"]};
@@ -13475,8 +13503,15 @@ sap.ui.define([
 		if (bMainSuccessful) {
 			sinon.assert.callCount(fnSeparateReceived, 1);
 			sinon.assert.calledWithExactly(fnSeparateReceived, "foo", 3, 5);
+			assert.strictEqual(await oBarRangePromise, undefined); // resolved with no value
 		} else {
 			sinon.assert.callCount(fnSeparateReceived, 0);
+			await oFooRangePromise.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true);
+				assert.strictEqual(oError.message, "$$separate: canceled foo");
+			});
 		}
 
 		return oResult;
@@ -13516,6 +13551,15 @@ sap.ui.define([
 		// code under test (oMainPromise must not have an influence)
 		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/null, fnSeparateReceived);
 
+		const oFooRangePromise = oCache.mSeparateProperty2ReadRequest.foo[0].promise;
+		const oBarRangePromise = oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+		assert.ok(oFooRangePromise.isPending());
+		assert.ok(oBarRangePromise.isPending());
+
+		// delete promise as it is no longer needed, makes it easier to compare the read ranges
+		delete oCache.mSeparateProperty2ReadRequest.foo[0].promise;
+		delete oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+
 		// simulate other simultaneous request ranges, proof the deleting index is dynamic
 		oCache.mSeparateProperty2ReadRequest.foo.push("~range~");
 		oCache.mSeparateProperty2ReadRequest.bar.unshift("~range~");
@@ -13537,6 +13581,12 @@ sap.ui.define([
 		sinon.assert.callCount(fnSeparateReceived, 1);
 		sinon.assert.calledWithExactly(fnSeparateReceived, "foo", 3, 5, "~fooError~");
 		fnSeparateReceived.resetHistory();
+		await oFooRangePromise.then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError.canceled, true);
+			assert.strictEqual(oError.message, "$$separate: canceled foo");
+		});
 
 		// code under test: reject separate promise for "bar"
 		fnRejectBar("~barError~");
@@ -13548,10 +13598,16 @@ sap.ui.define([
 		}, "no cleanup");
 		sinon.assert.callCount(fnSeparateReceived, 1);
 		sinon.assert.calledWithExactly(fnSeparateReceived, "bar", 3, 5, "~barError~");
+		await oBarRangePromise.then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError.canceled, true);
+			assert.strictEqual(oError.message, "$$separate: canceled bar");
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#requestSeparateProperties: skip import", async function () {
+	QUnit.test("CollectionCache#requestSeparateProperties: skip import", async function (assert) {
 		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
 			undefined, undefined, ["separate"]);
 
@@ -13570,6 +13626,9 @@ sap.ui.define([
 		// code under test
 		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/Promise.resolve());
 
+		const oRange = oCache.mSeparateProperty2ReadRequest.separate[0];
+		assert.ok(oRange.promise.isPending());
+
 		// simulate #reset
 		oCache.mSeparateProperty2ReadRequest.separate = [];
 
@@ -13578,6 +13637,13 @@ sap.ui.define([
 
 		fnResolveSeparate("~oResult~");
 		await oSeparatePromise;
+
+		await oRange.promise.then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError.canceled, true);
+			assert.strictEqual(oError.message, "$$separate: canceled separate");
+		});
 	});
 
 	//*********************************************************************************************
