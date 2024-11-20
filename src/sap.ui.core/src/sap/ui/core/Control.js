@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/performance/trace/Interaction",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	/* jQuery custom selectors ":sapFocusable"*/
+	"sap/ui/dom/jquery/Selectors"
 ], function(
 	CustomStyleClassSupport,
 	Core,
@@ -962,7 +964,14 @@ sap.ui.define([
 			// Focus might be moved from the busy indicator
 			// If it is still on the busy indicator, we restore the focus. Otherwise do nothing.
 			if (oBlockLayerDOM === document.activeElement) {
-				oLastFocusedElement = Element.closestTo(this._oBusyBlockState.lastFocusPosition) || this;
+				// Check if last focused DOM element is still available, restore focus on the DOM element
+				// Otherwise, move focus to the control's DOM Ref
+				// jQuery custom selectors ":sapFocusable"
+				if (jQuery(this._oBusyBlockState.lastFocusPosition).is(":sapFocusable")) {
+					oLastFocusedElement = this._oBusyBlockState.lastFocusPosition;
+				} else {
+					oLastFocusedElement = Element.closestTo(this._oBusyBlockState.lastFocusPosition) || this;
+				}
 				oLastFocusedElement.focus();
 			}
 		}

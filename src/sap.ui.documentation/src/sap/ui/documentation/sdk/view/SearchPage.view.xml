@@ -202,6 +202,50 @@
 					</op:ObjectPageSubSection>
  				</op:subSections>
 			</op:ObjectPageSection>
+			<op:ObjectPageSection id="external" title="{
+				parts: [
+						'i18n>SEARCH_PAGE_EXTERNAL_SECTION_TITLE',
+						'searchData>/matches/ExternalLength'
+					],
+					formatter: '.formatMessage' 
+				}"
+				visible="{=!!${searchData>/matches/ExternalLength}}"
+				app:category="external">
+				<op:subSections>
+					<op:ObjectPageSubSection>
+						<op:blocks>
+							<VBox class="sapUxAPObjectPageSubSectionAlignContent" width="auto">
+								<OverflowToolbar design="Transparent" height="3rem">
+									<Title text="{
+										parts: [
+											'i18n>SEARCH_PAGE_EXTERNAL_SECTION_TABLE_TITLE',
+											'searchView>/visibleExternalLength',
+											'searchData>/matches/ExternalLength'
+										],
+										formatter: '.formatTableTitle'
+									}"/>
+								</OverflowToolbar>
+
+								<List
+									id="externalList"
+									growing="true"
+									growingThreshold="25"
+									updateFinished="onExternalLoadMore"
+									items="{
+										path: 'searchData>/matches/aDataExternal'
+									}">
+									<FeedListItem
+										sender="{searchData>title}"
+										text="{searchData>summary}"
+										showIcon="false"
+										app:path="{searchData>path}"
+										app:external="{searchData>external}"/>
+								</List>
+							</VBox>
+						</op:blocks>
+					</op:ObjectPageSubSection>
+				</op:subSections>
+			</op:ObjectPageSection>
 		</op:sections>
 	</op:ObjectPageLayout>
 </mvc:View>

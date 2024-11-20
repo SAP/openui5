@@ -1,40 +1,20 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/base/i18n/Formatting",
-	"sap/base/i18n/Localization",
 	"sap/m/DynamicDateRange",
 	"sap/m/DynamicDateOption",
 	"sap/m/StandardDynamicDateOption",
-	"sap/m/DynamicDateValueHelpUIType",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/unified/DateRange",
 	"sap/ui/core/Element",
-	"sap/ui/core/format/DateFormat",
-	"sap/m/Button",
-	"sap/ui/core/Icon",
-	"sap/m/Label",
-	"sap/ui/Device",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/date/CalendarWeekNumbering"
+	"sap/ui/core/date/UI5Date"
 ], function(
-	Formatting,
-	Localization,
 	DynamicDateRange,
 	DynamicDateOption,
 	StandardDynamicDateOption,
-	DynamicDateValueHelpUIType,
 	Library,
 	nextUIUpdate,
-	DateRange,
 	Element,
-	DateFormat,
-	Button,
-	Icon,
-	Label,
-	Device,
-	UI5Date,
-	CalendarWeekNumbering
+	UI5Date
 ) {
 	"use strict";
 
@@ -255,5 +235,19 @@ sap.ui.define([
 		oClock.restore();
 	});
 
-});
+	QUnit.test("LASTDAYSINCLUDED option is found in the message bundle", async function(assert) {
+		var oDDR = new DynamicDateRange({id: "myDDRLast", standardOptions: ["LASTDAYSINCLUDED"]}),
+			oGetTextSpy = this.spy(oRb, "getText");
 
+		//act
+		oDDR.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		oDDR.open();
+
+		assert.ok(oGetTextSpy.calledWithExactly("DYNAMIC_DATE_LASTDAYSINCLUDED_TITLE"), "LASTDAYSINCLUDED TITLE text is used");
+
+		//cleanup
+		oDDR.destroy();
+	});
+
+});

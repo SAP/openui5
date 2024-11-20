@@ -37,8 +37,8 @@ sap.ui.define([
 	const TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Lifecycle", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
 				columns: TableQUnitUtils.createTextColumn()

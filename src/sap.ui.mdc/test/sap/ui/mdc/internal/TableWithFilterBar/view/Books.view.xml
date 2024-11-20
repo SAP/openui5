@@ -880,6 +880,8 @@
 					height="400px"
 					width="100%"
 				>
+					<!-- sortConditions="{sorters: [{key: 'author_ID', name: 'author_ID', descending: false}]}"
+					filterConditions='\{"author_ID" : [\{"operator":"EQ","values":[101]}]\}' -->
 					<mdc:selectionDetailsActions>
 						<mdcc:SelectionDetailsActions>
 							<mdcc:detailsItemActions>

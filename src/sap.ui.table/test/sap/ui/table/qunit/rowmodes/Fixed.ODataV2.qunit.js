@@ -39,12 +39,12 @@ sap.ui.define([
 			this.oDataModel.destroy();
 			this.oGetContextsSpy.restore();
 		},
-		createTable: async function(mSettings, fnBeforePlaceAt) {
+		createTable: function(mSettings, fnBeforePlaceAt) {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
 
-			this.oTable = await TableQUnitUtils.createTable(Object.assign({}, {
+			this.oTable = TableQUnitUtils.createTable(Object.assign({}, {
 				models: this.oDataModel,
 				columns: [
 					TableQUnitUtils.createTextColumn({
@@ -59,8 +59,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization if metadata not yet loaded", async function(assert) {
-		await this.createTable({models: TableQUnitUtils.createODataModel(null, true)});
+	QUnit.test("Initialization if metadata not yet loaded", function(assert) {
+		this.createTable({models: TableQUnitUtils.createODataModel(null, true)});
 
 		// render, refreshRows, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -69,8 +69,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization if metadata not yet loaded; Variable row heights", async function(assert) {
-		await this.createTable({
+	QUnit.test("Initialization if metadata not yet loaded; Variable row heights", function(assert) {
+		this.createTable({
 			models: TableQUnitUtils.createODataModel(null, true),
 			_bVariableRowHeightEnabled: true
 		});
@@ -82,8 +82,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization", async function(assert) {
-		await this.createTable();
+	QUnit.test("Initialization", function(assert) {
+		this.createTable();
 
 		// refreshRows, render, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -92,8 +92,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; With fixed rows", async function(assert) {
-		await this.createTable({
+	QUnit.test("Initialization; With fixed rows", function(assert) {
+		this.createTable({
 			rowMode: new FixedRowMode({
 				fixedTopRowCount: 1,
 				fixedBottomRowCount: 1
@@ -109,8 +109,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; With fixed rows; firstVisibleRow = 1; threshold = 1", async function(assert) {
-		await this.createTable({
+	QUnit.test("Initialization; With fixed rows; firstVisibleRow = 1; threshold = 1", function(assert) {
+		this.createTable({
 			rowMode: new FixedRowMode({
 				rowCount: 5,
 				fixedTopRowCount: 1,
@@ -135,8 +135,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; Variable row heights", async function(assert) {
-		await this.createTable({_bVariableRowHeightEnabled: true});
+	QUnit.test("Initialization; Variable row heights", function(assert) {
+		this.createTable({_bVariableRowHeightEnabled: true});
 
 		// refreshRows, render, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -147,8 +147,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; Bound on initialization; threshold = 1", async function(assert) {
-		await this.createTable({threshold: 1});
+	QUnit.test("Initialization; Bound on initialization; threshold = 1", function(assert) {
+		this.createTable({threshold: 1});
 
 		// refreshRows, render, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -159,8 +159,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; Bound on initialization; Variable row heights; threshold = 1", async function(assert) {
-		await this.createTable({threshold: 1, _bVariableRowHeightEnabled: true});
+	QUnit.test("Initialization; Bound on initialization; Variable row heights; threshold = 1", function(assert) {
+		this.createTable({threshold: 1, _bVariableRowHeightEnabled: true});
 
 		// refreshRows, render, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -171,8 +171,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; Bound between initialization and rendering; threshold = 1", async function(assert) {
-		await this.createTable({threshold: 1, rows: undefined}, function(oTable) {
+	QUnit.test("Initialization; Bound between initialization and rendering; threshold = 1", function(assert) {
+		this.createTable({threshold: 1, rows: undefined}, function(oTable) {
 			oTable.bindRows({path: "/Products"});
 		});
 
@@ -184,7 +184,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization; Bound after rendering; threshold = 1", async function(assert) {
-		await this.createTable({threshold: 1, rows: undefined});
+		this.createTable({threshold: 1, rows: undefined});
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.bindRows({path: "/Products"});
 
 		// refreshRows, updateRows
@@ -194,8 +195,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh", async function(assert) {
-		await this.createTable();
+	QUnit.test("Refresh", function(assert) {
+		this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.oGetContextsSpy.resetHistory();
@@ -206,8 +207,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh; With fixed rows", async function(assert) {
-		await this.createTable({
+	QUnit.test("Refresh; With fixed rows", function(assert) {
+		this.createTable({
 			rowMode: new FixedRowMode({
 				fixedTopRowCount: 1,
 				fixedBottomRowCount: 1
@@ -225,8 +226,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh; With fixed rows; firstVisibleRow = 1; threshold = 1", async function(assert) {
-		await this.createTable({
+	QUnit.test("Refresh; With fixed rows; firstVisibleRow = 1; threshold = 1", function(assert) {
+		this.createTable({
 			rowMode: new FixedRowMode({
 				rowCount: 5,
 				fixedTopRowCount: 1,
@@ -267,8 +268,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh; Variable row heights", async function(assert) {
-		await this.createTable({_bVariableRowHeightEnabled: true});
+	QUnit.test("Refresh; Variable row heights", function(assert) {
+		this.createTable({_bVariableRowHeightEnabled: true});
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.oGetContextsSpy.resetHistory();
@@ -279,8 +280,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort; With fixed rows", async function(assert) {
-		await this.createTable({
+	QUnit.test("Sort; With fixed rows", function(assert) {
+		this.createTable({
 			rowMode: new FixedRowMode({
 				fixedTopRowCount: 1,
 				fixedBottomRowCount: 1
@@ -304,8 +305,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", async function(assert) {
-		await this.createTable({
+	QUnit.test("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
+		this.createTable({
 			rowMode: new FixedRowMode({
 				rowCount: 5,
 				fixedTopRowCount: 1,

@@ -537,11 +537,13 @@
 		aDataAPI = [],
 		aDataDoc = [],
 		aDataExplored = [],
+		aDataExternal = [],
 		aFilteredData = [],
 		iAllLength = 0,
 		iAPILength = 0,
 		iDocLength = 0,
 		iExploredLength = 0,
+		iExternalLength = 0,
 		sPreferencedCategory = oOptions.sPreferencedCategory,
 		bIncludeDeprecated = oOptions.includeDeprecated;
 
@@ -613,6 +615,11 @@
 					iAPILength++;
 				}
 
+				if (oDoc.external) {
+					aDataExternal.push(oObject);
+					iExternalLength++;
+				}
+
 				if (bShouldAddToSearchResults) {
 					aData.push(oObject);
 					iAllLength++;
@@ -637,11 +644,13 @@
 			aDataAPI: aDataAPI,
 			aDataDoc : aDataDoc,
 			aDataExplored: aDataExplored,
+			aDataExternal: aDataExternal,
 			filteredData : aFilteredData,
 			AllLength: iAllLength,
 			APILength: iAPILength,
 			DocLength : iDocLength,
-			ExploredLength : iExploredLength
+			ExploredLength : iExploredLength,
+			ExternalLength : iExternalLength
 		};
 	}
 

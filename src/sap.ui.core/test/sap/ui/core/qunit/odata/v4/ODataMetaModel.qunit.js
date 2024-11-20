@@ -1299,14 +1299,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
-		this.oMetaModel.oMetaModelForAnnotations = "~oMetaModelForAnnotations~";
+		const oMetaModel = new ODataMetaModel(this.oMetaModel.oRequestor, "/~/$metadata");
+		const oSharedModel0 = {destroy : mustBeMocked};
+		const oSharedModel1 = {destroy : mustBeMocked};
 
-		this.mock(MetaModel.prototype).expects("destroy").on(this.oMetaModel).withExactArgs();
+		assert.deepEqual(oMetaModel.mSharedModelByUrl, {}); // constructor test :)
+
+		oMetaModel.mSharedModelByUrl.foo = oSharedModel0;
+		oMetaModel.mSharedModelByUrl.bar = oSharedModel1;
+		oMetaModel.oMetaModelForAnnotations = "~oMetaModelForAnnotations~";
+
+		this.mock(oSharedModel0).expects("destroy").withExactArgs();
+		this.mock(oSharedModel1).expects("destroy").withExactArgs();
+		this.mock(MetaModel.prototype).expects("destroy").on(oMetaModel).withExactArgs();
 
 		// code under test
-		this.oMetaModel.destroy();
+		oMetaModel.destroy();
 
-		assert.strictEqual(this.oMetaModel.oMetaModelForAnnotations, undefined);
+		assert.strictEqual(oMetaModel.oMetaModelForAnnotations, undefined);
+		assert.strictEqual(oMetaModel.mSharedModelByUrl, undefined);
 	});
 
 	//*********************************************************************************************
@@ -5463,17 +5474,19 @@ sap.ui.define([
 	//*********************************************************************************************
 	[true, false].forEach(function (bAutoExpandSelect) {
 		[false, true].forEach(function (bHasMetaModelForAnnotations) {
-			const sTitle = "getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect
-				+ ", bHasMetaModelForAnnotations=" + bHasMetaModelForAnnotations;
+			[false, true].forEach(function (bCopyAnnotations) {
+				const sTitle = "getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect
+					+ ", bHasMetaModelForAnnotations=" + bHasMetaModelForAnnotations
+					+ ", bCopyAnnotations=" + bCopyAnnotations;
 
 		QUnit.test(sTitle, function (assert) {
 			var mHeaders = {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"},
-				oMapGetExpectation,
-				oMapSetExpectation,
 				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 				oMetaModel = oModel.getMetaModel(),
 				oMetaModelMock = this.mock(oMetaModel),
 				oSharedModel;
+
+			oMetaModel.mSharedModelByUrl.foo = "~bar~";
 
 			oMetaModel.oMetaModelForAnnotations = bHasMetaModelForAnnotations
 				? "~oMetaModelForAnnotations~"
@@ -5485,11 +5498,7 @@ sap.ui.define([
 			oMetaModelMock.expects("getAbsoluteServiceUrl") // for second code under test
 				.withExactArgs("/Foo/ValueListService/$metadata")
 				.returns("/Foo/ValueListService/");
-			oMapGetExpectation = this.mock(Map.prototype).expects("get").twice() //for both c.u.t
-				.withExactArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
 			this.mock(oModel).expects("getHttpHeaders").withExactArgs().returns(mHeaders);
-			oMapSetExpectation = this.mock(Map.prototype).expects("set")
-				.withArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
 			// observe metadataUrlParams being passed along
 			// Note: "ab-CD" is derived from Localization.getLanguageTag here, not from mHeaders!
 			this.mock(_MetadataRequestor).expects("create")
@@ -5497,13 +5506,14 @@ sap.ui.define([
 					{"sap-language" : "~sLanguage~"}, undefined, sinon.match.func);
 			const oCopyAnnotationsExpectation
 				= this.mock(ODataMetaModel.prototype).expects("_copyAnnotations")
+					.exactly(bCopyAnnotations ? 1 : 0)
 					.withExactArgs(bHasMetaModelForAnnotations
 						? "~oMetaModelForAnnotations~"
 						: sinon.match.same(oMetaModel));
 
 			// code under test
 			oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
-				undefined, bAutoExpandSelect);
+				undefined, bAutoExpandSelect, bCopyAnnotations);
 
 			assert.ok(oSharedModel instanceof ODataModel);
 			assert.deepEqual(oSharedModel.mHeaders, mHeaders);
@@ -5512,23 +5522,25 @@ sap.ui.define([
 			assert.strictEqual(oSharedModel.sOperationMode, OperationMode.Server);
 			assert.strictEqual(oSharedModel.getGroupId(), "$auto");
 			assert.strictEqual(oSharedModel.bAutoExpandSelect, !!bAutoExpandSelect);
-			assert.ok(oCopyAnnotationsExpectation.calledOn(oSharedModel.getMetaModel()));
+			if (bCopyAnnotations) {
+				assert.ok(oCopyAnnotationsExpectation.calledOn(oSharedModel.getMetaModel()));
+			}
+			assert.deepEqual(oMetaModel.mSharedModelByUrl, {
+				foo : "~bar~",
+				[`${bAutoExpandSelect}/Foo/ValueListService/`] : oSharedModel
+			});
 
 			// code under test
 			assert.strictEqual(oMetaModel.getOrCreateSharedModel("/Foo/ValueListService/$metadata",
-					undefined, bAutoExpandSelect),
+					undefined, bAutoExpandSelect, bCopyAnnotations),
 				oSharedModel);
-
-			assert.ok(oMapGetExpectation.alwaysCalledOn(oMapSetExpectation.thisValues[0]));
-
-			oMapSetExpectation.thisValues[0].clear(); // clean up static map!
 		});
+			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrCreateSharedModel, undefined and false are the same in cache",
-			function (assert) {
+	QUnit.test("getOrCreateSharedModel, bAutoExpandSelect defaults to false", function (assert) {
 		var oModel = new ODataModel({serviceUrl : "/Foo1/DataService/"}),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel),
@@ -5538,10 +5550,6 @@ sap.ui.define([
 		oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
 			.withExactArgs("../ValueListService/$metadata")
 			.returns("/Foo1/ValueListService/");
-		this.mock(Map.prototype).expects("get").twice() //for both c.u.t
-			.withExactArgs(false + "/Foo1/ValueListService/").callThrough();
-		this.mock(Map.prototype).expects("set")
-			.withArgs(false + "/Foo1/ValueListService/").callThrough();
 		// observe metadataUrlParams NOT being passed along
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, {}, undefined,
@@ -5550,6 +5558,10 @@ sap.ui.define([
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
 			undefined, undefined);
+
+		assert.deepEqual(oMetaModel.mSharedModelByUrl, {
+			"false/Foo1/ValueListService/" : oSharedModel
+		});
 
 		// code under test
 		assert.strictEqual(
@@ -6101,21 +6113,21 @@ sap.ui.define([
 				oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 					.returns(SyncPromise.resolve(oMetadata));
 				oMetaModelMock.expects("getOrCreateSharedModel")
-					.withExactArgs(sMappingUrl1, undefined, undefined)
+					.withExactArgs(sMappingUrl1, undefined, undefined, true)
 					.returns(oValueListModel1);
 				oMetaModelMock.expects("fetchValueListMappings")
 					.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",
 						sinon.match.same(oProperty), undefined)
 					.resolves(oValueListMappings1);
 				oMetaModelMock.expects("getOrCreateSharedModel")
-					.withExactArgs(sMappingUrl2, undefined, undefined)
+					.withExactArgs(sMappingUrl2, undefined, undefined, true)
 					.returns(oValueListModel2);
 				oMetaModelMock.expects("fetchValueListMappings")
 					.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample.Product",
 						sinon.match.same(oProperty), undefined)
 					.resolves(oValueListMappings2);
 				oMetaModelMock.expects("getOrCreateSharedModel")
-					.withExactArgs(sMappingUrlBar, undefined, undefined)
+					.withExactArgs(sMappingUrlBar, undefined, undefined, true)
 					.returns(oValueListModelBar);
 				oMetaModelMock.expects("fetchValueListMappings")
 					.withExactArgs(sinon.match.same(oValueListModelBar), "zui5_epm_sample.Product",
@@ -6216,7 +6228,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sMappingUrl, undefined, undefined)
+				.withExactArgs(sMappingUrl, undefined, undefined, true)
 				.returns(oValueListModel);
 			oMetaModelMock.expects("fetchValueListMappings").withExactArgs(
 					sinon.match.same(oValueListModel), "name.space.Action",
@@ -6475,7 +6487,7 @@ sap.ui.define([
 		oRequestorMock.expects("read").withExactArgs("/Foo/EpmSample/$metadata")
 			.resolves(oMetadataProduct);
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sMappingUrl, undefined, true)
+			.withExactArgs(sMappingUrl, undefined, true, true)
 			.returns(oValueListModel);
 		oMetaModelMock.expects("fetchValueListMappings")
 			.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
@@ -6531,7 +6543,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sMappingUrl, undefined, undefined)
+				.withExactArgs(sMappingUrl, undefined, undefined, true)
 				.returns(oValueListModel);
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
@@ -6587,7 +6599,7 @@ sap.ui.define([
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(oMetadata));
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sMappingUrl, undefined, undefined)
+			.withExactArgs(sMappingUrl, undefined, undefined, true)
 			.returns(oValueListModel);
 
 		// code under test
@@ -6652,10 +6664,10 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sValueListService, undefined, true)
+				.withExactArgs(sValueListService, undefined, true, true)
 				.returns(oValueListModel);
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sCollectionRoot, undefined, true)
+				.withExactArgs(sCollectionRoot, undefined, true, true)
 				.returns(oValueListModel2);
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
@@ -6732,10 +6744,10 @@ sap.ui.define([
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(oMetadata));
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sValueListService1, undefined, true)
+			.withExactArgs(sValueListService1, undefined, true, true)
 			.returns(oValueListModel1);
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sValueListService2, undefined, true)
+			.withExactArgs(sValueListService2, undefined, true, true)
 			.returns(oValueListModel2);
 		oMetaModelMock.expects("fetchValueListMappings")
 			.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",

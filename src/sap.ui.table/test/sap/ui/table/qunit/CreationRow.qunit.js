@@ -24,9 +24,9 @@ sap.ui.define([
 	const TestControl = TableQUnitUtils.TestControl;
 	const TestInputControl = TableQUnitUtils.TestInputControl;
 
-	QUnit.module("Public API", {
+	QUnit.module("API", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -45,6 +45,7 @@ sap.ui.define([
 
 				oTable.setCreationRow(new CreationRow());
 			});
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -69,33 +70,6 @@ sap.ui.define([
 
 		assert.strictEqual(oCreationRow.resetFocus(), false, "Returned false, because no element was focused");
 		assert.strictEqual(document.activeElement, this.oTable.qunit.getDataCell(0, 0), "The focus was not changed");
-	});
-
-	QUnit.module("Private API", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
-				rowMode: new FixedRowMode({
-					rowCount: 1
-				}),
-				rows: {path: "/"},
-				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
-			}, function(oTable) {
-				oTable.addColumn(new Column({
-					id: "column1",
-					template: new TestControl({text: "test"})
-				}).setCreationTemplate(new TestControl({text: "test"})));
-
-				oTable.addColumn(new Column({
-					id: "column2",
-					template: new TestControl({text: "test2"})
-				}).setCreationTemplate(new TestInputControl({text: "test2"})));
-
-				oTable.setCreationRow(new CreationRow());
-			});
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		}
 	});
 
 	QUnit.test("#_fireApply", async function(assert) {
@@ -132,8 +106,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oCreationRow = new CreationRow();
 		},
 		afterEach: function() {
@@ -210,7 +184,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -230,6 +204,7 @@ sap.ui.define([
 
 				oTable.setCreationRow(new CreationRow());
 			});
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -268,7 +243,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -293,6 +268,7 @@ sap.ui.define([
 
 				oTable.setCreationRow(new CreationRow());
 			});
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -421,8 +397,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Cells", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -532,8 +508,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Default Toolbar", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oCreationRow = new CreationRow();
 		},
 		afterEach: function() {

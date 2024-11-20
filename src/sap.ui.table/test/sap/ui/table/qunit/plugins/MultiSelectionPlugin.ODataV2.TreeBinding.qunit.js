@@ -40,20 +40,10 @@ sap.ui.define([
 
 	QUnit.module("Load data", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(TreeTable);
+			this.oTable = TableQUnitUtils.createTable(TreeTable);
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 
-			// The binding is expanding to level 4 in 4 steps. We need to wait for completion before test execution.
-			function waitForLevel4(oTable) {
-				if (oTable.getRows()[3].getLevel() < 4) {
-					return oTable.qunit.whenNextRowsUpdated().then(function() {
-						return waitForLevel4(oTable);
-					});
-				} else {
-					return oTable.qunit.whenRenderingFinished();
-				}
-			}
-			return waitForLevel4(this.oTable);
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -65,10 +55,11 @@ sap.ui.define([
 		await this.oTable.qunit.whenRenderingFinished();
 		await this.oMultiSelectionPlugin.selectAll();
 		const oBinding = this.oTable.getBinding();
-		const iBindingLength = oBinding.getLength();
-		const aContexts = oBinding.getContexts(0, iBindingLength, 0);
+		const iExpectedLength = 197;
+		const aContexts = oBinding.getContexts(0, iExpectedLength, 0);
 
-		assert.equal(aContexts.length, iBindingLength, "All binding contexts are available");
+		assert.equal(oBinding.getLength(), iExpectedLength, "Binding length");
+		assert.equal(aContexts.length, iExpectedLength, "All binding contexts are available");
 		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
 	});
 

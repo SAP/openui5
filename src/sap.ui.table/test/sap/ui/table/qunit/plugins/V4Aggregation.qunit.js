@@ -270,8 +270,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Cell content visibility", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				columns: (() => {
 					const aColumns = [];
 					for (let i = 0; i < 6; i++) {

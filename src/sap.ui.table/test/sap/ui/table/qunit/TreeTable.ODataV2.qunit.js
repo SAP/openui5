@@ -50,8 +50,8 @@ sap.ui.define([
 		oControl.attachEventOnce("rowsUpdated", fnHandler, that);
 	}
 
-	async function createTable(mSettings) {
-		return await TableQUnitUtils.createTable(TreeTable, {
+	function createTable(mSettings) {
+		return TableQUnitUtils.createTable(TreeTable, {
 			id: "table0",
 			columns: [
 				new Column({label: "HierarchyNode", template: "HierarchyNode"}),
@@ -79,7 +79,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial Test", async function(assert) {
-		this.oTable = await createTable.call(this, {
+		this.oTable = createTable.call(this, {
 			rows: {
 				path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 				parameters: {rootLevel: 1}
@@ -107,7 +107,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expand and Collapse", async function(assert) {
-		this.oTable = await createTable.call(this, {
+		this.oTable = createTable.call(this, {
 			rows: {
 				path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 				parameters: {rootLevel: 1}
@@ -253,9 +253,9 @@ sap.ui.define([
 		assert.ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
 	});
 
-	QUnit.test("Number Of Expanded Levels", async function(assert) {
+	QUnit.test("Number Of Expanded Levels", function(assert) {
 		const done = assert.async();
-		this.oTable = await createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
+		this.oTable = createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
 
 		let oBinding;
 
@@ -303,9 +303,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Root Level 2", async function(assert) {
+	QUnit.test("Root Level 2", function(assert) {
 		const done = assert.async();
-		this.oTable = await createTable.call(this);
+		this.oTable = createTable.call(this);
 		let oBinding;
 
 		const fnHandler1 = function() {
@@ -343,9 +343,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Selection", async function(assert) {
+	QUnit.test("Selection", function(assert) {
 		const done = assert.async();
-		this.oTable = await createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
+		this.oTable = createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
 		let oBinding;
 
 		const fnHandler0 = function() {
@@ -459,9 +459,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("SelectAll with scrolling and paging", async function(assert) {
+	QUnit.test("SelectAll with scrolling and paging", function(assert) {
 		const done = assert.async();
-		this.oTable = await createTable.call(this);
+		this.oTable = createTable.call(this);
 
 		const fnHandler0 = function() {
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
@@ -651,8 +651,8 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(TreeTable);
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(TreeTable);
 			this.iNoDataVisibilityChanges = 0;
 
 			return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -689,11 +689,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("After rendering with data", async function(assert) {
+	QUnit.test("After rendering with data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable(TreeTable, function(oTable) {
+		this.oTable = TableQUnitUtils.createTable(TreeTable, function(oTable) {
 			new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					// the underlying TreeBinding adapter is loaded async and therefore no requests are pending initially
@@ -708,11 +708,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("After rendering without data", async function(assert) {
+	QUnit.test("After rendering without data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable(TreeTable, {
+		this.oTable = TableQUnitUtils.createTable(TreeTable, {
 			rows: {
 				path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 				filters: [new Filter({path: "GLAccountName", operator: "EQ", value1: "DoesNotExist"})]

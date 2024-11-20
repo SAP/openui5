@@ -1279,8 +1279,8 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
 				rows: {
 					path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 					parameters: {
@@ -1323,11 +1323,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("After rendering with data", async function(assert) {
+	QUnit.test("After rendering with data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
 			rows: {
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
@@ -1347,11 +1347,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("After rendering without data", async function(assert) {
+	QUnit.test("After rendering without data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
 			rows: {
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
@@ -1372,11 +1372,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("After rendering without data but with the grand total", async function(assert) {
+	QUnit.test("After rendering without data but with the grand total", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
 			rows: {
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {

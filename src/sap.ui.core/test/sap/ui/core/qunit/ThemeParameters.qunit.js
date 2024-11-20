@@ -1,6 +1,5 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
-	"sap/base/future",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
@@ -10,8 +9,9 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/test/utils/nextUIUpdate"
-], function(future, Parameters, Control, Element, Icon, Library, Theming, includeStylesheet, Bar, URI, nextUIUpdate) {
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/base/Log"
+], function(Parameters, Control, Element, Icon, Library, Theming, includeStylesheet, Bar, URI, nextUIUpdate, Log) {
 	"use strict";
 
 	QUnit.module("Parmeters.get", {
@@ -140,8 +140,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Read multiple given parameters (including undefined param name) (future=true)", async function (assert) {
-		future.active = true;
+	QUnit.test("Read multiple given parameters (including undefined param name)", async function (assert) {
 		var done = assert.async();
 		var oControl = new Control();
 		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapUiBaseColor"];
@@ -151,16 +150,21 @@ sap.ui.define([
 		Theming.attachAppliedOnce((oEvent) => {
 			oControl.addStyleClass("sapTestScope");
 
-			assert.throws(() => {
-				Parameters.get({
-					name: aParams,
-					scopeElement: oControl,
-					callback: function () {
-						assert.ok(false, "Callback should not be executed");
-					}
-				});
-			}, new Error("sap.ui.core.theming.Parameters: The following parameters could not be found: \"sapUiNotExistingTestParam\""), "Throws Error.");
-			future.active = undefined;
+			const errorSpy = sinon.spy(Log, "error");
+			const expectedError = "sap.ui.core.theming.Parameters: The following parameters could not be found: \"sapUiNotExistingTestParam\"";
+
+			Parameters.get({
+				name: aParams,
+				scopeElement: oControl,
+				callback: function () {
+					assert.ok(true, "Callback should be executed despite missing parameters.");
+				}
+			});
+
+			assert.ok(errorSpy.calledWith(expectedError), "Missing parameter logs correct error.");
+
+			errorSpy.restore();
+
 			done();
 		});
 	});
@@ -197,21 +201,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Read not defined parameter using callback (future=true)", async function (assert) {
-		future.active = true;
 		var done = assert.async();
 
 		await Library.load({ name: "testlibs.themeParameters.lib9" });
 
 		Theming.attachAppliedOnce((oEvent) => {
-			assert.throws(() => {
-				Parameters.get({
-					name: "sapUiNotExistingTestParam",
-					callback: function () {
-						assert.ok(false, "Callback should not be executed");
-					}
-				});
-			}, new Error("sap.ui.core.theming.Parameters: The following parameters could not be found: \"\""), "Throws Error.");
-			future.active = undefined;
+
+			const errorSpy = sinon.spy(Log, "error");
+			const expectedError = "sap.ui.core.theming.Parameters: The following parameters could not be found: \"sapUiNotExistingTestParam\"";
+
+			Parameters.get({
+				name: "sapUiNotExistingTestParam",
+				callback: function () {
+					assert.ok(true, "Callback should be executed despite missing parameters.");
+				}
+			});
+
+			assert.ok(errorSpy.calledWith(expectedError), "Missing parameter logs correct error.");
+
+			errorSpy.restore();
+
 			done();
 		});
 	});
