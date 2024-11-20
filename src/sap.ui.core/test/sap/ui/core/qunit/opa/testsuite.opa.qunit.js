@@ -113,29 +113,29 @@ sap.ui.define([
 				},
 				module: "./autowaiter/autoWaiter.qunit"
 			},
-			"demokit/sample/matcher/BindingPath/Opa": {
-				page: "test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/Opa.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/matcher/BindingPath/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/testsuite.qunit.html",
 				title: "Opa Sample for Binding Path Matcher",
 				ui5: {
 					libs: "sap.m"
 				}
 			},
-			"demokit/sample/matcher/Descendant/Opa": {
-				page: "test-resources/sap/ui/core/demokit/sample/matcher/Descendant/Opa.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/matcher/Descendant/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/matcher/Descendant/testsuite.qunit.html",
 				title: "Opa Sample for Descendant Matcher",
 				ui5: {
 					libs: "sap.m"
 				}
 			},
-			"demokit/sample/matcher/I18NText/Opa": {
-				page: "test-resources/sap/ui/core/demokit/sample/matcher/I18NText/Opa.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/matcher/I18NText/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/matcher/I18NText/testsuite.qunit.html",
 				title: "Opa Sample for I18N Text Matcher",
 				ui5: {
 					libs: "sap.m"
 				}
 			},
-			"demokit/sample/matcher/LabelFor/Opa": {
-				page: "test-resources/sap/ui/core/demokit/sample/matcher/LabelFor/Opa.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/matcher/LabelFor/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/matcher/LabelFor/testsuite.qunit.html",
 				title: "Opa Sample for LabelFor Matcher",
 				ui5: {
 					libs: "sap.m"
