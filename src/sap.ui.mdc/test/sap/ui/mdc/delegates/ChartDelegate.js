@@ -13,56 +13,16 @@ sap.ui.define([
 
     var ChartDelegate = Object.assign({}, V4ChartDelegate);
 
-    //var ChartLibrary;
     var Chart;
-    //var Dimension;
-    //var HierarchyDimension;
-    //var TimeDimension;
-    //var Measure;
-    //var VizPopover;
-    //var VizTooltip;
 
-
-    /**
-     * Define a set of V4 specific functions which is specifically meant for the sap.chart.Chart control
-     *
-     * ...
-     */
-
-    /**
-     * Provides the table's filter delegate that provides basic filter functionality such as adding filter fields.
-     * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
-     * to enable the table for inbuilt filtering.
-     *
-     * @example <caption>Example usage of <code>getFilterDelegate</code></caption>
-     * oFilterDelegate = {
-     * 		addItem: function() {
-     * 			var oFilterFieldPromise = new Promise(...);
-     * 			return oFilterFieldPromise;
-     * 		}
-     * }
-     * @returns {Object} Object for the chart filter personalization
-     * @public
-     */
     ChartDelegate.getFilterDelegate = function () {
         return {
-            /**
-             *
-             * @param {string} sPropertyName The property name
-             * @param {Object} oChart Instance of the chart TODO: Which one? MDC or inner?
-             * @since 1.88
-             * @returns {Promise} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
-             * For more information, see {@link module:sap/ui/mdc/AggregationBaseDelegate.addItem AggregationBaseDelegate}.
-             */
             addItem: function (sPropertyName, oChart) {
                 return Promise.resolve(null);
             }
         };
     };
 
-    /**
-     * Toolbar relevant API (WIP)
-     */
     ChartDelegate.zoomIn = function () {
 
     };
@@ -87,13 +47,6 @@ sap.ui.define([
         oChart._updateToolbar();
     };
 
-    /**
-     * Chart relevant API (WIP)
-     */
-    /**
-     * Loads necessary libraries and creates inner chart
-     * @returns {Promise} resolved when inner chart is ready
-     */
     ChartDelegate.initializeInnerChart = function (oChart) {
         return new Promise(function (resolve, reject) {
 
@@ -115,23 +68,11 @@ sap.ui.define([
         return {};
     };
 
-    /**
-     * Creates the inner dataset for the inner chart
-     */
     ChartDelegate.createInnerChartContent = function (oChart, aPropertyInfos) {
         return Promise.resolve();
         //Nothing to test
     };
 
-
-
-
-    /**
-     * Checks the binding of the table and rebinds it if required.
-     *
-     * @param {sap.ui.mdc.Chart} oChart The MDC chart instance
-     * @param {object} oBindingInfo The bindingInfo of the chart
-     */
     ChartDelegate.rebind = function (oChart, oBindingInfo) {
         //Nothing to test
     };
@@ -152,12 +93,6 @@ sap.ui.define([
         return oBindingInfo;
     };
 
-    /**
-     * Use this funciton inside a unit test to mock a bound value
-     * @param {*} bValue value to set on
-     *
-     * @private
-     */
     ChartDelegate.setInnerChartBoundTest = function(bValue) {
         this.oInnerChartBoundTest = bValue;
     };
@@ -170,31 +105,19 @@ sap.ui.define([
         //Nothing to do here
     };
 
-    /**
-     * Adds an item to the inner chart (measure/dimension)
-     */
     ChartDelegate.addInnerItem = function (sPropertyName, oChart, mPropertyBag) {
         return Promise.resolve(null);
     };
 
-    /**
-     * Inserts an item to the inner chart (measure/dimension)
-     */
     ChartDelegate.insertInnerItem = function (sPropertyName, oChart, mPropertyBag) {
 
     };
 
-    /**
-     * Removes an item from the inner chart
-     */
     ChartDelegate.removeInnerItem = function (sPropertyName, oChart, mPropertyBag) {
         // return true within the Promise for default behaviour (e.g. continue to destroy the item)
         return Promise.resolve(true);
     };
 
-    /**
-     * Delegate specific part
-     */
     ChartDelegate._loadChart = function () {
 
         return new Promise(function (resolve) {
@@ -212,11 +135,7 @@ sap.ui.define([
 
     };
 
-    /**
-     * Sets tooltips visible/invisible on inner chart
-     * @param {boolean}  bFlag true for visible, false for invisible
-     */
-    ChartDelegate.setChartTooltipVisibility = function(bFlag) {
+    ChartDelegate.setChartTooltipVisibility = function(oChart, bFlag) {
         //Nothing to do here
     };
 
@@ -254,7 +173,6 @@ sap.ui.define([
     };
 
     ChartDelegate.getInnerChartSelectionHandler = function(oChart) {
-        //TODO ist this ChartDelegate still used?
         return { eventId: "_selectionDetails", listener: this._oInnerChart };
     };
 
@@ -274,14 +192,6 @@ sap.ui.define([
         //Nothing to do here in test delegate
     };
 
-    /**
-     * Initializes a new chart property helper.
-     *
-     * @param {sap.ui.mdc.Chart} oChart Instance of the MDC chart.
-     * @returns {Promise<sap.ui.mdc.chart.PropertyHelper>} A promise that resolves with the property helper.
-     * @private
-     * @ui5-restricted sap.ui.mdc
-     */
     ChartDelegate.initPropertyHelper = function (oChart) {
         return new Promise(function(resolve){
             resolve(new PropertyHelper([]));
@@ -300,11 +210,11 @@ sap.ui.define([
         return [];
     };
 
-      ChartDelegate.changedNoDataStruct = function() {
+    ChartDelegate.changedNoDataStruct = function() {
         //Nothing to do here for test delegate
     };
 
-    ChartDelegate.showOverlay = function(bValue) {
+    ChartDelegate.showOverlay = function(oChart, bShow) {
 
     };
 

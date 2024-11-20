@@ -20,8 +20,8 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/Products"},
 				models: this.oDataModel
 			});
@@ -96,9 +96,9 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oGetContextsSpy.resetHistory();
-			this.oTable = await TableQUnitUtils.createTable();
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -611,8 +611,8 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.iNoDataVisibilityChanges = 0;
 
 			return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -649,11 +649,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("After rendering with data", async function(assert) {
+	QUnit.test("After rendering with data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable(function(oTable) {
+		this.oTable = TableQUnitUtils.createTable(function(oTable) {
 			new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					TableQUnitUtils.assertNoDataVisible(assert, oTable, true); // Initial rendering has no data
@@ -666,11 +666,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("After rendering without data", async function(assert) {
+	QUnit.test("After rendering without data", function(assert) {
 		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable({
+		this.oTable = TableQUnitUtils.createTable({
 			rows: {path: "/Products", filters: [new Filter({path: "Name", operator: "EQ", value1: "DoesNotExist"})]}
 		}, function(oTable) {
 			new Promise(function(resolve) {

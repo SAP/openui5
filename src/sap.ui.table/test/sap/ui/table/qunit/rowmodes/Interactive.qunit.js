@@ -37,9 +37,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Get contexts", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			});
 		},
@@ -113,7 +113,7 @@ sap.ui.define([
 	QUnit.module("Resizer", {
 		beforeEach: async function() {
 			const oTitle = new Title({text: "Title", titleStyle: "H3"});
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				extension: oTitle,
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				placeAt: "qunit-fixture",

@@ -173,8 +173,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Lifecycle", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -342,7 +342,7 @@ sap.ui.define([
 
 	QUnit.module("Data Cells", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: [
@@ -989,7 +989,7 @@ sap.ui.define([
 
 	QUnit.module("Row Header", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: TableQUnitUtils.createTextColumn(),
@@ -1239,7 +1239,7 @@ sap.ui.define([
 
 	QUnit.module("Row Actions", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: TableQUnitUtils.createTextColumn(),

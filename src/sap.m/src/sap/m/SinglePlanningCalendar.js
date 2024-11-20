@@ -279,9 +279,6 @@ function(
 				 * The appointments to be displayed in the grid. Appointments outside the visible time frame are not rendered.
 				 * Appointments, longer than a day, will be displayed in all of the affected days.
 				 * To display an all-day appointment, the appointment must start at 00:00 and end on any day in the future in 00:00h.
-				 *
-				 * Note: The <code>customContent</code> functionality of the <code>CalendarAppointment</code> is not available
-				 * in the <code>SinglePlanningCalendar</code>. If set, it will not make any effect.
 				 */
 				appointments : {
 					type: "sap.ui.unified.CalendarAppointment",

@@ -67,8 +67,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Lifecycle", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -88,8 +88,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Common", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				columns: TableQUnitUtils.createTextColumn().setWidth("2000px"),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
@@ -305,7 +305,7 @@ sap.ui.define([
 
 	QUnit.module("Rows", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: [
@@ -544,7 +544,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Droppable with empty rows aggregation (NoData not shown)", async function(assert) {
-		const oOtherTable = await TableQUnitUtils.createTable({
+		const oOtherTable = TableQUnitUtils.createTable({
 			rows: "{/}",
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 			columns: TableQUnitUtils.createTextColumn(),

@@ -43,8 +43,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Lifecycle", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -584,9 +584,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection plugin integration", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oSelectionPlugin = new TableQUnitUtils.TestSelectionPlugin();
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 5
 				}),

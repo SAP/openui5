@@ -35,8 +35,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Load data", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
@@ -59,8 +59,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data with server-driven paging", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createModelForListDataService({paging: true})
 			});
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
@@ -85,8 +85,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data without count", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {
 					path: "/Products"
 				}
@@ -115,8 +115,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data without count and short read", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {
 					path: "/Products"
 				},

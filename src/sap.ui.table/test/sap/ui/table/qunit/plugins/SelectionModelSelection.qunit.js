@@ -9,8 +9,8 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Selection API", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
@@ -25,8 +25,10 @@ sap.ui.define([
 		assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4, 5, 6], "Selection");
 	});
 
-	QUnit.test("#setSelected", function(assert) {
+	QUnit.test("#setSelected", async function(assert) {
 		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+
+		await this.oTable.qunit.whenRenderingFinished();
 
 		oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "Select a row");
@@ -39,20 +41,16 @@ sap.ui.define([
 
 		oSelectionPlugin.clearSelection();
 		this.oTable.getModel().setData();
+		await this.oTable.qunit.whenRenderingFinished();
 
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
-			return new Promise(function(resolve) {
-				setTimeout(resolve, 100);
-			});
-		}.bind(this)).then(function() {
-			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [], "Select a row that is not selectable");
-		});
+		oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
+		await TableQUnitUtils.wait(100);
+		assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [], "Select a row that is not selectable");
 	});
 
 	QUnit.module("Automatic deselection", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
@@ -95,9 +93,9 @@ sap.ui.define([
 		assert.equal(this.oSelectionChangeSpy.callCount, 1, "rowSelectionChange event fired");
 	});
 
-	QUnit.test("Initial change of total number of rows", async function(assert) {
+	QUnit.test("Initial change of total number of rows", function(assert) {
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable({
+		this.oTable = TableQUnitUtils.createTable({
 			rows: {path: "/"},
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 		}, function(oTable) {

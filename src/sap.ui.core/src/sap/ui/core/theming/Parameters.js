@@ -717,7 +717,7 @@ sap.ui.define([
 				});
 
 				if (!vParams || (typeof vParams === "object" && (Object.keys(vParams).length !== aNames.length))) {
-					future.errorThrows(`sap.ui.core.theming.Parameters: The following parameters could not be found: "${aNames.filter((n) => vParams && !Object.hasOwn(vParams, n))}"`);
+					Log.error(`sap.ui.core.theming.Parameters: The following parameters could not be found: "${aNames.length === 1 ? aNames[0] : aNames.filter((n) => vParams && !Object.hasOwn(vParams, n))}"`);
 				}
 
 				fnAsyncCallback(vParams);

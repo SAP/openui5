@@ -59,6 +59,15 @@
 					<core:CustomData key="category" value="entity" />
 				</customData>
 			</StandardListItem>
+			<StandardListItem
+					title="{i18n>SEARCH_SUGGESTIONS_EXTERNAL_SECTION_TITLE}"
+					counter="{searchData>/matches/ExternalLength}"
+					press="onSearchResultsSummaryPress"
+					type="Active">
+				<customData>
+					<core:CustomData key="category" value="external" />
+				</customData>
+			</StandardListItem>
 		</List>
 	</VBox>
 </core:FragmentDefinition>

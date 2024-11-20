@@ -204,6 +204,13 @@ sap.ui.define([
 	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UpdateRows] = function() { this.fireRenderingTriggered(); };
 	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UnbindRows] = function() { this.fireRenderingTriggered(); };
 
+	// If the table is unbound during initial rendering, it does not fire any rowsUpdated events. Handled in waitForFullRendering.
+	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RowsUnbound] = function() {
+		if (!this.getTable().getDomRef()) {
+			this.fireRenderingTriggered();
+		}
+	};
+
 	HelperPlugin.prototype.onDeactivate = function(oTable) {
 		TableUtils.Hook.uninstall(oTable, this);
 	};
@@ -401,9 +408,13 @@ sap.ui.define([
 
 		function waitForRowsUpdatedAndFinalDomUpdates() {
 			return oTable.qunit.whenNextRowsUpdated().then(function(mParameters) {
-				return waitForFinalDOMUpdates().then(function() {
-					return mParameters;
-				});
+				if (oTable._hasPendingRequests()) {
+					return TableQUnitUtils.nextEvent("dataReceived", oTable.getBinding());
+				} else {
+					return waitForFinalDOMUpdates().then(function() {
+						return mParameters;
+					});
+				}
 			});
 		}
 
@@ -466,12 +477,6 @@ sap.ui.define([
 		};
 		oTable.qunit.pRenderingFinishedNext = null;
 
-		oHelperPlugin.attachRenderingTriggered(function() {
-			if (oTable.qunit.pRenderingFinishedNext != null) {
-				initRenderingFinishedPromise("Next", waitForFullRendering);
-			}
-		});
-
 		/**
 		 * Returns a promise that resolves when no rendering is to be expected or when an ongoing rendering is finished.
 		 *
@@ -486,6 +491,12 @@ sap.ui.define([
 		oTable.qunit.pRenderingFinishedCurrent = null;
 
 		initRenderingFinishedPromise("Current", waitForFullRendering);
+
+		oHelperPlugin.attachRenderingTriggered(function() {
+			if (oTable.qunit.pRenderingFinishedNext != null) {
+				initRenderingFinishedPromise("Next", waitForFullRendering);
+			}
+		});
 		oHelperPlugin.attachRenderingTriggered(function() {
 			initRenderingFinishedPromise("Current", waitForFullRendering);
 		});
@@ -971,17 +982,22 @@ sap.ui.define([
 							Object.assign(oState, oTable.qunit._mSetRowStates.rowStates[iIndex]);
 							oTable.qunit._mSetRowStates.currentIndex++;
 						},
-						onRowsUpdated: function() {
+						resetCounter: function() {
 							oTable.qunit._mSetRowStates.currentIndex = 0;
+						},
+						onBeforeRendering: function() {
+							this.resetCounter();
 						},
 						currentIndex: 0
 					};
-					oTable.attachRowsUpdated(oTable.qunit._mSetRowStates.onRowsUpdated);
+					oTable.attachRowsUpdated(oTable.qunit._mSetRowStates.resetCounter);
+					oTable.addDelegate(oTable.qunit._mSetRowStates, true, oTable.qunit._mSetRowStates);
 					TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, oTable.qunit._mSetRowStates.updateRowState);
 				}
 				oTable.qunit._mSetRowStates.rowStates = aRowStates;
 			} else if (oTable.qunit._mSetRowStates) {
-				oTable.detachRowsUpdated(oTable.qunit._mSetRowStates.onRowsUpdated);
+				oTable.detachRowsUpdated(oTable.qunit._mSetRowStates.resetCounter);
+				oTable.removeDelegate(oTable.qunit._mSetRowStates);
 				TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, oTable.qunit._mSetRowStates.updateRowState);
 				delete oTable.qunit._mSetRowStates;
 			}
@@ -1012,8 +1028,7 @@ sap.ui.define([
 		return mDefaultSettings;
 	};
 
-	// TODO: This method should not be async. It should return the table synchronously and tests should wait for rendering if required.
-	TableQUnitUtils.createTable = async function(TableClass, mSettings, fnBeforePlaceAt) {
+	TableQUnitUtils.createTable = function(TableClass, mSettings, fnBeforePlaceAt) {
 		if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
 			fnBeforePlaceAt = TableClass;
 			TableClass = Table;
@@ -1053,7 +1068,6 @@ sap.ui.define([
 
 		if (sContainerId != null) {
 			oTable.placeAt(sContainerId);
-			await nextUIUpdate();
 		}
 
 		return oTable;

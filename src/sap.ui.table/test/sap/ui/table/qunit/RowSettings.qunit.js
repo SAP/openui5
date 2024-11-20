@@ -27,8 +27,8 @@ sap.ui.define([
 
 	QUnit.module("Highlights", {
 		beforeEach: async function() {
-			this.iRowsWithHighlight = 13;
-			this.oTable = await TableQUnitUtils.createTable({
+			this.iRowsWithHighlight = 15;
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: new JSONModel([
 					{highlight: MessageType.Success},
@@ -45,11 +45,13 @@ sap.ui.define([
 					{highlight: IndicationColor.Indication07},
 					{highlight: IndicationColor.Indication08},
 					{highlight: IndicationColor.Indication09},
-					{highlight: IndicationColor.Indication10}
+					{highlight: IndicationColor.Indication10},
+					{highlight: MessageType.Success}, // Group header row
+					{highlight: MessageType.Success} // Summary row
 				]),
 				columns: TableQUnitUtils.createTextColumn(),
 				rowMode: new FixedRowMode({
-					rowCount: this.iRowsWithHighlight + 2
+					rowCount: this.iRowsWithHighlight + 3 // One group header, one summary, and one empty row
 				}),
 				rowSettingsTemplate: new RowSettings({
 					highlight: "{highlight}"
@@ -175,9 +177,9 @@ sap.ui.define([
 
 					this.assertColor(assert, iRowIndex, sRGBBackgroundColor);
 
-				} else { // Group and sum rows
+				} else { // Group header, sum, empty row
 					assert.strictEqual(getComputedStyle(oHighlightElement).display, "none",
-						"The highlight element of row " + (iRowIndex + 1) + " (group or sum row) has \"display\" set to \"none\"");
+						"The highlight element of row " + (iRowIndex + 1) + " (group header, sum, or empty) has \"display\" set to \"none\"");
 				}
 			}
 		},
@@ -386,7 +388,7 @@ sap.ui.define([
 
 	QUnit.module("Navigated indicators", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(3),
 				columns: TableQUnitUtils.createTextColumn(),

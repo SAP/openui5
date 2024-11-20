@@ -1320,7 +1320,7 @@ sap.ui.define([
 
 	QUnit.module("Column header", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				columns: [
 					new Column({
 						multiLabels: [
@@ -1343,6 +1343,7 @@ sap.ui.define([
 					})
 				]
 			});
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -1512,8 +1513,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Sorting", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				columns: [
 					TableQUnitUtils.createTextColumn({text: "LastName", bind: true}).setSortProperty("LastName"),
@@ -1909,8 +1910,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Filtering", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				columns: [
 					TableQUnitUtils.createTextColumn({text: "LastName", bind: true}).setFilterProperty("LastName"),
@@ -2771,12 +2772,12 @@ sap.ui.define([
 				this.oTable.destroy();
 			}
 		},
-		createTable: async function(mSettings) {
+		createTable: function(mSettings) {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
 
-			this.oTable = await TableQUnitUtils.createTable(Object.assign({}, {
+			this.oTable = TableQUnitUtils.createTable(Object.assign({}, {
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				columns: [
@@ -3020,13 +3021,14 @@ sap.ui.define([
 
 	QUnit.module("Functions, properties", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
 				columns: [
 					TableQUnitUtils.createTextColumn()
 				]
 			});
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -3393,7 +3395,7 @@ sap.ui.define([
 		}
 
 		async function test(sRowMode) {
-			let oTable = await TableQUnitUtils.createTable({
+			let oTable = TableQUnitUtils.createTable({
 				rowMode: createRowMode(sRowMode === RowModeType.Fixed)
 			}, function(oTable) {
 				assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
@@ -3403,7 +3405,7 @@ sap.ui.define([
 			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
 			oTable.destroy();
 
-			oTable = await TableQUnitUtils.createTable({
+			oTable = TableQUnitUtils.createTable({
 				rowMode: createRowMode(sRowMode === RowModeType.Fixed),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
@@ -3425,7 +3427,7 @@ sap.ui.define([
 
 			oTable.destroy();
 
-			oTable = await TableQUnitUtils.createTable({
+			oTable = TableQUnitUtils.createTable({
 				rowMode: createRowMode(sRowMode === RowModeType.Fixed),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
@@ -3444,7 +3446,7 @@ sap.ui.define([
 	QUnit.test("Lazy row creation; RowMode = Auto", async function(assert) {
 		destroyTable();
 
-		let oTable = await TableQUnitUtils.createTable({
+		let oTable = TableQUnitUtils.createTable({
 			rowMode: RowModeType.Auto
 		}, function(oTable) {
 			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
@@ -3454,7 +3456,7 @@ sap.ui.define([
 		assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
 		oTable.destroy();
 
-		oTable = await TableQUnitUtils.createTable({
+		oTable = TableQUnitUtils.createTable({
 			rowMode: RowModeType.Auto,
 			rows: {path: "/"},
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
@@ -3475,7 +3477,7 @@ sap.ui.define([
 		assert.ok(oTable.getRows().length > 0, "After asynchronous row update: The table has rows");
 		oTable.destroy();
 
-		oTable = await TableQUnitUtils.createTable({
+		oTable = TableQUnitUtils.createTable({
 			rowMode: RowModeType.Auto,
 			rows: {path: "/"},
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
@@ -3992,8 +3994,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hooks", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable();
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -4129,9 +4131,10 @@ sap.ui.define([
 			"Change 'firstVisibleRow': 'UpdateRows' hook was correctly called");
 	});
 
-	QUnit.test("UpdateSizes", function(assert) {
+	QUnit.test("UpdateSizes", async function(assert) {
 		const oUpdateSizesSpy = sinon.spy();
 
+		await this.oTable.qunit.whenRenderingFinished();
 		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.UpdateSizes, oUpdateSizesSpy);
 
 		this.oTable._updateTableSizes(TableUtils.RowsUpdateReason.Resize);
@@ -4178,7 +4181,7 @@ sap.ui.define([
 
 	QUnit.module("NoData", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				columns: [
@@ -4225,20 +4228,21 @@ sap.ui.define([
 
 	QUnit.test("Without data and showNoData=true", async function(assert) {
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable({
+		this.oTable = TableQUnitUtils.createTable({
 			rows: "{/}",
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),
 			columns: [
 				TableQUnitUtils.createTextColumn()
 			]
 		});
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
 		this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_DATA"));
 	});
 
 	QUnit.test("Without data and showNoData=false", async function(assert) {
 		this.oTable.destroy();
-		this.oTable = await TableQUnitUtils.createTable({
+		this.oTable = TableQUnitUtils.createTable({
 			showNoData: false,
 			rows: "{/}",
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),
@@ -4246,6 +4250,7 @@ sap.ui.define([
 				TableQUnitUtils.createTextColumn()
 			]
 		});
+		await this.oTable.qunit.whenRenderingFinished();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
@@ -4447,8 +4452,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hierarchy modes", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(12),
 				columns: [
 					TableQUnitUtils.createTextColumn()
@@ -4705,8 +4710,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hide content", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
 				columns: [
@@ -4866,7 +4871,7 @@ sap.ui.define([
 			oTable.addColumn(oColumn);
 		});
 		oTable.setFixedColumnCount(2);
-		await oTable.qunit.setRowStates(aRowInfo.map((mRowInfo) => mRowInfo.state));
+		oTable.qunit.setRowStates(aRowInfo.map((mRowInfo) => mRowInfo.state));
 		await oTable.qunit.whenRenderingFinished();
 		aColumnInfo.forEach(function(mColumnInfo, iIndex) {
 			assertCellContentVisibility(oTable.getColumns()[iIndex], mColumnInfo.title);
@@ -4874,8 +4879,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clear text selection on update", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				rowMode: new FixedRowMode({
 					rowCount: 1
@@ -4956,8 +4961,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("ContextMenu", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModel(11),
 				columns: [
@@ -5003,17 +5008,17 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable?.destroy();
 		},
-		createTable: async function(mSettings) {
+		createTable: function(mSettings) {
 			this.oTable?.destroy();
-			this.oTable = await TableQUnitUtils.createTable(mSettings);
+			this.oTable = TableQUnitUtils.createTable(mSettings);
 		},
 		getDefaultRowMode: function() {
 			return this.oTable.getAggregation("_hiddenDependents").filter((oObject) => oObject.isA("sap.ui.table.rowmodes.RowMode"))[0];
 		}
 	});
 
-	QUnit.test("Default", async function(assert) {
-		await this.createTable();
+	QUnit.test("Default", function(assert) {
+		this.createTable();
 		assert.strictEqual(this.oTable.getRowMode(), null, "value of 'rowMode' aggregation");
 		assert.ok(TableUtils.isA(this.getDefaultRowMode(), "sap.ui.table.rowmodes.Fixed"),
 			"A default instance of sap.ui.table.rowmodes.Fixed is applied");
@@ -5022,9 +5027,9 @@ sap.ui.define([
 		}), "All properties of the default row mode instance are initial");
 	});
 
-	QUnit.test("Enum value", async function(assert) {
+	QUnit.test("Enum value", function(assert) {
 		for (const sRowMode of Object.values(RowModeType)) {
-			await this.createTable({rowMode: sRowMode});
+			this.createTable({rowMode: sRowMode});
 			assert.strictEqual(this.oTable.getRowMode(), sRowMode, "value of 'rowMode' aggregation");
 			assert.ok(TableUtils.isA(this.getDefaultRowMode(), "sap.ui.table.rowmodes." + sRowMode),
 				`A default instance of sap.ui.table.rowmodes.${sRowMode} is applied`);
