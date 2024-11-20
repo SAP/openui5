@@ -6117,6 +6117,8 @@ sap.ui.define([
 
 		this.oTable.setSelectionMode("Multi");
 		await nextUIUpdate();
+		await wait(100); // as the Table.prototype._updateExpandAllButton is async there is no other way than to wait
+
 		checkButtonStates.call(this, true);
 
 		this.oTable.setSelectionMode("Single");
