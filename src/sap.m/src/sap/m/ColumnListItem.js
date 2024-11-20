@@ -281,6 +281,10 @@ sap.ui.define([
 		return aOutput.filter(Boolean).join(" . ").trim();
 	};
 
+	ColumnListItem.prototype.getGroupAnnouncement = function() {
+		return this.$().prevAll(".sapMGHLI:first").text();
+	};
+
 	// update the aria-selected for the cells
 	ColumnListItem.prototype.updateSelectedDOM = function(bSelected, $This) {
 		ListItemBase.prototype.updateSelectedDOM.apply(this, arguments);

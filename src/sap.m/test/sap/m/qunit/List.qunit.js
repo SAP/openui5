@@ -29,8 +29,9 @@ sap.ui.define([
 	"sap/m/ListItemBase",
 	"sap/base/Log",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/date/UI5Date"
-], function(Library, jQuery, nextUIUpdate, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/m/GroupHeaderListItem"
+], function(Library, jQuery, nextUIUpdate, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date, GroupHeaderListItem) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -1449,6 +1450,42 @@ sap.ui.define([
 		assert.equal(oListSelection.getMode(), library.ListMode.Delete, "Switch to Delete: Ok");
 	});
 
+	QUnit.test("destroy invisible group text on destruction", async function(assert) {
+		const oData = {
+			names: [
+				{firstName: "Peter", lastName: "Müller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Piet", lastName: "Maier"}
+			]
+		};
+		const oModel = new JSONModel();
+		oModel.setData(oData);
+
+		const oList = new List();
+		oList.bindItems({
+			path: "/names",
+			template: new StandardListItem({
+				title: "{firstName}",
+				description: "{lastName}"
+			}),
+			sorter: new Sorter({
+				path: "lastName",
+				group: true
+			})
+		});
+
+		oList.setModel(oModel);
+
+		oList.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.ok(oList._oInvisibleGroupText, "Invisible group text exists");
+
+		oList.destroy();
+		assert.equal(oList.getDomRef(), null, "List is destroyed");
+		assert.equal(oList._oInvisibleGroupText, null, "Invisible group text is destroyed");
+	});
+
 
 	QUnit.module("Properties");
 
@@ -2424,6 +2461,8 @@ sap.ui.define([
 		this.oList.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
+		const oSkipFocusStub = sinon.stub(this.oList, "_skipGroupHeaderFocus").returns(true);
+
 		const aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
 			return oItem.isGroupHeader();
 		});
@@ -2431,11 +2470,13 @@ sap.ui.define([
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
 			const $GroupItem = oGroupItem.$();
-			assert.strictEqual($GroupItem.attr("role"), "group", "role=group assigned to CustomListItem, since its groupHeader");
+			assert.strictEqual($GroupItem.attr("role"), "listitem", "role=group assigned to CustomListItem, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");
 			assert.ok($GroupItem.attr("aria-owns"), "aria-owns added");
 		});
+
+		oSkipFocusStub.restore();
 	});
 
 	QUnit.test("Grouping behavior role='list'", async function(assert) {
@@ -2519,10 +2560,19 @@ sap.ui.define([
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
 			const $GroupItem = oGroupItem.$();
-			assert.strictEqual($GroupItem.attr("role"), "group", "role=group assigned to CustomListItem, since its groupHeader and parent's role=list");
+			assert.strictEqual($GroupItem.attr("role"), "listitem", "role=group assigned to CustomListItem, since its groupHeader and parent's role=list");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");
-			assert.ok($GroupItem.attr("aria-owns"), "aria-owns added");
+
+			const oSubListRef = oGroupItem.getDomRef().querySelector("ul");
+			assert.ok(oSubListRef, "GroupHeader contains a list");
+			assert.ok(oSubListRef.getAttribute("role"), "list", "role='list' is set to the sub list");
+			assert.ok(oSubListRef.getAttribute("aria-owns"), "aria-owns attribute is set to the sub list");
+
+			assert.ok(oGroupItem.getGroupedItems().length, "GroupHeader contains the mapped list items");
+			oGroupItem.getGroupedItems().forEach(function(sId) {
+				assert.ok(oSubListRef.getAttribute("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+			});
 		});
 	});
 });

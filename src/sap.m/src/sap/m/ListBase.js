@@ -695,6 +695,7 @@ function(
 			this._updateFinished();
 		}
 
+		this._updateInvisibleGroupText();
 		this._bSkippedInvalidationOnRebind = false;
 	};
 
@@ -2118,37 +2119,57 @@ function(
 	};
 
 	ListBase.prototype.getAccessbilityPosition = function(oItem) {
-		var iSetSize, iPosInSet,
-			aItems = this.getVisibleItems(),
-			sAriaRole = this.getAriaRole(),
-			bExcludeGroupHeaderFromCount = (sAriaRole === "list" || sAriaRole === "listbox");
+		let iSetSize, iPosInSet,
+			aItems = this.getVisibleItems();
 
-		if (bExcludeGroupHeaderFromCount) {
-			aItems = aItems.filter(function(oItem) {
-				return !oItem.isGroupHeader();
-			});
+		iSetSize = this.getSize();
+		if (this._hasNestedGrouping()) {
+			const aGroupItems = aItems
+				.filter((oItem) =>  oItem.isGroupHeader())
+				.find((oGroupHeader) => {
+					const aGroupedItems = oGroupHeader.getGroupedItems() ?? [];
+					return aGroupedItems.some((sItemId) => sItemId === oItem.getId());
+				});
+
+			if (aGroupItems) {
+				const aGroupItemIds = aGroupItems.getGroupedItems();
+				aItems = aItems.filter((oItem) => aGroupItemIds.includes(oItem.getId()));
+				iSetSize = aItems.length;
+			}
+		} else if (this._skipGroupHeaderFocus()) {
+			aItems = aItems.filter((oItem) => !oItem.isGroupHeader());
 		}
 
 		if (oItem) {
 			iPosInSet = aItems.indexOf(oItem) + 1;
 		}
 
-		var oBinding = this.getBinding("items");
-		if (oBinding && this.getGrowing() && this.getGrowingScrollToLoad()) {
-			iSetSize = oBinding.getLength();
-			if (!bExcludeGroupHeaderFromCount && oBinding.isGrouped()) {
-				iSetSize += aItems.filter(function(oItem) {
-					return oItem.isGroupHeader();
-				}).length;
-			}
-		} else {
-			iSetSize = aItems.length;
-		}
-
 		return {
 			setsize: iSetSize,
 			posinset: iPosInSet
 		};
+	};
+
+	ListBase.prototype.getSize = function() {
+		let aItems = this.getVisibleItems();
+		const bExcludeGroupHeaderFromCount = (this._hasNestedGrouping() || this._skipGroupHeaderFocus());
+
+		if (bExcludeGroupHeaderFromCount) {
+			aItems = aItems.filter((oItem) => !oItem.isGroupHeader());
+		}
+		let iSize = aItems.length;
+
+		const oBinding = this.getBinding("items");
+		if (oBinding && this.getGrowing() && this.getGrowingScrollToLoad()) {
+			iSize = oBinding.getLength();
+			if (!bExcludeGroupHeaderFromCount && oBinding.isGrouped()) {
+				iSize += aItems.filter(function(oItem) {
+					return oItem.isGroupHeader();
+				}).length;
+			}
+		}
+
+		return iSize;
 	};
 
 	// this gets called when the focus is on the item or its content
@@ -2243,6 +2264,8 @@ function(
 		$FocusedItem.addAriaLabelledBy(oInvisibleText.getId(), bPrepend);
 	};
 
+	ListBase.prototype._updateInvisibleGroupText = function() {};
+
 	/* Keyboard Handling */
 	ListBase.prototype.getNavigationRoot = function() {
 		return this.getDomRef("listUl");
@@ -2329,7 +2352,12 @@ function(
 	 * @since 1.26
 	 */
 	ListBase.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
-		var aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
+		let sSelector = ".sapMLIB";
+		if (this._skipGroupHeaderFocus()) {
+			// TODO: maybe use aria-roledescription instead, as CustomListItem and StandardListItem do not have MGHLI class
+			sSelector = ".sapMLIB:not(.sapMGHLI)";
+		}
+		var aNavigationItems = jQuery(oNavigationRoot).children(sSelector).get();
 		oItemNavigation.setItemDomRefs(aNavigationItems);
 		if (oItemNavigation.getFocusedIndex() == -1) {
 			if (this.getGrowing() && this.getGrowingDirection() == ListGrowingDirection.Upwards) {
@@ -3074,6 +3102,14 @@ function(
 	 */
 	ListBase.prototype.getAriaRole = function() {
 		return "list";
+	};
+
+	ListBase.prototype._skipGroupHeaderFocus = function() {
+		return false;
+	};
+
+	ListBase.prototype._hasNestedGrouping = function() {
+		return false;
 	};
 
 	return ListBase;
