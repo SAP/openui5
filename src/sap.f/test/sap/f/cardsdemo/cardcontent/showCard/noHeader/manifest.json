@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.f.cardsdemo.showCard.orderDetails",
+		"id": "sap.f.cardsdemo.showCard.order",
 		"type": "card",
 		"title": "Sample of an Snack Card",
 		"subTitle": "Sample of an Snack Card",
@@ -46,6 +46,9 @@
 			"parameters": {
 				"orderId": {
 					"value": 10249
+				},
+				"enableResize": {
+					"value": true
 				}
 			}
 		},
@@ -53,17 +56,8 @@
 			"data": {
 				"path": "/value/0"
 			},
-			"icon": {
-				"src": "sap-icon://sap-ui5"
-			},
-			"title": "Order for {ShipName}",
-			"subTitle": "For {ShipAddress}",
-			"status": {
-				"text": "ID {OrderID}"
-			},
-			"closeButton": {
-				"visible": false
-			}
+			"title": "Card with hidden header",
+			"visible": false
 		},
 		"content": {
 			"groups": [
@@ -72,22 +66,14 @@
 						{
 							"label": "Name",
 							"value": "{ShipName}"
-						},
+						}
+					]
+				},
+				{
+					"items": [
 						{
 							"label": "Address",
 							"value": "{ShipAddress}"
-						},
-						{
-							"label": "Country",
-							"value": "{ShipCountry}"
-						},
-						{
-							"label": "City",
-							"value": "{ShipCity}"
-						},
-						{
-							"label": "Postal code",
-							"value": "{ShipPostalCode}"
 						}
 					]
 				}
@@ -96,11 +82,18 @@
 		"footer": {
 			"actionsStrip": [
 				{
-					"text": "Close",
-					"buttonType": "Reject",
+					"text": "Show More",
+					"buttonType": "Accept",
 					"actions": [
 						{
-							"type": "HideCard"
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./detailsManifest.json",
+								"parameters": {
+									"orderId": "{parameters>/orderId/value}"
+								},
+								"resizable": "{parameters>/enableResize/value}"
+							}
 						}
 					]
 				}

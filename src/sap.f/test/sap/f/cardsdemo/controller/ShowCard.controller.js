@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/integration/Host"
-], function (Controller, Host) {
+	"sap/ui/integration/Host",
+	"sap/m/MessageToast"
+], function (Controller, Host, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.ShowCard", {
@@ -21,6 +22,29 @@ sap.ui.define([
 			this.getView().byId("showCard1").setHost(oHost);
 			this.getView().byId("showCard2").setHost(oHost);
 			this.getView().byId("showCard6").setHost(oHost);
+			this.getView().byId("showCard8").setHost(oHost);
+
+			var oHostWithActions = new Host({
+				actions: [
+					{
+						type: "Navigation",
+						text: "Open SAP website",
+						icon: "sap-icon://globe",
+						url: "http://www.sap.com",
+						target: "_blank"
+					},
+					{
+						type: "Custom",
+						text: "Add to Mobile",
+						icon: "sap-icon://add",
+						action: function (oCard, oButton) {
+								MessageToast.show("Card successfully added to Mobile.");
+						}
+					}
+				]
+			});
+
+			this.getView().byId("showCard7").setHost(oHostWithActions);
 		}
 
 	});

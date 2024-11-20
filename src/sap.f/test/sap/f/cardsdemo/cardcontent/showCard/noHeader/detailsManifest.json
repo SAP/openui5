@@ -53,17 +53,8 @@
 			"data": {
 				"path": "/value/0"
 			},
-			"icon": {
-				"src": "sap-icon://sap-ui5"
-			},
-			"title": "Order for {ShipName}",
-			"subTitle": "For {ShipAddress}",
-			"status": {
-				"text": "ID {OrderID}"
-			},
-			"closeButton": {
-				"visible": false
-			}
+			"title": "Card with hidden header",
+			"visible": false
 		},
 		"content": {
 			"groups": [

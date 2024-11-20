@@ -31,7 +31,8 @@
 			"request": {
 				"url": "{{destinations.myDestination}}/Products",
 				"parameters": {
-					"$format": "json"
+					"$format": "json",
+					"$count": true
 				}
 			},
 			"path": "/value"
@@ -44,10 +45,24 @@
 			}
 		},
 		"header": {
-			"icon": {
-				"src": "sap-icon://sap-ui5"
+			"type": "Default",
+			"title": "Details card with filter {= format.text(${i18n>CARD.COUNT_X_OF_Y}, [${parameters>/visibleItems}, ${/@odata.count}]) }",
+			"titleMaxLines": 1,
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
 			},
-			"title": "Details card with filter",
+			"subTitle": "By Average Price",
+			"closeButton": {
+				"visible": false
+			},
 			"actions": [
 				{
 					"type": "ShowCard",
