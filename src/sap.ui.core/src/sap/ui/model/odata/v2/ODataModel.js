@@ -5027,11 +5027,14 @@ sap.ui.define([
 	 *   supports message scope.
 	 * @param {boolean} [bSideEffects]
 	 *   Whether the request is to read side effects
+	 * @param {function} [fnRequest]
+	 *   Request function which can handle 503 "Retry-After" responses,
+	 *   see {@link sap.ui.model.odata.v2.ODataModel#_request}
 	 * @return {object} Request object
 	 * @private
 	 */
 	ODataModel.prototype._createRequest = function(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag,
-			bAsync, bUpdateAggregatedMessages, bSideEffects) {
+			bAsync, bUpdateAggregatedMessages, bSideEffects, fnRequest) {
 		var oRequest;
 
 		bAsync = bAsync !== false;
@@ -5091,6 +5094,9 @@ sap.ui.define([
 		};
 		if (bSideEffects) {
 			oRequest.sideEffects = true;
+		}
+		if (fnRequest) {
+			oRequest.fnRequest = fnRequest;
 		}
 		if (oData) {
 			oRequest.data = oData;
@@ -5873,12 +5879,14 @@ sap.ui.define([
 	 *   The parameters as specified in {@link #read}
 	 * @param {boolean} [bSideEffects]
 	 *   Whether to read data as side effects
+	 * @param {function} [fnRequest] Request function which can handle 503 "Retry-After" responses,
+	 *   see {@link sap.ui.model.odata.v2.ODataModel#_request}
 	 * @return {object}
 	 *   An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._read = function(sPath, mParameters, bSideEffects) {
+	ODataModel.prototype._read = function(sPath, mParameters, bSideEffects, fnRequest) {
 	   var bCanonical, oContext, fnError, aFilters, sGroupId, mHeaders, sMethod, oRequest,
 		   aSorters, fnSuccess, bUpdateAggregatedMessages, aUrlParams, mUrlParams,
 		   that = this;
@@ -5942,7 +5950,7 @@ sap.ui.define([
 		   sUrl = that._createRequestUrlWithNormalizedPath(sResourcePath, aUrlParams,
 			   that.bUseBatch);
 		   oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, /*sETag*/undefined,
-			   undefined, bUpdateAggregatedMessages, bSideEffects);
+			   undefined, bUpdateAggregatedMessages, bSideEffects, fnRequest);
 
 		   mRequests = that.mRequests;
 		   if (sGroupId in that.mDeferredGroups) {
@@ -7737,6 +7745,13 @@ sap.ui.define([
 	ODataModel.prototype._request = function(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata,
 			bSkipHandleTracking) {
 		var oRequestHandle;
+
+		if (oRequest.fnRequest) {
+			const fnRequest = oRequest.fnRequest;
+			delete oRequest.fnRequest;
+			return fnRequest(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata,
+				/*bSkipHandleTracking*/true);
+		}
 
 		if (this.bDestroyed) {
 			return {

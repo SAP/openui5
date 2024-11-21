@@ -76129,9 +76129,11 @@ sap.ui.define([
 				.expectChange("name", bSeparateFailed ? ["Employee 0", "Employee 1"] : [])
 				.expectChange("team", bSeparateFailed ? [null, null] : []);
 
-			oListBinding.resume();
-
-			await this.waitForChanges(assert, "resume binding");
+			await Promise.all([
+				// synchronous #resume leads in some cases to different request order
+				oListBinding.resumeAsync(),
+				this.waitForChanges(assert, "resume binding")
+			]);
 
 			if (bSeparateFailed) {
 				const oParameters = aEventParameters.shift();

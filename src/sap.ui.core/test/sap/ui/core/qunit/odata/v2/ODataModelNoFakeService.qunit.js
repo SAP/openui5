@@ -445,16 +445,15 @@ sap.ui.define([
 				.returns(sUrl);
 		oModelMock.expects("_createRequest")
 			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, /*oData*/null, /*sETag*/undefined,
-				/*bAsync*/undefined, bUpdateAggregatedMessages, "~bSideEffects")
+				/*bAsync*/undefined, bUpdateAggregatedMessages, "~bSideEffects", "~fnRequest")
 			.returns(oRequest);
 		oModelMock.expects("_pushToRequestQueue")
 			.withExactArgs(oModel.mRequests, sGroupId, null, sinon.match.same(oRequest),
-				fnSuccess, fnError, sinon.match.object, false)
-			.returns(oRequest);
+				fnSuccess, fnError, sinon.match.object, false);
 
 		// code under test
 		ODataModel.prototype._read.call(oModel, "~path/$count?foo='bar'", mParameters,
-			"~bSideEffects");
+			"~bSideEffects", "~fnRequest");
 	});
 
 	//*********************************************************************************************
@@ -798,10 +797,11 @@ sap.ui.define([
 			// code under test
 			ODataModel.prototype._createRequest.call(oModel, "~sUrl", "~deepPath", "GET",
 				/*mHeaders*/{}, /*oData*/undefined, /*sETag*/undefined, /*bAsync*/false,
-				/*bUpdateAggregatedMessages*/false, "~bTruthySideEffects"),
+				/*bUpdateAggregatedMessages*/false, "~bTruthySideEffects", "~fnRequest"),
 			{
 				async : false,
 				deepPath : "~deepPath",
+				fnRequest : "~fnRequest",
 				headers : {},
 				method : "GET",
 				password : undefined,
@@ -9757,6 +9757,27 @@ sap.ui.define([
 
 			assert.deepEqual(oModel.aPendingRequestHandles, ["~oPriorRequestHandle"]);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_request: oRequest w/ fnRequest", function (assert) {
+		const oHelper = {someRequestFunction() {}};
+		const oRequest = {};
+
+		this.mock(oHelper).expects("someRequestFunction")
+			.withExactArgs(sinon.match((oRequest0) => {
+					return oRequest0 === oRequest && !oRequest0.fnRequest;
+				}), "~fnSuccess", "~fnError", "~oHandler", "~oHttpClient", "~oMetadata", true)
+			.returns("~oRequestHandle");
+
+		oRequest.fnRequest = oHelper.someRequestFunction.bind(oHelper);
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype._request.call({/*oModel*/}, oRequest, "~fnSuccess", "~fnError", "~oHandler",
+				"~oHttpClient", "~oMetadata", "~bSkipHandleTracking"),
+			"~oRequestHandle"
+		);
 	});
 
 	//*********************************************************************************************

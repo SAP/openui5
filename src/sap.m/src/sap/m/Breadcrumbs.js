@@ -303,7 +303,8 @@ sap.ui.define([
 		if (!this.getAggregation("_currentLocation")) {
 			var oCurrentLocation = new Text({
 				id: this._getAugmentedId("currentText"),
-				text: this.getCurrentLocationText()
+				text: this.getCurrentLocationText(),
+				wrapping: false
 			}).addStyleClass("sapMBreadcrumbsCurrentLocation");
 
 			oCurrentLocation.addEventDelegate({

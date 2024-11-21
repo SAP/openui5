@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=none -->
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+	</edmx:Reference>
+	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='SFINODATA1')/$value">
+	<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="FAR_CUSTOMER_LINE_ITEMS" xml:lang="en" sap:schema-version="0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Item" sap:service-schema-version="3" sap:service-version="1" sap:label="Item" sap:semantics="aggregate" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="GeneratedID"/>
+				</Key>
+				<Property Name="AccountingDocument" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Document Number" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="AccountingDocumentItem" Type="Edm.String" MaxLength="3" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Line Item" sap:creatable="false" sap:updatable="false"/>
+				<Property Name="AmountInCompanyCodeCurrency" Type="Edm.String" MaxLength="5" sap:aggregation-role="measure" sap:display-format="UpperCase" sap:label="Amount" sap:creatable="false" sap:unit="Currency" sap:updatable="false"/>
+				<Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="CompanyName" sap:label="Company Code" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+				<Property Name="CompanyName" Type="Edm.String" MaxLength="25" sap:unicode="false" sap:label="Company Name" sap:quickinfo="Name of Company Code or Company" sap:creatable="false" sap:updatable="false" />
+				<!-- property which is an attribute of a dimension SNOW: CS20240008302461 -->
+				<Property Name="CompanyAttribute" Type="Edm.String" MaxLength="25" sap:unicode="false" sap:label="Company Attribute" sap:quickinfo="Attribute of Company Code" sap:attribute-for="CompanyCode" />
+				<Property Name="Currency" Type="Edm.String" MaxLength="5" sap:semantics="currency-code" sap:aggregation-role="dimension" sap:label="Currency"/>
+				<Property Name="Customer" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:text="CustomerName" sap:label="Customer" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+				<Property Name="CustomerName" Type="Edm.String" MaxLength="80" sap:unicode="false" sap:label="Customer Name" sap:creatable="false" sap:updatable="false" />
+				<Property Name="GeneratedID" Type="Edm.String" Nullable="false" sap:aggregation-role="dimension" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<!-- property of type Edm.Time for grouping SNOW: CS20230006325114 -->
+				<Property Name="CreationTime" Type="Edm.Time" Nullable="false" sap:aggregation-role="dimension" sap:creatable="false" sap:updatable="false"/>
+				<!-- property with sap:value-list but no value list provided in separate load -->
+				<Property Name="Invalid" Type="Edm.String" sap:value-list="standard"/>
+				<!-- property with ComplexType having a sap:value-list annotated property -->
+				<Property Name="Complex" Type="FAR_CUSTOMER_LINE_ITEMS.MyComplexType"/>
+				<!-- property which is neither a dimension nor a measure nor an associated property
+					of a dimension or a measure -->
+				<Property Name="OrdinaryProperty" Type="Edm.String"/>
+				<!-- property for testing filtering Edm.DateTime properties with precision > 3-->
+				<Property Name="ChangedAt" Type="Edm.DateTime" Precision="7"/>
+			</EntityType>
+			<EntityType Name="Foo">
+				<Key>
+					<PropertyRef Name="Bar"/>
+				</Key>
+				<Property Name="Bar" Type="Edm.String"/>
+				<!-- property with sap:value-list but no value list provided in separate load -->
+				<Property Name="Invalid" Type="Edm.String" sap:value-list="standard"/>
+			</EntityType>
+			<EntityType Name="SAP__Currency" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CurrencyCode" />
+				</Key>
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5"
+						  sap:label="Currency" sap:semantics="currency-code" />
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:label="ISO Code" />
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="15"
+						  sap:label="Short Text" />
+				<Property Name="DecimalPlaces" Type="Edm.Byte" Nullable="false"
+						  sap:label="Decimals" />
+			</EntityType>
+			<EntityType Name="SAP__UnitOfMeasure" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="UnitCode" />
+				</Key>
+				<Property Name="UnitCode" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:label="Internal UoM" sap:semantics="unit-of-measure" />
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:label="ISO Code" />
+				<Property Name="ExternalCode" Type="Edm.String" Nullable="false" MaxLength="3"
+						  sap:label="Commercial" />
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="30"
+						  sap:label="Meas. Unit Text" />
+				<Property Name="DecimalPlaces" Type="Edm.Int16" sap:label="Decimal Places" />
+			</EntityType>
+			<ComplexType Name="MyComplexType">
+				<Property Name="Customer" Type="Edm.String" sap:value-list="standard"/>
+			</ComplexType>
+			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="Items" EntityType="FAR_CUSTOMER_LINE_ITEMS.Item" sap:label="Item" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+				<EntitySet Name="Foos" EntityType="FAR_CUSTOMER_LINE_ITEMS.Foo"/>
+				<EntitySet Name="SAP__Currencies" EntityType="FAR_CUSTOMER_LINE_ITEMS.SAP__Currency" sap:content-version="1"/>
+				<EntitySet Name="SAP__UnitsOfMeasure" EntityType="FAR_CUSTOMER_LINE_ITEMS.SAP__UnitOfMeasure" sap:content-version="1"/>
+			</EntityContainer>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"
+						 Target="FAR_CUSTOMER_LINE_ITEMS.FAR_CUSTOMER_LINE_ITEMS_Entities">
+				<Annotation Term="SAP__CodeList.CurrencyCodes">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata" />
+						<PropertyValue Property="CollectionPath" String="SAP__Currencies" />
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__CodeList.UnitsOfMeasure">
+					<Record>
+						<PropertyValue Property="Url" String="./$metadata" />
+						<PropertyValue Property="CollectionPath" String="SAP__UnitsOfMeasure" />
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.SAP__Currency/CurrencyCode"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.Text" Path="Text" />
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces" />
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode" />
+			</Annotations>
+			<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.SAP__UnitOfMeasure/UnitCode"
+						 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.Text" Path="Text" />
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces" />
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode" />
+				<Annotation Term="SAP__CodeList.ExternalCode" Path="ExternalCode" />
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

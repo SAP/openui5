@@ -3,8 +3,11 @@ sap.ui.define([
 	"sap/m/BusyDialog",
 	"sap/m/Button",
 	"sap/m/List",
+	"sap/m/OverflowToolbar",
 	"sap/m/Slider",
 	"sap/m/StandardListItem",
+	"sap/m/Title",
+	"sap/m/ToolbarSpacer",
 	"sap/m/VBox",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
@@ -14,7 +17,7 @@ sap.ui.define([
 	"sap/ui/test/utils/nextUIUpdate",
 	/* jQuery custom selectors ":sapTabbable"*/
 	"sap/ui/dom/jquery/Selectors"
-], function(BusyDialog, Button, List, Slider, StandardListItem, VBox, Element, XMLView, KeyCodes, jQuery, qutils, nextUIUpdate) {
+], function(BusyDialog, Button, List, OverflowToolbar, Slider, StandardListItem, Title, ToolbarSpacer, VBox, Element, XMLView, KeyCodes, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
@@ -106,7 +109,17 @@ sap.ui.define([
 	QUnit.module("Basic", {
 		beforeEach : function() {
 			this.oFocusBefore = new Button("FocusBefore").placeAt("target1");
+			this.oToolbarButton = new Button({
+				text: "click me"
+			});
 			this.oListBox = new List({
+				headerToolbar: new OverflowToolbar({
+					content: [
+						new Title({ text: "Title" }),
+						new ToolbarSpacer(),
+						this.oToolbarButton
+					]
+				}),
 				tooltip : "Country",
 				width : "200px",
 				items : [ new StandardListItem({
@@ -168,6 +181,17 @@ sap.ui.define([
 		assert.equal(oLastFocusPosition, document.activeElement, "setBusy(false): Focus restored correctly to last focus position.");
 		assert.notOk($LB.attr("aria-busy"), "'aria-busy' attribute should be removed again.");
 
+	});
+
+	QUnit.test("Focus Restoration when focused item is out of busy section of the control", function(assert) {
+		this.oListBox.setBusyIndicatorDelay(0);
+		this.oToolbarButton.focus();
+
+		this.oListBox.setBusy(true, "listUl");
+		assert.ok(this.oToolbarButton.getDomRef().contains(document.activeElement), "setBusy(true): focus is still on the button because the busy section doesn't contain the focused element");
+
+		this.oListBox.setBusy(false);
+		assert.ok(this.oToolbarButton.getDomRef().contains(document.activeElement), "setBusy(false): focus is still on the button because the busy section doesn't contain the focused element");
 	});
 
 	QUnit.test("Focus Restoration Advanced", function(assert) {
@@ -265,11 +289,17 @@ sap.ui.define([
 		this.oListBox.setBusy(true);
 
 		simulateTabEvent(this.oFocusBefore.getDomRef());
+		oElem = this.oToolbarButton.getFocusDomRef();
+		checkFocus(oElem, assert);
+		simulateTabEvent(oElem);
 		oElem = document.getElementById(this.oListBox.getItems()[0].getId());
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem);
 		checkFocus(this.oFocusAfter.getDomRef(), assert);
 		simulateTabEvent(this.oFocusAfter.getDomRef(), true);
+		checkFocus(oElem, assert);
+		simulateTabEvent(oElem, true);
+		oElem = this.oToolbarButton.getFocusDomRef();
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem, true);
 		checkFocus(this.oFocusBefore.getDomRef(), assert);
