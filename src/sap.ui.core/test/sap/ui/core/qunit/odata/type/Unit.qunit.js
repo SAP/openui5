@@ -141,4 +141,25 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oType.getCustomUnitForKey(mCustomizing, "KG"), mCustomUnit);
 	});
+
+	//*********************************************************************************************
+[
+	{oFormatOptions: {}, iExpected: 3},
+	{oFormatOptions: undefined, iExpected: 3},
+	{oFormatOptions: {decimals: undefined, maxFractionDigits: undefined, minFractionDigits: undefined}, iExpected: 3},
+	{oFormatOptions: {decimals: 2}, iExpected: 2},
+	{oFormatOptions: {maxFractionDigits: 2}, iExpected: undefined},
+	{oFormatOptions: {minFractionDigits: 2}, iExpected: undefined},
+	{oFormatOptions: {decimals: null}, iExpected: null},
+	{oFormatOptions: {maxFractionDigits: null}, iExpected: undefined},
+	{oFormatOptions: {minFractionDigits: null}, iExpected: undefined},
+	{oFormatOptions: {decimals: 0}, iExpected: 0},
+	{oFormatOptions: {maxFractionDigits: 0}, iExpected: undefined},
+	{oFormatOptions: {minFractionDigits: 0}, iExpected: undefined}
+].forEach(({oFormatOptions, iExpected}, i) => {
+	QUnit.test(`constructor: oFormatOptions.decimals defaults to 3; #${i}`, function (assert) {
+		// code under test
+		assert.strictEqual(new Unit(oFormatOptions).oFormatOptions.decimals, iExpected);
+	});
+});
 });

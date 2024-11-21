@@ -23,23 +23,23 @@ sap.ui.define([
 			paths: ["sap/m/Text"],
 			instances: [Text],
 			createFunction: "createDisplay",
-			createdInstances: [{control: Text, boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}}]
+			createdInstances: [{control: Text, boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}}]
 		},
 		"Edit": {
 			getPathsFunction: "getEdit",
 			paths: ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"],
 			instances: [FieldInput, InvisibleText],
 			createFunction: "createEdit",
-			createdInstances: [{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
-								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
+			createdInstances: [{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
+								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
 		},
 		"EditMultiValue": {
 			getPathsFunction: "getEditMultiValue",
 			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"],
 			instances: [FieldMultiInput, FieldInput, Token, InvisibleText],
 			createFunction: "createEditMultiValue",
-			createdInstances: [{control: FieldMultiInput, boundAggregation: "tokens", boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
-								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
+			createdInstances: [{control: FieldMultiInput, boundAggregation: "tokens", boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
+								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
 		},
 		"EditMultiLine": {
 			getPathsFunction: "getEditMultiLine",
