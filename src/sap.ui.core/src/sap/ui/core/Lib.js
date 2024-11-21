@@ -1771,16 +1771,22 @@ sap.ui.define([
 	 */
 	Library._registerElement = function(oElementMetadata) {
 		var sElementName = oElementMetadata.getName(),
-			sLibraryName = oElementMetadata.getLibraryName() || "",
-			oLibrary = Library._get(sLibraryName),
-			sCategory = oElementMetadata.isA("sap.ui.core.Control") ? 'controls' : 'elements';
+			sLibraryName = oElementMetadata.getLibraryName() || "";
+
+		// if no lib name could be determined and if the class name is not namespaced, do not register it
+		if (!sLibraryName && !sElementName.includes(".")) {
+			return;
+		}
+
+		let oLibrary = Library._get(sLibraryName);
+		const sCategory = oElementMetadata.isA("sap.ui.core.Control") ? 'controls' : 'elements';
 
 		// if library has not been loaded yet, create a library
 		if (!oLibrary) {
 			/**
-             * Ensure namespace.
-             * @deprecated since 1.120
-             */
+			 * Ensure namespace.
+			 * @deprecated since 1.120
+			 */
 			ObjectPath.create(sLibraryName);
 			oLibrary = Library._get(sLibraryName, true /* bCreate */);
 		}
