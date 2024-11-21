@@ -375,7 +375,7 @@ sap.ui.define([
 				iFirstDayOfWeek: oMonth._getFirstDayOfWeek(),
 				iWeekendStart: oLocaleData.getWeekendStart(),
 				iWeekendEnd: oLocaleData.getWeekendEnd(),
-				aNonWorkingDays: oMonth._getNonWorkingDays() || [],
+				aNonWorkingDays: oMonth._getNonWorkingDays(),
 				sToday: oLocaleData.getRelativeDay(0),
 				oToday: CalendarDate.fromLocalJSDate(UI5Date.getInstance(), oMonth.getPrimaryCalendarType()),
 				sId: oMonth.getId(),
@@ -437,7 +437,7 @@ sap.ui.define([
 		var bShouldBeMarkedAsSpecialDate = oMonth._isSpecialDateMarkerEnabled(oDay);
 		const sFirstSpecialDateType = aDayTypes.length > 0 && aDayTypes[0].type;
 		const sSecondaryDateType = aDayTypes.length > 0 && aDayTypes[0].secondaryType;
-		const bIsWeekend = oHelper.aNonWorkingDays.length
+		const bIsWeekend = oHelper.aNonWorkingDays && oHelper.aNonWorkingDays instanceof Array
 			? oHelper.aNonWorkingDays.some((iNonWorkingDay) => oDay.getDay() === iNonWorkingDay)
 			: CalendarUtils._isWeekend(oDay, oMonth._getLocaleData());
 		const bNonWorkingWeekend =  sFirstSpecialDateType !== CalendarDayType.Working
