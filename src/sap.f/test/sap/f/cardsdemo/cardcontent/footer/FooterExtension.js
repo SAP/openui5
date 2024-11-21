@@ -100,7 +100,7 @@ sap.ui.define([
 			contentWidth: "40%"
 		});
 
-		if (Element.getElementById("cardsplayground---footer--sizeSwitch").getSelectedKey() === "compact") {
+		if (Element.getElementById("cardsplayground---footer--common-settings--density-mode-segmented-button").getSelectedKey() === "compact") {
 			this._oSnackDialog.addStyleClass("sapUiSizeCompact");
 		}
 

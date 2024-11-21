@@ -1310,11 +1310,11 @@ sap.ui.define([
 				if (sLanguage) {
 					mUrlParameters["sap-language"] = sLanguage;
 				}
-				oCodeListModel.read("/" + sCollectionPath, {
+				oCodeListModel._read("/" + sCollectionPath, {
 					error : fnReject,
 					success : fnResolve,
 					urlParameters : mUrlParameters
-				});
+				}, undefined, that.oDataModel._request.bind(that.oDataModel));
 			});
 			oMappingPromise = new SyncPromise(function (fnResolve, fnReject) {
 				try {

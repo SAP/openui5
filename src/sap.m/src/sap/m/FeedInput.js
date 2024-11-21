@@ -106,8 +106,8 @@ sap.ui.define([
 
 				/**
 				 * Defines the shape of the icon.
-				* @since 1.88
-				*/
+				 * @since 1.88
+				 */
 				iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Circle},
 
 				/**
@@ -133,12 +133,13 @@ sap.ui.define([
 				 * If a new tooltip is set, any previously set tooltip is deactivated.
 				 * The default value is set language dependent.
 				 * @since 1.28
+				 * @type {sap.ui.core.TooltipBase|string}
 				 */
-				buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"}
+				buttonTooltip : {type : "any", group : "Accessibility", defaultValue : "Submit"}
 			},
 			aggregations : {
 				/**
-				* Defines the inner avatar control.
+				 * Defines the inner avatar control.
 				 */
 				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
 			},

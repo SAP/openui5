@@ -399,7 +399,9 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 				content: [this.oStandardBreadCrumbsControl]
 			}),
 			oSpy = this.spy(this.oStandardBreadCrumbsControl, "fireEvent"),
-			sMinWidth;
+			sMinWidth,
+			iCurrentLocationHeight,
+			oCurrentLocation;
 
 		helpers.renderObject(oOFT);
 
@@ -409,6 +411,20 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 			await Parameters_getAsync("_sap_m_Toolbar_ShrinkItem_MinWidth")),
 			"Min-width is bigger than the standart 2.5rem/40px width of OFT's shrikable items");
 		assert.ok(oSpy.calledWith("_minWidthChange"), "Invalidation event is fired for the OFT");
+		//Arrange
+		oCurrentLocation = this.oStandardBreadCrumbsControl.getCurrentLocation();
+		iCurrentLocationHeight = oCurrentLocation.$().height();
+
+		//Act
+		document.getElementById("qunit-fixture").setAttribute("style", "width: 200px");
+		helpers.waitForUIUpdates();
+
+		// Assert
+		assert.equal(oCurrentLocation.$().height(), iCurrentLocationHeight, "Breadcrumbs current location element truncates, when space is not enough");
+
+		//Clean up
+		document.getElementById("qunit-fixture").setAttribute("style", "width: 200px");
+
 	});
 
 	QUnit.test("Breadcrumbs in OverflowToolbar - config", function (assert) {
