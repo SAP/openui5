@@ -1,6 +1,6 @@
 /*global QUnit */
 
-sap.ui.require(
+sap.ui.define(
 	[
 		"sap/m/Panel",
 		"sap/m/Text"

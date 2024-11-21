@@ -14,15 +14,18 @@
 		},
 		"config": {
 			"sample": {
-				"iframe": "Opa.html?opaExecutionDelay=700",
+				"iframe": "Test.qunit.html?testsuite=test-resources/appUnderTest/testsuite.qunit&test=Opa",
 				"stretch": true,
 				"files": [
-					"Opa.html",
-					"Opa.js",
 					"applicationUnderTest/view/Main.view.xml",
 					"applicationUnderTest/view/Main.controller.js",
 					"applicationUnderTest/Component.js",
-					"manifest.json"
+					"Component.js",
+					"Opa.qunit.js",
+					"Test.qunit.html",
+					"manifest.json",
+					"testsuite.qunit.html",
+					"testsuite.qunit.js"
 				]
 			}
 		}
