@@ -385,6 +385,12 @@ sap.ui.define([
 		if (!mPropertyBag.partialFlexState) {
 			mResponse.authors = await Loader.loadVariantsAuthors(mPropertyBag.reference);
 		}
+		storeInfoInSession(mPropertyBag.reference, mResponse);
+
+		return mResponse;
+	}
+
+	function prepareNewInstance(mResponse, mPropertyBag) {
 		// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
 		_mInstances[mPropertyBag.reference] = merge({}, {
 			unfilteredStorageResponse: mResponse,
@@ -396,12 +402,9 @@ sap.ui.define([
 			allContextsProvided: mPropertyBag.allContextsProvided
 		});
 
-		storeInfoInSession(mPropertyBag.reference, mResponse);
-
 		// no further changes to storageResponse properties allowed
 		Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
 		Object.freeze(_mInstances[mPropertyBag.reference].unfilteredStorageResponse);
-		return mResponse;
 	}
 
 	function storeInfoInSession(sReference, mResponse) {
@@ -502,12 +505,14 @@ sap.ui.define([
 			checkComponentId(mProperties);
 			checkVersionAndAllContexts(mProperties);
 			if (mProperties.reInitialize) {
-				await loadFlexData(mProperties);
+				const oResponse = await loadFlexData(mProperties);
+				prepareNewInstance(oResponse, mProperties);
 			} else {
 				rebuildResponseIfMaxLayerChanged(mPropertyBag.reference);
 			}
 		} else {
-			await loadFlexData(mProperties);
+			const oResponse = await loadFlexData(mProperties);
+			prepareNewInstance(oResponse, mProperties);
 		}
 
 		initializeNewInstance(mProperties);
@@ -591,7 +596,8 @@ sap.ui.define([
 		const oNewInitPromise = new Deferred();
 		_mInitPromises[sReference] = oNewInitPromise;
 		await oOldInitPromise;
-		await loadFlexData(mPropertyBag);
+		const oResponse = await loadFlexData(mPropertyBag);
+		prepareNewInstance(oResponse, mPropertyBag);
 		_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
 		const bUpdated = updateRuntimePersistence(
 			sReference,

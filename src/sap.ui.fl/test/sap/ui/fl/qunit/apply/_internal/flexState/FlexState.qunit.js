@@ -576,6 +576,42 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when initialize is called multiple times with an async callback depending on the state", function(assert) {
+			// This test covers a previous bug where the FlexState was not initialized completly
+			// i.e. it was cleared during the second initialization but the storageResponse was not yet set
+			// because the process was async
+			// This resulted in a failing DataSelector, which is tested here
+
+			const oSecondLoadPromise = new Promise((resolve) => {
+				this.fnResolve = resolve;
+			});
+			this.oLoadFlexDataStub.callsFake(() => {
+				if (this.oLoadFlexDataStub.callCount === 1) {
+					this.fnResolve();
+				}
+				return Promise.resolve(mEmptyResponse);
+			});
+
+			const fnDone = assert.async();
+			FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			})
+			.then(async function() {
+				await oSecondLoadPromise;
+				await Promise.resolve();
+				const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
+				assert.strictEqual(aFlexObjects.length, 0, "then the flex objects can be accessed");
+				fnDone();
+			});
+
+			FlexState.initialize({
+				reference: sReference,
+				reInitialize: true,
+				componentId: sComponentId
+			});
+		});
+
 		QUnit.test("when getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
 			return FlexState.initialize({
 				reference: "sap.ui.fl.other.reference",
