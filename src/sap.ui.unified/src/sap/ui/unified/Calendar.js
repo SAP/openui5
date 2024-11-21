@@ -118,9 +118,14 @@ sap.ui.define([
 			firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
 
 			/**
+			 * This property sets chosen days of the week as non-working days, and overrides the weekend days defined in the locale settings.
 			 * If set, the provided weekdays are displayed as non-working days.
-			 * Valid values inside the array are 0 to 6.
-			 * If not set, the weekend defined in the locale settings is displayed as non-working days.
+			 *
+			 * <ul>Users could override the non-working days for each week. Valid values inside the array are from 0 to 6. For example:
+			 * <li>A single day for each week - <code>[3]</code>.</li>
+			 * <li>All days for each week - <code>[0,1,2,3,4,5,6]</code>.</li>
+			 * <li>None of the days for each week - <code>[]</code>. In this case all weekdays are working days.</li>
+			 * <ul>
 			 *
 			 * <b>Note:</b> Keep in mind that this property sets only weekly-recurring days
 			 * as non-working. If you need specific dates or dates ranges, such as national
