@@ -164,7 +164,19 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable {
 }
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
-	outline: 0.0625rem dotted var(--sapContent_ContrastFocusColor);
+	outline: .0625rem solid var(--sapContent_FocusColor);
+}
+
+html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable :not(.sapMBadgeIndicator) ::after {
+	content: "";
+	position: absolute;
+	box-sizing: border-box;
+	left: 0.0625rem;
+	top: 0.0625rem;
+	right: 0.0625rem;
+	bottom: 0.0625rem;
+	border: .0625rem dotted var(--sapContent_ContrastFocusColor);
+	pointer-events: none
 }
 
 .sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
