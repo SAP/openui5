@@ -4,7 +4,7 @@
 	<appData>
 		<!-- Thirdparty references -->
 		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="less" displayName="LESS" npmName="less" version="1.6.3" hash="fb7893fd45c3d4c4b43242f7b7879977" homepage="http://lesscss.org/" id="73555000106100001897">
+			<lib name="less" displayName="LESS" npmName="less" version="1.6.3" hash="fa36f13be63573f4c23a4e11667eba56" homepage="http://lesscss.org/" id="73555000106100001897">
 				<license url="https://raw.github.com/cloudhead/less.js/master/LICENSE" type="Apache-2.0" />
 				<copyright>2009-2014, Alexis Sellier &lt;self@cloudhead.net&gt;</copyright>
 				<pattern>src/testsuite-utils/src/main/resources/META-INF/less/less.js</pattern>

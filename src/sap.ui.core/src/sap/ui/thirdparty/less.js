@@ -4763,7 +4763,7 @@ tree.Quoted.prototype = {
         var value = this.value.replace(/`([^`]+)`/g, function (_, exp) {
             // ##### BEGIN: MODIFIED BY SAP
             // Removed support for javascript
-            const error = new Error("You are using JavaScript, which has been disabled.");
+            var error = new Error("You are using JavaScript, which has been disabled.");
             error.index = that.index;
             error.type = "Syntax";
             throw error;
