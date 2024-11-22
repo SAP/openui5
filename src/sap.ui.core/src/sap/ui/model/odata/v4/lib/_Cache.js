@@ -4198,8 +4198,8 @@ sap.ui.define([
 	 * @param {object} [oEntity]
 	 *   The entity which contains the ETag to be sent as "If-Match" header with the POST request.
 	 * @param {boolean} [bIgnoreETag]
-	 *   Whether the entity's ETag should be actively ignored (If-Match:*); used only in case an
-	 *   entity is given and an ETag is present
+	 *   Whether the entity's ETag should be actively ignored (If-Match:*); used only in case no
+	 *   entity is given or an ETag is present
 	 * @param {function} [fnOnStrictHandlingFailed]
 	 *   If this callback is given, then the preference "handling=strict" is applied.
 	 *   If the request fails with an error having <code>oError.strictHandlingFailed</code> set,
@@ -4221,9 +4221,7 @@ sap.ui.define([
 	_SingleCache.prototype.post = function (oGroupLock, oData, oEntity, bIgnoreETag,
 			fnOnStrictHandlingFailed, fnGetOriginalResourcePath) {
 		var sGroupId,
-			mHeaders = oEntity
-				? {"If-Match" : bIgnoreETag && "@odata.etag" in oEntity ? "*" : oEntity}
-				: {},
+			mHeaders = {},
 			sHttpMethod = "POST",
 			oRequestLock,
 			that = this;
@@ -4309,10 +4307,17 @@ sap.ui.define([
 			}
 		}
 
-		this.bSentRequest = true;
+		if (oEntity && !("@odata.etag" in oEntity)) {
+			bIgnoreETag = false;
+		}
+		if (bIgnoreETag || oEntity) {
+			mHeaders["If-Match"] = bIgnoreETag ? "*" : oEntity;
+		}
 		if (fnOnStrictHandlingFailed) {
 			mHeaders["Prefer"] = "handling=strict";
 		}
+
+		this.bSentRequest = true;
 		this.oPromise = post(oGroupLock);
 
 		return this.oPromise;

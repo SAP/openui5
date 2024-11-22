@@ -564,8 +564,13 @@
 		},
 		{
 			"control": "sap.m.TabContainer",
-			"url": "../TabContainer.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"url": "./TabContainer.html",
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.TabContainer",
+				"title": "ACC test for sap.m.TabContainer",
+				"module": "./tabcontainer.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Table",

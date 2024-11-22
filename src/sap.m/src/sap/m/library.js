@@ -26,6 +26,7 @@ sap.ui.define([
  "./AvatarSize",
  "./AvatarType",
  "./AvatarColor",
+ "./AvatarBadgeColor",
  "./AvatarImageFitType",
  "./IllustratedMessageSize",
  "./IllustratedMessageType",
@@ -55,6 +56,7 @@ sap.ui.define([
 	 AvatarSize,
 	 AvatarType,
 	 AvatarColor,
+	 AvatarBadgeColor,
 	 AvatarImageFitType,
 	 IllustratedMessageSize,
 	 IllustratedMessageType,
@@ -86,6 +88,7 @@ sap.ui.define([
 		  "sap.m.AvatarSize",
 		  "sap.m.AvatarType",
 		  "sap.m.AvatarColor",
+		  "sap.m.AvatarBadgeColor",
 		  "sap.m.BackgroundDesign",
 		  "sap.m.BadgeState",
 		  "sap.m.BadgeAnimationType",
@@ -5196,6 +5199,7 @@ sap.ui.define([
 	 thisLib.AvatarSize = AvatarSize;
 	 thisLib.AvatarType = AvatarType;
 	 thisLib.AvatarColor = AvatarColor;
+	 thisLib.AvatarBadgeColor = AvatarBadgeColor;
 	 thisLib.AvatarImageFitType = AvatarImageFitType;
 
 	 thisLib.IllustratedMessageSize = IllustratedMessageSize;

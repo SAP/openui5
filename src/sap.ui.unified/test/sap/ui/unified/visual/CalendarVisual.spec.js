@@ -38,6 +38,12 @@ describe("sap.ui.unified.CalendarVisual", function() {
 		expect(takeScreenshot(oCal)).toLookAs("Arabic_two_months_calendar");
 	});
 
+	it("should show calendar with only working days", function () {
+		_initCalendar("11");
+
+		expect(takeScreenshot(oCal)).toLookAs("All_days_are_working_days");
+	});
+
 	function _initCalendar(sVersion) {
 		// initialize via Button function
 		element(by.id("B" + sVersion)).click();
