@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
-	"../services/SampleServices",
-	"sap/ui/qunit/QUnitUtils"
+	"../services/SampleServices"
 ], function (
 	Library,
 	AnalyticalContent,
@@ -18,8 +17,7 @@ sap.ui.define([
 	CardActions,
 	nextUIUpdate,
 	nextCardReadyEvent,
-	SampleServices,
-	QUnitUtils
+	SampleServices
 ) {
 	"use strict";
 
@@ -32,14 +30,7 @@ sap.ui.define([
 		"sap.card": {
 			"type": "Analytical",
 			"header": {
-				"title": "L3 Request list content Card",
-				"subTitle": "Card subtitle",
-				"icon": {
-					"src": "sap-icon://accept"
-				},
-				"status": {
-					"text": "100 of 200"
-				}
+				"title": "Card Header"
 			},
 			"content": {
 				"chartType": "StackedBar",
@@ -78,230 +69,11 @@ sap.ui.define([
 								"Week": "CW14",
 								"WeekDisplay": "Week 14",
 								"Revenue": 431000.22,
-								"Cost": 230000.00,
-								"Cost1": 24800.63,
-								"Cost2": 205199.37,
-								"Cost3": 199999.37,
-								"Target": 500000.00,
-								"Budget": 210000.00
-							},
-							{
-								"Week": "CW15",
-								"WeekDisplay": "Week 15",
-								"Revenue": 494000.30,
-								"Cost": 238000.00,
-								"Cost1": 99200.39,
-								"Cost2": 138799.61,
-								"Cost3": 200199.37,
-								"Target": 500000.00,
-								"Budget": 224000.00
-							},
-							{
-								"Week": "CW16",
-								"WeekDisplay": "Week 16",
-								"Revenue": 491000.17,
-								"Cost": 221000.00,
-								"Cost1": 70200.54,
-								"Cost2": 150799.46,
-								"Cost3": 80799.46,
-								"Target": 500000.00,
-								"Budget": 238000.00
-							},
-							{
-								"Week": "CW17",
-								"WeekDisplay": "Week 17",
-								"Revenue": 536000.34,
-								"Cost": 280000.00,
-								"Cost1": 158800.73,
-								"Cost2": 121199.27,
-								"Cost3": 108800.46,
-								"Target": 500000.00,
-								"Budget": 252000.00
-							},
-							{
-								"Week": "CW18",
-								"WeekDisplay": "Week 18",
-								"Revenue": 675000.00,
-								"Cost": 230000.00,
-								"Cost1": 140000.91,
-								"Cost2": 89999.09,
-								"Cost3": 100099.09,
-								"Target": 600000.00,
-								"Budget": 266000.00
-							},
-							{
-								"Week": "CW19",
-								"WeekDisplay": "Week 19",
-								"Revenue": 680000.00,
-								"Cost": 250000.00,
-								"Cost1": 172800.15,
-								"Cost2": 77199.85,
-								"Cost3": 57199.85,
-								"Target": 600000.00,
-								"Budget": 280000.00
-							},
-							{
-								"Week": "CW20",
-								"WeekDisplay": "Week 20",
-								"Revenue": 659000.14,
-								"Cost": 325000.00,
-								"Cost1": 237200.74,
-								"Cost2": 87799.26,
-								"Cost3": 187799.26,
-								"Target": 600000.00,
-								"Budget": 294000.00
+								"Cost": 230000.00
 							}
 						]
 					}
 				},
-				"dimensions": [{
-					"label": "Weeks",
-					"value": "{Week}",
-					"displayValue": "{WeekDisplay}"
-				}],
-				"measures": [{
-						"label": "{measures/revenueLabel}",
-						"value": "{Revenue}"
-					},
-					{
-						"label": "{measures/costLabel}",
-						"value": "{Cost}"
-					}
-				]
-			}
-		}
-	};
-
-	var oManifest_AnalyticalCard_DataOnCardLevel = {
-		"sap.app": {
-			"id": "test.cards.analytical.card2"
-		},
-		"sap.card": {
-			"type": "Analytical",
-			"data": {
-				"json": {
-					"measures": {
-						"revenueLabel": "Revenue",
-						"costLabel": "Costs"
-					},
-					"legendVisible": true,
-					"list": [{
-							"Week": "CW14",
-							"WeekDisplay": "Week 14",
-							"Revenue": 431000.22,
-							"Cost": 230000.00,
-							"Cost1": 24800.63,
-							"Cost2": 205199.37,
-							"Cost3": 199999.37,
-							"Target": 500000.00,
-							"Budget": 210000.00
-						},
-						{
-							"Week": "CW15",
-							"WeekDisplay": "Week 15",
-							"Revenue": 494000.30,
-							"Cost": 238000.00,
-							"Cost1": 99200.39,
-							"Cost2": 138799.61,
-							"Cost3": 200199.37,
-							"Target": 500000.00,
-							"Budget": 224000.00
-						},
-						{
-							"Week": "CW16",
-							"WeekDisplay": "Week 16",
-							"Revenue": 491000.17,
-							"Cost": 221000.00,
-							"Cost1": 70200.54,
-							"Cost2": 150799.46,
-							"Cost3": 80799.46,
-							"Target": 500000.00,
-							"Budget": 238000.00
-						},
-						{
-							"Week": "CW17",
-							"WeekDisplay": "Week 17",
-							"Revenue": 536000.34,
-							"Cost": 280000.00,
-							"Cost1": 158800.73,
-							"Cost2": 121199.27,
-							"Cost3": 108800.46,
-							"Target": 500000.00,
-							"Budget": 252000.00
-						},
-						{
-							"Week": "CW18",
-							"WeekDisplay": "Week 18",
-							"Revenue": 675000.00,
-							"Cost": 230000.00,
-							"Cost1": 140000.91,
-							"Cost2": 89999.09,
-							"Cost3": 100099.09,
-							"Target": 600000.00,
-							"Budget": 266000.00
-						},
-						{
-							"Week": "CW19",
-							"WeekDisplay": "Week 19",
-							"Revenue": 680000.00,
-							"Cost": 250000.00,
-							"Cost1": 172800.15,
-							"Cost2": 77199.85,
-							"Cost3": 57199.85,
-							"Target": 600000.00,
-							"Budget": 280000.00
-						},
-						{
-							"Week": "CW20",
-							"WeekDisplay": "Week 20",
-							"Revenue": 659000.14,
-							"Cost": 325000.00,
-							"Cost1": 237200.74,
-							"Cost2": 87799.26,
-							"Cost3": 187799.26,
-							"Target": 600000.00,
-							"Budget": 294000.00
-						}
-					]
-				},
-				"path": "/list"
-			},
-			"header": {
-				"title": "L3 Request list content Card",
-				"subTitle": "Card subtitle",
-				"icon": {
-					"src": "sap-icon://accept"
-				},
-				"status": {
-					"text": "100 of 200"
-				}
-			},
-			"content": {
-				"chartType": "StackedBar",
-				"legend": {
-					"visible": "{legendVisible}",
-					"position": "Bottom",
-					"alignment": "Center"
-				},
-				"plotArea": {
-					"dataLabel": {
-						"visible": true,
-						"showTotal": false
-					},
-					"categoryAxisText": {
-						"visible": false
-					},
-					"valueAxisText": {
-						"visible": true
-					}
-				},
-				"title": {
-					"text": "Stacked Bar chart",
-					"visible": true,
-					"alignment": "Center"
-				},
-				"measureAxis": "valueAxis",
-				"dimensionAxis": "categoryAxis",
 				"dimensions": [{
 					"label": "Weeks",
 					"value": "{Week}",
@@ -404,76 +176,6 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_Analytical_No_Actions = {
-		"_version": "1.8.0",
-		"sap.app": {
-			"id": "test.cards.analytical.card4",
-			"type": "card"
-		},
-		"sap.card": {
-			"type": "Analytical",
-			"header": {
-				"type": "Numeric",
-				"title": "Content with Navigation Service",
-				"data": {
-					"json": {
-						"n": 6547394.45496,
-						"u": "M $",
-						"trend": "Down",
-						"valueColor": "Critical"
-					}
-				},
-				"subTitle": "Success Rate",
-				"mainIndicator": {
-					"number": "{n}",
-					"unit": "{u}",
-					"trend": "{trend}",
-					"state": "{valueColor}"
-				},
-				"sideIndicators": [{
-					"title": "Decrease",
-					"number": "24",
-					"unit": "weeks"
-				}]
-			},
-			"content": {
-				"chartType": "Donut",
-				"legend": {
-					"visible": true,
-					"position": "Top",
-					"alignment": "Center"
-				},
-				"plotArea": {
-					"dataLabel": {
-						"visible": true,
-						"showTotal": true
-					}
-				},
-				"title": {
-					"text": "Donut chart",
-					"visible": true,
-					"alignment": "Bottom"
-				},
-				"measureAxis": "size",
-				"dimensionAxis": "color",
-				"data": {
-					"request": {
-						"url": "cost.json"
-					},
-					"path": "/milk"
-				},
-				"dimensions": [{
-					"label": "Store Name",
-					"value": "{Store Name}"
-				}],
-				"measures": [{
-					"label": "Revenue",
-					"value": "{Revenue}"
-				}]
-			}
-		}
-	};
-
 	var oManifest_Analytical_Service = {
 		"_version": "1.8.0",
 		"sap.app": {
@@ -491,27 +193,7 @@ sap.ui.define([
 			"type": "Analytical",
 			"header": {
 				"type": "Numeric",
-				"title": "Content with Navigation Service",
-				"data": {
-					"json": {
-						"n": 6547394.45496,
-						"u": "M $",
-						"trend": "Down",
-						"valueColor": "Critical"
-					}
-				},
-				"subTitle": "Success Rate",
-				"mainIndicator": {
-					"number": "{n}",
-					"unit": "{u}",
-					"trend": "{trend}",
-					"state": "{valueColor}"
-				},
-				"sideIndicators": [{
-					"title": "Decrease",
-					"number": "24",
-					"unit": "weeks"
-				}]
+				"title": "Content with Navigation Action (Service)"
 			},
 			"content": {
 				"chartType": "Donut",
@@ -570,27 +252,7 @@ sap.ui.define([
 			"type": "Analytical",
 			"header": {
 				"type": "Numeric",
-				"title": "Content with Navigation Service",
-				"data": {
-					"json": {
-						"n": 6547394.45496,
-						"u": "M $",
-						"trend": "Down",
-						"valueColor": "Critical"
-					}
-				},
-				"subTitle": "Success Rate",
-				"mainIndicator": {
-					"number": "{n}",
-					"unit": "{u}",
-					"trend": "{trend}",
-					"state": "{valueColor}"
-				},
-				"sideIndicators": [{
-					"title": "Decrease",
-					"number": "24",
-					"unit": "weeks"
-				}],
+				"title": "Content with Navigation Action (URL)",
 				"actions": [{
 					"type": "Navigation",
 					"url": "https://www.sap.com"
@@ -815,69 +477,6 @@ sap.ui.define([
 		}
 	};
 
-	var oManifest_Analytical_Global_Card_Data = {
-		"sap.app": {"id": "sap.fe", "type": "card"},
-		"sap.ui": {"technology": "UI5"},
-		"sap.card": {
-			"type": "Analytical",
-			"data": {
-				"json": {
-					"mainValue": "44.3M",
-					"mainValueUnscaled": "44,345,318",
-					"mainValueNoScale": "44.3",
-					"mainUnit": "EUR",
-					"mainCriticality": "Error",
-					"targetNumber": "45",
-					"targetUnit": "M",
-					"deviationNumber": "-1.5",
-					"chartData": [
-						{"Country": "United Kingdom", "SalesAmount": "13872516.000"},
-						{"Country": "USA", "SalesAmount": "30472802.000"}
-					]
-				}
-			},
-			"header": {
-				"type": "Numeric",
-				"title": "Actual Sales Amount",
-				"subTitle": "Sales actual figures",
-				"unitOfMeasurement": "{mainUnit}",
-				"mainIndicator": {
-					"number": "{mainValueNoScale}"
-				}
-			},
-			"content": {
-				"minHeight": "25rem",
-				"chartProperties": {
-					"plotArea": {"dataLabel": {"visible": false}},
-					"title": {
-						"visible": true,
-						"alignment": "left",
-						"text": "Sales Amount by Country Name"
-					},
-					"categoryAxis": {"title": {"visible": false}},
-					"valueAxis": {
-						"title": {"visible": false},
-						"label": {"formatString": "ShortFloat"}
-					}
-				},
-				"data": {
-					"path": "/chartData"
-				},
-				"chartType": "StackedBar",
-				"dimensions": [{"name": "Country Name", "value": "{Country}"}],
-				"measures": [{"name": "Sales Amount", "value": "{SalesAmount}"}],
-				"feeds": [
-					{"uid": "valueAxis", "type": "Measure", "values": ["Sales Amount"]},
-					{
-						"uid": "categoryAxis",
-						"type": "Dimension",
-						"values": ["Country Name"]
-					}
-				]
-			}
-		}
-	};
-
 	var oManifest_Analytical_TimeAxis = {
 		"sap.app": {"id": "sap.fe", "type": "card"},
 		"sap.ui": {"technology": "UI5"},
@@ -1029,8 +628,41 @@ sap.ui.define([
 		assert.strictEqual(oDataset.getDimensions()[0].getBindingInfo("displayValue").binding.getPath(), "WeekDisplay", "Dimension has expected displayValue.");
 	}
 
-
 	return Library.load("sap.viz").then(function () {
+		QUnit.module("Init");
+
+		QUnit.test("Initialization - AnalyticalContent", async function (assert) {
+			// Arrange
+			const oCard = new Card({
+				manifest: oManifest_AnalyticalCard,
+				width: "400px",
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
+			assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
+			assert.ok(oCard.getDomRef(), "Card should be rendered.");
+			assert.equal(oCard.getDomRef().clientWidth, 398, "Card should have width set to 398px.");
+			assert.equal(oCard.getDomRef().clientHeight, 598, "Card should have height set to 598px.");
+
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
+			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
+			assert.ok(oCard.getAggregation("_content").isA("sap.ui.integration.cards.AnalyticalContent"), "Chart is rendered");
+
+			// Cleanup
+			oCard.destroy();
+		});
+
 		QUnit.module("Chart creation", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -1046,27 +678,82 @@ sap.ui.define([
 			}
 		});
 
-		/*
-		* This test should be the first one,
-		* as it covers the initial creation of the analytical content
-		 */
-		QUnit.test("Creating chart with global card data", async function (assert) {
-			// Act
-			this.oCard.setManifest(oManifest_Analytical_Global_Card_Data);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oContent = this.oCard.getCardContent();
-			assert.ok(oContent.isA("sap.ui.integration.cards.AnalyticalContent"), "Chart is rendered");
-		});
-
 		QUnit.test("Using manifest", async function (assert) {
 			await testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard, assert);
 		});
 
 		QUnit.test("Using manifest with data on card level", async function (assert) {
-			await testStackedBarChartCreation(this.oCard, oManifest_AnalyticalCard_DataOnCardLevel, assert);
+			const oManifest = {
+				"sap.app": {
+					"id": "test.cards.analytical.card2"
+				},
+				"sap.card": {
+					"type": "Analytical",
+					"data": {
+						"json": {
+							"measures": {
+								"revenueLabel": "Revenue",
+								"costLabel": "Costs"
+							},
+							"legendVisible": true,
+							"list": [{
+									"Week": "CW14",
+									"WeekDisplay": "Week 14",
+									"Revenue": 431000.22,
+									"Cost": 230000.00
+								}
+							]
+						},
+						"path": "/list"
+					},
+					"header": {
+						"title": "Card Header"
+					},
+					"content": {
+						"chartType": "StackedBar",
+						"legend": {
+							"visible": "{legendVisible}",
+							"position": "Bottom",
+							"alignment": "Center"
+						},
+						"plotArea": {
+							"dataLabel": {
+								"visible": true,
+								"showTotal": false
+							},
+							"categoryAxisText": {
+								"visible": false
+							},
+							"valueAxisText": {
+								"visible": true
+							}
+						},
+						"title": {
+							"text": "Stacked Bar chart",
+							"visible": true,
+							"alignment": "Center"
+						},
+						"measureAxis": "valueAxis",
+						"dimensionAxis": "categoryAxis",
+						"dimensions": [{
+							"label": "Weeks",
+							"value": "{Week}",
+							"displayValue": "{WeekDisplay}"
+						}],
+						"measures": [{
+								"label": "{measures/revenueLabel}",
+								"value": "{Revenue}"
+							},
+							{
+								"label": "{measures/costLabel}",
+								"value": "{Cost}"
+							}
+						]
+					}
+				}
+			};
+
+			await testStackedBarChartCreation(this.oCard, oManifest, assert);
 		});
 
 		QUnit.test("Creating chart with 'feeds'", async function (assert) {
@@ -1106,39 +793,6 @@ sap.ui.define([
 				oChart = oContent.getAggregation("_content");
 
 			assert.strictEqual(oChart.getDataset().getDimensions()[0].getDataType(), "date", "dataType is correctly set");
-		});
-
-		QUnit.module("Init");
-
-		QUnit.test("Initialization - AnalyticalContent", async function (assert) {
-			// Arrange
-			var oCard = new Card({
-				manifest: oManifest_AnalyticalCard,
-				width: "400px",
-				height: "600px",
-				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
-			});
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-
-			await nextUIUpdate();
-
-			// Assert
-			assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
-			assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
-			assert.ok(oCard.getDomRef(), "Card should be rendered.");
-			assert.equal(oCard.getDomRef().clientWidth, 398, "Card should have width set to 398px.");
-			assert.equal(oCard.getDomRef().clientHeight, 598, "Card should have height set to 598px.");
-
-			await nextCardReadyEvent(oCard);
-			await nextUIUpdate();
-
-			// Assert
-			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
-			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
-
-			// Cleanup
-			oCard.destroy();
 		});
 
 		QUnit.module("vizProperties");
@@ -1200,6 +854,8 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
+			const oCardLContent = this.oCard.getCardContent();
+
 			this.oCard.attachAction(function (oEvent) {
 				oEvent.preventDefault();
 				// Assert
@@ -1213,7 +869,6 @@ sap.ui.define([
 			});
 
 			// Act
-			var oCardLContent = this.oCard.getCardContent();
 			oCardLContent.firePress();
 		});
 
@@ -1253,7 +908,7 @@ sap.ui.define([
 			var oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
-			this.oCard.setManifest(oManifest_Analytical_No_Actions);
+			this.oCard.setManifest(oManifest_AnalyticalCard);
 
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
@@ -1286,6 +941,7 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 
 			var oCardContent = this.oCard.getCardContent();
+
 			// Assert
 			assert.notOk(oCardContent.$().hasClass("sapFCardSectionClickable"), "Content area shouldn't have class 'sapFCardSectionClickable'");
 			assert.notOk(oCardContent._getVizProperties(oCardContent.getConfiguration()).interaction.noninteractiveMode, "Chart itself should be interactive");
@@ -1349,7 +1005,7 @@ sap.ui.define([
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
-				// this.oCard.destroy();
+				this.oCard.destroy();
 				this.oCard = null;
 			}
 		});
