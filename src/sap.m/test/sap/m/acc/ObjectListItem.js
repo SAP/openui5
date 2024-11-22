@@ -398,17 +398,6 @@ sap.ui.define([
 	});
 	list.addItem(emptyFirstStatus);
 
-	var markersAndStatuses = new ObjectListItem({
-		intro: "On behalf of John Smith, Ñagçyfox",
-		title: "Markers and statuses, no attributes",
-		number: "12",
-		numberUnit: "Milo",
-		firstStatus: new ObjectStatus({text: "First status info"}),
-		secondStatus: new ObjectStatus({text: "Second status info"}),
-		showMarkers: true
-	});
-	list.addItem(markersAndStatuses);
-
 	var app = new App();
 	var page = new Page("testPage", {
 		title: "Object List Item Test",
@@ -419,60 +408,76 @@ sap.ui.define([
 	app.addPage(page);
 	page.addContent(list);
 
-	page.addContent(new Label({
-		text: "Show Markers",
-		labelFor: "showMarkersCheckbox"
-	}));
+	/**
+	 * @deprecated As of version 1.42.0, showMarkers, markFavorite and markFlagged are replaced by markers aggregation.
+	 */
+	(() => {
+		var markersAndStatuses = new ObjectListItem({
+			intro: "On behalf of John Smith, Ñagçyfox",
+			title: "Markers and statuses, no attributes",
+			number: "12",
+			numberUnit: "Milo",
+			firstStatus: new ObjectStatus({text: "First status info"}),
+			secondStatus: new ObjectStatus({text: "Second status info"}),
+			showMarkers: true
+		});
+		list.addItem(markersAndStatuses);
 
-	page.addContent(new CheckBox("showMarkersCheckbox", {
-		text: "Show Markers",
-		selected: markersAndStatuses.getShowMarkers(),
-		select: function() {
-			markersAndStatuses.setShowMarkers(this.getSelected());
-		}
-	}));
+		page.addContent(new Label({
+			text: "Show Markers",
+			labelFor: "showMarkersCheckbox"
+		}));
 
-	page.addContent(new ToggleButton({
-		id: "flag-button",
-		text: "Flag",
-		tooltip: "Set mark flag",
-		pressed: false,
-		press: function (oEvent) {
-			if (oEvent.getParameter("pressed")) {
-				markersAndStatuses.setMarkFlagged(true);
-			} else {
-				markersAndStatuses.setMarkFlagged(false);
+		page.addContent(new CheckBox("showMarkersCheckbox", {
+			text: "Show Markers",
+			selected: markersAndStatuses.getShowMarkers(),
+			select: function() {
+				markersAndStatuses.setShowMarkers(this.getSelected());
 			}
-		}
-	}));
+		}));
 
-	page.addContent(new ToggleButton({
-		id: "favorite-button",
-		text: "Favorite",
-		tooltip: "Set Favorite flag",
-		pressed: false,
-		press: function (oEvent) {
-			if (oEvent.getParameter("pressed")) {
-				markersAndStatuses.setMarkFavorite(true);
-			} else {
-				markersAndStatuses.setMarkFavorite(false);
+		page.addContent(new ToggleButton({
+			id: "flag-button",
+			text: "Flag",
+			tooltip: "Set mark flag",
+			pressed: false,
+			press: function (oEvent) {
+				if (oEvent.getParameter("pressed")) {
+					markersAndStatuses.setMarkFlagged(true);
+				} else {
+					markersAndStatuses.setMarkFlagged(false);
+				}
 			}
-		}
-	}));
+		}));
 
-	page.addContent(new ToggleButton({
-		id: "locked-button",
-		text: "Locked",
-		tooltip: "Set Locked flag",
-		pressed: false,
-		press: function (oEvent) {
-			if (oEvent.getParameter("pressed")) {
-				markersAndStatuses.setMarkLocked(true);
-			} else {
-				markersAndStatuses.setMarkLocked(false);
+		page.addContent(new ToggleButton({
+			id: "favorite-button",
+			text: "Favorite",
+			tooltip: "Set Favorite flag",
+			pressed: false,
+			press: function (oEvent) {
+				if (oEvent.getParameter("pressed")) {
+					markersAndStatuses.setMarkFavorite(true);
+				} else {
+					markersAndStatuses.setMarkFavorite(false);
+				}
 			}
-		}
-	}));
+		}));
+
+		page.addContent(new ToggleButton({
+			id: "locked-button",
+			text: "Locked",
+			tooltip: "Set Locked flag",
+			pressed: false,
+			press: function (oEvent) {
+				if (oEvent.getParameter("pressed")) {
+					markersAndStatuses.setMarkLocked(true);
+				} else {
+					markersAndStatuses.setMarkLocked(false);
+				}
+			}
+		}));
+	})();
 
 	app.placeAt('body');
 });

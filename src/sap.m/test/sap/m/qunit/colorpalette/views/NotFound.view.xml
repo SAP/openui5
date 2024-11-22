@@ -3,14 +3,14 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
-	<MessagePage
+	<IllustratedMessage
 		title="{i18n>notFoundTitle}"
-		text="{i18n>notFoundText}"
-		icon="sap-icon://document"
+		description="{i18n>notFoundText}"
+		illustrationType="sapIllus-PageNotFound"
 		id="notFoundPage">
-		<customDescription>
+		<additionalContent>
 			<Link id="backToMainPage" text="{i18n>backToMainPage}" press="onLinkPressed" />
-		</customDescription>
-	</MessagePage>
+		</additionalContent>
+	</IllustratedMessage>
 
 </mvc:View>

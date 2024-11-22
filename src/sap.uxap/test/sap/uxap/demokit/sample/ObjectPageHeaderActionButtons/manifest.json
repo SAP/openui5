@@ -6,11 +6,16 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.uxap.sample.ObjectPageHeaderActionButtons.view.ObjectPageHeaderActionButtons",
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageHeaderActionButtons.view.ObjectPageHeaderActionButtons",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
 				"sap.ui.core": {},
+				"sap.ui.layout": {},
 				"sap.uxap": {}
 			}
 		},"resourceRoots": {

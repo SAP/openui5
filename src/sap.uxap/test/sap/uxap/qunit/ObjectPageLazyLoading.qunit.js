@@ -1,6 +1,29 @@
 /*global QUnit, */
-sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/model/json/JSONModel", "sap/m/Button", "sap/m/Title", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection", "sap/ui/core/mvc/XMLView"],
-function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, XMLView) {
+sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/Button",
+	"sap/m/Title",
+	"sap/uxap/ObjectPageDynamicHeaderTitle",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/ui/core/mvc/XMLView"
+], async function(
+	nextUIUpdate,
+	jQuery,
+	Core,
+	JSONModel,
+	Button,
+	Title,
+	ObjectPageDynamicHeaderTitle,
+	ObjectPageLayout,
+	ObjectPageSection,
+	ObjectPageSubSection,
+	XMLView
+) {
 	"use strict";
 
 	// utility function that will be used in these tests
@@ -52,7 +75,7 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 
 	var iLoadingDelay = 1000;
 	var oConfigModel = new JSONModel();
-	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/ObjectPageConfig.json", {}, false);
+	await oConfigModel.loadData("test-resources/sap/uxap/qunit/model/ObjectPageConfig.json");
 
 	/**
 	 * @deprecated Since version 1.120
