@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/m/AvatarColor"
 ], function(
 	Library,
 	coreLibrary,
@@ -28,7 +29,8 @@ sap.ui.define([
 	Log,
 	extend,
 	nextUIUpdate,
-	InvisibleText
+	InvisibleText,
+	AvatarColor
 ) {
 	"use strict";
 
@@ -1069,6 +1071,47 @@ sap.ui.define([
 				}
 			}
 		}
+	});
+
+	QUnit.test("badgeIconColor applies correct CSS classes for Accent colors", async function(assert) {
+		// Setup
+		this.oAvatar.attachPress(function () {});
+		this.oAvatar.setBadgeIcon("sap-icon://zoom-in");
+		await nextUIUpdate();
+
+		// Assert
+		for (let i = 1; i <= 10; i++) {
+			const accentClass = 'Accent' + i;
+			const avatarColor = AvatarColor[accentClass];
+
+			this.oAvatar.setBadgeIconColor(avatarColor);
+			await nextUIUpdate();
+
+			assert.strictEqual(this.oAvatar.getDomRef().classList.contains('sapFAvatarBadgeColor' + accentClass), true, 'The avatar has the sapFAvatarBadgeColor' + accentClass + ' class');
+
+			for (let j = 1; j <= 10; j++) {
+				if (j !== i) {
+					const otherAccentClass = 'Accent' + j;
+					assert.strictEqual(this.oAvatar.getDomRef().classList.contains('sapFAvatarBadgeColor' + otherAccentClass), false, "The avatar doesn't have the sapFAvatarBadgeColor" + otherAccentClass + " class");
+				}
+			}
+		}
+	});
+
+	QUnit.test("Setting badgeIcon as 'AVATAR_ICON_NONE' displays the badge without an icon", async function(assert) {
+		// Setup
+		const AVATAR_ICON_NONE = "sap-icon://avatar-icon-none";
+
+		this.oAvatar.attachPress(function () {});
+
+		this.oAvatar.setBadgeIcon(AVATAR_ICON_NONE);
+		this.oAvatar.setBadgeTooltip("Tooltip for Empty Badge");
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(this.oAvatar._badgeRef, "Badge is attached to Avatar");
+		assert.strictEqual(this.oAvatar._badgeRef.getSrc(), "", "Badge icon is not rendered (Empty src due to AVATAR_ICON_NONE)");
+		assert.strictEqual(this.oAvatar._badgeRef.getTooltip(), "Tooltip for Empty Badge", "Badge tooltip is correctly set");
 	});
 
 	QUnit.test("Affordance is rendered when press event is attached", async function(assert) {

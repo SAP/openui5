@@ -78,6 +78,7 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
 		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.ready(), oBinding.oCachePromise);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.ok(oBinding.hasOwnProperty("mCacheQueryOptions"));
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
@@ -1136,6 +1137,7 @@ sap.ui.define([
 		oBinding.fetchCache(oContext, bIgnoreParentCache, undefined, "~sGroupId~");
 
 		assert.strictEqual(oBinding.mLateQueryOptions, mLateQueryOptions);
+		assert.strictEqual(oBinding.ready(), oBinding.oCachePromise);
 		assert.ok(oBinding.oCachePromise.isPending());
 
 		return oBinding.oCachePromise.then(function () {

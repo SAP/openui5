@@ -215,6 +215,19 @@ sap.ui.define([
 		}
 	});
 
+	var oButton11 = new Button("B11", {
+		text : "Non Working Days",
+		press : function() {
+			Localization.setLanguage("en-US");
+			oCalendar1 && oCalendar1.destroy();
+			oCalendar1 = fnCalendarFactory();
+			oCalendar1.destroySelectedDates();
+			oCalendar1.setNonWorkingDays([]);
+			oPage.insertContent(oCalendar1, 0);
+			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
+		}
+	});
+
 	var oApp = new App("myApp").placeAt("body");
 	var oVL = new VerticalLayout("vLayout");
 
@@ -233,6 +246,7 @@ sap.ui.define([
 			oButton9,
 			oButtonRTL,
 			oButton10,
+			oButton11,
 			oVL
 		]
 	});

@@ -27,6 +27,9 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = library.AvatarColor;
 
+	// shortcut for sap.m.AvatarBadgeColor
+	var AvatarBadgeColor = library.AvatarBadgeColor;
+
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = library.AvatarSize;
 
@@ -43,6 +46,9 @@ sap.ui.define([
 	var AccentColors = Object.keys(AvatarColor).filter(function (sCurrColor) {
 		return sCurrColor.indexOf("Accent") !== -1;
 	});
+
+	// constant for Avatar badge icon with no icon display
+	var AVATAR_ICON_NONE = "sap-icon://avatar-icon-none";
 
 	/**
 	 * Constructor for a new <code>Avatar</code>.
@@ -155,6 +161,11 @@ sap.ui.define([
 				 * <li>Suggesting an image change: <code>sap-icon://camera</code></li>
 				 * <li>Suggesting an editing action: <code>sap-icon://edit</code></li>
 				 * </ul>
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>Use <code>sap-icon://avatar-icon-none</code> to show the badge without an icon.</li>
+				 * <li>When using avatar-icon-none, the badge remains visible and can display background color or tooltip.</li>
+				 * </ul>
 				 *
 				 * @since 1.77
 				 */
@@ -202,6 +213,19 @@ sap.ui.define([
 					type: "sap.ui.core.ValueState",
 					group: "Appearance",
 					defaultValue: ValueState.None
+				},
+
+				/**
+		 		* Defines the color of the badge icon.
+		 		* This color is used to style the badge, indicating different statuses or categories.
+				* Acceptable values include predefined `sap.m.AvatarBadgeColor` options.
+		 		*
+		 		* @since 1.132.0
+				*/
+				badgeIconColor: {
+					type: "sap.m.AvatarBadgeColor",
+					group: "Appearance",
+					defaultValue: AvatarBadgeColor.Accent6
 				},
 
 				/**
@@ -423,6 +447,21 @@ sap.ui.define([
 		}.bind(this));
 
 		this.setProperty("badgeValueState", sValue, true);
+		return this;
+	};
+
+	Avatar.prototype.setBadgeIconColor = function(sValue) {
+		Object.keys(AvatarBadgeColor).forEach(function(val) {
+			if (val.indexOf("Accent") !== -1) {
+				this.removeStyleClass('sapFAvatarBadgeColor' + val);
+			}
+		}.bind(this));
+
+		if (sValue && sValue.indexOf("Accent") !== -1) {
+			this.addStyleClass('sapFAvatarBadgeColor' + sValue);
+		}
+
+		this.setProperty("badgeIconColor", sValue, true);
 		return this;
 	};
 
@@ -718,10 +757,34 @@ sap.ui.define([
 		return sBadgeTooltip;
 	};
 
+	Avatar.prototype._handleEmptyBadgeIcon = function () {
+		var sBadgeIcon = this.getBadgeIcon(),
+			sBadgeTooltip = this._getBadgeTooltip();
+
+		if (sBadgeIcon === AVATAR_ICON_NONE) {
+			if (!this._badgeRef) {
+				this.setAggregation("_badge", new Icon({
+					src: "",
+					tooltip: sBadgeTooltip
+				}));
+			} else {
+
+				this._badgeRef.setTooltip(sBadgeTooltip);
+			}
+			this._badgeRef = this.getAggregation("_badge");
+			return this._badgeRef;
+		}
+		return null;
+	};
 
 	Avatar.prototype._getBadge = function () {
 		var sBadgeIconSrc = this._getBadgeIconSource(),
-			sBadgeTooltip = this._getBadgeTooltip();
+			sBadgeTooltip = this._getBadgeTooltip(),
+			oEmptyBadge = this._handleEmptyBadgeIcon();
+
+		if (oEmptyBadge) {
+			return oEmptyBadge;
+		}
 
 		if (!sBadgeIconSrc) {return;}
 
