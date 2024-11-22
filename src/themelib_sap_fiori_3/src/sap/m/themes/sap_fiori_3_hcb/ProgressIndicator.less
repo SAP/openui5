@@ -4,38 +4,38 @@
 /* ======================================== */
 
 .sapMPIBarNeutral {
-	background: @sapUiHighlight;
+	background: var(--sapHighlightColor);
 	box-sizing: border-box;
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid var(--sapField_BorderColor);
 }
 
 .sapMPIBarPositive {
-	background: @sapUiHighlight;
+	background: var(--sapHighlightColor);
 	box-sizing: border-box;
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid var(--sapField_BorderColor);
 }
 
 .sapMPIBarNegative {
-	background: @sapUiHighlight;
+	background: var(--sapHighlightColor);
 	box-sizing: border-box;
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid var(--sapField_BorderColor);
 }
 
 .sapMPIBarCritical {
-	background: @sapUiHighlight;
+	background: var(--sapHighlightColor);
 	box-sizing: border-box;
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid var(--sapField_BorderColor);
 }
 
 .sapMPIBarInformation {
-	background: @sapUiHighlight;
+	background: var(--sapHighlightColor);
 	box-sizing: border-box;
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid var(--sapField_BorderColor);
 }
 
 /* HCB Additional Styles */
 .sapMPIText::before {
-	font-family: 'SAP-icons';
+	font-family: var(--sapContent_IconFontFamily);
 	font-size: 0.875rem;
 	margin-right: 0.375rem;
 	vertical-align: bottom;
@@ -47,7 +47,7 @@
 }
 
 .sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
-	background: @sapUiHighlight;
+	background: var(--sapHighlightColor);
 }
 
 .sapMPITextLeft::before {
@@ -78,7 +78,7 @@
 .sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before,
 .sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before,
 .sapMPIBarInformation + .sapMPIBarRemaining > .sapMPITextRight::before {
-	color: @sapUiContentForegroundTextColor;
+	color: var(--sapContent_ForegroundTextColor);
 }
 
 .sapMPIBarDisabled {
@@ -88,7 +88,7 @@
 	.sapMPIText.sapMPITextLeft,
 	.sapMPITextRight,
 	.sapMPIBarRemaining > .sapMPITextRight::before {
-		color: @sapUiContentDisabledTextColor;
+		color: var(--sapContent_DisabledTextColor);
 	}
 
 	.sapMPIBarNeutral,
@@ -120,6 +120,7 @@
 
 .sap-phone,
 .sap-tablet:not(.sap-combi) {
+
 	.sapMPI:not(.sapMPIDisplayOnly) {
 		margin: 0.875rem 0;
 	}
