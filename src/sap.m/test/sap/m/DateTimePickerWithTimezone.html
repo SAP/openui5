@@ -17,6 +17,7 @@
 
 		var app = new sap.m.App("myApp");
 		var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+		var Localization = sap.ui.requireSync("sap/base/i18n/Localization");
 
 		var page1 = new sap.m.Page("page1", {
 			title:"DateTimePicker with Timezone",
@@ -101,15 +102,13 @@
 					press: function() {
 						var sTZ1 = "Europe/Sofia",
 							sTZ2 = "Europe/Berlin",
-							oCore = sap.ui.getCore(),
-							sCurrentTimezone = oCore.getConfiguration().getTimezone();
+							sCurrentTimezone = Localization.getTimezone();
 
-						oCore.getConfiguration().setTimezone(sCurrentTimezone === sTZ1 ? sTZ2 : sTZ1);
-						oCore.applyChanges();
+						Localization.setTimezone(sCurrentTimezone === sTZ1 ? sTZ2 : sTZ1);
 
-						oCore.byId("DTP1").invalidate();
-						oCore.byId("DTP2").invalidate();
-						oCore.byId("DTP3").invalidate();
+						sap.ui.core.Element.getElementById("DTP1").invalidate();
+						sap.ui.core.Element.getElementById("DTP2").invalidate();
+						sap.ui.core.Element.getElementById("DTP3").invalidate();
 					}
 				})
 			]

@@ -485,6 +485,7 @@ sap.ui.define([
 				markersAndStatuses.setMarkLocked(!markersAndStatuses.getMarkLocked());
 			}
 		}));
-		app.placeAt('body');
 	})();
+
+	app.placeAt('body');
 });

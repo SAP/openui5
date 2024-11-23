@@ -29,7 +29,8 @@
 				"viewType": "XML",
 				"viewPath": "sap.ui.testrecorder.appMock.view",
 				"controlId": "app",
-				"controlAggregation": "pages"
+				"controlAggregation": "pages",
+				"async": true
 			},
 			"routes": [{
 				"pattern": "",

@@ -82,7 +82,7 @@ sap.ui.define([
 	function createListValues(nCount) {
 		var aVals = [];
 		for (var i = 1; i < nCount + 1; i++) {
-			aVals.push({text: "Val" + i, key: "val" + i, count: i});
+			aVals.push({text: "Val" + i, key: "val" + i, counter: i});
 		}
 		return aVals;
 	}
@@ -344,7 +344,7 @@ sap.ui.define([
 						template: new FacetFilterItem({
 							key: "{key}",
 							text: "{text}",
-							count: "{count}"
+							counter: "{count}"
 						})
 					},
 					listOpen: handleListOpen,
@@ -564,7 +564,7 @@ sap.ui.define([
 						template: new FacetFilterItem({
 							key: "{test>key}",
 							text: "{test>text}",
-							count: "{test>count}"
+							counter: "{test>count}"
 						})
 					},
 					listOpen: handleListOpen,
