@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Panel",
 	"sap/m/library",
-	"sap/base/util/Deferred"
+	"sap/base/util/Deferred",
+	"sap/ui/core/Element"
 ], function(
 	Library1,
 	QUnitUtils,
@@ -35,7 +36,8 @@ sap.ui.define([
 	createAndAppendDiv,
 	Panel,
 	Library,
-	Deferred
+	Deferred,
+	Element
 ) {
 	"use strict";
 
@@ -314,6 +316,9 @@ sap.ui.define([
 		// Arrange
 		var oITH = createHeaderWithItems(1);
 		var oTab = oITH.getItems()[0];
+		var sAriaLabelledbyText = Library1.getResourceBundleFor("sap.m").getText("ICONTABBAR_SUBITEMS_POPOVER_ACCESSIBLE_NAME");
+		var sLabelId;
+
 		oTab.addItem(new IconTabFilter({ text: "SAP" }));
 		oITH.placeAt(DOM_RENDER_LOCATION);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
@@ -321,9 +326,13 @@ sap.ui.define([
 		// Act
 		oTab._expandButtonPress();
 
+		sLabelId = oTab._oPopover.getDomRef().getAttribute("aria-labelledby");
+
 		// Assert
-		assert.ok(oTab._oPopover, "Tab's own popover is initialised");
+		assert.ok(oTab._oPopover, "Tab's own popover is initialized");
 		assert.strictEqual(oTab._oPopover.isOpen(), true, "Tab's popover is open");
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The popover has the correct accessible name");
+
 
 		oTab._closePopover();
 		this.clock.tick(250);
@@ -819,6 +828,11 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oRootTab.getAggregation("_expandButtonBadge")._isBadgeAttached, "Badge is added to the expand button");
+
+		var sAriaLabelledbyText = Library1.getResourceBundleFor("sap.m").getText("ICONTABBAR_OVERFLOW_POPOVER_ACCESSIBLE_NAME");
+		var sLabelId = document.getElementsByClassName("sapMITBFilterPopover")[0].getAttribute("aria-labelledby");
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The popover has the correct accessible name");
+
 	});
 
 	QUnit.module("Badges - overflow menu (More button)", {

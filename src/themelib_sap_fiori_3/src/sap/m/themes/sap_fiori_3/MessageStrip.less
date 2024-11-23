@@ -4,16 +4,16 @@
 /* =================================== */
 
 .sapMMsgStrip {
-	border-radius: @sapUiElementBorderCornerRadius;
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
 .sapMMsgStripInformation {
-	background-color: @sapInformationBackground;
-	border-color: @sapInformationBorderColor;
-	color: @sapUiBaseText;
+	background-color: var(--sapInformationBackground);
+	border-color: var(--sapInformationBorderColor);
+	color: var(--sapTextColor);
 
 	& .sapMMsgStripIcon {
-		color: @sapInformativeElementColor;
+		color: var(--sapInformativeElementColor);
 	}
 }
 

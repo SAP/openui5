@@ -42,9 +42,14 @@ module.exports = {
 		"use strict";
 		var oElement = this.getElement(oConfig);
 
-		browser.executeScript("arguments[0].scrollIntoView()", oElement.getWebElement());
-
-		expect(takeScreenshot(oElement)).toLookAs(sPictureId);
+		oElement.getWebElement().then(function (webElem) {
+			return webElem.getAttribute('id').then(function(id) {
+				return browser.executeScript(`document.getElementById('${id}').scrollIntoView()`);
+			});
+		})
+		.then(function() {
+			return expect(takeScreenshot(oElement)).toLookAs(sPictureId);
+		});
 	},
 
 	switchToCompactDensity: function () {

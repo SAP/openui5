@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"./D3Chart",
-	"sap/ui/thirdparty/d3",
-	"sap/ui/core/theming/Parameters"
-], function($, D3Chart, d3, Parameters) {
+	"sap/ui/thirdparty/d3"
+], function($, D3Chart, d3) {
 	"use strict";
 
 	return D3Chart.extend("sap.ui.demo.toolpageapp.control.D3PieChart", {
@@ -51,9 +50,7 @@ sap.ui.define([
 
 			// draw arcs
 			g.append("path")
-				.attr("fill", function() {
-					return Parameters.get("sapUiChart1");
-				})
+				.attr("fill", "var(--sapChart_OrderedColor_1)")
 				.attr("d", arc);
 
 			var selTexts = selContainer.selectAll("text")
@@ -64,7 +61,7 @@ sap.ui.define([
 				.append("text")
 				.text(function (d) { return d.v; })
 				.attr("font-size", "0.875rem")
-				.attr("fill", function() { return Parameters.get("sapUiText"); } )
+				.attr("fill", "var(--sapTextColor)")
 				.attr("text-anchor", "middle")
 				.attr("y", function () {
 					return $(this).height() / 2;

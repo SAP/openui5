@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/m/IconTabBarSelectList",
 	"sap/m/BadgeEnabler",
-	"sap/m/ImageHelper"
+	"sap/m/ImageHelper",
+	"sap/ui/core/InvisibleText"
 ], function(
 	library,
 	Icon,
@@ -38,7 +39,8 @@ sap.ui.define([
 	ResponsivePopover,
 	IconTabBarSelectList,
 	BadgeEnabler,
-	ImageHelper
+	ImageHelper,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -947,7 +949,8 @@ sap.ui.define([
 				showHeader: false,
 				offsetY: 0,
 				offsetX: 0,
-				placement: PlacementType.VerticalPreferredBottom
+				placement: PlacementType.VerticalPreferredBottom,
+				ariaLabelledBy: this._isOverflow() ? InvisibleText.getStaticId("sap.m", this._getOverflowPopoverAccessibleNameLabel()) : InvisibleText.getStaticId("sap.m", this._getSubItemsPopoverAccessibleNameLabel())
 			}).addStyleClass("sapMITBFilterPopover");
 
 			this._oPopover.attachAfterClose(function () {
@@ -996,6 +999,24 @@ sap.ui.define([
 			this._oPopover.setInitialFocus(bHasSelectedItem ? oSelectList.getSelectedItem() : oSelectList.getVisibleTabFilters()[0]);
 			this._oPopover.openBy(this);
 		}
+	};
+
+	/**
+	 * Returns the message bundle key of the invisible text for the accessible name of the overflow popover.
+	 * @private
+	 * @returns {string} The message bundle key
+	 */
+	IconTabFilter.prototype._getOverflowPopoverAccessibleNameLabel = function() {
+		return "ICONTABBAR_OVERFLOW_POPOVER_ACCESSIBLE_NAME";
+	};
+
+	/**
+	 * Returns the message bundle key of the invisible text for the accessible name of the subitems popover.
+	 * @private
+	 * @returns {string} The message bundle key
+	 */
+	IconTabFilter.prototype._getSubItemsPopoverAccessibleNameLabel = function() {
+		return "ICONTABBAR_SUBITEMS_POPOVER_ACCESSIBLE_NAME";
 	};
 
 	/**

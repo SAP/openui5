@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"./D3Chart",
-	"sap/ui/thirdparty/d3",
-	"sap/ui/core/theming/Parameters"
-], function($, D3Chart, d3, Parameters) {
+	"sap/ui/thirdparty/d3"
+], function($, D3Chart, d3) {
 	"use strict";
 
 	return D3Chart.extend("sap.ui.demo.toolpageapp.control.D3ColumnChart", {
@@ -25,11 +24,11 @@ sap.ui.define([
 			var iHightestValue = aData[Object.keys(aData).sort(function(a, b){return aData[a].v - aData[b].v;}).pop()].v;
 
 			selRects.enter().append("rect");
-			selContainer.select("rect:nth-child(1)").style("fill", Parameters.get("sapUiChart1"));
-			selContainer.select("rect:nth-child(2)").style("fill", Parameters.get("sapUiChart2"));
-			selContainer.select("rect:nth-child(3)").style("fill", Parameters.get("sapUiChart3"));
-			selContainer.select("rect:nth-child(4)").style("fill", Parameters.get("sapUiChart4"));
-			selContainer.select("rect:nth-child(5)").style("fill", Parameters.get("sapUiChart5"));
+			selContainer.select("rect:nth-child(1)").style("fill", "var(--sapChart_OrderedColor_1)");
+			selContainer.select("rect:nth-child(2)").style("fill", "var(--sapChart_OrderedColor_2)");
+			selContainer.select("rect:nth-child(3)").style("fill", "var(--sapChart_OrderedColor_3)");
+			selContainer.select("rect:nth-child(4)").style("fill", "var(--sapChart_OrderedColor_4)");
+			selContainer.select("rect:nth-child(5)").style("fill", "var(--sapChart_OrderedColor_5)");
 
 			selContainer.selectAll("text").each(function (d) {
 				var bVisible = d.v > 50 && $(this).parent().width() > 150;
@@ -60,12 +59,12 @@ sap.ui.define([
 				.append("text").text(function (d) {
 					return d.v;
 				}).attr("font-size", "0.875rem")
-				.attr("fill", Parameters.get("sapUiTextInverted"));
+				.attr("fill", "var(--sapChart_Sequence_1_TextColor)");
 
 			selTexts.attr("x", function (d, i) {
-				var fTextWidth = $(this).width();
+				var fTextWidth = this.getBoundingClientRect().width;
 
-				return i * (iSpaceWidth + iBarWidth) + iBarWidth / 2 - fTextWidth * 0.75;
+				return i * (iSpaceWidth + iBarWidth) + (iBarWidth - fTextWidth) / 2;
 			}).attr("y", function () {
 				return this._iHeight - 5;
 			}.bind(this));

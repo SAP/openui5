@@ -19,13 +19,12 @@
 }
 
 html[data-sap-ui-animation='on'] {
+
 	.sapMMsgStrip {
-		-webkit-transition: opacity 0.2s;
 		transition: opacity 0.2s;
 	}
 
 	.sapMMsgStripCloseButton {
-		-webkit-transition: color 0.1s;
 		transition: color 0.1s;
 	}
 }
@@ -60,14 +59,13 @@ html[data-sap-ui-animation='on'] {
 		margin-left: 0.25rem;
 
 		&:not(.sapMLnkDsbl) {
-			text-shadow: @sapUiContentTextShadow;
+			text-shadow: var(--sapContent_TextShadow);
 		}
 	}
 
 	& > .sapMText {
 		line-height: 1.2;
 	}
-
 }
 
 .sapMMsgStripCloseButton {
@@ -80,7 +78,6 @@ html[data-sap-ui-animation='on'] {
 	top: -0.0625rem;
 }
 
-
 .sapMMsgStripCloseButton {
 	position: absolute;
 	top: -0.5625rem;
@@ -88,41 +85,41 @@ html[data-sap-ui-animation='on'] {
 }
 
 .sapMMsgStripInformation {
-	background-color: @sapUiNeutralBG;
-	border-color: @sapUiNeutralBorder;
-	color: @sapUiBaseText;
+	background-color: var(--sapNeutralBackground);
+	border-color: var(--sapNeutralBorderColor);
+	color: var(--sapTextColor);
 
 	& .sapMMsgStripIcon {
-		color: @sapUiNeutralElement;
+		color: var(--sapNeutralElementColor);
 	}
 }
 
 .sapMMsgStripSuccess {
-	background-color: @sapUiSuccessBG;
-	border-color: @sapUiSuccessBorder;
-	color: @sapUiBaseText;
+	background-color: var(--sapSuccessBackground);
+	border-color: var(--sapSuccessBorderColor);
+	color: var(--sapTextColor);
 
 	& .sapMMsgStripIcon {
-		color: @sapUiPositiveElement;
+		color: var(--sapPositiveElementColor);
 	}
 }
 
 .sapMMsgStripWarning {
-	background-color: @sapUiWarningBG;
-	border-color: @sapUiWarningBorder;
-	color: @sapUiBaseText;
+	background-color: var(--sapWarningBackground);
+	border-color: var(--sapWarningBorderColor);
+	color: var(--sapTextColor);
 
 	& .sapMMsgStripIcon {
-		color: @sapUiCriticalElement;
+		color: var(--sapCriticalElementColor);
 	}
 }
 
 .sapMMsgStripError {
-	background-color: @sapUiErrorBG;
-	border-color: @sapUiErrorBorder;
-	color: @sapUiBaseText;
+	background-color: var(--sapErrorBackground);
+	border-color: var(--sapErrorBorderColor);
+	color: var(--sapTextColor);
 
 	& .sapMMsgStripIcon {
-		color: @sapUiNegativeElement;
+		color: var(--sapNegativeElementColor);
 	}
 }
