@@ -4,6 +4,8 @@ sap.ui.define([
   "sap/ui/core/IconPool",
   "sap/ui/core/Theming",
   "sap/m/Button",
+  "sap/m/Select",
+  "sap/ui/core/Item",
   "sap/m/library",
   "sap/m/ToggleButton",
   "sap/m/Bar",
@@ -22,6 +24,8 @@ sap.ui.define([
   IconPool,
   Theming,
   Button,
+  Select,
+  Item,
   mobileLibrary,
   ToggleButton,
   Bar,
@@ -49,11 +53,17 @@ sap.ui.define([
   // shortcut for sap.m.ButtonType
   const ButtonType = mobileLibrary.ButtonType;
 
+  const encodeXML = sap.ui.requireSync("sap/base/security/encodeXML");
+
   function toggleCompact() {
 	  jQuery("body").toggleClass("sapUiSizeCompact");
   }
 
-  new HTML({content: "<div id='top'>&nbsp;</div>"}).placeAt("controlArea");
+  function createSeparator(sText) {
+	  return new HTML({content: "<div class='SectionSeparator'>" + encodeXML(sText) + "</div>"});
+  }
+
+  new HTML({id: "top", content: "<div>&nbsp;</div>"}).placeAt("controlArea");
 
   new Button("toggle_mode", {
 	  text: "Toggle Compact Mode",
@@ -62,22 +72,22 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
 
-  new Button("hcb_mode", {
-	  text: "HCB Theme",
-	  press: function(){
-		  Theming.setTheme("sap_belize_hcb");
+  new Select({
+	  items: [
+		  new Item({text: "Morning Horizon", key: "sap_horizon"}),
+		  new Item({text: "Evening Horizon", key: "sap_horizon_dark"}),
+		  new Item({text: "Horizon High Contrast Black", key: "sap_horizon_hcb"}),
+		  new Item({text: "Horizon High Contrast White", key: "sap_horizon_hcw"}),
+		  new Item({text: "Quartz Light", key: "sap_fiori_3"}),
+		  new Item({text: "Quartz Dark", key: "sap_fiori_3_dark"}),
+		  new Item({text: "Quartz High Contrast Black", key: "sap_fiori_3_hcb"}),
+		  new Item({text: "Quartz High Contrast White", key: "sap_fiori_3_hcw"})
+	  ],
+	  change(e) {
+		  const sTheme = e.getParameter("selectedItem").getKey();
+		  Theming.setTheme(sTheme);
 	  }
   }).placeAt("controlArea");
-
-  new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
-
-  new Button("belize_mode", {
-	  text: "Belize Theme",
-	  press: function(){
-		  Theming.setTheme("sap_belize");
-	  }
-  }).placeAt("controlArea");
-
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
 
   new Button("rtl_mode", {
@@ -89,7 +99,8 @@ sap.ui.define([
 
   new HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
 
-  new HTML({content: "</br>Default type Buttons</br>"}).placeAt("standAloneBtn");
+  ////////////////////////// DEFAULT //////////////////////////////////
+  createSeparator("Default type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Default,
@@ -137,7 +148,7 @@ sap.ui.define([
   }).placeAt("standAloneBtn");
 
 
-  new HTML({content: "</br></br>Transparent type Buttons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Transparent type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Transparent,
@@ -185,7 +196,7 @@ sap.ui.define([
   }).placeAt("standAloneBtn");
 
 
-  new HTML({content: "</br></br>Reject type Buttons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Reject type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Reject,
@@ -233,7 +244,7 @@ sap.ui.define([
   }).placeAt("standAloneBtn");
 
 
-  new HTML({content: "</br></br>Accept type Buttons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Accept type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Accept,
@@ -280,7 +291,7 @@ sap.ui.define([
 	  enabled: false
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br>Atttention type Buttons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Attention type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Attention,
@@ -327,7 +338,7 @@ sap.ui.define([
 	  enabled: false
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br><span>Emphasized type Buttons</span></br>"}).placeAt("standAloneBtn");
+  createSeparator("Emphasized type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Emphasized,
@@ -375,7 +386,7 @@ sap.ui.define([
   }).placeAt("standAloneBtn");
 
 
-  new HTML({content: "</br></br>Back type Buttons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Back type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Back,
@@ -423,7 +434,7 @@ sap.ui.define([
   }).placeAt("standAloneBtn");
 
 
-  new HTML({content: "</br></br>UP type Buttons</br>"}).placeAt("standAloneBtn");
+  createSeparator("UP type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Up,
@@ -471,7 +482,7 @@ sap.ui.define([
   }).placeAt("standAloneBtn");
 
 
-  new HTML({content: "</br></br>Unstyled type Buttons</br></br>"}).placeAt("standAloneBtn");
+  createSeparator("Unstyled type Buttons").placeAt("standAloneBtn");
 
   new Button({
 	  type: ButtonType.Unstyled,
@@ -519,7 +530,7 @@ sap.ui.define([
   }).placeAt("standAloneBtn");
 
 
-  new HTML({content: "</br><span>Default type ToggleButtons</span></br>"}).placeAt("standAloneBtn");
+  createSeparator("Default type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Default,
@@ -585,7 +596,7 @@ sap.ui.define([
 	  pressed: true
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br>Transparent type ToggleButtons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Transparent type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Transparent,
@@ -651,7 +662,7 @@ sap.ui.define([
 	  pressed: true
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br>Reject type ToggleButtons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Reject type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Reject,
@@ -715,7 +726,7 @@ sap.ui.define([
 	  pressed: true
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br>Accept type ToggleButtons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Accept type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Accept,
@@ -781,7 +792,7 @@ sap.ui.define([
 	  pressed: true
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br><span>Emphasized type ToggleButtons</span></br>"}).placeAt("standAloneBtn");
+  createSeparator("Emphasized type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Emphasized,
@@ -847,7 +858,7 @@ sap.ui.define([
 	  pressed: true
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br>Back type ToggleButtons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Back type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Back,
@@ -913,7 +924,7 @@ sap.ui.define([
 	  pressed: true
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br>UP type ToggleButtons</br>"}).placeAt("standAloneBtn");
+  createSeparator("UP type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Up,
@@ -979,7 +990,7 @@ sap.ui.define([
 	  pressed: true
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "</br></br>Unstyled type ToggleButtons</br>"}).placeAt("standAloneBtn");
+  createSeparator("Unstyled type ToggleButtons").placeAt("standAloneBtn");
 
   new ToggleButton({
 	  type: ButtonType.Unstyled,
@@ -1026,7 +1037,7 @@ sap.ui.define([
 	  enabled: false
   }).placeAt("standAloneBtn");
 
-  new HTML({content: "<span id='bars1'>Bar</span></br>"}).placeAt("barBtn");
+  createSeparator("Bar").placeAt("barBtn");
 
   new Bar({
 	  contentLeft: [
@@ -1182,7 +1193,7 @@ sap.ui.define([
 	  ]
   }).placeAt('barBtn');
 
-  new HTML({content: "</br></br>Transparent OverflowToolbar</br>"}).placeAt("barBtn");
+  createSeparator("Transparent OverflowToolbar").placeAt("barBtn");
 
   new OverflowToolbar({
 	  design: "Transparent",
@@ -1329,7 +1340,7 @@ sap.ui.define([
 	  ]
   }).placeAt('barBtn');
 
-  new HTML({content: "</br></br>OverflowToolbar</br>"}).placeAt("barBtn");
+  createSeparator("OverflowToolbar").placeAt("barBtn");
 
   new OverflowToolbar({
 	  content: [
@@ -1403,7 +1414,7 @@ sap.ui.define([
 	  ]
   }).placeAt('barBtn');
 
-  new HTML({content: "<span id='bars2'>ToolBar</span></br>"}).placeAt("barBtn");
+  createSeparator("ToolBar").placeAt("barBtn");
 
   new Toolbar({
 	  content: [
@@ -1548,7 +1559,7 @@ sap.ui.define([
 	  ]
   }).placeAt('barBtn');
 
-  new HTML({content: "</br></br>Transparent ToolBar</br>"}).placeAt("barBtn");
+  createSeparator("Transparent ToolBar").placeAt("barBtn");
 
   new Toolbar({
 	  design: ToolbarDesign.Transparent,
@@ -1695,7 +1706,7 @@ sap.ui.define([
 	  ]
   }).placeAt('barBtn');
 
-  new HTML({content: "</br></br>Solid ToolBar</br>"}).placeAt("barBtn");
+  createSeparator("Solid ToolBar").placeAt("barBtn");
 
   new Toolbar({
 	  design: ToolbarDesign.Solid,
@@ -1842,7 +1853,7 @@ sap.ui.define([
 	  ]
   }).placeAt('barBtn');
 
-  new HTML({content: "</br><span>RTL specific buttons</span></br>"}).placeAt("RTLBtn");
+  createSeparator("RTL specific buttons").placeAt("RTLBtn");
 
   new Button({
 	  type: ButtonType.Default,
@@ -1872,7 +1883,7 @@ sap.ui.define([
 	  text: "(עִבְרִית‬ עִבְרִית‬ עִבְרִית‬)"
   }).placeAt("RTLBtn");
 
-  new HTML({content: "</br><span>Special Type Buttons</span></br>"}).placeAt("specialBtn");
+  createSeparator("Special Type Buttons").placeAt("specialBtn");
 
   new Button({
 	  type: ButtonType.Critical

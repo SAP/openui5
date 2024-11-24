@@ -15,6 +15,8 @@ sap.ui.define([
   var aMenus = [];
   var bMenuEventingEnabled = false;
 
+  sap.ui.requireSync("sap/ui/core/IconPool");
+
   /*
    * a simple Tooltip control, inheriting from TooltipBase
    */

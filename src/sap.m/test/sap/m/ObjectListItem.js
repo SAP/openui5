@@ -428,4 +428,6 @@ sap.ui.define([
 	page.setEnableScrolling(true);
 	app.addPage(page);
 	page.addContent(list);
+
+	app.placeAt('body');
 });

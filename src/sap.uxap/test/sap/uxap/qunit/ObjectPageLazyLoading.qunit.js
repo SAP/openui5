@@ -1,10 +1,25 @@
 /*global QUnit, */
-sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/model/json/JSONModel", "sap/m/Title", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
-function(nextUIUpdate, JSONModel, Title, ObjectPageDynamicHeaderTitle, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
+sap.ui.define([
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/Title",
+	"sap/uxap/ObjectPageDynamicHeaderTitle",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection"
+], async function(
+	nextUIUpdate,
+	JSONModel,
+	Title,
+	ObjectPageDynamicHeaderTitle,
+	ObjectPageLayout,
+	ObjectPageSection,
+	ObjectPageSubSection
+) {
 	"use strict";
 
 	var oConfigModel = new JSONModel();
-	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/ObjectPageConfig.json", {}, false);
+	await oConfigModel.loadData("test-resources/sap/uxap/qunit/model/ObjectPageConfig.json");
 
 	QUnit.module("ObjectPageAfterRendering");
 

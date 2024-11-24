@@ -91,7 +91,7 @@ sap.ui.define([
 				oItemTemplate = new FacetFilterItem({
 					text: "{text}",
 					key: "{key}",
-					count: "{data}"
+					counter: "{data}"
 				});
 				oBindingInfo = {
 					path: "values",
