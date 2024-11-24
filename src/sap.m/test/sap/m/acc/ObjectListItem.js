@@ -1,7 +1,5 @@
 sap.ui.define([
 	"sap/m/App",
-	"sap/m/CheckBox",
-	"sap/m/Label",
 	"sap/m/library",
 	"sap/m/List",
 	"sap/m/ObjectAttribute",
@@ -9,14 +7,11 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/m/ObjectStatus",
 	"sap/m/Page",
-	"sap/m/ToggleButton",
 	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library"
 ], function(
 	App,
-	CheckBox,
-	Label,
 	mobileLibrary,
 	List,
 	ObjectAttribute,
@@ -24,7 +19,6 @@ sap.ui.define([
 	ObjectMarker,
 	ObjectStatus,
 	Page,
-	ToggleButton,
 	Element,
 	IconPool,
 	coreLibrary
@@ -398,17 +392,6 @@ sap.ui.define([
 	});
 	list.addItem(emptyFirstStatus);
 
-	var markersAndStatuses = new ObjectListItem({
-		intro: "On behalf of John Smith, Ñagçyfox",
-		title: "Markers and statuses, no attributes",
-		number: "12",
-		numberUnit: "Milo",
-		firstStatus: new ObjectStatus({text: "First status info"}),
-		secondStatus: new ObjectStatus({text: "Second status info"}),
-		showMarkers: true
-	});
-	list.addItem(markersAndStatuses);
-
 	var app = new App();
 	var page = new Page("testPage", {
 		title: "Object List Item Test",
@@ -418,50 +401,6 @@ sap.ui.define([
 	page.setEnableScrolling(true);
 	app.addPage(page);
 	page.addContent(list);
-
-	page.addContent(new Label({
-		text: "Show Markers",
-		labelFor: "showMarkersCheckbox"
-	}));
-
-	page.addContent(new CheckBox("showMarkersCheckbox", {
-		text: "Show Markers",
-		selected: false,
-		select: function() {}
-	}));
-
-	page.addContent(new ToggleButton({
-		id: "flag-button",
-		text: "Flag",
-		tooltip: "Set mark flag",
-		pressed: false,
-		press: function (oEvent) {
-			if (oEvent.getParameter("pressed"))
-				{}
-		}
-	}));
-
-	page.addContent(new ToggleButton({
-		id: "favorite-button",
-		text: "Favorite",
-		tooltip: "Set Favorite flag",
-		pressed: false,
-		press: function (oEvent) {
-			if (oEvent.getParameter("pressed"))
-				{}
-		}
-	}));
-
-	page.addContent(new ToggleButton({
-		id: "locked-button",
-		text: "Locked",
-		tooltip: "Set Locked flag",
-		pressed: false,
-		press: function (oEvent) {
-			if (oEvent.getParameter("pressed"))
-				{}
-		}
-	}));
 
 	app.placeAt('body');
 });

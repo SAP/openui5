@@ -1,19 +1,18 @@
 sap.ui.define([
-  "sap/ui/core/Element",
-  "sap/ui/qunit/utils/nextUIUpdate",
-  "sap/base/i18n/Localization",
   "sap/m/App",
   "sap/m/Page",
   "sap/m/VBox",
   "sap/m/DateTimePicker",
   "sap/m/Slider",
+  "sap/ui/core/Element",
   "sap/m/Button"
-], function(Element, nextUIUpdate, Localization, App, Page, VBox, DateTimePicker, Slider, Button) {
+], function(App, Page, VBox, DateTimePicker, Slider, Element, Button) {
   "use strict";
   // Note: the HTML page 'DateTimePickerWithTimezone.html' loads this module via data-sap-ui-on-init
 
   var app = new App("myApp");
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+  var Localization = sap.ui.requireSync("sap/base/i18n/Localization");
 
   var page1 = new Page("page1", {
 	  title:"DateTimePicker with Timezone",
@@ -100,10 +99,7 @@ sap.ui.define([
 					  sTZ2 = "Europe/Berlin",
 					  sCurrentTimezone = Localization.getTimezone();
 
-				  sap.ui.getCore();
-
 				  Localization.setTimezone(sCurrentTimezone === sTZ1 ? sTZ2 : sTZ1);
-				  nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
 
 				  Element.getElementById("DTP1").invalidate();
 				  Element.getElementById("DTP2").invalidate();

@@ -6,11 +6,16 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign.view.ObjectPageHeaderBackgroundDesign",
+		"rootView": {
+			"viewName": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign.view.ObjectPageHeaderBackgroundDesign",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
 				"sap.ui.core": {},
+				"sap.ui.layout": {},
 				"sap.uxap": {}
 			}
 		},

@@ -34,17 +34,17 @@
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listQuickActions/manifest.json" action=".onAction">
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/listQuickActions/manifest.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="4" />
 			</w:layoutData>
 			</w:Card>
-			<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/listContent/quickActions.json" action=".onAction">
+			<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/listContent/quickActions.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="card45" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/listContent/quickActions.json" action=".onAction">
+			<w:Card id="card45" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/listContent/quickActions.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
