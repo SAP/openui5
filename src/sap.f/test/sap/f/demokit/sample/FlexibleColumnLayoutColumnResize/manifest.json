@@ -17,6 +17,7 @@
 					"webapp/controller/Detail.controller.js",
 					"webapp/controller/FlexibleColumnLayout.controller.js",
 					"webapp/controller/List.controller.js",
+					"webapp/data/sections.json",
 					"webapp/Component.js",
 					"webapp/index.html",
 					"webapp/index.js",
