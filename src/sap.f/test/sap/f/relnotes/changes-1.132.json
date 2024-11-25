@@ -1,0 +1,27 @@
+{
+  "1.132.0": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "164defed8df51135ef19194b09e9776604125feb",
+        "type": "FIX",
+        "text": " Integration cards: fix focus styles of Card in GridContainer"
+      },
+      {
+        "id": "895388dbfc2bbdc6e82b511d276111424cc055fa",
+        "type": "FIX",
+        "text": " Integration Cards: fixed numeric header gap between icon and numeric indicator"
+      },
+      {
+        "id": "37d013f440cd97ac0bd4f39dc9689a73990e2228",
+        "type": "FIX",
+        "text": " Integration Cards: Internal demo no longer throws exception"
+      },
+      {
+        "id": "2034424ff86f1143bf6de87944055dab52e0abb2",
+        "type": "FIX",
+        "text": " Integration cards: resolved boolean values are now correct"
+      }
+    ]
+  }
+}

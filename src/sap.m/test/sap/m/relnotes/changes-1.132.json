@@ -3,6 +3,46 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "47a94f8fc3e769cf29ede15fdd0581e57bd63adf",
+        "type": "FIX",
+        "text": " sap/m/demokit/tutorial/walkthrough: Replace test links with testsuite"
+      },
+      {
+        "id": "82efaf2d65d242391a2486206b31fe815e9735b1",
+        "type": "FIX",
+        "text": " sap/m/demokit/tutorial/walkthrough: Correct links for the testsuite"
+      },
+      {
+        "id": "7e440cd80c4069f18e583af9b73b9536721b9b5d",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: remove redundant announcement"
+      },
+      {
+        "id": "e360ca1e0cac41626cdce9b300145e04738235fb",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Text truncation"
+      },
+      {
+        "id": "f879013e6a2b6b3e91d8c08a06fabfdb75ededdc",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: fixed documentation"
+      },
+      {
+        "id": "f9e42f7d7210827f3dd9c7b89adb3c7e909756cb",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Removing the note in the documentation for endContent"
+      },
+      {
+        "id": "b940bf38030dadc5e0e2577b170b4140c06472ea",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Last X included options are translatable now"
+      },
+      {
+        "id": "5a7a688c64a255db039d5f731cf10a977c82d27a",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: add accessible name for the popover"
+      },
+      {
         "id": "5c45f8281a5f11bf4d6470d497930f857824b0a6",
         "type": "FIX",
         "text": " sap.m.Toolbar: Console error prevented"

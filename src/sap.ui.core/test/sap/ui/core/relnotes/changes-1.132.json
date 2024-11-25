@@ -3,6 +3,16 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "85fc59fbd1378d595b66f729324c9e2578f6de9a",
+        "type": "FIX",
+        "text": " core/Control.js: Consider Busy Section when moving focus to BusyIndicator"
+      },
+      {
+        "id": "a348e95532d4640f1c9f9ad0418c7c90003f0421",
+        "type": "FIX",
+        "text": " core/Control: Restore focus to the last focused DOM element"
+      },
+      {
         "id": "f3234545266216ba236f1e0b7f1c395a5f6ed8a9",
         "type": "FIX",
         "text": " core/Control: restore focus before busy control is rerendered"

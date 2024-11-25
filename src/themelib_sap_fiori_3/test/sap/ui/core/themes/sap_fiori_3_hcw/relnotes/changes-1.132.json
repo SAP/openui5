@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "343ad10176e8fa61029dbb55d5a76f6932cf4eac",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button in fiori_3 theme has correct focus outline"
+      }
+    ]
+  }
+}

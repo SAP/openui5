@@ -1,0 +1,17 @@
+{
+  "1.132.0": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "895388dbfc2bbdc6e82b511d276111424cc055fa",
+        "type": "FIX",
+        "text": " Integration Cards: fixed numeric header gap between icon and numeric indicator"
+      },
+      {
+        "id": "2034424ff86f1143bf6de87944055dab52e0abb2",
+        "type": "FIX",
+        "text": " Integration cards: resolved boolean values are now correct"
+      }
+    ]
+  }
+}
