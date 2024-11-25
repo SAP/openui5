@@ -3,6 +3,11 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "8c233361e5b01f735dc221be6742e007367c1fbd",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Incorrect scrolling prevented"
+      },
+      {
         "id": "c153aa5547255d9dbf3c49775d49953ab9da0593",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix scrolling when switching tabs"

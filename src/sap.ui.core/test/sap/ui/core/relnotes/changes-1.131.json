@@ -3,6 +3,26 @@
     "date": "November 2024",
     "notes": [
       {
+        "id": "7117f9a1df1a36d54e72959186bdf0cd3e8fcee9",
+        "type": "FIX",
+        "text": " core/Control.js: Consider Busy Section when moving focus to BusyIndicator"
+      },
+      {
+        "id": "15dd8b56d0a9710496ea93d06a970e2f3ea69784",
+        "type": "FIX",
+        "text": " core/Control: Restore focus to the last focused DOM element"
+      },
+      {
+        "id": "720aaa2a8892ef57330786533b529493062be8ae",
+        "type": "FIX",
+        "text": " core/Control: restore focus before busy control is rerendered"
+      },
+      {
+        "id": "ceea0e7bd2c465067b5dfab14f708a4bed25d8f1",
+        "type": "FIX",
+        "text": " core/Element.qunit.js: Introduce Timeout for FF"
+      },
+      {
         "id": "b4e46f1abe1697137f359bb2c02b88532b732963",
         "type": "FEATURE",
         "text": " sap.ui.core.IconPool: Update icon font v5.10 and v4.22"
