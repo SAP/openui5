@@ -1310,9 +1310,9 @@ sap.ui.define([
 				completeChangeContent() {}
 			});
 			this.oXmlString =
-				`<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">` +
+				"<mvc:View id=\"testComponent---myView\" xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
 					`<Label id="${sLabelId}" />` +
-				`</mvc:View>`;
+				"</mvc:View>";
 			const oDOMParser = new DOMParser();
 			const oView = oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			[this.oControl] = oView.childNodes;

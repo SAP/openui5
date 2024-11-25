@@ -77,7 +77,7 @@ sap.ui.define([
 		var oModel = oEvent.getSource().getModel("translation");
 		var sSourceLanguage = oModel.getProperty("/sourceLanguage");
 		var sTargetLanguage = oModel.getProperty("/targetLanguage");
-		var sFileName = `${sSourceLanguage}_${sTargetLanguage}_` + `TranslationXLIFF`;
+		var sFileName = `${sSourceLanguage}_${sTargetLanguage}_TranslationXLIFF`;
 
 		var mPropertyBag = {
 			layer: Layer.CUSTOMER,

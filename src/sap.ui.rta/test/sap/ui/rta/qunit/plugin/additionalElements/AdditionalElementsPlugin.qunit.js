@@ -1890,7 +1890,7 @@ sap.ui.define([
 
 			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 			assert.ok(oIsServiceOutdatedStub.notCalled, "up to date service is not called");
-			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			const oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--rta_customFieldButton`);
 			assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
 		});
 
@@ -1909,7 +1909,7 @@ sap.ui.define([
 
 			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 			assert.strictEqual(oIsServiceOutdatedStub.callCount, 0, "the function is not called");
-			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--rta_customFieldButton`);
 			assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 		});
 
@@ -1929,7 +1929,7 @@ sap.ui.define([
 			await this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 
 			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			const oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--rta_customFieldButton`);
 			assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 		});
 
@@ -1956,7 +1956,7 @@ sap.ui.define([
 				"the event is fired"
 			);
 			assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-			var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
+			const oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--rta_customFieldButton`);
 			assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 		});
 
@@ -2028,7 +2028,7 @@ sap.ui.define([
 				oIsServiceOutdatedStub.getCall(0).args[0],
 				"addViaDelegate is dependent on up to date service, it should be called with a control"
 			);
-			var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
+			const oBCContainer = Element.getElementById(`${this.oDialog.getId()}--rta_businessContextContainer`);
 			assert.equal(this.oDialog.getCustomFieldButtonVisible(), true, "then in the dialog custom field is enabled");
 			assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 			assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
@@ -2068,7 +2068,7 @@ sap.ui.define([
 				true,
 				"then in the dialog custom field button is visible"
 			);
-			var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
+			const oBCContainer = Element.getElementById(`${this.oDialog.getId()}--rta_businessContextContainer`);
 			assert.equal(
 				oBCContainer.getVisible(),
 				true,

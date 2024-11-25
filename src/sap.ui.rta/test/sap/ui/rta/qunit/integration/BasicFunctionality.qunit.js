@@ -241,7 +241,7 @@ sap.ui.define([
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
 					triggerKeyDownEvent(document, KeyCodes.Y);
 					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
-					var oOkButton = Element.getElementById(`${oDialog.getId()}--` + `rta_addDialogOkButton`);
+					const oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
 					await nextUIUpdate();
 					done();

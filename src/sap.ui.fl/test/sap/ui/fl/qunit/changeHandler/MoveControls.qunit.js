@@ -841,7 +841,7 @@ sap.ui.define([
 				return MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 			}.bind(this))
 			.catch(function(oError) {
-				var sError = `Control to move was not found. Id: '${this.oObjectAttribute.getId()}foo` + `'`;
+				var sError = `Control to move was not found. Id: '${this.oObjectAttribute.getId()}foo` + "'";
 				assert.strictEqual(oError.message, sError, "Control with the given ID not found and error is raised");
 			}.bind(this));
 		});
@@ -862,20 +862,20 @@ sap.ui.define([
 			// -- -- Button
 
 			var oXmlString =
-				`<mvc:View xmlns:mvc="sap.ui.core.mvc" ` +
-						`xmlns:layout="sap.ui.layout" ` +
-						`xmlns="sap.m">` +
+				"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" " +
+						"xmlns:layout=\"sap.ui.layout\" " +
+						"xmlns=\"sap.m\">" +
 					`<layout:VerticalLayout id="${myLayoutId}">` +
-						`<layout:content>` +
+						"<layout:content>" +
 							`<ObjectHeader id="${myObjectHeaderId}">` +
 								`<ObjectAttribute id="${myObjectAttributeId}" />` +
 								`<ObjectAttribute id="${myObjectAttributeId2}" />` +
-							`</ObjectHeader>` +
+							"</ObjectHeader>" +
 							`<Button id="${myButtonId}">` +
-							`</Button>` +
-						`</layout:content>` +
-					`</layout:VerticalLayout>` +
-				`</mvc:View>`;
+							"</Button>" +
+						"</layout:content>" +
+					"</layout:VerticalLayout>" +
+				"</mvc:View>";
 			var oViewPromise;
 
 			var Comp = UIComponent.extend("sap.ui.rta.control.enabling.comp", {

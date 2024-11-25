@@ -241,13 +241,13 @@ sap.ui.define([
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 				this.oXmlString =
-					`<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">` +
+					"<mvc:View id=\"testComponentAsync---myView\" xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
 					`<HBox id="${this.sHBoxId}">` +
-					`<items>` +
-					`<Button />` +
-					`</items>` +
-					`</HBox>` +
-					`</mvc:View>`;
+					"<items>" +
+					"<Button />" +
+					"</items>" +
+					"</HBox>" +
+					"</mvc:View>";
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 				[this.oHBox] = this.oXmlView.childNodes;
 

@@ -88,7 +88,7 @@ sap.ui.define([
 			}
 
 			this.oAddElementsDialog._oDialogPromise.then(function() {
-				var oList = Element.getElementById(`${this.oAddElementsDialog.getId()}--` + `rta_addElementsDialogList`);
+				const oList = Element.getElementById(`${this.oAddElementsDialog.getId()}--rta_addElementsDialogList`);
 				var sBindingPath = oList.getItems()[0].getBindingContext().getPath();
 
 				function checkList() {
@@ -135,7 +135,7 @@ sap.ui.define([
 
 			this.oAddElementsDialog.setCustomFieldButtonVisible(true);
 			this.oAddElementsDialog.attachOpened(function() {
-				var oBCContainer = Element.getElementById(`${this.getId()}--` + `rta_businessContextContainer`);
+				const oBCContainer = Element.getElementById(`${this.getId()}--rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
@@ -163,7 +163,7 @@ sap.ui.define([
 
 			this.oAddElementsDialog.setCustomFieldButtonVisible(true);
 			this.oAddElementsDialog.attachOpened(function() {
-				var oBCContainer = Element.getElementById(`${this.getId()}--` + `rta_businessContextContainer`);
+				const oBCContainer = Element.getElementById(`${this.getId()}--rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
@@ -209,7 +209,7 @@ sap.ui.define([
 				this.oAddElementsDialog.attachEventOnce("opened", fnOnOpen);
 			}
 			function fnOnOpen() {
-				var oBCContainer = Element.getElementById(`${this.getId()}--` + `rta_businessContextContainer`);
+				const oBCContainer = Element.getElementById(`${this.getId()}--rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
@@ -276,7 +276,7 @@ sap.ui.define([
 				}
 			};
 			this.oAddElementsDialog.attachOpened(function() {
-				const oButton = Element.getElementById(`${this.getId()}--` + `rta_customFieldButton`);
+				const oButton = Element.getElementById(`${this.getId()}--rta_customFieldButton`);
 				const oRedirectToCustomFieldCreationStub = sandbox.stub(AddElementsDialog.prototype, "_redirectToExtensibilityAction");
 				assert.strictEqual(oButton.getVisible(), true, "then Button is visible");
 				assert.strictEqual(
@@ -331,7 +331,7 @@ sap.ui.define([
 				}
 			};
 			this.oAddElementsDialog.attachOpened(function() {
-				const oButton = Element.getElementById(`${this.getId()}--` + `rta_customFieldButton`);
+				const oButton = Element.getElementById(`${this.getId()}--rta_customFieldButton`);
 				const oRedirectToCustomFieldCreationStub = sandbox.stub(AddElementsDialog.prototype, "_redirectToExtensibilityAction");
 				assert.strictEqual(oButton.getVisible(), true, "then Button is visible");
 				assert.strictEqual(
@@ -392,7 +392,7 @@ sap.ui.define([
 				}
 			};
 			this.oAddElementsDialog.attachOpened(function() {
-				const oMenuButton = Element.getElementById(`${this.getId()}--` + `rta_customFieldMenuButton`);
+				const oMenuButton = Element.getElementById(`${this.getId()}--rta_customFieldMenuButton`);
 				const aMenuItems = oMenuButton.getMenu().getItems();
 				const oRedirectToCustomFieldCreationStub = sandbox.stub(AddElementsDialog.prototype, "_redirectToExtensibilityAction");
 				assert.strictEqual(oMenuButton.getVisible(), true, "then MenuButton is visible");

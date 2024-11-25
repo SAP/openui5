@@ -50,7 +50,7 @@ sap.ui.define([
 		const sDataSourceOfTypeODataAnnotation = getDataSourceNameByType(oChangeDataSource, "ODataAnnotation");
 
 		if (!(sDataSourceOfTypeOData && sDataSourceOfTypeODataAnnotation)) {
-			throw new Error(`When adding two data sources it is only allwoed to add a data source with type 'OData' and the other one must be of type 'ODataAnnotation'.`);
+			throw new Error("When adding two data sources it is only allwoed to add a data source with type 'OData' and the other one must be of type 'ODataAnnotation'.");
 		}
 
 		if (!oChangeDataSource[sDataSourceOfTypeOData]?.settings?.annotations?.includes(sDataSourceOfTypeODataAnnotation)) {
@@ -95,7 +95,7 @@ sap.ui.define([
 			}
 
 			if (!Array.isArray(oChangeDataSource[sDataSource].settings.annotations)) {
-				throw new Error(`Property 'annotations' must be of type 'array'.`);
+				throw new Error("Property 'annotations' must be of type 'array'.");
 			}
 		}
 	}

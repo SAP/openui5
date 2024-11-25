@@ -228,16 +228,16 @@ sap.ui.define([
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 				this.oXmlString =
-					`<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">` +
+					"<mvc:View id=\"testComponentAsync---myView\" xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
 					`<HBox id="${this.sHBoxId}">` +
-					`<tooltip>` +	// 0..1 aggregation
-					`<TooltipBase xmlns="sap.ui.core"></TooltipBase>` + // inline namespace as sap.ui.core is use case for not existing namespace
-					`</tooltip>` +
-					`<items>` +
-					`<Button id="button123"></Button>` + // content in default aggregation
-					`</items>` +
-					`</HBox>` +
-					`</mvc:View>`;
+					"<tooltip>" +	// 0..1 aggregation
+					"<TooltipBase xmlns=\"sap.ui.core\"></TooltipBase>" + // inline namespace as sap.ui.core is use case for not existing namespace
+					"</tooltip>" +
+					"<items>" +
+					"<Button id=\"button123\"></Button>" + // content in default aggregation
+					"</items>" +
+					"</HBox>" +
+					"</mvc:View>";
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 				[this.oHBox] = this.oXmlView.childNodes;
 				this.sAggregationType = "sap.ui.core.Control";
