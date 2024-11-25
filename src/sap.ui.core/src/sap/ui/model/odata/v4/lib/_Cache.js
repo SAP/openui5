@@ -760,9 +760,10 @@ sap.ui.define([
 			if (aSeparateRequestRanges) {
 				// separate properties always operate on entities of that.aElements
 				const iIndex = that.aElements.indexOf(oValue);
-				if (aSeparateRequestRanges.some(
-						(oRange) => iIndex >= oRange.start && iIndex < oRange.end)) {
-					return undefined; // separate property request still pending
+				const oRange = aSeparateRequestRanges.find(
+					(oRange0) => iIndex >= oRange0.start && iIndex < oRange0.end);
+				if (oRange) {
+					return oRange.promise; // separate property request still pending
 				}
 			}
 
@@ -3583,8 +3584,22 @@ sap.ui.define([
 		// types are needed for selecting the key properties, see #getQueryString called by
 		// #getResourcePathWithQuery
 		const mTypeForMetaPath = await this.fetchTypes();
-		const oReadRange = {start : iStart, end : iEnd};
 		this.aSeparateProperties.forEach(async (sProperty) => {
+			let fnResolve;
+			let fnReject;
+			const oReadRange = {
+				start : iStart,
+				end : iEnd,
+				promise : new SyncPromise(function (resolve, reject) {
+					fnResolve = resolve;
+					fnReject = function () {
+						const oError = new Error("$$separate: canceled " + sProperty);
+						oError.canceled = true;
+						reject(oError);
+					};
+				})
+			};
+			oReadRange.promise.catch(() => { /* avoid "Uncaught (in promise)" */ });
 			try {
 				this.mSeparateProperty2ReadRequest[sProperty].push(oReadRange);
 				const oResult = await this.oRequestor.request("GET",
@@ -3598,11 +3613,13 @@ sap.ui.define([
 
 				const iIndex = this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange);
 				if (iIndex < 0) { // stop import after #reset
+					fnReject();
 					return;
 				}
 
 				this.mSeparateProperty2ReadRequest[sProperty].splice(iIndex, 1);
 				if (bMainFailed) {
+					fnReject();
 					return;
 				}
 
@@ -3615,8 +3632,10 @@ sap.ui.define([
 							oSeparateData, [sProperty]);
 					}
 				}
+				fnResolve();
 				fnSeparateReceived(sProperty, iStart, iEnd);
 			} catch (oError) {
+				fnReject();
 				// do not clean up mSeparateProperty2ReadRequest to avoid late property requests
 				fnSeparateReceived(sProperty, iStart, iEnd, oError);
 			}
