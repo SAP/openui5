@@ -3185,11 +3185,11 @@ sap.ui.define([
 		/**
 		 * Creates the query options for a child binding with the meta path given by its base
 		 * meta path and relative meta path. Adds the key properties to $select of all expanded
-		 * navigation properties. Requires that metadata for the meta path is already loaded so
-		 * that synchronous access to all prefixes of the relative meta path is possible.
-		 * If the relative meta path contains segments which are not a structural property or a
-		 * navigation property, the child query options cannot be created and the method returns
-		 * undefined.
+		 * navigation properties, except if <code>bDoNotSelectKeyProperties</code> is given.
+		 * Requires that metadata for the meta path is already loaded so that synchronous access to
+		 * all prefixes of the relative meta path is possible. If the relative meta path contains
+		 * segments which are not a structural property or a navigation property, the child query
+		 * options cannot be created and the method returns undefined.
 		 *
 		 * @param {string} sBaseMetaPath
 		 *   The meta path which is the starting point for the relative meta path
@@ -3199,6 +3199,8 @@ sap.ui.define([
 		 *   The child binding's query options
 		 * @param {function} fnFetchMetadata
 		 *   Function which fetches metadata for a given meta path
+		 * @param {boolean} [bDoNotSelectKeyProperties]
+		 *   Whether to not add key properties to $select of all expanded navigation properties
 		 *
 		 * @returns {object|undefined} The query options for the child binding or
 		 *   <code>undefined</code> in case the query options cannot be created, e.g. because $apply
@@ -3207,7 +3209,7 @@ sap.ui.define([
 		 * @public
 		 */
 		wrapChildQueryOptions : function (sBaseMetaPath, sChildMetaPath, mChildQueryOptions,
-				fnFetchMetadata) {
+				fnFetchMetadata, bDoNotSelectKeyProperties) {
 			var sExpandSelectPath = "",
 				aMetaPathSegments = sChildMetaPath.split("/"),
 				oProperty,
@@ -3230,7 +3232,7 @@ sap.ui.define([
 				oProperty = fnFetchMetadata(sPropertyMetaPath).getResult();
 				if (oProperty.$kind === "NavigationProperty") {
 					mQueryOptionsForPathPrefix.$expand = {};
-					if (i === aMetaPathSegments.length - 1) {
+					if (!bDoNotSelectKeyProperties && i === aMetaPathSegments.length - 1) {
 						// avoid that mChildQueryOptions.$select is modified by selectKeyProperties
 						mChildQueryOptions = Object.assign({}, mChildQueryOptions);
 						mChildQueryOptions.$select &&= mChildQueryOptions.$select.slice();
@@ -3240,8 +3242,10 @@ sap.ui.define([
 						= (i === aMetaPathSegments.length - 1) // last segment in path
 							? mChildQueryOptions
 							: {};
-					_Helper.selectKeyProperties(mQueryOptionsForPathPrefix,
-						fnFetchMetadata(sPropertyMetaPath + "/").getResult());
+					if (!bDoNotSelectKeyProperties) {
+						_Helper.selectKeyProperties(mQueryOptionsForPathPrefix,
+							fnFetchMetadata(sPropertyMetaPath + "/").getResult());
+					}
 					sExpandSelectPath = "";
 				} else if (oProperty.$kind !== "Property") {
 					return undefined;

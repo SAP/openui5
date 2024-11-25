@@ -66,7 +66,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {});
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
-		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+		assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		assert.strictEqual(oBinding.iPatchCounter, 0);
 		assert.strictEqual(oBinding.bPatchSuccess, true);
 		assert.ok("oReadGroupLock" in oBinding);
@@ -948,7 +948,7 @@ sap.ui.define([
 						assert.strictEqual(oBinding.mAggregatedQueryOptions,
 							oFixture.initial ? mClonedQueryOptions : mAggregatedQueryOptions);
 						assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, false);
-						assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+						assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 					});
 				}
 			);
@@ -1053,7 +1053,7 @@ sap.ui.define([
 				assert.strictEqual(oError, "~oError~");
 			}).then(function () {
 				assert.strictEqual(oBinding.oCachePromise, oCachePromise);
-				assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+				assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 				oCachePromise.catch(function () { /* avoid "Uncaught (in Promise)"*/ });
 			});
 			});
@@ -1422,7 +1422,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {"" : "~n/a~"}, "unchanged");
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
-			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+			assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		});
 	});
 
@@ -1502,7 +1502,7 @@ sap.ui.define([
 			return oPromise.then(function (sReducedPath) {
 				assert.strictEqual(sReducedPath, undefined);
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, mOriginalAggregatedQueryOptions);
-				assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+				assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 			});
 		});
 	});
@@ -1570,7 +1570,7 @@ sap.ui.define([
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath,
 				bImmutable ? undefined : "/reduced/child/path/" + sPath);
-			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+			assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		});
 	});
 });
@@ -1629,7 +1629,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {}, "unchanged due to $uid");
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
-			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+			assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		});
 	});
 });
@@ -1663,7 +1663,7 @@ sap.ui.define([
 			oBinding.fetchIfChildCanUseCache(oContext, "childPath", null, "~bIsProperty~")
 				.getResult(),
 			"/resolved/child/path");
-		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+		assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, [], "unchanged");
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {}, "unchanged");
 	});
@@ -1694,7 +1694,7 @@ sap.ui.define([
 			oBinding.fetchIfChildCanUseCache(oContext, "childPath", null, "~bIsProperty~")
 				.getResult(),
 			"/resolved/child/path");
-		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+		assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, [], "unchanged");
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {}, "unchanged");
 	});
@@ -1776,7 +1776,7 @@ sap.ui.define([
 		assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), []);
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
-			assert.strictEqual(oBinding.bHasPathReductionToParent, bReduced);
+			assert.deepEqual(oBinding.mChildPathsReducedToParent, bReduced ? {[sPath] : true} : {});
 		});
 	});
 });
@@ -1822,7 +1822,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {"" : "~n/a~"}, "unchanged");
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, undefined);
-			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+			assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		});
 	});
 
@@ -1894,7 +1894,7 @@ sap.ui.define([
 		assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), [sChildPath]);
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, bImmutable ? undefined : "/reduced/child/path");
-			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+			assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		});
 	});
 });
@@ -1926,7 +1926,7 @@ sap.ui.define([
 			oBinding.fetchIfChildCanUseCache(oContext, "childPath", {}, "~bIsProperty~")
 				.getResult(),
 			"/resolved/child/path");
-		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+		assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, [], "unchanged");
 		assert.deepEqual(oBinding.mCanUseCachePromiseByChildPath, {}, "unchanged");
 	});
@@ -1968,6 +1968,7 @@ sap.ui.define([
 			oModelMock = this.mock(oBinding.oModel),
 			oPromise;
 
+		oBinding.mChildPathsReducedToParent = {foo : true};
 		oChildQueryOptionsPromise.then(function () {
 			oBinding.oContext = undefined; // this might happen e.g. for a virtual parent context
 		});
@@ -2019,7 +2020,8 @@ sap.ui.define([
 		assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), [sChildPath]);
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/SalesOrderList('42')/Note");
-			assert.strictEqual(oBinding.bHasPathReductionToParent, true);
+			assert.deepEqual(oBinding.mChildPathsReducedToParent,
+				{foo : true, [sChildPath] : true});
 		});
 	});
 
@@ -2063,7 +2065,7 @@ sap.ui.define([
 			oPromise;
 
 		oBinding.mCanUseCachePromiseByChildPath[o.sChildPath] = oCanUseCachePromise;
-		oBinding.bHasPathReductionToParent = "~bHasPathReductionToParent~";
+		oBinding.mChildPathsReducedToParent = "~mChildPathsReducedToParent~";
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs()
 			.returns("/base/path");
 		this.mock(oBinding.oModel).expects("resolve")
@@ -2092,7 +2094,7 @@ sap.ui.define([
 			assert.strictEqual(sReducedPath, sExpectedReducedPath);
 
 			// Note: we wait as long as possible to check that s.th. is unchanged
-			assert.strictEqual(oBinding.bHasPathReductionToParent, "~bHasPathReductionToParent~",
+			assert.deepEqual(oBinding.mChildPathsReducedToParent, "~mChildPathsReducedToParent~",
 				"unchanged");
 			assert.deepEqual(oBinding.aChildCanUseCachePromises, [], "unchanged");
 			assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath[o.sChildPath],
@@ -3266,6 +3268,7 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding();
 
 		oBinding.aChildCanUseCachePromises = [{}, {}];
+		oBinding.mChildPathsReducedToParent = "~mChildPathsReducedToParent~";
 		oBinding.oResumePromise = {};
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 		this.mock(asODataBinding.prototype).expects("destroy").on(oBinding).withExactArgs();
@@ -3275,6 +3278,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.mAggregatedQueryOptions, undefined);
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
+		assert.deepEqual(oBinding.mChildPathsReducedToParent, {});
 		assert.strictEqual(oBinding.oRefreshPromise, undefined);
 		assert.strictEqual(oBinding.oResumePromise, undefined);
 		assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath, undefined);
