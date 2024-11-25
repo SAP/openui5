@@ -1,13 +1,13 @@
-/* global QUnit */
-
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/core/Core",
-	"sap/ui/demo/HeapOfShards/test/integration/AllJourneys"
-], function(Core) {
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"./arrangements/Startup",
+	"./CheckJourney"
+], function (Opa5, Startup) {
 	"use strict";
-	Core.ready().then(function () {
-		QUnit.start();
+
+	Opa5.extendConfig({
+		arrangements: new Startup(),
+		viewNamespace: "sap.ui.demo.HeapOfShards.view.",
+		autoWait: true
 	});
 });
