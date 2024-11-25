@@ -4061,6 +4061,34 @@ function(
 		});
 	});
 
+	QUnit.module("ObjectPageLayout rendering in hidden parent", {
+		beforeEach: function () {
+
+			// Setup
+			this.oObjectPage = oFactory.getObjectPage();
+		},
+		afterEach: function () {
+
+			// Clean up
+			this.oObjectPage.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("Store scroll location, when Object page DOM is not visible on the document on onBeforeRendering", async function(assert) {
+		var oParentNode = document.getElementById("content");
+
+		//Hiding parent element
+		this.oObjectPage.placeAt("content");
+		oParentNode.style.display = "none";
+
+		await nextUIUpdate();
+		//We want the _bDdomReady to be set to true on initial rendering
+		this.oObjectPage._onAfterRenderingDomReady();
+		//Assert
+		assert.equal(this.oObjectPage._storeScrollLocation(), false, "We make sure we don`t store scroll location on hidden ObjectPage DOM reference");
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
