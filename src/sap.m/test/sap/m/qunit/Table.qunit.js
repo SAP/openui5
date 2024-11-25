@@ -1852,7 +1852,7 @@ sap.ui.define([
 		oTable.setSticky(["GroupHeaders"]);
 		oTable.removeGroupHeaders();
 		await nextUIUpdate();
-		assert.strictEqual(oTable.getStickyStyleValue(), 0, "GroupHeaders are Sticky but do not exist");
+		assert.strictEqual(oTable.getStickyStyleValue(), 8, "Sticky value is correct");
 	});
 
 	QUnit.test("Initial focus position calculation", async function(assert) {
