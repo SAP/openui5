@@ -139,5 +139,20 @@
         "text": " sap/ui/model/odata/v2/ODataListBinding: fire dataReceived event for aborted requests"
       }
     ]
+  },
+  "1.124.9": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "b92997c06b73083785a118081a4a58ef754a96df",
+        "type": "FIX",
+        "text": " sap/ui/model/analytics/AnalyticalBinding#updateAnalyticalInfo: keep attribute properties in additional select"
+      },
+      {
+        "id": "e272613620952d15f0e7d64daaea7809cc62fbe1",
+        "type": "FIX",
+        "text": " core/Element: use duck typing to check DOM element in 'closestTo'"
+      }
+    ]
   }
 }

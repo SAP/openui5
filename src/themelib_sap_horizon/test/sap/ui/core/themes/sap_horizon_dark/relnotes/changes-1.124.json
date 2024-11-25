@@ -58,5 +58,15 @@
         "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used."
       }
     ]
+  },
+  "1.124.9": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "b8021b115f3519c07f2cd92a7b2bb8cbbebc7f7c",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed Breadcrumbs item focus clip"
+      }
+    ]
   }
 }

@@ -53,5 +53,15 @@
         "text": " sap.ui.unified.Calendar: Calendar with two months in one column is displayed correctly now"
       }
     ]
+  },
+  "1.124.9": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "312bba01584bc92b9d1ec171e10b7d9695bfe754",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Legend selected is translated correctly in German"
+      }
+    ]
   }
 }

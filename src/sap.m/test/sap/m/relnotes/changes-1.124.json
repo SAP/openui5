@@ -329,5 +329,20 @@
         "text": " sap.m.Popover: Height calculations for scrollable contents are preserved after invalidation"
       }
     ]
+  },
+  "1.124.9": {
+    "date": "November 2024",
+    "notes": [
+      {
+        "id": "092e4e0b0f5af9c6193513926699b0be56468c3c",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: sync customData between outer and internal controls"
+      },
+      {
+        "id": "5161b68d385e102cf7b3aa484e05a60b8885a59a",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
+      }
+    ]
   }
 }
