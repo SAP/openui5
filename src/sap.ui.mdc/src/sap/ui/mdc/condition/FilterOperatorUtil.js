@@ -527,23 +527,27 @@ sap.ui.define([
 					tokenText: _getText(OperatorName.Empty, false),
 					valueTypes: [],
 					getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-						let isNullable = false;
-						if (oType) {
-							const vResult = oType.parseValue("", "string");
-							try {
-								oType.validateValue(vResult);
-								isNullable = vResult === null;
-							} catch (oError) {
-								isNullable = false;
+						if (sBaseType === BaseType.String) { // depending on backend and/or Type configuration filter is "" or null
+							let isNullable = false;
+							if (oType) {
+								const vResult = oType.parseValue("", "string");
+								try {
+									oType.validateValue(vResult);
+									isNullable = vResult === null;
+								} catch (oError) {
+									isNullable = false;
+								}
 							}
-						}
-						if (isNullable) {
-							return new Filter({
-								filters: [new Filter({ path: sFieldPath, operator: ModelOperator.EQ, value1: "" }), new Filter({ path: sFieldPath, operator: ModelOperator.EQ, value1: null })],
-								and: false
-							});
-						} else {
-							return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
+							if (isNullable) {
+								return new Filter({
+									filters: [new Filter({ path: sFieldPath, operator: ModelOperator.EQ, value1: "" }), new Filter({ path: sFieldPath, operator: ModelOperator.EQ, value1: null })],
+									and: false
+								});
+							} else {
+								return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
+							}
+						} else { // per default filter for null
+							return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
 						}
 					}
 				}),
@@ -560,23 +564,27 @@ sap.ui.define([
 					valueTypes: [],
 					exclude: true,
 					getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-						let isNullable = false;
-						if (oType) {
-							const vResult = oType.parseValue("", "string");
-							try {
-								oType.validateValue(vResult);
-								isNullable = vResult === null;
-							} catch (oError) {
-								isNullable = false;
+						if (sBaseType === BaseType.String) { // depending on backend and/or Type configuration filter is "" or null
+							let isNullable = false;
+							if (oType) {
+								const vResult = oType.parseValue("", "string");
+								try {
+									oType.validateValue(vResult);
+									isNullable = vResult === null;
+								} catch (oError) {
+									isNullable = false;
+								}
 							}
-						}
-						if (isNullable) {
-							return new Filter({
-								filters: [new Filter({ path: sFieldPath, operator: ModelOperator.NE, value1: "" }), new Filter({ path: sFieldPath, operator: ModelOperator.NE, value1: null })],
-								and: true
-							});
-						} else {
-							return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
+							if (isNullable) {
+								return new Filter({
+									filters: [new Filter({ path: sFieldPath, operator: ModelOperator.NE, value1: "" }), new Filter({ path: sFieldPath, operator: ModelOperator.NE, value1: null })],
+									and: true
+								});
+							} else {
+								return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
+							}
+						} else { // per default filter for not-null
+							return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
 						}
 					}
 				}),
@@ -2184,6 +2192,7 @@ sap.ui.define([
 				FilterOperatorUtil._mOperators.lessEqual,
 				FilterOperatorUtil._mOperators.greaterThan,
 				FilterOperatorUtil._mOperators.greaterEqual,
+				FilterOperatorUtil._mOperators.empty,
 
 				FilterOperatorUtil._mOperators.notEqual,
 				FilterOperatorUtil._mOperators.notBetween,
@@ -2191,6 +2200,7 @@ sap.ui.define([
 				FilterOperatorUtil._mOperators.notLessEqual,
 				FilterOperatorUtil._mOperators.notGreaterThan,
 				FilterOperatorUtil._mOperators.notGreaterEqual,
+				FilterOperatorUtil._mOperators.notEmpty,
 
 				FilterOperatorUtil._mOperators.today,
 				FilterOperatorUtil._mOperators.yesterday,
@@ -2261,6 +2271,7 @@ sap.ui.define([
 				FilterOperatorUtil._mOperators.lessEqual,
 				FilterOperatorUtil._mOperators.greaterThan,
 				FilterOperatorUtil._mOperators.greaterEqual,
+				FilterOperatorUtil._mOperators.empty,
 
 				FilterOperatorUtil._mOperators.notEqual,
 				FilterOperatorUtil._mOperators.notBetween,
@@ -2268,6 +2279,7 @@ sap.ui.define([
 				FilterOperatorUtil._mOperators.notLessEqual,
 				FilterOperatorUtil._mOperators.notGreaterThan,
 				FilterOperatorUtil._mOperators.notGreaterEqual,
+				FilterOperatorUtil._mOperators.notEmpty,
 
 				FilterOperatorUtil._mOperators.lastMinutes,
 				FilterOperatorUtil._mOperators.lastMinutesIncluded,

@@ -158,8 +158,8 @@ sap.ui.define([
 	QUnit.test("getOperatorsForType", function(assert) {
 
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.String).length, 20, "Default operators for String");
-		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 64, "Default operators for date");
-		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 72, "Default operators for datetime");
+		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 66, "Default operators for date");
+		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 74, "Default operators for datetime");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Time).length, 12, "Default operators for time");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Numeric).length, 12, "Default operators for numeric");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Boolean).length, 2, "Default operators for boolean");
@@ -306,8 +306,8 @@ sap.ui.define([
 							assert.ok(oFilter, "Filter returned");
 							assert.equal(oFilter.sPath, oTest.filter.path, "Filter path");
 							assert.equal(oFilter.sOperator, oTest.filter.operator, "Filter operator");
-							assert.equal(oFilter.oValue1, oTest.filter.value1, "Filter value1");
-							assert.equal(oFilter.oValue2, oTest.filter.value2, "Filter value2");
+							assert.deepEqual(oFilter.oValue1, oTest.filter.value1, "Filter value1");
+							assert.deepEqual(oFilter.oValue2, oTest.filter.value2, "Filter value2");
 						}
 					}
 
@@ -1439,6 +1439,7 @@ sap.ui.define([
 						filter: {path: "test", operator: FilterOperator.EQ, value1: ""},
 						isSingleValue: true,
 						oType: new StringType({}, {nullable: false}),
+						baseType: BaseType.String,
 						longText: mdcMessageBundle.getText("operators.Empty.longText"),
 						tokenText: mdcMessageBundle.getText("operators.Empty.tokenText")
 					},
@@ -1451,7 +1452,8 @@ sap.ui.define([
 						valid: true,
 						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
 						isSingleValue: true,
-						oType: new StringType({}, {nullable: true})
+						oType: new StringType({}, {nullable: true}),
+						baseType: BaseType.String
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.Empty, []), undefined, undefined, true],
@@ -1462,7 +1464,32 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
-						oType: new StringType({}, {nullable: false})
+						oType: new StringType({}, {nullable: false}),
+						baseType: BaseType.String
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
+						formatValue: "<empty>", // TODO: right result without operator?
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						oType: new DateType(),
+						baseType: BaseType.Date,
+						filter: {path: "test", operator: FilterOperator.EQ, value1: null}
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
+						formatValue: "<empty>", // TODO: right result without operator?
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						oType: new DateTimeOffsetType({}, {V4: true, nullable: true}),
+						baseType: BaseType.DateTime,
+						filter: {path: "test", operator: FilterOperator.EQ, value1: null}
 					}
 				],
 				[OperatorName.NotEmpty]: [{
@@ -1473,6 +1500,8 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
+						oType: new StringType({}, {nullable: false}),
+						baseType: BaseType.String,
 						filter: {path: "test", operator: FilterOperator.NE, value1: ""},
 						isSingleValue: true,
 						longText: mdcMessageBundle.getText("operators.NotEmpty.longText"),
@@ -1486,6 +1515,8 @@ sap.ui.define([
 						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
+						oType: new StringType({}, {nullable: false}),
+						baseType: BaseType.String,
 						filter: {path: "test", operator: FilterOperator.NE, value1: ""},
 						isSingleValue: true
 					},
@@ -1499,7 +1530,8 @@ sap.ui.define([
 						valid: true,
 						filter: {path: undefined, operator: undefined, value1: undefined, value2: undefined},
 						isSingleValue: true,
-						oType: new StringType({}, {nullable: true})
+						oType: new StringType({}, {nullable: true}),
+						baseType: BaseType.String
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, []), undefined, undefined, true],
@@ -1511,8 +1543,33 @@ sap.ui.define([
 						valid: true,
 						isSingleValue: true,
 						oType: new StringType({}, {nullable: false}),
+						baseType: BaseType.String,
 						longText: mdcMessageBundle.getText("operators.NotEmpty.longText"),
 						tokenText: mdcMessageBundle.getText("operators.NotEmpty.tokenText")
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
+						formatValue: "!(<empty>)", // TODO: right text?
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						oType: new DateType(),
+						baseType: BaseType.Date,
+						filter: {path: "test", operator: FilterOperator.NE, value1: null}
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
+						formatValue: "!(<empty>)", // TODO: right text?
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						oType: new DateTimeOffsetType({}, {V4: true, nullable: true}),
+						baseType: BaseType.DateTime,
+						filter: {path: "test", operator: FilterOperator.NE, value1: null}
 					}
 				],
 				"MyOperator": [{
