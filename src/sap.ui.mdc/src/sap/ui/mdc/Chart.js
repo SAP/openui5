@@ -1543,7 +1543,6 @@ sap.ui.define([
 		/**
 		 * This is a callback function which is called from the delegate once the inner chart finished loading data
 		 * Updates the Toolbar
-		 * Fires the innerChartLoadedData event
 		 *
 		 * @private
 		 */
@@ -1552,7 +1551,11 @@ sap.ui.define([
 			this.setBusy(false);
 			this._renderOverlay(false);
 
-			this.getControlDelegate().requestToolbarUpdate(this);
+			if (this.getControlDelegate().requestToolbarUpdate) {
+				this.getControlDelegate().requestToolbarUpdate(this);
+			} else {
+				this._updateToolbar();
+			}
 		};
 
 		Chart.prototype._checkStyleClassesForDimensions = function() {
