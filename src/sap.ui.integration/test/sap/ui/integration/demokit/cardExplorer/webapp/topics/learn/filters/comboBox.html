@@ -97,6 +97,16 @@
 						<td>1.61.0</td>
 						<td>1.121</td>
 					</tr>
+					<tr>
+						<td>group</td>
+						<td><a href="#groupApi">Group</a>
+						</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines whether and how items are grouped.</td>
+						<td>1.69.0</td>
+						<td>1.132</td>
+					</tr>
 				</table>
 			</div>
 
@@ -171,6 +181,72 @@
 						<td>The secondary text for the ComboBox filter item.</td>
 						<td>1.42.0</td>
 						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="groupApi" class="boldBlock">Group Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>Title of the group</td>
+						<td>1.69.0</td>
+						<td>1.132</td>
+					</tr>
+					<tr>
+						<td>order</td>
+						<td><a href="#groupOrderApi">Order</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>The sorting order of the group.</td>
+						<td>1.69.0</td>
+						<td>1.132</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="groupOrderApi" class="boldBlock">Group order Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The binding path used for sorting</td>
+						<td>1.69.0</td>
+						<td>1.132</td>
+					</tr>
+					<tr>
+						<td>dir</td>
+						<td>string</td>
+						<td>"ASC"</td>
+						<td>No</td>
+						<td>The direction of the sorting order - "ASC" or "DESC".</td>
+						<td>1.69.0</td>
+						<td>1.132</td>
 					</tr>
 				</table>
 			</div>

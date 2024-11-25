@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/integration/controls/MicrochartLegend",
 	"sap/ui/integration/controls/ListContentItem",
 	"sap/ui/integration/controls/ActionsStrip",
-	"sap/ui/integration/cards/list/MicrochartsResizeHelper"
+	"sap/ui/integration/cards/list/MicrochartsResizeHelper",
+	"sap/ui/integration/util/SorterHelper"
 ], function (
 	BaseListContent,
 	ListContentRenderer,
@@ -32,7 +33,8 @@ sap.ui.define([
 	MicrochartLegend,
 	ListContentItem,
 	ActionsStrip,
-	MicrochartsResizeHelper
+	MicrochartsResizeHelper,
+	SorterHelper
 ) {
 	"use strict";
 
@@ -382,7 +384,7 @@ sap.ui.define([
 		var oGroup = oConfiguration.group;
 
 		if (oGroup) {
-			this._oSorter = this._getGroupSorter(oGroup);
+			this._oSorter = SorterHelper.getGroupSorter(oGroup);
 		}
 		var oBindingInfo = {
 			template: this._oItemTemplate,
