@@ -1012,6 +1012,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 			await nextUIUpdate();
 
 			assert.strictEqual(oSubSection.getBlocks().length, 2, "subSection has two blocks");
+			assert.strictEqual(oSubSection._getGrid().getContent().length, 2, "subSection grid has two blocks");
 
 			// act
 			var oResult = oSubSection.removeAggregation("blocks", oButton);
@@ -1019,6 +1020,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 			// assert
 			assert.strictEqual(oResult, oButton, "removeAggregation returns the removed control");
 			assert.strictEqual(oSubSection.getBlocks().length, 1, "subSection has only one block left");
+			assert.strictEqual(oSubSection._getGrid().getContent().length, 1, "subSection grid has one block left");
 
 			oView.destroy();
 		});
@@ -1055,6 +1057,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 				assert.equal(oSpy.callCount, 0, "no error on adding block");
 				assert.ok(oSetParentSpy.calledWith(oSubSection, "blocks"), "Control's setParent is called with ObjectPageSubSection");
 				assert.strictEqual(oSubSection.getBlocks().length, 2, "ObjectPageSubSection has two controls in 'blocks' aggregation");
+				assert.strictEqual(oSubSection._getGrid().getContent().length, 2, "ObjectPageSubSection's grid has two controls in 'blocks' aggregation");
 				done();
 				oSubSection.removeAllDependents();
 				opl.destroy();
@@ -1943,6 +1946,29 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		await nextUIUpdate();
 		// Act
 		this.oObjectPageLayout._applyUxRules(true);
+	});
+
+	QUnit.test("does not reset grid content on rerendering", async function(assert) {
+
+		// Setup
+		var oSubSection = this.oObjectPageLayout.getSections()[0].getSubSections()[0],
+			done = assert.async();
+
+		assert.expect(1);
+
+		this.oObjectPageLayout.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		var oGrid = oSubSection._getGrid();
+		var oSpy = this.spy(oGrid, "removeAllContent");
+
+		// Act
+		oSubSection.rerender();
+
+		// Assert
+		assert.ok(oSpy.notCalled, "Grid content is not reset");
+
+		done();
 	});
 
 	QUnit.module("SubSection title visibility", {

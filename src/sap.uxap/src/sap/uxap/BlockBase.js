@@ -797,7 +797,19 @@ sap.ui.define([
 				return; /* only loaded views should be affected */
 			}
 
+			var bResume = bAllow && this.mSkipPropagation._views === true;
+
 			this.mSkipPropagation._views = !bAllow; /* skip if now allowed */
+
+			if (bResume) {
+				// upon resuming, we need to also catch up all the updates that were missed while the propagation was being skipped
+				// => the following will re-trigger the propagation of ALL binding info from the block to its child views
+				// [by re-attaching the views to the block]
+				var aViews = this.removeAllAggregation("_views", true) || [];
+				aViews.forEach(function (oView) {
+					this.addAggregation("_views", oView, true);
+				}, this);
+			}
 		};
 
 		/**
