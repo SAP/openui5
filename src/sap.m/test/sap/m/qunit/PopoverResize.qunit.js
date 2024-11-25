@@ -151,6 +151,8 @@ sap.ui.define([
 		const contentHeight = contentDomRef.offsetHeight;
 		const popoverOffsetX = popover.getOffsetX();
 		const popoverOffsetY = popover.getOffsetY();
+		const popoverContentWidth = popover.getContentWidth();
+		const popoverContentHeight = popover.getContentHeight();
 
 		assert.ok(popover.getDomRef().classList.contains("sapMPopoverResizeHandleTopRight"), "sapMPopoverResizeHandleTopRight class is added");
 
@@ -166,8 +168,15 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.ok(Math.abs(popover.getOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.ok(Math.abs(popover._getActualOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
+
+		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "popoverOffsetX is not changed");
+		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "popoverOffsetY is not changed");
+
+		assert.strictEqual(popover.getContentWidth(), popoverContentWidth, "contentWidth is not changed");
+		assert.strictEqual(popover.getContentHeight(), popoverContentHeight, "contentHeight is not changed");
+
 	});
 
 	QUnit.test("PlacementType Top, OffsetX = 100", async function (assert) {
@@ -197,8 +206,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.ok(Math.abs(popover.getOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.ok(Math.abs(popover._getActualOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Top, OffsetX = -100", async function (assert) {
@@ -228,8 +237,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.ok(Math.abs(popover.getOffsetX() - popoverOffsetX + mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.ok(Math.abs(popover._getActualOffsetX() - popoverOffsetX + mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Bottom, OffsetX = 0", async function (assert) {
@@ -259,8 +268,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.ok(Math.abs(popover.getOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.ok(Math.abs(popover._getActualOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Bottom, OffsetX = 100", async function (assert) {
@@ -291,8 +300,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.ok(Math.abs(popover.getOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.ok(Math.abs(popover._getActualOffsetX() - popoverOffsetX - mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Bottom, OffsetX = -100", async function (assert) {
@@ -323,8 +332,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.ok(Math.abs(popover.getOffsetX() - popoverOffsetX + mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.ok(Math.abs(popover._getActualOffsetX() - popoverOffsetX + mouseMoveOffset / 2) < acceptableMargin, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Left, OffsetY = 0", async function (assert) {
@@ -354,8 +363,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.ok(Math.abs(popover.getOffsetY() - popoverOffsetY + mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.ok(Math.abs(popover._getActualOffsetY() - popoverOffsetY + mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Left, OffsetY = -10", async function (assert) {
@@ -386,8 +395,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.ok(Math.abs(popover.getOffsetY() - popoverOffsetY + mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.ok(Math.abs(popover._getActualOffsetY() - popoverOffsetY + mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Left, OffsetY = 10", async function (assert) {
@@ -418,8 +427,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.ok(Math.abs(popover.getOffsetY() - popoverOffsetY - mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.ok(Math.abs(popover._getActualOffsetY() - popoverOffsetY - mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Right, OffsetY = 0", async function (assert) {
@@ -434,6 +443,8 @@ sap.ui.define([
 		const contentHeight = contentDomRef.offsetHeight;
 		const popoverOffsetX = popover.getOffsetX();
 		const popoverOffsetY = popover.getOffsetY();
+		const popoverContentWidth = popover.getContentWidth();
+		const popoverContentHeight = popover.getContentHeight();
 
 		assert.ok(popover.getDomRef().classList.contains("sapMPopoverResizeHandleBottomRight"), "sapMPopoverResizeHandleBottomRight class is added");
 
@@ -449,8 +460,14 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.ok(Math.abs(popover.getOffsetY() - popoverOffsetY - mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.ok(Math.abs(popover._getActualOffsetY() - popoverOffsetY - mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
+
+		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "popoverOffsetX is not changed");
+		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "popoverOffsetY is not changed");
+
+		assert.strictEqual(popover.getContentWidth(), popoverContentWidth, "contentWidth is not changed");
+		assert.strictEqual(popover.getContentHeight(), popoverContentHeight, "contentHeight is not changed");
 	});
 
 	QUnit.test("PlacementType Right, OffsetY = 10", async function (assert) {
@@ -481,8 +498,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.ok(Math.abs(popover.getOffsetY() - popoverOffsetY - mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.ok(Math.abs(popover._getActualOffsetY() - popoverOffsetY - mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Right, OffsetY = -10", async function (assert) {
@@ -513,8 +530,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.ok(Math.abs(popover.getOffsetY() - popoverOffsetY + mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.ok(Math.abs(popover._getActualOffsetY() - popoverOffsetY + mouseMoveOffset / 2) < acceptableMargin, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Top, No Arrow", async function (assert) {
@@ -544,8 +561,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Bottom, No Arrow", async function (assert) {
@@ -575,8 +592,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), popoverOffsetX, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), popoverOffsetX, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Top, OffsetX = -100, Opener Align = Start", async function (assert) {
@@ -608,8 +625,8 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), 0, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), 0, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 
 	QUnit.test("PlacementType Top, OffsetX = 100, Opener Align = End", async function (assert) {
@@ -639,7 +656,7 @@ sap.ui.define([
 		assert.ok(Math.abs(contentDomRef.offsetWidth - contentWidth - mouseMoveOffset) < acceptableMargin, "width is correct");
 		assert.ok(Math.abs(contentDomRef.offsetHeight - contentHeight - mouseMoveOffset) < acceptableMargin, "height is correct");
 
-		assert.strictEqual(popover.getOffsetX(), -1, "offsetX is correct");
-		assert.strictEqual(popover.getOffsetY(), popoverOffsetY, "offsetY is correct");
+		assert.strictEqual(popover._getActualOffsetX(), -1, "offsetX is correct");
+		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
 	});
 });
