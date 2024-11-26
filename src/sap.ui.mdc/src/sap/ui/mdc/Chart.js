@@ -480,22 +480,8 @@ sap.ui.define([
 		 * 	Defines whether the property is groupable and is selectable as a dimension in the chart
 		 * @property {boolean} aggregatable
 		 *  Defines whether the property is aggregatable and is selectable as a measure in the chart
-		 * @property {string} [aggregationMethod]
-		 * 	The aggregation method used if the property is aggregatable
 		 * @property {string} role
 		 * 	Defines the role that the property visualizes inside the chart
-		 * @property {object} [datapoint]
-		 * 	Implementation-specific object containing information about the data point
-		 * @property {object} [criticality]
-		 *  Implementation-specific object containing information about the criticality
-		 * @property {string} [textProperty]
-		 * 	The text property used for the dimension
-		 * @property {object} [textFormatter]
-		 * 	The text formatter object which can be used to format the textProperty
-		 * @property {object} [unitPath]
-		 *  The name of the unit property which will be used to display and format measure values with a unit value on a selectionDetails popover
-		 * @property {string} [timeUnitType]
-		 *  The <code>timeUnitType</code> type for a <code>TimeDimension</code>. If set, a <code>TimeDimension</code> is created instead of a <code>Dimension</code>
 		 * @public
 		 * @experimental As of version 1.80
 		 */

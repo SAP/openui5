@@ -871,7 +871,10 @@
 										"FakeFlpSemanticObject_author",
 										"FakeFlpSemanticObject_book"
 									]
-								\}
+								\},
+								"configurationForVizchart": [
+									\{ "key": "averagemetricsWords", "aggregationMethod": "average" \}
+								]
 							\}
 						\}'
 					chartType="column"
@@ -879,6 +882,10 @@
 					headerStyle="H4"
 					height="400px"
 					width="100%"
+					propertyInfo= '[
+						\{ "key": "language_code", "label": "Language", "dataType": "Edm.String", "role": "category", "groupable": true, "aggregatable": false \},
+						\{ "key": "averagemetricsWords", "label": "Words (average)", "dataType": "Edm.Int32", "role": "axis1", "path": "metricsWords", "groupable": false, "aggregatable": true \}
+					]'
 				>
 					<!-- sortConditions="{sorters: [{key: 'author_ID', name: 'author_ID', descending: false}]}"
 					filterConditions='\{"author_ID" : [\{"operator":"EQ","values":[101]}]\}' -->
