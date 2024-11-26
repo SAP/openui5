@@ -681,9 +681,9 @@ sap.ui.define([
 			const aIgnoreToolbarActions = this.getIgnoreToolbarActions();
 
 			const bShowSelectionDetails = this.getShowSelectionDetails();
-			const bShowDrillDown = (aP13nMode.includes("Item") && !(aIgnoreToolbarActions.length || aIgnoreToolbarActions.includes(ChartToolbarActionType.DrillDownUp)));
-			const bShowLegend = !(aIgnoreToolbarActions.length || aIgnoreToolbarActions.includes(ChartToolbarActionType.Legend));
-			const bShowZoom = !(aIgnoreToolbarActions.length || aIgnoreToolbarActions.includes(ChartToolbarActionType.ZoomInOut));
+			const bShowDrillDown = (aP13nMode.includes("Item") && !(aIgnoreToolbarActions.length && aIgnoreToolbarActions.includes(ChartToolbarActionType.DrillDownUp)));
+			const bShowLegend = !(aIgnoreToolbarActions.length && aIgnoreToolbarActions.includes(ChartToolbarActionType.Legend));
+			const bShowZoom = !(aIgnoreToolbarActions.length && aIgnoreToolbarActions.includes(ChartToolbarActionType.ZoomInOut));
 			const bShowSettings = aP13nMode.includes("Sort") || aP13nMode.includes("Item") || aP13nMode.includes("Filter");
 			const bShowChartType = this._getTypeBtnActive();
 
