@@ -55,7 +55,8 @@ sap.ui.require([
 				Then.onTheMainPage.checkMeasureValueState("Error");
 
 				When.onTheMainPage.changeMeasure("42", 1);
-				Then.onTheMainPage.checkMeasure("42", 1); // no unit yet for new entry and no error
+				// no unit yet for new entry and no error
+				Then.onTheMainPage.checkMeasure("42.000", 1);
 				Then.onTheMainPage.checkMeasureValueState("None", 1);
 
 				When.onTheMainPage.changeMeasure("KG", 1);

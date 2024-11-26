@@ -11520,28 +11520,37 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: If the OData service has no customizing for units, the OData Unit type uses the
 	// UI5 built-in CLDR information for formatting and parsing.
 	// JIRA: CPOUI5MODELS-423
-	QUnit.test("OData Unit type without unit customizing falls back to CLDR", function (assert) {
-		var oModel = createSpecialCasesModel({defaultBindingMode : "TwoWay"}),
-			sView = '\
-<FlexBox binding="{/ProductSet(\'P1\')}">\
-	<Input id="weight" value="{\
-		parts : [{\
-			constraints : { scale : \'variable\' },\
-			path : \'WeightMeasure\',\
-			type : \'sap.ui.model.odata.type.Decimal\'\
-		}, {\
-			path : \'WeightUnit\',\
-			type : \'sap.ui.model.odata.type.String\'\
-		}, {\
-			mode : \'OneTime\',\
-			path : \'/##@@requestUnitsOfMeasure\',\
-			targetType : \'any\'\
-		}],\
-		mode : \'TwoWay\',\
-		type : \'sap.ui.model.odata.type.Unit\'\
-	}" />\
-</FlexBox>',
-			that = this;
+	// Scenario: For Unit types the number of decimals defaults to 3 if neither
+	// maxFractionDigits, nor minFractionDigits nor decimals are given. If the scale is lower than 3
+	// it defines the number of decimals in the formatted output.
+	// SNOR: DINC0320964
+[
+	{vScale: "variable", sExpected0: "12.340", sExpected1: "23.400 kg", sExpected2: "0.000 kg"},
+	{vScale: 2, sExpected0: "12.34", sExpected1: "23.40 kg", sExpected2: "0.00 kg"},
+	{vScale: 5, sExpected0: "12.340", sExpected1: "23.400 kg", sExpected2: "0.000 kg"}
+].forEach(({vScale, sExpected0, sExpected1, sExpected2}, i) => {
+	QUnit.test(`OData Unit type without unit customizing falls back to CLDR; #${i}`, function (assert) {
+		const oModel = createSpecialCasesModel({defaultBindingMode : "TwoWay"});
+		const sView = `
+<FlexBox binding="{/ProductSet('P1')}">
+	<Input id="weight" value="{
+		parts : [{
+			constraints : { scale : '${vScale}' },
+			path : 'WeightMeasure',
+			type : 'sap.ui.model.odata.type.Decimal'
+		}, {
+			path : 'WeightUnit',
+			type : 'sap.ui.model.odata.type.String'
+		}, {
+			mode : 'OneTime',
+			path : '/##@@requestUnitsOfMeasure',
+			targetType : 'any'
+		}],
+		mode : 'TwoWay',
+		type : 'sap.ui.model.odata.type.Unit'
+	}" />
+</FlexBox>`;
+	const that = this;
 
 		this.expectHeadRequest()
 			.expectRequest("ProductSet('P1')", {
@@ -11549,24 +11558,25 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				WeightMeasure : "12.34",
 				WeightUnit : "mass-kilogram"
 			})
-			.expectValue("weight", "12.34")
-			.expectValue("weight", "12.34 kg");
+			.expectValue("weight", sExpected0)
+			.expectValue("weight", `${sExpected0} kg`);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oControl = that.oView.byId("weight");
 
-			that.expectValue("weight", "23.4 kg");
+			that.expectValue("weight", sExpected1);
 
 			// code under test
-			oControl.setValue("23.4 kg");
+			oControl.setValue(sExpected1);
 
-			that.expectValue("weight", "0 kg")
-				.expectValue("weight", "0 kg");
+			that.expectValue("weight", sExpected2)
+				.expectValue("weight", sExpected2);
 
 			// code under test
 			oControl.setValue("");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Do not show more decimal places than available for the amount/quantity part
