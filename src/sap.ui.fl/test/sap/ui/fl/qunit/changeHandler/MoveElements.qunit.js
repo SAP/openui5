@@ -69,15 +69,15 @@ sap.ui.define([
 			var oDOMParser = new DOMParser();
 			var oXmlString =
 				`<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m"><layout:VerticalLayout id="${this.oLayout.getId()}">` +
-					`<layout:content>` +
+					"<layout:content>" +
 						`<ObjectHeader id="${this.oObjectHeader.getId()}">` +
 							`<ObjectAttribute id="${this.oObjectAttribute.getId()}" />` +
 							`<ObjectAttribute id="${this.oObjectAttribute2.getId()}" />` +
-						`</ObjectHeader>` +
+						"</ObjectHeader>" +
 						`<Button id="${this.oButton.getId()}">` +
-						`</Button>` +
-					`</layout:content>` +
-				`</layout:VerticalLayout></mvc:View>`;
+						"</Button>" +
+					"</layout:content>" +
+				"</layout:VerticalLayout></mvc:View>";
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
 
 			this.oXmlView = oXmlDocument.documentElement;

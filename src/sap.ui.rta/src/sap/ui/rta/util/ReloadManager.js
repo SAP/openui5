@@ -183,7 +183,7 @@ sap.ui.define([
 	 * Sets a flag in sessionStorage to indicate that the "What's New" dialog should not be shown after rta reload.
 	 */
 	ReloadManager.setDontShowWhatsNewAfterReload = () => {
-		window.sessionStorage.setItem(`sap.ui.rta.whatsNew`, true);
+		window.sessionStorage.setItem("sap.ui.rta.whatsNew", true);
 	};
 
 	/**
@@ -192,14 +192,14 @@ sap.ui.define([
 	 * @returns {boolean} Returns true if the "What's New" dialog should be shown, false otherwise.
 	 */
 	ReloadManager.getDontShowWhatsNewAfterReload = () => {
-		return window.sessionStorage.getItem(`sap.ui.rta.whatsNew`);
+		return window.sessionStorage.getItem("sap.ui.rta.whatsNew");
 	};
 
 	/**
 	 * Removes the flag from sessionStorage that indicates the "What's New" dialog should not be shown after reload.
 	 */
 	ReloadManager.removeDontShowWhatsNewAfterReload = () => {
-		window.sessionStorage.removeItem(`sap.ui.rta.whatsNew`);
+		window.sessionStorage.removeItem("sap.ui.rta.whatsNew");
 	};
 
 	/**

@@ -49,8 +49,7 @@
 		}],
 		"no-multiple-empty-lines": ["error", {"max": 1}],
 		"quotes": ["error", "double", {
-			"avoidEscape": true,
-			"allowTemplateLiterals": true
+			"avoidEscape": true
 		}],
 		"no-unsafe-optional-chaining": "error",
 		"prefer-const": ["error", { "ignoreReadBeforeAssign": true }],

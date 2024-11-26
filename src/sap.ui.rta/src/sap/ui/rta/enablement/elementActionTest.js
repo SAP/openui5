@@ -321,10 +321,10 @@ sap.ui.define([
 				if (!oControlOverlay) {
 					throw new Error(
 						`The provided control ${oTargetControl.getId()}does not have any overlay existing during test execution. `
-						+ `With this testsetup it is no possible to check for designtime action definition. In some cases it is not `
-						+ `possible to identify the control with the designtime metadata automatically just by the given 'action.control'. `
-						+ `In this case please provide the 'action.designtimeActionControl' property with a valid control containing `
-						+ `the designtime metadata definition for this check.`
+						+ "With this testsetup it is no possible to check for designtime action definition. In some cases it is not "
+						+ "possible to identify the control with the designtime metadata automatically just by the given 'action.control'. "
+						+ "In this case please provide the 'action.designtimeActionControl' property with a valid control containing "
+						+ "the designtime metadata definition for this check."
 					);
 				}
 				let oElementDesignTimeMetadata = oControlOverlay.getDesignTimeMetadata();
@@ -402,7 +402,7 @@ sap.ui.define([
 
 				assert.ok(
 					oCommand,
-					`then the registration for action to change type, the registration for change and ` +
+					"then the registration for action to change type, the registration for change and " +
 					`control type to change handler is available and ${mOptions.action.name} is a valid action`
 				);
 				return oCommand;
