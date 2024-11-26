@@ -225,7 +225,6 @@ sap.ui.define([
 	 *   <li><code>aggregatable</code></li>
 	 *   <li><code>extension.technicallyGroupable</code></li>
 	 *   <li><code>extension.technicallyAggregatable</code></li>
-	 *   <li><code>extension.additionalProperties</code></li>
 	 * </ul>
 	 *
 	 * If the property is complex, the following attributes need to be specified:
@@ -250,7 +249,12 @@ sap.ui.define([
 	 *   If <code>aggregatable</code> is set to <code>false</code> to exclude it from aggregate personalization on the UI, the UI still needs to know
 	 *   that this property is aggregatable for data requests. If this attribute is not set, the default value is the same as the value of
 	 *   <code>aggregatable</code>.
-	 * @property {string[]} [extension.additionalProperties]
+	 * @public
+	 */
+
+	 /*
+	 * restricted for sap.fe (there's no way to make a property of a type private, therefore it's defined outside of the typedef)
+	 * property {string[]} [extension.additionalProperties]
 	 *   Properties that are loaded in addition if this property is loaded. These properties must be technically groupable, otherwise they can't be
 	 *   loaded. All nested additional properties must be listed at root level. For example, if property A references B and B references C, A must
 	 *   also reference C.
@@ -271,8 +275,6 @@ sap.ui.define([
 	 * 	       <code>CustomAggregate</code>.</li>
 	 *     <li>Properties that are referenced via <code>text</code> or <code>unit</code> must not be repeated here.</li>
 	 *   </ul>
-	 *
-	 * @public
 	 */
 
 	/**
