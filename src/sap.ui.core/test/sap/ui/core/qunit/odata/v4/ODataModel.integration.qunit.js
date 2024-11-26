@@ -20105,7 +20105,8 @@ sap.ui.define([
 	//
 	// Ensure that auto-$expand/$select does not add $select (JIRA: CPOUI5ODATAV4-270).
 	// Ensure that #changeParameters w/ unchanged $$aggregation is ignored (BCP: 2370045709).
-	QUnit.test("suspend/resume: call setAggregation on a suspended ODLB", function (assert) {
+	QUnit.test("Data Aggregation: suspend/resume: call setAggregation on a suspended ODLB",
+			function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
@@ -26163,7 +26164,7 @@ sap.ui.define([
 	// - those filters that can be applied before aggregating
 	// - those filters that must be applied after aggregating
 	// JIRA: CPOUI5ODATAV4-119
-	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _MinMaxHelper", function (assert) {
+	QUnit.test("Data Aggregation: JIRA: CPOUI5ODATAV4-119 with _MinMaxHelper", function (assert) {
 		var oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
@@ -26225,7 +26226,8 @@ sap.ui.define([
 		+ "($these/aggregate(SalesNumber) lt 1 or $these/aggregate(SalesNumber) gt 10)"
 		+ " and not contains($these/aggregate(SalesNumber),0)))"
 }].forEach((oFixture) => {
-	const sTitle = "JIRA: CPOUI5ODATAV4-119 with _AggregationCache, filter = " + oFixture.sFilter;
+	const sTitle = "Data Aggregation: JIRA: CPOUI5ODATAV4-119 with _AggregationCache, filter = "
+		+ oFixture.sFilter;
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createAggregationModel({autoExpandSelect : true}),
@@ -26323,7 +26325,7 @@ sap.ui.define([
 	//
 	// Add $count as well as searching before and after aggregating.
 	// JIRA: CPOUI5ODATAV4-1030
-	QUnit.test("JIRA: CPOUI5ODATAV4-119 with _Cache.CollectionCache", function (assert) {
+	QUnit.test("Data Aggregation: CPOUI5ODATAV4-119 with CollectionCache", function (assert) {
 		var oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
 
@@ -26369,7 +26371,7 @@ sap.ui.define([
 	//
 	// Add searching before aggregating and sorting.
 	// JIRA: CPOUI5ODATAV4-1030
-	QUnit.test("BCP: 2170032897 with UI5 filters", function (assert) {
+	QUnit.test("Data Aggregation: BCP: 2170032897 with UI5 filters", function (assert) {
 		var oListBinding,
 			oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
@@ -26449,7 +26451,7 @@ sap.ui.define([
 	// were needed (at least w/o visual grouping).
 	// BCP: 2170032897
 	// JIRA: CPOUI5ODATAV4-119
-	QUnit.test("BCP: 2170032897 with $filter", function (assert) {
+	QUnit.test("Data Aggregation: BCP: 2170032897 with $filter", function (assert) {
 		var oListBinding,
 			oModel = this.createAggregationModel({autoExpandSelect : true}),
 			that = this;
@@ -26769,7 +26771,7 @@ sap.ui.define([
 	// Scenario: check that $$aggregation can be removed again
 	// Note: Key properties are omitted from response data to improve readability.
 	// BCP: 2080047558
-	QUnit.test("BCP: 2080047558", function (assert) {
+	QUnit.test("Data Aggregation: BCP: 2080047558", function (assert) {
 		var oListBinding,
 			oModel = this.createSalesOrdersModel(),
 			sView = '\
@@ -26967,15 +26969,30 @@ sap.ui.define([
 	// Use subtotalsAtBottomOnly w/o subtotals actually being requested. This must not change
 	// anything!
 	// JIRA: CPOUI5ODATAV4-825
-	QUnit.test("requestSideEffects and $$aggregation", function (assert) {
+	//
+	// Units, addt'l properties, alias, multi-filter w/ paths, "*" (JIRA: CPOUI5ODATAV4-2819)
+	QUnit.test("Data Aggregation: requestSideEffects and $$aggregation", function (assert) {
 		var oBinding,
 			oHeaderContext,
 			oModel = this.createAggregationModel(),
+			oResponse = {
+				"@odata.count" : "1",
+				value : [{Region : "A", SalesAmount : "123"}]
+			},
+			sUrl = "BusinessPartners?$apply"
+				+ "=groupby((Region),aggregate(SalesAmount,Currency))&$count=true&$skip=0&$top=100",
+			sUrlWithFilter = "BusinessPartners?$apply"
+				+ "=filter(Country eq 'US' or Industry eq '4.0' or myMessages/code ne '-')"
+				+ "/groupby((Region),aggregate(SalesAmount,Currency))&$count=true&$skip=0&$top=100",
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartners\',\
 		parameters : {\
 			$$aggregation : {\
-				aggregate : {SalesAmount : {}},\
+				aggregate : {\
+					SalesAmount : {subtotals : true, unit : \'Currency\'},\
+					SalesNumberSum : {name : \'SalesNumber\', with : \'sum\'}\
+				},\
+				group : {Segment : {additionally : [\'Text/Segment\', \'RegionText\']}},\
 				groupLevels : [\'Region\'],\
 				subtotalsAtBottomOnly : true\
 			}\
@@ -26985,8 +27002,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-				+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]})
+		this.expectRequest(sUrl, oResponse)
 			.expectChange("region", ["A"])
 			.expectChange("salesAmount", ["123"]);
 
@@ -27001,45 +27017,104 @@ sap.ui.define([
 				that.waitForChanges(assert, "AccountResponsible (unused)")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
+			// expect no request
+			return Promise.all([
+				oHeaderContext.requestSideEffects(["T/*"]),
+				that.waitForChanges(assert, "T/* (unused)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrl, oResponse);
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
 				that.waitForChanges(assert, "entity")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
+			that.expectRequest(sUrl, oResponse);
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "*"}]),
+				that.waitForChanges(assert, "all structural properties")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrl, oResponse);
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesAmount"}]),
 				that.waitForChanges(assert, "SalesAmount (aggregate)")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
+			that.expectRequest(sUrl, oResponse);
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesNumber"}]),
+				that.waitForChanges(assert, "SalesNumber (aggregate w/ alias)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrl, oResponse);
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Currency"}]),
+				that.waitForChanges(assert, "Currency (unit)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrl, oResponse);
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Region"}]),
 				that.waitForChanges(assert, "Region (group level)")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region),aggregate(SalesAmount))&$skip=0&$top=100",
-					{value : [{Region : "A", SalesAmount : "123"}]});
+			that.expectRequest(sUrl, oResponse);
 
-			oBinding.filter(new Filter("Country", FilterOperator.EQ, "US"));
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Segment"}]),
+				that.waitForChanges(assert, "Segment (group, not level)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrl, oResponse);
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Text/Segment"}]),
+				that.waitForChanges(assert, "Text/Segment (additionally)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrl, oResponse);
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "Text/*"}]),
+				that.waitForChanges(assert, "Text/* (additionally)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrl, oResponse);
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "RegionText"}]),
+				that.waitForChanges(assert, "RegionText (additionally)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrlWithFilter, oResponse);
+
+			oBinding.filter(new Filter([
+				new Filter("Country", FilterOperator.EQ, "US"),
+				new Filter("Industry", FilterOperator.EQ, "4.0"),
+				new Filter("myMessages/code", FilterOperator.NE, "-") // slightly faked ;-)
+			]));
 
 			return that.waitForChanges(assert, "filter");
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region),aggregate(SalesAmount))&$skip=0&$top=100",
-					{value : [{Region : "A", SalesAmount : "123"}]});
+			that.expectRequest(sUrlWithFilter, oResponse);
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Country"}]),
 				that.waitForChanges(assert, "Country (filter)")
+			]);
+		}).then(function () {
+			that.expectRequest(sUrlWithFilter, oResponse);
+
+			return Promise.all([
+				oHeaderContext.requestSideEffects([{$PropertyPath : "myMessages/*"}]),
+				that.waitForChanges(assert, "myMessages/* (filter)")
 			]);
 		}).then(function () {
 			return that.oView.byId("table").getItems()[0].getBindingContext()
@@ -27713,7 +27788,7 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-2203
 	// SNOW: CS20240007001494
-	QUnit.test("CPOUI5ODATAV4-2203: $$aggregation.search", async function (assert) {
+	QUnit.test("Recursive Hierarchy: $$aggregation.search", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <t:Table id="table" rows="{path : '/EMPLOYEES',

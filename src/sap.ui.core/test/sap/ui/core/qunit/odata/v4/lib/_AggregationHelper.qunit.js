@@ -1986,27 +1986,32 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("isAffected", function (assert) {
-		var oAggregation = {
+		var oAggregation = { // Note: normalized by _AggregationHelper.buildApply before
 				aggregate : {
-					measure1 : {},
-					"complex1/measure2" : {},
-					alias : {name : "measure3"}
+					alias : {name : "measure1"},
+					"complexA/measure2" : {}, // be prepared for paths here!
+					measure3 : {unit : "unit"},
+					measure4 : {unit : "toParent/unit"}, // be prepared for paths here!
+					yetAnotherAlias : {name : "complexB/measure5"} // be prepared for paths here!
 				},
 				group : {
-					dimension1 : {}, // assuming a structured type with property1, property2
-					"complex2/dimension2" : {}
-				},
-				groupLevels : ["level1", "complex3/level2"]
+					"complexG/group1" : {}, // be prepared for paths here!
+					group2 : {additionally : ["a", "b/c"]}
+				}
 			};
 
-		// code under test
-		assert.notOk(_AggregationHelper.isAffected(oAggregation, [],
-			["foo", "bar", "meas", "dim", "lev"]));
+		assert.notOk( // code under test
+			_AggregationHelper.isAffected(oAggregation, [],
+				["alias", "group", "measure", "yetAnotherAlias"]));
 
 		[
-			"", "*", "measure1", "measure1/*", "measure3", "dimension1", "dimension1/property1",
-			"dimension1/*", "level1", "complex1", "complex1/*", "complex2", "complex2/*",
-			"complex3", "complex3/*"
+			"", "*",
+			"measure1", "complexA", "complexA/*", "complexA/measure2", "measure3", "measure4",
+			"complexB", "complexB/*", "complexB/measure5",
+			"unit", "toParent", "toParent/*", "toParent/unit",
+			"complexG", "complexG/*", "complexG/group1", "group2",
+			"a", "b", "b/c", "b/*",
+			"b/c/*", "b/c/d", "b/c/d/*" // assuming b/c is a complex property
 		].forEach(function (sSideEffectPath) {
 			// code under test
 			assert.ok(_AggregationHelper.isAffected(oAggregation, [], [sSideEffectPath]),
@@ -2034,6 +2039,11 @@ sap.ui.define([
 		], ["foo"]));
 
 		// code under test
+		assert.ok(_AggregationHelper.isAffected(oAggregation, [
+			new Filter("foo/bar", FilterOperator.EQ, null) // assuming foo/bar is a complex property
+		], ["foo/bar/baz"]));
+
+		// code under test
 		assert.notOk(_AggregationHelper.isAffected(oAggregation, [
 			new Filter("foobar", FilterOperator.EQ, "baz")
 		], ["foo"]));
@@ -2051,7 +2061,7 @@ sap.ui.define([
 
 		// code under test
 		assert.ok(_AggregationHelper.isAffected(oAggregation, [
-			new Filter({filters : [
+			new Filter({and : true, filters : [
 				new Filter("foo", FilterOperator.EQ, "baz"),
 				new Filter("bar", FilterOperator.EQ, "baz")
 			]})
