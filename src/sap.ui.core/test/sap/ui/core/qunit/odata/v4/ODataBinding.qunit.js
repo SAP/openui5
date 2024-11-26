@@ -3331,11 +3331,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("isTransient", function (assert) {
-		assert.notOk(new ODataBinding().isTransient());
+		assert.strictEqual(new ODataBinding({
+			bRelative : true,
+			oContext : undefined
+		}).isTransient(), undefined);
 
-		assert.notOk(new ODataBinding({sReducedPath : "/Foo"}).isTransient());
+		assert.strictEqual(new ODataBinding({
+			bRelative : true,
+			oContext : {getPath : () => "/SalesOrderList('1')"}
+		}).isTransient(), false);
 
-		assert.ok(new ODataBinding({sReducedPath : "/Foo($uid=1"}).isTransient());
+		assert.strictEqual(new ODataBinding({
+			bRelative : true,
+			oContext : {getPath : () => "/SalesOrderList($uid=1)"}
+		}).isTransient(), true);
+
+		assert.strictEqual(new ODataBinding({
+			bRelative : false,
+			oContext : {getPath : mustBeMocked} // not called
+		}).isTransient(), false);
 	});
 
 	//*********************************************************************************************
