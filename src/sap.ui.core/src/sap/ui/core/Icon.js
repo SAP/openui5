@@ -340,6 +340,9 @@ sap.ui.define([
 			}
 
 			if (oEvent.which === KeyCodes.SPACE) {
+				if (this.hasListeners("press")) {
+					oEvent.preventDefault();
+				}
 				this._bPressedSpace = true;
 			}
 
