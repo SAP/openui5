@@ -219,6 +219,12 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				refreshKeepingTreeState : function (sComment) {
+					pressButton.call(this,
+						bTreeTable ? "sideEffectsRefreshTreeTable" : "sideEffectsRefresh", null,
+						`'Refresh (keeping tree state)'. ${sComment}`
+					);
+				},
 				toggleExpand : function (vRowIndexOrId, sComment) {
 					if (bTreeTable) {
 						const [bIsId, sIsIdText, fnMatch] = getIdOrRowDetails(vRowIndexOrId);
