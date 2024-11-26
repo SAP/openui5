@@ -342,6 +342,13 @@ sap.ui.define([
 					]
 				}
 			},
+			"util/SorterHelper": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/SorterHelper"
+					]
+				}
+			},
 			"util/ContentFactory": {},
 			"util/ManifestResolver": {},
 			"util/SkeletonCard": {},

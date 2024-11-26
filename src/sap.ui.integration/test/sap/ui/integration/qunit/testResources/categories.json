@@ -2,21 +2,25 @@
 	{
 		"title": "Flat Screen Monitors",
 		"key": "FSM",
-		"additionalText": "FSM"
+		"additionalText": "FSM",
+		"group": "Group 1"
 	},
 	{
 		"title": "Graphic Cards",
 		"key": "GC",
-		"additionalText": "GC"
+		"additionalText": "GC",
+		"group": "Group 1"
 	},
 	{
 		"title": "Mouses and Keyboards",
 		"key": "MK",
-		"additionalText": "MK"
+		"additionalText": "MK",
+		"group": "Group 2"
 	},
 	{
 		"title": "Motherboards",
 		"key": "MB",
-		"additionalText": "MB"
+		"additionalText": "MB",
+		"group": "Group 2"
 	}
 ]
