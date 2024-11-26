@@ -283,7 +283,7 @@ sap.ui.define([
 		}) || "";
 	}
 
-	function reportInvalidProperty(sMessage, oAdditionalInfo) {
+	function reportInvalidProperty(sMessage, oProperty) {
 		const mLoadedLibraries = Lib.all();
 
 		// Enable strict validation if
@@ -300,7 +300,7 @@ sap.ui.define([
 			) ||
 			(new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
 		) {
-			throwInvalidPropertyError(sMessage, oAdditionalInfo);
+			throwInvalidPropertyError(sMessage, oProperty);
 		}
 
 		// TODO: warning is logged momentarily so that consumers can adapt to have valid property definitions
@@ -309,12 +309,12 @@ sap.ui.define([
 			return; // Avoid stringification overhead if logging is not required.
 		}
 
-		const sAdditionalInfo = stringifyPlainObject(oAdditionalInfo);
+		const sAdditionalInfo = stringifyPlainObject(oProperty);
 		Log.warning("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
 
-	function throwInvalidPropertyError(sMessage, oAdditionalInfo) {
-		const sAdditionalInfo = oAdditionalInfo ? stringifyPlainObject(oAdditionalInfo) : null;
+	function throwInvalidPropertyError(sMessage, oProperty) {
+		const sAdditionalInfo = oProperty ? stringifyPlainObject(oProperty) : null;
 		throw new Error("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
 
@@ -979,6 +979,11 @@ sap.ui.define([
 		const mPrivate = _private.get(this);
 		return mPrivate ? merge({}, mPrivate.mAttributeMetadata) : null;
 	};
+
+	Object.defineProperties(PropertyHelper, {
+		reportInvalidProperty: {value: reportInvalidProperty},
+		throwInvalidPropertyError: {value: throwInvalidPropertyError}
+	});
 
 	return PropertyHelper;
 });

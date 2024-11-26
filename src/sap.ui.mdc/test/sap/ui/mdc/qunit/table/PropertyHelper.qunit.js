@@ -27,9 +27,9 @@ sap.ui.define([
 				dataType: "String",
 				aggregatable: true
 			}]).destroy();
-		}, function(oError) {
-			return oError instanceof Error;
-		},  "Error thrown");
+		}, new Error("Invalid property definition: Property contains invalid attribute 'aggregatable'."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","aggregatable":true}'
+		));
 	});
 
 	QUnit.test("Simple property with both 'text' and 'unit'", function(assert) {
@@ -49,7 +49,9 @@ sap.ui.define([
 				label: "Unit Property",
 				dataType: "String"
 			}]).destroy();
-		}, new Error("Invalid property definition: A property must not have both a text and a unit."));
+		}, new Error("Invalid property definition: A property must not have both a text and a unit."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","text":"textProp","unit":"unitProp"}'
+		));
 	});
 
 	QUnit.test("Complex property with attribute 'groupable'", function(assert) {
@@ -64,9 +66,9 @@ sap.ui.define([
 				propertyInfos: ["prop"],
 				groupable: true
 			}]).destroy();
-		}, function(oError) {
-			return oError instanceof Error;
-		},  "Error thrown");
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'groupable'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"groupable":true}'
+		));
 	});
 
 	QUnit.test("Complex property with attribute 'isKey'", function(assert) {
@@ -81,9 +83,9 @@ sap.ui.define([
 				propertyInfos: ["prop"],
 				isKey: true
 			}]).destroy();
-		}, function(oError) {
-			return oError instanceof Error;
-		},  "Error thrown");
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'isKey'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"isKey":true}'
+		));
 	});
 
 	QUnit.test("Complex property with attribute 'unit'", function(assert) {
@@ -98,9 +100,9 @@ sap.ui.define([
 				propertyInfos: ["prop"],
 				unit: "prop"
 			}]).destroy();
-		}, function(oError) {
-			return oError instanceof Error;
-		},  "Error thrown");
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'unit'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"unit":"prop"}'
+		));
 	});
 
 	QUnit.test("Complex property with attribute 'text'", function(assert) {
@@ -115,9 +117,9 @@ sap.ui.define([
 				propertyInfos: ["prop"],
 				text: "prop"
 			}]).destroy();
-        }, function(oError) {
-            return oError instanceof Error;
-        },  "Error thrown");
+        }, new Error("Invalid property definition: Complex property contains invalid attribute 'text'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"text":"prop"}'
+		));
 	});
 
 	QUnit.module("Defaults", {
@@ -647,9 +649,9 @@ sap.ui.define([
 				dataType: "String",
 				extension: {}
 			}]).destroy();
-        }, function(oError) {
-            return oError instanceof Error;
-        },  "Error thrown");
+        }, new Error("Invalid property definition: Property contains invalid attribute 'extension'."
+			+ '\n{"key":"foo","label":"bar","dataType":"String","extension":{}}'
+		));
 	});
 
 	QUnit.test("Set 'extension' attribute", function(assert) {
@@ -739,10 +741,9 @@ sap.ui.define([
 				allowedInComplex: {type: "string", inComplexProperty: {allowed: true}},
 				notAllowedInComplex: {type: "string", inComplexProperty: {valueIfNotAllowed: "not allowed"}}
 			}).destroy();
-        }, function(oError) {
-            return oError instanceof Error;
-        },  "Error thrown if a complex property contains an extension attribute that is not allowed.");
-
+        }, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.notAllowedInComplex'."
+			+ '\n{"key":"complexFoo","label":"Complex Foo","propertyInfos":["foo"],"extension":{"notAllowedInComplex":"allowed?"}}'
+		));
 	});
 
 	QUnit.module("Computed attributes", {
