@@ -76171,6 +76171,10 @@ make root = ${bMakeRoot}`;
 	// ignored. This behavior applies for a full refresh (new cache) as well as for a cache reset.
 	// The reset is made by setting any entity as kept-alive before refreshing the binding.
 	// JIRA: CPOUI5ODATAV4-2692
+	//
+	// When using getDownloadUrl, the result URL does not exclude the $expand for the separate
+	// property.
+	// JIRA: CPOUI5ODATAV4-2694
 [false, true].forEach(function (bReset) {
 	QUnit.test(`$$separate: refresh ${bReset ? "w/" : "w/o"} reset`, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -76291,6 +76295,11 @@ make root = ${bMakeRoot}`;
 		fnResolveBestFriend();
 
 		await this.waitForChanges(assert, "resolve old separate request, ignore response");
+
+		// code under test
+		assert.strictEqual(oBinding.getDownloadUrl(),
+			"/special/cases/Artists?$select=ArtistID,IsActiveEntity,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)");
 	});
 });
 
