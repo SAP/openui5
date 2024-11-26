@@ -72,6 +72,66 @@ sap.ui.define([
 		}
 	};
 
+	const oBiteManifestWithUrlAndPaginator = {
+		"sap.app": {
+			"id": "card.explorer.sample.biteToSnackUrlManifestPaginator.bite",
+			"type": "card"
+		},
+		"sap.ui": {
+			"technology": "UI5",
+			"icons": {
+				"icon": "sap-icon://switch-classes"
+			}
+		},
+		"sap.card": {
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"test": {
+						"value": "test"
+					}
+				}
+			},
+			"data": {
+				"json": {
+					"info": {
+						"firstName": "Donna",
+						"email": "mail@mycompany.com"
+					}
+				}
+			},
+			"header": {
+				"title": "Some Title"
+			},
+			"content": {
+				"item": {
+					"title": "Lorem ipsum dolor sit."
+				}
+			},
+			"footer": {
+				"paginator": {
+					"pageSize": 5
+				},
+				"actionsStrip": [{
+					"text": "Review",
+					"actions": [{
+						"type": "ShowCard",
+						"parameters": {
+							"width": "420px",
+							"data": {
+								"personalInfoData": "{/info}"
+							},
+							"parameters": {
+								"test": "{parameters>/test/value}"
+							},
+							"manifest": "./snackManifest.json"
+						}
+					}]
+				}]
+			}
+		}
+	};
+
 	QUnit.module("Show/Hide Card Actions", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -119,6 +179,49 @@ sap.ui.define([
 		assert.strictEqual(oSnackCard.getCombinedParameters().test, this.oCard.getCombinedParameters().test, "Parameters are transferred between cards");
 		assert.strictEqual(oSnackCard.getWidth(), "100%", "The width of the child card is the default width of 100%");
 		assert.strictEqual(oDialog.getContentWidth(), "420px", "The width is applied to the dialog content");
+		assert.strictEqual(oSnackCard.getCardHeader().getTitle(), "Donna", "Data is transferred between cards properly");
+		assert.strictEqual(oSnackCard.getCardHeader().getProperty("headingLevel"), "1", "When card is in a dialog aria-level should be set to 1");
+
+		const oSnackCardActionStrip = oSnackCard.getAggregation("_footer").getActionsStrip(),
+			aSnackCardButtons = oSnackCardActionStrip._getToolbar().getContent();
+
+		// Act
+		aSnackCardButtons[1].firePress();
+
+		oDialog.attachAfterClose(() => {
+			// Assert
+			assert.ok(oSnackCard.isDestroyed(), "Child card is not destroyed, 'hideCard' action is working");
+			done();
+		});
+	});
+
+	QUnit.test("Open and close details card with paginator", async function (assert) {
+		// Arrange
+		const done = assert.async();
+
+		this.oCard.setManifest(oBiteManifestWithUrlAndPaginator);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip();
+		const aButtons = oActionsStrip._getToolbar().getContent();
+		let oDialog = this.oCard.getDependents()[0];
+
+		// Act
+		aButtons[1].firePress();
+		oDialog = this.oCard.getDependents()[0];
+
+		const oSnackCard = oDialog.getContent()[0];
+
+		await Promise.all([
+			nextCardReadyEvent(oSnackCard),
+			new Promise((resolve) => { oDialog.attachAfterOpen(resolve); })
+		]);
+		await nextUIUpdate();
+
+		//Assert
+		assert.strictEqual(oSnackCard.getCombinedParameters().test, this.oCard.getCombinedParameters().test, "Parameters are transferred between cards");
 		assert.strictEqual(oSnackCard.getCardHeader().getTitle(), "Donna", "Data is transferred between cards properly");
 		assert.strictEqual(oSnackCard.getCardHeader().getProperty("headingLevel"), "1", "When card is in a dialog aria-level should be set to 1");
 

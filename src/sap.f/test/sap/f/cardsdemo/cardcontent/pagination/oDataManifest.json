@@ -70,6 +70,24 @@
 			},
 			"actionsStrip": [
 				{
+					"text": "Show Details",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./detailsManifest.json",
+								"parameters": {
+									"orderId": "{parameters>/orderId/value}"
+								},
+								"data": {
+									"orderData": "{/value/0}"
+								}
+							}
+						}
+					]
+				},
+				{
 					"text": "Bound False",
 					"actions": [
 						{
