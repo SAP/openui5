@@ -56,6 +56,20 @@ sap.ui.define([
 		}
 	}
 
+	function checkPseudoAppVariant(oAppComponent) {
+		// pseudo app variants are not supported
+		const oComponentData = oAppComponent.getComponentData?.();
+		if (oComponentData?.startupParameters && Array.isArray(oComponentData.startupParameters["sap-app-id"])) {
+			const oManifest = oAppComponent.getManifest();
+			const sACHComponent = oManifest["sap.app"]?.ach;
+			const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+			const sErrorMessage = oRtaResourceBundle.getText("MSG_PSEUDO_APP_VARIANT_ERROR_MESSAGE", [sACHComponent]);
+			const oError = Error(sErrorMessage);
+			oError.reason = "pseudoAppVariant";
+			throw oError;
+		}
+	}
+
 	/**
 	 * Starter util for UI adaptation.
 	 * With this API you are also able to modify the UI adaptation plugins list and or add some event handler functions
@@ -87,6 +101,7 @@ sap.ui.define([
 		.then(function() {
 			return checkFlexEnabled(mOptions.rootControl);
 		})
+		.then(checkPseudoAppVariant.bind(undefined, mOptions.rootControl))
 		.then(function() {
 			oRta = new RuntimeAuthoring(mOptions);
 
@@ -151,7 +166,7 @@ sap.ui.define([
 				&& !(FlexUtils.getUshellContainer() && vError.reason === "flexEnabled") // FLP Plugin already handles this error
 			) {
 				var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
-				if (vError.reason === "isKeyUser") {
+				if (vError.reason === "isKeyUser" || vError.reason === "pseudoAppVariant") {
 					showMessageBox(
 						vError.message,
 						{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
