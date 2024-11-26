@@ -18,8 +18,8 @@
 					</layoutData>
 				</Button>
 				<Image height="1.5rem"
-					   class="sapUiSmallMarginBegin"
-					   src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" />
+					class="sapUiSmallMarginBegin"
+					src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" />
 				<Title level="H1" text="Product Name" wrapping="false" id="productName">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="Disappear"/>
@@ -31,16 +31,11 @@
 					</layoutData>
 				</Text>
 				<ToolbarSpacer />
-				<SearchField width="16rem" id="searchField">
+				<SearchField width="25rem" id="searchField">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="Low" group="1"/>
 					</layoutData>
 				</SearchField>
-				<ToolbarSpacer id="spacer">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="Low" group="1"/>
-					</layoutData>
-				</ToolbarSpacer>
 				<Button visible="false" icon="sap-icon://search" type="Transparent" id="searchButton" tooltip="Search"/>
 				<OverflowToolbarButton icon="sap-icon://source-code" type="Transparent" tooltip="Action 1" text="Action 1">
 					<layoutData>

@@ -11,7 +11,7 @@
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>
 			</Button>
-			<Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed" tooltip="SAP Logo">
+			<Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed" tooltip="SAP Logo" width="60px" height="30px">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>
@@ -27,17 +27,17 @@
 				</layoutData>
 			</Text>
 			<ToolbarSpacer />
-			<SearchField width="16rem" id="searchField">
+			<SearchField width="25rem" id="searchField">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="Low" group="1"/>
 				</layoutData>
 			</SearchField>
-			<ToolbarSpacer id="spacer">
-				<layoutData>
-					<OverflowToolbarLayoutData priority="Low" group="1"/>
-				</layoutData>
-			</ToolbarSpacer>
 			<Button visible="false" icon="sap-icon://search" type="Transparent" id="searchButton" tooltip="Search"/>
+			<OverflowToolbarButton icon="sap-icon://da" type="Transparent" tooltip="Joule" text="Joule">
+				<layoutData>
+					<OverflowToolbarLayoutData group="2"/>
+				</layoutData>
+			</OverflowToolbarButton>
 			<OverflowToolbarButton icon="sap-icon://source-code" type="Transparent" tooltip="Action 1" text="Action 1">
 				<layoutData>
 					<OverflowToolbarLayoutData group="2"/>
@@ -48,11 +48,6 @@
 					<OverflowToolbarLayoutData group="2"/>
 				</layoutData>
 			</OverflowToolbarButton>
-			<ToolbarSeparator>
-				<layoutData>
-					<OverflowToolbarLayoutData group="2"/>
-				</layoutData>
-			</ToolbarSeparator>
 			<OverflowToolbarButton icon="sap-icon://action-settings" type="Transparent" text="Settings"/>
 			<Button icon="sap-icon://bell" type="Transparent" tooltip="Notification">
 				<layoutData>
@@ -60,7 +55,7 @@
 				</layoutData>
 			</Button>
 			<tnt:ToolHeaderUtilitySeparator/>
-			<ToolbarSpacer width="1.125rem"/>
+			<OverflowToolbarButton icon="sap-icon://grid" type="Transparent" text="My Products" tooltip="My Products"/>
 			<Avatar src="test-resources/sap/tnt/images/Woman_avatar_01.png" displaySize="XS" press=".onAvatarPressed" tooltip="Profile">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
@@ -69,7 +64,7 @@
 		</tnt:ToolHeader>
 
 		<tnt:ToolHeader id="shellLikeToolHeaderOnlyMandatoryControls" class="sapUiTinyMargin sapUiLargeMarginTop">
-			<Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed" tooltip="SAP Logo">
+			<Image src="test-resources/sap/tnt/images/SAP_Logo.png" decorative="false" press="onLogoPressed" tooltip="SAP Logo" width="60px" height="30px">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>
