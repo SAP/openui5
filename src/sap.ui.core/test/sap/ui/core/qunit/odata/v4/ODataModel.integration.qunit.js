@@ -384,29 +384,35 @@ sap.ui.define([
 	 * @param {string} sTitle - A test title
 	 * @param {object} assert - The QUnit assert object
 	 * @param {sap.m.Table|sap.ui.table.Table} oTable - A table
-	 * @param {string[]|sap.ui.model.odata.v4.Context} aExpectedPaths
-	 *   List of all expected (normalized) current context paths or the corresponding context
+	 * @param {string[]|sap.ui.model.odata.v4.Context[]|undefined} aExpectedPaths
+	 *   List of all expected (normalized) current context paths or the corresponding contexts;
+	 *   <code>undefined</code> means to ignore the list binding
 	 * @param {any[][]} [aExpectedContent] - "Table" of expected cell contents
 	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
+	 * @throws {Error} If <code>iExpectedLength</code> is given but not <code>aExpectedPaths</code>
 	 */
 	// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
 	function checkTable(sTitle, assert, oTable, aExpectedPaths, aExpectedContent, iExpectedLength) {
 		var oListBinding = oTable.getBinding("items") || oTable.getBinding("rows"),
 			aRows = oTable.getItems ? oTable.getItems() : oTable.getRows();
 
-		assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
-		assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
-			sTitle);
-		const aAllExistingContexts = oListBinding._getAllExistingContexts();
-		aExpectedPaths.forEach((vExpectedPath, i) => {
-			if (typeof vExpectedPath !== "string") {
-				if (vExpectedPath !== aAllExistingContexts[i]) {
-					assert.ok(false, `${sTitle}: Context not same @${i}: ${vExpectedPath}`);
+		if (aExpectedPaths) {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
+				sTitle);
+			const aAllExistingContexts = oListBinding._getAllExistingContexts();
+			aExpectedPaths.forEach((vExpectedPath, i) => {
+				if (typeof vExpectedPath !== "string") {
+					if (vExpectedPath !== aAllExistingContexts[i]) {
+						assert.ok(false, `${sTitle}: Context not same @${i}: ${vExpectedPath}`);
+					}
+					aExpectedPaths[i] = vExpectedPath.getPath();
 				}
-				aExpectedPaths[i] = vExpectedPath.getPath();
-			}
-		});
-		assert.deepEqual(aAllExistingContexts.map(getNormalizedPath), aExpectedPaths);
+			});
+			assert.deepEqual(aAllExistingContexts.map(getNormalizedPath), aExpectedPaths);
+		} else if (arguments.length > 5) {
+			throw new Error("Unexpected iExpectedLength");
+		}
 
 		if (aExpectedContent) {
 			aExpectedContent = aExpectedContent.map(function (aTexts) {
@@ -586,6 +592,15 @@ sap.ui.define([
 		} else {
 			oContext.setSelected(bSelected);
 		}
+	}
+
+	/**
+	 * Simulates a rerendering of the given list binding by firing a change event.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - A list binding
+	 */
+	function simulateRerendering(oListBinding) {
+		oListBinding._fireChange({reason : ChangeReason.Change});
 	}
 
 	/**
@@ -30873,6 +30888,68 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A filter is set for a list binding, the request is delayed, and in the meantime
+	// #getAllCurrentContexts is called. See that the table still displays data because the contexts
+	// of the list binding are not destroyed.
+	// SNOW: DINC0312580
+	QUnit.test("DINC0312580: #getAllCurrentContexts does not destroy", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/EMPLOYEES}">
+	<Text text="{ID}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$select=ID&$skip=0&$top=100", {
+				value : [{
+					ID : "2"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("after createView", assert, oTable, [
+			"/EMPLOYEES('2')"
+		], [
+			["2"]
+		]);
+
+		let fnResolve;
+		this.expectRequest("EMPLOYEES?$select=ID&$filter=ID eq '3'&$skip=0&$top=100",
+				new Promise(function (resolve) {
+					fnResolve = resolve.bind(null, {
+						value : [{
+							ID : "3"
+						}]
+					});
+				})
+			);
+
+		const oBinding = oTable.getBinding("items");
+		oBinding.filter(new Filter("ID", FilterOperator.EQ, "3"));
+
+		await this.waitForChanges(assert);
+
+		// code under test
+		assert.deepEqual(oBinding.getAllCurrentContexts(), []); // no contexts while filtering
+
+		// list binding not relevant here
+		checkTable("after getAllCurrentContexts", assert, oTable, undefined, [
+			["2"]
+		]);
+
+		fnResolve();
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("after createView", assert, oTable, [
+			"/EMPLOYEES('3')"
+		], [
+			["3"]
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: "Select all" in a table runs into server-driven paging. No contexts must be
 	// created for placeholders.
 	// BCP: 2370039138
@@ -41742,12 +41819,14 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "request side effects for name")
 		]);
 
-		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
-		// Alpha will be destroyed because it is not visible anymore
-		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+		const oBinding = oTable.getBinding("rows");
+		assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('4')"
 		]);
+		// simulate rerendering after #requestSideEffects to ensure that Alpha will be destroyed
+		// because it is not visible anymore
+		simulateRerendering(oBinding);
 
 		checkTable("after requestSideEffects", assert, oTable, [
 			"/EMPLOYEES('3')",
@@ -41985,12 +42064,18 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "request side effects for name")
 		]);
 
-		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
-		// Eta will be destroyed because it is not visible anymore
-		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+		const oBinding = oTable.getBinding("rows");
+		assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 			"/EMPLOYEES('5')",
 			"/EMPLOYEES('6')"
 		]);
+
+		// simulate rerendering after #requestSideEffects to ensure that Alpha (Eta's parent) will
+		// be destroyed because it is not visible anymore
+		// simulateRerendering(oBinding); // TODO: table.Table does not react fast enough on event
+		oBinding.destroyPreviousContextsLater(Object.keys(oBinding.mPreviousContextsByPath));
+
+		await this.waitForChanges(assert, "prerendering task must be finished");
 
 		checkTable("after requestSideEffects", assert, oTable, [
 			"/EMPLOYEES('5')",
@@ -41999,6 +42084,7 @@ make root = ${bMakeRoot}`;
 			[undefined, 2, "5", "Zeta"],
 			[undefined, 2, "6", "Eta"]
 		], 7);
+		assert.strictEqual(oAlpha.getModel(), undefined, "Alpha was destroyed by side effect");
 
 		// code under test
 		assert.strictEqual(oEta.getParent(), undefined);
@@ -42021,7 +42107,6 @@ make root = ${bMakeRoot}`;
 		]);
 
 		assert.notStrictEqual(oResult, oAlpha, "Alpha was destroyed by side effect");
-		assert.strictEqual(oAlpha.getModel(), undefined, "Alpha was destroyed by side effect");
 		assert.strictEqual(oResult.getPath(), "/EMPLOYEES('0')");
 		assert.strictEqual(oResult.iIndex, 0);
 
@@ -43101,12 +43186,16 @@ make root = ${bMakeRoot}`;
 			[true, 2, "etag4.1", "4", "Epsilon #1", "4,false", "Epsilon's Friend"]
 		], 7);
 
-		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
-		// Beta will be destroyed because it is not visible anymore
-		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+		const oBinding = oTable.getBinding("rows");
+		assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 			sFriend + "(ArtistID='3',IsActiveEntity=false)",
 			sFriend + "(ArtistID='4',IsActiveEntity=false)"
 		]);
+		// simulate rerendering after #requestSideEffects to ensure that Beta will be destroyed
+		// because it is not visible anymore
+		simulateRerendering(oBinding);
+
+		await resolveLater(); // table update takes a moment
 
 		this.expectRequest(sBaseUrl + sSelect + sExpand + "&$skip=0&$top=2", {
 				value : [{
@@ -69189,7 +69278,7 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			if (bCancelCreation) { // creation already canceled
 				assert.notOk(oCreatedContext.isSelected(), "destroyed");
-				// binding is already destroyed
+				// context is already destroyed
 				// assert.notOk(oCreatedContext.getProperty("@$ui5.context.isSelected"));
 				assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
 
@@ -69217,7 +69306,6 @@ make root = ${bMakeRoot}`;
 				that.waitForChanges(assert, "removeCreated")
 			]);
 		}).then(function () {
-			// Note: this invokes ODLB#destroyPreviousContextsLater, thus we need to wait below
 			var aAllContexts = oBinding.getAllCurrentContexts();
 
 			assert.strictEqual(aAllContexts.length, 1);
@@ -69230,10 +69318,20 @@ make root = ${bMakeRoot}`;
 				Team_Id : "???"
 			});
 
-			return that.waitForChanges(assert, "ODLB#destroyPreviousContextsLater");
+			if (bSingle === false) { // TODO: requestRefresh failed to fire a change event
+				that.expectChange("id", ["???"])
+					.expectChange("memberCount", [null]);
+			}
+
+			simulateRerendering(oBinding);
+
+			return Promise.all([
+				resolveLater(), // table update takes a moment
+				that.waitForChanges(assert, "simulate rerendering")
+			]);
 		}).then(function () {
 			assert.notOk(oCreatedContext.isSelected(), "destroyed");
-			// binding is already destroyed
+			// context is already destroyed
 			// assert.notOk(oCreatedContext.getProperty("@$ui5.context.isSelected"));
 			assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
 		});
