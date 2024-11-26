@@ -56,6 +56,20 @@ sap.ui.define([
 		}
 	}
 
+	function checkPseudoAppVariant(oAppComponent) {
+		// pseudo app variants are not supported
+		const oComponentData = oAppComponent.getComponentData?.();
+		if (oComponentData?.startupParameters && Array.isArray(oComponentData.startupParameters["sap-app-id"])) {
+			const oManifest = oAppComponent.getManifest();
+			const sACHComponent = oManifest["sap.app"]?.ach;
+			const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+			const sErrorMessage = oRtaResourceBundle.getText("MSG_PSEUDO_APP_VARIANT_ERROR_MESSAGE", [sACHComponent]);
+			const oError = Error(sErrorMessage);
+			oError.reason = "pseudoAppVariant";
+			throw oError;
+		}
+	}
+
 	/**
 	 * Starter util for UI adaptation.
 	 * With this API you are also able to modify the UI adaptation plugins list and or add some event handler functions to be called on start, failed and stop events.
@@ -86,6 +100,7 @@ sap.ui.define([
 		.then(function() {
 			return checkFlexEnabled(mOptions.rootControl);
 		})
+		.then(checkPseudoAppVariant.bind(undefined, mOptions.rootControl))
 		.then(function() {
 			oRta = new RuntimeAuthoring(mOptions);
 
@@ -150,11 +165,19 @@ sap.ui.define([
 				&& !(FlexUtils.getUshellContainer() && vError.reason === "flexEnabled") // FLP Plugin already handles this error
 			) {
 				var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
-				showMessageBox(
-					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [vError.message]),
-					{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
-					"error"
-				);
+				if (vError.reason === "pseudoAppVariant") {
+					showMessageBox(
+						vError.message,
+						{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
+						"error"
+					);
+				} else {
+					showMessageBox(
+						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [vError.message]),
+						{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
+						"error"
+					);
+				}
 				Log.error("UI Adaptation could not be started", vError.message);
 			}
 			throw vError;
