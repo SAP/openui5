@@ -10,8 +10,14 @@ sap.ui.define([
 	/*global QUnit sinon */
 	"use strict";
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	var oURLConfigurationProviderStub;
 	QUnit.module("sap/ui/core/message/MessageManager", {
+		/**
+		 * @deprecated As of version 1.120
+		 */
 		beforeEach : function () {
 			// avoid attaching to validation events on UI5 core
 			oURLConfigurationProviderStub = sinon.stub(URLConfigurationProvider, "get");
@@ -19,7 +25,12 @@ sap.ui.define([
 				return sKey === "sapUiXxHandleValidation" ? false : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
 			});
 		},
-		afterEach: () => oURLConfigurationProviderStub.restore()
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		afterEach: () => {
+			oURLConfigurationProviderStub.restore();
+		}
 	});
 
 	var oProcessor = {getId : function () { return "id"; }, setMessages: function() {}},

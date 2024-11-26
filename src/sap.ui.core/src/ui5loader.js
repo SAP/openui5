@@ -2355,7 +2355,6 @@
 	 * @param {boolean} [bPreloadGroup=true] whether the name specifies a preload group, defaults to true
 	 * @param {boolean} [bUnloadAll] Whether all matching resources should be unloaded, even if they have been executed already.
 	 * @param {boolean} [bDeleteExports] Whether exports (global variables) should be destroyed as well. Will be done for UI5 module names only.
-	 * @experimental Since 1.16.3 API might change completely, apps must not develop against it.
 	 * @private
 	 */
 	function unloadResources(sName, bPreloadGroup, bUnloadAll, bDeleteExports) {
