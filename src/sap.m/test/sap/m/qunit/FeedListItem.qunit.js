@@ -1314,5 +1314,55 @@ sap.ui.define([
 		oFeedListItem = null;
 		oList = null;
 	});
+        QUnit.module("Rendering phone", {
+		beforeEach: async function() {
+				var oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
+				this.stub(Device, "system").value(oSystem);
+				jQuery("html").addClass("sap-phone");
+				this.oFeedListItemTemp = new sap.m.FeedListItem({
+					icon: "sap-icon://person-placeholder",
+					sender: "John Doe",
+					timestamp: "Just now"
+				});
+				this.oFeedListItemTemp.placeAt("qunit-fixture");
+				await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oFeedListItemTemp.destroy();
+		}
+	});
 
+	QUnit.test('Rendering of the time stamp', function(assert) {
+		this.applyTheme = function(sTheme, fnCallback) {
+			this.sRequiredTheme = sTheme;
+			if (Theming.getTheme() === this.sRequiredTheme) {
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
+				}
+			} else {
+				Theming.setTheme(sTheme);
+				Theming.attachApplied(fnThemeApplied.bind(this));
+			}
+
+			function fnThemeApplied(oEvent) {
+				Theming.detachApplied(fnThemeApplied);
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
+				}
+			}
+		};
+		var done = assert.async();
+		this.applyTheme("sap_horizon", async function() {
+			this.oFeedListItemTemp.invalidate();
+			await nextUIUpdate();
+			assert.ok(window.getComputedStyle(document.querySelector('.sapMFeedListItemTimestamp')).marginTop, '-4px', 'No trimming of timestamp');
+			done();
+		}.bind(this));
+	});
 });
