@@ -22,7 +22,10 @@ sap.ui.define([
 						return {
 							actions: {
 								remove: null,
-								reveal: null
+								reveal: null,
+								split: {
+									CAUTION_variantIndependent: true
+								}
 							}
 						};
 					}
@@ -42,7 +45,8 @@ sap.ui.define([
 											oControl.getDomRef().textContent = sNewText;
 										}
 									};
-								}
+								},
+								CAUTION_variantIndependent: true
 							},
 							remove: null,
 							reveal: null

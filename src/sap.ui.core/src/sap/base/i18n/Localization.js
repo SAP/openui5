@@ -696,7 +696,6 @@ sap.ui.define([
 		 * Might return undefined if the information is not available.
 		 *
 		 * @returns {string[]|undefined} List of Languages delivered with core
-		 * @experimental
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 * @since 1.120.0
@@ -707,7 +706,6 @@ sap.ui.define([
 
 		/**
 		 * @returns {string[]} List of supported languages
-		 * @experimental
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 * @since 1.120.0

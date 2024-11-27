@@ -1501,7 +1501,8 @@ sap.ui.define([
 			if (!mUnitPatterns && !oOptions.showNumber) {
 				return this._addOriginInfo(sMeasure);
 			}
-
+		}
+		if (oOptions.type === mNumberType.UNIT) {
 			// either take the decimals/precision on the custom units or fallback to the given format-options
 			oOptions.decimals = (mUnitPatterns && (typeof mUnitPatterns.decimals === "number" && mUnitPatterns.decimals >= 0)) ? mUnitPatterns.decimals : oOptions.decimals;
 			oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);

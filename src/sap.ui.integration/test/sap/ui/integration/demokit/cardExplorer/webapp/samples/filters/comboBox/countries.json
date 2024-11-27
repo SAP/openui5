@@ -1,114 +1,143 @@
+
 [
 	{
 		"text": "Austria",
-		"key": "AT"
+		"key": "AT",
+		"group": "A"
 	},
 	{
 		"text": "Belgium",
-		"key": "BE"
+		"key": "BE",
+		"group": "B"
 	},
 	{
 		"text": "Bulgaria",
-		"key": "BG"
+		"key": "BG",
+		"group": "B"
 	},
 	{
 		"text": "Croatia",
-		"key": "HR"
+		"key": "HR",
+		"group": "C"
 	},
 	{
 		"text": "Cyprus",
-		"key": "CY"
+		"key": "CY",
+		"group": "C"
 	},
 	{
 		"text": "Czech Republic",
-		"key": "CZ"
+		"key": "CZ",
+		"group": "C"
 	},
 	{
 		"text": "Denmark",
-		"key": "DK"
+		"key": "DK",
+		"group": "D"
 	},
 	{
 		"text": "Estonia",
-		"key": "EE"
+		"key": "EE",
+		"group": "E"
 	},
 	{
 		"text": "Finland",
-		"key": "FI"
+		"key": "FI",
+		"group": "F"
 	},
 	{
 		"text": "France",
-		"key": "FR"
+		"key": "FR",
+		"group": "F"
 	},
 	{
 		"text": "Germany",
-		"key": "DE"
+		"key": "DE",
+		"group": "G"
 	},
 	{
 		"text": "Greece",
-		"key": "GR"
+		"key": "GR",
+		"group": "G"
 	},
 	{
 		"text": "Hungary",
-		"key": "HU"
+		"key": "HU",
+		"group": "H"
 	},
 	{
 		"text": "Ireland",
-		"key": "IE"
+		"key": "IE",
+		"group": "I"
 	},
 	{
 		"text": "Italy",
-		"key": "IT"
+		"key": "IT",
+		"group": "I"
 	},
 	{
 		"text": "Latvia",
-		"key": "LV"
+		"key": "LV",
+		"group": "L"
 	},
 	{
 		"text": "Lithuania",
-		"key": "LT"
+		"key": "LT",
+		"group": "L"
 	},
 	{
 		"text": "Luxembourg",
-		"key": "LU"
+		"key": "LU",
+		"group": "L"
 	},
 	{
 		"text": "Malta",
-		"key": "MT"
+		"key": "MT",
+		"group": "M"
 	},
 	{
 		"text": "Netherlands",
-		"key": "NL"
+		"key": "NL",
+		"group": "N"
 	},
 	{
 		"text": "Poland",
-		"key": "PL"
+		"key": "PL",
+		"group": "P"
 	},
 	{
 		"text": "Portugal",
-		"key": "PT"
+		"key": "PT",
+		"group": "P"
 	},
 	{
 		"text": "Romania",
-		"key": "RO"
+		"key": "RO",
+		"group": "R"
 	},
 	{
 		"text": "Slovakia",
-		"key": "SK"
+		"key": "SK",
+		"group": "S"
 	},
 	{
 		"text": "Slovenia",
-		"key": "SI"
+		"key": "SI",
+		"group": "S"
 	},
 	{
 		"text": "Spain",
-		"key": "ES"
+		"key": "ES",
+		"group": "S"
 	},
 	{
 		"text": "Sweden",
-		"key": "SE"
+		"key": "SE",
+		"group": "S"
 	},
 	{
 		"text": "United Kingdom",
-		"key": "GB"
+		"key": "GB",
+		"group": "U"
 	}
 ]

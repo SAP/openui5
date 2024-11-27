@@ -86,7 +86,6 @@ SearchFieldRenderer.render = function(rm, oSF){
 
 		rm.openStart("span", sId + "-staticSearchIcon");
 		rm.attr("aria-hidden", true);
-		rm.class('sapMSFSSI'); // static search icon (needed for the Search Field in the Tool Header)
 		rm.openEnd().close("span");
 
 		rm.voidStart('input', sId + "-I")

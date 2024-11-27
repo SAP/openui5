@@ -86,6 +86,10 @@ sap.ui.define([
 			"valueHelp.CollectiveSearchSelect": {
 				group: "FilterBar",
 				module: "./vh/CollectiveSearchSelect.qunit"
+			},
+			"PropertyInfoValidator": {
+				group: "Util",
+				module: "./PropertyInfoValidator.qunit"
 			}
 		}
 	};

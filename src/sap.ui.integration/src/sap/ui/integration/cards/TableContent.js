@@ -20,7 +20,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/util/SorterHelper"
+
 ], function (
 	BaseListContent,
 	TableContentRenderer,
@@ -39,7 +41,8 @@ sap.ui.define([
 	mobileLibrary,
 	BindingResolver,
 	BindingHelper,
-	Log
+	Log,
+	SorterHelper
 ) {
 	"use strict";
 
@@ -310,7 +313,7 @@ sap.ui.define([
 		var oGroup = this.getParsedConfiguration().group;
 
 		if (oGroup) {
-			this._oSorter = this._getGroupSorter(oGroup);
+			this._oSorter = SorterHelper.getGroupSorter(oGroup);
 		}
 
 		var oBindingInfo = {

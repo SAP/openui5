@@ -50,7 +50,7 @@ sap.ui.define([
 		}
 
 		if (aFilteredConnectors.length > 1) {
-			throw new Error(`sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple `
+			throw new Error("sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple "
 				+ `Connector configurations were found to write into layer: ${sLayer}`);
 		}
 		return undefined;

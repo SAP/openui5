@@ -47,6 +47,31 @@ sap.ui.define([
 		return pCreatePropertyInfos;
 	};
 
+	ChartDelegate.fetchConfigurationForVizchart = function(oChart, sPropertyInfoKey, sPropertyName) {
+		if (!sPropertyInfoKey || !sPropertyName) {
+			return null;
+		}
+
+		const oDelegatePayload = oChart?.getDelegate().payload;
+		const aConfigurationForVizchartFromPayload = oDelegatePayload?.configurationForVizchart;
+		if (aConfigurationForVizchartFromPayload) {
+			const aConfiguration = aConfigurationForVizchartFromPayload.filter((oConfig) => { return oConfig.key === sPropertyInfoKey; });
+			const sResult = aConfiguration && aConfiguration[0] && aConfiguration[0][sPropertyName];
+			if (sResult) {
+				return sResult;
+			}
+		}
+
+		const oState = this._getState(oChart);
+		const aConfigurationForVizchart = oState.configForVizchart;
+		if (aConfigurationForVizchart) {
+			const aConfiguration = aConfigurationForVizchart.filter((oConfig) => { return oConfig.key === sPropertyInfoKey; });
+			return aConfiguration && aConfiguration[0][sPropertyName];
+		}
+
+		return null;
+	};
+
 	function onModelContextChange(oEvent, oData) {
 		var oChart = oEvent.getSource();
 		var oModel = this._getModel(oChart);
@@ -58,22 +83,32 @@ sap.ui.define([
 	}
 
 	ChartDelegate._createPropertyInfos = function (oChart, oModel) {
-		var oDelegatePayload = oChart.getDelegate().payload;
-		var aProperties = [];
-		var sEntitySetPath = "/" + oDelegatePayload.collectionName;
-		var oMetaModel = oModel.getMetaModel();
+		const oDelegatePayload = oChart.getDelegate().payload;
+		let aProperties = [];
+		const sEntitySetPath = "/" + oDelegatePayload.collectionName;
+		const oMetaModel = oModel.getMetaModel();
 
 		return Promise.all([
 			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
 		]).then(function (aResults) {
-			var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
-			var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
-			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
-			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
-			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
+			const oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
+			const oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
+			const oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
+			const oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
+			const oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
-			for (var sKey in oEntityType) {
-				var oObj = oEntityType[sKey];
+			let oState = this._getState(oChart);
+			if (!oState) {
+				oState = {};
+			}
+			const aConfigurationForVizchart = oState.configForVizchart;
+			if (!aConfigurationForVizchart || aConfigurationForVizchart.length === 0) {
+				oState.configForVizchart = [];
+				this._setState(oChart, oState);
+			}
+
+			for (const sKey in oEntityType) {
+				const oObj = oEntityType[sKey];
 
 				if (oObj && oObj.$kind === "Property") {
 					// ignore (as for now) all complex properties
@@ -85,7 +120,7 @@ sap.ui.define([
 						continue;
 					}
 
-					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
+					const oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 
 					//TODO: Check what we want to do with properties neither aggregatable nor groupable
 					//Right now: skip them, since we can't create a chart from it
@@ -94,7 +129,7 @@ sap.ui.define([
 					}
 
 					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]){
-						aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
+						aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(oChart, sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
 					}
 
 					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
@@ -110,9 +145,18 @@ sap.ui.define([
 							dataType: oObj.$Type,
 							//formatOptions: null,
 							//constraints: {},
-							role: ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
-							criticality: null ,//To be implemented by FE
-							textProperty: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null //To be implemented by FE
+							role: ChartItemRoleType.category //standard, normally this should be interpreted from UI.Chart annotation
+						});
+
+						const oState = this._getState(oChart);
+						const aConfigurationForVizchart = oState.configForVizchart;
+
+						aConfigurationForVizchart.push({
+							key: sKey,
+							aggregationMethod : null,
+							criticality: null,
+							textProperty: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"]?.$Path || null, //To be implemented by FE
+							textFormatter: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement"] || null
 						});
 
 					}
@@ -123,7 +167,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	ChartDelegate._createPropertyInfosForAggregatable = function(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo) {
+	ChartDelegate._createPropertyInfosForAggregatable = function(oChart, sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo) {
 		var aProperties = [];
 
 		if (oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"]){
@@ -139,15 +183,22 @@ sap.ui.define([
 					filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
 					groupable: false,
 					aggregatable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"],
-					aggregationMethod: sAggregationMethod,
 					path: sKey,
 					maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 					dataType: oObj.$Type,
-					datapoint: null, //To be implemented by FE
-					unitPath: (sAggregationMethod + sKey) === "minprice" ? "currency_code" : "",
 					role: (sAggregationMethod + sKey) === "averageprice" ? "axis2" : "axis1"
 				});
-			});
+
+				const oState = this._getState(oChart);
+				const aConfigurationForVizchart = oState.configForVizchart;
+				aConfigurationForVizchart.push({
+					key: sAggregationMethod + sKey,
+					aggregationMethod : sAggregationMethod,
+					datapoint: null, //To be implemented by FE
+					unitPath: (sAggregationMethod + sKey) === "minprice" ? "currency_code" : ""
+				});
+
+			}.bind(this));
 		}
 
 		return aProperties;

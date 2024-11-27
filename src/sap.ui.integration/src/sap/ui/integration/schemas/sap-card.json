@@ -3597,6 +3597,9 @@
             }
           }
         },
+        "group": {
+            "$ref": "#/$defs/group"
+        },
         "visible": {
           "description": "Determines whether the filter is visible",
           "$ref": "#/$defs/visibility"

@@ -139,7 +139,6 @@ sap.ui.define([
 	/**
 	 * Stereotype of the described class.
 	 *
-	 * @experimental might be enhanced to a set of stereotypes
 	 * @private
 	 * @ui5-restricted
 	 */

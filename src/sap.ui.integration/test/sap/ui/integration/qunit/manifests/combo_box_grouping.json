@@ -1,0 +1,65 @@
+{
+	"sap.app": {
+		"id": "card.explorer.dataSources.categories",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"filterVisibility": {
+					"value": false,
+					"type": "boolean"
+				}
+			},
+			"filters": {
+				"category": {
+					"data": {
+						"request": {
+							"url": "categories.json"
+						},
+						"path": "/"
+					},
+					"selectedKey": "FSM",
+					"type": "ComboBox",
+					"label": "Category",
+					"placeholder": "Test Placeholder",
+					"item": {
+						"path": "/",
+						"template": {
+							"key": "{key}",
+							"title": "{title}",
+							"additionalText": "{additionalText}"
+						}
+					},
+					"group": {
+						"title": "{group}",
+						"order": {
+							"path": "group",
+							"dir": "ASC"
+						}
+					}
+				}
+			}
+		},
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "categories.json"
+			},
+			"path": "/"
+		},
+		"header": {
+			"title": "{filters>/category/selectedItem/title}",
+			"subTitle": "{filters>/category/selectedItem/additionalText}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{filters>/category/selectedItem/key}",
+				"description": "{filters>/category/value}"
+			}
+		}
+	}
+}

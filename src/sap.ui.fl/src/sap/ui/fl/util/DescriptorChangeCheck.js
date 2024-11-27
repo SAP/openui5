@@ -74,7 +74,7 @@ sap.ui.define([
 		if (aObjectKeys.length > 1) {
 			if (sKey === "dataSource") {
 				if (aObjectKeys.length !== 2) {
-					throw new Error(`It is not allowed to add more than two data sources to manifest.`);
+					throw new Error("It is not allowed to add more than two data sources to manifest.");
 				}
 			} else {
 				throw new Error(`It is not allowed to add more than one ${sKey}: ${aObjectKeys.join(", ")}.`);
@@ -158,7 +158,7 @@ sap.ui.define([
 				}
 			}
 			if (oChangeEntity.hasOwnProperty("propertyValue")) {
-				throw new Error(`The property 'propertyValue' must not be provided in a 'DELETE' operation. Please remove 'propertyValue'.`);
+				throw new Error("The property 'propertyValue' must not be provided in a 'DELETE' operation. Please remove 'propertyValue'.");
 			}
 		}
 		if (sOpertationUpperCase !== "DELETE") {

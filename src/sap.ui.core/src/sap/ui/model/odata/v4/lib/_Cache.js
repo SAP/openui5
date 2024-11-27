@@ -760,9 +760,10 @@ sap.ui.define([
 			if (aSeparateRequestRanges) {
 				// separate properties always operate on entities of that.aElements
 				const iIndex = that.aElements.indexOf(oValue);
-				if (aSeparateRequestRanges.some(
-						(oRange) => iIndex >= oRange.start && iIndex < oRange.end)) {
-					return undefined; // separate property request still pending
+				const oRange = aSeparateRequestRanges.find(
+					(oRange0) => iIndex >= oRange0.start && iIndex < oRange0.end);
+				if (oRange) {
+					return oRange.promise; // separate property request still pending
 				}
 			}
 
@@ -1207,11 +1208,14 @@ sap.ui.define([
 	 *   The list's path relative to the cache; may be empty, but not <code>undefined</code>
 	 * @param {object} [mCustomQueryOptions]
 	 *   The custom query options, needed iff. a non-empty path is given
+	 * @param {object} [mAdditionalExpand]
+	 *   Additional query options to be added even for an empty path; should contain exactly one
+	 *   $expand
 	 * @returns {string} The download URL
 	 *
 	 * @public
 	 */
-	_Cache.prototype.getDownloadUrl = function (sPath, mCustomQueryOptions) {
+	_Cache.prototype.getDownloadUrl = function (sPath, mCustomQueryOptions, mAdditionalExpand) {
 		var mQueryOptions = this.mQueryOptions;
 
 		if (sPath) {
@@ -1220,11 +1224,15 @@ sap.ui.define([
 			// add the custom query options again
 			mQueryOptions = _Helper.merge({}, mCustomQueryOptions, mQueryOptions);
 		}
+
+		mQueryOptions = _Helper.merge({}, mQueryOptions, mAdditionalExpand);
+
 		return this.oRequestor.getServiceUrl()
 			+ _Helper.buildPath(this.sResourcePath, sPath)
 			+ this.oRequestor.buildQueryString(
 				_Helper.buildPath(this.sMetaPath, _Helper.getMetaPath(sPath)),
-				this.getDownloadQueryOptions(mQueryOptions), false, true);
+				this.getDownloadQueryOptions(mQueryOptions), false, /*bSortExpandSelect*/true,
+				/*bSortSystemQueryOptions*/!_Helper.isEmptyObject(mAdditionalExpand));
 	};
 
 	/**
@@ -3583,8 +3591,22 @@ sap.ui.define([
 		// types are needed for selecting the key properties, see #getQueryString called by
 		// #getResourcePathWithQuery
 		const mTypeForMetaPath = await this.fetchTypes();
-		const oReadRange = {start : iStart, end : iEnd};
 		this.aSeparateProperties.forEach(async (sProperty) => {
+			let fnResolve;
+			let fnReject;
+			const oReadRange = {
+				start : iStart,
+				end : iEnd,
+				promise : new SyncPromise(function (resolve, reject) {
+					fnResolve = resolve;
+					fnReject = function () {
+						const oError = new Error("$$separate: canceled " + sProperty);
+						oError.canceled = true;
+						reject(oError);
+					};
+				})
+			};
+			oReadRange.promise.catch(() => { /* avoid "Uncaught (in promise)" */ });
 			try {
 				this.mSeparateProperty2ReadRequest[sProperty].push(oReadRange);
 				const oResult = await this.oRequestor.request("GET",
@@ -3598,11 +3620,13 @@ sap.ui.define([
 
 				const iIndex = this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange);
 				if (iIndex < 0) { // stop import after #reset
+					fnReject();
 					return;
 				}
 
 				this.mSeparateProperty2ReadRequest[sProperty].splice(iIndex, 1);
 				if (bMainFailed) {
+					fnReject();
 					return;
 				}
 
@@ -3615,8 +3639,10 @@ sap.ui.define([
 							oSeparateData, [sProperty]);
 					}
 				}
+				fnResolve();
 				fnSeparateReceived(sProperty, iStart, iEnd);
 			} catch (oError) {
+				fnReject();
 				// do not clean up mSeparateProperty2ReadRequest to avoid late property requests
 				fnSeparateReceived(sProperty, iStart, iEnd, oError);
 			}

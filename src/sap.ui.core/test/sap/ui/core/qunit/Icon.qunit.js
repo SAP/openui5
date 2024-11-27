@@ -736,6 +736,40 @@ sap.ui.define([
 		oIcon.destroy();
 	});
 
+	QUnit.test("Pressing 'Space' key and preventDefault on keydown", async function(assert) {
+		// System under Test
+		const oIcon = new Icon().placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		const oPreventDefaultSpy = this.spy();
+
+		// Action
+		qutils.triggerEvent("keydown", oIcon.getDomRef(), {
+			key: " ",
+			which: KeyCodes.SPACE,
+			originalEvent: {
+				preventDefault: oPreventDefaultSpy
+			}
+		});
+		// Assert
+		assert.equal(oPreventDefaultSpy.callCount, 0, "preventDefault isn't called when no 'press' handler attached");
+
+		oIcon.attachPress(() => {});
+		// Action
+		qutils.triggerEvent("keydown", oIcon.getDomRef(), {
+			key: " ",
+			which: KeyCodes.SPACE,
+			originalEvent: {
+				preventDefault: oPreventDefaultSpy
+			}
+		});
+		// Assert
+		assert.equal(oPreventDefaultSpy.callCount, 1, "preventDefault is called not to trigger scrolling of the page");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
 	QUnit.test("Pressing 'Space' key should fire 'press' on keyup", async function(assert) {
 		// System under Test
 		const pressSpy = this.spy(),

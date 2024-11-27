@@ -1639,6 +1639,22 @@ sap.ui.define([
 										key: 'countries.json'
 									}
 								]
+							},
+							{
+								title: 'Grouping',
+								key: 'dynamicFilterGrouping',
+								files: [
+									{
+										url: '/samples/filters/comboBox/dynamicComboBoxFilterGrouping.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/filters/comboBox/countries.json',
+										name: 'countries.json',
+										key: 'countries.json'
+									}
+								]
 							}
 						]
 					},

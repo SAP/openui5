@@ -32,7 +32,7 @@ sap.ui.define([
 	const mPreloadedModules = {};
 
 	const sFragmentPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment.fragment.xml";
-	mPreloadedModules[sFragmentPath] = `<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"><Button xmlns="sap.m" id="button" text="Hello World"></Button></core:FragmentDefinition>`;
+	mPreloadedModules[sFragmentPath] = "<core:FragmentDefinition xmlns=\"sap.m\" xmlns:core=\"sap.ui.core\"><Button xmlns=\"sap.m\" id=\"button\" text=\"Hello World\"></Button></core:FragmentDefinition>";
 	const sFragmentInvalidTypePath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentInvalidType.fragment.xml";
 	mPreloadedModules[sFragmentInvalidTypePath] = '<ManagedObject xmlns="sap.ui.base" id="managedObject"></ManagedObject>';
 	const sFragmentMultiplePath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentMultiple.fragment.xml";
@@ -41,8 +41,8 @@ sap.ui.define([
 		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button3" text="Hello World"></Button>' +
 		"</core:FragmentDefinition>";
-	const sFragmentMultipleInvalidTypesPath = `sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentMultipleInvalidTypes.fragment.xml`;
-	mPreloadedModules[sFragmentMultipleInvalidTypesPath] = `<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:base="sap.ui.base">` +
+	const sFragmentMultipleInvalidTypesPath = "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/FragmentMultipleInvalidTypes.fragment.xml";
+	mPreloadedModules[sFragmentMultipleInvalidTypesPath] = "<core:FragmentDefinition xmlns=\"sap.m\" xmlns:core=\"sap.ui.core\" xmlns:base=\"sap.ui.base\">" +
 		'<Button xmlns="sap.m" id="button" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
 		'<base:ManagedObject id="managedObject"></base:ManagedObject>' +
@@ -293,16 +293,16 @@ sap.ui.define([
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 				this.oXmlString =
-					`<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">` +
+					"<mvc:View id=\"testComponentAsync---myView\" xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">" +
 						`<HBox id="${this.sHBoxId}">` +
-							`<tooltip>` +	// 0..1 aggregation
-								`<TooltipBase xmlns="sap.ui.core"></TooltipBase>` + // inline namespace as sap.ui.core is use case for not existing namespace
-							`</tooltip>` +
-							`<items>` +
-								`<Button id="button123"></Button>` + // content in default aggregation
-							`</items>` +
-						`</HBox>` +
-					`</mvc:View>`;
+							"<tooltip>" +	// 0..1 aggregation
+								"<TooltipBase xmlns=\"sap.ui.core\"></TooltipBase>" + // inline namespace as sap.ui.core is use case for not existing namespace
+							"</tooltip>" +
+							"<items>" +
+								"<Button id=\"button123\"></Button>" + // content in default aggregation
+							"</items>" +
+						"</HBox>" +
+					"</mvc:View>";
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 				[this.oHBox] = this.oXmlView.childNodes;
 				this.sAggregationType = "sap.ui.core.Control";

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/ComboBoxHelper",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/integration/util/SorterHelper"
 ], function (
 	BaseFilter,
 	ComboBox,
@@ -16,7 +17,8 @@ sap.ui.define([
 	JSONModel,
 	BindingResolver,
 	ComboBoxHelper,
-	merge
+	merge,
+	SorterHelper
 ) {
 	"use strict";
 
@@ -252,9 +254,15 @@ sap.ui.define([
 			additionalText: sItemTemplateAdditionalText
 		});
 
+		const oGroup = oConfig.group;
+		if (oGroup) {
+			this._oSorter = SorterHelper.getGroupSorter(oGroup);
+		}
+
 		oComboBox.bindItems({
 			path: sItemsPath,
-			template: this._oItemTemplate
+			template: this._oItemTemplate,
+			sorter: this._oSorter
 		});
 
 		ComboBoxHelper.setValueAndKey(

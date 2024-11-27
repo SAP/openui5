@@ -1,0 +1,85 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.showCard.taskDetails",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"title": "Details for Product"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "Default",
+							"value": "Detailed Stock Information."
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Approve",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "approve"
+							}
+						}
+					]
+				},
+				{
+					"text": "Reject",
+					"buttonType": "Reject",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "reject"
+							}
+						}
+					]
+				},
+				{
+					"text": "Close",
+					"actions": [
+						{
+							"type": "HideCard"
+						}
+					]
+				}
+			]
+		}
+	}
+}

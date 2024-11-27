@@ -720,6 +720,19 @@ sap.ui.define([
 						},
 						errorMessage: "Did not find the MessageStrip, the text was wrong or the type was wrong."
 					});
+				},
+				iShouldSeeTheSourceElementOverlay() {
+					return this.waitFor({
+						asyncPolling: true,
+						controlType: "sap.ui.dt.ElementOverlay",
+						matchers(oOverlay) {
+							return oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorDependent");
+						},
+						success(oOverlay) {
+							Opa5.assert.ok(oOverlay[0], "then dependent element indicator is shown");
+						},
+						errorMessage: "Did not find the dependent element with the style class"
+					});
 				}
 			}
 		}

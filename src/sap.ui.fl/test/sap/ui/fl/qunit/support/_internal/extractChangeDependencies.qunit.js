@@ -122,27 +122,27 @@ sap.ui.define([
 		});
 		this.oControl1.getCustomData = sandbox.stub().returns([{
 			getKey() {
-				return `sap.ui.fl.appliedChanges.fileNameChange1`;
+				return "sap.ui.fl.appliedChanges.fileNameChange1";
 			}
 		},
 		{
 			getKey() {
-				return `sap.ui.fl.failedChanges.js.fileNameChange5`;
+				return "sap.ui.fl.failedChanges.js.fileNameChange5";
 			}
 		}]);
 		this.oControl2.getCustomData = sandbox.stub().returns([{
 			getKey() {
-				return `sap.ui.fl.appliedChanges.fileNameChange2`;
+				return "sap.ui.fl.appliedChanges.fileNameChange2";
 			}
 		}]);
 		this.oControl3.getCustomData = sandbox.stub().returns([{
 			getKey() {
-				return `sap.ui.fl.failedChanges.xml.fileNameChange3`;
+				return "sap.ui.fl.failedChanges.xml.fileNameChange3";
 			}
 		}]);
 		this.oControl4.getCustomData = sandbox.stub().returns([{
 			getKey() {
-				return `sap.ui.fl.notApplicableChanges.fileNameChange4`;
+				return "sap.ui.fl.notApplicableChanges.fileNameChange4";
 			}
 		}]);
 		const oResult = extractChangeDependencies(oAppComponent);

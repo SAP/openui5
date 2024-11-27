@@ -338,6 +338,7 @@ sap.ui.define([
 				A : {},
 				B : {}
 			},
+			// Multiple (additional) groups on leaf level (JIRA: CPOUI5ODATAV4-2755)
 			groupLevels : ["TransactionCurrency", "Region"]
 		},
 		mQueryOptions : {
@@ -595,9 +596,10 @@ sap.ui.define([
 		oAggregation : {
 			aggregate : {
 				SalesAmount : {grandTotal : true},
-				SalesNumber : {subtotals : true} // no unit involved here!
+				SalesNumber : {} // no unit involved here!
 			},
 			// group is optional
+			// Note: a single group level defines the leaf level (JIRA: CPOUI5ODATAV4-2755)
 			groupLevels : ["Region"]
 		},
 		mQueryOptions : {
@@ -607,10 +609,11 @@ sap.ui.define([
 			$skip : 0,
 			$top : 10
 		},
-		sApply : "concat(aggregate(SalesAmount),groupby((Region),aggregate(SalesNumber))"
+		sApply : "concat(aggregate(SalesAmount)"
+			+ ",groupby((Region),aggregate(SalesAmount,SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
 			+ "/concat(aggregate($count as UI5__count),top(10)))",
-		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
+		sFollowUpApply : "groupby((Region),aggregate(SalesAmount,SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(10)"
 	}, {
 		oAggregation : {
@@ -897,6 +900,7 @@ sap.ui.define([
 				LifecycleStatus : {},
 				CurrencyCode : {}
 			},
+			// All levels present as groups (JIRA: CPOUI5ODATAV4-2755)
 			groupLevels : ["LifecycleStatus", "CurrencyCode"]
 		},
 		mQueryOptions : {
@@ -915,7 +919,9 @@ sap.ui.define([
 			aggregate : {
 				GrossAmount : {subtotals : true}
 			},
-			// group is optional
+			group : { // Some, but not all, levels present as groups (JIRA: CPOUI5ODATAV4-2755)
+				CurrencyCode : {}
+			},
 			groupLevels : ["LifecycleStatus", "CurrencyCode"]
 		},
 		iLevel : 2, // ignore $$leaves!
@@ -1029,7 +1035,8 @@ sap.ui.define([
 				bar : {},
 				foo : {}
 			},
-			groupLevels : ["foo", "AlreadyThere", "bar"] // no sorting here!
+			// Note: "bar" removed from here (JIRA: CPOUI5ODATAV4-2755)
+			groupLevels : ["foo", "AlreadyThere"] // no sorting here!
 		});
 	});
 
@@ -1058,7 +1065,8 @@ sap.ui.define([
 		oAggregation : {
 			aggregate : {A : {grandTotal : true}},
 			"grandTotal like 1.84" : true,
-			groupLevels : ["B"]
+			// Note: a single group level would define the leaf level (JIRA: CPOUI5ODATAV4-2755)
+			groupLevels : ["B", "C"]
 		},
 		sError : "Cannot combine visual grouping with grand total"
 	}, {

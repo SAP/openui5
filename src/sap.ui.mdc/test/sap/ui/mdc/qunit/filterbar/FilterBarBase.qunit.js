@@ -99,10 +99,12 @@ sap.ui.define([
     });
 
     QUnit.test("check reaction to the FilterField 'submit' event", function(assert){
-        const oFilterField = new FilterField();
+        const oFilterField = new FilterField({
+					label: "Test"
+				});
         sinon.stub(this.oFilterBarBase, "triggerSearch");
 
-        assert.ok(!oFilterField.hasListeners("submit"));
+        assert.ok(!oFilterField.hasListeners("submit"), "FilterField should not have a event listener for 'submit'");
 
         let fPromiseResolved;
         const oPromise = new Promise(function(resolve) {
@@ -116,18 +118,18 @@ sap.ui.define([
 
         oFilterField.attachSubmit(fCallback);
 
-        assert.ok(oFilterField.hasListeners("submit"));
+        assert.ok(oFilterField.hasListeners("submit"), "FilterField should have a event listener for 'submit'");
 
-        assert.ok(!this.oFilterBarBase.triggerSearch.called);
+        assert.ok(this.oFilterBarBase.triggerSearch.notCalled, "should not call 'triggerSearch' on FilterBar");
         oFilterField.fireSubmit({promise: Promise.resolve()});
 
         return oPromise.then(function() {
-            assert.ok(this.oFilterBarBase.triggerSearch.calledOnce);
+            assert.ok(this.oFilterBarBase.triggerSearch.calledOnce, "should call 'triggerSearch' once on FilterBar");
 
             oFilterField.detachSubmit(fCallback);
             this.oFilterBarBase.removeFilterItem(oFilterField);
 
-            assert.ok(!oFilterField.hasListeners("submit"));
+            assert.ok(!oFilterField.hasListeners("submit"), "FilterField should not have a event listener for 'submit'");
 
             oFilterField.destroy();
             this.oFilterBarBase.triggerSearch.restore();
@@ -988,19 +990,60 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			sinon.spy(Log, "error");
-			assert.ok(!Log.error.called);
+			const fnLogErrorSpy = sinon.spy(Log, "error");
+			assert.ok(!fnLogErrorSpy.called);
 
             this.oFilterBarBase._setXConditions(mDummyCondition)
             .then(function(){
                 assert.deepEqual(mResultCondition, this.oFilterBarBase.getInternalConditions(), "Condition returned without persistence active");
-				assert.ok(Log.error.calledOnce);
-				Log.error.restore();
+				assert.ok(fnLogErrorSpy.calledOnce);
+				fnLogErrorSpy.restore();
 
                 done();
             }.bind(this));
         }.bind(this));
 
     });
+
+		QUnit.module("_enhanceBasicSearchField");
+
+		QUnit.test("should log a warning when the 'propertyKey' of the given SearchField is not '$search' and then default to it", function (assert) {
+				const oFilterBarBase = new FilterBarBase({
+						delegate: {
+								name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate",
+								payload: {
+										modelName: undefined,
+										collectionName: "test"
+								}
+						}
+				});
+
+				const fnLogWarningSpy = sinon.spy(Log, "warning");
+				const fnEnhanceFilterFieldStub = sinon.stub(oFilterBarBase, "_enhanceFilterField");
+				const oBasicSearchFieldMock = {};
+				oBasicSearchFieldMock.getPropertyKey = sinon.stub().returns("");
+				oBasicSearchFieldMock.setPropertyKey = sinon.stub();
+
+				assert.ok(oBasicSearchFieldMock.getPropertyKey.notCalled, "should not call 'getPropertyKey' initially");
+				assert.ok(oBasicSearchFieldMock.setPropertyKey.notCalled, "should not call 'setPropertyKey' initially");
+				assert.ok(fnLogWarningSpy.notCalled, "should not call 'warning' initially");
+				assert.ok(fnEnhanceFilterFieldStub.notCalled, "should not call '_enhanceFilterField' initially");
+
+				oFilterBarBase._enhanceBasicSearchField(oBasicSearchFieldMock);
+
+				assert.ok(oBasicSearchFieldMock.getPropertyKey.calledOnce, "should call 'getPropertyKey'");
+				assert.ok(oBasicSearchFieldMock.setPropertyKey.calledOnce, "should call 'setPropertyKey'");
+				assert.ok(oBasicSearchFieldMock.setPropertyKey.calledWith("$search"), "should call 'setPropertyKey' with correct value");
+
+				const sExpectedErrorText = `sap.ui.mdc.FilterBar: BasicSearchField has incorrect 'propertyKey' ''. Overriding to default '$search'`;
+
+				assert.ok(fnLogWarningSpy.calledOnce, "should call 'warning'");
+				assert.ok(fnLogWarningSpy.calledWith(sExpectedErrorText), "should call 'warning' with correct value");
+
+				assert.ok(fnEnhanceFilterFieldStub.calledOnce, "should call '_enhanceFilterField'");
+				assert.ok(fnEnhanceFilterFieldStub.calledWith(oBasicSearchFieldMock), "should call '_enhanceFilterField' with correct value");
+
+				fnLogWarningSpy.restore();
+		});
 
 });

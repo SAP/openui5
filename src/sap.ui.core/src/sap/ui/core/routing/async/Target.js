@@ -18,7 +18,6 @@ sap.ui.define([
 	/**
 	 * Provide methods for sap.ui.core.routing.Target in async mode
 	 * @private
-	 * @experimental
 	 * @since 1.33
 	 */
 	return {

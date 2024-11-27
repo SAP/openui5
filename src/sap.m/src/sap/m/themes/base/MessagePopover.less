@@ -4,6 +4,7 @@
 /* ===================================== */
 
 .sapMMsgPopover.sapMMsgPopover-init {
+
 	.sapMNavItem.sapMPage {
 		position: relative;
 	}
@@ -14,6 +15,7 @@
 }
 
 .sapMMsgPopoverCloseBtn {
+
 	.sapMBtnIcon {
 		width: 2.5rem;
 		height: 2.5rem;
@@ -23,6 +25,7 @@
 
 /* Compact size */
 .sapUiSizeCompact.sapMMsgPopover {
+
 	.sapMMsgPopoverCloseBtn .sapMBtnIcon {
 		width: 1.626rem;
 		height: 1.626rem;
@@ -33,34 +36,38 @@
 		margin-right: 0;
 	}
 
-	.sapMBtnCustomIcon  {
+	.sapMBtnCustomIcon {
 		margin-left: 0;
 	}
 }
 
 .sapMPopover.sapMMsgPopover.sapMMsgPopover-init {
-	.sapMPopoverArr:after {
-		border-top-color: @sapUiPageHeaderBackground;
+
+	.sapMPopoverArr::after {
+		border-top-color: var(--sapPageHeader_Background);
 	}
 }
 
 .sapMMsgPopoverCloseBtn .sapMBtnIcon {
-	color: @sapUiButtonIconColor;
+	color: var(--sapButton_IconColor);
 }
 
-// style links in the description as Link control
+/* style links in the description as Link control */
 .sapMMsgPopoverDescriptionText a {
 	text-decoration: none;
-	color: @sapUiLink;
+	color: var(--sapLinkColor);
+
 	&:hover {
 		text-decoration: underline;
-		color: @sapUiLinkHover;
+		color: var(--sapLink_Hover_Color);
 	}
+
 	&:visited {
 		text-decoration: none;
-		color: @sapUiLinkVisited;
+		color: var(--sapLink_Visited_Color);
 	}
+
 	&:active {
-		color: @sapUiLinkActive;
+		color: var(--sapLink_Active_Color);
 	}
 }

@@ -2,6 +2,7 @@
 /* CSS for control sap.m/MessagePopover  */
 /* Base theme                            */
 /* ===================================== */
+
 @_sap_m_MessageView_DescIcon_Width: 3rem;
 
 .sapMMsgView {
@@ -24,6 +25,7 @@
 	.sapMMsgViewTitleText,
 	.sapMMsgViewDescriptionText {
 		margin: 1rem 1rem 0 3rem;
+
 		a.sapMLnkMaxWidth,
 		&.sapMLnkMaxWidth {
 			white-space: normal;
@@ -47,7 +49,7 @@
 
 	.sapMMsgViewTitleText {
 		vertical-align: middle;
-		font-size: @sapMFontHeader5Size;
+		font-size: var(--sapFontHeader5Size);
 	}
 
 	.sapMMsgViewItem {
@@ -56,6 +58,7 @@
 		&.sapMSLIWithDescription {
 			height: 3.3125rem;
 		}
+
 		&:not(.sapMSLIWithDescription) {
 			height: 2.75rem;
 		}
@@ -67,25 +70,26 @@
 
 	.sapMSLIDescription {
 		margin-top: 0.125rem;
-		font-family: @sapUiFontFamily;
+		font-family: var(--sapFontFamily);
 		font-size:  @sapMFontMediumSize;
-		color: @sapUiContentLabelColor;
+		color: var(--sapContent_LabelColor);
 	}
 
 	.sapMSLITitle {
-		font-family: @sapUiFontHeaderFamily;
-		font-size: @sapMFontHeader5Size;
+		font-family: var(--sapFontHeaderFamily);
+		font-size: var(--sapFontHeader5Size);
 		font-weight: @sapUiFontHeaderWeight;
-		color: @sapUiGroupTitleTextColor;
+		color: var(--sapGroup_TitleTextColor);
 	}
 
 	.sapMSLITitleOnly {
-		font-size: @sapMFontHeader5Size;
+		font-size: var(--sapFontHeader5Size);
 	}
 
 	.sapMLIB.sapMLIBActive {
+
 		.sapMSLIImgIcon {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 
@@ -101,7 +105,8 @@
 		max-width: ~"calc(100% - @{_sap_m_MessageView_DescIcon_Width})";
 	}
 
-	.sapMSLITitle, .sapMSLITitleOnly,
+	.sapMSLITitle,
+	.sapMSLITitleOnly,
 	.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
 		padding: 0;
 	}
@@ -110,8 +115,8 @@
 		display: none;
 	}
 
-	// remove the truncation behavior, when a list item does not need it
-	// (if it needs to have a truncation we change the item type to navigation)
+	/* remove the truncation behavior, when a list item does not need it */
+	/* (if it needs to have a truncation we change the item type to navigation) */
 	.sapMMsgViewItem:not(.sapMLIBTypeNavigation) .sapMSLITitleOnly {
 		text-overflow: clip;
 	}
@@ -121,14 +126,14 @@
 	position: absolute;
 	left: 0;
 	width: @_sap_m_MessageView_DescIcon_Width;
-	top: .7rem;
+	top: 0.7rem;
 	font-size: 1.35rem;
 }
 
 .sapMMsgViewItemActive {
 
 	& .sapMLnk {
-		font-size: @sapMFontHeader5Size;
+		font-size: var(--sapFontHeader5Size);
 		line-height: 1.5rem;
 	}
 
@@ -140,9 +145,10 @@
 
 /* Compact size */
 .sapUiSizeCompact .sapMMsgView {
-	&.sapMPopoverArrUp:after,
-	&.sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
-	&.sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
+
+	&.sapMPopoverArrUp::after,
+	&.sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp::after,
+	&.sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp::after {
 		bottom: -9px;
 		left: -8px;
 	}
@@ -156,7 +162,7 @@
 	}
 
 	.sapMMsgViewItemActive .sapMLnk {
-		font-size: @sapMFontHeader6Size;
+		font-size: var(--sapFontHeader6Size);
 	}
 
 	.sapMMsgViewItem:not(.sapMSLIWithDescription) {
@@ -206,8 +212,9 @@
 		margin-top: 0;
 	}
 
-	.sapMSLITitle, .sapMSLITitleOnly {
-		font-size: @sapMFontHeader6Size;
+	.sapMSLITitle,
+	.sapMSLITitleOnly {
+		font-size: var(--sapFontHeader6Size);
 	}
 
 	.sapMSLIDescIcon .sapMSLITitle,
@@ -218,35 +225,35 @@
 }
 
 .sapMMsgViewCloseBtn .sapMBtnIcon {
-	color: @sapUiButtonIconColor;
+	color: var(--sapButton_IconColor);
 }
 
 .sapMMsgViewItemSuccess .sapMSLIImgIcon,
 .sapMMsgViewBtnSuccess.sapMSegBBtn .sapUiIcon,
 .sapMMsgViewDescIconSuccess {
-	color: @sapUiPositiveElement;
+	color: var(--sapPositiveElementColor);
 }
 
 .sapMMsgViewItemWarning .sapMSLIImgIcon,
 .sapMMsgViewBtnWarning.sapMSegBBtn .sapUiIcon,
 .sapMMsgViewDescIconWarning {
-	color: @sapUiCriticalElement;
+	color: var(--sapCriticalElementColor);
 }
 
 .sapMMsgViewItemError .sapMSLIImgIcon,
 .sapMMsgViewBtnError.sapMSegBBtn .sapUiIcon,
 .sapMMsgViewDescIconError {
-	color: @sapUiNegativeElement;
+	color: var(--sapNegativeElementColor);
 }
 
 .sapMMsgViewItemInformation .sapMSLIImgIcon,
 .sapMMsgViewBtnInformation.sapMSegBBtn .sapUiIcon,
 .sapMMsgViewDescIconInformation {
-	color: @sapInformativeElementColor;
+	color: var(--sapInformativeElementColor);
 }
 
 .sapMMsgViewItem .sapMSLIIconActive {
-	color: @sapUiContentContrastIconColor;
+	color: var(--sapContent_ContrastIconColor);
 }
 
 .sapMMsgViewDescriptionText a.sapMLnk {

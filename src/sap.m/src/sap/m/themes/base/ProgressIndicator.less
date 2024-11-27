@@ -3,24 +3,22 @@
 /* Base theme                               */
 /* ======================================== */
 
-@sapMPIPopoverCloseIconWidth: 1.4375rem;
-@sapMPIPopoverCloseIconHeight: 1.375rem;
-@sapMPIPopoverCloseIconMargin: 0.125rem;
-@sapMPITextLeftTextThreshold: @sapUiContentContrastTextThreshold;
+@_sap_m_ProgressIndicator_PopoverCloseIconWidth: 1.4375rem;
+@_sap_m_ProgressIndicator_PopoverCloseIconHeight: 1.375rem;
+@_sap_m_ProgressIndicator_PopoverCloseIconMargin: 0.125rem;
+@_sap_m_ProgressIndicator_TextLeftTextThreshold: @sapUiContentContrastTextThreshold;
 
 .sapMPI {
+
 	&.sapMPIHoverable:hover {
 		cursor: pointer;
 	}
 
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
-
-	-webkit-flex-direction: row;
+	flex-direction: row;
 	box-sizing: border-box;
 	outline: none;
-	background: @sapUiFieldBackground;
+	background: var(--sapField_Background);
 	width: 100%;
 	height: 1.5rem;
 	min-width: 6rem;
@@ -33,7 +31,7 @@
 }
 
 .sapMPIPopover {
-	min-height: @sapMPIPopoverCloseIconHeight;
+	min-height: @_sap_m_ProgressIndicator_PopoverCloseIconHeight;
 
 	.sapMPopoverScroll {
 		padding-left: 0.5rem;
@@ -48,40 +46,35 @@
 	}
 
 	.sapUiIcon {
-		width: @sapMPIPopoverCloseIconWidth;
-		height: @sapMPIPopoverCloseIconHeight;
-		line-height: @sapMPIPopoverCloseIconHeight;
-		font-size: @sapFontSmallSize;
-		color: @sapContent_IconColor;
+		width: @_sap_m_ProgressIndicator_PopoverCloseIconWidth;
+		height: @_sap_m_ProgressIndicator_PopoverCloseIconHeight;
+		line-height: @_sap_m_ProgressIndicator_PopoverCloseIconHeight;
+		font-size: var(--sapFontSmallSize);
+		color: var(--sapContent_IconColor);
 		flex-shrink: 0;
-		margin: @sapMPIPopoverCloseIconMargin;
+		margin: @_sap_m_ProgressIndicator_PopoverCloseIconMargin;
 	}
 
-	/* Additional touch area for the close icon/button required by ACC standards*/
-	.sapUiIcon:after {
-		content: "";
+	/* Additional touch area for the close icon/button required by ACC standards */
+	.sapUiIcon::after {
+		content: '';
 		position: absolute;
-		right: (@sapMPIPopoverCloseIconMargin * -1);
-		top: (@sapMPIPopoverCloseIconMargin * -1);
-		width: @sapMPIPopoverCloseIconWidth + (@sapMPIPopoverCloseIconMargin * 2);
-		height: @sapMPIPopoverCloseIconHeight + (@sapMPIPopoverCloseIconMargin * 2);
+		right: (@_sap_m_ProgressIndicator_PopoverCloseIconMargin * -1);
+		top: (@_sap_m_ProgressIndicator_PopoverCloseIconMargin * -1);
+		width: @_sap_m_ProgressIndicator_PopoverCloseIconWidth + (@_sap_m_ProgressIndicator_PopoverCloseIconMargin * 2);
+		height: @_sap_m_ProgressIndicator_PopoverCloseIconHeight + (@_sap_m_ProgressIndicator_PopoverCloseIconMargin * 2);
 	}
 }
 
 .sapMPIBar,
 .sapMPIBarRemaining {
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
 	min-width: 0;
-
-	-webkit-align-items: center;
 	align-items: center;
 }
 
 .sapMPIBar {
 	height: 100%;
-	-webkit-justify-content: flex-end;
 	justify-content: flex-end;
 	flex-shrink: 0;
 	border-top-left-radius: 0.5rem;
@@ -93,13 +86,12 @@
 }
 
 .sapMPIBarRemaining {
-	-webkit-flex-grow: 1;
 	flex-grow: 1;
 	border-top-right-radius: 0.5rem;
 	border-bottom-right-radius: 0.5rem;
-	border-top: 1px solid @sapUiFieldBorderColor;
-	border-right: 1px solid @sapUiFieldBorderColor;
-	border-bottom: 1px solid @sapUiFieldBorderColor;
+	border-top: 1px solid var(--sapField_BorderColor);
+	border-right: 1px solid var(--sapField_BorderColor);
+	border-bottom: 1px solid var(--sapField_BorderColor);
 }
 
 .sapMPIBarDisabled {
@@ -113,22 +105,22 @@
 }
 
 .sapMPIText {
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontSmallSize;
+	font-family: var(--sapFontFamily);
+	font-size: var(--sapFontSmallSize);
 	font-weight: normal;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	color: @sapUiContentForegroundTextColor;
+	color: var(--sapContent_ForegroundTextColor);
 }
 
 .sapMPIDisplayOnly .sapMPIText {
-	color: @sapUiBaseText;
+	color: var(--sapTextColor);
 	font-size: 0.6875rem;
 }
 
 .sapMPITextLeft {
-	color: @sapUiContentContrastTextColor;
+	color: var(--sapContent_ContrastTextColor);
 	padding-right: 0.5rem;
 	display: none;
 }
@@ -157,58 +149,58 @@
 }
 
 .sapMPIBarNeutral {
-	background: @sapUiNeutralElement;
+	background: var(--sapNeutralElementColor);
 }
 
 .sapMPIBarPositive {
-	background: @sapUiPositiveElement;
+	background: var(--sapPositiveElementColor);
 }
 
 .sapMPIBarNegative {
-	background: @sapUiNegativeElement;
+	background: var(--sapNegativeElementColor);
 }
 
 .sapMPIBarCritical {
-	background: @sapUiCriticalElement;
+	background: var(--sapCriticalElementColor);
 }
 
 .sapMPIBarInformation {
-	background: @sapUiInformativeElement;
+	background: var(--sapInformativeElementColor);
 }
 
 .sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
-	background: @sapUiBaseText;
+	background: var(--sapTextColor);
 }
 
 /* Progress Indicator Remaining Bar */
 .sapMPIValueMin .sapMPIBarRemaining {
 	border-radius: 0.5rem;
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid var(--sapField_BorderColor);
 }
 
 /* Progress Indicator Value Text */
 .sapMPIBarNeutral .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNeutralElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+	color: contrast(@sapUiNeutralElement, @sapUiContentContrastTextColor, @sapUiBaseText, @_sap_m_ProgressIndicator_TextLeftTextThreshold);
 }
 
 .sapMPIBarPositive .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiPositiveElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+	color: contrast(@sapUiPositiveElement, @sapUiContentContrastTextColor, @sapUiBaseText, @_sap_m_ProgressIndicator_TextLeftTextThreshold);
 }
 
 .sapMPIBarNegative .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNegativeElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+	color: contrast(@sapUiNegativeElement, @sapUiContentContrastTextColor, @sapUiBaseText, @_sap_m_ProgressIndicator_TextLeftTextThreshold);
 }
 
 .sapMPIBarCritical .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiCriticalElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+	color: contrast(@sapUiCriticalElement, @sapUiContentContrastTextColor, @sapUiBaseText, @_sap_m_ProgressIndicator_TextLeftTextThreshold);
 }
 
 .sapMPIBarInformation .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiHighlight, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+	color: contrast(@sapUiHighlight, @sapUiContentContrastTextColor, @sapUiBaseText, @_sap_m_ProgressIndicator_TextLeftTextThreshold);
 }
 
 .sapMPIBarInformation.sapMPIDisplayOnly .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiBaseText, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+	color: contrast(@sapUiBaseText, @sapUiContentContrastTextColor, @sapUiBaseText, @_sap_m_ProgressIndicator_TextLeftTextThreshold);
 }
 
 /* Compact */

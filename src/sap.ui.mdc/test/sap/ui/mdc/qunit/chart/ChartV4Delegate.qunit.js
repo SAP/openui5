@@ -918,7 +918,7 @@ function(
         const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
         this.oMDCChart.addItem(oMeas);
 
-        ChartDelegate._prepareColoringForItem(oMeas).then(function(){
+        ChartDelegate._prepareColoringForItem(this.oMDCChart, oMeas).then(function(){
             assert.ok(ChartDelegate._getState(this.oMDCChart).aColMeasures.indexOf("Measure2") > -1, "Coloring measure added to state");
             done();
         }.bind(this));
@@ -999,8 +999,8 @@ function(
             }
         };
 
-        ChartDelegate._prepareColoringForItem(oMeas).then(function(){
-            ChartDelegate._prepareColoringForItem(oDim).then(function(){
+        ChartDelegate._prepareColoringForItem(this.oMDCChart, oMeas).then(function(){
+            ChartDelegate._prepareColoringForItem(this.oMDCChart, oDim).then(function(){
                 ChartDelegate._updateColoring(this.oMDCChart, ["Dimension1"], ["Measure2"]);
 
                 assert.ok(oColorSpy.calledWithExactly(oCorrectColorConfig), "Color function called on inner chart");
@@ -1050,7 +1050,7 @@ function(
             }
         };
 
-        ChartDelegate._prepareColoringForItem(oMeas).then(function(){
+        ChartDelegate._prepareColoringForItem(this.oMDCChart, oMeas).then(function(){
             ChartDelegate._updateColoring(this.oMDCChart, ["Dimension1"], ["Measure2"]);
 
             assert.ok(oColorSpy.calledWithExactly(oCorrectColorConfig), "Color function called on inner chart");

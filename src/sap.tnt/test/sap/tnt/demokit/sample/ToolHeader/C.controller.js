@@ -24,7 +24,7 @@ sap.ui.define([
 					this.byId("productName").setVisible(true);
 					this.byId("secondTitle").setVisible(true);
 					this.byId("searchField").setVisible(true);
-					this.byId("spacer").setVisible(true);
+
 					this.byId("searchButton").setVisible(false);
 					MessageToast.show("Screen width is corresponding to Large Desktop");
 					break;
@@ -34,7 +34,7 @@ sap.ui.define([
 					this.byId("productName").setVisible(true);
 					this.byId("secondTitle").setVisible(false);
 					this.byId("searchField").setVisible(true);
-					this.byId("spacer").setVisible(true);
+
 					this.byId("searchButton").setVisible(false);
 					MessageToast.show("Screen width is corresponding to Desktop");
 					break;
@@ -45,14 +45,14 @@ sap.ui.define([
 					this.byId("secondTitle").setVisible(true);
 					this.byId("searchButton").setVisible(true);
 					this.byId("searchField").setVisible(false);
-					this.byId("spacer").setVisible(false);
+
 					MessageToast.show("Screen width is corresponding to Tablet");
 					break;
 
 				case "Phone":
 					this.byId("searchButton").setVisible(true);
 					this.byId("searchField").setVisible(false);
-					this.byId("spacer").setVisible(false);
+
 					this.byId("productName").setVisible(false);
 					this.byId("secondTitle").setVisible(false);
 					MessageToast.show("Screen width is corresponding to Phone");

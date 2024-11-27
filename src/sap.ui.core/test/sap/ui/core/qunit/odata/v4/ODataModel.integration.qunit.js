@@ -381,29 +381,35 @@ sap.ui.define([
 	 * @param {string} sTitle - A test title
 	 * @param {object} assert - The QUnit assert object
 	 * @param {sap.m.Table|sap.ui.table.Table} oTable - A table
-	 * @param {string[]|sap.ui.model.odata.v4.Context} aExpectedPaths
-	 *   List of all expected (normalized) current context paths or the corresponding context
+	 * @param {string[]|sap.ui.model.odata.v4.Context[]|undefined} aExpectedPaths
+	 *   List of all expected (normalized) current context paths or the corresponding contexts;
+	 *   <code>undefined</code> means to ignore the list binding
 	 * @param {any[][]} [aExpectedContent] - "Table" of expected cell contents
 	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
+	 * @throws {Error} If <code>iExpectedLength</code> is given but not <code>aExpectedPaths</code>
 	 */
 	// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
 	function checkTable(sTitle, assert, oTable, aExpectedPaths, aExpectedContent, iExpectedLength) {
 		var oListBinding = oTable.getBinding("items") || oTable.getBinding("rows"),
 			aRows = oTable.getItems ? oTable.getItems() : oTable.getRows();
 
-		assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
-		assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
-			sTitle);
-		const aAllExistingContexts = oListBinding._getAllExistingContexts();
-		aExpectedPaths.forEach((vExpectedPath, i) => {
-			if (typeof vExpectedPath !== "string") {
-				if (vExpectedPath !== aAllExistingContexts[i]) {
-					assert.ok(false, `${sTitle}: Context not same @${i}: ${vExpectedPath}`);
+		if (aExpectedPaths) {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
+				sTitle);
+			const aAllExistingContexts = oListBinding._getAllExistingContexts();
+			aExpectedPaths.forEach((vExpectedPath, i) => {
+				if (typeof vExpectedPath !== "string") {
+					if (vExpectedPath !== aAllExistingContexts[i]) {
+						assert.ok(false, `${sTitle}: Context not same @${i}: ${vExpectedPath}`);
+					}
+					aExpectedPaths[i] = vExpectedPath.getPath();
 				}
-				aExpectedPaths[i] = vExpectedPath.getPath();
-			}
-		});
-		assert.deepEqual(aAllExistingContexts.map(getNormalizedPath), aExpectedPaths);
+			});
+			assert.deepEqual(aAllExistingContexts.map(getNormalizedPath), aExpectedPaths);
+		} else if (arguments.length > 5) {
+			throw new Error("Unexpected iExpectedLength");
+		}
 
 		if (aExpectedContent) {
 			aExpectedContent = aExpectedContent.map(function (aTexts) {
@@ -586,7 +592,16 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a test with the given title and invokes viewStart with the given parameters.
+	 * Simulates a rerendering of the given list binding by firing a change event.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - A list binding
+	 */
+	function simulateRerendering(oListBinding) {
+		oListBinding._fireChange({reason : ChangeReason.Change});
+	}
+
+	/**
+	 * Creates a test with the given title and invokes #createView with the given parameters.
 	 *
 	 * @param {string} sTitle The title of the test case
 	 * @param {string} sView The XML snippet of the view
@@ -2574,6 +2589,12 @@ sap.ui.define([
 
 				return sValue;
 			};
+			if (sControlId.endsWith("__AS_COMPOSITE")) {
+				// "__AS_COMPOSITE" enables an expression binding to be a composite binding (which
+				// is the default behavior in UI5). Without textFragments it becomes a simple
+				// PropertyBinding which doesn't report all actual binding updates
+				oBindingInfo.formatter.textFragments = fnOriginalFormatter?.textFragments;
+			}
 		},
 
 		/**
@@ -20089,8 +20110,8 @@ sap.ui.define([
 				group : {
 					BusinessPartnerRole : {}
 				},
-				groupLevels : ["BusinessPartnerRole"]
-			}, "JIRA: CPOUI5ODATAV4-1825");
+				groupLevels : [] // Note: "BusinessPartnerRole" removed from here
+			}, "JIRA: CPOUI5ODATAV4-1825, CPOUI5ODATAV4-2811");
 
 			that.expectEvents(assert, oBinding, [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "filter"}],
@@ -20101,8 +20122,7 @@ sap.ui.define([
 					[, "dataReceived", {data : {}}]
 				])
 				.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
-					+ "&$count=true&$skip=0&$top=100", {
-					"@odata.count" : "2",
+					+ "&$skip=0&$top=100", {
 					value : [{
 						BusinessPartnerRole : "01"
 					}, {
@@ -22966,9 +22986,11 @@ sap.ui.define([
 	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958).
 	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
 	// Support grand total w/ filter on aggregate (JIRA: CPOUI5ODATAV4-713)
+	// Multiple (additional) groups on leaf level (JIRA: CPOUI5ODATAV4-2755)
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var sFilterOnAggregate // JIRA: CPOUI5ODATAV4-713
-			= "groupby((CurrencyCode,LifecycleStatus),filter($these/aggregate(GrossAmount) gt 0))",
+			= "groupby((BillingStatus,CurrencyCode,DeliveryStatus,LifecycleStatus)"
+				+ ",filter($these/aggregate(GrossAmount) gt 0))",
 			oListBinding,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -22983,8 +23005,9 @@ sap.ui.define([
 					NetAmount : {}\
 				},\
 				group : {\
+					BillingStatus : {},\
 					CurrencyCode : {},\
-					LifecycleStatus : {}\
+					DeliveryStatus : {}\
 				},\
 				groupLevels : [\'LifecycleStatus\']\
 			},\
@@ -23001,7 +23024,8 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate + "/concat("
-				+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
+				+ "groupby((BillingStatus,CurrencyCode,DeliveryStatus,LifecycleStatus))"
+					+ "/aggregate($count as UI5__leaves)"
 				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/orderby(LifecycleStatus desc)"
 				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
@@ -23025,7 +23049,8 @@ sap.ui.define([
 
 			assert.strictEqual(oListBinding.getDownloadUrl(), sSalesOrderService + "SalesOrderList"
 				+ "?$apply=" + sFilterOnAggregate.replaceAll(" ", "%20")
-				+ "/groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount,NetAmount))"
+				+ "/groupby((LifecycleStatus,BillingStatus,CurrencyCode,DeliveryStatus)"
+					+ ",aggregate(GrossAmount,NetAmount))"
 				// Note: ordering by 'ItemPosition asc' does not apply, even on leaf level
 				+ "/orderby(LifecycleStatus%20desc)",
 				"CPOUI5ODATAV4-609");
@@ -23043,7 +23068,7 @@ sap.ui.define([
 
 			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "count");
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate
 					+ "/groupby((LifecycleStatus),aggregate(GrossAmount))"
@@ -23062,38 +23087,34 @@ sap.ui.define([
 
 			oTable.setFirstVisibleRow(7);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "scroll to #7");
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$apply=filter(GrossAmount gt 0)/concat("
-					+ "groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
-					+ ",groupby((LifecycleStatus))/orderby(LifecycleStatus desc)"
-					+ "/concat(aggregate($count as UI5__count),top(3)))", {
+			that.expectRequest("SalesOrderList?$count=true"
+					+ "&$orderby=LifecycleStatus desc,ItemPosition asc"
+					+ "&$apply=filter(GrossAmount gt 0)/groupby((LifecycleStatus))"
+					+ "&$skip=0&$top=3", {
+					"@odata.count" : "26",
 					value : [
-						{UI5__leaves : "32", "UI5__leaves@odata.type" : "#Decimal"},
-						{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
 						{LifecycleStatus : "Z"},
 						{LifecycleStatus : "Y"},
 						{LifecycleStatus : "X"}
 					]
 				})
-				.expectChange("count", "32")
-				.expectChange("isExpanded", [false, false, false])
-				.expectChange("isTotal", [false, false, false])
-				.expectChange("level", [1, 1, 1])
+				.expectChange("count", "26")
+				.expectChange("isExpanded", [undefined, undefined, undefined])
+				.expectChange("isTotal", [undefined, undefined, undefined]) // only leaves
+				.expectChange("level", [undefined, undefined, undefined]) // no grouping
 				.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 			oTable.removeColumn(4).destroy(); // GrossAmount
 			oListBinding.setAggregation({
-				group : {
-					// Note: a single group level w/o further groups makes little sense
-					CurrencyCode : {}
-				},
+				// Note: a single group level defines the leaf level (JIRA: CPOUI5ODATAV4-2755)
 				groupLevels : ["LifecycleStatus"]
 			});
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "single group level");
 		}).then(function () {
-			assert.strictEqual(oListBinding.getCount(), 32, "count of leaves");
+			assert.strictEqual(oListBinding.getCount(), 26, "count of leaves");
 
 			assert.throws(function () {
 				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
@@ -23103,17 +23124,15 @@ sap.ui.define([
 			assert.deepEqual(oListBinding.getAggregation(), {
 				aggregate : {},
 				group : {
-					CurrencyCode : {},
 					LifecycleStatus : {}
 				},
-				groupLevels : ["LifecycleStatus"]
-			}, "JIRA: CPOUI5ODATAV4-1825");
+				groupLevels : [] // Note: "LifecycleStatus" removed from here => no visual grouping!
+			}, "JIRA: CPOUI5ODATAV4-1825, CPOUI5ODATAV4-2811");
 
-			// no additional request for same aggregation data
+			// no additional request for same aggregation data (even if it looks slightly different)
 			// code under test (BCP: 2370045709)
 			oListBinding.setAggregation({
 				group : {
-					CurrencyCode : {}
 					// LifecycleStatus : {}
 				},
 				groupLevels : ["LifecycleStatus"]
@@ -23122,7 +23141,6 @@ sap.ui.define([
 			oListBinding.changeParameters({
 				$$aggregation : {
 					group : {
-						CurrencyCode : {}
 						// LifecycleStatus : {}
 					},
 					groupLevels : ["LifecycleStatus"]
@@ -23523,10 +23541,7 @@ sap.ui.define([
 					SalesAmount : {subtotals : true},\
 					SalesNumber : {}\
 				},\
-				group : {\
-					AccountResponsible : {}\
-				},\
-				groupLevels : [\'Region\']\
+				groupLevels : [\'Region\', \'AccountResponsible\']\
 			},\
 			$count : false,\
 			$orderby : \'Region desc,AccountResponsible\'\
@@ -23745,10 +23760,7 @@ sap.ui.define([
 					SalesAmount : {subtotals : true},\
 					SalesNumber : {}\
 				},\
-				group : {\
-					AccountResponsible : {}\
-				},\
-				groupLevels : [\'Region\']\
+				groupLevels : [\'Region\', \'AccountResponsible\']\
 			}\
 		},\
 		filters : {path : \'AccountResponsible\', operator : \'GE\', value1 : \'a\'}}">\
@@ -23956,10 +23968,7 @@ sap.ui.define([
 				SalesAmount : {subtotals : true},\
 				SalesNumber : {}\
 			},\
-			group : {\
-				AccountResponsible : {}\
-			},\
-			groupLevels : [\'Region\']\
+			groupLevels : [\'Region\', \'AccountResponsible\']\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -24138,10 +24147,7 @@ sap.ui.define([
 					: {grandTotal : true, subtotals : true, unit : \'LocalCurrency\'},\
 				SalesNumber : {grandTotal : true}\
 			},\
-			group : {\
-				Region : {}\
-			},\
-			groupLevels : [\'Country\']\
+			groupLevels : [\'Country\', \'Region\']\
 		},\
 		$count : true,\
 		$orderby : \'Country desc,Region,Currency asc,LocalCurrency desc\'\
@@ -24438,7 +24444,7 @@ sap.ui.define([
 					{grandTotal : true, subtotals : true, unit : \'LocalCurrency\'}\
 			},\
 			grandTotalAtBottomOnly : false,\
-			groupLevels : [\'Country\',\'LocalCurrency\',\'Region\'],\
+			groupLevels : [\'Country\', \'LocalCurrency\', \'Region\'],\
 			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
 		}\
 	}}">\
@@ -24494,9 +24500,9 @@ sap.ui.define([
 						LocalCurrency : {},
 						Region : {}
 					},
-					groupLevels : ["Country", "LocalCurrency", "Region"],
+					groupLevels : ["Country", "LocalCurrency"], // Note: "Region" removed from here
 					subtotalsAtBottomOnly : bSubtotalsAtBottomOnly
-				}, "JIRA: CPOUI5ODATAV4-1825");
+				}, "JIRA: CPOUI5ODATAV4-1825, CPOUI5ODATAV4-2811");
 
 				checkTable("initial state", assert, oTable, [
 					"/BusinessPartners()",
@@ -24602,9 +24608,9 @@ sap.ui.define([
 					[1, true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
 					// Note: "localCurrency" must not disappear here!
 					[3, true, true, 2, "A", "", subtotalAtTop("10"), "EUR"],
-					[undefined, false, true, 3, "A", "a", "1", "EUR"],
-					[undefined, false, true, 3, "A", "b", "2", "EUR"],
-					[undefined, false, true, 3, "A", "c", "3", "EUR"],
+					[undefined, undefined, false, 3, "A", "a", "1", "EUR"],
+					[undefined, undefined, false, 3, "A", "b", "2", "EUR"],
+					[undefined, undefined, false, 3, "A", "c", "3", "EUR"],
 					[undefined, undefined, true, 2, "", "", "10", "EUR"],
 					[undefined, undefined, true, 1, "", "", "10", "EUR"],
 					[undefined, undefined, true, 0, "", "", "3510", ""]
@@ -24665,7 +24671,7 @@ sap.ui.define([
 				}\
 			},\
 			grandTotalAtBottomOnly : false,\
-			groupLevels : [\'Country\',\'LocalCurrency\',\'Region\'],\
+			groupLevels : [\'Country\', \'LocalCurrency\', \'Region\'],\
 			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
 		}\
 	}}">\
@@ -24738,14 +24744,21 @@ sap.ui.define([
 
 				that.expectRequest("BusinessPartners"
 						+ "?$apply=filter(Country eq 'A' and LocalCurrency eq 'EUR')"
-						+ "/groupby((Region))&$count=true&$skip=0&$top=100", {
+						+ "/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
+						+ "&$count=true&$skip=0&$top=100", {
 						"@odata.count" : "3",
 						value : [{
-							Region : "a"
+							LocalCurrency : "EUR",
+							Region : "a",
+							SalesAmountLocalCurrency : "10"
 						}, {
-							Region : "b"
+							LocalCurrency : "EUR",
+							Region : "b",
+							SalesAmountLocalCurrency : "20"
 						}, {
-							Region : "c"
+							LocalCurrency : "EUR",
+							Region : "c",
+							SalesAmountLocalCurrency : "30"
 						}]
 					})
 					.expectChange("level", [,,, 3, 3, 3, 0]);
@@ -24768,9 +24781,9 @@ sap.ui.define([
 					[undefined, true, true, 0, "", "", "3510", ""],
 					[1, true, false, 1, "A", "", "", ""],
 					[3, true, false, 2, "A", "", "", "EUR"],
-					[undefined, false, false, 3, "A", "a", "", "EUR"],
-					[undefined, false, false, 3, "A", "b", "", "EUR"],
-					[undefined, false, false, 3, "A", "c", "", "EUR"],
+					[undefined, undefined, false, 3, "A", "a", "10", "EUR"],
+					[undefined, undefined, false, 3, "A", "b", "20", "EUR"],
+					[undefined, undefined, false, 3, "A", "c", "30", "EUR"],
 					[undefined, undefined, true, 0, "", "", "3510", ""]
 				]);
 
@@ -24812,7 +24825,7 @@ sap.ui.define([
 				SalesNumber : {grandTotal : true}\
 			},\
 			grandTotalAtBottomOnly : true,\
-			groupLevels : [\'Country\',\'Region\'],\
+			groupLevels : [\'Country\', \'Region\'],\
 			subtotalsAtBottomOnly : false\
 		}\
 	}}">\
@@ -24859,10 +24872,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {subtotals : true}\
 			},\
-			group : {\
-				Region : {}\
-			},\
-			groupLevels : [\'Country\']\
+			groupLevels : [\'Country\', \'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -24944,11 +24954,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-378
 	// JIRA: CPOUI5ODATAV4-597
 	//
-	// Show additional text properties for group levels.
-	// JIRA: CPOUI5ODATAV4-680
-	//
-	// Check download URL.
-	// JIRA: CPOUI5ODATAV4-609
+	// Show additional text properties for group levels (JIRA: CPOUI5ODATAV4-680)
+	// Check download URL (JIRA: CPOUI5ODATAV4-609)
+	// Some, but not all, levels present as groups (JIRA: CPOUI5ODATAV4-2755)
 	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
 		var oModel = this.createAggregationModel(),
 			oRowsBinding,
@@ -24963,11 +24971,10 @@ sap.ui.define([
 				SalesNumber : {}\
 			},\
 			group : {\
-				AccountResponsible : {},\
 				Country : {additionally : [\'CountryText\']},\
 				Region : {additionally : [\'RegionText\']}\
 			},\
-			groupLevels : [\'Country\', \'Region\', \'Segment\']\
+			groupLevels : [\'Country\', \'Region\', \'Segment\', \'AccountResponsible\']\
 		},\
 		$orderby : \'RegionText desc\'\
 	}}" threshold="0" visibleRowCount="4">\
@@ -25180,6 +25187,8 @@ sap.ui.define([
 	// Use subtotalsAtBottomOnly w/o subtotals actually being requested. This must not change
 	// anything!
 	// JIRA: CPOUI5ODATAV4-825
+	//
+	// All levels present as groups (JIRA: CPOUI5ODATAV4-2755)
 	QUnit.test("Data Aggregation: additionally via navigation", function (assert) {
 		var oTable,
 			sView = '\
@@ -25196,7 +25205,7 @@ sap.ui.define([
 				},\
 				Name : {additionally : [\'BestFriend/Name\']}\
 			},\
-			groupLevels : [\'IsActiveEntity\', \'Name\'],\
+			groupLevels : [\'IsActiveEntity\', \'Name\', \'ArtistID\'],\
 			subtotalsAtBottomOnly : true\
 		},\
 		$orderby :\
@@ -25336,10 +25345,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {}\
 			},\
-			group : {\
-				AccountResponsible : {}\
-			},\
-			groupLevels : [\'Region\'],\
+			groupLevels : [\'Region\', \'AccountResponsible\'],\
 			subtotalsAtBottomOnly : false\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
@@ -25467,10 +25473,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {subtotals : true}\
 			},\
-			group : {\
-				Segment : {}\
-			},\
-			groupLevels : [\'Country\', \'Region\']\
+			groupLevels : [\'Country\', \'Region\', \'Segment\']\
 		}\
 	}}" threshold="0" visibleRowCount="8">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -25643,10 +25646,7 @@ sap.ui.define([
 			aggregate : {\
 				SalesAmount : {subtotals : true}\
 			},\
-			group : {\
-				Region : {}\
-			},\
-			groupLevels : [\'Country\']\
+			groupLevels : [\'Country\', \'Region\']\
 		}\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
@@ -26645,10 +26645,7 @@ sap.ui.define([
 				aggregate : {\
 					SalesNumber : {grandTotal : true, subtotals : true}\
 				},\
-				group : {\
-					Region : {}\
-				},\
-				groupLevels : [\'Country\'],\
+				groupLevels : [\'Country\', \'Region\'],\
 				search : \'covfefe\'\
 			},\
 			$count : true,\
@@ -26899,26 +26896,25 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oListBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectRequest("SalesOrderList?$apply=groupby((LifecycleStatus))&$count=true"
+			that.expectRequest("SalesOrderList"
+					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
 					+ "&$skip=0&$top=100", {
-					"@odata.count" : "1",
-					value : [{LifecycleStatus : "Y"}]
+					value : [{GrossAmount : "2", LifecycleStatus : "Y"}]
 				})
-				.expectChange("grossAmount", [undefined])
+				.expectChange("grossAmount", ["2"])
 				.expectChange("lifecycleStatus", ["Y"]);
 
 			// code under test
 			oListBinding.setAggregation({
 				aggregate : {GrossAmount : {}},
-				groupLevels : ["LifecycleStatus"]
+				group : {LifecycleStatus : {}}
 			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList"
 					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
-					+ "&$count=true&$skip=0&$top=100", {
-					"@odata.count" : "1",
+					+ "&$skip=0&$top=100", {
 					value : [{GrossAmount : "3", LifecycleStatus : "X"}]
 				})
 				.expectChange("grossAmount", ["3"])
@@ -26927,7 +26923,7 @@ sap.ui.define([
 			// code under test
 			oListBinding.setAggregation({
 				aggregate : {GrossAmount : {subtotals : true}},
-				groupLevels : ["LifecycleStatus"]
+				group : {LifecycleStatus : {}}
 			});
 
 			return that.waitForChanges(assert);
@@ -26971,10 +26967,10 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true&$skip=0&$top=100",
-				{"@odata.count" : "1", value : [{Region : "A"}]})
+		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+				+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]})
 			.expectChange("region", ["A"])
-			.expectChange("salesAmount", [undefined]);
+			.expectChange("salesAmount", ["123"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// expect no request
@@ -26987,24 +26983,24 @@ sap.ui.define([
 				that.waitForChanges(assert, "AccountResponsible (unused)")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
+			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
 				that.waitForChanges(assert, "entity")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
+			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesAmount"}]),
 				that.waitForChanges(assert, "SalesAmount (aggregate)")
 			]);
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100", {"@odata.count" : "1", value : [{Region : "A"}]});
+			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+					+ "&$skip=0&$top=100", {value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Region"}]),
@@ -27012,16 +27008,16 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
-					{"@odata.count" : "1", value : [{Region : "A"}]});
+					+ "/groupby((Region),aggregate(SalesAmount))&$skip=0&$top=100",
+					{value : [{Region : "A", SalesAmount : "123"}]});
 
 			oBinding.filter(new Filter("Country", FilterOperator.EQ, "US"));
 
 			return that.waitForChanges(assert, "filter");
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region))&$count=true&$skip=0&$top=100",
-					{"@odata.count" : "1", value : [{Region : "A"}]});
+					+ "/groupby((Region),aggregate(SalesAmount))&$skip=0&$top=100",
+					{value : [{Region : "A", SalesAmount : "123"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Country"}]),
@@ -30846,6 +30842,68 @@ sap.ui.define([
 				[undefined, 2, "3", "0", "Lambda #1"]
 			], 4);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A filter is set for a list binding, the request is delayed, and in the meantime
+	// #getAllCurrentContexts is called. See that the table still displays data because the contexts
+	// of the list binding are not destroyed.
+	// SNOW: DINC0312580
+	QUnit.test("DINC0312580: #getAllCurrentContexts does not destroy", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/EMPLOYEES}">
+	<Text text="{ID}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$select=ID&$skip=0&$top=100", {
+				value : [{
+					ID : "2"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("after createView", assert, oTable, [
+			"/EMPLOYEES('2')"
+		], [
+			["2"]
+		]);
+
+		let fnResolve;
+		this.expectRequest("EMPLOYEES?$select=ID&$filter=ID eq '3'&$skip=0&$top=100",
+				new Promise(function (resolve) {
+					fnResolve = resolve.bind(null, {
+						value : [{
+							ID : "3"
+						}]
+					});
+				})
+			);
+
+		const oBinding = oTable.getBinding("items");
+		oBinding.filter(new Filter("ID", FilterOperator.EQ, "3"));
+
+		await this.waitForChanges(assert);
+
+		// code under test
+		assert.deepEqual(oBinding.getAllCurrentContexts(), []); // no contexts while filtering
+
+		// list binding not relevant here
+		checkTable("after getAllCurrentContexts", assert, oTable, undefined, [
+			["2"]
+		]);
+
+		fnResolve();
+
+		await resolveLater(); // table update takes a moment
+
+		checkTable("after createView", assert, oTable, [
+			"/EMPLOYEES('3')"
+		], [
+			["3"]
+		]);
 	});
 
 	//*********************************************************************************************
@@ -41718,12 +41776,14 @@ sap.ui.define([
 			this.waitForChanges(assert, "request side effects for name")
 		]);
 
-		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
-		// Alpha will be destroyed because it is not visible anymore
-		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+		const oBinding = oTable.getBinding("rows");
+		assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('4')"
 		]);
+		// simulate rerendering after #requestSideEffects to ensure that Alpha will be destroyed
+		// because it is not visible anymore
+		simulateRerendering(oBinding);
 
 		checkTable("after requestSideEffects", assert, oTable, [
 			"/EMPLOYEES('3')",
@@ -41961,12 +42021,18 @@ sap.ui.define([
 			this.waitForChanges(assert, "request side effects for name")
 		]);
 
-		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
-		// Eta will be destroyed because it is not visible anymore
-		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+		const oBinding = oTable.getBinding("rows");
+		assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 			"/EMPLOYEES('5')",
 			"/EMPLOYEES('6')"
 		]);
+
+		// simulate rerendering after #requestSideEffects to ensure that Alpha (Eta's parent) will
+		// be destroyed because it is not visible anymore
+		// simulateRerendering(oBinding); // TODO: table.Table does not react fast enough on event
+		oBinding.destroyPreviousContextsLater(Object.keys(oBinding.mPreviousContextsByPath));
+
+		await this.waitForChanges(assert, "prerendering task must be finished");
 
 		checkTable("after requestSideEffects", assert, oTable, [
 			"/EMPLOYEES('5')",
@@ -41975,6 +42041,7 @@ sap.ui.define([
 			[undefined, 2, "5", "Zeta"],
 			[undefined, 2, "6", "Eta"]
 		], 7);
+		assert.strictEqual(oAlpha.getModel(), undefined, "Alpha was destroyed by side effect");
 
 		// code under test
 		assert.strictEqual(oEta.getParent(), undefined);
@@ -41997,7 +42064,6 @@ sap.ui.define([
 		]);
 
 		assert.notStrictEqual(oResult, oAlpha, "Alpha was destroyed by side effect");
-		assert.strictEqual(oAlpha.getModel(), undefined, "Alpha was destroyed by side effect");
 		assert.strictEqual(oResult.getPath(), "/EMPLOYEES('0')");
 		assert.strictEqual(oResult.iIndex, 0);
 
@@ -43077,12 +43143,16 @@ sap.ui.define([
 			[true, 2, "etag4.1", "4", "Epsilon #1", "4,false", "Epsilon's Friend"]
 		], 7);
 
-		// #getAllCurrentContexts simulates rerendering after #requestSideEffects and ensures that
-		// Beta will be destroyed because it is not visible anymore
-		assert.deepEqual(oTable.getBinding("rows").getAllCurrentContexts().map(getPath), [
+		const oBinding = oTable.getBinding("rows");
+		assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 			sFriend + "(ArtistID='3',IsActiveEntity=false)",
 			sFriend + "(ArtistID='4',IsActiveEntity=false)"
 		]);
+		// simulate rerendering after #requestSideEffects to ensure that Beta will be destroyed
+		// because it is not visible anymore
+		simulateRerendering(oBinding);
+
+		await resolveLater(); // table update takes a moment
 
 		this.expectRequest(sBaseUrl + sSelect + sExpand + "&$skip=0&$top=2", {
 				value : [{
@@ -48565,6 +48635,10 @@ sap.ui.define([
 	// Add a sub-object page with a late property. Ensure that the property is still known and late
 	// after the rebind.
 	// JIRA: CPOUI5ODATAV4-936
+	//
+	// See that #getDownloadUrl handles backlinks correctly: backlink leads to a different cache,
+	// multiple properties of the same entity
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("BCP: 2180125559", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
@@ -48577,6 +48651,7 @@ sap.ui.define([
 			}">\
 		<Text id="price" text="{Price}"/>\
 		<Text id="channel" text="{_Artist/defaultChannel}"/>\
+		<Text id="tableName" text="{_Artist/Name}"/>\
 	</Table>\
 </FlexBox>\
 <FlexBox id="subObjectPage">\
@@ -48587,6 +48662,7 @@ sap.ui.define([
 		this.expectChange("name")
 			.expectChange("price", [])
 			.expectChange("channel", [])
+			.expectChange("tableName", [])
 			.expectChange("currency");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -48626,7 +48702,8 @@ sap.ui.define([
 				})
 				.expectChange("name", "Hour Frustrated again")
 				.expectChange("price", ["9.99"])
-				.expectChange("channel", ["Channel 2"]);
+				.expectChange("channel", ["Channel 2"])
+				.expectChange("tableName", ["Hour Frustrated again"]);
 
 			oObjectPage.setBindingContext(
 				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
@@ -48634,12 +48711,34 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			const oBinding = that.oView.byId("table").getBinding("items");
 
+			assert.strictEqual(
+				// code under test
+				oBinding.getDownloadUrl(),
+				"/special/cases/Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$expand=_Artist($select=Name,defaultChannel)"
+					+ "&$select=Price,PublicationID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication('42-0')"
+					+ "?$select=Price,PublicationID", {
+					Price : "9.99",
+					PublicationID : "42-0"
+				});
+
+			return Promise.all([
+				// code under test - verify that there is no $expand to _Artist now
+				oBinding.getCurrentContexts()[0].requestRefresh(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication('42-0')"
 					+ "?$select=CurrencyCode", {CurrencyCode : "EUR"})
 				.expectChange("currency", "EUR");
 
+			const oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			that.oView.byId("subObjectPage").setBindingContext(oContext);
 
 			return that.waitForChanges(assert);
@@ -48663,6 +48762,7 @@ sap.ui.define([
 				.expectChange("name", "Hour Frustrated again and again")
 				.expectChange("price", ["10.99"])
 				.expectChange("channel", ["Channel 3"])
+				.expectChange("tableName", ["Hour Frustrated again and again"])
 				.expectChange("currency", "USD");
 
 			oObjectPage.setBindingContext(
@@ -57059,6 +57159,9 @@ sap.ui.define([
 	// "SOITEM_2_SO/CurrencyCode" is not expanded, but taken from the parent sales order in the same
 	// cache and written back to it.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: backlink remains in same cache
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduce path: property in same cache", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -57101,6 +57204,15 @@ sap.ui.define([
 			oBinding.setValue("USD");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+					sSalesOrderService + "SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$expand=SOITEM_2_SO($select=CurrencyCode)"
+					+ "&$select=ItemPosition,Note,SalesOrderID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
 		});
 	});
 
@@ -57199,6 +57311,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Reduce path by removing multiple pairs of partner attributes.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: multiple backlinks remaining in same
+	// cache, adding to existing $expand
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduce path by removing multiple pairs of partner attributes", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
@@ -57206,30 +57322,52 @@ sap.ui.define([
 	<FlexBox binding="{AtoB}">\
 		<Table id="table" items="{BtoDs}">\
 			<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
+			<Text id="cValue" text="{DtoC/CValue}"/>\
 		</Table>\
 	</FlexBox>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("As(1)?$select=AID,AValue"
-				+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID))", {
+				+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID;"
+					+ "$expand=DtoC($select=CID,CValue)))", {
 				AID : 1,
 				AValue : 42,
 				AtoB : {
 					BID : 2,
 					BtoDs : [{
-						DID : 3
+						DID : 3,
+						DtoC : {
+							CID : 4,
+							CValue : 24
+						}
 					}]
 				}
 			})
-			.expectChange("aValue", ["42"]);
+			.expectChange("aValue", ["42"])
+			.expectChange("cValue", ["24"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+				"/special/cases/As(1)/AtoB/BtoDs?$expand="
+						+ "DtoB($expand=BtoA($select=AValue)),"
+						+ "DtoC($select=CID,CValue)"
+					+ "&$select=DID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: Reduce path by removing multiple pairs of partner attributes. See that AValue is
 	// taken from two caches above.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: multiple backlinks stepping up multiple
+	// caches
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduce path and step up multiple caches", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
@@ -57241,7 +57379,8 @@ sap.ui.define([
 			<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
 		</Table>\
 	</FlexBox>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("As(1)?$select=AID,AValue", {
 				AID : 1,
@@ -57259,12 +57398,24 @@ sap.ui.define([
 			})
 			.expectChange("aValue", ["42", "42"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+				"/special/cases/As(1)/AtoB/BtoDs?$expand=DtoB($expand=BtoA($select=AValue))"
+					+ "&$select=DID,DValue",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: Reduced path must not be shorter than root binding's path.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	//
+	// See that #getDownloadUrl handles backlinks correctly: backlink in same cache, partial
+	// reduction
+	// JIRA: CPOUI5ODATAV4-2733
 	QUnit.test("Reduced path must not be shorter than root binding's path", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
@@ -57273,7 +57424,8 @@ sap.ui.define([
 	<Table id="table" items="{BtoDs}">\
 		<Text id="table::aValue" text="{DtoB/BtoA/AValue}"/>\
 	</Table>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("As(1)/AtoB?$select=BID"
 				+ "&$expand=BtoA($select=AID,AValue),BtoDs($select=DID)", {
@@ -57289,7 +57441,15 @@ sap.ui.define([
 			.expectChange("aValue", "42")
 			.expectChange("table::aValue", ["42"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(
+				// code under test
+				that.oView.byId("table").getBinding("items").getDownloadUrl(),
+				"/special/cases/As(1)/AtoB/BtoDs?$expand=DtoB($expand=BtoA($select=AValue))"
+					+ "&$select=DID",
+				"JIRA: CPOUI5ODATAV4-2733"
+			);
+		});
 	});
 
 	//*********************************************************************************************
@@ -58865,7 +59025,7 @@ sap.ui.define([
 <Table id="orders" items="{path : \'/SalesOrderList\', parameters : {\
 		$expand : {\
 			SO_2_SOITEM : {\
-				$select : [\'ItemPosition\',\'Note\',\'SalesOrderID\']\
+				$select : [\'ItemPosition\', \'Note\', \'SalesOrderID\']\
 			}\
 		},\
 		$select : \'Note\'\
@@ -69075,7 +69235,7 @@ sap.ui.define([
 			}).then(function () {
 				if (bCancelCreation) { // creation already canceled
 					assert.notOk(oCreatedContext.isSelected(), "destroyed");
-					// binding is already destroyed
+					// context is already destroyed
 					// assert.notOk(oCreatedContext.getProperty("@$ui5.context.isSelected"));
 					assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
 
@@ -69103,7 +69263,6 @@ sap.ui.define([
 					that.waitForChanges(assert, "removeCreated")
 				]);
 			}).then(function () {
-				// Note: this invokes ODLB#destroyPreviousContextsLater, thus we need to wait below
 				var aAllContexts = oBinding.getAllCurrentContexts();
 
 				assert.strictEqual(aAllContexts.length, 1);
@@ -69116,10 +69275,20 @@ sap.ui.define([
 					Team_Id : "???"
 				});
 
-				return that.waitForChanges(assert, "ODLB#destroyPreviousContextsLater");
+				if (bSingle === false) { // TODO: requestRefresh failed to fire a change event
+					that.expectChange("id", ["???"])
+						.expectChange("memberCount", [null]);
+				}
+
+				simulateRerendering(oBinding);
+
+				return Promise.all([
+					resolveLater(), // table update takes a moment
+					that.waitForChanges(assert, "simulate rerendering")
+				]);
 			}).then(function () {
 				assert.notOk(oCreatedContext.isSelected(), "destroyed");
-				// binding is already destroyed
+				// context is already destroyed
 				// assert.notOk(oCreatedContext.getProperty("@$ui5.context.isSelected"));
 				assert.strictEqual(oCreatedContext.getModel(), undefined, "destroyed");
 			});
@@ -71405,7 +71574,7 @@ sap.ui.define([
 				return Promise.all([
 					checkCanceled(assert, oCreatedTeamContext.created()),
 					checkCanceled(assert, oCreatedEmployeeContext1.created()),
-					// do not check the 2nd context from initial data, expect no "uncaught (in promise)"
+					// do not check the 2nd context from initial data, expect no "Uncaught (in promise)"
 					checkCanceled(assert, oCreatedEmployeeContext3.created()),
 					checkCanceled(assert, oCreatedEmployeeContext4.created()),
 					checkCanceled(assert, oCreatedEquipmentsContext1.created()),
@@ -75609,6 +75778,17 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2692
 	//
 	// The "separateReceived" event is fired for each separate request (JIRA: CPOUI5ODATAV4-2792)
+	//
+	// While waiting for a separate request, the APIs Context#requestObject and
+	// Context#requestProperty can already be used to retrieve the separate data without sending
+	// additional GET requests. The returned promise will be resolved as soon as the separate
+	// request is processed. In case Context#requestProperty requests multiple properties, one of
+	// which was not provided by the separate request, then this missing property is requested by an
+	// additional GET request. The returned promise is resolved as soon as all requested properties
+	// are available.
+	// See that a simulated busy indicator (by using an expression binding) must be in busy state
+	// when the separate data is missing, and immediately disables if the data is received.
+	// JIRA: CPOUI5ODATAV4-2778
 	[false, true].forEach(function (bAutoExpandSelect) {
 		QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 			const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -75645,6 +75825,7 @@ sap.ui.define([
 		<Text id="name" text="{Name}"/>
 		<Text id="publicationCurrency" text="{BestPublication/CurrencyCode}"/>
 		<Text id="friend" text="{BestFriend/Name}"/>
+		<Text id="friendBusy__AS_COMPOSITE" text="{= !%{BestFriend} }"/>
 		<Text id="sibling" text="{SiblingEntity/Name}"/>
 	</Table>
 	<FlexBox id="details">
@@ -75652,6 +75833,9 @@ sap.ui.define([
 		<Text id="detailFriendName" text="{BestFriend/Name}"/>
 	</FlexBox>`;
 
+			if (bAutoExpandSelect) {
+				this.expectChange("friendBusy__AS_COMPOSITE", true, Number.MIN_SAFE_INTEGER);
+			}
 			let fnResolveBestFriend;
 			let fnResolveSiblingEntity;
 			this.expectRequest({
@@ -75673,8 +75857,10 @@ sap.ui.define([
 				})
 				.expectChange("name", ["Artist A", "Artist B"])
 				.expectChange("publicationCurrency", ["EUR", "USD"])
-				.expectChange("friend", [null, null])
-				.expectChange("sibling", [null, null])
+				.expectChange("friend", [])
+				// "__AS_COMPOSITE" ensures an expression binding is handled as a composite binding
+				.expectChange("friendBusy__AS_COMPOSITE", [true, true])
+				.expectChange("sibling", [])
 				.expectChange("detailName")
 				.expectChange("detailFriendName")
 				.expectRequest({
@@ -75726,13 +75912,43 @@ sap.ui.define([
 				assert.deepEqual(aEventParameters, []);
 			};
 
-			this.expectChange("friend", ["Friend A", "Friend B"]);
+			const [oArtistA, oArtistB] = oListBinding.getAllCurrentContexts();
+			// code under test (JIRA: CPOUI5ODATAV4-2778)
+			// use SyncPromise to show that the data will be available synchronously
+			const oFriendAPromise = SyncPromise.resolve(oArtistA.requestObject("BestFriend"));
+			// code under test (JIRA: CPOUI5ODATAV4-2778)
+			const oFriendBPromise = SyncPromise.resolve(oArtistB.requestProperty("BestFriend/Name"));
+
+			this.expectChange("friend", ["Friend A", "Friend B"])
+				.expectChange("friendBusy__AS_COMPOSITE", [false, false]);
 
 			fnResolveBestFriend();
 
 			await this.waitForChanges(assert, "$$separate response: BestFriend");
 
+			assert.deepEqual(oFriendAPromise.getResult(), {
+				ArtistID : "F1",
+				IsActiveEntity : true,
+				Name : "Friend A"
+			});
+			assert.strictEqual(oFriendBPromise.getResult(), "Friend B");
 			checkEvents([{property : "BestFriend", start : 0, length : 2}]);
+
+			this.expectRequest({
+					batchNo : 4,
+					url : "Artists(ArtistID='20',IsActiveEntity=true)/SiblingEntity?custom=foo"
+						+ "&$select=ArtistID,IsActiveEntity,defaultChannel"
+				}, {
+					ArtistID : "S2",
+					IsActiveEntity : true,
+					defaultChannel : "~defaultChannel~"
+				});
+
+			// code under test (JIRA: CPOUI5ODATAV4-2778)
+			const oSiblingBPromise = SyncPromise.resolve(oArtistB.requestProperty([
+				"SiblingEntity/Name",
+				"SiblingEntity/defaultChannel"
+			]));
 
 			this.expectChange("sibling", ["Sibling A", "Sibling B"]);
 
@@ -75740,11 +75956,12 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "$$separate response: SiblingEntity");
 
+			assert.deepEqual(oSiblingBPromise.getResult(), ["Sibling B", "~defaultChannel~"]);
 			checkEvents([{property : "SiblingEntity", start : 0, length : 2}]);
 
 			let fnResolveMain;
 			this.expectRequest({
-					batchNo : 4,
+					batchNo : 5,
 					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
 				}, {
@@ -75755,7 +75972,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 5,
+					batchNo : 6,
 					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
 				}, {
@@ -75766,7 +75983,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 6,
+					batchNo : 7,
 					url : sMainUrl + "&$skip=2&$top=1"
 				}, new Promise(function (resolve) {
 					fnResolveMain = resolve.bind(null, {
@@ -75790,6 +76007,10 @@ sap.ui.define([
 			this.expectChange("name", [,, "Artist C"])
 				.expectChange("publicationCurrency", [,, "JPY"])
 				.expectChange("friend", [,, "Friend C"])
+				.expectChange("friendBusy__AS_COMPOSITE", [,, false])
+				// as it is a composite binding, it might get additional change events even though there
+				// is no changed value
+				.expectChange("friendBusy__AS_COMPOSITE", [,, false])
 				.expectChange("sibling", [,, "Sibling C"]);
 
 			fnResolveMain();
@@ -75802,7 +76023,7 @@ sap.ui.define([
 			]);
 
 			this.expectRequest({
-					batchNo : 7,
+					batchNo : 8,
 					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
 				}, {
@@ -75817,7 +76038,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 8,
+					batchNo : 9,
 					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
 				}, {
@@ -75832,7 +76053,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 9,
+					batchNo : 10,
 					url : sMainUrl + "&$skip=3&$top=2"
 				}, {
 					"@odata.count" : "7",
@@ -75851,22 +76072,26 @@ sap.ui.define([
 				.expectChange("name", [,,, "Artist D", "Artist E"])
 				.expectChange("publicationCurrency", [,,, "DKK", "CZK"])
 				.expectChange("friend", [,,, "Friend D"])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,, false, true])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,, false])
 				.expectChange("sibling", [,,,, "Sibling E"])
 				.expectRequest({
-					batchNo : 10,
+					batchNo : 11,
 					url : "Artists(ArtistID='40',IsActiveEntity=true)?custom=foo&$select=SiblingEntity"
 						+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 				}, {
 					SiblingEntity : {ArtistID : "S4", IsActiveEntity : true, Name : "Sibling D"}
 				})
 				.expectRequest({
-					batchNo : 10,
+					batchNo : 11,
 					url : "Artists(ArtistID='50',IsActiveEntity=true)?custom=foo&$select=BestFriend"
 						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 				}, {
 					BestFriend : {ArtistID : "F5", IsActiveEntity : true, Name : "Friend E"}
 				})
 				.expectChange("friend", [,,,, "Friend E"])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,, false])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,, false])
 				.expectChange("sibling", [,,, "Sibling D"]);
 
 			oTable.requestItems();
@@ -75880,7 +76105,7 @@ sap.ui.define([
 
 			let fnResolveBestFriend60;
 			this.expectRequest({
-					batchNo : 11,
+					batchNo : 12,
 					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
 				}, new Promise(function (resolve) {
@@ -75893,7 +76118,7 @@ sap.ui.define([
 					});
 				}))
 				.expectRequest({
-					batchNo : 12,
+					batchNo : 13,
 					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
 				}, {
@@ -75904,7 +76129,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 13,
+					batchNo : 14,
 					url : sMainUrl + "&$skip=5&$top=1"
 				}, {
 					"@odata.count" : "7",
@@ -75917,7 +76142,7 @@ sap.ui.define([
 				})
 				.expectChange("name", [,,,,, "Artist F"])
 				.expectChange("publicationCurrency", [,,,,, "CAD"])
-				.expectChange("friend", [,,,,, null])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,,, true])
 				.expectChange("sibling", [,,,,, "Sibling F"]);
 
 			oTable.requestItems(1);
@@ -75927,7 +76152,7 @@ sap.ui.define([
 			checkEvents([{property : "SiblingEntity", start : 5, length : 1}]);
 
 			this.expectRequest({
-					batchNo : 14,
+					batchNo : 15,
 					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
 				}, {
@@ -75938,7 +76163,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 15,
+					batchNo : 16,
 					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
 						+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
 				}, {
@@ -75949,7 +76174,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 16,
+					batchNo : 17,
 					url : sMainUrl + "&$skip=6&$top=1"
 				}, {
 					"@odata.count" : "7",
@@ -75963,6 +76188,8 @@ sap.ui.define([
 				.expectChange("name", [,,,,,, "Artist G"])
 				.expectChange("publicationCurrency", [,,,,,, "EUR"])
 				.expectChange("friend", [,,,,,, "Friend G"])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,,,, false])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,,,, false])
 				.expectChange("sibling", [,,,,,, "Sibling G"]);
 
 			oTable.requestItems(1);
@@ -75974,8 +76201,7 @@ sap.ui.define([
 				{property : "SiblingEntity", start : 6, length : 1}
 			]);
 
-			this.expectChange("detailName", "Artist F")
-				.expectChange("detailFriendName", null);
+			this.expectChange("detailName", "Artist F");
 
 			// code under test
 			this.oView.byId("details").setBindingContext(oTable.getItems()[5].getBindingContext());
@@ -75983,6 +76209,7 @@ sap.ui.define([
 			await this.waitForChanges(assert, "show item 60 on object page");
 
 			this.expectChange("friend", [,,,,, "Friend F"])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,,, false])
 				.expectChange("detailFriendName", "Friend F");
 
 			fnResolveBestFriend60();
@@ -75999,6 +76226,10 @@ sap.ui.define([
 	// ignored. This behavior applies for a full refresh (new cache) as well as for a cache reset.
 	// The reset is made by setting any entity as kept-alive before refreshing the binding.
 	// JIRA: CPOUI5ODATAV4-2692
+	//
+	// When using getDownloadUrl, the result URL does not exclude the $expand for the separate
+	// property.
+	// JIRA: CPOUI5ODATAV4-2694
 	[false, true].forEach(function (bReset) {
 		QUnit.test(`$$separate: refresh ${bReset ? "w/" : "w/o"} reset`, async function (assert) {
 			const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -76043,7 +76274,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("name", ["Artist A", "Artist B"])
-				.expectChange("friend", [null, null]);
+				.expectChange("friend", []);
 
 			await this.createView(assert, sView, oModel);
 
@@ -76107,9 +76338,23 @@ sap.ui.define([
 				this.waitForChanges(assert, "refresh binding")
 			]);
 
+			if (bReset) {
+				this.expectCanceledError("Failed to read path"
+							+ " /Artists(ArtistID='10',IsActiveEntity=true)/BestFriend/Name",
+						"$$separate: canceled BestFriend")
+					.expectCanceledError("Failed to read path"
+							+ " /Artists(ArtistID='20',IsActiveEntity=true)/BestFriend/Name",
+						"$$separate: canceled BestFriend");
+			}
+
 			fnResolveBestFriend();
 
 			await this.waitForChanges(assert, "resolve old separate request, ignore response");
+
+			// code under test
+			assert.strictEqual(oBinding.getDownloadUrl(),
+				"/special/cases/Artists?$select=ArtistID,IsActiveEntity,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)");
 		});
 	});
 
@@ -76123,6 +76368,11 @@ sap.ui.define([
 	// to the "separateReceived" event. Calling preventDefault on this event prevents that this UI5
 	// message is automatically reported to the message model.
 	// JIRA: CPOUI5ODATAV4-2792
+	//
+	// Context#requestObject can be used to wait for the separate data while waiting for the
+	// pending separate GET request. If the separate request fails, the promise returned by
+	// #requestObject is rejected.
+	// JIRA: CPOUI5ODATAV4-2778
 	[/*main failed*/false, true].forEach(function (bSeparateFailed) {
 		[false, true].forEach(function (bPreventDefault) {
 			if (!bSeparateFailed && bPreventDefault) {
@@ -76166,12 +76416,15 @@ sap.ui.define([
 					.withArgs("Failed to get contexts for " + sTeaBusi + "EMPLOYEES with start index 0"
 						+ " and length 2");
 			}
-			const oError = createErrorInsideBatch();
+			let fnReject;
+			const oResponsePromise = new Promise(function (_resolve, reject) {
+				fnReject = reject.bind(null, createErrorInsideBatch());
+			});
 			this.expectRequest({
 					batchNo : 1,
 					url : "EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
 						+ "&$skip=0&$top=2"
-				}, bSeparateFailed ? oError : {
+				}, bSeparateFailed ? oResponsePromise : {
 					value : [{
 						EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
 						ID : "0"
@@ -76191,21 +76444,45 @@ sap.ui.define([
 						ID : "1",
 						Name : "Employee 1"
 					}]
-				} : oError)
-				.expectMessages(bPreventDefault ? [] : [{
-					code : "CODE",
-					message : "Request intentionally failed",
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}])
+				} : oResponsePromise)
 				.expectChange("name", bSeparateFailed ? ["Employee 0", "Employee 1"] : [])
-				.expectChange("team", bSeparateFailed ? [null, null] : []);
+				.expectChange("team", []);
 
 			await Promise.all([
 				// synchronous #resume leads in some cases to different request order
 				oListBinding.resumeAsync(),
 				this.waitForChanges(assert, "resume binding")
+			]);
+
+			let oEmployee0TeamPromise;
+			if (bSeparateFailed) {
+				const [oEmployee0] = oListBinding.getAllCurrentContexts();
+				// code under test (JIRA: CPOUI5ODATAV4-2778)
+				oEmployee0TeamPromise = oEmployee0.requestObject("EMPLOYEE_2_TEAM").then(function () {
+					assert.ok(false, "unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.canceled, true);
+					assert.strictEqual(oError.message, "$$separate: canceled EMPLOYEE_2_TEAM");
+				});
+
+				this.expectCanceledError("Failed to read path /EMPLOYEES('0')/EMPLOYEE_2_TEAM/Name",
+						"$$separate: canceled EMPLOYEE_2_TEAM")
+					.expectCanceledError("Failed to read path /EMPLOYEES('1')/EMPLOYEE_2_TEAM/Name",
+						"$$separate: canceled EMPLOYEE_2_TEAM");
+			}
+			this.expectMessages(bPreventDefault ? [] : [{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			fnReject();
+
+			await Promise.all([
+				oEmployee0TeamPromise,
+				this.waitForChanges(assert, "reject request")
 			]);
 
 			if (bSeparateFailed) {

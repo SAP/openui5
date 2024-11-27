@@ -148,8 +148,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				page: "test-resources/sap/ui/mdc/qunit/table/testsuite.table.qunit.html"
 			},
 
-			"FilterBar": {
-				group: "FilterBar Testsuite",
+			"FilterBar Testsuite": {
+				title: "FilterBar Testsuite",
+				group: "Testsuite",
 				page: "test-resources/sap/ui/mdc/qunit/filterbar/testsuite.filterbar.qunit.html"
 			},
 

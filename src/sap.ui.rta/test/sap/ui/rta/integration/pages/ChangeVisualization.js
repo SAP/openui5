@@ -197,15 +197,15 @@ sap.ui.define([
 						errorMessage: "Could not find the popover information or it doesn't match the change type"
 					});
 				},
-				iShouldSeeTheSourceElementOverlay() {
+				iShouldSeeTheHighlightedOverlay() {
 					return this.waitFor({
 						asyncPolling: true,
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers(oOverlay) {
-							return oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorDependent");
+							return oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered");
 						},
 						success(oOverlay) {
-							Opa5.assert.ok(oOverlay[0], "then dependent element indicator is shown");
+							Opa5.assert.ok(oOverlay[0], "then hover style class is shown on the overlay");
 						},
 						errorMessage: "Did not find the dependent element with the style class"
 					});
