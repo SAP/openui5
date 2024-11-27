@@ -1,4 +1,12 @@
 {
+	"config": {
+		"themePath": {
+			"sap_horizon": "v5/",
+			"sap_horizon_dark": "v5/",
+			"sap_horizon_hcw": "v5/hc/",
+			"sap_horizon_hcb": "v5/hc/"
+		}
+	},
 	"symbols": [
 		"Avatar",
 		"Calculator",
@@ -46,9 +54,185 @@
 		"UnsuccessfulAuth",
 		"User2"
 	],
-	"collections": [{
-		"prefix": "v5/hc/",
-		"mappings": {
+	"pathSymbolsConfig": {
+		"root": {
+			"ChartArea": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartArea2": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartBar": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartBPMNFlow": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartBullet": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartDoughnut": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartFlow": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartGantt": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartOrg": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ChartPie": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"CodePlaceholder": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Company": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Components": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"ExternalLink": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"FaceID": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Fingerprint": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Lock": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Mission": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoApplications": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoFlows": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoUsers": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Radar": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Secrets": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Services": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"SessionExpired": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"SessionExpiring": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Success": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"SuccessfulAuth": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Systems": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Teams": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Tools": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"UnableToLoad": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"Unlock": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"UnsuccessfulAuth": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"User2": {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			}
+		},
+		"v5/hc/": {
 			"Avatar": "Avatar-alternate",
 			"Calculator": "Calculator-alternate",
 			"ChartArea": "ChartArea-alternate",
@@ -93,10 +277,8 @@
 			"Tutorials": "Tutorials-alternate",
 			"UnSuccessfulAuth": "UnSuccessfulAuth-alternate",
 			"Unlock": "Unlock-alternate"
-		}
-	},{
-		"prefix": "v5/",
-		"mappings": {
+		},
+		"v5/": {
 			"ChartArea": "ChartArea",
 			"ChartArea2": "ChartArea2",
 			"ChartBPMNFlow": "ChartBPMNFlow",
@@ -132,5 +314,5 @@
 			"UnSuccessfulAuth": "UnSuccessfulAuth",
 			"Unlock": "Unlock"
 		}
-	}]
+	}
 }

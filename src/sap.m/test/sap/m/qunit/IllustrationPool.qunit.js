@@ -13,6 +13,8 @@ function (
 ) {
 	"use strict";
 
+	IllustrationPool._registerDefaultSet();
+
 	/**
 	 * STATIC MEMBERS
 	 */
@@ -134,7 +136,7 @@ function (
 
 		// Assert
 		assert.ok(fnLoadMetadataSpy.calledOnce, "while registering the dummy illustration set, its metadata is required");
-		assert.ok(fnLoadMetadataSpy.calledWithExactly(oDummySetConfig.setFamily, oDummySetConfig.setURI, undefined),
+		assert.ok(fnLoadMetadataSpy.calledWithExactly(oDummySetConfig.setFamily, oDummySetConfig.setURI, undefined, undefined),
 			"the correct arguments are passed to the _loadMetadata function");
 
 		// Act
@@ -300,7 +302,7 @@ function (
 		// Act
 		oLoadMetadataPromise = IllustrationPool._loadMetadata("fakeName", sInvalidPath, false);
 
-		oLoadMetadataPromise.then(function() {
+		oLoadMetadataPromise.catch(function() {
 			// Assert
 			assert.ok(IllustrationPool.getIllustrationSetMetadata("fakeName") === null);
 			assert.notOk(fnMetadataLoadedStub.calledOnce, "_metadataLoadedHandler is not called");
@@ -336,7 +338,7 @@ function (
 			assert.ok(fnInfoStub.calledOnce, "info is logged once in the success of the oLoadMetadataPromise");
 			assert.ok(fnInfoStub.calledWithExactly(sInfoMsg), "info is logged with the correct message");
 			assert.ok(fnMetadataLoadedSpy.calledOnce, "_metadataLoaded is called once in the success of the oLoadMetadataPromise");
-			assert.ok(fnMetadataLoadedSpy.calledWithExactly(setFamily, oMetadataJSON, bLoadAllResources),
+			assert.ok(fnMetadataLoadedSpy.calledWithExactly(setFamily, oMetadataJSON, bLoadAllResources, undefined),
 				"_metadataLoaded is with the correct arguments");
 
 			// End

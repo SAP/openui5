@@ -27,8 +27,7 @@ sap.ui.define([
             this._defineViewModel();
             this._initThemePicker();
             this._setAppTheme();
-            this._registerTntIllustrationSet();
-            this._setIllustrations();
+            Promise.all([IllustrationPool._registerDefaultSet(), this._registerTntIllustrationSet()]).then(this._setIllustrations.bind(this));
             this._showWelcomeMessage();
         },
 
