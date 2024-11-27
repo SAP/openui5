@@ -4,6 +4,7 @@
 /* ====================================== */
 
 .sapMRI {
+
 	& {
 		margin: 0.75rem 0;
 	}
@@ -13,21 +14,22 @@
 	}
 
 	.sapMRIUnsel {
-		color: @sapContent_UnratedColor;
+		color: var(--sapContent_UnratedColor);
 	}
 
 	.sapMRISel {
-		color: @sapContent_RatedColor;
+		color: var(--sapContent_RatedColor);
 	}
 }
 
 .sapMRI.sapMRIDisplayOnly,
 .sapMRI.sapMRIReadOnly {
+
 	.sapMRIIconSel {
-		color: @sapContent_RatedColor;
+		color: var(--sapContent_RatedColor);
 	}
 	.sapMRIUnsel {
-		color: @sapContent_UnratedColor;
+		color: var(--sapContent_UnratedColor);
 	}
 }
 
@@ -36,22 +38,25 @@
 }
 
 /* Custom focus outline */
-html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly) {
 	border-radius: 0.25rem;
-	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: 0.125rem;
 }
 
-.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
+.sapMRIIconSel,
+.sapMRIIconUnsel,
+.sapMRIIconHov,
+.sapMRIIconReadOnly {
 	font-size: 1.5rem;
 }
-.sapMRIIconSel, .sapMRIIconUnsel {
-	text-shadow: @sapContent_TextShadow;
+
+.sapMRIIconSel,
+.sapMRIIconUnsel {
+	text-shadow: var(--sapContent_TextShadow);
 }
 
-
 /* As font-size is set as an inline style, we need to override it for horizon only using important */
-
 .sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
 .sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
 .sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon {
@@ -59,6 +64,7 @@ html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 }
 
 .sapUiSizeCompact {
+
 	&.sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
 	&.sapMRIReadOnly .sapMRIIconSel .sapMRIunratedIcon,
 	&.sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
