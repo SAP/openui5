@@ -380,10 +380,11 @@ sap.ui.define([
 
 		QUnit.test("When the application uses pseudo app variants", function(assert) {
 			setIsKeyUser(true);
-			const sExpectedError = `This application emulates app variants by using the navigation parameter sap-app-id, which is no longer supported. Please open a ticket for the application component DummyComponent.`;
+			const sDummyComponent = "DummyComponent";
+			const sExpectedError = `This application emulates app variants by using the navigation parameter sap-app-id, which is no longer supported. Please open a ticket for the application component ${sDummyComponent}.`;
 			sandbox.stub(oAppComponent, "getManifest").returns({
 				"sap.app": {
-					ach: "DummyComponent"
+					ach: sDummyComponent
 				}
 			});
 			sandbox.stub(oAppComponent, "getComponentData").returns({
