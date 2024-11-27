@@ -22,6 +22,7 @@
 }
 
 @keyframes sapMCOpacityAnimation {
+
 	0% {
 		opacity: 0.25;
 	}
@@ -44,7 +45,7 @@
 }
 
 td .sapMNCValue.WithoutMargin {
-    justify-content: flex-end;
+	justify-content: flex-end;
 }
 
 .sapMNCIconImage {
@@ -52,20 +53,20 @@ td .sapMNCValue.WithoutMargin {
 	flex-direction: column;
 	justify-content: center;
 	padding-right: 0.375rem;
-	font-family: @sapUiFontHeaderFamily;
+	font-family: var(--sapFontHeaderFamily);
 	font-size: 1.75rem;
 	font-weight: @sapUiFontHeaderWeight;
-	color: @sapTile_IconColor;
+	color: var(--sapTile_IconColor);
 
-	&.sapMNCLargeFontSize:before {
+	&.sapMNCLargeFontSize::before {
 		padding-bottom: 0.25rem;
 	}
 
-	&.sapMNCMediumFontSize:before {
+	&.sapMNCMediumFontSize::before {
 		padding-bottom: 0.25rem;
 	}
 
-	&.sapMNCSmallFontSize:before {
+	&.sapMNCSmallFontSize::before {
 		padding-bottom: 0.25rem;
 	}
 }
@@ -79,7 +80,7 @@ td .sapMNCValue.WithoutMargin {
 	text-align: right;
 	text-overflow: ellipsis;
 	font-size: 2.25rem;
-	font-family: @sapFontLightFamily;
+	font-family: var(--sapFontLightFamily);
 	font-weight: @sapUiFontHeaderWeight;
 
 	&.WithoutMargin {
@@ -162,7 +163,7 @@ html[dir=rtl] .sapMNCValue {
 
 .sapMNCScale {
 	font-size: 0.875rem;
-	font-family: @sapUiFontHeaderFamily;
+	font-family: var(--sapFontHeaderFamily);
 	font-weight: @sapUiFontHeaderWeight;
 	grid-column: 1;
 	grid-row: 1;
@@ -175,37 +176,37 @@ html[dir=rtl] .sapMNCValue {
 .sapMNCValue.Neutral,
 .sapMNCIndScale.Neutral,
 .sapMNCScale.Neutral {
-	color: @sapUiNeutralText;
+	color: var(--sapNeutralTextColor);
 }
 
 .sapMNCValue.Good,
 .sapMNCIndScale.Good,
 .sapMNCScale.Good {
-	color: @sapUiPositiveText;
+	color: var(--sapPositiveTextColor);
 }
 
 .sapMNCValue.Error,
 .sapMNCIndScale.Error,
 .sapMNCScale.Error {
-	color: @sapUiNegativeText;
+	color: var(--sapNegativeTextColor);
 }
 
 .sapMNCValue.Critical,
 .sapMNCIndScale.Critical,
 .sapMNCScale.Critical {
-	color: @sapUiCriticalText;
+	color: var(--sapCriticalTextColor);
 }
 
 .sapMNCIndScale.Loading,
 .sapMNCScale.Loading,
 .sapMNCIconImage.Loading,
 .sapMNCValue.Failed {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 	opacity: 0.25;
 }
 
 .sapMNC:focus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 }
 
 .sapMNC:focus:not([tabindex]) {
@@ -213,6 +214,7 @@ html[dir=rtl] .sapMNCValue {
 }
 
 .sapMTileSmallPhone {
+
 	.sapMNC {
 		height: 3.438rem;
 		width: 8rem;
@@ -253,7 +255,7 @@ html[dir=rtl] .sapMNCValue {
 			}
 		}
 
-		.sapMNCIndIcon:only-child { // when there's no scale
+		.sapMNCIndIcon:only-child { /* when there's no scale */
 			margin-top: 0.5rem;
 		}
 
@@ -263,7 +265,7 @@ html[dir=rtl] .sapMNCValue {
 	}
 
 	.sapMGTHdrTxt > .sapMText {
-		font-size: @sapMFontHeader6Size;
+		font-size: var(--sapFontHeader6Size);
 	}
 }
 
@@ -277,6 +279,7 @@ html[dir=rtl] .sapMNCValue {
 
 	.sapMNCContentShimmerPlaceholderRows {
 		flex-grow: 1;
+
 		.sapMNCContentShimmerPlaceholderItemHeader {
 			height: 1rem;
 			margin-bottom: 0.5rem;
@@ -290,14 +293,14 @@ html[dir=rtl] .sapMNCValue {
 }
 
 .sapMNCLoadingShimmerMixin() {
-	background-color: @sapUiContentPlaceholderloadingBackground;
-	background-image: @sapUiContentPlaceholderloadingGradient;
+	background-color: var(--sapContent_Placeholderloading_Background);
+	background-image: var(--sapContent_Placeholderloading_Gradient);
 	background-repeat: no-repeat;
 	background-size: 800px 144px;
 	position: relative;
 	border-radius: 0.25rem;
 
-	[data-sap-ui-animation-mode="full"] & {
+	[data-sap-ui-animation-mode='full'] & {
 		animation-duration: 2.5s;
 		animation-fill-mode: forwards;
 		animation-iteration-count: infinite;
@@ -305,8 +308,8 @@ html[dir=rtl] .sapMNCValue {
 		animation-timing-function: linear;
 	}
 
-	[data-sap-ui-animation-mode="basic"] &,
-	[data-sap-ui-animation-mode="minimal"] & {
+	[data-sap-ui-animation-mode='basic'] &,
+	[data-sap-ui-animation-mode='minimal'] & {
 		animation-duration: 8s;
 		animation-fill-mode: forwards;
 		animation-iteration-count: infinite;
@@ -316,6 +319,7 @@ html[dir=rtl] .sapMNCValue {
 }
 
 @keyframes placeHolderShimmer {
+
 	0% {
 		background-position: -468px 0;
 	}
@@ -325,11 +329,13 @@ html[dir=rtl] .sapMNCValue {
 	}
 }
 
-@keyframes placeHolderShimmer{
-    0% {
-      background-position: -468px 0;
-    }
-    100% {
-      background-position: 468px 0;
-    }
+@keyframes placeHolderShimmer {
+
+	0% {
+		background-position: -468px 0;
+	}
+
+	100% {
+		background-position: 468px 0;
+	}
 }

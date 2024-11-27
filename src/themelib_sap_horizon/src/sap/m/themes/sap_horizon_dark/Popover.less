@@ -3,33 +3,37 @@
 /* Evening Horizon theme          */
 /* ============================== */
 
-.sapMPopoverArr:after {
-	background: @sapUiGroupContentBackground;
-	box-shadow: @sapUiContentShadow2;
+.sapMPopoverArr::after {
+	background: var(--sapGroup_ContentBackground);
+	box-shadow: var(--sapContent_Shadow2);
 }
 
 .sapMPopoverWithBar > .sapMPopoverArr {
-	&.sapMPopoverArrUp:after,
-	&.sapMPopoverHeaderAlignArr:after {
-		background-color: @sapUiPageHeaderBackground;
+	&.sapMPopoverArrUp::after,
+	&.sapMPopoverHeaderAlignArr::after {
+		background-color: var(--sapPageHeader_Background);
 	}
 }
 
-.sapMPopoverWithFooter > .sapMPopoverArr.sapMPopoverFooterAlignArr:after {
-	background-color: @sapUiPageFooterBackground;
+.sapMPopoverWithFooter > .sapMPopoverArr.sapMPopoverFooterAlignArr::after {
+	background-color: var(--sapPageFooter_Background);
 }
 
 .sapMPopover .sapMIBar.sapMHeader-CTX {
-	background-color: @sapUiPageHeaderBackground;
+	background-color: var(--sapPageHeader_Background);
 }
 
 .sapMPopover .sapMIBar.sapMSubHeader-CTX {
-	background-color: @sapUiPageHeaderBackground;
+	background-color: var(--sapPageHeader_Background);
 }
 
 .sapUiSizeCompact {
-	.sapMPopoverFooter, .sapMPopoverHeader {
-		.sapMIBar, .sapMBar {
+
+	.sapMPopoverFooter,
+	.sapMPopoverHeader {
+
+		.sapMIBar,
+		.sapMBar {
 			height: 2.5rem;
 
 			& > .sapMBarLeft,
@@ -54,31 +58,43 @@
 	}
 }
 
-.sapMPopoverHeader, .sapMPopoverSubHeader  {
+.sapMPopoverHeader,
+.sapMPopoverSubHeader {
 	position: relative;
 	z-index: 2;
 
 	.sapMBar {
+
 		.sapMBarContainer {
 			padding-left: 0;
 			padding-right: 0;
 		}
+
 		.sapMBarLeft {
 			padding-left: 1rem;
 		}
+
 		.sapMBarMiddle .sapMBarContainer {
 			padding: 0 1rem;
 		}
+
 		.sapMBarRight {
 			padding-right: 1rem;
 		}
 	}
 }
 
-.sapMPopoverHeader, .sapMPopoverFooter, .sapMPopoverSubHeader {
-	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
-	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+.sapMPopoverHeader,
+.sapMPopoverFooter,
+.sapMPopoverSubHeader {
+
+	.sapUi-Std-PaddingS,
+	.sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL,
+	.sapUi-Std-PaddingXL {
+
 		&.sapMBar {
+
 			.sapMBarMiddle .sapMBarPH {
 				padding-left: 0;
 				padding-right: 0;
@@ -104,7 +120,7 @@
 }
 
 .sapMPopover {
-	border-radius: @sapUiPopoverBorderCornerRadius;
+	border-radius: var(--sapPopover_BorderCornerRadius);
 
 	.sapMPopoverCont {
 		padding: 0.0625rem;
@@ -112,17 +128,17 @@
 
 	&.sapMPopoverWithoutBar .sapMPopoverCont,
 	.sapMIBar.sapMHeader-CTX {
-		border-top-right-radius: @sapUiPopoverBorderCornerRadius;
-		border-top-left-radius: @sapUiPopoverBorderCornerRadius;
+		border-top-right-radius: var(--sapPopover_BorderCornerRadius);
+		border-top-left-radius: var(--sapPopover_BorderCornerRadius);
 	}
 
 	&.sapMPopoverWithoutFooter .sapMPopoverCont,
 	.sapMIBar.sapMFooter-CTX {
-		border-bottom-right-radius: @sapUiPopoverBorderCornerRadius;
-		border-bottom-left-radius: @sapUiPopoverBorderCornerRadius;
+		border-bottom-right-radius: var(--sapPopover_BorderCornerRadius);
+		border-bottom-left-radius: var(--sapPopover_BorderCornerRadius);
 	}
 }
 
 .sapMPopoverResizeHandle {
-	color: @sapButton_Lite_TextColor;
+	color: var(--sapButton_Lite_TextColor);
 }

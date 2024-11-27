@@ -24,7 +24,9 @@ sap.ui.define([
 					technicallyGroupable: false
 				}
 			}]);
-		}, new Error("Invalid property definition: A property cannot be groupable when not technically groupable."));
+		}, new Error("Invalid property definition: A property cannot be groupable when not technically groupable."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","groupable":true,"extension":{"technicallyGroupable":false}}'
+		));
 	});
 
 	QUnit.test("aggregatable=true and technicallyAggregatable=false", function(assert) {
@@ -38,10 +40,12 @@ sap.ui.define([
 					technicallyAggregatable: false
 				}
 			}]);
-		}, new Error("Invalid property definition: A property cannot be aggregatable when not technically aggregatable."));
+		}, new Error("Invalid property definition: A property cannot be aggregatable when not technically aggregatable."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","aggregatable":true,"extension":{"technicallyAggregatable":false}}'
+		));
 	});
 
-	QUnit.skip("isKey=true and technicallyGroupable=false", function(assert) {
+	QUnit.test("isKey=true and technicallyGroupable=false", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				key: "prop",
@@ -49,7 +53,9 @@ sap.ui.define([
 				dataType: "String",
 				isKey: true
 			}]);
-		}, new Error("Invalid property definition: A key property must be technically groupable."));
+		}, new Error("Invalid property definition: A key property must be technically groupable."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","isKey":true}'
+		));
 	});
 
 	QUnit.test("isKey=true and technicallyAggregatable=true", function(assert) {
@@ -65,7 +71,10 @@ sap.ui.define([
 					technicallyAggregatable: true
 				}
 			}]);
-		}, new Error("Invalid property definition: A key property must not be technically aggregatable."));
+		}, new Error("Invalid property definition: A key property must not be technically aggregatable."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","isKey":true,"groupable":true,"aggregatable":false,'
+			+ '"extension":{"technicallyAggregatable":true}}'
+		));
 	});
 
 	QUnit.test("additionalProperties is not empty and technicallyGroupable=false & technicallyAggregatable=false", function(assert) {
@@ -83,7 +92,9 @@ sap.ui.define([
 				}
 			}]);
 		}, new Error("Invalid property definition: 'additionalProperties' must not contain property keys if the property is neither technically"
-			+ " groupable nor technically aggregatable."));
+			+ " groupable nor technically aggregatable."
+			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String","extension":{"additionalProperties":["prop"]}}'
+		));
 	});
 
 	QUnit.test("additionalProperties contains more than one property and technicallyGroupable=true & technicallyAggregatable=false", function(assert) {
@@ -107,7 +118,10 @@ sap.ui.define([
 					technicallyGroupable: true
 				}
 			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' contains more than one property."));
+		}, new Error("Invalid property definition: 'additionalProperties' contains more than one property."
+			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String",'
+			+ '"extension":{"additionalProperties":["idPropertyA","idPropertyB"],"technicallyGroupable":true}}'
+		));
 	});
 
 	QUnit.test("additionalProperties do not have id<->text relation and technicallyGroupable=true & technicallyAggregatable=false", function(assert) {
@@ -125,7 +139,10 @@ sap.ui.define([
 					technicallyGroupable: true
 				}
 			}]);
-		}, new Error("Invalid property definition: The property in 'additionalProperties' does not reference this property in 'text'."));
+		}, new Error("Invalid property definition: The property in 'additionalProperties' does not reference this property in 'text'."
+			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String",'
+			+ '"extension":{"additionalProperties":["idProperty"],"technicallyGroupable":true}}'
+		));
 	});
 
 	QUnit.test("additionalProperties contains the text", function(assert) {
@@ -148,7 +165,10 @@ sap.ui.define([
 					additionalProperties: ["idProperty"]
 				}
 			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' must not contain the text."));
+		}, new Error("Invalid property definition: 'additionalProperties' must not contain the text."
+			+ '\n{"key":"idProperty","label":"ID Property","dataType":"String","groupable":true,"text":"textProperty",'
+			+ '"extension":{"additionalProperties":["textProperty"]}}'
+		));
 	});
 
 	QUnit.test("additionalProperties contains the unit", function(assert) {
@@ -167,7 +187,10 @@ sap.ui.define([
 				label: "Unit Property",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' must not contain the unit."));
+		}, new Error("Invalid property definition: 'additionalProperties' must not contain the unit."
+			+ '\n{"key":"idProperty","label":"ID Property","dataType":"String","aggregatable":true,"unit":"unitProperty",'
+			+ '"extension":{"additionalProperties":["unitProperty"]}}'
+		));
 	});
 
 	QUnit.test("additionalProperties nesting", function(assert) {
@@ -201,8 +224,10 @@ sap.ui.define([
 				label: "Additional Property C",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' must contain all nested additionalProperties (additionalProperties"
-				+ " of additionalProperties)."));
+		}, new Error("Invalid property definition: All nested additional properties must be listed at root level."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","aggregatable":true,'
+			+ '"extension":{"additionalProperties":["additionalPropA","additionalPropB"]}}'
+		));
 	});
 
 	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
@@ -217,7 +242,10 @@ sap.ui.define([
 				propertyInfos: ["prop"],
 				aggregatable: true
 			}]).destroy();
-        },  "Error thrown");
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'aggregatable'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"aggregatable":true}'
+		)
+		);
 	});
 
 	QUnit.test("Complex property with attribute 'extension.technicallyGroupable'", function(assert) {
@@ -234,7 +262,10 @@ sap.ui.define([
 					technicallyGroupable: false
 				}
 			}]).destroy();
-        },  "Error thrown");
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.technicallyGroupable'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"technicallyGroupable":false}}'
+		)
+		);
 	});
 
 	QUnit.test("Complex property with attribute 'extension.technicallyAggregatable'", function(assert) {
@@ -251,7 +282,10 @@ sap.ui.define([
 					technicallyAggregatable: false
 				}
 			}]).destroy();
-        },  "Error thrown");
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.technicallyAggregatable'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"technicallyAggregatable":false}}'
+		)
+		);
 	});
 
 	QUnit.test("Complex property with attribute 'extension.customAggregate'", function(assert) {
@@ -268,7 +302,9 @@ sap.ui.define([
 					customAggregate: {}
 				}
 			}]).destroy();
-        },  "Error thrown");
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.customAggregate'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"customAggregate":{}}}')
+		);
 	});
 
 	QUnit.module("Defaults", {

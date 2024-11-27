@@ -61,10 +61,9 @@ sap.ui.define([
 						SalesNumber : {}
 					},
 					group : {
-						AccountResponsible : {},
 						Country_Code : {additionally : ["Country"]}
 					},
-					groupLevels : ["Country_Code", "Region", "Segment"]
+					groupLevels : ["Country_Code", "Region", "Segment", "AccountResponsible"]
 				};
 				if (sGrandTotalAtBottomOnly) {
 					if (sGrandTotalAtBottomOnly === "true") {

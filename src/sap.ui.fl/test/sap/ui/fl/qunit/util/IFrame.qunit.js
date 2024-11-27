@@ -305,13 +305,13 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			this.myView = await XMLView.create({
-				definition: `<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">` +
+				definition: "<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.ui.fl.util\">" +
 					`<IFrame id="iframe1" url="${sOpenUI5Url}" />` +
 					`<IFrame id="iframe2" url="${sOpenUI5Url}?fullName={$user>/fullName}" />` +
 					`<IFrame id="iframe3" url="${sOpenUI5Url}?domain={$user>/domain}&amp;{anyModel>/anyProperty}" />` +
 					`<IFrame id="iframe4" url="{= '${sOpenUI5Url}?domain=' + \${$user>/domain} }" />` +
 					`<IFrame id="iframe5" url="{= '${sOpenUI5Url}?domain=' + (\${$user>/domain}.indexOf('sap.com') !== -1 ? 'SAP' : 'EXTERNAL') }" />` +
-				`</mvc:View>`
+				"</mvc:View>"
 			});
 			var iFrame = this.myView.byId("iframe1");
 			this.myView.placeAt("qunit-fixture");

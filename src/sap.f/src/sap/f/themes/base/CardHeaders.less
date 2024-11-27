@@ -331,7 +331,7 @@
 }
 
 .sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before { // focus inside Grid Container
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard > .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before { // focus inside Grid Container
 	content: '';
 	display: block;
 	position: absolute;

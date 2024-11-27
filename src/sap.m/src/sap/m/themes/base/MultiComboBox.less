@@ -17,6 +17,7 @@
 
 /* hande min-width calculation */
 .sapMMultiComboBox.sapMMultiComboBoxHasToken {
+
 	.sapMTokenizer {
 		min-width: @_sap_m_InputWithTokens_TokenizerMinWidth;
 	}
@@ -27,6 +28,7 @@
 
 	.sapMInputBaseContentWrapper {
 		min-width: @_InputBase_Control_Tokens_MinWidth;
+
 		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 			min-width: @_InputBase_Control_Tokens_State_MinWidth;
 		}
@@ -83,8 +85,9 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 }
 
 .sapMMultiComboBoxPicker {
+
 	.sapMFocusable:focus {
-		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		outline-offset: -0.125rem;
 	}
 
@@ -95,7 +98,8 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 
 /* Compact size */
 .sapUiSizeCompact {
-	.sapMLIB.sapMMultiComboBoxItem.sapMSLIWrapping > .sapMCb{
+
+	.sapMLIB.sapMMultiComboBoxItem.sapMSLIWrapping > .sapMCb {
 		height: 2rem;
 		line-height: 2rem;
 		margin-top: 0;
@@ -103,15 +107,19 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 
 	/* handle min-width calculation */
 	.sapMMultiComboBox.sapMMultiComboBoxHasToken {
+
 		.sapMInputBaseContentWrapper {
 			min-width: @_InputBase_Control_Tokens_MinWidth_Compact;
+
 			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 				min-width: @_InputBase_Control_Tokens_State_MinWidth_Compact;
 				outline-offset: -3px;
+
 				.sapMToken {
 					margin-top: 0.0625rem;
 					margin-bottom: 0.0625rem;
 				}
+
 				.sapMTokenizerIndicator {
 					line-height: 1rem;
 				}
@@ -126,6 +134,7 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 	.sapMMultiComboBoxSelectAll.sapMTB.sapMIBar,
 	.sapMMultiComboBoxSelectAll.sapMTB-Transparent-CTX.sapMTB.sapMListHdrTBar {
 		padding: 0;
+
 		.sapMCb {
 			margin-left: 0.5rem;
 			padding-left: 2.25rem;
@@ -136,12 +145,13 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 .sapMMultiComboBoxSelectAll.sapMTB.sapMIBar,
 .sapMMultiComboBoxSelectAll.sapMTB-Transparent-CTX.sapMTB.sapMListHdrTBar {
 	padding: 0.125rem;
+
 	&.sapMMultiComboBoxSelectAllFocused {
-		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		outline-offset: -0.125rem;
 	}
 
-	& .sapMBarChild.sapMCb.sapMCbHasLabel:focus:before {
+	& .sapMBarChild.sapMCb.sapMCbHasLabel:focus::before {
 		border: none;
 	}
 }

@@ -96,7 +96,7 @@ sap.ui.define([
 		 * the support is disabled.
 		 *
 		 * @return {string[]} The support settings.
-		 * @experimental
+		 * @private
 		 * @since 1.120.0
 		 */
 		getSupportSettings() {
@@ -113,7 +113,7 @@ sap.ui.define([
 		 * the test recorder is disabled.
 		 *
 		 * @return {string[]} The test recorder settings.
-		 * @experimental
+		 * @private
 		 * @since 1.120.0
 		 */
 		getTestRecorderSettings() {

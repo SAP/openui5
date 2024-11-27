@@ -1007,17 +1007,43 @@ sap.ui.define([
 
 			assert.strictEqual(oScrollContainer.children.length, 2, "initially there are two aggregations in the scroll container");
 			assert.strictEqual(aOverlayChildrenDomRef.children.length, 4, "and 4 children in the element overlay");
-			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content3").getDomRef().parentElement, oScrollContainer, "content3 is in the scroll container");
-			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content4").getDomRef().parentElement, oScrollContainer, "content4 is in the scroll container");
-			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content5").getDomRef().parentElement, aOverlayChildrenDomRef, "content5 is not in the scroll container");
+			assert.strictEqual(
+				this.oSimpleScrollControlOverlay.getAggregationOverlay("content3").getDomRef().parentElement,
+				oScrollContainer,
+				"content3 is in the scroll container"
+			);
+			assert.strictEqual(
+				this.oSimpleScrollControlOverlay.getAggregationOverlay("content4").getDomRef().parentElement,
+				oScrollContainer,
+				"content4 is in the scroll container"
+			);
+			assert.strictEqual(
+				this.oSimpleScrollControlOverlay.getAggregationOverlay("content5").getDomRef().parentElement,
+				aOverlayChildrenDomRef,
+				"content5 is not in the scroll container"
+			);
 
 			this.oSimpleScrollControl.changeScrollContainer();
 
 			assert.strictEqual(oScrollContainer.children.length, 2, "still two children in the scroll container");
 			assert.strictEqual(aOverlayChildrenDomRef.children.length, 4, "and 4 children in the element overlay");
-			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content3").getDomRef().parentElement, aOverlayChildrenDomRef, "content3 is not in the scroll container");
-			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content4").getDomRef().parentElement, oScrollContainer, "content4 is in the scroll container");
-			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content5").getDomRef().parentElement, oScrollContainer, "content5 is in the scroll container");
+			const oContent3AggregationOverlay = this.oSimpleScrollControlOverlay.getAggregationOverlay("content3");
+			assert.strictEqual(
+				oContent3AggregationOverlay.getDomRef().parentElement,
+				aOverlayChildrenDomRef,
+				"content3 is not in the scroll container"
+			);
+			assert.strictEqual(oContent3AggregationOverlay.getScrollContainerId(), undefined, "content3 no longer has scroll container id");
+			assert.strictEqual(
+				this.oSimpleScrollControlOverlay.getAggregationOverlay("content4").getDomRef().parentElement,
+				oScrollContainer,
+				"content4 is in the scroll container"
+			);
+			assert.strictEqual(
+				this.oSimpleScrollControlOverlay.getAggregationOverlay("content5").getDomRef().parentElement,
+				oScrollContainer,
+				"content5 is in the scroll container"
+			);
 		});
 
 		QUnit.test("when the overlay gets destroyed and the scroll container needs updating", function(assert) {

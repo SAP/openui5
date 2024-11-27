@@ -36,7 +36,7 @@ sap.ui.define([
 			Then.onMainPage.checkValue("");
 			When.onMainPage.enterValue("100");
 			Then.onMainPage.checkUnit("");
-			Then.onMainPage.checkValue("100");
+			Then.onMainPage.checkValue("100.000");
 			When.onMainPage.enterUnit("DEG");
 			Then.onMainPage.checkUnit("DEG");
 			Then.onMainPage.checkValue("100.0", "100");

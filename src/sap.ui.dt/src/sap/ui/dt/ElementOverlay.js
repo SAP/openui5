@@ -242,6 +242,8 @@ sap.ui.define([
 				aAggregationsCopy.splice(aAggregationsCopy.indexOf(sAggregationName), 1);
 			} else {
 				o$ScrollContainer.get(0).removeChild(oAggregationNode);
+				const oChildOverlay = OverlayRegistry.getOverlay(oAggregationNode.getAttribute("id"));
+				oChildOverlay.setScrollContainerId(undefined);
 				DOMUtil.appendChild(this.getChildrenDomRef(), oAggregationNode);
 			}
 		}.bind(this));

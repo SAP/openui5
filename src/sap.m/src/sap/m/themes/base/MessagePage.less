@@ -7,7 +7,7 @@
 .sapMMessagePage {
 	width: 100%;
 	height: 100%;
-	background: @sapUiGlobalBackgroundColor;
+	background: var(--sapBackgroundColor);
 	position: relative;
 }
 
@@ -42,12 +42,14 @@
 	top: 3rem;
 }
 
-/* MessagePage inner controls styles*/
+/* MessagePage inner controls styles */
 .sapMMessagePage {
+
 	.sapMMessagePageInner {
+
 		.sapMMessagePageIcon.sapUiIcon::before {
 			font-size: 6rem;
-			color: @sapUiContentNonInteractiveIconColor;
+			color: var(--sapContent_NonInteractiveIconColor);
 		}
 
 		& > .sapMMessagePageContentWrapper > * {
@@ -62,8 +64,8 @@
 	}
 
 	.sapMText.sapMMessagePageMainText {
-		color: @sapUiGroupTitleTextColor;
-		font-size: @sapMFontHeader2Size;
+		color: var(--sapGroup_TitleTextColor);
+		font-size: var(--sapFontHeader2Size);
 	}
 
 	.sapMMessagePageDescription {
@@ -76,8 +78,8 @@
 	}
 
 	.sapMText.sapMMessagePageDescription {
-		color: @sapUiContentLabelColor;
-		font-size: @sapMFontHeader5Size;
+		color: var(--sapContent_LabelColor);
+		font-size: var(--sapFontHeader5Size);
 	}
 
 	.sapMMessagePageButtonsWrapper {
@@ -104,7 +106,7 @@
 		height: 2.5rem;
 	}
 
-	&+ .sapMMessagePageInner {
+	& + .sapMMessagePageInner {
 		top: 2.5rem;
 	}
 }

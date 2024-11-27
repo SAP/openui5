@@ -58,6 +58,10 @@ sap.ui.define([
 	 *   corresponding binding supports the feature of ignoring model messages, see
 	 *   {@link sap.ui.model.Binding#supportsIgnoreMessages}, and the corresponding binding
 	 *   parameter is not set manually.
+	 * @param {object} [oFormatOptions.decimals]
+	 *   The number of decimals to be used for formatting the number part of the unit; defaults to <b>3</b> if none of
+	 *   the format options <code>maxFractionDigits</code>, <code>minFractionDigits</code> or <code>decimals</code>
+	 *   is given
 	 * @param {boolean} [oFormatOptions.preserveDecimals=true]
 	 *   By default decimals are preserved, unless <code>oFormatOptions.style</code> is given as
 	 *   "short" or "long"; since 1.89.0
@@ -365,11 +369,14 @@ sap.ui.define([
 	};
 
 	Unit.prototype.setFormatOptions = function(oFormatOptions) {
-		this.oFormatOptions = Object.assign(
-			oFormatOptions.style !== "short" && oFormatOptions.style !== "long"
-				? {preserveDecimals : true}
-				: {},
-			oFormatOptions);
+		const bDefaultDecimals = oFormatOptions.maxFractionDigits === undefined
+			&& oFormatOptions.minFractionDigits === undefined
+			&& oFormatOptions.decimals === undefined;
+		this.oFormatOptions = {
+			...(oFormatOptions.style !== "short" && oFormatOptions.style !== "long" ? {preserveDecimals: true} : {}),
+			...oFormatOptions,
+			...(bDefaultDecimals ? {decimals: 3} : {})
+		};
 		this._clearInstances();
 		this._createInputFormat();
 	};

@@ -582,6 +582,7 @@ sap.ui.define([
 				}
 
 				that._deregisterContentResizeHandler();
+				that._resetSizes();
 
 				if (this._sTimeoutId && arguments.length > 1) {
 					clearTimeout(this._sTimeoutId);
@@ -1020,8 +1021,8 @@ sap.ui.define([
 				$scrollArea = $content.children(".sapMPopoverScroll"),
 				oContentStyle = $content[0].style,
 				oScrollAreaStyle = $scrollArea[0].style,
-				sContentWidth = this.getContentWidth(),
-				sContentHeight = this.getContentHeight(),
+				sContentWidth = this._getActualContentWidth(),
+				sContentHeight = this._getActualContentHeight(),
 				$arrow = this.$("arrow"),
 				iWindowWidth,
 				iWindowHeight,
@@ -1076,7 +1077,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._includeScrollWidth = function () {
-			var sContentWidth = this.getContentWidth(),
+			var sContentWidth = this._getActualContentWidth(),
 				$popover = this.$(),
 				iMaxWidth = Math.floor(window.innerWidth * 0.9), //90% of the max screen size
 				$popoverContent = this.$('cont');
@@ -1316,8 +1317,8 @@ sap.ui.define([
 				maxWidth: parseFloat(contentDimensions["max-width"]),
 				maxHeight: parseFloat(contentDimensions["max-height"]),
 				footerHeaderHeight: $popover.height() - contentHeight,
-				offsetX: this.getOffsetX(),
-				offsetY: this.getOffsetY(),
+				offsetX: this._getActualOffsetX(),
+				offsetY: this._getActualOffsetY(),
 				left: parseFloat($popover.css("left")),
 				top: parseFloat($popover.css("top")),
 				posParams: this._recalculateMargins(calculatedPlacement, posParams)
@@ -1386,8 +1387,10 @@ sap.ui.define([
 					dy = -dy;
 				}
 
-				this.setContentWidth(clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide) + 'px');
-				this.setContentHeight(Math.max(initial.height + dy, this._minDimensions.height) + 'px');
+				this.resizedWidth = Math.max(initial.width + dx, this._minDimensions.width) + 'px';
+				this.resizedHeight = Math.max(initial.height + dy, this._minDimensions.height) + 'px';
+
+				this.invalidate();
 				return;
 			}
 
@@ -1403,7 +1406,7 @@ sap.ui.define([
 						offsetX = Math.min(-1, initial.offsetX + (initial.width - width) / 2);
 					}
 
-					this.setOffsetX(Math.round(offsetX));
+					this.resizedOffsetX = Math.round(offsetX);
 					break;
 				case PlacementType.Bottom:
 					height = clamp(initial.height - dy, this._minDimensions.height, maxHeightBottomSide);
@@ -1416,7 +1419,7 @@ sap.ui.define([
 						offsetX = Math.min(-1, initial.offsetX + (initial.width - width) / 2);
 					}
 
-					this.setOffsetX(Math.round(offsetX));
+					this.resizedOffsetX = Math.round(offsetX);
 					break;
 				case PlacementType.Left:
 					width = clamp(initial.width - dx, this._minDimensions.width, maxWidthLeftSide);
@@ -1429,7 +1432,7 @@ sap.ui.define([
 						offsetY = Math.max(1, initial.offsetY + (height - initial.height) / 2);
 					}
 
-					this.setOffsetY(Math.round(offsetY));
+					this.resizedOffsetY = Math.round(offsetY);
 					break;
 				case PlacementType.Right:
 					width = clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide);
@@ -1442,12 +1445,13 @@ sap.ui.define([
 						offsetY = Math.max(0, initial.offsetY + (height - initial.height) / 2);
 					}
 
-					this.setOffsetY(Math.round(offsetY));
+					this.resizedOffsetY = Math.round(offsetY);
 					break;
 			}
 
-			this.setContentWidth(`${width}px`);
-			this.setContentHeight(`${height}px`);
+			this.resizedWidth = `${width}px`;
+			this.resizedHeight = `${height}px`;
+			this.invalidate();
 
 			this._calcPlacement();
 		};
@@ -1457,6 +1461,30 @@ sap.ui.define([
 		 */
 		Popover.prototype.isResized = function () {
 			return this._resized;
+		};
+
+		Popover.prototype._resetSizes = function () {
+			this._resized = false;
+			delete this.resizedOffsetX;
+			delete this.resizedOffsetY;
+			delete this.resizedWidth;
+			delete this.resizedHeight;
+		};
+
+		Popover.prototype._getActualContentWidth = function () {
+			return this.resizedWidth !== undefined ? this.resizedWidth : this.getContentWidth();
+		};
+
+		Popover.prototype._getActualContentHeight = function () {
+			return this.resizedHeight !== undefined ? this.resizedHeight : this.getContentHeight();
+		};
+
+		Popover.prototype._getActualOffsetX = function () {
+			return this.resizedOffsetX !== undefined ? this.resizedOffsetX : this.getOffsetX();
+		};
+
+		Popover.prototype._getActualOffsetY = function () {
+			return this.resizedOffsetY !== undefined ? this.resizedOffsetY : this.getOffsetY();
 		};
 
 		/* =========================================================== */
@@ -1563,7 +1591,7 @@ sap.ui.define([
 			}
 
 			var bRtl = Localization.getRTL();
-			var iOffsetX = iFlipOffset * (bRtl ? -1 : 1) + this.getOffsetX() * (bRtl ? -1 : 1);
+			var iOffsetX = iFlipOffset * (bRtl ? -1 : 1) + this._getActualOffsetX() * (bRtl ? -1 : 1);
 			return iOffsetX;
 		};
 
@@ -1583,7 +1611,7 @@ sap.ui.define([
 				var iParentHeight = bHasParent ? oParent.getBoundingClientRect().height : 0;
 				iFlipOffset = oFlipPlacement === "PreferredTopOrFlip" ? -Math.abs(iParentHeight) : Math.abs(iParentHeight);
 			}
-			return iFlipOffset + this.getOffsetY();
+			return iFlipOffset + this._getActualOffsetY();
 		};
 
 		Popover.prototype._calcOffset = function (sOffset) {
@@ -2080,7 +2108,7 @@ sap.ui.define([
 			// When Popover can fit into the current screen size, don't set the height on the content div.
 			// This can fix the flashing scroll bar problem when content size gets bigger after it's opened.
 			// When position: absolute is used on the scroller div, the height has to be kept otherwise content div has 0 height.
-			if (this.getContentHeight() || (iActualContentHeight > iMaxContentHeight)) {
+			if (this._getActualContentHeight() || (iActualContentHeight > iMaxContentHeight)) {
 				oCSS["height"] = Math.min(iMaxContentHeight, iActualContentHeight) + "px";
 			} else {
 				oCSS["height"] = "";

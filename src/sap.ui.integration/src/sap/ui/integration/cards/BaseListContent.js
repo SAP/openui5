@@ -8,16 +8,14 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/library",
-	"sap/base/Log",
-	"sap/ui/model/Sorter"
+	"sap/base/Log"
 ], function (
 	BaseContent,
 	BaseListContentRenderer,
 	BindingResolver,
 	IllustratedMessageType,
 	library,
-	Log,
-	Sorter
+	Log
 ) {
 	"use strict";
 
@@ -280,24 +278,6 @@ sap.ui.define([
 		}
 
 		return false;
-	};
-
-	/**
-	 * Define the sorting of a group.
-	 * @param {object} oGroup The group which will be sorted
-	 * @returns {sap.ui.model.Sorter}  Sorter for a list bindings.
-	 */
-	BaseListContent.prototype._getGroupSorter = function(oGroup) {
-
-		var bDescendingOrder = false;
-		if (oGroup.order.dir && oGroup.order.dir === "DESC") {
-			bDescendingOrder = true;
-		}
-		var oSorter = new Sorter(oGroup.order.path, bDescendingOrder, function (oContext) {
-			return BindingResolver.resolveValue(oGroup.title, oContext.getModel(), oContext.getPath());
-		});
-
-		return oSorter;
 	};
 
 	BaseListContent.prototype.getDataLength = function () {

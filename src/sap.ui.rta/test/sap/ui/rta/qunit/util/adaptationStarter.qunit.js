@@ -377,6 +377,50 @@ sap.ui.define([
 				);
 			}.bind(this));
 		});
+
+		QUnit.test("When the application uses pseudo app variants", function(assert) {
+			setIsKeyUser(true);
+			const sDummyComponent = "DummyComponent";
+			const sExpectedError = `This application emulates app variants by using the navigation parameter sap-app-id, which is no longer supported. Please open a ticket for the application component ${sDummyComponent}.`;
+			sandbox.stub(oAppComponent, "getManifest").returns({
+				"sap.app": {
+					ach: sDummyComponent
+				}
+			});
+			sandbox.stub(oAppComponent, "getComponentData").returns({
+				startupParameters: {
+					"sap-app-id": ["PseudoAppVariantId"]
+				}
+			});
+			return adaptationStarter({
+				rootControl: oAppComponent,
+				flexSettings: {
+					layer: "CUSTOMER"
+				}
+			})
+			.then(function() {
+				assert.ok(false, "should not go here");
+			})
+			.catch(function(oError) {
+				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
+				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
+				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
+				assert.strictEqual(
+					this.fnMessageBoxStub.lastCall.args[0],
+					sExpectedError,
+					"the specific message part is correct"
+				);
+				assert.strictEqual(this.oLogStub.lastCall.args[0],
+					"UI Adaptation could not be started", "the generic part of the error in the log is correct");
+				assert.strictEqual(
+					this.oLogStub.lastCall.args[1],
+					sExpectedError,
+					"the specific part of the error in the log is correct"
+				);
+				assert.ok(oError instanceof Error, "then promise was rejected with an error");
+				assert.strictEqual(oError.reason, "pseudoAppVariant", "the reason is properly set");
+			}.bind(this));
+		});
 	});
 
 	QUnit.done(function() {

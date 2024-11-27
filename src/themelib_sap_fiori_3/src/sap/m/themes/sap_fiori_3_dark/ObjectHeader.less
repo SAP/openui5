@@ -7,7 +7,7 @@
 .sapMOHC.sapMOHBgTranslucent,
 .sapMOH.sapMOHBgSolid,
 .sapMOHC.sapMOHBgSolid {
-	background-color: @sapUiObjectHeaderBackground;
+	background-color: var(--sapObjectHeader_Background);
 }
 
 .sapMOHC.sapMOHBgTranslucent,
@@ -15,6 +15,7 @@
 	border: none;
 	box-shadow: none;
 }
+
 .sapMOH.sapMOHBgTransparent,
 .sapMOHC.sapMOHBgTransparent {
 	background: transparent;
@@ -35,11 +36,11 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 .sapMOHTitle.sapMOHTitleActive:focus > h1 span,
 .sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus,
 .sapMOHTitleArrow .sapUiIcon:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline: 1px dotted var(--sapContent_FocusColor);
 	outline-offset: -1px;
 }
 
-/*** styles for responsive object header ***/
+/* styles for responsive object header */
 .sapMOHR:not(.sapMOHRNoBorder) {
 	box-shadow: @sapUiShadowHeader;
 }
@@ -50,7 +51,7 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 
 .sapMOHR.sapMOHRBgSolid,
 .sapMOHR.sapMOHRBgTranslucent {
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 }
 
 .sapMOHR.sapMOHRBgTransparent {
@@ -58,17 +59,18 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 }
 
 .sapMOHRTitleArrow .sapUiIcon:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline: 1px dotted var(--sapContent_FocusColor);
 	outline-offset: -1px;
 }
 
 .sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus {
-	&:before {
-		outline: 1px dotted @sapUiContentFocusColor;
+
+	&::before {
+		outline: 1px dotted var(--sapContent_FocusColor);
 	}
 }
 
 .sapMOHRTitleActive .sapMOHRTitleText:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline: 1px dotted var(--sapContent_FocusColor);
 	outline-offset: -1px;
 }

@@ -33,8 +33,9 @@ sap.ui.define([
 		// auto-$expand/$select: promises to wait until child bindings have provided
 		// their path and query options
 		this.aChildCanUseCachePromises = [];
-		// whether the binding has a child with a path to the parent binding via path reduction
-		this.bHasPathReductionToParent = false;
+		// the child paths that are handled by the parent binding due to path reduction, see
+		// #fetchIfChildCanUseCache and ODLB#fetchDownloadUrl
+		this.mChildPathsReducedToParent = {};
 		// counts the sent but not yet completed PATCHes
 		this.iPatchCounter = 0;
 		// whether all sent PATCHes have been successfully processed
@@ -644,6 +645,8 @@ sap.ui.define([
 	ODataParentBinding.prototype.destroy = function () {
 		this.mAggregatedQueryOptions = undefined;
 		this.aChildCanUseCachePromises = [];
+		// cannot be set to undefined, it might be modified after destruction
+		this.mChildPathsReducedToParent = {};
 		this.removeReadGroupLock();
 		this.oRefreshPromise = undefined;
 		this.oResumePromise = undefined;
@@ -855,7 +858,7 @@ sap.ui.define([
 
 			if (sReducedChildMetaPath === undefined) {
 				// the child's data does not fit into this bindings's cache, try the parent
-				that.bHasPathReductionToParent = true;
+				that.mChildPathsReducedToParent[sChildPath] = true;
 				return oParentContext.getBinding().fetchIfChildCanUseCache(oParentContext,
 					_Helper.getRelativePath(sResolvedChildPath, oParentContext.getPath()),
 					mChildQueryOptions, bIsProperty);

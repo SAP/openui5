@@ -4,11 +4,13 @@
 
 // Provides class sap.ui.core.Rendering
 sap.ui.define([
+	"sap/base/config",
 	"sap/base/Log",
 	"sap/ui/base/EventProvider",
 	"sap/ui/performance/trace/Interaction",
 	"sap/ui/performance/Measurement"
 ], (
+	BaseConfig,
 	Log,
 	EventProvider,
 	Interaction,
@@ -27,12 +29,12 @@ sap.ui.define([
 	 * @private
 	 */
 	const oRenderLog = Log.getLogger("sap.ui.Rendering",
-			(
-				// Note that the sap-ui-config option still is expected in camel case.
-				// Lower case is only accepted here because of the config normalization which will be removed in future
-				(window["sap-ui-config"] && (window["sap-ui-config"]["xx-debugRendering"] || window["sap-ui-config"]["xx-debugrendering"]) )
-				|| /sap-ui-xx-debug(R|-r)endering=(true|x|X)/.test(document.location.search)
-			) ? Log.Level.DEBUG : Math.min(Log.Level.INFO, Log.getLevel())
+			BaseConfig.get({
+				name: "sapUiXxDebugRendering",
+				type: BaseConfig.Type.Boolean,
+				external: true,
+				freeze: true
+			}) ? Log.Level.DEBUG : Math.min(Log.Level.INFO, Log.getLevel())
 		);
 
 	const MAX_RENDERING_ITERATIONS = 20,

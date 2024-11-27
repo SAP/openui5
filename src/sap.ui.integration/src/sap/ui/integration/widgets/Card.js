@@ -3123,7 +3123,7 @@ sap.ui.define([
 		}
 
 		if (typeof vManifest === "string") {
-			oChildCard.setManifest(this.hasPaginator() ? vManifest : this.getRuntimeUrl(vManifest));
+			oChildCard.setManifest(this.getRuntimeUrl(vManifest));
 			if (sBaseUrl) {
 				oChildCard.setBaseUrl(sBaseUrl);
 			}

@@ -220,8 +220,9 @@ sap.ui.define([
 							}
 							Opa5.assert.strictEqual(oInput.getValue(), sValue,
 								sInfoText + sId + " is '" + sValue + "'");
-							Opa5.assert.strictEqual(sActualModelValue, sValueInModel,
-								sId + " in model is '" + sValueInModel + "'");
+							Opa5.assert.strictEqual(sActualModelValue, (sValueInModel?.endsWith(".000")
+									? sValueInModel.split(".")[0] : sValueInModel),
+								`${sId} in model is '${sValueInModel}'`);
 							Opa5.assert.strictEqual(oInput.getValueState(), sValueState,
 								oInput.getId() + ": value state is '" + sValueState + "'");
 							Opa5.assert.strictEqual(oInput.getValueStateText(), sValueStateText,

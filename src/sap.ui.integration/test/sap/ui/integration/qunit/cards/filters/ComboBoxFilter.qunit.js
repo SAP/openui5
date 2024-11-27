@@ -293,7 +293,18 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("ComboBoxFilter Properties");
+	QUnit.module("ComboBoxFilter Properties", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
 
 	QUnit.test("Label", function (assert) {
 		// Arrange
@@ -313,6 +324,23 @@ sap.ui.define([
 		oCBF.destroy();
 
 		assert.ok(oLabel.isDestroyed(), "Hidden label should be destroyed when the filter is destroyed");
+	});
+
+	QUnit.test("Combo box filter items can be grouped", async function (assert) {
+		// Act
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/combo_box_grouping.json");
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const aItems = this.oCard.getAggregation("_filterBar")._getFilters()[0]._getComboBox().getItems();
+
+		// Assert
+		assert.strictEqual(aItems.length, 6, "There are 4 items and 2 group titles in the combo box.");
+		assert.ok(aItems[0].isA("sap.ui.core.SeparatorItem"), "The first item is a group separator");
+		assert.strictEqual(aItems[0].getText(), "Group 1", "The first group title text is correct");
+		assert.ok(aItems[3].isA("sap.ui.core.SeparatorItem"), "The fourth item is a group separator");
+		assert.strictEqual(aItems[3].getText(), "Group 2", "The fourth group title text is correct");
 	});
 
 });

@@ -431,7 +431,10 @@ sap.ui.define([
 			key: "CountryText",
 			path: "CountryTextPath",
 			label: "CountryText",
-			dataType: "String"
+			dataType: "String",
+			extension: {
+				technicallyGroupable: true
+			}
 		}, {
 			key: "Region",
 			path: "RegionPath",
@@ -731,18 +734,36 @@ sap.ui.define([
 
 	QUnit.test("#getInResultPropertyKeys", async function(assert) {
 		await this.initTable(undefined, ["Country"], this.defaultPropertyInfos.concat([{
+			key: "NewSalesAmount",
+			path: "NewSalesAmountPath",
+			label: "NewSalesAmount",
+			dataType: "String",
+			extension: {
+				technicallyAggregatable: true,
+				additionalProperties: ["City"]
+			}
+		}, {
+			key: "City",
+			path: "CityPath",
+			label: "City",
+			dataType: "String",
+			extension: {
+				technicallyGroupable: true
+			}
+		}, {
 			key: "NotGroupableAndNotAggregatable",
 			path: "NotGroupableAndNotAggregatablePath",
 			label: "NotGroupableAndNotAggregatable",
 			dataType: "String"
 		}]));
 		sinon.stub(this.oTable.getControlDelegate(), "getInResultPropertyKeys").returns([
-			"Region", "SalesAmountInLocalCurrency", "NotGroupableAndNotAggregatable"
+			"Region", "SalesAmountInLocalCurrency", "NewSalesAmount", "NotGroupableAndNotAggregatable"
 		]);
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {
-				SalesAmountInLocalCurrencyPath: {}
+				SalesAmountInLocalCurrencyPath: {},
+				NewSalesAmountPath: {}
 			},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
@@ -753,6 +774,68 @@ sap.ui.define([
 			groupLevels: []
 		});
 		this.oTable.getControlDelegate().getInResultPropertyKeys.restore();
+	});
+
+	QUnit.test("ID+Text; Both properties visible", async function(assert) {
+		await this.initTable(undefined, ["Country", "CountryText", "Region", "RegionText"]);
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("ID+Text; Only ID is visible", async function(assert) {
+		await this.initTable(undefined, ["Country", "Region"]);
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("ID+Text; Only Text is visible", async function(assert) {
+		await this.initTable(undefined, ["CountryText", "RegionText"]);
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryTextPath: {}, // The Text property has no dependency to the ID property
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Aggregatable property with additional properties", async function(assert) {
+		await this.initTable(undefined, ["SalesAmountInLocalCurrency"]);
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountInLocalCurrencyPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {},
+				RegionPath: {}
+			},
+			groupLevels: []
+		});
 	});
 
 	QUnit.module("#updateBindingInfo", {
@@ -962,7 +1045,7 @@ sap.ui.define([
 			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
-			group: {Name: {additionally: []}},
+			group: {Name: {}},
 			groupLevels: ["Name"]
 		});
 		sinon.assert.callOrder(
@@ -1226,7 +1309,7 @@ sap.ui.define([
 			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
-			group: {Name: {additionally: []}},
+			group: {Name: {}},
 			groupLevels: []
 		});
 
@@ -1240,7 +1323,7 @@ sap.ui.define([
 			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
-			group: {Name: {additionally: []}},
+			group: {Name: {}},
 			groupLevels: []
 		}, "$$aggregation parameter");
 	});

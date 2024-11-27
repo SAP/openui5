@@ -203,7 +203,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test(`because the variant is in the PUBLIC layer, but the user is not authorized to edit it (no key user nor author)`, function(assert) {
+		QUnit.test("because the variant is in the PUBLIC layer, but the user is not authorized to edit it (no key user nor author)", function(assert) {
 			sandbox.stub(InitialStorage, "loadFlexData").resolves({
 				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [],

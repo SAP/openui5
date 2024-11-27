@@ -11,7 +11,6 @@ sap.ui.define([
 	/**
 	 * Provide methods for sap.ui.core.routing.TargetCache in async mode
 	 * @private
-	 * @experimental
 	 * @since 1.58
 	 */
 	return {

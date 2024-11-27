@@ -309,7 +309,7 @@ sap.ui.define([
 	/**
 	 * This function returns a UI which is then shown inside the p13n Items panel.
 	 * Depending on which chart is used, the panel might offer different functionality.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.core.Control} Adaptation UI to be used
 	 * @experimental
 	 * @private
@@ -372,7 +372,7 @@ sap.ui.define([
 
 	/**
 	 * Creates a Sorter for a given property.
-	 * @param {sap.ui.mdc.chart.Item} oItem MDC item to create a sorter for
+	 * @param {sap.ui.mdc.chart.Item} oItem Item to create a sorter for
 	 * @param {object} oSortProperty Sorting information
 	 * @returns {sap.ui.model.Sorter} Sorter for given item
 	 *
@@ -426,7 +426,7 @@ sap.ui.define([
 		}
 
 		//Update coloring and semantical patterns on Item change
-		this._prepareColoringForItem(oItem).then(() => {
+		this._prepareColoringForItem(oChart, oItem).then(() => {
 			this._updateColoring(oChart, this._getChart(oChart).getVisibleDimensions(), this._getChart(oChart).getVisibleMeasures());
 		});
 
@@ -488,9 +488,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This iterates over all items of the MDC chart to make sure all necessary information is available on them.
+	 * This iterates over all items of the chart to make sure all necessary information is available on them.
 	 * If something is missing, this method updates the item accordingly. This is the last check before the inner chart is rendered.
-	 * @param {sap.ui.mdc.Chart} oChart MDC chart to check the items on
+	 * @param {sap.ui.mdc.Chart} oChart Chart to check the items on
 	 * @returns {Promise} Resolves once check is complete
 	 *
 	 * @experimental
@@ -527,11 +527,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an MDC chart Item for given property.
+	 * Creates an chart Item for given property.
 	 * @param {string} sPropertyName the name of the property in the propertyInfo object.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {string} sRole Role of the new item (if available)
- 	 * @returns {Promise<sap.ui.mdc.chart.Item>} Created MDC Item
+ 	 * @returns {Promise<sap.ui.mdc.chart.Item>} Created Item
 	 *
 	 * @experimental
 	 * @private
@@ -551,11 +551,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an MDC Item from given property info.
+	 * Creates an Item from given property info.
 	 * @param {object} oPropertyInfo PropertyInfo object
 	 * @param {string} idPrefix Prefix for the id of the item
 	 * @param {string} sRole Role of the new item (if available)
-	 * @returns {sap.ui.mdc.chart.Item} Created MDC Item
+	 * @returns {sap.ui.mdc.chart.Item} Created Item
 	 *
 	 * @experimental
 	 * @private
@@ -619,9 +619,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This function creates the content defined by the MDC chart for the inner chart instance.
+	 * This function creates the content defined by the chart for the inner chart instance.
 	 * For vizFrame, coloring dimensions/measures are set up here too.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {Promise} Resolved once chart content has been created
 	 *
 	 * @experimental
@@ -638,7 +638,7 @@ sap.ui.define([
 			const aVisibleMeasures = [];
 			oChart.getItems().forEach((oItem, iIndex) => {
 
-				//Uses excact mdc chart item id
+				//Uses excact chart item id
 				aPropPromises.push(this._getPropertyInfosByName(oItem.getPropertyKey(), oChart).then((oPropertyInfo) => {
 					//Skip a Item if there is no property representing the Item inside the backend
 					if (!oPropertyInfo) {
@@ -664,7 +664,7 @@ sap.ui.define([
 							Log.error("MDC Chart Item " + oItem.getId() + " with label " + oItem.getLabel() + " has no known type. Supported typed are: \"groupable\" & \"aggregatable\"");
 					}
 
-					aColorPromises.push(this._prepareColoringForItem(oItem));
+					aColorPromises.push(this._prepareColoringForItem(oChart, oItem));
 				}));
 
 			});
@@ -676,9 +676,9 @@ sap.ui.define([
 
 						aColorPromises.push(new Promise((resolve, reject) => {
 							oChart._getPropertyByNameAsync(sKey).then(function(oPropertyInfo) {
-								const { aggregationMethod, path } = oPropertyInfo;
+								const aggregationMethod = this.getPropertyAttribute(oChart, oPropertyInfo, "aggregationMethod");
+								const path = this.getPropertyAttribute(oChart, oPropertyInfo, "path");
 								const sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oChart);
-
 								const oMeasureSettings = {
 									name: sName,
 									label: oPropertyInfo.label,
@@ -692,8 +692,9 @@ sap.ui.define([
 									};
 								}
 
-								if (oPropertyInfo.unitPath) {
-									oMeasureSettings.unitBinding = oPropertyInfo.unitPath;
+								const unitPath = this.getPropertyAttribute(oChart, oPropertyInfo, "unitPath");
+								if (unitPath) {
+									oMeasureSettings.unitBinding = unitPath;
 								}
 
 								const oMeasure = new Measure(oMeasureSettings);
@@ -701,7 +702,7 @@ sap.ui.define([
 								aVisibleMeasures.push(oMeasure);
 								this._getChart(oChart).addMeasure(oMeasure);
 								resolve();
-							}); //this.getPropertyFromNameAndKind not used as the key is the name of the MDC chart Item
+							}); //this.getPropertyFromNameAndKind not used as the key is the name of the chart Item
 
 						}));
 					}
@@ -751,7 +752,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prepares the internal vizFrame coloring for given MDC chart Item.
+	 * Prepares the internal vizFrame coloring for given chart Item.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {sap.ui.mdc.chart.Item} oItem item to prepare coloring for
 	 * @returns {Promise} resolved, once coloring is prepared
 	 *
@@ -759,16 +761,16 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 */
-	ChartDelegate._prepareColoringForItem = function(oItem) {
+	ChartDelegate._prepareColoringForItem = function(oChart, oItem) {
 		//COLORING
-		return this._addCriticality(oItem).then(() => {
+		return this._addCriticality(oChart, oItem).then(() => {
 			this._getState(oItem.getParent()).aInSettings.push(oItem.getPropertyKey());
 
 			if (oItem.getType() === "aggregatable") {
 
-				//Uses excact MDC CHart Item name
+				//Uses excact Chart Item name
 				this._getPropertyInfosByName(oItem.getPropertyKey(), oItem.getParent()).then((oPropertyInfo) => {
-					this._getAdditionalColoringMeasuresForItem(oPropertyInfo).forEach((oMeasure) => {
+					this._getAdditionalColoringMeasuresForItem(oChart, oPropertyInfo).forEach((oMeasure) => {
 						const oState = this._getState(oItem.getParent());
 						if (oState.aColMeasures?.indexOf(oMeasure) == -1) {
 							oState.aColMeasures.push(oMeasure);
@@ -781,11 +783,11 @@ sap.ui.define([
 
 	};
 
-	ChartDelegate._getAdditionalColoringMeasuresForItem = function(oPropertyInfo) {
-
+	ChartDelegate._getAdditionalColoringMeasuresForItem = function(oChart, oPropertyInfo) {
 		let aAdditional = [];
 
-		const oCriticality = oPropertyInfo.datapoint ? oPropertyInfo.datapoint.criticality : null;
+		const oDatapoint = this.getPropertyAttribute(oChart, oPropertyInfo, "datapoint");
+		const oCriticality = oDatapoint?.criticality || null;
 
 		if (oCriticality?.DynamicThresholds) {
 			aAdditional = oCriticality.DynamicThresholds.usedMeasures;
@@ -797,6 +799,7 @@ sap.ui.define([
 	/**
 	 * Adds criticality to an item.
 	 *
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {sap.ui.mdc.chart.Item} oItem Item to add criticality to
 	 * @returns {Promise} Resolved once criticality is added
 	 *
@@ -804,12 +807,13 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	ChartDelegate._addCriticality = function(oItem) {
+	ChartDelegate._addCriticality = function(oChart, oItem) {
 
-		//Uses excact MDC chart item name to idenfiy property
+		//Uses excact chart item name to idenfiy property
 		return this._getPropertyInfosByName(oItem.getPropertyKey(), oItem.getParent()).then((oPropertyInfo) => {
-
-			if (oPropertyInfo.criticality || oPropertyInfo.datapoint?.criticality) {
+			const oDatapoint = this.getPropertyAttribute(oChart, oPropertyInfo, "datapoint");
+			const criticality = this.getPropertyAttribute(oChart, oPropertyInfo, "criticality");
+			if (criticality || oDatapoint?.criticality) {
 				const oColorings = this._getState(oItem.getParent()).oColorings || {
 					Criticality: {
 						DimensionValues: {},
@@ -820,11 +824,9 @@ sap.ui.define([
 				const mChartCrit = {};
 
 				if (oItem.getType() == "groupable") {
-
-					const mCrit = oPropertyInfo.criticality || [];
+					const mCrit = criticality || [];
 
 					for (const sKey in mCrit) {
-
 						mChartCrit[sKey] = {
 							Values: mCrit[sKey]
 						};
@@ -834,7 +836,8 @@ sap.ui.define([
 					oColorings.Criticality.DimensionValues[sDimName] = mChartCrit;
 
 				} else {
-					const mCrit = oPropertyInfo.datapoint && oPropertyInfo.datapoint.criticality ? oPropertyInfo.datapoint.criticality : [];
+					const oDatapoint = this.getPropertyAttribute(oChart, oPropertyInfo, "datapoint");
+					const mCrit = oDatapoint?.criticality || [];
 
 					for (const sKey in mCrit) {
 						mChartCrit[sKey] = mCrit[sKey];
@@ -934,8 +937,7 @@ sap.ui.define([
 				return;
 			}
 
-			const oDataPoint = oPropertyInfo.datapoint;
-
+			const oDataPoint = this.getPropertyAttribute(oChart, oPropertyInfo, "datapoint");
 			if (oDataPoint) {
 
 				if (oDataPoint.targetValue || oDataPoint.foreCastValue) {
@@ -1176,7 +1178,7 @@ sap.ui.define([
 	 * Performs the initial binding of the inner chart.
 	 * It is used for the vizFrame to make sure that the inner chart is correctly initialized upon creation.
 	 * Otherwise the chart will go into an error loop. <br><b>Note:</b> You must not override this setting.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {object} oBindingInfo Binding info object
 	 *
 	 * @experimental
@@ -1208,9 +1210,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and adds a dimension for the inner chart for a given MDC chart item.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-	 * @param {sap.ui.mdc.chart.Item} oItem MDC chart item to be added to the inner chart
+	 * Creates and adds a dimension for the inner chart for a given chart item.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {sap.ui.mdc.chart.Item} oItem Chart item to be added to the inner chart
 	 *
 	 * @experimental
 	 * @private
@@ -1226,9 +1228,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and adds a measure for the inner chart for given MDC chart item.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-	 * @param {sap.ui.mdc.chart.Item} oItem MDC chart item to be added to the inner chart
+	 * Creates and adds a measure for the inner chart for given chart item.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {sap.ui.mdc.chart.Item} oItem Chart item to be added to the inner chart
 	 *
 	 * @experimental
 	 * @private
@@ -1267,15 +1269,17 @@ sap.ui.define([
 			textFormatter: this.formatText.bind(oPropertyInfo)
 		};
 
-		if (oPropertyInfo.timeUnitType) {
-			mSettings = merge(mSettings, {timeUnit: oPropertyInfo.timeUnitType});
+		const timeUnitType = this.getPropertyAttribute(oChart, oPropertyInfo, "timeUnitType");
+		if (timeUnitType) {
+			mSettings = merge(mSettings, {timeUnit: timeUnitType});
 			oDimension = new TimeDimension(mSettings);
 		} else {
 			oDimension = new Dimension(mSettings);
 		}
 
-		if (oPropertyInfo.textProperty) {
-			oDimension.setTextProperty(oPropertyInfo.textProperty);
+		const textProperty = this.getPropertyAttribute(oChart, oPropertyInfo, "textProperty");
+		if (textProperty) {
+			oDimension.setTextProperty(textProperty);
 			oDimension.setDisplayText(true);
 		}
 
@@ -1290,12 +1294,59 @@ sap.ui.define([
 		this._getChart(oChart).addMeasure(oMeasure);
 	};
 
+
+	/**
+	 * Returns attributes of a configuration.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {string} sPropertyInfoKey Key of the <code>propertyInfo</code> object that must be available in the configuration
+	 * @param {string} sAttributeName Name of the attribute of the found configuration
+	 * @returns {string|null} Value of the attribute
+	 *
+	 * This must be implemented by application delegates and has to provide the following attribute values listed below.
+	 * {string} [aggregationMethod]
+	 * 	The aggregation method used if the property is aggregatable
+	 * {object} [datapoint]
+	 *  Implementation-specific object containing information about the data point
+	 * {object} [criticality]
+	 *  Implementation-specific object containing information about the criticality
+	 * {string} [textProperty]
+	 * 	The text property used for the dimension
+	 * {object} [textFormatter]
+	 * 	The text formatter object that can be used to format the text property
+	 * {object} [unitPath]
+	 *  The name of the unit property that is be used to display and format measure values with a unit value on a <code>selectionDetails>/code> popover
+	 * {string} [timeUnitType]
+	 *  The <code>timeUnitType</code> type for a <code>TimeDimension</code>. If set, a <code>TimeDimension</code> is created instead of a <code>Dimension</code>.
+	 *
+	 * @public
+	 */
+	ChartDelegate.fetchConfigurationForVizchart = function(oChart, sPropertyInfoKey, sAttributeName) {
+		return null;
+	};
+
+	/**
+	 * Returns the value of the proertyInfo object attribute. Of not exist try to fetch the value via fetchConfigurationForVizchart.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {object} oPropertyInfo PropertyInfo object
+	 * @param {string} sAttributeName Name of the property attribute
+	 * @returns {string|null} Value of the attribute
+	 *
+	 * @private
+	 */
+	ChartDelegate.getPropertyAttribute = function(oChart, oPropertyInfo, sAttributeName) {
+		let value = oPropertyInfo.hasOwnProperty(sAttributeName) ? oPropertyInfo[sAttributeName] : null;
+		if (!value) {
+			value = this.fetchConfigurationForVizchart(oChart, oPropertyInfo.key, sAttributeName);
+		}
+		return value;
+	};
+
 	/**
 	 * @private
 	 */
 	ChartDelegate.innerMeasureFactory = function(oChart, oItem, oPropertyInfo) {
-		const { aggregationMethod, path } = oPropertyInfo;
-
+		const aggregationMethod = this.getPropertyAttribute(oChart, oPropertyInfo, "aggregationMethod");
+		const path = this.getPropertyAttribute(oChart, oPropertyInfo, "path");
 		const oSettings = {
 			name: this._getAggregatedMeasureNameForMDCItem(oItem), //aggregationMethod + oItem.getPropertyKey() under normal circumstances
 			label: oItem?.getLabel() || oPropertyInfo.label,
@@ -1309,8 +1360,9 @@ sap.ui.define([
 			};
 		}
 
-		if (oPropertyInfo.unitPath) {
-			oSettings.unitBinding = oPropertyInfo.unitPath;
+		const unitPath = this.getPropertyAttribute(oChart, oPropertyInfo, "unitPath");
+		if (unitPath) {
+			oSettings.unitBinding = unitPath;
 		}
 
 		return new Measure(oSettings);
@@ -1410,7 +1462,7 @@ sap.ui.define([
 
 	/**
 	 * Gets sorters available for the data.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {array} Array containing available sorters
 	 *
 	 * @experimental
@@ -1577,7 +1629,7 @@ sap.ui.define([
 		}
 	};
 
-	//This is bound to mdc chart
+	//This is bound to chart
 	ChartDelegate._onDataLoadComplete = function(mEventParams) {
 		const oNoDataStruct = this.getControlDelegate()._getInnerStructure(this);
 

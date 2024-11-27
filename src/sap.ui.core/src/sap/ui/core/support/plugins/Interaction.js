@@ -4,6 +4,7 @@
 
 // Provides class sap.ui.core.support.plugins.Performance
 sap.ui.define([
+	"sap/base/config",
 	"sap/ui/core/RenderManager",
 	'sap/ui/core/Supportability',
 	'sap/ui/core/support/Plugin',
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date"
 ],
 	function(
+		BaseConfig,
 		RenderManager,
 		Supportability,
 		Plugin,
@@ -189,11 +191,20 @@ sap.ui.define([
 		}
 
 		function initInApps(oSupportStub) {
-			var _bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(window.location.search);
+			var _bFesrActive = BaseConfig.get({
+				name: "sapUiFesr",
+				type: BaseConfig.Type.Boolean,
+				external: true,
+				freeze: true
+			});
 			var _bODATA_Stats_On = Supportability.isStatisticsEnabled();
 
-			this._oStub.sendEvent(this.getId() + "SetQueryString", {"queryString": { bFesrActive: _bFesrActive,
-				bODATA_Stats_On: _bODATA_Stats_On}});
+			this._oStub.sendEvent(this.getId() + "SetQueryString", {
+				"queryString": {
+					bFesrActive: _bFesrActive,
+					bODATA_Stats_On: _bODATA_Stats_On
+				}
+			});
 			getPerformanceData.call(this);
 		}
 

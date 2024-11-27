@@ -100,7 +100,7 @@ sap.ui.define([
 							issueManager.addIssue({
 								severity: Severity.High,
 								details: `The ID '${sElementId}' for the control was generated and flexibility features ` +
-									`cannot support controls with generated IDs.`,
+									"cannot support controls with generated IDs.",
 								context: {
 									id: sElementId
 								}
@@ -110,7 +110,7 @@ sap.ui.define([
 								severity: Severity.Low,
 								details: `The ID '${sElementId}' for the control was concatenated and has a generated onset.
 									To enable the control for flexibility features, you must specify an ID for the control providing ` +
-									`the onset, which is marked as high issue.`,
+									"the onset, which is marked as high issue.",
 								context: {
 									id: sElementId
 								}

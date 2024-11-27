@@ -1949,6 +1949,7 @@ sap.ui.define([
 			this.mock(Log).expects("warning").never();
 			this.mock(oType).expects("_clearInstances").withExactArgs();
 			this.mock(oType).expects("_createInputFormat").withExactArgs();
+			oFormatOptions.decimals = 3;
 
 			// code under test
 			UnitType.prototype.setFormatOptions.call(oType, oFormatOptions);
@@ -1981,6 +1982,7 @@ sap.ui.define([
 			this.mock(Log).expects("warning").never();
 			this.mock(oType).expects("_clearInstances").withExactArgs();
 			this.mock(oType).expects("_createInputFormat").withExactArgs();
+			oFixture.result.decimals = 3;
 
 			// code under test
 			UnitType.prototype.setFormatOptions.call(oType, oFixture.formatOption);
@@ -1992,16 +1994,16 @@ sap.ui.define([
 
 	QUnit.test("unit formatValue", function (assert) {
 		var unitType = new UnitType();
-		assert.strictEqual(unitType.formatValue([22, "duration-hour"], "string"), "22 hr", "format test");
-		assert.strictEqual(unitType.formatValue([22, "speed-mile-per-hour"], "string"), "22 mph", "format test");
+		assert.strictEqual(unitType.formatValue([22, "duration-hour"], "string"), "22.000 hr", "format test");
+		assert.strictEqual(unitType.formatValue([22, "speed-mile-per-hour"], "string"), "22.000 mph", "format test");
 		assert.strictEqual(unitType.formatValue([-6622.333, "duration-hour"], "string"), "-6,622.333 hr", "format test");
-		assert.strictEqual(unitType.formatValue([1.0, "duration-hour"], "string"), "1 hr", "format test");
-		assert.strictEqual(unitType.formatValue([1.0000, "duration-hour"], "string"), "1 hr", "format test");
-		assert.strictEqual(unitType.formatValue([1.0000, "electric-ohm"], "string"), "1 Ω", "format test");
+		assert.strictEqual(unitType.formatValue([1.0, "duration-hour"], "string"), "1.000 hr", "format test");
+		assert.strictEqual(unitType.formatValue([1.0000, "duration-hour"], "string"), "1.000 hr", "format test");
+		assert.strictEqual(unitType.formatValue([1.0000, "electric-ohm"], "string"), "1.000 Ω", "format test");
 
 		assert.strictEqual(unitType.formatValue(null, "string"), null, "format test");
 		assert.strictEqual(unitType.formatValue([null, "duration-hour"], "string"), null, "format test");
-		assert.strictEqual(unitType.formatValue([1, null], "string"), "1", "format test");
+		assert.strictEqual(unitType.formatValue([1, null], "string"), "1.000", "format test");
 
 		assert.throws(function () { unitType.formatValue(22.0, "int"); }, FormatException, "format test");
 		assert.throws(function () { unitType.formatValue(22.0, "float"); }, FormatException, "format test");
@@ -2098,11 +2100,11 @@ sap.ui.define([
 		var oType = new UnitType();
 
 		// format and parse "kg" (unit-1)
-		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100.000 kg");
 		assert.deepEqual(oType.parseValue("100 kg", "string"), [100, "mass-kilogram"]);
 
 		// format and parse "Ω" (unit-2)
-		assert.strictEqual(oType.formatValue([30, "electric-ohm"], "string"), "30 Ω");
+		assert.strictEqual(oType.formatValue([30, "electric-ohm"], "string"), "30.000 Ω");
 		assert.deepEqual(oType.parseValue("30 Ω", "string"), [30, "electric-ohm"]);
 	});
 
@@ -2121,7 +2123,8 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit
-		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit returns number and measure (just as NumberFormat returns it)");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100.000 mass-kilogram",
+			"Format of unknown unit returns number and measure (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
 			},
@@ -2147,7 +2150,8 @@ sap.ui.define([
 		var oType = new UnitType();
 
 		// format and parse valid unit
-		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 kg", "Format: Standard Unit shines through global custom units");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"),
+			"100.000 kg", "Format: Standard Unit shines through global custom units");
 		assert.deepEqual(oType.parseValue("100 kg", "string"), [100, "mass-kilogram"], "Parse: Standard Unit shines through global custom units");
 
 		// format and parse valid unit
@@ -2183,7 +2187,8 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit (excluded by local config)
-		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100.000 mass-kilogram",
+			"Format of unknown unit leads to empty string (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
 			},
@@ -2191,7 +2196,8 @@ sap.ui.define([
 			"ParseException is thrown for wrong unit");
 
 		// format and parse invalid unit (excluded by local config)
-		assert.strictEqual(oType.formatValue([123.4, "lebkuchen"], "string"), "123.4 lebkuchen", "Lebkuchen is not formatted (excluded by local configuration)");
+		assert.strictEqual(oType.formatValue([123.4, "lebkuchen"], "string"), "123.400 lebkuchen",
+			"Lebkuchen is formatted with the default of 3 decimal places");
 		assert.throws(function () {
 			oType.parseValue("1234.56 LKs", "string");
 		},
@@ -2230,11 +2236,11 @@ sap.ui.define([
 			showMeasure: false
 		});
 
-		assert.strictEqual(unitType.formatValue([22, "electric-ohm"], "string"), "22", "format test");
+		assert.strictEqual(unitType.formatValue([22, "electric-ohm"], "string"), "22.000", "format test");
 		assert.strictEqual(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.333", "format test");
 		assert.strictEqual(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.339", "format test");
-		assert.strictEqual(unitType.formatValue([1.0, "electric-ohm"], "string"), "1", "format test");
-		assert.strictEqual(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1", "format test");
+		assert.strictEqual(unitType.formatValue([1.0, "electric-ohm"], "string"), "1.000", "format test");
+		assert.strictEqual(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1.000", "format test");
 		assert.strictEqual(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009", "format test");
 		assert.strictEqual(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1.00001", "format test");
 	});
@@ -2263,7 +2269,7 @@ sap.ui.define([
 		assert.strictEqual(unitType.parseValue("3.555 Ω", "string"), "3.555 Ω", "parse test");
 		assert.strictEqual(unitType.parseValue("-3.555 mph", "string"), "-3.555 mph", "parse test");
 
-		assert.strictEqual(unitType.formatValue("22 hr", "string"), "22 hr", "format test");
+		assert.strictEqual(unitType.formatValue("22 hr", "string"), "22.000 hr", "format test");
 		assert.strictEqual(unitType.formatValue("-6622.333 Ω", "string"), "-6,622.333 Ω", "format test");
 		assert.strictEqual(unitType.formatValue("-6622.339 mph", "string"), "-6,622.339 mph", "format test");
 	});

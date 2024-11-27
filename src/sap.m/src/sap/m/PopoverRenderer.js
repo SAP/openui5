@@ -30,7 +30,7 @@ sap.ui.define([
 	PopoverRenderer.render = function(oRm, oControl) {
 		oRm.openStart("div", oControl);
 		var aClassNames = this.generateRootClasses(oControl),
-			sContentWidth = oControl.getContentWidth();
+			sContentWidth = oControl._getActualContentWidth();
 
 		aClassNames.forEach(function(sClassName) {
 			oRm.class(sClassName);
@@ -93,9 +93,9 @@ sap.ui.define([
 			contents = oControl._getAllContent(),
 			oFooter = oControl.getFooter(),
 			oSubHeader = oControl.getSubHeader(),
-			sContentWidth = oControl.getContentWidth(),
+			sContentWidth = oControl._getActualContentWidth(),
 			sContentMinWidth = oControl.getContentMinWidth(),
-			sContentHeight = oControl.getContentHeight();
+			sContentHeight = oControl._getActualContentHeight();
 
 		if (Device.system.desktop) {
 			// invisible element for cycling keyboard navigation

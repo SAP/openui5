@@ -55,7 +55,7 @@ sap.ui.define([
 			}
 
 			if (!aTechnicalAttributes.every((element) => typeof element === "string")) {
-				throw new Error(`The array for the property 'technicalAttributes' does not only consist of strings. Only allowed values for the array is string`);
+				throw new Error("The array for the property 'technicalAttributes' does not only consist of strings. Only allowed values for the array is string");
 			}
 
 			if (!aTechnicalAttributes.every((element) => regex.test(element))) {

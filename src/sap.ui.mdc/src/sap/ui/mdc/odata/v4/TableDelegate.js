@@ -691,53 +691,14 @@ sap.ui.define([
 		for (const sPropertyKey of aVisiblePropertyKeys) {
 			const oProperty = oPropertyHelper.getProperty(sPropertyKey);
 
-			if (!oProperty.extension.technicallyGroupable && !oProperty.extension.technicallyAggregatable) {
-				continue;
-			}
-
-			// Skip text property if its ID is visible.
-			const oAdditionalProperty = oPropertyHelper.getProperty(oProperty.extension.additionalProperties?.[0]);
-			if (oAdditionalProperty?.text === oProperty.key && aVisiblePropertyKeys.includes(oAdditionalProperty.key)) {
-				continue;
-			}
-
 			if (oProperty.extension.technicallyGroupable) {
-				mAggregation.group[oProperty.path] = {};
+				addGroupablePropertyTo$$Aggregation(mAggregation, oTable, oProperty);
 			}
 
 			if (oProperty.extension.technicallyAggregatable) {
-				mAggregation.aggregate[oProperty.path] = {};
-
-				if (aTotaledPropertyKeys.includes(oProperty.key)) {
-					mAggregation.aggregate[oProperty.path].grandTotal = true;
-					mAggregation.aggregate[oProperty.path].subtotals = true;
-				}
-
-				if (oProperty.unit) {
-					const oUnitPropertyInfo = oPropertyHelper.getProperty(oProperty.unit);
-					if (oUnitPropertyInfo) {
-						mAggregation.aggregate[oProperty.path].unit = oUnitPropertyInfo.path;
-					}
-				}
-
-				if (!oProperty.extension.additionalProperties?.length && oProperty.extension.customAggregate?.contextDefiningProperties) {
-					oProperty.extension.customAggregate.contextDefiningProperties.forEach((sContextDefiningPropertyKey) => {
-						const oDefiningPropertyInfo = oPropertyHelper.getProperty(sContextDefiningPropertyKey);
-						if (oDefiningPropertyInfo) {
-							mAggregation.group[oDefiningPropertyInfo.path] = {};
-						}
-					});
-				}
-			}
-
-			const aAdditionalPropertyPaths = getAdditionalPropertyPaths(oProperty, oPropertyHelper);
-
-			if (oProperty.extension.technicallyAggregatable) {
-				for (const sPropertyPath of aAdditionalPropertyPaths) {
-					mAggregation.group[sPropertyPath] = {};
-				}
-			} else if (oProperty.extension.technicallyGroupable && oProperty.path in mAggregation.group) {
-				mAggregation.group[oProperty.path].additionally = aAdditionalPropertyPaths;
+				addAggregatablePropertyTo$$Aggregation(mAggregation, oTable, oProperty, {
+					withTotals: aTotaledPropertyKeys.includes(oProperty.key)
+				});
 			}
 		}
 
@@ -756,22 +717,6 @@ sap.ui.define([
 		sanitize$$Aggregation(mAggregation);
 
 		return mAggregation;
-	}
-
-	function getAdditionalPropertyPaths(oProperty, oPropertyHelper) {
-		const oPropertyPaths = new Set();
-
-		if (oProperty.text) {
-			const oTextProperty = oPropertyHelper.getProperty(oProperty.text);
-			oPropertyPaths.add(oTextProperty.path);
-		}
-
-		for (const sPropertyKey of oProperty.extension.additionalProperties ?? []) {
-			const oAdditionalProperty = oPropertyHelper.getProperty(sPropertyKey);
-			oPropertyPaths.add(oAdditionalProperty.path);
-		}
-
-		return Array.from(oPropertyPaths);
 	}
 
 	function addKeyPropertiesTo$$Aggregation(mAggregation, oTable) {
@@ -793,6 +738,56 @@ sap.ui.define([
 			} else if (oProperty.extension.technicallyAggregatable) {
 				mAggregation.aggregate[oProperty.path] = {};
 			}
+		}
+	}
+
+	function addGroupablePropertyTo$$Aggregation(mAggregation, oTable, oProperty) {
+		const oPropertyHelper = oTable.getPropertyHelper();
+		const mGroup = {};
+
+		// Skip the text property if it depends on the ID property. The ID property must be added to the aggregation instead.
+		const oIDProperty = oPropertyHelper.getProperty(oProperty.extension.additionalProperties[0]);
+		if (oIDProperty) {
+			addGroupablePropertyTo$$Aggregation(mAggregation, oTable, oIDProperty);
+			return;
+		}
+
+		mAggregation.group[oProperty.path] = mGroup;
+
+		const oTextProperty = oPropertyHelper.getProperty(oProperty.text);
+		if (oTextProperty) {
+			mGroup.additionally = [oTextProperty.path];
+		}
+	}
+
+	function addAggregatablePropertyTo$$Aggregation(mAggregation, oTable, oProperty, mSettings) {
+		const oPropertyHelper = oTable.getPropertyHelper();
+		const mAggregate = {};
+
+		mAggregation.aggregate[oProperty.path] = mAggregate;
+
+		if (mSettings?.withTotals) {
+			mAggregate.grandTotal = true;
+			mAggregate.subtotals = true;
+		}
+
+		if (oProperty.unit) {
+			const oUnitProperty = oPropertyHelper.getProperty(oProperty.unit);
+			mAggregate.unit = oUnitProperty.path;
+		}
+
+		for (const sPropertyKey of oProperty.extension.additionalProperties) {
+			const oProperty = oPropertyHelper.getProperty(sPropertyKey);
+			mAggregation.group[oProperty.path] = {};
+		}
+
+		if (!oProperty.extension.additionalProperties?.length && oProperty.extension.customAggregate?.contextDefiningProperties) {
+			oProperty.extension.customAggregate.contextDefiningProperties.forEach((sContextDefiningPropertyKey) => {
+				const oDefiningPropertyInfo = oPropertyHelper.getProperty(sContextDefiningPropertyKey);
+				if (oDefiningPropertyInfo) {
+					mAggregation.group[oDefiningPropertyInfo.path] = {};
+				}
+			});
 		}
 	}
 

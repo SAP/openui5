@@ -7,7 +7,6 @@ sap.ui.define(["sap/base/future"], function(future) {
 	/**
 	 * Provide methods for sap.ui.core.routing.Targets in async mode
 	 * @private
-	 * @experimental
 	 * @since 1.33
 	 */
 	return {

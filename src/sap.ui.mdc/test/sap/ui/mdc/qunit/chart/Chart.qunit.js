@@ -768,10 +768,6 @@ sap.ui.define([
 		// 	}.bind(this));
 		// });
 
-		QUnit.test("_showDrillDown", function (assert) {
-			assert.ok(true);
-		});
-
 		QUnit.test("getManagedObjectModel", function (assert) {
 			const done = assert.async();
 			this.oMDCChart.initialized().then(function(){
@@ -947,6 +943,168 @@ sap.ui.define([
 
 				oConditionsStub.restore();
 
+				done();
+			}.bind(this));
+		});
+
+		QUnit.module("sap.ui.mdc.Chart: Toolbar ignoreToolbarActions DrillDownUp", {
+
+			beforeEach: async function () {
+				const TestComponent = UIComponent.extend("test", {
+					metadata: {
+						manifest: {
+							"sap.app": {
+								"id": "",
+								"type": "application"
+							}
+						}
+					},
+					createContent: function () {
+
+						return new Chart({
+							p13nMode: ["Item"],
+							ignoreToolbarActions: ["DrillDownUp"],
+							delegate: {
+								name: sDelegatePath,
+								payload: {
+									collectionPath: "/testPath"
+								}
+							}
+						});
+					}
+				});
+				this.oUiComponent = new TestComponent();
+				this.oUiComponentContainer = new ComponentContainer({
+					component: this.oUiComponent,
+					async: false
+				});
+				this.oMDCChart = this.oUiComponent.getRootControl();
+
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				await nextUIUpdate();
+			},
+			afterEach: function () {
+				this.oUiComponentContainer.destroy();
+				this.oUiComponent.destroy();
+			}
+
+		});
+
+		QUnit.test("IgnoreToolbarActions('DrillDownUp')", function (assert) {
+			const done = assert.async();
+			this.oMDCChart.initialized().then(function(){
+				assert.notOk(this.oMDCChart._oDrillDownBtn,"DrillDownBtn of chart not exist");
+				assert.ok(this.oMDCChart._oLegendBtn, "LegendBtn of chart exist");
+				assert.ok(this.oMDCChart._oZoomInBtn, "ZoomInBtn of chart exist");
+				assert.ok(this.oMDCChart._oZoomOutBtn, "ZoomOutBtn of chart exist");
+				done();
+			}.bind(this));
+		});
+
+		QUnit.module("sap.ui.mdc.Chart: Toolbar ignoreToolbarActions Legend", {
+
+			beforeEach: async function () {
+				const TestComponent = UIComponent.extend("test", {
+					metadata: {
+						manifest: {
+							"sap.app": {
+								"id": "",
+								"type": "application"
+							}
+						}
+					},
+					createContent: function () {
+
+						return new Chart({
+							p13nMode: ["Item"],
+							ignoreToolbarActions: ["Legend"],
+							delegate: {
+								name: sDelegatePath,
+								payload: {
+									collectionPath: "/testPath"
+								}
+							}
+						});
+					}
+				});
+				this.oUiComponent = new TestComponent();
+				this.oUiComponentContainer = new ComponentContainer({
+					component: this.oUiComponent,
+					async: false
+				});
+				this.oMDCChart = this.oUiComponent.getRootControl();
+
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				await nextUIUpdate();
+			},
+			afterEach: function () {
+				this.oUiComponentContainer.destroy();
+				this.oUiComponent.destroy();
+			}
+
+		});
+
+		QUnit.test("IgnoreToolbarActions('Legend')", function (assert) {
+			const done = assert.async();
+			this.oMDCChart.initialized().then(function(){
+				assert.ok(this.oMDCChart._oDrillDownBtn,"DrillDownBtn of chart exist");
+				assert.notOk(this.oMDCChart._oLegendBtn, "LegendBtn of chart not exist");
+				assert.ok(this.oMDCChart._oZoomInBtn, "ZoomInBtn of chart exist");
+				assert.ok(this.oMDCChart._oZoomOutBtn, "ZoomOutBtn of chart exist");
+				done();
+			}.bind(this));
+		});
+
+		QUnit.module("sap.ui.mdc.Chart: Toolbar ignoreToolbarActions ZoomInOut", {
+
+			beforeEach: async function () {
+				const TestComponent = UIComponent.extend("test", {
+					metadata: {
+						manifest: {
+							"sap.app": {
+								"id": "",
+								"type": "application"
+							}
+						}
+					},
+					createContent: function () {
+
+						return new Chart({
+							p13nMode: ["Item"],
+							ignoreToolbarActions: ["ZoomInOut"],
+							delegate: {
+								name: sDelegatePath,
+								payload: {
+									collectionPath: "/testPath"
+								}
+							}
+						});
+					}
+				});
+				this.oUiComponent = new TestComponent();
+				this.oUiComponentContainer = new ComponentContainer({
+					component: this.oUiComponent,
+					async: false
+				});
+				this.oMDCChart = this.oUiComponent.getRootControl();
+
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				await nextUIUpdate();
+			},
+			afterEach: function () {
+				this.oUiComponentContainer.destroy();
+				this.oUiComponent.destroy();
+			}
+
+		});
+
+		QUnit.test("IgnoreToolbarActions('ZoomInOut')", function (assert) {
+			const done = assert.async();
+			this.oMDCChart.initialized().then(function(){
+				assert.ok(this.oMDCChart._oDrillDownBtn,"DrillDownBtn of chart exist");
+				assert.ok(this.oMDCChart._oLegendBtn, "LegendBtn of chart exist");
+				assert.notOk(this.oMDCChart._oZoomInBtn, "ZoomInBtn of chart not exist");
+				assert.notOk(this.oMDCChart._oZoomOutBtn, "ZoomOutBtn of chart not exist");
 				done();
 			}.bind(this));
 		});

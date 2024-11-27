@@ -1865,8 +1865,19 @@ sap.ui.define([
 			return SyncPromise.resolve(null);
 		}
 
+		const sMetaPath = _Helper.getMetaPath(this.getResolvedPath());
+		// Note: All paths in mChildPathsReducedToParent start with the partner navigation property
+		// of the last segment in the binding's path because they are backlinks. When wrapped, this
+		// results in exactly one $expand.
+		const mAdditionalExpand = {};
+		for (const sChildPath in this.mChildPathsReducedToParent) {
+			const mQueryOptions = _Helper.wrapChildQueryOptions(sMetaPath, sChildPath, {},
+				this.oModel.oInterface.fetchMetadata, /*bDoNotSelectKeyProperties*/true);
+			_Helper.aggregateExpandSelect(mAdditionalExpand, mQueryOptions);
+		}
+
 		return this.withCache(function (oCache, sPath) {
-			return oCache.getDownloadUrl(sPath, mUriParameters);
+			return oCache.getDownloadUrl(sPath, mUriParameters, mAdditionalExpand);
 		});
 	};
 
@@ -2507,7 +2518,7 @@ sap.ui.define([
 				aElements = oCache.getElements(sPath);
 			}, "", /*bSync*/true);
 
-		if (aElements && this.createContexts(0, aElements)) {
+		if (aElements && this.createContexts(0, aElements, /*bCreateOnly*/true)) {
 			// In the case that a control has requested new data and the data request is already
 			// completed, but the new contexts are not yet created, we have to ensure that a change
 			// event is fired to inform the control about these new contexts.
@@ -4640,7 +4651,10 @@ sap.ui.define([
 	 *   </ul>
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
-	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with:
+	 *   to, be repeated in <code>oAggregation.group</code>. Since 1.132.0, the last group level is
+	 *   interpreted as the leaf level in case there are no other groups than those given here. In
+	 *   that case, {@link #getAggregation} returns a shorter <code>groupLevels</code> list.
+	 *   Group levels cannot be combined with:
 	 *   <ul>
 	 *     <li> filtering for aggregated properties,
 	 *     <li> "$search" (since 1.93.0),
@@ -4791,7 +4805,9 @@ sap.ui.define([
 					this.oHeaderContext ??= Context.create(this.oModel, this, sResolvedPath);
 					if (this.mParameters.$$aggregation) {
 						_AggregationHelper.setPath(this.mParameters.$$aggregation, sResolvedPath);
-					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {
+					} else if (!_Helper.isEmptyObject(this.mChildPathsReducedToParent)
+							&& this.oModel.bAutoExpandSelect) {
+						// restart auto-$expand/$select
 						this.mCanUseCachePromiseByChildPath = {};
 						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
 					}
