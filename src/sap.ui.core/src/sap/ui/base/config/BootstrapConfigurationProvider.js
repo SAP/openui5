@@ -7,6 +7,8 @@ sap.ui.define([
 	"use strict";
 	const oConfig = Object.create(null);
 	const rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
+	const multipleParams = new Map();
+
 	/* helper for finding the bootstrap tag */
 	function getBootstrapTag() {
 		var oResult;
@@ -52,7 +54,7 @@ sap.ui.define([
 				if (!sNormalizedKey) {
 					sap.ui.loader._.logger.error("Invalid configuration option '" + sKey + "' in bootstrap!");
 				} else if (Object.hasOwn(oConfig, sNormalizedKey)) {
-					sap.ui.loader._.logger.error("Configuration option '" + sKey + "' already exists and will be ignored!");
+					multipleParams.set(sNormalizedKey, sKey);
 				} else {
 					oConfig[sNormalizedKey] = dataset[sKey];
 				}
@@ -61,6 +63,10 @@ sap.ui.define([
 	}
 	function get(sKey) {
 		let vValue = oConfig[sKey];
+		if (multipleParams.has(sKey)) {
+			sap.ui.loader._.logger.error("Configuration option '" + multipleParams.get(sKey) + "' was set multiple times. Value '" + vValue + "' will be used");
+			multipleParams.delete(sKey);
+		}
 		if (vValue === undefined) {
 			const vMatch = sKey.match(rAlias);
 			const sLowerCaseAlias = vMatch ? vMatch[1] + vMatch[2][0] + vMatch[2].slice(1).toLowerCase() : undefined;

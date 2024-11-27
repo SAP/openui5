@@ -11,6 +11,7 @@ sap.ui.define([
 	const oWriteableConfig = Object.create(null);
 	const rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
 	const mFrozenProperties = Object.create(null);
+	const multipleParams = new Map();
 	let bFrozen = false;
 	let Configuration;
 
@@ -26,7 +27,7 @@ sap.ui.define([
 				if (!sNormalizedKey) {
 					sap.ui.loader._.logger.error("Invalid configuration option '" + sKey + "' in global['sap-ui-config']!");
 				} else if (Object.hasOwn(oConfig, sNormalizedKey)) {
-					sap.ui.loader._.logger.error("Configuration option '" + sKey + "' was already set by '" + mOriginalGlobalParams[sNormalizedKey] + "' and will be ignored!");
+					multipleParams.set(sNormalizedKey, mOriginalGlobalParams[sNormalizedKey]);
 				} else if (Object.hasOwn(mFrozenProperties, sNormalizedKey) && oGlobalConfig[sKey] !== vFrozenValue) {
 					oConfig[sNormalizedKey] = vFrozenValue;
 					sap.ui.loader._.logger.error("Configuration option '" + sNormalizedKey + "' was frozen and cannot be changed to " + oGlobalConfig[sKey] + "!");
@@ -47,10 +48,14 @@ sap.ui.define([
 	}
 
 	function get(sKey, bFreeze) {
+		let vValue = oWriteableConfig[sKey] || oConfig[sKey];
+		if (multipleParams.has(sKey)) {
+			sap.ui.loader._.logger.error("Configuration option '" + multipleParams.get(sKey) + "' was set multiple times. Value '" + vValue + "' will be used");
+			multipleParams.delete(sKey);
+		}
 		if (Object.hasOwn(mFrozenProperties,sKey)) {
 			return mFrozenProperties[sKey];
 		}
-		let vValue = oWriteableConfig[sKey] || oConfig[sKey];
 		if (!Object.hasOwn(oConfig, sKey) && !Object.hasOwn(oWriteableConfig, sKey)) {
 			const vMatch = sKey.match(rAlias);
 			const sLowerCaseAlias = vMatch ? vMatch[1] + vMatch[2][0] + vMatch[2].slice(1).toLowerCase() : undefined;

@@ -10,10 +10,12 @@ globalThis.fnInit = () => {
 	sap.ui.require([
 		"sap/base/config",
 		"sap/base/Log",
+		"sap/base/config/camelize",
 		"sap/ui/thirdparty/sinon"
 	], (
 		BaseConfiguration,
 		Log,
+		camelize,
 		sinon
 	) => {
 		var oLog = Log.getLogger("test", 6);
@@ -33,14 +35,20 @@ globalThis.fnInit = () => {
 			});
 
 			[
-				{ duplicateParam: "sap-ui-FooBar", origParam: "sap-ui-fooBar"},
-				{ duplicateParam: "sap-ui-foo-bar", origParam: "sap-ui-fooBar"},
-				{ duplicateParam: "sap-ui-sapUiFooBar", origParam: "sap-ui-sap-ui-fooBar"},
-				{ duplicateParam: "sap-ui-initial-falsy-value", origParam: "sap-ui-initialFalsyValue"}
+				{ duplicateParam: "sap-ui-FooBar", origParam: "sap-ui-fooBar", type: BaseConfiguration.Type.String},
+				{ duplicateParam: "sap-ui-foo-bar", origParam: "sap-ui-fooBar", type: BaseConfiguration.Type.String},
+				{ duplicateParam: "sap-ui-sapUiFooBar", origParam: "sap-ui-sap-ui-fooBar", type: BaseConfiguration.Type.String},
+				{ duplicateParam: "sap-ui-initial-falsy-value", origParam: "sap-ui-initialFalsyValue", type: BaseConfiguration.Type.Boolean}
 			].forEach(function (oParams) {
 				var sDuplicateKey = sContext.startsWith("global") ? oParams.duplicateParam.replace("sap-ui-", "") : oParams.duplicateParam;
 				var sOrigKey = sContext.startsWith("global") ? oParams.origParam.replace("sap-ui-", "") : oParams.origParam;
-				assert.ok(oLogSpy.calledWith("Configuration option '" + sDuplicateKey + "' was already set by '" + sOrigKey + "' and will be ignored!"), "Logged invalid configuration option '" + sDuplicateKey + "'");
+				//trigger get for error logging
+				const value = BaseConfiguration.get({
+					name: camelize(oParams.origParam),
+					type: oParams.type,
+					external: true
+				});
+				assert.ok(oLogSpy.calledWith("Configuration option '" + sOrigKey + "' was set multiple times. Value '" + value + "' will be used"), "Logged invalid configuration option '" + sDuplicateKey + "'");
 			});
 
 			["sap-ui-sap/foo/bar"].forEach(function (sInvalidKey) {

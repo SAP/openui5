@@ -6,6 +6,7 @@ sap.ui.define([
 ], (camelize) => {
 	"use strict";
 
+	const multipleParams = new Map();
 	let oConfig = Object.create(null);
 
 	if (globalThis.document) {
@@ -17,7 +18,7 @@ sap.ui.define([
 			const bSapParam = /sap\-?([Uu]?i\-?)?/.test(tag.name);
 			if (sNormalizedKey) {
 				if (Object.hasOwn(oConfig, sNormalizedKey)) {
-					sap.ui.loader._.logger.error("Configuration option '" + tag.name + "' was already set by '" + mOriginalTagNames[sNormalizedKey] + "' and will be ignored!");
+					multipleParams.set(sNormalizedKey, mOriginalTagNames[sNormalizedKey]);
 				} else {
 					oConfig[sNormalizedKey] = tag.content;
 					mOriginalTagNames[sNormalizedKey] = tag.name;
@@ -31,6 +32,10 @@ sap.ui.define([
 
 	const MetaConfigurationProvider = {
 		get(sKey) {
+			if (multipleParams.has(sKey)) {
+				sap.ui.loader._.logger.error("Configuration option '" + multipleParams.get(sKey) + "' was set multiple times. Value '" + oConfig[sKey] + "' will be used");
+				multipleParams.delete(sKey);
+			}
 			return oConfig[sKey];
 		}
 	};

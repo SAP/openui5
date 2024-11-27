@@ -8,6 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	let oConfig = Object.create(null);
+	const multipleParams = new Map();
 
 	if (globalThis.location) {
 		oConfig = Object.create(null);
@@ -19,7 +20,7 @@ sap.ui.define([
 			const sNormalizedKey = camelize(key);
 			if (sNormalizedKey) {
 				if (Object.hasOwn(oConfig, sNormalizedKey)) {
-					sap.ui.loader._.logger.error("Configuration option '" + key + "' was already set by '" + mOriginalUrlParams[sNormalizedKey] + "' and will be ignored!");
+					multipleParams.set(sNormalizedKey, mOriginalUrlParams[sNormalizedKey]);
 				} else {
 					oConfig[sNormalizedKey] = value;
 					mOriginalUrlParams[sNormalizedKey] = key;
@@ -32,6 +33,10 @@ sap.ui.define([
 	}
 
 	function get(sKey) {
+		if (multipleParams.has(sKey)) {
+			sap.ui.loader._.logger.error("Configuration option '" + multipleParams.get(sKey) + "' was set multiple times. Value '" + oConfig[sKey] + "' will be used");
+			multipleParams.delete(sKey);
+		}
 		return oConfig[sKey];
 	}
 
