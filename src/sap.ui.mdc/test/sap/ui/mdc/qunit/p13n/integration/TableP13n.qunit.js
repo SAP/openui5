@@ -27,7 +27,8 @@ sap.ui.define([
 				}
 			];
 
-			return this.createTestObjects(aPropertyInfos);
+			this.createTestObjects(aPropertyInfos);
+			return this.oTable.initialized();
 		},
 		afterEach: function () {
 			this.destroyTestObjects();
