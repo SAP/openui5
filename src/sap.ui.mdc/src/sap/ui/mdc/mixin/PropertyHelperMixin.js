@@ -281,8 +281,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 				return undefined;
 			}
 
-			const aProperties = aResult[0];
-			const PropertyHelper = aResult[1];
+			const [aProperties, PropertyHelper] = aResult;
 			this._oPropertyHelper = new PropertyHelper(aProperties, this);
 			this._bPropertyHelperInitializing = false;
 			if (bFinal) {

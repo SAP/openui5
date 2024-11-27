@@ -273,8 +273,9 @@ sap.ui.define([
 				 *
 				 * These should be bound to a {@link sap.ui.mdc.FilterBar FilterBar} using the corresponding <code>propertyPath</code>.
 				 *
-				 * <b>Note:</b> For {@link sap.ui.mdc.FilterField FilterField} controls, the <code>conditions</code> property must be used to bind
-				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link @link sap.ui.mdc.FilterBar FilterBar}.</br>
+				 * <b>Note:</b> For {@link sap.ui.mdc.FilterField FilterField} controls, the <code>conditions</code> property is used to bind
+				 * {@link sap.ui.mdc.FilterField FilterField} to its parent {@link @link sap.ui.mdc.FilterBar FilterBar}.</br>
+				 * If this property is not explicitly configured, the {@link @link sap.ui.mdc.FilterBar FilterBar} sets a default binding.
 				 * For example, for a {@link sap.ui.mdc.FilterField FilterField} control inside a {@link sap.ui.mdc.FilterBar FilterBar} control, the binding looks like this:</br>
 				 * <code>conditions="{$filters>/conditions/propertyPath}"</code> with the following data:
 				 * <ul>

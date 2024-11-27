@@ -279,6 +279,7 @@ sap.ui.define(
 				}
 
 				oBasicSearchField.attachSubmit(this._handleFilterItemSubmit, this);
+				this._enhanceBasicSearchField(oBasicSearchField);
 				if (!this._oObserver.isObserved(oBasicSearchField, { properties: ["visible"] })) {
 					this._oObserver.observe(oBasicSearchField, { properties: ["visible"] });
 				}
