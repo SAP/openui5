@@ -58,7 +58,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
-	"sap/m/MenuItem"
+	"sap/m/MenuItem",
+	"sap/ui/fl/variants/VariantManagement"
 ], function(
 	TableQUnitUtils,
 	QUtils,
@@ -116,7 +117,8 @@ sap.ui.define([
 	ConditionValidated,
 	OperatorName,
 	Menu,
-	MenuItem
+	MenuItem,
+	VariantManagement
 ) {
 	"use strict";
 
@@ -2533,8 +2535,8 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function() {
 			sap.ui.require([
-				"sap/ui/fl/variants/VariantManagement", "sap/m/SegmentedButton", "sap/ui/core/Control"
-			], function(VariantManagement, SegmentedButton, Control) {
+				"sap/m/SegmentedButton", "sap/ui/core/Control"
+			], function(SegmentedButton, Control) {
 				// Test with VariantManagement
 				const oVariant = new VariantManagement(),
 					oVariant2 = new VariantManagement(),
@@ -2614,6 +2616,32 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		}.bind(this));
+	});
+
+	QUnit.test("Table with VariantManagement - Title Settings", async function(assert) {
+		this.oTable.setHeader("Test Header");
+		this.oTable.setHeaderLevel("H6");
+		this.oTable.setHeaderStyle("H3");
+
+		const oVariantManagement = new VariantManagement();
+		this.oTable.setVariant(oVariantManagement);
+
+		await this.oTable.initialized();
+
+		assert.equal(this.oTable._oTitle.getTitleStyle(), "H3", "Title style is set to 'H3'");
+		assert.equal(this.oTable._oTitle.getLevel(), "H6", "Title level is set to 'H6'");
+		assert.ok(oVariantManagement.getShowAsText(), "VariantManagement is shown as text");
+		assert.equal(this.oTable._oTable.getAriaLabelledBy()[0], this.oTable._oTitle.getId(), "Table is labelled by title");
+
+		this.oTable.setHeaderVisible(false);
+		assert.equal(oVariantManagement.getTitleStyle(), "H3", "VariantManagement title is set to 'H3'");
+		assert.equal(oVariantManagement.getHeaderLevel(), "H6", "VariantManagement title is set to 'H6'");
+		assert.notOk(oVariantManagement.getShowAsText(), "VariantManagement is not shown as text");
+
+		this.oTable.setHeaderLevel("Auto");
+		this.oTable.setHeaderStyle("H2");
+		assert.equal(oVariantManagement.getHeaderLevel(), "Auto", "VariantManagement title level is set to 'Auto'");
+		assert.equal(oVariantManagement.getTitleStyle(), "H2", "VariantManagement title style is set to 'H2'");
 	});
 
 	QUnit.test("Table busy state", function(assert) {

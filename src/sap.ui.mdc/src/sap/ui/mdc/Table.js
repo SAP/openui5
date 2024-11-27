@@ -896,6 +896,9 @@ sap.ui.define([
 			if (bNewValue && oControl) {
 				this._setToolbarBetween(oToolBar);
 			}
+			if (sAggregationName === "variant") {
+				this._updateVariantManagementStyle();
+			}
 			return this;
 		};
 	});
@@ -1235,6 +1238,7 @@ sap.ui.define([
 		}
 		this.setProperty("headerLevel", sLevel, true);
 		this._oTitle && this._oTitle.setLevel(sLevel);
+		this._updateVariantManagementStyle();
 		return this;
 	};
 
@@ -1244,6 +1248,7 @@ sap.ui.define([
 		}
 		this.setProperty("headerStyle", sStyle, true);
 		this._oTitle && this._oTitle.setTitleStyle(this.getHeaderStyle() || TitleLevel.H4);
+		this._updateVariantManagementStyle();
 		return this;
 	};
 
@@ -1832,6 +1837,7 @@ sap.ui.define([
 		if (this._oTitle) {
 			this._oTitle.setWidth(this.getHeaderVisible() ? undefined : "0px");
 		}
+		this._updateVariantManagementStyle();
 		return this;
 	};
 
@@ -3034,6 +3040,16 @@ sap.ui.define([
 	*/
 	Table.prototype._setSelectedContexts = function (aContexts) {
 		this.getControlDelegate().setSelectedContexts(this, aContexts);
+	};
+
+	Table.prototype._updateVariantManagementStyle = function() {
+		const oVariantManagement = this.getVariant();
+
+		if (oVariantManagement) {
+			oVariantManagement.setShowAsText(this.getHeaderVisible());
+			oVariantManagement.setHeaderLevel(this.getHeaderLevel());
+			oVariantManagement.setTitleStyle(this.getHeaderStyle() || TitleLevel.H4);
+		}
 	};
 
 	/**

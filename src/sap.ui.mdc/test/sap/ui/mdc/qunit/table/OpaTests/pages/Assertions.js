@@ -999,7 +999,7 @@ sap.ui.define([
 				success: function (aVariantManagements) {
 					Opa5.assert.equal(aVariantManagements.length, 1, "VariantManagement found");
 					this.waitFor({
-						controlType: "sap.m.Title",
+						controlType: "sap.ui.core.Control",
 						matchers: [
 							new Ancestor(aVariantManagements[0]), new Properties({
 								text: sVariantName

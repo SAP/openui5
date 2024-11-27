@@ -38,7 +38,11 @@ sap.ui.define(function() {
 		tests: {
 			"Table": {
 				group: "Controls",
-				module: "./{name}.qunit"
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
 			},
 			"Column": {
 				group: "Controls",
