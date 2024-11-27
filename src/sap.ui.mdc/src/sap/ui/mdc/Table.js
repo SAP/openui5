@@ -976,6 +976,9 @@ sap.ui.define([
 			if (bNewValue && oControl) {
 				this._setToolbarBetween(oToolBar);
 			}
+			if (sAggregationName === "variant") {
+				this._updateVariantManagementStyle();
+			}
 			return this;
 		};
 	});
@@ -1331,7 +1334,8 @@ sap.ui.define([
 			return this;
 		}
 		this.setProperty("headerLevel", sLevel, true);
-		this._oTitle && this._oTitle.setLevel(sLevel);
+		this._oTitle?.setLevel(sLevel);
+		this._updateVariantManagementStyle();
 		return this;
 	};
 
@@ -1340,7 +1344,10 @@ sap.ui.define([
 			return this;
 		}
 		this.setProperty("headerStyle", sStyle, true);
-		this._oTitle?.setTitleStyle(this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })]);
+
+		const sHeaderStyle = this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })];
+		this._oTitle?.setTitleStyle(sHeaderStyle);
+		this._updateVariantManagementStyle();
 		return this;
 	};
 
@@ -1908,6 +1915,7 @@ sap.ui.define([
 			this._oTitle.setWidth(this.getHeaderVisible() ? undefined : "0px");
 		}
 		this._updateInvisibleTitle();
+		this._updateVariantManagementStyle();
 		return this;
 	};
 
@@ -3231,9 +3239,10 @@ sap.ui.define([
 			this._oToolbar.setDesign(sToolBarDesign);
 		}
 
-		if (this._oTitle && !this.getHeaderStyle()) {
+		if (!this.getHeaderStyle()) {
 			const sHeaderStyle = TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })];
-			this._oTitle.setTitleStyle(sHeaderStyle);
+			this._oTitle?.setTitleStyle(sHeaderStyle);
+			this.getVariant()?.setTitleStyle(sHeaderStyle);
 		}
 	};
 
@@ -3245,6 +3254,16 @@ sap.ui.define([
 	 */
 	Table.prototype._setSelectedContexts = function(aContexts) {
 		this.getControlDelegate().setSelectedContexts(this, aContexts);
+	};
+
+	Table.prototype._updateVariantManagementStyle = function() {
+		const oVariantManagement = this.getVariant();
+
+		if (oVariantManagement) {
+			oVariantManagement.setShowAsText(this.getHeaderVisible());
+			oVariantManagement.setHeaderLevel(this.getHeaderLevel());
+			oVariantManagement.setTitleStyle(this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })]);
+		}
 	};
 
 	/**
