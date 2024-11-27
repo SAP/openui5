@@ -93,27 +93,27 @@ sap.ui.define([
 
 			"demokit/Form354": {
 				group: "Demokit",
-				page: "test-resources/sap/ui/layout/demokit/sample/Form354/test/FormSampleJourney.qunit.html"
+				page: "test-resources/sap/ui/layout/demokit/sample/tests/Test.qunit.html?testsuite=test-resources/sap/ui/layout/sample/SimpleForm/testsuite.qunit&test=formTests&component=sap.ui.layout.sample.Form354"
 			},
 
 			"demokit/SimpleForm354": {
 				group: "Demokit",
-				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm354/test/FormSampleJourney.qunit.html"
+				page: "test-resources/sap/ui/layout/demokit/sample/tests/Test.qunit.html?testsuite=test-resources/sap/ui/layout/sample/SimpleForm/testsuite.qunit&test=formTests&component=sap.ui.layout.sample.SimpleForm354"
 			},
 
 			"demokit/SimpleForm354wide": {
 				group: "Demokit",
-				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm354wide/test/FormSampleJourney.qunit.html"
+				page: "test-resources/sap/ui/layout/demokit/sample/tests/Test.qunit.html?testsuite=test-resources/sap/ui/layout/sample/SimpleForm/testsuite.qunit&test=formTests&component=sap.ui.layout.sample.SimpleForm354wide"
 			},
 
 			"demokit/SimpleForm354wideDual": {
 				group: "Demokit",
-				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm354wideDual/test/FormSampleJourney.qunit.html"
+				page: "test-resources/sap/ui/layout/demokit/sample/tests/Test.qunit.html?testsuite=test-resources/sap/ui/layout/sample/SimpleForm/testsuite.qunit&test=formTests&component=sap.ui.layout.sample.SimpleForm354wideDual"
 			},
 
 			"demokit/SimpleForm471": {
 				group: "Demokit",
-				page: "test-resources/sap/ui/layout/demokit/sample/SimpleForm471/test/FormSampleJourney.qunit.html"
+				page: "test-resources/sap/ui/layout/demokit/sample/tests/Test.qunit.html?testsuite=test-resources/sap/ui/layout/sample/SimpleForm/testsuite.qunit&test=formTests&component=sap.ui.layout.sample.SimpleForm471"
 			},
 
 			// --------------------------
