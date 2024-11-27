@@ -800,7 +800,11 @@ sap.ui.define([
 							}
 						}
 					}).then((vResult) => {
-						this.getControlDelegate().requestToolbarUpdate(this);
+						if (this.getControlDelegate().requestToolbarUpdate) {
+							this.getControlDelegate().requestToolbarUpdate(this);
+						} else {
+							this._updateToolbar();
+						}
 					});
 
 				});
