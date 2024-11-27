@@ -296,19 +296,30 @@ sap.ui.define([
 	QUnit.module("Focus handling");
 
 	QUnit.test("Focus correct when current element get's disabled", async function(assert) {
+		const done = assert.async();
 		createAndAppendDiv("uiarea_focus");
 
-		const oButton1 = new Button();
+
+		const oButton1 = new Button({
+			id: "btn_1",
+			text: "Button 1"
+		});
 		const oButton2 = new Button({
-			id: "btn_2"
+			id: "btn_2",
+			text: "Button 2"
 		});
 		const oButton3 = new Button({
+			id: "btn_3",
+			text: "Button 3",
 			press: function() {
 				this.setEnabled(false);
 				oButton2.focus();
 			}
 		});
-		const oButton4 = new Button();
+		const oButton4 = new Button({
+			id: "btn_4",
+			text: "Button 4"
+		});
 
 		const oPanel = new Panel({
 			content: [oButton1, oButton2, oButton3, oButton4]
@@ -317,30 +328,39 @@ sap.ui.define([
 		oPanel.placeAt("uiarea_focus");
 		await nextUIUpdate();
 
+
+		// 1. set initial focus on button 1
 		oButton1.focus();
 		assert.ok(oButton1.getDomRef() === document.activeElement, "Initially, oButton1 should be focused");
 
+		// 2. disable button 1
 		oButton1.setEnabled(false);
 		await nextUIUpdate();
 
 		assert.ok(oButton2.getDomRef() === document.activeElement, "After oButton1 has been disabled, the focus should be moved correctly on oButton2");
 
+		// 3. press and disable button 3, moves focus to button 2
 		oButton3.firePress();
 		await nextUIUpdate();
 		assert.ok(oButton2.getDomRef() === document.activeElement, "After oButton3 has been pressed, the focus should be moved correctly on oButton2 by the focus call of the press handler");
 
+		// 4. disable button 2
 		oButton2.setEnabled(false);
 		await nextUIUpdate();
 
 		assert.ok(oButton4.getDomRef().contains(document.activeElement), "After oButton2 has been disabled, the focus is moved to oButton4 since it is the only left.");
 
+		// 5. disable button 4
 		oButton4.setEnabled(false);
 		await nextUIUpdate();
 
-		assert.ok(document.activeElement === document.body, "After all buttons have been disabled, the focus is moved to the document.body.");
-		oPanel.destroy();
-	});
+		setTimeout(() => {
+			assert.equal(document.activeElement, document.body, "After all buttons have been disabled, the focus should be moved to the body.");
+			oPanel.destroy();
+			done();
+		}, 100);
 
+	});
 
 	QUnit.test("Focus correct when current element get's invisible", async function(assert) {
 		createAndAppendDiv("uiarea_focus");
