@@ -1,5 +1,6 @@
 /*global sinon, QUnit */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/CommandExecution",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Panel"
 ], function(
+	Log,
 	XMLView,
 	ManagedObject,
 	CommandExecution,
@@ -200,70 +202,72 @@ sap.ui.define([
 	});
 
 
-	var sView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
-	+  '<App id="commands">'
-	+  '<Page id="page" title="Commands" '
-	+  'binding="{odata>/}" >'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution id="CE_EXIT" command="Exit" enabled="true" execute=".onExit" />'
-	+  '<Popover '
-	+  'id="popoverCommand" '
-	+  'title="Popover" '
-	+  'class="sapUiContentPadding"> '
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE_POPOVER" enabled="false" command="Save" execute=".onSave" />'
-	+  '</dependents>'
-	+  '<footer>'
-	+  '<Toolbar>'
-	+  '<Button text="Delete" press="cmd:Exit" enabled="{$cmd>Delete/enabled}" />'
-	+  '<ToolbarSpacer />'
-	+  '<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />'
-	+  '</Toolbar>'
-	+  '</footer>'
-	+  '<Input value="{viewModel>/value}" />'
-	+  '</Popover>'
-	+  '</dependents>'
-	+  '<Panel id="PANEL" headerText="Button">'
-	+  '<headerToolbar>'
-	+  '<Toolbar>'
-	+  '<Button text="TBButton" />'
-	+  '</Toolbar>'
-	+  '</headerToolbar>'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE_PANEL" command="Save" enabled="true" execute=".onSave" />'
-	+  '</dependents>'
-	+  '<Panel id="PANEL2" headerText="innerButton">'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_CREATE_INNER" command="Create" enabled="true" execute=".onExit" />'
-	+  '<core:CommandExecution id="CE_SAVE_INNER" command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution id="CE_EXIT_INNER" command="Exit" enabled="true" execute=".onExit" />'
-	+  '</dependents>'
-	+  '<Button text="Save" press="cmd:Save" />'
-	+  '</Panel>'
-	+  '<Button text="Save" press="cmd:Save" />'
-	+  '</Panel>'
-	+  '<Panel headerText="sap.m.Input">'
-	+  '<Input id="myInput" value="{viewModel>/value}" />'
-	+  '<Table>'
-	+  '<columns>'
-	+  '<Column width="12em">'
-	+  '<Text text="Product" />'
-	+  '</Column>'
-	+  '</columns>'
-	+  '<items>'
-	+  '<StandardListItem title="Name">'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />'
-	+  '</dependents>'
-	+  '</StandardListItem>'
-	+  '</items>'
-	+  '</Table>'
-	+  '</Panel>'
-	+  '</Page>'
-	+  '</App>'
-	+  '</mvc:View>';
+	var sView = `
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">
+	<App id="commands">
+		<Page id="page" title="Commands" binding="{odata>/}" >
+			<dependents>
+				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
+				<core:CommandExecution id="CE_EXIT" command="Exit" enabled="true" execute=".onExit" />
+				<Popover id="popoverCommand" title="Popover" class="sapUiContentPadding">
+					<dependents>
+						<core:CommandExecution id="CE_SAVE_POPOVER" enabled="false" command="Save" execute=".onSave" />
+					</dependents>
+					<footer>
+						<Toolbar>
+							<Button text="Delete" press="cmd:Exit" enabled="{$cmd>Delete/enabled}" />
+							<ToolbarSpacer />
+							<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />
+						</Toolbar>
+					</footer>
+					<Input value="{viewModel>/value}" />
+				</Popover>
+			</dependents>
+			<Panel id="PANEL" headerText="Button">
+				<headerToolbar>
+					<Toolbar>
+						<Button text="TBButton" />
+					</Toolbar>
+				</headerToolbar>
+				<dependents>
+					<core:CommandExecution id="CE_SAVE_PANEL" command="Save" enabled="true" execute=".onSave" />
+				</dependents>
+				<Panel id="PANEL2" headerText="innerButton">
+					<dependents>
+						<core:CommandExecution id="CE_CREATE_INNER" command="Create" enabled="true" execute=".onExit" />
+						<core:CommandExecution id="CE_SAVE_INNER" command="Save" enabled="true" execute=".onSave" />
+						<core:CommandExecution id="CE_EXIT_INNER" command="Exit" enabled="true" execute=".onExit" />
+					</dependents>
+					<Button text="Save" press="cmd:Save" />
+				</Panel>
+				<Button text="Save" press="cmd:Save" />
+			</Panel>
+			<Panel headerText="sap.m.Input">
+				<Input id="myInput" value="{viewModel>/value}" />
+				<Table>
+					<columns>
+						<Column width="12em">
+							<Text text="Product" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<dependents>
+								<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />
+								<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />
+								<core:CommandExecution id="CE_NOT_DEFINED" command="notDefined" enabled="true" execute=".onExit" />
+							</dependents>
+							<cells>
+								<Text text="Name"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>
+`;
 
 	var sView2 = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
 	+  '<core:ComponentContainer id="CC" '
@@ -514,9 +518,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("via Component instantiation", function(assert) {
-		assert.expect(6);
+		assert.expect(8);
 		var oComponent;
-
+		const logSpy = sinon.spy(Log, "error");
 		// load the test component
 		return Component.create({
 			name: "my.command",
@@ -525,6 +529,7 @@ sap.ui.define([
 			oComponent = myComponent;
 			return oComponent.getRootControl().loaded();
 		}).then(function(oView) {
+			assert.ok(logSpy.getCalls()[0] && logSpy.getCalls()[0].args[0].includes("Command 'notDefined' is not defined in component manifest. No shortcut will be registered."), "Command not found and logged");
 			var oModel = oComponent.getModel("$cmd");
 			var oPage = oView.byId("page");
 			var oPopover = oView.byId("popoverCommand");
@@ -538,7 +543,12 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("Exit/enabled", oPagePopoverContext), true, "enabled correctly set in  model");
 			assert.equal(oModel.getProperty("Save/enabled", oPageContext), true, "enabled correctly set in  model");
 			assert.equal(oModel.getProperty("Exit/enabled", oPageContext), true, "enabled correctly set in  model");
-			oComponent.destroy();
+			try {
+				oComponent.destroy();
+				assert.ok(true, "destroy must not fail");
+			} catch (e) {
+				assert.ok(false, "destroy must not fail");
+			}
 		});
 	});
 
