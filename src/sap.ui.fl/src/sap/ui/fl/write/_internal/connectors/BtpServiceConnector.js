@@ -34,6 +34,7 @@ sap.ui.define([
 			Layer.USER
 		],
 		ROUTES: {
+			CONDENSE: `${InitialConnector.ROOT}/actions/condense`,
 			CHANGES: `${InitialConnector.ROOT}/changes`,
 			SETTINGS: `${InitialConnector.ROOT}/settings`,
 			TOKEN: `${InitialConnector.ROOT}/settings`,
@@ -71,6 +72,35 @@ sap.ui.define([
 				contentType: "application/json; charset=utf-8"
 			});
 			return oResult.response?.seenFeatureIds;
+		},
+
+		/**
+		 * Write flex data into the KeyUser service
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {object} mPropertyBag.flexObjects - Map of condensed changes
+		 * @param {string} [mPropertyBag.parentVersion] - Indicates if changes should be based on a version
+		 * @param {string} mPropertyBag.url - Configured url for the connector
+		 * @returns {Promise} Promise resolves as soon as the writing was completed
+		 */
+		condense(mPropertyBag) {
+			const mParameters = {};
+			if (mPropertyBag.parentVersion !== undefined) {
+				mParameters.parentVersion = mPropertyBag.parentVersion;
+			}
+			if (this.isLanguageInfoRequired) {
+				InitialUtils.addLanguageInfo(mParameters);
+			}
+			const sUrl = InitialUtils.getUrl(this.ROUTES.CONDENSE, mPropertyBag, mParameters);
+			const oRequestOption = WriteUtils.getRequestOptions(
+				InitialConnector,
+				this.ROUTES.TOKEN,
+				mPropertyBag.flexObjects,
+				"application/json; charset=utf-8",
+				"json"
+			);
+
+			return WriteUtils.sendRequest(sUrl, "POST", oRequestOption);
 		}
 	});
 
