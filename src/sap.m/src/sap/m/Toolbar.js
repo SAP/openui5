@@ -415,9 +415,10 @@ function(
 		var sActiveElementName = oActiveElement.getMetadata().getName(),
 			bIsSelectOrCombobox = ["sap.m.Select", "sap.m.ComboBox"].includes(sActiveElementName),
 			bIsUpOrDownArrowKey = [KeyCodes.ARROW_UP, KeyCodes.ARROW_DOWN].includes(oEvent.keyCode),
-			bIsBreadcrumbs = sActiveElementName === "sap.m.Breadcrumbs";
+			bIsBreadcrumbs = sActiveElementName === "sap.m.Breadcrumbs",
+			bIsSlider = ["sap.m.Slider", "sap.m.RangeSlider"].includes(sActiveElementName);
 
-		if (bIsUpOrDownArrowKey && bIsSelectOrCombobox || bIsBreadcrumbs) {
+		if (bIsUpOrDownArrowKey && bIsSelectOrCombobox || bIsBreadcrumbs || bIsSlider) {
 			return true;
 		}
 
