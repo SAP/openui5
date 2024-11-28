@@ -399,13 +399,6 @@ sap.ui.define([
 		return Promise.resolve();
 	};
 
-	/**
-	 * Requests a toolbar update once the inner chart is ready.
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-	 *
-	 * @public
-	 */
-	ChartDelegate.requestToolbarUpdate = function(oChart) {	};
 
 	/**
 	 * Checks the binding of the chart and rebinds it if required.
