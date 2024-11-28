@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/library"
-], function(LinkDelegate, LinkItem, Title, Text, Label, Image, SimpleForm, LinkType, Button, Dialog, mobileLibrary) {
+], function (LinkDelegate, LinkItem, Title, Text, Label, Image, SimpleForm, LinkType, Button, Dialog, mobileLibrary) {
 	"use strict";
 
 	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
@@ -21,7 +21,7 @@ sap.ui.define([
 	const ButtonType = mobileLibrary.ButtonType;
 	const DialogType = mobileLibrary.DialogType;
 
-	SampleLinkDelegate.fetchLinkType = function(oLink) {
+	SampleLinkDelegate.fetchLinkType = function (oLink) {
 		const oPayload = oLink.getPayload();
 
 		let sLinkType = LinkType.Text;
@@ -45,7 +45,7 @@ sap.ui.define([
 
 	};
 
-	SampleLinkDelegate.beforeNavigationCallback = function(oLink, oEvent) {
+	SampleLinkDelegate.beforeNavigationCallback = function (oLink, oEvent) {
 		const bAlwaysNavigate = oLink.getPayload()?.alwaysNavigate ?? false;
 		if (bAlwaysNavigate) {
 			return Promise.resolve(true);
@@ -76,7 +76,7 @@ sap.ui.define([
 		});
 	};
 
-	SampleLinkDelegate.fetchLinkItems = function(oLink) {
+	SampleLinkDelegate.fetchLinkItems = function (oLink) {
 		const sProductId = oLink.getPayload()?.product ?? "product1";
 		const oFirstLink = new LinkItem({
 			key: oLink.getId() + "link01",
@@ -104,7 +104,7 @@ sap.ui.define([
 		return Promise.resolve(aLinkItems);
 	};
 
-	SampleLinkDelegate.fetchAdditionalContent = function(oLink) {
+	SampleLinkDelegate.fetchAdditionalContent = function (oLink) {
 		const oPayload = oLink.getPayload();
 		if (oPayload?.displayAs === "DirectLink") {
 			return Promise.resolve([]);
@@ -156,6 +156,31 @@ sap.ui.define([
 
 		return oForm;
 	}
+
+	SampleLinkDelegate.fetchPopoverTitle = function (oLink, oPanel) {
+		if (!oLink) {
+			const sTitle = "";
+			return Promise.resolve({ sTitle, undefined });
+		}
+		const sTitle = oLink.getParent()?.getValue();
+		const oLabelledByControl = SampleLinkDelegate._getLabelledByControl(oPanel);
+
+		return Promise.resolve({ sTitle, oLabelledByControl });
+	};
+
+	SampleLinkDelegate._getLabelledByControl = function (oPanel) {
+		const aAdditionalContent = oPanel._getAdditionalContentArea().getItems();
+		let oLabelledByControl = oPanel._getPersonalizationButton();
+		if (aAdditionalContent.length > 0) {
+			[oLabelledByControl] = aAdditionalContent[0].getContent();
+		} else {
+			const aLinkControls = oPanel._getLinkControls();
+			if (aLinkControls.length > 0) {
+				[oLabelledByControl] = aLinkControls;
+			}
+		}
+		return oLabelledByControl;
+	};
 
 	return SampleLinkDelegate;
 });
