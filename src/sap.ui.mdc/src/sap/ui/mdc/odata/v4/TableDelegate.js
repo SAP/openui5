@@ -107,15 +107,54 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Payload for the {@link module:sap/ui/mdc/odata/v4/TableDelegate ODataV4 TableDelegate}. Contains settings to control the behavior of the
+	 * delegate.
+	 *
+	 * @typedef {object} sap.ui.mdc.odata.v4.TableDelegate.Payload
+	 * @property {object} [aggregationConfiguration] The configuration that is applied if data aggregation is enabled in the delegate.
+	 * @property {boolean} [aggregationConfiguration.leafLevel=false]
+	 *     Determines whether aggregation on the leaf level is enabled. If it is enabled, every column change affects the data in the table.
+	 * @public
+	 * @since 1.132
+	 */
+
+	/**
 	 * Base delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>. Extend this object in your project to use all functionalities of the
 	 * table. For more information, please see {@link module:sap/ui/mdc/TableDelegate}.
 	 *
+	 * Data aggregation is enabled if the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, and at least one of the
+	 * following conditions is fulfilled:
+	 * <ul>
+	 *   <li><code>p13nMode</code> <code>Group</code> is enabled</li>
+	 *   <li><code>p13nMode</code> <code>Aggregate</code> is enabled</li>
+	 *   <li>The table has group conditions</li>
+	 *   <li>The table has aggregate conditions</li>
+	 * </ul>
+	 *
+	 * Data aggregation can be configured via the delegate payload by providing <code>aggregationConfiguration</code>. See
+	 * {@link sap.ui.mdc.odata.v4.TableDelegate.Payload} for details.
+	 *
+	 * <i>Sample delegate object:</i>
+	 * <pre>{
+	 * 	name: "my/delegate/extending/sap/ui/mdc/odata/v4/TableDelegate",
+	 * 	payload: {
+	 * 		aggregationConfiguration: {
+	 * 			leafLevel: true
+	 * 		},
+	 * 		...
+	 * 	}
+	 * }</pre>
+	 *
+	 * If data aggregation is enabled, the following restrictions apply:
+	 * <ul>
+	 *   <li>Only properties that are technically groupable or technically aggregatable are loaded from the back end. See
+	 *       {@link sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo} for more information about properties.</li>
+	 *   <li>The path of a property must not contain a <code>NavigationProperty</code>.</li>
+	 * </ul>
+	 *
 	 * <b>Note:</b> This base delegate supports the <code>p13nMode</code> <code>Aggregate</code> only if the table type is
-	 * {@link sap.ui.mdc.table.GridTableType GridTable}, and the <code>p13nMode</code> <code>Group</code> is not supported if the table type is
-	 * {@link sap.ui.mdc.table.TreeTableType TreeTable}. This cannot be changed in your delegate implementation.<br>
-	 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable}, and <code>p13nMode</code> <code>Group</code> or <code>p13nMode</code>
-	 * <code>Aggregate</code> is enabled, only groupable or aggregatable properties are loaded from the back end. Also, the path of a property must
-	 * not contain a <code>NavigationProperty</code>.
+	 * {@link sap.ui.mdc.table.GridTableType GridTable}. The <code>p13nMode</code> <code>Group</code> is not supported if the table type is
+	 * {@link sap.ui.mdc.table.TreeTableType TreeTable}. This cannot be changed in your delegate implementation.
 	 *
 	 * @author SAP SE
 	 * @namespace
@@ -331,9 +370,8 @@ sap.ui.define([
 	 * The path of a property must not be empty.<br>
 	 * If a property is complex, the properties it references are taken into account.<br>
 	 * If <code>autoExpandSelect</code> of the {@link sap.ui.model.odata.v4.ODataModel} is not enabled, this method must return an empty array.
-	 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable} and <code>p13nMode</code> <code>Group</code> or <code>p13nMode</code>
-	 * <code>Aggregate</code> is enabled, also see the restrictions in the description of the
-	 * {@link module:sap/ui/mdc/odata/v4/TableDelegate TableDelegate}.<br>
+	 * See also the restrictions in the description of the {@link module:sap/ui/mdc/odata/v4/TableDelegate TableDelegate} if data aggregation is
+	 * enabled.<br>
 	 * For more information about properties, see {@link sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo PropertyInfo}.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
@@ -742,6 +780,10 @@ sap.ui.define([
 			return undefined;
 		}
 
+		const mAggregationConfig = {
+			leafLevel: false,
+			...oTable.getPayload()?.aggregationConfiguration
+		};
 		const oPropertyHelper = oTable.getPropertyHelper();
 		const aGroupedPropertyKeys = oTable._getGroupedProperties().map((mGroupLevel) => mGroupLevel.name);
 		const aTotaledPropertyKeys = Object.keys(oTable._getAggregatedProperties());
@@ -753,8 +795,10 @@ sap.ui.define([
 			subtotalsAtBottomOnly: true
 		};
 
-		// Add key properties to prevent data aggregation on leafs.
-		addKeyPropertiesTo$$Aggregation(mAggregation, oTable);
+		if (!mAggregationConfig.leafLevel) {
+			// Add key properties to prevent data aggregation on leafs.
+			addKeyPropertiesTo$$Aggregation(mAggregation, oTable);
+		}
 
 		addInResultPropertiesTo$$Aggregation(mAggregation, oTable);
 
