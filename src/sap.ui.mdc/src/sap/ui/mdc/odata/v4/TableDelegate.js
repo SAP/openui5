@@ -30,6 +30,83 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * @typedef {sap.ui.mdc.table.PropertyInfo} sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo
+	 *
+	 * An object literal describing a data property in the context of a {@link sap.ui.mdc.Table} with
+	 * {@link module:sap/ui/mdc/odata/v4/TableDelegate sap/ui/mdc/odata/v4/TableDelegate}.
+	 *
+	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Table#getPropertyInfo propertyInfo} property, the following
+	 * attributes need to be specified:
+	 * <ul>
+	 *   <li><code>key</code></li>
+	 *   <li><code>path</code></li>
+	 *   <li><code>dataType</code></li>
+	 *   <li><code>formatOptions</code></li>
+	 *   <li><code>constraints</code></li>
+	 *   <li><code>maxConditions</code></li>
+	 *   <li><code>caseSensitive</code></li>
+	 *   <li><code>visualSettings.widthCalculation</code></li>
+	 *   <li><code>propertyInfos</code></li>
+	 *   <li><code>groupable</code></li>
+	 *   <li><code>isKey</code></li>
+	 *   <li><code>unit</code></li>
+	 *   <li><code>text</code></li>
+	 *   <li><code>aggregatable</code></li>
+	 *   <li><code>extension.technicallyGroupable</code></li>
+	 *   <li><code>extension.technicallyAggregatable</code></li>
+	 * </ul>
+	 *
+	 * If the property is complex, the following attributes need to be specified:
+	 * <ul>
+	 *   <li><code>key</code></li>
+	 *   <li><code>visualSettings.widthCalculation</code></li>
+	 *   <li><code>propertyInfos</code> (all referenced properties must be specified)</li>
+	 * </ul>
+	 *
+	 * @property {boolean} [isKey=false]
+	 *   Defines whether a property is a key or part of a key in the data. A key property must be technically groupable.
+	 * @property {boolean} [aggregatable=false]
+	 *   Defines whether the property is aggregatable. A property can only be declared aggregatable if there is a <code>CustomAggregate</code> whose
+	 *   <code>Qualifier</code> is equal to the property key.
+	 * @property {Object} [extension]
+	 *   Contains model-specific information.
+	 * @property {boolean} [extension.technicallyGroupable=false]
+	 *   If <code>groupable</code> is set to <code>false</code> to exclude it from group personalization on the UI, the UI still needs to know that
+	 *   this property is groupable for data requests. If this attribute is not set, the default value is the same as the value of
+	 *   <code>groupable</code>.
+	 * @property {boolean} [extension.technicallyAggregatable=false]
+	 *   If <code>aggregatable</code> is set to <code>false</code> to exclude it from aggregate personalization on the UI, the UI still needs to know
+	 *   that this property is aggregatable for data requests. If this attribute is not set, the default value is the same as the value of
+	 *   <code>aggregatable</code>.
+	 * @public
+	 */
+
+	 /*
+	 * restricted for sap.fe (there's no way to make a property of a type private, therefore it's defined outside of the typedef)
+	 * property {string[]} [extension.additionalProperties]
+	 *   Properties that are loaded in addition if this property is loaded. These properties must be technically groupable, otherwise they can't be
+	 *   loaded. All nested additional properties must be listed at root level. For example, if property A references B and B references C, A must
+	 *   also reference C.
+	 *   This attribute is only taken into account if the <code>Aggregate</code> or <code>Group</code> <code>p13nMode</code> is enabled and the
+	 *   table type is {@link sap.ui.mdc.table.GridTableType GridTable}.
+	 *   These properties are not considered for any other functionality, such as export or column width calculation, for example.
+	 *
+	 *   The following restrictions apply:
+	 *   <ul>
+	 *     <li>If the property is neither technically groupable nor technically aggregatable, it must not reference additional properties.</li>
+	 * 	   <li>If the property is technically groupable but not technically aggregatable, not more than one additional property must be referenced.
+	 *         The additional property must be the property that is referencing this property in its <code>text</code> attribute (bidirectional
+	 *         reference).
+	 *         Regardless of the <code>groupable</code> attribute, the property cannot be grouped via the UI. This might change. If this change is not
+	 *         desired, set <code>groupable</code> to <code>false</code> explicitly.
+	 * 	       Do not group this property via API, for example, with the <code>StateUtil</code>.</li>
+	 *     <li>If the property is both technically groupable and technically aggregatable, it must reference only properties that are related to the
+	 * 	       <code>CustomAggregate</code>.</li>
+	 *     <li>Properties that are referenced via <code>text</code> or <code>unit</code> must not be repeated here.</li>
+	 *   </ul>
+	 */
+
+	/**
 	 * Base delegate for {@link sap.ui.mdc.Table} and <code>ODataV4</code>. Extend this object in your project to use all functionalities of the
 	 * table. For more information, please see {@link module:sap/ui/mdc/TableDelegate}.
 	 *
@@ -57,7 +134,7 @@ sap.ui.define([
 	 * @name module:sap/ui/mdc/odata/v4/TableDelegate.fetchProperties
 	 * @function
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {Promise<sap.ui.mdc.odata.v4.TablePropertyInfo[]>} A <code>Promise</code> that resolves with the property information
+	 * @returns {Promise<sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo[]>} A <code>Promise</code> that resolves with the property information
 	 * @protected
 	 */
 
@@ -257,7 +334,7 @@ sap.ui.define([
 	 * If the table type is {@link sap.ui.mdc.table.GridTableType GridTable} and <code>p13nMode</code> <code>Group</code> or <code>p13nMode</code>
 	 * <code>Aggregate</code> is enabled, also see the restrictions in the description of the
 	 * {@link module:sap/ui/mdc/odata/v4/TableDelegate TableDelegate}.<br>
-	 * For more information about properties, see {@link sap.ui.mdc.odata.v4.TablePropertyInfo PropertyInfo}.
+	 * For more information about properties, see {@link sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo PropertyInfo}.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @returns {string[]} Property keys
