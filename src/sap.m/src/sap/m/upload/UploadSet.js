@@ -1771,6 +1771,7 @@ sap.ui.define([
 		} else {
 			this.getList().addAggregation("items", oListItem, true);
 		}
+		oItem.attachEvent("selected", this._handleItemSetSelected, this); // capturing selected event to set selected status to CustomListItem
 		this._checkRestrictionsForItem(oItem);
 	};
 
@@ -2203,6 +2204,37 @@ sap.ui.define([
 			this._oDragIndicator = false;
       this._getIllustratedMessage();
 		}
+	};
+
+	/**
+	 * Handles the selected event of UploadSetItem.
+	 * Used to synchronize the internal list with the given item. The ListItem has to be set to selected value too.
+	 * Otherwise the internal sap.m.List and the UploadSetItem aggregation are not in sync.
+	 * @param {sap.ui.base.Event} event The SAPUI5 event object
+	 * @private
+	 */
+	UploadSet.prototype._handleItemSetSelected = function(event) {
+		var oItem = event.getSource();
+		if (oItem instanceof UploadSetItem) {
+			var oListItem = this._getListItemById(oItem.getId() + "-listItem");
+			if (oListItem) {
+				oListItem.setSelected(oItem.getSelected());
+			}
+		}
+	};
+
+	/**
+	 * Returns a CustomListItem instance rendered in the list using the id.
+	 * @param {string} sID id of the Custom List item to be queried.
+	 * @returns {sap.m.CustomListItem} The matching CustomList Item.
+	 * @private
+	 */
+	UploadSet.prototype._getListItemById = function(sID) {
+		const aListItems = this.getList()?.getItems();
+		if (aListItems && aListItems.length && sID) {
+			return aListItems.find((oListItem) => oListItem?.getId() === sID);
+		}
+		return null;
 	};
 
 	return UploadSet;
