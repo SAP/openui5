@@ -555,6 +555,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(aHeaderDays[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
+		assert.strictEqual(oSPC._getHeader().getCalendarWeekNumbering(), sInitialWeekNumbering, "The calendarWeekNumbering is set to the header");
 
 		// Act
 		sInitialWeekNumbering = "MiddleEastern";
@@ -565,6 +566,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(aHeaderDays[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
 		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
+		assert.strictEqual(oSPC._getHeader().getCalendarWeekNumbering(), sInitialWeekNumbering, "The calendarWeekNumbering is set to the header");
 
 		// Act
 		sInitialWeekNumbering = "WesternTraditional";
@@ -575,6 +577,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(aHeaderDays[0].textContent, "Sun", "Saturday is the first weekday for WesternTraditional");
 		assert.strictEqual(oSPC.getViewByKey(sViewKey).getCalendarWeekNumbering(), sInitialWeekNumbering, sViewKey + "has proper calendarWeekNumbering after changing the SinglePlanningCalendar property");
+		assert.strictEqual(oSPC._getHeader().getCalendarWeekNumbering(), sInitialWeekNumbering, "The calendarWeekNumbering is set to the header");
 
 		oSPC.destroy();
 	});
