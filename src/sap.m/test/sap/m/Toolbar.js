@@ -177,6 +177,7 @@ sap.ui.define([
 			}),
 			new DateTimePicker({
 				placeholder: "DateTimePicker",
+				ariaLabelledBy: ["SF_AD"],
 				width: "250px"
 			}),
 			new CheckBox({
