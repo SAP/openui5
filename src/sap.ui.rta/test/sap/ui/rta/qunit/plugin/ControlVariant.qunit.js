@@ -1040,15 +1040,19 @@ sap.ui.define([
 		QUnit.test("when startEdit is called and renamed control's text container has no overflow", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
-			var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
-			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
+			var oEditableControlDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef).get(0); /* Text control */
+			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
+			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().offsetWidth);
 
-			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.outerWidth());
+			var iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt(oEditableControlDomRef.offsetWidth);
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
-			var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-			assert.equal($editableWrapper.width(), iOverlayInnerWidth - iWidthDiff, "then correct with set for the editable field wrapper");
+			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
+			assert.strictEqual(
+				oEditableWrapperDOM.offsetWidth,
+				iOverlayInnerWidth - iWidthDiff,
+				"then correct width set for the editable field wrapper"
+			);
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container and parent container having overflow", function(assert) {
