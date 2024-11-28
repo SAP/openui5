@@ -1531,7 +1531,7 @@ sap.ui.define([
 				}
 			};
 			var sUserName = "testUser";
-			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			var oResponse = {response: [{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
 			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
@@ -1674,7 +1674,7 @@ sap.ui.define([
 				}
 			};
 			var sUserName = "testUser";
-			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			var oResponse = {response: [{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
 			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
@@ -1793,7 +1793,10 @@ sap.ui.define([
 				}
 			};
 			var sUserName = "testUser";
-			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			var oResponse = {response: [
+				{fileName: "id_123_setFavorite", fileType: "setFavorite"},
+				{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}
+			]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
 			var oCopyVariantSpy = sandbox.spy(this.oModel, "copyVariant");
@@ -1833,7 +1836,7 @@ sap.ui.define([
 				}
 			};
 			var sUserName = "testUser";
-			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			var oResponse = {response: [{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
 			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
@@ -1918,7 +1921,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling '_handleSave' with with bDesignTimeMode set to true and parameters from SaveAs button and default/execute box checked", function(assert) {
+		QUnit.test("when calling '_handleSave' with bDesignTimeMode set to true and parameters from SaveAs button and default/execute box checked", function(assert) {
 			assert.expect(9);
 			var sNewVariantReference = "variant2";
 			var aChanges = createChanges(this.oModel.oChangePersistence, Layer.CUSTOMER, "variant0");
@@ -1937,7 +1940,10 @@ sap.ui.define([
 				}
 			};
 			var sUserName = "testUser";
-			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			var oResponse = {response: [
+				{fileName: "id_123_setFavorite", fileType: "setFavorite"},
+				{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}
+			]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
 			var oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").callsFake(function() {
