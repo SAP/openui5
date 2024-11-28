@@ -127,6 +127,37 @@ sap.ui.define([
 		} // else: do not spam the output ;-)
 	}
 
+	function getIdOrRowDetails(vRowIndexOrId) {
+		const bIsId = typeof vRowIndexOrId === "string";
+		const sIsIdText = (bIsId ? "with ID " : "in row ") + vRowIndexOrId;
+		const fnMatch = function (oControl) {
+			return (bIsId)
+				? oControl.getBindingContext()?.getProperty("ID") === vRowIndexOrId
+				: oControl.getBindingContext().getIndex() === vRowIndexOrId;
+		};
+
+		return [bIsId, sIsIdText, fnMatch];
+	}
+
+	function pressButton(rButtonId, fnMatchers, sComment) {
+		this.waitFor({
+			actions : new Press(),
+			controlType : "sap.m.Button",
+			errorMessage : `Could not press button ${sComment}`,
+			id : rButtonId,
+			matchers : fnMatchers,
+			success : function () {
+				Opa5.assert.ok(true, `Pressed button ${sComment}`);
+			},
+			viewName : sViewName
+		});
+	}
+
+	function pressButtonInRow(vRowIndexOrId, rButtonId, sText, sComment) {
+		const [, sIsIdText, fnMatch] = getIdOrRowDetails(vRowIndexOrId);
+		pressButton.call(this, rButtonId, fnMatch, `'${sText}' ${sIsIdText}. ${sComment}`);
+	}
+
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
@@ -188,10 +219,15 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				toggleExpandInRow : function (iRow, sComment) {
+				toggleExpand : function (vRowIndexOrId, sComment) {
 					if (bTreeTable) {
+						const [bIsId, sIsIdText, fnMatch] = getIdOrRowDetails(vRowIndexOrId);
 						this.waitFor({
 							actions : function (oTable) {
+								const iRow = bIsId
+									? oTable.getRows().find(fnMatch).getBindingContext().getIndex()
+									: vRowIndexOrId;
+
 								if (oTable.isExpanded(iRow)) {
 									oTable.collapse(iRow);
 								} else {
@@ -199,46 +235,25 @@ sap.ui.define([
 								}
 							},
 							controlType : getTableType(),
-							errorMessage : "Could not toggle 'Expand' button in row " + iRow,
+							errorMessage : `Could not press button 'Expand' ${sIsIdText}`,
 							id : getTableId(),
 							success : function () {
-								Opa5.assert.ok(true, "Toggle 'Expand' button in row " + iRow
-									+ ". " + sComment);
+								Opa5.assert.ok(true,
+									`Pressed button 'Expand' ${sIsIdText}. ${sComment}`);
 							},
 							viewName : sViewName
 						});
 					} else {
-						this.waitFor({
-							actions : new Press(),
-							controlType : "sap.m.Button",
-							errorMessage : "Could not toggle 'Expand' button in row " + iRow,
-							id : /expandToggle/,
-							matchers : function (oControl) {
-								return oControl.getBindingContext().getIndex() === iRow;
-							},
-							success : function () {
-								Opa5.assert.ok(true, "Toggle 'Expand' button in row " + iRow
-									+ ". " + sComment);
-							},
-							viewName : sViewName
-						});
+						pressButtonInRow.call(this,
+							vRowIndexOrId, /expandToggle/, "Expand", sComment
+						);
 					}
 				},
-				expandLevels : function (iRow, iLevels, sComment) {
-					this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						errorMessage : `Could not press 'Expand Levels' button in row ${iRow}`,
-						id : bTreeTable ? /expandLevelsTreeTable/ : /expandLevelsTable/,
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						success : function () {
-							Opa5.assert.ok(true,
-								`Pressed 'Expand Levels' button in row ${iRow}. ${sComment}`);
-						},
-						viewName : sViewName
-					});
+				expandLevels : function (vRowIndexOrId, iLevels, sComment) {
+					pressButtonInRow.call(this, vRowIndexOrId,
+						bTreeTable ? /expandLevelsTreeTable/ : /expandLevelsTable/,
+						"Expand Levels", sComment
+					);
 
 					this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : "" + iLevels}),
@@ -252,33 +267,15 @@ sap.ui.define([
 						viewName : sViewName
 					});
 
-					this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						errorMessage : "Could not press 'Expand Levels Confirm' button",
-						id : /expandLevelsConfirm/,
-						success : function () {
-							Opa5.assert.ok(true,
-								`Pressed 'Expand Levels Confirm' button. ${sComment}`);
-						},
-						viewName : sViewName
-					});
+					pressButton.call(this, /expandLevelsConfirm/, null,
+						`'Expand Levels Confirm'. ${sComment}`
+					);
 				},
-				collapseAll : function (iRow, sComment) {
-					this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						errorMessage : `Could not press 'Collapse All' button in row ${iRow}`,
-						id : bTreeTable ? /collapseAllTreeTable/ : /collapseAllTable/,
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						success : function () {
-							Opa5.assert.ok(true,
-								`Pressed 'Collapse All' button in row  ${iRow}. ${sComment}`);
-						},
-						viewName : sViewName
-					});
+				collapseAll : function (vRowIndexOrId, sComment) {
+					pressButtonInRow.call(this, vRowIndexOrId,
+						bTreeTable ? /collapseAllTreeTable/ : /collapseAllTable/,
+						"Collapse All", sComment
+					);
 				}
 			},
 			assertions : {
