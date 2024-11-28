@@ -1125,20 +1125,18 @@ sap.ui.define([
 		assert.notOk(this.oColumnMenu.isOpen());
 	});
 
-	QUnit.test("Auto close behavior when the menu is open within a dialog", async function(assert) {
+	QUnit.test("Auto close behavior when the menu is open within a dialog", function(assert) {
 		const oButton1 = new Button();
 		const oButton2 = new Button();
 		const oDialog = new Dialog({
 			content: [oButton1, oButton2]
 		});
 
-		oDialog.placeAt("content");
-		await nextUIUpdate();
-
 		const clock = sinon.useFakeTimers();
 		oDialog.open();
+		clock.tick(500);
 		this.oColumnMenu.openBy(oButton1);
-		clock.tick(1000);
+		clock.tick(500);
 		assert.ok(this.oColumnMenu.isOpen());
 
 		this.oColumnMenu._oPopover._oControl.focus();
