@@ -2447,7 +2447,7 @@ sap.ui.define([
 				aElements = oCache.getElements(sPath);
 			}, "", /*bSync*/true);
 
-		if (aElements && this.createContexts(0, aElements)) {
+		if (aElements && this.createContexts(0, aElements, /*bCreateOnly*/true)) {
 			// In the case that a control has requested new data and the data request is already
 			// completed, but the new contexts are not yet created, we have to ensure that a change
 			// event is fired to inform the control about these new contexts.

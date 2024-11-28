@@ -10798,7 +10798,8 @@ sap.ui.define([
 			.callsArgWith(0, oCache, "path/to/cache");
 		this.mock(oCache).expects("getElements").withExactArgs("path/to/cache")
 			.returns("~aElements~");
-		this.mock(oBinding).expects("createContexts").withExactArgs(0, "~aElements~")
+		this.mock(oBinding).expects("createContexts")
+			.withExactArgs(0, "~aElements~", /*bCreateOnly*/true)
 			.returns(bFireChange);
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.exactly(bFireChange ? 1 : 0);
