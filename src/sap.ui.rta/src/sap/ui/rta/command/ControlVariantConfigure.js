@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/BaseCommand",
@@ -13,6 +14,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
+	VariantManager,
 	ChangesWriteAPI,
 	FlUtils,
 	BaseCommand,
@@ -97,7 +99,7 @@ sap.ui.define([
 		this.getChanges().forEach(function(mChangeProperties) {
 			mChangeProperties.appComponent = this.oAppComponent;
 			mChangeProperties.generator = rtaLibrary.GENERATOR_NAME;
-			this._aPreparedChanges.push(this.oModel.addVariantChange(this.sVariantManagementReference, mChangeProperties));
+			this._aPreparedChanges.push(VariantManager.addVariantChange(this.sVariantManagementReference, mChangeProperties));
 		}.bind(this));
 
 		this._aDeletedFlexObjects = ChangesWriteAPI.deleteVariantsAndRelatedObjects({
@@ -123,7 +125,9 @@ sap.ui.define([
 		delete this._aDeletedFlexObjects;
 
 		this.getChanges().forEach(function(mChangeProperties, index) {
-			const mPropertyBag = {};
+			const mPropertyBag = {
+				appComponent: this.oAppComponent
+			};
 			Object.keys(mChangeProperties).forEach(function(sProperty) {
 				var sOriginalProperty = `original${sProperty.charAt(0).toUpperCase()}${sProperty.substr(1)}`;
 				if (sProperty === "visible") {
@@ -136,7 +140,7 @@ sap.ui.define([
 				}
 			});
 			var oChange = this._aPreparedChanges[index];
-			this.oModel.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange);
+			VariantManager.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange);
 		}.bind(this));
 
 		this._aPreparedChanges = null;

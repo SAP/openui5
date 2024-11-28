@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function(
 	_omit,
 	VariantManagement,
+	VariantManager,
 	ChangesWriteAPI,
 	Layer,
 	CommandFactory,
@@ -56,8 +58,8 @@ sap.ui.define([
 			});
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 			sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
-			this.oAddVariantChangeStub = sandbox.stub(this.oModel, "addVariantChange").returnsArg(1);
-			this.oDeleteVariantChangeStub = sandbox.stub(this.oModel, "deleteVariantChange");
+			this.oAddVariantChangeStub = sandbox.stub(VariantManager, "addVariantChange").returnsArg(1);
+			this.oDeleteVariantChangeStub = sandbox.stub(VariantManager, "deleteVariantChange");
 			this.oSwitchStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 		},
 		afterEach() {
