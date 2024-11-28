@@ -54,7 +54,6 @@ sap.ui.define([
 				 */
 				src: {
 					type: "sap.ui.core.URI",
-					defaultValue: "",
 					bindable: true
 				},
 
@@ -70,17 +69,18 @@ sap.ui.define([
 				/**
 				 * Allow attribute of the iframe. No features are available by default
 				 *
-				 * Note: <code>allow</code> with value <code>fullscreen</code> is not supported for Safari.
-				 */
+				 * Note: <code>allow</code> with value <code>fullscreen</code> is not supported for Safari and Firefox.
+				 * For browser support specifics @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy/fullscreen
+				*/
 				allow: {
 					type: "string",
 					bindable: true
 				},
 
 				/**
-				 * Allowfullscreen attribute of the iframe.
+				 * AllowFullscreen attribute of the iframe.
 				 */
-				allowfullscreen: {
+				allowFullscreen: {
 					type: "boolean",
 					defaultValue: false,
 					bindable: true
@@ -120,7 +120,7 @@ sap.ui.define([
 	WebPageContent.prototype.onBeforeRendering = function () {
 		BaseContent.prototype.onBeforeRendering.apply(this, arguments);
 
-		if (this.getDomRef()) {
+		if (this.getDomRef("frame")) {
 			this.getDomRef("frame").removeEventListener("load", this._onFrameLoadedBound);
 		}
 	};
@@ -130,7 +130,21 @@ sap.ui.define([
 
 		if (this.getDomRef("frame")) {
 			this.getDomRef("frame").addEventListener("load", this._onFrameLoadedBound);
+		}
+
+		const sCurrSrc = this.getSrc();
+
+		if (!this.getCardInstance()?.isReady()) {
+			this.getCardInstance()?.attachEventOnce("_ready", () => {
+				this.invalidate();
+			});
+			return;
+		}
+
+		if (!this._bSrcChecked || this._sPrevSrc !== sCurrSrc) {
 			this._checkSrc();
+			this._sPrevSrc = sCurrSrc;
+			this._bSrcChecked = true;
 		}
 	};
 
@@ -159,9 +173,19 @@ sap.ui.define([
 			sandbox: oConfiguration.sandbox,
 			minHeight: oConfiguration.minHeight,
 			allow: oConfiguration.allow,
-			allowfullscreen: oConfiguration.allowfullscreen,
+			allowFullscreen: oConfiguration.allowFullscreen || oConfiguration.allowfullscreen,
 			omitSandbox: oConfiguration.omitSandbox
 		});
+	};
+
+	WebPageContent.prototype.isReady = function () {
+		const oCard = this.getCardInstance();
+
+		if (!oCard) {
+			return false;
+		}
+
+		return oCard.isReady();
 	};
 
 	WebPageContent.prototype._checkSrc = function () {
@@ -172,7 +196,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (sCurrSrc === "") {
+		if (!sCurrSrc) {
 			this.handleError({
 				illustrationType: IllustratedMessageType.ErrorScreen,
 				title: oCard.getTranslatedText("CARD_WEB_PAGE_EMPTY_URL_ERROR"),
@@ -190,10 +214,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._sPrevSrc !== sCurrSrc) {
-			this._raceFrameLoad();
-			this._sPrevSrc = sCurrSrc;
-		}
+		this._raceFrameLoad();
 	};
 	/**
 	 * Shows error if FRAME_LOADED event didn't fire for 15 seconds

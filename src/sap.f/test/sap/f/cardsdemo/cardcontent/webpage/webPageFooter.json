@@ -1,0 +1,132 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.webpage.cardFooter",
+		"type": "card",
+		"title": "Sample of a WebPage Card",
+		"subTitle" :"Sample of a WebPage Card with Footer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"WebPage",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.card": {
+		"type": "WebPage",
+        "extension": "./FooterExtension",
+		"configuration": {
+			"parameters": {
+				"minHeight": {
+					"description": "Minimum height of the content",
+					"type": "string",
+					"value": "25rem"
+				}
+			}
+		},
+        "data": {
+			"json": {
+				"email": "my@mymail.com",
+				"agendaUrl": "https://one.int.sap/home",
+				"company": {
+					"email": "mail@mycompany.com",
+					"emailSubject": "Subject"
+				}
+			}
+		},
+		"header": {
+			"title": "OpenUI5 Events",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			}
+		},
+		"content": {
+			"src": "https://openui5.org/events",
+			"minHeight": "{parameters>/minHeight/value}"
+		},
+        "footer": {
+			"actionsStrip": [
+				{
+					"type": "Link",
+					"text": "Agenda",
+					"icon": "sap-icon://action",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"type": "ToolbarSpacer"
+				},
+				{
+					"buttonType": "Emphasized",
+					"text": "More info",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "info"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"icon": "sap-icon://email",
+					"preferIcon": true,
+					"text": "Contact",
+					"tooltip": "Contact the webpage owner",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{email}"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Book a meeting",
+					"overflowPriority": "AlwaysOverflow",
+					"actions": [
+						{
+							"type": "Navigation",
+							"enabled": false,
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"buttonType": "Transparent",
+					"text": "Contact company",
+					"overflowPriority": "AlwaysOverflow",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{company/email}?subject={company/emailSubject}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}
