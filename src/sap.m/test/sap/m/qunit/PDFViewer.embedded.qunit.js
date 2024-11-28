@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit sinon*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -282,4 +282,101 @@ sap.ui.define([
 			.then(fnCheckControlStructure);
 	});
 
+	QUnit.test("getting header info", function (assert) {
+		var fnDone = assert.async();
+		const sTitle = "My Title";
+		const oOptions = {
+			source: "{/source}",
+			isTrustedSource: true,
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+		const getHeaderInfoStub = sinon.spy(oPdfViewer, "_getHeaderInfo");
+		oPdfViewer._onLoadListener({});
+
+		TestUtils.wait(1000)()
+			.then(function()  {
+				assert.ok(getHeaderInfoStub.calledOnce, "getHeaderInfo should be invoked");
+				getHeaderInfoStub.restore();
+				fnDone();
+			});
+	});
+
+	QUnit.test("Validate Method: _getHeaderInfo return: success", function (assert) {
+		var fnDone = assert.async();
+		const sTitle = "My Title";
+		const oOptions = {
+			source: "{/source}",
+			isTrustedSource: true,
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+
+		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD').then((sCurrentContentType) => {
+			assert.equal(sCurrentContentType, "application/pdf", "content-type should be valid");
+			fnDone();
+		});
+	});
+
+	QUnit.test("Validate Method: _getHeaderInfo return: error with invalid src", function (assert) {
+		var fnDone = assert.async();
+		const sTitle = "My Title";
+
+		const oOptions = {
+			source: "{/source}",
+			isTrustedSource: true,
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+
+		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file1.pdf", 'HEAD').catch((sError) => {
+			assert.ok(sError, "Error is displayed: " + sError);
+			fnDone();
+		});
+	});
+
+	QUnit.test("Validate Method: _getHeaderInfo return: error with invalid reqType", function (assert) {
+		var fnDone = assert.async();
+		const sTitle = "My Title";
+		const oOptions = {
+			source: "{/source}",
+			isTrustedSource: true,
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+
+		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD1').catch((sError) => {
+			assert.ok(sError, "Error is displayed: " + sError);
+			fnDone();
+		});
+	});
+
+	QUnit.test("Validate Method: _getHeaderInfo return: request error ", function (assert) {
+		var fnDone = assert.async();
+		const sTitle = "My Title";
+		const oOptions = {
+			source: "{/source}",
+			isTrustedSource: true,
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+
+		const oFakeXMLHttpRequestStub = sinon.useFakeXMLHttpRequest();
+		oFakeXMLHttpRequestStub.onCreate = function(req) {
+			req.send = function() {
+				req.error();
+			};
+		};
+
+		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD').catch((sError) => {
+			assert.ok(sError, "Error is displayed: " + sError);
+			oFakeXMLHttpRequestStub.restore();
+			fnDone();
+		});
+	});
 });

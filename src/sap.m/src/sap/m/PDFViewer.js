@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/m/PDFViewerRenderManager",
-	"sap/m/MessageBox",
 	"sap/m/PDFViewerRenderer",
 	"sap/base/Log",
 	"sap/base/assert",
@@ -21,7 +20,6 @@ sap.ui.define([
 		Control,
 		Device,
 		PDFViewerRenderManager,
-		MessageBox,
 		PDFViewerRenderer,
 		Log,
 		assert,
@@ -282,7 +280,7 @@ sap.ui.define([
 				this.setBusy(true);
 				fnInitIframeElement();
 			} catch (error) {
-				Log.error(error);
+				Log.info(error);
 				if (this._isError) {
 					this._isError = false;
 					this._objectsRegister.getErrorPlaceholderIllustratedMessageControl().invalidate();
@@ -329,10 +327,43 @@ sap.ui.define([
 			try {
 				this._getIframeDOMElement().removeClass("sapMPDFViewerLoading");
 			} catch (err) {
-				Log.fatal("Iframe not founded in loaded event");
+				Log.fatal("Iframe not found in loaded event");
 				Log.fatal(err);
 			}
 			this.fireEvent("loaded");
+		};
+
+		/**
+		 * @param {string} [src] - url of pdf
+		 * @param {string} [method] - GET or HEAD mothod
+		 * @returns - content-type header from the response header
+		 * @description - this method fetches response headers from server to validate content-type.
+		 * @private
+		 */
+		PDFViewer.prototype._getHeaderInfo = function(src, method) {
+			return new Promise((resolve, reject) => {
+				const oXMLHttpRequest = new XMLHttpRequest();
+				oXMLHttpRequest.open(method, src, false);
+				oXMLHttpRequest.onload = () => {
+					const sStatus = oXMLHttpRequest.status;
+					if (sStatus === 200) {
+						const response = oXMLHttpRequest.getAllResponseHeaders().toLowerCase().trim();
+						const items = response.split("\n");
+						const responseHeader = [];
+						for (let i = 0; i < items.length; i++) {
+							const parts = items[i].split(': ');
+							responseHeader[parts[0].trim()] = parts[1].trim();
+						}
+						resolve(responseHeader['content-type']);
+					} else {
+						reject(new Error(`Error in fetching header with method ${method}, status ${oXMLHttpRequest.status} and statusText ${oXMLHttpRequest.statusText}`));
+					}
+				};
+				oXMLHttpRequest.onerror = (error) => {
+					reject(new Error(`Error in fetching header with method ${method}, status ${oXMLHttpRequest.status}, statusText ${oXMLHttpRequest.statusText} and error ${error}`));
+				};
+				oXMLHttpRequest.send(null);
+			});
 		};
 
 		/**
@@ -340,15 +371,14 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._onLoadListener = function (oEvent) {
-			try {
-				var oTarget = jQuery(oEvent.target),
-					bContinue = true;
-				// Firefox
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=911444
-				// because of the embedded pdf plugin in firefox it is not possible to check contentType of the iframe document
-				// if the content is pdf. If the content is not a pdf and it is from the same origin, it can be accessed.
-				// Other browsers allow access to the mimeType of the iframe's document if the content is from the same origin.
-				var sCurrentContentType = "application/pdf";
+			const oTarget = jQuery(oEvent.target);
+			let bContinue = true, sCurrentContentType = '';
+
+			//HTML body.children can be accessed only in scenario when chrome://flags/#pdf-oopif = disabled OR invalid path given to the iframe src
+			var aTargetChildren = oTarget[0]?.contentWindow?.document?.body?.children;
+
+			//If chrome://flags/#pdf-oopif = disabled follow the existing approach to validate contentType.
+			if (aTargetChildren?.length) {
 				try {
 					// browsers render pdf in iframe as html page with embed tag
 					var aEmbeds = oTarget[0].contentWindow.document.embeds;
@@ -364,14 +394,38 @@ sap.ui.define([
 						return;
 					}
 				}
+				/*	LoadedEvent will be triggered if all the below criteria matches and PDF is displayed
+						1. If embed tag is present.
+						2. If ContentType = "application/pdf" / "application/x-google-chrome-pdf".
+						3. If Browser PDFPlugin is enabled.
+					else the ErrorEvent will be triggered, It will also be triggered if an invalid path is proveded as src for the iframe and LoadingError IllustratedMessage is displayed.
+				*/
 				if (bContinue && PDFViewerRenderer._isSupportedMimeType(sCurrentContentType) && PDFViewerRenderer._isPdfPluginEnabled()) {
 					this._fireLoadedEvent();
 				} else {
 					this._fireErrorEvent(oEvent.target);
 				}
-			} catch (error) {
-				Log.fatal(false, "Fatal error during the handling of load event happened.");
-				Log.fatal(false, error.message);
+			} else {
+				//If chrome://flags/#pdf-oopif = enabled trigger the HEAD Request
+				const sMethod = 'HEAD';
+				this._getHeaderInfo(this._sParametrizedSource, sMethod)
+				.then((sCurrentContentType) => {
+					/*	LoadedEvent will be triggered if all the below criteria matches
+							1. If ContentType = "application/pdf" / "application/x-google-chrome-pdf".
+							2. If Browser PDFPlugin is enabled.
+						else the ErrorEvent will be triggered and LoadingError IllustratedMessage is displayed.
+					*/
+					if (PDFViewerRenderer._isSupportedMimeType(sCurrentContentType) && PDFViewerRenderer._isPdfPluginEnabled()) {
+						this._fireLoadedEvent();
+					} else {
+						this._fireErrorEvent(oEvent.target);
+					}
+				}).catch((e) => {
+					//If Head Request fails ErrorEvent will be triggered and LoadingError IllustratedMessage is displayed.
+					this._fireErrorEvent(oEvent.target);
+					Log.fatal(e);
+					this.fireEvent("sourceValidationFailed", {}, true);
+				});
 			}
 		};
 
@@ -391,19 +445,6 @@ sap.ui.define([
 			var oWindow = window.open(this.getSource());
 			oWindow.opener = null;
 			oWindow.focus();
-		};
-
-		/**
-		 * @param {string} oClickedButtonId
-		 * @private
-		 */
-		PDFViewer.prototype._onSourceValidationErrorMessageBoxCloseListener = function (oClickedButtonId) {
-			if (oClickedButtonId === MessageBox.Action.CANCEL) {
-				this._renderErrorState();
-			} else {
-				this._fireLoadedEvent();
-			}
-
 		};
 
 		/**
@@ -590,22 +631,6 @@ sap.ui.define([
 			}
 
 			return this.getHeight();
-		};
-
-		/**
-		 * @private
-		 */
-		PDFViewer.prototype._showMessageBox = function () {
-			MessageBox.show(this._getLibraryResourceBundle().getText("PDF_VIEWER_SOURCE_VALIDATION_MESSAGE_TEXT"), {
-				icon: MessageBox.Icon.WARNING,
-				title: this._getLibraryResourceBundle().getText("PDF_VIEWER_SOURCE_VALIDATION_MESSAGE_HEADER"),
-				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-				defaultAction: MessageBox.Action.CANCEL,
-				id: this.getId() + "-validationErrorSourceMessageBox",
-				styleClass: "sapUiSizeCompact",
-				contentWidth: '100px',
-				onClose: this._onSourceValidationErrorMessageBoxCloseListener.bind(this)
-			});
 		};
 
 		/**
