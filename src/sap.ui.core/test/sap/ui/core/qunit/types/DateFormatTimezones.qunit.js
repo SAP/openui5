@@ -1,12 +1,13 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/format/TimezoneUtil"
-], function (Localization, Locale, LocaleData, UI5Date, DateFormat, TimezoneUtil) {
+], function (Log, Localization, Locale, LocaleData, UI5Date, DateFormat, TimezoneUtil) {
 	"use strict";
 
 	var sDefaultTimezone = Localization.getTimezone();
@@ -141,7 +142,9 @@ sap.ui.define([
 			"Oct 13, 2021, 3:22:33\u202FPM Europe, Berlin", "default to Europe, Berlin");
 		assert.strictEqual(oDateTimeWithTimezoneFormat.format(oDateEDT, undefined),
 			"Oct 13, 2021, 3:22:33\u202FPM Europe, Berlin", "default to Europe, Berlin");
-	});
+		assert.strictEqual(oDateTimeWithTimezoneFormat.format(),
+			"Europe, Berlin", "w/o arguments default to Europe, Berlin");
+		});
 
 	QUnit.module("DateTimeWithTimezone format de-DE", {
 		beforeEach: function () {
@@ -231,7 +234,9 @@ sap.ui.define([
 			pattern: "'foo 'VV"
 		});
 		assert.strictEqual(oDateFormat.format(null, "America/New_York"), "Americas, New York",
-			"timezone present in pattern");
+			"date null, timezone present in pattern");
+		assert.strictEqual(oDateFormat.format(undefined, "America/New_York"), "Americas, New York",
+			"date undefined, timezone present in pattern");
 
 		assert.strictEqual(oDateFormat.format(null, "Australia/Queensland"), "Australia/Queensland",
 			"timezone present in pattern (no translation available, but valid timezone)");
@@ -282,15 +287,16 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("only show timezone - null values", function (assert) {
+	QUnit.test("only show timezone - invalid values", function (assert) {
 		var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({
 				showDate: false,
 				showTime: false
 			});
 
-		[null, "", undefined, UI5Date.getInstance("invalid")].forEach(function(oDate) {
-			assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "Americas, New York",
-				"Timezone is displayed");
+		const oLogMock = this.mock(Log);
+		[0, "", "foo", UI5Date.getInstance("invalid")].forEach(function(oDate) {
+			oLogMock.expects("error").withExactArgs("The given date instance isn't valid.");
+			assert.strictEqual(oDateFormat.format(oDate, "America/New_York"), "", "empty output for invalid date");
 		});
 	});
 
