@@ -1127,10 +1127,6 @@ sap.ui.define([
 					break;
 			}
 
-			//Needed to apply current sorters when sorted measure/dimension was not selected yet
-			//However, since this gets called multiple times when the aggregation adds/removes multiple properties, the binding seems to break
-			this._rebind();
-
 			//Update the breadcrumbs after an MDC Item change
 			const aItems = this.getControlDelegate().getDrillableItems(this).map((oItem) => { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
 			this.getAggregation("_breadcrumbs").update(aItems);
