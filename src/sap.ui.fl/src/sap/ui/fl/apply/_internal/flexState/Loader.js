@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage"
 ], function(
+	ObjectPath,
 	ManagedObject,
 	ManifestUtils,
 	ApplyStorage
@@ -55,20 +57,23 @@ sap.ui.define([
 
 	function filterInvalidFileNames(mFlexData) {
 		[
-			"changes",
-			"variantChanges",
-			"variantDependentControlChanges",
-			"variantManagementChanges"
-		].forEach(function(sKey) {
-			mFlexData[sKey] = mFlexData[sKey].filter(function(oFlexItem) {
-				try {
-					var oTemporaryInstance = new ManagedObject(oFlexItem.fileName);
-				} catch (error) {
-					return false;
-				}
-				oTemporaryInstance.destroy();
-				return true;
-			});
+			"appDescriptorChanges", "annotationChanges", "changes",
+			"comp.changes", "comp.changes", "comp.defaultVariants", "comp.standardVariants",
+			"variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"
+		].forEach(function(vKey) {
+			const aFlexItems = ObjectPath.get(vKey, mFlexData);
+			if (aFlexItems) {
+				ObjectPath.set(vKey, aFlexItems.filter((oFlexItem) => {
+					let oTemporaryInstance;
+					try {
+						oTemporaryInstance = new ManagedObject(oFlexItem.fileName);
+					} catch (error) {
+						return false;
+					}
+					oTemporaryInstance.destroy();
+					return true;
+				}), mFlexData);
+			}
 		});
 		return mFlexData;
 	}
