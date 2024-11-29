@@ -39,7 +39,7 @@ sap.ui.define([
 
 		function toggleExpandInRow(iRow, sComment) {
 			// When.onTheMainPage.synchronize(sComment);
-			When.onTheMainPage.toggleExpandInRow(iRow, sComment);
+			When.onTheMainPage.toggleExpand(iRow, sComment);
 			// When.onTheMainPage.synchronize(sComment);
 		}
 

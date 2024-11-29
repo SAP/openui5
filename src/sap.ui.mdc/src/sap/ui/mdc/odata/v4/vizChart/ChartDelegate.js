@@ -1198,6 +1198,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Requests a toolbar update once the inner chart is ready.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 *
+	 * @private
+	 */
 	ChartDelegate.requestToolbarUpdate = function(oChart) {
 
 		//Workaround as the sap.chart.Chart doesn't call renderComplete when no dimensions/measures are set up

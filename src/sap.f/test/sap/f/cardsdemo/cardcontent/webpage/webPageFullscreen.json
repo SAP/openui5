@@ -32,7 +32,7 @@
 		"content": {
 			"src": "/test.html",
             "sandbox": "allow-scripts allow-popups allow-downloads",
-			"allowfullscreen": true
+			"allowFullscreen": true
 		}
 	}
 }

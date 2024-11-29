@@ -25,21 +25,24 @@ sap.ui.define(["./BaseContentRenderer", "sap/ui/integration/util/BindingResolver
 		oRm.openStart("iframe", oWebPageContent.getId() + "-frame")
 			.class("sapUiIntWPCFrame");
 
-		oRm.style("height", "calc(" + oWebPageContent.getMinHeight() + " - " + PADDING + ")")
-			.attr("src", oWebPageContent.getSrc())
-			.attr("tabindex", "0");
+		oRm.style("height", "calc(" + oWebPageContent.getMinHeight() + " - " + PADDING + ")");
+		if (oWebPageContent.isReady()) {
+			oRm.attr("src", oWebPageContent.getSrc());
+		}
 
-			if (!oWebPageContent.getOmitSandbox()) {
-				oRm.attr("sandbox", oWebPageContent.getSandbox());
-			}
+		oRm.attr("tabindex", "0");
 
-			if (oWebPageContent.getAllow()) {
-				oRm.attr("allow", oWebPageContent.getAllow());
-			}
+		if (!oWebPageContent.getOmitSandbox()) {
+			oRm.attr("sandbox", oWebPageContent.getSandbox());
+		}
 
-			if (oWebPageContent.getAllowfullscreen()) {
-				oRm.attr("allowfullscreen", oWebPageContent.getAllowfullscreen());
-			}
+		if (oWebPageContent.getAllow()) {
+			oRm.attr("allow", oWebPageContent.getAllow());
+		}
+
+		if (oWebPageContent.getAllowFullscreen()) {
+			oRm.attr("allowfullscreen", oWebPageContent.getAllowFullscreen());
+		}
 
 		oRm.openEnd()
 			.close("iframe");

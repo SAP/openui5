@@ -1,5 +1,6 @@
 /*global sinon, QUnit */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/CommandExecution",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Panel"
 ], function(
+	Log,
 	XMLView,
 	ManagedObject,
 	CommandExecution,
@@ -207,7 +209,7 @@ sap.ui.define([
 			<dependents>
 				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
 				<core:CommandExecution id="CE_EXIT" command="Exit" enabled="true" execute=".onExit" />
-				<Popover id="popoverCommand" title="Popover" class="sapUiContentPadding"> 
+				<Popover id="popoverCommand" title="Popover" class="sapUiContentPadding">
 					<dependents>
 						<core:CommandExecution id="CE_SAVE_POPOVER" enabled="false" command="Save" execute=".onSave" />
 					</dependents>
@@ -253,6 +255,7 @@ sap.ui.define([
 							<dependents>
 								<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />
 								<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />
+								<core:CommandExecution id="CE_NOT_DEFINED" command="notDefined" enabled="true" execute=".onExit" />
 							</dependents>
 							<cells>
 								<Text text="Name"/>
@@ -518,9 +521,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("via Component instantiation", function(assert) {
-		assert.expect(6);
+		assert.expect(8);
 		var oComponent;
-
+		const logSpy = sinon.spy(Log, "error");
 		// load the test component
 		return Component.create({
 			name: "my.command",
@@ -529,6 +532,7 @@ sap.ui.define([
 			oComponent = myComponent;
 			return oComponent.getRootControl().loaded();
 		}).then(function(oView) {
+			assert.ok(logSpy.getCalls()[0] && logSpy.getCalls()[0].args[0].includes("Command 'notDefined' is not defined in component manifest. No shortcut will be registered."), "Command not found and logged");
 			var oModel = oComponent.getModel("$cmd");
 			var oPage = oView.byId("page");
 			var oPopover = oView.byId("popoverCommand");
@@ -542,7 +546,12 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("Exit/enabled", oPagePopoverContext), true, "enabled correctly set in  model");
 			assert.equal(oModel.getProperty("Save/enabled", oPageContext), true, "enabled correctly set in  model");
 			assert.equal(oModel.getProperty("Exit/enabled", oPageContext), true, "enabled correctly set in  model");
-			oComponent.destroy();
+			try {
+				oComponent.destroy();
+				assert.ok(true, "destroy must not fail");
+			} catch (e) {
+				assert.ok(false, "destroy must not fail");
+			}
 		});
 	});
 

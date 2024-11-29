@@ -538,7 +538,7 @@
 		},
 		{
 			"control": "sap.m.StepInput",
-			"url": "../StepInput.html",
+			"url": "./StepInput.html",
 			"appComponent": "CA-UI5-CTR-BAL",
 			"accTest": {
 				"name": "sap.m.StepInput",

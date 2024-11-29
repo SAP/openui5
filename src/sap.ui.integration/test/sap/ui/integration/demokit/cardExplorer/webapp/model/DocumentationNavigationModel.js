@@ -95,7 +95,7 @@ sap.ui.define([
 						title: 'WebPage',
 						target: 'learnDetail',
 						key: 'webPage',
-						experimental: true
+						experimental: false
 					}
 				]
 			},

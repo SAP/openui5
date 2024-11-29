@@ -39,7 +39,6 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 			bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
 			bRootRoleSet = oLandmarkInfo && oLandmarkInfo.getRootRole(),
 			bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
-			bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole(),
 			bShowFooter = oControl.getShowFooter();
 
 		if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
@@ -100,10 +99,6 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 		oRm.openStart("div", oControl.getId() + "-stickyAnchorBar");
 		oRm.attr("data-sap-ui-customfastnavgroup", true);
 
-		// write ARIA role
-		if (!bNavigationRoleSet) {
-			oRm.attr("role", "navigation");
-		}
 		oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
 
 		if (!oControl._bHeaderInTitleArea) {
@@ -149,10 +144,6 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 		oRm.openStart("section", oControl.getId() + "-anchorBar");
 		oRm.attr("data-sap-ui-customfastnavgroup", true);
 
-		// write ARIA role
-		if (!bNavigationRoleSet) {
-			oRm.attr("role", "navigation");
-		}
 		oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
 
 		oRm.class("sapUxAPObjectPageNavigation")

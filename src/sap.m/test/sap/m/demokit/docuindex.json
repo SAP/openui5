@@ -646,6 +646,7 @@
 					"sap.m.sample.IllustratedMessageInPage",
 					"sap.m.sample.IllustratedMessageInPageSimple",
 					"sap.m.sample.IllustratedMessageInPageIllustrative",
+					"sap.m.sample.IllustratedMessageInPageWithURI",
 					"sap.m.sample.IllustratedMessageInPageTNT",
 					"sap.m.sample.IllustratedMessageInPageCustom",
 					"sap.m.sample.IllustratedMessageSessionTimeout"
@@ -2310,6 +2311,11 @@
 				"id": "sap.m.sample.IllustratedMessageInPageIllustrative",
 				"name": "Illustrative style illustrations (Default Illustration Set for Horizon)",
 				"description": "The available illustrations are from the default ('sapIllus') illustration set and are recommended for SAP Horizon theme. New use cases are added in this and the simple style."
+			},
+			{
+				"id": "sap.m.sample.IllustratedMessageInPageWithURI",
+				"name": "Illustrative style illustrations using the 'src' property",
+				"description": "The available illustrations are from the default illustration set with the use of the 'src' property."
 			},
 			{
 				"id": "sap.m.sample.IllustratedMessageInPageTNT",
