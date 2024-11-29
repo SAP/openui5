@@ -165,16 +165,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * This iterates over all items of the MDC chart to make sure all necessary information is available on them.
-	 * If something is missing, this method updates the item accordingly. This is the last check before the inner chart is rendered.
-	 * @param {sap.ui.mdc.Chart} oChart MDC chart to check the items on
-	 * @returns {Promise} Resolves once check is complete
-	 *
-	 * @public
-	 */
-	ChartDelegate.checkAndUpdateMDCItems = function(oChart) { };
-
-	/**
 	 * Event handler for <code>SelectionDetails</code> popover.
 	 *
 	 * @typedef {object} sap.ui.mdc.chart.SelectionDetails
