@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/config",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	BaseConfiguration,
 	FlexConfiguration,
 	sinon
 ) {
@@ -41,6 +43,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given a string value is set", function(assert) {
+			const oSpyBaseConfiguration = sandbox.spy(BaseConfiguration, "get");
 			const aConfiguration = [
 				{
 					connector: "KeyUserConnector",
@@ -53,6 +56,11 @@ sap.ui.define([
 			FlexConfiguration.setFlexibilityServices(JSON.stringify(aConfiguration));
 			const aFlexibilityService = FlexConfiguration.getFlexibilityServices();
 			assert.deepEqual(aFlexibilityService, aConfiguration, "then configuration is correct and returned as an array");
+			assert.deepEqual(oSpyBaseConfiguration.getCall(0).args[0].defaultValue, [{
+				url: "/sap/bc/lrep",
+				connector: "LrepConnector"
+			}], "then the LrepConnector is default configuration");
+			assert.equal(oSpyBaseConfiguration.getCall(0).args[0].external, false, "no external configuration is allowed");
 		});
 
 		QUnit.test("given a array value is set", function(assert) {
