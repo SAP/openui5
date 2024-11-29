@@ -235,7 +235,7 @@ sap.ui.define([
 		"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
 		"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 		"manifestFirst"         : { type : "boolean",  defaultValue : false },
-		"flexibilityServices"   : { type : "string",   defaultValue : "/sap/bc/lrep"},
+		"flexibilityServices"   : { type : "string",   defaultValue : "/sap/bc/lrep", noUrl:true },
 		"whitelistService"      : { type : "string",   defaultValue : null,      noUrl:true }, // deprecated, use allowlistService instead
 		"allowlistService"      : { type : "string",   defaultValue : null,      noUrl:true }, // url/to/service
 		"frameOptions"          : { type : "string",   defaultValue : "default", noUrl:true }, // default/allow/deny/trusted (default => allow)

@@ -970,19 +970,6 @@ sap.ui.define([
 		assert.equal(_getNumberOfFlModules(Configuration), 1);
 	});
 
-	QUnit.test("Set flexibilityServices URL enforces the loading of sap.ui.fl", function(assert) {
-
-		var sEncodedConfig = encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]');
-		browserUrl.change(location.origin + "?sap-ui-flexibilityServices="  + sEncodedConfig);
-
-		try {
-			Configuration.setCore();
-			assert.equal(_getNumberOfFlModules(Configuration), 1);
-		} finally {
-			browserUrl.reset();
-		}
-	});
-
 	QUnit.test("Default flexibilityServices does NOT enforces the loading of sap.ui.fl", function(assert) {
 		Configuration.setCore();
 		assert.equal(_getNumberOfFlModules(Configuration), 0);
