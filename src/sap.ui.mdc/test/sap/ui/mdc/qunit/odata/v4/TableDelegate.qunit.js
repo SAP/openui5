@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/base/ManagedObjectObserver"
 ], function(
@@ -23,6 +24,7 @@ sap.ui.define([
 	Core,
 	coreLibrary,
 	ODataModel,
+	Sorter,
 	Filter,
 	ManagedObjectObserver
 ) {
@@ -1321,7 +1323,7 @@ sap.ui.define([
 			}));
 
 			return this.oTable._fullyInitialized().then(function() {
-				this.oTable.bindRows();
+				this.oTable._rebind();
 				this.oInnerTable = this.oTable._oTable;
 				this.oRowBinding = this.oTable.getRowBinding();
 				this.oSetAggregationSpy = sinon.spy(this.oInnerTable.getDependents()[0], "setAggregationInfo");
@@ -1329,6 +1331,9 @@ sap.ui.define([
 				this.oChangeParametersSpy = sinon.spy(this.oRowBinding, "changeParameters");
 				this.oFilterSpy = sinon.spy(this.oRowBinding, "filter");
 				this.oSortSpy = sinon.spy(this.oRowBinding, "sort");
+				this.oSuspendSpy = sinon.spy(this.oRowBinding, "suspend");
+				this.oResumeSpy = sinon.spy(this.oRowBinding, "resume");
+				this.oClearSelectionSpy = sinon.spy(this.oTable, "clearSelection");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -1338,10 +1343,69 @@ sap.ui.define([
 			this.oChangeParametersSpy.restore();
 			this.oFilterSpy.restore();
 			this.oSortSpy.restore();
+			this.oSuspendSpy.restore();
+			this.oResumeSpy.restore();
+			this.oClearSelectionSpy.restore();
 		},
 		after: function() {
 			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
 		}
+	});
+
+	QUnit.test("Update binding within suspend and resume", function(assert) {
+		this.oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
+		this.oTable.setFilterConditions({Name: [{operator: "EQ", values: ["Test"], validated: "NotValidated"}]});
+		this.oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
+		this.oTable.setAggregateConditions({Name: {}});
+		this.oTable._rebind();
+
+		assert.equal(this.oSortSpy.callCount, 1, "Binding#sort called once");
+		sinon.assert.calledWithExactly(this.oSortSpy, [new Sorter("Name", true)]);
+		assert.equal(this.oFilterSpy.callCount, 1, "Binding#filter called once");
+		sinon.assert.calledWithExactly(this.oFilterSpy, [], "Application");
+		assert.equal(this.oChangeParametersSpy.callCount, 1, "Binding#changeParameters called once");
+		sinon.assert.calledWithExactly(this.oChangeParametersSpy, {});
+		assert.equal(this.oSetAggregationSpy.callCount, 1, "Binding#setAggregation called once");
+		sinon.assert.calledWithExactly(this.oSetAggregationSpy, {
+			columnState: createColumnStateIdMap(this.oTable, [{grandTotal: true, subtotals: true}]),
+			grandTotal: ["Name"],
+			groupLevels: ["Name"],
+			search: undefined,
+			subtotals: ["Name"],
+			visible: ["Name"]
+		});
+		sinon.assert.callOrder(
+			this.oSuspendSpy,
+			this.oSetAggregationSpy,
+			this.oChangeParametersSpy,
+			this.oFilterSpy,
+			this.oSortSpy,
+			this.oResumeSpy
+		);
+		assert.ok(this.oRebindSpy.notCalled, "Aggregation binding was not replaced");
+		assert.equal(this.oClearSelectionSpy.callCount, 1, "Table#clearSelection called once");
+
+		this.oTable.setType(TableType.ResponsiveTable);
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable._rebind(); // Creates the binding
+			this.oClearSelectionSpy.resetHistory();
+			this.oTable._rebind(); // Actual rebind
+			assert.ok(this.oClearSelectionSpy.notCalled, "Table#clearSelection not called if type is 'ResponsiveTable'");
+		}.bind(this));
+	});
+
+	QUnit.test("Update suspended binding", function(assert) {
+		this.oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
+		this.oTable.getRowBinding().suspend();
+		this.oSuspendSpy.resetHistory();
+		this.oTable._rebind();
+
+		assert.equal(this.oSortSpy.callCount, 1, "Binding#sort called once");
+		sinon.assert.calledWithExactly(this.oSortSpy, [new Sorter("Name", true)]);
+		assert.ok(this.oSuspendSpy.notCalled, "Binding#suspend not called");
+		assert.ok(this.oResumeSpy.notCalled, "Binding#resume not called");
+		assert.ok(this.oRebindSpy.notCalled, "Aggregation binding was not replaced");
+		assert.equal(this.oClearSelectionSpy.callCount, 1, "Table#clearSelection called once");
 	});
 
 	QUnit.test("Sort", function(assert) {
@@ -1359,12 +1423,12 @@ sap.ui.define([
 	QUnit.test("Filter", function(assert) {
 		var aFilters = [new Filter("Name", "EQ", "a")];
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
-        oUpdateBindingInfoStub.callsFake(function (oMDCTable, oBindingInfo) {
+		oUpdateBindingInfoStub.callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
 			oBindingInfo.filters = aFilters;
-        });
+		});
 
 		this.oTable._rebind();
 		assert.ok(this.oFilterSpy.firstCall.calledWithExactly(aFilters, "Application"));
@@ -1406,24 +1470,24 @@ sap.ui.define([
 	QUnit.test("Parameters", function(assert) {
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
-        oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oBindingInfo) {
+		oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
-            oBindingInfo.parameters.$search = "x";
-        });
+			oBindingInfo.parameters.$search = "x";
+		});
 		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
-            oBindingInfo.parameters.$search = undefined;
-        });
+			oBindingInfo.parameters.$search = undefined;
+		});
 		oUpdateBindingInfoStub.onCall(2).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
-            oBindingInfo.parameters.$$canonicalPath = true;
-        });
+			oBindingInfo.parameters.$$canonicalPath = true;
+		});
 
 		this.oTable._rebind();
 		assert.equal(this.oChangeParametersSpy.callCount, 1);
@@ -1431,8 +1495,10 @@ sap.ui.define([
 		assert.equal(this.oChangeParametersSpy.callCount, 2);
 		assert.equal(this.oRebindSpy.callCount, 0);
 
+		this.oClearSelectionSpy.resetHistory();
 		this.oTable._rebind();
 		assert.equal(this.oRebindSpy.callCount, 1);
+		assert.equal(this.oClearSelectionSpy.callCount, 1, "Table#clearSelection called once");
 
 		oUpdateBindingInfoStub.restore();
 	});
@@ -1446,6 +1512,7 @@ sap.ui.define([
 		assert.equal(this.oSortSpy.callCount, 0);
 		assert.equal(this.oSetAggregationSpy.callCount, 1);
 		assert.equal(this.oRebindSpy.callCount, 1);
+		assert.equal(this.oClearSelectionSpy.callCount, 0, "Table#clearSelection not called");
 	});
 
 	QUnit.test("Change path", function(assert) {
