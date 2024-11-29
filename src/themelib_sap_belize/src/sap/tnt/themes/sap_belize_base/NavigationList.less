@@ -45,7 +45,6 @@
 @_sap_tnt_NavigationList_PopupArrowBoxShadow: @sapUiContentShadow2;
 @_sap_tnt_NavigationList_PopupTitleTextSize: @sapMFontMediumSize;
 @_sap_tnt_NavigationList_PopupTitleLineHeight: normal;
-@_sap_tnt_NavigationList_SelectionIndicatorDisplay: none;
 @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPadding: 0;
 @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPaddingCompact: 0;
 @_sap_tnt_NavigationList_Collapsed_HoverOrFocusTextDisplay: none;
@@ -344,37 +343,11 @@
 	}
 }
 
-.sapTntNLISelectionIndicator {
-	display: none;
-	font-size: 0.5rem;
-	color: @sapUiListSelectionBorderColor;
-}
-
 .sapTntNLISelected.sapTntNLI,
 .sapTntNLISelected .sapTntNLIFirstLevel,
 .sapTntNLISelected.sapTntNLISecondLevel,
 .sapTntNLISelected.sapTntNLISecondLevel.sapTntNLI {
 	background-color: @sapUiListSelectionBackgroundColor;
-
-	.sapTntNLISelectionIndicator {
-		display: @_sap_tnt_NavigationList_SelectionIndicatorDisplay;
-	}
-}
-
-.sapTntNLIFirstLevel.sapTntNLIWithExpander {
-	.sapTntNLISelectionIndicator {
-		margin: 0 0 0 0.5rem;
-	}
-}
-
-.sapTntNLIFirstLevel:not(.sapTntNLIWithExpander) {
-	.sapTntNLISelectionIndicator {
-		margin: 0 0.5rem;
-	}
-}
-
-.sapTntNLISecondLevel .sapTntNLISelectionIndicator {
-	margin: 0 0.5rem;
 }
 
 .sapTntNLISelected .sapTntNLI:hover,

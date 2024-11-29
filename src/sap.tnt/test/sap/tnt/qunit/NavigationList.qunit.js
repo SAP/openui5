@@ -2,11 +2,9 @@
 
 sap.ui.define([
 	'sap/base/Log',
-	'sap/base/util/Deferred',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
@@ -21,11 +19,9 @@ sap.ui.define([
 	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function(
 	Log,
-	Deferred,
 	Element,
 	Library,
 	coreLibrary,
-	Parameters,
 	QUnitUtils,
 	KeyCodes,
 	jQuery,
@@ -392,49 +388,6 @@ sap.ui.define([
 		// Clean up
 		oNL.destroy();
 		await clearPendingUIUpdates(this.clock);
-	});
-
-	QUnit.test("Selection Indicator", function (assert) {
-		var deferred = new Deferred();
-		var sExpectedDisplay = Parameters.get({
-			name: [ "_sap_tnt_NavigationList_SelectionIndicatorDisplay"],
-			callback: function (_sExpectedDisplay) {
-				sExpectedDisplay = _sExpectedDisplay;
-				deferred.resolve();
-			}
-		});
-
-		if (sExpectedDisplay !== undefined) {
-			deferred.resolve();
-		}
-
-		return deferred.promise.then(async () => {
-			// Arrange
-			var oItem = new NavigationListItem({
-					text: "item"
-				}),
-				oNL = new NavigationList({
-					items: [
-						oItem
-					]
-				});
-			oNL.placeAt("qunit-fixture");
-			await nextUIUpdate(this.clock);
-
-			// Assert
-			assert.strictEqual(getComputedStyle(oItem.getDomRef().querySelector(".sapTntNLISelectionIndicator")).display, "none", "Selection indicator shouldn't be displayed on non-selected item");
-
-			// Act
-			oItem.$().trigger("tap");
-			await nextUIUpdate(this.clock);
-
-			// Assert
-			assert.strictEqual(getComputedStyle(oItem.getDomRef().querySelector(".sapTntNLISelectionIndicator")).display, sExpectedDisplay, "Selection indicator should be displayed on selected item based on the theme");
-
-			// Clean up
-			oNL.destroy();
-			await clearPendingUIUpdates(this.clock);
-		});
 	});
 
 	QUnit.module("Lifecycle");
