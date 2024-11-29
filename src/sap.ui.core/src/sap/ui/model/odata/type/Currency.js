@@ -43,9 +43,14 @@ sap.ui.define([
 	 * @param {boolean} [oConstraints.skipDecimalsValidation=false]
 	 *   Whether to skip validation of the number of decimals based on the code list customizing;
 	 *   since 1.93.0
-	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
-	 *   format option <code>customCurrencies</code> is set
-	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
+	 * @throws {Error}
+	 *   If
+	 *   <ul>
+	 *     <li>More parameters than <code>oFormatOptions</code> and <code>oConstraints</code> are given</li>
+	 *     <li>The <code>customCurrencies</code> format option is set</li>
+	 *     <li>Any constraint other than <code>skipDecimalsValidation</code> is set</li>
+	 *     <li>The <code>oFormatOptions.decimalPadding</code> is set but is not allowed</li>
+	 *   </ul>
 	 *
 	 * @alias sap.ui.model.odata.type.Currency
 	 * @author SAP SE
