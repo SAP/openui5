@@ -9192,6 +9192,10 @@ sap.ui.define([
 		let fnRejectRetryAfter;
 		let fnResolveRetryAfter;
 		let oRetryAfterError;
+		let fnResolveCallback;
+		let oCallbackPromise = new Promise((resolve) => {
+			fnResolveCallback = resolve;
+		});
 		let iCallbackCount = 0;
 		oModel.setRetryAfterHandler((oError) => {
 			if (fnAjaxSpy) {
@@ -9201,6 +9205,7 @@ sap.ui.define([
 				fnAjaxSpy.restore();
 				fnAjaxSpy = undefined;
 			}
+			fnResolveCallback();
 			iCallbackCount += 1;
 			assert.ok(oError instanceof Error);
 			assert.strictEqual(oError.message, "DB migration in progress");
@@ -9225,8 +9230,11 @@ sap.ui.define([
 		const oBinding = this.oView.byId("table").getBinding("items");
 		const aContexts = oBinding.getCurrentContexts();
 		bAnswerWith503 = true;
-		const aBatchPayloads = [];
-		TestUtils.onRequest((sPayload) => aBatchPayloads.push(sPayload));
+		const aRequests = [];
+		TestUtils.onRequest((sPayload) => {
+			aRequests.push(
+				...sPayload.split("\r\n").filter((sLine) => sLine.endsWith(" HTTP/1.1")));
+		});
 		fnAjaxSpy = this.spy(jQuery, "ajax");
 		this.expectChange("note", ["Note3", "Note4", "Note5"]);
 
@@ -9234,15 +9242,16 @@ sap.ui.define([
 		const oDeletePromise0 = aContexts[0].delete("$single");
 		const oDeletePromise1 = aContexts[1].delete("$single");
 
-		await this.waitForChanges(assert, "2");
-		// Note: this MUST not be called before #waitForChanges, probably due to timeout throttling
-		// https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
-		// #reasons_for_delays_longer_than_specified
-		await resolveLater(null, /*iDelay*/10); // BEWARE of sap-ui-excludeJQueryCompat=true
+		await Promise.all([
+			oCallbackPromise,
+			this.waitForChanges(assert, "2")
+		]);
 
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.deepEqual(aRequests, [
+			"DELETE SalesOrderList('1') HTTP/1.1",
+			"DELETE SalesOrderList('2') HTTP/1.1"
+		]);
+		aRequests.length = 0;
 		assert.strictEqual(iCallbackCount, 1);
 
 		this.expectChange("note", ["Note4", "Note5"]);
@@ -9256,7 +9265,7 @@ sap.ui.define([
 		assert.ok(aContexts[1].isDeleted());
 		assert.ok(aContexts[2].isDeleted());
 		assert.ok(oModel.hasPendingChanges());
-		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(aRequests.length, 0);
 		assert.strictEqual(iCallbackCount, 1, "not called again");
 
 		bAnswerWith503 = false;
@@ -9272,10 +9281,12 @@ sap.ui.define([
 			]);
 
 			assert.notOk(oModel.hasPendingChanges());
-			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('1')"));
-			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('2')"));
-			assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('3')"));
-			assert.strictEqual(aBatchPayloads.length, 0);
+			assert.deepEqual(aRequests.sort(), [
+				"DELETE SalesOrderList('1') HTTP/1.1",
+				"DELETE SalesOrderList('2') HTTP/1.1",
+				"DELETE SalesOrderList('3') HTTP/1.1"
+			], "order does not matter");
+			aRequests.length = 0;
 			assert.strictEqual(iCallbackCount, 1);
 
 			this.expectChange("note", ["Note5"]);
@@ -9316,24 +9327,29 @@ sap.ui.define([
 			assert.notOk(aContexts[1].isDeleted());
 			assert.notOk(aContexts[2].isDeleted());
 			assert.notOk(oModel.hasPendingChanges());
-			assert.strictEqual(aBatchPayloads.length, 0);
+			assert.strictEqual(aRequests.length, 0);
 			assert.strictEqual(iCallbackCount, 1);
 
 			this.expectChange("note", [,,, "Note5"]);
 		}
 
 		bAnswerWith503 = true;
+		oCallbackPromise = new Promise((resolve) => {
+			fnResolveCallback = resolve;
+		});
 
 		// code under test
 		const oDeletePromise4 = aContexts[3].delete("$single");
 
-		await this.waitForChanges(assert, "5");
-		await resolveLater(null, /*iDelay*/15); // BEWARE of sap-ui-excludeJQueryCompat=true
+		await Promise.all([
+			oCallbackPromise,
+			this.waitForChanges(assert, "5")
+		]);
 
 		assert.ok(oModel.hasPendingChanges());
 		assert.ok(aContexts[3].isDeleted());
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(aRequests.shift(), "DELETE SalesOrderList('4') HTTP/1.1");
+		assert.strictEqual(aRequests.length, 0);
 		assert.strictEqual(iCallbackCount, 2);
 
 		bAnswerWith503 = false;
@@ -9347,8 +9363,8 @@ sap.ui.define([
 		]);
 
 		assert.notOk(oModel.hasPendingChanges());
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('4')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(aRequests.shift(), "DELETE SalesOrderList('4') HTTP/1.1");
+		assert.strictEqual(aRequests.length, 0);
 
 		await Promise.all([
 			// code under test
@@ -9356,8 +9372,8 @@ sap.ui.define([
 			this.waitForChanges(assert, "7")
 		]);
 
-		assert.ok(aBatchPayloads.shift().includes("DELETE SalesOrderList('5')"));
-		assert.strictEqual(aBatchPayloads.length, 0);
+		assert.strictEqual(aRequests.shift(), "DELETE SalesOrderList('5') HTTP/1.1");
+		assert.strictEqual(aRequests.length, 0);
 		assert.strictEqual(aContexts[0].isDeleted(), !!bResolve);
 		assert.strictEqual(aContexts[1].isDeleted(), !!bResolve);
 		assert.strictEqual(aContexts[2].isDeleted(), !!bResolve);
@@ -9523,9 +9539,14 @@ sap.ui.define([
 		});
 		oModel.$keepSend = true; // do not stub sendBatch/-Request
 
+		let fnResolveCallback;
+		const oCallbackPromise = new Promise((resolve) => {
+			fnResolveCallback = resolve;
+		});
 		let iCallbackCount = 0;
 		let fnResolveRetryAfter;
 		oModel.setRetryAfterHandler((oError) => {
+			fnResolveCallback();
 			iCallbackCount += 1;
 			assert.ok(oError instanceof Error);
 			assert.strictEqual(oError.message, "DB migration in progress");
@@ -9554,7 +9575,7 @@ sap.ui.define([
 		const oPromise = oModel.getMetaModel().requestObject(
 			"/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS/EQUIPMENT_2_PRODUCT/ID/$Type");
 
-		await resolveLater(null, /*iDelay*/20); // BEWARE of sap-ui-excludeJQueryCompat=true
+		await oCallbackPromise;
 
 		const sExpectedRequestLine
 			= "GET /sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata";
