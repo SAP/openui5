@@ -26,7 +26,12 @@ globalThis.fnInit = () => {
 			assert.expect(19);
 
 			["sapUiSapFooBar"].forEach(function (sDuplicateKey) {
-				assert.ok(oLogSpy.calledWith("Configuration option '" + sDuplicateKey + "' already exists and will be ignored!"), "Logged invalid configuration option '" + sDuplicateKey + "'");
+				//trigger get for error logging
+				const value = BaseConfiguration.get({
+					name: sDuplicateKey,
+					type: BaseConfiguration.Type.String
+				});
+				assert.ok(oLogSpy.calledWith("Configuration option '" + sDuplicateKey + "' was set multiple times. Value '" + value + "' will be used"), "Logged invalid configuration option '" + sDuplicateKey + "'");
 			});
 
 			["sapUiSap;ui;bar"].forEach(function (sInvalidKey) {
