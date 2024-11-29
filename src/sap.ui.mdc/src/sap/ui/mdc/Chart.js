@@ -800,7 +800,11 @@ sap.ui.define([
 							}
 						}
 					}).then((vResult) => {
-						this.getControlDelegate().requestToolbarUpdate(this);
+						if (this.getControlDelegate().requestToolbarUpdate) {
+							this.getControlDelegate().requestToolbarUpdate(this);
+						} else {
+							this._updateToolbar();
+						}
 					});
 
 				});
@@ -1122,10 +1126,6 @@ sap.ui.define([
 					Log.error("Unknown mutation on MDC Chart Item Aggregation. This will not sync to inner chart!");
 					break;
 			}
-
-			//Needed to apply current sorters when sorted measure/dimension was not selected yet
-			//However, since this gets called multiple times when the aggregation adds/removes multiple properties, the binding seems to break
-			this._rebind();
 
 			//Update the breadcrumbs after an MDC Item change
 			const aItems = this.getControlDelegate().getDrillableItems(this).map((oItem) => { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });

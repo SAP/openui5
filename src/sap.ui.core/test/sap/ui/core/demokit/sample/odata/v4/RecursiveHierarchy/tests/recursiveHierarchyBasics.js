@@ -12,20 +12,20 @@ sap.ui.define([
 			Then.onTheMainPage.checkTable(vExpected, /* mDefaults */ null, sComment);
 		}
 
-		function toggleExpandInRow(iRow, sComment) {
-			When.onTheMainPage.toggleExpandInRow(iRow, sComment);
+		function toggleExpand(sId, sComment) {
+			When.onTheMainPage.toggleExpand(sId, sComment);
 		}
 
-		// function expandLevels(iRow, iLevels, sComment) {
-		//   When.onTheMainPage.expandLevels(iRow, iLevels, sComment);
+		// function expandLevels(sId, iLevels, sComment) {
+		//   When.onTheMainPage.expandLevels(sId, iLevels, sComment);
 		// }
 
-		function expandAll(iRow, sComment) {
-			When.onTheMainPage.expandLevels(iRow, Number.MAX_SAFE_INTEGER, sComment);
+		function expandAll(sId, sComment) {
+			When.onTheMainPage.expandLevels(sId, Number.MAX_SAFE_INTEGER, sComment);
 		}
 
-		function collapseAll(iRow, sComment) {
-			When.onTheMainPage.collapseAll(iRow, sComment);
+		function collapseAll(sId, sComment) {
+			When.onTheMainPage.collapseAll(sId, sComment);
 		}
 
 		Given.iStartMyUIComponent({
@@ -45,12 +45,12 @@ sap.ui.define([
 	* 2`,
 			"initial state");
 
-		collapseAll(0, "collapse all below 0 (Alpha)");
+		collapseAll("0", "collapse all below 0 (Alpha)");
 		checkTable(`
 + 0`,
 			"after collapse all below 0 (Alpha)");
 
-		toggleExpandInRow(0, "expand 0 (Alpha)");
+		toggleExpand("0", "expand 0 (Alpha)");
 		checkTable(`
 - 0
 	+ 1
@@ -59,13 +59,13 @@ sap.ui.define([
 	+ 4`,
 			"after expand 0 (Alpha)");
 
-		toggleExpandInRow(0, "collapse 0 (Alpha)");
+		toggleExpand("0", "collapse 0 (Alpha)");
 		checkTable(`
 + 0`,
 			"after collapse 0 (Alpha)");
 
 		// expandLevels(0, 4, "expand 4 levels below 0 (Alpha)"); // TODO should be the same
-		expandAll(0, "expand all below 0 (Alpha)");
+		expandAll("0", "expand all below 0 (Alpha)");
 		checkTable(`
 - 0
 	- 1

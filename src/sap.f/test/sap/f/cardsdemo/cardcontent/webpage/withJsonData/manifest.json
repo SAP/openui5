@@ -1,0 +1,35 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.webpage.cardWithData",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "WebPage",
+		"configuration": {
+			"parameters": {
+				"minHeight": {
+					"description": "Minimum height of the content",
+					"type": "string",
+					"value": "30rem"
+				}
+			}
+		},
+		"header": {
+			"title": "WebPage Card with data.json",
+			"subtitle": "{/src}",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			}
+		},
+		"data": {
+			"request": {
+				"url": "./data.json"
+			}
+		},
+		"content": {
+			"src": "{/src}",
+			"minHeight": "{parameters>/minHeight/value}"
+
+		}
+	}
+}

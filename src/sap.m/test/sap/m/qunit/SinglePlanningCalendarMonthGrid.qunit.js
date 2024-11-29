@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/events/KeyCodes",
+	"sap/base/i18n/Localization",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	qutils,
@@ -28,6 +29,7 @@ sap.ui.define([
 	DateRange,
 	CalendarDate,
 	KeyCodes,
+	Localization,
 	createAndAppendDiv
 ) {
 		"use strict";
@@ -409,6 +411,32 @@ sap.ui.define([
 			assert.equal(sLabels.length, 6, "there are 6 labels");
 			assert.equal(sLabels[0], "31", "first label is ok");
 			assert.equal(sLabels[5], "36", "last label is ok");
+		});
+
+		QUnit.test("Vertical labels in the beginning/end of the year when first day of week is Sunday", async function(assert) {
+			// act
+			Localization.setLanguage("en_US");
+			this.oSPCMG.setCalendarWeekNumbering("WesternTraditional");
+			this.oSPCMG.setFirstDayOfWeek(0);
+			this.oSPCMG.setStartDate(UI5Date.getInstance(2024, 11, 1));
+			await nextUIUpdate(this.clock);
+			var sLabels = this.oSPCMG._getVerticalLabels();
+
+			// assert
+			assert.equal(sLabels.length, 6, "there are 6 labels");
+			assert.equal(sLabels[0], "49", "first label is ok");
+			assert.equal(sLabels[4], "53", "fifth label is ok");
+			assert.equal(sLabels[5], "2", "last label is ok");
+
+			// act
+			this.oSPCMG.setStartDate(UI5Date.getInstance(2025, 0, 1));
+			await nextUIUpdate(this.clock);
+			sLabels = this.oSPCMG._getVerticalLabels();
+
+			// assert
+			assert.equal(sLabels.length, 6, "there are 6 labels");
+			assert.equal(sLabels[0], "1", "first label is ok");
+			assert.equal(sLabels[5], "6", "last label is ok");
 		});
 
 		QUnit.test("getFocusDomRef returns correct items", async function(assert) {

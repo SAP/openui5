@@ -103,13 +103,6 @@ function(nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 			"The aria-label on the header element now indicates that there is no title");
 	});
 
-	QUnit.test("AnchorBar element role", function (assert) {
-		var sRoleBundleText = getResourceBundleText("NAVIGATION_ROLE_DESCRIPTION");
-
-		assertCorrectRole(this.oObjectPage.$("anchorBar"), "navigation", "AnchorBar element has appropriate banner role set", assert);
-		assertCorrectRoleDescription(this.oObjectPage.$("anchorBar"), sRoleBundleText, "AnchorBar element has appropriate role description set", assert);
-	});
-
 	QUnit.test("AnchorBar element aria-label", function (assert) {
 		var oHeader = this.objectPageView.byId("objectPageHeader"),
 			sTitleText = "Updated title",

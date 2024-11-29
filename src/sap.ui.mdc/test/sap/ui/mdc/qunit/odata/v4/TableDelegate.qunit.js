@@ -546,7 +546,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Key properties", async function(assert) {
+	QUnit.test("Leaf-level aggregation disabled", async function(assert) {
 		await this.initTable(undefined, undefined, this.defaultPropertyInfos.concat([{
 			key: "ID",
 			path: "IDPath",
@@ -585,6 +585,41 @@ sap.ui.define([
 			group: {
 				IDPath: {},
 				CustomerIDPath: {},
+				CountryPath: {additionally: ["CountryTextPath"]},
+				RegionPath: {additionally: ["RegionTextPath"]}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Leaf-level aggregation enabled", async function(assert) {
+		await this.initTable({
+			delegate: {
+				name: "odata.v4.TestDelegate",
+				payload: {
+					aggregationConfiguration: {
+						leafLevel: true
+					}
+				}
+			}
+		}, undefined, this.defaultPropertyInfos.concat([{
+			key: "ID",
+			path: "IDPath",
+			label: "ID",
+			dataType: "String",
+			isKey: true,
+			extension: {
+				technicallyGroupable: true
+			}
+		}]));
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
 				CountryPath: {additionally: ["CountryTextPath"]},
 				RegionPath: {additionally: ["RegionTextPath"]}
 			},

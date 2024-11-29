@@ -956,11 +956,19 @@ sap.ui.define([
 			var aDays = this._getVisibleDays(this.getStartDate()),
 				iColumns = this._getColumns(),
 				aResult = [],
-				sLocale = new Locale(Formatting.getLanguageTag()).toString();
+				sLocale = new Locale(Formatting.getLanguageTag()).toString(),
+				oStartDate = new CalendarDate(this.getStartDate().getFullYear(), this.getStartDate().getMonth(), this.getStartDate().getDate()).toUTCJSDate(),
+				iWeekNumber;
 
 			for (var i = 0; i < this._getRows(); i++) {
 				var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: "Gregorian", calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
-				var iWeekNumber = Number(oDateFormat.format(aDays[i * iColumns].toUTCJSDate(), true));
+				var iFirstWeekDayInMonth = aDays[i * iColumns].toUTCJSDate();
+
+				if (iFirstWeekDayInMonth < oStartDate) {
+					iFirstWeekDayInMonth = oStartDate;
+				}
+
+				iWeekNumber = Number(oDateFormat.format(iFirstWeekDayInMonth, true));
 
 				aResult.push(iWeekNumber);
 			}
