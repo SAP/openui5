@@ -489,16 +489,9 @@ function(
 			this._sortList = null;
 		}
 
-		if (this._ariaSortListInvisibleText) {
-			this._ariaSortListInvisibleText.destroy();
-			this._ariaSortListInvisibleText = null;
-		}
-
 		if (this._sortOrderList) {
 			this._sortOrderList.destroy();
 			this._sortOrderList = null;
-			this._ariaSortOrderInvisibleText.destroy();
-			this._ariaSortOrderInvisibleText = null;
 		}
 
 		if (this._oGroupingNoneItem) {
@@ -508,14 +501,10 @@ function(
 		if (this._groupList) {
 			this._groupList.destroy();
 			this._groupList = null;
-			this._ariaGroupListInvisibleText.destroy();
-			this._ariaGroupListInvisibleText = null;
 		}
 		if (this._groupOrderList) {
 			this._groupOrderList.destroy();
 			this._groupOrderList = null;
-			this._ariaGroupOrderInvisibleText.destroy();
-			this._ariaGroupOrderInvisibleText = null;
 		}
 
 		if (this._presetFilterList) {
@@ -525,11 +514,6 @@ function(
 		if (this._filterList) {
 			this._filterList.destroy();
 			this._filterList = null;
-		}
-
-		if (this._ariaFilterByInvisibleText) {
-			this._ariaFilterByInvisibleText.destroy();
-			this._ariaFilterByInvisibleText = null;
 		}
 
 		// page2 (filter details)
@@ -2289,11 +2273,6 @@ function(
 		}
 		this._vContentPage = -1;
 
-		// Aria - used to label the sort order list
-		this._ariaSortOrderInvisibleText = new InvisibleText(this.getId() + "-sortOrderLabel", {
-			text: this._rb.getText("VIEWSETTINGS_SORT_BY")
-		});
-
 		this._sortOrderList = new List(this.getId() + "-sortorderlist", {
 			mode : ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
@@ -2302,7 +2281,7 @@ function(
 				// enable/disable reset button if necessary
 				this._checkResetStatus();
 			}.bind(this),
-			ariaLabelledBy: this._ariaSortOrderInvisibleText
+			ariaLabelledBy: this._sTitleLabelId
 		});
 
 		this._sortOrderList.addItemGroup(undefined, new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_SORT_BY")}));
@@ -2314,14 +2293,9 @@ function(
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
 
-		// Aria - used to label the sort list
-		this._ariaSortListInvisibleText = new InvisibleText(this.getId() + "-sortListLabel", {
-			text: this._rb.getText("VIEWSETTINGS_SORT_OBJECT")
-		});
+		this._sortList.addAriaLabelledBy(this._sTitleLabelId);
 
-		this._sortList.addAriaLabelledBy(this._ariaSortListInvisibleText);
-
-		this._sortContent = [ this._ariaSortOrderInvisibleText, this._sortOrderList, this._ariaSortListInvisibleText, this._sortList ];
+		this._sortContent = [ this._sortOrderList, this._sortList ];
 	};
 
 	/**
@@ -2390,11 +2364,6 @@ function(
 		}
 		this._vContentPage = -1;
 
-		// Aria - used to label the group order
-		this._ariaGroupOrderInvisibleText = new InvisibleText(this.getId() + "-groupOrderLabel", {
-			text: this._rb.getText("VIEWSETTINGS_GROUP_BY")
-		});
-
 		this._groupOrderList = new List(this.getId() + "-grouporderlist", {
 			mode : ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
@@ -2403,7 +2372,7 @@ function(
 				// enable/disable reset button if necessary
 				this._checkResetStatus();
 			}.bind(this),
-			ariaLabelledBy: this._ariaGroupOrderInvisibleText
+			ariaLabelledBy: this._sTitleLabelId
 		});
 
 		this._groupOrderList.addItemGroup(undefined, new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_GROUP_BY")}));
@@ -2413,11 +2382,6 @@ function(
 		this._groupOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
-
-		// Aria - used to label the group list
-		this._ariaGroupListInvisibleText = new InvisibleText(this.getId() + "-groupListLabel", {
-			text: this._rb.getText("VIEWSETTINGS_GROUP_OBJECT")
-		});
 
 		this._groupList = new List(this.getId() + "-grouplist",
 			{
@@ -2430,10 +2394,10 @@ function(
 					// enable/disable reset button if necessary
 					this._checkResetStatus();
 				}.bind(this),
-				ariaLabelledBy: this._ariaGroupListInvisibleText
+				ariaLabelledBy: this._sTitleLabelId
 			});
 
-		this._groupContent = [ this._ariaGroupOrderInvisibleText, this._groupOrderList, this._ariaGroupListInvisibleText, this._groupList ];
+		this._groupContent = [ this._groupOrderList, this._groupList ];
 	};
 
 	/**
@@ -2518,11 +2482,6 @@ function(
 		}
 		this._vContentPage = -1;
 
-		// Aria - used to label the filter by list
-		this._ariaFilterByInvisibleText = new InvisibleText(this.getId() + "-filterByLabel", {
-			text: this._rb.getText("VIEWSETTINGS_FILTER_BY")
-		});
-
 		this._presetFilterList = new List(
 			this.getId() + "-predefinedfilterlist",
 			{
@@ -2541,10 +2500,10 @@ function(
 			});
 
 		this._filterList = new List(this.getId() + "-filterlist", {
-			ariaLabelledBy: this._ariaFilterByInvisibleText
+			ariaLabelledBy: this._sTitleLabelId
 		});
 
-		this._filterContent = [ this._ariaFilterByInvisibleText, this._presetFilterList, this._filterList ];
+		this._filterContent = [ this._presetFilterList, this._filterList ];
 	};
 
 	/**
