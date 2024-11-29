@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/base/ManagedObjectObserver"
 ], function(
@@ -21,6 +22,7 @@ sap.ui.define([
 	Core,
 	coreLibrary,
 	ODataModel,
+	Sorter,
 	Filter,
 	ManagedObjectObserver
 ) {
@@ -1330,6 +1332,9 @@ sap.ui.define([
 				this.oChangeParametersSpy = sinon.spy(this.oRowBinding, "changeParameters");
 				this.oFilterSpy = sinon.spy(this.oRowBinding, "filter");
 				this.oSortSpy = sinon.spy(this.oRowBinding, "sort");
+				this.oSuspendSpy = sinon.spy(this.oRowBinding, "suspend");
+				this.oResumeSpy = sinon.spy(this.oRowBinding, "resume");
+				this.oClearSelectionSpy = sinon.spy(this.oTable, "clearSelection");
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -1339,10 +1344,30 @@ sap.ui.define([
 			this.oChangeParametersSpy.restore();
 			this.oFilterSpy.restore();
 			this.oSortSpy.restore();
+			this.oSuspendSpy.restore();
+			this.oResumeSpy.restore();
+			this.oClearSelectionSpy.restore();
 		},
 		after: function() {
 			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
 		}
+	});
+
+	QUnit.test("Clear selection", function(assert) {
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.rebind(); // Creates the binding
+			this.oClearSelectionSpy.resetHistory();
+			this.oTable.rebind(); // Actual rebind
+			assert.ok(this.oClearSelectionSpy.calledOnce, "Table#clearSelection called if type is 'Table'");
+
+			this.oTable.setType(TableType.ResponsiveTable);
+			return this.oTable._fullyInitialized();
+		}.bind(this)).then(function() {
+			this.oTable.rebind(); // Creates the binding
+			this.oClearSelectionSpy.resetHistory();
+			this.oTable.rebind(); // Actual rebind
+			assert.ok(this.oClearSelectionSpy.notCalled, "Table#clearSelection not called if type is 'ResponsiveTable'");
+		}.bind(this));
 	});
 
 	QUnit.test("Sort", function(assert) {
@@ -1436,6 +1461,7 @@ sap.ui.define([
 		assert.equal(this.oSortSpy.callCount, 0);
 		assert.equal(this.oSetAggregationSpy.callCount, 1);
 		assert.equal(this.oRebindTableSpy.callCount, 1);
+		assert.equal(this.oClearSelectionSpy.callCount, 0, "Table#clearSelection not called");
 	});
 
 });
