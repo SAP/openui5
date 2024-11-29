@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/util/JSTokenizer",
-	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -28,7 +27,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (Log, Localization, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason,
+], function (Log, Localization, JSTokenizer, SyncPromise, BindingMode, ChangeReason,
 		ClientListBinding, BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model,
 		PropertyBinding, Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel,
 		ODataModel, ValueListType, _Helper, _MetadataRequestor, TestUtils, URI) {
@@ -1165,6 +1164,7 @@ sap.ui.define([
 			};
 			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, undefined, this.oModel);
 			this.oMetaModelMock = this.mock(this.oMetaModel);
+			ODataMetaModel.clearCodeListsCache();
 		},
 
 		/*
@@ -5523,6 +5523,8 @@ sap.ui.define([
 				.withExactArgs(bHasMetaModelForAnnotations
 					? "~oMetaModelForAnnotations~"
 					: sinon.match.same(oMetaModel));
+		const oExpectation = this.mock(ODataModel.prototype).expects("setRetryAfterHandler")
+			.withExactArgs(sinon.match.func);
 
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
@@ -5538,6 +5540,7 @@ sap.ui.define([
 		if (bCopyAnnotations) {
 			assert.ok(oCopyAnnotationsExpectation.calledOn(oSharedModel.getMetaModel()));
 		}
+		assert.ok(oExpectation.calledOn(oSharedModel));
 		assert.deepEqual(oMetaModel.mSharedModelByUrl, {
 			foo : "~bar~",
 			[`${bAutoExpandSelect}/Foo/ValueListService/`] : oSharedModel
@@ -5547,6 +5550,12 @@ sap.ui.define([
 		assert.strictEqual(oMetaModel.getOrCreateSharedModel("/Foo/ValueListService/$metadata",
 				undefined, bAutoExpandSelect, bCopyAnnotations),
 			oSharedModel);
+
+		this.mock(oModel).expects("getOrCreateRetryAfterPromise").withExactArgs("~oError~")
+			.returns("~oPromise~");
+
+		// code under test
+		assert.strictEqual(oExpectation.args[0][0]("~oError~"), "~oPromise~");
 	});
 		});
 	});
@@ -5567,19 +5576,28 @@ sap.ui.define([
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, {}, undefined,
 				sinon.match.func);
+		const oExpectation = this.mock(ODataModel.prototype).expects("setRetryAfterHandler")
+			.withExactArgs(sinon.match.func);
 
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
 			undefined, undefined);
 
+		assert.ok(oExpectation.calledOn(oSharedModel));
 		assert.deepEqual(oMetaModel.mSharedModelByUrl, {
 			"false/Foo1/ValueListService/" : oSharedModel
 		});
 
-		// code under test
 		assert.strictEqual(
+			// code under test
 			oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata", undefined, false),
 			oSharedModel);
+
+		this.mock(oModel).expects("getOrCreateRetryAfterPromise").withExactArgs("~oError~")
+			.returns("~oPromise~");
+
+		// code under test
+		assert.strictEqual(oExpectation.args[0][0]("~oError~"), "~oPromise~");
 	});
 
 	//*********************************************************************************************
@@ -5587,20 +5605,28 @@ sap.ui.define([
 		var sTitle = "getOrCreateSharedModel: relative data service URL: " + sGroupId;
 
 		QUnit.test(sTitle, function (assert) {
-			var sAbsolutePath = "/" + uid() + "/", // circumvent caching
-				oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
+			var oModel = new ODataModel({serviceUrl : "/Foo/DataService/"}),
 				oSharedModel;
 
 			this.mock(oModel.getMetaModel()).expects("getAbsoluteServiceUrl")
 				.withExactArgs("../ValueListService/$metadata")
-				.returns(sAbsolutePath);
+				.returns("/absolute/path/");
+			const oExpectation = this.mock(ODataModel.prototype).expects("setRetryAfterHandler")
+				.withExactArgs(sinon.match.func);
 
 			// code under test
 			oSharedModel = oModel.getMetaModel()
 				.getOrCreateSharedModel("../ValueListService/$metadata", sGroupId);
 
-			assert.strictEqual(oSharedModel.sServiceUrl, sAbsolutePath);
+			assert.strictEqual(oSharedModel.sServiceUrl, "/absolute/path/");
 			assert.strictEqual(oSharedModel.getGroupId(), sGroupId);
+			assert.ok(oExpectation.calledOn(oSharedModel));
+
+			this.mock(oModel).expects("getOrCreateRetryAfterPromise").withExactArgs("~oError~")
+				.returns("~oPromise~");
+
+			// code under test
+			assert.strictEqual(oExpectation.args[0][0]("~oError~"), "~oPromise~");
 		});
 	});
 
@@ -6830,8 +6856,7 @@ sap.ui.define([
 					+ ", with standard code: " + bHasStandardCode;
 
 				QUnit.test(sTitle, function (assert) {
-					var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-						oCodeListBinding = {
+					var oCodeListBinding = {
 							destroy : function () {},
 							requestContexts : function () {}
 						},
@@ -6919,11 +6944,11 @@ sap.ui.define([
 					this.mock(_Helper).expects("setLanguage").twice()
 						.withExactArgs(sUrl, "~sLanguage~").returns("~sUrl w/ sLanguage~");
 					this.oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
-						.withExactArgs("~sUrl w/ sLanguage~").returns(sAbsoluteServiceUrl);
+						.withExactArgs("~sUrl w/ sLanguage~").returns("/absolute/path/");
 					oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
-						.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+						.withExactArgs("/absolute/path/" + "#UnitsOfMeasure").callThrough();
 					oMapSetExpectation = this.mock(Map.prototype).expects("set")
-						.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+						.withArgs("/absolute/path/" + "#UnitsOfMeasure").callThrough();
 					this.oMetaModelMock.expects("getOrCreateSharedModel")
 						.withExactArgs("~sUrl w/ sLanguage~", "$direct")
 						.returns(oCodeListModel);
@@ -7052,8 +7077,7 @@ sap.ui.define([
 			+ "/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys/0/Key"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("requestCodeList, alternate key error case #" + i, function (assert) {
-			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-				oCodeListMetaModel = {
+			var oCodeListMetaModel = {
 					getObject : function () {},
 					requestObject : function () {}
 				},
@@ -7076,11 +7100,11 @@ sap.ui.define([
 			this.mock(_Helper).expects("setLanguage").twice().withExactArgs(sUrl, undefined)
 				.returns(sUrl);
 			this.oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
-				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+				.withExactArgs(sUrl).returns("/absolute/path/");
 			this.mock(Map.prototype).expects("get").twice()
-				.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+				.withExactArgs("/absolute/path/" + "#UnitsOfMeasure").callThrough();
 			this.mock(Map.prototype).expects("set")
-				.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+				.withArgs("/absolute/path/" + "#UnitsOfMeasure").callThrough();
 			this.oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sUrl, "$direct")
 				.returns(oCodeListModel);
@@ -7117,8 +7141,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[["UnitCode", "InternalCode"], [], undefined].forEach(function (aKeys) {
 		QUnit.test("requestCodeList, not a single key: " + aKeys, function (assert) {
-			var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-				oCodeListMetaModel = {
+			var oCodeListMetaModel = {
 					getObject : function () {},
 					requestObject : function () {}
 				},
@@ -7141,11 +7164,11 @@ sap.ui.define([
 			this.mock(_Helper).expects("setLanguage").twice().withExactArgs(sUrl, undefined)
 				.returns(sUrl);
 			this.oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
-				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+				.withExactArgs(sUrl).returns("/absolute/path/");
 			this.mock(Map.prototype).expects("get").twice()
-				.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+				.withExactArgs("/absolute/path/" + "#UnitsOfMeasure").callThrough();
 			this.mock(Map.prototype).expects("set")
-				.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
+				.withArgs("/absolute/path/" + "#UnitsOfMeasure").callThrough();
 			this.oMetaModelMock.expects("getOrCreateSharedModel")
 				.withExactArgs(sUrl, "$direct")
 				.returns(oCodeListModel);
@@ -7239,8 +7262,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestCodeList: 2nd requestObject fails", function (assert) {
-		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-			oCodeListMetaModel = {
+		var oCodeListMetaModel = {
 				getObject : function () {},
 				requestObject : function () {}
 			},
@@ -7261,7 +7283,7 @@ sap.ui.define([
 			});
 		this.mock(_Helper).expects("setLanguage").withExactArgs(sUrl, undefined).returns(sUrl);
 		this.oMetaModelMock.expects("getAbsoluteServiceUrl")
-			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+			.withExactArgs(sUrl).returns("/absolute/path/");
 		this.oMetaModelMock.expects("getOrCreateSharedModel").withExactArgs(sUrl, "$direct")
 			.returns(oCodeListModel);
 		this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
@@ -7280,8 +7302,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestCodeList, change handler fails", function (assert) {
-		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-			oCodeListBinding = {
+		var oCodeListBinding = {
 				destroy : function () {},
 				requestContexts : function () {}
 			},
@@ -7306,7 +7327,7 @@ sap.ui.define([
 			});
 		this.mock(_Helper).expects("setLanguage").withExactArgs(sUrl, undefined).returns(sUrl);
 		this.oMetaModelMock.expects("getAbsoluteServiceUrl")
-			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+			.withExactArgs(sUrl).returns("/absolute/path/");
 		this.oMetaModelMock.expects("getOrCreateSharedModel")
 			.withExactArgs(sUrl, "$direct")
 			.returns(oCodeListModel);
@@ -7351,8 +7372,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestCodeList, data request fails", function (assert) {
-		var sAbsoluteServiceUrl = "/" + uid() + "/", // circumvent caching
-			oCodeListBinding = {
+		var oCodeListBinding = {
 				destroy : function () {},
 				requestContexts : function () {}
 			},
@@ -7377,7 +7397,7 @@ sap.ui.define([
 			});
 		this.mock(_Helper).expects("setLanguage").withExactArgs(sUrl, undefined).returns(sUrl);
 		this.oMetaModelMock.expects("getAbsoluteServiceUrl")
-			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+			.withExactArgs(sUrl).returns("/absolute/path/");
 		this.oMetaModelMock.expects("getOrCreateSharedModel")
 			.withExactArgs(sUrl, "$direct")
 			.returns(oCodeListModel);
