@@ -235,7 +235,7 @@ sap.ui.define([
 				change: oContentFactory.getHandleContentChange()
 			});
 
-			oContentFactory.setAriaLabelledBy(DynamicDateRange);
+			oContentFactory.setAriaLabelledBy(oDynamicDateRange);
 
 			return [oDynamicDateRange];
 

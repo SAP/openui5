@@ -709,7 +709,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Menu.prototype._connectVisualItem = function(oItem, oControl, iIndex) {
-			if (!oControl || Element.getElementById(oItem._getVisualControl())) {
+			if (!oControl || (Element.getElementById(oItem._getVisualControl()) && oControl.indexOfItem(oItem) !== -1)) {
 				return;
 			}
 

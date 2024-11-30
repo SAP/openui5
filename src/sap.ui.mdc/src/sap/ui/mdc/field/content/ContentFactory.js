@@ -135,6 +135,11 @@ sap.ui.define([
 		}
 	};
 
+	ContentFactory.prototype.destroy = function() {
+		BaseObject.prototype.destroy.apply(this, arguments);
+		this.exit(); // as BaseObject don't call exit
+	};
+
 	/**
 	 * Creates the suitable controls for the given content type and mode and returns the control instances.
 	 * @param {sap.ui.mdc.field.content.DefaultContent} oContentType The content type object
@@ -146,7 +151,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId, bProvideDefaultValueHelp) {
-		let aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
+		const sOperator = this._sOperator;
+		let aControlNames = oContentType.getControlNames(sContentMode, sOperator);
 		const sDefaultValueHelpName = bProvideDefaultValueHelp && oContentType.getUseDefaultValueHelp().name;
 		const oDefaultHelp = sDefaultValueHelpName && mDefaultHelps[sDefaultValueHelpName];
 		let oLoadModulesPromise;
@@ -189,7 +195,7 @@ sap.ui.define([
 						const oValueHelp = _createDefaultValueHelp.call(this, oDefaultHelp, aControls);
 
 						this.updateConditionType(); // to make sure to have current FormatOptions if Condition(s)Type already exist
-						const aContentControls = oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
+						const aContentControls = oContentType.create(this, sContentMode, sOperator, aControls, sId);
 						if (oValueHelp) {
 							aContentControls.push(oValueHelp);
 						}

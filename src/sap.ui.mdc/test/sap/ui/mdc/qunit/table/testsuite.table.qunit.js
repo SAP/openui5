@@ -37,7 +37,12 @@ sap.ui.define(function() {
 		},
 		tests: {
 			"Table": {
-				group: "Controls"
+				group: "Controls",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
 			},
 			"Column": {
 				group: "Controls"
