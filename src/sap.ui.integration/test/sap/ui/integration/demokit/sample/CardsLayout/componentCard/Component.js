@@ -3,7 +3,11 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.integration.sample.CardsLayout.ComponentCard.Component");
+	var Component = UIComponent.extend("sap.ui.integration.sample.CardsLayout.ComponentCard.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 
 	return Component;
 });

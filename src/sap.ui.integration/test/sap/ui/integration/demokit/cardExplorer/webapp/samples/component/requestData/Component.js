@@ -4,6 +4,9 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("my.component.sample.requestData.Component", {
+		metadata: {
+			manifest: "json"
+		},
 		onCardReady: function (oCard) {
 			this.oCard = oCard;
 		}

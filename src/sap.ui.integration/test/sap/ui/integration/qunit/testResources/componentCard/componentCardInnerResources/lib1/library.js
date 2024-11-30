@@ -3,6 +3,7 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 
 	var thisLib = Library.init({
 		name : "test.componentCard.lib1",
+		apiVersion: 2,
 		version: "1.0.0",
 		elements: [
 		],

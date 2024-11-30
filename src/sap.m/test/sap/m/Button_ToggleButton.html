@@ -25,7 +25,8 @@
 <script>
 	jQuery.sap.require("sap.ui.core.HTML");
 	jQuery.sap.require("sap.ui.core.IconPool");
-	const encodeXML = sap.ui.requireSync("sap/base/security/encodeXML");
+	jQuery.sap.require("sap.base.security.encodeXML");
+	const encodeXML = sap.ui.require("sap/base/security/encodeXML");
 
 	function toggleCompact() {
 		jQuery("body").toggleClass("sapUiSizeCompact");

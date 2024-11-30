@@ -15,9 +15,10 @@
 
 		<script>
 
+		jQuery.sap.require("sap.base.i18n.Localization");
 		var app = new sap.m.App("myApp");
 		var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
-		var Localization = sap.ui.requireSync("sap/base/i18n/Localization");
+		var Localization = sap.ui.require("sap/base/i18n/Localization");
 
 		var page1 = new sap.m.Page("page1", {
 			title:"DateTimePicker with Timezone",

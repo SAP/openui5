@@ -8,6 +8,9 @@ sap.ui.define([
 	var CardPreviewMode = integrationLibrary.CardPreviewMode;
 
 	var Component = UIComponent.extend("sap.ui.demo.cardExplorer.samples.preview.component.sampleComponent.Component", {
+		metadata: {
+			manifest: "json"
+		},
 		onCardReady: function (oCard) {
 			var oModel;
 

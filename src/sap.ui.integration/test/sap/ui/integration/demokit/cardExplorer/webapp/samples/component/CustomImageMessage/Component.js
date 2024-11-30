@@ -5,6 +5,9 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("my.component.sample.CustomImageMessage", {
+		metadata: {
+			manifest: "json"
+		},
 		onCardReady: function (oCard) {
 			oCard.showLoadingPlaceholders();
 
