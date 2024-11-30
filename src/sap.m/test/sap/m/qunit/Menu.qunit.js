@@ -1101,6 +1101,27 @@ sap.ui.define([
 			" to the given sap.m.MenuItem");
 	});
 
+	QUnit.test("removeItem from the aggregation and insert it later - 'connection' with unified menu / items", function(assert) {
+		//Prepare
+		var aItems = this.sut.getItems(),
+			oRemoveItem = aItems[0],
+			sRemoveUnfItemId = oRemoveItem._getVisualControl(),
+			oUnifiedMenu = Element.getElementById(oRemoveItem._getVisualParent()),
+			oUnifiedMenuItem = Element.getElementById(sRemoveUnfItemId);
+
+		//Act
+		this.sut.removeItem(oRemoveItem);
+
+		//Assert
+		assert.ok(oUnifiedMenu.indexOfItem(oUnifiedMenuItem) === -1, "unified menu item is removed from the unified menu items aggregation");
+
+		//Act
+		this.sut.insertItem(oRemoveItem, 1);
+
+		//Assert
+		assert.ok(oUnifiedMenu.indexOfItem(oUnifiedMenuItem) > -1, "unified menu item is presented in the unified menu items aggregation");
+	});
+
 	QUnit.test("onsapshow closes the menu", function(assert) {
 		//arrange
 		var fnMenuCloseSpy = sinon.spy(this.sutRootMenu._getVisualParent(), "close");

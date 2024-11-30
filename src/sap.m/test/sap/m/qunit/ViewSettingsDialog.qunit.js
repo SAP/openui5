@@ -1250,13 +1250,9 @@ sap.ui.define([
 		setTimeout(function () {
 			// store pointers to internal controls
 			var sortList = that.oVSD._sortList,
-				ariaSortListInvisibleText = that.oVSD._ariaSortListInvisibleText,
 				sortOrderList = that.oVSD._sortOrderList,
-				ariaSortOrderInvisibleText = that.oVSD._ariaSortOrderInvisibleText,
 				groupList = that.oVSD._groupList,
-				ariaGroupListInvisibleText = that.oVSD._ariaGroupListInvisibleText,
 				groupOrderList = that.oVSD._groupOrderList,
-				ariaGroupOrderInvisibleText = that.oVSD._ariaGroupOrderInvisibleText,
 				presetFilterList = that.oVSD._presetFilterList,
 				filterList = that.oVSD._filterList,
 				filterDetailList = that.oVSD._filterDetailList,
@@ -1281,13 +1277,9 @@ sap.ui.define([
 
 			// check if all internal controls are destroyed successfully
 			assert.strictEqual(sortList.bIsDestroyed, true, "sort list is destroyed successfully");
-			assert.strictEqual(ariaSortListInvisibleText.bIsDestroyed, true, "sort list aria label is destroyed successfully");
 			assert.strictEqual(sortOrderList.bIsDestroyed, true, "sort order list is destroyed successfully");
-			assert.strictEqual(ariaSortOrderInvisibleText.bIsDestroyed, true, "sort order list aria label is destroyed successfully");
 			assert.strictEqual(groupList.bIsDestroyed, true, "group list is destroyed successfully");
-			assert.strictEqual(ariaGroupListInvisibleText.bIsDestroyed, true, "group list aria label is destroyed successfully");
 			assert.strictEqual(groupOrderList.bIsDestroyed, true, "group order list is destroyed successfully");
-			assert.strictEqual(ariaGroupOrderInvisibleText.bIsDestroyed, true, "group order list aria label is destroyed successfully");
 			assert.strictEqual(presetFilterList.bIsDestroyed, true, "preset filter list is destroyed successfully");
 			assert.strictEqual(filterList.bIsDestroyed, true, "filter list is destroyed successfully");
 			assert.strictEqual(filterDetailList.bIsDestroyed, true, "filter detail list is destroyed successfully");
@@ -1307,13 +1299,9 @@ sap.ui.define([
 
 			// check if all controls are set to null correctly
 			assert.strictEqual(that.oVSD._sortList, null, "sort list is null");
-			assert.strictEqual(that.oVSD._ariaSortListInvisibleText, null, "sort list aria text is null");
 			assert.strictEqual(that.oVSD._sortOrderList, null, "sort order list is null");
-			assert.strictEqual(that.oVSD._ariaSortOrderInvisibleText, null, "sort order list aria text is null");
 			assert.strictEqual(that.oVSD._groupList, null, "group list is null");
-			assert.strictEqual(that.oVSD._ariaGroupListInvisibleText, null, "group list aria text is null");
 			assert.strictEqual(that.oVSD._groupOrderList, null, "group order list is null");
-			assert.strictEqual(that.oVSD._ariaGroupOrderInvisibleText, null, "group order list aria text is null");
 			assert.strictEqual(that.oVSD._presetFilterList, null, "preset filter list is null");
 			assert.strictEqual(that.oVSD._filterList, null, "filter list is null");
 			assert.strictEqual(that.oVSD._filterDetailList, null, "filter detail list is null");
@@ -1337,13 +1325,9 @@ sap.ui.define([
 	QUnit.test("Destroy ViewSettingsDialog that has never been opened/rendered", function (assert) {
 		// store poiners to internal controls
 		var sortList = this.oVSD._sortList,
-			ariaSortListInvisibleText = this.oVSD._ariaSortListInvisibleText,
 			sortOrderList = this.oVSD._sortOrderList,
-			ariaSortOrderInvisibleText = this.oVSD._ariaSortOrderInvisibleText,
 			groupList = this.oVSD._groupList,
-			ariaGroupListInvisibleText = this.oVSD._ariaGroupListInvisibleText,
 			groupOrderList = this.oVSD._groupOrderList,
-			ariaGroupOrderInvisibleText = this.oVSD._ariaGroupOrderInvisibleText,
 			presetFilterList = this.oVSD._presetFilterList,
 			filterList = this.oVSD._filterList,
 			filterDetailList = this.oVSD._filterDetailList,
@@ -1363,13 +1347,9 @@ sap.ui.define([
 
 		// check if all internal controls are not initialized yet
 		assert.notEqual(sortList, undefined, "sort list was initialized");
-		assert.strictEqual(ariaSortListInvisibleText, undefined, "sort list aria label is not initialized yet");
 		assert.strictEqual(sortOrderList, undefined, "sort order list is not initialized yet");
-		assert.strictEqual(ariaSortOrderInvisibleText, undefined, "sort order list aria label is not initialized yet");
 		assert.strictEqual(groupList, undefined, "group list is not initialized yet");
-		assert.strictEqual(ariaGroupListInvisibleText, undefined, "group list aria label is not initialized yet");
 		assert.strictEqual(groupOrderList, undefined, "group order list is not initialized yet");
-		assert.strictEqual(ariaGroupOrderInvisibleText, undefined, "group order list aria label is not initialized yet");
 		assert.strictEqual(presetFilterList, undefined, "preset filter list is not initialized yet");
 		assert.strictEqual(filterList, undefined, "filter list is not initialized yet");
 		assert.strictEqual(filterDetailList, undefined, "filter detail list is not initialized yet");
@@ -1447,14 +1427,12 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedSortItem(), this.oVSD.getSortItems()[1].getId(), "Second selected sort item is set successfully by selected flag");
 		assert.strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
-		assert.strictEqual(this.oVSD._sortContent.length, 4, "Sort content is initialized and has four items");
+		assert.strictEqual(this.oVSD._sortContent.length, 2, "Sort content is initialized and has two items");
 		assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
 		assert.strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
 		// Aria sort list and sort order list labels and ariaLabelledBy
-		assert.ok(document.getElementById(this.oVSD.getId() + "-sortOrderLabel"), "Sort order list aria label should be rendered");
-		assert.ok(document.getElementById(this.oVSD.getId() + "-sortListLabel"), "Sort list aria label should be rendered");
 		assert.strictEqual(this.oVSD._sortOrderList.getAriaLabelledBy().length, 1, "Sort order list should have aria ariaLabelledBy set");
 		assert.strictEqual(this.oVSD._sortList.getAriaLabelledBy().length, 1, "Sort list should have aria ariaLabelledBy set");
 
@@ -1503,13 +1481,11 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedGroupItem(), this.oVSD.getGroupItems()[1].getId(), "Second selected group item is set successfully by selected flag");
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
 		assert.strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
-		assert.strictEqual(this.oVSD._groupContent.length, 4, "Group content is initialized and has four items");
+		assert.strictEqual(this.oVSD._groupContent.length, 2, "Group content is initialized and has two items");
 		assert.strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
 		// Aria sort list and sort order list labels and ariaLabelledBy
-		assert.ok(document.getElementById(this.oVSD.getId() + "-groupOrderLabel"), "Group order list aria label should be rendered");
-		assert.ok(document.getElementById(this.oVSD.getId() + "-groupListLabel"), "Group list aria label should be rendered");
 		assert.strictEqual(this.oVSD._groupOrderList.getAriaLabelledBy().length, 1, "Group order list should have aria ariaLabelledBy set");
 		assert.strictEqual(this.oVSD._groupList.getAriaLabelledBy().length, 1, "Group list should have aria ariaLabelledBy set");
 
@@ -1554,7 +1530,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), this.oVSD.getPresetFilterItems()[1].getId(), "Second preset filter item is set successfully by selected flag");
 		assert.strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
 		assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
-		assert.strictEqual(this.oVSD._filterContent.length, 3, "Filter content is initalized and has three items");
+		assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initalized and has two items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 		assert.strictEqual(this.oVSD.getSelectedFilterItems().length, 0, "There are no selected filter items");
 		assert.strictEqual(this.oVSD._filterList.getAriaLabelledBy().length, 1, "Filter by list should have aria ariaLabelledBy set");
@@ -2236,7 +2212,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
 		assert.strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
 		assert.strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
-		assert.strictEqual(this.oVSD._filterContent.length, 3, "Filter content is initialized and has three items");
+		assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initialized and has two items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Sub-header with segmented button is not set on first page");
 		assert.deepEqual(this.oFilterState, this.oVSD.getSelectedFilterCompoundKeys(), "The computed filter keys should have the same structure as the passed one");
 		assert.ok(document.getElementById(sId + "-resetbutton"), "Filter reset button should be rendered");
@@ -2400,9 +2376,9 @@ sap.ui.define([
 
 		this.oVSD.open();
 		setTimeout(function () {
-			var listOfSortDirectionItems = that.oVSD._getPage1().getContent()[1];
+			var listOfSortDirectionItems = that.oVSD._getPage1().getContent()[0];
 			var oListItemDescending = listOfSortDirectionItems.getItems()[2];
-			var listOfOtherItems = that.oVSD._getPage1().getContent()[3];
+			var listOfOtherItems = that.oVSD._getPage1().getContent()[1];
 			var oListItemOther = listOfOtherItems.getItems()[1];
 			var vsdSortItem = that.oVSD.getSortItems()[1];
 			var spySortItem = that.spy(vsdSortItem, "setProperty");
@@ -2419,9 +2395,9 @@ sap.ui.define([
 
 			that.oVSD._switchToPage(1);
 			setTimeout(function () {
-				var list 						= that.oVSD._getPage1().getContent()[1];
+				var list 						= that.oVSD._getPage1().getContent()[0];
 				var listOfGroupItems 			= list.getItems()[2];
-				var listOfGroupDirectionItems	= that.oVSD._getPage1().getContent()[3];
+				var listOfGroupDirectionItems	= that.oVSD._getPage1().getContent()[1];
 				var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[2];
 				var vsdGroupItem 				= that.oVSD.getGroupItems()[1];
 				var spyGroupItem 				= that.spy(vsdGroupItem, "setProperty");

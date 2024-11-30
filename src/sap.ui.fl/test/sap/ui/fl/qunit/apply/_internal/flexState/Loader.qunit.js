@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
@@ -15,7 +14,6 @@ sap.ui.define([
 	JsObjectConnector,
 	Loader,
 	ManifestUtils,
-	LrepConnector,
 	ApplyStorage,
 	Version,
 	Settings,
@@ -450,6 +448,54 @@ sap.ui.define([
 				assert.ok(oStubloadVariantsAuthors.calledOnce, "then correct function of storage is called");
 				assert.equal(oStubloadVariantsAuthors.getCall(0).args[0], "test.app", "with correct reference");
 			});
+		});
+	});
+
+	QUnit.module("misc", {
+		beforeEach() {
+			this.oFlexDataResponse = {
+				appDescriptorChanges: [{fileName: "appDescriptorChange1"}, {fileName: "appDescriptorChange$"}],
+				annotationChanges: [{fileName: "annotationChange1"}, {fileName: "annotationChange%"}],
+				changes: [{fileName: "change1"}, {fileName: "change&"}],
+				comp: {
+					variants: [{fileName: "variant1"}, {fileName: "variant@"}],
+					changes: [{fileName: "compChange1"}, {fileName: "compChange#"}],
+					defaultVariants: [{fileName: "defaultVariant1"}, {fileName: "defaultVariant$"}],
+					standardVariants: [{fileName: "standardVariant1"}, {fileName: "standardVariant%"}]
+				},
+				variants: [{fileName: "variant1"}, {fileName: "variant@"}],
+				variantChanges: [{fileName: "variantChange1"}, {fileName: "variantChange#"}],
+				variantDependentControlChanges: [{fileName: "varDepControlChange1"}, {fileName: "varDepControlChange$"}],
+				variantManagementChanges: [{fileName: "variantManagementChange1"}, {fileName: "variantManagementChange%"}]
+			};
+			this.oLoadFlexDataStub = sandbox.stub(ApplyStorage, "loadFlexData").resolves(this.oFlexDataResponse);
+			sandbox.stub(ManifestUtils, "getBaseComponentNameFromManifest").returns("baseName");
+			const oRawManifest = {
+				property: "value"
+			};
+			this.oManifest = new Manifest(oRawManifest);
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("invalidFileNames", async function(assert) {
+			var mPropertyBag = {
+				manifest: this.oManifest,
+				reference: "reference"
+			};
+
+			const oResult = await Loader.loadFlexData(mPropertyBag);
+			assert.equal(oResult.changes.appDescriptorChanges.length, 1, "the appDescriptorChanges are filtered");
+			assert.equal(oResult.changes.annotationChanges.length, 1, "the annotationChanges are filtered");
+			assert.equal(oResult.changes.changes.length, 1, "the changes are filtered");
+			assert.equal(oResult.changes.comp.changes.length, 1, "the comp.changes are filtered");
+			assert.equal(oResult.changes.comp.defaultVariants.length, 1, "the comp.defaultVariants are filtered");
+			assert.equal(oResult.changes.comp.standardVariants.length, 1, "the comp.standardVariants are filtered");
+			assert.equal(oResult.changes.variants.length, 1, "the variants are filtered");
+			assert.equal(oResult.changes.variantChanges.length, 1, "the variantChanges are filtered");
+			assert.equal(oResult.changes.variantDependentControlChanges.length, 1, "the variantDependentControlChanges are filtered");
+			assert.equal(oResult.changes.variantManagementChanges.length, 1, "the variantManagementChanges are filtered");
 		});
 	});
 

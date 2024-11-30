@@ -3,16 +3,12 @@ sap.ui.define([
 	"sap/m/ViewSettingsDialog",
 	"sap/m/ViewSettingsItem",
 	"sap/m/ViewSettingsFilterItem",
-	"sap/m/ViewSettingsCustomTab",
 	"sap/m/Button",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/core/library"
-], function(MessageToast, ViewSettingsDialog, ViewSettingsItem, ViewSettingsFilterItem, ViewSettingsCustomTab, Button, App, Page, coreLibrary) {
+	"sap/ui/layout/VerticalLayout"
+], function(MessageToast, ViewSettingsDialog, ViewSettingsItem, ViewSettingsFilterItem, Button, App, Page, VerticalLayout) {
 	"use strict";
-
-	// shortcut for sap.ui.core.TitleLevel
-	var TitleLevel = coreLibrary.TitleLevel;
 
 	function handleConfirm(oEvent) {
 		if (oEvent.getParameters().filterString) {
@@ -123,12 +119,17 @@ sap.ui.define([
 		press: handleViewSettingsButtonPress
 	});
 
+	var oPageLayout = new VerticalLayout({
+		content: [
+			oViewSettingsDialogButton
+		]
+	}).addStyleClass("sapUiContentPadding");
+
 	var app = new App();
 	var page = new Page({
 		title: "ViewSettingsDialog",
-		titleLevel: TitleLevel.H1,
 		content: [
-			oViewSettingsDialogButton
+			oPageLayout
 		]
 	});
 	app.setInitialPage(page.getId());

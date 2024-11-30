@@ -4447,10 +4447,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._storeScrollLocation = function () {
-		var domRef = this.getDomRef() && this.$().width() && this.$().height();
 
-		if (!domRef || !this._bDomReady || !this._oScroller) {
-			return false;
+		if (!this.getDomRef() || !this._bDomReady || !this._oScroller) {
+			return;
 		}
 
 		this.triggerPendingLayoutUpdates();
@@ -4471,7 +4470,6 @@ sap.ui.define([
 			iOffset: iScrollTopWithinScrolledSubSection
 		};
 		this._oCurrentTabSection = null;
-		return this._oStoredScrolledSubSectionInfo;
 	};
 
 	ObjectPageLayout.prototype.onkeyup = function (oEvent) {
