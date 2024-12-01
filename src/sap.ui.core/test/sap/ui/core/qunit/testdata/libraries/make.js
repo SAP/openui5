@@ -152,7 +152,11 @@ function makeComponent(options) {
 	"sap/ui/core/UIComponent"
 ], function(UIComponent) {
 	"use strict";
-	return UIComponent.extend("${makeName(path)}.Component");
+	return UIComponent.extend("${makeName(path)}.Component" {
+		metadata: {
+			manifest: "json"
+		}
+	});
 });`;
 
 	const manifest = {

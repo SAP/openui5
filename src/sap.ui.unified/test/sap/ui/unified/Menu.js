@@ -1,4 +1,5 @@
 sap.ui.define([
+  "sap/ui/core/IconPool",
   "sap/ui/core/TooltipBase",
   "sap/ui/unified/Menu",
   "sap/ui/unified/MenuItem",
@@ -9,13 +10,11 @@ sap.ui.define([
   "sap/m/Dialog",
   "sap/m/Button",
   "sap/ui/thirdparty/jquery"
-], function(TooltipBase, Menu, MenuItem, MenuTextFieldItem, ToggleButton, Popup, Text, Dialog, Button, jQuery) {
+], function(IconPool, TooltipBase, Menu, MenuItem, MenuTextFieldItem, ToggleButton, Popup, Text, Dialog, Button, jQuery) {
   "use strict";
   var idCounter = 0;
   var aMenus = [];
   var bMenuEventingEnabled = false;
-
-  sap.ui.requireSync("sap/ui/core/IconPool");
 
   /*
    * a simple Tooltip control, inheriting from TooltipBase

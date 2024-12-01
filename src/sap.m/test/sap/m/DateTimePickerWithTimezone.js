@@ -1,4 +1,5 @@
 sap.ui.define([
+  "sap/base/i18n/Localization",
   "sap/m/App",
   "sap/m/Page",
   "sap/m/VBox",
@@ -6,13 +7,11 @@ sap.ui.define([
   "sap/m/Slider",
   "sap/ui/core/Element",
   "sap/m/Button"
-], function(App, Page, VBox, DateTimePicker, Slider, Element, Button) {
+], function(Localization, App, Page, VBox, DateTimePicker, Slider, Element, Button) {
   "use strict";
-  // Note: the HTML page 'DateTimePickerWithTimezone.html' loads this module via data-sap-ui-on-init
-
   var app = new App("myApp");
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
-  var Localization = sap.ui.requireSync("sap/base/i18n/Localization");
+  var Localization = sap.ui.require("sap/base/i18n/Localization");
 
   var page1 = new Page("page1", {
 	  title:"DateTimePicker with Timezone",

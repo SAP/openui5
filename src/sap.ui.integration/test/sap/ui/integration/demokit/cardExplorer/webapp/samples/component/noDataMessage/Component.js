@@ -7,6 +7,9 @@ sap.ui.define([
 	var CardBlockingMessageType = integrationLibrary.CardBlockingMessageType;
 
 	var Component = UIComponent.extend("my.component.sample.cardContent.Component", {
+		metadata: {
+			manifest: "json"
+		},
 		onCardReady: function (oCard) {
 			oCard.showLoadingPlaceholders();
 

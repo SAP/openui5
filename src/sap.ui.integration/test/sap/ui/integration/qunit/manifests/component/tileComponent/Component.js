@@ -3,6 +3,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	"use strict";
 
 	var Component = UIComponent.extend("test.manifest.component.tileComponent.Component", {
+		metadata: {
+			manifest: "json"
+		},
 		tileSetVisible: function (bIsVisible) {
 			this.tileVisible = bIsVisible;
 		},

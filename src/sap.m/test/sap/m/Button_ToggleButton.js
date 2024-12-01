@@ -2,6 +2,7 @@ sap.ui.define([
   "sap/base/i18n/Localization",
   "sap/ui/core/HTML",
   "sap/ui/core/IconPool",
+  "sap/base/security/encodeXML",
   "sap/ui/core/Theming",
   "sap/m/Button",
   "sap/m/Select",
@@ -22,6 +23,7 @@ sap.ui.define([
   Localization,
   HTML,
   IconPool,
+  encodeXML,
   Theming,
   Button,
   Select,
@@ -53,7 +55,7 @@ sap.ui.define([
   // shortcut for sap.m.ButtonType
   const ButtonType = mobileLibrary.ButtonType;
 
-  const encodeXML = sap.ui.requireSync("sap/base/security/encodeXML");
+  const encodeXML = sap.ui.require("sap/base/security/encodeXML");
 
   function toggleCompact() {
 	  jQuery("body").toggleClass("sapUiSizeCompact");
