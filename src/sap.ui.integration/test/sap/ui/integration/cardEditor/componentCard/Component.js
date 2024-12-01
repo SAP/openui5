@@ -4,6 +4,9 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("my.component.sample.cardContentControls.Component", {
+		metadata: {
+			manifest: "json"
+		},
 		onCardReady: function (oCard) {
 			// Holds the card for use inside the controller
 			this.card = oCard;

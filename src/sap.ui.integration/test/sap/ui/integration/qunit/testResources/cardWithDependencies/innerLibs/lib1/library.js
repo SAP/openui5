@@ -6,6 +6,7 @@ sap.ui.define([
 
 	var thisLib = Library.init({
 		name : "cardWithDependencies.innerLibs.lib1",
+		apiVersion: 2,
 		version: "1.0.0",
 		noLibraryCSS: true
 	});

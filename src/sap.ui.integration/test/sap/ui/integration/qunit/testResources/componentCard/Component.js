@@ -3,5 +3,9 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("test.componentCard.Component");
+	return UIComponent.extend("test.componentCard.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 });

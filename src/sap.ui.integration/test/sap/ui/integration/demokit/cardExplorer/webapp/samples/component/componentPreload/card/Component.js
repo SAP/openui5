@@ -3,7 +3,11 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("my.component.sample.componentPreload.Component");
+	var Component = UIComponent.extend("my.component.sample.componentPreload.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 
 	return Component;
 });

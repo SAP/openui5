@@ -3,7 +3,11 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("cards.performance.Component");
+	var Component = UIComponent.extend("cards.performance.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 
 	return Component;
 });

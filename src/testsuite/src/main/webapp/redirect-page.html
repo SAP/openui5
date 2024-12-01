@@ -1,48 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>OpenUI5 SDK - Demo Kit</title>
+	<title>OpenUI5 SDK - Demo Kit</title>
 
-    <link rel="stylesheet" href="redirect-page-resources/css/style.css">
-    <link rel="icon" href="redirect-page-resources/img/favicon.png">
+	<link rel="stylesheet" href="redirect-page-resources/css/style.css">
+	<link rel="icon" href="redirect-page-resources/img/favicon.png">
 </head>
 <body>
-    <nav id="navigation">
-        <ul id="navigation-list">
-            <li id="navigation-logo-item" class="navigation-list-item">
-				<img id="navigation-logo" src="redirect-page-resources/img/logo_ui5.png" alt="UI5 logo" onclick="redirectTo('https://ui5.sap.com/')">
+	<nav id="navigation">
+		<ul id="navigation-list">
+			<li id="navigation-logo-item" class="navigation-list-item">
+				<img id="navigation-logo" src="redirect-page-resources/img/logo_ui5.png" alt="UI5 logo" data-href="https://ui5.sap.com/">
 			</li>
-            <li class="navigation-list-item">
+			<li class="navigation-list-item">
 				<a class="navigation-link" href="https://ui5.sap.com/#/topic">Documentation</a>
 			</li>
-            <li class="navigation-list-item">
+			<li class="navigation-list-item">
 				<a class="navigation-link" href="https://ui5.sap.com/#/api">API Reference</a>
 			</li>
-            <li class="navigation-list-item">
+			<li class="navigation-list-item">
 				<a class="navigation-link" href="https://ui5.sap.com/#/controls">Samples</a>
 			</li>
-            <li class="navigation-list-item">
+			<li class="navigation-list-item">
 				<a class="navigation-link" href="https://ui5.sap.com/#/demoapps">Demo Apps</a>
 			</li>
-            <li class="navigation-list-item">
+			<li class="navigation-list-item">
 				<a class="navigation-link" href="https://ui5.sap.com/#/tools">Tools</a>
 			</li>
 			<li id="hamburger-menu-item" class="navigation-list-item">
-				<span id="hamburger-icon" onclick="onHamburgerIconClick()"></span>
+				<span id="hamburger-icon"></span>
 			</li>
-        </ul>
-    </nav>
+		</ul>
+	</nav>
 
 	<!-- Scrollbar should appear only for the content in this wrapper  -->
 	<div id="scrollable-content">
 		<header id="main-header">
 			<div id="main-headline-wrapper">
 				<p id="main-headline-text">Discover New Enterprise-Grade Horizons</p>
-				<button id="get-started-button" class="headline-button" onclick="redirectTo('https://ui5.sap.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218')">Get Started with UI5</button>
-				<button id="download-button" class="headline-button" onclick="redirectTo('https://tools.hana.ondemand.com/#sapui5')">Download</button>
+				<button id="get-started-button" class="headline-button" data-href="https://ui5.sap.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218">Get Started with UI5</button>
+				<button id="download-button" class="headline-button" data-href="https://tools.hana.ondemand.com/#sapui5">Download</button>
 			</div>
 		</header>
 
@@ -212,19 +212,6 @@
 			</div>
 		</footer>
 	</div>
-
-	<script>
-		'use strict';
-
-		function redirectTo(sSrc) {
-			window.location = sSrc;
-		}
-
-		function onHamburgerIconClick() {
-			var navigationList = document.getElementById('navigation-list');
-
-			navigationList.classList.toggle("responsive-menu-opened");
-		}
-	</script>
+	<script src="redirect-page-resources/js/init.js"></script>
 </body>
 </html>

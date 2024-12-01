@@ -5,6 +5,9 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("my.component.sample.cardContent.Component", {
+		metadata: {
+			manifest: "json"
+		},
 		onCardReady: function (oCard) {
 			oCard.addActionDefinition(new ActionDefinition({
 				type: "Custom",
