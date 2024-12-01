@@ -419,7 +419,7 @@ sap.ui.define([
 			const oIllustratedMessage = new IllustratedMessage({
 				illustrationType: IllustratedMessageType.NoData,
 				title: oItem?.getFileName(),
-				description: oLibraryResourceBundle.getText("FILE_PREVIEW_DIALOG_MAX_PREVIEW_SIZE_EXCEEDED", this.getMaxFileSizeforPreview()),
+				description: oLibraryResourceBundle.getText("FILE_PREVIEW_DIALOG_MAX_PREVIEW_SIZE_EXCEEDED", [this.getMaxFileSizeforPreview()]),
 				enableVerticalResponsiveness: true
 			});
 			return oIllustratedMessage;

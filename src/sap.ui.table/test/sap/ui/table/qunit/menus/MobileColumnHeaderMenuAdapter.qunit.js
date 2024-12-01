@@ -144,7 +144,7 @@ sap.ui.define([
 
 			const oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
 			const aQuickFilterContent = oQuickFilter.getContent();
-			const sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			const sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", [oColumn.getLabel().getText()]);
 			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
@@ -170,7 +170,7 @@ sap.ui.define([
 
 			const oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
 			const aQuickFilterContent = oQuickFilter.getContent();
-			const sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			const sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", [oColumn.getLabel().getText()]);
 			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");

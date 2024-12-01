@@ -1621,7 +1621,7 @@ sap.ui.define([
 		if (!oItem.getFileName()) {
 			sMessageText = this._oRb.getText("UPLOAD_SET_DELETE_WITHOUT_FILE_NAME_TEXT");
 		} else {
-			sMessageText = this._oRb.getText("UPLOAD_SET_DELETE_TEXT", oItem.getFileName());
+			sMessageText = this._oRb.getText("UPLOAD_SET_DELETE_TEXT", [oItem.getFileName()]);
 		}
 		this._oItemToBeDeleted = UploadSetItem._findById(oItem.getId(), this._getAllItems());
 		MessageBox.warning(sMessageText, {

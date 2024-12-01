@@ -4792,7 +4792,7 @@ sap.ui.define([
 		this.clock.tick(400);
 
 		//Assert
-		assert.ok(oAnnounceSpy.calledWith(oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2)), "The description has correct text.");
+		assert.ok(oAnnounceSpy.calledWith(oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", [2])), "The description has correct text.");
 
 		//Clean up
 		oAnnounceSpy.restore();

@@ -697,7 +697,7 @@ sap.ui.define([
 			var sContextBasedAdaptationId = oUniqueContext.contextBasedAdaptationId;
 			var oContextBasedAdaptation = {
 				id: sContextBasedAdaptationId,
-				title: _oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", sContext),
+				title: _oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", [sContext]),
 				contexts: {
 					role: [sContext]
 				},

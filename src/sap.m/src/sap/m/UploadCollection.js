@@ -2210,7 +2210,7 @@ sap.ui.define([
 			if (!sFileName) {
 				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_WITHOUT_FILENAME_TEXT");
 			} else {
-				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", sFileName);
+				sMessageText = this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", [sFileName]);
 			}
 			this._oItemForDelete = oItemForDelete;
 			MessageBox.show(sMessageText, {

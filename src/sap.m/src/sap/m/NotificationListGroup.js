@@ -343,7 +343,7 @@ function(
 	 */
 	NotificationListGroup.prototype._getMaxNumberReachedMsg = function () {
 		return {
-			title: RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', this.getItems().length - maxNumberOfNotifications),
+			title: RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', [this.getItems().length - maxNumberOfNotifications]),
 			description: RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY')
 		};
 	};

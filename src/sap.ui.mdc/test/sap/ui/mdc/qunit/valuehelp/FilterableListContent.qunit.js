@@ -85,7 +85,7 @@ sap.ui.define([
 	QUnit.test("getFormattedTokenizerTitle", function(assert) {
 
 		assert.equal(oContent.getFormattedTokenizerTitle(0), oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitleNoCount"), "formatted TokenizerTitle");
-		assert.equal(oContent.getFormattedTokenizerTitle(1), oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle", 1), "formatted TokenizerTitle");
+		assert.equal(oContent.getFormattedTokenizerTitle(1), oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle", [1]), "formatted TokenizerTitle");
 
 		oContent.setTokenizerTitle("myTitleText");
 		assert.equal(oContent.getFormattedTokenizerTitle(0), "myTitleText", "formatted TokenizerTitle");

@@ -5829,7 +5829,7 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		// assert
-		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", 2), "'MultiComboBox contains N tokens' text is set.");
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", [2]), "'MultiComboBox contains N tokens' text is set.");
 
 		//arrange
 		var sInvisibleTextId1 = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
@@ -7723,7 +7723,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// assert
-		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 4));
+		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", [4]));
 
 		// Act
 		this.oMCB1.getItems()[0].setEnabled(false);
@@ -7731,7 +7731,7 @@ sap.ui.define([
 
 		// assert
 		oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
-		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 3));
+		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", [3]));
 	});
 
 	QUnit.module("Expanded state (N-more)", {
