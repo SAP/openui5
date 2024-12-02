@@ -1,4 +1,4 @@
-sap.ui.define(function() {
+sap.ui.define(() => {
 	"use strict";
 
 	return {
@@ -12,7 +12,6 @@ sap.ui.define(function() {
 				version: 1
 			},
 			ui5: {
-				language: "EN",
 				theme: "sap_horizon"
 			},
 			coverage: {
