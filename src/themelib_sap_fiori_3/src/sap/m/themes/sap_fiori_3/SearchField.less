@@ -11,10 +11,10 @@
 @_sap_m_SearchField_ButtonSize: 2.125rem;
 @_sap_m_SearchField_ButtonFontSize: 1rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
-@_sap_m_SearchField_ResetIcon: "\e03e";
+@_sap_m_SearchField_ResetIcon: '\e03e';
 
 .sapMSFF {
-	border-radius: @sapUiFieldBorderCornerRadius;
+	border-radius: var(--sapField_BorderCornerRadius);
 }
 
 .sapMSFDisabled {
@@ -30,18 +30,18 @@
 	text-shadow: none;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB {
-	color: @sapUiHighlight;
+.sapMFocus > .sapMSFF > .sapMSFB {
+	color: var(--sapHighlightColor);
 }
 
-.sapMSFB:hover{
-	background-color: @sapUiButtonLiteHoverBackground;
+.sapMSFB:hover {
+	background-color: var(--sapButton_Lite_Hover_Background);
 }
 
-.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
-.sapMSFF>.sapMSFB.sapMSFBA {
-	background-color: @sapUiButtonLiteActiveBackground;
-	color: @sapUiContentContrastIconColor;
+.sapMSFF > .sapMSFB:not(.sapMSFBF):active,
+.sapMSFF > .sapMSFB.sapMSFBA {
+	background-color: var(--sapButton_Lite_Active_Background);
+	color: var(--sapContent_ContrastIconColor);
 }
 
 .sapMSFB:first-of-type {
@@ -49,6 +49,7 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMSFB:first-of-type {
 		margin-left: 0;
 	}

@@ -11,22 +11,22 @@
 @_sap_m_SearchField_ButtonSize: 2.25rem;
 @_sap_m_SearchField_ButtonFontSize: 1rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
-@_sap_m_SearchField_ResetIcon: "\e03e";
+@_sap_m_SearchField_ResetIcon: '\e03e';
 @_sap_m_SearchField_PlaceholderFontStyle: normal;
-@_sap_m_SearchField_ActiveBackgroundStyle: @sapUiFieldBackgroundStyle;
+@_sap_m_SearchField_ActiveBackgroundStyle: var(--sapField_BackgroundStyle);
 
 .sapMSFF {
-	border-radius: @sapUiFieldBorderCornerRadius;
+	border-radius: var(--sapField_BorderCornerRadius);
 }
 
 .sapMSFDisabled {
-	opacity: @sapUiContentDisabledOpacity;
+	opacity: var(--sapContent_DisabledOpacity);
 }
 
 .sapMSFB {
-	border-radius: @sapUiFieldBorderCornerRadius;
-	color: @sapUiButtonTextColor;
-	line-height: @_sap_m_SearchField_ButtonSize - @sapUiFieldBorderWidth * 2; // center the icon vertically
+	border-radius: var(--sapField_BorderCornerRadius);
+	color: var(--sapButton_TextColor);
+	line-height: @_sap_m_SearchField_ButtonSize - @sapUiFieldBorderWidth * 2; /* center the icon vertically */
 
 	&:first-of-type {
 		margin-left: 0.25rem;
@@ -37,32 +37,32 @@
 	}
 
 	&:hover {
-		box-shadow: @sapUiFieldHoverShadow;
-		background-color: @sapUiButtonHoverBackground;
-		border-left: 2px solid @sapUiButtonHoverBorderColor; // contrast themes specific
+		box-shadow: var(--sapField_Hover_Shadow);
+		background-color: var(--sapButton_Hover_Background);
+		border-left: 2px solid var(--sapButton_Hover_BorderColor); /* contrast themes specific */
 		border-right: 2px solid transparent;
 	}
 
-	&.sapMSFR:not(:last-child):hover { // if there is no search button the right border is not needed
-		border-right: 2px solid @sapUiButtonHoverBorderColor; // contrast themes specific
+	&.sapMSFR:not(:last-child):hover { /* if there is no search button the right border is not needed */
+		border-right: 2px solid var(--sapButton_Hover_BorderColor); /* contrast themes specific */
 	}
 
 	&:active,
-	&.sapMSFBA // Firefox specific
-	{
-		box-shadow: @sapUiFieldHoverShadow;
-		color: @sapUiButtonSelectedTextColor;
-		background-color: @sapUiButtonHoverBackground;
+	&.sapMSFBA { /* Firefox specific */
+		box-shadow: var(--sapField_Hover_Shadow);
+		color: var(--sapButton_Selected_TextColor);
+		background-color: var(--sapButton_Hover_Background);
 	}
 }
 
 .sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
-	background-color: @sapUiFieldHoverBackground;
+	background-color: var(--sapField_Hover_Background);
 }
 
 .sapMSF.sapMFocus {
+
 	.sapMSFF {
-		background-color: @sapUiFieldFocusBackground;
+		background-color: var(--sapField_Focus_Background);
 	}
 
 	&:hover .sapMSFF {
