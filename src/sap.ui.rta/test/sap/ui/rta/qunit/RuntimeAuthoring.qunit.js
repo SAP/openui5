@@ -6,54 +6,56 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/core/Element",
-	"sap/ui/Device",
 	"sap/ui/dt/DesignTimeMetadata",
-	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
-	"sap/ui/rta/Utils",
 	"sap/ui/rta/util/ReloadManager",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/Device"
 ], function(
 	RtaQunitUtils,
 	Log,
 	MessageBox,
 	MessageToast,
 	Element,
-	Device,
 	DesignTimeMetadata,
-	OverlayRegistry,
 	DOMUtil,
+	OverlayRegistry,
 	KeyCodes,
 	FlexRuntimeInfoAPI,
-	PersistenceWriteAPI,
-	ChangesWriteAPI,
-	VersionsAPI,
 	Versions,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
+	ReloadInfoAPI,
+	VersionsAPI,
 	Layer,
 	nextUIUpdate,
 	QUnitUtils,
 	RTABaseCommand,
 	CommandFactory,
 	Stack,
-	RuntimeAuthoring,
 	ChangeVisualization,
-	RtaUtils,
 	ReloadManager,
-	sinon
+	RuntimeAuthoring,
+	RtaUtils,
+	sinon,
+	Device
 ) {
 	"use strict";
 
@@ -513,11 +515,13 @@ sap.ui.define([
 			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			var oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
 			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
+			var oRemoveInfoSessionStub = sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
 			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 
 			return this.oRta.stop()
 			.then(function() {
+				assert.strictEqual(oRemoveInfoSessionStub.callCount, 1, "then the info session storage is removed");
 				var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
 				assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
 				assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
