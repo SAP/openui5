@@ -121,5 +121,15 @@
         "text": " sap.tnt.SideNavigation: Add proper bottom margin for all navigation list items"
       }
     ]
+  },
+  "1.108.38": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "0f532c55bfa3f9f0149fc560e6f6f537f1665fac",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add tooltip to the up and down arrow buttons"
+      }
+    ]
   }
 }

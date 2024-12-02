@@ -1801,5 +1801,25 @@
         "text": " sap.m.MessagePage: Icon ignored from screen readers"
       }
     ]
+  },
+  "1.108.38": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "9072b151bda9154c130cfa93cea0f2c60a429bcf",
+        "type": "FIX",
+        "text": " We've now set the correct state for the Selected property on the UploadSetItem"
+      },
+      {
+        "id": "1cbd8983821291aebbae3335f64dcdb98fd4c1bb",
+        "type": "FIX",
+        "text": " sap.m.Image: Inline svg rendering issue corrected"
+      },
+      {
+        "id": "06a8853c282c5f64e9fbda9b44495dbd7d3285bc",
+        "type": "FIX",
+        "text": " We've now fixed the truncation of timestamp issue in the feedListItem"
+      }
+    ]
   }
 }
