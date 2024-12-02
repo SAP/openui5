@@ -344,7 +344,8 @@ sap.ui.define([
 	 * DateFormat.getDateTimeWithTimezoneInstance({showDate: false, showTime: false}).format(oDate, "America/New_York");
 	 * // output: "Americas, New York"
 	 *
-	 * @param {Date} oJSDate The date to format
+	 * @param {Date} [oJSDate] The date to format. If it is <code>null</code> or <code>undefined</code> only the
+	 *   timezone will be formatted, any other invalid date is formatted as empty string.
 	 * @param {string} [sTimezone] The IANA timezone ID in which the date will be calculated and
 	 *   formatted e.g. "America/New_York". If the parameter is omitted, <code>null</code> or an empty string, the
 	 *   timezone will be taken from {@link module:sap/base/i18n/Localization.getTimezone Localization.getTimezone}.
@@ -2416,9 +2417,9 @@ sap.ui.define([
 			}
 		} else {
 			if (!isValidDateObject(vJSDate)) {
-				// Although an invalid date was given, the DATETIME_WITH_TIMEZONE instance might
-				// have a pattern with the timezone (VV) inside then the IANA timezone ID is returned
-				if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE && this.oFormatOptions.pattern.includes("VV")) {
+				const bNullish = vJSDate === undefined || vJSDate === null;
+				if (bNullish && this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE
+						&& this.oFormatOptions.pattern.includes("VV")) {
 					return this.oLocaleData.getTimezoneTranslations()[sTimezone] || sTimezone;
 				}
 				Log.error("The given date instance isn't valid.");
