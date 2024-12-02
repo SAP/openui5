@@ -74,13 +74,23 @@ sap.ui.require([
 							"text": "sap",
 							"nodes": [
 								{
-									"text": "ui",
+									"text": "m",
 									"nodes": [
 										{
-											"text": "Device.js",
+											"text": "Button.js",
 											"nodes": [],
 											"selected": false
 										}, {
+											"text": "Text.js",
+											"nodes": [],
+											"selected": false
+										}
+									],
+									"selected": false
+								}, {
+									"text": "ui",
+									"nodes": [
+										{
 											"text": "core",
 											"nodes": [
 												{
@@ -94,18 +104,8 @@ sap.ui.require([
 												}
 											],
 											"selected": false
-										}
-									],
-									"selected": false
-								}, {
-									"text": "m",
-									"nodes": [
-										{
-											"text": "Button.js",
-											"nodes": [],
-											"selected": false
 										}, {
-											"text": "Text.js",
+											"text": "Device.js",
 											"nodes": [],
 											"selected": false
 										}
