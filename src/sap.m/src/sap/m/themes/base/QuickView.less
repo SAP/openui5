@@ -11,8 +11,8 @@
 @_sap_m_QuickViewCard_PagePadding: 0;
 
 @_sap_m_QuickView_TitleMarginBottom: 0.5rem;
-@_sap_m_QuickView_TitleFontSize: @sapMFontHeader5Size;
-@_sap_m_QuickView_FormTitleFontSize: @sapMFontHeader5Size;
+@_sap_m_QuickView_TitleFontSize: var(--sapFontHeader5Size);
+@_sap_m_QuickView_FormTitleFontSize: var(--sapFontHeader5Size);
 
 .sapMQuickView .sapMNav,
 .sapMQuickViewCard .sapMNav {
@@ -20,7 +20,7 @@
 }
 
 .sapMQuickViewCard .sapUiHLayoutChildWrapper a {
-	margin-right: 1px; // this is needed for the focus to be visible on the right side (BCP 1980423560)
+	margin-right: 1px; /* this is needed for the focus to be visible on the right side (BCP 1980423560) */
 }
 
 .sapMQuickViewCard.sapMQuickViewCardNoScroll {
@@ -28,6 +28,7 @@
 }
 
 .sapMQuickViewPage {
+
 	.sapUiHLayout.sapUiHLayoutNoWrap .sapUiHLayoutChildWrapper {
 		max-width: 100%;
 	}
@@ -90,6 +91,7 @@ html.sap-tablet .sapMQuickViewPage.sapMPage > header {
 	bottom: 0;
 	font-size: 16px;
 }
+
 .sapUiSizeCompact .sapMQuickView.sapMPopover header.sapMBar {
 	height: 2.5rem;
 }
@@ -180,7 +182,6 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 }
 
 .sapMQuickViewPage .sapUiVltCell {
-	display: -webkit-box;
 	display: flex;
 }
 
@@ -202,7 +203,7 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 	margin-right: 3px;
 }
 
-.sapMQuickViewPage div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
+.sapMQuickViewPage div[class*='sapUiRespGrid'] > div[class*='sapUiRespGridSpan'] {
 	overflow: visible;
 }
 
@@ -212,41 +213,41 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 
 html.sap-desktop .sapMQuickViewHeader,
 html.sap-tablet .sapMQuickViewHeader {
-	font-size: @sapMFontHeader5Size;
+	font-size: var(--sapFontHeader5Size);
 }
 
 .sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewTitle {
-	font-size: @sapMFontHeader6Size;
+	font-size: var(--sapFontHeader6Size);
 }
 
 .sapMQuickViewPage h3,
 .sapMQuickViewPage .sapUiForm .sapUiFormTitle {
-	font-family: @sapUiFontHeaderFamily;
+	font-family: var(--sapFontHeaderFamily);
 	font-size: @_sap_m_QuickView_FormTitleFontSize;
 	font-weight: @sapUiFontHeaderWeight;
 	line-height: normal;
-	color: @sapUiGroupTitleTextColor;
+	color: var(--sapGroup_TitleTextColor);
 	padding-left: 0;
 }
 
 .sapMQuickViewPage .sapUiVltCell .sapMLnk {
-	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader5Size;
+	font-family: var(--sapFontHeaderFamily);
+	font-size: var(--sapFontHeader5Size);
 	font-weight: @sapUiFontHeaderWeight;
 	line-height: normal;
 	white-space: normal;
-	color: @sapUiLink;
+	color: var(--sapLinkColor);
 
 	&:active {
-		color: @sapUiLinkActive;
+		color: var(--sapLink_Active_Color);
 	}
 
 	&:visited {
-		color: @sapUiLinkVisited;
+		color: var(--sapLink_Visited_Color);
 	}
 
 	&hover:not(.sapMLnkDsbl) {
-		color: @sapUiLinkHover;
+		color: var(--sapLink_Hover_Color);
 	}
 }
 
@@ -255,13 +256,13 @@ html.sap-tablet .sapMQuickViewHeader {
 }
 
 .sapMQuickViewPage .sapUiVlt .sapMText {
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	font-size: @sapMFontMediumSize;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMQuickViewPage .sapMFlexItem:last-child {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
 
 .sapMQuickViewPage .sapUiIcon:focus,
@@ -287,6 +288,7 @@ html.sap-tablet.sap-ios .sapMPanel .sapMQuickViewCard {
 
 /* Compact size */
 .sapUiSizeCompact {
+
 	.sapMQuickViewPage.sapMPage > header.sapMPageHeader {
 		height: 2.5rem;
 	}
