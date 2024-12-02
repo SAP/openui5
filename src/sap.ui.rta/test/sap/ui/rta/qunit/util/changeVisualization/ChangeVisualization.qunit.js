@@ -1308,12 +1308,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		/*
-		** This test is temporary disabled because there is an issue with a change from the core colleagues regarding popovers
-		** The test will be enabled again once it has been rewritten
-		** Also there is the wrong popover used in the test.
-		** It should be the "detailsPopover" rather than the "ChangeVisualizationMenuPopover"
-
 		QUnit.test("when a change indicator with a related indicator (two display controls for the same change) is hovered/focused", async function(assert) {
 			function checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay) {
 				assert.ok(
@@ -1384,7 +1378,6 @@ sap.ui.define([
 			await nextUIUpdate();
 			checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay);
 		});
-		*/
 
 		QUnit.test("overlay focusability", async function(assert) {
 			prepareChanges([
