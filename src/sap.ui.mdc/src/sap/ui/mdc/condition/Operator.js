@@ -241,7 +241,7 @@ sap.ui.define([
 		},
 		destroy: function() {
 			this._oMethodOverwrites = null;
-			BaseObject.protoype.destroy.apply(this, arguments);
+			BaseObject.prototype.destroy.apply(this, arguments);
 		}
 	});
 

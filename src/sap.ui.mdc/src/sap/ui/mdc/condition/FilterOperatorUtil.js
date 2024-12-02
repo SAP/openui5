@@ -22,6 +22,7 @@ sap.ui.define([
 		'sap/ui/core/StaticArea',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/type/Integer',
+		'sap/ui/model/BindingMode',
 		'sap/base/i18n/Localization'
 	],
 
@@ -47,6 +48,7 @@ sap.ui.define([
 		JSONModel,
 		// the Integer type must be  available for some of the RangeOperators
 		Integer,
+		BindingMode,
 		Localization
 	) => {
 		"use strict";
@@ -1181,8 +1183,8 @@ sap.ui.define([
 						if (Field && sValueHelp) {
 
 							const oField = new Field(sId, {
-								value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
-								display: 'Description',
+								value: { path: sPath, type: oType, mode: BindingMode.TwoWay, targetType: 'raw' },
+								display: FieldDisplay.Description,
 								width: "100%",
 								valueHelp: sValueHelp
 							});
@@ -1224,7 +1226,7 @@ sap.ui.define([
 						const sReplace = _getMonths.apply(this)[iValue];
 
 						if (bHideOperator) {
-							return sReplace + "," + iYear;
+							return sReplace + " " + iYear;
 						} else {
 							const replaceRegExp0 = new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g");
 							const replaceRegExp1 = new RegExp("\\$" + 1 + "|" + 1 + "\\$" + "|" + "\\{" + 1 + "\\}", "g");
@@ -1255,8 +1257,8 @@ sap.ui.define([
 							if (sValueHelp) {
 
 								oField = new Field(sId, {
-									value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
-									display: 'Description',
+									value: { path: sPath, type: oType, mode: BindingMode.TwoWay, targetType: 'raw' },
+									display: FieldDisplay.Description,
 									width: "100%",
 									valueHelp: sValueHelp
 								});
@@ -1267,7 +1269,7 @@ sap.ui.define([
 
 						if (iIndex == 1) {
 							oField = new Field(sId, {
-								value: { path: "$this>", type: oType, mode: 'TwoWay', targetType: 'raw' },
+								value: { path: sPath, type: oType, mode: BindingMode.TwoWay, targetType: 'raw' },
 								width: "100%"
 							});
 						}
