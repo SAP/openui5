@@ -171,7 +171,6 @@
 
 				<items>
 					<ColumnListItem
-						press="onItemPress"
 						highlight="{= ${documents>uploadState} === 'Complete' ? 'Indication05' : null }"
 					>
 

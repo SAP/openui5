@@ -27,7 +27,7 @@
 			</headerToolbar>
 
 			<dependents>
-				<plugins:ColumnResizer columnResize="onColumnResize"/>
+				<plugins:ColumnResizer/>
 				<columnmenu:Menu id="menu">
 					<columnmenu:QuickSort>
 						<columnmenu:items>

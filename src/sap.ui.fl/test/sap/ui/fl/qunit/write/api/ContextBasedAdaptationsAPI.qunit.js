@@ -2049,7 +2049,7 @@ sap.ui.define([
 								role: ["/IPRO/MANAGER"]
 							},
 							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", "/IPRO/MANAGER")
+							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/MANAGER"])
 						},
 						changes: {
 							clonedFrom: [
@@ -2071,7 +2071,7 @@ sap.ui.define([
 								role: ["Z_SAP_UI_FLEX_KEY_USER"]
 							},
 							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", "Z_SAP_UI_FLEX_KEY_USER")
+							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["Z_SAP_UI_FLEX_KEY_USER"])
 						},
 						changes: {
 							clonedFrom: [
@@ -2096,7 +2096,7 @@ sap.ui.define([
 								role: ["/IPRO/CONTRACT_VIEWER"]
 							},
 							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", "/IPRO/CONTRACT_VIEWER")
+							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/CONTRACT_VIEWER"])
 						},
 						changes: {
 							clonedFrom: [
@@ -2149,7 +2149,7 @@ sap.ui.define([
 								role: ["/IPRO/MANAGER"]
 							},
 							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", "/IPRO/MANAGER")
+							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/MANAGER"])
 						},
 						changes: {
 							clonedFrom: [
@@ -2172,7 +2172,7 @@ sap.ui.define([
 								role: ["Z_SAP_UI_FLEX_KEY_USER"]
 							},
 							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", "Z_SAP_UI_FLEX_KEY_USER")
+							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["Z_SAP_UI_FLEX_KEY_USER"])
 						},
 						changes: {
 							clonedFrom: [
@@ -2198,7 +2198,7 @@ sap.ui.define([
 								role: ["/IPRO/CONTRACT_VIEWER"]
 							},
 							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", "/IPRO/CONTRACT_VIEWER")
+							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/CONTRACT_VIEWER"])
 						},
 						changes: {
 							clonedFrom: [

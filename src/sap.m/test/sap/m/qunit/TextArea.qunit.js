@@ -625,13 +625,13 @@ sap.ui.define([
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
 		assert.strictEqual(oTA.getMaxLength(), 6, "The TextArea maxLength property is correctly set to 0");
-		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_LEFT", "0"), "The counter is empty");
+		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_LEFT", ["0"]), "The counter is empty");
 
 		//arrange
 		oTA.setValue(sInitValue);
 		await nextUIUpdate();
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
-		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_EXCEEDED", 12), "The counter is empty");
+		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_EXCEEDED", [12]), "The counter is empty");
 		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), true, "The TextArea has got an aria-labelledby attribute");
 		assert.strictEqual(oTA.$("inner").attr("aria-labelledby"), oCounter[0].id, "The TextArea aria-labelledby attribute is set to counter id correctly");
 

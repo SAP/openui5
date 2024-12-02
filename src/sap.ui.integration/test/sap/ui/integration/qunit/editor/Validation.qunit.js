@@ -914,14 +914,14 @@ sap.ui.define([
 								var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
+								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", [2]), oMsgStrip.getText(), "Default Min List Text");
 								oMultiComboBox.setSelectedKeys(["key1"]);
 								EditorQunitUtils.wait(500).then(async function () {
 									oMultiComboBox.focus();
 									await nextUIUpdate();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-									assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
+									assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", [2]), oMsgStrip.getText(), "Default Min List Text");
 									oMultiComboBox.setSelectedKeys(["key1", "key2"]);
 									EditorQunitUtils.wait(500).then(async function () {
 										oMultiComboBox.focus();
@@ -1016,21 +1016,21 @@ sap.ui.define([
 								var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
+								assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", [2]), oMsgStrip.getText(), "Default Min List Text");
 								oMultiComboBox.setSelectedKeys(["key1"]);
 								EditorQunitUtils.wait(500).then(async function () {
 									oMultiComboBox.focus();
 									await nextUIUpdate();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-									assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", 2), oMsgStrip.getText(), "Default Min List Text");
+									assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMINLENGTH", [2]), oMsgStrip.getText(), "Default Min List Text");
 									oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4", "key5"]);
 									oField1._settingsButton.focus();
 									EditorQunitUtils.wait(500).then(async function () {
 										oMultiComboBox.focus();
 										await nextUIUpdate();
 										assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
-										assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMAXLENGTH", 4), oMsgStrip.getText(), "Default Max List Text");
+										assert.equal(oDefaultBundle.getText("EDITOR_VAL_LISTMAXLENGTH", [4]), oMsgStrip.getText(), "Default Max List Text");
 										resolve();
 									});
 								});

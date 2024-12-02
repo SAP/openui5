@@ -234,7 +234,7 @@ sap.ui.define([
 			if (mData.codeSnippet !== undefined) {
 				this.getView().getModel("controls").setProperty("/codeSnippet", mData.codeSnippet);
 			} else if (mData.error) {
-				var sNotFoundText = this.getView().getModel("i18n").getResourceBundle().getText("TestRecorder.Inspect.Snippet.NotFound.Text", "#" + mData.domElementId);
+				var sNotFoundText = this.getView().getModel("i18n").getResourceBundle().getText("TestRecorder.Inspect.Snippet.NotFound.Text", ["#" + mData.domElementId]);
 				this.getView().getModel("controls").setProperty("/codeSnippet", sNotFoundText);
 			}
 		},

@@ -1378,9 +1378,8 @@ sap.ui.define([
 			oHoveredIndicatorElement.dispatchEvent(new Event("focusout"));
 
 			// When the detail popover opens, the connected overlays must be highlighted
-			const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
-			this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
-			await oOpenPopoverPromise;
+			const oButtonDomRef = OverlayRegistry.getOverlay("Comp1---idMain1--rb1").getDomRef();
+			QUnitUtils.triggerEvent("click", oButtonDomRef);
 
 			await nextUIUpdate();
 			checkOnClasses(oHoveredOverlay, oRelatedIndicatorOverlay);

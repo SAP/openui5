@@ -1313,7 +1313,7 @@ sap.ui.define([
 
 		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
 		assert.ok(oIndicator, true, "N-more label is added.");
-		assert.strictEqual(oIndicator.innerHTML, oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iHiddenTokens), "N-more label's text is correct.");
+		assert.strictEqual(oIndicator.innerHTML, oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", [iHiddenTokens]), "N-more label's text is correct.");
 
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Loose);
 		await nextUIUpdate();
@@ -1349,7 +1349,7 @@ sap.ui.define([
 		assert.ok(aTokens[1].$().hasClass("sapMHiddenToken"), "The last token is hidden.");
 
 		assert.ok(oIndicator, true, "An indicator label is added.");
-		assert.strictEqual(oIndicator.innerHTML, oRb.getText("TOKENIZER_SHOW_ALL_ITEMS", 2), "N-items label's text is correct.");
+		assert.strictEqual(oIndicator.innerHTML, oRb.getText("TOKENIZER_SHOW_ALL_ITEMS", [2]), "N-items label's text is correct.");
 	});
 
 	QUnit.test("_handleNMoreIndicator", function(assert) {

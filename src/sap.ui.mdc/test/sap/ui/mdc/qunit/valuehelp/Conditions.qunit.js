@@ -342,7 +342,7 @@ sap.ui.define([
 	QUnit.test("getFormattedTitle", function(assert) {
 
 		assert.equal(oConditions.getFormattedTitle(0), oResourceBundle.getText("valuehelp.DEFINECONDITIONSNONUMBER"), "formatted title");
-		assert.equal(oConditions.getFormattedTitle(1), oResourceBundle.getText("valuehelp.DEFINECONDITIONS", 1), "formatted title");
+		assert.equal(oConditions.getFormattedTitle(1), oResourceBundle.getText("valuehelp.DEFINECONDITIONS", [1]), "formatted title");
 		oConditions.setTitle("Text");
 		assert.equal(oConditions.getFormattedTitle(0), "Text", "formatted title");
 
@@ -359,7 +359,7 @@ sap.ui.define([
 	QUnit.test("getFormattedTokenizerTitle", function(assert) {
 
 		assert.equal(oConditions.getFormattedTokenizerTitle(0), oResourceBundle.getText("valuehelp.DEFINECONDITIONS.TokenizerTitleNoCount"), "formatted TokenizerTitle");
-		assert.equal(oConditions.getFormattedTokenizerTitle(1), oResourceBundle.getText("valuehelp.DEFINECONDITIONS.TokenizerTitle", 1), "formatted TokenizerTitle");
+		assert.equal(oConditions.getFormattedTokenizerTitle(1), oResourceBundle.getText("valuehelp.DEFINECONDITIONS.TokenizerTitle", [1]), "formatted TokenizerTitle");
 
 		oConditions.setTokenizerTitle("myTitleText");
 		assert.equal(oConditions.getFormattedTokenizerTitle(0), "myTitleText", "formatted TokenizerTitle");
