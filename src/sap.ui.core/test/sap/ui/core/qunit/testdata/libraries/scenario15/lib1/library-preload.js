@@ -20,7 +20,11 @@ sap.ui.predefine("testlibs/scenario15/lib1/comp/Component",[
 	"sap/ui/core/UIComponent"
 ], function(UIComponent) {
 	"use strict";
-	return UIComponent.extend("testlibs.scenario15.lib1.comp.Component");
+	return UIComponent.extend("testlibs.scenario15.lib1.comp.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 });
 sap.ui.require.preload({
 	"testlibs/scenario15/lib1/manifest.json":"{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {\n\t\t\t\t\"testlibs.scenario15.lib3\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario15.lib4\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario15.lib5\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\",\n\t\t\t\t\t\"lazy\": true\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}",

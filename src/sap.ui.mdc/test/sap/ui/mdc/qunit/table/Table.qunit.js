@@ -4860,9 +4860,9 @@ sap.ui.define([
 				assert.ok(that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
 				assert.ok(that.getFilterInfoBar().getVisible(), "Initial filter conditions: Filter info bar is visible");
 				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.ONE_FILTER_ACTIVE", oListFormat.format(["NameLabel"])),
+					oResourceBundle.getText("table.ONE_FILTER_ACTIVE", [oListFormat.format(["NameLabel"])]),
 					"Initial filter conditions: The filter info bar text is correct (1 filter)");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), oResourceBundle.getText("table.ONE_FILTER_ACTIVE", oListFormat.format(["NameLabel"])), "The associated invisible text is correct");
+				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), oResourceBundle.getText("table.ONE_FILTER_ACTIVE", [oListFormat.format(["NameLabel"])]), "The associated invisible text is correct");
 				assert.strictEqual(that.getFilterInfoBar().getAriaLabelledBy()[0], that.getFilterInfoText().getId(), "Filter info bar is labelled with the contained text.");
 
 				that.oTable.setFilterConditions({

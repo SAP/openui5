@@ -249,7 +249,7 @@ sap.ui.define([
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 			var oContextBasedAdaptationMenu = this.oToolbar.getControl("contextBasedAdaptationMenu");
 			assert.ok(oContextBasedAdaptationMenu.getEnabled(), "then the context-based adaptation menu is enabled");
-			var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR", "Sales");
+			var sExpectedTitle = this.oToolbar.getTextResources().getText("BTN_ADAPTING_FOR", ["Sales"]);
 			assert.strictEqual(oContextBasedAdaptationMenu.getText(), sExpectedTitle, "then the menu text is rendered correctly ");
 			assert.ok(this.oToolbar.getControl("saveAsAdaptation").getEnabled(), "then the save as new adaptation button is enabled");
 			assert.ok(this.oToolbar.getControl("manageAdaptations").getEnabled(), "then the manage adaptations button is enabled");

@@ -551,12 +551,12 @@ sap.ui.define([
 
 		sText = oOptionLast.getText(this.ddr);
 
-		var sLastText = oRb.getText("DYNAMIC_DATE_LASTX_TITLE", "Days / Months");
+		var sLastText = oRb.getText("DYNAMIC_DATE_LASTX_TITLE", ["Days / Months"]);
 		assert.strictEqual(sText, sLastText, "the text is correct");
 
 		sText = oOptionNext.getText(this.ddr);
 
-		var sNextText = oRb.getText("DYNAMIC_DATE_NEXTX_TITLE", "Weeks / Quarters");
+		var sNextText = oRb.getText("DYNAMIC_DATE_NEXTX_TITLE", ["Weeks / Quarters"]);
 		assert.strictEqual(sText, sNextText, "the text is correct");
 
 		oOptionLast.destroy();

@@ -16,7 +16,11 @@ sap.ui.predefine("testlibs/scenario16/embeddingLib/embeddedComponent/Component",
 	"sap/ui/core/UIComponent"
 ], function(UIComponent) {
 	"use strict";
-	return UIComponent.extend("testlibs.scenario16.embeddingLib.embeddedComponent.Component");
+	return UIComponent.extend("testlibs.scenario16.embeddingLib.embeddedComponent.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 });
 sap.ui.require.preload({
 	"testlibs/scenario16/embeddingLib/manifest.json":"{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {}\n\t\t}\n\t}\n}",

@@ -927,7 +927,7 @@ sap.ui.define([
 		assert.ok($badgeIndicator.length, "Badge is rendered on the root tab");
 		assert.strictEqual($badgeIndicator.attr("aria-label"), oRB.getText("ICONTABFILTER_BADGE"),"'aria-label' is correct");
 		assert.ok(oRootTab.$().attr("aria-labelledby").indexOf($badgeIndicator.attr("id")) === 0, "aria-labelledby starts with the badge indicator id");
-		assert.strictEqual(oInvisibleMsgDomRef.textContent, oRB.getText("ICONTABFILTER_BADGE_MSG", oRootTab.getText()), "badge is announced");
+		assert.strictEqual(oInvisibleMsgDomRef.textContent, oRB.getText("ICONTABFILTER_BADGE_MSG", [oRootTab.getText()]), "badge is announced");
 	});
 
 	QUnit.test("Badge is added on a child tab", function (assert) {

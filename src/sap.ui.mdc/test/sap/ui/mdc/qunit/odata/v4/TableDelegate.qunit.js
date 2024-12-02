@@ -1482,7 +1482,7 @@ sap.ui.define([
 			aggregations: {Name: {}}
 		}, "Group"), {
 			validation: MessageType.Information,
-			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", "Name")
+			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", ["Name"])
 		}, "Grouping and aggreagtion can't be used simulatneously");
 
 		assert.deepEqual(this.oTable.validateState({

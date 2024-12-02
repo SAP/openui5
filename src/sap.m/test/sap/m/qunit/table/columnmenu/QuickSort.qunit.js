@@ -51,7 +51,7 @@ sap.ui.define([
 
 	QUnit.test("Label", function(assert) {
 		const oBundle = Library.getResourceBundleFor("sap.m");
-		let sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
+		let sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", ["A"]);
 		let aItems = this.oQuickSort.getItems();
 		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label of single item is correct.");
 
@@ -62,9 +62,9 @@ sap.ui.define([
 		});
 		this.oQuickSort.addItem(oItem);
 		aItems = this.oQuickSort.getItems();
-		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
+		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", ["A"]);
 		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label of first of two items is correct.");
-		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "B");
+		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", ["B"]);
 		assert.equal(aItems[1]._getLabel(aItems.length), sLabel, "QuickSort label of second of two items correct.");
 	});
 
@@ -89,8 +89,8 @@ sap.ui.define([
 		assert.notOk(this.oQuickSort._oContent, "The content is destroyed after addItem call");
 		const aQuickActions = this.oQuickSort.getEffectiveQuickActions();
 		assert.equal(aQuickActions.length, 2, "The quick sort has 2 quick actions");
-		assert.equal(aQuickActions[0].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A"), "The label for the quick action is set correctly");
-		assert.equal(aQuickActions[1].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", "B"), "The label for the quick action is set correctly");
+		assert.equal(aQuickActions[0].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", ["A"]), "The label for the quick action is set correctly");
+		assert.equal(aQuickActions[1].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", ["B"]), "The label for the quick action is set correctly");
 
 		function testItems(aItems, sortOrder) {
 			assert.equal(aItems.length, 2, "The quick sort has 2 buttons");

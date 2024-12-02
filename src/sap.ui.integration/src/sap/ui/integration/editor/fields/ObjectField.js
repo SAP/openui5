@@ -1604,7 +1604,7 @@ sap.ui.define([
 			var oList = that.buildTranslationsList(sParameterId + "_control_objectdetails_popover_translation_page_value_list");
 			var oTranslationsFooter = that.buildTranslationsFooter(oList, false);
 			that._oTranslationListPage = new Page({
-				title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TRANSLATION_LIST_TITLE", "{languages>/property}"),
+				title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TRANSLATION_LIST_TITLE", ["{languages>/property}"]),
 				showNavButton: true,
 				navButtonPress: fnNavBack,
 				content: oList,
@@ -1879,7 +1879,7 @@ sap.ui.define([
 				placement: sPlacement,
 				contentWidth: "300px",
 				contentHeight: "345px",
-				title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TRANSLATION_LIST_TITLE", "{languages>/property}"),
+				title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TRANSLATION_LIST_TITLE", ["{languages>/property}"]),
 				content: oList,
 				footer: oTranslationsFooter
 			}).addStyleClass("sapUiIntegrationFieldTranslation");
