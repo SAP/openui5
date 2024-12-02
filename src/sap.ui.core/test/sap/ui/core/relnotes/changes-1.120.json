@@ -903,5 +903,25 @@
         "text": " sap/ui/model/analytics/AnalyticalBinding#updateAnalyticalInfo: keep attribute properties in additional select"
       }
     ]
+  },
+  "1.120.24": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "9cdc337946e025e465c54bfb15109e311bb44915",
+        "type": "FIX",
+        "text": " CommandExecution: Log error when command not found + make destroy fail-safe"
+      },
+      {
+        "id": "43130c9cac486634ee46e6ba7ecfefb6ac1a5b51",
+        "type": "FIX",
+        "text": " Test Starter: Support ui5:// URLs for \"page\""
+      },
+      {
+        "id": "0881f7178734e175ff2e7231400b3ffafc240456",
+        "type": "FIX",
+        "text": " Test Starter: Support resource-roots configuration"
+      }
+    ]
   }
 }

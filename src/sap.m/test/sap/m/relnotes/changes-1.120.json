@@ -1021,5 +1021,35 @@
         "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
       }
     ]
+  },
+  "1.120.24": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "fd212dfe0cd9ee8bbebfbd304ef53c679f866e36",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon ignored from screen readers"
+      },
+      {
+        "id": "3f8eeea94e039931b0db1d38cae54b277c008f93",
+        "type": "FIX",
+        "text": " We've now set the correct state for the Selected property on the UploadSetItem"
+      },
+      {
+        "id": "a33feb2ba5206422359f152f586f77329c3c95be",
+        "type": "FIX",
+        "text": " sap.m.Image: Inline svg rendering issue corrected"
+      },
+      {
+        "id": "5a2f2747010e6a9c4bc9cf427215965b71687034",
+        "type": "FIX",
+        "text": " We've now fixed the truncation of timestamp issue in the feedListItem"
+      },
+      {
+        "id": "c8a7908892a843c9aba2b918ae1ee21d0e48257c",
+        "type": "FIX",
+        "text": " CellSelector: RTL flag is set on initialization"
+      }
+    ]
   }
 }
