@@ -323,6 +323,7 @@ sap.ui.define([
 				})
 				: [oAggregation.groupLevels[iLevel - 1]];
 			if (!iLevel) {
+				// Note: group levels are in front, in original order, followed by leaf level
 				aGroupBy = oAggregation.groupLevels.concat(aGroupBy);
 			}
 
@@ -354,7 +355,7 @@ sap.ui.define([
 				aGroupBy.forEach(function (sGroup) {
 					var aAdditionally = oAggregation.group[sGroup].additionally;
 
-					if (aAdditionally) {
+					if (aAdditionally) { // Note: addt'l properties intentionally at end
 						aGroupBy.push.apply(aGroupBy, aAdditionally);
 					}
 				});
