@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/format/DateFormat",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/test/TestUtils",
 	"sap/m/TimePickerClocks",
@@ -30,12 +31,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Configuration",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
 	qutils,
 	createAndAppendDiv,
 	DateFormat,
+	Localization,
 	InvisibleText,
 	TestUtils,
 	TimePickerClocks,
@@ -63,6 +66,7 @@ sap.ui.define([
 	oCore,
 	UI5Date,
 	Configuration,
+	nextUIUpdate,
 	Element
 ) {
 	"use strict";
@@ -1424,6 +1428,49 @@ sap.ui.define([
 
 		//cleanup
 		oTP.destroy();
+	});
+
+	QUnit.test("support2400 - The value 24:00:00 works correctly in scenarios when the mask is set and only the displayFormat is specified", async function(assert) {
+		//prepare
+		Localization.setLanguage("de-DE");
+		await nextUIUpdate();
+		const tpId = "timepicker";
+		const oTP = new TimePicker(tpId, {
+			support2400: true,
+			maskMode: 'On',
+			displayFormat: 'HH:mm'
+		}).placeAt("content");
+		await nextUIUpdate();
+
+		//act
+		oTP._handleInputChange('24:00');
+		await nextUIUpdate();
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00:00", "Value is set to 24:00:00");
+		assert.ok(oTP._bValid, "value is valid");
+		assert.equal(document.getElementById(tpId + "-inner").value, '24:00', "input value is correct");
+
+		//act
+		oTP._handleInputChange('23:24');
+
+		//assert
+		assert.equal(oTP.getValue(), "23:24:00", "Value is set to 23:24:00");
+		assert.ok(oTP._bValid, "value is valid");
+		assert.equal(document.getElementById(tpId + "-inner").value, '23:24', "input value is correct");
+
+		//act
+		oTP._handleInputChange('24:24');
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00:00", "Value is set to 24:00:00");
+		assert.ok(oTP._bValid, "value is valid");
+		assert.equal(document.getElementById(tpId + "-inner").value, '24:00', "input value is correct");
+
+		//cleanup
+		oTP.destroy();
+		Localization.setLanguage("en-US");
+		await nextUIUpdate();
 	});
 
 	QUnit.test("support2400 - 24:00:00 value works correctly in all scenarios", function(assert) {
