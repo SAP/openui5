@@ -1,7 +1,58 @@
 {
   "1.132.0": {
-    "date": "November 2024",
+    "date": "December 2024",
     "notes": [
+      {
+        "id": "54c99bb20a95839a123fd5769b231bb250fd159e",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon ignored from screen readers"
+      },
+      {
+        "id": "c073376f1f50fb3467b6124d8c5af107201d5b82",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: adjust inner list announcements"
+      },
+      {
+        "id": "62d4753b1076cb37daecdad8196dadf9da84faa3",
+        "type": "FIX",
+        "text": " sap.m.Menu: Connection between sap.m.MenuItem and sap.ui.unified.MenuItem is handled correctly now"
+      },
+      {
+        "id": "2bb2697b1388afc0da3b974d477c69ce8785e826",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Improve accessibility sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011093"
+          }
+        ]
+      },
+      {
+        "id": "5cce8a840d4f889c45908d0f3b0c2c2c47fb7ce5",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Improved arrow navigation"
+      },
+      {
+        "id": "0c62caf18298e7ac80d15a1e4c21e06c04c0bea9",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: Introducing 'src' property"
+      },
+      {
+        "id": "6fa0093ce7e1edd25f1d939d8b32a5ae441d3886",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: first week of year is now correct"
+      },
+      {
+        "id": "66e738f911fde45b90a12226512900185405593e",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolHeader: update visual design for Horizon themes"
+      },
+      {
+        "id": "204edc30d152a9d44b712083c9b277b5e6b3f393",
+        "type": "FIX",
+        "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
+      },
       {
         "id": "47a94f8fc3e769cf29ede15fdd0581e57bd63adf",
         "type": "FIX",

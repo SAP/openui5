@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "66e738f911fde45b90a12226512900185405593e",
+        "type": "FEATURE",
+        "text": " sap.tnt.ToolHeader: update visual design for Horizon themes"
+      }
+    ]
+  }
+}

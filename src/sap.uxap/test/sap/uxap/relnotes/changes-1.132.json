@@ -1,7 +1,22 @@
 {
   "1.132.0": {
-    "date": "November 2024",
+    "date": "December 2024",
     "notes": [
+      {
+        "id": "d0c849e069e5adfa98edb4fbd0e73a8730747f9b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Revert \" Calc FIX\""
+      },
+      {
+        "id": "58f18604598fa5efa056aba4b75c7a6bdd82e123",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Remove additional role"
+      },
+      {
+        "id": "74b1d54cc8a95c4e2c1881e6baa5de3fc3c3846c",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Calc FIX"
+      },
       {
         "id": "153b96be844e67b76514086283f77f3fba412f1e",
         "type": "FIX",

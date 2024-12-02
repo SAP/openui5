@@ -1,7 +1,12 @@
 {
   "1.132.0": {
-    "date": "November 2024",
+    "date": "December 2024",
     "notes": [
+      {
+        "id": "fa2109b7fdc98c1187e7a32bc6694c9b6b719c2b",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: YearPicker content now fits in limited size"
+      },
       {
         "id": "edab71c850e04a5721e3f95c4a6a48069fbc2278",
         "type": "FIX",

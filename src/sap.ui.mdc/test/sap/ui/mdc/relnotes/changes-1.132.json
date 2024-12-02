@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "e171189a42b6fc21ccc15a23baed2dd1caebe7aa",
+        "type": "FIX",
+        "text": " sap/ui/model/type/Unit#setFormatOptions: Introduce defaulting of decimals to 3 for unit types"
+      }
+    ]
+  }
+}

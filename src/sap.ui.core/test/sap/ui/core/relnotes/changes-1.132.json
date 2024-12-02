@@ -1,7 +1,27 @@
 {
   "1.132.0": {
-    "date": "November 2024",
+    "date": "December 2024",
     "notes": [
+      {
+        "id": "55148e2698c83c7a9ef7c7df53a8632629d81b1e",
+        "type": "FIX",
+        "text": " FESR: semanticStepName not set for interaction"
+      },
+      {
+        "id": "642db137bf1ae17c81f7ce5f0a0e14638303010c",
+        "type": "FIX",
+        "text": " sap.base.config: fix logging for URL parameters"
+      },
+      {
+        "id": "a500d77e530fc41f58cf8d1c4aded4c88349516b",
+        "type": "FIX",
+        "text": " CommandExecution: Log error when command not found + make destroy fail-safe"
+      },
+      {
+        "id": "e171189a42b6fc21ccc15a23baed2dd1caebe7aa",
+        "type": "FIX",
+        "text": " sap/ui/model/type/Unit#setFormatOptions: Introduce defaulting of decimals to 3 for unit types"
+      },
       {
         "id": "85fc59fbd1378d595b66f729324c9e2578f6de9a",
         "type": "FIX",

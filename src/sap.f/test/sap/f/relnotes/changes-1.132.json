@@ -1,7 +1,17 @@
 {
   "1.132.0": {
-    "date": "November 2024",
+    "date": "December 2024",
     "notes": [
+      {
+        "id": "215bc45b2a817b2830515993029e5ed27b8745e6",
+        "type": "FIX",
+        "text": " Integration Card: state color in numeric header side indicator fixed"
+      },
+      {
+        "id": "b2d1dc60adcf68afa7db1ef3655eee079caf857b",
+        "type": "FIX",
+        "text": " Integration Cards: card with paginator sets proper manifest url to child card"
+      },
       {
         "id": "164defed8df51135ef19194b09e9776604125feb",
         "type": "FIX",

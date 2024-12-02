@@ -1,7 +1,17 @@
 {
   "1.132.0": {
-    "date": "November 2024",
+    "date": "December 2024",
     "notes": [
+      {
+        "id": "abf9950e60a114fc9efaef970b9840695b00250a",
+        "type": "FEATURE",
+        "text": " Integration Cards: ComboBox filter support for groups"
+      },
+      {
+        "id": "b2d1dc60adcf68afa7db1ef3655eee079caf857b",
+        "type": "FIX",
+        "text": " Integration Cards: card with paginator sets proper manifest url to child card"
+      },
       {
         "id": "895388dbfc2bbdc6e82b511d276111424cc055fa",
         "type": "FIX",
