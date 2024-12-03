@@ -546,7 +546,9 @@ sap.ui.define([
 			sandbox.stub(VariantUtils, "getAllVariantManagementControlIds").returns([aVMControl.getId()]);
 			await nextUIUpdate();
 
-			const vResponse = await ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges});
+			const vResponse = await ControlPersonalizationWriteAPI.save(
+				{selector: {appComponent: this.oComp}, changes: aSuccessfulChanges}
+			);
 
 			assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
 			assert.strictEqual(oSaveStub.lastCall.args[0], aSuccessfulChanges, "the two changes were passed to the FlexController");
@@ -796,6 +798,38 @@ sap.ui.define([
 				}, "then second successfully applied change was returned");
 				assert.equal(aSuccessfulChanges[0].getVariantReference(), "mockview--VariantManagement1",
 					"the variant reference is correct");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'add' without 'useStaticArea' and two valid variant changes, and the VM control is only in the Static Area", function(assert) {
+			const oGetRelevantVMControlIdStub = sandbox.stub(VariantUtils, "getRelevantVariantManagementControlId")
+			.withArgs(sinon.match.any, sinon.match.any, /* bUseStaticArea = */undefined)
+			.returns(undefined)
+			.withArgs(sinon.match.any, sinon.match.any, /* bUseStaticArea = */true)
+			.returns("mockview--VariantManagement1");
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
+			})
+			.then(function(aSuccessfulChanges) {
+				assert.equal(this.fnLogErrorStub.callCount, 0, "no errors occurred");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "ChangesWriteAPI.apply has been called twice");
+				assert.deepEqual(aSuccessfulChanges[0].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then first successfully applied change was returned");
+				assert.equal(aSuccessfulChanges[0].getVariantReference(), "mockview--VariantManagement1",
+					"the variant reference is correct");
+				assert.deepEqual(aSuccessfulChanges[1].getSelector(), {
+					id: "mockview--ObjectPageLayout",
+					idIsLocal: true
+				}, "then second successfully applied change was returned");
+				assert.equal(aSuccessfulChanges[0].getVariantReference(), "mockview--VariantManagement1",
+					"the variant reference is correct");
+				assert.strictEqual(
+					oGetRelevantVMControlIdStub.callCount,
+					1,
+					"then getRelevantVMControlId is called only once for multiple changes with the same selector"
+				);
 			}.bind(this));
 		});
 	});
