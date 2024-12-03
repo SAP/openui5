@@ -178,10 +178,6 @@ function(
 			this.getDomRef("handle").setAttribute("data-sap-ui-swt", b ? this._sOn : this._sOff);
 		};
 
-		Switch.prototype._getInvisibleElement = function(){
-			return this.$("invisible");
-		};
-
 		Switch.prototype.getInvisibleElementId = function() {
 			return this.getId() + "-invisible";
 		};
@@ -192,20 +188,11 @@ function(
 
 			switch (this.getType()) {
 				case SwitchType.Default:
-					if (bState) {
-						sText = this.getCustomTextOn().trim() || oBundle.getText("SWITCH_ON");
-					} else {
-						sText = this.getCustomTextOff().trim() || oBundle.getText("SWITCH_OFF");
-					}
+					sText = bState ? this.getCustomTextOn().trim() : this.getCustomTextOff().trim();
 					break;
 
 				case SwitchType.AcceptReject:
-					if (bState) {
-						sText = oBundle.getText("SWITCH_ARIA_ACCEPT");
-					} else {
-						sText = oBundle.getText("SWITCH_ARIA_REJECT");
-					}
-
+					sText = bState ? oBundle.getText("SWITCH_ARIA_ACCEPT") : oBundle.getText("SWITCH_ARIA_REJECT");
 					break;
 
 				// no default

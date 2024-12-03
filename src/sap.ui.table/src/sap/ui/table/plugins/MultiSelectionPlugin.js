@@ -611,7 +611,7 @@ sap.ui.define([
 			const oIcon = oPlugin.getAggregation("icon");
 			const iSelectedCount = oPlugin.getSelectedCount();
 
-			if (oPlugin.getSelectableCount() === iSelectedCount) {
+			if (oPlugin.getSelectableCount() === iSelectedCount && iSelectedCount !== 0) {
 				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon));
 			} else if (iSelectedCount !== 0) {
 				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));

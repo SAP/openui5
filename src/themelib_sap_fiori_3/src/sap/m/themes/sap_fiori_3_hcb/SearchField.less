@@ -11,11 +11,11 @@
 @_sap_m_SearchField_ButtonSize: 2.125rem;
 @_sap_m_SearchField_ButtonFontSize: 1rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
-@_sap_m_SearchField_ResetIcon: "\e03e";
-@_sap_m_SearchField_Border: 0.0625rem @sapUiFieldBorderStyle @sapUiFieldBorderColor;
+@_sap_m_SearchField_ResetIcon: '\e03e';
+@_sap_m_SearchField_Border: 0.0625rem var(--sapField_BorderStyle) var(--sapField_BorderColor);
 
 .sapMSFF {
-	border-radius: @sapUiFieldBorderCornerRadius;
+	border-radius: var(--sapField_BorderCornerRadius);
 }
 
 .sapMSFDisabled {
@@ -23,9 +23,9 @@
 }
 
 html.sap-desktop .sapMFocus > .sapMSFF::before {
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	position: absolute;
-	content: " ";
+	content: ' ';
 	top: 1px;
 	right: 1px;
 	bottom: 1px;
@@ -43,33 +43,32 @@ html.sap-desktop .sapMFocus > .sapMSFF::before {
 	text-shadow: none;
 }
 
-.sapMFocus>.sapMSFF>.sapMSFB {
-	color: @sapUiContentContrastIconColor; // contrast themes specific
+.sapMFocus > .sapMSFF > .sapMSFB {
+	color: var(--sapContent_ContrastIconColor); /* contrast themes specific */
 }
 
 .sapMSFB:hover {
-	background-color: @sapUiButtonLiteHoverBackground;
-	border-left: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
+	background-color: var(--sapButton_Lite_Hover_Background);
+	border-left: 1px solid var(--sapList_SelectionBorderColor); /* contrast themes specific */
 	border-right: 1px solid transparent;
 }
 
 .sapMSFB.sapMSFR:hover {
-	box-sizing: border-box; // contrast themes specific
+	box-sizing: border-box; /* contrast themes specific */
 }
 
 .sapMSFB.sapMSFR:last-child:hover {
-	box-sizing: content-box; // contrast themes specific
+	box-sizing: content-box; /* contrast themes specific */
 }
 
-
-.sapMSFB.sapMSFR:not(:last-child):hover { // if there is no search button the right border is not needed
-	border-right: 1px solid @sapUiListSelectionBorderColor; // contrast themes specific
+.sapMSFB.sapMSFR:not(:last-child):hover { /* if there is no search button the right border is not needed */
+	border-right: 1px solid var(--sapList_SelectionBorderColor); /* contrast themes specific */
 }
 
-.sapMSFF>.sapMSFB:not(.sapMSFBF):active,
-.sapMSFF>.sapMSFB.sapMSFBA {
-	background-color: @sapUiButtonLiteActiveBackground;
-	color: @sapUiContentContrastIconColor;
+.sapMSFF > .sapMSFB:not(.sapMSFBF):active,
+.sapMSFF > .sapMSFB.sapMSFBA {
+	background-color: var(--sapButton_Lite_Active_Background);
+	color: var(--sapContent_ContrastIconColor);
 }
 
 .sapMSFB:first-of-type {
@@ -77,6 +76,7 @@ html.sap-desktop .sapMFocus > .sapMSFF::before {
 }
 
 .sapUiSizeCompact {
+
 	.sapMSFB:first-of-type {
 		margin-left: 0;
 	}

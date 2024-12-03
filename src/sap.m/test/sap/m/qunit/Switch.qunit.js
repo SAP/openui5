@@ -328,7 +328,7 @@ sap.ui.define([
 
 		oSwitch.setCustomTextOn("");
 		oInfo = oSwitch.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ON"), "Description");
+		assert.notOk(oInfo.description, "There is no additional default description of the state");
 
 		oSwitch.setType("AcceptReject");
 		oInfo = oSwitch.getAccessibilityInfo();
@@ -436,7 +436,7 @@ sap.ui.define([
 		}
 
 		assert.strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), switchOnText, 'The switch handle "data-sap-ui-swt" attribute must have the value of "On"');
-		assert.strictEqual(oSwitch.$("invisible").text(), switchOnText, 'The invisible switch label should be "On"');
+		assert.notOk(oSwitch.$("invisible").text(), "There is no additional default description of the 'On' state");
 
 		if (oSwitch.getEnabled()) {
 			assert.equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindext" attribute must have the value of "0"');
@@ -470,7 +470,7 @@ sap.ui.define([
 		}
 
 		assert.strictEqual(oSwitch.$("handle").attr("data-sap-ui-swt"), switchOffText, 'The switch handle "data-sap-ui-swt" attribute must have the value of "Off"');
-		assert.strictEqual(oSwitch.$("invisible").text(), switchOffText, 'The invisible switch label should be "Off"');
+		assert.notOk(oSwitch.$("invisible").text(), 'There is no additional default description of the "Off" state');
 
 		if (mDomRefs.oSwitch.getEnabled()) {
 			assert.equal(oSwitch.$().attr("tabindex"), 0, 'The switch "tabindex" attribute must have the value of "0"');
@@ -986,13 +986,13 @@ sap.ui.define([
 
 		// assert
 		assert.ok($IT.length, "invisible text exists");
-		assert.equal($IT.html(), "Off", "its text is correct");
+		assert.notOk($IT.html(), "There is no default 'Off 'state text");
 
 		// act
 		this.switch.setState(true);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// assert
-		assert.equal($IT.html(), "On", "its text is correct");
+		assert.notOk($IT.html(), "There is no default 'On' state text");
 	});
 });

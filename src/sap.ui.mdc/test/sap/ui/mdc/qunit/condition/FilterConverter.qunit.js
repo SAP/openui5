@@ -2,26 +2,47 @@
  * ${copyright}
  */
 
-/*global QUnit */
+/*global QUnit, sinon */
 /*eslint no-warning-comments: 0 */
 
 sap.ui.define([
 		"sap/ui/mdc/condition/ConditionModel",
 		"sap/ui/mdc/condition/Condition",
 		"sap/ui/mdc/condition/FilterConverter",
-		"sap/ui/mdc/enums/OperatorName",
 		"sap/ui/mdc/condition/FilterOperatorUtil",
+		"sap/ui/mdc/condition/Operator",
+		"sap/ui/mdc/enums/BaseType",
+		"sap/ui/mdc/enums/OperatorName",
 		"sap/ui/mdc/enums/OperatorOverwrite",
-		"sap/ui/model/Filter"
-		], function(ConditionModel, Condition, FilterConverter, OperatorName, FilterOperatorUtil, OperatorOverwrite, Filter) {
+		"sap/ui/model/Filter",
+		"sap/ui/model/type/String",
+		"sap/base/Log"
+		], function(ConditionModel, Condition, FilterConverter, FilterOperatorUtil, Operator, BaseType, OperatorName, OperatorOverwrite, Filter, StringType, Log) {
 	"use strict";
 
 	let oCM;
+	let oConditionTypes;
+	let oStringType;
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.mdc.condition.FilterConverter", {
+	QUnit.module("sap.ui.mdc.condition.FilterConverter.createFilters", {
 		beforeEach: function() {
 			oCM = new ConditionModel();
+			oStringType = new StringType();
+			oConditionTypes = {
+				"fieldPath1": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath1/foo": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath1*/foo": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath1*/foo*/bar": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath1+/foo": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath2": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath2/bar": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath2/foo": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath2*/bar": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath2+/bar": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"fieldPath3": {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+				"$search": {type: oStringType, baseType: BaseType.String, caseSensitive: true}
+			};
 		},
 
 		afterEach: function() {
@@ -29,12 +50,15 @@ sap.ui.define([
 				oCM.destroy();
 				oCM = undefined;
 			}
+			oStringType.destroy();
+			oStringType = undefined;
+			oConditionTypes = undefined;
 		}
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing the basic format of filter the and and or structor", function(assert) {
-		let oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+	QUnit.test("testing the basic format of filter the and and or structor", function(assert) {
+		let oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 		assert.strictEqual(oFilter, null, "filter is null");
 		let result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "no filters set", "result should be an empty filter");
@@ -42,8 +66,9 @@ sap.ui.define([
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, [1, 100]));
 		oCM.addCondition("fieldPath2/bar", Condition.createCondition(OperatorName.EQ, ["bar"]));
+		oCM.addCondition("fieldPath2/bar", Condition.createCondition("XXX", ["X"])); // unknown operatord should be ignored
 
-		oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
@@ -51,11 +76,11 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing a single include and a single exclude for one FieldPath", function(assert) {
+	QUnit.test("testing a single include and a single exclude for one FieldPath", function(assert) {
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, ["A", "Z"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "2 filters must be returned on top level");
@@ -65,12 +90,12 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing multiple include for one FieldPath", function(assert) {
+	QUnit.test("testing multiple include for one FieldPath", function(assert) {
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, ["A", "Z"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["Y"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 3, "3 filters must be returned on top level (multiple NE filters)");
@@ -79,13 +104,13 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing multiple include and exclude conditions", function(assert) {
+	QUnit.test("testing multiple include and exclude conditions", function(assert) {
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["FOO"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["BAR"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["Y"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.ok(oFilter.bAnd, "exclude filters must be connected via AND");
@@ -95,14 +120,14 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing multiple include and exclude conditions for different fieldPath", function(assert) {
+	QUnit.test("testing multiple include and exclude conditions for different fieldPath", function(assert) {
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.BT, ["A", "Z"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["X"]));
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.NE, ["Y"]));
 		oCM.addCondition("fieldPath2/bar", Condition.createCondition(OperatorName.EQ, ["FOO"]));
 		oCM.addCondition("fieldPath2/bar", Condition.createCondition(OperatorName.EQ, ["BAR"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "2 filters must be returned on top level");
@@ -113,11 +138,12 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing basic Search conditions", function(assert) {
+	QUnit.test("testing basic Search conditions", function(assert) {
 		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["FOO"]));
 		oCM.addCondition("$search", Condition.createCondition(OperatorName.EQ, ["search"]));
+		oCM.addCondition("$search", Condition.createCondition(OperatorName.NE, ["search"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "fieldPath1/foo EQ 'FOO'", "result filter has the expected format and $search is ignored");
@@ -125,10 +151,10 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing conditions with multiple parts", function(assert) {
+	QUnit.test("testing conditions with multiple parts", function(assert) {
 		oCM.addCondition("*fieldPath1,fieldPath2*", Condition.createCondition(OperatorName.EQ, ["FOO"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "(fieldPath1 EQ 'FOO' or fieldPath2 EQ 'FOO')", "result filter has the expected format");
@@ -136,13 +162,13 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing include and exclude Any support together with a normal fieldPath", function(assert) {
+	QUnit.test("testing include and exclude Any support together with a normal fieldPath", function(assert) {
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.BT, [1, 100]));
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.NE, ["bar"]));
 		oCM.addCondition("fieldPath2/foo", Condition.createCondition(OperatorName.EQ, ["bar"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 		let filter = oFilter.aFilters[0];
 		if (filter.sPath !== "fieldPath1") {
 			filter = filter.aFilters[1]; // as order could be different
@@ -156,10 +182,10 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing wrong any condition fieldPath", function(assert) {
+	QUnit.test("testing wrong any condition fieldPath", function(assert) {
 		oCM.addCondition("fieldPath1*/foo*/bar", Condition.createCondition(OperatorName.EQ, ["bar"]));
 		try {
-			FilterConverter.createFilters( oCM.getAllConditions(), {});
+			FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 			assert.ok(false, "exception not raised");
 		} catch (error) {
 			assert.ok(true, "exception should be raised");
@@ -168,13 +194,13 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing include and exclude operations for Any conditions", function(assert) {
+	QUnit.test("testing include and exclude operations for Any conditions", function(assert) {
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo1"]));
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo2"]));
 		oCM.addCondition("fieldPath2*/bar", Condition.createCondition(OperatorName.EQ, ["bar1"]));
 		oCM.addCondition("fieldPath2*/bar", Condition.createCondition(OperatorName.EQ, ["bar2"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
@@ -183,13 +209,13 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("FilterConverter.createFilters: testing include and exclude operations for All conditions", function(assert) {
+	QUnit.test("testing include and exclude operations for All conditions", function(assert) {
 		oCM.addCondition("fieldPath1+/foo", Condition.createCondition(OperatorName.EQ, ["foo1"]));
 		oCM.addCondition("fieldPath1+/foo", Condition.createCondition(OperatorName.EQ, ["foo2"]));
 		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.EQ, ["bar1"]));
 		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.EQ, ["bar2"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
@@ -197,18 +223,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("FilterConverter.createFilters: testing Empty operation for Any conditions", function(assert) {
+	QUnit.test("testing Empty operation for Any conditions", function(assert) {
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.Empty, []));
 		oCM.addCondition("fieldPath1*/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(result, "L1:fieldPath1 Any (L1/foo EQ '' or L1/foo EQ 'foo')", "result contains the expected Any filter");
 
 	});
 
-	QUnit.test("FilterConverter.createFilters: testing Nullable Empty operation for Any conditions", function(assert) {
+	QUnit.test("testing Nullable Empty operation for Any conditions", function(assert) {
 		const oEmptyOp = FilterOperatorUtil.getOperator(OperatorName.Empty);
 		oEmptyOp.overwrite(OperatorOverwrite.getModelFilter,
 			function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
@@ -224,7 +250,7 @@ sap.ui.define([
 		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.Empty, []));
 		oCM.addCondition("fieldPath2+/bar", Condition.createCondition(OperatorName.EQ, ["bar2"]));
 
-		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {});
+		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
 		assert.strictEqual(oFilter.aFilters.length, 2, "two filters must be returned on top level");
@@ -232,15 +258,15 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("FilterConverter.createFilters: testing caseSensitive types", function(assert) {
+	QUnit.test("testing caseSensitive types", function(assert) {
 		oCM.addCondition("fieldPath1", Condition.createCondition(OperatorName.EQ, ["Foo1"]));
 		oCM.addCondition("fieldPath2", Condition.createCondition(OperatorName.EQ, ["Foo2"]));
 		oCM.addCondition("fieldPath3", Condition.createCondition(OperatorName.EQ, ["Foo3"]));
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {
-			"fieldPath1" : {type: null, caseSensitive: false},	// the first property should be handled caseInsensitive
-			"fieldPath2" : {type: null, caseSensitive: true},
-			"fieldPath3" : {type: null}
+			"fieldPath1" : {type: oStringType, baseType: BaseType.String, caseSensitive: false},	// the first property should be handled caseInsensitive
+			"fieldPath2" : {type: oStringType, baseType: BaseType.String, caseSensitive: true},
+			"fieldPath3" : {type: oStringType, baseType: BaseType.String}
 		});
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);
@@ -251,5 +277,76 @@ sap.ui.define([
 		assert.strictEqual(result, "(tolower(fieldPath1) EQ tolower('Foo1') and fieldPath2 EQ 'Foo2' and fieldPath3 EQ 'Foo3')", "result contains the filter");
 
 	});
+
+	QUnit.test("testing Error in Filter creation", function(assert) {
+		oCM.addCondition("fieldPath1/foo", Condition.createCondition(OperatorName.EQ, ["foo"]));
+
+		const oOperator = FilterOperatorUtil.getOperator(OperatorName.EQ);
+		sinon.stub(Operator.prototype, "getModelFilter").throws(new Error("Test"));
+		sinon.spy(Log, "error");
+
+		try {
+			FilterConverter.createFilters( oCM.getAllConditions(), oConditionTypes);
+			assert.ok(Log.error.calledOnce, "Error shown in Log");
+		} catch (oError) {
+			assert.ok(false, "Exception must not be thrown");
+		}
+
+		oOperator.getModelFilter.restore();
+		Log.error.restore();
+
+	});
+
+	let oFakeFilterBar;
+	QUnit.module("sap.ui.mdc.condition.FilterConverter", {
+		beforeEach: function() {
+			oStringType = new StringType();
+			oFakeFilterBar = {
+				_getPropertyByName: (sFieldPath) => {
+					if (sFieldPath === "fieldPath1") {
+						return {
+							name: "fieldPath1",
+							typeConfig: {typeInstance: oStringType}
+						};
+					}
+				},
+				_getFilterField: (sFieldPath) => {
+					if (sFieldPath === "fieldPath2") {
+						return {
+							getFormatOptions: () => {return {originalDateType: oStringType};}
+						};
+					} else {
+						return {
+							getFormatOptions: () => {return {valueType: oStringType};}
+						};
+					}
+				}
+			};
+		},
+
+		afterEach: function() {
+			oStringType.destroy();
+			oStringType = undefined;
+			oFakeFilterBar = undefined;
+		}
+	});
+
+	QUnit.test("createConditionTypesMapFromFilterBar", function(assert) {
+		const oConditions = {
+			"fieldPath1": [Condition.createCondition(OperatorName.EQ, ["Foo1"])],
+			"fieldPath2": [Condition.createCondition(OperatorName.EQ, ["Foo2"])],
+			"fieldPath3": [Condition.createCondition(OperatorName.EQ, ["Foo3"])]
+		};
+		const oTypes = {
+			"fieldPath1": {type: oStringType},
+			"fieldPath2": {type: oStringType},
+			"fieldPath3": {type: oStringType}
+		};
+
+		const oResult = FilterConverter.createConditionTypesMapFromFilterBar(oConditions, oFakeFilterBar);
+
+		assert.deepEqual(oResult, oTypes, "ConditionTypesMap returned");
+	});
+
 
 });

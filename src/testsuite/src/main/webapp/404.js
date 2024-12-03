@@ -10,7 +10,7 @@ sap.ui.define([
 	}).then(function (oView) {
 		new Page({
 			showHeader: false,
-			content: oView,
+			content: oView
 		}).placeAt("content");
 	});
 });
