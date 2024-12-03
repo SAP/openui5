@@ -2166,7 +2166,7 @@ sap.ui.define([
 		check("Selected + Highlight + Unread (showUnread = true) + Content");
 
 		oItem.setCounter(5);
-		aState.splice(3, 0, oRb.getText("LIST_ITEM_COUNTER", 5));
+		aState.splice(3, 0, oRb.getText("LIST_ITEM_COUNTER", [5]));
 		check("Selected + Highlight + Unread (showUnread = true) + Counter + Content");
 
 		oItem.setType("Active");

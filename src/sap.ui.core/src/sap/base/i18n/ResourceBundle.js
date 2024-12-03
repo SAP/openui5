@@ -431,8 +431,9 @@ sap.ui.define([
 	 * @param {string} sKey Key to retrieve the text for
 	 * @param {any[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
 	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement
-	 *     is done whenever <code>aArgs</code> is given, no matter whether the text contains placeholders
-	 *     or not and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
+	 *     is done whenever <code>aArgs</code> is given (not <code>undefined</code>), no matter whether
+	 *     the text contains placeholders or not and no matter whether <code>aArgs</code> contains a
+	 *     value for <i>n</i> or not.
 	 * @param {boolean} [bIgnoreKeyFallback=false]
 	 *     If set, <code>undefined</code> is returned instead of the key string, when the key is not found
 	 *     in any bundle or fallback bundle.
