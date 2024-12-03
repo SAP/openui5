@@ -3638,6 +3638,7 @@ sap.ui.define([
 
 		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
+		sinon.spy(oValueHelp, "close");
 		sinon.stub(oValueHelp, "isOpen").callsFake(function() {
 			return this.toggleOpen.called;
 		});
@@ -3645,15 +3646,22 @@ sap.ui.define([
 		oField.focus();
 
 		return new Promise(function (resolve, reject) {
+			const aContent = oField.getAggregation("_content");
+			const oContent = aContent?.length > 0 && aContent[0];
+			const oToken = oContent?.getTokens()?.[0];
 			setTimeout(function () {
 				assert.ok(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
 				assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
+
+				oToken.focus(); // focus Token should close ValueHelp
+				assert.ok(oValueHelp.close.calledOnce, "close called once");
 
 				//do the same test with opensOnFocus(false) and the open should not be called
 				oField.getFocusDomRef().blur();
 				oValueHelp.shouldOpenOnFocus.resetHistory();
 				oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(false));
 				oValueHelp.toggleOpen.resetHistory();
+				oValueHelp.close.resetHistory();
 
 				oField.focus();
 
@@ -3661,43 +3669,53 @@ sap.ui.define([
 					assert.ok(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
 					assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
-					// Typehaead schold not open if Dialog was opened
+					// Should not open if Token focused
 					oField.getFocusDomRef().blur();
 					oValueHelp.shouldOpenOnFocus.resetHistory();
 					oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
 					oValueHelp.toggleOpen.resetHistory();
-					const aContent = oField.getAggregation("_content");
-					const oContent = aContent && aContent.length > 0 && aContent[0];
 
-					oField.focus();
-					oContent.fireValueHelpRequest(); // simulate value help request to open value help
-
+					oToken.focus();
 					setTimeout(function () {
-						assert.ok(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
-						assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
-						oValueHelp.close();
+						assert.notOk(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus not called");
+						assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
-						//in display mode value help must not open
+						// Typehaead should not open if Dialog was opened
 						oField.getFocusDomRef().blur();
 						oValueHelp.shouldOpenOnFocus.resetHistory();
 						oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
 						oValueHelp.toggleOpen.resetHistory();
 
-						oField.setEditMode(FieldEditMode.Display);
-						setTimeout(async function() { // to wait for promises taht changes inner controls
-							await nextUIUpdate();
-							const oFocusDomRef = oField.getFocusDomRef();
-							jQuery(oFocusDomRef).attr("tabindex", 0); // to make it focusable
-							oField.focus();
+						oField.focus();
+						oContent.fireValueHelpRequest(); // simulate value help request to open value help
 
-							setTimeout(function () {
-								assert.notOk(oValueHelp.shouldOpenOnFocus.called, "shouldOpenOnFocus must not be called");
-								assert.notOk(oValueHelp.toggleOpen.called, "open not called");
+						setTimeout(function () {
+							assert.ok(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+							assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
+							oValueHelp.close();
 
-								oValueHelp.close();
-								resolve();
-							},350);
-						});
+							//in display mode value help must not open
+							oField.getFocusDomRef().blur();
+							oValueHelp.shouldOpenOnFocus.resetHistory();
+							oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
+							oValueHelp.toggleOpen.resetHistory();
+
+							oField.setEditMode(FieldEditMode.Display);
+							setTimeout(async function() { // to wait for promises that changes inner controls
+								await nextUIUpdate();
+								const oFocusDomRef = oField.getFocusDomRef();
+								jQuery(oFocusDomRef).attr("tabindex", 0); // to make it focusable
+								oField.focus();
+
+								setTimeout(function () {
+									assert.notOk(oValueHelp.shouldOpenOnFocus.called, "shouldOpenOnFocus must not be called");
+									assert.notOk(oValueHelp.toggleOpen.called, "open not called");
+
+									oValueHelp.close();
+									resolve();
+								},350);
+							});
+						},350);
 					},350);
 				},350);
 			},350);

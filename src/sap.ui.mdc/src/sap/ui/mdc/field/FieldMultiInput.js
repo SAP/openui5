@@ -96,6 +96,7 @@ sap.ui.define([
 				this.iFocusedIndexBeforeUpdate = 0; // initialize (only set on detete token)
 			}
 			_bindAllTokens.call(this, true); // get all tokens as paging would need support from Tokenizer
+			oEvent.setMark("doNotOpenOnFocus", true); // prevent opening of ValueHelp if Token is focused
 		} else {
 			_bindAllTokens.call(this, false); // get all tokens as paging would need support from Tokenizer
 		}
