@@ -5,8 +5,11 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -17,8 +20,11 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Control,
 	UIComponent,
+	ApplyStrategyFactory,
 	FlexCustomData,
 	ChangeUtils,
+	AnnotationChange,
+	FlexObjectFactory,
 	UIChange,
 	ChangeHandlerRegistration,
 	ChangeHandlerStorage,
@@ -122,34 +128,83 @@ sap.ui.define([
 				layer: "layer"
 			});
 			this.oControl = new Control("control");
+			sandbox.stub(ApplyStrategyFactory, "getRuntimeStrategy").resolves({
+				registry: () => {
+					return Promise.resolve({
+						myAppDescriptorChangeType: () => "myAppDescriptorChangeHandler"
+					});
+				}
+			});
+			sandbox.stub(ChangeHandlerStorage, "getAnnotationChangeHandler")
+			.withArgs({changeType: "myAnnotationChangeType"})
+			.resolves("myAnnotationChangeHandler");
 		},
 		afterEach() {
 			sandbox.restore();
 			this.oControl.destroy();
 		}
 	}, function() {
-		QUnit.test("when change handler is not loaded yet and we have to wait for registration", function(assert) {
-			var oWaitStub = sandbox.stub(ChangeHandlerRegistration, "waitForChangeHandlerRegistration")
+		QUnit.test("when UI change handler is not loaded yet and we have to wait for registration", async function(assert) {
+			const oWaitStub = sandbox.stub(ChangeHandlerRegistration, "waitForChangeHandlerRegistration")
 			.withArgs("library")
 			.resolves();
-			var oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves("changeHandler");
-			var mPropertyBag = {
+			const oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves("changeHandler");
+			const oChangeHandler = await ChangeUtils.getChangeHandler({
+				flexObject: this.oChange,
+				control: this.oControl,
+				controlType: "sap.ui.core.Control",
 				modifier: {
 					getLibraryName() {return Promise.resolve("library");}
 				}
-			};
-			var mControl = {
-				control: this.oControl,
-				controlType: "sap.ui.core.Control"
-			};
-			return ChangeUtils.getChangeHandler(this.oChange, mControl, mPropertyBag).then(function(oChangeHandler) {
-				assert.equal(oWaitStub.callCount, 1, "the waitForChangeHandlerRegistration function was called");
-				assert.equal(oChangeHandler, "changeHandler", "the returned change handler is correct");
-				assert.equal(oGetChangeHandlerStub.callCount, 1, "the getChangeHandler function was called");
-				assert.equal(oGetChangeHandlerStub.firstCall.args[0], "type", "the passed property 'sChangeType' is correct");
-				assert.equal(oGetChangeHandlerStub.firstCall.args[1], "sap.ui.core.Control", "the passed property 'sControlType' is correct");
-				assert.equal(oGetChangeHandlerStub.firstCall.args[4], "layer", "the passed property 'sLayer' is correct");
 			});
+			assert.strictEqual(oWaitStub.callCount, 1, "the waitForChangeHandlerRegistration function was called");
+			assert.strictEqual(oChangeHandler, "changeHandler", "the returned change handler is correct");
+			assert.strictEqual(oGetChangeHandlerStub.callCount, 1, "the getChangeHandler function was called");
+			assert.strictEqual(oGetChangeHandlerStub.firstCall.args[0], "type", "the passed property 'sChangeType' is correct");
+			assert.strictEqual(oGetChangeHandlerStub.firstCall.args[1], "sap.ui.core.Control", "the property 'sControlType' is correct");
+			assert.strictEqual(oGetChangeHandlerStub.firstCall.args[4], "layer", "the passed property 'sLayer' is correct");
+		});
+
+		QUnit.test("app descriptor change - called with flex object", async function(assert) {
+			const oAppDescriptorChange = FlexObjectFactory.createFromFileContent(({
+				appDescriptorChange: true,
+				changeType: "myAppDescriptorChangeType",
+				fileName: "appDescriptorChange",
+				fileType: "change"
+			}));
+			const oChangeHandler = await ChangeUtils.getChangeHandler({
+				flexObject: oAppDescriptorChange
+			});
+			assert.strictEqual(oChangeHandler, "myAppDescriptorChangeHandler", "the returned change handler is correct");
+		});
+
+		QUnit.test("app descriptor change - called with parameters", async function(assert) {
+			const oChangeHandler = await ChangeUtils.getChangeHandler({
+				changeType: "myAppDescriptorChangeType",
+				appDescriptorChange: true
+			});
+			assert.strictEqual(oChangeHandler, "myAppDescriptorChangeHandler", "the returned change handler is correct");
+		});
+
+		QUnit.test("annotation change - called with flex object", async function(assert) {
+			const oAnnotationChange = FlexObjectFactory.createFromFileContent(({
+				fileType: "annotation_change",
+				fileName: "annotationChange1",
+				changeType: "myAnnotationChangeType"
+			}));
+
+			const oChangeHandler = await ChangeUtils.getChangeHandler({
+				flexObject: oAnnotationChange
+			});
+			assert.strictEqual(oChangeHandler, "myAnnotationChangeHandler", "the returned change handler is correct");
+		});
+
+		QUnit.test("annotation change - called with parameters", async function(assert) {
+			const oChangeHandler = await ChangeUtils.getChangeHandler({
+				changeType: "myAnnotationChangeType",
+				annotationChange: true
+			});
+			assert.strictEqual(oChangeHandler, "myAnnotationChangeHandler", "the returned change handler is correct");
 		});
 	});
 

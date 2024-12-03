@@ -1700,9 +1700,9 @@ sap.ui.define([
 				completeChangeContent() {},
 				onAfterXMLChangeProcessing: this.oOnAfterXMLChangeProcessingStub2
 			};
-			sandbox.stub(ChangeUtils, "getChangeHandler").callsFake(function(oChange) {
+			sandbox.stub(ChangeUtils, "getChangeHandler").callsFake(function(mPropertyBag) {
 				return Promise.resolve(
-					oChange.getChangeType() === "labelChange"
+					mPropertyBag.flexObject.getChangeType() === "labelChange"
 						? oChangeHandler
 						: oChangeHandler2
 				);
