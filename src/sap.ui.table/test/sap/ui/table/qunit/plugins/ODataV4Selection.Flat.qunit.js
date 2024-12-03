@@ -57,9 +57,10 @@ sap.ui.define([
 		assert.strictEqual(this.oTable.getSelectionMode(), "Single", "Selection mode of the table after replacing the selection plugin");
 	});
 
-	QUnit.test("Enable/Disable", function(assert) {
+	QUnit.test("Enable/Disable", async function(assert) {
 		const oActivateSpy = this.spy(this.oSelectionPlugin, "activate");
 		const oDeactivateSpy = this.spy(this.oSelectionPlugin, "deactivate");
+		const oFireSelectionChange = this.spy(this.oSelectionPlugin, "fireSelectionChange");
 
 		this.oTable.getRows()[0].getBindingContext().setSelected(true);
 		this.oSelectionPlugin.setEnabled(false);
@@ -68,10 +69,21 @@ sap.ui.define([
 		assert.strictEqual(this.oTable.getSelectionMode(), "None", "Table selection mode");
 		assert.ok(this.oTable.getRows()[0].getBindingContext().isSelected(), "Context selected state");
 
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(oFireSelectionChange.callCount, 0, "#fireSelectionChange call");
+
+		oFireSelectionChange.resetHistory();
 		this.oSelectionPlugin.setEnabled(true);
 		assert.ok(this.oSelectionPlugin.getEnabled(), "Plugin is enabled");
 		assert.ok(oActivateSpy.calledOnce, "#deactivate call");
 		assert.strictEqual(this.oTable.getSelectionMode(), "MultiToggle", "Table selection mode");
+
+		await TableQUnitUtils.wait(10);
+		assert.equal(oFireSelectionChange.callCount, 0, "#fireSelectionChange call");
+
+		this.oTable.getRows()[1].getBindingContext().setSelected(true);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+		assert.equal(oFireSelectionChange.callCount, 1, "#fireSelectionChange call");
 	});
 
 	QUnit.test("Render config", function(assert) {
@@ -152,14 +164,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind", async function(assert) {
-		const oClearSelection = this.spy(this.oSelectionPlugin, "clearSelection");
-		const oFireSelectionChange = this.spy(this.oSelectionPlugin, "fireSelectionChange");
-
 		this.oTable.unbindRows();
 		await this.oTable.qunit.whenRenderingFinished();
 
-		oClearSelection.resetHistory();
-		oFireSelectionChange.resetHistory();
+		const oClearSelection = this.spy(this.oSelectionPlugin, "clearSelection");
+		const oFireSelectionChange = this.spy(this.oSelectionPlugin, "fireSelectionChange");
+
 		this.oTable.bindRows("/Products");
 		await this.oTable.qunit.whenRenderingFinished();
 
@@ -169,17 +179,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind when disabled", async function(assert) {
-		const oClearSelection = this.spy(this.oSelectionPlugin, "clearSelection");
-		const oFireSelectionChange = this.spy(this.oSelectionPlugin, "fireSelectionChange");
-
 		this.oTable.unbindRows();
 		this.oSelectionPlugin.setEnabled(false);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		oClearSelection.resetHistory();
-		oFireSelectionChange.resetHistory();
+		const oClearSelection = this.spy(this.oSelectionPlugin, "clearSelection");
+		const oFireSelectionChange = this.spy(this.oSelectionPlugin, "fireSelectionChange");
+
 		this.oTable.bindRows("/Products");
 		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(oClearSelection.callCount, 0, "#clearSelection call");
+		assert.equal(oFireSelectionChange.callCount, 0, "fireSelectionChange call");
 		assert.strictEqual(this.oSelectionPlugin.isActive(), false, "Active state after binding");
 
 		this.oSelectionPlugin.setEnabled(true);
