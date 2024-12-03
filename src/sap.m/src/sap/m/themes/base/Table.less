@@ -171,13 +171,12 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 .sapMListTblCell.sapMListTblCellNoData {
 	font-size: 1rem;
 	padding-top: .75rem;
-	padding-bottom: .75rem;
-	line-height: 1.6;
-	border-bottom: 1px solid @sapUiListBorderColor;
-}
-
-.sapMListTblCell.sapMListTblCellNoData {
 	padding-right: 1rem;
+	padding-bottom: .75rem;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	&.sapMListTblCellNoIllustratedMessage {
+		line-height: 1.6;
+	}
 }
 
 .sapMListTblSelCol,

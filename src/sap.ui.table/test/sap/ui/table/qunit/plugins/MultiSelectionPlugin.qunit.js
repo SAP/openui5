@@ -310,7 +310,7 @@ sap.ui.define([
 			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
 
 			assert.ok(!oIcon.getUseIconTooltip(), "DeselectAll icon has no tooltip");
-			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon), "allSelectedIcon icon is correct");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon is correct");
 			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
 			assert.strictEqual($SelectAll.attr("aria-disabled"), "true", "Aria-Disabled set to true");
 			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "DeselectAll icon has the correct css class applied");

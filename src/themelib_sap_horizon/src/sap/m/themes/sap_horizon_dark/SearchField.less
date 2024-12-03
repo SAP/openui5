@@ -12,24 +12,25 @@
 @_sap_m_SearchField_ButtonFontSize: 1rem;
 @_sap_m_SearchField_CompactButtonLineHeight: 1.625rem;
 @_sap_m_SearchField_Compact_FormPaddingLeft: 0.5rem;
-@_sap_m_SearchField_ResetIcon: "\e03e";
+@_sap_m_SearchField_ResetIcon: '\e03e';
 @_sap_m_SearchField_Border: none;
 @_sap_m_SearchField_FocusOffset: 0;
 @_sap_m_SearchField_FocusBorderRadius: inherit;
 @_sap_m_SearchField_PlaceholderFontStyle: italic;
-@_sap_m_SearchField_ActiveBackgroundStyle: @sapUiFieldBackgroundStyle;
+@_sap_m_SearchField_ActiveBackgroundStyle: var(--sapField_BackgroundStyle);
 
 .sapMSFF {
-	border-radius: @sapUiFieldBorderCornerRadius;
+	border-radius: var(--sapField_BorderCornerRadius);
 }
 
 .sapMSFDisabled {
-	opacity: @sapUiContentDisabledOpacity;
+	opacity: var(--sapContent_DisabledOpacity);
 }
 
 .sapMSFB {
-	border-radius: @sapUiFieldBorderCornerRadius;
-	color: @sapUiFieldTextColor;
+	border-radius: var(--sapField_BorderCornerRadius);
+	color: var(--sapField_TextColor);
+
 	&:first-of-type {
 		margin-left: 0.25rem;
 	}
@@ -39,27 +40,27 @@
 	}
 
 	&:hover {
-		box-shadow: @sapUiFieldHoverShadow;
-		background: @sapUiFieldBackgroundStyle;
-		background-color: @sapUiFieldHoverBackground;
+		box-shadow: var(--sapField_Hover_Shadow);
+		background: var(--sapField_BackgroundStyle);
+		background-color: var(--sapField_Hover_Background);
 	}
 
 	&:active,
-	&.sapMSFBA // Firefox specific
-	{
-		box-shadow: @sapUiFieldHoverShadow;
-		color: @sapUiButtonSelectedTextColor;
-		background-color: @sapUiFieldHoverBackground;
+	&.sapMSFBA { /* Firefox specific */
+		box-shadow: var(--sapField_Hover_Shadow);
+		color: var(--sapButton_Selected_TextColor);
+		background-color: var(--sapField_Hover_Background);
 	}
 }
 
 .sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
-	background-color: @sapUiFieldHoverBackground;
+	background-color: var(--sapField_Hover_Background);
 }
 
 .sapMSF.sapMFocus {
+
 	.sapMSFF {
-		background-color: @sapUiFieldFocusBackground;
+		background-color: var(--sapField_Focus_Background);
 	}
 
 	&:hover .sapMSFF {
@@ -67,6 +68,6 @@
 	}
 
 	.sapMSFB:hover {
-		color: @sapUiButtonSelectedTextColor;
+		color: var(--sapButton_Selected_TextColor);
 	}
 }

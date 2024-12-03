@@ -394,6 +394,10 @@ TableRenderer.renderNoData = function(rm, oControl) {
 	rm.openStart("td", oControl.getId("nodata-text"));
 	rm.attr("colspan", oControl.getColCount() - bRenderDummyColumn - (bHasVisibleColumns ? 2 /* Highlight and Navigated cells are rendered always */ : 0));
 	rm.class("sapMListTblCell").class("sapMListTblCellNoData");
+
+	if (oControl.getNoData() === null || ( typeof oControl.getNoData() === "string" || !oControl.getNoData().isA("sap.m.IllustratedMessage"))) {
+		rm.class("sapMListTblCellNoIllustratedMessage");
+	}
 	rm.openEnd();
 
 	if (!oControl.shouldRenderItems()) {
