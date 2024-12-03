@@ -1,0 +1,20 @@
+{
+	"sap.app": {
+		"id": "sap.f.tutorial.fcl.01"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/index.html",
+				"stretch": true,
+				"files": [
+					"webapp/Component.js",
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

@@ -58,7 +58,7 @@
 		  "samples": ["sap.f.sample.SemanticPage", "sap.f.sample.SemanticPageFreeStyle"]
 		},
 		{
-		  "id": "sap.f.tutorial.fiori2",
+		  "id": "sap.f.tutorial.fcl",
 		  "name": "Flexible Column Layout App",
 		  "category": "Tutorial",
 		  "since": "1.56",
