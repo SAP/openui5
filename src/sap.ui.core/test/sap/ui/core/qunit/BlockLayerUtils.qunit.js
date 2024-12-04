@@ -2,8 +2,10 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/test/utils/nextUIUpdate",
-	"sap/m/Button"
-], function (Log, nextUIUpdate, Button) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/Button",
+	"sap/ui/events/KeyCodes"
+], function (Log, nextUIUpdate, QUnitUtils, Button, KeyCodes) {
 	"use strict";
 
 	// create content div
@@ -141,7 +143,6 @@ sap.ui.define([
 			return nextUIUpdate();
 		}
 	});
-
 
 	QUnit.test("setBlocked() → setBusy()", function(assert) {
 		this.oButton.setBusyIndicatorDelay(0);
@@ -404,6 +405,28 @@ sap.ui.define([
 		assert.equal(this.oButton.getBlocked(), false, "setBlocked(false): Button shouldn't be blocked anymore");
 		assert.equal(oBlockLayerDOM.length, 0, "BlockLayer should be removed");
 		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount, "onBefore-/onAfterRendering delegate should be removed again");
+	});
+
+	QUnit.test("setBlocked(true) → invalidate → setBlocked(false)", async function(assert) {
+		this.oButton.focus();
+		this.oButton.setBlocked(true);
+
+		this.oButton.invalidate();
+		await nextUIUpdate();
+
+		const oSpy = this.spy();
+		this.oButton.addDelegate({
+			onsapescape: oSpy
+		});
+
+		this.oButton.setBlocked(false);
+
+		assert.ok(this.oButton.getDomRef().contains(document.activeElement), "Button still has the focus");
+
+		QUnitUtils.triggerKeydown(this.oButton.getFocusDomRef(), KeyCodes.ESCAPE);
+		QUnitUtils.triggerKeyup(this.oButton.getFocusDomRef(), KeyCodes.ESCAPE);
+
+		assert.equal(oSpy.callCount, 1, "event should be dispatched to the control after unblocked");
 	});
 
 });

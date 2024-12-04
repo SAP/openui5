@@ -835,7 +835,9 @@ sap.ui.define([
 		 * @private
 		 */
 		onBeforeRendering: function() {
-			fnRemoveBusyIndicator.call(this);
+			if (this.getBusy()) {
+				fnRemoveBusyIndicator.call(this);
+			}
 			// remove all block-layers to prevent leftover DOM elements and eventhandlers
 			fnRemoveAllBlockLayers.call(this);
 		},
