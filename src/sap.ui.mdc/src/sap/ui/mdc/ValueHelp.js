@@ -698,23 +698,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls initialization of the <code>ValueHelp</code> element before the value help is really opened.
-	 * This is called during type-ahead when the user types the first letter and before the value help is opened with a delay.
-	 * This way the content can be determined in the delegate coding early.
-	 *
-	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
-	 * belongs to, not by the application.
-	 *
-	 * @param {boolean} bTypeahead Flag that determines whether value help is opened for type-ahead or for complex help
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 */
-	ValueHelp.prototype.initBeforeOpen = function(bTypeahead) { // ? naming, include as config in open?
-
-	};
-
-	/**
 	 * Determines if the value help should be opened when something is typed into the field.
 	 *
 	 * Opening the value help must be triggered by the control the <code>ValueHelp</code> element
