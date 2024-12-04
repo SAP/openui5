@@ -1161,7 +1161,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Tells whether the binding with the given aggregation data and filters is affected when
+		 * Tells whether a binding with the given aggregation data and filters is affected when
 		 * requesting side effects for the given paths.
 		 *
 		 * @param {object} oAggregation
@@ -1177,38 +1177,39 @@ sap.ui.define([
 		 * @public
 		 */
 		isAffected : function (oAggregation, aFilters, aSideEffectPaths) {
-			// returns true if the side effect path affects the property path
-			function affects(sSideEffectPath, sPropertyPath) {
-				if (sSideEffectPath.endsWith("/*")) {
+			return aSideEffectPaths.some(function (sSideEffectPath) {
+				// returns true if the mandatory property path is affected by the side effect path
+				function isAffected(sPropertyPath) {
 					// To avoid metadata access, we do not distinguish between properties and
 					// navigation properties, so there is no need to look at "/*".
-					sSideEffectPath = sSideEffectPath.slice(0, -2);
+					return _Helper.hasPathPrefix(sPropertyPath, sSideEffectPath.endsWith("/*")
+							? sSideEffectPath.slice(0, -2)
+							: sSideEffectPath)
+						|| _Helper.hasPathPrefix(sSideEffectPath, sPropertyPath);
 				}
-				return _Helper.hasPathPrefix(sPropertyPath, sSideEffectPath)
-					|| _Helper.hasPathPrefix(sSideEffectPath, sPropertyPath);
-			}
 
-			// returns true if the array contains a filter affected by the side effect path
-			function hasAffectedFilter(sSideEffectPath, aFilters0) {
-				return aFilters0.some(function (oFilter) {
-					return oFilter.aFilters
-						? hasAffectedFilter(sSideEffectPath, oFilter.aFilters)
-						: affects(sSideEffectPath, oFilter.sPath);
-				});
-			}
-
-			return aSideEffectPaths.some(function (sSideEffectPath) {
-				var fnAffects = affects.bind(null, sSideEffectPath);
+				// returns true if the array contains a filter affected by the side effect path
+				function hasAffectedFilter(aFilters0) {
+					return aFilters0.some(function (oFilter) {
+						return oFilter.aFilters
+							? hasAffectedFilter(oFilter.aFilters)
+							: isAffected(oFilter.sPath);
+					});
+				}
 
 				return sSideEffectPath === "" || sSideEffectPath === "*"
-					|| Object.keys(oAggregation.aggregate).some(function (sAlias) {
-							var oDetails = oAggregation.aggregate[sAlias];
+					|| hasAffectedFilter(aFilters)
+					|| Object.keys(oAggregation.aggregate).some((sAlias) => {
+						const oDetails = oAggregation.aggregate[sAlias];
 
-							return affects(sSideEffectPath, oDetails.name || sAlias);
-						})
-					|| Object.keys(oAggregation.group).some(fnAffects)
-					|| oAggregation.groupLevels.some(fnAffects)
-					|| hasAffectedFilter(sSideEffectPath, aFilters);
+						return isAffected(oDetails.name || sAlias)
+							|| oDetails.unit && isAffected(oDetails.unit);
+					})
+					|| Object.keys(oAggregation.group).some((sGroup) => {
+						return isAffected(sGroup)
+							|| oAggregation.group[sGroup].additionally
+								?.some((sPath) => isAffected(sPath));
+					});
 			});
 		},
 
