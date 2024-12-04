@@ -128,8 +128,8 @@ sap.ui.define([
 									oRevertData.value = null;
 								}
 
-								if (!oPriorAggregationConfig) {
-									const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, { propertyBag: mPropertyBag, changeType: oChange.getChangeType() }, oPriorAggregationConfig, sAffectedAggregation);
+								if (!oPriorAggregationConfig || !(oPriorAggregationConfig?.aggregations?.[sAffectedAggregation]?.length > 0)) {
+									const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
 									if (aCurrentState) {
 										const oStateItem = aCurrentState?.find((oItem, iIndex) => {
 											return oItem.key === oChange.getContent().key;

@@ -123,6 +123,7 @@ sap.ui.define([
 			const oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 			const sLayer = Layer.USER;
 			const aSuccessfulChanges = [];
+			const mVMReferences = {};
 
 			function createChanges() {
 				const aChanges = [];
@@ -138,12 +139,23 @@ sap.ui.define([
 						if (!oPersonalizationChange.transient && !mPropertyBag.ignoreVariantManagement) {
 							// check for preset variantReference
 							if (!oPersonalizationChange.changeSpecificData.variantReference) {
-								const sVariantManagementReference = getRelevantVariantManagementReference(
+								let sVariantManagementReference;
+								const sSelectorControlId = oPersonalizationChange.selectorControl.getId();
+								sVariantManagementReference = mVMReferences[sSelectorControlId] || getRelevantVariantManagementReference(
 									oAppComponent,
 									oPersonalizationChange.selectorControl,
 									mPropertyBag.useStaticArea
 								);
+								if (!sVariantManagementReference && !mPropertyBag.useStaticArea) {
+									// If not already found, look for a suitable VM control in the static area
+									sVariantManagementReference = getRelevantVariantManagementReference(
+										oAppComponent,
+										oPersonalizationChange.selectorControl,
+										true
+									);
+								}
 								if (sVariantManagementReference) {
+									mVMReferences[sSelectorControlId] = sVariantManagementReference;
 									const sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
 									oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
 								}

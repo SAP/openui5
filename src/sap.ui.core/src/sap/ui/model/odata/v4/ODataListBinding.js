@@ -1905,6 +1905,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
+		let aFiltersNoThese;
 		const oMetaModel = this.oModel.getMetaModel();
 		const oMetaContext = oMetaModel.getMetaContext(this.oModel.resolve(this.sPath, oContext));
 
@@ -1926,7 +1927,7 @@ sap.ui.define([
 			}
 
 			bToLower = sEdmType === "Edm.String" && oFilter.bCaseSensitive === false;
-			sFilterPath = bThese
+			sFilterPath = bThese && !aFiltersNoThese?.includes(oFilter)
 				? setCase(`$these/aggregate(${oFilter.sPath})`)
 				: setCase(decodeURIComponent(oFilter.sPath));
 			sValue = setCase(_Helper.formatLiteral(oFilter.oValue1, sEdmType));
@@ -2066,6 +2067,7 @@ sap.ui.define([
 		return oPromise.then((oEntityType) => {
 			const aFilters = _AggregationHelper.splitFilter(oCombinedFilter,
 				this.mParameters.$$aggregation, oEntityType);
+			aFiltersNoThese = aFilters[3];
 
 			return SyncPromise.all([
 				fetchFilter(aFilters[0], {}, /*bWithinAnd*/sStaticFilter)

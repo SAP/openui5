@@ -875,10 +875,6 @@ sap.ui.define([
 
 		};
 
-		FilterBarBase.prototype.onReset = function(oEvent) {
-			this._getConditionModel().removeAllConditions();
-		};
-
 		FilterBarBase.prototype.onSearch = function(oEvent) {
 			if (!this._bSearchPressed) {
 				this._bSearchPressed = true;

@@ -63,9 +63,9 @@ sap.ui.define([
 				if (bBookingID) { // leaf level is individual bookings
 					this._oAggregation.groupLevels.push("BookingID");
 				} else { // leaf level shows aggregates
-					// eslint-disable-next-line no-lonely-if
-					if (oTable.getColumns()[9].getLabel().getText() === "Booking ID") {
-						oTable.getColumns()[9].destroy(); // destroy BookingID column
+					const oColumn = oTable.getColumns()[9];
+					if (oColumn.getLabel().getText() === "Booking ID") {
+						oColumn.destroy(); // destroy BookingID column
 					}
 				}
 				// enable V4 tree table flag

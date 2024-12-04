@@ -7040,6 +7040,32 @@ sap.ui.define([
 		"$these/aggregate(a) ge 1 and tolower($these/aggregate(b)) ne tolower('SAP')"
 	]
 }, {
+	split : [
+		,, new Filter({
+			and : true,
+			filters : [
+				new Filter("a", FilterOperator.GE, 1),
+				new Filter("b", FilterOperator.EQ, "X")
+			]
+		}), [1] // aFiltersNoThese
+	],
+	result : [
+		,, "$these/aggregate(a) ge 1 and b eq 'X'"
+	]
+}, {
+	split : [
+		,, new Filter({
+			and : true,
+			filters : [
+				new Filter("a", FilterOperator.GE, 1),
+				new Filter("b", FilterOperator.EQ, "X")
+			]
+		}), [0, 1] // aFiltersNoThese
+	],
+	result : [
+		,, "a ge 1 and b eq 'X'"
+	]
+}, {
 	split : [new Filter("a", FilterOperator.GT, 42), new Filter("b", FilterOperator.EQ, "before")],
 	result : ["a gt 42", "b eq 'before'", undefined]
 }].forEach(function (oFixture, i) {
@@ -7055,9 +7081,12 @@ sap.ui.define([
 			oMetaContext = {
 				getPath : mustBeMocked
 			},
-			oMetaModelMock = this.mock(this.oModel.oMetaModel);
+			oMetaModelMock = this.mock(this.oModel.oMetaModel),
+			aSplitFilters = oFixture.split.slice(); // MUST NOT change fixture!
 
 		oBinding.mParameters.$$aggregation = oAggregation;
+		// aFiltersNoThese: map index to instance
+		aSplitFilters[3] = aSplitFilters[3]?.map((iIndex) => aSplitFilters[2].aFilters[iIndex]);
 
 		oMetaModelMock.expects("getMetaContext").withExactArgs("~").returns(oMetaContext);
 		this.mock(FilterProcessor).expects("combineFilters").returns(oFilter);
@@ -7071,7 +7100,7 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("splitFilter")
 			.withExactArgs(sinon.match.same(oFilter), sinon.match.same(oAggregation),
 				bDataAggregation ? "~oEntityType~" : undefined)
-			.returns(oFixture.split);
+			.returns(aSplitFilters);
 		this.mock(this.oModel).expects("resolve").withExactArgs("Set", sinon.match.same(oContext))
 			.returns("~");
 		oMetaModelMock.expects("resolve").withExactArgs("a", sinon.match.same(oMetaContext))
