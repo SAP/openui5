@@ -7982,6 +7982,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestElements: obsolete request fails", function (assert) {
+		const oCache = this.createCache("Employees");
+		this.mock(oCache).expects("getResourcePathWithQuery").withExactArgs(5, 10)
+			.returns("~sResourcePath~");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "~sResourcePath~", "~oGroupLock~", /*mHeaders*/undefined,
+				/*oPayload*/undefined, "~fnDataRequested~")
+			.returns(Promise.resolve().then(function () {
+				oCache.aReadRequests[0].bObsolete = true;
+				throw "~oError~";
+			}));
+		this.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~mTypes~");
+		this.mock(oCache).expects("fill").withExactArgs(sinon.match.instanceOf(SyncPromise), 5, 10);
+		this.mock(oCache).expects("checkRange").never();
+
+		// code under test
+		return oCache.requestElements(5, 10, "~oGroupLock~", 0, "~fnDataRequested~",
+				"~fnSeparateReceived~")
+			.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError, "~oError~");
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache#checkRange", function (assert) {
 		var oCache = this.createCache("Employees");
 

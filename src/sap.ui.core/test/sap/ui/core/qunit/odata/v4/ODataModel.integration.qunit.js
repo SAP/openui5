@@ -67855,7 +67855,11 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: Refresh a binding with $$sharedRequest while a read request is pending.
 	// BCP: 2370078660
-	QUnit.test("BCP: 2370078660", async function (assert) {
+	//
+	// See that the cache recovers gracefully if the first request fails and gets obsolete
+	// SNOW: DINC0329166
+[false, true].forEach(function (bReject) {
+	QUnit.test("BCP: 2370078660, bReject=" + bReject, async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true, sharedRequests : true});
 		const sView = `
 <Table id="table" items="{path : '/TEAMS', suspended : true}">
@@ -67866,8 +67870,12 @@ make root = ${bMakeRoot}`;
 
 		await this.createView(assert, sView, oModel);
 
-		let fnResolve;
-		const oResponsePromise = new Promise((resolve) => { fnResolve = resolve; });
+		let fnFulfill;
+		const oResponsePromise = new Promise((resolve, reject) => {
+			fnFulfill = bReject
+				? reject.bind(null, createErrorInsideBatch())
+				: resolve; // no need to give a result; it will be obsoleted anyway
+		});
 		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oResponsePromise);
 
 		const oBinding = this.oView.byId("table").getBinding("items");
@@ -67875,15 +67883,25 @@ make root = ${bMakeRoot}`;
 
 		await this.waitForChanges(assert, "resume");
 
-		this.expectCanceledError(
-				"Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
-					+ "/TEAMS with start index 0 and length 100",
-				"Request is obsolete")
-			.expectCanceledError(
-				"Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
-					+ "/TEAMS with start index 0 and length 100",
-				"Request is obsolete")
-			.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+		const sErrorMsg = "Failed to get contexts for " + sTeaBusi
+			+ "TEAMS with start index 0 and length 100";
+		if (bReject) {
+			// getContexts is called twice due to auto-$expand/$select refresh
+			this.oLogMock.expects("error").twice()
+				.withArgs(sErrorMsg, sinon.match("Request intentionally failed"));
+			this.expectMessages([{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
+		} else {
+			// getContexts is called twice due to auto-$expand/$select refresh
+			this.expectCanceledError(sErrorMsg, "Request is obsolete")
+				.expectCanceledError(sErrorMsg, "Request is obsolete");
+		}
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
 				value : [
 					{Team_Id : "1", Name : "Team #1"},
 					{Team_Id : "2", Name : "Team #2"}
@@ -67891,14 +67909,16 @@ make root = ${bMakeRoot}`;
 			})
 			.expectChange("name", ["Team #1", "Team #2"]);
 
+		// code under test
 		const oRefreshPromise = oBinding.requestRefresh();
-		fnResolve(); // no need to give a result; it will be obsoleted anyway
+		fnFulfill();
 
 		await Promise.all([
 			oRefreshPromise,
 			this.waitForChanges(assert, "refresh while resume request is pending")
 		]);
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Absolute property bindings for $count
