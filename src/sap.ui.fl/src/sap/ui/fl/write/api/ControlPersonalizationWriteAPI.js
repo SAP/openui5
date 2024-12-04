@@ -119,6 +119,7 @@ sap.ui.define([
 			var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 			var sLayer = Layer.USER;
 			var aSuccessfulChanges = [];
+			const mVMReferences = {};
 
 			function createChanges() {
 				var aChanges = [];
@@ -134,13 +135,24 @@ sap.ui.define([
 						if (!oPersonalizationChange.transient && !mPropertyBag.ignoreVariantManagement) {
 							// check for preset variantReference
 							if (!oPersonalizationChange.changeSpecificData.variantReference) {
-								var sVariantManagementReference = getRelevantVariantManagementReference(
+								let sVariantManagementReference;
+								const sSelectorControlId = oPersonalizationChange.selectorControl.getId();
+								sVariantManagementReference = mVMReferences[sSelectorControlId] || getRelevantVariantManagementReference(
 									oAppComponent,
 									oPersonalizationChange.selectorControl,
 									mPropertyBag.useStaticArea
 								);
+								if (!sVariantManagementReference && !mPropertyBag.useStaticArea) {
+									// If not already found, look for a suitable VM control in the static area
+									sVariantManagementReference = getRelevantVariantManagementReference(
+										oAppComponent,
+										oPersonalizationChange.selectorControl,
+										true
+									);
+								}
 								if (sVariantManagementReference) {
-									var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
+									mVMReferences[sSelectorControlId] = sVariantManagementReference;
+									const sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
 									oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
 								}
 							}
