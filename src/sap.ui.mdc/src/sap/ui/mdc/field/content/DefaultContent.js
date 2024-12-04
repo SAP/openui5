@@ -54,9 +54,6 @@ sap.ui.define([
 		getUseDefaultValueHelp: function() {
 			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: false, single: true, multi: true };
 		},
-		getSupportedModes: function() {
-			return []; // empty array means all (to support additional modes in future)
-		},
 		/**
 		 * Determines which controls to return for a given {@link sap.ui.mdc.enums.ContentMode}.
 		 * @param {sap.ui.mdc.enums.ContentMode} sContentMode The given content mode
