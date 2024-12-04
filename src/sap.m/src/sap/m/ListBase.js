@@ -2691,9 +2691,7 @@ function(
 			});
 		}
 
-		bGroupHeaders = this.getItems(true).some((oItem) => {
-			return oItem.isGroupHeader();
-		});
+		bGroupHeaders = this.isGrouped();
 
 		aSticky.forEach(function(sSticky) {
 			if (sSticky === Sticky.HeaderToolbar && bHeaderToolbarVisible) {

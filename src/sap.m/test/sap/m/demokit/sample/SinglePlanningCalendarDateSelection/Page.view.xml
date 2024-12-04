@@ -16,9 +16,6 @@
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
-					<customData>
-						<BadgeCustomData key="badge"/>
-					</customData>
 				</ToggleButton>
 			</OverflowToolbar>
 		<SinglePlanningCalendar

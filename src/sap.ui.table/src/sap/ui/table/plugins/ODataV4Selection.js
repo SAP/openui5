@@ -110,6 +110,7 @@ sap.ui.define([
 		oTable.setProperty("selectionMode", TableSelectionMode.None);
 		detachFromBinding(this, this.getTableBinding());
 		clearTimeout(this.iSelectionChangeTimeout);
+		delete this.iSelectionChangeTimeout;
 	};
 
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {

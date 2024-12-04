@@ -110,7 +110,7 @@ sap.ui.define([
 		const aTargetAggregationItems = await modifier.getAggregation(oControl, sAggregationName);
 		const aAggregationItems = aTargetAggregationItems || [];
 		const aCurrentState = [];
-		if (oConfig && Object.keys(oConfig.aggregations[sAggregationName]).length > 0) {
+		if (oConfig?.aggregations?.[sAggregationName] !== undefined && Object.keys(oConfig.aggregations[sAggregationName]).length > 0) {
 			Object.entries(oConfig.aggregations[sAggregationName]).forEach(([sKey, oItem]) => {
 				if (oItem.visible !== false) {
 					aCurrentState.push({ key: sKey, position: oItem.position });

@@ -23001,29 +23001,99 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Binding-specific parameter $$aggregation is used (JIRA: CPOUI5UISERVICESV3-1195).
-	// Check download URL (JIRA: CPOUI5ODATAV4-609).
-	// Request leaf count(JIRA: CPOUI5ODATAV4-164).
-	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958).
-	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709).
+	// Scenario: Multiple filters for units (or currencies) are copied into groupby() in order to
+	// keep them close to their corresponding filters on aggregates of amounts. There is data
+	// aggregation on leaf level!
+	// JIRA: CPOUI5ODATAV4-2796
+	QUnit.test("Data Aggregation: CPOUI5ODATAV4-2796", async function (assert) {
+		await this.createView(assert, "", this.createSalesOrdersModel());
+
+		const oListBinding = this.oModel.bindList("/ProductList", null, [/*vSorters*/], [
+			new Filter("Depth", FilterOperator.GT, "111"),
+			new Filter("Height", FilterOperator.GT, "222"),
+			new Filter("Width", FilterOperator.GT, "333"),
+			new Filter("DimUnit", FilterOperator.EQ, "CM"),
+			// Note: duplicates MUST be avoided here, auto-grouping would result in OR!
+			// new Filter("DimUnit", FilterOperator.EQ, "CM"),
+			// new Filter("DimUnit", FilterOperator.EQ, "CM"),
+			new Filter("Price", FilterOperator.GT, "444"),
+			new Filter("CurrencyCode", FilterOperator.EQ, "EUR"),
+			new Filter("WeightMeasure", FilterOperator.GT, "555"),
+			new Filter("WeightUnit", FilterOperator.EQ, "KG")
+		], {
+			$$aggregation : {
+				aggregate : {
+					Depth : {unit : "DimUnit"},
+					Height : {unit : "DimUnit"},
+					Price : {
+						grandTotal : true, //TODO should not be needed, right?
+						unit : "CurrencyCode"
+					},
+					WeightMeasure : {unit : "WeightUnit"},
+					Width : {unit : "DimUnit"}
+				},
+				group : {
+					// Note: do not group by all key properties!
+					// ProductID : {additionally : ["Description", "MeasureUnit", "Name"]},
+					SupplierID : {additionally : ["SupplierName"]}
+				},
+				groupLevels : ["Category", "TaxTarifCode", "TypeCode", "SupplierID"]
+			}
+		});
+
+		this.expectRequest("ProductList?$apply="
+				+ "filter(DimUnit eq 'CM' and CurrencyCode eq 'EUR' and WeightUnit eq 'KG')"
+				+ "/groupby((Category,SupplierID,TaxTarifCode,TypeCode)"
+					+ ",filter($these/aggregate(Depth) gt 111 and $these/aggregate(Height) gt 222"
+						+ " and $these/aggregate(Width) gt 333 and DimUnit eq 'CM'"
+						+ " and $these/aggregate(Price) gt 444 and CurrencyCode eq 'EUR'"
+						+ " and $these/aggregate(WeightMeasure) gt 555 and WeightUnit eq 'KG'"
+				+ "))/concat(aggregate(Price,CurrencyCode)"
+					+ ",groupby((Category))/concat(aggregate($count as UI5__count),top(99)))", {
+				value : [{
+					CurrencyCode : "EUR",
+					Price : null
+				}, { // actual results do not matter here, simulate empty response
+					UI5__count : "0", "UI5__count@odata.type" : "#Decimal"
+				}]
+			});
+
+		await Promise.all([
+			oListBinding.requestContexts(),
+			this.waitForChanges(assert)
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used (JIRA: CPOUI5UISERVICESV3-1195)
+	// Check download URL (JIRA: CPOUI5ODATAV4-609)
+	// Request leaf count(JIRA: CPOUI5ODATAV4-164)
+	// Test ODLB#getCount (JIRA: CPOUI5ODATAV4-958)
+	// Ensure that unchanged $$aggregation is ignored (BCP: 2370045709)
 	// Support grand total w/ filter on aggregate (JIRA: CPOUI5ODATAV4-713)
 	// Multiple (additional) groups on leaf level (JIRA: CPOUI5ODATAV4-2755)
+	// Keep currency filter close to filter on aggregate (JIRA: CPOUI5ODATAV4-2796)
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
-		var sFilterOnAggregate // JIRA: CPOUI5ODATAV4-713
-			= "groupby((BillingStatus,CurrencyCode,DeliveryStatus,LifecycleStatus)"
-				+ ",filter($these/aggregate(GrossAmount) gt 0))",
+		var sFilterOnAggregate // JIRA: CPOUI5ODATAV4-713, CPOUI5ODATAV4-2796
+			= "filter(CurrencyCode eq 'EUR')"
+			+ "/groupby((BillingStatus,CurrencyCode,DeliveryStatus,LifecycleStatus)"
+				+ ",filter(CurrencyCode eq 'EUR' and "
+				// Note: auto-grouping leads to OR for amount which works fine together w/ currency
+				+ "($these/aggregate(GrossAmount) lt 1 or $these/aggregate(GrossAmount) gt 100)))",
 			oListBinding,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
-		filters : {path : \'GrossAmount\', operator : \'GT\', value1 : \'0\'},\
+		filters : [{path : \'CurrencyCode\', operator : \'EQ\', value1 : \'EUR\'},\
+			{path : \'GrossAmount\', operator : \'LT\', value1 : \'1\'},\
+			{path : \'GrossAmount\', operator : \'GT\', value1 : \'100\'}],\
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
-					GrossAmount : {subtotals : true},\
-					NetAmount : {}\
+					GrossAmount : {subtotals : true, unit : \'CurrencyCode\'},\
+					NetAmount : {unit : \'CurrencyCode\'}\
 				},\
 				group : {\
 					BillingStatus : {},\
@@ -23047,14 +23117,15 @@ sap.ui.define([
 		this.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate + "/concat("
 				+ "groupby((BillingStatus,CurrencyCode,DeliveryStatus,LifecycleStatus))"
 					+ "/aggregate($count as UI5__leaves)"
-				+ ",groupby((LifecycleStatus),aggregate(GrossAmount))/orderby(LifecycleStatus desc)"
+				+ ",groupby((LifecycleStatus),aggregate(GrossAmount,CurrencyCode))"
+				+ "/orderby(LifecycleStatus desc)"
 				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [
 					{UI5__leaves : "42", "UI5__leaves@odata.type" : "#Decimal"},
 					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"},
-					{GrossAmount : "1", LifecycleStatus : "Z"},
-					{GrossAmount : "2", LifecycleStatus : "Y"},
-					{GrossAmount : "3", LifecycleStatus : "X"}
+					{CurrencyCode : "EUR", GrossAmount : "1", LifecycleStatus : "Z"},
+					{CurrencyCode : "EUR", GrossAmount : "2", LifecycleStatus : "Y"},
+					{CurrencyCode : "EUR", GrossAmount : "3", LifecycleStatus : "X"}
 				]
 			})
 			.expectChange("count")
@@ -23092,12 +23163,12 @@ sap.ui.define([
 			return that.waitForChanges(assert, "count");
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$apply=" + sFilterOnAggregate
-					+ "/groupby((LifecycleStatus),aggregate(GrossAmount))"
+					+ "/groupby((LifecycleStatus),aggregate(GrossAmount,CurrencyCode))"
 					+ "/orderby(LifecycleStatus desc)/skip(7)/top(3)", {
 					value : [
-						{GrossAmount : "7", LifecycleStatus : "T"},
-						{GrossAmount : "8", LifecycleStatus : "S"},
-						{GrossAmount : "9", LifecycleStatus : "R"}
+						{CurrencyCode : "EUR", GrossAmount : "7", LifecycleStatus : "T"},
+						{CurrencyCode : "EUR", GrossAmount : "8", LifecycleStatus : "S"},
+						{CurrencyCode : "EUR", GrossAmount : "9", LifecycleStatus : "R"}
 					]
 				})
 				.expectChange("isExpanded", [,,,,,,, false, false, false])
@@ -23111,9 +23182,9 @@ sap.ui.define([
 			return that.waitForChanges(assert, "scroll to #7");
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$count=true"
-					+ "&$orderby=LifecycleStatus desc,ItemPosition asc"
-					+ "&$apply=filter(GrossAmount gt 0)/groupby((LifecycleStatus))"
-					+ "&$skip=0&$top=3", {
+					+ "&$orderby=LifecycleStatus desc,ItemPosition asc&$apply=filter("
+						+ "CurrencyCode eq 'EUR' and (GrossAmount lt 1 or GrossAmount gt 100))"
+					+ "/groupby((LifecycleStatus))&$skip=0&$top=3", {
 					"@odata.count" : "26",
 					value : [
 						{LifecycleStatus : "Z"},
@@ -59321,7 +59392,7 @@ sap.ui.define([
 	// SNOW: DINC0027242 (resetChanges)
 	QUnit.test("DINC0027242", async function (assert) {
 		const oModel = this.createSalesOrdersModel(
-			{autoExpandSelect : true, updateGroupId : "noSubmit"});
+			{autoExpandSelect : true, updateGroupId : "doNotSubmit"});
 		const sView = `
 <Table id="table" items="{/SalesOrderList}">
 	<Text id="id" text="{SalesOrderID}"/>

@@ -1919,6 +1919,14 @@ sap.ui.define([
 }, {
 	filter : and(f("a1"), and(f("a2"), f("b"))),
 	result : [and(f("a1"), f("a2")), f("b")]
+}, {
+	filter : and(f("a2"), f("unit")),
+	noThese : [1],
+	result : [and(f("a2"), f("unit")), f("unit")]
+}, {
+	filter : and(f("unit"), f("a1"), f("currency")),
+	noThese : [0, 2],
+	result : [and(f("unit"), f("a1"), f("currency")), and(f("unit"), f("currency"))]
 }].forEach(function (oFixture, i) {
 	[false, true].forEach((bHasSubtotals) => {
 		[false, true].forEach((bHasGrandTotal) => {
@@ -1931,10 +1939,26 @@ sap.ui.define([
 				}
 
 	QUnit.test(sTitle, function (assert) {
+		function toString(oObject, bVarArgs) {
+			if (Array.isArray(oObject)) {
+				return (bVarArgs ? "" : "[")
+					+ oObject.map((oElement) => toString(oElement)).join(", ")
+					+ (bVarArgs ? "" : "]");
+			}
+			if (oObject instanceof Filter) {
+				if (oObject.aFilters) {
+					return (oObject.bAnd ? "and(" : "or(") + toString(oObject.aFilters, true) + ")";
+				}
+				return `f('${oObject.getPath()}')`; // Note: " is bad for QUnit's diff output
+			}
+			return "" + oObject;
+		}
+
 		const oAggregation = {
 			aggregate : {
 				a1 : {},
-				a2 : {subtotals : bHasSubtotals}
+				a2 : {subtotals : bHasSubtotals, unit : "unit"},
+				a3 : {unit : "currency"}
 			},
 			"grandTotal like 1.84" : bOldSchool,
 			group : {} // Note: added by _AggregationHelper.buildApply before
@@ -1950,13 +1974,22 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oAggregation.aggregate))
 			.returns(bHasGrandTotal);
 
-		assert.deepEqual(
-			// code under test
-			_AggregationHelper.splitFilter(oFixture.filter, oAggregation, oEntityType),
-			(bHasGrandTotal || bHasSubtotals) && !bOldSchool
-				? [undefined, oFixture.result[1], oFixture.result[0]]
-				: oFixture.result
-		);
+		// code under test
+		const aActual = _AggregationHelper.splitFilter(oFixture.filter, oAggregation, oEntityType);
+
+		const aFiltersNoThese = oFixture.noThese?.map((iIndex) => oFixture.filter.aFilters[iIndex])
+			 || [];
+		const aExpected = (bHasGrandTotal || bHasSubtotals) && !bOldSchool
+			? [undefined, oFixture.result[1], oFixture.result[0], aFiltersNoThese]
+			: oFixture.result;
+		assert.deepEqual(toString(aActual), toString(aExpected)); // readable diff
+		assert.deepEqual(aActual, aExpected); // just to be really sure
+		if (aExpected[3]) { // aExpected[3] === aFiltersNoThese
+			for (let iIndex = 0; iIndex < aFiltersNoThese.length; iIndex += 1) {
+				assert.strictEqual(aFiltersNoThese[iIndex], aActual[3][iIndex],
+					"same instance: " + iIndex);
+			}
+		}
 	});
 			});
 		});
