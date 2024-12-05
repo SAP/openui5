@@ -6,18 +6,18 @@
 /* IconOnly */
 
 .sapMSlt.sapMSltIconOnly:not(.sapMSltDisabled) {
-	border-color: @sapUiButtonLiteBorderColor;
-	background: @sapUiButtonLiteBackground;
+	border-color: var(--sapButton_Lite_BorderColor);
+	background: var(--sapButton_Lite_Background);
 	border-radius: 0.2rem;
 }
 
 /* IconOnly Hover */
 
 .sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
-	background: @sapUiButtonLiteHoverBackground;
+	background: var(--sapButton_Lite_Hover_Background);
 
 	&.sapMSltWithIcon {
-		border: 0.0625rem solid @sapUiButtonLiteHoverBorderColor;
+		border: 0.0625rem solid var(--sapButton_Lite_Hover_BorderColor);
 	}
 }
 
@@ -40,46 +40,46 @@
 }
 
 .sapMSltPressed > .sapMSltArrow::before {
-	color: @sapUiButtonActiveTextColor;
+	color: var(--sapButton_Active_TextColor);
 }
 
 html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
-	&:before {
+
+	&::before {
 		pointer-events: none;
-		content: "";
+		content: '';
 		position: absolute;
 		left: 0;
 		top: 0;
 		right: 0;
 		bottom: 0;
 		z-index: 1;
-		outline: 1px dotted @sapUiContentFocusColor;
+		outline: 1px dotted var(--sapContent_FocusColor);
 	}
-
 }
 
-html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):before {
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState)::before {
 	outline-offset: -2px;
 }
 
-html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:before {
+html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState::before {
 	outline-offset: -2px;
 }
 
 html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed {
-	outline-color: @sapUiContentContrastFocusColor;
+	outline-color: var(--sapContent_ContrastFocusColor);
 }
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
-	border-color: @sapUiFieldHoverBorderColor;
-	background: @sapUiFieldHoverBackground;
+	border-color: var(--sapField_Hover_BorderColor);
+	background: var(--sapField_Hover_Background);
 }
 
 /* pressed and hover */
 
 .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:not(.sapMSltState):hover {
 	background: @sapUiToggleButtonPressedHoverBackground;
-	border-color: @sapUiFieldActiveBorderColor;
+	border-color: var(--sapField_Active_BorderColor);
 }
 
 /* value state */
