@@ -91,6 +91,7 @@ sap.ui.define([
 		  "sap.m.AvatarBadgeColor",
 		  "sap.m.BackgroundDesign",
 		  "sap.m.BadgeState",
+		  "sap.m.BadgeStyle",
 		  "sap.m.BadgeAnimationType",
 		  "sap.m.BarDesign",
 		  "sap.m.BorderDesign",
@@ -791,20 +792,20 @@ sap.ui.define([
 	  * Types of badge rendering style.
 	  *
 	  * @enum {string}
-	  * @private
+	  * @public
 	  */
 	 thisLib.BadgeStyle = {
 		 /**
 		  * Default style. Use for badges which contain text or numbers.
 		  *
-		  * @private
+		  * @public
 		  */
 		 Default: "Default",
 
 		 /**
 		  * Attention style. This badge is rendered as a single dot meant to grab attention.
 		  *
-		  * @private
+		  * @public
 		  */
 		 Attention: "Attention"
 	 };
@@ -6029,6 +6030,7 @@ sap.ui.define([
 	  */
 	 DataType.registerEnum("sap.m.BackgroundDesign", thisLib.BackgroundDesign);
 	 DataType.registerEnum("sap.m.BadgeState", thisLib.BadgeState);
+	 DataType.registerEnum("sap.m.BadgeStyle", thisLib.BadgeStyle);
 	 DataType.registerEnum("sap.m.BadgeAnimationType", thisLib.BadgeAnimationType);
 	 DataType.registerEnum("sap.m.BarDesign", thisLib.BarDesign);
 	 DataType.registerEnum("sap.m.BorderDesign", thisLib.BorderDesign);

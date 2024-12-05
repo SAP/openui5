@@ -1,296 +1,145 @@
-/*globals sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
-	"sap/ui/mdc/enums/OperatorName",
+	"./ContentBasicTest",
 	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/field/content/DateContent",
 	"sap/ui/mdc/field/content/LinkContent",
-	"sap/ui/mdc/Field",
+	"sap/ui/mdc/field/ConditionsType",
+	"sap/ui/mdc/enums/BaseType",
+	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
-	"sap/m/Link",
-	"sap/ui/mdc/field/FieldInput",
-	"sap/ui/mdc/field/FieldMultiInput",
-	"sap/m/TextArea",
-	"sap/m/Token"
-], function(QUnit, OperatorName, DefaultContent, DateContent, LinkContent, Field, mLibrary, Link, FieldInput, FieldMultiInput, TextArea, Token) {
+	"sap/m/Link"
+], (
+	QUnit,
+	ContentBasicTest,
+	DefaultContent,
+	DateContent,
+	LinkContent,
+	ConditionsType,
+	BaseType,
+	FieldEditMode,
+	OperatorName,
+	mLibrary,
+	Link
+) => {
 	"use strict";
 
 	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 	const LinkDefaultContent = LinkContent.extendBaseContent(DefaultContent); // Use extended DefaultContent
 	const LinkDateContent = LinkContent.extendBaseContent(DateContent); // Use extended DateContent
 
-	const oControlMap = {
-		"Display": {
-			getPathsFunction: "getDisplay",
-			paths: ["sap/m/Link"],
-			instances: [Link],
-			createFunction: "createDisplay",
-			bindings: [
-				{
-					text: "$field>/conditions",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					wrapping: "$field>/multipleLines",
-					tooltip: "$field>/tooltip"
-				},
-				{}
-			],
-			properties: [
-				{
-					emptyIndicatorMode: EmptyIndicatorMode.Auto
-				},
-				{}
-			]
-		},
-		"DisplayMultiLine": {
-			getPathsFunction: "getDisplayMultiLine",
-			paths: ["sap/m/Link"],
-			instances: [Link],
-			createFunction: "createDisplayMultiLine",
-			bindings: [
-				{
-					text: "$field>/conditions",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					wrapping: "$field>/multipleLines",
-					tooltip: "$field>/tooltip"
-				},
-				{}
-			],
-			properties: [
-				{
-					emptyIndicatorMode: EmptyIndicatorMode.Auto
-				},
-				{}
-			]
-		},
-		"Edit": {
-			getPathsFunction: "getEdit",
-			paths: ["sap/ui/mdc/field/FieldInput"],
-			instances: [FieldInput],
-			createFunction: "createEdit",
-			bindings: [
-				{
-					value: "$field>/conditions",
-					placeholder: "$field>/placeholder",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					required: "$field>/required",
-					editable: "$field>/editMode",
-					enabled: "$field>/editMode",
-					valueState: "$field>/valueState",
-					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_valueHelpEnabled",
-					ariaAttributes: "$field>/_ariaAttributes",
-					tooltip: "$field>/tooltip"
-				},
-				{}
-			],
-			properties: [
-				{
-					width: "100%",
-					autocomplete: false,
-					showSuggestion: false
-				},
-				{}
-			]
-		},
-		"EditMultiValue": {
-			getPathsFunction: "getEditMultiValue",
-			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"],
-			instances: [FieldMultiInput, Token],
-			createFunction: "createEditMultiValue",
-			bindings: [
-				{
-					value: "$field>/conditions",
-					placeholder: "$field>/placeholder",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					required: "$field>/required",
-					editable: "$field>/editMode",
-					enabled: "$field>/editMode",
-					valueState: "$field>/valueState",
-					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_valueHelpEnabled",
-					ariaAttributes: "$field>/_ariaAttributes",
-					tooltip: "$field>/tooltip",
-					tokens: "$field>/conditions"
-				},
-				{
-					text: "$field>"
-				}
-			],
-			properties: [
-				{
-					width: "100%",
-					autocomplete: false,
-					showSuggestion: false
-				},
-				{}
-			]
-		},
-		"EditMultiLine": {
-			getPathsFunction: "getEditMultiLine",
-			paths: ["sap/m/TextArea"],
-			instances: [TextArea],
-			createFunction: "createEditMultiLine",
-			bindings: [
-				{
-					value: "$field>/conditions",
-					placeholder: "$field>/placeholder",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					required: "$field>/required",
-					editable: "$field>/editMode",
-					enabled: "$field>/editMode",
-					valueState: "$field>/valueState",
-					valueStateText: "$field>/valueStateText",
-					tooltip: "$field>/tooltip"
-				},
-				{}
-			],
-			properties: [
-				{
-					width: "100%",
-					rows: 4
-				},
-				{}
-			]
+	ContentBasicTest.controlMap.Display = {
+		getPathsFunction: "getDisplay",
+		paths: ["sap/m/Link"],
+		modules: [Link],
+		instances: [Link],
+		createFunction: "createDisplay",
+		noFormatting: false,
+		editMode: FieldEditMode.Display,
+		bindings: [
+			{
+				text: {path: "$field>/conditions", type: ConditionsType},
+				textAlign: {path: "$field>/textAlign"},
+				textDirection: {path: "$field>/textDirection"},
+				wrapping: {path: "$field>/multipleLines"},
+				tooltip: {path: "$field>/tooltip"}
 		}
-	};
-
-	const aControlMapKeys = Object.keys(oControlMap);
-
-	QUnit.module("Getters");
-
-	aControlMapKeys.forEach(function(sControlMapKey) {
-		const oValue = oControlMap[sControlMapKey];
-		QUnit.test(oValue.getPathsFunction, function(assert) {
-			assert.deepEqual(LinkDefaultContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
-		});
-	});
-
-	QUnit.test("getEditOperator", function(assert) {
-		assert.deepEqual(LinkDefaultContent.getEditOperator(), [null], "Correct editOperator value returned.");
-		assert.deepEqual(LinkDateContent.getEditOperator(), DateContent.getEditOperator(), "Correct editOperator value returned.");
-	});
-
-	QUnit.test("getUseDefaultEnterHandler", function(assert) {
-		assert.ok(LinkDefaultContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
-	});
-
-	QUnit.test("getUseDefaultValueHelp", function(assert) {
-		assert.notOk(LinkDefaultContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
-		assert.notOk(LinkDateContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
-	});
-
-	QUnit.test("getControlNames", function(assert) {
-		/* no need to use oOperator here as there is no editOperator*/
-		assert.deepEqual(LinkDefaultContent.getControlNames(null), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode null");
-		assert.deepEqual(LinkDefaultContent.getControlNames(undefined), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode undefined");
-		assert.deepEqual(LinkDefaultContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for not specified ContentMode");
-
-		assert.deepEqual(LinkDefaultContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode 'Edit'");
-		assert.deepEqual(LinkDateContent.getControlNames("Edit"), DateContent.getControlNames("Edit"), "Correct default controls returned for ContentMode 'Edit'");
-		assert.deepEqual(LinkDefaultContent.getControlNames("Display"), ["sap/m/Link"], "Correct default controls returned for ContentMode 'Display'");
-		assert.deepEqual(LinkDateContent.getControlNames("Display"), ["sap/m/Link"], "Correct default controls returned for ContentMode 'Display'");
-		assert.deepEqual(LinkDefaultContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct default controls returned for ContentMode 'EditMultiValue'");
-		assert.deepEqual(LinkDefaultContent.getControlNames("EditMultiLine"), ["sap/m/TextArea"], "Correct default controls returned for ContentMode 'EditMultiLine'");
-		assert.deepEqual(LinkDefaultContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
-		assert.deepEqual(LinkDateContent.getControlNames("EditOperator", OperatorName.EQ), ["sap/m/DatePicker"], "Correct default controls returned for ContentMode 'EditOperator'");
-	});
-
-	QUnit.module("Content creation", {
-		beforeEach: function() {
-			this.oField = new Field({});
-			this.aControls = [];
-		},
-		afterEach: function() {
-			delete this.oField;
-			while (this.aControls.length > 0) {
-				const oControl = this.aControls.pop();
-				if (oControl) {
-					oControl.destroy();
-				}
+		],
+		properties: [
+			{
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			}
+		],
+		events: [
+			{
+				press: {ctrlKey: false, metaKey: false}
+			}
+		],
+		detailTests: _checkLink
+	};
+
+	ContentBasicTest.controlMap.DisplayMultiValue = {
+		getPathsFunction: "getDisplayMultiValue",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createDisplayMultiValue",
+		noFormatting: false,
+		editMode: FieldEditMode.Display,
+		throwsError: true
+	};
+
+	ContentBasicTest.controlMap.DisplayMultiLine = {
+		getPathsFunction: "getDisplayMultiLine",
+		paths: ["sap/m/Link"],
+		modules: [Link],
+		instances: [Link],
+		createFunction: "createDisplayMultiLine",
+		noFormatting: false,
+		editMode: FieldEditMode.Display,
+		bindings: [
+			{
+				text: {path: "$field>/conditions", type: ConditionsType},
+				textAlign: {path: "$field>/textAlign"},
+				textDirection: {path: "$field>/textDirection"},
+				wrapping: {path: "$field>/multipleLines"},
+				tooltip: {path: "$field>/tooltip"}
 		}
-	});
-
-	const fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
-		return LinkDefaultContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
+		],
+		properties: [
+			{
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			}
+		],
+		events: [
+			{
+				press: {ctrlKey: false, metaKey: false}
+			}
+		],
+		detailTests: _checkLink
 	};
 
-	const fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(LinkDefaultContent, oControlMap[sContentMode].createFunction) : null;
+	const fnEnhanceField = (oFakeField) => {
+		oFakeField.getFieldInfo = () => {
+			return {
+				getDirectLinkHrefAndTarget: () => {return Promise.resolve({href: "X", target: "Y"});}
+			};
+		};
 	};
 
-	const fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
-		if (fnSpyFunction) {
-			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
-		}
-	};
+	ContentBasicTest.test(QUnit, LinkDefaultContent, "LinkContent", "sap.ui.model.type.String", {}, fnEnhanceField, BaseType.String, false, true);
 
-	QUnit.test("create", function(assert) {
-		const done = assert.async();
-		const oContentFactory = this.oField._oContentFactory;
-		this.oField.awaitControlDelegate().then(function() {
-			const aDisplayControls = oControlMap["Display"].instances;
-			const aEditControls = oControlMap["Edit"].instances;
-			const aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
-			const aEditMultiLineControls = oControlMap["EditMultiLine"].instances;
-
-			const fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
-			const fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			const fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
-			const fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
-
-			const aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
-			const aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			const aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
-			const aCreatedEditMultiLineControls = fnCreateControls(oContentFactory, "EditMultiLine", "-create");
-
-			const aCreatedEditOperatorControls = LinkDefaultContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
-
-			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
-			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
-			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
-			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
-
-			assert.ok(aCreatedDisplayControls[0] instanceof aDisplayControls[0], aDisplayControls[0].getMetadata().getName() + " control created for ContentMode 'Display'.");
-			assert.ok(aCreatedEditControls[0] instanceof aEditControls[0], aEditControls[0].getMetadata().getName() + " control created for ContentMode 'Edit'.");
-			assert.ok(aCreatedEditMultiValueControls[0] instanceof aEditMultiValueControls[0], aEditMultiValueControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiValue'.");
-			assert.ok(aCreatedEditMultiLineControls[0] instanceof aEditMultiLineControls[0], aEditMultiLineControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiLine'.");
-			assert.equal(aCreatedEditOperatorControls[0], null, "No control created for ContentMode 'EditOperator'.");
-
-			done();
+	function _checkLink(assert, aControls, oValue) {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				assert.equal(aControls[0].getHref(), "X", "Link: Href");
+				assert.equal(aControls[0].getTarget(), "Y", "Link: Target");
+				resolve();
+			},0);
 		});
+
+	}
+
+	// Test based on DateContent
+	QUnit.module("based on DateContent", {
+		beforeEach: () => {
+		},
+		afterEach: () => {
+		}
 	});
 
-	aControlMapKeys.forEach(function(sControlMapKey) {
-		const oValue = oControlMap[sControlMapKey];
-		if (oValue.createFunction) {
-			QUnit.test(oValue.createFunction, function(assert) {
-				const done = assert.async();
-				const oContentFactory = this.oField._oContentFactory;
-				this.oField.awaitControlDelegate().then(function() {
-					const oInstance = oValue.instances[0];
-					const aControls = LinkDefaultContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
-
-					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
-
-					for (const sName in oValue.bindings[0]) {
-						const oBindingInfo = aControls[0].getBindingInfo(sName);
-						const sPath = oBindingInfo && oBindingInfo.parts ? oBindingInfo.parts[0].path : oBindingInfo.path;
-						const sModel = oBindingInfo && oBindingInfo.parts ? oBindingInfo.parts[0].model : oBindingInfo.model;
-						assert.equal(sModel + ">" + sPath, oValue.bindings[0][sName], "Binding path for " + sName);
-					}
-					for (const sProperty in oValue.properties[0]) {
-						assert.equal(aControls[0].getProperty(sProperty), oValue.properties[0][sProperty], "Value for " + sProperty);
-					}
-					done();
-				});
-			});
-		}
+	QUnit.test("Getters", (assert) => {
+		assert.deepEqual(LinkDateContent.getEditOperator(), DateContent.getEditOperator(), "Correct editOperator value returned.");
+		assert.notOk(LinkDateContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
+		assert.deepEqual(LinkDateContent.getControlNames("Display"), ["sap/m/Link"], "Correct default controls returned for ContentMode 'Display'");
+		assert.deepEqual(LinkDateContent.getControlNames("DisplayMultiLine"), ["sap/m/Link"], "Correct default controls returned for ContentMode 'DisplayMultiLine'");
+		assert.deepEqual(LinkDateContent.getControlNames("DisplayMultiValue"), [null], "Correct default controls returned for ContentMode 'DisplayMultiValue'");
+		assert.deepEqual(LinkDateContent.getControlNames("Edit"), DateContent.getControlNames("Edit"), "Correct default controls returned for ContentMode 'Edit'");
+		assert.deepEqual(LinkDateContent.getControlNames("EditMultiLine"), DateContent.getControlNames("EditMultiLine"), "Correct default controls returned for ContentMode 'EditMultiLine'");
+		assert.deepEqual(LinkDateContent.getControlNames("EditMultiValue"), DateContent.getControlNames("EditMultiValue"), "Correct default controls returned for ContentMode 'EditMultiValue'");
+		assert.deepEqual(LinkDateContent.getControlNames("EditForHelp"), DateContent.getControlNames("EditForHelp"), "Correct default controls returned for ContentMode 'EditForHelp'");
+		assert.deepEqual(LinkDateContent.getControlNames("EditOperator", OperatorName.EQ), DateContent.getControlNames("EditOperator", OperatorName.EQ), "Correct default controls returned for ContentMode 'EditOperator'");
 	});
 
 	QUnit.start();

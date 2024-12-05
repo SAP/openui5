@@ -73,7 +73,7 @@ sap.ui.define([
 			this._aDataProviders = [];
 			this._aFiltersProviders = [];
 			this._pFilterBarReady = new Promise((resolve) => {
-				this._oCard.attachEventOnce("_filterBarReady", resolve);
+				this._oCard?.attachEventOnce("_filterBarReady", resolve);
 			});
 		}
 	});

@@ -38,6 +38,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// shortcut for sap.m.BadgeStyle
+	var BadgeStyle = mobileLibrary.BadgeStyle;
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -1719,6 +1722,36 @@ sap.ui.define([
 		assert.equal(this.oButton._badgeMinValue, 100, "Badge minimum value is not changed because is greater than maximum badge constraint");
 		assert.equal(this.oButton._badgeMaxValue, 200, "Badge maximum value is not changed becasue is less than minimum badge constraint");
 
+	});
+
+	QUnit.test("Badge change style", async function (assert){
+		//Arrange
+		let oBadge = this.oButton.getDomRef().querySelector(".sapMBadgeIndicator");
+
+		//Assert
+		assert.ok(oBadge.classList.contains("sapMBadgeDefault"), "The default badge must have a sapMBadgeDefault class");
+
+		//Act
+		this.oButton.setBadgeStyle(BadgeStyle.Attention);
+		await nextUIUpdate(this.clock);
+
+		//Arrange
+		oBadge = this.oButton.getDomRef().querySelector(".sapMBadgeIndicator");
+
+		//Assert
+		assert.notOk(oBadge.classList.contains("sapMBadgeDefault"), "The badge should not have a sapMBadgeDefault class after changing the style");
+		assert.ok(oBadge.classList.contains("sapMBadgeAttention"), "The badge should have a sapMBadgeAttention class after changing the style" );
+
+		//Act
+		this.oButton.setBadgeStyle(BadgeStyle.Default);
+		await nextUIUpdate(this.clock);
+
+		//Arrange
+		oBadge = this.oButton.getDomRef().querySelector(".sapMBadgeIndicator");
+
+		//Assert
+		assert.ok(oBadge.classList.contains("sapMBadgeDefault"), "The badge should have a sapMBadgeDefault class after changing the style to Default");
+		assert.notOk(oBadge.classList.contains("sapMBadgeAttention"), "The badge should not have a sapMBadgeAttention class after changing the style to Default");
 	});
 
 	QUnit.test("Buttton.prototype._updateBadgeInvisibleText", function(assert) {
