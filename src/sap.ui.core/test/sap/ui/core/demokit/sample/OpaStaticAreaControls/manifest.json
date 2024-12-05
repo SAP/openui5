@@ -14,17 +14,20 @@
 		},
 		"config": {
 			"sample": {
-				"iframe": "OpaStaticAreaControls.html?opaExecutionDelay=700",
+				"iframe": "Test.qunit.html?testsuite=test-resources/appUnderTest/testsuite.qunit&test=OpaStaticAreaControls",
 				"stretch": true,
 				"files": [
-					"OpaStaticAreaControls.html",
-					"OpaStaticAreaControls.js",
 					"applicationUnderTest/index.html",
 					"applicationUnderTest/Component.js",
 					"applicationUnderTest/manifest.json",
 					"applicationUnderTest/view/Main.view.xml",
 					"applicationUnderTest/view/Main.controller.js",
-					"manifest.json"
+					"Component.js",
+					"OpaStaticAreaControls.qunit.js",
+					"Test.qunit.html",
+					"manifest.json",
+					"testsuite.qunit.html",
+					"testsuite.qunit.js"
 				]
 			}
 		}

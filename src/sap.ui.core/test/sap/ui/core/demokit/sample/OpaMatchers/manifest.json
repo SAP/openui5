@@ -14,11 +14,9 @@
 		},
 		"config": {
 			"sample": {
-				"iframe": "OpaMatchers.html?opaExecutionDelay=700",
+				"iframe": "Test.qunit.html?testsuite=test-resources/appUnderTest/testsuite.qunit&test=OpaMatchers",
 				"stretch": true,
 				"files": [
-					"OpaMatchers.html",
-					"OpaMatchers.js",
 					"applicationUnderTest/controller/App.controller.js",
 					"applicationUnderTest/controller/Main.controller.js",
 					"applicationUnderTest/view/App.view.xml",
@@ -26,7 +24,12 @@
 					"applicationUnderTest/index.html",
 					"applicationUnderTest/Component.js",
 					"applicationUnderTest/manifest.json",
-					"manifest.json"
+					"Component.js",
+					"OpaMatchers.qunit.js",
+					"Test.qunit.html",
+					"manifest.json",
+					"testsuite.qunit.html",
+					"testsuite.qunit.js"
 				]
 			}
 		}
