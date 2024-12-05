@@ -1,0 +1,20 @@
+.sapUiJSDocType {
+	color: lighten(@sapUiLink,41);
+	display: inline-block;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	word-break: break-word; // ensure long names visible even when inside a narrow column
+	overflow-wrap: break-word;
+}
+
+.sapUiJSDocTypeLink {
+	color: @sapUiLink;
+	cursor: pointer;
+	text-decoration: none;
+	opacity: 1;
+}
+
+.sapUiJSDocTypeLink:hover:not(:active):not(:focus) {
+	color: @sapUiLinkHoverColor;
+	text-decoration: @sapUiLinkHoverTextDecoration;
+}
