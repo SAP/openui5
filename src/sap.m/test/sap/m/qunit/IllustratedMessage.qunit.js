@@ -228,7 +228,7 @@ function(
 		var oDescription,
 			sCurrDescrVal,
 			sEmptyString = '',
-			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, null, true),
+			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, undefined, true),
 			sTestDescrVal = "Test descr";
 
 		// Act - Force use of FormattedText
@@ -274,7 +274,7 @@ function(
 		var oDescription = this.oIllustratedMessage._getDescription(),
 			sEmptyString = '',
 			sCurrDescrVal = oDescription.getText(),
-			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, null, true),
+			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, undefined, true),
 			sTestDescrVal = "Test descr";
 
 		// Assert
@@ -328,7 +328,7 @@ function(
 		var sTitleText = this.oIllustratedMessage._getTitle().getText(),
 		sEmptyString = '',
 		sNewTitleVal = "Test title",
-		sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this.oIllustratedMessage._sIllustrationType, null, true);
+		sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this.oIllustratedMessage._sIllustrationType, undefined, true);
 
 		// Assert
 		assert.ok(this.oIllustratedMessage._getTitle().isA("sap.m.Title"), "Internal getter _getTitle is correctly returning an sap.m.Title");
@@ -834,8 +834,8 @@ function(
 
 		// Arrange
 		var sOriginalType = "NoTasks",
-			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, null, true),
-			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, null, true),
+			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, undefined, true),
+			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, undefined, true),
 			sVersionType = IllustratedMessageType.NoTasksV1;
 
 		// Act
@@ -853,8 +853,8 @@ function(
 
 		// Arrange
 		var sOriginalType = IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
-			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, null, true),
-			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, null, true),
+			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, undefined, true),
+			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, undefined, true),
 			sNewType = IllustratedMessageType.ReloadScreen;
 
 		// Act
