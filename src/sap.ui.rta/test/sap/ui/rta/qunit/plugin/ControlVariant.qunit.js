@@ -1118,11 +1118,15 @@ sap.ui.define([
 			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().clientWidth);
 
-			var iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt(oEditableControlDomRef.parentElement.offsetWidth);
+			const iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt(oEditableControlDomRef.offsetWidth);
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-			assert.equal(oEditableWrapperDOM.getBoundingClientRect().width, iOverlayInnerWidth - iWidthDiff, "then correct with set for the editable field wrapper");
+			assert.strictEqual(
+				oEditableWrapperDOM.offsetWidth,
+				iOverlayInnerWidth - iWidthDiff,
+				"then correct width set for the editable field wrapper"
+			);
 		});
 
 		QUnit.test("when startEdit is called and renamed control's text container and parent container having overflow", function(assert) {
