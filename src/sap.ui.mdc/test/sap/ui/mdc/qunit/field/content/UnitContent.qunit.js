@@ -1,292 +1,420 @@
 /*globals sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
+	"./ContentBasicTest",
 	"sap/ui/mdc/field/content/UnitContent",
-	"sap/ui/mdc/Field",
-	"delegates/odata/v4/FieldBaseDelegate", // as V4 type used for test
-	"sap/m/Text",
+	"sap/ui/mdc/field/ConditionType",
+	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/enums/BaseType",
+	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/mdc/odata/v4/TypeMap",
 	"sap/m/Token",
+	'sap/base/util/merge',
 	"sap/ui/core/InvisibleText",
 	"sap/ui/model/odata/type/Unit",
-	"sap/ui/mdc/odata/v4/TypeMap"
-], function(QUnit, UnitContent, Field, FieldBaseDelegate, Text, FieldInput, FieldMultiInput, Token, InvisibleText, UnitType, ODataV4TypeMap) {
+	"sap/ui/model/odata/type/Currency"
+], (
+	QUnit,
+	ContentBasicTest,
+	UnitContent,
+	ConditionType,
+	ConditionsType,
+	FieldInput,
+	FieldMultiInput,
+	BaseType,
+	FieldEditMode,
+	OperatorName,
+	ODataV4TypeMap,
+	Token,
+	merge,
+	InvisibleText,
+	UnitType,
+	CurrencyType
+) => {
 	"use strict";
+
+	ContentBasicTest.controlMap.Display.detailTests = _checkUnitFields;
+	ContentBasicTest.controlMap.Edit = {
+		getPathsFunction: "getEdit",
+		paths: ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"],
+		modules: [FieldInput, InvisibleText],
+		instances: [FieldInput, FieldInput],
+		createFunction: "createEdit",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		bindings: [
+			{
+				value: {path: "$field>/conditions", type: ConditionsType},
+				placeholder: {path: "$field>/placeholder"},
+				textAlign: {path: "$field>/textAlign"},
+				textDirection: {path: "$field>/textDirection"},
+				required: {path: "$field>/required"},
+				editable: {path: "$field>/editMode"},
+				enabled: {path: "$field>/editMode"},
+				valueState: {path: "$field>/valueState"},
+				valueStateText: {path: "$field>/valueStateText"},
+				fieldGroupIds: {path: "$field>/fieldGroupIds"},
+				tooltip: {path: "$field>/tooltip"}
+			},
+			{
+				value: {path: "$field>/conditions", type: ConditionsType},
+				placeholder: {path: "$field>/placeholder"},
+				textAlign: {path: "$field>/textAlign"},
+				textDirection: {path: "$field>/textDirection"},
+				required: {path: "$field>/required"},
+				editable: {path: "$field>/editMode"},
+				enabled: {path: "$field>/editMode"},
+				valueState: {path: "$field>/valueState"},
+				valueStateText: {path: "$field>/valueStateText"},
+				showValueHelp: {path: "$field>/_valueHelpEnabled"},
+				ariaAttributes: {path: "$field>/_ariaAttributes"},
+				fieldGroupIds: {path: "$field>/fieldGroupIds"},
+				tooltip: {path: "$field>/tooltip"}
+			}
+		],
+		properties: [
+			{
+				width: "70%",
+				showValueHelp: false,
+				autocomplete: false,
+				showSuggestion: false,
+				valueState: "Warning",
+				valueStateText: "My Warning"
+			},
+			{
+				width: "30%",
+				autocomplete: false,
+				showSuggestion: false,
+				valueState: "Warning",
+				valueStateText: "My Warning"
+			}
+		],
+		events: [
+			{
+				change: {value: "1"},
+				liveChange: {value: "1", previousValue: "", escPressed: false}
+			},
+			{
+				change: {value: "X"},
+				liveChange: {value: "X", previousValue: "", escPressed: false},
+				valueHelpRequest: {fromSuggestions: false, fromKeyboard: false}
+			}
+		],
+		detailTests: _checkUnitFields
+	};
+	ContentBasicTest.controlMap.EditDisplay = {
+		key: "Edit",
+		getPathsFunction: "getEdit",
+		paths: ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"],
+		modules: [FieldInput, InvisibleText],
+		instances: [FieldInput],
+		createFunction: "createEdit",
+		noFormatting: false,
+		editMode: FieldEditMode.EditableDisplay,
+		bindings: [
+			{
+				value: {path: "$field>/conditions", type: ConditionsType},
+				description: {path: "$field>/conditions", type: ConditionsType},
+				placeholder: {path: "$field>/placeholder"},
+				textAlign: {path: "$field>/textAlign"},
+				textDirection: {path: "$field>/textDirection"},
+				required: {path: "$field>/required"},
+				editable: {path: "$field>/editMode"},
+				enabled: {path: "$field>/editMode"},
+				valueState: {path: "$field>/valueState"},
+				valueStateText: {path: "$field>/valueStateText"},
+				fieldGroupIds: {path: "$field>/fieldGroupIds"},
+				tooltip: {path: "$field>/tooltip"}
+			}
+		],
+		properties: [
+			{
+				width: "100%",
+				fieldWidth: "70%",
+				showValueHelp: false,
+				autocomplete: false,
+				showSuggestion: false,
+				valueState: "Warning",
+				valueStateText: "My Warning"
+			}
+		],
+		events: [
+			{
+				change: {value: "1"},
+				liveChange: {value: "1", previousValue: "", escPressed: false}
+			}
+		],
+		detailTests: _checkUnitFields
+	};
+	ContentBasicTest.controlMapKeys.push("EditDisplay");
+
+	ContentBasicTest.controlMap.EditMultiValue = {
+		getPathsFunction: "getEditMultiValue",
+		paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"],
+		modules: [FieldMultiInput, FieldInput, Token, InvisibleText],
+		instances: [FieldMultiInput, FieldInput],
+		createFunction: "createEditMultiValue",
+		boundAggregations: ["tokens"],
+		aggregationInstances: [Token],
+		noFormatting: true,
+		editMode: FieldEditMode.Editable,
+		bindings: [
+			{
+				value: {path: "$field>/conditions", type: ConditionsType},
+				placeholder: {path: "$field>/placeholder"},
+				textAlign: {path: "$field>/textAlign"},
+				textDirection: {path: "$field>/textDirection"},
+				required: {path: "$field>/required"},
+				editable: {path: "$field>/editMode"},
+				enabled: {path: "$field>/editMode"},
+				valueState: {path: "$field>/valueState"},
+				valueStateText: {path: "$field>/valueStateText"},
+				fieldGroupIds: {path: "$field>/fieldGroupIds"},
+				tooltip: {path: "$field>/tooltip"},
+				tokens: {path: "$field>/conditions"}
+			},
+			{
+				value: {path: "$field>/conditions", type: ConditionsType},
+				placeholder: {path: "$field>/placeholder"},
+				textAlign: {path: "$field>/textAlign"},
+				textDirection: {path: "$field>/textDirection"},
+				required: {path: "$field>/required"},
+				editable: {path: "$field>/editMode"},
+				enabled: {path: "$field>/editMode"},
+				valueState: {path: "$field>/valueState"},
+				valueStateText: {path: "$field>/valueStateText"},
+				showValueHelp: {path: "$field>/_valueHelpEnabled"},
+				ariaAttributes: {path: "$field>/_ariaAttributes"},
+				fieldGroupIds: {path: "$field>/fieldGroupIds"},
+				tooltip: {path: "$field>/tooltip"}
+			}
+		],
+		aggregationBindings: [
+			{
+				text: {path: "$field>", type: ConditionType}
+			}
+		],
+		properties: [
+			{
+				width: "70%",
+				showValueHelp: false,
+				autocomplete: false,
+				showSuggestion: false,
+				valueState: "Warning",
+				valueStateText: "My Warning"
+			},
+			{
+				width: "30%",
+				autocomplete: false,
+				showSuggestion: false,
+				valueState: "Warning",
+				valueStateText: "My Warning"
+			}
+		],
+		events: [
+			{
+				change: {value: "1"},
+				liveChange: {value: "1", previousValue: "", escPressed: false},
+				tokenUpdate: {}
+			},
+			{
+				change: {value: "X"},
+				liveChange: {value: "X", previousValue: "", escPressed: false},
+				valueHelpRequest: {fromSuggestions: false, fromKeyboard: false}
+			}
+		],
+		detailTests: _checkUnitFields
+	};
+	ContentBasicTest.controlMap.EditMultiLine = {
+		getPathsFunction: "getEditMultiLine",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditMultiLine",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
+	};
+
+	ContentBasicTest.controlMap.EditForHelp = merge({}, ContentBasicTest.controlMap.Edit);
+	ContentBasicTest.controlMap.EditForHelp.getPathsFunction = "getEditForHelp";
+	ContentBasicTest.controlMap.EditForHelp.createFunction = "createEditForHelp";
 
 	const sInvisibleTextIdNumber = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
 	const sInvisibleTextIdUnit = InvisibleText.getStaticId("sap.ui.mdc", "field.UNIT");
+	const sInvisibleTextIdCurrency = InvisibleText.getStaticId("sap.ui.mdc", "field.CURRENCY");
 
-	const oControlMap = {
-		"Display": {
-			getPathsFunction: "getDisplay",
-			paths: ["sap/m/Text"],
-			instances: [Text],
-			createFunction: "createDisplay",
-			createdInstances: [{control: Text, boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}}]
-		},
-		"Edit": {
-			getPathsFunction: "getEdit",
-			paths: ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"],
-			instances: [FieldInput, InvisibleText],
-			createFunction: "createEdit",
-			createdInstances: [{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
-								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
-		},
-		"EditMultiValue": {
-			getPathsFunction: "getEditMultiValue",
-			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"],
-			instances: [FieldMultiInput, FieldInput, Token, InvisibleText],
-			createFunction: "createEditMultiValue",
-			createdInstances: [{control: FieldMultiInput, boundAggregation: "tokens", boundProperty: "text", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdNumber},
-								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.odata.type.Unit", formatOptions: {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, invisibleTextId: sInvisibleTextIdUnit}]
-		},
-		"EditMultiLine": {
-			getPathsFunction: "getEditMultiLine",
-			paths: [null],
-			instances: [null],
-			createFunction: "createEditMultiLine",
-			createdInstances: [],
-			throwsError: true
-		}
+	const fnEnhanceField = (oFakeField) => {
+		oFakeField.getTypeMap = () => {return ODataV4TypeMap;};
 	};
 
-	const aControlMapKeys = Object.keys(oControlMap);
+	ContentBasicTest.test(QUnit, UnitContent, "UnitContent", "sap.ui.model.odata.type.Unit", {}, fnEnhanceField, BaseType.Unit, undefined, true);
 
-	QUnit.module("Getters");
+	const fnCheckValueState = (assert, aControls, oValue) => {
+		const oFakeField = this.oContentFactory.getField();
+		sinon.stub(oFakeField, "isInvalidInput").returns(true);
+		sinon.stub(oFakeField, "_isInvalidInputForContent").withArgs(aControls[0]).returns(false);
+		oFakeField._isInvalidInputForContent.withArgs(aControls[1]).returns(true);
+		sinon.stub(oFakeField, "_getInvalidInputException").withArgs(aControls[0]).returns(null);
+		oFakeField._getInvalidInputException.withArgs(aControls[1]).returns(new Error("My Exception"));
+		const oData = ContentBasicTest.model.getData();
+		const oBindingValueState0 = aControls[0].getBinding("valueState");
+		const oBindingValueState1 = aControls[1].getBinding("valueState");
+		const oBindingValueStateText0 = aControls[0].getBinding("valueStateText");
+		const oBindingValueStateText1 = aControls[1].getBinding("valueStateText");
+		oData.valueState = "Error";
+		oData.valueStateText = "My Error";
+		oBindingValueState0.checkUpdate(true);
+		oBindingValueState1.checkUpdate(true);
+		oBindingValueStateText0.checkUpdate(true);
+		oBindingValueStateText1.checkUpdate(true);
 
-	aControlMapKeys.forEach(function(sControlMapKey) {
-		const oValue = oControlMap[sControlMapKey];
-		QUnit.test(oValue.getPathsFunction, function(assert) {
-			assert.deepEqual(UnitContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
-		});
-	});
+		assert.equal(aControls[0].getValueState(), "None", "ValueState on first control");
+		assert.equal(aControls[1].getValueState(), "Error", "ValueState on second control");
+		assert.equal(aControls[0].getValueStateText(), "", "ValueStateText on first control");
+		assert.equal(aControls[1].getValueStateText(), "My Exception", "ValueStateText on second control");
+		oFakeField.isInvalidInput.restore();
+		oFakeField._isInvalidInputForContent.restore();
+		oFakeField._getInvalidInputException.restore();
+		oData.valueState = "Warning";
+		oData.valueStateText = "My Warning";
+	};
 
-	QUnit.test("getEditOperator", function(assert) {
-		assert.deepEqual(UnitContent.getEditOperator(), [null], "Correct editOperator value returned.");
-	});
+	function _checkUnitFields(assert, aControls, oValue) {
+		const oDataType = this.oContentFactory.retrieveDataType();
+		const oFormatOptions = oDataType?.getFormatOptions();
+		const oUnitType = this.oContentFactory.getUnitType();
+		const oUnitFormatOptions = oUnitType?.getFormatOptions();
+		const oUnitOriginalType = this.oContentFactory.getUnitOriginalType();
+		const oUnitOriginalFormatOptions = oUnitOriginalType?.getFormatOptions();
+		let oBindingInfo;
 
-	QUnit.test("getUseDefaultEnterHandler", function(assert) {
-		assert.ok(UnitContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
-	});
+		switch (oValue.getPathsFunction) {
+			case "getDisplay": {
+				assert.deepEqual(oFormatOptions, {decimals: 3, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}, "DataType: FormatOptions");
+				assert.notOk(oUnitType, "No UnitType");
+				assert.notOk(oUnitOriginalType, "No UnitOriginalType");
 
-	QUnit.test("getUseDefaultValueHelp", function(assert) {
-		assert.notOk(UnitContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
-	});
-
-	QUnit.test("getControlNames", function(assert) {
-		/* no need to use oOperator here as there is no editOperator*/
-		assert.deepEqual(UnitContent.getControlNames(null), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode null");
-		assert.deepEqual(UnitContent.getControlNames(undefined), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode undefined");
-		assert.deepEqual(UnitContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for not specified ContentMode");
-
-		assert.deepEqual(UnitContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode 'Edit'");
-		assert.deepEqual(UnitContent.getControlNames("Display"), ["sap/m/Text"], "Correct controls returned for ContentMode 'Display'");
-		assert.deepEqual(UnitContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode 'EditMultiValue'");
-		assert.deepEqual(UnitContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
-		assert.deepEqual(UnitContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
-	});
-
-	QUnit.module("Content creation", {
-		beforeEach: function() {
-			this.oField = new Field({
-				dataType: "sap.ui.model.odata.type.Unit",
-				delegate: {name: "delegates/odata/v4/FieldBaseDelegate"}
-			});
-			this.aControls = [];
-		},
-		afterEach: function() {
-			delete this.oField;
-			while (this.aControls.length > 0) {
-				const oControl = this.aControls.pop();
-				if (oControl) {
-					oControl.destroy();
-				}
+				oBindingInfo = aControls[0].getBindingInfo("text");
+				assert.equal(oBindingInfo.type, this.oContentFactory.getConditionsType(), "Control bound to ConditionsType");
+				break;
 			}
+			case "getEdit": {
+				assert.deepEqual(oFormatOptions, {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "DataType: FormatOptions");
+				assert.deepEqual(oUnitFormatOptions, {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "UnitType: FormatOptions");
+				assert.deepEqual(oUnitOriginalFormatOptions, {decimals: 3, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}, "UnitOriginalType: FormatOptions");
+
+				assert.ok(aControls[0].getAriaDescribedBy().indexOf(sInvisibleTextIdNumber) >= 0, "InvisibleText set on ariaDescribedBy for Number");
+				assert.ok(aControls[0].getFieldGroupIds().indexOf("F1") >= 0, "FieldGroupID of Field set on FieldGroupIds for Number");
+				assert.ok(aControls[0].getFieldGroupIds().indexOf("X1") >= 0, "FieldGroupID of Parent set on FieldGroupIds for Number");
+				oBindingInfo = aControls[0].getBindingInfo("value");
+				assert.equal(oBindingInfo.type, this.oContentFactory.getConditionsType(), "Control bound to ConditionsType");
+				if (!oValue.key) {// for EditDisplay only one control created
+					assert.ok(aControls[1].getAriaDescribedBy().indexOf(sInvisibleTextIdUnit) >= 0, "InvisibleText set on ariaDescribedBy for Unit");
+					assert.ok(aControls[1].getFieldGroupIds().indexOf("F1") >= 0, "FieldGroupID of Field set on FieldGroupIds for Unit");
+					assert.ok(aControls[1].getFieldGroupIds().indexOf("X1") >= 0, "FieldGroupID of Parent set on FieldGroupIds for Unit");
+					oBindingInfo = aControls[1].getBindingInfo("value");
+					assert.equal(oBindingInfo.type, this.oContentFactory.getUnitConditionsType(), "Control bound to UnitConditionsType");
+
+					fnCheckValueState(assert, aControls, oValue);
+				}
+
+				break;
+			}
+			case "getEditMultiValue": {
+				assert.deepEqual(oFormatOptions, {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "DataType: FormatOptions");
+				assert.deepEqual(oUnitFormatOptions, {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "UnitType: FormatOptions");
+				assert.deepEqual(oUnitOriginalFormatOptions, {decimals: 3, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}, "UnitOriginalType: FormatOptions");
+
+				assert.ok(aControls[0].getAriaDescribedBy().indexOf(sInvisibleTextIdNumber) >= 0, "InvisibleText set on ariaDescribedBy for Number");
+				assert.ok(aControls[0].getFieldGroupIds().indexOf("F1") >= 0, "FieldGroupID of Field set on FieldGroupIds for Number");
+				assert.ok(aControls[0].getFieldGroupIds().indexOf("X1") >= 0, "FieldGroupID of Parent set on FieldGroupIds for Number");
+				assert.ok(aControls[1].getAriaDescribedBy().indexOf(sInvisibleTextIdUnit) >= 0, "InvisibleText set on ariaDescribedBy for Unit");
+				assert.ok(aControls[1].getFieldGroupIds().indexOf("F1") >= 0, "FieldGroupID of Field set on FieldGroupIds for Unit");
+				assert.ok(aControls[1].getFieldGroupIds().indexOf("X1") >= 0, "FieldGroupID of Parent set on FieldGroupIds for Unit");
+
+				oBindingInfo = aControls[0].getBindingInfo("value");
+				assert.equal(oBindingInfo.type, this.oContentFactory.getConditionsType(), "Control bound to ConditionsType");
+				oBindingInfo = aControls[1].getBindingInfo("value");
+				assert.equal(oBindingInfo.type, this.oContentFactory.getUnitConditionsType(), "Control bound to UnitConditionsType");
+
+				fnCheckValueState(assert, aControls, oValue);
+
+				// test filter function of Token-Binding
+				oBindingInfo = aControls[0].getBindingInfo("tokens");
+				assert.ok(oBindingInfo.filters?.[0].getTest()([[1, "EUR"]]), "Condition with number and measure leads to Token");
+				assert.notOk(oBindingInfo.filters?.[0].getTest()([[null, "EUR"]]), "Condition without number but measure don't leads to Token");
+
+				break;
+			}
+			default:
+				break;
 		}
-	});
-
-	const fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
-		return UnitContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
-	};
-
-	const fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(UnitContent, oControlMap[sContentMode].createFunction) : null;
-	};
-
-	const fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
-		if (fnSpyFunction) {
-			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
-		}
-	};
-
-	QUnit.test("create", function(assert) {
-		const done = assert.async();
-		const oContentFactory = this.oField._oContentFactory;
-		this.oField.awaitControlDelegate().then(function() {
-			const aDisplayControls = oControlMap["Display"].instances;
-			const aEditControls = oControlMap["Edit"].instances;
-			const aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
-
-			const fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
-			const fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			const fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
-			const fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
-
-			const aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
-			const aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			const aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
-
-			assert.throws(
-				function() {
-					UnitContent.create(oContentFactory, "EditMultiLine", null, oControlMap["EditMultiLine"].instances, "EditMultiLine-create");
-				},
-				function(oError) {
-					return (
-						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.UnitContent - createEditMultiLine not defined!"
-					);
-				},
-				"createEditMultiLine throws an error.");
-
-			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
-			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
-			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
-			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
-
-			assert.ok(aCreatedDisplayControls[0] instanceof aDisplayControls[0], aDisplayControls[0].getMetadata().getName() + " control created for ContentMode 'Display'.");
-			assert.ok(aCreatedEditControls[0] instanceof aEditControls[0], aEditControls[0].getMetadata().getName() + " control created for ContentMode 'Edit'.");
-			assert.ok(aCreatedEditMultiValueControls[0] instanceof aEditMultiValueControls[0], aEditMultiValueControls[0].getMetadata().getName() + " control created for ContentMode 'EditMultiValue'.");
-
-			done();
-		});
-	});
-
-	aControlMapKeys.forEach(function(sControlMapKey) {
-		const oValue = oControlMap[sControlMapKey];
-		if (oValue.createFunction && !oValue.throwsError) {
-			QUnit.test(oValue.createFunction, function(assert) {
-				const done = assert.async();
-				const oContentFactory = this.oField._oContentFactory;
-				this.oField.awaitControlDelegate().then(function() {
-					const aCreatedInstances = oValue.createdInstances;
-					const aControls = UnitContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
-					assert.equal(aControls.length, aCreatedInstances.length, "number of created controls");
-
-					for (let i = 0; i < aControls.length; i++) {
-						assert.ok(aControls[i] instanceof aCreatedInstances[i].control, "Correct control created in " + oValue.createFunction);
-						if (aCreatedInstances[i].boundProperty || aCreatedInstances[i].boundAggregation) {
-							let oBindingInfo = aControls[i].getBindingInfo(aCreatedInstances[i].boundAggregation || aCreatedInstances[i].boundProperty);
-							assert.ok(oBindingInfo, "Control BindingInfo created");
-							const sPath = oBindingInfo.path || oBindingInfo.parts[0].path;
-							assert.equal(sPath, "/conditions", "BindingInfo path");
-							if (aCreatedInstances[i].boundAggregation) {
-								oBindingInfo = oBindingInfo.template.getBindingInfo(aCreatedInstances[i].boundProperty);
-							}
-							const oConditionType = oBindingInfo.type;
-							const oType = oConditionType.getFormatOptions().valueType;
-							const oFormatOptions = oType.getFormatOptions();
-							assert.equal(oType.getMetadata().getName(), aCreatedInstances[i].type, "Type of binding");
-							assert.deepEqual(oFormatOptions, aCreatedInstances[i].formatOptions, "FormatOptions");
-						}
-						if (aCreatedInstances[i].invisibleTextId) {
-							assert.ok(aControls[i].getAriaDescribedBy().indexOf(aCreatedInstances[i].invisibleTextId) >= 0, "InvisibleText set on ariaDescribedBy");
-						}
-					}
-					done();
-				});
-			});
-		}
-	});
-
-	QUnit.test("createEditMultiLine", function(assert) {
-		const done = assert.async();
-		this.oField.awaitControlDelegate().then(function() {
-			assert.throws(
-				function() {
-					UnitContent.createEditMultiLine();
-				},
-				function(oError) {
-					return (
-						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.UnitContent - createEditMultiLine not defined!"
-					);
-				},
-				"createEditMultiLine throws an error.");
-			done();
-		});
-	});
+	}
 
 	QUnit.module("Deprecations", {
-		beforeEach: function() {
+		beforeEach: () => {
+			ContentBasicTest.initContentFactory("sap.ui.model.odata.type.Currency", {}, fnEnhanceField, BaseType.Unit);
 		},
-		afterEach: function() {
-			delete this.oField;
-			while (this.aControls.length > 0) {
-				const oControl = this.aControls.pop();
-				if (oControl) {
-					oControl.destroy();
-				}
-			}
+		afterEach: () => {
+			ContentBasicTest.cleanUpContentFactory();
 		}
 	});
 
-	QUnit.test("Prefers deprecated getUnitTypeInstance, if available", function(assert) {
+	QUnit.test("Prefers deprecated getUnitTypeInstance, if available", (assert) => {
 
 		const oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
-		let oGetUnitTypeInstanceStub;
-		const oTypeUtilStub = sinon.stub(FieldBaseDelegate, "getTypeMap").callsFake(function () {
-			const oResult  = Object.assign({}, oTypeUtilStub.wrappedMethod.call(this), {getUnitTypeInstance: function () {
-				return false;
-			}});
-			oGetUnitTypeInstanceStub = sinon.stub(oResult, "getUnitTypeInstance");
-			return oResult;
+		ODataV4TypeMap.getUnitTypeInstance = () => {
+			return false;
+		};
+		const oGetUnitTypeInstanceStub = sinon.stub(ODataV4TypeMap, "getUnitTypeInstance");
+
+		const aControls = UnitContent.create(this.oContentFactory, "Edit", OperatorName.EQ, [FieldInput, InvisibleText], "F1-inner");
+		assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");
+		assert.ok(oGetUnitTypeInstanceStub.calledTwice, "getUnitTypeInstance is called twice.");
+		const oType = this.oContentFactory.retrieveDataType();
+		assert.deepEqual(oGetUnitTypeInstanceStub.args[0], [oType, true, false], "getUnitTypeInstance is called with expected args.");
+		assert.deepEqual(oGetUnitTypeInstanceStub.args[1], [oType, false, true], "getUnitTypeInstance is called with expected args.");
+
+		oGetUnitTypeInstanceStub.restore();
+		delete ODataV4TypeMap.getUnitTypeInstance;
+		oAdjustDataTypeForUnitSpy.restore();
+
+		aControls.forEach((oCreatedControl, iIndex) => {
+			oCreatedControl.destroy();
 		});
-
-		this.oField = new Field({
-			dataType: "sap.ui.model.odata.type.Unit",
-			delegate: {name: "delegates/odata/v4/FieldBaseDelegate"}
-		});
-		this.aControls = [];
-
-		return this.oField.awaitControlDelegate().then(function() {
-			UnitContent.createEdit(this.oField._oContentFactory, [FieldInput, InvisibleText]);
-			assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");
-			assert.ok(oGetUnitTypeInstanceStub.calledTwice, "getUnitTypeInstance is called twice.");
-			const oType = this.oField._oContentFactory.retrieveDataType();
-			assert.deepEqual(oGetUnitTypeInstanceStub.args[0], [oType, true, false], "getUnitTypeInstance is called with expected args.");
-			assert.deepEqual(oGetUnitTypeInstanceStub.args[1], [oType, false, true], "getUnitTypeInstance is called with expected args.");
-
-			oGetUnitTypeInstanceStub.restore();
-			oTypeUtilStub.restore();
-			oAdjustDataTypeForUnitSpy.restore();
-		}.bind(this));
 	});
 
-	QUnit.test("Calls getDataTypeInstance with additional options, if getUnitTypeInstance is unavailable", function(assert) {
+	QUnit.test("Calls getDataTypeInstance with additional options, if getUnitTypeInstance is unavailable", (assert) => {
 
 		const oAdjustDataTypeForUnitSpy = sinon.spy(UnitContent, "_adjustDataTypeForUnit");
 		const oGetDataTypeInstanceSpy = sinon.spy(ODataV4TypeMap, "getDataTypeInstance");
 
-		this.oField = new Field({
-			dataType: "sap.ui.model.odata.type.Unit",
-			delegate: {name: "delegates/odata/v4/FieldBaseDelegate"}
+		const oType = this.oContentFactory.retrieveDataType();
+		const sType = oType.getMetadata().getName();
+		const oFormatOptions = oType.getFormatOptions();
+
+		const aControls = UnitContent.create(this.oContentFactory, "Edit", OperatorName.EQ, [FieldInput, InvisibleText], "F1-inner");
+		assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");
+		assert.ok(oGetDataTypeInstanceSpy.calledThrice, "oGetDataTypeInstanceSpy is called thrice.");
+		assert.deepEqual(oGetDataTypeInstanceSpy.args[1], [sType, oFormatOptions, undefined, {showNumber: true, showMeasure: false}], "getDataTypeInstance is called with expected args.");
+		assert.deepEqual(oGetDataTypeInstanceSpy.args[2], [sType, oFormatOptions, undefined, {showNumber: false, showMeasure: true}], "getDataTypeInstance is called with expected args.");
+		aControls[0].setModel(ContentBasicTest.model, "$field"); // to create bindings
+		aControls[1].setModel(ContentBasicTest.model, "$field"); // to create bindings
+		assert.ok(aControls[1].getAriaDescribedBy().indexOf(sInvisibleTextIdCurrency) >= 0, "InvisibleText set on ariaDescribedBy for Currency");
+		assert.ok(aControls[0].getFieldGroupIds().indexOf("F1") >= 0, "FieldGroupID of Field set on FieldGroupIds for Number"); // to test without faked parent
+		assert.ok(aControls[0].getFieldGroupIds().indexOf("X1") >= 0, "FieldGroupID of Parent set on FieldGroupIds for Number");
+		assert.ok(aControls[1].getFieldGroupIds().indexOf("F1") >= 0, "FieldGroupID of Field set on FieldGroupIds for Unit");
+		assert.ok(aControls[1].getFieldGroupIds().indexOf("X1") >= 0, "FieldGroupID of Parent set on FieldGroupIds for Unit");
+		oAdjustDataTypeForUnitSpy.restore();
+		oGetDataTypeInstanceSpy.restore();
+
+		aControls.forEach((oCreatedControl, iIndex) => {
+			oCreatedControl.destroy();
 		});
-		this.aControls = [];
-
-		return this.oField.awaitControlDelegate().then(function() {
-			const oType = this.oField._oContentFactory.retrieveDataType();
-			const sType = oType.getMetadata().getName();
-			const oFormatOptions = oType.getFormatOptions();
-
-			UnitContent.createEdit(this.oField._oContentFactory, [FieldInput, InvisibleText], "t1");
-			assert.ok(oAdjustDataTypeForUnitSpy.calledOnce, "_adjustDataTypeForUnit is called.");
-			assert.ok(oGetDataTypeInstanceSpy.calledThrice, "oGetDataTypeInstanceSpy is called thrice.");
-			assert.deepEqual(oGetDataTypeInstanceSpy.args[1], [sType, oFormatOptions, undefined, {showNumber: true, showMeasure: false}], "getDataTypeInstance is called with expected args.");
-			assert.deepEqual(oGetDataTypeInstanceSpy.args[2], [sType, oFormatOptions, undefined, {showNumber: false, showMeasure: true}], "getDataTypeInstance is called with expected args.");
-			oAdjustDataTypeForUnitSpy.restore();
-			oGetDataTypeInstanceSpy.restore();
-		}.bind(this));
 	});
 
 	QUnit.start();

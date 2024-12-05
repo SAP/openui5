@@ -170,6 +170,26 @@ sap.ui.define([
 			sHttpRequestMethod = this.getHttpRequestMethod(),
 			sUploadUrl = oItem.getUploadUrl() || this.getUploadUrl();
 
+		const _isBrowserOffline = () => {
+			return !window.navigator.onLine;
+		};
+
+		const _fireBrowserOfflineEvent = () => {
+			that.fireUploadCompleted({
+				item: oItem,
+				responseXHR: {
+					response: null, // No server response
+					responseXML: null,
+					responseText: JSON.stringify({
+						error: "Internet is offline. Please check your connection and try again."
+					}),
+					readyState: 4, // Indicates request has been processed (mocking completed state)
+					status: 0, // 0 typically indicates a network error
+					headers: ""
+				}
+			});
+		};
+
 		oXhr.open(sHttpRequestMethod, sUploadUrl, true);
 
 		if (aHeaderFields) {
@@ -206,12 +226,22 @@ sap.ui.define([
 			oFile = oFormData;
 
 			this._mRequestHandlers[oItem.getId()] = oRequestHandler;
-			oXhr.send(oFile);
-			this.fireUploadStarted({item: oItem});
+			if (_isBrowserOffline()) {
+				this.fireUploadStarted({item: oItem});
+				_fireBrowserOfflineEvent();
+			} else {
+				oXhr.send(oFile);
+				this.fireUploadStarted({item: oItem});
+			}
 		} else {
 			this._mRequestHandlers[oItem.getId()] = oRequestHandler;
-			oXhr.send(oFile);
-			this.fireUploadStarted({item: oItem});
+			if (_isBrowserOffline()) {
+				this.fireUploadStarted({item: oItem});
+				_fireBrowserOfflineEvent();
+			} else {
+				oXhr.send(oFile);
+				this.fireUploadStarted({item: oItem});
+			}
 		}
 	};
 

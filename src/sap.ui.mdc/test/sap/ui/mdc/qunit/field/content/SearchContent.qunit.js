@@ -1,286 +1,192 @@
 /*globals sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/qunit-2",
+	"./ContentBasicTest",
 	"sap/ui/mdc/field/content/SearchContent",
-	"sap/ui/mdc/FilterField",
-	"sap/m/Text",
+	"sap/ui/mdc/field/ConditionsType",
+	"sap/ui/mdc/enums/BaseType",
+	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/m/SearchField",
-	"sap/ui/mdc/field/FieldMultiInput",
-	"sap/m/TextArea",
-	"sap/m/Token",
-	"sap/ui/model/json/JSONModel"
-], function(QUnit, SearchContent, FilterField, Text, SearchField, FieldMultiInput, TextArea, Token, JSONModel) {
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException"
+], (
+	QUnit,
+	ContentBasicTest,
+	SearchContent,
+	ConditionsType,
+	BaseType,
+	FieldEditMode,
+	SearchField,
+	ParseException,
+	ValidateException
+) => {
 	"use strict";
 
-	const oControlMap = {
-		"Display": {
-			getPathsFunction: "getDisplay",
-			paths: ["sap/m/Text"],
-			instances: [Text],
-			createFunction: "createDisplay"
-		},
-		"Edit": {
-			getPathsFunction: "getEdit",
-			paths: ["sap/m/SearchField"],
-			instances: [SearchField],
-			createFunction: "createEdit"
-		},
-		"EditMultiValue": {
-			getPathsFunction: "getEditMultiValue",
-			paths: [null],
-			instances: [null],
-			createFunction: "createEditMultiValue",
-			throwsError: true
-		},
-		"EditMultiLine": {
-			getPathsFunction: "getEditMultiLine",
-			paths: [null],
-			instances: [null],
-			createFunction: "createEditMultiLine",
-			throwsError: true
-		},
-		"EditForHelp": {
-			getPathsFunction: "getEditForHelp",
-			paths: [null],
-			instances: [null],
-			createFunction: "createEditForHelp",
-			throwsError: true
-		}
+	ContentBasicTest.controlMap.DisplayMultiValue = {
+		getPathsFunction: "getDisplayMultiValue",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createDisplayMultiValue",
+		noFormatting: false,
+		editMode: FieldEditMode.Display,
+		throwsError: true
 	};
 
-	const aControlMapKeys = Object.keys(oControlMap);
+	ContentBasicTest.controlMap.DisplayMultiLine = {
+		getPathsFunction: "getDisplayMultiLine",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createDisplayMultiLine",
+		noFormatting: false,
+		editMode: FieldEditMode.Display,
+		throwsError: true
+	};
 
-	QUnit.module("Getters");
-
-	aControlMapKeys.forEach(function(sControlMapKey) {
-		const oValue = oControlMap[sControlMapKey];
-		QUnit.test(oValue.getPathsFunction, function(assert) {
-			assert.deepEqual(SearchContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
-		});
-	});
-
-	QUnit.test("getEditOperator", function(assert) {
-		assert.deepEqual(SearchContent.getEditOperator(), [null], "Correct editOperator value returned.");
-	});
-
-	QUnit.test("getUseDefaultEnterHandler", function(assert) {
-		assert.notOk(SearchContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
-	});
-
-	QUnit.test("getUseDefaultValueHelp", function(assert) {
-		assert.notOk(SearchContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
-	});
-
-	QUnit.test("getControlNames", function(assert) {
-		/* no need to use oOperator here as there is no editOperator*/
-		assert.deepEqual(SearchContent.getControlNames(null), ["sap/m/SearchField"], "Correct default controls returned for ContentMode null");
-		assert.deepEqual(SearchContent.getControlNames(undefined), ["sap/m/SearchField"], "Correct default controls returned for ContentMode undefined");
-		assert.deepEqual(SearchContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/m/SearchField"], "Correct default controls returned for not specified ContentMode");
-
-		assert.deepEqual(SearchContent.getControlNames("Edit"), ["sap/m/SearchField"], "Correct default controls returned for ContentMode 'Edit'");
-		assert.deepEqual(SearchContent.getControlNames("Display"), ["sap/m/Text"], "Correct default controls returned for ContentMode 'Display'");
-		assert.deepEqual(SearchContent.getControlNames("EditMultiValue"), [null], "Correct default controls returned for ContentMode 'EditMultiValue'");
-		assert.deepEqual(SearchContent.getControlNames("EditMultiLine"), [null], "Correct default controls returned for ContentMode 'EditMultiLine'");
-		assert.deepEqual(SearchContent.getControlNames("EditOperator"), [null], "Correct default controls returned for ContentMode 'EditOperator'");
-		assert.deepEqual(SearchContent.getControlNames("EditForHelp"), [null], "Correct default controls returned for ContentMode 'EditForHelp'");
-	});
-
-	let iChangeEvent = 0;
-	function _myChangeHandler(oEvent) {
-		iChangeEvent++;
-	}
-
-	let iSubmitEvent = 0;
-	function _mySubmitHandler(oEvent) {
-		iSubmitEvent++;
-	}
-
-	QUnit.module("Content creation", {
-		beforeEach: function() {
-			this.oField = new FilterField({
-				maxConditions: 1,
-				change: _myChangeHandler,
-				submit: _mySubmitHandler
-			});
-			this.aControls = [];
-		},
-		afterEach: function() {
-			delete this.oField;
-			while (this.aControls.length > 0) {
-				const oControl = this.aControls.pop();
-				if (oControl) {
-					oControl.destroy();
-				}
+	ContentBasicTest.controlMap.Edit = {
+		getPathsFunction: "getEdit",
+		paths: ["sap/m/SearchField"],
+		modules: [SearchField],
+		instances: [SearchField],
+		createFunction: "createEdit",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		bindings: [
+			{
+				value: {path: "$field>/conditions", type: ConditionsType},
+				placeholder: {path: "$field>/placeholder"},
+				tooltip: {path: "$field>/tooltip"}
 			}
-			iChangeEvent = 0;
-			iSubmitEvent = 0;
-		}
-	});
-
-	const fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
-		return SearchContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
+		],
+		properties: [
+			{
+				width: "100%"
+			}
+		],
+		events: [
+			{
+				change: {value: "X"},
+				liveChange: {newValue: "X"}
+			}
+		],
+		detailTests: _checkSearchField
 	};
 
-	const fnSpyOnCreateFunction = function(sContentMode) {
-		return oControlMap[sContentMode].createFunction ? sinon.spy(SearchContent, oControlMap[sContentMode].createFunction) : null;
+	ContentBasicTest.controlMap.EditMultiValue = {
+		getPathsFunction: "getEditMultiValue",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditMultiValue",
+		noFormatting: true,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
 	};
 
-	const fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
-		if (fnSpyFunction) {
-			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
-		}
+	ContentBasicTest.controlMap.EditMultiLine = {
+		getPathsFunction: "getEditMultiLine",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditMultiLine",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
 	};
 
-	QUnit.test("create", function(assert) {
-		const done = assert.async();
-		const oContentFactory = this.oField._oContentFactory;
-		this.oField.awaitControlDelegate().then(function() {
-			const aDisplayControls = oControlMap["Display"].instances;
-			const aEditControls = oControlMap["Edit"].instances;
+	ContentBasicTest.controlMap.EditForHelp = {
+		getPathsFunction: "getEditForHelp",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditForHelp",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
+	};
 
-			const fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
-			const fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			const fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
-			const fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
-			const fnCreateEditForHelpFunction = fnSpyOnCreateFunction("EditForHelp");
+	ContentBasicTest.test(QUnit, SearchContent, "SearchContent", "sap.ui.model.type.String", {}, undefined, BaseType.String, undefined, false);
 
-			const aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
-			const aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			this.aControls = aCreatedDisplayControls.concat(aCreatedEditControls);
+	function _checkSearchField(assert, aControls, oValue) {
+		const oSearchField = aControls[0];
+		const oBinding = oSearchField.getBinding("value");
 
-			assert.throws(
-				function() {
-					SearchContent.create(oContentFactory, "EditMultiValue", null, oControlMap["EditMultiValue"].instances, "EditMultiValue-create");
-				},
-				function(oError) {
-					return (
-						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMultiValue not defined!"
-					);
-				},
-				"createEditMultiValue throws an error.");
+		sinon.spy(oSearchField, "fireValidationSuccess");
+		sinon.spy(oSearchField, "fireParseError");
+		sinon.spy(oSearchField, "fireValidationError");
+		sinon.stub(oBinding, "setExternalValue");
 
-			assert.throws(
-				function() {
-					SearchContent.create(oContentFactory, "EditMultiLine", null, oControlMap["EditMultiLine"].instances, "EditMultiLine-create");
-				},
-				function(oError) {
-					return (
-						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMultiLine not defined!"
-					);
-				},
-				"createEditMultiLine throws an error.");
+		// for testing just fire event of SearchField. Do not test if SearchField behaves right on user-intercation, just test the API usage.
+		oSearchField.fireChange({value: "OK"});
+		assert.ok(oBinding.setExternalValue.calledOnce, "Binding.setExternalValue called");
+		assert.ok(oBinding.setExternalValue.calledWith("OK"), "Binding.setExternalValue value");
+		assert.ok(oSearchField.fireValidationSuccess.calledOnce, "SearchField.fireValidationSuccess called");
+		assert.equal(oSearchField.fireValidationSuccess.args[0][0].element, oSearchField, "SearchField.fireValidationSuccess Property 'element'");
+		assert.equal(oSearchField.fireValidationSuccess.args[0][0].property, "value", "SearchField.fireValidationSuccess Property 'property'");
+		assert.ok(oSearchField.fireValidationSuccess.args[0][0].type instanceof ConditionsType, "SearchField.fireValidationSuccess Property 'type'");
+		assert.equal(oSearchField.fireValidationSuccess.args[0][0].newValue, "OK", "SearchField.fireValidationSuccess Property 'newValue'");
+		assert.equal(oSearchField.fireValidationSuccess.args[0][0].oldValue, "", "SearchField.fireValidationSuccess Property 'oldValue'");
+		oBinding.setExternalValue.reset();
+		oSearchField.fireValidationSuccess.reset();
+		oSearchField.fireParseError.reset();
+		oSearchField.fireValidationError.reset();
 
-			assert.throws(
-				function() {
-					SearchContent.create(oContentFactory, "EditForHelp", null, oControlMap["EditForHelp"].instances, "EditForHelp-create");
-				},
-				function(oError) {
-					return (
-						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditForHelp not defined!"
-					);
-				},
-				"createEditForHelp throws an error.");
+		oBinding.setExternalValue.withArgs("A").throws(new ParseException("My ParseException"));
+		oSearchField.fireChange({value: "A"});
+		assert.ok(oBinding.setExternalValue.calledOnce, "Binding.setExternalValue called");
+		assert.ok(oBinding.setExternalValue.calledWith("A"), "Binding.setExternalValue value");
+		assert.notOk(oSearchField.fireValidationSuccess.called, "SearchField.fireValidationSuccess not called");
+		assert.ok(oSearchField.fireParseError.calledOnce, "SearchField.fireParseError called");
+		assert.equal(oSearchField.fireParseError.args[0][0].element, oSearchField, "SearchField.fireParseError Property 'element'");
+		assert.equal(oSearchField.fireParseError.args[0][0].property, "value", "SearchField.fireParseError Property 'property'");
+		assert.ok(oSearchField.fireParseError.args[0][0].type instanceof ConditionsType, "SearchField.fireParseError Property 'type'");
+		assert.equal(oSearchField.fireParseError.args[0][0].newValue, "A", "SearchField.fireParseError Property 'newValue'");
+		assert.equal(oSearchField.fireParseError.args[0][0].oldValue, "", "SearchField.fireParseError Property 'oldValue'");
+		assert.ok(oSearchField.fireParseError.args[0][0].exception instanceof ParseException, "SearchField.fireParseError Property 'exception'");
+		assert.equal(oSearchField.fireParseError.args[0][0].message, "My ParseException", "SearchField.fireParseError Property 'message'");
+		oBinding.setExternalValue.reset();
+		oSearchField.fireValidationSuccess.reset();
+		oSearchField.fireParseError.reset();
+		oSearchField.fireValidationError.reset();
 
-			const aCreatedEditOperatorControls = SearchContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
+		oBinding.setExternalValue.withArgs("B").throws(new ValidateException("My ValidateException"));
+		oSearchField.fireChange({value: "B"});
+		assert.ok(oBinding.setExternalValue.calledOnce, "Binding.setExternalValue called");
+		assert.ok(oBinding.setExternalValue.calledWith("B"), "Binding.setExternalValue value");
+		assert.notOk(oSearchField.fireValidationSuccess.called, "SearchField.fireValidationSuccess not called");
+		assert.ok(oSearchField.fireValidationError.calledOnce, "SearchField.fireValidationError called");
+		assert.equal(oSearchField.fireValidationError.args[0][0].element, oSearchField, "SearchField.fireValidationError Property 'element'");
+		assert.equal(oSearchField.fireValidationError.args[0][0].property, "value", "SearchField.fireValidationError Property 'property'");
+		assert.ok(oSearchField.fireValidationError.args[0][0].type instanceof ConditionsType, "SearchField.fireValidationError Property 'type'");
+		assert.equal(oSearchField.fireValidationError.args[0][0].newValue, "B", "SearchField.fireValidationError Property 'newValue'");
+		assert.equal(oSearchField.fireValidationError.args[0][0].oldValue, "", "SearchField.fireValidationError Property 'oldValue'");
+		assert.ok(oSearchField.fireValidationError.args[0][0].exception instanceof ValidateException, "SearchField.fireValidationError Property 'exception'");
+		assert.equal(oSearchField.fireValidationError.args[0][0].message, "My ValidateException", "SearchField.fireValidationError Property 'message'");
+		oBinding.setExternalValue.reset();
+		oSearchField.fireValidationSuccess.reset();
+		oSearchField.fireParseError.reset();
+		oSearchField.fireValidationError.reset();
 
-			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
-			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
-			fnSpyCalledOnce(fnCreateEditMultiValueFunction, "EditMultiValue", assert);
-			fnSpyCalledOnce(fnCreateEditMultiLineFunction, "EditMultiLine", assert);
-			fnSpyCalledOnce(fnCreateEditForHelpFunction, "EditForHelp", assert);
-
-			assert.ok(aCreatedDisplayControls[0] instanceof aDisplayControls[0], aDisplayControls[0].getMetadata().getName() + " control created for ContentMode 'Display'.");
-			assert.ok(aCreatedEditControls[0] instanceof aEditControls[0], aEditControls[0].getMetadata().getName() + " control created for ContentMode 'Edit'.");
-			assert.equal(aCreatedEditOperatorControls[0], null, "No control created for ContentMode 'EditOperator'.");
-
-			done();
-		}.bind(this));
-	});
-
-	QUnit.test("eventing", function(assert) {
-
-		const done = assert.async();
-		const oContentFactory = this.oField._oContentFactory;
-		const oModel = new JSONModel({ // fake model
-			conditions: []
-		});
-
-		this.oField.awaitControlDelegate().then(function() {
-			this.aControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			const oSearchField = this.aControls[0];
-			oSearchField.setModel(oModel, "$field"); // To create binding
-
-			// for testing just fire event of SearchField. Do not test if SearchField behaves right on user-intercation, just test the API usage.
-			oSearchField.fireChange({value: "Test"});
-			assert.equal(iChangeEvent, 1, "Change event fired once");
-
-			oSearchField.fireSearch({clearButtonPressed: true});
-			assert.equal(iSubmitEvent, 0, "Submit event not fired");
-			oSearchField.fireSearch({escPressed: true});
-			assert.equal(iSubmitEvent, 0, "Submit event not fired");
-			oSearchField.fireSearch({searchButtonPressed: true});
-			assert.equal(iSubmitEvent, 1, "Submit event fired once");
-
-			done();
-		}.bind(this));
-
-	});
-
-	aControlMapKeys.forEach(function(sControlMapKey) {
-		const oValue = oControlMap[sControlMapKey];
-		if (oValue.createFunction && !oValue.throwsError) {
-			QUnit.test(oValue.createFunction, function(assert) {
-				const done = assert.async();
-				const oContentFactory = this.oField._oContentFactory;
-				this.oField.awaitControlDelegate().then(function() {
-					const oInstance = oValue.instances[0];
-					this.aControls = SearchContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
-
-					assert.ok(this.aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
-					done();
-				}.bind(this));
-			});
+		oBinding.setExternalValue.withArgs("C").throws(new Error("My Error"));
+		try {
+			oSearchField.fireChange({value: "C"});
+		} catch (oError) {
+			assert.ok(true, "error expected");
+			assert.equal(oError.message, "My Error", "Error message");
 		}
-	});
+		oBinding.setExternalValue.restore();
+		oSearchField.fireValidationSuccess.restore();
+		oSearchField.fireParseError.restore();
+		oSearchField.fireValidationError.restore();
 
-	QUnit.test("createEditMultiValue", function(assert) {
-		const done = assert.async();
-		this.oField.awaitControlDelegate().then(function() {
-			assert.throws(
-				function() {
-					SearchContent.createEditMultiValue();
-				},
-				function(oError) {
-					return (
-						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMultiValue not defined!"
-					);
-				},
-				"createEditMultiValue throws an error.");
-			done();
-		});
-	});
-
-	QUnit.test("createEditMultiLine", function(assert) {
-		const done = assert.async();
-		this.oField.awaitControlDelegate().then(function() {
-			assert.throws(
-				function() {
-					SearchContent.createEditMultiLine();
-				},
-				function(oError) {
-					return (
-						oError instanceof Error &&
-						oError.message === "sap.ui.mdc.field.content.SearchContent - createEditMultiLine not defined!"
-					);
-				},
-				"createEditMultiLine throws an error.");
-			done();
-		});
-	});
+		oSearchField.fireSearch({clearButtonPressed: true});
+		assert.equal(this.oEventCount.enter, 0, "Enter event not fired");
+		oSearchField.fireSearch({escPressed: true});
+		assert.equal(this.oEventCount.enter, 0, "Enter event not fired");
+		oSearchField.fireSearch({searchButtonPressed: true});
+		assert.equal(this.oEventCount.enter, 1, "Enter event fired once");
+	}
 
 	QUnit.start();
 });

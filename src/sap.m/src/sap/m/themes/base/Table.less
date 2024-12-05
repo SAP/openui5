@@ -7,6 +7,10 @@
 @_sap_m_Table_CustomFocusMargin: 1px;
 @sapUiElementLineHeightSticky13: @sapUiElementLineHeight * 2;
 @sapUiElementLineHeightSticky15: (@sapUiElementLineHeight * 2) + 2rem;
+@sapUiSizeCompactElementLineHeightSticky15: (@sapUiElementLineHeight * 2) + 1.2rem;
+@sapUiSizeCompactElementLineHeightSticky14: @sapUiElementLineHeight + 1.25rem;
+@sapUiSizeCompactElementLineHeightSticky13: @sapUiElementLineHeight  + 1.95rem;
+@sapUiSizeCompactElementLineHeightSticky12: 2rem;
 
 .sapMListTbl {
 	width: 100%;
@@ -284,6 +288,37 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 .sapMSticky15 .sapMGHLI {
 	z-index: 2;
 	top: @sapUiElementLineHeightSticky15;
+}
+
+.sapUiSizeCompact {
+	& .sapMSticky12 .sapMGHLI {
+		top: @sapUiSizeCompactElementLineHeightSticky12;
+		/* only first child needs 1px more which prevents (tiny) double borders through stacking the following groupHeaders */
+		&:first-child {
+			top: @sapUiSizeCompactElementLineHeightSticky12 + 0.0625rem;
+		}
+	}
+	& .sapMSticky13 .sapMGHLI {
+		top: @sapUiSizeCompactElementLineHeightSticky13;
+		/* only first child needs 2px more which prevents (tiny) double borders through stacking the following groupHeaders */
+		&:first-child {
+			top: @sapUiSizeCompactElementLineHeightSticky13 + 0.125rem;
+		}
+	}
+	& .sapMSticky14 .sapMGHLI {
+		top: @sapUiSizeCompactElementLineHeightSticky14;
+		/* only first child needs 1px more which prevents (tiny) double borders through stacking the following groupHeaders */
+		&:first-child {
+			top: @sapUiSizeCompactElementLineHeightSticky14 + 0.0625rem;
+		}
+	}
+	& .sapMSticky15 .sapMGHLI {
+		top: @sapUiSizeCompactElementLineHeightSticky15;
+		/* only first child needs 2px more which prevents (tiny) double borders through stacking the following groupHeaders */
+		&:first-child {
+			top: @sapUiSizeCompactElementLineHeightSticky15 + 0.125rem;
+		}
+	}
 }
 
 /* define outline for the block layer */
