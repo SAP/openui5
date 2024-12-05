@@ -806,7 +806,10 @@ sap.ui.define([
 	FieldBase.prototype.onfocusin = function(oEvent) {
 		this._oFocusInHelp = undefined;
 		_connectValueHelp.call(this);
-		if (!this._oFocusInfo?.targetInfo?.silent) {
+		if (oEvent.isMarked("doNotOpenOnFocus")) {
+			const oValueHelp = _getValueHelp.call(this);
+			oValueHelp?.close(); // close if already opened to allow Token handling
+		} else if (!this._oFocusInfo?.targetInfo?.silent) {
 			_setFocusTimer.call(this, oEvent);
 		}
 	};
