@@ -68,5 +68,15 @@
         "text": " sap.m.Popover: resizable property now covers all cases"
       }
     ]
+  },
+  "1.131.1": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "70e8784058c3d164d2c556bd51ffe9df656caa9c",
+        "type": "FIX",
+        "text": " core/Control: cleanup busy indicator in onBeforeRendering only when it's busy"
+      }
+    ]
   }
 }
