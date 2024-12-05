@@ -37,6 +37,7 @@ sap.ui.define([
 	 * @param {object} [oConstraints] Value constraints
 	 * @param {float} [oConstraints.minimum] Smallest value allowed for this type
 	 * @param {float} [oConstraints.maximum] Largest value allowed for this type
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 * @alias sap.ui.model.type.Float
 	 */
 	var Float = SimpleType.extend("sap.ui.model.type.Float", /** @lends sap.ui.model.type.Float.prototype  */ {

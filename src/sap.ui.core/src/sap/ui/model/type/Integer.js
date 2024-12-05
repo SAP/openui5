@@ -34,6 +34,7 @@ sap.ui.define([
 	 * @param {object} [oConstraints] Value constraints
 	 * @param {int} [oConstraints.minimum] Smallest value allowed for this type
 	 * @param {int} [oConstraints.maximum] Largest value allowed for this type
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> format option is provided
 	 * @alias sap.ui.model.type.Integer
 	 */
 	var Integer = SimpleType.extend("sap.ui.model.type.Integer", /** @lends sap.ui.model.type.Integer.prototype */ {

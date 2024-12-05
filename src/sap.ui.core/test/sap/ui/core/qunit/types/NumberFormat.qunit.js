@@ -4962,6 +4962,107 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+["de-DE", "ar"].forEach((sLocale) => {
+	QUnit.test("format option 'decimalPadding' with locale: " + sLocale, function (assert) {
+		const oLocale = new Locale(sLocale);
+		const oFloatFormat = NumberFormat.getFloatInstance({decimalPadding: 5}, oLocale);
+		let sSeparator = oFloatFormat.oLocaleData.getNumberSymbol("decimal");
+
+		// code under test
+		assert.strictEqual(oFloatFormat.format(42.12), "42" + sSeparator + "12" + "\u2007\u2007\u2007");
+		assert.strictEqual(oFloatFormat.format(42.12345), "42"  + sSeparator + "12345");
+		assert.strictEqual(oFloatFormat.format(42), "42" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+		assert.strictEqual(oFloatFormat.format(-42), "-42" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+
+		const oUnitFormat = NumberFormat.getUnitInstance({decimalPadding: 5, showMeasure: false}, oLocale);
+		sSeparator = oUnitFormat.oLocaleData.getNumberSymbol("decimal");
+
+		// code under test
+		assert.strictEqual(oUnitFormat.format(42.12, "mass-gram"), "42" + sSeparator + "12" + "\u2007\u2007\u2007");
+		assert.strictEqual(oUnitFormat.format(42.12345, "mass-gram"), "42"  + sSeparator + "12345");
+		assert.strictEqual(oUnitFormat.format(4, "mass-gram"), "4" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+		assert.strictEqual(oUnitFormat.format(-4, "mass-gram"), "-4" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("checkDecimalPadding throws error", function (assert) {
+		// code under test
+		assert.throws(() => {
+			NumberFormat.checkDecimalPadding({decimalPadding: 0});
+		}, new Error("The format option 'decimalPadding' must have a value greater than 0"));
+
+		// code under test
+		assert.throws(() => {
+			NumberFormat.checkDecimalPadding({decimalPadding: -1});
+		}, new Error("The format option 'decimalPadding' must have a value greater than 0"));
+
+		// code under test
+		assert.throws(() => {
+			NumberFormat.checkDecimalPadding({decimalPadding: "foo"}, false);
+		}, new Error("Unsupported format option: 'decimalPadding' cannot be used with an integer or percent"
+				+ " instance of sap.ui.core.format.NumberFormat"));
+
+		// code under test
+		assert.throws(() => {
+			NumberFormat.checkDecimalPadding({decimalPadding: 2}, true, true);
+		}, new Error("The format option 'decimalPadding' can only be used if the format option "
+				+ "'showMeasure' is set to false"));
+
+		// code under test
+		assert.throws(() => {
+			NumberFormat.checkDecimalPadding({decimalPadding: 5, showMeasure: false, style: "short"}, true, true);
+		}, new Error("The format option 'decimalPadding' can only be used if the format option "
+				+ "'style' is not set to 'short' or 'long'"));
+
+		// code under test
+		assert.throws(() => {
+			NumberFormat.checkDecimalPadding({decimalPadding: 5, showMeasure: false, style: "long"}, true, true);
+		}, new Error("The format option 'decimalPadding' can only be used if the format option "
+				+ "'style' is not set to 'short' or 'long'"));
+	});
+
+	//*********************************************************************************************
+["getUnitInstance", "getCurrencyInstance"].forEach((sInstanceGetter) => {
+	QUnit.test(sInstanceGetter + ": calls checkDecimalPadding", function (assert) {
+		const oFormatOptions = {foo: "~bar"};
+		const oError = new Error("Expected error");
+		this.mock(NumberFormat).expects("checkDecimalPadding")
+			.withExactArgs(sinon.match.same(oFormatOptions), true, true)
+			.throws(oError);
+
+		// code under test
+		assert.throws(() => { NumberFormat[sInstanceGetter](oFormatOptions); }, oError);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getFloatInstance calls checkDecimalPadding", function (assert) {
+		const oFormatOptions = {foo: "~bar"};
+		const oError = new Error("Expected error");
+		this.mock(NumberFormat).expects("checkDecimalPadding")
+			.withExactArgs(sinon.match.same(oFormatOptions))
+			.throws(oError);
+
+		// code under test
+		assert.throws(() => { NumberFormat.getFloatInstance(oFormatOptions); }, oError);
+	});
+
+	//*********************************************************************************************
+["getIntegerInstance", "getPercentInstance"].forEach((sInstanceGetter) => {
+	QUnit.test(sInstanceGetter + ": calls checkDecimalPadding", function (assert) {
+		const oFormatOptions = {foo: "~bar"};
+		const oError = new Error("Expected error");
+		this.mock(NumberFormat).expects("checkDecimalPadding")
+			.withExactArgs(sinon.match.same(oFormatOptions), false)
+			.throws(oError);
+
+		// code under test
+		assert.throws(() => { NumberFormat[sInstanceGetter](oFormatOptions); }, oError);
+	});
+});
+
+	//*********************************************************************************************
 ["getCurrencyInstance", "getUnitInstance"].forEach((sInstanceGetter) => {
 	[
 		{resultCurrencyOrUnit: NaN},

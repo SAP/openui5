@@ -64,6 +64,11 @@ sap.ui.define([
 						min: 0,
 						help: "Integer value defining the number of decimals (minimum and maximum fraction digits)"
 					},
+					decimalPadding: {
+						type: "int",
+						min: 0,
+						help: "Integer value defining the number of characters after the decimal separator, filled up with whitespaces"
+					},
 					shortDecimals: {
 						type: "int",
 						min: 0,

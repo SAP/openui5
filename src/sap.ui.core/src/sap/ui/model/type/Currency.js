@@ -58,6 +58,7 @@ sap.ui.define([
 	 *   Smallest amount allowed excluding the minimum value itself
 	 * @param {number} [oConstraints.maximum]
 	 *   Largest amount allowed excluding the maximum value itself
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 * @alias sap.ui.model.type.Currency
 	 */
 	var Currency = CompositeType.extend("sap.ui.model.type.Currency", /** @lends sap.ui.model.type.Currency.prototype  */ {
