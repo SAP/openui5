@@ -123,6 +123,7 @@ sap.ui.define([
 					reference: this._sComponentName,
 					layer: Layer.CUSTOMER // only the customer layer has draft active
 				};
+				// TODO: array as response is bad practice, should be changed to an object
 				if (oResult?.response && oResult.response.length > 0) {
 					var aDraftFilenames = [];
 					if (Array.isArray(oResult.response)) {

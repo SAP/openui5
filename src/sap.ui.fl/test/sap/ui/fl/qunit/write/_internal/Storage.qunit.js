@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/Storage",
@@ -31,7 +30,6 @@ sap.ui.define([
 	FlVariant,
 	States,
 	WriteUtils,
-	JsObjectConnector,
 	WriteKeyUserConnector,
 	WriteLrepConnector,
 	Storage,
@@ -470,7 +468,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("and two changes are created by condenser in a certain order", function(assert) {
+		QUnit.test("and two changes are created by condenser in a certain order", async function(assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "select", "select"]);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
@@ -493,16 +491,19 @@ sap.ui.define([
 				reference: "reference"
 			};
 
-			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({status: 200, response: { flexObjects: ["c2", "c1"] }});
 
-			return Storage.condense(mPropertyBag).then(function() {
-				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
-				assert.propEqual(
-					oWriteCallArgs.flexObjects,
-					mCondenseExpected,
-					"then the 'create' changes on FlexObject are on the same order (without unnecessary 'reorder')"
-				);
-			});
+			const oReturn = await Storage.condense(mPropertyBag);
+			var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+			assert.propEqual(
+				oWriteCallArgs.flexObjects,
+				mCondenseExpected,
+				"then the 'create' changes on FlexObject are on the same order (without unnecessary 'reorder')"
+			);
+			assert.deepEqual(oReturn, {
+				status: 200,
+				response: ["c2", "c1"]
+			}, "then the response is returned");
 		});
 
 		QUnit.test("and create and update changes are created by condenser in a certain order", function(assert) {
