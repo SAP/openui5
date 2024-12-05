@@ -3343,7 +3343,9 @@ sap.ui.define([
 	 *   data model. Since 1.80.0, that model's parameter "sharedRequests" is set automatically (see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}). If the value list model is the data
 	 *   model associated with this meta model, use the binding-specific parameter "$$sharedRequest"
-	 *   instead, see {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 *   instead, see {@link sap.ui.model.odata.v4.ODataModel#bindList}. Since 1.132.0, the data
+	 *   model's {@link sap.ui.model.odata.v4.ODataModel#setRetryAfterHandler "Retry-After" handler}
+	 *   is reused by default, but can of course be overwritten.
 	 *
 	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
 	 *   is available with key "" and has an additional property "$qualifier" which is the original
