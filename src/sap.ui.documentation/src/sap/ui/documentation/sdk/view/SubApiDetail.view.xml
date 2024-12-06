@@ -169,11 +169,7 @@
 											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold sapUiDocumentationParamWrap" text="{name}" depth="{depth}" optional="{optional}" deprecated="{= ${deprecated} !== undefined }"/>
-												<layout:VerticalLayout class="sapUiDocumentationOrList" content="{path: 'types', templateShareable: false}" width="100%">
-													<m:Link text="{path: 'value', formatter: '.formatter.escapeSettingsValue'}"
-															href="{path: 'value', formatter: '.formatter.getUrlForType'}"
-															enabled="{= !!${linkEnabled} }"/>
-												</layout:VerticalLayout>
+												<custom:JSDocType typeInfo="{typeInfo}"/>
 												<layout:VerticalLayout>
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													<layout:VerticalLayout content="{path: 'examples', templateShareable: false}" width="100%">
@@ -236,11 +232,7 @@
 														class="sapUiDocumentationParamsTable">
 													<custom:Row>
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-														<layout:VerticalLayout class="sapUiDocumentationOrList" content="{path: 'types', templateShareable: false}" width="100%">
-															<m:Link text="{value}"
-																	href="{path: 'value', formatter: '.formatter.getUrlForType'}"
-																	enabled="{= !!${linkEnabled} }"/>
-														</layout:VerticalLayout>
+														<custom:JSDocType typeInfo="{typeInfo}"/>
 														<m:Text text="{defaultValue}" wrapping="false"/>
 														<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													</custom:Row>
@@ -281,11 +273,7 @@
 											class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-												<layout:VerticalLayout class="sapUiDocumentationOrList" content="{path : 'types'}">
-													<m:Link text="{value}"
-															href="{path: 'value', formatter: '.formatter.getUrlForType'}"
-															enabled="{= !!${linkEnabled} }"/>
-												</layout:VerticalLayout>
+												<custom:JSDocType typeInfo="{typeInfo}"/>
 												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
@@ -525,9 +513,7 @@
 														<template:repeat list="{event>parameters}" var="parameter">
 															<custom:Row>
 																<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
-																<m:Link text="{parameter>type}"
-																		href="api/{parameter>type}"
-																		enabled="{= !!${parameter>linkEnabled} }"/>
+																<custom:JSDocType typeInfo="{path: 'parameter>typeInfo', formatter: '.formatter.stringify'}"/>
 																<layout:VerticalLayout>
 																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																	<m:MessageStrip
@@ -651,20 +637,7 @@
 															<template:repeat list="{method>parameters}" var="parameter">
 																<custom:Row>
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
-																	<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
-																		<template:repeat list="{parameter>types}" var="type">
-																			<template:if test="{= !!${type>linkEnabled} }">
-																				<template:then>
-																					<m:Link text="{path: 'type>value', formatter: '.formatter.escapeSettingsValue'}"
-																							href="{path: 'type>value', formatter: '.formatter.getUrlForType'}"
-																							enabled="true"/>
-																				</template:then>
-																				<template:else>
-																					<m:Link text="{path: 'type>value', formatter: '.formatter.escapeSettingsValue'}" enabled="false"/>
-																				</template:else>
-																			</template:if>
-																		</template:repeat>
-																	</layout:VerticalLayout>
+																	<custom:JSDocType typeInfo="{path: 'parameter>typeInfo', formatter: '.formatter.stringify'}"/>
 																	<m:Text text="{parameter>defaultValue}" wrapping="false"/>
 																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																</custom:Row>
@@ -677,13 +650,7 @@
 																	columnTitles="Returns,Description"
 																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
-																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
-																	<template:repeat list="{method>returnValue/types}" var="rtype">
-																		<m:Link text="{path: 'rtype>value', formatter: '.formatter.escapeSettingsValue'}"
-																				href="{path: 'rtype>value', formatter: '.formatter.getUrlForType'}"
-																				enabled="{= !!${rtype>linkEnabled} }"/>
-																	</template:repeat>
-																</layout:VerticalLayout>
+																<custom:JSDocType typeInfo="{path: 'method>returnValue/typeInfo', formatter: '.formatter.stringify'}"/>
 																<custom:JSDocText sanitizeContent="false" text="{path: 'method>returnValue/description', formatter: '.formatter.escapeSettingsValue'}"/>
 															</custom:Row>
 														</custom:LightTable>
@@ -729,9 +696,7 @@
 											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-												<m:Link text="{type}"
-														href="api/{type}"
-														enabled="{= !!${linkEnabled} }"/>
+												<custom:JSDocType typeInfo="{typeInfo}"/>
 												<custom:JSDocText sanitizeContent="false" text="{description}"/>
 											</custom:Row>
 										</custom:LightTable>

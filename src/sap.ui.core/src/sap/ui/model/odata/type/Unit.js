@@ -47,6 +47,7 @@ sap.ui.define([
 	 * @param {string[]} [aDynamicFormatOptionNames] Not supported
 	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
 	 *   format option <code>customUnits</code> is set
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 *
 	 * @alias sap.ui.model.odata.type.Unit
 	 * @author SAP SE

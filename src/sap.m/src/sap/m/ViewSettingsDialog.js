@@ -329,6 +329,15 @@ function(
 						 */
 						parentFilterItem: {type: "sap.m.ViewSettingsFilterItem"}
 					}
+				},
+
+				/**
+				 * Fired before the dialog is closed.
+				 * This event can be prevented which effectively prevents the dialog from closing.
+				 * @since 1.132
+				 */
+				beforeClose : {
+					allowPreventDefault : true
 				}
 			}
 		},
@@ -3341,6 +3350,11 @@ function(
 				// fire confirm event
 				that.fireConfirm(oSettingsState);
 			};
+
+		// if beforeClose event is prevented do not close the dialog
+		if (!that.fireBeforeClose()) {
+			return;
+		}
 
 		// attach the reset function to afterClose to hide the dialog changes from
 		// the end user

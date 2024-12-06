@@ -127,7 +127,8 @@ sap.ui.define([
 						type: "focusin",
 						srcControl: oField,
 						target: null, // as not rendered, but Event needs to defined for check
-						currentTarget: null
+						currentTarget: null,
+						isMarked: () => {return false;}
 					};
 					oField.onfocusin(oEvent); // to connect ValueHelp
 					oMTable.getContent(); // to create internal controls
@@ -238,7 +239,8 @@ sap.ui.define([
 						type: "focusin",
 						srcControl: oField,
 						target: null, // as not rendered, but Event needs to defined for check
-						currentTarget: null
+						currentTarget: null,
+						isMarked: () => {return false;}
 					};
 					oField.onfocusin(oEvent); // to connect ValueHelp
 					oMTable.getContent(); // to create internal controls

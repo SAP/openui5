@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/type/Integer",
+	"sap/ui/model/type/Unit",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTimeWithTimezone",
@@ -27,7 +28,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/m/library",
 	"sap/ui/mdc/enums/OperatorOverwrite",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/base/Log"
 ], function(
 	FilterOperatorUtil,
 	Operator,
@@ -41,6 +43,7 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	IntegerType,
+	UnitType,
 	StringType,
 	DateType,
 	DateTimeWithTimezoneType,
@@ -50,7 +53,8 @@ sap.ui.define([
 	UI5Date,
 	mLibrary,
 	OperatorOverwrite,
-	Library
+	Library,
+	Log
 ) {
 	"use strict";
 
@@ -73,6 +77,7 @@ sap.ui.define([
 		let oOperator = new Operator({
 			name: "THISYEAR",
 			valueTypes: [],
+			group: "myGroup",
 			getModelFilter: _getModelFilter
 		});
 
@@ -81,6 +86,8 @@ sap.ui.define([
 		assert.ok(oOperator.parse, "Parse function set by default");
 		assert.ok(oOperator.validate, "Validate function set by default");
 		assert.equal(oOperator.getModelFilter, _getModelFilter, "GetModelFilter not default");
+		assert.equal(oOperator.group, "myGroup", "group set");
+		oOperator.destroy();
 
 		// invalid operator
 		oOperator = undefined;
@@ -97,6 +104,31 @@ sap.ui.define([
 		assert.notOk(oOperator, "no invalid operator created");
 		assert.ok(oError, "Error thrown");
 
+		oError = undefined;
+		try {
+			oOperator = new Operator();
+		} catch (myError) {
+			oError = myError;
+		}
+
+		assert.notOk(oOperator, "no invalid operator created");
+		assert.ok(oError, "Error thrown");
+
+		sinon.spy(Log, "warning");
+		oOperator = new Operator({
+			valueTypes: [],
+			getModelFilter: _getModelFilter
+		});
+
+		assert.ok(Log.warning.calledOnce, "Warning written to log");
+		assert.notOk(oOperator.name, "NoName set");
+		assert.ok(oOperator.format, "Format function set by default");
+		assert.ok(oOperator.parse, "Parse function set by default");
+		assert.ok(oOperator.validate, "Validate function set by default");
+		assert.equal(oOperator.getModelFilter, _getModelFilter, "GetModelFilter not default");
+		oOperator.destroy();
+		Log.warning.restore();
+
 	});
 
 	QUnit.test("createRangeOperator", function(assert) {
@@ -108,6 +140,7 @@ sap.ui.define([
 		const oOperator = new RangeOperator({
 			name: "TODAY",
 			valueTypes: [OperatorValueType.Static],
+			longText: "My Today",
 			calcRange: function() {
 				return UniversalDateUtils.ranges.today();
 			},
@@ -122,9 +155,12 @@ sap.ui.define([
 		assert.ok(oOperator.parse, "Parse function set by default");
 		assert.ok(oOperator.validate, "Validate function set by default");
 		assert.equal(oOperator.getModelFilter, _getModelFilter, "GetModelFilter not default");
+		assert.equal(oOperator.getLongText(), "My Today", "GetLongText");
+		assert.equal(oOperator.tokenFormat, "My Today", "tokenFormat");
 
 		assert.ok(oOperator.calcRange, "calcRange function set");
 		assert.ok(oOperator.formatRange, "formatRange function set");
+		oOperator.destroy();
 	});
 
 	QUnit.module("FilterOperatorUtil", {
@@ -198,6 +234,7 @@ sap.ui.define([
 		assert.equal(oOperator && oOperator.name, OperatorName.EQ, "EQ operator returned");
 
 		delete FilterOperatorUtil._mOperators[oMyOperator.name]; // TODO API to remove operator
+		oMyOperator.destroy();
 
 	});
 
@@ -255,13 +292,16 @@ sap.ui.define([
 					// EQ-Operator.format(["Test"]) --> "=Test"
 					const sFormattedText = oTest.formatArgs ? oOperator.format.apply(oOperator, oTest.formatArgs) : "";
 					if (oTest.hasOwnProperty("formatValue")) {
-						assert.strictEqual(sFormattedText, oTest.formatValue, "Formatting: Operator " + sOperator + " has formated correctly from " + oTest.formatArgs.join() + " to " + oTest.formatValue);
+						assert.strictEqual(sFormattedText, oTest.formatValue, "Formatting: Operator " + sOperator + " has formated correctly from " + JSON.stringify(oTest.formatArgs[0]) + " to " + oTest.formatValue);
 						if (oTest.formatValueCheckValues) {
 							assert.ok(sFormattedText.indexOf(oTest.formatValueCheckValues[0]) >= 0, "Formatting: Text includes value " + oTest.formatValueCheckValues[0]);
 							if (oTest.formatValueCheckValues.length > 1) {
 								assert.ok(sFormattedText.indexOf(oTest.formatValueCheckValues[1]) >= 0, "Formatting: Text includes value " + oTest.formatValueCheckValues[1]);
 							}
 						}
+
+						const sTextForCopy = oTest.hasOwnProperty("textForCopy") ? oTest.textForCopy : "\t" + sFormattedText;
+						assert.equal(oOperator.getTextForCopy.apply(oOperator, oTest.formatArgs), sTextForCopy, "getTextForCopy");
 					}
 
 					// EQ-Operator.parse("=Test") --> ["Test"]
@@ -271,6 +311,9 @@ sap.ui.define([
 							const sParseText = Array.isArray(aParseText) ? aParseText.join("") : aParseText; // also test undefined result
 							const sTestText = Array.isArray(oTest.parseArgs) ? oTest.parseArgs[0] : sFormattedText;
 							assert.strictEqual(sParseText, oTest.parsedValue, "Parsing: Operator " + sOperator + " has parsed correctly from " + sTestText + " to " + oTest.parsedValue);
+							if (oTest.hasOwnProperty("exception")) {
+								assert.notOk(oTest.exception, "No Exception fired in parsing");
+							}
 						} catch (oException) {
 							assert.ok(oTest.exception, "Exception fired in parsing");
 						}
@@ -286,6 +329,9 @@ sap.ui.define([
 							// create the model filter instance of the condition
 							//						var oFilter = oOperator.getModelFilter(oCondition);
 						}
+						if (oTest.hasOwnProperty("exception")) {
+							assert.notOk(oTest.exception, "No Exception fired in parsing");
+						}
 					} catch (oException) {
 						assert.ok(oTest.exception, "Exception fired in parsing");
 						oCondition = undefined; // to clear if exception occurred.
@@ -297,8 +343,11 @@ sap.ui.define([
 
 						try {
 							oOperator.validate(oCondition.values, oTest.type, oTest.compositeTypes, oTest.compositePart, oTest.additionalType);
+							if (oTest.hasOwnProperty("valid")) {
+								assert.ok(oTest.valid, "No Exception fired in validation");
+							}
 						} catch (oException) {
-							assert.ok(!oTest.valid, "Exception fired in validation");
+							assert.notOk(oTest.valid, "Exception fired in validation");
 						}
 
 						if (oTest.filter) {
@@ -309,6 +358,10 @@ sap.ui.define([
 							assert.deepEqual(oFilter.oValue1, oTest.filter.value1, "Filter value1");
 							assert.deepEqual(oFilter.oValue2, oTest.filter.value2, "Filter value2");
 						}
+
+						if (oTest.staticText) {
+							assert.equal(oOperator.getStaticText(oTest.oType), oTest.staticText, "StaticText");
+						}
 					}
 
 					if (oTest.hasOwnProperty("isSingleValue")) {
@@ -316,11 +369,15 @@ sap.ui.define([
 					}
 
 					if (oTest.hasOwnProperty("longText")) {
-						assert.equal(oOperator.longText, oTest.longText, "has expected longText");
+						assert.equal(oOperator.getLongText(oTest.baseType || BaseType.String), oTest.longText, "getLongText returns expected longText");
 					}
 
 					if (oTest.hasOwnProperty("tokenText")) {
 						assert.equal(oOperator.tokenText, oTest.tokenText, "has expected tokenText");
+					}
+
+					if (oTest.hasOwnProperty("valueDefaults")) {
+						assert.deepEqual(oOperator.valueDefaults, oTest.valueDefaults, "has expected default values");
 					}
 				}
 			}
@@ -340,6 +397,14 @@ sap.ui.define([
 				return new Filter({ path: sFieldPath, operator: FilterOperator.EQ, value1: "Hello World" });
 			}
 		}));
+		FilterOperatorUtil.addOperator(new Operator({
+			name: "MyEQOperator",
+			valueTypes: ["sap.ui.model.type.Integer", null],
+			filterOperator: FilterOperator.EQ,
+			longText: "My Equal",
+			tokenText: "key: {0}, description: {1}",
+			tokenParse: "#tokenText#"
+		}));
 
 		const aOperators = [];
 		for (const sName in FilterOperatorUtil._mOperators) {
@@ -349,6 +414,7 @@ sap.ui.define([
 		const oIntType = new IntegerType({}, {maximum: 3});
 		const oStringType = new StringType({}, {maxLength: 5});
 		const oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
+		const oUnitType = new UnitType({}, {});
 		const oDateTimeWithTimezoneType1 = new DateTimeWithTimezoneType({pattern: "yyyy-MM-dd'T'HH:mm:ss", showTimezone: false});
 		oDateTimeWithTimezoneType1._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
 		const oDateTimeWithTimezoneType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
@@ -361,6 +427,7 @@ sap.ui.define([
 				[OperatorName.EQ]: [{
 						formatArgs: [Condition.createItemCondition("Test", "desc")],
 						formatValue: "desc (Test)",
+						textForCopy: "Test	desc",
 						parseArgs: ["=Test"],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.EQ, [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -373,6 +440,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.Value],
 						formatValue: "Test",
+						textForCopy: "Test	desc",
 						parseArgs: ["=Test", undefined, FieldDisplay.Value],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -383,6 +451,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["Test"]), undefined, undefined],
 						formatValue: "=Test",
+						textForCopy: "	=Test",
 						parseArgs: ["Test", undefined, FieldDisplay.Value, true, undefined, undefined, undefined, true],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -393,17 +462,19 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition("Test"), undefined, FieldDisplay.Value],
 						formatValue: "=Test",
+						textForCopy: "	=Test",
 						parseArgs: ["Test", undefined, FieldDisplay.Value, false, undefined, undefined, undefined, false],
 						parsedValue: "Test",
 						condition: null, // condition only created without operator symbol if operator is hidden ot it is the default operator
 						isEmpty: false,
-						exception: true,
+						exception: false,
 						valid: false,
 						filter: {path: "test", operator: FilterOperator.EQ, value1: "Test"}
 					},
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.Description],
 						formatValue: "desc",
+						textForCopy: "Test	desc",
 						parseArgs: ["==desc", undefined, FieldDisplay.Description],
 						parsedValue: "=desc",
 						condition: Condition.createCondition(OperatorName.EQ, [undefined, "=desc"], undefined, undefined, ConditionValidated.NotValidated),
@@ -413,6 +484,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.ValueDescription],
 						formatValue: "Test (desc)",
+						textForCopy: "Test	desc",
 						parseArgs: ["=Test", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.EQ, ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
@@ -422,6 +494,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, FieldDisplay.ValueDescription],
 						formatValue: "5 (desc)",
+						textForCopy: "5	desc",
 						parseArgs: ["=5", oIntType, FieldDisplay.ValueDescription],
 						parsedValue: "5",
 						condition: Condition.createCondition(OperatorName.EQ, [5, undefined], undefined, undefined, ConditionValidated.NotValidated),
@@ -432,6 +505,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, FieldDisplay.DescriptionValue],
 						formatValue: "desc (5)",
+						textForCopy: "5	desc",
 						parseArgs: ["=desc (5)", oIntType, FieldDisplay.DescriptionValue],
 						parsedValue: "5desc",
 						condition: Condition.createCondition(OperatorName.EQ, [5, "desc"], undefined, undefined, ConditionValidated.Validated),
@@ -442,6 +516,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition(1, "desc"), oIntType, FieldDisplay.ValueDescription],
 						formatValue: "1 (desc)",
+						textForCopy: "1	desc",
 						parseArgs: ["=A", oIntType, FieldDisplay.ValueDescription],
 						parsedValue: "",
 						condition: Condition.createCondition(OperatorName.EQ, [undefined, undefined], undefined, undefined, ConditionValidated.NotValidated),
@@ -453,6 +528,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, FieldDisplay.ValueDescription],
 						formatValue: "Test (desc)",
+						textForCopy: "Test	desc",
 						parseArgs: ["=Test (desc)", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Testdesc",
 						condition: Condition.createCondition(OperatorName.EQ, ["Test", "desc"], undefined, undefined, ConditionValidated.Validated),
@@ -462,6 +538,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition(null, "desc"), undefined, FieldDisplay.ValueDescription],
 						formatValue: " (desc)",
+						textForCopy: "null	desc", // null as no Type given
 						parseArgs: ["=", undefined, FieldDisplay.ValueDescription],
 						parsedValue: undefined,
 						condition: null,
@@ -471,6 +548,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["Test", undefined], undefined, undefined, ConditionValidated.Validated), undefined, FieldDisplay.ValueDescription],
 						formatValue: "Test",
+						textForCopy: "Test	",
 						parseArgs: ["=Test", undefined, FieldDisplay.ValueDescription],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.EQ, ["Test", undefined], undefined, undefined, ConditionValidated.NotValidated),
@@ -480,6 +558,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["Test"]), undefined, undefined, true],
 						formatValue: "Test",
+						textForCopy: "	Test",
 						parseArgs: ["=Test"],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.EQ, [undefined, "Test"], undefined, undefined, ConditionValidated.NotValidated),
@@ -490,6 +569,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["="])],
 						formatValue: "==",
+						textForCopy: "	==",
 						parsedValue: "=",
 						isEmpty: false,
 						valid: true
@@ -497,6 +577,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["a", "b"])],
 						formatValue: "b (a)",
+						textForCopy: "	b (a)",
 						parseArgs: ["b (a)", undefined, undefined, true],
 						parsedValue: "ab",
 						condition: Condition.createCondition(OperatorName.EQ, ["a", "b"], undefined, undefined, ConditionValidated.Validated),
@@ -506,6 +587,7 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["a", "b (c)"])],
 						formatValue: "b (c) (a)",
+						textForCopy: "	b (c) (a)",
 						parseArgs: ["b (c) (a)", undefined, undefined, true],
 						parsedValue: "ab (c)",
 						condition: Condition.createCondition(OperatorName.EQ, ["a", "b (c)"], undefined, undefined, ConditionValidated.Validated),
@@ -515,39 +597,56 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["a", "b (c)"]), undefined, FieldDisplay.ValueDescription],
 						formatValue: "a (b (c))",
+						textForCopy: "	a (b (c))",
 						parseArgs: ["a (b (c))", undefined, FieldDisplay.ValueDescription, true],
 						parsedValue: "ab (c)",
 						condition: Condition.createCondition(OperatorName.EQ, ["a", "b (c)"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: true
 					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.EQ, [null, "Text"]), oStringType, FieldDisplay.DescriptionValue, true],
+						formatValue: "Text ()",
+						textForCopy: "	Text ()",
+						parseArgs: ["Text", oStringType, FieldDisplay.DescriptionValue, true],
+						parsedValue: "Text",
+						condition: Condition.createCondition(OperatorName.EQ, ["Text"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true
+					},
 					{ // DateTime with Timezone
 						formatArgs: [Condition.createCondition(OperatorName.EQ, [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						formatValue: "2022-02-24T13:15:30",
+						textForCopy: "	2022-02-24T13:15:30",
 						parseArgs: ["2022-02-24T14:15:30", oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						parsedValue: "2022-02-24T14:15:30+01:00,Europe/Berlin",
 						condition: Condition.createCondition(OperatorName.EQ, [["2022-02-24T14:15:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
-						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
+						valid: true, // validation only against dateTime part
 						type: oDateTimeWithTimezoneType1,
+						baseType: BaseType.DateTime,
 						compositeTypes: [oDateTimeOffsetType, oStringType],
-						compositePart: 0
+						compositePart: 0,
+						longText: mdcMessageBundle.getText("operators.EQ.longText")
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						formatValue: "Europe, Berlin",
+						textForCopy: "	Europe, Berlin",
 						parseArgs: ["America/New_York", oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						parsedValue: "2022-02-24T12:15:30Z,America/New_York",
 						condition: Condition.createCondition(OperatorName.EQ, [["2022-02-24T12:15:30Z", "America/New_York"]], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
 						type: oDateTimeWithTimezoneType2,
+						baseType: BaseType.DateTime,
 						compositeTypes: [oDateTimeOffsetType, oStringType],
 						compositePart: 1
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, ["@@$$"]), undefined, FieldDisplay.Value, false],
 						formatValue: "=@@$$",
+						textForCopy: "	=@@$$",
 						parseArgs: ["=@@$$", undefined, FieldDisplay.Value],
 						parsedValue: "@@$$",
 						condition: Condition.createCondition(OperatorName.EQ, ["@@$$"], undefined, undefined, ConditionValidated.NotValidated),
@@ -558,26 +657,31 @@ sap.ui.define([
 					{
 						formatArgs: [Condition.createItemCondition(5, "2023-07-31T07:42:30Z"), oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
 						formatValue: "5 (" + sDateTimeFormatted + ")",
+						textForCopy: "5	" + sDateTimeFormatted,
 						parseArgs: ["5 (" + sDateTimeFormatted + ")", oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
 						parsedValue: "5" + sDateTimeParsed,
 						condition: Condition.createCondition(OperatorName.EQ, [5, sDateTimeParsed], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: false,
 						type: oIntType,
+						baseType: BaseType.Number,
 						additionalType : oDateTimeOffsetType
 					},
 					{
 						formatArgs: [Condition.createItemCondition(5, "2023-07-31T07:42:30Z"), oIntType, FieldDisplay.Description, true, undefined, oDateTimeOffsetType, undefined],
 						formatValue: sDateTimeFormatted,
+						textForCopy: "5	" + sDateTimeFormatted,
 						parseArgs: ["1 (X)", oIntType, FieldDisplay.ValueDescription, true, undefined, oDateTimeOffsetType, undefined],
 						exception: true,
 						valid: false,
 						type: oIntType,
+						baseType: BaseType.Number,
 						additionalType : oDateTimeOffsetType
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, [5]), oIntType, FieldDisplay.Description, true, undefined, oDateTimeOffsetType, undefined],
 						formatValue: "5",
+						textForCopy: "	5",
 						parseArgs: ["1", oIntType, FieldDisplay.Value, true, undefined, oDateTimeOffsetType, undefined],
 						parsedValue: "1",
 						condition: Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated),
@@ -585,7 +689,31 @@ sap.ui.define([
 						exception: false,
 						valid: true,
 						type: oIntType,
+						baseType: BaseType.Number,
 						additionalType : oDateTimeOffsetType
+					},
+					{	// Unit
+						formatArgs: [Condition.createCondition(OperatorName.EQ, [[5, "mass-kilogram"]]), oUnitType, FieldDisplay.Value, true, [oIntType, oStringType], undefined, undefined],
+						formatValue: "5.000 kg",
+						textForCopy: "	5.000 kg",
+						parseArgs: ["5.000 kg", oUnitType, FieldDisplay.Value, true, undefined, undefined, undefined],
+						parsedValue: "5,mass-kilogram",
+						condition: Condition.createCondition(OperatorName.EQ, [[5, "mass-kilogram"]], undefined, undefined, ConditionValidated.NotValidated),
+						type: oUnitType,
+						baseType: BaseType.Unit,
+						isEmpty: false,
+						valid: true					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.EQ, [[null, "mass-kilogram"]]), oUnitType, FieldDisplay.Value, true, [oIntType, oStringType], undefined, undefined],
+						formatValue: null,
+						textForCopy: "	null", // TODO: ist this is OK?
+						parseArgs: ["", oUnitType, FieldDisplay.Value, true, undefined, undefined, undefined],
+						parsedValue: undefined,
+						condition: null,
+						type: oUnitType,
+						baseType: BaseType.Unit,
+						isEmpty: false,
+						valid: true
 					}
 				],
 				[OperatorName.NE]: [{
@@ -598,7 +726,8 @@ sap.ui.define([
 						valid: true,
 						isSingleValue: true,
 						longText: mdcMessageBundle.getText("operators.NE.longText"),
-						tokenText: ""
+						tokenText: "",
+						filter: {path: "test", operator: FilterOperator.NE, value1: "Test"}
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NE, ["Test"])],
@@ -675,6 +804,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.LT, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: "<" + sDateTimeFormatted,
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.LT, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.LT, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.LT.longText.date")
 					}
 				],
 				[OperatorName.NOTLT]: [{
@@ -727,6 +869,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: "!(<" + sDateTimeFormatted + ")",
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.NOTLT, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.GE, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.NOTLT.longText.date")
 					}
 				],
 				[OperatorName.GT]: [{
@@ -764,6 +919,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.GT, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: ">" + sDateTimeFormatted,
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.GT, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.GT, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.GT.longText.date")
 					}
 				],
 				[OperatorName.NOTGT]: [{
@@ -816,6 +984,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTGT, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: "!(>" + sDateTimeFormatted + ")",
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.NOTGT, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.LE, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.NOTGT.longText.date")
 					}
 				],
 				[OperatorName.LE]: [{
@@ -853,6 +1034,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.LE, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: "<=" + sDateTimeFormatted,
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.LE, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.LE, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.LE.longText.date")
 					}
 				],
 				[OperatorName.NOTLE]: [{
@@ -903,6 +1097,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: "!(<=" + sDateTimeFormatted + ")",
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.NOTLE, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.GT, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.NOTLE.longText.date")
 					}
 				],
 				[OperatorName.GE]: [{
@@ -940,6 +1147,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.GE, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: ">=" + sDateTimeFormatted,
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.GE, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.GE, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.GE.longText.date")
 					}
 				],
 				[OperatorName.NOTGE]: [{
@@ -990,6 +1210,19 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTGE, ["2023-07-31T07:42:30Z"]), oDateTimeOffsetType],
+						formatValue: "!(>=" + sDateTimeFormatted + ")",
+						parsedValue: sDateTimeParsed,
+						condition: Condition.createCondition(OperatorName.NOTGE, [sDateTimeParsed], undefined, undefined, ConditionValidated.NotValidated),
+						filter: {path: "test", operator: FilterOperator.LT, value1: sDateTimeParsed},
+						type: oDateTimeOffsetType,
+						baseType: BaseType.DateTime,
+						isEmpty: false,
+						valid: true,
+						exception: false,
+						longText: mdcMessageBundle.getText("operators.NOTGE.longText.date")
 					}
 				],
 				[OperatorName.StartsWith]: [{
@@ -1353,7 +1586,7 @@ sap.ui.define([
 						parseArgs: ["*A*", oNUMCType, FieldDisplay.Description],
 						parsedValue: "A",
 						condition: Condition.createCondition(OperatorName.Contains, ["A"], undefined, undefined, ConditionValidated.NotValidated),
-						exception: true,
+						exception: false, // String type don't throw ParseException here
 						isEmpty: false,
 						valid: false,
 						type: oNUMCType
@@ -1584,6 +1817,22 @@ sap.ui.define([
 					longText: "Hello World",
 					tokenText: "Hello"
 					}
+				],
+				"MyEQOperator": [{
+						formatArgs: [Condition.createCondition("MyEQOperator", [1, "XXX"], undefined, undefined, ConditionValidated.Validated)],
+						formatValue: "key: 1, description: XXX",
+						parsedValue: "1XXX",
+						isEmpty: false,
+						valid: true,
+						custom: true,
+						filter: {path: "test", operator: FilterOperator.EQ, value1: 1},
+						isSingleValue: true,
+						type: oIntType,
+						additionalType: oStringType,
+						baseType: BaseType.Number,
+						longText: "My Equal",
+						tokenText: "key: {0}, description: {1}"
+					}
 				]
 			};
 		//checking all above Operators for validity
@@ -1592,6 +1841,12 @@ sap.ui.define([
 		oIntType.destroy();
 		oStringType.destroy();
 		oNUMCType.destroy();
+		oUnitType.destroy();
+		oDateTimeOffsetType.destroy();
+		oDateTimeWithTimezoneType1.destroy();
+		oDateTimeWithTimezoneType2.destroy();
+		FilterOperatorUtil.removeOperator("MyOperator");
+		FilterOperatorUtil.removeOperator("MyEQOperator");
 
 	});
 
@@ -1615,6 +1870,7 @@ sap.ui.define([
 			aOperators.push(FilterOperatorUtil._mOperators[sName]);
 		}
 
+		const oCurrentDate = new UniversalDate();
 		// stub date creation to return fix dates
 		sinon.stub(UI5Date, "getInstance").withArgs().callsFake(function() {
 			if (arguments.length === 0) {
@@ -1624,7 +1880,7 @@ sap.ui.define([
 			}
 		});
 
-		const oDateTimeOffsetType = new DateTimeOffsetType({pattern: "yyyyMMdd-HHmmssSSS"}, {V4: true});
+		const oDateTimeOffsetType = new DateTimeOffsetType({pattern: "yyyyMMdd-HHmmssSSS"}, {V4: true, precision: 3});
 		const oDateType = new DateType({pattern: "yyyyMMdd"}, {});
 		const sTodayEnd = oDateTimeOffsetType.parseValue("20241018-235959999", "string"); // Today end
 
@@ -1642,7 +1898,7 @@ sap.ui.define([
 				tokenText: mMessageBundle.getText("DYNAMIC_DATE_TODAYFROMTO_FORMAT"),
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241014-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959000", "string")}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241014-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959999", "string")}
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [-4, 6]), undefined, undefined, true],
@@ -1655,7 +1911,7 @@ sap.ui.define([
 				isSingleValue: false,
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241022-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959000", "string")}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241022-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241024-235959999", "string")}
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, -6]), undefined, undefined, true],
@@ -1668,7 +1924,7 @@ sap.ui.define([
 				isSingleValue: false,
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241014-235959000", "string")}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241014-235959999", "string")}
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [-4, -6])],
@@ -1681,7 +1937,7 @@ sap.ui.define([
 				isSingleValue: false,
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241022-235959000", "string")}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20241012-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20241022-235959999", "string")}
 			}],
 
 			[OperatorName.SPECIFICMONTH]: [{
@@ -1696,7 +1952,8 @@ sap.ui.define([
 				tokenText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTH_FORMAT"),
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20240501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20240531-235959000", "string")}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20240501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20240531-235959999", "string")},
+				valueDefaults: [oCurrentDate.getMonth()]
 			},
 			{// only real valid if tokenText contains more that month
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4]), undefined, undefined, true],
@@ -1707,6 +1964,14 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
+			},
+			{// check wrong input
+				parseArgs: ["XXX", undefined, undefined, false], // also numbers needs to be parsed
+				parsedValue: "-1", // as parsing don't check validity
+				condition: null,
+				isEmpty: false,
+				valid: false,
+				exception: false
 			}],
 			[OperatorName.SPECIFICMONTHINYEAR]: [{
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000])],
@@ -1720,7 +1985,17 @@ sap.ui.define([
 				tokenText: mMessageBundle.getText("DYNAMIC_DATE_SPECIFICMONTHINYEAR_FORMAT"),
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20000501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20000531-235959000", "string")}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue("20000501-000000000", "string"), value2 : oDateTimeOffsetType.parseValue("20000531-235959999", "string")},
+				valueDefaults: [oCurrentDate.getMonth(), oCurrentDate.getFullYear()]
+			},
+			{// only real valid if tokenText contains more that month and year
+				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000]), undefined, undefined, true],
+				formatValue: "May 2000",
+				parseArgs: ["5 2000", undefined, undefined, true], // also numbers needs to be parsed
+				parsedValue: "42000",
+				condition: Condition.createCondition(OperatorName.SPECIFICMONTHINYEAR, [4, 2000], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true
 			}],
 
 			"MyToToday": [{
@@ -1741,17 +2016,17 @@ sap.ui.define([
 
 		// static operators
 		let aDateTimeOperators = [
-			{name: OperatorName.YESTERDAY, dateTime: {start: "20241017-000000000", end: "20241017-235959999"}, date: {start: "20241017", end: "20241017"}},
-			{name: OperatorName.TODAY, dateTime: {start: "20241018-000000000", end: "20241018-235959999"}, date: {start: "20241018", end: "20241018"}},
-			{name: OperatorName.TOMORROW, dateTime: {start: "20241019-000000000", end: "20241019-235959999"}, date: {start: "20241019", end: "20241019"}},
-			{name: OperatorName.FIRSTDAYWEEK, dateTime: {start: "20241013-000000000", end: "20241013-235959999"}, date: {start: "20241013", end: "20241013"}},
-			{name: OperatorName.LASTDAYWEEK, dateTime: {start: "20241019-000000000", end: "20241019-235959999"}, date: {start: "20241019", end: "20241019"}},
-			{name: OperatorName.FIRSTDAYMONTH, dateTime: {start: "20241001-000000000", end: "20241001-235959999"}, date: {start: "20241001", end: "20241001"}},
-			{name: OperatorName.LASTDAYMONTH, dateTime: {start: "20241031-000000000", end: "20241031-235959999"}, date: {start: "20241031", end: "20241031"}},
-			{name: OperatorName.FIRSTDAYQUARTER, dateTime: {start: "20241001-000000000", end: "20241001-235959999"}, date: {start: "20241001", end: "20241001"}},
-			{name: OperatorName.LASTDAYQUARTER, dateTime: {start: "20241231-000000000", end: "20241231-235959999"}, date: {start: "20241231", end: "20241231"}},
-			{name: OperatorName.FIRSTDAYYEAR, dateTime: {start: "20240101-000000000", end: "20240101-235959999"}, date: {start: "20240101", end: "20240101"}},
-			{name: OperatorName.LASTDAYYEAR, dateTime: {start: "20241231-000000000", end: "20241231-235959999"}, date: {start: "20241231", end: "20241231"}},
+			{name: OperatorName.YESTERDAY, dateTime: {start: "20241017-000000000", end: "20241017-235959999"}, date: {start: "20241017", end: "20241017"}, staticText: "start"},
+			{name: OperatorName.TODAY, dateTime: {start: "20241018-000000000", end: "20241018-235959999"}, date: {start: "20241018", end: "20241018"}, staticText: "start"},
+			{name: OperatorName.TOMORROW, dateTime: {start: "20241019-000000000", end: "20241019-235959999"}, date: {start: "20241019", end: "20241019"}, staticText: "start"},
+			{name: OperatorName.FIRSTDAYWEEK, dateTime: {start: "20241013-000000000", end: "20241013-235959999"}, date: {start: "20241013", end: "20241013"}, staticText: "start"},
+			{name: OperatorName.LASTDAYWEEK, dateTime: {start: "20241019-000000000", end: "20241019-235959999"}, date: {start: "20241019", end: "20241019"}, staticText: "start"},
+			{name: OperatorName.FIRSTDAYMONTH, dateTime: {start: "20241001-000000000", end: "20241001-235959999"}, date: {start: "20241001", end: "20241001"}, staticText: "start"},
+			{name: OperatorName.LASTDAYMONTH, dateTime: {start: "20241031-000000000", end: "20241031-235959999"}, date: {start: "20241031", end: "20241031"}, staticText: "start"},
+			{name: OperatorName.FIRSTDAYQUARTER, dateTime: {start: "20241001-000000000", end: "20241001-235959999"}, date: {start: "20241001", end: "20241001"}, staticText: "start"},
+			{name: OperatorName.LASTDAYQUARTER, dateTime: {start: "20241231-000000000", end: "20241231-235959999"}, date: {start: "20241231", end: "20241231"}, staticText: "start"},
+			{name: OperatorName.FIRSTDAYYEAR, dateTime: {start: "20240101-000000000", end: "20240101-235959999"}, date: {start: "20240101", end: "20240101"}, staticText: "start"},
+			{name: OperatorName.LASTDAYYEAR, dateTime: {start: "20241231-000000000", end: "20241231-235959999"}, date: {start: "20241231", end: "20241231"}, staticText: "start"},
 			{name: OperatorName.LASTWEEK, dateTime: {start: "20241006-000000000", end: "20241012-235959999"}, date: {start: "20241006", end: "20241012"}},
 			{name: OperatorName.THISWEEK, dateTime: {start: "20241013-000000000", end: "20241019-235959999"}, date: {start: "20241013", end: "20241019"}},
 			{name: OperatorName.NEXTWEEK, dateTime: {start: "20241020-000000000", end: "20241026-235959999"}, date: {start: "20241020", end: "20241026"}},
@@ -1789,7 +2064,8 @@ sap.ui.define([
 				tokenText: mMessageBundle.getText("DYNAMIC_DATE_" + sName + "_FORMAT"),
 				oType: oDateTimeOffsetType,
 				baseType: BaseType.DateTime,
-				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue(aDateTimeOperators[i].dateTime.start, "string"), value2 : oDateTimeOffsetType.parseValue(aDateTimeOperators[i].dateTime.end, "string")}
+				filter: {path: "test", operator: FilterOperator.BT, value1 : oDateTimeOffsetType.parseValue(aDateTimeOperators[i].dateTime.start, "string"), value2 : oDateTimeOffsetType.parseValue(aDateTimeOperators[i].dateTime.end, "string")},
+				staticText: aDateTimeOperators[i].staticText === "start" ? aDateTimeOperators[i].dateTime.start : aDateTimeOperators[i].dateTime.start + " - " + aDateTimeOperators[i].dateTime.end
 			});
 			if (aDateTimeOperators[i].date) { // check filter for Date
 				oFormatTest[sName].push({
@@ -1797,7 +2073,8 @@ sap.ui.define([
 					isEmpty: false,
 					oType: oDateType,
 					baseType: BaseType.Date,
-					filter: {path: "test", operator: FilterOperator.BT, value1 : oDateType.parseValue(aDateTimeOperators[i].date.start, "string"), value2 : oDateType.parseValue(aDateTimeOperators[i].date.end, "string")}
+					filter: {path: "test", operator: FilterOperator.BT, value1 : oDateType.parseValue(aDateTimeOperators[i].date.start, "string"), value2 : oDateType.parseValue(aDateTimeOperators[i].date.end, "string")},
+					staticText: aDateTimeOperators[i].staticText === "start" ? aDateTimeOperators[i].date.start : aDateTimeOperators[i].date.start + " - " + aDateTimeOperators[i].date.end
 				});
 			}
 		}
@@ -1811,26 +2088,26 @@ sap.ui.define([
 			{name: OperatorName.LASTHOURSINCLUDED, dateTime: {start: "20241018-080000000", end: "20241018-102230000"}},
 			{name: OperatorName.NEXTHOURS, dateTime: {start: "20241018-102230000", end: "20241018-132230000"}},
 			{name: OperatorName.NEXTHOURSINCLUDED, dateTime: {start: "20241018-102230000", end: "20241018-125959000"}},
-			{name: OperatorName.LASTDAYS, dateTime: {start: "20241015-000000000", end: "20241017-235959000"}, date: {start: "20241015", end: "20241017"}},
+			{name: OperatorName.LASTDAYS, dateTime: {start: "20241015-000000000", end: "20241017-235959999"}, date: {start: "20241015", end: "20241017"}},
 			{name: OperatorName.LASTDAYSINCLUDED, dateTime: {start: "20241016-000000000", end: "20241018-102230000"}, date: {start: "20241016", end: "20241018"}},
-			{name: OperatorName.NEXTDAYS, dateTime: {start: "20241019-000000000", end: "20241021-235959000"}, date: {start: "20241019", end: "20241021"}},
-			{name: OperatorName.NEXTDAYSINCLUDED, dateTime: {start: "20241018-102230000", end: "20241020-235959000"}, date: {start: "20241018", end: "20241020"}},
-			{name: OperatorName.LASTWEEKS, dateTime: {start: "20240922-000000000", end: "20241012-235959000"}, date: {start: "20240922", end: "20241012"}},
+			{name: OperatorName.NEXTDAYS, dateTime: {start: "20241019-000000000", end: "20241021-235959999"}, date: {start: "20241019", end: "20241021"}},
+			{name: OperatorName.NEXTDAYSINCLUDED, dateTime: {start: "20241018-102230000", end: "20241020-235959999"}, date: {start: "20241018", end: "20241020"}},
+			{name: OperatorName.LASTWEEKS, dateTime: {start: "20240922-000000000", end: "20241012-235959999"}, date: {start: "20240922", end: "20241012"}},
 			{name: OperatorName.LASTWEEKSINCLUDED, dateTime: {start: "20240929-000000000", end: "20241018-102230000"}, date: {start: "20240929", end: "20241018"}},
-			{name: OperatorName.NEXTWEEKS, dateTime: {start: "20241020-000000000", end: "20241109-235959000"}, date: {start: "20241020", end: "20241109"}},
-			{name: OperatorName.NEXTWEEKSINCLUDED, dateTime: {start: "20241018-102230000", end: "20241102-235959000"}, date: {start: "20241018", end: "20241102"}},
-			{name: OperatorName.LASTMONTHS, dateTime: {start: "20240701-000000000", end: "20240930-235959000"}, date: {start: "20240701", end: "20240930"}},
+			{name: OperatorName.NEXTWEEKS, dateTime: {start: "20241020-000000000", end: "20241109-235959999"}, date: {start: "20241020", end: "20241109"}},
+			{name: OperatorName.NEXTWEEKSINCLUDED, dateTime: {start: "20241018-102230000", end: "20241102-235959999"}, date: {start: "20241018", end: "20241102"}},
+			{name: OperatorName.LASTMONTHS, dateTime: {start: "20240701-000000000", end: "20240930-235959999"}, date: {start: "20240701", end: "20240930"}},
 			{name: OperatorName.LASTMONTHSINCLUDED, dateTime: {start: "20240801-000000000", end: "20241018-102230000"}, date: {start: "20240801", end: "20241018"}},
-			{name: OperatorName.NEXTMONTHS, dateTime: {start: "20241101-000000000", end: "20250131-235959000"}, date: {start: "20241101", end: "20250131"}},
-			{name: OperatorName.NEXTMONTHSINCLUDED, dateTime: {start: "20241018-102230000", end: "20241231-235959000"}, date: {start: "20241018", end: "20241231"}},
-			{name: OperatorName.LASTQUARTERS, dateTime: {start: "20240101-000000000", end: "20240930-235959000"}, date: {start: "20240101", end: "20240930"}},
+			{name: OperatorName.NEXTMONTHS, dateTime: {start: "20241101-000000000", end: "20250131-235959999"}, date: {start: "20241101", end: "20250131"}},
+			{name: OperatorName.NEXTMONTHSINCLUDED, dateTime: {start: "20241018-102230000", end: "20241231-235959999"}, date: {start: "20241018", end: "20241231"}},
+			{name: OperatorName.LASTQUARTERS, dateTime: {start: "20240101-000000000", end: "20240930-235959999"}, date: {start: "20240101", end: "20240930"}},
 			{name: OperatorName.LASTQUARTERSINCLUDED, dateTime: {start: "20240401-000000000", end: "20241018-102230000"}, date: {start: "20240401", end: "20241018"}},
-			{name: OperatorName.NEXTQUARTERS, dateTime: {start: "20250101-000000000", end: "20250930-235959000"}, date: {start: "20250101", end: "20250930"}},
-			{name: OperatorName.NEXTQUARTERSINCLUDED, dateTime: {start: "20241018-102230000", end: "20250630-235959000"}, date: {start: "20241018", end: "20250630"}},
-			{name: OperatorName.LASTYEARS, dateTime: {start: "20210101-000000000", end: "20231231-235959000"}, date: {start: "20210101", end: "20231231"}},
+			{name: OperatorName.NEXTQUARTERS, dateTime: {start: "20250101-000000000", end: "20250930-235959999"}, date: {start: "20250101", end: "20250930"}},
+			{name: OperatorName.NEXTQUARTERSINCLUDED, dateTime: {start: "20241018-102230000", end: "20250630-235959999"}, date: {start: "20241018", end: "20250630"}},
+			{name: OperatorName.LASTYEARS, dateTime: {start: "20210101-000000000", end: "20231231-235959999"}, date: {start: "20210101", end: "20231231"}},
 			{name: OperatorName.LASTYEARSINCLUDED, dateTime: {start: "20220101-000000000", end: "20241018-102230000"}, date: {start: "20220101", end: "20241018"}},
-			{name: OperatorName.NEXTYEARS, dateTime: {start: "20250101-000000000", end: "20271231-235959000"}, date: {start: "20250101", end: "20271231"}},
-			{name: OperatorName.NEXTYEARSINCLUDED, dateTime: {start: "20241018-102230000", end: "20261231-235959000"}, date: {start: "20241018", end: "20261231"}}
+			{name: OperatorName.NEXTYEARS, dateTime: {start: "20250101-000000000", end: "20271231-235959999"}, date: {start: "20250101", end: "20271231"}},
+			{name: OperatorName.NEXTYEARSINCLUDED, dateTime: {start: "20241018-102230000", end: "20261231-235959999"}, date: {start: "20241018", end: "20261231"}}
 		];
 		for (let i = 0; i < aDateTimeOperators.length; i++) {
 			const sName = aDateTimeOperators[i].name;
@@ -1876,6 +2153,8 @@ sap.ui.define([
 		//checking all above Operators for validity
 		fOperatorCheck(assert, aOperators, oFormatTest);
 		UI5Date.getInstance.restore();
+		FilterOperatorUtil.removeOperator("MyToToday");
+
 
 	});
 
@@ -2143,12 +2422,15 @@ sap.ui.define([
 			additionalInfo: "",
 			calcRange: function(iDuration) {
 				return UniversalDateUtils.ranges.nextYears(iDuration);
-			}
+			},
+			defaultValues: [1]
 		});
 
 		assert.equal(operatorWithSpecialCharacters.tokenTest, "^\\+foo (\\d+) operator$", "tokenTest has the expected format \+foo");
 		assert.equal(operatorWithSpecialCharacters.tokenParse, "^\\+foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format \+foo");
 		assert.equal(operatorWithSpecialCharacters.tokenFormat, "+foo {0} operator", "tokenFormat has the expected format +foo");
+		assert.deepEqual(operatorWithSpecialCharacters.valueDefaults, [1], "valueDefaults");
+		operatorWithSpecialCharacters.destroy();
 	});
 
 	QUnit.test("testing placeholder", function(assert) {
@@ -2166,6 +2448,7 @@ sap.ui.define([
 		assert.equal(operatorWithPlaceholder.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
 		assert.equal(operatorWithPlaceholder.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
 		assert.equal(operatorWithPlaceholder.tokenFormat, "foo $0 operator", "tokenFormat has the expected format for the placeholder");
+		operatorWithPlaceholder.destroy();
 
 		operatorWithPlaceholder = new RangeOperator({
 			name: "OPT",
@@ -2181,6 +2464,7 @@ sap.ui.define([
 		assert.equal(operatorWithPlaceholder.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
 		assert.equal(operatorWithPlaceholder.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
 		assert.equal(operatorWithPlaceholder.tokenFormat, "foo 0$ operator", "tokenFormat has the expected format for the placeholder");
+		operatorWithPlaceholder.destroy();
 
 		operatorWithPlaceholder = new RangeOperator({
 			name: "OPT",
@@ -2196,6 +2480,7 @@ sap.ui.define([
 		assert.equal(operatorWithPlaceholder.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
 		assert.equal(operatorWithPlaceholder.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
 		assert.equal(operatorWithPlaceholder.tokenFormat, "foo {0} operator", "tokenFormat has the expected format for the placeholder");
+		operatorWithPlaceholder.destroy();
 	});
 
 	QUnit.test("testing OperatorsForType", function(assert) {
@@ -2216,29 +2501,51 @@ sap.ui.define([
 			tokenFormat: "<{0}",
 			valueTypes: [OperatorValueType.Self]
 		});
+		FilterOperatorUtil.addOperators([oMyEQ, oLowerThan]); // to have it in global operator list
 
 		FilterOperatorUtil.setOperatorsForType("myType", [oMyEQ, oLowerThan], oMyEQ);
 
 		let aOperators = FilterOperatorUtil.getOperatorsForType("myType");
-
 		assert.equal(aOperators[0], "MYEQ", "Name set");
 		assert.equal(aOperators[1], "MYLT", "Name set");
 
 		let oDefaultOperator = FilterOperatorUtil.getDefaultOperator("myType");
-
 		assert.equal(oDefaultOperator.name, "MYEQ", "Name set");
 
 		FilterOperatorUtil.removeOperatorForType("myType", oMyEQ);
 
 		aOperators = FilterOperatorUtil.getOperatorsForType("myType");
-
-		assert.equal(aOperators.length, 1, "onle one operator exist");
+		assert.equal(aOperators.length, 1, "only one operator exist");
 		assert.equal(aOperators[0], "MYLT", "Name set");
 
 		// Should return null or one of the existng operators for this type, because the operator has been removed.
 		oDefaultOperator = FilterOperatorUtil.getDefaultOperator("myType");
-
 		assert.equal(oDefaultOperator.name, "MYEQ", "Name set");
+
+		FilterOperatorUtil.removeOperatorForType("myType", "MYLT");
+
+		aOperators = FilterOperatorUtil.getOperatorsForType("myType");
+		assert.equal(aOperators.length, 0, "no operator exist");
+
+		FilterOperatorUtil.setOperatorsForType("myType", oLowerThan, "MYLT");
+
+		aOperators = FilterOperatorUtil.getOperatorsForType("myType");
+		assert.equal(aOperators.length, 1, "only one operator exist");
+		assert.equal(aOperators[0], "MYLT", "Name set");
+		oDefaultOperator = FilterOperatorUtil.getDefaultOperator("myType");
+		assert.equal(oDefaultOperator.name, "MYLT", "Name set");
+
+		delete FilterOperatorUtil._mDefaultOpsForType["myType"]; // just to initialize
+		FilterOperatorUtil.insertOperatorForType("myType", "MYLT", 0);
+		FilterOperatorUtil.insertOperatorForType("myType", oMyEQ, 0);
+
+		aOperators = FilterOperatorUtil.getOperatorsForType("myType");
+		assert.equal(aOperators.length, 2, "two operators exist");
+		assert.equal(aOperators[0], "MYEQ", "Name set");
+		assert.equal(aOperators[1], "MYLT", "Name set");
+
+		oMyEQ.destroy();
+		oLowerThan.destroy();
 
 	});
 
@@ -2267,6 +2574,17 @@ sap.ui.define([
 		let oOperator = FilterOperatorUtil.getOperator("MyEqual");
 		assert.ok(oOperator, "Operator exist");
 
+		FilterOperatorUtil.removeOperator(oMyOperator);
+
+		oOperator = FilterOperatorUtil.getOperator("MyEqual");
+		assert.notOk(oOperator, "Operator should NOT exist");
+
+		// add one Operator and remove it
+		FilterOperatorUtil.addOperators(oMyOperator);
+
+		oOperator = FilterOperatorUtil.getOperator("MyEqual");
+		assert.ok(oOperator, "Operator exist");
+
 		FilterOperatorUtil.removeOperators(oMyOperator);
 
 		oOperator = FilterOperatorUtil.getOperator("MyEqual");
@@ -2281,12 +2599,15 @@ sap.ui.define([
 		assert.ok(oOperator, "Operator exist");
 
 		// remove all new added operators
-		FilterOperatorUtil.removeOperators([oMyOperator, oMyOperator2]);
+		FilterOperatorUtil.removeOperators([oMyOperator, "MyEqual2"]);
 
 		oOperator = FilterOperatorUtil.getOperator("MyEqual");
 		assert.notOk(oOperator, "Operator should NOT exist");
 		oOperator = FilterOperatorUtil.getOperator("MyEqual2");
 		assert.notOk(oOperator, "Operator should NOT exist");
+
+		oMyOperator.destroy();
+		oMyOperator2.destroy();
 
 	});
 
@@ -2294,10 +2615,10 @@ sap.ui.define([
 
 		let oOperator = FilterOperatorUtil.getOperator(OperatorName.Empty);
 		assert.ok(oOperator, "Operator exist");
-		assert.ok(oOperator.getLongText("String") === "empty", "Operator getLongText returns default text");
+		assert.ok(oOperator.getLongText(BaseType.String) === "empty", "Operator getLongText returns default text");
 
 		const fCallbackGetLongText = function(sBaseType) {
-			if (sBaseType === "String") {
+			if (sBaseType === BaseType.String) {
 				return "foo";
 			} else {
 				return "bar";
@@ -2305,8 +2626,8 @@ sap.ui.define([
 		};
 		oOperator.overwrite(OperatorOverwrite.getLongText, fCallbackGetLongText);
 		assert.equal(oOperator.getLongText, fCallbackGetLongText, "Overwrite function exist");
-		assert.ok(oOperator.getLongText("String") === "foo", "Operator getLongText returns expected text");
-		assert.ok(oOperator.getLongText("others") === "bar", "Operator getLongText returns expected text");
+		assert.ok(oOperator.getLongText(BaseType.String) === "foo", "Operator getLongText returns expected text");
+		assert.ok(oOperator.getLongText(BaseType.Number) === "bar", "Operator getLongText returns expected text");
 
 		oOperator = FilterOperatorUtil.getOperator(OperatorName.TODAY);
 		assert.ok(oOperator, "Operator exist");
@@ -2317,6 +2638,198 @@ sap.ui.define([
 		oOperator.overwrite(OperatorOverwrite.getModelFilter, fCallbackGetModelFilter);
 		assert.equal(oOperator.getModelFilter, fCallbackGetModelFilter, "Overwrite function exist");
 		assert.equal(oOperator.getModelFilter(), "foo", "Overwrite function returns expected value");
+
+	});
+
+	QUnit.test("testing onlyEQ", function(assert) {
+
+		const aOperators = [OperatorName.EQ];
+		assert.ok(FilterOperatorUtil.onlyEQ(aOperators), "Only EQ-Operator");
+
+		aOperators.push(OperatorName.NE);
+		assert.notOk(FilterOperatorUtil.onlyEQ(aOperators), "two operators");
+
+		aOperators.splice(0, 1);
+		assert.notOk(FilterOperatorUtil.onlyEQ(aOperators), "Only NE-Operator");
+
+	});
+
+	function _checkMonthField(assert, oControl, oType, Field, BindingMode, Element, ValueHelp, Popover, FixedList, FixedListItem) {
+
+		assert.ok(oControl, "Control created");
+		assert.ok(oControl instanceof Field, "Control is Field");
+		assert.equal(oControl?.getId(), "myId", "Control: id");
+		assert.equal(oControl?.getDisplay(), FieldDisplay.Description, "Control: display ");
+		assert.equal(oControl?.getWidth(), "100%", "Control: width");
+		assert.equal(oControl?.getValueHelp(), "LFHForSpecificMonth", "Control: valueHelp");
+
+		const oBindingInfo = oControl?.getBindingInfo("value");
+		assert.equal(oBindingInfo?.path || oBindingInfo.parts?.[0].path, "myPath", "BindingInfo path");
+		assert.equal(oBindingInfo?.type || oBindingInfo.parts?.[0].type, oType, "BindingInfo type");
+		assert.equal(oBindingInfo?.mode || oBindingInfo.parts?.[0].mode, BindingMode.TwoWay, "BindingInfo path");
+		assert.equal(oBindingInfo?.targetType || oBindingInfo.parts?.[0].targetType, "raw", "BindingInfo targetType");
+
+		if (oControl?.getValueHelp()) {
+			const oValueHelp = Element.getElementById(oControl.getValueHelp());
+			assert.ok(oValueHelp, "ValueHelp created");
+			assert.ok(oValueHelp instanceof ValueHelp, "ValueHelp is ValueHelp");
+
+			const oPopver = oValueHelp?.getTypeahead();
+			assert.ok(oPopver, "Popover created and assigned as typeahead");
+			assert.ok(oPopver instanceof Popover, "Popover is Popover");
+
+			const oFixedList = oPopver?.getContent()?.[0];
+			assert.ok(oFixedList, "Content created");
+			assert.ok(oFixedList instanceof FixedList, "Content is FixedList");
+			assert.notOk(oFixedList?.getFilterList(), "FixedList: filterList");
+			assert.ok(oFixedList?.getUseFirstMatch(), "FixedList: useFirstMatch");
+
+			const aItems = oFixedList.getItems();
+			assert.equal(aItems?.length, 12, "Number of items");
+			for (let i = 0; i < aItems.length; i++) {
+				const oItem = aItems[i];
+				assert.ok(oItem instanceof FixedListItem, "Item is FixedListItem");
+				assert.equal(oItem.getKey(), i, "Item: key");
+				// TODO, how to check names without copy _getMonths function?
+			}
+		}
+
+		oControl.destroy();
+
+	}
+
+	QUnit.test("createControl: SPECIFICMONTH", function(assert) {
+
+		return new Promise((resolve) => {
+			sap.ui.require(["sap/ui/mdc/Field",
+					"sap/ui/model/BindingMode",
+					"sap/ui/core/Element",
+					"sap/ui/mdc/valuehelp/content/FixedList",
+					"sap/ui/mdc/valuehelp/content/FixedListItem",
+					"sap/ui/mdc/ValueHelp",
+					"sap/ui/mdc/valuehelp/Popover",
+					"sap/ui/core/Control"], (Field, BindingMode, Element, FixedList, FixedListItem, ValueHelp, Popover, Control) => {
+				const oOperator = FilterOperatorUtil.getOperator("SPECIFICMONTH");
+				const oType = new IntegerType();
+				const oControl = oOperator.createControl(oType, "myPath", 0, "myId");
+
+				_checkMonthField(assert, oControl, oType, Field, BindingMode, Element, ValueHelp, Popover, FixedList, FixedListItem);
+
+				resolve();
+			});
+		});
+
+	});
+
+	QUnit.test("createControl: SPECIFICMONTHINYEAR", function(assert) {
+
+		return new Promise((resolve) => {
+			sap.ui.require(["sap/ui/mdc/Field",
+					"sap/ui/model/BindingMode",
+					"sap/ui/core/Element",
+					"sap/ui/mdc/valuehelp/content/FixedList",
+					"sap/ui/mdc/valuehelp/content/FixedListItem",
+					"sap/ui/mdc/ValueHelp",
+					"sap/ui/mdc/valuehelp/Popover",
+					"sap/ui/core/Control"], (Field, BindingMode, Element, FixedList, FixedListItem, ValueHelp, Popover, Control) => {
+				const oOperator = FilterOperatorUtil.getOperator("SPECIFICMONTHINYEAR");
+				const oType = new IntegerType();
+				let oControl = oOperator.createControl(oType, "myPath", 0, "myId");
+
+				_checkMonthField(assert, oControl, oType, Field, BindingMode, Element, ValueHelp, Popover, FixedList, FixedListItem);
+
+				oControl = oOperator.createControl(oType, "myPath", 1, "myId");
+				assert.ok(oControl, "Control created");
+				assert.ok(oControl instanceof Field, "Control is Field");
+				assert.equal(oControl?.getId(), "myId", "Control: id");
+				assert.equal(oControl?.getDisplay(), FieldDisplay.Value, "Control: display ");
+				assert.equal(oControl?.getWidth(), "100%", "Control: width");
+				assert.notOk(oControl?.getValueHelp(), "Control: valueHelp");
+
+				const oBindingInfo = oControl?.getBindingInfo("value");
+				assert.equal(oBindingInfo?.path || oBindingInfo.parts?.[0].path, "myPath", "BindingInfo path");
+				assert.equal(oBindingInfo?.type || oBindingInfo.parts?.[0].type, oType, "BindingInfo type");
+				assert.equal(oBindingInfo?.mode || oBindingInfo.parts?.[0].mode, BindingMode.TwoWay, "BindingInfo path");
+				assert.equal(oBindingInfo?.targetType || oBindingInfo.parts?.[0].targetType, "raw", "BindingInfo targetType");
+
+				resolve();
+			});
+		});
+
+	});
+
+	QUnit.test("getModelFilter: Unit", function(assert) { // just a POC
+
+		const oUnitType = new UnitType({}, {});
+		let oOperator = FilterOperatorUtil.getOperator(OperatorName.EQ);
+		let oCondition = Condition.createCondition(OperatorName.EQ, [[5, "mass-kilogram"]], undefined, undefined, ConditionValidated.NotValidated);
+		let oFilter = oOperator.getModelFilter(oCondition, "number,unit", oUnitType, false, BaseType.Unit);
+		let aFilters = oFilter?.getFilters();
+
+		assert.ok(oFilter, "Filter returned");
+		assert.equal(aFilters?.length, 2, "2 Filters included");
+		assert.equal(aFilters?.[0]?.getPath(), "number", "Filter0 path");
+		assert.equal(aFilters?.[0]?.getOperator(), FilterOperator.EQ, "Filter0 operator");
+		assert.equal(aFilters?.[0]?.getValue1(), 5, "Filter0 value1");
+		assert.equal(aFilters?.[0]?.getValue2(), undefined, "Filter0 value2");
+		assert.equal(aFilters?.[1]?.getPath(), "unit", "Filter1 path");
+		assert.equal(aFilters?.[1]?.getOperator(), FilterOperator.EQ, "Filter1 operator");
+		assert.equal(aFilters?.[1]?.getValue1(), "mass-kilogram", "Filter1 value1");
+		assert.equal(aFilters?.[1]?.getValue2(), undefined, "Filter1 value2");
+
+		oOperator = FilterOperatorUtil.getOperator(OperatorName.BT);
+		oCondition = Condition.createCondition(OperatorName.BT, [[5, "mass-kilogram"], [10, "mass-kilogram"]], undefined, undefined, ConditionValidated.NotValidated);
+		oFilter = oOperator.getModelFilter(oCondition, "number,unit", oUnitType, false, BaseType.Unit);
+		aFilters = oFilter?.getFilters();
+
+		assert.ok(oFilter, "Filter returned");
+		assert.equal(aFilters?.length, 2, "2 Filters included");
+		assert.equal(aFilters?.[0]?.getPath(), "number", "Filter0 path");
+		assert.equal(aFilters?.[0]?.getOperator(), FilterOperator.BT, "Filter0 operator");
+		assert.equal(aFilters?.[0]?.getValue1(), 5, "Filter0 value1");
+		assert.equal(aFilters?.[0]?.getValue2(), 10, "Filter0 value2");
+		assert.equal(aFilters?.[1]?.getPath(), "unit", "Filter1 path");
+		assert.equal(aFilters?.[1]?.getOperator(), FilterOperator.EQ, "Filter1 operator");
+		assert.equal(aFilters?.[1]?.getValue1(), "mass-kilogram", "Filter1 value1");
+		assert.equal(aFilters?.[1]?.getValue2(), undefined, "Filter1 value2");
+
+
+		oOperator = FilterOperatorUtil.getOperator(OperatorName.BT);
+		oCondition = Condition.createCondition(OperatorName.EQ, [[undefined, "mass-kilogram"]], undefined, undefined, ConditionValidated.NotValidated);
+		oFilter = oOperator.getModelFilter(oCondition, "number,unit", oUnitType, false, BaseType.Unit);
+		aFilters = oFilter?.getFilters();
+
+		assert.ok(oFilter, "Filter returned");
+		assert.notOk(aFilters, "No Filters included");
+		assert.equal(oFilter?.getPath(), "unit", "Filter1 path");
+		assert.equal(oFilter?.getOperator(), FilterOperator.EQ, "Filter1 operator");
+		assert.equal(oFilter?.getValue1(), "mass-kilogram", "Filter1 value1");
+		assert.equal(oFilter?.getValue2(), undefined, "Filter1 value2");
+
+	});
+
+	QUnit.test("getModelFilter: inParameter", function(assert) { // could only happen for old variants
+
+		const oType = new StringType({}, {});
+		const oOperator = FilterOperatorUtil.getOperator(OperatorName.EQ);
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["X", "Text"], {"conditions/in1": "A", "conditions/in2": "B"}, undefined, ConditionValidated.Validated);
+		const oFilter = oOperator.getModelFilter(oCondition, "myPath", oType, false, BaseType.String);
+		const aFilters = oFilter?.getFilters();
+
+		assert.ok(oFilter, "Filter returned");
+		assert.equal(aFilters?.length, 3, "3 Filters included");
+		assert.equal(aFilters?.[0]?.getPath(), "myPath", "Filter0 path");
+		assert.equal(aFilters?.[0]?.getOperator(), FilterOperator.EQ, "Filter0 operator");
+		assert.equal(aFilters?.[0]?.getValue1(), "X", "Filter0 value1");
+		assert.equal(aFilters?.[0]?.getValue2(), undefined, "Filter0 value2");
+		assert.equal(aFilters?.[1]?.getPath(), "in1", "Filter1 path");
+		assert.equal(aFilters?.[1]?.getOperator(), FilterOperator.EQ, "Filter1 operator");
+		assert.equal(aFilters?.[1]?.getValue1(), "A", "Filter1 value1");
+		assert.equal(aFilters?.[1]?.getValue2(), undefined, "Filter1 value2");
+		assert.equal(aFilters?.[2]?.getPath(), "in2", "Filter2 path");
+		assert.equal(aFilters?.[2]?.getOperator(), FilterOperator.EQ, "Filter2 operator");
+		assert.equal(aFilters?.[2]?.getValue1(), "B", "Filter2 value1");
+		assert.equal(aFilters?.[2]?.getValue2(), undefined, "Filter2 value2");
 
 	});
 

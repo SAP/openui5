@@ -250,11 +250,16 @@ sap.ui.define([
 			mProperties.flexObjects = mCondense;
 
 			const oResult = await _executeActionByName("condense", mProperties);
+
+			// the FlexController expects the response to be an array of changes, but having an array as response is bad practice.
+			// so once the coding is migrated away from FlexController and ChangePersistence, the return value should be used as is
 			if (oResult && oResult.status && oResult.status === 205 && aCreatedChanges.length) {
 				const aResponse = aCreatedChanges.map(function(oChange) {
 					return Object.values(oChange).pop();
 				});
 				oResult.response = aResponse;
+			} else if (oResult && oResult.status && oResult.status === 200) {
+				oResult.response = oResult.response.flexObjects;
 			}
 			return oResult;
 		}

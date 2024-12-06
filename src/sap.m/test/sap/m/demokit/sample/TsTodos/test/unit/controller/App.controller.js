@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/demo/todo/controller/App.controller",
+	"sap/m/sample/TsTodos/controller/App.controller",
 	"sap/ui/model/json/JSONModel"
 ], function(ManagedObject, Controller, AppController, JSONModel) {
 	"use strict";

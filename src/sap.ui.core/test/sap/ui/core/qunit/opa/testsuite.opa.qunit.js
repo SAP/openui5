@@ -129,8 +129,8 @@ sap.ui.define([
 				}
 			},
 
-			"demokit/sample/OpaAction/Opa": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaAction/Opa.html",
+			"sap/ui/core/demokit/sample/OpaAction/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaAction/testsuite.qunit.html",
 				title: "Opa sample for triggering actions on controls",
 				ui5: {
 					libs: "sap.m"
@@ -148,28 +148,28 @@ sap.ui.define([
 				title: "OPA5 AutoWait Parameters"
 			},
 
-			"demokit/sample/OpaBusyIndicator/OpaBusyIndicator": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaBusyIndicator/OpaBusyIndicator.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaBusyIndicator/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaBusyIndicator/testsuite.qunit.html",
 				title: "Testing busy controls with OPA5"
 			},
 
-			"demokit/sample/OpaById/Opa": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaById/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaById/testsuite.qunit.html",
 				title: "Opa sample for retrieving controls by id"
 			},
 
-			"demokit/sample/OpaDynamicWait/Opa": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaDynamicWait/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/testsuite.qunit.html",
 				title: "Opa sample for nested actions"
 			},
 
-			"demokit/sample/OpaMatchers/OpaMatchers": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaMatchers/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaMatchers/testsuite.qunit.html",
 				title: "Opa sample for matchers"
 			},
 
-			"demokit/sample/OpaPageObject/OpaPageObject": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaPageObject/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaPageObject/testsuite.qunit.html",
 				title: "Opa sample for PageObjects",
 				loader: {
 					paths: {
@@ -178,24 +178,16 @@ sap.ui.define([
 				}
 			},
 
-			"demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/testsuite.qunit.html",
 				title: "Opa sample for starting an app with a frame",
 				ui5: {
 					libs: "sap.m"
 				}
 			},
 
-			"demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrameDebug": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?sap-ui-debug=true",
-				title: "Opa sample for starting an app with a frame",
-				ui5: {
-					libs: "sap.m"
-				}
-			},
-
-			"demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/testsuite.qunit.html",
 				title: "OPA sample for starting an app with a component",
 				ui5: {
 					libs: "sap.m"
@@ -209,23 +201,23 @@ sap.ui.define([
 				}
 			},
 
-			"demokit/sample/OpaStaticAreaControls/OpaStaticAreaControls": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaStaticAreaControls/OpaStaticAreaControls.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaStaticAreaControls/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaStaticAreaControls/testsuite.qunit.html",
 				title: "Retrieving controls in the static area with OPA5"
 			},
 
-			"demokit/sample/OpaTestLibrary/OpaTestLibrary": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaTestLibrary/OpaTestLibrary.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaTestLibrary/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaTestLibrary/testsuite.qunit.html",
 				title: "OPA5 Test Library Sample"
 			},
 
-			"demokit/sample/OpaURLParameters/iStartMyAppInAFrameWithURLParameters/iStartMyAppInAFrameWithURLParameters": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaURLParameters/iStartMyAppInAFrameWithURLParameters/iStartMyAppInAFrameWithURLParameters.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaURLParameters/iStartMyAppInAFrameWithURLParameters/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaURLParameters/iStartMyAppInAFrameWithURLParameters/testsuite.qunit.html",
 				title: "Opa sample passing URL parameters to the IFrame"
 			},
 
-			"demokit/sample/OpaURLParameters/iStartMyUIComponentWithURLParameters/iStartMyUIComponentWithURLParameters": {
-				page: "test-resources/sap/ui/core/demokit/sample/OpaURLParameters/iStartMyUIComponentWithURLParameters/iStartMyUIComponentWithURLParameters.html?sap-ui-animation=false",
+			"sap/ui/core/demokit/sample/OpaURLParameters/iStartMyUIComponentWithURLParameters/testsuite.qunit.html": {
+				page: "test-resources/sap/ui/core/demokit/sample/OpaURLParameters/iStartMyUIComponentWithURLParameters/testsuite.qunit.html",
 				title: "OPA sample passing URL parameters"
 			},
 
