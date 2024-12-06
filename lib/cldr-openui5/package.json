@@ -15,7 +15,7 @@
     "npm": ">=9"
   },
   "devDependencies": {
-    "extend": "^3.0.0",
+    "extend": "^3.0.2",
     "json2json": "^0.2.4",
     "mocha": "^11.0.0",
     "pacote": "^20.0.0",
