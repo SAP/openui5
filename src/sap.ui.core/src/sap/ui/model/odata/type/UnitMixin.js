@@ -304,8 +304,14 @@ sap.ui.define([
 		 * @param {boolean} [oConstraints.skipDecimalsValidation=false]
 		 *   Whether to skip validation of the number of decimals based on the code list
 		 *   customizing; since 1.93.0
-		 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
-		 *   format option <code>sFormatOptionName</code> is set
+		 * @throws {Error}
+		 *   If
+		 *   <ul>
+		 *     <li>More parameters than <code>oFormatOptions</code> and <code>oConstraints</code> are given</li>
+		 *     <li>The <code>customCurrencies</code> or <code>customUnits</code> format option is set; the name is
+		 *       provided via <code>sFormatOptionName</code> when applying the <code>UnitMixin</code></li>
+		 *     <li>Any constraint other than <code>skipDecimalsValidation</code> is set</li>
+		 *   </ul>
 		 *
 		 * @alias sap.ui.model.odata.type.UnitMixin
 		 * @mixin
