@@ -169,7 +169,7 @@
 											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold sapUiDocumentationParamWrap" text="{name}" depth="{depth}" optional="{optional}" deprecated="{= ${deprecated} !== undefined }"/>
-												<custom:JSDocType typeInfo="{typeInfo}"/>
+												<custom:JSDocType typeInfo="{parts: ['typeInfo', 'types', 'type', 'linkEnabled'], formatter: '.formatter.formatJSDocType'}"/>
 												<layout:VerticalLayout>
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													<layout:VerticalLayout content="{path: 'examples', templateShareable: false}" width="100%">
@@ -232,7 +232,7 @@
 														class="sapUiDocumentationParamsTable">
 													<custom:Row>
 														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-														<custom:JSDocType typeInfo="{typeInfo}"/>
+														<custom:JSDocType typeInfo="{parts: ['typeInfo', 'types', 'type', 'linkEnabled'], formatter: '.formatter.formatJSDocType'}"/>
 														<m:Text text="{defaultValue}" wrapping="false"/>
 														<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													</custom:Row>
@@ -273,7 +273,7 @@
 											class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-												<custom:JSDocType typeInfo="{typeInfo}"/>
+												<custom:JSDocType typeInfo="{parts: ['typeInfo', 'types', 'type', 'linkEnabled'], formatter: '.formatter.formatJSDocType'}"/>
 												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
@@ -513,7 +513,7 @@
 														<template:repeat list="{event>parameters}" var="parameter">
 															<custom:Row>
 																<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
-																<custom:JSDocType typeInfo="{parts: ['parameter>typeInfo', 'parameter>types'], formatter: '.formatter.stringifyAlt'}"/>
+																<custom:JSDocType typeInfo="{parts: ['parameter>typeInfo', 'parameter>types', 'parameter>type', 'parameter>linkEnabled'], formatter: '.formatter.stringifyJSDocType'}"/>
 																<layout:VerticalLayout>
 																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																	<m:MessageStrip
@@ -637,7 +637,7 @@
 															<template:repeat list="{method>parameters}" var="parameter">
 																<custom:Row>
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
-																	<custom:JSDocType typeInfo="{parts: ['parameter>typeInfo','parameter>types'], formatter: '.formatter.stringifyAlt'}"/>
+																	<custom:JSDocType typeInfo="{parts: ['parameter>typeInfo','parameter>types'], formatter: '.formatter.stringifyJSDocType'}"/>
 																	<m:Text text="{parameter>defaultValue}" wrapping="false"/>
 																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																</custom:Row>
@@ -650,7 +650,7 @@
 																	columnTitles="Returns,Description"
 																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
-																<custom:JSDocType typeInfo="{parts: ['method>returnValue/typeInfo', 'method>returnValue/types'], formatter: '.formatter.stringifyAlt'}"/>
+																<custom:JSDocType typeInfo="{parts: ['method>returnValue/typeInfo', 'method>returnValue/types'], formatter: '.formatter.stringifyJSDocType'}"/>
 																<custom:JSDocText sanitizeContent="false" text="{path: 'method>returnValue/description', formatter: '.formatter.escapeSettingsValue'}"/>
 															</custom:Row>
 														</custom:LightTable>
@@ -696,7 +696,7 @@
 											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-												<custom:JSDocType typeInfo="{typeInfo}"/>
+												<custom:JSDocType typeInfo="{parts: ['typeInfo', 'types', 'type', 'linkEnabled'], formatter: '.formatter.formatJSDocType'}"/>
 												<custom:JSDocText sanitizeContent="false" text="{description}"/>
 											</custom:Row>
 										</custom:LightTable>
