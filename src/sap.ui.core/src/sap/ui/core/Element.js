@@ -859,13 +859,14 @@ sap.ui.define([
 	/**
 	 * This triggers immediate rerendering of its parent and thus of itself and its children.
 	 *
-	 * @deprecated As of 1.70, using this method is no longer recommended, but still works. Synchronous DOM
-	 *   updates via this method have several drawbacks: they only work when the control has been rendered
-	 *   before (no initial rendering possible), multiple state changes won't be combined automatically into
-	 *   a single re-rendering, they might cause additional layout trashing, standard invalidation might
-	 *   cause another async re-rendering.
+	 * @deprecated As of 1.70, using this method is no longer recommended, but calling it still
+	 * causes a re-rendering of the element. Synchronous DOM updates via this method have several
+	 * drawbacks: they only work when the control has been rendered before (no initial rendering
+	 * possible), multiple state changes won't be combined automatically into a single re-rendering,
+	 * they might cause additional layout thrashing, standard invalidation might cause another
+	 * async re-rendering.
 	 *
-	 *   The recommended alternative is to rely on invalidation and standard re-rendering.
+	 * The recommended alternative is to rely on invalidation and standard re-rendering.
 	 *
 	 * As <code>sap.ui.core.Element</code> "bubbles up" the rerender, changes to
 	 * child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
