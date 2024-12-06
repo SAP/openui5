@@ -23121,7 +23121,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Multiple filters for units (or currencies) are copied into groupby() in order to
 	// keep them close to their corresponding filters on aggregates of amounts. There is data
-	// aggregation on leaf level!
+	// aggregation on leaf level and visual grouping w/o totals!
 	// JIRA: CPOUI5ODATAV4-2796
 	QUnit.test("Data Aggregation: CPOUI5ODATAV4-2796", async function (assert) {
 		await this.createView(assert, "", this.createSalesOrdersModel());
@@ -23140,13 +23140,10 @@ sap.ui.define([
 			new Filter("WeightUnit", FilterOperator.EQ, "KG")
 		], {
 			$$aggregation : {
-				aggregate : {
+				aggregate : { // Note: NO grandTotal or subtotals!
 					Depth : {unit : "DimUnit"},
 					Height : {unit : "DimUnit"},
-					Price : {
-						grandTotal : true, //TODO should not be needed, right?
-						unit : "CurrencyCode"
-					},
+					Price : {unit : "CurrencyCode"},
 					WeightMeasure : {unit : "WeightUnit"},
 					Width : {unit : "DimUnit"}
 				},
@@ -23166,14 +23163,10 @@ sap.ui.define([
 						+ " and $these/aggregate(Width) gt 333 and DimUnit eq 'CM'"
 						+ " and $these/aggregate(Price) gt 444 and CurrencyCode eq 'EUR'"
 						+ " and $these/aggregate(WeightMeasure) gt 555 and WeightUnit eq 'KG'"
-				+ "))/concat(aggregate(Price,CurrencyCode)"
-					+ ",groupby((Category))/concat(aggregate($count as UI5__count),top(99)))", {
-				value : [{
-					CurrencyCode : "EUR",
-					Price : null
-				}, { // actual results do not matter here, simulate empty response
-					UI5__count : "0", "UI5__count@odata.type" : "#Decimal"
-				}]
+				+ "))/groupby((Category))&$count=true&$skip=0&$top=100", {
+				// actual results do not matter here, simulate empty response
+				"@odata.count" : "0",
+				value : []
 			});
 
 		await Promise.all([
@@ -25080,7 +25073,7 @@ sap.ui.define([
 	parameters : {\
 		$$aggregation : {\
 			aggregate : {\
-				SalesAmount : {subtotals : true}\
+				SalesAmount : {}\
 			},\
 			groupLevels : [\'Country\', \'Region\']\
 		}\
@@ -25095,8 +25088,8 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=4", {
+		this.expectRequest("BusinessPartners?$apply=groupby((Country))&$count=true&$skip=0"
+					+ "&$top=4", {
 				"@odata.count" : "2",
 				value : [
 					{Country : "US", SalesAmount : "100"},
@@ -25105,7 +25098,7 @@ sap.ui.define([
 			})
 			.expectChange("groupLevelCount", [undefined, undefined])
 			.expectChange("isExpanded", [false, false])
-			.expectChange("isTotal", [true, true])
+			.expectChange("isTotal", [false, false])
 			.expectChange("level", [1, 1])
 			.expectChange("country", ["US", "UK"])
 			.expectChange("region", [null, null])
@@ -26237,8 +26230,9 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=filter(AmountPerSale gt 99)/concat("
-				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency),groupby((Region)"
-				+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
+				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency)"
+				+ ",groupby((Region)"
+					+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
 				+ "/orderby(SalesAmountSum asc)/concat(aggregate($count as UI5__count),top(4)))", {
 				value : [{
 					Currency : "EUR",

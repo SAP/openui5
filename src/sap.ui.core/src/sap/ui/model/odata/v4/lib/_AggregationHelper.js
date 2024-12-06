@@ -1309,10 +1309,11 @@ sap.ui.define([
 		 *   applied before data aggregation (which improves performance) because it is unrelated to
 		 *   aggregates. The third one is special in that it has to be applied before data
 		 *   aggregation via the special syntax "$these/aggregate(...)" because it relates to
-		 *   aggregates; it is present only when grand totals are used, but "grandTotal like 1.84"
-		 *   is not. When the third one is present, then there is an additional fourth element which
-		 *   again is an array of filters: those exceptions where the special syntax is not
-		 *   applicable (for example, a currency filter that accompanies its amount).
+		 *   aggregates; it is present only in case of visual grouping or if grand totals are used,
+		 *   but "grandTotal like 1.84" is not. If the third one is present, then there is an
+		 *   additional fourth element which again is an array of filters: those exceptions where
+		 *   the special syntax is not applicable (for example, a currency filter that accompanies
+		 *   its amount).
 		 * @param {object} [oEntityType]
 		 *   The metadata for the entity type; needed only in case of aggregates
 		 *
@@ -1395,13 +1396,10 @@ sap.ui.define([
 			split(oFilter);
 			let aResult = [wrap(aFiltersOnAggregate), wrap(aFiltersNoAggregate)];
 
-			if (!oAggregation["grandTotal like 1.84"]) {
-				const bHasSubtotals = Object.values(oAggregation.aggregate)
-					.some((oDetails) => oDetails.subtotals);
-
-				if (bHasSubtotals || _AggregationHelper.hasGrandTotal(oAggregation.aggregate)) {
-					aResult = [undefined, aResult[1], aResult[0], aFiltersNoThese];
-				}
+			if (oAggregation.groupLevels.length
+					|| !oAggregation["grandTotal like 1.84"]
+					&& _AggregationHelper.hasGrandTotal(oAggregation.aggregate)) {
+				aResult = [undefined, aResult[1], aResult[0], aFiltersNoThese];
 			}
 
 			return aResult;
