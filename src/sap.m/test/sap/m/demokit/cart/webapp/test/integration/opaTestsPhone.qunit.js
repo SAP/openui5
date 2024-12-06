@@ -1,13 +1,12 @@
-/* global QUnit */
-
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/core/Core",
-	"sap/ui/demo/cart/test/integration/PhoneJourneys"
-], async function (Core) {
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"./arrangements/component/Startup",
+	"./PhoneNavigationJourney"
+], function (Opa5, Startup) {
 	"use strict";
-
-	await Core.ready();
-	QUnit.start();
+	Opa5.extendConfig({
+		arrangements: new Startup(),
+		viewNamespace: "sap.ui.demo.cart.view.",
+		autoWait: true
+	});
 });
