@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -16,7 +15,6 @@ sap.ui.define([
 	ManagedObject,
 	Element,
 	Fragment,
-	Lib,
 	JSONModel,
 	Filter,
 	FilterOperator,
@@ -38,7 +36,7 @@ sap.ui.define([
 	 * @since 1.44
 	 * @alias sap.ui.rta.plugin.additionalElements.AddElementsDialog
 	 */
-	var AddElementsDialog = ManagedObject.extend("sap.ui.rta.plugin.additionalElements.AddElementsDialog", {
+	const AddElementsDialog = ManagedObject.extend("sap.ui.rta.plugin.additionalElements.AddElementsDialog", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
@@ -57,7 +55,7 @@ sap.ui.define([
 		}
 	});
 
-	var oRTAResourceModel;
+	let oRTAResourceModel;
 
 	/**
 	 * Initialize the Dialog
@@ -122,11 +120,10 @@ sap.ui.define([
 	 * Close the dialog.
 	 * @returns {Promise} a Promise that resolves (to nothing) once the dialog is loaded and closed
 	 */
-	AddElementsDialog.prototype._submitDialog = function() {
-		return this._oDialogPromise.then(function(oDialog) {
-			oDialog.close();
-			this._fnResolveOnDialogConfirm();
-		}.bind(this));
+	AddElementsDialog.prototype._submitDialog = async function() {
+		const oDialog = await this._oDialogPromise;
+		oDialog.close();
+		this._fnResolveOnDialogConfirm();
 		// indicate that the dialog has been closed and the selected fields (if any) are to be added to the UI
 	};
 
@@ -186,8 +183,8 @@ sap.ui.define([
 	 */
 	AddElementsDialog.prototype._resortList = function() {
 		this._bDescendingSortOrder = !this._bDescendingSortOrder;
-		var oBinding = this._oList.getBinding("items");
-		var aSorter = [];
+		const oBinding = this._oList.getBinding("items");
+		const aSorter = [];
 		aSorter.push(new Sorter("label", this._bDescendingSortOrder));
 		oBinding.sort(aSorter);
 	};
@@ -199,15 +196,15 @@ sap.ui.define([
 	 * @private
 	 */
 	AddElementsDialog.prototype._updateModelFilter = function(oEvent) {
-		var sValue = oEvent.getParameter("newValue");
-		var oBinding = this._oList.getBinding("items");
+		const sValue = oEvent.getParameter("newValue");
+		const oBinding = this._oList.getBinding("items");
 		if ((typeof sValue) === "string") {
-			var oFilterLabel = new Filter("label", FilterOperator.Contains, sValue);
-			var oOriginalLabelFilter = new Filter("originalLabel", FilterOperator.Contains, sValue);
-			var oParentPropertyNameFilter = new Filter("parentPropertyName", FilterOperator.Contains, sValue);
-			var oDuplicateNameFilter = new Filter("duplicateName", FilterOperator.EQ, true);
-			var oParentNameFilter = new Filter({ filters: [oParentPropertyNameFilter, oDuplicateNameFilter], and: true });
-			var oFilterLabelOrInfo = new Filter({ filters: [oFilterLabel, oOriginalLabelFilter, oParentNameFilter], and: false });
+			const oFilterLabel = new Filter("label", FilterOperator.Contains, sValue);
+			const oOriginalLabelFilter = new Filter("originalLabel", FilterOperator.Contains, sValue);
+			const oParentPropertyNameFilter = new Filter("parentPropertyName", FilterOperator.Contains, sValue);
+			const oDuplicateNameFilter = new Filter("duplicateName", FilterOperator.EQ, true);
+			const oParentNameFilter = new Filter({ filters: [oParentPropertyNameFilter, oDuplicateNameFilter], and: true });
+			const oFilterLabelOrInfo = new Filter({ filters: [oFilterLabel, oOriginalLabelFilter, oParentNameFilter], and: false });
 			oBinding.filter([oFilterLabelOrInfo]);
 		} else {
 			oBinding.filter([]);
@@ -226,19 +223,19 @@ sap.ui.define([
 		});
 	};
 
-	AddElementsDialog.prototype.setTitle = function(sTitle) {
+	AddElementsDialog.prototype.setTitle = async function(sTitle) {
 		ManagedObject.prototype.setProperty.call(this, "title", sTitle, true);
-		this._oDialogPromise.then(function(oDialog) {
-			oDialog.setTitle(sTitle);
-		});
+		const oDialog = await this._oDialogPromise;
+		oDialog.setTitle(sTitle);
 	};
 
 	/**
 	 * Sets the information for the extensibility menu button items
 	 *
-	 * @param {string} sButtonText - Text for the extensibility MenuButton
-	 * @param {string} sButtonTooltip - Tooltip for the extensibility MenuButton
-	 * @param {object[]} aExtensibilityOptions - Options available on the extensibility MenuButton
+	 * @param {object} oExtensibilityInfo - Information for the extensibility menu button
+	 * @param {string} oExtensibilityInfo.UITexts.buttonText - Text for the extensibility MenuButton
+	 * @param {string} oExtensibilityInfo.UITexts.tooltip - Tooltip for the extensibility MenuButton
+	 * @param {object[]} oExtensibilityInfo.UITexts.options - Options available on the extensibility MenuButton
 	 * @public
 	 */
 	AddElementsDialog.prototype.setExtensibilityOptions = function(oExtensibilityInfo) {
@@ -284,7 +281,7 @@ sap.ui.define([
 		// clear old values from last run
 		this._removeExtensionDataTexts();
 
-		var aBusinessContextTexts = this._oDialogModel.getObject("/businessContextTexts");
+		const aBusinessContextTexts = this._oDialogModel.getObject("/businessContextTexts");
 		if (aContexts && aContexts.length > 0) {
 			aContexts.forEach(function(oContext) {
 				aBusinessContextTexts.push({
@@ -311,7 +308,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AddElementsDialog.prototype._removeExtensionDataTexts = function() {
-		var aBusinessContextTexts = this._oDialogModel.getObject("/businessContextTexts");
+		const aBusinessContextTexts = this._oDialogModel.getObject("/businessContextTexts");
 		aBusinessContextTexts.splice(1);
 	};
 
