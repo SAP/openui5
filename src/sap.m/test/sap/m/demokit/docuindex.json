@@ -85,7 +85,7 @@
 				"desc": "Calendar demo app for team and team members.",
 				"ref": "test-resources/sap/m/demokit/teamCalendar/webapp/index.html",
 				"links": {
-					"Run Integration Tests": "test-resources/sap/m/demokit/teamCalendar/webapp/test/integration/opaTests.qunit.html"
+					"Run Integration Tests": "test-resources/sap/m/demokit/teamCalendar/webapp/test/testsuite.qunit.html"
 				},
 				"category": "Showcase",
 				"config": "test-resources/sap/m/demokit/teamCalendar/demoapp.json"
