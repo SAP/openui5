@@ -56,7 +56,7 @@ sap.ui.define([
 			}
 		}),
 		oBooleanType,
-		mCodeListUrl2Promise = new Map(),
+		mCodeListUrl2Promise = {},
 		DEBUG = Log.Level.DEBUG,
 		aInt64Names = ["$count", "@$ui5.node.groupLevelCount", "@$ui5.node.level"],
 		oInt64Type,
@@ -2517,7 +2517,7 @@ sap.ui.define([
 			oSharedModel;
 
 		sUrl = this.getAbsoluteServiceUrl(sUrl);
-		sMapKey = !!bAutoExpandSelect + sUrl;
+		sMapKey = !!bAutoExpandSelect + sUrl; // no separator needed as sUrl.startsWith("/")
 		oSharedModel = this.mSharedModelByUrl[sMapKey];
 		if (!oSharedModel) {
 			oSharedModel = new this.oModel.constructor({
@@ -2748,9 +2748,11 @@ sap.ui.define([
 					return null;
 				}
 
-				sUrl = _Helper.setLanguage(oCodeList.Url, that.sLanguage);
-				sCacheKey = that.getAbsoluteServiceUrl(sUrl) + "#" + oCodeList.CollectionPath;
-				oPromise = mCodeListUrl2Promise.get(sCacheKey);
+				sUrl = that.getAbsoluteServiceUrl(
+					_Helper.setLanguage(oCodeList.Url, that.sLanguage));
+				// separator needed (Note: path must not include hash)
+				sCacheKey = oCodeList.CollectionPath + "#" + sUrl;
+				oPromise = mCodeListUrl2Promise[sCacheKey];
 				if (oPromise) {
 					return oPromise;
 				}
@@ -2860,7 +2862,7 @@ sap.ui.define([
 							oCodeListBinding.destroy();
 						});
 				});
-				mCodeListUrl2Promise.set(sCacheKey, oPromise);
+				mCodeListUrl2Promise[sCacheKey] = oPromise;
 
 				return oPromise;
 			});
@@ -3683,7 +3685,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.clearCodeListsCache = function () {
-		mCodeListUrl2Promise.clear();
+		mCodeListUrl2Promise = {};
 	};
 
 	return ODataMetaModel;
