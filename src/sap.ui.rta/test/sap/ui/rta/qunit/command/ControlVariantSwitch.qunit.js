@@ -2,16 +2,18 @@
 
 sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	VariantManagement,
+	VariantManager,
 	CommandFactory,
+	sinon,
 	FlexTestAPI,
-	RtaQunitUtils,
-	sinon
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -103,8 +105,8 @@ sap.ui.define([
 				})
 			];
 
-			var oAddAndApplyChangesStub = sandbox.stub(this.oModel, "addAndApplyChangesOnVariant").resolves();
-			sandbox.stub(this.oModel, "eraseDirtyChangesOnVariant").resolves(aDirtyChanges);
+			var oAddAndApplyChangesStub = sandbox.stub(VariantManager, "addAndApplyChangesOnVariant").resolves();
+			sandbox.stub(VariantManager, "eraseDirtyChangesOnVariant").resolves(aDirtyChanges);
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
 			.then(function(oCommand) {
