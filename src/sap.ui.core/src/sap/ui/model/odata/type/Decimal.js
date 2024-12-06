@@ -211,6 +211,7 @@ sap.ui.define([
 	 *
 	 *   The number is always displayed with exactly <code>scale</code> digits to the right of the
 	 *   decimal point (unless <code>scale</code> is "variable").
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 * @public
 	 * @since 1.27.0
 	 */

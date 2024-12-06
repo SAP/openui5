@@ -881,6 +881,8 @@ sap.ui.define([
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
 			// initially. Make sure that this is stable across devices.
 			this._oSandbox.stub(Device.resize, "height").value(1000);
+
+			ODataMetaModel.clearCodeListsCache();
 		},
 
 		afterEach : function (assert) {
@@ -9590,6 +9592,103 @@ sap.ui.define([
 			"cross-service reference $metadata succeeded at second try");
 		assert.deepEqual(aBatchPayloads, []);
 		assert.strictEqual(iCallbackCount, 1, "not called again");
+
+		TestUtils.onRequest(null);
+	});
+
+	//*********************************************************************************************
+	// Scenario: The data request for currency codes fails with 503 and is later repeated. Check
+	// also that requesting units of measure does not need a 2nd $metadata request.
+	// JIRA: CPOUI5ODATAV4-2812
+	QUnit.test('503, "Retry-After" handling: code lists', async function (assert) {
+		let bAnswerWith503 = false;
+		const sCommon = "/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/";
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true}, {
+			[sCommon + "$metadata"] : {source : "odata/v4/data/metadata_codelist.xml"},
+			["GET " + sCommon + "Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode"] : [{
+				code : 503,
+				headers : {"Retry-After" : "42"},
+				ifMatch : () => bAnswerWith503,
+				message : {error : {code : "DB_MIGRATION", message : "DB migration in progress"}}
+			}, {
+				message : {
+					value : [{
+						CurrencyCode : "EUR",
+						DecimalPlaces : 2,
+						ISOCode : "EUR",
+						Text : "Euro"
+					}]
+				}
+			}],
+			[
+				"GET " + sCommon + "UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode"
+			] : {
+				message : {
+					value : [{
+						DecimalPlaces : 5,
+						ExternalCode : "KG",
+						ISOCode : "KGM",
+						Text : "Kilogramm",
+						UnitCode : "KG"
+					}]
+				}
+			}
+		});
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+
+		await this.createView(assert, "", oModel);
+
+		bAnswerWith503 = true;
+		let fnResolveCallback;
+		const oCallbackPromise = new Promise((resolve) => {
+			fnResolveCallback = resolve;
+		});
+		let iCallbackCount = 0;
+		let fnResolveRetryAfter;
+		oModel.setRetryAfterHandler((oError) => {
+			fnResolveCallback();
+			iCallbackCount += 1;
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "DB migration in progress");
+			const iSeconds = (oError.retryAfter.getTime() - Date.now()) / 1000;
+			assert.ok(iSeconds > 41 && iSeconds < 43, `${iSeconds} roughly 42 seconds`);
+			// assert.closeTo(iSeconds, 42, /*delta*/0.5, `${iSeconds} roughly 42 seconds`);
+			return new Promise((resolve) => {
+				fnResolveRetryAfter = resolve;
+			});
+		});
+
+		// code under test
+		const oCurrencyCodesPromise = oModel.getMetaModel().requestCurrencyCodes();
+
+		await oCallbackPromise;
+
+		assert.strictEqual(iCallbackCount, 1);
+
+		bAnswerWith503 = false;
+		fnResolveRetryAfter();
+
+		assert.deepEqual(await oCurrencyCodesPromise, {
+			EUR : {
+				StandardCode : "EUR",
+				Text : "Euro",
+				UnitSpecificScale : 2
+			}
+		});
+
+		TestUtils.onRequest((_, sRequestLine) => {
+			// expect no $metadata request for the code lists anymore
+			assert.notOk(sRequestLine.includes(sCommon + "$metadata"), sRequestLine);
+		});
+
+		// code under test
+		assert.deepEqual(await oModel.getMetaModel().requestUnitsOfMeasure(), {
+			KG : {
+				StandardCode : "KGM",
+				Text : "Kilogramm",
+				UnitSpecificScale : 5
+			}
+		});
 
 		TestUtils.onRequest(null);
 	});

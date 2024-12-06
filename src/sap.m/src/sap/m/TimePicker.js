@@ -771,7 +771,7 @@ function(
 				sThatValue,
 				bThatValue2400,
 				bEnabled2400,
-				sFormat = this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern),
+				sFormat = this.getDisplayFormat() || this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern),
 				iIndexOfHH,
 				iIndexOfH;
 

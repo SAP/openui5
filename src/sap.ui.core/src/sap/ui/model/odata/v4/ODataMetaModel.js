@@ -2473,8 +2473,10 @@ sap.ui.define([
 	/**
 	 * Creates an OData model for the given URL, normalizes the path, caches it, and retrieves it
 	 * from the cache upon further requests. The model is read-only ("OneWay") and can, thus, safely
-	 * be shared. It shares this meta model's security token. The function expects that the metadata
-	 * and the local annotation files have already been loaded.
+	 * be shared across multiple calls to this method (but not across multiple meta models). It
+	 * shares this meta model's security token and "Retry-After" handler. Annotations are copied if
+	 * requested; in this case it is expected that the metadata and the local annotation files have
+	 * already been loaded.
 	 *
 	 * @param {string} sUrl
 	 *   The (relative) $metadata URL, for example "../ValueListService/$metadata"
@@ -2485,7 +2487,7 @@ sap.ui.define([
 	 * @param {boolean} [bCopyAnnotations]
 	 *   Whether to copy annotations to the shared model
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
-	 *   The value list model
+	 *   The shared model
 	 *
 	 * @private
 	 */
@@ -2510,6 +2512,9 @@ sap.ui.define([
 			if (bCopyAnnotations) {
 				oSharedModel.getMetaModel()._copyAnnotations(this.oMetaModelForAnnotations ?? this);
 			}
+			oSharedModel.setRetryAfterHandler((oError) => {
+				return this.oModel.getOrCreateRetryAfterPromise(oError);
+			});
 			this.mSharedModelByUrl[sMapKey] = oSharedModel;
 		}
 		return oSharedModel;
@@ -3648,6 +3653,15 @@ sap.ui.define([
 		delete mScope.$LastModified;
 
 		return mScope;
+	};
+
+	/**
+	 * Clears the cache used in {@link #requestCodeList}. To be used by test code only!
+	 *
+	 * @private
+	 */
+	ODataMetaModel.clearCodeListsCache = function () {
+		mCodeListUrl2Promise.clear();
 	};
 
 	return ODataMetaModel;

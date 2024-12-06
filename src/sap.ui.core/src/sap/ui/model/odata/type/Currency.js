@@ -45,6 +45,7 @@ sap.ui.define([
 	 *   since 1.93.0
 	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
 	 *   format option <code>customCurrencies</code> is set
+	 * @throws {Error} If the <code>oFormatOptions.decimalPadding</code> is set but is not allowed
 	 *
 	 * @alias sap.ui.model.odata.type.Currency
 	 * @author SAP SE

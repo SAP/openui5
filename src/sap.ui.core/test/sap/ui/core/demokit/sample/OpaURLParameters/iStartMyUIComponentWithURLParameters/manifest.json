@@ -14,16 +14,20 @@
 		},
 		"config": {
 			"sample": {
-				"iframe": "iStartMyUIComponentWithURLParameters.html?opaExecutionDelay=700",
+				"iframe": "Test.qunit.html?testsuite=test-resources/appUnderTest/testsuite.qunit&test=iStartMyUIComponentWithURLParameters",
 				"stretch": true,
 				"files": [
-					"iStartMyUIComponentWithURLParameters.html",
-					"iStartMyUIComponentWithURLParameters.js",
 					"applicationUnderTest/Component.js",
 					"applicationUnderTest/manifest.json",
 					"applicationUnderTest/view/Main.view.xml",
 					"applicationUnderTest/controller/Main.controller.js",
-					"manifest.json"
+					"Component.js",
+					"README.js",
+					"Test.qunit.html",
+					"iStartMyUIComponentWithURLParameters.qunit.js",
+					"manifest.json",
+					"testsuite.qunit.html",
+					"testsuite.qunit.js"
 				]
 			}
 		}

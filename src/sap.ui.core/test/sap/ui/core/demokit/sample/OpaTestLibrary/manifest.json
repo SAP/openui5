@@ -14,11 +14,9 @@
 		},
 		"config": {
 			"sample": {
-				"iframe": "OpaTestLibrary.html?opaExecutionDelay=700",
+				"iframe": "Test.qunit.html?testsuite=test-resources/appUnderTest/testsuite.qunit&test=OpaTestLibrary",
 				"stretch": true,
 				"files": [
-					"OpaTestLibrary.html",
-					"OpaTestLibrary.js",
 					"applicationUnderTest/index.html",
 					"applicationUnderTest/Component.js",
 					"applicationUnderTest/manifest.json",
@@ -29,7 +27,12 @@
 					"testLibrary/pageObjects/List.js",
 					"testLibrary/pageObjects/Common1.js",
 					"testLibrary/pageObjects/Common2.js",
-					"manifest.json"
+					"Component.js",
+					"OpaTestLibrary.qunit.js",
+					"Test.qunit.html",
+					"manifest.json",
+					"testsuite.qunit.html",
+					"testsuite.qunit.js"
 				]
 			}
 		}

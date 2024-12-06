@@ -510,11 +510,24 @@ sap.ui.define([
 		TimePickerInternals._replaceZeroHoursWith24 = function (sValue, iIndexOfHH, iIndexOfH) {
 			var iHoursDigits = 2,
 				iSubStringIndex = iIndexOfHH;
+			var oSignificantNumbers = /[1-9]/g;
+
+			if (iIndexOfH === -1) {
+				return sValue;
+			}
 
 			if (iIndexOfHH === -1) {
 				iHoursDigits = 1;
 				iSubStringIndex = iIndexOfH;
 			}
+
+			var sValueWithoutHours = sValue.substr(0, iSubStringIndex) + sValue.substr(iSubStringIndex + iHoursDigits);
+
+			if (oSignificantNumbers.test(sValueWithoutHours)) {
+				return sValue;
+			}
+
+			sValue = sValue.replace(/[0-9]/g, "0");
 
 			return sValue.substr(0, iSubStringIndex) + "24" + sValue.substr(iSubStringIndex + iHoursDigits);
 		};
