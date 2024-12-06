@@ -14,13 +14,14 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 * @private
 	 * @ui5-restricted sdk
+	 * @name sap.ui.documentation.JSDocType
 	 */
 	return Control.extend("sap.ui.documentation.JSDocType", {
 		metadata: {
 			library: "sap.ui.documentation",
 			properties: {
 				/**
-				 * @type {{?template: string, ?UI5Types: string[]}}
+				 * @type {{template=: string, UI5Types=: string[]}}
 				 */
 				typeInfo: {type : "object", defaultValue : {}}
 			}
@@ -44,6 +45,25 @@ sap.ui.define([
 				}
 
 				var oTypeInfo = oControl.getTypeInfo();
+				if (!oTypeInfo?.UI5Types && !oTypeInfo?.template) {
+					// try to get the old 'types' array and convert it to the new typeInfo structure
+					const aTypes = oControl.getBinding("typeInfo")?.getContext()?.getProperty("types");
+					// TODO share this code with formatter
+					if ( Array.isArray(aTypes) ) {
+						const UI5Types = [];
+						const template = aTypes.map(({value, linkEnabled}) => {
+							if ( linkEnabled ) {
+								UI5Types.push(value);
+								return `\${${UI5Types.length - 1}}`;
+							}
+							return value;
+						}).join(" | ");
+						oTypeInfo = {
+							template,
+							UI5Types
+						};
+					}
+				}
 				if (!oTypeInfo?.UI5Types && !oTypeInfo?.template) {
 					return;
 				}
