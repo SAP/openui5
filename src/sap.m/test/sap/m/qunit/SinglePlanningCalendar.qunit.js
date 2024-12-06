@@ -726,6 +726,27 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("appointmentSelect: event not thrown when there are no selected appointments in day-based view", function (assert) {
+		var oFakeDiv = document.createElement("div");
+			oFakeDiv.setAttribute("data-sap-start-date", "20180708-0300");
+			oFakeDiv.setAttribute("data-sap-end-date", "20180708-0400");
+			oFakeDiv.classList.add("sapMSinglePCRow");
+
+		var oSPC = new SinglePlanningCalendar(),
+			oFakeEvent = {
+				target: oFakeDiv
+			},
+			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+
+		//act
+		oSPC.getAggregation("_grid").onmouseup(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.notCalled, "Event was not fired");
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.test("appointmentSelect: select a single appointment in month-based view", function (assert) {
 		var oAppointment = new CalendarAppointment(),
 			oSPC = new SinglePlanningCalendar({
@@ -805,6 +826,36 @@ sap.ui.define([
 			appointments: oSPC.getAggregation("appointments"),
 			id: oSPC.getId()
 		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentSelect: event not thrown when there are no selected appointments in month-based view", async function (assert) {
+		var oFakeDiv = document.createElement("div");
+			oFakeDiv.setAttribute("sap-ui-date", "100000");
+			oFakeDiv.classList.add("sapMSPCMonthDay");
+
+		var oSPC = new SinglePlanningCalendar({
+				views: new SinglePlanningCalendarMonthView({
+					key: "MonthView",
+					title: "Month View"
+				})
+			}),
+			oFakeEvent = {
+				target: oFakeDiv,
+				srcControl: oSPC.getAggregation("_mvgrid")
+			},
+			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+
+		oSPC.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		//act
+		oSPC.getAggregation("_mvgrid")._fireSelectionEvent(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.notCalled, "Event was not fired");
 
 		//clean up
 		oSPC.destroy();
