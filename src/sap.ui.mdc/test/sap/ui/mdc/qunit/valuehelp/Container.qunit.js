@@ -167,6 +167,21 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("State promises", function(assert) {
+		assert.notOk(oContainer._retrievePromise("close"), "close promise not existing");
+		assert.notOk(oContainer._retrievePromise("open"), "open promise not existing");
+		oContainer.open();
+		assert.ok(oContainer._retrievePromise("open"), "open promise added");
+		oContainer.handleOpened();
+		assert.ok(oContainer._retrievePromise("open").isSettled(), "open promise resolved");
+		oContainer.handleClose();
+		assert.ok(oContainer._retrievePromise("open"), "open promise still available");
+		assert.ok(oContainer._retrievePromise("close"), "close promise added");
+		oContainer.handleClosed();
+		assert.ok(oContainer._retrievePromise("close").isSettled(), "close promise resolved");
+		assert.notOk(oContainer._retrievePromise("open"), "open promise removed");
+	});
+
 	QUnit.test("open", function(assert) {
 
 		sinon.stub(oContainer, "openContainer").callsFake(function(oContainer, bTypeahead) {
@@ -203,6 +218,7 @@ sap.ui.define([
 	QUnit.test("close", function(assert) {
 
 		sinon.stub(oContainer, "closeContainer").callsFake(function(oContainer) {
+			this.handleClose();
 			this.handleClosed();
 		});
 
