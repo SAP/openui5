@@ -674,7 +674,6 @@ sap.ui.define([
 		this._toggleContentResizeListener(false);
 
 		this._setAggregationProxy();
-		this._getGrid().removeAllContent();
 		this._applyLayout(oObjectPageLayout);
 		this.refreshSeeMoreVisibility();
 
@@ -709,8 +708,6 @@ sap.ui.define([
 
 	ObjectPageSubSection.prototype._applyLayout = function (oLayoutProvider) {
 		var aVisibleBlocks,
-			oGrid = this._getGrid(),
-			oGridContent = oGrid.getAggregation("content"),
 			sCurrentMode = this.getMode(),
 			sLayout = oLayoutProvider.getSubSectionLayout(),
 			oLayoutConfig = this._calculateLayoutConfiguration(sLayout, oLayoutProvider),
@@ -732,11 +729,6 @@ sap.ui.define([
 		try {
 			aVisibleBlocks.forEach(function (oBlock) {
 				this._setBlockMode(oBlock, sCurrentMode);
-
-				// Add Block to Grid content only if it's not already added
-				if (!oGridContent || (oGridContent && oGridContent.indexOf(oBlock) < 0)) {
-				    oGrid.addAggregation("content", oBlock, true); // this is always called onBeforeRendering so suppress invalidate
-				}
 			}, this);
 		} catch (sError) {
 			Log.error("ObjectPageSubSection :: error while building layout " + sLayout + ": " + sError);
@@ -928,7 +920,9 @@ sap.ui.define([
 		//empty real aggregations and feed internal ones at first rendering only
 		jQuery.each(this._aAggregationProxy, jQuery.proxy(function (sAggregationName, aValue) {
 			aAggregation = this.removeAllAggregation(sAggregationName, true);
-			aAggregation.forEach(this._onAddBlock, this);
+			aAggregation.forEach(function(oBlock) {
+				this._onAddBlock(oBlock, sAggregationName, true); // this is always called onBeforeRendering so suppress invalidate
+			}, this);
 			this._setAggregation(sAggregationName, aAggregation, true);
 		}, this));
 
@@ -974,12 +968,11 @@ sap.ui.define([
 		} else if (this.hasProxy(sAggregationName)) {
 			aAggregation = this._getAggregation(sAggregationName);
 			aAggregation.push(oObject);
-			this._onAddBlock(oObject);
-			this._setAggregation(sAggregationName, aAggregation, bSuppressInvalidate);
-
-			if (oObject instanceof BlockBase || oObject instanceof ObjectPageLazyLoader) {
-				oObject.setParent(this, "blocks"); //let the block know of its parent subsection
+			if (oObject instanceof BlockBase) {
+				oObject.setParent(this, sAggregationName); //let the block know of its parent subsection
 			}
+			this._onAddBlock(oObject, sAggregationName, bSuppressInvalidate);
+			this._setAggregation(sAggregationName, aAggregation, bSuppressInvalidate);
 
 		} else {
 			ObjectPageSectionBase.prototype.addAggregation.apply(this, arguments);
@@ -1004,16 +997,45 @@ sap.ui.define([
 		return this.addAggregation("blocks", oObject);
 	};
 
-	ObjectPageSubSection.prototype._onAddBlock = function (oBlock) {
-		oBlock && this._oBlocksObserver.observe(oBlock, {
+	ObjectPageSubSection.prototype._onAddBlock = function (oBlock, sAggregationName, bSuppressInvalidate) {
+		if (!oBlock) {
+			return;
+		}
+		this._oBlocksObserver.observe(oBlock, {
 			properties: ["visible"]
 		});
+		if (this._shouldForwardAggregationToGrid(sAggregationName)) {
+			this._addBlockToGrid(oBlock, bSuppressInvalidate);
+		}
 	};
 
-	ObjectPageSubSection.prototype._onRemoveBlock = function (oBlock) {
-		oBlock && this._oBlocksObserver.unobserve(oBlock, {
+	ObjectPageSubSection.prototype._shouldForwardAggregationToGrid = function (sAggregationName) {
+		return ((sAggregationName === "blocks")
+			|| (sAggregationName === "moreBlocks" && this.getMode() === ObjectPageSubSectionMode.Expanded));
+	};
+
+	ObjectPageSubSection.prototype._addBlockToGrid = function (oBlock, bSuppressInvalidate) {
+		var oGrid = this._getGrid();
+		if (oGrid?.indexOfContent(oBlock) < 0) { // add only if not already added (to preserve the ordering of the blocks)
+			oGrid?.addAggregation("content", oBlock, bSuppressInvalidate);
+		}
+	};
+
+	ObjectPageSubSection.prototype._onRemoveBlock = function (oBlock, bSuppressInvalidate) {
+		if (!oBlock) {
+			return;
+		}
+		this._oBlocksObserver.unobserve(oBlock, {
 			properties: ["visible"]
 		});
+		this._removeBlockFromGrid(oBlock, bSuppressInvalidate);
+	};
+
+	ObjectPageSubSection.prototype._removeBlockFromGrid = function (oBlock, bSuppressInvalidate) {
+		var oGrid = this._getGrid();
+		if (oGrid?.indexOfContent(oBlock) > -1) {
+			oGrid?.removeAggregation("content", oBlock, bSuppressInvalidate);
+		}
 	};
 
 	/**
@@ -1037,8 +1059,10 @@ sap.ui.define([
 
 		if (this.hasProxy(sAggregationName)) {
 			aInternalAggregation = this._getAggregation(sAggregationName);
-			this._unobserveBlocks();
 			this._setAggregation(sAggregationName, [], bSuppressInvalidate);
+			aInternalAggregation.forEach(function(oBlock) {
+				this._onRemoveBlock(oBlock);
+			}.bind(this));
 			return aInternalAggregation.slice();
 		}
 
@@ -1190,10 +1214,16 @@ sap.ui.define([
 			this.setProperty("mode", ObjectPageSubSectionMode.Collapsed);
 			this._oCurrentlyVisibleSeeMoreLessButton = this._getSeeMoreButton().setVisible(true);
 			this._getSeeLessButton().setVisible(false);
+			this.getMoreBlocks().forEach(function(oBlock) {
+				this._removeBlockFromGrid(oBlock);
+			}, this);
 		} else {
 			this.setProperty("mode", ObjectPageSubSectionMode.Expanded);
 			this._getSeeMoreButton().setVisible(false);
 			this._oCurrentlyVisibleSeeMoreLessButton = this._getSeeLessButton().setVisible(true);
+			this.getMoreBlocks().forEach(function(oBlock) {
+				this._addBlockToGrid(oBlock);
+			}, this);
 		}
 	};
 

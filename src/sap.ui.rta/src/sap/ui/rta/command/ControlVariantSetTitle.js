@@ -2,17 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/rta/command/BaseCommand",
-	"sap/ui/rta/library",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/variants/VariantManager",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/library"
 ], function(
-	BaseCommand,
-	rtaLibrary,
 	JsControlTreeModifier,
 	ControlVariantApplyAPI,
-	flUtils
+	VariantManager,
+	flUtils,
+	BaseCommand,
+	rtaLibrary
 ) {
 	"use strict";
 
@@ -85,7 +87,7 @@ sap.ui.define([
 			generator: rtaLibrary.GENERATOR_NAME
 		};
 
-		return Promise.resolve(this.oModel.addVariantChange(this.sVariantManagementReference, mPropertyBag))
+		return Promise.resolve(VariantManager.addVariantChange(this.sVariantManagementReference, mPropertyBag))
 		.then(function(oChange) {
 			this._oVariantChange = oChange;
 		}.bind(this));
@@ -100,11 +102,12 @@ sap.ui.define([
 		var mPropertyBag = {
 			variantReference: this.sCurrentVariant,
 			changeType: "setTitle",
-			title: this.getOldText()
+			title: this.getOldText(),
+			appComponent: this.oAppComponent
 		};
 		var oChange = this._oVariantChange;
 
-		return Promise.resolve(this.oModel.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange))
+		return Promise.resolve(VariantManager.deleteVariantChange(this.sVariantManagementReference, mPropertyBag, oChange))
 		.then(function() {
 			this._oVariantChange = null;
 		}.bind(this));

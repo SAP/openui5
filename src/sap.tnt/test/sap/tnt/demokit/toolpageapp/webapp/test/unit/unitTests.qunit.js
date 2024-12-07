@@ -1,13 +1,6 @@
-/* global QUnit */
-
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/core/Core",
-	"sap/ui/demo/toolpageapp/test/unit/AllTests"
-], async (Core) => {
+sap.ui.define([
+	"./model/formatter",
+	"./model/models"
+], function() {
 	"use strict";
-
-	await Core.ready();
-	QUnit.start();
 });

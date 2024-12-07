@@ -513,7 +513,7 @@
 														<template:repeat list="{event>parameters}" var="parameter">
 															<custom:Row>
 																<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
-																<custom:JSDocType typeInfo="{path: 'parameter>typeInfo', formatter: '.formatter.stringify'}"/>
+																<custom:JSDocType typeInfo="{parts: ['parameter>typeInfo', 'parameter>types'], formatter: '.formatter.stringifyAlt'}"/>
 																<layout:VerticalLayout>
 																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																	<m:MessageStrip
@@ -637,7 +637,7 @@
 															<template:repeat list="{method>parameters}" var="parameter">
 																<custom:Row>
 																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
-																	<custom:JSDocType typeInfo="{path: 'parameter>typeInfo', formatter: '.formatter.stringify'}"/>
+																	<custom:JSDocType typeInfo="{parts: ['parameter>typeInfo','parameter>types'], formatter: '.formatter.stringifyAlt'}"/>
 																	<m:Text text="{parameter>defaultValue}" wrapping="false"/>
 																	<custom:JSDocText sanitizeContent="false" text="{path: 'parameter>description', formatter: '.formatter.escapeSettingsValue'}"/>
 																</custom:Row>
@@ -650,7 +650,7 @@
 																	columnTitles="Returns,Description"
 																	class="sapUiDocumentation2ColumnsEqualTable">
 															<custom:Row>
-																<custom:JSDocType typeInfo="{path: 'method>returnValue/typeInfo', formatter: '.formatter.stringify'}"/>
+																<custom:JSDocType typeInfo="{parts: ['method>returnValue/typeInfo', 'method>returnValue/types'], formatter: '.formatter.stringifyAlt'}"/>
 																<custom:JSDocText sanitizeContent="false" text="{path: 'method>returnValue/description', formatter: '.formatter.escapeSettingsValue'}"/>
 															</custom:Row>
 														</custom:LightTable>

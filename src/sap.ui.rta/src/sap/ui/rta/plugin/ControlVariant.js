@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -32,6 +33,7 @@ sap.ui.define([
 	DtUtil,
 	ControlVariantApplyAPI,
 	VariantManagement,
+	VariantManager,
 	ContextSharingAPI,
 	Layer,
 	flUtils,
@@ -561,13 +563,12 @@ sap.ui.define([
 		var oElementOverlay = aElementOverlays[0];
 		var oVariantManagementControl = oElementOverlay.getElement();
 		var sVariantManagementReference = oElementOverlay.getVariantManagement();
-		var oModel = this._getVariantModel(oVariantManagementControl);
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 		var mFlexSettings = this.getCommandFactory().getFlexSettings();
 		var mComponentPropertyBag = mFlexSettings;
 		mComponentPropertyBag.variantManagementControl = oVariantManagementControl;
 
-		return oModel.manageVariants(
+		return VariantManager.manageVariants(
 			oVariantManagementControl,
 			sVariantManagementReference,
 			mFlexSettings.layer,

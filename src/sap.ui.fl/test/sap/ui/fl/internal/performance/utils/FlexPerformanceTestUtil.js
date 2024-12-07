@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -29,6 +30,7 @@ sap.ui.define([
 	XmlPreprocessor,
 	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
+	VariantManager,
 	PersistenceWriteAPI,
 	Layer,
 	FlUtils,
@@ -184,10 +186,11 @@ sap.ui.define([
 		})
 		.then(function() {
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
-			return oVMControl.getModel(ControlVariantApplyAPI.getVariantModelName())._handleSave(oVMControl, {
+			const oVariantModel = oVMControl.getModel(ControlVariantApplyAPI.getVariantModelName());
+			return VariantManager.handleSaveEvent(oVMControl, {
 				name: "newVariant",
 				layer: Layer.CUSTOMER
-			});
+			}, oVariantModel);
 		})
 		.then(function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);

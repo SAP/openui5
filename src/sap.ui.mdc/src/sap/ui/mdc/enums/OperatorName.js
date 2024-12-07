@@ -199,7 +199,7 @@ sap.ui.define(() => {
 		/**
 		 * "empty" operator
 		 *
-		 * The operator is available for string types.
+		 * The operator is available for string, date, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */
@@ -208,7 +208,7 @@ sap.ui.define(() => {
 		/**
 		 * "not empty" operator
 		 *
-		 * The operator is available for string types.
+		 * The operator is available for string, date, and date/time types.
 		 * @since 1.73.0
 		 * @public
 		 */

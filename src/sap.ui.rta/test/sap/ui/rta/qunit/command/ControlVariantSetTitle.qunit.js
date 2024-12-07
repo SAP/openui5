@@ -1,18 +1,20 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantManager",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/library",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	VariantManagement,
-	Layer,
 	ControlVariantApplyAPI,
+	VariantManagement,
+	VariantManager,
+	Layer,
 	CommandFactory,
 	rtaLibrary,
 	sinon,
@@ -58,8 +60,8 @@ sap.ui.define([
 		QUnit.test("execute and undo", function(assert) {
 			var oSetTitleCommand;
 			var sNewText = "Test";
-			var oAddChangeStub = sandbox.stub(this.oModel, "addVariantChange").resolves("setTitleChange");
-			var oDeleteStub = sandbox.stub(this.oModel, "deleteVariantChange").resolves();
+			var oAddChangeStub = sandbox.stub(VariantManager, "addVariantChange").resolves("setTitleChange");
+			var oDeleteStub = sandbox.stub(VariantManager, "deleteVariantChange").resolves();
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
 				newText: sNewText
@@ -87,7 +89,8 @@ sap.ui.define([
 				var mExpectedParams = {
 					variantReference: "variant0",
 					changeType: "setTitle",
-					title: "variant A"
+					title: "variant A",
+					appComponent: oMockedAppComponent
 				};
 				assert.strictEqual(oDeleteStub.callCount, 1, "the change got deleted");
 				assert.strictEqual(oDeleteStub.firstCall.args[0], "variantMgmtId1", "the vm reference was passed");

@@ -56,7 +56,7 @@ sap.ui.define([
 			}
 		}),
 		oBooleanType,
-		mCodeListUrl2Promise = new Map(),
+		mCodeListUrl2Promise = {},
 		DEBUG = Log.Level.DEBUG,
 		aInt64Names = ["$count", "@$ui5.node.groupLevelCount", "@$ui5.node.level"],
 		oInt64Type,
@@ -2497,7 +2497,7 @@ sap.ui.define([
 			oSharedModel;
 
 		sUrl = this.getAbsoluteServiceUrl(sUrl);
-		sMapKey = !!bAutoExpandSelect + sUrl;
+		sMapKey = !!bAutoExpandSelect + sUrl; // no separator needed as sUrl.startsWith("/")
 		oSharedModel = this.mSharedModelByUrl[sMapKey];
 		if (!oSharedModel) {
 			oSharedModel = new this.oModel.constructor({
@@ -2728,9 +2728,11 @@ sap.ui.define([
 					return null;
 				}
 
-				sUrl = _Helper.setLanguage(oCodeList.Url, that.sLanguage);
-				sCacheKey = that.getAbsoluteServiceUrl(sUrl) + "#" + oCodeList.CollectionPath;
-				oPromise = mCodeListUrl2Promise.get(sCacheKey);
+				sUrl = that.getAbsoluteServiceUrl(
+					_Helper.setLanguage(oCodeList.Url, that.sLanguage));
+				// separator needed (Note: path must not include hash)
+				sCacheKey = oCodeList.CollectionPath + "#" + sUrl;
+				oPromise = mCodeListUrl2Promise[sCacheKey];
 				if (oPromise) {
 					return oPromise;
 				}
@@ -2840,7 +2842,7 @@ sap.ui.define([
 							oCodeListBinding.destroy();
 						});
 				});
-				mCodeListUrl2Promise.set(sCacheKey, oPromise);
+				mCodeListUrl2Promise[sCacheKey] = oPromise;
 
 				return oPromise;
 			});
@@ -3323,7 +3325,9 @@ sap.ui.define([
 	 *   data model. Since 1.80.0, that model's parameter "sharedRequests" is set automatically (see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}). If the value list model is the data
 	 *   model associated with this meta model, use the binding-specific parameter "$$sharedRequest"
-	 *   instead, see {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 *   instead, see {@link sap.ui.model.odata.v4.ODataModel#bindList}. Since 1.132.0, the data
+	 *   model's {@link sap.ui.model.odata.v4.ODataModel#setRetryAfterHandler "Retry-After" handler}
+	 *   is reused by default, but can of course be overwritten.
 	 *
 	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
 	 *   is available with key "" and has an additional property "$qualifier" which is the original
@@ -3661,7 +3665,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.clearCodeListsCache = function () {
-		mCodeListUrl2Promise.clear();
+		mCodeListUrl2Promise = {};
 	};
 
 	return ODataMetaModel;

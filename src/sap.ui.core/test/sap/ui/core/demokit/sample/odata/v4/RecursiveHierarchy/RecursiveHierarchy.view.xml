@@ -28,8 +28,8 @@
 				<m:Button icon="sap-icon://synchronize" id="synchronize" press=".onSynchronize"
 					tooltip="Side Effect"/>
 				<m:Button icon="sap-icon://response" press=".onRefresh" tooltip="Refresh"/>
-				<m:Button icon="sap-icon://refresh" press=".onRefresh($event, true)"
-					tooltip="Refresh (keeping tree state)"/>
+				<m:Button icon="sap-icon://refresh" id="sideEffectsRefresh"
+					press=".onRefresh($event, true)" tooltip="Refresh (keeping tree state)"/>
 				<m:Button icon="sap-icon://multiselect-all" press=".onShowSelected"
 					tooltip="Show Selected Elements"/>
 			</m:Toolbar>
@@ -157,7 +157,8 @@
 				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
 					press=".onSynchronizeTreeTable" tooltip="Side effect"/>
 				<m:Button icon="sap-icon://response" press=".onRefreshTreeTable" tooltip="Refresh"/>
-				<m:Button icon="sap-icon://refresh" press=".onRefreshTreeTable($event, true)"
+				<m:Button icon="sap-icon://refresh" id="sideEffectsRefreshTreeTable"
+					press=".onRefreshTreeTable($event, true)"
 					tooltip="Refresh (keeping tree state)"/>
 				<m:Button icon="sap-icon://multiselect-all"
 					press=".onShowSelected($event, 'treeTable')"
