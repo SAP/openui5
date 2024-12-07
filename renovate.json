@@ -13,6 +13,7 @@
         "lit-html"
     ],
     "commitMessagePrefix": "[INTERNAL] Infra:",
+    "rangeStrategy": "bump",
     "reviewers": ["UI5 Foundation"],
     "maven": {
        "enabled": false

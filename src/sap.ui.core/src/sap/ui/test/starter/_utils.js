@@ -9,9 +9,8 @@
 
 sap.ui.define([
 	"sap/base/util/isPlainObject",
-	"sap/base/util/merge",
-	"sap/ui/thirdparty/URI"
-], function(isPlainObject, merge, URI) {
+	"sap/base/util/merge"
+], function(isPlainObject, merge) {
 	"use strict";
 
 	const mConfigLoaded = {};
@@ -92,12 +91,12 @@ sap.ui.define([
 		return [url.origin, url.origin + url.pathname];
 	})();
 
-	function toAbsoluteURL(sUrl) {
+	function createEffectivePageURL(sUrl, oParams, sName) {
 		// check for ui5 scheme
 		if (sUrl.startsWith("ui5:")) {
 			// check for authority
 			if (!sUrl.startsWith("ui5://")) {
-				throw new Error("URLs using the 'ui5' protocol must be absolute. Relative and server absolute URLs are reserved for future use.");
+				throw new TypeError(`Test '${sName}': Page URLs using the 'ui5' protocol must be absolute. Relative and server absolute URLs are reserved for future use.`);
 			}
 
 			const sNoScheme = sUrl.slice(6 /* "ui5://".length */);
@@ -107,7 +106,27 @@ sap.ui.define([
 			// in the context of the test starter, it then by convention is relative to the UI5 baseUrl (parent of "resources/")
 			sUrl = sap.ui.require.toUrl("") + "/../" + sUrl;
 		}
+
 		const url = new URL(sUrl, baseURL);
+
+		// add URL parameters if given
+		if ( oParams != null ) {
+			if ( typeof oParams !== "object" ) {
+				throw new TypeError(`Test '${sName}': Option 'uriParams' must be an object.`);
+			}
+			const urlParams = url.searchParams;
+			for (const name in oParams) {
+				if ( Object.hasOwn(oParams, name) ) {
+					const value = oParams[name];
+					if ( Array.isArray(value) ) {
+						value.forEach((singleValue) => urlParams.append(name, singleValue));
+					} else {
+						urlParams.append(name, value);
+					}
+				}
+			}
+		}
+
 		// for same origin URLs, return a URL w/o origin, otherwise the full URL
 		return url.origin === baseOrigin ? url.pathname + url.search + url.hash : url.href;
 	}
@@ -246,13 +265,7 @@ sap.ui.define([
 				oTestConfig.module = resolvePackage(resolvePlaceholders(oTestConfig.module, name));
 			}
 			oTestConfig.beforeBootstrap = resolvePackage(resolvePlaceholders(oTestConfig.beforeBootstrap, name));
-			oTestConfig.page = toAbsoluteURL(resolvePlaceholders(oTestConfig.page, name));
-
-			if (oTestConfig.uriParams) {
-				var oUri = new URI(oTestConfig.page);
-				oUri.addSearch(oTestConfig.uriParams);
-				oTestConfig.page = oUri.toString();
-			}
+			oTestConfig.page = createEffectivePageURL(resolvePlaceholders(oTestConfig.page, name), oTestConfig.uriParams, name);
 
 			oTestConfig.title = resolvePlaceholders(oTestConfig.title, name);
 			oSuiteConfig.tests[name] = oTestConfig;
@@ -318,7 +331,11 @@ sap.ui.define([
 			registerResourceRoots();
 			sap.ui.require([sTestSuite], function(oSuiteConfig) {
 				mConfigLoaded[sTestSuite] = pLoaded;
-				resolve( mergeWithDefaults(oSuiteConfig, sTestSuite) );
+				try {
+					resolve( mergeWithDefaults(oSuiteConfig, sTestSuite) );
+				} catch (oErr) {
+					reject(oErr);
+				}
 			}, function(oErr) {
 				reject(oErr);
 			});

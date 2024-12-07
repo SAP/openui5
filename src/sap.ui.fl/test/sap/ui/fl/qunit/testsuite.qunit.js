@@ -1305,6 +1305,22 @@ sap.ui.define([
 				}
 			},
 
+			"variants/VariantManager": {
+				group: "Variants",
+				ui5: {
+					resourceroots: {
+						"fl.test": "test-resources/sap/ui/fl/qunit/testResources/"
+					},
+					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+				},
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/fl/variants/VariantManager"]
+				}
+			},
+
 			"variants/VariantModel": {
 				group: "Variants",
 				ui5: {
@@ -1313,8 +1329,11 @@ sap.ui.define([
 					},
 					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				},
+				qunit: {
+					reorder: false
+				},
 				coverage: {
-					only: ["sap/ui/fl/variants/VariantModel"]
+					only: ["sap/ui/fl/variants/VariantModel", "sap/ui/fl/variants/VariantManager"]
 				}
 			},
 

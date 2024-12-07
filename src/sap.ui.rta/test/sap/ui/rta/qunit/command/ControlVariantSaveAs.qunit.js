@@ -1,24 +1,26 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/fl/write/api/ContextSharingAPI",
-	"sap/ui/rta/Utils",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/library",
+	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	Layer,
 	FlVariant,
 	VariantManagement,
+	VariantManager,
 	ContextSharingAPI,
-	Utils,
+	Layer,
 	CommandFactory,
 	rtaLibrary,
+	Utils,
 	sinon,
 	FlexTestAPI,
 	RtaQunitUtils
@@ -50,7 +52,7 @@ sap.ui.define([
 				appComponent: oMockedAppComponent
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
-				this.oHandleSaveStub = sandbox.stub(this.oModel, "_handleSave");
+				this.oHandleSaveStub = sandbox.stub(VariantManager, "handleSaveEvent");
 				this.oVariantManagement = new VariantManagement("variantMgmtId1");
 				sandbox.spy(this.oVariantManagement, "detachCancel");
 				sandbox.spy(this.oVariantManagement, "detachSave");
@@ -119,8 +121,8 @@ sap.ui.define([
 			sandbox.stub(this.oModel, "getVariant").returns({
 				controlChanges: aExistingChanges
 			});
-			var oRemoveStub = sandbox.stub(this.oModel, "removeVariant").resolves();
-			var oApplyChangeStub = sandbox.stub(this.oModel, "addAndApplyChangesOnVariant");
+			var oRemoveStub = sandbox.stub(VariantManager, "removeVariant").resolves();
+			var oApplyChangeStub = sandbox.stub(VariantManager, "addAndApplyChangesOnVariant");
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "saveAs", {
 				sourceVariantReference: oSourceVariantReference,
@@ -166,7 +168,7 @@ sap.ui.define([
 					variant: aChanges[0],
 					sourceVariantReference: "mySourceReference",
 					variantManagementReference: "variantMgmtId1",
-					component: oMockedAppComponent
+					appComponent: oMockedAppComponent
 				};
 				assert.strictEqual(oRemoveStub.callCount, 1, "removeVariant was called");
 				assert.deepEqual(oRemoveStub.firstCall.args[0], mExpectedProperties, "the correct properties were passed-1");

@@ -10,10 +10,11 @@ sap.ui.require([
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/createEdit",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/pageExpandCollapse",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/recursiveHierarchyBasics",
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/sideEffectsRefresh",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/opaQunit"
 ], function (Core, Helper, Main, createEdit, pageExpandCollapse, recursiveHierarchyBasics,
-		SandboxModel, opaTest) {
+		sideEffectsRefresh, SandboxModel, opaTest) {
 	"use strict";
 
 	Core.ready().then(function () {
@@ -52,6 +53,16 @@ sap.ui.require([
 				Main.setTreeTable(bTreeTable);
 
 				recursiveHierarchyBasics(Given, When, Then);
+			});
+		});
+
+		//*****************************************************************************
+		[false, true].forEach(function (bTreeTable) {
+			const sTitle = "side-effects refresh; w/ TreeTable: " + bTreeTable;
+			opaTest(sTitle, function (Given, When, Then) {
+				Main.setTreeTable(bTreeTable);
+
+				sideEffectsRefresh(Given, When, Then);
 			});
 		});
 

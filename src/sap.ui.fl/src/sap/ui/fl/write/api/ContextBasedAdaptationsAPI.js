@@ -4,39 +4,39 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/ui/fl/write/api/Adaptations",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/Adaptations",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
-	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	Lib,
-	Adaptations,
-	FeaturesAPI,
 	FlexObjectFactory,
+	CompVariantMerger,
+	VariantManagementState,
 	ManifestUtils,
 	ControlVariantApplyAPI,
+	FlexInfoSession,
+	CompVariantState,
+	FlexObjectManager,
+	Storage,
+	Versions,
+	Adaptations,
+	FeaturesAPI,
 	Layer,
 	LayerUtils,
 	FlexUtils,
-	FlexInfoSession,
-	FlexObjectManager,
-	CompVariantMerger,
-	CompVariantState,
-	VariantManagementState,
-	Storage,
-	Versions,
 	JSONModel
 ) {
 	"use strict";
@@ -468,9 +468,10 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Working layer
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} [contextBasedAdaptationId] - ID of the context-based adaption
+	 * @param {sap.ui.fl.variants.VariantManager} VariantManager - Variant Manager module
 	 * @returns {object} Returns the change as JSON object
 	 */
-	function createChangeSetVisibleFalseToRestrictedVariant(oVariant, mPropertyBag, contextBasedAdaptationId) {
+	function createChangeSetVisibleFalseToRestrictedVariant(oVariant, mPropertyBag, contextBasedAdaptationId, VariantManager) {
 		if (oVariant.isA("sap.ui.fl.apply._internal.flexObjects.CompVariant")) {
 			var sPersistencyKey = oVariant.getPersistencyKey();
 			oVariant = CompVariantState.updateVariant({
@@ -486,8 +487,7 @@ sap.ui.define([
 		}
 		// Fl variant
 		var oAppComponent = FlexUtils.getAppComponentForControl(mPropertyBag.control);
-		var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-		var oChange = oModel.createVariantChange(
+		var oChange = VariantManager.createVariantChange(
 			oVariant.getVariantManagementReference(),
 			{
 				changeType: "setVisible",
@@ -669,7 +669,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @returns {object} Returns a object containing context-based adaptations and changes/variants as FlexObjects that must be migrated
 	 */
-	function prepareMigrationData(aVariants, aFlVariantsFinalState, aChanges, mPropertyBag) {
+	function prepareMigrationData(aVariants, aFlVariantsFinalState, aChanges, mPropertyBag, VariantManager) {
 		var oMigrationData = {
 			contextBasedAdaptations: [],
 			flexObjects: []
@@ -735,7 +735,7 @@ sap.ui.define([
 			aVariants.forEach(function(oVariant) {
 				if (oVariant.getLayer() !== Layer.CUSTOMER && aUniqueContextVariantIds.indexOf(oVariant.getId()) < 0) {
 					oMigrationData.flexObjects.push(
-						createChangeSetVisibleFalseToRestrictedVariant(oVariant, mPropertyBag, sContextBasedAdaptationId)
+						createChangeSetVisibleFalseToRestrictedVariant(oVariant, mPropertyBag, sContextBasedAdaptationId, VariantManager)
 					);
 				}
 			});
@@ -747,7 +747,7 @@ sap.ui.define([
 			var bRestricted = aUnrestrictedViews.indexOf(oVariant) < 0;
 			if (oFinalState.visible === true && bRestricted) {
 				oMigrationData.flexObjects.push(
-					createChangeSetVisibleFalseToRestrictedVariant(oVariant, mPropertyBag, undefined)
+					createChangeSetVisibleFalseToRestrictedVariant(oVariant, mPropertyBag, undefined, VariantManager)
 				);
 			}
 		});
@@ -755,7 +755,18 @@ sap.ui.define([
 		return oMigrationData;
 	}
 
-	 /**
+	// the VariantModel / VariantManager uses the ContextBasedAdaptationsAPI to fetch the adaptation id,
+	// and the ContextBasedAdaptationsAPI uses the VariantModel / VariantManager to create changes
+	// TODO: the logic needs to be refactored to get rid of this circular dependency
+	function lazyRequireVariantManager() {
+		return new Promise(function(resolve) {
+			sap.ui.require(["sap/ui/fl/variants/VariantManager"], function(VariantManager) {
+				resolve(VariantManager);
+			});
+		});
+	}
+
+	/**
 	 * Migrate variants to use context-based adaptations by creating context-based adaptations for single unique context.
 	 * This is done by retrieving unique contexts, and grouping variants by unique contexts.
 	 * For each unique context a new context-based adaptation is created that contains one unique context.
@@ -768,7 +779,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
-	ContextBasedAdaptationsAPI.migrate = function(mPropertyBag) {
+	ContextBasedAdaptationsAPI.migrate = async function(mPropertyBag) {
 		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
 		var sParentVersion = getParentVersion(mPropertyBag);
 		mPropertyBag.parentVersion = sParentVersion;
@@ -781,6 +792,8 @@ sap.ui.define([
 			contextBasedAdaptation: [],
 			flexObjects: []
 		};
+
+		const VariantManager = await lazyRequireVariantManager();
 
 		return FlexObjectManager.getFlexObjects({
 			selector: mPropertyBag.control,
@@ -799,7 +812,7 @@ sap.ui.define([
 		.then(function(aFlexObjects) {
 			var aChanges = aFlexObjects.pop();
 			var aVariants = aFlexObjects.flat();
-			oMigrationData = prepareMigrationData(aVariants, aFlVariantsFinalState, aChanges, mPropertyBag);
+			oMigrationData = prepareMigrationData(aVariants, aFlVariantsFinalState, aChanges, mPropertyBag, VariantManager);
 
 			// Create adaptations sequentially because backend does not support parallel calls
 			var oPromise = Promise.resolve();

@@ -364,6 +364,28 @@ sap.ui.define([
 
 			stringify: function (oObject) {
 				return JSON.stringify(oObject, null, 2);
+			},
+			stringifyAlt: function (oObject, oAltObject) {
+				oObject ??= oFormatter.convertLegacyTypes(oAltObject);
+				return JSON.stringify(oObject, null, 2);
+			},
+			convertLegacyTypes: function(aTypes) {
+				// TODO achieve reuse between JSDocType and this formatter
+				// try to get the old 'types' array and convert it to the new typeInfo structure
+				if ( Array.isArray(aTypes) ) {
+					const UI5Types = [];
+					const template = aTypes.map(({value, linkEnabled}) => {
+						if ( linkEnabled ) {
+							UI5Types.push(value);
+							return `\${${UI5Types.length - 1}}`;
+						}
+						return value;
+					}).join(" | ");
+					return {
+						template,
+						UI5Types
+					};
+				}
 			}
 		};
 

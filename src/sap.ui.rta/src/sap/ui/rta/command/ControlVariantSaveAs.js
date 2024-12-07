@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils"
 ], function(
 	JsControlTreeModifier,
+	VariantManager,
 	ContextSharingAPI,
 	PersistenceWriteAPI,
 	flUtils,
@@ -113,7 +115,7 @@ sap.ui.define([
 		mParams.layer = this.sLayer;
 		mParams.newVariantReference = this.sNewVariantReference;
 		mParams.generator = rtaLibrary.GENERATOR_NAME;
-		return this.oModel._handleSave(this.oVariantManagementControl, mParams)
+		return VariantManager.handleSaveEvent(this.oVariantManagementControl, mParams, this.oModel)
 		.then(function(aDirtyChanges) {
 			this._aPreparedChanges = aDirtyChanges;
 			[this._oVariantChange] = aDirtyChanges;
@@ -149,11 +151,11 @@ sap.ui.define([
 				variant: this._oVariantChange,
 				sourceVariantReference: this.getSourceVariantReference(),
 				variantManagementReference: this.sVariantManagementReference,
-				component: this.oAppComponent
+				appComponent: this.oAppComponent
 			};
 
-			await this.oModel.removeVariant(mPropertyBag, true);
-			await this.oModel.addAndApplyChangesOnVariant(this._aControlChangesWithoutVariant);
+			await VariantManager.removeVariant(mPropertyBag, true);
+			await VariantManager.addAndApplyChangesOnVariant(this._aControlChangesWithoutVariant, this.oAppComponent);
 			this._aPreparedChanges = null;
 			this._oVariantChange = null;
 		}
