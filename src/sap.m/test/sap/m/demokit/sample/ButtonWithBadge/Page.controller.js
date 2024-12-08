@@ -20,7 +20,8 @@ function(JSONModel, Controller) {
 				badgeCurrent:		1,
 				buttonText: 		"Button with Badge",
 				buttonIcon: 		"sap-icon://cart",
-				buttonType: 		"Default",
+				buttonType:			"Default",
+				badgeStyle:			"Default",
 				buttonWithIcon:		true,
 				buttonWithText:		true
 			});
