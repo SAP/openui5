@@ -1,14 +1,20 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageToast",
-	"sap/m/Text",
+	"sap/m/Label",
 	"sap/ui/core/Popup",
 	"sap/ui/layout/VerticalLayout",
+	"sap/m/App",
+	"sap/m/Page",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/ui/unified/MenuTextFieldItem"
-], function(Button, MessageToast, Text, Popup, VerticalLayout, Menu, MenuItem, MenuTextFieldItem) {
+	"sap/ui/unified/MenuTextFieldItem",
+	"sap/ui/core/library"
+], function(Button, MessageToast, Label, Popup, VerticalLayout, App, Page, Menu, MenuItem, MenuTextFieldItem, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	// -----------------
 	// Utility functions
@@ -81,13 +87,6 @@ sap.ui.define([
 						startsSection: true,
 						select: handleMenuItemPress
 					}),
-					new MenuTextFieldItem({
-						icon: "sap-icon://filter",
-						label: "Another Filter",
-						value: "FilterValue",
-						enabled: false,
-						select: handleMenuItemPress
-					}),
 					new MenuItem({
 						text: "Clear filter"
 					})
@@ -103,11 +102,12 @@ sap.ui.define([
 	// Control preparation
 	// -------------------
 
-	var oTextForLabelling = new Text("labelling-text", {
-		text: "This text will be used as a label for one menu item"
+	var oTextForLabelling = new Label({
+		text: "This text will be used as a label for one menu item",
+		labelFor: "menuButton"
 	});
 
-	var oMenuButton = new Button({
+	var oMenuButton = new Button("menuButton",{
 		text: "Open settings menu",
 		press: handleMenuButtonPress
 	});
@@ -126,7 +126,15 @@ sap.ui.define([
 			oTextForLabelling,
 			oMenuButton
 		]
+	}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+	var oApp = new App();
+	var oPage = new Page({
+		title: "Menu Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
+		content: oLayout
 	});
 
-	oLayout.placeAt("content");
+	oApp.addPage(oPage);
+	oApp.placeAt("content");
 });
