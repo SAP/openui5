@@ -3,6 +3,16 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "58f3ed1b65e5aec8f008aa0b903ac4772cd48cb1",
+        "type": "FIX",
+        "text": " FilterField: do not open ValueHelp if Token focused"
+      },
+      {
+        "id": "a4fd3baf2c00ac9b1ba13913ef4e21b92f6e4758",
+        "type": "FEATURE",
+        "text": " FilterField: Empty, NotEmpty for Date and DateTime"
+      },
+      {
         "id": "e171189a42b6fc21ccc15a23baed2dd1caebe7aa",
         "type": "FIX",
         "text": " sap/ui/model/type/Unit#setFormatOptions: Introduce defaulting of decimals to 3 for unit types"

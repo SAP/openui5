@@ -3,6 +3,26 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "c721f9265bd9d010a9cdca98d9d2c6cab125e620",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: displayFormat is taken into account when formatting the output in 24-hour mode support"
+      },
+      {
+        "id": "996971c5a09cce8e0ead0c800ed58308b4194431",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Adding a new style for the badge"
+      },
+      {
+        "id": "4934e5a528dcfe96b136fcb2094d4c114176ee06",
+        "type": "FIX",
+        "text": " sap.m.Switch: remove duplicated state announcement"
+      },
+      {
+        "id": "6e23575335189aa97897c492ec40f67374d0145d",
+        "type": "FIX",
+        "text": " UploadsetwithTable plugin will now handles offline upload request error handling"
+      },
+      {
         "id": "54c99bb20a95839a123fd5769b231bb250fd159e",
         "type": "FIX",
         "text": " sap.m.MessagePage: Icon ignored from screen readers"
@@ -32,6 +52,11 @@
         "id": "5cce8a840d4f889c45908d0f3b0c2c2c47fb7ce5",
         "type": "FIX",
         "text": " sap.m.Toolbar: Improved arrow navigation"
+      },
+      {
+        "id": "b8bac9a6e225048b2cc304d3ee9cdc8b4bcd6dc8",
+        "type": "FEATURE",
+        "text": " sap.m.ViewSettingsDialog: add preventable beforeClose event"
       },
       {
         "id": "0c62caf18298e7ac80d15a1e4c21e06c04c0bea9",

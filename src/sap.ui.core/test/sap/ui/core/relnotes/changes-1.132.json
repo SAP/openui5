@@ -3,6 +3,11 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "6ffd2b242e0a1853dfa78ad2180b62d9a618702d",
+        "type": "FIX",
+        "text": " core/Control: cleanup busy indicator in onBeforeRendering only when it's busy"
+      },
+      {
         "id": "55148e2698c83c7a9ef7c7df53a8632629d81b1e",
         "type": "FIX",
         "text": " FESR: semanticStepName not set for interaction"
