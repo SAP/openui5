@@ -88,7 +88,7 @@
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-eslint": "^23.0.0",
-    "grunt-git": "^1.0.1",
+    "grunt-git": "^1.1.1",
     "grunt-jsdoc": "^2.4.1",
     "grunt-openui5": "^0.18.4",
     "grunt-text-replace": "^0.4.0",
