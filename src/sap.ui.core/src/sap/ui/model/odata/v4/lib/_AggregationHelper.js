@@ -611,7 +611,7 @@ sap.ui.define([
 
 		/**
 		 * Checks that the given value is of the given type. If <code>vType</code> is a string, then
-		 * <code>typeof vValue === vType<code> must hold. If <code>vType</code> is an array (of
+		 * <code>typeof vValue === vType</code> must hold. If <code>vType</code> is an array (of
 		 * length 1!), then <code>vValue</code> must be an array as well and each element is checked
 		 * recursively. If <code>vType</code> is an object, then <code>vValue</code> must be an
 		 * object (not an array, not <code>null</code>) as well, with a subset of keys, and each
