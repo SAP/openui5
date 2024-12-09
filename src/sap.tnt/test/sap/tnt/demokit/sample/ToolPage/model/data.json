@@ -322,6 +322,14 @@
 	],
 	"fixedNavigation": [
 		{
+			"title": "Quick Create",
+			"icon": "sap-icon://write-new",
+			"design": "Action",
+			"ariaHasPopup": "Dialog",
+			"selectable": false,
+			"press": "quickActionPress"
+		},
+		{
 			"title": "Fixed Item 1",
 			"icon": "sap-icon://employee"
 		},

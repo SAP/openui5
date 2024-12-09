@@ -70,6 +70,20 @@ sap.ui.define([
 				 * @since 1.121
 				 */
 				_externalLinkIconControl: { type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" }
+			},
+			events: {
+				/**
+				 * Fired when an item is pressed.
+				 * @since 1.133
+				 */
+				press: {
+					parameters: {
+						/**
+						 * The pressed item.
+						 */
+						item: { type: "sap.ui.core.Item" }
+					}
+				}
 			}
 		}
 	});
@@ -316,6 +330,14 @@ sap.ui.define([
 	 * @returns {boolean} whether the event was handled
 	 */
 	NavigationListItemBase.prototype.ontap = function (oEvent) {
+		const oParams = {
+			item: this
+		};
+
+		if (this.getEnabled() && !(oEvent.srcControl.isA("sap.ui.core.Icon")) && !this._isOverflow && !(!this.getNavigationList().getExpanded() && this.getItems().length)) {
+			this._firePress(oParams);
+		}
+
 		if (oEvent.isMarked("subItem")) {
 			return true;
 		}
@@ -331,6 +353,15 @@ sap.ui.define([
 		}
 
 		return false;
+	};
+
+	/**
+	 * Fires a press event on an item.
+	 * @param {object} oParams The event parameters
+	 * @private
+	 */
+	NavigationListItemBase.prototype._firePress = function(oParams) {
+		this.firePress(oParams);
 	};
 
 	/**
@@ -363,6 +394,9 @@ sap.ui.define([
 	 * @returns {string} CSS selector of the target
 	 */
 	NavigationListItemBase.prototype._getExpanderActivationTarget = function () {
+		if (!this.getSelectable() && !(this.getHref() && this.getTarget() === "_blank")) {
+			return ".sapTntNLIFirstLevel";
+		}
 		return ".sapTntNLIExpandIcon";
 	};
 
