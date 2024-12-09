@@ -2546,6 +2546,39 @@ sap.ui.define([
 		oOtherButton.destroy();
 	});
 
+	QUnit.test("Popover openby Shadow DOM element", (assert) => {
+		customElements.define(
+			"my-web-component-1",
+			class extends HTMLElement {
+				constructor() {
+					super();
+					const shadowRoot = this.attachShadow({ mode: "open"});
+
+					const oButton = document.createElement("button");
+					oButton.setAttribute("id", "btn1");
+					oButton.appendChild(document.createTextNode("open sap.m.Popover"));
+
+					shadowRoot.appendChild(oButton);
+				}
+			}
+		);
+
+		const oDiv = createAndAppendDiv("my-web-component-parent");
+		const oMyWebComponent = document.createElement("my-web-component-1");
+		oDiv.appendChild(oMyWebComponent);
+
+		const oPopupSpy = sinon.spy(Popup.prototype, "_applyPosition");
+		// create popover and openBy Shadow DOM element
+		const oPopover = new Popover();
+		const oBtnInShadowDOM = oMyWebComponent.shadowRoot.getElementById("btn1");
+		oPopover.openBy(oBtnInShadowDOM);
+
+		assert.equal(oPopupSpy.callCount, 1, "Popup#_applyPosition called");
+		assert.ok(oPopupSpy.calledWithMatch({ of: oBtnInShadowDOM }), "Popup#_applyPosition called with correct 'Position.of' info");
+		oPopupSpy.restore();
+		oDiv.remove();
+	});
+
 	QUnit.module("Popover scroll width",{
 		beforeEach: async function() {
 			this.clock = sinon.useFakeTimers();

@@ -2868,7 +2868,7 @@ sap.ui.define([
 				oCurrentOfRect;
 
 			if (oCurrentOfRef) {
-				if ((oCurrentOfRef === window) || (oCurrentOfRef === window.document) || document.documentElement.contains(oCurrentOfRef)) {
+				if ((oCurrentOfRef === window) || (oCurrentOfRef === window.document) || document.documentElement.contains(oCurrentOfRef) || oCurrentOfRef.getRootNode() instanceof ShadowRoot) {
 					// When the current Of reference is window or window.document or it's contained in the DOM tree,
 					// The client bounding rect can be calculated
 					oCurrentOfRect = jQuery(oCurrentOfRef).rect();
