@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "extend": "^3.0.2",
-    "json2json": "^0.2.4",
+    "json2json": "^0.2.8",
     "mocha": "^11.0.1",
     "pacote": "^20.0.0",
     "sinon": "^19.0.0"
