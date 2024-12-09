@@ -1,0 +1,112 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.m"
+>
+	<Dialog
+		id="sapUiRtaChangeAnnotationDialog"
+		verticalScrolling="true"
+		resizable="false"
+		draggable="true"
+		contentWidth="50rem"
+		contentHeight="25rem"
+	>
+		<customHeader>
+			<Bar>
+				<contentLeft>
+					<Label
+						id="sapUiRtaChangeAnnotationDialog_title"
+						class="sapUiSmallMargin"
+						text="{/title}"/>
+				</contentLeft>
+				<contentRight>
+					<Button
+						id="sapUiRtaChangeAnnotationDialog_toggleShowAllPropertiesButton"
+						class="sapUiSmallMargin"
+						text="{= ${/showChangedPropertiesOnly} ? ${i18n>ANNOTATION_CHANGE_DIALOG_BUTTON_ALL_PROPERTIES} : ${i18n>ANNOTATION_CHANGE_DIALOG_BUTTON_CHANGED_PROPERTIES}}"
+						press="switchDisplayMode"/>
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<content>
+			<VBox>
+				<MessageStrip
+					text="{i18n>ANNOTATION_CHANGE_DIALOG_WARNING}"
+					type="Warning"
+					showIcon="true"
+					class="sapUiSmallMarginBottom">
+					<link>
+						<Link text="{i18n>ANNOTATION_CHANGE_DIALOG_WARNING_MORE_INFO}"
+							target="_blank"
+							href=""/> <!-- TODO: Change link once the docs are available -->
+					</link>
+				</MessageStrip>
+				<Label
+					id="sapUiRtaChangeAnnotationDialog_description"
+					visible="{= ${/description}.length > 0}"
+					text="{/description}"/>
+				<SearchField
+					id="sapUiRtaChangeAnnotationDialog_propertiesFilter"
+					placeholder="{i18n>ANNOTATION_CHANGE_DIALOG_PROPERTY_SEARCH}"
+					width="100%"
+					value="{/filterText}"
+					liveChange="onFilterProperties"/>
+				<f:Form editable="false">
+					<f:layout>
+						<f:ResponsiveGridLayout
+							labelSpanXL="3"
+							labelSpanL="3"
+							labelSpanM="3"
+							labelSpanS="12"
+							adjustLabelSpan="false"
+							emptySpanXL="4"
+							emptySpanL="4"
+							emptySpanM="4"
+							emptySpanS="0"
+							columnsXL="1"
+							columnsL="1"
+							columnsM="1"
+							singleContainerFullSize="false"/>
+					</f:layout>
+					<f:FormContainer
+						id="sapUiRtaChangeAnnotationDialog_propertyList"
+						formElements="{path: '/propertiesToDisplay', templateShareable: false}">
+						<f:FormElement label="{propertyName}">
+							<Select
+								visible="{path: '/valueType', formatter: '.formatters.isValueList'}"
+								selectedKey="{currentValue}"
+								change="onValueListChange"
+								items="{path: '/possibleValues', templateShareable: false}">
+								<core:Item key="{key}" text="{text}" />
+							</Select>
+							<Input
+								visible="{path: '/valueType', formatter: '.formatters.isString'}"
+								value="{currentValue}"
+								change="onStringChange"/>
+							<CheckBox
+								visible="{path: '/valueType', formatter: '.formatters.isBoolean'}"
+								selected="{=!!${currentValue}}"
+								select="onBooleanChange"/>
+						</f:FormElement>
+					</f:FormContainer>
+				</f:Form>
+			</VBox>
+		</content>
+		<beginButton>
+			<Button
+				id="sapUiRtaChangeAnnotationDialog_saveButton"
+				type="Emphasized"
+				text="{i18n>ANNOTATION_CHANGE_DIALOG_SAVE}"
+				press="onSavePress"
+			/>
+		</beginButton>
+		<endButton>
+			<Button
+				id="sapUiRtaChangeAnnotationDialog_cancelButton"
+				type="Transparent"
+				text="{i18n>ANNOTATION_CHANGE_DIALOG_CANCEL}"
+				press="onCancelPress"
+			/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
