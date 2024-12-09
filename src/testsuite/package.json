@@ -52,6 +52,6 @@
   },
   "devDependencies": {
     "@ui5/middleware-code-coverage": "^2.0.1",
-    "local-web-server": "^5.3.0"
+    "local-web-server": "^5.4.0"
   }
 }
