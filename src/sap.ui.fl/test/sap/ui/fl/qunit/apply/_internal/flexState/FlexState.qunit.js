@@ -534,6 +534,31 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		[
+			{ bFlexStateAllContextsProvided: true, bFlexInfoSessionAllContextsProvided: true },
+			{ bFlexStateAllContextsProvided: false, bFlexInfoSessionAllContextsProvided: false },
+			{ bFlexInfoSessionAllContextsProvided: false },
+			{ bFlexStateAllContextsProvided: false },
+			{ bFlexInfoSessionAllContextsProvided: true },
+			{ bFlexStateAllContextsProvided: true }
+		].forEach(({ bFlexStateAllContextsProvided, bFlexInfoSessionAllContextsProvided }) => {
+			QUnit.test(`when FlexState is initialized with allContextsProvided set to ${bFlexStateAllContextsProvided} and FlexInfoSession with allContextsProvided set to ${bFlexInfoSessionAllContextsProvided}`, async function(assert) {
+				await FlexState.initialize({ reference: sReference, componentId: sComponentId });
+
+				if (bFlexStateAllContextsProvided !== undefined) {
+					FlexState.setAllContextsProvided(sReference, bFlexStateAllContextsProvided);
+				}
+				if (bFlexInfoSessionAllContextsProvided !== undefined) {
+					this.oGetFlexInfoSessionStub.returns({ allContextsProvided: bFlexInfoSessionAllContextsProvided });
+				}
+
+				await FlexState.initialize({ reference: sReference, componentId: sComponentId });
+
+				const expectedCallCount = (bFlexStateAllContextsProvided === bFlexInfoSessionAllContextsProvided) ? 1 : 2;
+				assert.strictEqual(this.oLoadFlexDataStub.callCount, expectedCallCount, `then the flex data request was triggered ${expectedCallCount} times`);
+			});
+		});
+
 		QUnit.test("when initialize is called multiple times with the same reference without waiting", async function(assert) {
 			assert.expect(3);
 			this.oLoadFlexDataStub.callsFake((mProperties) => {

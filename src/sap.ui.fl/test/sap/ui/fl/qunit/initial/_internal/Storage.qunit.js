@@ -918,7 +918,7 @@ sap.ui.define([
 				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, Version.Number.Draft, "the connector for draft layer has the version property set");
 				assert.equal(FlexInfoSession.getByReference(sFlexReference).version, undefined, "version is deleted in flex info session");
 				assert.equal(FlexInfoSession.getByReference(sFlexReference).maxLayer, undefined, "max layer is deleted in flex info session");
-				assert.equal(FlexInfoSession.getByReference(sFlexReference).initialAllContexts, true, "initialAllContexts still in flex info session");
+				assert.equal(FlexInfoSession.getByReference(sFlexReference).initialAllContexts, undefined, "initialAllContexts is not in the flex info session");
 			});
 		});
 
