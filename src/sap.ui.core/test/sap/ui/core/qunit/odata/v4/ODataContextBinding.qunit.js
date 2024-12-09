@@ -5605,6 +5605,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("ready2Inherit: no $$inheritExpandSelect", function (assert) {
+		const oContext = {
+			getBinding : mustBeMocked,
+			getPath : () => "/EMPLOYEES('1')"
+		};
+		const oBinding = this.bindContext("EMPLOYEE_2_TEAM/my.Operation(...)", oContext);
+		this.mock(oContext).expects("getBinding").never();
+
+		// code under test
+		assert.strictEqual(oBinding.ready2Inherit(), SyncPromise.resolve());
+	});
+
+	//*********************************************************************************************
 	QUnit.test("ready2Inherit: absolute", function (assert) {
 		const oBinding = this.bindContext("/TEAMS('1')/my.Operation(...)", null, {
 			$$inheritExpandSelect : true
