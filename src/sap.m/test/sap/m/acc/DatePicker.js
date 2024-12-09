@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"sap/m/Label",
 	"sap/m/Page",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/library"
-], function(App, DatePicker, Label, Page, coreLibrary) {
+], function(App, DatePicker, Label, Page, VerticalLayout, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -12,8 +13,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
-
-	var app = new App("myApp");
 
 	function handleChange(oEvent){
 		var oDP = oEvent.getSource();
@@ -25,18 +24,37 @@ sap.ui.define([
 		}
 	}
 
-	var page1 = new Page("page1", {
-		title:"Mobile DatePicker",
-		titleLevel: TitleLevel.H1,
-		content : [
-			new Label({text: "initial DatePicker", labelFor: "DP1"}),
-			new DatePicker("DP1", { change: handleChange }),
-			new Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
-			new DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", change: handleChange })
+	var oPageLayout = new VerticalLayout({
+		content: [
+			new Label({
+				text: "Choose a date",
+				labelFor: "DP1",
+				wrapping: true
+			}),
+			new DatePicker("DP1", {
+				change: handleChange
+			}),
+			new Label({
+				text: "Value format defined. Select a date",
+				labelFor: "DP2",
+				wrapping: true
+			}),
+			new DatePicker("DP2", {
+				value: "2014-03-26",
+				valueFormat: "yyyy-MM-dd",
+				displayFormat: "long",
+				change: handleChange
+			})
 		]
+	}).addStyleClass("sapUiContentPadding");
+
+	var oApp = new App();
+	var oPage = new Page({
+		title: "DatePicker Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
+		content: [ oPageLayout ]
 	});
 
-	app.addPage(page1);
-
-	app.placeAt("body");
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
 });
