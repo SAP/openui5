@@ -1,0 +1,26 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Menu>
+		<MenuItem text="New" icon="sap-icon://create"/>
+		<MenuItem text="Open" icon="sap-icon://open-folder">
+			<endContent>
+				<Button type="Transparent" icon="sap-icon://open-folder"/>
+				<Button type="Transparent" icon="sap-icon://favorite"/>
+			</endContent>
+		</MenuItem>
+		<MenuItem text="Save" icon="sap-icon://save">
+			<items>
+				<MenuItem text="Save locally" icon="sap-icon://save"/>
+				<MenuItem text="Save to cloud" icon="sap-icon://upload-to-cloud">
+					<endContent>
+						<Button type="Transparent" icon="sap-icon://open-folder"/>
+						<Button type="Transparent" icon="sap-icon://upload-to-cloud"/>
+					</endContent>
+				</MenuItem>
+				<MenuItem text="Save to memory" icon="sap-icon://approvals"/>
+			</items>
+		</MenuItem>
+
+	</Menu>
+</core:FragmentDefinition>
