@@ -9697,6 +9697,57 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Check that the promise for requesting currency codes does not fail if the model is
+	// destroyed while the request is pending.
+	// JIRA: CPOUI5ODATAV4-2812
+	QUnit.test('503, "Retry-After" handling: code lists, destroyed', async function (assert) {
+		await this.createView(assert, "", this.createSalesOrdersModel(null, {
+			"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+				: {source : "odata/v4/data/metadata_codelist.xml"}
+		}));
+
+		this.expectRequest("Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode", {
+				value : [{
+					CurrencyCode : "EUR",
+					DecimalPlaces : 2,
+					ISOCode : "EUR",
+					Text : "Euro"
+				}]
+			});
+
+		const oMetaModel = this.oModel.getMetaModel();
+		// this must not make the request processing fail (at least, if it already started)!
+		this.oModel.destroy();
+		this.oModel = null; // do not destroy twice
+
+		const [mCurrencyCodes] = await Promise.all([
+			// code under test
+			oMetaModel.requestCurrencyCodes(),
+			this.waitForChanges(assert)
+		]);
+
+		assert.deepEqual(mCurrencyCodes, {
+			EUR : {
+				StandardCode : "EUR",
+				Text : "Euro",
+				UnitSpecificScale : 2
+			}
+		});
+
+		try {
+			TestUtils.onRequest((_, sRequestLine) => {
+				assert.ok(false, sRequestLine);
+			});
+
+			// code under test
+			assert.deepEqual(await oMetaModel.requestCurrencyCodes(), mCurrencyCodes,
+				"shared OK, despite #destroy");
+		} finally {
+			TestUtils.onRequest(null);
+		}
+	});
+
+	//*********************************************************************************************
 	// Scenario: Table gets a binding context for which data was already loaded and then a refresh
 	// is performed synchronously.
 	// SNOW: CS20240007657519
