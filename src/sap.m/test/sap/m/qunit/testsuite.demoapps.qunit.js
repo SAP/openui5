@@ -33,13 +33,9 @@ sap.ui.define(function () {
 			},
 
 			// sap.m Templates
-			"sap/m/demokit/worklist/webapp/test/integration/opaTests": {
+			"sap/m/demokit/worklist/webapp/test/testsuite": {
 				group: "Worklist",
-				page: "test-resources/sap/m/demokit/worklist/webapp/test/integration/opaTests.qunit.html"
-			},
-			"sap/m/demokit/worklist/webapp/test/unit/unitTests": {
-				group: "Worklist",
-				page: "test-resources/sap/m/demokit/worklist/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/m/demokit/worklist/webapp/test/testsuite.qunit.html"
 			},
 			"sap/m/demokit/master-detail/webapp/test/testsuite.qunit.html": {
 				group: "MasterDetail",
