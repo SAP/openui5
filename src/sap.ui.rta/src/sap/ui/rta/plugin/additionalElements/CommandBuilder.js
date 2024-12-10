@@ -27,10 +27,10 @@ sap.ui.define([
 	 * @private
 	 * @since 1.94
 	 */
-	var CommandBuilder = {};
+	const CommandBuilder = {};
 
 	function getRevealDataFromActions(mActions, oRevealedElement) {
-		var mRevealData;
+		let mRevealData;
 		mActions.reveal.elements.some(function(mElement) {
 			if (mElement.element.getId() === oRevealedElement.getId()) {
 				mRevealData = mElement;
@@ -42,81 +42,62 @@ sap.ui.define([
 		return mRevealData;
 	}
 
-	function createCommandsForInvisibleElement(mPropertyBag) {
-		var oCompositeCommand = mPropertyBag.compositeCommand;
-		var oSelectedElement = mPropertyBag.selectedElement;
-		var mParents = mPropertyBag.parents;
-		var oSiblingElement = mPropertyBag.siblingElement;
-		var mActions = mPropertyBag.actions;
-		var iIndex = mPropertyBag.index;
-		var sTargetAggregation = mPropertyBag.targetAggregation;
-		var oPlugin = mPropertyBag.plugin;
-		return createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oPlugin)
-		.then(function(oRevealCommandForInvisible) {
-			oCompositeCommand.addCommand(oRevealCommandForInvisible);
-			return createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, sTargetAggregation, oPlugin);
-		})
-		.then(function(oMoveCommandForInvisible) {
-			if (oMoveCommandForInvisible) {
-				oCompositeCommand.addCommand(oMoveCommandForInvisible);
-			} else {
-				Log.warning(`No move action configured for ${
-						 mParents.parent.getMetadata().getName()
-						 }, aggregation: ${oSelectedElement.aggregation}`, "sap.ui.rta");
-			}
-			return oCompositeCommand;
-		});
+	async function createCommandsForInvisibleElement(mPropertyBag) {
+		const oRevealCommandForInvisible = await createRevealCommandForInvisible(
+			mPropertyBag.selectedElement, mPropertyBag.actions, mPropertyBag.parents, mPropertyBag.plugin
+		);
+		mPropertyBag.compositeCommand.addCommand(oRevealCommandForInvisible);
+		const oMoveCommandForInvisible = await createMoveCommandForInvisible(
+			mPropertyBag.selectedElement, mPropertyBag.parents, mPropertyBag.siblingElement,
+			mPropertyBag.index, mPropertyBag.targetAggregation, mPropertyBag.plugin
+		);
+		if (oMoveCommandForInvisible) {
+			mPropertyBag.compositeCommand.addCommand(oMoveCommandForInvisible);
+		} else {
+			Log.warning(
+				`No move action configured for ${mPropertyBag.parents.parent.getMetadata().getName()}, aggregation: ${mPropertyBag.selectedElement.aggregation}`,
+				"sap.ui.rta"
+			);
+		}
+		return mPropertyBag.compositeCommand;
 	}
 
 	function createRevealCommandForInvisible(mSelectedElement, mActions, mParents, oPlugin) {
-		var oRevealedElement = ElementUtil.getElementInstance(mSelectedElement.elementId);
-		var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
-		var mRevealData = getRevealDataFromActions(mActions, oRevealedElement);
+		const oRevealedElement = ElementUtil.getElementInstance(mSelectedElement.elementId);
+		const oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
+		const mRevealData = getRevealDataFromActions(mActions, oRevealedElement);
 
-		var oDesignTimeMetadata = mRevealData.designTimeMetadata;
-		var oRevealAction = mRevealData.action;
+		const sVMReference = oRevealedElementOverlay ? oPlugin.getVariantManagementReference(oRevealedElementOverlay) : undefined;
 
-		var sVariantManagementReference;
-		if (oRevealedElementOverlay) {
-			sVariantManagementReference = oPlugin.getVariantManagementReference(oRevealedElementOverlay);
-		}
-
-		if (oRevealAction.changeOnRelevantContainer) {
+		if (mRevealData.action.changeOnRelevantContainer) {
 			return oPlugin.getCommandFactory().getCommandFor(oRevealedElement, "reveal", {
 				revealedElementId: oRevealedElement.getId(),
 				directParent: mParents.parent
-			}, oDesignTimeMetadata, sVariantManagementReference);
+			}, mRevealData.designTimeMetadata, sVMReference);
 		}
-		return oPlugin.getCommandFactory().getCommandFor(
-			oRevealedElement,
-			"reveal",
-			{ },
-			oDesignTimeMetadata,
-			sVariantManagementReference
-		);
+		return oPlugin.getCommandFactory().getCommandFor(oRevealedElement, "reveal", {}, mRevealData.designTimeMetadata, sVMReference);
 	}
 
 	function createMoveCommandForInvisible(oSelectedElement, mParents, oSiblingElement, iIndex, sTargetAggregationName, oPlugin) {
-		var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
-		var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
+		const oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
+		const oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
 		// Elements can also be moved between aggregations inside the parent
-		var sSourceAggregationName = oSelectedElement.sourceAggregation;
-		var oSourceParent = oRevealedElementOverlay.getParentElementOverlay().getElement() || mParents.parent;
-		var oTargetParent = mParents.parent;
-		var iRevealTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, sTargetAggregationName);
-		var iRevealedSourceIndex = Utils.getIndex(oSourceParent, oRevealedElement, sSourceAggregationName) - 1;
+		const oSourceParent = oRevealedElementOverlay.getParentElementOverlay().getElement() || mParents.parent;
+		const iTempRevealTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, sTargetAggregationName);
+		const iRevealedSourceIndex = Utils.getIndex(oSourceParent, oRevealedElement, oSelectedElement.sourceAggregation) - 1;
 
-		iRevealTargetIndex = iIndex !== undefined ?
-			iIndex : ElementUtil.adjustIndexForMove(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
+		const iRevealTargetIndex = iIndex !== undefined ?
+			iIndex : ElementUtil.adjustIndexForMove(oSourceParent, mParents.parent, iRevealedSourceIndex, iTempRevealTargetIndex);
 
-		if (iRevealTargetIndex !== iRevealedSourceIndex
+		if (
+			iRevealTargetIndex !== iRevealedSourceIndex
 			|| mParents.parent !== oRevealedElement.getParent()
-			|| sSourceAggregationName !== sTargetAggregationName
+			|| oSelectedElement.sourceAggregation !== sTargetAggregationName
 		) {
-			var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ?
+			const oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ?
 				OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
-			var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
-			var sVariantManagementReference = oPlugin.getVariantManagementReference(oRevealedElementOverlay);
+			const oSourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
+			const sVariantManagementReference = oPlugin.getVariantManagementReference(oRevealedElementOverlay);
 
 			return oPlugin.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 				movedElements: [{
@@ -126,19 +107,19 @@ sap.ui.define([
 				}],
 				source: {
 					parent: oSourceParent,
-					aggregation: sSourceAggregationName
+					aggregation: oSelectedElement.sourceAggregation
 				},
 				target: {
-					parent: oTargetParent,
+					parent: mParents.parent,
 					aggregation: sTargetAggregationName
 				}
-			}, SourceParentDesignTimeMetadata, sVariantManagementReference);
+			}, oSourceParentDesignTimeMetadata, sVariantManagementReference);
 		}
 		return Promise.resolve();
 	}
 
 	function areLibDependenciesMissing(oComponent, mRequiredLibraries) {
-		var mAppsLibDependencies = oComponent.getManifestEntry("/sap.ui5/dependencies/libs");
+		const mAppsLibDependencies = oComponent.getManifestEntry("/sap.ui5/dependencies/libs");
 		return Object.keys(mRequiredLibraries).some(function(sRequiredLib) {
 			return !mAppsLibDependencies[sRequiredLib] || mAppsLibDependencies[sRequiredLib].lazy;
 		});
@@ -146,11 +127,10 @@ sap.ui.define([
 
 	function createCommandForAddLibrary(mParents, mRequiredLibraries, oParentAggregationDTMetadata, oPlugin) {
 		if (mRequiredLibraries) {
-			var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
-			var bLibsMissing = areLibDependenciesMissing(oComponent, mRequiredLibraries);
-			if (bLibsMissing) {
-				var mManifest = oComponent.getManifest();
-				var sReference = mManifest["sap.app"].id;
+			const oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
+			if (areLibDependenciesMissing(oComponent, mRequiredLibraries)) {
+				const mManifest = oComponent.getManifest();
+				const sReference = mManifest["sap.app"].id;
 				return oPlugin.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
 					reference: sReference,
 					parameters: { libraries: mRequiredLibraries },
@@ -161,36 +141,28 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function createCommandsForAddViaDelegate(mPropertyBag) {
-		var oCompositeCommand = mPropertyBag.compositeCommand;
-		var mAddViaDelegateAction = mPropertyBag.actions.addViaDelegate.action;
-		var mRequiredLibraries = mAddViaDelegateAction.delegateInfo.requiredLibraries;
-		var oParentAggregationOverlay = mPropertyBag.parents.parentOverlay.getAggregationOverlay(mPropertyBag.actions.aggregation);
-		var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-		return createCommandForAddLibrary(mPropertyBag.parents, mRequiredLibraries, oParentAggregationDTMetadata, mPropertyBag.plugin)
-		.then(function(oCommandForAddLibrary) {
-			if (oCommandForAddLibrary) {
-				oCompositeCommand.addCommand(oCommandForAddLibrary);
-			}
-			return createAddViaDelegateCommand(mPropertyBag, oParentAggregationDTMetadata);
-		})
-		.then(function(oAddViaDelegateCommand) {
-			if (oAddViaDelegateCommand) {
-				oCompositeCommand.addCommand(oAddViaDelegateCommand);
-			}
-			return oCompositeCommand;
-		});
+	async function createCommandsForAddViaDelegate(mPropertyBag) {
+		const mAddViaDelegateAction = mPropertyBag.actions.addViaDelegate.action;
+		const oParentAggregationOverlay = mPropertyBag.parents.parentOverlay.getAggregationOverlay(mPropertyBag.actions.aggregation);
+		const oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
+		const oCommandForAddLibrary = await createCommandForAddLibrary(
+			mPropertyBag.parents, mAddViaDelegateAction.delegateInfo.requiredLibraries, oParentAggregationDTMetadata, mPropertyBag.plugin
+		);
+		if (oCommandForAddLibrary) {
+			mPropertyBag.compositeCommand.addCommand(oCommandForAddLibrary);
+		}
+		const oAddViaDelegateCommand = await createAddViaDelegateCommand(mPropertyBag, oParentAggregationDTMetadata);
+		if (oAddViaDelegateCommand) {
+			mPropertyBag.compositeCommand.addCommand(oAddViaDelegateCommand);
+		}
+		return mPropertyBag.compositeCommand;
 	}
 
 	function getODataServiceUriFromManifest(oManifest) {
-		var sUri = "";
+		let sUri = "";
 		if (oManifest) {
-			var oSapApp = oManifest.getEntry ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
-			if (
-				oSapApp && oSapApp.dataSources
-				&& oSapApp.dataSources.mainService
-				&& oSapApp.dataSources.mainService.uri
-			) {
+			const oSapApp = oManifest.getEntry ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
+			if (oSapApp?.dataSources?.mainService?.uri) {
 				sUri = oSapApp.dataSources.mainService.uri;
 			}
 		}
@@ -202,33 +174,26 @@ sap.ui.define([
 	}
 
 	function createAddViaDelegateCommand(mPropertyBag, oParentAggregationDTMetadata) {
-		var oSelectedElement = mPropertyBag.selectedElement;
-		var mParents = mPropertyBag.parents;
-		var oSiblingElement = mPropertyBag.siblingElement;
-		var mActions = mPropertyBag.actions;
-		var iIndex = mPropertyBag.index;
-		var oPlugin = mPropertyBag.plugin;
-		var mAddViaDelegateAction = mActions.addViaDelegate.action;
-		var oParent = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
-		var oParentOverlay = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainerOverlay : mParents.parentOverlay;
-		var sVariantManagementReference = oPlugin.getVariantManagementReference(oParentOverlay);
-		var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
-		var sCommandName = "addDelegateProperty";
-		var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
-		var sServiceUri = getODataServiceUriFromManifest(oManifest);
+		const mParents = mPropertyBag.parents;
+		const mAddViaDelegateAction = mPropertyBag.actions.addViaDelegate.action;
+		const oParent = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
+		const oParentOverlay = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainerOverlay : mParents.parentOverlay;
+		const iAddTargetIndex = Utils.getIndex(
+			mParents.parent, mPropertyBag.siblingElement, mPropertyBag.actions.aggregation, oParentAggregationDTMetadata.getData().getIndex
+		);
 
-		return oPlugin.getCommandFactory().getCommandFor(mParents.parent, sCommandName, {
-			newControlId: createFieldLabelId(oParent, oSelectedElement.entityType, oSelectedElement.bindingPath),
-			index: iIndex !== undefined ? iIndex : iAddTargetIndex,
-			bindingString: oSelectedElement.bindingPath,
-			entityType: oSelectedElement.entityType, // needed for custom field support tool
+		return mPropertyBag.plugin.getCommandFactory().getCommandFor(mParents.parent, "addDelegateProperty", {
+			newControlId: createFieldLabelId(oParent, mPropertyBag.selectedElement.entityType, mPropertyBag.selectedElement.bindingPath),
+			index: mPropertyBag.index !== undefined ? mPropertyBag.index : iAddTargetIndex,
+			bindingString: mPropertyBag.selectedElement.bindingPath,
+			entityType: mPropertyBag.selectedElement.entityType, // needed for custom field support tool
 			parentId: mParents.parent.getId(),
-			propertyName: oSelectedElement.name,
-			oDataServiceVersion: oSelectedElement.oDataServiceVersion,
-			oDataServiceUri: sServiceUri,
+			propertyName: mPropertyBag.selectedElement.name,
+			oDataServiceVersion: mPropertyBag.selectedElement.oDataServiceVersion,
+			oDataServiceUri: getODataServiceUriFromManifest(FlUtils.getAppComponentForControl(mParents.parent).getManifest()),
 			modelType: mAddViaDelegateAction.delegateInfo.modelType,
 			relevantContainerId: mParents.relevantContainer.getId()
-		}, oParentAggregationDTMetadata, sVariantManagementReference);
+		}, oParentAggregationDTMetadata, mPropertyBag.plugin.getVariantManagementReference(oParentOverlay));
 	}
 
 	/**
@@ -240,9 +205,9 @@ sap.ui.define([
 	 * @param {Array<sap.ui.core.Element>} aSelectedElements - Selected elements when the action was triggered
 	 * @param {string} sTargetAggregation - The aggregation where the element is being inserted
 	 * @param {sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin} oPlugin - Instance of the AdditionalElementsPlugin
-	 * @returns {Promise} Resolving when the commands are created
+	 * @returns {Promise<undefined>} Resolves when the commands are created
 	 */
-	CommandBuilder.createCommands = function(mParents, oSiblingElement, mActions, iIndex, aSelectedElements, sTargetAggregation, oPlugin) {
+	CommandBuilder.createCommands = async function(mParents, oSiblingElement, mActions, iIndex, aSelectedElements, sTargetAggregation, oPlugin) {
 		// sort elements by label in descending order. When added the fields will be in ascending order on the UI
 		aSelectedElements.sort(function(oElement1, oElement2) {
 			if (oElement1.label > oElement2.label) {
@@ -255,12 +220,10 @@ sap.ui.define([
 		});
 
 		if (aSelectedElements.length > 0) {
-			return oPlugin.getCommandFactory().getCommandFor(mParents.parent, "composite")
-
-			.then(function(oCompositeCommand) {
-				var oPromise = Promise.resolve();
-				aSelectedElements.forEach(function(oSelectedElement) {
-					var mPropertyBag = {
+			try {
+				const oCompositeCommand = await oPlugin.getCommandFactory().getCommandFor(mParents.parent, "composite");
+				for (const oSelectedElement of aSelectedElements) {
+					const mPropertyBag = {
 						compositeCommand: oCompositeCommand,
 						selectedElement: oSelectedElement,
 						parents: mParents,
@@ -272,36 +235,28 @@ sap.ui.define([
 					};
 					switch (oSelectedElement.type) {
 						case "invisible":
-							oPromise = oPromise.then(
-								createCommandsForInvisibleElement.bind(this, mPropertyBag));
+							await createCommandsForInvisibleElement(mPropertyBag);
 							break;
 						case "delegate":
-							oPromise = oPromise.then(
-								createCommandsForAddViaDelegate.bind(this, mPropertyBag));
+							await createCommandsForAddViaDelegate(mPropertyBag);
 							break;
 						default:
 							Log.error(`Can't create command for untreated element.type ${oSelectedElement.type}`);
 					}
-				}, this);
-				return oPromise.then(function() { return oCompositeCommand; });
-			}.bind(this))
+				}
 
-			.then(function(oCompositeCommand) {
 				oPlugin.fireElementModified({
 					command: oCompositeCommand
 				});
-			})
-
-			.catch(function(vMessage) {
+			} catch (oError) {
 				throw DtUtils.propagateError(
-					vMessage,
+					oError,
 					"AdditionalElementsPlugin#_createCommands",
 					"Error occurred during _createCommands execution",
 					"sap.ui.rta.plugin"
 				);
-			});
+			}
 		}
-		return Promise.resolve();
 	};
 
 	return CommandBuilder;
