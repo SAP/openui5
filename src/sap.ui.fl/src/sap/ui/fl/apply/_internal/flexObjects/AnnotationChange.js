@@ -24,12 +24,9 @@ sap.ui.define([
 
 		metadata: {
 			properties: {
-				/**
-				 * The selector is required to enable the FlexCommand.
-				 */
-				selector: {
-					type: "object",
-					defaultValue: {}
+				serviceUrl: {
+					type: "string",
+					defaultValue: ""
 				}
 			}
 		},
@@ -39,7 +36,6 @@ sap.ui.define([
 			FlexObject.apply(this, aArgs);
 			this.setFileType("annotation_change");
 		}
-
 	});
 
 	/**
@@ -48,7 +44,10 @@ sap.ui.define([
 	 * @static
 	 */
 	AnnotationChange.getMappingInfo = function() {
-		return { ...FlexObject.getMappingInfo() };
+		return {
+			...FlexObject.getMappingInfo(),
+			serviceUrl: "selector.serviceUrl"
+		};
 	};
 
 	/**
@@ -58,6 +57,14 @@ sap.ui.define([
 	 */
 	AnnotationChange.prototype.getMappingInfo = function() {
 		return AnnotationChange.getMappingInfo();
+	};
+
+	/**
+	 * Returns the Id to be used by the condenser.
+	 * @returns {string} Id for condensing
+	 */
+	AnnotationChange.prototype.getIdForCondensing = function() {
+		return this.getServiceUrl();
 	};
 
 	return AnnotationChange;

@@ -441,12 +441,10 @@ sap.ui.define([
 			const oDummyChangeHandler = { dummy: "dummy" };
 
 			ChangeHandlerStorage.registerAnnotationChangeHandler({
-				modelType: "someModelType",
 				changeType: "someChangeType",
 				changeHandler: oDummyChangeHandler
 			});
 			return ChangeHandlerStorage.getAnnotationChangeHandler({
-				modelType: "someModelType",
 				changeType: "someChangeType"
 			}).then(function(oChangeHandler) {
 				assert.strictEqual(oChangeHandler, oDummyChangeHandler, "the change handler is returned");
@@ -464,16 +462,35 @@ sap.ui.define([
 			]);
 
 			ChangeHandlerStorage.registerAnnotationChangeHandler({
-				modelType: "someModelType",
 				changeType: "someChangeType",
 				changeHandler: sDummyChangeHandlerPath
 			});
 			return ChangeHandlerStorage.getAnnotationChangeHandler({
-				modelType: "someModelType",
 				changeType: "someChangeType"
 			}).then(function(oChangeHandler) {
 				assert.strictEqual(oChangeHandler, oDummyChangeHandler, "the change handler is returned");
 			});
+		});
+
+		QUnit.test("mix of default and specific change handlers", async function(assert) {
+			const oDefaultCHandler = { dummy: "dummy" };
+			const oSpecificCHandler = { foo: "bar" };
+			ChangeHandlerStorage.registerAnnotationChangeHandler({
+				isDefaultChangeHandler: true,
+				changeHandler: oDefaultCHandler
+			});
+			ChangeHandlerStorage.registerAnnotationChangeHandler({
+				changeType: "specificChangeType",
+				changeHandler: oSpecificCHandler
+			});
+
+			assert.deepEqual(await ChangeHandlerStorage.getAnnotationChangeHandler({
+				changeType: "anotherChangeType"
+			}), oDefaultCHandler, "the default change handler is returned");
+
+			assert.deepEqual(await ChangeHandlerStorage.getAnnotationChangeHandler({
+				changeType: "specificChangeType"
+			}), oSpecificCHandler, "the specific change handler is returned");
 		});
 	});
 

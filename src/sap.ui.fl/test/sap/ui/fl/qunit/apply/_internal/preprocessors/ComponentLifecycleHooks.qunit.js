@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ComponentLifecycleHooks",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/changeHandler/ChangeAnnotation",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -21,11 +23,13 @@ sap.ui.define([
 	Lib,
 	AppDescriptorApplier,
 	ApplyStrategyFactory,
+	FlexObjectFactory,
 	FlexState,
 	ManifestUtils,
 	ComponentLifecycleHooks,
 	ControlVariantApplyAPI,
-	ChangePersistence,
+	ChangeAnnotation,
+	ChangeHandlerRegistration,
 	FlexControllerFactory,
 	Layer,
 	Utils,
@@ -539,6 +543,151 @@ sap.ui.define([
 
 			await ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {});
 			assert.notOk(this.oAppComponent.getModel("i18nFlexVendor"), "the model is not available");
+		});
+	});
+
+	QUnit.module("modelCreatedHook", {
+		beforeEach() {
+			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "componentId");
+			sandbox.stub(this.oAppComponent, "getComponentData").returns({foo: "bar"});
+			ChangeHandlerRegistration.registerAnnotationChangeHandler({
+				isDefaultChangeHandler: true,
+				changeHandler: ChangeAnnotation
+			});
+			this.oAnnotationChanges = [
+				FlexObjectFactory.createAnnotationChange({
+					serviceUrl: "url1",
+					content: { annotationPath: "somePath", value: "someValue" }
+				}),
+				FlexObjectFactory.createAnnotationChange({
+					serviceUrl: "url2",
+					content: { annotationPath: "somePath2", value: "someValue2" }
+				}),
+				FlexObjectFactory.createAnnotationChange({
+					serviceUrl: "url2",
+					content: { annotationPath: "anotherPath", value: "someOtherValue2" }
+				})
+			];
+			this.oFlexStateInitStub = sandbox.stub(FlexState, "initialize").resolves();
+			sandbox.stub(FlexState, "getAnnotationChanges").returns(this.oAnnotationChanges);
+			this.oSetAnnotationChangeStub1 = sandbox.stub();
+			this.oSetAnnotationChangeStub2 = sandbox.stub();
+			this.oSetAnnotationChangeStub3 = sandbox.stub();
+			this.oFakeModel1 = {
+				setAnnotationChangePromise: this.oSetAnnotationChangeStub1,
+				getServiceUrl() {
+					return "url1";
+				}
+			};
+			this.oFakeModel2 = {
+				setAnnotationChangePromise: this.oSetAnnotationChangeStub2,
+				getServiceUrl() {
+					return "url2";
+				}
+			};
+			this.oFakeModel3 = {
+				setAnnotationChangePromise: this.oSetAnnotationChangeStub3,
+				getServiceUrl() {
+					return "url3";
+				}
+			};
+		},
+		afterEach() {
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("hook gets called with two annotation changes available", async function(assert) {
+			const oAsyncHints = {foobar: "baz"};
+			ComponentLifecycleHooks.modelCreatedHook({
+				model: this.oFakeModel1,
+				modelId: "someModelId",
+				factoryConfig: {id: this.oAppComponent.getId(), asyncHints: oAsyncHints, componentData: {foo: "bar"}},
+				ownerId: undefined,
+				manifest: this.oAppComponent.getManifest()
+			});
+			ComponentLifecycleHooks.modelCreatedHook({
+				model: this.oFakeModel2,
+				modelId: "someModelId",
+				factoryConfig: {id: this.oAppComponent.getId(), asyncHints: oAsyncHints, settings: {componentData: {foo: "bar"}}},
+				ownerId: undefined,
+				manifest: this.oAppComponent.getManifest()
+			});
+			ComponentLifecycleHooks.modelCreatedHook({
+				model: this.oFakeModel3,
+				modelId: "someModelId",
+				factoryConfig: {id: this.oAppComponent.getId(), asyncHints: oAsyncHints, settings: {componentData: {foo: "bar"}}},
+				ownerId: undefined,
+				manifest: this.oAppComponent.getManifest()
+			});
+
+			assert.strictEqual(this.oFlexStateInitStub.callCount, 3, "FlexState was initialized 3 times");
+			assert.deepEqual(this.oFlexStateInitStub.getCall(0).args[0], {
+				componentData: {foo: "bar"},
+				asyncHints: oAsyncHints,
+				componentId: this.oAppComponent.getId(),
+				reference: this.oAppComponent.getId()
+			}, "FlexState was initialized with the correct parameters");
+			assert.deepEqual(this.oFlexStateInitStub.getCall(0).args[0], this.oFlexStateInitStub.getCall(1).args[0]);
+			assert.deepEqual(this.oFlexStateInitStub.getCall(1).args[0], this.oFlexStateInitStub.getCall(2).args[0]);
+
+			assert.ok(this.oSetAnnotationChangeStub1.calledOnce, "the promise was set on the first model");
+			assert.ok(this.oSetAnnotationChangeStub2.calledOnce, "the promise was set on the second model");
+			assert.ok(this.oSetAnnotationChangeStub3.calledOnce, "the promise was set on the third model");
+			const aAnnoChangesModel1 = await this.oSetAnnotationChangeStub1.getCall(0).args[0];
+			assert.strictEqual(aAnnoChangesModel1.length, 1, "the first model was set with the correct annotation change");
+			assert.deepEqual(
+				aAnnoChangesModel1[0],
+				{ path: this.oAnnotationChanges[0].getContent().annotationPath, value: this.oAnnotationChanges[0].getContent().value },
+				"the first model was set with the correct annotation change"
+			);
+
+			const aAnnoChangesModel2 = await this.oSetAnnotationChangeStub2.getCall(0).args[0];
+			assert.strictEqual(aAnnoChangesModel2.length, 2, "the second model was set with the correct annotation changes");
+			assert.deepEqual(
+				aAnnoChangesModel2[0],
+				{ path: this.oAnnotationChanges[1].getContent().annotationPath, value: this.oAnnotationChanges[1].getContent().value },
+				"the second model was set with the correct annotation change"
+			);
+			assert.deepEqual(
+				aAnnoChangesModel2[1],
+				{ path: this.oAnnotationChanges[2].getContent().annotationPath, value: this.oAnnotationChanges[2].getContent().value },
+				"the second model was set with the correct annotation change"
+			);
+
+			const aAnnoChangesModel3 = await this.oSetAnnotationChangeStub3.getCall(0).args[0];
+			assert.strictEqual(aAnnoChangesModel3.length, 0, "the third model was set with no annotation change");
+		});
+
+		QUnit.test("hook gets called with a model on an embedded component", async function(assert) {
+			const oAsyncHints = {foobar: "baz"};
+			ComponentLifecycleHooks.modelCreatedHook({
+				model: this.oFakeModel1,
+				modelId: "someModelId",
+				factoryConfig: {id: "embeddedId"},
+				owner: {
+					id: this.oAppComponent.getId(),
+					config: {asyncHints: oAsyncHints}
+				},
+				manifest: {foo: "bar"}
+			});
+
+			assert.strictEqual(this.oFlexStateInitStub.callCount, 1, "FlexState was initialized once");
+			assert.deepEqual(this.oFlexStateInitStub.getCall(0).args[0], {
+				componentData: {foo: "bar"},
+				asyncHints: oAsyncHints,
+				componentId: this.oAppComponent.getId(),
+				reference: this.oAppComponent.getId()
+			}, "FlexState was initialized with the correct parameters");
+
+			assert.ok(this.oSetAnnotationChangeStub1.calledOnce, "the promise was set on the first model");
+			const aAnnoChangesModel1 = await this.oSetAnnotationChangeStub1.getCall(0).args[0];
+			assert.strictEqual(aAnnoChangesModel1.length, 1, "the first model was set with the correct annotation change");
+			assert.deepEqual(
+				aAnnoChangesModel1[0],
+				{ path: this.oAnnotationChanges[0].getContent().annotationPath, value: this.oAnnotationChanges[0].getContent().value },
+				"the first model was set with the correct annotation change"
+			);
 		});
 	});
 

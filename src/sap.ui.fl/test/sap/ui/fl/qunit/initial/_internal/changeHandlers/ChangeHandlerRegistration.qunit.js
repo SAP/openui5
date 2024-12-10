@@ -211,28 +211,26 @@ sap.ui.define([
 		QUnit.test("registerAnnotationChangeHandler", function(assert) {
 			const oRegisterStub = sandbox.stub(ChangeHandlerStorage, "registerAnnotationChangeHandler");
 			ChangeHandlerRegistration.registerAnnotationChangeHandler({
-				modelType: "someModelType",
 				changeType: "someChangeType",
-				changeHandler: "someChangeHandlerPath"
+				changeHandler: "someChangeHandlerPath",
+				isDefaultChangeHandler: true
 			});
 
 			assert.strictEqual(oRegisterStub.callCount, 1, "the registration was called once");
 			const mPropertyBag = oRegisterStub.firstCall.args[0];
-			assert.strictEqual(mPropertyBag.modelType, "someModelType", "the model type was passed");
 			assert.strictEqual(mPropertyBag.changeType, "someChangeType", "the change type was passed");
 			assert.strictEqual(mPropertyBag.changeHandler, "someChangeHandlerPath", "the change handler path was passed");
+			assert.strictEqual(mPropertyBag.isDefaultChangeHandler, true, "the change handler is registered as default change handler");
 		});
 
 		QUnit.test("getAnnotationChangeHandler", function(assert) {
 			const oRegisterStub = sandbox.stub(ChangeHandlerStorage, "getAnnotationChangeHandler").returns("someChangeHandler");
 			const oChangeHandler = ChangeHandlerRegistration.getAnnotationChangeHandler({
-				modelType: "someModelType",
 				changeType: "someChangeType"
 			});
 
 			assert.strictEqual(oRegisterStub.callCount, 1, "the registration was called once");
 			const mPropertyBag = oRegisterStub.firstCall.args[0];
-			assert.strictEqual(mPropertyBag.modelType, "someModelType", "the model type was passed");
 			assert.strictEqual(mPropertyBag.changeType, "someChangeType", "the change type was passed");
 			assert.strictEqual(oChangeHandler, "someChangeHandler", "the change handler was returned");
 		});
