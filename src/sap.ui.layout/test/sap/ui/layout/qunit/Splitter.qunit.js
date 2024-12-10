@@ -939,6 +939,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("When dragging a bar, native 'pull to refresh' is not triggered", function (assert) {
+		if (Device.browser.safari) {
+			assert.ok(true, "Test is not applicable for Safari. TouchEvent is not supported.");
+			return;
+		}
+
 		// Arrange
 		const oTouchEvent = new TouchEvent("touchstart", {
 			bubbles: true,
