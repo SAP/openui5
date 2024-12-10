@@ -446,6 +446,9 @@ sap.ui.define([
 	 */
 	Container.prototype.open = function(oValueHelpContentPromise, bTypeahead) {
 		if (!this.isOpening()) {
+			if (this._retrievePromise("close")) {
+				this._cancelPromise("close");
+			}
 			const oOpenPromise = this._addPromise("open");
 			return Promise.all([this.getContainerControl(), oValueHelpContentPromise]).then((aResults) => {
 				return this.placeContent(aResults[0]);
@@ -518,11 +521,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles the <code>close</code> event of the container control or element.
+	 * @param {sap.ui.base.Event} oEvent event
+	 * @protected
+	 * @since 1.132
+	 */
+	Container.prototype.handleClose = function(oEvent) {
+		this._addPromise("close");
+	};
+
+	/**
 	 * Handles the <code>closed</code> event of the container control or element.
 	 * @param {sap.ui.base.Event} oEvent event
 	 * @protected
 	 */
 	Container.prototype.handleClosed = function(oEvent) {
+		this._resolvePromise("close");
 		this._removePromise("open");
 
 		const aContent = this.getContent();
@@ -567,6 +581,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the container is closing.
+	 *
+	 * <b>Note:</b> This function must only be called by the <code>ValueHelp</code> element.
+	 *
+	 * @returns {boolean} true if closing
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @since 1.132
+	 */
+	Container.prototype.isClosing = function() {
+		const oPromise = this._retrievePromise("close");
+		return !!oPromise && !oPromise.isCanceled() && !oPromise.isSettled();
+	};
+
+	/**
 	 * Determines if the container is open.
 	 *
 	 * <b>Note:</b> This function must only be called by the <code>ValueHelp</code> element.
@@ -578,7 +608,7 @@ sap.ui.define([
 	 */
 	Container.prototype.isOpen = function() {
 		const oPromise = this._retrievePromise("open");
-		return oPromise && oPromise.isSettled();
+		return !!oPromise && oPromise.isSettled();
 	};
 
 	/**
@@ -593,7 +623,7 @@ sap.ui.define([
 	 */
 	Container.prototype.isOpening = function() {
 		const oPromise = this._retrievePromise("open");
-		return oPromise && !oPromise.isCanceled() && !oPromise.isSettled();
+		return !!oPromise && !oPromise.isCanceled() && !oPromise.isSettled();
 	};
 
 	/*

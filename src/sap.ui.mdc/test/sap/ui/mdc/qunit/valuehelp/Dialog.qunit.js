@@ -529,6 +529,7 @@ sap.ui.define([
 
 		sinon.spy(oContent, "onShow");
 		sinon.spy(oContent, "onHide");
+		sinon.spy(oDialog, "handleClose");
 
 		oDialog.setTitle("Test");
 		const oPromise = oDialog.open(Promise.resolve());
@@ -584,7 +585,11 @@ sap.ui.define([
 					assert.equal(iConfirm, 1, "Confirm event fired");
 					assert.ok(bClose, "close parameter");
 
+
 					oDialog.close();
+					assert.ok(oDialog.handleClose.calledOnce, "handleClose called");
+					oDialog.handleClose.restore();
+
 					setTimeout(function() { // wait until closed
 						assert.equal(iClosed, 1, "Closed event fired once");
 						assert.notOk(oContainer.isOpen(), "sap.m.Dialog is not open");

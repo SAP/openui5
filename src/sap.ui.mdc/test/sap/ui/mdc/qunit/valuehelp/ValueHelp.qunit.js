@@ -335,13 +335,13 @@ sap.ui.define([
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oValueHelp.close();
 		assert.ok(oContainer.close.called, "Container close called if open");
-
 	});
 
 	QUnit.test("close handling", function(assert) {
 
 		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oValueHelp, "close");
+		oContainer.handleClose();
 		oContainer.handleClosed(); // TODO: change to event?
 		assert.equal(iClosed, 1, "Close event fired");
 
@@ -1024,6 +1024,7 @@ sap.ui.define([
 
 		sinon.spy(oValueHelp, "close");
 		oValueHelp.connect(oField); // to attach events
+		oContainer.handleClose();
 		oContainer.handleClosed(); // TODO: change to event?
 		assert.equal(iClosed, 1, "Close event fired");
 
@@ -1150,6 +1151,13 @@ sap.ui.define([
 		oDomRef = oValueHelp.getDomRef();
 		assert.ok(oContainer.getDomRef.called, "Container getDomRef called");
 		assert.equal(oDomRef, oField.getDomRef(), "DomRef returned if opening");
+
+		sinon.stub(oContainer, "isClosing").returns(true);
+		oDomRef = oValueHelp.getDomRef();
+		assert.ok(oContainer.getDomRef.called, "Container getDomRef called");
+		assert.notOk(oDomRef, "no DomRef returned if open but closing");
+
+		oContainer.isClosing.reset();
 		oContainer.isOpening.reset();
 
 		sinon.stub(oContainer, "isOpen").returns(true);
@@ -1337,6 +1345,57 @@ sap.ui.define([
 		return _testClonedDialog(assert);
 
 	});
+
+	QUnit.module("with Dialog and Typeahead", {
+		beforeEach: async function() {
+			this.typeahead = new Container("C1", {
+				title: "Typeahead"
+			});
+			this.dialog = new Container("C2", {
+				title: "Dialog"
+			});
+			oValueHelp = new ValueHelp("F1-H", {
+				typeahead: this.typeahead,
+				dialog: this.dialog
+			});
+			await _initFields();
+		},
+		afterEach: function () {
+			this.typeahead.destroy();
+			this.typeahead = undefined;
+			this.dialog.destroy();
+			this.dialog = undefined;
+			_teardown();
+		}
+	});
+
+	QUnit.test("fireClosed", function(assert) {
+
+		sinon.spy(oValueHelp, "fireClosed");
+		oValueHelp.connect(oField); // to attach events
+
+		this.dialog.handleClose();
+		this.dialog.handleClosed();
+		assert.ok(oValueHelp.fireClosed.called, "fireClosed called.");
+		oValueHelp.fireClosed.reset();
+
+		sinon.stub(this.typeahead, "isOpen").returns(true);
+		this.dialog.handleClose();
+		this.dialog.handleClosed();
+		assert.notOk(oValueHelp.fireClosed.called, "fireClosed not called as typeahead is still open.");
+		this.typeahead.isOpen.restore();
+
+
+		sinon.stub(this.dialog, "isOpen").returns(true);
+		this.typeahead.handleClose();
+		this.typeahead.handleClosed();
+		assert.notOk(oValueHelp.fireClosed.called, "fireClosed not called as typeahead is still open.");
+		this.dialog.isOpen.restore();
+
+		oValueHelp.fireClosed.restore();
+	});
+
+
 
 	let oDeviceStub;
 	QUnit.module("Phone support", {
