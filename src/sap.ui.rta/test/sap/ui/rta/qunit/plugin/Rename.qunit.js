@@ -24,7 +24,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/QUnitUtils",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
@@ -52,7 +51,6 @@ sap.ui.define([
 	RenamePlugin,
 	SelectionPlugin,
 	Utils,
-	jQuery,
 	sinon,
 	QUnitUtils,
 	RtaQunitUtils
@@ -426,7 +424,7 @@ sap.ui.define([
 
 		QUnit.test("when isEnabled are called with designTime with a domRef function pointing to nothing", function(assert) {
 			sandbox.stub(this.oFormContainerOverlay.getDesignTimeMetadata(), "getAssociatedDomRef").callsFake(function() {
-				return jQuery();
+				return undefined;
 			});
 			this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
 			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);

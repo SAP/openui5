@@ -230,10 +230,10 @@ sap.ui.define([
 		}
 
 		var iIndex = mProperties.index;
-		var o$ScrollContainer = this.getScrollContainerById(iIndex);
+		var oScrollContainer = this.getScrollContainerById(iIndex);
 		var oNewScrollContainer = this.getScrollContainers(true)[iIndex];
 		var aAggregationsCopy = [].concat(oNewScrollContainer.aggregations);
-		var aCurrentScrollContainerChildren = o$ScrollContainer.find(">:not(.sapUiDtDummyScrollContainer)").toArray();
+		var aCurrentScrollContainerChildren = Array.from(oScrollContainer.querySelectorAll(":scope >:not(.sapUiDtDummyScrollContainer)"));
 
 		// first check if the current scroll container content is correct, and if not move it to the children div
 		aCurrentScrollContainerChildren.forEach(function(oAggregationNode) {
@@ -241,7 +241,7 @@ sap.ui.define([
 			if (oNewScrollContainer.aggregations.includes(sAggregationName)) {
 				aAggregationsCopy.splice(aAggregationsCopy.indexOf(sAggregationName), 1);
 			} else {
-				o$ScrollContainer.get(0).removeChild(oAggregationNode);
+				oScrollContainer.removeChild(oAggregationNode);
 				const oChildOverlay = OverlayRegistry.getOverlay(oAggregationNode.getAttribute("id"));
 				oChildOverlay.setScrollContainerId(undefined);
 				DOMUtil.appendChild(this.getChildrenDomRef(), oAggregationNode);
@@ -252,7 +252,7 @@ sap.ui.define([
 		aAggregationsCopy.forEach(function(sAggregationName) {
 			var oAggregationNode = this.getAggregationOverlay(sAggregationName).getDomRef();
 			this.getChildrenDomRef().removeChild(oAggregationNode);
-			DOMUtil.appendChild(o$ScrollContainer.get(0), oAggregationNode);
+			DOMUtil.appendChild(oScrollContainer, oAggregationNode);
 		}.bind(this));
 	};
 
@@ -268,8 +268,8 @@ sap.ui.define([
 
 	ElementOverlay.prototype._subscribeToMutationObserver = function(bIsRoot) {
 		var oMutationObserver = Overlay.getMutationObserver();
-		var $DomRef = this.getAssociatedDomRef();
-		this._sObservableNodeId = $DomRef && $DomRef.get(0) && $DomRef.get(0).id;
+		var oDomRef = this.getAssociatedDomRef();
+		this._sObservableNodeId = oDomRef?.id;
 
 		if (this._sObservableNodeId) {
 			oMutationObserver.registerHandler(this._sObservableNodeId, this._domChangedCallback.bind(this), bIsRoot);
@@ -382,23 +382,19 @@ sap.ui.define([
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			// TODO: write Unit test for the case when getAssociatedDomRef() returns undefined (domRef func returns undefined)
-			var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(
-				this.getElement(),
-				mScrollContainer.domRef
-			) || jQuery();
-			var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
+			var oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || undefined;
+			var oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
-			if ($ScrollContainerDomRef.length) {
-				var oScrollContainerDomRef = $ScrollContainerDomRef.get(0);
+			if (oScrollContainerDomRef) {
 				var mScrollContainerGeometry = DOMUtil.getGeometry(oScrollContainerDomRef);
-				this._ensureVisibility($ScrollContainerOverlayDomRef);
-				this._setSize($ScrollContainerOverlayDomRef, mScrollContainerGeometry);
-				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, mScrollContainerGeometry, this.$());
-				this._handleOverflowScroll(mScrollContainerGeometry, $ScrollContainerOverlayDomRef, this, bForceScrollbarSync);
-				this._setZIndex(mScrollContainerGeometry, $ScrollContainerOverlayDomRef);
-				this._setClipPath($ScrollContainerOverlayDomRef, $ScrollContainerDomRef);
+				this._ensureVisibility(oScrollContainerOverlayDomRef);
+				this._setSize(oScrollContainerOverlayDomRef, mScrollContainerGeometry);
+				Overlay.prototype._setPosition.call(this, oScrollContainerOverlayDomRef, mScrollContainerGeometry, this.getDomRef());
+				this._handleOverflowScroll(mScrollContainerGeometry, oScrollContainerOverlayDomRef, this, bForceScrollbarSync);
+				this._setZIndex(mScrollContainerGeometry, oScrollContainerOverlayDomRef);
+				this._setClipPath(oScrollContainerOverlayDomRef, oScrollContainerDomRef);
 			} else {
-				$ScrollContainerOverlayDomRef.css("display", "none");
+				oScrollContainerOverlayDomRef.style.display = "none";
 			}
 		}, this);
 	};
@@ -409,11 +405,11 @@ sap.ui.define([
 			this._sortChildren(this.getChildrenDomRef());
 			if (!this.bIsDestroyed) {
 				this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-					var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
-					var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
+					var oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
+					var oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
-					if ($ScrollContainerDomRef.length) {
-						this._sortChildren($ScrollContainerOverlayDomRef.get(0));
+					if (oScrollContainerDomRef) {
+						this._sortChildren(oScrollContainerOverlayDomRef);
 					}
 				}, this);
 			}
@@ -618,15 +614,15 @@ sap.ui.define([
 	/**
 	 * Gets DOM Node of the scroll container by its ID
 	 * @param {number} iIndex - index of the scroll container
-	 * @return {jQuery} - returns DOM Node of scroll container by its index
+	 * @return {HTMLElement} - returns DOM Node of scroll container by its index
 	 */
 	ElementOverlay.prototype.getScrollContainerById = function(iIndex) {
-		return jQuery(this.getChildrenDomRef()).find(`>.${S_SCROLLCONTAINER_CLASSNAME}[data-sap-ui-dt-scrollcontainerindex="${iIndex}"]`);
+		return this.getChildrenDomRef().querySelectorAll(`:scope > .${S_SCROLLCONTAINER_CLASSNAME}[data-sap-ui-dt-scrollcontainerindex="${iIndex}"]`)[0];
 	};
 
 	/**
-	 * Returns a jQuery Object reference for the associated Element or undefined, if it can't be found
-	 * @return {jQuery} jQuery object or undefined
+	 * Returns a Object reference for the associated Element or undefined, if it can't be found
+	 * @return {HTMLElement} object or undefined
 	 * @public
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
@@ -636,7 +632,7 @@ sap.ui.define([
 		oDomRef ||= ElementUtil.getDomRef(this.getElement());
 
 		if (oDomRef) {
-			return jQuery(oDomRef);
+			return oDomRef;
 		}
 		return undefined;
 	};
@@ -1009,7 +1005,7 @@ sap.ui.define([
 		if (aScrollContainers.length) {
 			iSize = _max(
 				aScrollContainers.map(function(mScrollContainer, iIndex) {
-					var mGeometry = DOMUtil.getGeometry(this.getScrollContainerById(iIndex).get(0));
+					var mGeometry = DOMUtil.getGeometry(this.getScrollContainerById(iIndex));
 					return mGeometry.size[sType];
 				}, this)
 			);

@@ -77,7 +77,7 @@ sap.ui.define([
 		this._aAggregatedTestResult = null;
 		this._aAggregatedInfoResult = null;
 		this._sAggregation = null;
-		this._$TestAreaDomRef = null;
+		this._oTestAreaDomRef = null;
 
 		if (iStubCounter === 0) {
 			oMutationObserverStub = sinon.stub(ElementOverlay.prototype, "_subscribeToMutationObserver");
@@ -99,9 +99,9 @@ sap.ui.define([
 		}
 		window.clearTimeout(this._iTimeout);
 		this._oElement.destroy();
-		if (this._$TestAreaDomRef) {
-			this._$TestAreaDomRef.remove();
-			delete this._$TestAreaDomRef;
+		if (this._oTestAreaDomRef) {
+			this._oTestAreaDomRef.remove();
+			delete this._oTestAreaDomRef;
 		}
 	};
 

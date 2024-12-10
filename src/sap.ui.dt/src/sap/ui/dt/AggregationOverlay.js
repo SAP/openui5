@@ -216,14 +216,14 @@ function(
 		Overlay.prototype._setPosition.apply(this, aArgs);
 
 		if (oGeometry.domRef && !Util.isInteger(this.getScrollContainerId())) {
-			this._handleOverflowScroll(oGeometry, this.$(), this.getParent(), bForceScrollbarSync);
+			this._handleOverflowScroll(oGeometry, this.getDomRef(), this.getParent(), bForceScrollbarSync);
 		}
 	};
 
 	/**
 	 * Returns a DOM representation for an aggregation, associated with this AggregationOverlay, if it can be found or undefined
 	 * Representation is searched in DOM based on DesignTimeMetadata defined for the parent Overlay
-	 * @return {jQuery} Associated with this AggregationOverlay DOM Element or null, if it can't be found
+	 * @return {HTMLElement} Associated with this AggregationOverlay DOM Element or undefined, if it can't be found
 	 * @public
 	 */
 	AggregationOverlay.prototype.getAssociatedDomRef = function() {
