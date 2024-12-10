@@ -26,10 +26,10 @@ sap.ui.define([
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.rta.contextBased.Page", {
-		onInit() {
+		async onInit() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			this.oRolesModel = new JSONModel();
-			this.oRolesModel.loadData("./model/roles.json", "", false);
+			await this.oRolesModel.loadData("./model/roles.json", "");
 			this.sandbox = sinon.createSandbox();
 			this.oToolbar = new Adaptation({
 				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
@@ -43,7 +43,7 @@ sap.ui.define([
 			this.oManageAdaptationsDialog = new ManageAdapationsDialog({ toolbar: this.oToolbar });
 			this.oAddAdaptationsDialog = new AddAdaptationDialog({ toolbar: this.oToolbar });
 			var oTempAdaptationsModel = new JSONModel();
-			oTempAdaptationsModel.loadData("./model/adaptations.json", "", false);
+			await oTempAdaptationsModel.loadData("./model/adaptations.json", "");
 			var aAdaptations = oTempAdaptationsModel.getProperty("/adaptations");
 			this.oModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 		},
@@ -111,7 +111,7 @@ sap.ui.define([
 			return Promise.resolve({ role: aFilterRoles });
 		}.bind(this));
 
-		this.loadStub.callsFake(function() {
+		this.loadStub.callsFake(async function() {
 			var oAdaptationsModel = new JSONModel();
 			var sAdaptationJsonModelPath;
 			if (sAdaptationsDataPath === "./model/onlyOneAdaptation.json") {
@@ -121,7 +121,7 @@ sap.ui.define([
 			} else {
 				sAdaptationJsonModelPath = "./model/adaptations.json";
 			}
-			oAdaptationsModel.loadData(sAdaptationJsonModelPath, "", false);
+			await oAdaptationsModel.loadData(sAdaptationJsonModelPath, "");
 			return Promise.resolve(oAdaptationsModel.getData());
 		});
 

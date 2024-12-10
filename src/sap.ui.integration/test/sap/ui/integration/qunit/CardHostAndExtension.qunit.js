@@ -662,4 +662,35 @@ function (
 		assert.strictEqual(oNestedItem.getText(), "Nested Action", "Actions can be nested");
 
 	});
+
+	QUnit.test("Card is properly passed when function is used for visible/enabled property", async function (assert) {
+		// Arrange
+		this.oHost.setActions([
+			{
+				type: 'Custom',
+				text: 'Visible',
+				visible: function (oCard) {
+					//Assert
+					assert.ok(oCard, "Card is passed to the function");
+					assert.strictEqual(oCard.getId(), this.oCard.getId(), "The proper card is passed to the function");
+					return true;
+				}.bind(this)
+			},
+			{
+				type: 'Custom',
+				text: 'Enabled',
+				enabled: function (oCard) {
+					//Assert
+					assert.ok(oCard, "Card is passed to the function");
+					assert.strictEqual(oCard.getId(), this.oCard.getId(), "The proper card is passed to the function");
+					return true;
+				}.bind(this)
+			}
+		]);
+		this.oCard.setHost(this.oHost);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+	});
 });

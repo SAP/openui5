@@ -221,7 +221,7 @@ sap.ui.define([
 	};
 
 	ActionsToolbar.prototype._refreshRecursiveMenuItems = function (aActions, aMenuItems, aPromises) {
-		const oCard = this._oCard;
+		const oCard = this.getCardInstance();
 
 		if (!aActions || !aMenuItems) {
 			return;
