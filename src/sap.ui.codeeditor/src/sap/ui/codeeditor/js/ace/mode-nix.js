@@ -8,7 +8,7 @@ var DocCommentHighlightRules = function () {
                 token: "comment.doc.tag",
                 regex: "@\\w+(?=\\s|$)"
             }, DocCommentHighlightRules.getTagRule(), {
-                defaultToken: "comment.doc",
+                defaultToken: "comment.doc.body",
                 caseInsensitive: true
             }
         ]
@@ -23,14 +23,14 @@ DocCommentHighlightRules.getTagRule = function (start) {
 };
 DocCommentHighlightRules.getStartRule = function (start) {
     return {
-        token: "comment.doc",
-        regex: "\\/\\*(?=\\*)",
+        token: "comment.doc", // doc comment
+        regex: /\/\*\*(?!\/)/,
         next: start
     };
 };
 DocCommentHighlightRules.getEndRule = function (start) {
     return {
-        token: "comment.doc",
+        token: "comment.doc", // closing comment
         regex: "\\*\\/",
         next: start
     };
@@ -88,11 +88,11 @@ var c_cppHighlightRules = function (extraKeywords) {
             },
             DocCommentHighlightRules.getStartRule("doc-start"),
             {
-                token: "comment",
+                token: "comment", // multi line comment
                 regex: "\\/\\*",
                 next: "comment"
             }, {
-                token: "string",
+                token: "string", // character
                 regex: "'(?:" + escapeRe + "|.)?'"
             }, {
                 token: "string.start",
@@ -114,17 +114,17 @@ var c_cppHighlightRules = function (extraKeywords) {
                     { defaultToken: "string" }
                 ]
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "0[xX][0-9a-fA-F]+(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b"
             }, {
-                token: "keyword",
+                token: "keyword", // pre-compiler directives
                 regex: "#\\s*(?:include|import|pragma|line|define|undef)\\b",
                 next: "directive"
             }, {
-                token: "keyword",
+                token: "keyword", // special case pre-compiler directive
                 regex: "#\\s*(?:endif|if|ifdef|else|elif|ifndef)\\b"
             }, {
                 token: keywordMapper,
@@ -148,7 +148,7 @@ var c_cppHighlightRules = function (extraKeywords) {
         ],
         "comment": [
             {
-                token: "comment",
+                token: "comment", // closing comment
                 regex: "\\*\\/",
                 next: "start"
             }, {
@@ -183,12 +183,12 @@ var c_cppHighlightRules = function (extraKeywords) {
                 next: "start"
             },
             {
-                token: "constant.other",
+                token: "constant.other", // single line
                 regex: '\\s*["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]',
                 next: "start"
             },
             {
-                token: "constant.other",
+                token: "constant.other", // single line
                 regex: "\\s*['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']",
                 next: "start"
             },
@@ -454,10 +454,10 @@ var NixHighlightRules = function () {
                 regex: '"',
                 push: "qqstring"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "0[xX][0-9a-fA-F]+\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
             }, {
                 token: keywordMapper,
@@ -470,7 +470,7 @@ var NixHighlightRules = function () {
                 next: "pop"
             }],
         "comment": [{
-                token: "comment",
+                token: "comment", // closing comment
                 regex: "\\*\\/",
                 next: "start"
             }, {

@@ -170,7 +170,7 @@ var PowershellHighlightRules = function () {
                 regex: "<#",
                 next: "comment"
             }, {
-                token: "string",
+                token: "string", // multi line
                 regex: /@'$/,
                 push: [
                     {
@@ -183,7 +183,7 @@ var PowershellHighlightRules = function () {
                     }
                 ]
             }, {
-                token: "string",
+                token: "string", // multi line
                 regex: /@"$/,
                 push: [
                     {
@@ -275,10 +275,10 @@ var PowershellHighlightRules = function () {
         ],
         "constants": [
             {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "0[xX][0-9a-fA-F]+\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
             }, {
                 token: "constant.language.boolean",
@@ -290,11 +290,11 @@ var PowershellHighlightRules = function () {
         ],
         "strings": [
             {
-                token: "string",
+                token: "string", // single line
                 regex: "['][^']*[']"
             },
             {
-                token: "string",
+                token: "string", // single line
                 regex: /"/,
                 push: [
                     {

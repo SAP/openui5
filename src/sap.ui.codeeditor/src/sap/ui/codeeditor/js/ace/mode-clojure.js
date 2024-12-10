@@ -84,38 +84,38 @@ var ClojureHighlightRules = function () {
                 token: "comment",
                 regex: ";.*$"
             }, {
-                token: "keyword",
+                token: "keyword", //parens
                 regex: "[\\(|\\)]"
             }, {
-                token: "keyword",
+                token: "keyword", //lists
                 regex: "[\\'\\(]"
             }, {
-                token: "keyword",
+                token: "keyword", //vectors
                 regex: "[\\[|\\]]"
             }, {
-                token: "string.regexp",
+                token: "string.regexp", //Regular Expressions
                 regex: '#"',
                 next: "regex"
             }, {
-                token: "keyword",
+                token: "keyword", //sets and maps
                 regex: "[\\{|\\}|\\#\\{|\\#\\}]"
             }, {
-                token: "keyword",
+                token: "keyword", // ampersands
                 regex: '[\\&]'
             }, {
-                token: "keyword",
+                token: "keyword", // metadata
                 regex: '[\\#\\^\\{]'
             }, {
-                token: "keyword",
+                token: "keyword", // anonymous fn syntactic sugar
                 regex: '[\\%]'
             }, {
-                token: "keyword",
+                token: "keyword", // deref reader macro
                 regex: '[@]'
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "0[xX][0-9a-fA-F]+\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
             }, {
                 token: "constant.language",
@@ -124,11 +124,11 @@ var ClojureHighlightRules = function () {
                 token: keywordMapper,
                 regex: "[a-zA-Z_$][a-zA-Z0-9_$\\-]*\\b"
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: '"',
                 next: "string"
             }, {
-                token: "constant",
+                token: "constant", // symbol
                 regex: /:[^()\[\]{}'"\^%`,;\s]+/
             }
         ],

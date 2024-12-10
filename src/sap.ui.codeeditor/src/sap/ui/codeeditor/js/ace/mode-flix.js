@@ -40,13 +40,13 @@ var FlixHighlightRules = function () {
                 regex: "'",
                 next: "char"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "0x[a-fA-F0-9](_*[a-fA-F0-9])*(i8|i16|i32|i64|ii)?\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "[0-9](_*[0-9])*\\.[0-9](_*[0-9])*(f32|f64)?\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // integer
                 regex: "[0-9](_*[0-9])*(i8|i16|i32|i64|ii)?\\b"
             }, {
                 token: "constant.language.boolean",
@@ -61,7 +61,7 @@ var FlixHighlightRules = function () {
                 token: "storage.modifier",
                 regex: "@(Deprecated|Experimental|Internal|ParallelWhenPure|Parallel|LazyWhenPure|Lazy|Skip|Test)\\b"
             }, {
-                token: "keyword",
+                token: "keyword", // hole
                 regex: "(\\?\\?\\?|\\?[a-zA-Z0-9]+)"
             }, {
                 token: keywordMapper,
@@ -88,7 +88,7 @@ var FlixHighlightRules = function () {
         ],
         "string": [
             {
-                token: "constant.character.escape",
+                token: "constant.character.escape", // unicode
                 regex: "\\\\(u[0-9a-fA-F]{4})"
             }, {
                 token: "constant.character.escape",
@@ -104,7 +104,7 @@ var FlixHighlightRules = function () {
         ],
         "regex": [
             {
-                token: "constant.character.escape",
+                token: "constant.character.escape", // unicode
                 regex: "\\\\(u[0-9a-fA-F]{4})"
             }, {
                 token: "constant.character.escape",
@@ -120,7 +120,7 @@ var FlixHighlightRules = function () {
         ],
         "char": [
             {
-                token: "constant.character.escape",
+                token: "constant.character.escape", // unicode
                 regex: "\\\\(u[0-9a-fA-F]{4})"
             }, {
                 token: "constant.character.escape",

@@ -62,6 +62,7 @@ font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro
 direction: ltr;
 text-align: left;
 -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+forced-color-adjust: none;
 }
 .ace_scroller {
 position: absolute;
@@ -146,7 +147,7 @@ float: left;
 margin-left: -19px;
 float: left;
 }
-.ace_gutter-cell.ace_error, .ace_icon.ace_error, .ace_icon.ace_error_fold {
+.ace_gutter-cell.ace_error, .ace_icon.ace_error, .ace_icon.ace_error_fold, .ace_gutter-cell.ace_security, .ace_icon.ace_security, .ace_icon.ace_security_fold {
 background-image: url("./main-1.png");
 background-repeat: no-repeat;
 background-position: 2px center;
@@ -156,32 +157,44 @@ background-image: url("./main-2.png");
 background-repeat: no-repeat;
 background-position: 2px center;
 }
-.ace_gutter-cell.ace_info, .ace_icon.ace_info {
+.ace_gutter-cell.ace_info, .ace_icon.ace_info, .ace_gutter-cell.ace_hint, .ace_icon.ace_hint {
 background-image: url("./main-3.png");
 background-repeat: no-repeat;
 background-position: 2px center;
 }
-.ace_dark .ace_gutter-cell.ace_info, .ace_dark .ace_icon.ace_info {
+.ace_dark .ace_gutter-cell.ace_info, .ace_dark .ace_icon.ace_info, .ace_dark .ace_gutter-cell.ace_hint, .ace_dark .ace_icon.ace_hint {
 background-image: url("./main-4.png");
 }
 .ace_icon_svg.ace_error {
 -webkit-mask-image: url("./main-5.svg");
 background-color: crimson;
 }
-.ace_icon_svg.ace_warning {
+.ace_icon_svg.ace_security {
 -webkit-mask-image: url("./main-6.svg");
+background-color: crimson;
+}
+.ace_icon_svg.ace_warning {
+-webkit-mask-image: url("./main-7.svg");
 background-color: darkorange;
 }
 .ace_icon_svg.ace_info {
--webkit-mask-image: url("./main-7.svg");
+-webkit-mask-image: url("./main-8.svg");
 background-color: royalblue;
 }
+.ace_icon_svg.ace_hint {
+-webkit-mask-image: url("./main-9.svg");
+background-color: silver;
+}
 .ace_icon_svg.ace_error_fold {
--webkit-mask-image: url("./main-8.svg");
+-webkit-mask-image: url("./main-10.svg");
+background-color: crimson;
+}
+.ace_icon_svg.ace_security_fold {
+-webkit-mask-image: url("./main-11.svg");
 background-color: crimson;
 }
 .ace_icon_svg.ace_warning_fold {
--webkit-mask-image: url("./main-9.svg");
+-webkit-mask-image: url("./main-12.svg");
 background-color: darkorange;
 }
 .ace_scrollbar {
@@ -392,8 +405,8 @@ height: 11px;
 margin-top: -2px;
 vertical-align: middle;
 background-image:
-url("./main-10.png"),
-url("./main-11.png");
+url("./main-13.png"),
+url("./main-14.png");
 background-repeat: no-repeat, repeat-x;
 background-position: center center, top left;
 color: transparent;
@@ -406,8 +419,8 @@ pointer-events: auto;
 }
 .ace_fold:hover{
 background-image:
-url("./main-12.png"),
-url("./main-13.png");
+url("./main-15.png"),
+url("./main-16.png");
 }
 .ace_tooltip {
 background-color: #f5f5f5;
@@ -421,13 +434,19 @@ position: fixed;
 z-index: 999999;
 box-sizing: border-box;
 cursor: default;
-white-space: pre;
+white-space: pre-wrap;
 word-wrap: break-word;
 line-height: normal;
 font-style: normal;
 font-weight: normal;
 letter-spacing: normal;
 pointer-events: none;
+overflow: auto;
+max-width: min(60em, 66vw);
+overscroll-behavior: contain;
+}
+.ace_tooltip pre {
+white-space: pre-wrap;
 }
 .ace_tooltip.ace_dark {
 background-color: #636363;
@@ -458,7 +477,7 @@ margin: 0 -12px 0 1px;
 display: none;
 width: 11px;
 vertical-align: top;
-background-image: url("./main-14.png");
+background-image: url("./main-17.png");
 background-repeat: no-repeat;
 background-position: center;
 border-radius: 3px;
@@ -469,10 +488,10 @@ cursor: pointer;
 display: inline-block;   
 }
 .ace_fold-widget.ace_end {
-background-image: url("./main-15.png");
+background-image: url("./main-18.png");
 }
 .ace_fold-widget.ace_closed {
-background-image: url("./main-16.png");
+background-image: url("./main-19.png");
 }
 .ace_fold-widget:hover {
 border: 1px solid rgba(0, 0, 0, 0.3);
@@ -488,13 +507,13 @@ box-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
 * Dark version for fold widgets
 */
 .ace_dark .ace_fold-widget {
-background-image: url("./main-17.png");
+background-image: url("./main-20.png");
 }
 .ace_dark .ace_fold-widget.ace_end {
-background-image: url("./main-18.png");
+background-image: url("./main-21.png");
 }
 .ace_dark .ace_fold-widget.ace_closed {
-background-image: url("./main-19.png");
+background-image: url("./main-22.png");
 }
 .ace_dark .ace_fold-widget:hover {
 box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
@@ -583,17 +602,28 @@ opacity:1;
 background-color: #ddd;
 }
 .ace_placeholder {
+position: relative;
 font-family: arial;
 transform: scale(0.9);
 transform-origin: left;
 white-space: pre;
 opacity: 0.7;
 margin: 0 10px;
+z-index: 1;
 }
 .ace_ghost_text {
 opacity: 0.5;
 font-style: italic;
+}
+.ace_ghost_text_container > div {
 white-space: pre;
+}
+.ghost_text_line_wrapped::after {
+content: "↩";
+position: absolute;
+}
+.ace_lineWidgetContainer.ace_ghost_text {
+margin: 0px 4px
 }
 .ace_screenreader-only {
 position:absolute;
@@ -602,6 +632,9 @@ top:auto;
 width:1px;
 height:1px;
 overflow:hidden;
+}
+.ace_hidden_token {
+display: none;
 }
 /*ace-tm*/
 .ace-tm .ace_gutter {
@@ -721,10 +754,10 @@ background: rgb(250, 250, 255);
 border: 1px solid rgb(200, 200, 250);
 }
 .ace-tm .ace_indent-guide {
-background: url("./main-20.png") right repeat-y;
+background: url("./main-23.png") right repeat-y;
 }
 .ace-tm .ace_indent-guide-active {
-background: url("./main-21.png") right repeat-y;
+background: url("./main-24.png") right repeat-y;
 }
 /*error_marker.css*/
 .error_widget_wrapper {
@@ -945,7 +978,6 @@ flex: 0 0 auto;
 .ace_autocomplete .ace_line .ace_ {
 flex: 0 1 auto;
 overflow: hidden;
-white-space: nowrap;
 text-overflow: ellipsis;
 }
 .ace_autocomplete .ace_completion-spacer {
@@ -977,7 +1009,7 @@ animation: none;
 /*inlineautocomplete.css*/
 .ace_icon_svg.ace_arrow,
 .ace_icon_svg.ace_arrow_rotated {
--webkit-mask-image: url("./main-22.svg");
+-webkit-mask-image: url("./main-25.svg");
 }
 .ace_icon_svg.ace_arrow_rotated {
 transform: rotate(180deg);
@@ -1151,7 +1183,7 @@ transform: rotate(-45deg);
 border-width: 0 2px 2px 0 ;
 }
 .ace_searchbtn_close {
-background: url("./main-23.png") no-repeat 50% 0;
+background: url("./main-26.png") no-repeat 50% 0;
 border-radius: 50%;
 border: 0 none;
 color: #656565;

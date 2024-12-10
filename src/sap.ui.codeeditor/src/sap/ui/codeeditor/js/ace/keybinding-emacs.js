@@ -589,11 +589,11 @@ exports.handler.attach = function (editor) {
     editor.pushEmacsMark = function (p, activate) {
         var prevMark = this.session.$emacsMark;
         if (prevMark)
-            this.session.$emacsMarkRing.push(prevMark);
+            pushUnique(this.session.$emacsMarkRing, prevMark);
         if (!p || activate)
             this.setEmacsMark(p);
         else
-            this.session.$emacsMarkRing.push(p);
+            pushUnique(this.session.$emacsMarkRing, p);
     };
     editor.popEmacsMark = function () {
         var mark = this.emacsMark();
@@ -625,6 +625,13 @@ exports.handler.attach = function (editor) {
     editor.on('copy', this.onCopy);
     editor.on('paste', this.onPaste);
 };
+function pushUnique(ring, mark) {
+    var last = ring[ring.length - 1];
+    if (last && last.row === mark.row && last.column === mark.column) {
+        return;
+    }
+    ring.push(mark);
+}
 exports.handler.detach = function (editor) {
     editor.renderer.$blockCursor = false;
     editor.session.$selectLongWords = $formerLongWords;
@@ -826,7 +833,7 @@ exports.emacsKeys = {
     "S-M-5": "replace",
     "Backspace": "backspace",
     "Delete|C-d": "del",
-    "Return|C-m": { command: "insertstring", args: "\n" },
+    "Return|C-m": { command: "insertstring", args: "\n" }, // "newline"
     "C-o": "splitline",
     "M-d|C-Delete": { command: "killWord", args: "right" },
     "C-Backspace|M-Backspace|M-Delete": { command: "killWord", args: "left" },
@@ -839,13 +846,13 @@ exports.emacsKeys = {
     "C-Space": "setMark",
     "C-x C-x": "exchangePointAndMark",
     "C-t": "transposeletters",
-    "M-u": "touppercase",
+    "M-u": "touppercase", // Doesn't work
     "M-l": "tolowercase",
-    "M-/": "autocomplete",
+    "M-/": "autocomplete", // Doesn't work
     "C-u": "universalArgument",
     "M-;": "togglecomment",
     "C-/|C-x u|S-C--|C-z": "undo",
-    "S-C-/|S-C-x u|C--|S-C-z": "redo",
+    "S-C-/|S-C-x u|C--|S-C-z": "redo", // infinite undo?
     "C-x r": "selectRectangularRegion",
     "M-x": { command: "focusCommandLine", args: "M-x " }
 };

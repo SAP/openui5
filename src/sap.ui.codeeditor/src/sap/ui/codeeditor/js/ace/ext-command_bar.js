@@ -85,7 +85,8 @@ var CommandBarTooltip = /** @class */ (function () {
         if (!registerForMainTooltip && !this.elements[MORE_OPTIONS_BUTTON_ID]) {
             this.$createCommand(MORE_OPTIONS_BUTTON_ID, {
                 name: "···",
-                exec: function () {
+                exec: 
+                function () {
                     this.$shouldHideMoreOptions = false;
                     this.$setMoreOptionsVisibility(!this.isMoreOptionsShown());
                 }.bind(this),
@@ -269,7 +270,8 @@ var CommandBarTooltip = /** @class */ (function () {
         }
         dom.buildDom(['div', { class: [BUTTON_CLASS_NAME, command.cssClass || ""].join(" "), ref: id }, buttonNode], parentEl, this.elements);
         this.commands[id] = command;
-        var eventListener = function (e) {
+        var eventListener = 
+        function (e) {
             if (this.editor) {
                 this.editor.focus();
             }

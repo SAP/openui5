@@ -13,10 +13,10 @@ var JackHighlightRules = function () {
                 regex: "'",
                 next: "string1"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "-?0[xX][0-9a-fA-F]+\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "(?:0|[-+]?[1-9][0-9]*)\\b"
             }, {
                 token: "constant.binary",
