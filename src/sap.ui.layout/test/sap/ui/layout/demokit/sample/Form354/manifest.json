@@ -25,7 +25,6 @@
 					"Page.controller.js",
 					"Change.fragment.xml",
 					"Display.fragment.xml",
-					"test/FormSampleJourney.qunit.html",
 					"manifest.json"
 				]
 			}
