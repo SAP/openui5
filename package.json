@@ -100,7 +100,7 @@
     "karma-junit-reporter": "^2.0.1",
     "karma-ui5": "^4.1.0",
     "lit-html": "2.2.2",
-    "load-grunt-config": "^3.0.1",
+    "load-grunt-config": "^3.0.2",
     "moment": "^2.30.1",
     "node-fetch": "^3.3.2",
     "pacote": "^20.0.0",
