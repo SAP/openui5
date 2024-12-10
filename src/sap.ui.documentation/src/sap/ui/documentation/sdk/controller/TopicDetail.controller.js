@@ -7,10 +7,10 @@ sap.ui.define([
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/XML2JSONUtils",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/util/Resources",
+		"sap/ui/documentation/sdk/controller/util/DocumentationLoader",
 		"sap/ui/documentation/sdk/controller/util/ResponsiveImageMap",
 		"sap/ui/documentation/sdk/controller/util/SidyBySideImageMap",
 		"sap/m/LightBox",
@@ -30,10 +30,10 @@ sap.ui.define([
 		ResizeHandler,
 		BaseController,
 		JSONModel,
-		XML2JSONUtils,
 		Device,
 		ToggleFullScreenHandler,
 		ResourcesUtil,
+		DocumentationLoader,
 		ResponsiveImageMap,
 		SidyBySideImageMap,
 		LightBox,
@@ -256,26 +256,16 @@ sap.ui.define([
 				return DataTableHelper.getInstance();
 			},
 
-			_onHtmlResourceLoaded: function (htmlContent) {
-				var jsonObj;
-
-				if (!htmlContent) {
-					setTimeout(function () {
-						this.onRouteNotFound();
-					}.bind(this), 0);
-					return;
+			_onHtmlResourceLoaded: function (oResourceInfo) {
+				oResourceInfo.bIsPhone = Device.system.phone;
+				oResourceInfo.topicURL = this.sTopicURL;
+				if (oResourceInfo.shortdesc) {
+					oResourceInfo.shortdesc = oResourceInfo.shortdesc.trim().replace(/(\r\n|\n|\r)/gm, ' ');
 				}
 
-				jsonObj = XML2JSONUtils.XML2JSON(htmlContent, this._oConfig);
-				jsonObj.bIsPhone = Device.system.phone;
-				jsonObj.topicURL = this.sTopicURL;
-				if (jsonObj.shortdesc) {
-					jsonObj.shortdesc = jsonObj.shortdesc.trim().replace(/(\r\n|\n|\r)/gm, ' ');
-				}
+				this.jsonDefModel.setData(oResourceInfo);
 
-				this.jsonDefModel.setData(jsonObj);
-
-				this.oHtml.setContent(jsonObj.html);
+				this.oHtml.setContent(oResourceInfo.html);
 				this.oLayout.invalidate();
 
 				this._scrollContentToTop();
@@ -294,22 +284,17 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (event) {
 				//TODO: global jquery call found
-				var sId = decodeURIComponent(event.getParameter("arguments").id),
-					aUrlParts = sId.split("#"),
-					sTopicId = aUrlParts[0],
-					sSubTopicId = aUrlParts[1],
-					oOptions = event.getParameter("arguments")["?options"];
+				var oTopicInfo = this.getRouter()._decodeDocumentationRouteArguments(event.getParameter("arguments")),
+					oOptions = oTopicInfo.options;
 
-				this.sTopicId = sTopicId.replace(".html", "");
-				this.sSubTopicId = sSubTopicId;
-				this.sTopicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"));
-				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
-
+				this.sTopicId = oTopicInfo.topicId;
+				this.sSubTopicId = oTopicInfo.subTopicId;
+				this.sTopicURL = oTopicInfo.topicURL;
 				this.sQueryFromUrl = oOptions && oOptions.q ? decodeURIComponent(oOptions.q) : "";
 
-				jQuery.ajax(this.sTopicURL)
-					.done(this._onHtmlResourceLoaded.bind(this))
-					.fail(this.onRouteNotFound.bind(this));
+				DocumentationLoader.getInstance(this._oConfig).fetch(this.sTopicURL)
+					.then(this._onHtmlResourceLoaded.bind(this))
+					.catch(this.onRouteNotFound.bind(this));
 			},
 
 			_onHtmlRendered: function () {

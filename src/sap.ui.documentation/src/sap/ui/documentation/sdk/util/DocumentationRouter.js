@@ -7,10 +7,11 @@ sap.ui.define([
 	'sap/m/routing/Router',
 	'sap/ui/core/routing/History',
 	'sap/ui/thirdparty/hasher',
+	"sap/ui/documentation/sdk/util/Resources",
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/ui/thirdparty/URI"
-], function(Router, History, Hasher, ControlsInfo, URLUtil, URI) {
+], function(Router, History, Hasher, ResourcesUtil, ControlsInfo, URLUtil, URI) {
 	"use strict";
 
 	// We need to set the global hasher instance to not encode URL's. This is specific for the SDK
@@ -395,9 +396,8 @@ sap.ui.define([
 	 * @returns {object} Demo Kit custom object
 	 * @private
 	 */
-	DocumentationRouter.prototype._decodeSpecialRouteArguments = function (oEvent) {
-		var oArguments = oEvent.getParameters().arguments,
-			aEntity = [],
+	DocumentationRouter.prototype._decodeSpecialRouteArguments = function (oArguments) {
+		var aEntity = [],
 			sMemberType,
 			aMember = [],
 			aTemp;
@@ -481,6 +481,28 @@ sap.ui.define([
 			entityId: oArguments.p2 ? decodeURIComponent(oArguments.p2) : undefined
 		};
 
+	};
+
+	DocumentationRouter.prototype._decodeDocumentationRouteArguments = function (oArguments) {
+		var sId = decodeURIComponent(oArguments.id),
+			aUrlParts = sId.split("#"),
+			sTopicId = aUrlParts[0],
+			sSubTopicId = oArguments.subId || aUrlParts[1],
+			oOptions = oArguments["?options"];
+
+		return {
+			topicId: sTopicId.replace(".html", ""),
+			subTopicId: sSubTopicId,
+			options: oOptions,
+			topicURL: ResourcesUtil.getResourceOriginPath(this.getAppConfig().docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"))
+		};
+	};
+
+	DocumentationRouter.prototype.getAppConfig = function () {
+		if (!this._oAppConfig) {
+			this._oAppConfig = this._getOwnerComponent().getConfig();
+		}
+		return this._oAppConfig;
 	};
 
 	/**
