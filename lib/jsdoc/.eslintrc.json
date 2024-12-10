@@ -1,0 +1,18 @@
+{
+	"overrides": [
+		{
+			"env": {
+				"node": true,
+				"es2023": true
+			},
+			"files": [
+				"./*.js",
+				"./**/*.js"
+			],
+			"rules": {
+				"comma-dangle": ["error", "only-multiline"],
+				"strict": ["error", "global"]
+			}
+		}
+	]
+}
