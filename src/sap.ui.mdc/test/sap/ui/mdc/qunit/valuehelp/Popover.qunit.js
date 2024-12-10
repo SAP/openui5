@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/IconPool",
 	"sap/ui/model/ParseException"
-], function (
+], (
 		ValueHelpDelegate,
 		Popover,
 		Content,
@@ -38,49 +38,49 @@ sap.ui.define([
 		Device,
 		IconPool,
 		ParseException
-	) {
+	) => {
 	"use strict";
 
 	let oPopover;
 	const iPopoverDuration = 355;
 
-	const _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
+	const _fPressHandler = (oEvent) => {}; // just dummy handler to make Icon focusable
 	let oField;
 	let oContentField;
 	let oContent;
 	const oValueHelp = { //to fake ValueHelp
-		getControl: function() {
+		getControl() {
 			return oField;
 		},
-		_handleClosed: function () {
+		_handleClosed() {
 
 		},
-		_handleOpened: function () {
+		_handleOpened() {
 
 		},
-		getTypeahead: function () {
+		getTypeahead() {
 			return oPopover;
 		},
-		getPayload: function () {
+		getPayload() {
 			return undefined;
 		},
-		getDialog: function () {
+		getDialog() {
 			return null;
 		},
-		getControlDelegate: function () {
+		getControlDelegate() {
 			return ValueHelpDelegate;
 		},
-		awaitControlDelegate: function () {
+		awaitControlDelegate() {
 			return Promise.resolve();
 		},
-		getId: function () {
+		getId() {
 			return "VH1";
 		},
 		sFilterValue: "",
-		setFilterValue: function(sFilterValue) {
+		setFilterValue(sFilterValue) {
 			oValueHelp.filterValue = sFilterValue;
 		},
-		getFilterValue: function() {
+		getFilterValue() {
 			return oValueHelp.filterValue;
 		},
 		bDelegateInitialized: true
@@ -90,40 +90,28 @@ sap.ui.define([
 
 	/* use dummy control to simulate Field */
 
-//	var oClock;
-
-	const _teardown = function() {
-//		if (oClock) {
-//			oClock.restore();
-//			oClock = undefined;
-//		}
+	const _teardown = () => {
 		oContent = undefined;
 		oPopover.destroy();
 		oPopover = undefined;
 		oValueHelpConfig = undefined;
-		if (oModel) {
-			oModel.destroy();
-			oModel = undefined;
-		}
-		if (oField) {
-			oField.destroy();
-			oField = undefined;
-		}
-		if (oContentField) {
-			oContentField.destroy();
-			oContentField = undefined;
-		}
+		oModel?.destroy();
+		oModel = undefined;
+		oField?.destroy();
+		oField = undefined;
+		oContentField?.destroy();
+		oContentField = undefined;
 	};
 
 	QUnit.module("basic features", {
-		beforeEach: function() {
+		beforeEach() {
 			oPopover = new Popover("P1", {
 			});
 		},
 		afterEach: _teardown
 	});
 
-	QUnit.test("default values", async function(assert) {
+	QUnit.test("default values", async (assert) => {
 
 		assert.equal(oPopover.getMaxConditions(), undefined, "getMaxConditions");
 		assert.notOk(oPopover.isMultiSelect(), "isMultiSelect");
@@ -139,47 +127,53 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getContainerControl", function(assert) {
+	QUnit.test("getContainerControl", (assert) => {
 
 		oPopover.setTitle("Test");
 
 		const oContainer = oPopover.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
-		if (oContainer) {
-			const fnDone = assert.async();
-			oContainer.then(function(oContainer) {
-				assert.ok(oContainer, "Container returned");
-				assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
-				assert.equal(oContainer.getContentHeight(), "auto", "contentHeight");
-				assert.equal(oContainer.getPlacement(), mLibrary.PlacementType.VerticalPreferredBottom, "placement");
-				assert.notOk(oContainer.getShowHeader(), "showHeader");
-				assert.notOk(oContainer.getShowArrow(), "showArrow");
-				assert.notOk(oContainer.getResizable(), "resizable");
-				assert.equal(oContainer.getTitle(), "Test", "title");
-				assert.equal(oContainer.getTitleAlignment(), mLibrary.TitleAlignment.Center, "titleAlignment");
+		return oContainer?.then((oContainer) => {
+			assert.ok(oContainer, "Container returned");
+			assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
+			assert.equal(oContainer.getContentHeight(), "auto", "contentHeight");
+			assert.equal(oContainer.getPlacement(), mLibrary.PlacementType.VerticalPreferredBottom, "placement");
+			assert.notOk(oContainer.getShowHeader(), "showHeader");
+			assert.notOk(oContainer.getShowArrow(), "showArrow");
+			assert.notOk(oContainer.getResizable(), "resizable");
+			assert.equal(oContainer.getTitle(), "Test", "title");
+			assert.equal(oContainer.getTitleAlignment(), mLibrary.TitleAlignment.Center, "titleAlignment");
+			assert.notOk(oContainer.isPopupAdaptationAllowed(), "isPopupAdaptationAllowed");
 
-				// call again
-				oContainer = oPopover.getContainerControl();
-				assert.ok(oContainer.isA("sap.m.Popover"), "sap.m.Popover directly returned on second call");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				fnDone();
-			});
-		}
+			sinon.stub(oContainer, "getScrollDelegate").returns("ScrollDelegate");
+			assert.equal(oPopover.getScrollDelegate(), "ScrollDelegate", "ScrollDelegate of Container returned");
+			oContainer.getScrollDelegate.restore();
+
+			// call again
+			oContainer = oPopover.getContainerControl();
+			assert.ok(oContainer.isA("sap.m.Popover"), "sap.m.Popover directly returned on second call");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+		});
 
 	});
 
-	QUnit.test("providesScrolling", function(assert) {
+	QUnit.test("providesScrolling", (assert) => {
 
 		const bScrolling = oPopover.providesScrolling();
 		assert.ok(bScrolling, "provides scrolling");
 
 	});
 
+	QUnit.test("getUIAreaForContent", (assert) => {
+
+		assert.equal(oPopover.getUIAreaForContent(), null, "getUIAreaForContent returns no UIArea as long as no Popover created");
+
+	});
+
 	QUnit.module("assigned to ValueHelp", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			oValueHelpConfig = {maxConditions: 1};
 			oModel = new JSONModel({
 				_config: oValueHelpConfig,
@@ -188,7 +182,7 @@ sap.ui.define([
 			});
 
 			oContentField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-			oContent = new Content("Content1");
+			oContent = new Content("Content1", {displayContent: oContentField});
 			sinon.stub(oContent, "getContent").returns(oContentField);
 
 			oPopover = new Popover("P1", {
@@ -196,7 +190,7 @@ sap.ui.define([
 			}).setModel(oModel, "$valueHelp");
 			sinon.stub(oPopover, "getParent").returns(oValueHelp);
 			oField = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-			oField.getFocusElementForValueHelp = function(bTypeahed) { // fake
+			oField.getFocusElementForValueHelp = (bTypeahed) => { // fake
 				return oField;
 			};
 			oField.placeAt("content");
@@ -205,14 +199,15 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("getContainerControl with content configuration", function(assert) {
+	QUnit.test("getContainerControl with content configuration", (assert) => {
 
-		oContent.getContainerConfig = function () {
+		oContent.getContainerConfig = () => {
 			return {
 				'sap.ui.mdc.valuehelp.Popover': {
 					showArrow: true,
 					showHeader: true,
-					resizable: true
+					resizable: true,
+					getContentWidth: () => "99%"
 				}
 			};
 		};
@@ -220,41 +215,37 @@ sap.ui.define([
 		const oContainer = oPopover.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
-		if (oContainer) {
-			const fnDone = assert.async();
-			oContainer.then(function(oContainer) {
-				assert.ok(oContainer, "Container returned");
-				assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
-				assert.equal(oContainer.getContentHeight(), "auto", "contentHeight");
-				assert.equal(oContainer.getPlacement(), mLibrary.PlacementType.VerticalPreferredBottom, "placement");
-				assert.ok(oContainer.getShowHeader(), "showHeader");
-				assert.ok(oContainer.getShowArrow(), "showArrow");
-				assert.ok(oContainer.getResizable(), "resizable");
-				assert.equal(oContainer.getTitle(), "Test", "title");
-				assert.equal(oContainer.getTitleAlignment(), mLibrary.TitleAlignment.Center, "titleAlignment");
+		return oContainer.then((oContainer) => {
+			assert.ok(oContainer, "Container returned");
+			assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
+			assert.equal(oContainer.getContentHeight(), "auto", "contentHeight");
+			assert.equal(oContainer.getPlacement(), mLibrary.PlacementType.VerticalPreferredBottom, "placement");
+			assert.ok(oContainer.getShowHeader(), "showHeader");
+			assert.ok(oContainer.getShowArrow(), "showArrow");
+			assert.ok(oContainer.getResizable(), "resizable");
+			assert.equal(oContainer.getContentWidth(), "99%", "contentWidth");
+			assert.equal(oContainer.getTitle(), "Test", "title");
+			assert.equal(oContainer.getTitleAlignment(), mLibrary.TitleAlignment.Center, "titleAlignment");
 
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				fnDone();
-			});
-		}
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+		});
 
 	});
 
 
-	QUnit.test("open / close", function(assert) {
+	QUnit.test("open / close", (assert) => {
 
 		let iOpened = 0;
 		let sItemId;
 		let iItems;
-		oPopover.attachEvent("opened", function(oEvent) {
+		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 			sItemId = oEvent.getParameter("itemId");
 			iItems = oEvent.getParameter("items");
 		});
 		let iClosed = 0;
-		oPopover.attachEvent("closed", function(oEvent) {
+		oPopover.attachEvent("closed", (oEvent) => {
 			iClosed++;
 		});
 
@@ -262,7 +253,7 @@ sap.ui.define([
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "handleClose");
 		sinon.spy(oPopover, "_openContainerByTarget");
-		oContent.getContentHeight = function () {
+		oContent.getContentHeight = () => {
 			return 100;
 		};
 
@@ -271,13 +262,13 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					assert.equal(sItemId, "MyItem", "Opened event returns itemId");
 					assert.equal(iItems, 3, "Opened event returns items");
 					const oContainer = oPopover.getAggregation("_container");
-					assert.ok(oPopover._openContainerByTarget.called, "_openContainerByTarget was called.");
+					assert.ok(oPopover._openContainerByTarget.calledOnce, "_openContainerByTarget was called.");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
 					assert.ok(oContainer.isOpen(), "sap.m.Popover is open");
 					assert.equal(oContainer._getAllContent()[0], oContentField, "Content of sap.m.Popover");
@@ -288,11 +279,16 @@ sap.ui.define([
 					assert.equal(oPopover.getDomRef(), oContainer.getDomRef(), "DomRef of sap.m.Popover returned");
 					assert.equal(oPopover.getUIAreaForContent(), oContainer.getUIArea(), "getUIAreaForContent returns UiArea of sap.m.Popover");
 
+					// just check opening again without Promise
+					oPopover._openContainerByTarget.reset();
+					oPopover.openContainer(oContainer, true);
+					assert.notOk(oPopover._openContainerByTarget.called, "_openContainerByTarget was not called.");
+
 					oPopover.close();
 					assert.ok(oPopover.handleClose.calledOnce, "handleClose called");
 					oPopover.handleClose.restore();
 
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						assert.equal(iClosed, 1, "Closed event fired once");
 						assert.notOk(oContainer.isOpen(), "sap.m.Popover is not open");
 						assert.ok(oContent.onHide.calledOnce, "Content onHide called");
@@ -302,7 +298,7 @@ sap.ui.define([
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				oContent.onShow.restore();
 				oContent.onHide.restore();
@@ -313,18 +309,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("open with footer toolbar", function(assert) {
+	QUnit.test("open with footer toolbar", (assert) => {
 
 		sinon.stub(oContent, "isFocusInHelp").returns(true); // test if initial focus is not set to field
 		const oToolbar = new Toolbar("TB1");
 		sinon.stub(oContent, "getContainerConfig").returns({
 			'sap.ui.mdc.valuehelp.Popover': {
-				getFooter : function () { return oToolbar; }
+				getFooter() { return oToolbar; }
 			}
 		});
 
 		let iOpened = 0;
-		oPopover.attachEvent("opened", function(oEvent) {
+		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 		});
 		const oPromise = oPopover.open(Promise.resolve());
@@ -332,8 +328,8 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -343,11 +339,11 @@ sap.ui.define([
 					assert.equal(oContainer.getFooter(), oToolbar, "footer");
 
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				oToolbar.destroy();
 				fnDone();
@@ -356,17 +352,17 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("open with footer content", function(assert) {
+	QUnit.test("open with footer content", (assert) => {
 
 		const oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		sinon.stub(oContent, "getContainerConfig").returns({
 			'sap.ui.mdc.valuehelp.Popover': {
-				getFooter : function () { return oIcon; }
+				getFooter() { return oIcon; }
 			}
 		});
 
 		let iOpened = 0;
-		oPopover.attachEvent("opened", function(oEvent) {
+		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 		});
 		const oPromise = oPopover.open(Promise.resolve());
@@ -374,8 +370,8 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -389,11 +385,11 @@ sap.ui.define([
 					assert.equal(oFooter.getContent()[1], oIcon, "Icon is second content");
 
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				oIcon.destroy();
 				fnDone();
@@ -402,18 +398,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Consider canceled opening promise with async showTypeahead", function(assert) {
+	QUnit.test("Consider canceled opening promise with async showTypeahead", (assert) => {
 
 		const oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		sinon.stub(oContent, "getContainerConfig").returns({
 			'sap.ui.mdc.valuehelp.Popover': {
-				getFooter : function () { return oIcon; }
+				getFooter() { return oIcon; }
 			}
 		});
 		sinon.spy(oPopover, "_openContainerByTarget");
 
 
-		sinon.stub(ValueHelpDelegate, "showTypeahead").callsFake(function () {
+		sinon.stub(ValueHelpDelegate, "showTypeahead").callsFake(() => {
 			return new Promise((resolve) => {
 				oPopover._cancelPromise("open");
 				resolve(true);
@@ -422,7 +418,7 @@ sap.ui.define([
 		const oPromise = oPopover.open(Promise.resolve(), true);
 		const fnDone = assert.async();
 		assert.ok(oPromise instanceof Promise, "open returns promise");
-		setTimeout(function() { // wait until open
+		setTimeout(() => { // wait until open
 			assert.notOk(oPopover._openContainerByTarget.called, "Popover will not be opened as promise was cancelled during showTypeahead");
 			oPopover._openContainerByTarget.restore();
 			ValueHelpDelegate.showTypeahead.restore();
@@ -431,7 +427,7 @@ sap.ui.define([
 		}, iPopoverDuration);
 	});
 
-	QUnit.test("removeVisualFocus", function(assert) {
+	QUnit.test("removeVisualFocus", (assert) => {
 
 		sinon.spy(oContent, "removeVisualFocus");
 		oPopover.removeVisualFocus();
@@ -439,7 +435,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("setVisualFocus", function(assert) {
+	QUnit.test("setVisualFocus", (assert) => {
 
 		sinon.spy(oContent, "setVisualFocus");
 		oPopover.setVisualFocus();
@@ -447,28 +443,23 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate", function(assert) {
+	QUnit.test("navigate", (assert) => {
 
 		sinon.spy(oContent, "navigate");
 
 		const oPromise = oPopover.navigate(1);
 		assert.ok(oPromise instanceof Promise, "navigate returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function() {
-				assert.ok(oContent.navigate.calledOnce, "navigate on Content called");
-				assert.ok(oContent.navigate.calledWith(1), "navigate  on Content called with 1");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				fnDone();
-			});
-		}
+		return oPromise?.then(() => {
+			assert.ok(oContent.navigate.calledOnce, "navigate on Content called");
+			assert.ok(oContent.navigate.calledWith(1), "navigate  on Content called with 1");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+		});
 
 	});
 
-	QUnit.test("getItemForValue", function(assert) {
+	QUnit.test("getItemForValue", (assert) => {
 
 		sinon.spy(oContent, "getItemForValue");
 
@@ -480,7 +471,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isValidationSupported", function(assert) {
+	QUnit.test("isValidationSupported", (assert) => {
 
 		sinon.stub(oContent, "isValidationSupported").returns(true);
 		assert.ok(oPopover.isValidationSupported(), "isValidationSupported");
@@ -488,7 +479,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", function(assert) {
+	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		let bSupported = oPopover.isTypeaheadSupported();
 		assert.notOk(bSupported, "not supported if content not supports search");
@@ -499,9 +490,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getUseAsValueHelp", function(assert) {
+	QUnit.test("getUseAsValueHelp", (assert) => {
 
-		oContent.getUseAsValueHelp = function () {
+		oContent.getUseAsValueHelp = () => {
 			return true;
 		};
 		sinon.spy(oContent, "getUseAsValueHelp");
@@ -511,7 +502,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getValueHelpIcon", function(assert) {
+	QUnit.test("getValueHelpIcon", (assert) => {
 
 		sinon.stub(oContent, "getValueHelpIcon").returns("sap-icon://sap-ui5");
 		assert.equal(oPopover.getValueHelpIcon(), "sap-icon://sap-ui5", "icon");
@@ -519,7 +510,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getAriaAttributes", function(assert) {
+	QUnit.test("getAriaAttributes", (assert) => {
 
 		sinon.stub(oContent, "getAriaAttributes").returns({
 			contentId: "X",
@@ -541,7 +532,7 @@ sap.ui.define([
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
-		oContent.getUseAsValueHelp = function () {
+		oContent.getUseAsValueHelp = () => {
 			return true;
 		};
 
@@ -552,7 +543,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnFocus", async function(assert) {
+	QUnit.test("shouldOpenOnFocus", async (assert) => {
 
 		oPopover.setOpensOnFocus(true);
 		let bShouldOpen = await oPopover.shouldOpenOnFocus();
@@ -564,7 +555,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick", async function(assert) {
+	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnClick").returns(true);
 
@@ -585,7 +576,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnNavigate", function(assert) {
+	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnNavigate").returns(true);
 		assert.ok(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
@@ -593,7 +584,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled", function(assert) {
+	QUnit.test("isNavigationEnabled", (assert) => {
 
 		sinon.stub(oContent, "isNavigationEnabled").returns("X"); // "X" - just for testing return value
 		assert.notOk(oPopover.isNavigationEnabled(1), "Navigation if closed and not used as value help: disabled");
@@ -610,7 +601,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isFocusInHelp", function(assert) {
+	QUnit.test("isFocusInHelp", (assert) => {
 
 		sinon.stub(oContent, "isFocusInHelp").returns(true);
 		assert.ok(oPopover.isFocusInHelp(), "isFocusInHelp");
@@ -618,7 +609,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isMultiSelect", function(assert) {
+	QUnit.test("isMultiSelect", (assert) => {
 
 		sinon.stub(oContent, "isMultiSelect").returns(true);
 		assert.ok(oPopover.isMultiSelect(), "isMultiSelect");
@@ -626,12 +617,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("confirmed event", function(assert) {
+	QUnit.test("confirmed event", (assert) => {
 
 		sinon.stub(oPopover, "isSingleSelect").returns(true);
 		let iConfirm = 0;
 		let bClose = false;
-		oPopover.attachEvent("confirm", function(oEvent) {
+		oPopover.attachEvent("confirm", (oEvent) => {
 			iConfirm++;
 			bClose = oEvent.getParameter("close");
 		});
@@ -639,15 +630,15 @@ sap.ui.define([
 		const oPromise = oPopover.open(Promise.resolve());
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					oContent.fireConfirm();
 					assert.equal(iConfirm, 1, "Confirm event fired");
 					assert.ok(bClose, "close parameter");
 
 					fnDone();
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -655,7 +646,33 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("setHighlightId", function(assert) {
+	QUnit.test("cancel event", (assert) => {
+
+		sinon.stub(oPopover, "isSingleSelect").returns(true);
+		let iCancel = 0;
+		oPopover.attachEvent("cancel", (oEvent) => {
+			iCancel++;
+		});
+
+		const oPromise = oPopover.open(Promise.resolve());
+		if (oPromise) {
+			const fnDone = assert.async();
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
+					oContent.fireCancel();
+					assert.equal(iCancel, 1, "Cancel event fired if content cancelled");
+
+					fnDone();
+				}, iPopoverDuration);
+			}).catch((oError) => {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("setHighlightId", (assert) => {
 		sinon.spy(oContent, "setHighlightId");
 		oPopover.setHighlightId("x");
 		assert.ok(oContent.setHighlightId.calledWith("x"), "Container setHighlightId calls Content.setHighlightId with argument");
@@ -663,7 +680,7 @@ sap.ui.define([
 
 
 	QUnit.module("popover valuehelp assigned to Input ", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			oValueHelpConfig = {maxConditions: 1};
 			oModel = new JSONModel({
 				_config: oValueHelpConfig,
@@ -672,7 +689,7 @@ sap.ui.define([
 			});
 
 			oContentField = new Input("I1");
-			oContent = new Content("Content1");
+			oContent = new Content("Content1", {displayContent: oContentField});
 			sinon.stub(oContent, "getContent").returns(oContentField);
 
 			oPopover = new Popover("P1", {
@@ -688,10 +705,10 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("open without ValueState", function(assert) {
+	QUnit.test("open without ValueState", (assert) => {
 
 		let iOpened = 0;
-		oPopover.attachEvent("opened", function(oEvent) {
+		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 		});
 		const oPromise = oPopover.open(Promise.resolve());
@@ -699,8 +716,8 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -710,11 +727,11 @@ sap.ui.define([
 					assert.notOk(oContainer.getCustomHeader().getVisible(), "CustomHeader ValueStateHeader is NOT visible");
 
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -722,12 +739,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("open with ValueState", function(assert) {
+	QUnit.test("open with ValueState", (assert) => {
 		oField.setValueState("Error");
 		oField.setValueStateText("My Error message");
 
 		let iOpened = 0;
-		oPopover.attachEvent("opened", function(oEvent) {
+		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 		});
 		const oPromise = oPopover.open(Promise.resolve());
@@ -735,8 +752,8 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					const oContainer = oPopover.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Popover"), "Container is sap.m.Popover");
@@ -748,11 +765,11 @@ sap.ui.define([
 					assert.ok(oContainer.getCustomHeader().getVisible(), "CustomHeader ValueStateHeader is visible");
 
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -760,31 +777,39 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_disableFollowOfTemporarily", function(assert) {
+	QUnit.test("_disableFollowOfTemporarily", (assert) => {
 		const fnDone = assert.async();
 		sinon.spy(oPopover, "_disableFollowOfTemporarily");
 
-		return oPopover.open(Promise.resolve()).then(function() {
-			setTimeout(function() { // wait until open
+		return oPopover.open(Promise.resolve()).then(() => {
+			setTimeout(() => { // wait until open
 				const oMPopover = oPopover.getAggregation("_container");
 				sinon.spy(oMPopover, "setFollowOf");
 
 				oContent.fireConfirm();
-				assert.ok(oPopover._disableFollowOfTemporarily.called, "Popover disables the followOf feature temporarily on selection");
+				assert.ok(oPopover._disableFollowOfTemporarily.calledOnce, "Popover disables the followOf feature temporarily on selection");
 				assert.ok(oMPopover.setFollowOf.calledWith(false), "MPopover followOf was disabled");
 
-				oContent.fireConfirm({close: true});
-				assert.notOk(oPopover._disableFollowOfTemporarily.calledTwice, "Popover does not disable the followOf feature temporarily");
+				oPopover._disableFollowOfTemporarily.reset();
+				oMPopover.setFollowOf.reset();
+				oContent.fireConfirm(); // second try to test it is enabled only once again
+				assert.ok(oPopover._disableFollowOfTemporarily.calledOnce, "Popover disables the followOf feature temporarily on selection");
+				assert.ok(oMPopover.setFollowOf.calledWith(false), "MPopover followOf was disabled");
 
-				setTimeout(function () {
-					assert.ok(oMPopover.setFollowOf.calledWith(true), "MPopover followOf was enabled again");
+				oPopover._disableFollowOfTemporarily.reset();
+				oMPopover.setFollowOf.reset();
+				oContent.fireConfirm({close: true});
+				assert.notOk(oPopover._disableFollowOfTemporarily.called, "Popover does not disable the followOf feature temporarily");
+
+				setTimeout(() => {
+					assert.ok(oMPopover.setFollowOf.calledOnceWith(true), "MPopover followOf was enabled again");
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				},300);
 			}, iPopoverDuration);
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch called");
 			fnDone();
 		});
@@ -795,7 +820,7 @@ sap.ui.define([
 
 	let oDeviceStub;
 	QUnit.module("Phone support", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			const oSystem = {
 				desktop: false,
 				phone: true,
@@ -812,7 +837,7 @@ sap.ui.define([
 			});
 
 			oContentField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-			oContent = new Content("Content1");
+			oContent = new Content("Content1", {displayContent: oContentField});
 			sinon.stub(oContent, "getContent").returns(oContentField);
 
 			oPopover = new Popover("P1", {
@@ -820,91 +845,89 @@ sap.ui.define([
 			}).setModel(oModel, "$valueHelp");
 			sinon.stub(oPopover, "getParent").returns(oValueHelp);
 			oField = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-			oField.getFocusElementForValueHelp = function(bTypeahed) { // fake
+			oField.getFocusElementForValueHelp = (bTypeahed) => { // fake
 				return oField;
 			};
+			oField.getPlaceholder = () => "my Placeholder"; // fake Placeholder
 			oField.placeAt("content");
 			await nextUIUpdate();
 		},
-		afterEach: function () {
+		afterEach() {
 			_teardown();
 			oDeviceStub.restore();
 		}
 	});
 
-	QUnit.test("getContainerControl (multi-select)", function(assert) {
+	QUnit.test("getContainerControl (multi-select)", (assert) => {
 
 		oPopover.setTitle("Test");
 
 		const oContainer = oPopover.getContainerControl();
 
-		if (oContainer) {
-			const fnDone = assert.async();
-			oContainer.then(function(oContainer) {
-				assert.ok(oContainer, "Container returned");
-				assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
-				assert.equal(oContainer.getStretch(), true, "stretch");
-				assert.equal(oContainer.getHorizontalScrolling(), false, "horizontalScrolling");
+		return oContainer?.then((oContainer) => {
+			assert.ok(oContainer, "Container returned");
+			assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
+			assert.equal(oContainer.getStretch(), true, "stretch");
+			assert.equal(oContainer.getHorizontalScrolling(), false, "horizontalScrolling");
 
-				const oCloseButton = oContainer.getBeginButton();
-				assert.ok(oCloseButton, "close-button exist");
-				assert.ok(oCloseButton && oCloseButton.isA("sap.m.Button"), "close-button is Button");
+			const oCloseButton = oContainer.getBeginButton();
+			assert.ok(oCloseButton, "close-button exist");
+			assert.ok(oCloseButton?.isA("sap.m.Button"), "close-button is Button");
 
-				const oCustomHeaderBar = oContainer.getCustomHeader();
-				assert.ok(oCustomHeaderBar, "header-bar exist");
-				assert.ok(oCustomHeaderBar && oCustomHeaderBar.isA("sap.m.Bar"), "header-bar is Bar");
-				const aContentMiddle = oCustomHeaderBar.getContentMiddle();
-				assert.equal(aContentMiddle && aContentMiddle.length, 1, "ContentMiddle returned");
-				const oTitle = aContentMiddle && aContentMiddle[0];
-				assert.ok(oTitle, "title exist");
-				assert.ok(oTitle && oTitle.isA("sap.m.Title"), "title is Title");
-				assert.equal(oTitle && oTitle.getText(), "Test", "Title text");
-				assert.equal(oTitle && oTitle.getLevel(), "H1", "Title level");
-				const aContentRight = oCustomHeaderBar.getContentRight();
-				assert.equal(aContentRight && aContentRight.length, 1, "ContentRight returned");
-				const oCancelButton = aContentRight && aContentRight[0];
-				assert.ok(oCancelButton, "cancel-button exist");
-				assert.ok(oCancelButton && oCancelButton.isA("sap.m.Button"), "cancel-button is Button");
-				assert.equal(oCancelButton && oCancelButton.getIcon(), IconPool.getIconURI("decline"), "cancel-button is Icon");
+			const oCustomHeaderBar = oContainer.getCustomHeader();
+			assert.ok(oCustomHeaderBar, "header-bar exist");
+			assert.ok(oCustomHeaderBar?.isA("sap.m.Bar"), "header-bar is Bar");
+			const aContentMiddle = oCustomHeaderBar.getContentMiddle();
+			assert.equal(aContentMiddle?.length, 1, "ContentMiddle returned");
+			const oTitle = aContentMiddle?.[0];
+			assert.ok(oTitle, "title exist");
+			assert.ok(oTitle?.isA("sap.m.Title"), "title is Title");
+			assert.equal(oTitle?.getText(), "Test", "Title text");
+			assert.equal(oTitle?.getLevel(), "H1", "Title level");
+			const aContentRight = oCustomHeaderBar.getContentRight();
+			assert.equal(aContentRight?.length, 1, "ContentRight returned");
+			const oCancelButton = aContentRight?.[0];
+			assert.ok(oCancelButton, "cancel-button exist");
+			assert.ok(oCancelButton?.isA("sap.m.Button"), "cancel-button is Button");
+			assert.equal(oCancelButton?.getIcon(), IconPool.getIconURI("decline"), "cancel-button is Icon");
 
-				const oSubHeaderBar = oContainer.getSubHeader();
-				assert.ok(oSubHeaderBar, "subHeader-bar exist");
-				assert.ok(oSubHeaderBar && oSubHeaderBar.isA("sap.m.Toolbar"), "subHeader-bar is Toolbar");
-				const aSubHeaderContent = oSubHeaderBar.getContent();
-				assert.equal(aSubHeaderContent && aSubHeaderContent.length, 2, "SubHeaderContent returned");
-				const oInput = aSubHeaderContent[0];
-				assert.ok(oInput, "Input exist");
-				assert.ok(oInput && oInput.isA("sap.m.Input"), "Input is Input");
-				assert.notOk(oInput && oInput.getValue(), "Input value");
-				assert.equal(oInput && oInput.getWidth(), "100%", "Input width");
-				assert.equal(oInput && oInput.getShowValueStateMessage(), false, "Input showValueStateMessage");
-				assert.equal(oInput && oInput.getShowValueHelp(), false, "Input showValueHelp");
-				assert.equal(oContainer.getInitialFocus(), oInput && oInput.getId(), "initial focus");
-				const oShowConditionsButton = aSubHeaderContent[1];
-				assert.ok(oShowConditionsButton, "show-conditions-button exist");
-				assert.ok(oShowConditionsButton && oShowConditionsButton.isA("sap.m.ToggleButton"), "show-conditions-button is ToggleButton");
-				assert.equal(oShowConditionsButton && oShowConditionsButton.getIcon(), IconPool.getIconURI("multiselect-all"), "show-conditions-button Icon");
+			const oSubHeaderBar = oContainer.getSubHeader();
+			assert.ok(oSubHeaderBar, "subHeader-bar exist");
+			assert.ok(oSubHeaderBar?.isA("sap.m.Toolbar"), "subHeader-bar is Toolbar");
+			const aSubHeaderContent = oSubHeaderBar?.getContent();
+			assert.equal(aSubHeaderContent?.length, 2, "SubHeaderContent returned");
+			const oInput = aSubHeaderContent?.[0];
+			assert.ok(oInput, "Input exist");
+			assert.ok(oInput?.isA("sap.m.Input"), "Input is Input");
+			assert.notOk(oInput?.getValue(), "Input value");
+			assert.equal(oInput?.getWidth(), "100%", "Input width");
+			assert.equal(oInput?.getPlaceholder(), "my Placeholder", "Input Placeholder");
+			assert.equal(oInput?.getShowValueStateMessage(), false, "Input showValueStateMessage");
+			assert.equal(oInput?.getShowValueHelp(), false, "Input showValueHelp");
+			assert.equal(oContainer.getInitialFocus(), oInput?.getId(), "initial focus");
+			const oShowConditionsButton = aSubHeaderContent?.[1];
+			assert.ok(oShowConditionsButton, "show-conditions-button exist");
+			assert.ok(oShowConditionsButton?.isA("sap.m.ToggleButton"), "show-conditions-button is ToggleButton");
+			assert.equal(oShowConditionsButton?.getIcon(), IconPool.getIconURI("multiselect-all"), "show-conditions-button Icon");
 
-				const aDialogContent = oContainer.getContent();
-				assert.equal(aDialogContent && aDialogContent.length, 2, "Dialog content");
-				const oValueStateHeader = aDialogContent && aDialogContent[0];
-				assert.ok(oValueStateHeader && oValueStateHeader.isA("sap.m.ValueStateHeader"), "ValueStateHeader is first content");
-				const oScrollContainer = aDialogContent && aDialogContent[1];
-				assert.ok(oScrollContainer && oScrollContainer.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
+			const aDialogContent = oContainer.getContent();
+			assert.equal(aDialogContent?.length, 2, "Dialog content");
+			const oValueStateHeader = aDialogContent?.[0];
+			assert.ok(oValueStateHeader?.isA("sap.m.ValueStateHeader"), "ValueStateHeader is first content");
+			const oScrollContainer = aDialogContent?.[1];
+			assert.ok(oScrollContainer?.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
+			assert.equal(oPopover.getScrollDelegate(), oScrollContainer?.getScrollDelegate(), "ScrollDelegate of ScrollContainer returned");
 
-				// call again
-				oContainer = oPopover.getContainerControl();
-				assert.ok(oContainer.isA("sap.m.Dialog"), "sap.m.Dialog directly returned on second call");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				fnDone();
-			});
-		}
+			// call again
+			oContainer = oPopover.getContainerControl();
+			assert.ok(oContainer.isA("sap.m.Dialog"), "sap.m.Dialog directly returned on second call");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+		});
 
 	});
 
-	QUnit.test("getContainerControl (single-select)", function(assert) {
+	QUnit.test("getContainerControl (single-select)", (assert) => {
 
 		oValueHelpConfig.maxConditions = 1;
 		oPopover.setTitle("Test");
@@ -915,54 +938,55 @@ sap.ui.define([
 
 		if (oContainer) {
 			const fnDone = assert.async();
-			oContainer.then(function(oContainer) {
-				setTimeout(function() { // as setting value on input might be async
+			oContainer.then((oContainer) => {
+				setTimeout(() => { // as setting value on input might be async
 					assert.ok(oContainer, "Container returned");
 					assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
 					assert.equal(oContainer.getStretch(), true, "stretch");
 					assert.equal(oContainer.getHorizontalScrolling(), false, "horizontalScrolling");
 
 					const oCloseButton = oContainer.getBeginButton();
-					assert.ok(oCloseButton && oCloseButton.isA("sap.m.Button"), "close-button is Button");
+					assert.ok(oCloseButton?.isA("sap.m.Button"), "close-button is Button");
 
 					const oCustomHeaderBar = oContainer.getCustomHeader();
-					assert.ok(oCustomHeaderBar && oCustomHeaderBar.isA("sap.m.Bar"), "header-bar is Bar");
-					const aContentMiddle = oCustomHeaderBar.getContentMiddle();
-					assert.equal(aContentMiddle && aContentMiddle.length, 1, "ContentMiddle returned");
-					const oTitle = aContentMiddle && aContentMiddle[0];
-					assert.ok(oTitle && oTitle.isA("sap.m.Title"), "title is Title");
-					assert.equal(oTitle && oTitle.getText(), "Test", "Title text");
-					assert.equal(oTitle && oTitle.getLevel(), "H1", "Title level");
-					const aContentRight = oCustomHeaderBar.getContentRight();
-					assert.equal(aContentRight && aContentRight.length, 1, "ContentRight returned");
-					const oCancelButton = aContentRight && aContentRight[0];
-					assert.ok(oCancelButton && oCancelButton.isA("sap.m.Button"), "cancel-button is Button");
-					assert.equal(oCancelButton && oCancelButton.getIcon(), IconPool.getIconURI("decline"), "cancel-button is Icon");
+					assert.ok(oCustomHeaderBar?.isA("sap.m.Bar"), "header-bar is Bar");
+					const aContentMiddle = oCustomHeaderBar?.getContentMiddle();
+					assert.equal(aContentMiddle?.length, 1, "ContentMiddle returned");
+					const oTitle = aContentMiddle?.[0];
+					assert.ok(oTitle?.isA("sap.m.Title"), "title is Title");
+					assert.equal(oTitle?.getText(), "Test", "Title text");
+					assert.equal(oTitle?.getLevel(), "H1", "Title level");
+					const aContentRight = oCustomHeaderBar?.getContentRight();
+					assert.equal(aContentRight?.length, 1, "ContentRight returned");
+					const oCancelButton = aContentRight?.[0];
+					assert.ok(oCancelButton?.isA("sap.m.Button"), "cancel-button is Button");
+					assert.equal(oCancelButton?.getIcon(), IconPool.getIconURI("decline"), "cancel-button is Icon");
 
 					const oSubHeaderBar = oContainer.getSubHeader();
-					assert.ok(oSubHeaderBar && oSubHeaderBar.isA("sap.m.Toolbar"), "subHeader-bar is Toolbar");
-					const aSubHeaderContent = oSubHeaderBar.getContent();
-					assert.equal(aSubHeaderContent && aSubHeaderContent.length, 1, "SubHeaderContent returned");
-					const oInput = aSubHeaderContent[0];
+					assert.ok(oSubHeaderBar?.isA("sap.m.Toolbar"), "subHeader-bar is Toolbar");
+					const aSubHeaderContent = oSubHeaderBar?.getContent();
+					assert.equal(aSubHeaderContent?.length, 1, "SubHeaderContent returned");
+					const oInput = aSubHeaderContent?.[0];
 					assert.ok(oInput, "Input exist");
-					assert.ok(oInput && oInput.isA("sap.m.Input"), "Input is Input");
-					assert.equal(oInput && oInput.getValue(), "X", "Input value");
-					assert.equal(oInput && oInput.getWidth(), "100%", "Input width");
-					assert.equal(oInput && oInput.getShowValueStateMessage(), false, "Input showValueStateMessage");
-					assert.equal(oInput && oInput.getShowValueHelp(), true, "Input showValueHelp");
-					assert.equal(oContainer.getInitialFocus(), oInput && oInput.getId(), "initial focus");
+					assert.ok(oInput?.isA("sap.m.Input"), "Input is Input");
+					assert.equal(oInput?.getValue(), "X", "Input value");
+					assert.equal(oInput?.getWidth(), "100%", "Input width");
+					assert.equal(oInput?.getPlaceholder(), "my Placeholder", "Input Placeholder");
+					assert.equal(oInput?.getShowValueStateMessage(), false, "Input showValueStateMessage");
+					assert.equal(oInput?.getShowValueHelp(), true, "Input showValueHelp");
+					assert.equal(oContainer.getInitialFocus(), oInput?.getId(), "initial focus");
 
 					const aDialogContent = oContainer.getContent();
-					assert.equal(aDialogContent && aDialogContent.length, 2, "Dialog content");
-					const oValueStateHeader = aDialogContent && aDialogContent[0];
-					assert.ok(oValueStateHeader && oValueStateHeader.isA("sap.m.ValueStateHeader"), "ValueStateHeader is first content");
-					assert.notOk(oValueStateHeader.getVisible(), "ValueStateHeader not visible");
-					const oScrollContainer = aDialogContent && aDialogContent[1];
-					assert.ok(oScrollContainer && oScrollContainer.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
+					assert.equal(aDialogContent?.length, 2, "Dialog content");
+					const oValueStateHeader = aDialogContent?.[0];
+					assert.ok(oValueStateHeader?.isA("sap.m.ValueStateHeader"), "ValueStateHeader is first content");
+					assert.notOk(oValueStateHeader?.getVisible(), "ValueStateHeader not visible");
+					const oScrollContainer = aDialogContent?.[1];
+					assert.ok(oScrollContainer?.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
 
 					fnDone();
 				}, 0);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -970,35 +994,41 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("open / close", function(assert) {
+	QUnit.test("open / close", (assert) => {
 
 		let iOpened = 0;
 		let sItemId;
 		let iItems;
-		oPopover.attachEvent("opened", function(oEvent) {
+		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 			sItemId = oEvent.getParameter("itemId");
 			iItems = oEvent.getParameter("items");
 		});
 		let iClosed = 0;
-		oPopover.attachEvent("closed", function(oEvent) {
+		oPopover.attachEvent("closed", (oEvent) => {
 			iClosed++;
 		});
 
 		sinon.stub(oContent, "onShow").returns({itemId: "MyItem", items: 3});
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "_openContainerByTarget");
-		oContent.getContentHeight = function () {
+		oContent.getContentHeight = () => {
 			return 100;
 		};
+		const oToolbar = new Toolbar("TB1");
+		sinon.stub(oContent, "getContainerConfig").returns({ // test Footer too
+			'sap.ui.mdc.valuehelp.Popover': {
+				getFooter() { return oToolbar; }
+			}
+		});
 
 		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
 					assert.equal(sItemId, "MyItem", "Opened event returns itemId");
 					assert.equal(iItems, 3, "Opened event returns items");
@@ -1007,21 +1037,27 @@ sap.ui.define([
 					assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
 					assert.ok(oContainer.isOpen(), "sap.m.Dialog is open");
 					const aDialogContent = oContainer.getContent();
-					const oScrollContainer = aDialogContent && aDialogContent[1];
-					const oShownContent = oScrollContainer.getContent()[0];
-					assert.ok(oShownContent.isA("sap.m.List"), "Tokenlist shown");
-					assert.equal(oShownContent.getMode(), "Delete", "List mode");
-					const aItems = oShownContent.getItems();
-					assert.equal(aItems.length, 1, "one item");
-					assert.equal(aItems[0].getTitle(), "X", "Text of item");
-					// assert.ok(aItems[0].getSelected(), "Item is selected");
-					assert.equal(aItems[0].getType(), "Active", "Type of item");
+					const oScrollContainer = aDialogContent?.[1];
+					const oShownContent = oScrollContainer?.getContent()[0];
+					assert.ok(oShownContent?.isA("sap.m.List"), "Tokenlist shown");
+					assert.equal(oShownContent?.getMode(), "Delete", "List mode");
+					const aItems = oShownContent?.getItems();
+					assert.equal(aItems?.length, 1, "one item");
+					assert.equal(aItems?.[0].getTitle(), "X", "Text of item");
+					// assert.ok(aItems?.[0].getSelected(), "Item is selected");
+					assert.equal(aItems?.[0].getType(), "Active", "Type of item");
 					assert.ok(oContent.onShow.calledOnce, "Content onShow called");
 					assert.equal(oPopover.getDomRef(), oContainer.getDomRef(), "DomRef of sap.m.Dialog returned");
 					assert.equal(oPopover.getUIAreaForContent(), oContainer.getUIArea(), "getUIAreaForContent returns UiArea of sap.m.Dialog");
+					const oCloseButton = oContainer.getBeginButton();
+					assert.notOk(oCloseButton, "close-button is not assigned as beginButton");
+					assert.equal(oContainer.getFooter(), oToolbar, "footer");
+					const aFooterContent = oToolbar.getContent();
+					assert.equal(aFooterContent.length, 1, "One control inside Toolbar");
+					assert.ok(aFooterContent[0].isA("sap.m.Button"), "Toolbar content is close-button");
 
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						assert.equal(iClosed, 1, "Closed event fired once");
 						assert.notOk(oContainer.isOpen(), "sap.m.Dialog is not open");
 						assert.ok(oContent.onHide.calledOnce, "Content onHide called");
@@ -1031,7 +1067,7 @@ sap.ui.define([
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				oContent.onShow.restore();
 				oContent.onHide.restore();
@@ -1042,14 +1078,15 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Cancel Button", function(assert) {
+	QUnit.test("Cancel Button", (assert) => {
 
 		let iCancel = 0;
-		oPopover.attachEvent("cancel", function(oEvent) {
+		oPopover.attachEvent("cancel", (oEvent) => {
 			iCancel++;
 		});
+		sinon.spy(oPopover, "handleCanceled"); // add spy before attaching event to content
 
-		oContent.getContentHeight = function () {
+		oContent.getContentHeight = () => {
 			return 100;
 		};
 
@@ -1057,21 +1094,26 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					const oContainer = oPopover.getAggregation("_container");
 					const oCustomHeaderBar = oContainer.getCustomHeader();
 					const aContentRight = oCustomHeaderBar.getContentRight();
-					const oCancelButton = aContentRight && aContentRight[0];
+					const oCancelButton = aContentRight?.[0];
 					oCancelButton.firePress(); // simulate press
 					assert.equal(iCancel, 1, "Cancel event fired once");
 
+					iCancel = 0;
+					oContent.fireCancel();
+					assert.equal(iCancel, 0, "Cancel event not fired if content cancelled");
+					assert.ok(oPopover.handleCanceled.calledOnce, "Popover handleCanceled called");
+
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -1079,24 +1121,24 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Input interaction (multi-select)", function(assert) {
+	QUnit.test("Input interaction (multi-select)", (assert) => {
 
 		let iSelect = 0;
 		let sSelectType;
 		let aSelectConditions;
-		oPopover.attachEvent("select", function(oEvent) {
+		oPopover.attachEvent("select", (oEvent) => {
 			iSelect++;
 			sSelectType = oEvent.getParameter("type");
 			aSelectConditions = oEvent.getParameter("conditions");
 		});
 		let iConfirm = 0;
 		let bConfirmClose;
-		oPopover.attachEvent("confirm", function(oEvent) {
+		oPopover.attachEvent("confirm", (oEvent) => {
 			iConfirm++;
 			bConfirmClose = oEvent.getParameter("close");
 		});
 
-		oContent.getContentHeight = function () {
+		oContent.getContentHeight = () => {
 			return 100;
 		};
 
@@ -1104,14 +1146,14 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					const oContainer = oPopover.getAggregation("_container");
 					const oSubHeaderBar = oContainer.getSubHeader();
 					const aSubHeaderContent = oSubHeaderBar.getContent();
 					const oInput = aSubHeaderContent[0];
 					const aDialogContent = oContainer.getContent();
-					const oValueStateHeader = aDialogContent && aDialogContent[0];
+					const oValueStateHeader = aDialogContent?.[0];
 
 					oInput._$input.val("A");
 					oInput.fireLiveChange({value: "A"});
@@ -1119,7 +1161,7 @@ sap.ui.define([
 					assert.equal(iSelect, 0, "Select event not fired");
 
 					oInput.fireSubmit({value: "A"});
-					setTimeout(function() { // as parsing might be async
+					setTimeout(() => { // as parsing might be async
 						assert.equal(iSelect, 1, "Select event fired");
 						assert.equal(sSelectType, ValueHelpSelectionType.Add, "Select type");
 						const oCondition = Condition.createCondition(OperatorName.EQ, ["A"], undefined, undefined, ConditionValidated.NotValidated);
@@ -1140,7 +1182,7 @@ sap.ui.define([
 						sinon.stub(oPopover._oInputConditionType, "parseValue").throws(new ParseException("MyError"));
 						oInput._$input.val("Y");
 						oInput.fireSubmit({value: "Y"});
-						setTimeout(function() { // as parsing might be async
+						setTimeout(() => { // as parsing might be async
 							assert.equal(iSelect, 0, "Select event not fired");
 							assert.equal(iConfirm, 0, "Confirm event not fired");
 							assert.equal(oInput.getValueState(), "Error", "ValueState on Input");
@@ -1150,13 +1192,13 @@ sap.ui.define([
 							assert.ok(oValueStateHeader.getVisible(), "ValueStateHeader visible");
 
 							oPopover.close();
-							setTimeout(function() { // wait until closed
+							setTimeout(() => { // wait until closed
 								fnDone();
 							}, iPopoverDuration);
 						}, 0);
 					}, 0);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -1164,7 +1206,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Input interaction (single-select)", function(assert) {
+	QUnit.test("Input interaction (single-select)", (assert) => {
 
 		oValueHelpConfig.maxConditions = 1;
 		sinon.stub(oPopover, "hasDialog").returns(true); // to enable valueHelp icon
@@ -1172,23 +1214,23 @@ sap.ui.define([
 		let iSelect = 0;
 		let sSelectType;
 		let aSelectConditions;
-		oPopover.attachEvent("select", function(oEvent) {
+		oPopover.attachEvent("select", (oEvent) => {
 			iSelect++;
 			sSelectType = oEvent.getParameter("type");
 			aSelectConditions = oEvent.getParameter("conditions");
 		});
 		let iConfirm = 0;
 		let bConfirmClose;
-		oPopover.attachEvent("confirm", function(oEvent) {
+		oPopover.attachEvent("confirm", (oEvent) => {
 			iConfirm++;
 			bConfirmClose = oEvent.getParameter("close");
 		});
 		let iRequestSwitchToDialog = 0;
-		oPopover.attachEvent("requestSwitchToDialog", function(oEvent) {
+		oPopover.attachEvent("requestSwitchToDialog", (oEvent) => {
 			iRequestSwitchToDialog++;
 		});
 
-		oContent.getContentHeight = function () {
+		oContent.getContentHeight = () => {
 			return 100;
 		};
 
@@ -1196,15 +1238,15 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					const oContainer = oPopover.getAggregation("_container");
 					const oSubHeaderBar = oContainer.getSubHeader();
 					const aSubHeaderContent = oSubHeaderBar.getContent();
 					const oInput = aSubHeaderContent[0];
 					oInput._$input.val("A");
 					oInput.fireSubmit({value: "A"});
-					setTimeout(function() { // as parsing might be async
+					setTimeout(() => { // as parsing might be async
 						assert.equal(iSelect, 1, "Select event fired");
 						assert.equal(sSelectType, ValueHelpSelectionType.Set, "Select type");
 						const oCondition = Condition.createCondition(OperatorName.EQ, ["A"], undefined, undefined, ConditionValidated.NotValidated);
@@ -1226,12 +1268,12 @@ sap.ui.define([
 						assert.equal(iRequestSwitchToDialog, 1, "RequestSwitchToDialog event fired");
 
 						oPopover.close();
-						setTimeout(function() { // wait until closed
+						setTimeout(() => { // wait until closed
 							fnDone();
 						}, iPopoverDuration);
 					}, 0);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -1239,9 +1281,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("OK Button", function(assert) {
+	QUnit.test("OK Button", (assert) => {
 
-		oContent.getContentHeight = function () {
+		oContent.getContentHeight = () => {
 			return 100;
 		};
 
@@ -1249,8 +1291,8 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					const oContainer = oPopover.getAggregation("_container");
 					const oSubHeaderBar = oContainer.getSubHeader();
 					const aSubHeaderContent = oSubHeaderBar.getContent();
@@ -1264,11 +1306,11 @@ sap.ui.define([
 					assert.equal(oInput.fireSubmit.args[0][0].value, "A", "Input submit called with value");
 
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -1276,18 +1318,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Token List", function(assert) {
+	QUnit.test("Token List", (assert) => {
 
 		let iSelect = 0;
 		let sSelectType;
 		let aSelectConditions;
-		oPopover.attachEvent("select", function(oEvent) {
+		oPopover.attachEvent("select", (oEvent) => {
 			iSelect++;
 			sSelectType = oEvent.getParameter("type");
 			aSelectConditions = oEvent.getParameter("conditions");
 		});
 
-		oContent.getContentHeight = function () {
+		oContent.getContentHeight = () => {
 			return 100;
 		};
 
@@ -1295,14 +1337,14 @@ sap.ui.define([
 
 		if (oPromise) {
 			const fnDone = assert.async();
-			oPromise.then(function() {
-				setTimeout(function() { // wait until open
+			oPromise.then(() => {
+				setTimeout(() => { // wait until open
 					const oContainer = oPopover.getAggregation("_container");
 					const oSubHeaderBar = oContainer.getSubHeader();
 					const aSubHeaderContent = oSubHeaderBar.getContent();
 					const oShowConditionsButton = aSubHeaderContent[1];
 					const aDialogContent = oContainer.getContent();
-					const oScrollContainer = aDialogContent && aDialogContent[1];
+					const oScrollContainer = aDialogContent?.[1];
 
 					oShowConditionsButton.firePress({pressed: false});
 					let oShownContent = oScrollContainer.getContent()[0];
@@ -1325,11 +1367,11 @@ sap.ui.define([
 					assert.deepEqual(aSelectConditions, [oCondition], "Selected condition");
 
 					oPopover.close();
-					setTimeout(function() { // wait until closed
+					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
 				}, iPopoverDuration);
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called");
 				fnDone();
 			});
@@ -1337,7 +1379,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick", async function(assert) {
+	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnClick").returns(false);
 		let bShouldOpen = await oPopover.shouldOpenOnClick();
@@ -1357,7 +1399,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", function(assert) {
+	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		sinon.stub(oContent, "isSearchSupported").returns(true);
 		sinon.stub(oPopover, "isDialog").returns(false);
@@ -1371,4 +1413,28 @@ sap.ui.define([
 		assert.notOk(oPopover.isTypeaheadSupported(), "for Single-selection not supported");
 
 	});
+
+	QUnit.test("_disableFollowOfTemporarily", (assert) => { // just to check of doing nothing as Dialog don't has this feature
+		const fnDone = assert.async();
+		sinon.stub(oPopover, "isSingleSelect").returns(true);
+		sinon.spy(oPopover, "_disableFollowOfTemporarily");
+
+		return oPopover.open(Promise.resolve()).then(() => {
+			setTimeout(() => { // wait until open
+				oContent.fireConfirm();
+				assert.ok(oPopover._disableFollowOfTemporarily.called, "Popover disables the followOf feature temporarily on selection");
+
+				setTimeout(() => {
+					oPopover.close();
+					setTimeout(() => { // wait until closed
+						fnDone();
+					}, iPopoverDuration);
+				},300);
+			}, iPopoverDuration);
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+			fnDone();
+		});
+	});
+
 });
