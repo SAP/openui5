@@ -255,14 +255,7 @@ function (
 			Object.keys(this.oTestCases).forEach(function(sUrlPath) {
 				const oTestCase = this.oTestCases[sUrlPath],
 					oExpectedPatternMatch = Utils.getSpecialRouteEventArguments(oTestCase.expectedPatternMatch),
-					oExpectedDecoderOutput = Utils.getDecoderExpectedReturnValue(oTestCase.expectedDecoderOutput),
-					oMockPatternMatchedEvent = {
-						getParameters: function() {
-							return {
-								arguments: oExpectedPatternMatch
-							};
-						}
-					};
+					oExpectedDecoderOutput = Utils.getDecoderExpectedReturnValue(oTestCase.expectedDecoderOutput);
 
 				oRouteMatchedSpy.reset();
 
@@ -273,7 +266,7 @@ function (
 				assert.ok(oRouteMatchedSpy.calledWithMatch(oExpectedPatternMatch), "correct 'patternMatched' event arguments for " + sUrlPath);
 
 				// Act: synchronously call the tested function
-				const oOutput = this.oRouter._decodeSpecialRouteArguments(oMockPatternMatchedEvent);
+				const oOutput = this.oRouter._decodeSpecialRouteArguments(oExpectedPatternMatch);
 
 				// Check
 				assert.deepEqual(oOutput, oExpectedDecoderOutput, "correctly decoded result for " + sUrlPath);

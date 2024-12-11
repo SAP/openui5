@@ -388,6 +388,45 @@ sap.ui.define([
 		assert.strictEqual(document.activeElement, this.getButtonByIndex(1), "Should not move the focus");
 	});
 
+	QUnit.test("Left arrow when there is nested PaneContainer", async function (assert) {
+		// Arrange
+		this.clock.restore();
+		const done = assert.async();
+		const oResponsiveSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
+				panes: [
+					new SplitPane({
+						content: new Button()
+					}),
+					new PaneContainer({
+						layoutData: new SplitterLayoutData({
+							size: "100px"
+						}),
+						panes: [
+							new SplitPane({
+								content: new Button()
+							})
+						]
+					})
+				]
+			})
+		});
+
+		oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+		const oBarDomRef = oResponsiveSplitter.getRootPaneContainer()._oSplitter.getDomRef("splitbar-0");
+
+		oResponsiveSplitter.getRootPaneContainer().attachResize((e) => {
+			assert.ok(true, "resize event is fired");
+			assert.strictEqual(e.getParameter("oldSizes")[1], 100, "Old size of nested PaneContainer is correct");
+			assert.strictEqual(e.getParameter("newSizes")[1], 120, "New size of nested PaneContainer is correct");
+			done();
+		});
+
+		// Act
+		QunitUtils.triggerKeydown(oBarDomRef, KeyCodes.ARROW_LEFT);
+	});
+
 	QUnit.module("SplitPane API", {
 		beforeEach: function () {
 			this.oSplitPane = new SplitPane();

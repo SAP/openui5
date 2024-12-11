@@ -114,12 +114,13 @@ sap.ui.define([
 		return oMockServer;
 	}
 
-	async function createList(oListConfig, oItemsBindingConfig) {
+	async function createList(oListConfig, oItemsBindingConfig, oTemplateConfig) {
 		const oBindingInfo = Object.assign({
 			path : "/Products",
 			template : new StandardListItem({
 				title : "{Name}",
-				description : "{Category}"
+				description : "{Category}",
+				...oTemplateConfig
 			})
 		}, oItemsBindingConfig);
 		const oControlMetadata = Object.assign({
@@ -823,6 +824,81 @@ sap.ui.define([
 		await ui5Event("updateFinished", oList);
 
 		assert.ok(oInvalidateSpy.notCalled, "The list is not invalidated");
+	});
+
+	QUnit.module("rememberSelections=false", Object.assign({}, oModuleConfig, {
+		beforeEach: async function() {
+			this.oList = await createList({ rememberSelections: false });
+			this.oList.setModel(createODataModel());
+			await ui5Event("updateFinished", this.oList);
+		}
+	}));
+
+	QUnit.test("List should clear selection when the binding is filtered or sorted", async function(assert) {
+		this.oList.getItems()[0].setSelected(true);
+
+		this.oList.getBinding("items").filter(new Filter("SupplierName", FilterOperator.Contains, "Very Best Screens"));
+		await ui5Event("updateFinished", this.oList);
+		assert.notOk(this.oList.getItems()[0].getSelected(), "Previous selection is cleared during filter operation");
+
+		this.oList.getItems()[0].setSelected(true);
+		this.oList.getBinding("items").sort(new Sorter("ProductId", true));
+		await ui5Event("updateFinished", this.oList);
+		assert.notOk(this.oList.getItems()[0].getSelected(), "Previous selection is cleared during sort operation");
+	});
+
+	QUnit.module("rememberSelections=false and selected bound one-way", Object.assign({}, oModuleConfig, {
+		beforeEach: async function() {
+			this.oList = await createList({ rememberSelections: false, mode: "MultiSelect" }, undefined, {
+				selected: {
+					path : "Price",
+					formatter : function(value) {
+						return value > 1200;
+					}
+				}
+			});
+			this.oList.setModel(createODataModel());
+			await ui5Event("updateFinished", this.oList);
+		}
+	}));
+
+	QUnit.test("List should clear selection when the binding is filtered or sorted", async function(assert) {
+		assert.equal(this.oList.getSelectedItems().length, 1, "Only one items is selected initially");
+		const selectedContexts = this.oList.getSelectedContexts();
+		this.oList.selectAll();
+		assert.equal(this.oList.getSelectedItems().length, 16, "Now all items are selected");
+
+		this.oList.getBinding("items").sort(new Sorter("ProductId", true));
+		await ui5Event("updateFinished", this.oList);
+		assert.deepEqual(this.oList.getSelectedContexts(), selectedContexts, "Previous selection is cleared during sort operation");
+	});
+
+	QUnit.module("rememberSelections=false and and selected bound two-way", Object.assign({}, oModuleConfig, {
+		beforeEach: async function() {
+			this.oList = await createList({ rememberSelections: false, mode: "MultiSelect" }, undefined, {
+				selected: "{Selected}"
+			});
+			const oModel = createJSONModel();
+			oModel.getData().Products.forEach((Product) => {
+				Product.Selected = false;
+			});
+			this.oList.setModel(oModel);
+			await ui5Event("updateFinished", this.oList);
+		}
+	}));
+
+	QUnit.test("List should NOT clear selection when the binding is filtered or sorted", async function(assert) {
+		this.oList.getItems()[10].setSelected(true);
+		const productId = this.oList.getItems()[10].getBindingContext().getProperty("ProductId");
+		const selectedContexts = this.oList.getSelectedContexts();
+
+		this.oList.getBinding("items").sort(new Sorter("ProductId", true));
+		await ui5Event("updateFinished", this.oList);
+		assert.deepEqual(this.oList.getSelectedContexts(), selectedContexts, "Previous selection is still available");
+
+		this.oList.getBinding("items").filter(new Filter("ProductId", FilterOperator.EQ, productId));
+		await ui5Event("updateFinished", this.oList);
+		assert.ok(this.oList.getItems()[0].getSelected(), "Previous selection is still available");
 	});
 
 	QUnit.module("ItemsPool", Object.assign({}, oModuleConfig, {
