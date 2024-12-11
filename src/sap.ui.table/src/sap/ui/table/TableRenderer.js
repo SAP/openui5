@@ -60,9 +60,6 @@ sap.ui.define([
 		mFlexCellContentAlignment.Left = oTable._bRtlMode ? "flex-end" : "flex-start";
 		mFlexCellContentAlignment.Right = oTable._bRtlMode ? "flex-start" : "flex-end";
 
-		// The resource bundle is required for rendering. In case it is not already loaded, it should be loaded synchronously.
-		TableUtils.getResourceBundle();
-
 		// basic table div
 		rm.openStart("div", oTable);
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROOT");

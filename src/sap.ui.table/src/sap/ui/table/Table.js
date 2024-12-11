@@ -1216,9 +1216,12 @@ sap.ui.define([
 		const oChanges = oEvent.changes || {};
 		const bRtlChanged = oChanges.hasOwnProperty("rtl");
 		const bLangChanged = oChanges.hasOwnProperty("language");
-		this._adaptLocalization(bRtlChanged, bLangChanged).then(function() {
+
+		this._adaptLocalization(bRtlChanged, bLangChanged);
+
+		if (bRtlChanged || bLangChanged) {
 			this.invalidate();
-		}.bind(this)).catch(function() {});
+		}
 	};
 
 	/**
@@ -1231,36 +1234,22 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bRtlChanged Whether the text direction changed.
 	 * @param {boolean} bLangChanged Whether the language changed.
-	 * @returns {Promise} A promise on the adaptation. If no adaptation is required, because text direction and language did not change, the
-	 * promise will be rejected.
 	 * @private
 	 */
 	Table.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
-		if (!bRtlChanged && !bLangChanged) {
-			return Promise.reject();
-		}
-
-		let pUpdateLocalizationInfo = Promise.resolve();
-
 		if (bRtlChanged) {
 			this._bRtlMode = Localization.getRTL();
 		}
 
 		if (bLangChanged) {
-			pUpdateLocalizationInfo = TableUtils.getResourceBundle({async: true, reload: true});
+			// Clear the cell context menu.
+			TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
+
+			/**
+			 * @deprecated As of Version 1.117
+			 */
+			this._invalidateColumnMenus(); // Update the column menus.
 		}
-
-		return pUpdateLocalizationInfo.then(function() {
-			if (bLangChanged) {
-				// Clear the cell context menu.
-				TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
-
-				/**
-				 * @deprecated As of Version 1.117
-				 */
-				this._invalidateColumnMenus(); // Update the column menus.
-			}
-		}.bind(this));
 	};
 
 	/**
