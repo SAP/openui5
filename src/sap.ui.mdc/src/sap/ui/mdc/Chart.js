@@ -984,6 +984,41 @@ sap.ui.define([
 		};
 
 		/**
+		 * This iterates over all items of the chart to make sure all necessary information is available on them.
+		 * If something is missing, this method updates the item accordingly. This is the last check before the inner chart is rendered.
+		 * @returns {Promise} Resolves once check is complete
+		 *
+		 * @private
+		 */
+		Chart.prototype.checkAndUpdateItems = function() {
+			return new Promise((resolve, reject) => {
+				const aPropPromises = [];
+
+				const fnCheckAndUpdateItemProperty = function(oItem, oPropertyInfoProValue, sPropertyName, sDefaultValue) {
+					const value = oItem.getProperty(sPropertyName);
+					if (!value || value !== oPropertyInfoProValue) {
+						if (value !== oPropertyInfoProValue) {
+							Log.error("sap.ui.mdc.Chart", `the propertyInfo.${sPropertyName} for Item '${oItem.getId()}' has a different value! new value = ${ oPropertyInfoProValue || sDefaultValue }`);
+						}
+						oItem.setProperty(sPropertyName, oPropertyInfoProValue || sDefaultValue);
+					}
+				};
+
+				this.getItems().forEach((oItem) => {
+					aPropPromises.push(this._getPropertyByNameAsync(oItem.getPropertyKey()).then((oPropertyInfo) => {
+						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.label, "label");
+						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.groupable ? "groupable" : "aggregatable", "type");
+						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.role, "role", oPropertyInfo.groupable ? "category" : "axis1");
+					}));
+				});
+
+				Promise.all(aPropPromises).then(() => {
+					resolve();
+				});
+			});
+		};
+
+		/**
 		 * Creates the content for the inner chart from properties.
 		 * The properties are given via the PropertyHelper which is initialized here.
 		 * The rest of the creation of the content for the inner chart is done in the delegate.
@@ -993,7 +1028,7 @@ sap.ui.define([
 		 */
 		Chart.prototype._createContentfromPropertyInfos = function(oInnerChart) {
 			//Make sure all MDC Items have the necessary information to create a chart
-			this.getControlDelegate().checkAndUpdateMDCItems(this).then(() => {
+			this.checkAndUpdateItems().then(() => {
 				//Create content on inner chart instance
 				if (!this._oInnerChartContentPromise) {
 					this._oInnerChartContentPromise = this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this));

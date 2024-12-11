@@ -87,7 +87,7 @@ sap.ui.define([
 
 		QUnit.test("_createContentFromPropertyInfos", function (assert) {
 			const done = assert.async();
-			const oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
+			const oMockDelegate = { createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
 			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
 			this.oMDCChart._propagatePropertiesToInnerChart = function () { }; //Mock this as it requires an inner chart (which we don't want to test in this case)
@@ -699,7 +699,7 @@ sap.ui.define([
 
 		QUnit.test("innerChartBound", function (assert) {
 			const done = assert.async();
-			const oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
+			const oMockDelegate = { createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
 			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
 			// this.oMDCChart.getControlDelegate = function () { return oMockDelegate; };
 			this.oMDCChart._propagatePropertiesToInnerChart = function () { }; //Mock this as it requires an inner chart (which we don't want to test in this case)

@@ -132,7 +132,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I click on a  breadcrumb, Chart should perform a drill-up", function(Given, When, Then) {
-		When.onTheMDCChart.iClickOnTheBreadcrumbWithName("Languages", sChartId);
+		When.onTheMDCChart.iClickOnTheBreadcrumbWithName("Language", sChartId);
 
 		Then.onTheMDCChart.iShouldSeeVisibleDimensionsInOrder(["language_code"], sChartId);
 		Then.onTheMDCChart.iShouldSeeVisibleMeasuresInOrder(["averagemetricsWords"], sChartId);

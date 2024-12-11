@@ -488,45 +488,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * This iterates over all items of the chart to make sure all necessary information is available on them.
-	 * If something is missing, this method updates the item accordingly. This is the last check before the inner chart is rendered.
-	 * @param {sap.ui.mdc.Chart} oChart Chart to check the items on
-	 * @returns {Promise} Resolves once check is complete
-	 *
-	 * @experimental
-	 * @private
-	 * @ui5-restricted sap.fe, sap.ui.mdc
-	 */
-	ChartDelegate.checkAndUpdateMDCItems = function(oChart) {
-		return new Promise((resolve, reject) => {
-			const aPropPromises = [];
-
-			oChart.getItems().forEach((oItem) => {
-				const bIsComplete = oItem.getPropertyKey() && oItem.getLabel() && oItem.getType() && oItem.getRole();
-
-				if (!bIsComplete) {
-					aPropPromises.push(this._getPropertyInfosByName(oItem.getPropertyKey(), oChart).then((oPropertyInfo) => {
-						oItem.setLabel(oPropertyInfo.label);
-
-						if (oPropertyInfo.groupable) {
-							oItem.setType("groupable");
-							oItem.setRole(oItem.getRole() || oPropertyInfo.role || "category");
-						} else if (oPropertyInfo.aggregatable) {
-							oItem.setType("aggregatable");
-							oItem.setRole(oItem.getRole() || oPropertyInfo.role || "axis1");
-						}
-					}));
-				}
-			});
-
-			Promise.all(aPropPromises).then(() => {
-				resolve();
-			});
-		});
-
-	};
-
-	/**
 	 * Creates an chart Item for given property.
 	 * @param {string} sPropertyName the name of the property in the propertyInfo object.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
