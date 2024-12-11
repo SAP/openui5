@@ -626,7 +626,7 @@ sap.ui.define([
 
 			oResult = fnOnStrictHandlingFailed(
 				_Helper.extractMessages(oError).map(function (oRawMessage) {
-					return that.oModel.createUI5Message(oRawMessage);
+					return oModel.createUI5Message(oRawMessage);
 				})
 			);
 
