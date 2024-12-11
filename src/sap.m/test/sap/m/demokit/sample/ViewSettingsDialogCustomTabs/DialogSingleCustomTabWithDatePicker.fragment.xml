@@ -1,0 +1,15 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ViewSettingsDialog id="settingsDialogCustomTab"
+			confirm="handleConfirm"
+			beforeClose="handleBeforeClose">
+		<customTabs>
+			<ViewSettingsCustomTab id="app-settings" icon="sap-icon://action-settings" title="Settings" tooltip="Application Settings">
+				<content>
+					<DatePicker id="datePicker" class="vsd-dp" width="80%"/>
+				</content>
+			</ViewSettingsCustomTab>
+		</customTabs>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

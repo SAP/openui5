@@ -20,9 +20,10 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/util/Mobile",
+	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/theming/Parameters"
-], function(Localization, Library, nextUIUpdate, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, qutils, Parameters) {
+], function(Localization, Library, nextUIUpdate, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, oCore, qutils, Parameters) {
 	"use strict";
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
@@ -42,7 +43,7 @@ sap.ui.define([
 	Mobile.init();
 
 	QUnit.module("Rendering test - sap.m.NumericContent", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -53,7 +54,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Numeric Content rendered.", async function(assert) {
+	QUnit.test("Numeric Content rendered.", async function (assert) {
 		this.oNumericContent.setValue("12");
 		await nextUIUpdate();
 		fnAssertNumericContentHasRendered(assert);
@@ -87,7 +88,7 @@ sap.ui.define([
 		assert.ok(oSpy.notCalled, "The firePress function has been called only once when the enter key is press");
 	});
 
-	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", async function(assert) {
+	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", async function (assert) {
 		var value = '12.2';
 		var scale = '%';
 
@@ -106,7 +107,7 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
 	});
 
-	QUnit.test("Numeric Content - Render Placeholder loading animation", async function(assert) {
+	QUnit.test("Numeric Content - Render Placeholder loading animation", async function (assert) {
 		//Switch to Loading State
 		this.oNumericContent.setState(LoadState.Loading);
 		await nextUIUpdate();
@@ -118,7 +119,7 @@ sap.ui.define([
 		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
 	});
 
-	QUnit.test("Numeric Content - State test", async function(assert) {
+	QUnit.test("Numeric Content - State test", async function (assert) {
 		this.oNumericContent.setValue(200);
 
 		//Switch to Loading State
@@ -255,7 +256,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.GenericTile");
 
-	QUnit.test("Numeric Content inside sap.m.GenericTile rendered.", async function(assert) {
+	QUnit.test("Numeric Content inside sap.m.GenericTile rendered.", async function (assert) {
 		// Arrange
 		this.oNumericContent = fnCreateExampleNumericContent();
 		this.oGenericTile = new GenericTile("generic-tile", {
@@ -280,7 +281,7 @@ sap.ui.define([
 		this.oNumericContent = null;
 	});
 
-	QUnit.test("Resize handler is registered in init phase.", async function(assert) {
+	QUnit.test("Resize handler is registered in init phase.", async function (assert) {
 		// Arrange
 		var oSpyRegister = sinon.spy(ResizeHandler, "register");
 		var oSpyDeregister = sinon.spy(ResizeHandler, "deregister");
@@ -306,7 +307,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Functional tests - sap.m.NumericContent", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -317,7 +318,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test formatter value processing", async function(assert) {
+	QUnit.test("Test formatter value processing", async function (assert) {
 		this.oNumericContent.setFormatterValue(false);
 		this.oNumericContent.setValue("68Mio.");
 		await nextUIUpdate();
@@ -336,7 +337,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.getDomRef("scale"), null, "Scale cleaned successfully with formatter switched on");
 	});
 
-	QUnit.test("Test processing of formatter value with RTL and LTR mark", async function(assert) {
+	QUnit.test("Test processing of formatter value with RTL and LTR mark", async function (assert) {
 		this.oNumericContent.setFormatterValue(true);
 		var sFormattedValue = String.fromCharCode(8206) + String.fromCharCode(8207) + "58,7 Mio";
 		this.oNumericContent.setValue(sFormattedValue);
@@ -346,7 +347,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
 	});
 
-	QUnit.test("Test nullify parameter", async function(assert) {
+	QUnit.test("Test nullify parameter", async function (assert) {
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value was nullified successfully");
 		this.oNumericContent.setNullifyValue(false);
 		await nextUIUpdate();
@@ -375,7 +376,7 @@ sap.ui.define([
 		assert.notDeepEqual(sTooltip, "Test, test", "Tooltip is not a string");
 	});
 
-	QUnit.test("Tests tooltip to check if it includes value color text", async function(assert) {
+	QUnit.test("Tests tooltip to check if it includes value color text", async function (assert) {
 		//Arrange
 		var sTooltip = this.oNumericContent.getTooltip_AsString();
 		//Act
@@ -478,7 +479,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Property withoutMargin", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oNumericContent = new NumericContent({
 				scale: "Mrd",
 				indicator: DeviationIndicator.Up,
@@ -496,19 +497,19 @@ sap.ui.define([
 		assert.ok(this.oNumericContent.getWithMargin(), "Default value shall be 'false'.");
 	});
 
-	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", async function(assert) {
+	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", async function (assert) {
 		assert.ok(!this.oNumericContent.$().hasClass("WithoutMargin"));
 		this.oNumericContent.setWithMargin(false);
 		await nextUIUpdate();
 		assert.ok(this.oNumericContent.$().hasClass("WithoutMargin"), "'withoutMargin' CSS class expected.");
 		assert.ok(jQuery(this.oNumericContent.$().children()[0]).hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the inner div container.");
 		assert.ok(this.oNumericContent.$("value").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the parent value container.");
-		assert.strictEqual(this.oNumericContent.$("value").css("justify-content"), "center", "'center' CSS style expected within the parent value container.");
+		assert.strictEqual(this.oNumericContent.$("value").css("justify-content"), "flex-start", "'flex-start' CSS style expected within the parent value container.");
 		assert.ok(this.oNumericContent.$().find(".sapMNCIndScale").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the indicator and scale container.");
 	});
 
 	QUnit.module("Events test", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -562,7 +563,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 	});
 	QUnit.module("Negative values", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				indicator: DeviationIndicator.Up,
 				value: "−859,65 t.",
@@ -585,7 +586,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Adaptive font size", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				indicator: DeviationIndicator.Up,
 				value: "12345678",
@@ -620,7 +621,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - small", async function(assert) {
+	QUnit.test("Test the adaptive font size change based on language - small", async function (assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "de";
@@ -645,7 +646,7 @@ sap.ui.define([
 		Localization.setLanguage(sDefaultLanguage);
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - medium", async function(assert) {
+	QUnit.test("Test the adaptive font size change based on language - medium", async function (assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "es";
@@ -664,7 +665,7 @@ sap.ui.define([
 		Localization.setLanguage(sDefaultLanguage);
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - large", async function(assert) {
+	QUnit.test("Test the adaptive font size change based on language - large", async function (assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "bg";
@@ -695,8 +696,32 @@ sap.ui.define([
 		this.oNumericContent.setAdaptiveFontSize(true);
 	});
 
+	QUnit.module("Create numeric Content with Image", {
+		beforeEach: async function () {
+			this.oNumericContent = new NumericContent("numeric-cnt", {
+				size: Size.L, // deprecated since 1.38
+				state: LoadState.Loaded,
+				scale: "M",
+				indicator: DeviationIndicator.Up,
+				nullifyValue: true,
+				formatterValue: false,
+				valueColor: ValueColor.Good,
+				icon: "test-resources/sap/m/demokit/sample/NumericContentIcon/images/grass.jpg"
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oNumericContent.destroy();
+			this.oNumericContent = null;
+		}
+	});
+
+	QUnit.test("Rendering", function(assert) {
+		assert.ok(document.getElementById("numeric-cnt-icon-image"), "Image is rendered");
+	});
+
 	QUnit.module("Truncate value to", {
-		beforeEach: async function() {
+		beforeEach: async function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				value: "12345678123456781234567812345678",
 				animateTextChange: false

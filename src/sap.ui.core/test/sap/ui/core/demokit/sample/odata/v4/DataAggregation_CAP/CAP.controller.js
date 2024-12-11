@@ -78,14 +78,19 @@ sap.ui.define([
 				if (sThreshold) {
 					oTable.setThreshold(parseInt(sThreshold));
 				}
-				if (sGrandTotalAtBottomOnly) {
+				if (sGrandTotalAtBottomOnly === "off") {
+					oTable.getRowMode().setFixedTopRowCount(0);
+					this._oAggregation.aggregate.FlightPrice.grandTotal = false;
+				} else if (sGrandTotalAtBottomOnly) {
 					if (sGrandTotalAtBottomOnly === "true") {
 						oTable.getRowMode().setFixedTopRowCount(0);
 					}
 					oTable.getRowMode().setFixedBottomRowCount(1);
 					this._oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
 				}
-				if (sSubtotalsAtBottomOnly) {
+				if (sSubtotalsAtBottomOnly === "off") {
+					this._oAggregation.aggregate.FlightPrice.subtotals = false;
+				} else if (sSubtotalsAtBottomOnly) {
 					this._oAggregation.subtotalsAtBottomOnly = sSubtotalsAtBottomOnly === "true";
 				}
 				oRowsBinding.setAggregation(this._oAggregation);

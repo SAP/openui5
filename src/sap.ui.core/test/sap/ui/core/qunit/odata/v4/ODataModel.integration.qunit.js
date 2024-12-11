@@ -23154,7 +23154,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Multiple filters for units (or currencies) are copied into groupby() in order to
 	// keep them close to their corresponding filters on aggregates of amounts. There is data
-	// aggregation on leaf level!
+	// aggregation on leaf level and visual grouping w/o totals!
 	// JIRA: CPOUI5ODATAV4-2796
 	QUnit.test("Data Aggregation: CPOUI5ODATAV4-2796", async function (assert) {
 		await this.createView(assert, "", this.createSalesOrdersModel());
@@ -23173,13 +23173,10 @@ sap.ui.define([
 			new Filter("WeightUnit", FilterOperator.EQ, "KG")
 		], {
 			$$aggregation : {
-				aggregate : {
+				aggregate : { // Note: NO grandTotal or subtotals!
 					Depth : {unit : "DimUnit"},
 					Height : {unit : "DimUnit"},
-					Price : {
-						grandTotal : true, //TODO should not be needed, right?
-						unit : "CurrencyCode"
-					},
+					Price : {unit : "CurrencyCode"},
 					WeightMeasure : {unit : "WeightUnit"},
 					Width : {unit : "DimUnit"}
 				},
@@ -23199,14 +23196,10 @@ sap.ui.define([
 						+ " and $these/aggregate(Width) gt 333 and DimUnit eq 'CM'"
 						+ " and $these/aggregate(Price) gt 444 and CurrencyCode eq 'EUR'"
 						+ " and $these/aggregate(WeightMeasure) gt 555 and WeightUnit eq 'KG'"
-				+ "))/concat(aggregate(Price,CurrencyCode)"
-					+ ",groupby((Category))/concat(aggregate($count as UI5__count),top(99)))", {
-				value : [{
-					CurrencyCode : "EUR",
-					Price : null
-				}, { // actual results do not matter here, simulate empty response
-					UI5__count : "0", "UI5__count@odata.type" : "#Decimal"
-				}]
+				+ "))/groupby((Category))&$count=true&$skip=0&$top=100", {
+				// actual results do not matter here, simulate empty response
+				"@odata.count" : "0",
+				value : []
 			});
 
 		await Promise.all([
@@ -25113,7 +25106,7 @@ sap.ui.define([
 	parameters : {\
 		$$aggregation : {\
 			aggregate : {\
-				SalesAmount : {subtotals : true}\
+				SalesAmount : {}\
 			},\
 			groupLevels : [\'Country\', \'Region\']\
 		}\
@@ -25128,8 +25121,8 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=4", {
+		this.expectRequest("BusinessPartners?$apply=groupby((Country))&$count=true&$skip=0"
+					+ "&$top=4", {
 				"@odata.count" : "2",
 				value : [
 					{Country : "US", SalesAmount : "100"},
@@ -25138,7 +25131,7 @@ sap.ui.define([
 			})
 			.expectChange("groupLevelCount", [undefined, undefined])
 			.expectChange("isExpanded", [false, false])
-			.expectChange("isTotal", [true, true])
+			.expectChange("isTotal", [false, false])
 			.expectChange("level", [1, 1])
 			.expectChange("country", ["US", "UK"])
 			.expectChange("region", [null, null])
@@ -26270,8 +26263,9 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=filter(AmountPerSale gt 99)/concat("
-				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency),groupby((Region)"
-				+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
+				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency)"
+				+ ",groupby((Region)"
+					+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
 				+ "/orderby(SalesAmountSum asc)/concat(aggregate($count as UI5__count),top(4)))", {
 				value : [{
 					Currency : "EUR",
@@ -76114,6 +76108,12 @@ sap.ui.define([
 	// See that a simulated busy indicator (by using an expression binding) must be in busy state
 	// when the separate data is missing, and immediately disables if the data is received.
 	// JIRA: CPOUI5ODATAV4-2778
+	//
+	// Context#requestObject for the complete context's data is only resolved as soon as all pending
+	// separate property requests are completed. When calling Context#getObject while waiting for
+	// these separate requests, the returned object is incomplete but contains the already received
+	// data.
+	// JIRA: CPOUI5ODATAV4-2817
 	[false, true].forEach(function (bAutoExpandSelect) {
 		QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 			const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -76243,6 +76243,17 @@ sap.ui.define([
 			const oFriendAPromise = SyncPromise.resolve(oArtistA.requestObject("BestFriend"));
 			// code under test (JIRA: CPOUI5ODATAV4-2778)
 			const oFriendBPromise = SyncPromise.resolve(oArtistB.requestProperty("BestFriend/Name"));
+			// code under test (JIRA: CPOUI5ODATAV4-2817)
+			const oArtistAPromise = SyncPromise.resolve(oArtistA.requestObject());
+
+			assert.deepEqual(oArtistA.getObject(), {
+				ArtistID : "10",
+				// BestFriend missing
+				BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+				IsActiveEntity : true,
+				Name : "Artist A"
+				// SiblingEntity missing
+			});
 
 			this.expectChange("friend", ["Friend A", "Friend B"])
 				.expectChange("friendBusy__AS_COMPOSITE", [false, false]);
@@ -76257,6 +76268,15 @@ sap.ui.define([
 				Name : "Friend A"
 			});
 			assert.strictEqual(oFriendBPromise.getResult(), "Friend B");
+			assert.strictEqual(oArtistAPromise.isPending(), true, "still waiting for SiblingEntity");
+			assert.deepEqual(oArtistA.getObject(), {
+				ArtistID : "10",
+				BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+				BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+				IsActiveEntity : true,
+				Name : "Artist A"
+				// SiblingEntity missing
+			});
 			checkEvents([{property : "BestFriend", start : 0, length : 2}]);
 
 			this.expectRequest({
@@ -76282,6 +76302,14 @@ sap.ui.define([
 			await this.waitForChanges(assert, "$$separate response: SiblingEntity");
 
 			assert.deepEqual(oSiblingBPromise.getResult(), ["Sibling B", "~defaultChannel~"]);
+			assert.deepEqual(oArtistAPromise.getResult(), {
+				ArtistID : "10",
+				BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+				BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+				IsActiveEntity : true,
+				Name : "Artist A",
+				SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+			}, "all separate properties are available");
 			checkEvents([{property : "SiblingEntity", start : 0, length : 2}]);
 
 			let fnResolveMain;

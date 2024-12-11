@@ -111,8 +111,10 @@
 	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
 		&lt;ul>
 			&lt;li> &lt;code>filter&lt;/code> - Comma separated list of UI5-like filter conditions,
-			for example &lt;code>status EQ B,Distance BT 1000 5000&lt;/code>
-			&lt;li> &lt;code>grandTotalAtBottomOnly&lt;/code> - Optional boolean (empty, false, or true)
+				for example
+				&lt;code>status EQ B,Distance BT 1000 5000,FlightPrice GT 12345&lt;/code>
+			&lt;li> &lt;code>grandTotalAtBottomOnly&lt;/code> - Optional boolean (empty, false, or
+				true) or &lt;code>off&lt;/code> to turn off grand totals
 			&lt;li> &lt;code>$orderby&lt;/code> - OData system query option for sorting,
-			for example &lt;code>FlightPrice asc&lt;/code>"/>
+				for example &lt;code>FlightPrice asc&lt;/code>"/>
 </mvc:View>

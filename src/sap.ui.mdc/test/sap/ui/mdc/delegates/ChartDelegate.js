@@ -177,11 +177,6 @@ sap.ui.define([
     };
 
 
-    ChartDelegate.checkAndUpdateMDCItems = function(){
-        return Promise.resolve();
-    };
-
-
     ChartDelegate._getModel = function (oTable) {
         var oMetadataInfo = oTable.getDelegate().payload;
         return oTable.getModel(oMetadataInfo.model);
