@@ -43,5 +43,15 @@
         "text": " sap.ui.core.format.NumberFormat#format: Do not apply currency customizing for decimals on currency formats, if format option \"style: 'long'/'short'\" is set"
       }
     ]
+  },
+  "1.130.2": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "0e4ef8aaabcd2e43f1018133a4b439eae87ab853",
+        "type": "FIX",
+        "text": " FESR: semanticStepName not set for interaction"
+      }
+    ]
   }
 }

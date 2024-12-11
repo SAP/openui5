@@ -165,5 +165,15 @@
         "text": " sap.m.PlanningCalendarLegend: adjust accessibility semantics"
       }
     ]
+  },
+  "1.130.2": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "e41030f716a7ceefa0e939417cae6512c2d81888",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon ignored from screen readers"
+      }
+    ]
   }
 }

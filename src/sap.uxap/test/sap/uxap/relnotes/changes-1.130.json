@@ -13,5 +13,15 @@
         "text": " sap.uxap.ObjectPageLayout: Timing issue fixed"
       }
     ]
+  },
+  "1.130.2": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "4493f45ca3bc6e5bb9d3c101a4dcbe2d1e2db6b4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Incorrect scrolling prevented"
+      }
+    ]
   }
 }
