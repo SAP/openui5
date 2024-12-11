@@ -1928,15 +1928,15 @@ sap.ui.define([
 	noThese : [0, 2],
 	result : [and(f("unit"), f("a1"), f("currency")), and(f("unit"), f("currency"))]
 }].forEach(function (oFixture, i) {
-	[false, true].forEach((bHasSubtotals) => {
+	[false, true].forEach((bHasGroupLevels) => {
 		[false, true].forEach((bHasGrandTotal) => {
 			[false, true].forEach((bOldSchool) => {
 				const sTitle = `splitFilter: #${i}, bHasGrandTotal=${bHasGrandTotal}
-					, bHasSubtotals=${bHasSubtotals}, "grandTotal like 1.84"=${bOldSchool}`;
+					, bHasGroupLevels=${bHasGroupLevels}, "grandTotal like 1.84"=${bOldSchool}`;
 
-				if (bHasSubtotals && bHasGrandTotal) {
-					return;
-				}
+			if (bOldSchool && !bHasGrandTotal) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
 		function toString(oObject, bVarArgs) {
@@ -1957,11 +1957,12 @@ sap.ui.define([
 		const oAggregation = {
 			aggregate : {
 				a1 : {},
-				a2 : {subtotals : bHasSubtotals, unit : "unit"},
+				a2 : {unit : "unit"},
 				a3 : {unit : "currency"}
 			},
 			"grandTotal like 1.84" : bOldSchool,
-			group : {} // Note: added by _AggregationHelper.buildApply before
+			group : {}, // Note: added by _AggregationHelper.buildApply before
+			groupLevels : bHasGroupLevels ? ["baz"] : [] // dto.
 		};
 		const oEntityType = {
 			$Key : ["bar", "foo"]
@@ -1970,7 +1971,7 @@ sap.ui.define([
 			oAggregation.group.bar = {};
 		}
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
-			.exactly(bHasSubtotals || bOldSchool ? 0 : 1)
+			.exactly(bHasGroupLevels || bOldSchool ? 0 : 1)
 			.withExactArgs(sinon.match.same(oAggregation.aggregate))
 			.returns(bHasGrandTotal);
 
@@ -1979,7 +1980,7 @@ sap.ui.define([
 
 		const aFiltersNoThese = oFixture.noThese?.map((iIndex) => oFixture.filter.aFilters[iIndex])
 			 || [];
-		const aExpected = (bHasGrandTotal || bHasSubtotals) && !bOldSchool
+		const aExpected = bHasGroupLevels || bHasGrandTotal && !bOldSchool
 			? [undefined, oFixture.result[1], oFixture.result[0], aFiltersNoThese]
 			: oFixture.result;
 		assert.deepEqual(toString(aActual), toString(aExpected)); // readable diff
