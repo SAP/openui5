@@ -2480,29 +2480,30 @@ sap.ui.define([
 	 *
 	 * @param {string} sUrl
 	 *   The (relative) $metadata URL, for example "../ValueListService/$metadata"
-	 * @param {string} [sGroupId]
-	 *   The group ID, for example "$direct"
+	 * @param {boolean} [bCopyAnnotations]
+	 *   Whether to copy annotations to the shared model, which is a value list model - not a code
+	 *   list model!
 	 * @param {boolean} [bAutoExpandSelect]
 	 *   Whether the model is to be created with autoExpandSelect
-	 * @param {boolean} [bCopyAnnotations]
-	 *   Whether to copy annotations to the shared model
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
 	 *   The shared model
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.getOrCreateSharedModel = function (sUrl, sGroupId, bAutoExpandSelect,
-			bCopyAnnotations) {
-		var sMapKey,
-			oSharedModel;
-
+	ODataMetaModel.prototype.getOrCreateSharedModel = function (sUrl, bCopyAnnotations,
+			bAutoExpandSelect) {
 		sUrl = this.getAbsoluteServiceUrl(sUrl);
-		sMapKey = !!bAutoExpandSelect + sUrl; // no separator needed as sUrl.startsWith("/")
-		oSharedModel = this.mSharedModelByUrl[sMapKey];
+		const sMapKey = !!bAutoExpandSelect + sUrl; // no separator needed as sUrl.startsWith("/")
+		let mSharedModelByUrl = this.mSharedModelByUrl;
+		if (!bCopyAnnotations) {
+			// #requestCodeList must not fail, but no need to share if already destroyed
+			mSharedModelByUrl ??= {};
+		}
+		let oSharedModel = mSharedModelByUrl[sMapKey];
 		if (!oSharedModel) {
 			oSharedModel = new this.oModel.constructor({
 				autoExpandSelect : bAutoExpandSelect,
-				groupId : sGroupId,
+				groupId : bCopyAnnotations ? undefined : "$direct",
 				httpHeaders : this.oModel.getHttpHeaders(),
 				metadataUrlParams : this.sLanguage && {"sap-language" : this.sLanguage},
 				operationMode : OperationMode.Server,
@@ -2515,7 +2516,7 @@ sap.ui.define([
 			oSharedModel.setRetryAfterHandler((oError) => {
 				return this.oModel.getOrCreateRetryAfterPromise(oError);
 			});
-			this.mSharedModelByUrl[sMapKey] = oSharedModel;
+			mSharedModelByUrl[sMapKey] = oSharedModel;
 		}
 		return oSharedModel;
 	};
@@ -2737,7 +2738,8 @@ sap.ui.define([
 					return oPromise;
 				}
 
-				oCodeListModel = that.getOrCreateSharedModel(sUrl, "$direct");
+				const bDestroyAlreadyCalled = !that.mSharedModelByUrl;
+				oCodeListModel = that.getOrCreateSharedModel(sUrl);
 				oCodeListMetaModel = oCodeListModel.getMetaModel();
 				sTypePath = "/" + oCodeList.CollectionPath + "/";
 				oPromise = oCodeListMetaModel.requestObject(sTypePath).then(function (oType) {
@@ -2840,6 +2842,9 @@ sap.ui.define([
 							return aContexts.reduce(addCustomizing, {});
 						}).finally(function () {
 							oCodeListBinding.destroy();
+							if (bDestroyAlreadyCalled) {
+								oCodeListModel.destroy();
+							}
 						});
 				});
 				mCodeListUrl2Promise[sCacheKey] = oPromise;
@@ -3397,7 +3402,7 @@ sap.ui.define([
 			function addMapping(mValueListMapping, sQualifier, sMappingUrl, oModel) {
 				if ("CollectionRoot" in mValueListMapping) {
 					oModel = that.getOrCreateSharedModel(mValueListMapping.CollectionRoot,
-						undefined, bAutoExpandSelect, /*bCopyAnnotations*/true);
+						/*bCopyAnnotations*/true, bAutoExpandSelect);
 					if (oValueListInfo[sQualifier]
 							&& oValueListInfo[sQualifier].$model === oModel) {
 						// same model -> allow overriding the qualifier
@@ -3431,8 +3436,8 @@ sap.ui.define([
 
 				// fetch mappings for each entry and wait for all
 				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
-					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl, undefined,
-							bAutoExpandSelect, /*bCopyAnnotations*/true);
+					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl,
+							/*bCopyAnnotations*/true, bAutoExpandSelect);
 
 					// fetch the mappings for the given mapping URL
 					return that.fetchValueListMappings(oValueListModel,

@@ -126,6 +126,10 @@ sap.ui.define([
 				return this._oConfigUtil;
 			},
 
+			getConfig : function () {
+				return this.getManifestEntry("/sap.ui5/config") || {};
+			},
+
 
 			// MODELS
 			loadVersionInfo: function () {

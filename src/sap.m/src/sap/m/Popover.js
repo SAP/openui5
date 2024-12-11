@@ -515,7 +515,7 @@ sap.ui.define([
 				}
 
 				// if the openBy dom reference is already detached from the document, try to get the dom reference with the same id from dom tree again
-				if (!containsOrEquals(document.documentElement, oPosition.of) && oPosition.of.id) {
+				if (!containsOrEquals(document.documentElement, oPosition.of) && oPosition.of.id && !(oPosition.of.getRootNode() instanceof ShadowRoot)) {
 					oOf = jQuery(document.getElementById(oPosition.of.id));
 					if (oOf) {
 						oPosition.of = oOf;

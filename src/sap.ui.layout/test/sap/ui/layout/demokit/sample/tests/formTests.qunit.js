@@ -1,7 +1,5 @@
 /* global QUnit */
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
@@ -12,7 +10,8 @@ sap.ui.require([
 
 	await Core.ready();
 
-	var sSampleName = document.querySelector("[data-sample-component]").dataset.sampleComponent;
+	var urlParams = new URLSearchParams(window.location.search);
+	var sSampleName = urlParams.get("component");
 
 	Opa5.extendConfig({
 		viewNamespace: sSampleName + ".",
@@ -77,5 +76,4 @@ sap.ui.require([
 		Then.theValuesShouldNotBePersisted().
 			and.iTeardownMyUIComponent();
 	});
-	QUnit.start();
 });

@@ -468,9 +468,10 @@ sap.ui.define([
 		const oDialog = this.getDialog();
 
 		// check for opening too as focus move sometimes to valuehelp before handleOpened finished
-		if (oTypeahead && (oTypeahead.isOpen() || oTypeahead.isOpening())) {
+		// consider closing state as toggleOpen does not wait for the previous container to be fully closed when switching from an open typeahead to dialog or vice versa
+		if ((oTypeahead?.isOpen() || oTypeahead?.isOpening()) && !oTypeahead?.isClosing()) {
 			return oTypeahead.getDomRef();
-		} else if (oDialog && (oDialog.isOpen() || oDialog.isOpening())) {
+		} else if ((oDialog?.isOpen() || oDialog?.isOpening()) && !oDialog?.isClosing()) {
 			return oDialog.getDomRef();
 		}
 
@@ -669,7 +670,9 @@ sap.ui.define([
 	ValueHelp.prototype.isOpen = function() {
 		const oTypeahead = this.getTypeahead();
 		const oDialog = this.getDialog();
-		return !!((oTypeahead && (oTypeahead.isOpen() || oTypeahead.isOpening())) || (oDialog && (oDialog.isOpen() || oDialog.isOpening())));
+		const bTypeaheadOpen = oTypeahead?.isOpen() || oTypeahead?.isOpening();
+		const bDialogOpen = oDialog?.isOpen() || oDialog?.isOpening();
+		return bTypeaheadOpen || bDialogOpen;
 	};
 
 	/**
@@ -1132,7 +1135,10 @@ sap.ui.define([
 	function _handleClosed(oEvent) {
 		this._removePromise("delegateContent");
 		this._removePromise("navigate");
-		this.fireClosed();
+		// suppress close event if any container remains open (might happen when opening the dialog while typeahead is shown -> see #toggleOpen)
+		if (!this.isOpen()) {
+			this.fireClosed();
+		}
 	}
 
 	function _observeChanges(oChanges) {

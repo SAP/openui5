@@ -284,6 +284,7 @@ sap.ui.define([
 						resizable: true,
 						draggable: true,
 						afterOpen: this.handleOpened.bind(this),
+						beforeClose: this.handleClose.bind(this),
 						afterClose: this.handleClosed.bind(this),
 						buttons: [this.oButtonOK, this.oButtonCancel]
 					});

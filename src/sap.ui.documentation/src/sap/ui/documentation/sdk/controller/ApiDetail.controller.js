@@ -52,7 +52,7 @@ sap.ui.define([
 					oComponent,
 					oController;
 
-				oArguments = this.getRouter()._decodeSpecialRouteArguments(oEvent);
+				oArguments = this.getRouter()._decodeSpecialRouteArguments(oEvent.getParameter("arguments"));
 				oComponent = this.getOwnerComponent();
 
 				if (this._sTopicid === oArguments.id) {

@@ -260,6 +260,7 @@ sap.ui.define([
 
 		sinon.stub(oContent, "onShow").returns({itemId: "MyItem", items: 3});
 		sinon.spy(oContent, "onHide");
+		sinon.spy(oPopover, "handleClose");
 		sinon.spy(oPopover, "_openContainerByTarget");
 		oContent.getContentHeight = function () {
 			return 100;
@@ -288,6 +289,9 @@ sap.ui.define([
 					assert.equal(oPopover.getUIAreaForContent(), oContainer.getUIArea(), "getUIAreaForContent returns UiArea of sap.m.Popover");
 
 					oPopover.close();
+					assert.ok(oPopover.handleClose.calledOnce, "handleClose called");
+					oPopover.handleClose.restore();
+
 					setTimeout(function() { // wait until closed
 						assert.equal(iClosed, 1, "Closed event fired once");
 						assert.notOk(oContainer.isOpen(), "sap.m.Popover is not open");

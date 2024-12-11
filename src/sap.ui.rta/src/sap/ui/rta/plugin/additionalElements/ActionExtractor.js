@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/restricted/_difference",
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
 	"sap/ui/rta/Utils"
 ], function(
-	difference,
 	merge,
 	Log,
 	JsControlTreeModifier,
@@ -38,27 +36,25 @@ sap.ui.define([
 	 */
 	const ActionExtractor = {};
 
-	function getAddViaDelegateActionData(mAction, oDesignTimeMetadata, oPlugin) {
-		return oPlugin.hasChangeHandler(mAction.changeType, mAction.element)
-		.then(function(bHasChangeHandler) {
-			if (bHasChangeHandler) {
-				return {
-					aggregationName: mAction.aggregation,
-					addPropertyActionData: {
-						designTimeMetadata: oDesignTimeMetadata,
-						action: mAction,
-						delegateInfo: {
-							payload: mAction.delegateInfo.payload || {},
-							delegate: mAction.delegateInfo.instance,
-							modelType: mAction.delegateInfo.modelType,
-							requiredLibraries: mAction.delegateInfo.requiredLibraries,
-							delegateType: mAction.delegateInfo.delegateType
-						}
+	async function getAddViaDelegateActionData(mAction, oDesignTimeMetadata, oPlugin) {
+		const bHasChangeHandler = await oPlugin.hasChangeHandler(mAction.changeType, mAction.element);
+		if (bHasChangeHandler) {
+			return {
+				aggregationName: mAction.aggregation,
+				addPropertyActionData: {
+					designTimeMetadata: oDesignTimeMetadata,
+					action: mAction,
+					delegateInfo: {
+						payload: mAction.delegateInfo.payload || {},
+						delegate: mAction.delegateInfo.instance,
+						modelType: mAction.delegateInfo.modelType,
+						requiredLibraries: mAction.delegateInfo.requiredLibraries,
+						delegateType: mAction.delegateInfo.delegateType
 					}
-				};
-			}
-			return undefined;
-		});
+				}
+			};
+		}
+		return undefined;
 	}
 
 	function getInvisibleElements(oParentOverlay, sAggregationName, oPlugin) {
@@ -121,7 +117,7 @@ sap.ui.define([
 	}
 
 	// Return all elements that can be made visible in each aggregation (including elements from other aggregations)
-	function getRevealActionFromAggregations(aParents, _mReveal, sAggregationName, aAggregationNames, oPlugin) {
+	async function getRevealActionFromAggregations(aParents, _mReveal, sAggregationName, aAggregationNames, oPlugin) {
 		const aInvisibleElements = aParents.reduce(function(aInvisibleChildren, oParentOverlay) {
 			let aInvisibleChildrenPerAggregation = [];
 			aAggregationNames.forEach(function(sAggregation) {
@@ -131,24 +127,20 @@ sap.ui.define([
 			return oParentOverlay ? aInvisibleChildren.concat(aInvisibleChildrenPerAggregation) : aInvisibleChildren;
 		}.bind(this), []);
 
-		const oInitialRevealObject = {
+		let oRevealObject = {
 			elements: [],
 			controlTypeNames: []
 		};
-		const mRevealPromise = aInvisibleElements.reduce(function(oPreviousPromise, mInvisibleElement) {
-			return oPreviousPromise.then(function(mReveal) {
-				return checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sAggregationName);
-			});
-		}, Promise.resolve(oInitialRevealObject));
+		for (const mInvisibleElement of aInvisibleElements) {
+			oRevealObject = await checkAndEnrichReveal(oRevealObject, mInvisibleElement, oPlugin, sAggregationName);
+		}
 
-		return mRevealPromise.then(function(mReveal) {
-			if (mReveal.elements.length > 0) {
-				_mReveal[sAggregationName] = {
-					reveal: mReveal
-				};
-			}
-			return _mReveal;
-		});
+		if (oRevealObject.elements.length > 0) {
+			_mReveal[sAggregationName] = {
+				reveal: oRevealObject
+			};
+		}
+		return _mReveal;
 	}
 
 	function filterValidAddPropertyActions(aActions, mParents, oPlugin) {
@@ -159,21 +151,18 @@ sap.ui.define([
 		});
 	}
 
-	function loadRequiredLibraries(mRequiredLibraries) {
+	async function loadRequiredLibraries(mRequiredLibraries) {
 		const aRequiredLibraries = Object.keys(mRequiredLibraries || {});
-		const aRequireLibrariesPromise = [];
-		aRequiredLibraries.forEach((sLibrary) => {
-			aRequireLibrariesPromise.push(
-				Lib.load({name: sLibrary})
-			);
-		});
-		return Promise.all(aRequireLibrariesPromise)
-		.then(() => true)
-		.catch((vError) => {
+		try {
+			for (const sLibrary of aRequiredLibraries) {
+				await Lib.load({name: sLibrary});
+			}
+			return true;
+		} catch (vError) {
 			Log.error("Required library not available: ", vError);
 			// Ignore the error here as the write delegate might not be required
 			return false;
-		});
+		}
 	}
 
 	function filterValidDelegateForAction(aActions, mParents) {
@@ -201,68 +190,53 @@ sap.ui.define([
 		return oFilterPromise;
 	}
 
-	function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sTargetAggregation) {
-		const oInvisibleElement = mInvisibleElement.element;
-		let oDesignTimeMetadata;
-		let mRevealAction;
-		let bRevealEnabled = false;
-		let oHasChangeHandlerPromise = Promise.resolve(false);
-		const sSourceAggregation = mInvisibleElement.sourceAggregation;
-
-		const oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
+	async function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sTargetAggregation) {
+		const oOverlay = OverlayRegistry.getOverlay(mInvisibleElement.element);
 		if (oOverlay) {
-			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+			const oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 
-			mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
+			const mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", mInvisibleElement.element);
 			if (mRevealAction && mRevealAction.changeType) {
-				let oRevealSelector = oInvisibleElement;
+				let oRevealSelector = mInvisibleElement.element;
 				if (mRevealAction.changeOnRelevantContainer) {
 					oRevealSelector = oOverlay.getRelevantContainer();
 				}
 
-				oHasChangeHandlerPromise = oPlugin.hasChangeHandler(mRevealAction.changeType, oRevealSelector)
-				.then(function(bHasChangeHandler) {
-					// Element can be made invalid while the check is running (e.g. destroyed during undo of split)
-					if (ElementUtil.isElementValid(oInvisibleElement)) {
-						const mParents = AdditionalElementsUtils.getParents(true, oOverlay, oPlugin);
-						if (bHasChangeHandler) {
-							if (mRevealAction.changeOnRelevantContainer) {
-								// we have the child overlay, so we need the parents
-								bRevealEnabled = oPlugin.hasStableId(mParents.relevantContainerOverlay)
-									&& oPlugin.hasStableId(mParents.parentOverlay);
-							} else {
-								bRevealEnabled = true;
-							}
-							mRevealAction.getAggregationName ||= defaultGetAggregationName;
+				// Element can be made invalid while the check is running (e.g. destroyed during undo of split)
+				if (ElementUtil.isElementValid(mInvisibleElement.element)) {
+					const mParents = AdditionalElementsUtils.getParents(true, oOverlay, oPlugin);
+					const bHasChangeHandler = await oPlugin.hasChangeHandler(mRevealAction.changeType, oRevealSelector);
+					if (bHasChangeHandler) {
+						let bRevealEnabled = mRevealAction.changeOnRelevantContainer ?
+							// we have the child overlay, so we need the parents
+							oPlugin.hasStableId(mParents.relevantContainerOverlay) && oPlugin.hasStableId(mParents.parentOverlay)
+							: true;
+						mRevealAction.getAggregationName ||= defaultGetAggregationName;
 
-							// Check if the invisible element can be moved to the target aggregation
-							if (bRevealEnabled && (sSourceAggregation !== sTargetAggregation)) {
-								const oAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(sTargetAggregation);
-								return Utils.checkTargetZone(oAggregationOverlay, oOverlay, oPlugin);
+						// Check if the invisible element can be moved to the target aggregation
+						if (bRevealEnabled && (mInvisibleElement.sourceAggregation !== sTargetAggregation)) {
+							const oAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(sTargetAggregation);
+							bRevealEnabled = await Utils.checkTargetZone(oAggregationOverlay, oOverlay, oPlugin);
+						}
+
+						if (bRevealEnabled) {
+							mReveal.elements.push({
+								element: mInvisibleElement.element,
+								designTimeMetadata: oDesignTimeMetadata,
+								action: mRevealAction,
+								sourceAggregation: mInvisibleElement.sourceAggregation,
+								targetAggregation: sTargetAggregation
+							});
+							const mName = oDesignTimeMetadata.getName(mInvisibleElement.element);
+							if (mName) {
+								mReveal.controlTypeNames.push(mName);
 							}
 						}
 					}
-					return bRevealEnabled;
-				});
-			}
-		}
-
-		return oHasChangeHandlerPromise.then(function(bIncludeReveal) {
-			if (bIncludeReveal) {
-				mReveal.elements.push({
-					element: oInvisibleElement,
-					designTimeMetadata: oDesignTimeMetadata,
-					action: mRevealAction,
-					sourceAggregation: sSourceAggregation,
-					targetAggregation: sTargetAggregation
-				});
-				const mName = oDesignTimeMetadata.getName(oInvisibleElement);
-				if (mName) {
-					mReveal.controlTypeNames.push(mName);
 				}
 			}
-			return mReveal;
-		});
+		}
+		return mReveal;
 	}
 
 	/**
@@ -296,32 +270,28 @@ sap.ui.define([
 	 *
 	 * @return {Promise} Resolving to a structure with all "add/reveal" action relevant data collected
 	 */
-	ActionExtractor.getActions = function(bSibling, oSourceElementOverlay, oPlugin, bInvalidate, oDesignTime) {
+	ActionExtractor.getActions = async function(bSibling, oSourceElementOverlay, oPlugin, bInvalidate, oDesignTime) {
 		const sSiblingOrChild = bSibling ? "asSibling" : "asChild";
 		if (!bInvalidate && oSourceElementOverlay._mAddActions) {
-			return Promise.resolve(oSourceElementOverlay._mAddActions[sSiblingOrChild]);
+			return oSourceElementOverlay._mAddActions[sSiblingOrChild];
 		}
 
-		const oRevealActionsPromise = this._getRevealActions(bSibling, oSourceElementOverlay, oPlugin, oDesignTime);
-		const oAddPropertyActionsPromise = this._getAddViaDelegateActions(bSibling, oSourceElementOverlay, oPlugin);
-
-		return Promise.all([
-			oRevealActionsPromise,
-			oAddPropertyActionsPromise
-		]).then(function(aAllActions) {
-			// join and condense all action data
-			const mAllActions = merge(aAllActions[0], aAllActions[1]);
-			oSourceElementOverlay._mAddActions ||= {asSibling: {}, asChild: {}};
-			oSourceElementOverlay._mAddActions[sSiblingOrChild] = mAllActions;
-			return mAllActions;
-		});
+		const [oRevealAction, oAddViaDelegateAction] = await Promise.all([
+			this._getRevealActions(bSibling, oSourceElementOverlay, oPlugin, oDesignTime),
+			this._getAddViaDelegateActions(bSibling, oSourceElementOverlay, oPlugin)
+		]);
+		// join and condense all action data
+		const mAllActions = merge(oRevealAction, oAddViaDelegateAction);
+		oSourceElementOverlay._mAddActions ||= {asSibling: {}, asChild: {}};
+		oSourceElementOverlay._mAddActions[sSiblingOrChild] = mAllActions;
+		return mAllActions;
 	};
 
 	/**
 	 * Returns the already calculated actions of an Overlay, or undefined if no actions available
 	 * @param {boolean} bSibling - Indicates if the elements should be added as sibling (true) or child (false) to the overlay
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Elements will be added in relation (sibling/parent) to this overlay
-	 * @returns {object/undefined} - Object with all "add/reveal" action relevant data collected or undefined if no actions available
+	 * @returns {object|undefined} - Object with all "add/reveal" action relevant data collected or undefined if no actions available
 	 */
 	ActionExtractor.getActionsOrUndef = function(bSibling, oOverlay) {
 		const sSiblingOrChild = bSibling ? "asSibling" : "asChild";
@@ -340,7 +310,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<object>} Reveal action data
 	 */
-	ActionExtractor._getRevealActions = function(bSibling, oSourceElementOverlay, oPlugin, oDesignTime) {
+	ActionExtractor._getRevealActions = async function(bSibling, oSourceElementOverlay, oPlugin, oDesignTime) {
 		if (bIsSyncRegistered) {
 			bIsSyncRegistered = false;
 			oDesignTime.attachEventOnce("synced", function() {
@@ -369,19 +339,17 @@ sap.ui.define([
 			}).map(function(oAggregationOverlay) {
 				return oAggregationOverlay.getAggregationName();
 			});
-			return aAggregationNames.reduce(function(oPreviousPromise, sAggregationName) {
+			const mAggregatedReveal = await aAggregationNames.reduce(function(oPreviousPromise, sAggregationName) {
 				return oPreviousPromise.then(function(mReveal) {
 					return getRevealActionFromAggregations(aParents, mReveal, sAggregationName, aAggregationNames, oPlugin);
 				});
-			}, Promise.resolve({}))
-			.then(function(mAggregatedReveal) {
-				if (bSibling) {
-					mRevealCache[mParents.parentOverlay.getId()] = mAggregatedReveal;
-				}
-				return mAggregatedReveal;
-			});
+			}, Promise.resolve({}));
+			if (bSibling) {
+				mRevealCache[mParents.parentOverlay.getId()] = mAggregatedReveal;
+			}
+			return mAggregatedReveal;
 		}
-		return Promise.resolve({});
+		return {};
 	};
 
 	/**

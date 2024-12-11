@@ -33,13 +33,9 @@ sap.ui.define(function () {
 			},
 
 			// sap.m Templates
-			"sap/m/demokit/worklist/webapp/test/integration/opaTests": {
+			"sap/m/demokit/worklist/webapp/test/testsuite": {
 				group: "Worklist",
-				page: "test-resources/sap/m/demokit/worklist/webapp/test/integration/opaTests.qunit.html"
-			},
-			"sap/m/demokit/worklist/webapp/test/unit/unitTests": {
-				group: "Worklist",
-				page: "test-resources/sap/m/demokit/worklist/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/m/demokit/worklist/webapp/test/testsuite.qunit.html"
 			},
 			"sap/m/demokit/master-detail/webapp/test/testsuite.qunit.html": {
 				group: "MasterDetail",
@@ -120,13 +116,9 @@ sap.ui.define(function () {
 				group: "Testing Tutorial",
 				page: "test-resources/sap/m/demokit/tutorial/testing/16/webapp/test/testsuite.qunit.html"
 			},
-			"sap/m/demokit/tutorial/worklist/07/webapp/test/integration/opaTests": {
+			"sap/m/demokit/tutorial/worklist/07/webapp/test/testsuite": {
 				group: "Worklist Tutorial",
-				page: "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/integration/opaTests.qunit.html"
-			},
-			"sap/m/demokit/tutorial/worklist/07/webapp/test/unit/unitTests": {
-				group: "Worklist Tutorial",
-				page: "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/testsuite.qunit.html"
 			},
 			"sap/m/demokit/tutorial/walkthrough/38/webapp/test/testsuite": {
 				group: "Walkthrough Tutorial",

@@ -154,7 +154,7 @@ sap.ui.define([
 
 				// Handling for special route
 				if (event.getParameter("name") === "apiSpecialRoute") {
-					oSpecialRouteInfo = this._oRouter._decodeSpecialRouteArguments(event);
+					oSpecialRouteInfo = this._oRouter._decodeSpecialRouteArguments(event.getParameter("arguments"));
 					sTopicId = oSpecialRouteInfo.id;
 				}
 

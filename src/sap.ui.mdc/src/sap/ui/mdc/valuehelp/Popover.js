@@ -206,6 +206,7 @@ sap.ui.define([
 				title: this.getTitle(),
 				titleAlignment: MLibrary.TitleAlignment.Center,
 				afterOpen: this.handleOpened.bind(this),
+				beforeClose: this.handleClose.bind(this),
 				afterClose: this.handleClosed.bind(this),
 				customHeader: oValueStateHeader
 			}).addStyleClass("sapMdcValueHelpPopover").addStyleClass("sapMComboBoxBasePicker").addStyleClass("sapMComboBoxBasePicker-CTX"); // to have a ComboBox popup
@@ -453,6 +454,7 @@ sap.ui.define([
 				horizontalScrolling: false,
 				initialFocus: oInput,
 				afterOpen: this.handleOpened.bind(this),
+				beforeClose: this.handleClose.bind(this),
 				afterClose: this.handleClosed.bind(this)
 			});
 

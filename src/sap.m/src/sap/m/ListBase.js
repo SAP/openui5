@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/RenderManager",
 	"sap/ui/Device",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
@@ -34,6 +35,7 @@ function(
 	ControlBehavior,
 	RenderManager,
 	Device,
+	ChangeReason,
 	Control,
 	Element,
 	InvisibleText,
@@ -239,6 +241,7 @@ function(
 				 * If set to true, this control remembers and retains the selection of the items after a binding update has been performed (e.g. sorting, filtering).
 				 * <b>Note:</b> This feature works only if two-way data binding for the <code>selected</code> property of the item is not used. It also needs to be turned off if the binding context of the item does not always point to the same entry in the model, for example, if the order of the data in the <code>JSONModel</code> is changed.
 				 * <b>Note:</b> This feature leverages the built-in selection mechanism of the corresponding binding context when the OData V4 model is used. Therefore, all binding-relevant limitations apply in this context as well. For more details, see the {@link sap.ui.model.odata.v4.Context#setSelected setSelected}, the {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}, and the {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo requestValueListInfo} API documentation. Do not enable this feature when <code>$$SharedRequests</code> or <code>$$clearSelectionOnFilter</code> is active.
+				 * <b>Note:</b> If this property is set to <code>false</code>, a possible binding context update of items (for example, filtering or sorting the list binding) would clear the selection of the items.
 				 * @since 1.16.6
 				 */
 				rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -599,6 +602,13 @@ function(
 
 		if (this._bSkippedInvalidationOnRebind && this.getBinding("items").getLength() === 0) {
 			this.invalidate();
+		}
+
+		if ((sReason === ChangeReason.Filter || sReason === ChangeReason.Sort || sReason === ChangeReason.Context) && !this.getRememberSelections()) {
+			const oFirstItem = this.getItems(true)[0];
+			if (oFirstItem && !oFirstItem.isSelectedBoundTwoWay()) {
+				this.removeSelections();
+			}
 		}
 
 		if (this._oGrowingDelegate) {
