@@ -122,7 +122,7 @@
 		},
 		{
 			"control": "sap.m.FacetFilter",
-			"url": "../FacetFilter.html",
+			"url": "./FacetFilter.html",
 			"appComponent": "CA-UI5-CTR-BAL",
 			"accTest": {
 				"name": "sap.m.FacetFilter",
