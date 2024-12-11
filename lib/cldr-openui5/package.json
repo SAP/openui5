@@ -5,20 +5,47 @@
   "type": "module",
   "scripts": {
     "start": "node cli.js",
-    "test": "npm run lint && npm run mocha",
+    "test": "npm run lint && npm run test-coverage",
+    "test-no-coverage": "npm run lint && npm run mocha",
+    "test-coverage": "cross-env NODE_OPTIONS=\"--import=./test/code-coverage-config/setup-coverage.js\" nyc mocha",
     "mocha": "mocha",
-    "lint": "eslint ./"
+    "lint": "eslint ./",
+    "serve-coverage": "http-server ../../tmp/coverage -p 8082"
   },
   "author": "SAP SE",
   "engines": {
-    "node": ">=18.14.0",
+    "node": "^20.11.0 || >=22.0.0",
     "npm": ">=9"
   },
   "devDependencies": {
+    "@istanbuljs/esm-loader-hook": "^0.2.0",
+    "cross-env": "^7.0.3",
     "extend": "^3.0.2",
+    "http-server": "^14.1.1",
     "json2json": "^0.2.8",
     "mocha": "^11.0.1",
+    "nyc": "^17.1.0",
     "pacote": "^20.0.0",
     "sinon": "^19.0.2"
+  },
+  "nyc": {
+    "include": [
+      "lib/**/*.js"
+    ],
+    "exclude": [
+      "test/**/*.js"
+    ],
+    "reporter": [
+      "html",
+      "text"
+    ],
+    "report-dir": "../../tmp/coverage",
+    "temp-directory": "../../tmp/.nyc_output",
+    "all": true,
+    "check-coverage": true,
+    "statements": 0,
+    "branches": 0,
+    "functions": 0,
+    "lines": 0
   }
 }

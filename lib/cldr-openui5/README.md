@@ -71,3 +71,11 @@ describe("Generator.js", function () {
 npm run mocha -- --grep 'Generator.js' # Runs all tests under describe("Generator.js", ...)
 npm run mocha -- --grep 'private members' # Runs the test with the title 'private members'
 ```
+
+## Show test coverage
+After running the tests with coverage enabled (`npm test`), you can display the coverage results in the browser
+by running `npm run serve-coverage` and accessing the results under [here](http://localhost:8082/index.html):
+```sh
+# via openui5/lib/cldr-openui5
+npm run serve-coverage
+```
