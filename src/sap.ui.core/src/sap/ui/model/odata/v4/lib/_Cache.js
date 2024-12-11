@@ -756,7 +756,7 @@ sap.ui.define([
 				}
 			}
 
-			const aSeparateRequestRanges = that.mSeparateProperty2ReadRequest?.[sSegment];
+			const aSeparateRequestRanges = that.mSeparateProperty2ReadRequests?.[sSegment];
 			if (aSeparateRequestRanges) {
 				// separate properties always operate on entities of that.aElements
 				const iIndex = that.aElements.indexOf(oValue);
@@ -877,6 +877,25 @@ sap.ui.define([
 						vValue[sSegment] = {};
 					}
 					vValue = vValue[vIndex];
+				}
+				if (aSegments.length === 1 && oGroupLock !== _GroupLock.$cached
+						&& that.mSeparateProperty2ReadRequests) {
+					// a single segment is just a key predicate => vValue is a complete entity;
+					// separate properties always operate on entities of that.aElements
+					const iIndex = that.aElements.indexOf(vValue);
+					const aSeparatePromises = [];
+					for (const sProperty in that.mSeparateProperty2ReadRequests) {
+						const oRange = that.mSeparateProperty2ReadRequests[sProperty]
+							.find((oRange0) => iIndex >= oRange0.start && iIndex < oRange0.end);
+						if (oRange) {
+							aSeparatePromises.push(oRange.promise);
+						}
+					}
+					if (aSeparatePromises.length) {
+						return Promise.all(aSeparatePromises).then(function () {
+							return step(oParentValue);
+						});
+					}
 				}
 				// missing advertisement or annotation is not an error
 				if (vValue === undefined && sSegment[0] !== "#" && sSegment[0] !== "@") {
@@ -2603,9 +2622,9 @@ sap.ui.define([
 		this.aReadRequests = [];
 		this.aSeparateProperties = aSeparateProperties ?? []; // properties to be loaded separately
 		// maps separate property to an array of requested $skip/$top ranges (see aReadRequests)
-		this.mSeparateProperty2ReadRequest = {};
+		this.mSeparateProperty2ReadRequests = {};
 		this.aSeparateProperties.forEach((sProperty) => {
-			this.mSeparateProperty2ReadRequest[sProperty] = [];
+			this.mSeparateProperty2ReadRequests[sProperty] = [];
 		});
 		this.bServerDrivenPaging = false;
 		this.oSyncPromiseAll = undefined;
@@ -3608,7 +3627,7 @@ sap.ui.define([
 			};
 			oReadRange.promise.catch(() => { /* avoid "Uncaught (in promise)" */ });
 			try {
-				this.mSeparateProperty2ReadRequest[sProperty].push(oReadRange);
+				this.mSeparateProperty2ReadRequests[sProperty].push(oReadRange);
 				const oResult = await this.oRequestor.request("GET",
 					this.getResourcePathWithQuery(iStart, iEnd, sProperty),
 					this.oRequestor.lockGroup("$single", this));
@@ -3618,13 +3637,13 @@ sap.ui.define([
 					bMainFailed = true;
 				});
 
-				const iIndex = this.mSeparateProperty2ReadRequest[sProperty].indexOf(oReadRange);
+				const iIndex = this.mSeparateProperty2ReadRequests[sProperty].indexOf(oReadRange);
 				if (iIndex < 0) { // stop import after #reset
 					fnReject();
 					return;
 				}
 
-				this.mSeparateProperty2ReadRequest[sProperty].splice(iIndex, 1);
+				this.mSeparateProperty2ReadRequests[sProperty].splice(iIndex, 1);
 				if (bMainFailed) {
 					fnReject();
 					return;
@@ -3643,7 +3662,7 @@ sap.ui.define([
 				fnSeparateReceived(sProperty, iStart, iEnd);
 			} catch (oError) {
 				fnReject();
-				// do not clean up mSeparateProperty2ReadRequest to avoid late property requests
+				// do not clean up mSeparateProperty2ReadRequests to avoid late property requests
 				fnSeparateReceived(sProperty, iStart, iEnd, oError);
 			}
 		});
@@ -3865,8 +3884,8 @@ sap.ui.define([
 		this.aReadRequests?.forEach((oReadRequest) => {
 			oReadRequest.bObsolete = true;
 		});
-		for (const sProperty in this.mSeparateProperty2ReadRequest) {
-			this.mSeparateProperty2ReadRequest[sProperty] = [];
+		for (const sProperty in this.mSeparateProperty2ReadRequests) {
+			this.mSeparateProperty2ReadRequests[sProperty] = [];
 		}
 		if (mChangeListeners[""]) {
 			this.mChangeListeners[""] = mChangeListeners[""];

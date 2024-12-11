@@ -76126,6 +76126,12 @@ make root = ${bMakeRoot}`;
 	// See that a simulated busy indicator (by using an expression binding) must be in busy state
 	// when the separate data is missing, and immediately disables if the data is received.
 	// JIRA: CPOUI5ODATAV4-2778
+	//
+	// Context#requestObject for the complete context's data is only resolved as soon as all pending
+	// separate property requests are completed. When calling Context#getObject while waiting for
+	// these separate requests, the returned object is incomplete but contains the already received
+	// data.
+	// JIRA: CPOUI5ODATAV4-2817
 [false, true].forEach(function (bAutoExpandSelect) {
 	QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -76255,6 +76261,17 @@ make root = ${bMakeRoot}`;
 		const oFriendAPromise = SyncPromise.resolve(oArtistA.requestObject("BestFriend"));
 		// code under test (JIRA: CPOUI5ODATAV4-2778)
 		const oFriendBPromise = SyncPromise.resolve(oArtistB.requestProperty("BestFriend/Name"));
+		// code under test (JIRA: CPOUI5ODATAV4-2817)
+		const oArtistAPromise = SyncPromise.resolve(oArtistA.requestObject());
+
+		assert.deepEqual(oArtistA.getObject(), {
+			ArtistID : "10",
+			// BestFriend missing
+			BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+			IsActiveEntity : true,
+			Name : "Artist A"
+			// SiblingEntity missing
+		});
 
 		this.expectChange("friend", ["Friend A", "Friend B"])
 			.expectChange("friendBusy__AS_COMPOSITE", [false, false]);
@@ -76269,6 +76286,15 @@ make root = ${bMakeRoot}`;
 			Name : "Friend A"
 		});
 		assert.strictEqual(oFriendBPromise.getResult(), "Friend B");
+		assert.strictEqual(oArtistAPromise.isPending(), true, "still waiting for SiblingEntity");
+		assert.deepEqual(oArtistA.getObject(), {
+			ArtistID : "10",
+			BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+			BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+			IsActiveEntity : true,
+			Name : "Artist A"
+			// SiblingEntity missing
+		});
 		checkEvents([{property : "BestFriend", start : 0, length : 2}]);
 
 		this.expectRequest({
@@ -76294,6 +76320,14 @@ make root = ${bMakeRoot}`;
 		await this.waitForChanges(assert, "$$separate response: SiblingEntity");
 
 		assert.deepEqual(oSiblingBPromise.getResult(), ["Sibling B", "~defaultChannel~"]);
+		assert.deepEqual(oArtistAPromise.getResult(), {
+			ArtistID : "10",
+			BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A"},
+			BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
+			IsActiveEntity : true,
+			Name : "Artist A",
+			SiblingEntity : {ArtistID : "S1", IsActiveEntity : true, Name : "Sibling A"}
+		}, "all separate properties are available");
 		checkEvents([{property : "SiblingEntity", start : 0, length : 2}]);
 
 		let fnResolveMain;
