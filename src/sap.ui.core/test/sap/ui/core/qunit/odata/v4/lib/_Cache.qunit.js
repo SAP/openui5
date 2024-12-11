@@ -2335,7 +2335,7 @@ sap.ui.define([
 		const aElements = ["0", "1", {}, "3", "4"];
 		aElements.$byPredicate = {"('2')" : aElements[2]};
 		oCache.aElements = aElements;
-		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
+		oCache.mSeparateProperty2ReadRequests = {expensive : [{start : 7, end : 9}, oRange]};
 		let fnResolve;
 		oRange.promise = new SyncPromise(function (resolve) { fnResolve = resolve; });
 
@@ -2367,7 +2367,7 @@ sap.ui.define([
 		const aElements = ["0", "1", {"@$ui5._" : {predicate : ("('2')")}}, "3", "4"];
 		aElements.$byPredicate = {"('2')" : aElements[2]};
 		oCache.aElements = aElements;
-		oCache.mSeparateProperty2ReadRequest = {expensive : [{start : 7, end : 9}, oRange]};
+		oCache.mSeparateProperty2ReadRequests = {expensive : [{start : 7, end : 9}, oRange]};
 		oRange.promise = "n/a";
 
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("('2')/expensive")
@@ -2384,6 +2384,76 @@ sap.ui.define([
 		assert.strictEqual(
 			await oCache.drillDown(aElements, "('2')/expensive", "~oGroupLock~"),
 			"~lateResult~");
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSeparatePromise) {
+	[false, true].forEach(function (bOnlyCached) {
+		[0, 1].forEach(function (iStart) {
+			const sTitle = "_Cache#drillDown: wait for all separate properties, bSeparatePromise: "
+				+ bSeparatePromise + ", bCached: " + bOnlyCached + ", iStart: " + iStart;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oCache = new _Cache(this.oRequestor, "Products");
+		const oElement = {"@$ui5._" : {predicate : ("('1')")}};
+		oCache.aElements = ["0", oElement, "2"];
+		oCache.aElements.$byPredicate = {"('1')" : oElement};
+		oCache.mSeparateProperty2ReadRequests = {
+			foo : [{
+				start : 0,
+				end : 1,
+				promise : new SyncPromise(() => {}) // must not be used
+			}],
+			bar : [{
+				start : 2,
+				end : 3,
+				promise : new SyncPromise(() => {}) // must not be used
+			}]
+		};
+		let fnResolveFoo;
+		let fnResolveBar;
+		const oFooPromise = new SyncPromise((resolve) => { fnResolveFoo = resolve; });
+		if (bSeparatePromise) {
+			oCache.mSeparateProperty2ReadRequests.foo.push({
+				start : iStart,
+				end : 2,
+				promise : oFooPromise
+			});
+			oCache.mSeparateProperty2ReadRequests.bar.push({
+				start : iStart,
+				end : 2,
+				promise : new SyncPromise((resolve) => { fnResolveBar = resolve; })
+			});
+		}
+
+		// code under test
+		const oResultPromise = oCache.drillDown(oCache.aElements, "('1')",
+			bOnlyCached ? _GroupLock.$cached : "~oGroupLock~");
+
+		if (!bOnlyCached && bSeparatePromise) {
+			assert.strictEqual(oResultPromise.isPending(), true);
+
+			oCache.mSeparateProperty2ReadRequests.foo.pop();
+			oCache.mSeparateProperty2ReadRequests.bar.pop();
+
+			setTimeout(function () {
+				assert.strictEqual(oResultPromise.isPending(), true);
+				fnResolveFoo("n/a");
+			});
+
+			await oFooPromise;
+			setTimeout(function () {
+				assert.strictEqual(oResultPromise.isPending(), true);
+				fnResolveBar("n/a");
+			});
+
+			await oResultPromise;
+		}
+
+		assert.strictEqual(oResultPromise.getResult(), oElement);
+	});
+		});
 	});
 });
 
@@ -5897,7 +5967,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSharedRequest, bSharedRequest);
 		assert.deepEqual(oCache.aSeparateProperties,
 			bSharedRequest ? [] : ["separate0", "separate1"]);
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest,
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests,
 			bSharedRequest ? {} : {separate0 : [], separate1 : []});
 		assert.strictEqual(oCache.iActiveElements, 0);
 	});
@@ -11344,7 +11414,7 @@ sap.ui.define([
 		oCache.sContext = "~context~";
 		oCache.aElements.$count = oCache.iLimit = 3;
 		oCache.aReadRequests = [{iStart : 1, iEnd : 2}, {iStart : 3, iEnd : 4}];
-		oCache.mSeparateProperty2ReadRequest = {prop1 : ["range0", "range1"], prop2 : ["range2"]};
+		oCache.mSeparateProperty2ReadRequests = {prop1 : ["range0", "range1"], prop2 : ["range2"]};
 
 		oSetQueryOptionsExpectation = this.mock(oCache).expects("setQueryOptions")
 			.withExactArgs("~mQueryOptions~", true);
@@ -11372,7 +11442,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.iLimit, Infinity);
 		assert.deepEqual(oCache.mChangeListeners, {"" : "~listeners~"});
 		sinon.assert.callOrder(oSetQueryOptionsExpectation, oFireChangeExpectation);
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {prop1 : [], prop2 : []});
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {prop1 : [], prop2 : []});
 	});
 
 	//*********************************************************************************************
@@ -13432,20 +13502,20 @@ sap.ui.define([
 		fnResolveTypes("~types~");
 		await oTypesPromise;
 
-		const oFooRangePromise = oCache.mSeparateProperty2ReadRequest.foo[0].promise;
-		const oBarRangePromise = oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+		const oFooRangePromise = oCache.mSeparateProperty2ReadRequests.foo[0].promise;
+		const oBarRangePromise = oCache.mSeparateProperty2ReadRequests.bar[0].promise;
 		assert.ok(oFooRangePromise.isPending());
 		assert.ok(oBarRangePromise.isPending());
 
 		// delete promise as it is no longer needed, makes it easier to compare the read ranges
-		delete oCache.mSeparateProperty2ReadRequest.foo[0].promise;
-		delete oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+		delete oCache.mSeparateProperty2ReadRequests.foo[0].promise;
+		delete oCache.mSeparateProperty2ReadRequests.bar[0].promise;
 
 		// simulate other simultaneous request ranges, proof the deleting index is dynamic
-		oCache.mSeparateProperty2ReadRequest.foo.push("~range~");
-		oCache.mSeparateProperty2ReadRequest.bar.unshift("~range~");
+		oCache.mSeparateProperty2ReadRequests.foo.push("~range~");
+		oCache.mSeparateProperty2ReadRequests.bar.unshift("~range~");
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {
 			foo : [{start : 3, end : 5}, "~range~"],
 			bar : ["~range~", {start : 3, end : 5}]
 		});
@@ -13485,7 +13555,7 @@ sap.ui.define([
 		await oBarPromise;
 		await oMainPromise.catch(() => { /* avoid "unhandled rejection" */ });
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {
 			foo : [{start : 3, end : 5}, "~range~"],
 			bar : ["~range~"]
 		});
@@ -13520,7 +13590,7 @@ sap.ui.define([
 		await "next tick";
 		await "next tick";
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {
 			foo : ["~range~"],
 			bar : ["~range~"]
 		});
@@ -13575,20 +13645,20 @@ sap.ui.define([
 		// code under test (oMainPromise must not have an influence)
 		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/null, fnSeparateReceived);
 
-		const oFooRangePromise = oCache.mSeparateProperty2ReadRequest.foo[0].promise;
-		const oBarRangePromise = oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+		const oFooRangePromise = oCache.mSeparateProperty2ReadRequests.foo[0].promise;
+		const oBarRangePromise = oCache.mSeparateProperty2ReadRequests.bar[0].promise;
 		assert.ok(oFooRangePromise.isPending());
 		assert.ok(oBarRangePromise.isPending());
 
 		// delete promise as it is no longer needed, makes it easier to compare the read ranges
-		delete oCache.mSeparateProperty2ReadRequest.foo[0].promise;
-		delete oCache.mSeparateProperty2ReadRequest.bar[0].promise;
+		delete oCache.mSeparateProperty2ReadRequests.foo[0].promise;
+		delete oCache.mSeparateProperty2ReadRequests.bar[0].promise;
 
 		// simulate other simultaneous request ranges, proof the deleting index is dynamic
-		oCache.mSeparateProperty2ReadRequest.foo.push("~range~");
-		oCache.mSeparateProperty2ReadRequest.bar.unshift("~range~");
+		oCache.mSeparateProperty2ReadRequests.foo.push("~range~");
+		oCache.mSeparateProperty2ReadRequests.bar.unshift("~range~");
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {
 			foo : [{start : 3, end : 5}, "~range~"],
 			bar : ["~range~", {start : 3, end : 5}]
 		}, "no cleanup");
@@ -13598,7 +13668,7 @@ sap.ui.define([
 		fnRejectFoo("~fooError~");
 		await oFooPromise.catch(() => { /* avoid "unhandled rejection" */ });
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {
 			foo : [{start : 3, end : 5}, "~range~"],
 			bar : ["~range~", {start : 3, end : 5}]
 		}, "no cleanup");
@@ -13616,7 +13686,7 @@ sap.ui.define([
 		fnRejectBar("~barError~");
 		await oBarPromise.catch(() => { /* avoid "unhandled rejection" */ });
 
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequest, {
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {
 			foo : [{start : 3, end : 5}, "~range~"],
 			bar : ["~range~", {start : 3, end : 5}]
 		}, "no cleanup");
@@ -13650,11 +13720,11 @@ sap.ui.define([
 		// code under test
 		await oCache.requestSeparateProperties(3, 5, /*oMainPromise*/Promise.resolve());
 
-		const oRange = oCache.mSeparateProperty2ReadRequest.separate[0];
+		const oRange = oCache.mSeparateProperty2ReadRequests.separate[0];
 		assert.ok(oRange.promise.isPending());
 
 		// simulate #reset
-		oCache.mSeparateProperty2ReadRequest.separate = [];
+		oCache.mSeparateProperty2ReadRequests.separate = [];
 
 		this.mock(oCache).expects("visitResponse").never();
 		this.mock(_Helper).expects("updateSelected").never();

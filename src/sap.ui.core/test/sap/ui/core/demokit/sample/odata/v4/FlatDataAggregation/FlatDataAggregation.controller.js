@@ -38,10 +38,14 @@ sap.ui.define([
 						FlightDate : {},
 						status : {additionally : ["statusName"]}
 					}
+					// Note: leaf level is aggregation across TravelID, BookingDate, BookingID
 				};
 				const oUriParameters = new URLSearchParams(window.location.search);
 				const sGrandTotalAtBottomOnly = oUriParameters.get("grandTotalAtBottomOnly");
-				if (sGrandTotalAtBottomOnly) {
+				if (sGrandTotalAtBottomOnly === "off") {
+					oTable.getRowMode().setFixedTopRowCount(0);
+					this._oAggregation.aggregate.FlightPrice.grandTotal = false;
+				} else if (sGrandTotalAtBottomOnly) {
 					if (sGrandTotalAtBottomOnly === "true") {
 						oTable.getRowMode().setFixedTopRowCount(0);
 					}

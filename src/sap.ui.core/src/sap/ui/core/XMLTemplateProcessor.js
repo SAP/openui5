@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ElementRegistry',
 	'./mvc/View',
+	'./mvc/ViewType',
 	'./mvc/EventHandlerResolver',
 	'./ExtensionPoint',
 	'./StashedControlSupport',
@@ -31,6 +32,7 @@ sap.ui.define([
 	Component,
 	ElementRegistry,
 	View,
+	ViewType,
 	EventHandlerResolver,
 	ExtensionPoint,
 	StashedControlSupport,
@@ -1104,8 +1106,9 @@ sap.ui.define([
 							}
 						} else if (oInfo && oInfo._iKind === -1) {
 							// SPECIAL SETTING - currently only allowed for:
-							// - View's async setting
-							if (oMetadata.isA("sap.ui.core.mvc.View") && sName == "async") {
+							// - "async"
+							// - "type" (value must be in the ViewType enum)
+							if (oMetadata.isA("sap.ui.core.mvc.View") && (sName == "async" || (sName == "type" && ViewType[sValue]))) {
 								mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules);
 							} else {
 								future.warningThrows("" + oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");

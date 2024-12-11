@@ -1,3 +1,8 @@
 .sapMSegB.vsdSetting {
 	margin-bottom: 1rem;
 }
+
+.vsd-dp {
+	margin-inline-start: 2rem;
+	margin-block-start: 2rem;
+}

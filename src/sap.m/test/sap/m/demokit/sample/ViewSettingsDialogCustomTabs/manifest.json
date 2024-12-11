@@ -33,6 +33,7 @@
 					"C.controller.js",
 					"Dialog.fragment.xml",
 					"DialogSingleCustomTab.fragment.xml",
+					"DialogSingleCustomTabWithDatePicker.fragment.xml",
 					"manifest.json"
 				]
 			}

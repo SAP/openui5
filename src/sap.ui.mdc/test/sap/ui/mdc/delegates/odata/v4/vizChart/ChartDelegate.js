@@ -186,7 +186,7 @@ sap.ui.define([
 					path: sKey,
 					maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 					dataType: oObj.$Type,
-					role: (sAggregationMethod + sKey) === "averageprice" ? "axis2" : "axis1"
+					role: "axis1"
 				});
 
 				const oState = this._getState(oChart);
