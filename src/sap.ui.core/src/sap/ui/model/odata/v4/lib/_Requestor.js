@@ -1395,7 +1395,7 @@ sap.ui.define([
 						oResponse = vRequest.method === "GET" ? null : {};
 					}
 					that.reportHeaderMessages(vRequest.$resourcePath,
-						getResponseHeader.call(vResponse, "sap-messages"));
+						getResponseHeader.call(vResponse, "sap-messages"), oResponse);
 					sETag = getResponseHeader.call(vResponse, "ETag");
 					if (sETag) {
 						oResponse["@odata.etag"] = sETag;
@@ -1743,18 +1743,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reports OData messages from the "sap-messages" response header.
+	 * Reports OData messages from the "sap-messages" response header (or forwards them via the
+	 * response object).
 	 *
 	 * @param {string} sResourcePath
-	 *   The resource path of the request whose response contained the messages
+	 *   The resource path of the request whose response contained the messages, see also
+	 *   {@link #request sOriginalResourcePath} which may well be "R#V#C"
 	 * @param {string} [sMessages]
 	 *   The messages in the serialized form as contained in the "sap-messages" response header
+	 * @param {object} oResponse
+	 *   The response object, needed in case <code>sResourcePath === "R#V#C"</code> as described
+	 *   at {@link #request}
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.reportHeaderMessages = function (sResourcePath, sMessages) {
+	_Requestor.prototype.reportHeaderMessages = function (sResourcePath, sMessages, oResponse) {
 		if (sMessages) {
-			this.oModelInterface.reportTransitionMessages(JSON.parse(sMessages), sResourcePath);
+			const aMessages = JSON.parse(sMessages);
+			if (sResourcePath === "R#V#C") {
+				_Helper.setPrivateAnnotation(oResponse, "headerMessages", aMessages);
+			} else {
+				this.oModelInterface.reportTransitionMessages(aMessages, sResourcePath);
+			}
 		}
 	};
 
@@ -1799,7 +1809,10 @@ sap.ui.define([
 	 * @param {string} [sOriginalResourcePath=sResourcePath]
 	 *   The path by which this resource has originally been requested and thus can be identified on
 	 *   the client. Only required for non-GET requests where <code>sResourcePath</code> is a
-	 *   different (canonical) path.
+	 *   different (canonical) path. The special value "R#V#C" can be given to indicate that the
+	 *   resource path may be a return value context and cannot be provided in advance; in this
+	 *   case header messages are not reported automatically, but forwarded via the response object
+	 *   as a private annotation "headerMessages" which the caller needs to take care of.
 	 * @param {boolean} [bAtFront]
 	 *   Whether the request is added at the front of the first change set (ignored for method
 	 *   "GET")
@@ -1880,7 +1893,7 @@ sap.ui.define([
 					$queryOptions : mQueryOptions,
 					$reject : fnReject,
 					$resolve : fnResolve,
-					$resourcePath : sOriginalResourcePath,
+					$resourcePath : sOriginalResourcePath, // BEWARE of "R#V#C"!
 					$submit : fnSubmit
 				};
 				if (sMethod === "GET") { // push behind last GET and all change sets
@@ -1917,13 +1930,17 @@ sap.ui.define([
 		return this.sendRequest(sMethod, sResourcePath,
 			Object.assign({}, mHeaders, this.mFinalHeaders,
 				sMethod === "GET" ? {"sap-cancel-on-close" : "true"} : undefined),
-			JSON.stringify(oPayload), sOriginalResourcePath
+			JSON.stringify(oPayload),
+			sOriginalResourcePath === "R#V#C"
+				? sResourcePath
+				: sOriginalResourcePath
 		).then(function (oResponse) {
-			that.reportHeaderMessages(sOriginalResourcePath, oResponse.messages);
-			return that.doConvertResponse(
+			const oResult = that.doConvertResponse(
 				// Note: "text/plain" used for $count
 				typeof oResponse.body === "string" ? JSON.parse(oResponse.body) : oResponse.body,
 				sMetaPath);
+			that.reportHeaderMessages(sOriginalResourcePath, oResponse.messages, oResult);
+			return oResult;
 		});
 	};
 
@@ -2000,7 +2017,7 @@ sap.ui.define([
 	 * @param {string} [sPayload]
 	 *   Data to be sent to the server
 	 * @param {string} [sOriginalResourcePath]
-	 *  The path by which the resource has originally been requested
+	 *  The path by which the resource has originally been requested; MUST NOT be "R#V#C"!
 	 * @returns {Promise}
 	 *   A promise that is resolved with an object having the properties body, contentType, messages
 	 *   and resourcePath. The body is already an object if the contentType is "application/json".

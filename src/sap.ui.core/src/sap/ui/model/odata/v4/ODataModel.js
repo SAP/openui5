@@ -2625,13 +2625,17 @@ sap.ui.define([
 	 *   parameter
 	 * @param {boolean} [bSilent]
 	 *   Whether the created UI5 messages should only be returned without reporting them
+	 * @param {string} [sOriginalResourcePath]
+	 *   The "original resource path" to be used to build the target path for bound messages that
+	 *   do not address "$Parameter/...", useful in case of a return value context (R.V.C.)
 	 * @returns {sap.ui.core.message.Message[]|undefined}
 	 *   An array of <code>aMessages</code> transformed to UI5 message instances, or
 	 *   <code>undefined</code> in case there are no messages
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.reportTransitionMessages = function (aMessages, sResourcePath, bSilent) {
+	ODataModel.prototype.reportTransitionMessages = function (aMessages, sResourcePath, bSilent,
+			sOriginalResourcePath) {
 		var sContextPath, oOperationMetadata;
 
 		if (!aMessages.length) {
@@ -2656,7 +2660,8 @@ sap.ui.define([
 			if (oOperationMetadata) {
 				oMessage = _Helper.clone(oMessage);
 				// make targets absolute, will not be adjusted again in #createUI5Message
-				_Helper.adjustTargets(oMessage, oOperationMetadata, undefined, sContextPath);
+				_Helper.adjustTargets(oMessage, oOperationMetadata, undefined, sContextPath,
+					sOriginalResourcePath);
 			}
 			oMessage.transition = true;
 
