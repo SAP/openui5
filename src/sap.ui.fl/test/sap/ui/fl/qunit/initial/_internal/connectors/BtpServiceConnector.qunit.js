@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/BtpServiceConnector",
+	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	BtpServiceConnector,
+	KeyUserConnector,
 	Utils,
 	Version,
 	sinon
@@ -15,7 +17,7 @@ sap.ui.define([
 
 	const sandbox = sinon.createSandbox();
 
-	QUnit.module("BtpServiceConnector loadFLVariant", {
+	QUnit.module("BtpServiceConnector", {
 		afterEach() {
 			sandbox.restore();
 		}
@@ -127,6 +129,14 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, undefined, "with correct token");
 			});
+		});
+
+		QUnit.test("loadFeatures", async function(assert) {
+			sandbox.stub(KeyUserConnector, "loadFeatures").resolves({
+				isCondensingEnabledOnBtp: true
+			});
+			const oFeatures = await BtpServiceConnector.loadFeatures();
+			assert.strictEqual(oFeatures.isCondensingEnabled, true, "then the condensing flag is set to the value from the backend");
 		});
 	});
 
