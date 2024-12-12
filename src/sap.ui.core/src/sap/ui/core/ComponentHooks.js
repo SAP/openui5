@@ -170,7 +170,47 @@ sap.ui.define([], function() {
 		 * @ui5-restricted sap.ui.fl
 		 * @since 1.37.0
 		 */
-		onComponentLoaded: new Hook(false)
+		onComponentLoaded: new Hook(false),
+
+		/**
+	 	* Callback handler which will be executed once a new Component instance is initialized.
+	 	*
+	 	* Example usage:
+	 	* <pre>
+	 	* sap.ui.require(['sap/ui/core/ComponentHooks'], function(ComponentHooks) {
+	 	*   ComponentHooks.onUIComponentInstanceInitialized.register(function(oComponent) {
+	 	*     // do some logic with the Component
+	 	*   });
+	 	* });
+	 	* </pre>
+	 	*
+	 	* <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
+	 	*
+	 	* @private
+	 	* @ui5-restricted sap.ushell
+	 	* @since 1.132.0
+	 	*/
+		onUIComponentInstanceInitialized: new Hook(false),
+
+		/**
+	 	* Callback handler which will be executed when a Component instance is destroyed.
+	 	*
+	 	* Example usage:
+	 	* <pre>
+	 	* sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
+	 	*   ComponentHooks.onUIComponentInstanceDestroy.register(function(oComponent) {
+	 	*     // do some logic with the Component
+	 	*   });
+	 	* });
+	 	* </pre>
+	 	*
+	 	* <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
+	 	*
+	 	* @private
+	 	* @ui5-restricted sap.ushell
+	 	* @since 1.132.0
+	 	*/
+		onUIComponentInstanceDestroy: new Hook(false)
 	};
 
 	return ComponentHooks;
