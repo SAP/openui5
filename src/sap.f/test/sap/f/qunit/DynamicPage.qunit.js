@@ -2667,6 +2667,21 @@ function(
 		assert.notOk(oDynamicPage._shouldAutoExpandHeaderOnResize({ target: oDynamicPage.getDomRef()}), "should auto expand header on resize");
 	});
 
+	QUnit.test("DynamicPage shows the header when _shouldAutoExpandHeaderOnResize() returns true", function (assert) {
+		// Arrange
+		var oDynamicPage = this.oDynamicPage;
+		oDynamicPage.setToggleHeaderOnTitleClick(false);
+		var oExpandSpy = this.spy(oDynamicPage, "_expandHeader");
+		this.stub(oDynamicPage, "_shouldAutoExpandHeaderOnResize").returns(true);
+
+		oDynamicPage.getHeader().$().addClass("sapFDynamicPageHeaderHidden");
+
+		// Act
+		oDynamicPage._onResize({size: {height: 1000, width: 1000}, oldSize: {height: 500, width: 500}});
+		assert.equal(oExpandSpy.callCount, 1, "should auto expand header on resize");
+		assert.notOk(oDynamicPage.getHeader().$().hasClass("sapFDynamicPageHeaderHidden"), "header is shown");
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {
