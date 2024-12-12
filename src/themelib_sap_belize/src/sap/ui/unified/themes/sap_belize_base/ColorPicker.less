@@ -667,7 +667,7 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 
 //unified compact mode
 .sapUiSizeCompact {
-	.sapUnifiedColorPicker {
+	.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker {
 		&.sapUiCPPhone .sapUiColorPicker-ColorPickerHexField {
 			margin-top:0.2rem;
 		}
@@ -690,11 +690,13 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 		.sapUiColorPicker-ColorPickerAlphaSlider {
 			padding-top: 0.5rem;
 			.sapMSliderInner {
-				height: 1.25rem;
+				height: 1.375rem;
 			}
 			.sapMSliderHandle {
+				margin-top: 0.125rem;
+				height: 1.625rem;
 				top: -0.3125rem;
-				width: 0.6875rem;
+				width: 0.9375rem;
 			}
 		}
 		&:not(.sapUiCPPhone) .sapUiCPComparisonWrapper {
@@ -791,4 +793,8 @@ html[data-sap-ui-browser^="ie"] .sapMPopover .sapUiColorPicker-ColorPickerMatrix
 
 .sapUiPopupWithPadding.sapUiCPDialog .sapMDialogScrollCont {
 	padding: 0;
+}
+
+.sapUiSizeCompact .sapUiColorPicker-Default.sapUnifiedColorPicker:not(.sapUiCPPhone) .sapMBtn .sapMBtnInner .sapMBtnIcon {
+	margin-left: 0.3rem;
 }
