@@ -1,28 +1,30 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
-	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
-	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	States,
 	AnnotationChange,
 	AppDescriptorChange,
 	CompVariant,
 	ControllerExtensionChange,
-	UpdatableChange,
-	FlVariant,
-	UIChange,
 	FlexObjectFactory,
+	FlVariant,
+	States,
+	UIChange,
+	UpdatableChange,
 	Layer,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -136,6 +138,23 @@ sap.ui.define([
 				States.LifecycleState.PERSISTED,
 				"then the state of the flex object is set to PERSISTED"
 			);
+		});
+
+		QUnit.test("when a too long filename is used", function(assert) {
+			const sFileName = "a".repeat(65);
+			const oFlexObject = FlexObjectFactory.createUIChange({
+				id: sFileName
+			});
+			assert.strictEqual(oFlexObject.getId(), sFileName, "then the id is set");
+
+			const sExpectedFileName = "b".repeat(65);
+			sandbox.stub(Utils, "createDefaultFileName").returns(sExpectedFileName);
+			const sChangeType = "a".repeat(45);
+			assert.throws(() => {
+				FlexObjectFactory.createUIChange({
+					changeType: sChangeType
+				});
+			}, new Error(`File name '${sExpectedFileName}' must not exceed 64 characters`), "then an error is thrown");
 		});
 	});
 

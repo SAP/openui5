@@ -74,11 +74,22 @@ sap.ui.define([
 	function createBasePropertyBag(mOriginalProperties) {
 		const mProperties = cloneIfObject(mOriginalProperties);
 		const sChangeType = mProperties.type || mProperties.changeType;
-		const sFileName = mProperties.fileName || mProperties.id || Utils.createDefaultFileName(sChangeType);
+
+		let sFileName = mProperties.fileName || mProperties.id;
+		if (!sFileName) {
+			sFileName = Utils.createDefaultFileName(sChangeType);
+			// ABAP only supports 64 characters for the file name
+			// but for variants, the filename is also the variant reference
+			// standard variants can have longer names, as they are not stored in the LREP
+			if (sFileName.length > 64) {
+				throw Error(`File name '${sFileName}' must not exceed 64 characters`);
+			}
+		}
 		const sUser = mProperties.user ||
 			(!LayerUtils.isDeveloperLayer(mProperties.layer)
 				? Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().getUserId()
 				: undefined);
+
 		return {
 			id: sFileName,
 			adaptationId: mProperties.adaptationId,
