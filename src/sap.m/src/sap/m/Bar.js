@@ -126,6 +126,8 @@ sap.ui.define([
 
 				/**
 				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 *
+				 * <b>Note:</b>The aria-labelledby attribute will not be rendered when there are less than two interactive elements inside the Bar (for example, one Button).
 				 */
 				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 			},
