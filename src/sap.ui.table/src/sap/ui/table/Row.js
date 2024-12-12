@@ -520,7 +520,8 @@ sap.ui.define([
 	};
 
 	Row.prototype.invalidate = function() {
-		return this;
+		// The table takes care of rendering the rows after it has done an update. Rendering must not be triggered by the row itself, therefore
+		// invalidation must not bubble up to the table.
 	};
 
 	/**

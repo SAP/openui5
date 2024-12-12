@@ -305,7 +305,7 @@ sap.ui.define([
 		assert.ok(!oTable.$().hasClass("sapUiTableResizing"), "After Trigger");
 	});
 
-	QUnit.module("Menus", {
+	QUnit.module("Context menu", {
 		beforeEach: async function() {
 			await createTables();
 			this.oPointerExtension = oTable._getPointerExtension();
@@ -314,7 +314,6 @@ sap.ui.define([
 		afterEach: function() {
 			destroyTables();
 		},
-
 		/**
 		 * Triggers a mouse down event on the passed element simulating the specified button.
 		 *
@@ -325,6 +324,17 @@ sap.ui.define([
 		 */
 		triggerMouseDownEvent: function(oElement, iButton) {
 			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, iButton);
+		},
+		assertOpenContextMenuCall: function(oTable, oContextMenuEvent) {
+			QUnit.assert.equal(TableUtils.Menu.openContextMenu.callCount, 1, "openContextMenu call");
+			QUnit.assert.deepEqual([
+				TableUtils.Menu.openContextMenu.firstCall.args[0],
+				TableUtils.Menu.openContextMenu.firstCall.args[1].originalEvent
+			], [
+				oTable,
+				oContextMenuEvent
+			], "openContextMenu call parameters");
+			TableUtils.Menu.openContextMenu.resetHistory();
 		}
 	});
 
@@ -425,53 +435,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("Data cell", function(assert) {
-		const oElem = getCell(0, 0);
-		const oColumn = oTable.getColumns()[0];
-		const oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
-		let oContextMenuEventArgument;
+		const oElem = getCell(0, 0)[0];
+		const oContextMenuEvent = createPointerEvent("contextmenu");
+
+		this.spy(TableUtils.Menu, "openContextMenu");
 
 		// Try to open the menu with the left mouse button.
 		this.triggerMouseDownEvent(oElem, 0);
 		qutils.triggerMouseEvent(oElem, "click");
-		assert.equal(oTable._oCellContextMenu, null, "Menu is not yet created");
+		assert.notOk(TableUtils.Menu.openContextMenu.called, "openContextMenu call");
 		checkFocus(oElem, assert);
 
 		// Try to open the menu with the right mouse button.
 		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.notEqual(oTable._oCellContextMenu, null, "Menu is created");
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+		oElem.dispatchEvent(oContextMenuEvent);
+		this.assertOpenContextMenuCall(oTable, oContextMenuEvent);
 		checkFocus(oElem, assert);
-
-		TableUtils.Menu.cleanupDefaultContentCellContextMenu(oTable);
-		oTable.setEnableCellFilter(true);
-		this.stub(oColumn, "isFilterableByMenu").returns(true);
-
-		// Try to open the menu with the left mouse button.
-		this.triggerMouseDownEvent(oElem, 0);
-		qutils.triggerMouseEvent(oElem, "click");
-		assert.equal(oTable._oCellContextMenu, null, "Menu is not yet created");
-		checkFocus(oElem, assert);
-
-		// Open the menu with the right mouse button.
-		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oTable._oCellContextMenu.isOpen(), "Menu is opened");
-		const bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
 		// Open the menu with the right mouse button on the same element.
 		this.triggerMouseDownEvent(oElem, 2);
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oTable._oCellContextMenu.isOpen(), "Menu is opened");
-		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-		oContextMenuEvent.resetHistory();
-		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+		oElem.dispatchEvent(oContextMenuEvent);
+		this.assertOpenContextMenuCall(oTable, oContextMenuEvent);
 
 		// If an interactive/clickable element inside a data cell was clicked, open the default context menu instead of the column or cell context
 		// menu.
@@ -479,13 +463,11 @@ sap.ui.define([
 		const $CellContent = oTable.getRows()[0].getCells()[0].$();
 
 		for (let i = 0; i < aKnownClickableControls.length; i++) {
+			TableUtils.Menu.openContextMenu.resetHistory();
 			$CellContent.toggleClass(aKnownClickableControls[i], true);
 			this.triggerMouseDownEvent($CellContent, 2);
-			jQuery($CellContent).trigger("contextmenu");
-			assert.ok(!oTable._oCellContextMenu.isOpen(), "Menu is closed");
-			oContextMenuEventArgument = oContextMenuEvent.args[0][0];
-			oContextMenuEvent.resetHistory();
-			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+			$CellContent[0].dispatchEvent(oContextMenuEvent);
+			assert.notOk(TableUtils.Menu.openContextMenu.called, "openContextMenu call");
 			$CellContent.toggleClass(aKnownClickableControls[i], false);
 		}
 	});

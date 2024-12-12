@@ -944,16 +944,12 @@ sap.ui.define([
 
 			assert.strictEqual(oTable._bRtlMode !== null, bRTLChanged,
 				"The flag _bRtlMode of the table was " + (bRTLChanged ? "" : " not") + " updated");
-
-			assert.strictEqual(oTable._oCellContextMenu == null, bLanguageChanged,
-				"The cell context menu was " + (bLanguageChanged ? "" : " not") + " reset");
 		}
 
 		function test(bChangeTextDirection, bChangeLanguage) {
 			const mChanges = {changes: {}};
 
 			oTable._bRtlMode = null;
-			TableUtils.Menu.openContextMenu(oTable, {target: getCell(0, 0, null, null, oTable)[0]});
 			oInvalidateSpy.resetHistory();
 
 			if (bChangeTextDirection) {
@@ -6236,48 +6232,18 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("ContextMenu", {
+	QUnit.module("Context menu", {
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				rows: "{/}",
-				models: TableQUnitUtils.createJSONModel(11),
-				columns: [
-					TableQUnitUtils.createTextColumn({text: "name", bind: true, label: "Name"}).setFilterProperty("name")
-				],
-				enableCellFilter: true
-			});
-
-			return this.oTable.qunit.whenRenderingFinished();
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
-	QUnit.test("DefaultContextMenu", function(assert) {
-		const oCell = this.oTable.qunit.getDataCell(0, 0);
 
-		qutils.triggerMouseEvent(oCell, "mousedown", null, null, null, null, 2);
-		oCell.dispatchEvent(new MouseEvent("contextmenu", {bubbles: true}));
-		assert.ok(this.oTable._oCellContextMenu.isOpen(), "Context menu is open");
-		this.oTable.setFirstVisibleRow(1);
-
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.notOk(this.oTable._oCellContextMenu.isOpen(), "Context menu is closed after scrolling");
-		});
-	});
-
-	QUnit.test("CustomContextMenu", function(assert) {
-		const oCell = this.oTable.qunit.getDataCell(0, 0);
-
-		this.oTable.setContextMenu(new Menu({items: new MenuItem({text: "CustomMenu"})}));
-		qutils.triggerMouseEvent(oCell, "mousedown", null, null, null, null, 2);
-		oCell.dispatchEvent(new MouseEvent("contextmenu", {bubbles: true}));
-		assert.ok(this.oTable.getContextMenu().isOpen(), "Context menu is open");
-		this.oTable.setFirstVisibleRow(1);
-
-		return this.oTable.qunit.whenRenderingFinished().then(() => {
-			assert.notOk(this.oTable.getContextMenu().isOpen(), "Context menu is closed after scrolling");
-		});
+	QUnit.test("Default context menu", function(assert) {
+		assert.ok(this.oTable._getDefaultContextMenu().isA("sap.ui.table.menus.ContextMenu"),
+			"Default context menu is a sap.ui.table.menus.ContextMenu");
 	});
 
 	QUnit.module("Row Modes", {
