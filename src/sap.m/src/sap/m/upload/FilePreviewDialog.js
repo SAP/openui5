@@ -448,6 +448,7 @@ sap.ui.define([
 					new Button({
 						text: oLibraryResourceBundle.getText("UPLOAD_SET_TABLE_FILE_PREVIEW_DIALOG_CLOSE"),
 						press: () => {
+							this._oCarousel.destroyPages();
 							this._oDialog.close();
 							this._aCachedPageIndexs = [];
 						}
