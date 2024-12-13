@@ -2167,9 +2167,9 @@ function(
 			oPopupInput = oSuggestionsPopover && oSuggestionsPopover.getInput(),
 			oPopupInputDomRef = oPopupInput && oPopupInput.getFocusDomRef();
 
-		// Trigger the ListItems refresh only when the focus is on the input field or the device is phone.
+		// Trigger the ListItems refresh only when the focus is on the input field (incl. busy indicator in case of being busy) or the device is phone.
 		// In all other cases this instantiates list population and it might not be needed at all.
-		if (document.activeElement === this.getFocusDomRef() || document.activeElement === oPopupInputDomRef) {
+		if (document.activeElement === this.getFocusDomRef() || document.activeElement === oPopupInputDomRef || this.getDomRef()?.contains(document.activeElement)) {
 			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 		}
