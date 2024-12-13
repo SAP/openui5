@@ -45,7 +45,7 @@
 					width="11rem">
 					<m:Label text="{/#Product/Category/@sap:label}"/>
 					<template>
-						<m:Input text="{Category}" wrapping="false"/>
+						<m:Input value="{Category}" wrapping="false"/>
 					</template>
 				</Column>
 				<Column
