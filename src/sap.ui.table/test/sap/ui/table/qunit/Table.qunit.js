@@ -454,7 +454,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const $SelectAll = oTable.$("selall");
-		const sSelectAllTitleText = TableUtils.getResourceBundle().getText("TBL_SELECT_ALL");
+		const sSelectAllTitleText = TableUtils.getResourceText("TBL_SELECT_ALL");
 
 		// Initially no rows are selected.
 		assert.ok($SelectAll.hasClass("sapUiTableSelAll"), "Initial: The SelectAll checkbox is not checked");
@@ -871,18 +871,10 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.test("ColumnMenu invalidation when localization changes", async function(assert) {
-		let pAdaptLocalization;
-		const done = assert.async();
-
 		oTable.getColumns().slice(1).forEach(function(oColumn) {
 			oTable.removeColumn(oColumn);
 		});
 		await nextUIUpdate();
-
-		oTable._adaptLocalization = function(bRtlChanged, bLangChanged) {
-			pAdaptLocalization = Table.prototype._adaptLocalization.apply(this, arguments);
-			return pAdaptLocalization;
-		};
 
 		function assertLocalizationUpdates(bRTLChanged, bLanguageChanged) {
 			assert.strictEqual(oTable.getColumns()[0].getMenu()._bInvalidated, bLanguageChanged,
@@ -893,7 +885,6 @@ sap.ui.define([
 			const mChanges = {changes: {}};
 
 			oTable._bRtlMode = null;
-			TableUtils.Menu.openContextMenu(oTable, getCell(0, 0, null, null, oTable));
 			oTable.getColumns()[0].getMenu()._bInvalidated = false;
 
 			if (bChangeTextDirection) {
@@ -904,52 +895,32 @@ sap.ui.define([
 			}
 
 			oTable.onLocalizationChanged(mChanges);
+			assertLocalizationUpdates(bChangeTextDirection, bChangeLanguage);
+		}
 
-			const pAssert = new Promise(function(resolve) {
-				setTimeout(function() {
-					assertLocalizationUpdates(bChangeTextDirection, bChangeLanguage);
+		await new Promise((resolve) => {
+			oTable.getColumns()[0].attachEventOnce("columnMenuOpen", function() {
+				setTimeout(() => {
+					test(true, true); // RTL + Language
+					test(true, false); // RTL
+					test(false, true); // Language
+					test(false, false); // Other localization event
 					resolve();
 				}, 0);
 			});
 
-			return pAdaptLocalization.then(function() {
-				return pAssert;
-			}).catch(function() {
-				return pAssert;
-			});
-		}
-
-		oTable.getColumns()[0].attachEventOnce("columnMenuOpen", function() {
-			// RTL + Language
-			test(true, true).then(function() {
-				// RTL
-				return test(true, false);
-			}).then(function() {
-				// Language
-				return test(false, true);
-			}).then(function() {
-				// Other localization event
-				return test(false, false);
-			}).then(done);
+			const oColumn = oTable.getColumns()[0];
+			oColumn._openHeaderMenu(oColumn.getDomRef());
 		});
-
-		const oColumn = oTable.getColumns()[0];
-		oColumn._openHeaderMenu(oColumn.getDomRef());
 	});
 
 	QUnit.test("Localization Change", async function(assert) {
 		const oInvalidateSpy = sinon.spy(oTable, "invalidate");
-		let pAdaptLocalization;
 
 		oTable.getColumns().slice(1).forEach(function(oColumn) {
 			oTable.removeColumn(oColumn);
 		});
 		await nextUIUpdate();
-
-		oTable._adaptLocalization = function(bRtlChanged, bLangChanged) {
-			pAdaptLocalization = Table.prototype._adaptLocalization.apply(this, arguments);
-			return pAdaptLocalization;
-		};
 
 		function assertLocalizationUpdates(bRTLChanged, bLanguageChanged) {
 			let sChangesTestMessage;
@@ -993,32 +964,13 @@ sap.ui.define([
 			}
 
 			oTable.onLocalizationChanged(mChanges);
-
-			const pAssert = new Promise(function(resolve) {
-				setTimeout(function() {
-					assertLocalizationUpdates(bChangeTextDirection, bChangeLanguage);
-					resolve();
-				}, 0);
-			});
-
-			return pAdaptLocalization.then(function() {
-				return pAssert;
-			}).catch(function() {
-				return pAssert;
-			});
+			assertLocalizationUpdates(bChangeTextDirection, bChangeLanguage);
 		}
 
-		// RTL + Language
-		return test(true, true).then(function() {
-			// RTL
-			return test(true, false);
-		}).then(function() {
-			// Language
-			return test(false, true);
-		}).then(function() {
-			// Other localization event
-			return test(false, false);
-		});
+		test(true, true); // RTL + Language
+		test(true, false); // RTL
+		test(false, true); // Language
+		test(false, false); // Other localization event
 	});
 
 	QUnit.test("AlternateRowColors", async function(assert) {
@@ -5059,8 +5011,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getRenderConfig", async function(assert) {
-		const sSelectAllTitleText = TableUtils.getResourceBundle().getText("TBL_SELECT_ALL");
-		const sDeselectAllTitleText = TableUtils.getResourceBundle().getText("TBL_DESELECT_ALL");
+		const sSelectAllTitleText = TableUtils.getResourceText("TBL_SELECT_ALL");
+		const sDeselectAllTitleText = TableUtils.getResourceText("TBL_DESELECT_ALL");
 		let Elem;
 
 		this.oTable.addDependent(this.oTestPlugin);

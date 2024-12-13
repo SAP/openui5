@@ -109,7 +109,7 @@ sap.ui.define([
 
 	QUnit.test("Item._getText", function(assert) {
 		const oItem = new RowActionItem();
-		const sText = TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE");
+		const sText = TableUtils.getResourceText("TBL_ROW_ACTION_NAVIGATE");
 
 		this.oRowAction.addItem(oItem);
 		assert.ok(!oItem._getText(false), "No Text or Tooltip set (Text preferred)");
@@ -203,7 +203,7 @@ sap.ui.define([
 				tooltip: "C",
 				text: "Wrong"
 			}), 1);
-		}, ["sap-icon://delete", "sap-icon://overflow"], ["B", TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_MORE")]);
+		}, ["sap-icon://delete", "sap-icon://overflow"], ["B", TableUtils.getResourceText("TBL_ROW_ACTION_MORE")]);
 		await checkRendering(this, assert, function() {
 			this.oRowAction.removeAllItems();
 		}, [], []);
@@ -290,19 +290,19 @@ sap.ui.define([
 	QUnit.test("Type Navigation", async function(assert) {
 		await checkRendering(this, assert, function() {
 			this.oRowAction.addItem(new RowActionItem({type: "Navigation"}));
-		}, ["navigationIcon"], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE")]);
+		}, ["navigationIcon"], [TableUtils.getResourceText("TBL_ROW_ACTION_NAVIGATE")]);
 		await checkRendering(this, assert, function() {
 			this.oRowAction.getItems()[0].setIcon("sap-icon://account");
-		}, ["sap-icon://account"], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE")]);
+		}, ["sap-icon://account"], [TableUtils.getResourceText("TBL_ROW_ACTION_NAVIGATE")]);
 	});
 
 	QUnit.test("Type Delete", async function(assert) {
 		await checkRendering(this, assert, function() {
 			this.oRowAction.addItem(new RowActionItem({type: "Delete"}));
-		}, ["deleteIcon"], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_DELETE")]);
+		}, ["deleteIcon"], [TableUtils.getResourceText("TBL_ROW_ACTION_DELETE")]);
 		await checkRendering(this, assert, function() {
 			this.oRowAction.getItems()[0].setIcon("sap-icon://account");
-		}, ["sap-icon://account"], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_DELETE")]);
+		}, ["sap-icon://account"], [TableUtils.getResourceText("TBL_ROW_ACTION_DELETE")]);
 	});
 
 	QUnit.test("Non-fixed column layout", async function(assert) {
@@ -470,38 +470,36 @@ sap.ui.define([
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		const oGetSizeStub = this.stub(this.oRowAction, "_getSize");
 
-		TableUtils.getResourceBundle(); // Make sure the resource bundle is available and ready for use.
-
 		oGetSizeStub.returns(2);
 		assert.equal(this.oRowAction.getAccessibilityInfo().focusable, true, "ACCInfo.focusable: 2 Items");
 		assert.equal(this.oRowAction.getAccessibilityInfo().enabled, true, "ACCInfo.enabled: 2 Items");
 		assert.equal(this.oRowAction.getAccessibilityInfo().description,
-			TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_MULTIPLE_ACTION", [2]), "ACCInfo.description: 2 Items");
+			TableUtils.getResourceText("TBL_ROW_ACTION_MULTIPLE_ACTION", [2]), "ACCInfo.description: 2 Items");
 
 		this.oRowAction.setVisible(false);
 		assert.equal(this.oRowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 2 Items - invisible");
 		assert.equal(this.oRowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 2 Items - invisible");
-		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NO_ACTION"),
+		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceText("TBL_ROW_ACTION_NO_ACTION"),
 			"ACCInfo.description: 2 Items - invisible");
 
 		oGetSizeStub.returns(0);
 		this.oRowAction.setVisible(true);
 		assert.equal(this.oRowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 2 Items - no Count");
 		assert.equal(this.oRowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 2 Items - no Count");
-		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NO_ACTION"),
+		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceText("TBL_ROW_ACTION_NO_ACTION"),
 			"ACCInfo.description: 2 Items - no Count");
 
 		oGetSizeStub.returns(2);
 		this.oRowAction.getItems()[0].setVisible(false);
 		assert.equal(this.oRowAction.getAccessibilityInfo().focusable, true, "ACCInfo.focusable: 2 Items - 1 invisible");
 		assert.equal(this.oRowAction.getAccessibilityInfo().enabled, true, "ACCInfo.enabled: 2 Items - 1 invisible");
-		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_SINGLE_ACTION"),
+		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceText("TBL_ROW_ACTION_SINGLE_ACTION"),
 			"ACCInfo.description: 2 Items - 1 invisible");
 
 		this.oRowAction.destroyItems();
 		assert.equal(this.oRowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 0 Items");
 		assert.equal(this.oRowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 0 Items");
-		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NO_ACTION"),
+		assert.equal(this.oRowAction.getAccessibilityInfo().description, TableUtils.getResourceText("TBL_ROW_ACTION_NO_ACTION"),
 			"ACCInfo.description: 0 Items");
 	});
 
