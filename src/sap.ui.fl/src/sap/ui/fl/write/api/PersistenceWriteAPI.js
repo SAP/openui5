@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
@@ -26,6 +27,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	DescriptorChangeTypes,
 	FlexCustomData,
+	AnnotationChange,
 	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
@@ -266,12 +268,15 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.add = function(mPropertyBag) {
-		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
-		var sFlexReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
+		const sFlexReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 		function addSingleFlexObject(oFlexObject) {
 			if (isDescriptorChange(oFlexObject)) {
 				return oFlexObject.store();
+			}
+			if (oFlexObject instanceof AnnotationChange) {
+				return FlexObjectManager.addDirtyFlexObjects(sFlexReference, [oFlexObject])?.[0];
 			}
 			return UIChangeManager.addDirtyChanges(sFlexReference, [oFlexObject], oAppComponent)?.[0];
 		}
@@ -284,7 +289,7 @@ sap.ui.define([
 			return addSingleFlexObject(mPropertyBag.change);
 		}
 
-		var bHasDescriptorChanges = mPropertyBag.flexObjects.some(function(oFlexObject) {
+		const bHasDescriptorChanges = mPropertyBag.flexObjects.some(function(oFlexObject) {
 			return isDescriptorChange(oFlexObject);
 		});
 
@@ -293,7 +298,25 @@ sap.ui.define([
 			return mPropertyBag.flexObjects.map(addSingleFlexObject);
 		}
 
-		return UIChangeManager.addDirtyChanges(sFlexReference, mPropertyBag.flexObjects, oAppComponent);
+		const aUIChanges = [];
+		const aAnnotationChanges = [];
+
+		mPropertyBag.flexObjects.forEach((oFlexObject) => {
+			if (oFlexObject instanceof AnnotationChange) {
+				aAnnotationChanges.push(oFlexObject);
+			} else {
+				aUIChanges.push(oFlexObject);
+			}
+		});
+
+		const aAddedFlexObjects = FlexObjectManager.addDirtyFlexObjects(sFlexReference, aAnnotationChanges);
+		const aAddedUIChanges = UIChangeManager.addDirtyChanges(sFlexReference, aUIChanges, oAppComponent);
+
+		// Ensure that the added changes are returned in the same order as they were passed
+		return mPropertyBag.flexObjects.map((oFlexObject) => {
+			return aAddedFlexObjects.find((oAddedFlexObject) => oAddedFlexObject === oFlexObject)
+				|| aAddedUIChanges.find((oAddedFlexObject) => oAddedFlexObject === oFlexObject);
+		});
 	};
 
 	/**

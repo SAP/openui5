@@ -66,19 +66,19 @@ sap.ui.define([
 	};
 
 	AnnotationChangeDialogController.prototype.onValueListChange = function(oEvent) {
-		const sPath = oEvent.getSource().getBindingContext().getObject().path;
+		const sPath = oEvent.getSource().getBindingContext().getObject().annotationPath;
 		const sSelectedKey = oEvent.getParameters().selectedItem.getKey();
 		this._oChangedProperties[sPath] = sSelectedKey;
 	};
 
 	AnnotationChangeDialogController.prototype.onBooleanChange = function(oEvent) {
-		const sPath = oEvent.getSource().getBindingContext().getObject().path;
+		const sPath = oEvent.getSource().getBindingContext().getObject().annotationPath;
 		const bSelected = oEvent.getParameters().selected;
 		this._oChangedProperties[sPath] = bSelected;
 	};
 
 	AnnotationChangeDialogController.prototype.onStringChange = function(oEvent) {
-		const sPath = oEvent.getSource().getBindingContext().getObject().path;
+		const sPath = oEvent.getSource().getBindingContext().getObject().annotationPath;
 		const sValue = oEvent.getParameters().value;
 		this._oChangedProperties[sPath] = sValue;
 	};

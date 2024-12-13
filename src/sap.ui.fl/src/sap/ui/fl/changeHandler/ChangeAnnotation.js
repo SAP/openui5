@@ -46,13 +46,13 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.AnnotationChange} oChange - Change object to be completed
 	 * @param {object} oSpecificChangeInfo - Information needed to complete the change
-	 * @param {string} oSpecificChangeInfo.annotationPath - Path of the annotation to be changed
-	 * @param {string} oSpecificChangeInfo.value - Value of the annotation to be changed
+	 * @param {string} oSpecificChangeInfo.content.annotationPath - Path of the annotation to be changed
+	 * @param {string} oSpecificChangeInfo.content.value - Value of the annotation to be changed
 	 */
 	ChangeAnnotation.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 		oChange.setContent({
-			annotationPath: oSpecificChangeInfo.annotationPath,
-			value: oSpecificChangeInfo.value
+			annotationPath: oSpecificChangeInfo.content.annotationPath,
+			value: oSpecificChangeInfo.content.value
 		});
 	};
 

@@ -67,7 +67,8 @@ sap.ui.define([
 				"settings",
 				"split",
 				"stretch",
-				"toolHooks"
+				"toolHooks",
+				"annotation"
 			];
 
 			const defaultPluginsArray = [];

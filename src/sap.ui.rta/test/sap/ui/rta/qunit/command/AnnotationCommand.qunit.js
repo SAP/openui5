@@ -1,24 +1,27 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/command/Annotation",
-	"rta/test/qunit/command/basicCommandTest"
+	"rta/test/qunit/command/basicCommandTest",
+	"sap/ui/rta/command/AnnotationCommand"
 ], function(
-	AnnotationCommand,
-	basicCommandTest
+	basicCommandTest,
+	AnnotationCommand
 ) {
 	"use strict";
 
 	basicCommandTest({
 		commandName: "annotation",
-		designTimeAction: false
+		designtimeActionStructure: "annotation",
+		variantIndependent: true
 	}, {
 		changeType: "annotation",
+		serviceUrl: "testServiceUrl",
 		content: {
 			myFancy: "Content"
 		}
 	}, {
 		changeType: "annotation",
+		serviceUrl: "testServiceUrl",
 		content: {
 			myFancy: "Content"
 		}

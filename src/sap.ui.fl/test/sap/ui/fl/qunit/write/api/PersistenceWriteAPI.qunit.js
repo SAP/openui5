@@ -435,6 +435,20 @@ sap.ui.define([
 			PersistenceWriteAPI.add({change: oChange, selector: this.vSelector});
 		});
 
+		QUnit.test("when add is called with an annotation change", function(assert) {
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
+
+			PersistenceWriteAPI.add({
+				change: FlexObjectFactory.createAnnotationChange({
+					serviceUrl: "someServiceUrl"
+				}),
+				selector: this.vSelector
+			});
+
+			assert.ok(FlexObjectManager.addDirtyFlexObjects.calledOnce, "then the annotation change was added");
+		});
+
 		QUnit.test("when add is called with multiple descriptor changes", function(assert) {
 			var i = 0;
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
@@ -495,6 +509,69 @@ sap.ui.define([
 				Error("Using 'flexObjects' and 'change' properties together not supported. Please use the 'flexObjects' property."),
 				"then an error with the correct message is thrown"
 			);
+		});
+
+		QUnit.test("when add is called with multiple UI changes and multiple annotation changes", function(assert) {
+			const mPropertyBag = {
+				flexObjects: [
+					FlexObjectFactory.createUIChange({
+						changeType: "flexChange"
+					}),
+					FlexObjectFactory.createAnnotationChange({
+						serviceUrl: "someServiceUrl"
+					}),
+					FlexObjectFactory.createUIChange({
+						changeType: "flexChange2"
+					}),
+					FlexObjectFactory.createAnnotationChange({
+						serviceUrl: "someServiceUrl2"
+					})
+				],
+				selector: this.vSelector
+			};
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
+			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
+
+			const aAddResult = PersistenceWriteAPI.add(mPropertyBag);
+			assert.deepEqual(
+				aAddResult,
+				[mPropertyBag.flexObjects[0], mPropertyBag.flexObjects[1], mPropertyBag.flexObjects[2], mPropertyBag.flexObjects[3]],
+				"then the added changes are returned in the correct order"
+			);
+		});
+
+		QUnit.test("when add is called with UI changes, descriptor changes and annotation changes", function(assert) {
+			const sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+			const mPropertyBag = {
+				flexObjects: [
+					FlexObjectFactory.createUIChange({
+						changeType: "flexChange"
+					}),
+					FlexObjectFactory.createAnnotationChange({
+						serviceUrl: "someServiceUrl"
+					}),
+					{
+						_getMap() {
+							return {
+								changeType: sDescriptorChangeType
+							};
+						},
+						store() {
+							return "storeWasCalled";
+						}
+					}
+				],
+				selector: this.vSelector
+			};
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
+			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
+
+			const aAddResult = PersistenceWriteAPI.add(mPropertyBag);
+			assert.strictEqual(aAddResult[0], mPropertyBag.flexObjects[0], "then addDirtyChanges was called first");
+			assert.strictEqual(aAddResult[1], mPropertyBag.flexObjects[1], "then addDirtyFlexObjects was called second");
+			assert.strictEqual(aAddResult[2], "storeWasCalled", "then store was called last");
 		});
 
 		QUnit.test("when remove is called for a flex object", function(assert) {

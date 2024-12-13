@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/ToolHooks",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+	"sap/ui/rta/plugin/annotations/AnnotationPlugin",
 	"sap/ui/rta/plugin/iframe/AddIFrame",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/CompVariant",
@@ -18,25 +19,26 @@ sap.ui.define([
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/rta/plugin/CutPaste",
 	"sap/ui/rta/plugin/DragDrop",
+	"sap/ui/rta/plugin/LocalReset",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/Resize",
 	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/plugin/Split",
-	"sap/ui/rta/plugin/Stretch",
-	"sap/ui/rta/plugin/LocalReset",
-	"sap/ui/rta/plugin/Resize"
+	"sap/ui/rta/plugin/Stretch"
 ], function(
 	isEmptyObject,
 	values,
 	ManagedObject,
 	ContextMenuPlugin,
 	ToolHooksPlugin,
-	Layer,
 	Settings,
+	Layer,
 	CommandFactory,
 	AdditionalElementsPlugin,
+	AnnotationPlugin,
 	AddIFramePlugin,
 	CombinePlugin,
 	CompVariantPlugin,
@@ -44,15 +46,15 @@ sap.ui.define([
 	CreateContainerPlugin,
 	CutPastePlugin,
 	RTADragDropPlugin,
+	LocalResetPlugin,
 	RemovePlugin,
 	RTARenamePlugin,
+	ResizePlugin,
 	RTAElementMover,
 	SelectionPlugin,
 	SettingsPlugin,
 	SplitPlugin,
-	StretchPlugin,
-	LocalResetPlugin,
-	ResizePlugin
+	StretchPlugin
 ) {
 	"use strict";
 
@@ -207,6 +209,10 @@ sap.ui.define([
 					commandFactory: this._oCommandFactory
 				});
 			}
+
+			this._mDefaultPlugins.annotation = new AnnotationPlugin({
+				commandFactory: this._oCommandFactory
+			});
 		}
 
 		return { ...this._mDefaultPlugins };
