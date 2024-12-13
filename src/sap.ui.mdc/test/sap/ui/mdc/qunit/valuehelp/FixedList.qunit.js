@@ -13,12 +13,17 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Integer",
+	"sap/ui/model/type/Date",
+	"sap/ui/model/type/String",
 	"sap/m/library",
 	"sap/m/ScrollContainer",
 	"sap/ui/core/library",
+	"sap/ui/core/date/UI5Date",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/strings/whitespaceReplacer"
-], function (
+], (
 		ValueHelpDelegate,
 		FixedList,
 		FixedListItem,
@@ -27,12 +32,17 @@ sap.ui.define([
 		ValueHelpSelectionType,
 		ParseException,
 		FormatException,
+		JSONModel,
+		IntegerType,
+		DateType,
+		StringType,
 		mLibrary,
 		ScrollContainer,
 		coreLibrary,
+		UI5Date,
 		nextUIUpdate,
 		whitespaceReplacer
-	) {
+	) => {
 	"use strict";
 
 	let oFixedList;
@@ -40,38 +50,40 @@ sap.ui.define([
 	let oScrollContainer = null;
 
 	const oContainer = { //to fake Container
-		getScrollDelegate: function() {
+		getScrollDelegate() {
 			return null;
 		},
-		isOpen: function() {
+		isOpen() {
 			return bIsOpen;
 		},
-		isOpening: function() {
+		isOpening() {
 			return bIsOpen;
 		},
-		isTypeahead: function () {
+		isTypeahead() {
 			return true;
 		},
-		getValueHelpDelegatePayload: function () {
+		getValueHelpDelegatePayload() {
 			return undefined;
 		},
-		invalidate: function () {},
-		getValueHelpDelegate: function () {
+		invalidate() {},
+		getValueHelpDelegate() {
 			return ValueHelpDelegate;
 		},
-		getControl: function () {
+		getControl() {
 			return undefined;
 		},
-		getValueHelp: function () {
+		getValueHelp() {
 			return {
-				getDisplay: function () {
+				getDisplay() {
 					return "DescriptionValue";
 				}
 			};
-		}
+		},
+		getId() {return "MyContainer";},
+		getParent() {return null;}
 	};
 
-	const _teardown = function() {
+	const _teardown = () => {
 		oFixedList.destroy();
 		oFixedList = null;
 		bIsOpen = true;
@@ -87,7 +99,7 @@ sap.ui.define([
 
 		oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oList]); // to render List
-		oContainer.getUIAreaForContent = function() {
+		oContainer.getUIAreaForContent = () => {
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
@@ -96,7 +108,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("basic features", {
-		beforeEach: function() {
+		beforeEach() {
 			const aConditions = [Condition.createItemCondition("I2", "My Item 2")];
 			oFixedList = new FixedList("FL1", {
 				items: [
@@ -116,186 +128,169 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("getContent", function(assert) {
+	QUnit.test("getContent", (assert) => {
 
 		let iSelect = 0;
 		let aConditions;
 		let sType;
-		oFixedList.attachEvent("select", function(oEvent) {
+		oFixedList.attachEvent("select", (oEvent) => {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
 		let iConfirm = 0;
-		oFixedList.attachEvent("confirm", function(oEvent) {
+		oFixedList.attachEvent("confirm", (oEvent) => {
 			iConfirm++;
 		});
 
 		const oContent = oFixedList.getContent();
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				const oShowResult = oFixedList.onShow(); // to update selection and scroll
-				assert.ok(oContent, "Content returned");
-				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
-				assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List has no style class sapMListFocus");
-				assert.equal(oFixedList.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
-				assert.equal(oContent.getWidth(), "100%", "List width");
-				assert.notOk(oContent.getShowNoData(), "List showNoData");
-				assert.notOk(oContent.getRememberSelections(), "List rememberSelections");
-				assert.equal(oContent.getMode(), mLibrary.ListMode.SingleSelectMaster, "List mode");
-				assert.ok(oContent.hasStyleClass("sapMComboBoxBaseList"), "List has style class sapMComboBoxBaseList");
-				assert.ok(oContent.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
-				assert.equal(oContent.getAriaRole(), "listbox", "List aria role");
-				assert.equal(oContent.getItems().length, 3, "Number of items");
-				let oItem = oContent.getItems()[0];
-				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item0 is DisplayListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item0 type");
-				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item0 valueTextDirection");
-				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
-				assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
-				assert.notOk(oItem.getSelected(), "Item0 not selected");
-				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item0 has style class sapMComboBoxNonInteractiveItem");
-				oItem = oContent.getItems()[1];
-				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item1 is DisplayListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item1 type");
-				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.RTL, "Item1 valueTextDirection");
-				assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item1 label");
-				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
-				assert.ok(oItem.getSelected(), "Item1 selected");
-				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
-				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item is not focused");
-				assert.equal(oShowResult?.itemId, oItem.getId(), "OnShow returns selected itemId");
-				assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
-				oItem = oContent.getItems()[2];
-				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");
-				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item2 valueTextDirection");
-				assert.equal(oItem.getLabel(), "item 3", "Item2 label");
-				assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item2 has style class sapMComboBoxNonInteractiveItem");
+		return oContent?.then((oContent) => {
+			const oShowResult = oFixedList.onShow(); // to update selection and scroll
+			assert.ok(oContent, "Content returned");
+			assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
+			assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List has no style class sapMListFocus");
+			assert.equal(oFixedList.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
+			assert.equal(oContent.getWidth(), "100%", "List width");
+			assert.notOk(oContent.getShowNoData(), "List showNoData");
+			assert.notOk(oContent.getRememberSelections(), "List rememberSelections");
+			assert.equal(oContent.getMode(), mLibrary.ListMode.SingleSelectMaster, "List mode");
+			assert.ok(oContent.hasStyleClass("sapMComboBoxBaseList"), "List has style class sapMComboBoxBaseList");
+			assert.ok(oContent.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
+			assert.equal(oContent.getAriaRole(), "listbox", "List aria role");
+			assert.equal(oContent.getItems().length, 3, "Number of items");
+			let oItem = oContent.getItems()[0];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item0 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item0 type");
+			assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item0 valueTextDirection");
+			assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
+			assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
+			assert.notOk(oItem.getSelected(), "Item0 not selected");
+			assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item0 has style class sapMComboBoxNonInteractiveItem");
+			oItem = oContent.getItems()[1];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item1 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item1 type");
+			assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.RTL, "Item1 valueTextDirection");
+			assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item1 label");
+			assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
+			assert.ok(oItem.getSelected(), "Item1 selected");
+			assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
+			assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item is not focused");
+			assert.equal(oShowResult?.itemId, oItem.getId(), "OnShow returns selected itemId");
+			assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
+			oItem = oContent.getItems()[2];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");
+			assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item2 valueTextDirection");
+			assert.equal(oItem.getLabel(), "item 3", "Item2 label");
+			assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
+			assert.notOk(oItem.getSelected(), "Item2 not selected");
+			assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item2 has style class sapMComboBoxNonInteractiveItem");
 
-				const aNewConditions = [
-					Condition.createItemCondition("I3", "item 3")
-				];
-				oItem.setSelected(true);
-				oContent.fireItemPress({listItem: oItem});
-				assert.equal(iSelect, 1, "select event fired");
-				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-				assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
-				assert.equal(iConfirm, 1, "confirm event fired");
-				assert.deepEqual(oFixedList.getConditions(), aNewConditions, "FixedList conditions");
+			const aNewConditions = [
+				Condition.createItemCondition("I3", "item 3")
+			];
+			oItem.setSelected(true);
+			oContent.fireItemPress({listItem: oItem});
+			assert.equal(iSelect, 1, "select event fired");
+			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+			assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+			assert.equal(iConfirm, 1, "confirm event fired");
+			assert.deepEqual(oFixedList.getConditions(), aNewConditions, "FixedList conditions");
 
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getContent with grouping", function(assert) {
+	QUnit.test("getContent with grouping", (assert) => {
 
 		oFixedList.setGroupable(true);
 
 		const oContent = oFixedList.getContent();
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oFixedList.onShow(true); // to update selection and scroll
-				oFixedList.setVisualFocus(); // fake focus
+		return oContent?.then((oContent) => {
+			oFixedList.onShow(true); // to update selection and scroll
+			oFixedList.setVisualFocus(); // fake focus
 
-				assert.ok(oContent, "Content returned");
-				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
-				assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
-				assert.equal(oContent.getItems().length, 5, "Number of items");
-				let oItem = oContent.getItems()[0];
-				assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Inactive, "Item0 type");
-				assert.equal(oItem.getTitle(), "Group 1", "Item0 title");
-				oItem = oContent.getItems()[1];
-				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item1 is DisplayListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item1 type");
-				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item1 valueTextDirection");
-				assert.equal(oItem.getLabel(), "Item 1", "Item1 label");
-				assert.equal(oItem.getValue(), "My Item 1", "Item1 value");
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
-				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
-				oItem = oContent.getItems()[2];
-				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");
-				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item2 valueTextDirection");
-				assert.equal(oItem.getLabel(), "item 3", "Item2 label");
-				assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
-				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item2 has style class sapMComboBoxNonInteractiveItem");
-				oItem = oContent.getItems()[3];
-				assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Inactive, "Item3 type");
-				assert.equal(oItem.getTitle(), "Group 2", "Item3 title");
-				oItem = oContent.getItems()[4];
-				assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item4 is DisplayListItem");
-				assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item4 type");
-				assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.RTL, "Item4 valueTextDirection");
-				assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item4 label");
-				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item4 value");
-				assert.ok(oItem.getSelected(), "Item4 selected");
-				assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item4 has style class sapMComboBoxNonInteractiveItem");
-
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+			assert.ok(oContent, "Content returned");
+			assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
+			assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
+			assert.equal(oContent.getItems().length, 5, "Number of items");
+			let oItem = oContent.getItems()[0];
+			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Inactive, "Item0 type");
+			assert.equal(oItem.getTitle(), "Group 1", "Item0 title");
+			oItem = oContent.getItems()[1];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item1 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item1 type");
+			assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item1 valueTextDirection");
+			assert.equal(oItem.getLabel(), "Item 1", "Item1 label");
+			assert.equal(oItem.getValue(), "My Item 1", "Item1 value");
+			assert.notOk(oItem.getSelected(), "Item1 not selected");
+			assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
+			oItem = oContent.getItems()[2];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");
+			assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.Inherit, "Item2 valueTextDirection");
+			assert.equal(oItem.getLabel(), "item 3", "Item2 label");
+			assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
+			assert.notOk(oItem.getSelected(), "Item2 not selected");
+			assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item2 has style class sapMComboBoxNonInteractiveItem");
+			oItem = oContent.getItems()[3];
+			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Inactive, "Item3 type");
+			assert.equal(oItem.getTitle(), "Group 2", "Item3 title");
+			oItem = oContent.getItems()[4];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item4 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item4 type");
+			assert.equal(oItem.getValueTextDirection(), coreLibrary.TextDirection.RTL, "Item4 valueTextDirection");
+			assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item4 label");
+			assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item4 value");
+			assert.ok(oItem.getSelected(), "Item4 selected");
+			assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item4 has style class sapMComboBoxNonInteractiveItem");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("Filtering", function(assert) {
+	QUnit.test("Filtering", (assert) => {
 
 		let iTypeaheadSuggested = 0;
-		oFixedList.attachEvent("typeaheadSuggested", function(oEvent) {
+		oFixedList.attachEvent("typeaheadSuggested", (oEvent) => {
 			iTypeaheadSuggested++;
 		});
 
 		oFixedList.setFilterValue("i");
 		const oContent = oFixedList.getContent();
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
-				assert.equal(oContent.getItems().length, 2, "Number of items");
-				let oItem = oContent.getItems()[0];
-				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
-				assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
-				oItem = oContent.getItems()[1];
-				assert.equal(oItem.getLabel(), "item 3", "Item1 label");
-				assert.equal(oItem.getValue(), "My Item 3", "Item1 value");
+		return oContent?.then((oContent) => {
+			oFixedList.onShow(); // to update selection and scroll
+			assert.equal(oContent.getItems().length, 2, "Number of items");
+			let oItem = oContent.getItems()[0];
+			assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
+			assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
+			oItem = oContent.getItems()[1];
+			assert.equal(oItem.getLabel(), "item 3", "Item1 label");
+			assert.equal(oItem.getValue(), "My Item 3", "Item1 value");
 
-				oFixedList.setCaseSensitive(true);
+			oFixedList.setCaseSensitive(true);
 
-				assert.equal(oContent.getItems().length, 1, "Number of items");
-				oItem = oContent.getItems()[0];
-				assert.equal(oItem.getLabel(), "item 3", "Item0 label");
-				assert.equal(oItem.getValue(), "My Item 3", "Item0 value");
+			assert.equal(oContent.getItems().length, 1, "Number of items");
+			oItem = oContent.getItems()[0];
+			assert.equal(oItem.getLabel(), "item 3", "Item0 label");
+			assert.equal(oItem.getValue(), "My Item 3", "Item0 value");
 
-				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
-
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+			assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("Filtering without hiding", function(assert) {
+	QUnit.test("Filtering without hiding", (assert) => {
 
 		let iTypeaheadSuggested = 0;
 		let oCondition;
@@ -303,7 +298,7 @@ sap.ui.define([
 		let sItemId;
 		let iItems;
 		let bTypeaheadCaseSensitive;
-		oFixedList.attachEvent("typeaheadSuggested", function(oEvent) {
+		oFixedList.attachEvent("typeaheadSuggested", (oEvent) => {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
@@ -318,44 +313,38 @@ sap.ui.define([
 		oFixedList.setFilterValue("i");
 		const oContent = oFixedList.getContent();
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				assert.equal(oContent.getItems().length, 3, "Number of items");
-				let oItem = oContent.getItems()[0];
-				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
-				assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
-				oItem = oContent.getItems()[1];
-				assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item1 label");
-				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
-				oItem = oContent.getItems()[2];
-				assert.equal(oItem.getLabel(), "item 3", "Item2 label");
-				assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
+		return oContent?.then((oContent) => {
+			assert.equal(oContent.getItems().length, 3, "Number of items");
+			let oItem = oContent.getItems()[0];
+			assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
+			assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
+			oItem = oContent.getItems()[1];
+			assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item1 label");
+			assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
+			oItem = oContent.getItems()[2];
+			assert.equal(oItem.getLabel(), "item 3", "Item2 label");
+			assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
 
-				oItem = oContent.getItems()[0];
+			oItem = oContent.getItems()[0];
 
-				oFixedList.setCaseSensitive(true);
-				iTypeaheadSuggested = 0;
-				oFixedList.setFilterValue("M");
-				assert.notOk(oItem.getSelected(), "Item0 not selected");
-				oItem = oContent.getItems()[1];
-				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
-				assert.deepEqual(oCondition, Condition.createItemCondition("I2", "My Item   2"), "typeaheadSuggested event condition");
-				assert.equal(sFilterValue, "M", "typeaheadSuggested event filterValue");
-				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
-				assert.equal(iItems, 3, "typeaheadSuggested event items");
-				assert.equal(bTypeaheadCaseSensitive, true, "typeaheadSuggested event caseSensitive");
-
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+			oFixedList.setCaseSensitive(true);
+			iTypeaheadSuggested = 0;
+			oFixedList.setFilterValue("M");
+			assert.notOk(oItem.getSelected(), "Item0 not selected");
+			oItem = oContent.getItems()[1];
+			assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+			assert.deepEqual(oCondition, Condition.createItemCondition("I2", "My Item   2"), "typeaheadSuggested event condition");
+			assert.equal(sFilterValue, "M", "typeaheadSuggested event filterValue");
+			assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
+			assert.equal(iItems, 3, "typeaheadSuggested event items");
+			assert.equal(bTypeaheadCaseSensitive, true, "typeaheadSuggested event caseSensitive");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - match", function(assert) {
+	QUnit.test("getItemForValue - match", (assert) => {
 
 		const oConfig = {
 			parsedValue: "I2",
@@ -372,21 +361,16 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I2", description: "My Item   2"}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) =>  {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I2", description: "My Item   2"}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - match for description", function(assert) {
+	QUnit.test("getItemForValue - match for description", (assert) => {
 
 		const oConfig = {
 			parsedValue: undefined,
@@ -403,21 +387,16 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I3", description: "item 3"}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I3", description: "item 3"}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - no value for key", function(assert) {
+	QUnit.test("getItemForValue - no value for key", (assert) => {
 
 		const oConfig = {
 			parsedValue: undefined,
@@ -434,21 +413,16 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, null, "no Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, null, "no Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - empty value for key", function(assert) {
+	QUnit.test("getItemForValue - empty value for key", (assert) => {
 
 		const oConfig = {
 			parsedValue: "",
@@ -465,21 +439,16 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, null, "no Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, null, "no Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - empty value for description", function(assert) {
+	QUnit.test("getItemForValue - empty value for description", (assert) => {
 
 		const oConfig = {
 			parsedValue: "",
@@ -496,22 +465,17 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, null, "no Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, null, "no Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - useFirstMatch for key", function(assert) {
-		const fnDone = assert.async();
+	QUnit.test("getItemForValue - useFirstMatch for key", (assert) => {
+
 		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: undefined,
@@ -528,21 +492,17 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - useFirstMatch for description", function(assert) {
-		const fnDone = assert.async();
+	QUnit.test("getItemForValue - useFirstMatch for description", (assert) => {
+
 		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: "I",
@@ -559,20 +519,16 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue - not found", function(assert) {
+	QUnit.test("getItemForValue - not found", (assert) => {
 
 		const oConfig = {
 			parsedValue: "I",
@@ -590,22 +546,17 @@ sap.ui.define([
 		const oPromise = oFixedList.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(true, "Promise Catch called");
-				assert.ok(oError instanceof FormatException, "ParseException fired");
-				assert.equal(oError.message, 'Value "I" does not exist.', "Error message");
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.notOk(true, "Promise Then must not be called");
+		}).catch((oError) => {
+			assert.ok(true, "Promise Catch called");
+			assert.ok(oError instanceof FormatException, "ParseException fired");
+			assert.equal(oError.message, 'Value "I" does not exist.', "Error message");
+		});
 
 	});
 
-	QUnit.test("isValidationSupported", function(assert) {
+	QUnit.test("isValidationSupported", (assert) => {
 
 		assert.ok(oFixedList.isValidationSupported(), "validation is supported");
 
@@ -662,14 +613,14 @@ sap.ui.define([
 		iVisualFocusSet = 0;
 	}
 
-	QUnit.test("navigate", function(assert) {
+	QUnit.test("navigate", (assert) => {
 
 		iNavigate = 0;
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
 		bNavigateCaseSensitive = undefined;
-		oFixedList.attachEvent("navigated", function(oEvent) {
+		oFixedList.attachEvent("navigated", (oEvent) => {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
@@ -677,56 +628,63 @@ sap.ui.define([
 			bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 		iVisualFocusSet = 0;
-		oFixedList.attachEvent("visualFocusSet", function(oEvent) {
+		oFixedList.attachEvent("visualFocusSet", (oEvent) => {
 			iVisualFocusSet++;
 		});
 
 		oFixedList.setCaseSensitive(true);
 		oFixedList.setConditions([]);
+		const aItems = oFixedList.getItems();
+		aItems[1].setText("Item 2"); // to test filtering
 		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(async function(oContent) {
-				await _renderScrollContainer(oContent);
-				// oFixedList.onShow(); // to update selection and scroll
-				oFixedList.navigate(1);
-				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
+		return oContent?.then(async (oContent) => {
+			await _renderScrollContainer(oContent);
+			// oFixedList.onShow(); // to update selection and scroll
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
-				// no previout item
-				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
+			// no previout item
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
 
-				// next item of selected one
-				oFixedList.navigate(1);
-				_checkNavigatedItem(assert, oContent, 1, 1, Condition.createItemCondition("I2", "My Item   2"), false);
-				oContent.getItems()[1].setSelected(false); // initialize
-				oFixedList.onConnectionChange(); // simulate new assignment
+			// next item of selected one
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
+			oContent.getItems()[1].setSelected(false); // initialize
+			oFixedList.onConnectionChange(); // simulate new assignment
 
-				// no item selected -> navigate to last
-				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
+			// no item selected -> navigate to last
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
 
-				oFixedList.onHide();
-				assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List removed style class sapMListFocus");
+			oFixedList.navigate(-9999);
+			_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+			oFixedList.navigate(9999);
+			_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
+
+			// Filtering initializes navigation
+			oFixedList.setFilterValue("I");
+			oFixedList.navigate(2);
+			_checkNavigatedItem(assert, oContent, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
+
+			oFixedList.onHide();
+			assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List removed style class sapMListFocus");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("navigate - without filtering but groupable (closed list)", function(assert) {
+	QUnit.test("navigate - without filtering but groupable (closed list)", (assert) => {
 
 		iNavigate = 0;
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
 		bNavigateCaseSensitive = undefined;
-		oFixedList.attachEvent("navigated", function(oEvent) {
+		oFixedList.attachEvent("navigated", (oEvent) => {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
@@ -734,7 +692,7 @@ sap.ui.define([
 			bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 		iVisualFocusSet = 0;
-		oFixedList.attachEvent("visualFocusSet", function(oEvent) {
+		oFixedList.attachEvent("visualFocusSet", (oEvent) => {
 			iVisualFocusSet++;
 		});
 
@@ -745,53 +703,48 @@ sap.ui.define([
 		bIsOpen = false;
 		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oFixedList.navigate(1);
-				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
-				iNavigate = 0;
-				oNavigateCondition = undefined;
-				sNavigateItemId = undefined;
+		return oContent?.then((oContent) => {
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+			iNavigate = 0;
+			oNavigateCondition = undefined;
+			sNavigateItemId = undefined;
 
-				// ignore group header backwards
-				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
+			// ignore group header backwards
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
 
-				// ignore group header forwards
-				oFixedList.navigate(1);
-				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
-				oContent.getItems()[4].setSelected(false); // initialize
-				oFixedList.onConnectionChange(); // simulate new assignment
+			// ignore group header forwards
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+			oContent.getItems()[4].setSelected(false); // initialize
+			oFixedList.onConnectionChange(); // simulate new assignment
 
-				// find filtered item backwards
-				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+			// find filtered item backwards
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 
-				// ignore group header backwards
-				oContent.getItems()[4].setSelected(false); // initialize
-				oContent.getItems()[2].setSelected(true); // set as selected
-				oFixedList.onConnectionChange(); // simulate new assignment
-				oFixedList.navigate(-2);
-				_checkNavigatedItem(assert, oContent, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			// ignore group header backwards
+			oContent.getItems()[4].setSelected(false); // initialize
+			oContent.getItems()[2].setSelected(true); // set as selected
+			oFixedList.onConnectionChange(); // simulate new assignment
+			oFixedList.navigate(-2);
+			_checkNavigatedItem(assert, oContent, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("navigate - without filtering but groupable (open list)", function(assert) {
+	QUnit.test("navigate - without filtering but groupable (open list)", (assert) => {
 
 		iNavigate = 0;
 		oNavigateCondition = undefined;
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
 		bNavigateCaseSensitive = undefined;
-		oFixedList.attachEvent("navigated", function(oEvent) {
+		oFixedList.attachEvent("navigated", (oEvent) => {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
@@ -799,7 +752,7 @@ sap.ui.define([
 			bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 		iVisualFocusSet = 0;
-		oFixedList.attachEvent("visualFocusSet", function(oEvent) {
+		oFixedList.attachEvent("visualFocusSet", (oEvent) => {
 			iVisualFocusSet++;
 		});
 
@@ -810,52 +763,47 @@ sap.ui.define([
 		bIsOpen = true;
 		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(async function(oContent) {
-				await _renderScrollContainer(oContent);
-				oFixedList.navigate(1);
-				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+		return oContent?.then(async (oContent) => {
+			await _renderScrollContainer(oContent);
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 
-				// select group header backwards
-				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 3, 3, undefined, false);
+			// select group header backwards
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, 3, 3, undefined, false);
 
-				// navigate from group header to previous item
-				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
+			// navigate from group header to previous item
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition("I3", "item 3"), false);
 
-				// select group header forwards
-				oFixedList.navigate(1);
-				_checkNavigatedItem(assert, oContent, 3, 3, undefined, false);
+			// select group header forwards
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 3, 3, undefined, false);
 
-				// navigate from gropu header to next item
-				oFixedList.navigate(1);
-				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
-				oContent.getItems()[4].setSelected(false); // initialize
-				oFixedList.onConnectionChange(); // simulate new assignment
+			// navigate from gropu header to next item
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+			oContent.getItems()[4].setSelected(false); // initialize
+			oFixedList.onConnectionChange(); // simulate new assignment
 
-				// find filtered item backwards
-				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
+			// find filtered item backwards
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 
-				// do not ignore group header backwards
-				oContent.getItems()[4].setSelected(false); // initialize
-				oContent.getItems()[2].setSelected(true); // set as selected
-				oFixedList.onConnectionChange(); // simulate new assignment
-				oFixedList.navigate(-3);
-				_checkNavigatedItem(assert, oContent, 0, 0, undefined, false);
+			// do not ignore group header backwards
+			oContent.getItems()[4].setSelected(false); // initialize
+			oContent.getItems()[2].setSelected(true); // set as selected
+			oFixedList.onConnectionChange(); // simulate new assignment
+			oFixedList.navigate(-3);
+			_checkNavigatedItem(assert, oContent, 0, 0, undefined, false);
 
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError);
-				fnDone();
-			});
-		}
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
 
 	});
 
-	QUnit.test("getValueHelpIcon", function(assert) {
+	QUnit.test("getValueHelpIcon", (assert) => {
 
 		assert.equal(oFixedList.getValueHelpIcon(), "sap-icon://slim-arrow-down", "icon");
 		oFixedList.setUseAsValueHelp(false);
@@ -863,7 +811,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getAriaAttributes", function(assert) {
+	QUnit.test("getAriaAttributes", (assert) => {
 
 		const oCheckAttributes = {
 			contentId: "FL1-List",
@@ -883,7 +831,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick", function(assert) {
+	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		assert.notOk(oFixedList.shouldOpenOnClick(), "should not open if filterList set");
 		oFixedList.setFilterList(false);
@@ -891,19 +839,19 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isFocusInHelp", function(assert) {
+	QUnit.test("isFocusInHelp", (assert) => {
 
 		assert.notOk(oFixedList.isFocusInHelp(), "Focus should stay in field");
 
 	});
 
-	QUnit.test("isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", (assert) => {
 
 		assert.ok(oFixedList.isSingleSelect(), "only singe selection");
 
 	});
 
-	QUnit.test("shouldOpenOnNavigate", function(assert) {
+	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		assert.ok(oFixedList.shouldOpenOnNavigate(), "should open if maxConditions != 1");
 
@@ -914,20 +862,20 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled", function(assert) {
+	QUnit.test("isNavigationEnabled", (assert) => {
 
 		assert.ok(oFixedList.isNavigationEnabled(1), "Navigation is enabled");
 
 	});
 
-	QUnit.test("isSearchSupported", function(assert) {
+	QUnit.test("isSearchSupported", (assert) => {
 
 		const bSupported = oFixedList.isSearchSupported();
 		assert.ok(bSupported, "Search is supported");
 
 	});
 
-	QUnit.test("setHighlightId", async function(assert) {
+	QUnit.test("setHighlightId", async (assert) => {
 		oFixedList.setConditions([]);
 		const oContent = await oFixedList.getContent();
 		const aItems = oContent.getItems();
@@ -945,6 +893,194 @@ sap.ui.define([
 		assert.ok(aItems[1].hasStyleClass("sapMLIBFocused"), "navigation added class sapMLIBFocused");
 
 		oFixedList.setHighlightId();
+	});
+
+	QUnit.test("destroyItems", (assert) => {
+
+		const oContent = oFixedList.getContent();
+
+		return oContent?.then((oContent) => {
+			assert.equal(oContent.getItems().length, 3, "Number of items");
+
+			oFixedList.destroyItems();
+			assert.equal(oFixedList.getItems().length, 0, "Number of  outer items");
+			assert.equal(oContent.getItems().length, 0, "Number of inner items (immideately destroyed)");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
+
+	});
+
+	let oModel;
+	QUnit.module("Using Binding", {
+		beforeEach() {
+			oModel = new JSONModel({
+				conditions: [Condition.createItemCondition(2, UI5Date.getInstance(2024, 11, 13))],
+				items: [
+					{key: 1, date: UI5Date.getInstance(2023, 11, 13), description: "last year"},
+					{key: 2, date: UI5Date.getInstance(2024, 11, 13), description: "today"},
+					{key: 3, date: UI5Date.getInstance(2025, 11, 13), description: "next year"}
+				],
+				config: {
+					maxConditions: -1,
+					operators: [OperatorName.EQ]
+				}
+			});
+
+			const oIntegerType = new IntegerType();
+			const oDateType = new DateType({pattern: "yyyy-MM-dd"});
+			const oStringType = new StringType();
+			const oFixedListItem = new FixedListItem("MyTemplate", {
+				key: {path: "key", type: oIntegerType},
+				text: {path: "date", type: oDateType},
+				additionalText: {path: "description", type: oStringType}
+			});
+
+			oFixedList = new FixedList("FL1", {
+				items: {path: "/items", template: oFixedListItem},
+				conditions: {path: "/conditions"},
+				config: {path: "/config"},
+				models: oModel
+			});
+			sinon.stub(oFixedList, "getParent").returns(oContainer);
+			oFixedList.oParent = oContainer; // fake
+		},
+		afterEach() {
+			_teardown();
+			oModel.destroy();
+			oModel = undefined;
+		}
+	});
+
+	QUnit.test("getContent", (assert) => {
+
+		let iSelect = 0;
+		let aConditions;
+		let sType;
+		oFixedList.attachEvent("select", (oEvent) => {
+			iSelect++;
+			aConditions = oEvent.getParameter("conditions");
+			sType = oEvent.getParameter("type");
+		});
+
+		const oContent = oFixedList.getContent();
+
+		return oContent?.then((oContent) => {
+			const oShowResult = oFixedList.onShow(); // to update selection and scroll
+			assert.ok(oContent, "Content returned");
+			assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
+			assert.equal(oContent.getItems().length, 3, "Number of items");
+			let oItem = oContent.getItems()[0];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item0 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item0 type");
+			assert.equal(oItem.getLabel(), "2023-12-13", "Item0 label");
+			assert.equal(oItem.getValue(), "last year", "Item0 value");
+			assert.notOk(oItem.getSelected(), "Item0 not selected");
+			oItem = oContent.getItems()[1];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item1 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item1 type");
+			assert.equal(oItem.getLabel(), "2024-12-13", "Item1 label");
+			assert.equal(oItem.getValue(), "today", "Item1 value");
+			assert.ok(oItem.getSelected(), "Item1 selected");
+			assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item is not focused");
+			assert.equal(oShowResult?.itemId, oItem.getId(), "OnShow returns selected itemId");
+			assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
+			oItem = oContent.getItems()[2];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");
+			assert.equal(oItem.getLabel(), "2025-12-13", "Item2 label");
+			assert.equal(oItem.getValue(), "next year", "Item2 value");
+			assert.notOk(oItem.getSelected(), "Item2 not selected");
+
+			const aNewConditions = [
+				Condition.createItemCondition(3, UI5Date.getInstance(2025, 11, 13))
+			];
+			oItem.setSelected(true);
+			oContent.fireItemPress({listItem: oItem});
+			assert.equal(iSelect, 1, "select event fired");
+			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+			assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+			assert.deepEqual(oFixedList.getConditions(), aNewConditions, "FixedList conditions");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
+
+	});
+
+	QUnit.test("Filtering", (assert) => {
+
+		oFixedList.setFilterValue("2024");
+		const oContent = oFixedList.getContent();
+
+		return oContent?.then((oContent) => {
+			oFixedList.onShow(); // to update selection and scroll
+			assert.equal(oContent.getItems().length, 1, "Number of items");
+			const oItem = oContent.getItems()[0];
+			assert.equal(oItem.getLabel(), "2024-12-13", "Item0 label");
+			assert.equal(oItem.getValue(), "today", "Item0 value");
+
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
+
+	});
+
+	QUnit.test("getItemForValue", (assert) => {
+
+		const oConfig = {
+			parsedValue: 2,
+			parsedDescription: UI5Date.getInstance(2025, 11, 13),
+			value: "2024-12-13",
+			inParameters: undefined,
+			outParameters: undefined,
+			bindingContext: undefined,
+			checkKey: true,
+			checkDescription: true,
+			exception: ParseException
+		};
+
+		const oPromise = oFixedList.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: 2, description: UI5Date.getInstance(2024, 11, 13)}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
+
+	});
+
+	QUnit.test("navigate", (assert) => {
+
+		iNavigate = 0;
+		oNavigateCondition = undefined;
+		sNavigateItemId = undefined;
+		bNavigateLeaveFocus = undefined;
+		bNavigateCaseSensitive = undefined;
+		oFixedList.attachEvent("navigated", (oEvent) => {
+			iNavigate++;
+			oNavigateCondition = oEvent.getParameter("condition");
+			sNavigateItemId = oEvent.getParameter("itemId");
+			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
+			bNavigateCaseSensitive = oEvent.getParameter("caseSensitive");
+		});
+		iVisualFocusSet = 0;
+		oFixedList.attachEvent("visualFocusSet", (oEvent) => {
+			iVisualFocusSet++;
+		});
+
+		oFixedList.setCaseSensitive(true);
+		const oContent = oFixedList.getContent(); // as content needs to be crated before navigation is possible
+
+		return oContent?.then(async (oContent) => {
+			await _renderScrollContainer(oContent);
+			oFixedList.navigate(1);
+			_checkNavigatedItem(assert, oContent, 2, 2, Condition.createItemCondition(3, UI5Date.getInstance(2025, 11, 13)), false);
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
+
 	});
 
 });
