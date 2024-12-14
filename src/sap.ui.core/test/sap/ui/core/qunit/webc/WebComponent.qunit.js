@@ -1,137 +1,248 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/webc/WebComponent",
-	"sap/ui/core/Control",
-	'sap/ui/core/LabelEnablement',
+	"sap/ui/core/library",
+	"webc/fixtures/BasicUI5Control",
+	"webc/fixtures/ControlWrapper",
+	"webc/fixtures/LabelWrapper",
+	"webc/helper/renderingFor",
+	"webc/helper/WebcWrapperPool",
+	"webc/helper/uglifyHTML",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(WebComponent, Control, LabelEnablement, createAndAppendDiv) {
+], function(
+	coreLibrary,
+	BasicUI5Control,
+	ControlWrapper,
+	LabelWrapper,
+	renderingFor,
+	WebcWrapperPool,
+	uglifyHTML,
+	createAndAppendDiv
+) {
 	"use strict";
 
-	createAndAppendDiv("contentDiv1");
+	createAndAppendDiv("webc-fixture-container");
+	const coreValueStateEnum = coreLibrary.ValueState;
 
-	class MyWebComponent extends HTMLElement {
-		webcProp;
-		constructor() {
-			super();
-			this.attachShadow({ mode: "open" });
-			this.shadowRoot.innerHTML = "<div><slot name=\"header\"></slot><slot></slot></div>";
-		}
-	}
-	window.customElements.define("my-web-component", MyWebComponent);
 
-	QUnit.module("Web Components - Basic Tests", {
+	QUnit.module("Properties", {
 		beforeEach: function () {
 		},
-		afterEach: function() {
+		afterEach: async function() {
+			// clean up the pool after each test, so we don't leak anything
+			// the pool automatically awaits the rendering, so that we can start with a clean DOM
+			await WebcWrapperPool.clear();
 		}
 	});
 
-	QUnit.test("Create and Render Web Component", function(assert) {
-		const done = assert.async();
-
-		var MyControl = Control.extend("my.Control", {
-			metadata: {
-				interfaces : [
-					"sap.ui.core.Label"
-				],
-				properties: {
-					text: "string"
-				},
-				associations : {
-					labelFor : {type : "sap.ui.core.Control", multiple : false}
-				}
+	QUnit.test("Getter and Setter - simple", async function(assert) {
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper, {
+			id: "creationTest",
+			text: "Text",
+			myWidth: "100%",
+			height: "100%",
+			borderWidth: "2px",
+			otherText: "OtherText",
+			propProp: {
+				"key": "value"
 			},
-			renderer: {
-				apiVersion: 2,
-				render: function(oRm, oControl) {
-					oRm.openStart("div", oControl);
-					oRm.openEnd();
-					oRm.text(oControl.getText());
-					oRm.close("div");
-				}
-			}
-		});
-		LabelEnablement.enrich(MyControl.prototype);
-
-		var MyWebComponent = WebComponent.extend("my.WebComponent", {
-			metadata: {
-				tag: "my-web-component",
-				properties: {
-					text: {
-						type: "string",
-						mapping: "textContent"
-					},
-					otherText: "string",
-					myWidth: {
-						type: "sap.ui.core.CSSSize",
-						mapping: {
-							type: "style",
-							to: "width"
-						}
-					},
-					height: {
-						type: "sap.ui.core.CSSSize",
-						mapping: "style"
-					},
-					borderWidth: {
-						type: "sap.ui.core.CSSSize",
-						mapping: {
-							type: "style",
-							to: "border",
-							formatter: "_formatBorder"
-						}
-					},
-					propProp: {
-						type: "object",
-						mapping: {
-							type: "property",
-							to: "webcProp"
-						}
-					},
-					slotProp: {
-						type: "string",
-						mapping: {
-							type: "slot",
-							to: "div"
-						}
-					},
-					otherSlotProp: {
-						type: "string",
-						mapping: "slot"
-					},
-					noneProp: {
-						type: "int",
-						mapping: "none"
-					}
-				},
-				defaultAggregation: "content",
-				aggregations: {
-					content: {
-						type: "sap.ui.core.Control",
-						multiple: true
-					},
-					header: {
-						type: "sap.ui.core.Control",
-						multiple: true,
-						slot: "header"
-					}
-				},
-				associations: {
-					ariaLabelledBy: {
-						type: "sap.ui.core.Control",
-						multiple: true,
-						mapping: {
-							type: "property",
-							to: "accessibleNameRef",
-							formatter: "_getAriaLabelledByForRendering"
-						}
-					}
-				}
-			},
-			_formatBorder: function(bw) { return bw + " solid red"; }
+			slotProp: "SlotText",
+			otherSlotProp: "OtherSlotText",
+			noneProp: 1337
 		});
 
-		var oMyWebComponent = new MyWebComponent({
+		// place into DOM and wait
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		// Property getters
+		assert.equal(myWebComponent.getText(), "Text", "Property \"text\" is correct!");
+		assert.equal(myWebComponent.getMyWidth(), "100%", "Property \"myWidth\" is correct!");
+		assert.equal(myWebComponent.getHeight(), "100%", "Property \"height\" is correct!");
+		assert.equal(myWebComponent.getBorderWidth(), "2px", "Property \"borderWidth\" is correct!");
+		assert.deepEqual(myWebComponent.getPropProp(), {
+			"key": "value"
+		}, "Property \"propProp\" is correct!");
+		assert.equal(myWebComponent.getSlotProp(), "SlotText", "Property \"slotProp\" is correct!");
+		assert.equal(myWebComponent.getOtherSlotProp(), "OtherSlotText", "Property \"otherSlotProp\" is correct!");
+		assert.equal(myWebComponent.getNoneProp(), 1337, "Property \"noneProp\" is correct!");
+		assert.equal(myWebComponent.getOtherText(), "OtherText", "Property \"otherText\" is correct!");
+
+		// TODO: Render output after setting properties
+
+	});
+
+	QUnit.test("Enabled mapping & propagation", async function(assert) {
+		await Promise.resolve();
+		// TODO: implement enabled propagation tests
+		assert.ok(true, "ok");
+	});
+
+	QUnit.test("'textDirection' to 'dir' mapping", async function(assert) {
+		await Promise.resolve();
+		// TODO: implement enabled propagation tests
+		assert.ok(true, "ok");
+	});
+
+	QUnit.test("'valueState' and 'valueStateText' mapping ", async function(assert) {
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper, {
+			id: "creationTest",
+			myWidth: "100%",
+			height: "100%",
+			valueState: coreValueStateEnum.Error,
+			valueStateText: "Error message"
+		});
+
+		// place into DOM and wait
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		assert.strictEqual(myWebComponent.getDomRef().getAttribute("value-state"), "Negative", "Value state is correctly rendered.");
+		assert.strictEqual(myWebComponent.getDomRef().querySelector("div[slot=\"valueStateMessage\"]").textContent, "Error message", "Value state text is correctly rendered.");
+
+		myWebComponent.setValueState(coreValueStateEnum.Success);
+		myWebComponent.setValueStateText("Success message");
+
+		await renderingFor(myWebComponent);
+
+		assert.strictEqual(myWebComponent.getDomRef().getAttribute("value-state"), "Positive", "Value state is correctly rendered.");
+		assert.strictEqual(myWebComponent.getDomRef().querySelector("div[slot=\"valueStateMessage\"]").textContent, "Success message", "Value state text is correctly rendered.");
+
+		// Test property update after attribute change
+		myWebComponent.getDomRef().setAttribute("value-state", "Critical");
+
+		assert.strictEqual(myWebComponent.getValueState(), coreValueStateEnum.Warning, "Value state is correctly rendered.");
+	});
+
+
+	QUnit.module("Aggregations", {
+		beforeEach: function () {
+		},
+		afterEach: async function() {
+			// clean up the pool after each test, so we don't leak anything
+			// the pool automatically awaits the rendering, so that we can start with a clean DOM
+			await WebcWrapperPool.clear();
+		}
+	});
+
+	QUnit.test("Getters and Mutators", async function(assert) {
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper, {
+			id: "creationTest",
+			content: [
+				new BasicUI5Control({ text: "Content" })
+			],
+			header: [
+				new BasicUI5Control({ text: "Header" })
+			]
+		});
+
+		// place into DOM and wait
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		// Aggregation getter
+		assert.equal(myWebComponent.getContent().length, 1, "Aggregation \"content\" is filled!");
+		assert.equal(myWebComponent.getContent()[0].getText(), "Content", "Aggregation \"content\" is correct!");
+		assert.equal(myWebComponent.getHeader().length, 1, "Aggregation \"header\" is filled!");
+		assert.equal(myWebComponent.getHeader()[0].getText(), "Header", "Aggregation \"header\" is correct!");
+
+		// aggregation changes
+		// TODO: implement changes and await the rendering
+		// TODO: assert rendering output
+	});
+
+
+
+	QUnit.module("Associations", {
+		beforeEach: function () {
+		},
+		afterEach: async function() {
+			// clean up the pool after each test, so we don't leak anything
+			// the pool automatically awaits the rendering, so that we can start with a clean DOM
+			await WebcWrapperPool.clear();
+		}
+	});
+
+	QUnit.test("Getter and Setter", async function(assert) {
+		await Promise.resolve();
+
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper, {
+			id: "associatedControl"
+		});
+
+		// LabelWrapper is a wrapped web component that represents a simple label.
+		const myLabelComponent = await WebcWrapperPool.create(LabelWrapper, {
+			id: "labelTest",
+			text: "Hello from the QUnit test :)",
+			// associate the control
+			labelFor: myWebComponent
+		});
+
+		// place into DOM and wait for first rendering
+		myLabelComponent.placeAt("webc-fixture-container");
+		await renderingFor(myLabelComponent);
+
+		// getter (initial)
+		assert.equal(myLabelComponent.getLabelFor(), "associatedControl", "Association 'labelFor' is filled correctly.");
+
+		// setter
+		const myWebComponent2 = await WebcWrapperPool.create(ControlWrapper, {
+			id: "associatedControl2"
+		});
+		myLabelComponent.setLabelFor(myWebComponent2);
+
+		assert.equal(myLabelComponent.getLabelFor(), "associatedControl2", "Association 'labelFor' is filled correctly after updating it.");
+
+		// assert rendering output
+		await renderingFor(myLabelComponent);
+
+		const domRef = myLabelComponent.getDomRef();
+		assert.equal(domRef.getAttribute("for"), "associatedControl2", "Association 'labelFor' is correctly rendered to 'for' attribute.");
+	});
+
+
+
+	QUnit.module("Messaging", {
+		beforeEach: function () {
+		},
+		afterEach: async function() {
+			// clean up the pool after each test, so we don't leak anything
+			// the pool automatically awaits the rendering, so that we can start with a clean DOM
+			await WebcWrapperPool.clear();
+		}
+	});
+
+	QUnit.test("TODO - migrate messaging tests?", async function(assert) {
+		await Promise.resolve();
+		// TODO: Implement messaging tests here --> or rather move to separate qunit file?
+		//       They are quite extensive after all when faking a backend.
+		assert.ok(true);
+	});
+
+
+
+	/**
+	 * TODO:
+	 * This is a 1:1 refactoring of the old tests.
+	 * Kept for reference, since they include rendering checks.
+	 * Can be removed once all sub modules have been implemented and tested with higher coverage.
+	 */
+	QUnit.module("Old Tests", {
+		beforeEach: function () {
+		},
+		afterEach: async function() {
+			// clean up the pool after each test, so we don't leak anything
+			// the pool automatically awaits the rendering, so that we can start with a clean DOM
+			await WebcWrapperPool.clear();
+		}
+	});
+
+	QUnit.test("Simple output comparison", async function(assert) {
+		const labelControlForAssociation = await WebcWrapperPool.create(LabelWrapper, { id: "ariaLabelAssociation", text: "Label for Rendering" });
+		const contentControl = new BasicUI5Control({ text: "Content" });
+		const headerControl = new BasicUI5Control({ text: "Header" });
+
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper, {
+			id: "creationTest",
 			text: "Text",
 			myWidth: "100%",
 			height: "100%",
@@ -143,46 +254,34 @@ sap.ui.define([
 			otherSlotProp: "OtherSlotText",
 			noneProp: 1337,
 			content: [
-				new MyControl({ text: "Content" })
+				contentControl
 			],
 			header: [
-				new MyControl({ text: "Header" })
+				headerControl
 			],
-			ariaLabelledBy: new MyControl("label", { text: "Label" })
+			ariaLabelledBy: labelControlForAssociation
 		});
-		oMyWebComponent.placeAt("contentDiv1");
 
-		assert.equal(oMyWebComponent.getText(), "Text", "Property \"text\" is correct!");
-		assert.equal(oMyWebComponent.getMyWidth(), "100%", "Property \"myWidth\" is correct!");
-		assert.equal(oMyWebComponent.getHeight(), "100%", "Property \"height\" is correct!");
-		assert.equal(oMyWebComponent.getBorderWidth(), "2px", "Property \"borderWidth\" is correct!");
-		assert.deepEqual(oMyWebComponent.getPropProp(), {
+		// render to DOM and wait
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		// assert rendering output in DOM
+		const expected = uglifyHTML(
+		`<sample-webc id="creationTest" data-sap-ui="creationTest" data-sap-ui-render="" accessible-name-ref="${labelControlForAssociation.getId()}" style="width: 100%; height: 100%; border: 2px solid red;">
+			Text
+			<div slot="slotProp">SlotText</div>
+			<span slot="otherSlotProp">OtherSlotText</span>
+			<div id="${contentControl.getId()}" data-sap-ui="${contentControl.getId()}" data-sap-ui-render="">Content</div>
+			<div id="${headerControl.getId()}" data-sap-ui="${headerControl.getId()}" data-sap-ui-render="" slot="header">Header</div>
+		</sample-webc>`);
+
+		assert.equal(myWebComponent.getDomRef().outerHTML,
+			expected,
+			"styles and text nodes are written correctly");
+		assert.deepEqual(myWebComponent.getDomRef().webcProp, {
 			"key": "value"
-		}, "Property \"propProp\" is correct!");
-		assert.equal(oMyWebComponent.getSlotProp(), "SlotText", "Property \"slotProp\" is correct!");
-		assert.equal(oMyWebComponent.getOtherSlotProp(), "OtherSlotText", "Property \"otherSlotProp\" is correct!");
-		assert.equal(oMyWebComponent.getNoneProp(), 1337, "Property \"noneProp\" is correct!");
-		assert.equal(oMyWebComponent.getContent().length, 1, "Aggregation \"content\" is filled!");
-		assert.equal(oMyWebComponent.getContent()[0].getText(), "Content", "Aggregation \"content\" is correct!");
-		assert.equal(oMyWebComponent.getHeader().length, 1, "Aggregation \"header\" is filled!");
-		assert.equal(oMyWebComponent.getHeader()[0].getText(), "Header", "Aggregation \"header\" is correct!");
-		assert.equal(oMyWebComponent.getAriaLabelledBy().length, 1, "Association \"ariaLabelledBy\" is filled!");
-		assert.equal(oMyWebComponent.getAriaLabelledBy()[0], "label", "Association \"ariaLabelledBy\" is correct!");
-
-		oMyWebComponent.addDelegate({
-			onAfterRendering: function() {
-				assert.equal(oMyWebComponent.getDomRef().outerHTML,
-					"<my-web-component id=\"__component0\" data-sap-ui=\"__component0\" data-sap-ui-render=\"\" accessible-name-ref=\"label\" style=\"width: 100%; height: 100%; border: 2px solid red;\">Text<div slot=\"slotProp\">SlotText</div><span slot=\"otherSlotProp\">OtherSlotText</span><div id=\"__control0\" data-sap-ui=\"__control0\" data-sap-ui-render=\"\">Content</div><div id=\"__control1\" data-sap-ui=\"__control1\" data-sap-ui-render=\"\" slot=\"header\">Header</div></my-web-component>",
-					"styles and text nodes are written correctly");
-				// properties will be applied in the onAfterRendering / whenDefined Promise
-				window.customElements.whenDefined("my-web-component").then(function() {
-					assert.deepEqual(oMyWebComponent.getDomRef().webcProp, {
-						"key": "value"
-					}, "property webcProp is set correctly");
-					done();
-				});
-			}
-		});
+		}, "property webcProp is set correctly");
 	});
 
 });

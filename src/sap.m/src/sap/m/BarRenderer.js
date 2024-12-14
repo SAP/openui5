@@ -43,7 +43,8 @@ BarRenderer.decorateRootElement = function (oRM, oControl) {
 
 	oRM.accessibilityState(oControl, {
 		"role": oControl._getAccessibilityRole(),
-		"level":  oControl._getRootAriaLevel()
+		"level":  oControl._getRootAriaLevel(),
+		"labelledby": {value: oControl._getAccessibilityRole() ? oControl.getAriaLabelledBy() : "", append: false}
 	});
 
 	oRM.class("sapMBar-CTX");

@@ -328,7 +328,7 @@
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapTntNLI:not(.sapTntNLIDisabled).sapTntNLIActive,
+.sapTntNLI:not(.sapTntNLIDisabled).sapTntNLIActive:not(:hover),
 .sapTntNLIActive .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled),
 .sapTntNLCollapsed.sapTntNLIFirstLevel.sapTntNLISelected,
 .sapTntNL .sapTntNLGroup.sapTntNLI:not(.sapTntNLIDisabled):active,
@@ -342,7 +342,8 @@
 		border-width: @_sap_tnt_NavigationList_SelectedBorderWidth;
 	}
 
-	.sapMText {
+	.sapMText,
+	.sapTntNLGroupText {
 		color: @sapUiListActiveTextColor;
 	}
 

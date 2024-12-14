@@ -140,12 +140,12 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
-		return Table.prototype._adaptLocalization.apply(this, arguments).then(function() {
-			if (bLangChanged) {
-				this._oGroupHeaderMenuAdapter.destroy();
-				this._oGroupHeaderMenuAdapter = new GroupHeaderContextMenuAdapter(this);
-			}
-		}.bind(this));
+		Table.prototype._adaptLocalization.apply(this, arguments);
+
+		if (bLangChanged) {
+			this._oGroupHeaderMenuAdapter.destroy();
+			this._oGroupHeaderMenuAdapter = new GroupHeaderContextMenuAdapter(this);
+		}
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {

@@ -14,8 +14,7 @@
 				ariaLabelledBy="title"
 				selectionMode="MultiToggle"
 				rows="{/modelData}"
-				enableColumnFreeze="true"
-				showColumnVisibilityMenu="true">
+				enableColumnFreeze="true">
 				<extension>
 					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Contacts"/>
