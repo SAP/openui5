@@ -268,7 +268,7 @@ sap.ui.define([
 		const oOnAfterRenderingEventListener = this.spy();
 
 		this.assertColor(assert, 0, this.getColorRgb("sapUiSuccessBorder"));
-		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
+		this.assertText(assert, 0, TableUtils.getResourceText("TBL_ROW_STATE_SUCCESS"));
 
 		this.oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		this.oTable.getRows()[0].getAggregation("_settings").setHighlight(MessageType.Error);
@@ -276,13 +276,13 @@ sap.ui.define([
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight");
 		this.assertColor(assert, 0, this.getColorRgb("sapUiErrorBorder"));
-		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_ERROR"));
+		this.assertText(assert, 0, TableUtils.getResourceText("TBL_ROW_STATE_ERROR"));
 	});
 
 	QUnit.test("setHighlightText", async function(assert) {
 		const oOnAfterRenderingEventListener = this.spy();
 
-		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
+		this.assertText(assert, 0, TableUtils.getResourceText("TBL_ROW_STATE_SUCCESS"));
 
 		this.oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		this.oTable.getRows()[0].getAggregation("_settings").setHighlightText("testitext");
@@ -346,13 +346,13 @@ sap.ui.define([
 			let sHighlightText = "";
 
 			if (iRowIndex === 0) {
-				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + MessageType.Success.toUpperCase());
+				sHighlightText = TableUtils.getResourceText("TBL_ROW_STATE_" + MessageType.Success.toUpperCase());
 			} else if (iRowIndex === 1) {
-				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + MessageType.Warning.toUpperCase());
+				sHighlightText = TableUtils.getResourceText("TBL_ROW_STATE_" + MessageType.Warning.toUpperCase());
 			} else if (iRowIndex === 2) {
-				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + MessageType.Error.toUpperCase());
+				sHighlightText = TableUtils.getResourceText("TBL_ROW_STATE_" + MessageType.Error.toUpperCase());
 			} else if (iRowIndex === 3) {
-				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + MessageType.Information.toUpperCase());
+				sHighlightText = TableUtils.getResourceText("TBL_ROW_STATE_" + MessageType.Information.toUpperCase());
 			}
 			// Rows with indices 4-9 (MessageType.None and IndicationColors) has no highlight text.
 

@@ -52,7 +52,9 @@ function(ElementMetadata, WebComponentRenderer, camelize) {
 		} else if (typeof info.mapping === "object") {
 			this._sMapping = fnValidateType(info.mapping.type);
 			this._sMapTo = info.mapping.to;
+			this._sSlotName = info.mapping.slotName;
 			this._fnMappingFormatter = info.mapping.formatter;
+			this._fnMappingParser = info.mapping.parser;
 		}
 	};
 	WebComponentProperty.prototype = Object.create(OriginalProperty.prototype);
@@ -79,6 +81,7 @@ function(ElementMetadata, WebComponentRenderer, camelize) {
 			this._sMapping = "property"; // Associations map only to properties, no matter what is set, it's always "property" mapping
 			this._sMapTo = info.mapping.to; // The property, to which the association is related
 			this._fnMappingFormatter = info.mapping.formatter;
+			this._fnMappingParser = info.mapping.parser;
 		}
 	};
 	WebComponentAssociation.prototype = Object.create(OriginalAssociation.prototype);

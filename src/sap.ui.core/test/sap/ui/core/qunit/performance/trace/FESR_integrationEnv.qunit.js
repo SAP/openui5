@@ -18,7 +18,7 @@ globalThis.fnInit = () => {
 			dummyRequest: function(bUseUrlObject) {
 				var xhr = new XMLHttpRequest();
 				const sUrl = "resources/ui5loader.js?noCache=" + Date.now() + "-" + (++requestCounter);
-				xhr.open("GET", bUseUrlObject ?  new URL(sUrl, document.baseURI) : sUrl, false);
+				xhr.open("GET", bUseUrlObject ?  new URL(sUrl, document.location.origin) : sUrl, false);
 				xhr.send();
 				return xhr;
 			}
@@ -28,6 +28,8 @@ globalThis.fnInit = () => {
 			const sIntegrationEnv = new URLSearchParams(globalThis.location.search).get("sap-ui-fesr-env"),
 				oSinonSandbox = sinon.createSandbox(),
 				oHeaderSpy = oSinonSandbox.spy(XMLHttpRequest.prototype, "setRequestHeader");
+
+			let aValues;
 
 			// create new interaction
 			Interaction.start("new_interaction");
@@ -42,14 +44,14 @@ globalThis.fnInit = () => {
 			// trigger another request to send FESR using URL object to ensure isCORSRequest can handle URL objects as well
 			this.dummyRequest(/* bUseUrlObject */ true);
 
-			assert.ok(oHeaderSpy.args.some(function(args) {
+			assert.ok(oHeaderSpy.args.some((args) => {
 				if (args[0] === "SAP-Perf-FESRec-opt") {
-					var values = args[1].split(",");
+					aValues = args[1].split(",");
 					// Integration environment
-					return values[3] === `${Device.browser.reportingName}_${Device.browser.version}${sIntegrationEnv ? ":" + sIntegrationEnv : ""}`.substring(0, 20);
+					return aValues[3] === `${Device.browser.reportingName}_${Device.browser.version}${sIntegrationEnv ? ":" + sIntegrationEnv : ""}`.substring(0, 20);
 				}
 				return false;
-			}), `Found the FESR header field value and the integration environemnt is ${sIntegrationEnv ? sIntegrationEnv : "not provided"}.`);
+			}), `Found the FESR header field value and the integration environemnt is ${aValues[3]}.`);
 
 			oSinonSandbox.restore();
 		});

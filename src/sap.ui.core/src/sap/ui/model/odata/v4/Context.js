@@ -454,7 +454,7 @@ sap.ui.define([
 			throw oError;
 		});
 
-		if (oGroupLock && this.oModel.isApiGroup(oGroupLock.getGroupId())) {
+		if (oGroupLock && oModel.isApiGroup(oGroupLock.getGroupId())) {
 			oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
 				oDependentBinding.setContext(undefined);
 			});
@@ -518,7 +518,7 @@ sap.ui.define([
 				oGroupLock.unlock();
 				oGroupLock = oGroupLock.getUnlockedCopy();
 				this.doSetProperty(sPath, vValue, null, true, true) // early UI update
-					.catch(this.oModel.getReporter());
+					.catch(oModel.getReporter());
 
 				return SyncPromise.resolve(oPromise).then(function (bSuccess) {
 					// in case of success, wait until creation is completed because context path's
@@ -529,9 +529,9 @@ sap.ui.define([
 				});
 			}
 		}
-		if (this.oModel.bAutoExpandSelect) {
+		if (oModel.bAutoExpandSelect) {
 			sPath = oMetaModel.getReducedPath(
-				this.oModel.resolve(sPath, this),
+				oModel.resolve(sPath, this),
 				this.oBinding.getBaseForPathReduction());
 		}
 		return this.withCache(function (oCache, sCachePath, oBinding) {
@@ -587,7 +587,7 @@ sap.ui.define([
 						// event listener
 						// runs synchronously - setProperty calls fetchValue with $cached
 						oCache.setProperty(oResult.propertyPath, vValue, sEntityPath, bUpdating)
-							.catch(that.oModel.getReporter());
+							.catch(oModel.getReporter());
 						that.bFiringCreateActivate = true;
 						that.bInactive = oBinding.fireCreateActivate(that) ? false : 1;
 						that.bFiringCreateActivate = false;
@@ -598,6 +598,7 @@ sap.ui.define([
 					// returned Promise is rejected -> no patch events
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
 						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
+						// Note: use that.oModel intentionally, fails if already destroyed!
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent,
 						that.isEffectivelyKeptAlive.bind(that)

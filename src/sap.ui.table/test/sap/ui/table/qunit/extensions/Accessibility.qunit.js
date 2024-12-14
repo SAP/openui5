@@ -1565,7 +1565,7 @@ sap.ui.define([
 			assert.strictEqual($Elem.attr("role"), "button", "Expanded Tree icon role of expandable row");
 			assert.strictEqual($Elem.attr("aria-expanded"), "true", "Expanded Tree icon aria-expanded property");
 			assert.strictEqual($Elem.attr("aria-hidden"), "false", "Expanded Tree icon aria-hidden property");
-			assert.strictEqual($Elem.attr("title"), TableUtils.getResourceBundle().getText("TBL_COLLAPSE_EXPAND"),
+			assert.strictEqual($Elem.attr("title"), TableUtils.getResourceText("TBL_COLLAPSE_EXPAND"),
 				"Expanded Tree icon title property");
 
 			$Elem = oTreeTable.$("rows-row1-col0").find(".sapUiTableTreeIcon");
@@ -1579,7 +1579,7 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("role"), "button", "Collapsed Tree icon role of expandable row");
 		assert.strictEqual($Elem.attr("aria-expanded"), "false", "Collapsed Tree icon aria-expanded property");
 		assert.strictEqual($Elem.attr("aria-hidden"), "false", "Collapsed Tree icon aria-hidden property");
-		assert.strictEqual($Elem.attr("title"), TableUtils.getResourceBundle().getText("TBL_COLLAPSE_EXPAND"), "Collapsed Tree icon title property");
+		assert.strictEqual($Elem.attr("title"), TableUtils.getResourceText("TBL_COLLAPSE_EXPAND"), "Collapsed Tree icon title property");
 
 		oTreeTable.expand(0);
 		await nextUIUpdate();
@@ -2008,7 +2008,7 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			if (sHighlight in MessageType) {
-				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
+				sHighlightText = TableUtils.getResourceText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
 			}
 
 			assertHighlightTexts(true, sHighlightText);

@@ -180,15 +180,12 @@ sap.ui.define([
 						id: oTable.getId() + "-expandAll",
 						controlType: "sap.m.MenuButton",
 						actions: new Press(),
-						success: function() {
-							return this.waitFor({
-								controlType: "sap.ui.unified.MenuItem",
-								matchers: new PropertyStrictEquals({
-									name: "text",
-									value: bExpandAll ? oResourceBundle.getText("table.EXPAND_TREE") : oResourceBundle.getText("table.EXPAND_NODE")
-								}),
-								actions: new Press()
-							});
+						success: function(oMenuButton) {
+							const sExpandText = bExpandAll ? oResourceBundle.getText("table.EXPAND_TREE") : oResourceBundle.getText("table.EXPAND_NODE");
+							const oMenuItem = oMenuButton?.getMenu()?.getItems().find((oMenuItem) => oMenuItem.getText() === sExpandText);
+
+							// Simulate menu item press (Having a matcher with an Action does not work in Safari)
+							oMenuItem?.firePress();
 						},
 						errorMessage: "Could not press Expand Menu Button"
 					});
@@ -242,15 +239,12 @@ sap.ui.define([
 						id: oTable.getId() + "-collapseAll",
 						controlType: "sap.m.MenuButton",
 						actions: new Press(),
-						success: function() {
-							return this.waitFor({
-								controlType: "sap.ui.unified.MenuItem",
-								matchers: new PropertyStrictEquals({
-									name: "text",
-									value: bCollapseAll ? oResourceBundle.getText("table.COLLAPSE_TREE") : oResourceBundle.getText("table.COLLAPSE_NODE")
-								}),
-								actions: new Press()
-							});
+						success: function(oMenuButton) {
+							const sCollapseText = bCollapseAll ? oResourceBundle.getText("table.COLLAPSE_TREE") : oResourceBundle.getText("table.COLLAPSE_NODE");
+							const oMenuItem = oMenuButton?.getMenu()?.getItems().find((oMenuItem) => oMenuItem.getText() === sCollapseText);
+
+							// Simulate menu item press (Having a matcher with an Action does not work in Safari)
+							oMenuItem?.firePress();
 						},
 						errorMessage: "Could not press Collapse Menu Button"
 					});

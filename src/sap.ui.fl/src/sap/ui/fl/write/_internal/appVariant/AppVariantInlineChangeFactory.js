@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/descriptorRelated/Utils",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChange"
 ], function(
 	Utils,
+	FlUtils,
 	AppVariantInlineChange
 ) {
 	"use strict";
@@ -1004,6 +1006,7 @@ sap.ui.define([
 	 * Creates an inline change of change type <code>appdescr_ui_generic_app_changePageConfiguration</code>.
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type
+	 * @param {string} mPropertyBag.fileName Name of the change file
 	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
 	 * @param {object} mPropertyBag.content Content of an inline change
 	 * @param {object} mPropertyBag.content.parentPage Source page details
@@ -1019,6 +1022,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AppVariantInlineChangeFactory.create_ui_generic_app_changePageConfiguration = function(mPropertyBag) {
+		mPropertyBag.fileName = FlUtils.createDefaultFileName("appdescr_ui_gen_app_changePageConfig");
 		Utils.checkParameterAndType(mPropertyBag.content, "parentPage", "object");
 		Utils.checkEntityPropertyChange(mPropertyBag.content);
 		return _createAppVariantInlineChange(mPropertyBag);

@@ -119,6 +119,7 @@ sap.ui.define(function() {
 			types: {},
 			util: {},
 			rule: {},
+			webc: {},
 			xml: {}
 		}
 	};

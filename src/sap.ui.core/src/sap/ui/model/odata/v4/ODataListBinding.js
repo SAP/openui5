@@ -4390,7 +4390,7 @@ sap.ui.define([
 			}
 		}
 		if (bSingle) {
-			this.oModel.withUnresolvedBindings("removeCachesAndMessages",
+			oModel.withUnresolvedBindings("removeCachesAndMessages",
 				oContext.getPath().slice(1));
 
 			return this.refreshSingle(oContext, this.lockGroup(sGroupId), /*bAllowRemoval*/false,
