@@ -53,6 +53,10 @@ sap.ui.define(function() {
 			"Menu": {
 				group: "Controls"
 			},
+			"GroupHeaderRowContextMenu": {
+				group: "Controls",
+				module: "./menu/{name}.qunit"
+			},
 			"TableTypeBase": {
 				group: "Table types"
 			},

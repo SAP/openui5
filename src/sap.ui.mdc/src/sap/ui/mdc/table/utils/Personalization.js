@@ -162,6 +162,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a change that removes all groups and applies it to the table.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
+	 */
+	PersonalizationUtils.createClearGroupsChange = function(oTable) {
+		oTable.getEngine().createChanges({
+			control: oTable,
+			key: "Group",
+			state: [],
+			applyAbsolute: ProcessingStrategy.FullReplace
+		});
+	};
+
+	/**
 	 * Creates a change that removes all filters and applies it to the table.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
