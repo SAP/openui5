@@ -125,7 +125,7 @@ sap.ui.define([
 
 		if (this._oInnerCreationRow) {
 			this._oInnerCreationRow.setVisible(bVisible);
-			this._getTable()._oTable.getRowMode().setHideEmptyRows(bVisible);
+			this._getTable()._oTable.getRowMode().setHideEmptyRows?.(bVisible);
 		}
 
 		return this;
@@ -158,7 +158,7 @@ sap.ui.define([
 		if (oTable._isOfType(TableType.Table, true)) {
 			if (!this._oInnerCreationRow || this._oInnerCreationRow.isDestroyed()) {
 				pCreateInnerCreationRow = this._createGridTableCreationRow();
-				oTable._oTable.getRowMode().setHideEmptyRows(this.getVisible());
+				oTable._oTable.getRowMode().setHideEmptyRows?.(this.getVisible());
 			} else {
 				pCreateInnerCreationRow = Promise.resolve();
 			}
@@ -194,7 +194,7 @@ sap.ui.define([
 				]
 			});
 
-			this._getTable()._oTable.getRowMode().setHideEmptyRows(this.getVisible());
+			this._getTable()._oTable.getRowMode().setHideEmptyRows?.(this.getVisible());
 
 			for (const sModelName in this._mBindingContexts) {
 				const mBindingContext = this._mBindingContexts[sModelName];
