@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.f.cardsdemo.webpage.card1",
+		"id": "sap.f.cardsdemo.webpage.baseUrlCard",
 		"type": "card",
 		"title": "Sample of a WebPage Card",
 		"subTitle" :"Sample of a WebPage Card",
@@ -25,15 +25,13 @@
 		"type": "WebPage",
 		"header": {
 			"title": "OpenUI5 Events",
-			"subTitle": "src: '/test.html'",
+			"subTitle": "src: '/events', baseUrl: 'https://openui5.org'",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}
 		},
 		"content": {
-			"src": "/test.html",
-			"sandbox": "allow-scripts allow-popups allow-downloads",
-			"allowFullscreen": true
+			"src": "/events"
 		}
 	}
 }

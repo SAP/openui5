@@ -1,9 +1,9 @@
 {
 	"sap.app": {
+		"id": "sap.f.cardsdemo.webpage.errorCard1",
 		"type": "card",
-		"id": "sap.f.cardsdemo.webpage.cardWithExtension",
 		"title": "Sample of a WebPage Card",
-		"subTitle" :"Sample of a WebPage Card with Extension",
+		"subTitle" :"Sample of a WebPage Card",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -23,31 +23,24 @@
 	},
 	"sap.card": {
 		"type": "WebPage",
-		"extension": "./webpageCardSampleExtension",
-		"data": {
-			"extension": {
-				"method": "getData"
-			}
-		},
 		"configuration": {
 			"parameters": {
 				"minHeight": {
 					"description": "Minimum height of the content",
 					"type": "string",
-					"value": "30rem"
+					"value": "25rem"
 				}
 			}
 		},
 		"header": {
-			"title": "WebPage Card with Extension",
-			"subTitle": "src: '\\\\\\{/url}/events'",
+			"title": "OpenUI5 Events",
+			"subTitle": "src: 'someErrorPage.html'",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}
 		},
 		"content": {
-			"src": "{/url}/events",
-			"sandbox": "allow-scripts",
+			"src": "someErrorPage.html",
 			"minHeight": "{parameters>/minHeight/value}"
 		}
 	}
