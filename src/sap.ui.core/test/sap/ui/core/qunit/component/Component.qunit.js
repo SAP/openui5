@@ -1803,8 +1803,8 @@ sap.ui.define([
 
 		return Component.create(oConfig).then(function(oComponent) {
 			assert.equal(oSpy.callCount, 2, "'onModelCreated' hook should be called two times");
-			assert.ok(oSpy.calledWith(sinon.match.any, "myV2Model", oConfig), "hook called with correct model name 'myV2Model' and config object");
-			assert.ok(oSpy.calledWith(sinon.match.any, "myV4Model", oConfig), "hook called with correct model name 'myV4Model' and config object");
+			assert.ok(oSpy.calledWithMatch({ modelId: "myV2Model", factoryConfig: oConfig }), "hook called with correct model name 'myV2Model' and config object");
+			assert.ok(oSpy.calledWithMatch({ modelId: "myV4Model", factoryConfig: oConfig }), "hook called with correct model name 'myV4Model' and config object");
 
 			ComponentHooks.onModelCreated.deregister();
 			oComponent.destroy();
