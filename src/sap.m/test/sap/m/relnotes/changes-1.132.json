@@ -3,6 +3,16 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "47d288b52266cb2ce584b9a06f16d5188217fa05",
+        "type": "FIX",
+        "text": " sap.m.Bar: adjust aria-labelledby attribute rendering"
+      },
+      {
+        "id": "61f4f9381aa07096628fd490a855079a7f9ab569",
+        "type": "FIX",
+        "text": " We've now fixed the issue of image not rendering in the numeric content control"
+      },
+      {
         "id": "c721f9265bd9d010a9cdca98d9d2c6cab125e620",
         "type": "FIX",
         "text": " sap.m.TimePicker: displayFormat is taken into account when formatting the output in 24-hour mode support"
@@ -72,6 +82,11 @@
         "id": "66e738f911fde45b90a12226512900185405593e",
         "type": "FEATURE",
         "text": " sap.tnt.ToolHeader: update visual design for Horizon themes"
+      },
+      {
+        "id": "2a5f8fdc7f627b7cca7a7925d5b7ab157d1e551d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Enhance keyboard navigation"
       },
       {
         "id": "204edc30d152a9d44b712083c9b277b5e6b3f393",

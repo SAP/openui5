@@ -3,6 +3,11 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "d927e5d0b8419ed1b5b99efd2049423039dbe63d",
+        "type": "FIX",
+        "text": " Integration Cards: Actions toolbar now sets the 'card' association"
+      },
+      {
         "id": "abf9950e60a114fc9efaef970b9840695b00250a",
         "type": "FEATURE",
         "text": " Integration Cards: ComboBox filter support for groups"

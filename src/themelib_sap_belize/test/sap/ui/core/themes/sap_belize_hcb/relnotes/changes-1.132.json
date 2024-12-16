@@ -1,0 +1,17 @@
+{
+  "1.132.0": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "3d18c4190cb371fc416004a001079e305c77f2b0",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: slider handles are correct in Belize now"
+      },
+      {
+        "id": "61f4f9381aa07096628fd490a855079a7f9ab569",
+        "type": "FIX",
+        "text": " We've now fixed the issue of image not rendering in the numeric content control"
+      }
+    ]
+  }
+}

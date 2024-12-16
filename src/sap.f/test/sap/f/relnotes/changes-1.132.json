@@ -3,6 +3,11 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "5219a40d2949b26770cc618362d813da90452f9e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed failure to expand the header"
+      },
+      {
         "id": "215bc45b2a817b2830515993029e5ed27b8745e6",
         "type": "FIX",
         "text": " Integration Card: state color in numeric header side indicator fixed"

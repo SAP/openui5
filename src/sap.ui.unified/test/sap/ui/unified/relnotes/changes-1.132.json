@@ -3,9 +3,19 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "9444c30a8e7a61b3f9916eeae5e149462dd5aee3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Prevent navigation when selecting a week"
+      },
+      {
         "id": "fa2109b7fdc98c1187e7a32bc6694c9b6b719c2b",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: YearPicker content now fits in limited size"
+      },
+      {
+        "id": "2a5f8fdc7f627b7cca7a7925d5b7ab157d1e551d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Enhance keyboard navigation"
       },
       {
         "id": "edab71c850e04a5721e3f95c4a6a48069fbc2278",
