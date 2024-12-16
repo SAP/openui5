@@ -8,13 +8,11 @@
 		<Button
 			text="Show Select Dialog"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Show Select Dialog (Remember)"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="remember" value="true" />
 			</customData>
@@ -22,8 +20,7 @@
 		<Button
 			text="Show Select Dialog (Multi)"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 			</customData>
@@ -31,8 +28,7 @@
 		<Button
 			text="Show Select Dialog (Remember)"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="remember" value="true" />
@@ -43,8 +39,7 @@
 		<Button
 			text="Show Select Dialog (growingThreshold=15)"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="remember" value="true" />
@@ -55,8 +50,7 @@
 		<Button
 			text="Show Select Dialog (growing=false)"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="remember" value="true" />
@@ -66,8 +60,7 @@
 		<Button
 			text="Show Select Dialog (draggable=true)"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="draggable" value="true" />
@@ -76,8 +69,7 @@
 		<Button
 			text="Show Select Dialog (resizable=true)"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="resizable" value="true" />
@@ -86,8 +78,7 @@
 		<Button
 			text="Show Select Dialog with Responsive Padding"
 			press=".onSelectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog">
+			class="sapUiSmallMarginBottom">
 			<customData>
 				<core:CustomData key="responsivePadding" value="true" />
 				<core:CustomData key="resizable" value="true" />
