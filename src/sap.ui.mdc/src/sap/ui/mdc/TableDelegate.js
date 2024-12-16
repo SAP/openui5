@@ -91,7 +91,7 @@ sap.ui.define([
 	 * @name module:sap/ui/mdc/TableDelegate.addItem
 	 * @function
 	 * @param {sap.ui.mdc.Table | Element} oTable Instance of the table or an XML node representing the table during preprocessing
-	 * @param {string} sPropertyName The property name
+	 * @param {string} sPropertyKey The property key
 	 * @param {Object} [mPropertyBag] Instance of a property bag from the SAPUI5 flexibility API
 	 * @returns {Promise<sap.ui.mdc.table.Column>} A <code>Promise</code> that resolves with a column
 	 * @abstract
@@ -175,23 +175,23 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.getGroupSorter = function(oTable) {
-		const oGroupedProperty = oTable._getGroupedProperties()[0];
+		const oGroupLevel = oTable._getGroupedProperties()[0];
 
-		if (!oGroupedProperty || !oTable._isOfType(TableType.ResponsiveTable)) {
+		if (!oGroupLevel || !oTable._isOfType(TableType.ResponsiveTable)) {
 			return undefined;
 		}
 
-		const oSortedProperty = oTable._getSortedProperties().find((oProperty) => {
-			return oProperty.name === oGroupedProperty.name;
+		const oSortedProperty = oTable._getSortedProperties().find((oSortCondition) => {
+			return oSortCondition.name === oGroupLevel.name;
 		});
-		const sPath = oTable.getPropertyHelper().getProperty(oGroupedProperty.name).path;
+		const sPath = oTable.getPropertyHelper().getProperty(oGroupLevel.name).path;
 		const bDescending = oSortedProperty ? oSortedProperty.descending : false;
 
-		if (!oTable._mFormatGroupHeaderInfo || oTable._mFormatGroupHeaderInfo.propertyName !== oGroupedProperty.name) {
+		if (!oTable._mFormatGroupHeaderInfo || oTable._mFormatGroupHeaderInfo.propertyKey !== oGroupLevel.name) {
 			oTable._mFormatGroupHeaderInfo = {
-				propertyName: oGroupedProperty.name,
+				propertyKey: oGroupLevel.name,
 				formatter: function(oContext) {
-					return this.formatGroupHeader(oTable, oContext, oGroupedProperty.name);
+					return this.formatGroupHeader(oTable, oContext, oGroupLevel.name);
 				}.bind(this)
 			};
 		}
@@ -204,12 +204,12 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {sap.ui.model.Context} oContext Binding context
-	 * @param {string} sProperty Name of the grouped property
+	 * @param {string} sPropertyKey Key of the grouped property
 	 * @returns {string} The group header title
 	 * @protected
 	 */
-	TableDelegate.formatGroupHeader = function(oTable, oContext, sProperty) {
-		const oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+	TableDelegate.formatGroupHeader = function(oTable, oContext, sPropertyKey) {
+		const oProperty = oTable.getPropertyHelper().getProperty(sPropertyKey);
 		const oTextProperty = oProperty.textProperty;
 		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		let sResourceKey = "table.ROW_GROUP_TITLE";
@@ -299,12 +299,12 @@ sap.ui.define([
 			 * <code>null</code>.
 			 *
 			 * @param {sap.ui.mdc.Table} oTable Instance of the table
-			 * @param {string} sPropertyName The property name
+			 * @param {string} sPropertyKey The property key
 			 * @returns {Promise<sap.ui.mdc.FilterField>}
 			 *     A <code>Promise</code> that resolves with an instance of <code>sap.ui.mdc.FilterField</code>.
 			 * @see sap.ui.mdc.AggregationBaseDelegate#addItem
 			 */
-			addItem: function(oTable, sPropertyName) {
+			addItem: function(oTable, sPropertyKey) {
 				return Promise.resolve(null);
 			},
 
@@ -315,11 +315,11 @@ sap.ui.define([
 			 * By default, this method does not add the condition and returns a <code>Promise</code> that resolves without a value.
 			 *
 			 * @param {sap.ui.mdc.Table} oTable Instance of the table
-			 * @param {string} sPropertyName The property name
+			 * @param {string} sPropertyKey The property key
 			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility API
 			 * @returns {Promise} A <code>Promise</code> that resolves once the properyInfo property has been updated
 			 */
-			addCondition: function(oTable, sPropertyName, mPropertyBag) {
+			addCondition: function(oTable, sPropertyKey, mPropertyBag) {
 				return Promise.resolve();
 			},
 
@@ -330,11 +330,11 @@ sap.ui.define([
 			 * By default, this method does not remove the condition and returns a <code>Promise</code> that resolves without a value.
 			 *
 			 * @param {sap.ui.mdc.Table} oTable Instance of the table
-			 * @param {string} sPropertyName The property name
+			 * @param {string} sPropertyKey The property key
 			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility API
 			 * @returns {Promise} A <code>Promise</code> that resolves once the properyInfo property has been updated
 			 */
-			removeCondition: function(oTable, sPropertyName, mPropertyBag) {
+			removeCondition: function(oTable, sPropertyKey, mPropertyBag) {
 				return Promise.resolve();
 			}
 		};

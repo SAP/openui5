@@ -1199,7 +1199,7 @@ sap.ui.define([
 				this.oTable.getEngine()._setModificationHandler(this.oTable, oTestModificationHandler);
 
 				PersonalizationUtils.createSortChange(oTable, {
-					property: "name",
+					propertyKey: "name",
 					sortOrder: "Ascending"
 				});
 
