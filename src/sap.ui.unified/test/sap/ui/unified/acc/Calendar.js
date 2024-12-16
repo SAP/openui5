@@ -12,9 +12,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
-	// Single Day Selection
 	var oSingleDaySelectionLabel = new Label({
-		text: "Single Day Selection"
+		text: "Single Day Selection",
+		wrapping: true
 	});
 	var oSingleDaySelectionCalendar = new Calendar({
 		ariaLabelledBy: oSingleDaySelectionLabel
@@ -26,12 +26,12 @@ sap.ui.define([
 		startDate: oDate
 	}));
 
-	// With Multiple Months
 	var oWithMultipleMonthsLabel = new Label({
-		text: "With Multiple Months"
+		text: "With Multiple Months",
+		wrapping: true
 	});
 	var oWithMultipleMonthsCalendar = new Calendar({
-		months: 3,
+		months: 2,
 		ariaLabelledBy: oWithMultipleMonthsLabel
 	});
 
@@ -52,5 +52,5 @@ sap.ui.define([
 	});
 
 	oApp.addPage(oPage);
-	oApp.placeAt("content");
+	oApp.placeAt("body");
 });

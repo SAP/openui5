@@ -1,44 +1,30 @@
 sap.ui.define([
-	"sap/m/HBox",
 	"sap/m/Label",
-	"sap/m/MessageToast",
-	"sap/ui/core/library",
-	"sap/ui/Device",
 	"sap/ui/unified/CalendarDateInterval",
-	"sap/ui/core/date/UI5Date",
 	"sap/m/App",
-	"sap/m/Page"
+	"sap/m/Page",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/library",
+	"sap/ui/core/date/UI5Date"
 ], function(
-		HBox,
-		Label,
-		MessageToast,
-		coreLibrary,
-		Device,
-		CalendarDateInterval,
-		UI5Date,
-		App,
-		Page
-		) {
+	Label,
+	CalendarDateInterval,
+	App,
+	Page,
+	VerticalLayout,
+	coreLibrary,
+	UI5Date
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oCal = new CalendarDateInterval("Cal1",{
-		width: "320px",
-		legend: "Legend1",
-		cancel: function(oEvent){
-			MessageToast.show("Cancel");
-		}
+		days: 7,
+		width: "320px"
 	});
 
-	var oHbox1 = new HBox({
-		items: [
-			oCal
-		]
-	});
-
-	// single interval selection
 	var oStartDate = UI5Date.getInstance();
 	oStartDate.setDate(oStartDate.getDate() - 1);
 	var oCal2 = new CalendarDateInterval("Cal2", {
@@ -46,12 +32,6 @@ sap.ui.define([
 		startDate: oStartDate,
 		days: 7,
 		intervalSelection: true
-	});
-
-	var oHbox2 = new HBox({
-		items: [
-			oCal2
-		]
 	});
 
 	var oStartDateEndMonth = UI5Date.getInstance();
@@ -64,35 +44,36 @@ sap.ui.define([
 		singleSelection: false
 	});
 
-	var oHbox3 = new HBox({
-		items: [
-			oCal3
-		]
-	});
-
-	var app = new App("myApp");
-	var page = new Page("page", {
-		title: "Test Page for sap.ui.unified.CalendarDateInterval",
-		titleLevel: TitleLevel.H1,
+	var oApp = new App();
+	var oPageLayout = new VerticalLayout({
 		content: [
 			new Label({
-				text: "Single day Selection Calendar",
-				labelFor: "Cal1"
-			}).addStyleClass("sapUiSmallMarginTop"),
-			oHbox1,
+				text: "Single selection",
+				labelFor: "Cal1",
+				wrapping: true
+			}),
+			oCal,
 			new Label({
-				text: "Single interval Selection Calendar",
-				labelFor: "Cal2"
-			}).addStyleClass("sapUiSmallMarginTop"),
-			oHbox2,
+				text: "Single interval selection",
+				labelFor: "Cal2",
+				wrapping: true
+			}),
+			oCal2,
 			new Label({
-				text: "Single day Selection in multiple month Calendar",
-				labelFor: "Cal3"
-			}).addStyleClass("sapUiSmallMarginTop"),
-			oHbox3
+				text: "Multiple selection",
+				labelFor: "Cal3",
+				wrapping: true
+			}),
+			oCal3
 		]
+	}).addStyleClass("sapUiContentPadding");
+
+	var oPage = new Page({
+		title: "CalendarDateInterval Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
+		content: [oPageLayout]
 	});
-	page.addStyleClass("sapUiContentPadding");
-	app.addPage(page);
-	app.placeAt("body");
+
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
 });
