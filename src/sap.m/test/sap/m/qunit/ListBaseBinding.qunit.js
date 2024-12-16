@@ -833,16 +833,19 @@ sap.ui.define([
 	}));
 
 	QUnit.test("List should clear selection when the binding is filtered or sorted", async function(assert) {
-		this.oList.getItems()[0].setSelected(true);
+		assert.expect(2);
+		const oBinding = this.oList.getBinding("items");
+		oBinding.attachRefresh(() => {
+			assert.notOk(this.oList.getItems()[0].getSelected(), "Previous selection is cleared during binding refresh");
+		});
 
-		this.oList.getBinding("items").filter(new Filter("SupplierName", FilterOperator.Contains, "Very Best Screens"));
+		this.oList.getItems()[0].setSelected(true);
+		oBinding.filter(new Filter("SupplierName", FilterOperator.Contains, "Very Best Screens"));
 		await ui5Event("updateFinished", this.oList);
-		assert.notOk(this.oList.getItems()[0].getSelected(), "Previous selection is cleared during filter operation");
 
 		this.oList.getItems()[0].setSelected(true);
-		this.oList.getBinding("items").sort(new Sorter("ProductId", true));
+		oBinding.sort(new Sorter("ProductId", true));
 		await ui5Event("updateFinished", this.oList);
-		assert.notOk(this.oList.getItems()[0].getSelected(), "Previous selection is cleared during sort operation");
 	});
 
 	QUnit.module("rememberSelections=false and selected bound one-way", Object.assign({}, oModuleConfig, {

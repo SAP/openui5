@@ -635,6 +635,7 @@ function(
 	// this gets called only with oData Model when first load or filter/sort
 	ListBase.prototype.refreshItems = function(sReason) {
 		this._bRefreshItems = true;
+		this._clearUnboundSelections(sReason);
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.refreshItems(sReason);
@@ -673,12 +674,7 @@ function(
 			this.invalidate();
 		}
 
-		if ((sReason === ChangeReason.Filter || sReason === ChangeReason.Sort || sReason === ChangeReason.Context) && !this.getRememberSelections()) {
-			const oFirstItem = this.getItems(true)[0];
-			if (oFirstItem && !oFirstItem.isSelectedBoundTwoWay()) {
-				this.removeSelections();
-			}
-		}
+		this._clearUnboundSelections(sReason);
 
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
@@ -1408,6 +1404,16 @@ function(
 			/* reset focused position */
 			if (this._oItemNavigation && document.activeElement.id != this.getId("nodata")) {
 				this._oItemNavigation.iFocusedIndex = -1;
+			}
+		}
+	};
+
+	// clear the selection during filtering and sorting if the rememeberSelections is not active and selected property is not two-way bound
+	ListBase.prototype._clearUnboundSelections = function(sReason) {
+		if ((sReason === ChangeReason.Filter || sReason === ChangeReason.Sort || sReason === ChangeReason.Context) && !this.getRememberSelections()) {
+			const oFirstItem = this.getItems(true)[0];
+			if (oFirstItem && !oFirstItem.isSelectedBoundTwoWay()) {
+				this.removeSelections();
 			}
 		}
 	};
