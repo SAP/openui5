@@ -16,3 +16,26 @@
 	border: none;
 	background-color: transparent;
 }
+
+//unified compact mode
+.sapUiSizeCompact {
+	.sapUiColorPicker-ColorPickerMatrix.sapUnifiedColorPicker {
+		.sapUiColorPicker-ColorPickerSlider,
+		.sapUiColorPicker-ColorPickerAlphaSlider {
+			padding-top: 0.5rem;
+			.sapMSliderInner {
+				height: 1.375rem;
+			}
+			.sapMSliderHandle {
+				margin-top: 0.125rem;
+				height: 1.625rem;
+				top: -0.3125rem;
+				width: 0.9375rem;
+			}
+		}
+	}
+}
+
+.sapUiSizeCompact .sapUiColorPicker-Default.sapUnifiedColorPicker:not(.sapUiCPPhone) .sapMBtn .sapMBtnInner .sapMBtnIcon {
+	margin-left: 0.3rem;
+}
