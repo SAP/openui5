@@ -5,7 +5,6 @@
 sap.ui.define([
 	"./TableTypeBase",
 	"./utils/Personalization",
-	"sap/m/Button",
 	"sap/m/plugins/ColumnResizer",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
@@ -17,7 +16,6 @@ sap.ui.define([
 ], (
 	TableTypeBase,
 	PersonalizationUtils,
-	Button,
 	ColumnResizer,
 	SegmentedButton,
 	SegmentedButtonItem,
@@ -133,10 +131,10 @@ sap.ui.define([
 		// avoid execution of the if and else if block if bValue has not changed
 		if (bValue && !this._oShowDetailsButton) {
 			oResponsiveTable.getHeaderToolbar().insertEnd(this._getShowDetailsButton(), 0);
-			oResponsiveTable.attachEvent("popinChanged", this._onPopinChanged, this);
+			oResponsiveTable.attachEvent("popinChanged", onPopinChanged, this);
 			oResponsiveTable.setHiddenInPopin(this._getImportanceToHide());
 		} else if (!bValue && this._oShowDetailsButton) {
-			oResponsiveTable.detachEvent("popinChanged", this._onPopinChanged, this);
+			oResponsiveTable.detachEvent("popinChanged", onPopinChanged, this);
 			oResponsiveTable.getHeaderToolbar().removeEnd(this._oShowDetailsButton);
 			oResponsiveTable.setHiddenInPopin([]);
 			this._oShowDetailsButton.destroy();
@@ -193,18 +191,18 @@ sap.ui.define([
 		};
 
 		if (oTable.hasListeners("rowPress")) {
-			mSettings.itemPress = [this._onItemPress, this];
+			mSettings.itemPress = [onItemPress, this];
 		}
 
 		return  Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), mSettings);
 	};
 
-	ResponsiveTableType.prototype._onItemPress = function(oEvent) {
+	function onItemPress(oEvent) {
 		this.callHook("RowPress", this.getTable(), {
 			bindingContext: oEvent.getParameter("listItem").getBindingContext(this.getInnerTable().getBindingInfo("items").model)
 		});
-		this._onRowActionPress(oEvent);
-	};
+		onRowActionPress.call(this, oEvent);
+	}
 
 	ResponsiveTableType.createColumn = function(sId, mSettings) {
 		return new InnerColumn(sId, mSettings);
@@ -326,11 +324,11 @@ sap.ui.define([
 		if (!oColumnResizer) {
 			oColumnResizer = new ColumnResizer();
 			oResponsiveTable.addDependent(oColumnResizer);
-			oColumnResizer.attachColumnResize(this._onColumnResize, this);
+			oColumnResizer.attachColumnResize(onColumnResize, this);
 		} else {
 			oColumnResizer.setEnabled(true);
-			oColumnResizer.detachColumnResize(this._onColumnResize, this);
-			oColumnResizer.attachColumnResize(this._onColumnResize, this);
+			oColumnResizer.detachColumnResize(onColumnResize, this);
+			oColumnResizer.attachColumnResize(onColumnResize, this);
 		}
 	};
 
@@ -346,11 +344,11 @@ sap.ui.define([
 
 		if (oColumnResizer) {
 			oColumnResizer.setEnabled(false);
-			oColumnResizer.detachColumnResize(this._onColumnResize, this);
+			oColumnResizer.detachColumnResize(onColumnResize, this);
 		}
 	};
 
-	ResponsiveTableType.prototype._onColumnResize = function(oEvent) {
+	function onColumnResize(oEvent) {
 		const oTable = this.getTable();
 		const oResponsiveTable = this.getInnerTable();
 		const oResponsiveTableColumn = oEvent.getParameter("column");
@@ -362,7 +360,7 @@ sap.ui.define([
 			column: oColumn,
 			width: sWidth
 		});
-	};
+	}
 
 	ResponsiveTableType.prototype.createColumnResizeMenuItem = function(oColumn, oColumnMenu) {
 		const oColumnResizer = ColumnResizer.findOn(this.getInnerTable());
@@ -387,7 +385,7 @@ sap.ui.define([
 	ResponsiveTableType.prototype._attachItemPress = function() {
 		const oResponsiveTable = this.getInnerTable();
 		if (oResponsiveTable && !oResponsiveTable.hasListeners("itemPress")) {
-			oResponsiveTable.attachEvent("itemPress", this._onItemPress, this);
+			oResponsiveTable.attachEvent("itemPress", onItemPress, this);
 			return true;
 		}
 		return false;
@@ -403,7 +401,7 @@ sap.ui.define([
 		const oTable = this.getTable();
 		const oResponsiveTable = this.getInnerTable();
 		if (!oTable.hasListeners("rowPress") && oResponsiveTable) {
-			oResponsiveTable.detachEvent("itemPress", this._onItemPress, this);
+			oResponsiveTable.detachEvent("itemPress", onItemPress, this);
 			return true;
 		}
 		return false;
@@ -504,7 +502,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent - Event object
 	 * @private
 	 */
-	ResponsiveTableType.prototype._onPopinChanged = function(oEvent) {
+	function onPopinChanged(oEvent) {
 		const bHasPopin = oEvent.getParameter("hasPopin");
 		const aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
 		const aVisibleItemsLength = oEvent.getSource().getVisibleItems().length;
@@ -514,9 +512,9 @@ sap.ui.define([
 		} else {
 			this._oShowDetailsButton.setVisible(false);
 		}
-	};
+	}
 
-	ResponsiveTableType.prototype._onRowActionPress = function(oEvent) {
+	function onRowActionPress(oEvent) {
 		const oTable = this.getTable();
 		const oInnerRow = oEvent.getParameter("listItem");
 
@@ -545,7 +543,7 @@ sap.ui.define([
 		this.callHook("Press", this._oRowActionItem, {
 			bindingContext: oInnerRow.getBindingContext(this.getInnerTable().getBindingInfo("items").model)
 		});
-	};
+	}
 
 	ResponsiveTableType.prototype.removeToolbar = function() {
 		const oResponsiveTable = this.getInnerTable();

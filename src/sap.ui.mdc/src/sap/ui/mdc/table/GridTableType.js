@@ -248,17 +248,17 @@ sap.ui.define([
 		};
 
 		if (oTable.hasListeners("rowPress")) {
-			mSettings.cellClick = [this._onCellClick, this];
+			mSettings.cellClick = [onCellClick, this];
 		}
 
 		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), mSettings);
 	};
 
-	GridTableType.prototype._onCellClick = function(oEvent) {
+	function onCellClick(oEvent) {
 		this.callHook("RowPress", this.getTable(), {
 			bindingContext: oEvent.getParameter("rowBindingContext")
 		});
-	};
+	}
 
 	GridTableType.createColumn = function(sId, mSettings) {
 		return new InnerColumn(sId, mSettings);
@@ -276,8 +276,8 @@ sap.ui.define([
 			oColumn.setResizable(true);
 			oColumn.setAutoResizable(true);
 		});
-		oGridTable.detachColumnResize(this._onColumnResize, this);
-		oGridTable.attachColumnResize(this._onColumnResize, this);
+		oGridTable.detachColumnResize(onColumnResize, this);
+		oGridTable.attachColumnResize(onColumnResize, this);
 	};
 
 	GridTableType.prototype.disableColumnResize = function() {
@@ -292,10 +292,10 @@ sap.ui.define([
 			oColumn.setResizable(false);
 			oColumn.setAutoResizable(false);
 		});
-		oGridTable.detachColumnResize(this._onColumnResize, this);
+		oGridTable.detachColumnResize(onColumnResize, this);
 	};
 
-	GridTableType.prototype._onColumnResize = function(oEvent) {
+	function onColumnResize(oEvent) {
 		const oTable = this.getTable();
 		const oGridTable = this.getInnerTable();
 		const oGridTableColumn = oEvent.getParameter("column");
@@ -307,7 +307,7 @@ sap.ui.define([
 			column: oColumn,
 			width: sWidth
 		});
-	};
+	}
 
 	GridTableType.prototype.updateRowSettings = function() {
 		const oGridTable = this.getInnerTable();
@@ -346,7 +346,7 @@ sap.ui.define([
 				visible: oTemplateInfo.visible,
 				icon: oTemplateInfo.icon,
 				text: oTemplateInfo.text,
-				press: [this._onRowActionPress, this]
+				press: [onRowActionPress, this]
 			});
 			// Remove temporary metadata from row actions object
 			delete oRowActions.templateInfo;
@@ -357,7 +357,7 @@ sap.ui.define([
 					visible: oRowActionItem.isBound("visible") ? oRowActionItem.getBindingInfo("visible") : oRowActionItem.getVisible(),
 					icon: oRowActionItem.isBound("icon") ? oRowActionItem.getBindingInfo("icon") : oRowActionItem.getIcon(),
 					text: oRowActionItem.isBound("text") ? oRowActionItem.getBindingInfo("text") : oRowActionItem.getText(),
-					press: [this._onRowActionPress, this]
+					press: [onRowActionPress, this]
 				});
 				// Add custom data for MDC row action, so original is retrievable from inner row action item
 				oInnerRowActionItem.data("rowAction", oRowActionItem);
@@ -381,7 +381,7 @@ sap.ui.define([
 		oGridTable.setRowActionCount();
 	};
 
-	GridTableType.prototype._onRowActionPress = function(oEvent) {
+	function onRowActionPress(oEvent) {
 		const oTable = this.getTable();
 		const oInnerRowActionItem = oEvent.getParameter("item");
 		const oRowSettings = oTable.getRowSettings();
@@ -407,13 +407,13 @@ sap.ui.define([
 		this.callHook("Press", this._oRowActionItem, {
 			bindingContext: oEvent.getParameter("row").getBindingContext(this.getInnerTable().getBindingInfo("rows").model)
 		});
-	};
+	}
 
 	GridTableType.prototype.prepareRowPress = function() {
 		const oGridTable = this.getInnerTable();
 		if (oGridTable && !oGridTable.hasListeners("cellClick")) {
 			// Only add cellClick listener, if none has been registered yet
-			oGridTable.attachEvent("cellClick", this._onCellClick, this);
+			oGridTable.attachEvent("cellClick", onCellClick, this);
 		}
 	};
 
@@ -421,7 +421,7 @@ sap.ui.define([
 		const oTable = this.getTable();
 		if (!oTable.hasListeners("rowPress")) {
 			// Only detach cellClick listener, if table has no rowPress event listener anymore
-			this.getInnerTable()?.detachEvent("cellClick", this._onCellClick, this);
+			this.getInnerTable()?.detachEvent("cellClick", onCellClick, this);
 		}
 	};
 
