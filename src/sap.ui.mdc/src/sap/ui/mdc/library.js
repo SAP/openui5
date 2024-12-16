@@ -250,7 +250,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * This optional event can be fired by typaehead contents also supporting dialog mode.
+	 * This optional event can be fired by typeahead contents also supporting dialog mode.
 	 *
 	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContent.requestSwitchToDialog
 	 * @event
@@ -483,7 +483,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * This optional event can be fired by typaehead contents also supporting dialog mode.
+	 * This optional event can be fired by typeahead contents also supporting dialog mode.
 	 *
 	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContainer.requestSwitchToDialog
 	 * @event

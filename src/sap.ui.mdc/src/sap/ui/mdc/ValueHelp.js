@@ -901,15 +901,15 @@ sap.ui.define([
 	 * @property {any} value Value as entered by user
 	 * @property {any} [parsedValue] Value parsed by type of key to match the data type of the key
 	 * @property {any} [parsedDescription] Value parsed by type of description to match the data type of the description
-	 * @property {object} [context] Contextual information provided by condition <code>payload</code> or <code>inParameters</code>/<code>outParameters</code>. This is only filled if the description needs to be determined for an existing condition.
+	 * @property {object} [context] Contextual information provided by the <code>payload</code> or <code>inParameters</code>/<code>outParameters</code> of the condition. This is only filled if the description needs to be determined for an existing condition.
 	 * @property {object} [context.inParameter] In parameters of the current condition (<code>inParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
-	 * @property {object} [context.ouParameter] Out parameters of the current condition (<code>outParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
+	 * @property {object} [context.outParameter] Out parameters of the current condition (<code>outParameters</code> are not used any longer, but it might be filled in older conditions stored in variants.)
 	 * @property {object} [context.payload] Payload of the current condition
 	 * @property {sap.ui.model.Context} [bindingContext] <code>BindingContext</code> of the checked field. Inside a table, the <code>ValueHelp</code> element might be connected to a different row.
 	 * @property {boolean} checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @property {boolean} checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @property {boolean} [caseSensitive] If set, the check is done case-sensitively
-	 * @property {boolean} [exactMatch] If set, only exact matches are requested and no suggestions
+	 * @property {boolean} [exactMatch] If set, only exact matches and no suggestions are requested
 	 * @property {sap.ui.core.Control} control Instance of the calling control
 	 * @public
 	 */
