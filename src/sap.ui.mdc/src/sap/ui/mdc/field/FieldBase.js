@@ -2645,9 +2645,6 @@ sap.ui.define([
 								delete this._vLiveChangeValue;
 							}
 						}, 300, { leading: false, trailing: true });
-
-						// on first call init ValueHelp (trigger loading metadata on first typing)
-						oValueHelp.initBeforeOpen(true);
 					}
 					const vOpenByTyping = oValueHelp.isTypeaheadSupported(); // trigger determination of search functionality
 					if (vOpenByTyping instanceof Promise) {

@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/Container",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/mdc/enums/ValueHelpPropagationReason",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/core/Icon",
 	"sap/ui/model/FormatException",
@@ -18,13 +20,15 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/Device"
-], function (
+],  (
 		ValueHelp,
 		ValueHelpDelegate,
 		Container,
 		Condition,
 		ConditionValidated,
+		FieldDisplay,
 		OperatorName,
+		ValueHelpPropagationReason,
 		ValueHelpSelectionType,
 		Icon,
 		FormatException,
@@ -32,7 +36,7 @@ sap.ui.define([
 		StringType,
 		nextUIUpdate,
 		Device
-	) {
+	) => {
 	"use strict";
 
 	let oValueHelp;
@@ -46,25 +50,25 @@ sap.ui.define([
 	let bSelectAdd;
 	let bSelectClose;
 
-	const _myDisconnectHandler = function(oEvent) {
+	const _myDisconnectHandler = (oEvent) => {
 		iDisconnect++;
 	};
 
-	const _mySelectHandler = function(oEvent) {
+	const _mySelectHandler = (oEvent) => {
 		iSelect++;
 		aSelectConditions = oEvent.getParameter("conditions");
 		bSelectAdd = oEvent.getParameter("add");
 		bSelectClose = oEvent.getParameter("close");
 	};
 
-	const _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
+	const _fPressHandler = (oEvent) => {}; // just dummy handler to make Icon focusable
 
 	let iNavigate = 0;
 	let oNavigateCondition;
 	let sNavigateItemId;
 	let bNavigateLeaveFocus;
 	let bNavigateCaseSensitive;
-	const _myNavigateHandler = function(oEvent) {
+	const _myNavigateHandler = (oEvent) => {
 		iNavigate++;
 		oNavigateCondition = oEvent.getParameter("condition");
 		sNavigateItemId = oEvent.getParameter("itemId");
@@ -78,7 +82,7 @@ sap.ui.define([
 	let sTypeaheadItemId;
 	let iTypeaheadItems;
 	let bTypeaheadCaseSensitive;
-	const _myTypeaheadHandler = function(oEvent) {
+	const _myTypeaheadHandler = (oEvent) => {
 		iTypeaheadSuggested++;
 		oTypeaheadCondition = oEvent.getParameter("condition");
 		sTypeaheadFilterValue = oEvent.getParameter("filterValue");
@@ -88,12 +92,12 @@ sap.ui.define([
 	};
 
 	let iVisualFocusSet = 0;
-	const _myVisualFocusSetHandler = function(oEvent) {
+	const _myVisualFocusSetHandler = (oEvent) => {
 		iVisualFocusSet++;
 	};
 
 	let iClosed = 0;
-	const _myClosedHandler = function(oEvent) {
+	const _myClosedHandler = (oEvent) => {
 		iClosed++;
 	};
 
@@ -102,7 +106,7 @@ sap.ui.define([
 	/* use dummy control to simulate Field */
 
 //	var oClock;
-	const _initFields = async function() {
+	const _initFields = async () => {
 		oField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		oField2 = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 
@@ -113,7 +117,7 @@ sap.ui.define([
 //		oClock = sinon.useFakeTimers();
 	};
 
-	const _teardown = function() {
+	const _teardown = () => {
 //		if (oClock) {
 //			oClock.restore();
 //			oClock = undefined;
@@ -150,7 +154,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("basic features", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			oValueHelp = new ValueHelp("F1-H", {
 				disconnect: _myDisconnectHandler
 			});
@@ -159,7 +163,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("default values", async function(assert) {
+	QUnit.test("default values", async (assert) => {
 
 		assert.equal(oValueHelp.getConditions().length, 0, "Conditions");
 		assert.equal(oValueHelp.getFilterValue(), "", "FilterValue");
@@ -171,37 +175,32 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", function(assert) {
+	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(bSupported) {
-				assert.strictEqual(bSupported, false, "TypeAhead not supported per default");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				fnDone();
-			});
-		}
+		return oPromise?.then((bSupported) => {
+			assert.strictEqual(bSupported, false, "TypeAhead not supported per default");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+		});
 
 	});
 
-	QUnit.test("getIcon", function(assert) {
+	QUnit.test("getIcon", (assert) => {
 
 		assert.notOk(oValueHelp.getIcon(), "without Container no icon returned");
 
 	});
 
-	QUnit.test("isValidationSupported", function(assert) {
+	QUnit.test("isValidationSupported", (assert) => {
 
 		assert.notOk(oValueHelp.isValidationSupported(), "without Typeahed Container not supported");
 
 	});
 
-	QUnit.test("connect", function(assert) {
+	QUnit.test("connect", (assert) => {
 
 		oField.setFieldGroupIds(["myFieldGroup"]);
 		oField2.setFieldGroupIds(["myFieldGroup2"]);
@@ -223,7 +222,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getAriaAttributes", function(assert) {
+	QUnit.test("getAriaAttributes", (assert) => {
 
 		const oCheckAttributes = {
 			contentId: undefined,
@@ -239,7 +238,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getControl", function(assert) {
+	QUnit.test("getControl", (assert) => {
 
 		oValueHelp.connect(oField);
 		const oMyField = oValueHelp.getControl();
@@ -247,8 +246,33 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getDisplay", (assert) => {
+
+		assert.equal(oValueHelp.getDisplay(), FieldDisplay.Value, "Default");
+
+		oValueHelp.setProperty("_config", {display: FieldDisplay.Description});
+		assert.equal(oValueHelp.getDisplay(), FieldDisplay.Description, "from Config");
+
+	});
+
+	QUnit.test("onControlChange", (assert) => {
+
+		return oValueHelp._getControlDelegatePromise().then((oDelegate) => {
+			oValueHelp.connect(oField);
+			sinon.spy(oDelegate, "onConditionPropagation");
+			sinon.spy(oValueHelp, "setBindingContext");
+
+			oValueHelp.onControlChange();
+			assert.ok(oDelegate.onConditionPropagation.calledWith(oValueHelp, ValueHelpPropagationReason.ControlChange), "ValueHelpDelegate.onConditionPropagation called");
+			assert.ok(oValueHelp.setBindingContext.calledOnce, "oValueHelp.setBindingContext called");
+			oDelegate.onConditionPropagation.restore();
+		});
+
+	});
+
+
 	QUnit.module("with Typeahed", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			oContainer = new Container("C1", {
 				title: "Test"
 			});
@@ -267,7 +291,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("connect", function(assert) {
+	QUnit.test("connect", (assert) => {
 
 		oField.setFieldGroupIds(["myFieldGroup"]);
 		oField2.setFieldGroupIds(["myFieldGroup2"]);
@@ -279,7 +303,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("open", function(assert) {
+	QUnit.test("open", (assert) => {
 
 		sinon.spy(oContainer, "open");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
@@ -296,7 +320,7 @@ sap.ui.define([
 		assert.ok(oValueHelp.fireOpen.called, "ValueHelp open event fired for typeahead opening");
 		assert.equal(oValueHelp.fireOpen.lastCall.args[0].container, oContainer, "ValueHelp open event carries correct container");
 
-		setTimeout(function() { // Delegate is called async
+		setTimeout(() => { // Delegate is called async
 			assert.ok(oContainer.open.calledOnce, "Container open called for typeahead opening");
 			assert.equal(oContainer.open.lastCall.args[1], true, "Container open called with bTypeahead");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for typeahead opening");
@@ -314,7 +338,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("do not close open/opening containers if they are the same instance", function(assert) {
+	QUnit.test("do not close open/opening containers if they are the same instance", (assert) => {
 		sinon.spy(oContainer, "open");
 		sinon.spy(oContainer, "close");
 		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
@@ -325,7 +349,7 @@ sap.ui.define([
 		assert.notOk(oContainer.close.called, "Container close was not called for already open container");
 	});
 
-	QUnit.test("close", function(assert) {
+	QUnit.test("close", (assert) => {
 
 		sinon.spy(oContainer, "close");
 
@@ -337,7 +361,7 @@ sap.ui.define([
 		assert.ok(oContainer.close.called, "Container close called if open");
 	});
 
-	QUnit.test("close handling", function(assert) {
+	QUnit.test("close handling", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oValueHelp, "close");
@@ -347,7 +371,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("toggleOpen", function(assert) {
+	QUnit.test("toggleOpen", (assert) => {
 
 		sinon.spy(oValueHelp, "open");
 		sinon.spy(oValueHelp, "close");
@@ -373,7 +397,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isOpen", function(assert) {
+	QUnit.test("isOpen", (assert) => {
 
 		assert.notOk(oValueHelp.isOpen(), "ValueHelp not open per default");
 
@@ -382,7 +406,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("skipOpening", function(assert) {
+	QUnit.test("skipOpening", (assert) => {
 
 		sinon.spy(oContainer, "close");
 		oValueHelp.skipOpening();
@@ -394,52 +418,42 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported - not supported(default)", function(assert) {
+	QUnit.test("isTypeaheadSupported - not supported(default)", (assert) => {
 
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(bSupported) {
-				assert.strictEqual(bSupported, false, "TypeAhead not supported");
-				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			});
-		}
+		return oPromise?.then((bSupported) => {
+			assert.strictEqual(bSupported, false, "TypeAhead not supported");
+			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
+			ValueHelpDelegate.retrieveContent.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+			ValueHelpDelegate.retrieveContent.restore();
+		});
 
 	});
 
-	QUnit.test("isTypeaheadSupported - supported", function(assert) {
+	QUnit.test("isTypeaheadSupported - supported", (assert) => {
 
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		sinon.stub(oContainer, "isTypeaheadSupported").returns(true);
 		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(bSupported) {
-				assert.strictEqual(bSupported, true, "TypeAhead supported");
-				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			});
-		}
+		return oPromise?.then((bSupported) => {
+			assert.strictEqual(bSupported, true, "TypeAhead supported");
+			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
+			ValueHelpDelegate.retrieveContent.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+			ValueHelpDelegate.retrieveContent.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue with result", function(assert) {
+	QUnit.test("getItemForValue with result", (assert) => {
 
 		sinon.stub(oContainer, "getItemForValue").returns(Promise.resolve({key: "X", description: "Text"}));
 		const oConfig = {
@@ -462,22 +476,17 @@ sap.ui.define([
 		const oPromise = oValueHelp.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.ok(oContainer.getItemForValue.calledWith(oCheckConfig), "getItemForValue called on Container with Config");
-				assert.deepEqual(oItem, {key: "X", description: "Text"}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.ok(oContainer.getItemForValue.calledWith(oCheckConfig), "getItemForValue called on Container with Config");
+			assert.deepEqual(oItem, {key: "X", description: "Text"}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+		});
 
 	});
 
-	QUnit.test("getItemForValue with error", function(assert) {
+	QUnit.test("getItemForValue with error", (assert) => {
 
 		sinon.stub(oContainer, "getItemForValue").returns(Promise.reject(new ParseException("Error")));
 		const oConfig = {
@@ -493,22 +502,17 @@ sap.ui.define([
 		const oPromise = oValueHelp.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(true, "Promise Catch called");
-				assert.ok(oError instanceof ParseException, "Exception returned");
-				assert.equal(oError.message, "Error", "Error text");
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.notOk(true, "Promise Then must not be called");
+		}).catch((oError) => {
+			assert.ok(true, "Promise Catch called");
+			assert.ok(oError instanceof ParseException, "Exception returned");
+			assert.equal(oError.message, "Error", "Error text");
+		});
 
 	});
 
-	QUnit.test("getIcon", function(assert) {
+	QUnit.test("getIcon", (assert) => {
 
 		sinon.stub(oContainer, "getValueHelpIcon").returns("X");
 		const sIcon = oValueHelp.getIcon();
@@ -517,7 +521,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isValidationSupported", function(assert) {
+	QUnit.test("isValidationSupported", (assert) => {
 
 		sinon.stub(oContainer, "isValidationSupported").returns(true);
 		assert.ok(oValueHelp.isValidationSupported(), "Typeahed result returned");
@@ -525,7 +529,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getDomRef", function(assert) {
+	QUnit.test("getDomRef", (assert) => {
 
 		sinon.stub(oContainer, "getDomRef").returns(oField.getDomRef()); // just fake
 		let oDomRef = oValueHelp.getDomRef();
@@ -548,7 +552,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getAriaAttributes", function(assert) {
+	QUnit.test("getAriaAttributes", (assert) => {
 
 		const oCheckAttributes = {
 			contentId: undefined,
@@ -567,9 +571,13 @@ sap.ui.define([
 		oAttributes = oValueHelp.getAriaAttributes();
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeahead");
 
+		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
+		oAttributes = oValueHelp.getAriaAttributes();
+		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeahead used as dialog");
+
 	});
 
-	QUnit.test("shouldOpenOnFocus", async function(assert) {
+	QUnit.test("shouldOpenOnFocus", async (assert) => {
 
 		sinon.stub(oContainer, "shouldOpenOnFocus").returns(Promise.resolve(true));
 		let bShouldOpen = await oValueHelp.shouldOpenOnFocus();
@@ -585,7 +593,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick", async function(assert) {
+	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(oContainer, "shouldOpenOnClick").returns(Promise.resolve(true));
 		let bShouldOpen = await oValueHelp.shouldOpenOnClick();
@@ -597,7 +605,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isFocusInHelp", function(assert) {
+	QUnit.test("isFocusInHelp", (assert) => {
 
 		sinon.stub(oContainer, "isFocusInHelp").returns(true);
 		assert.notOk(oValueHelp.isFocusInHelp(), "focus stays in field in TypeAhead");
@@ -607,7 +615,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("removeVisualFocus", function(assert) {
+	QUnit.test("removeVisualFocus", (assert) => {
 
 		sinon.spy(oContainer, "removeVisualFocus");
 		oValueHelp.removeVisualFocus();
@@ -615,7 +623,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("setVisualFocus", function(assert) {
+	QUnit.test("setVisualFocus", (assert) => {
 
 		sinon.spy(oContainer, "setVisualFocus");
 		oValueHelp.setVisualFocus();
@@ -623,7 +631,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate", function(assert) {
+	QUnit.test("navigate", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oContainer, "navigate");
@@ -632,7 +640,7 @@ sap.ui.define([
 		oValueHelp.navigate(1);
 
 		const fnDone = assert.async();
-		setTimeout(function() { // as Promise used inside
+		setTimeout(() => { // as Promise used inside
 			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
 			assert.notOk(oContainer.open.called, "Container not opened");
@@ -643,7 +651,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate with opening", function(assert) {
+	QUnit.test("navigate with opening", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oContainer, "navigate");
@@ -654,7 +662,7 @@ sap.ui.define([
 		oValueHelp.navigate(1);
 
 		const fnDone = assert.async();
-		setTimeout(function() { // as Promise used inside
+		setTimeout(() => { // as Promise used inside
 			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
 			assert.ok(oContainer.open.called, "Container opened");
@@ -665,7 +673,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigated event", function(assert) {
+	QUnit.test("navigated event", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		const oCondition = Condition.createItemCondition("Test");
@@ -679,7 +687,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("typeahedSuggested event", function(assert) {
+	QUnit.test("typeahedSuggested event", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		const oCondition = Condition.createItemCondition("kéy", "Description");
@@ -694,7 +702,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("visualFocusSet event", function(assert) {
+	QUnit.test("visualFocusSet event", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		oContainer.fireVisualFocusSet();
@@ -702,7 +710,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled", function(assert) {
+	QUnit.test("isNavigationEnabled", (assert) => {
 
 		sinon.stub(oContainer, "isNavigationEnabled").returns("X"); // "X" - just for testing return value
 		assert.equal(oValueHelp.isNavigationEnabled(1), "X", "Navigation if closed and no dialog: Result of Container returned");
@@ -721,9 +729,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Selection handling", function(assert) {
+	QUnit.test("Selection handling", (assert) => {
 
-		return oValueHelp.initControlDelegate().then(function () {
+		return oValueHelp.initControlDelegate().then(() => {
 			oValueHelp.connect(oField); // to attach events
 			// set
 			let aSelectConditions = [
@@ -781,7 +789,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Confirmation handling", function(assert) {
+	QUnit.test("Confirmation handling", (assert) => {
 
 		sinon.spy(oValueHelp, "close");
 		const aConditions = [
@@ -796,8 +804,7 @@ sap.ui.define([
 						   Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated)
 						   ];
 
-		const fnDone = assert.async();
-		oValueHelp.initControlDelegate().then(function () {
+		return oValueHelp.initControlDelegate().then(() => {
 			oValueHelp.connect(oField); // to attach events
 			oValueHelp.setConditions(aConditions);
 			oContainer.fireConfirm({});
@@ -830,11 +837,10 @@ sap.ui.define([
 			oValueHelp.setProperty("_valid", false);
 			oContainer.fireConfirm({});
 			assert.equal(iSelect, 3, "Select event not fired");
-			fnDone();
 		});
 	});
 
-	QUnit.test("Cancelling handling", function(assert) {
+	QUnit.test("Cancelling handling", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		sinon.spy(oValueHelp, "close");
@@ -843,14 +849,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RequestDelegateContent event", function(assert) {
+	QUnit.test("RequestDelegateContent event", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		oContainer.fireRequestDelegateContent({container: oContainer});
 
 		const fnDone = assert.async();
-		setTimeout(function() { // Delegate is called async
+		setTimeout(() => { // Delegate is called async
 			assert.ok(ValueHelpDelegate.retrieveContent.calledWith(oValueHelp, oContainer), "ValueHelpDelegate.retrieveContent called for typeahead");
 
 			ValueHelpDelegate.retrieveContent.restore();
@@ -860,10 +866,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("SwitchToValueHelp event", function(assert) {
+	QUnit.test("SwitchToValueHelp event", (assert) => {
 
 		let bFired = false;
-		oValueHelp.attachSwitchToValueHelp(function(oEvent) {
+		oValueHelp.attachSwitchToValueHelp((oEvent) => {
 			bFired = true;
 		});
 
@@ -921,13 +927,13 @@ sap.ui.define([
 
 	}
 
-	QUnit.test("Clone", function(assert) {
+	QUnit.test("Clone", (assert) => {
 
 		return _testClonedTypeahead(assert);
 
 	});
 
-	QUnit.test("Clone - connected", function(assert) {
+	QUnit.test("Clone - connected", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		return _testClonedTypeahead(assert);
@@ -935,7 +941,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("with Dialog", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			oContainer = new Container("C1", {
 				title: "Test"
 			});
@@ -951,7 +957,9 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("connect", function(assert) {
+	QUnit.test("connect", (assert) => {
+
+		assert.deepEqual(oContainer._getFieldGroupIds(), [], "FieldGroupIDs empty"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
 
 		oField.setFieldGroupIds(["myFieldGroup"]);
 		oField2.setFieldGroupIds(["myFieldGroup2"]);
@@ -963,7 +971,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("open", function(assert) {
+	QUnit.test("open", (assert) => {
 
 		sinon.spy(oContainer, "open");
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
@@ -979,7 +987,7 @@ sap.ui.define([
 		assert.ok(oValueHelp.fireOpen.called, "ValueHelp open event fired for typeahead opening");
 		assert.equal(oValueHelp.fireOpen.lastCall.args[0].container, oContainer, "ValueHelp open event carries correct container");
 
-		setTimeout(function() { // Delegate is called async
+		setTimeout(() => { // Delegate is called async
 			assert.ok(oContainer.open.called, "Container open called for dialog opening");
 			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for opening");
 			oContainer.handleOpened();
@@ -994,7 +1002,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("close open/opening containers when opening in another mode", function(assert) {
+	QUnit.test("close open/opening containers when opening in another mode", (assert) => {
 		sinon.spy(oContainer, "open");
 		sinon.spy(oContainer, "close");
 
@@ -1006,7 +1014,7 @@ sap.ui.define([
 		assert.ok(oContainer.close.called, "Container close called for already open container");
 	});
 
-	QUnit.test("close", function(assert) {
+	QUnit.test("close", (assert) => {
 
 		sinon.spy(oContainer, "close");
 
@@ -1020,7 +1028,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("close handling", function(assert) {
+	QUnit.test("close handling", (assert) => {
 
 		sinon.spy(oValueHelp, "close");
 		oValueHelp.connect(oField); // to attach events
@@ -1030,7 +1038,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("toggleOpen", function(assert) {
+	QUnit.test("toggleOpen", (assert) => {
 
 		sinon.spy(oValueHelp, "open");
 		sinon.spy(oValueHelp, "close");
@@ -1052,7 +1060,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isOpen", function(assert) {
+	QUnit.test("isOpen", (assert) => {
 
 		assert.notOk(oValueHelp.isOpen(), "ValueHelp not open per default");
 
@@ -1061,7 +1069,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("skipOpening", function(assert) {
+	QUnit.test("skipOpening", (assert) => {
 
 		sinon.spy(oContainer, "close");
 		oValueHelp.skipOpening();
@@ -1073,29 +1081,24 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", function(assert) {
+	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		const oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(bSupported) {
-				assert.strictEqual(bSupported, false, "TypeAhead not supported");
-				assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called for dialog");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called");
-				ValueHelpDelegate.retrieveContent.restore();
-				fnDone();
-			});
-		}
+		return oPromise.then((bSupported) => {
+			assert.strictEqual(bSupported, false, "TypeAhead not supported");
+			assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called for dialog");
+			ValueHelpDelegate.retrieveContent.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+			ValueHelpDelegate.retrieveContent.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue", function(assert) {
+	QUnit.test("getItemForValue", (assert) => {
 
 		sinon.spy(oContainer, "getItemForValue");
 		const oConfig = {
@@ -1109,21 +1112,16 @@ sap.ui.define([
 		const oPromise = oValueHelp.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(sText) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(true, "Promise Catch called");
-				assert.notOk(oContainer.getItemForValue.called, "getItemForValue not called on Container");
-				fnDone();
-			});
-		}
+		return oPromise.then((sText) => {
+			assert.notOk(true, "Promise Then must not be called");
+		}).catch((oError) => {
+			assert.ok(true, "Promise Catch called");
+			assert.notOk(oContainer.getItemForValue.called, "getItemForValue not called on Container");
+		});
 
 	});
 
-	QUnit.test("getIcon", function(assert) {
+	QUnit.test("getIcon", (assert) => {
 
 		sinon.stub(oContainer, "getValueHelpIcon").returns("X");
 		const sIcon = oValueHelp.getIcon();
@@ -1132,7 +1130,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isValidationSupported", function(assert) {
+	QUnit.test("isValidationSupported", (assert) => {
 
 		sinon.stub(oContainer, "isValidationSupported").returns(true);
 		assert.notOk(oValueHelp.isValidationSupported(), "Not supported");
@@ -1140,7 +1138,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getDomRef", function(assert) {
+	QUnit.test("getDomRef", (assert) => {
 
 		sinon.stub(oContainer, "getDomRef").returns(oField.getDomRef()); // just fake
 		let oDomRef = oValueHelp.getDomRef();
@@ -1170,7 +1168,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getAriaAttributes", function(assert) {
+	QUnit.test("getAriaAttributes", (assert) => {
 
 		const oCheckAttributes = {
 			contentId: undefined,
@@ -1201,28 +1199,28 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnFocus", function(assert) {
+	QUnit.test("shouldOpenOnFocus", (assert) => {
 
 		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
 		assert.ok(oValueHelp.shouldOpenOnFocus(), "returns value of container");
 
 	});
 
-	QUnit.test("shouldOpenOnClick", function(assert) {
+	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
 		assert.ok(oValueHelp.shouldOpenOnClick(), "returns value of container");
 
 	});
 
-	QUnit.test("isFocusInHelp", function(assert) {
+	QUnit.test("isFocusInHelp", (assert) => {
 
 		sinon.stub(oContainer, "isFocusInHelp").returns(true);
 		assert.ok(oValueHelp.isFocusInHelp(), "returns value of container");
 
 	});
 
-	QUnit.test("removeVisualFocus", function(assert) {
+	QUnit.test("removeVisualFocus", (assert) => {
 
 		sinon.spy(oContainer, "removeVisualFocus");
 		oValueHelp.removeVisualFocus();
@@ -1230,7 +1228,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate", function(assert) {
+	QUnit.test("navigate", (assert) => {
 
 		// nothing must happen as onyl supported for Typeahead
 		oValueHelp.connect(oField); // to attach events
@@ -1240,7 +1238,7 @@ sap.ui.define([
 		assert.notOk(oPromise, "navigate returns nothing");
 
 		const fnDone = assert.async();
-		setTimeout(function() { // to check if something is async called
+		setTimeout(() => { // to check if something is async called
 			assert.notOk(oContainer.navigate.called, "Container.navigate not called");
 			assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called");
 			ValueHelpDelegate.retrieveContent.restore();
@@ -1249,16 +1247,16 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled", function(assert) {
+	QUnit.test("isNavigationEnabled", (assert) => {
 
 		assert.notOk(oValueHelp.isNavigationEnabled(1), "Navigation if closed: disabled if no typeahead");
 
 	});
 
-	QUnit.test("Selection handling", function(assert) {
+	QUnit.test("Selection handling", (assert) => {
 
 
-		return oValueHelp.initControlDelegate().then(function () {
+		return oValueHelp.initControlDelegate().then(() => {
 			oValueHelp.connect(oField); // to attach events
 			// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
 			const aSelectConditions = [
@@ -1271,11 +1269,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Confirmation handling", function(assert) {
+	QUnit.test("Confirmation handling", (assert) => {
 
 		// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
-		const fnDone = assert.async();
-		oValueHelp.initControlDelegate().then(function () {
+		return oValueHelp.initControlDelegate().then(() => {
 			sinon.spy(oValueHelp, "close");
 			oValueHelp.connect(oField); // to attach events
 			oContainer.fireConfirm({});
@@ -1284,11 +1281,10 @@ sap.ui.define([
 			assert.ok(bSelectAdd, "'add' property");
 			assert.notOk(bSelectClose, "'close' property");
 			assert.notOk(oValueHelp.close.called, "ValueHelp close not called");
-			fnDone();
 		});
 	});
 
-	QUnit.test("Cancelling handling", function(assert) {
+	QUnit.test("Cancelling handling", (assert) => {
 
 		sinon.spy(oValueHelp, "close");
 		oValueHelp.connect(oField); // to attach events
@@ -1333,13 +1329,13 @@ sap.ui.define([
 
 	}
 
-	QUnit.test("Clone", function(assert) {
+	QUnit.test("Clone", (assert) => {
 
 		return _testClonedDialog(assert);
 
 	});
 
-	QUnit.test("Clone - connected", function(assert) {
+	QUnit.test("Clone - connected", (assert) => {
 
 		oValueHelp.connect(oField); // to attach events
 		return _testClonedDialog(assert);
@@ -1347,7 +1343,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("with Dialog and Typeahead", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			this.typeahead = new Container("C1", {
 				title: "Typeahead"
 			});
@@ -1360,7 +1356,7 @@ sap.ui.define([
 			});
 			await _initFields();
 		},
-		afterEach: function () {
+		afterEach: () => {
 			this.typeahead.destroy();
 			this.typeahead = undefined;
 			this.dialog.destroy();
@@ -1369,7 +1365,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("fireClosed", function(assert) {
+	QUnit.test("fireClosed", (assert) => {
 
 		sinon.spy(oValueHelp, "fireClosed");
 		oValueHelp.connect(oField); // to attach events
@@ -1399,7 +1395,7 @@ sap.ui.define([
 
 	let oDeviceStub;
 	QUnit.module("Phone support", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			const oSystem = {
 				desktop: false,
 				phone: true,
@@ -1423,13 +1419,13 @@ sap.ui.define([
 			});
 			await _initFields();
 		},
-		afterEach: function () {
+		afterEach: () => {
 			_teardown();
 			oDeviceStub.restore();
 		}
 	});
 
-	QUnit.test("shouldOpenOnFocus", function(assert) {
+	QUnit.test("shouldOpenOnFocus", (assert) => {
 
 		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
 		assert.ok(oValueHelp.shouldOpenOnFocus(), "if only typeahed opening on focus in phone mode");
@@ -1437,14 +1433,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick", function(assert) {
+	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
 		assert.ok(oValueHelp.shouldOpenOnClick(), "if only typeahed no opening on click in phone mode");
 
 	});
 
-	QUnit.test("setHighlightId", function(assert) {
+	QUnit.test("setHighlightId", (assert) => {
 		sinon.spy(oContainer, "setHighlightId");
 		oValueHelp.setHighlightId("x");
 		assert.ok(oContainer.setHighlightId.calledWith("x"), "ValueHelp.setHighlightId calls Container.setHighlightId with argument");
