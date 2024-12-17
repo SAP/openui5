@@ -101,9 +101,8 @@ sap.ui.define([
 							return {
 								aggregations: {
 									content: {
-										domRef: function () {
-											return ":sap-domref > .sapMITBContainerContent";
-										},
+										domRef: ":sap-domref > .sapMITBContainerContent",
+
 										actions: {
 											move: "moveControls"
 										}

@@ -480,7 +480,7 @@ sap.ui.define([
 			sandbox.stub(this.oElementOverlay, "getDesignTimeMetadata");
 			const oElementUtilSpy = sandbox.spy(ElementUtil, "getDomRef");
 			const oDomRef = this.oElementOverlay.getAssociatedDomRef();
-			assert.strictEqual(oDomRef.get(0), oElementUtilSpy.lastCall.returnValue, "the domRef is found");
+			assert.strictEqual(oDomRef, oElementUtilSpy.lastCall.returnValue, "the domRef is found");
 		});
 	});
 
@@ -983,7 +983,7 @@ sap.ui.define([
 			var mInitialValues = createInitialScrollHandlerValues.call(this);
 			var oScrollContainerDOM = this.oSimpleScrollControl.getDomRef().querySelector(".sapUiDtTestSSCScrollContainer");
 			oScrollContainerDOM.addEventListener("scroll", scrollHandler.bind(this, assert, fnDone, mInitialValues));
-			this.oSimpleScrollControlOverlay.getScrollContainerById(0).get(0).scrollTop = 100;
+			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop = 100;
 		});
 
 		QUnit.test("when the control is re-rendered (with removal of all events) and then scrolled", function(assert) {
@@ -1002,7 +1002,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the scroll container needs updating", function(assert) {
-			var oScrollContainer = this.oSimpleScrollControlOverlay.getScrollContainerById(1).get(0);
+			var oScrollContainer = this.oSimpleScrollControlOverlay.getScrollContainerById(1);
 			var aOverlayChildrenDomRef = this.oSimpleScrollControlOverlay.getChildrenDomRef();
 
 			assert.strictEqual(oScrollContainer.children.length, 2, "initially there are two aggregations in the scroll container");
@@ -1165,7 +1165,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("check position in DOM tree", function(assert) {
 			var aChildren = Array.from(this.oLayoutOverlay.getChildrenDomRef().children);
-			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId()).get(0);
+			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
 			var aScrollContainerChildren = Array.from(oScrollContainer.children);
 
 			var iIndexHeaderTitleOverlay = aChildren.indexOf(this.oHeaderTitleOverlay.getDomRef());
@@ -1182,7 +1182,7 @@ sap.ui.define([
 		QUnit.test("check whether scrollbar position doesn't affect sorting", function(assert) {
 			var fnDone = assert.async();
 
-			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId()).get(0);
+			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
 			var aScrollContainerChildren = Array.from(oScrollContainer.children);
 			var iIndexHeaderContentOverlay = aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef());
 			var iIndexSectionsOverlay = aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef());
@@ -1525,7 +1525,7 @@ sap.ui.define([
 				// setTimeout is needed, because synced event doesn"t wait until all async processes are done
 				setTimeout(async function() {
 					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-					var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
+					var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
 					assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "block");
 					this.oScrollControlOverlay.attachEvent("geometryChanged", function() {
 						assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "none");
@@ -1578,7 +1578,7 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("synced", async function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
 				var oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
-				var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0).get(0);
+				var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
 				assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "block");
 				var oGeometryChangedSpy = sandbox.spy();
 				oTextAreaOverlay.attachEvent("geometryChanged", oGeometryChangedSpy);
@@ -1819,7 +1819,7 @@ sap.ui.define([
 		QUnit.test("check that the scrollcontainer overlay has the correct clip-path", function(assert) {
 			assert.strictEqual(
 				window.getComputedStyle(this.oDynamicPage.$wrapper.get(0))["clip-path"],
-				window.getComputedStyle(this.oDynamicPageOverlay.getScrollContainerById(0).get(0))["clip-path"],
+				window.getComputedStyle(this.oDynamicPageOverlay.getScrollContainerById(0))["clip-path"],
 				"then the scroll container gets the clip-path property from the DynamicPage contentWrapper"
 			);
 		});
