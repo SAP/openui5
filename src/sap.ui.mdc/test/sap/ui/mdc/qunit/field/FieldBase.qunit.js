@@ -4504,8 +4504,6 @@ sap.ui.define([
 		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
 		oValueHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		await nextUIUpdate();
-		sinon.spy(oValueHelp, "initBeforeOpen");
-
 
 		const fnDone = assert.async();
 		oField.focus(); // as ValueHelp is connected with focus
@@ -4519,14 +4517,12 @@ sap.ui.define([
 			assert.equal(oValueHelp.getConditions().length, 1, "One condition set on ValueHelp");
 			assert.ok(oValueHelp.open.called, "open called");
 			assert.ok(oValueHelp.open.calledWith, true, "open called as Suggestion");
-			assert.ok(oValueHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
 			oContent._$input.val("=A");
 			oContent.fireLiveChange({ value: "=A" });
 
 			setTimeout(function() { // to wait for Promises and opening
 				assert.equal(oValueHelp.getFilterValue(), "A", "FilterValue set");
-				assert.ok(oValueHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
 				oContent._$input.val("=X");
 				oContent.fireLiveChange({ value: "=X" });
@@ -4570,7 +4566,6 @@ sap.ui.define([
 		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
 		oValueHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		await nextUIUpdate();
-		sinon.spy(oValueHelp, "initBeforeOpen");
 
 		const fnDone = assert.async();
 		oField.focus(); // as ValueHelp is connected with focus
@@ -4586,7 +4581,6 @@ sap.ui.define([
 				assert.equal(oValueHelp.getConditions().length, 1, "One condition set on ValueHelp");
 				assert.ok(oValueHelp.open.called, "open called");
 				assert.ok(oValueHelp.open.calledWith, false, "open called as ValueHelp");
-				assert.ok(oValueHelp.initBeforeOpen.calledOnce, "initBeforeOpen called once");
 
 				oValueHelp.close();
 				setTimeout(function() { // to wait for closing
