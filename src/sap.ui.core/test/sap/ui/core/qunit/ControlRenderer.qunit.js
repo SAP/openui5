@@ -38,7 +38,8 @@ sap.ui.define([
 				icon: { type: "sap.ui.core.URI", defaultValue: "" },
 				enabled: {type : "boolean", defaultValue : true },
 				renderNothing: { type: "boolean", defaultValue: false },
-				doSomething: { type: "function" }
+				doSomething: { type: "function" },
+				renderSomething: { type: "function" }
 			},
 			aggregations: {
 				items: { type: "sap.ui.core.Control", multiple: true }
@@ -58,7 +59,7 @@ sap.ui.define([
 			rm.openStart("div", oControl);
 			rm.accessibilityState(oControl);
 			rm.attr("title", oControl.getTooltip_AsString() || "StringControl");
-			rm.attr("aria-describedby", InvisibleText.getStaticId("sap.ui.core", "ARIA_DESCRIBEDBY")); /* during rerendering this will create new RM not to invalidate static UIArea */
+			rm.attr("aria-describedby", InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_INFORMATION")); /* during rerendering this will create new RM not to invalidate static UIArea */
 			rm.attr("tabindex", 0);
 			rm.style("width", oControl.getWidth());
 			rm.style("background-color", "red");
@@ -77,6 +78,9 @@ sap.ui.define([
 			rm.text(oControl.getHeader(), true);
 			rm.close("header");
 			rm.voidStart("hr").voidEnd();
+			if (oControl.getRenderSomething()) {
+				oControl.getRenderSomething()(rm, oControl);
+			}
 			oControl.getItems().forEach(function(oChild) {
 				rm.renderControl(oChild);
 			});
@@ -91,7 +95,8 @@ sap.ui.define([
 				width: { type: "string", defaultValue: "100%" },
 				icon: { type: "sap.ui.core.URI", defaultValue: "" },
 				renderNothing: { type: "boolean", defaultValue: false },
-				doSomething: { type: "function" }
+				doSomething: { type: "function" },
+				renderSomething: { type: "function" }
 			},
 			aggregations: {
 				items: { type: "sap.ui.core.Control", multiple: true, dnd: true }
@@ -110,7 +115,7 @@ sap.ui.define([
 				rm.openStart("div", oControl);
 				rm.accessibilityState(oControl);
 				rm.attr("title", oControl.getTooltip_AsString() || "PatchingControl");
-				rm.attr("aria-describedby", InvisibleText.getStaticId("sap.ui.core", "ARIA_DESCRIBEDBY"));
+				rm.attr("aria-describedby", InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_INFORMATION"));
 				rm.attr("tabindex", 0);
 				rm.style("width", oControl.getWidth());
 				rm.style("background-color", "green");
@@ -935,6 +940,36 @@ sap.ui.define([
 		oChild2ApplyFocusInfoSpy.restore();
 		oRootControl.destroy();
 	});
+
+	QUnit.test("Tag Verification", async function(assert) {
+		var fnRenderSomething = function(rm) {
+			rm.openStart("div").openEnd();
+				rm.openStart("span").openEnd();
+			rm.close("div");
+		};
+
+		var oControlS = new StringControl({
+			renderSomething: fnRenderSomething
+		});
+
+		var oControlP = new PatchingControl({
+			renderSomething: fnRenderSomething
+		});
+
+		var oAssertionSpy = this.spy(console, "assert");
+		oControlS.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		assert.equal(oAssertionSpy.callCount, 1, "closing span tag is neccessary");
+
+		oControlP.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		assert.equal(oAssertionSpy.callCount, 2, "closing span tag is neccessary");
+
+		oControlS.destroy();
+		oControlP.destroy();
+		oAssertionSpy.restore();
+	});
+
 
 	var SkipRenderingModule = function(fnInitControlTree) {
 		return {
