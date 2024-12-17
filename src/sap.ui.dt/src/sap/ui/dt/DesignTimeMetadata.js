@@ -3,20 +3,22 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Lib",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	ResourceBundle,
 	merge,
 	ObjectPath,
 	ManagedObject,
 	Lib,
-	ElementUtil,
 	DOMUtil,
+	ElementUtil,
 	jQuery
 ) {
 	"use strict";
@@ -260,7 +262,7 @@ sap.ui.define([
 	};
 
 	DesignTimeMetadata.prototype._getTextFromLibrary = function(sLibraryName, sKey, aArgs) {
-		var oLibResourceBundle = Lib.getResourceBundleFor(`${sLibraryName}.designtime`);
+		let oLibResourceBundle = ResourceBundle.create({ bundleName: `${sLibraryName}/designtime/messagebundle` });
 		if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)) {
 			return oLibResourceBundle.getText(sKey, aArgs);
 		}

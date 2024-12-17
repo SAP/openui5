@@ -1,25 +1,27 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/dt/DesignTimeMetadata",
-	"sap/ui/layout/form/SimpleForm",
+	"sap/base/i18n/ResourceBundle",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/Label",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
-	"sap/m/Button",
-	"sap/m/Label",
-	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	sinon,
-	DesignTimeMetadata,
-	SimpleForm,
+	ResourceBundle,
+	Button,
+	Input,
+	Label,
 	Lib,
 	Title,
-	Button,
-	Label,
-	Input,
-	nextUIUpdate
+	DesignTimeMetadata,
+	SimpleForm,
+	nextUIUpdate,
+	sinon
 ) {
 	"use strict";
 
@@ -139,6 +141,23 @@ sap.ui.define([
 				this.oDesignTimeMetadata.getCommandName("someChangeType", null, "someAggregation"),
 				"someCommand",
 				"then aggregation actions are considered"
+			);
+		});
+
+		QUnit.test("when getLibraryText is called for a designtime bundle", function(assert) {
+			const oFakeElement = {
+				getMetadata: sandbox.stub().returns({
+					getLibraryName: sandbox.stub().returns("fakeLibrary")
+				})
+			};
+			const oFakeLibBundle = {
+				getText: sandbox.stub().returns("translated text"),
+				hasText: sandbox.stub().returns(true)
+			};
+			sandbox.stub(ResourceBundle, "create").returns(oFakeLibBundle);
+			assert.equal(
+				this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"),
+				"translated text", "then you get the text from the resource bundle of the corresponding library"
 			);
 		});
 
