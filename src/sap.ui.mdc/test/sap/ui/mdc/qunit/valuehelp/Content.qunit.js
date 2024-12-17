@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/OperatorValueType",
 	"sap/ui/model/FilterOperator"
-], function (
+], (
 		ValueHelpDelegate,
 		Content,
 		Condition,
@@ -24,7 +24,7 @@ sap.ui.define([
 		OperatorName,
 		OperatorValueType,
 		FilterOperator
-		) {
+		) => {
 	"use strict";
 
 	let oContent;
@@ -32,44 +32,49 @@ sap.ui.define([
 	let bIsOpen = false;
 	let bIsOpening = false;
 
+	const oValueHelp = {};
+
 	const oContainer = { //to fake Container
-		getScrollDelegate: function() {
+		getScrollDelegate() {
 			return "X"; // just test return value
 		},
-		getUIArea: function() {
+		getUIArea() {
 			return null;
 		},
-		isTypeahead: function() {
+		isTypeahead() {
 			return bIsTypeahead;
 		},
-		providesScrolling: function() {
+		providesScrolling() {
 			return bIsTypeahead;
 		},
-		isOpen: function() {
+		isOpen() {
 			return bIsOpen;
 		},
-		isOpening: function() {
+		isOpening() {
 			return bIsOpening;
 		},
-		getValueHelpDelegate: function () {
+		getValueHelp() {
+			return oValueHelp;
+		},
+		getValueHelpDelegate() {
 			return ValueHelpDelegate;
 		},
-		getValueHelpDelegatePayload: function () {
+		getValueHelpDelegatePayload() {
 			return {x: "X"};
 		},
-		awaitValueHelpDelegate: function () {
+		awaitValueHelpDelegate() {
 			return Promise.resolve();
 		},
-		isValueHelpDelegateInitialized: function () {
+		isValueHelpDelegateInitialized() {
 			return true;
 		},
-		invalidate: function () {},
-		getControl: function () {
+		invalidate() {},
+		getControl() {
 			return "Control"; // just to test forwarding
 		}
 	};
 
-	const _teardown = function() {
+	const _teardown = () => {
 		oContent.destroy();
 		oContent = null;
 		bIsTypeahead = false;
@@ -78,7 +83,7 @@ sap.ui.define([
 		};
 
 	QUnit.module("basic features", {
-		beforeEach: function() {
+		beforeEach() {
 			oContent = new Content("C1");
 			sinon.stub(oContent, "getParent").returns(oContainer);
 			oContent.oParent = oContainer; // fake
@@ -86,7 +91,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("condition update", function(assert) {
+	QUnit.test("condition update", (assert) => {
 
 		sinon.spy(oContent, "invalidate");
 		sinon.spy(oContent, "handleConditionsUpdate");
@@ -97,17 +102,50 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("filterValue update", function(assert) {
+	QUnit.test("filterValue update", (assert) => {
 
+		let iCount = 0;
+
+		oContent.attachCancel((oEvent) => {iCount++;});
+
+		bIsOpen = true;
+		bIsTypeahead = true;
 		sinon.spy(oContent, "invalidate");
 		sinon.spy(oContent, "handleFilterValueUpdate");
+		sinon.stub(ValueHelpDelegate, "showTypeahead").returns(false);
 		oContent.setFilterValue("X");
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
 		assert.ok(oContent.handleFilterValueUpdate.calledOnce, "handleFilterValueUpdate called");
+		assert.ok(ValueHelpDelegate.showTypeahead.calledOnce, "ValueHelpDelegate.showTypeahead called");
+		ValueHelpDelegate.showTypeahead.restore();
+
+		const fnDone = assert.async();
+		setTimeout(() => { // as Promise inside
+			assert.equal(iCount, 1, "Cancel event fired");
+			fnDone();
+		}, 0);
 
 	});
 
-	QUnit.test("onShow", function(assert) {
+	QUnit.test("getContent", (assert) => {
+
+		assert.notOk(oContent.getContent(), "Just existance check");
+
+	});
+
+	QUnit.test("getContainerConfig", (assert) => {
+
+		assert.notOk(oContent.getContainerConfig(), "Just existance check");
+
+	});
+
+	QUnit.test("onBeforeShow", (assert) => {
+
+		assert.notOk(oContent.onBeforeShow(true), "Just existance check");
+
+	});
+
+	QUnit.test("onShow", (assert) => {
 
 		sinon.spy(oContent, "handleConditionsUpdate");
 		oContent.onShow();
@@ -116,7 +154,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("onHide", function(assert) {
+	QUnit.test("onHide", (assert) => {
 
 		oContent._bVisible = true; // fake
 		oContent.onHide();
@@ -124,13 +162,31 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getScrollDelegate", function(assert) {
+	QUnit.test("getInitialFocusedControl", (assert) => {
+
+		assert.equal(oContent.getInitialFocusedControl(), null, "result");
+
+	});
+
+	QUnit.test("getItemForValue", (assert) => {
+
+		assert.notOk(oContent.getItemForValue({}), "Just existance check");
+
+	});
+
+	QUnit.test("isValidationSupported", (assert) => {
+
+		assert.notOk(oContent.isValidationSupported(), "validation not supported");
+
+	});
+
+	QUnit.test("getScrollDelegate", (assert) => {
 
 		assert.equal(oContent.getScrollDelegate(), "X", "getScrollDelegate returns value from Container");
 
 	});
 
-	QUnit.test("EQ operator determination", function(assert) {
+	QUnit.test("EQ operator determination", (assert) => {
 		const oOperator = new Operator({
 			name: "MyTest",
 			filterOperator: FilterOperator.EQ,
@@ -148,7 +204,7 @@ sap.ui.define([
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
 	});
 
-	QUnit.test("createCondition", function(assert) {
+	QUnit.test("createCondition", (assert) => {
 
 		const oOperator = new Operator({
 			name: "MyTest",
@@ -165,7 +221,7 @@ sap.ui.define([
 		let oCondition = oContent.createCondition("1", "Text1", {myPayload: true});
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
-			assert.equal(oCondition && oCondition.operator, "MyTest", "Condition Operator");
+			assert.equal(oCondition.operator, "MyTest", "Condition Operator");
 			assert.equal(oCondition.values.length, 1, "Condition values length");
 			assert.equal(oCondition.values[0], "1", "Condition values[0]");
 			assert.deepEqual(oCondition.payload, {myPayload: true}, "Condition payload");
@@ -177,7 +233,7 @@ sap.ui.define([
 		oCondition = oContent.createCondition("1", "Text1");
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
-			assert.equal(oCondition && oCondition.operator, OperatorName.EQ, "Condition Operator");
+			assert.equal(oCondition.operator, OperatorName.EQ, "Condition Operator");
 			assert.equal(oCondition.values.length, 2, "Condition values length");
 			assert.equal(oCondition.values[0], "1", "Condition values[0]");
 			assert.equal(oCondition.values[1], "Text1", "Condition values[1]");
@@ -187,14 +243,32 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getUIArea", function(assert) {
+	QUnit.test("setVisualFocus", (assert) => {
+
+		assert.notOk(oContent.setVisualFocus(), "Just existance check");
+
+	});
+
+	QUnit.test("removeVisualFocus", (assert) => {
+
+		assert.notOk(oContent.removeVisualFocus(), "Just existance check");
+
+	});
+
+	QUnit.test("navigate", (assert) => {
+
+		assert.notOk(oContent.navigate(1), "Just existance check");
+
+	});
+
+	QUnit.test("getUIArea", (assert) => {
 
 		sinon.spy(oContainer, "getUIArea");
 		assert.notOk(oContent.getUIArea(), "no UIArea returned");
 		assert.ok(oContainer.getUIArea.calledOnce, "getUIArea of Container called");
 		oContainer.getUIArea.reset();
 
-		oContainer.getUIAreaForContent = function () {
+		oContainer.getUIAreaForContent = () => {
 			return "X"; // just test call
 		};
 		assert.equal(oContent.getUIArea(), "X", "UIArea from getUIAreaForContent od Container returned");
@@ -202,7 +276,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeahead", function(assert) {
+	QUnit.test("isTypeahead", (assert) => {
 
 		assert.notOk(oContent.isTypeahead(), "not typeahead");
 		bIsTypeahead = true;
@@ -210,14 +284,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isSearchSupported", function(assert) {
+	QUnit.test("isSearchSupported", (assert) => {
 
 		const bSupported = oContent.isSearchSupported();
 		assert.notOk(bSupported, "not supported as default");
 
 	});
 
-	QUnit.test("provideScrolling", function(assert) {
+	QUnit.test("provideScrolling", (assert) => {
 
 		assert.ok(oContent.provideScrolling(), "scrolling needed if not provided by Container");
 		bIsTypeahead = true;
@@ -225,7 +299,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isContainerOpen", function(assert) {
+	QUnit.test("isContainerOpen", (assert) => {
 
 		assert.notOk(oContent.isContainerOpen(), "not open");
 		bIsOpen = true;
@@ -233,7 +307,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isContainerOpening", function(assert) {
+	QUnit.test("isContainerOpening", (assert) => {
 
 		assert.notOk(oContent.isContainerOpening(), "not opening");
 		bIsOpening = true;
@@ -241,34 +315,47 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getValueHelpDelegate", function(assert) {
+	QUnit.test("getValueHelpInstance", (assert) => {
+
+		const oResult = oContent.getValueHelpInstance();
+		assert.equal(oResult, oValueHelp, "ValueHelp returned");
+
+	});
+
+	QUnit.test("getValueHelpDelegate", (assert) => {
 
 		const oDelegate = oContent.getValueHelpDelegate();
 		assert.equal(oDelegate, ValueHelpDelegate, "Delegate returned");
 
 	});
 
-	QUnit.test("_awaitValueHelpDelegate", function(assert) {
+	QUnit.test("_awaitValueHelpDelegate", (assert) => {
 
 		const oPromise = oContent.awaitValueHelpDelegate();
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 	});
 
-	QUnit.test("isValueHelpDelegateInitialized", function(assert) {
+	QUnit.test("isValueHelpDelegateInitialized", (assert) => {
 
 		const bDelegateInitialized = oContent.isValueHelpDelegateInitialized();
 		assert.ok(bDelegateInitialized, "Delegate initialized");
 
 	});
 
-	QUnit.test("getCount", function(assert) {
+	QUnit.test("getCount", (assert) => {
 
 		assert.equal(oContent.getCount(), 0, "getCount");
 
 	});
 
-	QUnit.test("getAriaAttributes", function(assert) {
+	QUnit.test("getValueHelpIcon", (assert) => {
+
+		assert.notOk(oContent.getValueHelpIcon(), "Just existance check");
+
+	});
+
+	QUnit.test("getAriaAttributes", (assert) => {
 
 		const oCheckAttributes = {
 			contentId: null,
@@ -283,20 +370,20 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", (assert) => {
 		oContent.setConfig({maxConditions: -1});
 		assert.equal(oContent.isSingleSelect(), false, "multi-select correctly determined from maxConditions");
 		oContent.setConfig({maxConditions: 1});
 		assert.equal(oContent.isSingleSelect(), true, "single-select correctly determined from maxConditions");
 	});
 
-	QUnit.test("shouldOpenOnClick", function(assert) {
+	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		assert.notOk(oContent.shouldOpenOnClick(), "shouldOpenOnClick");
 
 	});
 
-	QUnit.test("shouldOpenOnNavigate", function(assert) {
+	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		oContent.setConfig({maxConditions: -1});
 		assert.notOk(oContent.shouldOpenOnNavigate(), "multi-value");
@@ -304,13 +391,13 @@ sap.ui.define([
 		assert.notOk(oContent.shouldOpenOnNavigate(), "single-value");
 	});
 
-	QUnit.test("isNavigationEnabled", function(assert) {
+	QUnit.test("isNavigationEnabled", (assert) => {
 
 		assert.notOk(oContent.isNavigationEnabled(1), "isNavigationEnabled");
 
 	});
 
-	QUnit.test("isFocusInHelp", function(assert) {
+	QUnit.test("isFocusInHelp", (assert) => {
 
 		assert.ok(oContent.isFocusInHelp(), "correctly determined from typeahead");
 		bIsTypeahead = true;
@@ -318,7 +405,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isMultiSelect", function(assert) {
+	QUnit.test("isMultiSelect", (assert) => {
 
 		oContent.setConfig({maxConditions: -1});
 		assert.ok(oContent.isMultiSelect(), "correctly determined from maxConditions");
@@ -326,20 +413,20 @@ sap.ui.define([
 		assert.notOk(oContent.isMultiSelect(), "correctly determined from maxConditions");
 	});
 
-	QUnit.test("getMaxConditions", function(assert) {
+	QUnit.test("getMaxConditions", (assert) => {
 		oContent.setConfig({maxConditions: -1});
 		assert.equal(oContent.getMaxConditions(), -1, "maxConditions taken from config");
 		oContent.setConfig({maxConditions: 1});
 		assert.equal(oContent.getMaxConditions(), 1, "maxConditions updated from config");
 	});
 
-	QUnit.test("getRequiresTokenizer", function(assert) {
+	QUnit.test("getRequiresTokenizer", (assert) => {
 
 		assert.ok(oContent.getRequiresTokenizer(), "getRequiresTokenizer");
 
 	});
 
-	QUnit.test("getFormattedTitle", function(assert) {
+	QUnit.test("getFormattedTitle", (assert) => {
 
 		oContent.setTitle("Title");
 		assert.equal(oContent.getFormattedTitle(1), "Title", "formatted title");
@@ -349,14 +436,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getFormattedShortTitle", function(assert) {
+	QUnit.test("getFormattedShortTitle", (assert) => {
 
 		oContent.setShortTitle("ShortTitle");
 		assert.equal(oContent.getFormattedShortTitle(), "ShortTitle", "formatted shortTitle");
 
 	});
 
-	QUnit.test("getFormattedTokenizerTitle", function(assert) {
+	QUnit.test("getFormattedTokenizerTitle", (assert) => {
 
 		assert.equal(oContent.getFormattedTokenizerTitle(), "", "formatted TokenizerTitle is empty");
 
@@ -367,17 +454,41 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getControl", function(assert) {
+	QUnit.test("getControl", (assert) => {
 
 		const oControl = oContent.getControl();
 		assert.equal(oControl, "Control", "Delegate returned");
 
 	});
 
-	QUnit.test("isQuickSelectSupported", function(assert) {
+	QUnit.test("isQuickSelectSupported", (assert) => {
 
 		const bSupported = oContent.isQuickSelectSupported();
 		assert.notOk(bSupported, "not supported as default");
+
+	});
+
+	QUnit.test("onContainerClose", (assert) => {
+
+		assert.notOk(oContent.onContainerClose(), "Just existance check");
+
+	});
+
+	QUnit.test("onContainerOpen", (assert) => {
+
+		assert.notOk(oContent.onContainerOpen(), "Just existance check");
+
+	});
+
+	QUnit.test("onConnectionChange", (assert) => {
+
+		assert.notOk(oContent.onConnectionChange(), "Just existance check");
+
+	});
+
+	QUnit.test("setHighlightId", (assert) => {
+
+		assert.notOk(oContent.setHighlightId("ID"), "Just existance check");
 
 	});
 
