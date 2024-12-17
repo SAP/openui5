@@ -453,6 +453,15 @@ sap.ui.define([
 					]
 				}
 			},
+			"plugin/annotations/AnnotationChangeDialog": {
+				group: "Plugin",
+				coverage: {
+					only: [
+						"sap/ui/rta/plugin/annotations/AnnotationChangeDialog",
+						"sap/ui/rta/plugin/annotations/AnnotationChangeDialogController"
+					]
+				}
+			},
 			"plugin/iframe/AddIFrameDialog": {
 				group: "Plugin",
 				coverage: {
