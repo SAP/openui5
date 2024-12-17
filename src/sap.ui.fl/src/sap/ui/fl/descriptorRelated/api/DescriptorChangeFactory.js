@@ -152,11 +152,13 @@ sap.ui.define([
 		}
 
 		var mPropertyBag = {};
-		mPropertyBag.changeType = oInlineChange._getChangeType();
+		const mInlineChangeProps = oInlineChange.getMap();
+		mPropertyBag.changeType = mInlineChangeProps.changeType;
+		mPropertyBag.fileName = oInlineChange.fileName;
 		mPropertyBag.componentName = sReference;
 		mPropertyBag.reference = sReference;
 		mPropertyBag.generator = sTool;
-		mPropertyBag.support = oInlineChange.getMap().support;
+		mPropertyBag.support = mInlineChangeProps.support;
 
 		// default to 'CUSTOMER'
 		mPropertyBag.layer = sLayer || "CUSTOMER";
