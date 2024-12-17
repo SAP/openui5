@@ -115,7 +115,7 @@
 							<template:with path="field>Value/$Path" var="target">
 								<template:if test="{= ${target>@@getValueListType} !== 'None' }">
 									<template:then>
-										<demo:ValueHelp value="{field>Value/@@value}"/>
+										<demo:ValueHelp id="{target>}" value="{field>Value/@@value}"/>
 									</template:then>
 									<template:elseif test="{target>@com.sap.vocabularies.Common.v1.Text}">
 										<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
