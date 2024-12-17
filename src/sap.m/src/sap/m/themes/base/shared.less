@@ -2,6 +2,8 @@
 /* Shared CSS Base theme  */
 /* ====================== */
 
+@_sap_m_Badge_AttentionBackgroundColor: @sapUiContentBadgeBackground;
+
 /* Common CSS for condensed table cell content controls */
 .sapUiCondensedTableCellContent {
 	box-sizing: border-box;
@@ -56,7 +58,7 @@
 
 /* ObjectListItem and ObjectHeader share styles for markers such as flag and favorite */
 .sapMObjStatusMarker {
-	color: @sapUiContentMarkerIconColor;
+	color: var(--sapContent_MarkerIconColor);
 }
 
 .sapMObjStatusMarker .sapUiIcon + .sapUiIcon,
@@ -64,7 +66,7 @@
 	margin-left: .5rem;
 }
 
-.sapMObjStatusMarkerInvisible{
+.sapMObjStatusMarkerInvisible {
 	visibility: hidden;
 }
 
@@ -81,29 +83,37 @@
 }
 
 .defaultHighlightedText {
-    background: @sapUiContentSearchHighlightColor;
-    font-weight: bold;
+	background: var(--sapContent_SearchHighlightColor);
+	font-weight: bold;
 }
 
 /* Enables sap.m.IBadge implementations where possible */
 
 @keyframes sapMBadgeAppearPulse {
+
 	0% {transform: scale(.9); opacity:1;}
+
 	100% {transform: scale(2);opacity: 0;}
 }
 
 @keyframes sapMBadgeAppearBounce {
+
 	0% {transform: scale(1);}
-	50% {transform: scale(1.4); }
+
+	50% {transform: scale(1.4);}
+
 	100% {transform: scale(1);}
 }
 
 @keyframes sapMBadgeDisappear {
+
 	0% {transform: scale(1);}
+
 	100% {transform: scale(0);}
 }
 
 @keyframes sapMBadgeUpdate {
+
 	0% {transform: scale(1);}
 
 	50% {transform: scale(1.2);}
@@ -111,49 +121,50 @@
 	100% {transform: scale(1);}
 }
 
-@_sap_m_Badge_AttentionBackgroundColor: @sapUiContentBadgeBackground;
 @keyframes sapMBadgeAppearMotionSmall {
+
 	0% {
-		transform: scale(0.33); // 0.125rem / 0.375rem
+		transform: scale(0.33); /* 0.125rem / 0.375rem */
 		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 	}
 
 	20% {
-		transform: scale(1.66); // 0.625rem / 0.375rem
+		transform: scale(1.66); /* 0.625rem / 0.375rem */
 	}
 
 	40% {
-		transform: scale(1.33); // 0.5rem / 0.375rem
-		box-shadow: 0 0 0 1px fade(@_sap_m_Badge_AttentionBackgroundColor, 20%); // 0.875rem pulse layer
+		transform: scale(1.33); /* 0.5rem / 0.375rem */
+		box-shadow: 0 0 0 1px fade(@_sap_m_Badge_AttentionBackgroundColor, 20%); /* 0.875rem pulse layer */
 	}
 
 	60% {
-		transform: scale(1); // 0.375rem
-		box-shadow: 0 0 0 0.3125rem fade(@_sap_m_Badge_AttentionBackgroundColor, 15%); // 1rem pulse layer
+		transform: scale(1); /* 0.375rem */
+		box-shadow: 0 0 0 0.3125rem fade(@_sap_m_Badge_AttentionBackgroundColor, 15%); /* 1rem pulse layer */
 	}
 
 	100% {
-		box-shadow: 0 0 0 0.375rem fade(@_sap_m_Badge_AttentionBackgroundColor, 0%); // 1.125rem pulse layer
+		box-shadow: 0 0 0 0.375rem fade(@_sap_m_Badge_AttentionBackgroundColor, 0%); /* 1.125rem pulse layer */
 	}
 }
 
 @keyframes sapMBadgeAppearMotion {
+
 	0% {
-		transform: scale(0.25); // 0.125rem / 0.5rem
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); // required for Internet Explorer
+		transform: scale(0.25); /* 0.125rem / 0.5rem */
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); /* required for Internet Explorer */
 	}
 
 	20% {
-		transform: scale(1.25); // 0.625rem / 0.5rem
+		transform: scale(1.25); /* 0.625rem / 0.5rem */
 	}
 
 	40% {
-		transform: scale(1); // 0.5rem
-		box-shadow: 0 0 0 1px fade(@_sap_m_Badge_AttentionBackgroundColor, 20%); // 0.875rem pulse layer
+		transform: scale(1); /* 0.5rem */
+		box-shadow: 0 0 0 1px fade(@_sap_m_Badge_AttentionBackgroundColor, 20%); /* 0.875rem pulse layer */
 	}
 
 	100% {
-		box-shadow: 0 0 0 0.375rem fade(@_sap_m_Badge_AttentionBackgroundColor, 0%); // 1.125rem pulse layer
+		box-shadow: 0 0 0 0.375rem fade(@_sap_m_Badge_AttentionBackgroundColor, 0%); /* 1.125rem pulse layer */
 	}
 }
 
@@ -167,69 +178,65 @@
 		right: -0.25rem;
 		z-index: 100;
 		max-width: 100%;
-
 		padding-right: 0.125rem;
 		box-sizing: border-box;
 		height: 100%;
 		transform-origin: center center;
-
 		pointer-events: none;
 
-		&:after {
+		&::after {
 			border-radius: 1.125rem;
 			display: block;
-
 			padding: 0 0.3125rem;
 			min-width: 0.5rem;
 			height: 1.125rem;
 			line-height: 1.125rem;
-			font-size: @sapMFontSmallSize;
-			font-family: @sapUiFontFamily;
+			font-size: var(--sapFontSmallSize);
+			font-family: var(--sapFontFamily);
 			text-align: center;
-
-			background-color: @sapUiContentBadgeBackground;
-			border: 0.0625rem solid @sapUiContentBadgeBackground;
-			color: @sapUiContentBadgeTextColor;
-
+			background-color: var(--sapContent_BadgeBackground);
+			border: 0.0625rem solid var(--sapContent_BadgeBackground);
+			color: var(--sapContent_BadgeTextColor);
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			overflow: hidden;
 
 			.badgeAccentColorMixin(10);
 		}
-		//We need one more pseudo-element, attached to the badge indicator, in order
-		//to show the pulse animation simultaneously with the bounce one.
-		&:before {
+
+		/* We need one more pseudo-element, attached to the badge indicator, in order */
+		/* to show the pulse animation simultaneously with the bounce one. */
+		&::before {
 			position: absolute;
 			border-radius: 1.125rem;
 			display: block;
-
 			padding: 0 0.3125rem;
 			min-width: 0.5rem;
 			height: 1.125rem;
 			line-height: 1.125rem;
-			font-size: @sapMFontSmallSize;
-			font-family: @sapUiFontFamily;
-
-			background-color: @sapUiContentBadgeBackground;
-			border: 0.0625rem solid @sapUiContentBadgeBackground;
-			color: @sapUiContentBadgeTextColor;
-
+			font-size: var(--sapFontSmallSize);
+			font-family: var(--sapFontFamily);
+			background-color: var(--sapContent_BadgeBackground);
+			border: 0.0625rem solid var(--sapContent_BadgeBackground);
+			color: var(--sapContent_BadgeTextColor);
 			text-overflow: ellipsis;
 			overflow: hidden;
 			opacity:0;
 
 			.badgeAccentColorMixin(10);
 		}
+
 		.sapMBadgeTopLeft& {
 			top: -0.125rem;
 			left: -0.25rem;
 			right: auto;
-		 }
+		}
+
 		.sapMBadgeTopRight& {
 			top: -0.125rem;
 			right: -0.25rem;
 		}
+
 		.sapMBadgeInline& {
 			left: 0;
 			right: 0;
@@ -244,41 +251,44 @@
 		right: -0.25rem;
 		width: 0.5rem;
 		height: 0.5rem;
-
 		border-radius: 1.125rem;
 		background-color: @_sap_m_Badge_AttentionBackgroundColor;
-		border: 0.125rem solid @sapUiObjectHeaderBackground;
+		border: 0.125rem solid var(--sapObjectHeader_Background);
 	}
 }
 
-.sapMBadgeIndicator.sapMBadgeDefault:after {
+.sapMBadgeIndicator.sapMBadgeDefault::after {
 	content: attr(data-badge);
 }
 
-.sapMBadgeIndicator.sapMBadgeDefault[data-badge=""]:after {
+.sapMBadgeIndicator.sapMBadgeDefault[data-badge='']::after {
 	display: none;
 }
 
 html[data-sap-ui-animation='on'] {
+
 	.sapMBadge.sapMBadgeAnimationTypeFull {
-		.sapMBadgeDefault.sapMBadgeAnimationAdd:after {
+
+		.sapMBadgeDefault.sapMBadgeAnimationAdd::after {
 			animation: sapMBadgeAppearBounce .1s;
 		}
 
-		.sapMBadgeDefault.sapMBadgeAnimationAdd:before {
+		.sapMBadgeDefault.sapMBadgeAnimationAdd::before {
 			content: attr(data-badge);
 			animation: sapMBadgeAppearPulse .2s;
 		}
 
 		.sapMBadgeAttention.sapMBadgeAnimationRemove,
-		.sapMBadgeDefault.sapMBadgeAnimationRemove:after {
+		.sapMBadgeDefault.sapMBadgeAnimationRemove::after {
 			animation: sapMBadgeDisappear .1s;
 			animation-fill-mode: forwards;
 			transform-origin: center;
 		}
 	}
+
 	.sapMBadge:not(.sapMBadgeAnimationTypeNone) {
-		.sapMBadgeDefault.sapMBadgeAnimationUpdate:after {
+
+		.sapMBadgeDefault.sapMBadgeAnimationUpdate::after {
 			animation: sapMBadgeUpdate .1s;
 			animation-fill-mode: forwards;
 		}
@@ -286,8 +296,9 @@ html[data-sap-ui-animation='on'] {
 }
 
 html[data-sap-ui-animation='off'] {
+
 	.sapMBadgeAttention.sapMBadgeAnimationRemove,
-	.sapMBadgeDefault.sapMBadgeAnimationRemove:after {
+	.sapMBadgeDefault.sapMBadgeAnimationRemove::after {
 		scale: 0;
 		opacity: 0;
 		display: none;
@@ -296,8 +307,9 @@ html[data-sap-ui-animation='off'] {
 
 .sapMBadgeAnimationTypeUpdate,
 .sapMBadgeAnimationTypeNone {
+
 	.sapMBadgeAttention.sapMBadgeAnimationRemove,
-	.sapMBadgeDefault.sapMBadgeAnimationRemove:after {
+	.sapMBadgeDefault.sapMBadgeAnimationRemove::after {
 		scale: 0;
 		opacity: 0;
 		display: none;
