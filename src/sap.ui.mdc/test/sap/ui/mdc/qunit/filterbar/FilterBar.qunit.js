@@ -1000,17 +1000,10 @@ sap.ui.define([
 
 		const oMyModel = new JSONModel();
 
-		sinon.stub(sap.ui, "require").returns(oDelegate);
-
 		const oFB = new FilterBar({
-			delegate: {
-				name: "test",
-				payload: {
-					modelName: "Model",
-					collectionName: "Collection"
-				}
-			}
 		});
+		sinon.stub(oFB, "getControlDelegate").returns(oDelegate);
+		sinon.stub(oFB, "awaitControlDelegate").returns(new Promise((resolve) => { resolve(oDelegate); }));
 
 		const done = assert.async();
 
@@ -1021,7 +1014,6 @@ sap.ui.define([
 			assert.ok(aProperties);
 			assert.equal(aProperties.length, 2);
 
-			sap.ui.require.restore();
 			oFB.destroy();
 			done();
 		});
