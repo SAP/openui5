@@ -1006,9 +1006,11 @@ sap.ui.define([
 
 				this.getItems().forEach((oItem) => {
 					aPropPromises.push(this._getPropertyByNameAsync(oItem.getPropertyKey()).then((oPropertyInfo) => {
-						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.label, "label");
-						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.groupable ? "groupable" : "aggregatable", "type");
-						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.role, "role", oPropertyInfo.groupable ? "category" : "axis1");
+						if (oPropertyInfo) {
+							fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.label, "label");
+							fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.groupable ? "groupable" : "aggregatable", "type");
+							fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.role, "role", oPropertyInfo.groupable ? "category" : "axis1");
+						}
 					}));
 				});
 
