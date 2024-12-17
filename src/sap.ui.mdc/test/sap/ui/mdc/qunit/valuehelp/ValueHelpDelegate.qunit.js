@@ -167,7 +167,12 @@ sap.ui.define([
 		assert.equal(oBindingInfo.filters?.[0]?.getOperator(), FilterOperator.EQ, "oBindingInfo filter operator");
 		assert.equal(oBindingInfo.filters?.[0]?.getValue1(), "A", "oBindingInfo filter value1");
 		assert.equal(oBindingInfo.filters?.[0]?.getValue2(), undefined, "oBindingInfo filter value2");
+	});
 
+	/**
+	 *  @deprecated since 1.120.2
+	 */
+	QUnit.test("updateBindingInfo - using filterFields", (assert) => {
 		sinon.stub(oFakeContent, "getActiveFilterBar").returns(null);
 		sinon.stub(oFakeContent, "isPropertyInitial").withArgs("filterFields").returns(false);
 		sinon.stub(oFakeContent, "getSearch").returns("B");
