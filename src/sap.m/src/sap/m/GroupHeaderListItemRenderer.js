@@ -118,7 +118,7 @@ sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/library", "sap/ui/core/Renderer",
 
 	GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI) {
 		var sTextDir = oLI.getTitleTextDirection();
-		rm.openStart("span");
+		rm.openStart("span", `${oLI.getId()}-title`);
 		rm.class("sapMGHLITitle");
 
 		if (sTextDir != TextDirection.Inherit) {

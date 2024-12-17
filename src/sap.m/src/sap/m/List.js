@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.List.
-sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
-	function(library, ListBase, ListRenderer) {
+sap.ui.define(["./library", "./ListBase", "./ListRenderer", "sap/ui/core/Lib", "sap/ui/core/InvisibleText"],
+	function(library, ListBase, ListRenderer, Library, InvisibleText) {
 	"use strict";
 
 
@@ -52,6 +52,21 @@ sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
 		renderer: ListRenderer
 	});
 
+	List.prototype.exit = function() {
+		ListBase.prototype.exit.call(this);
+		if (this._oInvisibleGroupText) {
+			this._oInvisibleGroupText.destroy();
+			this._oInvisibleGroupText = null;
+		}
+	};
+
+	List.prototype._getInvisibleGroupText = function() {
+		if (!this._oInvisibleGroupText) {
+			this._oInvisibleGroupText = new InvisibleText().toStatic();
+		}
+		return this._oInvisibleGroupText;
+	};
+
 	List.prototype.getAriaRole = function() {
 		return this._sAriaRole || "list";
 	};
@@ -72,6 +87,31 @@ sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
 	 */
 	List.prototype.applyAriaRole = function(sRole) {
 		this._sAriaRole = sRole;
+	};
+
+	List.prototype._skipGroupHeaderFocus = function() {
+		// Currently hidden behind a URL flag, as ComboBox and MultiComboBox are not compatible with the new behavior
+		// As they set the focus themselves (focus the first visible item), it leads to a lot of issues.
+		const oParams = new URLSearchParams(window.location.search);
+		return oParams.get("sap-ui-xx-list-skip-group-header-focus") && this.getAriaRole() === "listbox";
+	};
+
+	List.prototype._hasNestedGrouping = function() {
+		return this.getAriaRole() === "list";
+	};
+
+	List.prototype._updateInvisibleGroupText = function() {
+		const bUpdateGroupDescription = this._hasNestedGrouping() || this._skipGroupHeaderFocus();
+
+		if (this.isGrouped() && bUpdateGroupDescription) {
+			const oInvisibleText = this._getInvisibleGroupText();
+			const sBundleKey = this._hasNestedGrouping() ? "LIST_ROLE_LIST_GROUP_DESCRIPTION" : "LIST_ROLE_LISTBOX_GROUP_DESCRIPTION",
+				iGroupCount = this.getItems().filter((oItem) => oItem.isGroupHeader()).length,
+				aValues = this._hasNestedGrouping() ? [iGroupCount, this.getSize()] : [iGroupCount];
+
+			oInvisibleText.setText(Library.getResourceBundleFor("sap.m").getText(sBundleKey, aValues));
+			this.getNavigationRoot()?.setAttribute("aria-describedby", oInvisibleText.getId());
+		}
 	};
 
 	return List;

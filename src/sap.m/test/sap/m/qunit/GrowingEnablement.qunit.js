@@ -769,20 +769,20 @@ sap.ui.define([
 		assert.strictEqual(fnSetLastGroupHeaderSpy.callCount, aGroupHeaderListItems.length, "default groupHeaderListItem template called twice");
 
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
-			const $GroupItem = oGroupItem.$();
+			const oSubListRef = oGroupItem.getDomRef().querySelector("ul");
 			oGroupItem.getGroupedItems().forEach(function(sId) {
-				assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+				assert.ok(oSubListRef.getAttribute("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
 			});
 		});
 
 		const oSecondGroupItem = aGroupHeaderListItems[1];
+		const oSecondGroupItemSubListRef = oSecondGroupItem.getDomRef().querySelector("ul");
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 2, "2 items mapped to group");
 		this.oList.$("trigger").trigger("tap");
 
-		await nextDOMAttributeUpdate(oSecondGroupItem.$()[0], ["aria-owns"]);
-
+		await nextDOMAttributeUpdate(oSecondGroupItemSubListRef, ["aria-owns"]);
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 3, "3 items mapped to group, due to growing");
-		const aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
+		const aAriaOwns = oSecondGroupItemSubListRef.getAttribute("aria-owns").split(" ");
 		assert.strictEqual(aAriaOwns.length, 3, "GroupHeader DOM updated");
 
 		aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
@@ -812,19 +812,21 @@ sap.ui.define([
 			return oItem.isGroupHeader();
 		});
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
-			const $GroupItem = oGroupItem.$();
+			const oSubListRef = oGroupItem.getDomRef().querySelector("ul");
 			oGroupItem.getGroupedItems().forEach(function(sId) {
-				assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+				assert.ok(oSubListRef.getAttribute("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
 			});
 		});
 
 		const oSecondGroupItem = aGroupHeaderListItems[1];
+		let oSecondGroupItemSubListRef = oSecondGroupItem.getDomRef().querySelector("ul");
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 2, "2 items mapped to group");
 		this.oList.$("trigger").trigger("tap");
 		await timeout(10);
 
+		oSecondGroupItemSubListRef = oSecondGroupItem.getDomRef().querySelector("ul");
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 3, "3 items mapped to group, due to growing");
-		const aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
+		const aAriaOwns = oSecondGroupItemSubListRef.getAttribute("aria-owns").split(" ");
 		assert.strictEqual(aAriaOwns.length, 3, "GroupHeader DOM updated");
 
 		aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
