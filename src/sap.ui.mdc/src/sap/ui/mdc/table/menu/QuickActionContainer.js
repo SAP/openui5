@@ -74,7 +74,7 @@ sap.ui.define([
 					change: function(oEvent) {
 						const oItem = oEvent.getParameter("item");
 						PersonalizationUtils.createSortChange(oTable, {
-							property: oItem.getKey(),
+							propertyKey: oItem.getKey(),
 							sortOrder: oItem.getSortOrder()
 						});
 					}
@@ -101,7 +101,7 @@ sap.ui.define([
 					}),
 					change: function(oEvent) {
 						PersonalizationUtils.createGroupChange(oTable, {
-							property: oEvent.getParameter("item").getKey()
+							propertyKey: oEvent.getParameter("item").getKey()
 						});
 					}
 				}));
@@ -123,7 +123,7 @@ sap.ui.define([
 					}),
 					change: function(oEvent) {
 						PersonalizationUtils.createAggregateChange(oTable, {
-							property: oEvent.getParameter("item").getKey()
+							propertyKey: oEvent.getParameter("item").getKey()
 						});
 					}
 				}));

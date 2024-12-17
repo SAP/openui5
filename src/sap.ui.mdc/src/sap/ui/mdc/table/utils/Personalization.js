@@ -120,7 +120,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
 	 * @param {object} mSettings The change details.
-	 * @param {string} mSettings.property The name of the property to sort, as specified in the <code>PropertyInfo</code>.
+	 * @param {string} mSettings.propertyKey The key of the property to sort, as specified in the <code>PropertyInfo</code>.
 	 * @param {sap.ui.core.SortOrder} mSettings.sortOrder The sort order.
 	 */
 	PersonalizationUtils.createSortChange = function(oTable, mSettings) {
@@ -128,7 +128,7 @@ sap.ui.define([
 			control: oTable,
 			key: "Sort",
 			state: [{
-				name: mSettings.property,
+				name: mSettings.propertyKey,
 				descending: mSettings.sortOrder === CoreLibrary.SortOrder.Descending,
 				sorted: mSettings.sortOrder !== CoreLibrary.SortOrder.None
 			}],
@@ -143,11 +143,11 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
 	 * @param {object} mSettings The change details.
-	 * @param {string} mSettings.property The name of the property to group, as specified in the <code>PropertyInfo</code>.
+	 * @param {string} mSettings.propertyKey The key of the property to group, as specified in the <code>PropertyInfo</code>.
 	 */
 	PersonalizationUtils.createGroupChange = function(oTable, mSettings) {
-		const bIsGrouped = (oTable.getCurrentState().groupLevels || []).some((oProperty) => {
-			return oProperty.name == mSettings.property;
+		const bIsGrouped = (oTable.getCurrentState().groupLevels || []).some((oGroupLevel) => {
+			return oGroupLevel.name == mSettings.propertyKey;
 		});
 
 		oTable.getEngine().createChanges({
@@ -155,7 +155,7 @@ sap.ui.define([
 			key: "Group",
 			state: [{
 				grouped: !bIsGrouped,
-				name: mSettings.property
+				name: mSettings.propertyKey
 			}],
 			applyAbsolute: oTable._isOfType("ResponsiveTable")
 		});
@@ -181,16 +181,16 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
 	 * @param {object} mSettings The change details.
-	 * @param {string} mSettings.property The name of the property to aggregate, as specified in the <code>PropertyInfo</code>.
+	 * @param {string} mSettings.propertyKey The key of the property to aggregate, as specified in the <code>PropertyInfo</code>.
 	 */
 	PersonalizationUtils.createAggregateChange = function(oTable, mSettings) {
-		const bHasAggregate = mSettings.property in (oTable.getCurrentState().aggregations || {});
+		const bHasAggregate = mSettings.propertyKey in (oTable.getCurrentState().aggregations || {});
 
 		oTable.getEngine().createChanges({
 			control: oTable,
 			key: "Aggregate",
 			state: [{
-				name: mSettings.property,
+				name: mSettings.propertyKey,
 				aggregated: !bHasAggregate
 			}],
 			applyAbsolute: false

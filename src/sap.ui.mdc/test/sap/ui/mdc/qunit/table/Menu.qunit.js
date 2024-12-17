@@ -248,7 +248,7 @@ sap.ui.define([
 			aSortItemContent[0].firePress();
 			assert.ok(fSortSpy.calledOnce, "createSortChange is called");
 			assert.ok(fSortSpy.calledWithExactly(oTable, {
-				property: "test",
+				propertyKey: "test",
 				sortOrder: "None"
 			}), "createSortChange is called with the correct parameters");
 
@@ -294,7 +294,7 @@ sap.ui.define([
 			aGroupItemContent[0].firePress();
 			assert.ok(fGroupSpy.calledOnce, "createGroupChange is called");
 			assert.ok(fGroupSpy.calledWithExactly(oTable, {
-				property: "test"
+				propertyKey: "test"
 			}), "createGroupChange is called with the correct parameters");
 
 			fGroupSpy.restore();
