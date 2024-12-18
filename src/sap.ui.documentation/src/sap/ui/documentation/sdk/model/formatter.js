@@ -365,21 +365,29 @@ sap.ui.define([
 			stringify: function (oObject) {
 				return JSON.stringify(oObject, null, 2);
 			},
-			stringifyAlt: function (oObject, oAltObject) {
-				oObject ??= oFormatter.convertLegacyTypes(oAltObject);
+			stringifyJSDocType: function (oObject, aTyoes, sType, bLinkEnabled) {
+				oObject = oFormatter.formatJSDocType(oObject, aTyoes, sType, bLinkEnabled);
 				return JSON.stringify(oObject, null, 2);
 			},
-			convertLegacyTypes: function(aTypes) {
-				// TODO achieve reuse between JSDocType and this formatter
+			formatJSDocType: function (oObject, aTyoes, sType, bLinkEnabled) {
+				oObject ??= oFormatter.convertLegacyJSDocTypes(aTyoes, sType, bLinkEnabled);
+				return oObject;
+			},
+			convertLegacyJSDocTypes: function(aTypes, sType, bLinkEnabled) {
+				if (!aTypes && !sType) {
+					return;
+				}
+				aTypes || (aTypes = [{value: sType, linkEnabled: bLinkEnabled}]);
 				// try to get the old 'types' array and convert it to the new typeInfo structure
 				if ( Array.isArray(aTypes) ) {
 					const UI5Types = [];
-					const template = aTypes.map(({value, linkEnabled}) => {
+					const template = aTypes.map(({value, name, linkEnabled}) => {
+						const simpleType = value || name;
 						if ( linkEnabled ) {
-							UI5Types.push(value);
+							UI5Types.push(simpleType);
 							return `\${${UI5Types.length - 1}}`;
 						}
-						return value;
+						return simpleType;
 					}).join(" | ");
 					return {
 						template,
