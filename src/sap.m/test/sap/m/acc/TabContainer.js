@@ -140,7 +140,6 @@ sap.ui.define([
 	});
 
 	var fnCloseItem = function(oEvent) {
-		// prevent the tab being closed by default
 		oEvent.preventDefault();
 		tabContainer.removeItem(oEvent.getParameter("item"));
 	};
@@ -154,7 +153,7 @@ sap.ui.define([
 	}).addStyleClass("sapUiResponsivePadding--header");
 
 	new App().addPage(new Page({
-		title: "sap.m.TabContainer test page",
+		title: "TabContainer Accessibility Test Page",
 		titleLevel: TitleLevel.H1,
 		content: [tabContainer],
 		models: oProductModel

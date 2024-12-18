@@ -16,10 +16,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
-	// -----------------
-	// Utility functions
-	// -----------------
-
 	function handleMenuItemPress (oEvent) {
 		var oItem = oEvent.getParameter("item"),
 			sMsg;
@@ -97,14 +93,10 @@ sap.ui.define([
 		return window.oMenu;
 	}
 
-
-	// -------------------
-	// Control preparation
-	// -------------------
-
 	var oTextForLabelling = new Label({
 		text: "This text will be used as a label for one menu item",
-		labelFor: "menuButton"
+		labelFor: "menuButton",
+		wrapping: true
 	});
 
 	var oMenuButton = new Button("menuButton",{
@@ -116,17 +108,12 @@ sap.ui.define([
 		window.bIsKeyboardPress = (oEvent.type === "keyup");
 	});
 
-
-	// -------------
-	// Page's layout
-	// -------------
-
 	var oLayout = new VerticalLayout({
 		content: [
 			oTextForLabelling,
 			oMenuButton
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oApp = new App();
 	var oPage = new Page({
@@ -136,5 +123,5 @@ sap.ui.define([
 	});
 
 	oApp.addPage(oPage);
-	oApp.placeAt("content");
+	oApp.placeAt("body");
 });
