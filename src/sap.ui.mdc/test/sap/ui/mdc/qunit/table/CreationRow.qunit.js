@@ -263,4 +263,28 @@ sap.ui.define([
 			done();
 		});
 	});
+
+	QUnit.test("Initialization with Interactive Row Mode", async function(assert) {
+		const oCreationRow = new CreationRow();
+		const oTable = new Table({
+			type: new GridTableType({
+				rowCountMode: "Interactive"
+			}),
+			creationRow: oCreationRow
+		});
+
+		const fnSpy = sinon.spy(oCreationRow, "_createGridTableCreationRow");
+
+		await oTable._fullyInitialized();
+
+		assert.ok(fnSpy.calledOnce, "CreationRow#_createGridTableCreationRow was called once");
+	});
+
+	QUnit.test("setVisible with Interactive Row Mode", function(assert) {
+		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
+
+		this.oCreationRow.setVisible(true);
+
+		assert.ok(this.oCreationRow.getVisible(), "CreationRow is visible without any exceptions");
+	});
 });
