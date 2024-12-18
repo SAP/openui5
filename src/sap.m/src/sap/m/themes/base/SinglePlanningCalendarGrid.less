@@ -57,7 +57,7 @@
 
 	overflow: hidden;
 
-	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
+	/* TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place */
 	.sapUiCalItem:focus {
 		outline: 0.0625rem dotted;
 		outline-offset: -0.1875rem;
@@ -86,10 +86,10 @@
 	opacity: 1;
 }
 
-
 /*****************
 	GRID CONTENT
 *****************/
+
 /* ROW HEADERS */
 .sapMSinglePCGridContent {
 	display: flex;
@@ -183,13 +183,13 @@
 }
 
 .sapMSinglePCNowMarker::after {
-	content: "";
+	content: '';
 	border-top: 0.125rem solid;
 	flex: 1;
 }
 
 .sapMSinglePCColumnToday .sapMSinglePCRow::before {
-	content: "";
+	content: '';
 	box-sizing: border-box;
 	border: 0.063rem solid;
 	border-bottom: none;
@@ -202,37 +202,38 @@
 /* SELECTED COLUMNS */
 .sapMSinglePCGrid .sapUiCalColumnSelected,
 .sapMSinglePCGrid .sapUiCalColumnSelected.sapMSinglePCColumnWeekend {
-	background: @sapList_SelectionBackgroundColor;
+	background: var(--sapList_SelectionBackgroundColor);
 }
 
 .sapMSinglePCGrid .sapUiCalColumnSelected,
 .sapMSinglePCGrid .sapUiCalColumnSelected.sapMSinglePCColumnWeekend {
+
 	.sapMSinglePCRow::before {
 		top: -0.625rem;
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		right: 0;
-		border: 0.0625rem solid @sapList_SelectionBorderColor;
-		content: "";
+		border: 0.0625rem solid var(--sapList_SelectionBorderColor);
+		content: '';
 		pointer-events: none;
 		border-top: none;
 		border-bottom: none;
 	}
 
 	.sapMSinglePCRow:last-child::before{
-		border-bottom: 0.0625rem solid @sapList_SelectionBorderColor;
+		border-bottom: 0.0625rem solid var(--sapList_SelectionBorderColor);
 	}
 
 	&.sapMSinglePCBlockersColumn::before {
 		position: absolute;
-		content: "";
+		content: '';
 		pointer-events: none;
 		top: 0;
 		bottom: 0;
 		left: 0;
 		right: 0;
-		border: 0.0625rem solid @sapList_SelectionBorderColor;
+		border: 0.0625rem solid var(--sapList_SelectionBorderColor);
 		bottom: -0.0625rem;
 		border-bottom: none;
 	}
@@ -244,6 +245,7 @@
 }
 
 .sapMSinglePCGrid .sapUiCalColumnSelected.sapUiCalColumnSelectedStartColumn {
+
 	.sapMSinglePCRow::before {
 		border-right: none;
 	}
@@ -285,8 +287,9 @@
 	}
 
 	.sapUiCalendarApp {
+
 		&.sapUiCalendarAppSel::after {
-			content: "";
+			content: '';
 			position: absolute;
 			display: block;
 			top: 0;
@@ -294,12 +297,13 @@
 			right: 0;
 			left: 0;
 			z-index: 0;
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 			background-color: fade(@sapUiSelected, 90%);
 			border-radius: 0 0.125rem 0.125rem 0.125rem;
 		}
 
 		.sapUiCalendarAppCont {
+
 			.sapUiCalendarAppTitleWrapper,
 			.sapUiIcon,
 			.sapUiCalendarAppIcon,
@@ -311,47 +315,53 @@
 	}
 
 	.sapMSinglePCAppointmentWrap:focus {
+
 		.sapUiCalendarAppCont::after {
 			z-index: 1;
 		}
 	}
 }
 
-//space is needed for the day marker in day view when special dates
+/* space is needed for the day marker in day view when special dates */
 .sapMSpecialDaysInDayView .sapMSinglePCBlockers {
 	top: 0.3125rem;
 }
 
 html.sap-desktop {
+
 	.sapMSinglePCBlockersRow > .sapMSinglePCBlockersColumns > .sapMSinglePCBlockersColumn:focus::after,
 	.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow:focus::after {
-		content: "";
+		content: '';
 		position: absolute;
 		top: 0.0625rem;
 		left: 0.0625rem;
 		right: 0.0625rem;
 		bottom: 0.0625rem;
-		border: 0.0625rem dotted @sapUiContentFocusColor;
+		border: 0.0625rem dotted var(--sapContent_FocusColor);
 		pointer-events: none;
 		z-index: 3;
 	}
 
 	.sapMSinglePCBlockers,
 	.sapMSinglePCAppointments {
+
 		.sapUiCalendarApp {
+
 			&:hover::after {
-				background-color: @sapUiListHoverBackground;
+				background-color: var(--sapList_Hover_Background);
 			}
 		}
 	}
 }
 
 .sapMSinglePCGrid {
+
 	.sapUiCalendarAppTitleWrapper,
 	.sapUiCalendarAppTitle,
 	.sapUiCalendarAppText {
 		width: 100%;
 		margin-right: 0.125rem;
+
 		& + .sapUiCalendarAppArrowIconRight {
 			margin-left: 0.25rem;
 		}
@@ -360,6 +370,7 @@ html.sap-desktop {
 
 .sapMSinglePCAppointments,
 .sapMSinglePCBlockersColumns {
+
 	.sapUiCalendarAppCont {
 		display: flex;
 	}
@@ -384,6 +395,7 @@ html.sap-desktop {
 }
 
 .sapMSinglePCBlockersColumns {
+
 	.sapUiCalendarAppCont {
 		align-items: center;
 	}
@@ -398,6 +410,7 @@ html.sap-desktop {
 }
 
 .sapMSinglePCAppointments {
+
 	.sapUiCalendarAppArrowIconLeft,
 	.sapUiCalendarAppArrowIconRight {
 		padding-top: 0.25rem;
@@ -405,7 +418,7 @@ html.sap-desktop {
 }
 
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
-	// TODO: this styles will be removed when Appointments refactoring occured
+	/* TODO: this styles will be removed when Appointments refactoring occured */
 	box-sizing: border-box;
 	padding: 0.0625rem;
 	position: absolute;
@@ -414,14 +427,14 @@ html.sap-desktop {
 	&:focus {
 		outline: none;
 
-		.sapUiCalendarAppCont:after {
+		.sapUiCalendarAppCont::after {
 			position: absolute;
 			top: 0.0625rem;
 			left: 0.0625rem;
 			right: 0.0625rem;
 			bottom: 0.0625rem;
-			content: "";
-			border: 0.0625rem dotted @sapUiContentFocusColor;
+			content: '';
+			border: 0.0625rem dotted var(--sapContent_FocusColor);
 			pointer-events: none;
 		}
 	}
@@ -455,6 +468,7 @@ html.sap-desktop {
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp7,
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp8,
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp9 {
+
 			> .sapUiCalendarAppText,
 			> .sapUiCalendarAppTitle {
 				white-space: pre-line;
@@ -467,24 +481,31 @@ html.sap-desktop {
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp3 {
 			max-height: 3.25rem;
 		}
+
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp2{
 			max-height: 2.3rem;
 		}
+
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp1 {
 			max-height: 1.2rem;
 		}
+
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp4 {
 			max-height: 4.25rem;
 		}
+
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp5 {
 			max-height: 5.2rem;
 		}
+
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp6 {
 			max-height: 6.25rem;
 		}
+
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp7 {
 			max-height: 7.5rem;
 		}
+
 		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp8 {
 			max-height: 8.3rem;
 		}
@@ -492,12 +513,15 @@ html.sap-desktop {
 }
 
 .sapUiSizeCompact {
+
 	.sapMSinglePCBlockersColumns .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp {
 		height: 1.438rem;
 	}
+
 	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp .sapUiCalendarAppTitle {
 		padding-top: 0.1rem;
 	}
+
 	.sapMSinglePCGrid .sapUiCalendarAppIcon {
 		top: 0.1rem;
 	}
@@ -513,11 +537,11 @@ html.sap-desktop {
 
 .sapUiCalendarAppCont .sapUiIcon .sapUiCalendarAppArrowIcon {
 	font-size: 0.75rem;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMSinglePCGrid .sapUiCalendarRowApps {
-	// TODO: this styles will be removed when Appointments refactoring occured
+	/* TODO: this styles will be removed when Appointments refactoring occured */
 	position: absolute;
 	min-height: auto;
 	height: auto;
@@ -525,9 +549,9 @@ html.sap-desktop {
 }
 
 .sapMSinglePCGrid .sapUiAppCreate {
-	border-top: 0.125rem solid @sapUiContentForegroundBorderColor;
-	border-bottom: 0.125rem solid @sapUiContentForegroundBorderColor;
-	border-right: 0.125rem solid @sapUiContentForegroundBorderColor;
+	border-top: 0.125rem solid var(--sapContent_ForegroundBorderColor);
+	border-bottom: 0.125rem solid var(--sapContent_ForegroundBorderColor);
+	border-right: 0.125rem solid var(--sapContent_ForegroundBorderColor);
 }
 
 .sapMSinglePCColumnHeader.sapUiCalRow,
@@ -540,12 +564,15 @@ html.sap-desktop {
 }
 
 .sapUiSizeCompact {
+
 	.sapMSinglePCColumnHeader.sapUiCalRow,
 	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItem {
 		height:2rem;
 	}
-	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
+
+	/* TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place */
 	.sapMSinglePCColumnHeader {
+
 		.sapUiCalItem {
 			display: flex;
 			flex-direction: row-reverse;
@@ -650,20 +677,23 @@ html.sap-desktop {
 }
 
 .calendarRowTypeColorMixIn(@class, @iitemtypeclass, @color, @bcolor){
+
 	.sapMSinglePCAppointments, .sapMSinglePCBlockers {
+
 		.@{class}.sapMSinglePCAppointmentWrap {
 			border-left-color: @color;
 		}
 	}
+
 	.sapMSinglePCBlockers, .sapMSinglePCAppointments {
 
 		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont {
 			background-color: fade(@bcolor, 90%);
 		}
 	}
-	//Special Dates
+	/* Special Dates */
 	.sapMSinglePCGrid .@{iitemtypeclass} {
-		//day view
+		/* day view */
 		.sapMSinglePCBlockersColumn {
 			box-shadow: inset 0 0.25rem 0 @color;
 		}
