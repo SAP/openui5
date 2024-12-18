@@ -34,11 +34,7 @@ sap.ui.define([
 		oRm.class("sapMPlanCal");
 		oRm.accessibilityState({
 			role: "region",
-			roledescription: oPC._oRB.getText("PLANNINGCALENDAR"),
-			labelledby: {
-				value: oHeader.getId() + "-Title",
-				append: true
-			}
+			roledescription: oPC._oRB.getText("PLANNINGCALENDAR")
 		});
 		this.addAdditionalClasses(oRm, oPC);
 

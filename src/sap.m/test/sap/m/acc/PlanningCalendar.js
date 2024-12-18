@@ -136,9 +136,9 @@ sap.ui.define([
 		})
 	});
 
-	var app = new App("myApp");
+	var oApp = new App();
 
-	var oEventLabel = new Label({text: "Events log"});
+	var oEventLabel = new Label({text: "Events log", wrapping: true});
 
 	var oModel = new JSONModel();
 
@@ -184,7 +184,6 @@ sap.ui.define([
 		setEventLog("rowSelectionChange:" + sValue);
 	};
 
-	//adds some event info to the event log label
 	function setEventLog(sMessage) {
 		oEventLabel.setText(sMessage);
 		oEventLabel.$().attr('style', "background-color: rgb(" + Math.ceil(Math.random() * 255).toString() + "," + Math.ceil(Math.random() * 255).toString() + "," + Math.ceil(Math.random() * 255).toString() + ");");
@@ -209,7 +208,9 @@ sap.ui.define([
 
 
 	var oTitle = new MTitle("Title1", {
-		text: "Title"
+		text: "Title",
+		level: TitleLevel.H2,
+		wrapping: true
 	});
 
 	var oOLI = new ObjectListItem({
@@ -776,7 +777,7 @@ sap.ui.define([
 		rowSelectionChange: handleRowSelectionChange
 	});
 
-	var page1 = new Page("page1", {
+	var oPage = new Page({
 		title: "PlanningCalendar Accessibility Test Page",
 		titleLevel: TitleLevel.H1,
 		content: [
@@ -784,8 +785,8 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiContentPadding");
 
-	app.setModel(oModel);
-	app.addPage(page1);
+	oApp.setModel(oModel);
+	oApp.addPage(oPage);
 
-	app.placeAt("body");
+	oApp.placeAt("body");
 });
