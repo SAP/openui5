@@ -559,7 +559,14 @@ sap.ui.define([
 				 * @private
 				 * @ui5-private
 				 */
-				openerReference: { visibility: "hidden" }
+				openerReference: { visibility: "hidden" },
+
+				/**
+				 * The opener card.
+				 * @private
+				 * @ui5-private
+				 */
+				dialogHeader: { visibility: "hidden" }
 			}
 		},
 		renderer: CardRenderer
@@ -2053,6 +2060,20 @@ sap.ui.define([
 	 * @returns {sap.f.cards.IHeader} The header of the card
 	 */
 	Card.prototype.getCardHeader = function () {
+		let oHeader = this.getAggregation("_header");
+
+		if (!oHeader && this.getAssociation("dialogHeader")) {
+			oHeader = Element.getElementById(this.getAssociation("dialogHeader"));
+		}
+
+		return oHeader;
+	};
+
+	/**
+	 * @private
+     * @returns {sap.f.cards.IHeader} The header of the card.
+	 */
+	Card.prototype._getHeaderAggregation = function () {
 		return this.getAggregation("_header");
 	};
 
@@ -2112,11 +2133,11 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyHeaderManifestSettings = function () {
-		var oPrevHeader = this.getAggregation("_header");
+		var oPrevHeader = this.getCardHeader();
 
 		if (oPrevHeader) {
 			oPrevHeader.setToolbar(null); // ensure that actionsToolbar won't be destroyed
-			this.destroyAggregation("_header");
+			oPrevHeader.destroy();
 		}
 
 		var oHeader = this.createHeader();

@@ -7,52 +7,19 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Element",
 	"sap/ui/integration/library",
+	"sap/ui/integration/util/BindingHelper",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
 ], (
 	Dialog,
 	Device,
 	Element,
-	library
+	library,
+	BindingHelper
 ) => {
 	"use strict";
 
 	const CardDataMode = library.CardDataMode;
-
-	function _addDimensionsDelegate(oDialog, oParentCard, bSetMinSize) {
-		const oChildCard = oDialog.getContent()[0];
-		let bSetMaxDimensions = true;
-
-		oChildCard.addEventDelegate({
-			onAfterRendering: () => {
-				const oChildCardDomRef = oChildCard.getDomRef();
-
-				if (bSetMinSize) {
-					oChildCardDomRef.style.minHeight = oParentCard.getDomRef().offsetHeight + "px";
-					oChildCardDomRef.style.minWidth = oParentCard.getDomRef().offsetWidth + "px";
-				}
-
-				if (bSetMaxDimensions) {
-					oChildCardDomRef.style.maxHeight = oDialog._getAreaDimensions().height * 70 / 100 + "px";
-					oChildCardDomRef.style.maxWidth = oDialog._getAreaDimensions().width * 70 / 100 + "px";
-				} else {
-					oChildCardDomRef.style.maxHeight = "";
-					oChildCardDomRef.style.maxWidth = "";
-				}
-			}
-		});
-
-		oDialog.addEventDelegate({
-			onmousedown: (e) => {
-				if (e.target.closest(".sapMDialogResizeHandle")) {
-					bSetMaxDimensions = false;
-				}
-			},
-			onAfterRendering: () => {
-				oDialog.getDomRef().style.minHeight = "8.25rem";
-			}
-		});
-	}
 
 	function _addAnimationDelegate(oDialog, oParentCard) {
 		const oParentRect = oParentCard.getDomRef().getBoundingClientRect();
@@ -93,23 +60,59 @@ sap.ui.define([
 		});
 	}
 
-	function _addResizeDelegate(oDialog, oChildCard) {
-		const oDelegate = {
-			onmousedown: (e) => {
-				if (e.target.closest(".sapMDialogResizeHandle")) {
-					oChildCard.setHeight("100%");
-					oDialog.setContentHeight(oDialog.getDomRef("cont").offsetHeight + "px");
-					oDialog.setVerticalScrolling(false);
-					oDialog.removeEventDelegate(oDelegate);
-				}
-			}
-		};
-
-		oDialog.addEventDelegate(oDelegate);
+	function _enableResizing(oDialog, oChildCard) {
+		// We can not set the contentHeight during resize as the dialog "jumps" if invalidated then.
+		// So it needs to be done after open.
+		oDialog.attachAfterOpen(() => {
+			oChildCard.setHeight("100%");
+			oDialog.setContentHeight(oDialog.getDomRef("cont").offsetHeight + "px");
+		});
 	}
 
-	function _openDialog(oChildCard, oParentCard, oParameters, bSetMinSize) {
+	function _setDialogHeader(oDialog, oChildCard) {
+		const oHeader = oChildCard.getCardHeader();
+		if (!oHeader) {
+			return;
+		}
+
+		// propagetes any inherited models from the card before move
+		BindingHelper.propagateModels(oHeader, oHeader);
+
+		oDialog.setCustomHeader(oHeader);
+		oChildCard.setAssociation("dialogHeader", oHeader);
+
+		oHeader.setProperty("headingLevel", "1");
+		oHeader.setProperty("focusable", false);
+		oHeader.setVisible(true);
+	}
+
+	function _setAriaAttributes(oDialog, oChildCard) {
+		// Adjust accessibility
+		oChildCard.addEventDelegate({
+			onAfterRendering: () => {
+				// the card shouldn't be a region with aria-labelledby, otherwise the header is read two times.
+				oChildCard.getDomRef().setAttribute("role", "generic");
+				oChildCard.getDomRef().removeAttribute("aria-labelledby");
+			}
+		});
+
+		oDialog.addEventDelegate({
+			onAfterRendering: () => {
+				// The dialog has no good API to set the title aria-labelledby.
+				// You can only add one to the header. Therefore we need to override it.
+				const oHeader = oDialog.getCustomHeader();
+				if (!oHeader) {
+					return;
+				}
+				oDialog.getDomRef().setAttribute("aria-labelledby", oHeader.getTitleId());
+			}
+		});
+	}
+
+	function _openDialog(oChildCard, oParentCard, oParameters) {
 		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
+		oChildCard.addStyleClass("sapUiIntCardDialogCard");
+
 		oParentCard.setBusy(true).setBusyIndicatorDelay(750);
 
 		const oDialog = new Dialog({
@@ -120,13 +123,11 @@ sap.ui.define([
 				verticalScrolling: false,
 				horizontalScrolling: false,
 				draggable: true,
-				showHeader: false,
-				ariaLabelledBy: oChildCard.getId(),
+				resizable: true,
 				escapeHandler: function (oPromise) {
 					oChildCard.hide();
 					oPromise.resolve();
 				},
-				resizable: oParameters.resizable,
 				afterOpen: () => {
 					oParentCard.setBusy(false);
 				},
@@ -138,15 +139,17 @@ sap.ui.define([
 		oDialog.addStyleClass("sapUiIntCardDialog");
 
 		oParentCard.addDependent(oDialog);
-		oChildCard.attachEventOnce("_ready", () => {
+
+		oChildCard.attachEvent("_ready", () => {
+			_setDialogHeader(oDialog, oChildCard);
+			_setAriaAttributes(oDialog, oChildCard);
 			oDialog.open();
 			_setFocus(oChildCard, oDialog);
 		});
 
 		if (!Device.system.phone) {
-			_addDimensionsDelegate(oDialog, oParentCard, bSetMinSize);
 			_addAnimationDelegate(oDialog, oParentCard);
-			_addResizeDelegate(oDialog, oChildCard);
+			_enableResizing(oDialog, oChildCard);
 		}
 
 		oChildCard.startManifestProcessing();
@@ -170,7 +173,7 @@ sap.ui.define([
 		}
 	}
 
-	function openCardDialog(oParentCard, oParameters, bSetMinSize = false) {
+	function openCardDialog(oParentCard, oParameters) {
 		let oChildCard;
 
 		if (oParameters._cardId) {
@@ -182,7 +185,7 @@ sap.ui.define([
 			});
 		}
 
-		return _openDialog(oChildCard, oParentCard, oParameters, bSetMinSize);
+		return _openDialog(oChildCard, oParentCard, oParameters);
 	}
 
 	return openCardDialog;

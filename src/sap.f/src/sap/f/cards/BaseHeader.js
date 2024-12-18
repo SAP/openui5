@@ -164,10 +164,15 @@ sap.ui.define([
 		}
 	});
 
-
-	BaseHeader.prototype._setRootAccessibilityRole  = BarInPageEnabler.prototype._setRootAccessibilityRole;
-	BaseHeader.prototype._setRootAriaLevel = BarInPageEnabler.prototype._setRootAriaLevel;
-	BaseHeader.prototype._applyContextClassFor = BarInPageEnabler.prototype._applyContextClassFor;
+	BaseHeader.prototype._setRootAccessibilityRole = function () {
+		// Do nothing. The sap.f.BaseHeader has the heading role already.
+	};
+	BaseHeader.prototype._setRootAriaLevel = function () {
+		// Do nothing. The sap.f.BaseHeader has aria-level set by headingLevel already.
+	};
+	BaseHeader.prototype._applyContextClassFor = function () {
+		// Do nothing. The sap.f.BaseHeader does not differ based on context classes.
+	};
 
 	BaseHeader.prototype.init = function () {
 		this._oRb = Library.getResourceBundleFor("sap.f");
@@ -221,6 +226,15 @@ sap.ui.define([
 
 	BaseHeader.prototype.getFocusDomRef = function () {
 		return this.getDomRef("focusable");
+	};
+
+	/**
+	 * Gets the id of the title element. Can be used for aria-labelledby.
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {string} The id of the title element.
+	 */
+	BaseHeader.prototype.getTitleId = function () {
+		return null; // must override in Header and NumericHeader
 	};
 
 	/**

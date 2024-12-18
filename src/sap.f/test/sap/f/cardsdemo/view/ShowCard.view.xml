@@ -50,6 +50,20 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card
+				id="showCard7"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/paginationAndActions/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="showCard8"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/noHeader/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>

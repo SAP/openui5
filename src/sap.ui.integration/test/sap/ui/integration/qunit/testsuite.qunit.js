@@ -219,7 +219,8 @@ sap.ui.define([
 				coverage: {
 					only: [
 						"sap/ui/integration/cards/actions/",
-						"sap/ui/integration/widgets/Card"
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/util/openCardDialog"
 					]
 				}
 			},
@@ -353,7 +354,13 @@ sap.ui.define([
 			"util/ManifestResolver": {},
 			"util/SkeletonCard": {},
 			"util/loadCardEditor": {},
-			"util/openCardDialog": {},
+			"util/openCardDialog":  {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/openCardDialog"
+					]
+				}
+			},
 			"model/ContextModel": {
 				coverage: {
 					only: [
