@@ -1137,7 +1137,7 @@ sap.ui.define([
 
 	/**
 	 * Performs the initial binding of the inner chart.
-	 * It is used for the vizFrame to make sure that the inner chart is correctly initialized upon creation.
+	 * It is used for the <code>vizFrame</code> to make sure that the inner chart is correctly initialized upon creation.
 	 * Otherwise the chart will go into an error loop. <br><b>Note:</b> You must not override this setting.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {object} oBindingInfo Binding info object
@@ -1428,7 +1428,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets sorters available for the data.
+	 * Gets currently available sorters based on the visualized data.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {array} Array containing available sorters
 	 *
@@ -1534,7 +1534,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the propertyHelper used for the chart delegate.
+	 * Gets the <code>PropertyHelper</code> used for the chart delegate.
 	 * @returns {Promise} <code>Promise</code> with the property helper reference
 	 */
 	ChartDelegate.getPropertyHelperClass = function() {

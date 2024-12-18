@@ -104,9 +104,6 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 		return this.getTitle();
 	};
 
-	// group header has no group announcement
-	GroupHeaderListItem.prototype.getGroupAnnouncement = function() {};
-
 	return GroupHeaderListItem;
 
 });

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
@@ -25,6 +26,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	DescriptorChangeTypes,
 	FlexCustomData,
+	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
 	Settings,
@@ -445,6 +447,19 @@ sap.ui.define([
 		mPropertyBag.invalidateCache = false;
 		// TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectManager expect a control
 		return FlexObjectManager.getFlexObjects(mPropertyBag);
+	};
+
+	/**
+	 * Retrieves the annotation changes for the given control from the FlexState.
+	 *
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control to retrieve the flex reference
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.AnnotationChange[]} List of all annotation changes
+	 * @private
+	 */
+	PersistenceWriteAPI._getAnnotationChanges = function(mPropertyBag) {
+		const sFlexReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
+		return FlexState.getAnnotationChanges(sFlexReference);
 	};
 
 	/**

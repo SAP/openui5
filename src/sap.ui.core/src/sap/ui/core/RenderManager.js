@@ -250,6 +250,7 @@ sap.ui.define([
 			oDomInterface = {},            // semantic rendering API for the controls whose renderer provides apiVersion=2 marker
 			aRenderingStyles = [],         // during string-based rendering, stores the styles that couldn't be set via style attribute due to CSP restrictions
 			oPatcher = new Patcher(),      // the Patcher instance to handle in-place DOM patching
+			iOpenTagCount = 0,             // the number of open tags, this is used to detect missing tags
 			sLastStyleMethod,
 			sLastClassMethod;
 
@@ -263,6 +264,7 @@ sap.ui.define([
 			aStyleStack = that.aStyleStack = [{}];
 			bDomInterface = undefined;
 			bVoidOpen = false;
+			iOpenTagCount = 0;
 			sOpenTag = "";
 		}
 
@@ -379,6 +381,7 @@ sap.ui.define([
 			assertOpenTagHasEnded();
 			assert(!(sLastStyleMethod = sLastClassMethod = ""));
 			sOpenTag = sTagName;
+			iOpenTagCount++;
 
 			aBuffer.push("<" + sTagName);
 			if (vControlOrId) {
@@ -429,6 +432,7 @@ sap.ui.define([
 		this.close = function(sTagName) {
 			assertValidName(sTagName, "tag");
 			assertOpenTagHasEnded();
+			iOpenTagCount--;
 
 			aBuffer.push("</" + sTagName + ">");
 			return this;
@@ -469,6 +473,7 @@ sap.ui.define([
 			assertOpenTagHasStarted("voidEnd");
 			assertOpenTagHasEnded(bVoidOpen || !sOpenTag);
 			bVoidOpen = false;
+			iOpenTagCount--;
 			sOpenTag = "";
 
 			writeClasses(bExludeStyleClasses ? false : undefined);
@@ -614,6 +619,7 @@ sap.ui.define([
 			assertOpenTagHasEnded();
 			assert(!(sLastStyleMethod = sLastClassMethod = ""));
 			sOpenTag = sTagName;
+			iOpenTagCount++;
 
 			if (!vControlOrId) {
 				oPatcher.openStart(sTagName);
@@ -699,6 +705,7 @@ sap.ui.define([
 			assertOpenTagHasStarted("voidEnd");
 			assertOpenTagHasEnded(bVoidOpen || !sOpenTag);
 			bVoidOpen = false;
+			iOpenTagCount--;
 			sOpenTag = "";
 
 			oPatcher.voidEnd();
@@ -728,6 +735,7 @@ sap.ui.define([
 		oDomInterface.close = function(sTagName) {
 			assertValidName(sTagName, "tag");
 			assertOpenTagHasEnded();
+			iOpenTagCount--;
 
 			oPatcher.close(sTagName);
 			return this;
@@ -1051,6 +1059,8 @@ sap.ui.define([
 
 		//Does everything needed after the rendering (restore focus, calling "onAfterRendering", initialize event binding)
 		function finalizeRendering(oStoredFocusInfo){
+
+			assert(!iOpenTagCount, "RenderManager: Mismatched opening and closing tags. Verify renderers!");
 
 			var i, size = aRenderedControls.length;
 

@@ -46,7 +46,7 @@ sap.ui.define([
 		if (oElement.hasStyleClass) {
 			return oElement.hasStyleClass(sStretchStyleClass);
 		}
-		return oOverlay.getAssociatedDomRef().hasClass(sStretchStyleClass);
+		return oOverlay.getAssociatedDomRef().classList.contains(sStretchStyleClass);
 	}
 
 	QUnit.module("Given a stretch plugin", {

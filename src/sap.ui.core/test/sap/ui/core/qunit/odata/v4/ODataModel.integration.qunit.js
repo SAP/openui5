@@ -44631,6 +44631,47 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create a context, bind a list relative to it (the list binding has not yet
+	// determined its cache then), and create a transient context in this binding. Reset the
+	// changes. No catch handler must be required on the nested context's created() promise.
+	// SNOW: DINC0336411
+	QUnit.test("DINC0336411", async function (assert) {
+		const oModel = this.createTeaBusiModel(
+			{autoExpandSelect : true, updateGroupId : "doNotSubmit"});
+		const sView = `
+<Table id="table" items="{/TEAMS}">
+	<Text id="id" text="{Team_Id}"/>
+</Table>`;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {value : [{Team_Id : "1"}]})
+			.expectChange("id", ["1"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("id", ["new", "1"]);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		const oContext = oBinding.create({Team_Id : "new"});
+		const oNestedBinding = oModel.bindList("TEAM_2_EMPLOYEES", oContext);
+		oNestedBinding.create();
+
+		await this.waitForChanges(assert);
+
+		this.expectCanceledError("Deep create of TEAMS canceled; group: doNotSubmit")
+			.expectChange("id", ["1"]);
+
+		await Promise.all([
+			checkCanceled(assert, oContext.created()),
+			// code under test - no catch on the nested context
+			oBinding.resetChanges(),
+			this.waitForChanges(assert)
+		]);
+
+		assert.notOk(oNestedBinding.isResolved());
+		assert.strictEqual(oNestedBinding.getModel(), oModel, "nested binding is not destroyed");
+	});
+
+	//*********************************************************************************************
 	// Scenario: Paging with prefetch (threshold is 5, intentionally odd). Set first visible row to
 	// 30. Then consecutively increase resp. decrease it by one and see that requests only occur
 	// after threshold/2 has been surmounted.

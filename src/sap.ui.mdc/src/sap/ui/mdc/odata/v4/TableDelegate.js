@@ -244,7 +244,7 @@ sap.ui.define([
 		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a back end error.
 		if (isAnalyticsEnabled(oTable)) {
 			const oPropertyHelper = oTable.getPropertyHelper();
-			const aVisiblePropertyPaths = getVisiblePropertyKeys(oTable).map((sPropertyName) => oPropertyHelper.getProperty(sPropertyName).path);
+			const aVisiblePropertyPaths = getVisiblePropertyKeys(oTable).map((sPropertyKey) => oPropertyHelper.getProperty(sPropertyKey).path);
 
 			aSorters = aSorters.filter((oSorter) => aVisiblePropertyPaths.includes(oSorter.sPath));
 		}
@@ -662,7 +662,7 @@ sap.ui.define([
 
 		for (const oColumn of oTable.getColumns()) {
 			const aRelevantColumnProperties = getColumnProperties(oTable, oColumn).filter((oProperty) => {
-				return aTotaledPropertyKeys.includes(oProperty.name);
+				return aTotaledPropertyKeys.includes(oProperty.key);
 			});
 			const bColumnHasTotals = aRelevantColumnProperties.length > 0;
 
@@ -724,19 +724,19 @@ sap.ui.define([
 	}
 
 	function hasStateForInvisibleColumns(oTable, aItems, aStates) {
-		const aPropertyNames = [];
+		const aPropertyKeys = [];
 
 		if (aItems) {
 			aItems.forEach((oItem) => {
 				oTable.getPropertyHelper().getProperty(oItem.name).getSimpleProperties().forEach((oProperty) => {
-					aPropertyNames.push(oProperty.name);
+					aPropertyKeys.push(oProperty.key);
 				});
 			});
 		}
 
 		const bOnlyVisibleColumns = aStates ? aStates.every((oState) => {
-			return aPropertyNames.find((sPropertyName) => {
-				return oState.name ? oState.name === sPropertyName : oState === sPropertyName;
+			return aPropertyKeys.find((sPropertyKey) => {
+				return oState.name ? oState.name === sPropertyKey : oState === sPropertyKey;
 			});
 		}) : true;
 

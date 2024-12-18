@@ -52,10 +52,6 @@ sap.ui.define([
 		this.getTable()?.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table#type");
 	};
 
-	TableTypeBase.prototype.getSupportedP13nModes = function() {
-		return Object.keys(TableP13nMode);
-	};
-
 	TableTypeBase.prototype.callHook = function(sHookName, oObject, mPropertyBag) {
 		const sFunctionName = "_on" + sHookName;
 

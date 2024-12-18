@@ -1229,7 +1229,9 @@ sap.ui.define([
 		QUnit.test("when startEdit is called and renamed control's text container has overflow", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
-			var oEditableControlDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef).get(0);
+			var oEditableControlDomRef = this.oVariantManagementOverlay
+			.getDesignTimeMetadata()
+			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
 			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().offsetWidth);
 
@@ -1252,7 +1254,9 @@ sap.ui.define([
 		QUnit.test("when startEdit is called and renamed control's text container has no overflow", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
-			var oEditableControlDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef).get(0);
+			var oEditableControlDomRef = this.oVariantManagementOverlay
+			.getDesignTimeMetadata()
+			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
 			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().clientWidth);
 
@@ -1270,7 +1274,9 @@ sap.ui.define([
 		QUnit.test("when startEdit is called and renamed control's text container and parent container having overflow", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
-			var oEditableControlDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef).get(0);
+			var oEditableControlDomRef = this.oVariantManagementOverlay
+			.getDesignTimeMetadata()
+			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
 			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 
 			oControlDOM.style.width = "10px";
@@ -1290,7 +1296,9 @@ sap.ui.define([
 		QUnit.test("when startEdit is called and renamed control's editable dom has its own overlay", function(assert) {
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 
-			var oEditableControlDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef).get(0);
+			var oEditableControlDomRef = this.oVariantManagementOverlay
+			.getDesignTimeMetadata()
+			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
 			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
 			var sInnerControlOverlayWidth = "10px";
 			oControlDOM.style.width = "10px";

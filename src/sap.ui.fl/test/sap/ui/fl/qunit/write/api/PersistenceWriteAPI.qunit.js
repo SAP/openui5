@@ -4,11 +4,9 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
@@ -21,7 +19,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -30,11 +27,9 @@ sap.ui.define([
 	_omit,
 	Log,
 	JsControlTreeModifier,
-	UIComponent,
 	DescriptorChangeTypes,
 	FlexCustomData,
 	FlexObjectFactory,
-	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	FlexConfiguration,
@@ -47,7 +42,6 @@ sap.ui.define([
 	Storage,
 	FeaturesAPI,
 	PersistenceWriteAPI,
-	ChangePersistence,
 	Layer,
 	Utils,
 	sinon,
@@ -360,6 +354,31 @@ sap.ui.define([
 				assert.equal(fnGetFlexObjectsStub.getCall(0).args[0], mPropertyBag, "with the passed propertyBag");
 				assert.strictEqual(aGetResponse, aObjects, "and the function resolves with the State response");
 			});
+		});
+
+		QUnit.test("when _getAnnotationChanges is called", async function(assert) {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: [
+					{
+						fileName: "someUIChange",
+						fileType: "change",
+						reference: sReference
+					}
+				],
+				annotationChanges: [
+					{
+						fileName: "someAnnotationChange",
+						fileType: "annotation_change",
+						reference: sReference
+					}
+				]
+			});
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
+			.withArgs(this.oAppComponent)
+			.returns(sReference);
+			const aAnnotationChanges = PersistenceWriteAPI._getAnnotationChanges({control: this.oAppComponent});
+			assert.strictEqual(aAnnotationChanges.length, 1, "one annotation change was returned");
+			assert.strictEqual(aAnnotationChanges[0].getId(), "someAnnotationChange", "the correct change was returned");
 		});
 
 		QUnit.test("when add is called with a flex change", function(assert) {

@@ -50,6 +50,7 @@ sap.ui.define([
 		// query options resulting from child bindings added when this binding already has data
 		this.mLateQueryOptions = undefined;
 		// the absolute binding path (possibly reduced if the binding uses a parent binding's cache)
+		// may be incorrect while cache creation is pending (this.oCache === undefined)
 		this.sReducedPath = undefined;
 		// change reason to be used when the binding is resumed
 		this.sResumeChangeReason = undefined;
@@ -1122,7 +1123,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.isTransient = function () {
-		return this.sReducedPath && this.sReducedPath.includes("($uid=");
+		return this.bRelative && this.oContext?.getPath().includes("($uid=");
 	};
 
 	/**

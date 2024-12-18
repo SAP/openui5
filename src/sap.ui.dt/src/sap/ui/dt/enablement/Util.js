@@ -73,10 +73,10 @@ sap.ui.define([
 		if (oDesignTimeMetadata && !oDesignTimeMetadata.isIgnored(oElement)) {
 			mAggregationTest.ignored = false;
 			mAggregationTest.domRefDeclared = !!oDesignTimeMetadata.getDomRef();
-			var $AggregationDomRef = oAggregationOverlay.getAssociatedDomRef();
-			if ($AggregationDomRef) {
+			var oAggregationDomRef = oAggregationOverlay.getAssociatedDomRef();
+			if (oAggregationDomRef) {
 				mAggregationTest.domRefFound = true;
-				mAggregationTest.domRefVisible = DOMUtil.isVisible($AggregationDomRef.get(0));
+				mAggregationTest.domRefVisible = DOMUtil.isVisible(oAggregationDomRef);
 			}
 
 			var mGeometry = oAggregationOverlay.getGeometry();
