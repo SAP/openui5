@@ -112,7 +112,7 @@
 		},
 		{
 			"control": "sap.m.DynamicDateRange",
-			"url": "../DynamicDateRange.html",
+			"url": "./DynamicDateRange.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
