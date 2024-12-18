@@ -2437,7 +2437,7 @@ sap.ui.define([
 
 		// Support Japanese Gannen instead of Ichinen for first year of the era
 		if (sCalendarType === CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
-			sResult = sResult.replace(/(^|[^\d])1年/g, "$1元年");
+			sResult = sResult.replace(/(^|\D)1\u5e74/g, "$1\u5143\u5e74");
 		}
 
 		return sResult;
@@ -2903,7 +2903,7 @@ sap.ui.define([
 
 		// Support Japanese Gannen instead of Ichinen for first year of the era
 		if (sCalendarType === CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
-			sValue = sValue.replace(/元年/g, "1年");
+			sValue = sValue.replace(/\u5143\u5e74/g, "1\u5e74");
 		}
 
 		if (!this.oFormatOptions.interval) {
