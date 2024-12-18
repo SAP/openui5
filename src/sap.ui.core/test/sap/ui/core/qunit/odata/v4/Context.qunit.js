@@ -4151,7 +4151,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
-	["~iLevels~", undefined].forEach(function (iLevels) {
+	// Note: expanding a node while it is already expanded is only allowed with expand all
+	[undefined, 1, 42, Number.MAX_SAFE_INTEGER, 1E16].forEach(function (iLevels) {
 	QUnit.test("expand: success=" + bSuccess + ", iLevels=" + iLevels, function (assert) {
 		var oBinding = {
 				expand : function () {}
@@ -4163,7 +4164,8 @@ sap.ui.define([
 			oError = new Error(),
 			oSyncPromise = bSuccess ? SyncPromise.resolve("n/a") : SyncPromise.reject(oError);
 
-		this.mock(oContext).expects("isExpanded").withExactArgs().returns(false);
+		this.mock(oContext).expects("isExpanded").withExactArgs()
+			.returns(iLevels >= Number.MAX_SAFE_INTEGER);
 		this.mock(oBinding).expects("expand")
 			.withExactArgs(sinon.match.same(oContext), iLevels || 1)
 			.returns(oSyncPromise);
@@ -4185,6 +4187,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+[undefined, 1, 42, Number.MAX_SAFE_INTEGER - 1].forEach(function (iLevels) {
 	QUnit.test("expand: already expanded", function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 
@@ -4192,9 +4195,10 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oContext.expand();
-		}, new Error("Already expanded: " + oContext));
+			oContext.expand(iLevels);
+		}, new Error("No partial expand possible. Node already expanded: " + oContext));
 	});
+});
 
 	//*********************************************************************************************
 [-23, 0].forEach(function (iLevels) {
