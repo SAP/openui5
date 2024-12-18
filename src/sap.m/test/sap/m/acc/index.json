@@ -123,12 +123,7 @@
 		{
 			"control": "sap.m.FacetFilter",
 			"url": "./FacetFilter.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.FacetFilter",
-				"title": "ACC test for sap.m.FacetFilter",
-				"module": "./facetfilter.qunit"
-			}
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.FeedContent",
@@ -359,12 +354,7 @@
 		{
 			"control": "sap.m.ObjectNumber",
 			"url": "../ObjectNumber.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.ObjectNumber",
-				"title": "ACC test for sap.m.ObjectNumber",
-				"module": "./objectnumber.qunit"
-			}
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.ObjectMarker",
@@ -404,12 +394,7 @@
 		{
 			"control": "sap.m.PlanningCalendar",
 			"url": "./PlanningCalendar.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.PlanningCalendar",
-				"title": "ACC test for sap.m.PlanningCalendar",
-				"module": "./planningcalendar.qunit"
-			}
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Popover",
@@ -524,12 +509,7 @@
 		{
 			"control": "sap.m.SinglePlanningCalendar",
 			"url": "../SinglePlanningCalendar.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.SinglePlanningCalendar",
-				"title": "ACC test for sap.m.SinglePlanningCalendar",
-				"module": "./singleplanningcalendar.qunit"
-			}
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Slider",
@@ -559,12 +539,7 @@
 		{
 			"control": "sap.m.StepInput",
 			"url": "./StepInput.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.StepInput",
-				"title": "ACC test for sap.m.StepInput",
-				"module": "./stepinput.qunit"
-			}
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.SuggestionsList",
@@ -585,12 +560,7 @@
 		{
 			"control": "sap.m.TabContainer",
 			"url": "./TabContainer.html",
-			"appComponent": "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.m.TabContainer",
-				"title": "ACC test for sap.m.TabContainer",
-				"module": "./tabcontainer.qunit"
-			}
+			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Table",

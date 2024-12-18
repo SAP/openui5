@@ -23,7 +23,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-    // shortcut for sap.ui.core.TitleLevel
+	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oMenu = new Menu({
@@ -67,14 +67,12 @@ sap.ui.define([
 			}),
 			new MenuItem({
 				text: "iphone",
-				// icon: "sap-icon://iphone",
 				items: [
 					new MenuItem({
 						icon: "sap-icon://video",
 						text: "video"
 					}),
 					new MenuItem({
-						// icon: "sap-icon://loan",
 						text: "loan"
 					}),
 					new MenuItem({
@@ -142,6 +140,7 @@ sap.ui.define([
 		menu: oMenu
 	});
 
+	var oMenu2 = new Menu();
 	var oModel = new JSONModel();
 
 	function bindAggregations(dataNumber) {
@@ -231,7 +230,6 @@ sap.ui.define([
 		}
 	}
 
-	var oMenu2 = new Menu();
 	bindAggregations();
 
 	var oButton2 = new MenuButton("button2",{
@@ -239,23 +237,18 @@ sap.ui.define([
 		menu: oMenu2
 	});
 
-	// Menu with shortcuts/additional text
-
 	var oMenu3 = new Menu({
 			items: [
-
 				new MenuItem({
 					text: "New",
 					icon: "sap-icon://create",
 					shortcutText: "Ctrl + N"
 				}),
-
 				new MenuItem({
 					text: "Open",
 					icon: "sap-icon://open-folder",
 					shortcutText: "Ctrl + O"
 				}),
-
 				new MenuItem({
 					text: "Save",
 					shortcutText: "Ctrl + Shift + S",
@@ -272,12 +265,10 @@ sap.ui.define([
 						})
 					]
 				}),
-
 				new MenuItem({
 					text: "Delete",
 					shortcutText: "Ctrl + D"
 				}),
-
 				new MenuItem({
 					text: "Close",
 					icon: "sap-icon://decline",
@@ -287,20 +278,20 @@ sap.ui.define([
 		});
 
 	var oButton3 = new MenuButton("button3", {
-        text: "File Menu",
-        menu: oMenu3
-    });
+		text: "File Menu",
+		menu: oMenu3
+	});
 
-    var oLayout = new VerticalLayout({
+	var oLayout = new VerticalLayout({
 		content: [
-            new Label({text: "Regular menu", labelFor: "button1"}),
+			new Label({text: "Regular menu", wrapping: true, labelFor: "button1"}),
 			oButton,
-            new Label({text: "Initialted via binding", labelFor: "button2"}),
+			new Label({text: "Initialted via binding", wrapping: true, labelFor: "button2"}),
 			oButton2,
-            new Label({text: "Peform file operations", labelFor: "button3"}),
-            oButton3
+			new Label({text: "Peform file operations", wrapping: true, labelFor: "button3"}),
+			oButton3
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oApp = new App();
 	var oPage = new Page({
