@@ -147,6 +147,44 @@ sap.ui.define([
 				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
+
+		QUnit.test("when calling command factory for a change with long name without mocks ...", function(assert) {
+			var done = assert.async();
+			this.sChangeType = "appdescr_ui_generic_app_changePageConfiguration";
+			this.mParameters = {
+				parentPage: {component: "dummy", entitySet: "dummy"},
+				entityPropertyChange: {
+					propertyPath: "a",
+					operation: "UPSERT",
+					propertyValue: "b"
+				}
+			};
+
+			var oAppDescrCmd;
+			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+				reference: this.sReference,
+				parameters: this.mParameters,
+				texts: this.mTexts,
+				changeType: this.sChangeType,
+				appComponent: this.oMockedAppComponent
+			}, {}, {layer: this.sLayer})
+			.then(function(oAppDescriptorCommand) {
+				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
+				assert.ok(oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
+				oAppDescrCmd = oAppDescriptorCommand;
+				return oAppDescriptorCommand.createAndStoreChange();
+			})
+			.then(function() {
+				const oChange = oAppDescrCmd.getPreparedChange();
+				assert.ok(oChange, "the prepared change is available");
+				assert.deepEqual(oChange.getContent(), this.mParameters, "the stored change contains the parameters");
+				assert.ok(oChange.getDefinition().fileName.length <= 64, "the fileName is shortened to not exceed the LREP limit");
+			}.bind(this))
+			.catch(function(oError) {
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
+			})
+			.then(done);
+		});
 	});
 
 	QUnit.done(function() {
