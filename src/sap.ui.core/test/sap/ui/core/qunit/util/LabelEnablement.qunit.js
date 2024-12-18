@@ -171,6 +171,20 @@ sap.ui.define([
 		assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
 	});
 
+	QUnit.test("Label assignment done with LabelFor association - duplicate", async function(assert) {
+		this.oLabel.setLabelFor(this.oControl1);
+		// call setLabelFor again on purpose to test that the same label is only saved once
+		this.oLabel.setLabelFor(this.oControl1);
+		await nextUIUpdate();
+
+		assert.strictEqual(LabelEnablement.getReferencingLabels(this.oControl1).length, 1, "Label assigned to control 1");
+		assert.strictEqual(LabelEnablement.getReferencingLabels(this.oControl1)[0], "testLabel", "Label assigned to control 1");
+		assert.strictEqual(LabelEnablement.getReferencingLabels(this.oControl2).length, 0, "No label assigned to control 2");
+		assert.strictEqual(this.oLabel.$().attr("for"), "testControl1", "Labels for attribute points to correct control");
+		assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "testLabel someLabelFromApplication testControl1-additionalLabel", "aria-labelledby reference to label in control 1 available");
+		assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+	});
+
 	QUnit.test("Label assignment done with setAlternativeLabelFor", async function(assert) {
 		this.oLabel.setAlternativeLabelFor(this.oControl1);
 		await nextUIUpdate();
@@ -602,6 +616,44 @@ sap.ui.define([
 
 		oLabel.destroy();
 		oLabel1.destroy();
+		oCompositeControl.destroy();
+	});
+
+	QUnit.test("Composite Control that set the labelled control to its internally aggregated control - label destroyed and recreated", async function(assert) {
+		const oCompositeControl = new TestCompositeControl();
+		const oInnerInput = oCompositeControl.getAggregation("_input");
+
+		const oLabel = new Label("compControlLabel", {
+			text: "Label",
+			labelFor: oCompositeControl
+		}).placeAt("content");
+
+		oLabel.destroy();
+
+		const oNewLabel = new Label("compControlLabel", {
+			text: "Label",
+			labelFor: oCompositeControl
+		}).placeAt("content");
+
+		oCompositeControl.placeAt("content");
+
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oCompositeControl), [oNewLabel.getId()], "There are labels for the outer control");
+		assert.equal(LabelEnablement.getReferencingLabels(oInnerInput).length, 0, "There are also labels for the inner control");
+
+		await nextUIUpdate();
+
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oCompositeControl), [oNewLabel.getId()], "There are labels for the outer control");
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oInnerInput), [oNewLabel.getId()], "There are also labels for the inner control");
+		assert.equal(oNewLabel.getDomRef().getAttribute("for"), oInnerInput.getIdForLabel(), "The 'for' attribute is set correctly for the label");
+
+		oNewLabel.setLabelFor(null);
+		assert.equal(LabelEnablement.getReferencingLabels(oCompositeControl).length, 0, "There's no label for the outer control");
+		assert.equal(LabelEnablement.getReferencingLabels(oInnerInput).length, 0, "There's no label for the inner control");
+
+		await nextUIUpdate();
+		assert.equal(oNewLabel.getDomRef().getAttribute("for"), undefined, "The 'for' attribute is not set");
+
+		oNewLabel.destroy();
 		oCompositeControl.destroy();
 	});
 
