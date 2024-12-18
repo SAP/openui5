@@ -2077,7 +2077,7 @@ sap.ui.define([
 					}
 				}
 			}).then(function(oDescriptorInlineChange) {
-				assert.ok(oDescriptorInlineChange.getMap().fileName.length < 64);
+				assert.ok(oDescriptorInlineChange.fileName.length < 64);
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui_generic_app_changePageConfiguration");
 			});
