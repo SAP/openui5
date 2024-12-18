@@ -305,7 +305,7 @@ sap.ui.define([
 
 			var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
 			assert.ok(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), "then the domRef of the control is returned");
-			assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).get(0), this.oButton.getDomRef(), "then the value of domRef is correct");
+			assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), this.oButton.getDomRef(), "then the value of domRef is correct");
 		});
 
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function and no element", function(assert) {
@@ -359,7 +359,7 @@ sap.ui.define([
 
 			var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
 			assert.ok(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), "then the domRef of the control is returned");
-			assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).get(0).textContent, "myButton", "then the text of the button is correct");
+			assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).textContent, "myButton", "then the text of the button is correct");
 		});
 
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as undefined", function(assert) {
@@ -403,7 +403,7 @@ sap.ui.define([
 			});
 
 			var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-			assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).length, 0, "then the domRef of the control is undefined ");
+			assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), undefined, "then the domRef of the control is undefined ");
 		});
 	});
 
@@ -445,7 +445,7 @@ sap.ui.define([
 			var vDomRef = oDesignTimeMetadata.getAction("rename", this.oSimpleForm).domRef;
 			var oAssociatedDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef);
 			assert.ok(oAssociatedDomRef, "then the domRef of the control is returned");
-			assert.strictEqual(oAssociatedDomRef.get(0), this.oSimpleForm.getDomRef(), "then the domRef is correct");
+			assert.strictEqual(oAssociatedDomRef, this.oSimpleForm.getDomRef(), "then the domRef is correct");
 		});
 
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function returning ':sap-domRef'", function(assert) {
@@ -464,7 +464,7 @@ sap.ui.define([
 			var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
 			var oAssociatedDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef);
 			assert.ok(oAssociatedDomRef, "then the domRef of the content is returned");
-			assert.strictEqual(oAssociatedDomRef.get(0), this.oSimpleForm.getDomRef(), "then the domRef is correct");
+			assert.strictEqual(oAssociatedDomRef, this.oSimpleForm.getDomRef(), "then the domRef is correct");
 		});
 	});
 

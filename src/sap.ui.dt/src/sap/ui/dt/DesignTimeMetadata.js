@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/dt/ElementUtil",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/dt/ElementUtil"
 ], function(
 	ResourceBundle,
 	merge,
@@ -18,8 +17,7 @@ sap.ui.define([
 	ManagedObject,
 	Lib,
 	DOMUtil,
-	ElementUtil,
-	jQuery
+	ElementUtil
 ) {
 	"use strict";
 
@@ -128,7 +126,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} oElement Element we need DomRef for
 	 * @param {string|function} vDomRef Selector or Function for fetchting DomRef
 	 * @param {string} [sAggregationName] Aggregation Name
-	 * @return {jQuery} Returns associated DOM references wrapped by jQuery object
+	 * @return {HTMLElement|HTMLElement[]} Returns one or multiple associated DOM references
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getAssociatedDomRef = function(...aArgs) {
@@ -143,13 +141,20 @@ sap.ui.define([
 
 			if (typeof (vDomRef) === "function") {
 				try {
+					// TODO: replace jQuery when we know that vDomRef will always return a DOM Element
 					var vRes = vDomRef(...aArgs);
-					return vRes && jQuery(vRes);
+					// convert Nodelist and jQuery-Selection to an Array
+					if ((vRes.jquery && vRes.length > 1) || vRes instanceof NodeList) {
+						vRes = Array.from(vRes);
+					}
+					// we return an Array or a Node
+					return vRes.jquery ? vRes.get(0) : vRes;
 				} catch (error) {
 					return undefined;
 				}
 			} else if (oElementDomRef && typeof (vDomRef) === "string") {
-				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef);
+				// TODO: replace jQuery when we know that getDomRefForCSSSelector will always return a DOM Element
+				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef).get(0);
 			}
 		}
 		return undefined;

@@ -70,7 +70,7 @@ sap.ui.define([
 				oElement.removeStyleClass(Stretch.STRETCHSTYLECLASS);
 			}
 		} else {
-			var oElementDomRef = oOverlay.getAssociatedDomRef() && oOverlay.getAssociatedDomRef().get(0);
+			var oElementDomRef = oOverlay.getAssociatedDomRef();
 			if (oElementDomRef) {
 				if (bAddClass) {
 					oElementDomRef.classList.add(Stretch.STRETCHSTYLECLASS);
@@ -379,7 +379,9 @@ sap.ui.define([
 
 	Stretch.prototype._reevaluateStretching = function(oOverlay) {
 		if (!oOverlay.bIsDestroyed) {
-			var oElementDomRef = oOverlay.getAssociatedDomRef() && oOverlay.getAssociatedDomRef().get(0);
+			var oElementDomRef = Array.isArray(oOverlay.getAssociatedDomRef())
+				? oOverlay.getAssociatedDomRef()[0]
+				: oOverlay.getAssociatedDomRef();
 			if (oElementDomRef) {
 				var bIsStretched = oElementDomRef.classList.contains(Stretch.STRETCHSTYLECLASS);
 				var bShouldBeStretched = childrenAreSameSize(oOverlay, undefined, bIsStretched);
@@ -396,7 +398,7 @@ sap.ui.define([
 
 	Stretch.prototype._checkParentAndAddToStretchCandidates = function(oOverlay) {
 		var oParentOverlay = oOverlay.getParentElementOverlay();
-		var oParentElementDOM = oParentOverlay && oParentOverlay.getAssociatedDomRef() && oParentOverlay.getAssociatedDomRef().get(0);
+		var oParentElementDOM = oParentOverlay?.getAssociatedDomRef();
 		if (oParentElementDOM) {
 			if (startAtSamePosition(oParentOverlay, oOverlay)) {
 				if (childrenAreSameSize(oParentOverlay)) {

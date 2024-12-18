@@ -1688,7 +1688,7 @@ sap.ui.define([
 		const oCal = new Calendar({months: 4, intervalSelection: true});
 
 		// initial setup
-		oCal.placeAt("content");
+		oCal.placeAt("qunit-fixture");
 		oCal.focusDate(UI5Date.getInstance(2021, 4, 1));
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
@@ -1731,7 +1731,7 @@ sap.ui.define([
 		const oCal = new Calendar({months: 4, singleSelection: false});
 
 		// initial setup
-		oCal.placeAt("content");
+		oCal.placeAt("qunit-fixture");
 		oCal.focusDate(oFocusDate);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 

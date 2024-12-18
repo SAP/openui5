@@ -161,6 +161,10 @@ ListItemBaseRenderer.closeItemTag = function(rm, oLI) {
 };
 
 ListItemBaseRenderer.renderTabIndex = function(rm, oLI) {
+	const oList = oLI.getList();
+	if (oList?._skipGroupHeaderFocus() && oLI.isGroupHeader()) {
+		return;
+	}
 	rm.attr("tabindex", "-1");
 };
 
@@ -303,6 +307,7 @@ ListItemBaseRenderer.getAccessibilityState = function(oLI) {
 		};
 
 	if (sAriaLabelledBy) {
+		// Maybe remove the aria-labelled by here? Or remove logic that has ariaLabelledBy
 		mAccessibilityState.labelledby = {
 			value: sAriaLabelledBy.trim(),
 			append: true
@@ -324,14 +329,17 @@ ListItemBaseRenderer.getAccessibilityState = function(oLI) {
 		mAccessibilityState.selected = null;
 		if (oLI.isGroupHeader()) {
 			bPositionNeeded = false;
-			mAccessibilityState.role = "group";
 			if (oLI.getTitle) {
 				mAccessibilityState.label = oLI.getTitle();
 			}
 			mAccessibilityState.roledescription = Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_GROUP_HEADER");
-			var aGroupedItems = oLI.getGroupedItems();
-			if (aGroupedItems && aGroupedItems.length) {
-				mAccessibilityState.owns = aGroupedItems.join(" ");
+
+			const oList = oLI.getList();
+			if (!oList?._hasNestedGrouping()) {
+				const aGroupedItems = oLI.getGroupedItems();
+				if (aGroupedItems && aGroupedItems.length) {
+					mAccessibilityState.owns = aGroupedItems.join(" ");
+				}
 			}
 		}
 	} else if (oLI.isSelectable()) {
@@ -354,6 +362,27 @@ ListItemBaseRenderer.getAccessibilityState = function(oLI) {
  * @protected
  */
 ListItemBaseRenderer.renderLIContent = function(rm, oLI) {
+};
+
+/**
+ * Hook for rendering a list's sub list (in case of grouping).
+ *
+ * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
+ * @param {sap.m.ListItemBase} oLI an object representation of the control that should be rendered.
+ * @protected
+ */
+ListItemBaseRenderer.renderLISubList = function(rm, oLI) {
+	rm.openStart("ul");
+	rm.attr("role", "list");
+	rm.attr("aria-labelledby", oLI.getId() + "-title");
+
+	var aGroupedItems = oLI.getGroupedItems();
+	if (aGroupedItems && aGroupedItems.length) {
+		rm.attr("aria-owns", aGroupedItems.join(" "));
+	}
+
+	rm.openEnd();
+	rm.close("ul");
 };
 
 /**
@@ -395,6 +424,11 @@ ListItemBaseRenderer.renderContentLatter = function(rm, oLI) {
 ListItemBaseRenderer.renderLIContentWrapper = function(rm, oLI) {
 	rm.openStart("div", oLI.getId() + "-content").class("sapMLIBContent").openEnd();
 	this.renderLIContent(rm, oLI);
+
+	const oList = oLI.getList();
+	if (oList?._hasNestedGrouping() && oLI.isGroupHeader()) {
+		this.renderLISubList(rm, oLI);
+	}
 	rm.close("div");
 };
 

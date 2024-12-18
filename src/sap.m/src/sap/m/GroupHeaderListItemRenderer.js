@@ -114,7 +114,7 @@ GroupHeaderListItemRenderer.renderLIContentWrapper = function(rm, oLI) {
 
 GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI) {
 	var sTextDir = oLI.getTitleTextDirection();
-	rm.openStart("span");
+	rm.openStart("span", `${oLI.getId()}-title`);
 	rm.class("sapMGHLITitle");
 
 	if (sTextDir != TextDirection.Inherit) {

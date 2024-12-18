@@ -167,26 +167,6 @@ sap.ui.define([
 		assert.equal(oBindingInfo.filters?.[0]?.getOperator(), FilterOperator.EQ, "oBindingInfo filter operator");
 		assert.equal(oBindingInfo.filters?.[0]?.getValue1(), "A", "oBindingInfo filter value1");
 		assert.equal(oBindingInfo.filters?.[0]?.getValue2(), undefined, "oBindingInfo filter value2");
-
-		sinon.stub(oFakeContent, "getActiveFilterBar").returns(null);
-		sinon.stub(oFakeContent, "isPropertyInitial").withArgs("filterFields").returns(false);
-		sinon.stub(oFakeContent, "getSearch").returns("B");
-
-		ValueHelpDelegate.updateBindingInfo(oFakeValueHelp, oFakeContent, oBindingInfo);
-		assert.equal(oBindingInfo.filters?.length, 1, "oBindingInfo filter set");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.length, 2, "oBindingInfo filter 2 Filters");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[0]?.getPath(), "key", "oBindingInfo filter0 path");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[0]?.getOperator(), FilterOperator.Contains, "oBindingInfo filter0 operator");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[0]?.getValue1(), "B", "oBindingInfo filter0 value1");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[0]?.getValue2(), undefined, "oBindingInfo filter0 value2");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[1]?.getPath(), "text", "oBindingInfo filter1 path");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[1]?.getOperator(), FilterOperator.Contains, "oBindingInfo filter1 operator");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[1]?.getValue1(), "B", "oBindingInfo filter1 value1");
-		assert.equal(oBindingInfo.filters?.[0]?.getFilters()?.[1]?.getValue2(), undefined, "oBindingInfo filter1 value2");
-
-		oFakeContent.getActiveFilterBar.restore();
-		oFakeContent.isPropertyInitial.restore();
-		oFakeContent.getSearch.restore();
 	});
 
 	QUnit.test("updateBinding", (assert) => {

@@ -493,7 +493,7 @@ sap.ui.define([
 	};
 
 	/*
-	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
+	 * The focus visualization of the field help needs to be set as the user starts navigation into the value help items.
 	 *
 	 * @private
 	 */

@@ -23,8 +23,8 @@ sap.ui.define([
 	const ChartDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
 
 	/**
-	 * Gets the filters to be applied when updating the chart's binding based on the
-	 * filter conditions of the chart itself and it's associated {@link sap.ui.mdc.IFilterSource IFilterSource}.
+	 * Gets the filters that are applied when updating the chart's binding based on the
+	 * filter conditions of the chart itself and its associated {@link sap.ui.mdc.IFilterSource IFilterSource}.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.model.Filter[]} Array of filters
@@ -137,7 +137,7 @@ sap.ui.define([
 	 * <b>Note:</b> This does <b>not</b> add the chart item to the <code>Items</code> aggregation of the chart.
 	 * Called and used by <code>p13n</code>.
 	 *
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart to add the property to
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart to which the property is added
 	 * @param {string} sPropertyName The name of the property added
 	 * @param {object} mPropertyBag The property bag containing useful information about the change
 	 * @param {string} [sRole] New role for given item
@@ -153,7 +153,7 @@ sap.ui.define([
 	 * Removes an existing chart item for a given property name and updates the inner chart.
 	 * Called and used by <code>p13n</code>.
 	 *
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart from which property is removed
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart from which the property is removed
 	 * @param {sap.ui.mdc.chart.Item} oItem The <code>item</code> that is removed from the chart
 	 * @param {object} mPropertyBag The property bag containing useful information about the change
 	 * @returns {Promise<boolean>} <code>Promise</code> containing information whether the item was deleted
@@ -246,7 +246,7 @@ sap.ui.define([
 	/**
 	 * Gets the instance of the inner chart.
 	 *
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.core.Control} Instance of the inner chart
 	 *
 	 * @public
@@ -254,7 +254,7 @@ sap.ui.define([
 	ChartDelegate.getInnerChart = function(oChart) { };
 
 	/**
-	 * Chart <code>ChartTypeObject</code> type.
+	 * Defines the chart <code>ChartTypeObject</code> type.
 	 *
 	 * @typedef {object} sap.ui.mdc.chart.ChartTypeObject
 	 * @property {string} key Unique key of the chart type
@@ -267,7 +267,7 @@ sap.ui.define([
 	/**
 	 * Gets the current chart type.
 	 *
-	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {object} Information about the current chart type
 	 * The object has the following properties:
 	 * <ul>
@@ -313,10 +313,10 @@ sap.ui.define([
 	/**
 	 * Gets the current drilling stack of the inner chart.<br>
 	 * The returned objects need at least a <code>label</code> and a <code>name</code> property.<br>
-	 * Also, a <code>dimension</code> array containing the dimension drill stack at the current level is required.
+	 * Also, a <code>dimension</code> array containing the dimension drilling stack at the current level is required.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
-	 * @returns {object[]} Array containing the drill stack
+	 * @returns {object[]} Array containing the drilling stack
 	 *
 	 * @public
 	 */
@@ -412,7 +412,7 @@ sap.ui.define([
 
 
 	/**
-	 * Gets the binding info for given chart.
+	 * Gets the binding info for a given chart.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.base.ManagedObject.AggregationBindingInfo} BindingInfo object
@@ -447,7 +447,7 @@ sap.ui.define([
 	ChartDelegate.setChartTooltipVisibility = function(oChart, bVisible) { };
 
 	/**
-	 * Gets an ID that should be used in the internal chart for the Measure/Dimension.<br>
+	 * Gets an ID that is used in the internal chart for the measure/dimension.<br>
 	 * For standard cases, this is just the ID of the property.<br>
 	 * If it is necessary to use another ID internally inside the chart (for example, for duplicate property IDs) this method can be overwritten.<br>
 	 * In this case, <code>getPropertyFromNameAndKind</code> needs to be overwritten as well.
@@ -463,7 +463,7 @@ sap.ui.define([
 
     //TODO: Think about a better function name or at least make sure the description is clearly understandable.
 	/**
-	 * Gets a PropertyInfo object based on an internal chart dimension/measure and type of a property.
+	 * Gets a <code>PropertyInfo</code> object based on an internal chart dimension/measure and type of a property.
 	 *
 	 * @param {string} sName ID of internal chart measure/dimension
 	 * @param {string} sKind Kind of the property
@@ -475,7 +475,7 @@ sap.ui.define([
 	ChartDelegate.getPropertyFromNameAndKind = function(sName, sKind, oChart) { };
 
 	/**
-	 * Gets the relevant PropertyInfos based on the metadata used with the chart instance.
+	 * Gets the relevant <code>PropertyInfo</code> objects based on the metadata used with the chart instance.
 	 *
 	 * <b>Note:</b>
 	 * The result of this function must be kept stable throughout the lifecycle of your application.

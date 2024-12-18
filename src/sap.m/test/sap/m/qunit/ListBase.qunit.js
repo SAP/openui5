@@ -2771,12 +2771,32 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		oListItem1.focus();
-		assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) > -1, "group headers info exist in the accessibility info of the item");
+		assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) === -1, "group headers info is not in description");
 
 		oListItem2.focus();
-		assert.ok(oListItem2.getAccessibilityInfo().description.indexOf(oGroupHeader2.getTitle()) > -1, "group headers info of the item matches with the correct group header");
+		assert.ok(oListItem2.getAccessibilityInfo().description.indexOf(oGroupHeader2.getTitle()) === -1, "group headers info is not in description");
 
 		oList.destroy();
+	});
+
+	QUnit.test("group headers info of the item if table", async function(assert) {
+		const oGroupHeader1 = new GroupHeaderListItem({
+				title: "Group Header 1"
+			}),
+			oListItem1 = new ColumnListItem({
+				cells: [new Text({text: "List Item 1"})]
+			}),
+			oTable = new Table({
+				columns: new Column({ header: new Text({text: "Column 1"}) }),
+				items: [oGroupHeader1, oListItem1]
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		oListItem1.focus();
+		assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) > -1, "group headers info is in description and matches group");
+
+		oTable.destroy();
 	});
 
 	QUnit.test("highlight text of the item", async function(assert) {
@@ -3130,18 +3150,97 @@ sap.ui.define([
 
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			const $GroupItem = oGroupItem.$();
-			assert.strictEqual($GroupItem.attr("role"), "group", "Group header has role='group'");
+			assert.strictEqual($GroupItem.attr("role"), "listitem", "Group header has role='listitem'");
 			assert.strictEqual($GroupItem.attr("aria-label"), oGroupItem.getTitle(), "correct aria-label is set");
 			assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER"), "correct aria-roledescription assigned");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset attribute not added to groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize attribute not added to groupHeader");
-			assert.ok($GroupItem.attr("aria-owns"), "aria-owns attribute added to Group Headers");
+
+			const oSubListRef = oGroupItem.getDomRef().querySelector("ul");
+			assert.ok(oSubListRef, "GroupHeader contains a list");
+			assert.ok(oSubListRef.getAttribute("role"), "list", "role='list' is set to the sub list");
+			assert.ok(oSubListRef.getAttribute("aria-owns"), "aria-owns attribute is set to the sub list");
+
 			assert.ok(oGroupItem.getGroupedItems().length, "GroupHeader contains the mapped list items");
 			oGroupItem.getGroupedItems().forEach(function(sId) {
-				assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+				assert.ok(oSubListRef.getAttribute("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
 			});
 		});
 
+		let iSetSize = 0, iPosInSet = 1;
+		oList.getVisibleItems().forEach((oListItem) => {
+			if (oListItem.isGroupHeader()) {
+				iSetSize = oListItem.getGroupedItems().length;
+				iPosInSet = 1;
+				return;
+			}
+
+			const oLIRef = oListItem.getDomRef();
+			assert.strictEqual(oLIRef.getAttribute("role"), "listitem", "role='listitem' is set to the list item");
+			assert.equal(oLIRef.getAttribute("aria-posinset"), `${iPosInSet}`, "aria-posinset attribute has correct value for list item");
+			assert.equal(oLIRef.getAttribute("aria-setsize"), `${iSetSize}`, "aria-setsize attribute has correct value for list item");
+			iPosInSet++;
+		});
+
+		oList.destroy();
+	});
+
+	QUnit.test("Grouping behaviour with role='listbox'", async (assert) => {
+		const oList = new List();
+		oList.applyAriaRole("listbox");
+		bindListData(oList, data5, "/items", createListItem);
+		const oSorter = new Sorter({
+			path: "Key",
+			descending: false,
+			group: function(oContext) {
+				return oContext.getProperty("Key");
+			}
+		});
+		oList.placeAt("qunit-fixture");
+
+		const oSkipFocusStub = sinon.stub(oList, "_skipGroupHeaderFocus").returns(true);
+
+		const oBinding = oList.getBinding("items");
+		oBinding.sort(oSorter);
+		await nextUIUpdate();
+		assert.ok(oBinding.isGrouped(), "list is grouped");
+
+		const aGroupHeaderListItems = oList.getVisibleItems().filter(function(oItem) {
+			return oItem.isGroupHeader();
+		});
+		const oRb = Library.getResourceBundleFor("sap.m");
+
+		aGroupHeaderListItems.forEach(function(oGroupItem) {
+			const oGroupItemRef = oGroupItem.getDomRef();
+
+			assert.strictEqual(oGroupItemRef.getAttribute("role"), "listitem", "Group header has role='listitem'");
+			assert.strictEqual(oGroupItemRef.getAttribute("aria-label"), oGroupItem.getTitle(), "correct aria-label is set");
+			assert.strictEqual(oGroupItemRef.getAttribute("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER"), "correct aria-roledescription assigned");
+			assert.notOk(oGroupItemRef.getAttribute("aria-posinset"), "aria-posinset attribute not added to groupHeader");
+			assert.notOk(oGroupItemRef.getAttribute("aria-setsize"), "aria-setsize attribute not added to groupHeader");
+			assert.ok(oGroupItemRef.getAttribute("aria-owns"), "aria-owns attribute is set to group header item");
+
+			assert.ok(oGroupItem.getGroupedItems().length, "GroupHeader contains the mapped list items");
+			oGroupItem.getGroupedItems().forEach(function(sId) {
+				assert.ok(oGroupItemRef.getAttribute("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+			});
+		});
+
+		const iSetSize = oBinding.getLength();
+		let iPosInSet = 1;
+		oList.getVisibleItems().forEach((oListItem) => {
+			if (oListItem.isGroupHeader()) {
+				return;
+			}
+
+			const oLIRef = oListItem.getDomRef();
+			assert.strictEqual(oLIRef.getAttribute("role"), "option", "role='option' is set to the item");
+			assert.equal(oLIRef.getAttribute("aria-posinset"), `${iPosInSet}`, "aria-posinset attribute has correct value for list item");
+			assert.equal(oLIRef.getAttribute("aria-setsize"), `${iSetSize}`, "aria-setsize attribute has correct value for list item");
+			iPosInSet++;
+		});
+
+		oSkipFocusStub.restore();
 		oList.destroy();
 	});
 

@@ -109,10 +109,10 @@ sap.ui.define([
 
 			// if the Control is currently not visible on the screen, we have to scroll it into view
 			if (!DOMUtil.isElementInViewport(oEditableControlDomRef)) {
-				oEditableControlDomRef.get(0).scrollIntoView();
+				oEditableControlDomRef.scrollIntoView();
 			}
 
-			this._oEditableControlDomRef = oEditableControlDomRef.get(0); /* Text Control */
+			this._oEditableControlDomRef = oEditableControlDomRef; /* Text Control */
 			var mMutators = typeof mPropertyBag.getTextMutators === "function"
 				? mPropertyBag.getTextMutators(oElement)
 				: {
@@ -128,11 +128,7 @@ sap.ui.define([
 			var iWidthDifference = 0;
 
 			// case where the editable control has it's own overlay
-			var oOverlayForWrapper = OverlayRegistry.getOverlay(
-				oEditableControlDomRef.jquery
-					? oEditableControlDomRef.get(0).id
-					: oEditableControlDomRef.id
-			);
+			var oOverlayForWrapper = OverlayRegistry.getOverlay(oEditableControlDomRef.id);
 
 			// if the editable control overlay could not be found, then the passed overlay should be considered
 			// for this purpose the width of the editable control should be adjusted

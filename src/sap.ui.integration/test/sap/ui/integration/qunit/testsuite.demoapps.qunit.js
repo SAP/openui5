@@ -10,13 +10,9 @@ sap.ui.define(function () {
 		},
 
 		tests: {
-			"sap/ui/integration/demokit/cardEplorer/webapp/test/integration/opaTests": {
+			"sap/ui/integration/demokit/cardEplorer/webapp/test/testsuite.qunit": {
 				group: "CardExplorer",
-				page: "test-resources/sap/ui/integration/demokit/cardExplorer/webapp/test/integration/opaTests.qunit.html"
-			},
-			"sap/ui/integration/demokit/cardEplorer/webapp/test/unit/unitTests": {
-				group: "CardExplorer",
-				page: "test-resources/sap/ui/integration/demokit/cardExplorer/webapp/test/unit/unitTests.qunit.html"
+				page: "test-resources/sap/ui/integration/demokit/cardExplorer/webapp/test/testsuite.qunit.html"
 			}
 		}
 	};

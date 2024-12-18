@@ -749,16 +749,19 @@ function(
         const oDim2 = new Item({propertyKey: "Dimension2", type: "groupable", label: "Dim2", role: "x"});
         const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable", label: "Label 2", role: "axis2"});
         const oMeas2 = new Item({propertyKey: "Measure2", type: "aggregatable", label: "Meas2", role: "axis"});
+        const oMeas3 = new Item({propertyKey: "Measure3", type: "aggregatable", label: "Meas3", role: "axis"});
 
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oDim2);
         this.oMDCChart.addItem(oMeas);
         this.oMDCChart.addItem(oMeas2);
+        this.oMDCChart.addItem(oMeas3);
 
         const oLabelSpyDim = sinon.spy(oDim, "setProperty");
         const oRoleSpyDim = sinon.spy(oDim2, "setProperty");
         const oLabelSpyMeas = sinon.spy(oMeas, "setProperty");
-         const oRoleSpyMeas = sinon.spy(oMeas2, "setProperty");
+        const oRoleSpyMeas = sinon.spy(oMeas2, "setProperty");
+        const oLabelSpyMeas3 = sinon.spy(oMeas3, "setProperty");
 
         const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Dimension1").returns(Promise.resolve({
@@ -782,6 +785,7 @@ function(
             label: "Meas 2",
             role: "axis2"
         }));
+        oStub.withArgs("Measure3").returns(Promise.resolve());
 
         this.oMDCChart.checkAndUpdateItems(this.oMDCChart).then(function(){
 
@@ -789,6 +793,7 @@ function(
             assert.ok(oRoleSpyDim.calledWithExactly("role", "category"), "Role set to category");
             assert.notOk(oLabelSpyMeas.calledWithExactly("label", "Label 2"), "Label was not set");
             assert.ok(oRoleSpyMeas.calledWithExactly("role", "axis2"), "Role was set to axis2");
+            assert.notOk(oLabelSpyMeas3.calledOnce, "Label was not changed, no PropertyInfo exist");
 
             done();
         });

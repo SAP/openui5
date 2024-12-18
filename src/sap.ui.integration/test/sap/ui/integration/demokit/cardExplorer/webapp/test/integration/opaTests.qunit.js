@@ -1,12 +1,20 @@
-/* global QUnit */
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/core/Core",
-	"sap/ui/demo/cardExplorer/test/integration/AllJourneys"
-], async (Core) => {
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"./arrangements/Startup",
+	"sap/ui/test/opaQunit",
+	"./DownloadJourney",
+	"./NavigationJourney"
+	// "./EditJourney"
+], function (Opa5, Startup) {
 	"use strict";
 
-	await Core.ready();
-	QUnit.start();
+	// set the cookie that states the user already set cookie preferences,
+	// to prevent the cookie settings dialog interfere the test
+	document.cookie = "dk_approval_requested=1";
+
+	Opa5.extendConfig({
+		arrangements: new Startup(),
+		viewNamespace: "sap.ui.demo.cardExplorer.view.",
+		autoWait: true
+	});
 });

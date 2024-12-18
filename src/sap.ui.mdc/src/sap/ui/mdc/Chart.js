@@ -237,7 +237,7 @@ sap.ui.define([
 
 					/**
 					 * Controls the visibility of the chart tooltip.<br>
-					 * <b>Note:</b> If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> will be triggered and can be used to make the <code>Chart</code> tooltip visible.
+					 * <b>Note:</b> If set to <code>true</code>, a call of the <code>delegate.setChartTooltipVisibility</code> is triggered and can be used to make the <code>Chart</code> tooltip visible.
 					 *
 					 * @since 1.88
 					 */
@@ -356,7 +356,7 @@ sap.ui.define([
 						}
 					},
 					/**
-					 * Feeds details popover actions for data point selection in the mdc chart.<br>
+					 * Feeds details popover actions for data point selection in the chart.<br>
 					 * For more information, see {@link sap.ui.mdc.chart.SelectionDetailsActions SelectionDetailsActions}.
 					 */
 					selectionDetailsActions: {
@@ -488,7 +488,7 @@ sap.ui.define([
 
 
 		/**
-		 * Initialises the MDC Chart
+		 * Initializes the chart.
 		 *
 		 * @private
 		 */
@@ -588,9 +588,9 @@ sap.ui.define([
 			return this.getInbuiltFilter() ? this.getInbuiltFilter().getConditions() : [];
 		};
 		/**
-		 * Registers the chart rebind to the filter bar search event.
+		 * Registers the chart rebind function call to the filter bar search event.
 		 *
-		 * @param {sap.ui.mdc.filterbar.p13n.AdaptionFilterBar} oFilter The FilterBar instance to be attached to.
+		 * @param {sap.ui.mdc.filterbar.p13n.AdaptionFilterBar} oFilter The FilterBar instance
 		 * @private
 		 */
 		Chart.prototype._registerInnerFilter = function(oFilter) {
@@ -600,7 +600,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Applies given settings onto the MDC chart, loads the delegate and initializes the MDC chart
+		 * Applies the given settings to the chart, loads the delegate, and initializes the chart.
 		 *
 		 * @param {*} mSettings settings to apply
 		 *
@@ -637,8 +637,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Initializes the inner controls of the MDC chart (toolbar, inner chart)
-		 * Inner chart is initialized via the delegate
+		 * Initializes the inner controls of the chart (toolbar, inner chart).
+		 * The inner chart is initialized via the delegate.
 		 */
 		Chart.prototype._initInnerControls = function() {
 
@@ -869,10 +869,10 @@ sap.ui.define([
 			this._updateVariantManagementStyle();
 		};
 		/**
-		 * Creates the SelectionDetails control used in the toolbar.
+		 * Creates the <code>SelectionDetails</code> control used in the toolbar.
 		 *
-		 * @param {string} sId Id of the MDC chart
-		 * @returns {sap.m.SelectionDetails} The SelectionDetails instance
+		 * @param {string} sId ID of the chart
+		 * @returns {sap.m.SelectionDetails} The <code>SelectionDetails</code> instance
 		 * @private
 		 */
 		Chart.prototype._createSelectionDetails = function(sId) {
@@ -957,7 +957,7 @@ sap.ui.define([
 			}
 		};
 		/**
-		 * Getter for the filter info text used to update the info toolbar.
+		 * Gets the filter info text used to update the info toolbar.
 		 *
 		 * @returns {string} The info text
 		 * @private
@@ -1006,9 +1006,11 @@ sap.ui.define([
 
 				this.getItems().forEach((oItem) => {
 					aPropPromises.push(this._getPropertyByNameAsync(oItem.getPropertyKey()).then((oPropertyInfo) => {
-						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.label, "label");
-						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.groupable ? "groupable" : "aggregatable", "type");
-						fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.role, "role", oPropertyInfo.groupable ? "category" : "axis1");
+						if (oPropertyInfo) {
+							fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.label, "label");
+							fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.groupable ? "groupable" : "aggregatable", "type");
+							fnCheckAndUpdateItemProperty(oItem, oPropertyInfo.role, "role", oPropertyInfo.groupable ? "category" : "axis1");
+						}
 					}));
 				});
 
@@ -1053,7 +1055,7 @@ sap.ui.define([
 			});
 		};
 		/**
-		 * Creates the bread crumbs control to visualize the drill depth of the chart.
+		 * Creates the <code>Breadcrumbs</code> control to visualize the drilling depth of the chart.
 		 * @private
 		 */
 		Chart.prototype._createBreadcrumbs = function() {
@@ -1284,7 +1286,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Calls the update function on the toolbar, if a toolbar exists
+		 * Calls the update function for the toolbar if a toolbar exists.
 		 *
 		 * @private
 		 */
@@ -1304,8 +1306,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * This checks the enablement of the zoom buttons in the toolbar.
-		 * <b>Note:</b> Buttons will be disabled when no zoom state is available or is disabled.
+		 * Checks the enablement of the zoom buttons in the toolbar.
+		 * <b>Note:</b> Buttons will be disabled if no zoom state is available or if it is disabled.
 		 *
 		 * @experimental
 		 * @private
@@ -1342,7 +1344,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Initialises the selection details control by attaching to its selection handler.
+		 * Initializes the <code>SelectionDetails</code> control by attaching it to the provided chart selection handler.
 		 * @private
 		 */
 		Chart.prototype._initSelectionDetails = function() {
@@ -1395,7 +1397,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Zooms in on the inner chart.
+		 * Zooms in from the inner chart.
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -1406,7 +1408,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Zooms out on the inner chart.
+		 * Zooms out from the inner chart.
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -1502,7 +1504,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Getter for information about the current chart type.
+		 * Gets the information about the current chart type.
 		 *
 		 * @returns {object} object containing information about the chart type
 		 *
@@ -1515,7 +1517,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Getter for the available chart types of inner chart based on its current state.
+		 * Gets the available chart types of the inner chart based on its current state.
 		 *
 		 * @returns {sap.ui.mdc.chart.ChartTypeObject[]} Array containing the currently available chart types
 		 *
@@ -1747,7 +1749,7 @@ sap.ui.define([
 			return this;
 		};
 		/**
-		 * Returns the variant management control of the MDC Chart.
+		 * Returns the <code>VariantManagement</code> control of the chart.
 		 * @returns {sap.ui.fl.variants.VariantManagement} The variant management instance
 		 */
 		Chart.prototype.getVariant = function() {

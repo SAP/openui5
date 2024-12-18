@@ -2131,7 +2131,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.getSupportedP13nModes = function() {
-		let aSupportedP13nModes = getIntersection(Object.keys(TableP13nMode), this._getType().getSupportedP13nModes());
+		let aSupportedP13nModes = Object.keys(TableP13nMode);
 
 		if (this.isControlDelegateInitialized()) {
 			aSupportedP13nModes = getIntersection(aSupportedP13nModes, this.getControlDelegate().getSupportedFeatures(this).p13nModes);
@@ -2712,23 +2712,6 @@ sap.ui.define([
 		});
 	};
 
-	Table.prototype._onCustomSort = function(oEvent, sSortOrder) {
-		const sSortProperty = oEvent.getParameter("property");
-
-		this.getCurrentState().sorters.forEach((oProp) => {
-			if (oProp.name === sSortProperty) {
-				if (oProp.descending && sSortOrder === SortOrder.Descending || !oProp.descending && sSortOrder === SortOrder.Ascending) {
-					sSortOrder = SortOrder.None;
-				}
-			}
-		});
-
-		PersonalizationUtils.createSortChange(this, {
-			property: sSortProperty,
-			sortOrder: sSortOrder
-		});
-	};
-
 	Table.prototype._onRowPress = function(mPropertyBag) {
 		if (this.getSelectionMode() !== TableSelectionMode.SingleMaster) {
 			this.fireRowPress({
@@ -2749,18 +2732,6 @@ sap.ui.define([
 		PersonalizationUtils.createColumnWidthChange(this, {
 			column: mPropertyBag.column,
 			width: mPropertyBag.width
-		});
-	};
-
-	Table.prototype._onCustomGroup = function(sProperty) {
-		PersonalizationUtils.createGroupChange(this, {
-			property: sProperty
-		});
-	};
-
-	Table.prototype._onCustomAggregate = function(sProperty) {
-		PersonalizationUtils.createAggregateChange(this, {
-			property: sProperty
 		});
 	};
 
