@@ -90,7 +90,7 @@ describe('sap.m.MultiInput', function() {
 	// MultiInput with placeholder and nMore
 	it("Should visualize MultiInput placeholder when nMore was previously present", function () {
 		var oMultiInput = element(by.id("mi-placeholder"));
-		browser.executeScript("arguments[0].scrollIntoView()", oMultiInput).then(function () {
+		browser.executeScript("document.getElementById('mi-placeholder').scrollIntoView()").then(function () {
 			expect(takeScreenshot()).toLookAs("multiinput_nmore_initial");
 
 			browser.executeScript("sap.ui.core.Element.getElementById('mi-placeholder').setTokens([])");
