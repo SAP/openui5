@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
@@ -18,9 +18,9 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils"
 ], function(
 	Log,
+	CompVariant,
 	States,
 	DependencyHandler,
-	UIChangesState,
 	FlexObjectState,
 	FlexState,
 	Version,
@@ -122,7 +122,13 @@ sap.ui.define([
 		if (!aDirtyChanges.length && !bCondenseAnyLayer) {
 			return [];
 		}
-		var aPersistedAndSameLayerChanges = UIChangesState.getAllUIChanges(this._mComponent.name).filter(function(oChange) {
+		var aPersistedAndSameLayerChanges = FlexState.getFlexObjectsDataSelector().get({reference: this._mComponent.name})
+		.filter(function(oChange) {
+			// CompVariants are currently saved separately and should not be part of the condense request
+			// TODO: Remove CompVariant special handling todos#5
+			if (oChange instanceof CompVariant) {
+				return false;
+			}
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
 				return oChange.getState() === States.LifecycleState.PERSISTED && aDraftFilenames.includes(oChange.getId());
 			}

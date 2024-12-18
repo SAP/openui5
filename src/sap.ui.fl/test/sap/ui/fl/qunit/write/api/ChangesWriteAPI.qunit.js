@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
@@ -38,6 +39,7 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
+	Utils,
 	ControlVariantUtils,
 	States,
 	FlexObjectState,
@@ -509,18 +511,50 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getChangeHandler is called", function(assert) {
-			var oGetControlTypeStub = sandbox.stub().returns("myFancyControlType");
-			var mPropertyBag = {
+		QUnit.test("when getChangeHandler is called", async function(assert) {
+			const oModifier = {getControlType: sandbox.stub().returns("myFancyControlType")};
+			const mPropertyBag = {
 				element: "myFancyElement",
-				modifier: {getControlType: oGetControlTypeStub},
+				modifier: oModifier,
 				layer: Layer.CUSTOMER,
 				changeType: "myFancyChangeType"
 			};
-			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").returns("myFancyChangeHandler");
-			var oReturn = ChangesWriteAPI.getChangeHandler(mPropertyBag);
+			sandbox.stub(Utils, "getChangeHandler").callsFake((mPropertyBag) => {
+				assert.strictEqual(mPropertyBag.changeType, "myFancyChangeType", "the change type is passed correctly");
+				assert.strictEqual(mPropertyBag.layer, Layer.CUSTOMER, "the layer is passed correctly");
+				if (mPropertyBag.control) {
+					assert.strictEqual(mPropertyBag.control, "myFancyElement", "the element is passed correctly");
+					assert.strictEqual(mPropertyBag.controlType, "myFancyControlType", "the control type is passed correctly");
+					assert.strictEqual(mPropertyBag.modifier, oModifier, "the modifier is passed correctly");
+					return Promise.resolve("myFancyChangeHandler");
+				}
+				if (mPropertyBag.appDescriptorChange) {
+					return Promise.resolve("myAppDescriptorChangeHandler");
+				}
+				if (mPropertyBag.annotationChange) {
+					return Promise.resolve("myAnnotationChangeHandler");
+				}
+				return undefined;
+			});
 
-			assert.strictEqual(oReturn, "myFancyChangeHandler", "the function returns the value of the ChangeHandlerStorage function");
+			const oReturn = await ChangesWriteAPI.getChangeHandler(mPropertyBag);
+			assert.strictEqual(oReturn, "myFancyChangeHandler", "the function returns the expected value");
+
+			const mPropertyBagAppDescriptorChange = {
+				changeType: "myFancyChangeType",
+				layer: Layer.CUSTOMER,
+				appDescriptorChange: true
+			};
+			const oReturnAppDescriptorChange = await ChangesWriteAPI.getChangeHandler(mPropertyBagAppDescriptorChange);
+			assert.strictEqual(oReturnAppDescriptorChange, "myAppDescriptorChangeHandler", "the function returns the expected value");
+
+			const mPropertyBagAnnotationChange = {
+				changeType: "myFancyChangeType",
+				layer: Layer.CUSTOMER,
+				annotationChange: true
+			};
+			const oReturnAnnotationChange = await ChangesWriteAPI.getChangeHandler(mPropertyBagAnnotationChange);
+			assert.strictEqual(oReturnAnnotationChange, "myAnnotationChangeHandler", "the function returns the expected value");
 		});
 
 		QUnit.test("when createVariant is called", function(assert) {

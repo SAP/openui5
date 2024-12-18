@@ -901,7 +901,7 @@ sap.ui.define([
 			assert.strictEqual(aRemainingChanges.length, 7, `Expected number of remaining changes: ${7}`);
 		});
 
-		QUnit.test("mix of changes with non-UI changes in between", async function(assert) {
+		QUnit.test("mix of changes with unsupported Flex Objects in between", async function(assert) {
 			const aLoadedChanges = await loadChangesFromPath("mixOfIndexRelatedAndNonIndexRelatedChanges.json", assert, 41);
 			this.aChanges = aLoadedChanges;
 			await applyChangeSequentially(aLoadedChanges);
@@ -937,6 +937,80 @@ sap.ui.define([
 			);
 			assert.strictEqual(aRemainingChanges[3].getId(), "someOtherFlexObject2", "the non UI Change was sorted correctly");
 			assert.strictEqual(aRemainingChanges[4].getId(), "someOtherFlexObject3", "the non UI Change was sorted correctly");
+		});
+
+		QUnit.test("app descriptor changes", async function(assert) {
+			const oAppDescriptorChange1 = FlexObjectFactory.createFromFileContent(({
+				appDescriptorChange: true,
+				changeType: "appdescr_app_setTitle",
+				fileName: "appDescriptorChange1",
+				layer: Layer.CUSTOMER,
+				fileType: "change",
+				reference: sReference
+			}));
+			const oAppDescriptorChange2 = FlexObjectFactory.createFromFileContent(({
+				appDescriptorChange: true,
+				changeType: "appdescr_app_setTitle",
+				fileName: "appDescriptorChange2",
+				layer: Layer.CUSTOMER,
+				fileType: "change",
+				reference: sReference
+			}));
+			const oAppDescriptorChange3 = FlexObjectFactory.createFromFileContent(({
+				appDescriptorChange: true,
+				changeType: "appdescr_app_notSupportedForCondensing",
+				fileName: "appDescriptorChange3",
+				layer: Layer.CUSTOMER,
+				fileType: "change",
+				reference: sReference
+			}));
+
+			const aRemainingChanges = await Condenser.condense(
+				oAppComponent,
+				[oAppDescriptorChange1, oAppDescriptorChange2, oAppDescriptorChange3]
+			);
+			assert.strictEqual(aRemainingChanges.length, 2, "only two changes remain");
+			assert.strictEqual(
+				aRemainingChanges[0].getId(),
+				"appDescriptorChange2",
+				"the newer supported app descriptor change remains"
+			);
+			assert.strictEqual(
+				aRemainingChanges[1].getId(),
+				"appDescriptorChange3",
+				"the unsupported app descriptor change is not removed by the condenser"
+			);
+		});
+
+		QUnit.test("mix of UI changes and app descriptor changes", async function(assert) {
+			const aLoadedChanges = await loadChangesFromPath("mixOfIndexRelatedAndNonIndexRelatedChanges.json", assert, 41);
+			this.aChanges = aLoadedChanges;
+			await applyChangeSequentially(aLoadedChanges);
+
+			const aChanges = [].concat(this.aChanges);
+			aChanges.splice(20, 0, FlexObjectFactory.createFromFileContent(({
+				appDescriptorChange: true,
+				changeType: "appdescr_app_setTitle",
+				fileName: "appDescriptorChange1",
+				layer: Layer.CUSTOMER,
+				fileType: "change",
+				reference: sReference
+			})));
+			aChanges.splice(30, 0, FlexObjectFactory.createFromFileContent(({
+				appDescriptorChange: true,
+				changeType: "appdescr_app_setTitle",
+				fileName: "appDescriptorChange2",
+				layer: Layer.CUSTOMER,
+				fileType: "change",
+				reference: sReference
+			})));
+
+			const aRemainingChanges = await Condenser.condense(oAppComponent, aChanges);
+			assert.strictEqual(
+				aRemainingChanges.length,
+				11,
+				"One app descriptor change is removed by the condenser, expected number of remaining changes: 11"
+			);
 		});
 
 		QUnit.test("mix of not applied changes in between", async function(assert) {

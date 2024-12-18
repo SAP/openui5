@@ -276,7 +276,7 @@ sap.ui.define([
 
 	/**
 	 * Collects modified changes from the different states within the <code>sap.ui.fl</code> library.
-	 * TODO: remove special CompVariant handling
+	 * TODO: remove special CompVariant handling todos#5
 	 *
 	 * @param {object} sReference - Flex Reference
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} All dirty Flex objects

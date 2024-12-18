@@ -259,6 +259,20 @@ sap.ui.define([
 		QUnit.test("when calling getNamespace function", function(assert) {
 			assert.strictEqual(this.oFlexObject.getNamespace(), oFileContent.namespace, "then namespace is returned");
 		});
+
+		QUnit.test("when calling 'getIdForCondensing' without specific implementation", function(assert) {
+			const oFlexObjectWithoutImplementation = FlexObjectFactory.createFromFileContent({
+				fileType: "variant",
+				fileName: "testVariant_123",
+				namespace: "testNamespace"
+			});
+			assert.throws(
+				() => {
+					oFlexObjectWithoutImplementation.getIdForCondensing();
+				},
+				/Method getIdForCondensing must be implemented/
+			);
+		});
 	});
 
 	QUnit.module("State handling", {
@@ -457,7 +471,11 @@ sap.ui.define([
 				oExpectedFileContent,
 				"then the two flex objects are not equal"
 			);
-			assert.notStrictEqual(oCopiedFlexObject.fileName, oFileContent.fileName, "then the cloned flex object has another id as the original flex object");
+			assert.notStrictEqual(
+				oCopiedFlexObject.fileName,
+				oFileContent.fileName,
+				"then the cloned flex object has another id as the original flex object"
+			);
 		});
 	});
 

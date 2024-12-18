@@ -10,7 +10,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/condenser/Classification",
@@ -29,7 +32,10 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Element,
+	DescriptorChangeTypes,
 	ChangesUtils,
+	AppDescriptorChange,
+	FlexObject,
 	States,
 	UIChange,
 	CondenserClassification,
@@ -205,31 +211,47 @@ sap.ui.define([
 	 * Retrieves the condenser information from the change handler
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component of the control at runtime
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oFlexObject - Flex object instance
 	 * @returns {Promise.<object>} - Resolves with the condenser information or undefined
 	 */
-	async function getCondenserInfoFromChangeHandler(oAppComponent, oChange) {
-		const sControlId = JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
-		const oControl = Element.getElementById(sControlId);
-		if (oControl) {
-			const mPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent,
-				view: FlUtils.getViewForControl(oControl)
-			};
-			const mControl = ChangesUtils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-			try {
-				const oChangeHandler = await ChangesUtils.getChangeHandler(oChange, mControl, mPropertyBag);
-				if (typeof oChangeHandler.getCondenserInfo === "function") {
-					const oCondenserInfo = await oChangeHandler.getCondenserInfo(oChange, mPropertyBag);
-					if (oCondenserInfo && mControl.bTemplateAffected) {
-						replaceTemplateSelector(oCondenserInfo, oChange);
-					}
-					return oCondenserInfo;
+	async function getCondenserInfoFromChangeHandler(oAppComponent, oFlexObject) {
+		let oChangeHandler;
+		let bTemplateAffected = false;
+		let mPropertyBag = {};
+		try {
+			// UI changes require template handling
+			if (oFlexObject instanceof UIChange) {
+				const sControlId = JsControlTreeModifier.getControlIdBySelector(oFlexObject.getSelector(), oAppComponent);
+				const oControl = Element.getElementById(sControlId);
+				if (oControl) {
+					mPropertyBag = {
+						modifier: JsControlTreeModifier,
+						appComponent: oAppComponent,
+						view: FlUtils.getViewForControl(oControl)
+					};
+					const mControl = ChangesUtils.getControlIfTemplateAffected(oFlexObject, oControl, mPropertyBag);
+					bTemplateAffected = mControl.bTemplateAffected;
+					oChangeHandler = await ChangesUtils.getChangeHandler({
+						flexObject: oFlexObject,
+						control: mControl.control,
+						controlType: mControl.controlType,
+						modifier: mPropertyBag.modifier
+					});
 				}
-			} catch (oError) {
-				return undefined;
+			} else {
+				oChangeHandler = await ChangesUtils.getChangeHandler({
+					flexObject: oFlexObject
+				});
 			}
+			if (typeof oChangeHandler.getCondenserInfo === "function") {
+				const oCondenserInfo = await oChangeHandler.getCondenserInfo(oFlexObject, mPropertyBag);
+				if (oCondenserInfo && bTemplateAffected) {
+					replaceTemplateSelector(oCondenserInfo, oFlexObject);
+				}
+				return oCondenserInfo;
+			}
+		} catch (oError) {
+			return undefined;
 		}
 		return undefined;
 	}
@@ -249,15 +271,13 @@ sap.ui.define([
 	 *
 	 * @param {object} mReducedChanges - Map of reduced changes
 	 * @param {object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oFlexObject - Flex object instance
 	 * @param {sap.ui.core.Component} oAppComponent - Application component of the control at runtime
 	 * @returns {object} Classification types map
 	 */
-	function getTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent) {
-		const sAffectedControlId = oCondenserInfo !== undefined
-			? oCondenserInfo.affectedControl
-			: JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
-		mReducedChanges[sAffectedControlId] ||= {};
+	function getTypesMap(mReducedChanges, oCondenserInfo, oFlexObject, oAppComponent) {
+		const sIdForCondensing = oFlexObject.getIdForCondensing(oCondenserInfo, oAppComponent);
+		mReducedChanges[sIdForCondensing] ||= {};
 		// If an updateControl is present, it means that the update has a different selector from the other changes
 		// (e.g. iFrame added as Section) and the changes must be brought to the same group (= same affected control)
 		if (oCondenserInfo && oCondenserInfo.updateControl) {
@@ -265,12 +285,12 @@ sap.ui.define([
 			const aPath = [CondenserUtils.NOT_INDEX_RELEVANT, CondenserClassification.Update, oCondenserInfo.uniqueKey];
 			const oUpdateCondenserInfo = ObjectPath.get(aPath, mReducedChanges[sUpdateControlId]);
 			if (oUpdateCondenserInfo) {
-				ObjectPath.set(aPath, oUpdateCondenserInfo, mReducedChanges[sAffectedControlId]);
+				ObjectPath.set(aPath, oUpdateCondenserInfo, mReducedChanges[sIdForCondensing]);
 				delete mReducedChanges[sUpdateControlId][CondenserUtils.NOT_INDEX_RELEVANT]
 				[CondenserClassification.Update][oCondenserInfo.uniqueKey];
 			}
 		}
-		return mReducedChanges[sAffectedControlId];
+		return mReducedChanges[sIdForCondensing];
 	}
 
 	/**
@@ -402,7 +422,7 @@ sap.ui.define([
 				return getChanges(vSubObjects, aChanges);
 			} else if (Array.isArray(vSubObjects)) {
 				vSubObjects.forEach((oObject) => {
-					if (oObject instanceof UIChange) {
+					if (oObject instanceof FlexObject) {
 						aChanges.push(oObject);
 					} else {
 						aChanges.push(oObject.change);
@@ -436,7 +456,7 @@ sap.ui.define([
 				getCondenserInfos(vSubObjects, aCondenserInfos);
 			} else if (Array.isArray(vSubObjects)) {
 				vSubObjects.forEach((oObject) => {
-					if (!(oObject instanceof UIChange)) {
+					if (!(oObject instanceof FlexObject)) {
 						aCondenserInfos.push(oObject);
 					}
 				});
@@ -508,13 +528,14 @@ sap.ui.define([
 						}
 						return oChange;
 					});
+					const setUpdateChange = (oChange) => {
+						if (oChange.getId() === oLastChange.getId()) {
+							return oUpdateChange;
+						}
+						return oChange;
+					};
 					aReducedIndexRelatedChangesPerContainer.forEach((aReducedIndexRelatedChanges, iIndex) => {
-						aReducedIndexRelatedChangesPerContainer[iIndex] = aReducedIndexRelatedChanges.map((oChange) => {
-							if (oChange.getId() === oLastChange.getId()) {
-								return oUpdateChange;
-							}
-							return oChange;
-						});
+						aReducedIndexRelatedChangesPerContainer[iIndex] = aReducedIndexRelatedChanges.map(setUpdateChange);
 					});
 				} else {
 					oUpdateChange.setState(States.LifecycleState.UPDATED);
@@ -551,8 +572,8 @@ sap.ui.define([
 		const mUIReconstructions = {};
 		const aAllIndexRelatedChanges = [];
 
-		// filter out objects which are not of type change, e.g. Variants, AppVariants, AppVariantInlineChange
-		// or are not applied (e.g. not part of the active variant) or were deleted
+		// filter out objects which are not applied (e.g. not part of the active variant) or of unsupported type (e.g. variants)
+		// + mark deleted changes
 		const aNotCondensableChanges = [];
 		const aCondensableChanges = [];
 		aChanges.slice(0).reverse().forEach((oChange) => {
@@ -561,6 +582,12 @@ sap.ui.define([
 			}
 			if (oChange instanceof UIChange) {
 				if (oChange.isSuccessfullyApplied()) {
+					aCondensableChanges.push(oChange);
+				} else {
+					aNotCondensableChanges.push(oChange);
+				}
+			} else if (oChange instanceof AppDescriptorChange) {
+				if (DescriptorChangeTypes.getCondensableChangeTypes().includes(oChange.getChangeType())) {
 					aCondensableChanges.push(oChange);
 				} else {
 					aNotCondensableChanges.push(oChange);
@@ -596,7 +623,11 @@ sap.ui.define([
 		sortByInitialOrder(aChanges, aReducedChanges);
 
 		if (!bUnclassifiedChanges) {
-			Measurement.start("Condenser_handleIndexRelatedChanges", "handle index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
+			Measurement.start(
+				"Condenser_handleIndexRelatedChanges",
+				"handle index related changes - CondenserClass",
+				["sap.ui.fl", "Condenser"]
+			);
 
 			let bSuccess = true;
 			let aCondenserInfos = getCondenserInfos(mReducedChanges, []);

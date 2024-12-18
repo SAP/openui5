@@ -9,7 +9,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
 		afterEach() {
@@ -17,14 +17,20 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with title", function(assert) {
-			var oManifest = {
+			const oManifest = {
 				"sap.app": {
 					id: "custom.app.variant",
 					title: "{{title}}"
 				}
 			};
-			var oNewManifest = SetTitle.applyChange(oManifest);
+			const oNewManifest = SetTitle.applyChange(oManifest);
 			assert.equal(oNewManifest["sap.app"].title, "{{custom.app.variant_sap.app.title}}");
+		});
+
+		QUnit.test("when calling 'getCondenserInfo'", function(assert) {
+			const oCondenserInfo = SetTitle.getCondenserInfo();
+			assert.equal(oCondenserInfo.classification, "lastOneWins");
+			assert.equal(oCondenserInfo.uniqueKey, "manifestSetTitle");
 		});
 	});
 

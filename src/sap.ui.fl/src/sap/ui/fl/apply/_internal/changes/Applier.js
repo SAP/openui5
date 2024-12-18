@@ -314,7 +314,12 @@ sap.ui.define([
 	Applier.applyChangeOnControl = async function(oChange, oControl, mPropertyBag) {
 		const mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 		try {
-			const oChangeHandler = mPropertyBag.changeHandler || await Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+			const oChangeHandler = mPropertyBag.changeHandler || await Utils.getChangeHandler({
+				flexObject: oChange,
+				control: mControl.control,
+				controlType: mControl.controlType,
+				modifier: mPropertyBag.modifier
+			});
 			checkPreconditions(oChange, mPropertyBag);
 
 			if (oChange.hasApplyProcessStarted()) {
@@ -450,7 +455,12 @@ sap.ui.define([
 			try {
 				const oControl = await checkControlAndDependentSelectorControls(oChange, mPropertyBag);
 				const mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-				mPropertyBag.changeHandler = await Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+				mPropertyBag.changeHandler = await Utils.getChangeHandler({
+					flexObject: oChange,
+					control: mControl.control,
+					controlType: mControl.controlType,
+					modifier: mPropertyBag.modifier
+				});
 				oChange.setQueuedForApply();
 				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag, true);
 

@@ -346,6 +346,26 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("GetIdForCondensing", () => {
+		QUnit.test("getIdForCondensing without affectedControl", (assert) => {
+			const oUIChange = FlexObjectFactory.createUIChange({ ...oFileContent });
+			const oAppComponent = "appComponent";
+			sandbox.stub(JsControlTreeModifier, "getControlIdBySelector")
+			.withArgs(oFileContent.selector, oAppComponent)
+			.returns("controlId");
+			assert.strictEqual(oUIChange.getIdForCondensing(undefined, oAppComponent), "controlId", "the ID is correct");
+		});
+
+		QUnit.test("getIdForCondensing with affectedControl", (assert) => {
+			const oUIChange = FlexObjectFactory.createUIChange({ ...oFileContent });
+			assert.strictEqual(
+				oUIChange.getIdForCondensing({affectedControl: "controlId"}, "appComponent"),
+				"controlId",
+				"the ID is correct"
+			);
+		});
+	});
+
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
