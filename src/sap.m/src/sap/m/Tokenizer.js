@@ -641,7 +641,7 @@ sap.ui.define([
 		}
 
 		var iTokenizerWidth = this._getPixelWidth(),
-			aTokens = this._getVisibleTokens().reverse(),
+			aTokens = this._getVisibleTokens(),
 			iTokensCount = aTokens.length,
 			iLabelWidth, iFreeSpace,
 			iCounter, iFirstTokenToHide = -1;
