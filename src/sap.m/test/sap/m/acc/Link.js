@@ -1,221 +1,110 @@
 sap.ui.define([
 	"sap/m/App",
-	"sap/m/Column",
-	"sap/m/ColumnListItem",
+	"sap/m/Page",
 	"sap/m/Label",
 	"sap/m/Link",
-	"sap/m/Page",
-	"sap/m/Table",
-	"sap/m/Text",
 	"sap/m/Title",
-	"sap/ui/layout/VerticalLayout"
-], function(App, Column, ColumnListItem, Label, Link, Page, Table, MText, Title, VerticalLayout) {
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/library"
+], function(App, Page, Label, Link, Title, VerticalLayout, coreLibrary) {
 	"use strict";
 
-	// ----------------
-	// Utility functions
-	// ----------------
-
-	function getText(sText) {
-		return new MText({ text: sText }).addStyleClass("sapUiSmallMarginTop");
-	}
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	function getTitle(sText) {
 		return new Title({
 			text: sText,
+			level: TitleLevel.H2,
 			wrapping: true,
-			titleStyle: "H3"
+			titleStyle: TitleLevel.H5
 		}).addStyleClass("sapUiMediumMarginTop");
 	}
-
-
-	// ----------------
-	// Layout sections
-	// ----------------
 
 	var oRegularLinksLayout = new VerticalLayout({
 		content: [
 			getTitle("Regular Links"),
 
-			getText("With href:"),
-			new Link({ text: "Something", href: "https://www.sap.com" }),
+			new Label({ text: "With href:", wrapping: true, labelFor: "destination1" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination1", { text: "destination 1", href: "https://www.sap.com" }),
 
-			getText("Without href:"),
-			new Link({ text: "Something" }),
+			new Label({ text: "Without href:", wrapping: true, labelFor: "destination2" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination2", { text: "destination 2" }),
 
-			getText("Disabled:"),
-			new Link({ text: "Something", href: "https://www.sap.com", enabled: false}),
+			new Label("regularLinkLabelledBy", { text: "Using ariaLabelledBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 3", href: "https://www.sap.com", ariaLabelledBy: "regularLinkLabelledBy" }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "regularLinkWithLabel" }),
-			new Link("regularLinkWithLabel", { text: "Something", href: "https://www.sap.com" }),
-
-			getText("Using ariaLabelledBy association:"),
-			new MText("regularLinkLabelledBy", { text: "Label" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaLabelledBy: "regularLinkLabelledBy" }),
-
-			getText("Using ariaDescribedBy association:"),
-			new MText("regularLinkDescribedBy", { text: "Description" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaDescribedBy: "regularLinkDescribedBy" })
+			new Label("regularLinkDescribedBy", { text: "Using ariaDescribedBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 4", href: "https://www.sap.com", ariaDescribedBy: "regularLinkDescribedBy" })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oSubtleLinksLayout = new VerticalLayout({
 		content: [
 			getTitle("Subtle Links"),
 
-			getText("With href:"),
-			new Link({ text: "Something", href: "https://www.sap.com", subtle: true }),
+			new Label({ text: "With href:", wrapping: true, labelFor: "destination5" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination5", { text: "destination 5", href: "https://www.sap.com", subtle: true }),
 
-			getText("Without href:"),
-			new Link({ text: "Something", subtle: true }),
+			new Label({ text: "Without href:", wrapping: true, labelFor: "destination6" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination6", { text: "destination 6", subtle: true }),
 
-			getText("Disabled:"),
-			new Link({ text: "Something", href: "https://www.sap.com", enabled: false, subtle: true}),
+			new Label("subtleLinkLabelledBy", { text: "Using ariaLabelledBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 7", href: "https://www.sap.com", ariaLabelledBy: "subtleLinkLabelledBy", subtle: true }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "subtleLinkWithLabel" }),
-			new Link("subtleLinkWithLabel", { text: "Something", href: "https://www.sap.com", subtle: true }),
-
-			getText("Using ariaLabelledBy association:"),
-			new MText("subtleLinkLabelledBy", { text: "Label" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaLabelledBy: "subtleLinkLabelledBy", subtle: true }),
-
-			getText("Using ariaDescribedBy association:"),
-			new MText("subtleLinkDescribedBy", { text: "Description" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaDescribedBy: "subtleLinkDescribedBy", subtle: true })
+			new Label("subtleLinkDescribedBy", { text: "Using ariaDescribedBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 8", href: "https://www.sap.com", ariaDescribedBy: "subtleLinkDescribedBy", subtle: true })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oEmphasizedLayout = new VerticalLayout({
 		content: [
 			getTitle("Emphasized Links"),
 
-			getText("With href:"),
-			new Link({ text: "Something", href: "https://www.sap.com", emphasized: true }),
+			new Label({ text: "With href:", wrapping: true, labelFor: "destination9" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination9", { text: "destination 9", href: "https://www.sap.com", emphasized: true }),
 
-			getText("Without href:"),
-			new Link({ text: "Something", emphasized: true }),
+			new Label({ text: "Without href:", wrapping: true, labelFor: "destination10" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination10", { text: "destination 10", emphasized: true }),
 
-			getText("Disabled:"),
-			new Link({ text: "Something", href: "https://www.sap.com", enabled: false, emphasized: true}),
+			new Label("emphasizedLinkLabelledBy", { text: "Using ariaLabelledBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 11", href: "https://www.sap.com", ariaLabelledBy: "emphasizedLinkLabelledBy", emphasized: true }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "emphasizedLinkWithLabel" }),
-			new Link("emphasizedLinkWithLabel", { text: "Something", href: "https://www.sap.com", emphasized: true }),
-
-			getText("Using ariaLabelledBy association:"),
-			new MText("emphasizedLinkLabelledBy", { text: "Label" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaLabelledBy: "emphasizedLinkLabelledBy", emphasized: true }),
-
-			getText("Using ariaDescribedBy association:"),
-			new MText("emphasizedLinkDescribedBy", { text: "Description" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaDescribedBy: "emphasizedLinkDescribedBy", emphasized: true })
+			new Label("emphasizedLinkDescribedBy", { text: "Using ariaDescribedBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 12", href: "https://www.sap.com", ariaDescribedBy: "emphasizedLinkDescribedBy", emphasized: true })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oCombinedLayout = new VerticalLayout({
 		content: [
 			getTitle("Combined Links (Subtle & Emphasized)"),
 
-			getText("With href:"),
-			new Link({ text: "Something", href: "https://www.sap.com", subtle: true, emphasized: true }),
+			new Label({ text: "With href:", wrapping: true, labelFor: "destination13" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination13", { text: "destination 13", href: "https://www.sap.com", subtle: true, emphasized: true }),
 
-			getText("Without href:"),
-			new Link({ text: "Something", subtle: true, emphasized: true }),
+			new Label({ text: "Without href:", wrapping: true, labelFor: "destination14" }).addStyleClass("sapUiSmallMarginTop"),
+			new Link("destination14", { text: "destination 14", subtle: true, emphasized: true }),
 
-			getText("Disabled:"),
-			new Link({ text: "Something", href: "https://www.sap.com", enabled: false, subtle: true, emphasized: true}),
+			new Label("combinedLinkLabelledBy", { text: "Using ariaLabelledBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 15", href: "https://www.sap.com", ariaLabelledBy: "combinedLinkLabelledBy", subtle: true, emphasized: true }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "combinedLinkWithLabel" }),
-			new Link("combinedLinkWithLabel", { text: "Something", href: "https://www.sap.com", subtle: true, emphasized: true }),
-
-			getText("Using ariaLabelledBy association:"),
-			new MText("combinedLinkLabelledBy", { text: "Label" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaLabelledBy: "combinedLinkLabelledBy", subtle: true, emphasized: true }),
-
-			getText("Using ariaDescribedBy association:"),
-			new MText("combinedLinkDescribedBy", { text: "Description" }),
-			new Link({ text: "Something", href: "https://www.sap.com", ariaDescribedBy: "combinedLinkDescribedBy", subtle: true, emphasized: true })
+			new Label("combinedLinkDescribedBy", { text: "Using ariaDescribedBy association:", wrapping: true }).addStyleClass("sapUiSmallMarginTop"),
+			new Link({ text: "destination 16", href: "https://www.sap.com", ariaDescribedBy: "combinedLinkDescribedBy", subtle: true, emphasized: true })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
-
-
-	var oTableLayout = new VerticalLayout({
-		content: [
-			getTitle("Links in Table").addStyleClass("sapUiLargeMarginBegin sapUiSmallMarginBottom"),
-
-			new Table({
-				columns: [
-					new Column({
-						header: new MText({text: "Link's type"})
-					}),
-					new Column({
-						header: new MText({text: "Control with href"})
-					}),
-					new Column({
-						header: new MText({text: "Control without href"})
-					}),
-					new Column({
-						header: new MText({text: "Disabled control"})
-					})
-				],
-				items: [
-					new ColumnListItem({
-						cells: [
-							new MText({text: "Regular"}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true}),
-							new Link({text: "Something", wrapping: true}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, enabled: false})
-						]
-					}),
-					new ColumnListItem({
-						cells: [
-							new MText({text: "Subtle"}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true}),
-							new Link({text: "Something", wrapping: true, subtle: true}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true, enabled: false})
-						]
-					}),
-					new ColumnListItem({
-						cells: [
-							new MText({text: "Emphasized"}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, emphasized: true}),
-							new Link({text: "Something", wrapping: true, emphasized: true}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, emphasized: true, enabled: false})
-						]
-					}),
-					new ColumnListItem({
-						cells: [
-							new MText({text: "Combined"}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true, emphasized: true}),
-							new Link({text: "Something", wrapping: true, subtle: true, emphasized: true}),
-							new Link({text: "Something", href: "https://www.sap.com", wrapping: true, subtle: true, emphasized: true, enabled: false})
-						]
-					})
-				]
-			})
-		]
-	});
-
-
-	// ----------------
-	// Final page
-	// ----------------
+	}).addStyleClass("sapUiContentPadding");
 
 	var oApp = new App(),
 		oPage = new Page({
-			title: "Link ACC Test Page",
+			title: "Link Accessibility Test Page",
+			titleLevel: TitleLevel.H1,
 			content: [
 				oRegularLinksLayout,
 				oSubtleLinksLayout,
 				oEmphasizedLayout,
-				oCombinedLayout,
-				oTableLayout
+				oCombinedLayout
 			]
 		});
 
 	oApp.addPage(oPage);
-	oApp.placeAt("content");
+	oApp.placeAt("body");
 });
