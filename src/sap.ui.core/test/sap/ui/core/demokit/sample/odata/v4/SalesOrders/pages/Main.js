@@ -1160,9 +1160,8 @@ sap.ui.define([
 				},
 				selectByKey : function (sKey) {
 					this.waitFor({
-						actions : function (oControl) {
-							var oNewItem,
-								oTable = oControl.getAggregation("content")[0];
+						actions : function (oTable) {
+							var oNewItem;
 
 							oTable.getItems().some(function (oItem) {
 								if (oItem.getCells()[0].getText() === sKey) {
@@ -1174,7 +1173,8 @@ sap.ui.define([
 							});
 							Opa5.assert.ok(oNewItem, "Selected item: " + oNewItem.getText());
 						},
-						controlType : "sap.m.Popover",
+						controlType : "sap.m.Table",
+						id : /-valueHelpTable$/,
 						success : function () {
 							Opa5.assert.ok(true, "Selected Value");
 						}
