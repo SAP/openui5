@@ -72,6 +72,7 @@ sap.ui.define([
 					Engine.getInstance().clearTrace(oControl);
 					delete oControl._pPendingModification;
 					resumeInvalidation(oControl);
+					Engine.getInstance().fireStateChange(oControl);
 					return oControl._onModifications(aAffectedControllerKeys);
 				});
 			}
