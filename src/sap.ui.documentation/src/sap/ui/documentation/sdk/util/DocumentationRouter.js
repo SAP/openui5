@@ -166,6 +166,7 @@ sap.ui.define([
 
 				oApp.addPage(oView, master);
 				oApp.toDetail(oView.getId(), "show", data);
+				this.fireEvent("_navToWithoutHash", { viewName, viewType, master, data });
 			}.bind(this));
 		},
 
@@ -503,6 +504,30 @@ sap.ui.define([
 			this._oAppConfig = this._getOwnerComponent().getConfig();
 		}
 		return this._oAppConfig;
+	};
+
+	DocumentationRouter.prototype.getConfig = function () {
+		return this._getOwnerComponent().getManifestEntry("/sap.ui5/routing");
+	};
+
+	DocumentationRouter.prototype.getRouteConfig = function (sRouteName) {
+		return this.getConfig().routes.find((oRouteConfig) => oRouteConfig.name === sRouteName);
+	};
+
+	DocumentationRouter.prototype.getTargetConfig = function (sTargetName) {
+		return this.getConfig().targets[sTargetName];
+	};
+
+	DocumentationRouter.prototype.getRouteTopLevelTitle = function(oRouteConfig) {
+		var sTarget = oRouteConfig.titleTarget || this._getLastTargetForRoute(oRouteConfig);
+		return this.getTargetConfig(sTarget)?.title; // the title is the title of the corresponding top-level tab
+	};
+
+	DocumentationRouter.prototype._getLastTargetForRoute = function(oRouteConfig) {
+		var aTargets = oRouteConfig.target;
+		if (aTargets && aTargets.length) {
+			return aTargets[aTargets.length - 1];
+		}
 	};
 
 	/**

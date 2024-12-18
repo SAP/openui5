@@ -139,7 +139,8 @@ sap.ui.define([
 					// Error
 					function() {
 						Log.warning("No neo-app.json was detected");
-					}
+						this.onRouteNotFound();
+					}.bind(this)
 				);
 			},
 			/**

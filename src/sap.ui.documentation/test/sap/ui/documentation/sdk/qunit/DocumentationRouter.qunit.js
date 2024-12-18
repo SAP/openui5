@@ -1,13 +1,13 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/documentation/sdk/util/DocumentationRouter",
-	"sap/ui/thirdparty/jquery",
+	"./TestUtil",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
 ],
 function (
 	DocumentationRouter,
-	jQuery
+	TestUtil
 ) {
 	"use strict";
 
@@ -203,6 +203,12 @@ function (
 			}
 
 			return Object.assign(oResult, oArguments);
+		},
+		createRouter: function(oManifest) {
+			var oRoutingManifestEntry = oManifest["sap.ui5"].routing,
+				oRoutingConfig = oRoutingManifestEntry.config,
+				aRoutes = oRoutingManifestEntry.routes;
+			return new DocumentationRouter(aRoutes, oRoutingConfig, null, oRoutingManifestEntry.targets);
 		}
 	};
 
@@ -224,27 +230,20 @@ function (
 
 				var done = assert.async();
 
-				jQuery.ajax({
-					async: true,
-					url : sap.ui.require.toUrl("sap/ui/documentation/sdk/manifest.json"),
-					dataType : 'json',
-					success : function(oResponse) {
-						this.oManifest = oResponse;
-						this.oRoutingManifestEntry = this.oManifest["sap.ui5"].routing;
-						this.oRoutingConfig = this.oRoutingManifestEntry.config;
-						this.aRoutes = this.oRoutingManifestEntry.routes;
-						this.oRouter =
-							new DocumentationRouter(this.aRoutes, this.oRoutingConfig, null, this.oRoutingManifestEntry.targets);
+				TestUtil.createRouter()
+					.then(function (oRouter) {
+						this.oRouter = oRouter;
 						done();
-					}.bind(this),
-					error : function (err) {
+					}.bind(this))
+					.catch(function (err) {
 						assert.notOk("invalid test setup " + err);
 						done();
-					}
-				});
+					});
 			},
 			after: function() {
 				window['sap-ui-documentation-static'] = this.originalDeploymentTypeFlag;
+				this.oRouter.destroy();
+				this.oRouter = null;
 			}
 		});
 

@@ -116,6 +116,11 @@ sap.ui.define([], function() {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/DocumentationRouter"]
 				}
+			},
+			"UsageTracker": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/util/UsageTracker"]
+				}
 			}
 			// "Forwarding": {
 			// 	coverage: {
