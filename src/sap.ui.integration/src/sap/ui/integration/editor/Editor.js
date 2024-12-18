@@ -219,8 +219,11 @@ sap.ui.define([
 				}
 			},
 			events: {
-				ready: {},
-				manifestReady: {}
+				manifestReady: {},
+				fieldReady: {},
+				destinationReady: {},
+				UIReady: {},
+				ready: {}
 			}
 		},
 		renderer: {
@@ -233,7 +236,7 @@ sap.ui.define([
 					oRm.openStart("div", oControl);
 					oRm.openEnd();
 					//render the additional content if alignment of it is "top"
-					if (oControl.isReady() && sPreviewPosition === "top") {
+					if (oControl.isFieldReady() && sPreviewPosition === "top") {
 						oRm.renderControl(oPreview);
 					}
 				}
@@ -241,7 +244,7 @@ sap.ui.define([
 					oRm.openStart("div", oControl);
 					oRm.class("sapUiIntegrationEditor");
 					oRm.openEnd();
-					if (oControl.isReady()){
+					if (oControl.isFieldReady()){
 						oRm.renderControl(oPreview);
 					}
 				} else if (bShowPreview && (sPreviewPosition === "top" || sPreviewPosition === "bottom")) {
@@ -253,7 +256,7 @@ sap.ui.define([
 					oRm.class("sapUiIntegrationEditor");
 					oRm.openEnd();
 				}
-				if (oControl.isReady()) {
+				if (oControl.isFieldReady()) {
 					//surrounding div tag for form <div class="sapUiIntegrationEditorForm"
 					oRm.openStart("div");
 					oRm.class("sapUiIntegrationEditorForm");
@@ -856,6 +859,18 @@ sap.ui.define([
 					}
 					oRm.close("div");
 				}
+				if (oControl.isFieldReady()) {
+					oControl.fireUIReady();
+					if (oControl._aFieldDataReadyPromise.length > 0) {
+						Promise.all(oControl._aFieldDataReadyPromise).then(function () {
+							oControl._ready = true;
+							oControl.fireReady();
+						});
+					} else {
+						oControl._ready = true;
+						oControl.fireReady();
+					}
+				}
 			}
 		}
 	});
@@ -868,8 +883,10 @@ sap.ui.define([
 			Editor.oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
 			this._applyLanguageChange();
 		}
+		this._fieldReady = false;
 		this._ready = false;
 		this._aFieldReadyPromise = [];
+		this._aFieldDataReadyPromise = [];
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
@@ -930,6 +947,13 @@ sap.ui.define([
 		return this._ready;
 	};
 
+	/**
+	 * Returns whether the fields of editor are ready to be used
+	 */
+	Editor.prototype.isFieldReady = function () {
+		return this._fieldReady;
+	};
+
 	Editor.prototype.hasPreview = function() {
 		var oPreview = this.getAggregation("_preview");
 		if (oPreview && oPreview.visible !== false) {
@@ -940,7 +964,7 @@ sap.ui.define([
 
 	Editor.prototype.getSeparatePreview = function() {
 		var sPreviewPosition = this.getPreviewPosition();
-		if (!this.isReady() || sPreviewPosition !== "separate") {
+		if (!this.isFieldReady() || sPreviewPosition !== "separate") {
 			return null;
 		}
 		if (!this._oPreview) {
@@ -980,6 +1004,7 @@ sap.ui.define([
 	};
 
 	Editor.prototype.setJson = function (vIdOrSettings, bSuppress) {
+		this._fieldReady = false;
 		this._ready = false;
 		if (deepEqual(vIdOrSettings, this._preIdOrSettings)) {
 			return this;
@@ -2152,7 +2177,14 @@ sap.ui.define([
 				if (oConfig.type === "string[]" && oField.isFilterBackend() && oConfig.visualization && oConfig.visualization.type === "MultiInput") {
 					oField.setModel(new JSONModel({}), undefined);
 				} else {
-					this._addValueListModel(oConfig, oField);
+					var pGetFieldData = Utils.timeoutPromise(this._addValueListModel(oConfig, oField));
+					pGetFieldData = pGetFieldData
+						.catch(function (sReason) {
+							this.checkUpdate();
+							Log.error("Get data of field " + sParameterKey + " could not be resolved. Reason: " + sReason);
+						}.bind(this));
+
+					this._aFieldDataReadyPromise.push(pGetFieldData);
 				}
 			}
 			this._createDependentFields(oConfig, oField);
@@ -2168,7 +2200,7 @@ sap.ui.define([
 	};
 
 	Editor.prototype._updateEditor = function (aDependentFields) {
-		if (this._ready) {
+		if (this._fieldReady) {
 			if (aDependentFields.length === 0) {
 				return;
 			}
@@ -2204,6 +2236,7 @@ sap.ui.define([
 	 * request data via data provider in RT
 	 * @param {object} oConfig
 	 * @param {sap.ui.integration.editor.fields.BaseField} oField
+	 * @returns {Promise} the getData promise of dataProvider
 	 */
 	Editor.prototype._requestData = function (oConfig, oField) {
 		var oDataProvider = this._oDataProviderFactory.create(oConfig.values.data);
@@ -2217,7 +2250,7 @@ sap.ui.define([
 			path: "context>/"
 		});
 		var oPromise = oDataProvider.getData();
-		oPromise.then(function (oData) {
+		return oPromise.then(function (oData) {
 			if (oConfig._cancel) {
 				oConfig._values = [];
 				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
@@ -2472,11 +2505,17 @@ sap.ui.define([
 	 * Creates a unnamed model if a values.data section exists in the configuration
 	 * @param {object} oConfig
 	 * @param {sap.ui.integration.editor.fields.BaseField} oField
+	 * @returns {promise} the return promise
 	 */
 	Editor.prototype._addValueListModel = function (oConfig, oField, nTimeout) {
 		if (oConfig.values) {
 			var oValueModel;
 			if (oConfig.values.data) {
+				//we use the binding context to connect the given path from oConfig.values.data.path
+				//with that the result of the data request can be have also other structures.
+				oField.bindObject({
+					path: oConfig.values.data.path || "/"
+				});
 				if (this._oDataProviderFactory) {
 					oValueModel = oField.getModel();
 					if (!oValueModel) {
@@ -2485,18 +2524,13 @@ sap.ui.define([
 					}
 					this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
 					if (!nTimeout) {
-						this._requestData(oConfig, oField);
+						return this._requestData(oConfig, oField);
 					} else {
 						setTimeout(function() {
-							this._requestData(oConfig, oField);
+							return this._requestData(oConfig, oField);
 						}.bind(this), nTimeout);
 					}
 				}
-				//we use the binding context to connect the given path from oConfig.values.data.path
-				//with that the result of the data request can be have also other structures.
-				oField.bindObject({
-					path: oConfig.values.data.path || "/"
-				});
 			} else if (this.getAggregation("_extension")) {
 				oValueModel = this.getAggregation("_extension").getModel();
 				//filter data for page admin
@@ -2529,6 +2563,7 @@ sap.ui.define([
 				//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
 				//to carry the values.
 				oField.setModel(oValueModel, undefined);
+				return Promise.resolve(null);
 			}
 		}
 	};
@@ -3132,8 +3167,13 @@ sap.ui.define([
 			this._initPreview();
 		}
 		Promise.all(this._aFieldReadyPromise).then(function () {
-			this._ready = true;
-			this.fireReady();
+			this._fieldReady = true;
+			this.fireFieldReady();
+			if (this.getMode() !== "admin" && this.getMode() !== "all") {
+				setTimeout(function () {
+					this.fireDestinationReady();
+				}.bind(this), 100);
+			}
 		}.bind(this));
 	};
 
@@ -3426,6 +3466,9 @@ sap.ui.define([
 					this._destinationsModel.setProperty("/_loading", false);
 					this._destinationsModel.setSizeLimit(a.length);
 					this._destinationsModel.checkUpdate(true);
+					setTimeout(function () {
+						this.fireDestinationReady();
+					}.bind(this), 100);
 				}.bind(this)).catch(function () {
 					//Fix DIGITALWORKPLACE-4359, retry once for the timeout issue
 					return this.getHostInstance().getDestinations();
@@ -3437,9 +3480,15 @@ sap.ui.define([
 					this._destinationsModel.setProperty("/_loading", false);
 					this._destinationsModel.setSizeLimit(b.length);
 					this._destinationsModel.checkUpdate(true);
+					setTimeout(function () {
+						this.fireDestinationReady();
+					}.bind(this), 100);
 				}.bind(this)).catch(function (e) {
 					this._destinationsModel.setProperty("/_loading", false);
 					this._destinationsModel.checkUpdate(true);
+					setTimeout(function () {
+						this.fireDestinationReady();
+					}.bind(this), 100);
 					Log.error("Can not get destinations list from '" + oHost.getId() + "'.");
 				}.bind(this));
 			}

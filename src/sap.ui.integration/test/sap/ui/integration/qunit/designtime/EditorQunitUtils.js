@@ -164,6 +164,30 @@ sap.ui.define([
 		return oEditor;
 	};
 
+	EditorQunitUtils.isFieldReady = function(oEditor) {
+		return new Promise(function(resolve) {
+			oEditor.attachFieldReady(function() {
+				resolve();
+			});
+		});
+	};
+
+	EditorQunitUtils.isDestinationReady = function(oEditor) {
+		return new Promise(function(resolve) {
+			oEditor.attachDestinationReady(function() {
+				resolve();
+			});
+		});
+	};
+
+	EditorQunitUtils.isUIReady = function(oEditor) {
+		return new Promise(function(resolve) {
+			oEditor.attachUIReady(function() {
+				resolve();
+			});
+		});
+	};
+
 	EditorQunitUtils.isReady = function(oEditor) {
 		return new Promise(function(resolve) {
 			oEditor.attachReady(function() {

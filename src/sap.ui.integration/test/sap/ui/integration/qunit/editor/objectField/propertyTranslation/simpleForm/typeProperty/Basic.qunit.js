@@ -132,11 +132,12 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithPropertiesDefinedWithTranslation
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 						assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
@@ -185,7 +186,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -197,11 +198,12 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithPropertiesDefinedWithTranslation
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 						assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
@@ -304,7 +306,7 @@ sap.ui.define([
 								});
 							});
 						});
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});

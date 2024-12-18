@@ -462,7 +462,7 @@ sap.ui.define([
 						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -554,7 +554,7 @@ sap.ui.define([
 						EditorQunitUtils.wait(500).then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getContent()[1];
 							oField1._settingsButton.focus();
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -632,7 +632,7 @@ sap.ui.define([
 							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -710,7 +710,7 @@ sap.ui.define([
 							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -813,7 +813,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -907,7 +907,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1009,7 +1009,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1157,7 +1157,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1264,7 +1264,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1354,7 +1354,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1459,7 +1459,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1570,7 +1570,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1683,7 +1683,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1794,7 +1794,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait(1000).then(async function () {
+							EditorQunitUtils.wait().then(async function () {
 								oMultiComboBox.focus();
 								await nextUIUpdate();
 								var oMsgStrip = Element.getElementById(oField1.getAssociation("_messageStrip"));
@@ -1916,12 +1916,12 @@ sap.ui.define([
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						EditorQunitUtils.wait(1000).then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
-							EditorQunitUtils.wait(1000).then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.ok(!oCheckBox.getSelected(), "Selected is false");
 								resolve();
 							});
@@ -1999,12 +1999,12 @@ sap.ui.define([
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						EditorQunitUtils.wait(1000).then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
-							EditorQunitUtils.wait(1000).then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.ok(!oCheckBox.getSelected(), "Selected is false");
 								resolve();
 							});
@@ -2070,12 +2070,12 @@ sap.ui.define([
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						EditorQunitUtils.wait(1000).then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);
-							EditorQunitUtils.wait(1000).then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.ok(!oSwitch.getState(), "State is false");
 								resolve();
 							});
@@ -2163,12 +2163,12 @@ sap.ui.define([
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
-						EditorQunitUtils.wait(1000).then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);
-							EditorQunitUtils.wait(1000).then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.ok(!oSwitch.getState(), "State is false");
 								resolve();
 							});

@@ -357,8 +357,8 @@ sap.ui.define([
 			assert.equal(this.oCardEditor.getCard(), "card2", "Card is set correctly");
 
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -373,8 +373,8 @@ sap.ui.define([
 			var oCard = new Card({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			this.oCardEditor.setCard(oCard);
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -394,8 +394,8 @@ sap.ui.define([
 			var oCard = new Card({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			this.oCardEditor.setCard(oCard);
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					var oGeneralPanel = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field");
@@ -464,8 +464,8 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -479,11 +479,12 @@ sap.ui.define([
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromCardExtension is ComboBox");
 
-					EditorQunitUtils.wait(2000).then(function () {
+					EditorQunitUtils.isReady(this.oCardEditor).then(function () {
+						assert.ok(this.oCardEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromCardExtension lenght is OK");
 						resolve();
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -544,8 +545,8 @@ sap.ui.define([
 				manifest: oManifestForSharedExtension
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -559,11 +560,12 @@ sap.ui.define([
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromCardExtension is ComboBox");
 
-					EditorQunitUtils.wait(2000).then(function () {
+					EditorQunitUtils.isReady(this.oCardEditor).then(function () {
+						assert.ok(this.oCardEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromCardExtension lenght is OK");
 						resolve();
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -720,8 +722,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					return new Promise(function (resolve) {
 						EditorQunitUtils.wait(100).then(function () {
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
@@ -879,8 +881,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					return new Promise(function (resolve) {
 						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
@@ -972,8 +974,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					return new Promise(function (resolve) {
 						EditorQunitUtils.wait().then(function () {
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
@@ -1104,8 +1106,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1149,8 +1151,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1194,14 +1196,15 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					setTimeout(function () {
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
+					EditorQunitUtils.isReady(this.oCardEditor).then(function () {
+						assert.ok(this.oCardEditor.isReady(), "Editor is ready");
 						var cardPreview = this.oCardEditor.getAggregation("_preview");
 						var card = cardPreview._getCardPreview();
 						assert.equal(card, null, "Preview mode card is OK");
 						resolve();
-					}.bind(this), 500);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1226,8 +1229,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1271,8 +1274,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1318,8 +1321,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1360,8 +1363,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1382,8 +1385,8 @@ sap.ui.define([
 		QUnit.test("Not scaled (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/previewNoScale", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1459,8 +1462,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1504,8 +1507,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1546,8 +1549,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1588,8 +1591,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1633,8 +1636,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var cardPreview = this.oCardEditor.getAggregation("_preview");
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
@@ -1706,8 +1709,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1749,8 +1752,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				this.oCardEditor.attachFieldReady(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "Card Editor fields are ready");
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");

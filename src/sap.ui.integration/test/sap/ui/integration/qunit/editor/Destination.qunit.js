@@ -57,12 +57,12 @@ sap.ui.define([
 		QUnit.test("Check Loading animation on destination", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "MyDestination" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(oField.getAggregation("_field").getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(oField.getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
 						resolve();
@@ -74,12 +74,12 @@ sap.ui.define([
 		QUnit.test("Check default destination", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
 						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
@@ -136,12 +136,12 @@ sap.ui.define([
 		QUnit.test("Check number of destinations", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
 						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
@@ -165,12 +165,12 @@ sap.ui.define([
 		QUnit.test("Filter destinations 1", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
 						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
@@ -193,12 +193,12 @@ sap.ui.define([
 		QUnit.test("Filter destinations 2", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
 						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
@@ -222,12 +222,12 @@ sap.ui.define([
 		QUnit.test("Filter destinations 3", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var DestinationComboBox = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
 						assert.ok(DestinationComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
@@ -284,12 +284,12 @@ sap.ui.define([
 		QUnit.test("Check destination is", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(oField.getAggregation("_field").getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(8000).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 6000ms
 						assert.ok(oField.getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
 						assert.equal(oField.getAggregation("_field").getItems().length, 0, "Content of Form contains: Destination Field items lengh OK");
@@ -341,8 +341,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -359,7 +359,7 @@ sap.ui.define([
 					assert.ok(DestinationLabel2.isA("sap.m.Label"), "Label2: Form content contains a Label");
 					assert.equal(DestinationLabel2.getText(), "dest2 label defined in manifest", "Label2: Has dest2 label from destination label property defined in manifest");
 					assert.ok(!DestinationComboBox2.getEditable(), "Content of Form contains: Destination Field 2 is NOT editable");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -410,11 +410,11 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.ok(!aFormContent, "Editor: has no destinations");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						resolve();
 					});
 				}.bind(this));
@@ -454,13 +454,13 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 1, "Editor: has 1 item");
 					var oPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						resolve();
 					});
 				}.bind(this));
@@ -497,8 +497,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oGeneralPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains a General Panel");
@@ -522,7 +522,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel1.getText(), "dest1 label defined in DT", "Label1: Has dest1 label from destination label property defined in DT");
 					assert.ok(DestinationField1.isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -584,8 +584,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oDestinationPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
@@ -617,7 +617,7 @@ sap.ui.define([
 					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
 					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
 
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -669,8 +669,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oDestinationPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
@@ -705,7 +705,7 @@ sap.ui.define([
 					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
 					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
 
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -757,8 +757,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oDestinationPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
@@ -790,7 +790,7 @@ sap.ui.define([
 					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
 					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
 
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -842,8 +842,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oDestinationPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oDestinationPanel.isA("sap.m.Panel"), "Panel: Form content contains Destination Panel");
@@ -878,7 +878,7 @@ sap.ui.define([
 					assert.equal(oField2.getAggregation("_field").getSelected(), false, "booleanParameter Field: Value");
 					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/booleanParameter/value"], false, "booleanParameter Field: manifestpath Value");
 
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -930,8 +930,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oGeneralPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains General Panel");
@@ -990,8 +990,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oGeneralPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oGeneralPanel.isA("sap.m.Panel"), "Panel: Form content contains General Panel");
@@ -1053,8 +1053,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oGroupPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
@@ -1113,8 +1113,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					var oGroupPanel = aFormContent[0].getAggregation("_field");
 					assert.ok(oGroupPanel.isA("sap.m.Panel"), "Panel: Form content contains Group Panel");
@@ -1176,15 +1176,15 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 2, "Editor: has 2 item");
 					var oPanel1 = aFormContent[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
 					var oPanel2 = aFormContent[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						resolve();
 					});
 				}.bind(this));
@@ -1225,8 +1225,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 3, "Editor: has 3 item");
 					var oPanel1 = aFormContent[0].getAggregation("_field");
@@ -1235,7 +1235,7 @@ sap.ui.define([
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
 					var oPanel3 = aFormContent[2].getAggregation("_field");
 					assert.ok(oPanel3.isA("sap.m.Panel"), "Panel: Form content contains 3 Panel");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						resolve();
 					});
 				}.bind(this));
@@ -1276,15 +1276,15 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 2, "Editor: has 2 item");
 					var oPanel1 = aFormContent[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
 					var oPanel2 = aFormContent[1].getAggregation("_field");
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						resolve();
 					});
 				}.bind(this));
@@ -1325,8 +1325,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 3, "Editor: has 3 item");
 					var oPanel1 = aFormContent[0].getAggregation("_field");
@@ -1335,7 +1335,7 @@ sap.ui.define([
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panel");
 					var oPanel3 = aFormContent[2].getAggregation("_field");
 					assert.ok(oPanel3.isA("sap.m.Panel"), "Panel: Form content contains 3 Panel");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						resolve();
 					});
 				}.bind(this));
@@ -1384,8 +1384,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1402,7 +1402,7 @@ sap.ui.define([
 					assert.ok(DestinationLabel2.isA("sap.m.Label"), "Label2: Form content contains a Label");
 					assert.equal(DestinationLabel2.getText(), "dest2 label defined in manifest", "Label2: Has dest2 label from destination label property defined in manifest");
 					assert.ok(!DestinationComboBox2.getEditable(), "Content of Form contains: Destination Field 2 is NOT editable");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -1462,8 +1462,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 15, "Editor: has 7 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1475,7 +1475,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel1.getText(), "dest1 with sorter", "Label1: Has dest1 label from destination label property defined in DT");
 					assert.ok(this.oEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox1.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox1.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 1 that is ComboBox");
 						assert.ok(DestinationComboBox1.getBusy() === false, "Content of Form contains: Destination Field 1 that is not busy anymore");
@@ -1545,8 +1545,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 15, "Editor: has 7 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1558,7 +1558,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel2.getText(), "dest2 with filter", "Label2: Has dest2 label");
 					assert.ok(this.oEditor.getAggregation("_formContent")[4].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox2.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox2.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 2 that is ComboBox");
 						assert.ok(DestinationComboBox2.getBusy() === false, "Content of Form contains: Destination Field 2 that is not busy anymore");
@@ -1617,8 +1617,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 15, "Editor: has 7 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1630,7 +1630,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel3.getText(), "dest3 with filters and And condition default", "Label3: Has dest3 label");
 					assert.ok(this.oEditor.getAggregation("_formContent")[6].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox3.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox3.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 3 that is ComboBox");
 						assert.ok(DestinationComboBox3.getBusy() === false, "Content of Form contains: Destination Field 3 that is not busy anymore");
@@ -1689,8 +1689,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 15, "Editor: has 7 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1702,7 +1702,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel4.getText(), "dest4 with filters and And condition TRUE", "Label4: Has dest4 label");
 					assert.ok(this.oEditor.getAggregation("_formContent")[8].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox4.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox4.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 4 that is ComboBox");
 						assert.ok(DestinationComboBox4.getBusy() === false, "Content of Form contains: Destination Field 4 that is not busy anymore");
@@ -1759,8 +1759,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 15, "Editor: has 7 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1772,7 +1772,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel5.getText(), "dest5 with filters and And condition FALSE", "Label5: Has dest5 label");
 					assert.ok(this.oEditor.getAggregation("_formContent")[6].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox5.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox5.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 5 that is ComboBox");
 						assert.ok(DestinationComboBox5.getBusy() === false, "Content of Form contains: Destination Field 5 that is not busy anymore");
@@ -1831,8 +1831,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 15, "Editor: has 7 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1844,7 +1844,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel6.getText(), "dest6 with sorters and filter", "Label6: Has dest6 label");
 					assert.ok(this.oEditor.getAggregation("_formContent")[12].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox6.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox6.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 6 that is ComboBox");
 						assert.ok(DestinationComboBox6.getBusy() === false, "Content of Form contains: Destination Field 6 that is not busy anymore");
@@ -1903,8 +1903,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 15, "Editor: has 7 destinations");
 					var oPanel = aFormContent[0].getAggregation("_field");
@@ -1916,7 +1916,7 @@ sap.ui.define([
 					assert.equal(DestinationLabel7.getText(), "dest7 with sorters and filters", "Label7: Has dest3 label");
 					assert.ok(this.oEditor.getAggregation("_formContent")[14].isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
 					assert.ok(DestinationComboBox7.getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.wait(1500).then(function () {
+					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationComboBox7.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field 7 that is ComboBox");
 						assert.ok(DestinationComboBox7.getBusy() === false, "Content of Form contains: Destination Field 7 that is not busy anymore");

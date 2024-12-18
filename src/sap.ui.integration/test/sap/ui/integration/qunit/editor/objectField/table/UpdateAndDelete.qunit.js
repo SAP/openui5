@@ -175,8 +175,8 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -209,8 +209,8 @@ sap.ui.define([
 					assert.equal(oToolbar2.getContent().length, 7, "Table toolbar 2: content length");
 					var oAddButton2 = oToolbar2.getContent()[1];
 					assert.ok(!oAddButton2.getVisible(), "Table toolbar 2: add button not visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -307,7 +307,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -319,8 +319,8 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -353,8 +353,8 @@ sap.ui.define([
 					assert.equal(oToolbar2.getContent().length, 7, "Table toolbar 2: content length");
 					var oAddButton2 = oToolbar2.getContent()[1];
 					assert.ok(!oAddButton2.getVisible(), "Table toolbar 2: add button not visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -441,7 +441,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -453,8 +453,8 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -487,8 +487,8 @@ sap.ui.define([
 					assert.equal(oToolbar2.getContent().length, 7, "Table toolbar 2: content length");
 					var oAddButton2 = oToolbar2.getContent()[1];
 					assert.ok(!oAddButton2.getVisible(), "Table toolbar 2: add button not visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -628,7 +628,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -640,8 +640,8 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -674,8 +674,8 @@ sap.ui.define([
 					assert.equal(oToolbar2.getContent().length, 7, "Table toolbar 2: content length");
 					var oAddButton2 = oToolbar2.getContent()[1];
 					assert.ok(!oAddButton2.getVisible(), "Table toolbar 2: add button not visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -814,7 +814,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -826,8 +826,8 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -860,8 +860,8 @@ sap.ui.define([
 					assert.equal(oToolbar2.getContent().length, 7, "Table toolbar 2: content length");
 					var oAddButton2 = oToolbar2.getContent()[1];
 					assert.ok(!oAddButton2.getVisible(), "Table toolbar 2: add button not visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1013,7 +1013,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1025,8 +1025,8 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1059,8 +1059,8 @@ sap.ui.define([
 					assert.equal(oToolbar2.getContent().length, 7, "Table toolbar 2: content length");
 					var oAddButton2 = oToolbar2.getContent()[1];
 					assert.ok(!oAddButton2.getVisible(), "Table toolbar 2: add button not visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1202,7 +1202,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1235,8 +1235,8 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValue1InTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1269,8 +1269,8 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1378,7 +1378,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1390,8 +1390,8 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValue1InTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1424,8 +1424,8 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1531,7 +1531,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1543,8 +1543,8 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValue1InTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1577,8 +1577,8 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1689,7 +1689,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1701,8 +1701,8 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValue1InTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true} };
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1735,8 +1735,8 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1845,7 +1845,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1878,8 +1878,8 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValue1InTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1907,8 +1907,8 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
-					oDeleteButton.onAfterRendering = function(oEvent) {
-						oDeleteButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oDeleteButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
@@ -1921,7 +1921,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1933,8 +1933,8 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValue1InTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1962,8 +1962,8 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
-					oDeleteButton.onAfterRendering = function(oEvent) {
-						oDeleteButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oDeleteButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
@@ -1977,7 +1977,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1989,8 +1989,8 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue1 = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValue1InTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -2029,8 +2029,8 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
-					oDeleteButton.onAfterRendering = function(oEvent) {
-						oDeleteButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oDeleteButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
@@ -2045,7 +2045,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});

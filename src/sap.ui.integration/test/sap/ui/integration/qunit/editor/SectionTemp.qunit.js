@@ -338,8 +338,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -366,7 +366,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					var oModel = this.oEditor.getModel("context");
 					assert.ok(oModel !== null, "Editor has a context model");
 					assert.deepEqual(oModel.getData(), getDefaultContextModel(this.oEditor._oResourceBundle), "Editor has a default context model");
@@ -380,7 +380,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ host: "contexthost", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					var oModel = this.oEditor.getModel("context");
 					assert.ok(oModel !== null, "Editor has a context model");
 					assert.strictEqual(oModel.getProperty("/sap.workzone/currentUser/id/label"), "Id of the Work Zone user", "Editor host context contains the user id label 'Id of the Work Zone'");
@@ -399,8 +399,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
@@ -411,8 +411,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": {} } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
@@ -423,8 +423,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
@@ -435,8 +435,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {} } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
@@ -447,8 +447,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {}, "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
@@ -478,8 +478,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -512,8 +512,8 @@ sap.ui.define([
 			}
 		});
 		return new Promise(function (resolve, reject) {
-			EditorQunitUtils.isReady(this.oEditor).then(function () {
-				assert.ok(this.oEditor.isReady(), "Editor is ready");
+			EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+				assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 				var oHint = this.oEditor.getAggregation("_formContent")[1];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
 				assert.equal(oHint.getHtmlText(), 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
@@ -543,8 +543,8 @@ sap.ui.define([
 			}
 		});
 		return new Promise(function (resolve, reject) {
-			EditorQunitUtils.isReady(this.oEditor).then(function () {
-				assert.ok(this.oEditor.isReady(), "Editor is ready");
+			EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+				assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 				var oHint = this.oEditor.getAggregation("_formContent")[4];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
 				assert.equal(oHint.getHtmlText(), 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
@@ -557,11 +557,12 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
@@ -575,7 +576,7 @@ sap.ui.define([
 						assert.equal(aItems[2].getKey(), "key3", "Field: Select item 1 Key is OK");
 						assert.equal(aItems[2].getText(), "text3", "Field: Select item 1 Text is OK");
 						resolve();
-					}, 500);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -603,11 +604,12 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
@@ -623,7 +625,7 @@ sap.ui.define([
 						assert.equal(aItems[3].getKey(), "key4", "Field: Select item 3 Key is OK");
 						assert.equal(aItems[3].getText(), "text4req", "Field: Select item 3 Text is OK");
 						resolve();
-					}, 1000);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -651,18 +653,19 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
 						assert.equal(oField.getAggregation("_field").getItems().length, 5, "Field: MultiComboBox items lenght is OK");
 						resolve();
-					}, 500);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -689,8 +692,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -734,18 +737,19 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
 						assert.equal(oField.getAggregation("_field").getItems().length, 6, "Field: MultiComboBox items lenght is OK");
 						resolve();
-					}, 1000);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -773,8 +777,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -790,18 +794,19 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_control");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						oSelect.setSelectedIndex(10);
 						oSelect.open();
 						resolve();
-					}, 500);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -810,19 +815,20 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_control");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oSelect.getItemByKey(IconFormatter.SRC_FOR_HIDDEN_ICON).getEnabled(), "Icon: item none is enabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is disabled");
 						resolve();
-					}, 500);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -831,19 +837,20 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_control");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(!oSelect.getItemByKey(IconFormatter.SRC_FOR_HIDDEN_ICON).getEnabled(), "Icon: item none is disabled");
 						assert.ok(oSelect.getItemByKey("file").getEnabled(), "Icon: item file is enabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is disabled");
 						resolve();
-					}, 500);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -871,8 +878,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -907,8 +914,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -943,8 +950,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -960,8 +967,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -977,8 +984,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -994,8 +1001,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1011,8 +1018,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(async function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(async function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1036,8 +1043,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(async function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(async function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1061,8 +1068,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1078,8 +1085,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1097,8 +1104,8 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					var oPanel = this.oEditor.getAggregation("_formContent")[3].getAggregation("_field");
@@ -1121,8 +1128,8 @@ sap.ui.define([
 			this.oEditor.setMode("content");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1144,8 +1151,8 @@ sap.ui.define([
 
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -1198,8 +1205,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -1226,8 +1233,8 @@ sap.ui.define([
 			var oJson = { baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } };
 			this.oEditor.setJson(oJson);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1356,8 +1363,8 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1388,7 +1395,8 @@ sap.ui.define([
 					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
-					setTimeout(async function () {
+					EditorQunitUtils.isReady(this.oEditor).then(async function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 						assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
@@ -1411,7 +1419,7 @@ sap.ui.define([
 						assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
 						assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 						resolve();
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1424,7 +1432,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1455,12 +1463,13 @@ sap.ui.define([
 					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oComboBox = oCustomerField.getAggregation("_field");
 						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
-						setTimeout(async function () {
+						EditorQunitUtils.wait(iWaitTimeout).then(async function () {
 							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
@@ -1483,8 +1492,8 @@ sap.ui.define([
 							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
 							assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1497,8 +1506,8 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1529,12 +1538,13 @@ sap.ui.define([
 					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oComboBox = oEmployeeField.getAggregation("_field");
 						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
-						setTimeout(async function () {
+						EditorQunitUtils.wait(iWaitTimeout).then(async function () {
 							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
@@ -1557,8 +1567,8 @@ sap.ui.define([
 							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
 							assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1571,8 +1581,8 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1603,7 +1613,8 @@ sap.ui.define([
 					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oComboBox = oCustomerField.getAggregation("_field");
 						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(0);
@@ -1612,7 +1623,7 @@ sap.ui.define([
 						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
-						setTimeout(async function () {
+						EditorQunitUtils.wait(iWaitTimeout).then(async function () {
 							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 1, "Field: Order lenght is OK");
@@ -1636,8 +1647,8 @@ sap.ui.define([
 							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
 							assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1650,8 +1661,8 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1682,7 +1693,8 @@ sap.ui.define([
 					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oComboBox = oCustomerField.getAggregation("_field");
 						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(0);
@@ -1691,12 +1703,12 @@ sap.ui.define([
 						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
-						setTimeout(function () {
+						EditorQunitUtils.wait(iWaitTimeout).then(function () {
 							oComboBox = oOrderField.getAggregation("_field");
 							assert.equal(oComboBox.getItems().length, 1, "Field: Order lenght is OK");
 							oComboBox.setSelectedIndex(0);
 							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
-							setTimeout(async function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(async function () {
 								assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 								assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 								assert.equal(oOrderField.getAggregation("_field").getItems().length, 1, "Field: Order lenght is OK");
@@ -1715,9 +1727,9 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
-							}, iWaitTimeout);
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+							});
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1730,8 +1742,8 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1762,7 +1774,8 @@ sap.ui.define([
 					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oComboBox = oCustomerField.getAggregation("_field");
 						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(1);
@@ -1771,12 +1784,12 @@ sap.ui.define([
 						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(1);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
-						setTimeout(function () {
+						EditorQunitUtils.wait(iWaitTimeout).then(function () {
 							oComboBox = oOrderField.getAggregation("_field");
 							assert.equal(oComboBox.getItems().length, 2, "Field: Order lenght is OK");
 							oComboBox.setSelectedIndex(0);
 							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
-							setTimeout(async function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(async function () {
 								assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 								assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 								assert.equal(oOrderField.getAggregation("_field").getItems().length, 2, "Field: Order lenght is OK");
@@ -1795,9 +1808,9 @@ sap.ui.define([
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
-							}, iWaitTimeout);
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+							});
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1830,8 +1843,8 @@ sap.ui.define([
 				manifest: oManifestForExtension
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1845,11 +1858,12 @@ sap.ui.define([
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromEditorExtension is ComboBox");
 
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromEditorExtension lenght is OK");
 						resolve();
-					}, 2 * iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1926,8 +1940,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oBooleanSwitch = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(oBooleanSwitch.getState() === false, "Label: Boolean switch value");
 
@@ -1957,20 +1971,21 @@ sap.ui.define([
 					var oCustomersWithEditableDependentMultiInput = oCustomersInMultiInputWithEditableDependenteField.getAggregation("_field");
 					assert.ok(oCustomersWithEditableDependentMultiInput.isA("sap.m.MultiInput"), "Field: Customers Editable is MultiInput");
 					assert.ok(!oCustomersWithEditableDependentMultiInput.getEditable(), "Field: Customers Editable is Not Editable");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerWithEditableDependentComboBox.getItems().length, 4, "Field: Customer Editable data lenght is OK");
 						assert.equal(oCustomersWithEditableDependentMultiComboBox.getItems().length, 5, "Field: Customers Editable data lenght is OK");
 
 						oBooleanSwitch.setState(true);
-						setTimeout(function () {
+						EditorQunitUtils.wait(iWaitTimeout).then(function () {
 							assert.ok(oCustomerWithEditableDependentComboBox.getEditable(), "Field: Customer Editable is now Editable");
 							assert.equal(oCustomerWithEditableDependentComboBox.getItems().length, 4, "Field: Customer Editable data lenght is OK");
 							assert.ok(oCustomersWithEditableDependentMultiComboBox.getEditable(), "Field: Customers Editable is now Editable");
 							assert.equal(oCustomersWithEditableDependentMultiComboBox.getItems().length, 5, "Field: Customers Editable data lenght is OK");
 							assert.ok(oCustomersWithEditableDependentMultiInput.getEditable(), "Field: Customers Editable is now Editable");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1985,8 +2000,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oBooleanSwitch = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(oBooleanSwitch.getState() === false, "Label: Boolean switch value");
 
@@ -2016,20 +2031,21 @@ sap.ui.define([
 					var oCustomersWithVisibleDependentMultiInput = oCustomersMultiInputWithVisibleDependentField.getAggregation("_field");
 					assert.ok(oCustomersWithVisibleDependentMultiInput.isA("sap.m.MultiInput"), "Field: Customers Visible is MultiInput");
 					assert.ok(!oCustomersWithVisibleDependentMultiInput.getVisible(), "Field: Customers Visible is Not Visible");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerWithVisibleDependentComboBox.getItems().length, 4, "Field: Customer Visible data lenght is OK");
 						assert.equal(oCustomersWithVisibleDependentMultiComboBox.getItems().length, 5, "Field: Customers Visible data lenght is OK");
 
 						oBooleanSwitch.setState(true);
-						setTimeout(function () {
+						EditorQunitUtils.wait(iWaitTimeout).then(function () {
 							assert.ok(oCustomerWithVisibleDependentComboBox.getVisible(), "Field: Customer Visible is now Visible");
 							assert.equal(oCustomerWithVisibleDependentComboBox.getItems().length, 4, "Field: Customer Visible data lenght is OK");
 							assert.ok(oCustomersWithVisibleDependentMultiComboBox.getVisible(), "Field: Customers Visible is now Visible");
 							assert.equal(oCustomersWithVisibleDependentMultiComboBox.getItems().length, 5, "Field: Customers Visible data lenght is OK");
 							assert.ok(oCustomersWithVisibleDependentMultiInput.getVisible(), "Field: Customers Visible is now Editable");
 							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
