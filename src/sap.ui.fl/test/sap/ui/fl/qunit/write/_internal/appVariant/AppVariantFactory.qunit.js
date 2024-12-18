@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/registry/Settings",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AppVariantFactory,
+	AppVariantInlineChangeFactory,
 	WriteUtils,
 	TransportSelection,
 	Settings,
@@ -90,6 +92,64 @@ sap.ui.define([
 				assert.notOk("Should never succeed");
 			}).catch(function(oError) {
 				assert.ok(oError.message, "lalala");
+			});
+		});
+
+		QUnit.test("When a change is added to an app variant and submitted", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id: "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER,
+					packageName: "$TMP",
+					content: []
+				})
+			});
+			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});
+			return AppVariantFactory.prepareUpdate({
+				id: "a.id"
+			}).then(function(oVariant) {
+				return AppVariantInlineChangeFactory.create_ui_generic_app_changePageConfiguration({
+					changeType: "appdescr_ui_generic_app_changePageConfiguration",
+					content: {
+						parentPage: {component: "dummy", entitySet: "dummy"},
+						entityPropertyChange: {
+							propertyPath: "a",
+							operation: "UPSERT",
+							propertyValue: "b"
+						}
+					}
+				}).then(function(oAppVariantInlineChange) {
+					return oVariant.addDescriptorInlineChange(oAppVariantInlineChange);
+				}).then(function() {
+					return oVariant.submit();
+				}).then(function(oResponse) {
+					assert.ok(oStubOpenTransportSelection.calledOnce);
+					assert.notEqual(oResponse, null);
+					assert.equal(oNewConnectorStub.callCount, 2);
+					assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/a.id");
+					assert.equal(oNewConnectorStub.getCall(0).args[1], "GET");
+					assert.equal(oNewConnectorStub.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?sap-language=EN");
+					var body = JSON.parse(oNewConnectorStub.getCall(1).args[2].payload);
+					assert.equal(body.packageName, "$TMP");
+					assert.equal(body.reference, "a.reference");
+					assert.equal(body.id, "a.id");
+					assert.equal(body.layer, Layer.CUSTOMER);
+					assert.deepEqual(body.content, [
+						{
+							changeType: "appdescr_ui_generic_app_changePageConfiguration",
+							content: {
+								parentPage: {component: "dummy", entitySet: "dummy"},
+								entityPropertyChange: {
+									propertyPath: "a",
+									operation: "UPSERT",
+									propertyValue: "b"
+								}
+							}
+						}
+					]);
+					assert.equal(oNewConnectorStub.getCall(1).args[1], "PUT");
+				});
 			});
 		});
 
