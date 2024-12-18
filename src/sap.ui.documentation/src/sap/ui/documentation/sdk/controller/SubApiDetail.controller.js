@@ -203,7 +203,6 @@ sap.ui.define([
 					}.bind(this), 1000);
 				}.bind(this), 0);
 
-				this.searchResultsButtonVisibilitySwitch(this.byId("apiDetailBackToSearch"));
 				this.appendPageTitle(this._oModel.getProperty("/displayName"));
 			},
 

@@ -24,17 +24,30 @@
 							  upperCaseAnchorBar="false"
 							  busyIndicatorDelay="0">
 				<headerTitle>
-					<ObjectPageHeader id="title" objectTitle="{/title}" objectSubtitle="{/subTitle}">
+					<ObjectPageDynamicHeaderTitle id="title">
+						<expandedHeading>
+							<m:FlexBox fitContainer="true" alignItems="Center">
+								<m:Title text="{/title}" wrapping="true" />
+								<m:Label text="{/subTitle}" />
+							</m:FlexBox>
+						</expandedHeading>
+
+						<snappedHeading>
+							<m:FlexBox fitContainer="true" alignItems="Center">
+								<m:Title text="{/title}" wrapping="true" />
+								<m:Label text="{/subTitle}" />
+							</m:FlexBox>
+						</snappedHeading>
+
 						<actions>
-							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
-							<ObjectPageHeaderActionButton
-									id="toggleFullScreenBtn"
-									visible="{device>/system/desktop}"
-									icon="sap-icon://full-screen"
-									tooltip="Show this sample in full screen mode"
-									press="onToggleFullScreen" />
+							<m:Button
+								id="toggleFullScreenBtn"
+								visible="{device>/system/desktop}"
+								icon="sap-icon://full-screen"
+								tooltip="Show this sample in full screen mode"
+								press="onToggleFullScreen" />
 						</actions>
-					</ObjectPageHeader>
+					</ObjectPageDynamicHeaderTitle>
 					<core:ExtensionPoint name="customTitle" />
 				</headerTitle>
 
