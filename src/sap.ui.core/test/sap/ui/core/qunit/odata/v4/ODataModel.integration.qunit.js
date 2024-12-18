@@ -6936,6 +6936,9 @@ sap.ui.define([
 			oBinding = that.oView.byId("form").getObjectBinding();
 			oContext = oBinding.getBoundContext();
 
+			// code under test
+			assert.strictEqual(oContext.isAggregated(), false, "JIRA: CPOUI5ODATAV4-2760");
+
 			that.expectRequest("EMPLOYEES('1')", {ID : "1", Name : "Jonathan Smith *"})
 				.expectChange("name", "Jonathan Smith *");
 
@@ -20314,7 +20317,8 @@ sap.ui.define([
 	// Ensure that #changeParameters w/ unchanged $$aggregation is ignored (BCP: 2370045709).
 	QUnit.test("Data Aggregation: suspend/resume: call setAggregation on a suspended ODLB",
 			function (assert) {
-		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+		var oBinding,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{path : \'/BusinessPartnerList\', suspended : true}">\
 	<Text id="role" text="{BusinessPartnerRole}"/>\
@@ -20324,8 +20328,10 @@ sap.ui.define([
 		this.expectChange("role", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("items");
-
+			// avoid that the metadata request disturbs the timing
+			return oModel.getMetaModel().requestObject("/");
+		}).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
 			oBinding.setAggregation({groupLevels : ["BusinessPartnerRole"]});
 			// code under test (BCP: 2370045709)
 			oBinding.changeParameters({$$aggregation : {groupLevels : ["BusinessPartnerRole"]}});
@@ -20338,6 +20344,12 @@ sap.ui.define([
 				},
 				groupLevels : [] // Note: "BusinessPartnerRole" removed from here
 			}, "JIRA: CPOUI5ODATAV4-1825, CPOUI5ODATAV4-2811");
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2760)
+				oBinding.getHeaderContext().isAggregated();
+			}, new Error("Must not call method when the binding's root binding is suspended"
+				+ ": sap.ui.model.odata.v4.ODataListBinding: /BusinessPartnerList"));
 
 			that.expectEvents(assert, oBinding, [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "filter"}],
@@ -20361,6 +20373,10 @@ sap.ui.define([
 			oBinding.resume();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test
+			assert.strictEqual(oBinding.getHeaderContext().isAggregated(), true,
+				"JIRA: CPOUI5ODATAV4-2760");
 		});
 	});
 
@@ -23348,7 +23364,13 @@ sap.ui.define([
 			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
 				assert.strictEqual(oContext.getPath(),
 					"/SalesOrderList(LifecycleStatus='" + "ZYX"[i] + "')");
+				assert.strictEqual(oContext.isExpanded(), false, "no leaf");
+				assert.strictEqual(oContext.getProperty("@$ui5.node.isTotal"), true, "subtotal");
+				// code under test
+				assert.strictEqual(oContext.isAggregated(), true, "JIRA: CPOUI5ODATAV4-2760");
 			});
+			assert.strictEqual(oListBinding.getHeaderContext().isAggregated(), true,
+				"JIRA: CPOUI5ODATAV4-2760");
 
 			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 			assert.strictEqual(oListBinding.getLength(), 26, "flat list as currently expanded");
@@ -23405,6 +23427,9 @@ sap.ui.define([
 			return that.waitForChanges(assert, "single group level");
 		}).then(function () {
 			assert.strictEqual(oListBinding.getCount(), 26, "count of leaves");
+			// code under test
+			assert.strictEqual(oListBinding.getHeaderContext().isAggregated(), true,
+				"JIRA: CPOUI5ODATAV4-2760");
 
 			assert.throws(function () {
 				oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
@@ -23616,6 +23641,14 @@ sap.ui.define([
 				"/SalesOrderList('26')", // SalesOrderID is the single key property!
 				"/SalesOrderList('25')"
 			]);
+
+			const oContext = aCurrentContexts[1];
+			assert.strictEqual(oContext.isExpanded(), undefined, "leaf");
+			assert.strictEqual(oContext.getProperty("@$ui5.node.isTotal"), false);
+			// code under test
+			assert.strictEqual(oContext.isAggregated(), false, "JIRA: CPOUI5ODATAV4-2760");
+			assert.strictEqual(oBinding.getHeaderContext().isAggregated(), false,
+				"JIRA: CPOUI5ODATAV4-2760");
 
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-1851)
@@ -26578,15 +26611,34 @@ sap.ui.define([
 				+ "/concat(aggregate($count as UI5__count),top(99)))", {
 				value : [
 					{SalesAmount : "n/a", "SalesAmount@odata.type" : "#Decimal"},
-					{UI5__count : "26", "UI5__count@odata.type" : "#Decimal"}
-					// ... (don't care)
+					{UI5__count : "1", "UI5__count@odata.type" : "#Decimal"},
+					{
+						Currency : "n/a",
+						Id : 42, // Edm.Int16
+						Region : "n/a",
+						SalesAmount : "n/a"
+					}
 				]
 			});
 
-		await Promise.all([
+		const [aContexts] = await Promise.all([
 			oListBinding.requestContexts(),
 			this.waitForChanges(assert)
 		]);
+
+		assert.strictEqual(aContexts[0].getPath(), "/BusinessPartners()");
+		assert.strictEqual(aContexts[0].isExpanded(), true);
+		assert.strictEqual(aContexts[0].getProperty("@$ui5.node.isTotal"), true, "grand total");
+		// code under test
+		assert.strictEqual(aContexts[0].isAggregated(), true, "JIRA: CPOUI5ODATAV4-2760");
+
+		assert.strictEqual(aContexts[1].getPath(), "/BusinessPartners(42)");
+		assert.strictEqual(aContexts[1].isExpanded(), undefined, "leaf");
+		assert.strictEqual(aContexts[1].getProperty("@$ui5.node.isTotal"), false);
+		// code under test
+		assert.strictEqual(aContexts[1].isAggregated(), false, "JIRA: CPOUI5ODATAV4-2760");
+		assert.strictEqual(oListBinding.getHeaderContext().isAggregated(), false,
+			"JIRA: CPOUI5ODATAV4-2760");
 	});
 
 	//*********************************************************************************************
@@ -26877,6 +26929,14 @@ sap.ui.define([
 				oTable = that.oView.byId("table");
 				oListBinding = oTable.getBinding("rows");
 
+				const [oContext] = oListBinding.getCurrentContexts();
+				assert.strictEqual(oContext.isExpanded(), undefined, "leaf");
+				assert.strictEqual(oContext.getProperty("@$ui5.node.isTotal"), undefined);
+				// code under test
+				assert.strictEqual(oContext.isAggregated(), true, "JIRA: CPOUI5ODATAV4-2760");
+				assert.strictEqual(oListBinding.getHeaderContext().isAggregated(), true,
+					"JIRA: CPOUI5ODATAV4-2760");
+
 				if (bCount) {
 					assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 					assert.strictEqual(oListBinding.getLength(), 26);
@@ -27107,6 +27167,8 @@ sap.ui.define([
 				group : {},
 				groupLevels : []
 			}, "JIRA: CPOUI5ODATAV4-1825");
+			assert.strictEqual(oListBinding.getHeaderContext().isAggregated(), true,
+				"JIRA: CPOUI5ODATAV4-2760");
 
 			assert.throws(function () {
 				// code under test
@@ -27230,6 +27292,13 @@ sap.ui.define([
 			oListBinding.setAggregation();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			const [oContext] = oListBinding.getCurrentContexts();
+
+			// code under test
+			assert.strictEqual(oContext.isAggregated(), false, "JIRA: CPOUI5ODATAV4-2760");
+			assert.strictEqual(oListBinding.getHeaderContext().isAggregated(), false,
+				"JIRA: CPOUI5ODATAV4-2760");
 		});
 	});
 
@@ -27506,6 +27575,10 @@ sap.ui.define([
 			oListBinding = oRoot.getBinding();
 			oHeaderContext = oListBinding.getHeaderContext();
 
+			// code under test
+			assert.strictEqual(oRoot.isAggregated(), false, "JIRA: CPOUI5ODATAV4-2760");
+			assert.strictEqual(oListBinding.getHeaderContext().isAggregated(), false,
+				"JIRA: CPOUI5ODATAV4-2760");
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(), {
 				expandTo : 1,
@@ -27908,9 +27981,13 @@ sap.ui.define([
 					}]
 				});
 
+			const oArtist1 = oListBinding.getCurrentContexts()[0];
+			// code under test
+			assert.strictEqual(oArtist1.isAggregated(), false, "JIRA: CPOUI5ODATAV4-2760");
+
 			return Promise.all([
 				// code under test
-				oListBinding.getCurrentContexts()[0].expand(),
+				oArtist1.expand(),
 				that.waitForChanges(assert, "expand")
 			]);
 		}).then(function () {
@@ -28048,6 +28125,8 @@ sap.ui.define([
 				}
 			});
 			assert.strictEqual(oListBinding.getAggregation().expandTo, Number.MAX_SAFE_INTEGER);
+			// code under test
+			assert.strictEqual(oKeptAliveNode.isAggregated(), false, "JIRA: CPOUI5ODATAV4-2760");
 		});
 	});
 	});

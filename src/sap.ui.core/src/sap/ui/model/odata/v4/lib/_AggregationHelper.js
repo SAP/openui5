@@ -1314,12 +1314,10 @@ sap.ui.define([
 		 *   additional fourth element which again is an array of filters: those exceptions where
 		 *   the special syntax is not applicable (for example, a currency filter that accompanies
 		 *   its amount).
-		 * @param {object} [oEntityType]
-		 *   The metadata for the entity type; needed only in case of aggregates
 		 *
 		 * @public
 		 */
-		splitFilter : function (oFilter, oAggregation, oEntityType) {
+		splitFilter : function (oFilter, oAggregation) {
 			var aFiltersNoAggregate = [],
 				aFiltersNoThese = [],
 				aFiltersOnAggregate = [];
@@ -1384,11 +1382,11 @@ sap.ui.define([
 				return aFilters.length > 1 ? new Filter(aFilters, true) : aFilters[0];
 			}
 
-			if (!oAggregation || !oAggregation.aggregate) {
+			if (!oAggregation?.aggregate) {
 				// no data aggregation at all
 				return [oFilter];
 			}
-			if (oEntityType.$Key.every((sKey) => sKey in oAggregation.group)) {
+			if (!oAggregation.$leafLevelAggregated) {
 				// no data aggregation on leaf level (all keys used for grouping)
 				return [undefined, oFilter];
 			}
