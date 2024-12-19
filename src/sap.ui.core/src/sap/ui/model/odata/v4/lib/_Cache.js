@@ -3566,7 +3566,7 @@ sap.ui.define([
 			return that.handleCount(oGroupLock, iTransientElements, oReadRequest.iStart,
 				oReadRequest.iEnd, aResult[0], iFiltered);
 		}).catch(function (oError) {
-			if (!oError.canceled) {
+			if (!oError.canceled && !oReadRequest.bObsolete) {
 				that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
 				that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
 			}
