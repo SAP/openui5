@@ -148,7 +148,7 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype.resolveListBinding = function() {
-		const oListBinding = this.getListBinding();
+		const oListBinding = this.getListBinding?.();
 		if (oListBinding) {
 			this._resolvePromise("listBinding", oListBinding);
 			this._updateBasicSearchField();
@@ -170,41 +170,6 @@ sap.ui.define([
 	 */
 	FilterableListContent.prototype.applyFilters = function() {
 
-	};
-
-
-	FilterableListContent.prototype._prettyPrintFilters = function(oFilter) {
-
-		let sRes;
-		if (!oFilter) {
-			return "";
-		}
-		if (Array.isArray(oFilter)) {
-			sRes = "";
-			oFilter.forEach(function(oFilter, iIndex, aFilters) {
-				sRes += this._prettyPrintFilters(oFilter);
-				if (aFilters.length - 1 != iIndex) {
-					sRes += " or ";
-				}
-			}, this);
-			return "(" + sRes + ")";
-		} else if (oFilter._bMultiFilter) {
-			sRes = "";
-			const { bAnd } = oFilter;
-			oFilter.aFilters.forEach(function(oFilter, iIndex, aFilters) {
-				sRes += this._prettyPrintFilters(oFilter);
-				if (aFilters.length - 1 != iIndex) {
-					sRes += bAnd ? " and " : " or ";
-				}
-			}, this);
-			return "(" + sRes + ")";
-		} else {
-			sRes = oFilter.sPath + " " + oFilter.sOperator + " '" + oFilter.oValue1 + "'";
-			if (oFilter.sOperator === "BT") {
-				sRes += "...'" + oFilter.oValue2 + "'";
-			}
-			return sRes;
-		}
 	};
 
 	FilterableListContent.prototype.getItemFromContext = function(oBindingContext, oOptions) {
