@@ -7584,7 +7584,7 @@ sap.ui.define([
 			assert.throws(function () {
 				// code under test
 				oCache.handleResponse(oResult, 3, oFetchTypesResult);
-			}, new Error("Duplicate predicate: bar"));
+			}, new Error("Duplicate key predicate: bar"));
 			return;
 		}
 
@@ -7936,6 +7936,40 @@ sap.ui.define([
 
 		return oPromise.then(function () {
 			sinon.assert.callOrder(oCheckRangeExpectation, oHandleResponseExpectation);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestElements: handleResponse fails", function (assert) {
+		const oCache = this.createCache("Employees");
+		this.mock(oCache).expects("getResourcePathWithQuery").withExactArgs(5, 10)
+			.returns("~sResourcePath~");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "~sResourcePath~", "~oGroupLock~", /*mHeaders*/undefined,
+				/*oPayload*/undefined, "~fnDataRequested~")
+			.resolves("~oResult~");
+		this.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~mTypes~");
+		this.mock(oCache).expects("requestSeparateProperties")
+			.withExactArgs(5, 10, sinon.match.instanceOf(SyncPromise));
+		this.mock(oCache).expects("fill").withExactArgs(sinon.match.instanceOf(SyncPromise), 5, 10);
+		this.mock(oCache).expects("checkRange")
+			.withExactArgs(sinon.match.instanceOf(SyncPromise), 5, 10);
+		const oError = new Error();
+		this.mock(oCache).expects("handleResponse").withExactArgs("~oResult~", 5, "~mTypes~")
+			.throws(oError);
+		this.mock(oCache).expects("handleCount").never();
+		// Note: no reject handler involved, thus no addt'l calls to #checkRange or #fill
+
+		// code under test
+		const oPromise = oCache.requestElements(5, 10, "~oGroupLock~", 0, "~fnDataRequested~");
+
+		assert.deepEqual(oCache.aReadRequests, [{iStart : 5, iEnd : 10, bObsolete : false}]);
+
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError, oError0);
+			assert.deepEqual(oCache.aReadRequests, []);
 		});
 	});
 

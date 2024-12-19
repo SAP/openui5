@@ -4040,7 +4040,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addElements: duplicate predicate (outside)", function (assert) {
+	QUnit.test("addElements: duplicate key predicate (outside)", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -4058,11 +4058,11 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oCache.addElements([oElement], 1); // oCache/iStart does not matter here
-		}, new Error("Duplicate predicate: foo"));
+		}, new Error("Duplicate key predicate: foo"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addElements: duplicate predicate (inside)", function (assert) {
+	QUnit.test("addElements: duplicate key predicate (inside)", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
@@ -4079,7 +4079,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oCache.addElements([oElement], 1); // oCache/iStart does not matter here
-		}, new Error("Duplicate predicate: foo"));
+		}, new Error("Duplicate key predicate: foo"));
 	});
 
 	//*********************************************************************************************

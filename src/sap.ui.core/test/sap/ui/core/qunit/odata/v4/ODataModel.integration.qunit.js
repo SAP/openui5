@@ -8550,10 +8550,10 @@ sap.ui.define([
 						{data : {}}],
 					// the change events for row properties are fired after dataReceived because the
 					// corresponding bindings are only created when the data has been received
-					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
-						{reason : "refresh"}],
 					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM/2[2]|ItemPosition",
-						"change", {reason : "change"}]
+						"change", {reason : "change"}],
+					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
+						{reason : "refresh"}]
 				])
 				.expectRequest("SalesOrderList('0500000001')?$select=Note,SalesOrderID",
 					{SalesOrderID : "0500000001", Note : "refreshed"})
@@ -64183,6 +64183,37 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Simple list, server responds with a duplicate key predicate in response.
+	// Check that a message and an error is logged which clearly indicates the issue.
+	// JIRA: CPOUI5ODATAV4-2813
+	QUnit.test("Duplicate key predicate", function (assert) {
+		const sView = `
+<Table id="table" items="{/EMPLOYEES}">
+	<Text id="id" text="{ID}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", {
+				value : [
+					{ID : "1"},
+					{ID : "1"}
+				]
+			})
+			.expectMessages([{
+				message : "Duplicate key predicate: ('1')",
+				persistent : true,
+				technical : true,
+				technicalDetails : {},
+				type : "Error"
+			}]);
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to get contexts for " + sTeaBusi
+					+ "EMPLOYEES with start index 0 and length 100",
+				sinon.match("Duplicate key predicate: ('1')"), sODLB);
+
+		return this.createView(assert, sView);
 	});
 
 	//*********************************************************************************************
