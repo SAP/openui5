@@ -1,6 +1,7 @@
 sap.ui.define([
-	"sap/ui/integration/Extension"
-], function (Extension) {
+	"sap/ui/integration/Extension",
+	"sap/ui/integration/ActionDefinition"
+], function (Extension, ActionDefinition) {
 	"use strict";
 
 	var TaskExtension = Extension.extend("sap.f.cardsdemo.showCard.task.Extension");
@@ -8,6 +9,19 @@ sap.ui.define([
 	TaskExtension.prototype.init = function () {
 		Extension.prototype.init.apply(this, arguments);
 		this.attachAction(this._handleAction.bind(this));
+	};
+
+	TaskExtension.prototype.onCardReady = function () {
+
+		this.getCard().addActionDefinition(new ActionDefinition({
+			type: "Navigation",
+			parameters: {
+				url: "https://training.sap.com/",
+				target: "_blank"
+			},
+			icon: "sap-icon://learning-assistant",
+			text: "Book"
+		}));
 	};
 
 	TaskExtension.prototype._handleAction = function (oEvent) {

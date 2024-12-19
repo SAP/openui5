@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "sap.f.tutorial.fcl.10"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/index.html",
+				"stretch": true,
+				"files": [
+					"webapp/view/App.view.xml",
+					"webapp/view/Master.view.xml",
+					"webapp/view/Detail.view.xml",
+					"webapp/view/DetailDetail.view.xml",
+					"webapp/controller/App.controller.js",
+					"webapp/controller/Master.controller.js",
+					"webapp/controller/Detail.controller.js",
+					"webapp/controller/DetailDetail.controller.js",
+					"webapp/Component.js",
+					"webapp/index.html",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

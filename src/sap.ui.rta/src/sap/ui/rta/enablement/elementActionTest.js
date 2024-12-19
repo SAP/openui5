@@ -559,22 +559,21 @@ sap.ui.define([
 			const oControl = await getControlFromActionMap.call(this, mAction);
 			const oChange = oCommand.getPreparedChange();
 			oChange.setRevertData(oChange.getRevertData() || {});
-			const mPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: oCommand.getAppComponent()
-			};
 
 			try {
 				const oChangeHandler = await ChangesUtils.getChangeHandler(
-					oChange,
 					{
+						flexObject: oChange,
 						control: oControl,
-						controlType: oControl.getMetadata().getName()
-					},
-					mPropertyBag
+						controlType: oControl.getMetadata().getName(),
+						modifier: JsControlTreeModifier
+					}
 				);
 				if (oChangeHandler && typeof oChangeHandler.getCondenserInfo === "function") {
-					oCondenserInfo = await oChangeHandler.getCondenserInfo(oChange, mPropertyBag);
+					oCondenserInfo = await oChangeHandler.getCondenserInfo(oChange, {
+						modifier: JsControlTreeModifier,
+						appComponent: oCommand.getAppComponent()
+					});
 				}
 				return oCondenserInfo?.classification === CondenserClassification.Create;
 			} catch (oError) {

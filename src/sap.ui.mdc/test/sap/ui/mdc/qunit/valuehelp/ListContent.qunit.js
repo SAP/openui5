@@ -1,33 +1,32 @@
 // Use this test page to test the API and features of the ValueHelp.
 // The interaction with the Field is tested on the field test page.
 
-/* global QUnit */
-/*eslint max-nested-callbacks: [2, 5]*/
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/condition/Condition"
-], function (
+], (
 		ListContent,
 		Condition
-	) {
+	) => {
 	"use strict";
 
 	let oContent;
 
-	const _teardown = function() {
+	const _teardown = () => {
 		oContent.destroy();
 		oContent = null;
 	};
 
 	QUnit.module("basic features", {
-		beforeEach: function() {
+		beforeEach() {
 			oContent = new ListContent();
 		},
 		afterEach: _teardown
 	});
 
-	QUnit.test("EQ operator determination", function(assert) {
+	QUnit.test("EQ operator determination", (assert) => {
 		const aConditions = [
 			Condition.createItemCondition("A", "Validated A"),
 			Condition.createItemCondition("B", "Validated B"),
@@ -35,6 +34,14 @@ sap.ui.define([
 		];
 
 		assert.equal(oContent.getCount(aConditions), 2, "getCount default implementation only considers validated conditions");
+	});
+
+	QUnit.test("caseSensitive", (assert) => {
+		sinon.spy(oContent, "handleFilterValueUpdate");
+
+		oContent.setCaseSensitive(true);
+
+		assert.ok(oContent.handleFilterValueUpdate.calledOnce, "handleFilterValueUpdate called if caseSensitive updated");
 	});
 
 });

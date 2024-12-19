@@ -103,10 +103,8 @@ sap.ui.define([
 			{
 				manifest: this._createManifest(),
 				baseUrl: oCard.getBaseUrl(),
-				resizable: true,
 				showCloseButton: true
-			},
-			true
+			}
 		);
 	};
 

@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/model/models",
 	"sap/ui/documentation/sdk/controller/ErrorHandler",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/documentation/sdk/controller/util/CookiesConsentManager",
+	"sap/ui/documentation/sdk/controller/util/UsageTracker",
 	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
 	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/base/util/Version",
@@ -24,6 +26,8 @@ sap.ui.define([
 	models,
 	ErrorHandler,
 	JSONModel,
+	CookiesConsentManager,
+	UsageTracker,
 	ConfigUtil,
 	DemokitURLUtil,
 	Version,
@@ -73,17 +77,21 @@ sap.ui.define([
 
 			},
 
-			getCookiesManagement: function() {
-				var sId = "sap.ui.documentation.sdk.cookieSettingsDialog";
-
-				if (!this._pCookiesComponent) {
-					this._pCookiesComponent = this.createComponent({
-						usage: "cookieSettingsDialog",
-						id: 'cookiesComp-' + sId
-					});
+			getCookiesConsentManager: function() {
+				if (!this._oCookiesConsentManager) {
+					const oConfig = {
+						defaultConsentDialogComponentId: "sap.ui.documentation.sdk.cookieSettingsDialog"
+					};
+					this._oCookiesConsentManager = CookiesConsentManager.create(this, oConfig);
 				}
+				return this._oCookiesConsentManager;
+			},
 
-				return this._pCookiesComponent;
+			getUsageTracker: function() {
+				if (!this._oUsageTracker) {
+					this._oUsageTracker = new UsageTracker(this);
+				}
+				return this._oUsageTracker;
 			},
 
 			/**
@@ -96,9 +104,10 @@ sap.ui.define([
 				this._oErrorHandler.destroy();
 				this._oConfigUtil.destroy();
 				this._oConfigUtil = null;
-				this._pCookiesComponent && this._pCookiesComponent.then(function(oCookiesMgmtComponent) {
-					oCookiesMgmtComponent.destroy();
-				});
+				this._oCookiesConsentManager?.destroy();
+				this._oCookiesConsentManager = null;
+				this._oUsageTracker?.destroy();
+				this._oUsageTracker = null;
 				// call the base component's destroy function
 				UIComponent.prototype.destroy.apply(this, arguments);
 			},

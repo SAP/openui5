@@ -1,4 +1,3 @@
-
 {
 	"sap.app": {
 		"id": "sap.f.cardsdemo.showCard.taskDetails",
@@ -27,7 +26,6 @@
 	},
 	"sap.card": {
 		"type": "Object",
-		"extension": "./TaskExtension",
 		"header": {
 			"icon": {
 				"src": "./images/DonnaMoore.png"

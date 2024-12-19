@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -36,6 +37,7 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
+	ChangesUtils,
 	ControlVariantUtils,
 	FlexObjectFactory,
 	States,
@@ -56,7 +58,8 @@ sap.ui.define([
 	/**
 	 * Provides an API for tools like {@link sap.ui.rta} to create, apply and revert {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}.
 	 *
-	 * @namespace sap.ui.fl.write.api.ChangesWriteAPI
+	 * @namespace
+	 * @alias module:sap/ui/fl/write/api/ChangesWriteAPI
 	 * @since 1.68
 	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
@@ -315,20 +318,24 @@ sap.ui.define([
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 	 * @param {string} mPropertyBag.changeType - Change type of a <code>sap.ui.fl.apply._internal.flexObjects.FlexObject</code> change
 	 * @param {string} [mPropertyBag.controlType] - Type of the control. If not given will be derived from the element
+	 * @param {boolean} [mPropertyBag.appDescriptorChange] - Indicates that the change is an app descriptor change
+	 * @param {boolean} [mPropertyBag.annotationChange] - Indicates that the change is an annotation change
 	 * @returns {Promise.<object>} Change handler object wrapped in a Promise
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
 	ChangesWriteAPI.getChangeHandler = function(mPropertyBag) {
-		var sControlType = mPropertyBag.controlType || mPropertyBag.modifier.getControlType(mPropertyBag.element);
-		return ChangeHandlerStorage.getChangeHandler(
-			mPropertyBag.changeType,
-			sControlType,
-			mPropertyBag.element,
-			mPropertyBag.modifier,
-			mPropertyBag.layer
-		);
+		var sControlType = mPropertyBag.controlType || mPropertyBag.modifier?.getControlType(mPropertyBag.element);
+		return ChangesUtils.getChangeHandler({
+			changeType: mPropertyBag.changeType,
+			control: mPropertyBag.element,
+			controlType: sControlType,
+			modifier: mPropertyBag.modifier,
+			layer: mPropertyBag.layer,
+			appDescriptorChange: mPropertyBag.appDescriptorChange,
+			annotationChange: mPropertyBag.annotationChange
+		});
 	};
 
 	/**

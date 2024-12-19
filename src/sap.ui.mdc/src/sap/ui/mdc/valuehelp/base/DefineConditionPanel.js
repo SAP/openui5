@@ -1954,8 +1954,8 @@ sap.ui.define([
 
 	function _handleInsert(oEvent) {
 		const aConditions = this.getConditions();
-		const oFormatOptions = this.getFormatOptions();
-		const iMaxConditions = oFormatOptions.maxConditions;
+		const oConfig = merge({}, this.getConfig());
+		const iMaxConditions = oConfig.maxConditions;
 
 		// get Index of first row (as validated conditions might exist and are hidden)
 		const oGrid = this.byId("conditions");

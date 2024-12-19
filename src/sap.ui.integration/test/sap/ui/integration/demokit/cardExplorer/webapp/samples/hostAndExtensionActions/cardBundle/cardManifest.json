@@ -49,6 +49,11 @@
 				"title": "{training}",
 				"description": "{location}"
 			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 2
+			}
 		}
 	}
 }

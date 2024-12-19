@@ -1,0 +1,154 @@
+{
+	"sap.app": {
+		"id": "test.manifest.showCardNumericHeader",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "{{destinations.myDestination}}/Products",
+				"parameters": {
+					"$format": "json",
+					"$count": true,
+					"$filter": "startswith(ProductName, '{filters>/name/value}') eq true"
+				}
+			}
+		},
+		"configuration": {
+			"filters": {
+				"name": {
+					"type": "Search",
+					"label": "Name",
+					"placeholder": "Name"
+				}
+			},
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind_V4"
+				}
+			}
+		},
+		"header": {
+			"type": "Numeric",
+			"data": {
+				"json": {
+					"kpiInfos": {
+						"kpi": {
+							"number": "200",
+							"unit": "K",
+							"trend": "Up",
+							"state": "Critical",
+							"target": {
+								"number": 250,
+								"unit": "K"
+							},
+							"deviation": {
+								"number": 25
+							},
+							"details": "Q1, 2019",
+							"Lines": [
+								{
+									"color": "Good",
+									"lineType": "Dashed",
+									"Points": [
+										{
+											"X": 0,
+											"Y": 100
+										},
+										{
+											"X": 10,
+											"Y": 110
+										},
+										{
+											"X": 20,
+											"Y": 80
+										},
+										{
+											"X": 30,
+											"Y": 120
+										}
+									]
+								},
+								{
+									"color": "#1c74d1",
+									"lineType": "Dotted",
+									"Points": [
+										{
+											"X": 0,
+											"Y": 250
+										},
+										{
+											"X": 10,
+											"Y": 380
+										},
+										{
+											"X": 20,
+											"Y": 180
+										},
+										{
+											"X": 30,
+											"Y": 190
+										}
+									]
+								}
+							]
+						}
+					}
+				},
+				"path": "/kpiInfos/kpi"
+			},
+			"title": "Numeric title",
+			"titleMaxLines": 1,
+			"status": {
+				"text": "Visible {parameters>/visibleItems}"
+			},
+			"subTitle": "By Average Price",
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{target/number}",
+					"unit": "{target/unit}"
+				},
+				{
+					"title": "Deviation",
+					"number": "{deviation/number}",
+					"unit": "%"
+				}
+			],
+			"details": "{details}",
+			"actions": [
+				{
+					"type": "ShowCard",
+					"parameters": {
+						"manifest": "./detailsManifest.json",
+						"data": {
+							"productsData": "{/}"
+						}
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 3
+			}
+		}
+	}
+}

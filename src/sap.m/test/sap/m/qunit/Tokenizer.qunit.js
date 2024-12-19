@@ -1288,9 +1288,9 @@ sap.ui.define([
 		this.tokenizer = new Tokenizer({
 			maxWidth:"200px",
 			tokens: [
-				new Token({text: "XXXX"}),
-				new Token({text: "XXX"}),
-				new Token({text: "XXXX"})
+				new Token({text: "Token 1"}),
+				new Token({text: "Token 2"}),
+				new Token({text: "Token 3"})
 			]
 		});
 
@@ -1314,6 +1314,7 @@ sap.ui.define([
 		oIndicator = this.tokenizer.$().find(".sapMTokenizerIndicator")[0];
 		assert.ok(oIndicator, true, "N-more label is added.");
 		assert.strictEqual(oIndicator.innerHTML, oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", [iHiddenTokens]), "N-more label's text is correct.");
+		assert.notOk(this.tokenizer.getTokens()[0].$().hasClass("sapMHiddenToken"), "The first token is visible.");
 
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Loose);
 		await nextUIUpdate();

@@ -3,12 +3,18 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/requireAsync",
 	"sap/ui/fl/Utils"
 ], function(
+	ApplyStrategyFactory,
 	FlexCustomData,
+	AnnotationChange,
+	AppDescriptorChange,
 	ChangeHandlerStorage,
 	requireAsync,
 	FlUtils
@@ -66,29 +72,49 @@ sap.ui.define([
 		},
 
 		/**
-		 * Fetches the change handler for a specific change and control;
-		 * if the change handler is currently being registered the function waits for the registration.
+		 * Fetches the change handler for a specific flex object or for the given parameters (e.g. for UI changes
+		 * or when the flex object is not available yet).
+		 * If the change handler is currently being registered, the function waits for the registration.
 		 *
-		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change for which the change handler should be fetched
-		 * @param {object} mControl - Object with information about the control
-		 * @param {sap.ui.core.Control} mControl.control - Control instance
-		 * @param {string} mControl.controlType - Type of the control
-		 * @param {object} mPropertyBag - Contains additional data that are needed for fetching the change handler
-		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
-		 * @returns {Promise} Promise resolving with the change handler or an empty object
+		 * @param {object} mPropertyBag - Data required to retrieve the change handler
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [mPropertyBag.flexObject] - Flex object for which the change handler is requested
+		 * @param {string} [mPropertyBag.changeType] - Change type of the flex object
+		 * @param {sap.ui.core.Control} [mPropertyBag.control] - Control for which the change handler is requested
+		 * @param {string} [mPropertyBag.controlType] - Type of the control for which the change handler is requested
+		 * @param {string} [mPropertyBag.layer] - Layer of the flex object
+		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} [mPropertyBag.modifier] - Control tree modifier
+		 * @param {boolean} [mPropertyBag.appDescriptorChange] - Whether the flex object is an app descriptor change
+		 * @param {boolean} [mPropertyBag.annotationChange] - Whether the flex object is an annotation change
+		 * @returns {Promise} Promise resolving with the retrieved change handler or undefined
 		 */
-		async getChangeHandler(oChange, mControl, mPropertyBag) {
-			const sLibraryName = await mPropertyBag.modifier.getLibraryName(mControl.control);
-			// the ChangeHandlerRegistration includes all the predefined ChangeHandlers.
-			// With this as a standard import the ChangeHandlers would not be able to access API classes due to circular dependencies.
-			// TODO should be removed as soon as the ChangePersistence / FlexController are gone
-			const ChangeHandlerRegistration = await requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration");
-			await ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
-			const sChangeType = oChange.getChangeType();
-			const sLayer = oChange.getLayer();
-			return ChangeHandlerStorage.getChangeHandler(
-				sChangeType, mControl.controlType, mControl.control, mPropertyBag.modifier, sLayer
-			);
+		async getChangeHandler(mPropertyBag) {
+			const sChangeType = mPropertyBag.changeType || mPropertyBag.flexObject?.getChangeType();
+			if (mPropertyBag.flexObject instanceof AppDescriptorChange || mPropertyBag.appDescriptorChange) {
+				const mStrategy = await ApplyStrategyFactory.getRuntimeStrategy();
+				try {
+					const oRegistry = await mStrategy.registry();
+					return await oRegistry[sChangeType]?.();
+				} catch (oError) {
+					mStrategy.handleError(oError);
+				}
+			} else if (mPropertyBag.flexObject instanceof AnnotationChange || mPropertyBag.annotationChange) {
+				return ChangeHandlerStorage.getAnnotationChangeHandler({
+					changeType: sChangeType
+				});
+			} else if (mPropertyBag.control) {
+				const sLibraryName = await mPropertyBag.modifier.getLibraryName(mPropertyBag.control);
+				// the ChangeHandlerRegistration includes all the predefined ChangeHandlers.
+				// With this as a standard import the ChangeHandlers would not be able to access API classes due to circular dependencies.
+				// TODO should be removed as soon as the ChangePersistence / FlexController are gone
+				const ChangeHandlerRegistration =
+					await requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration");
+				await ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
+				const sLayer = mPropertyBag.layer || mPropertyBag.flexObject?.getLayer();
+				return ChangeHandlerStorage.getChangeHandler(
+					sChangeType, mPropertyBag.controlType, mPropertyBag.control, mPropertyBag.modifier, sLayer
+				);
+			}
+			return undefined;
 		},
 
 		checkIfDependencyIsStillValid(oAppComponent, oModifier, mChangesMap, sChangeId) {

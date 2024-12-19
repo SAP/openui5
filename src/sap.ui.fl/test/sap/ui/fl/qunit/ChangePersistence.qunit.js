@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/ChangePersistence",
@@ -37,6 +38,7 @@ sap.ui.define([
 	Settings,
 	Condenser,
 	UIChangeManager,
+	CompVariantState,
 	FlexObjectManager,
 	WriteStorage,
 	ChangePersistence,
@@ -795,6 +797,42 @@ sap.ui.define([
 			assert.equal(this.oWriteStub.callCount, 0);
 			assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called again");
 			assert.equal(oUpdateStorageResponseStub.callCount, 6, "four changes got potentially deleted from the cache");
+		});
+
+		// TODO: Remove after CompVariant rework todos#5
+		QUnit.test("Persisted CompVariant flex objects should not be part of the condense process", async function(assert) {
+			const sPersistenceKey = "persistenceKey";
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: () => true,
+				hasPersoConnector: () => false,
+				isPublicLayerAvailable: () => false,
+				getUserId: () => "USER_123"
+			});
+
+			const oCompVariant = CompVariantState.addVariant({
+				changeSpecificData: {
+					type: "pageVariant",
+					content: {}
+				},
+				layer: Layer.CUSTOMER,
+				reference: sReference,
+				persistencyKey: sPersistenceKey,
+				control: {
+					getCurrentVariantId() {
+						return "";
+					}
+				}
+			});
+
+			oCompVariant.setState(States.PERSISTED);
+			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			this.oCondenserStub.resetHistory();
+			addTwoChanges(sReference, this.oComponentInstance, Layer.CUSTOMER, Layer.CUSTOMER);
+			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			assert.notOk(
+				this.oCondenserStub.getCalls()[0].args[1].includes(oCompVariant),
+				"the condenser was called without the CompVariant"
+			);
 		});
 
 		QUnit.test("Shall save the dirty changes for a draft when adding a new change and return a promise", function(assert) {

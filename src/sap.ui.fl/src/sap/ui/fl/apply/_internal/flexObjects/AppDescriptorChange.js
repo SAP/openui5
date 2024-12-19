@@ -49,6 +49,14 @@ sap.ui.define([
 		return AppDescriptorChange.getMappingInfo();
 	};
 
+	/**
+	 * Returns the ID to be used by the condenser.
+	 * @returns {string} ID for condensing
+	 */
+	AppDescriptorChange.prototype.getIdForCondensing = function() {
+		return `appDescriptor_${this.getFlexObjectMetadata().reference}`;
+	};
+
 	// ----------------- temporary functions -----------------
 	// The AppDescriptorChange is treated like a normal UI Change.
 	// This functions should be removed as soon as this is not the case anymore.

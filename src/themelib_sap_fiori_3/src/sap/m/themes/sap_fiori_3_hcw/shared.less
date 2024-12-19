@@ -6,8 +6,9 @@
 
 .sapMBadge,
 .sapMBadge[class*=sapMBadgeAccentColor] {
-	.sapMBadgeIndicator:after {
-		background-color: @sapUiContentBadgeBackground ;
-		border-color: @sapUiGroupContentBorderColor;
+
+	.sapMBadgeIndicator::after {
+		background-color: var(--sapContent_BadgeBackground);
+		border-color: var(--sapGroup_ContentBorderColor);
 	}
 }

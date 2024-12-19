@@ -401,44 +401,52 @@
 				"welcome": {
 					"viewName": "Welcome",
 					"viewLevel": 2,
-					"viewId": "welcome"
+					"viewId": "welcome",
+					"title": "home"
 				},
 				"controls": {
 					"viewName": "Controls",
 					"viewLevel": 2,
-					"viewId": "controls"
+					"viewId": "controls",
+					"title": "samples"
 				},
 				"controlsMaster": {
 					"viewName": "ControlsMaster",
 					"viewLevel": 1,
 					"viewId": "controlsMaster",
-					"controlAggregation": "masterPages"
+					"controlAggregation": "masterPages",
+					"title": "samples"
 				},
 				"group": {
 					"viewName": "Group",
 					"viewLevel": 2,
-					"viewId": "group"
+					"viewId": "group",
+					"title": "samples"
 				},
 				"entity": {
 					"viewName": "Entity",
 					"viewLevel": 2,
-					"viewId": "entity"
+					"viewId": "entity",
+					"title": "samples"
 				},
 				"sample": {
 					"viewName": "Sample",
 					"viewLevel": 2,
-					"viewId": "sample"
+					"viewId": "sample",
+					"title": "samples"
 				},
 				"code": {
 					"viewName": "Code",
 					"viewLevel": 2,
 					"viewId": "code",
-					"transition": "slide"
+					"transition": "slide",
+					"title": "samples"
 				},
 				"downloads": {
 					"viewName": "Downloads",
 					"viewLevel": 2,
-					"viewId": "downloads"
+					"viewId": "downloads",
+					"title": "demoApps"
 				},
 				"apiMaster": {
 					"viewName": "ApiMaster",
@@ -449,47 +457,56 @@
 				"demoApps": {
 					"viewName": "DemoApps",
 					"viewLevel": 2,
-					"viewId": "demoApps"
+					"viewId": "demoApps",
+					"title": "demoApps"
 				},
 				"resources": {
 					"viewName": "Resources",
 					"viewLevel": 2,
-					"viewId": "resources"
+					"viewId": "resources",
+					"title": "resources"
 				},
 				"news": {
 					"viewName": "News",
 					"viewLevel": 2,
-					"viewId": "news"
+					"viewId": "news",
+					"title": "home"
 				},
 				"BPSupport": {
 					"viewName": "BPSupport",
 					"viewLevel": 2,
-					"viewId": "BPSupport"
+					"viewId": "BPSupport",
+					"title": "home"
 				},
 				"apiDetailInitial": {
 					"viewName": "ApiDetailInitial",
 					"viewId": "apiDetailInitial",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "apiReference"
 				},
 				"apiDetail": {
 					"viewName": "ApiDetail",
 					"viewId": "apiDetail",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "apiReference"
 				},
 				"apiDetailDeprecated": {
 					"viewName": "ApiDetailDeprecated",
 					"viewId": "apiDetailDeprecated",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "apiReference"
 				},
 				"apiDetailExperimental": {
 					"viewName": "ApiDetailExperimental",
 					"viewId": "apiDetailExperimental",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "apiReference"
 				},
 				"apiDetailSince": {
 					"viewName": "ApiDetailSince",
 					"viewId": "apiDetailSince",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "apiReference"
 				},
 				"topicMaster": {
 					"viewName": "TopicMaster",
@@ -500,62 +517,74 @@
 				"topicDetailInitial": {
 					"viewName": "TopicDetailInitial",
 					"viewId": "topicDetailInitial",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "documentation"
 				},
 				"topicDetail": {
 					"viewName": "TopicDetail",
 					"viewId": "topicDetail",
-					"viewLevel": 2
+					"viewLevel": 2,
+					"title": "documentation"
 				},
 				"searchPage": {
 					"viewName": "SearchPage",
 					"viewId": "searchPage",
 					"viewLevel": 2,
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"title": "home"
 				},
 				"sampleNotFound": {
-				  "viewName": "SampleNotFound",
-				  "viewId": "sampleNotFound"
+					"viewName": "SampleNotFound",
+					"viewId": "sampleNotFound",
+					"title": "samples"
 				},
 				"notFound": {
 					"viewName": "NotFound",
-					"viewId": "notFound"
+					"viewId": "notFound",
+					"title": "home"
 				},
 				"versionNotFound": {
 					"viewName": "VersionNotFound",
-					"viewId": "versionNotFound"
+					"viewId": "versionNotFound",
+					"title": "home"
 				},
 				"sitemap": {
 					"viewName": "Sitemap",
-					"viewId": "sitemap"
+					"viewId": "sitemap",
+					"title": "home"
 				},
 				"liveEditor": {
 					"viewName": "LiveEditor",
-					"viewId": "liveEditor"
+					"viewId": "liveEditor",
+					"title": "home"
 				},
 				"releaseNotes": {
 					"viewName": "ReleaseNotes",
 					"viewLevel": 2,
 					"viewId": "releaseNotes",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"title": "home"
 				},
 				"license": {
 					"viewName": "License",
 					"viewLevel": 2,
 					"viewId": "releaseNotes",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"title": "home"
 				},
 				"termsOfUse": {
 					"viewName": "TermsOfUse",
 					"viewLevel": 2,
 					"viewId": "termsOfUse",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"title": "home"
 				},
 				"versionInfo": {
 					"viewName": "VersionInfo",
 					"viewLevel": 2,
 					"viewId": "versionInfo",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"title": "home"
 				}
 			}
 		},

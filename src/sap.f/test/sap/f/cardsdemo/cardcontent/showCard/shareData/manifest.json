@@ -44,10 +44,126 @@
 			}
 		},
 		"header": {
-			"icon": {
-				"src": "sap-icon://sap-ui5"
+			"type": "Numeric",
+			"data": {
+				"json": {
+					"kpiInfos": {
+						"kpi": {
+							"number": "200",
+							"unit": "K",
+							"trend": "Up",
+							"state": "Critical",
+							"target": {
+								"number": 250,
+								"unit": "K"
+							},
+							"deviation": {
+								"number": 25
+							},
+							"details": "Q1, 2019",
+							"Lines": [
+								{
+									"color": "Good",
+									"lineType": "Dashed",
+									"Points": [
+										{
+											"X": 0,
+											"Y": 100
+										},
+										{
+											"X": 10,
+											"Y": 110
+										},
+										{
+											"X": 20,
+											"Y": 80
+										},
+										{
+											"X": 30,
+											"Y": 120
+										}
+									]
+								},
+								{
+									"color": "#1c74d1",
+									"lineType": "Dotted",
+									"Points": [
+										{
+											"X": 0,
+											"Y": 250
+										},
+										{
+											"X": 10,
+											"Y": 380
+										},
+										{
+											"X": 20,
+											"Y": 180
+										},
+										{
+											"X": 30,
+											"Y": 190
+										}
+									]
+								}
+							]
+						}
+					}
+				},
+				"path": "/kpiInfos/kpi"
 			},
 			"title": "Sharing data between details card and opener",
+			"titleMaxLines": 1,
+			"status": {
+				"text": "Visible {parameters>/visibleItems}"
+			},
+			"subTitle": "By Average Price",
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{target/number}",
+					"unit": "{target/unit}"
+				},
+				{
+					"title": "Deviation",
+					"number": "{deviation/number}",
+					"unit": "%"
+				}
+			],
+			"chart": {
+				"type": "Line",
+				"leftTopLabel": "0",
+				"rightTopLabel": "30",
+				"maxXValue": 30,
+				"maxYValue": 400,
+				"minXValue": 0,
+				"minYValue": 0,
+				"leftBottomLabel": "June 1",
+				"rightBottomLabel": "June 30",
+				"lines": {
+					"path": "Lines",
+					"template": {
+						"color": "{color}",
+						"lineType": "{type}",
+						"showPoints": true,
+						"points": {
+							"path": "Points",
+							"template": {
+								"x": "{X}",
+								"y": "{Y}"
+							}
+						}
+					}
+				}
+			},
+			"details": "{details}",
 			"actions": [
 				{
 					"type": "ShowCard",

@@ -29,8 +29,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/documentation/sdk/util/Resources",
 	'sap/base/util/LoaderExtensions',
-	"sap/ui/documentation/sdk/controller/util/ThemePicker",
-	"sap/ui/thirdparty/URI"
+	"sap/ui/documentation/sdk/controller/util/ThemePicker"
 ], function(
 	Localization,
 	Element,
@@ -58,8 +57,7 @@ sap.ui.define([
 	Toolbar,
 	ResourcesUtil,
 	LoaderExtensions,
-	ThemePicker,
-	URI
+	ThemePicker
 ) {
 	"use strict";
 
@@ -128,7 +126,6 @@ sap.ui.define([
 
 			var oViewModel = new JSONModel({
 				bCNICPShow: window.location.href.includes("sapui5.platform.sapcloud.cn"),
-				bShowTAConsent: false,
 				busy: false,
 				delay: 0,
 				device: Device,
@@ -152,8 +149,7 @@ sap.ui.define([
 					"<a href='https://sdk.openui5.org/1.71.46/'>https://sdk.openui5.org/1.71.46/</a>"
 			});
 
-			var oComponent = this.getOwnerComponent(),
-				oController = this;
+			var oController = this;
 
 			ThemePicker.init(oController);
 
@@ -184,16 +180,15 @@ sap.ui.define([
 
 			}.bind(this));
 
-			//setup cookie query parsing
-			var oUri = new URI(window.location.href);
-			if (oUri.hasQuery("sap-ui-xx-tracking") && oUri.query(true)["sap-ui-xx-tracking"] === "aa") {
-				oViewModel.setProperty("/bShowTAConsent", true);
-			}
+			this._oCookiesConsentManager = this.getOwnerComponent().getCookiesConsentManager();
+
+			this._initUsageTracking();
 
 			// Config routes
 			this.oRouter = this.getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
 			this.oRouter.attachBypassed(this.onRouteNotFound.bind(this));
+			this.oRouter.attachEvent("_navToWithoutHash", this.onNavToWithoutHash.bind(this));
 
 			// Store product version information
 			this._aNeoAppVersions = [];
@@ -249,19 +244,13 @@ sap.ui.define([
 
 			this._createConfigurationBasedOnURIInput();
 
-			if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1" && this._aConfiguration.length > 0) {
-				this._applyCookiesConfiguration(this._aConfiguration);
-			} else {
-				this._applyDefaultConfiguration(this._aConfiguration);
-			}
-
-			var bExternalCookiesManager = oViewModel.getProperty("/bShowTAConsent");
-
-			if (!bExternalCookiesManager) {
-				oComponent.getCookiesManagement().then(function(oCookieMgmtComponent) {
-					oCookieMgmtComponent.enable(oComponent.getRootControl());
-				});
-			}
+			this._oCookiesConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+				if (bAccepts && this._aConfiguration.length > 0) {
+					this._applyCookiesConfiguration(this._aConfiguration);
+				} else {
+					this._applyDefaultConfiguration(this._aConfiguration);
+				}
+			}.bind(this));
 
 			// Handle page resize
 			ResizeHandler.register(this._demoKitPage, this.onPageResize.bind(this));
@@ -291,9 +280,12 @@ sap.ui.define([
 			if (this.highlighter) {
 				this.highlighter.destroy();
 			}
+
+			this._oCookiesConsentManager = null;
 		},
 
 		onRouteChange: function (oEvent) {
+			this._cacheRouteEventDetails(oEvent);
 			if (!this.oRouter.getRoute(oEvent.getParameter("name"))._oConfig.target) {
 				return;
 			}
@@ -323,6 +315,10 @@ sap.ui.define([
 			this._demoKitSplitApp.hideMaster();
 			oViewModel.setProperty("/bIsShownMaster", false);
 			this.appendPageTitle(null).appendPageTitle(WEB_PAGE_TITLE[sKey]);
+		},
+
+		onNavToWithoutHash: function(oEvent) {
+			this._cacheRouteEventDetails(oEvent);
 		},
 
 		toggleMaster: function (oEvent) {
@@ -446,9 +442,7 @@ sap.ui.define([
 			} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 				this.settingsDialogOpen();
 			} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
-				this.getOwnerComponent().getCookiesManagement().then(function (oCookieMgmtComponent) {
-					oCookieMgmtComponent.cookieSettingsDialogOpen({ showCookieDetails: true }, this.getView());
-				}.bind(this));
+				this._oCookiesConsentManager.showDialog(this.getView());
 			} else if (sTargetText === CHANGE_VERSION_TEXT) {
 				this.onChangeVersionButtonPress();
 			} else if (ThemePicker._getTheme()[sTargetText]) {
@@ -459,6 +453,23 @@ sap.ui.define([
 				URLHelper.redirect(sTarget, true);
 			}
 			this.sTarget = sTarget;
+		},
+
+		_initUsageTracking: function () {
+			this._oCookiesConsentManager.checkUserAcceptsUsageTracking(function(bAccepts) {
+				if (!bAccepts) {
+					return;
+				}
+				var oTracker = this.getOwnerComponent().getUsageTracker();
+
+				// track the routes visited before the usage tracker was initialized
+				this._aRouterCachedEventDetails.forEach(function(oEventDetails) {
+					oTracker.logRouteVisit(oEventDetails);
+				});
+
+				// clear the logged route visits
+				this._aRouterCachedEventDetails = [];
+			}.bind(this));
 		},
 
 		createSearchPopover: function () {
@@ -856,9 +867,11 @@ sap.ui.define([
 		_setSelectedLanguage: function (sLanguage) {
 			this._oSupportedLangModel.setProperty("/selectedLang", sLanguage);
 			Localization.setLanguage(sLanguage);
-			if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
-				this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_LANGUAGE, sLanguage);
-			}
+			this._oCookiesConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+				if (bAccepts) {
+					this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_LANGUAGE, sLanguage);
+				}
+			}.bind(this));
 
 			if (this._sKey) {
 				this._setSelectedSectionTitle(this._sKey);

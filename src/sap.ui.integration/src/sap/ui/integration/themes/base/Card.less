@@ -12,6 +12,7 @@
 }
 
 .sapUiIntCardDialog {
+
 	.sapMDialogSection,
 	.sapMDialogScroll,
 	.sapMDialogScrollCont,
@@ -20,16 +21,24 @@
 		max-height: inherit;
 	}
 
+	.sapFCardHeader {
+		box-shadow: @sapUiContentHeaderShadow;
+		border-radius: @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0 0;
+	}
+
+	&.sapMDialogDraggable .sapFCardHeader {
+		.sapMNC,
+		.sapFCardStatus {
+			cursor: text;
+		}
+
+		.sapFAvatar {
+			cursor: default;
+		}
+	}
+
 	.sapUiIntCard {
-		border-radius: @sapUiElementBorderCornerRadius;
-
-		.sapFCardHeader {
-			box-shadow: @sapUiContentHeaderShadow;
-		}
-
-		&:has(.sapFCardFilterBar) .sapFCardHeader {
-			box-shadow: unset;
-		}
+		border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
 
 		.sapFCardFilterBar {
 			border-bottom: none;
@@ -38,6 +47,7 @@
 
 		.sapFCardContent {
 			overflow: auto;
+			border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
 		}
 
 		.sapFCardObjectContent>.sapMVBox {

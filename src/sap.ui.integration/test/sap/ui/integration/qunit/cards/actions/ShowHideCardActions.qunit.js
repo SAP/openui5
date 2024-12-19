@@ -272,13 +272,14 @@ sap.ui.define([
 
 		aButtons[1].firePress();
 
-		const oSnackCard = this.oCard.getDependents()[0].getContent()[0];
+		const oDialog = this.oCard.getDependents()[0];
+		const oSnackCard = oDialog.getContent()[0];
 
 		await nextCardReadyEvent(oSnackCard);
 
 		//Assert
-		assert.strictEqual(oSnackCard.getCardHeader().getToolbar().getVisible(), false, "Close Button is not visible");
-		assert.strictEqual(oSnackCard.getCardHeader().getDomRef().querySelector("sapMBtn"), null, "Close Button is not in DOM");
+		assert.strictEqual(oDialog.getCustomHeader().getToolbar().getVisible(), false, "Close Button is not visible");
+		assert.strictEqual(oDialog.getCustomHeader().getDomRef().querySelector("sapMBtn"), null, "Close Button is not in DOM");
 	});
 
 	QUnit.module("Show/Hide Card Actions - Resizing", {
@@ -353,5 +354,4 @@ sap.ui.define([
 			done();
 		});
 	});
-
 });

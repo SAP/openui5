@@ -57,7 +57,13 @@
 				"src": "sap-icon://sap-ui5"
 			},
 			"title": "Order for {ShipName}",
-			"subTitle": "ID {parameters>/orderId/value}"
+			"subTitle": "For {ShipAddress}",
+			"status": {
+				"text": "ID {OrderID}"
+			},
+			"closeButton": {
+				"visible": false
+			}
 		},
 		"content": {
 			"groups": [
@@ -65,7 +71,7 @@
 					"items": [
 						{
 							"label": "Name",
-							"value": "{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}"
+							"value": "{ShipName}"
 						},
 						{
 							"label": "Address",

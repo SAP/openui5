@@ -89,6 +89,11 @@
 	color: #fff;
 }
 
+/* hide the link that allows to reopen the TrustArc consent dialog */
+#teconsent > a {
+	display: none;
+}
+
 /*SMALL*/
 
 .sap-phone .sapUiDemoIconExplorer .sapMText.HomeHeaderText {

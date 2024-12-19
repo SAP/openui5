@@ -1,0 +1,11 @@
+specVersion: "4.0"
+metadata:
+  name: tutorial.fcl
+type: application
+framework:
+  name: OpenUI5
+  version: "2.0.0-SNAPSHOT" #MainVersion#
+  libraries:
+    - name: sap.f
+    - name: sap.ui.core
+    - name: themelib_sap_horizon

@@ -1,0 +1,103 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.showCard.order",
+		"type": "card",
+		"title": "Sample of an Snack Card",
+		"subTitle": "Sample of an Snack Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample",
+				"Snack"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "{{destinations.myDestination}}/Orders",
+				"parameters": {
+					"$format": "json",
+					"$filter": "OrderID eq {parameters>/orderId/value}"
+				}
+			},
+			"path": "/value/0"
+		},
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind_V4"
+				}
+			},
+			"parameters": {
+				"orderId": {
+					"value": 10249
+				},
+				"enableResize": {
+					"value": true
+				}
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/value/0"
+			},
+			"title": "Card with hidden header",
+			"visible": false
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Name",
+							"value": "{ShipName}"
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "Address",
+							"value": "{ShipAddress}"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Show More",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./detailsManifest.json",
+								"parameters": {
+									"orderId": "{parameters>/orderId/value}"
+								},
+								"resizable": "{parameters>/enableResize/value}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

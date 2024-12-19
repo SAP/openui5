@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/Utils"
 ], function(
 	isEmptyObject,
 	isPlainObject,
+	JsControlTreeModifier,
 	FlexObject,
 	States,
 	Utils
@@ -471,6 +473,19 @@ sap.ui.define([
 			return { ...this._oExtensionPointInfo };
 		}
 		return this._oExtensionPointInfo;
+	};
+
+	/**
+	 * Returns the ID to be used for condensing.
+	 *
+	 * @param {object} oCondenserInfo - Condenser information returned from the change handler
+	 * @param {sap.ui.core.Component} oAppComponent - Application component
+	 * @returns {string} ID for condensing
+	 */
+	UIChange.prototype.getIdForCondensing = function(oCondenserInfo, oAppComponent) {
+		return oCondenserInfo !== undefined
+			? oCondenserInfo.affectedControl
+			: JsControlTreeModifier.getControlIdBySelector(this.getSelector(), oAppComponent);
 	};
 
 	return UIChange;

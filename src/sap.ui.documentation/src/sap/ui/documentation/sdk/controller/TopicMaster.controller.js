@@ -9,8 +9,9 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/base/Log",
 		"sap/ui/documentation/sdk/controller/util/Highlighter",
-		"sap/ui/documentation/sdk/controller/util/DocuInfo"
-	], function (Device, MasterTreeBaseController, JSONModel, mobileLibrary, Log, Highlighter, DocuInfo) {
+		"sap/ui/documentation/sdk/controller/util/DocuInfo",
+		"sap/ui/documentation/sdk/controller/util/TreeUtil"
+	], function (Device, MasterTreeBaseController, JSONModel, mobileLibrary, Log, Highlighter, DocuInfo, TreeUtil) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -41,7 +42,7 @@ sap.ui.define([
 
 						// Add data to model and initialize tree
 						oModel.setData(oData);
-						this._initTreeUtil("key", "links");
+						this._initTreeUtil(TreeUtil.treeTypes.Documentation, "key", "links");
 					}.bind(this))
 					.catch(function () {
 						this.onRouteNotFound();

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/FavoriteModel",
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
 	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
+	"sap/ui/documentation/sdk/controller/util/CookiesConsentManager",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/VersionInfo"
 ], function(
@@ -20,6 +21,7 @@ sap.ui.define([
 	FavoriteModel,
 	ErrorHandler,
 	ConfigUtil,
+	CookiesConsentManager,
 	JSONModel,
 	VersionInfo
 ) {
@@ -184,17 +186,14 @@ sap.ui.define([
 			return this._sContentDensityClass;
 		},
 
-		getCookiesManagement: function() {
-			var sId = "sap.ui.documentation.sdk.cookieSettingsDialog";
-
-			if (!this._pCookiesComponent) {
-				this._pCookiesComponent = this.createComponent({
-					usage: "cookieSettingsDialog",
-					id: 'cookiesComp-' + sId
-				});
+		getCookiesConsentManager: function() {
+			if (!this._oCookiesConsentManager) {
+				const oConfig = {
+					defaultConsentDialogComponentId: "sap.ui.documentation.sdk.cookieSettingsDialog"
+				};
+				this._oCookiesConsentManager = CookiesConsentManager.create(this, oConfig);
 			}
-
-			return this._pCookiesComponent;
+			return this._oCookiesConsentManager;
 		}
 	});
 
