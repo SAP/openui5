@@ -435,7 +435,7 @@ sap.ui.define([
 		FieldBase.prototype.handleModelContextChange.apply(this, arguments);
 
 		if (this.getCurrentContent().length === 0) {
-			// inner control not created, maybe it can be created bow (maybe ConditionModel assignment changed)
+			// inner control not created, maybe it can be created now (maybe ConditionModel assignment changed)
 			this.triggerCheckCreateInternalContent();
 		}
 
