@@ -208,7 +208,8 @@ sap.ui.define([
 		assert.equal(true, true, "...");
 		var oDomRef = oThingInspector.getDomRef();
 		assert.ok(oDomRef, "Rendered ThingInspector should exist in the page");
-		assert.equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
+		assert.ok(oDomRef.classList.contains("sapUiUx3Overlay"), "Rendered ThingInspector should have the class 'sapUiUx3Overlay'");
+		assert.ok(oDomRef.classList.contains("sapUiUx3TI"), "Rendered ThingInspector should have the class 'sapUiUx3TI'");
 	});
 
 	QUnit.test("Swatch", function(assert) {

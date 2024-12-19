@@ -884,6 +884,13 @@ sap.ui.define([
 		}
 
 		var $Ref = this._$(true);
+		$Ref.addClass("sapUiPopupInitial");
+		$Ref.css({
+			"position" : "absolute",
+			"display": "block",
+			"visibility": "visible",
+			"opacity": "" // reset the opacity style
+		});
 
 		var iRealDuration = "fast";
 		if ((iDuration === 0) || (iDuration > 0)) {
@@ -912,10 +919,6 @@ sap.ui.define([
 		this._iZIndex = this._iZIndex === this.getLastZIndex() ? this._iZIndex : this.getNextZIndex();
 
 		var oStaticArea = StaticArea.getDomRef();
-		$Ref.css({
-			"position" : "absolute",
-			"visibility" : "hidden"
-		});
 
 		if (!($Ref[0].parentNode == oStaticArea)) { // do not move in DOM if not required - otherwise this destroys e.g. the RichTextEditor
 			$Ref.appendTo(oStaticArea);
@@ -932,13 +935,6 @@ sap.ui.define([
 		// and show the popup content
 		$Ref.toggleClass("sapUiShd", this._bShadow);
 
-		var oDomRef = $Ref[0];
-
-		if (oDomRef) {
-			oDomRef.style.display = "none";
-			oDomRef.style.visibility = "visible";
-		}
-
 		var bNoAnimation = iRealDuration == 0;
 
 		this._duringOpen(!bNoAnimation);
@@ -948,7 +944,7 @@ sap.ui.define([
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, this._opened.bind(this));
 		} else { // otherwise play the default animation
-			$Ref.fadeIn(iRealDuration, this._opened.bind(this));
+			$Ref.fadeTo(iRealDuration, 1, this._opened.bind(this));
 		}
 	};
 
@@ -993,8 +989,39 @@ sap.ui.define([
 		this.bOpen = true;
 
 		var $Ref = this._$(/* bForceReRender */false, /* bGetOnly */true);
-		if ($Ref[0] && $Ref[0].style) {
-			$Ref[0].style.display = "block";
+		$Ref.removeClass("sapUiPopupInitial");
+
+		this._activateFocusHandle();
+
+		this._$(false, true).on("keydown", this._F6NavigationHandler);
+
+		// set and register listener of 'followOf' (given via Popup.open()) only when
+		// the popup has been opened already. Otherwise checking the opener's positio
+		// starts to early
+		if (this.getFollowOf()) {
+			Popup.DockTrigger.addListener(Popup.checkDocking, this);
+		}
+
+		this.eOpenState = OpenState.OPEN;
+
+		// notify that opening has completed
+		this.fireOpened();
+	};
+
+	/**
+	 * This function is called before or during the Popup opens. Here the registration
+	 * of events and delegates takes place and the corresponding flags for the Popup are set.
+	 *
+	 * @param {boolean} bOpenAnimated Determines if the opening has animation
+	 *
+	 * @private
+	 */
+	Popup.prototype._duringOpen = function(bOpenAnimated) {
+		Popup._clearSelection();
+		this._setupUserSelection();
+
+		if (this._bModal) {
+			this._showBlockLayer();
 		}
 
 		// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
@@ -1018,80 +1045,12 @@ sap.ui.define([
 			}
 		}
 
-		this.eOpenState = OpenState.OPEN;
-
-		// set and register listener of 'followOf' (given via Popup.open()) only when
-		// the popup has been opened already. Otherwise checking the opener's positio
-		// starts to early
-		if (this.getFollowOf()) {
-			Popup.DockTrigger.addListener(Popup.checkDocking, this);
-		}
-
-		// notify that opening has completed
-		this.fireOpened();
-	};
-
-	/**
-	 * This function is called before or during the Popup opens. Here the registration
-	 * of events and delegates takes place and the corresponding flags for the Popup are set.
-	 *
-	 * @param {boolean} bOpenAnimated Determines if the opening has animation
-	 *
-	 * @private
-	 */
-	Popup.prototype._duringOpen = function(bOpenAnimated) {
-		var oStaticArea = StaticArea.getDomRef(),
-			oFirstFocusableInStaticArea = document.getElementById(oStaticArea.id + "-firstfe");
-
-		Popup._clearSelection();
-		this._setupUserSelection();
-
-		if (this._bModal) {
-			this._showBlockLayer();
-		}
-
-		// When it runs on a mobile device, the focus doesn't need to be set into the popup area immediately after opening
-		// the popup. It even causes some rendering problem in iOS safari when the focus is set here.
-		if (!this.touchEnabled
-			// When the open process is animated, the focus should be moved out of the previous focused element during the
-			// opening animation. Otherwise, it's not needed to shift the focus because the focus will be set into the popup
-			// in the same call stack in function "_opened"
-			&& bOpenAnimated
-			// some application or test create the static UIArea div by itself and therefore the first focusable element
-			// is not available
-			&& oFirstFocusableInStaticArea
-			// Some popup scenarios requires the blur of the previous focused element should be done
-			// at the end of this open method to first show the block layer which changes the top most displayed popup
-			&& this._shouldGetFocusAfterOpen()
-			// when the current active element is in a popup, it's not blurred at this position because the focus isn't
-			// set to the new popup yet and blurring in the previous popup will mess up the modal or autoclose in the
-			// previous popup
-			&& !this.isInPopup(document.activeElement)
-			// If the focus needs to be set into the popup and it's different than the current document active element
-			// (the focus may stay with the current active element when the initial focus id is set), the current active
-			// element is blurred here to prevent it from getting further events during the opening animation of the
-			// popup
-			&& this._getDomRefToFocus() !== document.activeElement) {
-
-			/* actively move the focus to the static UI area to blur the previous focused element after popup is open.
-			 The focus will be moved into the popup once the popup opening animation is finished
-			 */
-			/* In safari no scrolling happens when focus() is called on DOM elements with height: 0px.
-			 In firefox and chrome no scrolling has to be forced with preventScroll: true in this scenario.
-			*/
-			oFirstFocusableInStaticArea.focus({preventScroll: true});
-		}
-
 		// add Delegate to hosted content for handling of events (e.g. onfocusin)
 		if (this.oContent instanceof Element) {
 			this.oContent.addDelegate(this);
 		}
 
 		this.bOpen = true;
-
-		this._activateFocusHandle();
-
-		this._$(false, true).on("keydown", this._F6NavigationHandler);
 	};
 
 	Popup.prototype._shouldGetFocusAfterOpen = function() {
@@ -2863,7 +2822,7 @@ sap.ui.define([
 	Popup.DockTrigger = IntervalTrigger;
 
 	Popup.checkDocking = function(){
-		if (this.getOpenState() === OpenState.OPEN) {
+		if (this.getOpenState() === OpenState.OPEN || this.getOpenState() === OpenState.OPENING) {
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of),
 				oCurrentOfRect;
 
@@ -2913,7 +2872,7 @@ sap.ui.define([
 			 */
 			if (this._oLastOfRect) {
 				if (!fnRectEqual(this._oLastOfRect, oCurrentOfRect)) {
-					if (this._followOfHandler) {
+					if (this._followOfHandler && this.getOpenState() === OpenState.OPEN) {
 						// provide the last position additionally if the call back needs it also
 						// e.g. the Callout needs it => create deep copy of old positioning object
 						var oLastPositionCopy = deepExtend({}, this._oLastPosition),

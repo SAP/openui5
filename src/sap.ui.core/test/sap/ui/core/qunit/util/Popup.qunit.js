@@ -186,6 +186,28 @@ sap.ui.define([
 		this.oPopup.open(0);
 	});
 
+	QUnit.test("Close Popup immediately after calling 'open'", function(assert) {
+		assert.expect(3);
+
+		var done = assert.async();
+		var fnOpened = function() {
+			assert.ok(false, "'Opened' event shouldn't be fired because it's closed immediately after calling 'open'");
+		};
+		var fnClosed = function() {
+			this.oPopup.detachClosed(fnClosed);
+
+			assert.equal(this.oPopup.isOpen(), false, "Popup should be closed after closing");
+			assert.equal(this.$Ref.css("display"), "none", "Popup should be 'display:none' after closing");
+			assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be 'visibility:hidden' after closing");
+			done();
+		};
+
+		this.oPopup.attachOpened(fnOpened, this);
+		this.oPopup.attachClosed(fnClosed, this);
+		this.oPopup.open();
+		this.oPopup.close();
+	});
+
 	QUnit.test("Check 'onAfterRendering' with control and DOM element", function(assert) {
 		var done = assert.async();
 

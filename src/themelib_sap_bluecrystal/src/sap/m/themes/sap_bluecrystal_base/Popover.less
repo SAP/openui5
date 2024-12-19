@@ -81,12 +81,6 @@
 	min-height: 2rem;
 }
 
-html[data-sap-ui-animation='on'] .sapMPopover {
-	-webkit-transition: opacity 0.2s linear;
-	transition: opacity 0.2s linear;
-}
-
-
 .sapMPopoverHeader .sapMTitle {
 	font-size: @sapMFontHeader5Size;
 }
@@ -128,6 +122,11 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 
 .sapMPopover.sapMPopoverTransparent {
 	opacity: 0;
+}
+
+html[data-sap-ui-animation='on'] .sapMPopover.sapMPopoverTransparent {
+	-webkit-transition: opacity 0.2s linear;
+	transition: opacity 0.2s linear;
 }
 
 .sapMPopover.sapMPopoverOpaque {
