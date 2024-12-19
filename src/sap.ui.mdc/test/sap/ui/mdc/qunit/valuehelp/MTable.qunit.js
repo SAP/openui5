@@ -38,7 +38,7 @@ sap.ui.define([
 	"sap/m/p13n/Engine",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
 	"sap/m/table/Util"
-], function(
+], (
 	Library,
 	qutils,
 	ValueHelpDelegate,
@@ -71,7 +71,7 @@ sap.ui.define([
 	Engine,
 	createAppEnvironment,
 	MTableUtil
-) {
+) => {
 	"use strict";
 
 	sinon.stub(StateUtil, "applyExternalState").returns(null); // don't test StateUtil here
@@ -92,71 +92,71 @@ sap.ui.define([
 	let sLocalFilterValue;
 
 	const oValueHelp = {
-		getPayload: function () {},
-		getDisplay: function () {
+		getPayload() {},
+		getDisplay() {
 			return "DescriptionValue";
 		}
 	};
 
 	const oContainer = { //to fake Container
-		getScrollDelegate: function() {
+		getScrollDelegate() {
 			return oScrollContainer;
 		},
-		isOpen: function() {
+		isOpen() {
 			return bIsOpen;
 		},
-		isOpening: function() {
+		isOpening() {
 			return false;
 		},
-		isTypeahead: function() {
+		isTypeahead() {
 			return bIsTypeahead;
 		},
-		getValueHelpDelegate: function () {
+		getValueHelpDelegate() {
 			return ValueHelpDelegate;
 		},
-		getValueHelpDelegatePayload: function () {
+		getValueHelpDelegatePayload() {
 			return {x: "X"};
 		},
-		awaitValueHelpDelegate: function () {
+		awaitValueHelpDelegate() {
 			return Promise.resolve();
 		},
-		isValueHelpDelegateInitialized: function() {
+		isValueHelpDelegateInitialized() {
 			return true;
 		},
-		invalidate: function () {},
-		getUIArea: function() {
+		invalidate() {},
+		getUIArea() {
 			return null;
 		},
-		getParent: function() {
+		getParent() {
 			return null;
 		},
-		getId: function() {
+		getId() {
 			return "myFakeContainer";
 		},
-		getControl: function () {
+		getControl() {
 			return "Control"; // just to test forwarding
 		},
-		setLocalFilterValue: function(sFilterValue) {
+		setLocalFilterValue(sFilterValue) {
 			sLocalFilterValue = sFilterValue;
 		},
-		getLocalFilterValue: function() {
+		getLocalFilterValue() {
 			return sLocalFilterValue;
 		},
-		getFilterValue: function () {
+		getFilterValue() {
 			return undefined;
 		},
-		hasDialog: function() {
+		hasDialog() {
 			return true;
 		},
-		getDomRef: function() {
+		getDomRef() {
 			return oTable?.getDomRef();
 		},
-		getValueHelp: function () {
+		getValueHelp() {
 			return oValueHelp;
 		}
 	};
 
-	const _init = function(bTypeahead) {
+	const _init = (bTypeahead) => {
 		oModel = new JSONModel({
 			items: [
 				{ text: "Item 1", key: "I1", additionalText: "Text 1", inValue: "" },
@@ -199,7 +199,7 @@ sap.ui.define([
 		oMTable.oParent = oContainer; // fake
 	};
 
-	const _teardown = function() {
+	const _teardown = () => {
 		oMTable.destroy();
 		oMTable = null;
 		oTable = undefined; // destroyed with MTable content
@@ -223,7 +223,7 @@ sap.ui.define([
 
 		oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer.getUIAreaForContent = function() {
+		oContainer.getUIAreaForContent = () => {
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
@@ -232,18 +232,18 @@ sap.ui.define([
 
 	}
 
-	const _fakeV4Binding = function (oListBinding) {
+	const _fakeV4Binding = (oListBinding) => {
 		oListBinding = oListBinding || oTable.getBinding("items");
-		oListBinding.requestContexts = function() { return Promise.resolve([]);};
-		oListBinding.changeParameters = function() {};
+		oListBinding.requestContexts = () => { return Promise.resolve([]);};
+		oListBinding.changeParameters = () => {};
 		oListBinding.mParameters = {};
-		oListBinding.getRootBinding = function () { return undefined;};
-		oListBinding.suspend = function() {};
-		oListBinding.resume = function() {};
+		oListBinding.getRootBinding = () => { return undefined;};
+		oListBinding.suspend = () => {};
+		oListBinding.resume = () => {};
 	};
 
 	QUnit.module("Typeahead", {
-		beforeEach: function() {
+		beforeEach() {
 			bIsTypeahead = true;
 			iMaxConditions = 1;
 			_init(true);
@@ -251,18 +251,18 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("getContent for typeahead", function(assert) {
+	QUnit.test("getContent for typeahead", (assert) => {
 
 		let iSelect = 0;
 		let aConditions;
 		let sType;
-		oMTable.attachEvent("select", function(oEvent) {
+		oMTable.attachEvent("select", (oEvent) => {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
 		let iConfirm = 0;
-		oMTable.attachEvent("confirm", function(oEvent) {
+		oMTable.attachEvent("confirm", (oEvent) => {
 			iConfirm++;
 		});
 
@@ -313,9 +313,11 @@ sap.ui.define([
 				// check if empty indicator returned
 				oModel.setData({items: []});
 				oModel.checkUpdate(true);
+				oTable.setMode(ListMode.None); // to check auto-set
 				oShowResult = oMTable.onShow();
 				assert.equal(oShowResult?.itemId, oTable.getId("nodata-text"), "OnShow returns nodata-text ID");
 				assert.equal(oShowResult?.items, 0, "OnShow returns number of items");
+				assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
 
 				oTable.setShowNoData(false);
 				oShowResult = oMTable.onShow();
@@ -329,74 +331,64 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getContainerConfig - footer without length limitation", function(assert) {
+	QUnit.test("getContainerConfig - footer without length limitation", (assert) => {
 
 		const oContainerConfig = oMTable.getContainerConfig();
-		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oPopupConfig = oContainerConfig?.['sap.ui.mdc.valuehelp.Popover'];
 
 		assert.ok(oContainerConfig, "Config returned");
-		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+		const oFooterContent = oPopupConfig?.getFooter?.();
 
-		if (oFooterContent) {
-			const fnDone = assert.async();
-			oFooterContent.then(function(aFooterContent) {
-				assert.notOk(aFooterContent, "no Content returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
-			});
-		}
+		return oFooterContent?.then((aFooterContent) => {
+			assert.notOk(aFooterContent, "no Content returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
-	QUnit.test("getContainerConfig - footer with length limitation", function(assert) {
+	QUnit.test("getContainerConfig - footer with length limitation", (assert) => {
 
 		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
 
 		let iSwitchToDialog = 0;
-		oMTable.attachEvent("requestSwitchToDialog", function(oEvent) {
+		oMTable.attachEvent("requestSwitchToDialog", (oEvent) => {
 			iSwitchToDialog++;
 		});
 
 		const oContainerConfig = oMTable.getContainerConfig();
-		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oPopupConfig = oContainerConfig?.['sap.ui.mdc.valuehelp.Popover'];
 
 		assert.ok(oContainerConfig, "Config returned");
-		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+		const oFooterContent = oPopupConfig?.getFooter?.();
 
-		if (oFooterContent) {
-			const fnDone = assert.async();
-			oFooterContent.then(function(oFooterContent) {
-				assert.ok(oFooterContent, "Content returned");
-				assert.ok(oFooterContent.isA("sap.m.Toolbar"), "Content is sap.m.Toolbar");
-				const aToolbarContent = oFooterContent.getContent();
-				assert.equal(aToolbarContent.length, 2, "Tollbar content length");
-				const oSpacer = aToolbarContent[0];
-				assert.ok(oSpacer.isA("sap.m.ToolbarSpacer"), "First content is sap.m.ToolbarSpacer");
-				const oButton = aToolbarContent[1];
-				assert.ok(oButton.isA("sap.m.Button"), "Second content is sap.m.Button");
-				assert.equal(oButton.getText(), oMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "Button text");
-				assert.ok(oButton.getEnabled(), "Button enabled");
-				assert.equal(oButton.getType(), mLibrary.ButtonType.Default, "Button type");
+		return oFooterContent?.then((oFooterContent) => {
+			assert.ok(oFooterContent, "Content returned");
+			assert.ok(oFooterContent.isA("sap.m.Toolbar"), "Content is sap.m.Toolbar");
+			const aToolbarContent = oFooterContent.getContent();
+			assert.equal(aToolbarContent.length, 2, "Tollbar content length");
+			const oSpacer = aToolbarContent[0];
+			assert.ok(oSpacer.isA("sap.m.ToolbarSpacer"), "First content is sap.m.ToolbarSpacer");
+			const oButton = aToolbarContent[1];
+			assert.ok(oButton.isA("sap.m.Button"), "Second content is sap.m.Button");
+			assert.equal(oButton.getText(), oMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "Button text");
+			assert.ok(oButton.getEnabled(), "Button enabled");
+			assert.equal(oButton.getType(), mLibrary.ButtonType.Default, "Button type");
 
-				oButton.firePress();
-				assert.equal(iSwitchToDialog, 1, "requestSwitchToDialog event fired");
+			oButton.firePress();
+			assert.equal(iSwitchToDialog, 1, "requestSwitchToDialog event fired");
 
-				oFooterContent.destroy();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
-			});
-		}
+			oFooterContent.destroy();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
 	/**
 	 *  @deprecated since 1.120.2
 	 */
-	QUnit.test("Filtering without $search", function(assert) {
+	QUnit.test("Filtering without $search", (assert) => {
 
 		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
@@ -407,7 +399,7 @@ sap.ui.define([
 		oMTable._bContentBound = true;
 
 		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for onBeforeShow-Promise
+		setTimeout(() => { // as waiting for onBeforeShow-Promise
 			oMTable.setFilterValue("3");
 			// compare arguments of filter as Filter object is changed during filtering
 			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
@@ -430,7 +422,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Filtering for InParameters", function(assert) {
+	QUnit.test("Filtering for InParameters", (assert) => {
 
 		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
@@ -439,8 +431,7 @@ sap.ui.define([
 		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
-		const fnDone = assert.async();
-		oMTable.onBeforeShow(true).then(function() {
+		return oMTable.onBeforeShow(true).then(() => {
 			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable), "ValueHelpDelegate.getFilterConditions called");
 			oMTable.onShow(true); // to trigger filtering
 			// compare arguments of filter as Filter object is changed during filtering
@@ -458,12 +449,11 @@ sap.ui.define([
 			assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table has style no class sapMListFocus");
 
 			ValueHelpDelegate.getFilterConditions.restore();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Filtering using $search", function(assert) {
+	QUnit.test("Filtering using $search", (assert) => {
 
 		let iTypeaheadSuggested = 0;
 		let oCondition;
@@ -471,7 +461,7 @@ sap.ui.define([
 		let sItemId;
 		let iItems;
 		let bTypeaheadCaseSensitive;
-		oMTable.attachEvent("typeaheadSuggested", function(oEvent) {
+		oMTable.attachEvent("typeaheadSuggested", (oEvent) => {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
@@ -498,7 +488,7 @@ sap.ui.define([
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
 		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
+		setTimeout(() => { // as waiting for Promise
 			// as JSOM-Model does not support $search all items are returned, but test for first of result
 			const oTable = oMTable.getTable();
 			const aItems = oTable.getItems();
@@ -513,7 +503,7 @@ sap.ui.define([
 			assert.ok(oListBinding.changeParameters.calledWith({$search: "ABC"}), "ListBinding.changeParameters called with search string");
 
 			iTypeaheadSuggested = 0;
-			setTimeout( function(){ // as waiting for Promise
+			setTimeout(() => { // as waiting for Promise
 				// as JSOM-Model does not support $search all items are returned, but test for first of result
 				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
 				assert.notOk(oCondition, "typeaheadSuggested event no condition");
@@ -527,7 +517,7 @@ sap.ui.define([
 				assert.ok(oListBinding.changeParameters.calledWith({$search: "I"}), "ListBinding.changeParameters called with search string");
 
 				iTypeaheadSuggested = 0;
-				setTimeout( function(){ // as waiting for Promise
+				setTimeout(() => { // as waiting for Promise
 					// as JSOM-Model does not support $search all items are returned, but test for first of result
 					assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
 					assert.deepEqual(oCondition, Condition.createItemCondition("I2", "Item 2"), "typeaheadSuggested event condition");
@@ -546,7 +536,7 @@ sap.ui.define([
 	});
 
 	// Delegate seems to already be loaded in this test?
-	/* QUnit.test("Filtering waiting for delegate", function(assert) {
+	/* QUnit.test("Filtering waiting for delegate", (assert) => {
 
 		var fnResolve;
 		var oPromise = new Promise(function(fResolve) {
@@ -565,7 +555,7 @@ sap.ui.define([
 		assert.notOk(oListBinding.filter.called, "ListBinding filter not called before Delegate finished");
 
 		var fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
+		setTimeout(() => { // as waiting for Promise
 			assert.ok(oListBinding.filter.called, "ListBinding filter called after Delegate finished");
 			fnDone();
 		}, 0);
@@ -576,7 +566,7 @@ sap.ui.define([
 
 	}); */
 
-	QUnit.test("isSearchSupported", function(assert) {
+	QUnit.test("isSearchSupported", (assert) => {
 		const isSearchSupportedStub = sinon.stub(ValueHelpDelegate, "isSearchSupported").returns(false);
 		assert.notOk(oMTable.isSearchSupported(), "not supported for filtering");
 		isSearchSupportedStub.returns(true);
@@ -587,7 +577,7 @@ sap.ui.define([
 	/**
 	 *  @deprecated since 1.120.2
 	 */
-	QUnit.test("isSearchSupported without $search", function(assert) {
+	QUnit.test("isSearchSupported without $search", (assert) => {
 		oMTable.setFilterFields("*foo*");
 		const bSupported = oMTable.isSearchSupported();
 		assert.ok(bSupported, "supported for filtering");
@@ -597,12 +587,12 @@ sap.ui.define([
 	/**
 	 *  @deprecated since 1.120.2
 	 */
-	QUnit.test("isSearchSupported using $search", function(assert) {
+	QUnit.test("isSearchSupported using $search", (assert) => {
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
 		const oListBinding = oTable.getBinding("items");
-		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
+		oListBinding.changeParameters = (oParameters) => {}; // just fake V4 logic
 
 		oMTable.setFilterFields("$search");
 		const bSupported = oMTable.isSearchSupported();
@@ -617,7 +607,7 @@ sap.ui.define([
 	/**
 	 *  @deprecated since 1.120.2
 	 */
-	QUnit.test("isSearchSupported - no search", function(assert) {
+	QUnit.test("isSearchSupported - no search", (assert) => {
 
 		oMTable.setFilterFields();
 		const bSupported = oMTable.isSearchSupported();
@@ -625,11 +615,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getItemForValue: check for key - match", function(assert) {
+	QUnit.test("getItemForValue: check for key - match", (assert) => {
 
 		sinon.spy(ValueHelpDelegate, "getFilterConditions");
-		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
-			if (aValues && aValues[0] === "I3") {
+		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake((oPayload, oContent, aValues, oContext) => {
+			if (aValues?.[0] === "I3") {
 				return {inParameters: {inValue: "3"}, outParameters: null};
 			}
 		});
@@ -651,26 +641,21 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
-				ValueHelpDelegate.getFilterConditions.restore();
-				ValueHelpDelegate.createConditionPayload.restore();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				ValueHelpDelegate.getFilterConditions.restore();
-				ValueHelpDelegate.createConditionPayload.restore();
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
+			ValueHelpDelegate.getFilterConditions.restore();
+			ValueHelpDelegate.createConditionPayload.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+			ValueHelpDelegate.getFilterConditions.restore();
+			ValueHelpDelegate.createConditionPayload.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key with InParameter - match", function(assert) {
+	QUnit.test("getItemForValue: check for key with InParameter - match", (assert) => {
 
 		oModel.setData({
 			items: [
@@ -684,8 +669,8 @@ sap.ui.define([
 		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
-		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
-			if (aValues && aValues[0] === "I3") {
+		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake((oPayload, oContent, aValues, oContext) => {
+			if (aValues?.[0] === "I3") {
 				return {inParameters: {inValue: "3"}, outParameters: null};
 			}
 		});
@@ -708,26 +693,21 @@ sap.ui.define([
 
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
-				ValueHelpDelegate.getFilterConditions.restore();
-				ValueHelpDelegate.createConditionPayload.restore();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				ValueHelpDelegate.getFilterConditions.restore();
-				ValueHelpDelegate.createConditionPayload.restore();
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
+			ValueHelpDelegate.getFilterConditions.restore();
+			ValueHelpDelegate.createConditionPayload.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+			ValueHelpDelegate.getFilterConditions.restore();
+			ValueHelpDelegate.createConditionPayload.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key - no unique match with setUseFirstMatch=false", function(assert) {
+	QUnit.test("getItemForValue: check for key - no unique match with setUseFirstMatch=false", (assert) => {
 
 		oMTable.setUseFirstMatch(false);
 		oModel.setData({
@@ -757,22 +737,17 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(true, "Promise Catch called");
-				assert.ok(oError instanceof ParseException, "ParseException returned");
-				assert.equal(oError.message, oResourceBundle.getText("valuehelp.VALUE_NOT_UNIQUE", ["I3"]), "Error message");
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.notOk(true, "Promise Then must not be called");
+		}).catch((oError) => {
+			assert.ok(true, "Promise Catch called");
+			assert.ok(oError instanceof ParseException, "ParseException returned");
+			assert.equal(oError.message, oResourceBundle.getText("valuehelp.VALUE_NOT_UNIQUE", ["I3"]), "Error message");
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key - no unique match with setUseFirstMatch=true", function(assert) {
+	QUnit.test("getItemForValue: check for key - no unique match with setUseFirstMatch=true", (assert) => {
 
 		oMTable.setUseFirstMatch(true);
 		oModel.setData({
@@ -802,21 +777,16 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I3", description: "Item 3", payload: undefined}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I3", description: "Item 3", payload: undefined}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key - match from request", function(assert) {
+	QUnit.test("getItemForValue: check for key - match from request", (assert) => {
 
 		const oConfig = {
 			parsedValue: "I3",
@@ -830,29 +800,28 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-/* 		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
- */		//oTable.getItems.callThrough();
+		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+		oTable.getItems.callThrough();
+		sinon.spy(ValueHelpDelegate, "executeFilter");
 
 		_fakeV4Binding();
 
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-			}).finally(function () {
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
+			assert.ok(ValueHelpDelegate.executeFilter.calledOnce, "ValueHelpDelegate.executeFilter called");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		}).finally(() => {
+			ValueHelpDelegate.executeFilter.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key with InParameters - match from request", function(assert) {
+	QUnit.test("getItemForValue: check for key with InParameters - match from request", (assert) => {
 
 		oModel.setData({
 			items: [
@@ -866,7 +835,7 @@ sap.ui.define([
 		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
-		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
+		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake((oPayload, oContent, aValues, oContext) => {
 			const oData = oContext.getObject();
 			if (oData.key === "I3") {
 				return {inParameters: {inValue: oData.inValue}};
@@ -877,7 +846,7 @@ sap.ui.define([
 			parsedValue: "I3",
 			parsedDescription: undefined,
 			value: "I3",
-			bindingContext: {getPath: function () {return "BC";}},
+			bindingContext: {getPath() {return "BC";}},
 			checkKey: true,
 			checkDescription: false,
 			caseSensitive: true,
@@ -885,32 +854,31 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		/* sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
-		oTable.getItems.callThrough(); */
+		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+		oTable.getItems.callThrough();
+		sinon.spy(ValueHelpDelegate, "executeFilter");
 
 		_fakeV4Binding();
 
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}}}, "Item returned");
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-			}).finally(function () {
-				ValueHelpDelegate.getFilterConditions.restore();
-				ValueHelpDelegate.createConditionPayload.restore();
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}}}, "Item returned");
+			assert.ok(ValueHelpDelegate.executeFilter.calledOnce, "ValueHelpDelegate.executeFilter called");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		}).finally(() => {
+			ValueHelpDelegate.getFilterConditions.restore();
+			ValueHelpDelegate.createConditionPayload.restore();
+			ValueHelpDelegate.executeFilter.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key - no match", function(assert) {
+	QUnit.test("getItemForValue: check for key - no match", (assert) => {
 
 		const oConfig = {
 			parsedValue: "X",
@@ -929,22 +897,17 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.notOk(true, "Promise Then must not be called");
-				fnDone();
-			}).catch(function(oError) {
-				assert.ok(true, "Promise Catch called");
-				assert.ok(oError instanceof ParseException, "ParseException returned");
-				assert.equal(oError.message, oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["X"]), "Error message");
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.notOk(true, "Promise Then must not be called");
+		}).catch((oError) => {
+			assert.ok(true, "Promise Catch called");
+			assert.ok(oError instanceof ParseException, "ParseException returned");
+			assert.equal(oError.message, oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["X"]), "Error message");
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for description - match", function(assert) {
+	QUnit.test("getItemForValue: check for description - match", (assert) => {
 
 		const oConfig = {
 			parsedValue: undefined,
@@ -963,21 +926,16 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for description - match with case sensitive check", function(assert) {
+	QUnit.test("getItemForValue: check for description - match with case sensitive check", (assert) => {
 
 		oMTable.setUseFirstMatch(false);
 		oModel.setData({
@@ -1005,21 +963,16 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "i1", description: "item 1", payload: undefined}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "i1", description: "item 1", payload: undefined}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for description - match from request", function(assert) {
+	QUnit.test("getItemForValue: check for description - match from request", (assert) => {
 
 		const oConfig = {
 			parsedValue: undefined,
@@ -1033,29 +986,28 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		/* sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
-		oTable.getItems.callThrough(); */
+		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+		oTable.getItems.callThrough();
+		sinon.spy(ValueHelpDelegate, "executeFilter");
 
 		_fakeV4Binding();
 
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
+			assert.ok(ValueHelpDelegate.executeFilter.calledOnce, "ValueHelpDelegate.executeFilter called");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		}).finally(() => {
+			ValueHelpDelegate.executeFilter.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key and description - match", function(assert) {
+	QUnit.test("getItemForValue: check for key and description - match", (assert) => {
 
 		const oConfig = {
 			parsedValue: "I3",
@@ -1074,21 +1026,16 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-			}).finally(function() {
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check for key and description - match from request", function(assert) {
+	QUnit.test("getItemForValue: check for key and description - match from request", (assert) => {
 
 		const oConfig = {
 			parsedValue: "I3",
@@ -1102,29 +1049,28 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		/* sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
-		oTable.getItems.callThrough(); */
+		sinon.stub(oTable, "getItems").onFirstCall().returns([]); // to force request
+		oTable.getItems.callThrough();
+		sinon.spy(ValueHelpDelegate, "executeFilter");
 
 		_fakeV4Binding();
 
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-			}).finally(function() {
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
+			assert.ok(ValueHelpDelegate.executeFilter.calledOnce, "ValueHelpDelegate.executeFilter called");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		}).finally(() => {
+			ValueHelpDelegate.executeFilter.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue: check missing paths", function(assert) {
+	QUnit.test("getItemForValue: check missing paths", (assert) => {
 
 		oMTable.setKeyPath();
 		oMTable.setDescriptionPath();
@@ -1161,7 +1107,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getItemForValue: ValueHelpDelegate.getFilterConditions", function(assert) {
+	QUnit.test("getItemForValue: ValueHelpDelegate.getFilterConditions", (assert) => {
 
 		oModel.setData({
 			items: [
@@ -1185,7 +1131,7 @@ sap.ui.define([
 		};
 
 		const getFilterConditionsStub = sinon.stub(ValueHelpDelegate, "getFilterConditions");
-		getFilterConditionsStub.callsFake(function (oPayload, oContent, oLocalConfig) {
+		getFilterConditionsStub.callsFake((oPayload, oContent, oLocalConfig) => {
 			assert.ok(true, "ValueHelpDelegate.getFilterConditions is called.");
 			assert.equal(oContent, oMTable, "getFilterConditions receives correct content");
 			assert.equal(oLocalConfig, oConfig, "getFilterConditions receives correct config");
@@ -1197,22 +1143,18 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
-		if (oPromise) {
-			const fnDone = assert.async();
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, {key: "I1", description: "Item 1B", payload: undefined}, "Correct item returned");
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-			}).finally(function() {
-				getFilterConditionsStub.restore();
-				fnDone();
-			});
-		}
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: "I1", description: "Item 1B", payload: undefined}, "Correct item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		}).finally(() => {
+			getFilterConditionsStub.restore();
+		});
 
 	});
 
-	QUnit.test("getItemForValue: Noop config", function(assert) {
+	QUnit.test("getItemForValue: Noop config", (assert) => {
 
 		oModel.setData({
 			items: [
@@ -1236,7 +1178,7 @@ sap.ui.define([
 		};
 
 		const getFilterConditionsStub = sinon.stub(ValueHelpDelegate, "getFilterConditions");
-		getFilterConditionsStub.callsFake(function (oPayload, oContent, oLocalConfig) {
+		getFilterConditionsStub.callsFake((oPayload, oContent, oLocalConfig) => {
 			assert.ok(true, "ValueHelpDelegate.getFilterConditions is called.");
 			assert.equal(oContent, oMTable, "getFilterConditions receives correct content");
 			assert.equal(oLocalConfig, oConfig, "getFilterConditions receives correct config");
@@ -1249,7 +1191,7 @@ sap.ui.define([
 		getFilterConditionsStub.restore();
 	});
 
-	QUnit.test("isValidationSupported", function(assert) {
+	QUnit.test("isValidationSupported", (assert) => {
 
 		assert.ok(oMTable.isValidationSupported(), "validation is supported");
 
@@ -1268,19 +1210,19 @@ sap.ui.define([
 		sNavigateItemId = undefined;
 		bNavigateLeaveFocus = undefined;
 		iVisualFocusSet = 0;
-		oMTable.attachEvent("navigated", function(oEvent) {
+		oMTable.attachEvent("navigated", (oEvent) => {
 			iNavigate++;
 			oNavigateCondition = oEvent.getParameter("condition");
 			sNavigateItemId = oEvent.getParameter("itemId");
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 		});
-		oMTable.attachEvent("visualFocusSet", function(oEvent) {
+		oMTable.attachEvent("visualFocusSet", (oEvent) => {
 			iVisualFocusSet++;
 		});
 
 	}
 
-	function _checkNavigatedItem(assert, oTable, bOpen, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
+	function _checkNavigatedItem(assert, oTable, bOpen, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus, bNavigateEvent) {
 
 		const aItems = oTable.getItems();
 		assert.equal(oTable.hasStyleClass("sapMListFocus"), bOpen && iNavigatedIndex >= 0, "Table has style class sapMListFocus");
@@ -1303,7 +1245,7 @@ sap.ui.define([
 			}
 		}
 
-		assert.equal(iNavigate, 1, "Navigated Event fired");
+		assert.equal(iNavigate, bNavigateEvent ? 1 : 0, "Navigated Event fired");
 		if (!bLeaveFocus && iNavigatedIndex >= 0) {
 			if (bIsOpen) {
 				assert.ok(oTable.scrollToIndex.calledWith(iNavigatedIndex), "Table scrolled to item");
@@ -1330,9 +1272,10 @@ sap.ui.define([
 
 	}
 
-	QUnit.test("navigate", async function(assert) {
+	QUnit.test("navigate", async (assert) => {
 
 		bIsOpen = true; // test for open navigation (for closed is tested later)
+		oMTable._bContentBound = true;
 		await _renderScrollContainer();
 
 		_attachNavigated();
@@ -1340,22 +1283,29 @@ sap.ui.define([
 		oMTable.setConditions([]);
 		oMTable.onShow(); // to update selection and scroll
 		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
+		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false, true);
 
 		// no previous item
 		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
+		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), true, true);
 
 		// next item of selected one
 		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
+		_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I2", "Item 2"), false, true);
 		oTable.getItems()[1].setSelected(false); // initialize
 		oMTable.onConnectionChange(); // simulate new assignment
 		oMTable.setConditions([]);
 
 		// no item selected -> navigate to last
 		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
+		_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false, true);
+
+		const oShowResult = oMTable.onShow();
+		assert.equal(oShowResult?.itemId, oTable.getItems()[2].getId(), "OnShow returns navigated Item ID");
+		assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
+
+		oMTable.setFilterValue("I"); // as JSOM-Model does not support $search all items are returned, just test for initialization of navigation
+		_checkNavigatedItem(assert, oTable, true, -1, -1, undefined, undefined, false);
 
 		// first match -> navigation starts there
 		oTable.getItems()[2].setSelected(false); // initialize
@@ -1363,14 +1313,20 @@ sap.ui.define([
 		oMTable.setConditions([]);
 		oMTable.setHighlightId(oTable.getItems()[0].getId());
 		oMTable.navigate(0);
-		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
+		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false, true);
+
+		oMTable.navigate(9999);
+		_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false, true);
+
+		oMTable.navigate(-9999);
+		_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false, true);
 
 		oMTable.onHide();
 		assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table removed style class sapMListFocus");
 
 	});
 
-	QUnit.test("navigate to footer button", async function(assert) {
+	QUnit.test("navigate to footer button", async (assert) => {
 
 		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
 		_attachNavigated();
@@ -1378,41 +1334,41 @@ sap.ui.define([
 		await _renderScrollContainer();
 
 		const oContainerConfig = oMTable.getContainerConfig();
-		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
-		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+		const oPopupConfig = oContainerConfig?.['sap.ui.mdc.valuehelp.Popover'];
+		const oFooterContent = oPopupConfig?.getFooter?.();
 
-		if (oFooterContent) {
-			const fnDone = assert.async();
-			oFooterContent.then(async function(oFooterContent) {
-				oFooterContent.placeAt("content"); // render Footer
-				await nextUIUpdate();
-				const aToolbarContent = oFooterContent.getContent();
-				const oButton = aToolbarContent[1];
-				sinon.spy(oButton, "focus");
+		return oFooterContent?.then(async (oFooterContent) => {
+			oFooterContent.placeAt("content"); // render Footer
+			await nextUIUpdate();
+			const aToolbarContent = oFooterContent.getContent();
+			const oButton = aToolbarContent[1];
+			sinon.spy(oButton, "focus");
 
-				oMTable.setConditions([]);
-				oMTable.onShow(); // to update selection and scroll
-				oMTable._iNavigateIndex = 2; // fake last item navigated
-				oMTable.navigate(1);
-				_checkNavigatedItem(assert, oTable, true, -1, -1, undefined, false);
-				assert.ok(oButton.focus.called, "Button focused");
-				sinon.stub(oContainer, "getDomRef").returns(undefined); // to fake focus in field (outside Popover)
+			oMTable.setConditions([]);
+			oMTable.onShow(); // to update selection and scroll
+			oMTable._iNavigateIndex = 2; // fake last item navigated
+			oMTable.navigate(1);
+			_checkNavigatedItem(assert, oTable, true, -1, -1, undefined, false, true);
+			assert.ok(oButton.focus.called, "Button focused");
+			sinon.stub(oContainer, "getDomRef").returns(undefined); // to fake focus in field (outside Popover)
 
-				qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
+			qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+			_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false, true);
 
-				oContainer.getDomRef.restore();
-				oFooterContent.destroy();
-				fnDone();
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
-			});
-		}
+			oContainer.getDomRef.restore();
+
+			oButton.focus();
+			oTable.focus(); // fake focus somethere else
+			_checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false, true);
+
+			oFooterContent.destroy();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
-	QUnit.test("navigate for multi-value", async function(assert) {
+	QUnit.test("navigate for multi-value", async (assert) => {
 
 		await _renderScrollContainer();
 
@@ -1427,13 +1383,13 @@ sap.ui.define([
 		let iSelect = 0;
 		let aConditions;
 		let sType;
-		oMTable.attachEvent("select", function(oEvent) {
+		oMTable.attachEvent("select", (oEvent) => {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
 		let iConfirm = 0;
-		oMTable.attachEvent("confirm", function(oEvent) {
+		oMTable.attachEvent("confirm", (oEvent) => {
 			iConfirm++;
 		});
 
@@ -1469,7 +1425,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate for multi-value (closed)", function(assert) {
+	QUnit.test("navigate for multi-value (closed)", (assert) => {
 
 		bIsOpen = false;
 
@@ -1484,29 +1440,29 @@ sap.ui.define([
 		oMTable.setConditions([Condition.createItemCondition("I2", "Item 2")]);
 		oMTable.navigate(1);
 		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
-			_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), false);
+		setTimeout(() => { // as waiting for Promise
+			_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), false, true);
 
 			// no previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), true);
+			_checkNavigatedItem(assert, oTable, false, 0, 1, Condition.createItemCondition("I1", "Item 1"), true, true);
 
 			// next item , selected one needs to be skipped
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
+			_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false, true);
 			oMTable.onConnectionChange(); // simulate new assignment
 
 			// navigate to last
 			oMTable.navigate(-1);
-			setTimeout( function(){ // as waiting for Promise
-				_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false);
+			setTimeout(() => { // as waiting for Promise
+				_checkNavigatedItem(assert, oTable, false, 2, 1, Condition.createItemCondition("I3", "X-Item 3"), false, true);
 				fnDone();
 			}, 0);
 		}, 0);
 
 	});
 
-	QUnit.test("navigate to footer button (multi-value)", async function(assert) {
+	QUnit.test("navigate to footer button (multi-value)", async (assert) => {
 
 		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
 		_attachNavigated();
@@ -1523,13 +1479,12 @@ sap.ui.define([
 		sinon.spy(aItems[2], "focus");
 
 		const oContainerConfig = oMTable.getContainerConfig();
-		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
-		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+		const oPopupConfig = oContainerConfig?.['sap.ui.mdc.valuehelp.Popover'];
+		const oFooterContent = oPopupConfig?.getFooter?.();
 
 		if (oFooterContent) {
-			const fnDone = assert.async();
-			oMTable.onBeforeShow(true).then( () => {
-				oFooterContent.then(async function(oFooterContent) {
+			return oMTable.onBeforeShow(true).then( () => {
+				oFooterContent.then(async (oFooterContent) => {
 					oFooterContent.placeAt("content"); // render Footer
 					await nextUIUpdate();
 					const aToolbarContent = oFooterContent.getContent();
@@ -1551,18 +1506,20 @@ sap.ui.define([
 					assert.ok(aItems[2].focus.called, "3rd item focused");
 					assert.equal(iNavigate, 0, "Navigated Event not fired");
 
+					oButton.focus();
+					oTable.focus(); // fake focus somethere else
+					_checkNavigatedItem(assert, oTable, true, -1, -1, undefined, true, true);
+
 					oFooterContent.destroy();
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
 			});
 		}
 
 	});
 
-	QUnit.test("navigate grouped table with async ListBinding (closed)", function(assert) {
+	QUnit.test("navigate grouped table with async ListBinding (closed)", (assert) => {
 
 		bIsOpen = false; // test for closed navigation (for open is tested later)
 		oModel.setData({
@@ -1587,8 +1544,8 @@ sap.ui.define([
 
 		oMTable.navigate(1);
 		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
-			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+		setTimeout(() => { // as waiting for Promise
+			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false, true);
 			let oItem = oTable.getItems()[0];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 			oItem = oTable.getItems()[3];
@@ -1596,23 +1553,23 @@ sap.ui.define([
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			_checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false, true);
 
 			// next item (ignoring group header)
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, false, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+			_checkNavigatedItem(assert, oTable, false, 4, 4, Condition.createItemCondition("I2", "Item 2"), false, true);
 
 			// previous item (ignoring group header)
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			_checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false, true);
 
 			// previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false, true);
 
 			// no previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), true);
+			_checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), true, true);
 
 			oMTable.onConnectionChange(); // simulate new assignment
 
@@ -1621,7 +1578,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("navigate grouped table with async ListBinding (open)", async function(assert) {
+	QUnit.test("navigate grouped table with async ListBinding (open)", async (assert) => {
 
 		oModel.setData({
 			items: [
@@ -1651,8 +1608,8 @@ sap.ui.define([
 
 			oMTable.navigate(1);
 			const fnDone = assert.async();
-			setTimeout( function(){ // as waiting for Promise
-				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
+			setTimeout(() => { // as waiting for Promise
+				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false, true);
 				let oItem = oTable.getItems()[0];
 				assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 				oItem = oTable.getItems()[3];
@@ -1660,39 +1617,39 @@ sap.ui.define([
 
 				// next item
 				oMTable.navigate(1);
-				_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+				_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false, true);
 
 				// next item
 				oMTable.navigate(1);
-				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false, true);
 
 				// next item (group header)
 				oMTable.navigate(1);
-				_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
+				_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false, true);
 
 				// next item
 				oMTable.navigate(1);
-				_checkNavigatedItem(assert, oTable, true, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+				_checkNavigatedItem(assert, oTable, true, 4, 4, Condition.createItemCondition("I2", "Item 2"), false, true);
 
 				// previous item (group header)
 				oMTable.navigate(-1);
-				_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
+				_checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false, true);
 
 				// previous item
 				oMTable.navigate(-1);
-				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+				_checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false, true);
 
 				// previous item
 				oMTable.navigate(-1);
-				_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+				_checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false, true);
 
 				// previous item (group header)
 				oMTable.navigate(-1);
-				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
+				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false, true);
 
 				// no previous item
 				oMTable.navigate(-1);
-				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, true);
+				_checkNavigatedItem(assert, oTable, true, 0, 0, undefined, true, true);
 
 				oMTable.onHide();
 
@@ -1702,7 +1659,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled - singleSelect and closed", function(assert) {
+	QUnit.test("isNavigationEnabled - singleSelect and closed", (assert) => {
 
 		const oListBinding = oMTable.getListBinding();
 		const oBindingInfo = oMTable.getListBindingInfo();
@@ -1749,7 +1706,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled - singleSelect and opened", function(assert) {
+	QUnit.test("isNavigationEnabled - singleSelect and opened", (assert) => {
 
 		const oListBinding = oMTable.getListBinding();
 		const oBindingInfo = oMTable.getListBindingInfo();
@@ -1796,7 +1753,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled - multiSelect and closed", function(assert) {
+	QUnit.test("isNavigationEnabled - multiSelect and closed", (assert) => {
 
 		const oListBinding = oMTable.getListBinding();
 		const oBindingInfo = oMTable.getListBindingInfo();
@@ -1844,7 +1801,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isNavigationEnabled - multiSelect and opened", function(assert) {
+	QUnit.test("isNavigationEnabled - multiSelect and opened", (assert) => {
 
 		const oListBinding = oMTable.getListBinding();
 		const oBindingInfo = oMTable.getListBindingInfo();
@@ -1892,7 +1849,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getValueHelpIcon", function(assert) {
+	QUnit.test("getValueHelpIcon", (assert) => {
 
 		assert.equal(oMTable.getValueHelpIcon(), "sap-icon://slim-arrow-down", "icon");
 		oMTable.setUseAsValueHelp(false);
@@ -1900,7 +1857,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getAriaAttributes", function(assert) {
+	QUnit.test("getAriaAttributes", (assert) => {
 
 		let oCheckAttributes = {
 			contentId: oTable.getId(),
@@ -1941,7 +1898,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnNavigate", function(assert) {
+	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		assert.notOk(oMTable.shouldOpenOnNavigate(), "should not open on navigate for single Select");
 
@@ -1950,26 +1907,26 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getContainerConfig - getContentHeight", function(assert) {
+	QUnit.test("getContainerConfig - getContentHeight", (assert) => {
 
 		const oFakeDom = {
-			getBoundingClientRect: function() {
+			getBoundingClientRect() {
 				return {height: 10};
 			}
 		};
 		sinon.stub(oTable, "getDomRef"). returns(oFakeDom);
 
 		const oContainerConfig = oMTable.getContainerConfig();
-		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oPopupConfig = oContainerConfig?.['sap.ui.mdc.valuehelp.Popover'];
 
 		assert.ok(oContainerConfig, "Config returned");
-		const iHeight = oPopupConfig.getContentHeight();
+		const iHeight = oPopupConfig?.getContentHeight();
 		assert.equal(iHeight, 10, "height");
 		oTable.getDomRef.restore();
 
 	});
 
-	QUnit.test("isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", (assert) => {
 
 		assert.ok(oMTable.isSingleSelect(), "singe-selection taken from Table");
 
@@ -1988,13 +1945,13 @@ sap.ui.define([
 
 	}
 
-	QUnit.test("clone", function(assert) {
+	QUnit.test("clone", (assert) => {
 
 		return _testClone(assert);
 
 	});
 
-	QUnit.test("clone - opened", function(assert) {
+	QUnit.test("clone - opened", (assert) => {
 
 		return oMTable.onBeforeShow(true).then(() => {
 			return _testClone(assert);
@@ -2002,120 +1959,138 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("setHighlightId", (assert) => {
+		const aItems = oTable.getItems();
+
+		oMTable.setHighlightId(aItems[0].getId());
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
+
+		const oShowResult = oMTable.onShow();
+		assert.equal(oShowResult?.itemId, oTable.getItems()[0].getId(), "OnShow returns navigated Item ID");
+		assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
+
+		oMTable.setHighlightId(aItems[1].getId());
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId don't have class sapMLIBFocused");
+		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
+
+		oTable.setMode(ListMode.MultiSelect);
+		sinon.spy(aItems[1], "focus");
+		oMTable.navigate(0);
+		assert.ok(aItems[1].focus.called, "navigation focused item");
+
+		oMTable.setHighlightId();
+	});
+
 	QUnit.module("Dialog", {
-		beforeEach: function() {
+		beforeEach() {
 			bIsTypeahead = false;
 			_init(false);
 		},
 		afterEach: _teardown
 	});
 
-	QUnit.test("getContent for dialog", function(assert) {
+	QUnit.test("getContent for dialog", (assert) => {
 		let iSelect = 0;
 		let aConditions;
 		let sType;
-		oMTable.attachEvent("select", function(oEvent) {
+		oMTable.attachEvent("select", (oEvent) => {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
 		let iConfirm = 0;
-		oMTable.attachEvent("confirm", function(oEvent) {
+		oMTable.attachEvent("confirm", (oEvent) => {
 			iConfirm++;
 		});
 
 		oMTable.setFilterValue("X");
 		const oContent = oMTable.getContent();
 
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oMTable.onBeforeShow(true).then(() => {
-					oMTable.onShow(); // to update selection and scroll
-					assert.ok(oContent, "Content returned");
-					assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
-					assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
-					const oFixContent = oContent.getFixContent()[0];
-					assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
-					assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
-					assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
-					const oFilterBar = oFixContent.getItems()[0];
-					assert.ok(oFilterBar.isA("sap.ui.mdc.valuehelp.FilterBar"), "VBox item is FilterBar");
-					// const oConditions = oFilterBar.getInternalConditions();
-					// assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
-					const oFlexContent = oContent.getFlexContent();
-					assert.ok(oFlexContent.isA("sap.m.Panel"), "FlexContent is sap.m.Panel");
-					assert.ok(oFlexContent.getExpanded(), "Panel is expanded");
-					assert.equal(oFlexContent.getHeight(), "100%", "Panel height");
-					assert.equal(oFlexContent.getHeaderText(), oResourceBundle.getText("valuehelp.TABLETITLE", [3]), "Panel headerText");
-					assert.ok(oFlexContent.hasStyleClass("sapMdcTablePanel"), "Panel has style class sapMdcTablePanel");
-					assert.equal(oFlexContent.getContent().length, 1, "Panel number of items");
-					const oScrollContainer = oFlexContent.getContent()[0];
-					assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
-					assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
-					assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer");
+		return oContent?.then((oContent) => {
+			return oMTable.onBeforeShow(true).then(() => {
+				oMTable.onShow(); // to update selection and scroll
+				assert.ok(oContent, "Content returned");
+				assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
+				assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
+				const oFixContent = oContent.getFixContent()[0];
+				assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
+				assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
+				assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
+				const oFilterBar = oFixContent.getItems()[0];
+				assert.ok(oFilterBar.isA("sap.ui.mdc.valuehelp.FilterBar"), "VBox item is FilterBar");
+				// const oConditions = oFilterBar.getInternalConditions();
+				// assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
+				const oFlexContent = oContent.getFlexContent();
+				assert.ok(oFlexContent.isA("sap.m.Panel"), "FlexContent is sap.m.Panel");
+				assert.ok(oFlexContent.getExpanded(), "Panel is expanded");
+				assert.equal(oFlexContent.getHeight(), "100%", "Panel height");
+				assert.equal(oFlexContent.getHeaderText(), oResourceBundle.getText("valuehelp.TABLETITLE", [3]), "Panel headerText");
+				assert.ok(oFlexContent.hasStyleClass("sapMdcTablePanel"), "Panel has style class sapMdcTablePanel");
+				assert.equal(oFlexContent.getContent().length, 1, "Panel number of items");
+				const oScrollContainer = oFlexContent.getContent()[0];
+				assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
+				assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
+				assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer");
+				assert.equal(oMTable.getScrollDelegate(), oScrollContainer.getScrollDelegate(), "ScrollDelegate");
 
-					assert.equal(oTable.getMode(), ListMode.MultiSelect, "Table mode");
-					// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
-					assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
+				assert.equal(oTable.getMode(), ListMode.MultiSelect, "Table mode");
+				// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
+				assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
 
-					const aItems = oTable.getItems();
-					let oItem = aItems[0];
-					assert.notOk(oItem.getSelected(), "Item0 not selected");
-					oItem = aItems[1];
-					assert.ok(oItem.getSelected(), "Item1 is selected");
-					oItem = aItems[2];
-					assert.notOk(oItem.getSelected(), "Item2 not selected");
+				const aItems = oTable.getItems();
+				let oItem = aItems[0];
+				assert.notOk(oItem.getSelected(), "Item0 not selected");
+				oItem = aItems[1];
+				assert.ok(oItem.getSelected(), "Item1 is selected");
+				oItem = aItems[2];
+				assert.notOk(oItem.getSelected(), "Item2 not selected");
 
-					let aNewConditions = [
-						Condition.createItemCondition("I3", "X-Item 3")
-					];
-					oTable.fireItemPress({listItem: oItem});
-					assert.equal(iSelect, 1, "select event fired");
-					assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-					assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
-					assert.equal(iConfirm, 0, "confirm event not fired");
-					oItem = aItems[0];
-					assert.notOk(oItem.getSelected(), "Item0 not selected");
-					oItem = aItems[1];
-					assert.ok(oItem.getSelected(), "Item1 is selected");
-					oItem = aItems[2];
-					assert.ok(oItem.getSelected(), "Item2 is selected");
-					// TODO: clarify if Conditions should really not be updated - so they are not in sync with Selection
-					// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
+				let aNewConditions = [
+					Condition.createItemCondition("I3", "X-Item 3")
+				];
+				oTable.fireItemPress({listItem: oItem});
+				assert.equal(iSelect, 1, "select event fired");
+				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+				assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+				assert.equal(iConfirm, 0, "confirm event not fired");
+				oItem = aItems[0];
+				assert.notOk(oItem.getSelected(), "Item0 not selected");
+				oItem = aItems[1];
+				assert.ok(oItem.getSelected(), "Item1 is selected");
+				oItem = aItems[2];
+				assert.ok(oItem.getSelected(), "Item2 is selected");
+				// TODO: clarify if Conditions should really not be updated - so they are not in sync with Selection
+				// assert.deepEqual(oMTable.getConditions(), aNewConditions, "MTable conditions");
 
-					// selection via SelectionChangeEvent (selection of items done normally in table)
-					iSelect = 0;
-					iConfirm = 0;
-					aNewConditions = [
-						Condition.createItemCondition("I2", "Item 2")
-					];
-					aItems[1].setSelected(false);
-					oTable.fireSelectionChange({listItems: [aItems[1]]});
-					assert.equal(iSelect, 1, "select event fired");
-					assert.deepEqual(aConditions, aNewConditions, "select event conditions");
-					assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
-					assert.equal(iConfirm, 0, "confirm event not fired");
+				// selection via SelectionChangeEvent (selection of items done normally in table)
+				iSelect = 0;
+				iConfirm = 0;
+				aNewConditions = [
+					Condition.createItemCondition("I2", "Item 2")
+				];
+				aItems[1].setSelected(false);
+				oTable.fireSelectionChange({listItems: [aItems[1]]});
+				assert.equal(iSelect, 1, "select event fired");
+				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+				assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
+				assert.equal(iConfirm, 0, "confirm event not fired");
 
-					oMTable.onHide();
-					assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
-					fnDone();
-				});
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
+				oMTable.onHide();
+				assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
 			});
-		}
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 
 	});
 
-	QUnit.test("isQuickSelectSupported", function(assert) {
+	QUnit.test("isQuickSelectSupported", (assert) => {
 
 		assert.ok(oMTable.isQuickSelectSupported(), "quick select supported");
 
 	});
 
-	QUnit.test("Filter with FilterBar", function(assert) {
+	QUnit.test("Filter with FilterBar", (assert) => {
 
 		const oListBinding = oTable.getBinding("items");
 		sinon.stub(ValueHelpDelegate, "isSearchSupported").returns(true);
@@ -2182,10 +2157,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Filtering with FilterBar and $search", function(assert) {
+	QUnit.test("Filtering with FilterBar and $search", (assert) => {
 
 		let iTypeaheadSuggested = 0;
-		oMTable.attachEvent("typeaheadSuggested", function(oEvent) {
+		oMTable.attachEvent("typeaheadSuggested", (oEvent) => {
 			iTypeaheadSuggested++;
 		});
 
@@ -2201,9 +2176,9 @@ sap.ui.define([
 
 		const oListBinding = oTable.getBinding("items");
 		const oListBindingInfo = oTable.getBindingInfo("items");
-		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
-		oListBinding.getRootBinding = function() {}; // just fake V4 logic
-		oListBinding.requestContexts = function(iStartIndex, iRequestedItems) {return Promise.resolve(oListBinding.getContexts(iStartIndex, iRequestedItems));}; // just fake V4 logic
+		oListBinding.changeParameters = (oParameters) => {}; // just fake V4 logic
+		oListBinding.getRootBinding = () => {}; // just fake V4 logic
+		oListBinding.requestContexts = (iStartIndex, iRequestedItems) => {return Promise.resolve(oListBinding.getContexts(iStartIndex, iRequestedItems));}; // just fake V4 logic
 
 		const oFilterBar = new FilterBar("FB1");
 		sinon.stub(oFilterBar, "getConditions").returns({
@@ -2265,34 +2240,17 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", (assert) => {
 
 		assert.notOk(oMTable.isSingleSelect(), "multi-selection taken from Table");
 
 	});
 
-	QUnit.test("setHighlightId", function(assert) {
-		const aItems = oTable.getItems();
-
-		oMTable.setHighlightId(aItems[0].getId());
-		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
-
-		oMTable.setHighlightId(aItems[1].getId());
-		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId don't have class sapMLIBFocused");
-		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
-
-		sinon.spy(aItems[1], "focus");
-		oMTable.navigate(0);
-		assert.ok(aItems[1].focus.called, "navigation focused item");
-
-		oMTable.setHighlightId();
-	});
-
-	QUnit.test("announces table update", function(assert) {
+	QUnit.test("announces table update", (assert) => {
 		const oContent = oMTable.getContent();
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
+			oContent.then((oContent) => {
 				oMTable.onBeforeShow(true).then(() => {
 					sinon.spy(oMTable, "_updateHeaderText");
 					sinon.spy(MTableUtil, "announceTableUpdate");
@@ -2320,7 +2278,7 @@ sap.ui.define([
 						},0);
 					},0);
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 				fnDone();
 			});
