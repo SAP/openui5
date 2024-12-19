@@ -19,6 +19,9 @@ globalThis.fnInit = () => {
 			afterEach: function() {
 				this.sinonSandbox.restore();
 			},
+			beforeEach: function (assert) {
+				assert.ok(Interaction.getActive(), "Interaction is active.");
+			},
 			dummyRequest: function(bUseUrlObject) {
 				var xhr = new XMLHttpRequest();
 				const sUrl = "/resources/ui5loader.js?noCache=" + Date.now() + "-" + (++this.requestCounter);
