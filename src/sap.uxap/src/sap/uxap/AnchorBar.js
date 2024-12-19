@@ -1093,7 +1093,7 @@ sap.ui.define([
 			iIndex = oContent.indexOf(oElement);
 
 		if (iIndex !== -1) {
-			mAriaProps.role = "option";
+			mAriaProps.role = "tab";
 			mAriaProps.setsize = oContent.length;
 			mAriaProps.posinset = iIndex + 1; // we need "+ 1", since iIndex would start from 0 (due to indexOf)
 		}

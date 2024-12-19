@@ -606,7 +606,7 @@ sap.ui.define([
 	QUnit.test("AnchorBar container has the correct role", function (assert) {
 		var $oMenu = jQuery("#UxAP-69_anchorBarBinding--ObjectPageLayout-anchBar-scroll");
 
-		assert.strictEqual($oMenu.attr("role"), "listbox", "AnchorBar container has the listbox role.");
+		assert.strictEqual($oMenu.attr("role"), "tablist", "AnchorBar container has the listbox role.");
 	});
 
 	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {
@@ -723,7 +723,7 @@ sap.ui.define([
 				"inner buttons are hidden from accessibility API");
 			}
 
-			checkButtonAriaAttribute(assert, oCurrentButton, "role", "option",
+			checkButtonAriaAttribute(assert, oCurrentButton, "role", "tab",
 				"aria role of the button is set correctly");
 		}
 	});
