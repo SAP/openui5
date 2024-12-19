@@ -52,43 +52,50 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const sDelegatePath = "sap/ui/mdc/TableDelegate";
-
 	const fnOriginalUpdateBindingInfo = TableDelegate.updateBindingInfo;
 	TableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		fnOriginalUpdateBindingInfo.apply(this, arguments);
 		oBindingInfo.path = oTable.getPayload() ? oTable.getPayload().collectionPath : "/foo";
 	};
 
+	const fnOriginalFetchProperties = TableDelegate.fetchProperties;
+	TableDelegate.fetchProperties = function(oTable) {
+		const oPayload = oTable.getPayload();
+
+		if (oPayload?.propertyInfo) {
+			return Promise.resolve(oPayload.propertyInfo);
+		} else {
+			return fnOriginalFetchProperties.apply(this, arguments);
+		}
+	};
+
 	QUnit.module("API", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				path: "Name_Path",
-				label: "Name_Label",
-				sortable: true,
-				dataType: "String"
-			}, {
-				name: "FirstName",
-				path: "FirstName_Path",
-				label: "FirstName_Label",
-				sortable: true,
-				dataType: "String"
-			}, {
-				name: "ID",
-				path: "ID_Path",
-				label: "ID_Label",
-				sortable: true,
-				text: "FirstName",
-				dataType: "String"
-			}]);
-		},
 		beforeEach: async function(assert) {
 			this.oTable = new Table({
 				delegate: {
-					name: sDelegatePath,
+					name: "sap/ui/mdc/TableDelegate",
 					payload: {
-						collectionPath: "/foo"
+						collectionPath: "/foo",
+						propertyInfo: [{
+							name: "Name",
+							path: "Name_Path",
+							label: "Name_Label",
+							sortable: true,
+							dataType: "String"
+						}, {
+							name: "FirstName",
+							path: "FirstName_Path",
+							label: "FirstName_Label",
+							sortable: true,
+							dataType: "String"
+						}, {
+							name: "ID",
+							path: "ID_Path",
+							label: "ID_Label",
+							sortable: true,
+							text: "FirstName",
+							dataType: "String"
+						}]
 					}
 				},
 				p13nMode: ["Sort"],
@@ -116,9 +123,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		}
 	});
 
@@ -278,21 +282,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				path: "Name_Path",
-				label: "Name_Label",
-				dataType: "String"
-			}]);
-		},
 		afterEach: function() {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		initTable: async function(mSettings, fnBeforeInit) {
 			if (this.oTable) {
@@ -301,9 +294,15 @@ sap.ui.define([
 
 			this.oTable = new Table(Object.assign({
 				delegate: {
-					name: sDelegatePath,
+					name: "sap/ui/mdc/TableDelegate",
 					payload: {
-						collectionPath: "/"
+						collectionPath: "/",
+						propertyInfo: [{
+							name: "Name",
+							path: "Name_Path",
+							label: "Name_Label",
+							dataType: "String"
+						}]
 					}
 				},
 				columns: [
