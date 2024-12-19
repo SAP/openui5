@@ -16,6 +16,7 @@ sap.ui.define([], function() {
 	var rCheckValidIPv6 = /^\[(((([0-9a-f]{1,4}:){6}|(::([0-9a-f]{1,4}:){5})|(([0-9a-f]{1,4})?::([0-9a-f]{1,4}:){4})|((([0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::([0-9a-f]{1,4}:){3})|((([0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::([0-9a-f]{1,4}:){2})|((([0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:)|((([0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::))(([0-9a-f]{1,4}:[0-9a-f]{1,4})|(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])))|((([0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4})|((([0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::))\]$/i;
 	var rCheckHostName = /^([a-z0-9]([a-z0-9\-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9\-]*[a-z0-9])?$/i;
 	var rSpecialSchemeURLs = /^((?:ftp|https?|wss?):)([\s\S]+)$/;
+	var rBlobURLs = /^blob:(?<origin>[\w\+]+:\/\/(?=.{1,254}(?::|$))(?:(?!\d|-)(?![a-z0-9\-]{1,62}-(?:\.|:|$))[a-z0-9\-]{1,63}\b(?!\.$)\.?)+(:\d+)?)\/(?<uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/;
 
 	/* eslint-disable no-control-regex */
 	var rCheckWhitespaces = /[\u0009\u000A\u000D]/;
@@ -266,11 +267,24 @@ sap.ui.define([], function() {
 			}
 		}
 
+		// Test for Blob URLs (Schema: "blob:[ORIGIN]/[UUID]",
+		// e.g: "blob:https://sapui5.hana.ondemand.com/c56a4180-65aa-42ec-a945-5fd21dec0538")
+		var result = rBlobURLs.exec(sUrl);
+		if (result && result.groups) {
+			// Blob URLs are only valid if from the same origin
+			if (result.groups.origin !== window.location.origin) {
+				return false;
+			}
+
+			// get the url without 'blob:' for further validation
+			sUrl = result.groups.origin + "/" + result.groups.uuid;
+		}
+
 		// for 'special' URLs without a given base URL, the whatwg spec allows any number of slashes.
 		// As the rBasicUrl regular expression cannot handle 'special' URLs, the URL is modified upfront,
 		// if it wouldn't be recognized by the regex.
 		// See https://url.spec.whatwg.org/#scheme-state (case 2.6.)
-		var result = rSpecialSchemeURLs.exec(sUrl);
+		result = rSpecialSchemeURLs.exec(sUrl);
 		if (result && !/^[\/\\]{2}/.test(result[2])) {
 			sUrl = result[1] + "//" + result[2];
 		}
