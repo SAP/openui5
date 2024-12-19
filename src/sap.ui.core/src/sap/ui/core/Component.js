@@ -2191,9 +2191,15 @@ sap.ui.define([
 					factoryConfig: oConfig,
 					manifest: oManifest,
 					model: oModel,
-					modelId: sModelName,
-					ownerId: ManagedObject._sOwnerId
+					modelId: sModelName
 				};
+				const oOwnerComponent = Component.getComponentById(ManagedObject._sOwnerId);
+				if (oOwnerComponent) {
+					oInfo.owner = {
+						id: ManagedObject._sOwnerId,
+						config: oOwnerComponent._componentConfig
+					};
+				}
 				ComponentHooks.onModelCreated.execute(oInfo);
 			}
 
