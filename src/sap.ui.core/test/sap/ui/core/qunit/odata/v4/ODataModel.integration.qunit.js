@@ -6374,10 +6374,13 @@ sap.ui.define([
 	//
 	// The header message contains the property "longtextUrl", which points one level up. See that
 	// the UI5 message contains the resolved "descriptionUrl". (SNOW: DINC0197984)
+	//
+	// Header message target relative to R.V.C. (SNOW: DINC0341568)
 	QUnit.test("Context.refresh() in a list relative to a return value context", function (assert) {
 		var oMessage = {
 				additionalTargets : [
-					"$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/ProductID"
+					"$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/ProductID",
+					"SalesOrderID"
 				],
 				code : "foo-42",
 				longtextUrl : "../LongText('0815')",
@@ -6432,7 +6435,8 @@ sap.ui.define([
 					persistent : true,
 					targets : [
 						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/Name",
-						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/ProductID"
+						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/ProductID",
+						"/SalesOrderList('1')/SalesOrderID"
 					],
 					technicalDetails : {
 						originalMessage : oMessage
@@ -7523,7 +7527,7 @@ sap.ui.define([
 						Salary : 54321
 					}
 				}
-			}, {/* response does not matter here */});
+			}); // 204 No Content
 
 			// code under test
 			return Promise.all([oOperation.invoke(), that.waitForChanges(assert)]);
@@ -7566,7 +7570,7 @@ sap.ui.define([
 						Salary : 54321
 					}
 				}
-			}, {/* response does not matter here */});
+			}); // 204 No Content
 
 			return Promise.all([
 				// code under test
@@ -15267,8 +15271,20 @@ sap.ui.define([
 	// and messages are reported as expected. Refreshing the return value context updates also
 	// messages properly. (CPOUI5UISERVICESV3-1674)
 	// Return value context can be used with v4.Context#setProperty (CPOUI5UISERVICESV3-1874).
-	QUnit.test("Bound action on collection", function (assert) {
+	//
+	// Check that targets of header messages are properly resolved w.r.t. R.V.C. (for various group
+	// IDs).
+	// SNOW: DINC0341568
+["$auto", "$direct", "$single"].forEach((sGroupId) => {
+	QUnit.test("Bound action on collection, sGroupId=" + sGroupId, function (assert) {
 		var oHeaderContext,
+			oHeaderMessage = {
+				additionalTargets : ["ArtistID"],
+				code : "C0D€",
+				message : "Some header message",
+				numericSeverity : 2,
+				target : "Name"
+			},
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oReturnValueContext,
 			sView = '\
@@ -15329,8 +15345,22 @@ sap.ui.define([
 						transition : false
 					}],
 					Name : "Queen"
+				}, {
+					"sap-messages" : JSON.stringify([oHeaderMessage])
 				})
 				.expectMessages([{
+					code : "C0D€",
+					message : "Some header message",
+					persistent : true,
+					targets : [
+						"/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+						"/Artists(ArtistID='ABC',IsActiveEntity=false)/ArtistID"
+					],
+					technicalDetails : {
+						originalMessage : oHeaderMessage
+					},
+					type : "Information"
+				}, {
 					code : "23",
 					message : "Just A Message",
 					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
@@ -15344,7 +15374,7 @@ sap.ui.define([
 				.setParameter("Name", oDefaults.getObject("Name"));
 
 			return Promise.all([
-				oAction.invoke(),
+				oAction.invoke(sGroupId),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
@@ -15358,9 +15388,14 @@ sap.ui.define([
 		}).then(function () {
 			return that.checkValueState(assert, "nameCreated", "Success", "Just A Message");
 		}).then(function () {
-			var sResourcePath = "Artists(ArtistID='ABC',IsActiveEntity=false)"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
-				sErrorMessage = "sap.ui.model.odata.v4.ODataContextBinding:"
+			Messaging.removeMessages( // remove oHeaderMessage
+				Messaging.getMessageModel().getObject("/")
+					.filter((oMessage) => oMessage.code === oHeaderMessage.code)
+			);
+
+			const sResourcePath = "Artists(ArtistID='ABC',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name";
+			const sErrorMessage = "sap.ui.model.odata.v4.ODataContextBinding:"
 					+ " /Artists|special.cases.Create(...)"
 					+ " is ignoring response from inactive cache: /special/cases/"
 					+ sResourcePath;
@@ -15442,6 +15477,7 @@ sap.ui.define([
 			return that.checkValueState(assert, "nameCreated", "Success", "What a nice acronym!");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Call bound action on a context of a relative ListBinding.
@@ -48130,6 +48166,8 @@ make root = ${bMakeRoot}`;
 	// The second test uses a bound function instead of an action to check that the different
 	// access to the cache also works.
 	// JIRA: CPOUI5UISERVICESV3-1193
+	//
+	// Header message target relative to R.V.C. (SNOW: DINC0341568)
 	[{
 		operation : "EditAction",
 		method : "POST"
@@ -48197,6 +48235,14 @@ make root = ${bMakeRoot}`;
 						target : "Name",
 						transition : true
 					}]
+				}, {
+					"sap-messages" : i > 0 ? undefined : JSON.stringify([{
+						additionalTargets : ["ArtistID", "IsActiveEntity"],
+						code : "C0D€",
+						message : "Some header message",
+						numericSeverity : 2,
+						target : "Name"
+					}])
 				})
 				.expectMessages([{
 					code : "23",
@@ -48204,7 +48250,17 @@ make root = ${bMakeRoot}`;
 					persistent : true,
 					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 					type : "Success"
-				}]);
+				}, ...(i > 0 ? [] : [{
+					code : "C0D€",
+					message : "Some header message",
+					persistent : true,
+					targets : [
+						"/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+						"/Artists(ArtistID='42',IsActiveEntity=false)/ArtistID",
+						"/Artists(ArtistID='42',IsActiveEntity=false)/IsActiveEntity"
+					],
+					type : "Information"
+				}])]);
 
 				// code under test
 				return Promise.all([
@@ -61284,7 +61340,7 @@ make root = ${bMakeRoot}`;
 		function onStrictHandlingFailed0(aMessages) {
 			assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
 			assert.strictEqual(aMessages[0].getCode(), "CODE1");
-			assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('0')/Note");
+			assert.deepEqual(aMessages[0].getTargets(), ["/SalesOrderList('0')/Note"]);
 			assert.strictEqual(aMessages[0].getType(), "Warning");
 			if (bDifferentContentIDs) {
 				assert.strictEqual(aMessages.length, 1);
@@ -61292,11 +61348,11 @@ make root = ${bMakeRoot}`;
 				assert.strictEqual(aMessages.length, 3);
 				assert.strictEqual(aMessages[1].getMessage(), "Note is empty");
 				assert.strictEqual(aMessages[1].getCode(), "CODE1");
-				assert.strictEqual(aMessages[1].getTargets()[0], "/SalesOrderList('0')/Note");
+				assert.deepEqual(aMessages[1].getTargets(), ["/SalesOrderList('0')/Note"]);
 				assert.strictEqual(aMessages[1].getType(), "Warning");
 				assert.strictEqual(aMessages[2].getMessage(), "Some unbound info");
 				assert.strictEqual(aMessages[2].getCode(), "CODE2");
-				assert.strictEqual(aMessages[2].getTargets()[0], "");
+				assert.deepEqual(aMessages[2].getTargets(), [""]);
 				assert.strictEqual(aMessages[2].getType(), "Information");
 			}
 			return new Promise(function (resolve) {
@@ -61309,11 +61365,11 @@ make root = ${bMakeRoot}`;
 				assert.strictEqual(aMessages.length, 2);
 				assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
 				assert.strictEqual(aMessages[0].getCode(), "CODE1");
-				assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('1')/Note");
+				assert.deepEqual(aMessages[0].getTargets(), ["/SalesOrderList('1')/Note"]);
 				assert.strictEqual(aMessages[0].getType(), "Warning");
 				assert.strictEqual(aMessages[1].getMessage(), "Some unbound info");
 				assert.strictEqual(aMessages[1].getCode(), "CODE2");
-				assert.strictEqual(aMessages[1].getTargets()[0], "");
+				assert.deepEqual(aMessages[1].getTargets(), [""]);
 				assert.strictEqual(aMessages[1].getType(), "Information");
 			} else {
 				assert.strictEqual(aMessages.length, 0);
@@ -61583,6 +61639,8 @@ make root = ${bMakeRoot}`;
 	// fnOnStrictHandlingFailed callback.
 	//
 	// JIRA: CPOUI5ODATAV4-1034
+	//
+	// Add error detail w/ target to 2nd one (SNOW: DINC0341568)
 	QUnit.test("CPOUI5ODATAV4-1034: handling=strict, simulate draft save", function (assert) {
 		var sConfirmAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			sGoodsAction = "com.sap.gateway.default.zui5_epm_sample.v0002."
@@ -61608,16 +61666,33 @@ make root = ${bMakeRoot}`;
 				oConfirmBinding = oModel.bindContext(sConfirmAction + "(...)", oContext),
 				oError = createErrorInsideBatch({
 					code : "STRICT",
+					details : [{
+						"@Common.numericSeverity" : 3,
+						code : "NOTE_EMPTY",
+						message : "Note is empty",
+						// Note: "$Parameter/" is optional in error case, but mandatory in success
+						target : "$Parameter/SalesOrder/Note"
+					}],
 					message : "Strict Handling"
 				}, 412),
 				oGoodsBinding = oModel.bindContext(sGoodsAction + "(...)", oContext);
 
 			function fnOnStrictHandlingFailed(aMessages) {
-				assert.deepEqual(aMessages, [], "no details in strict error response");
+				assert.strictEqual(aMessages.length, 1);
+				assert.strictEqual(aMessages[0].getCode(), "NOTE_EMPTY");
+				assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
+				assert.deepEqual(aMessages[0].getTargets(), ["/SalesOrderList('42')/Note"]);
+				assert.strictEqual(aMessages[0].getType(), "Warning");
+
 				// code under test
 				aMessages = oContext.getMessages();
 				assert.strictEqual(aMessages.length, 1);
-				assert.strictEqual(aMessages[0].message, "Incorrect LifecycleStatus");
+				assert.strictEqual(aMessages[0].getCode(), "CODE");
+				assert.strictEqual(aMessages[0].getMessage(), "Incorrect LifecycleStatus");
+				assert.strictEqual(aMessages[0].getPersistent(), false);
+				assert.deepEqual(aMessages[0].getTargets(),
+					["/SalesOrderList('42')/LifecycleStatus"]);
+				assert.strictEqual(aMessages[0].getType(), "Warning");
 
 				return Promise.resolve(false);
 			}
@@ -67735,7 +67810,7 @@ make root = ${bMakeRoot}`;
 					payload : {EmployeeID : "1"},
 					url : "FireEmployee"
 				}, new Promise(function (resolve) {
-					fnResolveOperation0 = resolve;
+					fnResolveOperation0 = resolve; // 204 No Content
 				}));
 
 			// code under test
@@ -67752,7 +67827,7 @@ make root = ${bMakeRoot}`;
 					payload : {EmployeeID : "2"},
 					url : "FireEmployee"
 				}, new Promise(function (resolve) {
-					fnResolveOperation1 = resolve;
+					fnResolveOperation1 = resolve; // 204 No Content
 				}));
 
 			// code under test
