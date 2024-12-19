@@ -52,7 +52,7 @@
 		},
 		{
 			"control": "sap.m.Button",
-			"url": "Button.html",
+			"url": "./Button.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -82,23 +82,43 @@
 		},
 		{
 			"control": "sap.m.ColorPalette",
-			"url": "ColorPalette.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"url": "./ColorPalette.html",
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.ColorPalette",
+				"title": "ACC test for sap.m.ColorPalette",
+				"module": "./colorpalette.qunit"
+			}
 		},
 		{
 			"control": "sap.m.DatePicker",
-			"url": "DatePicker.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"url": "./DatePicker.html",
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.DatePicker",
+				"title": "ACC test for sap.m.DatePicker",
+				"module": "./datepicker.qunit"
+			}
 		},
 		{
 			"control": "sap.m.DateRangeSelection",
 			"url": "./DateRangeSelection.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.DateRangeSelection",
+				"title": "ACC test for sap.m.DateRangeSelection",
+				"module": "./daterangeselection.qunit"
+			}
 		},
 		{
 			"control": "sap.m.DateTimePicker",
-			"url": "DateTimePicker.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"url": "./DateTimePicker.html",
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.DateTimePicker",
+				"title": "ACC test for sap.m.DateTimePicker",
+				"module": "./datetimepicker.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Dialog",
@@ -113,7 +133,12 @@
 		{
 			"control": "sap.m.DynamicDateRange",
 			"url": "./DynamicDateRange.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.DynamicDateRange",
+				"title": "ACC test for sap.m.DynamicDateRange",
+				"module": "./dynamicdaterange.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ExpandableText",
@@ -147,7 +172,7 @@
 		},
 		{
 			"control": "sap.m.FormattedText",
-			"url": "FormattedText.html",
+			"url": "./FormattedText.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -212,7 +237,7 @@
 		},
 		{
 			"control": "sap.m.Link",
-			"url": "Link.html",
+			"url": "./Link.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -238,17 +263,22 @@
 		},
 		{
 			"control": "sap.m.MaskInput",
-			"url": "../MaskInput.html",
+			"url": "./MaskInput.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.Menu",
 			"url": "./Menu.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.Menu",
+				"title": "ACC test for sap.m.Menu",
+				"module": "./Menu.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MenuButton",
-			"url": "MenuButton.html",
+			"url": "./MenuButton.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -338,17 +368,17 @@
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
-			"url": "ObjectHeader.html",
+			"url": "./ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.ObjectHeader",
-			"url": "ObjectHeader.html",
+			"url": "./ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
 			"control": "sap.m.ObjectIdentifier",
-			"url": "ObjectIdentifier.html",
+			"url": "./ObjectIdentifier.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -368,7 +398,7 @@
 		},
 		{
 			"control": "sap.m.ObjectMarker",
-			"url": "ObjectMarker.html",
+			"url": "./ObjectMarker.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -378,7 +408,7 @@
 		},
 		{
 			"control": "sap.m.ObjectStatus",
-			"url": "ObjectHeader.html",
+			"url": "./ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -493,7 +523,7 @@
 		},
 		{
 			"control": "sap.m.SegmentedButton",
-			"url": "SegmentedButton.html",
+			"url": "./SegmentedButton.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -579,7 +609,7 @@
 		},
 		{
 			"control": "sap.m.Switch",
-			"url": "Switch.html",
+			"url": "./Switch.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -609,8 +639,13 @@
 		},
 		{
 			"control": "sap.m.TimePicker",
-			"url": "TimePicker.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"url": "./TimePicker.html",
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.TimePicker",
+				"title": "ACC test for sap.m.TimePicker",
+				"module": "./timepicker.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Text",
@@ -675,7 +710,12 @@
 		{
 			"control": "sap.m.ViewSettingsDialog",
 			"url": "ViewSettingsDialog.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.ViewSettingsDialog",
+				"title": "ACC test for sap.m.ViewSettingsDialog",
+				"module": "./viewsettingsdialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Wizard",

@@ -81,8 +81,7 @@ sap.ui.define([
 				"SupplierName": "",
 				"Description": "Should be one line in height",
 				"Price": 39.99,
-				"CurrencyCode": "EUR",
-				"icon": "../ui/documentation/sdk/images/HT-6120.jpg"
+				"CurrencyCode": "EUR"
 			},
 			{
 				"Name": "Hurricane GX",

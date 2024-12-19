@@ -19,7 +19,7 @@ sap.ui.define([
 	function getTitle(sText) {
 		return new Title({
 			text: sText,
-			titleLevel: TitleLevel.H2,
+			level: TitleLevel.H2,
 			titleStyle: TitleLevel.H5,
 			wrapping: true
 		}).addStyleClass("sapUiMediumMarginTop");
@@ -38,7 +38,7 @@ sap.ui.define([
 			new Label({ text: "Label", wrapping: true, labelFor: "defaultSwitchWithLabel" }),
 			new Switch("defaultSwitchWithLabel"),
 
-			new Label({ text: "Using ariaLabelledBy association", wrapping: true, labelFor: "defaultSwitchLabelledBy" }),
+			new Label("defaultSwitchLabelledBy", { text: "Using ariaLabelledBy association", wrapping: true }),
 			new Switch({ ariaLabelledBy: "defaultSwitchLabelledBy" })
 		]
 	}).addStyleClass("sapUiContentPadding");
@@ -80,13 +80,13 @@ sap.ui.define([
 		content: [
 			getTitle("AcceptReject type"),
 
-			new Label({ text: "Regular", labelFor: "regularWithAcceptStatus" }),
+			new Label({ text: "Regular", labelFor: "regularWithAcceptStatus", wrapping: true }),
 			new Switch("regularWithAcceptStatus", { type: SwitchType.AcceptReject }),
 
-			new Label({ text: "Disabled", labelFor: "disabledWithAcceptStatus" }),
+			new Label({ text: "Disabled", labelFor: "disabledWithAcceptStatus", wrapping: true }),
 			new Switch("disabledWithAcceptStatus", { type: SwitchType.AcceptReject, enabled: false }),
 
-			new Label("acceptRejectSwitchLabelledBy", { text: "Using ariaLabelledBy association" }),
+			new Label("acceptRejectSwitchLabelledBy", { text: "Using ariaLabelledBy association", wrapping: true }),
 			new Switch({ type: SwitchType.AcceptReject, ariaLabelledBy: "acceptRejectSwitchLabelledBy" })
 		]
 	}).addStyleClass("sapUiContentPadding");
@@ -104,5 +104,5 @@ sap.ui.define([
 		});
 
 	oApp.addPage(oPage);
-	oApp.placeAt("content");
+	oApp.placeAt("body");
 });

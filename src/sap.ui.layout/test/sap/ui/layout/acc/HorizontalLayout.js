@@ -11,7 +11,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	const TitleLevel = coreLibrary.TitleLevel;
 
-	const oDefaultLayout = new HorizontalLayout("myLayout", {
+	const oDefaultLayout = new HorizontalLayout({
 		allowWrapping: true,
 		content:[
 			new Image({

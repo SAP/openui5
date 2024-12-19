@@ -215,9 +215,9 @@ sap.ui.require([
 		]
 	});
 
-	var oPage = new Page("mySecondPage", {
+	var oPage = new Page({
 		backgroundDesign: "Standard",
-		title : "Dynamic Side Content",
+		title : "DynamicSideContent Accessibility Test Page",
 		titleLevel: TitleLevel.H1,
 		enableScrolling : true,
 		footer: oFooterBar,
