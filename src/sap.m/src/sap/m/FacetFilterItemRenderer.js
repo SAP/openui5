@@ -19,7 +19,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
 	 */
 	FacetFilterItemRenderer.renderLIContent = function(oRm, oControl) {
 
-		oRm.openStart("div", oControl);
+		oRm.openStart("div");
 		if (oControl.getParent() && oControl.getParent().getWordWrap()) {
 			oRm.class("sapMFFLITitleWrap");
 		} else {
