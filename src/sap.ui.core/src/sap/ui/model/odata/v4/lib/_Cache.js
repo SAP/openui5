@@ -3107,7 +3107,7 @@ sap.ui.define([
 
 					const iIndex = aElements.indexOf(oKeptElement);
 					if (iIndex >= 0 && iIndex !== iStart + i - iOffset) {
-						throw new Error("Duplicate predicate: " + sPredicate);
+						throw new Error("Duplicate key predicate: " + sPredicate);
 					}
 				}
 				aElements.$byPredicate[sPredicate] = oElement;
@@ -3565,7 +3565,7 @@ sap.ui.define([
 
 			return that.handleCount(oGroupLock, iTransientElements, oReadRequest.iStart,
 				oReadRequest.iEnd, aResult[0], iFiltered);
-		}).catch(function (oError) {
+		}, function (oError) {
 			if (!oError.canceled && !oReadRequest.bObsolete) {
 				that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
 				that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
