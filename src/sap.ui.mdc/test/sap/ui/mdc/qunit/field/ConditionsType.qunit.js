@@ -11,25 +11,25 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/String"
-], function (
-		Library,
-		ConditionsType,
-		Condition,
-		FilterOperatorUtil,
-		ConditionValidateException,
-		ConditionValidated,
-		OperatorName,
-		IntegerType,
-		CurrencyType,
-		StringType
-	) {
+], (
+	Library,
+	ConditionsType,
+	Condition,
+	FilterOperatorUtil,
+	ConditionValidateException,
+	ConditionValidated,
+	OperatorName,
+	IntegerType,
+	CurrencyType,
+	StringType
+) => {
 	"use strict";
 
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	let oConditionsType;
 	let oValueType;
 	let bAsyncCalled;
-	const fnAsync = function(oPromise) {
+	const fnAsync = (oPromise) => {
 		bAsyncCalled = true;
 		if (!(oPromise instanceof Promise)) {
 			throw new Error("needs promise");
@@ -52,24 +52,24 @@ sap.ui.define([
 	}
 
 	QUnit.module("Default type", {
-		beforeEach: function() {
+		beforeEach() {
 			oConditionsType = new ConditionsType({operators: [OperatorName.EQ]});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionsType.destroy();
 			oConditionsType = undefined;
 			bAsyncCalled = undefined;
 		}
 	});
 
-	QUnit.test("Formatting: nothing", function(assert) {
+	QUnit.test("Formatting: nothing", (assert) => {
 
 		const sResult = oConditionsType.formatValue();
 		assert.equal(sResult, null, "Result of formatting");
 
 	});
 
-	QUnit.test("Formatting: simple String", function(assert) {
+	QUnit.test("Formatting: simple String", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test"], undefined, undefined, ConditionValidated.Validated);
 		const sResult = oConditionsType.formatValue([oCondition]);
@@ -77,7 +77,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: empty array", function(assert) {
+	QUnit.test("Formatting: empty array", (assert) => {
 
 		let vResult = oConditionsType.formatValue([]);
 		assert.equal(vResult, "", "Result of formatting");
@@ -87,7 +87,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: invalid value", function(assert) {
+	QUnit.test("Formatting: invalid value", (assert) => {
 
 		let oException;
 
@@ -101,7 +101,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: invalid condition", function(assert) {
+	QUnit.test("Formatting: invalid condition", (assert) => {
 
 		let oException;
 
@@ -115,7 +115,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: array of conditions", function(assert) {
+	QUnit.test("Formatting: array of conditions", (assert) => {
 
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1});
 		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["Test1"]);
@@ -129,7 +129,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: array of conditions with noFormatting", function(assert) {
+	QUnit.test("Formatting: array of conditions with noFormatting", (assert) => {
 
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, noFormatting: true});
 		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["Test1"]);
@@ -143,7 +143,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: simple String", function(assert) {
+	QUnit.test("Parsing: simple String", (assert) => {
 
 		const aConditions = oConditionsType.parseValue("Test");
 		assert.ok(aConditions, "Result returned");
@@ -153,7 +153,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: EQ - empty", function(assert) {
+	QUnit.test("Parsing: EQ - empty", (assert) => {
 
 		const aConditions = oConditionsType.parseValue("");
 		assert.ok(aConditions, "Result returned");
@@ -163,7 +163,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: simple Integer", function(assert) {
+	QUnit.test("Formatting: simple Integer", (assert) => {
 
 		oValueType = new IntegerType();
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
@@ -176,7 +176,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: simple Integer", function(assert) {
+	QUnit.test("Parsing: simple Integer", (assert) => {
 
 		oValueType = new IntegerType();
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
@@ -191,7 +191,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: invalid value", function(assert) {
+	QUnit.test("Parsing: invalid value", (assert) => {
 
 		oValueType = new IntegerType();
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
@@ -207,11 +207,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: maxConditions > 1", function(assert) {
+	QUnit.test("Parsing: maxConditions > 1", (assert) => {
 
 		const aCompareConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		let aConditions = [];
-		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: 2, getConditions: function() {return aConditions;}, noFormatting: true});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: 2, getConditions() {return aConditions;}, noFormatting: true});
 
 		aConditions = oConditionsType.parseValue("X");
 		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: valid value", function(assert) {
+	QUnit.test("Validating: valid value", (assert) => {
 
 		oValueType = new IntegerType({}, {maximum: 100});
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
@@ -257,7 +257,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: nothing", function(assert) {
+	QUnit.test("Validating: nothing", (assert) => {
 
 		oValueType = new IntegerType({}, {maximum: 100});
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
@@ -273,7 +273,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: empty conditions", function(assert) {
+	QUnit.test("Validating: empty conditions", (assert) => {
 
 		let oException;
 
@@ -287,7 +287,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: invalid value", function(assert) {
+	QUnit.test("Validating: invalid value", (assert) => {
 
 		oValueType = new IntegerType({}, {maximum: 100});
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType});
@@ -301,8 +301,8 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
-		assert.deepEqual(oException && oException.getConditions(), [oCondition], "exception conditions");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getConditions(), [oCondition], "exception conditions");
 
 		oException = undefined;
 		try {
@@ -311,12 +311,12 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.notOk(oException && oException.getCondition(), "exception condition");
-		assert.deepEqual(oException && oException.getConditions(), "XXX", "exception conditions");
+		assert.notOk(oException?.getCondition(), "exception condition");
+		assert.deepEqual(oException?.getConditions(), "XXX", "exception conditions");
 
 	});
 
-	QUnit.test("setConstraints", function(assert) {
+	QUnit.test("setConstraints", (assert) => {
 
 		oConditionsType.setConstraints({test: "test"});
 
@@ -324,7 +324,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: unsing condition from navigation", function(assert) {
+	QUnit.test("Parsing: unsing condition from navigation", (assert) => {
 
 		const oNavigateCondition = Condition.createCondition(OperatorName.EQ, ["I3"], {testIn: "A"}, {testOut: "B"}, ConditionValidated.Validated);
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], navigateCondition: oNavigateCondition});
@@ -337,7 +337,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("destroyed ConditionsType", function(assert) {
+	QUnit.test("destroyed ConditionsType", (assert) => {
 
 		oConditionsType.destroy();
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
@@ -359,10 +359,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: multiple values from Paste", async function(assert) {
+	QUnit.test("Parsing: multiple values from Paste", async (assert) => {
 
 		let aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
-		oConditionsType.setFormatOptions({operators: [], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		oConditionsType.setFormatOptions({operators: [], maxConditions: -1, getConditions() {return aConditions;}, asyncParsing: fnAsync});
 		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3\tI5\n\tA*");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
@@ -375,7 +375,7 @@ sap.ui.define([
 
 		// for multipleLines allow linebreaks
 		aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
-		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, multipleLines: true, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, multipleLines: true, getConditions() {return aConditions;}, asyncParsing: fnAsync});
 		// eslint-disable-next-line require-atomic-updates
 		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3\tI5");
 		assert.ok(aConditions, "Result returned");
@@ -386,7 +386,7 @@ sap.ui.define([
 
 		// for BT use two values
 		aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
-		oConditionsType.setFormatOptions({operators: [OperatorName.BT], maxConditions: -1, multipleLines: false, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		oConditionsType.setFormatOptions({operators: [OperatorName.BT], maxConditions: -1, multipleLines: false, getConditions() {return aConditions;}, asyncParsing: fnAsync});
 		// eslint-disable-next-line require-atomic-updates
 		aConditions = await oConditionsType.parseValue("I1\tI2\nI3\tI5");
 		assert.ok(aConditions, "Result returned");
@@ -398,11 +398,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: multiple invalid values from Paste", async function(assert) {
+	QUnit.test("Parsing: multiple invalid values from Paste", async (assert) => {
 
 		oValueType = new IntegerType();
 		let aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
-		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType, maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], valueType: oValueType, maxConditions: -1, getConditions() {return aConditions;}, asyncParsing: fnAsync});
 
 		try {
 			aConditions = await oConditionsType.parseValue("1\nA\n3");
@@ -415,16 +415,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Async", {
-		beforeEach: function() {
+		beforeEach() {
 			oConditionsType = new ConditionsType({operators: [OperatorName.EQ], asyncParsing: fnAsync});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionsType.destroy();
 			oConditionsType = undefined;
 		}
 	});
 
-	QUnit.test("Formatting", function(assert) {
+	QUnit.test("Formatting", (assert) => {
 
 		oConditionsType.setFormatOptions({operators: [], maxConditions: -1});
 		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["I1"]);
@@ -432,12 +432,12 @@ sap.ui.define([
 		const oCondition3 = Condition.createCondition(OperatorName.EQ, ["I3"]);
 		const oStub = sinon.stub(oConditionsType._oConditionType, "formatValue");
 
-		oStub.callsFake(function(oCondition) {
+		oStub.callsFake((oCondition) => {
 			if (oCondition.values[0] == "I2") {
 				return "Item2";
 			} else {
-				const oPromise = new Promise(function(fResolve) {
-					setTimeout(function () { // simulate request
+				const oPromise = new Promise((fResolve) => {
+					setTimeout(() => { // simulate request
 						let sText;
 						switch (oCondition.values[0]) {
 						case "I1":
@@ -466,15 +466,13 @@ sap.ui.define([
 		const sResult = oConditionsType.formatValue([oCondition1, oCondition2, oCondition3]);
 		assert.ok(sResult instanceof Promise, "Promise returned");
 
-		const fnDone = assert.async();
-		sResult.then(function(sDescription) {
+		return sResult.then((sDescription) => {
 			assert.equal(sDescription, "Item1" + oResourceBundle.getText("field.SEPARATOR") + "Item2" + oResourceBundle.getText("field.SEPARATOR") + "Item3", "Result of formatting");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Formatting with error", function(assert) {
+	QUnit.test("Formatting with error", (assert) => {
 
 		oConditionsType.setFormatOptions({operators: [], maxConditions: -1});
 		const oCondition1 = Condition.createCondition(OperatorName.EQ, ["I1"]);
@@ -482,9 +480,9 @@ sap.ui.define([
 		const oCondition3 = Condition.createCondition(OperatorName.EQ, ["I3"]);
 		const oStub = sinon.stub(oConditionsType._oConditionType, "formatValue");
 
-		oStub.callsFake(function(oCondition) {
-			const oPromise = new Promise(function(fResolve, fReject) {
-				setTimeout(function () { // simulate request
+		oStub.callsFake((oCondition) => {
+			const oPromise = new Promise((fResolve, fReject) => {
+				setTimeout(() => { // simulate request
 					let sText;
 					switch (oCondition.values[0]) {
 					case "I1":
@@ -516,23 +514,21 @@ sap.ui.define([
 		const sResult = oConditionsType.formatValue([oCondition1, oCondition2, oCondition3]);
 		assert.ok(sResult instanceof Promise, "Promise returned");
 
-		const fnDone = assert.async();
-		sResult.catch(function(oError) {
+		return sResult.catch((oError) => {
 			assert.ok(oError, "Error Fired");
 			assert.ok(oError instanceof Error, "Error is an Error object");
 			assert.equal(oError.message, "Cannot format value I2", "Error message");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing", function(assert) {
+	QUnit.test("Parsing", (assert) => {
 
 		const oStub = sinon.stub(oConditionsType._oConditionType, "parseValue");
 
-		oStub.callsFake(function(sText) {
-				const oPromise = new Promise(function(fResolve) {
-					setTimeout(function () { // simulate request
+		oStub.callsFake((sText) => {
+				const oPromise = new Promise((fResolve) => {
+					setTimeout(() => { // simulate request
 						let vKey;
 						switch (sText) {
 						case "Item1":
@@ -561,24 +557,22 @@ sap.ui.define([
 		assert.ok(vResult instanceof Promise, "Promise returned");
 		assert.ok(bAsyncCalled, "asyncParsing function called");
 
-		const fnDone = assert.async();
-		vResult.then(function(aConditions) {
+		return vResult.then((aConditions) => {
 			assert.ok(aConditions, "Result returned");
 			assert.ok(Array.isArray(aConditions), "Arry returned");
 			assert.equal(aConditions.length, 1, "1 condition returned");
 			_checkCondition(assert, aConditions[0], OperatorName.EQ, ["I2", "Item2"], ConditionValidated.Validated);
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing with error", function(assert) {
+	QUnit.test("Parsing with error", (assert) => {
 
 		const oStub = sinon.stub(oConditionsType._oConditionType, "parseValue");
 
-		oStub.callsFake(function(sText) {
-				const oPromise = new Promise(function(fResolve, fReject) {
-					setTimeout(function () { // simulate request
+		oStub.callsFake((sText) => {
+				const oPromise = new Promise((fResolve, fReject) => {
+					setTimeout(() => { // simulate request
 						try {
 							throw new Error("Cannot parse value " + sText);
 						} catch (oError) {
@@ -592,28 +586,26 @@ sap.ui.define([
 		const vResult = oConditionsType.parseValue("Item2");
 		assert.ok(vResult instanceof Promise, "Promise returned");
 
-		const fnDone = assert.async();
-		vResult.catch(function(oError) {
+		return vResult.catch((oError) => {
 			assert.ok(oError, "Error Fired");
 			assert.ok(oError instanceof Error, "Error is an Error object");
 			assert.equal(oError.message, "Cannot parse value Item2", "Error message");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: maxConditions > 1", function(assert) {
+	QUnit.test("Parsing: maxConditions > 1", (assert) => {
 
 		const aCompareConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined),
 								  Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		const aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
-		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, getConditions() {return aConditions;}, asyncParsing: fnAsync});
 
 		const oStub = sinon.stub(oConditionsType._oConditionType, "parseValue");
 
-		oStub.callsFake(function(sText) {
-				const oPromise = new Promise(function(fResolve) {
-					setTimeout(function () { // simulate request
+		oStub.callsFake((sText) => {
+				const oPromise = new Promise((fResolve) => {
+					setTimeout(() => { // simulate request
 						fResolve(Condition.createCondition(OperatorName.EQ, [sText], undefined, undefined, ConditionValidated.NotValidated, undefined));
 					}, 0);
 				});
@@ -624,10 +616,8 @@ sap.ui.define([
 		assert.ok(vResult instanceof Promise, "Promise returned");
 		assert.ok(bAsyncCalled, "asyncParsing function called");
 
-		const fnDone = assert.async();
-		vResult.then(function(aConditions) {
+		return vResult.then((aConditions) => {
 			assert.deepEqual(aConditions, aCompareConditions, "Result returned");
-			fnDone();
 		});
 
 	});
@@ -637,7 +627,7 @@ sap.ui.define([
 	let oOriginalType;
 
 	QUnit.module("currency type", {
-		beforeEach: function() {
+		beforeEach() {
 			const oCondition1 = Condition.createCondition(OperatorName.EQ, [[1.23, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
 			const oCondition2 = Condition.createCondition(OperatorName.BT, [[1, "EUR"], [2, "EUR"]], undefined, undefined, ConditionValidated.NotValidated);
 			const aConditions = [oCondition1, oCondition2];
@@ -649,7 +639,7 @@ sap.ui.define([
 				maxConditions: -1,
 				originalDateType: oOriginalType,
 				additionalType: oUnitType,
-				getConditions: function() {return aConditions;}
+				getConditions() {return aConditions;}
 			});
 			oUnitConditionsType = new ConditionsType({
 				valueType: oUnitType,
@@ -657,10 +647,10 @@ sap.ui.define([
 				originalDateType: oOriginalType,
 				additionalType: oValueType,
 				maxConditions: 1,
-				getConditions: function() {return aConditions;}
+				getConditions() {return aConditions;}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionsType.destroy();
 			oConditionsType = undefined;
 			oUnitConditionsType.destroy();
@@ -674,7 +664,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting", function(assert) {
+	QUnit.test("Formatting", (assert) => {
 
 		const sValue1 = oValueType.formatValue([1.23, "EUR"], "string"); // because of special whitspace and local dependend
 		const sValue2 = oValueType.formatValue([1, "EUR"], "string"); // because of special whitspace and local dependend
@@ -699,7 +689,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("unit parsing", function(assert) {
+	QUnit.test("unit parsing", (assert) => {
 
 		let aConditions = oUnitConditionsType.parseValue("USD");
 		assert.equal(aConditions.length, 2, "two conditions");
@@ -720,14 +710,14 @@ sap.ui.define([
 
 		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
 		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
-		oUnitConditionsType.oFormatOptions.getConditions = function() {return [];};
+		oUnitConditionsType.oFormatOptions.getConditions = () => {return [];};
 		aConditions = oUnitConditionsType.parseValue("EUR");
 		assert.equal(aConditions.length, 1, "one conditions");
 		_checkCondition(assert, aConditions[0], OperatorName.EQ, [[1, "EUR"]], ConditionValidated.NotValidated);
 
 	});
 
-	QUnit.test("unit Parsing unsing condition from navigation", function(assert) {
+	QUnit.test("unit Parsing unsing condition from navigation", (assert) => {
 
 		const oNavigateCondition = Condition.createCondition(OperatorName.EQ, [[1, "USD"]], {testIn: "A"}, {testOut: "B"}, ConditionValidated.Validated, {testPayload: "C"});
 		const oFormatOptions = oUnitConditionsType.getFormatOptions();
@@ -747,7 +737,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: maxConditions > 1", function(assert) {
+	QUnit.test("Parsing: maxConditions > 1", (assert) => {
 
 		oUnitType._aCurrentValue = [1, "USD"]; // fake existing value
 		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
@@ -761,22 +751,22 @@ sap.ui.define([
 		oUnitType._aCurrentValue = undefined; // fake initial value
 		oValueType._aCurrentValue = undefined; // fake initial value
 		oOriginalType._aCurrentValue = undefined; // fake initial value
-		oUnitConditionsType.oFormatOptions.getConditions = function() {return [];};
+		oUnitConditionsType.oFormatOptions.getConditions = () => {return [];};
 		aCompareConditions = [Condition.createCondition(OperatorName.EQ, [[7.77, "EUR"]], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 
 		aConditions = oUnitConditionsType.parseValue("EUR");
-		oConditionsType.oFormatOptions.getConditions = function() {return aConditions;};
+		oConditionsType.oFormatOptions.getConditions = () => {return aConditions;};
 		aConditions = oConditionsType.parseValue("7.77");
 		assert.deepEqual(aConditions, aCompareConditions, "Result returned");
 
 	});
 
 	QUnit.module("Not nullable type", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new StringType({}, {nullable: false});
 			oConditionsType = new ConditionsType({valueType: oValueType, operators: [OperatorName.EQ], maxConditions: 1});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionsType.destroy();
 			oConditionsType = undefined;
 			oValueType.destroy();
@@ -784,7 +774,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Validating: null", function(assert) {
+	QUnit.test("Validating: null", (assert) => {
 
 		let oException;
 
@@ -795,8 +785,8 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired if maxConditions=1 and only EQ operators");
-		assert.deepEqual(oException && oException.getCondition(), null, "exception condition");
-		assert.deepEqual(oException && oException.getConditions(), [], "exception conditions");
+		assert.deepEqual(oException?.getCondition(), null, "exception condition");
+		assert.deepEqual(oException?.getConditions(), [], "exception conditions");
 
 		oConditionsType.setFormatOptions({valueType: oValueType, operators: [], maxConditions: 1});
 		oException = undefined;
