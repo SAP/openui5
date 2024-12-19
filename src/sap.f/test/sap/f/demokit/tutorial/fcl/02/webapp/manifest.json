@@ -1,0 +1,28 @@
+{
+	"_version": "1.38.0",
+	"sap.app": {
+		"id": "sap.ui.demo.fcl",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.fcl.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "fcl"
+		},
+		"dependencies": {
+			"minUI5Version": "1.98.0",
+			"libs": {
+				"sap.f": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"fullWidth": true
+		}
+	}
+}

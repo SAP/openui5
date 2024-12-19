@@ -31,39 +31,7 @@ sap.ui.define([
 			apiVersion: 2,
 
 			render: function (oRm, oControl) {
-
-				function renderLinkForType(oRm, sType) {
-					if (!sType) {
-						return;
-					}
-					oRm.openStart("a");
-					oRm.class("sapUiJSDocTypeLink");
-					oRm.attr("href", "api/" + sType);
-					oRm.openEnd();
-					oRm.text(sType);
-					oRm.close("a");
-				}
-
 				var oTypeInfo = oControl.getTypeInfo();
-				if (!oTypeInfo?.UI5Types && !oTypeInfo?.template) {
-					// try to get the old 'types' array and convert it to the new typeInfo structure
-					const aTypes = oControl.getBinding("typeInfo")?.getContext()?.getProperty("types");
-					// TODO share this code with formatter
-					if ( Array.isArray(aTypes) ) {
-						const UI5Types = [];
-						const template = aTypes.map(({value, linkEnabled}) => {
-							if ( linkEnabled ) {
-								UI5Types.push(value);
-								return `\${${UI5Types.length - 1}}`;
-							}
-							return value;
-						}).join(" | ");
-						oTypeInfo = {
-							template,
-							UI5Types
-						};
-					}
-				}
 				if (!oTypeInfo?.UI5Types && !oTypeInfo?.template) {
 					return;
 				}
@@ -77,13 +45,25 @@ sap.ui.define([
 
 				sTemplate.split(REGEXP_TEMPLATE_PLACEHOLDER).forEach(function (sPart) {
 					if (REGEXP_TEMPLATE_PLACEHOLDER.test(sPart)) {
-						renderLinkForType(oRm, oTypeInfo.UI5Types[iNextType++]);
+						this._renderLinkForType(oRm, oTypeInfo.UI5Types[iNextType++]);
 					} else {
 						oRm.text(sPart);
 					}
-				});
+				}, this);
 
 				oRm.close("div");
+			},
+
+			_renderLinkForType: function(oRm, sType) {
+				if (!sType) {
+					return;
+				}
+				oRm.openStart("a");
+				oRm.class("sapUiJSDocTypeLink");
+				oRm.attr("href", "api/" + sType);
+				oRm.openEnd();
+				oRm.text(sType);
+				oRm.close("a");
 			}
 	}});
 

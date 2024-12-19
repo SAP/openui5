@@ -15,7 +15,8 @@ sap.ui.define([
 					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
-						id : /-0-field/,
+						// e.g. "__xmlview0--CurrencyCode-__table0-0-field-inner"
+						id : /--CurrencyCode-.*-0-field/,
 						success : function () {
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
 							this.waitFor({
@@ -25,8 +26,7 @@ sap.ui.define([
 									Opa5.assert.ok(true, "ValueHelp Popover Closed");
 								}
 							});
-						},
-						viewName : sViewName
+						}
 					});
 				},
 				pressValueHelpOnRole : function () {

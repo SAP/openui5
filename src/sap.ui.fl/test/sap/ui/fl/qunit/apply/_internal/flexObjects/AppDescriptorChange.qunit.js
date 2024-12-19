@@ -8,7 +8,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oChangeDefinition = {
+	const oChangeDefinition = {
 		appDescriptorChange: true,
 		fileName: "id_1656921947872_169_appDescriptor",
 		fileType: "change",
@@ -30,7 +30,7 @@ sap.ui.define([
 	};
 	QUnit.module("FlexObjectFactory", {}, function() {
 		QUnit.test("createControllerExtension", function(assert) {
-			var mPropertyBag = {
+			const mPropertyBag = {
 				changeType: oChangeDefinition.changeType,
 				content: oChangeDefinition.content,
 				layer: oChangeDefinition.layer,
@@ -39,16 +39,33 @@ sap.ui.define([
 				generator: oChangeDefinition.support.generator,
 				compositeCommand: oChangeDefinition.support.compositeCommand
 			};
-			var oAppDescriptorChange = FlexObjectFactory.createAppDescriptorChange(mPropertyBag);
-			assert.ok(oAppDescriptorChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange"), "the correct change was created");
-			assert.deepEqual(_omit(oAppDescriptorChange.convertToFileContent(), "creation", "fileName"), _omit(oChangeDefinition, "creation", "fileName"), "the convert function is correct");
+			const oAppDescriptorChange = FlexObjectFactory.createAppDescriptorChange(mPropertyBag);
+			assert.ok(
+				oAppDescriptorChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange"),
+				"the correct change was created"
+			);
+			assert.deepEqual(
+				_omit(oAppDescriptorChange.convertToFileContent(), "creation", "fileName"),
+				_omit(oChangeDefinition, "creation", "fileName"),
+				"the convert function is correct"
+			);
 		});
 
 		QUnit.test("createFromFileContent", function(assert) {
-			var oAppDescriptorChange = FlexObjectFactory.createFromFileContent(oChangeDefinition);
-			assert.ok(oAppDescriptorChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange"), "the correct change was created");
+			const oAppDescriptorChange = FlexObjectFactory.createFromFileContent(oChangeDefinition);
+			assert.ok(
+				oAppDescriptorChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange"),
+				"the correct change was created"
+			);
 			assert.strictEqual(oAppDescriptorChange.getFileType(), "change", "the file type is correct");
 			assert.deepEqual(oAppDescriptorChange.convertToFileContent(), oChangeDefinition, "the convert function is correct");
+		});
+	});
+
+	QUnit.module("Others", () => {
+		QUnit.test("getIdForCondensing", (assert) => {
+			const oAppDescriptorChange = FlexObjectFactory.createFromFileContent(oChangeDefinition);
+			assert.strictEqual(oAppDescriptorChange.getIdForCondensing(), "appDescriptor_my.reference", "the ID for condensing is correct");
 		});
 	});
 });

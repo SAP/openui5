@@ -206,6 +206,14 @@ sap.ui.define([
 		return this.getCardHeader() ? this.getCardHeader().getFocusDomRef() : this.getDomRef();
 	};
 
+	/**
+	 * @private
+	 * @returns {sap.f.cards.IHeader} The header of the card.
+	 */
+	CardBase.prototype._getHeaderAggregation = function () {
+		return this.getCardHeader();
+	};
+
 	CardBase.prototype.onmousedown = function () {
 		this._hideBadge();
 	};

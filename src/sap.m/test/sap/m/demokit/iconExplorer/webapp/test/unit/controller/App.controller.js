@@ -25,13 +25,6 @@ sap.ui.define([
 				return "sapUiSizeCompact";
 			};
 
-			this.oComponentStub.getCookiesManagement = function() {
-				return Promise.resolve({
-					enable: function () {
-						return true;
-					}
-				});
-			};
 			this.oComponentStub.getRootControl = function() {
 				return true;
 			};

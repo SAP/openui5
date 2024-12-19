@@ -217,6 +217,7 @@ sap.ui.define([
 					oTable = new Table({
 						fixedLayout : false,
 						growing : true,
+						id : that.getId() + "-valueHelpTable",
 						mode : "SingleSelectMaster"
 					}),
 					oValueListMapping = mValueListInfo[that.getQualifier()] || mValueListInfo[""];
@@ -228,7 +229,7 @@ sap.ui.define([
 				function onSelectionChange(oEvent) {
 					that.setValue(oEvent.getParameter("listItem").getCells()[0].getText(),
 						oBinding.getContext());
-					oPopover.close();
+					onClose();
 				}
 
 				oPopover.setTitle("Value Help: "
@@ -258,6 +259,9 @@ sap.ui.define([
 				oTable.setModel(oValueListMapping.$model);
 				oTable.attachSelectionChange(onSelectionChange);
 				oButton.attachPress(onClose);
+				oPopover.attachAfterClose(() => {
+					oPopover.destroy(); // avoid "duplicate id" issues
+				});
 				oPopover.addContent(oTable);
 				oPopover.data("openedBy", oInput);
 				oPopover.setInitialFocus(oTable);

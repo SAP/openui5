@@ -1,24 +1,30 @@
 sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/m/Label",
 	"sap/m/Button",
-	"sap/m/Bar"
-], function(App, Page, Button, Bar) {
+	"sap/m/Bar",
+	"sap/ui/core/library"
+], function(App, Page, Label, Button, Bar, coreLibrary) {
 	"use strict";
 
-	var app = new App("myApp");
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
-	var oPage = new Page("page1", {
-		title: "Bar Test page",
+	var oApp = new App();
+	var oPage = new Page({
+		title: "Bar Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
 		content: [
-			new Button({text:'Button'}),
 			new Bar("bar1", {
-				contentLeft: [new Button({text: "One"})]
+				contentLeft: [
+					new Label({labelFor: "one", text: "one function", wrapping: true}),
+					new Button("one", {text: "One"})
+				]
 			})
 		]
 	});
 
-	app.addPage(oPage);
-
-	app.placeAt("body");
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
 });

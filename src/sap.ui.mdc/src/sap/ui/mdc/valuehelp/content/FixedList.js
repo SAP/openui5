@@ -244,12 +244,14 @@ sap.ui.define([
 
 	function _updateFilter() {
 
+		const oList = _getList.call(this);
+		const oListBinding = this.getListBinding();
+
 		if (this._iNavigateIndex >= 0) { // initialize navigation
 			this.setProperty("conditions", [], true);
 			this._iNavigateIndex = -1;
+			oList.setFakeFocus();
 		}
-		const oList = _getList.call(this);
-		const oListBinding = this.getListBinding();
 
 		if (oList) {
 			oListBinding.update();

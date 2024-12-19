@@ -386,6 +386,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	NumericHeader.prototype.getTitleId = function () {
+		return this._getTitle().getId();
+	};
+
+	/**
 	 * Lazily create a title and return it.
 	 *
 	 * @private

@@ -15,20 +15,13 @@ sap.ui.define([
 			onInit : function () {
 				var oViewModel,
 					fnSetAppNotBusy,
-					iOriginalBusyDelay = this.getView().getBusyIndicatorDelay(),
-					oComponent = this.getOwnerComponent(),
-					oUri = new URI(window.location.href);
+					iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 
 				oViewModel = new JSONModel({
 					busy : true,
-					delay : 0,
-					bShowTAConsent: false
+					delay : 0
 				});
 				this.setModel(oViewModel, "view");
-
-				if (oUri.hasQuery("sap-ui-xx-tracking") && oUri.query(true)["sap-ui-xx-tracking"] === "aa") {
-					oViewModel.setProperty("/bShowTAConsent", true);
-				}
 
 				// reduce the log level to speed up the app performance
 				Log.setLevel(Log.Level.WARNING);
@@ -43,14 +36,6 @@ sap.ui.define([
 
 				// apply content density mode to root view
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
-
-				var bExternalCookiesManager = oViewModel.getProperty("/bShowTAConsent");
-
-				if (!bExternalCookiesManager) {
-					oComponent.getCookiesManagement().then(function(oCookieMgmtComponent) {
-						oCookieMgmtComponent.enable(oComponent.getRootControl());
-					});
-				}
 
 				this._initThemePicker();
 			},

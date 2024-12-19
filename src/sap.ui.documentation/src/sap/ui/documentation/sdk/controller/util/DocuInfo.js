@@ -3,8 +3,8 @@
  */
 
 // Provides reuse functionality for reading documentation topics from index.json files.
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/documentation/sdk/util/Resources"],
-	function (jQuery, ResourcesUtil) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/documentation/sdk/util/Resources", "sap/ui/documentation/sdk/controller/util/TreeUtil"],
+	function (jQuery, ResourcesUtil, TreeUtil) {
 		"use strict";
 
 		var oCachedData;
@@ -31,7 +31,17 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/documentation/sdk/util/Resour
 
 		}
 
+
+		function _getDocumentTitle(sTopicId, oConfig) {
+			return _getDocuIndexPromise(oConfig).then(function (oData) {
+				var oTreeUtil = TreeUtil.getInstance(TreeUtil.treeTypes.Documentation, "key", "links");
+				var oTopicInfo = oTreeUtil.getNodeById(sTopicId, oData);
+				return oTopicInfo?.text;
+			});
+		}
+
 		return {
-			getDocuIndexPromise: _getDocuIndexPromise
+			getDocuIndexPromise: _getDocuIndexPromise,
+			getDocumentTitle: _getDocumentTitle
 		};
 	});

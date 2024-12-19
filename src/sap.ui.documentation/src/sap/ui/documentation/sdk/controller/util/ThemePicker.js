@@ -37,6 +37,7 @@ sap.ui.define([
 
 		this._oConfigUtil = oComponent.getOwnerComponent().getConfigUtil();
 		this._oCookieNames = this._oConfigUtil.COOKIE_NAMES;
+		this._oConsentManager = oComponent.getOwnerComponent().getCookiesConsentManager();
 
 		this.bus = EventBus.getInstance();
 
@@ -46,11 +47,13 @@ sap.ui.define([
 			(window.matchMedia('(prefers-color-scheme: dark)').matches ||
 			window.matchMedia('(prefers-color-scheme: light)').matches));
 
-		if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1" && this._aConfiguration.length > 0) {
-			ThemePicker._applyCookiesConfiguration(this._aConfiguration);
-		} else {
-			ThemePicker._applyDefaultConfiguration(this._aConfiguration);
-		}
+		this._oConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+			if (bAccepts && this._aConfiguration.length > 0) {
+				ThemePicker._applyCookiesConfiguration(this._aConfiguration);
+			} else {
+				ThemePicker._applyDefaultConfiguration(this._aConfiguration);
+			}
+		}.bind(this));
 
 	};
 
@@ -91,9 +94,11 @@ sap.ui.define([
 			this.bus.publish("themeChanged", "onThemeChanged", {sThemeActive: this._getTheme()[sKey]});
 		}
 
-		if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
-			this._oConfigUtil.setCookie(CONFIGURATION_APPEARANCE, sKey);
-		}
+		this._oConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+			if (bAccepts) {
+				this._oConfigUtil.setCookie(CONFIGURATION_APPEARANCE, sKey);
+			}
+		}.bind(this));
 	};
 
 	/**

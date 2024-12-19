@@ -320,6 +320,13 @@ sap.ui.define([
 		return aIds.filter((sElement) => { return !!sElement; }).join(" ");
 	};
 
+	/**
+	 * @override
+	 */
+	Header.prototype.getTitleId = function () {
+		return this._getTitle().getId();
+	};
+
 	Header.prototype.isLoading = function () {
 		return false;
 	};

@@ -55,7 +55,7 @@
 		"content": {
 			"item": {
 				"title": "{ProductName}",
-				"description": "{UnitsInStock} units in stock",
+				"description": "{UnitsInStock} units in stock, {QuantityPerUnit} per unit, {= format.currency(${UnitPrice}, 'USD')} per unit",
 				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
 			}
 		},

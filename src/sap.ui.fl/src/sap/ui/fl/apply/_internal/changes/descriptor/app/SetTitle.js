@@ -4,9 +4,9 @@
  */
 
 sap.ui.define([
-
+	"sap/ui/fl/changeHandler/condenser/Classification"
 ], function(
-
+	CondenserClassification
 ) {
 	"use strict";
 
@@ -34,6 +34,18 @@ sap.ui.define([
 		applyChange(oManifest) {
 			oManifest["sap.app"].title = `{{${oManifest["sap.app"].id}_sap.app.title}}`;
 			return oManifest;
+		},
+
+		/**
+		 * Retrieves the condenser-specific information.
+		 *
+		 * @returns {object} Condenser-specific information
+		 */
+		getCondenserInfo() {
+			return {
+				classification: CondenserClassification.LastOneWins,
+				uniqueKey: "manifestSetTitle"
+			};
 		}
 
 	};

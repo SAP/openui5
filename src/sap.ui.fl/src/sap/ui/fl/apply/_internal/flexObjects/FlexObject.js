@@ -525,5 +525,14 @@ sap.ui.define([
 		mFileContent.support.clonedFrom = this.getId();
 		return mFileContent;
 	};
+
+	/**
+	 * Returns the ID of the flex object.
+	 * Must be implemented by each relevant object type.
+	 */
+	FlexObject.prototype.getIdForCondensing = function() {
+		throw new Error("Method getIdForCondensing must be implemented");
+	};
+
 	return FlexObject;
 });

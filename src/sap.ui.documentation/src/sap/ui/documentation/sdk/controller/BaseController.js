@@ -59,6 +59,7 @@ sap.ui.define([
 				if (Device.system.phone || Device.system.tablet) {
 					this.getOwnerComponent().loadVersionInfo(); // for Desktop is always loaded in <code>Component.js</code>
 				}
+				this._aRouterCachedEventDetails = [];
 
 			},
 
@@ -264,12 +265,25 @@ sap.ui.define([
 				});
 			},
 
-			onRouteNotFound: function () {
+			onRouteNotFound: function (oEvent) {
 				var sNotFoundTitle = this.getModel("i18n").getProperty("NOT_FOUND_TITLE");
+
+				if (this._isRouteBypassedEvent(oEvent)) {
+					this._cacheRouteEventDetails(oEvent);
+				}
 
 				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 				setTimeout(this.appendPageTitle.bind(this, sNotFoundTitle));
 				return;
+			},
+
+			_isRouteBypassedEvent: function (oEvent) {
+				return typeof oEvent?.getId === "function" && oEvent.getId() === "bypassed";
+			},
+
+			_cacheRouteEventDetails: function(oEvent) {
+				var oEventDetails = Object.assign({eventId: oEvent.getId()}, oEvent.getParameters());
+				this._aRouterCachedEventDetails.push(oEventDetails);
 			}
 		});
 

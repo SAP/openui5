@@ -933,6 +933,7 @@ sap.ui.define([
 	// test case to check if associated file preview dialog is opened on file selection
 	QUnit.test("File Preview Dialog opens on file selection", async function (assert) {
 		const done = assert.async();
+		var oUploadSetwithTablePluginCarouselPlugin;
 		/**
 		 * MDC Table with ActionsPlaceholder
 		 */
@@ -999,13 +1000,16 @@ sap.ui.define([
 		const afterDialogOpen = function (oEvent) {
 			oDialog = oEvent.getSource();
 			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file");
-			oDialog?.close();
+			oDialog?.getButtons()[1].firePress();
+			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			oUploadSetwithTablePluginCarouselPlugin.restore();
 			oMdcTable.destroy();
 			done();
 		};
 
 		oPreviewDialog.attachEventOnce("beforePreviewDialogOpen", (oEvent) => {
 			oDialog = oEvent.getParameter("oDialog");
+			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
 			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
 		});
 	});

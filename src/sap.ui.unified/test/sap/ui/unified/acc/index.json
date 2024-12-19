@@ -29,12 +29,7 @@
 		{
 			"control" : "sap.ui.unified.ColorPicker",
 			"url" : "../ColorPicker.html",
-			"appComponent" : "CA-UI5-CTR-BAL",
-			"accTest": {
-				"name": "sap.ui.unified.ColorPicker",
-				"title": "ACC test for sap.ui.unified.ColorPicker",
-				"module": "./colorpicker.qunit"
-			}
+			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
 			"control" : "sap.ui.unified.Currency",

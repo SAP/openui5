@@ -9,6 +9,8 @@ sap.ui.define([],
 	function () {
 		"use strict";
 
+		var oCreatedTreeUtils = {};
+
 		/**
 		 * For the class to work, it needs to know what some information about the structure of the tree
 		 * @param nodeIdField - what is the name of the field that holds the unique identifier of the node
@@ -18,6 +20,7 @@ sap.ui.define([],
 		var TreeUtil = function (nodeIdField, childrenField) {
 			this.nodeIdField = nodeIdField;
 			this.childrenField = childrenField;
+			this.memoizedIndex = [];
 		};
 
 		/**
@@ -27,16 +30,34 @@ sap.ui.define([],
 		 * @returns {Array}
 		 */
 		TreeUtil.prototype.getPathToNode = function (nodeId, tree) {
+			const stored = this.memoizedIndex[nodeId];
+			if (stored) {
+				return stored.stack;
+			}
 			var stack = [];
 			this._walkTree(nodeId, tree, stack);
 			return stack;
 		};
 
+		TreeUtil.prototype.getNodeById = function (nodeId, tree) {
+			const stored = this.memoizedIndex[nodeId];
+			if (stored) {
+				return stored.node;
+			}
+			this.getPathToNode(nodeId, tree);
+			return this.memoizedIndex[nodeId]?.node;
+		};
+
 		TreeUtil.prototype._walkTree = function (nodeId, tree, stack) {
 
-			var found = this._findLeaf(tree, nodeId);
+			var node = this._findLeaf(tree, nodeId),
+				found = !!node;
 			if (found) {
 				stack.push(nodeId);
+				this.memoizedIndex[nodeId] = {
+					node,
+					stack
+				};
 				return true;
 			}
 
@@ -60,6 +81,17 @@ sap.ui.define([],
 			return null;
 		};
 
-		return TreeUtil;
+		return {
+			treeTypes: {
+				"Documentation": "Documentation",
+				"ApiReference": "ApiReference"
+			},
+			getInstance: function (treeType, nodeIdField, childrenField) {
+				if (!oCreatedTreeUtils[treeType]) {
+					oCreatedTreeUtils[treeType] = new TreeUtil(nodeIdField, childrenField);
+				}
+				return oCreatedTreeUtils[treeType];
+			}
+		};
 
 	});

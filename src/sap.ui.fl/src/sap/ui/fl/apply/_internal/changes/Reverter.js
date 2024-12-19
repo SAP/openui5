@@ -64,7 +64,12 @@ sap.ui.define([
 	Reverter.revertChangeOnControl = async function(oChange, oControl, mPropertyBag) {
 		const mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 		try {
-			const oChangeHandler = await Utils.getChangeHandler(oChange, mControl, mPropertyBag);
+			const oChangeHandler = await Utils.getChangeHandler({
+				flexObject: oChange,
+				control: mControl.control,
+				controlType: mControl.controlType,
+				modifier: mPropertyBag.modifier
+			});
 			await waitForApplyIfNecessary(oChange);
 			if (oChange.isSuccessfullyApplied()) {
 				oChange.startReverting();

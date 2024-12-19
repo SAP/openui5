@@ -1,0 +1,68 @@
+{
+	"sap.app": {
+		"id": "test.manifest.showCardHeader",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "./ActionsExtension",
+		"data": {
+			"request": {
+				"url": "{{destinations.myDestination}}/Products",
+				"parameters": {
+					"$format": "json",
+					"$count": true,
+					"$filter": "startswith(ProductName, '{filters>/name/value}') eq true"
+				}
+			}
+		},
+		"configuration": {
+			"filters": {
+				"name": {
+					"type": "Search",
+					"label": "Name",
+					"placeholder": "Name"
+				}
+			},
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind_V4"
+				}
+			}
+		},
+		"header": {
+			"type": "Default",
+			"title": "Details card with filter {= format.text(${i18n>CARD.COUNT_X_OF_Y}, [${parameters>/visibleItems}, ${/@odata.count}]) }",
+			"titleMaxLines": 1,
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
+			},
+			"subTitle": "By Average Price",
+			"closeButton": {
+				"visible": false
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 3
+			}
+		}
+	}
+}
