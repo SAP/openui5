@@ -19,26 +19,26 @@ sap.ui.define([
 	"sap/ui/model/ValidateException",
 	"sap/ui/core/date/UI5Date",
 	"sap/m/DynamicDateUtil"
-], function (
-		DynamicDateRangeConditionsType,
-		FieldBaseDelegate,
-		Condition,
-		ConditionValidateException,
-		FilterOperatorUtil,
-		Operator,
-		OperatorDynamicDateOption,
-		ConditionValidated,
-		OperatorValueType,
-		OperatorName,
-		DateType,
-		DateTimeOffsetType,
-		FilterOperator,
-		FormatException,
-		ParseException,
-		ValidateException,
-		UI5Date,
-		DynamicDateUtil
-		) {
+], (
+	DynamicDateRangeConditionsType,
+	FieldBaseDelegate,
+	Condition,
+	ConditionValidateException,
+	FilterOperatorUtil,
+	Operator,
+	OperatorDynamicDateOption,
+	ConditionValidated,
+	OperatorValueType,
+	OperatorName,
+	DateType,
+	DateTimeOffsetType,
+	FilterOperator,
+	FormatException,
+	ParseException,
+	ValidateException,
+	UI5Date,
+	DynamicDateUtil
+) => {
 	"use strict";
 
 	let oDynamicDateRangeConditionsType;
@@ -72,49 +72,49 @@ sap.ui.define([
 	});
 	FilterOperatorUtil.addOperator(oMyDateOperator);
 
-	const fnTeardown = function() {
+	const fnTeardown = () => {
 		oDynamicDateRangeConditionsType.destroy();
 		oDynamicDateRangeConditionsType = undefined;
 		oType.destroy();
 		oType = undefined;
 	};
 
-	const fnInitDate = function() {
+	const fnInitDate = () => {
 		oType = new DateType({style: "long", calendarType: "Gregorian"});
 		oDynamicDateRangeConditionsType = new DynamicDateRangeConditionsType({valueType: oType, maxConditions: 1, delegate: FieldBaseDelegate, payload: {}});
 	};
 
-	const fnInitDateTime = function() {
+	const fnInitDateTime = () => {
 		oType = new DateTimeOffsetType({style: "long", calendarType: "Gregorian", UTC: true}, {V4:true}); // UTC to check conversion
 		oDynamicDateRangeConditionsType = new DynamicDateRangeConditionsType({valueType: oType, maxConditions: 1, delegate: FieldBaseDelegate, payload: {}});
 	};
 
-	function _createCondition(sOperator, aValues) {
+	const _createCondition = (sOperator, aValues) => {
 		const oCondition = Condition.createCondition(sOperator, aValues, undefined, undefined, ConditionValidated.NotValidated);
 		oCondition.isEmpty = false;
 		return oCondition;
-	}
+	};
 
 	QUnit.module("Formatting Date", {
 		beforeEach: fnInitDate,
 		afterEach: fnTeardown
 	});
 
-	QUnit.test("nothing", function(assert) {
+	QUnit.test("nothing", (assert) => {
 
 		const sResult = oDynamicDateRangeConditionsType.formatValue();
 		assert.equal(sResult, null, "Result of formatting");
 
 	});
 
-	QUnit.test("empty array", function(assert) {
+	QUnit.test("empty array", (assert) => {
 
 		const vResult = oDynamicDateRangeConditionsType.formatValue([]);
 		assert.equal(vResult, undefined, "Result of formatting");
 
 	});
 
-	QUnit.test("invalid value", function(assert) {
+	QUnit.test("invalid value", (assert) => {
 
 		let oException;
 
@@ -129,7 +129,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid condition", function(assert) {
+	QUnit.test("invalid condition", (assert) => {
 
 		let oException;
 
@@ -144,7 +144,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid maxConditions", function(assert) {
+	QUnit.test("invalid maxConditions", (assert) => {
 
 		let oException;
 		oDynamicDateRangeConditionsType.setFormatOptions({valueType: oType, maxConditions: -1});
@@ -160,7 +160,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("normal operators", function(assert) {
+	QUnit.test("normal operators", (assert) => {
 
 		let oCondition = _createCondition(OperatorName.EQ, ["2021-10-04"]);
 		let oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
@@ -180,7 +180,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - static", function(assert) {
+	QUnit.test("RangeOperators - static", (assert) => {
 
 		const aOperators = ["TODAY", "YESTERDAY", "TOMORROW", "LASTWEEK", "THISWEEK", "NEXTWEEK", "LASTMONTH", "THISMONTH", "NEXTMONTH", "LASTQUARTER", "THISQUARTER", "NEXTQUARTER",
 							"QUARTER1", "QUARTER2", "QUARTER3", "QUARTER4", "LASTYEAR", "THISYEAR", "NEXTYEAR", "YEARTODATE"];
@@ -194,7 +194,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - integer (one value)", function(assert) {
+	QUnit.test("RangeOperators - integer (one value)", (assert) => {
 
 		const aOperators = ["LASTDAYS", "LASTDAYSINCLUDED", "NEXTDAYS", "NEXTDAYSINCLUDED", "LASTWEEKS", "LASTWEEKSINCLUDED", "NEXTWEEKS", "NEXTWEEKSINCLUDED",
 							"LASTMONTHS", "LASTMONTHSINCLUDED", "NEXTMONTHS", "NEXTMONTHSINCLUDED", "LASTQUARTERS", "LASTQUARTERSINCLUDED", "NEXTQUARTERS", "NEXTQUARTERSINCLUDED",
@@ -210,7 +210,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - integer (two values)", function(assert) {
+	QUnit.test("RangeOperators - integer (two values)", (assert) => {
 
 		const aOperators = ["TODAYFROMTO", "SPECIFICMONTHINYEAR"];
 
@@ -223,7 +223,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("unknown operator", function(assert) {
+	QUnit.test("unknown operator", (assert) => {
 
 		let oException;
 
@@ -238,7 +238,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("custom operators", function(assert) {
+	QUnit.test("custom operators", (assert) => {
 
 		const oCondition = _createCondition("MyDate", ["2021-10-04"]);
 		const oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
@@ -251,7 +251,7 @@ sap.ui.define([
 		afterEach: fnTeardown
 	});
 
-	QUnit.test("normal operators", function(assert) {
+	QUnit.test("normal operators", (assert) => {
 
 		let oCondition = _createCondition(OperatorName.EQ, ["2022-02-01T09:08:30Z"]); // for Type UTC is used
 		let oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
@@ -271,7 +271,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - integer (one value)", function(assert) {
+	QUnit.test("RangeOperators - integer (one value)", (assert) => {
 
 		const aOperators = ["LASTMINUTES", "LASTMINUTESINCLUDED", "NEXTMINUTES", "NEXTMINUTESINCLUDED", "LASTHOURS", "LASTHOURSINCLUDED", "NEXTHOURS", "NEXTHOURSINCLUDED"];
 
@@ -284,7 +284,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("custom Date operator", function(assert) {
+	QUnit.test("custom Date operator", (assert) => {
 
 		const oCondition = _createCondition("MYDATE2", ["2023-02-09"]);
 		const oResult = oDynamicDateRangeConditionsType.formatValue([oCondition]);
@@ -297,7 +297,7 @@ sap.ui.define([
 		afterEach: fnTeardown
 	});
 
-	QUnit.test("empty", function(assert) {
+	QUnit.test("empty", (assert) => {
 
 		const aConditions = oDynamicDateRangeConditionsType.parseValue();
 		assert.ok(aConditions, "Result returned");
@@ -306,7 +306,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid value", function(assert) {
+	QUnit.test("invalid value", (assert) => {
 
 		let oException;
 
@@ -322,7 +322,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid maxConditions", function(assert) {
+	QUnit.test("invalid maxConditions", (assert) => {
 
 		let oException;
 		oDynamicDateRangeConditionsType.setFormatOptions({valueType: oType, maxConditions: -1});
@@ -338,7 +338,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("normal operators", function(assert) {
+	QUnit.test("normal operators", (assert) => {
 
 		let oCondition = _createCondition(OperatorName.EQ, ["2021-10-04"]);
 		let aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATE", values: [UI5Date.getInstance(2021, 9, 4)]});
@@ -358,7 +358,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - static", function(assert) {
+	QUnit.test("RangeOperators - static", (assert) => {
 
 		const aOperators = ["TODAY", "YESTERDAY", "TOMORROW", "LASTWEEK", "THISWEEK", "NEXTWEEK", "LASTMONTH", "THISMONTH", "NEXTMONTH", "LASTQUARTER", "THISQUARTER", "NEXTQUARTER",
 							"QUARTER1", "QUARTER2", "QUARTER3", "QUARTER4", "LASTYEAR", "THISYEAR", "NEXTYEAR", "YEARTODATE"];
@@ -372,7 +372,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - integer (one value)", function(assert) {
+	QUnit.test("RangeOperators - integer (one value)", (assert) => {
 
 		const aOperators = ["LASTDAYS", "LASTDAYSINCLUDED", "NEXTDAYS", "NEXTDAYSINCLUDED", "LASTWEEKS", "LASTWEEKSINCLUDED", "NEXTWEEKS", "NEXTWEEKSINCLUDED",
 							"LASTMONTHS", "LASTMONTHSINCLUDED", "NEXTMONTHS", "NEXTMONTHSINCLUDED", "LASTQUARTERS", "LASTQUARTERSINCLUDED", "NEXTQUARTERS", "NEXTQUARTERSINCLUDED",
@@ -388,7 +388,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - integer (two values)", function(assert) {
+	QUnit.test("RangeOperators - integer (two values)", (assert) => {
 
 		const aOperators = ["TODAYFROMTO", "SPECIFICMONTHINYEAR"];
 
@@ -401,7 +401,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("custom operators", function(assert) {
+	QUnit.test("custom operators", (assert) => {
 
 		const oCondition = _createCondition("MyDate", ["2021-10-04"]);
 		const aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "Date-MyDate", values: ["2021-10-04"]});
@@ -414,7 +414,7 @@ sap.ui.define([
 		afterEach: fnTeardown
 	});
 
-	QUnit.test("normal operators", function(assert) {
+	QUnit.test("normal operators", (assert) => {
 
 		let oCondition = _createCondition(OperatorName.EQ, ["2022-02-01T09:21:30Z"]); // Data type uses UTC
 		let aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATETIME", values: [UI5Date.getInstance(2022, 1, 1, 9, 21, 30, 0)]}); // DynamicDateRange uses local date
@@ -434,7 +434,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RangeOperators - integer (one value)", function(assert) {
+	QUnit.test("RangeOperators - integer (one value)", (assert) => {
 
 		const aOperators = ["LASTMINUTES", "LASTMINUTESINCLUDED", "NEXTMINUTES", "NEXTMINUTESINCLUDED", "LASTHOURS", "LASTHOURSINCLUDED", "NEXTHOURS", "NEXTHOURSINCLUDED"];
 
@@ -447,7 +447,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("custom Date operator", function(assert) {
+	QUnit.test("custom Date operator", (assert) => {
 
 		const oCondition = _createCondition("MYDATE2", ["2021-10-04"]);
 		const aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "DATE", values: [UI5Date.getInstance(2021, 9, 4)]}); // DynamicDateRange uses local date
@@ -460,7 +460,7 @@ sap.ui.define([
 		afterEach: fnTeardown
 	});
 
-	QUnit.test("nothing", function(assert) {
+	QUnit.test("nothing", (assert) => {
 
 		let oException;
 
@@ -474,7 +474,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("empty conditions", function(assert) {
+	QUnit.test("empty conditions", (assert) => {
 
 		let oException;
 
@@ -488,7 +488,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("invalid value", function(assert) {
+	QUnit.test("invalid value", (assert) => {
 
 		let oException;
 
@@ -499,8 +499,8 @@ sap.ui.define([
 		}
 		assert.ok(oException, "exception fired");
 		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
-		assert.notOk(oException && oException.getCondition(), "exception condition");
-		assert.deepEqual(oException && oException.getConditions(), "XXX", "exception conditions");
+		assert.notOk(oException?.getCondition(), "exception condition");
+		assert.deepEqual(oException?.getConditions(), "XXX", "exception conditions");
 
 		oException = undefined;
 		try {
@@ -510,12 +510,12 @@ sap.ui.define([
 		}
 		assert.ok(oException, "exception fired");
 		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
-		assert.deepEqual(oException && oException.getCondition(), "XXX", "exception condition");
-		assert.deepEqual(oException && oException.getConditions(), ["XXX"], "exception conditions");
+		assert.deepEqual(oException?.getCondition(), "XXX", "exception condition");
+		assert.deepEqual(oException?.getConditions(), ["XXX"], "exception conditions");
 
 	});
 
-	QUnit.test("invalid operator", function(assert) {
+	QUnit.test("invalid operator", (assert) => {
 
 		let oException;
 		const oCondition = _createCondition("XXX", ["2021-10-04"]);
@@ -527,12 +527,12 @@ sap.ui.define([
 		}
 		assert.ok(oException, "exception fired");
 		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
-		assert.deepEqual(oException && oException.getConditions(), [oCondition], "exception conditions");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getConditions(), [oCondition], "exception conditions");
 
 	});
 
-	QUnit.test("invalid condition", function(assert) {
+	QUnit.test("invalid condition", (assert) => {
 
 		let oException;
 		const oCondition = _createCondition(OperatorName.SPECIFICMONTH, [20]);
@@ -544,12 +544,12 @@ sap.ui.define([
 		}
 		assert.ok(oException, "exception fired");
 		assert.ok(oException instanceof ConditionValidateException, "ConditionValidateException fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
-		assert.deepEqual(oException && oException.getConditions(), [oCondition], "exception conditions");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getConditions(), [oCondition], "exception conditions");
 
 	});
 
-	QUnit.test("valid condition", function(assert) {
+	QUnit.test("valid condition", (assert) => {
 
 		let oException;
 		const oCondition = _createCondition(OperatorName.SPECIFICMONTH, [2]);
