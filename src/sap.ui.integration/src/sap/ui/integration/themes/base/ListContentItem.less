@@ -7,6 +7,11 @@
 @_sap_ui_integration_ListContentItem_TextShadow: 0 0 @sapUiListTextColor;
 
 .sapUiIntLCI {
+
+	&:not(.sapMLIBActionable) {
+		cursor: default;
+	}
+
 	padding: unset;
 
 	// apply the padding to the contents, to prevent clipping when buttons are hovered for example, due to overflow

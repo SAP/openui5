@@ -213,6 +213,7 @@ sap.ui.define([
 			"cards/actions/CardActions": {
 				module: [
 					"./cards/actions/CardActions.qunit",
+					"./cards/actions/SemanticRoleListItemCardActions.qunit",
 					"./cards/actions/ShowHideCardActions.qunit",
 					"./cards/actions/SubmitAction.qunit"
 				],

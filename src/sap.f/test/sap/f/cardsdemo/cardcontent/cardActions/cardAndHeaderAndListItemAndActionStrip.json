@@ -1,0 +1,126 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "list.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"actions": [{
+			"type": "Navigation",
+			"parameters": {
+				"url": "https://sap.com",
+				"target": "_blank"
+			}
+		}],
+		"type": "List",
+		"data": {
+			"json": {
+				"items": [
+					{"title": "Item 1"},
+					{"title": "Item 2"},
+					{"title": "Item 3"},
+					{"title": "Item 4"}
+				]
+			}
+		},
+		"header": {
+		  "title": "Card and Header and List Item with Action Strip",
+		  "subTitle": "sematicRole - listitem",
+		  "actions": [
+			{
+			  "type": "Navigation",
+			  "parameters": {
+				"url": "https://sap.com",
+				"target": "_blank"
+			  }
+			}
+		  ]
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{title}",
+				"actions": [
+				  {
+					"type": "Navigation",
+					"parameters": {
+					  "url": "https://sap.com",
+					  "target": "_blank"
+					}
+				  }
+				],
+				"actionsStrip": [
+				  {
+					"text": "Add to Favorites",
+					"actions": [
+					  {
+						"type": "Custom",
+						"parameters": {
+						  "method": "addToFavorites",
+						  "id": "{Id}"
+						}
+					  }
+					]
+				  },
+				  {
+					"buttonType": "Transparent",
+					"text": "Remove",
+					"actions": [
+					  {
+						"type": "Custom",
+						"parameters": {
+						  "method": "remove",
+						  "id": "{Id}"
+						}
+					  }
+					]
+				  }
+			  ]
+			},
+			"maxItems": 4
+		},
+		"footer": {
+		  "actionsStrip": [
+			{
+			  "type": "ToolbarSpacer"
+			},
+			{
+			  "type": "Link",
+			  "text": "Agenda",
+			  "icon": "sap-icon://action",
+			  "actions": [
+				{
+				  "type": "Navigation",
+				  "parameters": {
+					"url": "{agendaUrl}"
+				  }
+				}
+			  ]
+			},
+			{
+			  "text": "Approve",
+			  "overflowPriority": "High",
+			  "actions": [
+				{
+				  "type": "Custom",
+				  "parameters": {
+					"method": "approve"
+				  }
+				}
+			  ]
+			}
+		  ]
+		}
+	}
+}
