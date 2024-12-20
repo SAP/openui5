@@ -184,7 +184,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oDialogRef.getAttribute("aria-labelledby"), oHeader.getTitleId(), "Dialog has correct aria-labelledby attribute");
-		assert.strictEqual(oCardRef.getAttribute("role"), "generic", "Card has correct role");
+		assert.notOk(oCardRef.getAttribute("role"), "Card has correct role");
 		assert.notOk(oCardRef.getAttribute("aria-labelledby"), "Card has no extra labeling");
 
 		const oContentListRef = oCard.getCardContent().getInnerList().getDomRef("listUl");
