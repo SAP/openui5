@@ -98,6 +98,7 @@ sap.ui.define([
 			_bindAllTokens.call(this, true); // get all tokens as paging would need support from Tokenizer
 			oEvent.setMark("doNotOpenOnFocus", true); // prevent opening of ValueHelp if Token is focused
 		} else {
+			delete this._iRestoreTokenFocus;
 			_bindAllTokens.call(this, false); // get all tokens as paging would need support from Tokenizer
 		}
 
@@ -109,11 +110,13 @@ sap.ui.define([
 
 		const {bDeletePressed, bTokensUpdated} = this;
 		const iIndex = this.iFocusedIndexBeforeUpdate;
+		let bRestore = false;
 
 		if (this._oUpdateBindingTimer) {
 			// update still pending -> don't set the focus
 			this.bTokensUpdated = false;
 			this.bDeletePressed = false;
+			bRestore = true;
 		} else if (this._bUpdateBinding && this._iRestoreTokenFocus !== undefined) {
 			this.iFocusedIndexBeforeUpdate = this.getTokens().length - this._iRestoreTokenFocus; // reuse existing focus logic
 			delete this._iRestoreTokenFocus;
@@ -124,11 +127,12 @@ sap.ui.define([
 				// set to new token (for shift-tap)
 				oTokenizer._oSelectionOrigin = oTokenizer.getTokens()[this.iFocusedIndexBeforeUpdate];
 			}
+			bRestore = true;
 		}
 
 		MultiInput.prototype.onAfterRendering.apply(this, arguments);
 
-		if (this._oUpdateBindingTimer || this._bUpdateBinding) {
+		if (bRestore) {
 			this.bDeletePressed = bDeletePressed; // restore
 			this.iFocusedIndexBeforeUpdate = iIndex; // restore
 			this.bTokensUpdated = bTokensUpdated; // restore
