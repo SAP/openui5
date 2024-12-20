@@ -36,6 +36,7 @@ sap.ui.define([
 	let mActiveForAllItems = {};
 	let mPredefinedChangeHandlers = {};
 	let mAnnotationChangeHandlers = {};
+	const sDefaultAnnoChangeType = "defaultForAll";
 
 	function checkPreconditions(oChangeHandlerEntry) {
 		if (!oChangeHandlerEntry.changeHandler) {
@@ -232,28 +233,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registers an annotation change handler for a specific change type and a model type.
+	 * Registers an annotation change handler for a specific change type or as default change handler.
+	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {string} mPropertyBag.modelType - Model type
-	 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be registered
 	 * @param {string|object} mPropertyBag.changeHandler - Path to change handler or change handler object
+	 * @param {string} [mPropertyBag.changeType] - Change type for which the change handler should be registered
+	 * @param {boolean} [mPropertyBag.isDefaultChangeHandler] - Indicates if the change handler is the default change handler
 	 */
 	ChangeHandlerStorage.registerAnnotationChangeHandler = function(mPropertyBag) {
-		mAnnotationChangeHandlers[mPropertyBag.modelType] ||= {};
-		mAnnotationChangeHandlers[mPropertyBag.modelType][mPropertyBag.changeType] = {
+		const sChangeType = mPropertyBag.isDefaultChangeHandler ? sDefaultAnnoChangeType : mPropertyBag.changeType;
+
+		mAnnotationChangeHandlers[sChangeType] = {
 			changeHandler: mPropertyBag.changeHandler
 		};
 	};
 
 	/**
-	 * Returns the registered change handler for the specified change type and model type.
+	 * Returns the registered change handler for the specified change type or the default change handler.
+	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {string} mPropertyBag.modelType - Model type
-	 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be returned
+	 * @param {string} [mPropertyBag.changeType] - Change type for which the change handler should be returned
 	 * @returns {Promise<object>} Resolves with the change handler
 	 */
 	ChangeHandlerStorage.getAnnotationChangeHandler = function(mPropertyBag) {
-		const oChangeHandler = ObjectPath.get([mPropertyBag.modelType, mPropertyBag.changeType], mAnnotationChangeHandlers);
+		const oChangeHandler = mAnnotationChangeHandlers[mPropertyBag.changeType] || mAnnotationChangeHandlers[sDefaultAnnoChangeType];
 		if (!oChangeHandler) {
 			throw Error("No Annotation Change handler registered for the Change type and Model type");
 		}

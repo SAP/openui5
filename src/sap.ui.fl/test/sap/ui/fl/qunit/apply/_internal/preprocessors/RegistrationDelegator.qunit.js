@@ -1,64 +1,77 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
-	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
-	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/base/DesignTime"
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/fl/changeHandler/ChangeAnnotation",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
+	DesignTime,
 	MvcController,
 	XMLView,
 	ComponentHooks,
 	ExtensionPoint,
 	ManifestUtils,
 	RegistrationDelegator,
-	ChangeHandlerRegistration,
-	DelegateMediatorAPI,
 	DelegateMediator,
-	sinon,
-	DesignTime
+	DelegateMediatorAPI,
+	ChangeAnnotation,
+	ChangeHandlerRegistration,
+	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
+
+	function deregisterAllComponentHooks() {
+		ComponentHooks.onInstanceCreated.deregister();
+		ComponentHooks.onComponentLoaded.deregister();
+		ComponentHooks.onPreprocessManifest.deregister();
+		ComponentHooks.onModelCreated.deregister();
+	}
 
 	QUnit.module("sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator", {
 		afterEach() {
-			ComponentHooks.onInstanceCreated.deregister();
-			ComponentHooks.onComponentLoaded.deregister();
-			ComponentHooks.onPreprocessManifest.deregister();
-
+			deregisterAllComponentHooks();
 			sandbox.restore();
 			DelegateMediator.clear();
 		}
 	}, function() {
 		QUnit.test("Check if all the registration functions were called", function(assert) {
-			var oRegisterAllSpy = sandbox.spy(RegistrationDelegator, "registerAll");
+			const oRegisterAllSpy = sandbox.spy(RegistrationDelegator, "registerAll");
 
-			var oRegisterChangeHandlersForLibraryStub = sandbox.stub(
+			const oRegisterChangeHandlersForLibraryStub = sandbox.stub(
 				ChangeHandlerRegistration,
 				"getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs"
 			);
-			var oRegisterPredefinedChangeHandlersStub = sandbox.stub(ChangeHandlerRegistration, "registerPredefinedChangeHandlers");
-			var oRegisterExtensionProviderStub = sandbox.stub(MvcController, "registerExtensionProvider");
-			var oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
-			var oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
-			var oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");
+			const oRegisterPredefinedChangeHandlersStub = sandbox.stub(ChangeHandlerRegistration, "registerPredefinedChangeHandlers");
+			const oRegisterAnnotationChangeHandlerStub = sandbox.stub(ChangeHandlerRegistration, "registerAnnotationChangeHandler");
 
-			var fnDone = assert.async();
+			const oRegisterExtensionProviderStub = sandbox.stub(MvcController, "registerExtensionProvider");
+			const oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
+			const oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
+			const oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");
+
+			const fnDone = assert.async();
 			sap.ui.require(["sap/ui/fl/library"], function() {
 				assert.equal(oRegisterAllSpy.callCount, 1, "register all was called once");
 
 				assert.ok(ComponentHooks.onInstanceCreated.isRegistered(), "register changes in component is registered.");
 				assert.equal(oRegisterChangeHandlersForLibraryStub.callCount, 1, "Register Change Handlers called.");
 				assert.equal(oRegisterPredefinedChangeHandlersStub.callCount, 1, "Extension provider called.");
+				assert.strictEqual(oRegisterAnnotationChangeHandlerStub.callCount, 1, "Annotation change handler called once.");
+				assert.deepEqual(oRegisterAnnotationChangeHandlerStub.getCall(0).args[0], {
+					changeHandler: ChangeAnnotation,
+					isDefaultChangeHandler: true
+				}, "Annotation change handler registered for ODataModel v2");
 				assert.ok(ComponentHooks.onComponentLoaded.isRegistered(), "load component event handler is registered.");
 				assert.equal(oRegisterExtensionProviderStub.callCount, 1, "Extension provider called.");
 				assert.equal(oRegisterXMLPreprocessorStub.callCount, 1, "XML preprocessor called.");
@@ -70,20 +83,17 @@ sap.ui.define([
 		});
 	});
 
-	var sWriteProcessorPath = "sap/ui/fl/write/_internal/extensionPoint/Processor";
-	var sApplyProcessorPath = "sap/ui/fl/apply/_internal/extensionPoint/Processor";
+	const sWriteProcessorPath = "sap/ui/fl/write/_internal/extensionPoint/Processor";
+	const sApplyProcessorPath = "sap/ui/fl/apply/_internal/extensionPoint/Processor";
 
 	QUnit.module("sap.ui.fl.RegistrationDelegator getExtensionPointProvider function", {
 		beforeEach() {
-			var oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
+			const oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
 			RegistrationDelegator.registerAll();
 			[this.fnExtensionProvider] = oRegisterExtensionProviderStub.firstCall.args;
 		},
 		afterEach() {
-			ComponentHooks.onInstanceCreated.deregister();
-			ComponentHooks.onComponentLoaded.deregister();
-			ComponentHooks.onPreprocessManifest.deregister();
-
+			deregisterAllComponentHooks();
 			sandbox.restore();
 			DelegateMediator.clear();
 		}
@@ -113,29 +123,30 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.RegistrationDelegator 'registerModelSpecificReadDelegates' function", {
 		afterEach() {
+			deregisterAllComponentHooks();
 			sandbox.restore();
 			DelegateMediator.clear();
 		}
-	});
-
-	QUnit.test("When 'registerModelSpecificReadDelegates' is called", function(assert) {
-		var oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");
-		RegistrationDelegator.registerAll();
-		assert.strictEqual(
-			oRegisterReadDelegateStub.getCall(0).args[0].modelType,
-			"sap.ui.model.odata.v4.ODataModel",
-			"then the model type is 'sap.ui.model.odata.v4.ODataModel'"
-		);
-		assert.strictEqual(
-			oRegisterReadDelegateStub.getCall(1).args[0].modelType,
-			"sap.ui.model.odata.v2.ODataModel",
-			"then the model type is 'sap.ui.model.odata.v2.ODataModel'"
-		);
-		assert.strictEqual(
-			oRegisterReadDelegateStub.getCall(2).args[0].modelType,
-			"sap.ui.model.odata.ODataModel",
-			"then the model type is 'sap.ui.model.odata.ODataModel'"
-		);
+	}, function() {
+		QUnit.test("When 'registerModelSpecificReadDelegates' is called", function(assert) {
+			const oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");
+			RegistrationDelegator.registerAll();
+			assert.strictEqual(
+				oRegisterReadDelegateStub.getCall(0).args[0].modelType,
+				"sap.ui.model.odata.v4.ODataModel",
+				"then the model type is 'sap.ui.model.odata.v4.ODataModel'"
+			);
+			assert.strictEqual(
+				oRegisterReadDelegateStub.getCall(1).args[0].modelType,
+				"sap.ui.model.odata.v2.ODataModel",
+				"then the model type is 'sap.ui.model.odata.v2.ODataModel'"
+			);
+			assert.strictEqual(
+				oRegisterReadDelegateStub.getCall(2).args[0].modelType,
+				"sap.ui.model.odata.ODataModel",
+				"then the model type is 'sap.ui.model.odata.ODataModel'"
+			);
+		});
 	});
 
 	QUnit.done(function() {

@@ -20,7 +20,6 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When 'registerAnnotationChangeHandler' is called", function(assert) {
 			const mPropertyBag = {
-				modelType: "someModelType",
 				changeType: "someChangeType",
 				changeHandler: "someChangeHandler"
 			};
@@ -43,9 +42,20 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("When 'registerAnnotationChangeHandler' is called with isDefaultChangeHandler set to true", function(assert) {
+			assert.throws(
+				function() {
+					AnnotationChangeHandlerAPI.registerAnnotationChangeHandler({
+						isDefaultChangeHandler: true, changeType: "someChangeType", changeHandler: {}
+					});
+				},
+				/The API is not allowed to register default change handlers!/,
+				"then an error is thrown"
+			);
+		});
+
 		QUnit.test("When 'getAnnotationChangeHandler' is called", function(assert) {
 			const mPropertyBag = {
-				modelType: "someModelType",
 				changeType: "someChangeType"
 			};
 
@@ -62,7 +72,7 @@ sap.ui.define([
 				function() {
 					AnnotationChangeHandlerAPI.getAnnotationChangeHandler({});
 				},
-				/properties are required/,
+				/property is required/,
 				"then an error is thrown"
 			);
 		});

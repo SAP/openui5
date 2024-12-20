@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Component",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
@@ -11,14 +12,17 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/performance/Measurement"
 ], function(
 	Log,
+	Component,
 	Lib,
 	AppDescriptorApplier,
 	ApplyStrategyFactory,
@@ -26,11 +30,13 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	ControlVariantApplyAPI,
+	ChangeHandlerRegistration,
 	VariantModel,
 	FlexControllerFactory,
 	Layer,
 	Utils,
 	JSONModel,
+	ODataUtils,
 	Measurement
 ) {
 	"use strict";
@@ -226,6 +232,59 @@ sap.ui.define([
 	 */
 	ComponentLifecycleHooks.componentLoadedHook = function(...aArgs) {
 		return onLoadComponent(...aArgs);
+	};
+
+	async function fetchModelChanges(oPropertyBag) {
+		// if there is the owner property, the model is part of a reuse component.
+		// but the changes must still be fetched for the app component
+		const oOwnerComponent = oPropertyBag.owner && Component.get(oPropertyBag.owner.id);
+
+		// the functionality still works without component Id, but the FlexState will be initialized again
+		// once the component Id is set. This will happen in the instanceCreated hook.
+		// This can only be improved once the generated component instance Id is available in the factory config
+		const sAppComponentId = oPropertyBag.owner?.id || oPropertyBag.factoryConfig.id || oPropertyBag.factoryConfig.settings?.id;
+
+		const oComponentData = oOwnerComponent?.getComponentData()
+			|| oPropertyBag.factoryConfig.componentData
+			|| oPropertyBag.factoryConfig.settings?.componentData;
+		const sReference = ManifestUtils.getFlexReference({
+			manifest: oOwnerComponent?.getManifest() || oPropertyBag.manifest,
+			componentData: oComponentData
+		});
+		await FlexState.initialize({
+			componentData: oComponentData,
+			asyncHints: oPropertyBag.owner?.config.asyncHints || oPropertyBag.factoryConfig.asyncHints,
+			componentId: sAppComponentId,
+			reference: sReference
+		});
+		const sServiceUrl = ODataUtils.removeOriginSegmentParameters(oPropertyBag.model.getServiceUrl());
+		const aRelevantAnnotationChanges = FlexState.getAnnotationChanges(sReference)
+		.filter((oAnnotationChange) => oAnnotationChange.getServiceUrl() === sServiceUrl);
+
+		const aReturn = [];
+		for (const oAnnotationChange of aRelevantAnnotationChanges) {
+			const oChangeHandler = await ChangeHandlerRegistration.getAnnotationChangeHandler({
+				changeType: oAnnotationChange.getChangeType()
+			});
+			aReturn.push(await oChangeHandler.applyChange(oAnnotationChange));
+		}
+		return aReturn;
+	}
+
+	/**
+	 * Sets a promise at the model instance which resolves with the necessary information for the model to change annotations.
+	 *
+	 * @param {object} oPropertyBag - Property bag
+	 * @param {object} oPropertyBag.model - Model instance
+	 * @param {string} oPropertyBag.modelId - Id of the model instance
+	 * @param {object} oPropertyBag.factoryConfig - Configuration of loaded component
+	 * @param {object} oPropertyBag.manifest - Manifest of the owner component
+	 * @param {object} [oPropertyBag.owner] - Only passed if the model is part of an embedded component
+	 * @param {string} [oPropertyBag.owner.id] - Id of the owner component
+	 * @param {object} [oPropertyBag.owner.config] - Configuration of the owner component
+	 */
+	ComponentLifecycleHooks.modelCreatedHook = function(oPropertyBag) {
+		oPropertyBag.model.setAnnotationChangePromise(fetchModelChanges(oPropertyBag));
 	};
 
 	return ComponentLifecycleHooks;
