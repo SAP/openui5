@@ -43,24 +43,21 @@ sap.ui.define(function() {
 			"simpleGherkinParser": {},
 			"StepDefinitions": {},
 
-			/*
-			 * Note: Tests that are part of demokit samples have not been migrates as long as the test starter is not a public offering
-			 */
 			"GherkinWithOPA5": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/GherkinTestRunner.html?sap-ui-animation=false"
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/testsuite.qunit.html"
 			},
 			"GherkinWithPageObjects": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/GherkinTestRunner.html?sap-ui-animation=false"
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/testsuite.qunit.html"
 			},
 			"GherkinWithQUnit": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithQUnit/GherkinTestRunner.html?sap-ui-animation=false&noglobals=true"
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithQUnit/testsuite.qunit.html"
 			},
 			"GherkinWithUIComponent": {
 				group: "Demokit Samples",
-				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithUIComponent/GherkinTestRunner.html?sap-ui-animation=false"
+				page: "test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithUIComponent/testsuite.qunit.html"
 			}
 		}
 	};

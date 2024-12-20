@@ -1,7 +1,4 @@
-/* global QUnit */
-window.QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/gherkin/opa5TestHarness",
 	// Code coverage will be calculated for all modules loaded after the harness
 	"GherkinWithOPA5/Steps"
@@ -16,6 +13,4 @@ sap.ui.require([
 		featurePath: "GherkinWithOPA5.Requirements2",
 		steps: Steps
 	});
-
-	QUnit.start();
 });
