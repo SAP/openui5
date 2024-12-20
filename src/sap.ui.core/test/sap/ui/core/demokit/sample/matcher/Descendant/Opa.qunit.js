@@ -1,8 +1,6 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/test/matchers/Descendant',
 	'sap/ui/test/matchers/Properties',
 	'sap/ui/test/opaQunit',
@@ -66,7 +64,4 @@ sap.ui.require([
 			Then.iTeardownMyAppFrame();
 		}
 	});
-
-	QUnit.start();
-
 });

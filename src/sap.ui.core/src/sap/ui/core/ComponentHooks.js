@@ -81,12 +81,17 @@ sap.ui.define([], function() {
 	const ComponentHooks = {
 		/**
 		 * Callback handler that executes when a manifest model (ODataModel v2 and v4) is created.
-		 * The model instance, the manifest model ID, and the configuration object will be passed into the registered function.
+		 * The registered function receives an object containing:
+		 * 	- Model instance
+		 * 	- Manifest object
+		 * 	- Manifest model ID
+		 * 	- Owner component (if available)
+		 * 	- Configuration object from the component factory
 		 *
 		 * Example usage:
 		 * <pre>
 		 * sap.ui.require(['sap/ui/core/ComponentHooks'], function(ComponentHooks) {
-		 *   ComponentHooks.onModelCreated.register(function(oModel, sModelID, oConfig) {
+		 *   ComponentHooks.onModelCreated.register(function(oInfo) {
 		 *     // do some logic
 		 *   });
 		 * });

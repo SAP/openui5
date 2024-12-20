@@ -3,5 +3,9 @@ sap.ui.define([
   ], function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.mdc.demokit.sample.FilterbarTypes.webapp.Component");
+	return UIComponent.extend("sap.ui.mdc.demokit.sample.FilterbarTypes.webapp.Component", {
+		"metadata": {
+			"manifest": "json"
+		}
+	});
 });

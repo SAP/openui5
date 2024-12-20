@@ -24,53 +24,53 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/base/strings/whitespaceReplacer",
 	"sap/base/util/deepEqual"
-], function (
-		ConditionType,
-		Condition,
-		FieldBaseDelegate,
-		ValueHelp,
-		FilterOperatorUtil,
-		Operator,
-		ConditionValidateException,
-		ConditionValidated,
-		FieldDisplay,
-		OperatorValueType,
-		OperatorName,
-		FilterOperator,
-		IntegerType,
-		CurrencyType,
-		DateType,
-		FormatException,
-		ParseException,
-		StringType,
-		DateTimeWithTimezoneType,
-		DateTimeOffsetType,
-		whitespaceReplacer,
-		deepEqual
-	) {
+], (
+	ConditionType,
+	Condition,
+	FieldBaseDelegate,
+	ValueHelp,
+	FilterOperatorUtil,
+	Operator,
+	ConditionValidateException,
+	ConditionValidated,
+	FieldDisplay,
+	OperatorValueType,
+	OperatorName,
+	FilterOperator,
+	IntegerType,
+	CurrencyType,
+	DateType,
+	FormatException,
+	ParseException,
+	StringType,
+	DateTimeWithTimezoneType,
+	DateTimeOffsetType,
+	whitespaceReplacer,
+	deepEqual
+) => {
 	"use strict";
 
 	let oConditionType;
 	let oValueType;
 
 	QUnit.module("Default type", {
-		beforeEach: function() {
+		beforeEach() {
 			oConditionType = new ConditionType({delegate: FieldBaseDelegate});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 		}
 	});
 
-	QUnit.test("Formatting: nothing", function(assert) {
+	QUnit.test("Formatting: nothing", (assert) => {
 
 		const sResult = oConditionType.formatValue();
 		assert.equal(sResult, null, "Result of formatting");
 
 	});
 
-	QUnit.test("Formatting: EQ - simple String", function(assert) {
+	QUnit.test("Formatting: EQ - simple String", (assert) => {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
 		let sResult = oConditionType.formatValue(oCondition);
@@ -86,7 +86,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: EQ - key/Description", function(assert) {
+	QUnit.test("Formatting: EQ - key/Description", (assert) => {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		oConditionType.oFormatOptions.operators = [OperatorName.EQ]; // fake setting directly
@@ -96,7 +96,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: EQ - simple String with whitespaces", function(assert) {
+	QUnit.test("Formatting: EQ - simple String with whitespaces", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["Test   Test"], undefined, undefined, ConditionValidated.Validated);
 		let sResult = oConditionType.formatValue(oCondition);
@@ -108,7 +108,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: invalid condition", function(assert) {
+	QUnit.test("Formatting: invalid condition", (assert) => {
 
 		let oException;
 
@@ -143,7 +143,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: Contains - simple String", function(assert) {
+	QUnit.test("Formatting: Contains - simple String", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.Contains, ["Test"]);
 		const sResult = oConditionType.formatValue(oCondition);
@@ -151,7 +151,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: Contains - simple String (hideOperator)", function(assert) {
+	QUnit.test("Formatting: Contains - simple String (hideOperator)", (assert) => {
 
 		oConditionType.oFormatOptions.hideOperator = true; // fake setting directly
 		const oCondition = Condition.createCondition(OperatorName.Contains, ["Test"]);
@@ -160,7 +160,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: Default/hideOperator - simple String", function(assert) {
+	QUnit.test("Parsing: Default/hideOperator - simple String", (assert) => {
 
 		let oCondition = oConditionType.parseValue("Test");
 		assert.ok(oCondition, "Result returned");
@@ -228,7 +228,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: only EQ - simple String", function(assert) {
+	QUnit.test("Parsing: only EQ - simple String", (assert) => {
 
 		oConditionType.setFormatOptions({operators: [OperatorName.EQ]});
 		let oCondition = oConditionType.parseValue("Test");
@@ -249,7 +249,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: EQ - simple String as 'any'", function(assert) {
+	QUnit.test("Parsing: EQ - simple String as 'any'", (assert) => {
 
 		oConditionType.setFormatOptions({operators: [OperatorName.EQ]});
 		const oCondition = oConditionType.parseValue("Test", "any");
@@ -262,7 +262,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: EQ - empty string", function(assert) {
+	QUnit.test("Parsing: EQ - empty string", (assert) => {
 
 		oConditionType.setFormatOptions({operators: [OperatorName.EQ]});
 		const oCondition = oConditionType.parseValue("");
@@ -270,7 +270,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: limited operators - simple string", function(assert) {
+	QUnit.test("Parsing: limited operators - simple string", (assert) => {
 
 		oConditionType.setFormatOptions({operators: [OperatorName.NOTGT, OperatorName.GT, OperatorName.NOTLT, OperatorName.LT]});
 		let oCondition = oConditionType.parseValue(">Test");
@@ -287,7 +287,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: single operator - simple string", function(assert) {
+	QUnit.test("Parsing: single operator - simple string", (assert) => {
 
 		oConditionType.setFormatOptions({operators: [OperatorName.GT]});
 		let oCondition = oConditionType.parseValue(">Test");
@@ -304,7 +304,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: <empty> - string", function(assert) {
+	QUnit.test("Parsing: <empty> - string", (assert) => {
 
 		const oCondition = oConditionType.parseValue("<empty>");
 		assert.ok(oCondition, "Result returned");
@@ -315,14 +315,14 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: null", function(assert) {
+	QUnit.test("Parsing: null", (assert) => {
 
 		const oCondition = oConditionType.parseValue(null);
 		assert.ok(oCondition === null, "null returned");
 
 	});
 
-	QUnit.test("destroyed ConditionType", function(assert) {
+	QUnit.test("destroyed ConditionType", (assert) => {
 
 		oConditionType.destroy();
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["Test"]);
@@ -344,12 +344,20 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getTextForCopy", (assert) => {
+
+		const oCondition = Condition.createItemCondition("I1", "Text1");
+		const sText = oConditionType.getTextForCopy(oCondition);
+		assert.equal(sText, "I1\tText1", "text");
+
+	});
+
 	QUnit.module("Number type", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new IntegerType({}, {maximum: 100});
 			oConditionType = new ConditionType({valueType: oValueType, fieldPath: "X"});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 			oValueType.destroy();
@@ -357,7 +365,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting: EQ - number", function(assert) {
+	QUnit.test("Formatting: EQ - number", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [2]);
 		let sResult = oConditionType.formatValue(oCondition);
@@ -375,7 +383,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: EQ - number", function(assert) {
+	QUnit.test("Parsing: EQ - number", (assert) => {
 
 		oConditionType.setFormatOptions({operators: [OperatorName.EQ], fieldPath: "X"});
 		let oCondition = oConditionType.parseValue("1");
@@ -404,7 +412,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: GreaterThan - number", function(assert) {
+	QUnit.test("Parsing: GreaterThan - number", (assert) => {
 
 		const oCondition = oConditionType.parseValue(">1");
 		assert.ok(oCondition, "Result returned");
@@ -416,7 +424,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: invalid value", function(assert) {
+	QUnit.test("Parsing: invalid value", (assert) => {
 
 		let oException;
 
@@ -430,7 +438,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: invalid value", function(assert) {
+	QUnit.test("Validating: invalid value", (assert) => {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, [200]);
 		let oException;
@@ -442,7 +450,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
 
 		oException = undefined;
 		try {
@@ -451,7 +459,7 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), "XXX", "exception condition");
+		assert.deepEqual(oException?.getCondition(), "XXX", "exception condition");
 
 		oException = undefined;
 		oCondition = Condition.createCondition("XX", [200]);
@@ -461,18 +469,18 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
 
 	});
 
 	let oOriginalType;
 	QUnit.module("Date type", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new DateType({pattern: "yyyy-MM-dd"}, {minimum: new Date(2000, 0, 1)});
 			oOriginalType = new DateType({pattern: "dd.MM.yyyy"}, {minimum: new Date(2000, 0, 1)});
 			oConditionType = new ConditionType({valueType: oValueType, originalDateType: oOriginalType, fieldPath: "X", operators: [OperatorName.EQ]});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 			oValueType.destroy();
@@ -482,7 +490,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting: EQ - date", function(assert) {
+	QUnit.test("Formatting: EQ - date", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(2020, 1, 3)], undefined, undefined, ConditionValidated.Validated);
 		const sResult = oConditionType.formatValue(oCondition);
@@ -490,7 +498,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: EQ - date", function(assert) {
+	QUnit.test("Parsing: EQ - date", (assert) => {
 
 		const oCondition = oConditionType.parseValue("2020-02-03");
 		assert.ok(oCondition, "Result returned");
@@ -502,7 +510,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: invalid value", function(assert) {
+	QUnit.test("Parsing: invalid value", (assert) => {
 
 		let oException;
 		sinon.spy(oValueType, "parseValue");
@@ -520,7 +528,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: invalid value", function(assert) {
+	QUnit.test("Validating: invalid value", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [new Date(1900, 0, 1)]);
 		let oException;
@@ -534,14 +542,14 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.ok(oException && oException.message.startsWith("Enter a date after 01.01.2000"), "Pattern of original date used in message");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.ok(oException?.message.startsWith("Enter a date after 01.01.2000"), "Pattern of original date used in message");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
 		assert.ok(oValueType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of ValueType called with currentValue");
 		assert.ok(oOriginalType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of originalDateType called with currentValue");
 
 	});
 
-	QUnit.test("Validating: invalid null value", function(assert) {
+	QUnit.test("Validating: invalid null value", (assert) => {
 
 		let oException;
 		sinon.spy(oValueType, "validateValue");
@@ -554,8 +562,8 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.ok(oException && oException.message.startsWith("Enter a date after 01.01.2000"), "Pattern of original date used in message");
-		assert.deepEqual(oException && oException.getCondition(), null, "exception condition");
+		assert.ok(oException?.message.startsWith("Enter a date after 01.01.2000"), "Pattern of original date used in message");
+		assert.deepEqual(oException?.getCondition(), null, "exception condition");
 		assert.ok(oValueType.validateValue.calledWith(null), "validateValue of ValueType called with null");
 		assert.ok(oOriginalType.validateValue.calledWith(null), "validateValue of originalDateType called with null");
 
@@ -566,7 +574,7 @@ sap.ui.define([
 	let oValueType2;
 	let oConditionType2;
 	QUnit.module("DateTimeWithTimezone type", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new DateTimeWithTimezoneType({pattern: "yyyy-MM-dd'T'HH:mm:ss", showTimezone: false});
 			oOriginalType = new DateTimeWithTimezoneType({showTimezone: true});
 			oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true});
@@ -588,7 +596,7 @@ sap.ui.define([
 				delegate: FieldBaseDelegate
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 			oValueType.destroy();
@@ -606,7 +614,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting: EQ", function(assert) {
+	QUnit.test("Formatting: EQ", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
 		let sResult = oConditionType.formatValue(oCondition);
@@ -620,7 +628,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: EQ", function(assert) {
+	QUnit.test("Parsing: EQ", (assert) => {
 
 		oValueType._aCurrentValue = ["2022-02-25T07:06:30+01:00", "Europe/Berlin"]; // fake formatting before (to have at least timezone)
 		oValueType2._aCurrentValue = ["2022-02-25T07:06:30+01:00", "Europe/Berlin"]; // fake formatting before (to have at least timezone)
@@ -652,7 +660,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: valid value", function(assert) {
+	QUnit.test("Validating: valid value", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
 		let oException;
@@ -695,7 +703,7 @@ sap.ui.define([
 
 	let oValueHelp;
 	let bAsyncCalled;
-	const fnAsync = function(oPromise) {
+	const fnAsync = (oPromise) => {
 		bAsyncCalled = true;
 		if (!(oPromise instanceof Promise)) {
 			throw new Error("needs promise");
@@ -703,16 +711,16 @@ sap.ui.define([
 	};
 
 	QUnit.module("Key/Description using ValueHelp", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueHelp = new ValueHelp("VH1");
-			const fnGetItemsForValue = function(oConfig) {
+			const fnGetItemsForValue = (oConfig) => {
 				if (oConfig.value === "I1" || oConfig.value === "Item1") {
 					return Promise.resolve({key: "I1", description: "Item1"});
 				} else if (oConfig.value === "=I1" || oConfig.value === "=Item1") {
 					return Promise.resolve({key: "=I1", description: "=Item1"});
 				} else if (oConfig.value === "I2" || oConfig.value === "Item2") {
-					return new Promise(function(fResolve, fReject) {
-						setTimeout(function () { // simulate request
+					return new Promise((fResolve, fReject) => {
+						setTimeout(() => { // simulate request
 							fResolve({key: "i2", description: "Item 2", payload: {payload: "I2"}});
 						}, 0);
 					});
@@ -752,7 +760,7 @@ sap.ui.define([
 				control: "Control" // just dummy to test forwarding to valueHelp
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			oValueHelp.destroy();
 			oValueHelp = undefined;
 			oConditionType.destroy();
@@ -763,7 +771,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting: key -> description (from condition)", function(assert) {
+	QUnit.test("Formatting: key -> description (from condition)", (assert) => {
 
 		const oCondition = Condition.createItemCondition("I1", "Text1");
 		let sResult = oConditionType.formatValue(oCondition);
@@ -783,7 +791,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: key -> description (from help)", function(assert) {
+	QUnit.test("Formatting: key -> description (from help)", (assert) => {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["Sync"], undefined, undefined, ConditionValidated.Validated);
 		const oConfig = { // to compare
@@ -804,11 +812,10 @@ sap.ui.define([
 		assert.equal(sResult, "SyncCall", "Result of formatting");
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
 
-		const fnDone = assert.async();
 		oCondition = Condition.createCondition(OperatorName.EQ, ["I1"], undefined, undefined, ConditionValidated.Validated);
 		let oPromise = oConditionType.formatValue(oCondition);
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(sDescription) {
+		return oPromise.then((sDescription) => {
 			assert.equal(sDescription, "Item1", "Result of formatting");
 			oConfig.value = "I1";
 			oConfig.parsedValue = "I1";
@@ -818,37 +825,33 @@ sap.ui.define([
 			oCondition.values.push(undefined);
 			oPromise = oConditionType.formatValue(oCondition);
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(sDescription) {
+			return oPromise.then((sDescription) => {
 				assert.equal(sDescription, "Item1 (I1)", "Result of formatting");
 
 				oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 				oCondition = Condition.createCondition(OperatorName.EQ, ["I2"], undefined, undefined, ConditionValidated.Validated);
 				oPromise = oConditionType.formatValue(oCondition);
 				assert.ok(oPromise instanceof Promise, "Promise returned");
-				oPromise.then(function(sDescription) {
+				return oPromise.then((sDescription) => {
 					assert.equal(sDescription, "I2 (Item 2)", "Result of formatting");
 
 					// preventGetDescription -> no description is read
 					oConditionType.oFormatOptions.preventGetDescription = true; // fake setting directly
 					sResult = oConditionType.formatValue(oCondition);
 					assert.equal(sResult, "I2", "Result of formatting");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise Catch must not be called");
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch must not be called");
-				fnDone();
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Formatting: key -> awaitFormatCondition", async function(assert) {
+	QUnit.test("Formatting: key -> awaitFormatCondition", async (assert) => {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription;
 		oConditionType.oFormatOptions.awaitFormatCondition = () => {};
@@ -872,7 +875,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: invalid key -> description (from help)", function(assert) {
+	QUnit.test("Formatting: invalid key -> description (from help)", (assert) => {
 
 		// test fallbacks without delegate
 		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
@@ -900,11 +903,9 @@ sap.ui.define([
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 		assert.notOk(oException, "no exception fired");
 
-		const fnDone = assert.async();
-		oPromise.then(function(sDescription) {
+		return oPromise.then((sDescription) => {
 			assert.notOk(true, "Promise Then must not be called");
-			fnDone();
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.ok(oException, "exception fired");
 			assert.ok(oException instanceof FormatException, "Error is a FormatException");
 			assert.equal(oException.message, "myException", "error text");
@@ -913,18 +914,16 @@ sap.ui.define([
 			oPromise = oConditionType.formatValue(oCondition);
 			assert.ok(oPromise instanceof Promise, "Promise returned");
 
-			oPromise.then(function(sDescription) {
+			return oPromise.then((sDescription) => {
 				assert.equal(sDescription, "ZZZ", "Result of formatting");
-				fnDone();
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch must not be called");
-				fnDone();
 			});
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key", function(assert) {
+	QUnit.test("Parsing: description -> key", (assert) => {
 
 		const oCondition = oConditionType.parseValue("SyncCall");
 		assert.ok(oCondition, "Result returned");
@@ -940,10 +939,9 @@ sap.ui.define([
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 		assert.notOk(bAsyncCalled, "asyncParsing function not called");
 
-		const fnDone = assert.async();
 		const oPromise =  oConditionType.parseValue("Item1");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -960,7 +958,7 @@ sap.ui.define([
 			bAsyncCalled = undefined;
 			const oPromise =  oConditionType.parseValue("Item2");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -973,26 +971,22 @@ sap.ui.define([
 				assert.deepEqual(oCondition.payload, {payload: "I2"} , "payload returned");
 				assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 				assert.ok(bAsyncCalled, "asyncParsing function called");
-				fnDone();
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch must not be called");
-				fnDone();
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: key -> key and description", function(assert) {
+	QUnit.test("Parsing: key -> key and description", (assert) => {
 
 		// test fallbacks without delegate
-		const fnDone = assert.async();
 		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
 		const oPromise = oConditionType.parseValue("I2");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1004,22 +998,19 @@ sap.ui.define([
 			assert.notOk(oCondition.outParameters, "no out-parameters returned");
 			assert.deepEqual(oCondition.payload, {payload: "I2"} , "payload returned");
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: key and description -> key and Description", function(assert) {
+	QUnit.test("Parsing: key and description -> key and Description", (assert) => {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
 
-		const fnDone = assert.async();
 		let oPromise = oConditionType.parseValue("I2 (X)");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1048,7 +1039,7 @@ sap.ui.define([
 
 			oPromise = oConditionType.parseValue("Item3");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1063,7 +1054,7 @@ sap.ui.define([
 
 				oPromise = oConditionType.parseValue("x (Item2)");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
 					assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1075,23 +1066,19 @@ sap.ui.define([
 					assert.notOk(oCondition.outParameters, "no out-parameters returned");
 					assert.deepEqual(oCondition.payload, {payload: "I2"} , "payload returned");
 					assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise Catch must not be called");
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch must not be called");
-				fnDone();
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: key and description -> key and Description with error", function(assert) {
+	QUnit.test("Parsing: key and description -> key and Description with error", (assert) => {
 
 		// test fallbacks without delegate
 		oConditionType.oFormatOptions.delegate = undefined; // fake setting directly
@@ -1108,13 +1095,12 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
+		assert.equal(oException?.message, "Value \"X\" does not exist.", "error text");
 		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		oValueHelp.getItemForValue.resetHistory();
 		oException = null;
 
-		const fnDone = assert.async();
 		try {
 			oPromise = oConditionType.parseValue("XXX");
 		} catch (e) {
@@ -1123,14 +1109,13 @@ sap.ui.define([
 
 		assert.notOk(oException, "no exception fired");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.notOk(true, "Promise Then must not be called");
 			oType.destroy();
-			fnDone();
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.ok(oException, "exception fired");
 			assert.ok(oException instanceof ParseException, "Error is a ParseException");
-			assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
+			assert.equal(oException?.message, "Value \"XXX\" does not exist.", "error text");
 			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 			// test own error (like runtime error) just forwarded
@@ -1143,7 +1128,7 @@ sap.ui.define([
 			}
 
 			assert.ok(oException, "exception fired");
-			assert.equal(oException && oException.message, "myError", "error text");
+			assert.equal(oException?.message, "myError", "error text");
 			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 			oValueHelp.getItemForValue.resetHistory();
@@ -1171,24 +1156,22 @@ sap.ui.define([
 
 			assert.notOk(oException, "no exception fired");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.notOk(true, "Promise Then must not be called");
 				oType.destroy();
-				fnDone();
-			}).catch(function(oException) {
+			}).catch((oException) => {
 				assert.ok(oException, "exception fired");
 				assert.ok(oException instanceof ParseException, "Error is a ParseException");
 				assert.equal(oException.message, "Value \"XXX\" does not exist.", "error text");
 				assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 				oType.destroy();
-				fnDone();
 			});
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key with error", function(assert) {
+	QUnit.test("Parsing: description -> key with error", (assert) => {
 
 		const oType = new StringType({}, {maxLength: 2}); // use type to test invalid key is not checked for description
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
@@ -1201,7 +1184,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "Value \"X\" does not exist.", "error text");
+		assert.equal(oException?.message, "Value \"X\" does not exist.", "error text");
 		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test own error (like runtime error) just forwarded
@@ -1214,14 +1197,13 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "myError", "error text");
+		assert.equal(oException?.message, "myError", "error text");
 		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// test invalid key because of type validation
 		oValueHelp.getItemForValue.resetHistory();
 		oException = null;
 		let oPromise;
-		const fnDone = assert.async();
 		try {
 			oPromise = oConditionType.parseValue("ZZZ");
 		} catch (e) {
@@ -1230,14 +1212,13 @@ sap.ui.define([
 
 		assert.notOk(oException, "no exception fired");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.notOk(true, "Promise Then must not be called");
 			oType.destroy();
-			fnDone();
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.ok(oException, "exception fired");
 			assert.ok(oException instanceof ParseException, "Error is a ParseException");
-			assert.equal(oException && oException.message, "myException", "error text");
+			assert.equal(oException?.message, "myException", "error text");
 			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 			// test non-unique key because of type validation
@@ -1251,30 +1232,27 @@ sap.ui.define([
 
 			assert.notOk(oException, "no exception fired");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.notOk(true, "Promise Then must not be called");
 				oType.destroy();
-				fnDone();
-			}).catch(function(oException) {
+			}).catch((oException) => {
 				assert.ok(oException, "exception fired");
 				assert.ok(oException instanceof ParseException, "Error is a ParseException");
-				assert.equal(oException && oException.message, "not Unique", "error text");
+				assert.equal(oException?.message, "not Unique", "error text");
 				assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 				oType.destroy();
-				fnDone();
 			});
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key with error and no inputValidation", function(assert) {
+	QUnit.test("Parsing: description -> key with error and no inputValidation", (assert) => {
 
-		const fnDone = assert.async();
 		oValueHelp.setValidateInput(false);
 		let oPromise = oConditionType.parseValue("ZZZ");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(true, "Promise Then must be called");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1286,7 +1264,7 @@ sap.ui.define([
 			oPromise = oConditionType.parseValue("notUnique");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
 
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.ok(true, "Promise Then must be called");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1299,7 +1277,7 @@ sap.ui.define([
 				oPromise = oConditionType.parseValue("=ZZZ");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
 
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.ok(true, "Promise Then must be called");
 					assert.equal(typeof oCondition, "object", "Result is object");
 					assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1307,23 +1285,19 @@ sap.ui.define([
 					assert.equal(oCondition.values.length, 1, "Values length");
 					assert.equal(oCondition.values[0], "ZZZ", "Values entry0");
 					assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise must not fail");
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise must not fail");
-				fnDone();
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise must not fail");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key with default Operator", function(assert) {
+	QUnit.test("Parsing: description -> key with default Operator", (assert) => {
 
 		oConditionType.oFormatOptions.operators = [OperatorName.EQ, OperatorName.Contains]; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator(OperatorName.Contains)); // fake contains as default operator
@@ -1341,11 +1315,10 @@ sap.ui.define([
 		// default operator not allowed
 		oValueHelp.getItemForValue.resetHistory();
 		oConditionType.oFormatOptions.operators = [OperatorName.GT, OperatorName.EQ]; // fake setting directly
-		const fnDone = assert.async();
 		let oPromise = oConditionType.parseValue("ZZZ");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.GT, "Operator");
@@ -1366,14 +1339,13 @@ sap.ui.define([
 			}
 			assert.notOk(oException, "no exception fired");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.notOk(true, "Promise Then must not be called");
 				FilterOperatorUtil.getDefaultOperator.restore();
-				fnDone();
-			}).catch(function(oException) {
+			}).catch((oException) => {
 				assert.ok(oException, "exception fired");
 				assert.ok(oException instanceof ParseException, "Error is a ParseException");
-				assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
+				assert.equal(oException?.message, "Value \"XXX\" does not exist.", "error text");
 				assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 				// only one operator
@@ -1387,29 +1359,26 @@ sap.ui.define([
 				}
 				assert.notOk(oException, "no exception fired");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.notOk(true, "Promise Then must not be called");
 					FilterOperatorUtil.getDefaultOperator.restore();
-					fnDone();
-				}).catch(function(oException) {
+				}).catch((oException) => {
 					assert.ok(oException, "exception fired");
 					assert.ok(oException instanceof ParseException, "Error is a ParseException");
-					assert.equal(oException && oException.message, "Value \"XXX\" does not exist.", "error text");
+					assert.equal(oException?.message, "Value \"XXX\" does not exist.", "error text");
 					assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 					FilterOperatorUtil.getDefaultOperator.restore();
-					fnDone();
 				});
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise must not fail");
 			FilterOperatorUtil.getDefaultOperator.restore();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key with entered symbol", function(assert) {
+	QUnit.test("Parsing: description -> key with entered symbol", (assert) => {
 
 		oConditionType.oFormatOptions.operators = [OperatorName.EQ, OperatorName.Contains]; // fake setting directly
 
@@ -1442,11 +1411,10 @@ sap.ui.define([
 		oConfig.value = "ZZZ";
 		oConfig.parsedValue = "ZZZ";
 		oConfig.parsedDescription = "ZZZ";
-		const fnDone = assert.async();
 		let oPromise = oConditionType.parseValue("=ZZZ");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1463,7 +1431,7 @@ sap.ui.define([
 			oConfig.parsedDescription = "Item1";
 			oPromise = oConditionType.parseValue("=Item1");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1482,29 +1450,24 @@ sap.ui.define([
 				oConfig.checkDescription = false;
 				oPromise = oConditionType.parseValue("=");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.deepEqual(oCondition, null, "null returned");
 					assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 					assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-					fnDone();
-				}).catch(function(oException) {
+				}).catch((oException) => {
 					assert.notOk(oException, "exception fired");
-					fnDone();
 				});
-				}).catch(function(oException) {
+				}).catch((oException) => {
 				assert.notOk(oException, "exception fired");
-				fnDone();
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise must not fail");
 			FilterOperatorUtil.getDefaultOperator.restore();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key with entered symbol and hidden operator", function(assert) {
+	QUnit.test("Parsing: description -> key with entered symbol and hidden operator", (assert) => {
 
 		oConditionType.oFormatOptions.operators = [OperatorName.EQ]; // fake setting directly
 		oConditionType.oFormatOptions.hideOperator = true;
@@ -1535,7 +1498,6 @@ sap.ui.define([
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
 
 		oValueHelp.getItemForValue.resetHistory();
-		const fnDone = assert.async();
 		oConfig.value = "=Item1";
 		oConfig.parsedValue = "=Item1";
 		oConfig.parsedDescription = "=Item1";
@@ -1543,7 +1505,7 @@ sap.ui.define([
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 		assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1566,17 +1528,14 @@ sap.ui.define([
 			assert.ok(oException instanceof ParseException, "Error is a ParseException");
 			assert.ok(oValueHelp.getItemForValue.calledOnce, "getItemForValue called");
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-			fnDone();
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.notOk(true, "Promise must not fail");
 			FilterOperatorUtil.getDefaultOperator.restore();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key with custom Operator", function(assert) {
+	QUnit.test("Parsing: description -> key with custom Operator", (assert) => {
 
 		let oOperator = new Operator({
 			name: "MyContains",
@@ -1614,10 +1573,9 @@ sap.ui.define([
 		oConditionType.oFormatOptions.operators = ["MyExclude", "MyContains", "MyInclude"]; // fake setting directly
 
 		// existing value
-		const fnDone = assert.async();
 		let oPromise = oConditionType.parseValue("Item3");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, "MyInclude", "Operator");
@@ -1632,7 +1590,7 @@ sap.ui.define([
 			// not existing value
 			oPromise = oConditionType.parseValue("XXX");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, "MyContains", "Operator");
@@ -1644,7 +1602,7 @@ sap.ui.define([
 				// exlude value
 				oPromise = oConditionType.parseValue("!=Item3");
 				assert.ok(oPromise instanceof Promise, "Promise returned"); // Promise because validateInput is set to determine key
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
 					assert.equal(oCondition.operator, "MyExclude", "Operator");
@@ -1656,32 +1614,28 @@ sap.ui.define([
 					delete FilterOperatorUtil.removeOperator("MyContains");
 					delete FilterOperatorUtil.removeOperator("MyInclude");
 					delete FilterOperatorUtil.removeOperator("MyExclude");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise Catch must not be called");
 					delete FilterOperatorUtil.removeOperator("MyContains");
 					delete FilterOperatorUtil.removeOperator("MyInclude");
 					delete FilterOperatorUtil.removeOperator("MyExclude");
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch must not be called");
 				delete FilterOperatorUtil.removeOperator("MyContains");
 				delete FilterOperatorUtil.removeOperator("MyInclude");
 				delete FilterOperatorUtil.removeOperator("MyExclude");
-				fnDone();
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
 			delete FilterOperatorUtil.removeOperator("MyContains");
 			delete FilterOperatorUtil.removeOperator("MyInclude");
 			delete FilterOperatorUtil.removeOperator("MyExclude");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: description (key entered) -> key", function(assert) {
+	QUnit.test("Parsing: description (key entered) -> key", (assert) => {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator(OperatorName.Contains)); // fake contains as default operator
@@ -1689,8 +1643,7 @@ sap.ui.define([
 		let oPromise = oConditionType.parseValue("I2");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
-		const fnDone = assert.async();
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1702,12 +1655,11 @@ sap.ui.define([
 
 			oPromise = oConditionType.parseValue("XXX");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.notOk(true, "Promise Then must not be called");
 
 				FilterOperatorUtil.getDefaultOperator.restore();
-				fnDone();
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.ok(oError, "Error Fired");
 				assert.ok(oError instanceof ParseException, "Error is a ParseException");
 				assert.equal(oError.message, "Value \"XXX\" does not exist.", "Error message");
@@ -1715,7 +1667,7 @@ sap.ui.define([
 				oConditionType.oFormatOptions.operators = []; // fake setting directly
 				oPromise = oConditionType.parseValue("XXX");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
 					assert.equal(oCondition.operator, OperatorName.Contains, "Operator");
@@ -1725,24 +1677,21 @@ sap.ui.define([
 					assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
 
 					FilterOperatorUtil.getDefaultOperator.restore();
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise Catch must not be called");
 
 					FilterOperatorUtil.getDefaultOperator.restore();
-					fnDone();
 				});
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
 
 			FilterOperatorUtil.getDefaultOperator.restore();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: value only -> validation from help", function(assert) {
+	QUnit.test("Parsing: value only -> validation from help", (assert) => {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
 		sinon.stub(FilterOperatorUtil, "getDefaultOperator").returns(FilterOperatorUtil.getOperator(OperatorName.Contains)); // fake contains as default operator
@@ -1750,13 +1699,11 @@ sap.ui.define([
 		let oPromise = oConditionType.parseValue("ZZZ");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
-		const fnDone = assert.async();
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.notOk(true, "Promise Then must not be called");
 
 			FilterOperatorUtil.getDefaultOperator.restore();
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.ok(oError, "Error Fired");
 			assert.ok(oError instanceof ParseException, "Error is a ParseException");
 			assert.equal(oError.message, "myException", "Error message");
@@ -1764,7 +1711,7 @@ sap.ui.define([
 			oConditionType.oFormatOptions.operators = []; // fake setting directly
 			oPromise = oConditionType.parseValue("ZZZ");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, OperatorName.Contains, "Operator");
@@ -1777,7 +1724,7 @@ sap.ui.define([
 				oValueHelp.setValidateInput(false);
 				oPromise = oConditionType.parseValue("ZZZ");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.ok(oCondition, "Result returned");
 					assert.equal(typeof oCondition, "object", "Result is object");
 					assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1787,31 +1734,27 @@ sap.ui.define([
 					assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
 
 					FilterOperatorUtil.getDefaultOperator.restore();
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise Catch must not be called");
 
 					FilterOperatorUtil.getDefaultOperator.restore();
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise Catch must not be called");
 
 				FilterOperatorUtil.getDefaultOperator.restore();
-				fnDone();
 			});
 		});
 
 	});
 
-	QUnit.test("Parsing: empty string -> key and description", function(assert) {
+	QUnit.test("Parsing: empty string -> key and description", (assert) => {
 
 		const oType = new StringType({parseKeepsEmptyString: true}, {nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 		const oPromise = oConditionType.parseValue("");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		const fnDone = assert.async();
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1821,21 +1764,19 @@ sap.ui.define([
 			assert.equal(oCondition.values[1], "Empty", "Values entry1");
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 			oType.destroy();
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
 			oType.destroy();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: empty digsequence-string -> key and description", function(assert) {
+	QUnit.test("Parsing: empty digsequence-string -> key and description", (assert) => {
 
 		const oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 
-		oValueHelp.getItemForValue.callsFake(function(oConfig) {
+		oValueHelp.getItemForValue.callsFake((oConfig) => {
 			if (oConfig.parsedValue === "000000" && oConfig.value === "") {
 				return Promise.resolve({key: "000000", description: "Empty"});
 			}
@@ -1843,8 +1784,7 @@ sap.ui.define([
 
 		const oPromise = oConditionType.parseValue("");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		const fnDone = assert.async();
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1854,20 +1794,18 @@ sap.ui.define([
 			assert.equal(oCondition.values[1], "Empty", "Values entry1");
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 			oType.destroy();
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
 			oType.destroy();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: empty string -> key and description with not found", function(assert) {
+	QUnit.test("Parsing: empty string -> key and description with not found", (assert) => {
 
 		const oType = new StringType({parseKeepsEmptyString: true}, {nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
-		oValueHelp.getItemForValue.callsFake(function(oConfig) {
+		oValueHelp.getItemForValue.callsFake((oConfig) => {
 			if (oConfig.parsedValue === "" && oConfig.value === "") {
 				return Promise.reject(new oConfig.exception("not found"));
 			}
@@ -1875,7 +1813,6 @@ sap.ui.define([
 
 		let oException;
 		let oPromise;
-		const fnDone = assert.async();
 
 		try {
 			oPromise = oConditionType.parseValue("");
@@ -1885,24 +1822,22 @@ sap.ui.define([
 
 		assert.notOk(oException, "no exception fired");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.notOk(oCondition, "no condition returned");
 			oType.destroy();
-			fnDone();
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.notOk(true, "Promise must not fail");
 			oType.destroy();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: empty digsequence-string -> key and description with not found", function(assert) {
+	QUnit.test("Parsing: empty digsequence-string -> key and description with not found", (assert) => {
 
 		const oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 
-		oValueHelp.getItemForValue.callsFake(function(oConfig) {
+		oValueHelp.getItemForValue.callsFake((oConfig) => {
 			if (oConfig.parsedValue === "000000" && oConfig.value === "") {
 				return Promise.reject(new oConfig.exception("not found"));
 			}
@@ -1910,7 +1845,6 @@ sap.ui.define([
 
 		let oException;
 		let oPromise;
-		const fnDone = assert.async();
 
 		try {
 			oPromise = oConditionType.parseValue("");
@@ -1920,28 +1854,25 @@ sap.ui.define([
 
 		assert.notOk(oException, "no exception fired");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.notOk(oCondition, "no condition returned");
 			oType.destroy();
-			fnDone();
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.notOk(true, "Promise must not fail");
 			oType.destroy();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: empty string -> key only", function(assert) {
+	QUnit.test("Parsing: empty string -> key only", (assert) => {
 
 		const oType = new StringType({parseKeepsEmptyString: true}, {nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
 		oConditionType.oFormatOptions.display = FieldDisplay.Value; // fake setting directly
 
-		const fnDone = assert.async();
 		let oPromise = oConditionType.parseValue("");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -1958,22 +1889,19 @@ sap.ui.define([
 
 			oPromise = oConditionType.parseValue("");
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.notOk(oCondition, "no result returned");
-				fnDone();
-			}).catch(function(oException) {
+			}).catch((oException) => {
 				assert.notOk(true, "Promise must not fail");
-				fnDone();
 			});
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.notOk(true, "Promise must not fail");
 			oType.destroy();
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: unsing condition from navigation", function(assert) {
+	QUnit.test("Parsing: unsing condition from navigation", (assert) => {
 
 		const oNavigateCondition = Condition.createItemCondition("I3", "Item3", {testIn: "A"}, {testOut: "B"});
 		const oCompareCondition = Condition.createItemCondition("I3", "Item3", {testIn: "A"}, {testOut: "B"}); // as internal propertys (output) must not be returned
@@ -1998,7 +1926,7 @@ sap.ui.define([
 	let oUnitType;
 
 	QUnit.module("Currency type", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new CurrencyType({showMeasure: false}, {maximum: 1000});
 			oUnitType = new CurrencyType({showNumber: false}, {maximum: 1000});
 			oOriginalType = new CurrencyType(undefined, {maximum: 1000});
@@ -2007,7 +1935,7 @@ sap.ui.define([
 			oOneFieldType = new CurrencyType();
 			oOneFieldConditionType = new ConditionType({valueType: oOneFieldType, operators: [OperatorName.EQ, OperatorName.BT], delegate: FieldBaseDelegate});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 			oValueType.destroy();
@@ -2025,7 +1953,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting: EQ - Currency", function(assert) {
+	QUnit.test("Formatting: EQ - Currency", (assert) => {
 
 		let oType = new CurrencyType({showMeasure: false});
 		let sValue = oType.formatValue([123.45, "USD"], "string"); // because of special whitspace and local dependend
@@ -2057,7 +1985,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: BT - Currency", function(assert) {
+	QUnit.test("Formatting: BT - Currency", (assert) => {
 
 		oConditionType.oFormatOptions.operators = []; // fake setting directly
 		let oType = new CurrencyType({showMeasure: false});
@@ -2078,7 +2006,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: invalid condition", function(assert) {
+	QUnit.test("Formatting: invalid condition", (assert) => {
 
 		let oException;
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["X"]);
@@ -2093,11 +2021,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Formatting: unit from ValueHelp", function(assert) {
+	QUnit.test("Formatting: unit from ValueHelp", (assert) => {
 
 		oValueHelp = new ValueHelp("VH1");
 		sinon.stub(oValueHelp, "isValidationSupported").returns(true);
-		sinon.stub(oValueHelp, "getItemForValue").callsFake(function(oConfig) {
+		sinon.stub(oValueHelp, "getItemForValue").callsFake((oConfig) => {
 			if (oConfig.parsedValue === "EUR") {
 				return Promise.resolve({key: "EUR", description: "Euro"});
 			}
@@ -2106,24 +2034,21 @@ sap.ui.define([
 		oUnitConditionType.oFormatOptions.display = FieldDisplay.Description; // fake setting directly
 		const oCondition = Condition.createCondition(OperatorName.EQ, [[123.45, "EUR"]], undefined, undefined, ConditionValidated.Validated);
 
-		const fnDone = assert.async();
 		const oPromise = oUnitConditionType.formatValue(oCondition);
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(sDescription) {
+		return oPromise.then((sDescription) => {
 			assert.equal(sDescription, "Euro", "Result of unit formatting");
 			oValueHelp.destroy();
 			oValueHelp = undefined;
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
 			oValueHelp.destroy();
 			oValueHelp = undefined;
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: with unit", function(assert) {
+	QUnit.test("Parsing: with unit", (assert) => {
 
 		sinon.spy(oValueType, "parseValue");
 		sinon.stub(oValueType, "getParseWithValues").returns(true); // fake parseWithValue (to simulate oData type)
@@ -2212,7 +2137,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: invalid value", function(assert) {
+	QUnit.test("Parsing: invalid value", (assert) => {
 
 		let oException;
 		sinon.spy(oValueType, "parseValue");
@@ -2241,7 +2166,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: with unit and nullable type", function(assert) {
+	QUnit.test("Parsing: with unit and nullable type", (assert) => {
 
 		oValueType.destroy();
 		oUnitType.destroy();
@@ -2292,7 +2217,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: BT with unit", function(assert) {
+	QUnit.test("Parsing: BT with unit", (assert) => {
 
 		oConditionType.oFormatOptions.operators = [OperatorName.EQ, OperatorName.BT]; // fake setting directly
 		sinon.spy(oValueType, "parseValue");
@@ -2326,7 +2251,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: default Operator with unit", function(assert) {
+	QUnit.test("Parsing: default Operator with unit", (assert) => {
 
 		oConditionType.oFormatOptions.operators = []; // fake setting directly
 		sinon.spy(oValueType, "parseValue");
@@ -2346,11 +2271,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: unit from ValueHelp", function(assert) {
+	QUnit.test("Parsing: unit from ValueHelp", (assert) => {
 
 		oValueHelp = new ValueHelp("VH1", {validateInput: false}); // test invalid input returned if OK for Type
 		sinon.stub(oValueHelp, "isValidationSupported").returns(true);
-		sinon.stub(oValueHelp, "getItemForValue").callsFake(function(oConfig) {
+		sinon.stub(oValueHelp, "getItemForValue").callsFake((oConfig) => {
 			if (oConfig.value === "Euro") {
 				return Promise.resolve({key: "EUR", description: "Euro"});
 			} else if (oConfig.value === "USD" || oConfig.value === "X") {
@@ -2363,10 +2288,9 @@ sap.ui.define([
 		oValueType._aCurrentValue = [1, "USD"]; // fake existing value
 		oOriginalType._aCurrentValue = [1, "USD"]; // fake existing value
 
-		const fnDone = assert.async();
 		let oPromise = oUnitConditionType.parseValue("Euro");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -2379,7 +2303,7 @@ sap.ui.define([
 
 			oPromise = oUnitConditionType.parseValue("USD"); // valid currency for type but not for Help
 			assert.ok(oPromise instanceof Promise, "Promise returned");
-			oPromise.then(function(oCondition) {
+			return oPromise.then((oCondition) => {
 				assert.ok(oCondition, "Result returned");
 				assert.equal(typeof oCondition, "object", "Result is object");
 				assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -2400,10 +2324,9 @@ sap.ui.define([
 
 				assert.notOk(oException, "no exception fired");
 				assert.ok(oPromise instanceof Promise, "Promise returned");
-				oPromise.then(function(oCondition) {
+				return oPromise.then((oCondition) => {
 					assert.notOk(true, "Promise Then must not be called");
-					fnDone();
-				}).catch(function(oException) {
+				}).catch((oException) => {
 					assert.ok(oException, "Exception returned");
 					assert.ok(oException instanceof ParseException, "Exception is a ParseException");
 
@@ -2419,24 +2342,21 @@ sap.ui.define([
 
 					oValueHelp.destroy();
 					oValueHelp = undefined;
-					fnDone();
 				});
-			}).catch(function(oException) {
+			}).catch((oException) => {
 				assert.notOk(true, "Promise must not fail");
 				oValueHelp.destroy();
 				oValueHelp = undefined;
-				fnDone();
 			});
-		}).catch(function(oException) {
+		}).catch((oException) => {
 			assert.notOk(true, "Promise must not fail");
 			oValueHelp.destroy();
 			oValueHelp = undefined;
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Validation: with unit", function(assert) {
+	QUnit.test("Validation: with unit", (assert) => {
 
 		sinon.spy(oValueType, "validateValue");
 		sinon.spy(oUnitType, "validateValue");
@@ -2452,7 +2372,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: invalid value", function(assert) {
+	QUnit.test("Validating: invalid value", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, [[999999, "USD"]]);
 		let oException;
@@ -2467,7 +2387,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
 		assert.ok(oValueType.validateValue.calledWith([999999, "USD"]), "validateValue of ValueType called with currentValue");
 		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
 
@@ -2478,7 +2398,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
 		assert.ok(oUnitType.validateValue.calledWith([999999, "USD"]), "validateValue of UnitType called with currentValue");
 		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
 
@@ -2486,11 +2406,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Not nullable type", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new StringType({}, {nullable: false});
 			oConditionType = new ConditionType({valueType: oValueType, fieldPath: "X", operators: [OperatorName.EQ]});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 			oValueType.destroy();
@@ -2498,7 +2418,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Validating: null", function(assert) {
+	QUnit.test("Validating: null", (assert) => {
 
 		let oException;
 
@@ -2509,16 +2429,16 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.notOk(oException && oException.getCondition(), "exception has no condition");
+		assert.notOk(oException?.getCondition(), "exception has no condition");
 
 	});
 
 	QUnit.module("Not nullable type with parseKeepsEmptyString", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new StringType({parseKeepsEmptyString: true}, {nullable: false});
 			oConditionType = new ConditionType({valueType: oValueType, fieldPath: "X", operators: [OperatorName.EQ]});
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 			oValueType.destroy();
@@ -2526,7 +2446,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Validating: null", function(assert) {
+	QUnit.test("Validating: null", (assert) => {
 
 		let oException;
 
@@ -2540,7 +2460,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: null digsequence-string", function(assert) {
+	QUnit.test("Validating: null digsequence-string", (assert) => {
 
 		const oType = new StringType({}, {maxLength: 6, isDigitSequence: true, nullable: false}); // use digsequencce to test internal format for check
 		oConditionType.oFormatOptions.valueType = oType; // fake setting directly
@@ -2568,15 +2488,15 @@ sap.ui.define([
 	let oPromise3;
 
 	QUnit.module("multiple async requests", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueHelp = new ValueHelp("VH1");
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
-			sinon.stub(oValueHelp, "getItemForValue").callsFake(function(oConfig) {
+			sinon.stub(oValueHelp, "getItemForValue").callsFake((oConfig) => {
 				if (oConfig.value === "S" || oConfig.value === "Sync Text") {
 					return {key: "S", description: "Sync Text"};
 				} else if (oConfig.value === "1") {
 					if (!oPromise1) {
-						oPromise1 = new Promise(function(fResolve, fReject) {
+						oPromise1 = new Promise((fResolve, fReject) => {
 							fResolve1 = fResolve;
 							fReject1 = fReject;
 						});
@@ -2584,7 +2504,7 @@ sap.ui.define([
 					return oPromise1;
 				} else if (oConfig.value === "2") {
 					if (!oPromise2) {
-						oPromise2 = new Promise(function(fResolve, fReject) {
+						oPromise2 = new Promise((fResolve, fReject) => {
 							fResolve2 = fResolve;
 							fReject2 = fReject;
 						});
@@ -2592,7 +2512,7 @@ sap.ui.define([
 					return oPromise2;
 				} else if (oConfig.value === "3") {
 					if (!oPromise3) {
-						oPromise3 = new Promise(function(fResolve, fReject) {
+						oPromise3 = new Promise((fResolve, fReject) => {
 							fResolve3 = fResolve;
 							fReject3 = fReject;
 						});
@@ -2610,7 +2530,7 @@ sap.ui.define([
 				bindingContext: "BC" // just dummy to test forwarding to valueHelp
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			oValueHelp.destroy();
 			oValueHelp = undefined;
 			oConditionType.destroy();
@@ -2628,7 +2548,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting: multiple promises", function(assert) {
+	QUnit.test("Formatting: multiple promises", (assert) => {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
@@ -2647,22 +2567,19 @@ sap.ui.define([
 		fResolve1("Text 1");
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
-		Promise.all([vResult1, vResult2, vResult3]).then(function(aResult) {
+		return Promise.all([vResult1, vResult2, vResult3]).then((aResult) => {
 			assert.ok(true, "All promises resolved");
 			assert.equal(aResult[0], "Text 3", "Result 1");
 			assert.equal(aResult[1], "Text 2", "Result 2");
 			assert.equal(aResult[2], "Text 3", "Result 3");
 			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Formatting: multiple promises with error on last call", function(assert) {
+	QUnit.test("Formatting: multiple promises with error on last call", (assert) => {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
@@ -2677,48 +2594,42 @@ sap.ui.define([
 		assert.ok(vResult3 instanceof Promise, "Promise returned");
 
 		fResolve2("Text 2");
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fReject3(new FormatException("wrong value"));
 		}, 0);
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fResolve1("Text 1");
 		}, 0);
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last exception is shown
-		const fnDone = assert.async();
-
 		// PromiseAll cannot be used for test as we need to check exception for every single Promise
-		vResult1.then(function(sResult) {
+		return vResult1.then((sResult) => {
 			assert.notOk(true, "Promise1 must not be resolved (as resolved after error)");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.ok(true, "Promise1 Catch called");
 			assert.ok(oError instanceof FormatException, "Error is a FormatException");
 			assert.equal(oError.message, "wrong value", "Error message");
 
-			vResult2.then(function(sResult) {
+			return vResult2.then((sResult) => {
 				assert.ok(true, "Promise2 must be resolved (as resoved before error)");
 				assert.equal(sResult, "Text 2", "Result 2");
 
-				vResult3.then(function(sResult) {
+				return vResult3.then((sResult) => {
 					assert.notOk(true, "Promise3 must not be resolved (as error thrown)");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.ok(true, "Promise3 Catch called");
 					assert.ok(oError instanceof FormatException, "Error is a FormatException");
 					assert.equal(oError.message, "wrong value", "Error message");
 					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise2 Catch must not be called");
-				fnDone();
 			});
 		});
 
 	});
 
-	QUnit.test("Formatting: multiple promises with error between", function(assert) {
+	QUnit.test("Formatting: multiple promises with error between", (assert) => {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
@@ -2733,46 +2644,41 @@ sap.ui.define([
 		assert.ok(vResult3 instanceof Promise, "Promise returned");
 
 		fReject2(new FormatException("wrong value"));
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fResolve3("Text 3");
 		}, 0);
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fReject1(new FormatException("wrong value"));
 		}, 0);
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
 		// PromiseAll cannot be used for test as we need to check exception for every single Promise
-		vResult1.then(function(sResult) {
+		return vResult1.then((sResult) => {
 			assert.ok(true, "Promise1 must be resolved (as resoved after success)");
 			assert.equal(sResult, "Text 3", "Result 1");
 
-			vResult2.then(function(sResult) {
+			return vResult2.then((sResult) => {
 				assert.notOk(true, "Promise2 must not be resolved (as errot thrown)");
-				fnDone();
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.ok(true, "Promise2 Catch called");
 				assert.ok(oError instanceof FormatException, "Error is a FormatException");
 				assert.equal(oError.message, "wrong value", "Error message");
 
-				vResult3.then(function(sResult) {
+				return vResult3.then((sResult) => {
 					assert.ok(true, "Promise3 must be resolved (rsolved as last)");
 					assert.equal(sResult, "Text 3", "Result 3");
 					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise3 Catch must not be called");
-					fnDone();
 				});
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise1 Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Formatting: multiple promises and call with given description", function(assert) {
+	QUnit.test("Formatting: multiple promises and call with given description", (assert) => {
 
 		let oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
@@ -2790,21 +2696,18 @@ sap.ui.define([
 		fResolve1("Text 1");
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
-		Promise.all([vResult1, vResult2]).then(function(aResult) {
+		return Promise.all([vResult1, vResult2]).then((aResult) => {
 			assert.ok(true, "All promises resolved");
 			assert.equal(aResult[0], "Sync Text", "Result 1");
 			assert.equal(aResult[1], "Sync Text", "Result 2");
 			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: multiple promises", function(assert) {
+	QUnit.test("Parsing: multiple promises", (assert) => {
 
 		const vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2820,22 +2723,19 @@ sap.ui.define([
 		fResolve1({key: "1", description: "Text 1"});
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
-		Promise.all([vResult1, vResult2, vResult3]).then(function(aResult) {
+		return Promise.all([vResult1, vResult2, vResult3]).then((aResult) => {
 			assert.ok(true, "All promises resolved");
 			assert.equal(aResult[0].values[0], "3", "Result 1");
 			assert.equal(aResult[1].values[0], "2", "Result 2");
 			assert.equal(aResult[2].values[0], "3", "Result 3");
 			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: multiple promises with error on last call", function(assert) {
+	QUnit.test("Parsing: multiple promises with error on last call", (assert) => {
 
 		const vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2847,48 +2747,42 @@ sap.ui.define([
 		assert.ok(vResult3 instanceof Promise, "Promise returned");
 
 		fResolve2({key: "2", description: "Text 2"});
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fReject3(new ParseException("wrong value"));
 		}, 0);
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fResolve1({key: "1", description: "Text 1"});
 		}, 0);
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last exception is shown
-		const fnDone = assert.async();
-
 		// PromiseAll cannot be used for test as we need to check exception for every single Promise
-		vResult1.then(function(oCondition) {
+		return vResult1.then((oCondition) => {
 			assert.notOk(true, "Promise1 must not be resolved (as resolved after error)");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.ok(true, "Promise1 Catch called");
 			assert.ok(oError instanceof ParseException, "Error is a ParseException");
 			assert.equal(oError.message, "wrong value", "Error message");
 
-			vResult2.then(function(oCondition) {
+			return vResult2.then((oCondition) => {
 				assert.ok(true, "Promise2 must be resolved (as resoved before error)");
 				assert.equal(oCondition.values[0], "2", "Result 2");
 
-				vResult3.then(function(oCondition) {
+				return vResult3.then((oCondition) => {
 					assert.notOk(true, "Promise3 must not be resolved (as errot thrown)");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.ok(true, "Promise3 Catch called");
 					assert.ok(oError instanceof ParseException, "Error is a ParseException");
 					assert.equal(oError.message, "wrong value", "Error message");
 					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-					fnDone();
 				});
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.notOk(true, "Promise2 Catch must not be called");
-				fnDone();
 			});
 		});
 
 	});
 
-	QUnit.test("Parsing: multiple promises with error between", function(assert) {
+	QUnit.test("Parsing: multiple promises with error between", (assert) => {
 
 		const vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2900,46 +2794,41 @@ sap.ui.define([
 		assert.ok(vResult3 instanceof Promise, "Promise returned");
 
 		fReject2(new FormatException("wrong value"));
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fResolve3({key: "3", description: "Text 3"});
 		}, 0);
-		setTimeout(function () { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
+		setTimeout(() => { // as requests will be also asyn. (otherwise promise then will be executed before exceptions)
 			fReject1(new FormatException("wrong value"));
 		}, 0);
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
 		// PromiseAll cannot be used for test as we need to check exception for every single Promise
-		vResult1.then(function(oCondition) {
+		return vResult1.then((oCondition) => {
 			assert.ok(true, "Promise1 must be resolved (as resoved after success)");
 			assert.equal(oCondition.values[0], "3", "Result 1");
 
-			vResult2.then(function(oCondition) {
+			return vResult2.then((oCondition) => {
 				assert.notOk(true, "Promise2 must not be resolved (as errot thrown)");
-				fnDone();
-			}).catch(function(oError) {
+			}).catch((oError) => {
 				assert.ok(true, "Promise2 Catch called");
 				assert.ok(oError instanceof ParseException, "Error is a ParseException");
 				assert.equal(oError.message, "wrong value", "Error message");
 
-				vResult3.then(function(oCondition) {
+				return vResult3.then((oCondition) => {
 					assert.ok(true, "Promise3 must be resolved (rsolved as last)");
 					assert.equal(oCondition.values[0], "3", "Result 3");
 					assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-					fnDone();
-				}).catch(function(oError) {
+				}).catch((oError) => {
 					assert.notOk(true, "Promise3 Catch must not be called");
-					fnDone();
 				});
 			});
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise1 Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: multiple promises and sync parsing", function(assert) {
+	QUnit.test("Parsing: multiple promises and sync parsing", (assert) => {
 
 		const vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -2954,21 +2843,18 @@ sap.ui.define([
 		fResolve1({key: "1", description: "Text 1"});
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
-		Promise.all([vResult1, vResult2]).then(function(aResult) {
+		return Promise.all([vResult1, vResult2]).then((aResult) => {
 			assert.ok(true, "All promises resolved");
 			assert.equal(aResult[0].values[0], "S", "Result 1");
 			assert.equal(aResult[1].values[0], "S", "Result 2");
 			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Formatting and Parsing", function(assert) {
+	QUnit.test("Formatting and Parsing", (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["1"], undefined, undefined, ConditionValidated.Validated);
 		const vResult1 = oConditionType.formatValue(oCondition);
@@ -2981,21 +2867,18 @@ sap.ui.define([
 		fResolve1("Text 1");
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
-		Promise.all([vResult1, vResult2]).then(function(aResult) {
+		return Promise.all([vResult1, vResult2]).then((aResult) => {
 			assert.ok(true, "All promises resolved");
 			assert.equal(aResult[0], "Text 2", "Result 1");
 			assert.equal(aResult[1].values[0], "2", "Result 2");
 			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing and Formatting", function(assert) {
+	QUnit.test("Parsing and Formatting", (assert) => {
 
 		const vResult1 = oConditionType.parseValue("1");
 		assert.ok(vResult1 instanceof Promise, "Promise returned");
@@ -3008,23 +2891,20 @@ sap.ui.define([
 		fResolve1({key: "1", description: "Text 1"});
 
 		// all promises resolved after the last one should return the result of the last one -> at the end the last value is shown
-		const fnDone = assert.async();
-		Promise.all([vResult1, vResult2]).then(function(aResult) {
+		return Promise.all([vResult1, vResult2]).then((aResult) => {
 			assert.ok(true, "All promises resolved");
 			assert.equal(aResult[0].values[0], "2", "Result 1");
 			assert.equal(aResult[1], "Text 2", "Result 2");
 			assert.equal(oConditionType._oCalls.last, 0, "Internal Async counter cleared");
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
 	let oAdditionalType;
 	QUnit.module("different type for description", {
-		beforeEach: function() {
+		beforeEach() {
 			oValueType = new IntegerType({}, {maximum: 100});
 			oAdditionalType = new DateType({pattern: "yyyy-MM-dd"}, {minimum: new Date(2000, 0, 1)});
 			oConditionType = new ConditionType({
@@ -3039,7 +2919,7 @@ sap.ui.define([
 			});
 
 			oValueHelp = new ValueHelp("VH1");
-			const fnGetItemsForValue = function(oConfig) {
+			const fnGetItemsForValue = (oConfig) => {
 				if (oConfig.parsedValue === 1 && oConfig.checkKey) {
 					return Promise.resolve({key: 1, description: new Date(2023, 6, 31)});
 				} else if (deepEqual(oConfig.parsedDescription, new Date(2023, 6, 31)) && !oConfig.checkKey && oConfig.checkDescription) {
@@ -3050,7 +2930,7 @@ sap.ui.define([
 			sinon.stub(oValueHelp, "getItemForValue").callsFake(fnGetItemsForValue);
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
 		},
-		afterEach: function() {
+		afterEach() {
 			oConditionType.destroy();
 			oConditionType = undefined;
 			oValueType.destroy();
@@ -3063,7 +2943,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Formatting: EQ", function(assert) {
+	QUnit.test("Formatting: EQ", (assert) => {
 
 		const oCondition = Condition.createItemCondition(2, new Date(2023, 6, 31));
 		const sResult = oConditionType.formatValue(oCondition);
@@ -3071,7 +2951,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: EQ", function(assert) {
+	QUnit.test("Parsing: EQ", (assert) => {
 
 		const oCondition = oConditionType.parseValue("2 (2023-07-31)");
 		assert.ok(oCondition, "Result returned");
@@ -3084,7 +2964,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Parsing: invalid value", function(assert) {
+	QUnit.test("Parsing: invalid value", (assert) => {
 
 		let oException;
 
@@ -3107,7 +2987,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Validating: invalid value", function(assert) {
+	QUnit.test("Validating: invalid value", (assert) => {
 
 		let oCondition = Condition.createItemCondition(200, new Date(2023, 6, 31));
 		let oException;
@@ -3119,7 +2999,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
 
 		oException = undefined;
 		oCondition = Condition.createItemCondition(2, new Date(1900, 6, 31));
@@ -3129,14 +3009,13 @@ sap.ui.define([
 			oException = e;
 		}
 		assert.ok(oException, "exception fired");
-		assert.deepEqual(oException && oException.getCondition(), oCondition, "exception condition");
+		assert.deepEqual(oException?.getCondition(), oCondition, "exception condition");
 
 	});
 
-	QUnit.test("Formatting: key -> description (from help)", function(assert) {
+	QUnit.test("Formatting: key -> description (from help)", (assert) => {
 
 		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
-		const fnDone = assert.async();
 		const oCondition = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.Validated);
 		const oConfig = { // to compare
 			value: 1,
@@ -3155,22 +3034,18 @@ sap.ui.define([
 
 		const oPromise = oConditionType.formatValue(oCondition);
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(sDescription) {
+		return oPromise.then((sDescription) => {
 			assert.equal(sDescription, "1 (2023-07-31)", "Result of formatting");
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: description -> key", function(assert) {
+	QUnit.test("Parsing: description -> key", (assert) => {
 
 		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
-		const fnDone = assert.async();
 		const oConfig = { // to compare
 			value: "2023-07-31",
 			parsedValue: undefined,
@@ -3187,7 +3062,7 @@ sap.ui.define([
 
 		const oPromise =  oConditionType.parseValue("2023-07-31");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -3198,19 +3073,15 @@ sap.ui.define([
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 			assert.ok(bAsyncCalled, "asyncParsing function called");
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: key -> description", function(assert) {
+	QUnit.test("Parsing: key -> description", (assert) => {
 
 		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
-		const fnDone = assert.async();
 		const oConfig = { // to compare
 			value: "1",
 			parsedValue: 1,
@@ -3227,7 +3098,7 @@ sap.ui.define([
 
 		const oPromise =  oConditionType.parseValue("1");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -3238,19 +3109,15 @@ sap.ui.define([
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 			assert.ok(bAsyncCalled, "asyncParsing function called");
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});
 
-	QUnit.test("Parsing: key and description -> key and description", function(assert) {
+	QUnit.test("Parsing: key and description -> key and description", (assert) => {
 
 		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
-		const fnDone = assert.async();
 		const oConfig = { // to compare
 			value: "1",
 			parsedValue: 1,
@@ -3267,7 +3134,7 @@ sap.ui.define([
 
 		const oPromise =  oConditionType.parseValue("1 (2023-07-31)");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
-		oPromise.then(function(oCondition) {
+		return oPromise.then((oCondition) => {
 			assert.ok(oCondition, "Result returned");
 			assert.equal(typeof oCondition, "object", "Result is object");
 			assert.equal(oCondition.operator, OperatorName.EQ, "Operator");
@@ -3278,11 +3145,8 @@ sap.ui.define([
 			assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
 			assert.ok(bAsyncCalled, "asyncParsing function called");
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called with config");
-
-			fnDone();
-		}).catch(function(oError) {
+		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch must not be called");
-			fnDone();
 		});
 
 	});

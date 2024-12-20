@@ -1114,7 +1114,6 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var fnCancel = this.spy(),
-				oConvertedResponse = {},
 				oGroupLock,
 				oPayload = {foo : 42},
 				oPromise,
@@ -1141,11 +1140,12 @@ sap.ui.define([
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 					}, JSON.stringify(oPayload), "~Employees~?custom=value")
 				.resolves(oResponse);
-			this.mock(oRequestor).expects("reportHeaderMessages")
-				.withExactArgs("~Employees~?custom=value", sinon.match.same(oResponse.messages));
 			this.mock(oRequestor).expects("doConvertResponse")
 				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
-				.returns(oConvertedResponse);
+				.returns("~oConvertedResponse~");
+			this.mock(oRequestor).expects("reportHeaderMessages")
+				.withExactArgs("~Employees~?custom=value", sinon.match.same(oResponse.messages),
+					"~oConvertedResponse~");
 			this.mock(oRequestor).expects("submitBatch").never();
 
 			// code under test
@@ -1155,7 +1155,7 @@ sap.ui.define([
 			}, oPayload, fnSubmit, fnCancel, "meta/path");
 
 			return oPromise.then(function (oResult) {
-				assert.strictEqual(oResult, oConvertedResponse);
+				assert.strictEqual(oResult, "~oConvertedResponse~");
 
 				sinon.assert.calledOnceWithExactly(fnSubmit);
 				assert.notOk(fnCancel.called);
@@ -1417,10 +1417,11 @@ sap.ui.define([
 					"sap-cancel-on-close" : "true"
 				}, undefined, "~sResourcePath~")
 			.resolves(oResponse);
-		this.mock(oRequestor).expects("reportHeaderMessages")
-			.withExactArgs("~sResourcePath~", "~messages~");
 		this.mock(oRequestor).expects("doConvertResponse").exactly(sCount === "42" ? 1 : 0)
 			.withExactArgs(42, undefined).returns("~result~");
+		// Note: in case of "1a", JSON.parse throws (see below) and this call is not reached
+		this.mock(oRequestor).expects("reportHeaderMessages").exactly(sCount === "42" ? 1 : 0)
+			.withExactArgs("~sResourcePath~", "~messages~", "~result~");
 
 		// code under test
 		return oRequestor.request("GET", "Employees").then(function (oResult) {
@@ -1442,10 +1443,35 @@ sap.ui.define([
 			.withExactArgs("POST", "EMPLOYEES", sinon.match.object, sinon.match.string,
 				sOriginalPath)
 			.returns(Promise.resolve({}));
+		this.mock(oRequestor).expects("reportHeaderMessages")
+			.withExactArgs(sOriginalPath, undefined, undefined);
 
 		// code under test
 		return oRequestor.request("POST", "EMPLOYEES", this.createGroupLock("$direct"), {}, {},
 			undefined, undefined, undefined, sOriginalPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: 'R#V#C', $direct", async function (assert) {
+		const oRequestor = _Requestor.create("/", oModelInterface);
+		const oGroupLock = this.createGroupLock("$direct");
+		this.mock(oRequestor).expects("convertResourcePath").withExactArgs("EMPLOYEES")
+			.returns("converted/EMPLOYEES");
+		this.mock(oRequestor).expects("addQueryString").never();
+		this.mock(oRequestor).expects("sendRequest")
+			.withExactArgs("POST", "converted/EMPLOYEES", sinon.match.object, sinon.match.string,
+				"converted/EMPLOYEES")
+			.resolves({/*details do not matter here*/});
+		this.mock(oRequestor).expects("doConvertResponse").withExactArgs(undefined, undefined)
+			.returns("~oResult~");
+		this.mock(oRequestor).expects("reportHeaderMessages")
+			.withExactArgs("R#V#C", undefined, "~oResult~");
+
+		assert.strictEqual(
+			// code under test
+			await oRequestor.request("POST", "EMPLOYEES", oGroupLock, {}, {},
+				undefined, undefined, undefined, "R#V#C"),
+			"~oResult~");
 	});
 
 	//*********************************************************************************************
@@ -2515,7 +2541,8 @@ sap.ui.define([
 		this.mock(oModelInterface).expects("onHttpResponse")
 			.withExactArgs(sinon.match.same(mHeaders));
 		this.mock(oRequestor).expects("reportHeaderMessages")
-			.withExactArgs("original/resource/path", sinon.match.same(mHeaders["SAP-Messages"]));
+			.withExactArgs("original/resource/path", sinon.match.same(mHeaders["SAP-Messages"]),
+				{id : 42});
 
 		return Promise.all([
 			oRequestPromise,
@@ -2535,7 +2562,7 @@ sap.ui.define([
 		this.mock(oModelInterface).expects("onHttpResponse")
 			.withExactArgs(sinon.match.same(mHeaders));
 		this.mock(oRequestor).expects("reportHeaderMessages")
-			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
+			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]), {});
 
 		return Promise.all([
 			oRequestPromise,
@@ -2557,7 +2584,7 @@ sap.ui.define([
 		this.mock(oModelInterface).expects("onHttpResponse")
 			.withExactArgs(sinon.match.same(mHeaders));
 		this.mock(oRequestor).expects("reportHeaderMessages")
-			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
+			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]), {});
 
 		return Promise.all([
 			oRequestPromise,
@@ -4440,13 +4467,7 @@ sap.ui.define([
 			sResourcePath = "Product(42)/to_bar";
 
 		this.mock(oModelInterface).expects("reportTransitionMessages")
-			.withExactArgs([{
-					code : "42",
-					message : "Test"
-				}, {
-					code : "43",
-					type : "Warning"
-				}], sResourcePath);
+			.withExactArgs(aMessages, sResourcePath);
 
 		// code under test
 		oRequestor.reportHeaderMessages(sResourcePath, sMessages);
@@ -4460,6 +4481,19 @@ sap.ui.define([
 
 		// code under test
 		oRequestor.reportHeaderMessages("foo(42)/to_bar");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("reportHeaderMessages for 'R#V#C'", function () {
+		const oRequestor = _Requestor.create("/", oModelInterface);
+		this.mock(oModelInterface).expects("reportTransitionMessages").never();
+		const aMessages = [{code : "42", message : "Test"}, {code : "43", type : "Warning"}];
+		const sMessages = JSON.stringify(aMessages);
+		this.mock(_Helper).expects("setPrivateAnnotation")
+			.withExactArgs("~oResponse~", "headerMessages", aMessages);
+
+		// code under test
+		oRequestor.reportHeaderMessages("R#V#C", sMessages, "~oResponse~");
 	});
 
 	//*****************************************************************************************

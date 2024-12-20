@@ -3854,11 +3854,6 @@ sap.ui.define([
 		assert.expect(1);
 
 		oOverflowButton = this.otb._getOverflowButton();
-		oOverflowButton.focus = function () {
-			// Assert
-		   assert.ok(true, "After closing the Popover by changed property of a content control the focus is back to OTB button");
-		   done();
-		};
 
 		oButtonWithPressFunc = new Button({
 		   text: "Test text 1",
@@ -3871,8 +3866,17 @@ sap.ui.define([
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Act - click the overflow button
+		oOverflowButton.focus();
 		oOverflowButton.firePress();
+
+		oButtonWithPressFunc.focus();
 		oButtonWithPressFunc.firePress();
+
+		setTimeout(() => {
+			// Assert
+		   assert.ok(oOverflowButton.getDomRef().contains(document.activeElement), "After closing the Popover by changed property of a content control the focus is back to OTB button");
+		   done();
+		}, 400);
 	 });
 
 	QUnit.test("Clone button tooltip not anounced, when control used in List based conrols", function (assert) {

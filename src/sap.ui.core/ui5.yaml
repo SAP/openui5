@@ -144,6 +144,7 @@ builder:
             name: sap-ui-core-preload
             filters:
               - sap/ui/core/Core.js
+              - sap/ui/performance/trace/_InteractionImpl.js
             resolve: true
           - mode: require
             filters:

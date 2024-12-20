@@ -113,7 +113,12 @@
 		{
 			"control": "sap.m.FacetFilter",
 			"url": "./FacetFilter.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.FacetFilter",
+				"title": "ACC test for sap.m.FacetFilter",
+				"module": "./facetfilter.qunit"
+			}
 		},
 		{
 			"control": "sap.m.FeedContent",
@@ -339,7 +344,12 @@
 		{
 			"control": "sap.m.ObjectNumber",
 			"url": "../ObjectNumber.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.ObjectNumber",
+				"title": "ACC test for sap.m.ObjectNumber",
+				"module": "./objectnumber.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ObjectMarker",
@@ -379,7 +389,12 @@
 		{
 			"control": "sap.m.PlanningCalendar",
 			"url": "./PlanningCalendar.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.PlanningCalendar",
+				"title": "ACC test for sap.m.PlanningCalendar",
+				"module": "./planningcalendar.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Popover",
@@ -494,7 +509,12 @@
 		{
 			"control": "sap.m.SinglePlanningCalendar",
 			"url": "../SinglePlanningCalendar.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.SinglePlanningCalendar",
+				"title": "ACC test for sap.m.SinglePlanningCalendar",
+				"module": "./singleplanningcalendar.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Slider",
@@ -519,7 +539,12 @@
 		{
 			"control": "sap.m.StepInput",
 			"url": "./StepInput.html",
-			"appComponent": "CA-UI5-CTR-BAL"
+			"appComponent": "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.m.StepInput",
+				"title": "ACC test for sap.m.StepInput",
+				"module": "./stepinput.qunit"
+			}
 		},
 		{
 			"control": "sap.m.SuggestionsList",

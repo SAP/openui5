@@ -1878,10 +1878,10 @@ sap.ui.define([
 		oHelperMock.expects("clone").withExactArgs("~message1~").returns(oClonedMessage1);
 		oHelperMock.expects("adjustTargets")
 			.withExactArgs(sinon.match.same(oClonedMessage0), "~operationMetadata~", undefined,
-				"/resource/path");
+				"/resource/path", "~sOriginalResourcePath~");
 		oHelperMock.expects("adjustTargets")
 			.withExactArgs(sinon.match.same(oClonedMessage1), "~operationMetadata~", undefined,
-				"/resource/path");
+				"/resource/path", "~sOriginalResourcePath~");
 		oModelMock.expects("createUI5Message")
 			.withExactArgs(sinon.match(function (oMessage) {
 				return oMessage === oClonedMessage0 && oMessage.transition === true;
@@ -1895,9 +1895,11 @@ sap.ui.define([
 		this.mock(Messaging).expects("updateMessages")
 			.withExactArgs(undefined, ["~UI5msg0~", "~UI5msg1~"]);
 
-		// code under test
-		assert.deepEqual(oModel.reportTransitionMessages(["~message0~", "~message1~"],
-			"resource/path/operation?~queryOptions~"), ["~UI5msg0~", "~UI5msg1~"]);
+		assert.deepEqual(
+			// code under test
+			oModel.reportTransitionMessages(["~message0~", "~message1~"],
+				"resource/path/operation?~queryOptions~", undefined, "~sOriginalResourcePath~"),
+			["~UI5msg0~", "~UI5msg1~"]);
 	});
 
 	//*********************************************************************************************

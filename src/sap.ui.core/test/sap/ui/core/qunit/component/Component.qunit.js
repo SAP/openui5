@@ -1714,14 +1714,97 @@ sap.ui.define([
 
 		return Component.create(oConfig).then(function(oComponent) {
 			assert.equal(oSpy.callCount, 2, "'onModelCreated' hook should be called two times");
-			assert.ok(oSpy.calledWith(sinon.match.any, "myV2Model", oConfig), "hook called with correct model name 'myV2Model' and config object");
-			assert.ok(oSpy.calledWith(sinon.match.any, "myV4Model", oConfig), "hook called with correct model name 'myV4Model' and config object");
+			assert.ok(oSpy.calledWithMatch({ modelId: "myV2Model", factoryConfig: oConfig }), "hook called with correct model name 'myV2Model' and config object");
+			assert.ok(oSpy.calledWithMatch({ modelId: "myV4Model", factoryConfig: oConfig }), "hook called with correct model name 'myV4Model' and config object");
 
 			ComponentHooks.onModelCreated.deregister();
 			oComponent.destroy();
 		});
 	});
 
+	QUnit.test("Hook 'onModelCreated' with Reuse Component", function(assert) {
+		const oManifest = {
+			"sap.app": {
+				"id": "testdata.other",
+				"type": "application",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {
+				"componentUsages": {
+					"myReuse": {
+						"name": "testdata.other.reuse"
+					}
+				},
+				"resources": {
+					"css": [
+						{
+							"uri": "style3.css"
+						}
+					]
+				},
+				"models": {
+					"": {
+						"type": "sap.ui.model.json.JSONModel"
+					},
+					"myV2Model": {
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "./some/odata/service/"
+					},
+					"myV4Model": {
+						"type": "sap.ui.model.odata.v4.ODataModel",
+						"uri": "./some/odata/service/"
+					}
+
+				}
+			}
+		};
+
+		const oConfig = {
+			id: "myComponent",
+			async: true,
+			manifest: oManifest,
+			asyncHints: {
+				components: [
+					{
+						"name": "my.async.hints"
+					}
+				]
+			}
+		};
+
+		const oUsage = {
+			usage: "myReuse"
+		};
+
+		const oReuseConfig = {
+			async: true,
+			name: "testdata.other.reuse",
+			manifest: true
+		};
+
+		const oSpy = sinon.spy();
+		ComponentHooks.onModelCreated.register(oSpy);
+
+		return Component.create(oConfig).then(function(oComponent) {
+			assert.equal(oSpy.callCount, 2, "'onModelCreated' hook should be called two times");
+			assert.ok(oSpy.calledWithMatch({ modelId: "myV2Model", factoryConfig: oConfig }), "hook called with correct model name 'myV2Model' and config object");
+			assert.ok(oSpy.calledWithMatch({ modelId: "myV4Model", factoryConfig: oConfig }), "hook called with correct model name 'myV4Model' and config object");
+
+			ComponentHooks.onModelCreated.deregister();
+
+			const oSpy2 = sinon.spy();
+			ComponentHooks.onModelCreated.register(oSpy2);
+
+			return oComponent.createComponent(oUsage).then(function() {
+				assert.equal(oSpy2.callCount, 2, "'onModelCreated' hook should be called two times");
+				assert.ok(oSpy2.calledWithMatch({ modelId: "myV2Model", factoryConfig: oReuseConfig, owner: { id: "myComponent", config: oConfig} }), "hook called with correct model name 'myV2Model' and config object");
+				assert.ok(oSpy2.calledWithMatch({ modelId: "myV4Model", factoryConfig: oReuseConfig, owner: { id: "myComponent", config: oConfig} }), "hook called with correct model name 'myV4Model' and config object");
+				oComponent.destroy();
+			});
+		});
+	});
 
 	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
 

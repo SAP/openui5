@@ -51,7 +51,7 @@ function findLabelForControl(oLabel, fnOnAfterRendering) {
 				const oDelegate = {
 					onAfterRendering: function(oLabel) {
 						this.removeEventDelegate(oDelegate);
-						if (typeof fnOnAfterRendering === "function") {
+						if (typeof fnOnAfterRendering === "function" && !oLabel.bIsDestroyed) {
 							fnOnAfterRendering(oLabel);
 						}
 					}.bind(oControl, oLabel)
