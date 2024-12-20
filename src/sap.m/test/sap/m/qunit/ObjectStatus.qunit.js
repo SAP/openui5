@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Label",
+	"sap/ui/core/Element",
 	// side effect: provides jQuery.event.prototype.getMark
 	"sap/ui/events/jquery/EventExtension"
 ], function(
@@ -28,7 +29,8 @@ sap.ui.define([
 	Panel,
 	mobileLibrary,
 	KeyCodes,
-	Label
+	Label,
+	Element
 ) {
 	"use strict";
 
@@ -738,20 +740,28 @@ sap.ui.define([
 	QUnit.test("Internal icon ARIA for icon-only ObjectStatus that has tooltip", async function (assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus("iconTooltipStatus", {
-				icon: "sap-icon://download"
-			});
+			icon: "sap-icon://download"
+		});
 
 		oObjectStatus.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
 		// Assert
+		assert.ok(Element.getElementById("iconTooltipStatus-icon").getUseIconTooltip(), "Default icon tooltip is used");
 		assert.strictEqual(document.getElementById("iconTooltipStatus-icon-title").innerHTML, "Download", "Icon tooltip is set as alternative text in icon-only ObjectStatus");
+
+		// Act
+		oObjectStatus.setTooltip("Custom tooltip");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(Element.getElementById("iconTooltipStatus-icon").getUseIconTooltip(), "Custom tooltip is set as alternative text in icon-only ObjectStatus");
 
 		// Cleanup
 		oObjectStatus.destroy();
 	});
 
-		QUnit.test("Internal icon ARIA for icon-only ObjectStatus that can't be find in the Icon Registry", async function (assert) {
+	QUnit.test("Internal icon ARIA for icon-only ObjectStatus that can't be find in the Icon Registry", async function (assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus("iconTooltipStatus", {
 				icon: "sap-icon://test"
