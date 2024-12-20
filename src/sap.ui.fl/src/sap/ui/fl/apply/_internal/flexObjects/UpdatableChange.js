@@ -47,5 +47,9 @@ sap.ui.define([
 		return oLatestRevertInfo;
 	};
 
+	UpdatableChange.prototype.canBeCondensed = function() {
+		return false;
+	};
+
 	return UpdatableChange;
 });
