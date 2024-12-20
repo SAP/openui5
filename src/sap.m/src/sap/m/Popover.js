@@ -2486,7 +2486,7 @@ sap.ui.define([
 			var that = this;
 
 			setTimeout(function () {
-				$Ref.css("display", "block");
+				$Ref.css("opacity", 1);
 				that._includeScrollWidth();
 				that._animation(function () {
 					if (!that.oPopup || that.oPopup.getOpenState() !== OpenState.OPENING) {

@@ -2,5 +2,9 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("mdc.sample");
+	return UIComponent.extend("mdc.sample", {
+		"metadata": {
+			"manifest": "json"
+		}
+	});
 });

@@ -15,8 +15,15 @@ sap.ui.define([
 					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
-						// e.g. "__xmlview0--CurrencyCode-__table0-0-field-inner"
-						id : /--CurrencyCode-.*-0-field/,
+						id : /-0-field/,
+						matchers : function (oControl) {
+							// Note: we need to press the inner Input, but the "value" binding is
+							// on the outer ValueHelp control!
+							return oControl.getParent().getMetadata().getName()
+								=== "sap.ui.core.sample.common.ValueHelp"
+							&& oControl.getParent().getBindingInfo("value").parts[0].path
+								=== "CurrencyCode";
+						},
 						success : function () {
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
 							this.waitFor({
@@ -26,7 +33,8 @@ sap.ui.define([
 									Opa5.assert.ok(true, "ValueHelp Popover Closed");
 								}
 							});
-						}
+						},
+						viewName : sViewName
 					});
 				},
 				pressValueHelpOnRole : function () {

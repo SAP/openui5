@@ -3551,11 +3551,6 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function() { // to wait for promises in ValueHelp and open Popover
-			assert.ok(oContent.onsapfocusleave.called, "onsapfocusleave on Input called");
-			assert.ok(oContent.preventChangeOnFocusLeave.returnValues[0], "preventChangeOnFocusLeave on Input returns true");
-			oContent.onsapfocusleave.reset();
-			oContent.preventChangeOnFocusLeave.reset();
-
 			const oPopover = oVHPopover.getAggregation("_container");
 			assert.ok(oPopover.isOpen(), "Popover isOpen");
 			assert.ok(containsOrEquals(oPopover.getDomRef(), document.activeElement), "Focus is on ValueHelp");

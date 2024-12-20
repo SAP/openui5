@@ -170,11 +170,14 @@ sap.ui.define([
 		 *   operation parameter, except the binding parameter
 		 * @param {string} [sContextPath]
 		 *   The context path for a bound operation
+		 * @param {string} [sOriginalResourcePath]
+		 *   The "original resource path" to be used to build the target path for bound messages
+		 *   that do not address "$Parameter/...", useful in case of a return value context (R.V.C.)
 		 *
 		 * @public
 		 */
 		adjustTargets : function (oMessage, oOperationMetadata, sParameterContextPath,
-				sContextPath) {
+				sContextPath, sOriginalResourcePath) {
 			var sAdditionalTargetsKey = "additionalTargets" in oMessage
 					? "additionalTargets"
 					: _Helper.getAnnotationKey(oMessage, ".additionalTargets"),
@@ -183,7 +186,7 @@ sap.ui.define([
 			aTargets = [oMessage.target].concat(oMessage[sAdditionalTargetsKey])
 				.map(function (sTarget) {
 					return sTarget && _Helper.getAdjustedTarget(sTarget, oOperationMetadata,
-						sParameterContextPath, sContextPath);
+						sParameterContextPath, sContextPath, sOriginalResourcePath);
 				}).filter(function (sTarget) {
 					return sTarget;
 				});
@@ -1303,22 +1306,30 @@ sap.ui.define([
 		 *   operation parameter, except the binding parameter
 		 * @param {string} [sContextPath]
 		 *   The context path for a bound operation
+		 * @param {string} [sOriginalResourcePath]
+		 *   The "original resource path" to be used to build the target path for bound messages
+		 *   that do not address "$Parameter/...", useful in case of a return value context (R.V.C.)
+		 *   - but not applicable in an error case!
 		 * @returns {string|undefined} The adjusted target, or <code>undefined</code> if the target
 		 *   is unknown
 		 *
 		 * @private
 		 */
 		getAdjustedTarget : function (sTarget, oOperationMetadata, sParameterContextPath,
-				sContextPath) {
+				sContextPath, sOriginalResourcePath) {
 			var bIsParameterName,
 				sParameterName,
 				aSegments;
 
 			aSegments = sTarget.split("/");
 			sParameterName = aSegments.shift();
+			// Note: "$Parameter/" is optional in error case (where we cannot have a R.V.C.), but
+			// mandatory in success case!
 			if (sParameterName === "$Parameter") {
 				sTarget = aSegments.join("/");
 				sParameterName = aSegments.shift();
+			} else if (sOriginalResourcePath) {
+				return "/" + sOriginalResourcePath + "/" + sTarget;
 			}
 			if (oOperationMetadata.$IsBound
 					&& sParameterName === oOperationMetadata.$Parameter[0].$Name) {

@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.1.4
-// * data:{"sModified":"2024-11-04T10:14:03Z"}
+// * Theming Engine 14.2.8
+// * data:{"sModified":"2024-12-12T10:42:39Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/skeleton.less (Version 11.22.0) *******************/
+/******************* FILE /Base/baseLib/baseTheme/skeleton.less (Version 11.24.0) *******************/
 
 /*!SAP_POSTPROCESS_REDUCE_START*/
 
@@ -644,10 +644,12 @@
   --sapList_TableFixedBorderColor: @sapList_TableFixedBorderColor;
   --sapList_TableFixedColumnBorderWidth: @sapList_TableFixedColumnBorderWidth;
   --sapList_TableFixedRowBorderWidth: @sapList_TableFixedRowBorderWidth;
+  --sapMessage_BorderWidth: @sapMessage_BorderWidth;
   --sapMessage_ErrorBorderColor: @sapMessage_ErrorBorderColor;
   --sapMessage_WarningBorderColor: @sapMessage_WarningBorderColor;
   --sapMessage_SuccessBorderColor: @sapMessage_SuccessBorderColor;
   --sapMessage_InformationBorderColor: @sapMessage_InformationBorderColor;
+  --sapMessage_Button_Hover_Background: @sapMessage_Button_Hover_Background;
   --sapPopover_BorderCornerRadius: @sapPopover_BorderCornerRadius;
   --sapProgress_Background: @sapProgress_Background;
   --sapProgress_BorderColor: @sapProgress_BorderColor;
@@ -690,6 +692,7 @@
   --sapSlider_BorderColor: @sapSlider_BorderColor;
   --sapSlider_Selected_Background: @sapSlider_Selected_Background;
   --sapSlider_Selected_BorderColor: @sapSlider_Selected_BorderColor;
+  --sapSlider_Selected_Dimension: @sapSlider_Selected_Dimension;
   --sapSlider_HandleBackground: @sapSlider_HandleBackground;
   --sapSlider_HandleBorderColor: @sapSlider_HandleBorderColor;
   --sapSlider_RangeHandleBackground: @sapSlider_RangeHandleBackground;
@@ -720,6 +723,32 @@
   --sapObjectHeader_Subtitle_TextColor: @sapObjectHeader_Subtitle_TextColor;
   --sapBlockLayer_Background: @sapBlockLayer_Background;
   --sapBlockLayer_Opacity: @sapBlockLayer_Opacity;
+  --sapTab_TextColor: @sapTab_TextColor;
+  --sapTab_ForegroundColor: @sapTab_ForegroundColor;
+  --sapTab_IconColor: @sapTab_IconColor;
+  --sapTab_Background: @sapTab_Background;
+  --sapTab_Selected_TextColor: @sapTab_Selected_TextColor;
+  --sapTab_Selected_IconColor: @sapTab_Selected_IconColor;
+  --sapTab_Selected_Background: @sapTab_Selected_Background;
+  --sapTab_Selected_Indicator_Dimension: @sapTab_Selected_Indicator_Dimension;
+  --sapTab_Positive_TextColor: @sapTab_Positive_TextColor;
+  --sapTab_Positive_ForegroundColor: @sapTab_Positive_ForegroundColor;
+  --sapTab_Positive_IconColor: @sapTab_Positive_IconColor;
+  --sapTab_Positive_Selected_TextColor: @sapTab_Positive_Selected_TextColor;
+  --sapTab_Positive_Selected_IconColor: @sapTab_Positive_Selected_IconColor;
+  --sapTab_Positive_Selected_Background: @sapTab_Positive_Selected_Background;
+  --sapTab_Negative_TextColor: @sapTab_Negative_TextColor;
+  --sapTab_Negative_ForegroundColor: @sapTab_Negative_ForegroundColor;
+  --sapTab_Negative_IconColor: @sapTab_Negative_IconColor;
+  --sapTab_Negative_Selected_TextColor: @sapTab_Negative_Selected_TextColor;
+  --sapTab_Negative_Selected_IconColor: @sapTab_Negative_Selected_IconColor;
+  --sapTab_Negative_Selected_Background: @sapTab_Negative_Selected_Background;
+  --sapTab_Critical_TextColor: @sapTab_Critical_TextColor;
+  --sapTab_Critical_ForegroundColor: @sapTab_Critical_ForegroundColor;
+  --sapTab_Critical_IconColor: @sapTab_Critical_IconColor;
+  --sapTab_Critical_Selected_TextColor: @sapTab_Critical_Selected_TextColor;
+  --sapTab_Critical_Selected_IconColor: @sapTab_Critical_Selected_IconColor;
+  --sapTab_Critical_Selected_Background: @sapTab_Critical_Selected_Background;
   --sapTile_Background: @sapTile_Background;
   --sapTile_Hover_Background: @sapTile_Hover_Background;
   --sapTile_Active_Background: @sapTile_Active_Background;
@@ -766,6 +795,8 @@
   --sapIndicationColor_1_Selected_BorderColor: @sapIndicationColor_1_Selected_BorderColor;
   --sapIndicationColor_1_Selected_TextColor: @sapIndicationColor_1_Selected_TextColor;
   --sapIndicationColor_1b: @sapIndicationColor_1b;
+  --sapIndicationColor_1b_TextColor: @sapIndicationColor_1b_TextColor;
+  --sapIndicationColor_1b_Background: @sapIndicationColor_1b_Background;
   --sapIndicationColor_1b_BorderColor: @sapIndicationColor_1b_BorderColor;
   --sapIndicationColor_1b_Hover_Background: @sapIndicationColor_1b_Hover_Background;
   --sapIndicationColor_2: @sapIndicationColor_2;
@@ -780,6 +811,8 @@
   --sapIndicationColor_2_Selected_BorderColor: @sapIndicationColor_2_Selected_BorderColor;
   --sapIndicationColor_2_Selected_TextColor: @sapIndicationColor_2_Selected_TextColor;
   --sapIndicationColor_2b: @sapIndicationColor_2b;
+  --sapIndicationColor_2b_TextColor: @sapIndicationColor_2b_TextColor;
+  --sapIndicationColor_2b_Background: @sapIndicationColor_2b_Background;
   --sapIndicationColor_2b_BorderColor: @sapIndicationColor_2b_BorderColor;
   --sapIndicationColor_2b_Hover_Background: @sapIndicationColor_2b_Hover_Background;
   --sapIndicationColor_3: @sapIndicationColor_3;
@@ -794,6 +827,8 @@
   --sapIndicationColor_3_Selected_BorderColor: @sapIndicationColor_3_Selected_BorderColor;
   --sapIndicationColor_3_Selected_TextColor: @sapIndicationColor_3_Selected_TextColor;
   --sapIndicationColor_3b: @sapIndicationColor_3b;
+  --sapIndicationColor_3b_TextColor: @sapIndicationColor_3b_TextColor;
+  --sapIndicationColor_3b_Background: @sapIndicationColor_3b_Background;
   --sapIndicationColor_3b_BorderColor: @sapIndicationColor_3b_BorderColor;
   --sapIndicationColor_3b_Hover_Background: @sapIndicationColor_3b_Hover_Background;
   --sapIndicationColor_4: @sapIndicationColor_4;
@@ -808,6 +843,8 @@
   --sapIndicationColor_4_Selected_BorderColor: @sapIndicationColor_4_Selected_BorderColor;
   --sapIndicationColor_4_Selected_TextColor: @sapIndicationColor_4_Selected_TextColor;
   --sapIndicationColor_4b: @sapIndicationColor_4b;
+  --sapIndicationColor_4b_TextColor: @sapIndicationColor_4b_TextColor;
+  --sapIndicationColor_4b_Background: @sapIndicationColor_4b_Background;
   --sapIndicationColor_4b_BorderColor: @sapIndicationColor_4b_BorderColor;
   --sapIndicationColor_4b_Hover_Background: @sapIndicationColor_4b_Hover_Background;
   --sapIndicationColor_5: @sapIndicationColor_5;
@@ -822,6 +859,8 @@
   --sapIndicationColor_5_Selected_BorderColor: @sapIndicationColor_5_Selected_BorderColor;
   --sapIndicationColor_5_Selected_TextColor: @sapIndicationColor_5_Selected_TextColor;
   --sapIndicationColor_5b: @sapIndicationColor_5b;
+  --sapIndicationColor_5b_TextColor: @sapIndicationColor_5b_TextColor;
+  --sapIndicationColor_5b_Background: @sapIndicationColor_5b_Background;
   --sapIndicationColor_5b_BorderColor: @sapIndicationColor_5b_BorderColor;
   --sapIndicationColor_5b_Hover_Background: @sapIndicationColor_5b_Hover_Background;
   --sapIndicationColor_6: @sapIndicationColor_6;
@@ -836,6 +875,8 @@
   --sapIndicationColor_6_Selected_BorderColor: @sapIndicationColor_6_Selected_BorderColor;
   --sapIndicationColor_6_Selected_TextColor: @sapIndicationColor_6_Selected_TextColor;
   --sapIndicationColor_6b: @sapIndicationColor_6b;
+  --sapIndicationColor_6b_TextColor: @sapIndicationColor_6b_TextColor;
+  --sapIndicationColor_6b_Background: @sapIndicationColor_6b_Background;
   --sapIndicationColor_6b_BorderColor: @sapIndicationColor_6b_BorderColor;
   --sapIndicationColor_6b_Hover_Background: @sapIndicationColor_6b_Hover_Background;
   --sapIndicationColor_7: @sapIndicationColor_7;
@@ -850,6 +891,8 @@
   --sapIndicationColor_7_Selected_BorderColor: @sapIndicationColor_7_Selected_BorderColor;
   --sapIndicationColor_7_Selected_TextColor: @sapIndicationColor_7_Selected_TextColor;
   --sapIndicationColor_7b: @sapIndicationColor_7b;
+  --sapIndicationColor_7b_TextColor: @sapIndicationColor_7b_TextColor;
+  --sapIndicationColor_7b_Background: @sapIndicationColor_7b_Background;
   --sapIndicationColor_7b_BorderColor: @sapIndicationColor_7b_BorderColor;
   --sapIndicationColor_7b_Hover_Background: @sapIndicationColor_7b_Hover_Background;
   --sapIndicationColor_8: @sapIndicationColor_8;
@@ -864,6 +907,8 @@
   --sapIndicationColor_8_Selected_BorderColor: @sapIndicationColor_8_Selected_BorderColor;
   --sapIndicationColor_8_Selected_TextColor: @sapIndicationColor_8_Selected_TextColor;
   --sapIndicationColor_8b: @sapIndicationColor_8b;
+  --sapIndicationColor_8b_TextColor: @sapIndicationColor_8b_TextColor;
+  --sapIndicationColor_8b_Background: @sapIndicationColor_8b_Background;
   --sapIndicationColor_8b_BorderColor: @sapIndicationColor_8b_BorderColor;
   --sapIndicationColor_8b_Hover_Background: @sapIndicationColor_8b_Hover_Background;
   --sapIndicationColor_9: @sapIndicationColor_9;
@@ -878,6 +923,8 @@
   --sapIndicationColor_9_Selected_BorderColor: @sapIndicationColor_9_Selected_BorderColor;
   --sapIndicationColor_9_Selected_TextColor: @sapIndicationColor_9_Selected_TextColor;
   --sapIndicationColor_9b: @sapIndicationColor_9b;
+  --sapIndicationColor_9b_TextColor: @sapIndicationColor_9b_TextColor;
+  --sapIndicationColor_9b_Background: @sapIndicationColor_9b_Background;
   --sapIndicationColor_9b_BorderColor: @sapIndicationColor_9b_BorderColor;
   --sapIndicationColor_9b_Hover_Background: @sapIndicationColor_9b_Hover_Background;
   --sapIndicationColor_10: @sapIndicationColor_10;
@@ -892,6 +939,8 @@
   --sapIndicationColor_10_Selected_BorderColor: @sapIndicationColor_10_Selected_BorderColor;
   --sapIndicationColor_10_Selected_TextColor: @sapIndicationColor_10_Selected_TextColor;
   --sapIndicationColor_10b: @sapIndicationColor_10b;
+  --sapIndicationColor_10b_TextColor: @sapIndicationColor_10b_TextColor;
+  --sapIndicationColor_10b_Background: @sapIndicationColor_10b_Background;
   --sapIndicationColor_10b_BorderColor: @sapIndicationColor_10b_BorderColor;
   --sapIndicationColor_10b_Hover_Background: @sapIndicationColor_10b_Hover_Background;
   --sapLegend_WorkingBackground: @sapLegend_WorkingBackground;
@@ -1472,6 +1521,7 @@
   --sapFontUrl_72Mono_Bold_woff: @sapFontUrl_72Mono_Bold_woff;
   --sapFontUrl_72Mono_Bold_full_woff2: @sapFontUrl_72Mono_Bold_full_woff2;
   --sapFontUrl_72Mono_Bold_full_woff: @sapFontUrl_72Mono_Bold_full_woff;
+  --sapSapThemeId: @sapSapThemeId;
   --sapBreakpoint_S_Min: @sapBreakpoint_S_Min;
   --sapBreakpoint_M_Min: @sapBreakpoint_M_Min;
   --sapBreakpoint_L_Min: @sapBreakpoint_L_Min;

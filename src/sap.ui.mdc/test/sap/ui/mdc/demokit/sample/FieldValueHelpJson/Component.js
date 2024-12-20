@@ -3,5 +3,9 @@ sap.ui.define([
   ], function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("mdc.sample.Component");
+	return UIComponent.extend("mdc.sample.Component", {
+		"metadata": {
+			"manifest": "json"
+		}
+	});
 });

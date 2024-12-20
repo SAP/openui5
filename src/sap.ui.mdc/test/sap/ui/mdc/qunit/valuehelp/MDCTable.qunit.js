@@ -4,68 +4,51 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/mdc/ValueHelpDelegate",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"delegates/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
-	"sap/ui/mdc/enums/ValueHelpSelectionType",
-	"sap/ui/mdc/valuehelp/FilterBar",
-	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
-	"sap/ui/model/ParseException",
-	"sap/ui/model/FormatException",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterType",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/model/Sorter",
-	"sap/m/library",
-	'sap/ui/mdc/table/Column',
-	"sap/m/ColumnListItem",
-	"sap/m/Label",
-	"sap/m/Text",
-	"sap/m/ScrollContainer",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/library",
-	"sap/m/p13n/Engine",
+	"sap/ui/mdc/enums/TableSelectionMode",
+	"sap/ui/mdc/enums/TableRowCountMode",
+	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
-	"sap/ui/mdc/p13n/StateUtil"
-], function (
-		qutils,
-		ValueHelpDelegate,
-		ValueHelpDelegateV4,
-		MDCTable,
-		Condition,
-		ConditionValidated,
-		OperatorName,
-		ValueHelpSelectionType,
-		FilterBar,
-		FilterField,
-		ParseException,
-		FormatException,
-		JSONModel,
-		Filter,
-		FilterType,
-		FilterOperator,
-		Sorter,
-		mLibrary,
-		Column,
-		ColumnListItem,
-		Label,
-		Text,
-		ScrollContainer,
-		KeyCodes,
-		coreLibrary,
-		Engine,
-		Table,
-		GridTableType,
-		ResponsiveTableType,
-		StateUtil
-	) {
+	"sap/ui/mdc/p13n/StateUtil",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/library",
+	"sap/m/ColumnListItem",
+	"sap/m/ScrollContainer",
+	"sap/m/Text",
+	"sap/m/p13n/Engine"
+], (
+	qutils,
+	nextUIUpdate,
+	ValueHelpDelegateV4,
+	MDCTable,
+	Condition,
+	ConditionValidated,
+	OperatorName,
+	TableSelectionMode,
+	TableRowCountMode,
+	Column,
+	Table,
+	GridTableType,
+	ResponsiveTableType,
+	StateUtil,
+	JSONModel,
+	mLibrary,
+	ColumnListItem,
+	ScrollContainer,
+	Text,
+	Engine
+) => {
 	"use strict";
+
+	const ListItemType = mLibrary.ListType;
+
 	let oMdcTableWrapper;
 	let oModel;
 	let oTable;
@@ -73,52 +56,53 @@ sap.ui.define([
 	let bIsOpen = true;
 	let bIsTypeahead = true;
 	let iMaxConditions = -1;
+	let oScrollContainer = null;
 	const oContainer = { //to fake Container
-		getScrollDelegate: function() {
+		getScrollDelegate() {
 			return null;
 		},
-		isOpen: function() {
+		isOpen() {
 			return bIsOpen;
 		},
-		isOpening: function() {
+		isOpening() {
 			return false;
 		},
-		isTypeahead: function() {
+		isTypeahead() {
 			return bIsTypeahead;
 		},
-		getValueHelpDelegate: function () {
-			return ValueHelpDelegate;
+		getValueHelpDelegate() {
+			return ValueHelpDelegateV4;
 		},
-		getValueHelpDelegatePayload: function () {
+		getValueHelpDelegatePayload() {
 			return {x: "X"};
 		},
-		awaitValueHelpDelegate: function () {
+		awaitValueHelpDelegate() {
 			return Promise.resolve();
 		},
-		isValueHelpDelegateInitialized: function() {
+		isValueHelpDelegateInitialized() {
 			return true;
 		},
-		invalidate: function () {},
-		getUIArea: function() {
+		invalidate() {},
+		getUIArea() {
 			return null;
 		},
-		getParent: function() {
+		getParent() {
 			return null;
 		},
-		getId: function() {
+		getId() {
 			return "myFakeContainer";
 		},
-		getControl: function () {
+		getControl() {
 			return "Control"; // just to test forwarding
 		},
-		getLocalFilterValue: function () {
+		getLocalFilterValue() {
 			return undefined;
 		},
-		getFilterValue: function () {
+		getFilterValue() {
 			return undefined;
 		}
 	};
-	const _init = function(bTypeahead, sTableType, sSelectionMode) {
+	const _init = (bTypeahead, sTableType, sSelectionMode) => {
 		let oType;
 
 		oModel = new JSONModel({
@@ -139,16 +123,16 @@ sap.ui.define([
 			oType = new ResponsiveTableType({growingMode: "Scroll"});
 		}
 		if (!oType) {
-			oType = new GridTableType({rowCountMode: "Fixed", rowCount: 20}); // otherwise no rows will be available
+			oType = new GridTableType({rowCountMode: TableRowCountMode.Fixed, rowCount: 20}); // otherwise no rows will be available
 		}
 
-		iMaxConditions = sSelectionMode && sSelectionMode.startsWith("Single") ? 1 : -1;
+		iMaxConditions = sSelectionMode?.startsWith("Single") ? 1 : -1;
 
 		oTable = new Table("T1", {
 			delegate: { name: "delegates/json/TableDelegate", payload: { collectionName: "items" } },
 			type: oType,
 			width: "26rem",
-			selectionMode: sSelectionMode || "Multi",
+			selectionMode: sSelectionMode,
 			columns: [ new Column({
 				header: "key", //Define the header text as present in the propertyinfo
 				propertyKey: "key", //Reference the column with the according propertyinfo object
@@ -187,7 +171,7 @@ sap.ui.define([
 		oMdcTableWrapper.setParent(); // just to fake call
 		oMdcTableWrapper.oParent = oContainer; // fake
 	};
-	const _teardown = function() {
+	const _teardown = () => {
 		oMdcTableWrapper.destroy();
 		oMdcTableWrapper = null;
 		oTable = undefined; // destroyed with MDCTable content
@@ -198,80 +182,97 @@ sap.ui.define([
 		bIsOpen = true;
 		bIsTypeahead = true;
 		iMaxConditions = -1;
+		if (oScrollContainer) {
+			oScrollContainer.getContent.restore();
+			oScrollContainer.destroy();
+			oScrollContainer = null;
+			delete oContainer.getUIAreaForContent;
+		}
 	};
 
+	// to fake rendering
+	async function _renderScrollContainer() {
+
+		oScrollContainer = new ScrollContainer(); // to test scrolling
+		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
+		oContainer.getUIAreaForContent = () => {
+			return oScrollContainer.getUIArea();
+		};
+		oScrollContainer.placeAt("content"); // render ScrollContainer
+		await nextUIUpdate();
+		sinon.spy(oTable, "scrollToIndex");
+
+	}
+
 	QUnit.module("General", {
-		beforeEach: function() {
+		beforeEach() {
 			bIsTypeahead = false;
 			_init(false);
 		},
 		afterEach: _teardown
 	});
 
-	QUnit.test("getContent for dialog", function(assert) {
+	QUnit.test("getContent for dialog", (assert) => {
 		oMdcTableWrapper.setFilterValue("X");
+		oTable.getType().setRowCountMode(TableRowCountMode.Auto);
 		const oContent = oMdcTableWrapper.getContent();
-		if (oContent) {
-			const fnDone = assert.async();
-			oContent.then(function(oContent) {
+		return oContent?.then((oContent) => {
 
-				sinon.spy(oTable, "scrollToIndex");
-				sinon.stub(oTable, "isTableBound").returns(true);
-				sinon.stub(StateUtil, "applyExternalState").returns(Promise.resolve(true));
-				sinon.stub(StateUtil, "retrieveExternalState").returns(Promise.resolve({filter: {}}));
-				sinon.stub(StateUtil, "diffState").returns(Promise.resolve({filter: {}}));
+			sinon.spy(oTable, "scrollToIndex");
+			sinon.stub(oTable, "isTableBound").returns(true);
+			sinon.stub(StateUtil, "applyExternalState").returns(Promise.resolve(true));
+			sinon.stub(StateUtil, "retrieveExternalState").returns(Promise.resolve({filter: {}}));
+			sinon.stub(StateUtil, "diffState").returns(Promise.resolve({filter: {}}));
 
-				return oTable.initialized().then(function () {
-					return oMdcTableWrapper.onBeforeShow(true).then(function () {
-						//oMdcTableWrapper.onShow(true); // to update selection and scroll
-						assert.ok(oContent, "Content returned");
-						assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
-						assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
-						const oFixContent = oContent.getFixContent()[0];
-						assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
-						assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
-						assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
-						const oTableBox = oContent.getFlexContent();
-						assert.ok(oTableBox.isA("sap.m.VBox"), "TableBox is sap.m.VBox");
-						assert.equal(oTableBox.getHeight(), "100%", "Panel height");
-						assert.ok(oTableBox.hasStyleClass("sapMdcValueHelpPanelTableBox"), "Panel has style class sapMdcTablePanel");
-						assert.equal(oTableBox.getItems().length, 1, "TableBox number of items");
-						//Test responsive mode
-						/* var oScrollContainer = oTableBox.getItems()[0];
-						assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
-						assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
-						assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer"); */
-						assert.equal(oTableBox.getItems()[0], oTable, "Table found");
-						assert.equal(oTable.getSelectionMode(), "Multi", "Table mode");
-						assert.ok(oTable.scrollToIndex.calledWith(0), "Table scrolled to top");
-						assert.ok(oTable.hasStyleClass("sapUiSizeCozy"), "A density style is applied.");
+			return oTable.initialized().then(() => {
+				return oMdcTableWrapper.onBeforeShow(true).then(() => {
+					oMdcTableWrapper.onShow(true);
+					assert.ok(oContent, "Content returned");
+					assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
+					assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
+					const oFixContent = oContent.getFixContent()[0];
+					assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
+					assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
+					assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
+					const oTableBox = oContent.getFlexContent();
+					assert.ok(oTableBox.isA("sap.m.VBox"), "TableBox is sap.m.VBox");
+					assert.equal(oTableBox.getHeight(), "100%", "Panel height");
+					assert.ok(oTableBox.hasStyleClass("sapMdcValueHelpPanelTableBox"), "Panel has style class sapMdcTablePanel");
+					assert.equal(oTableBox.getItems().length, 1, "TableBox number of items");
+					assert.equal(oTableBox.getItems()[0], oTable, "Table found");
+					assert.equal(oTable.getSelectionMode(), "Multi", "Table mode");
+					assert.equal(oTable.getType().getRowCount(), 3, "Table RowCount");
+					assert.ok(oTable.scrollToIndex.calledWith(0), "Table scrolled to top");
+					assert.ok(oTable.hasStyleClass("sapUiSizeCozy"), "A density style is applied.");
 
 
-						oTable.isTableBound.restore();
-						oTable.scrollToIndex.restore();
-						StateUtil.applyExternalState.restore();
-						StateUtil.retrieveExternalState.restore();
-						StateUtil.diffState.restore();
+					oTable.isTableBound.restore();
+					oTable.scrollToIndex.restore();
+					StateUtil.applyExternalState.restore();
+					StateUtil.retrieveExternalState.restore();
+					StateUtil.diffState.restore();
 
-						fnDone();
-					}); // to update selection and scroll
-				});
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-				fnDone();
+					oMdcTableWrapper.onHide();
+				}); // to update selection and scroll
 			});
-		}
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
 	});
-	QUnit.test("isQuickSelectSupported", function(assert) {
+	QUnit.test("isQuickSelectSupported", (assert) => {
 		assert.ok(oMdcTableWrapper.isQuickSelectSupported(), "quick select supported");
 	});
 
-	QUnit.test("isSingleSelect", function(assert) {
+	QUnit.test("isSingleSelect", (assert) => {
+		oTable.setSelectionMode(TableSelectionMode.Multi);
 		assert.notOk(oMdcTableWrapper.isSingleSelect(), "multi-selection taken from Table");
+
+		oTable.setSelectionMode(TableSelectionMode.SingleMaster);
+		assert.ok(oMdcTableWrapper.isSingleSelect(), "single-selection taken from Table");
 	});
 
 	QUnit.module("GridTableType", {
-		beforeEach: function() {
+		beforeEach() {
 			bIsTypeahead = false;
 		},
 		afterEach: _teardown
@@ -279,20 +280,21 @@ sap.ui.define([
 
 	/*eslint max-nested-callbacks: [2, 20]*/
 
-	QUnit.test("handleSelectionChange - Single Select", function(assert) {
-		_init(false, "Table", "SingleMaster");
+	QUnit.test("handleSelectionChange - Single Select", (assert) => {
+		_init(false, "Table", TableSelectionMode.SingleMaster);
 		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 
-		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper.onBeforeShow(true).then(function() {
-				return oMdcTableWrapper.awaitListBinding().then(function () {
+		return oContentPromise.then((oContent) => {
+			return oMdcTableWrapper.onBeforeShow(true).then(() => {
+				return oMdcTableWrapper.awaitListBinding().then(() => {
+					oMdcTableWrapper.onShow(true);
 					const oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
-					return oSelectionPlugin.setSelectedIndex(2).then(function () {
+					return oSelectionPlugin.setSelectedIndex(2).then(() => {
 						assert.ok(oMdcTableWrapper._handleSelectionChange.calledTwice, "MDCTable _handleSelectionChange was called twice"); // Once by Table._setSelectedContexts, second time by setSelectedIndex
 						assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as this item is not in conditions");
 						assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
@@ -311,7 +313,7 @@ sap.ui.define([
 							"id": "MT1"
 						}, "carries expected configuration");
 
-						return oSelectionPlugin.setSelectedIndex(1).then(function () {
+						return oSelectionPlugin.setSelectedIndex(1).then(() => {
 							assert.ok(oMdcTableWrapper._handleSelectionChange.calledThrice, "MDCTable _handleSelectionChange was called");
 							assert.notOk(oMdcTableWrapper._fireSelect.calledTwice, "MDCTable _fireSelect was not called as this item is in conditions");
 							oSelectionPlugin.removeSelectionInterval(1,1);
@@ -322,6 +324,14 @@ sap.ui.define([
 								"conditions": [],
 								"id": "MT1"
 							}, "carries expected configuration");
+
+							oMdcTableWrapper._handleSelectionChange.reset();
+							oMdcTableWrapper._fireSelect.reset();
+							oMdcTableWrapper.onHide();
+							return oSelectionPlugin.setSelectedIndex(0).then(() => {
+								assert.ok(oMdcTableWrapper._handleSelectionChange.notCalled, "MDCTable _handleSelectionChange was not called");
+								assert.ok(oMdcTableWrapper._fireSelect.notCalled, "MDCTable _fireSelect was not called");
+							});
 						});
 					});
 				});
@@ -329,9 +339,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("handleSelectionChange - Multi Select", function(assert) {
-		_init(false, "Table", "Multi");
-		const oPrepareContentPromise = oMdcTableWrapper.getContent().then(function () {
+	QUnit.test("handleSelectionChange - Multi Select", (assert) => {
+		_init(false, "Table", TableSelectionMode.Multi);
+		const oPrepareContentPromise = oMdcTableWrapper.getContent().then(() => {
 			return oMdcTableWrapper.onBeforeShow();
 		});
 
@@ -340,11 +350,11 @@ sap.ui.define([
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
 
-		return oPrepareContentPromise.then(function (oContent) {
-			return oMdcTableWrapper.awaitListBinding().then(function () {
+		return oPrepareContentPromise.then((oContent) => {
+			return oMdcTableWrapper.awaitListBinding().then(() => {
 				const oSelectionPlugin = oTable._oTable._getSelectionPlugin();
 
-				return oSelectionPlugin.addSelectionInterval(0,2).then(function () {
+				return oSelectionPlugin.addSelectionInterval(0,2).then(() => {
 					assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
 					assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as some items are not yet in conditions");
 					assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
@@ -397,15 +407,15 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("handleSelectionChange - Clone", function(assert) {
-		_init(false, "Table", "SingleMaster");
+	QUnit.test("handleSelectionChange - Clone", (assert) => {
+		_init(false, "Table", TableSelectionMode.SingleMaster);
 		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 
-		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper.onBeforeShow(true).then(function() {
-				return oMdcTableWrapper.awaitListBinding().then(function () {
+		return oContentPromise.then((oContent) => {
+			return oMdcTableWrapper.onBeforeShow(true).then(() => {
+				return oMdcTableWrapper.awaitListBinding().then(() => {
 					const oClone = oMdcTableWrapper.clone("MyClone");
 					const oCloneTable = oClone.getTable();
 					oCloneTable.fireSelectionChange();
@@ -417,15 +427,15 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.skip("handleSelectionChange - noop", function(assert) {
-		_init(false, "Table", "Single");
+	QUnit.skip("handleSelectionChange - noop", (assert) => {
+		_init(false, "Table", TableSelectionMode.Single);
 		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
-		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper.awaitListBinding().then(function () {
+		return oContentPromise.then((oContent) => {
+			return oMdcTableWrapper.awaitListBinding().then(() => {
 
 				oTable._oTable._getSelectionPlugin().fireSelectionChange({
 					rowIndices: [2],
@@ -451,28 +461,29 @@ sap.ui.define([
 	});
 
 	QUnit.module("ResponsiveTableType", {
-		beforeEach: function() {
+		beforeEach() {
 			bIsTypeahead = false;
-			//_init(false, "ResponsiveTableType", "Single");
+			//_init(false, "ResponsiveTableType", TableSelectionMode.Single);
 		},
 		afterEach: _teardown
 	});
 
-	QUnit.test("handleSelectionChange - SingleSelect", function(assert) {
-		_init(false, "ResponsiveTableType", "SingleMaster");
+	QUnit.test("handleSelectionChange - SingleSelect", (assert) => {
+		_init(false, "ResponsiveTableType", TableSelectionMode.SingleMaster);
 
 		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
-		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper.onBeforeShow(true).then(function() {
-				return oMdcTableWrapper.awaitListBinding().then(function () {
+		return oContentPromise.then((oContent) => {
+			return oMdcTableWrapper.onBeforeShow(true).then(() => {
+				return oMdcTableWrapper.awaitListBinding().then(() => {
+					oMdcTableWrapper.onShow(true);
 					const oInnerTable = oTable._oTable;
-					const aTableItems = oInnerTable && oInnerTable.getItems();
+					const aTableItems = oInnerTable?.getItems();
 
-					oInnerTable.setSelectedItem(aTableItems[2], true, true);
+					oInnerTable?.setSelectedItem(aTableItems?.[2], true, true);
 					assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
 					assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as this item is not in conditions");
 					assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
@@ -509,26 +520,40 @@ sap.ui.define([
 						"conditions": [],
 						"id": "MT1"
 					}, "carries expected configuration");
+
+					const oTableBox = oContent.getFlexContent();
+					assert.ok(oTableBox.isA("sap.m.VBox"), "TableBox is sap.m.VBox");
+					assert.equal(oTableBox.getHeight(), "100%", "Panel height");
+					assert.ok(oTableBox.hasStyleClass("sapMdcValueHelpPanelTableBox"), "Panel has style class sapMdcTablePanel");
+					assert.equal(oTableBox.getItems().length, 1, "TableBox number of items");
+					const oScrollContainer = oTableBox.getItems()[0];
+					assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
+					assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
+					assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer");
+					assert.equal(oMdcTableWrapper.getScrollDelegate(), oScrollContainer.getScrollDelegate(), "ScrollDelegate");
+
+					oMdcTableWrapper.onHide();
 				});
 			});
 		});
 	});
 
-	QUnit.test("handleSelectionChange - MultiSelect", function(assert) {
-		_init(false, "ResponsiveTableType", "Multi");
+	QUnit.test("handleSelectionChange - MultiSelect", (assert) => {
+		_init(false, "ResponsiveTableType", TableSelectionMode.Multi);
 
 		const oContentPromise = oMdcTableWrapper.getContent();
 
 		sinon.spy(oMdcTableWrapper, "_handleSelectionChange");
 		sinon.spy(oMdcTableWrapper, "_fireSelect");
 
-		return oContentPromise.then(function (oContent) {
-			return oMdcTableWrapper.onBeforeShow(true).then(function() {
-				return oMdcTableWrapper.awaitListBinding().then(function () {
+		return oContentPromise.then((oContent) => {
+			return oMdcTableWrapper.onBeforeShow(true).then(() => {
+				return oMdcTableWrapper.awaitListBinding().then(async () => {
+					oMdcTableWrapper.onShow(true);
 					const oInnerTable = oTable._oTable;
-					const aTableItems = oInnerTable && oInnerTable.getItems();
+					const aTableItems = oInnerTable?.getItems();
 
-					oInnerTable.setSelectedItem(aTableItems[2], true, true);
+					oInnerTable?.setSelectedItem(aTableItems?.[2], true, true);
 					assert.ok(oMdcTableWrapper._handleSelectionChange.called, "MDCTable _handleSelectionChange was called");
 					assert.ok(oMdcTableWrapper._fireSelect.called, "MDCTable _fireSelect was called as this item is not in conditions");
 					assert.deepEqual(oMdcTableWrapper._fireSelect.lastCall.args[0], {
@@ -587,6 +612,13 @@ sap.ui.define([
 						],
 						"id": "MT1"
 					}, "carries expected configuration");
+
+					// check item type changed while mouseover
+					await _renderScrollContainer();
+					const oItem = oTable._oTable.getItems()[0];
+					qutils.triggerMouseEvent(oItem.getDomRef(), "mouseover", null, null, null, null, 0);
+					assert.equal(oItem.getType(), ListItemType.Active, "ItemType");
+					oMdcTableWrapper.onHide();
 				});
 			});
 		});

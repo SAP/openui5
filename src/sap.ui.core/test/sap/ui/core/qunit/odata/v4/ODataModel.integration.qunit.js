@@ -6371,10 +6371,13 @@ sap.ui.define([
 	//
 	// The header message contains the property "longtextUrl", which points one level up. See that
 	// the UI5 message contains the resolved "descriptionUrl". (SNOW: DINC0197984)
+	//
+	// Header message target relative to R.V.C. (SNOW: DINC0341568)
 	QUnit.test("Context.refresh() in a list relative to a return value context", function (assert) {
 		var oMessage = {
 				additionalTargets : [
-					"$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/ProductID"
+					"$Parameter/SalesOrder/SO_2_SOITEM(ProductID='HT-1000')/ProductID",
+					"SalesOrderID"
 				],
 				code : "foo-42",
 				longtextUrl : "../LongText('0815')",
@@ -6429,7 +6432,8 @@ sap.ui.define([
 					persistent : true,
 					targets : [
 						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/Name",
-						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/ProductID"
+						"/SalesOrderList('1')/SO_2_SOITEM(ProductID='HT-1000')/ProductID",
+						"/SalesOrderList('1')/SalesOrderID"
 					],
 					technicalDetails : {
 						originalMessage : oMessage
@@ -7520,7 +7524,7 @@ sap.ui.define([
 						Salary : 54321
 					}
 				}
-			}, {/* response does not matter here */});
+			}); // 204 No Content
 
 			// code under test
 			return Promise.all([oOperation.invoke(), that.waitForChanges(assert)]);
@@ -7563,7 +7567,7 @@ sap.ui.define([
 						Salary : 54321
 					}
 				}
-			}, {/* response does not matter here */});
+			}); // 204 No Content
 
 			return Promise.all([
 				// code under test
@@ -15249,179 +15253,211 @@ sap.ui.define([
 	// and messages are reported as expected. Refreshing the return value context updates also
 	// messages properly. (CPOUI5UISERVICESV3-1674)
 	// Return value context can be used with v4.Context#setProperty (CPOUI5UISERVICESV3-1874).
-	QUnit.test("Bound action on collection", function (assert) {
-		var oHeaderContext,
-			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
-			oReturnValueContext,
-			sView = '\
+	//
+	// Check that targets of header messages are properly resolved w.r.t. R.V.C. (for various group
+	// IDs).
+	// SNOW: DINC0341568
+	["$auto", "$direct", "$single"].forEach((sGroupId) => {
+		QUnit.test("Bound action on collection, sGroupId=" + sGroupId, function (assert) {
+			var oHeaderContext,
+				oHeaderMessage = {
+					additionalTargets : ["ArtistID"],
+					code : "C0D€",
+					message : "Some header message",
+					numericSeverity : 2,
+					target : "Name"
+				},
+				oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+				oReturnValueContext,
+				sView = '\
 <Table id="table" items="{path : \'/Artists\', parameters : {$select : \'Messages\'}}">\
 	<Text id="name" text="{Name}"/>\
 </Table>\
 <Input id="nameCreated" value="{Name}"/>',
-			that = this;
+				that = this;
 
-		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name&$skip=0&$top=100",
-			{
-				value : [{
-					"@odata.etag" : "ETag",
-					ArtistID : "XYZ",
-					IsActiveEntity : true,
-					Messages : [],
-					Name : "Missy Eliot"
-				}]
-			})
-			.expectChange("name", ["Missy Eliot"])
-			.expectChange("nameCreated");
+			this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name&$skip=0&$top=100",
+				{
+					value : [{
+						"@odata.etag" : "ETag",
+						ArtistID : "XYZ",
+						IsActiveEntity : true,
+						Messages : [],
+						Name : "Missy Eliot"
+					}]
+				})
+				.expectChange("name", ["Missy Eliot"])
+				.expectChange("nameCreated");
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
-			that.expectRequest("Artists/special.cases.GetDefaults()", {
-					ArtistID : "ABC",
-					IsActiveEntity : false,
-					Name : "DefaultName"
-				});
-
-			return Promise.all([
-				// code under test
-				that.oModel.bindContext("special.cases.GetDefaults(...)", oHeaderContext).invoke(),
-				that.waitForChanges(assert)
-			]);
-		}).then(function (aResults) {
-			var oAction,
-				oDefaults = aResults[0];
-
-			that.expectRequest({
-					method : "POST",
-					url : "Artists/special.cases.Create"
-						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
-					payload : {
+			return this.createView(assert, sView, oModel).then(function () {
+				oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+				that.expectRequest("Artists/special.cases.GetDefaults()", {
 						ArtistID : "ABC",
 						IsActiveEntity : false,
 						Name : "DefaultName"
-					}
-				}, {
-					"@odata.etag" : "ETagAfterCreate",
-					ArtistID : "ABC",
-					IsActiveEntity : false,
-					Messages : [{
+					});
+
+				return Promise.all([
+					// code under test
+					that.oModel.bindContext("special.cases.GetDefaults(...)", oHeaderContext).invoke(),
+					that.waitForChanges(assert)
+				]);
+			}).then(function (aResults) {
+				var oAction,
+					oDefaults = aResults[0];
+
+				that.expectRequest({
+						method : "POST",
+						url : "Artists/special.cases.Create"
+							+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
+						payload : {
+							ArtistID : "ABC",
+							IsActiveEntity : false,
+							Name : "DefaultName"
+						}
+					}, {
+						"@odata.etag" : "ETagAfterCreate",
+						ArtistID : "ABC",
+						IsActiveEntity : false,
+						Messages : [{
+							code : "23",
+							message : "Just A Message",
+							numericSeverity : 1,
+							target : "Name",
+							transition : false
+						}],
+						Name : "Queen"
+					}, {
+						"sap-messages" : JSON.stringify([oHeaderMessage])
+					})
+					.expectMessages([{
+						code : "C0D€",
+						message : "Some header message",
+						persistent : true,
+						targets : [
+							"/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+							"/Artists(ArtistID='ABC',IsActiveEntity=false)/ArtistID"
+						],
+						technicalDetails : {
+							originalMessage : oHeaderMessage
+						},
+						type : "Information"
+					}, {
 						code : "23",
 						message : "Just A Message",
-						numericSeverity : 1,
-						target : "Name",
-						transition : false
-					}],
-					Name : "Queen"
-				})
-				.expectMessages([{
-					code : "23",
-					message : "Just A Message",
-					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
-					type : "Success"
-				}]);
+						target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+						type : "Success"
+					}]);
 
-			oAction = that.oModel.bindContext("special.cases.Create(...)", oHeaderContext,
-					{$$inheritExpandSelect : true})
-				.setParameter("ArtistID", oDefaults.getObject("ArtistID"))
-				.setParameter("IsActiveEntity", oDefaults.getObject("IsActiveEntity"))
-				.setParameter("Name", oDefaults.getObject("Name"));
+				oAction = that.oModel.bindContext("special.cases.Create(...)", oHeaderContext,
+						{$$inheritExpandSelect : true})
+					.setParameter("ArtistID", oDefaults.getObject("ArtistID"))
+					.setParameter("IsActiveEntity", oDefaults.getObject("IsActiveEntity"))
+					.setParameter("Name", oDefaults.getObject("Name"));
 
-			return Promise.all([
-				oAction.invoke(),
-				that.waitForChanges(assert)
-			]);
-		}).then(function (aPromiseResults) {
-			oReturnValueContext = aPromiseResults[0];
+				return Promise.all([
+					oAction.invoke(sGroupId),
+					that.waitForChanges(assert)
+				]);
+			}).then(function (aPromiseResults) {
+				oReturnValueContext = aPromiseResults[0];
 
-			that.expectChange("nameCreated", "Queen");
+				that.expectChange("nameCreated", "Queen");
 
-			that.oView.byId("nameCreated").setBindingContext(oReturnValueContext);
+				that.oView.byId("nameCreated").setBindingContext(oReturnValueContext);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			return that.checkValueState(assert, "nameCreated", "Success", "Just A Message");
-		}).then(function () {
-			var sResourcePath = "Artists(ArtistID='ABC',IsActiveEntity=false)"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
-				sErrorMessage = "sap.ui.model.odata.v4.ODataContextBinding:"
-					+ " /Artists|special.cases.Create(...)"
-					+ " is ignoring response from inactive cache: /special/cases/"
-					+ sResourcePath;
+				return that.waitForChanges(assert);
+			}).then(function () {
+				return that.checkValueState(assert, "nameCreated", "Success", "Just A Message");
+			}).then(function () {
+				Messaging.removeMessages( // remove oHeaderMessage
+					Messaging.getMessageModel().getObject("/")
+						.filter((oMessage) => oMessage.code === oHeaderMessage.code)
+				);
 
-			that.expectRequest(sResourcePath, {
-					// CPOUI5ODATAV4-980: this response is ignored anyway
-					ArtistID : "ABC",
-					IsActiveEntity : false,
-					Name : "n/a"
-				})
-				// Note: this is caused by "nameCreated" via R.V.C., path is a bit misleading
-				.expectCanceledError("Failed to read path /Artists/special.cases.Create(...)",
-					sErrorMessage)
-				.expectCanceledError("Failed to read path"
-					+ " /Artists(ArtistID='ABC',IsActiveEntity=false)/Name", sErrorMessage)
-				.expectRequest(sResourcePath, {
-					"@odata.etag" : "ETagAfterRefresh",
-					ArtistID : "ABC",
-					IsActiveEntity : false,
-					Messages : [{
+				const sResourcePath = "Artists(ArtistID='ABC',IsActiveEntity=false)"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name";
+				const sErrorMessage = "sap.ui.model.odata.v4.ODataContextBinding:"
+						+ " /Artists|special.cases.Create(...)"
+						+ " is ignoring response from inactive cache: /special/cases/"
+						+ sResourcePath;
+
+				that.expectRequest(sResourcePath, {
+						// CPOUI5ODATAV4-980: this response is ignored anyway
+						ArtistID : "ABC",
+						IsActiveEntity : false,
+						Name : "n/a"
+					})
+					// Note: this is caused by "nameCreated" via R.V.C., path is a bit misleading
+					.expectCanceledError("Failed to read path /Artists/special.cases.Create(...)",
+						sErrorMessage)
+					.expectCanceledError("Failed to read path"
+						+ " /Artists(ArtistID='ABC',IsActiveEntity=false)/Name", sErrorMessage)
+					.expectRequest(sResourcePath, {
+						"@odata.etag" : "ETagAfterRefresh",
+						ArtistID : "ABC",
+						IsActiveEntity : false,
+						Messages : [{
+							code : "23",
+							message : "Just Another Message",
+							numericSeverity : 1,
+							target : "Name",
+							transition : false
+						}],
+						Name : "After Refresh"
+					})
+					.expectChange("nameCreated", "After Refresh")
+					// Note: this proves that "Just A Message" is gone
+					.expectMessages([{
 						code : "23",
 						message : "Just Another Message",
-						numericSeverity : 1,
-						target : "Name",
-						transition : false
-					}],
-					Name : "After Refresh"
-				})
-				.expectChange("nameCreated", "After Refresh")
-				// Note: this proves that "Just A Message" is gone
-				.expectMessages([{
-					code : "23",
-					message : "Just Another Message",
-					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
-					type : "Success"
-				}]);
+						target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+						type : "Success"
+					}]);
 
-			return Promise.all([
-				oReturnValueContext.requestRefresh(), // will be canceled, must not fail
-				oReturnValueContext.requestRefresh(),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			return that.checkValueState(assert, "nameCreated", "Success", "Just Another Message");
-		}).then(function () {
-			that.expectChange("nameCreated", "TAFKAP")
-				.expectRequest({
-					headers : {"If-Match" : "ETagAfterRefresh"},
-					method : "PATCH",
-					payload : {Name : "TAFKAP"},
-					url : "Artists(ArtistID='ABC',IsActiveEntity=false)"
-				}, {
-					// "@odata.etag" : "ETagAfterPatch",
-					ArtistID : "ABC",
-					IsActiveEntity : false,
-					Messages : [{
+				return Promise.all([
+					oReturnValueContext.requestRefresh(), // will be canceled, must not fail
+					oReturnValueContext.requestRefresh(),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				return that.checkValueState(assert, "nameCreated", "Success", "Just Another Message");
+			}).then(function () {
+				that.expectChange("nameCreated", "TAFKAP")
+					.expectRequest({
+						headers : {"If-Match" : "ETagAfterRefresh"},
+						method : "PATCH",
+						payload : {Name : "TAFKAP"},
+						url : "Artists(ArtistID='ABC',IsActiveEntity=false)"
+					}, {
+						// "@odata.etag" : "ETagAfterPatch",
+						ArtistID : "ABC",
+						IsActiveEntity : false,
+						Messages : [{
+							code : "CODE",
+							message : "What a nice acronym!",
+							numericSeverity : 1,
+							target : "Name",
+							transition : false
+						}],
+						Name : "T.A.F.K.A.P."
+					})
+					.expectChange("nameCreated", "T.A.F.K.A.P.")
+					.expectMessages([{
 						code : "CODE",
 						message : "What a nice acronym!",
-						numericSeverity : 1,
-						target : "Name",
-						transition : false
-					}],
-					Name : "T.A.F.K.A.P."
-				})
-				.expectChange("nameCreated", "T.A.F.K.A.P.")
-				.expectMessages([{
-					code : "CODE",
-					message : "What a nice acronym!",
-					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
-					type : "Success"
-				}]);
+						target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+						type : "Success"
+					}]);
 
-			return Promise.all([
-				// code under test
-				oReturnValueContext.setProperty("Name", "TAFKAP"),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			return that.checkValueState(assert, "nameCreated", "Success", "What a nice acronym!");
+				return Promise.all([
+					// code under test
+					oReturnValueContext.setProperty("Name", "TAFKAP"),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				return that.checkValueState(assert, "nameCreated", "Success", "What a nice acronym!");
+			});
 		});
 	});
 
@@ -48112,6 +48148,8 @@ sap.ui.define([
 	// The second test uses a bound function instead of an action to check that the different
 	// access to the cache also works.
 	// JIRA: CPOUI5UISERVICESV3-1193
+	//
+	// Header message target relative to R.V.C. (SNOW: DINC0341568)
 	[{
 		operation : "EditAction",
 		method : "POST"
@@ -48179,6 +48217,14 @@ sap.ui.define([
 						target : "Name",
 						transition : true
 					}]
+				}, {
+					"sap-messages" : i > 0 ? undefined : JSON.stringify([{
+						additionalTargets : ["ArtistID", "IsActiveEntity"],
+						code : "C0D€",
+						message : "Some header message",
+						numericSeverity : 2,
+						target : "Name"
+					}])
 				})
 				.expectMessages([{
 					code : "23",
@@ -48186,7 +48232,17 @@ sap.ui.define([
 					persistent : true,
 					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 					type : "Success"
-				}]);
+				}, ...(i > 0 ? [] : [{
+					code : "C0D€",
+					message : "Some header message",
+					persistent : true,
+					targets : [
+						"/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+						"/Artists(ArtistID='42',IsActiveEntity=false)/ArtistID",
+						"/Artists(ArtistID='42',IsActiveEntity=false)/IsActiveEntity"
+					],
+					type : "Information"
+				}])]);
 
 				// code under test
 				return Promise.all([
@@ -61266,7 +61322,7 @@ sap.ui.define([
 			function onStrictHandlingFailed0(aMessages) {
 				assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
 				assert.strictEqual(aMessages[0].getCode(), "CODE1");
-				assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('0')/Note");
+				assert.deepEqual(aMessages[0].getTargets(), ["/SalesOrderList('0')/Note"]);
 				assert.strictEqual(aMessages[0].getType(), "Warning");
 				if (bDifferentContentIDs) {
 					assert.strictEqual(aMessages.length, 1);
@@ -61274,11 +61330,11 @@ sap.ui.define([
 					assert.strictEqual(aMessages.length, 3);
 					assert.strictEqual(aMessages[1].getMessage(), "Note is empty");
 					assert.strictEqual(aMessages[1].getCode(), "CODE1");
-					assert.strictEqual(aMessages[1].getTargets()[0], "/SalesOrderList('0')/Note");
+					assert.deepEqual(aMessages[1].getTargets(), ["/SalesOrderList('0')/Note"]);
 					assert.strictEqual(aMessages[1].getType(), "Warning");
 					assert.strictEqual(aMessages[2].getMessage(), "Some unbound info");
 					assert.strictEqual(aMessages[2].getCode(), "CODE2");
-					assert.strictEqual(aMessages[2].getTargets()[0], "");
+					assert.deepEqual(aMessages[2].getTargets(), [""]);
 					assert.strictEqual(aMessages[2].getType(), "Information");
 				}
 				return new Promise(function (resolve) {
@@ -61291,11 +61347,11 @@ sap.ui.define([
 					assert.strictEqual(aMessages.length, 2);
 					assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
 					assert.strictEqual(aMessages[0].getCode(), "CODE1");
-					assert.strictEqual(aMessages[0].getTargets()[0], "/SalesOrderList('1')/Note");
+					assert.deepEqual(aMessages[0].getTargets(), ["/SalesOrderList('1')/Note"]);
 					assert.strictEqual(aMessages[0].getType(), "Warning");
 					assert.strictEqual(aMessages[1].getMessage(), "Some unbound info");
 					assert.strictEqual(aMessages[1].getCode(), "CODE2");
-					assert.strictEqual(aMessages[1].getTargets()[0], "");
+					assert.deepEqual(aMessages[1].getTargets(), [""]);
 					assert.strictEqual(aMessages[1].getType(), "Information");
 				} else {
 					assert.strictEqual(aMessages.length, 0);
@@ -61565,6 +61621,8 @@ sap.ui.define([
 	// fnOnStrictHandlingFailed callback.
 	//
 	// JIRA: CPOUI5ODATAV4-1034
+	//
+	// Add error detail w/ target to 2nd one (SNOW: DINC0341568)
 	QUnit.test("CPOUI5ODATAV4-1034: handling=strict, simulate draft save", function (assert) {
 		var sConfirmAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			sGoodsAction = "com.sap.gateway.default.zui5_epm_sample.v0002."
@@ -61590,16 +61648,33 @@ sap.ui.define([
 				oConfirmBinding = oModel.bindContext(sConfirmAction + "(...)", oContext),
 				oError = createErrorInsideBatch({
 					code : "STRICT",
+					details : [{
+						"@Common.numericSeverity" : 3,
+						code : "NOTE_EMPTY",
+						message : "Note is empty",
+						// Note: "$Parameter/" is optional in error case, but mandatory in success
+						target : "$Parameter/SalesOrder/Note"
+					}],
 					message : "Strict Handling"
 				}, 412),
 				oGoodsBinding = oModel.bindContext(sGoodsAction + "(...)", oContext);
 
 			function fnOnStrictHandlingFailed(aMessages) {
-				assert.deepEqual(aMessages, [], "no details in strict error response");
+				assert.strictEqual(aMessages.length, 1);
+				assert.strictEqual(aMessages[0].getCode(), "NOTE_EMPTY");
+				assert.strictEqual(aMessages[0].getMessage(), "Note is empty");
+				assert.deepEqual(aMessages[0].getTargets(), ["/SalesOrderList('42')/Note"]);
+				assert.strictEqual(aMessages[0].getType(), "Warning");
+
 				// code under test
 				aMessages = oContext.getMessages();
 				assert.strictEqual(aMessages.length, 1);
-				assert.strictEqual(aMessages[0].message, "Incorrect LifecycleStatus");
+				assert.strictEqual(aMessages[0].getCode(), "CODE");
+				assert.strictEqual(aMessages[0].getMessage(), "Incorrect LifecycleStatus");
+				assert.strictEqual(aMessages[0].getPersistent(), false);
+				assert.deepEqual(aMessages[0].getTargets(),
+					["/SalesOrderList('42')/LifecycleStatus"]);
+				assert.strictEqual(aMessages[0].getType(), "Warning");
 
 				return Promise.resolve(false);
 			}
@@ -67717,7 +67792,7 @@ sap.ui.define([
 					payload : {EmployeeID : "1"},
 					url : "FireEmployee"
 				}, new Promise(function (resolve) {
-					fnResolveOperation0 = resolve;
+					fnResolveOperation0 = resolve; // 204 No Content
 				}));
 
 			// code under test
@@ -67734,7 +67809,7 @@ sap.ui.define([
 					payload : {EmployeeID : "2"},
 					url : "FireEmployee"
 				}, new Promise(function (resolve) {
-					fnResolveOperation1 = resolve;
+					fnResolveOperation1 = resolve; // 204 No Content
 				}));
 
 			// code under test
@@ -68189,49 +68264,69 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Refresh a binding with $$sharedRequest while a read request is pending.
 	// BCP: 2370078660
-	QUnit.test("BCP: 2370078660", async function (assert) {
-		const oModel = this.createTeaBusiModel({autoExpandSelect : true, sharedRequests : true});
-		const sView = `
-<Table id="table" items="{path : '/TEAMS', suspended : true}">
-	<Text id="name" text="{Name}"/>
-</Table>`;
+	//
+	// See that the cache recovers gracefully if the first request fails and gets obsolete
+	// SNOW: DINC0329166
+	[false, true].forEach(function (bReject) {
+		QUnit.test("BCP: 2370078660, bReject=" + bReject, async function (assert) {
+			const oModel = this.createTeaBusiModel({autoExpandSelect : true, sharedRequests : true});
+			const sView = `
+	<Table id="table" items="{path : '/TEAMS', suspended : true}">
+		<Text id="name" text="{Name}"/>
+	</Table>`;
 
-		this.expectChange("name", []);
+			this.expectChange("name", []);
 
-		await this.createView(assert, sView, oModel);
+			await this.createView(assert, sView, oModel);
 
-		let fnResolve;
-		const oResponsePromise = new Promise((resolve) => { fnResolve = resolve; });
-		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oResponsePromise);
+			let fnFulfill;
+			const oResponsePromise = new Promise((resolve, reject) => {
+				fnFulfill = bReject
+					? reject.bind(null, createErrorInsideBatch())
+					: resolve; // no need to give a result; it will be obsoleted anyway
+			});
+			this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oResponsePromise);
 
-		const oBinding = this.oView.byId("table").getBinding("items");
-		oBinding.resume();
+			const oBinding = this.oView.byId("table").getBinding("items");
+			oBinding.resume();
 
-		await this.waitForChanges(assert, "resume");
+			await this.waitForChanges(assert, "resume");
 
-		this.expectCanceledError(
-				"Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
-					+ "/TEAMS with start index 0 and length 100",
-				"Request is obsolete")
-			.expectCanceledError(
-				"Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001"
-					+ "/TEAMS with start index 0 and length 100",
-				"Request is obsolete")
-			.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
-				value : [
-					{Team_Id : "1", Name : "Team #1"},
-					{Team_Id : "2", Name : "Team #2"}
-				]
-			})
-			.expectChange("name", ["Team #1", "Team #2"]);
+			const sErrorMsg = "Failed to get contexts for " + sTeaBusi
+				+ "TEAMS with start index 0 and length 100";
+			if (bReject) {
+				// getContexts is called twice due to auto-$expand/$select refresh
+				this.oLogMock.expects("error").twice()
+					.withArgs(sErrorMsg, sinon.match("Request intentionally failed"));
+				this.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			} else {
+				// getContexts is called twice due to auto-$expand/$select refresh
+				this.expectCanceledError(sErrorMsg, "Request is obsolete")
+					.expectCanceledError(sErrorMsg, "Request is obsolete");
+			}
+			this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+					value : [
+						{Team_Id : "1", Name : "Team #1"},
+						{Team_Id : "2", Name : "Team #2"}
+					]
+				})
+				.expectChange("name", ["Team #1", "Team #2"]);
 
-		const oRefreshPromise = oBinding.requestRefresh();
-		fnResolve(); // no need to give a result; it will be obsoleted anyway
+			// code under test
+			const oRefreshPromise = oBinding.requestRefresh();
+			fnFulfill();
 
-		await Promise.all([
-			oRefreshPromise,
-			this.waitForChanges(assert, "refresh while resume request is pending")
-		]);
+			await Promise.all([
+				oRefreshPromise,
+				this.waitForChanges(assert, "refresh while resume request is pending")
+			]);
+		});
 	});
 
 	//*********************************************************************************************

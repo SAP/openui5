@@ -1,8 +1,6 @@
 /* global QUnit*/
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	'sap/ui/test/opaQunit',
 	'sap/ui/test/Opa5',
 	'sap/ui/test/matchers/LabelFor',
@@ -102,7 +100,5 @@ sap.ui.require([
 			Then.iTeardownMyAppFrame();
 		}
 	});
-
-	QUnit.start();
 
 });

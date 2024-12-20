@@ -3566,7 +3566,7 @@ sap.ui.define([
 			return that.handleCount(oGroupLock, iTransientElements, oReadRequest.iStart,
 				oReadRequest.iEnd, aResult[0], iFiltered);
 		}).catch(function (oError) {
-			if (!oError.canceled) {
+			if (!oError.canceled && !oReadRequest.bObsolete) {
 				that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
 				that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
 			}
@@ -4287,10 +4287,16 @@ sap.ui.define([
 			return SyncPromise.all([
 				that.oRequestor.request(sHttpMethod,
 					that.sResourcePath + that.sQueryString, oGroupLock0, mHeaders, oData,
-					oEntity && sGroupId !== "$single" && onSubmit),
+					oEntity && sGroupId !== "$single" && onSubmit, undefined, undefined, "R#V#C"),
 				that.fetchTypes()
 			]).then(function (aResult) {
 				that.buildOriginalResourcePath(aResult[0], aResult[1], fnGetOriginalResourcePath);
+				const aHeaderMessages = _Helper.getPrivateAnnotation(aResult[0], "headerMessages");
+				if (aHeaderMessages) {
+					that.oRequestor.getModelInterface().reportTransitionMessages(aHeaderMessages,
+						that.sResourcePath, /*bSilent*/false, that.sOriginalResourcePath);
+					_Helper.deletePrivateAnnotation(aResult[0], "headerMessages");
+				}
 				that.visitResponse(aResult[0], aResult[1]);
 				if (that.mQueryOptions && that.mQueryOptions.$select) {
 					// add "@$ui5.noData" annotations, e.g. for missing Edm.Stream properties

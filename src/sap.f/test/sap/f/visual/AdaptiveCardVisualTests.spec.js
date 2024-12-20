@@ -14,7 +14,7 @@ describe('sap.f.AdaptiveCardVisualTests', function() {
 			});
 		};
 
-		browser.executeScript("arguments[0].scrollIntoView()", submitButton).then(function() {
+		browser.executeScript("document.querySelector('.ac-pushButton').scrollIntoView()").then(function() {
 			submitButton.click();
 			captureCard();
 		});
@@ -38,7 +38,7 @@ describe('sap.f.AdaptiveCardVisualTests', function() {
 			});
 		};
 
-		browser.executeScript("arguments[0].scrollIntoView()", showMoreButton).then(function() {
+		browser.executeScript("document.querySelector('.ac-pushButton.expandable').srollIntoView()").then(function() {
 			showMoreButton.click();
 			captureCard();
 		});

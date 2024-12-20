@@ -4794,7 +4794,7 @@ sap.ui.define([
 
 		// code under test
 		_Helper.adjustTargets(oMessage, "oOperationMetadata", "sParameterContextPath",
-			"sContextPath");
+			"sContextPath", "sOriginalResourcePath");
 
 		assert.deepEqual(oMessage, {target : undefined});
 	});
@@ -4807,12 +4807,13 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
 			.returns(undefined);
 		this.mock(_Helper).expects("getAdjustedTarget")
-			.withExactArgs("target", "oOperationMetadata", "sParameterContextPath", "sContextPath")
+			.withExactArgs("target", "oOperationMetadata", "sParameterContextPath", "sContextPath",
+				"sOriginalResourcePath")
 			.returns("~adjusted~");
 
 		// code under test
 		_Helper.adjustTargets(oMessage, "oOperationMetadata", "sParameterContextPath",
-			"sContextPath");
+			"sContextPath", "sOriginalResourcePath");
 
 		assert.deepEqual(oMessage, {target : "~adjusted~"});
 	});
@@ -4846,24 +4847,25 @@ sap.ui.define([
 			oHelperMock.expects("getAnnotationKey").never();
 		}
 		oHelperMock.expects("getAdjustedTarget")
-			.withExactArgs("target", "oOperationMetadata", "sParameterContextPath", "sContextPath")
+			.withExactArgs("target", "oOperationMetadata", "sParameterContextPath", "sContextPath",
+				"sOriginalResourcePath")
 			.returns(bTargetIsValid ? "~adjusted~" : undefined);
 		oHelperMock.expects("getAdjustedTarget")
 			.withExactArgs("additional1", "oOperationMetadata", "sParameterContextPath",
-				"sContextPath")
+				"sContextPath", "sOriginalResourcePath")
 			.returns("~adjusted1~");
 		oHelperMock.expects("getAdjustedTarget")
 			.withExactArgs("foo", "oOperationMetadata", "sParameterContextPath",
-				"sContextPath")
+				"sContextPath", "sOriginalResourcePath")
 			.returns(undefined);
 		oHelperMock.expects("getAdjustedTarget")
 			.withExactArgs("additional2", "oOperationMetadata", "sParameterContextPath",
-				"sContextPath")
+				"sContextPath", "sOriginalResourcePath")
 			.returns("~adjusted2~");
 
 		// code under test
 		_Helper.adjustTargets(oMessage, "oOperationMetadata", "sParameterContextPath",
-			"sContextPath");
+			"sContextPath", "sOriginalResourcePath");
 
 		const oExpectedMessage = {
 			target : bTargetIsValid ? "~adjusted~" : "~adjusted1~",
@@ -4906,7 +4908,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			_Helper.getAdjustedTarget("$Parameter/foo/bar", oOperationMetadata,
-				"~parameterContextPath~"),
+				"~parameterContextPath~", "n/a", "n/a"),
 			"~parameterContextPath~/foo/bar");
 
 		assert.strictEqual(
@@ -4925,14 +4927,23 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			_Helper.getAdjustedTarget("$Parameter/foo/bar", oOperationMetadata,
-				"~parameterContextPath~", "~contextPath~"),
+				"~parameterContextPath~", "~contextPath~", "n/a"),
 			"~contextPath~/bar");
 
 		assert.strictEqual(
 			// code under test
 			_Helper.getAdjustedTarget("$Parameter/bar", oOperationMetadata,
-				"~parameterContextPath~", "~contextPath~"),
+				"~parameterContextPath~", "~contextPath~", "n/a"),
 			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAdjustedTarget: R.V.C.", function (assert) {
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("foo/bar", /*oOperationMetadata*/null, "n/a", "n/a",
+				"original/resource/path"),
+			"/original/resource/path/foo/bar");
 	});
 
 	//*********************************************************************************************
