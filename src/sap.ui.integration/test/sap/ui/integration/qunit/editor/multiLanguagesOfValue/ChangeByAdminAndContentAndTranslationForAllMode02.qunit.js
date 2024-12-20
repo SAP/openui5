@@ -209,8 +209,8 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oAdminChanges, _oContentChanges, _oTranslationChangesWithErrorTexts]
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
 					var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
@@ -221,7 +221,8 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Translation", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -357,8 +358,8 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oAdminChanges, _oContentChanges, _oTranslationChanges]
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
 					var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
@@ -369,7 +370,8 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Translation", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -505,8 +507,8 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oAdminChanges, _oContentChanges, _oTranslationChanges]
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
 					var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
@@ -517,7 +519,8 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 French", "Label1: Label 1 French");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Translation", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -653,8 +656,8 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oAdminChanges, _oContentChanges, _oTranslationChanges]
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
 					var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
@@ -665,7 +668,8 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Translation", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -802,8 +806,8 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oAdminChanges, _oContentChanges, _oTranslationChanges]
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
 					var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
@@ -814,7 +818,8 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Translation", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -950,8 +955,8 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oAdminChanges, _oContentChanges, _oTranslationChanges]
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
 					var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
@@ -962,7 +967,8 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Translation", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -1098,8 +1104,8 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oAdminChanges, _oContentChanges, _oTranslationChanges]
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
 					var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
@@ -1110,7 +1116,8 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Translation", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");

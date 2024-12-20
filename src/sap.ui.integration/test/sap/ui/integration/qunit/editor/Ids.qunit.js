@@ -93,8 +93,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 
 					var oGeneralGroupField = this.oEditor.getAggregation("_formContent")[0];
@@ -264,8 +264,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oHint1 = this.oEditor.getAggregation("_formContent")[1];
 					assert.equal(oHint1.getId(), sEditorId + "_group_hint", "Hint of group: id");
@@ -288,8 +288,8 @@ sap.ui.define([
 			var oJson = { baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } };
 			this.oEditor.setJson(oJson);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField._descriptionIcon.getId(), sEditorId + "_stringParameter_description_icon", "Description Icon: id");
@@ -342,8 +342,8 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					var sMessageIcon = oField.getAssociation("_messageIcon");
@@ -358,22 +358,20 @@ sap.ui.define([
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "groupsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					EditorQunitUtils.wait().then(function () {
-						var sEditorId = this.oEditor.getId();
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
-						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
-						var oMessageStripOfPanel = oPanel._messageStrip;
-						assert.equal(oMessageStripOfPanel.getId(), sEditorId + "_group_strip", "MessageStrip of group: id");
-						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
-						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
-						assert.ok(oSubPanel.getExpanded(), "Sub group expanded by default");
-						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
-						var oMessageStripOfSubPanel = oPanel.getContent()[1];
-						assert.equal(oMessageStripOfSubPanel.getId(), sEditorId + "_subGroup_strip", "MessageStrip of sub group: id");
-						resolve();
-					}.bind(this));
+					assert.ok(this.oEditor.isReady(), "Editor field is ready");
+					var sEditorId = this.oEditor.getId();
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
+					assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
+					var oMessageStripOfPanel = oPanel._messageStrip;
+					assert.equal(oMessageStripOfPanel.getId(), sEditorId + "_group_strip", "MessageStrip of group: id");
+					var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
+					assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
+					assert.ok(oSubPanel.getExpanded(), "Sub group expanded by default");
+					assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
+					var oMessageStripOfSubPanel = oPanel.getContent()[1];
+					assert.equal(oMessageStripOfSubPanel.getId(), sEditorId + "_subGroup_strip", "MessageStrip of sub group: id");
+					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
@@ -382,19 +380,17 @@ sap.ui.define([
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "subTabsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					EditorQunitUtils.wait().then(function () {
-						var sEditorId = this.oEditor.getId();
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
-						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
-						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
-						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 0 of Default Panel is sub tab bar");
-						assert.ok(oSubTab.getExpanded(), "Sub group expanded by default");
-						var oMessageStripOfSubTab = oPanel.getContent()[0];
-						assert.equal(oMessageStripOfSubTab.getId(), sEditorId + "_subGroup_strip", "MessageStrip of sub tab: id");
-						resolve();
-					}.bind(this));
+					assert.ok(this.oEditor.isReady(), "Editor field is ready");
+					var sEditorId = this.oEditor.getId();
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
+					assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
+					var oSubTab = oPanel.getContent()[1].getAggregation("_field");
+					assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 0 of Default Panel is sub tab bar");
+					assert.ok(oSubTab.getExpanded(), "Sub group expanded by default");
+					var oMessageStripOfSubTab = oPanel.getContent()[0];
+					assert.equal(oMessageStripOfSubTab.getId(), sEditorId + "_subGroup_strip", "MessageStrip of sub tab: id");
+					resolve();
 				}.bind(this));
 			}.bind(this));
 		});
@@ -423,8 +419,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 
 					var oTranslationTopPanelField = this.oEditor.getAggregation("_formContent")[0];
@@ -464,29 +460,28 @@ sap.ui.define([
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "subTabsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					EditorQunitUtils.wait().then(function () {
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var sEditorId = this.oEditor.getId();
-						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
-						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
-						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
-						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 0 of Default Panel is sub tab bar");
-						assert.equal(oSubTab.getId(), sEditorId + "_subGroup_control", "Field: sub tab bar id");
-						assert.ok(oSubTab.getExpanded(), "Sub group expanded by default");
-						var oMessageStripOfSubTab = oPanel.getContent()[0];
-						assert.ok(!oMessageStripOfSubTab.getVisible(), "Message strip of sub tab is not visible since sub tab is expanded");
-						assert.equal(oMessageStripOfSubTab.getId(), sEditorId + "_subGroup_strip", "Field: message strip id");
-						var oSubTabFilter = oSubTab.getItems()[0];
-						assert.equal(oSubTabFilter.getId(), sEditorId + "_subGroup_control_icontabfilter", "Field: sub tab filter id");
-						oSubTab.setExpanded(false);
-						EditorQunitUtils.wait(500).then(function () {
-							var expandedBtn = oSubTabFilter._getExpandIcon();
-							assert.ok(expandedBtn.getVisible(), "Error icon appeared.");
-							resolve();
-							//TBD
-						});
-					}.bind(this));
+					assert.ok(this.oEditor.isReady(), "Editor field is ready");
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
+					var sEditorId = this.oEditor.getId();
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
+					assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
+					var oSubTab = oPanel.getContent()[1].getAggregation("_field");
+					assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 0 of Default Panel is sub tab bar");
+					assert.equal(oSubTab.getId(), sEditorId + "_subGroup_control", "Field: sub tab bar id");
+					assert.ok(oSubTab.getExpanded(), "Sub group expanded by default");
+					var oMessageStripOfSubTab = oPanel.getContent()[0];
+					assert.ok(!oMessageStripOfSubTab.getVisible(), "Message strip of sub tab is not visible since sub tab is expanded");
+					assert.equal(oMessageStripOfSubTab.getId(), sEditorId + "_subGroup_strip", "Field: message strip id");
+					var oSubTabFilter = oSubTab.getItems()[0];
+					assert.equal(oSubTabFilter.getId(), sEditorId + "_subGroup_control_icontabfilter", "Field: sub tab filter id");
+					oSubTab.setExpanded(false);
+					EditorQunitUtils.wait(500).then(function () {
+						var expandedBtn = oSubTabFilter._getExpandIcon();
+						assert.ok(expandedBtn.getVisible(), "Error icon appeared.");
+						resolve();
+						//TBD
+					});
 				}.bind(this));
 			}.bind(this));
 		});
@@ -530,8 +525,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -580,8 +575,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -640,8 +635,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -708,8 +703,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -816,8 +811,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -868,8 +863,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -971,8 +966,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1078,8 +1073,8 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1088,46 +1083,49 @@ sap.ui.define([
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field 1: String Field");
 					var oSettingsButton = oField._settingsButton;
 					assert.equal(oSettingsButton.getId(), sEditorId + "_stringParameter_settings_btn", "Field 1: settings button id");
-					oSettingsButton.firePress();
-					oSettingsButton.focus();
-					EditorQunitUtils.wait().then(function () {
-						assert.equal(oSettingsButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
-						//popup is opened
-						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
-						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
-						var testInterface = settingsClass._private();
-						assert.deepEqual(testInterface.oCurrentInstance, oField._oSettingsPanel, "Settings: Points to right settings panel");
-						var oPopover = testInterface.oPopover;
-						assert.equal(oPopover.getId(), sEditorId + "_stringParameter_settings_popover", "Settings: Popover id");
-						var aHeaderContents = oPopover.getCustomHeader().getContent();
-						assert.equal(aHeaderContents[0].getId(), sEditorId + "_stringParameter_settings_popover_segmented_btn", "Popver: segment button id");
-						assert.equal(aHeaderContents[1].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_txt", "Popver: dynamicvalue text id");
-						assert.equal(aHeaderContents[2].getId(), sEditorId + "_stringParameter_settings_popover_settings_txt", "Popver: settings text id");
-						var oDynamicPanel = oPopover.getContent()[0];
-						var aDynamicValueControls = oDynamicPanel.getItems()[0].getItems();
-						assert.equal(aDynamicValueControls[0].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_label", "Popver: dynamicvalue label id");
-						assert.equal(aDynamicValueControls[1].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_input", "Popver: dynamicvalue input id");
-						assert.equal(oDynamicPanel.getItems()[1].getItems()[0].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_desc_txt", "Popver: dynamicvalue description text id");
-						var oCurrentValue = oPopover.getContent()[1];
-						assert.equal(oCurrentValue.getItems()[0].getId(), sEditorId + "_stringParameter_settings_popover_actualvalue_label", "Popver: dynamicvalue actualvalue label id");
-						assert.equal(oCurrentValue.getItems()[1].getId(), sEditorId + "_stringParameter_settings_popover_actualvalue_input", "Popver: dynamicvalue actualvalue input id");
-						var oSettingsPanel = oPopover.getContent()[2];
-						var aAdminSettings = oSettingsPanel.getItems()[0].getItems();
-						var aAdminVisibleControls = aAdminSettings[1].getItems();
-						assert.equal(aAdminVisibleControls[0].getId(), sEditorId + "_stringParameter_settings_popover_adminvisible_label", "Popver: settings adminvisible label id");
-						assert.equal(aAdminVisibleControls[1].getId(), sEditorId + "_stringParameter_settings_popover_adminvisible_checkbox", "Popver: settings adminvisible checkbox id");
-						var aAdminEditableControls = aAdminSettings[2].getItems();
-						assert.equal(aAdminEditableControls[0].getId(), sEditorId + "_stringParameter_settings_popover_admineditable_label", "Popver: settings admineditable label id");
-						assert.equal(aAdminEditableControls[1].getId(), sEditorId + "_stringParameter_settings_popover_admineditable_checkbox", "Popver: settings admineditable checkbox id");
-						var aAllowDynamicValuesControls = aAdminSettings[3].getItems();
-						assert.equal(aAllowDynamicValuesControls[0].getId(), sEditorId + "_stringParameter_settings_popover_allowdynamicvalues_label", "Popver: settings allowdynamicvalues label id");
-						assert.equal(aAllowDynamicValuesControls[1].getId(), sEditorId + "_stringParameter_settings_popover_allowdynamicvalues_checkbox", "Popver: settings allowdynamicvalues checkbox id");
-						var aActions = oPopover.getFooter().getContent();
-						assert.equal(aActions[0].getId(), sEditorId + "_stringParameter_settings_popover_reset_btn", "Popver: reset button id");
-						assert.equal(aActions[2].getId(), sEditorId + "_stringParameter_settings_popover_ok_btn", "Popver: ok button id");
-						assert.equal(aActions[3].getId(), sEditorId + "_stringParameter_settings_popover_cancel_btn", "Popver: cancel button id");
-						resolve();
-					});
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						oSettingsButton.firePress();
+						oSettingsButton.focus();
+						EditorQunitUtils.wait().then(function () {
+							assert.equal(oSettingsButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+							//popup is opened
+							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
+							var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+							var testInterface = settingsClass._private();
+							assert.deepEqual(testInterface.oCurrentInstance, oField._oSettingsPanel, "Settings: Points to right settings panel");
+							var oPopover = testInterface.oPopover;
+							assert.equal(oPopover.getId(), sEditorId + "_stringParameter_settings_popover", "Settings: Popover id");
+							var aHeaderContents = oPopover.getCustomHeader().getContent();
+							assert.equal(aHeaderContents[0].getId(), sEditorId + "_stringParameter_settings_popover_segmented_btn", "Popver: segment button id");
+							assert.equal(aHeaderContents[1].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_txt", "Popver: dynamicvalue text id");
+							assert.equal(aHeaderContents[2].getId(), sEditorId + "_stringParameter_settings_popover_settings_txt", "Popver: settings text id");
+							var oDynamicPanel = oPopover.getContent()[0];
+							var aDynamicValueControls = oDynamicPanel.getItems()[0].getItems();
+							assert.equal(aDynamicValueControls[0].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_label", "Popver: dynamicvalue label id");
+							assert.equal(aDynamicValueControls[1].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_input", "Popver: dynamicvalue input id");
+							assert.equal(oDynamicPanel.getItems()[1].getItems()[0].getId(), sEditorId + "_stringParameter_settings_popover_dynamicvalue_desc_txt", "Popver: dynamicvalue description text id");
+							var oCurrentValue = oPopover.getContent()[1];
+							assert.equal(oCurrentValue.getItems()[0].getId(), sEditorId + "_stringParameter_settings_popover_actualvalue_label", "Popver: dynamicvalue actualvalue label id");
+							assert.equal(oCurrentValue.getItems()[1].getId(), sEditorId + "_stringParameter_settings_popover_actualvalue_input", "Popver: dynamicvalue actualvalue input id");
+							var oSettingsPanel = oPopover.getContent()[2];
+							var aAdminSettings = oSettingsPanel.getItems()[0].getItems();
+							var aAdminVisibleControls = aAdminSettings[1].getItems();
+							assert.equal(aAdminVisibleControls[0].getId(), sEditorId + "_stringParameter_settings_popover_adminvisible_label", "Popver: settings adminvisible label id");
+							assert.equal(aAdminVisibleControls[1].getId(), sEditorId + "_stringParameter_settings_popover_adminvisible_checkbox", "Popver: settings adminvisible checkbox id");
+							var aAdminEditableControls = aAdminSettings[2].getItems();
+							assert.equal(aAdminEditableControls[0].getId(), sEditorId + "_stringParameter_settings_popover_admineditable_label", "Popver: settings admineditable label id");
+							assert.equal(aAdminEditableControls[1].getId(), sEditorId + "_stringParameter_settings_popover_admineditable_checkbox", "Popver: settings admineditable checkbox id");
+							var aAllowDynamicValuesControls = aAdminSettings[3].getItems();
+							assert.equal(aAllowDynamicValuesControls[0].getId(), sEditorId + "_stringParameter_settings_popover_allowdynamicvalues_label", "Popver: settings allowdynamicvalues label id");
+							assert.equal(aAllowDynamicValuesControls[1].getId(), sEditorId + "_stringParameter_settings_popover_allowdynamicvalues_checkbox", "Popver: settings allowdynamicvalues checkbox id");
+							var aActions = oPopover.getFooter().getContent();
+							assert.equal(aActions[0].getId(), sEditorId + "_stringParameter_settings_popover_reset_btn", "Popver: reset button id");
+							assert.equal(aActions[2].getId(), sEditorId + "_stringParameter_settings_popover_ok_btn", "Popver: ok button id");
+							assert.equal(aActions[3].getId(), sEditorId + "_stringParameter_settings_popover_cancel_btn", "Popver: cancel button id");
+							resolve();
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1157,8 +1155,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1167,27 +1165,29 @@ sap.ui.define([
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field 1: String Field");
 					var oSettingsButton = oField._settingsButton;
 					assert.equal(oSettingsButton.getId(), sEditorId + "_stringWithStaticList_settings_btn", "Field 1: settings button id");
-					oSettingsButton.firePress();
-					oSettingsButton.focus();
-					EditorQunitUtils.wait().then(function () {
-						assert.equal(oSettingsButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
-						//popup is opened
-						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
-						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
-						var testInterface = settingsClass._private();
-						assert.deepEqual(testInterface.oCurrentInstance, oField._oSettingsPanel, "Settings: Points to right settings panel");
-						var oPopover = testInterface.oPopover;
-						var oSettingsPanel = oPopover.getContent()[2];
-						var aAdminSettings = oSettingsPanel.getItems()[0].getItems();
-						var aAllowDynamicValuesControls = aAdminSettings[4].getItems();
-						assert.equal(aAllowDynamicValuesControls[0].getId(), sEditorId + "_stringWithStaticList_settings_popover_allowselectedvalues_label", "Popver: settings allowselectedvalues label id");
-						assert.equal(aAllowDynamicValuesControls[1].getId(), sEditorId + "_stringWithStaticList_settings_popover_allowselectedvalues_all_btn", "Popver: settings allowselectedvalues all button id");
-						var oScrollContainer = oSettingsPanel.getItems()[1];
-						assert.equal(oScrollContainer.getId(), sEditorId + "_stringWithStaticList_settings_popover_scroll_container", "Popver: settings scroll container id");
-						var oValueTable = oScrollContainer.getContent()[0];
-						assert.equal(oValueTable.getId(), sEditorId + "_stringWithStaticList_settings_popover_pav_table", "Popver: settings value table id");
-						resolve();
-					});
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");oSettingsButton.firePress();
+						oSettingsButton.focus();
+						EditorQunitUtils.wait().then(function () {
+							assert.equal(oSettingsButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+							//popup is opened
+							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
+							var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+							var testInterface = settingsClass._private();
+							assert.deepEqual(testInterface.oCurrentInstance, oField._oSettingsPanel, "Settings: Points to right settings panel");
+							var oPopover = testInterface.oPopover;
+							var oSettingsPanel = oPopover.getContent()[2];
+							var aAdminSettings = oSettingsPanel.getItems()[0].getItems();
+							var aAllowDynamicValuesControls = aAdminSettings[4].getItems();
+							assert.equal(aAllowDynamicValuesControls[0].getId(), sEditorId + "_stringWithStaticList_settings_popover_allowselectedvalues_label", "Popver: settings allowselectedvalues label id");
+							assert.equal(aAllowDynamicValuesControls[1].getId(), sEditorId + "_stringWithStaticList_settings_popover_allowselectedvalues_all_btn", "Popver: settings allowselectedvalues all button id");
+							var oScrollContainer = oSettingsPanel.getItems()[1];
+							assert.equal(oScrollContainer.getId(), sEditorId + "_stringWithStaticList_settings_popover_scroll_container", "Popver: settings scroll container id");
+							var oValueTable = oScrollContainer.getContent()[0];
+							assert.equal(oValueTable.getId(), sEditorId + "_stringWithStaticList_settings_popover_pav_table", "Popver: settings value table id");
+							resolve();
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1229,15 +1229,16 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Label 1 English", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field 1: String Field");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 						assert.equal(oValueHelpIcon.getId(), sEditorId + "_string1_control-vhi", "Field 1: value help icon id");
 						assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
@@ -1257,7 +1258,7 @@ sap.ui.define([
 							assert.equal(aActions[2].getId(), sEditorId + "_string1_translation_popover_cancel_btn", "Translation popover: cancel button id");
 							resolve();
 						});
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1297,11 +1298,12 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field: Object Field");
 						var oSimpleForm = oField.getAggregation("_field");
 						assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -1326,7 +1328,7 @@ sap.ui.define([
 							assert.equal(aActions[3].getId(), sEditorId + "_objectWithPropertiesDefined_control_translation_popover_cancel_btn", "Translation popover: cancel button id");
 							resolve();
 						});
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1366,8 +1368,8 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1454,8 +1456,8 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];

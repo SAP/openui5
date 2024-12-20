@@ -163,15 +163,16 @@ sap.ui.define([
 					}
 				});
 				return new Promise(function (resolve, reject) {
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 						assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel = this.oEditor.getAggregation("_formContent")[1];
 						var oField = this.oEditor.getAggregation("_formContent")[2];
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n " + sMappingLanguage, "Field value : StringParameter Value Trans in i18n " + sMappingLanguage);
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
@@ -236,15 +237,16 @@ sap.ui.define([
 					manifestChanges: [oAdminChanges]
 				});
 				return new Promise(function (resolve, reject) {
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 						assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel = this.oEditor.getAggregation("_formContent")[1];
 						var oField = this.oEditor.getAggregation("_formContent")[2];
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							var sExpectedValueOfText = _oExpectedValuesOfChangesWithTransFormat["string1"][sMappingLanguage] || "StringParameter Value Trans in i18n " + sMappingLanguage;
 							assert.equal(oField.getAggregation("_field").getValue(), sExpectedValueOfText, "Field value : " + sExpectedValueOfText);
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
@@ -313,15 +315,16 @@ sap.ui.define([
 					manifestChanges: [oContentChanges]
 				});
 				return new Promise(function (resolve, reject) {
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 						assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel = this.oEditor.getAggregation("_formContent")[1];
 						var oField = this.oEditor.getAggregation("_formContent")[2];
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							var sExpectedValueOfText = _oExpectedValuesOfChangesWithTransFormat["string2"][sMappingLanguage] || "StringParameter Value Trans in i18n " + sMappingLanguage;
 							assert.equal(oField.getAggregation("_field").getValue(), sExpectedValueOfText, "Field value : " + sExpectedValueOfText);
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
@@ -390,15 +393,16 @@ sap.ui.define([
 					manifestChanges: [oTranslationChanges]
 				});
 				return new Promise(function (resolve, reject) {
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 						assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel = this.oEditor.getAggregation("_formContent")[1];
 						var oField = this.oEditor.getAggregation("_formContent")[2];
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							assert.equal(oField.getAggregation("_field").getValue(), "String3 translation", "Field value : String3 translation");
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");

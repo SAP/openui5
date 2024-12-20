@@ -181,15 +181,16 @@ sap.ui.define([
 					manifestChanges: [oAdminChanges]
 				});
 				return new Promise(function (resolve, reject) {
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 						assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel = this.oEditor.getAggregation("_formContent")[1];
 						var oField = this.oEditor.getAggregation("_formContent")[2];
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field: Object List Field");
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							assert.ok(deepEqual(oField._getCurrentProperty("value"), [oObject1]), "Field: value ok");
 							var oTable = oField.getAggregation("_field");
 							var oToolbar = oTable.getExtension()[0];
@@ -257,7 +258,7 @@ sap.ui.define([
 									});
 								});
 							};
-						});
+						}.bind(this));
 					}.bind(this));
 				}.bind(this));
 			});
@@ -273,15 +274,16 @@ sap.ui.define([
 					manifestChanges: [oAdminChanges]
 				});
 				return new Promise(function (resolve, reject) {
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 						assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel = this.oEditor.getAggregation("_formContent")[1];
 						var oField = this.oEditor.getAggregation("_formContent")[2];
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field: Object List Field");
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							assert.ok(deepEqual(oField._getCurrentProperty("value"), [oObject1]), "Field: value ok");
 							var oTable = oField.getAggregation("_field");
 							var oToolbar = oTable.getExtension()[0];
@@ -349,7 +351,7 @@ sap.ui.define([
 									});
 								});
 							};
-						});
+						}.bind(this));
 					}.bind(this));
 				}.bind(this));
 			});

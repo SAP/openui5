@@ -219,8 +219,8 @@ sap.ui.define([
 							manifest: _oManifest,
 							manifestChanges: [_oContentChanges, _oTranslationChanges]
 						});
-						EditorQunitUtils.isReady(that.oEditor).then(function () {
-							assert.ok(that.oEditor.isReady(), "Editor is ready");
+						EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+							assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 							var oField1Ori = that.oEditor.getAggregation("_formContent")[3];
 							var oField1Trans = that.oEditor.getAggregation("_formContent")[4];
 							var oField3Ori = that.oEditor.getAggregation("_formContent")[6];
@@ -229,7 +229,8 @@ sap.ui.define([
 							var oField4Trans = that.oEditor.getAggregation("_formContent")[10];
 							var oField5Ori = that.oEditor.getAggregation("_formContent")[12];
 							var oField5Trans = that.oEditor.getAggregation("_formContent")[13];
-							EditorQunitUtils.wait().then(function () {
+							EditorQunitUtils.isReady(that.oEditor).then(function () {
+								assert.ok(that.oEditor.isReady(), "Editor is ready");
 								assert.equal(oField1Ori.getAggregation("_field").getText(), sString1OriValue, "Field1Ori: " + sString1OriValue);
 								assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
 								assert.equal(oField1Trans.getAggregation("_field").getValue(), sString1TransValue, "Field1Trans: " + sString1TransValue);
