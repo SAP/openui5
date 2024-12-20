@@ -13,4 +13,9 @@
 		width: 100%;
 		min-height: 100%;
 	}
+
+	// Hide the placeholder using CSS only, to avoid re-rendering the iframe, which results in page reload.
+	&:not(.sapFCardContentLoading) .sapFCardContentPlaceholder {
+		display: none;
+	}
 }

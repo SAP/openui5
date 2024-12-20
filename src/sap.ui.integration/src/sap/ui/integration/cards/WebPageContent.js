@@ -2,14 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/IllustratedMessageType",
 	"./BaseContent",
 	"./WebPageContentRenderer",
+	"sap/ui/util/isCrossOriginURL",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/util/BindingHelper"
 ], function (
-	IllustratedMessageType,
 	BaseContent,
 	WebPageContentRenderer,
+	isCrossOriginURL,
+	IllustratedMessageType,
 	BindingHelper
 ) {
 	"use strict";
@@ -107,6 +109,10 @@ sap.ui.define([
 
 		this._onFrameLoadedBound = this._onFrameLoaded.bind(this);
 		this._sPrevSrc = this.getSrc();
+
+		this.attachEventOnce("_dataReady", () => {
+			this._bDataReady = true;
+		});
 	};
 
 	WebPageContent.prototype.exit = function () {
@@ -123,6 +129,17 @@ sap.ui.define([
 		if (this.getDomRef("frame")) {
 			this.getDomRef("frame").removeEventListener("load", this._onFrameLoadedBound);
 		}
+
+		const sCurrSrc = this.getSrc();
+
+		if (this._isDataReady() && sCurrSrc !== undefined && this._sPrevSrc !== sCurrSrc) {
+			this._sPrevSrc = sCurrSrc;
+
+			if (this._checkSrc()) {
+				this._bSrcChecked = true;
+				this._raceFrameLoad();
+			}
+		}
 	};
 
 	WebPageContent.prototype.onAfterRendering = function () {
@@ -131,28 +148,13 @@ sap.ui.define([
 		if (this.getDomRef("frame")) {
 			this.getDomRef("frame").addEventListener("load", this._onFrameLoadedBound);
 		}
-
-		const sCurrSrc = this.getSrc();
-
-		if (!this.getCardInstance()?.isReady()) {
-			this.getCardInstance()?.attachEventOnce("_ready", () => {
-				this.invalidate();
-			});
-			return;
-		}
-
-		if (!this._bSrcChecked || this._sPrevSrc !== sCurrSrc) {
-			this._checkSrc();
-			this._sPrevSrc = sCurrSrc;
-			this._bSrcChecked = true;
-		}
 	};
 
 	/**
 	 * @override
 	 */
 	WebPageContent.prototype.applyConfiguration = function () {
-		var oConfiguration = this.getParsedConfiguration();
+		const oConfiguration = this.getParsedConfiguration();
 
 		//workaround until actions refactor
 		this.fireEvent("_actionContentReady"); // todo
@@ -161,15 +163,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oSrcBinding = BindingHelper.formattedProperty(oConfiguration.src, function (sValue) {
-			return this._oIconFormatter.formatSrc(sValue);
-		}.bind(this));
-
-		if (oSrcBinding) {
-			this.bindSrc(oSrcBinding);
-		}
-
 		this.applySettings({
+			src: BindingHelper.formattedProperty(oConfiguration.src, (sValue) => this._oIconFormatter.formatSrc(sValue) ),
 			sandbox: oConfiguration.sandbox,
 			minHeight: oConfiguration.minHeight,
 			allow: oConfiguration.allow,
@@ -178,22 +173,20 @@ sap.ui.define([
 		});
 	};
 
-	WebPageContent.prototype.isReady = function () {
-		const oCard = this.getCardInstance();
-
-		if (!oCard) {
-			return false;
+	WebPageContent.prototype._isDataReady = function () {
+		if (!this.getCardInstance()) {
+			return this._bDataReady;
 		}
 
-		return oCard.isReady();
+		return this._bDataReady && this.getCardInstance().isDataReady();
 	};
 
 	WebPageContent.prototype._checkSrc = function () {
-		var oCard = this.getCardInstance(),
+		const oCard = this.getCardInstance(),
 			sCurrSrc = this.getSrc();
 
 		if (!oCard) {
-			return;
+			return false;
 		}
 
 		if (!sCurrSrc) {
@@ -202,20 +195,21 @@ sap.ui.define([
 				title: oCard.getTranslatedText("CARD_WEB_PAGE_EMPTY_URL_ERROR"),
 				description: oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION")
 			});
-			return;
+			return false;
 		}
 
-		if (!sCurrSrc.startsWith("https://")) {
+		if (isCrossOriginURL(sCurrSrc) && !sCurrSrc.startsWith("https")) {
 			this.handleError({
 				illustrationType: IllustratedMessageType.ErrorScreen,
 				title: oCard.getTranslatedText("CARD_WEB_PAGE_HTTPS_URL_ERROR"),
 				description: oCard.getTranslatedText("CARD_ERROR_REQUEST_ACCESS_DENIED_DESCRIPTION")
 			});
-			return;
+			return false;
 		}
 
-		this._raceFrameLoad();
+		return true;
 	};
+
 	/**
 	 * Shows error if FRAME_LOADED event didn't fire for 15 seconds
 	 */
@@ -227,6 +221,8 @@ sap.ui.define([
 		}
 
 		this._iLoadTimeout = setTimeout(function () {
+			this.fireEvent(FRAME_LOADED);
+
 			var iSeconds = LOAD_TIMEOUT / 1000,
 				oCard = this.getCardInstance();
 

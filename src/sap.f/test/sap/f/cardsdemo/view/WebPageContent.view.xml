@@ -14,36 +14,39 @@
 			</Toolbar>
 		</subHeader>
 		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
-		<f:GridContainer id="grid" class="sapUiSmallMargin">
-			<w:Card
-				id="webPageCardLocal"
-				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPageError/manifest.json"
-				height="auto"
-				class="sapUiMediumMarginEnd">
+		<f:GridContainer id="grid" class="sapUiSmallMargin" inlineBlockLayout="true">
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/manifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
 			</w:Card>
 			<w:Card
-				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/manifest.json"
-				height="auto"
-				class="sapUiMediumMarginEnd">
+				id="webPageCardWrongUrl"
+				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/webPageError/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/webPageFullscreen.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
 			</w:Card>
 			<w:Card
-				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/webPageFullscreen.json"
-				height="auto"
-				class="sapUiMediumMarginEnd">
+				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/baseUrl/manifest.json"
+				baseUrl="https://openui5.org">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
 			</w:Card>
 			<w:Card
-				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/webPageFooter.json"
-				height="auto"
-				class="sapUiMediumMarginEnd">
+				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/baseUrlHttp/manifest.json"
+				baseUrl="http://openui5.org">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/webPageFooter.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
@@ -65,9 +68,7 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card
-				manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/minHeight/manifest.json"
-				class="sapUiMediumMarginEnd">
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/minHeight/manifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>

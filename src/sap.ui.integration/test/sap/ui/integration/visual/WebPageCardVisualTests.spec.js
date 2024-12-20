@@ -9,7 +9,7 @@ describe("sap.ui.integration.WebPageCardVisualTests", function () {
 
 	it("WebPage Card", function () {
 		utils.navigateTo("WebPage Card");
-		var aCardIds = ["webPageCardLocal"];
+		var aCardIds = ["webPageCardWrongUrl"];
 
 		aCardIds.forEach(function (sId) {
 			utils.takePictureOfElement({

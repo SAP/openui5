@@ -3338,5 +3338,14 @@ sap.ui.define([
 		return bIsInteractive && this.getProperty("interactive");
 	};
 
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {boolean} Whether data is ready.
+	 */
+	Card.prototype.isDataReady = function () {
+		return !!this._bDataReady;
+	};
+
 	return Card;
 });
