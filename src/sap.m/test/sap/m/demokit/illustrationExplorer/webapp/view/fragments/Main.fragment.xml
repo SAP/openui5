@@ -1,0 +1,52 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+    xmlns:grid="sap.ui.layout.cssgrid">
+    <layout:DynamicSideContent id="dynamicSideContent" equalSplit="true">
+        <layout:mainContent>
+            <f:GridList class="sapUiDemoIllustrationExplorerMainContent"
+                items="{app>/filteredIllustrations}">
+                <f:customLayout>
+                    <grid:GridResponsiveLayout>
+                        <grid:layoutS>
+                            <grid:GridSettings
+                                gridTemplateColumns="1fr 1fr"
+                                gridAutoFlow="RowDense"
+                                gridGap="0.75rem" />
+                        </grid:layoutS>
+                        <grid:layoutM>
+                            <grid:GridSettings
+                                gridTemplateColumns="1fr 1fr"
+                                gridAutoFlow="RowDense"
+                                gridGap="0.75rem" />
+                        </grid:layoutM>
+                        <grid:layout>
+                            <grid:GridSettings
+                                gridTemplateColumns="repeat(auto-fill, minmax(12rem, 1fr))"
+                                gridAutoFlow="RowDense"
+                                gridGap="1rem" />
+                        </grid:layout>
+                    </grid:GridResponsiveLayout>
+                </f:customLayout>
+
+                <f:GridListItem type="Active" press=".onIllustrationPress">
+                    <VBox alignItems="Center" class="sapUiSmallMargin">
+                        <Illustration class="sapUiDemoIllustrationExplorerImage" set="{app>set}"
+                            media="{app>size}" type="{app>type}" />
+                        <Text class="sapUiSmallMarginTop" text="{app>type}" />
+                    </VBox>
+                </f:GridListItem>
+            </f:GridList>
+        </layout:mainContent>
+        <layout:sideContent>
+            <grid:CSSGrid
+                id="sideContentContainer"
+                class="sapUiDemoIllustrationExplorerSideContent"
+                gridTemplateColumns="1fr"
+                gridGap="1rem">
+            </grid:CSSGrid>
+        </layout:sideContent>
+    </layout:DynamicSideContent>
+</core:FragmentDefinition>

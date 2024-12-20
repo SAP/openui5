@@ -1,0 +1,59 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <VBox class="sapUiDemoIllustrationExplorerDetailsContent">
+        <HBox class="sapUiSmallMarginBottom">
+            <ObjectStatus title="{i18n>illustrationTypeLabel}" text="{illustration>/type}"
+                state="Information">
+                <layoutData>
+                    <FlexItemData styleClass="sapUiSmallMarginEnd" />
+                </layoutData>
+            </ObjectStatus>
+
+            <ObjectStatus title="{i18n>illustrationCategoryLabel}" text="{illustration>/category}"
+                state="Success"
+                visible="{= ${illustration>/set} !== 'tnt' }" />
+        </HBox>
+
+        <Panel headerText="{i18n>illustrationSizeLabel}: Dot">
+            <IllustratedMessage
+                illustrationType="{illustration>/type}"
+                illustrationSize="Dot"
+                title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
+                description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
+            <layoutData>
+                <FlexItemData styleClass="sapUiSmallMarginBottom" />
+            </layoutData>
+        </Panel>
+
+        <Panel headerText="{i18n>illustrationSizeLabel}: Spot">
+            <IllustratedMessage
+                illustrationType="{illustration>/type}"
+                illustrationSize="Spot"
+                title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
+                description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
+            <layoutData>
+                <FlexItemData styleClass="sapUiSmallMarginBottom" />
+            </layoutData>
+        </Panel>
+
+        <Panel headerText="{i18n>illustrationSizeLabel}: Dialog">
+            <IllustratedMessage
+                illustrationType="{illustration>/type}"
+                illustrationSize="Dialog"
+                title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
+                description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
+            <layoutData>
+                <FlexItemData styleClass="sapUiSmallMarginBottom" />
+            </layoutData>
+        </Panel>
+
+        <Panel headerText="{i18n>illustrationSizeLabel}: Scene">
+            <IllustratedMessage
+                illustrationType="{illustration>/type}"
+                illustrationSize="Scene"
+                title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
+                description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
+        </Panel>
+    </VBox>
+</core:FragmentDefinition>

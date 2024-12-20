@@ -1,0 +1,28 @@
+<mvc:XMLView
+    controllerName="sap.ui.demo.illustrationExplorer.controller.App"
+    displayBlock="true"
+    height="100%"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core">
+    <App id="app" class="sapUiDemoIllustrationExplorer">
+        <Page title="{i18n>pageTitle}" titleLevel="H1"
+            class="sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--footer">
+            <subHeader>
+                <core:Fragment
+                    fragmentName="sap.ui.demo.illustrationExplorer.view.fragments.SubHeader"
+                    type="XML" />
+            </subHeader>
+            <content>
+                <core:Fragment
+                    fragmentName="sap.ui.demo.illustrationExplorer.view.fragments.Main"
+                    type="XML" />
+            </content>
+            <footer>
+                <core:Fragment
+                    fragmentName="sap.ui.demo.illustrationExplorer.view.fragments.Footer"
+                    type="XML" />
+            </footer>
+        </Page>
+    </App>
+</mvc:XMLView>
