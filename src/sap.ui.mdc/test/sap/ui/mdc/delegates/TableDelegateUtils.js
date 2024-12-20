@@ -22,8 +22,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable
 	 *     Instance of the table.
-	 * @param {string} sPropertyName
-	 *     Name of the property.
+	 * @param {string} sPropertyKey
+	 *     Key of the property.
 	 * @param {function(sap.ui.mdc.Table, object):(sap.ui.core.Control | undefined)} [fnCreateTemplate]
 	 *     Callback to create a column template. Receives the table instance and property object. If no callback is provided or the callback does
 	 *     not return a control, a default control is created.
@@ -31,12 +31,12 @@ sap.ui.define([
 	 *     Promise that resolves with the column.
 	 * @private
 	 */
-	TableDelegateUtils.createColumn = function(oTable, sPropertyName, fnCreateTemplate) {
+	TableDelegateUtils.createColumn = function(oTable, sPropertyKey, fnCreateTemplate) {
 		if (!oTable.isA) {
 			return Promise.resolve(null);
 		}
 
-		return oTable._getPropertyByNameAsync(sPropertyName).then(function(oProperty) {
+		return oTable._getPropertyByNameAsync(sPropertyKey).then(function(oProperty) {
 			if (!oProperty) {
 				return null;
 			}
@@ -45,14 +45,14 @@ sap.ui.define([
 			var oColumnInfo = {
 				header: oProperty.label,
 				template: oTemplate || this.createColumnTemplate(oTable, oProperty),
-				propertyKey: sPropertyName
+				propertyKey: sPropertyKey
 			};
 
 			if (oProperty.unit) {
 				oColumnInfo.hAlign = "Right";
 			}
 
-			return new Column(oTable.getId() + "--" + oProperty.name, oColumnInfo);
+			return new Column(oTable.getId() + "--" + oProperty.key, oColumnInfo);
 		}.bind(this));
 	};
 

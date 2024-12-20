@@ -62,26 +62,22 @@ sap.ui.define([
 				delegate: {
 					name: sDelegatePath,
 					payload: {
-						collectionPath: "/testPath"
+						collectionPath: "/testPath",
+						propertyInfo: [{
+							key: "A",
+							label: "A",
+							dataType: "String",
+							path: "A"
+						},{
+							key: "B",
+							label: "B",
+							dataType: "String",
+							path: "B",
+							sortable: false
+						}]
 					}
 				}
 			});
-
-			TableQUnitUtils.stubPropertyInfos(this.oTable, [
-				{
-					name: "A",
-					label: "A",
-					dataType: "String",
-					path: "A"
-				},
-				{
-					name: "B",
-					label: "B",
-					dataType: "String",
-					path: "B",
-					sortable: false
-				}
-			]);
 
 			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
@@ -90,7 +86,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
@@ -205,19 +200,18 @@ sap.ui.define([
 				delegate: {
 					name: sDelegatePath,
 					payload: {
-						collectionPath: "/testPath"
+						collectionPath: "/testPath",
+						propertyInfo: [{
+							key: "test",
+							label: "Test",
+							path: "test",
+							dataType: "String",
+							sortable: true,
+							groupable: true
+						}]
 					}
 				}
 			});
-
-			TableQUnitUtils.stubPropertyInfos(this.oTable, [{
-				name: "test",
-				label: "Test",
-				path: "test",
-				dataType: "String",
-				sortable: true,
-				groupable: true
-			}]);
 
 			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
@@ -226,7 +220,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
@@ -355,20 +348,17 @@ sap.ui.define([
 				delegate: {
 					name: sDelegatePath,
 					payload: {
-						collectionPath: "/testPath"
+						collectionPath: "/testPath",
+						propertyInfo: [{
+							key: "test",
+							label: "Test",
+							path: "test",
+							dataType: "String",
+							groupable: true
+						}]
 					}
 				}
 			});
-
-			TableQUnitUtils.stubPropertyInfos(this.oTable, [
-				{
-					name: "test",
-					label: "Test",
-					path: "test",
-					dataType: "String",
-					groupable: true
-				}
-			]);
 
 			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
@@ -377,7 +367,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 

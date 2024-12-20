@@ -4,8 +4,6 @@ sap.ui.define([
 	"../../../delegates/TableDelegate",
 	"../../util/createAppEnvironment",
 	"sap/ui/mdc/table/utils/Personalization",
-	"sap/ui/mdc/Table",
-	"sap/ui/mdc/p13n/StateUtil",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/Deferred"
 ], function(
@@ -13,8 +11,6 @@ sap.ui.define([
 	TableDelegate,
 	createAppEnvironment,
 	PersonalizationUtils,
-	Table,
-	StateUtil,
 	nextUIUpdate,
 	Deferred
 ) {
@@ -24,10 +20,23 @@ sap.ui.define([
 	`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
 		<Table id="myTable"
 			p13nMode="Column,Sort,Filter,Group,Aggregate"
-			delegate='{
+			delegate='${JSON.stringify({
 				name: "test-resources/sap/ui/mdc/delegates/TableDelegate",
-				payload: {collectionPath: "/testPath"}
-			}'>
+				payload: {
+					collectionPath: "/testPath",
+					propertyInfo: [{
+						key: "colA",
+						label: "Column A",
+						path: "a",
+						dataType: "String"
+					}, {
+						key: "colB",
+						label: "Column B",
+						path: "b",
+						dataType: "String"
+					}]
+				}
+			})}'>
 			<columns>
 				<mdcTable:Column id="myTable-columnA" header="Column A" propertyKey="colA">
 					<m:Text />
@@ -35,18 +44,6 @@ sap.ui.define([
 			</columns>
 		</Table>
 	</mvc:View>`;
-
-	TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-		name: "colA",
-		label: "Column A",
-		path: "a",
-		dataType: "String"
-	}, {
-		name: "colB",
-		label: "Column B",
-		path: "b",
-		dataType: "String"
-	}]);
 
 	QUnit.module("User personalization detection", {
 		before: async function() {

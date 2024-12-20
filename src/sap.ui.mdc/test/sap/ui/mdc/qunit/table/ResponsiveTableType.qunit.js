@@ -121,6 +121,42 @@ sap.ui.define([
 		assert.equal(oInnerTable.getGrowingThreshold(), 30, "Table.threshold=30: growingThreshold");
 	});
 
+	QUnit.module("API", {
+		afterEach: function() {
+			this.oTable?.destroy();
+		},
+		createTable: function(mSettings) {
+			this.oTable = new Table({
+				type: new ResponsiveTableType(),
+				...mSettings
+			});
+			return this.oTable;
+		}
+	});
+
+	QUnit.test("#updateSortIndicators", async function(assert) {
+		const oTable = this.createTable({
+			columns: [
+				new Column()
+			]
+		});
+
+		await oTable.initialized();
+
+		const oType = oTable.getType();
+		const oColumn = oTable.getColumns()[0];
+		const oInnerColumn = oTable._oTable.getColumns()[0];
+
+		oType.updateSortIndicator(oColumn, "Ascending");
+		assert.strictEqual(oInnerColumn.getSortIndicator(),"Ascending", "Inner table column sort order");
+
+		oType.updateSortIndicator(oColumn, "Descending");
+		assert.strictEqual(oInnerColumn.getSortIndicator(), "Descending", "Inner table column sort order");
+
+		oType.updateSortIndicator(oColumn, "None");
+		assert.strictEqual(oInnerColumn.getSortIndicator(), "None", "Inner table column sort order");
+	});
+
 	QUnit.module("Show Details", {
 		beforeEach: async function() {
 			this.createTable();

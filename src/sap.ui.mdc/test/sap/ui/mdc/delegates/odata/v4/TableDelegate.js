@@ -9,12 +9,9 @@ sap.ui.define([
 	"delegates/odata/v4/FilterBarDelegate",
 	"delegates/odata/v4/ODataMetaModelUtil",
 	"delegates/odata/v4/util/DelegateUtil",
-	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/unified/Currency",
 	"sap/m/Text",
-	"sap/ui/model/Filter",
 	"sap/base/Log",
-	'sap/ui/mdc/odata/v4/TypeMap',
 	'../../util/PayloadSearchKeys'
 ], function(
 	TableDelegateUtils,
@@ -23,12 +20,9 @@ sap.ui.define([
 	FilterBarDelegate,
 	ODataMetaModelUtil,
 	DelegateUtil,
-	FilterUtil,
 	Currency,
 	Text,
-	Filter,
 	Log,
-	ODataV4TypeMap,
 	PayloadSearchKeys
 ) {
 	"use strict";
@@ -38,10 +32,10 @@ sap.ui.define([
 	 */
 	var TestTableDelegate = Object.assign({}, TableDelegate);
 
-	TestTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
-		return TableDelegateUtils.createColumn(oTable, sPropertyName, function(oTable, oProperty) {
+	TestTableDelegate.addItem = function(oTable, sPropertyKey, mPropertyBag) {
+		return TableDelegateUtils.createColumn(oTable, sPropertyKey, function(oTable, oProperty) {
 			let aProperties;
-			if (oProperty.name.endsWith("_ComplexWithUnit")) {
+			if (oProperty.key.endsWith("_ComplexWithUnit")) {
 				aProperties = oProperty.getSimpleProperties();
 
 				return new Currency({
@@ -53,7 +47,7 @@ sap.ui.define([
 						path: aProperties[1].path
 					}
 				});
-			} else 	if (oProperty.name.endsWith("_ComplexWithText")) {
+			} else 	if (oProperty.key.endsWith("_ComplexWithText")) {
 				aProperties = oProperty.getSimpleProperties();
 				const sTemplate = oProperty.exportSettings.template;
 				return new Text({
@@ -73,7 +67,7 @@ sap.ui.define([
 				});
 			}
 		}).then(function(oColumn) {
-			if (sPropertyName.endsWith("_ComplexWithUnit")) {
+			if (sPropertyKey.endsWith("_ComplexWithUnit")) {
 				oColumn.setHAlign("Right");
 				oColumn.setWidth("15rem");
 			}
@@ -132,6 +126,12 @@ sap.ui.define([
 	}
 
 	TestTableDelegate.fetchProperties = function(oTable) {
+		const oPayload = oTable.getPayload();
+
+		if (oPayload?.propertyInfo) {
+			return Promise.resolve(oPayload.propertyInfo);
+		}
+
 		var oModel = TableDelegateUtils.getModel(oTable);
 
 		if (!oModel) {

@@ -15,8 +15,18 @@ sap.ui.define([
 
 	var TestTableDelegate = Object.assign({}, TableDelegate);
 
-	TestTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
-		return TableDelegateUtils.createColumn(oTable, sPropertyName);
+	TestTableDelegate.fetchProperties = function(oTable) {
+		const oPayload = oTable.getPayload();
+
+		if (oPayload?.propertyInfo) {
+			return Promise.resolve(oPayload.propertyInfo);
+		} else {
+			return TableDelegate.fetchProperties.apply(this, arguments);
+		}
+	};
+
+	TestTableDelegate.addItem = function(oTable, sPropertyKey, mPropertyBag) {
+		return TableDelegateUtils.createColumn(oTable, sPropertyKey);
 	};
 
 	TestTableDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
@@ -33,16 +43,16 @@ sap.ui.define([
 
 	TestTableDelegate.getFilterDelegate = function() {
 		return {
-			addItem: function(oTable, sPropertyName) {
+			addItem: function(oTable, sPropertyKey) {
 				return this.fetchProperties(oTable).then(function(aProperties) {
 					var oProperty = aProperties.find(function(oProperty) {
-						return oProperty.name === sPropertyName;
+						return oProperty.key === sPropertyKey;
 					});
 
 					return new FilterField({
 						label: oProperty.label,
-						conditions: "{$filters>/conditions/" + oProperty.name + "}",
-						propertyKey: oProperty.name
+						conditions: "{$filters>/conditions/" + oProperty.key + "}",
+						propertyKey: oProperty.key
 					});
 				});
 			}.bind(this)
