@@ -9,11 +9,6 @@ sap.ui.define([
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectStatus",
 	"sap/m/ObjectMarker",
-	"sap/m/Table",
-	"sap/m/Column",
-	"sap/m/Label",
-	"sap/m/ColumnListItem",
-	"sap/m/Text",
 	"sap/m/Panel",
 	"sap/m/Page",
 	"sap/m/App"
@@ -28,11 +23,6 @@ sap.ui.define([
 	ObjectAttribute,
 	ObjectStatus,
 	ObjectMarker,
-	Table,
-	Column,
-	Label,
-	ColumnListItem,
-	MText,
 	Panel,
 	Page,
 	App
@@ -141,83 +131,16 @@ sap.ui.define([
 		}
 	}));
 
-	var oTable = new Table({
-		columns : [
-			new Column({
-				header : new Label({
-					text: "Last name",
-					wrapping: true
-				})
-			}),
-			new Column({
-				header : new Label({
-					text: "First name",
-					wrapping: true
-				})
-			}),
-			new Column({
-				header : new Label({
-					text: "Non-interactive usage",
-					wrapping: true
-				})
-			}),
-			new Column({
-				header : new Label({
-					text: "Interactive usage",
-					wrapping: true
-				})
-			})
-		]
-	});
-
-	oTable.bindItems("/exampleData", new ColumnListItem({
-		vAlign: "Middle",
-		cells : [
-			new MText({
-				text : "{lastName}",
-				wrapping : false
-			}),
-			new MText({
-				text : "{name}",
-				wrapping : false
-			}),
-			new ObjectMarker({
-				type: "{type}"
-			}),
-			new ObjectMarker({
-				type: "{type}",
-				press: oActiveMarkerHandler
-			})
-		]
-	}));
-
 	var oStandalonePanel = new Panel("standalone-panel", {
 		headerText: "Standalone use case",
-		expandable: true,
-		expanded: false,
 		content: [
 			new Panel({
 				headerText: "Non-interactive markers",
-				expandable: true,
-				expanded: false,
 				content: {
 					path: "/markerTypes",
 					templateShareable: false,
 					template: new ObjectMarker({
 						type: "{type}"
-					})
-				}
-			}),
-			new Panel({
-				headerText: "Interactive markers",
-				expandable: true,
-				expanded: false,
-				content: {
-					path: "/markerTypes",
-					templateShareable: false,
-					template: new ObjectMarker({
-						type: "{type}",
-						press: oActiveMarkerHandler
 					})
 				}
 			})
@@ -226,41 +149,23 @@ sap.ui.define([
 
 	var oObjectListItemPanel = new Panel({
 		headerText: "In a ObjectListItem use case",
-		expandable: true,
-		expanded: false,
 		content: [
 			new Panel({
 				headerText: "Non-Interactive Markers",
-				expandable: true,
-				expanded: false,
 				content: oList
-			}),
-			new Panel({
-				headerText: "Interactive Markers",
-				expandable: true,
-				expanded: false,
-				content: oActiveList
 			})
 		]
-	});
-
-	var oTablePanel = new Panel({
-		headerText: "In a Table use case",
-		expandable: true,
-		expanded: false,
-		content: oTable
 	});
 
 	var oPageLayout = new VerticalLayout({
 		content: [
 			oStandalonePanel,
-			oObjectListItemPanel,
-			oTablePanel
+			oObjectListItemPanel
 		]
-	}).addStyleClass("sapUiSmallMargin");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oPage = new Page("page", {
-		title:"Object Marker",
+		title:"ObjectMarker Accessibility Test Page",
 		titleLevel: TitleLevel.H1,
 		content: [
 			oPageLayout
@@ -268,8 +173,7 @@ sap.ui.define([
 	});
 
 	new App({
-		initialPage: "page",
-		pages: oPage,
+		pages: [oPage] ,
 		models: oModel
 	}).placeAt("body");
 });
