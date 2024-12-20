@@ -63,7 +63,7 @@ sap.ui.define([
 		this._oFullScreenDiv = document.createElement("div");
 		this._oFullScreenDiv.className = FULL_SCREEN_DIV_CLASS_NAME;
 		this._oFullScreenDiv.style["z-index"] = ZIndexManager.getNextZIndex();
-		var oOverlayContainer = Overlay.getOverlayContainer()[0];
+		var oOverlayContainer = Overlay.getOverlayContainer();
 		oOverlayContainer.append(this._oFullScreenDiv);
 	}
 

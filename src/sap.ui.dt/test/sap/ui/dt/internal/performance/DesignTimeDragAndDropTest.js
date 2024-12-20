@@ -83,60 +83,60 @@ window.startDragAndDrop = function() {
 		// execute operations based on console.log statements in drag&drop plugin
 		// do it in a promise chain so that the browser can render in between...
 		Promise.resolve().then(function() {
-			oLayout1Overlay.$().trigger("click");
-			oLayout1Overlay.$().trigger("dragstart");
-			oLayout1Overlay.$().trigger("drag");
-			oLayout1Overlay.$().trigger("dragenter");
+			oLayout1Overlay.getDomRef().dispatchEvent(new MouseEvent("click"));
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragstart"));
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("drag"));
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragenter"));
 		}).then(function() {
 			for (let i = 0; i < 100; i++) {
-				oLayout1Overlay.$().trigger("dragover");
-				oLayout1Overlay.$().trigger("drag");
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragover"));
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("drag"));
 			}
 		}).then(function() {
-			oControlInLayout2Overlay.$().trigger("dragenter");
-			oControlInLayout2Overlay.$().trigger("dragover");
+			oControlInLayout2Overlay.getDomRef().dispatchEvent(new DragEvent("dragenter"));
+			oControlInLayout2Overlay.getDomRef().dispatchEvent(new DragEvent("dragover"));
 		}).then(function() {
-			oLayout1Overlay.$().trigger("drag");
-			oLayout1Overlay.$().trigger("dragenter");
-			oLayout2ContentOverlay.$().trigger("dragleave");
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("drag"));
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragenter"));
+			oLayout2ContentOverlay.getDomRef().dispatchEvent(new DragEvent("dragleave"));
 		}).then(function() {
 			for (let i = 0; i < 100; i++) {
-				oLayout1Overlay.$().trigger("dragover");
-				oLayout1Overlay.$().trigger("drag");
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragover"));
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("drag"));
 			}
 		}).then(function() {
-			oControlInLayout3Overlay.$().trigger("dragenter");
+			oControlInLayout3Overlay.getDomRef().dispatchEvent(new DragEvent("dragenter"));
 		}).then(function() {
-			oLayout2ContentOverlay.$().trigger("dragleave");
+			oLayout2ContentOverlay.getDomRef().dispatchEvent(new DragEvent("dragleave"));
 		}).then(function() {
-			oControlInLayout3Overlay.$().trigger("dragover");
+			oControlInLayout3Overlay.getDomRef().dispatchEvent(new DragEvent("dragover"));
 		}).then(function() {
-			oLayout1Overlay.$().trigger("drag");
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("drag"));
 		}).then(function() {
-			oControlInLayout1Overlay.$().trigger("dragenter");
+			oControlInLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragenter"));
 		}).then(function() {
-			oLayout1Overlay.$().trigger("dragenter");
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragenter"));
 		}).then(function() {
-			oLayout3ContentOverlay.$().trigger("dragleave");
+			oLayout3ContentOverlay.getDomRef().dispatchEvent(new DragEvent("dragleave"));
 		}).then(function() {
 			for (let i = 0; i < 100; i++) {
-				oControlInLayout1Overlay.$().trigger("dragover");
-				oLayout1Overlay.$().trigger("dragover");
-				oLayout1Overlay.$().trigger("drag");
+				oControlInLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragover"));
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragover"));
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("drag"));
 			}
 		}).then(function() {
-			oLayout1Overlay.$().trigger("dragenter");
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragenter"));
 		}).then(function() {
-			oLayout3ContentOverlay.$().trigger("dragleave");
+			oLayout3ContentOverlay.getDomRef().dispatchEvent(new DragEvent("dragleave"));
 		}).then(function() {
 			for (let i = 0; i < 100; i++) {
-				oLayout1Overlay.$().trigger("dragover");
-				oLayout1Overlay.$().trigger("drag");
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragover"));
+				oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("drag"));
 			}
 		}).then(function() {
-			oLayout3ContentOverlay.$().trigger("drop");
+			oLayout3ContentOverlay.getDomRef().dispatchEvent(new DragEvent("drop"));
 		}).then(function() {
-			oLayout1Overlay.$().trigger("dragend");
+			oLayout1Overlay.getDomRef().dispatchEvent(new DragEvent("dragend"));
 		}).then(function() {
 			// measure time
 			performance.mark("drag.ends");

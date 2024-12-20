@@ -28,7 +28,7 @@ sap.ui.define([
 	"use strict";
 
 	var OVERLAY_CONTAINER_ID = "overlay-container";
-	var $OverlayContainer;
+	var oOverlayContainer;
 	var oMutationObserver;
 
 	/**
@@ -238,9 +238,11 @@ sap.ui.define([
 
 			// Attach stored browser events
 			this.attachEventOnce("afterRendering", function(oEvent) {
-				var $DomRef = jQuery(oEvent.getParameter("domRef"));
+				var oDomRef = oEvent.getParameter("domRef");
 				this._aBindParameters.forEach(function(mBrowserEvent) {
-					$DomRef.on(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
+					if (oDomRef) {
+						oDomRef.addEventListener(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
+					}
 				});
 			}, this);
 		},
@@ -289,8 +291,12 @@ sap.ui.define([
 	 * @static
 	 */
 	Overlay.getOverlayContainer = function() {
-		$OverlayContainer ||= jQuery("<div></div>").attr("id", OVERLAY_CONTAINER_ID).appendTo("body");
-		return $OverlayContainer;
+		if (!oOverlayContainer) {
+			oOverlayContainer = document.createElement("div");
+			oOverlayContainer.id = OVERLAY_CONTAINER_ID;
+			document.body.append(oOverlayContainer);
+		}
+		return oOverlayContainer;
 	};
 
 	/**
@@ -298,11 +304,11 @@ sap.ui.define([
 	 * @static
 	 */
 	Overlay.removeOverlayContainer = function() {
-		if ($OverlayContainer) {
-			$OverlayContainer.remove();
+		if (oOverlayContainer) {
+			oOverlayContainer.remove();
 		}
 
-		$OverlayContainer = undefined;
+		oOverlayContainer = undefined;
 	};
 
 	/**
@@ -395,7 +401,7 @@ sap.ui.define([
 		if (!this.hasStyleClass(sClassName)) {
 			this._aStyleClasses.push(sClassName);
 			if (this.isReady()) {
-				this.$().addClass(sClassName);
+				this.getDomRef()?.classList.add(sClassName);
 			}
 		}
 	};
@@ -410,7 +416,7 @@ sap.ui.define([
 				return sItem !== sClassName;
 			});
 			if (this.isReady()) {
-				this.$().removeClass(sClassName);
+				this.getDomRef()?.classList.remove(sClassName);
 			}
 		}
 	};
@@ -450,7 +456,11 @@ sap.ui.define([
 		});
 		this._oScrollbarSynchronizers.clear();
 
-		this.$().remove();
+		const oDomRef = this.getDomRef();
+		if (oDomRef && oDomRef.parentNode) {
+			oDomRef.parentNode.removeChild(oDomRef);
+		}
+
 		delete this._bInit;
 		delete this._bShouldBeDestroyed;
 		delete this._$DomRef;
@@ -515,7 +525,7 @@ sap.ui.define([
 	};
 
 	Overlay.prototype.focus = function() {
-		this.$().trigger("focus");
+		this.getDomRef()?.focus();
 	};
 
 	/**
@@ -528,7 +538,7 @@ sap.ui.define([
 		if (this.getFocusable() !== bFocusable) {
 			this.setProperty("focusable", bFocusable);
 			this.toggleStyleClass("sapUiDtOverlayFocusable");
-			this.$().attr("tabindex", bFocusable ? 0 : null);
+			this.getDomRef()?.setAttribute("tabindex", bFocusable ? 0 : null);
 		}
 	};
 
@@ -723,7 +733,7 @@ sap.ui.define([
 					fnProxy
 				});
 
-				// if control is rendered, directly call on()
+				// If the control is rendered, directly add the event listener
 				this.$().on(sEventType, fnProxy);
 			}
 		}
@@ -750,8 +760,8 @@ sap.ui.define([
 
 				// remove the bind parameters from the stored array
 				if (this._aBindParameters) {
-					var $ = this.$();
 					var oParamSet;
+					var $ = this.$();
 					for (var i = this._aBindParameters.length - 1; i >= 0; i--) {
 						oParamSet = this._aBindParameters[i];
 						if (oParamSet.sEventType === sEventType && oParamSet.fnHandler === fnHandler && oParamSet.oListener === oListener) {
@@ -916,7 +926,10 @@ sap.ui.define([
 		bVisible = !!bVisible;
 		if (this.getVisible() !== bVisible) {
 			this.setProperty("visible", bVisible);
-			this.$().css("visibility", bVisible ? "" : "hidden");
+			const oDomRef = this.getDomRef();
+			if (oDomRef) {
+				oDomRef.style.visibility = bVisible ? "" : "hidden";
+			}
 			this.fireVisibleChanged({
 				visible: bVisible
 			});

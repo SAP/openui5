@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Panel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
+
 ], function(
 	Overlay,
 	ElementOverlay,
@@ -21,7 +23,8 @@ sap.ui.define([
 	Button,
 	Panel,
 	sinon,
-	nextUIUpdate
+	nextUIUpdate,
+	jQuery
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -36,7 +39,8 @@ sap.ui.define([
 				element: this.oPage,
 				designTimeMetadata: new AggregationDesignTimeMetadata()
 			});
-			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
+			// TODO remove jQuery when Overlay.render() returns DOM Element
+			jQuery(Overlay.getOverlayContainer()).append(this.oAggregationOverlay.render());
 		},
 		afterEach() {
 			this.oPage.destroy();
@@ -65,7 +69,8 @@ sap.ui.define([
 					}
 				})
 			});
-			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
+			// TODO remove jQuery when Overlay.render() returns DOM Element
+			jQuery(Overlay.getOverlayContainer()).append(this.oAggregationOverlay.render());
 
 			this.oAggregationOverlay.applyStyles();
 		},
@@ -115,7 +120,8 @@ sap.ui.define([
 					designTimeMetadata: new AggregationDesignTimeMetadata(),
 					children: [aOverlays[0]],
 					init: function(oEvent) {
-						Overlay.getOverlayContainer().append(oEvent.getSource().render());
+						// TODO remove jQuery when Overlay.render() returns DOM Element
+						jQuery(Overlay.getOverlayContainer()).append(oEvent.getSource().render());
 						this.oAggregationOverlay.applyStyles();
 						fnDone();
 					}.bind(this)
@@ -183,7 +189,8 @@ sap.ui.define([
 				})
 			});
 
-			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
+			// TODO remove jQuery when Overlay.render() returns DOM Element
+			jQuery(Overlay.getOverlayContainer()).append(this.oAggregationOverlay.render());
 			this.oAggregationOverlay.attachEventOnce("scrollSynced", fnDone);
 			this.oAggregationOverlay.applyStyles();
 
@@ -284,8 +291,8 @@ sap.ui.define([
 
 			this.oAggregationOverlay.attachEventOnce("afterRendering", function(oEvent) {
 				assert.ok(true, "then AggregationOverlay is rendered");
-				oEvent.getSource().$().trigger(sEventName, [sMockText1]);
-				oEvent.getSource().$().trigger(sEventName, [sMockText2]);
+				oEvent.getSource().getDomRef().dispatchEvent(new CustomEvent(sEventName, { detail: sMockText1}));
+				oEvent.getSource().getDomRef().dispatchEvent(new CustomEvent(sEventName, { detail: sMockText2}));
 			});
 
 			this.oAggregationOverlay.attachBrowserEvent(sEventName, fnEventHandler, this.oAggregationOverlay);

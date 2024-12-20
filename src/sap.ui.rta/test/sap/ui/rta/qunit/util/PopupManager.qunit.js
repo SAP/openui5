@@ -536,7 +536,7 @@ sap.ui.define([
 			var fnDefaultOnAfterRendering = this.oPopover.oPopup.onAfterRendering;
 			var {oPopup} = this.oPopover;
 			this.oPopover.attachAfterOpen(function() {
-				var oOverlayContainerDomRef = Overlay.getOverlayContainer().get(0);
+				var oOverlayContainerDomRef = Overlay.getOverlayContainer();
 				this.oRta.getPopupManager().addAutoCloseArea(new Button("autoCloseButton"));
 				this.oRta.getPopupManager()._applyPopupPatch(this.oPopover);
 				assert.strictEqual(this.fnRemovePopupListeners.callCount, 1, "then popup event listeners removed");

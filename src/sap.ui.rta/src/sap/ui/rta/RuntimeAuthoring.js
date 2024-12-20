@@ -448,11 +448,11 @@ sap.ui.define([
 			await onStackModified.call(this);
 
 			// Resolve the CSS variable set in themes/base/OverlayWithScrollbar.css
-			Overlay.getOverlayContainer().get(0).style.setProperty(
+			Overlay.getOverlayContainer().style.setProperty(
 				"--sap-ui-rta-scrollbar-scrollWidth",
 				`${DOMUtil.getScrollbarWidth()}px`
 			);
-			Overlay.getOverlayContainer().get(0).style.setProperty(
+			Overlay.getOverlayContainer().style.setProperty(
 				"--sap-ui-rta-scrollbar-scrollWidthPlusTwo",
 				`${DOMUtil.getScrollbarWidth() + 2}px`
 			);
@@ -519,7 +519,7 @@ sap.ui.define([
 			// add root control is triggering overlay creation, so we need to wait for the scope to be set.
 			this._oDesignTime.addRootElement(this._oRootControl);
 
-			Overlay.getOverlayContainer().get(0).classList.add("sapUiRta");
+			Overlay.getOverlayContainer().classList.add("sapUiRta");
 			// RTA Visual Improvements
 			document.body.classList.add("sapUiRtaMode");
 			this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
@@ -680,7 +680,13 @@ sap.ui.define([
 
 			oSelectionPlugin.setIsActive(!(sNewMode === "visualization"));
 
-			Overlay.getOverlayContainer().toggleClass("sapUiRtaVisualizationMode", (sNewMode === "visualization"));
+			const oOverlayContainer = Overlay.getOverlayContainer();
+			if (sNewMode === "visualization") {
+				oOverlayContainer.classList.add("sapUiRtaVisualizationMode");
+			} else {
+				oOverlayContainer.classList.remove("sapUiRtaVisualizationMode");
+			}
+
 			if (sNewMode === "visualization") {
 				document.querySelectorAll(".sapUiDtOverlayMovable").forEach(function(oNode) {
 					oNode.style.cursor = "default";
@@ -1070,7 +1076,7 @@ sap.ui.define([
 	function onKeyDown(oEvent) {
 		// if for example the addField Dialog/reset Popup is open, we don't want the user to be able to undo/redo
 		const bMacintosh = Device.os.macintosh;
-		const bFocusInsideOverlayContainer = Overlay.getOverlayContainer().get(0).contains(document.activeElement);
+		const bFocusInsideOverlayContainer = Overlay.getOverlayContainer().contains(document.activeElement);
 		const bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
 		let bFocusOnContextMenu = false;
 		// there might be two divs with that style-class (compact and expanded context menu)
