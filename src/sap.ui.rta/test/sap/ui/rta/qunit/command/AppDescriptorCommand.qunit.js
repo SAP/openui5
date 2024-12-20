@@ -178,7 +178,7 @@ sap.ui.define([
 				const oChange = oAppDescrCmd.getPreparedChange();
 				assert.ok(oChange, "the prepared change is available");
 				assert.deepEqual(oChange.getContent(), this.mParameters, "the stored change contains the parameters");
-				assert.ok(oChange.getDefinition().fileName.length <= 64, "the fileName is shortened to not exceed the LREP limit");
+				assert.ok(oChange.getId().length <= 64, "the fileName is shortened to not exceed the LREP limit");
 			}.bind(this))
 			.catch(function(oError) {
 				assert.ok(false, `catch must never be called - Error: ${oError}`);
