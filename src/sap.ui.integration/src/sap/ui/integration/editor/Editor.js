@@ -876,8 +876,8 @@ sap.ui.define([
 	});
 
 	/**
-		 * Init of the editor
-		 */
+	 * Init of the editor
+	 */
 	Editor.prototype.init = function () {
 		if (Editor.oResourceBundle && Editor.oResourceBundle.sLocale !== Utils._language) {
 			Editor.oResourceBundle = Library.getResourceBundleFor("sap.ui.integration", Utils._language);
@@ -921,7 +921,7 @@ sap.ui.define([
 
 	Editor.prototype.getParameters = function () {
 		if (!this._isManifestReady) {
-			Log.error("The manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.editor.Editor");
+			Log.error("sap.ui.integration.editor.Editor: the manifest is not ready. Consider using the 'manifestReady' event.", "sap.ui.integration.editor.Editor");
 			return null;
 		}
 
@@ -1114,6 +1114,7 @@ sap.ui.define([
 			languages: Editor._oLanguages,
 			supportedLocales: aSupportedLocales
 		});
+		this._oEditorResourceBundles.loadResourceBundles();
 	};
 
 	/**
@@ -1127,7 +1128,7 @@ sap.ui.define([
 		if (this._sAppId) {
 			LoaderExtensions.registerResourcePath(this._sAppId.replace(/\./g, "/"), this._oEditorManifest.getUrl() || "/");
 		} else {
-			Log.error("sap.app/id entry in the manifest is mandatory");
+			Log.error("sap.ui.integration.editor.Editor: sap.app/id entry in the manifest is mandatory");
 		}
 	};
 
@@ -1156,7 +1157,7 @@ sap.ui.define([
 		var sExtensionPath = this._oEditorManifest.get(this.getConfigurationPath() + "/extension") || this._oEditorManifest.get("/" + this.getSection() + "/extension"),
 			sFullExtensionPath;
 		if (!sExtensionPath) {
-			Log.info("Extension is not defined in manifest, do not load it.");
+			Log.info("sap.ui.integration.editor.Editor: extension is not defined in manifest, do not load it.");
 			return new Promise(function (resolve, reject) {
 				resolve();
 			});
@@ -1177,7 +1178,7 @@ sap.ui.define([
 				}
 				resolve();
 			}.bind(this), function (vErr) {
-				Log.error("Failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);
+				Log.error("sap.ui.integration.editor.Editor: failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);
 				reject(vErr);
 			});
 		}.bind(this));
@@ -1212,7 +1213,7 @@ sap.ui.define([
 
 		if (vHost && !oHostInstance) {
 			Log.error(
-				"Host with id '" + vHost + "' is not available during editor initialization. It must be available for host specific features to work.",
+				"sap.ui.integration.editor.Editor: Host with id '" + vHost + "' is not available during editor initialization. It must be available for host specific features to work.",
 				"Make sure that the host already exists, before assigning it to the editor.",
 				"sap.ui.integration.editor.Editor"
 			);
@@ -1260,7 +1261,7 @@ sap.ui.define([
 			sSanitizedUrl = sUrl && sUrl.trim().replace(/^\//, "");
 
 		if (sAppId === null) {
-			Log.error("The manifest is not ready so the URL can not be resolved. Consider using the 'manifestReady' event.", "sap.ui.integration.editor.Editor");
+			Log.error("sap.ui.integration.editor.Editor: manifest is not ready so the URL can not be resolved. Consider using the 'manifestReady' event.", "sap.ui.integration.editor.Editor");
 			return null;
 		}
 
@@ -1332,7 +1333,7 @@ sap.ui.define([
 			this._language = this._language.split("-")[0];
 		}
 		if (!Editor._oLanguages[this._language]) {
-			Log.warning("The language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
+			Log.warning("sap.ui.integration.editor.Editor: language: " + sValue + " is currently unknown, some UI controls might show " + sValue + " instead of the language name.");
 		}
 		return this;
 	};
@@ -1805,13 +1806,13 @@ sap.ui.define([
 					if (bResolved) {
 						return;
 					}
-					Log.error("Editor context could not be determined with " + CONTEXT_TIMEOUT + ".");
+					Log.error("sap.ui.integration.editor.Editor: context could not be determined with " + CONTEXT_TIMEOUT + ".");
 					bResolved = true;
 					resolve({});
 				}, CONTEXT_TIMEOUT);
 				oHost.getContext().then(function (oContextData) {
 					if (bResolved) {
-						Log.error("Editor context returned after more than " + CONTEXT_TIMEOUT + ". Context is ignored.");
+						Log.error("sap.ui.integration.editor.Editor: context returned after more than " + CONTEXT_TIMEOUT + ". Context is ignored.");
 					}
 					bResolved = true;
 					resolve(oContextData || {});
@@ -1851,7 +1852,7 @@ sap.ui.define([
 					.catch(function (sReason) {
 						this._mValues[sAbsolutePath] = null;
 						this.checkUpdate();
-						Log.error("Path " + sAbsolutePath + " could not be resolved. Reason: " + sReason);
+						Log.error("sap.ui.integration.editor.Editor: path " + sAbsolutePath + " could not be resolved. Reason: " + sReason);
 					}.bind(this));
 
 				this._aPendingPromises.push(pGetProperty);
@@ -2180,9 +2181,8 @@ sap.ui.define([
 					var pGetFieldData = Utils.timeoutPromise(this._addValueListModel(oConfig, oField));
 					pGetFieldData = pGetFieldData
 						.catch(function (sReason) {
-							this.checkUpdate();
-							Log.error("Get data of field " + sParameterKey + " could not be resolved. Reason: " + sReason);
-						}.bind(this));
+							Log.error("sap.ui.integration.editor.Editor: get data of field " + sParameterKey + " could not be resolved. Reason: " + sReason);
+						});
 
 					this._aFieldDataReadyPromise.push(pGetFieldData);
 				}
@@ -2425,7 +2425,7 @@ sap.ui.define([
 	Editor.prototype._requestExtensionData = function () {
 		var oExtension = this.getAggregation("_extension");
 		if (!oExtension) {
-			Log.info("Extension is not defined or created, do not load data of it.");
+			Log.info("sap.ui.integration.editor.Editor: extension is not defined or created, do not load data of it.");
 			return new Promise(function (resolve, reject) {
 				resolve();
 			});
@@ -2457,7 +2457,7 @@ sap.ui.define([
 			}
 		}
 		if (!bHasExtensionData) {
-			Log.info("Extension data is not defined in manifest, do not load data of it.");
+			Log.info("sap.ui.integration.editor.Editor: extension data is not defined in manifest, do not load data of it.");
 			return new Promise(function (resolve, reject) {
 				resolve();
 			});
@@ -2491,12 +2491,12 @@ sap.ui.define([
 							sError = (oErrorInResponse.code || oErrorInResponse.errorCode || oResponse.status) + ": " + oErrorInResponse.message;
 						}
 
-						Log.error("Request extension data failed, " + sError);
+						Log.error("sap.ui.integration.editor.Editor: request extension data failed, " + sError);
 					});
 				}
 			} else if (typeof (oError) === "string") {
 				sError = oError;
-				Log.error("Request extension data failed, " + sError);
+				Log.error("sap.ui.integration.editor.Editor: request extension data failed, " + sError);
 			}
 		}.bind(this));
 	};
@@ -3215,6 +3215,7 @@ sap.ui.define([
 		this._oInitialManifestModel = null;
 		this._settingsModel = null;
 		this._destinationsModel = null;
+		this._oEditorResourceBundles = null;
 		document.body.style.removeProperty("--sapUiIntegrationEditorFormWidth");
 		document.body.style.removeProperty("--sapUiIntegrationEditorFormHeight");
 		Control.prototype.destroy.apply(this, arguments);
@@ -3489,7 +3490,7 @@ sap.ui.define([
 					setTimeout(function () {
 						this.fireDestinationReady();
 					}.bind(this), 100);
-					Log.error("Can not get destinations list from '" + oHost.getId() + "'.");
+					Log.error("sap.ui.integration.editor.Editor: can not get destinations list from '" + oHost.getId() + "'.");
 				}.bind(this));
 			}
 		}

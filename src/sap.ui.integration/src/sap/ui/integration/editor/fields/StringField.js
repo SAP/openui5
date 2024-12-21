@@ -437,13 +437,19 @@ sap.ui.define([
 	//open the translation popup
 	StringField.prototype.openTranslationListPopup = function(oEvent) {
 		var that = this;
+		if (!that._oEditorResourceBundles.isReady()) {
+			// waiting for loading resource bundles
+			setTimeout(function() {
+				that.openTranslationListPopup(oEvent);
+			}, 100);
+			return;
+		}
 		var oControl = oEvent.getSource();
-		var oField = oControl.getParent();
-		var sParameterId = oField.getParameterId();
-		var oResourceBundle = oField.getResourceBundle();
-		var oTranslatedValues = that.buildTranslationsData(oField, oControl);
+		var sParameterId = that.getParameterId();
+		var oResourceBundle = that.getResourceBundle();
+		var oTranslatedValues = that.buildTranslationsData(oControl);
 		var oTranslatonsModel;
-		var sPlacement = oField.getPopoverPlacement(oControl._oValueHelpIcon);
+		var sPlacement = that.getPopoverPlacement(oControl._oValueHelpIcon);
 		if (!that._oTranslationPopover) {
 			var oList = that.buildTranslationsList(sParameterId + "_translation_popover_value_list");
 			that._oTranslationPopover = new Popover(sParameterId + "_translation_popover", {
@@ -489,11 +495,11 @@ sap.ui.define([
 								aLanguages.translatedLanguages.forEach(function(oLanguage) {
 									if (oLanguage.value !== oLanguage.originValue) {
 										if (oLanguage.updated) {
-											oField.setTranslationValueInTexts(oLanguage.key, oLanguage.value);
+											that.setTranslationValueInTexts(oLanguage.key, oLanguage.value);
 											aUpdatedLanguages.push(oLanguage.key);
 										}
 									} else if (oLanguage.updated) {
-										oField.deleteTranslationValueInTexts(oLanguage.key);
+										that.deleteTranslationValueInTexts(oLanguage.key);
 									}
 								});
 								if (aUpdatedLanguages.length > 0) {
@@ -524,17 +530,17 @@ sap.ui.define([
 		that._oTranslationPopover.openBy(oControl._oValueHelpIcon);
 	};
 
-	StringField.prototype.buildTranslationsData = function(oField, oControl) {
+	StringField.prototype.buildTranslationsData = function(oControl) {
 		var that = this;
-		var oConfig = oField.getConfiguration();
+		var oConfig = that.getConfiguration();
 		if (!that._aOriginTranslatedValues) {
 			//init the origin translation value list in card i18n files
-			that._aOriginTranslatedValues = oField.getOriginTranslatedValues(oConfig);
+			that._aOriginTranslatedValues = that.getOriginTranslatedValues(oConfig);
 		}
 		var aTempTranslatedLanguages = deepClone(that._aOriginTranslatedValues, 500);
 		//merge the value in texts or beforeLayerChange into the value list of i18n files
 		aTempTranslatedLanguages.forEach(function (translatedValue) {
-			var sTranslateText = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
+			var sTranslateText = that.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
 			if (sTranslateText) {
 				translatedValue.value = sTranslateText;
 				if (Array.isArray(that._aUpdatedLanguages) && !that._aUpdatedLanguages.includes(translatedValue.key)) {
@@ -561,7 +567,7 @@ sap.ui.define([
 			//check the updated language list, update the data model
 			aTempTranslatedLanguages.forEach(function (translatedValue) {
 				if (Array.isArray(that._aUpdatedLanguages) && that._aUpdatedLanguages.includes(translatedValue.key)) {
-					translatedValue.value = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
+					translatedValue.value = that.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
 					translatedValue.updated = true;
 				}
 				if (translatedValue.key === Utils._language) {

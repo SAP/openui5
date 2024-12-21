@@ -50,7 +50,7 @@ sap.ui.define([
 		}
 
 		if (this._oEditor.getAggregation("_extension") !== this) {
-			Log.error("Extension formatters must be set before the initialization of the editor. Do this inside Extension#init().");
+			Log.error("sap.ui.integration.editor.Extension: extension formatters must be set before the initialization of the editor. Do this inside Extension#init().");
 		}
 	};
 
