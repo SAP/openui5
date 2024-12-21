@@ -171,8 +171,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function () {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function () {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",
@@ -317,8 +317,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",
@@ -454,8 +454,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",
@@ -723,8 +723,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",
@@ -965,8 +965,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",
@@ -1236,8 +1236,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",
@@ -1502,8 +1502,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",
@@ -1659,8 +1659,8 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectFieldWithValues
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
-			assert.ok(oEditor.isReady(), "Editor is ready");
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
+			assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 			oValue = {
 				"text": "textnew",
 				"key": "keynew",

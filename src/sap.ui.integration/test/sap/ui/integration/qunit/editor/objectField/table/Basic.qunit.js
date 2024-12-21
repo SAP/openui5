@@ -170,190 +170,100 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
+					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
+					var oField2 = this.oEditor.getAggregation("_formContent")[4];
+					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
+					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value");
 					var oSettings = this.oEditor.getCurrentSettings();
 					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oAddButton = oTableToolbar.getContent()[1];
-					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					var oDeleteButton = oTableToolbar.getContent()[3];
-					assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
-					var oClearFitlersButton = oTableToolbar.getContent()[4];
-					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
-					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
-					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
-					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oColumns = oTable.getColumns();
-					assert.equal(oColumns.length, 8, "Table: column number is 8");
-					assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
-					assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
-					assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
-					assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
-					assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
-					assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
-					assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange({
-						rowIndex: 0,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change");
-					oSettings = this.oEditor.getCurrentSettings();
-					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after table selection change");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					oTable.setSelectedIndex(3);
-					oTable.fireRowSelectionChange({
-						rowIndex: 3,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change again");
-					oSettings = this.oEditor.getCurrentSettings();
-					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after table selection change again");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					oTable.setSelectedIndex(-1);
-					oTable.fireRowSelectionChange({
-						rowIndex: -1,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value not change after remove table selection");
-					oSettings = this.oEditor.getCurrentSettings();
-					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after remove table selection");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-
-					oSelectAllSelectionsButton.firePress();
-					assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
-
-					oClearAllSelectionsButton.firePress();
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
-
-					var oRow1 = oTable.getRows()[0];
-					var oSelectionCell1 = oRow1.getCells()[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
-					oSelectionCell1.setSelected(true);
-					oSelectionCell1.fireSelect({
-						selected: true
-					});
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
-					oSettings = this.oEditor.getCurrentSettings();
-					assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], oField._getCurrentProperty("value"), "Editor: Field 1 setting value changed after selecting");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
-					oSelectionCell1.setSelected(false);
-					oSelectionCell1.fireSelect({
-						selected: false
-					});
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
-					oSettings = this.oEditor.getCurrentSettings();
-					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value removed after deselecting");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
-
-					var oRow4 = oTable.getRows()[3];
-					var oSelectionCell4 = oRow4.getCells()[0];
-					assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
-					oSelectionCell4.setSelected(true);
-					oSelectionCell4.fireSelect({
-						selected: true
-					});
-					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
-					oSettings = this.oEditor.getCurrentSettings();
-					assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], oField._getCurrentProperty("value"), "Editor: Field 1 setting value changed after selecting again");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-
-					oRemoveValueButton.firePress();
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after clicking remove value button");
-					oSettings = this.oEditor.getCurrentSettings();
-					assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value removed after clicking remove value button");
-
-					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
-					var oField2 = this.oEditor.getAggregation("_formContent")[4];
-					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
-					var oField3 = this.oEditor.getAggregation("_formContent")[6];
-					EditorQunitUtils.wait().then(function () {
-						assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
-						assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value");
-						oSettings = this.oEditor.getCurrentSettings();
-						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value");
-						oTable = oField2.getAggregation("_field");
-						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-						oSelectionColumn = oTable.getColumns()[0];
-						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oAddButton = oTableToolbar.getContent()[1];
+						assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						var oDeleteButton = oTableToolbar.getContent()[3];
+						assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
+						var oClearFitlersButton = oTableToolbar.getContent()[4];
+						assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
+						var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+						assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+						assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oColumns = oTable.getColumns();
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
+						assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
+						assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
+						assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
+						assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
+						assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
+						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
+						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 						oTable.setSelectedIndex(0);
 						oTable.fireRowSelectionChange({
 							rowIndex: 0,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
-						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
+						assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change");
 						oSettings = this.oEditor.getCurrentSettings();
-						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after table selection change");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 						oTable.setSelectedIndex(3);
 						oTable.fireRowSelectionChange({
 							rowIndex: 3,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
-						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
+						assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change again");
 						oSettings = this.oEditor.getCurrentSettings();
-						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after table selection change again");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 						oTable.setSelectedIndex(-1);
 						oTable.fireRowSelectionChange({
 							rowIndex: -1,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
-						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value not change after remove table selection");
 						oSettings = this.oEditor.getCurrentSettings();
-						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value not change after remove table selection");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+
+						oSelectAllSelectionsButton.firePress();
+						assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
+						assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
+
+						oClearAllSelectionsButton.firePress();
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
 
 						var oRow1 = oTable.getRows()[0];
 						var oSelectionCell1 = oRow1.getCells()[0];
@@ -365,9 +275,9 @@ sap.ui.define([
 						});
 						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), {"text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 						oSettings = this.oEditor.getCurrentSettings();
-						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], oField2._getCurrentProperty("value"), "Editor: Field 2 setting value changed after selecting");
+						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], oField._getCurrentProperty("value"), "Editor: Field 1 setting value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 						oSelectionCell1.setSelected(false);
 						oSelectionCell1.fireSelect({
@@ -375,9 +285,9 @@ sap.ui.define([
 						});
 						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: DT Value removed after deselecting");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
 						oSettings = this.oEditor.getCurrentSettings();
-						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value removed after deselecting");
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value removed after deselecting");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
 						var oRow4 = oTable.getRows()[3];
@@ -390,27 +300,28 @@ sap.ui.define([
 						});
 						assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 						oSettings = this.oEditor.getCurrentSettings();
-						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], oField2._getCurrentProperty("value"), "Editor: Field 2 setting value changed after selecting");
+						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], oField._getCurrentProperty("value"), "Editor: Field 1 setting value changed after selecting again");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+
 						oRemoveValueButton.firePress();
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
-						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: DT Value removed after clicking remove value button");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after clicking remove value button");
 						oSettings = this.oEditor.getCurrentSettings();
-						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value removed after clicking remove value button");
+						assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value"], "Editor: Field 1 setting value removed after clicking remove value button");
 
 						EditorQunitUtils.wait().then(function () {
-							assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
-							assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
-							assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
-							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value");
+							assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
+							assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
+							assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
+							assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value");
-							oTable = oField3.getAggregation("_field");
-							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value");
+							oTable = oField2.getAggregation("_field");
+							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-							assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
+							assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
 							assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							oSelectionColumn = oTable.getColumns()[0];
 							oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -421,9 +332,9 @@ sap.ui.define([
 								userInteraction: true
 							});
 							assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
-							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+							assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 							oTable.setSelectedIndex(3);
 							oTable.fireRowSelectionChange({
@@ -431,9 +342,9 @@ sap.ui.define([
 								userInteraction: true
 							});
 							assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
-							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+							assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 							oTable.setSelectedIndex(-1);
 							oTable.fireRowSelectionChange({
@@ -441,9 +352,9 @@ sap.ui.define([
 								userInteraction: true
 							});
 							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
-							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+							assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value not change");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 
 							var oRow1 = oTable.getRows()[0];
@@ -456,9 +367,9 @@ sap.ui.define([
 							});
 							assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
+							assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), {"text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], oField3._getCurrentProperty("value"), "Editor: Field 3 setting value not change after table selection change");
+							assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], oField2._getCurrentProperty("value"), "Editor: Field 2 setting value changed after selecting");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 							oSelectionCell1.setSelected(false);
 							oSelectionCell1.fireSelect({
@@ -466,9 +377,9 @@ sap.ui.define([
 							});
 							assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
+							assert.ok(!oField2._getCurrentProperty("value"), "Field 2: DT Value removed after deselecting");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value removed after deselecting");
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value removed after deselecting");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
 							var oRow4 = oTable.getRows()[3];
@@ -481,17 +392,109 @@ sap.ui.define([
 							});
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
+							assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], oField3._getCurrentProperty("value"), "Editor: Field 3 setting value not change after table selection change again");
+							assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], oField2._getCurrentProperty("value"), "Editor: Field 2 setting value changed after selecting");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 							oRemoveValueButton.firePress();
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
-							assert.ok(!oField._getCurrentProperty("value"), "Field 3: DT Value removed after clicking remove value button");
+							assert.ok(!oField2._getCurrentProperty("value"), "Field 2: DT Value removed after clicking remove value button");
 							oSettings = this.oEditor.getCurrentSettings();
-							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value removed after clicking remove value button");
+							assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value"], "Editor: Field 2 setting value removed after clicking remove value button");
 
-							resolve();
+							EditorQunitUtils.wait().then(function () {
+								assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
+								assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
+								assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
+								assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value");
+								oTable = oField3.getAggregation("_field");
+								assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
+								assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+								assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
+								assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
+								oSelectionColumn = oTable.getColumns()[0];
+								oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+								oTable.setSelectedIndex(0);
+								oTable.fireRowSelectionChange({
+									rowIndex: 0,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
+								assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+								oTable.setSelectedIndex(3);
+								oTable.fireRowSelectionChange({
+									rowIndex: 3,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
+								assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+								oTable.setSelectedIndex(-1);
+								oTable.fireRowSelectionChange({
+									rowIndex: -1,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
+								assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value not change");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value not change");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+
+								var oRow1 = oTable.getRows()[0];
+								var oSelectionCell1 = oRow1.getCells()[0];
+								assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+								assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
+								oSelectionCell1.setSelected(true);
+								oSelectionCell1.fireSelect({
+									selected: true
+								});
+								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], oField3._getCurrentProperty("value"), "Editor: Field 3 setting value not change after table selection change");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
+								oSelectionCell1.setSelected(false);
+								oSelectionCell1.fireSelect({
+									selected: false
+								});
+								assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
+								assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value removed after deselecting");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
+
+								var oRow4 = oTable.getRows()[3];
+								var oSelectionCell4 = oRow4.getCells()[0];
+								assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
+								assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
+								oSelectionCell4.setSelected(true);
+								oSelectionCell4.fireSelect({
+									selected: true
+								});
+								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], oField3._getCurrentProperty("value"), "Editor: Field 3 setting value not change after table selection change again");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+								oRemoveValueButton.firePress();
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
+								assert.ok(!oField._getCurrentProperty("value"), "Field 3: DT Value removed after clicking remove value button");
+								oSettings = this.oEditor.getCurrentSettings();
+								assert.ok(!oSettings["/sap.card/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value"], "Editor: Field 3 setting value removed after clicking remove value button");
+
+								resolve();
+							}.bind(this));
 						}.bind(this));
 					}.bind(this));
 				}.bind(this));
@@ -536,166 +539,92 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oAddButton = oTableToolbar.getContent()[1];
-					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					var oDeleteButton = oTableToolbar.getContent()[3];
-					assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
-					var oClearFitlersButton = oTableToolbar.getContent()[4];
-					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
-					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
-					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
-					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oColumns = oTable.getColumns();
-					assert.equal(oColumns.length, 8, "Table: column number is 8");
-					assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
-					assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
-					assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
-					assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
-					assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
-					assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
-					assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange({
-						rowIndex: 0,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: DT Value not change after table selection change");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					oTable.setSelectedIndex(3);
-					oTable.fireRowSelectionChange({
-						rowIndex: 3,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: DT Value not change after table selection change again");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					oTable.setSelectedIndex(-1);
-					oTable.fireRowSelectionChange({
-						rowIndex: -1,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value not change after remove table selection");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-
-					oSelectAllSelectionsButton.firePress();
-					assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
-
-					oClearAllSelectionsButton.firePress();
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
-
-					var oRow1 = oTable.getRows()[0];
-					var oSelectionCell1 = oRow1.getCells()[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
-					oSelectionCell1.setSelected(true);
-					oSelectionCell1.fireSelect({
-						selected: true
-					});
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
-					oSelectionCell1.setSelected(false);
-					oSelectionCell1.fireSelect({
-						selected: false
-					});
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
-
-					var oRow4 = oTable.getRows()[3];
-					var oSelectionCell4 = oRow4.getCells()[0];
-					assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
-					oSelectionCell4.setSelected(true);
-					oSelectionCell4.fireSelect({
-						selected: true
-					});
-					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-
-					oRemoveValueButton.firePress();
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after clicking remove value button");
-
 					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
 					var oField2 = this.oEditor.getAggregation("_formContent")[4];
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
-					EditorQunitUtils.wait().then(function () {
-						assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
-						assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value");
-						oTable = oField2.getAggregation("_field");
-						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-						oSelectionColumn = oTable.getColumns()[0];
-						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value");
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oAddButton = oTableToolbar.getContent()[1];
+						assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						var oDeleteButton = oTableToolbar.getContent()[3];
+						assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
+						var oClearFitlersButton = oTableToolbar.getContent()[4];
+						assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
+						var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+						assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+						assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oColumns = oTable.getColumns();
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
+						assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
+						assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
+						assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
+						assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
+						assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
+						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
+						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 						oTable.setSelectedIndex(0);
 						oTable.fireRowSelectionChange({
 							rowIndex: 0,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value not change");
+						assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: DT Value not change after table selection change");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 						oTable.setSelectedIndex(3);
 						oTable.fireRowSelectionChange({
 							rowIndex: 3,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value not change");
+						assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: DT Value not change after table selection change again");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 						oTable.setSelectedIndex(-1);
 						oTable.fireRowSelectionChange({
 							rowIndex: -1,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value not change");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value not change after remove table selection");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+
+						oSelectAllSelectionsButton.firePress();
+						assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
+						assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
+
+						oClearAllSelectionsButton.firePress();
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
 
 						var oRow1 = oTable.getRows()[0];
 						var oSelectionCell1 = oRow1.getCells()[0];
@@ -707,7 +636,7 @@ sap.ui.define([
 						});
 						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 						oSelectionCell1.setSelected(false);
 						oSelectionCell1.fireSelect({
@@ -715,7 +644,7 @@ sap.ui.define([
 						});
 						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-						assert.ok(!oField._getCurrentProperty("value"), "Field 2: DT Value removed after deselecting");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
 						var oRow4 = oTable.getRows()[3];
@@ -728,21 +657,22 @@ sap.ui.define([
 						});
 						assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
 						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+
 						oRemoveValueButton.firePress();
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
-						assert.ok(!oField._getCurrentProperty("value"), "Field 2: DT Value removed after clicking remove value button");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after clicking remove value button");
 
 						EditorQunitUtils.wait().then(function () {
-							assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
-							assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
-							assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
-							assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value");
-							oTable = oField3.getAggregation("_field");
-							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
+							assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
+							assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
+							assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value");
+							oTable = oField2.getAggregation("_field");
+							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-							assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
+							assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
 							assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							oSelectionColumn = oTable.getColumns()[0];
 							oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -753,7 +683,7 @@ sap.ui.define([
 								userInteraction: true
 							});
 							assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
-							assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value not change");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 							oTable.setSelectedIndex(3);
 							oTable.fireRowSelectionChange({
@@ -761,7 +691,7 @@ sap.ui.define([
 								userInteraction: true
 							});
 							assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
-							assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value not change");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 							oTable.setSelectedIndex(-1);
 							oTable.fireRowSelectionChange({
@@ -769,7 +699,7 @@ sap.ui.define([
 								userInteraction: true
 							});
 							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
-							assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value not change");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value not change");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
 
 							var oRow1 = oTable.getRows()[0];
@@ -782,7 +712,7 @@ sap.ui.define([
 							});
 							assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
+							assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 							oSelectionCell1.setSelected(false);
 							oSelectionCell1.fireSelect({
@@ -790,7 +720,7 @@ sap.ui.define([
 							});
 							assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
+							assert.ok(!oField._getCurrentProperty("value"), "Field 2: DT Value removed after deselecting");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
 							var oRow4 = oTable.getRows()[3];
@@ -803,15 +733,91 @@ sap.ui.define([
 							});
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
 							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
+							assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 							oRemoveValueButton.firePress();
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
 							assert.ok(!oField._getCurrentProperty("value"), "Field 2: DT Value removed after clicking remove value button");
 
-							resolve();
+							EditorQunitUtils.wait().then(function () {
+								assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
+								assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
+								assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
+								assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value");
+								oTable = oField3.getAggregation("_field");
+								assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
+								assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+								assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
+								assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
+								oSelectionColumn = oTable.getColumns()[0];
+								oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+								oTable.setSelectedIndex(0);
+								oTable.fireRowSelectionChange({
+									rowIndex: 0,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
+								assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value not change");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+								oTable.setSelectedIndex(3);
+								oTable.fireRowSelectionChange({
+									rowIndex: 3,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndex and SelectedIndices Value after selection change again");
+								assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value not change");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+								oTable.setSelectedIndex(-1);
+								oTable.fireRowSelectionChange({
+									rowIndex: -1,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
+								assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value not change");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+
+								var oRow1 = oTable.getRows()[0];
+								var oSelectionCell1 = oRow1.getCells()[0];
+								assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+								assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
+								oSelectionCell1.setSelected(true);
+								oSelectionCell1.fireSelect({
+									selected: true
+								});
+								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
+								oSelectionCell1.setSelected(false);
+								oSelectionCell1.fireSelect({
+									selected: false
+								});
+								assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
+								assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
+
+								var oRow4 = oTable.getRows()[3];
+								var oSelectionCell4 = oRow4.getCells()[0];
+								assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
+								assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
+								oSelectionCell4.setSelected(true);
+								oSelectionCell4.fireSelect({
+									selected: true
+								});
+								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+								oRemoveValueButton.firePress();
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
+								assert.ok(!oField._getCurrentProperty("value"), "Field 2: DT Value removed after clicking remove value button");
+
+								resolve();
+							});
 						});
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -845,28 +851,31 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(!oAddButton.getVisible(), "Table toolbar: add button not visible");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					resolve();
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(!oAddButton.getVisible(), "Table toolbar: add button not visible");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+						resolve();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -878,186 +887,146 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oAddButton = oTableToolbar.getContent()[1];
-					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					var oDeleteButton = oTableToolbar.getContent()[3];
-					assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
-					var oClearFitlersButton = oTableToolbar.getContent()[4];
-					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
-					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
-					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
-					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oColumns = oTable.getColumns();
-					assert.equal(oColumns.length, 8, "Table: column number is 8");
-					assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
-					assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
-					assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
-					assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
-					assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
-					assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
-					assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange({
-						rowIndex: 0,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					oTable.setSelectedIndex(3);
-					oTable.fireRowSelectionChange({
-						rowIndex: 3,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change again");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					oTable.setSelectedIndex(-1);
-					oTable.fireRowSelectionChange({
-						rowIndex: -1,
-						userInteraction: true
-					});
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value not change after remove table selection");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-
-					oSelectAllSelectionsButton.firePress();
-					assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
-					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
-
-					oClearAllSelectionsButton.firePress();
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
-
-					var oRow3 = oTable.getRows()[2];
-					var oSelectionCell3 = oRow3.getCells()[0];
-					assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
-
-					var oRow1 = oTable.getRows()[0];
-					var oSelectionCell1 = oRow1.getCells()[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
-					oSelectionCell1.setSelected(true);
-					oSelectionCell1.fireSelect({
-						selected: true
-					});
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
-					oSelectionCell1.setSelected(false);
-					oSelectionCell1.fireSelect({
-						selected: false
-					});
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
-
-					var oRow4 = oTable.getRows()[3];
-					var oSelectionCell4 = oRow4.getCells()[0];
-					assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
-					oSelectionCell4.setSelected(true);
-					oSelectionCell4.fireSelect({
-						selected: true
-					});
-					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-
-					oRemoveValueButton.firePress();
-					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after clicking remove value button");
-
 					var oLabel2 = this.oEditor.getAggregation("_formContent")[3];
 					var oField2 = this.oEditor.getAggregation("_formContent")[4];
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
-					EditorQunitUtils.wait().then(function () {
-						assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
-						assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value");
-						oTable = oField2.getAggregation("_field");
-						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
-						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-						assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-						oSelectionColumn = oTable.getColumns()[0];
-						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oAddButton = oTableToolbar.getContent()[1];
+						assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						var oDeleteButton = oTableToolbar.getContent()[3];
+						assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
+						var oClearFitlersButton = oTableToolbar.getContent()[4];
+						assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
+						var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+						assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+						assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oColumns = oTable.getColumns();
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
+						assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
+						assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
+						assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
+						assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
+						assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
+						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
+						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 						oTable.setSelectedIndex(0);
 						oTable.fireRowSelectionChange({
 							rowIndex: 0,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value not change after table selection changed");
+						assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-						oTable.setSelectedIndex(2);
+						oTable.setSelectedIndex(3);
 						oTable.fireRowSelectionChange({
-							rowIndex: 2,
+							rowIndex: 3,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices()[0] === 2, "Table: SelectedIndex and SelectedIndices Value after selection change again");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value not change after table selection changed");
+						assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change again");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 						oTable.setSelectedIndex(-1);
 						oTable.fireRowSelectionChange({
 							rowIndex: -1,
 							userInteraction: true
 						});
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
-						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value not change after table selection changed");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value not change after remove table selection");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
-						oRow4 = oTable.getRows()[3];
-						oSelectionCell4 = oRow4.getCells()[0];
+						oSelectAllSelectionsButton.firePress();
+						assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
+						assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
+						assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
+
+						oClearAllSelectionsButton.firePress();
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
+
+						var oRow3 = oTable.getRows()[2];
+						var oSelectionCell3 = oRow3.getCells()[0];
+						assert.ok(oSelectionCell3.isA("sap.m.CheckBox"), "Row 3: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is selected");
+
+						var oRow1 = oTable.getRows()[0];
+						var oSelectionCell1 = oRow1.getCells()[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
+						oSelectionCell1.setSelected(true);
+						oSelectionCell1.fireSelect({
+							selected: true
+						});
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
+						oSelectionCell1.setSelected(false);
+						oSelectionCell1.fireSelect({
+							selected: false
+						});
+						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
+						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
+
+						var oRow4 = oTable.getRows()[3];
+						var oSelectionCell4 = oRow4.getCells()[0];
 						assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
-						assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
+						assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
+						oSelectionCell4.setSelected(true);
+						oSelectionCell4.fireSelect({
+							selected: true
+						});
+						assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+
+						oRemoveValueButton.firePress();
+						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after clicking remove value button");
+
 						EditorQunitUtils.wait().then(function () {
-							assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
-							assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
-							assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: Value");
-							oTable = oField3.getAggregation("_field");
-							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
+							assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
+							assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
+							assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value");
+							oTable = oField2.getAggregation("_field");
+							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-							assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
-							assert.equal(oTable.getSelectedIndices().length, 0, "Table: no selected row");
+							assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
+							assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							oSelectionColumn = oTable.getColumns()[0];
 							oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
@@ -1066,71 +1035,114 @@ sap.ui.define([
 								rowIndex: 0,
 								userInteraction: true
 							});
-							assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndices Value after table selection change");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: DT Value not change after table selection change");
+							assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndex and SelectedIndices Value after selection change");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value not change after table selection changed");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-							oTable.setSelectedIndex(3);
+							oTable.setSelectedIndex(2);
 							oTable.fireRowSelectionChange({
-								rowIndex: 3,
+								rowIndex: 2,
 								userInteraction: true
 							});
-							assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndices Value after table selection change again");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: DT Value not change after table selection change again");
+							assert.ok(oTable.getSelectedIndices()[0] === 2, "Table: SelectedIndex and SelectedIndices Value after selection change again");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value not change after table selection changed");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 							oTable.setSelectedIndex(-1);
 							oTable.fireRowSelectionChange({
 								rowIndex: -1,
 								userInteraction: true
 							});
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SetectedIndex and SelectedIndices Value after remove table selection");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: DT Value not change after remove table selections");
+							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndex and SelectedIndices Value after remove table selection");
+							assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value not change after table selection changed");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
-							var oRow2 = oTable.getRows()[1];
-							var oSelectionCell2 = oRow2.getCells()[0];
-							assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
-							assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-
-							var oRow1 = oTable.getRows()[0];
-							var oSelectionCell1 = oRow1.getCells()[0];
-							assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-							assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
-							oSelectionCell1.setSelected(true);
-							oSelectionCell1.fireSelect({
-								selected: true
-							});
-							assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
-							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
-							oSelectionCell1.setSelected(false);
-							oSelectionCell1.fireSelect({
-								selected: false
-							});
-							assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
-							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
-							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
-
-							var oRow4 = oTable.getRows()[3];
-							var oSelectionCell4 = oRow4.getCells()[0];
+							oRow4 = oTable.getRows()[3];
+							oSelectionCell4 = oRow4.getCells()[0];
 							assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
-							assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
-							oSelectionCell4.setSelected(true);
-							oSelectionCell4.fireSelect({
-								selected: true
-							});
-							assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
-							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-							oRemoveValueButton.firePress();
-							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
-							assert.ok(!oField._getCurrentProperty("value"), "Field 3: DT Value removed after clicking remove value button");
+							assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
+							EditorQunitUtils.wait().then(function () {
+								assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
+								assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
+								assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: Value");
+								oTable = oField3.getAggregation("_field");
+								assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
+								assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+								assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: no selected row");
+								oSelectionColumn = oTable.getColumns()[0];
+								oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+								oTable.setSelectedIndex(0);
+								oTable.fireRowSelectionChange({
+									rowIndex: 0,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndices Value after table selection change");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: DT Value not change after table selection change");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+								oTable.setSelectedIndex(3);
+								oTable.fireRowSelectionChange({
+									rowIndex: 3,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndices Value after table selection change again");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: DT Value not change after table selection change again");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+								oTable.setSelectedIndex(-1);
+								oTable.fireRowSelectionChange({
+									rowIndex: -1,
+									userInteraction: true
+								});
+								assert.ok(oTable.getSelectedIndices().length === 0, "Table: SetectedIndex and SelectedIndices Value after remove table selection");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: DT Value not change after remove table selections");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
-							resolve();
+								var oRow2 = oTable.getRows()[1];
+								var oSelectionCell2 = oRow2.getCells()[0];
+								assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
+								assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
+
+								var oRow1 = oTable.getRows()[0];
+								var oSelectionCell1 = oRow1.getCells()[0];
+								assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+								assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
+								oSelectionCell1.setSelected(true);
+								oSelectionCell1.fireSelect({
+									selected: true
+								});
+								assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
+								oSelectionCell1.setSelected(false);
+								oSelectionCell1.fireSelect({
+									selected: false
+								});
+								assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
+								assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
+
+								var oRow4 = oTable.getRows()[3];
+								var oSelectionCell4 = oRow4.getCells()[0];
+								assert.ok(oSelectionCell4.isA("sap.m.CheckBox"), "Row 4: Cell 1 is CheckBox");
+								assert.ok(!oSelectionCell4.getSelected(), "Row 4: Cell 1 is not selected");
+								oSelectionCell4.setSelected(true);
+								oSelectionCell4.fireSelect({
+									selected: true
+								});
+								assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
+								assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
+								assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
+								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+								oRemoveValueButton.firePress();
+								assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after clicking it");
+								assert.ok(!oField._getCurrentProperty("value"), "Field 3: DT Value removed after clicking remove value button");
+
+								resolve();
+							});
 						});
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1179,8 +1191,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1189,34 +1201,34 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oNewRow = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oSelectionCell1 = oNewRow.getCells()[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oAddButton = oTableToolbar.getContent()[1];
-					assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					var oDeleteButton = oTableToolbar.getContent()[3];
-					assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
-					var oClearFitlersButton = oTableToolbar.getContent()[4];
-					assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
-					var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
-					assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
-					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
-					var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
-					assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
-					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oNewRow = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oSelectionCell1 = oNewRow.getCells()[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oAddButton = oTableToolbar.getContent()[1];
+						assert.ok(oAddButton.getEnabled(), "Table: Add button in toolbar enabled");
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						var oDeleteButton = oTableToolbar.getContent()[3];
+						assert.ok(!oDeleteButton.getEnabled(), "Table: Delete button in toolbar disabled");
+						var oClearFitlersButton = oTableToolbar.getContent()[4];
+						assert.ok(!oClearFitlersButton.getEnabled(), "Table: ClearAllFilters button in toolbar disabled");
+						var oSelectAllSelectionsButton = oTableToolbar.getContent()[5];
+						assert.ok(!oSelectAllSelectionsButton.getVisible(), "Table: SelectAllSelections button in toolbar hided");
+						assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
+						var oClearAllSelectionsButton = oTableToolbar.getContent()[6];
+						assert.ok(!oClearAllSelectionsButton.getVisible(), "Table: ClearAllSelections button in toolbar hided");
+						assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1403,7 +1415,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1452,8 +1464,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
 					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1462,24 +1474,24 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oNewRow = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oSelectionCell1 = oNewRow.getCells()[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					var oRow = oTable.getRows()[1];
-					assert.ok(deepEqual(cleanUUID(oRow.getBindingContext().getObject()), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": {"_editable": false}}), "Table: target row");
-					oTable.setSelectedIndex(1);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oNewRow = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oSelectionCell1 = oNewRow.getCells()[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						var oRow = oTable.getRows()[1];
+						assert.ok(deepEqual(cleanUUID(oRow.getBindingContext().getObject()), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": {"_editable": false}}), "Table: target row");
+						oTable.setSelectedIndex(1);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1680,7 +1692,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});

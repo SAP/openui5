@@ -134,37 +134,40 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					var oTextArea = oField.getAggregation("_field");
-					assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
-					assert.equal(oTextArea.getValue(), "", "Field 1: Object Value null");
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value null");
-					var sNewValue = '[{\n\t"string": "string value",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string":"string value", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value created");
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTextArea = oField.getAggregation("_field");
+						assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
+						assert.equal(oTextArea.getValue(), "", "Field 1: Object Value null");
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value null");
+						var sNewValue = '[{\n\t"string": "string value",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string":"string value", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value created");
 
-					sNewValue = '[{\n\t"string1": "string value 1",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string1":"string value 1", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value updated");
+						sNewValue = '[{\n\t"string1": "string value 1",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string1":"string value 1", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value updated");
 
-					sNewValue = '[]';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value updated");
+						sNewValue = '[]';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value updated");
 
-					sNewValue = '';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value deleted");
-					resolve();
+						sNewValue = '';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value deleted");
+						resolve();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -201,37 +204,40 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					var oTextArea = oField.getAggregation("_field");
-					assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
-					assert.equal(oTextArea.getValue(), "[]", "Field 1: Object Value []");
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value []");
-					var sNewValue = '[{\n\t"string": "string value",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string":"string value", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value updated");
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTextArea = oField.getAggregation("_field");
+						assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
+						assert.equal(oTextArea.getValue(), "[]", "Field 1: Object Value []");
+						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value []");
+						var sNewValue = '[{\n\t"string": "string value",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string":"string value", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value updated");
 
-					sNewValue = '[{\n\t"string1": "string value 1",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string1":"string value 1", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value updated");
+						sNewValue = '[{\n\t"string1": "string value 1",\n\t"boolean": true,\n\t"integer": 5,\n\t"number": 5.22\n}]';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"string1":"string value 1", "boolean": true, "integer": 5, "number": 5.22}]), "Field 1: DT Value updated");
 
-					sNewValue = '[]';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value updated");
+						sNewValue = '[]';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value updated");
 
-					sNewValue = '';
-					oTextArea.setValue(sNewValue);
-					oTextArea.fireChange({ value: sNewValue});
-					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value deleted");
-					resolve();
+						sNewValue = '';
+						oTextArea.setValue(sNewValue);
+						oTextArea.fireChange({ value: sNewValue});
+						assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value deleted");
+						resolve();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -252,43 +258,46 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oColumns = oTable.getColumns();
-					assert.equal(oColumns.length, 6, "Table: column number is 6");
-					var oSelectionColumn = oColumns[0];
-					assert.ok(!oSelectionColumn.getVisible(), "Row 1: selection column is not visible");
-					assert.equal(oColumns[1].getLabel().getText(), "a", "Table: column 'a'");
-					assert.equal(oColumns[2].getLabel().getText(), "b", "Table: column 'b'");
-					assert.equal(oColumns[3].getLabel().getText(), "d", "Table: column 'd'");
-					assert.equal(oColumns[4].getLabel().getText(), "c", "Table: column 'c'");
-					assert.equal(oColumns[5].getLabel().getText(), "e", "Table: column 'e'");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), {"a": "aa", "b": "bb", "d": 2, "_dt": {"_selected": true}}), "Row 1: value");
-					var oRow2 = oTable.getRows()[1];
-					assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), {"b": "bbb", "c": "ccc", "d": 3, "_dt": {"_selected": true}}), "Row 2: value");
-					var oRow3 = oTable.getRows()[2];
-					assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), {"c": "cccc", "d": 1, "a": "aaaa", "e": false, "_dt": {"_selected": true}}), "Row 3: value");
-					var oRow4 = oTable.getRows()[3];
-					assert.ok(deepEqual(cleanUUIDAndPosition(oRow4.getBindingContext().getObject()), {"a": "aaa", "b": "bbb", "e": true, "_dt": {"_selected": true}}), "Row 4: value");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					resolve();
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oColumns = oTable.getColumns();
+						assert.equal(oColumns.length, 6, "Table: column number is 6");
+						var oSelectionColumn = oColumns[0];
+						assert.ok(!oSelectionColumn.getVisible(), "Row 1: selection column is not visible");
+						assert.equal(oColumns[1].getLabel().getText(), "a", "Table: column 'a'");
+						assert.equal(oColumns[2].getLabel().getText(), "b", "Table: column 'b'");
+						assert.equal(oColumns[3].getLabel().getText(), "d", "Table: column 'd'");
+						assert.equal(oColumns[4].getLabel().getText(), "c", "Table: column 'c'");
+						assert.equal(oColumns[5].getLabel().getText(), "e", "Table: column 'e'");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), {"a": "aa", "b": "bb", "d": 2, "_dt": {"_selected": true}}), "Row 1: value");
+						var oRow2 = oTable.getRows()[1];
+						assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), {"b": "bbb", "c": "ccc", "d": 3, "_dt": {"_selected": true}}), "Row 2: value");
+						var oRow3 = oTable.getRows()[2];
+						assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), {"c": "cccc", "d": 1, "a": "aaaa", "e": false, "_dt": {"_selected": true}}), "Row 3: value");
+						var oRow4 = oTable.getRows()[3];
+						assert.ok(deepEqual(cleanUUIDAndPosition(oRow4.getBindingContext().getObject()), {"a": "aaa", "b": "bbb", "e": true, "_dt": {"_selected": true}}), "Row 4: value");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+						resolve();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -309,25 +318,25 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -412,7 +421,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -424,25 +433,25 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -526,7 +535,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -538,25 +547,25 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -646,7 +655,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -658,25 +667,25 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -765,7 +774,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -786,34 +795,34 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(2);
-					oTable.fireRowSelectionChange({
-						rowIndex: 2,
-						userInteraction: true
-					});
-					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oEditButton = oToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
+						oTable.setSelectedIndex(2);
+						oTable.fireRowSelectionChange({
+							rowIndex: 2,
+							userInteraction: true
+						});
+						assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -903,7 +912,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -915,34 +924,34 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(2);
-					oTable.fireRowSelectionChange({
-						rowIndex: 2,
-						userInteraction: true
-					});
-					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oEditButton = oToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
+						oTable.setSelectedIndex(2);
+						oTable.fireRowSelectionChange({
+							rowIndex: 2,
+							userInteraction: true
+						});
+						assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1027,7 +1036,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1039,34 +1048,34 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(2);
-					oTable.fireRowSelectionChange({
-						rowIndex: 2,
-						userInteraction: true
-					});
-					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oEditButton = oToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
+						oTable.setSelectedIndex(2);
+						oTable.fireRowSelectionChange({
+							rowIndex: 2,
+							userInteraction: true
+						});
+						assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1164,7 +1173,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1176,34 +1185,34 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oEditButton = oToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(2);
-					oTable.fireRowSelectionChange({
-						rowIndex: 2,
-						userInteraction: true
-					});
-					assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oEditButton = oToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
+						oTable.setSelectedIndex(2);
+						oTable.fireRowSelectionChange({
+							rowIndex: 2,
+							userInteraction: true
+						});
+						assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1293,7 +1302,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1314,34 +1323,34 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oDeleteButton = oToolbar.getContent()[3];
-					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange({
-						rowIndex: 0,
-						userInteraction: true
-					});
-					assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
-					oDeleteButton.onAfterRendering = function(oEvent) {
-						oDeleteButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oDeleteButton = oToolbar.getContent()[3];
+						assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(!oClearFilterButton.getVisible(), "Table toolbar: clear filter button not visible");
+						assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange({
+							rowIndex: 0,
+							userInteraction: true
+						});
+						assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 						oDeleteButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
@@ -1358,7 +1367,7 @@ sap.ui.define([
 								resolve();
 							});
 						});
-					};
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});

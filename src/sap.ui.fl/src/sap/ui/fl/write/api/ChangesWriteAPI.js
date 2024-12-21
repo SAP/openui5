@@ -96,6 +96,18 @@ sap.ui.define([
 		});
 	}
 
+	async function createAnnotationChange(mPropertyBag) {
+		const oChangeHandler = await ChangeHandlerStorage.getAnnotationChangeHandler({
+			changeType: mPropertyBag.changeSpecificData.changeType
+		});
+		const oFlexObject = FlexObjectFactory.createAnnotationChange(mPropertyBag.changeSpecificData);
+		oChangeHandler.completeChangeContent(oFlexObject, mPropertyBag.changeSpecificData, {
+			modifier: JsControlTreeModifier,
+			appComponent: mPropertyBag.appComponent
+		});
+		return oFlexObject;
+	}
+
 	function createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag) {
 		const oFlexObject = FlexObjectFactory.createUIChange(mPropertyBag.changeSpecificData);
 		return ChangeHandlerStorage.getChangeHandler(
@@ -157,6 +169,10 @@ sap.ui.define([
 
 		if (DescriptorChangeTypes.getChangeTypes().includes(mPropertyBag.changeSpecificData.changeType)) {
 			return createDescriptorChange(mPropertyBag);
+		}
+
+		if (mPropertyBag.annotationChange) {
+			return createAnnotationChange(mPropertyBag);
 		}
 
 		const mContextBasedAdaptationBag = {

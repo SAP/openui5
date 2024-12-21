@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/MultiValueField",
 	"sap/ui/mdc/ValueHelp",
@@ -40,9 +39,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(
+], (
 	Element,
-	qutils,
 	library,
 	MultiValueField,
 	ValueHelp,
@@ -76,7 +74,7 @@ sap.ui.define([
 	DateTimeType,
 	KeyCodes,
 	nextUIUpdate
-) {
+) => {
 	"use strict";
 
 	let oField;
@@ -86,7 +84,7 @@ sap.ui.define([
 	let iCount = 0;
 	let oPromise;
 
-	const _myChangeHandler = function(oEvent) {
+	const _myChangeHandler = (oEvent) => {
 		iCount++;
 		sId = oEvent.oSource.getId();
 		aChangeItems = oEvent.getParameter("items");
@@ -98,18 +96,18 @@ sap.ui.define([
 //	var sLiveValue;
 //	var iLiveCount = 0;
 //
-//	var _myLiveChangeHandler = function(oEvent) {
+//	var _myLiveChangeHandler = (oEvent) => {
 //		iLiveCount++;
 //		sLiveId = oEvent.oSource.getId();
 //		sLiveValue = oEvent.getParameter("value");
 //	};
 //
 //	var iParseError = 0;
-//	var _myParseErrorHandler = function(oEvent) {
+//	var _myParseErrorHandler = (oEvent) => {
 //		iParseError++;
 //	};
 //
-//	var _checkException = function(assert, oField, fnFunction, sName, vArgument) {
+//	var _checkException = (assert, oField, fnFunction, sName, vArgument) => {
 //
 //		var oException;
 //
@@ -123,7 +121,7 @@ sap.ui.define([
 //
 //	};
 
-	const _cleanupEvents = function() {
+	const _cleanupEvents = () => {
 		iCount = 0;
 		sId = null;
 		aChangeItems = null;
@@ -136,59 +134,84 @@ sap.ui.define([
 	};
 
 	QUnit.module("Field rendering", {
-		beforeEach: function() {
+		beforeEach() {
 			oField = new MultiValueField("F1");
 		},
-		afterEach: function() {
+		afterEach() {
 			oField.destroy();
 			oField = undefined;
 			_cleanupEvents();
 		}
 	});
 
-	QUnit.test("default rendering", async function(assert) {
+	QUnit.test("default rendering", async (assert) => {
 
 		oField.placeAt("content");
 		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");
-		const oContent = aContent && aContent.length > 0 && aContent[0];
+		const oContent = aContent?.length > 0 && aContent[0];
 		assert.ok(oContent, "default content exist");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
-		assert.notOk(oContent && oContent.getShowValueHelp(), "no valueHelp");
+		assert.equal(oContent?.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
+		assert.notOk(oContent?.getShowValueHelp(), "no valueHelp");
 
 	});
 
-	QUnit.test("FieldEditMode", async function(assert) {
+	QUnit.test("FieldEditMode", async (assert) => {
 
 		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
 		await nextUIUpdate();
 
 		let aContent = oField.getAggregation("_content");
-		let oContent = aContent && aContent.length > 0 && aContent[0];
+		let oContent = aContent?.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 
 		oField.setEditMode(FieldEditMode.ReadOnly);
 		await nextUIUpdate();
 		aContent = oField.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent = aContent?.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is used");
 		assert.notOk(oContent.getEditable(), "MultiInput is not editable");
 
 	});
 
-	QUnit.test("internal control creation", function(assert) {
+	QUnit.test("internal control creation", (assert) => {
 
 		const fnDone = assert.async();
-		setTimeout(function() { // async control creation in applySettings
+		setTimeout(() => { // async control creation in applySettings
 			const aContent = oField.getAggregation("_content");
-			const oContent = aContent && aContent.length > 0 && aContent[0];
+			const oContent = aContent?.length > 0 && aContent[0];
 			assert.notOk(oContent, "no content exist before rendering"); // as no data type can be determined
 			fnDone();
 		}, 0);
+
+	});
+
+	QUnit.module("API", {
+		beforeEach() {
+			oField = new MultiValueField("F1");
+		},
+		afterEach() {
+			oField.destroy();
+			oField = undefined;
+			_cleanupEvents();
+		}
+	});
+
+	QUnit.test("setMaxConditions", (assert) => {
+
+		oField.setMaxConditions(5);
+		assert.equal(oField.getMaxConditions(), 5, "maxConditions set");
+
+		try {
+			oField.setMaxConditions(1);
+		} catch (oError) {
+			assert.equal(oError?.message, "Multiple Conditions needed on MultiValueField " + oField, "Error fired");
+			assert.equal(oField.getMaxConditions(), 5, "maxConditions nou updated");
+		}
 
 	});
 
@@ -198,7 +221,7 @@ sap.ui.define([
 	let oDescriptionType;
 	let oItemTemplate;
 
-	const _initModel = function() {
+	const _initModel = () => {
 		oModel = new JSONModel({
 			items: [{ key: 1, description: "Text 1" },
 					{ key: 2, description: "Text 2" },
@@ -217,7 +240,7 @@ sap.ui.define([
 		});
 	};
 
-	const _cleanupModel = function() {
+	const _cleanupModel = () => {
 		oModel.destroy();
 		oItemTemplate.destroy();
 		oType.destroy();
@@ -228,7 +251,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Items", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			_initModel();
 			oFieldEdit = new MultiValueField("F1", {
 				editMode: FieldEditMode.Editable,
@@ -245,7 +268,7 @@ sap.ui.define([
 			sinon.spy(MultiValueFieldDelegate, "createCondition");
 			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach() {
 			MultiValueFieldDelegate.createCondition.restore();
 			oFieldEdit.destroy();
 			oFieldDisplay.destroy();
@@ -256,7 +279,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("used data type", function(assert) {
+	QUnit.test("used data type", (assert) => {
 
 		let oType = oFieldEdit._oContentFactory.getDataType();
 		assert.ok(oType.isA("sap.ui.model.type.Integer"), "used data type for Field");
@@ -266,9 +289,16 @@ sap.ui.define([
 		assert.ok(oType.isA("sap.ui.model.type.String"), "used additional data type for Field");
 		assert.ok(oType._bMyType, "Given additional Type is used in Field");
 
+		// fake data type change
+		oFieldEdit._oContentFactory.setDataType();
+		oFieldEdit.initDataType();
+		oType = oFieldEdit._oContentFactory.getDataType();
+		assert.ok(oType.isA("sap.ui.model.type.Integer"), "used data type for Field");
+		assert.ok(oType._bMyType, "Given Type is used in Field");
+
 	});
 
-	QUnit.test("conditions & Tokens", function(assert) {
+	QUnit.test("conditions & Tokens", (assert) => {
 
 		assert.equal(MultiValueFieldDelegate.createCondition.callCount, 6, "Conditions created via delegate");
 
@@ -280,7 +310,7 @@ sap.ui.define([
 		assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition0 validated");
 
 		let aContent = oFieldEdit.getAggregation("_content");
-		let oContent = aContent && aContent.length > 0 && aContent[0];
+		let oContent = aContent?.length > 0 && aContent[0];
 		let aTokens = oContent.getTokens();
 		assert.ok(aTokens.length, 3, "Tokens created");
 		assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
@@ -288,7 +318,7 @@ sap.ui.define([
 		assert.equal(aTokens[2].getText(), "Text 3", "Token2 text");
 
 		aContent = oFieldDisplay.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent = aContent?.length > 0 && aContent[0];
 		aTokens = oContent.getTokens();
 		assert.ok(aTokens.length, 3, "Tokens created");
 		assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
@@ -298,9 +328,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("user interaction", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			_initModel();
-			sinon.stub(MultiValueFieldDelegate, "updateItems").callsFake(function(oPayload, aConditions, oMultiValueField) {
+			sinon.stub(MultiValueFieldDelegate, "updateItems").callsFake((oPayload, aConditions, oMultiValueField) => {
 				const aItems = [];
 				for (let i = 0; i < aConditions.length; i++) {
 					const oCondition = aConditions[i];
@@ -324,7 +354,7 @@ sap.ui.define([
 			await nextUIUpdate();
 			oField.focus(); // as ValueHelp is connected with focus
 		},
-		afterEach: function() {
+		afterEach() {
 			oField.destroy();
 			oField = undefined;
 			_cleanupModel();
@@ -333,14 +363,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("update via ValueHelp", function(assert) {
+	QUnit.test("update via ValueHelp", (assert) => {
 
 		const fnDone = assert.async();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const oCondition = Condition.createItemCondition(4, "Text 4");
 		oValueHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
 
-		setTimeout(function() { // async model update
+		setTimeout(() => { // async model update
 			assert.ok(MultiValueFieldDelegate.updateItems.calledOnce, "MultiValueFieldDelegate.updateItems called once");
 			assert.ok(MultiValueFieldDelegate.updateItems.calledWith({}, [oCondition], oField), "MultiValueFieldDelegate.updateItems arguments");
 			assert.equal(iCount, 1, "Change event fired once");
@@ -350,7 +380,7 @@ sap.ui.define([
 			assert.equal(aChangeItems[0].getDescription(), "Text 4", "Change event: item key");
 			assert.ok(oPromise, "Promise returned");
 			assert.ok(bValid, "Change event: valid");
-			oPromise.then(function(vResult) {
+			oPromise.then((vResult) => {
 				assert.ok(true, "Promise resolved");
 				assert.ok(Array.isArray(vResult), "Result is array");
 				assert.ok(vResult.length, 1, "One item returned");
@@ -369,7 +399,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("internal control creation", function(assert) {
+	QUnit.test("internal control creation", (assert) => {
 
 		let oField = new MultiValueField("F3", {
 			items: {path: "/items", template: oItemTemplate}
@@ -377,13 +407,13 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		let aContent = oField.getAggregation("_content");
-		let oContent = aContent && aContent.length > 0 && aContent[0];
+		let oContent = aContent?.length > 0 && aContent[0];
 		assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
 
 		oField.setEditMode(FieldEditMode.Display);
-		setTimeout(function() { // async control creation in observeChanges
+		setTimeout(() => { // async control creation in observeChanges
 			aContent = oField.getAggregation("_content");
-			oContent = aContent && aContent.length > 0 && aContent[0];
+			oContent = aContent?.length > 0 && aContent[0];
 			assert.ok(oContent, "content exist after setting editMode and multipleLines");
 
 			oField.destroy();
@@ -392,9 +422,9 @@ sap.ui.define([
 				editMode: FieldEditMode.Editable
 			});
 
-			setTimeout(function() { // async control creation in applySettings
+			setTimeout(() => { // async control creation in applySettings
 				aContent = oField.getAggregation("_content");
-				oContent = aContent && aContent.length > 0 && aContent[0];
+				oContent = aContent?.length > 0 && aContent[0];
 				assert.ok(oContent, "content exist before rendering");
 
 				oField.destroy();
@@ -403,9 +433,9 @@ sap.ui.define([
 					editMode: { path: "/editMode"}
 				});
 
-				setTimeout(function() { // async control creation in applySettings
+				setTimeout(() => { // async control creation in applySettings
 					aContent = oField.getAggregation("_content");
-					oContent = aContent && aContent.length > 0 && aContent[0];
+					oContent = aContent?.length > 0 && aContent[0];
 					assert.notOk(oContent, "content not exist before rendering"); // as editMode has not set by binding right now
 
 					oField.destroy();
@@ -415,9 +445,9 @@ sap.ui.define([
 					});
 					oField.setModel(oModel);
 
-					setTimeout(function() { // async control creation in applySettings
+					setTimeout(() => { // async control creation in applySettings
 						aContent = oField.getAggregation("_content");
-						oContent = aContent && aContent.length > 0 && aContent[0];
+						oContent = aContent?.length > 0 && aContent[0];
 						assert.ok(oContent, "content exist before rendering");
 						oField.destroy();
 						fnDone();

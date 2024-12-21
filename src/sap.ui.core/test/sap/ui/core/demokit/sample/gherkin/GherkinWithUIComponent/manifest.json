@@ -8,15 +8,18 @@
 	"sap.ui5": {
 		"config": {
 			"sample": {
-				"iframe": "GherkinTestRunner.html",
+				"iframe": "Test.qunit.html?testsuite=test-resources/sap/ui/core/sample/gherkin/GherkinWithUIComponent/testsuite.qunit&test=GherkinTestRunner",
 				"stretch": true,
 				"files": [
-					"GherkinTestRunner.html",
-					"GherkinTestRunner.js",
+					"Component.js",
+					"GherkinTestRunner.qunit.js",
 					"Requirements1.feature",
 					"Requirements2.feature",
 					"Steps.js",
-					"manifest.json"
+					"Test.qunit.html",
+					"manifest.json",
+					"testsuite.qunit.html",
+					"testsuite.qunit.js"
 				]
 			}
 		}

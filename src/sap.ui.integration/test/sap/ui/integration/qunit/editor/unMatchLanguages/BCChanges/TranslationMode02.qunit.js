@@ -231,9 +231,9 @@ sap.ui.define([
 						manifestChanges: [oAdminChange, oTranslationChanges]
 					});
 					return new Promise(function (resolve, reject) {
-						EditorQunitUtils.isReady(this.oEditor).then(function () {
+						EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 							assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-							assert.ok(this.oEditor.isReady(), "Editor is ready");
+							assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 							var oLabel = this.oEditor.getAggregation("_formContent")[2];
 							assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 							assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
@@ -282,9 +282,9 @@ sap.ui.define([
 						manifestChanges: [oAdminChange, oTranslationChanges]
 					});
 					return new Promise(function (resolve, reject) {
-						EditorQunitUtils.isReady(this.oEditor).then(function () {
+						EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 							assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-							assert.ok(this.oEditor.isReady(), "Editor is ready");
+							assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 							var oLabel = this.oEditor.getAggregation("_formContent")[2];
 							assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 							assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
@@ -332,9 +332,9 @@ sap.ui.define([
 						manifestChanges: [oContentChange, oTranslationChanges]
 					});
 					return new Promise(function (resolve, reject) {
-						EditorQunitUtils.isReady(this.oEditor).then(function () {
+						EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 							assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-							assert.ok(this.oEditor.isReady(), "Editor is ready");
+							assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 							var oLabel = this.oEditor.getAggregation("_formContent")[2];
 							assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 							assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
@@ -383,9 +383,9 @@ sap.ui.define([
 						manifestChanges: [oContentChange, oTranslationChanges]
 					});
 					return new Promise(function (resolve, reject) {
-						EditorQunitUtils.isReady(this.oEditor).then(function () {
+						EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 							assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-							assert.ok(this.oEditor.isReady(), "Editor is ready");
+							assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 							var oLabel = this.oEditor.getAggregation("_formContent")[2];
 							assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 							assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
@@ -435,9 +435,9 @@ sap.ui.define([
 						manifestChanges: [oAdminChange, oContentChange, oTranslationChanges]
 					});
 					return new Promise(function (resolve, reject) {
-						EditorQunitUtils.isReady(this.oEditor).then(function () {
+						EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 							assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-							assert.ok(this.oEditor.isReady(), "Editor is ready");
+							assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 							var oLabel = this.oEditor.getAggregation("_formContent")[2];
 							assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 							assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
@@ -489,9 +489,9 @@ sap.ui.define([
 						manifestChanges: [oAdminChange, oContentChange, oTranslationChanges]
 					});
 					return new Promise(function (resolve, reject) {
-						EditorQunitUtils.isReady(this.oEditor).then(function () {
+						EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 							assert.equal(Utils._language, sMappingLanguage, "Utils._language is ok");
-							assert.ok(this.oEditor.isReady(), "Editor is ready");
+							assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 							var oLabel = this.oEditor.getAggregation("_formContent")[2];
 							assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 							assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");

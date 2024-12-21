@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
 	xmlns:w="sap.ui.integration.widgets"
 	controllerName="sap.f.cardsdemo.controller.CardActions"
 	displayBlock="true">
@@ -21,31 +22,206 @@
 				</VBox>
 				<HBox wrap="Wrap">
 					<w:Card
-                        semanticRole="ListItem"
+						action=".onCardAction"
+						semanticRole="ListItem"
 						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/noAction.json"
 						width="400px"
 						class="sapUiSmallMargin" />
 				</HBox>
-                <HBox wrap="Wrap">
+				<HBox wrap="Wrap">
 					<w:Card
-                        semanticRole="ListItem"
-						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/basicAction.json"
+						action=".onCardAction"
+						semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/card.json"
 						width="400px"
 						class="sapUiSmallMargin" />
 				</HBox>
-                <HBox wrap="Wrap">
+				<HBox wrap="Wrap">
 					<w:Card
-                        semanticRole="ListItem"
-						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/actionCardAndHeader.json"
+						action=".onCardAction"
+						semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndListItem.json"
 						width="400px"
 						class="sapUiSmallMargin" />
 				</HBox>
-                    <HBox wrap="Wrap">
+				<HBox wrap="Wrap">
 					<w:Card
-                        semanticRole="ListItem"
-						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/actionHeader.json"
+						action=".onCardAction"
+						semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndHeader.json"
 						width="400px"
 						class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						action=".onCardAction"
+						semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/header.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						action=".onCardAction"
+						semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndHeaderAndListItem.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						action=".onCardAction"
+						semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndHeaderAndListItemAndActionStrip.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+						action=".onCardAction"
+						semanticRole="ListItem"
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/cardAndItemsActionStrip.json"
+						width="400px"
+						class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/object.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/objectCardAndContent.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/table.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/tableCardAndItemActions.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analytical.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analyticalCardAndContent.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analyticalDonut.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/analyticalActionableAreaFull.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/calendar.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/adaptive.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/component/manifest.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<w:Card
+							action=".onCardAction"
+							semanticRole="ListItem"
+							manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/cardActions/webpage.json"
+							width="400px"
+							class="sapUiSmallMargin" />
+				</HBox>
+				<HBox wrap="Wrap">
+					<f:Card
+							press=".onFCardPress"
+							width="400px"
+							semanticRole="ListItem"
+							class="sapUiMediumMargin">
+						<f:header>
+							<card:Header
+									title="sap.f.Card with Card Action"
+									subtitle="Sales executive" />
+						</f:header>
+						<f:content>
+							<HBox>
+								<VBox class="sapUiMediumMargin">
+									<Title text="Contact details" class="sapUiTinyMarginBottom" />
+									<Label text="First Name" />
+								</VBox>
+							</HBox>
+						</f:content>
+					</f:Card>
+				</HBox>
+				<HBox wrap="Wrap">
+					<f:Card
+							press=".onFCardPress"
+							width="400px"
+							semanticRole="ListItem"
+							class="sapUiMediumMargin">
+						<f:header>
+							<card:Header
+									press=".onFCardHeaderPress"
+									title="sap.f.Card with Card and Header Action"
+									subtitle="Sales executive" />
+						</f:header>
+						<f:content>
+							<HBox>
+								<VBox class="sapUiMediumMargin">
+									<Title text="Contact details" class="sapUiTinyMarginBottom" />
+									<Label text="First Name" />
+								</VBox>
+							</HBox>
+						</f:content>
+					</f:Card>
 				</HBox>
 			</VBox>
 		</Panel>

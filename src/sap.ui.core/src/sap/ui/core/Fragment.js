@@ -321,7 +321,7 @@ function(
 	 * @private
 	 * @param {string|object} vName The fragment name or the fragment config
 	 * @param {string|sap.ui.core.mvc.Controller} vType The type of the fragment or the controller
-	 * @param {sap.ui.core.mvc.Controller|Object} oController the Controller or Object which should be used by the controls in the Fragment.
+	 * @param {sap.ui.core.mvc.Controller|object} oController the Controller or object which should be used by the controls in the Fragment.
 	 * @returns {Promise<sap.ui.core.Control|sap.ui.core.Control[]>|sap.ui.core.Fragment} If fragment is created asynchronoulsy
 	 *  a Promise is returned which resolves with the resulting {sap.ui.core.Control|sap.ui.core.Control[]}
 	 *  after fragment parsing and instantiation.
@@ -386,29 +386,35 @@ function(
 	}
 
 	/**
-	 * Loads and instantiates a Fragment.
-	 * A Promise is returned, which resolves with the Fragments content.
+	 * Loads and instantiates a fragment.
+	 * Also refer to {@link topic:04129b2798c447368f4c8922c3c33cd7 Instantiation of Fragments}.
 	 *
-	 * The Fragment object itself is not an entity with significance beyond this factory.
+	 * The fragment object itself is not an entity that has any further significance beyond this factory function.
 	 *
-	 * The Fragment types "XML", "JS" and "HTML" (type "HTML" is deprecated) are available by default; additional Fragment types can be added using
-	 * the sap.ui.core.Fragment.registerType() function.
+	 * A Promise is returned, which resolves with the fragment's content.
+	 *
+	 * The Fragment types <code>"XML"</code>, <code>"JS"</code>, and <code>"HTML"</code> (type <code>"HTML"</code> is deprecated) are available by default.
+	 * Additional Fragment types can be implemented and added using the {@link sap.ui.core.Fragment.registerType} function.
 	 *
 	 * Further properties may be supported by future or custom Fragment types. Any given properties
 	 * will be forwarded to the Fragment implementation.
 	 *
-	 * If no fixed ID is given, the Fragment ID is generated. In any case, the Fragment ID will be used as prefix for the IDs of
+	 * If no fixed ID is given, the fragment ID is generated. In any case, the fragment ID will be used as prefix for the IDs of
 	 * all contained controls.
 	 *
+	 * <b>Note:</b>
+	 * In case you are embedding a Fragment into an existing View, please also have a look at the
+	 * {@link sap.ui.core.mvc.Controller.loadFragment loadFragment} factory for a closer coupling to the corresponding Controller instance.
+	 *
 	 * @example <caption>Loading an XML fragment (default type)</caption>
-	 * sap.ui.require(["sap/ui/core/Fragment"], async function(Fragment){
+	 * sap.ui.require(["sap/ui/core/Fragment"], async (Fragment) => {
 	 *  const myFrag = await Fragment.load({
 	 *    name: "my.useful.VerySimpleUiPart"
 	 *  });
 	 * });
 	 *
 	 * @example <caption>Creating an XML fragments</caption>
-	 * sap.ui.require(["sap/ui/core/Fragment"], async function(Fragment){
+	 * sap.ui.require(["sap/ui/core/Fragment"], async (Fragment) => {
 	 *  const myFrag = await Fragment.load({
 	 *    type: "XML",
 	 *    definition: '&lt;Button xmlns=&quot;sap.m&quot; id=&quot;xmlfragbtn&quot; text=&quot;This is an XML Fragment&quot; press=&quot;doSomething&quot;&gt;&lt;/Button&gt;'
@@ -416,7 +422,7 @@ function(
 	 * });
      *
 	 * @example <caption>Creating an JS fragments</caption>
-	 * sap.ui.require(["sap/ui/core/Fragment"], async function(Fragment){
+	 * sap.ui.require(["sap/ui/core/Fragment"], async (Fragment) => {
 	 *  const myFrag = await Fragment.load({
      *    name: "my.sample.AsyncButton",
 	 *    type: "JS",
@@ -424,29 +430,29 @@ function(
 	 * });
 	 *
 	 * @example <caption>Creating an HTML fragments (deprecated)</caption>
-	 * sap.ui.require(["sap/ui/core/Fragment"], async function(Fragment){
+	 * sap.ui.require(["sap/ui/core/Fragment"], async (Fragment) => {
 	 *  const myFrag = await Fragment.load({
 	 *    type: "HTML",
 	 *    definition: '&lt;div id=&quot;htmlfragbtn&quot; data-sap-ui-type=&quot;sap.m.Button&quot; data-text=&quot;This is an HTML Fragment&quot;&gt;&lt;/div&gt;'
 	 *  });
 	 * });
 	 *
-	 * <b>Note:</b> If the Fragment contains ExtensionPoints you have to pass the parameter 'containingView'.
+	 * <b>Note:</b> If the fragment contains <code>ExtensionPoint</code>s, you have to pass the parameter <code>containingView</code>.
 	 * The containing view should be the View instance into which the fragment content will be inserted manually.
 	 *
 	 * @param {object} mOptions options map
-	 * @param {string} [mOptions.name] must be supplied if no "definition" parameter is given. The Fragment name must correspond to an XML Fragment which
+	 * @param {string} [mOptions.name] must be supplied if no <code>definition</code> parameter is given. The fragment name must correspond to an XML fragment which
 	 *    can be loaded via the module system
-	 *    (fragmentName + suffix ".fragment.[typeextension]") and which contains the Fragment definition.
-	 *    If "mOptions.controller" is supplied, the (event handler-) methods referenced in the Fragment will be called on this Controller.
-	 *    Note that Fragments may require a Controller to be given and certain methods to be implemented by it.
-	 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (type "HTML" is deprecated). Default is "XML"
-	 * @param {string} [mOptions.definition] definition of the Fragment content. When this property is supplied, the "name" parameter must not be used. If both are supplied, the definition has priority.
-	 * Please see the above example on how to use the 'definition' parameter.
-	 * @param {string} [mOptions.id] the ID of the Fragment
-	 * @param {sap.ui.core.mvc.Controller|Object} [mOptions.controller] the Controller or Object which should be used by the controls in the Fragment.
-	 *    Note that some Fragments may not need a Controller while others may need one and certain methods to be implemented by it.
-	 * @param {sap.ui.core.mvc.View} [mOptions.containingView] The view containing the Fragment content. If the Fragment content contains ExtensionPoints this parameter must be given.
+	 *    (fragmentName + suffix <code>.fragment.<i>&lt;typeExtension></i></code>) and which contains the fragment definition.
+	 *    If <code>mOptions.controller</code> is supplied, the (event handler) methods referenced in the fragment will be called on that controller.
+	 *    Note that fragments may require a controller to be given and certain methods to be implemented by it.
+	 * @param {string} [mOptions.type=XML] the fragment type, e.g. <code>"XML"</code>, <code>"JS"</code>, or <code>"HTML"</code> (type <code>"HTML"</code> is deprecated). Default is <code>"XML"</code>
+	 * @param {string} [mOptions.definition] definition of the fragment content. When this property is supplied, the <code>name</code> parameter must not be used. If both are supplied, the definition has priority.
+	 * Please see the above example on how to use the <code>definition</code> parameter.
+	 * @param {string} [mOptions.id] the ID of the fragment
+	 * @param {sap.ui.core.mvc.Controller|object} [mOptions.controller] the controller or object which should be used by the controls in the fragment.
+	 *    Note that some fragments may not need a controller while others may need one and certain methods to be implemented by it.
+	 * @param {sap.ui.core.mvc.View} [mOptions.containingView] The view containing the fragment content. If the fragment content contains <code>ExtensionPoint</code>s, this parameter must be given.
 	 * @public
 	 * @static
 	 * @since 1.58

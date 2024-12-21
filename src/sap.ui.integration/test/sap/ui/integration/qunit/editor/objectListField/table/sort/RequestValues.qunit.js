@@ -195,15 +195,16 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithOldValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oSettings = this.oEditor.getCurrentSettings();
 						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectListWithRequestValues/value"], aObjectsParameterValueInCurrentSettings, "Editor: field 1 setting value");
 						resolve();
@@ -219,8 +220,8 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -323,15 +324,16 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -456,15 +458,16 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -561,15 +564,16 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -666,15 +670,16 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -767,25 +772,25 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					var oTable = oField.getAggregation("_field");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oClearFilterButton = oToolbar.getContent()[4];
-					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					var oDeleteButton = oToolbar.getContent()[3];
-					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						var oClearFilterButton = oToolbar.getContent()[4];
+						assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
+						var oDeleteButton = oToolbar.getContent()[3];
+						assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
 						EditorQunitUtils.wait().then(function () {
 							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 							assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -855,7 +860,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});

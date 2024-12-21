@@ -346,7 +346,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("GetIdForCondensing", () => {
+	QUnit.module("Condensing", () => {
 		QUnit.test("getIdForCondensing without affectedControl", (assert) => {
 			const oUIChange = FlexObjectFactory.createUIChange({ ...oFileContent });
 			const oAppComponent = "appComponent";
@@ -363,6 +363,17 @@ sap.ui.define([
 				"controlId",
 				"the ID is correct"
 			);
+		});
+
+		QUnit.test("canBeCondensed", function(assert) {
+			const oUIChange = FlexObjectFactory.createUIChange({ ...oFileContent });
+			oUIChange.markSuccessful();
+			const oUIChange2 = FlexObjectFactory.createUIChange({ ...oFileContent });
+			oUIChange2.markFailed();
+			const oUIChange3 = FlexObjectFactory.createUIChange({ ...oFileContent });
+			assert.ok(oUIChange.canBeCondensed(), "the change can be condensed");
+			assert.notOk(oUIChange2.canBeCondensed(), "the change can't be condensed");
+			assert.notOk(oUIChange3.canBeCondensed(), "the change can't be condensed");
 		});
 	});
 

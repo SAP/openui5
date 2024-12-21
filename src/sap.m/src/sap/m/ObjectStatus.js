@@ -208,11 +208,11 @@ sap.ui.define([
 	 */
 	ObjectStatus.prototype._getImageControl = function() {
 		var sImgId = this.getId() + '-icon',
-			bIsIconOnly = !this.getText() && !this.getTitle(),
+			bUseIconTooltip = !this.getText() && !this.getTitle() && !this.getTooltip(),
 			mProperties = {
 				src : this.getIcon(),
 				densityAware : this.getIconDensityAware(),
-				useIconTooltip : bIsIconOnly,
+				useIconTooltip : bUseIconTooltip,
 				decorative: !this.getActive()
 			};
 

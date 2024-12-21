@@ -26,7 +26,7 @@ sap.ui.define([
 	QUnit.config.reorder = false;
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
-	var iWaitTimeout = 1500;
+	var iWaitTimeout = 3000;
 	var oResponseData = {
 		"Customers": [
 			{"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1"},
@@ -301,8 +301,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -310,39 +310,42 @@ sap.ui.define([
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
-					//settings button
-					var oButton = oCustomerField._settingsButton;
-					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					oButton.firePress();
-					oButton.focus();
-					setTimeout(function () {
-						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
-						//popup is opened
-						assert.equal(oCustomerField._oSettingsPanel._oOpener, oCustomerField, "Settings: Has correct owner");
-						var settingsClass = oCustomerField._oSettingsPanel.getMetadata().getClass();
-						var testInterface = settingsClass._private();
-						assert.deepEqual(testInterface.oCurrentInstance, oCustomerField._oSettingsPanel, "Settings: Points to right settings panel");
-						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
-						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
-						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
-						testInterface.oSegmentedButton.getItems()[1].firePress();
-						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
-						testInterface.oSegmentedButton.getItems()[0].firePress();
-						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
-						testInterface.oDynamicValueField.fireValueHelpRequest();
-						assert.equal(testInterface.oSettingsPanel.getItems()[0].getItems().length, 5, "Settings: Settings Panel has 5 items");
-						var oItem = testInterface.getMenuItems()[3].getItems()[2];
-						testInterface.getMenu().fireItemSelected({ item: oItem });
-						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						setTimeout(function () {
-							//this is delayed not to give time to show the tokenizer
-							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
-							resolve();
-						}, 1000);
-					}, 1000);
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						//settings button
+						var oButton = oCustomerField._settingsButton;
+						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+						oButton.firePress();
+						oButton.focus();
+						EditorQunitUtils.wait().then(function () {
+							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+							//popup is opened
+							assert.equal(oCustomerField._oSettingsPanel._oOpener, oCustomerField, "Settings: Has correct owner");
+							var settingsClass = oCustomerField._oSettingsPanel.getMetadata().getClass();
+							var testInterface = settingsClass._private();
+							assert.deepEqual(testInterface.oCurrentInstance, oCustomerField._oSettingsPanel, "Settings: Points to right settings panel");
+							assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
+							assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
+							assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
+							testInterface.oSegmentedButton.getItems()[1].firePress();
+							assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
+							testInterface.oSegmentedButton.getItems()[0].firePress();
+							assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
+							testInterface.oDynamicValueField.fireValueHelpRequest();
+							assert.equal(testInterface.oSettingsPanel.getItems()[0].getItems().length, 5, "Settings: Settings Panel has 5 items");
+							var oItem = testInterface.getMenuItems()[3].getItems()[2];
+							testInterface.getMenu().fireItemSelected({ item: oItem });
+							testInterface.oPopover.getFooter().getContent()[2].firePress();
+							EditorQunitUtils.wait().then(function () {
+								//this is delayed not to give time to show the tokenizer
+								assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
+								resolve();
+							});
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -356,8 +359,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerNotEditableLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomerNotEditableField = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oCustomerNotEditableLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -368,10 +371,11 @@ sap.ui.define([
 					assert.ok(!oCustomerComboBox.getEditable(), "Field: Customer NotEditable is Not Editable");
 					var oNextField = this.oEditor.getAggregation("_formContent")[7].getAggregation("_field");
 					assert.ok(oNextField.isA("sap.m.Panel"), "Field: Customer NotVisible is not visible");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerComboBox.getItems().length, 4, "Field: Customer NotEditable data lenght is OK");
 						resolve();
-					}, 2000);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -383,8 +387,8 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -393,18 +397,19 @@ sap.ui.define([
 					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
 
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerComoboBox.getItems().length, 4, "Field: Customer origin lenght is OK");
 						var oModel = oCustomerComoboBox.getModel();
 						oModel.attachPropertyChange(function () {
-							setTimeout(function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(function () {
 								assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
 								resolve();
-							}, 2 * iWaitTimeout);
+							});
 						});
 						oCustomerComoboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomerComoboBox, "c");
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -416,8 +421,8 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -426,18 +431,19 @@ sap.ui.define([
 					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
 
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerComoboBox.getItems().length, 4, "Field: Customer origin lenght is OK");
 						var oModel = oCustomerComoboBox.getModel();
 						oModel.attachPropertyChange(function () {
-							setTimeout(function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(function () {
 								assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
 								resolve();
-							}, 2 * iWaitTimeout);
+							});
 						});
 						oCustomerComoboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomerComoboBox, "c");
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -551,8 +557,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -560,39 +566,42 @@ sap.ui.define([
 					assert.ok(oCustomersField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 					var oCustomerComoboBox = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomerComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
-					//settings button
-					var oButton = oCustomersField._settingsButton;
-					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					oButton.firePress();
-					oButton.focus();
-					setTimeout(function () {
-						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
-						//popup is opened
-						assert.deepEqual(oCustomersField._oSettingsPanel._oOpener, oCustomersField, "Settings: Has correct owner");
-						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
-						var testInterface = settingsClass._private();
-						assert.deepEqual(testInterface.oCurrentInstance, oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
-						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
-						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
-						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
-						testInterface.oSegmentedButton.getItems()[1].firePress();
-						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
-						testInterface.oSegmentedButton.getItems()[0].firePress();
-						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
-						testInterface.oDynamicValueField.fireValueHelpRequest();
-						assert.equal(testInterface.oSettingsPanel.getItems()[0].getItems().length, 5, "Settings: Settings Panel has 5 items");
-						var oItem = testInterface.getMenuItems()[3].getItems()[2];
-						testInterface.getMenu().fireItemSelected({ item: oItem });
-						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						setTimeout(function () {
-							//this is delayed not to give time to show the tokenizer
-							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
-							resolve();
-						}, 1000);
-					}, 1000);
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						//settings button
+						var oButton = oCustomersField._settingsButton;
+						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+						oButton.firePress();
+						oButton.focus();
+						EditorQunitUtils.wait().then(function () {
+							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+							//popup is opened
+							assert.deepEqual(oCustomersField._oSettingsPanel._oOpener, oCustomersField, "Settings: Has correct owner");
+							var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
+							var testInterface = settingsClass._private();
+							assert.deepEqual(testInterface.oCurrentInstance, oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
+							assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
+							assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
+							assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
+							testInterface.oSegmentedButton.getItems()[1].firePress();
+							assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
+							testInterface.oSegmentedButton.getItems()[0].firePress();
+							assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
+							testInterface.oDynamicValueField.fireValueHelpRequest();
+							assert.equal(testInterface.oSettingsPanel.getItems()[0].getItems().length, 5, "Settings: Settings Panel has 5 items");
+							var oItem = testInterface.getMenuItems()[3].getItems()[2];
+							testInterface.getMenu().fireItemSelected({ item: oItem });
+							testInterface.oPopover.getFooter().getContent()[2].firePress();
+							EditorQunitUtils.wait().then(function () {
+								//this is delayed not to give time to show the tokenizer
+								assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
+								resolve();
+							});
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -606,8 +615,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersNotEditableLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomersNotEditableField = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oCustomersNotEditableLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -618,10 +627,11 @@ sap.ui.define([
 					assert.ok(!oCustomersMultiComboBox.getEditable(), "Field: Customers NotEditable is Not Editable");
 					var oNextField = this.oEditor.getAggregation("_formContent")[7].getAggregation("_field");
 					assert.ok(oNextField.isA("sap.m.Panel"), "Field: Customers NotVisible is not visible");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers NotEditable data lenght is OK");
-					resolve();
-					}, 2000);
+						resolve();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -633,8 +643,8 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -643,18 +653,19 @@ sap.ui.define([
 					var oCustomersMultiComboBox = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomersMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers origin lenght is OK");
 						var oModel = oCustomersMultiComboBox.getModel();
 						oModel.attachPropertyChange(function () {
-							setTimeout(function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(function () {
 								assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
 								resolve();
-							}, 2 * iWaitTimeout);
+							});
 						});
 						oCustomersMultiComboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiComboBox, "c");
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -666,8 +677,8 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -676,18 +687,19 @@ sap.ui.define([
 					var oCustomersMultiComboBox = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomersMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers origin lenght is OK");
 						var oModel = oCustomersMultiComboBox.getModel();
 						oModel.attachPropertyChange(function () {
-							setTimeout(function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(function () {
 								assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
 								resolve();
-							}, 2 * iWaitTimeout);
+							});
 						});
 						oCustomersMultiComboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiComboBox, "c");
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -801,8 +813,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -810,39 +822,42 @@ sap.ui.define([
 					assert.ok(oCustomersField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 					var oCustomersMultiInput = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
-					//settings button
-					var oButton = oCustomersField._settingsButton;
-					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-					oButton.firePress();
-					oButton.focus();
-					setTimeout(function () {
-						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
-						//popup is opened
-						assert.deepEqual(oCustomersField._oSettingsPanel._oOpener, oCustomersField, "Settings: Has correct owner");
-						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
-						var testInterface = settingsClass._private();
-						assert.deepEqual(testInterface.oCurrentInstance, oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
-						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
-						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
-						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
-						testInterface.oSegmentedButton.getItems()[1].firePress();
-						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
-						testInterface.oSegmentedButton.getItems()[0].firePress();
-						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
-						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
-						testInterface.oDynamicValueField.fireValueHelpRequest();
-						assert.equal(testInterface.oSettingsPanel.getItems()[0].getItems().length, 5, "Settings: Settings Panel has 5 items");
-						var oItem = testInterface.getMenuItems()[3].getItems()[2];
-						testInterface.getMenu().fireItemSelected({ item: oItem });
-						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						setTimeout(function () {
-							//this is delayed not to give time to show the tokenizer
-							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
-							resolve();
-						}, 1000);
-					}, 1000);
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						//settings button
+						var oButton = oCustomersField._settingsButton;
+						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+						oButton.firePress();
+						oButton.focus();
+						EditorQunitUtils.wait().then(function () {
+							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+							//popup is opened
+							assert.deepEqual(oCustomersField._oSettingsPanel._oOpener, oCustomersField, "Settings: Has correct owner");
+							var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
+							var testInterface = settingsClass._private();
+							assert.deepEqual(testInterface.oCurrentInstance, oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
+							assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
+							assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
+							assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
+							testInterface.oSegmentedButton.getItems()[1].firePress();
+							assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel is visible after settings button press");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === false, "Settings: Dynamic Values Panel not visible after settings button press");
+							testInterface.oSegmentedButton.getItems()[0].firePress();
+							assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel is not visible after dynamic button press");
+							assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel is visible after dynamic button press");
+							testInterface.oDynamicValueField.fireValueHelpRequest();
+							assert.equal(testInterface.oSettingsPanel.getItems()[0].getItems().length, 5, "Settings: Settings Panel has 5 items");
+							var oItem = testInterface.getMenuItems()[3].getItems()[2];
+							testInterface.getMenu().fireItemSelected({ item: oItem });
+							testInterface.oPopover.getFooter().getContent()[2].firePress();
+							EditorQunitUtils.wait().then(function () {
+								//this is delayed not to give time to show the tokenizer
+								assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
+								resolve();
+							});
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -856,8 +871,8 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersNotEditableLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomersNotEditableField = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oCustomersNotEditableLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -880,8 +895,8 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiInput
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -890,18 +905,19 @@ sap.ui.define([
 					var oCustomersMultiInput = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
 
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oModel = oCustomersMultiInput.getModel();
 						assert.deepEqual(oModel.getData(), {},  "Field: Customers ori lenght is OK");
 						oModel.attachPropertyChange(function () {
-							setTimeout(function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(function () {
 								assert.equal(oModel.getData().value.length, 2,  "Field: Customers lenght is OK");
 								resolve();
-							}, 2 * iWaitTimeout);
+							});
 						});
 						oCustomersMultiInput.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -913,8 +929,8 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiInput
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -923,18 +939,19 @@ sap.ui.define([
 					var oCustomersMultiInput = oCustomersField.getAggregation("_field");
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
 
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oModel = oCustomersMultiInput.getModel();
 						assert.deepEqual(oModel.getData(), {},  "Field: Customers ori lenght is OK");
 						oModel.attachPropertyChange(function () {
-							setTimeout(function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(function () {
 								assert.equal(oModel.getData().value.length, 2,  "Field: Customers lenght is OK");
 								resolve();
-							}, 2 * iWaitTimeout);
+							});
 						});
 						oCustomersMultiInput.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -957,8 +974,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -971,18 +988,19 @@ sap.ui.define([
 					assert.equal(oTokens[0].getText(), "A Company", "Field: token1 text is OK");
 					assert.equal(oTokens[1].getText(), "B Company", "Field: token2 text is OK");
 					assert.equal(oTokens[2].getText(), "C2 Company", "Field: token3 text is OK");
-					setTimeout(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oModel = oCustomersMultiInput.getModel();
 						assert.deepEqual(oModel.getData(), {},  "Field: Customers ori lenght is OK");
 						oModel.attachPropertyChange(function () {
-							setTimeout(function () {
+							EditorQunitUtils.wait(iWaitTimeout).then(function () {
 								assert.equal(oModel.getData().value.length, 4,  "Field: Customers lenght is OK");
 								resolve();
-							}, 2 * iWaitTimeout);
+							});
 						});
 						oCustomersMultiInput.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
-					}, iWaitTimeout);
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});

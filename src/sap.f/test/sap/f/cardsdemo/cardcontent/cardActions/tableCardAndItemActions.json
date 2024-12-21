@@ -1,0 +1,174 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "list.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+	  "actions": [{
+		"type": "Navigation",
+		"parameters": {
+		  "url": "https://sap.com",
+		  "target": "_blank"
+		}
+	  }],
+	  "type": "Table",
+	  "data": {
+		"json": [{
+		  "product": "DVD player",
+		  "salesOrder": "5000010050",
+		  "customerName": "Robert Brown Entertainment",
+		  "netAmount": "2K USD",
+		  "status": "Delivered",
+		  "statusState": "Success",
+		  "deliveryProgress": 100
+		},
+		  {
+			"product": "Astro Laptop 1516",
+			"salesOrder": "5000010051",
+			"customerName": "Entertainment Argentina",
+			"netAmount": "127k USD",
+			"status": "Canceled",
+			"statusState": "Error",
+			"deliveryProgress": 0
+		  },
+		  {
+			"product": "Astro Phone 6",
+			"salesOrder": "5000010052",
+			"customerName": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning",
+			"deliveryProgress": 33
+		  },
+		  {
+			"product": "Beam Breaker B-1",
+			"salesOrder": "5000010053",
+			"customerName": "Quimica Madrilenos",
+			"netAmount": "25K USD",
+			"status": "Delivered",
+			"statusState": "Success",
+			"deliveryProgress": 100
+		  },
+		  {
+			"product": "Beam Breaker B-2",
+			"salesOrder": "5000010054",
+			"customerName": "Development Para O Governo",
+			"netAmount": "7K USD",
+			"status": "Delivered",
+			"statusState": "Success",
+			"deliveryProgress": 100
+		  },
+		  {
+			"product": "Beam Breaker B-3",
+			"salesOrder": "5000010050",
+			"customerName": "Robert Brown Entertainment",
+			"netAmount": "2K USD",
+			"status": "Delivered",
+			"statusState": "Success",
+			"deliveryProgress": 100
+		  },
+		  {
+			"product": "Benda Laptop 1408",
+			"salesOrder": "5000010051",
+			"customerName": "Entertainment Argentina",
+			"netAmount": "127k USD",
+			"status": "Canceled",
+			"statusState": "Error",
+			"deliveryProgress": 0
+		  },
+		  {
+			"product": "Bending Screen 21HD",
+			"salesOrder": "5000010052",
+			"customerName": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning",
+			"deliveryProgress": 27
+		  },
+		  {
+			"product": "Blaster Extreme",
+			"salesOrder": "5000010052",
+			"customerName": "Brazil Technologies",
+			"netAmount": "8K USD",
+			"status": "In Progress",
+			"statusState": "Warning",
+			"deliveryProgress": 51
+		  }
+		]
+	  },
+	  "header": {
+		"title": "Card and Items Actions",
+		"subTitle": "Today"
+	  },
+	  "content": {
+		"maxItems": 3,
+		"row": {
+		  "actions": [{
+			"type": "Navigation",
+			"parameters": {
+			  "url": "https://sap.com",
+			  "target": "_blank"
+			}
+		  }],
+		  "columns": [{
+			"title": "Product",
+			"value": "{product}",
+			"additionalText": "{salesOrder}",
+			"identifier": true
+		  },
+			{
+			  "title": "Customer",
+			  "value": "{customerName}"
+			},
+			{
+			  "title": "Net Amount",
+			  "value": "{netAmount}",
+			  "hAlign": "End"
+			}
+		  ]
+		}
+	  },
+	  "footer": {
+		"actionsStrip": [
+		  {
+			"type": "ToolbarSpacer"
+		  },
+		  {
+			"type": "Link",
+			"text": "Agenda",
+			"icon": "sap-icon://action",
+			"actions": [
+			  {
+				"type": "Navigation",
+				"parameters": {
+				  "url": "{agendaUrl}"
+				}
+			  }
+			]
+		  },
+		  {
+			"text": "Approve",
+			"overflowPriority": "High",
+			"actions": [
+			  {
+				"type": "Custom",
+				"parameters": {
+				  "method": "approve"
+				}
+			  }
+			]
+		  }
+		]
+	  }
+	}
+}

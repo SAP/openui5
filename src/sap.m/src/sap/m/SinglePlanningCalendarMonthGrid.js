@@ -648,6 +648,14 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * @returns {boolean} true if there are any selected appointments
+		 * @private
+		 */
+		SinglePlanningCalendarMonthGrid.prototype._hasSelectedAppointments = function() {
+			return this.getAppointments().some((oAppointment) => oAppointment.getSelected());
+		};
+
 		SinglePlanningCalendarMonthGrid.prototype._isSelectAppointment = function (oEvent) {
 			return oEvent.target.classList.contains("sapUiCalendarRowApps") || (oEvent.target.parentElement && oEvent.target.parentElement.classList.contains("sapUiCalendarRowApps"));
 		};
@@ -781,11 +789,14 @@ sap.ui.define([
 			if ((oSrcControl && oSrcControl.isA("sap.m.SinglePlanningCalendarMonthGrid") && bIsCell && !bIsLink) || bWeekNumberSelect) {
 				this._lastPressedAppointment = undefined;
 				this._fireGridCellSelectionEvent(oEvent, bWeekNumberSelect);
+
 				// deselect all appointments
-				this.fireAppointmentSelect({
-					appointment: undefined,
-					appointments: this._toggleAppointmentSelection(undefined, true)
-				});
+				if (this._hasSelectedAppointments()) {
+					this.fireAppointmentSelect({
+						appointment: undefined,
+						appointments: this._toggleAppointmentSelection(undefined, true)
+					});
+				}
 			} else if (oSrcControl && oSrcControl.isA("sap.ui.unified.CalendarAppointment")) {
 				this._lastPressedAppointment = oSrcControl;
 				const bCtrlKeyOrMetaKey = oEvent.ctrlKey || oEvent.metaKey;

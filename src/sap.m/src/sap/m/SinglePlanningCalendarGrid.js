@@ -1410,10 +1410,13 @@ sap.ui.define([
 					endDate: this._getDateFormatter().parse(oGridCell.getAttribute("data-sap-end-date"))
 				});
 
-				this.fireAppointmentSelect({
-					appointment: undefined,
-					appointments: this._toggleAppointmentSelection(undefined, true)
-				});
+				const bHasSelectedApps = this.getSelectedAppointments().length > 0;
+				if (bHasSelectedApps) {
+					this.fireAppointmentSelect({
+						appointment: undefined,
+						appointments: this._toggleAppointmentSelection(undefined, true)
+					});
+				}
 			} else if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment") && !oColumnGridHeaderCell && !bArrowNavigation) {
 
 				// add suffix in appointment

@@ -1,7 +1,7 @@
 /* global QUnit,sinon */
 sap.ui.define([
-	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/core/Lib", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate", "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/m/p13n/modification/FlexModificationHandler", "test-resources/sap/m/qunit/p13n/TestModificationHandler"
-], function (Engine, MDCQUnitUtils, Library, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler) {
+	"sap/m/p13n/Engine", "sap/ui/core/Lib", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate", "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/m/p13n/modification/FlexModificationHandler", "test-resources/sap/m/qunit/p13n/TestModificationHandler"
+], function (Engine, Library, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler) {
 	"use strict";
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
@@ -9,7 +9,7 @@ sap.ui.define([
 		beforeEach: function () {
 				const aPropertyInfos = [
 				{
-					"name": "col1",
+					"key": "col1",
 					"path": "nav/col1",
 					"label": "col1",
 					"dataType": "String",
@@ -17,7 +17,7 @@ sap.ui.define([
 					"filterable": true,
 					"visible": true
 				}, {
-					"name": "col2",
+					"key": "col2",
 					"path": "nav/col2",
 					"label": "col2",
 					"dataType": "String",
@@ -34,6 +34,12 @@ sap.ui.define([
 		},
 		createTestObjects: function(aPropertyInfos) {
 			this.oTable = new Table("TestTabl", {
+				delegate: {
+					name: "test-resources/sap/ui/mdc/delegates/TableDelegate",
+					payload: {
+						propertyInfo: aPropertyInfos
+					}
+				},
 				columns: [
 					new Column("col1",{
 						header:"col1",
@@ -46,7 +52,6 @@ sap.ui.define([
 				]
 			});
 			this.oTable.setP13nMode(["Column","Sort","Filter"]);
-			MDCQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
 
 			sinon.stub(TableDelegate,"getFilterDelegate").callsFake(function() {
 				return {
@@ -67,7 +72,6 @@ sap.ui.define([
 		destroyTestObjects: function() {
 			this.oTable.destroy();
 			TableDelegate.getFilterDelegate.restore();
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 

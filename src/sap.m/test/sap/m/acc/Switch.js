@@ -1,181 +1,105 @@
 sap.ui.define([
 	"sap/m/library",
-	"sap/m/Text",
+	"sap/ui/core/library",
 	"sap/m/Title",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Switch",
 	"sap/m/Label",
-	"sap/m/Table",
-	"sap/m/Column",
-	"sap/m/ColumnListItem",
 	"sap/m/App",
 	"sap/m/Page"
-], function(mobileLibrary, MText, Title, VerticalLayout, Switch, Label, Table, Column, ColumnListItem, App, Page) {
+], function(mobileLibrary, coreLibrary, Title, VerticalLayout, Switch, Label, App, Page) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	// shortcut for sap.m.SwitchType
 	var SwitchType = mobileLibrary.SwitchType;
 
-	function getText(sText) {
-		return new MText({ text: sText }).addStyleClass("sapUiSmallMarginTop");
-	}
-
 	function getTitle(sText) {
 		return new Title({
 			text: sText,
-			titleStyle: "H3"
+			titleLevel: TitleLevel.H2,
+			titleStyle: TitleLevel.H5,
+			wrapping: true
 		}).addStyleClass("sapUiMediumMarginTop");
 	}
-
-
-	// ----------------
-	// Layout sections
-	// ----------------
 
 	var oDefaultType = new VerticalLayout({
 		content: [
 			getTitle("Default type"),
 
-			getText("Regular:"),
-			new Switch(),
+			new Label({text: "Regular", wrapping: true, labelFor: "defaultSwitch"}),
+			new Switch("defaultSwitch", {}),
 
-			getText("Disabled:"),
-			new Switch({ enabled: false }),
+			new Label({text: "Disabled", wrapping: true, labelFor: "disabledSwitch"}),
+			new Switch("disabledSwitch", { enabled: false }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "defaultSwitchWithLabel" }),
+			new Label({ text: "Label", wrapping: true, labelFor: "defaultSwitchWithLabel" }),
 			new Switch("defaultSwitchWithLabel"),
 
-			getText("Using ariaLabelledBy association:"),
-			new MText("defaultSwitchLabelledBy", { text: "Label" }),
+			new Label({ text: "Using ariaLabelledBy association", wrapping: true, labelFor: "defaultSwitchLabelledBy" }),
 			new Switch({ ariaLabelledBy: "defaultSwitchLabelledBy" })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oDefaultCustomTextLayout = new VerticalLayout({
 		content: [
 			getTitle("Default type with custom text"),
 
-			getText("Regular:"),
-			new Switch({ customTextOn: "Yes", customTextOff: "No" }),
+			new Label({ text: "Regular with text", wrapping: true, labelFor: "regularWithText" }),
+			new Switch("regularWithText", { customTextOn: "Yes", customTextOff: "No" }),
 
-			getText("Disabled:"),
-			new Switch({ customTextOn: "Yes", customTextOff: "No", enabled: false }),
+			new Label({ text: "Disabled with text", wrapping: true, labelFor: "disabledWithText" }),
+			new Switch("disabledWithText", { customTextOn: "Yes", customTextOff: "No", enabled: false }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "defaultCustomTextSwitchWithLabel" }),
+			new Label({ text: "Switch with label", wrapping: true, labelFor: "defaultCustomTextSwitchWithLabel" }),
 			new Switch("defaultCustomTextSwitchWithLabel", { customTextOn: "Yes", customTextOff: "No" }),
 
-			getText("Using ariaLabelledBy association:"),
-			new MText("defaultCustomTextSwitchLabelledBy", { text: "Label" }),
+			new Label("defaultCustomTextSwitchLabelledBy", { text: "Using ariaLabelledBy association", wrapping: true }),
 			new Switch({ customTextOn: "Yes", customTextOff: "No", ariaLabelledBy: "defaultCustomTextSwitchLabelledBy" })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oDefaultNoTextLayout = new VerticalLayout({
 		content: [
 			getTitle("Default type without text (via custom text)"),
 
-			getText("Regular:"),
-			new Switch({ customTextOn: " ", customTextOff: " " }),
+			new Label({ text: "Regular without text", wrapping: true, labelFor: "regularWithoutText" }),
+			new Switch("regularWithoutText", { customTextOn: " ", customTextOff: " " }),
 
-			getText("Disabled:"),
-			new Switch({ customTextOn: " ", customTextOff: " ", enabled: false }),
+			new Label({ text: "Disabled without text", wrapping: true, labelFor: "disabledWithoutText" }),
+			new Switch("disabledWithoutText", { customTextOn: " ", customTextOff: " ", enabled: false }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "defaultNoTextSwitchWithLabel" }),
-			new Switch("defaultNoTextSwitchWithLabel", { customTextOn: " ", customTextOff: " " }),
-
-			getText("Using ariaLabelledBy association:"),
-			new MText("defaultNoTextSwitchLabelledBy", { text: "Label" }),
+			new Label("defaultNoTextSwitchLabelledBy", { text: "Using ariaLabelledBy association", wrapping: true }),
 			new Switch({ customTextOn: " ", customTextOff: " ", ariaLabelledBy: "defaultNoTextSwitchLabelledBy" })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
+	}).addStyleClass("sapUiContentPadding");
 
 	var oAcceptRejectLayout = new VerticalLayout({
 		content: [
 			getTitle("AcceptReject type"),
 
-			getText("Regular:"),
-			new Switch({ type: SwitchType.AcceptReject }),
+			new Label({ text: "Regular", labelFor: "regularWithAcceptStatus" }),
+			new Switch("regularWithAcceptStatus", { type: SwitchType.AcceptReject }),
 
-			getText("Disabled:"),
-			new Switch({ type: SwitchType.AcceptReject, enabled: false }),
+			new Label({ text: "Disabled", labelFor: "disabledWithAcceptStatus" }),
+			new Switch("disabledWithAcceptStatus", { type: SwitchType.AcceptReject, enabled: false }),
 
-			getText("Connected to a Label:"),
-			new Label({ text: "Label", labelFor: "acceptRejectSwitchWithLabel" }),
-			new Switch("acceptRejectSwitchWithLabel", { type: SwitchType.AcceptReject }),
-
-			getText("Using ariaLabelledBy association:"),
-			new MText("acceptRejectSwitchLabelledBy", { text: "Label" }),
+			new Label("acceptRejectSwitchLabelledBy", { text: "Using ariaLabelledBy association" }),
 			new Switch({ type: SwitchType.AcceptReject, ariaLabelledBy: "acceptRejectSwitchLabelledBy" })
 		]
-	}).addStyleClass("sapUiLargeMarginBeginEnd");
-
-	var oTableLayout = new VerticalLayout({
-		content: [
-			getTitle("Switches in Table").addStyleClass("sapUiLargeMarginBegin sapUiSmallMarginBottom"),
-
-			new Table({
-				columns: [
-					new Column({
-						header: new MText({text: "Switch's type"})
-					}),
-					new Column({
-						header: new MText({text: "Regular control"})
-					}),
-					new Column({
-						header: new MText({text: "Disabled control"})
-					})
-				],
-				items: [
-					new ColumnListItem({
-						cells: [
-							new MText({text: "Default"}),
-							new Switch(),
-							new Switch({ enabled: false })
-						]
-					}),
-					new ColumnListItem({
-						cells: [
-							new MText({ text: "Default with custom text" }),
-							new Switch({ customTextOn: "Yes", customTextOff: "No" }),
-							new Switch({ customTextOn: "Yes", customTextOff: "No", enabled: false })
-						]
-					}),
-					new ColumnListItem({
-						cells: [
-							new MText({text: "Default without text"}),
-							new Switch({ customTextOn: " ", customTextOff: " " }),
-							new Switch({ customTextOn: " ", customTextOff: " ", enabled: false })
-						]
-					}),
-					new ColumnListItem({
-						cells: [
-							new MText({text: "Accept Reject"}),
-							new Switch({ type: SwitchType.AcceptReject }),
-							new Switch({ type: SwitchType.AcceptReject, enabled: false })
-						]
-					})
-				]
-			})
-		]
-	});
-
-
-	// ----------------
-	// Final page
-	// ----------------
+	}).addStyleClass("sapUiContentPadding");
 
 	var oApp = new App(),
 		oPage = new Page({
-			title: "Switch ACC Test Page",
+			title: "Switch Accessibility Test Page",
+			titleLevel: TitleLevel.H1,
 			content: [
 				oDefaultType,
 				oDefaultCustomTextLayout,
 				oDefaultNoTextLayout,
-				oAcceptRejectLayout,
-				oTableLayout
+				oAcceptRejectLayout
 			]
 		});
 

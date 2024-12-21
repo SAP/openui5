@@ -1,0 +1,123 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "list.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+	  "actions": [{
+		"type": "Navigation",
+		"parameters": {
+		  "url": "https://sap.com",
+		  "target": "_blank"
+		}
+	  }],
+	  "type": "Analytical",
+	  "header": {
+		"title": "actionableArea = Full"
+	  },
+	  "content": {
+		"chartType": "Donut",
+		"data": {
+		  "json": {
+			"milk": [
+			  {
+				"id": "1",
+				"storeName": "24-Seven",
+				"revenue": 345292.06
+			  },
+			  {
+				"id": "2",
+				"storeName": "A&A",
+				"revenue": 1564235.29
+			  },
+			  {
+				"id": "3",
+				"storeName": "Alexei's Specialities",
+				"revenue": 1085567.22
+			  }
+			]
+		  },
+		  "path": "/milk"
+		},
+		"dimensions": [
+		  {
+			"name": "Store Name",
+			"value": "{storeName}"
+		  }
+		],
+		"measures": [
+		  {
+			"name": "Revenue",
+			"value": "{revenue}"
+		  }
+		],
+		"feeds": [
+		  {
+			"type": "Dimension",
+			"uid": "color",
+			"values": [
+			  "Store Name"
+			]
+		  },
+		  {
+			"type": "Measure",
+			"uid": "size",
+			"values": [
+			  "Revenue"
+			]
+		  }
+		],
+		"actionableArea": "Full",
+		"actions": [
+		  {
+			"type": "Navigation",
+			"parameters": {
+			  "url": "https://sap.com?id={id}&revenue={revenue}&storeName={storeName}"
+			}
+		  }
+		]
+	  },
+	  "footer": {
+		"actionsStrip": [
+		  {
+			"type": "ToolbarSpacer"
+		  },
+		  {
+			"type": "Link",
+			"text": "Agenda",
+			"icon": "sap-icon://action",
+			"actions": [
+			  {
+				"type": "Navigation",
+				"parameters": {
+				  "url": "{agendaUrl}"
+				}
+			  }
+			]
+		  },
+		  {
+			"text": "Approve",
+			"overflowPriority": "High",
+			"actions": [
+			  {
+				"type": "Custom",
+				"parameters": {
+				  "method": "approve"
+				}
+			  }
+			]
+		  }
+		]
+	  }
+	}
+}

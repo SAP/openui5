@@ -162,36 +162,36 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialProperties
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: no Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount beforeFiltering ok");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanDT(cleanUUID(oRow1.getBindingContext().getObject())), oValueOfRow1), "Table: row1 value");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oTypeCell = oCells1[3];
-					assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
-					assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
-					assert.equal(oTypeCell.getSelectedKey(), oValueOfRow1.type, "Row 1: Cell 4 selectedkey ok");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount beforeFiltering ok");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanDT(cleanUUID(oRow1.getBindingContext().getObject())), oValueOfRow1), "Table: row1 value");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oTypeCell = oCells1[3];
+						assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
+						assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
+						assert.equal(oTypeCell.getSelectedKey(), oValueOfRow1.type, "Row 1: Cell 4 selectedkey ok");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -238,7 +238,7 @@ sap.ui.define([
 							assert.ok(oCloseButtonInPopover.getVisible(), "Popover: close button visible");
 							resolve();
 						});
-					};
+					});
 				});
 			});
 		});
@@ -252,42 +252,42 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oTypeCell = oCells1[3];
-					assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
-					assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
-					assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oTypeCell = oCells1[3];
+						assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
+						assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
+						assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -334,7 +334,7 @@ sap.ui.define([
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							resolve();
 						});
-					};
+					});
 				});
 			});
 		});
@@ -348,50 +348,50 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oTypeCell = oCells1[3];
-					assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
-					assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
-					assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
-					var oObjectCell = oCells1[4];
-					assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
-					assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
-					assert.ok(oObjectCell.getItems()[0].isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
-					assert.ok(!oObjectCell.getItems()[0].getEditable(), "Row 1: Cell 4 control 1 is not editable");
-					var oObjectCellControl1Value = JSON.parse(oObjectCell.getItems()[0].getValue());
-					assert.ok(deepEqual(oObjectCellControl1Value, oValue.object), "Row 1: Cell 4 control 1 value ok");
-					assert.ok(oObjectCell.getItems()[1].isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
-					assert.ok(oObjectCell.getItems()[1].getEnabled(), "Row 1: Cell 4 control 2 is enabled");
-					assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oTypeCell = oCells1[3];
+						assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
+						assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
+						assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
+						var oObjectCell = oCells1[4];
+						assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
+						assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
+						assert.ok(oObjectCell.getItems()[0].isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
+						assert.ok(!oObjectCell.getItems()[0].getEditable(), "Row 1: Cell 4 control 1 is not editable");
+						var oObjectCellControl1Value = JSON.parse(oObjectCell.getItems()[0].getValue());
+						assert.ok(deepEqual(oObjectCellControl1Value, oValue.object), "Row 1: Cell 4 control 1 value ok");
+						assert.ok(oObjectCell.getItems()[1].isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
+						assert.ok(oObjectCell.getItems()[1].getEnabled(), "Row 1: Cell 4 control 2 is enabled");
+						assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -446,7 +446,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});
@@ -460,42 +460,42 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oTypeCell = oCells1[3];
-					assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
-					assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
-					assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oTypeCell = oCells1[3];
+						assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
+						assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
+						assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -543,7 +543,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});
@@ -557,42 +557,42 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oTypeCell = oCells1[3];
-					assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
-					assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
-					assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oTypeCell = oCells1[3];
+						assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
+						assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
+						assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -655,7 +655,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});
@@ -703,42 +703,42 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialProperties
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: no Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount beforeFiltering ok");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanDT(cleanUUID(oRow1.getBindingContext().getObject())), oValueOfRow1), "Table: row1 value");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oObjectCell = oCells1[4];
-					assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
-					assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
-					var oObjectCellInput = oObjectCell.getItems()[0];
-					assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
-					assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
-					assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValueOfRow1.object), "Row 1: Cell 4 control 1 value ok");
-					var oDisplayButton = oObjectCell.getItems()[1];
-					assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
-					assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount beforeFiltering ok");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanDT(cleanUUID(oRow1.getBindingContext().getObject())), oValueOfRow1), "Table: row1 value");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oObjectCell = oCells1[4];
+						assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
+						assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
+						var oObjectCellInput = oObjectCell.getItems()[0];
+						assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
+						assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
+						assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValueOfRow1.object), "Row 1: Cell 4 control 1 value ok");
+						var oDisplayButton = oObjectCell.getItems()[1];
+						assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
+						assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oDisplayButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							assert.ok(oField._oObjectPropertyDetailsPopover.isOpen(), "Popover: object property details popover is open");
@@ -783,7 +783,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});
@@ -797,48 +797,48 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oObjectCell = oCells1[4];
-					assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
-					assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
-					var oObjectCellInput = oObjectCell.getItems()[0];
-					assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
-					assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
-					assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValue.object), "Row 1: Cell 4 control 1 value ok");
-					var oDisplayButton = oObjectCell.getItems()[1];
-					assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
-					assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oObjectCell = oCells1[4];
+						assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
+						assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
+						var oObjectCellInput = oObjectCell.getItems()[0];
+						assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
+						assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
+						assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValue.object), "Row 1: Cell 4 control 1 value ok");
+						var oDisplayButton = oObjectCell.getItems()[1];
+						assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
+						assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oDisplayButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							assert.ok(oField._oObjectPropertyDetailsPopover.isOpen(), "Popover: object property details popover is open");
@@ -883,7 +883,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});
@@ -897,50 +897,50 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oTypeCell = oCells1[3];
-					assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
-					assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
-					assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
-					var oObjectCell = oCells1[4];
-					assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
-					assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
-					assert.ok(oObjectCell.getItems()[0].isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
-					assert.ok(!oObjectCell.getItems()[0].getEditable(), "Row 1: Cell 4 control 1 is not editable");
-					var oObjectCellControl1Value = JSON.parse(oObjectCell.getItems()[0].getValue());
-					assert.ok(deepEqual(oObjectCellControl1Value, oValue.object), "Row 1: Cell 4 control 1 value ok");
-					assert.ok(oObjectCell.getItems()[1].isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
-					assert.ok(oObjectCell.getItems()[1].getEnabled(), "Row 1: Cell 4 control 2 is enabled");
-					assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					oAddButton.onAfterRendering = function(oEvent) {
-						oAddButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oTypeCell = oCells1[3];
+						assert.ok(oTypeCell.isA("sap.m.ComboBox"), "Row 1: Cell 4 is ComboBox");
+						assert.ok(!oTypeCell.getEditable(), "Row 1: Cell 4 is not editable");
+						assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
+						var oObjectCell = oCells1[4];
+						assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
+						assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
+						assert.ok(oObjectCell.getItems()[0].isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
+						assert.ok(!oObjectCell.getItems()[0].getEditable(), "Row 1: Cell 4 control 1 is not editable");
+						var oObjectCellControl1Value = JSON.parse(oObjectCell.getItems()[0].getValue());
+						assert.ok(deepEqual(oObjectCellControl1Value, oValue.object), "Row 1: Cell 4 control 1 value ok");
+						assert.ok(oObjectCell.getItems()[1].isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
+						assert.ok(oObjectCell.getItems()[1].getEnabled(), "Row 1: Cell 4 control 2 is enabled");
+						assert.equal(oTypeCell.getSelectedKey(), oValue.type, "Row 1: Cell 4 selectedkey ok");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1022,7 +1022,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});
@@ -1036,48 +1036,48 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oObjectCell = oCells1[4];
-					assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
-					assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
-					var oObjectCellInput = oObjectCell.getItems()[0];
-					assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
-					assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
-					assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValue.object), "Row 1: Cell 4 control 1 value ok");
-					var oDisplayButton = oObjectCell.getItems()[1];
-					assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
-					assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oObjectCell = oCells1[4];
+						assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
+						assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
+						var oObjectCellInput = oObjectCell.getItems()[0];
+						assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
+						assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
+						assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValue.object), "Row 1: Cell 4 control 1 value ok");
+						var oDisplayButton = oObjectCell.getItems()[1];
+						assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
+						assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1149,7 +1149,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});
@@ -1163,48 +1163,48 @@ sap.ui.define([
 				manifest: oManifestForobjectListWithValuesAndSpecialPropertiesWithValue
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(oEditor).then(function () {
-					assert.ok(oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(oEditor).then(function () {
+					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
 					oField = oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List with special properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), [oValue]), "Field 1: Value");
-					oTable = oField.getAggregation("_field");
-					assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
-					oCell = oTable.getRows()[0].getCells()[0];
-					assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
-					var oSelectionColumn = oTable.getColumns()[0];
-					oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					var oRow1 = oTable.getRows()[0];
-					assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
-					var oCells1 = oRow1.getCells();
-					assert.equal(oCells1.length, 5, "Row1: cells length ok");
-					var oSelectionCell1 = oCells1[0];
-					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-					assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
-					var oObjectCell = oCells1[4];
-					assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
-					assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
-					var oObjectCellInput = oObjectCell.getItems()[0];
-					assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
-					assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
-					assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValue.object), "Row 1: Cell 4 control 1 value ok");
-					var oDisplayButton = oObjectCell.getItems()[1];
-					assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
-					assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
-					var oTableToolbar = oTable.getExtension()[0];
-					var oEditButton = oTableToolbar.getContent()[2];
-					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
-					oTable.setSelectedIndex(0);
-					oTable.fireRowSelectionChange();
-					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
-					oEditButton.onAfterRendering = function(oEvent) {
-						oEditButton.onAfterRendering = function () {};
+					EditorQunitUtils.isReady(oEditor).then(function () {
+						assert.ok(oEditor.isReady(), "Editor is ready");
+						oTable = oField.getAggregation("_field");
+						assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount beforeFiltering ok");
+						oCell = oTable.getRows()[0].getCells()[0];
+						assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
+						var oSelectionColumn = oTable.getColumns()[0];
+						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						var oRow1 = oTable.getRows()[0];
+						assert.ok(deepEqual(cleanUUID(oRow1.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
+						var oCells1 = oRow1.getCells();
+						assert.equal(oCells1.length, 5, "Row1: cells length ok");
+						var oSelectionCell1 = oCells1[0];
+						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
+						assert.ok(oSelectionCell1.getEditable(), "Row 1: Cell 1 is editable");
+						var oObjectCell = oCells1[4];
+						assert.ok(oObjectCell.isA("sap.m.HBox"), "Row 1: Cell 4 is HBox");
+						assert.equal(oObjectCell.getItems().length, 2, "Row 1: Cell 4 has 2 controls");
+						var oObjectCellInput = oObjectCell.getItems()[0];
+						assert.ok(oObjectCellInput.isA("sap.m.Input"), "Row 1: Cell 4 control 1 is Input");
+						assert.ok(!oObjectCellInput.getEditable(), "Row 1: Cell 4 control 1 is not editable");
+						assert.ok(deepEqual(JSON.parse(oObjectCellInput.getValue()), oValue.object), "Row 1: Cell 4 control 1 value ok");
+						var oDisplayButton = oObjectCell.getItems()[1];
+						assert.ok(oDisplayButton.isA("sap.m.Button"), "Row 1: Cell 4 control 2 is Button");
+						assert.ok(oDisplayButton.getEnabled(), "Row 1: Cell 4 control 2 is enabled");
+						var oTableToolbar = oTable.getExtension()[0];
+						var oEditButton = oTableToolbar.getContent()[2];
+						assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
+						oTable.setSelectedIndex(0);
+						oTable.fireRowSelectionChange();
+						assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
 						oEditButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -1294,7 +1294,7 @@ sap.ui.define([
 								});
 							});
 						});
-					};
+					});
 				});
 			});
 		});

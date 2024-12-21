@@ -180,6 +180,7 @@ sap.ui.define([
 	FlexObjectFactory.createAnnotationChange = function(mPropertyBag) {
 		mPropertyBag.compositeCommand ||= mPropertyBag.support && mPropertyBag.support.compositeCommand;
 		const mProperties = createBasePropertyBag(mPropertyBag);
+		mProperties.serviceUrl = mPropertyBag.serviceUrl;
 		return new AnnotationChange(mProperties);
 	};
 

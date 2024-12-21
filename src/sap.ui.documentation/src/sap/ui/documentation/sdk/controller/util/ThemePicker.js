@@ -23,6 +23,10 @@ sap.ui.define([
 	APPEARANCE_KEY_HCB = "hcb",
 	APPEARANCE_KEY_HCW = "hcw",
 	APPEARANCE_KEY_AUTO = "auto",
+	APPEARANCE_KEY_QUARTZ = "sap_fiori_3",
+	APPEARANCE_KEY_QUARTZ_DARK = "sap_fiori_3_dark",
+	APPEARANCE_KEY_QUARTZ_HCB = "sap_fiori_3_hcb",
+	APPEARANCE_KEY_QUARTZ_HCW = "sap_fiori_3_hcw",
 	APPEARANCE = Object.create(null);
 
 	APPEARANCE[APPEARANCE_KEY_LIGHT] = "sap_horizon";
@@ -31,6 +35,11 @@ sap.ui.define([
 	APPEARANCE[APPEARANCE_KEY_HCW] = "sap_horizon_hcw";
 	APPEARANCE[APPEARANCE_KEY_AUTO] = "sap_horizon"; // fallback if window.matchMedia is not supported
 
+	// Older themes
+	APPEARANCE[APPEARANCE_KEY_QUARTZ] = "sap_fiori_3";
+	APPEARANCE[APPEARANCE_KEY_QUARTZ_DARK] = "sap_fiori_3_dark";
+	APPEARANCE[APPEARANCE_KEY_QUARTZ_HCB] = "sap_fiori_3_hcb";
+	APPEARANCE[APPEARANCE_KEY_QUARTZ_HCW] = "sap_fiori_3_hcw";
 
 	ThemePicker.init = function(oComponent) {
 		this.oComponent = oComponent;

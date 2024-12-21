@@ -1424,6 +1424,7 @@ sap.ui.define([
 			this._observeHeaderTitleText(oContent);
 			this._getHeader().setTitle(oContent.getText());
 			oContent.setVisible(false);
+			this.addAriaLabelledBy(oContent.getId());
 		}
 		this.addAggregation("toolbarContent", oContent);
 
@@ -1435,6 +1436,7 @@ sap.ui.define([
 			this._observeHeaderTitleText(oContent);
 			this._getHeader().setTitle(oContent.getText());
 			oContent.setVisible(false);
+			this.addAriaLabelledBy(oContent.getId());
 		}
 		this.insertAggregation("toolbarContent", oContent, iIndex);
 

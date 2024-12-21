@@ -221,6 +221,61 @@ sap.ui.define([
 		oCard.destroy();
 	});
 
+	QUnit.module("Ready State of Card which is NOT Rendered, using 'startManifestProcessing'", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("List card", async function (assert) {
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.readyState.card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {},
+				"content": {
+					"item": {}
+				}
+			}
+		});
+		this.oCard.startManifestProcessing();
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.ok(true, "Ready event is fired");
+	});
+
+	QUnit.test("WebPage card", async function (assert) {
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.readyState.card"
+			},
+			"sap.card": {
+				"type": "WebPage",
+				"header": {},
+				"content": {
+					"src": "page.html"
+				}
+			}
+		});
+		this.oCard.startManifestProcessing();
+
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		assert.ok(true, "Ready event is fired");
+	});
+
 	return Library.load("sap.viz").then(function () {
 		QUnit.module("Ready state of analytical content", {
 			beforeEach: function () {

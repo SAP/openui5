@@ -146,6 +146,10 @@ sap.ui.define([
 				fileType: "ctrl_variant_change",
 				layer: Layer.CUSTOMER
 			};
+			this.oAnnotationChangeCustomer = {
+				fileType: "annotation_change",
+				layer: Layer.CUSTOMER
+			};
 			this.oOtherType = {
 				fileType: "other"
 			};
@@ -161,7 +165,7 @@ sap.ui.define([
 				this.oCtrlVariantManagUser, this.oCtrlVariantManagCustomer, this.oVariantChangeUser2, this.oVariantChangeUser1,
 				this.oChangeUser, this.oChangeCustomer,	this.oChangeUserWithVMR, this.oChangeCustomerWithVMR, this.oVariantUser,
 				this.oVariantCustomer, this.oCtrlVariantChangeUser, this.oCtrlVariantChangeCustomer, this.oOtherType,
-				this.oAppDescriptorCustomer
+				this.oAppDescriptorCustomer, this.oAnnotationChangeCustomer
 			];
 
 			this.oEmptyResponse.USER.changes = [this.oChangeUser];
@@ -179,6 +183,7 @@ sap.ui.define([
 			this.oEmptyResponse.CUSTOMER.variantChanges = [this.oCtrlVariantChangeCustomer];
 			this.oEmptyResponse.CUSTOMER.variantDependentControlChanges = [this.oChangeCustomerWithVMR];
 			this.oEmptyResponse.CUSTOMER.variantManagementChanges = [this.oCtrlVariantManagCustomer];
+			this.oEmptyResponse.CUSTOMER.annotationChanges = [this.oAnnotationChangeCustomer];
 
 			assert.deepEqual(Utils.getGroupedFlexObjects(aTestData), this.oEmptyResponse, "the return is correct");
 		});

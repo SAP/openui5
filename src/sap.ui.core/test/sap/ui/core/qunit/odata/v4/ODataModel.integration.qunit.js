@@ -45271,6 +45271,10 @@ sap.ui.define([
 	// Collapse Delta, Gamma, and Beta. Expand Beta again completely and see that all nodes under
 	// Beta are expanded.
 	// JIRA: CPOUI5ODATAV4-2667
+	//
+	// See that it is possible to expand a node completely even if it was not collapsed before, and
+	// see that no unnecessary change events are fired.
+	// JIRA: CPOUI5ODATAV4-2781
 	QUnit.test("Recursive Hierarchy: expand all below a node", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
@@ -45285,7 +45289,7 @@ sap.ui.define([
 				hierarchyQualifier : 'OrgChart'
 			}
 		}}" threshold="0" visibleRowCount="6">
-	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text id="IsExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
 	<Text text="{Name}"/>
@@ -45319,7 +45323,8 @@ sap.ui.define([
 					ID : "2",
 					Name : "Zeta"
 				}]
-			});
+			})
+			.expectChange("IsExpanded", [true, false, undefined]); // JIRA: CPOUI5ODATAV4-2781
 
 		await this.createView(assert, sView, oModel);
 
@@ -45335,15 +45340,43 @@ sap.ui.define([
 					ID : "1.1",
 					Name : "Gamma"
 				}]
-			});
+			})
+			.expectChange("IsExpanded", [, true, false, undefined]);
 
 		assert.strictEqual(oBeta.getBinding().getLength(), 3, "before expand");
 
-		await oBeta.expand();
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
 
 		assert.strictEqual(oBeta.getBinding().getLength(), 4, "after expand");
 
+		this.expectChange("IsExpanded", [, false, undefined]);
+
 		oBeta.collapse();
+
+		await this.waitForChanges(assert, "collapse Beta");
+
+		this.expectChange("IsExpanded", [, true, false]);
+
+		await Promise.all([
+			// preparation for JIRA: CPOUI5ODATAV4-2781
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta again")
+		]);
+
+		checkTable("after expand Beta again", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[false, 3, "1.1", "Gamma"],
+			[undefined, 2, "2", "Zeta"]
+		]);
 
 		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "1", Levels : null}])
 				+ sSelect + "&$count=true&$skip=0&$top=6", {
@@ -45385,12 +45418,14 @@ sap.ui.define([
 					ID : "2",
 					Name : "Zeta"
 				}]
-			});
+			})
+			.expectChange("IsExpanded", [,, true, true, undefined, undefined]);
 
-		// code under test
-		oBeta.expand(Number.MAX_SAFE_INTEGER);
-
-		await this.waitForChanges(assert, "expand all below Beta");
+		await Promise.all([
+			// code under test
+			oBeta.expand(Number.MAX_SAFE_INTEGER),
+			this.waitForChanges(assert, "expand all below Beta")
+		]);
 
 		checkTable("after expand all below Beta", assert, oTable, [
 			"/EMPLOYEES('0')",
@@ -45409,9 +45444,15 @@ sap.ui.define([
 		]);
 		const [,, oGamma, oDelta] = oTable.getBinding("rows").getCurrentContexts();
 
+		this.expectChange("IsExpanded", [,,, false]) // collapse Delta
+			.expectChange("IsExpanded", [,, false]) // collapse Gamma
+			.expectChange("IsExpanded", [, false, undefined]); // collapse Beta
+
 		oDelta.collapse();
 		oGamma.collapse();
 		oBeta.collapse();
+
+		await this.waitForChanges(assert, "collapse Delta, Gamma, Beta");
 
 		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "1", Levels : null}])
 				+ sSelect + "&$count=true&$skip=0&$top=6", {
@@ -45453,12 +45494,14 @@ sap.ui.define([
 					ID : "2",
 					Name : "Zeta"
 				}]
-			});
+			})
+			.expectChange("IsExpanded", [, true, true, true]);
 
-		// code under test
-		oBeta.expand(Number.MAX_SAFE_INTEGER);
-
-		await this.waitForChanges(assert, "expand all below Beta again");
+		await Promise.all([
+			// code under test
+			oBeta.expand(Number.MAX_SAFE_INTEGER),
+			this.waitForChanges(assert, "expand all below Beta again")
+		]);
 
 		checkTable("after expand all below Beta again", assert, oTable, [
 			"/EMPLOYEES('0')",

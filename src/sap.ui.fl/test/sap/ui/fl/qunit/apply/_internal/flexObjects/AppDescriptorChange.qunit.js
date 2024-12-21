@@ -1,12 +1,17 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory"
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	_omit,
-	FlexObjectFactory
+	DescriptorChangeTypes,
+	FlexObjectFactory,
+	sinon
 ) {
 	"use strict";
+	const sandbox = sinon.createSandbox();
 
 	const oChangeDefinition = {
 		appDescriptorChange: true,
@@ -28,6 +33,7 @@ sap.ui.define([
 		},
 		texts: {}
 	};
+
 	QUnit.module("FlexObjectFactory", {}, function() {
 		QUnit.test("createControllerExtension", function(assert) {
 			const mPropertyBag = {
@@ -62,10 +68,27 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Others", () => {
-		QUnit.test("getIdForCondensing", (assert) => {
+	QUnit.module("Others", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("getIdForCondensing", function(assert) {
 			const oAppDescriptorChange = FlexObjectFactory.createFromFileContent(oChangeDefinition);
 			assert.strictEqual(oAppDescriptorChange.getIdForCondensing(), "appDescriptor_my.reference", "the ID for condensing is correct");
 		});
+
+		QUnit.test("canBeCondensed", function(assert) {
+			sandbox.stub(DescriptorChangeTypes, "getCondensableChangeTypes").returns(["appDescriptor"]);
+			const oAppDescriptorChange = FlexObjectFactory.createFromFileContent(oChangeDefinition);
+			assert.ok(oAppDescriptorChange.canBeCondensed(), "the change can be condensed");
+
+			const oNotCondensable = FlexObjectFactory.createFromFileContent({...oChangeDefinition, changeType: "notCondensable"});
+			assert.notOk(oNotCondensable.canBeCondensed(), "the change can't be condensed");
+		});
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject"
 ], function(
+	DescriptorChangeTypes,
 	FlexObject
 ) {
 	"use strict";
@@ -55,6 +57,10 @@ sap.ui.define([
 	 */
 	AppDescriptorChange.prototype.getIdForCondensing = function() {
 		return `appDescriptor_${this.getFlexObjectMetadata().reference}`;
+	};
+
+	AppDescriptorChange.prototype.canBeCondensed = function() {
+		return DescriptorChangeTypes.getCondensableChangeTypes().includes(this.getChangeType());
 	};
 
 	// ----------------- temporary functions -----------------

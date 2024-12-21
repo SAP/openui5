@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
-	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/test/TestUtils",
 	"sap/ui/mdc/enums/TableMultiSelectMode",
 	"sap/ui/mdc/enums/TableSelectionMode",
@@ -43,7 +42,6 @@ sap.ui.define([
 	ODataModel,
 	Sorter,
 	Filter,
-	ManagedObjectObserver,
 	TestUtils,
 	TableMultiSelectMode,
 	SelectionMode,
@@ -61,14 +59,28 @@ sap.ui.define([
 	], function(TableDelegate) {
 		const TestDelegate = Object.assign({}, TableDelegate);
 
-		TestDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
+		TestDelegate.fetchProperties = function(oTable) {
 			const oPayload = oTable.getPayload();
 
-			TableDelegate.updateBindingInfo.apply(this, arguments);
-			oBindingInfo.path = oPayload?.collectionPath ?? "/Products";
+			if (oPayload?.propertyInfo) {
+				return Promise.resolve(oPayload.propertyInfo);
+			} else {
+				return TableDelegate.fetchProperties.apply(this, arguments);
+			}
+		};
 
-			if (oPayload?.bindingParameters) {
-				oBindingInfo.parameters = oPayload.bindingParameters;
+		TestDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
+			TableDelegate.updateBindingInfo.apply(this, arguments);
+
+			const oPayload = oTable.getPayload();
+
+			if (oPayload) {
+				if (oPayload.collectionPath) {
+					oBindingInfo.path = oPayload.collectionPath;
+				}
+				if (oPayload.bindingParameters) {
+					oBindingInfo.parameters = oPayload.bindingParameters;
+				}
 			}
 		};
 
@@ -128,23 +140,6 @@ sap.ui.define([
 			}
 		}
 	}]);
-
-	const sTableView1 =
-		`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
-		<Table p13nMode="Group,Aggregate" id="myTable" delegate='\{name: "odata.v4.TestDelegate"\}'>
-			<columns>
-				<mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name">
-					<m:Text text="{Name}" id="myTable--text0"/>
-				</mdcTable:Column>
-				<mdcTable:Column id="myTable--column1" header="column 1" propertyKey="Country">
-					<m:Text text="{Country}" id="myTable--text1"/>
-				</mdcTable:Column>
-				<mdcTable:Column header="column 2" propertyKey="name_country">
-					<m:Text text="{Name}" id="myTable--text2"/>
-				</mdcTable:Column>
-			</columns>
-		</Table>
-	</mvc:View>`;
 
 	function getQuickAction(oMenu, sType) {
 		const oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
@@ -214,34 +209,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Column header menu", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				label: "Name",
-				path: "Name",
-				dataType: "String",
-				groupable: true,
-				aggregatable: true
-			}, {
-				name: "Country",
-				label: "Country",
-				path: "Country",
-				dataType: "String",
-				groupable: true,
-				aggregatable: true
-			}, {
-				name: "name_country",
-				label: "Complex Title & Description",
-				propertyInfos: ["Name", "Country"]
-			}, {
-				name: "Value",
-				label: "Value",
-				path: "Value",
-				dataType: "String",
-				sortable: false,
-				filterable: false
-			}]);
-		},
 		beforeEach: async function() {
 			await this.createTestObjects();
 			await this.oTable.getEngine().getModificationHandler().waitForChanges({
@@ -251,11 +218,55 @@ sap.ui.define([
 		afterEach: function() {
 			this.destroyTestObjects();
 		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
-		},
+		tableViewString:
+		`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
+			<Table id="myTable" p13nMode="Group,Aggregate" delegate='${JSON.stringify({
+				name: "odata.v4.TestDelegate",
+				payload: {
+					collectionPath: "/Products",
+					propertyInfo: [{
+						key: "Name",
+						label: "Name",
+						path: "Name",
+						dataType: "String",
+						groupable: true,
+						aggregatable: true
+					}, {
+						key: "Country",
+						label: "Country",
+						path: "Country",
+						dataType: "String",
+						groupable: true,
+						aggregatable: true
+					}, {
+						key: "name_country",
+						label: "Complex Title and Description",
+						propertyInfos: ["Name", "Country"]
+					}, {
+						key: "Value",
+						label: "Value",
+						path: "Value",
+						dataType: "String",
+						sortable: false,
+						filterable: false
+					}]
+				}
+			})}'>
+				<columns>
+					<mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name">
+						<m:Text text="{Name}" id="myTable--text0"/>
+					</mdcTable:Column>
+					<mdcTable:Column id="myTable--column1" header="column 1" propertyKey="Country">
+						<m:Text text="{Country}" id="myTable--text1"/>
+					</mdcTable:Column>
+					<mdcTable:Column header="column 2" propertyKey="name_country">
+						<m:Text text="{Name}" id="myTable--text2"/>
+					</mdcTable:Column>
+				</columns>
+			</Table>
+		</mvc:View>`,
 		createTestObjects: async function() {
-			const mCreatedApp = await createAppEnvironment(sTableView1, "Table");
+			const mCreatedApp = await createAppEnvironment(this.tableViewString, "Table");
 			this.oUiComponentContainer = mCreatedApp.container;
 			this.oUiComponentContainer.placeAt("qunit-fixture");
 			this.oTable = mCreatedApp.view.byId("myTable");
@@ -481,12 +492,20 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable?.destroy();
 		},
-		initTable: async function(mSettings, aVisibleProperties = [
-			"Country", "Region", "SalesAmount"
-		], aPropertyInfos = this.defaultPropertyInfos) {
+		initTable: async function(
+			mSettings,
+			aVisibleProperties = ["Country", "Region", "SalesAmount"],
+			oDelegatePayload = {}
+		) {
+			const oPayload = {
+				collectionPath: "/Products",
+				propertyInfo: this.defaultPropertyInfos,
+				...oDelegatePayload
+			};
 			this.oTable = new Table({
 				delegate: {
-					name: "odata.v4.TestDelegate"
+					name: "odata.v4.TestDelegate",
+					payload: oPayload
 				},
 				autoBindOnInit: false,
 				p13nMode: ["Group", "Aggregate"],
@@ -494,19 +513,16 @@ sap.ui.define([
 					serviceUrl: "serviceUrl/",
 					operationMode: "Server"
 				}),
-				columns: aVisibleProperties.map(function(sPropertyKey) {
-					const oProperty = this.defaultPropertyInfos.find(function(oPropertyInfo) {
-						return oPropertyInfo.key === sPropertyKey;
-					});
+				columns: aVisibleProperties.map((sPropertyKey) => {
+					const oProperty = oPayload.propertyInfo.find((oPropertyInfo) => oPropertyInfo.key === sPropertyKey);
 					return new Column({
 						header: oProperty.label,
 						propertyKey: sPropertyKey,
 						template: new Text({text: `{${oProperty.path}}`})
 					});
-				}.bind(this)),
+				}),
 				...mSettings
 			});
-			TableQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
 			await this.oTable.initialized();
 			this.observe$$aggregation();
 		},
@@ -547,34 +563,37 @@ sap.ui.define([
 	});
 
 	QUnit.test("Leaf-level aggregation disabled", async function(assert) {
-		await this.initTable(undefined, undefined, this.defaultPropertyInfos.concat([{
-			key: "ID",
-			path: "IDPath",
-			label: "ID",
-			dataType: "String",
-			isKey: true,
-			extension: {
-				technicallyGroupable: true
+		await this.initTable(undefined, undefined, {
+			propertyInfo: this.defaultPropertyInfos.concat([{
+				key: "ID",
+				path: "IDPath",
+				label: "ID",
+				dataType: "String",
+				isKey: true,
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CustomerID",
+				path: "CustomerIDPath",
+				label: "CustomerID",
+				dataType: "String",
+				isKey: true,
+				text: "CustomerText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CustomerText",
+				path: "CustomerTextPath",
+				label: "CustomerText",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
 			}
-		}, {
-			key: "CustomerID",
-			path: "CustomerIDPath",
-			label: "CustomerID",
-			dataType: "String",
-			isKey: true,
-			text: "CustomerText",
-			extension: {
-				technicallyGroupable: true
-			}
-		}, {
-			key: "CustomerText",
-			path: "CustomerTextPath",
-			label: "CustomerText",
-			dataType: "String",
-			extension: {
-				technicallyGroupable: true
-			}
-		}]));
+			])
+		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {
@@ -593,25 +612,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("Leaf-level aggregation enabled", async function(assert) {
-		await this.initTable({
-			delegate: {
-				name: "odata.v4.TestDelegate",
-				payload: {
-					aggregationConfiguration: {
-						leafLevel: true
-					}
+		await this.initTable(undefined, undefined, {
+			aggregationConfiguration: {
+				leafLevel: true
+			},
+			propertyInfo: this.defaultPropertyInfos.concat([{
+				key: "ID",
+				path: "IDPath",
+				label: "ID",
+				dataType: "String",
+				isKey: true,
+				extension: {
+					technicallyGroupable: true
 				}
-			}
-		}, undefined, this.defaultPropertyInfos.concat([{
-			key: "ID",
-			path: "IDPath",
-			label: "ID",
-			dataType: "String",
-			isKey: true,
-			extension: {
-				technicallyGroupable: true
-			}
-		}]));
+			}])
+		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {
@@ -768,29 +783,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getInResultPropertyKeys", async function(assert) {
-		await this.initTable(undefined, ["Country"], this.defaultPropertyInfos.concat([{
-			key: "NewSalesAmount",
-			path: "NewSalesAmountPath",
-			label: "NewSalesAmount",
-			dataType: "String",
-			extension: {
-				technicallyAggregatable: true,
-				additionalProperties: ["City"]
-			}
-		}, {
-			key: "City",
-			path: "CityPath",
-			label: "City",
-			dataType: "String",
-			extension: {
-				technicallyGroupable: true
-			}
-		}, {
-			key: "NotGroupableAndNotAggregatable",
-			path: "NotGroupableAndNotAggregatablePath",
-			label: "NotGroupableAndNotAggregatable",
-			dataType: "String"
-		}]));
+		await this.initTable(undefined, ["Country"], {
+			propertyInfo: this.defaultPropertyInfos.concat([{
+				key: "NewSalesAmount",
+				path: "NewSalesAmountPath",
+				label: "NewSalesAmount",
+				dataType: "String",
+				extension: {
+					technicallyAggregatable: true,
+					additionalProperties: ["City"]
+				}
+			}, {
+				key: "City",
+				path: "CityPath",
+				label: "City",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "NotGroupableAndNotAggregatable",
+				path: "NotGroupableAndNotAggregatablePath",
+				label: "NotGroupableAndNotAggregatable",
+				dataType: "String"
+			}])
+		});
 		sinon.stub(this.oTable.getControlDelegate(), "getInResultPropertyKeys").returns([
 			"Region", "SalesAmountInLocalCurrency", "NewSalesAmount", "NotGroupableAndNotAggregatable"
 		]);
@@ -874,36 +891,33 @@ sap.ui.define([
 	});
 
 	QUnit.module("#updateBindingInfo", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				path: "Name_Path",
-				label: "Name_Label",
-				dataType: "String"
-			}, {
-				name: "FirstName",
-				path: "FirstName_Path",
-				label: "FirstName_Label",
-				dataType: "String"
-			}, {
-				name: "ID",
-				path: "ID_Path",
-				label: "ID_Label",
-				dataType: "String"
-			}]);
-		},
 		afterEach: function() {
 			this.destroyTable();
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		initTable: function(mSettings) {
 			this.destroyTable();
 			this.oTable = new Table({
 				autoBindOnInit: false,
 				delegate: {
-					name: "sap/ui/mdc/odata/v4/TableDelegate"
+					name: "odata.v4.TestDelegate",
+					payload: {
+						propertyInfo: [{
+							key: "Name",
+							path: "Name_Path",
+							label: "Name_Label",
+							dataType: "String"
+						}, {
+							key: "FirstName",
+							path: "FirstName_Path",
+							label: "FirstName_Label",
+							dataType: "String"
+						}, {
+							key: "ID",
+							path: "ID_Path",
+							label: "ID_Label",
+							dataType: "String"
+						}]
+					}
 				},
 				...mSettings
 			});
@@ -1001,31 +1015,32 @@ sap.ui.define([
 	});
 
 	QUnit.module("#updateBinding", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				path: "Name",
-				label: "Name",
-				sortable: true,
-				groupable: true,
-				filterable: true,
-				dataType: "String"
-			}, {
-				name: "Country",
-				label: "Country",
-				path: "Country",
-				sortable: true,
-				groupable: true,
-				filterable: true,
-				dataType: "String"
-			}]);
-		},
 		beforeEach: async function() {
 			this.oTable = new Table({
 				autoBindOnInit: false,
 				p13nMode: ["Column", "Sort", "Filter", "Group", "Aggregate"],
 				delegate: {
-					name: "odata.v4.TestDelegate"
+					name: "odata.v4.TestDelegate",
+					payload: {
+						collectionPath: "/Products",
+						propertyInfo: [{
+							key: "Name",
+							path: "Name",
+							label: "Name",
+							sortable: true,
+							groupable: true,
+							filterable: true,
+							dataType: "String"
+						}, {
+							key: "Country",
+							label: "Country",
+							path: "Country",
+							sortable: true,
+							groupable: true,
+							filterable: true,
+							dataType: "String"
+						}]
+					}
 				},
 				models: new ODataModel({
 					serviceUrl: "serviceUrl/",
@@ -1055,9 +1070,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		}
 	});
 
@@ -1364,48 +1376,38 @@ sap.ui.define([
 	});
 
 	QUnit.module("#validateState", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "Name",
-				label: "Name",
-				path: "Name",
-				dataType: "String",
-				groupable: true,
-				aggregatable: true
-			}, {
-				name: "Country",
-				label: "Country",
-				path: "Country",
-				dataType: "String",
-				groupable: true,
-				aggregatable: true
-			}, {
-				name: "name_country",
-				label: "Complex Title & Description",
-				propertyInfos: ["Name", "Country"]
-			}, {
-				name: "Value",
-				label: "Value",
-				path: "Value",
-				dataType: "String",
-				sortable: false,
-				filterable: false
-			}]);
-		},
 		beforeEach: function() {
 			this.oTable = new Table({
 				p13nMode: ["Group", "Aggregate"],
 				delegate: {
-					name: "sap/ui/mdc/odata/v4/TableDelegate"
+					name: "odata.v4.TestDelegate",
+					payload: {
+						propertyInfo: [{
+							key: "Name",
+							label: "Name",
+							path: "Name",
+							dataType: "String",
+							groupable: true,
+							aggregatable: true
+						}, {
+							key: "Country",
+							label: "Country",
+							path: "Country",
+							dataType: "String",
+							groupable: true,
+							aggregatable: true
+						}, {
+							key: "name_country",
+							label: "Complex Title and Description",
+							propertyInfos: ["Name", "Country"]
+						}]
+					}
 				}
 			});
 			return this.oTable.initialized();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		}
 	});
 
@@ -1757,30 +1759,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "ProductName",
-				path: "Name",
-				label: "Product Name",
-				dataType: "String"
-			}]);
-		},
 		afterEach: function() {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
+			this.oTable?.destroy();
 		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
-		},
-		initTable: async function(mSettings, fnBeforeInit) {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
-
+		initTable: async function(mSettings, oDelegatePayload, fnBeforeInit) {
 			this.oTable = new Table(Object.assign({
 				delegate: {
-					name: "odata.v4.TestDelegate"
+					name: "odata.v4.TestDelegate",
+					payload: {
+						collectionPath: "/Products",
+						propertyInfo: [{
+							key: "ProductName",
+							path: "Name",
+							label: "Product Name",
+							dataType: "String"
+						}],
+						...oDelegatePayload
+					}
 				},
 				columns: [
 					new Column({
@@ -1870,7 +1865,7 @@ sap.ui.define([
 				selectionLimit: 1337,
 				showHeaderSelector: false
 			})
-		}, function(oTable) {
+		}, undefined, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
 			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection");
@@ -1919,7 +1914,7 @@ sap.ui.define([
 			multiSelectMode: TableMultiSelectMode.ClearAll,
 			selectionChange: oSelectionChangeStub,
 			type: new ResponsiveTableType()
-		}, function(oTable) {
+		}, undefined, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
 			const oInnerTable = oTable._oTable;
@@ -2070,14 +2065,10 @@ sap.ui.define([
 		await this.initTable({
 			selectionMode: SelectionMode.Multi,
 			type: new ResponsiveTableType(),
-			p13nMode: ["Filter"],
-			delegate: {
-				name: "odata.v4.TestDelegate",
-				payload: {
-					bindingParameters: {
-						$$clearSelectionOnFilter: true
-					}
-				}
+			p13nMode: ["Filter"]
+		}, {
+			bindingParameters: {
+				$$clearSelectionOnFilter: true
 			}
 		});
 		await new Promise((resolve) => {

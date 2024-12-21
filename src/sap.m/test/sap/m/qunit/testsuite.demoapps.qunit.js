@@ -23,6 +23,10 @@ sap.ui.define(function () {
 				group: "IconExplorer",
 				page: "test-resources/sap/m/demokit/iconExplorer/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/iconexplorer/testsuite.qunit&test=unit/unitTests"
 			},
+			"sap/m/demokit/illustrationExplorer/webapp/test/integration/opaTests": {
+				group: "IllustrationExplorer",
+				page: "test-resources/sap/m/demokit/illustrationExplorer/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/illustrationExplorer/testsuite.qunit&test=integration/opaTests"
+			},
 			"sap/m/demokit/orderbrowser/webapp/test/testsuite.qunit.html": {
 				group: "OrderBrowser",
 				page: "test-resources/sap/m/demokit/orderbrowser/webapp/test/testsuite.qunit.html"

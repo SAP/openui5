@@ -4,12 +4,13 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(future, Log, Button, ManagedObject, Component, ComponentContainer, Element, UIComponent, View, nextUIUpdate) {
+], function(future, Log, Button, ManagedObject, Component, ComponentHooks, ComponentContainer, Element, UIComponent, View, nextUIUpdate) {
 	"use strict";
 	/*global sinon, QUnit*/
 
@@ -97,9 +98,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("UIComponent initialization callback hook", function(assert) {
-
 		this.oServer.respondWithJSONContent(this.oManifest);
 
+		const oSpy = sinon.spy();
+		ComponentHooks.onUIComponentInstanceInitialized.register(oSpy);
 		UIComponent._fnOnInstanceInitialized = function(oComponent) {
 			assert.equal(oComponent.getId(), "myComponent", "Initialization hook was called!");
 		};
@@ -108,9 +110,12 @@ sap.ui.define([
 			id : "myComponent",
 			manifest : "/anylocation/manifest.json"
 		}).then(function (oComponent) {
+			assert.equal(oSpy.callCount, 1, "'onUIComponentInstanceInitialized' hook should be called.");
+			assert.ok(oSpy.calledWith(oComponent), "Hook should be called with the correct component instance.");
 			delete UIComponent._fnOnInstanceInitialized;
 
 			oComponent.destroy();
+			ComponentHooks.onUIComponentInstanceInitialized.deregister();
 		});
 	});
 
@@ -122,6 +127,11 @@ sap.ui.define([
 			id : "myComponent",
 			manifest : "/anylocation/manifest.json"
 		}).then(function (oComponent) {
+			const oSpy = sinon.spy(() => {
+				assert.equal(oSpy.callCount, 1, "'onUIComponentInstanceDestroy' hook should be called.");
+				assert.ok(oSpy.calledWith(oComponent), "Hook should be called with the correct component instance.");
+			});
+			ComponentHooks.onUIComponentInstanceDestroy.register(oSpy);
 			UIComponent._fnOnInstanceDestroy = function(oComponent) {
 				assert.equal(oComponent.getId(), "myComponent", "Destruction hook was called!");
 			};
@@ -129,6 +139,7 @@ sap.ui.define([
 			oComponent.destroy();
 
 			delete UIComponent._fnOnInstanceDestroy;
+			ComponentHooks.onUIComponentInstanceDestroy.deregister();
 		});
 	});
 

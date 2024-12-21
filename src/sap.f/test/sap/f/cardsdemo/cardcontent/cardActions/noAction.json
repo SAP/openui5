@@ -14,30 +14,70 @@
 		}
 	},
 	"sap.card": {
-		"type": "List",
+	  "type": "List",
+	  "data": {
+		"json": {
+		  "items": [
+			{
+			  "title": "Item 1"
+			},
+			{
+			  "title": "Item 2"
+			},
+			{
+			  "title": "Item 3"
+			},
+			{
+			  "title": "Item 4"
+			}
+		  ]
+		}
+	  },
+	  "header": {
+		"title": "No actions on card",
+		"subTitle": "sematicRole - listitem",
+		"titleMaxLines": 1
+	  },
+	  "content": {
 		"data": {
-				"json": {
-					"items": [
-						{"title": "Item 1"},
-						{"title": "Item 2"},
-						{"title": "Item 3"},
-						{"title": "Item 4"}
-					]
+		  "path": "/items"
+		},
+		"item": {
+		  "title": "{title}"
+		},
+		"maxItems": 4
+	  },
+	  "footer": {
+		"actionsStrip": [
+		  {
+			"type": "ToolbarSpacer"
+		  },
+		  {
+			"type": "Link",
+			"text": "Agenda",
+			"icon": "sap-icon://action",
+			"actions": [
+			  {
+				"type": "Navigation",
+				"parameters": {
+				  "url": "{agendaUrl}"
 				}
-			},
-			"header": {
-				"title": "No actions on card",
-				"subTitle": "sematicRole - listitem",
-				"titleMaxLines": 1
-			},
-		"content": {
-			"data": {
-				"path": "/items"
-			},
-			"item": {
-				"title": "{title}"
-			},
-			"maxItems": 4
-		}				
+			  }
+			]
+		  },
+		  {
+			"text": "Approve",
+			"overflowPriority": "High",
+			"actions": [
+			  {
+				"type": "Custom",
+				"parameters": {
+				  "method": "approve"
+				}
+			  }
+			]
+		  }
+		]
+	  }
 	}
 }

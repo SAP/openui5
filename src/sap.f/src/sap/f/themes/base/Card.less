@@ -189,9 +189,9 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	cursor: pointer;
 }
 //Todo HC should use the active background:  --sapTile_Hover_Background
-.sapFCard.sapFCardInteractive:active {
+.sapFCard.sapFCardInteractive:focus:active {
 	box-shadow: none;
-	border: 0.0625rem solid; @sapTile_Interactive_BorderColor;
+	border: 0.0625rem solid @sapTile_Interactive_BorderColor;
 }
 
 .sapFCard.sapFCardSectionInteractive {

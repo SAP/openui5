@@ -1,0 +1,82 @@
+{
+    "categories": [
+        {
+            "category": "All"
+        },
+        {
+            "category": "Classic",
+            "illustrations": [
+                "BeforeSearch",
+                "NoSearchResults",
+                "NoNotifications",
+                "NoMail",
+                "NoData",
+                "NoEntries",
+                "NoActivities",
+                "NoTasks",
+                "NoSavedItems",
+                "UnableToLoad",
+                "UnableToUpload",
+                "SuccessBalloon",
+                "SuccessCheckMark"
+            ]
+        },
+        {
+            "category": "Standard",
+            "illustrations": [
+                "SignOut",
+                "SearchEarth",
+                "SearchFolder",
+                "NoFilterResults",
+                "PageNotFound",
+                "SleepingBell",
+                "NewMail",
+                "NoMail_v1",
+                "Tent",
+                "EmptyList",
+                "EmptyCalendar",
+                "NoTasks_v1",
+                "NoSavedItems_v1",
+                "AddColumn",
+                "SortColumn",
+                "NoColumnsSet",
+                "FilterTable",
+                "ResizeColumn",
+                "GroupTable",
+                "EmptyPlanningCalendar",
+                "AddPeople",
+                "UploadCollection",
+                "NoDimensionsSet",
+                "AddDimensions",
+                "UploadToCloud",
+                "ReloadScreen",
+                "ErrorScreen",
+                "Connection",
+                "UnableToLoadImage",
+                "BalloonSky",
+                "SuccessScreen",
+                "SuccessHighFive",
+                "Survey"
+            ]
+        },
+        {
+            "category": "Simple",
+            "illustrations": [
+                "SimpleBalloon",
+                "SimpleBell",
+                "SimpleCalendar",
+                "SimpleCheckMark",
+                "SimpleConnection",
+                "SimpleEmptyDoc",
+                "SimpleEmptyList",
+                "SimpleError",
+                "SimpleMagnifier",
+                "SimpleMail",
+                "SimpleNoSavedItems",
+                "SimpleNotFoundMagnifier",
+                "SimpleReload",
+                "SimpleTask"
+            ]
+        }
+    ]
+}

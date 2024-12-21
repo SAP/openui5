@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/m/PlanningCalendarRow",
 	"sap/m/PlanningCalendar",
 	"sap/m/Text",
+	"sap/m/Title",
 	"sap/ui/Device",
 	"sap/m/PlanningCalendarView",
 	"sap/ui/unified/calendar/OneMonthDatesRow",
@@ -65,6 +66,7 @@ sap.ui.define([
 	PlanningCalendarRow,
 	PlanningCalendar,
 	Text,
+	Title,
 	Device,
 	PlanningCalendarView,
 	OneMonthDatesRow,
@@ -1649,13 +1651,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Title referencing", function(assert) {
-		var oPC = new PlanningCalendar();
+		var oPC = new PlanningCalendar({
+			toolbarContent: [
+				new Title("Title1", {text: "Title"})
+			]
+		});
 
 		oPC.placeAt("bigUiArea");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
-		assert.strictEqual(oPC.$().attr("aria-labelledby"), oPC._getHeader().getId() + "-Title",
-			"Control's title is added in aria-labelledby");
+		assert.strictEqual(oPC.$().attr("aria-labelledby"), "Title1", "Control's title is added in aria-labelledby");
 
 		oPC.destroy();
 	});

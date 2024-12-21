@@ -461,5 +461,9 @@ sap.ui.define([
 		return sPath !== "/" ? sPath + "/" + iIndex : sPath + iIndex;
 	};
 
+	AnalyticalContent.prototype.getFocusDomRef = function () {
+		return this.getAggregation("_content").getDomRef().querySelector(".v-info") || this.getDomRef();
+	};
+
 	return AnalyticalContent;
 });

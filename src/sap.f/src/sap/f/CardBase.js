@@ -203,6 +203,10 @@ sap.ui.define([
 	 * @protected
 	 */
 	CardBase.prototype.getFocusDomRef = function () {
+		if (this.isInteractive() && this.getSemanticRole() === SemanticRole.ListItem) {
+			return this.getDomRef();
+		}
+
 		return this.getCardHeader() ? this.getCardHeader().getFocusDomRef() : this.getDomRef();
 	};
 
@@ -321,7 +325,13 @@ sap.ui.define([
 			return;
 		}
 
-		this.firePress();
+		if (this.getFocusDomRef()?.matches(":has(:focus-within)")) {
+			return;
+		}
+
+		this.firePress({
+			originalEvent: oEvent
+		});
 		oEvent.preventDefault();
 	};
 

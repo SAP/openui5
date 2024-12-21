@@ -108,31 +108,32 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oKeyColumn = oTable.getColumns()[1];
-					assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
+						assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						var oKeyColumn = oTable.getColumns()[1];
+						assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -200,31 +201,32 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oKeyColumn = oTable.getColumns()[1];
-					assert.equal(oKeyColumn.getLabel().getText(), "translated key France", "Column key: key label text translated");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
+						assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						var oKeyColumn = oTable.getColumns()[1];
+						assert.equal(oKeyColumn.getLabel().getText(), "translated key France", "Column key: key label text translated");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -292,31 +294,32 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oKeyColumn = oTable.getColumns()[1];
-					assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
+						assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						var oKeyColumn = oTable.getColumns()[1];
+						assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -385,31 +388,32 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifestForObjectFieldsWithTranslation
 				});
-				EditorQunitUtils.isReady(that.oEditor).then(function () {
-					assert.ok(that.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
-					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
-					var oSelectionColumn = oTable.getColumns()[0];
-					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
-					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
-					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-					var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
-					assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
-					assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
-					var oToolbar = oTable.getExtension()[0];
-					assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
-					var oAddButton = oToolbar.getContent()[1];
-					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
-					var oKeyColumn = oTable.getColumns()[1];
-					assert.equal(oKeyColumn.getLabel().getText(), "translated key France", "Column key: key label text translated");
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isReady(), "Editor is ready");
+						var oTable = oField.getAggregation("_field");
+						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+						var oSelectionColumn = oTable.getColumns()[0];
+						var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
+						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+						var oSelectionCell2 = oTable.getRows()[2].getCells()[0];
+						assert.ok(oSelectionCell2.isA("sap.m.CheckBox"), "Row 2: Cell 1 is CheckBox");
+						assert.ok(oSelectionCell2.getSelected(), "Row 2: Cell 1 is selected");
+						var oToolbar = oTable.getExtension()[0];
+						assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
+						var oAddButton = oToolbar.getContent()[1];
+						assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+						var oKeyColumn = oTable.getColumns()[1];
+						assert.equal(oKeyColumn.getLabel().getText(), "translated key France", "Column key: key label text translated");
 						oAddButton.firePress();
 						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];

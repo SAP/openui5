@@ -125,8 +125,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oStringrField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oStringrField.getAggregation("_field").getValue(), "stringParameter Value", "Field: stringParameter Value");
 					var oTranslateField = this.oEditor.getAggregation("_formContent")[4];
@@ -159,20 +159,22 @@ sap.ui.define([
 					assert.equal(oNow2SyntaxField.getAggregation("_field").getValue(), "Value: NOW_ISO2", "Field: parameter syntax to NOW_ISO2 Value");
 					var oLocale2SyntaxField = this.oEditor.getAggregation("_formContent")[38];
 					assert.equal(oLocale2SyntaxField.getAggregation("_field").getValue(), "Value: LOCALE2", "Field: parameter syntax to LOCALE2 Value");
-
-					oStringrField.getAggregation("_field").setValue("stringParameter New Value");
-					oTranslateField.getAggregation("_field").setValue("StringParameter Value Trans New Value");
-					oTranslateInI18nField.getAggregation("_field").setValue("StringParameter Value Trans in i18n New Value");
-					EditorQunitUtils.wait(1000).then(function () {
-						assert.equal(oNormalSyntaxField.getAggregation("_field").getValue(), "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
-						assert.equal(oTranslateSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
-						assert.equal(oTranslateInI18nSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
-						assert.equal(oTodaySyntaxField.getAggregation("_field").getValue().substring(7), oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
-						assert.equal(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17), oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
-						assert.equal(oLocaleSyntaxField.getAggregation("_field").getValue(), "Value: " + Localization.getLanguage(), "Field: parameter syntax to LOCALE Value");
-						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
-						resolve();
-					});
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						oStringrField.getAggregation("_field").setValue("stringParameter New Value");
+						oTranslateField.getAggregation("_field").setValue("StringParameter Value Trans New Value");
+						oTranslateInI18nField.getAggregation("_field").setValue("StringParameter Value Trans in i18n New Value");
+						EditorQunitUtils.wait(1000).then(function () {
+							assert.equal(oNormalSyntaxField.getAggregation("_field").getValue(), "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
+							assert.equal(oTranslateSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
+							assert.equal(oTranslateInI18nSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
+							assert.equal(oTodaySyntaxField.getAggregation("_field").getValue().substring(7), oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO Value");
+							assert.equal(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17), oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO Value");
+							assert.equal(oLocaleSyntaxField.getAggregation("_field").getValue(), "Value: " + Localization.getLanguage(), "Field: parameter syntax to LOCALE Value");
+							assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
+							resolve();
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -195,8 +197,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -246,8 +248,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -290,8 +292,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oStringrField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oStringrField.getAggregation("_field").getValue(), "stringParameter Value", "Field: stringParameter Value");
 					var oTranslateField = this.oEditor.getAggregation("_formContent")[4];
@@ -324,20 +326,22 @@ sap.ui.define([
 					assert.equal(oNow2SyntaxField.getAggregation("_field").getValue(), "Value: NOW_ISO2", "Field: parameter syntax to NOW_ISO2 Value");
 					var oLocale2SyntaxField = this.oEditor.getAggregation("_formContent")[38];
 					assert.equal(oLocale2SyntaxField.getAggregation("_field").getValue(), "Value: LOCALE2", "Field: parameter syntax to LOCALE2 Value");
-
-					oStringrField.getAggregation("_field").setValue("stringParameter New Value");
-					oTranslateField.getAggregation("_field").setValue("StringParameter Value Trans New Value");
-					oTranslateInI18nField.getAggregation("_field").setValue("StringParameter Value Trans in i18n New Value");
-					EditorQunitUtils.wait(1000).then(function () {
-						assert.equal(oNormalSyntaxField.getAggregation("_field").getValue(), "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
-						assert.equal(oTranslateSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
-						assert.equal(oTranslateInI18nSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
-						assert.equal(oTodaySyntaxField.getAggregation("_field").getValue().substring(7), oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO");
-						assert.equal(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17), oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO");
-						assert.equal(oLocaleSyntaxField.getAggregation("_field").getValue(), "Value: " + Localization.getLanguage(), "Field: parameter syntax to LOCALE");
-						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
-						resolve();
-					});
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						oStringrField.getAggregation("_field").setValue("stringParameter New Value");
+						oTranslateField.getAggregation("_field").setValue("StringParameter Value Trans New Value");
+						oTranslateInI18nField.getAggregation("_field").setValue("StringParameter Value Trans in i18n New Value");
+						EditorQunitUtils.wait(1000).then(function () {
+							assert.equal(oNormalSyntaxField.getAggregation("_field").getValue(), "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
+							assert.equal(oTranslateSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
+							assert.equal(oTranslateInI18nSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
+							assert.equal(oTodaySyntaxField.getAggregation("_field").getValue().substring(7), oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO");
+							assert.equal(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17), oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO");
+							assert.equal(oLocaleSyntaxField.getAggregation("_field").getValue(), "Value: " + Localization.getLanguage(), "Field: parameter syntax to LOCALE");
+							assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
+							resolve();
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -360,8 +364,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -411,8 +415,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -456,8 +460,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -507,8 +511,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -557,8 +561,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -621,8 +625,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -681,8 +685,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -740,8 +744,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -784,8 +788,8 @@ sap.ui.define([
 				manifest: oManifest
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent").length, 20, "Content length OK");
 					var oStringrField = this.oEditor.getAggregation("_formContent")[3];
 					assert.equal(oStringrField.getAggregation("_field").getText(), "stringParameter Value", "Field: stringParameter ori Value");
@@ -832,8 +836,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent").length, 17, "Content length OK");
 					var oStringrField = this.oEditor.getAggregation("_formContent")[3];
 					assert.equal(oStringrField.getAggregation("_field").getText(), "stringParameter Value", "Field: stringParameter ori Value");
@@ -880,8 +884,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent").length, 17, "Content length OK");
 					var oStringrField = this.oEditor.getAggregation("_formContent")[3];
 					assert.equal(oStringrField.getAggregation("_field").getText(), "stringParameter Value", "Field: stringParameter ori Value");
@@ -932,8 +936,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					assert.equal(this.oEditor.getAggregation("_formContent").length, 20, "Content length OK");
 					var oStringrField = this.oEditor.getAggregation("_formContent")[3];
 					assert.equal(oStringrField.getAggregation("_field").getText(), "stringParameter Value", "Field: stringParameter ori Value");
@@ -981,8 +985,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oStringrField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oStringrField.getAggregation("_field").getValue(), "stringParameter Value", "Field: stringParameter Value");
 					var oTranslateField = this.oEditor.getAggregation("_formContent")[4];
@@ -1015,20 +1019,22 @@ sap.ui.define([
 					assert.equal(oNow2SyntaxField.getAggregation("_field").getValue(), "Value: NOW_ISO2", "Field: parameter syntax to NOW_ISO2 Value");
 					var oLocale2SyntaxField = this.oEditor.getAggregation("_formContent")[38];
 					assert.equal(oLocale2SyntaxField.getAggregation("_field").getValue(), "Value: LOCALE2", "Field: parameter syntax to LOCALE2 Value");
-
-					oStringrField.getAggregation("_field").setValue("stringParameter New Value");
-					oTranslateField.getAggregation("_field").setValue("StringParameter Value Trans New Value");
-					oTranslateInI18nField.getAggregation("_field").setValue("StringParameter Value Trans in i18n New Value");
-					EditorQunitUtils.wait(1000).then(function () {
-						assert.equal(oNormalSyntaxField.getAggregation("_field").getValue(), "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
-						assert.equal(oTranslateSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
-						assert.equal(oTranslateInI18nSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
-						assert.equal(oTodaySyntaxField.getAggregation("_field").getValue().substring(7), oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO");
-						assert.equal(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17), oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO");
-						assert.equal(oLocaleSyntaxField.getAggregation("_field").getValue(), "Value: " + Localization.getLanguage(), "Field: parameter syntax to LOCALE");
-						assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
-						resolve();
-					});
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
+						oStringrField.getAggregation("_field").setValue("stringParameter New Value");
+						oTranslateField.getAggregation("_field").setValue("StringParameter Value Trans New Value");
+						oTranslateInI18nField.getAggregation("_field").setValue("StringParameter Value Trans in i18n New Value");
+						EditorQunitUtils.wait(1000).then(function () {
+							assert.equal(oNormalSyntaxField.getAggregation("_field").getValue(), "Value: stringParameter New Value", "Field: Normol parameter syntax New Value");
+							assert.equal(oTranslateSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans New Value", "Field: parameter syntax to translate New Value");
+							assert.equal(oTranslateInI18nSyntaxField.getAggregation("_field").getValue(), "Value: StringParameter Value Trans in i18n New Value", "Field: parameter syntax to translate New Value");
+							assert.equal(oTodaySyntaxField.getAggregation("_field").getValue().substring(7), oDate.toISOString().substring(0, 10), "Field: parameter syntax to TODAY_ISO");
+							assert.equal(oNowSyntaxField.getAggregation("_field").getValue().substring(7, 17), oDate.toISOString().substring(0, 10), "Field: parameter syntax to NOW_ISO");
+							assert.equal(oLocaleSyntaxField.getAggregation("_field").getValue(), "Value: " + Localization.getLanguage(), "Field: parameter syntax to LOCALE");
+							assert.ok(oMixedSyntaxField.getAggregation("_field").getValue().startsWith("Mixed value: stringParameter New Value, StringParameter Value Trans New Value, StringParameter Value Trans in i18n New Value, " + oDate.toISOString().substring(0, 10)), "Field: mixed parameter syntaxs New Value");
+							resolve();
+						});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1051,8 +1057,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1102,8 +1108,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1147,8 +1153,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1198,8 +1204,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1243,8 +1249,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1294,8 +1300,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1344,8 +1350,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1408,8 +1414,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1468,8 +1474,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1527,8 +1533,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1591,8 +1597,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1651,8 +1657,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1715,8 +1721,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1775,8 +1781,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1852,8 +1858,8 @@ sap.ui.define([
 				manifestChanges: [adminchanges, contentchanges, translationchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1924,8 +1930,8 @@ sap.ui.define([
 			});
 			var oDate = UI5Date.getInstance();
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translation", "Field: String Value");
 					oField = this.oEditor.getAggregation("_formContent")[4];
