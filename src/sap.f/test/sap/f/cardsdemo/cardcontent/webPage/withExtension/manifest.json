@@ -40,12 +40,13 @@
 		},
 		"header": {
 			"title": "WebPage Card with Extension",
+			"subTitle": "src: '\\\\\\{/url}/events'",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}
 		},
 		"content": {
-			"src": "{/url}",
+			"src": "{/url}/events",
 			"sandbox": "allow-scripts",
 			"minHeight": "{parameters>/minHeight/value}"
 		}

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/m/ObjectStatus",
 	"sap/m/Page",
-	"sap/ui/core/Element",
+	"sap/m/VBox",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library"
 ], function(
@@ -19,7 +19,7 @@ sap.ui.define([
 	ObjectMarker,
 	ObjectStatus,
 	Page,
-	Element,
+	VBox,
 	IconPool,
 	coreLibrary
 ) {
@@ -240,21 +240,12 @@ sap.ui.define([
 		new ObjectAttribute({text: "attribute text 5"})
 	];
 
-	function handlePress(oEvent) {
-		if (!bestVariation6.getIntro()) {
-			bestVariation6.setIntro("I am impressed.");
-		} else {
-			bestVariation6.setIntro(undefined);
-		}
-	}
-
 	var bestVariation6 = new ObjectListItem({
 		intro: "On behalf of John Smith",
 		title: "More than three attributes & press",
 		number: "3.6244",
 		numberUnit: "Euro",
-		attributes: moreThanThreeAttrs,
-		press: handlePress
+		attributes: moreThanThreeAttrs
 	});
 	list.addItem(bestVariation6);
 
@@ -290,20 +281,14 @@ sap.ui.define([
 		new ObjectAttribute({text: ""})
 	];
 
-	var emptyAttributes = new ObjectListItem({
+	var objcetListItemEmptyAttributes = new ObjectListItem({
 		intro: "On behalf of John Smith, Ñagçyfox",
 		title: "3 Attributes with empty string & no status",
 		number: "9999999999",
 		numberUnit: "Euro",
 		attributes: emptyAttributes
 	});
-	list.addItem(emptyAttributes);
-
-	emptyAttributes = [
-		new ObjectAttribute({text: ""}),
-		new ObjectAttribute({text: ""}),
-		new ObjectAttribute({text: ""})
-	];
+	list.addItem(objcetListItemEmptyAttributes);
 
 	var emptyAttributesFirstStatus = new ObjectListItem({
 		intro: "On behalf of John Smith, Ñagçyfox",
@@ -392,15 +377,17 @@ sap.ui.define([
 	});
 	list.addItem(emptyFirstStatus);
 
-	var app = new App();
-	var page = new Page("testPage", {
-		title: "Object List Item Test",
-		titleLevel: TitleLevel.H1
-	});
-	app.setInitialPage(page.getId());
-	page.setEnableScrolling(true);
-	app.addPage(page);
-	page.addContent(list);
+	var oPageLayout = new VBox({
+		items: [list]
+	}).addStyleClass("sapUiMediumMargin");
 
-	app.placeAt('body');
+	var oApp = new App();
+	var oPage = new Page({
+		title: "ObjectListItem Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
+		content: [oPageLayout]
+	});
+	oPage.setEnableScrolling(true);
+	oApp.addPage(oPage);
+	oApp.placeAt('body');
 });

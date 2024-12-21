@@ -15,17 +15,39 @@ sap.ui.define([
 	 * Simple web component used for testing the control wrapper and its renderer.
 	 */
 	class SampleWebc extends HTMLElement {
-		static observedAttributes = ["value-state"];
+		static observedAttributes = ["value-state", "observed-prop", "unobserved-prop"];
 		webcProp;
 		_invalidate;
+		#wordsToSay;
+		#span;
+		get wordsToSay() {
+			return this.#wordsToSay;
+		}
 		constructor() {
 			super();
 			this.attachShadow({ mode: "open" });
-			this.shadowRoot.innerHTML = "<div><slot name=\"header\"></slot><slot></slot><slot name =\"valueStateMessage\"></slot></div>";
+			this.shadowRoot.innerHTML = `
+				<div>
+					<slot name="header"></slot>
+					<slot></slot>
+					<slot name="valueStateMessage"></slot>
+					<slot name="single"></slot>
+				</div>`;
+			this.#span = document.createElement("span");
+			this.shadowRoot.appendChild(this.#span);
+			this.addEventListener("click", ({target}) => {
+				this.dispatchEvent(new CustomEvent("press-action", {
+					detail: {
+						target
+					}
+				}));
+			});
 		}
 		attributeChangedCallback(name, oldValue, newValue) {
+			const type = name === "observed-prop" ? "other" : "property";
+
 			this._invalidate?.({
-				type: "property",
+				type: type,
 				name: camelize(name),
 				newValue
 			});
@@ -35,6 +57,24 @@ sap.ui.define([
 		}
 		detachInvalidate() {
 			delete this._invalidate;
+		}
+		say(wordsToSay) {
+			this.#wordsToSay = wordsToSay;
+			this.#span.textContent = [...this.#wordsToSay].join(" ");
+			return null;
+		}
+
+		/**
+		 * Returns the given HTMLElement.
+		 * The Control Wrapper must convert a given Control instance into its DOM ref.
+		 *
+		 * @param {HTMLElement} domElement the HTMLElement that will be returned
+		 * @param {function} fn callback function, passes the given element as argument
+		 * @returns {HTMLElement} the input HTMLElement
+		 */
+		processElement(domElement, fn) {
+			fn(domElement);
+			return domElement;
 		}
 	}
 	window.customElements.define("sample-webc", SampleWebc);
@@ -48,6 +88,9 @@ sap.ui.define([
 		metadata: {
 			// tag name is specified via the actual web component
 			tag: "sample-webc",
+
+			methods: ["say", "processElement"],
+			getters:["wordsToSay"],
 
 			properties: {
 				// string to textContent mapping
@@ -145,8 +188,12 @@ sap.ui.define([
 						// "mapping.to" describes the result in the webc DOM
 						to: "div"
 					}
+				},
+				// observed property, which leads to a change.type != "property"
+				observedProp: {
+					type: "string",
+					defaultValue: "TestValue"
 				}
-
 			},
 			defaultAggregation: "content",
 			aggregations: {
@@ -160,6 +207,12 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					slot: "header"
+				},
+				// single aggregation 0..1
+				single: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					slot: "single"
 				}
 			},
 			associations: {
@@ -174,6 +227,9 @@ sap.ui.define([
 						formatter: "_getAriaLabelledByForRendering"
 					}
 				}
+			},
+			events: {
+				pressAction: {}
 			}
 		},
 		// refer to "borderWidth" property above

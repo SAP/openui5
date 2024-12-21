@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/FilterBar",
 	"./UnitTestMetadataDelegate",
-	"../QUnitUtils",
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/p13n/subcontroller/FilterController",
 	"sap/ui/mdc/util/PropertyHelper",
@@ -31,7 +30,6 @@ sap.ui.define([
 	FilterField,
 	FilterBar,
 	FBTestDelegate,
-	MDCQUnitUtils,
 	Engine,
 	FilterController,
 	PropertyHelper,
@@ -42,21 +40,22 @@ sap.ui.define([
 	let oAdaptationFilterBar;
 	QUnit.module("AdaptationFilterBar - MDC Control specific tests", {
 		beforeEach: function () {
-			const aPropertyInfo = [
-				{
-					label: "Key 1",
-					name: "key1",
-					dataType: "sap.ui.model.type.String"
-				},
-				{
-					label: "Key 2",
-					name: "key2",
-					dataType: "sap.ui.model.type.String"
-				}
-			];
-
 			this.oTestTable = new Table({
-				p13nMode: ["Filter","Column","Sort"]
+				delegate: {
+					name: "test-resources/sap/ui/mdc/delegates/TableDelegate",
+					payload: {
+						propertyInfo: [{
+							label: "Key 1",
+							name: "key1",
+							dataType: "sap.ui.model.type.String"
+						},{
+							label: "Key 2",
+							name: "key2",
+							dataType: "sap.ui.model.type.String"
+						}]
+					}
+				},
+				p13nMode: ["Filter", "Column", "Sort"]
 			});
 
 			this.oAdaptationFilterBar = new AdaptationFilterBar({
@@ -65,15 +64,11 @@ sap.ui.define([
 			if (FlexUtil.handleChanges.restore){
 				FlexUtil.handleChanges.restore();
 			}
-
-			MDCQUnitUtils.stubPropertyInfos(this.oTestTable, aPropertyInfo);
 		},
 
 		afterEach: function () {
 			this.oAdaptationFilterBar.destroy();
 			this.oAdaptationFilterBar = undefined;
-
-			MDCQUnitUtils.restorePropertyInfos(this.oTestTable);
 			this.oTestTable.destroy();
 			this.oTestTable = null;
 		}

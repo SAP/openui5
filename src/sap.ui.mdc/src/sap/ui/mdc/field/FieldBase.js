@@ -1900,27 +1900,27 @@ sap.ui.define([
 
 	function _attachContentHandlers(oContent) {
 
-		if (oContent.getMetadata().getEvents().change) {
+		if (oContent.getMetadata().getAllEvents().change) {
 			// content has change event -> attach handler
 			oContent.attachEvent("change", _handleContentChange, this);
 		}
-		if (oContent.getMetadata().getEvents().liveChange) {
+		if (oContent.getMetadata().getAllEvents().liveChange) {
 			// content has liveChange event -> attach handler
 			oContent.attachEvent("liveChange", _handleContentLiveChange, this);
 		}
-		if (oContent.getMetadata().getEvents().press) {
+		if (oContent.getMetadata().getAllEvents().press) {
 			// content has press event -> attach handler
 			oContent.attachEvent("press", _handleContentPress, this);
 		}
-		if (oContent.getMetadata().getEvents().valueHelpRequest) {
+		if (oContent.getMetadata().getAllEvents().valueHelpRequest) {
 			// content has valueHelpRequest event -> attach handler
 			oContent.attachEvent("valueHelpRequest", _handleValueHelpRequest, this);
 		}
-		if (oContent.getMetadata().getEvents().tokenUpdate) {
+		if (oContent.getMetadata().getAllEvents().tokenUpdate) {
 			// content has tokenUpdate event -> attach handler
 			oContent.attachEvent("tokenUpdate", _handleTokenUpdate, this);
 		}
-		if (oContent.getMetadata().getEvents().validateFieldGroup) {
+		if (oContent.getMetadata().getAllEvents().validateFieldGroup) {
 			// content has tokenUpdate event -> attach handler
 			oContent.attachEvent("validateFieldGroup", _validateFieldGroup, this);
 		}
@@ -1929,27 +1929,27 @@ sap.ui.define([
 
 	function _detachContentHandlers(oContent) {
 
-		if (oContent.getMetadata().getEvents().change) {
+		if (oContent.getMetadata().getAllEvents().change) {
 			// oldContent has change event -> detach handler
 			oContent.detachEvent("change", _handleContentChange, this);
 		}
-		if (oContent.getMetadata().getEvents().liveChange) {
+		if (oContent.getMetadata().getAllEvents().liveChange) {
 			// oldContent has liveChange event -> detach handler
 			oContent.detachEvent("liveChange", _handleContentLiveChange, this);
 		}
-		if (oContent.getMetadata().getEvents().press) {
+		if (oContent.getMetadata().getAllEvents().press) {
 			// oldContent has press event -> detach handler
 			oContent.detachEvent("press", _handleContentPress, this);
 		}
-		if (oContent.getMetadata().getEvents().valueHelpRequest) {
+		if (oContent.getMetadata().getAllEvents().valueHelpRequest) {
 			// oldContent has valueHelpRequest event -> detach handler
 			oContent.detachEvent("valueHelpRequest", _handleValueHelpRequest, this);
 		}
-		if (oContent.getMetadata().getEvents().tokenUpdate) {
+		if (oContent.getMetadata().getAllEvents().tokenUpdate) {
 			// content has tokenUpdate event -> deattach handler
 			oContent.detachEvent("tokenUpdate", _handleTokenUpdate, this);
 		}
-		if (oContent.getMetadata().getEvents().validateFieldGroup) {
+		if (oContent.getMetadata().getAllEvents().validateFieldGroup) {
 			// content has tokenUpdate event -> attach handler
 			oContent.detachEvent("validateFieldGroup", _validateFieldGroup, this);
 		}

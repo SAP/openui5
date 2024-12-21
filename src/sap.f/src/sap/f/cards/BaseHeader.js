@@ -267,8 +267,11 @@ sap.ui.define([
 			return;
 		}
 
-		this.firePress();
+		this.firePress({
+			originalEvent: oEvent
+		});
 		oEvent.preventDefault();
+		oEvent.stopPropagation();
 	};
 
 	/**

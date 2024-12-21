@@ -1,0 +1,121 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <OverflowToolbar>
+        <SearchField
+            id="searchField"
+            class="sapUiDemoIllustrationExplorerSearchField"
+            placeholder="{i18n>searchPlaceholder}"
+            liveChange=".onSearch">
+            <layoutData>
+                <OverflowToolbarLayoutData
+                    priority="NeverOverflow"
+                    minWidth="12rem"
+                    maxWidth="22rem"
+                    shrinkable="true" />
+            </layoutData>
+        </SearchField>
+
+        <ToolbarSpacer width="1rem" />
+
+        <Label
+            text="{i18n>illustrationSizeLabel}"
+            labelFor="illustrationSizeSelect"
+            showColon="true">
+            <layoutData>
+                <OverflowToolbarLayoutData group="1" />
+            </layoutData>
+        </Label>
+        <Select
+            id="illustrationSizeSelect"
+            class="sapUiDemoIllustrationExplorerIllustrationSizeSelect"
+            width="100%"
+            items="{app>/illustrationSizes}"
+            selectedKey="{app>/selectedIllustrationSize}"
+            change=".onIllustrationSizeChange">
+            <core:Item key="{app>size}" text="{app>size}" />
+            <layoutData>
+                <OverflowToolbarLayoutData
+                    group="1"
+                    minWidth="12rem"
+                    maxWidth="14rem"
+                    shrinkable="true" />
+            </layoutData>
+        </Select>
+
+        <Label
+            text="{i18n>illustrationSetLabel}"
+            labelFor="illustrationSetSelect"
+            showColon="true">
+            <layoutData>
+                <OverflowToolbarLayoutData group="2" />
+            </layoutData>
+        </Label>
+        <Select
+            id="illustrationSetSelect"
+            class="sapUiDemoIllustrationExplorerIllustrationSetSelect"
+            width="100%"
+            items="{app>/illustrationSets}"
+            selectedKey="{app>/selectedIllustrationSet}"
+            change=".onIllustrationSetChange">
+            <core:Item key="{app>set}" text="{app>text}" />
+            <layoutData>
+                <OverflowToolbarLayoutData
+                    group="2"
+                    minWidth="12rem"
+                    maxWidth="14rem"
+                    shrinkable="true" />
+            </layoutData>
+        </Select>
+
+        <Label
+            text="{i18n>illustrationCategoryLabel}"
+            labelFor="categorySelect"
+            showColon="true">
+            <layoutData>
+                <OverflowToolbarLayoutData group="3" />
+            </layoutData>
+        </Label>
+        <Select
+            id="categorySelect"
+            class="sapUiDemoIllustrationExplorerCategorySelect"
+            width="100%"
+            items="{categories>/categories}"
+            selectedKey="{app>/selectedCategory}"
+            change=".onCategoryChange">
+            <core:Item key="{categories>category}" text="{categories>category}" />
+            <layoutData>
+                <OverflowToolbarLayoutData
+                    group="3"
+                    minWidth="12rem"
+                    maxWidth="14rem"
+                    shrinkable="true" />
+            </layoutData>
+        </Select>
+
+        <Label
+            text="{i18n>themeLabel}"
+            labelFor="themeSelect"
+            showColon="true">
+            <layoutData>
+                <OverflowToolbarLayoutData group="4" />
+            </layoutData>
+        </Label>
+        <Select
+            id="themeSelect"
+            class="sapUiDemoIllustrationExplorerThemeSelect"
+            width="100%"
+            items="{app>/themes}"
+            selectedKey="{app>/selectedTheme}"
+            change=".onThemeChange">
+            <core:Item key="{app>theme}" text="{app>text}" />
+            <layoutData>
+                <OverflowToolbarLayoutData
+                    group="4"
+                    minWidth="12rem"
+                    maxWidth="14rem"
+                    shrinkable="true" />
+            </layoutData>
+        </Select>
+    </OverflowToolbar>
+</core:FragmentDefinition>

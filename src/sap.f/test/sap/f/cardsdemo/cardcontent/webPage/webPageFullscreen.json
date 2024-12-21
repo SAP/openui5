@@ -25,13 +25,14 @@
 		"type": "WebPage",
 		"header": {
 			"title": "OpenUI5 Events",
+			"subTitle": "src: '/test.html'",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}
 		},
 		"content": {
 			"src": "/test.html",
-            "sandbox": "allow-scripts allow-popups allow-downloads",
+			"sandbox": "allow-scripts allow-popups allow-downloads",
 			"allowFullscreen": true
 		}
 	}

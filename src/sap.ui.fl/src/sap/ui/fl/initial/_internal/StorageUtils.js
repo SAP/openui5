@@ -202,7 +202,8 @@ sap.ui.define([
 					|| oResponse.comp.variants.length > 0
 					|| oResponse.comp.changes.length > 0
 					|| oResponse.comp.defaultVariants.length > 0
-					|| oResponse.comp.standardVariants.length > 0;
+					|| oResponse.comp.standardVariants.length > 0
+					|| oResponse.annotationChanges.length > 0;
 			});
 
 			aResponses.sort(function(a, b) {
@@ -243,7 +244,9 @@ sap.ui.define([
 			aSortedFlexObjects.forEach(function(oFlexObject) {
 				var sLayer = oFlexObject.layer;
 
-				if (oFlexObject.fileType === "ctrl_variant" && oFlexObject.variantManagementReference) {
+				if (oFlexObject.fileType === "annotation_change") {
+					mGroupedFlexObjects[sLayer].annotationChanges.push(oFlexObject);
+				} else if (oFlexObject.fileType === "ctrl_variant" && oFlexObject.variantManagementReference) {
 					mGroupedFlexObjects[sLayer].variants.push(oFlexObject);
 				} else if (oFlexObject.fileType === "ctrl_variant_change") {
 					mGroupedFlexObjects[sLayer].variantChanges.push(oFlexObject);

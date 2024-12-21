@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ComponentLifecycleHooks",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/fl/changeHandler/ChangeAnnotation",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/base/DesignTime",
 	// the lower 2 are set as a callback in the "register...Processors" which are not detected as dependencies from the preload-building
@@ -26,6 +27,7 @@ sap.ui.define([
 	ManifestUtils,
 	ComponentLifecycleHooks,
 	DelegateMediatorAPI,
+	ChangeAnnotation,
 	ChangeHandlerRegistration,
 	DesignTime
 ) {
@@ -51,6 +53,14 @@ sap.ui.define([
 	function registerChangeHandlers() {
 		ChangeHandlerRegistration.registerPredefinedChangeHandlers();
 		ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
+		ChangeHandlerRegistration.registerAnnotationChangeHandler({
+			changeHandler: ChangeAnnotation,
+			isDefaultChangeHandler: true
+		});
+	}
+
+	function registerOnModelCreated() {
+		ComponentHooks.onModelCreated.register(ComponentLifecycleHooks.modelCreatedHook);
 	}
 
 	function registerLoadComponentEventHandler() {
@@ -114,6 +124,7 @@ sap.ui.define([
 		registerDescriptorChangeHandler();
 		registerExtensionPointProvider();
 		registerModelSpecificReadDelegates();
+		registerOnModelCreated();
 	};
 
 	return RegistrationDelegator;

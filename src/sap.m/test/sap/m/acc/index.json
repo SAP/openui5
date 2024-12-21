@@ -343,7 +343,7 @@
 		},
 		{
 			"control": "sap.m.ObjectNumber",
-			"url": "../ObjectNumber.html",
+			"url": "./ObjectNumber.html",
 			"appComponent": "CA-UI5-CTR-BAL",
 			"accTest": {
 				"name": "sap.m.ObjectNumber",
@@ -508,7 +508,7 @@
 		},
 		{
 			"control": "sap.m.SinglePlanningCalendar",
-			"url": "../SinglePlanningCalendar.html",
+			"url": "./SinglePlanningCalendar.html",
 			"appComponent": "CA-UI5-CTR-BAL",
 			"accTest": {
 				"name": "sap.m.SinglePlanningCalendar",

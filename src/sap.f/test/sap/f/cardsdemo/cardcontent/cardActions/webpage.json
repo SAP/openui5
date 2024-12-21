@@ -1,0 +1,80 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "list.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+	  "actions": [{
+		"type": "Navigation",
+		"parameters": {
+		  "url": "https://sap.com",
+		  "target": "_blank"
+		}
+	  }],
+	  "type": "WebPage",
+	  "configuration": {
+		"parameters": {
+		  "minHeight": {
+			"label": "Minimum Content Height",
+			"description": "Minimum height of the content",
+			"type": "string",
+			"value": "25rem"
+		  }
+		}
+	  },
+	  "header": {
+		"title": "OpenUI5 Events",
+		"icon": {
+		  "src": "sap-icon://desktop-mobile"
+		}
+	  },
+	  "content": {
+		"src": "https://openui5.org/events",
+		"sandbox": "allow-scripts allow-popups allow-downloads",
+		"minHeight": "{parameters>/minHeight/value}",
+		"allowfullscreen": true
+	  },
+	  "footer": {
+		"actionsStrip": [
+		  {
+			"type": "ToolbarSpacer"
+		  },
+		  {
+			"type": "Link",
+			"text": "Agenda",
+			"icon": "sap-icon://action",
+			"actions": [
+			  {
+				"type": "Navigation",
+				"parameters": {
+				  "url": "{agendaUrl}"
+				}
+			  }
+			]
+		  },
+		  {
+			"text": "Approve",
+			"overflowPriority": "High",
+			"actions": [
+			  {
+				"type": "Custom",
+				"parameters": {
+				  "method": "approve"
+				}
+			  }
+			]
+		  }
+		]
+	  }
+	}
+}

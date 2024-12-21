@@ -26,7 +26,8 @@ sap.ui.define(["./BaseContentRenderer", "sap/ui/integration/util/BindingResolver
 			.class("sapUiIntWPCFrame");
 
 		oRm.style("height", "calc(" + oWebPageContent.getMinHeight() + " - " + PADDING + ")");
-		if (oWebPageContent.isReady()) {
+
+		if (oWebPageContent._bSrcChecked) {
 			oRm.attr("src", oWebPageContent.getSrc());
 		}
 
@@ -57,6 +58,15 @@ sap.ui.define(["./BaseContentRenderer", "sap/ui/integration/util/BindingResolver
 		}
 
 		return WebPageContentRenderer.MIN_WEB_PAGE_CONTENT_HEIGHT;
+	};
+
+	/**
+	 * @override
+	 */
+	WebPageContentRenderer.renderLoadingPlaceholder = function (oRm, oCardContent) {
+		// Always render the placeholder for WebPage Content and hide it with CSS only to avoid iframe re-rendering.
+		// Unnecessary iframe re-rendering causes the iframe to reload its page.
+		oRm.renderControl(oCardContent.getAggregation("_loadingPlaceholder"));
 	};
 
 	return WebPageContentRenderer;

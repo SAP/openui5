@@ -2,14 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"../QUnitUtils",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/mdc/enums/TableType"
 ], function(
-	MDCQUnitUtils,
 	ManagedObjectObserver,
 	Element,
 	qutils,
@@ -18,87 +16,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const QUnitUtils = Object.assign({}, MDCQUnitUtils);
-
 	function getRowsAggregationName(oTable) {
 		return oTable._isOfType(TableType.Table, true) ? "rows" : "items";
 	}
 
-	QUnitUtils.stubPropertyInfos = function(oTarget, aPropertyInfos, oTypeMap) {
-		const fnOriginalGetControlDelegate = oTarget.getControlDelegate;
-		const fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
-		let oDelegate;
-		let fnOriginalFetchProperties;
-		let fnOriginalGetTypeMap;
-		let bPropertyHelperExists;
-
-		if (typeof fnOriginalGetControlDelegate !== "function") {
-			throw new Error("The target cannot be stubbed. " + oTarget);
-		}
-
-		if (oTarget.__restorePropertyInfos) {
-			throw new Error("The target is already stubbed. " + oTarget);
-		}
-
-		if (typeof oTarget.getPropertyHelper === "function") {
-			bPropertyHelperExists = !!oTarget.getPropertyHelper();
-
-			if (bPropertyHelperExists) {
-				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
-			}
-		}
-
-		function getDelegate() {
-			if (oDelegate) {
-				return oDelegate;
-			}
-
-			oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
-			fnOriginalFetchProperties = oDelegate.fetchProperties;
-
-			oDelegate.fetchProperties = function() {
-				fnOriginalFetchProperties.apply(this, arguments);
-				return Promise.resolve(aPropertyInfos);
-			};
-
-			if (oTypeMap) {
-				fnOriginalGetTypeMap = oDelegate.getTypeMap;
-				oDelegate.getTypeMap = () => oTypeMap;
-			}
-
-			return oDelegate;
-		}
-
-		oTarget.getControlDelegate = function() {
-			return getDelegate.call(this);
-		};
-
-		oTarget.awaitControlDelegate = function() {
-			return fnOriginalAwaitControlDelegate.apply(this, arguments).then(function() {
-				return getDelegate.call(this);
-			}.bind(this));
-		};
-
-		oTarget.__restorePropertyInfos = function() {
-			delete oTarget.__restorePropertyInfos;
-			oTarget.getControlDelegate = fnOriginalGetControlDelegate;
-			oTarget.awaitControlDelegate = fnOriginalAwaitControlDelegate;
-
-			if (oDelegate) {
-				oDelegate.fetchProperties = fnOriginalFetchProperties;
-
-				if (fnOriginalGetTypeMap) {
-					oDelegate.getTypeMap = fnOriginalGetTypeMap;
-				}
-			}
-		};
-	};
-
-	QUnitUtils.restorePropertyInfos = function(oTarget) {
-		if (oTarget.__restorePropertyInfos) {
-			oTarget.__restorePropertyInfos();
-		}
-	};
+	const QUnitUtils = {};
 
 	QUnitUtils.waitForBindingInfo = function(oTable) {
 		const sRowsAggregationName = getRowsAggregationName(oTable);

@@ -290,5 +290,17 @@ sap.ui.define([
 		return Object.getOwnPropertyNames(oData).length;
 	};
 
+	BaseListContent.prototype.ontap = function (oEvent) {
+		oEvent.stopPropagation();
+	};
+
+	BaseListContent.prototype.onsapenter = function (oEvent) {
+		oEvent.stopPropagation();
+	};
+
+	BaseListContent.prototype.onsapspace = function (oEvent) {
+		oEvent.stopPropagation();
+	};
+
 	return BaseListContent;
 });

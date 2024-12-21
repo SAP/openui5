@@ -200,15 +200,16 @@ sap.ui.define([
 						manifest: oManifestForObjectListFieldsWithTranslations,
 						manifestChanges: [_oAdminChangesOfObjectListsWithTranslations]
 					});
-					EditorQunitUtils.isReady(that.oEditor).then(function () {
-						assert.ok(that.oEditor.isReady(), "Editor is ready");
+					EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 						var oField1 = that.oEditor.getAggregation("_formContent")[2];
 						var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
 						var oField2 = that.oEditor.getAggregation("_formContent")[4];
 						var oSelectedValueOfField1 = merge(deepClone(oValueOfObject1InAdminChange, 500), {"_dt": {"_selected": true, "_position": 1}});
 						var oSelectedValueOfField2 = merge(deepClone(oValueOfObject2InAdminChange, 500), {"_dt": {"_selected": true, "_position": 1}});
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(that.oEditor).then(function () {
+							assert.ok(that.oEditor.isReady(), "Editor is ready");
 							assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 							assert.equal(oLabel1.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 							assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");

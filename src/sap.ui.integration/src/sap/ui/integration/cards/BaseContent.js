@@ -161,7 +161,14 @@ sap.ui.define([
 				/**
 				 * Fires when the user presses the control.
 				 */
-				press: {},
+				press: {
+					parameters: {
+						/**
+						 * The original Event.
+						 */
+						originalEvent: { type: "object" }
+					}
+				},
 
 				/**
 				 * Fires after all internally awaited events are fired.
@@ -218,7 +225,7 @@ sap.ui.define([
 	BaseContent.prototype.ontap = function (oEvent) {
 		if (!oEvent.isMarked()) {
 			this.firePress({
-				/* no parameters */
+				originalEvent: oEvent
 			});
 		}
 	};

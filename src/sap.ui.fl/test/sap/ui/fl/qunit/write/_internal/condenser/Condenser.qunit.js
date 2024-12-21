@@ -939,6 +939,44 @@ sap.ui.define([
 			assert.strictEqual(aRemainingChanges[4].getId(), "someOtherFlexObject3", "the non UI Change was sorted correctly");
 		});
 
+		QUnit.test("Annotation Changes", async function(assert) {
+			const oAnnotationChange1 = FlexObjectFactory.createFromFileContent(({
+				changeType: "annotationChange1",
+				fileName: "annotationChange1",
+				layer: Layer.CUSTOMER,
+				content: { annotationPath: "myFancyAnnotationPath", value: "myFancyValue" },
+				fileType: "annotation_change",
+				reference: sReference,
+				selector: { serviceUrl: "myFancyServiceUrl" }
+			}));
+			const oAnnotationChange2 = FlexObjectFactory.createFromFileContent(({
+				changeType: "annotationChange1",
+				fileName: "annotationChange2",
+				layer: Layer.CUSTOMER,
+				content: { annotationPath: "myFancyAnnotationPath", value: "myFancyValue" },
+				fileType: "annotation_change",
+				reference: sReference,
+				selector: { serviceUrl: "myFancyServiceUrl" }
+			}));
+			const oAnnotationChange3 = FlexObjectFactory.createFromFileContent(({
+				changeType: "annotationChange2",
+				fileName: "annotationChange3",
+				layer: Layer.CUSTOMER,
+				content: { annotationPath: "myFancyAnnotationPath", value: "myFancyValue" },
+				fileType: "annotation_change",
+				reference: sReference,
+				selector: { serviceUrl: "myFancyServiceUrl" }
+			}));
+
+			const aRemainingChanges = await Condenser.condense(
+				oAppComponent,
+				[oAnnotationChange1, oAnnotationChange2, oAnnotationChange3]
+			);
+			assert.strictEqual(aRemainingChanges.length, 2, "only two changes remain");
+			assert.strictEqual(aRemainingChanges[0].getId(), "annotationChange2", "the newer duplicate change remains");
+			assert.strictEqual(aRemainingChanges[1].getId(), "annotationChange3", "the unique change remains");
+		});
+
 		QUnit.test("app descriptor changes", async function(assert) {
 			const oAppDescriptorChange1 = FlexObjectFactory.createFromFileContent(({
 				appDescriptorChange: true,

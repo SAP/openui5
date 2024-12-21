@@ -488,5 +488,9 @@ sap.ui.define([
 			: JsControlTreeModifier.getControlIdBySelector(this.getSelector(), oAppComponent);
 	};
 
+	UIChange.prototype.canBeCondensed = function() {
+		return this.isSuccessfullyApplied();
+	};
+
 	return UIChange;
 });

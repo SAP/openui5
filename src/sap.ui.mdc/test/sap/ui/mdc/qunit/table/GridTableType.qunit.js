@@ -129,36 +129,28 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		afterEach: function() {
-			this.destroyTable();
+			this.oTable?.destroy();
 		},
 		createTable: function(mSettings) {
-			this.destroyTable();
-			this.oTable = new Table(Object.assign({
-				type: new GridTableType()
-			}, mSettings));
+			this.oTable = new Table({
+				type: new GridTableType(),
+				...mSettings
+			});
 			return this.oTable;
-		},
-		initTable: function() {
-			this.createTable().initialized();
-		},
-		destroyTable: function() {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
 		}
 	});
 
-	QUnit.test("setScrollThreshold", async function(assert) {
-		const oMdcTable = this.createTable({
-			type: new GridTableType({ scrollThreshold: 200 })
+	QUnit.test("scrollThreshold property", async function(assert) {
+		const oTable = this.createTable({
+			type: new GridTableType({scrollThreshold: 200})
 		});
 
-		await oMdcTable.initialized();
+		await oTable.initialized();
 
-		const oInnerTable = oMdcTable._oTable;
-		const oTableType = oMdcTable.getType();
+		const oInnerTable = oTable._oTable;
+		const oTableType = oTable.getType();
 		const setThresholdSpy = sinon.spy(oTableType, "setScrollThreshold");
-		const invalidateSpy = sinon.spy(oMdcTable, "invalidate");
+		const invalidateSpy = sinon.spy(oTable, "invalidate");
 
 		oTableType.setScrollThreshold(25);
 
@@ -177,25 +169,24 @@ sap.ui.define([
 		assert.ok(invalidateSpy.notCalled, "Invalidation not called");
 	});
 
-	QUnit.test("fixedColumnCount property", function(assert) {
+	QUnit.test("fixedColumnCount property", async function(assert) {
 		const oTable = this.createTable({
 			type: new GridTableType({fixedColumnCount: 1})
 		});
 
-		return oTable.initialized().then(function() {
-			assert.equal(oTable.getType().getFixedColumnCount(), 1, "fixedColumnCount for type is set to 1");
-			assert.equal(oTable._oTable.getFixedColumnCount(), 1, "Inner table has a fixed column count of 1");
+		await oTable.initialized();
+		assert.equal(oTable.getType().getFixedColumnCount(), 1, "fixedColumnCount for type is set to 1");
+		assert.equal(oTable._oTable.getFixedColumnCount(), 1, "Inner table has a fixed column count of 1");
 
-			oTable.getType().setFixedColumnCount(2);
+		oTable.getType().setFixedColumnCount(2);
 
-			assert.equal(oTable.getType().getFixedColumnCount(), 2, "fixedColumnCount for type is set to 2");
-			assert.equal(oTable._oTable.getFixedColumnCount(), 2, "Inner table has a fixed column count of 2");
+		assert.equal(oTable.getType().getFixedColumnCount(), 2, "fixedColumnCount for type is set to 2");
+		assert.equal(oTable._oTable.getFixedColumnCount(), 2, "Inner table has a fixed column count of 2");
 
-			oTable.getType().setFixedColumnCount(0);
+		oTable.getType().setFixedColumnCount(0);
 
-			assert.equal(oTable.getType().getFixedColumnCount(), 0, "fixedColumnCount for type is set to 0");
-			assert.equal(oTable._oTable.getFixedColumnCount(), 0, "Inner table has a fixed column count of 0");
-		});
+		assert.equal(oTable.getType().getFixedColumnCount(), 0, "fixedColumnCount for type is set to 0");
+		assert.equal(oTable._oTable.getFixedColumnCount(), 0, "Inner table has a fixed column count of 0");
 	});
 
 	QUnit.test("#getTableStyleClasses", function(assert) {
@@ -205,6 +196,29 @@ sap.ui.define([
 
 		oTable.getType().setRowCountMode(RowCountMode.Fixed);
 		assert.deepEqual(oTable.getType().getTableStyleClasses(), [], "RowCountMode Fixed");
+	});
+
+	QUnit.test("#updateSortIndicators", async function(assert) {
+		const oTable = this.createTable({
+			columns: [
+				new Column()
+			]
+		});
+
+		await oTable.initialized();
+
+		const oType = oTable.getType();
+		const oColumn = oTable.getColumns()[0];
+		const oInnerColumn = oTable._oTable.getColumns()[0];
+
+		oType.updateSortIndicator(oColumn, "Ascending");
+		assert.strictEqual(oInnerColumn.getSortOrder(),"Ascending", "Inner table column sort order");
+
+		oType.updateSortIndicator(oColumn, "Descending");
+		assert.strictEqual(oInnerColumn.getSortOrder(), "Descending", "Inner table column sort order");
+
+		oType.updateSortIndicator(oColumn, "None");
+		assert.strictEqual(oInnerColumn.getSortOrder(), "None", "Inner table column sort order");
 	});
 
 	QUnit.module("Row settings", {

@@ -1,0 +1,81 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "list.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"actions": [{
+			"type": "Navigation",
+			"parameters": {
+				"url": "https://sap.com",
+				"target": "_blank"
+			}
+		}],
+		"type": "List",
+		"data": {
+			"json": {
+				"items": [
+					{"title": "Item 1"},
+					{"title": "Item 2"},
+					{"title": "Item 3"},
+					{"title": "Item 4"}
+				]
+			}
+		},
+		"header": {
+			"title": "Action on card level",
+			"subTitle": "sematicRole - listitem"
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{title}"
+			},
+			"maxItems": 4
+		},
+		"footer": {
+		  "actionsStrip": [
+			{
+			  "type": "ToolbarSpacer"
+			},
+			{
+			  "type": "Link",
+			  "text": "Agenda",
+			  "icon": "sap-icon://action",
+			  "actions": [
+				{
+				  "type": "Navigation",
+				  "parameters": {
+					"url": "{agendaUrl}"
+				  }
+				}
+			  ]
+			},
+			{
+			  "text": "Approve",
+			  "overflowPriority": "High",
+			  "actions": [
+				{
+				  "type": "Custom",
+				  "parameters": {
+					"method": "approve"
+				  }
+				}
+			  ]
+			}
+		  ]
+		}
+	}
+}

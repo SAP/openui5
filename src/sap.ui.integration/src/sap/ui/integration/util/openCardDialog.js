@@ -91,7 +91,7 @@ sap.ui.define([
 		oChildCard.addEventDelegate({
 			onAfterRendering: () => {
 				// the card shouldn't be a region with aria-labelledby, otherwise the header is read two times.
-				oChildCard.getDomRef().setAttribute("role", "generic");
+				oChildCard.getDomRef().removeAttribute("role");
 				oChildCard.getDomRef().removeAttribute("aria-labelledby");
 			}
 		});

@@ -85,8 +85,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -128,8 +128,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -171,8 +171,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -187,8 +187,8 @@ sap.ui.define([
 		QUnit.test("1 string parameter and label trans (as file)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "1translatedstringWithI18nObject.json" });
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -235,8 +235,8 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -315,8 +315,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
 					var oIcon1 = oField1._descriptionIcon;
@@ -326,7 +326,8 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					var oIcon3 = oField3._descriptionIcon;
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "Field1: String 1 English");
@@ -335,7 +336,7 @@ sap.ui.define([
 						oIcon1.onmouseover();
 						var oPopover1 = oIcon1.getDependents()[0];
 						assert.equal(oPopover1.getContent()[0].getText(), "Desc 1 English", "Label2: Desc 1 English");
-					}).then(function () {
+					}.bind(this)).then(function () {
 						assert.equal(oLabel2.getText(), "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 						assert.equal(oField2.getAggregation("_field").getValue(), "String 2 English", "Field2: String 2 English");
@@ -371,8 +372,8 @@ sap.ui.define([
 						host: "contexthost",
 						manifest: oManifest
 					});
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 						var oField1 = this.oEditor.getAggregation("_formContent")[2];
 						var oIcon1 = oField1._descriptionIcon;
@@ -382,7 +383,8 @@ sap.ui.define([
 						var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 						var oField3 = this.oEditor.getAggregation("_formContent")[6];
 						var oIcon3 = oField3._descriptionIcon;
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							assert.equal(oLabel1.getText(), "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 							assert.equal(oField1.getAggregation("_field").getValue(), "String 1 US English", "Field1: String 1 US English");
@@ -391,7 +393,7 @@ sap.ui.define([
 							oIcon1.onmouseover();
 							var oPopover1 = oIcon1.getDependents()[0];
 							assert.equal(oPopover1.getContent()[0].getText(), "Desc 1 US English", "Label2: Desc 1 US English");
-						}).then(function () {
+						}.bind(this)).then(function () {
 							assert.equal(oLabel2.getText(), "Label 2 US English", "Label2: Label 2 US English");
 							assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 							assert.equal(oField2.getAggregation("_field").getValue(), "String 2 US English", "Field2: String 2 US English");
@@ -457,8 +459,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
 					var oIcon1 = oField1._descriptionIcon;
@@ -468,7 +470,8 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					var oIcon3 = oField3._descriptionIcon;
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "Field1: String 1 English");
@@ -477,7 +480,7 @@ sap.ui.define([
 						oIcon1.onmouseover();
 						var oPopover1 = oIcon1.getDependents()[0];
 						assert.equal(oPopover1.getContent()[0].getText(), "Desc 1 English", "Label2: Desc 1 English");
-					}).then(function () {
+					}.bind(this)).then(function () {
 						assert.equal(oLabel2.getText(), "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 						assert.equal(oField2.getAggregation("_field").getValue(), "String 2 English", "Field2: String 2 English");
@@ -513,8 +516,8 @@ sap.ui.define([
 						host: "contexthost",
 						manifest: oManifest
 					});
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 						var oField1 = this.oEditor.getAggregation("_formContent")[2];
 						var oIcon1 = oField1._descriptionIcon;
@@ -524,7 +527,8 @@ sap.ui.define([
 						var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 						var oField3 = this.oEditor.getAggregation("_formContent")[6];
 						var oIcon3 = oField3._descriptionIcon;
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							assert.equal(oLabel1.getText(), "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 							assert.equal(oField1.getAggregation("_field").getValue(), "String 1 US English", "Field1: String 1 US English");
@@ -533,7 +537,7 @@ sap.ui.define([
 							oIcon1.onmouseover();
 							var oPopover1 = oIcon1.getDependents()[0];
 							assert.equal(oPopover1.getContent()[0].getText(), "Desc 1 US English", "Label2: Desc 1 US English");
-						}).then(function () {
+						}.bind(this)).then(function () {
 							assert.equal(oLabel2.getText(), "Label 2 US English", "Label2: Label 2 US English");
 							assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 							assert.equal(oField2.getAggregation("_field").getValue(), "String 2 US English", "Field2: String 2 US English");
@@ -607,8 +611,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
 					var oIcon1 = oField1._descriptionIcon;
@@ -618,7 +622,8 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					var oIcon3 = oField3._descriptionIcon;
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "Field1: String 1 English");
@@ -627,7 +632,7 @@ sap.ui.define([
 						oIcon1.onmouseover();
 						var oPopover1 = oIcon1.getDependents()[0];
 						assert.equal(oPopover1.getContent()[0].getText(), "Desc 1 English", "Label2: Desc 1 English");
-					}).then(function () {
+					}.bind(this)).then(function () {
 						assert.equal(oLabel2.getText(), "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 						assert.equal(oField2.getAggregation("_field").getValue(), "String 2 English", "Field2: String 2 English");
@@ -663,8 +668,8 @@ sap.ui.define([
 						host: "contexthost",
 						manifest: oManifest
 					});
-					EditorQunitUtils.isReady(this.oEditor).then(function () {
-						assert.ok(this.oEditor.isReady(), "Editor is ready");
+					EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 						var oField1 = this.oEditor.getAggregation("_formContent")[2];
 						var oIcon1 = oField1._descriptionIcon;
@@ -674,7 +679,8 @@ sap.ui.define([
 						var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 						var oField3 = this.oEditor.getAggregation("_formContent")[6];
 						var oIcon3 = oField3._descriptionIcon;
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(this.oEditor).then(function () {
+							assert.ok(this.oEditor.isReady(), "Editor is ready");
 							assert.equal(oLabel1.getText(), "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 							assert.equal(oField1.getAggregation("_field").getValue(), "String 1 US English", "Field1: String 1 US English");
@@ -683,7 +689,7 @@ sap.ui.define([
 							oIcon1.onmouseover();
 							var oPopover1 = oIcon1.getDependents()[0];
 							assert.equal(oPopover1.getContent()[0].getText(), "Desc 1 US English", "Label2: Desc 1 US English");
-						}).then(function () {
+						}.bind(this)).then(function () {
 							assert.equal(oLabel2.getText(), "Label 2 US English", "Label2: Label 2 US English");
 							assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 							assert.equal(oField2.getAggregation("_field").getValue(), "String 2 US English", "Field2: String 2 US English");
@@ -761,8 +767,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
@@ -777,7 +783,8 @@ sap.ui.define([
 					var oLabel4 = this.oEditor.getAggregation("_formContent")[11];
 					var oField4Ori = this.oEditor.getAggregation("_formContent")[12];
 					var oField4Trans = this.oEditor.getAggregation("_formContent")[13];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -860,8 +867,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
@@ -876,7 +883,8 @@ sap.ui.define([
 					var oLabel4 = this.oEditor.getAggregation("_formContent")[11];
 					var oField4Ori = this.oEditor.getAggregation("_formContent")[12];
 					var oField4Trans = this.oEditor.getAggregation("_formContent")[13];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -956,8 +964,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
@@ -969,7 +977,8 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -1047,8 +1056,8 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				EditorQunitUtils.isReady(this.oEditor).then(function () {
-					assert.ok(this.oEditor.isReady(), "Editor is ready");
+				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
+					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
@@ -1063,7 +1072,8 @@ sap.ui.define([
 					var oLabel4 = this.oEditor.getAggregation("_formContent")[11];
 					var oField4Ori = this.oEditor.getAggregation("_formContent")[12];
 					var oField4Trans = this.oEditor.getAggregation("_formContent")[13];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
+						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");

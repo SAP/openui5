@@ -32,7 +32,7 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated"
-], function(
+], (
 	Element,
 	Messaging,
 	jQuery,
@@ -56,7 +56,7 @@ sap.ui.define([
 	SearchField,
 	Condition,
 	ConditionValidated
-) {
+) => {
 	"use strict";
 
 	let oFilterField;
@@ -67,7 +67,7 @@ sap.ui.define([
 	let iCount = 0;
 	let oPromise;
 
-	const _myChangeHandler = function(oEvent) {
+	const _myChangeHandler = (oEvent) => {
 		iCount++;
 		sId = oEvent.oSource.getId();
 		sValue = oEvent.getParameter("value");
@@ -80,44 +80,44 @@ sap.ui.define([
 	let sLiveValue;
 	let iLiveCount = 0;
 
-	const _myLiveChangeHandler = function(oEvent) {
+	const _myLiveChangeHandler = (oEvent) => {
 		iLiveCount++;
 		sLiveId = oEvent.oSource.getId();
 		sLiveValue = oEvent.getParameter("value");
 	};
 
 	QUnit.module("FilterField rendering", {
-		beforeEach: function() {
+		beforeEach() {
 			oFilterField = new FilterField("FF1");
 		},
-		afterEach: function() {
+		afterEach() {
 			oFilterField.destroy();
 			oFilterField = undefined;
 		}
 	});
 
-	QUnit.test("default rendering", async function(assert) {
+	QUnit.test("default rendering", async (assert) => {
 
 		oFilterField.placeAt("content");
 		await nextUIUpdate();
 
 		const aContent = oFilterField.getAggregation("_content");
-		const oContent = aContent && aContent.length > 0 && aContent[0];
+		const oContent = aContent?.length > 0 && aContent[0];
 		assert.ok(oContent, "default content exist");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
-		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
+		assert.equal(oContent?.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
+		assert.ok(oContent?.getShowValueHelp(), "valueHelp used");
 		assert.equal(oFilterField._sDefaultValueHelp, "Field-DefineConditions-Help", "Default Field help set");
 		const oValueHelp = Element.getElementById(oFilterField._sDefaultValueHelp);
-		assert.ok(oValueHelp && oValueHelp instanceof ValueHelp, "ValueHelp used");
+		assert.ok(oValueHelp instanceof ValueHelp, "ValueHelp used");
 
 	});
 
-	QUnit.test("internal control creation", function(assert) {
+	QUnit.test("internal control creation", (assert) => {
 
 		const fnDone = assert.async();
-		setTimeout(function() { // async control creation in applySettings
+		setTimeout(() => { // async control creation in applySettings
 			let aContent = oFilterField.getAggregation("_content");
-			let oContent = aContent && aContent.length > 0 && aContent[0];
+			let oContent = aContent?.length > 0 && aContent[0];
 			assert.notOk(oContent, "no content exist before rendering");
 
 			oFilterField.destroy();
@@ -125,9 +125,9 @@ sap.ui.define([
 				dataType: "sap.ui.model.type.String"
 			});
 
-			setTimeout(function() { // async control creation in applySettings
+			setTimeout(() => { // async control creation in applySettings
 				aContent = oFilterField.getAggregation("_content");
-				oContent = aContent && aContent.length > 0 && aContent[0];
+				oContent = aContent?.length > 0 && aContent[0];
 				assert.ok(oContent, "content exist before rendering");
 				fnDone();
 			}, 0);
@@ -136,7 +136,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Eventing", {
-		beforeEach: async function() {
+		beforeEach: async () => {
 			oFilterField = new FilterField("FF1", {
 				dataType: "sap.ui.model.type.Integer",
 				dataTypeConstraints: {maximum: 100},
@@ -145,7 +145,7 @@ sap.ui.define([
 			}).placeAt("content");
 			await nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach() {
 			oFilterField.destroy();
 			oFilterField = undefined;
 			iCount = 0;
@@ -160,10 +160,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("with internal content", function(assert) {
+	QUnit.test("with internal content", (assert) => {
 
 		const aContent = oFilterField.getAggregation("_content");
-		const oContent = aContent && aContent.length > 0 && aContent[0];
+		const oContent = aContent?.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("10");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
@@ -181,7 +181,7 @@ sap.ui.define([
 		const aTokens = oContent.getTokens ? oContent.getTokens() : [];
 		assert.equal(aTokens.length, 1, "MultiInput has one Token");
 		const oToken = aTokens[0];
-		assert.equal(oToken && oToken.getText(), "=10", "Text on token set");
+		assert.equal(oToken?.getText(), "=10", "Text on token set");
 
 		//simulate liveChange by calling from internal control
 		oContent.fireLiveChange({value: "2"});
@@ -197,7 +197,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("clenaup wrong input for single value", async function(assert) {
+	QUnit.test("clenaup wrong input for single value", async (assert) => {
 
 		const fnDone = assert.async();
 		Messaging.registerObject(oFilterField, true); // to test valueState
@@ -207,7 +207,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const aContent = oFilterField.getAggregation("_content");
-		const oContent = aContent && aContent.length > 0 && aContent[0];
+		const oContent = aContent?.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
@@ -217,19 +217,19 @@ sap.ui.define([
 		assert.equal(sValue, "XXXX", "Value of change event");
 		assert.deepEqual(oFilterField.getConditions(), [], "FilterField conditions");
 		assert.ok(oPromise, "Promise returned");
-		setTimeout(function() { // to wait for valueStateMessage
-			oPromise.then(function(vResult) {
+		setTimeout(() => { // to wait for valueStateMessage
+			oPromise.then((vResult) => {
 				assert.notOk(true, "Promise must not be resolved");
 				fnDone();
-			}).catch(function(oException) {
+			}).catch((oException) => {
 				assert.ok(true, "Promise rejected");
 				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
 				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
 
 				// cleanup should remove valueState
 				oFilterField.setConditions([]);
-				setTimeout(function() { // to wait for ManagedObjectModel update
-					setTimeout(function() { // to wait for Message update
+				setTimeout(() => { // to wait for ManagedObjectModel update
+					setTimeout(() => { // to wait for Message update
 						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
 						assert.equal(oFilterField.getValueState(), "None", "ValueState removed");
 
@@ -241,7 +241,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("clenaup wrong input for multi value", async function(assert) {
+	QUnit.test("clenaup wrong input for multi value", async (assert) => {
 
 		const fnDone = assert.async();
 		Messaging.registerObject(oFilterField, true); // to test valueState
@@ -250,7 +250,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const aContent = oFilterField.getAggregation("_content");
-		const oContent = aContent && aContent.length > 0 && aContent[0];
+		const oContent = aContent?.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
@@ -260,19 +260,19 @@ sap.ui.define([
 		assert.equal(sValue, "XXXX", "Value of change event");
 		assert.deepEqual(oFilterField.getConditions(), [], "FilterField conditions");
 		assert.ok(oPromise, "Promise returned");
-		setTimeout(function() { // to wait for valueStateMessage
-			oPromise.then(function(vResult) {
+		setTimeout(() => { // to wait for valueStateMessage
+			oPromise.then((vResult) => {
 				assert.notOk(true, "Promise must not be resolved");
 				fnDone();
-			}).catch(function(oException) {
+			}).catch((oException) => {
 				assert.ok(true, "Promise rejected");
 				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
 				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
 
 				// cleanup should remove valueState
 				oFilterField.setConditions([]);
-				setTimeout(function() { // to wait for ManagedObjectModel update
-					setTimeout(function() { // to wait for Message update
+				setTimeout(() => { // to wait for ManagedObjectModel update
+					setTimeout(() => { // to wait for Message update
 						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
 						assert.equal(oFilterField.getValueState(), "None", "ValueState removed");
 
@@ -285,16 +285,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("API", {
-		beforeEach: function() {
+		beforeEach() {
 			oFilterField = new FilterField("FF1");
 		},
-		afterEach: function() {
+		afterEach() {
 			oFilterField.destroy();
 			oFilterField = undefined;
 		}
 	});
 
-	QUnit.test("getSupportedOperators", function(assert) {
+	QUnit.test("getSupportedOperators", (assert) => {
 
 		sinon.spy(FilterOperatorUtil, "getOperatorsForType");
 
@@ -313,7 +313,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("set/add/removeOperators", function(assert) {
+	QUnit.test("set/add/removeOperators", (assert) => {
 
 		const oNE = FilterOperatorUtil.getOperator(OperatorName.NE);
 
@@ -325,6 +325,11 @@ sap.ui.define([
 		assert.equal(aOperators.length, 2, "two Operator returned");
 		assert.equal(aOperators[0], OperatorName.BT, "right Operator returned");
 		assert.equal(aOperators[1], OperatorName.LT, "right Operator returned");
+
+		oFilterField.setOperators([oNE]);
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 1, "one Operator returned");
+		assert.equal(aOperators[0], OperatorName.NE, "right Operator returned");
 
 		oFilterField.setOperators([OperatorName.BT]);
 		aOperators = oFilterField.getOperators();
@@ -342,9 +347,18 @@ sap.ui.define([
 
 		oFilterField.addOperators([OperatorName.LT, oNE]);
 		aOperators = oFilterField.getOperators();
-		assert.equal(aOperators.length, 3, "two Operators returned");
+		assert.equal(aOperators.length, 3, "three Operators returned");
 
 		oFilterField.removeOperators([OperatorName.LT, oNE]);
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 1, "one Operator returned");
+		assert.equal(aOperators[0], OperatorName.BT, "right Operator returned");
+
+		oFilterField.addOperators(OperatorName.LT);
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 2, "two Operators returned");
+
+		oFilterField.removeOperators(OperatorName.LT);
 		aOperators = oFilterField.getOperators();
 		assert.equal(aOperators.length, 1, "one Operator returned");
 		assert.equal(aOperators[0], OperatorName.BT, "right Operator returned");
@@ -358,7 +372,7 @@ sap.ui.define([
 		assert.ok(aOperators.length == 19, "all default Operators without EQreturned");
 	});
 
-	QUnit.test("set/getDefaultOperator", function(assert) {
+	QUnit.test("set/getDefaultOperator", (assert) => {
 
 		const oNE = FilterOperatorUtil.getOperator(OperatorName.NE);
 
@@ -379,7 +393,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("value updates in searchfield scenario", async function(assert) { // BCP: 2280085536
+	QUnit.test("value updates in searchfield scenario", async (assert) => { // BCP: 2280085536
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
 			propertyKey: "$search",
@@ -394,7 +408,7 @@ sap.ui.define([
 
 
 		const aContent = oFilterField.getAggregation("_content");
-		const oContent = aContent && aContent.length > 0 && aContent[0];
+		const oContent = aContent?.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.m.SearchField", "sap.m.SearchField is used");
 
 		oContent.fireChange({
@@ -414,7 +428,7 @@ sap.ui.define([
 		oFilterField.fireChange.restore();
 	});
 
-	QUnit.test("search event handling", async function(assert) {
+	QUnit.test("search event handling", async (assert) => {
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
 			propertyKey: "$search",
@@ -428,7 +442,7 @@ sap.ui.define([
 		sinon.spy(oFilterField._oContentFactory, "getHandleEnter");
 
 		let aContent = oFilterField.getAggregation("_content");
-		let oContent = aContent && aContent.length > 0 && aContent[0];
+		let oContent = aContent?.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.m.SearchField", "sap.m.SearchField is used");
 
 		oContent.fireSearch();
@@ -451,26 +465,27 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		aContent = oFilterField.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent = aContent?.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 
 		oFilterField.setPropertyKey("*key,description*");
 		await nextUIUpdate();
 
 		aContent = oFilterField.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
+		oContent = aContent?.length > 0 && aContent[0];
 		assert.equal(oContent.getMetadata().getName(), "sap.m.SearchField", "sap.m.SearchField is used");
 
 		oFilterField._oContentFactory.getHandleEnter.restore();
 	});
 
-	QUnit.test("additionalDataType", function(assert) {
+	QUnit.test("additionalDataType", (assert) => {
 
 		let oType = new DateType();
 		oType._bMyType = true;
 
 		oFilterField.setAdditionalDataType(oType);
 		assert.equal(oFilterField.getContentFactory().retrieveAdditionalDataType(), oType, "Given type used");
+		oType.destroy();
 
 		oFilterField.setAdditionalDataType({name: "sap.ui.model.type.Date", formatOptions: {style: "short"}, constraints: {minimum: new Date(1900, 0, 1)}});
 		oType = oFilterField.getContentFactory().retrieveAdditionalDataType();
@@ -478,9 +493,12 @@ sap.ui.define([
 		assert.deepEqual(oType.getFormatOptions(), {style: "short"}, "used FormatOptions");
 		assert.deepEqual(oType.getConstraints(), {minimum: new Date(1900, 0, 1)}, "used Constraints");
 
+		oFilterField.setAdditionalDataType();
+		assert.notOk(oFilterField.getContentFactory().retrieveAdditionalDataType(), "no type used");
+
 	});
 
-	QUnit.test("awaitFormatCondition", async function(assert) {
+	QUnit.test("awaitFormatCondition", async (assert) => {
 		oFilterField.setDisplay("ValueDescription");
 		oFilterField.setConditions([Condition.createCondition(OperatorName.EQ, ["MyKey"], undefined, undefined, ConditionValidated.Validated)]);
 

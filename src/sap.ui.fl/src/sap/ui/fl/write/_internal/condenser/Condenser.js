@@ -580,18 +580,8 @@ sap.ui.define([
 			if (oChange.getState() === States.LifecycleState.DELETED) {
 				oChange.condenserState = "delete";
 			}
-			if (oChange instanceof UIChange) {
-				if (oChange.isSuccessfullyApplied()) {
-					aCondensableChanges.push(oChange);
-				} else {
-					aNotCondensableChanges.push(oChange);
-				}
-			} else if (oChange instanceof AppDescriptorChange) {
-				if (DescriptorChangeTypes.getCondensableChangeTypes().includes(oChange.getChangeType())) {
-					aCondensableChanges.push(oChange);
-				} else {
-					aNotCondensableChanges.push(oChange);
-				}
+			if (oChange.canBeCondensed()) {
+				aCondensableChanges.push(oChange);
 			} else {
 				aNotCondensableChanges.push(oChange);
 			}

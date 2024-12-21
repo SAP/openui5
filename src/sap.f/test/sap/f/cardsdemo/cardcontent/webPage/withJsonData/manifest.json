@@ -16,7 +16,7 @@
 		},
 		"header": {
 			"title": "WebPage Card with data.json",
-			"subtitle": "{/src}",
+			"subTitle": "src: '\\\\\\{/src}'",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}

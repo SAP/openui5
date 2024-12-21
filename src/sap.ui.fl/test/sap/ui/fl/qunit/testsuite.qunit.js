@@ -1208,6 +1208,13 @@ sap.ui.define([
 				}
 			},
 
+			"changeHandler/ChangeAnnotation": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/ChangeAnnotation"]
+				}
+			},
+
 			"changeHandler/HideControl": {
 				group: "ChangeHandler",
 				coverage: {

@@ -19,29 +19,31 @@ sap.ui.define([
 	 */
 	const AnnotationChangeHandlerAPI = /** @lends sap.ui.fl.apply.api.AnnotationChangeHandlerAPI */{
 		/**
-		 * Registers a model-specific annotation change handler for a change type.
+		 * Registers an annotation change handler for a change type.
 		 * The change type is not control-specific, hence it must be unique to avoid conflicts.
 		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {string} mPropertyBag.modelType - Model type
 		 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be registered
 		 * @param {string|object} mPropertyBag.changeHandler - Path to change handler or change handler object
 		 *
 		 * @private
 		 */
 		registerAnnotationChangeHandler(mPropertyBag) {
-			if (!mPropertyBag.modelType || !mPropertyBag.changeType || !mPropertyBag.changeHandler) {
-				throw new Error("'modelType', 'changeType' and 'changeHandler' properties are required for registration!");
+			if (!mPropertyBag.changeType || !mPropertyBag.changeHandler) {
+				throw new Error("'changeType' and 'changeHandler' properties are required for registration!");
+			}
+
+			if (mPropertyBag.isDefaultChangeHandler) {
+				throw new Error("The API is not allowed to register default change handlers!");
 			}
 
 			ChangeHandlerRegistration.registerAnnotationChangeHandler(mPropertyBag);
 		},
 
 		/**
-		 * Returns the model-specific annotation change handler for the requested change type.
+		 * Returns the annotation change handler for the requested change type.
 		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {string} mPropertyBag.modelType - Model type
 		 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be returned
 		 * @returns {Promise<object>} Resolves with the change handler
 		 *
@@ -49,8 +51,8 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getAnnotationChangeHandler(mPropertyBag) {
-			if (!mPropertyBag.modelType || !mPropertyBag.changeType) {
-				throw new Error("'modelType' and 'changeType' properties are required!");
+			if (!mPropertyBag.changeType) {
+				throw new Error("'changeType' property is required!");
 			}
 
 			return ChangeHandlerRegistration.getAnnotationChangeHandler(mPropertyBag);

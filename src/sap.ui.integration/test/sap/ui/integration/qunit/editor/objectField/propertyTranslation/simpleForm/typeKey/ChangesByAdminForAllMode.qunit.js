@@ -188,15 +188,16 @@ sap.ui.define([
 						manifest: oManifestForObjectFieldsWithPropertiesDefined,
 						manifestChanges: [_oAdminChangesOfObjectsWithPropertiesDefined]
 					});
-					EditorQunitUtils.isReady(that.oEditor).then(function () {
-						assert.ok(that.oEditor.isReady(), "Editor is ready");
+					EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
+						assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 						var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 						var oField1 = that.oEditor.getAggregation("_formContent")[2];
 						var oLabel2 = that.oEditor.getAggregation("_formContent")[3];
 						var oField2 = that.oEditor.getAggregation("_formContent")[4];
 						var oLabel3 = that.oEditor.getAggregation("_formContent")[5];
 						var oField3 = that.oEditor.getAggregation("_formContent")[6];
-						EditorQunitUtils.wait().then(function () {
+						EditorQunitUtils.isReady(that.oEditor).then(function () {
+							assert.ok(that.oEditor.isReady(), "Editor is ready");
 							assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 							assert.equal(oLabel1.getText(), "Object1 properties defined", "Label 1: Has label text");
 							assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");

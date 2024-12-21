@@ -137,5 +137,10 @@ sap.ui.define([
 			return oContexts[sContextKey].length > 0;
 		});
 	};
+
+	Variant.prototype.canBeCondensed = function() {
+		return false;
+	};
+
 	return Variant;
 });

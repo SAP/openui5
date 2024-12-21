@@ -346,7 +346,16 @@ sap.ui.define([
 		var oAction = oConfig.action;
 
 		oConfig.actionControl["attach" + capitalize(oConfig.eventName)](function (oEvent) {
-			var oSource = oEvent.getSource();
+			const oSource = oEvent.getSource();
+			const oOriginalEvent = oEvent.getParameter("originalEvent");
+
+			if (oOriginalEvent) {
+				oOriginalEvent.stopPropagation();
+
+				if (oConfig.actionControl.getFocusDomRef()?.matches(":has(:focus-within)")) {
+					return;
+				}
+			}
 
 			if (oAction.service) {
 				this._handleServiceAction(oEvent, oAction, oConfig.control);

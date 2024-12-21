@@ -647,19 +647,24 @@ sap.ui.define([
 
 	/**
 	 * Expands the group node that this context points to. Since 1.127.0, it is possible to expand
-	 * a group node by a given number of levels.
+	 * a group node by a given number of levels. Since 1.132.0, it is possible to do a full expand,
+	 * that is to expand all levels below a node, even if a node is already partially or fully
+	 * expanded.
 	 *
 	 * @param {number} [iLevels=1]
 	 *   The number of levels to expand (@experimental as of version 1.127.0),
-	 *   <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels. If a node
+	 *   <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be used to expand fully. If a node
 	 *   is expanded a second time, the expand state of the descendants is not changed.
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the expand is successful, or
 	 *   rejected in case of an error
-	 * @throws {Error}
-	 *   If the context points to a node that is not expandable or already expanded, the given
-	 *   number of levels is not a positive number, or the given number of levels is greater than
-	 *   1 without a recursive hierarchy
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the context points to a node that is not expandable or already expanded (unless a
+	 *       full expand is requested),
+	 *     <li> the given number of levels is not a positive number,
+	 *     <li> the given number of levels is greater than 1 without a recursive hierarchy.
+	 *   </ul>
 	 *
 	 * @public
 	 * @see #collapse
@@ -671,10 +676,13 @@ sap.ui.define([
 			throw new Error("Not a positive number: " + iLevels);
 		}
 		switch (this.isExpanded()) {
+			case true:
+				if (iLevels < Number.MAX_SAFE_INTEGER) {
+					throw new Error("No partial expand possible. Node already expanded: " + this);
+				}
+				// falls through
 			case false:
 				return Promise.resolve(this.oBinding.expand(this, iLevels)).then(() => {});
-			case true:
-				throw new Error("Already expanded: " + this);
 			default:
 				throw new Error("Not expandable: " + this);
 		}
@@ -1649,8 +1657,8 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>} A promise which:
 	 *   <ul>
 	 *     <li> Resolves if successful with either the parent node or <code>null</code> for a root
-	 *       node that has no parent</li>
-	 *     <li> Rejects with an <code>Error</code> instance otherwise</li>
+	 *       node that has no parent
+	 *     <li> Rejects with an <code>Error</code> instance otherwise
 	 *   </ul>
 	 * @throws {Error} If
 	 *   <ul>

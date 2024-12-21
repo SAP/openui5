@@ -534,5 +534,15 @@ sap.ui.define([
 		throw new Error("Method getIdForCondensing must be implemented");
 	};
 
+	/**
+	 * Checks if the flex object can be condensed.
+	 * This function is called before even the ChangeHandler is fetched and getCondenserInfo is called.
+	 *
+	 * @returns {boolean} <code>true</code> if the flex object can be condensed
+	 */
+	FlexObject.prototype.canBeCondensed = function() {
+		return true;
+	};
+
 	return FlexObject;
 });

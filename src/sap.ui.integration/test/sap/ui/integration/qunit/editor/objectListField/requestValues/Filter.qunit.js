@@ -168,7 +168,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -239,7 +239,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -359,7 +359,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -465,7 +465,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -591,7 +591,7 @@ sap.ui.define([
 			host: "contexthost",
 			manifest: oManifestForObjectListFields
 		});
-		return EditorQunitUtils.isReady(oEditor).then(function() {
+		return EditorQunitUtils.isFieldReady(oEditor).then(function() {
 			var oLabel = oEditor.getAggregation("_formContent")[1];
 			oField = oEditor.getAggregation("_formContent")[2];
 			assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");

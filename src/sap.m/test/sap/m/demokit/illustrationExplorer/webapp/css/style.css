@@ -1,0 +1,84 @@
+.sapUiDemoIllustrationExplorer {
+    .sapUiDemoIllustrationExplorerImage {
+        display: block;
+        max-width: 100%;
+    }
+
+    .sapUiDemoIllustrationExplorerMainContent {
+        padding: 1.5rem 2.75rem 1rem 2.75rem;
+    }
+
+    .sapUiDemoIllustrationExplorerSideContent {
+        padding: 1.5rem 2.75rem 1.5rem 2.25rem;
+    }
+
+    .sapUiDemoIllustrationExplorerDetailsPage {
+        .sapUiDemoIllustrationExplorerDetailsContent {
+            padding-top: 1rem;
+            padding-bottom: 2.75rem;
+        }
+    }
+
+    /* Media queries */
+    /* 1439px */
+    @media (max-width: 89.9375em) {
+        .sapUiDemoIllustrationExplorerMainContent {
+            padding: 1rem 2rem 0.75rem 2rem;
+        }
+
+        .sapUiDemoIllustrationExplorerSideContent {
+            padding: 1rem 2rem 1.25rem 1.5rem;
+        }
+    }
+
+    /* 840px */
+    @media (max-width: 52.5em) {
+        .sapUiDemoIllustrationExplorerMainContent {
+            padding-bottom: 2rem;
+        }
+
+        .sapUiDemoIllustrationExplorerSideContent {
+            padding-bottom: 2.5rem;
+        }
+
+        .sapUiDemoIllustrationExplorerFooter {
+            height: 100% !important;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+    }
+
+    /* 620px */
+    @media (max-width: 38.75em) {
+        .sapUiDemoIllustrationExplorerSearchField {
+            max-width: none !important;
+        }
+    }
+
+    /* 599px */
+    @media (max-width: 37.4375em) {
+
+        .sapUiDemoIllustrationExplorerMainContent {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+
+    /* 479px */
+    @media (max-width: 29.9375em) {
+        .sapUiDemoIllustrationExplorerFooterContentWrapper>.sapMFlexItem:first-child {
+            padding-bottom: 0.25rem;
+        }
+    }
+}
+
+/* Device specific */
+html:not(.sap-desktop) {
+
+    .sapUiDemoIllustrationExplorerIllustrationSizeSelect,
+    .sapUiDemoIllustrationExplorerIllustrationSetSelect,
+    .sapUiDemoIllustrationExplorerCategorySelect,
+    .sapUiDemoIllustrationExplorerThemeSelect {
+        max-width: none !important;
+    }
+}

@@ -14,13 +14,17 @@ sap.ui.define([
 		changeType: "annotationChangeType",
 		reference: "my.annotation.reference",
 		content: {
-			annotation: "someAnnotation"
+			annotationPath: "someAnnotationPath",
+			value: "someValue"
 		},
 		layer: "CUSTOMER",
 		namespace: "apps/my.annotation.reference/changes/",
 		projectId: "my.annotation.reference",
 		creation: "2022-07-04T08:05:48.561Z",
 		originalLanguage: "EN",
+		selector: {
+			serviceUrl: "someServiceUrl"
+		},
 		support: {
 			generator: "my.annotation.generator",
 			compositeCommand: "composite"
@@ -37,7 +41,8 @@ sap.ui.define([
 				namespace: oAnnotationChangeDefinition.namespace,
 				reference: oAnnotationChangeDefinition.reference,
 				generator: oAnnotationChangeDefinition.support.generator,
-				compositeCommand: oAnnotationChangeDefinition.support.compositeCommand
+				compositeCommand: oAnnotationChangeDefinition.support.compositeCommand,
+				serviceUrl: "someServiceUrl"
 			};
 			var oAnnotationChange = FlexObjectFactory.createAnnotationChange(mPropertyBag);
 			assert.ok(oAnnotationChange.isA("sap.ui.fl.apply._internal.flexObjects.AnnotationChange"), "the correct change was created");

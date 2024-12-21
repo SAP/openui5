@@ -6,6 +6,7 @@
 sap.ui.define([
 	'../base/ManagedObject',
 	'./Component',
+	'./ComponentHooks',
 	'./Element',
 	'sap/ui/core/mvc/ViewType',
 	'./UIComponentMetadata',
@@ -16,6 +17,7 @@ sap.ui.define([
 	function(
 		ManagedObject,
 		Component,
+		ComponentHooks,
 		Element,
 		ViewType,
 		UIComponentMetadata,
@@ -302,6 +304,7 @@ sap.ui.define([
 
 			function setRootControl(vRootControl) {
 				var fnFireInstanceInitialized = function() {
+					ComponentHooks.onUIComponentInstanceInitialized.execute(that);
 					if (typeof UIComponent._fnOnInstanceInitialized === "function") {
 						UIComponent._fnOnInstanceInitialized(that);
 					}
@@ -461,6 +464,7 @@ sap.ui.define([
 		UIComponent.prototype.destroy = function() {
 
 			// notify Component destruction callback handler
+			ComponentHooks.onUIComponentInstanceDestroy.execute(this);
 			if (typeof UIComponent._fnOnInstanceDestroy === "function") {
 				UIComponent._fnOnInstanceDestroy(this);
 			}

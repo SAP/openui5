@@ -508,7 +508,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			TableQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
@@ -787,7 +786,23 @@ sap.ui.define([
 			delegate: {
 				name: sDelegatePath,
 				payload: {
-					collectionPath: "/testPath"
+					collectionPath: "/testPath",
+					propertyInfo: [{
+						key: "column1",
+						path: "column1",
+						label: "column1",
+						dataType: "String"
+					},{
+						key: "column2",
+						path: "column2",
+						label: "column2",
+						dataType: "String"
+					},{
+						key: "column3",
+						path: "column3",
+						label: "column3",
+						dataType: "String"
+					}]
 				}
 			},
 			columns: [
@@ -813,27 +828,6 @@ sap.ui.define([
 				})
 			})
 		});
-
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "column1",
-				path: "column1",
-				label: "column1",
-				dataType: "String"
-			},
-			{
-				name: "column2",
-				path: "column2",
-				label: "column2",
-				dataType: "String"
-			},
-			{
-				name: "column3",
-				path: "column3",
-				label: "column3",
-				dataType: "String"
-			}
-		]);
 
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setGroupConditions({
@@ -1061,170 +1055,6 @@ sap.ui.define([
 			assert.equal(oBindingInfo.path, sPath);
 			assert.equal(oBindingInfo.template, oTemplate);
 		}.bind(this));
-	});
-
-	QUnit.test("sort indicator is set correctly at the inner grid table columns", function(assert) {
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "name"
-		}));
-
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "age"
-		}));
-
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "name",
-				path: "name",
-				label: "name",
-				dataType: "String"
-			},
-			{
-				name: "age",
-				path: "age",
-				label: "age",
-				dataType: "String"
-			}
-		]);
-
-		return this.oTable._fullyInitialized().then(async function() {
-			const oSortConditions = {
-				sorters: [
-					{name: "name", descending: true}
-				]
-			};
-			const aInnerColumns = this.oTable._oTable.getColumns();
-
-			this.oTable.setSortConditions(oSortConditions);
-			await this.oTable.rebind();
-
-			assert.equal(aInnerColumns[0].getSortOrder(), "Descending");
-			assert.equal(aInnerColumns[1].getSortOrder(), "None");
-		}.bind(this));
-	});
-
-	QUnit.test("sort indicator is set correctly at the inner mobile table columns", function(assert) {
-		this.oTable.setType(TableType.ResponsiveTable);
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "name"
-		}));
-
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "age"
-		}));
-
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "name",
-				path: "name",
-				label: "name",
-				dataType: "String"
-			},
-			{
-				name: "age",
-				path: "age",
-				label: "age",
-				dataType: "String"
-			}
-		]);
-
-		return this.oTable._fullyInitialized().then(async function() {
-			const aInnerColumns = this.oTable._oTable.getColumns();
-
-			this.oTable.setSortConditions({
-				sorters: [
-					{name: "age", descending: false}
-				]
-			});
-			this.oTable.setGroupConditions({
-				groupLevels: [
-					{name: "name"}
-				]
-			});
-			await this.oTable.rebind();
-
-			assert.equal(aInnerColumns[0].getSortIndicator(), "None");
-			assert.equal(aInnerColumns[1].getSortIndicator(), "Ascending");
-		}.bind(this));
-	});
-
-	QUnit.test("Sort Change triggered", function(assert) {
-		const oTable = this.oTable;
-		const done = assert.async();
-
-		this.oTable.setP13nMode(["Sort"]);
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "name"
-		}));
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "age"
-		}));
-
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
-			name: "name",
-			label: "name",
-			dataType: "String"
-		}, {
-			name: "age",
-			label: "age",
-			dataType: "String"
-		}]);
-
-		this.oTable.initialized().then(function() {
-			oTable.setSortConditions({
-				sorters: [
-					{name: "name", descending: true}
-				]
-			});
-		}).then(function () {
-
-			this.oTable.getEngine().initAdaptation(this.oTable, "Sort").then(function() {
-				const oTestModificationHandler = TestModificationHandler.getInstance();
-				oTestModificationHandler.processChanges = function(aChanges) {
-					assert.equal(aChanges.length, 2);
-					assert.equal(aChanges[0].changeSpecificData.changeType, "removeSort");
-					assert.equal(aChanges[0].changeSpecificData.content.name, "name");
-					assert.equal(aChanges[0].changeSpecificData.content.descending, true);
-					assert.equal(aChanges[1].changeSpecificData.changeType, "addSort");
-					assert.equal(aChanges[1].changeSpecificData.content.name, "name");
-					assert.equal(aChanges[1].changeSpecificData.content.descending, false);
-					done();
-				};
-				this.oTable.getEngine()._setModificationHandler(this.oTable, oTestModificationHandler);
-
-				PersonalizationUtils.createSortChange(oTable, {
-					propertyKey: "name",
-					sortOrder: "Ascending"
-				});
-
-			}.bind(this));
-
-		}.bind(this));
-	});
-
-	QUnit.test("Set filter conditions", function(assert) {
-		const oFilterConditions = {
-			name: [
-				{
-					isEmpty: null,
-					operator: OperatorName.EQ,
-					validated: ConditionValidated.NotValidated,
-					values: ["test"]
-				}
-			]
-		};
-
-		this.oTable.setFilterConditions(oFilterConditions);
-		assert.deepEqual(this.oTable.getFilterConditions(), oFilterConditions, "Filter conditions set");
-
-		this.oTable.setFilterConditions(null);
-		assert.deepEqual(this.oTable.getFilterConditions(), {}, "Filter conditions removed");
 	});
 
 	QUnit.test("setThreshold", async function(assert) {
@@ -2689,634 +2519,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Export button handling on initialization when export is disabled", function(assert) {
-		const oTable = this.oTable;
-
-		assert.notOk(oTable._oExportButton, "Export button does not exist before table initialization");
-
-		return oTable.initialized().then(function() {
-			assert.notOk(oTable._oExportButton, "Export button does not exist after table initialization");
-		});
-	});
-
-	QUnit.test("Export button handling on initialization when export is enabled", function(assert) {
-		const oTable = this.oTable;
-
-		oTable.setEnableExport(true);
-		assert.notOk(oTable._oExportButton, "Export button does not exist before table initialization");
-
-		return oTable.initialized().then(function() {
-			assert.ok(oTable._oExportButton, "Export button exists after initialization");
-			assert.ok(oTable._oExportButton.isA("sap.m.MenuButton"), "Is a sap.m.MenuButton");
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Is child of the toolbar");
-			assert.ok(oTable._oExportButton.getVisible(), "Is visible");
-
-			assert.equal(FESRHelper.getSemanticStepname(oTable._oExportButton, "defaultAction"), "OI:QE", "Correct FESR StepName");
-			const oMenu = oTable._oExportButton.getMenu();
-			assert.equal(oMenu.getItems().length, 2, "Export MenuButton has 2 actions");
-			assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[0], "press"), "OI:QE", "Correct FESR StepName - Menu Item 1");
-			assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[1], "press"), "OI:EXP:SETTINGS", "Correct FESR StepName - Menu Item 2");
-		});
-	});
-
-	QUnit.test("Export button handling on initialization when export is enabled but not supported by the delegate", function(assert) {
-		const oTable = this.oTable;
-
-		oTable.setEnableExport(true);
-
-		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
-			return oTable.initialized();
-		}).then(function() {
-			assert.notOk(oTable._oExportButton, "Export button does not exist after table initialization");
-			oTable.getControlDelegate().getSupportedFeatures.restore();
-		});
-	});
-
-	QUnit.test("Export button handling when enabling/disabling export after initialization", function(assert) {
-		const oTable = this.oTable;
-
-		return oTable.initialized().then(function() {
-			oTable.setEnableExport(true);
-			assert.ok(oTable._oExportButton, "Enabled: Export button exists");
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Enabled: Is child of the toolbar");
-			assert.ok(oTable._oExportButton.getVisible(), "Enabled: Is visible");
-
-			oTable.setEnableExport(false);
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Disabled: Is child of the toolbar");
-			assert.notOk(oTable._oExportButton.getVisible(), "Disabled: Is invisible");
-
-			oTable.setEnableExport(true);
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Enabled: Is child of the toolbar");
-			assert.ok(oTable._oExportButton.getVisible(), "Enabled: Is visible");
-		});
-	});
-
-	QUnit.test("Export button handling when enabling export after initialization but not supported by the delegate", function(assert) {
-		const oTable = this.oTable;
-
-
-		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
-			return oTable.initialized();
-		}).then(function() {
-			oTable.setEnableExport(true);
-			assert.notOk(oTable._oExportButton, "Export button does not exist");
-			oTable.getControlDelegate().getSupportedFeatures.restore();
-		});
-	});
-
-	QUnit.test("Export button handling when changing the table type", function(assert) {
-		const oTable = this.oTable;
-		let oExportButton;
-
-		oTable.setEnableExport(true);
-
-		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
-			return oTable.initialized();
-		}).then(function() {
-			oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": true});
-			oTable.setType(TableType.ResponsiveTable);
-			return oTable.initialized();
-		}).then(function() {
-			oExportButton = oTable._oExportButton;
-			assert.ok(oTable._oExportButton,
-				"Export button exists after changing to a type for which the delegate does support export");
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
-			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
-
-			oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": false});
-			oTable.setType(TableType.Table);
-			return oTable.initialized();
-		}).then(function() {
-			assert.notOk(oTable._oExportButton.getVisible(),
-				"Export button is invisible after changing to a type for which the delegate does not support export");
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
-			assert.equal(oExportButton, oTable._oExportButton, "Same button instance is used");
-
-			oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": true});
-			oTable.setType(TableType.ResponsiveTable);
-			return oTable.initialized();
-		}).then(function() {
-			assert.ok(oTable._oExportButton.getVisible(),
-				"Export button is visible after changing to a type for which the delegate supports export");
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
-			assert.equal(oExportButton, oTable._oExportButton, "Same button instance is used");
-		}).finally(function() {
-			oTable.getControlDelegate().getSupportedFeatures.restore();
-		});
-	});
-
-	QUnit.test("Export button initialization with toolbar actions", function(assert) {
-		const oTable = this.oTable;
-
-		// Aggregation forwarding will cause the creation of the ActionToolbar. The export button will not be added at this point, because
-		// the delegate is not yet loaded. The button has to be added to the toolbar when the rest of the content is created.
-		oTable.addAction(new Text());
-		oTable.setEnableExport(true);
-
-		return oTable.awaitControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": true});
-			return oTable.initialized();
-		}).then(function() {
-			assert.ok(oTable._oExportButton, "Export button exists after initialization with toolbar actions");
-			assert.strictEqual(oTable._oExportButton.getParent(), oTable._oToolbar, "Export button is a child of the toolbar");
-			assert.ok(oTable._oExportButton.isA("sap.m.OverflowToolbarMenuButton"), "Export button is an OverflowToolbarMenuButton");
-			assert.ok(oTable._oExportButton.getVisible(), "Export button is visible");
-		}).finally(function() {
-			oTable.getControlDelegate().getSupportedFeatures.restore();
-		});
-	});
-
-	QUnit.skip("trigger export - no visible columns (TODO: SHOULD BE AN OPA TEST!)", function(assert) {
-		const done = assert.async();
-
-		this.oTable.setEnableExport(true);
-
-		TableQUnitUtils.waitForBinding(this.oTable).then(function() {
-			const fnOnExport = sinon.spy(this.oTable, "_onExport");
-
-			sap.ui.require([
-				"sap/m/MessageBox"
-			], function(MessageBox) {
-				sinon.stub(MessageBox, "error").callsFake(function() {
-					assert.ok(fnOnExport.calledOnce, "_onExport called");
-					assert.ok(MessageBox.error.calledOnce);
-					MessageBox.error.restore();
-					done();
-				});
-				this.oTable._oExportButton.fireDefaultAction();
-			}.bind(this));
-		}.bind(this));
-	});
-
-	QUnit.test("test Export as... via keyboard shortcut", async function(assert) {
-		this.oTable.placeAt("qunit-fixture");
-		await this.oTable.initialized();
-		await nextUIUpdate();
-
-		sinon.stub(this.oTable, "_onExport");
-
-		this.oTable.setEnableExport(true);
-
-		assert.notOk(this.oTable.getRowBinding(), "no binding so no binding length");
-		assert.notOk(this.oTable._oExportButton.getEnabled(), "Button is disabled as binding length is 0");
-
-		// trigger CTRL + SHIFT + E keyboard shortcut
-		QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
-		assert.ok(this.oTable._onExport.notCalled, "Export button is disabled: Export not triggered");
-
-		this.oTable._oExportButton.setEnabled(true);
-
-		// trigger CTRL + SHIFT + E keyboard shortcut
-		QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
-		assert.ok(this.oTable._onExport.calledWith(true), "Export settings dialog opened");
-
-		sinon.stub(this.oTable.getControlDelegate(), "getSupportedFeatures").returns({p13nModes: [], "export": false});
-		this.oTable.setType(TableType.ResponsiveTable);
-		await this.oTable.initialized();
-
-		this.oTable._onExport.resetHistory();
-		QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
-		assert.ok(this.oTable._onExport.notCalled, "Export is not supported by delegate: Export not triggered");
-		this.oTable.getControlDelegate().getSupportedFeatures.restore();
-	});
-
-	QUnit.test("test attachBeforeExport and preventDefault", async function(assert) {
-		const oTable = this.oTable;
-		const fnSetLabel = sinon.stub();
-		const fnSetType = sinon.stub();
-		const oFakeExportHandlerEvent = sinon.createStubInstance(UI5Event);
-
-		oFakeExportHandlerEvent.getParameter.withArgs("exportSettings").returns({});
-		oFakeExportHandlerEvent.getParameter.withArgs("userExportSettings").returns({
-			splitCells: false,
-			includeFilterSettings: true
-		});
-		oFakeExportHandlerEvent.getParameter.withArgs("filterSettings").returns([{
-			getProperty: sinon.stub().returns("SampleField"),
-			setLabel: fnSetLabel,
-			setType: fnSetType
-		}]);
-
-		oTable.attachBeforeExport((oEvent) => {
-			const mExportSettings = oEvent.getParameter("exportSettings");
-			const mUserSettings = oEvent.getParameter("userExportSettings");
-			const aFilterSettings = oEvent.getParameter("filterSettings");
-
-			assert.ok(mExportSettings, "Export settings defined");
-			assert.ok(mUserSettings, "User settings defined");
-			assert.ok(aFilterSettings, "Filter settings defined");
-			assert.ok(Array.isArray(aFilterSettings), "Filter settings defined");
-
-			assert.ok(fnSetLabel.called, "Filter#setLabel was called");
-			assert.ok(fnSetLabel.calledWith("SampleLabel"), "Filter#setLabel was called with correct value");
-			assert.ok(fnSetType.called, "Filter#setType was called");
-			assert.ok(fnSetType.calledWith(oTable.getPropertyHelper().getProperty("SampleField").typeConfig.typeInstance), "Filter#setType was called with the expected type instance");
-
-			oEvent.preventDefault();
-		});
-
-		await oTable.initialized();
-
-		TableQUnitUtils.stubPropertyInfos(oTable, [
-			{
-				name: "SampleField",
-				path: "SampleField",
-				label: "SampleLabel",
-				dataType: "Edm.String"
-			}
-		], ODataTypeMap);
-
-		assert.ok(fnSetLabel.notCalled, "setLabel function not called");
-		assert.ok(fnSetType.notCalled, "setType function not called");
-		await oTable._fullyInitialized();
-
-		assert.ok(oFakeExportHandlerEvent.preventDefault.notCalled, "Default action was not prevented yet");
-		oTable._onBeforeExport(oFakeExportHandlerEvent);
-
-		assert.ok(oFakeExportHandlerEvent.preventDefault.calledOnce, "Prevent default has been forwarded to the ExportHandler event");
-	});
-
-	QUnit.test("test _getExportHandler", async function(assert) {
-		const oTable = this.oTable;
-		const fnRequire = sap.ui.require;
-		const fnCapabilities = sinon.spy(oTable.getControlDelegate(), "fetchExportCapabilities");
-
-		/* Create fake ExportHandler class because dependency to sapui5.runtime is not possible */
-		const FakeExportHandler = function() {};
-		FakeExportHandler.prototype.isA = function(sClass) { return sClass === "sap.ui.export.ExportHandler"; };
-		FakeExportHandler.prototype.attachBeforeExport = sinon.stub();
-
-		sinon.stub(Library, "load").withArgs({name: "sap.ui.export"}).resolves();
-		sinon.stub(sap.ui, "require").callsFake(function(aDependencies, fnCallback) {
-			if (Array.isArray(aDependencies) && aDependencies.length === 1 && aDependencies[0] === "sap/ui/export/ExportHandler") {
-				fnCallback(FakeExportHandler);
-			} else {
-				fnRequire(aDependencies, fnCallback);
-			}
-		});
-
-		await oTable.initialized();
-
-		assert.ok(Library.load.notCalled, "Not called yet");
-		assert.ok(fnCapabilities.notCalled, "Not called yet");
-		assert.notOk(oTable._oExportHandler, "No cached instance");
-
-		let oHandler = await oTable._getExportHandler();
-
-		assert.equal(Library.load.callCount, 1, "Library.load has been called once");
-		assert.equal(fnCapabilities.callCount, 1, "fetchExportCapabilities has been called once");
-		assert.ok(oHandler, "Variable is defined");
-		assert.ok(oTable._oExportHandler, "Cached instance available");
-		assert.ok(oHandler.attachBeforeExport.calledOnce, "ExportHandler#attachBeforeExport has been called once");
-		assert.ok(oHandler.attachBeforeExport.calledWith(oTable._onBeforeExport, oTable), "Table._onBeforeExport has been attached as event handler");
-
-		/* Reset spies */
-		Library.load.reset();
-		fnCapabilities.reset();
-		assert.ok(Library.load.notCalled, "Not called yet");
-		assert.ok(fnCapabilities.notCalled, "Not called yet");
-
-		oHandler = await oTable._getExportHandler();
-
-		assert.ok(Library.load.notCalled, "Not called again");
-		assert.ok(fnCapabilities.notCalled, "Not called again");
-		assert.ok(oHandler, "Variable is defined");
-		assert.ok(oHandler.isA("sap.ui.export.ExportHandler"), "Parameter is a sap.ui.export.ExportHandler");
-		assert.equal(oHandler, oTable._oExportHandler, "Cached instance has been returned");
-
-		Library.load.restore();
-		fnCapabilities.restore();
-		sap.ui.require.restore();
-	});
-
-	QUnit.test("test _getExportHandler when sap.ui.export is missing", async function(assert) {
-		const oTable = this.oTable;
-		assert.expect(2);
-
-		sinon.stub(Library, "load").returns(Promise.reject());
-		sinon.stub(MessageBox, "error");
-
-		await oTable.initialized();
-		await oTable._getExportHandler().catch(() => {
-			assert.ok(MessageBox.error.calledOnce, "MessageBox was called");
-			assert.ok(MessageBox.error.calledWith(Library.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY")), "Called with proper error message");
-		});
-
-		Library.load.restore();
-		MessageBox.error.restore();
-	});
-
-	QUnit.test("test _createExportColumnConfiguration", async function(assert) {
-		const done = assert.async();
-
-		const sCollectionPath = "/foo";
-		this.oTable.destroy();
-		this.oTable = new Table({
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: sCollectionPath
-				}
-			}
-		});
-
-		this.oTable.setEnableExport(true);
-		await nextUIUpdate();
-		assert.ok(this.oTable.getEnableExport(), "enableExport=true");
-
-		this.oTable.addColumn(new Column({
-			id: "firstNameColumn",
-			header: "First name",
-			width: "10rem",
-			propertyKey: "firstName",
-			template: new Text({
-				text: "{firstName}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "lastNameColumn",
-			header: "Last name",
-			width: "10rem",
-			propertyKey: "lastName",
-			template: new Text({
-				text: "{lastName}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "fullName",
-			header: "Full name",
-			width: "15rem",
-			propertyKey: "fullName",
-			template: new Text({
-				text: "{lastName}, {firstName}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "fullNameExportSettings",
-			header: "Full name 2",
-			width: "15rem",
-			propertyKey: "fullName2",
-			template: new Text({
-				text: "{lastName}, {firstName}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "ageColumn",
-			header: "Age",
-			hAlign: "Right",
-			width: "8rem",
-			propertyKey: "age",
-			template: new Text({
-				text: "{age}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "dobColumn",
-			header: "Date of Birth",
-			hAlign: "Right",
-			width: "12rem",
-			propertyKey: "dob",
-			template: new Text({
-				text: "{dob}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "salaryColumn",
-			header: "Salary",
-			hAlign: "Right",
-			width: "12rem",
-			propertyKey: "salary",
-			template: new Text({
-				text: "{salary}"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "noDataColumn1",
-			header: "NoDataColumn1",
-			hAlign: "Begin",
-			propertyKey: "noDataColumn1",
-			template: new Button({
-				text: "<"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "noDataColumn2",
-			header: "NoDataColumn2",
-			hAlign: "Begin",
-			propertyKey: "noDataColumn2",
-			template: new Button({
-				text: ">"
-			})
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "ignoreColumn",
-			header: "IgnoreColumn",
-			hAlign: "Begin",
-			propertyKey: "ignoreColumn",
-			template: new Text({
-				text: "This text will not appear in the export"
-			})
-		}));
-
-		const aExpectedOutput = [
-			{
-				columnId: "firstNameColumn",
-				property: "firstName",
-				type: "String",
-				label: "First_Name",
-				width: 19,
-				textAlign: "Begin"
-			},
-			{
-				columnId: "lastNameColumn",
-				property: "lastName",
-				type: "String",
-				label: "Last name",
-				width: 10,
-				textAlign: "Begin"
-			},
-			{
-				columnId: "fullName",
-				label: "First_Name",
-				property: "firstName",
-				textAlign: "Begin",
-				type: "String",
-				width: 19
-			},
-			{
-				columnId: "fullName-additionalProperty1",
-				label: "Last name",
-				property: "lastName",
-				textAlign: "Begin",
-				type: "String",
-				width: 15
-			},
-			{
-				columnId: "fullNameExportSettings",
-				label: "Name",
-				property: ["firstName", "lastName"],
-				template: "{0}, {1}",
-				textAlign: "Begin",
-				type: "String",
-				width: 15
-			},
-			{
-				columnId: "ageColumn",
-				property: "age",
-				type: "Number",
-				label: "Age",
-				width: 8,
-				textAlign: "Right"
-			},
-			{
-				columnId: "dobColumn",
-				property: "dob",
-				type: "Date",
-				label: "Date of Birth",
-				width: 15,
-				textAlign: "Right",
-				template: "{0}",
-				inputFormat: "YYYYMMDD"
-			},
-			{
-				columnId: "salaryColumn",
-				displayUnit: true,
-				label: "Salary",
-				property: "salary",
-				template: "{0} {1}",
-				textAlign: "Right",
-				unitProperty: "currency",
-				width: 10,
-				type: "Currency"
-			},
-			{
-				columnId: "noDataColumn1",
-				label: "NoDataColumn1",
-				property: "",
-				textAlign: "Begin",
-				type: "String",
-				width: 5
-			},
-			{
-				columnId: "noDataColumn2",
-				label: "NoDataColumn2",
-				property: "",
-				textAlign: "Begin",
-				type: "String",
-				width: ""
-			}
-		];
-
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "firstName",
-				path: "firstName",
-				label: "First name",
-				dataType: "String",
-				exportSettings: {
-					width: 19,
-					type: "String",
-					label: "First_Name"
-				}
-			}, {
-				name: "lastName",
-				path: "lastName",
-				label: "Last name",
-				dataType: "String"
-			}, {
-				name: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
-				label: "Full name",
-				propertyInfos: ["firstName", "lastName"]
-			}, {
-				name: "fullName2", // complex PropertyInfo with exportSettings => 1 spreadsheet column config will be created
-				label: "Name",
-				propertyInfos: ["firstName", "lastName"],
-				exportSettings: {
-					template: "{0}, {1}"
-				}
-			}, {
-				name: "age",
-				path: "age",
-				label: "Age",
-				dataType: "String",
-				exportSettings: {
-					type: "Number"
-				}
-			}, {
-				name: "dob",
-				path: "dob",
-				label: "dob",
-				dataType: "String",
-				exportSettings: {
-					label: "Date of Birth",
-					type: "Date",
-					inputFormat: "YYYYMMDD",
-					width: 15,
-					template: "{0}"
-				}
-			}, {
-				name: "salary",
-				path: "salary",
-				label: "Salary",
-				dataType: "String",
-				exportSettings: {
-					displayUnit: true,
-					unitProperty: "currency",
-					template: "{0} {1}",
-					width: 10,
-					type: "Currency"
-				}
-			}, {
-				name: "currency",
-				path: "currency",
-				label: "Currency code",
-				dataType: "String",
-				exportSettings: {
-					width: 5
-				}
-			}, {
-				name: "noDataColumn1",
-				label: "NoDataColumn1",
-				sortable: false,
-				filterable: false,
-				dataType: "String",
-				exportSettings: {
-					width: 5
-				}
-			}, {
-				name: "noDataColumn2",
-				label: "NoDataColumn2",
-				sortable: false,
-				filterable: false,
-				dataType: "String"
-			}, {
-				name: "ignoreColumn",
-				label: "IgnoreColumn",
-				exportSettings: null,
-				dataType: "String"
-			}
-		]);
-
-		this.oTable.initialized().then(function() {
-			this.oTable._createExportColumnConfiguration({fileName: 'Table header'}).then(function(aActualOutput) {
-				assert.deepEqual(aActualOutput[0], aExpectedOutput[0], "The export configuration was created as expected");
-				done();
-			});
-		}.bind(this));
-	});
-
 	QUnit.test("Open the p13n dialog via button and shortcut", async function(assert) {
 		this.oTable.setP13nMode(["Column", "Sort"]);
 		this.oTable.placeAt("qunit-fixture");
@@ -3668,339 +2870,6 @@ sap.ui.define([
 				assert.ok(this.oTable._oTable.getAriaLabelledBy().includes(this.oTable.getId() + "-invisibleTitle"), "Header is referenced by ariaLabelledBy.");
 				assert.notOk(this.oTable._oToolbar.getVisible(), "Toolbar is not visible.");
 			});
-		});
-	});
-
-	QUnit.test("Test enableAutoColumnWidth property", async function(assert) {
-		const oCanvasContext = document.createElement("canvas").getContext("2d");
-		oCanvasContext.font = [
-			parseFloat(ThemeParameters.get({ name: "sapMFontMediumSize" }) || "0.875rem") * parseFloat(MLibrary.BaseFontSize) + "px",
-			ThemeParameters.get({ name: "sapUiFontFamily" }) || "Arial"
-		].join(" ");
-
-		const fPadding = 1.0625;
-		this.oTable.setEnableAutoColumnWidth(true);
-		await nextUIUpdate();
-
-		const measureText = function(sRefText) {
-			return oCanvasContext.measureText(sRefText).width / 16;
-		};
-		const check = function(sRefText, fOrigWidth, fRange) {
-			// length of 5 chars  ~ 3.159rem
-			// length of 10 chars ~ 6.318rem
-			const fRefTextWidth = measureText(sRefText);
-			return Math.abs(fRefTextWidth - fOrigWidth) <= (fRange || 0.5);
-		};
-
-		this.oTable.addColumn(new Column({
-			id: "firstName",
-			width: "10rem",
-			header: "First name",
-			propertyKey: "firstName"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "lastName",
-			header: "Last name",
-			propertyKey: "lastName"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "fullName",
-			header: "Full name",
-			propertyKey: "fullName"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "numberValue",
-			header: "Number value",
-			propertyKey: "numberValue"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "booleanValue",
-			header: "Boolean value",
-			propertyKey: "booleanValue"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "columnGap1",
-			header: "Test gap",
-			propertyKey: "columnGap1"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "columnGap2",
-			header: "Test gap",
-			propertyKey: "columnGap2"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "noWidthCalculation",
-			header: "No Width Calculation",
-			propertyKey: "noWidthCalculation"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "complexNoWidthCalculation",
-			header: "Complex No Width Calculation",
-			propertyKey: "complexNoWidthCalculation"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "stringValue_nomaxlength",
-			header: "stringValue_nomaxlength",
-			propertyKey: "stringValue_nomaxlength"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "stringValue_bigmaxlength",
-			header: "stringValue_bigmaxlength",
-			propertyKey: "stringValue_bigmaxlength"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "stringValue_nolabeltruncate",
-			header: "stringValue_nolabeltruncate",
-			propertyKey: "stringValue_nolabeltruncate"
-		}));
-
-		this.oTable.addColumn(new Column({
-			id: "column_required",
-			header: "a",
-			propertyKey: "a",
-			required: true
-		}));
-
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [
-			{
-				name: "firstName",
-				path: "firstName",
-				label: "First name",
-				dataType: "Edm.String",
-				constraints: {maxLength: 30},
-				visualSettings: {
-					widthCalculation: {
-						minWidth: 4,
-						maxWidth: 10
-					}
-				}
-			}, {
-				name: "lastName",
-				path: "lastName",
-				label: "Last name",
-				dataType: "Edm.String",
-				constraints: {maxLength: 30},
-				visualSettings: {
-					widthCalculation: {
-						minWidth: 6,
-						maxWidth: 8
-					}
-				}
-			}, {
-				name: "fullName",
-				label: "Full name",
-				propertyInfos: ["firstName", "lastName"],
-				visualSettings: {
-					widthCalculation: {
-						verticalArrangement: true
-					}
-				}
-			}, {
-				name: "numberValue",
-				label: "Number value",
-				dataType: "Edm.Byte",
-				visualSettings: {
-					widthCalculation: {
-						includeLabel: false
-					}
-				}
-			}, {
-				name: "booleanValue",
-				label: "Boolean value",
-				dataType: "Edm.Boolean",
-				visualSettings: {
-					widthCalculation: {
-						includeLabel: false,
-						minWidth: 1
-					}
-				}
-			}, {
-				name: "columnGap1",
-				label: "Test gap",
-				dataType: "Edm.String",
-				constraints: {maxLength: 32},
-				visualSettings: {
-					widthCalculation: {
-						gap: 2
-					}
-				}
-			}, {
-				name: "columnGap2",
-				label: "Test gap",
-				dataType: "Edm.String",
-				constraints: {maxLength: 32}
-			}, {
-				name: "noWidthCalculation",
-				label: "No Width Calculation",
-				dataType: "Edm.String",
-				visualSettings: {
-					widthCalculation: null
-				}
-			}, {
-				name: "complexNoWidthCalculation",
-				label: "Complex with no width calculation",
-				propertyInfos: ["lastName", "noWidthCalculation"],
-				visualSettings: {
-					widthCalculation: {
-						includeLabel: false
-					}
-				}
-			}, {
-				name: "stringValue_nomaxlength",
-				label: "String",
-				dataType: "Edm.String"
-			}, {
-				name: "stringValue_bigmaxlength",
-				label: "String",
-				dataType: "Edm.String",
-				constraints: {maxLength: 255}
-			}, {
-				name: "stringValue_nolabeltruncate",
-				label: "stringValue_nolabeltruncate",
-				dataType: "Edm.String",
-				constraints: {maxLength: 5},
-				visualSettings: {
-					widthCalculation: {
-						truncateLabel: false
-					}
-				}
-			}, {
-				name: "a",
-				label: "a",
-				dataType: "Edm.Boolean",
-				visualSettings: {
-					widthCalculation: {
-						minWidth: 1
-					}
-				}
-			}
-		], ODataTypeMap);
-
-		return this.oTable._fullyInitialized().then(function() {
-			return this.oTable.propertiesFinalized();
-		}.bind(this)).then(function() {
-			const oPropertyHelper = this.oTable.getPropertyHelper();
-			const aColumns = this.oTable.getColumns();
-			const getInnerColumnWidth = function(oMDCColumn) {
-				return oMDCColumn.getInnerColumn().getWidth();
-			};
-
-			// 1st column must have a width of 10rem due of its predefined
-			assert.equal(parseFloat(getInnerColumnWidth(aColumns[0])) + "rem", "10rem", "Table inner column firstName width is 10rem");
-
-			// 2nd column maxLength of 30 exceeds a maxWidth of 8
-			assert.notOk(check("A".repeat(30), parseFloat(getInnerColumnWidth(aColumns[1]))), "Column lastName would exceed maxWidth of 8rem");
-			assert.equal((parseFloat(getInnerColumnWidth(aColumns[1])) - fPadding) + "rem", "8rem", "Table inner column lastName width is 8rem");
-
-			// 3th column is complex with vertical alignment and exceed maxWidth of 10rem of column firstName
-			assert.notOk(check("A".repeat(30), parseFloat(getInnerColumnWidth(aColumns[2]))), "Column fullName would exceed maxWidth of 10rem");
-			assert.equal((parseFloat(getInnerColumnWidth(aColumns[2])) - fPadding) + "rem", "10rem",
-				"Table inner column fullName calculated width is 10rem");
-
-			// 4th column width is 2rem, the default minWidth, due Edm.Byte has a limit of 3 chars ~ 1.459rem
-			let sPropertyName = aColumns[3].getPropertyKey();
-			let oProperty = oPropertyHelper.getProperty(sPropertyName);
-
-			const sWidth = oPropertyHelper._calcColumnWidth(oProperty, aColumns[3]);
-			assert.equal(sWidth, aColumns[3]._oSettingsModel.getProperty("/calculatedWidth"), "calculatedWidth for numberValue width is " + sWidth);
-			assert.equal(sWidth, getInnerColumnWidth(aColumns[3]), "Column numberValue width is " + sWidth);
-
-			// 5th column is in correct range due of type boolean
-			assert.ok(check("Yes", parseFloat(getInnerColumnWidth(aColumns[4])) - fPadding),
-				"Column booleanValue width calculated correctly");
-
-			// by side of the gap, columnGap1 and columnGap2 are identical
-			sPropertyName = aColumns[5].getPropertyKey();
-			oProperty = oPropertyHelper.getProperty(sPropertyName);
-			assert.equal(getInnerColumnWidth(aColumns[5]),
-				parseFloat(getInnerColumnWidth(aColumns[6])) + oProperty.visualSettings.widthCalculation.gap + "rem",
-				"Additional gap of " + oProperty.visualSettings.widthCalculation.gap + "rem for Column columnGap1 is calculated correctly");
-
-			// visualSettings.widthCalculation=null
-			assert.notOk(getInnerColumnWidth(aColumns[7]), "There is no width set since visualSettings.widthCalculation=null");
-
-			// complex property with visualSettings.widthCalculation=null
-			assert.equal(getInnerColumnWidth(aColumns[8]), getInnerColumnWidth(aColumns[1]), "Width calculation in complex property with visualSettings.widthCalculation=null is ignored");
-
-			assert.equal(getInnerColumnWidth(aColumns[9]), 19 + fPadding + "rem", "String type without maxLength gets maxWidth");
-			assert.equal(getInnerColumnWidth(aColumns[10]), 19 + fPadding + "rem", "String type with big maxLength gets maxWidth");
-
-			assert.ok(measureText(aColumns[11].getHeader()) <= parseFloat(getInnerColumnWidth(aColumns[11])) - fPadding, "The header is not truncated and the column width is as wide as the header");
-
-			// 12th column. required "*" is added to column
-			assert.ok(check("Yes*", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */), "Heaeder has correct width when using 'required' property");
-		}.bind(this));
-	});
-
-	QUnit.test("Test enableAutoColumnWidth for TreeTable type columns", async function(assert) {
-		TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-			name: "firstName",
-			path: "firstName",
-			label: "First name",
-			dataType: "Edm.String",
-			constraints: {maxLength: 30}
-		}, {
-			name: "lastName",
-			path: "lastName",
-			label: "Last name",
-			dataType: "Edm.String",
-			constraints: {maxLength: 30}
-		}], ODataTypeMap);
-
-		function setupTable(oTable) {
-			oTable.setEnableAutoColumnWidth(true);
-			oTable.addColumn(new Column({
-				header: "First name",
-				propertyKey: "firstName"
-			}));
-			oTable.addColumn(new Column({
-				header: "Last name",
-				propertyKey: "lastName"
-			}));
-			return oTable;
-		}
-
-		setupTable(this.oTable);
-		this.oTreeTable = setupTable(new Table({
-			type: TableType.TreeTable,
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/testPath"
-				}
-			}
-		}));
-		this.oTreeTable.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		return Promise.all([
-			this.oTable._fullyInitialized(),
-			this.oTreeTable._fullyInitialized()
-		]).then(function() {
-			return Promise.all([
-				this.oTable.propertiesFinalized(),
-				this.oTreeTable.propertiesFinalized()
-			]);
-		}.bind(this)).then(function() {
-			const aTreeTableColumns = this.oTreeTable.getColumns().map(function(oColumn) { return oColumn.getInnerColumn(); });
-			const aTableColumns = this.oTable.getColumns().map(function(oColumn) { return oColumn.getInnerColumn(); });
-
-			assert.ok(parseFloat(aTreeTableColumns[0].getWidth()) > parseFloat(aTableColumns[0].getWidth()), "The first tree column has larger width");
-			assert.equal(aTreeTableColumns[1].getWidth(), aTableColumns[1].getWidth(), "The column width is not changed for the the second column");
-			this.oTreeTable.destroy();
-		}.bind(this)).finally(function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		});
 	});
 
@@ -4375,32 +3244,19 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("Rows binding", {
+	QUnit.module("Bind/Rebind", {
 		afterEach: function() {
 			this.oTable?.destroy();
 		},
-		createTable: function(mSettings) {
+		createTable: function(mSettings, aPropertyInfos) {
 			this.oTable = new Table({
 				delegate: {
 					name: sDelegatePath,
 					payload: {
-						collectionPath: "/testPath"
+						collectionPath: "/testPath",
+						propertyInfo: aPropertyInfos
 					}
 				},
-				columns: [
-					new Column({
-						header: "Test",
-						template: new Text({
-							text: "Test"
-						})
-					}),
-					new Column({
-						header: "Test2",
-						template: new Text({
-							text: "Test2"
-						})
-					})
-				],
 				...mSettings
 			});
 
@@ -4430,7 +3286,19 @@ sap.ui.define([
 
 	QUnit.test("ResponsiveTable", async function(assert) {
 		this.createTable({
-			type: TableType.ResponsiveTable
+			type: TableType.ResponsiveTable,
+			columns: [
+				new Column({
+					template: new Text({
+						text: "Test"
+					})
+				}),
+				new Column({
+					template: new Text({
+						text: "Test2"
+					})
+				})
+			]
 		});
 		await this.oTable.initialized();
 		assert.ok(!this.oTable._oTable.isBound("rows"), "Table is not bound when the 'initialized' promise resolves");
@@ -4453,6 +3321,13 @@ sap.ui.define([
 		], "Cells in the template");
 
 		this.oTable.getControlDelegate().updateBindingInfo.restore();
+	});
+
+	QUnit.test("autoBindOnInit=true", async function(assert) {
+		this.createTable();
+		await this.oTable.initialized();
+		await TableQUnitUtils.waitForBindingInfo(this.oTable);
+		assert.ok(this.oTable.isTableBound(), "Table is bound");
 	});
 
 	QUnit.test("autoBindOnInit=false", async function(assert) {
@@ -4627,6 +3502,66 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Sort indicators", async function(assert) {
+		this.createTable({
+			columns: [
+				new Column({
+					propertyKey: "name"
+				}),
+				new Column({
+					propertyKey: "firstName"
+				}),
+				new Column({
+					propertyKey: "age"
+				})
+			],
+			sortConditions: {
+				sorters: [
+					{name: "name", descending: true}
+				]
+			},
+			autoBindOnInit: false
+		}, [{
+			key: "name",
+			path: "name",
+			label: "name",
+			dataType: "String"
+		}, {
+			key: "firstName",
+			path: "firstName",
+			label: "firstName",
+			dataType: "String"
+		}, {
+			key: "age",
+			path: "age",
+			label: "age",
+			dataType: "String"
+		}]);
+
+		const oUpdateSortIndicator = this.spy(this.oTable._getType(), "updateSortIndicator");
+
+		assert.ok(oUpdateSortIndicator.notCalled, "Sort indicators not updated before binding");
+
+		await this.oTable.rebind();
+		assert.equal(oUpdateSortIndicator.callCount, 3, "Sort indicators of every column updated after binding");
+		sinon.assert.calledWithExactly(oUpdateSortIndicator.getCall(0), this.oTable.getColumns()[0], "Descending");
+		sinon.assert.calledWithExactly(oUpdateSortIndicator.getCall(1), this.oTable.getColumns()[1], "None");
+		sinon.assert.calledWithExactly(oUpdateSortIndicator.getCall(2), this.oTable.getColumns()[2], "None");
+
+		oUpdateSortIndicator.resetHistory();
+		this.oTable.setSortConditions({
+			sorters: [
+				{name: "firstName", descending: false},
+				{name: "age", descending: true}
+			]
+		});
+		await this.oTable.rebind();
+		assert.equal(oUpdateSortIndicator.callCount, 3, "Sort indicators of every column updated after binding");
+		sinon.assert.calledWithExactly(oUpdateSortIndicator.getCall(0), this.oTable.getColumns()[0], "None");
+		sinon.assert.calledWithExactly(oUpdateSortIndicator.getCall(1), this.oTable.getColumns()[1], "Ascending");
+		sinon.assert.calledWithExactly(oUpdateSortIndicator.getCall(2), this.oTable.getColumns()[2], "Descending");
+	});
+
 	QUnit.module("Inbuilt filter initialization", {
 		createTable: async function(mSettings) {
 			this.oTable = new Table(mSettings);
@@ -4683,47 +3618,43 @@ sap.ui.define([
 	});
 
 	QUnit.module("Filter info bar", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
-				name: "name",
-				label: "NameLabel",
-				dataType: "String"
-			}, {
-				name: "age",
-				label: "AgeLabel",
-				dataType: "String"
-			}, {
-				name: "gender",
-				label: "GenderLabel",
-				dataType: "String"
-			}]);
+		afterEach: function() {
+			this.oTable.destroy();
 		},
-		beforeEach: async function() {
+		createTable: async function(mSettings) {
 			this.oTable = new Table({
 				delegate: {
 					name: sDelegatePath,
 					payload: {
-						collectionPath: "/testPath"
+						collectionPath: "/testPath",
+						propertyInfo: [{
+							key: "name",
+							label: "NameLabel",
+							dataType: "String"
+						}, {
+							key: "age",
+							label: "AgeLabel",
+							dataType: "String"
+						}, {
+							key: "gender",
+							label: "GenderLabel",
+							dataType: "String"
+						}]
 					}
-				}
+				},
+				...mSettings
 			});
+			await this.oTable.initialized();
 			this.oTable.placeAt("qunit-fixture");
 			await nextUIUpdate();
 		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
-		},
-		getFilterInfoBar: function(oMDCTable) {
-			const oTable = this.oTable || oMDCTable;
+		getFilterInfoBar: function() {
 			let oFilterInfoBar;
 
-			if (oTable._isOfType(TableType.ResponsiveTable)) {
-				oFilterInfoBar = oTable._oTable.getInfoToolbar();
+			if (this.oTable._isOfType(TableType.ResponsiveTable)) {
+				oFilterInfoBar = this.oTable._oTable.getInfoToolbar();
 			} else {
-				oFilterInfoBar = oTable._oTable.getExtension()[1];
+				oFilterInfoBar = this.oTable._oTable.getExtension()[1];
 			}
 
 			if (oFilterInfoBar && oFilterInfoBar.isA("sap.m.OverflowToolbar")) {
@@ -4732,20 +3663,16 @@ sap.ui.define([
 				return null;
 			}
 		},
-		getFilterInfoText: function(oMDCTable) {
-			const oTable = this.oTable || oMDCTable;
-			const oFilterInfoBar = this.getFilterInfoBar(oTable);
+		getFilterInfoText: function() {
+			const oFilterInfoBar = this.getFilterInfoBar();
 			return oFilterInfoBar ? oFilterInfoBar.getContent()[0] : null;
 		},
-		hasFilterInfoBar: function(oMDCTable) {
-			const oTable = this.oTable || oMDCTable;
-			return this.getFilterInfoBar(oTable) !== null;
+		hasFilterInfoBar: function() {
+			return this.getFilterInfoBar() !== null;
 		},
-		waitForFilterInfoBarRendered: function(oMDCTable) {
-			const oTable = this.oTable || oMDCTable;
-
-			return new Promise(function(resolve) {
-				const oFilterInfoBar = this.getFilterInfoBar(oTable);
+		filterInfoBarRendered: async function() {
+			await new Promise((resolve) => {
+				const oFilterInfoBar = this.getFilterInfoBar();
 
 				if (!oFilterInfoBar.getDomRef()) {
 					oFilterInfoBar.addEventDelegate({
@@ -4757,308 +3684,301 @@ sap.ui.define([
 				} else {
 					resolve();
 				}
-			}.bind(this));
+			});
 		}
 	});
 
-	QUnit.test("Filter info bar (filter disabled)", function(assert) {
-		const that = this;
-
-		return this.oTable.initialized().then(function() {
-			assert.ok(!that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar does not exist");
-		}).then(function() {
-			that.oTable.destroy();
-			that.oTable = new Table({
-				filterConditions: {
-					name: [
-						{
-							isEmpty: null,
-							operator: OperatorName.EQ,
-							validated: ConditionValidated.NotValidated,
-							values: ["test"]
-						}
-					]
-				}
-			});
-			return that.oTable.initialized();
-		}).then(function() {
-			assert.ok(!that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar does not exist");
-
-			that.oTable.setFilterConditions({
-				age: [
-					{
-						isEmpty: null,
-						operator: OperatorName.EQ,
-						validated: ConditionValidated.NotValidated,
-						values: ["test"]
-					}
-				]
-			});
-
-			return wait(50);
-		}).then(function() {
-			assert.ok(!that.hasFilterInfoBar(), "Change filter conditions: Filter info bar does not exist");
-
-			that.oTable.setP13nMode(["Filter"]);
-			assert.ok(that.hasFilterInfoBar(), "Filtering enabled: Filter info bar exists");
-			assert.ok(!that.getFilterInfoBar().getVisible(), "Filtering enabled: Filter info bar is invisible");
+	QUnit.test("Filtering disabled", async function(assert) {
+		await this.createTable({
+			filterConditions: {
+				name: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}]
+			}
 		});
+
+		assert.ok(!this.hasFilterInfoBar(), "Filter info bar does not exist");
+
+		this.oTable.setFilterConditions({
+			age: [{
+				isEmpty: null,
+				operator: OperatorName.EQ,
+				validated: ConditionValidated.NotValidated,
+				values: ["test"]
+			}]
+		});
+
+		await wait(50);
+		assert.ok(!this.hasFilterInfoBar(), "Change filter conditions: Filter info bar does not exist");
+
+		this.oTable.setP13nMode(["Filter"]);
+		assert.ok(this.hasFilterInfoBar(), "Filtering enabled: Filter info bar exists");
+		assert.ok(!this.getFilterInfoBar().getVisible(), "Filtering enabled: Filter info bar is invisible");
 	});
 
 	aTestedTypes.forEach(function(sTableType) {
-		QUnit.test("Filter info bar with table type = " + sTableType + " (filter enabled)", function(assert) {
-			const that = this;
+		QUnit.test("Filtering enabled; Table type = " + sTableType, async function(assert) {
 			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 			const oListFormat = ListFormat.getInstance();
+			let oFilterInfoBar;
 
-			this.oTable.destroy();
-			this.oTable = new Table({
+			await this.createTable({
 				type: sTableType,
 				p13nMode: ["Filter"]
 			});
 
-			return this.oTable._fullyInitialized().then(function() {
-				assert.ok(that.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
-				assert.ok(!that.getFilterInfoBar().getVisible(), "No initial filter conditions: Filter info bar is invisible");
-				assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-					return sId === that.oTable._oFilterInfoBarInvisibleText.getId();
-				}).length, 1, "ariaLabelledBy of the inner table contains a reference to the invisible text");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
-			}).then(async function() {
-				that.oTable.destroy();
-				that.oTable = new Table({
-					columns: [
-						new Column({
-							template: new Text(),
-							propertyKey: "name",
-							header: "NameLabelColumnHeader"
-						}),
-						new Column({
-							template: new Text(),
-							propertyKey: "age",
-							header: "AgeLabelColumnHeader"
-						})
-					],
-					type: sTableType,
-					p13nMode: ["Filter"],
-					filterConditions: {
-						name: [
-							{
-								isEmpty: null,
-								operator: OperatorName.EQ,
-								validated: ConditionValidated.NotValidated,
-								values: ["test"]
-							}
-						]
-					}
-				});
+			assert.ok(this.hasFilterInfoBar(), "No initial filter conditions: Filter info bar exists");
+			assert.ok(!this.getFilterInfoBar().getVisible(), "No initial filter conditions: Filter info bar is invisible");
+			assert.equal(this.oTable._oTable.getAriaLabelledBy().filter((sId) => sId === this.oTable._oFilterInfoBarInvisibleText.getId()).length, 1,
+				"ariaLabelledBy of the inner table contains a reference to the invisible text");
+			assert.equal(this.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
 
-				that.oTable.placeAt("qunit-fixture");
-				await nextUIUpdate();
-				return that.oTable._fullyInitialized();
-			}).then(function() {
-				assert.ok(that.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
-				assert.ok(that.getFilterInfoBar().getVisible(), "Initial filter conditions: Filter info bar is visible");
-				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.ONE_FILTER_ACTIVE", [oListFormat.format(["NameLabel"])]),
-					"Initial filter conditions: The filter info bar text is correct (1 filter)");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), oResourceBundle.getText("table.ONE_FILTER_ACTIVE", [oListFormat.format(["NameLabel"])]), "The associated invisible text is correct");
-				assert.strictEqual(that.getFilterInfoBar().getAriaLabelledBy()[0], that.getFilterInfoText().getId(), "Filter info bar is labelled with the contained text.");
-
-				that.oTable.setFilterConditions({
-					name: [
-						{
-							isEmpty: null,
-							operator: OperatorName.EQ,
-							validated: ConditionValidated.NotValidated,
-							values: ["test"]
-						}
-					],
-					age: [
-						{
-							isEmpty: null,
-							operator: OperatorName.EQ,
-							validated: ConditionValidated.NotValidated,
-							values: ["test"]
-						}
-					]
-				});
-
-				return that.waitForFilterInfoBarRendered();
-			}).then(function() {
-				const oFilterInfoBar = that.getFilterInfoBar();
-
-				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [2, oListFormat.format(["NameLabel", "AgeLabel"])]),
-					"Change filter conditions: The filter info bar text is correct (2 filters)");
-
-				oFilterInfoBar.focus();
-				assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
-
-				that.oTable.setFilterConditions({
-					name: []
-				});
-				assert.ok(that.hasFilterInfoBar(), "Filter conditions removed: Filter info bar exists");
-				assert.ok(!that.getFilterInfoBar().getVisible(), "Filter conditions removed: Filter info bar is invisible");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
-				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
-
-				that.oTable.setFilterConditions({
-					name: [
-						{
-							isEmpty: null,
-							operator: OperatorName.EQ,
-							validated: ConditionValidated.NotValidated,
-							values: ["test"]
-						}
-					],
-					age: [
-						{
-							isEmpty: null,
-							operator: OperatorName.EQ,
-							validated: ConditionValidated.NotValidated,
-							values: ["test"]
-						}
-					],
-					gender: [
-						{
-							isEmpty: null,
-							operator: OperatorName.EQ,
-							validated: ConditionValidated.NotValidated,
-							values: ["test"]
-						}
-					]
-				});
-
-				return wait(0);
-			}).then(function() {
-				assert.ok(that.getFilterInfoBar().getVisible(), "Set filter conditions: Filter info bar is visible");
-				assert.strictEqual(that.getFilterInfoText().getText(),
-					oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [3, oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])]),
-					"Set filter conditions: The filter info bar text is correct (3 filters)");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(),
-					oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [3, oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])]),
-					"The associated invisible text is correct");
-			}).then(function() {
-				return that.waitForFilterInfoBarRendered();
-			}).then(async function() {
-				const oFilterInfoBar = that.getFilterInfoBar();
-
-				that.oTable.setP13nMode();
-
-				oFilterInfoBar.focus();
-				assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
-
-				that.oTable.setP13nMode(["Column", "Sort"]);
-				assert.ok(that.hasFilterInfoBar(), "Filter disabled: Filter info bar exists");
-				assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
-				await nextUIUpdate();
-				assert.ok(that.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
-
-				that.oTable.destroy();
-				assert.ok(oFilterInfoBar.bIsDestroyed, "Filter info bar is destroyed when the table is destroyed");
-				assert.equal(that.oTable._oFilterInfoBarInvisibleText, null, "The invisible text is set to null");
-			});
-		});
-	});
-
-	QUnit.test("Filter info bar after changing table type", function(assert) {
-		const that = this;
-
-		this.oTable.destroy();
-		this.oTable = new Table({
-			p13nMode: ["Filter"],
-			filterConditions: {
-				name: [
-					{
+			this.oTable.destroy();
+			await this.createTable({
+				type: sTableType,
+				p13nMode: ["Filter"],
+				filterConditions: {
+					name: [{
 						isEmpty: null,
 						operator: OperatorName.EQ,
 						validated: ConditionValidated.NotValidated,
 						values: ["test"]
-					}
+					}]
+				},
+				columns: [
+					new Column({
+						template: new Text(),
+						propertyKey: "name",
+						header: "NameLabelColumnHeader"
+					}),
+					new Column({
+						template: new Text(),
+						propertyKey: "age",
+						header: "AgeLabelColumnHeader"
+					})
 				]
-			}
-		});
+			});
 
-		return this.oTable.initialized().then(function() {
-			that.oTable.setType(TableType.ResponsiveTable);
-			return that.oTable._fullyInitialized();
-		}).then(function() {
-			assert.ok(that.hasFilterInfoBar(), "Changed from \"Table\" to \"ResponsiveTable\": Filter info bar exists");
-			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-				return sId === that.oTable._oFilterInfoBarInvisibleText.getId();
-			}).length, 1, "Changed from \"Table\" to \"ResponsiveTable\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
-						  + " table");
-		}).then(function() {
-			that.oTable.setType(TableType.Table);
-			return that.oTable._fullyInitialized();
-		}).then(function() {
-			assert.ok(that.hasFilterInfoBar(), "Changed from \"ResponsiveTable\" to \"Table\": Filter info bar exists");
-			assert.equal(that.oTable._oTable.getAriaLabelledBy().filter(function(sId) {
-				return sId === that.oTable._oFilterInfoBarInvisibleText.getId();
-			}).length, 1, "Changed from \"ResponsiveTable\" to \"Table\": The filter info bar text is in the \"ariaLabelledBy\" association of the"
-						  + " table");
+			assert.ok(this.hasFilterInfoBar(), "Initial filter conditions: Filter info bar exists");
+			assert.ok(this.getFilterInfoBar().getVisible(), "Initial filter conditions: Filter info bar is visible");
+			assert.strictEqual(this.getFilterInfoText().getText(),
+				oResourceBundle.getText("table.ONE_FILTER_ACTIVE", [oListFormat.format(["NameLabel"])]),
+				"Initial filter conditions: The filter info bar text is correct (1 filter)");
+			assert.equal(
+				this.oTable._oFilterInfoBarInvisibleText.getText(), oResourceBundle.getText("table.ONE_FILTER_ACTIVE",
+				[oListFormat.format(["NameLabel"])]),
+				"The associated invisible text is correct"
+			);
+			assert.strictEqual(this.getFilterInfoBar().getAriaLabelledBy()[0], this.getFilterInfoText().getId(),
+				"Filter info bar is labelled with the contained text.");
+
+			this.oTable.setFilterConditions({
+				name: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}],
+				age: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}]
+			});
+
+			await this.filterInfoBarRendered();
+			oFilterInfoBar = this.getFilterInfoBar();
+
+			assert.strictEqual(this.getFilterInfoText().getText(),
+				oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [2, oListFormat.format(["NameLabel", "AgeLabel"])]),
+				"Change filter conditions: The filter info bar text is correct (2 filters)");
+
+			oFilterInfoBar.focus();
+			assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
+
+			this.oTable.setFilterConditions({
+				name: []
+			});
+			assert.ok(this.hasFilterInfoBar(), "Filter conditions removed: Filter info bar exists");
+			assert.ok(!this.getFilterInfoBar().getVisible(), "Filter conditions removed: Filter info bar is invisible");
+			assert.equal(this.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
+			assert.ok(this.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+
+			this.oTable.setFilterConditions({
+				name: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}],
+				age: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}],
+				gender: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}]
+			});
+
+			await wait(0);
+			assert.ok(this.getFilterInfoBar().getVisible(), "Set filter conditions: Filter info bar is visible");
+			assert.strictEqual(this.getFilterInfoText().getText(),
+				oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [3, oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])]),
+				"Set filter conditions: The filter info bar text is correct (3 filters)");
+			assert.equal(this.oTable._oFilterInfoBarInvisibleText.getText(),
+				oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [3, oListFormat.format(["NameLabel", "AgeLabel", "GenderLabel"])]),
+				"The associated invisible text is correct");
+
+			await this.filterInfoBarRendered();
+			oFilterInfoBar = this.getFilterInfoBar();
+
+			this.oTable.setP13nMode();
+
+			oFilterInfoBar.focus();
+			assert.strictEqual(document.activeElement, oFilterInfoBar.getFocusDomRef(), "The filter info bar is focused");
+
+			this.oTable.setP13nMode(["Column", "Sort"]);
+			assert.ok(this.hasFilterInfoBar(), "Filter disabled: Filter info bar exists");
+			assert.ok(!oFilterInfoBar.getVisible(), "Filter disabled: Filter info bar is invisible");
+			assert.equal(this.oTable._oFilterInfoBarInvisibleText.getText(), "", "The associated invisible text is empty");
+			await nextUIUpdate();
+			assert.ok(this.oTable.getDomRef().contains(document.activeElement), "The table has the focus");
+
+			this.oTable.destroy();
+			assert.ok(oFilterInfoBar.bIsDestroyed, "Filter info bar is destroyed when the table is destroyed");
+			assert.equal(this.oTable._oFilterInfoBarInvisibleText, null, "The invisible text is set to null");
 		});
 	});
 
-	QUnit.test("Press the filter info bar & focus handling with p13n dialog (TODO: SHOULD BE AN OPA TEST!)", function(assert) {
-		const that = this;
-
-		this.oTable.addColumn(new Column({
-			template: new Text(),
-			propertyKey: "name"
-		}));
-		this.oTable.setP13nMode(["Filter"]);
-
-		return this.oTable.initialized().then(function() {
-			that.oTable.setFilterConditions({
+	QUnit.test("Changing table type", async function(assert) {
+		await this.createTable({
+			p13nMode: ["Filter"],
+			filterConditions: {
 				name: [{
 					isEmpty: null,
 					operator: OperatorName.EQ,
 					validated: ConditionValidated.NotValidated,
 					values: ["test"]
 				}]
-			});
-
-			return that.oTable.awaitPropertyHelper();
-		}).then(function() {
-			return that.waitForFilterInfoBarRendered();
-		}).then(function() {
-			const oOpenFilterDialogStub = sinon.stub(PersonalizationUtils, "openFilterDialog").resolves();
-			const oFilterInfoBar = that.getFilterInfoBar();
-
-			oFilterInfoBar.firePress();
-			assert.ok(oOpenFilterDialogStub.calledOnceWith(that.oTable),
-				"Pressing the filter info bar calls utils.Personalization.openFilterDialog with the correct arguments");
-			oOpenFilterDialogStub.restore();
-
-			// Simulate setting the focus when the filter dialog is closed and all filters have been removed.
-			// The filter info bar will be hidden in this case. The focus should still be somewhere in the table and not on the document body.
-			that.oTable.setFilterConditions({
-				name: [{
-					isEmpty: null,
-					operator: OperatorName.EQ,
-					validated: ConditionValidated.NotValidated,
-					values: ["test"]
-				}]
-			});
-			return that.waitForFilterInfoBarRendered();
-		}).then(function() {
-			const oFilterInfoBar = that.getFilterInfoBar();
-
-			oFilterInfoBar.focus();
-			oFilterInfoBar.firePress(); // Opens the filter dialog
-
-			return TableQUnitUtils.waitForP13nPopup(that.oTable);
-		}).then(function() {
-			return TableQUnitUtils.closeP13nPopup(that.oTable);
-		}).then(async function() {
-			that.oTable.setFilterConditions({name: []}); // Hides the filter info bar
-			await nextUIUpdate();
-			assert.ok(that.oTable.getDomRef().contains(document.activeElement),
-				"After removing all filters in the dialog and closing it, the focus is in the table");
+			}
 		});
+
+		this.oTable.setType(TableType.ResponsiveTable);
+		await this.oTable.initialized();
+		assert.ok(this.hasFilterInfoBar(), "Changed from \"Table\" to \"ResponsiveTable\": Filter info bar exists");
+		assert.equal(this.oTable._oTable.getAriaLabelledBy().filter((sId) => sId === this.oTable._oFilterInfoBarInvisibleText.getId()).length, 1,
+			"Changed from \"Table\" to \"ResponsiveTable\": The filter info bar text is in the \"ariaLabelledBy\" association of the table");
+
+		this.oTable.setType(TableType.Table);
+		await this.oTable.initialized();
+		assert.ok(this.hasFilterInfoBar(), "Changed from \"ResponsiveTable\" to \"Table\": Filter info bar exists");
+		assert.equal(this.oTable._oTable.getAriaLabelledBy().filter((sId) => sId === this.oTable._oFilterInfoBarInvisibleText.getId()).length, 1,
+			"Changed from \"ResponsiveTable\" to \"Table\": The filter info bar text is in the \"ariaLabelledBy\" association of the table");
+	});
+
+	QUnit.test("Open filter dialog", async function(assert) {
+		await this.createTable({
+			p13nMode: ["Filter"],
+			filterConditions: {
+				name: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}]
+			},
+			columns: new Column({
+				template: new Text(),
+				propertyKey: "name"
+			})
+		});
+		await this.filterInfoBarRendered();
+
+		this.stub(PersonalizationUtils, "openFilterDialog").resolves();
+		this.getFilterInfoBar().firePress();
+		assert.ok(PersonalizationUtils.openFilterDialog.calledOnceWith(this.oTable),
+			"Pressing the filter info bar calls utils.Personalization.openFilterDialog with the correct arguments");
+
+		PersonalizationUtils.openFilterDialog.restore();
+	});
+
+	QUnit.test("Open filter dialog; Focus handling (TODO: SHOULD BE AN OPA TEST!)", async function(assert) {
+		await this.createTable({
+			p13nMode: ["Filter"],
+			filterConditions: {
+				name: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}]
+			},
+			columns: new Column({
+				template: new Text(),
+				propertyKey: "name"
+			})
+		});
+		await this.filterInfoBarRendered();
+
+		const oFilterInfoBar = this.getFilterInfoBar();
+
+		// Simulate setting the focus when the filter dialog is closed and all filters have been removed.
+		// The filter info bar will be hidden in this case. The focus should still be somewhere in the table and not on the document body.
+		oFilterInfoBar.focus();
+		oFilterInfoBar.firePress(); // Opens the filter dialog
+		await TableQUnitUtils.waitForP13nPopup(this.oTable);
+		await TableQUnitUtils.closeP13nPopup(this.oTable);
+		this.oTable.setFilterConditions({name: []}); // Hides the filter info bar
+		await nextUIUpdate();
+		assert.ok(this.oTable.getDomRef().contains(document.activeElement),
+			"After removing all filters in the dialog and closing it, the focus is in the table");
+	});
+
+	QUnit.test("Clear filters button", async function(assert) {
+		await this.createTable({
+			p13nMode: ["Filter"],
+			filterConditions: {
+				name: [{
+					isEmpty: null,
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
+					values: ["test"]
+				}]
+			},
+			columns: new Column({
+				template: new Text(),
+				propertyKey: "name"
+			})
+		});
+		await this.filterInfoBarRendered();
+
+		const oFilterInfoBarContent = this.getFilterInfoBar().getContent();
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+
+		assert.ok(oFilterInfoBarContent[1].isA("sap.m.ToolbarSpacer"), "The second content element is a toolbar spacer");
+		assert.ok(oFilterInfoBarContent[2].isA("sap.m.Button"), "The third content element is a (Clear Filters) button");
+		assert.equal(oFilterInfoBarContent[2].getTooltip(), oResourceBundle.getText("infobar.REMOVEALLFILTERS"), "Clear Filters button tooltip");
+		assert.equal(oFilterInfoBarContent[2].getIcon(), "sap-icon://decline", "Clear Filters button icon");
+		assert.equal(oFilterInfoBarContent[2].getType(), "Transparent", "Clear Filters button type");
+
+		this.spy(PersonalizationUtils, "createClearFiltersChange");
+		oFilterInfoBarContent[2].firePress();
+		assert.ok(PersonalizationUtils.createClearFiltersChange.calledOnceWithExactly(this.oTable),
+			"Pressing the Clear Filters button calls utils.Personalization.createClearFiltersChange with the correct arguments");
+
+		await nextUIUpdate();
+		assert.ok(this.oTable.getDomRef().contains(document.activeElement), "The focus is in the table");
+
+		PersonalizationUtils.createClearFiltersChange.restore();
 	});
 
 	aTestedTypes.forEach(function(sTableType) {
@@ -5458,40 +4378,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Column resize", {
-		before: function() {
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, [
-				{
-					name: "Name",
-					label: "Name",
-					path: "Name",
-					groupable: true,
-					aggregatable: true,
-					dataType: "String",
-					extension: {
-						customAggregate: {}
-					}
-				}, {
-					name: "Country",
-					label: "Country",
-					path: "Country",
-					groupable: true,
-					aggregatable: true,
-					dataType: "String",
-					extension: {
-						customAggregate: {}
-					}
-				},
-				{name: "name_country", label: "Complex Title & Description", propertyInfos: ["Name", "Country"]},
-				{name: "Name_2", label: "Name 2", propertyInfos: ["Name"]},
-				{name: "Name_3", label: "Name 3", propertyInfos: ["Name"]}
-			]);
-		},
 		beforeEach: function() {
 			return this.createTestObjects();
-
-		},
-		after: function() {
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		afterEach: function() {
 			this.destroyTestObjects();
@@ -5502,18 +4390,53 @@ sap.ui.define([
 			}, mSettings);
 
 			const sTableView =
-				'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
-				'<Table enableColumnResize="' + mSettings.enableColumnResize + '" id="table" delegate=\'\{name: "sap/ui/mdc/odata/v4/TableDelegate"\}\'>' +
-				'<columns>' +
-				'<mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name" />' +
-				'<mdcTable:Column id="myTable--column1" header="column 1" propertyKey="Country" />' +
-				'<mdcTable:Column id="myTable--column2" header="column 2" propertyKey="name_country" />' +
-				'</columns>' +
-				'<customData>' +
-				'<core:CustomData key="xConfig"'
-				+ ' value=\'\\{\"aggregations\":\\{\"columns\":\\{\"name_country\":\\{\"width\":\"199px\"\\},\"Name_2\":\\{\"width\":\"159px\"\\},\"Name_3\":\\{\"width\":\"149px\"\\}\\}\\}\\}\'/>' +
-				'</customData>' +
-				'</Table></mvc:View>';
+			`<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
+				<Table id="table" enableColumnResize="${mSettings.enableColumnResize}" delegate='${JSON.stringify({
+					name: sDelegatePath,
+					payload: {
+						propertyInfo: [{
+							key: "Name",
+							label: "Name",
+							path: "Name",
+							dataType: "String"
+						}, {
+							key: "Country",
+							label: "Country",
+							path: "Country",
+							dataType: "String"
+						}, {
+							key: "name_country",
+							label: "Complex Title + Description",
+							propertyInfos: ["Name", "Country"]
+						}, {
+							key: "Name_2",
+							label: "Name 2",
+							propertyInfos: ["Name"]
+						}, {
+							key: "Name_3",
+							label: "Name 3",
+							propertyInfos: ["Name"]
+						}]
+					}
+				})}'>
+					<columns>
+						<mdcTable:Column id="myTable--column0" header="column 0" propertyKey="Name" />
+						<mdcTable:Column id="myTable--column1" header="column 1" propertyKey="Country" />
+						<mdcTable:Column id="myTable--column2" header="column 2" propertyKey="name_country" />
+					</columns>
+					<customData>
+						<core:CustomData key="xConfig" value=\'\\{
+							\"aggregations\":\\{
+								\"columns\":\\{
+									\"name_country\":\\{\"width\":\"199px\"\\},
+									\"Name_2\":\\{\"width\":\"159px\"\\},
+									\"Name_3\":\\{\"width\":\"149px\"\\}
+								\\}
+							\\}
+						\\}\'/>
+					</customData>
+				</Table>
+			</mvc:View>`;
 
 			return createAppEnvironment(sTableView, "Table").then(async function(mCreatedApp){
 				this.oView = mCreatedApp.view;
@@ -5714,7 +4637,12 @@ sap.ui.define([
 			delegate: {
 				name: sDelegatePath,
 				payload: {
-					collectionPath: "/testPath"
+					collectionPath: "/testPath",
+					propertyInfo: [{
+						key: "name",
+						label: "Name",
+						dataType: "String"
+					}]
 				}
 			},
 			p13nMode: ["Filter"],
@@ -5739,12 +4667,6 @@ sap.ui.define([
 		const oFilter = new FilterBar();
 		const fnAnnounceTableUpdate = sinon.spy(MTableUtil, "announceTableUpdate");
 
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
-			name: "name",
-			label: "Name",
-			dataType: "String"
-		}]);
-
 		this.oTable.setFilter(oFilter);
 
 		return TableQUnitUtils.waitForBinding(this.oTable).then(function() {
@@ -5764,7 +4686,6 @@ sap.ui.define([
 			this.oTable.getRowBinding()._fireChange();
 			// in some cases OData V4 doesn't trigger a data request, but the binding context changes and the item count has to be announced
 			assert.ok(fnAnnounceTableUpdate.calledTwice, "MTableUtil.announceTableUpdate is called on binding change even if no data request is sent.");
-			TableQUnitUtils.restorePropertyInfos(this.oTable);
 			fnAnnounceTableUpdate.restore();
 		}.bind(this));
 	});
@@ -5775,7 +4696,12 @@ sap.ui.define([
 			delegate: {
 				name: sDelegatePath,
 				payload: {
-					collectionPath: "/testPath"
+					collectionPath: "/testPath",
+					propertyInfo: [{
+						key: "name",
+						label: "Name",
+						dataType: "String"
+					}]
 				}
 			},
 			p13nMode: ["Filter"],
@@ -5801,12 +4727,6 @@ sap.ui.define([
 		const fnOnDataReceived = sinon.spy(this.oTable, "_onDataReceived");
 		const fnAnnounceTableUpdate = sinon.spy(MTableUtil, "announceTableUpdate");
 
-		TableQUnitUtils.stubPropertyInfos(this.oTable, [{
-			name: "name",
-			label: "Name",
-			dataType: "String"
-		}]);
-
 		this.oTable.setFilter(oFilter);
 
 		return TableQUnitUtils.waitForBinding(this.oTable).then(function() {
@@ -5814,55 +4734,11 @@ sap.ui.define([
 			assert.ok(fnOnDataReceived.called, "Event dataReceived is fired.");
 			assert.equal(this.oTable._bAnnounceTableUpdate, undefined, "Table internal flag _bAnnounceTableUpdate is undefined");
 			assert.notOk(fnAnnounceTableUpdate.called, "Function announceTableUpdate is never called.");
-			TableQUnitUtils.restorePropertyInfos(this.oTable);
 			fnAnnounceTableUpdate.restore();
 		}.bind(this));
 	});
 
 	QUnit.module("PropertyInfo handling", {
-		beforeEach: function() {
-			this.aProperties = [{
-				name: "firstname",
-				path: "firstname",
-				label: "First Name",
-				dataType: "String",
-				visualSettings: {
-					widthCalculation: {
-						minWidth: 22
-					}
-				}
-			}, {
-				name: "lastname",
-				path: "lastname",
-				label: "Last Name",
-				dataType: "String",
-				exportSettings: {
-					property: "lastname",
-					textAlign: "Center"
-				}
-			}, {
-				name: "age",
-				path: "age",
-				dataType: "String",
-				label: "Age"
-			}];
-			this.aInitialProperties = [{
-				name: "lastname",
-				label: "Last Name",
-				path: "lastname",
-				dataType: "String",
-				exportSettings: {
-					property: "lastname",
-					textAlign: "Center"
-				}
-			}, {
-				name: "age",
-				path: "age",
-				label: "Age",
-				dataType: "String"
-			}];
-			TableQUnitUtils.stubPropertyInfos(Table.prototype, this.aProperties);
-		},
 		afterEach: function() {
 			if (this.oTable) {
 				this.oTable.destroy();
@@ -5871,14 +4747,38 @@ sap.ui.define([
 			if (this.oFetchPropertiesSpy) {
 				this.oFetchPropertiesSpy.restore();
 			}
-			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTable: function(mSettings) {
 			this.oTable = new Table(Object.assign({
 				delegate: {
 					name: sDelegatePath,
 					payload: {
-						collectionPath: "/testPath"
+						collectionPath: "/testPath",
+						propertyInfo: [{
+							key: "firstname",
+							path: "firstname",
+							label: "First Name",
+							dataType: "String",
+							visualSettings: {
+								widthCalculation: {
+									minWidth: 22
+								}
+							}
+						}, {
+							key: "lastname",
+							path: "lastname",
+							label: "Last Name",
+							dataType: "String",
+							exportSettings: {
+								property: "lastname",
+								textAlign: "Center"
+							}
+						}, {
+							key: "age",
+							path: "age",
+							dataType: "String",
+							label: "Age"
+						}]
 					}
 				},
 				columns: [
@@ -5893,7 +4793,21 @@ sap.ui.define([
 						propertyKey: "age"
 					})
 				],
-				propertyInfo: this.aInitialProperties
+				propertyInfo: [{
+					key: "lastname",
+					label: "Last Name",
+					path: "lastname",
+					dataType: "String",
+					exportSettings: {
+						property: "lastname",
+						textAlign: "Center"
+					}
+				}, {
+					key: "age",
+					path: "age",
+					label: "Age",
+					dataType: "String"
+				}]
 			}, mSettings));
 			this.oFinalizePropertyHelperSpy = sinon.spy(this.oTable, "finalizePropertyHelper");
 
@@ -5917,7 +4831,7 @@ sap.ui.define([
 			assert.equal(this.oFetchPropertiesSpy.callCount, 0, "Delegate.fetchProperties not called");
 			assert.ok(oTable.getPropertyHelper(), "PropertyHelper exists");
 			assert.notOk(oTable.isPropertyHelperFinal(), "PropertyHelper is not final");
-			assert.equal(oTable.getPropertyHelper().getProperties().length, this.aInitialProperties.length, "PropertyHelper has initial properties");
+			assert.equal(oTable.getPropertyHelper().getProperties().length, 2, "PropertyHelper has initial properties");
 		}.bind(this));
 	});
 
@@ -6367,6 +5281,937 @@ sap.ui.define([
 			window.removeEventListener("unhandledrejection", fnOnRejectedPromiseError);
 			assert.deepEqual(aErrors, [], "No uncaught errors detected");
 		});
+	});
+
+	QUnit.module("Automatic column width calculation", {
+		afterEach: function() {
+			this.oTable?.destroy();
+		},
+		createTable: function(mSettings, aPropertyInfos) {
+			this.oTable = new Table({
+				delegate: {
+					name: "test-resources/sap/ui/mdc/delegates/odata/v4/TableDelegate",
+					payload: {
+						collectionPath: "/testPath",
+						propertyInfo: aPropertyInfos
+					}
+				},
+				enableAutoColumnWidth: true,
+				...mSettings
+			});
+
+			return this.oTable;
+		}
+	});
+
+	QUnit.test("Column widths", async function(assert) {
+		const oCanvasContext = document.createElement("canvas").getContext("2d");
+		oCanvasContext.font = [
+			parseFloat(ThemeParameters.get({name: "sapMFontMediumSize"}) || "0.875rem") * parseFloat(MLibrary.BaseFontSize) + "px",
+			ThemeParameters.get({name: "sapUiFontFamily"}) || "Arial"
+		].join(" ");
+
+		const fPadding = 1.0625;
+		const measureText = function(sRefText) {
+			return oCanvasContext.measureText(sRefText).width / 16;
+		};
+		const check = function(sRefText, fOrigWidth, fRange) {
+			// length of 5 chars  ~ 3.159rem
+			// length of 10 chars ~ 6.318rem
+			const fRefTextWidth = measureText(sRefText);
+			return Math.abs(fRefTextWidth - fOrigWidth) <= (fRange || 0.5);
+		};
+
+		this.createTable({
+			columns: [
+				new Column({
+					id: "firstName",
+					width: "10rem",
+					header: "First name",
+					propertyKey: "firstName"
+				}),
+				new Column({
+					id: "lastName",
+					header: "Last name",
+					propertyKey: "lastName"
+				}),
+				new Column({
+					id: "fullName",
+					header: "Full name",
+					propertyKey: "fullName"
+				}),
+				new Column({
+					id: "numberValue",
+					header: "Number value",
+					propertyKey: "numberValue"
+				}),
+				new Column({
+					id: "booleanValue",
+					header: "Boolean value",
+					propertyKey: "booleanValue"
+				}),
+				new Column({
+					id: "columnGap1",
+					header: "Test gap",
+					propertyKey: "columnGap1"
+				}),
+				new Column({
+					id: "columnGap2",
+					header: "Test gap",
+					propertyKey: "columnGap2"
+				}),
+				new Column({
+					id: "noWidthCalculation",
+					header: "No Width Calculation",
+					propertyKey: "noWidthCalculation"
+				}),
+				new Column({
+					id: "complexNoWidthCalculation",
+					header: "Complex No Width Calculation",
+					propertyKey: "complexNoWidthCalculation"
+				}),
+				new Column({
+					id: "stringValue_nomaxlength",
+					header: "stringValue_nomaxlength",
+					propertyKey: "stringValue_nomaxlength"
+				}),
+				new Column({
+					id: "stringValue_bigmaxlength",
+					header: "stringValue_bigmaxlength",
+					propertyKey: "stringValue_bigmaxlength"
+				}),
+				new Column({
+					id: "stringValue_nolabeltruncate",
+					header: "stringValue_nolabeltruncate",
+					propertyKey: "stringValue_nolabeltruncate"
+				}),
+				new Column({
+					id: "column_required",
+					header: "a",
+					propertyKey: "a",
+					required: true
+				})
+			]
+		}, [{
+			key: "firstName",
+			path: "firstName",
+			label: "First name",
+			dataType: "Edm.String",
+			constraints: {maxLength: 30},
+			visualSettings: {
+				widthCalculation: {
+					minWidth: 4,
+					maxWidth: 10
+				}
+			}
+		}, {
+			key: "lastName",
+			path: "lastName",
+			label: "Last name",
+			dataType: "Edm.String",
+			constraints: {maxLength: 30},
+			visualSettings: {
+				widthCalculation: {
+					minWidth: 6,
+					maxWidth: 8
+				}
+			}
+		}, {
+			key: "fullName",
+			label: "Full name",
+			propertyInfos: ["firstName", "lastName"],
+			visualSettings: {
+				widthCalculation: {
+					verticalArrangement: true
+				}
+			}
+		}, {
+			key: "numberValue",
+			label: "Number value",
+			dataType: "Edm.Byte",
+			visualSettings: {
+				widthCalculation: {
+					includeLabel: false
+				}
+			}
+		}, {
+			key: "booleanValue",
+			label: "Boolean value",
+			dataType: "Edm.Boolean",
+			visualSettings: {
+				widthCalculation: {
+					includeLabel: false,
+					minWidth: 1
+				}
+			}
+		}, {
+			key: "columnGap1",
+			label: "Test gap",
+			dataType: "Edm.String",
+			constraints: {maxLength: 32},
+			visualSettings: {
+				widthCalculation: {
+					gap: 2
+				}
+			}
+		}, {
+			key: "columnGap2",
+			label: "Test gap",
+			dataType: "Edm.String",
+			constraints: {maxLength: 32}
+		}, {
+			key: "noWidthCalculation",
+			label: "No Width Calculation",
+			dataType: "Edm.String",
+			visualSettings: {
+				widthCalculation: null
+			}
+		}, {
+			key: "complexNoWidthCalculation",
+			label: "Complex with no width calculation",
+			propertyInfos: ["lastName", "noWidthCalculation"],
+			visualSettings: {
+				widthCalculation: {
+					includeLabel: false
+				}
+			}
+		}, {
+			key: "stringValue_nomaxlength",
+			label: "String",
+			dataType: "Edm.String"
+		}, {
+			key: "stringValue_bigmaxlength",
+			label: "String",
+			dataType: "Edm.String",
+			constraints: {maxLength: 255}
+		}, {
+			key: "stringValue_nolabeltruncate",
+			label: "stringValue_nolabeltruncate",
+			dataType: "Edm.String",
+			constraints: {maxLength: 5},
+			visualSettings: {
+				widthCalculation: {
+					truncateLabel: false
+				}
+			}
+		}, {
+			key: "a",
+			label: "a",
+			dataType: "Edm.Boolean",
+			visualSettings: {
+				widthCalculation: {
+					minWidth: 1
+				}
+			}
+		}]);
+		await this.oTable.initialized();
+		this.oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		await this.oTable._fullyInitialized();
+		await this.oTable.propertiesFinalized();
+
+		const oPropertyHelper = this.oTable.getPropertyHelper();
+		const aColumns = this.oTable.getColumns();
+		const getInnerColumnWidth = function(oMDCColumn) {
+			return oMDCColumn.getInnerColumn().getWidth();
+		};
+
+		// 1st column must have a width of 10rem due of its predefined
+		assert.equal(parseFloat(getInnerColumnWidth(aColumns[0])) + "rem", "10rem", "Table inner column firstName width is 10rem");
+
+		// 2nd column maxLength of 30 exceeds a maxWidth of 8
+		assert.notOk(check("A".repeat(30), parseFloat(getInnerColumnWidth(aColumns[1]))), "Column lastName would exceed maxWidth of 8rem");
+		assert.equal((parseFloat(getInnerColumnWidth(aColumns[1])) - fPadding) + "rem", "8rem", "Table inner column lastName width is 8rem");
+
+		// 3th column is complex with vertical alignment and exceed maxWidth of 10rem of column firstName
+		assert.notOk(check("A".repeat(30), parseFloat(getInnerColumnWidth(aColumns[2]))), "Column fullName would exceed maxWidth of 10rem");
+		assert.equal((parseFloat(getInnerColumnWidth(aColumns[2])) - fPadding) + "rem", "10rem",
+			"Table inner column fullName calculated width is 10rem");
+
+		// 4th column width is 2rem, the default minWidth, due Edm.Byte has a limit of 3 chars ~ 1.459rem
+		let sPropertyName = aColumns[3].getPropertyKey();
+		let oProperty = oPropertyHelper.getProperty(sPropertyName);
+
+		const sWidth = oPropertyHelper._calcColumnWidth(oProperty, aColumns[3]);
+		assert.equal(sWidth, aColumns[3]._oSettingsModel.getProperty("/calculatedWidth"), "calculatedWidth for numberValue width is " + sWidth);
+		assert.equal(sWidth, getInnerColumnWidth(aColumns[3]), "Column numberValue width is " + sWidth);
+
+		// 5th column is in correct range due of type boolean
+		assert.ok(check("Yes", parseFloat(getInnerColumnWidth(aColumns[4])) - fPadding),
+			"Column booleanValue width calculated correctly");
+
+		// by side of the gap, columnGap1 and columnGap2 are identical
+		sPropertyName = aColumns[5].getPropertyKey();
+		oProperty = oPropertyHelper.getProperty(sPropertyName);
+		assert.equal(getInnerColumnWidth(aColumns[5]),
+			parseFloat(getInnerColumnWidth(aColumns[6])) + oProperty.visualSettings.widthCalculation.gap + "rem",
+			"Additional gap of " + oProperty.visualSettings.widthCalculation.gap + "rem for Column columnGap1 is calculated correctly");
+
+		// visualSettings.widthCalculation=null
+		assert.notOk(getInnerColumnWidth(aColumns[7]), "There is no width set since visualSettings.widthCalculation=null");
+
+		// complex property with visualSettings.widthCalculation=null
+		assert.equal(getInnerColumnWidth(aColumns[8]), getInnerColumnWidth(aColumns[1]), "Width calculation in complex property with visualSettings.widthCalculation=null is ignored");
+
+		assert.equal(getInnerColumnWidth(aColumns[9]), 19 + fPadding + "rem", "String type without maxLength gets maxWidth");
+		assert.equal(getInnerColumnWidth(aColumns[10]), 19 + fPadding + "rem", "String type with big maxLength gets maxWidth");
+
+		assert.ok(measureText(aColumns[11].getHeader()) <= parseFloat(getInnerColumnWidth(aColumns[11])) - fPadding, "The header is not truncated and the column width is as wide as the header");
+
+		// 12th column. required "*" is added to column
+		assert.ok(check("Yes*", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */), "Heaeder has correct width when using 'required' property");
+	});
+
+	QUnit.test("Column widths; TreeTableType", async function(assert) {
+		const aPropertyInfos = [{
+			key: "firstName",
+			path: "firstName",
+			label: "First name",
+			dataType: "Edm.String",
+			constraints: {maxLength: 30}
+		}, {
+			key: "lastName",
+			path: "lastName",
+			label: "Last name",
+			dataType: "Edm.String",
+			constraints: {maxLength: 30}
+		}];
+		const createTableConfig = function() {
+			return {
+				enableAutoColumnWidth: true,
+				columns: [
+					new Column({
+						header: "First name",
+						propertyKey: "firstName"
+					}),
+					new Column({
+						header: "Last name",
+						propertyKey: "lastName"
+					})
+				]
+			};
+		};
+
+		const oTable = this.createTable({
+			...createTableConfig()
+		}, aPropertyInfos);
+		const oTreeTable = this.createTable({
+			type: TableType.TreeTable,
+			...createTableConfig()
+		}, aPropertyInfos);
+
+		await Promise.all([
+			oTable.propertiesFinalized(),
+			oTreeTable.propertiesFinalized()
+		]);
+		await wait(0); // PropertyBinding needs time to update the width property
+
+		const aTableColumns = oTable.getColumns().map((oColumn) => oColumn.getInnerColumn());
+		const aTreeTableColumns = oTreeTable.getColumns().map((oColumn) => oColumn.getInnerColumn());
+		const [oFirstColumn, oSecondColumn] = aTableColumns;
+		const [oFirstTreeTableColumn, oSecondTreeTableColumn] = aTreeTableColumns;
+
+		assert.ok(parseFloat(oFirstTreeTableColumn.getWidth()) > parseFloat(oFirstColumn.getWidth()), "The first TreeTable column has larger width");
+		assert.equal(oSecondTreeTableColumn.getWidth(), oSecondColumn.getWidth(), "The column width is not changed for the the second column");
+
+		oTable.destroy();
+		oTreeTable.destroy();
+	});
+
+	QUnit.module("Export", {
+		afterEach: function() {
+			this.oTable?.destroy();
+		},
+		createTable: function(mSettings, aPropertyInfos) {
+			this.oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath",
+						propertyInfo: aPropertyInfos
+					}
+				},
+				...mSettings
+			});
+		}
+	});
+
+	QUnit.test("Export button handling on initialization when export is disabled", async function(assert) {
+		this.createTable();
+
+		assert.notOk(this.oTable._oExportButton, "Export button does not exist before initialization");
+
+		await this.oTable.initialized();
+		assert.notOk(this.oTable._oExportButton, "Export button does not exist after initialization");
+	});
+
+	QUnit.test("Export button handling on initialization when export is enabled", async function(assert) {
+		this.createTable({
+			enableExport: true
+		});
+
+		assert.notOk(this.oTable._oExportButton, "Export button does not exist before table initialization");
+
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oExportButton, "Export button exists after initialization");
+		assert.ok(this.oTable._oExportButton.isA("sap.m.MenuButton"), "Is a sap.m.MenuButton");
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Is child of the toolbar");
+		assert.ok(this.oTable._oExportButton.getVisible(), "Is visible");
+
+		assert.equal(FESRHelper.getSemanticStepname(this.oTable._oExportButton, "defaultAction"), "OI:QE", "Correct FESR StepName");
+		const oMenu = this.oTable._oExportButton.getMenu();
+		assert.equal(oMenu.getItems().length, 2, "Export MenuButton has 2 actions");
+		assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[0], "press"), "OI:QE", "Correct FESR StepName - Menu Item 1");
+		assert.equal(FESRHelper.getSemanticStepname(oMenu.getItems()[1], "press"), "OI:EXP:SETTINGS", "Correct FESR StepName - Menu Item 2");
+	});
+
+	QUnit.test("Export button handling on initialization when export is enabled but not supported by the delegate", async function(assert) {
+		this.createTable({
+			enableExport: true
+		});
+
+		const oDelegate = await this.oTable.awaitControlDelegate();
+		sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
+
+		await this.oTable.initialized();
+		assert.notOk(this.oTable._oExportButton, "Export button does not exist after table initialization");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.restore();
+	});
+
+	QUnit.test("Export button handling when enabling/disabling export after initialization", async function(assert) {
+		this.createTable();
+
+		await this.oTable.initialized();
+		this.oTable.setEnableExport(true);
+		assert.ok(this.oTable._oExportButton, "Enabled: Export button exists");
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Enabled: Is child of the toolbar");
+		assert.ok(this.oTable._oExportButton.getVisible(), "Enabled: Is visible");
+
+		this.oTable.setEnableExport(false);
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Disabled: Is child of the toolbar");
+		assert.notOk(this.oTable._oExportButton.getVisible(), "Disabled: Is invisible");
+
+		this.oTable.setEnableExport(true);
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Enabled: Is child of the toolbar");
+		assert.ok(this.oTable._oExportButton.getVisible(), "Enabled: Is visible");
+	});
+
+	QUnit.test("Export button handling when enabling export after initialization but not supported by the delegate", async function(assert) {
+		this.createTable();
+
+		const oDelegate = await this.oTable.awaitControlDelegate();
+		sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
+
+		await this.oTable.initialized();
+		this.oTable.setEnableExport(true);
+		assert.notOk(this.oTable._oExportButton, "Export button does not exist");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.restore();
+	});
+
+	QUnit.test("Export button handling when changing the table type", async function(assert) {
+		this.createTable({
+			enableExport: true
+		});
+
+		const oDelegate = await this.oTable.awaitControlDelegate();
+		sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": false});
+
+		await this.oTable.initialized();
+		assert.notOk(this.oTable._oExportButton, "Export button does not exist");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": true});
+		this.oTable.setType(TableType.ResponsiveTable);
+		await this.oTable.initialized();
+		const oExportButton = this.oTable._oExportButton;
+		assert.ok(this.oTable._oExportButton,
+			"Export button exists after changing to a type for which the delegate does support export");
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Export button is a child of the toolbar");
+		assert.ok(this.oTable._oExportButton.getVisible(), "Export button is visible");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": false});
+		this.oTable.setType(TableType.Table);
+		await this.oTable.initialized();
+		assert.notOk(this.oTable._oExportButton.getVisible(),
+			"Export button is invisible after changing to a type for which the delegate does not support export");
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Export button is a child of the toolbar");
+		assert.equal(oExportButton, this.oTable._oExportButton, "Same button instance is used");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.returns({p13nModes: [], "export": true});
+		this.oTable.setType(TableType.ResponsiveTable);
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oExportButton.getVisible(),
+			"Export button is visible after changing to a type for which the delegate supports export");
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Export button is a child of the toolbar");
+		assert.equal(oExportButton, this.oTable._oExportButton, "Same button instance is used");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.restore();
+	});
+
+	QUnit.test("Export button initialization with toolbar actions", async function(assert) {
+		this.createTable({
+			action: new Text(),
+			enableExport: true
+		});
+
+		// Aggregation forwarding will cause the creation of the ActionToolbar. The export button will not be added at this point, because
+		// the delegate is not yet loaded. The button has to be added to the toolbar when the rest of the content is created.
+
+		const oDelegate = await this.oTable.awaitControlDelegate();
+		sinon.stub(oDelegate, "getSupportedFeatures").returns({p13nModes: [], "export": true});
+
+		await this.oTable.initialized();
+		assert.ok(this.oTable._oExportButton, "Export button exists after initialization with toolbar actions");
+		assert.strictEqual(this.oTable._oExportButton.getParent(), this.oTable._oToolbar, "Export button is a child of the toolbar");
+		assert.ok(this.oTable._oExportButton.isA("sap.m.OverflowToolbarMenuButton"), "Export button is an OverflowToolbarMenuButton");
+		assert.ok(this.oTable._oExportButton.getVisible(), "Export button is visible");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.restore();
+	});
+
+	QUnit.skip("Trigger export; No visible columns (TODO: SHOULD BE AN OPA TEST!)", async function(assert) {
+		this.createTable({
+			enableExport: true
+		});
+		this.spy(this.oTable, "_onExport");
+
+		await TableQUnitUtils.waitForBinding(this.oTable);
+
+		await new Promise((resolve) => {
+			sap.ui.require([
+				"sap/m/MessageBox"
+			], (MessageBox) => {
+				this.stub(MessageBox, "error").callsFake(function() {
+					assert.ok(this.oTable._onExport.calledOnce, "_onExport called");
+					assert.ok(MessageBox.error.calledOnce);
+					MessageBox.error.restore();
+					resolve();
+				});
+				this.oTable._oExportButton.fireDefaultAction();
+			});
+		});
+	});
+
+	QUnit.test("Trigger 'Export as' via keyboard shortcut", async function(assert) {
+		this.createTable({
+			enableExport: true
+		});
+		this.oTable.placeAt("qunit-fixture");
+		await this.oTable.initialized();
+		await nextUIUpdate();
+
+		sinon.stub(this.oTable, "_onExport");
+
+		assert.ok(!this.oTable._oExportButton.getEnabled(), "Binding length is 0: Button disabled");
+
+		// trigger CTRL + SHIFT + E keyboard shortcut
+		QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
+		assert.ok(this.oTable._onExport.notCalled, "Export button is disabled: Export not triggered");
+
+		this.oTable._oExportButton.setEnabled(true);
+
+		// trigger CTRL + SHIFT + E keyboard shortcut
+		QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
+		assert.ok(this.oTable._onExport.calledWith(true), "Export settings dialog opened");
+
+		sinon.stub(this.oTable.getControlDelegate(), "getSupportedFeatures").returns({p13nModes: [], "export": false});
+		this.oTable.setType(TableType.ResponsiveTable);
+		await this.oTable.initialized();
+
+		this.oTable._onExport.resetHistory();
+		QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
+		assert.ok(this.oTable._onExport.notCalled, "Export is not supported by delegate: Export not triggered");
+
+		this.oTable.getControlDelegate().getSupportedFeatures.restore();
+	});
+
+	QUnit.test("beforeExport event", async function(assert) {
+		const fnSetLabel = this.stub();
+		const fnSetType = this.stub();
+		const oFakeExportHandlerEvent = sinon.createStubInstance(UI5Event);
+
+		oFakeExportHandlerEvent.getParameter.withArgs("exportSettings").returns({});
+		oFakeExportHandlerEvent.getParameter.withArgs("userExportSettings").returns({
+			splitCells: false,
+			includeFilterSettings: true
+		});
+		oFakeExportHandlerEvent.getParameter.withArgs("filterSettings").returns([{
+			getProperty: this.stub().returns("SampleField"),
+			setLabel: fnSetLabel,
+			setType: fnSetType
+		}]);
+
+		this.createTable({
+			beforeExport: (oEvent) => {
+				const mExportSettings = oEvent.getParameter("exportSettings");
+				const mUserSettings = oEvent.getParameter("userExportSettings");
+				const aFilterSettings = oEvent.getParameter("filterSettings");
+
+				assert.ok(mExportSettings, "Export settings defined");
+				assert.ok(mUserSettings, "User settings defined");
+				assert.ok(aFilterSettings, "Filter settings defined");
+				assert.ok(Array.isArray(aFilterSettings), "Filter settings defined");
+
+				assert.ok(fnSetLabel.called, "Filter#setLabel was called");
+				assert.ok(fnSetLabel.calledWith("SampleLabel"), "Filter#setLabel was called with correct value");
+				assert.ok(fnSetType.called, "Filter#setType was called");
+				assert.ok(fnSetType.calledWith(this.oTable.getPropertyHelper().getProperty("SampleField").typeConfig.typeInstance),
+					"Filter#setType was called with the expected type instance");
+
+				oEvent.preventDefault();
+			}
+		}, [{
+			key: "SampleField",
+			path: "SampleField",
+			label: "SampleLabel",
+			dataType: "String"
+		}]);
+		await this.oTable._fullyInitialized();
+
+		this.oTable._onBeforeExport(oFakeExportHandlerEvent);
+		assert.ok(oFakeExportHandlerEvent.preventDefault.calledOnce, "Prevent default has been forwarded to the ExportHandler event");
+	});
+
+	QUnit.test("#_getExportHandler", async function(assert) {
+		this.createTable();
+		await this.oTable.initialized();
+
+		const oFetchExportCapabilities = this.spy(this.oTable.getControlDelegate(), "fetchExportCapabilities");
+
+		/* Create fake ExportHandler class because dependency to sapui5.runtime is not possible */
+		const FakeExportHandler = function() {};
+		FakeExportHandler.prototype.isA = function(sClass) {return sClass === "sap.ui.export.ExportHandler";};
+		FakeExportHandler.prototype.attachBeforeExport = this.stub();
+
+		this.stub(Library, "load").withArgs({name: "sap.ui.export"}).resolves();
+		this.stub(sap.ui, "require").withArgs(["sap/ui/export/ExportHandler"]).callsFake(function(aDependencies, fnCallback) {
+			fnCallback(FakeExportHandler);
+		});
+
+		assert.ok(Library.load.notCalled, "Not called yet");
+		assert.ok(oFetchExportCapabilities.notCalled, "Not called yet");
+		assert.notOk(this.oTable._oExportHandler, "No cached instance");
+
+		let oHandler = await this.oTable._getExportHandler();
+
+		assert.equal(Library.load.callCount, 1, "Library.load has been called once");
+		assert.equal(oFetchExportCapabilities.callCount, 1, "fetchExportCapabilities has been called once");
+		assert.ok(oHandler, "Variable is defined");
+		assert.ok(this.oTable._oExportHandler, "Cached instance available");
+		assert.ok(oHandler.attachBeforeExport.calledOnce, "ExportHandler#attachBeforeExport has been called once");
+		assert.ok(oHandler.attachBeforeExport.calledWith(this.oTable._onBeforeExport, this.oTable),
+			"Table._onBeforeExport has been attached as event handler");
+
+		/* Reset spies */
+		Library.load.reset();
+		oFetchExportCapabilities.reset();
+		assert.ok(Library.load.notCalled, "Not called yet");
+		assert.ok(oFetchExportCapabilities.notCalled, "Not called yet");
+
+		oHandler = await this.oTable._getExportHandler();
+
+		assert.ok(Library.load.notCalled, "Not called again");
+		assert.ok(oFetchExportCapabilities.notCalled, "Not called again");
+		assert.ok(oHandler, "Variable is defined");
+		assert.ok(oHandler.isA("sap.ui.export.ExportHandler"), "Parameter is a sap.ui.export.ExportHandler");
+		assert.equal(oHandler, this.oTable._oExportHandler, "Cached instance has been returned");
+
+		Library.load.restore();
+		oFetchExportCapabilities.restore();
+		sap.ui.require.restore();
+	});
+
+	QUnit.test("#_getExportHandler when sap.ui.export is missing", async function(assert) {
+		this.createTable();
+
+		assert.expect(2);
+
+		sinon.stub(Library, "load").returns(Promise.reject());
+		sinon.stub(MessageBox, "error");
+
+		await this.oTable.initialized();
+		await this.oTable._getExportHandler().catch(() => {
+			assert.ok(MessageBox.error.calledOnce, "MessageBox was called");
+			assert.ok(MessageBox.error.calledWith(Library.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY")),
+				"Called with proper error message");
+		});
+
+		Library.load.restore();
+		MessageBox.error.restore();
+	});
+
+	QUnit.test("#_createExportColumnConfiguration", async function(assert) {
+		this.createTable({
+			enableExport: true,
+			columns: [
+				new Column({
+					id: "firstNameColumn",
+					header: "First name",
+					width: "10rem",
+					propertyKey: "firstName",
+					template: new Text({
+						text: "{firstName}"
+					})
+				}),
+				new Column({
+					id: "lastNameColumn",
+					header: "Last name",
+					width: "10rem",
+					propertyKey: "lastName",
+					template: new Text({
+						text: "{lastName}"
+					})
+				}),
+				new Column({
+					id: "fullName",
+					header: "Full name",
+					width: "15rem",
+					propertyKey: "fullName",
+					template: new Text({
+						text: "{lastName}, {firstName}"
+					})
+				}),
+				new Column({
+					id: "fullNameExportSettings",
+					header: "Full name 2",
+					width: "15rem",
+					propertyKey: "fullName2",
+					template: new Text({
+						text: "{lastName}, {firstName}"
+					})
+				}),
+				new Column({
+					id: "ageColumn",
+					header: "Age",
+					hAlign: "Right",
+					width: "8rem",
+					propertyKey: "age",
+					template: new Text({
+						text: "{age}"
+					})
+				}),
+				new Column({
+					id: "dobColumn",
+					header: "Date of Birth",
+					hAlign: "Right",
+					width: "12rem",
+					propertyKey: "dob",
+					template: new Text({
+						text: "{dob}"
+					})
+				}),
+				new Column({
+					id: "salaryColumn",
+					header: "Salary",
+					hAlign: "Right",
+					width: "12rem",
+					propertyKey: "salary",
+					template: new Text({
+						text: "{salary}"
+					})
+				}),
+				new Column({
+					id: "noDataColumn1",
+					header: "NoDataColumn1",
+					hAlign: "Begin",
+					propertyKey: "noDataColumn1",
+					template: new Button({
+						text: "<"
+					})
+				}),
+				new Column({
+					id: "noDataColumn2",
+					header: "NoDataColumn2",
+					hAlign: "Begin",
+					propertyKey: "noDataColumn2",
+					template: new Button({
+						text: ">"
+					})
+				}),
+				new Column({
+					id: "ignoreColumn",
+					header: "IgnoreColumn",
+					hAlign: "Begin",
+					propertyKey: "ignoreColumn",
+					template: new Text({
+						text: "This text will not appear in the export"
+					})
+				})
+			]
+		}, [{
+				key: "firstName",
+				path: "firstName",
+				label: "First name",
+				dataType: "String",
+				exportSettings: {
+					width: 19,
+					type: "String",
+					label: "First_Name"
+				}
+			}, {
+				key: "lastName",
+				path: "lastName",
+				label: "Last name",
+				dataType: "String"
+			}, {
+				key: "fullName", // complex PropertyInfo without exportSettings => 2 spreadsheet column configs will be created
+				label: "Full name",
+				propertyInfos: ["firstName", "lastName"]
+			}, {
+				key: "fullName2", // complex PropertyInfo with exportSettings => 1 spreadsheet column config will be created
+				label: "Name",
+				propertyInfos: ["firstName", "lastName"],
+				exportSettings: {
+					template: "{0}, {1}"
+				}
+			}, {
+				key: "age",
+				path: "age",
+				label: "Age",
+				dataType: "String",
+				exportSettings: {
+					type: "Number"
+				}
+			}, {
+				key: "dob",
+				path: "dob",
+				label: "dob",
+				dataType: "String",
+				exportSettings: {
+					label: "Date of Birth",
+					type: "Date",
+					inputFormat: "YYYYMMDD",
+					width: 15,
+					template: "{0}"
+				}
+			}, {
+				key: "salary",
+				path: "salary",
+				label: "Salary",
+				dataType: "String",
+				exportSettings: {
+					displayUnit: true,
+					unitProperty: "currency",
+					template: "{0} {1}",
+					width: 10,
+					type: "Currency"
+				}
+			}, {
+				key: "currency",
+				path: "currency",
+				label: "Currency code",
+				dataType: "String",
+				exportSettings: {
+					width: 5
+				}
+			}, {
+				key: "noDataColumn1",
+				label: "NoDataColumn1",
+				sortable: false,
+				filterable: false,
+				dataType: "String",
+				exportSettings: {
+					width: 5
+				}
+			}, {
+				key: "noDataColumn2",
+				label: "NoDataColumn2",
+				sortable: false,
+				filterable: false,
+				dataType: "String"
+			}, {
+				key: "ignoreColumn",
+				label: "IgnoreColumn",
+				exportSettings: null,
+				dataType: "String"
+			}
+		]);
+
+		await nextUIUpdate();
+
+		const aExpectedOutput = [{
+			columnId: "firstNameColumn",
+			property: "firstName",
+			type: "String",
+			label: "First_Name",
+			width: 19,
+			textAlign: "Begin"
+		}, {
+			columnId: "lastNameColumn",
+			property: "lastName",
+			type: "String",
+			label: "Last name",
+			width: 10,
+			textAlign: "Begin"
+		}, {
+			columnId: "fullName",
+			label: "First_Name",
+			property: "firstName",
+			textAlign: "Begin",
+			type: "String",
+			width: 19
+		}, {
+			columnId: "fullName-additionalProperty1",
+			label: "Last name",
+			property: "lastName",
+			textAlign: "Begin",
+			type: "String",
+			width: 15
+		}, {
+			columnId: "fullNameExportSettings",
+			label: "Name",
+			property: ["firstName", "lastName"],
+			template: "{0}, {1}",
+			textAlign: "Begin",
+			type: "String",
+			width: 15
+		}, {
+			columnId: "ageColumn",
+			property: "age",
+			type: "Number",
+			label: "Age",
+			width: 8,
+			textAlign: "Right"
+		}, {
+			columnId: "dobColumn",
+			property: "dob",
+			type: "Date",
+			label: "Date of Birth",
+			width: 15,
+			textAlign: "Right",
+			template: "{0}",
+			inputFormat: "YYYYMMDD"
+		}, {
+			columnId: "salaryColumn",
+			displayUnit: true,
+			label: "Salary",
+			property: "salary",
+			template: "{0} {1}",
+			textAlign: "Right",
+			unitProperty: "currency",
+			width: 10,
+			type: "Currency"
+		}, {
+			columnId: "noDataColumn1",
+			label: "NoDataColumn1",
+			property: "",
+			textAlign: "Begin",
+			type: "String",
+			width: 5
+		}, {
+			columnId: "noDataColumn2",
+			label: "NoDataColumn2",
+			property: "",
+			textAlign: "Begin",
+			type: "String",
+			width: ""
+		}];
+
+		await this.oTable.initialized();
+		const aActualOutput = await this.oTable._createExportColumnConfiguration({fileName: 'Table header'});
+		assert.deepEqual(aActualOutput, aExpectedOutput, "The export configuration was created as expected");
 	});
 
 	QUnit.module("Theming", {

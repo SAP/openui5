@@ -119,20 +119,21 @@ sap.ui.define([
 		},
 
 		/**
-		 * Registers an annotation change handler for a specific change type and a model type.
+		 * Registers an annotation change handler for a specific change type or as default change handler.
+		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {string} mPropertyBag.modelType - Model type
-		 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be registered
 		 * @param {string|object} mPropertyBag.changeHandler - Path to change handler or change handler object
+		 * @param {string} [mPropertyBag.changeType] - Change type for which the change handler should be registered
+		 * @param {boolean} [mPropertyBag.isDefaultChangeHandler] - Indicates if the change handler is the default change handler
 		 */
 		registerAnnotationChangeHandler(mPropertyBag) {
 			ChangeHandlerStorage.registerAnnotationChangeHandler(mPropertyBag);
 		},
 
 		/**
-		 * Returns the registered change handler for the specified change type and model type.
+		 * Returns the registered change handler for the specified change type or the default change handler.
+		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {string} mPropertyBag.modelType - Model type
 		 * @param {string} mPropertyBag.changeType - Change type for which the change handler should be returned
 		 * @returns {Promise<object>} Resolves with the change handler
 		 */
