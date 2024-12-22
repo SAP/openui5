@@ -8,7 +8,13 @@
         "applicationVersion": {
             "version": "1.0.0"
         },
-        "i18n": "i18n/i18n.properties"
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": [
+                ""
+            ],
+            "fallbackLocale": ""
+        }
     },
     "sap.ui": {
         "technology": "UI5",
@@ -28,7 +34,10 @@
             "minUI5Version": "1.120.0",
             "libs": {
                 "sap.m": {},
-                "sap.ui.core": {}
+                "sap.f": {},
+                "sap.ui.core": {},
+                "sap.ui.layout": {},
+                "sap.ui.documentation": {}
             }
         },
         "componentUsages": {
