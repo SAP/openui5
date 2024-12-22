@@ -3313,6 +3313,28 @@ sap.ui.define([
 		assert.strictEqual(oPicker.getContent()[0].getItems().length, 3, "The items in the list are updated");
 	});
 
+	QUnit.test("Should focus the first token when nMore popover is open by the nMore indicator link and then closed", function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.multiInput.setTokens([
+			new Token({text: "Token 1"}),
+			new Token({text: "Token 2"}),
+			new Token({text: "Token 3"}),
+			new Token({text: "Token 4"})
+		]);
+
+		var oTokenizer = this.multiInput.getAggregation("tokenizer");
+		var oTokensPopup = oTokenizer.getTokensPopup();
+
+		// Act
+		oTokenizer._handleNMoreIndicatorPress();
+		this.clock.tick(nPopoverAnimationTick + 1);
+
+		qutils.triggerKeydown(oTokensPopup.getDomRef(), KeyCodes.ESCAPE);
+		this.clock.tick(nPopoverAnimationTick + 1);
+
+		assert.strictEqual(document.activeElement, oTokenizer.getAggregation("tokens")[0].getDomRef(), "The first token is focused after nMore popover is closed");
+	});
+
 	QUnit.test("Popover's interaction - try to delete non editable token", async function(assert) {
 		// Arrange
 		var oFakeEvent, oItem,
@@ -4226,7 +4248,7 @@ sap.ui.define([
 			oRenderingSpy = this.spy(oMultiInput, "onBeforeRendering"),
 			bVisible;
 
-		oMultiInput.placeAt("qunit-fixture");
+		oMultiInput.placeAt("content");
 		await nextUIUpdate();
 
 		//Act

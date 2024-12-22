@@ -331,6 +331,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype._handleNMoreIndicatorPress = function () {
+		this._bIsOpenedByNMoreIndicator = true;
 		this._togglePopup(this.getTokensPopup());
 	};
 
@@ -524,6 +525,12 @@ sap.ui.define([
 					iWidestElement += Math.ceil(iWidestElement * ( 1 - fRatio ));
 					oPopup.setContentWidth(iWidestElement + "px");
 				});
+			}, this)
+			.attachAfterClose(function () {
+				if (this.getTokens().length && this._bIsOpenedByNMoreIndicator) {
+					this.getTokens()[0].focus();
+				}
+				this._bIsOpenedByNMoreIndicator = false;
 			}, this);
 
 		this.addDependent(this._oPopup);
