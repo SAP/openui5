@@ -38,7 +38,7 @@ describe('sap.f.AdaptiveCardVisualTests', function() {
 			});
 		};
 
-		browser.executeScript("document.querySelector('.ac-pushButton.expandable').srollIntoView()").then(function() {
+		browser.executeScript("document.querySelector('.ac-pushButton.expandable').scrollIntoView()").then(function() {
 			showMoreButton.click();
 			captureCard();
 		});
