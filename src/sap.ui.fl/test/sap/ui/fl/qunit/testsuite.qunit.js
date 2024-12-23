@@ -558,6 +558,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/FlexState"]
 				}
 			},
+			"apply/_internal/flexState/communication/FLPAboutInfo": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/communication/FLPAboutInfo"]
+				}
+			},
 			"apply/_internal/flexState/DataSelector": {
 				group: "Apply Internal",
 				coverage: {

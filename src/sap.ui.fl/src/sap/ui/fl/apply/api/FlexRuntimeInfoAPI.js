@@ -200,6 +200,28 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the context-based adaptation ID for the given property bag.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Reference of the application
+		 * @returns {string|undefined} The adaptation ID if found, otherwise undefined.
+		 */
+		getContextBasedAdaptationId(mPropertyBag) {
+			return FlexInfoSession.getByReference(mPropertyBag.reference)?.adaptationId;
+		},
+
+		/**
+		 * Returns the title of the context-based adaptation for a given reference.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Reference of the application
+		 * @returns {string|undefined} The title of the context-based adaptation, or undefined if not found.
+		 */
+		getContextBasedAdaptationTitle(mPropertyBag) {
+			return FlexInfoSession.getByReference(mPropertyBag.reference)?.adaptationTitle;
+		},
+
+		/**
 		 * Returns the information needed for the rta feedback dialog
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties

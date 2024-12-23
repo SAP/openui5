@@ -29,6 +29,9 @@ sap.ui.define([
 							return false;
 						}
 					};
+				},
+				getServiceAsync() {
+					return Promise.resolve();
 				}
 			});
 
