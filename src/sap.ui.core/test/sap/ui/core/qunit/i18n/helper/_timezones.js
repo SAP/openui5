@@ -500,8 +500,13 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 
 	/**
-	 * CLDR 43.0.0 time zone keys as in timeZoneNames.json, e.g:
-	 * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-modern/main/de/timeZoneNames.json
+	 * CLDR 44.0.0 time zone IDs which are extracted from the first entries of the <code>_alias</code> properties of the
+	 * <code>timezone.json</code> file in the BCP47 CLDR package, see
+	 * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-bcp47/bcp47/timezone.json.
+	 *
+	 * According to the specification, the first entry in the <code>_alias</code> property contains the
+	 * canonical time zone ID used by the CLDR, see https://www.unicode.org/reports/tr35/#Time_Zone_Identifiers
+	 * for further details.
 	 *
 	 * @type {string[]}
 	 */
@@ -660,7 +665,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Montserrat",
 		"America/Nassau",
 		"America/New_York",
-		"America/Nipigon",
 		"America/Nome",
 		"America/Noronha",
 		"America/North_Dakota/Beulah",
@@ -668,7 +672,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/North_Dakota/New_Salem",
 		"America/Ojinaga",
 		"America/Panama",
-		"America/Pangnirtung",
 		"America/Paramaribo",
 		"America/Phoenix",
 		"America/Port-au-Prince",
@@ -676,13 +679,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Porto_Velho",
 		"America/Puerto_Rico",
 		"America/Punta_Arenas",
-		"America/Rainy_River",
 		"America/Rankin_Inlet",
 		"America/Recife",
 		"America/Regina",
 		"America/Resolute",
 		"America/Rio_Branco",
-		"America/Santa_Isabel",
 		"America/Santarem",
 		"America/Santiago",
 		"America/Santo_Domingo",
@@ -698,7 +699,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Swift_Current",
 		"America/Tegucigalpa",
 		"America/Thule",
-		"America/Thunder_Bay",
 		"America/Tijuana",
 		"America/Toronto",
 		"America/Tortola",
@@ -706,7 +706,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Whitehorse",
 		"America/Winnipeg",
 		"America/Yakutat",
-		"America/Yellowknife",
 		"Antarctica/Casey",
 		"Antarctica/Davis",
 		"Antarctica/DumontDUrville",
@@ -737,7 +736,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Asia/Brunei",
 		"Asia/Calcutta",
 		"Asia/Chita",
-		"Asia/Choibalsan",
 		"Asia/Colombo",
 		"Asia/Damascus",
 		"Asia/Dhaka",
@@ -815,7 +813,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Australia/Adelaide",
 		"Australia/Brisbane",
 		"Australia/Broken_Hill",
-		"Australia/Currie",
 		"Australia/Darwin",
 		"Australia/Eucla",
 		"Australia/Hobart",
@@ -824,8 +821,34 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Australia/Melbourne",
 		"Australia/Perth",
 		"Australia/Sydney",
+		"Etc/GMT",
+		"Etc/GMT+1",
+		"Etc/GMT+10",
+		"Etc/GMT+11",
+		"Etc/GMT+12",
+		"Etc/GMT+2",
+		"Etc/GMT+3",
+		"Etc/GMT+4",
+		"Etc/GMT+5",
+		"Etc/GMT+6",
+		"Etc/GMT+7",
+		"Etc/GMT+8",
+		"Etc/GMT+9",
+		"Etc/GMT-1",
+		"Etc/GMT-10",
+		"Etc/GMT-11",
+		"Etc/GMT-12",
+		"Etc/GMT-13",
+		"Etc/GMT-14",
+		"Etc/GMT-2",
+		"Etc/GMT-3",
+		"Etc/GMT-4",
+		"Etc/GMT-5",
+		"Etc/GMT-6",
+		"Etc/GMT-7",
+		"Etc/GMT-8",
+		"Etc/GMT-9",
 		"Etc/UTC",
-		// "Etc/Unknown", => not valid
 		"Europe/Amsterdam",
 		"Europe/Andorra",
 		"Europe/Astrakhan",
@@ -876,7 +899,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Europe/Tallinn",
 		"Europe/Tirane",
 		"Europe/Ulyanovsk",
-		"Europe/Uzhgorod",
 		"Europe/Vaduz",
 		"Europe/Vatican",
 		"Europe/Vienna",
@@ -884,7 +906,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Europe/Volgograd",
 		"Europe/Warsaw",
 		"Europe/Zagreb",
-		"Europe/Zaporozhye",
 		"Europe/Zurich",
 		"Indian/Antananarivo",
 		"Indian/Chagos",
@@ -912,7 +933,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Pacific/Guadalcanal",
 		"Pacific/Guam",
 		"Pacific/Honolulu",
-		"Pacific/Johnston",
 		"Pacific/Kiritimati",
 		"Pacific/Kosrae",
 		"Pacific/Kwajalein",

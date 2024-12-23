@@ -2266,6 +2266,7 @@ sap.ui.define([
 				if (oPart.digits === 2) {
 					var mTimezoneTranslations = oFormat.oLocaleData.getTimezoneTranslations();
 
+					sTimezone = TimezoneUtils.getABAPTimezone(sTimezone);
 					// shortcut, first try the time zone parameter
 					if (sValue === mTimezoneTranslations[sTimezone]) {
 						return {
@@ -2290,7 +2291,7 @@ sap.ui.define([
 					for (var i = sValue.length; i > 0; i -= 1) {
 						sCurrentValue = sValue.slice(0, i);
 						if (TimezoneUtils.isValidTimezone(sCurrentValue)) {
-							oTimezoneParsed.timezone = sCurrentValue;
+							oTimezoneParsed.timezone = TimezoneUtils.getABAPTimezone(sCurrentValue);
 							oTimezoneParsed.length = sCurrentValue.length;
 							break;
 						}
@@ -2366,6 +2367,7 @@ sap.ui.define([
 			bUTC = false;
 
 			checkTimezoneParameterType(sTimezone);
+			sTimezone = TimezoneUtils.getABAPTimezone(sTimezone);
 			if (sTimezone && !TimezoneUtils.isValidTimezone(sTimezone)) {
 				Log.error("The given timezone isn't valid.");
 				return "";

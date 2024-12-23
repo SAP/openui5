@@ -650,6 +650,8 @@ sap.ui.define([
 			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
 
 			timezones.aABAPTimezoneIDs.forEach(function (sTimezoneId) {
+				// Mapping has to be applied as the aABAPTimezonesIDs may contain deprecated IDs
+				sTimezoneId = TimezoneUtils.getABAPTimezone(sTimezoneId);
 				var sTranslationCldr = mTimezoneTranslations[sTimezoneId];
 				if (aABAPUnsupportedIDs.includes(sTimezoneId)) {
 					assert.notOk(sTranslationCldr, sLocale + ": no translation expected for " + sTimezoneId);

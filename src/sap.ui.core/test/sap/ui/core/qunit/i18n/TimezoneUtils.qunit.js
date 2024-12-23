@@ -552,10 +552,12 @@ sap.ui.define([
 
 		QUnit.test("convert CLDR to ABAP", function (assert) {
 			const oDateTimeFormatMock = this.mock(Intl.DateTimeFormat.prototype);
+			const oTimezoneUtilsMock = this.mock(TimezoneUtils);
 
 			for (const [sCLDR_ID, sABAP_ID] of Object.entries(TimezoneUtils.mTimezoneAliases2ABAPTimezones)) {
 				TimezoneUtils._clearLocalTimezoneCache();
 				oDateTimeFormatMock.expects("resolvedOptions").returns({timeZone: sCLDR_ID});
+				oTimezoneUtilsMock.expects("getABAPTimezone").withExactArgs(sCLDR_ID).returns(sABAP_ID);
 
 				// code under test
 				assert.strictEqual(TimezoneUtils.getLocalTimezone(), sABAP_ID, sCLDR_ID + " -> " + sABAP_ID);
@@ -569,6 +571,7 @@ sap.ui.define([
 			TimezoneUtils._clearLocalTimezoneCache();
 			// the browser's Intl.DateTimeFormat implementation may return undefined in case of OS default timezone
 			this.mock(Intl.DateTimeFormat.prototype).expects("resolvedOptions").returns({timeZone: undefined});
+			this.mock(TimezoneUtils).expects("getABAPTimezone").withExactArgs(undefined).returns(undefined);
 
 			// code under test
 			assert.strictEqual(TimezoneUtils.getLocalTimezone(), undefined);
@@ -737,4 +740,38 @@ sap.ui.define([
 		assert.strictEqual(TimezoneUtils.calculateOffset(oDate, sTimezone), bUseFirstOffset ? 29 : 33);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getABAPTimezone", function (assert) {
+		const mAcutalTimezoneAliases2ABAPTimezones = TimezoneUtils.mTimezoneAliases2ABAPTimezones;
+		try {
+			TimezoneUtils.mTimezoneAliases2ABAPTimezones = {"Foo": "Bar"};
+
+			// code under test - Mapping is applied
+			assert.strictEqual(TimezoneUtils.getABAPTimezone("Foo"), "Bar");
+
+			// code under test - No mapping found, given ID is returned
+			assert.strictEqual(TimezoneUtils.getABAPTimezone("Baz"), "Baz");
+		} finally {
+			TimezoneUtils.mTimezoneAliases2ABAPTimezones = mAcutalTimezoneAliases2ABAPTimezones;
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getABAPTimezone: Provides mapping from CLDR to ABAP IDs", function (assert) {
+		timezones.aCLDRTimezoneIDs.forEach((sCLDRTimezoneID) => {
+			// code under test
+			assert.ok(timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sCLDRTimezoneID)),
+				sCLDRTimezoneID);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getABAPTimezone: Provides mapping from IANA to ABAP IDs", function (assert) {
+		timezones.aTzTimezoneIDs.forEach((sIANATimezoneID) => {
+			// code under test
+			assert.ok(timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sIANATimezoneID)),
+				sIANATimezoneID);
+		});
+	});
 });
