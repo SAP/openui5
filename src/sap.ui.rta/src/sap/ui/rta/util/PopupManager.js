@@ -394,7 +394,7 @@ sap.ui.define([
 		var {oPopup} = oPopupElement;
 		var aAutoCloseAreas = [
 			oPopup.oContent.getDomRef(),
-			oOverlayContainer.get(0)
+			oOverlayContainer
 		].concat(
 			this.getAutoCloseAreas()
 		);

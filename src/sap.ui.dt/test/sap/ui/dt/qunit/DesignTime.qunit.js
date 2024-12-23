@@ -961,8 +961,8 @@ sap.ui.define([
 		QUnit.test("when the DesignTime is disabled and then enabled again", function(assert) {
 			this.oDesignTime.setEnabled(false);
 			assert.strictEqual(
-				jQuery(Overlay.getOverlayContainer()).filter(":visible").length,
-				0,
+				Overlay.getOverlayContainer().style.display !== "none",
+				false,
 				"then the overlay container has been hidden"
 			);
 			assert.strictEqual(
@@ -983,8 +983,8 @@ sap.ui.define([
 
 			this.oDesignTime.setEnabled(true);
 			assert.strictEqual(
-				jQuery(Overlay.getOverlayContainer()).filter(":visible").length,
-				1,
+				Overlay.getOverlayContainer().style.display !== "none",
+				true,
 				"then after enabling it again the overlay container is displayed"
 			);
 			assert.strictEqual(
