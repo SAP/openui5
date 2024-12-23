@@ -2015,6 +2015,18 @@ sap.ui.define([
 		//assert
 		assert.equal(oTP.getValue(), "24:00", "Value is set to 24:00 when format is HH:mm");
 
+		//act
+		oTP._handleInputChange("00:00:00");
+
+		//assert
+		assert.equal(oTP.getValue(), "00:00", "Value is set to 00:00");
+
+		//act
+		oTP._handleInputChange("24:00:00");
+
+		//assert
+		assert.equal(oTP.getValue(), "24:00", "Value is set to 24:00 when format is HH:mm");
+
 		//cleanup
 		oTP.destroy();
 	});
