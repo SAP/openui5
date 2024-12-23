@@ -16,9 +16,6 @@ sap.ui.define([
 	// shortcut for sap.m.MessageBox.Icon
 	var Icon = MessageBox.Icon;
 
-	// shortcut for sap.ui.core.aria.HasPopup
-	var HasPopup = coreLibrary.aria.HasPopup;
-
 	var oCompactMode = new CheckBox("compactMode", {
 			text: "Compact Mode",
 			selected : false,
@@ -34,49 +31,42 @@ sap.ui.define([
 		content: [
 			new Button("confirmMsgDialogButton", {
 				text: "Confirm",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.confirm("Approve purchase order 12345?");
 				}
 			}),
 			new Button("alertMsgDialogButton", {
 				text: "Alert",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.alert("The quantity you have reported exceeds the quantity planed.");
 				}
 			}),
 			new Button("errorMsgDialogButton", {
 				text: "Error",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.error("Select a team in the \"Development\" area.\n\"Marketing\" isn't assigned to this area.");
 				}
 			}),
 			new Button("informationMsgDialogButton", {
 				text: "Information",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.information("You booking will be reserved for 24 hours.");
 				}
 			}),
 			new Button("warningMsgDialogButton", {
 				text: "Warning",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.warning("The project schedule was last updated over a year ago.");
 				}
 			}),
 			new Button("successMsgDialogButton", {
 				text: "Success",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.success("Project 1234567 was created and assigned to team \"ABC\".");
 				}
 			}),
 			new Button("showDetailsMsgDialogButton", {
 				text: "Show Details",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.show("Your file could not be uploaded because of a security problem.", {
 						icon: Icon.INFORMATION,
@@ -89,7 +79,6 @@ sap.ui.define([
 			}),
 			new Button("showDetailsAsyncMsgDialogButton", {
 				text: "Show Details Async",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.show("Your file could not be uploaded because of a security problem.", {
 						icon: Icon.INFORMATION,
@@ -108,7 +97,6 @@ sap.ui.define([
 			new Button({
 				text: "Show details from callback - Try again",
 				width: "270px",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.show("Your file could not be uploaded because of a security problem.", {
 						title: "Error",
@@ -131,7 +119,6 @@ sap.ui.define([
 			}),
 			new Button("initialFocusMsgDialogButton", {
 				text: "Initial Focus Action",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.confirm(
 							"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
@@ -145,7 +132,6 @@ sap.ui.define([
 			}),
 			new Button("initialFocusCustomMsgDialogButton", {
 				text: "Initial Focus Custom Button",
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					MessageBox.show(
 							'Initial button focus is set by attribute \n initialFocus: \"Custom button\" \n Note: The name is not case sensitive', {

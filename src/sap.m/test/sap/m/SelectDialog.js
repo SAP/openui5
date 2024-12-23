@@ -39,8 +39,7 @@ sap.ui.define([
 
 		var sServiceURI = "/service/" ;
 		var sMetaDataURI = "qunit/data/";
-		// shortcut for sap.ui.core.aria.HasPopup
-		var AriaHasPopup = coreLibrary.aria.HasPopup;
+
 
 		// configure respond to requests delay
 	   MockServer.config({
@@ -238,7 +237,6 @@ sap.ui.define([
 
 		var oButton2 = new Button("Button2", {
 			text: "Open SelectDialog with Dialog Binding & List Binding & prefiltered by \"ad\"",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function (oEvent) {
 				// initiate model
 				oSelectDialog2.setModel(oModelList);
@@ -281,7 +279,6 @@ sap.ui.define([
 
 		var oButton3 = new Button("Button3", {
 			text: "Open SelectDialog with destroy call in close event & already initialized binding",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function (oEvent) {
 				// set model & bind Aggregation
 				oSelectDialog3.setModel(oModelList);
@@ -324,7 +321,6 @@ sap.ui.define([
 
 		var oButton4 = new Button("Button4", {
 			text: "Open SelectDialog with web service and binding before opening the dialog",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function (oEvent) {
 
 				// initiate model
@@ -402,7 +398,6 @@ sap.ui.define([
 
 		var oButton4a = new Button("Button4a", {
 			text: "Open SelectDialog with web service pre-filtered by \"id\" and binding before opening the dialog",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function (oEvent) {
 				// open dialog
 				oSelectDialog4a.open("id_1");
@@ -423,7 +418,6 @@ sap.ui.define([
 		/* 5) reuse of dialog2 to show a forward footer button scenario */
 		var oButton5 = new Button("Button5", {
 			text: "Forward to...",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oSelectDialog2.open("");
@@ -476,7 +470,6 @@ sap.ui.define([
 
 		var oButton6 = new Button("Button6", {
 			text: "Open SelectDialog with late binding in MultiSelect prefiltered by \"ad\" mode with 1000px width",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oSelectDialog6.open("");
@@ -538,7 +531,6 @@ sap.ui.define([
 
 		var oButton7 = new Button("Button7", {
 			text: "Open SelectDialog in MultiSelect mode prefiltered by \"id_1\" with web service binding and 400px width",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// initiate model
 				var oModel = new ODataModel(sServiceURI, true);
@@ -608,7 +600,6 @@ sap.ui.define([
 
 		var oButton8 = new Button("Button8", {
 			text: "Open SelectDialog in MultiSelect mode with JSON binding and selection model and rememberSelections=false",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// clear filter
 				oSelectDialog8.getBinding("items").filter([]);
@@ -671,7 +662,6 @@ sap.ui.define([
 
 		var oButton9 = new Button("Button9", {
 			text: "Open SelectDialog in MultiSelect mode prefiltered by \"Hulk\" with JSON binding and selection model and rememberSelections=true",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// prefilter dialog
 				var itemsBinding = oSelectDialog9.getBinding("items");
@@ -723,7 +713,6 @@ sap.ui.define([
 
 		var oButton10 = new Button("Button10", {
 			text: "Open SelectDialog with the view as parent and delayed binding (wrong usage, don't do this at home!)",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// bind aggregation with filters
 				oSelectDialog10.bindAggregation("items", {
@@ -761,7 +750,6 @@ sap.ui.define([
 
 		var oButton11 = new Button("Button11", {
 			text: "Open SelectDialog with growing=false",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oSelectDialog8.open();
@@ -784,7 +772,6 @@ sap.ui.define([
 
 		var oButton12 = new Button("Button12", {
 			text: "Open SelectDialog to test the sticky toolbar",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// initiate model
 				var oModel = new ODataModel(sServiceURI, true);
@@ -817,7 +804,6 @@ sap.ui.define([
 
 		var oButton13 = new Button("Button13", {
 			text: "Open SelectDialog with resizable=true",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oSelectDialog13.open();
@@ -859,7 +845,6 @@ sap.ui.define([
 
 		var oButton14 = new Button("Button14", {
 			text: "Single Select Dialog with Remember Selection",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// initiate model
 				oSelectDialog14.setModel(oSingleModel);
@@ -899,7 +884,6 @@ sap.ui.define([
 
 		var oButton15 = new Button("Button15", {
 			text: "Multi Select Dialog with Remember Selection",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// initiate model
 				oSelectDialog15.setModel(oModelList);
@@ -931,7 +915,6 @@ sap.ui.define([
 
 		var oButton16 = new Button("Button16", {
 			text: "SelectDialog with Responsive Paddings (SAP Quartz and Horizon Themes only)",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				oSelectDialog16.setModel(oModelList);
 				oSelectDialog16.bindAggregation("items", {
@@ -957,7 +940,6 @@ sap.ui.define([
 
 		var oButton17 = new Button("Button17", {
 			text: "Select Dialog with custom placeholder",
-			ariaHasPopup: AriaHasPopup.Dialog,
 			press: function () {
 				// open dialog
 				oSelectDialog17.open();
@@ -973,7 +955,6 @@ sap.ui.define([
 
 		var oButton18 = new Button("Button18", {
 				text: "Open SelectDialog with delayed binding",
-				ariaHasPopup: AriaHasPopup.Dialog,
 				press: function () {
 					// bind aggregation with filters
 					oSelectDialog18.bindAggregation("items", {
