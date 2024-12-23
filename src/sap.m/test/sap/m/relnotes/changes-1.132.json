@@ -3,6 +3,46 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "d17387dadd9c3a2bcfbc7c7d91c56e5c465efb30",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: apply tooltip properly"
+      },
+      {
+        "id": "51797b50daf7f5ecda9d21560c53535262d2086f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Visual test fixed"
+      },
+      {
+        "id": "7511627ad0411097b0765841989b64faa95e3be6",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust accessibility semantics"
+      },
+      {
+        "id": "e235a8dcf52dad455a9169d4933ec209c31052ed",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: render tokens based on their order"
+      },
+      {
+        "id": "510ce38e1c6c2967567814d2a1ad26ec4d412593",
+        "type": "FIX",
+        "text": " core/Popup: move focus into Popup before opening animation starts"
+      },
+      {
+        "id": "c435a5d1c72f9ac4b4db05f9bc1f2ac9e7189a54",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: prevent unnecessary firing of appointmentSelect event"
+      },
+      {
+        "id": "8c8a4e9fc3e6b0c9d0f6479c0e650b3d98cf0dbe",
+        "type": "FIX",
+        "text": " sap/m/Input: Respect the busy indicator as part of the input"
+      },
+      {
+        "id": "194c48a3631c690b62c1502d3d669ab5f92acffe",
+        "type": "FIX",
+        "text": " We now disable the video preview once the Preview dialog is closed"
+      },
+      {
         "id": "47d288b52266cb2ce584b9a06f16d5188217fa05",
         "type": "FIX",
         "text": " sap.m.Bar: adjust aria-labelledby attribute rendering"

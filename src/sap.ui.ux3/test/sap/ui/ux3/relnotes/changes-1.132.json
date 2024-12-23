@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "510ce38e1c6c2967567814d2a1ad26ec4d412593",
+        "type": "FIX",
+        "text": " core/Popup: move focus into Popup before opening animation starts"
+      }
+    ]
+  }
+}

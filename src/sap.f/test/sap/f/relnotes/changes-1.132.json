@@ -3,6 +3,16 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "93bd66119ecbc4d64f5f1c9d09fddfc49745e0ba",
+        "type": "FEATURE",
+        "text": " Integration Cards: Usage of relative links in WebPage cards is now enabled"
+      },
+      {
+        "id": "b0a78bb049f23d0f0c05e67840284ee2addbff45",
+        "type": "FIX",
+        "text": " sap.f.AdaptiveCards: Visual test fixed"
+      },
+      {
         "id": "5219a40d2949b26770cc618362d813da90452f9e",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Fixed failure to expand the header"

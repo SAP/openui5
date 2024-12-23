@@ -3,6 +3,16 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "510ce38e1c6c2967567814d2a1ad26ec4d412593",
+        "type": "FIX",
+        "text": " core/Popup: move focus into Popup before opening animation starts"
+      },
+      {
+        "id": "145eaafe22356c2ca123a31a695ae998f157c0c7",
+        "type": "FIX",
+        "text": " CreationRow: Only call setHideEmptyRows if row mode offers it"
+      },
+      {
         "id": "58f3ed1b65e5aec8f008aa0b903ac4772cd48cb1",
         "type": "FIX",
         "text": " FilterField: do not open ValueHelp if Token focused"

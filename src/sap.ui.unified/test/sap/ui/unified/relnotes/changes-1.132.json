@@ -3,6 +3,16 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "7511627ad0411097b0765841989b64faa95e3be6",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust accessibility semantics"
+      },
+      {
+        "id": "dbe7f17bd0b913365cd40d109699d3c1134cdc3d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fix qunit tests"
+      },
+      {
         "id": "9444c30a8e7a61b3f9916eeae5e149462dd5aee3",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Prevent navigation when selecting a week"

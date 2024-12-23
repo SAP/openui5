@@ -3,6 +3,16 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "5371f8817d5ce5a2afd90936aea3a528b7a7ea48",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Dropdown is correctly aligned in Belize now"
+      },
+      {
+        "id": "510ce38e1c6c2967567814d2a1ad26ec4d412593",
+        "type": "FIX",
+        "text": " core/Popup: move focus into Popup before opening animation starts"
+      },
+      {
         "id": "3d18c4190cb371fc416004a001079e305c77f2b0",
         "type": "FIX",
         "text": " sap.ui.unified.ColorPicker: slider handles are correct in Belize now"

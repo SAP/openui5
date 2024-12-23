@@ -3,6 +3,21 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "81a127d2be0b782e5e7f4d7d9ee683781247d58a",
+        "type": "FIX",
+        "text": " core/LabelEnablement: handle destroy of label when updating inner control"
+      },
+      {
+        "id": "510ce38e1c6c2967567814d2a1ad26ec4d412593",
+        "type": "FIX",
+        "text": " core/Popup: move focus into Popup before opening animation starts"
+      },
+      {
+        "id": "51d2d889b1dfde2b09698560ff1aab6d796a27df",
+        "type": "FIX",
+        "text": " sap/ui/core/demokit/sample/OpaTestLibrary: Fix race condition in OPA"
+      },
+      {
         "id": "6ffd2b242e0a1853dfa78ad2180b62d9a618702d",
         "type": "FIX",
         "text": " core/Control: cleanup busy indicator in onBeforeRendering only when it's busy"

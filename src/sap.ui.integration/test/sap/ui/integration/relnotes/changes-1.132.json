@@ -3,6 +3,11 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "93bd66119ecbc4d64f5f1c9d09fddfc49745e0ba",
+        "type": "FEATURE",
+        "text": " Integration Cards: Usage of relative links in WebPage cards is now enabled"
+      },
+      {
         "id": "d927e5d0b8419ed1b5b99efd2049423039dbe63d",
         "type": "FIX",
         "text": " Integration Cards: Actions toolbar now sets the 'card' association"

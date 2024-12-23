@@ -3,6 +3,11 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "ff865a05c4903988491ef8e1a853c962967936f2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Calc FIX"
+      },
+      {
         "id": "831d748bda786323770b7df8bd443613b31cecfc",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Focus loss prevented"
