@@ -777,7 +777,8 @@
 		  "since": "1.38",
 		  "samples": [
 			"sap.m.sample.Menu",
-			"sap.m.sample.MenuSelectable"
+			"sap.m.sample.MenuSelectable",
+			"sap.m.sample.MenuEndContent"
 		  ]
 		},
 		{
@@ -3313,6 +3314,11 @@
 		  "id": "sap.m.sample.MenuSelectable",
 		  "name": "Menu with Selectable Items",
 		  "description": "Some menu items can be added to groups to allow single or multiple item selection."
+		},
+		{
+			"id": "sap.m.sample.MenuEndContent",
+			"name": "Menu with EndContent Items",
+			"description": "EndContent (Button and/or Icon) can be added to some of the menu items."
 		},
 		{
 		  "id": "sap.m.sample.MenuButton",
