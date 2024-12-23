@@ -62,7 +62,9 @@ module.exports = {
 			}
 		}));
 
-		browser.executeScript("arguments[0].scrollIntoView()", oCompactBtn.getWebElement());
+		browser.executeScript(function (sId) {
+			document.getElementById(sId).scrollIntoView();
+		}, oCompactBtn.getWebElement().getAttribute("id"));
 
 		oCompactBtn.click();
 	},
