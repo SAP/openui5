@@ -1,9 +1,12 @@
 {
-  "name": "navigation-tutorial",
+  "name": "ui5.navigation",
   "private": true,
   "version": "1.0.0",
   "author": "SAP SE",
   "description": "UI5 Demo App - Navigation Tutorial",
+  "scripts": {
+    "start": "ui5 serve -o index.html"
+  },
   "devDependencies": {
     "@ui5/cli": "^4"
   }

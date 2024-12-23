@@ -1,6 +1,6 @@
 specVersion: "4.0"
 metadata:
-  name: navigation-tutorial
+  name: ui5.navigation
 type: application
 framework:
   name: OpenUI5
