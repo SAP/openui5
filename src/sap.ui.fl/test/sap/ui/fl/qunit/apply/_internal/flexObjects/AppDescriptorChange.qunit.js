@@ -66,6 +66,59 @@ sap.ui.define([
 			assert.strictEqual(oAppDescriptorChange.getFileType(), "change", "the file type is correct");
 			assert.deepEqual(oAppDescriptorChange.convertToFileContent(), oChangeDefinition, "the convert function is correct");
 		});
+
+		QUnit.test("createAppDescriptorChange", function(assert) {
+			const oChangeDefinition = {
+				appDescriptorChange: true,
+				fileName: "id_1656921947872_169_appDescriptor",
+				fileType: "change",
+				changeType: "appdescr_ui_generic_app_changePageConfiguration",
+				content: {
+					parentPage: {
+						component: "sap.suite.ui.generic.template.ListReport",
+						entitySet: "Travel"
+					},
+					entityPropertyChange: {
+						propertyPath: "component/settings/filterSettings/dateSettings",
+						operation: "UPSERT",
+						propertyValue: {
+							useDateRange: false
+						}
+					}
+				},
+				originalLanguage: "EN",
+				layer: "VENDOR",
+				texts: {}
+			};
+			const mPropertyBag = {
+				changeType: "appdescr_ui_generic_app_changePageConfiguration",
+				content: {
+					parentPage: {
+						component: "sap.suite.ui.generic.template.ListReport",
+						entitySet: "Travel"
+					},
+					entityPropertyChange: {
+						propertyPath: "component/settings/filterSettings/dateSettings",
+						operation: "UPSERT",
+						propertyValue: {
+							useDateRange: false
+						}
+					}
+				},
+				layer: "VENDOR"
+			};
+
+			const oAppDescriptorChange = FlexObjectFactory.createAppDescriptorChange(mPropertyBag);
+			assert.ok(
+				oAppDescriptorChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange"),
+				"the correct change was created"
+			);
+			assert.deepEqual(
+				_omit(oAppDescriptorChange.convertToFileContent(), "fileName"),
+				_omit(oChangeDefinition, "fileName"),
+				"the convert function is correct"
+			);
+		});
 	});
 
 	QUnit.module("Others", {
