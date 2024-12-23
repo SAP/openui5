@@ -440,7 +440,9 @@ sap.ui.define([
 				var oCellTemplate;
 				var oCellSettings;
 				var oCell = deepClone(oProperty.cell) || {};
-				oCell.values = oCell.values || oProperty.values;
+				if (!oCell.values && oProperty.values) {
+					oCell.values = oProperty.values;
+				}
 				delete oCell.type;
 				if (sCellType === "string" && oCell.values) {
 					sCellType = "ComboBox";
@@ -554,6 +556,7 @@ sap.ui.define([
 						}
 						oCellSettings = merge(oCellSettings, oCell);
 						var oComboBoxSettingsModel = new JSONModel(oCell.values.data.json);
+						delete oCellSettings.values;
 						oCellTemplate = new ComboBox(oCellSettings);
 						oCellTemplate.setModel(oComboBoxSettingsModel,"settings");
 						break;
@@ -1849,6 +1852,13 @@ sap.ui.define([
 
 	ObjectField.prototype.openTranslationPopup = function (sProperty, oEvent) {
 		var that = this;
+		if (!that._oEditorResourceBundles.isReady()) {
+			// waiting for loading resource bundles
+			setTimeout(function() {
+				that.openTranslationPopup(sProperty, oEvent);
+			}, 100);
+			return;
+		}
 		var oControl = oEvent.getSource();
 		var oResourceBundle = that.getResourceBundle();
 		var oNewObject = oControl.getModel().getProperty("/value");
@@ -1896,6 +1906,13 @@ sap.ui.define([
 
 	ObjectField.prototype.navToTranslationPage = function (sProperty, oEvent) {
 		var that = this;
+		if (!that._oEditorResourceBundles.isReady()) {
+			// waiting for loading resource bundles
+			setTimeout(function() {
+				that.navToTranslationPage(sProperty, oEvent);
+			}, 100);
+			return;
+		}
 		var oNewObject = that._oObjectDetailsPopover.getModel().getProperty("/value");
 		var sValue = oNewObject[sProperty];
 		//get translation key of the value
