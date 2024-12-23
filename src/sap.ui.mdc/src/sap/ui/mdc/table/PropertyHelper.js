@@ -209,18 +209,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets all groupable properties.
-	 *
-	 * @returns {sap.ui.mdc.table.PropertyInfo[]} All groupable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getGroupableProperties = function() {
-		return this.getProperties().filter((oProperty) => {
-			return oProperty.groupable;
-		});
-	};
-
-	/**
 	 * Gets the clipboard settings for a column.
 	 *
 	 * @param {sap.ui.mdc.table.Column} oColumn The column for which to get the clipboard settings

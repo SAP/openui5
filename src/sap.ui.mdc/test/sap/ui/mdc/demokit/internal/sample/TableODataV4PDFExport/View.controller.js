@@ -128,12 +128,14 @@ sap.ui.define([
 			return oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
 				aInitiallyVisibleProperties.forEach(function(sPropertyName) {
 					const oProperty = oPropertyHelper.getProperty(sPropertyName);
-					if (!oProperty.isComplex() && oProperty && oProperty.unitProperty) {
-						this.createColumnWithUnitTemplate(oTable, oProperty, oProperty.unitProperty);
-					} else if (!oProperty.isComplex() && oProperty && !oProperty.unitProperty) {
-						this.createSimpleColumn(oTable, oProperty);
-					} else if (oProperty.isComplex() && oProperty) {
+					const oUnitProperty = oPropertyHelper.getProperty(oProperty.unit);
+
+					if (oProperty.isComplex()) {
 						this.createComplexColumn(oTable, oProperty, oPropertyHelper);
+					} else if (oUnitProperty) {
+						this.createColumnWithUnitTemplate(oTable, oProperty, oUnitProperty);
+					} else {
+						this.createSimpleColumn(oTable, oProperty);
 					}
 				}, this);
 

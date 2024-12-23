@@ -133,7 +133,7 @@ sap.ui.define([
 			oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
 				aInitiallyVisibleProperties.forEach(function(sPropertyName) {
 					const oProperty = oPropertyHelper.getProperty(sPropertyName);
-					const oUnitProperty = oProperty.unitProperty;
+					const oUnitProperty = oPropertyHelper.getProperty(oProperty.unit);
 					if (!oProperty.isComplex() && oProperty && oUnitProperty) {
 						this.createColumnWithUnitTemplate(oTable, oProperty, oUnitProperty);
 					} else if (!oProperty.isComplex() && oProperty && !oUnitProperty) {
