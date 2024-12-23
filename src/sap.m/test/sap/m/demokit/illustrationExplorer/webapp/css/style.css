@@ -1,4 +1,10 @@
 .sapUiDemoIllustrationExplorer {
+
+    /* hide the link that allows to reopen the TrustArc consent dialog */
+    #teconsent>a {
+        display: none;
+    }
+
     .sapUiDemoIllustrationExplorerImage {
         display: block;
         max-width: 100%;
