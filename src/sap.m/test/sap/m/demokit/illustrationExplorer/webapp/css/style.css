@@ -1,10 +1,4 @@
 .sapUiDemoIllustrationExplorer {
-
-    /* hide the link that allows to reopen the TrustArc consent dialog */
-    #teconsent>a {
-        display: none;
-    }
-
     .sapUiDemoIllustrationExplorerImage {
         display: block;
         max-width: 100%;
@@ -75,6 +69,13 @@
         .sapUiDemoIllustrationExplorerFooterContentWrapper>.sapMFlexItem:first-child {
             padding-bottom: 0.25rem;
         }
+    }
+}
+
+.sapUiDemoIllustrationExplorerBody {
+    /* hide the link that allows to reopen the TrustArc consent dialog */
+    #teconsent>a {
+        display: none;
     }
 }
 
