@@ -8,31 +8,26 @@
 			text="Message Dialog"
 			width="230px"
 			press=".onDefaultMessageDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Success)"
 			width="230px"
 			press=".onSuccessMessageDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Warning)"
 			width="230px"
 			press=".onWarningMessageDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Error)"
 			width="230px"
 			press=".onErrorMessageDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Message Dialog (Information)"
 			width="230px"
 			press=".onMessageInformationDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

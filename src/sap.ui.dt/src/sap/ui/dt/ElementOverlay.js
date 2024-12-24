@@ -491,7 +491,7 @@ sap.ui.define([
 		// drops into in different event loops (JS execution cycles) which leads to invalid intermediate position
 		// on the screen with following sorting. That said, sorting happens for intermediate state and then for real
 		// state of the elements in viewport once again. Thus, excluding these elements allow us to avoid 2 extra sortings.
-		var aChildren = jQuery(oContainer).find(">:not(.sapUiDtDummyScrollContainer)").toArray();
+		var aChildren = Array.from(oContainer.querySelectorAll(":scope >:not(.sapUiDtDummyScrollContainer)"));
 		var aSorted = aChildren.slice().sort(compareChildren);
 
 		var bOrderChanged = aChildren.some(function(oChild, iIndex) {
@@ -514,7 +514,8 @@ sap.ui.define([
 		if (this._bInit) {
 			if (this.isRoot()) {
 				if (!this.isRendered()) {
-					Overlay.getOverlayContainer().append(this.render());
+					// TODO remove jQuery when Overlay.render() returns DOM Element
+					jQuery(Overlay.getOverlayContainer()).append(this.render());
 					this.applyStyles();
 				} else {
 					Log.error("sap.ui.dt.ElementOverlay: overlay is already rendered and can\'t be placed in overlay container. Isn\'t it already there?");
@@ -587,10 +588,9 @@ sap.ui.define([
 		var a$Children = Overlay.prototype._renderChildren.apply(this, aArgs);
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-			var $ScrollContainer = jQuery("<div></div>", {
-				"class": S_SCROLLCONTAINER_CLASSNAME,
-				"data-sap-ui-dt-scrollContainerIndex": iIndex
-			});
+			var oScrollContainer = document.createElement("div");
+			oScrollContainer.classList.add(S_SCROLLCONTAINER_CLASSNAME);
+			oScrollContainer.setAttribute("data-sap-ui-dt-scrollContainerIndex", iIndex);
 
 			if (mScrollContainer.aggregations) {
 				_intersection( // filters ignored aggregations
@@ -600,12 +600,13 @@ sap.ui.define([
 					var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
 					var iAggregationOverlayIndex = a$Children.indexOf(oAggregationOverlay.$());
 					oAggregationOverlay.setScrollContainerId(iIndex);
-					$ScrollContainer.append(a$Children[iAggregationOverlayIndex]);
+					oScrollContainer.append(a$Children[iAggregationOverlayIndex].get(0));
 					a$Children.splice(iAggregationOverlayIndex, 1);
 				}, this);
 			}
 
-			a$Children.push($ScrollContainer);
+			// TODO remove jQuery when Overlay._renderChildren / .render() returns DOM Element
+			a$Children.push(jQuery(oScrollContainer));
 		}, this);
 
 		return a$Children;
@@ -722,7 +723,7 @@ sap.ui.define([
 			this.setProperty("movable", bMovable);
 			this.fireMovableChange({movable: bMovable});
 
-			this.$()[bMovable ? "attr" : "removeAttr"]("draggable", bMovable);
+			this.getDomRef()?.[bMovable ? "setAttribute" : "removeAttribute"]("draggable", bMovable);
 		}
 
 		return this;

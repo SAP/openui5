@@ -55,6 +55,7 @@ sap.ui.define([
 		var oDensitySizes = oControl._getDensitySizes();
 
 		oRm.openStart("div", oControl);
+		oRm.attr("role", "group");
 		oRm.class("sapMSinglePCGrid");
 		oRm.class("sapMSPCMonthGrid");
 		oRm.openEnd();
@@ -101,10 +102,17 @@ sap.ui.define([
 			// render week number
 			oRm.openStart("div");
 			oRm.class("sapMSPCMonthWeekNumber");
+			oRm.attr("role", "row");
 			oRm.attr("id", `${oControl.getId()}-week-${iWeekNumber}`);
 			oRm.attr("aria-label", `${sWeekText} ${iWeekNumber}`);
 			oRm.openEnd();
+
+			oRm.openStart("span");
+			oRm.attr("role", "gridcell");
+			oRm.openEnd();
 			oRm.text(iWeekNumber);
+			oRm.close("span");
+
 			oRm.close("div");
 
 			for (j = 0; j < iColumns; j++) {
@@ -460,7 +468,7 @@ sap.ui.define([
 
 			mAttributes["id"] = sId + "-Icon";
 			mAttributes["title"] = null;
-			mAttributes["role"] = "img";
+			mAttributes["role"] = "presentation";
 			oRm.icon(sIcon, aClasses, mAttributes);
 		}
 

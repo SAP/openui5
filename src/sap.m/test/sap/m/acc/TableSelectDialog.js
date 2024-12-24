@@ -29,9 +29,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.ui.core.aria.HasPopup
-	var HasPopup = coreLibrary.aria.HasPopup;
-
 	// create the template for the items binding
 	var oItemTemplate1 = new ColumnListItem({
 		type : "Active",
@@ -176,7 +173,6 @@ sap.ui.define([
 
 	var oButton3 = new Button("Button3", {
 		text: "Open TableSelectDialog with destroy call in close event & late binding",
-		ariaHasPopup: HasPopup.Dialog,
 		press: function (evt) {
 			oTableSelectDialog3.open();
 
@@ -206,7 +202,6 @@ sap.ui.define([
 
 	var oButton11 = new Button("Button11", {
 		text: "Open TableSelectDialog with property growing false",
-		ariaHasPopup: HasPopup.Dialog,
 		press: function () {
 			oTableSelectDialog11.open();
 			// then set model & bind Aggregation

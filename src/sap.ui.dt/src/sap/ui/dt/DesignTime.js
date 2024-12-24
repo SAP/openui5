@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/dt/TaskManager",
 	"sap/ui/dt/TaskRunner",
 	"sap/ui/dt/util/ZIndexManager",
-	"sap/ui/dt/Util"
+	"sap/ui/dt/Util",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	_curry,
 	_difference,
@@ -51,7 +52,8 @@ sap.ui.define([
 	TaskManager,
 	TaskRunner,
 	ZIndexManager,
-	Util
+	Util,
+	jQuery
 ) {
 	"use strict";
 
@@ -318,8 +320,8 @@ sap.ui.define([
 			// Toggle root overlays visibility when property "enabled" is changed
 			this.attachEvent("enabledChanged", function(oEvent) {
 				var bValue = oEvent.getParameter("value");
-				var $OverlayContainer = Overlay.getOverlayContainer();
-				$OverlayContainer[bValue ? "show" : "hide"]();
+				var oOverlayContainer = Overlay.getOverlayContainer();
+				oOverlayContainer.style.display = bValue ? "block" : "none";
 
 				// Ensure that the overlays are correct when the mode is enabled
 				this.getRootElements().forEach(function(oRootElement) {
@@ -630,7 +632,8 @@ sap.ui.define([
 		})
 		.then(
 			function(oElementOverlay) {
-				Overlay.getOverlayContainer().append(oElementOverlay.render());
+				// TODO remove jQuery when Overlay.render() returns DOM Element
+				jQuery(Overlay.getOverlayContainer()).append(oElementOverlay.render());
 				this._oTaskManager.add({
 					type: "applyStyles",
 					callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),
