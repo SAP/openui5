@@ -21,7 +21,7 @@
 	padding: 0;
 }
 
-html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tablet {
+html .sapUxAPObjectPageLayout-Std-Desktop-XL, html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tablet {
 	.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
 		margin-right: 2rem;
 		margin-bottom: 1rem;
@@ -40,7 +40,8 @@ html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tab
 }
 
 .sapUxAPObjectPageLayout-Std-Tablet,
-.sapUxAPObjectPageLayout-Std-Desktop {
+.sapUxAPObjectPageLayout-Std-Desktop,
+.sapUxAPObjectPageLayout-Std-Desktop-XL {
 	.sapUxAPObjectPageHeaderContentCellRight {
 		padding-right: 2rem;
 	}
@@ -71,6 +72,7 @@ html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tab
 	}
 
 	&:empty {
+		.sapUxAPObjectPageLayout-Std-Desktop-XL &,
 		.sapUxAPObjectPageLayout-Std-Desktop &,
 		.sapUxAPObjectPageLayout-Std-Tablet &,
 		.sapUxAPObjectPageLayout-Std-Phone &
