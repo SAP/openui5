@@ -18,17 +18,17 @@
 		},
 		{
 			"control" : "sap.ui.unified.CalendarMonthInterval",
-			"url" : "../CalendarMonthInterval.html",
+			"url" : "./CalendarMonthInterval.html",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
 			"control" : "sap.ui.unified.CalendarTimeInterval",
-			"url" : "../CalendarTimeInterval.html",
+			"url" : "./CalendarTimeInterval.html",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
 			"control" : "sap.ui.unified.ColorPicker",
-			"url" : "../ColorPicker.html",
+			"url" : "./ColorPicker.html",
 			"appComponent" : "CA-UI5-CTR-BAL",
 			"accTest": {
 				"name": "sap.ui.unified.ColorPicker",

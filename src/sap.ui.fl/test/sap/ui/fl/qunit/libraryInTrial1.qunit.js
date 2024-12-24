@@ -31,6 +31,9 @@ sap.ui.define([
 							return true;
 						}
 					};
+				},
+				getServiceAsync() {
+					return Promise.resolve();
 				}
 			});
 

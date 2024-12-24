@@ -40,8 +40,6 @@ sap.ui.define([
 	var sServiceURI = "/service/";
 	var sMetaDataURI = "qunit/data/";
 
-	// shortcut for sap.ui.core.aria.HasPopup
-	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	// configure respond to requests delay
 	MockServer.config({
@@ -491,7 +489,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog with destroy call in close event & late binding",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function (evt) {
 			oTableSelectDialog3.open();
 
@@ -542,7 +539,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog in MultiSelect mode",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog4.open();
@@ -641,7 +637,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog in MultiSelect mode with large data",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog5.open();
@@ -774,7 +769,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog with very large data",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog6.setMultiSelect(false);
@@ -787,7 +781,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog with multi Select and very large data",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog6.setMultiSelect(true);
@@ -883,7 +876,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"id_1\" with web service binding and no fixed width",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// initiate model
 			var oModel = new ODataModel(sServiceURI, true);
@@ -952,7 +944,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog in MultiSelect mode, Web service binding, late binding, with web service binding and 400px width",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog9.open("");
@@ -976,7 +967,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog with default property growing (true)",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			oTableSelectDialog10.open();
 		}
@@ -987,7 +977,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog with property growing false",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			oTableSelectDialog11.open();
 		}
@@ -1052,7 +1041,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open TableSelectDialog with Reset Button and long title",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			oTableSelectDialog12.open();
 		}
@@ -1102,7 +1090,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open SelectDialog with resizable=true",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog13.open();
@@ -1130,7 +1117,6 @@ sap.ui.define([
 			maxWidth: "100%"
 		}),
 		text: "Open SelectDialog with Responsive Padding",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog14.open();
@@ -1154,7 +1140,6 @@ sap.ui.define([
 
 	var oButton15 = new Button("Button15", {
 		text: "Select Dialog with custom placeholder",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog15.open();
@@ -1173,7 +1158,6 @@ sap.ui.define([
 
 	var oButton16 = new Button("Button16", {
 		text: "Select Dialog with delayed loading",
-		ariaHasPopup: AriaHasPopup.Dialog,
 		press: function () {
 			// open dialog
 			oTableSelectDialog16.open();

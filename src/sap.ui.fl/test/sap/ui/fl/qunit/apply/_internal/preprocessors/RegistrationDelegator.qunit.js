@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ExtensionPoint",
+	"sap/ui/fl/apply/_internal/flexState/communication/FLPAboutInfo",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
@@ -19,6 +20,7 @@ sap.ui.define([
 	XMLView,
 	ComponentHooks,
 	ExtensionPoint,
+	FLPAboutInfo,
 	ManifestUtils,
 	RegistrationDelegator,
 	DelegateMediator,
@@ -59,6 +61,7 @@ sap.ui.define([
 			const oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
 			const oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
 			const oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");
+			const oRegisterFLPAboutInfoStub = sandbox.stub(FLPAboutInfo, "initialize");
 
 			const fnDone = assert.async();
 			sap.ui.require(["sap/ui/fl/library"], function() {
@@ -78,6 +81,7 @@ sap.ui.define([
 				assert.equal(oRegisterExtensionPointProviderStub.callCount, 1, "ExtensionPoint called.");
 				assert.equal(oRegisterReadDelegateStub.callCount, 3, "delegate registration is called.");
 				assert.ok(ComponentHooks.onPreprocessManifest.isRegistered());
+				assert.ok(oRegisterFLPAboutInfoStub.callCount, 1, "FLPAboutInfo registration is called.");
 				fnDone();
 			});
 		});

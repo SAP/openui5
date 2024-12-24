@@ -301,7 +301,7 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 			// synchronously call the result of a scroll event that
 			// the browser fires when the position of the selected section changed
-			oObjectPage._updateSelectionOnScroll(iScrollTop + 100);
+			oObjectPage._updateSelectionOnScroll(iScrollTop + oObjectPage.getSections().length * 100);
 			// the page internally sets a wrong selected section
 			// because on scroll we do not yet update the cached positions of the sections
 			assert.notEqual(oObjectPage.getSelectedSection() , sSelectedSectionId, "selected section has changed");

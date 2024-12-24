@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
+	"sap/ui/fl/apply/_internal/flexState/communication/FLPAboutInfo",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ComponentLifecycleHooks",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -24,6 +25,7 @@ sap.ui.define([
 	ComponentHooks,
 	ExtensionPoint,
 	Preprocessor,
+	FLPAboutInfo,
 	ManifestUtils,
 	ComponentLifecycleHooks,
 	DelegateMediatorAPI,
@@ -45,7 +47,6 @@ sap.ui.define([
 	 * @private
 	 */
 	var RegistrationDelegator = {};
-
 	function registerChangesInComponent() {
 		ComponentHooks.onInstanceCreated.register(ComponentLifecycleHooks.instanceCreatedHook);
 	}
@@ -110,6 +111,10 @@ sap.ui.define([
 		});
 	}
 
+	function registerFLPAboutInfo() {
+		FLPAboutInfo.initialize();
+	}
+
 	/**
 	 * Registers everything in one call
 	 *
@@ -125,6 +130,7 @@ sap.ui.define([
 		registerExtensionPointProvider();
 		registerModelSpecificReadDelegates();
 		registerOnModelCreated();
+		registerFLPAboutInfo();
 	};
 
 	return RegistrationDelegator;

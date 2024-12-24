@@ -24,6 +24,11 @@ sap.ui.define([
         init() {
             UIComponent.prototype.init.apply(this, arguments);
 
+            const oCategoriesModel = new JSONModel(sap.ui.require.toUrl(
+                "sap/ui/demo/illustrationExplorer/model/categories.json"
+            ));
+            this.setModel(oCategoriesModel, "categories");
+
             const oIllustrationModel = new JSONModel();
             this.setModel(oIllustrationModel, "illustration");
 

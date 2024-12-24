@@ -125,6 +125,38 @@ sap.ui.define([
 		assert.strictEqual($FormattedText[0].style["text-align"], "center", "a::class is rendered correctly");
 	});
 
+	QUnit.test("getAccessibilityInfo method", function(assert) {
+		// prepare
+		var oFormattedText = new FormattedText({
+			htmlText: 'The <strong>best</strong> %%0 at <em>%%1</em>',
+			controls: [
+				new Link({
+					text: "run",
+					href: "https://www.sap.com",
+					subtle: true
+				}),
+				new Link({
+					text: "SAP",
+					href: "https://www.sap.com",
+					emphasized: true
+				})
+			]
+		}).placeAt("qunit-fixture");
+
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// act
+		// assert
+		assert.strictEqual(
+			oFormattedText.getAccessibilityInfo().description,
+			"The best Link run Subtle at Link SAP Emphasized",
+			"Proper accessibility info is returned"
+		);
+
+		// cleanup
+		oFormattedText.destroy();
+	});
+
 	QUnit.module("_setUseLimitedRenderingRules restricted method", {
 		beforeEach: function () {
 			this.oFT = new FormattedText();

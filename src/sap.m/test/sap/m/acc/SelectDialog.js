@@ -29,9 +29,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.ui.core.aria.HasPopup
-	var HasPopup = coreLibrary.aria.HasPopup;
-
 	// filter function for the list search
 	var fnDoSearch = function (oEvent, bProductSearch) {
 		var aFilters = [],
@@ -123,7 +120,6 @@ sap.ui.define([
 		}),
 		oButton1 = new Button("Button1", {
 			text: "SelectDialog in single selection mode",
-			ariaHasPopup: HasPopup.Dialog,
 			press: function (oEvent) {
 				// initiate model
 				oSelectDialog1.setModel(oModelList);
@@ -163,7 +159,6 @@ sap.ui.define([
 
 	var oButton2 = new Button("Button4", {
 		text: "SelectDialog in multi selection mode",
-		ariaHasPopup: HasPopup.Dialog,
 		press: function () {
 			// prefilter dialog
 			var itemsBinding = oSelectDialog2.getBinding("items");

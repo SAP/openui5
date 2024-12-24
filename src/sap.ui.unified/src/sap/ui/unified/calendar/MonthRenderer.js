@@ -492,7 +492,7 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 		mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 	}
 
-	if (this.renderWeekNumbers && oMonth._oDate) {
+	if (this.renderWeekNumbers && oMonth.getShowWeekNumbers() && oMonth._oDate) {
 		// TODO: We could replace the following lines with a sap.ui.unified.calendar.CalendarUtils.calculateWeekNumber usage
 		// once the same method starts to respect the sap/ui/core/date/CalendarWeekNumbering types.
 		const oWeekConfig = CalendarDateUtils.getWeekConfigurationValues(oMonth.getCalendarWeekNumbering(), new Locale(oMonth._getLocale()));

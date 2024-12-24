@@ -17,9 +17,6 @@ sap.ui.define([
 ], function(App, Bar, Button, Dialog, FlexItemData, HBox, Label, mobileLibrary, Page, SearchField, MText, Title, HTML, Icon, coreLibrary) {
 	"use strict";
 
-	// shortcut for sap.ui.core.aria.HasPopup
-	var HasPopup = coreLibrary.aria.HasPopup;
-
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -197,7 +194,6 @@ sap.ui.define([
 			new Button('simpleDialogButton', {
 				text: "Simple Dialog",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oSimpleDialog.open();
 				}
@@ -206,7 +202,6 @@ sap.ui.define([
 			new Button('msgDialogButton', {
 				text: "Message Dialog",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oMessageDialog.open();
 				}
@@ -215,7 +210,6 @@ sap.ui.define([
 			new Button('cutomHeaderDialogButton', {
 				text: "With Custom Header",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oCustomHeaderDialog.open();
 				}
@@ -224,7 +218,6 @@ sap.ui.define([
 			new Button('dialogWithSuccessStateButton', {
 				text: "Success Dialog",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oSuccessStateDialog.open();
 				}
@@ -233,7 +226,6 @@ sap.ui.define([
 			new Button('dialogWithWarningStateButton', {
 				text: "Warning Dialog",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oWarningStateDialog.open();
 				}
@@ -242,7 +234,6 @@ sap.ui.define([
 			new Button('dialogWithErrorStateButton', {
 				text: "Error Dialog",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oErrorStateDialog.open();
 				}
@@ -251,7 +242,6 @@ sap.ui.define([
 			new Button('searchFieldInDialogButton', {
 				text: "SearchField in Dialog",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oSearchFieldDialog.open();
 				}
@@ -260,7 +250,6 @@ sap.ui.define([
 			new Button('subtitleDialogButton', {
 				text: "subtitle in Dialog",
 				width: _buttonWidth,
-				ariaHasPopup: HasPopup.Dialog,
 				press: function () {
 					oSubtitledDialog.open();
 				}

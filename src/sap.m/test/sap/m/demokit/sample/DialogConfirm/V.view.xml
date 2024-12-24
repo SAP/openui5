@@ -8,25 +8,21 @@
 			text="Approve"
 			width="230px"
 			press=".onApproveDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Reject"
 			width="230px"
 			press=".onRejectDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Submit (mandatory note)"
 			width="230px"
 			press=".onSubmitDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 		<Button
 			text="Confirm (optional note)"
 			width="230px"
 			press=".onConfirmDialogPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

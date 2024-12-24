@@ -24,7 +24,6 @@ sap.ui.define([
 	"sap/ui/rta/service/index",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/Device",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
@@ -52,7 +51,6 @@ sap.ui.define([
 	mServicesDictionary,
 	RuntimeAuthoring,
 	Utils,
-	jQuery,
 	sinon,
 	Device,
 	RtaQunitUtils
@@ -509,7 +507,6 @@ sap.ui.define([
 
 			this.oOverlayContainer = document.createElement("button");
 			document.getElementById("qunit-fixture").append(this.oOverlayContainer);
-			this.oOverlayContainer = jQuery(this.oOverlayContainer);
 			this.oAnyOtherDomRef = document.createElement("button");
 			document.getElementById("qunit-fixture").append(this.oAnyOtherDomRef);
 			this.oContextMenu = document.createElement("button");
@@ -550,7 +547,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with focus on an overlay", function(assert) {
-			this.oOverlayContainer.get(0).focus();
+			this.oOverlayContainer.focus();
 
 			this.oRta.fnKeyDown(this.oUndoEvent);
 			assert.equal(this.oUndoStub.callCount, 1, "then undo was called once");
@@ -610,7 +607,7 @@ sap.ui.define([
 			this.oUndoEvent.ctrlKey = false;
 			this.oUndoEvent.metaKey = true;
 
-			this.oOverlayContainer.get(0).focus();
+			this.oOverlayContainer.focus();
 			this.oRta.fnKeyDown(this.oUndoEvent);
 			assert.equal(this.oUndoStub.callCount, 1, "then undo was called once");
 
