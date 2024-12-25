@@ -35,7 +35,11 @@ function(
 	 *
 	 * @class
 	 * The <code>Tree</code> control provides a tree structure for displaying data in a hierarchy.
-	 * <b>Note:</b> Growing feature is not supported by <code>Tree</code>.
+	 *
+	 * <b>Note:</b>
+	 * Growing feature is not supported by <code>Tree</code>.
+	 * Additionally, the OData V2 tree scenario is deprecated as of UI5 2.0 and is therefore not supported by <code>Tree</code>.
+	 *
 	 * @extends sap.m.ListBase
 	 *
 	 * @author SAP SE
