@@ -18,6 +18,7 @@
 					class="sapUiTinyMarginBeginEnd"
 					icon="{= ${/buttonWithIcon} ? ${/buttonIcon} : '' }"
 					type="{/buttonType}"
+					badgeStyle="{/badgeStyle}"
 					text="{= ${/buttonWithText} ? ${/buttonText} : '' }">
 					<customData>
 						<BadgeCustomData
@@ -118,6 +119,25 @@
 						id="TextCheckBox"
 						text="Text"
 						selected="{/buttonWithText}"/>
+				</FlexBox>
+				<FlexBox
+					class="sapUiTinyMarginBeginEnd"
+					alignItems="Center"
+					justifyContent="Start">
+					<Text
+						renderWhitespace="true"
+						width="50px"
+						text="Badge Style"/>
+					<Select
+						id="BadgeStyle"
+						selectedKey="{/badgeStyle}">
+						<core:Item
+								key="Default"
+								text="Default"/>
+						<core:Item
+								key="Attention"
+								text="Attention"/>
+					</Select>
 				</FlexBox>
 				<Toolbar class="sapUiSmallMarginTop">
 					<content>
