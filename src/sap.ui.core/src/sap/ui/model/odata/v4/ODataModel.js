@@ -165,12 +165,6 @@ sap.ui.define([
 		 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives
 		 *   are supported in order to load schemas on demand from other $metadata documents and
 		 *   include them into the current service ("cross-service references").
-		 * @param {string} [mParameters.synchronizationMode]
-		 *   <b>deprecated:</b> As of Version 1.110.0, this parameter is obsolete; see also
-		 *   {@link topic:648e360fa22d46248ca783dc6eb44531 Data Reuse}
-		 *   (Controls synchronization between different bindings which refer to the same data for
-		 *   the case data changes in one binding. Must be set to 'None' which means bindings are
-		 *   not synchronized at all; all other values are not supported and lead to an error.)
 		 * @param {string} [mParameters.updateGroupId]
 		 *   The group ID that is used for update requests. If no update group ID is specified,
 		 *   <code>mParameters.groupId</code> is used. Valid update group IDs are
@@ -178,12 +172,11 @@ sap.ui.define([
 		 * @param {boolean} [mParameters.withCredentials]
 		 *   Whether the XMLHttpRequest is called with <code>withCredentials</code>, so that user
 		 *   credentials are included in cross-origin requests by the browser (since 1.120.0)
-		 * @throws {Error} If an unsupported synchronization mode is given, if the given service
-		 *   root URL does not end with a forward slash, if an unsupported parameter is given, if
-		 *   OData system query options or parameter aliases are specified as parameters, if an
-		 *   invalid group ID or update group ID is given, if the given operation mode is not
-		 *   supported, if an annotation file cannot be merged into the service metadata, if an
-		 *   unsupported value for <code>odataVersion</code> is given.
+		 * @throws {Error} If the given service root URL does not end with a forward slash, if an
+		 *   unsupported parameter is given, if OData system query options or parameter aliases are
+		 *   specified as parameters, if an invalid group ID or update group ID is given, if the
+		 *   given operation mode is not supported, if an annotation file cannot be merged into the
+		 *   service metadata, if an unsupported value for <code>odataVersion</code> is given.
 		 *
 		 * @alias sap.ui.model.odata.v4.ODataModel
 		 * @author SAP SE
@@ -243,12 +236,11 @@ sap.ui.define([
 	 *
 	 * @param {object} mParameters
 	 *   The parameters
-	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
-	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
-	 *   system query options or parameter aliases are specified as parameters, if an invalid group
-	 *   ID or update group ID is given, if the given operation mode is not supported, if an
-	 *   annotation file cannot be merged into the service metadata, if an unsupported value for
-	 *   <code>odataVersion</code> is given.
+	 * @throws {Error} If the given service root URL does not end with a forward slash, if an
+	 *   unsupported parameter is given, if OData system query options or parameter aliases are
+	 *   specified as parameters, if an invalid group ID or update group ID is given, if the given
+	 *   operation mode is not supported, if an annotation file cannot be merged into the service
+	 *   metadata, if an unsupported value for <code>odataVersion</code> is given.
 	 */
 	function constructor(mParameters = {}) {
 		var oGroupProperties,
