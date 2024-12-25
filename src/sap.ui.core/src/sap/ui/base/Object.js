@@ -47,15 +47,33 @@ sap.ui.define(['./Metadata'], function(Metadata) {
 	};
 
 	/**
-	 * Returns a public facade of this object.
+	 * Returns the public facade of this object.
 	 *
-	 * By default, <code>this</code> is returned.
+	 * By default, the public facade is implemented as an instance of {@link sap.ui.base.Interface},
+	 * exposing the <code>publicMethods</code> as defined in the metadata of the class of this object.
+	 *
+	 * See the documentation of the {@link #.extend extend} method for an explanation of <code>publicMethods</code>.
+	 *
+	 * The facade is created on the first call of <code>getInterface</code> and reused for all later calls.
 	 *
 	 * @public
-	 * @returns {sap.ui.base.Object} A facade for this object.
+	 * @returns {sap.ui.base.Object} A facade for this object, with at least the public methods of the class of this.
 	 */
 	BaseObject.prototype.getInterface = function() {
-		return this;
+		// New implementation that avoids the overhead of a dedicated member for the interface
+		// initially, an Object instance has no associated Interface and the getInterface
+		// method is defined only in the prototype. So the code here will be executed.
+		// It creates an interface (basically the same code as in the old implementation)
+		var oInterface = new BaseObject._Interface(this, null);
+		// Now this Object instance gets a new, private implementation of getInterface
+		// that returns the newly created oInterface. Future calls of getInterface on the
+		// same Object therefore will return the already created interface
+		this.getInterface = function() {
+			return oInterface;
+		};
+		// as the first caller doesn't benefit from the new method implementation we have to
+		// return the created interface as well.
+		return oInterface;
 	};
 
 	/**
