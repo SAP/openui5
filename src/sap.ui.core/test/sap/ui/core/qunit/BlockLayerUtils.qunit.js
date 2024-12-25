@@ -151,7 +151,8 @@ sap.ui.define([
 		assert.ok(this.oButton.getBusy(), "Button should be busy");
 		assert.equal(queryAll('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 	});
@@ -159,13 +160,15 @@ sap.ui.define([
 	QUnit.test("setBlocked(true) → setBusy(true) : setBlocked(false) → setBusy(false)", function(assert) {
 		this.oButton.setBusyIndicatorDelay(0);
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
 
 		this.oButton.setBusy(true);
 		assert.ok(this.oButton.getBusy(), "Button should be busy");
 
-		assert.notOk(false, "Button shouldn't be blocked anymore");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
 		this.oButton.setBusy(false);
@@ -176,7 +179,8 @@ sap.ui.define([
 	QUnit.test("setBlocked(true) → setBusy(true) : setBusy(false) → setBlocked(false)", function(assert) {
 		this.oButton.setBusyIndicatorDelay(0);
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
 
 		this.oButton.setBusy(true);
@@ -186,7 +190,8 @@ sap.ui.define([
 		assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.notOk(false, "Button shouldn't be blocked anymore");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
 		this.testNoneTabbableSpanExists(this.oButton.getDomRef());
 	});
 
@@ -197,13 +202,15 @@ sap.ui.define([
 		assert.ok(this.oButton.getBusy(), "Button should be busy");
 		assert.equal(queryAll('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 
 		this.oButton.setBusy(false);
 		assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.notOk(false, "Button shouldn't be blocked anymore");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
 		this.testNoneTabbableSpanExists(this.oButton.getDomRef());
 	});
 
@@ -214,9 +221,11 @@ sap.ui.define([
 		assert.ok(this.oButton.getBusy(), "Button should be busy");
 		assert.equal(queryAll('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 
-		assert.notOk(false, "Button shouldn't be blocked anymore");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
 		this.oButton.setBusy(false);
@@ -229,7 +238,8 @@ sap.ui.define([
 
 		this.oButton.setBusyIndicatorDelay(0);
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
 
 		this.oButton.setBusy(true);
@@ -238,16 +248,19 @@ sap.ui.define([
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.notOk(false, "Button shouldn't be blocked anymore");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
 		assert.equal(queryAll('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be still available.");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.ok(oLogSpy.calledTwice, "Info logged. Block Layer creation ignored since Busy Layer still exists.");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.notOk(false, "Button shouldn't be busy anymore");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be busy anymore");
 		assert.ok(oLogSpy.calledThrice, "Info logged. Unblocking ignored since Busy Layer still exists.");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
@@ -257,7 +270,8 @@ sap.ui.define([
 	QUnit.test("setBlocked(true) → setBusy(true) : setBusy(false) → setBusy(true) → setBusy(false)", function(assert) {
 		this.oButton.setBusyIndicatorDelay(0);
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
@@ -297,7 +311,8 @@ sap.ui.define([
 		assert.equal(queryAll('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
 		assert.equal(queryAll('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.ok(oLogSpy.calledOnce, "Info logged. Block Layer creation ignored since Busy Layer still exists.");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
@@ -333,23 +348,27 @@ sap.ui.define([
 		assert.equal(queryAll('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
 		assert.equal(queryAll('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.ok(oLogSpy.calledOnce, "Info logged. Block Layer creation ignored since Busy Layer still exists.");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.notOk(false, "Button shouldn't be blocked");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked");
 		assert.ok(oLogSpy.calledTwice, "Info logged. Unblocking ignored since Busy Layer still exists.");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
 		assert.equal(queryAll('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.ok(false, "Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.ok(this.oButton.getBlocked(), "Button should be blocked");
 		assert.ok(oLogSpy.calledThrice, "Info logged. Block Layer creation ignored since Busy Layer still exists.");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
 		this.testOneTabbableSpanExists(this.oButton.getDomRef());
 
-		assert.notOk(false, "Button shouldn't be blocked");
+		this.oButton.setBlocked(false);
+		assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked");
 		assert.equal(oLogSpy.callCount, 4, "Info logged. Unblocking ignored since Busy Layer still exists.");
 		assert.equal(queryAll('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
 		assert.equal(queryAll('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
@@ -361,33 +380,36 @@ sap.ui.define([
 	QUnit.test("Don't remove afterRendering delegate when either busy or block state is still active", async function(assert) {
 		var iInitialDelegateCount = this.oButton.aDelegates.length;
 		assert.ok(iInitialDelegateCount >= 1, "Button should already have at least one delegate initially");
-		assert.equal(false, true, "setBlocked(true): Button should be blocked");
+		this.oButton.setBlocked(true);
+		assert.equal(this.oButton.getBlocked(), true, "setBlocked(true): Button should be blocked");
 		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount + 1, "onBefore-/onAfterRendering delegate should be added");
 
 		this.oButton.setBusyIndicatorDelay(0);
 		this.oButton.setBusy(true);
 		assert.equal(this.oButton.getBusy(), true, "setBusy(true): Button should be busy");
-		assert.equal(false, true, "Button should still be blocked");
+		assert.equal(this.oButton.getBlocked(), true, "Button should still be blocked");
 
 		this.oButton.setBusy(false);
 		assert.equal(this.oButton.getBusy(), false, "setBusy(false): Button shouldn't be busy anymore");
-		assert.equal(false, true, "Button should still be blocked");
+		assert.equal(this.oButton.getBlocked(), true, "Button should still be blocked");
 		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount + 1 , "onBefore-/onAfterRendering delegate should still be available");
 
 		this.oButton.invalidate();
 		await nextUIUpdate();
-		assert.equal(false, true, "After Re-rendering: Button should still be blocked");
+		assert.equal(this.oButton.getBlocked(), true, "After Re-rendering: Button should still be blocked");
 
 		var oBlockLayerDOM = document.getElementsByClassName("sapUiBlockLayer");
 		assert.ok(oBlockLayerDOM, "After Re-rendering: BlockLayer should be available");
 
-		assert.equal(false, false, "setBlocked(false): Button shouldn't be blocked anymore");
+		this.oButton.setBlocked(false);
+		assert.equal(this.oButton.getBlocked(), false, "setBlocked(false): Button shouldn't be blocked anymore");
 		assert.equal(oBlockLayerDOM.length, 0, "BlockLayer should be removed");
 		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount, "onBefore-/onAfterRendering delegate should be removed again");
 	});
 
 	QUnit.test("setBlocked(true) → invalidate → setBlocked(false)", async function(assert) {
 		this.oButton.focus();
+		this.oButton.setBlocked(true);
 
 		this.oButton.invalidate();
 		await nextUIUpdate();
@@ -396,6 +418,8 @@ sap.ui.define([
 		this.oButton.addDelegate({
 			onsapescape: oSpy
 		});
+
+		this.oButton.setBlocked(false);
 
 		assert.ok(this.oButton.getDomRef().contains(document.activeElement), "Button still has the focus");
 

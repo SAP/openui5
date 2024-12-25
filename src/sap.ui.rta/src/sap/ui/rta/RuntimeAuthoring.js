@@ -923,6 +923,7 @@ sap.ui.define([
 	function setBlockedOnRootElements(bBlocked) {
 		this._oDesignTime?.getRootElements().forEach((oRootElement) => {
 			const oUiElement = oRootElement.isA("sap.ui.core.Component") ? oRootElement.getRootControl() : oRootElement;
+			oUiElement?.setBlocked(bBlocked);
 		});
 	}
 

@@ -96,10 +96,13 @@ sap.ui.define([
 
 			properties : {
 				/**
+				 * Whether the control is currently in blocked state.
+				 */
+				"blocked" : {type: "boolean", defaultValue: false, visibility: "hidden"},
+				/**
 				 * Whether the control is currently in busy state.
 				 */
 				"busy" : {type: "boolean", defaultValue: false},
-
 				/**
 				 * The delay in milliseconds, after which the busy indicator will show up for this control.
 				 */
@@ -142,6 +145,7 @@ sap.ui.define([
 				 * @since 1.31
 				 */
 				"fieldGroupIds" : { type: "string[]", defaultValue: [] }
+
 			},
 
 			events : {
@@ -821,6 +825,10 @@ sap.ui.define([
 		 * @private
 		 */
 		onAfterRendering: function () {
+			if (this.getBlocked() && this.getDomRef() && !this.getDomRef("blockedLayer")) {
+				this._oBlockState = BlockLayerUtils.block(this, this.getId() + "-blockedLayer", this._sBlockSection);
+				jQuery(this._oBlockState.$blockLayer.get(0)).addClass("sapUiBlockLayerOnly");
+			}
 			if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && !this.getDomRef("busyIndicator")) {
 				// Also use the BusyIndicatorDelay when a control is initialized
 				// with "busy = true". If the delayed call was already initialized
@@ -902,6 +910,14 @@ sap.ui.define([
 	}
 
 	/**
+	 * Adds a standalone block-layer. Might be shared with a BusyIndicator later on.
+	 */
+	function fnAddStandaloneBlockLayer () {
+		this._oBlockState = BlockLayerUtils.block(this, this.getId() + "-blockedLayer", this._sBlockSection);
+		jQuery(this._oBlockState.$blockLayer.get(0)).addClass("sapUiBlockLayerOnly");
+	}
+
+	/**
 	 * Adds a standalone BusyIndicator.
 	 * The block-layer code is able to recognize that a new block-layer is not needed.
 	 */
@@ -967,10 +983,16 @@ sap.ui.define([
 		$this.removeAttr("aria-busy");
 
 		if (this._sBlockSection === this._sBusySection) {
-			if (!this.getBusy()) {
+			if (!this.getBlocked() && !this.getBusy()) {
 				// Remove shared block state & busy block state reference
 				fnRemoveAllBlockLayers.call(this);
 
+			} else if (this.getBlocked()) {
+				if (this._oBlockState || this._oBusyBlockState) {
+					// Hide animation in shared block layer
+					BlockLayerUtils.toggleAnimationStyle(this._oBlockState || this._oBusyBlockState, false);
+					this._oBlockState = this._oBusyBlockState;
+				}
 			} else if (this._oBusyBlockState) {
 				BlockLayerUtils.unblock(this._oBusyBlockState);
 
@@ -983,6 +1005,82 @@ sap.ui.define([
 			delete this._oBusyBlockState;
 		}
 	}
+
+	/**
+	 * Set the controls block state.
+	 *
+	 * @param {boolean} bBlocked The new blocked state to be set
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.viz, sap.ui.rta, sap.ui.table
+	 */
+	Control.prototype.setBlocked = function(bBlocked, sBlockedSection /* this is an internal parameter to apply partial blocking for a specific section of the control */) {
+		//If the new state is already set, we don't need to do anything
+		if (!!bBlocked == this.getProperty("blocked")) {
+			return this;
+		}
+		this._sBlockSection = sBlockedSection || this._sBlockSection;
+
+		//No rerendering - should be modeled as a non-invalidating property once we have that
+		this.setProperty("blocked", bBlocked, /*bSuppressInvalidate*/ true);
+
+		if (bBlocked) {
+			this.addDelegate(oRenderingDelegate, false, this);
+		} else if (!this.getBusy()) {
+			// only remove delegate if control is not still in "busy" state
+			this.removeDelegate(oRenderingDelegate);
+		}
+
+		//If no domref exists stop here.
+		if (!this.getDomRef()) {
+			return this;
+		}
+
+		if (bBlocked) {
+			// blocking
+			if (this._sBlockSection === this._sBusySection) {
+				// only create a new block state if neither busy nor blocking blockState is present
+				if (!this._oBusyBlockState && !this._oBlockState) {
+					fnAddStandaloneBlockLayer.call(this);
+				} else {
+					Log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
+				}
+			} else {
+				fnAddStandaloneBlockLayer.call(this);
+			}
+		} else {
+			// unblocking
+			if (this._sBlockSection === this._sBusySection) {
+				if (!this.getBlocked() && !this.getBusy()) {
+					// Remove shared block state & busy block state reference
+					fnRemoveAllBlockLayers.call(this);
+
+				} else if (this.getBusy()) {
+					// Control or section is still busy, hence no removal required
+					Log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
+
+				}
+			} else if (this._oBlockState) {
+				// standalone block state
+				BlockLayerUtils.unblock(this._oBlockState);
+
+				delete this._oBlockState;
+			}
+		}
+
+		return this;
+	};
+
+	/**
+	 * Gets current value of property blocked.
+	 * @returns {boolean} Whether the control is currently in blocked state. Default is 'false'.
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.m, sap.viz, sap.ui.rta, sap.ui.table
+	 */
+	Control.prototype.getBlocked = function() {
+		return this.getProperty("blocked");
+	};
 
 	/**
 	 * Set the controls busy state.
@@ -1010,7 +1108,10 @@ sap.ui.define([
 			Interaction.notifyShowBusyIndicator(this);
 			this.addDelegate(oRenderingDelegate, false, this);
 		} else {
-			this.removeDelegate(oRenderingDelegate);
+			// only remove the delegate if the control is not still in "blocked" state
+			if (!this.getProperty("blocked")) {
+				this.removeDelegate(oRenderingDelegate);
+			}
 
 			//If there is a pending delayed call we clear it
 			if (this._busyIndicatorDelayedCallId) {
