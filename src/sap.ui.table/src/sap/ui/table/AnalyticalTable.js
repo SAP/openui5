@@ -52,7 +52,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated As of version 2.0, replaced by the {@link topic:3801656db27b4b7a9099b6ed5fa1d769 Table Building Block (OData V4)}.
 	 * @alias sap.ui.table.AnalyticalTable
 	 * @see {@link topic:08197fa68e4f479cbe30f639cc1cd22c sap.ui.table}
 	 * @see {@link fiori:/analytical-table-alv/ Analytical Table}

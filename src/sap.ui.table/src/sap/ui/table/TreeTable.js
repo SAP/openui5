@@ -37,10 +37,6 @@ sap.ui.define([
 		 *
 		 * @class
 		 * The TreeTable control provides a comprehensive set of features to display hierarchical data.
-		 *
-		 * <b>Note:</b> OData V2 is deprecated as of UI5 2.0 and is therefore not supported by the <code>TreeTable</code>.
-		 * Consider using {@link topic:3801656db27b4b7a9099b6ed5fa1d769 Table Building Block (OData V4)} for OData scenarios.
-		 *
 		 * @extends sap.ui.table.Table
 		 * @version ${version}
 		 *

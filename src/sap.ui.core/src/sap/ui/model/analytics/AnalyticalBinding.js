@@ -275,8 +275,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.analytics.AnalyticalBinding
 	 * @extends sap.ui.model.TreeBinding
-	 * @deprecated As of version 2.0, will be replaced by OData V4 data aggregation, see
-	 *   {@link topic:7d914317c0b64c23824bf932cc8a4ae1 Extension for Data Aggregation}
+	 * @experimental This module is only for experimental use!
 	 * @protected
 	 */
 	var AnalyticalBinding = TreeBinding.extend("sap.ui.model.analytics.AnalyticalBinding", /** @lends sap.ui.model.analytics.AnalyticalBinding.prototype */ {
