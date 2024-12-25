@@ -64,21 +64,6 @@ License: BSD-3-Clause
 Comment: these files belong to: Ace (Ajax.org Cloud9 Editor)
 
 
-# Library: sap.ui.commons:
-
-Files: src/sap.ui.commons/src/sap/ui/commons/themes/base/jQueryUi*
-Copyright: 2014 jQuery Foundation and other contributors
-License: MIT
-Comment: these files belong to: jQuery UI
-
-Files: src/sap.ui.commons/src/sap/ui/commons/Carousel.js
-Copyright:
-    2009-2024 SAP SE or an SAP affiliate company and OpenUI5 contributors
-    Spencer Tipping
-License: Apache-2.0 and MIT
-Comment: these files contain content from SAP and jquery.fix.clone: Carousel.js is authored by SAP, but contains an improved implementation of the clone function which is taken from jquery-fix-clone
-
-
 # Library: sap.ui.core:
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/jquery.js
@@ -426,40 +411,6 @@ Files: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webap
 Copyright: 2020 Jeremy Danyow
 License: MIT
 Comment: these files belong to: @cfworker/json-schema
-
-
-# Library: sap.ui.webc.common:
-
-Files: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/theming/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/localization/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.* src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-business-suite/*.*
-Copyright: SAP
-License: Apache-2.0
-Comment: these files belong to: UI5 Web Components
-
-Files: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/lit-html/*.*
-Copyright: Google LLC
-License: BSD-3-Clause
-Comment: these files belong to: lit-html
-
-
-# Library: sap.ui.webc.fiori:
-
-Files: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty/*.*
-Copyright: SAP
-License: Apache-2.0
-Comment: these files belong to: UI5 Web Components
-
-Files: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/lib/zxing.js
-Copyright: 2005 Sun Microsystems, Inc.; 2010-2014 University of Manchester; 2010-2015 Stian Soiland-Reyes; 2015 Peter Hull
-License: Apache-2.0
-Comment: these files belong to: ZXing
-
-
-# Library: sap.ui.webc.main:
-
-Files: src/sap.ui.webc.main/src/sap/ui/webc/main/thirdparty/*.*
-Copyright: SAP
-License: Apache-2.0
-Comment: these files belong to: UI5 Web Components
 
 
 # Outside of Libraries:
