@@ -84,8 +84,7 @@
         <raw-module name="sap/ui/thirdparty/require.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <raw-module name="sap/ui/thirdparty/signals.js" />
-        <raw-module name="sap/ui/thirdparty/sinon-ie.js" depends="sap/ui/thirdparty/sinon.js" />
-        <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js,sap/ui/thirdparty/sinon-ie.js" />
+        <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-4.js" />
@@ -393,7 +392,6 @@
         </lib>
         <ignore>
             <file pattern="sap/ui/thirdparty/RequestRecorder.js" />
-            <file pattern="sap/ui/thirdparty/sinon-ie.js" />
         </ignore>
     </thirdparty>
 
