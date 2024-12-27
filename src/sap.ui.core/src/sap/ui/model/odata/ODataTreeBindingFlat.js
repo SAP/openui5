@@ -23,11 +23,13 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.ODataTreeBindingFlat";
 
 	/**
-	 * Adapter for TreeBindings to add the ListBinding functionality and use the
+	 * Adapter for <code>sap.ui.model.odata.v2.ODataTreeBinding</code> to add the list binding functionality and use the
 	 * tree structure in list based controls.
 	 *
 	 * @alias sap.ui.model.odata.ODataTreeBindingFlat
 	 * @function
+	 * @deprecated As of version 2.0; will be replaced by OData V4 hierarchy functionality; see
+	 *   {@link topic:7d914317c0b64c23824bf932cc8a4ae1/section_RCH Recursive Hierarchy}
 	 *
 	 * @public
 	 */
