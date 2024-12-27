@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/rta/command/Annotation",
 	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Settings",
@@ -32,7 +31,6 @@ sap.ui.define([
 	ChangesWriteAPI,
 	PropertyChange,
 	VerticalLayout,
-	AnnotationCommand,
 	AppDescriptorCommand,
 	CommandFactory,
 	SettingsCommand,
@@ -560,47 +558,6 @@ sap.ui.define([
 			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton });
 		});
 
-		QUnit.test("when the handle settings function is called and the handler returns a change object with an annotation change,", function(assert) {
-			const done = assert.async();
-			const mAnnotationChange = {
-				changeSpecificData: {
-					annotationChangeType: "annotationChangeType",
-					content: {
-						dummyContent: "dummyContent"
-					}
-				}
-			};
-
-			const oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
-				isEnabled: true,
-				handler() {
-					return new Promise(function(resolve) {
-						resolve([mAnnotationChange]);
-					});
-				}
-			});
-
-			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
-				const oCompositeCommand = oEvent.getParameter("command");
-				assert.ok(oCompositeCommand, "Composite command is created");
-				const oAnnotationCommand = oCompositeCommand.getCommands()[0];
-				assert.ok(oAnnotationCommand instanceof AnnotationCommand, "... which contains an AnnotationCommand...");
-				assert.strictEqual(
-					oAnnotationCommand.getChangeType(),
-					mAnnotationChange.changeSpecificData.annotationChangeType,
-					"with the correct change type"
-				);
-				assert.strictEqual(
-					oAnnotationCommand.getContent(),
-					mAnnotationChange.changeSpecificData.content,
-					"with the correct content"
-				);
-
-				done();
-			});
-			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton });
-		});
-
 		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change and a flex change,", function(assert) {
 			const done = assert.async();
 			const mAppDescriptorChange = {
@@ -643,156 +600,7 @@ sap.ui.define([
 				assert.ok(oCompositeCommand, "Composite command is created");
 				const oAppDescriptorCommand = oCompositeCommand.getCommands()[0];
 				const oFlexCommand = oCompositeCommand.getCommands()[1];
-				assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... containing an AnnotationCommand");
-				assert.strictEqual(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
-				assert.strictEqual(oAppDescriptorCommand.getReference(), "someName", "with the correct reference");
-				assert.strictEqual(
-					oAppDescriptorCommand.getChangeType(),
-					mAppDescriptorChange.changeSpecificData.appDescriptorChangeType,
-					"with the correct change type"
-				);
-				assert.strictEqual(
-					oAppDescriptorCommand.getParameters(),
-					mAppDescriptorChange.changeSpecificData.content.parameters,
-					"with the correct parameters"
-				);
-				assert.strictEqual(
-					oAppDescriptorCommand.getTexts(),
-					mAppDescriptorChange.changeSpecificData.content.texts,
-					"with the correct texts"
-				);
-				assert.ok(oFlexCommand instanceof SettingsCommand, "... and a (flex) SettingsCommand");
-				assert.strictEqual(oFlexCommand.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
-				assert.strictEqual(
-					oFlexCommand.getChangeType(), mSettingsChange.changeSpecificData.changeType, "with the correct change type"
-				);
-				assert.strictEqual(oFlexCommand.getContent(), mSettingsChange.changeSpecificData.content, "with the correct parameters");
-				done();
-			});
-			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton }, {});
-		});
-
-		QUnit.test("when the handle settings function is called and the handler returns a change object with an annotation change and a flex change,", function(assert) {
-			const done = assert.async();
-			const mAnnotationChange = {
-				changeSpecificData: {
-					annotationChangeType: "annotationChangeType",
-					content: {
-						dummyContent: "dummyContent"
-					}
-				}
-			};
-			const mSettingsChange = {
-				selectorElement: {
-					id: "stableNavPopoverId",
-					controlType: "sap.m.Button",
-					appComponent: oMockedAppComponent
-				},
-				changeSpecificData: {
-					changeType: "changeSettings",
-					content: "testchange"
-				}
-			};
-
-			const oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
-				isEnabled: true,
-				handler() {
-					return new Promise(function(resolve) {
-						resolve([mAnnotationChange, mSettingsChange]);
-					});
-				}
-			});
-
-			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
-				const oCompositeCommand = oEvent.getParameter("command");
-				assert.ok(oCompositeCommand, "Composite command is created");
-				const oAnnotationCommand = oCompositeCommand.getCommands()[0];
-				const oFlexCommand = oCompositeCommand.getCommands()[1];
-				assert.ok(oAnnotationCommand instanceof AnnotationCommand, "... containing an AnnotationCommand");
-				assert.strictEqual(
-					oAnnotationCommand.getChangeType(),
-					mAnnotationChange.changeSpecificData.annotationChangeType,
-					"with the correct change type"
-				);
-				assert.strictEqual(
-					oAnnotationCommand.getContent(),
-					mAnnotationChange.changeSpecificData.content,
-					"with the correct content"
-				);
-				assert.ok(oFlexCommand instanceof SettingsCommand, "... and a (flex) SettingsCommand");
-				assert.strictEqual(oFlexCommand.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
-				assert.strictEqual(
-					oFlexCommand.getChangeType(), mSettingsChange.changeSpecificData.changeType, "with the correct change type"
-				);
-				assert.strictEqual(oFlexCommand.getContent(), mSettingsChange.changeSpecificData.content, "with the correct parameters");
-				done();
-			});
-			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton }, {});
-		});
-
-		QUnit.test("when the handle settings function is called and the handler returns a change object with annotation, app descriptor and flex changes,", function(assert) {
-			const done = assert.async();
-			const mAnnotationChange = {
-				changeSpecificData: {
-					annotationChangeType: "annotationChangeType",
-					content: {
-						dummyContent: "dummyContent"
-					}
-				}
-			};
-			const mAppDescriptorChange = {
-				appComponent: oMockedAppComponent,
-				changeSpecificData: {
-					appDescriptorChangeType: "appDescriptorChangeType",
-					content: {
-						parameters: {
-							param1: "param1"
-						},
-						texts: {
-							text1: "text1"
-						}
-					}
-				}
-			};
-			const mSettingsChange = {
-				selectorElement: {
-					id: "stableNavPopoverId",
-					controlType: "sap.m.Button",
-					appComponent: oMockedAppComponent
-				},
-				changeSpecificData: {
-					changeType: "changeSettings",
-					content: "testchange"
-				}
-			};
-
-			const oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
-				isEnabled: true,
-				handler() {
-					return new Promise(function(resolve) {
-						resolve([mAnnotationChange, mAppDescriptorChange, mSettingsChange]);
-					});
-				}
-			});
-
-			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
-				const oCompositeCommand = oEvent.getParameter("command");
-				assert.ok(oCompositeCommand, "Composite command is created");
-				const oAnnotationCommand = oCompositeCommand.getCommands()[0];
-				const oAppDescriptorCommand = oCompositeCommand.getCommands()[1];
-				const oFlexCommand = oCompositeCommand.getCommands()[2];
-				assert.ok(oAnnotationCommand instanceof AnnotationCommand, "... containing an AnnotationCommand");
-				assert.strictEqual(
-					oAnnotationCommand.getChangeType(),
-					mAnnotationChange.changeSpecificData.annotationChangeType,
-					"with the correct change type"
-				);
-				assert.strictEqual(
-					oAnnotationCommand.getContent(),
-					mAnnotationChange.changeSpecificData.content,
-					"with the correct content"
-				);
-				assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... and an AppDescriptorCommand");
+				assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... containing an App Descriptor command");
 				assert.strictEqual(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
 				assert.strictEqual(oAppDescriptorCommand.getReference(), "someName", "with the correct reference");
 				assert.strictEqual(
@@ -1075,7 +883,11 @@ sap.ui.define([
 			const aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.strictEqual(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 			assert.strictEqual(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
-			assert.strictEqual(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
+			assert.strictEqual(
+				aMenuItems.length,
+				1,
+				"'getMenuItems' doesn't return the action where the relevant container has no stable id"
+			);
 			assert.strictEqual(
 				this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid"
 			);

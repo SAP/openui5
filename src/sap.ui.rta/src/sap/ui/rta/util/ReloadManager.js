@@ -78,16 +78,16 @@ sap.ui.define([
 			return "MSG_RELOAD_WITH_PERSONALIZATION_AND_VIEWS";
 		}
 
+		if (oReloadInfo.changesNeedReload) {
+			return "MSG_RELOAD_NEEDED";
+		}
+
 		if (oReloadInfo.initialDraftGotActivated || oReloadInfo.activeVersionNotSelected) {
 			return "MSG_RELOAD_ACTIVATED_DRAFT";
 		}
 
 		if (oReloadInfo.isDraftAvailable) {
 			return "MSG_RELOAD_WITHOUT_DRAFT";
-		}
-
-		if (oReloadInfo.changesNeedReload) {
-			return "MSG_RELOAD_NEEDED";
 		}
 
 		if (oReloadInfo.allContexts) {

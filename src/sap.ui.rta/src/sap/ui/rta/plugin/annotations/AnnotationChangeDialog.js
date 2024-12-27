@@ -57,7 +57,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.rta.plugin.annotations.AnnotationChangeInfo
 	 * @property {string} serviceUrl - Url of the OData service
 	 * @property {object[]} properties - Array of properties
-	 * @property {string} properties.path - Path of the property
+	 * @property {string} properties.annotationPath - Path of the property
 	 * @property {string} properties.propertyName - Name of the property
 	 * @property {string} properties.currentValue - Current value of the property
 	 * @property {object[]} possibleValues - Array of possible values for value list type properties
@@ -83,7 +83,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.rta.plugin.annotations.AnnotationChangeDefinition
 	 * @property {string} annotationChangeType - Change type
 	 * @property {object} content - Change content
-	 * @property {string} content.propertyPath - Path of the property
+	 * @property {string} content.annotationPath - Path of the property
 	 * @property {string} content.value - New value
 	 * @property {string} serviceUrl - Url of the OData service
 	 * @private
@@ -124,24 +124,24 @@ sap.ui.define([
 		});
 		const aChangedAnnotations = aExistingChanges
 		.map((oChange) => {
-			return oChange.getContent().propertyPath;
+			return oChange.getContent().annotationPath;
 		});
 
 		this._oPopover ||= await this._createDialog();
 
 		const oOriginalProperties = {};
-		aProperties.forEach(({ path, currentValue }) => {
-			oOriginalProperties[path] = currentValue;
+		aProperties.forEach(({ annotationPath, currentValue }) => {
+			oOriginalProperties[annotationPath] = currentValue;
 		});
 
 		const sFilterText = sPreSelectedPropertyKey
-			? aProperties.find((oProperty) => oProperty.path === sPreSelectedPropertyKey).propertyName
+			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).propertyName
 			: "";
 		this.oChangeAnnotationModel.setData({
 			title: sAnnotationTitle,
 			description: sAnnotationDescription,
 			properties: aProperties, // all properties
-			changedProperties: aProperties.filter(({ path }) => aChangedAnnotations.includes(path)),
+			changedProperties: aProperties.filter(({ annotationPath }) => aChangedAnnotations.includes(annotationPath)),
 			propertiesToDisplay: aProperties, // switches dynamcially between all properties and changed properties
 			showChangedPropertiesOnly: false,
 			filterText: sFilterText,
@@ -158,12 +158,11 @@ sap.ui.define([
 				return null;
 			}
 			return {
-				annotationChangeType: "changeAnnotation",
+				serviceUrl: sServiceUrl,
 				content: {
-					propertyPath: sPath,
+					annotationPath: sPath,
 					value: vNewValue
-				},
-				serviceUrl: sServiceUrl
+				}
 			};
 		}).filter(Boolean);
 	};
