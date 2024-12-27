@@ -209,8 +209,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.formatGroupHeader = function(oTable, oContext, sPropertyKey) {
-		const oProperty = oTable.getPropertyHelper().getProperty(sPropertyKey);
-		const oTextProperty = oProperty.textProperty;
+		const oPropertyHelper = oTable.getPropertyHelper();
+		const oProperty = oPropertyHelper.getProperty(sPropertyKey);
+		const oTextProperty = oPropertyHelper.getProperty(oProperty.text);
 		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 		let sResourceKey = "table.ROW_GROUP_TITLE";
 		const aValues = [oProperty.label, oContext.getProperty(oProperty.path, true)];

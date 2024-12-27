@@ -213,27 +213,39 @@ sap.ui.define([
 		 * Checks whether the property is complex.
 		 *
 		 * @this sap.ui.mdc.util.PropertyInfo
+		 * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
 		 * @returns {boolean | null} Whether the property is complex
 		 */
-		isComplex: function() {
+		isComplex: function(oPropertyHelper) {
 			return PropertyHelper.isPropertyComplex(this);
 		},
 		/**
 		 * Gets all relevant simple properties. Returns itself if it is a simple property, and the referenced simple properties if it is complex.
 		 *
 		 * @this sap.ui.mdc.util.PropertyInfo
+		 * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
 		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The referenced simple properties if it is complex, otherwise itself
 		 */
-		getSimpleProperties: function() {
-			return this.propertyInfosProperties || [this];
+		getSimpleProperties: function(oPropertyHelper) {
+			if (!_private.get(oPropertyHelper)) {
+				// PropertyHelper was destroyed
+				return [];
+			}
+
+			if (this.isComplex()) {
+				return this.propertyInfos.map((sPropertyKey) => oPropertyHelper.getProperty(sPropertyKey));
+			} else {
+				return [this];
+			}
 		},
 		/**
 		 * Gets all sortable properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this sap.ui.mdc.util.PropertyInfo
+		 * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
 		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The sortable properties
 		 */
-		getSortableProperties: function() {
+		getSortableProperties: function(oPropertyHelper) {
 			return this.getSimpleProperties().filter((oProperty) => {
 				return oProperty.sortable;
 			});
@@ -242,22 +254,12 @@ sap.ui.define([
 		 * Gets all filterable properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this sap.ui.mdc.util.PropertyInfo
+		 * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
 		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The filterable properties
 		 */
-		getFilterableProperties: function() {
+		getFilterableProperties: function(oPropertyHelper) {
 			return this.getSimpleProperties().filter((oProperty) => {
 				return oProperty.filterable;
-			});
-		},
-		/**
-		 * Gets all visible properties referenced by the property, including the property itself if it is not complex.
-		 *
-		 * @this sap.ui.mdc.util.PropertyInfo
-		 * @returns {sap.ui.mdc.util.PropertyInfo[]} The visible properties
-		 */
-		getVisibleProperties: function() {
-			return this.getSimpleProperties().filter((oProperty) => {
-				return oProperty.visible;
 			});
 		}
 	};
@@ -323,7 +325,7 @@ sap.ui.define([
 			Object.keys(mPropertyMethods).forEach((sMethod) => {
 				Object.defineProperty(oProperty, sMethod, {
 					value: function() {
-						return mPropertyMethods[sMethod].call(this);
+						return mPropertyMethods[sMethod].call(this, oPropertyHelper);
 					},
 					writable: true
 				});
@@ -417,11 +419,6 @@ sap.ui.define([
 
 			if (vValue != null && typeof mAttribute.type === "string" && mAttribute.type.startsWith("PropertyReference") ||
 				sAttributePath === "propertyInfos") {
-
-				if (bIsComplex || sAttributePath !== "propertyInfos") {
-					preparePropertyReferences(oPropertySection, sAttribute, mProperties);
-				}
-
 				continue;
 			}
 
@@ -437,26 +434,6 @@ sap.ui.define([
 		}
 
 		return aDependenciesForDefaults;
-	}
-
-	function preparePropertyReferences(oPropertySection, sAttribute, mProperties) {
-		const vPropertyReference = oPropertySection[sAttribute];
-		let vProperties;
-		let sPropertyName = sAttribute;
-
-		if (Array.isArray(vPropertyReference)) {
-			vProperties = vPropertyReference.map((sName) => {
-				return mProperties[sName];
-			});
-			sPropertyName += "Properties";
-		} else {
-			vProperties = mProperties[vPropertyReference];
-			sPropertyName += "Property";
-		}
-
-		Object.defineProperty(oPropertySection, sPropertyName, {
-			value: vProperties
-		});
 	}
 
 	function setAttributeDefault(oPropertySection, mAttributeSection, sSection, sAttribute, aDependenciesForDefaults, vValue) {
@@ -835,10 +812,6 @@ sap.ui.define([
 				}
 
 				oPropertySection[mDependency.targetAttribute] = vValue;
-
-				if (typeof mDependency.targetType === "string" && mDependency.targetType.startsWith("PropertyReference")) {
-					preparePropertyReferences(oPropertySection, mDependency.targetAttribute, mProperties);
-				}
 			}
 		});
 	};
@@ -922,42 +895,6 @@ sap.ui.define([
 	 */
 	PropertyHelper.isPropertyComplex = function(oProperty) {
 		return oProperty != null && typeof oProperty === "object" ? "propertyInfos" in oProperty : false;
-	};
-
-	/**
-	 * Gets all sortable properties.
-	 *
-	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All sortable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getSortableProperties = function() {
-		return this.getProperties().filter((oProperty) => {
-			return oProperty.sortable;
-		});
-	};
-
-	/**
-	 * Gets all filterable properties.
-	 *
-	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All filterable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getFilterableProperties = function() {
-		return this.getProperties().filter((oProperty) => {
-			return oProperty.filterable;
-		});
-	};
-
-	/**
-	 * Gets all visible properties.
-	 *
-	 * @returns {sap.ui.mdc.util.PropertyInfo[]} All visible properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getVisibleProperties = function() {
-		return this.getProperties().filter((oProperty) => {
-			return oProperty.visible;
-		});
 	};
 
 	/**

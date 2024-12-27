@@ -2974,12 +2974,8 @@ sap.ui.define([
 
 		aColumns.forEach(function(oColumn) {
 			const oProperty = oPropertyHelper.getProperty(oColumn.getPropertyKey());
-			const aSortableProperties = oProperty ? oProperty.getSortableProperties().map((oProperty) => {
-				return oProperty.name;
-			}) : [];
-			const oSortCondition = this._getSortedProperties().find((oSortCondition) => {
-				return aSortableProperties.includes(oSortCondition.name);
-			});
+			const aSortableProperties = oProperty?.getSortableProperties().map((oProperty) => oProperty.name) ?? [];
+			const oSortCondition = this._getSortedProperties().find((oSortCondition) => aSortableProperties.includes(oSortCondition.name));
 			let sSortOrder = SortOrder.None;
 
 			if (oSortCondition) {
