@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Lib",
@@ -20,18 +19,19 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
@@ -51,6 +51,7 @@ sap.ui.define([
 	"sap/ui/rta/util/ServiceEventBus",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ], function(
 	capitalize,
@@ -58,7 +59,6 @@ sap.ui.define([
 	Log,
 	MessageBox,
 	MessageToast,
-	jQuery,
 	ManagedObject,
 	BusyIndicator,
 	Lib,
@@ -69,18 +69,19 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	KeyCodes,
+	FlexState,
 	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	Version,
+	Settings,
 	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
-	VersionsAPI,
 	TranslationAPI,
+	VersionsAPI,
 	Layer,
-	Settings,
 	FlexUtils,
 	JSONModel,
 	Measurement,
@@ -100,6 +101,7 @@ sap.ui.define([
 	ServiceEventBus,
 	validateFlexEnabled,
 	Utils,
+	jQuery,
 	Device
 ) {
 	"use strict";
@@ -675,6 +677,14 @@ sap.ui.define([
 			this.fireStop();
 			if (!bSkipRestart) {
 				ReloadInfoAPI.removeInfoSessionStorage(this.getRootControlInstance());
+				if (oReloadInfo.allContexts) {
+					// If the allContexts flag is set, the scope for role-restricted variants has changed
+					// i.e. the end user is lacking necessary roles which triggers a reload
+					// In this case, we need to clear the flex state to make sure that a new
+					// flex request is sent that fetches only the allowed variants
+					const sReference = ManifestUtils.getFlexReferenceForControl(this.getRootControlInstance());
+					FlexState.clearState(sReference);
+				}
 				ReloadManager.handleUrlParametersOnExit(oReloadInfo);
 			}
 			VersionsAPI.clearInstances();

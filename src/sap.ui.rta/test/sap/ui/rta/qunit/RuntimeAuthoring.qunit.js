@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -38,6 +39,7 @@ sap.ui.define([
 	DOMUtil,
 	OverlayRegistry,
 	KeyCodes,
+	FlexState,
 	FlexRuntimeInfoAPI,
 	Versions,
 	ChangesWriteAPI,
@@ -516,12 +518,18 @@ sap.ui.define([
 			var oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
 			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
 			var oRemoveInfoSessionStub = sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
+			var oClearFlexStateStub = sandbox.stub(FlexState, "clearState");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
 			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 
 			return this.oRta.stop()
 			.then(function() {
 				assert.strictEqual(oRemoveInfoSessionStub.callCount, 1, "then the info session storage is removed");
+				assert.strictEqual(
+					oClearFlexStateStub.callCount,
+					0,
+					"then by default the flex state is not cleared"
+				);
 				var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
 				assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
 				assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
@@ -561,6 +569,25 @@ sap.ui.define([
 					);
 				});
 			}.bind(this));
+		});
+
+		QUnit.test("when stopping rta with allContexts flag in the reload info", async function(assert) {
+			sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
+			sandbox.stub(RtaUtils, "showMessageBox").resolves();
+			const oCheckReloadStub = sandbox.stub(ReloadManager, "checkReloadOnExit");
+			oCheckReloadStub.callsFake(async (...args) => {
+				return {
+					...(await oCheckReloadStub.wrappedMethod.apply(this, args)),
+					allContexts: true
+				};
+			});
+			const oClearFlexStateStub = sandbox.stub(FlexState, "clearState");
+			await this.oRta.stop();
+			assert.strictEqual(
+				oClearFlexStateStub.callCount,
+				1,
+				"then the flex state is cleared"
+			);
 		});
 
 		QUnit.test("when saving changes and versioning and cba is disabled", function(assert) {
