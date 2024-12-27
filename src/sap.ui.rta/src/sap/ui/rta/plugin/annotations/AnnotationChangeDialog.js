@@ -63,6 +63,7 @@ sap.ui.define([
 	 * @property {object[]} possibleValues - Array of possible values for value list type properties
 	 * @property {string} possibleValues.key - Key of the option
 	 * @property {string} possibleValues.text - Text of the option
+	 * @property {string} [preSelectedProperty] - Name of the property that should be filtered for initially
 	 * @private
 	 * @ui5-restricted
 	 */
