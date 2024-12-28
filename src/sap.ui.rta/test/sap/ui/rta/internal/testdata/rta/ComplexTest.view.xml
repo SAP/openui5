@@ -49,6 +49,7 @@
 						<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
 						<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
 						<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
+						<Button id="AnnotationButton" text="Annotation Button" sap.ui.dt:designtime="sap/ui/rta/test/AnnotationTest.designtime" />
 					</HBox>
 					<Text id="headerTextWithFormatter" text="{path: 'i18n>appTitle', formatter: '.sampleFormatter'}" />
 				</VBox>

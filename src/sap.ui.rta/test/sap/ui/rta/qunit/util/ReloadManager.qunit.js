@@ -127,7 +127,7 @@ sap.ui.define([
 					isDraftAvailable: true,
 					allContexts: true,
 					initialDraftGotActivated: true,
-					changesNeedReload: true
+					changesNeedReload: false
 				},
 				testName: "with initial draft",
 				expectedMessageKey: "MSG_RELOAD_ACTIVATED_DRAFT"
@@ -139,7 +139,7 @@ sap.ui.define([
 					isDraftAvailable: true,
 					allContexts: true,
 					initialDraftGotActivated: false,
-					changesNeedReload: true
+					changesNeedReload: false
 				},
 				testName: "with draft",
 				expectedMessageKey: "MSG_RELOAD_WITHOUT_DRAFT"

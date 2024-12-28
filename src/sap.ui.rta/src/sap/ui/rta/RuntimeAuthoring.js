@@ -558,15 +558,16 @@ sap.ui.define([
 	 * @public
 	 * @param {boolean} bSkipSave - Stop RTA with or w/o saving changes
 	 * @param {boolean} bSkipRestart - Stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/app descriptor changes
+	 * @param {boolean} bSkipUnsavedChangesPrompt - Stop RTA without showing the "save changes" prompt to the user (e.g. closing of annotation dialog)
 	 * @returns {Promise} Resolves with undefined
 	 */
-	RuntimeAuthoring.prototype.stop = async function(bSkipSave, bSkipRestart) {
+	RuntimeAuthoring.prototype.stop = async function(bSkipSave, bSkipRestart, bSkipUnsavedChangesPrompt) {
 		let bUserCancelled;
 		checkToolbarAndExecuteFunction.call(this, "setBusy", true);
 		try {
 			bSkipSave ||= !PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()});
 			await waitForPendingActions.call(this);
-			if (!bSkipSave && this.canSave()) {
+			if (!bSkipSave && this.canSave() && !bSkipUnsavedChangesPrompt) {
 				const sAction = await showSaveConfirmation.call(this);
 				if (sAction === MessageBox.Action.CANCEL) {
 					bUserCancelled = true;
@@ -1698,6 +1699,14 @@ sap.ui.define([
 
 		this._pElementModified = this._pElementModified.then(function() {
 			this.getPluginManager().handleStopCutPaste();
+
+			// Executed annotation commands will stop RTA and trigger a save + reload in RTA mode
+			if (oEvent.getParameter("hasAnnotationCommand")) {
+				this._pElementModified = Promise.resolve();
+				RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
+				return this.getCommandStack().pushAndExecute(oCommand)
+				.then(this.stop.bind(this, false, false, /* bSkipUnsavedChangesPrompt = */true));
+			}
 
 			if (oCommand instanceof BaseCommand) {
 				if (sNewControlID) {

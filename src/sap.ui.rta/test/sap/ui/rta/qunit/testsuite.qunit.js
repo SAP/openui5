@@ -172,10 +172,10 @@ sap.ui.define([
 					"xx-designMode": true
 				}
 			},
-			"command/Annotation": {
+			"command/AnnotationCommand": {
 				group: "Command",
 				coverage: {
-					only: ["sap/ui/rta/command/Annotation"]
+					only: ["sap/ui/rta/command/AnnotationCommand"]
 				},
 				ui5: {
 					resourceroots: {
@@ -460,6 +460,12 @@ sap.ui.define([
 						"sap/ui/rta/plugin/annotations/AnnotationChangeDialog",
 						"sap/ui/rta/plugin/annotations/AnnotationChangeDialogController"
 					]
+				}
+			},
+			"plugin/annotations/AnnotationPlugin": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/annotations/AnnotationPlugin"]
 				}
 			},
 			"plugin/iframe/AddIFrameDialog": {

@@ -65,12 +65,12 @@ sap.ui.define([
 						properties: [
 							{
 								propertyName: "My Test Label",
-								path: "path/to/test/label",
+								annotationPath: "path/to/test/label",
 								currentValue: oTextArrangementTypes.TextOnly
 							},
 							{
 								propertyName: "My Other Test Label",
-								path: "path/to/second/test/label",
+								annotationPath: "path/to/second/test/label",
 								currentValue: oTextArrangementTypes.IDFirst
 							}
 						],
@@ -138,9 +138,9 @@ sap.ui.define([
 			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);
 			assert.strictEqual(aChanges.length, 1, "then one change was returned");
 			assert.strictEqual(
-				aChanges[0].content.propertyPath,
+				aChanges[0].content.annotationPath,
 				"path/to/test/label",
-				"then the correct path was returned"
+				"then the correct annotationPath was returned"
 			);
 			assert.strictEqual(
 				aChanges[0].content.value,
@@ -168,12 +168,12 @@ sap.ui.define([
 						properties: [
 							{
 								propertyName: "My Test Label",
-								path: "path/to/test/label",
+								annotationPath: "path/to/test/label",
 								currentValue: oTextArrangementTypes.TextOnly
 							},
 							{
 								propertyName: "My Other Test Label",
-								path: "path/to/second/test/label",
+								annotationPath: "path/to/second/test/label",
 								currentValue: oTextArrangementTypes.IDFirst
 							}
 						],
@@ -243,7 +243,7 @@ sap.ui.define([
 			oDialog.destroy();
 		});
 
-		QUnit.test("When the dialog is opened with a preselected path", async function(assert) {
+		QUnit.test("When the dialog is opened with a preselected annotationPath", async function(assert) {
 			const oTestDelegate = {
 				getAnnotationsChangeInfo: () => {
 					return {
@@ -251,12 +251,12 @@ sap.ui.define([
 						properties: [
 							{
 								propertyName: "My First Test Label",
-								path: "path/to/test/label",
+								annotationPath: "path/to/test/label",
 								currentValue: oTextArrangementTypes.TextOnly
 							},
 							{
 								propertyName: "My Other Test Label",
-								path: "path/to/second/test/label",
+								annotationPath: "path/to/second/test/label",
 								currentValue: oTextArrangementTypes.IDFirst
 							}
 						],
@@ -282,7 +282,7 @@ sap.ui.define([
 				assert.strictEqual(
 					oList.getFormElements().length,
 					1,
-					"then the properties are filtered based on the predefined path"
+					"then the properties are filtered based on the predefined annotationPath"
 				);
 
 				const oSearchField = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertiesFilter");
@@ -312,7 +312,7 @@ sap.ui.define([
 			const oAnnotationChange = FlexObjectFactory.createFromFileContent({
 				changeType: "changeAnnotation",
 				content: {
-					propertyPath: "path/to/test/label"
+					annotationPath: "path/to/test/label"
 				},
 				fileType: "annotation_change"
 			});
@@ -326,12 +326,12 @@ sap.ui.define([
 						properties: [
 							{
 								propertyName: "My Test Label",
-								path: "path/to/test/label",
+								annotationPath: "path/to/test/label",
 								currentValue: oTextArrangementTypes.TextOnly
 							},
 							{
 								propertyName: "My Other Test Label",
-								path: "path/to/second/test/label",
+								annotationPath: "path/to/second/test/label",
 								currentValue: oTextArrangementTypes.IDFirst
 							}
 						],
@@ -359,8 +359,8 @@ sap.ui.define([
 					"then only one form element is displayed"
 				);
 				assert.strictEqual(
-					aFormElements[0].getBindingContext().getObject().path,
-					oAnnotationChange.getContent().propertyPath,
+					aFormElements[0].getBindingContext().getObject().annotationPath,
+					oAnnotationChange.getContent().annotationPath,
 					"then only the property for which a change exists is displayed"
 				);
 				oToggleButton.firePress();
@@ -383,12 +383,12 @@ sap.ui.define([
 						properties: [
 							{
 								propertyName: "My Test Label",
-								path: "path/to/test/label",
+								annotationPath: "path/to/test/label",
 								currentValue: true
 							},
 							{
 								propertyName: "My Other Test Label",
-								path: "path/to/second/test/label",
+								annotationPath: "path/to/second/test/label",
 								currentValue: false
 							}
 						]
@@ -428,7 +428,7 @@ sap.ui.define([
 			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);
 			assert.strictEqual(aChanges.length, 1, "One change was returned");
 			assert.strictEqual(
-				aChanges[0].content.propertyPath,
+				aChanges[0].content.annotationPath,
 				"path/to/second/test/label",
 				"then the correct path was returned"
 			);
@@ -447,12 +447,12 @@ sap.ui.define([
 						properties: [
 							{
 								propertyName: "My Test Label",
-								path: "path/to/test/label",
+								annotationPath: "path/to/test/label",
 								currentValue: "Hello"
 							},
 							{
 								propertyName: "My Other Test Label",
-								path: "path/to/second/test/label",
+								annotationPath: "path/to/second/test/label",
 								currentValue: "World"
 							}
 						]
@@ -492,7 +492,7 @@ sap.ui.define([
 			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);
 			assert.strictEqual(aChanges.length, 1, "One change was returned");
 			assert.strictEqual(
-				aChanges[0].content.propertyPath,
+				aChanges[0].content.annotationPath,
 				"path/to/test/label",
 				"then the correct path was returned"
 			);

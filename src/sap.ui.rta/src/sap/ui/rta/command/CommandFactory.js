@@ -382,7 +382,7 @@ sap.ui.define([
 			noSelector: true
 		},
 		annotation: {
-			clazz: "sap/ui/rta/command/Annotation",
+			clazz: "sap/ui/rta/command/AnnotationCommand",
 			noSelector: true
 		},
 		addIFrame: {
