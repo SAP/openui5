@@ -153,17 +153,5 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Gets all aggregatable properties.
-	 *
-	 * @returns {sap.ui.mdc.odata.v4.TablePropertyInfo[]} All aggregatable properties
-	 * @public
-	 */
-	PropertyHelper.prototype.getAggregatableProperties = function() {
-		return this.getProperties().filter((oProperty) => {
-			return oProperty.aggregatable;
-		});
-	};
-
 	return PropertyHelper;
 });

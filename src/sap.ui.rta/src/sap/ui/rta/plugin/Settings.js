@@ -162,22 +162,6 @@ sap.ui.define([
 		});
 	};
 
-	Settings.prototype._handleAnnotationChangeCommand = function(mChange, oElement, oCompositeCommand) {
-		var mChangeSpecificData = mChange.changeSpecificData;
-
-		return this.getCommandFactory().getCommandFor(
-			oElement,
-			"annotation",
-			{
-				content: mChangeSpecificData.content,
-				changeType: mChangeSpecificData.annotationChangeType
-			}
-		)
-		.then(function(oAnnotationCommand) {
-			return oCompositeCommand.addCommand(oAnnotationCommand);
-		});
-	};
-
 	Settings.prototype._handleCompositeCommand = function(aElementOverlays, oElement, aChanges, oSettingsAction) {
 		var oCompositeCommand;
 
@@ -196,9 +180,6 @@ sap.ui.define([
 				// App Descriptor Change
 				} else if (mChangeSpecificData.appDescriptorChangeType) {
 					return () => this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
-				// Annotation Change
-				} else if (mChangeSpecificData.annotationChangeType) {
-					return () => this._handleAnnotationChangeCommand(mChange, oElement, oCompositeCommand);
 				}
 				return undefined;
 			}, this);

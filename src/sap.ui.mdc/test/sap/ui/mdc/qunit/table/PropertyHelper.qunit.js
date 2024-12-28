@@ -444,13 +444,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getGroupableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [this.oPropertyHelper.getProperty("propB")]);
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [], "After destruction");
-	});
-
 	QUnit.test("getColumnExportSettings", function(assert) {
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(), [], "No parameter");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings({}), [], "No column instance passed");
@@ -636,7 +629,7 @@ sap.ui.define([
 		assert.ok(Object.isFrozen(oSimpleProperty.getGroupableProperties()[0]), "Returned properties are frozen");
 
 		this.oPropertyHelper.destroy();
-		assert.deepEqual(oComplexProperty.getGroupableProperties(), [oSimpleProperty], "After destruction");
+		assert.deepEqual(oComplexProperty.getGroupableProperties(), [], "After destruction");
 	});
 
 	QUnit.module("Extension attributes");

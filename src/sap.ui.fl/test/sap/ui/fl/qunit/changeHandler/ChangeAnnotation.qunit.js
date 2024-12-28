@@ -30,9 +30,11 @@ sap.ui.define([
 		QUnit.test("completeChangeContent / applyChange / getCondenserInfo", function(assert) {
 			assert.deepEqual(this.oAnnotationChange.getContent(), {}, "initial content is empty");
 			ChangeAnnotation.completeChangeContent(this.oAnnotationChange, {
-				annotationPath: "somePath",
-				value: "someValue",
-				unknownProperty: "someUnknownProperty"
+				content: {
+					annotationPath: "somePath",
+					value: "someValue",
+					unknownProperty: "someUnknownProperty"
+				}
 			});
 			assert.deepEqual(this.oAnnotationChange.getContent(), {
 				annotationPath: "somePath",

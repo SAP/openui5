@@ -1,17 +1,17 @@
 sap.ui.define([
 	"sap/m/App",
-	"sap/ui/core/UIComponent",
-	"sap/ui/rta/test/SmartLinkUtil",
-	"sap/ui/core/CustomData",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/core/CustomData",
+	"sap/ui/core/UIComponent",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/test/SmartLinkUtil"
 ], function(
 	App,
-	UIComponent,
-	SmartLinkUtil,
-	CustomData,
 	XMLView,
-	JSONModel
+	CustomData,
+	UIComponent,
+	JSONModel,
+	SmartLinkUtil
 ) {
 	"use strict";
 

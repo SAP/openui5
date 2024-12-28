@@ -442,68 +442,6 @@ sap.ui.define([
 		oPropertyHelper.destroy();
 	});
 
-	QUnit.module("API", {
-		beforeEach: function() {
-			this.oPropertyHelper = new PropertyHelper([{
-				key: "propA",
-				path: "propAPath",
-				label: "Property A",
-				dataType: "String",
-				groupable: true,
-				isKey: true,
-				text: "propB"
-			}, {
-				key: "propB",
-				label: "Property B",
-				dataType: "String",
-				groupable: true,
-				extension: {
-					technicallyAggregatable: true,
-					additionalProperties: ["propA"]
-				}
-			}, {
-				key: "propC",
-				label: "Property C",
-				dataType: "String",
-				aggregatable: true,
-				unit: "unit",
-				extension: {
-					technicallyGroupable: true,
-					customAggregate: {}
-				}
-			}, {
-				key: "complexPropA",
-				label: "Complex property A",
-				propertyInfos: ["propA"]
-			}, {
-				key: "complexPropB",
-				label: "Complex property B",
-				propertyInfos: ["propB"]
-			}, {
-				key: "complexPropC",
-				label: "Complex property C",
-				propertyInfos: ["propA", "propB", "propC"]
-			}, {
-				key: "unit",
-				label: "Unit",
-				dataType: "String"
-			}]);
-			this.aProperties = this.oPropertyHelper.getProperties();
-		},
-		afterEach: function() {
-			this.oPropertyHelper.destroy();
-		}
-	});
-
-	QUnit.test("getAggregatableProperties", function(assert) {
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [
-			this.aProperties[2]
-		]);
-
-		this.oPropertyHelper.destroy();
-		assert.deepEqual(this.oPropertyHelper.getAggregatableProperties(), [], "After destruction");
-	});
-
 	QUnit.module("Property");
 
 	QUnit.test("getAggregatableProperties", function(assert) {
@@ -542,10 +480,9 @@ sap.ui.define([
 		assert.deepEqual(oPropertyHelper.getProperty("complexProp2").getAggregatableProperties(), [],
 			"Complex property referencing non-aggregatable properties");
 
-		const oSimpleProperty = oPropertyHelper.getProperty("prop");
 		const oComplexProperty = oPropertyHelper.getProperty("complexProp");
 		oPropertyHelper.destroy();
-		assert.deepEqual(oComplexProperty.getAggregatableProperties(), [oSimpleProperty], "After destruction");
+		assert.deepEqual(oComplexProperty.getAggregatableProperties(), [], "After destruction");
 
 		oPropertyHelper.destroy();
 	});

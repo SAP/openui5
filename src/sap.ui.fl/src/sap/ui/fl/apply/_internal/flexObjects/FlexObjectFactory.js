@@ -173,6 +173,10 @@ sap.ui.define([
 
 	FlexObjectFactory.createAppDescriptorChange = function(mPropertyBag) {
 		mPropertyBag.compositeCommand ||= mPropertyBag.support && mPropertyBag.support.compositeCommand;
+		if (!(mPropertyBag.fileName || mPropertyBag.id)) {
+			const sChangeType = mPropertyBag.type || mPropertyBag.changeType;
+			mPropertyBag.fileName = Utils.createDefaultFileName(sChangeType).substring(0, 64);
+		}
 		const mProperties = createBasePropertyBag(mPropertyBag);
 		return new AppDescriptorChange(mProperties);
 	};
