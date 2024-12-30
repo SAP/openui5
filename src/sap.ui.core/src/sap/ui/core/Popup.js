@@ -2836,7 +2836,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._isFocusInsidePopup = function () {
-		var oDomRef = this._$(false).get(0);
+		var oDomRef = this._$(false /* force rerendering */, true /* get only*/).get(0);
 
 		if (oDomRef && oDomRef.contains(document.activeElement)) {
 			return true;
