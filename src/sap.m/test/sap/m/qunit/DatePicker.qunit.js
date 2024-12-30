@@ -2224,6 +2224,70 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("Dialog accessible name", async function(assert) {
+		// Prepare
+		var oDP = new DatePicker("DP"),
+			sAriaLabelledbyText = Library.getResourceBundleFor("sap.m").getText("DATEPICKER_POPOVER_ACCESSIBLE_NAME"),
+			sLabelId;
+
+		oDP.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		qutils.triggerEvent("click", "DP-icon");
+		await nextUIUpdate();
+		sLabelId = oDP._oPopup.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The dialog has the correct accessible name");
+
+		oDP.destroy();
+	});
+
+	QUnit.test("Month picker dialog accessible name", async function(assert) {
+		// Prepare
+		var oDP = new DatePicker("DP", {
+				displayFormat: "MM/yyyy"
+			}),
+			sAriaLabelledbyText = Library.getResourceBundleFor("sap.m").getText("DATEPICKER_MONTH_POPOVER_ACCESSIBLE_NAME"),
+			sLabelId;
+
+		oDP.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		qutils.triggerEvent("click", "DP-icon");
+		await nextUIUpdate();
+		sLabelId = oDP._oPopup.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The dialog has the correct accessible name");
+
+		oDP.destroy();
+	});
+
+	QUnit.test("Year picker dialog accessible name", async function(assert) {
+		// Prepare
+		var oDP = new DatePicker("DP", {
+				displayFormat: "yyyy"
+			}),
+			sAriaLabelledbyText = Library.getResourceBundleFor("sap.m").getText("DATEPICKER_YEAR_POPOVER_ACCESSIBLE_NAME"),
+			sLabelId;
+
+		oDP.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		qutils.triggerEvent("click", "DP-icon");
+		await nextUIUpdate();
+		sLabelId = oDP._oPopup.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The dialog has the correct accessible name");
+
+		oDP.destroy();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: async function () {
 			this.oDP = new DatePicker("EDP").placeAt("content");

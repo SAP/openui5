@@ -321,7 +321,6 @@ function(
 			}.bind(this)
 		});
 		oCalendarPicker = new Calendar(sOPHId + "-Cal", {
-			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER"),
 			calendarWeekNumbering: this.getCalendarWeekNumbering(),
 			primaryCalendarType: sCalendarType
 		});
@@ -341,7 +340,6 @@ function(
 		this.setAssociation("currentPicker", oCalendarPicker);
 
 		oMonthPicker = new CustomMonthPicker(sOPHId + "-MonthCal", {
-			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER"),
 			primaryCalendarType: sCalendarType
 		});
 		oMonthPicker.attachEvent("select", this._handlePickerDateSelect, this);
@@ -350,7 +348,6 @@ function(
 		this._oMonthPicker = oMonthPicker;
 
 		oYearPicker = new CustomYearPicker(sOPHId + "-YearCal", {
-			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER"),
 			primaryCalendarType: sCalendarType
 		});
 		oYearPicker.attachEvent("select", this._handlePickerDateSelect, this);
@@ -674,13 +671,17 @@ function(
 	 * @private
 	 */
 	PlanningCalendarHeader.prototype._openCalendarPickerPopup = function(oPicker){
-		var aContent, oContent;
+		var aContent, oContent, sAccessibleNameId;
 
 		if (!this._oPopup) {
 			this._oPopup = this._createPopup();
 		}
 
 		aContent = this._oPopup.getContent();
+		sAccessibleNameId = InvisibleText.getStaticId("sap.m", this._getPopoverAccessibleName());
+		this._oPopup.removeAllAssociation("ariaLabelledBy");
+		this._oPopup.addAriaLabelledBy(sAccessibleNameId);
+
 		if (aContent.length) {
 			oContent = this._oPopup.getContent()[0];
 			if (oContent.isA("sap.ui.unified.internal.CustomYearPicker")) {
@@ -730,6 +731,24 @@ function(
 		this._oPopup = oPopover;
 
 		return this._oPopup;
+	};
+
+	/**
+	 * Returns the message bundle key of the invisible text for the accessible name of the popover.
+	 * @private
+	 * @returns {string} The message bundle key
+	 */
+	PlanningCalendarHeader.prototype._getPopoverAccessibleName = function() {
+		var sPickerName = Element.getElementById(this.getAssociation("currentPicker")).getMetadata().getName();
+
+		switch (sPickerName) {
+			case "sap.ui.unified.internal.CustomYearPicker":
+				return "DATEPICKER_YEAR_POPOVER_ACCESSIBLE_NAME";
+			case "sap.ui.unified.internal.CustomMonthPicker":
+				return "DATEPICKER_MONTH_POPOVER_ACCESSIBLE_NAME";
+			default:
+				return "DATEPICKER_POPOVER_ACCESSIBLE_NAME";
+		}
 	};
 
 	/**

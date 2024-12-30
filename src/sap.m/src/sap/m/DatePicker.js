@@ -1278,7 +1278,16 @@ sap.ui.define([
 	 * @returns {string} The message bundle key
 	 */
 	DatePicker.prototype._getAccessibleNameLabel = function() {
-		return "DATEPICKER_POPOVER_ACCESSIBLE_NAME";
+		var sConstructorName = this._getCalendarConstructor().getMetadata().getName();
+
+		switch (sConstructorName) {
+			case "sap.ui.unified.internal.CustomYearPicker":
+				return "DATEPICKER_YEAR_POPOVER_ACCESSIBLE_NAME";
+			case "sap.ui.unified.internal.CustomMonthPicker":
+				return "DATEPICKER_MONTH_POPOVER_ACCESSIBLE_NAME";
+			default:
+				return "DATEPICKER_POPOVER_ACCESSIBLE_NAME";
+		}
 	};
 
 	// to be overwritten by DateTimePicker
