@@ -3144,10 +3144,11 @@ sap.ui.define([
 		 * This default mode is suitable if the List or Table contains editable and/or non-editable fields.
 		 *
 		 * In this mode, the first focus goes to the first item.
-		 * If the focus is on the item, or cell, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before
-		 * the <code>sap.m.List</code> or <code>sap.m.Table</code> control.
-		 * If the focus is on the interactive element, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before
-		 * the focused interactive element.
+		 * If the focus is on the item or cell, and the item doesn't contain any interactive elements, pressing tab moves the focus to the next element in the tab chain after
+		 * the <code>sap.m.List</code> or <code>sap.m.Table</code> control. If the item contains interactive elements, pressing tab moves the focus to the first interactive
+		 * element within the item (changing the mode to <code>Edit</code>).
+		 * If the focus is on the item or cell, pressing shift+tab moves the focus to the previous element in the tab chain before the <code>sap.m.List</code> or
+		 * <code>sap.m.Table</code> control.
 		 * @public
 		 */
 		Navigation : "Navigation",
@@ -3155,8 +3156,7 @@ sap.ui.define([
 		/**
 		 * This mode is suitable if there are only editable fields within the item.
 		 *
-		 * In this mode, the first focus goes to the first interactive element within the first item and this is the only difference between the <code>Edit</code>
-		 * and <code>Navigation</code> mode.
+		 * In this mode, the first focus goes to the first interactive element within the first item. Pressing tab/shift+tab moves the focus among the interactive elements within the item.
 		 * @public
 		 */
 		Edit : "Edit"
