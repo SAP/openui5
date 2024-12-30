@@ -79,7 +79,7 @@ sap.ui.define([
 			defaultValue: "BASE_EDITOR.TYPES.DATE"
 		},
 		pattern: {
-			defaultValue: "YYYY-MM-dd'T'HH:mm:ss.SSS'Z'"
+			defaultValue: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 		},
 		utc: {
 			defaultValue: false
@@ -145,7 +145,7 @@ sap.ui.define([
 
 	DateEditor.prototype.getFormatterInstance = function (mOptions) {
 		return DateFormat.getDateInstance(mOptions || {
-			pattern: "YYYY-MM-dd"
+			pattern: "yyyy-MM-dd"
 		});
 	};
 
