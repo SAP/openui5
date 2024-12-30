@@ -19,6 +19,7 @@ sap.ui.define([
 
 	return UIComponent.extend("fl.performance.flexApplyChanges.Component", {
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 

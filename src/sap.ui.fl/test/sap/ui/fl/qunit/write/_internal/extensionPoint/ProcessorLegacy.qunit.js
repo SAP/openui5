@@ -141,6 +141,9 @@ sap.ui.define([
 		}, 500);
 	}
 
+	/**
+	 * @deprecated As of version 1.56
+	 */
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync with 'flexExtensionPointEnabled: false'", {
 		before() {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
