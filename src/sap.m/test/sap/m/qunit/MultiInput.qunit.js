@@ -4690,4 +4690,36 @@ sap.ui.define([
 		oDummyBtn.destroy();
 		runAllTimersAndRestore(this.clock);
 	});
+
+	QUnit.test("List items should not be displayed when editable: false and startSuggestion: 0", async function (assert) {
+		var oModel = new JSONModel({
+			items: [
+				{ name: "Item 1", key: "item-1" },
+				{ name: "Item 2", key: "item-2" },
+				{ name: "Item 3", key: "item-3" }
+			]
+		});
+
+		var oMultiInput = new MultiInput({
+			editable: false,
+			startSuggestion: 0,
+			showSuggestion: true
+		}).placeAt("content");
+
+		oMultiInput.setModel(oModel);
+		oMultiInput.bindAggregation("suggestionItems", {
+			path: "/items",
+			template: new Item({ text: "{name}", key: "{key}" })
+		});
+
+		await nextUIUpdate();
+
+		oMultiInput.focus();
+		oMultiInput._$input.trigger("input").val("I").trigger("input");
+		await nextUIUpdate();
+
+		var oSuggestionPopover = oMultiInput._getSuggestionsPopover();
+		assert.notOk(oSuggestionPopover.isOpen(), "Suggestions should not be visible when editable is false and startSuggestion is 0.");
+		oMultiInput.destroy();
+	});
 });
