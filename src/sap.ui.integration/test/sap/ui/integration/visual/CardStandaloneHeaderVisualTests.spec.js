@@ -60,10 +60,14 @@ describe("sap.ui.integration.CardStandaloneHeaderVisualTests", function () {
 		const fheader = element(by.id("fHeader"));
 		const fNumericHeader = element(by.id("fNumericHeader"));
 
-		browser.executeScript("arguments[0].scrollIntoView()", fheader.getWebElement());
+		browser.executeScript(function (sId) {
+			document.getElementById(sId).scrollIntoView();
+		}, fheader.getWebElement().getAttribute("id"));
 		expect(takeScreenshot(fheader)).toLookAs('fheader');
 
-		browser.executeScript("arguments[0].scrollIntoView()", fNumericHeader.getWebElement());
+		browser.executeScript(function (sId) {
+			document.getElementById(sId).scrollIntoView();
+		}, fNumericHeader.getWebElement().getAttribute("id"));
 		expect(takeScreenshot(fNumericHeader)).toLookAs('fNumericHeader');
 	});
 });
