@@ -1,0 +1,12 @@
+{
+  "1.132.0": {
+    "date": "December 2024",
+    "notes": [
+      {
+        "id": "8e533a912357baf322c6a766ea37d8e0d55333dc",
+        "type": "FIX",
+        "text": " sap.ui.fl - Fix long fileName in case of inline appdescriptor change"
+      }
+    ]
+  }
+}

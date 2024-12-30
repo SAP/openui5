@@ -3,6 +3,16 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "62d4c3870df73baaf155c257275a3388f5411885",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent losing focus on nMore popover close"
+      },
+      {
+        "id": "28d537cc6cd05c5f0b263d256fe1673f99ca7008",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: provide accessibility info"
+      },
+      {
         "id": "d17387dadd9c3a2bcfbc7c7d91c56e5c465efb30",
         "type": "FIX",
         "text": " sap.m.ObjectStatus: apply tooltip properly"

@@ -3,6 +3,11 @@
     "date": "December 2024",
     "notes": [
       {
+        "id": "a1db4fdea94d5aef04c3eef764d53f0dea879f28",
+        "type": "FIX",
+        "text": " sap.f.AdaptiveCards: Visual test fixed"
+      },
+      {
         "id": "93bd66119ecbc4d64f5f1c9d09fddfc49745e0ba",
         "type": "FEATURE",
         "text": " Integration Cards: Usage of relative links in WebPage cards is now enabled"
