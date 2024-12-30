@@ -7,6 +7,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleRenderer",
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
+	"sap/m/SegmentedButton",
+	"sap/m/Select",
+	"sap/ui/core/Item",
 	"sap/m/Title",
 	"sap/m/Input",
 	"sap/m/Label",
@@ -30,6 +33,9 @@ sap.ui.define([
 	InvisibleRenderer,
 	ToolbarSeparator,
 	Button,
+	SegmentedButton,
+	Select,
+	Item,
 	Title,
 	Input,
 	Label,
@@ -1102,6 +1108,7 @@ sap.ui.define([
 		// Cleanup
 		oTB.destroy();
 	});
+
 	QUnit.module("Edge cases");
 
 	QUnit.test("Preventing error, when focused element is not presented", function(assert) {
@@ -1114,5 +1121,53 @@ sap.ui.define([
 		bReturnValue = oTB._shouldAllowDefaultBehavior(null);
 
 		assert.strictEqual(bReturnValue, false, "Error caused by unexisting element being called a method to, is prevented");
+	});
+
+	QUnit.test("KB navigation logic when SegmentedButton with _select aggregation used", function(assert) {
+
+		// Arrange
+		var oTB = createToolbar();
+
+		var oSB = new SegmentedButton({
+			buttons : [
+				new Button({
+					text: "button 1"
+				}),
+				new Button({
+					text: "button 2"
+				}),
+				new Button({
+					text: "button 3"
+				})
+			]
+		});
+
+		oTB.addContent(oSB);
+
+		Core.applyChanges();
+
+		oSB._toSelectMode();
+
+		Core.applyChanges();
+
+		var oSelect = oSB.getAggregation("_select");
+
+
+		// Act
+		var oDefaultBehaviorSpy = sinon.spy(oTB, "_shouldAllowDefaultBehavior");
+
+		// Act
+		oSelect.focus();
+		var oArrowDownEvent = new KeyboardEvent("keydown", { code: KeyCodes.ARROW_DOWN });
+
+		oTB._moveFocus("forward", oArrowDownEvent);
+
+		oSelect.focus();
+		oSB.setParent(null);
+		oTB._moveFocus("forward", oArrowDownEvent);
+
+		// Assert
+		assert.strictEqual(oDefaultBehaviorSpy.getCalls()[0].args[0], oSB, "_shouldAllowDefaultBehavior is called with SegmentedButton");
+		assert.strictEqual(oDefaultBehaviorSpy.getCalls()[1].args[0], oSelect, "_shouldAllowDefaultBehavior is called with Select");
 	});
 });
