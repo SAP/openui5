@@ -587,6 +587,17 @@ sap.ui.define([
 		oPopup.open();
 	});
 
+	QUnit.test("_isFocusInsidePopup shouldn't render the Popup content", function(assert) {
+		const oButton = new Button();
+		const oPopup = new Popup(oButton);
+
+		assert.equal(oPopup._isFocusInsidePopup(), false, "focus isn't in the popup");
+		assert.notOk(oButton.getDomRef(), "Calling _isFocusInsidePopup should not render the popup content");
+
+		oButton.destroy();
+		oPopup.destroy();
+	});
+
 	QUnit.test("Check if focus is set back to the opener after closing", function(assert) {
 		var done = assert.async();
 		var sLeftTop = Popup.Dock.LeftTop;
