@@ -936,7 +936,6 @@ sap.ui.define([
 		// update the focus information (potentially) stored by the central UI5 focus handling
 		Element._updateFocusInfo(this);
 
-		var oDomRef = this.getDomRef();
 
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 
@@ -944,6 +943,7 @@ sap.ui.define([
 		this.data = noCustomDataAfterDestroy;
 
 		// exit early if there is no control DOM to remove
+		var oDomRef = this.getDomRef();
 		if (!oDomRef) {
 			return;
 		}
