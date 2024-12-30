@@ -38,7 +38,7 @@ sap.ui.define([
 
 	DateTimeEditor.prototype.getFormatterInstance = function (mOptions) {
 		return DateFormat.getDateTimeInstance(mOptions || {
-			pattern: "YYYY-MM-dd'T'HH:mm:ss.SSSSZ"
+			pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 		});
 	};
 
