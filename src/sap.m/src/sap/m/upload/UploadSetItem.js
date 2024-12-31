@@ -19,10 +19,11 @@ sap.ui.define([
 	"sap/m/ProgressIndicator",
 	"sap/m/VBox",
 	"sap/m/HBox",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/ui/core/InvisibleText"
 ], function (Log, CoreLibrary, Element, Icon, IconPool, HTML,
 			 MobileLibrary, Button, CustomListItem, Image, Input,
-			 Label, Link, ProgressIndicator, VBox, HBox, CoreLib) {
+			 Label, Link, ProgressIndicator, VBox, HBox, CoreLib, InvisibleText) {
 	"use strict";
 
 	var UploadType = MobileLibrary.UploadType;
@@ -187,6 +188,7 @@ sap.ui.define([
 				var oItem = Element.getElementById(sItemId);
 				oRm.openStart("div");
 				oRm.class("sapMUCTextContainer");
+				oControl._item = oItem;
 				if (this._bInEditMode) {
 					oRm.class("sapMUCEditMode");
 				}
@@ -205,6 +207,25 @@ sap.ui.define([
 			}
 		}
 	});
+
+	DynamicItemContent.prototype.getAccessibilityInfo = function() {
+		//var sFileANme = oItem._bInEditMode ? oItem._getFileNameEdit() : oItem._getFileNameLink()
+		var aButtonsToRender = [];
+		if (this._item._bInEditMode) {
+			aButtonsToRender = [
+				this._item._getConfirmRenameButton(),
+				this._item._getCancelRenameButton()
+			];
+		} else {
+			aButtonsToRender = [
+				this._item._getRestartButton(),
+				this._item._getEditButton(),
+				this._item._getDeleteButton(),
+				this._item._getTerminateButton()
+			];
+		}
+		return {children: [ this._item._bInEditMode ? this._item._getFileNameEdit() : this._item._getFileNameLink(), ...this._item.getMarkers(), ...this._item.getMarkersAsStatus(), ...this._item.getAttributes(), ...this._item.getStatuses(), ...aButtonsToRender]};
+	};
 
 	/* ========= */
 	/* Constants */
@@ -671,6 +692,8 @@ sap.ui.define([
 	UploadSetItem.prototype._getEditButton = function () {
 		var oParent = this.getParent();
 		if (!this._oEditButton) {
+			this._oInvisibleText = new InvisibleText();
+			this._oInvisibleText.toStatic();
 			this._oEditButton = new Button({
 				id: this.getId() + "-editButton",
 				icon: "sap-icon://edit",
@@ -682,7 +705,9 @@ sap.ui.define([
 			});
 			this._oEditButton.addStyleClass("sapMUCEditBtn");
 			this.addDependent(this._oEditButton);
-		}
+			this._oEditButton.addAriaLabelledBy(this._oInvisibleText.getId());
+			this._oInvisibleText.setText("Button" + this._oRb.getText("UPLOAD_SET_EDIT_BUTTON_TEXT"));
+			}
 
 		return this._oEditButton;
 	};
@@ -803,6 +828,8 @@ sap.ui.define([
 	UploadSetItem.prototype._getDeleteButton = function () {
 		var oParent = this.getParent();
 		if (!this._oDeleteButton) {
+			this._oInvisibleText = new InvisibleText();
+			this._oInvisibleText.toStatic();
 			this._oDeleteButton = new Button({
 				id: this.getId() + "-deleteButton",
 				icon: "sap-icon://delete",
@@ -814,6 +841,8 @@ sap.ui.define([
 			});
 			this._oDeleteButton.addStyleClass("sapMUCDeleteBtn");
 			this.addDependent(this._oDeleteButton);
+			this._oDeleteButton.addAriaLabelledBy(this._oInvisibleText.getId());
+			this._oInvisibleText.setText("Button" + this._oRb.getText("UPLOAD_SET_DELETE_BUTTON_TEXT"));
 		}
 
 		return this._oDeleteButton;
