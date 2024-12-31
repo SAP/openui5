@@ -584,6 +584,14 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("test for getAccessibilityInfo method used in uploadSetItem", function (assert) {
+		//Assert
+		var aItems = this.oUploadSet.getItems();
+		aItems.forEach((oItem) => {
+			assert.ok(Array.isArray(oItem._getDynamicContent().getAccessibilityInfo().children), "Required info of the uploadSetItem present inside inside the array for the ListItemBase to pick for screen reader");
+		});
+	});
+
 	QUnit.module("UploadSetItems now accespts markersAsStatus aggregation", {
 		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("upload-set",{
