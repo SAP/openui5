@@ -250,8 +250,7 @@ sap.ui.define([
 							assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm 1 field 3: Value help icon visible");
 							assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm 1 field 3: Input value help icon");
 							assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm 1 field 3: Input value help icon src");
-							oValueHelpIcon1.firePress();
-							EditorQunitUtils.wait(1500).then(function () {
+							oField1.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover1 = oField1._oTranslationPopover;
 								var oSaveButton1 = oTranslationPopover1.getFooter().getContent()[1];
 								assert.ok(oSaveButton1.getVisible(), "oTranslationPopover 1 footer: save button visible");
@@ -299,8 +298,7 @@ sap.ui.define([
 									assert.ok(oValueHelpIcon2.getVisible(), "SimpleForm 2 field 3: Value help icon visible");
 									assert.ok(oValueHelpIcon2.isA("sap.ui.core.Icon"), "SimpleForm 2 field 3: Input value help icon");
 									assert.equal(oValueHelpIcon2.getSrc(), "sap-icon://translate", "SimpleForm 2 field 3: Input value help icon src");
-									oValueHelpIcon2.firePress();
-									EditorQunitUtils.wait(1500).then(function () {
+									oField2.attachEventOnce("translationPopoverOpened", function () {
 										var oTranslationPopover2 = oField2._oTranslationPopover;
 										var oSaveButton2 = oTranslationPopover2.getFooter().getContent()[1];
 										assert.ok(oSaveButton2.getVisible(), "oTranslationPopover 2 footer: save button visible");
@@ -348,8 +346,7 @@ sap.ui.define([
 											assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm 3 field 3: Value help icon visible");
 											assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm 3 field 3: Input value help icon");
 											assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm 3 field 3: Input value help icon src");
-											oValueHelpIcon3.firePress();
-											EditorQunitUtils.wait(1500).then(function () {
+											oField3.attachEventOnce("translationPopoverOpened", function () {
 												var oTranslationPopover3 = oField3._oTranslationPopover;
 												var oSaveButton3 = oTranslationPopover3.getFooter().getContent()[1];
 												assert.ok(oSaveButton3.getVisible(), "oTranslationPopover 3 footer: save button visible");
@@ -374,10 +371,13 @@ sap.ui.define([
 												destroyEditor(that.oEditor);
 												resolve();
 											});
+											oValueHelpIcon3.firePress();
 										});
 									});
+									oValueHelpIcon2.firePress();
 								});
 							});
+							oValueHelpIcon1.firePress();
 						});
 					});
 				});

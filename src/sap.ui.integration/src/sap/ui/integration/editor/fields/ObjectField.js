@@ -98,10 +98,14 @@ sap.ui.define([
 			events: {
 				/**
 				 * Fired when table is updated.
-				 * @experimental since 1.105
+				 */
+				tableUpdated: {},
+				/**
+				 * Fired when translation popover opened in SimpleForm.
+				 * @experimental since 1.132
 				 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
-				tableUpdated: {}
+				translationPopoverOpened: {}
 			}
 		},
 		renderer: BaseField.getMetadata().getRenderer()
@@ -1891,6 +1895,9 @@ sap.ui.define([
 				contentHeight: "345px",
 				title: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TRANSLATION_LIST_TITLE", ["{languages>/property}"]),
 				content: oList,
+				afterOpen: function () {
+					that.fireTranslationPopoverOpened();
+				},
 				footer: oTranslationsFooter
 			}).addStyleClass("sapUiIntegrationFieldTranslation");
 			oTranslatonsModel = that.buildTranslationsModel(oTranslatedValues);
