@@ -9,7 +9,9 @@ describe("sap.ui.integration.CardErrorsMessagesVisualTests", function () {
 
 	function focusElement(oConfig) {
 		var oElement = utils.getElement(oConfig);
-		browser.executeScript("arguments[0].focus()", oElement.getWebElement());
+		browser.executeScript(function (sId) {
+			document.getElementById(sId).focus();
+		}, oElement.getWebElement().getAttribute("id"));
 	}
 
 	it("Error Messages", function () {
