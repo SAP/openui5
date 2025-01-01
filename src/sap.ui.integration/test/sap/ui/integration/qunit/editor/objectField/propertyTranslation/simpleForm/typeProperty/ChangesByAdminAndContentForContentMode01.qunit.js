@@ -472,12 +472,15 @@ sap.ui.define([
 												resolve();
 											});
 											oValueHelpIcon3.firePress();
+											oValueHelpIcon3.focus();
 										});
 									});
 									oValueHelpIcon2.firePress();
+									oValueHelpIcon2.focus();
 								});
 							});
 							oValueHelpIcon1.firePress();
+							oValueHelpIcon1.focus();
 						});
 					});
 				});

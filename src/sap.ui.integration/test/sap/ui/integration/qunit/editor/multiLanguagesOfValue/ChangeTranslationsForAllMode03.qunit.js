@@ -529,9 +529,7 @@ sap.ui.define([
 													EditorQunitUtils.wait().then(function () {
 														var oCurrentSettings = that.oEditor.getCurrentSettings();
 														assert.ok(typeof oCurrentSettings.texts === "undefined", "Field: translation Value in texts");
-														oValueHelpIcon1.firePress();
-														oValueHelpIcon1.focus();
-														EditorQunitUtils.wait().then(function () {
+														oField1.attachEventOnce("translationPopoverOpened", function () {
 															var oTranslationPopover1 = oField1._oTranslationPopover;
 															var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
 															assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
@@ -555,6 +553,8 @@ sap.ui.define([
 															destroyEditor(that.oEditor);
 															resolve();
 														});
+														oValueHelpIcon1.firePress();
+														oValueHelpIcon1.focus();
 													});
 												});
 											});
@@ -966,9 +966,7 @@ sap.ui.define([
 													EditorQunitUtils.wait().then(function () {
 														var oCurrentSettings = that.oEditor.getCurrentSettings();
 														assert.ok(typeof oCurrentSettings.texts === "undefined", "Field: translation Value in texts");
-														oValueHelpIcon1.firePress();
-														oValueHelpIcon1.focus();
-														EditorQunitUtils.wait().then(function () {
+														oField1.attachEventOnce("translationPopoverOpened", function () {
 															var oTranslationPopover1 = oField1._oTranslationPopover;
 															var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
 															assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
@@ -989,6 +987,8 @@ sap.ui.define([
 															destroyEditor(that.oEditor);
 															resolve();
 														});
+														oValueHelpIcon1.firePress();
+														oValueHelpIcon1.focus();
 													});
 												});
 											});
