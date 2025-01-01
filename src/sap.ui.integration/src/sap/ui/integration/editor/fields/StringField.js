@@ -60,7 +60,15 @@ sap.ui.define([
 	 */
 	var StringField = BaseField.extend("sap.ui.integration.editor.fields.StringField", {
 		metadata: {
-			library: "sap.ui.integration"
+			library: "sap.ui.integration",
+			events: {
+				/**
+				 * Fired when translation popover opened.
+				 * @experimental since 1.132
+				 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 */
+				translationPopoverOpened: {}
+			}
 		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
@@ -481,6 +489,9 @@ sap.ui.define([
 					]
 				}),
 				content: oList,
+				afterOpen: function () {
+					that.fireTranslationPopoverOpened();
+				},
 				footer: new OverflowToolbar({
 					content: [
 						new ToolbarSpacer(),
