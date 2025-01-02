@@ -374,6 +374,12 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		name: "Chrome on Windows 10",
 		navigator: {
 			userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.130 Safari/537.36",
+			userAgentData: {
+				getHighEntropyValues: () => Promise.resolve({
+					platform: "Windows",
+					platformVersion: "7"
+				})
+			},
 			platform: "Win"
 		},
 		expected: {
@@ -396,10 +402,86 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			os: {
 				name: "win",
 				version: 10,
-				versionStr: "10"
+				versionStr: "10",
+				windows: true
 			}
 		},
 		touch: true
+	},
+	{
+		name: "Edge on Windows 11",
+		navigator: {
+			userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
+			userAgentData: {
+				getHighEntropyValues: () => Promise.resolve({
+					platform: "Windows",
+					platformVersion: "14"
+				})
+			},
+			platform: "Win"
+		},
+		expectedClientHints: {
+			os: {
+				name: "win",
+				version: 11,
+				versionStr: "11",
+				windows: true
+			}
+		},
+		expected: {
+			browser: {
+				webkit: true,
+				mozilla: undefined,
+				chrome: true,
+				safari: undefined,
+				firefox: undefined,
+				name: "cr",
+				version: 131,
+				versionStr: "131"
+			},
+			system: {
+				desktop: true,
+				tablet: true,
+				phone: false,
+				combi: true
+			},
+			os: {
+				name: "win",
+				version: 10,
+				versionStr: "10",
+				windows: true
+			}
+		},
+		touch: true
+	},
+	{
+		name: "Chrome on Mac OS 15.1.1",
+		navigator: {
+			userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
+			userAgentData: {
+				getHighEntropyValues: () => Promise.resolve({
+					platform: "macOS",
+					platformVersion: "15.1.1"
+				})
+			},
+			platform: "MacIntel"
+		},
+		expectedClientHints: {
+			os: {
+				name: "mac",
+				version: 15.1,
+				versionStr: "15.1.1",
+				macintosh: true
+			}
+		},
+		expected: {
+			os: {
+				name: "mac",
+				version: -1,
+				versionStr: "",
+				macintosh: true
+			}
+		}
 	},
 	{
 		name: "Firefox 41 on Android",
@@ -569,12 +651,19 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 			for (sCategory in currentTest.expected) {
 				for (sProperty in currentTest.expected[sCategory]) {
-					assert.strictEqual(Device[sCategory][sProperty], currentTest.expected[sCategory][sProperty], currentTest.name + ": device detection property '" + sCategory + "." + sProperty + "' should match for " + currentTest.ua);
+					assert.strictEqual(Device[sCategory][sProperty], currentTest.expected[sCategory][sProperty], currentTest.name + ": device detection property '" + sCategory + "'." + sProperty + "' should match for " + currentTest.navigator.userAgent);
 				}
 			}
+			return Device.os.getPlatformInfo().then((oPlatformInfo) => {
+				const oOs = currentTest.expectedClientHints?.os || currentTest.expected.os;
+				assert.ok(oPlatformInfo === Device.os, "The platform info object is the same as the Device.os object");
+				for (sProperty in oOs) {
+					assert.strictEqual(Device.os[sProperty], oOs[sProperty], currentTest.name + ": device detection property 'OS'." + sProperty + "' should match for " + currentTest.navigator.userAgent);
+				}
 
-			// Reset device API
-			Device._setCustomNavigator();
+				// Reset device API
+				Device._setCustomNavigator();
+			});
 		});
 	};
 
