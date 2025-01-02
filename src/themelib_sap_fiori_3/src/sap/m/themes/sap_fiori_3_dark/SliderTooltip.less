@@ -3,42 +3,40 @@
 /* Quartz Dark theme                    */
 /* ==================================== */
 
-/* ------------------------------ */
 /* Slider Tooltip styles          */
-/* ------------------------------ */
 
 .sapMSliderTooltip {
-	background: @sapUiFieldBackground;
-	border-radius: @sapUiElementBorderCornerRadius;
-	border: 1px solid @sapUiFieldBorderColor;
+	background: var(--sapField_Background);
+	border-radius: var(--sapElement_BorderCornerRadius);
+	border: 1px solid var(--sapField_BorderColor);
 	box-shadow: none;
 	height: 1.375rem;
 	min-width: 2rem;
 	padding: 0.25rem;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMSliderTooltipInput {
 	font-size: @sapMFontMediumSize;
-	color: @sapUiFieldTextColor;
-	background: @sapUiFieldBackground;
+	color: var(--sapField_TextColor);
+	background: var(--sapField_Background);
 }
 
 .sapMSliderTooltipErrorState {
-	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor
+	background: var(--sapField_InvalidBackground);
+	border-color: var(--sapField_InvalidColor);
 }
 
 .sapMSliderTooltipErrorState .sapMSliderTooltipInput {
-	background: @sapUiFieldInvalidBackground;
+	background: var(--sapField_InvalidBackground);
 }
 
 .sapMSliderTooltip.sapMSliderTooltipNonEditableWrapper {
 	border-radius: 0.25rem;
 	height: 0.875rem;
 	padding: 0.25rem;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
-	background: @sapUiFieldBackground;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapContent_LabelColor);
+	background: var(--sapField_Background);
 }

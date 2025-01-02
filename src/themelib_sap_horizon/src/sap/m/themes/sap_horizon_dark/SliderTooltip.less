@@ -4,30 +4,30 @@
 /* ==================================== */
 
 .sapMSliderTooltip {
-	background: @sapField_Focus_Background; 
+	background: var(--sapField_Focus_Background);
 	border-radius: 0.5rem;
 	border: none;
-	box-shadow: @sapUiContentShadow1;
+	box-shadow: var(--sapContent_Shadow1);
 	height: 1.375rem;
 	min-width: 2rem;
 	padding: 0.25rem;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMSliderTooltipInput {
 	font-size: @sapMFontMediumSize;
-	color: @sapUiFieldTextColor;
-	background: @sapField_Focus_Background; 
+	color: var(--sapField_TextColor);
+	background: var(--sapField_Focus_Background);
 }
 
 .sapMSliderTooltipErrorState {
-	box-shadow: inset 0px 0px 0px 2px @sapField_InvalidColor;
+	box-shadow: inset 0 0 0 2px var(--sapField_InvalidColor);
 }
 
 .sapMSliderTooltip.sapMSliderTooltipNonEditableWrapper {
 	height: 0.875rem;
 	padding: 0.25rem;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapContent_LabelColor);
 }
