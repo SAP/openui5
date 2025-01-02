@@ -36,7 +36,7 @@
 			"title": "WebPage Card (Content min-height is 150px)"
 		},
 		"content": {
-			"src": "someErrorPage.html"
+			"src": "test.html"
 		}
 	}
 }
