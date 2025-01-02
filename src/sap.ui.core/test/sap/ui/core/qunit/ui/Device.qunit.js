@@ -365,6 +365,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	{
 		name: "Chrome on Windows 10",
 		ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.130 Safari/537.36",
+		uad: {
+			getHighEntropyValues: function() {
+				return Promise.resolve({
+					platform: "Windows",
+					platformVersion: "7"
+				});
+			}
+		},
 		expected: {
 			msie: undefined,
 			webkit: true,
@@ -389,7 +397,78 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			versionStr: "10"
 		},
 		touch: true,
-		windowsOnly: true
+		platform: "Win"
+	},
+	{
+		name: "Edge on Windows 11",
+		ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
+		uad: {
+			getHighEntropyValues: function() {
+				return Promise.resolve({
+					platform: "Windows",
+					platformVersion: "14"
+				});
+			}
+		},
+		expectedClientHints: {
+			os: {
+				name: "win",
+				version: 11,
+				versionStr: "11",
+				windows: true
+			}
+		},
+		expected: {
+			webkit: true,
+			mozilla: undefined,
+			chrome: true,
+			safari: undefined,
+			firefox: undefined,
+			name: "cr",
+			version: 131,
+			versionStr: "131"
+		},
+		system: {
+			desktop: true,
+			tablet: true,
+			phone: false,
+			combi: true
+		},
+		os: {
+			name: "win",
+			version: 10,
+			versionStr: "10",
+			windows: true
+		},
+		touch: true,
+		platform: "Win"
+	},
+	{
+		name: "Chrome on Mac OS 15.1.1",
+		ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0',
+		uad: {
+			getHighEntropyValues: function() {
+				return Promise.resolve({
+					platform: "macOS",
+					platformVersion: "15.1.1"
+				});
+			}
+		},
+		expectedClientHints: {
+			os: {
+				name: "mac",
+				version: 15.1,
+				versionStr: "15.1.1",
+				macintosh: true
+			}
+		},
+		os: {
+			name: "mac",
+			version: -1,
+			versionStr: "",
+			macintosh: true
+		},
+		platform: "MacIntel"
 	},
 	{
 		name: "Firefox 41 on Android",
@@ -485,7 +564,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				var bOldSupportTouch = Device.support.touch,
 					oOldBrowserInfo = Device.browser;
 
-				Device._setOS(currentTest.ua, currentTest.platform);
+				Device._setOS(currentTest.ua, currentTest.platform, currentTest.uad);
 				Device.support.touch = currentTest.touch;
 				Device.browser = actualResult;
 
@@ -503,8 +582,16 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					}
 				}
 
-				Device.support.touch = bOldSupportTouch;
-				Device.browser = oOldBrowserInfo;
+				return Device.os.getPlatformInfo(currentTest.uad).then(function(oPlatformInfo) {
+					var oOs = currentTest.expectedClientHints && currentTest.expectedClientHints.os || currentTest.expected.os;
+					assert.ok(oPlatformInfo === Device.os, "The platform info object is the same as the Device.os object");
+					for (var sProperty in oOs) {
+						assert.strictEqual(Device.os[sProperty], oOs[sProperty], currentTest.name + ": device detection property 'OS'." + sProperty + "' should match for " + currentTest.ua);
+					}
+				}).finally(function() {
+					Device.support.touch = bOldSupportTouch;
+					Device.browser = oOldBrowserInfo;
+				});
 			}
 		});
 	};
