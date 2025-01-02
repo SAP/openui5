@@ -304,8 +304,7 @@ sap.ui.define([
 							assert.ok(oValueHelpIcon2.getVisible(), "SimpleForm 2 field 1: Value help icon visible");
 							assert.ok(oValueHelpIcon2.isA("sap.ui.core.Icon"), "SimpleForm 2 field 1: Input value help icon");
 							assert.equal(oValueHelpIcon2.getSrc(), "sap-icon://translate", "SimpleForm 2 field 1: Input value help icon src");
-							oValueHelpIcon2.firePress();
-							EditorQunitUtils.wait(1500).then(function () {
+							oField2.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover2 = oField2._oTranslationPopover;
 								var oSaveButton2 = oTranslationPopover2.getFooter().getContent()[1];
 								assert.ok(oSaveButton2.getVisible(), "oTranslationPopover 2 footer: save button visible");
@@ -352,6 +351,7 @@ sap.ui.define([
 								destroyEditor(that.oEditor);
 								resolve();
 							});
+							oValueHelpIcon2.firePress();
 						});
 					});
 				});

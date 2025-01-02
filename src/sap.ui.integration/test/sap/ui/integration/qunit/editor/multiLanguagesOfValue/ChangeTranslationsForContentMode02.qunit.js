@@ -150,9 +150,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -197,9 +195,7 @@ sap.ui.define([
 									assert.ok(oSaveButton1.getEnabled(), "oTranslationPopover1 Content: save button enabled");
 									oCancelButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
-										oValueHelpIcon1.firePress();
-										oValueHelpIcon1.focus();
-										EditorQunitUtils.wait().then(function () {
+										oField1.attachEventOnce("translationPopoverOpened", function () {
 											var oTranslationPopover1 = oField1._oTranslationPopover;
 											var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 											assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -234,10 +230,14 @@ sap.ui.define([
 											destroyEditor(that.oEditor);
 											resolve();
 										});
+										oValueHelpIcon1.firePress();
+										oValueHelpIcon1.focus();
 									});
 								});
 							});
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -270,9 +270,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -323,9 +321,7 @@ sap.ui.define([
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
 										assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
-										oValueHelpIcon1.firePress();
-										oValueHelpIcon1.focus();
-										EditorQunitUtils.wait().then(function () {
+										oField1.attachEventOnce("translationPopoverOpened", function () {
 											var oTranslationPopover1 = oField1._oTranslationPopover;
 											var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 											assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -369,10 +365,14 @@ sap.ui.define([
 											destroyEditor(that.oEditor);
 											resolve();
 										});
+										oValueHelpIcon1.firePress();
+										oValueHelpIcon1.focus();
 									});
 								});
 							});
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -405,9 +405,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -458,9 +456,7 @@ sap.ui.define([
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
 										assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
-										oValueHelpIcon1.firePress();
-										oValueHelpIcon1.focus();
-										EditorQunitUtils.wait().then(function () {
+										oField1.attachEventOnce("translationPopoverOpened", function () {
 											var oTranslationPopover1 = oField1._oTranslationPopover;
 											var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 											assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -511,9 +507,7 @@ sap.ui.define([
 														var oCurrentSettings = that.oEditor.getCurrentSettings();
 														delete oTextsValue[sLanguageKey6];
 														assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
-														oValueHelpIcon1.firePress();
-														oValueHelpIcon1.focus();
-														EditorQunitUtils.wait().then(function () {
+														oField1.attachEventOnce("translationPopoverOpened", function () {
 															var oTranslationPopover1 = oField1._oTranslationPopover;
 															var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
 															assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
@@ -534,14 +528,20 @@ sap.ui.define([
 															destroyEditor(that.oEditor);
 															resolve();
 														});
+														oValueHelpIcon1.firePress();
+														oValueHelpIcon1.focus();
 													});
 												});
 											});
 										});
+										oValueHelpIcon1.firePress();
+										oValueHelpIcon1.focus();
 									});
 								});
 							});
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -585,9 +585,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -635,9 +633,7 @@ sap.ui.define([
 									assert.ok(oSaveButton1.getEnabled(), "oTranslationPopover1 Content: save button enabled");
 									oCancelButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
-										oValueHelpIcon1.firePress();
-										oValueHelpIcon1.focus();
-										EditorQunitUtils.wait().then(function () {
+										oField1.attachEventOnce("translationPopoverOpened", function () {
 											var oTranslationPopover1 = oField1._oTranslationPopover;
 											var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 											assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -675,10 +671,14 @@ sap.ui.define([
 											destroyEditor(that.oEditor);
 											resolve();
 										});
+										oValueHelpIcon1.firePress();
+										oValueHelpIcon1.focus();
 									});
 								});
 							});
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -711,9 +711,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -767,9 +765,7 @@ sap.ui.define([
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
 										assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
-										oValueHelpIcon1.firePress();
-										oValueHelpIcon1.focus();
-										EditorQunitUtils.wait().then(function () {
+										oField1.attachEventOnce("translationPopoverOpened", function () {
 											var oTranslationPopover1 = oField1._oTranslationPopover;
 											var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 											assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -816,10 +812,14 @@ sap.ui.define([
 											destroyEditor(that.oEditor);
 											resolve();
 										});
+										oValueHelpIcon1.firePress();
+										oValueHelpIcon1.focus();
 									});
 								});
 							});
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -852,9 +852,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -908,9 +906,7 @@ sap.ui.define([
 											"/sap.card/configuration/parameters/stringParameter/value": sNewValue
 										};
 										assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
-										oValueHelpIcon1.firePress();
-										oValueHelpIcon1.focus();
-										EditorQunitUtils.wait().then(function () {
+										oField1.attachEventOnce("translationPopoverOpened", function () {
 											var oTranslationPopover1 = oField1._oTranslationPopover;
 											var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 											assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -964,9 +960,7 @@ sap.ui.define([
 														var oCurrentSettings = that.oEditor.getCurrentSettings();
 														delete oTextsValue[sLanguageKey6];
 														assert.ok(deepEqual(oCurrentSettings.texts, oTextsValue), "Field: translation Value in texts");
-														oValueHelpIcon1.firePress();
-														oValueHelpIcon1.focus();
-														EditorQunitUtils.wait().then(function () {
+														oField1.attachEventOnce("translationPopoverOpened", function () {
 															var oTranslationPopover1 = oField1._oTranslationPopover;
 															var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
 															assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
@@ -990,14 +984,20 @@ sap.ui.define([
 															destroyEditor(that.oEditor);
 															resolve();
 														});
+														oValueHelpIcon1.firePress();
+														oValueHelpIcon1.focus();
 													});
 												});
 											});
 										});
+										oValueHelpIcon1.firePress();
+										oValueHelpIcon1.focus();
 									});
 								});
 							});
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});

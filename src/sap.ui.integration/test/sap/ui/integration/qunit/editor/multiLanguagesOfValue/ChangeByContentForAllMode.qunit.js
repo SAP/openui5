@@ -174,9 +174,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -203,9 +201,7 @@ sap.ui.define([
 							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
-							oValueHelpIcon3.firePress();
-							oValueHelpIcon3.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField3.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), _oExpectedValues["string3"]["en"], "oTranslationPopover3 Header: String3 Value");
@@ -225,9 +221,7 @@ sap.ui.define([
 								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
-								oValueHelpIcon4.firePress();
-								oValueHelpIcon4.focus();
-								EditorQunitUtils.wait().then(function () {
+								oField4.attachEventOnce("translationPopoverOpened", function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), _oExpectedValues["string4"]["en"], "oTranslationPopover4 Header: String4 Value");
@@ -243,13 +237,17 @@ sap.ui.define([
 									}
 									var oCancelButton4 = oTranslationPopover4.getFooter().getContent()[2];
 									oCancelButton4.firePress();
-
-								}).then(function () {
 									destroyEditor(that.oEditor);
 									resolve();
 								});
+								oValueHelpIcon4.firePress();
+								oValueHelpIcon4.focus();
 							});
+							oValueHelpIcon3.firePress();
+							oValueHelpIcon3.focus();
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -296,9 +294,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -325,9 +321,7 @@ sap.ui.define([
 							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
-							oValueHelpIcon3.firePress();
-							oValueHelpIcon3.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField3.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -347,9 +341,7 @@ sap.ui.define([
 								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
-								oValueHelpIcon4.firePress();
-								oValueHelpIcon4.focus();
-								EditorQunitUtils.wait().then(function () {
+								oField4.attachEventOnce("translationPopoverOpened", function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), _oExpectedValues["string4"]["en-GB"], "oTranslationPopover4 Header: String4 Value");
@@ -365,13 +357,17 @@ sap.ui.define([
 									}
 									var oCancelButton4 = oTranslationPopover4.getFooter().getContent()[2];
 									oCancelButton4.firePress();
-
-								}).then(function () {
 									destroyEditor(that.oEditor);
 									resolve();
 								});
+								oValueHelpIcon4.firePress();
+								oValueHelpIcon4.focus();
 							});
+							oValueHelpIcon3.firePress();
+							oValueHelpIcon3.focus();
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -418,9 +414,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -447,9 +441,7 @@ sap.ui.define([
 							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
-							oValueHelpIcon3.firePress();
-							oValueHelpIcon3.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField3.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -469,9 +461,7 @@ sap.ui.define([
 								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
-								oValueHelpIcon4.firePress();
-								oValueHelpIcon4.focus();
-								EditorQunitUtils.wait().then(function () {
+								oField4.attachEventOnce("translationPopoverOpened", function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), _oExpectedValues["string4"]["fr"], "oTranslationPopover4 Header: String4 Value");
@@ -487,13 +477,17 @@ sap.ui.define([
 									}
 									var oCancelButton4 = oTranslationPopover4.getFooter().getContent()[2];
 									oCancelButton4.firePress();
-
-								}).then(function () {
 									destroyEditor(that.oEditor);
 									resolve();
 								});
+								oValueHelpIcon4.firePress();
+								oValueHelpIcon4.focus();
 							});
+							oValueHelpIcon3.firePress();
+							oValueHelpIcon3.focus();
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -540,9 +534,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -569,9 +561,7 @@ sap.ui.define([
 							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
-							oValueHelpIcon3.firePress();
-							oValueHelpIcon3.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField3.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), _oExpectedValues["string3"]["ru"], "oTranslationPopover3 Header: String3 Value");
@@ -591,9 +581,7 @@ sap.ui.define([
 								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
-								oValueHelpIcon4.firePress();
-								oValueHelpIcon4.focus();
-								EditorQunitUtils.wait().then(function () {
+								oField4.attachEventOnce("translationPopoverOpened", function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String 4 English", "oTranslationPopover4 Header: String4 Value");
@@ -609,13 +597,17 @@ sap.ui.define([
 									}
 									var oCancelButton4 = oTranslationPopover4.getFooter().getContent()[2];
 									oCancelButton4.firePress();
-
-								}).then(function () {
 									destroyEditor(that.oEditor);
 									resolve();
 								});
+								oValueHelpIcon4.firePress();
+								oValueHelpIcon4.focus();
 							});
+							oValueHelpIcon3.firePress();
+							oValueHelpIcon3.focus();
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -662,9 +654,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -691,9 +681,7 @@ sap.ui.define([
 							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
-							oValueHelpIcon3.firePress();
-							oValueHelpIcon3.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField3.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -713,9 +701,7 @@ sap.ui.define([
 								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
-								oValueHelpIcon4.firePress();
-								oValueHelpIcon4.focus();
-								EditorQunitUtils.wait().then(function () {
+								oField4.attachEventOnce("translationPopoverOpened", function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), _oExpectedValues["string4"]["zh-CN"], "oTranslationPopover4 Header: String4 Value");
@@ -731,13 +717,17 @@ sap.ui.define([
 									}
 									var oCancelButton4 = oTranslationPopover4.getFooter().getContent()[2];
 									oCancelButton4.firePress();
-
-								}).then(function () {
 									destroyEditor(that.oEditor);
 									resolve();
 								});
+								oValueHelpIcon4.firePress();
+								oValueHelpIcon4.focus();
 							});
+							oValueHelpIcon3.firePress();
+							oValueHelpIcon3.focus();
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -784,9 +774,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -813,9 +801,7 @@ sap.ui.define([
 							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
-							oValueHelpIcon3.firePress();
-							oValueHelpIcon3.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField3.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), _oExpectedValues["string3"]["zh-TW"], "oTranslationPopover3 Header: String3 Value");
@@ -835,9 +821,7 @@ sap.ui.define([
 								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
-								oValueHelpIcon4.firePress();
-								oValueHelpIcon4.focus();
-								EditorQunitUtils.wait().then(function () {
+								oField4.attachEventOnce("translationPopoverOpened", function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String 4 English", "oTranslationPopover4 Header: String4 Value");
@@ -853,13 +837,17 @@ sap.ui.define([
 									}
 									var oCancelButton4 = oTranslationPopover4.getFooter().getContent()[2];
 									oCancelButton4.firePress();
-
-								}).then(function () {
 									destroyEditor(that.oEditor);
 									resolve();
 								});
+								oValueHelpIcon4.firePress();
+								oValueHelpIcon4.focus();
 							});
+							oValueHelpIcon3.firePress();
+							oValueHelpIcon3.focus();
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
@@ -906,9 +894,7 @@ sap.ui.define([
 						var oValueHelpIcon1 = oField1.getAggregation("_field")._oValueHelpIcon;
 						assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon1.firePress();
-						oValueHelpIcon1.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField1.attachEventOnce("translationPopoverOpened", function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -935,9 +921,7 @@ sap.ui.define([
 							var oValueHelpIcon3 = oField3.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "oField3: Input value help icon");
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
-							oValueHelpIcon3.firePress();
-							oValueHelpIcon3.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField3.attachEventOnce("translationPopoverOpened", function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -957,9 +941,7 @@ sap.ui.define([
 								var oValueHelpIcon4 = oField4.getAggregation("_field")._oValueHelpIcon;
 								assert.ok(oValueHelpIcon4.isA("sap.ui.core.Icon"), "oField4: Input value help icon");
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
-								oValueHelpIcon4.firePress();
-								oValueHelpIcon4.focus();
-								EditorQunitUtils.wait().then(function () {
+								oField4.attachEventOnce("translationPopoverOpened", function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String 4 English", "oTranslationPopover4 Header: String4 Value");
@@ -975,13 +957,17 @@ sap.ui.define([
 									}
 									var oCancelButton4 = oTranslationPopover4.getFooter().getContent()[2];
 									oCancelButton4.firePress();
-
-								}).then(function () {
 									destroyEditor(that.oEditor);
 									resolve();
 								});
+								oValueHelpIcon4.firePress();
+								oValueHelpIcon4.focus();
 							});
+							oValueHelpIcon3.firePress();
+							oValueHelpIcon3.focus();
 						});
+						oValueHelpIcon1.firePress();
+						oValueHelpIcon1.focus();
 					});
 				});
 			});
