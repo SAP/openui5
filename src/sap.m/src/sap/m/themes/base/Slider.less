@@ -3,9 +3,8 @@
 /* Base theme                    */
 /* ============================= */
 
-/* ------------------------------ */
-/* Slider commons styles          */
-/* ------------------------------ */
+/* Slider commons styles */
+
 @_sap_m_Slider_Height: 3rem;
 @_sap_m_Slider_Height_Compact: 2rem;
 @_sap_m_Slider_Progress: .1875rem;
@@ -74,16 +73,15 @@
 .sapMSliderTick {
 	display: inline-block;
 	height: 1rem;
-	border-left: 0.0625rem solid @sapUiFieldBorderColor;
+	border-left: 0.0625rem solid var(--sapField_BorderColor);
 	margin: 0.4375rem 0 0 -0.0625rem;
 }
-
 
 .sapMSliderTickLabel {
 	display: inline-block;
 	position: absolute;
 	width: 0.0625rem;
-	background-color: @sapUiFieldBorderColor;
+	background-color: var(--sapField_BorderColor);
 	margin: 0 0 0 -0.0625rem;
 
 	&:last-child {
@@ -108,9 +106,9 @@
 
 /* slider progress bar */
 .sapMSliderProgress {
-	background: @sapUiFieldActiveBorderColor;
+	background: var(--sapField_Active_BorderColor);
 
-	&:before{
+	&::before {
 		content: '';
 		position: absolute;
 		width: 100%;
@@ -137,10 +135,10 @@
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
 
-	&:focus:before {
+	&:focus::before {
 		content: '';
 		position: absolute;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		border-radius: 50%;
 		pointer-events: none;
 		top: -0.25rem;
@@ -150,12 +148,11 @@
 	}
 }
 
-/* ============ */
 /* compact size */
-/* ============ */
 
 /* slider */
 .sapUiSizeCompact {
+
 	.sapMSlider {
 		height: @_sap_m_Slider_Height_Compact;
 		padding: calc(@_sap_m_Slider_Top_Bottom_Padding_Compact ~"/" 2) .875rem;
