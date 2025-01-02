@@ -25,10 +25,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var {FlexWrap} = mobileLibrary;
+	const {FlexWrap} = mobileLibrary;
 
 	return UIComponent.extend("rta.performance.dragAndDrop.Component", {
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 
@@ -38,10 +39,10 @@ sap.ui.define([
 
 		createContent() {
 			// create Vertical Layout
-			var oLayout1 = new VerticalLayout("Layout1");
+			const oLayout1 = new VerticalLayout("Layout1");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout1, 6);
 			DtPerformanceTestUtil.addMixedControlsTo(oLayout1, 31, 60, false /* invisible */);
-			var oContainerLayout1 = new VerticalLayout({
+			const oContainerLayout1 = new VerticalLayout({
 				id: "ContainerLayout1",
 				content: [
 					new Label({
@@ -51,10 +52,10 @@ sap.ui.define([
 					oLayout1
 				]
 			});
-			var oLayout2 = new VerticalLayout("Layout2");
+			const oLayout2 = new VerticalLayout("Layout2");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout2, 6, 6);
 			DtPerformanceTestUtil.addMixedControlsTo(oLayout2, 91, 120, false /* invisible */);
-			var oContainerLayout2 = new VerticalLayout({
+			const oContainerLayout2 = new VerticalLayout({
 				id: "ContainerLayout2",
 				content: [
 					new Label({
@@ -64,10 +65,10 @@ sap.ui.define([
 					oLayout2
 				]
 			});
-			var oLayout3 = new VerticalLayout("Layout3");
+			const oLayout3 = new VerticalLayout("Layout3");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout3, 6, 12);
 			DtPerformanceTestUtil.addMixedControlsTo(oLayout3, 151, 200, false /* invisible */);
-			var oContainerLayout3 = new VerticalLayout({
+			const oContainerLayout3 = new VerticalLayout({
 				id: "ContainerLayout3",
 				content: [
 					new Label({
@@ -81,7 +82,7 @@ sap.ui.define([
 			// with adding a margin to the first item in a box the box is not eligible for stretching anymore
 			oLayout3.getContent()[1].getItems()[0].addStyleClass("sapUiRtaPerfTestMarginTop");
 
-			var oHBox = new HBox("HBox", {
+			const oHBox = new HBox("HBox", {
 				wrap: FlexWrap.Wrap,
 				items: [oContainerLayout1, oContainerLayout2, oContainerLayout3],
 				customData: [
@@ -97,7 +98,7 @@ sap.ui.define([
 			});
 			oHBox.setWidth("100%");
 
-			var mHBoxDesigntimeMetadata = {
+			const mHBoxDesigntimeMetadata = {
 				aggregations: {
 					items: {
 						propagateRelevantContainer: true

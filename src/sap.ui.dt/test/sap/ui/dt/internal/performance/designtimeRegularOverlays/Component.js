@@ -14,21 +14,22 @@ sap.ui.define([
 
 	return UIComponent.extend("dt.performance.designtimeRegularOverlays.Component", {
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 
 		createContent() {
 			// create Vertical Layout
-			var oLayout = new VerticalLayout("visibleLayout");
+			const oLayout = new VerticalLayout("visibleLayout");
 			PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 200, true /* visible */);
 			PerformanceTestUtil.addMixedControlsTo(oLayout, 201, 500, false /* invisible */);
 
-			var oInvisibleLayout = new VerticalLayout("invisibleLayout", {
+			const oInvisibleLayout = new VerticalLayout("invisibleLayout", {
 				visible: false
 			});
 			PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /* visible */);
 
-			var oHorizontalLayout = new HorizontalLayout("HorizontalLayout", {
+			const oHorizontalLayout = new HorizontalLayout("HorizontalLayout", {
 				content: [oLayout, oInvisibleLayout]
 			});
 			return oHorizontalLayout;

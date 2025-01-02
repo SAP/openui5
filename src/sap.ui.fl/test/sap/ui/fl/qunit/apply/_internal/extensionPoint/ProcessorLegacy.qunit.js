@@ -274,6 +274,9 @@ sap.ui.define([
 		}, 500);
 	}
 
+	/**
+	 * @deprecated As of version 1.56
+	 */
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync", {
 		beforeEach: createComponentAndContainer.bind(null, SYNC),
 		afterEach: destroyComponentAndContainer.bind(null, SYNC)
