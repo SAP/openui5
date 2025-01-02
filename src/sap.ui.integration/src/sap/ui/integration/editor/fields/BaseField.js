@@ -118,10 +118,14 @@ sap.ui.define([
 				afterInit: {},
 				/**
 				 * Fired when validation failed.
-				 * @experimental since 1.105
+				 */
+				validateFailed: {},
+				/**
+				 * Fired when settings panel opened.
+				 * @experimental since 1.132
 				 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
-				validateFailed: {}
+				settingsPanelOpened: {}
 			}
 		},
 		renderer: {

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/deepEqual",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 	Localization,
 	merge,
@@ -28,7 +29,8 @@ sap.ui.define([
 	KeyCodes,
 	ResourceBundle,
 	deepEqual,
-	EditorQunitUtils
+	EditorQunitUtils,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -97,9 +99,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -127,6 +128,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -178,9 +181,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -209,6 +211,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -261,9 +265,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -277,6 +280,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -329,9 +334,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -346,6 +350,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -401,9 +407,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -434,6 +439,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -489,9 +496,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -521,6 +527,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -568,9 +576,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -606,6 +613,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -823,9 +832,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -861,6 +869,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1087,9 +1097,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1106,6 +1115,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1153,9 +1164,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1183,6 +1193,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1238,9 +1250,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1254,6 +1265,8 @@ sap.ui.define([
 							assert.equal(oTable.getSelectedItems().length, 2, "Settings: 2 records are selected from admin change.");
 							resolve();
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1378,9 +1391,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1410,6 +1422,8 @@ sap.ui.define([
 								resolve();
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1464,9 +1478,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1496,6 +1509,8 @@ sap.ui.define([
 								resolve();
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1551,9 +1566,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1584,6 +1598,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1639,9 +1655,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1672,6 +1687,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1727,9 +1744,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1759,6 +1775,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1814,9 +1832,8 @@ sap.ui.define([
 						//settings button
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1846,6 +1863,8 @@ sap.ui.define([
 								resolve();
 							});
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -2014,9 +2033,8 @@ sap.ui.define([
 						assert.equal(oItems[3].getKey(), "Products", "Content of Form contains: Destination Field item 3 Key OK");
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							assert.ok(!oButton.hasStyleClass("settings"), "Settings: settings style does not exist");
 							//popup is opened
@@ -2179,6 +2197,8 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -2227,9 +2247,8 @@ sap.ui.define([
 					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2366,6 +2385,8 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -2414,9 +2435,8 @@ sap.ui.define([
 					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2513,6 +2533,8 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -2561,9 +2583,8 @@ sap.ui.define([
 					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2721,6 +2742,8 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -2769,9 +2792,8 @@ sap.ui.define([
 					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2932,6 +2954,8 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -2980,9 +3004,8 @@ sap.ui.define([
 					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -3143,6 +3166,8 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this));
 						}.bind(this));
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -3226,9 +3251,8 @@ sap.ui.define([
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
-						oButton.firePress();
-						oButton.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("settingsPanelOpened", async function () {
+							await nextUIUpdate();
 							var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 							var testInterface = settingsClass._private();
 							var oTransformPanelForm = testInterface.oTransformPanel.getItems()[0];
@@ -3247,6 +3271,8 @@ sap.ui.define([
 							assert.deepEqual(oObject2, {"label": "Northwind", "name": "Northwind"}, "Table: row 2 object");
 							resolve();
 						});
+						oButton.firePress();
+						oButton.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));

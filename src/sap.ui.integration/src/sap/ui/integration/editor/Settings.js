@@ -306,6 +306,7 @@ sap.ui.define([
 						oCurrentModel.setProperty("/selectedValues", "All");
 					}
 				}
+				oField.fireSettingsPanelOpened();
 			}
 		});
 		oPopover.setCustomHeader(oHeader);

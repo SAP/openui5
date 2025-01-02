@@ -234,5 +234,11 @@ sap.ui.define([
 		return oSubObject;
 	};
 
+	EditorQunitUtils.performance = {
+		action: 150,
+		interaction: 1000,
+		complexInteraction: 3000
+	};
+
 	return EditorQunitUtils;
 });
