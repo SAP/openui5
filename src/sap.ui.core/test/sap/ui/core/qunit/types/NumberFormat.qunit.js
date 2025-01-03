@@ -5095,4 +5095,68 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencySymbolOrCode: currency code", function (assert) {
+		// code under test
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call({}, {currencyCode: true}, "~foo"),
+			"~foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencySymbolOrCode: with customCurrencies", function (assert) {
+		const oFormatOptions = {currencyCode: false, customCurrencies: {/*content not relevant*/}};
+		const oNumberFormat = {mKnownCurrencySymbols: {FOO: "~bar"}};
+
+		// code under test - currency symbol defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "FOO"),
+			"~bar");
+
+		// code under test - currency symbol not defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "BAZ"),
+			"BAZ");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencySymbolOrCode: currency symbols from CLDR", function (assert) {
+		const oFormatOptions = {currencyCode: false};
+		const oLocaleData = {getCurrencySymbol() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		const oNumberFormat = {oLocaleData: oLocaleData};
+		oLocaleDataMock.expects("getCurrencySymbol").withExactArgs("FOO").returns("~bar");
+
+		// code under test - currency symbol defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "FOO"),
+			"~bar");
+
+		oLocaleDataMock.expects("getCurrencySymbol").withExactArgs("BAZ").returns(undefined);
+
+		// code under test - currency symbol not defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "BAZ"),
+			"BAZ");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: calls getCurrencySymbolOrCode (showNumber: false)", function (assert) {
+		const oFormatOptions = {foo: "~bar", showNumber: false};
+		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
+		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
+			.withExactArgs(sinon.match(oFormatOptions), "~currencyCode")
+			.returns("~currencyCodeOrSymbol");
+
+		// code under test
+		assert.strictEqual(oCurrencyFormat.format("1.23", "~currencyCode"), "~currencyCodeOrSymbol");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: calls getCurrencySymbolOrCode (showNumber: true)", function (assert) {
+		const oFormatOptions = {foo: "~bar"};
+		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
+		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
+			.withExactArgs(sinon.match(oFormatOptions), "~currencyCode")
+			.returns("~currencyCodeOrSymbol");
+
+		// code under test
+		assert.strictEqual(oCurrencyFormat.format("1.23", "~currencyCode"), "~currencyCodeOrSymbol\xa01.23");
+	});
 });
