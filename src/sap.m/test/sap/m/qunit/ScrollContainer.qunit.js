@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ScrollContainer",
 	"sap/m/Image",
+	"sap/m/Select",
 	"sap/ui/core/Core",
 	"sap/ui/core/HTML",
 	"sap/m/App",
@@ -17,6 +18,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	ScrollContainer,
 	Image,
+	Select,
 	Core,
 	HTML,
 	App,
@@ -477,6 +479,43 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_DOWN", false, false, true);
 
 		intEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
+
+	});
+
+	QUnit.test("Press [CTRL] + [DOWN] for ScrollEnablement _customScrollTo with Select", function(assert) {
+		var oScrollContainer = new ScrollContainer("oSC", {
+			height: "100px",
+			width: "100px",
+			vertical: true,
+			content: [
+				new HTML({
+					content : "<div class=\"height800\">800px height div" +
+					"<div class=\"absoluteLeft0Top200\">" +
+					"<div class=\"absoluteLeft0Top200\" id=\"nestedPositioned\">XYZ</div>" +
+					"</div>" +
+					"</div>"
+				}),
+				this.oTestSelect = new Select(),
+				new HTML({
+					content : "<div class=\"height200\">200px height div</div>"
+				})
+			]
+		});
+
+		oScrollContainer.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oScrollContainer.scrollToElement(this.oTestSelect);
+
+		this.oTestSelect.focus();
+
+		assert.equal(getScrollPos(oScrollContainer.getId(), "top"), -800, "ScrollContainer should be scrolled to position 800 from the top");
+
+		qutils.triggerKeydown(this.oTestSelect.getDomRef(), "ARROW_DOWN", false, false, true);
+
+		assert.equal(getScrollPos(oScrollContainer.getId(), "top"), -800, "ScrollContainer should be scrolled to position 800 from the top");
+
+		oScrollContainer.destroy();
 
 	});
 
