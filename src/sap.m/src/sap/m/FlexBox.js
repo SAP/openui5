@@ -108,7 +108,7 @@ function(
 				/**
 				 * Determines whether the layout is rendered as a series of divs or as an unordered list (ul).<br>
 				 * <br>
-				 * We recommend to use <code>Bare</code> in most cases to avoid layout issues due to browser inconsistencies.
+				 * <b>Note:</b> We recommend to use <code>Bare</code> in most cases to avoid layout issues due to browser inconsistencies.
 				 */
 				renderType : {type : "sap.m.FlexRendertype", group : "Misc", defaultValue : FlexRendertype.Div},
 
