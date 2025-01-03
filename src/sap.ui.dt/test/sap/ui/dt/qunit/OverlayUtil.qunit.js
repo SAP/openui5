@@ -495,6 +495,15 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("when findAllOverlaysInContainer is called with relevant container that can't be found", function(assert) {
+			sandbox.stub(this.oSectionOverlay0, "getRelevantContainer").returns(this.oSection1);
+			assert.strictEqual(
+				OverlayUtil.findAllOverlaysInContainer(this.oSectionOverlay0).length,
+				1,
+				"then it returns just the Relevant Container Overlay without exceptions"
+			);
+		});
+
 		QUnit.test("when findAllSiblingOverlaysInContainer is called", function(assert) {
 			assert.strictEqual(
 				OverlayUtil.findAllSiblingOverlaysInContainer(this.oVBoxOverlay0, this.oVBoxOverlay0).length,
