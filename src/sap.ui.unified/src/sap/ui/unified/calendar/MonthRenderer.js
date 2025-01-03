@@ -245,11 +245,22 @@ sap.ui.define([
 				oRm.style("width", sWidth);
 			}
 			oRm.accessibilityState(null, {
-				role: "columnheader",
-				label: aWeekDaysWide[(i + iStartDay) % 7]
+				role: "columnheader"
 			});
 			oRm.openEnd(); // div element
+
+			oRm.openStart("span");
+			oRm.attr("aria-hidden", "true");
+			oRm.openEnd();
 			oRm.text(aWeekDays[(i + iStartDay) % 7]);
+			oRm.close("span");
+
+			oRm.openStart("span");
+			oRm.class("sapUiPseudoInvisibleText");
+			oRm.openEnd();
+			oRm.text(aWeekDaysWide[(i + iStartDay) % 7]);
+			oRm.close("span");
+
 			oRm.close("div");
 		}
 
@@ -329,8 +340,14 @@ sap.ui.define([
 		oRm.class("sapUiCalDummy");
 		oRm.style("visibility", bVisible ? "visible" : "hidden");
 		oRm.attr("role", sRole);
-		oRm.attr("aria-label", Library.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_WEEK"));
 		oRm.openEnd();
+
+		oRm.openStart("span");
+		oRm.class("sapUiPseudoInvisibleText");
+		oRm.openEnd();
+		oRm.text(Library.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_WEEK"));
+		oRm.close("span");
+
 		oRm.close('div');
 	};
 
