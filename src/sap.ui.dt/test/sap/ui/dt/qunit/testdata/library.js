@@ -22,7 +22,8 @@ sap.ui.define([
 	 */
 
 	// delegate further initialization of this library to the Core
-	var testLib = Lib.init({
+	const testLib = Lib.init({
+		apiVersion: 2,
 		name: "sap.ui.testLibrary",
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.ui.dt"],
