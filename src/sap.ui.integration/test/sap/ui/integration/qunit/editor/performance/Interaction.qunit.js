@@ -1167,7 +1167,7 @@ sap.ui.define([
 				});
 				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -1179,7 +1179,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					EditorQunitUtils.isReady(that.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready : " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready : " + time + "ms OK");
 						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), _oExpectedValues["string1"]["en"], "oField1: String1 Value");
@@ -1199,7 +1199,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oField1.attachEventOnce("translationPopoverOpened", function () {
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Translation popover opened : " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -1228,7 +1228,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oField3.attachEventOnce("translationPopoverOpened", function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Translation popover opened : " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), _oExpectedValues["string3"]["en"], "oTranslationPopover3 Header: String3 Value");
@@ -1250,7 +1250,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oField4.attachEventOnce("translationPopoverOpened", function () {
 									time = new Date().getTime() - start.getTime();
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Translation popover opened : " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), _oExpectedValues["string4"]["en"], "oTranslationPopover4 Header: String4 Value");
@@ -1357,13 +1357,13 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready : " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready : " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel1.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 						assert.equal(oLabel1.getText(), "Object properties defined", "Label 2: Has label text");
@@ -1404,7 +1404,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 							oField1.attachEventOnce("translationPopoverOpened", function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Translation popover opened : " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
 								var oTranslationPopover1 = oField1._oTranslationPopover;
 								var oSaveButton1 = oTranslationPopover1.getFooter().getContent()[1];
 								assert.ok(oSaveButton1.getVisible(), "oTranslationPopover1 footer: save button visible");
@@ -1442,7 +1442,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 									oField1.attachEventOnce("translationPopoverOpened", function () {
 										time = new Date().getTime() - start.getTime();
-										assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Translation popover opened : " + time + "ms OK");
+										assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
 										var oTranslationPopover1 = oField1._oTranslationPopover;
 										var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
 										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");

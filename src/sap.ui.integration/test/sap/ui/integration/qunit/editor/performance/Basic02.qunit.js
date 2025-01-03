@@ -177,11 +177,11 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "numberParameter", "Label: Has numberParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.NumberField"), "Field: Number Field");
 					assert.equal(oField.getAggregation("_field").getValue(), 3.2, "Field: Value 3.2");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -204,11 +204,11 @@ sap.ui.define([
 								assert.equal(oLabel.getText(), "numberParameter", "Label: Has numberParameter label from parameter name");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.NumberField"), "Field: Number Field");
 								assert.equal(oField.getAggregation("_field").getValue(), 3.2, "Field: Value 3.2");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -231,11 +231,11 @@ sap.ui.define([
 											assert.equal(oLabel.getText(), "numberParameter", "Label: Has numberParameter label from parameter name");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.NumberField"), "Field: Number Field");
 											assert.equal(oField.getAggregation("_field").getValue(), 3.2, "Field: Value 3.2");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -258,11 +258,11 @@ sap.ui.define([
 														assert.equal(oLabel.getText(), "numberParameter", "Label: Has numberParameter label from parameter name");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.NumberField"), "Field: Number Field");
 														assert.equal(oField.getAggregation("_field").getValue(), 3.2, "Field: Value 3.2");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -285,11 +285,11 @@ sap.ui.define([
 																	assert.equal(oLabel.getText(), "numberParameter", "Label: Has numberParameter label from parameter name");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.NumberField"), "Field: Number Field");
 																	assert.equal(oField.getAggregation("_field").getValue(), 3.2, "Field: Value 3.2");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -355,11 +355,11 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "dateParameter", "Label: Has dateParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -382,11 +382,11 @@ sap.ui.define([
 								assert.equal(oLabel.getText(), "dateParameter", "Label: Has dateParameter label from parameter name");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
 								assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -409,11 +409,11 @@ sap.ui.define([
 											assert.equal(oLabel.getText(), "dateParameter", "Label: Has dateParameter label from parameter name");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
 											assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -436,11 +436,11 @@ sap.ui.define([
 														assert.equal(oLabel.getText(), "dateParameter", "Label: Has dateParameter label from parameter name");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
 														assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -463,11 +463,11 @@ sap.ui.define([
 																	assert.equal(oLabel.getText(), "dateParameter", "Label: Has dateParameter label from parameter name");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
 																	assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -533,11 +533,11 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
 					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -560,11 +560,11 @@ sap.ui.define([
 								assert.equal(oLabel.getText(), "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
 								assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -587,11 +587,11 @@ sap.ui.define([
 											assert.equal(oLabel.getText(), "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
 											assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -614,11 +614,11 @@ sap.ui.define([
 														assert.equal(oLabel.getText(), "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
 														assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -641,11 +641,11 @@ sap.ui.define([
 																	assert.equal(oLabel.getText(), "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
 																	assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -713,11 +713,11 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "booleanParameter", "Label: Has booleanParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField.getAggregation("_field").getSelected() === true, "Field: value true");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -740,11 +740,11 @@ sap.ui.define([
 								assert.equal(oLabel.getText(), "booleanParameter", "Label: Has booleanParameter label from parameter name");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 								assert.ok(oField.getAggregation("_field").getSelected() === true, "Field: value true");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -767,11 +767,11 @@ sap.ui.define([
 											assert.equal(oLabel.getText(), "booleanParameter", "Label: Has booleanParameter label from parameter name");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 											assert.ok(oField.getAggregation("_field").getSelected() === true, "Field: value true");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -794,11 +794,11 @@ sap.ui.define([
 														assert.equal(oLabel.getText(), "booleanParameter", "Label: Has booleanParameter label from parameter name");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 														assert.ok(oField.getAggregation("_field").getSelected() === true, "Field: value true");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -821,11 +821,11 @@ sap.ui.define([
 																	assert.equal(oLabel.getText(), "booleanParameter", "Label: Has booleanParameter label from parameter name");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 																	assert.ok(oField.getAggregation("_field").getSelected() === true, "Field: value true");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -894,11 +894,11 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.equal(oLabel.getText(), "dest1 label", "Label: Has dest1 label from destination label property");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -922,11 +922,11 @@ sap.ui.define([
 								assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 								assert.equal(oLabel.getText(), "dest1 label", "Label: Has dest1 label from destination label property");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -950,11 +950,11 @@ sap.ui.define([
 											assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 											assert.equal(oLabel.getText(), "dest1 label", "Label: Has dest1 label from destination label property");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -978,11 +978,11 @@ sap.ui.define([
 														assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 														assert.equal(oLabel.getText(), "dest1 label", "Label: Has dest1 label from destination label property");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -1006,11 +1006,11 @@ sap.ui.define([
 																	assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 																	assert.equal(oLabel.getText(), "dest1 label", "Label: Has dest1 label from destination label property");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -1086,7 +1086,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1095,7 +1095,7 @@ sap.ui.define([
 						var oContents = oSimpleForm.getContent();
 						assert.equal(oContents.length, 16, "SimpleForm: length");
 						assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -1117,7 +1117,7 @@ sap.ui.define([
 								assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 								assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1126,7 +1126,7 @@ sap.ui.define([
 									var oContents = oSimpleForm.getContent();
 									assert.equal(oContents.length, 16, "SimpleForm: length");
 									assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -1148,7 +1148,7 @@ sap.ui.define([
 											assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 											assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1157,7 +1157,7 @@ sap.ui.define([
 												var oContents = oSimpleForm.getContent();
 												assert.equal(oContents.length, 16, "SimpleForm: length");
 												assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -1179,7 +1179,7 @@ sap.ui.define([
 														assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 														assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1188,7 +1188,7 @@ sap.ui.define([
 															var oContents = oSimpleForm.getContent();
 															assert.equal(oContents.length, 16, "SimpleForm: length");
 															assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -1210,7 +1210,7 @@ sap.ui.define([
 																	assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 																	assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1219,7 +1219,7 @@ sap.ui.define([
 																		var oContents = oSimpleForm.getContent();
 																		assert.equal(oContents.length, 16, "SimpleForm: length");
 																		assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -1293,14 +1293,14 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object Field", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field: Object Field");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
 						var oTextArea = oField.getAggregation("_field");
 						assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 						assert.equal(oTextArea.getValue(), "", "Field 1: Object Value null");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -1322,14 +1322,14 @@ sap.ui.define([
 								assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 								assert.equal(oLabel.getText(), "Object Field", "Label: Has label text");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field: Object Field");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
 									var oTextArea = oField.getAggregation("_field");
 									assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 									assert.equal(oTextArea.getValue(), "", "Field 1: Object Value null");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -1351,14 +1351,14 @@ sap.ui.define([
 											assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 											assert.equal(oLabel.getText(), "Object Field", "Label: Has label text");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field: Object Field");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
 												var oTextArea = oField.getAggregation("_field");
 												assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 												assert.equal(oTextArea.getValue(), "", "Field 1: Object Value null");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -1380,14 +1380,14 @@ sap.ui.define([
 														assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 														assert.equal(oLabel.getText(), "Object Field", "Label: Has label text");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field: Object Field");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
 															var oTextArea = oField.getAggregation("_field");
 															assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 															assert.equal(oTextArea.getValue(), "", "Field 1: Object Value null");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -1409,14 +1409,14 @@ sap.ui.define([
 																	assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 																	assert.equal(oLabel.getText(), "Object Field", "Label: Has label text");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field: Object Field");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
 																		var oTextArea = oField.getAggregation("_field");
 																		assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 																		assert.equal(oTextArea.getValue(), "", "Field 1: Object Value null");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -1495,7 +1495,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1508,7 +1508,7 @@ sap.ui.define([
 						var oSelectionCell1 = oRow1.getCells()[0];
 						assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -1531,7 +1531,7 @@ sap.ui.define([
 								assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 								assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1544,7 +1544,7 @@ sap.ui.define([
 									var oSelectionCell1 = oRow1.getCells()[0];
 									assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 									assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -1567,7 +1567,7 @@ sap.ui.define([
 											assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 											assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1580,7 +1580,7 @@ sap.ui.define([
 												var oSelectionCell1 = oRow1.getCells()[0];
 												assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 												assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -1603,7 +1603,7 @@ sap.ui.define([
 														assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 														assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1616,7 +1616,7 @@ sap.ui.define([
 															var oSelectionCell1 = oRow1.getCells()[0];
 															assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 															assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -1639,7 +1639,7 @@ sap.ui.define([
 																	assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 																	assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1652,7 +1652,7 @@ sap.ui.define([
 																		var oSelectionCell1 = oRow1.getCells()[0];
 																		assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 																		assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -1728,7 +1728,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1736,7 +1736,7 @@ sap.ui.define([
 						assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 						assert.equal(oTextArea.getValue(), "[]", "Field 1: Object Value []");
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value []");
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -1758,7 +1758,7 @@ sap.ui.define([
 								assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 								assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1766,7 +1766,7 @@ sap.ui.define([
 									assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 									assert.equal(oTextArea.getValue(), "[]", "Field 1: Object Value []");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value []");
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -1788,7 +1788,7 @@ sap.ui.define([
 											assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 											assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1796,7 +1796,7 @@ sap.ui.define([
 												assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 												assert.equal(oTextArea.getValue(), "[]", "Field 1: Object Value []");
 												assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value []");
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -1818,7 +1818,7 @@ sap.ui.define([
 														assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 														assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1826,7 +1826,7 @@ sap.ui.define([
 															assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 															assert.equal(oTextArea.getValue(), "[]", "Field 1: Object Value []");
 															assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value []");
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -1848,7 +1848,7 @@ sap.ui.define([
 																	assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 																	assert.equal(oLabel.getText(), "Object List Field", "Label 1: Has label text");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1856,7 +1856,7 @@ sap.ui.define([
 																		assert.ok(oTextArea.isA("sap.m.TextArea"), "Field 1: Control is TextArea");
 																		assert.equal(oTextArea.getValue(), "[]", "Field 1: Object Value []");
 																		assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), []), "Field 1: DT Value []");
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
@@ -1939,7 +1939,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
-					assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1948,7 +1948,7 @@ sap.ui.define([
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-						assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 						EditorQunitUtils.wait().then(function () {
 							destroyEditor(oEditor);
 							count++;
@@ -1971,7 +1971,7 @@ sap.ui.define([
 								assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 								assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
-								assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
 									assert.ok(oEditor.isReady(), "Editor is ready");
@@ -1980,7 +1980,7 @@ sap.ui.define([
 									assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 									assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 									assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-									assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 									EditorQunitUtils.wait().then(function () {
 										destroyEditor(oEditor);
 										count++;
@@ -2003,7 +2003,7 @@ sap.ui.define([
 											assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 											assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 											assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
-											assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
 												assert.ok(oEditor.isReady(), "Editor is ready");
@@ -2012,7 +2012,7 @@ sap.ui.define([
 												assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 												assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 												assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-												assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 												EditorQunitUtils.wait().then(function () {
 													destroyEditor(oEditor);
 													count++;
@@ -2035,7 +2035,7 @@ sap.ui.define([
 														assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 														assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 														assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
-														assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
 															assert.ok(oEditor.isReady(), "Editor is ready");
@@ -2044,7 +2044,7 @@ sap.ui.define([
 															assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 															assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 															assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-															assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 															EditorQunitUtils.wait().then(function () {
 																destroyEditor(oEditor);
 																count++;
@@ -2067,7 +2067,7 @@ sap.ui.define([
 																	assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 																	assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 																	assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
-																	assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
 																		assert.ok(oEditor.isReady(), "Editor is ready");
@@ -2076,7 +2076,7 @@ sap.ui.define([
 																		assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 																		assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 																		assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
-																		assert.ok(time < EditorQunitUtils.performance.interaction , "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		EditorQunitUtils.wait().then(function () {
 																			destroyEditor(oEditor);
 																			oHost.destroy();
