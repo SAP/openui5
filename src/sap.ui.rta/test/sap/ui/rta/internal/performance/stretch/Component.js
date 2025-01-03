@@ -11,6 +11,7 @@ sap.ui.define([
 
 	return UIComponent.extend("rta.performance.stretch.Component", {
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 
@@ -19,7 +20,7 @@ sap.ui.define([
 		},
 
 		createContent() {
-			var oLayout = new VerticalLayout("visibleLayout");
+			const oLayout = new VerticalLayout("visibleLayout");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout, 100);
 			return oLayout;
 		}

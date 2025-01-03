@@ -110,6 +110,8 @@ sap.ui.define([
 				}
 			}
 		},
+		renderer: null,
+
 		// eslint-disable-next-line object-shorthand
 		constructor: function(...aArgs) {
 			this._oChangeIndicatorRegistry = new ChangeIndicatorRegistry({

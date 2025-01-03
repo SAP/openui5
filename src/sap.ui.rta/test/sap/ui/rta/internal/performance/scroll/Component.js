@@ -25,6 +25,7 @@ sap.ui.define([
 
 	return UIComponent.extend("rta.performance.scroll.Component", {
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 
@@ -33,19 +34,19 @@ sap.ui.define([
 		},
 
 		createContent() {
-			var oHeaderLayout = new Panel("layout-header");
+			const oHeaderLayout = new Panel("layout-header");
 			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 1, 10, true /* visible */);
 			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 11, 20, false /* invisible */);
 
-			var oFirstSectionPanel = new VerticalLayout("panel1");
+			const oFirstSectionPanel = new VerticalLayout("panel1");
 			DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 21, 30, true /* visible */);
 			DtPerformanceTestUtil.addMixedControlsTo(oFirstSectionPanel, 31, 40, false /* invisible */);
 
-			var oSecondSectionPanel = new VerticalLayout("panel2");
+			const oSecondSectionPanel = new VerticalLayout("panel2");
 			DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 41, 60, true /* visible */);
 			DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 61, 80, false /* invisible */);
 
-			var oObjectPageLayout = new ObjectPageLayout("opLayout", {
+			const oObjectPageLayout = new ObjectPageLayout("opLayout", {
 				headerTitle: new ObjectPageHeader("opHeader", {
 					objectTitle: "RtaPerformance",
 					objectSubtitle: "ScrollTest"

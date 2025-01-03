@@ -11,6 +11,10 @@ sap.ui.define([
 ) {
 	"use strict";
 	return UIComponent.extend("sap.ui.fl.qunit.integration.async.testComponentWithView.Component", {
+		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
+			manifest: "json"
+		},
 		init(...aArgs) {
 			UIComponent.prototype.init.apply(this, aArgs);
 		},
