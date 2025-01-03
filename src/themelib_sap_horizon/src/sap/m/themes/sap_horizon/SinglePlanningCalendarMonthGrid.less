@@ -2,6 +2,7 @@
 /* CSS for control sap.m/SinglePlanningCalendarMonthGrid  */
 /* Horizon theme                                          */
 /* ====================================================== */
+
 .calendarSpecialDayTypeColorMixIn(@class, @color) {
 	.sapMSPCMonthGrid {
 		.@{class} .specialDateIndicator {
@@ -32,12 +33,12 @@
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType20, @sapLegendColor20);
 
 html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after {
-	border: 0.125rem solid @sapUiContentFocusColor;
+	border: 0.125rem solid var(--sapContent_FocusColor);
 }
 
 html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMarker::after {
 	border: none;
-	outline: 0.125rem solid @sapUiContentFocusColor;
+	outline: 0.125rem solid var(--sapContent_FocusColor);
 	outline-offset: -0.3125rem;
 }
 
