@@ -8,11 +8,11 @@
 }
 
 .sapMPanelBGSolid {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
 
 .sapMPanelBGTranslucent {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
 
 .sapMPanelBGTransparent {
@@ -25,12 +25,12 @@
 .sapMPanelWrappingDiv,
 /* do not want border if expanded and if only header text */
 .sapMPanelWrappingDivTb {
-	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	border-bottom: 0.0625rem solid var(--sapGroup_TitleBorderColor);
 }
 
 .sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded,
 .sapMPanelWrappingDivTb.sapMPanelWrappingDivTbExpanded {
-	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	border-bottom: 0.0625rem solid var(--sapGroup_TitleBorderColor);
 }
 
 .sapMPanelWrappingDivTb .sapMTB.sapMTBStandard {
@@ -38,7 +38,7 @@
 }
 
 .sapMPanelContent:not(.sapMPanelBGTransparent) {
-	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	border-bottom: 0.0625rem solid var(--sapGroup_TitleBorderColor);
 }
 
 .sapMPanelContent {
@@ -51,5 +51,5 @@
 }
 
 .sapMPanelWrappingDiv .sapUiIcon {
-	color: @sapButton_Lite_TextColor;
+	color: var(--sapButton_Lite_TextColor);
 }

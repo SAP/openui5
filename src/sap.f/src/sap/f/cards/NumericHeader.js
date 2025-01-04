@@ -271,13 +271,6 @@ sap.ui.define([
 				 * Displays the main and side indicators
 				 */
 				_numericIndicators: { type: "sap.f.cards.NumericIndicators", multiple: false, visibility: "hidden" }
-			},
-			events: {
-
-				/**
-				 * Fires when the user presses the control.
-				 */
-				press: {}
 			}
 		},
 		renderer: NumericHeaderRenderer

@@ -5,21 +5,21 @@
 
 .sapMPanel {
 	min-height: 2.75rem;
-	border-radius: @sapElement_BorderCornerRadius;
+	border-radius: var(--sapElement_BorderCornerRadius);
 
 	.sapMPanelWrappingDiv:not(.sapMPanelWrappingDivExpanded),
 	.sapMPanelWrappingDivTb:not(.sapMPanelWrappingDivTbExpanded) {
-		border-radius: @sapElement_BorderCornerRadius;
+		border-radius: var(--sapElement_BorderCornerRadius);
 		overflow: hidden;
 	}
 }
 
 .sapMPanelBGSolid {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
 
 .sapMPanelBGTranslucent {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
 
 .sapMPanelBGTransparent {
@@ -32,26 +32,27 @@
 .sapMPanelWrappingDiv,
 /* do not want border if expanded and if only header text */
 .sapMPanelWrappingDivTb {
-	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
-	background: @sapGroup_ContentBackground;
+	border-bottom: 0.0625rem solid var(--sapGroup_TitleBorderColor);
+	background: var(--sapGroup_ContentBackground);
 }
 
 .sapMPanelExpandable .sapMPanelWrappingDiv {
+
 	&.sapMPanelWrappingDivExpanded:focus {
-		border-top-left-radius: @sapElement_BorderCornerRadius;
-		border-top-right-radius: @sapElement_BorderCornerRadius;
+		border-top-left-radius: var(--sapElement_BorderCornerRadius);
+		border-top-right-radius: var(--sapElement_BorderCornerRadius);
 		outline-offset: -0.125rem;
 	}
 
 	&:not(.sapMPanelWrappingDivExpanded):focus {
-		border-radius: @sapElement_BorderCornerRadius;
+		border-radius: var(--sapElement_BorderCornerRadius);
 		outline-offset: -0.125rem;
 	}
 }
 
 .sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded,
 .sapMPanelWrappingDivTb.sapMPanelWrappingDivTbExpanded {
-	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	border-bottom: 0.0625rem solid var(--sapGroup_TitleBorderColor);
 }
 
 .sapMPanelWrappingDivTb .sapMTB.sapMTBStandard {
@@ -82,23 +83,24 @@
 }
 
 .sapMPanel.sapMPanelExpandable .sapMPanelWrappingDivTb {
+
 	& .sapMPanelHeaderTB {
 		border-top-left-radius: 0;
 		margin-left: 2.75rem;
 	}
 
 	&:not(.sapMPanelWrappingDivTbExpanded) .sapMPanelHeaderTB {
-		border-bottom-right-radius: @sapElement_BorderCornerRadius;
-		border-top-right-radius: @sapElement_BorderCornerRadius;
+		border-bottom-right-radius: var(--sapElement_BorderCornerRadius);
+		border-top-right-radius: var(--sapElement_BorderCornerRadius);
 	}
 
 	&.sapMPanelWrappingDivTbExpanded .sapMPanelHeaderTB {
-		border-top-right-radius: @sapElement_BorderCornerRadius;
+		border-top-right-radius: var(--sapElement_BorderCornerRadius);
 	}
 }
 
 .sapMPanelWrappingDiv .sapUiIcon {
-	color: @sapButton_Lite_TextColor;
+	color: var(--sapButton_Lite_TextColor);
 }
 
 .sapMPanelStickyHeadingDiv {

@@ -102,6 +102,7 @@ sap.ui.define([
 		event.getSource().suggest();
 	}
 	var barSearchFieldLabel = new Label({
+		width: "3.5rem",
 		text: "Search"
 	}).addStyleClass("sapUiTinyMarginEnd");
 	var barSearchField = new SearchField("SFB1", {
@@ -191,6 +192,7 @@ sap.ui.define([
 			],
 			contentRight: [
 				new HBox({
+					renderType: "Bare",
 					items: [
 						barSearchFieldLabel,
 						barSearchField
