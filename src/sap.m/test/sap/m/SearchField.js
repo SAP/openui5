@@ -97,9 +97,11 @@ sap.ui.define([
 		subHeader: new Bar({
 			contentMiddle: [
 				new HBox({
+					renderType: "Bare",
 					items: [
 						new Label("SFB2Label", {
-							text: "SFB2"
+							text: "SFB2",
+							width: "2.5rem"
 						}).addStyleClass("sapUiTinyMarginEnd"),
 						new SearchField( "SFB2", {
 							placeholder: "Search",

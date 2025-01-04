@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
@@ -20,7 +19,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Lib"
 ],
-function (
+function(
 	Card,
 	CardHeader,
 	CardNumericHeader,
@@ -30,7 +29,6 @@ function (
 	fLibrary,
 	Button,
 	Text,
-	jQuery,
 	Control,
 	DateFormat,
 	UniversalDate,
@@ -414,7 +412,7 @@ function (
 		afterEach
 	});
 
-	QUnit.test("Press is fired on sapselect for numeric header", async function (assert) {
+	QUnit.test("Press is fired on Enter keydown for numeric header", async function (assert) {
 		// Arrange
 		var oHeader = new CardNumericHeader({ title: "Title" }),
 			oCard = new Card({
@@ -427,10 +425,32 @@ function (
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate(this.clock);
-		oHeader.onsapselect(new jQuery.Event("sapselect"));
+		QUnitUtils.triggerKeydown(oHeader.getDomRef(), KeyCodes.ENTER);
 
 		// Assert
-		assert.ok(fnPressHandler.calledOnce, "The press event is fired on sapselect");
+		assert.ok(fnPressHandler.calledOnce, "The press event is fired on Enter keydown");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Press is fired on Space keyup for numeric header", async function (assert) {
+		// Arrange
+		var oHeader = new CardNumericHeader({ title: "Title" }),
+			oCard = new Card({
+				header: oHeader
+			}),
+			fnPressHandler = this.stub();
+
+		oHeader.attachPress(fnPressHandler);
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+		QUnitUtils.triggerKeyup(oHeader.getDomRef(), KeyCodes.SPACE);
+
+		// Assert
+		assert.ok(fnPressHandler.calledOnce, "The press event is fired on Space keyup");
 
 		// Clean up
 		oCard.destroy();
@@ -458,6 +478,55 @@ function (
 
 		// Assert
 		assert.ok(fnPressHandler.notCalled, "Enter or Space on the toolbar shouldn't result in press event");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Press is NOT fired when the header is tapped", async function (assert) {
+		// Arrange
+		const oHeader = new CardNumericHeader({
+				title: "Title"
+			}),
+			oCard = new Card({
+				header: oHeader
+			}),
+			fnPressHandler = this.stub();
+
+		oHeader.attachPress(fnPressHandler);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Act
+		QUnitUtils.triggerEvent("tap", oHeader.getDomRef());
+
+		// Assert
+		assert.ok(fnPressHandler.calledOnce, "Tapping the header should result in press event");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Press is NOT fired when the header with href is tapped", async function (assert) {
+		// Arrange
+		const oHeader = new CardNumericHeader({
+				title: "Title",
+				href: "https://www.sap.com"
+			}),
+			oCard = new Card({
+				header: oHeader
+			}),
+			fnPressHandler = this.stub();
+
+		oHeader.attachPress(fnPressHandler);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Act
+		QUnitUtils.triggerEvent("tap", oHeader.getDomRef(), { ctrlKey: true });
+
+		// Assert
+		assert.ok(fnPressHandler.notCalled, "Tapping the header with href should NOT result in press event");
 
 		// Clean up
 		oCard.destroy();

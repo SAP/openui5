@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/m/Text",
 	"sap/f/cards/util/addTooltipIfTruncated",
-	"sap/m/BarInPageEnabler",
 	"./BaseHeaderRenderer"
 ], function(
 	Control,
@@ -20,10 +20,10 @@ sap.ui.define([
 	DateFormat,
 	UniversalDate,
 	coreLibrary,
+	KeyCodes,
 	mLibrary,
 	Text,
 	addTooltipIfTruncated,
-	BarInPageEnabler,
 	BaseHeaderRenderer
 ) {
 	"use strict";
@@ -162,6 +162,12 @@ sap.ui.define([
 				 * @since 1.118
 				 */
 				bannerLines: { type: "sap.m.Text", group: "Appearance", multiple: true  }
+			},
+			events: {
+				/**
+				 * Fires when the user presses the control.
+				 */
+				press: {}
 			}
 		},
 
@@ -249,27 +255,44 @@ sap.ui.define([
 		return !!this.getHref();
 	};
 
-	BaseHeader.prototype.ontap = function (oEvent) {
-		this._handleTapOrSelect(oEvent);
-	};
-
-	BaseHeader.prototype.onsapselect = function (oEvent) {
-		this._handleTapOrSelect(oEvent);
-	};
-
-	BaseHeader.prototype._handleTapOrSelect = function (oEvent) {
-		if (!this.isInteractive() || this._isInsideToolbar(oEvent.target)) {
+	BaseHeader.prototype.onkeydown = function (oEvent) {
+		if (oEvent.key !== "Enter" && oEvent.keyCode !== KeyCodes.ENTER) {
 			return;
 		}
 
+		if (!this._hasModifierKeys(oEvent)) {
+			this._handleTap(oEvent);
+		}
+	};
+
+	BaseHeader.prototype.onkeyup = function (oEvent) {
+		if (oEvent.key !== " " && oEvent.keyCode !== KeyCodes.SPACE) {
+			return;
+		}
+
+		if (!this._hasModifierKeys(oEvent)) {
+			this._handleTap(oEvent);
+		}
+	};
+
+	BaseHeader.prototype.ontap = function (oEvent) {
 		if (this.isLink() && oEvent.ctrlKey) {
 			// ctrl + click should open the link in a new tab
+			return;
+		}
+
+		this._handleTap(oEvent);
+	};
+
+	BaseHeader.prototype._handleTap = function (oEvent) {
+		if (!this.isInteractive() || this._isInsideToolbar(oEvent.target)) {
 			return;
 		}
 
 		this.firePress({
 			originalEvent: oEvent
 		});
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
@@ -497,6 +520,10 @@ sap.ui.define([
 		if (this.getProperty("useTooltips")) {
 			addTooltipIfTruncated(oText);
 		}
+	};
+
+	BaseHeader.prototype._hasModifierKeys = function (oEvent) {
+		return oEvent.shiftKey || oEvent.altKey || oEvent.ctrlKey || oEvent.metaKey;
 	};
 
 	return BaseHeader;

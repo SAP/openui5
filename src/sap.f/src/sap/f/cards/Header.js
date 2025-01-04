@@ -152,13 +152,6 @@ sap.ui.define([
 				 * Defines the inner avatar control.
 				 */
 				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
-			},
-			events: {
-
-				/**
-				 * Fires when the user presses the control.
-				 */
-				press: {}
 			}
 		},
 		renderer: HeaderRenderer
