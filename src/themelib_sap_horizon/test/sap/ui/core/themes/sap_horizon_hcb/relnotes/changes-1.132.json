@@ -1,7 +1,12 @@
 {
   "1.132.0": {
-    "date": "December 2024",
+    "date": "January 2025",
     "notes": [
+      {
+        "id": "e9556d961087cf780ea5e38deeb95e2152857977",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Fix misaligned SearchField"
+      },
       {
         "id": "66e738f911fde45b90a12226512900185405593e",
         "type": "FEATURE",

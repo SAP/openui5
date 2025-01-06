@@ -1,7 +1,12 @@
 {
   "1.132.0": {
-    "date": "December 2024",
+    "date": "January 2025",
     "notes": [
+      {
+        "id": "f70a348fff8b868910d958376190669226fd2165",
+        "type": "FIX",
+        "text": " sap.f.cards.BaseHeader: Press event is now fired when Spacebar key is released"
+      },
       {
         "id": "a1db4fdea94d5aef04c3eef764d53f0dea879f28",
         "type": "FIX",
