@@ -29,5 +29,15 @@
         "text": " sap.m.Page: Focus element is scrolled into view"
       }
     ]
+  },
+  "1.120.25": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "703c10879ba032221e48e93833ac0492a4a70a12",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: slider handles are correct in Belize now"
+      }
+    ]
   }
 }

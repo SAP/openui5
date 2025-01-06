@@ -923,5 +923,15 @@
         "text": " Test Starter: Support resource-roots configuration"
       }
     ]
+  },
+  "1.120.25": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "2a88dfbca963aef9367a069afc663f775fc11bdc",
+        "type": "FIX",
+        "text": " core/Icon: fix keyboard support for keys \"Space\" and \"Enter\""
+      }
+    ]
   }
 }

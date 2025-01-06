@@ -276,5 +276,15 @@
         "text": " m.Table: bottom border in horizon_dark"
       }
     ]
+  },
+  "1.120.25": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "828147a00455ebe326d3bf80fd0cf5e33169aaeb",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent focus outline overflow"
+      }
+    ]
   }
 }

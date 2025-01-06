@@ -1051,5 +1051,25 @@
         "text": " CellSelector: RTL flag is set on initialization"
       }
     ]
+  },
+  "1.120.25": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "b9db686745b5ac54be77d4129eb1d0d83daa0568",
+        "type": "FIX",
+        "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
+      },
+      {
+        "id": "2a88dfbca963aef9367a069afc663f775fc11bdc",
+        "type": "FIX",
+        "text": " core/Icon: fix keyboard support for keys \"Space\" and \"Enter\""
+      },
+      {
+        "id": "d360aecb1aaa181514b4901ba8761623c243bc2d",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: displayFormat is taken into account when formatting the output in 24-hour mode support"
+      }
+    ]
   }
 }
