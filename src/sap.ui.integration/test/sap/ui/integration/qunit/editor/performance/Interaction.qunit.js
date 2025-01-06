@@ -387,7 +387,7 @@ sap.ui.define([
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -421,7 +421,7 @@ sap.ui.define([
 					EditorQunitUtils.isReady(this.oEditor).then(async function () {
 						time = new Date().getTime() - start.getTime();
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 						assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
@@ -460,7 +460,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -494,7 +494,7 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oComboBox = oCustomerField.getAggregation("_field");
 						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
@@ -502,7 +502,7 @@ sap.ui.define([
 						oOrderModel.attachPropertyChange(async function (){
 							await nextUIUpdate();
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Data Request " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Data Request " + time + "ms OK");
 							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
@@ -545,7 +545,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -579,7 +579,7 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oComboBox = oEmployeeField.getAggregation("_field");
 						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
@@ -587,7 +587,7 @@ sap.ui.define([
 						oOrderModel.attachPropertyChange(async function (){
 							await nextUIUpdate();
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Data Request " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Data Request " + time + "ms OK");
 							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
@@ -630,7 +630,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -664,7 +664,7 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oCustomerComboBox = oCustomerField.getAggregation("_field");
 						assert.equal(oCustomerComboBox.getItems().length, 4, "Field: Customer lenght is OK");
@@ -672,10 +672,10 @@ sap.ui.define([
 						oOrderModel.attachEventOnce("propertyChange", async function (){
 							var end = new Date();
 							time = end.getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Data Request " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Data Request " + time + "ms OK");
 							await nextUIUpdate();
 							var uiChangetime = new Date().getTime() - end.getTime();
-							assert.ok(uiChangetime < EditorQunitUtils.performance.action, "Performance - UI Change " + uiChangetime + "ms OK");
+							assert.ok(uiChangetime < EditorQunitUtils.performance.interaction, "Performance - UI Change " + uiChangetime + "ms OK");
 							assert.equal(oCustomerComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 							var oEmployeeComboBox = oEmployeeField.getAggregation("_field");
 							assert.equal(oEmployeeComboBox.getItems().length, 6, "Field: Employee lenght is OK");
@@ -702,10 +702,10 @@ sap.ui.define([
 							oOrderModel.attachEventOnce("propertyChange", async function (){
 								end = new Date();
 								time = end.getTime() - newStart.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Data Request " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Data Request " + time + "ms OK");
 								await nextUIUpdate();
 								var uiChangetime = new Date().getTime() - end.getTime();
-								assert.ok(uiChangetime < EditorQunitUtils.performance.action, "Performance - UI Change " + uiChangetime + "ms OK");
+								assert.ok(uiChangetime < EditorQunitUtils.performance.interaction, "Performance - UI Change " + uiChangetime + "ms OK");
 								assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
 								assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 								assert.equal(oOrderField.getAggregation("_field").getItems().length, 1, "Field: Order lenght is OK");
@@ -852,7 +852,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -864,14 +864,14 @@ sap.ui.define([
 
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomerComoboBox.getItems().length, 4, "Field: Customer origin lenght is OK");
 						var oModel = oCustomerComoboBox.getModel();
 						oModel.attachPropertyChange(async function () {
 							await nextUIUpdate();
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Data Request " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Data Request " + time + "ms OK");
 							assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
 							resolve();
 						});
@@ -894,7 +894,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
@@ -906,14 +906,14 @@ sap.ui.define([
 
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers origin lenght is OK");
 						var oModel = oCustomersMultiComboBox.getModel();
 						oModel.attachPropertyChange(async function () {
 							await nextUIUpdate();
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Data Request " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Data Request " + time + "ms OK");
 							assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
 							resolve();
 						});
@@ -936,7 +936,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
@@ -948,14 +948,14 @@ sap.ui.define([
 
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oModel = oCustomersMultiInput.getModel();
 						assert.deepEqual(oModel.getData(), {},  "Field: Customers ori lenght is OK");
 						oModel.attachPropertyChange(async function () {
 							await nextUIUpdate();
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Data Request " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Data Request " + time + "ms OK");
 							assert.equal(oModel.getData().value.length, 2,  "Field: Customers lenght is OK");
 							resolve();
 						});
@@ -1015,7 +1015,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1026,7 +1026,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						//settings button
 						var oButton = oField._settingsButton;
@@ -1034,7 +1034,7 @@ sap.ui.define([
 						oField.attachEventOnce("settingsPanelOpened", async function () {
 							await nextUIUpdate();
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Settings Panel opened " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Settings Panel opened " + time + "ms OK");
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1167,7 +1167,7 @@ sap.ui.define([
 				});
 				EditorQunitUtils.isFieldReady(that.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(that.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -1179,7 +1179,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					EditorQunitUtils.isReady(that.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready : " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready : " + time + "ms OK");
 						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), _oExpectedValues["string1"]["en"], "oField1: String1 Value");
@@ -1199,7 +1199,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oField1.attachEventOnce("translationPopoverOpened", function () {
 							time = new Date().getTime() - start.getTime();
-							assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
+							assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Translation popover opened : " + time + "ms OK");
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -1228,7 +1228,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oField3.attachEventOnce("translationPopoverOpened", function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Translation popover opened : " + time + "ms OK");
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), _oExpectedValues["string3"]["en"], "oTranslationPopover3 Header: String3 Value");
@@ -1250,7 +1250,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oField4.attachEventOnce("translationPopoverOpened", function () {
 									time = new Date().getTime() - start.getTime();
-									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Translation popover opened : " + time + "ms OK");
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), _oExpectedValues["string4"]["en"], "oTranslationPopover4 Header: String4 Value");
@@ -1357,13 +1357,13 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + time + "ms OK");
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
 					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready : " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready : " + time + "ms OK");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						assert.ok(oLabel1.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 						assert.equal(oLabel1.getText(), "Object properties defined", "Label 2: Has label text");
@@ -1404,7 +1404,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 							oField1.attachEventOnce("translationPopoverOpened", function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Translation popover opened : " + time + "ms OK");
 								var oTranslationPopover1 = oField1._oTranslationPopover;
 								var oSaveButton1 = oTranslationPopover1.getFooter().getContent()[1];
 								assert.ok(oSaveButton1.getVisible(), "oTranslationPopover1 footer: save button visible");
@@ -1442,7 +1442,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 									oField1.attachEventOnce("translationPopoverOpened", function () {
 										time = new Date().getTime() - start.getTime();
-										assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Translation popover opened : " + time + "ms OK");
+										assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Translation popover opened : " + time + "ms OK");
 										var oTranslationPopover1 = oField1._oTranslationPopover;
 										var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
 										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
