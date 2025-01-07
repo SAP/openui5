@@ -4152,7 +4152,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
 	// Note: expanding a node while it is already expanded is only allowed with expand all
-	[undefined, 1, 42, Number.MAX_SAFE_INTEGER, 1E16].forEach(function (iLevels) {
+	[undefined, 1, Number.MAX_SAFE_INTEGER, 1E16].forEach(function (iLevels) {
 	QUnit.test("expand: success=" + bSuccess + ", iLevels=" + iLevels, function (assert) {
 		var oBinding = {
 				expand : function () {}
@@ -4187,28 +4187,14 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[undefined, 1, 42, Number.MAX_SAFE_INTEGER - 1].forEach(function (iLevels) {
-	QUnit.test("expand: already expanded", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
-
-		this.mock(oContext).expects("isExpanded").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oContext.expand(iLevels);
-		}, new Error("No partial expand possible. Node already expanded: " + oContext));
-	});
-});
-
-	//*********************************************************************************************
-[-23, 0].forEach(function (iLevels) {
-	QUnit.test("expand: not a positive number " + iLevels, function (assert) {
+[-23, 0, 2, Number.MAX_SAFE_INTEGER - 1].forEach(function (iLevels) {
+	QUnit.test("expand: unsupported number of levels " + iLevels, function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 
 		assert.throws(function () {
 			// code under test
 			oContext.expand(iLevels);
-		}, new Error("Not a positive number: " + iLevels));
+		}, new Error("Unsupported number of levels: " + iLevels));
 	});
 });
 
