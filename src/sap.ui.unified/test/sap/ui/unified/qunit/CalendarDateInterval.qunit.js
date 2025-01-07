@@ -81,14 +81,14 @@ sap.ui.define([
 
 		// act
 		var $DatesRow = Element.getElementById("myCal").getAggregation("month")[0].$();
-		var aWeekHeaders = $DatesRow.find(".sapUiCalWH");
+		var aWeekHeaderTextElemnts = $DatesRow.find("[aria-hidden='true']");
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(aWeekHeaders.length, 14, "14 week headers are rendered.");
+		assert.equal(aWeekHeaderTextElemnts.length, 14, "14 week headers are rendered.");
 		assert.equal(aDays.length, 14, "14 days are rendered.");
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20150202", "Correct first day is set.");
-		assert.equal(jQuery(aWeekHeaders[0]).text(), "Mon", "Weekday of first day is correct.");
+		assert.equal(jQuery(aWeekHeaderTextElemnts[0]).text(), "Mon", "Weekday of first day is correct.");
 		assert.equal(iStartDateChanged, 0, "no startDateChangeEvent fired by rendering");
 	});
 
