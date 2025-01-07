@@ -3,6 +3,21 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "7f8fde06ae203a537fd1fe13919cd0e109e4700b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Accessible name is now provided"
+      },
+      {
+        "id": "52f84ac22682f7a6ec5e648078be4a5888e999a3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Screen reader announcements now adjusted"
+      },
+      {
+        "id": "e3e48ae96159fbc2960cda9e100a244f02dc77d9",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Documentation is now updated"
+      },
+      {
         "id": "e9556d961087cf780ea5e38deeb95e2152857977",
         "type": "FIX",
         "text": " sap.m.SearchField: Fix misaligned SearchField"

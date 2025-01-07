@@ -3,6 +3,16 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "7f8fde06ae203a537fd1fe13919cd0e109e4700b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Accessible name is now provided"
+      },
+      {
+        "id": "52f84ac22682f7a6ec5e648078be4a5888e999a3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Screen reader announcements now adjusted"
+      },
+      {
         "id": "7511627ad0411097b0765841989b64faa95e3be6",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: adjust accessibility semantics"

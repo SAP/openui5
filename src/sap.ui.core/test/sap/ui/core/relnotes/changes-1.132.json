@@ -3,6 +3,16 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "f7755a7aa74fc8f28ab7c61cde9bba01e15796b9",
+        "type": "FIX",
+        "text": " sap.ui.base.Object.isObjectA(): type inference for TypeScript"
+      },
+      {
+        "id": "042728bdc6a2475f5998161a99809ced1fd3dab5",
+        "type": "FIX",
+        "text": " core/Element|Popup: get DOMRef after calling parent \"destroy\""
+      },
+      {
         "id": "81a127d2be0b782e5e7f4d7d9ee683781247d58a",
         "type": "FIX",
         "text": " core/LabelEnablement: handle destroy of label when updating inner control"
