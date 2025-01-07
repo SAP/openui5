@@ -97,7 +97,15 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
-			"GroupHeaderContextMenuAdapter": {
+			"ContextMenu": {
+				group: "Menus",
+				module: "./menus/{name}.qunit",
+				ui5: {
+					// Test has dependencies to sap.ui.unified
+					libs: ["sap.ui.table", "sap.ui.unified"]
+				}
+			},
+			"AnalyticalTableContextMenu": {
 				group: "Menus",
 				module: "./menus/{name}.qunit"
 			},

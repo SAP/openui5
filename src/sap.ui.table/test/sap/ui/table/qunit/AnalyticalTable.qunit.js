@@ -311,18 +311,6 @@ sap.ui.define([
 		assert.equal(this.oTable.getSelectionBehavior(), library.SelectionBehavior.RowOnly, "SelectionBehavior.RowOnly");
 	});
 
-	QUnit.test("extendedGroupHeaderMenu", function(assert) {
-		const oTable = this.oTable;
-
-		assert.strictEqual(oTable.getProperty("extendedGroupHeaderMenu"), true, "Default extendedGroupHeaderMenu");
-
-		oTable.setProperty("extendedGroupHeaderMenu", false);
-		assert.strictEqual(oTable.getProperty("extendedGroupHeaderMenu"), false, "Updated value for extendedGroupHeaderMenu");
-
-		oTable.setProperty("extendedGroupHeaderMenu", undefined);
-		assert.strictEqual(oTable.getProperty("extendedGroupHeaderMenu"), true, "Default extendedGroupHeaderMenu");
-	});
-
 	/**
 	 * @deprecated As of version 1.21.2
 	 */
@@ -663,7 +651,7 @@ sap.ui.define([
 		assert.ok(oSelectionChangedSpy.calledOnce, "The original selectionChanged event listener was called once");
 	});
 
-	QUnit.module("GroupHeaderMenu", {
+	QUnit.module("Context menu", {
 		beforeEach: async function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
@@ -674,34 +662,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Localization", function(assert) {
-		const done = assert.async();
-
-		async function doTest(oTable) {
-			const oAdapter = oTable._oGroupHeaderMenuAdapter;
-			const oDestroySpy = sinon.spy(oAdapter, "destroy");
-
-			assert.ok(oAdapter.isA?.("sap.ui.table.menus.GroupHeaderContextMenuAdapter"),
-				"Group header menu adapter is initialized");
-
-			TableUtils.Menu.openContextMenu(oTable, {
-				target: oTable.getRows()[0].getCells()[4].getDomRef(),
-				preventDefault: () => {}
-			});
-			assert.ok(oDestroySpy.notCalled, "GroupHeaderContextMenuAdapter not destroyed");
-
-			await oTable._adaptLocalization(true, false);
-			assert.ok(oDestroySpy.notCalled, "GroupHeaderContextMenuAdapter still not destroyed");
-
-			await oTable._adaptLocalization(false, true);
-			assert.ok(oDestroySpy.called, "GroupHeaderContextMenuAdapter destroyed");
-			assert.notEqual(oTable._oGroupHeaderMenuAdapter, oAdapter, "New GroupHeaderContextMenuAdapter created");
-			assert.ok(oTable._oGroupHeaderMenuAdapter.isA?.("sap.ui.table.menus.GroupHeaderContextMenuAdapter"),
-				"Group header menu adapter is present");
-			done();
-		}
-
-		performTestAfterTableIsUpdated.call(this, doTest);
+	QUnit.test("Default context menu", function(assert) {
+		assert.ok(this.oTable._getDefaultContextMenu().isA("sap.ui.table.menus.AnalyticalTableContextMenu"),
+			"Default context menu is a sap.ui.table.menus.AnalyticalTableContextMenu");
 	});
 
 	QUnit.module("AnalyticalTable with ODataModel v2", {
