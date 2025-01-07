@@ -93,8 +93,7 @@ sap.ui.define([
 		FilterableListContent.prototype.init.apply(this, arguments);
 
 		this._oObserver.observe(this, {
-			aggregations: ["table"],
-			properties: ["showRowCount"]
+			aggregations: ["table"]
 		});
 
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
@@ -1066,10 +1065,6 @@ sap.ui.define([
 	};
 
 	MTable.prototype.observeChanges = function(oChanges) {
-
-		if (oChanges.name === "showRowCount") {
-			this._updateHeaderText();
-		}
 
 		if (oChanges.name === "config") {
 			_adjustTable.call(this);
