@@ -276,6 +276,23 @@
 								"default": "sap.ui.base.Object"
 							}
 						]
+					},
+					{
+						"name": "isObjectA",
+						"static": true,
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "oObject is T"
+							}
+						},
+						"typeParameters": [
+							{
+								"name": "T",
+								"type": "sap.ui.base.Object",
+								"default": "sap.ui.base.Object"
+							}
+						]
 					}
 				]
 			},
