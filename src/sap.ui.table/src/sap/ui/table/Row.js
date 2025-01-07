@@ -476,6 +476,7 @@ sap.ui.define([
 	 *
 	 * @returns {number} The level.
 	 * @private
+	 * @ui5-private sap.ui.mdc.Table
 	 */
 	Row.prototype.getLevel = function() {
 		return state(this).level;

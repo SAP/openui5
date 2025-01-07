@@ -1084,28 +1084,8 @@ sap.ui.define([
 
 	Table.prototype.setContextMenu = function(oContextMenu) {
 		this._oContextMenu = this.validateAggregation("contextMenu", oContextMenu, false);
-
-		if (!this._oTable) {
-			return this;
-		}
-
-		this._oTable.setAggregation("contextMenu", oContextMenu, true);
-
-		if (!oContextMenu) {
-			this._oTable.detachBeforeOpenContextMenu(this._onBeforeOpenContextMenu, this);
-			return this;
-		}
-
-		if (!this._oTable.hasListeners("beforeOpenContextMenu")) {
-			this._oTable.attachBeforeOpenContextMenu(this._onBeforeOpenContextMenu, this);
-		}
-
+		this._oTable?.setAggregation("contextMenu", oContextMenu, true);
 		return this;
-	};
-
-	Table.prototype._onBeforeOpenContextMenu = function(oEvent) {
-		const oEventParameters = this._getType().getContextMenuParameters(oEvent);
-		!this.fireBeforeOpenContextMenu(oEventParameters) && oEvent.preventDefault();
 	};
 
 	Table.prototype.getContextMenu = function() {
@@ -1120,6 +1100,27 @@ sap.ui.define([
 		}
 		this._oContextMenu = null;
 		return this;
+	};
+
+	Table.prototype._onBeforeOpenContextMenu = function(mPropertyBag) {
+		const oContextMenu = mPropertyBag.contextMenu;
+		let bPreventDefault = true;
+
+		if (oContextMenu.isA("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu")) {
+			oContextMenu.initContent(this, {
+				groupLevel: mPropertyBag.groupLevel
+			});
+			bPreventDefault = oContextMenu.isEmpty();
+		} else {
+			bPreventDefault = !this.fireBeforeOpenContextMenu({
+				bindingContext: mPropertyBag.bindingContext,
+				column: mPropertyBag.column
+			});
+		}
+
+		if (bPreventDefault) {
+			mPropertyBag.event.preventDefault();
+		}
 	};
 
 	/**

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableRowCountMode",
 	"sap/ui/mdc/enums/TableRowActionType",
 	"sap/m/Text",
+	"sap/m/Menu",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	TableQUnitUtils,
@@ -21,6 +22,7 @@ sap.ui.define([
 	RowCountMode,
 	RowActionType,
 	Text,
+	Menu,
 	JSONModel
 ) {
 	"use strict";
@@ -483,5 +485,115 @@ sap.ui.define([
 			id: this.oTable.getId(),
 			bindingContext: this.oTable._oTable.getRows()[1].getBindingContext("namedModel")
 		}), "'rowPress' event handler called with the correct parameters");
+	});
+
+	QUnit.module("Context menu", {
+		beforeEach: async function() {
+			this.oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "namedModel>/testPath"
+					}
+				},
+				columns: new Column({
+					template: new Text()
+				}),
+				contextMenu: new Menu(),
+				models: {
+					namedModel: new JSONModel({
+						testPath: new Array(3).fill({})
+					})
+				}
+			});
+			this.oTable.placeAt("qunit-fixture");
+			await this.oTable.initialized();
+			await new Promise((resolve) => {
+				this.oTable._oTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Standard context menu", function(assert) {
+		const oContextMenu = this.oTable.getContextMenu();
+		let oInnerTableEvent;
+
+		this.spy(this.oTable, "_onBeforeOpenContextMenu");
+		this.oTable._oTable.attachBeforeOpenContextMenu((oEvent) => {
+			oInnerTableEvent = oEvent;
+		});
+
+		this.oTable._oTable.fireBeforeOpenContextMenu({
+			rowIndex: 0,
+			columnIndex: 0,
+			contextMenu: oContextMenu
+		});
+		assert.equal(this.oTable._onBeforeOpenContextMenu.callCount, 1, "Table#_onBeforeOpenContextMenu call");
+		sinon.assert.calledWithExactly(this.oTable._onBeforeOpenContextMenu, {
+			bindingContext: this.oTable._oTable.getRows()[0].getBindingContext("namedModel"),
+			column: this.oTable.getColumns()[0],
+			contextMenu: oContextMenu,
+			event: oInnerTableEvent,
+			groupLevel: undefined
+		});
+
+		this.oTable._onBeforeOpenContextMenu.resetHistory();
+		this.oTable._oTable.fireBeforeOpenContextMenu({
+			rowIndex: 0,
+			columnIndex: undefined,
+			contextMenu: oContextMenu
+		});
+		assert.equal(this.oTable._onBeforeOpenContextMenu.callCount, 1, "Table#_onBeforeOpenContextMenu call");
+		sinon.assert.calledWithExactly(this.oTable._onBeforeOpenContextMenu, {
+			bindingContext: this.oTable._oTable.getRows()[0].getBindingContext("namedModel"),
+			column: undefined,
+			contextMenu: oContextMenu,
+			event: oInnerTableEvent,
+			groupLevel: undefined
+		});
+	});
+
+	QUnit.test("Group header row context menu", function(assert) {
+		const oContextMenu = this.oTable._oTable.getAggregation("groupHeaderRowContextMenu");
+		let oInnerTableEvent;
+
+		assert.ok(oContextMenu.isA("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu"), "GroupHeaderRowContextMenu is set");
+
+		this.spy(this.oTable, "_onBeforeOpenContextMenu");
+		this.oTable._oTable.attachBeforeOpenContextMenu((oEvent) => {
+			oInnerTableEvent = oEvent;
+		});
+
+		this.oTable._oTable.fireBeforeOpenContextMenu({
+			rowIndex: 0,
+			columnIndex: 0,
+			contextMenu: oContextMenu
+		});
+		assert.equal(this.oTable._onBeforeOpenContextMenu.callCount, 1, "Table#_onBeforeOpenContextMenu call");
+		sinon.assert.calledWithExactly(this.oTable._onBeforeOpenContextMenu, {
+			bindingContext: this.oTable._oTable.getRows()[0].getBindingContext("namedModel"),
+			column: this.oTable.getColumns()[0],
+			contextMenu: oContextMenu,
+			event: oInnerTableEvent,
+			groupLevel: 1
+		});
+
+		this.oTable._onBeforeOpenContextMenu.resetHistory();
+		this.oTable._oTable.fireBeforeOpenContextMenu({
+			rowIndex: 0,
+			columnIndex: undefined,
+			contextMenu: oContextMenu
+		});
+		assert.equal(this.oTable._onBeforeOpenContextMenu.callCount, 1, "Table#_onBeforeOpenContextMenu call");
+		sinon.assert.calledWithExactly(this.oTable._onBeforeOpenContextMenu, {
+			bindingContext: this.oTable._oTable.getRows()[0].getBindingContext("namedModel"),
+			column: undefined,
+			contextMenu: oContextMenu,
+			event: oInnerTableEvent,
+			groupLevel: 1
+		});
 	});
 });

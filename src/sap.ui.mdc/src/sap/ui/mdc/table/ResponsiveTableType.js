@@ -187,7 +187,8 @@ sap.ui.define([
 			},
 			noData: oTable._getNoDataText(),
 			headerToolbar: oTable._oToolbar,
-			ariaLabelledBy: [oTable._oTitle]
+			ariaLabelledBy: [oTable._oTitle],
+			beforeOpenContextMenu: [onBeforeOpenContextMenu, this]
 		};
 
 		if (oTable.hasListeners("rowPress")) {
@@ -202,6 +203,20 @@ sap.ui.define([
 			bindingContext: oEvent.getParameter("listItem").getBindingContext(this.getInnerTable().getBindingInfo("items").model)
 		});
 		onRowActionPress.call(this, oEvent);
+	}
+
+	function onBeforeOpenContextMenu(oEvent) {
+		const mEventParameters = oEvent.getParameters();
+		const oInnerTable = this.getInnerTable();
+		const oColumn = Element.getElementById(mEventParameters.column?.getId().replace(/\-innerColumn$/, ""));
+
+		this.callHook("BeforeOpenContextMenu", this.getTable(), {
+			bindingContext: mEventParameters.listItem.getBindingContext(oInnerTable.getBindingInfo("items").model),
+			column: oColumn,
+			contextMenu: oInnerTable.getContextMenu(),
+			event: oEvent,
+			groupLevel: undefined
+		});
 	}
 
 	ResponsiveTableType.createColumn = function(sId, mSettings) {
@@ -467,17 +482,6 @@ sap.ui.define([
 			});
 		}
 		return this._oShowDetailsButton;
-	};
-
-	ResponsiveTableType.prototype.getContextMenuParameters = function(oEvent) {
-		const oListItem = oEvent.getParameter("listItem");
-		const oInnerColumn = oEvent.getParameter("column");
-		const oMDCColumn = oInnerColumn ? Element.getElementById(oInnerColumn.getId().replace(/\-innerColumn$/, "")) : undefined;
-
-		return {
-			bindingContext: oListItem.getBindingContext(this.getInnerTable().getBindingInfo("items").model),
-			column: oMDCColumn
-		};
 	};
 
 	/**
