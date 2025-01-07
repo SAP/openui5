@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -18,9 +19,10 @@ sap.ui.define([
 	MessageBox,
 	MessageToast,
 	Version,
-	PersistenceWriteAPI,
-	VersionsAPI,
 	Versions,
+	PersistenceWriteAPI,
+	ReloadInfoAPI,
+	VersionsAPI,
 	FlexUtils,
 	ReloadManager,
 	RuntimeAuthoring,
@@ -424,6 +426,28 @@ sap.ui.define([
 				assert.strictEqual(oMessageToastStub.callCount, 0, "then no messageToast was shown");
 				fnDone();
 			});
+		});
+
+		QUnit.test("when an exit event is fired from the toolbar", function(assert) {
+			const done = assert.async();
+			sandbox.stub(PersistenceWriteAPI, "hasDirtyChanges").returns(true);
+			sandbox.stub(this.oRta, "canSave").returns(true);
+			sandbox.stub(ReloadManager, "handleReloadOnExit");
+			sandbox.stub(ReloadManager, "removeDontShowWhatsNewAfterReload");
+			sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
+			const oMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves();
+			const oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();
+			sandbox.stub(ReloadManager, "checkReloadOnExit");
+
+			this.oRta.attachEventOnce("stop", function() {
+				assert.ok(true, "then the RTA stop event is fired");
+				assert.strictEqual(oSerializeStub.callCount, 1, "then the changes were saved");
+				assert.strictEqual(oMessageBoxStub.callCount, 1, "then a message box was shown");
+				assert.strictEqual(oMessageBoxStub.lastCall.args[1], "MSG_UNSAVED_DRAFT_CHANGES_ON_CLOSE", "then the message is correct");
+				done();
+			});
+
+			this.oRta.getToolbar().fireExit();
 		});
 	});
 
