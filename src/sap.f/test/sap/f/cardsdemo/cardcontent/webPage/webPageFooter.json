@@ -36,7 +36,7 @@
         "data": {
 			"json": {
 				"email": "my@mymail.com",
-				"agendaUrl": "https://one.int.sap/home",
+				"agendaUrl": "https://www.sap.com",
 				"company": {
 					"email": "mail@mycompany.com",
 					"emailSubject": "Subject"
