@@ -103,20 +103,6 @@ sap.ui.define([
 
 		oRm.openEnd(); // div element
 
-		if (oMonth.getIntervalSelection()) {
-			oRm.openStart("span", sId + "-Start");
-			oRm.style("display", "none");
-			oRm.openEnd();
-			oRm.text(rb.getText("CALENDAR_START_DATE"));
-			oRm.close("span");
-
-			oRm.openStart("span", sId + "-End");
-			oRm.style("display", "none");
-			oRm.openEnd();
-			oRm.text(rb.getText("CALENDAR_END_DATE"));
-			oRm.close("span");
-		}
-
 		this.renderMonth(oRm, oMonth, oDate);
 
 		oRm.close("div");
@@ -464,6 +450,8 @@ sap.ui.define([
 			|| sSecondaryDateType === CalendarDayType.NonWorking || bNonWorkingWeekend;
 		const bFilteredByTypeOrColor = !!(sSpecialDateTypeFilter || sSpecialDateColorFilter) && (sSpecialDateTypeFilter !== CalendarDayType.None || sSpecialDateColorFilter) ;
 		const sNonWorkingDayText = oMonth._oUnifiedRB.getText("LEGEND_NON_WORKING_DAY");
+		const sStartDateText = InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_START_DATE");
+		const sEndDateText = InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_END_DATE");
 		const aTooltipTexts = [];
 
 		// Days before 0001.01.01 should be disabled.
@@ -497,17 +485,17 @@ sap.ui.define([
 		}
 		if (iSelected === 2) {
 			oRm.class("sapUiCalItemSelStart"); // interval start
-			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-Start";
+			mAccProps["describedby"] = `${mAccProps["describedby"]} ${sStartDateText}`.trim();
 		} else if (iSelected === 3) {
 			oRm.class("sapUiCalItemSelEnd"); // interval end
-			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
+			mAccProps["describedby"] = `${mAccProps["describedby"]} ${sEndDateText}`.trim();
 		} else if (iSelected === 4) {
 			oRm.class("sapUiCalItemSelBetween"); // interval between
 		} else if (iSelected === 5) {
 			oRm.class("sapUiCalItemSelStart"); // interval start
 			oRm.class("sapUiCalItemSelEnd"); // interval end
-			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-Start";
-			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
+			mAccProps["describedby"] = `${mAccProps["describedby"]} ${sStartDateText}`.trim();
+			mAccProps["describedby"] = `${mAccProps["describedby"]} ${sEndDateText}`.trim();
 		}
 
 		if (this.renderWeekNumbers && oMonth.getShowWeekNumbers() && oMonth._oDate) {
