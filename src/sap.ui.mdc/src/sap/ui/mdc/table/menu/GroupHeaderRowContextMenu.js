@@ -91,6 +91,7 @@ sap.ui.define([
 
 		return new MenuItem({
 			text: oResourceBundle.getText("table.TBL_UNGROUP"),
+			visible: "{$sap.ui.mdc.Table>/@custom/activeP13nModes/Group}",
 			items: [
 				new MenuItem({
 					text: oResourceBundle.getText("table.TBL_UNGROUP_LEVEL"),

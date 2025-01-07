@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/mdc/table/menu/GroupHeaderRowContextMenu",
 	"sap/ui/mdc/Table",
+	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/utils/Personalization",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
@@ -10,6 +11,7 @@ sap.ui.define([
 ], function(
 	GroupHeaderRowContextMenu,
 	Table,
+	TableDelegate,
 	PersonalizationUtils,
 	Menu,
 	MenuItem,
@@ -87,9 +89,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("Menu items", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oContextMenu = new GroupHeaderRowContextMenu();
-			this.oTable = new Table();
+			this.stub(TableDelegate, "getSupportedFeatures").returns({
+				p13nModes: ["Group"]
+			});
+			this.oTable = new Table({
+				delegate: {
+					name: "sap/ui/mdc/TableDelegate"
+				},
+				dependents: this.oContextMenu
+			});
+			await this.oTable.initialized();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -104,10 +115,17 @@ sap.ui.define([
 		const oUngroupAllItem = oUngroupItem.getItems()[1];
 		const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 
+		assert.notOk(oUngroupItem.getVisible(), "Visible; p13nMode 'Group' not active");
 		assert.strictEqual(oUngroupItem.getText(), oResourceBundle.getText("table.TBL_UNGROUP"), "Text");
 		assert.strictEqual(oUngroupItem.getItems().length, 2, "Submenu items");
 		assert.strictEqual(oUngroupLevelItem.getText(), oResourceBundle.getText("table.TBL_UNGROUP_LEVEL"), "Ungroup Level text");
 		assert.strictEqual(oUngroupAllItem.getText(), oResourceBundle.getText("table.TBL_UNGROUP_ALL"), "Ungroup All text");
+
+		this.oTable.setP13nMode(["Group"]);
+		assert.ok(oUngroupItem.getVisible(), "Visible; p13nMode 'Group' active");
+
+		this.oTable.setP13nMode();
+		assert.notOk(oUngroupItem.getVisible(), "Visible; p13nMode 'Group' not active");
 
 		this.oTable.setGroupConditions({
 			groupLevels: [

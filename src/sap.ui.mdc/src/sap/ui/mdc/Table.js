@@ -925,7 +925,8 @@ sap.ui.define([
 		this._setupPropertyInfoStore("propertyInfo");
 
 		this._oManagedObjectModel = new ManagedObjectModel(this, {
-			hasGrandTotal: false
+			hasGrandTotal: false,
+			activeP13nModes: createActiveP13nModesMap(this)
 		});
 		this._oManagedObjectModel.setDefaultBindingMode(BindingMode.OneWay);
 		this.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table");
@@ -1386,8 +1387,8 @@ sap.ui.define([
 		}
 
 		this.setProperty("p13nMode", aSortedKeys, true);
-
 		this._updateAdaptation();
+		this._oManagedObjectModel.setProperty("/@custom/activeP13nModes", createActiveP13nModesMap(this));
 
 		if (!deepEqual(aOldP13nMode.sort(), this.getP13nMode().sort())) {
 			updateP13nSettings(this);
@@ -1732,6 +1733,7 @@ sap.ui.define([
 
 			// TODO: Cache Delegate.getSupportedFeatures and use only cached feature information in the table.
 
+			this._oManagedObjectModel.setProperty("/@custom/activeP13nModes", createActiveP13nModesMap(this));
 			this._updateAdaptation();
 
 			const oDelegate = this.getControlDelegate();
@@ -2135,6 +2137,20 @@ sap.ui.define([
 
 		return aSupportedP13nModes;
 	};
+
+	function createActiveP13nModesMap(oTable) {
+		const oAllP13nModes = new Set(Object.keys(TableP13nMode));
+		const oEnabledP13nModes = new Set(oTable.getP13nMode());
+		const oP13nModesSupportedByDelegate = new Set(oTable.isControlDelegateInitialized()
+			? oTable.getControlDelegate().getSupportedFeatures(oTable).p13nModes
+			: []);
+		const oActiveP13nModes = oEnabledP13nModes.intersection(oP13nModesSupportedByDelegate);
+
+		return Array.from(oAllP13nModes).reduce((oModes, sMode) => {
+			oModes[sMode] = oActiveP13nModes.has(sMode);
+			return oModes;
+		}, {});
+	}
 
 	Table.prototype.getActiveP13nModes = function() {
 		return getIntersection(this.getP13nMode(), this.getSupportedP13nModes());
