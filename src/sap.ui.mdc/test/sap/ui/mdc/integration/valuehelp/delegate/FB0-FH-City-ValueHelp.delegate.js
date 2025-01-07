@@ -91,7 +91,7 @@ sap.ui.define([
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Dialog")) {
 
 			if (!oCurrentContent) {
-				oCurrentContent = new MDCTable({title: "Select from List", keyPath: "city", descriptionPath: "text", filterFields: "$search"});
+				oCurrentContent = new MDCTable({title: "Select from List", keyPath: "city", descriptionPath: "text"});
 				oContainer.addContent(oCurrentContent);
 
 				oCurrentContent.setFilterBar(
