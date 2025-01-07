@@ -3719,8 +3719,8 @@ sap.ui.define([
 
 
 	/**
-	 * Holds the selected appointments. If no appointments are selected, an empty array is returned.
-	 * @returns {sap.ui.unified.CalendarAppointment[]} Array of IDs of selected appointments
+	 * Returns the IDs of the selected appointments. If no appointments are selected, an empty array is returned.
+	 * @returns {string[]} Array with the IDs of the selected appointments
 	 * @since 1.54
 	 * @public
 	 */
