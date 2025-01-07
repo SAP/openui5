@@ -179,7 +179,7 @@ sap.ui.define([
 				});
 				EditorQunitUtils.isFieldReady(oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = oEditor.getAggregation("_formContent")[1];
 					var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -213,7 +213,7 @@ sap.ui.define([
 					assert.ok(oControl4.isA("sap.m.ComboBox"), "Field 4: Control is ComboBox");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 						assert.ok(oEditor.isReady(), "Editor is ready");
 						var aItems3 = oControl3.getItems();
 						assert.equal(aItems3.length, 3, "Field 3: Select items lenght is OK");
@@ -248,7 +248,7 @@ sap.ui.define([
 							});
 							EditorQunitUtils.isFieldReady(oEditor).then(function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 								var oLabel1 = oEditor.getAggregation("_formContent")[1];
 								var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -282,7 +282,7 @@ sap.ui.define([
 								assert.ok(oControl4.isA("sap.m.ComboBox"), "Field 4: Control is ComboBox");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
-									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 									assert.ok(oEditor.isReady(), "Editor is ready");
 									var aItems3 = oControl3.getItems();
 									assert.equal(aItems3.length, 3, "Field 3: Select items lenght is OK");
@@ -317,7 +317,7 @@ sap.ui.define([
 										});
 										EditorQunitUtils.isFieldReady(oEditor).then(function () {
 											time = new Date().getTime() - start.getTime();
-											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 											var oLabel1 = oEditor.getAggregation("_formContent")[1];
 											var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -351,7 +351,7 @@ sap.ui.define([
 											assert.ok(oControl4.isA("sap.m.ComboBox"), "Field 4: Control is ComboBox");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
-												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 												assert.ok(oEditor.isReady(), "Editor is ready");
 												var aItems3 = oControl3.getItems();
 												assert.equal(aItems3.length, 3, "Field 3: Select items lenght is OK");
@@ -386,7 +386,7 @@ sap.ui.define([
 													});
 													EditorQunitUtils.isFieldReady(oEditor).then(function () {
 														time = new Date().getTime() - start.getTime();
-														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 														var oLabel1 = oEditor.getAggregation("_formContent")[1];
 														var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -420,7 +420,7 @@ sap.ui.define([
 														assert.ok(oControl4.isA("sap.m.ComboBox"), "Field 4: Control is ComboBox");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
-															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 															assert.ok(oEditor.isReady(), "Editor is ready");
 															var aItems3 = oControl3.getItems();
 															assert.equal(aItems3.length, 3, "Field 3: Select items lenght is OK");
@@ -455,7 +455,7 @@ sap.ui.define([
 																});
 																EditorQunitUtils.isFieldReady(oEditor).then(function () {
 																	time = new Date().getTime() - start.getTime();
-																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 																	var oLabel1 = oEditor.getAggregation("_formContent")[1];
 																	var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -489,7 +489,7 @@ sap.ui.define([
 																	assert.ok(oControl4.isA("sap.m.ComboBox"), "Field 4: Control is ComboBox");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
-																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		assert.ok(oEditor.isReady(), "Editor is ready");
 																		var aItems3 = oControl3.getItems();
 																		assert.equal(aItems3.length, 3, "Field 3: Select items lenght is OK");
@@ -572,7 +572,7 @@ sap.ui.define([
 				});
 				EditorQunitUtils.isFieldReady(oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = oEditor.getAggregation("_formContent")[1];
 					var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -590,7 +590,7 @@ sap.ui.define([
 					assert.ok(oControl2.isA("sap.m.MultiComboBox"), "Field 2: Control is MultiComboBox");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 						assert.ok(oEditor.isReady(), "Editor is ready");
 						assert.equal(oControl1.getItems().length, 5, "Field 1: MultiComboBox items lenght is OK");
 						assert.equal(oControl2.getItems().length, 6, "Field 2: MultiComboBox items lenght is OK");
@@ -609,7 +609,7 @@ sap.ui.define([
 							});
 							EditorQunitUtils.isFieldReady(oEditor).then(function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 								var oLabel1 = oEditor.getAggregation("_formContent")[1];
 								var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -627,7 +627,7 @@ sap.ui.define([
 								assert.ok(oControl2.isA("sap.m.MultiComboBox"), "Field 2: Control is MultiComboBox");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
-									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 									assert.ok(oEditor.isReady(), "Editor is ready");
 									assert.equal(oControl1.getItems().length, 5, "Field 1: MultiComboBox items lenght is OK");
 									assert.equal(oControl2.getItems().length, 6, "Field 2: MultiComboBox items lenght is OK");
@@ -646,7 +646,7 @@ sap.ui.define([
 										});
 										EditorQunitUtils.isFieldReady(oEditor).then(function () {
 											time = new Date().getTime() - start.getTime();
-											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 											var oLabel1 = oEditor.getAggregation("_formContent")[1];
 											var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -664,7 +664,7 @@ sap.ui.define([
 											assert.ok(oControl2.isA("sap.m.MultiComboBox"), "Field 2: Control is MultiComboBox");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
-												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 												assert.ok(oEditor.isReady(), "Editor is ready");
 												assert.equal(oControl1.getItems().length, 5, "Field 1: MultiComboBox items lenght is OK");
 												assert.equal(oControl2.getItems().length, 6, "Field 2: MultiComboBox items lenght is OK");
@@ -683,7 +683,7 @@ sap.ui.define([
 													});
 													EditorQunitUtils.isFieldReady(oEditor).then(function () {
 														time = new Date().getTime() - start.getTime();
-														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 														var oLabel1 = oEditor.getAggregation("_formContent")[1];
 														var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -701,7 +701,7 @@ sap.ui.define([
 														assert.ok(oControl2.isA("sap.m.MultiComboBox"), "Field 2: Control is MultiComboBox");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
-															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 															assert.ok(oEditor.isReady(), "Editor is ready");
 															assert.equal(oControl1.getItems().length, 5, "Field 1: MultiComboBox items lenght is OK");
 															assert.equal(oControl2.getItems().length, 6, "Field 2: MultiComboBox items lenght is OK");
@@ -720,7 +720,7 @@ sap.ui.define([
 																});
 																EditorQunitUtils.isFieldReady(oEditor).then(function () {
 																	time = new Date().getTime() - start.getTime();
-																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 																	var oLabel1 = oEditor.getAggregation("_formContent")[1];
 																	var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -738,7 +738,7 @@ sap.ui.define([
 																	assert.ok(oControl2.isA("sap.m.MultiComboBox"), "Field 2: Control is MultiComboBox");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
-																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		assert.ok(oEditor.isReady(), "Editor is ready");
 																		assert.equal(oControl1.getItems().length, 5, "Field 1: MultiComboBox items lenght is OK");
 																		assert.equal(oControl2.getItems().length, 6, "Field 2: MultiComboBox items lenght is OK");
@@ -805,7 +805,7 @@ sap.ui.define([
 				});
 				EditorQunitUtils.isFieldReady(oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = oEditor.getAggregation("_formContent")[1];
 					var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -823,7 +823,7 @@ sap.ui.define([
 					var oSelect2 = oControl2.getAggregation("_control");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 						assert.ok(oEditor.isReady(), "Editor is ready");
 						oSelect1.setSelectedIndex(10);
 						oSelect1.open();
@@ -844,7 +844,7 @@ sap.ui.define([
 							});
 							EditorQunitUtils.isFieldReady(oEditor).then(function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 								var oLabel1 = oEditor.getAggregation("_formContent")[1];
 								var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -862,7 +862,7 @@ sap.ui.define([
 								var oSelect2 = oControl2.getAggregation("_control");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
-									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 									assert.ok(oEditor.isReady(), "Editor is ready");
 									oSelect1.setSelectedIndex(10);
 									oSelect1.open();
@@ -883,7 +883,7 @@ sap.ui.define([
 										});
 										EditorQunitUtils.isFieldReady(oEditor).then(function () {
 											time = new Date().getTime() - start.getTime();
-											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 											var oLabel1 = oEditor.getAggregation("_formContent")[1];
 											var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -901,7 +901,7 @@ sap.ui.define([
 											var oSelect2 = oControl2.getAggregation("_control");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
-												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 												assert.ok(oEditor.isReady(), "Editor is ready");
 												oSelect1.setSelectedIndex(10);
 												oSelect1.open();
@@ -922,7 +922,7 @@ sap.ui.define([
 													});
 													EditorQunitUtils.isFieldReady(oEditor).then(function () {
 														time = new Date().getTime() - start.getTime();
-														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 														var oLabel1 = oEditor.getAggregation("_formContent")[1];
 														var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -940,7 +940,7 @@ sap.ui.define([
 														var oSelect2 = oControl2.getAggregation("_control");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
-															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 															assert.ok(oEditor.isReady(), "Editor is ready");
 															oSelect1.setSelectedIndex(10);
 															oSelect1.open();
@@ -961,7 +961,7 @@ sap.ui.define([
 																});
 																EditorQunitUtils.isFieldReady(oEditor).then(function () {
 																	time = new Date().getTime() - start.getTime();
-																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 																	var oLabel1 = oEditor.getAggregation("_formContent")[1];
 																	var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -979,7 +979,7 @@ sap.ui.define([
 																	var oSelect2 = oControl2.getAggregation("_control");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
-																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		assert.ok(oEditor.isReady(), "Editor is ready");
 																		oSelect1.setSelectedIndex(10);
 																		oSelect1.open();
@@ -1060,7 +1060,7 @@ sap.ui.define([
 				});
 				EditorQunitUtils.isFieldReady(oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = oEditor.getAggregation("_formContent")[1];
 					var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1086,7 +1086,7 @@ sap.ui.define([
 					assert.ok(deepEqual(cleanDT(oField3._getCurrentProperty("value")), oValue), "Field 3: Value");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 						assert.ok(oEditor.isReady(), "Editor is ready");
 						var oContents = oSimpleForm1.getContent();
 						assert.equal(oContents.length, 16, "SimpleForm 1: length");
@@ -1114,7 +1114,7 @@ sap.ui.define([
 							});
 							EditorQunitUtils.isFieldReady(oEditor).then(function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 								var oLabel1 = oEditor.getAggregation("_formContent")[1];
 								var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1140,7 +1140,7 @@ sap.ui.define([
 								assert.ok(deepEqual(cleanDT(oField3._getCurrentProperty("value")), oValue), "Field 3: Value");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
-									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 									assert.ok(oEditor.isReady(), "Editor is ready");
 									var oContents = oSimpleForm1.getContent();
 									assert.equal(oContents.length, 16, "SimpleForm 1: length");
@@ -1168,7 +1168,7 @@ sap.ui.define([
 										});
 										EditorQunitUtils.isFieldReady(oEditor).then(function () {
 											time = new Date().getTime() - start.getTime();
-											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 											var oLabel1 = oEditor.getAggregation("_formContent")[1];
 											var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1194,7 +1194,7 @@ sap.ui.define([
 											assert.ok(deepEqual(cleanDT(oField3._getCurrentProperty("value")), oValue), "Field 3: Value");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
-												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 												assert.ok(oEditor.isReady(), "Editor is ready");
 												var oContents = oSimpleForm1.getContent();
 												assert.equal(oContents.length, 16, "SimpleForm 1: length");
@@ -1222,7 +1222,7 @@ sap.ui.define([
 													});
 													EditorQunitUtils.isFieldReady(oEditor).then(function () {
 														time = new Date().getTime() - start.getTime();
-														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 														var oLabel1 = oEditor.getAggregation("_formContent")[1];
 														var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1248,7 +1248,7 @@ sap.ui.define([
 														assert.ok(deepEqual(cleanDT(oField3._getCurrentProperty("value")), oValue), "Field 3: Value");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
-															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 															assert.ok(oEditor.isReady(), "Editor is ready");
 															var oContents = oSimpleForm1.getContent();
 															assert.equal(oContents.length, 16, "SimpleForm 1: length");
@@ -1276,7 +1276,7 @@ sap.ui.define([
 																});
 																EditorQunitUtils.isFieldReady(oEditor).then(function () {
 																	time = new Date().getTime() - start.getTime();
-																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 																	var oLabel1 = oEditor.getAggregation("_formContent")[1];
 																	var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1302,7 +1302,7 @@ sap.ui.define([
 																	assert.ok(deepEqual(cleanDT(oField3._getCurrentProperty("value")), oValue), "Field 3: Value");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
-																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		assert.ok(oEditor.isReady(), "Editor is ready");
 																		var oContents = oSimpleForm1.getContent();
 																		assert.equal(oContents.length, 16, "SimpleForm 1: length");
@@ -1396,7 +1396,7 @@ sap.ui.define([
 				});
 				EditorQunitUtils.isFieldReady(oEditor).then(function () {
 					time = new Date().getTime() - start.getTime();
-					assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+					assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 					assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 					var oLabel1 = oEditor.getAggregation("_formContent")[1];
 					var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1414,7 +1414,7 @@ sap.ui.define([
 					assert.ok(oTable2.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 					EditorQunitUtils.isReady(oEditor).then(function () {
 						time = new Date().getTime() - start.getTime();
-						assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+						assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 						assert.ok(oEditor.isReady(), "Editor is ready");
 						assert.equal(oTextArea1.getValue(), "[]", "Field 1: Object Value []");
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField1._getCurrentProperty("value")), []), "Field 1: DT Value []");
@@ -1437,7 +1437,7 @@ sap.ui.define([
 							});
 							EditorQunitUtils.isFieldReady(oEditor).then(function () {
 								time = new Date().getTime() - start.getTime();
-								assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+								assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 								assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 								var oLabel1 = oEditor.getAggregation("_formContent")[1];
 								var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1455,7 +1455,7 @@ sap.ui.define([
 								assert.ok(oTable2.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 								EditorQunitUtils.isReady(oEditor).then(function () {
 									time = new Date().getTime() - start.getTime();
-									assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+									assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 									assert.ok(oEditor.isReady(), "Editor is ready");
 									assert.equal(oTextArea1.getValue(), "[]", "Field 1: Object Value []");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField1._getCurrentProperty("value")), []), "Field 1: DT Value []");
@@ -1478,7 +1478,7 @@ sap.ui.define([
 										});
 										EditorQunitUtils.isFieldReady(oEditor).then(function () {
 											time = new Date().getTime() - start.getTime();
-											assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+											assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 											assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 											var oLabel1 = oEditor.getAggregation("_formContent")[1];
 											var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1496,7 +1496,7 @@ sap.ui.define([
 											assert.ok(oTable2.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 											EditorQunitUtils.isReady(oEditor).then(function () {
 												time = new Date().getTime() - start.getTime();
-												assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+												assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 												assert.ok(oEditor.isReady(), "Editor is ready");
 												assert.equal(oTextArea1.getValue(), "[]", "Field 1: Object Value []");
 												assert.ok(deepEqual(cleanUUIDAndPosition(oField1._getCurrentProperty("value")), []), "Field 1: DT Value []");
@@ -1519,7 +1519,7 @@ sap.ui.define([
 													});
 													EditorQunitUtils.isFieldReady(oEditor).then(function () {
 														time = new Date().getTime() - start.getTime();
-														assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+														assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 														assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 														var oLabel1 = oEditor.getAggregation("_formContent")[1];
 														var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1537,7 +1537,7 @@ sap.ui.define([
 														assert.ok(oTable2.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 														EditorQunitUtils.isReady(oEditor).then(function () {
 															time = new Date().getTime() - start.getTime();
-															assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+															assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 															assert.ok(oEditor.isReady(), "Editor is ready");
 															assert.equal(oTextArea1.getValue(), "[]", "Field 1: Object Value []");
 															assert.ok(deepEqual(cleanUUIDAndPosition(oField1._getCurrentProperty("value")), []), "Field 1: DT Value []");
@@ -1560,7 +1560,7 @@ sap.ui.define([
 																});
 																EditorQunitUtils.isFieldReady(oEditor).then(function () {
 																	time = new Date().getTime() - start.getTime();
-																	assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Field Ready " + count + ": " + time + "ms OK");
+																	assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Field Ready " + count + ": " + time + "ms OK");
 																	assert.ok(oEditor.isFieldReady(), "Editor fields are ready");
 																	var oLabel1 = oEditor.getAggregation("_formContent")[1];
 																	var oField1 = oEditor.getAggregation("_formContent")[2];
@@ -1578,7 +1578,7 @@ sap.ui.define([
 																	assert.ok(oTable2.isA("sap.ui.table.Table"), "Field 2: Control is Table");
 																	EditorQunitUtils.isReady(oEditor).then(function () {
 																		time = new Date().getTime() - start.getTime();
-																		assert.ok(time < EditorQunitUtils.performance.interaction, "Performance - Ready " + count + ": " + time + "ms OK");
+																		assert.ok(time < EditorQunitUtils.performance.complexInteraction, "Performance - Ready " + count + ": " + time + "ms OK");
 																		assert.ok(oEditor.isReady(), "Editor is ready");
 																		assert.equal(oTextArea1.getValue(), "[]", "Field 1: Object Value []");
 																		assert.ok(deepEqual(cleanUUIDAndPosition(oField1._getCurrentProperty("value")), []), "Field 1: DT Value []");
