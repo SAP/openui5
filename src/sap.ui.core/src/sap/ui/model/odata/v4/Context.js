@@ -160,7 +160,7 @@ sap.ui.define([
 	 * Collapses the group node that this context points to.
 	 *
 	 * @param {boolean} [bAll]
-	 *   Whether to collapse the node and all its descendants (@experimental as of version 1.128.0)
+	 *   Whether to collapse the node and all its descendants (since 1.132.0)
 	 * @throws {Error}
 	 *   If the context points to a node that
 	 *   <ul>
@@ -168,7 +168,7 @@ sap.ui.define([
 	 *     <li> is already collapsed,
 	 *     <li> is a grand total,
 	 *   </ul>
-	 *   or if <code>bAll</code> is <code>true</code> but no recursive hierarchy is present.
+	 *   or if <code>bAll</code> is <code>true</code>, but no recursive hierarchy is present.
 	 *
 	 * @public
 	 * @see #expand
@@ -650,35 +650,32 @@ sap.ui.define([
 	 * full expand, that is to expand all levels below a node, even if a node is already partially
 	 * or fully expanded.
 	 *
-	 * @param {number} [iLevels=1]
-	 *   The number of levels to expand, <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be
-	 *   used to expand fully. If a node is expanded a second time, the expand state of the
-	 *   descendants is not changed.
+	 * @param {boolean} [bAll]
+	 *   Whether to expand the node and all its descendants (since 1.132.0)
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the expand is successful, or
 	 *   rejected in case of an error
-	 * @throws {Error} If
-	 *   <ul>
-	 *     <li> the context points to a node that is not expandable or already expanded (unless a
-	 *       full expand is requested),
-	 *     <li> the given number of levels is not a positive number,
-	 *     <li> the given number of levels is greater than 1 without a recursive hierarchy,
-	 *     <li> the given number of levels is between 1 and <code>Number.MAX_SAFE_INTEGER</code>.
-	 *   </ul>
+	 * @throws {Error}
+	 *   If <code>bAll</code> is <code>true</code>, but no recursive hierarchy is present, or if the
+	 *   context points to a node that is not expandable or is already expanded (unless a full
+	 *   expand is requested).
 	 *
 	 * @public
 	 * @see #collapse
 	 * @see #isExpanded
 	 * @since 1.77.0
 	 */
-	Context.prototype.expand = function (iLevels = 1) {
-		if (iLevels <= 0 || iLevels > 1 && iLevels < Number.MAX_SAFE_INTEGER) {
-			throw new Error("Unsupported number of levels: " + iLevels);
-		}
+	Context.prototype.expand = function (bAll) {
 		switch (this.isExpanded()) {
 			case true:
-			case false:
+				if (!bAll) {
+					throw new Error("Already expanded: " + this);
+				}
+				// falls through
+			case false: {
+				const iLevels = bAll ? Number.MAX_SAFE_INTEGER : 1;
 				return Promise.resolve(this.oBinding.expand(this, iLevels)).then(() => {});
+			}
 			default:
 				throw new Error("Not expandable: " + this);
 		}
