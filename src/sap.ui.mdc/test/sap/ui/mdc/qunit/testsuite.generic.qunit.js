@@ -74,49 +74,50 @@ sap.ui.define([
 			},
 			"sap.ui.mdc.Field": {
 				create: async (Field, mSettings) => { // use Unit Field to test with two content controls (single control is tested in FieldBase)
-					const aModules = await fnRequire(["sap/ui/model/json/JSONModel", "sap/ui/model/type/String", "sap/ui/model/type/Float", "sap/ui/model/type/Currency", "sap/ui/mdc/enums/FieldDisplay", "sap/ui/mdc/enums/FieldEditMode", "sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Popover", "sap/ui/mdc/valuehelp/content/MTable", "sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem", "sap/m/Label", "sap/m/Text", "sap/ui/mdc/field/FieldBaseDelegate", "sap/ui/mdc/ValueHelpDelegate", "sap/ui/mdc/field/FieldInput"]);
+					const aModules = await fnRequire(["sap/ui/model/json/JSONModel", "sap/ui/model/type/String", "sap/ui/model/type/Float", "sap/ui/model/type/Currency", "sap/ui/mdc/enums/FieldDisplay", "sap/ui/mdc/enums/FieldEditMode", "sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Popover", "sap/ui/mdc/valuehelp/content/MTable", "sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem", "sap/m/Label", "sap/m/Text", "sap/ui/mdc/ValueHelpDelegate", "sap/ui/mdc/field/FieldBaseDelegate", "sap/ui/mdc/field/FieldInput"]);
+					const [JSONModel, StringType, FloatType, CurrencyType, FieldDisplay, FieldEditMode, ValueHelp, Popover, MTable, Table, Column, ColumnListItem, Label, Text, ValueHelpDelegate] = aModules;
 					const sId = mSettings && mSettings.id;
 
-					const oModel = new aModules[0]({
+					const oModel = new JSONModel({
 						number: 1,
 						currency: "EUR",
 						items:[{text: "Euro", key: "EUR", additionalText: "Euro"},
 								{text: "US Dollar", key: "USD", additionalText: "US-Dollar"},
 								{text: "Japan Yen", key: "JPY", additionalText: "Japan-Yen"}]
 					});
+					ValueHelpDelegate.isSearchSupported = () => true; // fake it
 
 					// test with Typeahead as ValueHelp is not tested stand-alone
-					const oItemTemplate = new aModules[11]({
+					const oItemTemplate = new ColumnListItem({
 						type: "Active",
-						cells: [new aModules[13]({text: "{key}"}),
-								new aModules[13]({text: "{text}"}),
-								new aModules[13]({text: "{additionalText}"})]
+						cells: [new Text({text: "{key}"}),
+								new Text({text: "{text}"}),
+								new Text({text: "{additionalText}"})]
 					});
-					const oMTable = new aModules[8](sId + "VH1-MTable", {
-						filterFields: "text",
+					const oMTable = new MTable(sId + "VH1-MTable", {
 						keyPath: "key",
 						descriptionPath: "text",
-						table: new aModules[9](sId + "VH1-Table", {
+						table: new Table(sId + "VH1-Table", {
 							width: "26rem",
-							columns: [ new aModules[10]({header: new aModules[12]({text: "Id"})}),
-										new aModules[10]({header: new aModules[12]({text: "Text"})}),
-										new aModules[10]({header: new aModules[12]({text: "Info"})})],
+							columns: [ new Column({header: new Label({text: "Id"})}),
+										new Column({header: new Label({text: "Text"})}),
+										new Column({header: new Label({text: "Info"})})],
 							items: {path: "/items", template: oItemTemplate}
 						})
 					});
-					const oPopover = new aModules[7](sId + "VH1-Pop", {
+					const oPopover = new Popover(sId + "VH1-Pop", {
 						title: "Title",
 						content: oMTable
 					});
-					const oValueHelp = new aModules[6](sId + "VH1", {
+					const oValueHelp = new ValueHelp(sId + "VH1", {
 						typeahead: oPopover
 					});
 
 					const oField = new Field(sId, {
-						value: {parts: [{path: "/number", type: new aModules[2]()}, {path: "/currency", type: new aModules[1]()}], type: new aModules[3]()},
+						value: {parts: [{path: "/number", type: new FloatType()}, {path: "/currency", type: new StringType()}], type: new CurrencyType()},
 						additionalValue: undefined,
-						display: aModules[4].Value,
-						editMode: aModules[5].Editable,
+						display: FieldDisplay.Value,
+						editMode: FieldEditMode.Editable,
 						multipleLines: false,
 						valueHelp: oValueHelp.getId(),
 						dependents: [oValueHelp, oItemTemplate]
@@ -184,50 +185,51 @@ sap.ui.define([
 			},
 			"sap.ui.mdc.MultiValueField": {
 				create: async (MultiValueField, mSettings) => {
-					const aModules = await fnRequire(["sap/ui/model/json/JSONModel", "sap/ui/model/type/String", "sap/ui/mdc/enums/FieldDisplay", "sap/ui/mdc/enums/FieldEditMode", "sap/ui/mdc/field/MultiValueFieldItem", "sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/MTable", "sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem", "sap/m/Label", "sap/m/Text", "sap/ui/mdc/valuehelp/content/Conditions", "sap/ui/mdc/field/MultiValueFieldDelegate", "sap/ui/mdc/ValueHelpDelegate", "sap/ui/mdc/field/FieldMultiInput", "sap/m/ScrollContainer", "sap/ui/layout/FixFlex", "sap/ui/mdc/valuehelp/FilterBar", "sap/ui/mdc/valuehelp/FilterBarDelegate", "sap/ui/fl/library"]);
+					const aModules = await fnRequire(["sap/ui/model/json/JSONModel", "sap/ui/model/type/String", "sap/ui/mdc/enums/FieldDisplay", "sap/ui/mdc/enums/FieldEditMode", "sap/ui/mdc/field/MultiValueFieldItem", "sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/MTable", "sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem", "sap/m/Label", "sap/m/Text", "sap/ui/mdc/valuehelp/content/Conditions", "sap/ui/mdc/ValueHelpDelegate", "sap/ui/mdc/field/MultiValueFieldDelegate", "sap/ui/mdc/field/FieldMultiInput", "sap/m/ScrollContainer", "sap/ui/layout/FixFlex", "sap/ui/mdc/valuehelp/FilterBar", "sap/ui/mdc/valuehelp/FilterBarDelegate", "sap/ui/fl/library"]);
+					const [JSONModel, StringType, FieldDisplay, FieldEditMode, MultiValueFieldItem, ValueHelp, Dialog, MTable, Table, Column, ColumnListItem, Label, Text, Conditions, ValueHelpDelegate] = aModules;
 					const sId = mSettings && mSettings.id;
 
-					const oModel = new aModules[0]({
+					const oModel = new JSONModel({
 						items:[{text: "Item 1", key: "I1", additionalText: "Text 1"},
 								{text: "Item 2", key: "I2", additionalText: "Text 2"},
 								{text: "X-Item 3", key: "I3", additionalText: "Text 3"}]
 					});
+					ValueHelpDelegate.isSearchSupported = () => true; // fake it
 
 					// test with Dialog as ValueHelp is not tested stand-alone
-					const oVHItemTemplate = new aModules[10]({
+					const oVHItemTemplate = new ColumnListItem({
 						type: "Active",
-						cells: [new aModules[12]({text: "{key}"}),
-								new aModules[12]({text: "{text}"}),
-								new aModules[12]({text: "{additionalText}"})]
+						cells: [new Text({text: "{key}"}),
+								new Text({text: "{text}"}),
+								new Text({text: "{additionalText}"})]
 					});
-					const oMTable = new aModules[7](sId + "VH1-MTable", {
-						filterFields: "text",
+					const oMTable = new MTable(sId + "VH1-MTable", {
 						keyPath: "key",
 						descriptionPath: "text",
-						table: new aModules[8](sId + "VH1-Table", {
+						table: new Table(sId + "VH1-Table", {
 							width: "26rem",
-							columns: [ new aModules[9]({header: new aModules[11]({text: "Id"})}),
-										new aModules[9]({header: new aModules[11]({text: "Text"})}),
-										new aModules[9]({header: new aModules[11]({text: "Info"})})],
+							columns: [ new Column({header: new Label({text: "Id"})}),
+										new Column({header: new Label({text: "Text"})}),
+										new Column({header: new Label({text: "Info"})})],
 							items: {path: "/items", template: oVHItemTemplate}
 						})
 					});
-					const oDialog = new aModules[6](sId + "VH1-Dia", {
+					const oDialog = new Dialog(sId + "VH1-Dia", {
 						title: "Title",
-						content: [oMTable, new aModules[13](sId + "VH1-Cond", {label: "Label"})]
+						content: [oMTable, new Conditions(sId + "VH1-Cond", {label: "Label"})]
 					});
-					const oValueHelp = new aModules[5](sId + "VH1", {
+					const oValueHelp = new ValueHelp(sId + "VH1", {
 						dialog: oDialog
 					});
 
-					const oItemTemplate = new aModules[4](sId + "I1", {
-						key: {path: "key", type: new aModules[1]({}, {maxLength: 1000})},
-						description: {path: "text", type: new aModules[1]()}
+					const oItemTemplate = new MultiValueFieldItem(sId + "I1", {
+						key: {path: "key", type: new StringType({}, {maxLength: 1000})},
+						description: {path: "text", type: new StringType()}
 					});
 					const oField = new MultiValueField(sId, {
 						items: {path: "/items", template: oItemTemplate},
-						display: aModules[2].Value,
-						editMode: aModules[3].Editable,
+						display: FieldDisplay.Value,
+						editMode: FieldEditMode.Editable,
 						multipleLines: false,
 						maxConditions: -1,
 						valueHelp: oValueHelp.getId(),
