@@ -45521,7 +45521,7 @@ make root = ${bMakeRoot}`;
 
 		await Promise.all([
 			// code under test
-			oBeta.expand(Number.MAX_SAFE_INTEGER),
+			oBeta.expand(true),
 			this.waitForChanges(assert, "expand all below Beta")
 		]);
 
@@ -45597,7 +45597,7 @@ make root = ${bMakeRoot}`;
 
 		await Promise.all([
 			// code under test
-			oBeta.expand(Number.MAX_SAFE_INTEGER),
+			oBeta.expand(true),
 			this.waitForChanges(assert, "expand all below Beta again")
 		]);
 
@@ -45695,7 +45695,7 @@ make root = ${bMakeRoot}`;
 			});
 
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand all below Alpha");
 
@@ -46105,7 +46105,7 @@ make root = ${bMakeRoot}`;
 			});
 
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand all below Alpha");
 
@@ -46796,7 +46796,7 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand all below Alpha");
 
@@ -46886,7 +46886,7 @@ make root = ${bMakeRoot}`;
 		const oTable = this.oView.byId("table");
 		const oAlpha = oTable.getRows()[0].getBindingContext();
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand Alpha completely");
 
@@ -47258,7 +47258,7 @@ make root = ${bMakeRoot}`;
 			});
 
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand Alpha completely");
 
