@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/initial/api/InitialFlexAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
+	InitialFlexAPI,
 	Settings,
 	Storage,
 	Layer,
@@ -105,10 +107,7 @@ sap.ui.define([
 		 * @public
 		 */
 		isKeyUser() {
-			return Settings.getInstance()
-			.then(function(oSettings) {
-				return oSettings.isKeyUser();
-			});
+			return InitialFlexAPI.isKeyUser();
 		},
 
 		/**

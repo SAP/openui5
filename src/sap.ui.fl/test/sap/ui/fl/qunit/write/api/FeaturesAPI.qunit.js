@@ -1,18 +1,20 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/initial/api/InitialFlexAPI",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	FeaturesAPI,
-	Settings,
 	FlexConfiguration,
+	InitialFlexAPI,
+	Settings,
 	Storage,
+	FeaturesAPI,
 	Layer,
 	Utils,
 	sinon
@@ -129,11 +131,7 @@ sap.ui.define([
 			});
 
 			QUnit.test(`when isKeyUser() is called for ${bValueToBeSet ? "a" : "not a"} key user`, function(assert) {
-				sandbox.stub(Settings, "getInstance").resolves({
-					isKeyUser() {
-						return bValueToBeSet;
-					}
-				});
+				sandbox.stub(InitialFlexAPI, "isKeyUser").resolves(bValueToBeSet);
 				return FeaturesAPI.isKeyUser()
 				.then(function(bReturnValue) {
 					assert.strictEqual(bReturnValue, bValueToBeSet, `then ${bValueToBeSet} is returned`);

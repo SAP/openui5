@@ -1,19 +1,19 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/api/startKeyUserAdaptation",
-	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/initial/api/InitialFlexAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
+	"sap/ui/rta/api/startKeyUserAdaptation",
+	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	RuntimeAuthoring,
-	startKeyUserAdaptation,
-	FeaturesAPI,
+	InitialFlexAPI,
 	PersistenceWriteAPI,
 	Layer,
+	startKeyUserAdaptation,
+	RuntimeAuthoring,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -27,7 +27,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when called with an object", function(assert) {
-			sandbox.stub(FeaturesAPI, "isKeyUser").resolves(true);
+			sandbox.stub(InitialFlexAPI, "isKeyUser").resolves(true);
 			sandbox.stub(RuntimeAuthoring.prototype, "start");
 			sandbox.stub(PersistenceWriteAPI, "getChangesWarning").resolves({});
 			return startKeyUserAdaptation({
