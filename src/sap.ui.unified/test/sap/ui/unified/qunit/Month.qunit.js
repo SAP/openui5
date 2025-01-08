@@ -674,11 +674,11 @@ sap.ui.define([
 					"The corresponding legend item's text is used as aria-label");
 		});
 
-		QUnit.test("Dummy cell has an accessible name", async function (assert) {
+		QUnit.test("Dummy cell has an invisible text", async function (assert) {
 			this.oSut.placeAt("qunit-fixture");
 			await nextUIUpdate();
 
-			assert.strictEqual(document.getElementsByClassName("sapUiCalDummy")[0].getAttribute("aria-label"),
+			assert.strictEqual(document.getElementsByClassName("sapUiCalDummy")[0].innerText,
 				Library.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_WEEK"),
 				"Dummy cell's accessible name is provided in aria-label");
 		});

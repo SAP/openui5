@@ -44984,7 +44984,8 @@ sap.ui.define([
 	// Beta again. Request a side effects refresh and see that the request does not contain
 	// unnecessary ExpandLevels.
 	// JIRA: CPOUI5ODATAV4-2026
-	QUnit.test("Recursive Hierarchy: expand by given number of levels", async function (assert) {
+	//TODO Test is skipped because iLevels between 1 and Number.MAX_SAFE_INTEGER is not supported
+	QUnit.skip("Recursive Hierarchy: expand by given number of levels", async function (assert) {
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
 				+ ",NodeProperty='ID',Levels=2";

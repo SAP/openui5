@@ -4,6 +4,9 @@ sap.ui.define([
 	"../../../delegates/TableDelegate",
 	"../../util/createAppEnvironment",
 	"sap/ui/mdc/table/utils/Personalization",
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/ui/mdc/enums/ProcessingStrategy",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/Deferred"
 ], function(
@@ -11,6 +14,9 @@ sap.ui.define([
 	TableDelegate,
 	createAppEnvironment,
 	PersonalizationUtils,
+	Table,
+	TableP13nMode,
+	ProcessingStrategy,
 	nextUIUpdate,
 	Deferred
 ) {
@@ -45,6 +51,60 @@ sap.ui.define([
 		</Table>
 	</mvc:View>`;
 
+	QUnit.module("Methods to create changes", {
+		before: async function() {
+			const mCreatedApp = await createAppEnvironment(sTableView, "Table");
+
+			this.oUiComponentContainer = mCreatedApp.container;
+			this.oTable = mCreatedApp.view.byId('myTable');
+			this.oEngine = this.oTable.getEngine();
+
+			sinon.stub(TableDelegate, "getSupportedFeatures").callsFake(function() {
+				const mSupportedFeatures = TableDelegate.getSupportedFeatures.wrappedMethod.apply(this, arguments);
+				mSupportedFeatures.p13nModes = Object.values(TableP13nMode);
+				return mSupportedFeatures;
+			});
+
+			await this.oTable.initialized();
+		},
+		beforeEach: async function() {
+			this.spy(this.oEngine, "createChanges");
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oEngine.createChanges.restore();
+			return this.oEngine.reset(this.oTable);
+		},
+		after: function() {
+			TableDelegate.getSupportedFeatures.restore();
+			this.oUiComponentContainer.destroy();
+		}
+	});
+
+	QUnit.test("createClearGroupsChange", async function(assert) {
+		this.oTable.setGroupConditions({
+			groupLevels: [
+				{name: "colA"},
+				{name: "colB"}
+			]
+		});
+
+		PersonalizationUtils.createClearGroupsChange(this.oTable);
+		assert.equal(this.oEngine.createChanges.callCount, 1, "Engine#createChanges call");
+		sinon.assert.calledWithExactly(this.oEngine.createChanges, {
+			control: this.oTable,
+			key: "Group",
+			state: [],
+			applyAbsolute: ProcessingStrategy.FullReplace
+		});
+
+		await this.oEngine.waitForChanges(this.oTable);
+		assert.deepEqual(this.oTable.getGroupConditions(), {
+			groupLevels: []
+		}, "Group conditions");
+	});
+
 	QUnit.module("User personalization detection", {
 		before: async function() {
 			sinon.stub(TableDelegate, "addItem").callsFake(function(oTable, sProperty) {
@@ -62,6 +122,7 @@ sap.ui.define([
 			const mCreatedApp = await createAppEnvironment(sTableView, "Table");
 			this.oUiComponentContainer = mCreatedApp.container;
 			this.oTable = mCreatedApp.view.byId('myTable');
+
 			await this.oTable.initialized();
 		},
 		beforeEach: async function() {

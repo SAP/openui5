@@ -314,6 +314,9 @@ sap.ui.define([
 				XHRInterceptor.register("FESR", "open" , fesrHeaderOverride);
 			}
 			Interaction.setFESR(FESR);
+			await Device.os.getPlatformInfo().then((platform) => {
+				CLIENT_OS = `${platform.name}_${platform.version}`;
+			});
 		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
 			await Interaction.setActive(false);

@@ -1400,11 +1400,11 @@ sap.ui.define([
 			await nextUIUpdate();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
 			var oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
-			var aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
+			var aWeekHeaderTextElemnts = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
 
 			//Assert
-			assert.strictEqual(aWeekHeaders.length, 7, "7 weekheaders rendered");
-			assert.strictEqual(aWeekHeaders[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
+			assert.strictEqual(aWeekHeaderTextElemnts.length, 7, "7 weekheaders rendered");
+			assert.strictEqual(aWeekHeaderTextElemnts[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
 
 			oDRS.setCalendarWeekNumbering('ISO_8601');
 			await nextUIUpdate();
@@ -1412,9 +1412,9 @@ sap.ui.define([
 			await nextUIUpdate();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
 			oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
-			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
+			aWeekHeaderTextElemnts = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
 			//Assert
-			assert.equal(aWeekHeaders[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
+			assert.equal(aWeekHeaderTextElemnts[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
 
 			oDRS.setCalendarWeekNumbering('WesternTraditional');
 			await nextUIUpdate();
@@ -1422,9 +1422,9 @@ sap.ui.define([
 			await nextUIUpdate();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
 			oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
-			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
+			aWeekHeaderTextElemnts = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
 			//Assert
-			assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
+			assert.equal(aWeekHeaderTextElemnts[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
 
 			//Cleanup
 			oDRS.destroy();

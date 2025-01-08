@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/ui/mdc/table/ResponsiveColumnSettings",
+	"sap/ui/mdc/table/menu/GroupHeaderRowContextMenu",
 	"sap/ui/mdc/table/utils/Personalization",
 	"sap/ui/mdc/FilterBar",
 	"sap/m/Text",
@@ -73,6 +74,7 @@ sap.ui.define([
 	GridTableType,
 	ResponsiveTableType,
 	ResponsiveColumnSettings,
+	GroupHeaderRowContextMenu,
 	PersonalizationUtils,
 	FilterBar,
 	Text,
@@ -2966,284 +2968,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Context Menu", async function(assert) {
-		const done = assert.async();
-
-		const oModel = new JSONModel();
-		oModel.setData({
-			testPath: [
-				{}, {}, {}, {}, {}
-			]
-		});
-
-		this.oTable.destroy();
-		this.oTable = new Table({
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/testPath"
-				}
-			},
-			type: new GridTableType()
-		});
-
-		this.oTable.setModel(oModel);
-		this.oTable.addColumn(new Column({
-			header: "test",
-			template: new Text()
-		}));
-
-		this.oTable.placeAt("qunit-fixture");
-		await nextUIUpdate();
-		const oBeforeOpenContextMenuSpy = this.spy();
-		this.oTable.attachEvent("beforeOpenContextMenu", oBeforeOpenContextMenuSpy);
-
-		TableQUnitUtils.waitForBinding(this.oTable).then(function() {
-			this.oTable.attachEventOnce("beforeOpenContextMenu", function(oEvent) {
-				assert.equal(oEvent.getParameter("bindingContext"), this.oTable._oTable.getContextByIndex(0), "BeforeOpenContextMenu event fired with correct bindingContext parameters");
-				assert.equal(oEvent.getParameter("column"), this.oTable.getColumns()[0], "BeforeOpenContextMenu event fired with correct column parameters");
-				assert.equal(this.oTable._oTable.mEventRegistry.beforeOpenContextMenu.length, 1, "Only attached to event once");
-				assert.equal(oBeforeOpenContextMenuSpy.callCount, 1, "beforeOpenContextMenu event fired once");
-
-				const oDestroyContextmenuSpy = sinon.spy(this.oTable._oTable, "destroyContextMenu");
-
-				this.oTable.getContextMenu().close();
-				this.oTable.destroyContextMenu();
-
-				assert.equal(this.oTable.getContextMenu(), null, "Context menu is set to null");
-				assert.equal(this.oTable.getContextMenu(), this.oTable._oTable.getContextMenu(), "Context menu is set on inner table");
-				this.oTable.setContextMenu(null);
-				assert.notOk(this.oTable._oTable.mEventRegistry.beforeOpenContextMenu, "Deattached to event once");
-				assert.ok(oDestroyContextmenuSpy.calledOnce, "Inner  table destroyContextMenu called once");
-
-				this.oTable.setContextMenu(new Menu({
-					items: [
-						new MenuItem({text: "Test B"})
-					]
-				}));
-
-				assert.equal(this.oTable.getContextMenu(), this.oTable._oTable.getContextMenu(), "Context menu is set on inner table and is same as MDC table");
-				assert.equal(this.oTable.getContextMenu().getItems()[0].getText(), "Test B", "ContextMenu with text Test B is shown");
-				assert.equal(this.oTable._oTable.mEventRegistry.beforeOpenContextMenu.length, 1, "Only attached to event once");
-
-				this.oTable.attachEventOnce("beforeOpenContextMenu", function(oEvent) {
-					assert.equal(oEvent.getParameter("bindingContext"), this.oTable._oTable.getContextByIndex(0), "BeforeOpenContextMenu event fired with correct bindingContext parameters");
-					assert.equal(oEvent.getParameter("column"), this.oTable.getColumns()[0], "BeforeOpenContextMenu event fired with correct column parameters");
-					assert.equal(oBeforeOpenContextMenuSpy.callCount, 2, "beforeOpenContextMenuSpy event fired once");
-					this.oTable._oTable = null;
-					this.oTable.destroyContextMenu();
-					assert.equal(this.oTable.getContextMenu(), null);
-
-					this.oTable.setContextMenu(new Menu({
-						items: [
-							new MenuItem({text: "Test A"})
-						]
-					}));
-					this.oTable.setType(TableType.ResponsiveTable);
-					assert.equal(this.oTable._oContextMenu.getItems()[0].getText(), "Test A", "ContextMenu is not destroyed");
-					done();
-				}.bind(this));
-
-				this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
-					const oCell = this.oTable._oTable.getRows()[0].getDomRef("col0");
-					oCell.focus();
-					jQuery(oCell).trigger("contextmenu");
-				}.bind(this));
-			}.bind(this));
-
-			this.oTable.setContextMenu(null);
-			assert.equal(this.oTable.getContextMenu(), null, "Context menu is set to null on mdc table");
-
-			this.oTable.setContextMenu(undefined);
-			assert.equal(this.oTable.getContextMenu(), undefined, "Context menu is undefined on mdc table");
-
-			const oMenu = new Menu({
-				items: [
-					new MenuItem({text: "Test A"})
-				]
-			});
-			this.oTable.setContextMenu(oMenu);
-
-			const oContextMenu = this.oTable.getContextMenu();
-			assert.equal(oContextMenu, oMenu, "Context menu is set on mdc table");
-			assert.equal(oContextMenu, this.oTable._oTable.getContextMenu(), "Context menu is set on mdc table and is same as inner table");
-			assert.equal(oContextMenu.getItems()[0].getText(), "Test A", "ContextMenu with text Test A is shown");
-			this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
-				const oCell = this.oTable._oTable.getRows()[0].getDomRef("col0");
-				oCell.focus();
-				jQuery(oCell).trigger("contextmenu");
-			}.bind(this));
-		}.bind(this));
-	});
-
-	QUnit.test("Context Menu - preventDefault", function(assert) {
-		const done = assert.async();
-		assert.expect(4);
-		const oModel = new JSONModel();
-		oModel.setData({
-			testPath: [
-				{}, {}, {}, {}, {}
-			]
-		});
-
-		this.oTable.destroy();
-		this.oTable = new Table({
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/testPath"
-				}
-			},
-			type: new GridTableType()
-		});
-
-		this.oTable.setModel(oModel);
-		this.oTable.addColumn(new Column({
-			header: "test",
-			template: new Text()
-		}));
-
-		this.oTable.placeAt("qunit-fixture");
-		const fnBeforeOpenContextMenu = sinon.spy(this.oTable, "_onBeforeOpenContextMenu");
-
-		this.oTable.setContextMenu(new Menu({
-			items: [
-				new MenuItem({text: "Test B"})
-			]
-		}));
-
-		nextUIUpdate().then(() => {
-			return TableQUnitUtils.waitForBinding(this.oTable);
-		}).then(function() {
-			this.oTable.attachEventOnce("beforeOpenContextMenu", function(oEvent) {
-				oEvent.preventDefault();
-			});
-
-			this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
-				let oCell = this.oTable._oTable.getRows()[0].getDomRef("col0");
-				oCell.focus();
-				jQuery(oCell).trigger("contextmenu");
-				assert.equal(fnBeforeOpenContextMenu.callCount, 1, "beforeOpenContextMenu event is fired and _onBeforeOpenContextMenu is called");
-				assert.notOk(this.oTable._oContextMenu.isOpen(), "ContextMenu open is prevented");
-
-				oCell = this.oTable._oTable.getRows()[0].getDomRef("col0");
-				oCell.focus();
-				jQuery(oCell).trigger("contextmenu");
-				assert.ok(this.oTable._oContextMenu.isOpen(), "ContextMenu open is not prevented");
-				assert.equal(fnBeforeOpenContextMenu.callCount, 2,  "beforeOpenContextMenu event is fired and _onBeforeOpenContextMenu is called");
-				fnBeforeOpenContextMenu.restore();
-				done();
-			}.bind(this));
-		}.bind(this));
-	});
-
-	QUnit.test("ContextMenuSetting plugin owner", function(assert) {
-		return this.oTable.initialized(this.oTable).then(() => {
-			assert.equal(this.oTable.getContextMenuSettingPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for ContextMenuSetting");
-		});
-	});
-
-	QUnit.test("Context Menu For ResponsiveTable type", async function(assert) {
-		const done = assert.async();
-
-		assert.expect(16);
-
-		const oModel = new JSONModel();
-		oModel.setData({
-			testPath: [
-				{}, {}, {}, {}, {}
-			]
-		});
-
-		this.oTable.destroy();
-		this.oTable = new Table({
-			delegate: {
-				name: sDelegatePath,
-				payload: {
-					collectionPath: "/testPath"
-				}
-			},
-			type: new ResponsiveTableType()
-		});
-
-		this.oTable.setModel(oModel);
-		this.oTable.addColumn(new Column({
-			header: "test",
-			template: new Text()
-		}));
-		this.oTable.addColumn(new Column({
-			header: "test",
-			width: "10000px", // Force Popin
-			template: new Text()
-		}));
-
-		this.oTable.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		this.oTable.setContextMenu(null);
-		assert.equal(this.oTable.getContextMenu(), null, "Context menu is set to null on mdc table");
-
-		this.oTable.setContextMenu(undefined);
-		assert.equal(this.oTable.getContextMenu(), null, "Context menu is undefiend on mdc table");
-
-		TableQUnitUtils.waitForBinding(this.oTable).then(async function() {
-			let oColParam = this.oTable.getColumns()[0];
-
-			this.oTable.attachBeforeOpenContextMenu(function(oEvent) {
-				assert.equal(oEvent.getParameter("bindingContext"), this.oTable._oTable.getItems()[0].getBindingContext(), "BeforeOpenContextMenu event fired with correct bindingContext parameters");
-				assert.equal(oEvent.getParameter("column"), oColParam, "BeforeOpenContextMenu event fired with correct column parameters");
-			}.bind(this));
-
-			let oMenu = new Menu({
-				items: [
-					new MenuItem({text: "Test A"})
-				]
-			});
-			this.oTable.setContextMenu(oMenu);
-			let oContextMenu = this.oTable.getContextMenu();
-			assert.equal(oContextMenu, oMenu, "Context menu set on inner table is same on mdc table");
-			assert.equal(oContextMenu, this.oTable._oTable.getContextMenu());
-			assert.equal(oContextMenu.getItems()[0].getText(), "Test A", "ContextMenu with text Test A is shown");
-			let oDestroyContextmenuSpy = sinon.spy(this.oTable._oTable, "destroyContextMenu");
-			await nextUIUpdate();
-
-			oMenu = this.oTable._oTable.getContextMenu();
-			let oCell = this.oTable._oTable.getItems()[0].getDomRef().querySelector(".sapMListTblCell");
-			oCell.focus();
-			jQuery(oCell).trigger("contextmenu");
-			oMenu.close();
-
-			oCell = this.oTable._oTable.getItems()[0].getDomRef("subcont"); // Popin Cell
-			oCell.focus();
-			oColParam = undefined;
-			jQuery(oCell).trigger("contextmenu");
-			oMenu.close();
-
-			this.oTable.destroyContextMenu();
-
-			assert.equal(this.oTable.getContextMenu(), null, "Context menu is set to null on mdc table ");
-			assert.equal(this.oTable.getContextMenu(), this.oTable._oTable.getContextMenu(), "Context menu set on inner table is same on mdc table");
-			assert.ok(oDestroyContextmenuSpy.calledOnce, "Inner table destroyContextMenu called once");
-
-			this.oTable.setContextMenu(new Menu({
-				items: [
-					new MenuItem({text: "Test B"})
-				]
-			}));
-
-			oContextMenu = this.oTable.getContextMenu();
-			assert.equal(oContextMenu, this.oTable._oTable.getContextMenu(), "Context menu set on inner table is same on mdc table");
-			assert.equal(oContextMenu.getItems()[0].getText(), "Test B", "ContextMenu with text Test B is shown");
-			TableQUnitUtils.waitForBinding(this.oTable).then(function() {
-				oDestroyContextmenuSpy = sinon.spy(this.oTable._oContextMenu, "destroy");
-				this.oTable.destroy();
-				assert.ok(oDestroyContextmenuSpy.callCount, 2, "ContextMenu destroyed");
-				assert.equal(this.oTable.getContextMenu(), null, "Contextmenu destroyed");
-				done();
-			}.bind(this));
-		}.bind(this));
-	});
-
 	QUnit.module("Bind/Rebind", {
 		afterEach: function() {
 			this.oTable?.destroy();
@@ -5280,6 +5004,146 @@ sap.ui.define([
 		}).then(() => {
 			window.removeEventListener("unhandledrejection", fnOnRejectedPromiseError);
 			assert.deepEqual(aErrors, [], "No uncaught errors detected");
+		});
+	});
+
+	QUnit.module("Context menu", {
+		beforeEach: function() {
+			this.oContextMenu = new Menu();
+			this.oBeforeOpenContextMenu = this.spy();
+			this.oBeforeOpenContextMenuParameters = null;
+			this.oTable = new Table({
+				contextMenu: this.oContextMenu,
+				beforeOpenContextMenu: (oEvent) => {
+					this.oBeforeOpenContextMenuParameters = oEvent.getParameters();
+					this.oBeforeOpenContextMenu();
+				}
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		assertBeforeOpenContextMenu: function(mExpectedParameters) {
+			QUnit.assert.equal(this.oBeforeOpenContextMenu.callCount, 1, "beforeOpenContextMenu event");
+			QUnit.assert.deepEqual(this.oBeforeOpenContextMenuParameters, {
+				...mExpectedParameters,
+				id: this.oTable.getId()
+			}, "beforeOpenContextMenu event parameters");
+			this.oBeforeOpenContextMenuParameters = null;
+			this.oBeforeOpenContextMenu.resetHistory();
+		}
+	});
+
+	QUnit.test("Aggregation API before initialization of inner table", function(assert) {
+		assert.equal(this.oTable.getContextMenu(), this.oContextMenu, "#getContextMenu");
+
+		this.oTable.destroyContextMenu();
+		assert.strictEqual(this.oTable.getContextMenu(), null, "#getContextMenu after #destroyContextMenu");
+		assert.ok(this.oContextMenu.isDestroyed(), "The context menu is destroyed");
+
+		this.oContextMenu = new Menu();
+		this.oTable.setContextMenu(this.oContextMenu);
+		assert.equal(this.oTable.getContextMenu(), this.oContextMenu, "#getContextMenu after #setContextMenu");
+
+		this.oTable.setContextMenu(null);
+		assert.strictEqual(this.oTable.getContextMenu(), null, "#getContextMenu after #setContextMenu(null)");
+	});
+
+	QUnit.test("Aggregation API after initialization of inner table", async function(assert) {
+		await this.oTable.initialized();
+		assert.equal(this.oTable.getContextMenu(), this.oContextMenu, "#getContextMenu");
+
+		this.oTable.destroyContextMenu();
+		assert.strictEqual(this.oTable.getContextMenu(), null, "#getContextMenu after #destroyContextMenu");
+		assert.ok(this.oContextMenu.isDestroyed(), "The context menu is destroyed");
+
+		this.oContextMenu = new Menu();
+		this.oTable.setContextMenu(this.oContextMenu);
+		assert.equal(this.oTable.getContextMenu(), this.oContextMenu, "#getContextMenu after #setContextMenu");
+
+		this.oTable.setContextMenu(null);
+		assert.strictEqual(this.oTable.getContextMenu(), null, "#getContextMenu after #setContextMenu(null)");
+
+		this.oContextMenu = new Menu();
+		this.oTable.setContextMenu(this.oContextMenu);
+		this.oTable.setType(TableType.ResponsiveTable);
+		await this.oTable.initialized();
+		assert.equal(this.oTable.getContextMenu(), this.oContextMenu, "#getContextMenu after #setType");
+		assert.ok(!this.oContextMenu.isDestroyed(), "The context menu should not be destroyed");
+	});
+
+	QUnit.test("#_onBeforeOpenContextMenu - Context menu", function(assert) {
+		const oContextMenu = this.oTable.getContextMenu();
+		const oEvent = {preventDefault: this.spy()};
+
+		this.oTable._onBeforeOpenContextMenu({
+			contextMenu: oContextMenu
+		});
+		this.assertBeforeOpenContextMenu({
+			bindingContext: undefined,
+			column: undefined
+		});
+
+		this.oTable._onBeforeOpenContextMenu({
+			contextMenu: oContextMenu,
+			bindingContext: {myBindingContext: "test"},
+			column: {myColumn: "test"},
+			event: oEvent
+		});
+		this.assertBeforeOpenContextMenu({
+			bindingContext: {myBindingContext: "test"},
+			column: {myColumn: "test"}
+		});
+		assert.notOk(oEvent.preventDefault.calledOnce, "preventDefault on the given event object");
+
+		oEvent.preventDefault.resetHistory();
+		this.oTable.attachEventOnce("beforeOpenContextMenu", (oEvent) => oEvent.preventDefault());
+		this.oTable._onBeforeOpenContextMenu({
+			contextMenu: oContextMenu,
+			event: oEvent
+		});
+		assert.ok(oEvent.preventDefault.calledOnce, "preventDefault on the given event object");
+	});
+
+	QUnit.test("#_onBeforeOpenContextMenu - Group header row context menu", function(assert) {
+		const oGroupHeaderRowContextMenu = new GroupHeaderRowContextMenu();
+		const oEvent = {preventDefault: this.spy()};
+
+		this.spy(oGroupHeaderRowContextMenu, "initContent");
+		this.stub(oGroupHeaderRowContextMenu, "isEmpty").returns(false);
+
+		this.oTable._onBeforeOpenContextMenu({
+			contextMenu: oGroupHeaderRowContextMenu
+		});
+		assert.ok(oGroupHeaderRowContextMenu.initContent.calledOnceWithExactly(this.oTable, {
+			groupLevel: undefined
+		}), "ContextMenu#initContent call");
+
+		oGroupHeaderRowContextMenu.initContent.resetHistory();
+		this.oTable._onBeforeOpenContextMenu({
+			contextMenu: oGroupHeaderRowContextMenu,
+			groupLevel: 1,
+			event: oEvent
+		});
+		assert.ok(oGroupHeaderRowContextMenu.initContent.calledOnceWithExactly(this.oTable, {
+			groupLevel: 1
+		}), "ContextMenu#initContent call");
+		assert.notOk(oEvent.preventDefault.calledOnce, "preventDefault on the given event object");
+
+		oEvent.preventDefault.resetHistory();
+		oGroupHeaderRowContextMenu.isEmpty.returns(true);
+		this.oTable._onBeforeOpenContextMenu({
+			contextMenu: oGroupHeaderRowContextMenu,
+			event: oEvent
+		});
+		assert.ok(oEvent.preventDefault.calledOnce, "preventDefault on the given event object");
+
+		assert.notOk(this.oBeforeOpenContextMenu.called, "beforeOpenContextMenu event");
+	});
+
+	QUnit.test("ContextMenuSetting plugin owner", function(assert) {
+		return this.oTable.initialized(this.oTable).then(() => {
+			assert.equal(this.oTable.getContextMenuSettingPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for ContextMenuSetting");
 		});
 	});
 

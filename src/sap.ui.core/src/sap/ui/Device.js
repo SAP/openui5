@@ -160,6 +160,7 @@ if (typeof window.sap.ui !== "object") {
 	var setDefaultNavigator = function () {
 		oReducedNavigator = {
 			userAgent: window.navigator.userAgent,
+			userAgentData: window.navigator.userAgentData,
 			platform: window.navigator.platform
 		};
 		// Only add property standalone in case navigator has this property
@@ -197,6 +198,11 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * Might be empty if no version can reliably be determined.
 	 *
+	 * **Note:** The property <code>versionStr</code> may not contain the correct version
+	 * for Windows 11 onwards, depending on the point in time, the property is accessed
+	 * or the browser's capability to provide the version.
+	 * In this case the <code>versionStr</code> property may contain <code>10</code>.
+	 *
 	 * @name sap.ui.Device.os.versionStr
 	 * @type string
 	 * @public
@@ -205,6 +211,11 @@ if (typeof window.sap.ui !== "object") {
 	 * The version of the operating system as <code>float</code>.
 	 *
 	 * Might be <code>-1</code> if no version can reliably be determined.
+	 *
+	 * **Note:** The property <code>version</code> may not contain the correct version
+	 * for Windows 11 onwards, depending on the point in time, the property is accessed
+	 * or the browser's capability to provide the version.
+	 * In this case the <code>version</code> property may contain <code>10</code>.
 	 *
 	 * @name sap.ui.Device.os.version
 	 * @type float
@@ -290,6 +301,7 @@ if (typeof window.sap.ui !== "object") {
 		"IOS": "iOS",
 		"ANDROID": "Android"
 	};
+	let oPlatform;
 
 	function getOS() { // may return null!!
 
@@ -385,10 +397,51 @@ if (typeof window.sap.ui !== "object") {
 				}
 			}
 		}
+
+		/**
+		 * Provides the operating system version of the Device using browser client hints.
+		 * In case the browser does not support client hints, the versionStr detected from the userAgent is returned.
+		 * @returns {Promise<float>} A promise that resolves with the version of the operating system as <code>string</code>.
+		 * @ui5-restricted sap.ui.core
+		 */
+		Device.os.getPlatformInfo = function () {
+			if (oPlatform || !oReducedNavigator.userAgentData) {
+				return Promise.resolve(Device.os);
+			}
+			return oReducedNavigator.userAgentData.getHighEntropyValues(["platformVersion"]).then((oClientHints) => {
+				oPlatform = {
+					OS,
+					version: parseFloat(oClientHints.platformVersion),
+					versionStr: oClientHints.platformVersion,
+					name: oClientHints.platform,
+					getPlatformInfo: () => Promise.resolve(Device.os)
+				};
+
+				if (oClientHints.platform === "macOS") {
+					oPlatform.name = "MACINTOSH";
+				} else if (oClientHints.platform === "Windows") {
+					// Map windows version according to
+					// https://learn.microsoft.com/en-us/microsoft-edge/web-platform/how-to-detect-win11#detecting-specific-windows-versions
+					if (oPlatform.version >= 13) {
+						oPlatform.versionStr = "11";
+						oPlatform.version = 11;
+					} else if (oPlatform.version > 0) {
+						oPlatform.versionStr = "10";
+						oPlatform.version = 10;
+					} else {
+						oPlatform.versionStr = Device.os.versionStr;
+						oPlatform.version = Device.os.version;
+					}
+				}
+				oPlatform[oPlatform.name.toLowerCase()] = true;
+				oPlatform.name = OS[oPlatform.name.toUpperCase()];
+
+				Device.os = oPlatform;
+				return Device.os;
+			});
+		};
 	}
 	setOS();
-
-
 
 	//******** Browser Detection ********
 
@@ -1906,7 +1959,13 @@ if (typeof window.sap.ui !== "object") {
 		} else {
 			Device.support.touch = bTouch;
 			oReducedNavigator = Object.assign(oReducedNavigator, oCustomNavigator);
+			// In case no client hints are provided we don't add it to the reduced navigator
+			// to simulate browser without client hints API
+			if (!oCustomNavigator.userAgentData) {
+				delete oReducedNavigator.userAgentData;
+			}
 		}
+		oPlatform = undefined;
 
 		setOS();
 		setBrowser();

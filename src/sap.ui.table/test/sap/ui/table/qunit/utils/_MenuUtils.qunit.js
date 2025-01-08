@@ -87,7 +87,7 @@ sap.ui.define([
 			TableQUnitUtils.createTextColumn().setVisible(false),
 			TableQUnitUtils.createTextColumn()
 		],
-		models: TableQUnitUtils.createJSONModel(aRowStates.length),
+		models: TableQUnitUtils.createJSONModelWithEmptyRows(aRowStates.length),
 		rowActionTemplate: new RowAction({
 			items: new RowActionItem({type: "Navigation"})
 		}),
@@ -187,7 +187,6 @@ sap.ui.define([
 	QUnit.module("#openContextMenu - Custom context menu", {
 		before: function() {
 			this.oBeforeOpenContextMenuEventInfo = {
-				name: "beforeOpenContextMenu",
 				lastCallParameters: null,
 				handler: sinon.spy((oEvent) => {
 					this.oBeforeOpenContextMenuEventInfo.lastCallParameters = oEvent.mParameters;
@@ -196,17 +195,13 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
 				contextMenu: new TestContextMenu(),
-				beforeOpenContextMenu: this.oBeforeOpenContextMenuEventInfo.handler
+				beforeOpenContextMenu: this.oBeforeOpenContextMenuEventInfo.handler,
+				extension: new TableQUnitUtils.TestControl(),
+				footer: new TableQUnitUtils.TestControl()
 			});
-
-			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, function(oState) {
-				Object.assign(oState, aRowStates[parseInt(oState.context.getPath().substring(1))]);
-			}, this);
-
-			this.oTable.bindRows({
-				path: "/"
-			});
+			this.oTable.qunit.setRowStates(aRowStates);
 
 			return this.oTable.qunit.whenRenderingFinished();
 		},
@@ -218,65 +213,49 @@ sap.ui.define([
 			this.oBeforeOpenContextMenuEventInfo.handler.resetHistory();
 			this.oTable.getContextMenu()?.openAsContextMenu.resetHistory();
 		},
-		assertEventCalled: function(assert, bCalled, mExpectedParameters) {
+		assertEventCalled: function(bCalled, mExpectedParameters) {
 			const oEventInfo = this.oBeforeOpenContextMenuEventInfo;
 
 			if (bCalled) {
-				assert.ok(oEventInfo.handler.calledOnce, oEventInfo.name + ": The event handler has been called");
-				assert.deepEqual(oEventInfo.lastCallParameters, Object.assign({id: this.oTable.getId()}, mExpectedParameters),
-					oEventInfo.name + ": The event object contains the correct parameters");
+				QUnit.assert.ok(oEventInfo.handler.calledOnce, "beforeOpenContextMenu: The event handler has been called");
+				QUnit.assert.deepEqual(oEventInfo.lastCallParameters, Object.assign({id: this.oTable.getId()}, mExpectedParameters),
+					"beforeOpenContextMenu: The event object contains the correct parameters");
 			} else {
-				assert.ok(oEventInfo.handler.notCalled, oEventInfo.name + ": The event handler has not been called");
+				QUnit.assert.ok(oEventInfo.handler.notCalled, "beforeOpenContextMenu: The event handler has not been called");
 			}
 
 			oEventInfo.handler.resetHistory();
 			oEventInfo.lastCallParameters = null;
 		},
-		assertBindingContext: function(assert, iRowIndex) {
+		assertBindingContext: function(iRowIndex) {
 			const sModelName = this.oTable.getBindingInfo("rows").model;
+			const oContextMenuBindingContext = this.oTable.getContextMenu().getBindingContext(sModelName);
+			const oRowBindingContext = this.oTable.getRows()[iRowIndex].getBindingContext(sModelName);
 
-			assert.ok(this.oTable.getContextMenu().getBindingContext(sModelName) === this.oTable.getRows()[iRowIndex].getBindingContext(sModelName),
-				"Binding context");
+			QUnit.assert.ok(oContextMenuBindingContext === oRowBindingContext, "Binding context");
 		}
 	});
 
 	QUnit.test("Elements that do not support a custom context menu", function(assert) {
-		const oOpenMenuHook = sinon.stub();
-		const test = (oElement, sElementName, bDefaultMenuExists = false) => {
+		const test = (oElement, sElementName) => {
 			const oEvent = createFakeEventObject(oElement);
 
-			TableUtils.Menu.cleanupDefaultContentCellContextMenu(this.oTable); // Delete the default context menu to be table to test the creation.
 			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-			assert.notOk(oEvent.preventDefault.called, "preventDefault");
-
 			assert.ok(true, "--- Opening context menu for: " + sElementName);
+			assert.notOk(oEvent.preventDefault.called, "preventDefault");
 			assert.notOk(this.oTable.getContextMenu().openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
+			this.assertEventCalled(false);
 
-			if (bDefaultMenuExists) {
-				assert.notOk(this.oTable._oCellContextMenu.isOpen(), "Default context menu open state if empty");
-
-				oOpenMenuHook.callsFake((oCellInfo, oMenu) => { oMenu.addItem(new MenuItem()); });
-				sinon.spy(this.oTable._oCellContextMenu, "openAsContextMenu");
-				TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-				assert.ok(this.oTable._oCellContextMenu.openAsContextMenu.calledOnceWithExactly(oEvent, oEvent.target),
-					"Default context menu #openAsContextMenu call if it has items");
-				assert.ok(oEvent.preventDefault.called, "preventDefault");
-				this.oTable._oCellContextMenu.destroyItems();
-				oOpenMenuHook.reset();
-			} else {
-				assert.notOk(!!this.oTable._oCellContextMenu, "Default context menu existance");
-			}
-
-			this.assertEventCalled(assert, false);
 			this.resetSpies();
 		};
 
-		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.OpenContextMenu, oOpenMenuHook, this);
-
 		test(this.oTable.qunit.getSelectAllCell(), "SelectAll cell");
-		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row", true);
-		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row", true);
+		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row");
+		test(this.oTable.qunit.getRowActionCell(3), "Row action cell in group header row");
+		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row");
 		test(this.oTable.qunit.getDataCell(8, 0), "Cell in empty row");
+		test(this.oTable.getExtension()[0].getDomRef(), "Extension");
+		test(this.oTable.getFooter().getDomRef(), "Footer");
 		test(document.getElementsByTagName("body").item(0), "Element outside the table");
 	});
 
@@ -285,13 +264,13 @@ sap.ui.define([
 
 		oEvent = createFakeEventObject(this.oTable.qunit.getDataCell(0, 0));
 		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-		this.assertEventCalled(assert, true, {
+		this.assertEventCalled(true, {
 			rowIndex: 0,
 			columnIndex: 0,
 			contextMenu: this.oTable.getContextMenu()
 		});
 		assert.ok(this.oTable.getContextMenu().openAsContextMenu.calledOnceWithExactly(oEvent, oEvent.target), "ContextMenu#openAsContextMenu call");
-		this.assertBindingContext(assert, 0);
+		this.assertBindingContext(0);
 		assert.ok(oEvent.preventDefault.called, "preventDefault");
 
 		this.resetSpies();
@@ -300,13 +279,13 @@ sap.ui.define([
 		await this.oTable.qunit.whenRenderingFinished();
 		oEvent = createFakeEventObject(this.oTable.qunit.getDataCell(1, 1));
 		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-		this.assertEventCalled(assert, true, {
+		this.assertEventCalled(true, {
 			rowIndex: 1,
 			columnIndex: 2,
 			contextMenu: this.oTable.getContextMenu()
 		});
 		assert.ok(this.oTable.getContextMenu().openAsContextMenu.calledOnceWithExactly(oEvent, oEvent.target), "ContextMenu#openAsContextMenu call");
-		this.assertBindingContext(assert, 1);
+		this.assertBindingContext(1);
 		assert.ok(oEvent.preventDefault.called, "preventDefault");
 	});
 
@@ -315,13 +294,13 @@ sap.ui.define([
 
 		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
 
-		this.assertEventCalled(assert, true, {
+		this.assertEventCalled(true, {
 			rowIndex: 0,
 			columnIndex: null,
 			contextMenu: this.oTable.getContextMenu()
 		});
 		assert.ok(this.oTable.getContextMenu().openAsContextMenu.calledOnceWithExactly(oEvent, oEvent.target), "ContextMenu#openAsContextMenu call");
-		this.assertBindingContext(assert, 0);
+		this.assertBindingContext(0);
 		assert.ok(oEvent.preventDefault.called, "preventDefault");
 	});
 
@@ -330,13 +309,13 @@ sap.ui.define([
 
 		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
 
-		this.assertEventCalled(assert, true, {
+		this.assertEventCalled(true, {
 			rowIndex: 0,
 			columnIndex: null,
 			contextMenu: this.oTable.getContextMenu()
 		});
 		assert.ok(this.oTable.getContextMenu().openAsContextMenu.calledOnceWithExactly(oEvent, oEvent.target), "ContextMenu#openAsContextMenu call");
-		this.assertBindingContext(assert, 0);
+		this.assertBindingContext(0);
 		assert.ok(oEvent.preventDefault.called, "preventDefault");
 	});
 
@@ -352,50 +331,27 @@ sap.ui.define([
 		assert.notOk(oEvent.preventDefault.called, "preventDefault");
 	});
 
-	QUnit.test("Destroy context menu in 'beforeOpenContextMenu' event", function(assert) {
-		const oEvent = createFakeEventObject(this.oTable.qunit.getDataCell(0, 0));
-		const oContextMenu = this.oTable.getContextMenu();
-
-		this.oTable.attachEventOnce("beforeOpenContextMenu", (oEvent) => {
-			this.oTable.destroyContextMenu();
-		});
-		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-
-		assert.notOk(oContextMenu.openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-	});
-
-	QUnit.test("Cell filter enabled", function(assert) {
-		this.oTable.getColumns()[0].setFilterProperty("name");
-		this.oTable.setEnableCellFilter(true);
-
-		const oEvent = createFakeEventObject(this.oTable.qunit.getDataCell(0, 0));
-		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-		assert.ok(this.oTable.getContextMenu().openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
-		assert.notOk(!!this.oTable._oCellContextMenu, "Default context menu existance");
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-	});
-
 	QUnit.module("#openContextMenu - Default context menu", {
 		beforeEach: function() {
 			this.oBeforeOpenContextMenuEvenHandler = sinon.spy();
 			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
 				columns: [
 					TableQUnitUtils.createTextColumn({text: "name", bind: true}).setFilterProperty("name"),
 					TableQUnitUtils.createTextColumn().setVisible(false),
 					TableQUnitUtils.createTextColumn({text: "firstName", bind: true}).setFilterProperty("firstName"),
 					TableQUnitUtils.createTextColumn()
 				],
-				beforeOpenContextMenu: this.oBeforeOpenContextMenuEvenHandler
+				beforeOpenContextMenu: this.oBeforeOpenContextMenuEvenHandler,
+				extension: new TableQUnitUtils.TestControl(),
+				footer: new TableQUnitUtils.TestControl()
 			});
+			this.oTable.qunit.setRowStates(aRowStates);
+			this.oDefaultContextMenu = this.oTable._getDefaultContextMenu();
 
-			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, function(oState) {
-				Object.assign(oState, aRowStates[parseInt(oState.context.getPath().substring(1))]);
-			}, this);
-
-			this.oTable.bindRows({
-				path: "/"
-			});
+			sinon.spy(this.oDefaultContextMenu, "initContent");
+			sinon.spy(this.oDefaultContextMenu, "open");
+			sinon.stub(this.oDefaultContextMenu, "isEmpty").returns(false);
 
 			return this.oTable.qunit.whenRenderingFinished();
 		},
@@ -405,17 +361,27 @@ sap.ui.define([
 		},
 		resetSpies: function() {
 			this.oBeforeOpenContextMenuEvenHandler.resetHistory();
+			this.oDefaultContextMenu.initContent.resetHistory();
+			this.oDefaultContextMenu.open.resetHistory();
+		},
+		assertBindingContext: function(iRowIndex) {
+			const sModelName = this.oTable.getBindingInfo("rows").model;
+			const oContextMenuBindingContext = this.oDefaultContextMenu.getBindingContext(sModelName);
+			const oRowBindingContext = this.oTable.getRows()[iRowIndex].getBindingContext(sModelName);
+
+			QUnit.assert.ok(oContextMenuBindingContext === oRowBindingContext, "Binding context");
 		}
 	});
 
-	QUnit.test("Elements that do not support the default context menu", function(assert) {
+	QUnit.test("Elements that do not support context menus", function(assert) {
 		const test = (oElement, sElementName) => {
 			const oEvent = createFakeEventObject(oElement);
 
 			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
 			assert.ok(true, "--- Opening context menu for: " + sElementName);
-			assert.notOk(!!this.oTable._oCellContextMenu, "Context menu existance");
 			assert.notOk(oEvent.preventDefault.called, "preventDefault");
+			assert.notOk(this.oDefaultContextMenu.initContent.called, "DefaultContextMenu#initContent call");
+			assert.notOk(this.oDefaultContextMenu.open.called, "DefaultContextMenu#open call");
 			assert.notOk(this.oBeforeOpenContextMenuEvenHandler.called, "beforeOpenContextMenu event");
 
 			this.resetSpies();
@@ -423,108 +389,92 @@ sap.ui.define([
 
 		test(this.oTable.qunit.getSelectAllCell(), "SelectAll cell");
 		test(this.oTable.qunit.getDataCell(8, 0), "Cell in empty row");
+		test(this.oTable.getExtension()[0].getDomRef(), "Extension");
+		test(this.oTable.getFooter().getDomRef(), "Footer");
 		test(document.getElementsByTagName("body").item(0), "Element outside the table");
 	});
 
-	QUnit.test("Elements that support the default context menu", function(assert) {
-		const oOpenMenuHook = sinon.stub();
+	QUnit.test("Elements that do not support a custom context menu", function(assert) {
 		const test = (oElement, sElementName) => {
 			const oEvent = createFakeEventObject(oElement);
+			const $Cell = TableUtils.getCell(this.oTable, oEvent.target);
+			const oCellInfo = TableUtils.getCellInfo($Cell);
+			const oRow = this.oTable.getRows()[oCellInfo.rowIndex];
+			const oColumn = this.oTable.getColumns()[oCellInfo.columnIndex];
 
-			TableUtils.Menu.cleanupDefaultContentCellContextMenu(this.oTable); // Delete the default context menu to be table to test the creation.
+			this.oDefaultContextMenu.isEmpty.returns(false);
 			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-
 			assert.ok(true, "--- Opening context menu for: " + sElementName);
-			assert.notOk(this.oTable._oCellContextMenu.isOpen(), "Context menu open state if empty");
-			assert.notOk(oEvent.preventDefault.called, "preventDefault");
-			assert.notOk(this.oBeforeOpenContextMenuEvenHandler.called, "beforeOpenContextMenu event");
-
-			oOpenMenuHook.callsFake((oCellInfo, oMenu) => { oMenu.addItem(new MenuItem()); });
-			sinon.spy(this.oTable._oCellContextMenu, "openAsContextMenu");
-			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-			assert.ok(this.oTable._oCellContextMenu.openAsContextMenu.calledOnceWithExactly(oEvent, oEvent.target),
-				"Default context menu #openAsContextMenu call if it has items");
 			assert.ok(oEvent.preventDefault.called, "preventDefault");
-			this.oTable._oCellContextMenu.destroyItems();
-			oOpenMenuHook.reset();
+			assert.ok(this.oDefaultContextMenu.initContent.calledOnceWithExactly(oRow, oColumn), "DefaultContextMenu#initContent call");
+			assert.ok(this.oDefaultContextMenu.open.calledOnceWithExactly(oEvent, oCellInfo.cell), "DefaultContextMenu#open call");
+			assert.notOk(this.oBeforeOpenContextMenuEvenHandler.called, "beforeOpenContextMenu event");
+			assert.notOk(this.oTable.getContextMenu().openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
+
+			this.oDefaultContextMenu.isEmpty.returns(true);
+			this.resetSpies();
+			oEvent.preventDefault.resetHistory();
+			this.oTable.getContextMenu().openAsContextMenu.resetHistory();
+			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
+			assert.ok(true, "--- Opening context menu for: " + sElementName + " (context menu empty)");
+			assert.notOk(oEvent.preventDefault.called, "preventDefault");
+			assert.ok(this.oDefaultContextMenu.initContent.calledOnceWithExactly(oRow, oColumn), "DefaultContextMenu#initContent call");
+			assert.notOk(this.oDefaultContextMenu.open.called, "DefaultContextMenu#open call");
+			assert.notOk(this.oBeforeOpenContextMenuEvenHandler.called, "beforeOpenContextMenu event");
+			assert.notOk(this.oTable.getContextMenu().openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
 
 			this.resetSpies();
 		};
 
-		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.OpenContextMenu, oOpenMenuHook, this);
+		this.oTable.setContextMenu(new TestContextMenu());
+		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row");
+		test(this.oTable.qunit.getRowActionCell(3), "Row action cell in group header row");
+
+		this.oTable.setAggregation("groupHeaderRowContextMenu", new TestContextMenu());
+		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row");
+		assert.notOk(this.oTable.getAggregation("groupHeaderRowContextMenu").openAsContextMenu.called,
+			"GroupHeaderRowContextMenu#openAsContextMenu call");
+	});
+
+	QUnit.test("Elements that support the default context menu", function(assert) {
+		const test = (oElement, sElementName) => {
+			const oEvent = createFakeEventObject(oElement);
+			const $Cell = TableUtils.getCell(this.oTable, oEvent.target);
+			const oCellInfo = TableUtils.getCellInfo($Cell);
+			const oRow = this.oTable.getRows()[oCellInfo.rowIndex];
+			const oColumn = this.oTable.getColumns()[oCellInfo.columnIndex];
+
+			this.oDefaultContextMenu.isEmpty.returns(false);
+			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
+			assert.ok(true, "--- Opening context menu for: " + sElementName);
+			assert.ok(oEvent.preventDefault.called, "preventDefault");
+			assert.ok(this.oDefaultContextMenu.initContent.calledOnceWithExactly(oRow, oColumn), "DefaultContextMenu#initContent call");
+			assert.ok(this.oDefaultContextMenu.open.calledOnceWithExactly(oEvent, oCellInfo.cell), "DefaultContextMenu#open call");
+			sinon.assert.callOrder(this.oDefaultContextMenu.initContent, this.oDefaultContextMenu.open);
+			assert.notOk(this.oBeforeOpenContextMenuEvenHandler.called, "beforeOpenContextMenu event");
+
+			this.oDefaultContextMenu.isEmpty.returns(true);
+			this.resetSpies();
+			oEvent.preventDefault.resetHistory();
+			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
+			assert.ok(true, "--- Opening context menu for: " + sElementName + " (context menu empty)");
+			assert.notOk(oEvent.preventDefault.called, "preventDefault");
+			assert.ok(this.oDefaultContextMenu.initContent.calledOnceWithExactly(oRow, oColumn), "DefaultContextMenu#initContent call");
+			assert.notOk(this.oDefaultContextMenu.open.called, "DefaultContextMenu#open call");
+			assert.notOk(this.oBeforeOpenContextMenuEvenHandler.called, "beforeOpenContextMenu event");
+
+			this.resetSpies();
+		};
 
 		test(this.oTable.qunit.getDataCell(0, 0), "Cell in standard row");
 		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row");
+		test(this.oTable.qunit.getRowHeaderCell(3), "Row header cell in group header row");
 		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row");
 		test(this.oTable.qunit.getRowHeaderCell(0), "Row header cell");
 		test(this.oTable.qunit.getRowActionCell(0), "Row action cell");
 	});
 
-	QUnit.test("Cell filter enabled", function(assert) {
-		const test = (oElement, sElementName, bHasCellFilter = false) => {
-			const oEvent = createFakeEventObject(oElement);
-
-			TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-
-			assert.ok(true, "--- Opening context menu for: " + sElementName);
-			assert.notOk(this.oBeforeOpenContextMenuEvenHandler.called, "beforeOpenContextMenu event");
-
-			if (bHasCellFilter) {
-				assert.ok(this.oTable._oCellContextMenu.openAsContextMenu.calledOnceWithExactly(oEvent, oEvent.target),
-					"ContextMenu#openAsContextMenu call");
-				assert.ok(oEvent.preventDefault.called, "preventDefault");
-			} else {
-				assert.notOk(this.oTable._oCellContextMenu.openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
-				assert.notOk(oEvent.preventDefault.called, "preventDefault");
-			}
-
-			this.resetSpies();
-			this.oTable._oCellContextMenu.openAsContextMenu.resetHistory();
-		};
-
-		this.oTable.setEnableCellFilter(true);
-
-		// We first need to create the default context menu to attach a spy on it.
-		TableUtils.Menu.openContextMenu(this.oTable, createFakeEventObject(this.oTable.qunit.getDataCell(0, 0)));
-		sinon.spy(this.oTable._oCellContextMenu, "openAsContextMenu");
-
-		test(this.oTable.qunit.getDataCell(0, 0), "Cell in filterable column", true);
-		test(this.oTable.qunit.getDataCell(0, 2), "Cell in non-filterable column");
-		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row");
-		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row");
-		test(this.oTable.qunit.getRowHeaderCell(0), "Row header cell");
-		test(this.oTable.qunit.getRowActionCell(0), "Row action cell");
-	});
-
-	QUnit.test("Cell filter; Default filter", function(assert) {
-		this.spy(this.oTable, "filter");
-		this.oTable.setEnableCellFilter(true);
-		TableUtils.Menu.openContextMenu(this.oTable, createFakeEventObject(this.oTable.qunit.getDataCell(0, 0)));
-		this.oTable._oCellContextMenu.getItems()[0].fireSelect();
-		assert.ok(this.oTable.filter.calledOnceWithExactly(this.oTable.getColumns()[0], "name_0"), "Table#filter call");
-	});
-
-	QUnit.test("Cell filter; Custom filter", function(assert) {
-		let mParameters;
-
-		this.spy(this.oTable, "filter");
-		this.oTable.setEnableCellFilter(true);
-		this.oTable.setEnableCustomFilter(true);
-		this.oTable.attachCustomFilter((oEvent) => {
-			mParameters = oEvent.getParameters();
-		});
-
-		TableUtils.Menu.openContextMenu(this.oTable, createFakeEventObject(this.oTable.qunit.getDataCell(0, 0)));
-		this.oTable._oCellContextMenu.getItems()[0].fireSelect();
-		assert.deepEqual(mParameters, {
-			column: this.oTable.getColumns()[0],
-			value: "name_0",
-			id: this.oTable.getId()
-		}, "customFilter event handler");
-		assert.notOk(this.oTable.filter.called, "Table#filter call");
-	});
-
-	QUnit.module("Other methods", {
+	QUnit.module("#closeContentCellContextMenu", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}"
@@ -536,46 +486,29 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#closeContentCellContextMenu - No menus", function(assert) {
+	QUnit.test("No menus exist", function(assert) {
 		TableUtils.Menu.closeContentCellContextMenu(this.oTable);
 		assert.ok(true, "Does not throw if there is nothing to close");
 	});
 
-	QUnit.test("#closeContentCellContextMenu - Custom context menu", function(assert) {
+	QUnit.test("Menus without #close method exist", function(assert) {
 		this.oTable.setContextMenu(new TestContextMenu());
-		TableUtils.Menu.openContextMenu(this.oTable, createFakeEventObject(this.oTable.qunit.getDataCell(0, 0)));
+		this.oTable.setAggregation("groupHeaderRowContextMenu", new TestContextMenu());
+		sinon.spy(this.oTable._getDefaultContextMenu(), "close");
 		TableUtils.Menu.closeContentCellContextMenu(this.oTable);
-		assert.ok(true, "Does not throw if the context menu does not implement #close");
+		assert.ok(true, "Does not throw if there is a custom context menu that does not implement #close");
+		assert.ok(this.oTable._getDefaultContextMenu().close.calledOnceWithExactly(), "DefaultContextMenu#close call");
+	});
 
+	QUnit.test("Menus exist", function(assert) {
+		this.oTable.setContextMenu(new TestContextMenu());
+		this.oTable.setAggregation("groupHeaderRowContextMenu", new TestContextMenu());
 		this.oTable.getContextMenu().close = sinon.spy();
-		TableUtils.Menu.openContextMenu(this.oTable, createFakeEventObject(this.oTable.qunit.getDataCell(0, 0)));
+		this.oTable.getAggregation("groupHeaderRowContextMenu").close = sinon.spy();
+		sinon.spy(this.oTable._getDefaultContextMenu(), "close");
 		TableUtils.Menu.closeContentCellContextMenu(this.oTable);
 		assert.ok(this.oTable.getContextMenu().close.calledOnceWithExactly(), "ContextMenu#close call");
-	});
-
-	QUnit.test("#closeContentCellContextMenu - Default context menu", function(assert) {
-		this.oTable.setEnableCellFilter(true);
-		this.oTable.getColumns()[0].setFilterProperty("test");
-		TableUtils.Menu.openContextMenu(this.oTable, createFakeEventObject(this.oTable.qunit.getDataCell(0, 0)));
-		sinon.spy(this.oTable._oCellContextMenu, "close");
-
-		TableUtils.Menu.closeContentCellContextMenu(this.oTable);
-		assert.ok(this.oTable._oCellContextMenu.close.calledOnceWithExactly(), "ContextMenu#close call");
-	});
-
-	QUnit.test("#cleanupDefaultContentCellContextMenu", function(assert) {
-		this.oTable.setEnableCellFilter(true);
-		this.oTable.getColumns()[0].setFilterProperty("test");
-
-		TableUtils.Menu.cleanupDefaultContentCellContextMenu(this.oTable);
-		assert.ok(true, "Does not throw if the default cell context menu does not exist");
-
-		TableUtils.Menu.openContextMenu(this.oTable, createFakeEventObject(this.oTable.qunit.getDataCell(0, 0)));
-		this.spy(this.oTable._oCellContextMenu, "destroy");
-
-		const oCellContextMenu = this.oTable._oCellContextMenu;
-		TableUtils.Menu.cleanupDefaultContentCellContextMenu(this.oTable);
-		assert.ok(oCellContextMenu.destroy.called, "#destroy call");
-		assert.notOk(this.oTable._oCellContextMenu, "Reference to the default context menu instance is removed");
+		assert.ok(this.oTable.getAggregation("groupHeaderRowContextMenu").close.calledOnceWithExactly(), "GroupHeaderRowContextMenu#close call");
+		assert.ok(this.oTable._getDefaultContextMenu().close.calledOnceWithExactly(), "DefaultContextMenu#close call");
 	});
 });

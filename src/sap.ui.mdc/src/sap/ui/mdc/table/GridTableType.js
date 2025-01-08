@@ -4,13 +4,15 @@
 
 sap.ui.define([
 	"./TableTypeBase",
+	"./menu/GroupHeaderRowContextMenu",
+	"../enums/TableRowCountMode",
 	"sap/m/table/Util",
-	"sap/ui/mdc/enums/TableRowCountMode",
 	"sap/ui/core/Lib"
 ], (
 	TableTypeBase,
-	MTableUtil,
+	GroupHeaderRowContextMenu,
 	TableRowCountMode,
+	MTableUtil,
 	Library
 ) => {
 	"use strict";
@@ -213,7 +215,11 @@ sap.ui.define([
 			return null;
 		}
 
-		return new InnerTable(sId, this.getTableSettings());
+		const oGridTable = new InnerTable(sId, this.getTableSettings());
+
+		oGridTable.setAggregation("groupHeaderRowContextMenu", new GroupHeaderRowContextMenu());
+
+		return oGridTable;
 	};
 
 	GridTableType.prototype.getTableSettings = function() {
@@ -244,7 +250,8 @@ sap.ui.define([
 					return mSelectionBehaviorMap[sSelectionMode]; // Default is "RowSelector"
 				}
 			},
-			fixedColumnCount: "{$sap.ui.mdc.Table#type>/fixedColumnCount}"
+			fixedColumnCount: "{$sap.ui.mdc.Table#type>/fixedColumnCount}",
+			beforeOpenContextMenu: [onBeforeOpenContextMenu, this]
 		};
 
 		if (oTable.hasListeners("rowPress")) {
@@ -257,6 +264,21 @@ sap.ui.define([
 	function onCellClick(oEvent) {
 		this.callHook("RowPress", this.getTable(), {
 			bindingContext: oEvent.getParameter("rowBindingContext")
+		});
+	}
+
+	function onBeforeOpenContextMenu(oEvent) {
+		const mEventParameters = oEvent.getParameters();
+		const oTable = this.getTable();
+		const oInnerTable = this.getInnerTable();
+		const oRow = oInnerTable.getRows().find((oRow) => oRow.getIndex() === mEventParameters.rowIndex);
+
+		this.callHook("BeforeOpenContextMenu", oTable, {
+			bindingContext: oInnerTable.getContextByIndex(mEventParameters.rowIndex),
+			column: oTable.getColumns()[mEventParameters.columnIndex],
+			contextMenu: mEventParameters.contextMenu,
+			event: oEvent,
+			groupLevel: mEventParameters.contextMenu.isA("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu") ? oRow.getLevel() : undefined
 		});
 	}
 
@@ -488,13 +510,6 @@ sap.ui.define([
 
 	GridTableType.prototype.updateSortIndicator = function(oColumn, sSortOrder) {
 		oColumn.getInnerColumn().setSortOrder(sSortOrder);
-	};
-
-	GridTableType.prototype.getContextMenuParameters = function(oEvent) {
-		return {
-			bindingContext: this.getInnerTable().getContextByIndex(oEvent.getParameters().rowIndex),
-			column: this.getTable().getColumns()[oEvent.getParameters().columnIndex]
-		};
 	};
 
 	GridTableType.prototype.getTableStyleClasses = function() {

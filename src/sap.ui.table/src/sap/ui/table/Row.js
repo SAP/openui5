@@ -452,6 +452,7 @@ sap.ui.define([
 	 *
 	 * @returns {number} The level.
 	 * @private
+	 * @ui5-private sap.ui.mdc.Table
 	 */
 	Row.prototype.getLevel = function() {
 		return state(this).level;
@@ -496,7 +497,8 @@ sap.ui.define([
 	};
 
 	Row.prototype.invalidate = function() {
-		return this;
+		// The table takes care of rendering the rows after it has done an update. Rendering must not be triggered by the row itself, therefore
+		// invalidation must not bubble up to the table.
 	};
 
 	/**

@@ -1060,6 +1060,50 @@ sap.ui.define([
 		oDRS.destroy();
 	});
 
+	QUnit.test("Month range dialog accessible name", async function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection("DRS", {
+				displayFormat: "MM/yyyy"
+			}),
+			sAriaLabelledbyText = Library.getResourceBundleFor("sap.m").getText("DATERANGESELECTION_MONTH_POPOVER_ACCESSIBLE_NAME"),
+			sLabelId;
+
+		oDRS.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		qutils.triggerEvent("click", "DRS-icon");
+		await nextUIUpdate();
+		sLabelId = oDRS._oPopup.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The dialog has the correct accessible name");
+
+		oDRS.destroy();
+	});
+
+	QUnit.test("Year range dialog accessible name", async function(assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection("DRS", {
+				displayFormat: "yyyy"
+			}),
+			sAriaLabelledbyText = Library.getResourceBundleFor("sap.m").getText("DATERANGESELECTION_YEAR_POPOVER_ACCESSIBLE_NAME"),
+			sLabelId;
+
+		oDRS.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		qutils.triggerEvent("click", "DRS-icon");
+		await nextUIUpdate();
+		sLabelId = oDRS._oPopup.getDomRef().getAttribute("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Element.getElementById(sLabelId).getDomRef().textContent, sAriaLabelledbyText, "The dialog has the correct accessible name");
+
+		oDRS.destroy();
+	});
+
 	QUnit.module("binding type DateInterval", {
 		beforeEach: async function() {
 			this.model = new JSONModel({

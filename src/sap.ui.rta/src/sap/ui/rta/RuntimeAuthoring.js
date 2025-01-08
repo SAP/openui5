@@ -1444,7 +1444,7 @@ sap.ui.define([
 			},
 			textResources: this._getTextResources(),
 			restore: this.restore.bind(this),
-			exit: this.stop.bind(this, false, false)
+			exit: this.stop.bind(this, false, false, false)
 		};
 
 		oProperties.publishVersion = onPublishVersion.bind(this);
