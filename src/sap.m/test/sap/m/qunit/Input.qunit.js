@@ -5180,7 +5180,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 		var oList = oInput._getSuggestionsPopover().getItemsContainer();
 		assert.strictEqual(oList.$("listUl").attr("role"), "listbox", "role='listbox' applied to the List control DOM");
-		assert.strictEqual(oList.getItems()[0].$().attr("role"), "listitem", "role='listitem' applied to the group header");
+		assert.strictEqual(oList.getItems()[0].$().attr("role"), "group", "role='group' applied to the group header");
 		assert.strictEqual(oList.getItems()[1].$().attr("role"), "option", "role='option' applied to the items");
 
 		oInput.destroy();
