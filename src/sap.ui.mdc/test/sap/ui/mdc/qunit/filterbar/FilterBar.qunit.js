@@ -1529,4 +1529,25 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("check required property on Label of FilterField", async function(assert) {
+		const done = assert.async();
+
+		const oFilterField1 = new FilterField({
+			required: true,
+			propertyKey: "field1"
+		});
+		const oFilterField2 = new FilterField({
+			propertyKey: "field2"
+		});
+		oFilterBar.addFilterItem(oFilterField1);
+		oFilterBar.addFilterItem(oFilterField2);
+
+		await oFilterBar.initialized();
+
+		assert.ok(oFilterBar._getFilterItemLayout(oFilterField1)._oLabel.getRequired(), "should have property 'required' set to true on Label");
+		assert.notOk(oFilterBar._getFilterItemLayout(oFilterField2)._oLabel.getRequired(), "should have property 'required' set to false on Label by default");
+
+		done();
+	});
+
 });
