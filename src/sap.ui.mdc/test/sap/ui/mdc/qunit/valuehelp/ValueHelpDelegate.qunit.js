@@ -80,7 +80,6 @@ sap.ui.define([
 		},
 		getFilterValue: () => "",
 		getActiveFilterBar: () => oFakeFilterBar,
-		getFilterFields: () => "*key,text*",
 		getSearch: () => "",
 		getCaseSensitive: () => true,
 		shouldOpenOnClick: () => false
@@ -176,6 +175,7 @@ sap.ui.define([
 		sinon.stub(oFakeContent, "getActiveFilterBar").returns(null);
 		sinon.stub(oFakeContent, "isPropertyInitial").withArgs("filterFields").returns(false);
 		sinon.stub(oFakeContent, "getSearch").returns("B");
+		oFakeContent.getFilterFields = () => "*key,text*";
 
 		ValueHelpDelegate.updateBindingInfo(oFakeValueHelp, oFakeContent, oBindingInfo);
 		assert.equal(oBindingInfo.filters?.length, 1, "oBindingInfo filter set");
@@ -192,6 +192,7 @@ sap.ui.define([
 		oFakeContent.getActiveFilterBar.restore();
 		oFakeContent.isPropertyInitial.restore();
 		oFakeContent.getSearch.restore();
+		delete oFakeContent.getFilterFields;
 	});
 
 	QUnit.test("updateBinding", (assert) => {

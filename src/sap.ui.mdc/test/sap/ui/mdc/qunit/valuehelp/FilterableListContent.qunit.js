@@ -263,8 +263,75 @@ sap.ui.define([
 						ValueHelpDelegate.getFilterConditions.restore();
 						FilterBarDelegate.fetchProperties.restore();
 						oContent.applyFilters.restore();
+						StateUtil.applyExternalState.restore();
 					});
 				});
+			});
+		});
+
+	});
+
+	/**
+	 *  @deprecated since 1.120.2
+	 */
+	QUnit.test("onBeforeShow using FilterFields", (assert) => {
+
+		oContent.setFilterFields("*name,text*");
+		let sLocalFilter;
+		const oContainer = {
+			setLocalFilterValue(sValue) {
+				sLocalFilter = sValue;
+			},
+			getLocalFilterValue() {
+				return sLocalFilter;
+			},
+			isOpening() {
+				return false;
+			},
+			isOpen() {
+				return false;
+			}
+		};
+		sinon.stub(oContent, "getParent").returns(oContainer);
+		oContent.setFilterValue("I");
+		const oConditions = {test: [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated)]};
+		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oConditions);
+		sinon.stub(StateUtil, "applyExternalState").returns(); // prevent Flex logic, just test as BlackBox
+		return oContent._createDefaultFilterBar().then(() => {
+			const oFilterBar = oContent.getActiveFilterBar();
+			sinon.spy(oFilterBar, "cleanUpAllFilterFieldsInErrorState");
+			sinon.stub(oFilterBar, "getSearch").returns("i");
+			sinon.stub(FilterBarDelegate, "fetchProperties").returns(
+				Promise.resolve([{
+						name: "$search",
+						label: "Search",
+						dataType: "sap.ui.model.type.String"
+					},
+					{
+						name: "test",
+						label: "Test",
+						dataType: "sap.ui.model.type.String"
+					}
+				])
+			);
+
+			sinon.spy(oContent, "applyFilters");
+
+			return oContent.onBeforeShow(true).then(() => {
+				const oTestConditions = {
+					test: [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated)],
+					"*name,text*": [Condition.createCondition(OperatorName.Contains, ["I"], undefined, undefined, ConditionValidated.NotValidated)]
+				};
+				assert.ok(oFilterBar.cleanUpAllFilterFieldsInErrorState.called, "FilterBar.cleanUpAllFilterFieldsInErrorState called");
+				assert.ok(StateUtil.applyExternalState.calledWith(oFilterBar, {filter: oTestConditions}), "StateUtil.applyExternalState called");
+				oFilterBar.fireSearch();
+				assert.ok(oContent.applyFilters.called, "applyFilters called");
+
+				oFilterBar.cleanUpAllFilterFieldsInErrorState.restore();
+				ValueHelpDelegate.getFilterConditions.restore();
+				FilterBarDelegate.fetchProperties.restore();
+				oContent.applyFilters.restore();
+				StateUtil.applyExternalState.restore();
 			});
 		});
 
