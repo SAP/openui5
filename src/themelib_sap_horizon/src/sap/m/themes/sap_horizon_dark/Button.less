@@ -183,6 +183,17 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable:not(.sapMBtnActi
 	text-shadow: var(--sapContent_TextShadow);
 }
 
+.sapMBtn {
+	.sapMBtnCritical,
+	.sapMBtnNegative,
+	.sapMBtnSuccess,
+	.sapMBtnNeutral {
+		&.sapMBtnInner.sapMBtnActive {
+			text-shadow: none;
+		}
+	}
+}
+
 /* ---------------------------------------------------------------------*/
 /* Disabled, hover and active states:                                   */
 /* ---------------------------------------------------------------------*/
