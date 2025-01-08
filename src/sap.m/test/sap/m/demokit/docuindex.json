@@ -1772,7 +1772,8 @@
 				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple",
 				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFileDialogs",
 				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview",
-				"sap.m.sample.UploadSetwithTablePlugin.GridTableSimple"
+				"sap.m.sample.UploadSetwithTablePlugin.GridTableSimple",
+				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator"
 			]
 		}
 	  ],
@@ -4024,6 +4025,11 @@
 			"id": "sap.m.sample.UploadSetwithTablePlugin.GridTableSimple",
 			"name": "Plugin for Grid Table (sap.ui.table.Table)",
 			"description": "This example demonstrates the usage of UploadSetwithTable plugin for grid table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator",
+			"name": "Plugin for Responsive Table (sap.m.Table) - Upload Progress and Upload Termination",
+			"description": "This example demonstrates the progress or termination of the items that are being uploaded. The upload progress is displayed for each item that is being uploaded. The users can terminate the upload process at any time."
 		}
 	  ]
 	}
