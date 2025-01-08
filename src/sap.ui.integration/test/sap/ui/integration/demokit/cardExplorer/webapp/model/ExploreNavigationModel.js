@@ -1412,7 +1412,6 @@ sap.ui.define([
 						title: 'WebPage',
 						target: 'exploreSamples',
 						key: 'webPage',
-						experimental: true,
 						files: [
 							{
 								url: '/samples/webPage/manifest.json',
