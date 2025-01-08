@@ -99,17 +99,21 @@ sap.ui.define([
 
 		this.oAdaptationFilterBar.setAdaptationControl(this.oTestTable);
 
-		this.oTestTable.getEngine().createChanges({
-			control: this.oTestTable,
-			key: "Filter",
-			state: mSampleConditions,
-			applyAbsolute: false,
-			suppressAppliance: true
-		}).then(function(aChanges){
-			assert.equal(aChanges.length, 1, "One change has been created");
-			assert.deepEqual(aChanges[0].selectorElement, this.oTestTable, "Change has been created on the corresponding adaptationControl");
-			done();
-		}.bind(this));
+		this.oTestTable.initialized()
+		.then(() => {
+			this.oTestTable.getEngine().createChanges({
+				control: this.oTestTable,
+				key: "Filter",
+				state: mSampleConditions,
+				applyAbsolute: false,
+				suppressAppliance: true
+			}).then(function(aChanges){
+				assert.equal(aChanges.length, 1, "One change has been created");
+				assert.deepEqual(aChanges[0].selectorElement, this.oTestTable, "Change has been created on the corresponding adaptationControl");
+				done();
+			}.bind(this));
+		});
+
 	});
 
 	QUnit.test("Set propertyInfo depending on parent", function(assert) {
