@@ -82,11 +82,13 @@ sap.ui.define([], function() {
 		/**
 		 * Callback handler that executes when a manifest model (ODataModel v2 and v4) is created.
 		 * The registered function receives an object containing:
-		 * 	- Model instance
-		 * 	- Manifest object
-		 * 	- Manifest model ID
-		 * 	- Owner component (if available)
-		 * 	- Configuration object from the component factory
+		 * <ul>
+		 * 	<li>Model instance</li>
+		 * 	<li>Manifest object</li>
+		 * 	<li>Manifest model ID</li>
+		 * 	<li>Owner component ID (if available)</li>
+		 * 	<li>Configuration object from the component factory</li>
+		 * </ul>
 		 *
 		 * Example usage:
 		 * <pre>
