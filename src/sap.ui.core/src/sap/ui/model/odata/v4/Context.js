@@ -646,15 +646,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Expands the group node that this context points to. Since 1.127.0, it is possible to expand
-	 * a group node by a given number of levels. Since 1.132.0, it is possible to do a full expand,
-	 * that is to expand all levels below a node, even if a node is already partially or fully
-	 * expanded.
+	 * Expands the group node that this context points to. Since 1.132.0, it is possible to do a
+	 * full expand, that is to expand all levels below a node, even if a node is already partially
+	 * or fully expanded.
 	 *
 	 * @param {number} [iLevels=1]
-	 *   The number of levels to expand (@experimental as of version 1.127.0),
-	 *   <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be used to expand fully. If a node
-	 *   is expanded a second time, the expand state of the descendants is not changed.
+	 *   The number of levels to expand, <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be
+	 *   used to expand fully. If a node is expanded a second time, the expand state of the
+	 *   descendants is not changed.
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the expand is successful, or
 	 *   rejected in case of an error
@@ -663,7 +662,8 @@ sap.ui.define([
 	 *     <li> the context points to a node that is not expandable or already expanded (unless a
 	 *       full expand is requested),
 	 *     <li> the given number of levels is not a positive number,
-	 *     <li> the given number of levels is greater than 1 without a recursive hierarchy.
+	 *     <li> the given number of levels is greater than 1 without a recursive hierarchy,
+	 *     <li> the given number of levels is between 1 and <code>Number.MAX_SAFE_INTEGER</code>.
 	 *   </ul>
 	 *
 	 * @public
@@ -672,15 +672,11 @@ sap.ui.define([
 	 * @since 1.77.0
 	 */
 	Context.prototype.expand = function (iLevels = 1) {
-		if (iLevels <= 0) {
-			throw new Error("Not a positive number: " + iLevels);
+		if (iLevels <= 0 || iLevels > 1 && iLevels < Number.MAX_SAFE_INTEGER) {
+			throw new Error("Unsupported number of levels: " + iLevels);
 		}
 		switch (this.isExpanded()) {
 			case true:
-				if (iLevels < Number.MAX_SAFE_INTEGER) {
-					throw new Error("No partial expand possible. Node already expanded: " + this);
-				}
-				// falls through
 			case false:
 				return Promise.resolve(this.oBinding.expand(this, iLevels)).then(() => {});
 			default:

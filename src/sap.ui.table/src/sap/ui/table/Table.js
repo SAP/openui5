@@ -28,6 +28,7 @@ sap.ui.define([
 	"./rowmodes/Interactive",
 	"./rowmodes/Auto",
 	"./plugins/SelectionModelSelection",
+	"./menus/ContextMenu",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/core/AnimationMode",
@@ -58,6 +59,7 @@ sap.ui.define([
 	InteractiveRowMode,
 	AutoRowMode,
 	SelectionModelSelectionPlugin,
+	ContextMenu,
 	jQuery,
 	Log,
 	AnimationMode,
@@ -344,7 +346,7 @@ sap.ui.define([
 			 * If the creation row is set, the busy indicator will no longer cover the horizontal scrollbar, even if the creation row is invisible.
 			 *
 			 * @private
-			 * @ui5-private sap.ui.mdc
+			 * @ui5-private sap.ui.mdc.Table
 			 */
 			creationRow: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
@@ -359,7 +361,7 @@ sap.ui.define([
 			 * The control that is shown in case the Table has no visible columns.
 			 *
 			 * @private
-			 * @ui5-private sap.ui.mdc, sap.ui.comp
+			 * @ui5-private sap.ui.mdc.Table, sap.ui.comp.smarttable.SmartTable
 			 */
 			_noColumnsMessage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
@@ -389,6 +391,19 @@ sap.ui.define([
 			 * @since 1.54
 			 */
 			contextMenu: {type: "sap.ui.core.IContextMenu", multiple: false},
+
+			// This aggregation is OK as long as it's restricted to the MDC Table. Usage is simple in that context. As soon as there are plans for
+			// other usages, we should think about having only the contextMenu aggregation and an enum. The enum (row type) controls where the menu
+			// should be opened.
+			/**
+			 * Defines the context menu for group header rows.
+			 *
+			 * <b>Note:</b> The public event <code>beforeOpenContextMenu</code> is fired before this private context menu is opened.
+			 *
+			 * @private
+			 * @ui5-private sap.ui.mdc.Table
+			 */
+			groupHeaderRowContextMenu: {type: "sap.ui.core.IContextMenu", multiple: false, visibility: "hidden"},
 
 			/**
 			 * Defines the message strip to display binding-related messages.
@@ -884,7 +899,6 @@ sap.ui.define([
 		this._detachExtensions();
 		this._cleanUpTimers();
 		this._detachEvents();
-		TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
 		clearHideBusyIndicatorTimeout(this);
 		delete this._aTableHeaders;
 	};
@@ -949,28 +963,14 @@ sap.ui.define([
 		const bRtlChanged = oChanges.hasOwnProperty("rtl");
 		const bLangChanged = oChanges.hasOwnProperty("language");
 
-		this._adaptLocalization(bRtlChanged, bLangChanged);
-
-		if (bRtlChanged || bLangChanged) {
-			this.invalidate();
-		}
-	};
-
-	/**
-	 * Adapts the table to localization changes. Re-rendering or invalidation of the table needs to be taken care of by the caller.
-	 *
-	 * @param {boolean} bRtlChanged Whether the text direction changed.
-	 * @param {boolean} bLangChanged Whether the language changed.
-	 * @private
-	 */
-	Table.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
 		if (bRtlChanged) {
 			this._bRtlMode = Localization.getRTL();
 		}
 
-		if (bLangChanged) {
-			// Clear the cell context menu.
-			TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
+		if (bLangChanged) {}
+
+		if (bRtlChanged || bLangChanged) {
+			this.invalidate();
 		}
 	};
 
@@ -2234,7 +2234,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.CreationRow} oCreationRow Instance of the creation row
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.ui.mdc.Table
 	 */
 	Table.prototype.setCreationRow = function(oCreationRow) {
 		if (!TableUtils.isA(oCreationRow, "sap.ui.table.CreationRow")) {
@@ -2249,7 +2249,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.table.CreationRow} oCreationRow Instance of the creation row
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.ui.mdc.Table
 	 */
 	Table.prototype.getCreationRow = function() {
 		return this.getAggregation("creationRow");
@@ -3507,6 +3507,17 @@ sap.ui.define([
 			oSelectionPlugin.detachSelectionChange(oTable._onSelectionChanged, oTable);
 		}
 	}
+
+	Table.prototype._getDefaultContextMenu = function() {
+		let oDefaultContextMenu = this.getAggregation("_hiddenDependents").find((oElement) => oElement.isA("sap.ui.table.menus.ContextMenu"));
+
+		if (!oDefaultContextMenu) {
+			oDefaultContextMenu = new ContextMenu();
+			this.addAggregation("_hiddenDependents", oDefaultContextMenu);
+		}
+
+		return oDefaultContextMenu;
+	};
 
 	/**
 	 * @inheritDoc

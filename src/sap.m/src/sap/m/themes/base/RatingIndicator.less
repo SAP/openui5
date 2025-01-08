@@ -28,9 +28,9 @@ html.sap-tablet .sapMRI:focus {
 	float: left;
 	display: block;
 	overflow: hidden;
-	padding:0;
-	margin:0;
-	color: @sapUiAccent1;
+	padding: 0;
+	margin: 0;
+	color: var(--sapAccentColor1);
 	word-wrap: normal;
 	white-space: nowrap;
 }
@@ -57,12 +57,15 @@ html.sap-tablet .sapMRI:focus {
 	color: darken(@sapUiAccent1, 5);
 }
 
-.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
-    font-family: SAP-icons;
+.sapMRIIconSel,
+.sapMRIIconUnsel,
+.sapMRIIconHov,
+.sapMRIIconReadOnly {
+	font-family: var(--sapContent_IconFontFamily);
 }
 
 .sapMListTblCell > .sapMRI {
-  margin: 0;
+	margin: 0;
 }
 
 .sapUiSizeCondensed .sapUiTableDataCell > .sapUiTableCellInner > .sapMRI {
@@ -114,6 +117,7 @@ html.sap-tablet .sapMRI:focus {
 
 /* Compact mode */
 .sapUiSizeCompact {
+
 	.sapMRI {
 		margin: 0.5rem 0;
 	}
@@ -142,52 +146,65 @@ html.sap-tablet .sapMRI:focus {
 
 /* Condensed mode */
 .sapUiSizeCondensed .sapUiTableDataCell .sapMRI .sapUiIcon,
-.sapUiSizeCondensed .sapUiTableDataCell .sapMRI .sapMImg{
+.sapUiSizeCondensed .sapUiTableDataCell .sapMRI .sapMImg {
 	vertical-align: top;
 }
 
 .sapUiSizeCondensed .sapMRI .sapUiIcon,
-.sapUiSizeCondensed .sapMRI .sapMImg{
+.sapUiSizeCondensed .sapMRI .sapMImg {
 	padding-right: 0;
 }
 
 .sapMRI.sapUiRatingIndicatorXS {
-	.sapUiIcon, .sapMImg {
+
+	.sapUiIcon,
+	.sapMImg {
 		padding-right: @sapUiRIIconPaddingXS;
 		vertical-align: top;
 	}
 }
 
 .sapMRI.sapUiRatingIndicatorS {
-	.sapUiIcon, .sapMImg {
+
+	.sapUiIcon,
+	.sapMImg {
 		padding-right: @sapUiRIIconPaddingS;
 		vertical-align: top;
 	}
 }
 
 .sapMRI.sapUiRatingIndicatorM {
-	.sapUiIcon, .sapMImg {
+
+	.sapUiIcon,
+	.sapMImg {
 		padding-right: @sapUiRIIconPaddingM;
 		vertical-align: top;
 	}
 }
 
 .sapMRI.sapUiRatingIndicatorL {
-	.sapUiIcon, .sapMImg {
+
+	.sapUiIcon,
+	.sapMImg {
 		padding-right: @sapUiRIIconPaddingL;
 		vertical-align: top;
 	}
 }
 
-.sapMRI.sapUiRatingIndicatorXS, .sapMRI.sapUiRatingIndicatorS, .sapMRI.sapUiRatingIndicatorM,
+.sapMRI.sapUiRatingIndicatorXS,
+.sapMRI.sapUiRatingIndicatorS,
+.sapMRI.sapUiRatingIndicatorM,
 .sapMRI.sapUiRatingIndicatorL {
-	.sapUiIcon:last-child, .sapMImg:last-child {
+
+	.sapUiIcon:last-child,
+	.sapMImg:last-child {
 		padding-right: 0;
 	}
 }
 
 .sapMRI.sapMRIDisplayOnly {
+
 	.sapMRIIconSel {
-		color: @sapUiBaseText;
+		color: var(--sapTextColor);
 	}
 }

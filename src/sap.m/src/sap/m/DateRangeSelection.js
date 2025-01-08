@@ -304,7 +304,16 @@ sap.ui.define([
 		 * @returns {string} The message bundle key
 		 */
 		DateRangeSelection.prototype._getAccessibleNameLabel = function() {
-			return "DATERANGESELECTION_POPOVER_ACCESSIBLE_NAME";
+			var sConstructorName = this._getCalendarConstructor().getMetadata().getName();
+
+			switch (sConstructorName) {
+				case "sap.ui.unified.internal.CustomYearPicker":
+					return "DATERANGESELECTION_YEAR_POPOVER_ACCESSIBLE_NAME";
+				case "sap.ui.unified.internal.CustomMonthPicker":
+					return "DATERANGESELECTION_MONTH_POPOVER_ACCESSIBLE_NAME";
+				default:
+					return "DATERANGESELECTION_POPOVER_ACCESSIBLE_NAME";
+			}
 		};
 
 		DateRangeSelection.prototype._getDateFormatPlaceholderText = function (oFormatOptions) {

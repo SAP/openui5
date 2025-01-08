@@ -4,41 +4,46 @@
 /* ====================================== */
 
 .sapMRI {
-	text-shadow: @sapUiContentTextShadow;
+	text-shadow: var(--sapContent_TextShadow);
 
-	.sapMRISel, .sapMRIHov {
-		color: @sapUiContentRatedColor;
+	.sapMRISel,
+	.sapMRIHov {
+		color: var(--sapContent_RatedColor);
 	}
 
 	.sapMRIUnsel,
 	&.sapMRIReadOnly .sapMRIUnsel,
 	&.sapMRIDisplayOnly .sapMRIUnsel {
-		color: @sapUiContentUnratedColor;
+		color: var(--sapContent_UnratedColor);
 	}
 
 	&.sapMRIDisplayOnly {
 		text-shadow: none;
 
 		.sapMRIIconSel {
-			color: @sapUiContentIconColor;
+			color: var(--sapContent_IconColor);
 		}
 	}
 
 	&.sapMRIDisabled {
 		text-shadow: none;
 
-		.sapMRIUnsel, .sapMRISel {
-			color: @sapUiContentDisabledTextColor;
+		.sapMRIUnsel,
+		.sapMRISel {
+			color: var(--sapContent_DisabledTextColor);
 		}
 	}
 }
 
 /* Custom focus outline */
 html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly) {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: 0.0625rem;
 }
 
-.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
+.sapMRIIconSel,
+.sapMRIIconUnsel,
+.sapMRIIconHov,
+.sapMRIIconReadOnly {
 	font-size: 1.5rem;
 }

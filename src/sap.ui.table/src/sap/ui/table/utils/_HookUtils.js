@@ -156,13 +156,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 				]
 			},
 
-			OpenContextMenu: {
-				arguments: [
-					{type: validateCellInfo},
-					{type: "class:sap.ui.unified.Menu"}
-				]
-			},
-
 			TotalRowCountChanged: {
 				arguments: []
 			}
@@ -468,10 +461,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 
 	function validateRowsUpdateReason(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
 		return sReason in HookUtils.TableUtils.RowsUpdateReason || validateChangeReason(sReason);
-	}
-
-	function validateCellInfo(oCellInfo) { // sap.ui.table.utils.TableUtils.CellInfo
-		return oCellInfo ? typeof oCellInfo.isOfType === "function" : false;
 	}
 
 	function validateRowState(oRowState) { // sap.ui.table.Row.State

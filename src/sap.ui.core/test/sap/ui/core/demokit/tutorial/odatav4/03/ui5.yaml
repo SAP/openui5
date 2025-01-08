@@ -10,4 +10,4 @@ framework:
     - name: sap.f
     - name: sap.ui.layout
     - name: sap.ui.core
-    - name: themelib_sap_belize
+    - name: themelib_sap_horizon

@@ -9,7 +9,7 @@ sap.ui.define([
 	"./Table",
 	"./TreeTable",
 	"./TableRenderer",
-	"./menus/GroupHeaderContextMenuAdapter",
+	"./menus/AnalyticalTableContextMenu",
 	"sap/ui/core/Element",
 	"sap/ui/model/analytics/ODataModelAdapter",
 	"./utils/TableUtils",
@@ -23,7 +23,7 @@ sap.ui.define([
 	Table,
 	TreeTable,
 	TableRenderer,
-	GroupHeaderContextMenuAdapter,
+	AnalyticalTableContextMenu,
 	Element,
 	ODataModelAdapter,
 	TableUtils,
@@ -63,6 +63,9 @@ sap.ui.define([
 			/**
 			 * If set to <code>true</code>, the full set of <code>MenuItem</code> instances is shown in the group header menu. The value
 			 * <code>false</code> means that only a reduced set of group header menu items is shown.
+			 *
+			 * @private
+			 * @ui5-private sap.ui.comp.smarttable.SmartTable
 			 */
 			extendedGroupHeaderMenu: {type: "boolean", group: "Behavior", defaultValue: true, visibility: "hidden"}
 		},
@@ -123,29 +126,13 @@ sap.ui.define([
 		});
 		this._aGroupedColumns = [];
 		this._bSuspendUpdateAnalyticalInfo = false;
-		this._oGroupHeaderMenuAdapter = new GroupHeaderContextMenuAdapter(this);
 
 		TableUtils.Grouping.setToDefaultGroupMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
-		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenContextMenu, onOpenTableContextMenu, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 
 		this._oProxy = new TreeBindingProxy(this, "rows");
-	};
-
-	AnalyticalTable.prototype.exit = function() {
-		Table.prototype.exit.apply(this, arguments);
-		this._oGroupHeaderMenuAdapter.destroy();
-	};
-
-	AnalyticalTable.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
-		Table.prototype._adaptLocalization.apply(this, arguments);
-
-		if (bLangChanged) {
-			this._oGroupHeaderMenuAdapter.destroy();
-			this._oGroupHeaderMenuAdapter = new GroupHeaderContextMenuAdapter(this);
-		}
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -320,18 +307,6 @@ sap.ui.define([
 			}
 		}
 	};
-
-	function onOpenTableContextMenu(oCellInfo, oMenu) {
-		const oRow = oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL) ? this.getRows()[oCellInfo.rowIndex] : null;
-
-		if (!oRow || !oRow.isGroupHeader()) {
-			this._oGroupHeaderMenuAdapter.removeItemsFrom(oMenu);
-			return;
-		}
-
-		this._iGroupedLevel = oRow.getLevel();
-		this._oGroupHeaderMenuAdapter.addItemsTo(oMenu, this.getProperty("extendedGroupHeaderMenu"));
-	}
 
 	/**
 	 * @inheritDoc
@@ -829,7 +804,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.Row} oRow The row for which the analytical information is returned
 	 * @returns {object | null} The analytical information of the given row
 	 * @private
-	 * @ui5-restricted sap.ui.comp
+	 * @ui5-restricted sap.ui.comp.smarttable.SmartTable
 	 */
 	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) {
 		const oBinding = this.getBinding();
@@ -882,6 +857,19 @@ sap.ui.define([
 
 	// This table sets its own constraints on the row counts.
 	AnalyticalTable.prototype._setRowCountConstraints = function() {};
+
+	AnalyticalTable.prototype._getDefaultContextMenu = function() {
+		let oDefaultContextMenu = this.getAggregation("_hiddenDependents").find((oElement) => {
+			return oElement.isA("sap.ui.table.menus.AnalyticalTableContextMenu");
+		});
+
+		if (!oDefaultContextMenu) {
+			oDefaultContextMenu = new AnalyticalTableContextMenu();
+			this.addAggregation("_hiddenDependents", oDefaultContextMenu);
+		}
+
+		return oDefaultContextMenu;
+	};
 
 	// If the AnalyticalBinding is created with the parameter "useBatchRequest" set to false, an imbalance between dataRequested and
 	// dataReceived events can occur. There will be one dataRequested event for every request that would otherwise be part of a batch

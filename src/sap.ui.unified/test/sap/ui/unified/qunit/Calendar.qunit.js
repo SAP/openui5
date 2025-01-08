@@ -160,48 +160,48 @@ sap.ui.define([
 
 	QUnit.test("Week day orders", function(assert) {
 		var oMonthDomRef = Element.getElementById("Cal1").getAggregation("month")[0].getDomRef(),
-			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
+			aWeekHeaderTextElemnts = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
 
-		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
-		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for en-US");
+		assert.equal(aWeekHeaderTextElemnts.length, 7, "7 weekheaders rendered");
+		assert.equal(aWeekHeaderTextElemnts[0].textContent, "Sun", "Sunday is the first weekday for en-US");
 
 		oMonthDomRef = Element.getElementById("Cal2").getAggregation("month")[0].getDomRef();
-		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
-		assert.equal(aWeekHeaders[0].textContent, "Mo", "Monday is the first weekday for de-DE");
+		aWeekHeaderTextElemnts = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
+		assert.equal(aWeekHeaderTextElemnts[0].textContent, "Mo", "Monday is the first weekday for de-DE");
 
 		oMonthDomRef = Element.getElementById("Cal3").getAggregation("month")[0].getDomRef();
-		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
-		assert.equal(aWeekHeaders[0].textContent, "Di", "Thuesday is the first weekday for custom setting");
+		aWeekHeaderTextElemnts = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
+		assert.equal(aWeekHeaderTextElemnts[0].textContent, "Di", "Thuesday is the first weekday for custom setting");
 
 		assert.equal(iStartDateChangeFired, 0, "Initially no startdateChange event fired");
 		assert.equal(oFormatYyyymmdd.format(this.oCal2.getStartDate()), "20110101", "Cal2: Start date");
 	});
 
-	QUnit.test("Week day orders", function(assert) {
+	QUnit.test("Week day orders - different calendar week numbering", function(assert) {
 		//Assert
 		this.oCal1.setCalendarWeekNumbering("ISO_8601");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		var oMonthDomRef = Element.getElementById("Cal1").getAggregation("month")[0].getDomRef(),
-			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
+			aWeekHeaderTextElements = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
 
-		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
-		assert.equal(aWeekHeaders[0].textContent, "Mon", "Sunday is the first weekday for ISO_8601");
+		assert.equal(aWeekHeaderTextElements.length, 7, "7 weekheaders rendered");
+		assert.equal(aWeekHeaderTextElements[0].textContent, "Mon", "Sunday is the first weekday for ISO_8601");
 
 		this.oCal2.setCalendarWeekNumbering("MiddleEastern");
 		this.oCal2.setLocale("en-US");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oMonthDomRef = Element.getElementById("Cal2").getAggregation("month")[0].getDomRef();
-		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
-		assert.equal(aWeekHeaders[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
+		aWeekHeaderTextElements = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
+		assert.equal(aWeekHeaderTextElements[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
 
 		this.oCal3.setCalendarWeekNumbering("WesternTraditional");
 		this.oCal3.setLocale("en-US");
 		this.oCal3.setFirstDayOfWeek(-1);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oMonthDomRef = Element.getElementById("Cal3").getAggregation("month")[0].getDomRef();
-		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
-		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
+		aWeekHeaderTextElements = oMonthDomRef.querySelectorAll("[aria-hidden='true']");
+		assert.equal(aWeekHeaderTextElements[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
 
 		assert.equal(iStartDateChangeFired, 0, "Initially no startdateChange event fired");
 		assert.equal(oFormatYyyymmdd.format(this.oCal2.getStartDate()), "20110101", "Cal2: Start date");
@@ -1695,11 +1695,15 @@ sap.ui.define([
 		const aMonth = oCal.getAggregation("month");
 		const aWeekNumbers = aMonth[0].getDomRef().querySelectorAll(".sapUiCalWeekNum");
 		const oMockedEvent = {
-			target: aWeekNumbers[1]
+			target: aWeekNumbers[1],
+			button: 0,
+			clientX: 60,
+			clientY: 256
 		};
 
 		// Act
 		aMonth[0].onmousedown(oMockedEvent);
+		aMonth[0].onmouseup(oMockedEvent);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		let oDateCell = aWeekNumbers[1].nextElementSibling;
 
@@ -1711,6 +1715,7 @@ sap.ui.define([
 
 		// Act
 		aMonth[0].onmousedown(oMockedEvent);
+		aMonth[0].onmouseup(oMockedEvent);
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		oDateCell = aWeekNumbers[1].nextElementSibling;
 

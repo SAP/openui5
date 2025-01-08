@@ -9,13 +9,14 @@
 }
 
 .sapMRangeSlider.sapMSlider {
+
 	.sapMSliderLabels {
 		height: 1rem;
 
 		.sapMSliderRangeLabel {
 			width: 2rem;
-			font-size: @sapMFontSmallSize;
-			color: @sapUiContentLabelColor;
+			font-size: var(--sapFontSmallSize);
+			color: var(--sapContent_LabelColor);
 		}
 	}
 
@@ -24,25 +25,26 @@
 	}
 
 	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
+
 		&:hover {
 			background-color: transparent;
-			border-color: @sapUiButtonHoverBorderColor;
+			border-color: var(--sapButton_Hover_BorderColor);
 		}
 
 		&:active {
 			background: transparent;
-			border-color: @sapUiButtonActiveBorderColor;
+			border-color: var(--sapButton_Active_BorderColor);
 		}
 
 		&.sapMSliderHandlePressed {
 			background: transparent;
-			border-color: @sapUiButtonActiveBorderColor;
+			border-color: var(--sapButton_Active_BorderColor);
 		}
 	}
 
 	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
 	.sapMSliderHandle:hover {
 		background-color: fade(@sapUiButtonHoverBackground, 25);
-		border-color: @sapUiButtonHoverBorderColor;
+		border-color: var(--sapButton_Hover_BorderColor);
 	}
 }

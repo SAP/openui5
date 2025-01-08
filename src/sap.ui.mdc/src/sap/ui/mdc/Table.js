@@ -930,7 +930,8 @@ sap.ui.define([
 		this._setupPropertyInfoStore("propertyInfo");
 
 		this._oManagedObjectModel = new ManagedObjectModel(this, {
-			hasGrandTotal: false
+			hasGrandTotal: false,
+			activeP13nModes: createActiveP13nModesMap(this)
 		});
 		this._oManagedObjectModel.setDefaultBindingMode(BindingMode.OneWay);
 		this.setModel(this._oManagedObjectModel, "$sap.ui.mdc.Table");
@@ -1089,28 +1090,8 @@ sap.ui.define([
 
 	Table.prototype.setContextMenu = function(oContextMenu) {
 		this._oContextMenu = this.validateAggregation("contextMenu", oContextMenu, false);
-
-		if (!this._oTable) {
-			return this;
-		}
-
-		this._oTable.setAggregation("contextMenu", oContextMenu, true);
-
-		if (!oContextMenu) {
-			this._oTable.detachBeforeOpenContextMenu(this._onBeforeOpenContextMenu, this);
-			return this;
-		}
-
-		if (!this._oTable.hasListeners("beforeOpenContextMenu")) {
-			this._oTable.attachBeforeOpenContextMenu(this._onBeforeOpenContextMenu, this);
-		}
-
+		this._oTable?.setAggregation("contextMenu", oContextMenu, true);
 		return this;
-	};
-
-	Table.prototype._onBeforeOpenContextMenu = function(oEvent) {
-		const oEventParameters = this._getType().getContextMenuParameters(oEvent);
-		!this.fireBeforeOpenContextMenu(oEventParameters) && oEvent.preventDefault();
 	};
 
 	Table.prototype.getContextMenu = function() {
@@ -1125,6 +1106,27 @@ sap.ui.define([
 		}
 		this._oContextMenu = null;
 		return this;
+	};
+
+	Table.prototype._onBeforeOpenContextMenu = function(mPropertyBag) {
+		const oContextMenu = mPropertyBag.contextMenu;
+		let bPreventDefault = true;
+
+		if (oContextMenu.isA("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu")) {
+			oContextMenu.initContent(this, {
+				groupLevel: mPropertyBag.groupLevel
+			});
+			bPreventDefault = oContextMenu.isEmpty();
+		} else {
+			bPreventDefault = !this.fireBeforeOpenContextMenu({
+				bindingContext: mPropertyBag.bindingContext,
+				column: mPropertyBag.column
+			});
+		}
+
+		if (bPreventDefault) {
+			mPropertyBag.event.preventDefault();
+		}
 	};
 
 	/**
@@ -1390,8 +1392,8 @@ sap.ui.define([
 		}
 
 		this.setProperty("p13nMode", aSortedKeys, true);
-
 		this._updateAdaptation();
+		this._oManagedObjectModel.setProperty("/@custom/activeP13nModes", createActiveP13nModesMap(this));
 
 		if (!deepEqual(aOldP13nMode.sort(), this.getP13nMode().sort())) {
 			updateP13nSettings(this);
@@ -1736,6 +1738,7 @@ sap.ui.define([
 
 			// TODO: Cache Delegate.getSupportedFeatures and use only cached feature information in the table.
 
+			this._oManagedObjectModel.setProperty("/@custom/activeP13nModes", createActiveP13nModesMap(this));
 			this._updateAdaptation();
 
 			const oDelegate = this.getControlDelegate();
@@ -2139,6 +2142,20 @@ sap.ui.define([
 
 		return aSupportedP13nModes;
 	};
+
+	function createActiveP13nModesMap(oTable) {
+		const oAllP13nModes = new Set(Object.keys(TableP13nMode));
+		const oEnabledP13nModes = new Set(oTable.getP13nMode());
+		const oP13nModesSupportedByDelegate = new Set(oTable.isControlDelegateInitialized()
+			? oTable.getControlDelegate().getSupportedFeatures(oTable).p13nModes
+			: []);
+		const oActiveP13nModes = oEnabledP13nModes.intersection(oP13nModesSupportedByDelegate);
+
+		return Array.from(oAllP13nModes).reduce((oModes, sMode) => {
+			oModes[sMode] = oActiveP13nModes.has(sMode);
+			return oModes;
+		}, {});
+	}
 
 	Table.prototype.getActiveP13nModes = function() {
 		return getIntersection(this.getP13nMode(), this.getSupportedP13nModes());
