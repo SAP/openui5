@@ -15,8 +15,10 @@ sap.ui.define([
 	"sap/m/Carousel",
 	"sap/base/Log",
 	"sap/ui/core/Lib",
-	"sap/m/VBox"
-], function(Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log, Library, VBox) {
+	"sap/m/VBox",
+	"sap/m/Bar",
+	"sap/m/Title"
+], function(Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log, Library, VBox, Bar, Title) {
 	"use strict";
 
 	// get resource translation bundle;
@@ -128,8 +130,9 @@ sap.ui.define([
 				if (!this._oDialog) {
 					this._oDialog = this._createDialog();
 				} else {
+					var oTitle = this._oDialog?.getCustomHeader()?.getContentLeft()[0];
 					// Sets the title of the dialog to the currently previewed item filename.
-					this._oDialog.setTitle(this._previewItem?.getFileName() || "");
+					oTitle?.setText(this._previewItem?.getFileName() || "");
 					// Removes all the existing content and set the new content on the dialog.
 					this._oDialog.removeAllContent();
 					this._oDialog.insertContent(this._oCarousel);
@@ -325,7 +328,9 @@ sap.ui.define([
 					// oCarousel.setActivePage(oTargetPage);
 
 					const sNewDialogTitle = aItems[iIndex].getFileName();
-					this._oDialog.setTitle(sNewDialogTitle);
+
+					var oTitle = this._oDialog?.getCustomHeader()?.getContentLeft()[0];
+					oTitle?.setText(sNewDialogTitle);
 				}
 			});
 
@@ -431,7 +436,9 @@ sap.ui.define([
 		_createDialog: function() {
 			const oActiveItem = this._getActiveUploadSetwithTableItem();
 			const oDialog = new Dialog({
-				title: oActiveItem.getFileName(),
+				customHeader: new Bar({
+					contentLeft: [new Title({ text:  oActiveItem.getFileName()}).addStyleClass("sapMDialogTitle")]
+				}),
 				content: this._oCarousel,
 				horizontalScrolling: false,
 				verticalScrolling: false,
