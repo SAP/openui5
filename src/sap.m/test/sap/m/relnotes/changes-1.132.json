@@ -3,6 +3,11 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "c0ed69faa6489d131cb96bab69ee528e61e328eb",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: prevent adding tokens to disabled input"
+      },
+      {
         "id": "7f8fde06ae203a537fd1fe13919cd0e109e4700b",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Accessible name is now provided"
