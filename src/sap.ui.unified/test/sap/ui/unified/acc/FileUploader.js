@@ -8,10 +8,13 @@ sap.ui.define([
 ], function(Label, coreLibrary, FileUploader, VerticalLayout, App, Page) {
 	"use strict";
 
+	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
-	var oLabel1 = new Label({text: "Simple FileUploader", labelFor: "FU1"});
+	var oLabel1 = new Label({text: "Simple FileUploader", labelFor: "FU1", wrapping: true});
 	var oFU1 = new FileUploader("FU1", {
 		name: "FU1",
 		uploadUrl: "../../../../../upload/",
@@ -27,7 +30,7 @@ sap.ui.define([
 		}
 	});
 
-	var oLabel2 = new Label({text: "FileUploader with Label", labelFor: "FU2"});
+	var oLabel2 = new Label({text: "FileUploader with Label", labelFor: "FU2", wrapping: true});
 	var oFU2 = new FileUploader("FU2", {
 		name: "FU2",
 		uploadUrl: "../../../../../upload/",
@@ -36,7 +39,7 @@ sap.ui.define([
 		additionalData: "abc=123&test=456"
 	});
 
-	var oLabel3 = new Label({text: "Disabled FileUploader", labelFor: "FU3"});
+	var oLabel3 = new Label({text: "Disabled FileUploader", labelFor: "FU3", wrapping: true});
 	var oFU3 = new FileUploader("FU3", {
 		name: "FU3",
 		uploadUrl: "../../../../../upload/",
@@ -46,7 +49,7 @@ sap.ui.define([
 		enabled: false
 	});
 
-	var oLabel4 = new Label({text: "FileUploader with Tooltip", labelFor: "FU4"});
+	var oLabel4 = new Label({text: "FileUploader with Tooltip", labelFor: "FU4", wrapping: true});
 	var oFU4 = new FileUploader("FU4", {
 		name: "FU4",
 		uploadUrl: "../../../../../upload/",
@@ -56,7 +59,7 @@ sap.ui.define([
 		tooltip: "Tooltip"
 	});
 
-	var oLabel5 = new Label({text: "FileUploader with Tooltip and Label", labelFor: "FU5"});
+	var oLabel5 = new Label({text: "FileUploader with Tooltip and Label", labelFor: "FU5", wrapping: true});
 	var oFU5 = new FileUploader("FU5", {
 		name: "FU5",
 		uploadUrl: "../../../../../upload/",
@@ -66,7 +69,7 @@ sap.ui.define([
 		tooltip: "Tooltip"
 	});
 
-	var oLabel6 = new Label({text: "FileUploader with only Button", labelFor: "FU6"});
+	var oLabel6 = new Label({text: "FileUploader with only Button", labelFor: "FU6", wrapping: true});
 	var oFU6 = new FileUploader("FU6", {
 		name: "FU6",
 		uploadUrl: "../../../../../upload/",
@@ -77,7 +80,7 @@ sap.ui.define([
 		buttonText: "Choose"
 	});
 
-	var oLabel7 = new Label({text: "FileUploader with ValueState", labelFor: "FU7"});
+	var oLabel7 = new Label({text: "FileUploader with ValueState", labelFor: "FU7", wrapping: true});
 	var oFU7 = new FileUploader("FU7", {
 		name: "FU7",
 		uploadUrl: "../../../../../upload/",
@@ -87,7 +90,7 @@ sap.ui.define([
 		valueState: ValueState.Error
 	});
 
-	var oLabel8 = new Label({text: "FileUploader with Placeholder", labelFor: "FU8"});
+	var oLabel8 = new Label({text: "FileUploader with Placeholder", labelFor: "FU8", wrapping: true});
 	var oFU8 = new FileUploader("FU8", {
 		name: "FU8",
 		uploadUrl: "../../../../../upload/",
@@ -97,7 +100,7 @@ sap.ui.define([
 		placeholder: "choose file"
 	});
 
-	var oLabel9 = new Label({text: "FileUploader with icon only", labelFor: "FU9"});
+	var oLabel9 = new Label({text: "FileUploader with icon only", labelFor: "FU9", wrapping: true});
 	var oFU9 = new FileUploader("FU9", {
 		name: "FU9",
 		uploadUrl: "../../../../../upload/",
@@ -110,36 +113,27 @@ sap.ui.define([
 
 	var oLayout = new VerticalLayout({
 		content: [
-			oLabel1,
-			oFU1,
-			oLabel2,
-			oFU2,
-			oLabel3,
-			oFU3,
-			oLabel4,
-			oFU4,
-			oLabel5,
-			oFU5,
-			oLabel6,
-			oFU6,
-			oLabel7,
-			oFU7,
-			oLabel8,
-			oFU8,
-			oLabel9,
-			oFU9
+			oLabel1, oFU1,
+			oLabel2, oFU2,
+			oLabel3, oFU3,
+			oLabel4, oFU4,
+			oLabel5, oFU5,
+			oLabel6, oFU6,
+			oLabel7, oFU7,
+			oLabel8, oFU8,
+			oLabel9, oFU9
 		]
 	}).addStyleClass("sapUiContentPadding");
 
-	var app = new App("myApp");
-	var page = new Page("page", {
-		title: "Test Page for sap.ui.unified.FileUploader",
+	var oApp = new App();
+	var oPage = new Page({
+		title: "FileUploader Accessibility Test Page",
 		titleLevel: TitleLevel.H1,
 		content: [
 			oLayout
 		]
 	});
 
-	app.addPage(page);
-	app.placeAt("body");
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
 });

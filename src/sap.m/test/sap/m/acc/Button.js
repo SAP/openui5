@@ -6,9 +6,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Title",
 	"sap/ui/core/library",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/HorizontalLayout"
-], function(App, Button, Label, mobileLibrary, Page, Title, coreLibrary, VerticalLayout, HorizontalLayout) {
+	"sap/ui/layout/VerticalLayout"
+], function(App, Button, Label, mobileLibrary, Page, Title, coreLibrary, VerticalLayout) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -16,8 +15,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TitleLevel
 	const TitleLevel = coreLibrary.TitleLevel;
-
-	const app = new App("myApp");
 
 	const oDefaultButtons = new VerticalLayout({
 		content: [
@@ -125,13 +122,24 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiSmallMargin");
 
-	const oPage = new Page("page1", {
-		title:"Button Test page",
+	const oApp = new App();
+	const oPage = new Page({
+		title:"Button Accessibility Test Page",
 		titleLevel: TitleLevel.H1,
 		content : [
-			new Label("L1", { text: "Go to homepage", width: "100%" }),
+			new Label("L1", {
+				text: "Go to homepage",
+				width: "100%",
+				wrapping: true
+			}),
 			oDefaultButtons,
-			new Title({ text: "Buttons with special types:", level: TitleLevel.H2, width: "100%" }).addStyleClass("sapUiSmallMarginTop"),
+			new Title({
+				text: "Buttons with special types:",
+				level: TitleLevel.H2,
+				titleStyle: TitleLevel.H5,
+				width: "100%",
+				wrapping: true
+			}).addStyleClass("sapUiSmallMarginTop"),
 			ButtonsWithSpecialTypesBack,
 			ButtonsWithSpecialTypesAccept,
 			ButtonsWithSpecialTypesReject,
@@ -141,6 +149,6 @@ sap.ui.define([
 	});
 
 	oPage.addStyleClass("sapUiContentPadding");
-	app.addPage(oPage);
-	app.placeAt("body");
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
 });

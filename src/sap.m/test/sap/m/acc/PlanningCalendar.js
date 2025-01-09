@@ -223,7 +223,6 @@ sap.ui.define([
 		rows: [
 			new PlanningCalendarRow("Row1", {
 				customData: new CustomData({key: "myKey", value: "myValue", writeToDom: true}),
-				icon: "../ui/unified/images/m_01.png",
 				title: "Max Mustermann",
 				text: "Musterteam",
 				tooltip: "Header tooltip",
@@ -285,7 +284,6 @@ sap.ui.define([
 							})
 						],
 						title: "2 days meeting",
-						icon: "../ui/unified/images/m_01.png",
 						tooltip: "2 days meeting",
 						text: "Room 1"
 					}),
@@ -339,7 +337,6 @@ sap.ui.define([
 						endDate: UI5Date.getInstance("2015", "0", "2", "23", "59"),
 						type: CalendarDayType.Type01,
 						title: "Event 1",
-						icon: "../ui/unified/images/m_01.png",
 						tooltip: "Tooltip 1",
 						text: "Room 1"
 					}),

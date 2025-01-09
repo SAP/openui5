@@ -54,10 +54,11 @@ sap.ui.define([
 
 	// Single Day Selection
 	const oSingleDaySelectionLabel = new Label({
-		text: "Calendar with Legend"
+		text: "Calendar with Legend",
+		wrapping: true
 	});
 	const oSingleDaySelectionCalendar = new Calendar({
-		startDate: UI5Date.getInstance(2017, 3, 1),
+		initialFocusedDate: UI5Date.getInstance(2017, 3, 1),
 		ariaLabelledBy: oSingleDaySelectionLabel,
 		legend: oCalendarLegend,
 		selectedDates: [new DateRange({startDate: UI5Date.getInstance(2017, 3, 12)})],
@@ -80,5 +81,5 @@ sap.ui.define([
 	});
 
 	oApp.addPage(oPage);
-	oApp.placeAt("content");
+	oApp.placeAt("body");
 });

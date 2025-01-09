@@ -381,18 +381,18 @@ sap.ui.define([
 			iRight = iRight < 0 ? 0 : iRight;
 
 			if (!bHasCustomContent && sTitle) {
-				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Title";
+				mAccProps["labelledby"].value = `${mAccProps["labelledby"].value} ${sId}-${iColumn}_${iRow}-Title`;
 			}
 
 			// Put start/end information after the title
-			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Descr";
+			mAccProps["labelledby"].value = `${mAccProps["labelledby"].value} ${sId}-${iColumn}_${iRow}-Descr`;
 
 			if (!bHasCustomContent && sText) {
-				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Text";
+				mAccProps["labelledby"].value = `${mAccProps["labelledby"].value} ${sId}-${iColumn}_${iRow}-Text`;
 			}
 
 			if (oAppointment.getTentative()) {
-				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
+				mAccProps["labelledby"].value = `${mAccProps["labelledby"].value} ${InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE")}`;
 			}
 
 			if (oAppointment.getSelected()) {
@@ -467,14 +467,14 @@ sap.ui.define([
 				aClasses = ["sapUiCalendarAppIcon"];
 				var mAttributes = {};
 
-				mAttributes["id"] = sId + "-Icon";
+				mAttributes["id"] = `${sId}-${iColumn}_${iRow}-Icon`;
 				mAttributes["title"] = null;
 				mAttributes["role"] = "presentation";
 				oRm.icon(sIcon, aClasses, mAttributes);
 			}
 
 			if (!bHasCustomContent && sTitle) {
-				oRm.openStart("span", sId + "-" + iColumn + "_" + iRow + "-Title");
+				oRm.openStart("span", `${sId}-${iColumn}_${iRow}-Title`);
 				oRm.class("sapUiCalendarAppTitle");
 				oRm.openEnd(); // span element
 				oRm.text(sTitle, true);
@@ -492,7 +492,7 @@ sap.ui.define([
 				oRm.icon("sap-icon://arrow-right", aClasses, { title: null, role: "img" });
 			}
 
-			oRm.openStart("span", sId + "-" + iColumn + "_" + iRow + "-Descr");
+			oRm.openStart("span", `${sId}-${iColumn}_${iRow}-Descr`);
 			oRm.class("sapUiInvisibleText");
 			oRm.openEnd(); // span element
 			oRm.text(oControl._getAppointmentAnnouncementInfo(oAppointment));
@@ -517,13 +517,13 @@ sap.ui.define([
 
 			oStartDate.setDate(oStartDate.getDate() - oStartDate.getDay() + iFirstDayOfWeek);
 			oFirstRenderedDate = CalendarDate.fromLocalJSDate(oStartDate);
-			oRm.openStart("div", sId + "-Names");
+			oRm.openStart("div", `${sId}-Names`);
 			oRm.class("sapMSPCMonthDayNames");
 			oRm.openEnd(); // span element
 
 			for (var i = 0; i < 7; i++) {
 				iDayIndex = (i + iFirstDayOfWeek) % 7;
-				sDayId = sId + "-WH" + iDayIndex;
+				sDayId = `${sId}-WH${iDayIndex}`;
 
 				oRm.openStart("div", sDayId);
 				oRm.class("sapUiCalWH");
