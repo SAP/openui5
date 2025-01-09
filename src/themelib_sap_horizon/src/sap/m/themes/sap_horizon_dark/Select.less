@@ -151,7 +151,9 @@ div.sapMSltPicker .sapMSltPickerValueState {
 
 .sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
 .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
-	background: var(--sapField_Background);
+	&:not(.sapMSltReadonly) {
+		background: var(--sapField_Background);
+	}
 	border: none;
 
 	&:not(.sapMSltExpanded) {
