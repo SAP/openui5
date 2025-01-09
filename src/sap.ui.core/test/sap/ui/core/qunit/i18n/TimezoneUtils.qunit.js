@@ -553,7 +553,7 @@ sap.ui.define([
 		QUnit.test("convert CLDR to ABAP", function (assert) {
 			const oDateTimeFormatMock = this.mock(Intl.DateTimeFormat.prototype);
 
-			for (const [sCLDR_ID, sABAP_ID] of Object.entries(TimezoneUtils.mCLDR2ABAPTimezones)) {
+			for (const [sCLDR_ID, sABAP_ID] of Object.entries(TimezoneUtils.mTimezoneAliases2ABAPTimezones)) {
 				TimezoneUtils._clearLocalTimezoneCache();
 				oDateTimeFormatMock.expects("resolvedOptions").returns({timeZone: sCLDR_ID});
 

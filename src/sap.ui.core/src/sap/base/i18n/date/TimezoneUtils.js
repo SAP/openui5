@@ -287,7 +287,7 @@ sap.ui.define([], function() {
 	 *
 	 * @private
  	 */
-	TimezoneUtils.mCLDR2ABAPTimezones = {
+	TimezoneUtils.mTimezoneAliases2ABAPTimezones = {
 		"America/Buenos_Aires": "America/Argentina/Buenos_Aires",
 		"America/Catamarca": "America/Argentina/Catamarca",
 		"America/Cordoba": "America/Argentina/Cordoba",
@@ -321,7 +321,7 @@ sap.ui.define([], function() {
 	TimezoneUtils.getLocalTimezone = function() {
 		if (sLocalTimezone === "") { // timezone may be undefined, only value "" means empty cache
 			sLocalTimezone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
-			sLocalTimezone = TimezoneUtils.mCLDR2ABAPTimezones[sLocalTimezone] || sLocalTimezone;
+			sLocalTimezone = TimezoneUtils.mTimezoneAliases2ABAPTimezones[sLocalTimezone] || sLocalTimezone;
 		}
 
 		return sLocalTimezone;
