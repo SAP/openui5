@@ -1597,8 +1597,9 @@ sap.ui.define([
 			oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);
 			oOptions.precision = (mUnitPatterns && (typeof mUnitPatterns.precision === "number" && mUnitPatterns.precision >= 0)) ? mUnitPatterns.precision : oOptions.precision;
 		}
-
-		if (oOptions.type == mNumberType.CURRENCY) {
+		let sCurrencySymbolOrCode;
+		if (oOptions.type === mNumberType.CURRENCY) {
+			sCurrencySymbolOrCode = this.getCurrencySymbolOrCode(oOptions, sMeasure);
 			// Make sure the "trailingCurrencyCode" mode is only used on currency codes:
 			// The "customCurrencies" format option takes precedence over CLDR and global configuration. If the given measure isn't found
 			// there, we already return an empty string in the check above (look for error log 'Currency "xy" is unknown').
@@ -1615,21 +1616,7 @@ sap.ui.define([
 
 			if (!oOptions.showNumber) {
 				// if the number should not be shown, return the sMeasure part standalone, without anything number specific
-				if (!oOptions.currencyCode) {
-					var sSymbol;
-					// custom currencies provided
-					if (oOptions.customCurrencies && typeof oOptions.customCurrencies === "object") {
-						// the custom currency symbol map was preprocessed on instance creation
-						sSymbol = this.mKnownCurrencySymbols[sMeasure];
-					} else {
-						sSymbol = this.oLocaleData.getCurrencySymbol(sMeasure);
-					}
-
-					if (sSymbol && sSymbol !== sMeasure) {
-						sMeasure = sSymbol;
-					}
-				}
-				return sMeasure;
+				return sCurrencySymbolOrCode;
 			}
 
 			if (oOptions.style === "long" || oOptions.style === "short") {
@@ -1868,23 +1855,7 @@ sap.ui.define([
 				}
 			}
 
-			// check if we need to render a symbol instead of a currency-code
-			if (!oOptions.currencyCode) {
-				var sSymbol;
-				// custom currencies provided
-				if (oOptions.customCurrencies && typeof oOptions.customCurrencies === "object") {
-					// the custom currency symbol map was preprocessed on instance creation
-					sSymbol = this.mKnownCurrencySymbols[sMeasure];
-				} else {
-					sSymbol = this.oLocaleData.getCurrencySymbol(sMeasure);
-				}
-
-				if (sSymbol && sSymbol !== sMeasure) {
-					sMeasure = sSymbol;
-				}
-			}
-
-			sResult = this._composeCurrencyResult(sPattern, sResult, sMeasure, {
+			sResult = this._composeCurrencyResult(sPattern, sResult, sCurrencySymbolOrCode, {
 				decimalPadding: iDecimalPadding,
 				showMeasure: oOptions.showMeasure,
 				negative: bNegative,
@@ -1936,6 +1907,32 @@ sap.ui.define([
 			sResult += "\u2007".repeat(iDecimalPaddingLength); // CHAR_FIGURE_SPACE u2007
 		}
 		return this._addOriginInfo(sResult);
+	};
+
+	/**
+	 * Gets the currency symbol or the currency code for the given currency code depending on the given format options.
+	 *
+	 * @param {Object<string, any>} oFormatOptions
+	 *   The currently used format options
+	 * @param {boolean} [oFormatOptions.currencyCode=true]
+	 *   Whether to show the currency code or the currency symbol, see {@link Numberformat.getCurrencyInstance}
+	 * @param {Object<string,object>} [oFormatOptions.customCurrencies]
+	 *   Custom currencies, see {@link Numberformat.getCurrencyInstance}
+	 * @param {string} sCurrencyCode
+	 *   The currency code
+	 *
+	 * @returns {string}
+	 *   The currency symbol or the currency code
+	 * @private
+	 */
+	NumberFormat.prototype.getCurrencySymbolOrCode = function (oFormatOptions, sCurrencyCode) {
+		if (oFormatOptions.currencyCode) {
+			return sCurrencyCode;
+		}
+		// the custom currency symbol map was preprocessed on instance creation
+		return (typeof oFormatOptions.customCurrencies === "object"
+			? this.mKnownCurrencySymbols[sCurrencyCode]
+			: this.oLocaleData.getCurrencySymbol(sCurrencyCode)) || sCurrencyCode;
 	};
 
 	/**
