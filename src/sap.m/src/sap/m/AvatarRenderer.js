@@ -59,6 +59,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", 	"sap/ui/core/Ico
 				bActive = oAvatar.getActive() && bShouldBeClickable,
 				sCustomBadgeTooltip = oAvatar._getBadgeTooltip(),
 				sDefaultBadgeTooltip = oAvatar._getDefaultTooltip(),
+				bDecorative = oAvatar.getDecorative(),
 				sBadgeTooltip = (sCustomBadgeTooltip && sCustomBadgeTooltip !== sDefaultBadgeTooltip) ? sDefaultTooltip + " " + sCustomBadgeTooltip : sDefaultBadgeTooltip;
 
 			oRm.openStart("span", oAvatar);
@@ -78,7 +79,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", 	"sap/ui/core/Ico
 					oRm.class(sAvatarClass + "Focusable");
 					oRm.attr("role", "button");
 					oRm.attr("tabindex", 0);
-				} else if (oAvatar.getDecorative()) {
+				} else if (bDecorative) {
 					oRm.attr("role", "presentation");
 					oRm.attr("aria-hidden", "true");
 				} else {
@@ -96,23 +97,25 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", 	"sap/ui/core/Ico
 				oRm.style("height", sCustomDisplaySize);
 				oRm.style("font-size", sCustomFontSize);
 			}
-			if (sTooltip) {
-				// if tooltip property is set the initials should be overwritten
-				oRm.attr("title", sTooltip);
-				oRm.attr("aria-label", sTooltip);
-			} else if (sBadgeTooltip) {
-				// if both initials and badgeTooltip are available, their value should also be incorporated into the aria-label
-				if (sInitials) {
-					sBadgeTooltip += " " + sInitials;
+			if (!bDecorative || bHasListener) {
+				if (sTooltip) {
+					// if tooltip property is set the initials should be overwritten
+					oRm.attr("title", sTooltip);
+					oRm.attr("aria-label", sTooltip);
+				} else if (sBadgeTooltip) {
+					// if both initials and badgeTooltip are available, their value should also be incorporated into the aria-label
+					if (sInitials) {
+						sBadgeTooltip += " " + sInitials;
+					}
+					// if only badgeTooltip is available, its value should be incorporated into the aria-label
+					oRm.attr("aria-label", sBadgeTooltip);
+				} else if (sInitials) {
+					// default "Avatar" text + initials
+					oRm.attr("aria-label", sDefaultTooltip + " " + sInitials);
+				} else {
+					// no tooltip set nor initials - set only the default "Avatar" text
+					oRm.attr("aria-label", sDefaultTooltip);
 				}
-				// if only badgeTooltip is available, its value should be incorporated into the aria-label
-				oRm.attr("aria-label", sBadgeTooltip);
-			} else if (sInitials) {
-				// default "Avatar" text + initials
-				oRm.attr("aria-label", sDefaultTooltip + " " + sInitials);
-			} else {
-				// no tooltip set nor initials - set only the default "Avatar" text
-				oRm.attr("aria-label", sDefaultTooltip);
 			}
 			// aria-labelledby references
 			if (aLabelledBy && aLabelledBy.length > 0) {
