@@ -3634,6 +3634,20 @@ sap.ui.define([
 	}, { // client-side annotation
 		path : "/TEAMS('42')|@$ui5.context.isSelected",
 		editUrl : "TEAMS('42')"
+	}, { // upsert (entity still missing)
+		path : "/EMPLOYEES('42')/EMPLOYEE_2_TEAM|Name",
+		fetchPredicates : {
+			"/EMPLOYEES('42')/EMPLOYEE_2_TEAM" : null
+		},
+		editUrl : "EMPLOYEES('42')/EMPLOYEE_2_TEAM"
+	}, { // upsert (entity being updated)
+		path : "/EMPLOYEES('42')/EMPLOYEE_2_TEAM|Name",
+		fetchPredicates : {
+			"/EMPLOYEES('42')/EMPLOYEE_2_TEAM" : {
+				"@$ui5._" : {upsert : true}
+			}
+		},
+		editUrl : "EMPLOYEES('42')/EMPLOYEE_2_TEAM"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -3650,12 +3664,16 @@ sap.ui.define([
 			}
 			this.mock(_Helper).expects("getMetaPath")
 				.withExactArgs(sMetaPath).returns("~");
+			oContextMock.expects("fetchValue").never();
 			this.oMetaModelMock.expects("fetchObject").withExactArgs("~")
 				.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
 					that.oMetaModelMock.expects("fetchEntityContainer")
 						.returns(SyncPromise.resolve(mScope));
 					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, j) {
-						var oEntityInstance = {"@$ui5._" : {predicate : "(~" + j + ")"}};
+						const vResult = oFixture.fetchPredicates[sPath];
+						const oEntityInstance = typeof vResult === "string"
+							? {"@$ui5._" : {predicate : "(~" + j + ")"}}
+							: vResult;
 
 						// Note: the entity instance is delivered asynchronously
 						oContextMock.expects("fetchValue")
@@ -3739,12 +3757,20 @@ sap.ui.define([
 		message : "No instance to calculate key predicate at /TEAMS/0"
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
-		instance : {},
+		instance : null,
+		message : "No instance to calculate key predicate at /TEAMS/0"
+	}, {
+		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+		instance : {"$@ui5._" : {upsert : true}},
 		message : "No key predicate known at /TEAMS/0"
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : new Error("failed to load team"),
 		message : "failed to load team at /TEAMS/0"
+	}, {
+		dataPath : "/EMPLOYEES('1')/EMPLOYEE_2_TEAM",
+		instance : undefined,
+		message : "No instance to calculate key predicate at /EMPLOYEES('1')/EMPLOYEE_2_TEAM"
 	}, {
 		dataPath : "/TEAMS/0/Foo@$ui5.something",
 		message : "Read-only path must not be updated"

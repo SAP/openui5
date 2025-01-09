@@ -71468,6 +71468,355 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Update two properties of an entity reachable via single-valued navigation property.
+	// However, the navigation property is null, and the entity is inserted by this update
+	// ("upsert"). The test is run with and without an intermediate ODCB w/o cache on the navigation
+	// property. (Its binding context points to the upserted entity; it is used for #resetChanges
+	// and #delete).
+	// See that further property updates are merged into the PATCH, and that the PATCH is followed
+	// by a GET request for that entity (using ODCB#requestSideEffects) within the same $batch.
+	// When it failed, see that transition messages are handled correctly, properties still are
+	// merged, and the PATCH is repeated. See that it is correctly reset upon ODM#resetChanges,
+	// Context#resetChanges, or Context#delete. See that the GET request correctly updates the
+	// entity after a successful PATCH.
+	// The upserted entity is reached via two navigation properties. This effects the URL for the
+	// upsert PATCH because we use the deep path for it then.
+	// JIRA: CPOUI5ODATAV4-2211
+["submit", "reset", "delete"].forEach(function (sAction) {
+	[false, true].forEach(function (bIntermediate) {
+		const sTitle = "CPOUI5ODATAV4-2211: upsert, " + sAction
+			+ ", intermediate context binding=" + bIntermediate;
+
+		if (!bIntermediate && sAction === "delete") {
+			return; // no delete w/o context
+		}
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createSpecialCasesModel(
+			{autoExpandSelect : true, updateGroupId : "update"});
+		const sPublicationPath
+			= "/Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication";
+		const sView = `
+<FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
+	<Text id="artistId" text="{ArtistID}"/>
+	<Input id="publicationId" value="{BestFriend/BestPublication/PublicationID}"/>
+	<Input id="price" value="{BestFriend/BestPublication/Price}"/>
+	<Input id="currency" value="{BestFriend/BestPublication/CurrencyCode}"/>
+</FlexBox>`;
+		const sViewWithIntermediate = `
+<FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
+	<Text id="artistId" text="{ArtistID}"/>
+	<FlexBox id="publication" binding="{BestFriend/BestPublication}">
+		<Input id="publicationId" value="{PublicationID}"/>
+		<Input id="price" value="{Price}"/>
+		<Input id="currency" value="{CurrencyCode}"/>
+	</FlexBox>
+</FlexBox>`;
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+					+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))", {
+				"@odata.etag" : "etag1",
+				ArtistID : "1",
+				IsActiveEntity : false,
+				BestFriend : {
+					"@odata.etag" : "etag2",
+					ArtistID : "2",
+					IsActiveEntity : false,
+					BestPublication : null
+				}
+			})
+			.expectChange("artistId", "1")
+			.expectChange("publicationId", "")
+			.expectChange("price", null)
+			.expectChange("currency", "");
+
+		await this.createView(assert, bIntermediate ? sViewWithIntermediate : sView, oModel);
+
+		this.expectChange("publicationId", "2")
+			.expectChange("price", "12");
+
+		// code under test
+		this.oView.byId("publicationId").getBinding("value").setValue("2");
+		this.oView.byId("price").getBinding("value").setValue("12");
+
+		await this.waitForChanges(assert, "upsert");
+
+		const oArtistContext = this.oView.byId("form").getBindingContext();
+		assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"), {
+			Price : "12",
+			PublicationID : "2"
+		});
+
+		this.oLogMock.expects("error")
+			.withArgs("Failed to update path " + sPublicationPath + "/PublicationID");
+		this.oLogMock.expects("error")
+			.withArgs("Failed to update path " + sPublicationPath + "/Price");
+		this.expectRequest({
+				batchNo : 2,
+				method : "PATCH",
+				headers : {
+					"If-None-Match" : "*",
+					Prefer : "return=minimal"
+				},
+				url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
+				payload : {Price : "12", PublicationID : "2"}
+			}, createErrorInsideBatch({target : "Price"}))
+			.expectRequest({
+				batchNo : 2,
+				method : "GET",
+				url : "Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))"
+			}) // no response required
+			.expectMessages([{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				targets : [sPublicationPath + "/Price"],
+				technical : true,
+				type : "Error"
+			}]);
+
+		await Promise.all([
+			oModel.submitBatch("update"),
+			this.waitForChanges(assert, "submit -> error")
+		]);
+		await this.checkValueState(assert, this.oView.byId("price"), "Error",
+			"Request intentionally failed");
+
+		this.expectChange("price", "11");
+
+		// code under test
+		this.oView.byId("price").getBinding("value").setValue("11");
+
+		await this.waitForChanges(assert, "update");
+
+		let oContext;
+		if (bIntermediate) {
+			oContext = this.oView.byId("publication").getBindingContext();
+		}
+		let oPromise;
+		if (sAction === "submit") {
+			this.expectRequest({
+					batchNo : 3,
+					method : "PATCH",
+					headers : {
+						"If-None-Match" : "*",
+						Prefer : "return=minimal"
+					},
+					url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
+					payload : {Price : "11", PublicationID : "2"}
+				}, null, {ETag : "etag3"}) // 204 No Content
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))"
+				}, {
+					BestFriend : {
+						BestPublication : {
+							"@odata.etag" : "etag3",
+							CurrencyCode : "USD",
+							Price : "10.99",
+							PublicationID : "2"
+						}
+					}
+				})
+				.expectChange("price", "10.99")
+				.expectChange("currency", "USD");
+		} else {
+			this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+				.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
+					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+				.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update");
+			if (sAction === "delete") { // delete causes setContext(null) -> no default values
+				this.expectChange("publicationId", null)
+					.expectChange("price", null)
+					.expectChange("currency", null);
+			} else {
+				this.expectChange("price", "12") // from the second PATCH to "11"
+					.expectChange("publicationId", "")
+					.expectChange("price", null);
+			}
+
+			// code under test
+			if (sAction === "delete") {
+				oPromise = oContext.delete();
+			} else if (oContext) {
+				oPromise = oContext.resetChanges();
+			} else {
+				oModel.resetChanges();
+			}
+		}
+
+		await Promise.all([
+			oPromise,
+			oModel.submitBatch("update"),
+			this.waitForChanges(assert, sAction)
+		]);
+
+		assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"),
+			sAction === "submit"
+				? {
+					"@odata.etag" : "etag3",
+					CurrencyCode : "USD",
+					Price : "10.99",
+					PublicationID : "2"
+				}
+				: null);
+	});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Update a property of a complex type on an entity reachable via single-valued
+	// navigation property, resulting in an upsert. Request side effects for a property of that
+	// entity or the full binding. See that there is only one GET request. Then change a property
+	// after the successful upsert, and see that the PATCH uses the canonical path.
+	// Using an ODLB here, because its #requestSideEffects is implemented differently.
+	// Using $$patchWithoutSideEffects here, to see that is has no effect.
+	// JIRA: CPOUI5ODATAV4-2211
+[false, true].forEach(function (bRefresh) {
+	const sTitle = `CPOUI5ODATAV4-2211: upsert & ${bRefresh ? "refresh" : "side-effects request"}`;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createSalesOrdersModel(
+			{autoExpandSelect : true, updateGroupId : "update"});
+		const sView = `
+<Table id="table" items="{path : '/SalesOrderList',
+		parameters : {$$patchWithoutSideEffects : true}}">
+	<Text id="orderId" text="{SalesOrderID}"/>
+	<Text id="buyerId" text="{BuyerID}"/>
+	<Input id="city" value="{SO_2_BP/Address/City}"/>
+	<Input id="postalCode" value="{SO_2_BP/Address/PostalCode}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$select=BuyerID,SalesOrderID"
+				+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "etag1",
+					BuyerID : null,
+					SalesOrderID : "1",
+					SO_2_BP : null
+				}]
+			})
+			.expectChange("orderId", ["1"])
+			.expectChange("buyerId", [""])
+			.expectChange("city", [""])
+			.expectChange("postalCode", [""]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("city", ["Heidelberg"]);
+
+		const oOrderContext = this.oView.byId("table").getItems()[0].getBindingContext();
+		// code under test
+		const oPromise = oOrderContext.setProperty("SO_2_BP/Address/City", "Heidelberg");
+
+		await this.waitForChanges(assert, "upsert");
+
+		this.expectRequest({
+				batchNo : 2,
+				method : "PATCH",
+				headers : {
+					"If-None-Match" : "*",
+					Prefer : "return=minimal"
+				},
+				url : "SalesOrderList('1')/SO_2_BP",
+				payload : {Address : {City : "Heidelberg"}}
+			}, null, {ETag : "etag2"}); // 204 No Content
+		if (bRefresh) {
+			this.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList?$select=BuyerID,SalesOrderID"
+						+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
+							+ ",BusinessPartnerID)"
+						+ "&$skip=0&$top=100"
+				}, {
+					value : [{
+						"@odata.etag" : "etag1",
+						BuyerID : "2",
+						SalesOrderID : "1",
+						SO_2_BP : {
+							"@odata.etag" : "etag2",
+							Address : {
+								City : "Heidelberg",
+								PostalCode : "12345"
+							},
+							BusinessPartnerID : "2"
+						}
+					}]
+				});
+		} else {
+			this.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList('1')?$select=BuyerID"
+						+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
+							+ ",BusinessPartnerID)"
+				}, {
+					"@odata.etag" : "etag1",
+					BuyerID : "2",
+					SO_2_BP : {
+						"@odata.etag" : "etag2",
+						Address : {
+							City : "Heidelberg",
+							PostalCode : "12345"
+						},
+						BusinessPartnerID : "2"
+					}
+				});
+		}
+		this.expectChange("buyerId", ["2"])
+			.expectChange("postalCode", ["12345"]);
+
+		await Promise.all([
+			oPromise,
+			// code under test
+			bRefresh
+				? oOrderContext.getBinding().getHeaderContext().requestSideEffects([""])
+				: oOrderContext.requestSideEffects(["BuyerID", "SO_2_BP/Address/PostalCode"]),
+			oModel.submitBatch("update"),
+			this.waitForChanges(assert, "submit")
+		]);
+
+		assert.deepEqual(oOrderContext.getObject("SO_2_BP"), {
+			"@odata.etag" : "etag2",
+			Address : {
+				City : "Heidelberg",
+				PostalCode : "12345"
+			},
+			BusinessPartnerID : "2"
+		});
+
+		this.expectChange("city", ["Walldorf"])
+			.expectRequest({
+				method : "PATCH",
+				headers : {
+					"If-Match" : "etag2",
+					Prefer : "return=minimal"
+				},
+				url : "BusinessPartnerList('2')",
+				payload : {Address : {City : "Walldorf"}}
+			}, null, {ETag : "etag3"}); // 204 No Content
+
+		await Promise.all([
+			// code under test
+			oOrderContext.setProperty("SO_2_BP/Address/City", "Walldorf"),
+			oModel.submitBatch("update"),
+			this.waitForChanges(assert, "patch")
+		]);
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Deep create, nested list binding w/o own cache; create is called twice in the
 	// nested binding while the parent context is still transient. Patch one nested entity while
 	// transient and when persisted.
