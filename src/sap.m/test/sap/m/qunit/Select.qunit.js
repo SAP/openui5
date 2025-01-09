@@ -7977,6 +7977,42 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("onsapshow Alt + DOWN - selects first selectable item, when null is selected", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			oSelect.setForceSelection(false);
+			oSelect.setSelectedItem(null);
+			Core.applyChanges();
+			oSelect.focus();
+			var aSelectableItems = oSelect.getSelectableItems(),
+				oFirstSelectableItem = aSelectableItems[aSelectableItems.indexOf(oSelect.getSelectedItem()) + 1];
+
+			// act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER, false, true);
+
+			// assert
+			assert.equal(oSelect.getSelectedItem().getId(), oFirstSelectableItem.getId(), "First selectable item is selected");
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.module("onsaphide");
 
 		QUnit.test("onsaphide Alt + UP - open control's picker popup", function (assert) {
