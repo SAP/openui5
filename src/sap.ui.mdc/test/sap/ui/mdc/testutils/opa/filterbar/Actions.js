@@ -415,6 +415,41 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+		iCloseTheErrorPopover: function() {
+			const sPopoverTitle = Utils.getTextFromResourceBundle("sap.m", "MSGBOX_TITLE_ERROR");
+			const sCloseButton = Utils.getTextFromResourceBundle("sap.m", "MSGBOX_CLOSE");
+
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: [new PropertyStrictEquals({
+                    name: "title",
+                    value: sPopoverTitle
+                })],
+				success:function(aDialog) {
+					Opa5.assert.equal(aDialog.length, 1, "Error popover found");
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						properties: {
+							text: sCloseButton
+						},
+						matchers: new Ancestor(aDialog[0]),
+						actions: new Press(),
+						success : function(aBtn) {
+							Opa5.assert.equal(aBtn.length, 1, "One Close button pressed");
+						}
+					});
+				}
+			});
+		},
+		iSetLiveMode: function(bLiveMode) {
+			return this.waitFor({
+				controlType: "sap.ui.mdc.FilterBar",
+				success: function(aFilterBar) {
+					Opa5.assert.strictEqual(aFilterBar.length, 1, "Only one FilterBar is present");
+					aFilterBar[0].setLiveMode(bLiveMode);
+				}
+			});
 		}
     };
 

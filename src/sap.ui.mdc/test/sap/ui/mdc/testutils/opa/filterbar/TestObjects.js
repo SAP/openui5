@@ -162,6 +162,12 @@ sap.ui.define([
 				*/
 				iPressTheAdaptFiltersShowValuesButton: function () {
 					return filterBarActions.iPressTheAdaptFiltersShowValuesButton.apply(this, arguments);
+				},
+				iCloseTheErrorPopover: function () {
+					return filterBarActions.iCloseTheErrorPopover.apply(this, arguments);
+				},
+				iSetLiveMode: function () {
+					return filterBarActions.iSetLiveMode.apply(this, arguments);
 				}
 			},
 			assertions: {
@@ -227,6 +233,10 @@ sap.ui.define([
 
 				iCheckAvailableFilters: function(oControl, aFilters) {
 					return p13nAssertions.iCheckAvailableFilters.call(this, oControl, aFilters, filterBarActions.iOpenThePersonalizationDialog);
+				},
+
+				iShouldSeeTheErrorPopover: function() {
+					return filterBarAssertions.iShouldSeeTheErrorPopover.apply(this, arguments);
 				}
 			}
 		}
