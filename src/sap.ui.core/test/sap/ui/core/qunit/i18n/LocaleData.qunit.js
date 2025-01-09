@@ -6,15 +6,15 @@ sap.ui.define([
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/date/CalendarType",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/base/i18n/date/TimezoneUtils",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData",
-	"sap/ui/core/date/CalendarWeekNumbering"
-], function(timezones, Log, Formatting, LanguageTag, Localization, CalendarType, TimezoneUtils, LoaderExtensions,
-		Configuration, Lib, Locale, LocaleData, CalendarWeekNumbering) {
+	"sap/ui/core/LocaleData"
+], function(timezones, Log, Formatting, LanguageTag, Localization, CalendarType, CalendarWeekNumbering,
+		TimezoneUtils, LoaderExtensions, Configuration, Lib, Locale, LocaleData) {
 	"use strict";
 	const aSupportedLanguages = ["ar", "ar_EG", "ar_SA", "bg", "ca", "cnr", "cs", "cy", "da", "de", "de_AT", "de_CH",
 		"el", "el_CY", "en", "en_AU", "en_GB", "en_HK", "en_IE", "en_IN", "en_NZ", "en_PG", "en_SG", "en_ZA", "es",

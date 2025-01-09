@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/CalendarLegend',
 	'sap/ui/unified/CalendarLegendRenderer',
-	'sap/ui/core/library',
 	'sap/ui/unified/library',
 	"sap/base/Log",
 	'sap/ui/core/InvisibleText',
@@ -18,13 +18,13 @@ sap.ui.define([
 	"sap/ui/core/Locale"
 ],
 	function(
+		CalendarType,
 		Element,
 		Library,
 		CalendarUtils,
 		CalendarDate,
 		CalendarLegend,
 		CalendarLegendRenderer,
-		coreLibrary,
 		library,
 		Log,
 		InvisibleText,
@@ -38,8 +38,6 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = library.CalendarDayType;
 
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
 
 
 	/**
@@ -500,7 +498,7 @@ sap.ui.define([
 
 		if (this.renderWeekNumbers && oMonth.getShowWeekNumbers() && oMonth._oDate) {
 			// TODO: We could replace the following lines with a sap.ui.unified.calendar.CalendarUtils.calculateWeekNumber usage
-			// once the same method starts to respect the sap/ui/core/date/CalendarWeekNumbering types.
+			// once the same method starts to respect the sap/base/i18n/date/CalendarWeekNumbering types.
 			const oWeekConfig = CalendarDateUtils.getWeekConfigurationValues(oMonth.getCalendarWeekNumbering(), new Locale(oMonth._getLocale()));
 			oWeekConfig.firstDayOfWeek = oMonth._getFirstDayOfWeek();
 			const oFirstDateOfWeek = CalendarDate.fromUTCDate(CalendarUtils.getFirstDateOfWeek(oDay.toLocalJSDate(), oWeekConfig), oMonth.getPrimaryCalendarType());

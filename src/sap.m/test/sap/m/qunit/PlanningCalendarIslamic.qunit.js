@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
@@ -35,6 +36,7 @@ sap.ui.define([
 	Formatting,
 	LanguageTag,
 	Localization,
+	CalendarType,
 	Element,
 	Library,
 	qutils,
@@ -66,9 +68,6 @@ sap.ui.define([
 
 	// set language to en-GB, since we have specific language strings tested
 	Localization.setLanguage("en_GB");
-
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
@@ -198,7 +197,7 @@ sap.ui.define([
 			rows: aRows,
 			specialDates: aSpecialDates,
 			toolbarContent: [oSearchField, oButton],
-			primaryCalendarType: "Islamic"
+			primaryCalendarType: CalendarType.Islamic
 		});
 		if (sViewKey) {
 			oTC.setViewKey(sViewKey);
@@ -960,10 +959,10 @@ sap.ui.define([
 	QUnit.test("Week day and date aria", async function(assert) {
 		//Prepare
 		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
-			oFormatDate = DateFormat.getInstance({style: "long", calendarType: "Islamic"}),
+			oFormatDate = DateFormat.getInstance({style: "long", calendarType: CalendarType.Islamic}),
 			oDate = new CalendarDate(2015, 0, 2, CalendarType.Islamic),
 			sAriaDate = oFormatDate.format(oDate.toUTCJSDate(), true),
-			aWeekDaysWide = oFormatDate.oLocaleData.getDaysStandAlone("wide", "Islamic"),
+			aWeekDaysWide = oFormatDate.oLocaleData.getDaysStandAlone("wide", CalendarType.Islamic),
 			sWeekDayAriaText = aWeekDaysWide[5],
 			sExpectedAria = sWeekDayAriaText + " " + sAriaDate;
 

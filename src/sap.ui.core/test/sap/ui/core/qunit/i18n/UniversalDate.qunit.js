@@ -3,6 +3,8 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/ui/core/Locale",
 	"sap/ui/core/date/Buddhist",
 	"sap/ui/core/date/_Calendars",
@@ -11,11 +13,9 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/CalendarType",
-	"sap/ui/core/date/CalendarWeekNumbering"
-], function(Formatting, LanguageTag, Localization, Locale, Buddhist, _Calendars, UniversalDate,
-		Gregorian, Islamic, Japanese, Persian, UI5Date, CalendarType, CalendarWeekNumbering) {
+	"sap/ui/core/date/UI5Date"
+], function(Formatting, LanguageTag, Localization, CalendarType, CalendarWeekNumbering, Locale,
+		Buddhist, _Calendars, UniversalDate, Gregorian, Islamic, Japanese, Persian, UI5Date) {
 	"use strict";
 
 	const sLanguage = Localization.getLanguage();

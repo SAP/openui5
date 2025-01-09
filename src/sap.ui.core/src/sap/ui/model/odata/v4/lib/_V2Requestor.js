@@ -5,7 +5,7 @@
 sap.ui.define([
 	"./_Helper",
 	"./_Parser",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils"
 ], function (_Helper, _Parser, CalendarType, DateFormat, ODataUtils) {

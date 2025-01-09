@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
@@ -32,7 +33,6 @@ sap.ui.define([
 	"sap/m/PlanningCalendarView",
 	"sap/ui/unified/calendar/OneMonthDatesRow",
 	"sap/ui/unified/calendar/DatesRow",
-	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/InvisibleText",
@@ -42,6 +42,7 @@ sap.ui.define([
 ], function(
 	Formatting,
 	Localization,
+	CalendarType,
 	Element,
 	Library,
 	Locale,
@@ -72,7 +73,6 @@ sap.ui.define([
 	PlanningCalendarView,
 	OneMonthDatesRow,
 	DatesRow,
-	coreLibrary,
 	Control,
 	XMLView,
 	InvisibleText,
@@ -87,9 +87,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.PlanningCalendarBuiltInView
 	var PlanningCalendarBuiltInView = mobileLibrary.PlanningCalendarBuiltInView;
-
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;

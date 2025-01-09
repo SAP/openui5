@@ -13,7 +13,7 @@ sap.ui.define([
 	"./FormattedText",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"./MessageStripRenderer",
 	"sap/base/Log",
 	"sap/m/Button",
@@ -28,16 +28,13 @@ sap.ui.define([
 	FormattedText,
 	ControlBehavior,
 	Library,
-	coreLibrary,
+	MessageType,
 	MessageStripRenderer,
 	Log,
 	Button,
 	InvisibleText
 ) {
 	"use strict";
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
@@ -109,7 +106,7 @@ sap.ui.define([
 				 * Possible values are: Information (default), Success, Warning, Error.
 				 * If None is passed, the value is set to Information and a warning is displayed in the console.
 				 */
-				type: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: MessageType.Information },
+				type: { type: "sap.ui.core.message.MessageType", group: "Appearance", defaultValue: MessageType.Information },
 
 				/**
 				 * Determines a custom icon which is displayed.
@@ -334,7 +331,7 @@ sap.ui.define([
 
 	/**
 	 * Set Arialabelledby to the close button.
-	 * @param {sap.ui.core.MessageType} sType The Message type
+	 * @param {module:sap/ui/core/message/MessageType} sType The Message type
 	 */
 	MessageStrip.prototype._setButtonAriaLabelledBy = function (sType) {
 		var oCloseButton = this.getAggregation("_closeButton"),

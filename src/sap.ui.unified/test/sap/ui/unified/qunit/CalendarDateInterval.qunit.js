@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/CalendarDateInterval",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/format/DateFormat",

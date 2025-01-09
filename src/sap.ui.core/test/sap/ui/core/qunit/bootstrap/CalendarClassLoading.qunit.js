@@ -1,7 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
-	'sap/ui/core/CalendarType'
-], function(CalendarType) {
+], function() {
 	"use strict";
 
 	QUnit.module("Basic");

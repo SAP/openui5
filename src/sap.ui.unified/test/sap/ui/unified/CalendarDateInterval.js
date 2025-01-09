@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/ToggleButton",
 	"sap/m/VBox",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/library",

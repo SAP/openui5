@@ -5,6 +5,7 @@
 // Provides control sap.m.DynamicDateRange.
 sap.ui.define([
 	'sap/base/Log',
+	'sap/base/i18n/date/CalendarWeekNumbering',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
@@ -41,6 +42,7 @@ sap.ui.define([
 	'sap/ui/core/CustomData'
 ], function(
 	Log,
+	_CalendarWeekNumbering, // implicitly required as type of `calendarWeekNumbering`
 	InvisibleText,
 	Element,
 	Control,
@@ -486,13 +488,12 @@ sap.ui.define([
 					 */
 					 hideInput: { type: "boolean", group: "Misc", defaultValue: false },
 
-					  /**
+					/**
 					 * If set, the calendar week numbering is used for display.
 					 * If not set, the calendar week numbering of the global configuration is used.
 					 * @since 1.111.0
 					 */
-
-					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+					calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
 					/**
 					 * Specifies whether clear icon is shown.

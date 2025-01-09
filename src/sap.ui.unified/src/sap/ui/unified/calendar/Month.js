@@ -5,6 +5,8 @@
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarType",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	"sap/ui/core/Element",
@@ -24,12 +26,13 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/InvisibleMessage',
-	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/date/UI5Date',
 	"sap/base/Log"
 ], function(
 	Formatting,
+	CalendarType,
+	CalendarWeekNumbering,
 	Control,
 	Device,
 	Element,
@@ -49,7 +52,6 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	InvisibleMessage,
-	CalendarWeekNumbering,
 	CalendarDateUtils,
 	UI5Date,
 	Log
@@ -57,9 +59,6 @@ sap.ui.define([
 	"use strict";
 
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
-
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
 
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = library.CalendarDayType;
@@ -134,14 +133,14 @@ sap.ui.define([
 			 * If not set, the calendar type of the global configuration is used.
 			 * @since 1.34.0
 			 */
-			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+			primaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"},
 
 			/**
 			 * If set, the days are also displayed in this calendar type
 			 * If not set, the dates are only displayed in the primary calendar type
 			 * @since 1.34.0
 			 */
-			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+			secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"},
 
 			/**
 			 * Width of Month
@@ -182,7 +181,7 @@ sap.ui.define([
 			 * Note: This property should not be used with firstDayOfWeek property.
 			 * @since 1.108.0
 			 */
-			 calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+			 calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
 
 		},
 		aggregations : {
@@ -354,7 +353,7 @@ sap.ui.define([
 		this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 		this._oFormatLong = DateFormat.getInstance({style: "long", calendarType: this._getPrimaryCalendarType()});
 
-		if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering() !== "Default") {
+		if (this.getFirstDayOfWeek() !== -1 && this.getCalendarWeekNumbering() !== CalendarWeekNumbering.Default) {
 			Log.warning("Both properties firstDayOfWeek and calendarWeekNumbering should not be used at the same time!");
 		}
 	};

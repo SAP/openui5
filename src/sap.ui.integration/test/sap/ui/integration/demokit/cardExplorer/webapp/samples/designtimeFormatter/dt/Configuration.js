@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/calendarType/value",
 						"type": "datetime",
 						"formatter": { "calendarType": "Buddhist" },
-						"description": "All types of Calendar in the sap.ui.core.CalendarType are supported."
+						"description": "All types of Calendar in the sap/base/i18n/date/CalendarType are supported."
 					},
 					"float": {
 						"manifestpath": "/sap.card/configuration/parameters/float/value",

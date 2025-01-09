@@ -19,6 +19,7 @@
 		sap.ui.getCore().attachInit(() => {
 			jQuery.sap.require("sap.ui.model.type.Date");
 			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+			const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
 
 			// load Button, Label and Text synchronously to avoid async/sync conflicts when the form loads them async
 			// UI5 2.0 transformation will convert this to dependencies
@@ -26,7 +27,7 @@
 			jQuery.sap.require("sap.m.Label");
 			jQuery.sap.require("sap.m.Text");
 
-			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
 			var aSpecialDays = [["20160101",undefined,"Neujahr",1],
 								["20160106",undefined,"Heilige Drei Könige",1],
@@ -226,9 +227,9 @@
 				label: "primary calendar type",
 				fields: [ new sap.m.ComboBox("CB1",{
 										items: [
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese})
+														new sap.ui.core.ListItem({text: CalendarType.Gregorian, key: CalendarType.Gregorian}),
+														new sap.ui.core.ListItem({text: CalendarType.Islamic, key: CalendarType.Islamic}),
+														new sap.ui.core.ListItem({text: CalendarType.Japanese, key: CalendarType.Japanese})
 														],
 										selectionChange: function(oEvent){
 											var oCB = oEvent.getSource();
@@ -249,9 +250,9 @@
 				label: "secondary calendar type",
 				fields: [ new sap.m.ComboBox("CB2",{
 										items: [
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese})
+														new sap.ui.core.ListItem({text: CalendarType.Gregorian, key: CalendarType.Gregorian}),
+														new sap.ui.core.ListItem({text: CalendarType.Islamic, key: CalendarType.Islamic}),
+														new sap.ui.core.ListItem({text: CalendarType.Japanese, key: CalendarType.Japanese})
 														],
 										selectionChange: function(oEvent){
 											var oCB = oEvent.getSource();

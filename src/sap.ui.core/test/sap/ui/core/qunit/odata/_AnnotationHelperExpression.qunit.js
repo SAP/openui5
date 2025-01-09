@@ -4,17 +4,17 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarType",
 	"sap/base/util/deepEqual",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/CalendarType",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/performance/Measurement"
-], function (Log, Formatting, deepEqual, BindingParser, ManagedObject, CalendarType, UI5Date,
+], function (Log, Formatting, CalendarType, deepEqual, BindingParser, ManagedObject, UI5Date,
 		DateFormat, JSONModel, Basics, Expression, Measurement
 ) {
 	/*global QUnit, sinon */

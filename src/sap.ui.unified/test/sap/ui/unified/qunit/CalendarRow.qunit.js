@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarRowRenderer",
 	"sap/ui/unified/CalendarLegendItem",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/unified/CalendarRow",
