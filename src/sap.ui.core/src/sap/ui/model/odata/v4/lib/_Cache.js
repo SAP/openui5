@@ -2927,8 +2927,9 @@ sap.ui.define([
 	_CollectionCache.prototype.getQueryString = function (sSeparateProperty) {
 		var sExclusiveFilter = this.getExclusiveFilter(),
 			mQueryOptions = Object.assign({}, this.mQueryOptions),
-			sFilterOptions = mQueryOptions.$filter,
-			sQueryString = this.sQueryString;
+			sQueryString = this.sQueryString,
+			bRebuildQueryString,
+			bSortSystemQueryOptions;
 
 		if (this.aSeparateProperties.length) {
 			if (sSeparateProperty) {
@@ -2947,19 +2948,24 @@ sap.ui.define([
 					delete mQueryOptions.$expand;
 				}
 			}
-			sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
-				this.bSortExpandSelect, true);
+			bSortSystemQueryOptions = true;
+			bRebuildQueryString = true;
 		}
 
 		if (sExclusiveFilter) {
-			if (sFilterOptions) {
-				mQueryOptions.$filter = "(" + sFilterOptions + ") and " + sExclusiveFilter;
-				sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
-					false, this.bSortExpandSelect);
+			if (mQueryOptions.$filter) {
+				bRebuildQueryString = true;
 			} else {
 				sQueryString += (sQueryString ? "&" : "?") + "$filter="
 					+ _Helper.encode(sExclusiveFilter, false);
 			}
+			mQueryOptions.$filter = mQueryOptions.$filter
+				? "(" + mQueryOptions.$filter + ") and " + sExclusiveFilter
+				: sExclusiveFilter;
+		}
+		if (bRebuildQueryString) {
+			sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
+				false, this.bSortExpandSelect, bSortSystemQueryOptions);
 		}
 
 		return sQueryString;

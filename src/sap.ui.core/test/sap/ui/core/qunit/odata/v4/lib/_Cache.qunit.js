@@ -7249,7 +7249,7 @@ sap.ui.define([
 					BestPublication : "~BestPublication~"
 				}
 			};
-		this.mock(this.oRequestor).expects("buildQueryString")
+		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, mExpectedQueryOptions, false, "bSortExpandSelect",
 				true)
 			.returns("?~");
@@ -7302,7 +7302,7 @@ sap.ui.define([
 			.callsFake(function (mQueryOptions) {
 				mQueryOptions.$select = ["ID"];
 			});
-		this.mock(this.oRequestor).expects("buildQueryString")
+		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Artists/_Friend", {
 					foo : "bar",
 					$apply : "~apply~",
@@ -7322,6 +7322,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bOwnFilter) {
+	const sTitle = `CollectionCache#getQueryString: $$separate and exclusive filter,
+		${bOwnFilter ? "w/" : "w/o"} own filter`;
+
+	QUnit.test(sTitle, function (assert) {
+		const mQueryOptions = {
+			$expand : {
+				BestFriend : "~BestFriend~"
+			},
+			$select : ["Name"]
+		};
+		if (bOwnFilter) {
+			mQueryOptions.$filter = "~own~";
+		}
+		const oCache = this.createCache("Artists('42')/_Friend", mQueryOptions);
+		const sQueryOptions = JSON.stringify(oCache.mQueryOptions);
+
+		oCache.sQueryString = "?foo=bar";
+		oCache.aSeparateProperties = ["BestFriend"];
+		oCache.bSortExpandSelect = "~bSortExpandSelect~";
+		this.mock(oCache).expects("getExclusiveFilter").withExactArgs().returns("~exclusive~");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/Artists/_Friend", {
+					$filter : bOwnFilter ? "(~own~) and ~exclusive~" : "~exclusive~",
+					$select : ["Name"]
+				}, false, "~bSortExpandSelect~", true)
+			.returns("?~");
+
+		// code under test
+		assert.strictEqual(oCache.getQueryString(), "?~");
+
+		assert.strictEqual(oCache.sQueryString, "?foo=bar", "unchanged");
+		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
+	});
+});
+
+	//*********************************************************************************************
 ["?foo=bar", ""].forEach(function (sQuery) {
 	QUnit.test("CollectionCache#getQueryString: no own filter, query=" + sQuery, function (assert) {
 		var oCache = this.createCache("Employees");
@@ -7331,6 +7368,7 @@ sap.ui.define([
 			.returns("~exclusive~");
 		this.mock(_Helper).expects("encode").withExactArgs("~exclusive~", false)
 			.returns("~encoded~");
+		this.oRequestorMock.expects("buildQueryString").never();
 
 		// code under test
 		assert.strictEqual(oCache.getQueryString(),
@@ -7351,11 +7389,11 @@ sap.ui.define([
 		oCache.bSortExpandSelect = "bSortExpandSelect";
 		this.mock(oCache).expects("getExclusiveFilter").withExactArgs()
 			.returns("~exclusive~");
-		this.mock(this.oRequestor).expects("buildQueryString")
+		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, {
 				foo : "bar",
 				$filter : "(~own~) and ~exclusive~"
-			}, false, "bSortExpandSelect")
+			}, false, "bSortExpandSelect", undefined)
 			.returns("?~");
 
 		// code under test

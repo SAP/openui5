@@ -76771,6 +76771,12 @@ make root = ${bMakeRoot}`;
 	// these separate requests, the returned object is incomplete but contains the already received
 	// data.
 	// JIRA: CPOUI5ODATAV4-2817
+	//
+	// Create a new item. When paging, the exclusive filter for the created item is also added to
+	// the separate requests. See that the given start index of the "separateReceived" event
+	// corresponds to the affected context index (to be used as #requestContexts parameter) instead
+	// of the actual $skip index.
+	// JIRA: CPOUI5ODATAV4-2696
 [false, true].forEach(function (bAutoExpandSelect) {
 	QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -76824,7 +76830,7 @@ make root = ${bMakeRoot}`;
 				batchNo : bAutoExpandSelect ? 3 : 1,
 				url : sMainUrl + "&$skip=0&$top=2"
 			}, {
-				"@odata.count" : "7",
+				"@odata.count" : "8",
 				value : [{
 					ArtistID : "10",
 					BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
@@ -76997,7 +77003,7 @@ make root = ${bMakeRoot}`;
 				url : sMainUrl + "&$skip=2&$top=1"
 			}, new Promise(function (resolve) {
 				fnResolveMain = resolve.bind(null, {
-					"@odata.count" : "7",
+					"@odata.count" : "8",
 					value : [{
 						ArtistID : "30",
 						BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
@@ -77066,7 +77072,7 @@ make root = ${bMakeRoot}`;
 				batchNo : 10,
 				url : sMainUrl + "&$skip=3&$top=2"
 			}, {
-				"@odata.count" : "7",
+				"@odata.count" : "8",
 				value : [{
 					ArtistID : "40",
 					BestPublication : {CurrencyCode : "DKK", PublicationID : "Pub4"},
@@ -77142,7 +77148,7 @@ make root = ${bMakeRoot}`;
 				batchNo : 14,
 				url : sMainUrl + "&$skip=5&$top=1"
 			}, {
-				"@odata.count" : "7",
+				"@odata.count" : "8",
 				value : [{
 					ArtistID : "60",
 					BestPublication : {CurrencyCode : "CAD", PublicationID : "Pub6"},
@@ -77187,7 +77193,7 @@ make root = ${bMakeRoot}`;
 				batchNo : 17,
 				url : sMainUrl + "&$skip=6&$top=1"
 			}, {
-				"@odata.count" : "7",
+				"@odata.count" : "8",
 				value : [{
 					ArtistID : "70",
 					BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub7"},
@@ -77227,6 +77233,109 @@ make root = ${bMakeRoot}`;
 		await this.waitForChanges(assert, "resolve 60's BestFriend");
 
 		checkEvents([{property : "BestFriend", start : 5, length : 1}]);
+
+		this.expectChange("name", ["Artist X"])
+			.expectChange("publicationCurrency", [""])
+			.expectChange("friend", [""])
+			.expectChange("friendBusy__AS_COMPOSITE", [true])
+			.expectChange("friendBusy__AS_COMPOSITE", [true])
+			.expectChange("sibling", [""])
+			.expectRequest({
+				batchNo : 18,
+				method : "POST",
+				url : "Artists?custom=foo",
+				payload : {Name : "Artist X"}
+			}, {
+				ArtistID : "240",
+				IsActiveEntity : true,
+				Name : "Artist X"
+			})
+			.expectRequest({
+				batchNo : 19,
+				url : "Artists(ArtistID='240',IsActiveEntity=true)?custom=foo&$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ ",BestPublication($select=CurrencyCode,PublicationID)"
+					+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+			}, {
+				BestFriend : {ArtistID : "F24", IsActiveEntity : true, Name : "Friend X"},
+				BestPublication : {CurrencyCode : "IDR", PublicationID : "Pub24"},
+				SiblingEntity : {ArtistID : "S24", IsActiveEntity : true, Name : "Sibling X"}
+			})
+			.expectChange("publicationCurrency", ["IDR"])
+			.expectChange("friend", ["Friend X"])
+			.expectChange("friendBusy__AS_COMPOSITE", [false])
+			.expectChange("friendBusy__AS_COMPOSITE", [false])
+			.expectChange("sibling", ["Sibling X"]);
+
+		oListBinding.create({Name : "Artist X"}, /*bSkipRefresh*/true);
+
+		await this.waitForChanges(assert, "create new item");
+
+		this.expectRequest({
+				batchNo : 20,
+				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$filter=(IsActiveEntity eq true)"
+					+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+					+ "&$orderby=ArtistID&$search=covfefe"
+					+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1"
+			}, {
+				value : [{
+					ArtistID : "80",
+					BestFriend : {ArtistID : "F8", IsActiveEntity : true, Name : "Friend H"},
+					IsActiveEntity : true
+				}]
+			})
+			.expectRequest({
+				batchNo : 21,
+				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$filter=(IsActiveEntity eq true)"
+					+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+					+ "&$orderby=ArtistID&$search=covfefe"
+					+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1"
+			}, {
+				value : [{
+					ArtistID : "80",
+					IsActiveEntity : true,
+					SiblingEntity : {ArtistID : "S8", IsActiveEntity : true, Name : "Sibling H"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 22,
+				url : sUrl + "&$count=true"
+					+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
+					+ "&$filter=(IsActiveEntity eq true)"
+					+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+					+ "&$orderby=ArtistID&$search=covfefe"
+					+ "&$select=ArtistID,IsActiveEntity,Name"
+					+ "&$skip=7&$top=1"
+			}, {
+				"@odata.count" : "9",
+				value : [{
+					ArtistID : "80",
+					BestPublication : {CurrencyCode : "CHF", PublicationID : "Pub8"},
+					IsActiveEntity : true,
+					Name : "Artist H"
+				}]
+			})
+			.expectChange("name", [,,,,,,, "Artist G", "Artist H"])
+			.expectChange("publicationCurrency", [,,,,,,, "EUR", "CHF"])
+			.expectChange("friend", [,,,,,,, "Friend G", "Friend H"])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,,,,, false, false])
+			.expectChange("friendBusy__AS_COMPOSITE", [,,,,,,, false, false])
+			.expectChange("sibling", [,,,,,,, "Sibling G", "Sibling H"]);
+
+		// 70 was hidden by the #create; requesting 2 items makes 70 visible again and loads 1 more
+		oTable.requestItems();
+
+		await this.waitForChanges(assert, "load item 80");
+
+		checkEvents([
+			{property : "BestFriend", start : 8, length : 1},
+			{property : "SiblingEntity", start : 8, length : 1}
+		]);
+
+		const [oArtistH] = await oListBinding.requestContexts(8, 1);
+		assert.deepEqual(oArtistH.getProperty("Name"), "Artist H");
 	});
 });
 
