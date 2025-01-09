@@ -53,7 +53,6 @@ sap.ui.define([
 					items: { path: '/StatusCollection', template: oItem }
 				});
 
-				oContent.setFilterFields("*StatusId,Name*");
 				oContent.setKeyPath("StatusId");
 				oContent.setDescriptionPath("Name");
 				oContent.setCaseSensitive(true);

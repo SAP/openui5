@@ -305,6 +305,7 @@ sap.ui.define([
 							this._oSearchField = new FilterField(this.getId() + "-search", {
 								conditions: "{$filters>/conditions/" + sSearchPath + "}",
 								propertyKey: sSearchPath,
+								dataType: "sap.ui.model.type.String", // to not have property initial -> no special oData type needed
 								placeholder: "{$i18n>filterbar.SEARCH}",
 								label: "{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
 								maxConditions: 1,

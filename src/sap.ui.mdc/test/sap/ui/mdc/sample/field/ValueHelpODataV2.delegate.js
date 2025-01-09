@@ -1,10 +1,12 @@
 
 sap.ui.define([
 	"delegates/ValueHelpDelegate",
-	'sap/ui/mdc/odata/TypeMap'
+	"sap/ui/mdc/odata/TypeMap",
+	"sap/ui/mdc/util/IdentifierUtil"
 ], function(
 	TestValueHelpDelegate,
-	ODataTypeMap
+	ODataTypeMap,
+	IdentifierUtil
 ) {
 	"use strict";
 
@@ -62,6 +64,21 @@ sap.ui.define([
 
 		return TestValueHelpDelegate.showTypeahead.apply(this, arguments);
 	};
+
+	ValueHelpDelegate.isSearchSupported = function(oValueHelp, oContent, oListBinding) {
+		var oPayload = oValueHelp.getPayload();
+
+		if (oPayload.searchEnabledCheck) {
+			const oView = IdentifierUtil.getView(oValueHelp);
+			const oCheckBox = oView.byId(oPayload.searchEnabledCheck);
+			if (!oCheckBox.getSelected()) {
+				return false;
+			}
+		}
+
+		return TestValueHelpDelegate.isSearchSupported.apply(this, arguments);
+	};
+
 
 	return ValueHelpDelegate;
 });
