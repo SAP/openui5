@@ -1861,19 +1861,13 @@ sap.ui.define([
 			aggregate : {
 				a1 : {}
 			},
-			group : {
-				A : {},
-				B : {},
-				C : {}
-			}
-		};
-		const oEntityType = {
-			$Key : ["A", "C"]
+			group : {/*does not matter*/}
+			// $leafLevelAggregated : false, // default
 		};
 		const oFilter = new Filter("a1", FilterOperator.GT, "0");
 
 		// code under test
-		const aResult = _AggregationHelper.splitFilter(oFilter, oAggregation, oEntityType);
+		const aResult = _AggregationHelper.splitFilter(oFilter, oAggregation);
 
 		assert.deepEqual(aResult, [undefined, oFilter]);
 		assert.strictEqual(aResult[1], oFilter);
@@ -1962,21 +1956,16 @@ sap.ui.define([
 			},
 			"grandTotal like 1.84" : bOldSchool,
 			group : {}, // Note: added by _AggregationHelper.buildApply before
-			groupLevels : bHasGroupLevels ? ["baz"] : [] // dto.
+			groupLevels : bHasGroupLevels ? ["baz"] : [], // dto.
+			$leafLevelAggregated : true
 		};
-		const oEntityType = {
-			$Key : ["bar", "foo"]
-		};
-		if (bHasGrandTotal) { // *some* key properties used for grouping, but not *every*
-			oAggregation.group.bar = {};
-		}
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
 			.exactly(bHasGroupLevels || bOldSchool ? 0 : 1)
 			.withExactArgs(sinon.match.same(oAggregation.aggregate))
 			.returns(bHasGrandTotal);
 
 		// code under test
-		const aActual = _AggregationHelper.splitFilter(oFixture.filter, oAggregation, oEntityType);
+		const aActual = _AggregationHelper.splitFilter(oFixture.filter, oAggregation);
 
 		const aFiltersNoThese = oFixture.noThese?.map((iIndex) => oFixture.filter.aFilters[iIndex])
 			 || [];

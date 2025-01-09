@@ -67,7 +67,7 @@ sap.ui.define([
 		}
 
 		for (const [sKey, oMenuItem] of this._mItems.entries()) {
-			oMenuItem.setVisible(aBasicItemKeys.includes(sKey) ? bExtendedMenu : true);
+			oMenuItem.setVisible(aBasicItemKeys.includes(sKey) ? true : bExtendedMenu);
 
 			if (!oMenu.getItems().includes(oMenuItem)) {
 				oMenu.addItem(oMenuItem);

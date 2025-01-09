@@ -1207,6 +1207,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether this context represents aggregated data, as opposed to a single entity
+	 * instance. This method returns <code>true</code> only in case of data aggregation (but not for
+	 * a recursive hierarchy)
+	 * and not for non-expandable nodes (so-called leaves; see {@link #isExpanded}) if all of the
+	 * entity type's key properties are available as groups. For a list binding's
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}, the returned
+	 * value is the same as for every leaf.
+	 *
+	 * @returns {boolean} Whether this context represents aggregated data
+	 * @throws {Error} If this context's root binding is suspended
+	 *
+	 * @private
+	 * @see sap.ui.model.odata.v4.ODataListBinding#setAggregation
+	 * @since 1.132.0
+	 * @ui5-restricted sap.fe
+	 */
+	Context.prototype.isAggregated = function () {
+		this.oBinding.checkSuspended();
+		const bAggregated = this.oBinding.mParameters.$$aggregation?.$leafLevelAggregated;
+		if (bAggregated === undefined) {
+			return false;
+		}
+
+		// Note: #isExpanded fails for header context ("Invalid header path: @$ui5.node.isExpanded")
+		return bAggregated
+			|| this !== this.oBinding.getHeaderContext() && this.isExpanded() !== undefined;
+	};
+
+	/**
 	 * Tells whether this node is an ancestor of (or the same as) the given node (in case of a
 	 * recursive hierarchy, see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
 	 *
@@ -2117,7 +2146,7 @@ sap.ui.define([
 			that = this;
 
 		if (this.iIndex === iVIRTUAL || this.isTransient() && !this.isInactive()
-			|| this.oBinding.getHeaderContext && this === this.oBinding.getHeaderContext()
+			|| this === this.oBinding.getHeaderContext?.()
 			// only operation bindings have a parameter context, for others the function fails
 			|| this.oBinding.oOperation && this === this.oBinding.getParameterContext()) {
 			throw new Error("Cannot reset: " + this);
