@@ -107,7 +107,7 @@ sap.ui.define([
 		assert.equal(aMenuItems.length, 6, "Menu items");
 
 		assert.equal(aMenuItems[0].getText(), TableUtils.getResourceText("TBL_UNGROUP"), "Ungroup; Text");
-		assert.equal(aMenuItems[0].getVisible(), false, "Ungroup; Visible");
+		assert.equal(aMenuItems[0].getVisible(), true, "Ungroup; Visible");
 		assert.equal(aMenuItems[0].getEnabled(), true, "Ungroup; Enabled");
 		assert.equal(aMenuItems[0].getSubmenu().getItems()[0].getText(),
 			TableUtils.getResourceText("TBL_UNGROUP_LEVEL"), "Ungroup level; Text");
@@ -119,7 +119,7 @@ sap.ui.define([
 		assert.equal(aMenuItems[0].getSubmenu().getItems()[1].getEnabled(), true, "Ungroup all; Enabled");
 
 		assert.equal(aMenuItems[1].getText(), TableUtils.getResourceText("TBL_COLLAPSE"), "Collapse; Text");
-		assert.equal(aMenuItems[1].getVisible(), false, "Collapse; Visible");
+		assert.equal(aMenuItems[1].getVisible(), true, "Collapse; Visible");
 		assert.equal(aMenuItems[1].getEnabled(), true, "Collapse; Enabled");
 		assert.equal(aMenuItems[1].getIcon(), "sap-icon://collapse-all", "Collapse; Icon");
 		assert.equal(aMenuItems[1].getSubmenu().getItems()[0].getText(),
@@ -132,7 +132,7 @@ sap.ui.define([
 		assert.equal(aMenuItems[1].getSubmenu().getItems()[1].getEnabled(), true, "Collapse all; Enabled");
 
 		assert.equal(aMenuItems[2].getText(), TableUtils.getResourceText("TBL_EXPAND"), "Expand; Text");
-		assert.equal(aMenuItems[2].getVisible(), false, "Expand; Visible");
+		assert.equal(aMenuItems[2].getVisible(), true, "Expand; Visible");
 		assert.equal(aMenuItems[2].getEnabled(), true, "Expand; Enabled");
 		assert.equal(aMenuItems[2].getIcon(), "sap-icon://expand-all", "Expand; Icon");
 		assert.equal(aMenuItems[2].getSubmenu().getItems()[0].getText(),
@@ -145,11 +145,11 @@ sap.ui.define([
 		assert.equal(aMenuItems[2].getSubmenu().getItems()[1].getEnabled(), true, "Expand all; Enabled");
 
 		assert.equal(aMenuItems[3].getText(), TableUtils.getResourceText("TBL_SHOW_COLUMN"), "Show column");
-		assert.equal(aMenuItems[3].getVisible(), true, "Show column; Visible");
+		assert.equal(aMenuItems[3].getVisible(), false, "Show column; Visible");
 		assert.equal(aMenuItems[3].getEnabled(), true, "Show column; Enabled");
 
 		assert.equal(aMenuItems[4].getText(), TableUtils.getResourceText("TBL_MOVE"), "Move group; Text");
-		assert.equal(aMenuItems[4].getVisible(), true, "Move group; Visible");
+		assert.equal(aMenuItems[4].getVisible(), false, "Move group; Visible");
 		assert.equal(aMenuItems[4].getEnabled(), true, "Move group; Enabled");
 		assert.equal(aMenuItems[4].getSubmenu().getItems()[0].getText(),
 			TableUtils.getResourceText("TBL_MOVE_UP"), "Move group one level up; Text");
@@ -163,9 +163,19 @@ sap.ui.define([
 		assert.equal(aMenuItems[4].getSubmenu().getItems()[1].getIcon(), "sap-icon://arrow-bottom", "Move group one level down; Icon");
 
 		assert.equal(aMenuItems[5].getText(), TableUtils.getResourceText("TBL_SORT"), "Sort; Text");
-		assert.equal(aMenuItems[5].getVisible(), true, "Sort; Visible");
+		assert.equal(aMenuItems[5].getVisible(), false, "Sort; Visible");
 		assert.equal(aMenuItems[5].getEnabled(), true, "Sort; Enabled");
 		assert.equal(aMenuItems[5].getIcon(), "sap-icon://sort", "Sort; Icon");
+
+		this.oTable.setProperty("extendedGroupHeaderMenu", true);
+		this.oContextMenu.initContent(this.oRow);
+
+		assert.equal(aMenuItems[0].getVisible(), true, "Ungroup; Visible");
+		assert.equal(aMenuItems[1].getVisible(), true, "Collapse; Visible");
+		assert.equal(aMenuItems[2].getVisible(), true, "Expand; Visible");
+		assert.equal(aMenuItems[3].getVisible(), true, "Show column; Visible");
+		assert.equal(aMenuItems[4].getVisible(), true, "Move group; Visible");
+		assert.equal(aMenuItems[5].getVisible(), true, "Sort; Visible");
 	});
 
 	QUnit.test("Standard row", function(assert) {

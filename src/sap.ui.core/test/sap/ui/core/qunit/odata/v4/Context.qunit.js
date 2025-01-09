@@ -2263,6 +2263,60 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{}, {$$aggregation : {}}].forEach((mParameters, i) => {
+	QUnit.test("isAggregated: no $leafLevelAggregated #" + i, function (assert) {
+		const oBinding = {
+			mParameters : mParameters,
+			checkSuspended : mustBeMocked
+		};
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+		this.mock(oContext).expects("isExpanded").never();
+
+		// code under test
+		assert.strictEqual(oContext.isAggregated(), false);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("isAggregated: $leafLevelAggregated : true", function (assert) {
+		const oBinding = {
+			mParameters : {$$aggregation : {$leafLevelAggregated : true}},
+			checkSuspended : mustBeMocked
+		};
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+		this.mock(oContext).expects("isExpanded").never();
+
+		// code under test
+		assert.strictEqual(oContext.isAggregated(), true);
+	});
+
+	//*********************************************************************************************
+["header context", undefined, true, false].forEach((vExpanded) => {
+	const sTitle = "isAggregated: $leafLevelAggregated : false, vExpanded = " + vExpanded;
+
+	QUnit.test(sTitle, function (assert) {
+		// false for header context and leaves, true for expanded or collapsed inner nodes
+		const bExpectedResult = typeof vExpanded === "boolean";
+		const oBinding = {
+			mParameters : {$$aggregation : {$leafLevelAggregated : false}},
+			checkSuspended : mustBeMocked,
+			getHeaderContext : mustBeMocked
+		};
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+		this.mock(oBinding).expects("getHeaderContext").withExactArgs()
+			.returns(vExpanded === "header context" ? oContext : {/*don't care*/});
+		this.mock(oContext).expects("isExpanded").exactly(vExpanded === "header context" ? 0 : 1)
+			.returns(vExpanded);
+
+		// code under test
+		assert.strictEqual(oContext.isAggregated(), bExpectedResult);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("isAncestorOf", function (assert) {
 		const oBinding = {
 			isAncestorOf : mustBeMocked

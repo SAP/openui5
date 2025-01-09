@@ -21,7 +21,7 @@
 			function (_Core, _Lib) {
 				Core = _Core;
 				Lib = _Lib;
-				Core.boot();
+
 				Core.ready().then(initTags);
 			});
 	}

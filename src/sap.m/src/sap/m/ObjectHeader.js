@@ -680,38 +680,26 @@ sap.ui.define([
 		};
 
 		ObjectHeader.prototype.ontap = function(oEvent) {
-			var sSourceId = oEvent.target.id;
-			if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
-				if (!this.getIntroHref()) {
-					this.fireIntroPress({
-						domRef : window.document.getElementById(sSourceId)
-					});
-				}
-			} else if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
-					jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
-					sSourceId === this.getId() + "-titleText-inner" )) {
-				if (!this.getTitleHref()) {
-					oEvent.preventDefault();
-					sSourceId = this.getId() + "-title";
+			var oSource = oEvent.target,
+				sSourceId = oSource.id,
+				sTitleId = `${this.getId()}-title`,
+				sIntroId = `${this.getId()}-intro`,
+				sTextId = `${this.getId()}-txt`,
+				bInnerText = oSource.classList.contains("sapMLnkText"),
+				bTitle = bInnerText || sSourceId === sTitleId || sSourceId === `${this.getId()}-titleText-inner`,
+				bIntro = bInnerText || sSourceId === sIntroId,
+				bText = bInnerText || sSourceId === sTextId || oSource.parentElement.id === sTextId;
 
-					this.fireTitlePress({
-						domRef : window.document.getElementById(sSourceId)
-					});
-				}
-			} else if (this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-txt" || jQuery(oEvent.target).parent().attr('id') === this.getId() + "-txt" )) {
-				if (!this.getTitleHref()) {
-					oEvent.preventDefault();
-					// The sourceId should be always the id of the "a", even if we click on the inside span element
-					sSourceId = this.getId() + "-txt";
-
-					this.fireTitlePress({
-						domRef : window.document.getElementById(sSourceId)
-					});
-				}
-			} else if (oEvent.target.classList.contains("sapUiIconTitle")) {
-				this.fireTitleSelectorPress({
-					domRef : oEvent.target.parentElement
-				});
+			if (this.getIntroActive() && !this.getIntroHref() && bIntro) {
+				this.fireIntroPress({ domRef: window.document.getElementById(sIntroId) });
+			} else if (!this.getResponsive() && this.getTitleActive() && !this.getTitleHref() && bTitle) {
+				oEvent.preventDefault();
+				this.fireTitlePress({ domRef: window.document.getElementById(sTitleId) });
+			} else if (this.getResponsive() && this.getTitleActive() && !this.getTitleHref() && bText) {
+				oEvent.preventDefault();
+				this.fireTitlePress({ domRef: window.document.getElementById(sTextId) });
+			} else if (oSource.classList.contains("sapUiIconTitle")) {
+				this.fireTitleSelectorPress({ domRef: oSource.parentElement });
 			} else if (sSourceId.indexOf(this.getId()) !== -1) {
 				// we didn't click on any of the active parts of the ObjectHeader
 				// event should not trigger any further actions

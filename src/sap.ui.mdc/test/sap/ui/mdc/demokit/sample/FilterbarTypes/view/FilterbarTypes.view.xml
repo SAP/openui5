@@ -19,7 +19,7 @@
 			<f:DynamicPageHeader pinnable="true">
 				<mdc:FilterBar
 					id="mountainsFilterbar"
-					delegate="{ name: 'mdc/sample/delegate/JSONFilterBarDelegate', payload: {}}"
+					delegate='\{"name": "mdc/sample/delegate/JSONFilterBarDelegate", "payload": \{\}\}'
 					p13nMode = "Item,Value"
 					filtersChanged=".onFiltersChanged">
 					<mdc:filterItems>
@@ -31,12 +31,12 @@
 							conditions="{$filters>/conditions/name}"
 							valueHelp="VH1"
 							operators="EQ"
-							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}">
+							delegate='\{"name": "sap/ui/mdc/field/FieldBaseDelegate"\}'>
 							<mdc:dependents>
-								<mdc:ValueHelp id="VH1" delegate="{name: 'sap/ui/mdc/ValueHelpDelegate', payload: {}}">
+								<mdc:ValueHelp id="VH1" delegate='\{"name": "mdc/sample/delegate/JSONValueHelpDelegate", "payload": \{"searchKeys": ["name"]\}\}'>
 									<mdc:typeahead>
 										<mdcv:Popover title="Select Mountain">
-											<mdcvc:MTable keyPath="name" descriptionPath="name" filterFields="*name*">
+											<mdcvc:MTable keyPath="name" descriptionPath="name">
 												<Table id="ddListMountains" items='{path : "mountains>/mountains" }' width="30rem">
 													<columns>
 														<Column visible="false">
@@ -124,7 +124,7 @@
 							dataTypeFormatOptions='\{"emptyString": 0\}'
 							dataTypeConstraints='\{"minimum": 0\}'
 							conditions="{$filters>/conditions/rank}"
-							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
+							delegate='\{"name": "sap/ui/mdc/field/FieldBaseDelegate"\}'
 							operators="EQ">
 						</mdc:FilterField>
 

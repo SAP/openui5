@@ -1887,6 +1887,8 @@ sap.ui.define([
 	 * {@link sap.ui.filter.Filter.NONE} is set as any of the dynamic filters, it will override
 	 * all static filters.
 	 *
+	 * As a side effect, this method computes <code>$$aggregation.$leafLevelAggregated</code>.
+	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context instance to be used; it is given as a parameter and this.oContext is unused
 	 *   because setContext calls this method (indirectly) before calling the superclass to ensure
@@ -2053,20 +2055,25 @@ sap.ui.define([
 
 		const oCombinedFilter
 			= FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
-		if (!oCombinedFilter) {
-			return SyncPromise.resolve([sStaticFilter]);
-		}
-		if (oCombinedFilter === Filter.NONE) {
-			return SyncPromise.resolve(["false"]);
-		}
 
 		const oPromise = _Helper.isDataAggregation(this.mParameters)
 			? oMetaModel.fetchObject(oMetaContext.getPath() + "/")
-			: SyncPromise.resolve();
+			: SyncPromise.resolve(); // Note: no oEntityType available below!
 
 		return oPromise.then((oEntityType) => {
-			const aFilters = _AggregationHelper.splitFilter(oCombinedFilter,
-				this.mParameters.$$aggregation, oEntityType);
+			const oAggregation = this.mParameters.$$aggregation;
+			if (oEntityType) {
+				oAggregation.$leafLevelAggregated
+					= !oEntityType.$Key?.every((sKey) => sKey in oAggregation.group);
+			}
+
+			if (!oCombinedFilter) {
+				return [sStaticFilter];
+			}
+			if (oCombinedFilter === Filter.NONE) {
+				return ["false"];
+			}
+			const aFilters = _AggregationHelper.splitFilter(oCombinedFilter, oAggregation);
 			aFiltersNoThese = aFilters[3];
 
 			return SyncPromise.all([

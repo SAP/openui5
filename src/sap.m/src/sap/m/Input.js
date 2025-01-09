@@ -1679,7 +1679,7 @@ function(
 			sValue = "";
 		}
 
-		if (sValue.length >= this.getStartSuggestion()) {
+		if (sValue.length >= this.getStartSuggestion() && this.getEditable()) {
 			this._iSuggestDelay = setTimeout(function(){
 
 				// when using non ASCII characters the value might be the same as previous
