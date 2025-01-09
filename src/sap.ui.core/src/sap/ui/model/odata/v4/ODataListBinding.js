@@ -2063,8 +2063,12 @@ sap.ui.define([
 		return oPromise.then((oEntityType) => {
 			const oAggregation = this.mParameters.$$aggregation;
 			if (oEntityType) {
-				oAggregation.$leafLevelAggregated
-					= !oEntityType.$Key?.every((sKey) => sKey in oAggregation.group);
+				oAggregation.$leafLevelAggregated = !oEntityType.$Key?.every((sKey) => {
+					// "group" and "additionally" determine groupby()
+					return sKey in oAggregation.group
+						|| Object.keys(oAggregation.group).some(
+							(sGroup) => oAggregation.group[sGroup].additionally?.includes(sKey));
+				});
 			}
 
 			if (!oCombinedFilter) {
