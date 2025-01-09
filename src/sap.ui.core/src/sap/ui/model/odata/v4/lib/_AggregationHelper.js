@@ -880,15 +880,12 @@ sap.ui.define([
 			});
 
 			aGroups.forEach(function (sGroup) {
-				var aAdditionally = oAggregation.group[sGroup].additionally;
-
-				if (aAdditionally) {
-					aAdditionally.forEach(function (sAdditionally) {
+				oAggregation.group[sGroup].additionally
+					?.forEach(function (sAdditionally) {
 						aAllProperties.push(sAdditionally.includes("/")
 							? sAdditionally.split("/")
 							: sAdditionally);
 					});
-				}
 			});
 
 			return aAllProperties;
@@ -975,8 +972,7 @@ sap.ui.define([
 			 */
 			function isUsedFor(sName, sGroup) {
 				return sName === sGroup
-					|| oAggregation.group[sGroup].additionally
-					&& oAggregation.group[sGroup].additionally.includes(sName);
+					|| oAggregation.group[sGroup].additionally?.includes(sName);
 			}
 
 			if (sOrderby) {
