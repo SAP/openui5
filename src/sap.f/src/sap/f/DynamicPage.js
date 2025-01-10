@@ -1901,6 +1901,7 @@ sap.ui.define([
 
 		if (this._shouldAutoExpandHeaderOnResize(oEvent)) {
 			this._expandHeader(true, false /* bUserInteraction */);
+			this.getHeader().$().removeClass("sapFDynamicPageHeaderHidden");
 		}
 
 		this._adjustSnap();
