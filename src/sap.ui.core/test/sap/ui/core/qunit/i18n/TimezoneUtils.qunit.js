@@ -759,18 +759,24 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getABAPTimezone: Provides mapping from CLDR to ABAP IDs", function (assert) {
+		const aNotSupportedInABAP = ["CST6CDT", "EST5EDT", "MST7MDT", "PST8PDT"];
 		timezones.aCLDRTimezoneIDs.forEach((sCLDRTimezoneID) => {
 			// code under test
-			assert.ok(timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sCLDRTimezoneID)),
+			assert.strictEqual(
+				timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sCLDRTimezoneID)),
+				!aNotSupportedInABAP.includes(sCLDRTimezoneID),
 				sCLDRTimezoneID);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getABAPTimezone: Provides mapping from IANA to ABAP IDs", function (assert) {
+		const aNotSupportedInABAP = ["CET", "CST6CDT", "EET", "EST5EDT", "MET", "MST7MDT", "PST8PDT", "WET"];
 		timezones.aTzTimezoneIDs.forEach((sIANATimezoneID) => {
 			// code under test
-			assert.ok(timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sIANATimezoneID)),
+			assert.strictEqual(
+				timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sIANATimezoneID)),
+				!aNotSupportedInABAP.includes(sIANATimezoneID),
 				sIANATimezoneID);
 		});
 	});
