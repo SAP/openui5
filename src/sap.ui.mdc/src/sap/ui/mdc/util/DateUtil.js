@@ -2,20 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/ui/core/library',
+		'sap/base/i18n/date/CalendarType',
 		'sap/ui/core/date/UI5Date',
 		'sap/ui/mdc/enums/BaseType',
 		'sap/base/util/merge'
 	],
 	(
-		coreLibrary,
+		CalendarType,
 		UI5Date,
 		BaseType,
 		merge
 	) => {
 		"use strict";
-
-		const { CalendarType } = coreLibrary;
 
 		/**
 		 * Utility class with functions for Date conversion
