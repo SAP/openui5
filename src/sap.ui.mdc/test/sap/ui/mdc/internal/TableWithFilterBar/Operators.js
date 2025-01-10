@@ -269,85 +269,10 @@ sap.ui.define([
 		}
 	});
 
-	var customDateEmpty = new Operator({
-		name: "CustomDateEmpty",
-		longText: "Empty",
-		filterOperator: ModelOperator.EQ,
-		tokenParse: "^<#tokenText#>$",
-		tokenFormat: "<#tokenText#>",
-		valueTypes: [],
 
-		/*
-		DynamicDateRangeGroups https://sapui5untested.int.sap.eu2.hana.ondemand.com/demokit/?sap-ui-xx-columnmenu=true#/api/sap.m.DynamicDateRangeGroups
-		* 1 - Single Dates
-		* 2 - Date Ranges
-		* 3 - Weeks
-		* 4 - Months
-		* 5 - Quarters
-		* 6 - Years
-		*/
-		// group: undefined, // when group is not specified; default behavior include/exclude group with id 1 and 2 will be created
-		group: {id : 1}, // place operator into existing group 1 'Single Dates'
-		// group: {id : 2, text: "new Group"},  // insert a new group with id 2. existing group 2 will be shifted to 3, 4....
-		// group: {id : 10, text: "new Group at the end"},  // adds a new group with id 10 and text "new Group as the end" to the end
-		// this only works for FilterFields with custom operators when maxConditions=1 and no valueHelp is assigned to the FilterField.
-
-		getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-			var isNullable = false;
-			//TODO Check if the Date type is nullable
-			if (oType) {
-				var vResult = oType.parseValue("", "string");
-				try {
-					oType.validateValue(vResult);
-					isNullable = vResult === null;
-				} catch (oError) {
-					isNullable = false;
-				}
-			}
-
-			if (isNullable) {
-				return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
-			} else {
-				throw "Cannot create a Filter for fieldPath " + sFieldPath + " and operator " + this.name;
-			}
-		}
-	});
-
-	var customDateNotEmpty = new Operator({
-		name: "CustomDateNotEmpty",
-		longText: "Not Empty",
-		filterOperator: ModelOperator.NE,
-		tokenParse: "^!<#tokenText#>$",
-		tokenFormat: "!(<#tokenText#>)",
-		valueTypes: [],
-		exclude: true,
-		group: {id : 1},
-		getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-			var isNullable = false;
-			if (oType) {
-				var vResult = oType.parseValue("", "string");
-				try {
-					oType.validateValue(vResult);
-					isNullable = vResult === null;
-				} catch (oError) {
-					isNullable = false;
-				}
-			}
-			if (isNullable) {
-				return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
-			} else {
-				throw "Cannot create a Filter for fieldPath " + sFieldPath + " and operator " + this.name;
-			}
-		}
-	});
-
-	[ToToday, customDateEmpty, customDateNotEmpty, oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator, oMyDateOperator, oMyDateRangeOperator, oMyNextDays].forEach(function (oOperator) {
+	[ToToday, oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator, oMyDateOperator, oMyDateRangeOperator, oMyNextDays].forEach(function (oOperator) {
 		FilterOperatorUtil.addOperator(oOperator);
 	});
-
-	// FilterOperatorUtil.addOperatorForType(BaseType.Date, customDateEmpty);
-	// FilterOperatorUtil.addOperatorForType(BaseType.Date, customDateNotEmpty);
-
 
 	var oTodayOp = FilterOperatorUtil.getOperator(OperatorName.TODAY);
 	var fOrgTodayGetModelFilter = oTodayOp.overwrite(OperatorOverwrite.getModelFilter,
@@ -355,34 +280,6 @@ sap.ui.define([
 			var oFilter = fOrgTodayGetModelFilter(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType);
 			return new Filter({path: sFieldPath, operator: ModelOperator.EQ, value1: oFilter.oValue1});
 		}
-	);
-
-	var oEmptyOp = FilterOperatorUtil.getOperator(OperatorName.Empty);
-	FilterOperatorUtil.addOperatorForType(BaseType.Date, oEmptyOp);
-	var fOrgEmptyGetModelFilter = oEmptyOp.overwrite(OperatorOverwrite.getModelFilter,
-		function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-			if (sBaseType === "Date") {
-				var isNullable = false;
-				if (oType) {
-					var vResult = oType.parseValue("", "string");
-					try {
-						oType.validateValue(vResult);
-						isNullable = vResult === null;
-					} catch (oError) {
-						isNullable = false;
-					}
-				}
-				if (isNullable) {
-					return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: null });
-				} else {
-					throw "Cannot create a Filter for fieldPath " + sFieldPath + " and operator " + this.name;
-				}
-			} else {
-				//TODO this will not work!!!!!
-				return fOrgEmptyGetModelFilter(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType);
-			}
-
-		}.bind(oEmptyOp)
 	);
 
 	var oYesterdayOp = FilterOperatorUtil.getOperator(OperatorName.YESTERDAY);
