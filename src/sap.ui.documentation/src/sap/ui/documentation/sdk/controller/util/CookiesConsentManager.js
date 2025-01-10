@@ -52,8 +52,8 @@ sap.ui.define(
 
         const TRACKED_HOSTNAMES = {
             // complementary list and regex for the hostnames that should be tracked
-            "LIST": ["ui5.sap.com", "sdk.openui5.org", "openui5nightly.hana.ondemand.com"],
-            "REGEX": /^sapui5([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?\.hana\.ondemand\.com$/
+            "LIST": ["ui5.sap.com", "sdk.openui5.org"],
+            "REGEX": /^(sapui5|openui5)([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?\.hana\.ondemand\.com$/
         };
 
         // shorthand for TrustArc constants
