@@ -1225,6 +1225,34 @@ sap.ui.define([
 		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultBadgeTooltip + " " + sCustomBadgeTooltip + " " + sInitials, "Both custom badgeTooltip and initials value are set as aria-label");
 	});
 
+	QUnit.test("Check aria-label of decorative avatar", async function(assert) {
+		var $oAvatar = this.oAvatar.$(),
+			sInitials = "AA";
+
+		// Act
+		this.oAvatar.setInitials(sInitials);
+		this.oAvatar.setDecorative(true);
+		await nextUIUpdate();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), undefined, "The decorative avatar should not have aria-label since it is ignored by accessibility tools");
+	});
+
+	QUnit.test("Check aria-label of decorative avatar with press handler", async function(assert) {
+		var $oAvatar = this.oAvatar.$(),
+			sDefaultBadgeTooltip = this.oAvatar._getDefaultTooltip(),
+			sInitials = "AA";
+
+		// Act
+		this.oAvatar.setInitials(sInitials);
+		this.oAvatar.setDecorative(true);
+		this.oAvatar.attachPress(function () {});
+		await nextUIUpdate();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultBadgeTooltip + " " + sInitials, "The decorative property doesn`t take effect if avatar has a press handler, therefore avatar should have aria-label");
+	});
+
 	QUnit.module("Keyboard handling", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
