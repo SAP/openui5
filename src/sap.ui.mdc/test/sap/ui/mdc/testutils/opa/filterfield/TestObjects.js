@@ -24,10 +24,11 @@ sap.ui.define([
 				 * @method iEnterTextOnTheFilterField
 				 * @param {string | Object} vIdentifier ID or a plain object providing properties identifying of the given <code>sap.ui.mdc.FilterField</code>
 				 * @param {string} sValue Value that is entered in the <code>sap.ui.mdc.FilterField</code>
+				 * @param {Object} [oConfig] Configuration object
 				 * @returns {Promise} OPA waitFor
 				 */
-				iEnterTextOnTheFilterField: function(vIdentifier, sValue) {
-					return fieldActions.iEnterTextOnTheFilterField.call(this, vIdentifier, sValue);
+				iEnterTextOnTheFilterField: function(vIdentifier, sValue, oConfig) {
+					return fieldActions.iEnterTextOnTheFilterField.call(this, vIdentifier, sValue, oConfig);
 				},
 				/**
 				 * OPA5 test action

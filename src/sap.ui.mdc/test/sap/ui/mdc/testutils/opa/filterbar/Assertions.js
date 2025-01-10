@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/PropertyStrictEquals",
     "./waitForFilterBar",
-    "./waitForAdaptFiltersButton"
+    "./waitForAdaptFiltersButton",
+    "../Utils"
 ], function(
 	Opa5,
 	Matcher,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Ancestor,
 	PropertyStrictEquals,
     waitForFilterBar,
-    waitForAdaptFiltersButton
+    waitForAdaptFiltersButton,
+    Utils
 ) {
 	"use strict";
 
@@ -133,7 +135,23 @@ sap.ui.define([
 
 		iShouldSeeTheAdaptFiltersButton: function() {
 			return waitForAdaptFiltersButton.call(this);
-		}
+		},
+
+        iShouldSeeTheErrorPopover: function() {
+            const sPopoverTitle = Utils.getTextFromResourceBundle("sap.m", "MSGBOX_TITLE_ERROR");
+
+            return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: [new PropertyStrictEquals({
+                    name: "title",
+                    value: sPopoverTitle
+                })],
+				success: function(aDialog){
+					Opa5.assert.strictEqual(aDialog.length, 1, "Only one error popover is present");
+				},
+				errorMessage: "The error popover could not be found"
+			});
+        }
     };
 
 });
