@@ -19,19 +19,16 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
-	return function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oChangeContent = oChange.getContent();
-		var sAggregationName = oChangeContent.targetAggregation;
-		var iIndex = oChangeContent.index;
+	return async function(oChange, oControl, mPropertyBag) {
+		const oModifier = mPropertyBag.modifier;
+		const oChangeContent = oChange.getContent();
+		const sAggregationName = oChangeContent.targetAggregation;
+		const iIndex = oChangeContent.index;
 
 		if (iIndex === undefined) {
-			return Promise.resolve()
-			.then(oModifier.getAggregation.bind(oModifier, oControl, sAggregationName))
-			.then(function(aAggregationContent) {
-				return aAggregationContent.length; /* last by default */
-			});
+			const aAggregationContent = await oModifier.getAggregation(oControl, sAggregationName);
+			return aAggregationContent.length; /* last by default */
 		}
-		return Promise.resolve(iIndex);
+		return iIndex;
 	};
 });

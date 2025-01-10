@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.27.0
 	 */
-	var UnstashControl = {};
+	const UnstashControl = {};
 
 	/**
 	 * Unstashes and shows a control.
@@ -65,7 +65,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UnstashControl.revertChange = async function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
+		const mRevertData = oChange.getRevertData();
 		await mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
 		oChange.resetRevertData();
 	};

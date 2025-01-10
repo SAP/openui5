@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted change handlers
 	 */
-	var Base = /** @lends sap.ui.fl.changeHandler.Base */{
+	const Base = /** @lends sap.ui.fl.changeHandler.Base */{
 		/**
 		 * Deprecated. Use setText on the flex object instance instead
 		 *
@@ -46,32 +46,30 @@ sap.ui.define([
 		 * @returns {Element[]|sap.ui.core.Element[]} Array with the nodes/instances of the controls of the fragment
 		 * @public
 		 */
-		instantiateFragment(oChange, mPropertyBag) {
-			var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
-			var sModuleName = oFlexObjectMetadata.moduleName;
+		async instantiateFragment(oChange, mPropertyBag) {
+			const oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+			const sModuleName = oFlexObjectMetadata.moduleName;
 			if (!sModuleName) {
 				return Promise.reject(new Error("The module name of the fragment is not set. This should happen in the backend"));
 			}
-			var sViewId = mPropertyBag.viewId ? `${mPropertyBag.viewId}--` : "";
-			var sProjectId = oFlexObjectMetadata.projectId || "";
-			var sFragmentId = (
+			const sViewId = mPropertyBag.viewId ? `${mPropertyBag.viewId}--` : "";
+			const sProjectId = oFlexObjectMetadata.projectId || "";
+			const sFragmentId = (
 				oChange.getExtensionPointInfo
 				&& oChange.getExtensionPointInfo()
 				&& oChange.getExtensionPointInfo().fragmentId
 			) || "";
-			var sSeparator = sProjectId && sFragmentId ? "." : "";
-			var sIdPrefix = sViewId + sProjectId + sSeparator + sFragmentId;
+			const sSeparator = sProjectId && sFragmentId ? "." : "";
+			const sIdPrefix = sViewId + sProjectId + sSeparator + sFragmentId;
 
-			var oModifier = mPropertyBag.modifier;
-			var oView = mPropertyBag.view;
-			return Promise.resolve()
-			.then(function() {
-				var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
-				return oModifier.instantiateFragment(sFragment, sIdPrefix, oView)
-				.catch(function(oError) {
-					throw new Error(`The following XML Fragment could not be instantiated: ${sFragment} Reason: ${oError.message}`);
-				});
-			});
+			const oModifier = mPropertyBag.modifier;
+			const oView = mPropertyBag.view;
+			const sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+			try {
+				return await oModifier.instantiateFragment(sFragment, sIdPrefix, oView);
+			} catch (oError) {
+				throw new Error(`The following XML Fragment could not be instantiated: ${sFragment} Reason: ${oError.message}`);
+			}
 		},
 
 		/**
@@ -81,7 +79,7 @@ sap.ui.define([
 		 * @returns {Promise} Returns rejected promise with non-applicable message inside
 		 */
 		markAsNotApplicable(sNotApplicableCauseMessage, bAsync) {
-			var oReturn = { message: sNotApplicableCauseMessage };
+			const oReturn = { message: sNotApplicableCauseMessage };
 			if (!bAsync) {
 				throw oReturn;
 			}
@@ -90,4 +88,4 @@ sap.ui.define([
 	};
 
 	return Base;
-}, /* bExport= */true);
+});
