@@ -176,7 +176,7 @@ sap.ui.define([
 								iIndex = oContent.indexOf(oElement.getParent());
 
 							if (iIndex !== -1) {
-								mAriaProps.role = "option";
+								mAriaProps.role = "tab";
 								mAriaProps.setsize = oContent.length;
 								mAriaProps.posinset = iIndex + 1;
 

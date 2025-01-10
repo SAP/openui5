@@ -30,7 +30,7 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 					.openEnd();
 
 				rm.openStart("div", oToolbar.getId() + "-scroll")
-					.attr("role", "listbox")
+					.attr("role", "tablist")
 					.attr("aria-describedby", oToolbar.getId() + "-desc")
 					.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL"))
 					.openEnd();
