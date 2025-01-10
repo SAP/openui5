@@ -22,6 +22,13 @@ sap.ui.define([
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
 	});
 
+	opaTest("Should see the Cookie Preferences link", function (Given, When, Then) {
+		// Action
+		When.iLookAtTheScreen();
+		// Assertions
+		Then.onTheWelcomePage.iSeeTheCookiePreferencesLink();
+	});
+
 	opaTest("Should navigate to Topic Master Page", function (Given, When, Then) {
 		// Action
 		When.onTheAppPage.iPressTheTopicMasterTabButton();

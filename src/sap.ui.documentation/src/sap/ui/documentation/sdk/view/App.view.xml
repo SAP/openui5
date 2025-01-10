@@ -129,6 +129,10 @@
 										text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
 										visible="{versionData>/isOpenUI5}" />
 									<MenuItem
+										key="cookie_preferences"
+										icon="sap-icon://user-settings"
+										text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" />
+									<MenuItem
 										key="terms_of_use"
 										icon="sap-icon://document-text"
 										text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"

@@ -36,7 +36,7 @@
 								href="https://www.sap.com/corporate/en/legal/privacy.html"
 								target="_blank"/>
 						<Link
-								class="sapUiDocumentationFooterLink"
+								class="sapUiTinyMarginBottom sapUiLargeMarginEnd sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_TERMS}"
 								href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
 								visible="{= !${versionData>/isOpenUI5} &amp;&amp; !${versionData>/isDevEnv} }"
@@ -48,11 +48,15 @@
 								visible="{versionData>/isOpenUI5}"
 								target="_blank"/>
 						<Link
-								class="sapUiDocumentationFooterLink"
+								class="sapUiTinyMarginBottom sapUiLargeMarginEnd sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_TERMS}"
 								href="TermsOfUse.txt"
 								visible="{versionData>/isOpenUI5}"
 								target="_blank"/>
+						<Link
+								class="sapUiDocumentationFooterLink"
+								text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}"
+								press="onEditCookiePreferencesRequest"/>
 					</items>
 				</FlexBox>
 			</items>

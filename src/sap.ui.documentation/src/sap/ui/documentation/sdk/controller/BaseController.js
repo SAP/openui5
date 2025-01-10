@@ -241,8 +241,12 @@ sap.ui.define([
 			 * @param {object} oEvent the Event object from which we are going to get the correct item key.
 			 */
 			handleFooterMasterItemPress: function(oEvent) {
-				var sTargetText = oEvent.getParameter("item").getKey(),
-				sTarget = BaseController.LEGAL_LINKS[sTargetText];
+				var sTargetText = oEvent.getParameter("item").getKey();
+				if (sTargetText === FOOTER_MENU_OPTIONS.COOKIE_PREFERENCES) {
+					this.onEditCookiePreferencesRequest();
+					return;
+				}
+				var sTarget = BaseController.LEGAL_LINKS[sTargetText];
 				URLHelper.redirect(sTarget, true);
 			},
 			/**
@@ -277,6 +281,23 @@ sap.ui.define([
 				return;
 			},
 
+			onEditCookiePreferencesRequest: function () {
+				var oConsentManager = this.getOwnerComponent().getCookiesConsentManager();
+				oConsentManager.showPreferencesDialog(this.getView());
+				if (!oConsentManager.supportsWaitForPreferencesSubmission()) {
+					return;
+				}
+				oConsentManager.waitForPreferencesSubmission().then(function () {
+					oConsentManager.checkUserAcceptsUsageTracking(function(bAcceptsUsageTracking) {
+						if (bAcceptsUsageTracking) {
+							this.getOwnerComponent().getUsageTracker().start();
+						} else {
+							this.getOwnerComponent().getUsageTracker().stop();
+						}
+					}.bind(this));
+				}.bind(this));
+			},
+
 			_isRouteBypassedEvent: function (oEvent) {
 				return typeof oEvent?.getId === "function" && oEvent.getId() === "bypassed";
 			},
@@ -290,11 +311,19 @@ sap.ui.define([
 		/**
 		 * STATIC MEMBERS
 		 */
+		const FOOTER_MENU_OPTIONS = {
+			COOKIE_PREFERENCES: "cookie_preferences",
+			LEGAL: "legal",
+			PRIVACY: "privacy",
+			TERMS_OF_USE: "terms_of_use",
+			LICENSE: "license"
+		};
+
 		BaseController.LEGAL_LINKS = {
-			"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
-			"privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
-			"terms_of_use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
-			"license": "LICENSE.txt"
+			[FOOTER_MENU_OPTIONS.LEGAL]: "https://www.sap.com/corporate/en/legal/impressum.html",
+			[FOOTER_MENU_OPTIONS.PRIVACY]: "https://www.sap.com/corporate/en/legal/privacy.html",
+			[FOOTER_MENU_OPTIONS.TERMS_OF_USE]: "https://www.sap.com/corporate/en/legal/terms-of-use.html",
+			[FOOTER_MENU_OPTIONS.LICENSE]: "LICENSE.txt"
 		};
 
 		return BaseController;

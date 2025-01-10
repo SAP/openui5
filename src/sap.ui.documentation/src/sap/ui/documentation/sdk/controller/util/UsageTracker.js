@@ -63,38 +63,50 @@ sap.ui.define(
                     this._oRouter = oComponent.getRouter();
                     this._oConfig = oComponent.getConfig();
                     this._oLastRouteParameters = null;
-
+                    this._isStarted = false;
+                },
+                start: function(aRouterEventsToLog) {
+                    if (this._isStarted) {
+                        return;
+                    }
                     this._initRemoteServiceConnector();
-                    this._listenForUserNavigations();
 
+                    this._attachListenersForUserNavigations();
                     Localization.attachChange(this._onLanguageChange);
+
+                    this._logPrecedingRouteVisits(aRouterEventsToLog);
+                    this._isStarted = true;
+                },
+                stop: function() {
+                    if (!this._isStarted) {
+                        return;
+                    }
+                    this._detachListenersForUserNavigations();
+                    Localization.detachChange(this._onLanguageChange);
+                    this._isStarted = false;
                 },
                 _initRemoteServiceConnector: function() {
                     window.adobeDataLayer = window.adobeDataLayer || [];
                     this._logSessionStarted();
                 },
-                _listenForUserNavigations: function() {
-                    this._oRouter.attachRouteMatched(this._onRouteMatched, this);
-                    this._oRouter.attachBypassed(this._onRouteNotFound, this);
-                    this._oRouter.attachEvent("_navToWithoutHash", this._onNavToWithoutHash, this);
-                },
-                logRouteVisit: function(oEventParameters) {
-                    if (!oEventParameters) {
-                        return;
-                    }
-                    switch (oEventParameters.eventId) {
-                        case "routeMatched": {
-                            this._logRouteMatched(oEventParameters);
-                            break;
-                        }
-                        case "bypassed": {
-                            this._logRouteNotFound(oEventParameters);
-                            break;
-                        }
-                        case "_navToWithoutHash": {
-                            this._logNavToWithoutHash(oEventParameters);
-                            break;
-                        }
+                _logPrecedingRouteVisits: function(aRouterEventsToLog) {
+                    if (aRouterEventsToLog) {
+                        aRouterEventsToLog.forEach(function(oEventParameters) {
+                            switch (oEventParameters.eventId) {
+                                case "routeMatched": {
+                                    this._logRouteMatched(oEventParameters);
+                                    break;
+                                }
+                                case "bypassed": {
+                                    this._logRouteNotFound(oEventParameters);
+                                    break;
+                                }
+                                case "_navToWithoutHash": {
+                                    this._logNavToWithoutHash(oEventParameters);
+                                    break;
+                                }
+                            }
+                        }, this);
                     }
                 },
                 _onRouteMatched: function (oEvent) {
@@ -102,10 +114,10 @@ sap.ui.define(
                 },
                 _logRouteMatched: function(oEventParameters) {
                     if (this._areEqualRoutes(oEventParameters, this._oLastRouteParameters)) {
-                        // sometimes the same route is matched multiple times
-                        // (e.g. when route is loaded via both 'navTo' and 'linkClickHandler' of DocumentationRouter)
-                        // so return to avoid logging the same page visit multiple times
-                        // until the above issue is resolved
+                        // prevent logging the same page visit multiple times
+                        // that happens when the router fires multiple events for the same route
+                        // (e.g. when the app calls BOTH 'navTo' and 'linkClickHandler' of DocumentationRouter to load the same route)
+                        // untill the issue is fixed in the router
                         return;
                     }
                     if (this._isLegacyRoute(oEventParameters)) {
@@ -280,11 +292,18 @@ sap.ui.define(
                 _onLanguageChange: function (oEvent) {
                     sSiteLanguage = Localization.getLanguageTag().language;
                 },
-                exit: function () {
+                _attachListenersForUserNavigations: function() {
+                    this._oRouter.attachRouteMatched(this._onRouteMatched, this);
+                    this._oRouter.attachBypassed(this._onRouteNotFound, this);
+                    this._oRouter.attachEvent("_navToWithoutHash", this._onNavToWithoutHash, this);
+                },
+                _detachListenersForUserNavigations() {
                     this._oRouter.detachRouteMatched(this._onRouteMatched, this);
                     this._oRouter.detachBypassed(this._onRouteNotFound, this);
-                    this._oRouter.detachEvent("_contentNotFound", this._onNavToWithoutHash, this);
-                    Localization.detachChange(this._onLanguageChange);
+                    this._oRouter.detachEvent("_navToWithoutHash", this._onNavToWithoutHash);
+                },
+                exit: function () {
+                    this.stop();
                     this._oRouter = null;
                 }
             }
