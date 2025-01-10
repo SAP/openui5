@@ -62,7 +62,7 @@ sap.ui.define([
 		},
 
 		loadVariantsAuthors() {
-			return Promise.reject("loadVariantsAuthors is not implemented");
+			return Promise.resolve({});
 		}
 	});
 });

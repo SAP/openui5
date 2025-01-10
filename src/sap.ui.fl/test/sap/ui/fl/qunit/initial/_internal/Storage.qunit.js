@@ -256,7 +256,7 @@ sap.ui.define([
 			return Storage.loadVariantsAuthors("reference").then(function(oResponse) {
 				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
 				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadVariantsAuthors was triggered once");
-				assert.strictEqual(oLogResolveSpy.callCount, 3, "the logAndResolveDefault called three time");
+				assert.strictEqual(oLogResolveSpy.callCount, 2, "the logAndResolveDefault called twice");
 				assert.deepEqual(oResponse, oExpectedResponse, "response was merged even with one connector failing");
 			});
 		});

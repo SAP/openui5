@@ -34,7 +34,8 @@ sap.ui.define([
 		isCondensingEnabled: true,
 		isContextSharingEnabled: false,
 		isVersioningEnabled: true,
-		logonUser: "DEFAULT_USER"
+		logonUser: "DEFAULT_USER",
+		isVariantAuthorNameAvailable: false
 	};
 
 	function loadDataFromStorage(mPropertyBag) {
