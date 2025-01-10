@@ -29,14 +29,25 @@ sap.ui.define(
             get CONSENT_BAR_HTML() {
                 return `<div id="consent_blackbar" style="position: fixed; bottom: 0px; z-index: 1000000; width: 100%;"></div>
                     <div id="${this.CONSENT_BAR_ID}"></div>`;
+            },
+            CATEGORIES: {
+                "REQUIRED_COOKIES": "Required Cookies",
+                "FUNCTIONAL_COOKIES": "Functional Cookies",
+                "ADVERTISING_COOKIES": "Advertising Cookies"
+            },
+            CONSENT_DECISION:{
+                FOR_CATEGORY: {
+                    "PENDING": 0,
+                    "REQUIRED_COOKIES_PEMITTED": 1,
+                    "FUNCTIONAL_COOKIES_PEMITTED": 2,
+                    "ADVERTISING_COOKIES_PEMITTED": 3
+                },
+                FOR_DOMAIN: {
+                    "OPTED_OUT": 0,
+                    "OPTED_IN": 1,
+                    "NO_PREFERENCE": 2
+                }
             }
-        };
-
-        const CONSENT_DECISION = {
-            PENDING: 0,
-            REQUIRED_COOKIES_PERMITTED: 1,
-            FUNCTIONAL_COOKIES_PERMITTED: 2,
-            ADVERTISING_COOKIES_PERMITTED: 3
         };
 
         const TRACKED_HOSTNAMES = {
@@ -44,6 +55,11 @@ sap.ui.define(
             "LIST": ["ui5.sap.com", "sdk.openui5.org"],
             "REGEX": /^(sapui5|openui5)([a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?\.hana\.ondemand\.com$/
         };
+
+        // shorthand for TrustArc constants
+        const oCookieCategories = TRUST_ARC.CATEGORIES,
+            oCategoryDecisionType = TRUST_ARC.CONSENT_DECISION.FOR_CATEGORY,
+            oDomainDecisionType = TRUST_ARC.CONSENT_DECISION.FOR_DOMAIN;
 
         var DefaultConsentManager = BaseObject.extend(
             "sap.ui.documentation.sdk.controller.util.DefaultConsentManager",
@@ -76,15 +92,21 @@ sap.ui.define(
                 checkUserAcceptsUsageTracking(fnCallback) {
                     fnCallback(false); // no usage tracking provisioned in this case
                 },
-                showDialog: function(oRootView) {
+                showPreferencesDialog: function(oRootView) {
                     this._load().then(function() {
-                        this._oConsentDialogComponent.cookieSettingsDialogOpen({ showCookieDetails: true }, oRootView);
-                    });
+                        this._oConsentDialogComponent.openCookieSettingsDialog({ showCookieDetails: true }, oRootView);
+                    }.bind(this));
+                },
+                supportsWaitForPreferencesSubmission() {
+                    return false;
+                },
+                waitForPreferencesSubmission: function () {
+                    throw new Error("Not supported. Check supportsWaitForPreferencesSubmission method first.");
                 },
                 exit: function () {
-                  if (this._oConsentDialogComponent) {
-                    this._oConsentDialogComponent.destroy();
-                  }
+                    if (this._oConsentDialogComponent) {
+                        this._oConsentDialogComponent.destroy();
+                    }
                 }
             }
         );
@@ -98,17 +120,27 @@ sap.ui.define(
                 // override
                 checkUserAcceptsRequiredCookies(fnCallback) {
                     this.getConsentDecision(function(iConsentDecision) {
-                         fnCallback(iConsentDecision >= CONSENT_DECISION.REQUIRED_COOKIES_PERMITTED);
+                         fnCallback(iConsentDecision >= oCategoryDecisionType.REQUIRED_COOKIES_PEMITTED);
                      });
                  },
+                // override
                 checkUserAcceptsUsageTracking(fnCallback) {
-                     this.getConsentDecision(function(iConsentDecision) {
-                         fnCallback(iConsentDecision >= CONSENT_DECISION.FUNCTIONAL_COOKIES_PERMITTED);
-                     });
+                    this.getConsentDecision(function(iConsentDecision) {
+                        var bAccepts = iConsentDecision >= oCategoryDecisionType.FUNCTIONAL_COOKIES_PEMITTED;
+                        if (bAccepts) {
+                            var oAddionalPreferences = this._getAdditionalPreferences(oCookieCategories.FUNCTIONAL_COOKIES);
+                            if (oAddionalPreferences) {
+                                bAccepts = Object.values(oAddionalPreferences.domains).every(function (oDecisionForDomain) {
+                                    return parseInt(oDecisionForDomain) === oDomainDecisionType.OPTED_IN;
+                                });
+                            }
+                        }
+                        fnCallback(bAccepts);
+                    }.bind(this));
                 },
                 getConsentDecision: function (fnCallback) {
                     var iConsentDecision = this._getConsentDecisionSync(),
-                        bDecisionAvailable = iConsentDecision > CONSENT_DECISION.PENDING;
+                        bDecisionAvailable = iConsentDecision > oCategoryDecisionType.PENDING;
                     if (bDecisionAvailable) {
                         fnCallback(iConsentDecision);
                         return;
@@ -123,8 +155,8 @@ sap.ui.define(
                         this._oGetDecisionPromise = new Promise(function(resolve, reject) {
                             function onTrustArcReady() {
                                 var iConsentDecision = this._getConsentDecisionSync();
-                                if (iConsentDecision === CONSENT_DECISION.PENDING) { // user has not made a decision yet
-                                    this._waitForSubmitPreferences()
+                                if (iConsentDecision === oCategoryDecisionType.PENDING) { // user has not made a decision yet
+                                    this.waitForPreferencesSubmission()
                                     .then(function() {
                                         resolve(this._getConsentDecisionSync());
                                     }.bind(this));
@@ -144,6 +176,13 @@ sap.ui.define(
                     }
                     return this._oGetDecisionPromise;
                 },
+                _getAdditionalPreferences: function (sConsentCategory) {
+                    var oCategories = window.truste?.cma?.callApi("getConsentCategories",document.domain)?.categories,
+                        bAdditionalPreferencesDefined = oCategories && oCategories[sConsentCategory];
+                    if (bAdditionalPreferencesDefined) {
+                        return oCategories[sConsentCategory];
+                    }
+                },
                 _isTrustArcReady: function() {
                     return typeof truste !== 'undefined' && window.truste.cma;
                 },
@@ -158,7 +197,12 @@ sap.ui.define(
                         }, 100); // Check every 100 milliseconds
                     });
                 },
-                _waitForSubmitPreferences: function() {
+                // override
+                supportsWaitForPreferencesSubmission() {
+                    return true;
+                },
+                // override
+                waitForPreferencesSubmission: function () {
                     return new Promise(function(resolve, reject) {
                         var oMessage = this._composeApiRequest("getConsentDecision");
                         window.top.postMessage(oMessage,"*");
@@ -242,8 +286,22 @@ sap.ui.define(
                     return false;
                 },
                 // override
-                showDialog: function() {
-                    // not supported
+                showPreferencesDialog: function() {
+                    this._load().then(function () {
+                        var consentBarLinkSelector = "#" + TRUST_ARC.CONSENT_BAR_ID + " a",
+                            consentBarLink = document.querySelector(consentBarLinkSelector);
+                        if (consentBarLink) {
+                            this._simulateClick(consentBarLink);
+                        }
+                    }.bind(this));
+                },
+                _simulateClick: function (element) {
+                    var event = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    element.dispatchEvent(event);
                 }
             }
         );

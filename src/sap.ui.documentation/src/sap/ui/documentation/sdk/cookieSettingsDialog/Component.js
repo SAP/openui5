@@ -35,7 +35,7 @@ sap.ui.define([
 				var bApprovalRequested = this.getCookieValue(this.COOKIE_NAMES.APPROVAL_REQUESTED) === "1";
 
 				if (!bApprovalRequested) {
-					this.cookieSettingsDialogOpen({
+					this.openCookieSettingsDialog({
 						showCookieDetails: false,
 						enableAdvancedSettings: false // this flag is left for eventual future advanced cookie settings
 					}, oRootView);
@@ -74,7 +74,7 @@ sap.ui.define([
 		 * Opens the cookie settings dialog
 		 * @public
 		 */
-		cookieSettingsDialogOpen: function (oOptions, oView) {
+		openCookieSettingsDialog: function (oOptions, oView) {
 			this.getCookieSettingsController().then(function(oController) {
 				oController.openCookieSettingsDialog(oOptions, oView, this);
 			}.bind(this));
