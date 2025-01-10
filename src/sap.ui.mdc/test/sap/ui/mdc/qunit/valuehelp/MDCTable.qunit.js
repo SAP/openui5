@@ -160,7 +160,6 @@ sap.ui.define([
 			table: oTable,
 			keyPath: "key",
 			descriptionPath: "text",
-			filterFields: "*text,additionalText*",
 			conditions: [Condition.createItemCondition("I2", "Item 2", {inParameter: null})], // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
