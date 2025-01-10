@@ -17,7 +17,8 @@
 		<script>
 
 			jQuery.sap.require("sap.ui.model.type.Date");
-			const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
+			jQuery.sap.require("sap.base.i18n.date.CalendarType");
+			const CalendarType = sap.ui.require("sap/base/i18n/date/CalendarType");
 
 			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
 			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: CalendarType.Gregorian});

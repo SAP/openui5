@@ -18,7 +18,8 @@
 		sap.ui.getCore().attachInit(() => {
 			jQuery.sap.require("sap.ui.model.type.Date");
 			var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
-			const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
+			jQuery.sap.require("sap.base.i18n.date.CalendarType");
+			const CalendarType = sap.ui.require("sap/base/i18n/date/CalendarType");
 
 			// load Button, Label and Text synchronously to avoid async/sync conflicts when the form loads them async
 			// UI5 2.0 transformation will convert this to dependencies
