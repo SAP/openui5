@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/m/DynamicDateRange",
 	"sap/m/DynamicDateOption",
 	"sap/m/StandardDynamicDateOption",
@@ -15,11 +16,11 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/Label",
 	"sap/ui/Device",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/date/CalendarWeekNumbering"
+	"sap/ui/core/date/UI5Date"
 ], function(
 	Formatting,
 	Localization,
+	CalendarWeekNumbering,
 	DynamicDateRange,
 	DynamicDateOption,
 	StandardDynamicDateOption,
@@ -33,8 +34,7 @@ sap.ui.define([
 	Icon,
 	Label,
 	Device,
-	UI5Date,
-	CalendarWeekNumbering
+	UI5Date
 ) {
 	"use strict";
 

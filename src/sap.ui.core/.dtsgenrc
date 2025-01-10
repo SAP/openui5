@@ -344,5 +344,10 @@
 				]
 			}
 		]
+	},
+	"deprecatedEnumAliases": {
+		"sap.ui.core.CalendarType": "module:sap/base/i18n/date/CalendarType",
+		"sap.ui.core.MessageType": "module:sap/ui/core/message/MessageType",
+		"sap.ui.core.date.CalendarWeekNumbering": "module:sap/base/i18n/date/CalendarWeekNumbering"
 	}
 }

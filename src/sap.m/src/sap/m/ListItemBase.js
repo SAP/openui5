@@ -112,12 +112,12 @@ function(
 				/**
 				 * Defines the highlight state of the list items.
 				 *
-				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or
+				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link module:sap/ui/core/message/MessageType} or
 				 * {@link sap.ui.core.IndicationColor} (only values of <code>Indication01</code> to <code>Indication10</code> are supported
 				 * for accessibility contrast reasons).
 				 *
 				 * Accessibility support is provided through the associated {@link sap.m.ListItemBase#setHighlightText highlightText} property.
-				 * If the <code>highlight</code> property is set to a value of {@link sap.ui.core.MessageType}, the <code>highlightText</code>
+				 * If the <code>highlight</code> property is set to a value of {@link module:sap/ui/core/message/MessageType}, the <code>highlightText</code>
 				 * property does not need to be set because a default text is used. However, the default text can be overridden by setting the
 				 * <code>highlightText</code> property.
 				 * In all other cases the <code>highlightText</code> property must be set.
@@ -740,8 +740,8 @@ function(
 	ListItemBase.prototype.setHighlight = function(sValue) {
 		if (sValue == null) {
 			sValue = MessageType.None;
-		} else if (!DataType.getType("sap.ui.core.MessageType").isValid(sValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(sValue)) {
-			throw new Error('"' + sValue + '" is not a value of the enums sap.ui.core.MessageType or sap.ui.core.IndicationColor for property "highlight" of ' + this);
+		} else if (!DataType.getType("sap.ui.core.message.MessageType").isValid(sValue) && !DataType.getType("sap.ui.core.IndicationColor").isValid(sValue)) {
+			throw new Error('"' + sValue + '" is not a value of the enums sap/ui/core/message/MessageType or sap.ui.core.IndicationColor for property "highlight" of ' + this);
 		}
 
 		return this.setProperty("highlight", sValue);

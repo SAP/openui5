@@ -2,7 +2,6 @@ sap.ui.define([
   "sap/ui/core/Element",
   "sap/ui/model/type/Date",
   "sap/ui/core/format/DateFormat",
-  "sap/ui/core/CalendarType",
   "sap/ui/unified/calendar/TimesRow",
   "sap/ui/core/library",
   "sap/m/Label",
@@ -12,27 +11,14 @@ sap.ui.define([
   "sap/ui/unified/DateTypeRange",
   "sap/ui/core/Item",
   "sap/m/Select"
-], function(
-  Element,
-  TypeDate,
-  DateFormat,
-  CalendarType,
-  TimesRow,
-  coreLibrary,
-  Label,
-  Input,
-  DateRange,
-  ToggleButton,
-  DateTypeRange,
-  Item,
-  Select
-) {
+], function(Element, TypeDate, DateFormat, TimesRow, coreLibrary, Label, Input, DateRange, ToggleButton, DateTypeRange, Item, Select) {
   "use strict";
 
   // shortcut for sap.ui.core.ValueState
   const ValueState = coreLibrary.ValueState;
 
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+  const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
 
   var oFormatYyyyMMddHHmmss = DateFormat.getInstance({pattern: "yyyyMMddHHmmss", calendarType: CalendarType.Gregorian});
 

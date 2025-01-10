@@ -638,11 +638,12 @@ sap.ui.define([
 	 * @public
 	 */
 	NumberFormat.getFloatInstance = function(oFormatOptions, oLocale) {
-		this.checkDecimalPadding(oFormatOptions);
-		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.FLOAT);
+		NumberFormat.checkDecimalPadding(oFormatOptions);
+		const oFormat = NumberFormat.createInstance(oFormatOptions, oLocale);
+		const oLocaleFormatOptions = oFormat.getLocaleFormatOptions(mNumberType.FLOAT);
+		oFormat.oFormatOptions = extend({}, this.oDefaultFloatFormat, oLocaleFormatOptions,
+			oFormat.oOriginalFormatOptions);
 
-		oFormat.oFormatOptions = extend({}, this.oDefaultFloatFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
 		return oFormat;
 	};
 
@@ -742,11 +743,13 @@ sap.ui.define([
 	 * @public
 	 */
 	NumberFormat.getIntegerInstance = function(oFormatOptions, oLocale) {
-		this.checkDecimalPadding(oFormatOptions, false);
-		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.INTEGER);
+		NumberFormat.checkDecimalPadding(oFormatOptions, false);
+		const oFormat = NumberFormat.createInstance(oFormatOptions, oLocale);
+		const oLocaleFormatOptions = oFormat.getLocaleFormatOptions(mNumberType.INTEGER);
 
-		oFormat.oFormatOptions = extend({}, this.oDefaultIntegerFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
+		oFormat.oFormatOptions = extend({}, NumberFormat.oDefaultIntegerFormat, oLocaleFormatOptions,
+			oFormat.oOriginalFormatOptions);
+
 		return oFormat;
 	};
 
@@ -909,33 +912,21 @@ sap.ui.define([
 	 * @public
 	 */
 	NumberFormat.getCurrencyInstance = function(oFormatOptions, oLocale) {
-		this.checkDecimalPadding(oFormatOptions, true, true);
-		var oFormat = this.createInstance(oFormatOptions, oLocale);
-		var sContext = oFormat.oOriginalFormatOptions && oFormat.oOriginalFormatOptions.currencyContext;
+		NumberFormat.checkDecimalPadding(oFormatOptions, true, true);
+		const oFormat = NumberFormat.createInstance(oFormatOptions, oLocale);
+		const oLocaleFormatOptions = oFormat.getLocaleFormatOptions(mNumberType.CURRENCY);
+		oFormat.oFormatOptions = extend({}, NumberFormat.oDefaultCurrencyFormat, oLocaleFormatOptions,
+			oFormat.oOriginalFormatOptions);
 
-		// currency code trailing
-		var bShowTrailingCurrencyCode = showTrailingCurrencyCode(oFormat.oOriginalFormatOptions);
-
-
-		// prepend "sap-" to pattern params to load (context and short)
-		if (bShowTrailingCurrencyCode) {
-			sContext = sContext || this.oDefaultCurrencyFormat.style;
-			sContext = "sap-" + sContext;
-		}
-		var oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.CURRENCY, sContext);
-
-		oFormat.oFormatOptions = extend({}, this.oDefaultCurrencyFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
-
-		// Trailing currency code option
-		//
-		// The format option "trailingCurrencyCode" is influenced by other options, such as pattern, currencyCode, global config
+		// The format option "trailingCurrencyCode" is influenced by other options, such as pattern, currencyCode,
+		// global config
 		// Therefore set it manually without modifying the original oFormatOptions.
 		// E.g. the "pattern" option would overwrite this option, even if the "trailingCurrencyCode" option is set
 		// oFormatOptions.pattern = "###"
 		// oFormatOptions.trailingCurrencyCode = true
 		// ->
 		// oFormatOptions.trailingCurrencyCode = false
-		oFormat.oFormatOptions.trailingCurrencyCode = bShowTrailingCurrencyCode;
+		oFormat.oFormatOptions.trailingCurrencyCode = oFormat.showTrailingCurrencyCode();
 		oFormat._defineCustomCurrencySymbols();
 
 		return oFormat;
@@ -1059,11 +1050,13 @@ sap.ui.define([
 	 * @public
 	 */
 	NumberFormat.getUnitInstance = function(oFormatOptions, oLocale) {
-		this.checkDecimalPadding(oFormatOptions, true, true);
-		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.UNIT);
+		NumberFormat.checkDecimalPadding(oFormatOptions, true, true);
+		const oFormat = NumberFormat.createInstance(oFormatOptions, oLocale);
+		const oLocaleFormatOptions = oFormat.getLocaleFormatOptions(mNumberType.UNIT);
 
-		oFormat.oFormatOptions = extend({}, this.oDefaultUnitFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
+		oFormat.oFormatOptions = extend({}, NumberFormat.oDefaultUnitFormat, oLocaleFormatOptions,
+			oFormat.oOriginalFormatOptions);
+
 		return oFormat;
 	};
 
@@ -1151,11 +1144,13 @@ sap.ui.define([
 	 * @public
 	 */
 	NumberFormat.getPercentInstance = function(oFormatOptions, oLocale) {
-		this.checkDecimalPadding(oFormatOptions, false);
-		var oFormat = this.createInstance(oFormatOptions, oLocale),
-			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.PERCENT);
+		NumberFormat.checkDecimalPadding(oFormatOptions, false);
+		const oFormat = NumberFormat.createInstance(oFormatOptions, oLocale);
+		const oLocaleFormatOptions = oFormat.getLocaleFormatOptions(mNumberType.PERCENT);
 
-		oFormat.oFormatOptions = extend({}, this.oDefaultPercentFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
+		oFormat.oFormatOptions = extend({}, NumberFormat.oDefaultPercentFormat, oLocaleFormatOptions,
+			oFormat.oOriginalFormatOptions);
+
 		return oFormat;
 	};
 
@@ -1230,29 +1225,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get locale dependent default format options.
+	 * Gets the default locale-dependent format options for the given number format type.
 	 *
-	 * @static
+	 * @param {"integer"|"float"|"currency"|"unit"|"percent"} sType
+	 *   The number format type
+	 *
+	 * @returns {object} The default locale-dependent format options for the given number format type
+	 * @private
 	 */
-	NumberFormat.getLocaleFormatOptions = function(oLocaleData, iType, sContext) {
-		var oLocaleFormatOptions,
-			sNumberPattern;
-
-		switch (iType) {
+	NumberFormat.prototype.getLocaleFormatOptions = function (sType) {
+		const oLocaleData = this.oLocaleData;
+		let sNumberPattern;
+		let sContext;
+		switch (sType) {
 			case mNumberType.PERCENT:
 				sNumberPattern = oLocaleData.getPercentPattern();
 				break;
 			case mNumberType.CURRENCY:
+				sContext = this.oOriginalFormatOptions?.currencyContext || NumberFormat.oDefaultCurrencyFormat.style;
+				// prepend "sap-" to pattern params to load (context and short)
+				if (this.showTrailingCurrencyCode()) {
+					sContext = "sap-" + sContext;
+				}
 				sNumberPattern = oLocaleData.getCurrencyPattern(sContext);
-				break;
-			case mNumberType.UNIT:
-				sNumberPattern = oLocaleData.getDecimalPattern();
 				break;
 			default:
 				sNumberPattern = oLocaleData.getDecimalPattern();
 		}
 
-		oLocaleFormatOptions = this.parseNumberPattern(sNumberPattern);
+		const oLocaleFormatOptions = NumberFormat.parseNumberPattern(sNumberPattern);
 
 		oLocaleFormatOptions.plusSign = oLocaleData.getNumberSymbol("plusSign");
 		oLocaleFormatOptions.minusSign = oLocaleData.getNumberSymbol("minusSign");
@@ -1263,14 +1264,7 @@ sap.ui.define([
 
 		// Some options need to be overridden to stay compatible with the formatting defaults
 		// before pattern parsing was added to the NumberFormat
-		switch (iType) {
-			case mNumberType.UNIT:
-			case mNumberType.FLOAT:
-			case mNumberType.PERCENT:
-				// Unlimited fraction digits for float and percent values
-				oLocaleFormatOptions.minFractionDigits = 0;
-				oLocaleFormatOptions.maxFractionDigits = 99;
-				break;
+		switch (sType) {
 			case mNumberType.INTEGER:
 				// No fraction digits and no grouping for integer values
 				oLocaleFormatOptions.minFractionDigits = 0;
@@ -1282,6 +1276,11 @@ sap.ui.define([
 				oLocaleFormatOptions.minFractionDigits = undefined;
 				oLocaleFormatOptions.maxFractionDigits = undefined;
 				break;
+			default:
+				// cases: mNumberType.UNIT, mNumberType.FLOAT and mNumberType.PERCENT
+				// Unlimited fraction digits
+				oLocaleFormatOptions.minFractionDigits = 0;
+				oLocaleFormatOptions.maxFractionDigits = 99;
 		}
 
 		return oLocaleFormatOptions;
@@ -1597,8 +1596,9 @@ sap.ui.define([
 			oOptions.decimals = NumberFormat.getMaximumDecimals(oOptions);
 			oOptions.precision = (mUnitPatterns && (typeof mUnitPatterns.precision === "number" && mUnitPatterns.precision >= 0)) ? mUnitPatterns.precision : oOptions.precision;
 		}
-
-		if (oOptions.type == mNumberType.CURRENCY) {
+		let sCurrencySymbolOrCode;
+		if (oOptions.type === mNumberType.CURRENCY) {
+			sCurrencySymbolOrCode = this.getCurrencySymbolOrCode(oOptions, sMeasure);
 			// Make sure the "trailingCurrencyCode" mode is only used on currency codes:
 			// The "customCurrencies" format option takes precedence over CLDR and global configuration. If the given measure isn't found
 			// there, we already return an empty string in the check above (look for error log 'Currency "xy" is unknown').
@@ -1615,21 +1615,7 @@ sap.ui.define([
 
 			if (!oOptions.showNumber) {
 				// if the number should not be shown, return the sMeasure part standalone, without anything number specific
-				if (!oOptions.currencyCode) {
-					var sSymbol;
-					// custom currencies provided
-					if (oOptions.customCurrencies && typeof oOptions.customCurrencies === "object") {
-						// the custom currency symbol map was preprocessed on instance creation
-						sSymbol = this.mKnownCurrencySymbols[sMeasure];
-					} else {
-						sSymbol = this.oLocaleData.getCurrencySymbol(sMeasure);
-					}
-
-					if (sSymbol && sSymbol !== sMeasure) {
-						sMeasure = sSymbol;
-					}
-				}
-				return sMeasure;
+				return sCurrencySymbolOrCode;
 			}
 
 			if (oOptions.style === "long" || oOptions.style === "short") {
@@ -1868,23 +1854,7 @@ sap.ui.define([
 				}
 			}
 
-			// check if we need to render a symbol instead of a currency-code
-			if (!oOptions.currencyCode) {
-				var sSymbol;
-				// custom currencies provided
-				if (oOptions.customCurrencies && typeof oOptions.customCurrencies === "object") {
-					// the custom currency symbol map was preprocessed on instance creation
-					sSymbol = this.mKnownCurrencySymbols[sMeasure];
-				} else {
-					sSymbol = this.oLocaleData.getCurrencySymbol(sMeasure);
-				}
-
-				if (sSymbol && sSymbol !== sMeasure) {
-					sMeasure = sSymbol;
-				}
-			}
-
-			sResult = this._composeCurrencyResult(sPattern, sResult, sMeasure, {
+			sResult = this._composeCurrencyResult(sPattern, sResult, sCurrencySymbolOrCode, {
 				decimalPadding: iDecimalPadding,
 				showMeasure: oOptions.showMeasure,
 				negative: bNegative,
@@ -1936,6 +1906,32 @@ sap.ui.define([
 			sResult += "\u2007".repeat(iDecimalPaddingLength); // CHAR_FIGURE_SPACE u2007
 		}
 		return this._addOriginInfo(sResult);
+	};
+
+	/**
+	 * Gets the currency symbol or the currency code for the given currency code depending on the given format options.
+	 *
+	 * @param {Object<string, any>} oFormatOptions
+	 *   The currently used format options
+	 * @param {boolean} [oFormatOptions.currencyCode=true]
+	 *   Whether to show the currency code or the currency symbol, see {@link Numberformat.getCurrencyInstance}
+	 * @param {Object<string,object>} [oFormatOptions.customCurrencies]
+	 *   Custom currencies, see {@link Numberformat.getCurrencyInstance}
+	 * @param {string} sCurrencyCode
+	 *   The currency code
+	 *
+	 * @returns {string}
+	 *   The currency symbol or the currency code
+	 * @private
+	 */
+	NumberFormat.prototype.getCurrencySymbolOrCode = function (oFormatOptions, sCurrencyCode) {
+		if (oFormatOptions.currencyCode) {
+			return sCurrencyCode;
+		}
+		// the custom currency symbol map was preprocessed on instance creation
+		return (typeof oFormatOptions.customCurrencies === "object"
+			? this.mKnownCurrencySymbols[sCurrencyCode]
+			: this.oLocaleData.getCurrencySymbol(sCurrencyCode)) || sCurrencyCode;
 	};
 
 	/**
@@ -2600,31 +2596,20 @@ sap.ui.define([
 	}
 
 	/**
-	 * Based on the format options and the global config, determine whether to display a trailing currency code
-	 * @param oFormatOptions
-	 * @returns {boolean}
+	 * Whether to show the currency code at the end based on the original format options and the global configuration.
+	 *
+	 * @returns {boolean} Whether to show trailing currency code
 	 */
-	function showTrailingCurrencyCode(oFormatOptions) {
-		var bShowTrailingCurrencyCodes = Formatting.getTrailingCurrencyCode();
-		if (oFormatOptions) {
-
-			// overwritten by instance configuration
-			if (oFormatOptions.trailingCurrencyCode !== undefined) {
-				bShowTrailingCurrencyCodes = oFormatOptions.trailingCurrencyCode;
-			}
-
-			// is false when custom pattern is used
-			if (oFormatOptions.pattern) {
-				bShowTrailingCurrencyCodes = false;
-			}
-
-			// is false when currencyCode is not used
-			if (oFormatOptions.currencyCode === false) {
-				bShowTrailingCurrencyCodes = false;
-			}
+	NumberFormat.prototype.showTrailingCurrencyCode = function () {
+		const oFormatOptions = this.oOriginalFormatOptions;
+		// use default currency mode if custom pattern is given or currency code shall not be shown
+		if (oFormatOptions?.pattern || oFormatOptions?.currencyCode === false) {
+			return false;
 		}
-		return bShowTrailingCurrencyCodes;
-	}
+		return oFormatOptions?.trailingCurrencyCode !== undefined
+			? oFormatOptions.trailingCurrencyCode // overwritten by instance configuration
+			: Formatting.getTrailingCurrencyCode();
+	};
 
 	function getIndianCurrencyFormat(sStyle, sKey, sPlural, bDecimal) {
 		var sFormat,

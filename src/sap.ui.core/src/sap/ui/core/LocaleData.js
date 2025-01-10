@@ -4,20 +4,19 @@
 
 //Provides the locale object sap.ui.core.LocaleData
 sap.ui.define([
-	"./Lib",
 	"./Locale",
 	"sap/base/assert",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/date/CalendarType",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/core/date/CalendarWeekNumbering"
-], function(Lib, Locale, assert, Formatting, LanguageTag, Localization, CalendarType, extend, LoaderExtensions,
-		BaseObject, SyncPromise, CalendarWeekNumbering) {
+	"sap/ui/base/SyncPromise"
+], function(Locale, assert, Formatting, LanguageTag, Localization, CalendarType, CalendarWeekNumbering,
+		extend, LoaderExtensions, BaseObject, SyncPromise) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,

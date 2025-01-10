@@ -214,7 +214,7 @@ function(
 						parameters: {
 							/**
 							 * Refers to the control that opens the popover.
-							 * See {@link sap.ui.core.MessageType} enum values for types.
+							 * See {@link module:sap/ui/core/message/MessageType} enum values for types.
 							 */
 							openBy: {type: "sap.ui.core.Control"}
 						}
@@ -232,7 +232,7 @@ function(
 							/**
 							 * Refers to the type of messages being shown.
 							 */
-							messageTypeFilter: {type: "sap.ui.core.MessageType"}
+							messageTypeFilter: {type: "module:sap/ui/core/message/MessageType"}
 
 						}
 					},
@@ -245,7 +245,7 @@ function(
 							/**
 							 * This parameter refers to the type of messages being shown.
 							 */
-							messageTypeFilter: {type: "sap.ui.core.MessageType"}
+							messageTypeFilter: {type: "module:sap/ui/core/message/MessageType"}
 						}
 					},
 

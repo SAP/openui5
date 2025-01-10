@@ -2,6 +2,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/format/DateFormat",
@@ -11,23 +13,19 @@ sap.ui.define([
 	"sap/ui/core/date/Buddhist",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/library",
 	"sap/ui/core/Supportability",
-	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/test/TestUtils",
 	// load all required calendars in advance
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function(Log, Formatting, Localization, extend, LoaderExtensions, DateFormat, FormatUtils, Locale, LocaleData,
-		Buddhist, UniversalDate, UI5Date, library, Supportability, CalendarWeekNumbering, TestUtils) {
+], function(Log, Formatting, Localization, CalendarType, CalendarWeekNumbering, extend, LoaderExtensions, DateFormat,
+		FormatUtils, Locale, LocaleData, Buddhist, UniversalDate, UI5Date, Supportability, TestUtils) {
 	"use strict";
 	/* eslint-disable max-nested-callbacks */
 	/*global QUnit, sinon */
 
-	// shortcut for sap.ui.core.CalendarType
-	const CalendarType = library.CalendarType;
 	const oDateTime = UI5Date.getInstance("2000-09-23T06:46:13Z");
 	const oTZDateTime = UI5Date.getInstance("2000-09-23T03:46:13+05:30");
 	const oDefaultDate = DateFormat.getInstance();

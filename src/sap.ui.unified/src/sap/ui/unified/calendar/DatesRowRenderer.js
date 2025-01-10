@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Lib", 'sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', './MonthRenderer', "sap/ui/core/CalendarType"], function(Library, Renderer, CalendarDate, MonthRenderer, CalendarType) {
+sap.ui.define(["sap/base/i18n/date/CalendarType", "sap/ui/core/Lib", 'sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', './MonthRenderer'], function(CalendarType, Library, Renderer, CalendarDate, MonthRenderer) {
 "use strict";
 
 /*

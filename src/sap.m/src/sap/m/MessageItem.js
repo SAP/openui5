@@ -5,14 +5,11 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Item",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/base/Log"
 ],
-	function(library, Item, coreLibrary, Log) {
+	function(library, Item, MessageType, Log) {
 		"use strict";
-
-		// shortcut for sap.ui.core.MessageType
-		var MessageType = coreLibrary.MessageType;
 
 		/**
 		 * Constructor for a new MessageItem.
@@ -49,7 +46,7 @@ sap.ui.define([
 					/**
 					 * Specifies the type of the message
 					 */
-					type: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: MessageType.Error },
+					type: { type: "sap.ui.core.message.MessageType", group: "Appearance", defaultValue: MessageType.Error },
 
 					/**
 					 * Specifies the title of the message
@@ -154,7 +151,7 @@ sap.ui.define([
 		 * Sets type of the MessageItem.
 		 * <b>Note:</b> if you set the type to None it will be handled and rendered as Information.
 		 *
-		 * @param {sap.ui.core.MessageType} sType Type of Message
+		 * @param {module:sap/ui/core/message/MessageType} sType Type of Message
 		 * @returns {this} The MessageItem
 		 * @public
 		 */

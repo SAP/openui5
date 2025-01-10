@@ -203,7 +203,9 @@
 					<NavigationPropertyBinding Path="_Friend" Target="Artists"/>
 					<NavigationPropertyBinding Path="BestFriend" Target="Artists"/>
 					<NavigationPropertyBinding Path="SiblingEntity" Target="Artists" />
+					<NavigationPropertyBinding Path="BestPublication" Target="Publications" />
 				</EntitySet>
+				<EntitySet Name="Publications" EntityType="special.cases.PublicationsType"/>
 				<EntitySet Name="Events" EntityType="special.cases.EventsType"/>
 				<EntitySet Name="As" EntityType="special.cases.A">
 					<NavigationPropertyBinding Path="AtoEntityWithComplexKey"

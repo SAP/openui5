@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/unified/Calendar",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Locale",

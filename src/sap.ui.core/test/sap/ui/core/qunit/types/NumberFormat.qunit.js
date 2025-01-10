@@ -3,12 +3,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/util/extend",
 	"sap/ui/core/format/FormatUtils",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/Supportability"
-], function(Log, Formatting, Localization, FormatUtils, NumberFormat, Locale, LocaleData, Supportability) {
+], function(Log, Formatting, Localization, extend, FormatUtils, NumberFormat, Locale, LocaleData, Supportability) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
@@ -5023,42 +5024,209 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["getUnitInstance", "getCurrencyInstance"].forEach((sInstanceGetter) => {
-	QUnit.test(sInstanceGetter + ": calls checkDecimalPadding", function (assert) {
-		const oFormatOptions = {foo: "~bar"};
-		const oError = new Error("Expected error");
-		this.mock(NumberFormat).expects("checkDecimalPadding")
-			.withExactArgs(sinon.match.same(oFormatOptions), true, true)
-			.throws(oError);
+[{
+	aCheckDecimalPaddingArgs: [],
+	oDefaultOptions: NumberFormat.oDefaultFloatFormat,
+	sGetter: "getFloatInstance",
+	sType: "float"
+}, {
+	aCheckDecimalPaddingArgs: [false],
+	oDefaultOptions: NumberFormat.oDefaultIntegerFormat,
+	sGetter: "getIntegerInstance",
+	sType: "integer"
+}, {
+	aCheckDecimalPaddingArgs: [true, true],
+	oDefaultOptions: NumberFormat.oDefaultUnitFormat,
+	sGetter: "getUnitInstance",
+	sType: "unit"
+}, {
+	aCheckDecimalPaddingArgs: [true, true],
+	oDefaultOptions: NumberFormat.oDefaultCurrencyFormat,
+	sGetter: "getCurrencyInstance",
+	sType: "currency"
+}, {
+	aCheckDecimalPaddingArgs: [false],
+	oDefaultOptions: NumberFormat.oDefaultPercentFormat,
+	sGetter: "getPercentInstance",
+	sType: "percent"
+}].forEach(({aCheckDecimalPaddingArgs, oDefaultOptions, sGetter, sType}) => {
+	QUnit.test(sGetter, function (assert) {
+		this.mock(NumberFormat).expects("checkDecimalPadding").withExactArgs("~oOptions", ...aCheckDecimalPaddingArgs);
+		const oNumberFormat = {
+			oOriginalFormatOptions: {
+				foo: "~foo~fromOriginalFormatOptions",
+				bar: "~bar~fromOriginalFormatOptions",
+				maxIntegerDigits: "~maxIntegerDigits~fromOriginalFormatOptions",
+				...(sGetter === "getCurrencyInstance" && {
+					trailingCurrencyCode: "~trailingCurrencyCode~fromOriginalFormatOptions"
+				})
+			},
+			getLocaleFormatOptions() {},
+			...(sGetter === "getCurrencyInstance" && {
+				_defineCustomCurrencySymbols() {},
+				showTrailingCurrencyCode() {}
+			})
+		};
+		this.mock(NumberFormat).expects("createInstance").withExactArgs("~oOptions", "~oLocale").returns(oNumberFormat);
+		const oLocaleFormatOptions = {
+			bar: "~bar~fromLocaleFormatOptions",
+			maxFractionDigits: "~maxFractionDigits~fromLocaleFormatOptions"
+		};
+		this.mock(oNumberFormat).expects("getLocaleFormatOptions").withExactArgs(sType).returns(oLocaleFormatOptions);
+		if (oNumberFormat._defineCustomCurrencySymbols) {
+			this.mock(oNumberFormat).expects("_defineCustomCurrencySymbols").withExactArgs();
+			this.mock(oNumberFormat).expects("showTrailingCurrencyCode").withExactArgs().returns("~trailingCurrency");
+		}
 
 		// code under test
-		assert.throws(() => { NumberFormat[sInstanceGetter](oFormatOptions); }, oError);
+		assert.strictEqual(NumberFormat[sGetter]("~oOptions", "~oLocale"), oNumberFormat);
+
+		assert.notStrictEqual(oNumberFormat.oFormatOptions, oNumberFormat.oOriginalFormatOptions);
+		assert.notStrictEqual(oNumberFormat.oFormatOptions, oDefaultOptions);
+		assert.notStrictEqual(oNumberFormat.oFormatOptions, oLocaleFormatOptions);
+		const oExpectedFormatOptions = extend({}, oDefaultOptions);
+		oExpectedFormatOptions.foo = "~foo~fromOriginalFormatOptions";
+		oExpectedFormatOptions.bar = "~bar~fromOriginalFormatOptions";
+		oExpectedFormatOptions.maxIntegerDigits = "~maxIntegerDigits~fromOriginalFormatOptions";
+		oExpectedFormatOptions.maxFractionDigits = "~maxFractionDigits~fromLocaleFormatOptions";
+		oExpectedFormatOptions.parseAsString = oDefaultOptions.parseAsString;
+		if (oNumberFormat.showTrailingCurrencyCode) {
+			oExpectedFormatOptions.trailingCurrencyCode = "~trailingCurrency";
+		}
+		assert.deepEqual(oNumberFormat.oFormatOptions, oExpectedFormatOptions);
+	});
+
+	QUnit.test(sGetter + ": checkDecimalPadding fails", function (assert) {
+		const oError = new Error("Expected error");
+		this.mock(NumberFormat).expects("checkDecimalPadding")
+			.withExactArgs("~oFormatOptions", ...aCheckDecimalPaddingArgs)
+			.throws(oError);
+		this.mock(NumberFormat).expects("createInstance").never();
+
+		assert.throws(() => {
+			// code under test
+			NumberFormat[sGetter]("~oFormatOptions");
+		}, oError);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("getFloatInstance calls checkDecimalPadding", function (assert) {
-		const oFormatOptions = {foo: "~bar"};
-		const oError = new Error("Expected error");
-		this.mock(NumberFormat).expects("checkDecimalPadding")
-			.withExactArgs(sinon.match.same(oFormatOptions))
-			.throws(oError);
+[
+	{sType: "float"},
+	{iMaxFractionDigits: 0, bGroupingEnabled: false, sType: "integer"},
+	{sType: "unit"},
+	{sPatternGetter: "getPercentPattern", sType: "percent"}
+].forEach(({bGroupingEnabled, iMaxFractionDigits = 99, sPatternGetter = "getDecimalPattern", sType}) => {
+	QUnit.test("getLocaleFormatOptions: " + sType, function (assert) {
+		const oLocaleData = {getNumberSymbol() {}};
+		oLocaleData[sPatternGetter] = () => {};
+		const oLocalDataMock = this.mock(oLocaleData);
+		oLocalDataMock.expects(sPatternGetter).withExactArgs().returns("~pattern");
+		const oOptions = {};
+		this.mock(NumberFormat).expects("parseNumberPattern").withExactArgs("~pattern").returns(oOptions);
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("plusSign").returns("~plus");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("minusSign").returns("~minus");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("decimal").returns("~decimal");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("group").returns("~group");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("percentSign").returns("~percent");
+		const oNumberFormat = {oLocaleData};
 
 		// code under test
-		assert.throws(() => { NumberFormat.getFloatInstance(oFormatOptions); }, oError);
+		const oLocaleFormatOptions = NumberFormat.prototype.getLocaleFormatOptions.call(oNumberFormat, sType);
+
+		assert.strictEqual(oLocaleFormatOptions, oOptions);
+		assert.deepEqual(oLocaleFormatOptions, {
+			decimalSeparator: "~decimal",
+			groupingSeparator: "~group",
+			maxFractionDigits: iMaxFractionDigits,
+			minFractionDigits: 0,
+			minusSign: "~minus",
+			pattern: "~pattern",
+			percentSign: "~percent",
+			plusSign: "~plus",
+			...(bGroupingEnabled !== undefined && {groupingEnabled: bGroupingEnabled})
+		});
 	});
+});
 
 	//*********************************************************************************************
-["getIntegerInstance", "getPercentInstance"].forEach((sInstanceGetter) => {
-	QUnit.test(sInstanceGetter + ": calls checkDecimalPadding", function (assert) {
-		const oFormatOptions = {foo: "~bar"};
-		const oError = new Error("Expected error");
-		this.mock(NumberFormat).expects("checkDecimalPadding")
-			.withExactArgs(sinon.match.same(oFormatOptions), false)
-			.throws(oError);
+[{
+	sContext: "standard"
+}, {
+	sContext: "sap-standard",
+	bShowTrailingCurrencyCode: true
+}, {
+	sContext: "standard",
+	oOriginalFormatOptions: {}
+}, {
+	sContext: "sap-standard",
+	bShowTrailingCurrencyCode: true,
+	oOriginalFormatOptions: {}
+}, {
+	sContext: "~currencyContext",
+	oOriginalFormatOptions: {currencyContext: "~currencyContext"}
+}, {
+	sContext: "sap-~currencyContext",
+	bShowTrailingCurrencyCode: true,
+	oOriginalFormatOptions: {currencyContext: "~currencyContext"}
+}].forEach(({sContext, oOriginalFormatOptions, bShowTrailingCurrencyCode = false}, i) => {
+	QUnit.test("getLocaleFormatOptions: currency, #" + i, function (assert) {
+		const oLocaleData = {
+			getCurrencyPattern() {},
+			getNumberSymbol() {}
+		};
+		const oLocalDataMock = this.mock(oLocaleData);
+		oLocalDataMock.expects("getCurrencyPattern").withExactArgs(sContext).returns("~pattern");
+		const oOptions = {};
+		this.mock(NumberFormat).expects("parseNumberPattern").withExactArgs("~pattern").returns(oOptions);
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("plusSign").returns("~plus");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("minusSign").returns("~minus");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("decimal").returns("~decimal");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("group").returns("~group");
+		oLocalDataMock.expects("getNumberSymbol").withExactArgs("percentSign").returns("~percent");
+		const oNumberFormat = {
+			oLocaleData,
+			oOriginalFormatOptions,
+			showTrailingCurrencyCode() {}
+		};
+		this.mock(oNumberFormat).expects("showTrailingCurrencyCode").withExactArgs().returns(bShowTrailingCurrencyCode);
 
 		// code under test
-		assert.throws(() => { NumberFormat[sInstanceGetter](oFormatOptions); }, oError);
+		const oLocaleFormatOptions = NumberFormat.prototype.getLocaleFormatOptions.call(oNumberFormat, "currency");
+
+		assert.strictEqual(oLocaleFormatOptions, oOptions);
+		assert.deepEqual(oLocaleFormatOptions, {
+			decimalSeparator: "~decimal",
+			groupingSeparator: "~group",
+			maxFractionDigits: undefined,
+			minFractionDigits: undefined,
+			minusSign: "~minus",
+			pattern: "~pattern",
+			percentSign: "~percent",
+			plusSign: "~plus"
+		});
+	});
+});
+
+	//*********************************************************************************************
+[
+	{iGetTrailingCurrencyCodeCount: 1, oOriginalFormatOptions: undefined, bResult: "~fromFormatting"},
+	{iGetTrailingCurrencyCodeCount: 1, oOriginalFormatOptions: {}, bResult: "~fromFormatting"},
+	{oOriginalFormatOptions: {trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: "~trailingCurrencyCode"},
+	{oOriginalFormatOptions: {pattern: "~foo", trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: false},
+	{oOriginalFormatOptions: {currencyCode: false, trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: false},
+	{
+		oOriginalFormatOptions: {currencyCode: "~foo", trailingCurrencyCode: "~trailingCurrencyCode"},
+		bResult: "~trailingCurrencyCode"
+	}
+].forEach(({oOriginalFormatOptions, bResult, iGetTrailingCurrencyCodeCount = 0}) => {
+	QUnit.test("showTrailingCurrencyCode: no format options", function (assert) {
+		this.mock(Formatting).expects("getTrailingCurrencyCode").withExactArgs()
+			.exactly(iGetTrailingCurrencyCodeCount)
+			.returns("~fromFormatting");
+
+		// code under test
+		assert.strictEqual(NumberFormat.prototype.showTrailingCurrencyCode.call({oOriginalFormatOptions}), bResult);
 	});
 });
 
@@ -5095,4 +5263,68 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencySymbolOrCode: currency code", function (assert) {
+		// code under test
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call({}, {currencyCode: true}, "~foo"),
+			"~foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencySymbolOrCode: with customCurrencies", function (assert) {
+		const oFormatOptions = {currencyCode: false, customCurrencies: {/*content not relevant*/}};
+		const oNumberFormat = {mKnownCurrencySymbols: {FOO: "~bar"}};
+
+		// code under test - currency symbol defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "FOO"),
+			"~bar");
+
+		// code under test - currency symbol not defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "BAZ"),
+			"BAZ");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencySymbolOrCode: currency symbols from CLDR", function (assert) {
+		const oFormatOptions = {currencyCode: false};
+		const oLocaleData = {getCurrencySymbol() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		const oNumberFormat = {oLocaleData: oLocaleData};
+		oLocaleDataMock.expects("getCurrencySymbol").withExactArgs("FOO").returns("~bar");
+
+		// code under test - currency symbol defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "FOO"),
+			"~bar");
+
+		oLocaleDataMock.expects("getCurrencySymbol").withExactArgs("BAZ").returns(undefined);
+
+		// code under test - currency symbol not defined
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "BAZ"),
+			"BAZ");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: calls getCurrencySymbolOrCode (showNumber: false)", function (assert) {
+		const oFormatOptions = {foo: "~bar", showNumber: false};
+		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
+		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
+			.withExactArgs(sinon.match(oFormatOptions), "~currencyCode")
+			.returns("~currencyCodeOrSymbol");
+
+		// code under test
+		assert.strictEqual(oCurrencyFormat.format("1.23", "~currencyCode"), "~currencyCodeOrSymbol");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: calls getCurrencySymbolOrCode (showNumber: true)", function (assert) {
+		const oFormatOptions = {foo: "~bar"};
+		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
+		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
+			.withExactArgs(sinon.match(oFormatOptions), "~currencyCode")
+			.returns("~currencyCodeOrSymbol");
+
+		// code under test
+		assert.strictEqual(oCurrencyFormat.format("1.23", "~currencyCode"), "~currencyCodeOrSymbol\xa01.23");
+	});
 });

@@ -4,15 +4,15 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (Log, Formatting, SyncPromise, CalendarType, DateFormat, ODataUtils, _Helper,
+], function (Log, Formatting, CalendarType, SyncPromise, DateFormat, ODataUtils, _Helper,
 		_Parser, _Requestor, asV2Requestor0) {
 	"use strict";
 

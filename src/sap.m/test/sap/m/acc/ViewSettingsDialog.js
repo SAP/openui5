@@ -6,9 +6,13 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/layout/VerticalLayout"
-], function(MessageToast, ViewSettingsDialog, ViewSettingsItem, ViewSettingsFilterItem, Button, App, Page, VerticalLayout) {
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/library"
+], function(MessageToast, ViewSettingsDialog, ViewSettingsItem, ViewSettingsFilterItem, Button, App, Page, VerticalLayout, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	function handleConfirm(oEvent) {
 		if (oEvent.getParameters().filterString) {
@@ -114,7 +118,7 @@ sap.ui.define([
 		window.oViewSettingsDialog.open();
 	}
 
-	var oViewSettingsDialogButton = new Button({
+	var oViewSettingsDialogButton = new Button("openDialogBtn", {
 		text: "Open View Settings Dialog",
 		press: handleViewSettingsButtonPress
 	});
@@ -127,7 +131,8 @@ sap.ui.define([
 
 	var app = new App();
 	var page = new Page({
-		title: "ViewSettingsDialog",
+		title: "ViewSettingsDialog Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
 		content: [
 			oPageLayout
 		]

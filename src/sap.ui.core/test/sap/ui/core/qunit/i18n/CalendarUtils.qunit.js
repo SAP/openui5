@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/ui/core/LocaleData",
-	"sap/ui/core/date/CalendarUtils",
-	"sap/ui/core/date/CalendarWeekNumbering"
-], function(Formatting, LocaleData, CalendarUtils, CalendarWeekNumbering) {
+	"sap/ui/core/date/CalendarUtils"
+], function(Formatting, CalendarWeekNumbering, LocaleData, CalendarUtils) {
 	/*global QUnit */
 	"use strict";
 

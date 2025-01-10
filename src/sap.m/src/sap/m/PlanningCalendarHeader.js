@@ -21,7 +21,8 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CustomMonthPicker',
 	'sap/ui/unified/calendar/CustomYearPicker',
 	'sap/ui/unified/calendar/IndexPicker',
-	'sap/ui/core/date/CalendarWeekNumbering',
+	'sap/base/i18n/date/CalendarType',
+	'sap/base/i18n/date/CalendarWeekNumbering',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
@@ -47,7 +48,8 @@ function(
 	CustomMonthPicker,
 	CustomYearPicker,
 	IndexPicker,
-	CalendarWeekNumbering,
+	_CalendarType, // type of `_primaryCalendarType` and `_secondaryCalendarType`
+	_CalendarWeekNumbering, // type of `calendarWeekNumbering`
 	CalendarDate,
 	IconPool,
 	InvisibleText,
@@ -140,7 +142,7 @@ function(
 				 * @ui5-restricted sap.m.PlanningCalendarHeader
 				 * @since 1.110.0
 				 */
-				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+				calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
 				/**
 				 * If set, the calendar type is used for display.
@@ -149,7 +151,7 @@ function(
 				 * @ui5-restricted sap.m.PlanningCalendarHeader
 				 * @since 1.108.0
 				 */
-				_primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+				_primaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"},
 
 				/**
 				 * If set, the days are also displayed in this calendar type
@@ -158,7 +160,7 @@ function(
 				 * @ui5-restricted sap.m.PlanningCalendarHeader
 				 * @since 1.109.0
 				 */
-				_secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
+				_secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"}
 
 			},
 

@@ -2,7 +2,7 @@
 	"tests" : [
 		{
 			"control" : "sap.ui.unified.Calendar",
-			"url" : "Calendar.html",
+			"url" : "./Calendar.html",
 			"desc" : "stand alone calendars",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
@@ -43,12 +43,17 @@
 		},
 		{
 			"control" : "sap.ui.unified.Menu",
-			"url" : "Menu.html",
-			"appComponent" : "CA-UI5-CTR-BAL"
+			"url" : "./Menu.html",
+			"appComponent" : "CA-UI5-CTR-BAL",
+			"accTest": {
+				"name": "sap.ui.unified.Menu",
+				"title": "ACC test for sap.ui.unified.Menu",
+				"module": "./unifiedmenu.qunit"
+			}
 		},
 		{
 			"control" : "sap.ui.unified.FileUploader",
-			"url" : "FileUploader.html",
+			"url" : "./FileUploader.html",
 			"desc" : "FileUploader test using sap.m library",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		}

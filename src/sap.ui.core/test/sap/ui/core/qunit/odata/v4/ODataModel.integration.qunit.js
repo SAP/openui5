@@ -8589,10 +8589,10 @@ sap.ui.define([
 						{data : {}}],
 					// the change events for row properties are fired after dataReceived because the
 					// corresponding bindings are only created when the data has been received
-					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
-						{reason : "refresh"}],
 					["PropertyBinding: /SalesOrderList('0500000001')/SO_2_SOITEM/2[2]|ItemPosition",
-						"change", {reason : "change"}]
+						"change", {reason : "change"}],
+					["PropertyBinding: /SalesOrderList('0500000001')|Note", "change",
+						{reason : "refresh"}]
 				])
 				.expectRequest("SalesOrderList('0500000001')?$select=Note,SalesOrderID",
 					{SalesOrderID : "0500000001", Note : "refreshed"})
@@ -65125,6 +65125,37 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Simple list, server responds with a duplicate key predicate in response.
+	// Check that a message and an error is logged which clearly indicates the issue.
+	// JIRA: CPOUI5ODATAV4-2813
+	QUnit.test("Duplicate key predicate", function (assert) {
+		const sView = `
+<Table id="table" items="{/EMPLOYEES}">
+	<Text id="id" text="{ID}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", {
+				value : [
+					{ID : "1"},
+					{ID : "1"}
+				]
+			})
+			.expectMessages([{
+				message : "Duplicate key predicate: ('1')",
+				persistent : true,
+				technical : true,
+				technicalDetails : {},
+				type : "Error"
+			}]);
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to get contexts for " + sTeaBusi
+					+ "EMPLOYEES with start index 0 and length 100",
+				sinon.match("Duplicate key predicate: ('1')"), sODLB);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
 	// Scenario: A binding drills down via key predicate into a missing element. Depending on
 	// whether or not the collection itself is empty, drill-down fails or just logs.
 	// BCP: 2070374495
@@ -71450,6 +71481,355 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Update two properties of an entity reachable via single-valued navigation property.
+	// However, the navigation property is null, and the entity is inserted by this update
+	// ("upsert"). The test is run with and without an intermediate ODCB w/o cache on the navigation
+	// property. (Its binding context points to the upserted entity; it is used for #resetChanges
+	// and #delete).
+	// See that further property updates are merged into the PATCH, and that the PATCH is followed
+	// by a GET request for that entity (using ODCB#requestSideEffects) within the same $batch.
+	// When it failed, see that transition messages are handled correctly, properties still are
+	// merged, and the PATCH is repeated. See that it is correctly reset upon ODM#resetChanges,
+	// Context#resetChanges, or Context#delete. See that the GET request correctly updates the
+	// entity after a successful PATCH.
+	// The upserted entity is reached via two navigation properties. This effects the URL for the
+	// upsert PATCH because we use the deep path for it then.
+	// JIRA: CPOUI5ODATAV4-2211
+	["submit", "reset", "delete"].forEach(function (sAction) {
+		[false, true].forEach(function (bIntermediate) {
+			const sTitle = "CPOUI5ODATAV4-2211: upsert, " + sAction
+				+ ", intermediate context binding=" + bIntermediate;
+
+			if (!bIntermediate && sAction === "delete") {
+				return; // no delete w/o context
+			}
+
+		QUnit.test(sTitle, async function (assert) {
+			const oModel = this.createSpecialCasesModel(
+				{autoExpandSelect : true, updateGroupId : "update"});
+			const sPublicationPath
+				= "/Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication";
+			const sView = `
+	<FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
+		<Text id="artistId" text="{ArtistID}"/>
+		<Input id="publicationId" value="{BestFriend/BestPublication/PublicationID}"/>
+		<Input id="price" value="{BestFriend/BestPublication/Price}"/>
+		<Input id="currency" value="{BestFriend/BestPublication/CurrencyCode}"/>
+	</FlexBox>`;
+			const sViewWithIntermediate = `
+	<FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
+		<Text id="artistId" text="{ArtistID}"/>
+		<FlexBox id="publication" binding="{BestFriend/BestPublication}">
+			<Input id="publicationId" value="{PublicationID}"/>
+			<Input id="price" value="{Price}"/>
+			<Input id="currency" value="{CurrencyCode}"/>
+		</FlexBox>
+	</FlexBox>`;
+
+			this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))", {
+					"@odata.etag" : "etag1",
+					ArtistID : "1",
+					IsActiveEntity : false,
+					BestFriend : {
+						"@odata.etag" : "etag2",
+						ArtistID : "2",
+						IsActiveEntity : false,
+						BestPublication : null
+					}
+				})
+				.expectChange("artistId", "1")
+				.expectChange("publicationId", "")
+				.expectChange("price", null)
+				.expectChange("currency", "");
+
+			await this.createView(assert, bIntermediate ? sViewWithIntermediate : sView, oModel);
+
+			this.expectChange("publicationId", "2")
+				.expectChange("price", "12");
+
+			// code under test
+			this.oView.byId("publicationId").getBinding("value").setValue("2");
+			this.oView.byId("price").getBinding("value").setValue("12");
+
+			await this.waitForChanges(assert, "upsert");
+
+			const oArtistContext = this.oView.byId("form").getBindingContext();
+			assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"), {
+				Price : "12",
+				PublicationID : "2"
+			});
+
+			this.oLogMock.expects("error")
+				.withArgs("Failed to update path " + sPublicationPath + "/PublicationID");
+			this.oLogMock.expects("error")
+				.withArgs("Failed to update path " + sPublicationPath + "/Price");
+			this.expectRequest({
+					batchNo : 2,
+					method : "PATCH",
+					headers : {
+						"If-None-Match" : "*",
+						Prefer : "return=minimal"
+					},
+					url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
+					payload : {Price : "12", PublicationID : "2"}
+				}, createErrorInsideBatch({target : "Price"}))
+				.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+							+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))"
+				}) // no response required
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					targets : [sPublicationPath + "/Price"],
+					technical : true,
+					type : "Error"
+				}]);
+
+			await Promise.all([
+				oModel.submitBatch("update"),
+				this.waitForChanges(assert, "submit -> error")
+			]);
+			await this.checkValueState(assert, this.oView.byId("price"), "Error",
+				"Request intentionally failed");
+
+			this.expectChange("price", "11");
+
+			// code under test
+			this.oView.byId("price").getBinding("value").setValue("11");
+
+			await this.waitForChanges(assert, "update");
+
+			let oContext;
+			if (bIntermediate) {
+				oContext = this.oView.byId("publication").getBindingContext();
+			}
+			let oPromise;
+			if (sAction === "submit") {
+				this.expectRequest({
+						batchNo : 3,
+						method : "PATCH",
+						headers : {
+							"If-None-Match" : "*",
+							Prefer : "return=minimal"
+						},
+						url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
+						payload : {Price : "11", PublicationID : "2"}
+					}, null, {ETag : "etag3"}) // 204 No Content
+					.expectRequest({
+						batchNo : 3,
+						method : "GET",
+						url : "Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
+							+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+							+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))"
+					}, {
+						BestFriend : {
+							BestPublication : {
+								"@odata.etag" : "etag3",
+								CurrencyCode : "USD",
+								Price : "10.99",
+								PublicationID : "2"
+							}
+						}
+					})
+					.expectChange("price", "10.99")
+					.expectChange("currency", "USD");
+			} else {
+				this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+					.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
+						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+					.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update");
+				if (sAction === "delete") { // delete causes setContext(null) -> no default values
+					this.expectChange("publicationId", null)
+						.expectChange("price", null)
+						.expectChange("currency", null);
+				} else {
+					this.expectChange("price", "12") // from the second PATCH to "11"
+						.expectChange("publicationId", "")
+						.expectChange("price", null);
+				}
+
+				// code under test
+				if (sAction === "delete") {
+					oPromise = oContext.delete();
+				} else if (oContext) {
+					oPromise = oContext.resetChanges();
+				} else {
+					oModel.resetChanges();
+				}
+			}
+
+			await Promise.all([
+				oPromise,
+				oModel.submitBatch("update"),
+				this.waitForChanges(assert, sAction)
+			]);
+
+			assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"),
+				sAction === "submit"
+					? {
+						"@odata.etag" : "etag3",
+						CurrencyCode : "USD",
+						Price : "10.99",
+						PublicationID : "2"
+					}
+					: null);
+		});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Update a property of a complex type on an entity reachable via single-valued
+	// navigation property, resulting in an upsert. Request side effects for a property of that
+	// entity or the full binding. See that there is only one GET request. Then change a property
+	// after the successful upsert, and see that the PATCH uses the canonical path.
+	// Using an ODLB here, because its #requestSideEffects is implemented differently.
+	// Using $$patchWithoutSideEffects here, to see that is has no effect.
+	// JIRA: CPOUI5ODATAV4-2211
+	[false, true].forEach(function (bRefresh) {
+		const sTitle = `CPOUI5ODATAV4-2211: upsert & ${bRefresh ? "refresh" : "side-effects request"}`;
+
+		QUnit.test(sTitle, async function (assert) {
+			const oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"});
+			const sView = `
+	<Table id="table" items="{path : '/SalesOrderList',
+			parameters : {$$patchWithoutSideEffects : true}}">
+		<Text id="orderId" text="{SalesOrderID}"/>
+		<Text id="buyerId" text="{BuyerID}"/>
+		<Input id="city" value="{SO_2_BP/Address/City}"/>
+		<Input id="postalCode" value="{SO_2_BP/Address/PostalCode}"/>
+	</Table>`;
+
+			this.expectRequest("SalesOrderList?$select=BuyerID,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						"@odata.etag" : "etag1",
+						BuyerID : null,
+						SalesOrderID : "1",
+						SO_2_BP : null
+					}]
+				})
+				.expectChange("orderId", ["1"])
+				.expectChange("buyerId", [""])
+				.expectChange("city", [""])
+				.expectChange("postalCode", [""]);
+
+			await this.createView(assert, sView, oModel);
+
+			this.expectChange("city", ["Heidelberg"]);
+
+			const oOrderContext = this.oView.byId("table").getItems()[0].getBindingContext();
+			// code under test
+			const oPromise = oOrderContext.setProperty("SO_2_BP/Address/City", "Heidelberg");
+
+			await this.waitForChanges(assert, "upsert");
+
+			this.expectRequest({
+					batchNo : 2,
+					method : "PATCH",
+					headers : {
+						"If-None-Match" : "*",
+						Prefer : "return=minimal"
+					},
+					url : "SalesOrderList('1')/SO_2_BP",
+					payload : {Address : {City : "Heidelberg"}}
+				}, null, {ETag : "etag2"}); // 204 No Content
+			if (bRefresh) {
+				this.expectRequest({
+						batchNo : 2,
+						method : "GET",
+						url : "SalesOrderList?$select=BuyerID,SalesOrderID"
+							+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
+								+ ",BusinessPartnerID)"
+							+ "&$skip=0&$top=100"
+					}, {
+						value : [{
+							"@odata.etag" : "etag1",
+							BuyerID : "2",
+							SalesOrderID : "1",
+							SO_2_BP : {
+								"@odata.etag" : "etag2",
+								Address : {
+									City : "Heidelberg",
+									PostalCode : "12345"
+								},
+								BusinessPartnerID : "2"
+							}
+						}]
+					});
+			} else {
+				this.expectRequest({
+						batchNo : 2,
+						method : "GET",
+						url : "SalesOrderList('1')?$select=BuyerID"
+							+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
+								+ ",BusinessPartnerID)"
+					}, {
+						"@odata.etag" : "etag1",
+						BuyerID : "2",
+						SO_2_BP : {
+							"@odata.etag" : "etag2",
+							Address : {
+								City : "Heidelberg",
+								PostalCode : "12345"
+							},
+							BusinessPartnerID : "2"
+						}
+					});
+			}
+			this.expectChange("buyerId", ["2"])
+				.expectChange("postalCode", ["12345"]);
+
+			await Promise.all([
+				oPromise,
+				// code under test
+				bRefresh
+					? oOrderContext.getBinding().getHeaderContext().requestSideEffects([""])
+					: oOrderContext.requestSideEffects(["BuyerID", "SO_2_BP/Address/PostalCode"]),
+				oModel.submitBatch("update"),
+				this.waitForChanges(assert, "submit")
+			]);
+
+			assert.deepEqual(oOrderContext.getObject("SO_2_BP"), {
+				"@odata.etag" : "etag2",
+				Address : {
+					City : "Heidelberg",
+					PostalCode : "12345"
+				},
+				BusinessPartnerID : "2"
+			});
+
+			this.expectChange("city", ["Walldorf"])
+				.expectRequest({
+					method : "PATCH",
+					headers : {
+						"If-Match" : "etag2",
+						Prefer : "return=minimal"
+					},
+					url : "BusinessPartnerList('2')",
+					payload : {Address : {City : "Walldorf"}}
+				}, null, {ETag : "etag3"}); // 204 No Content
+
+			await Promise.all([
+				// code under test
+				oOrderContext.setProperty("SO_2_BP/Address/City", "Walldorf"),
+				oModel.submitBatch("update"),
+				this.waitForChanges(assert, "patch")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Deep create, nested list binding w/o own cache; create is called twice in the
 	// nested binding while the parent context is still transient. Patch one nested entity while
 	// transient and when persisted.
@@ -76373,6 +76753,12 @@ sap.ui.define([
 	// these separate requests, the returned object is incomplete but contains the already received
 	// data.
 	// JIRA: CPOUI5ODATAV4-2817
+	//
+	// Create a new item. When paging, the exclusive filter for the created item is also added to
+	// the separate requests. See that the given start index of the "separateReceived" event
+	// corresponds to the affected context index (to be used as #requestContexts parameter) instead
+	// of the actual $skip index.
+	// JIRA: CPOUI5ODATAV4-2696
 	[false, true].forEach(function (bAutoExpandSelect) {
 		QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 			const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -76426,7 +76812,7 @@ sap.ui.define([
 					batchNo : bAutoExpandSelect ? 3 : 1,
 					url : sMainUrl + "&$skip=0&$top=2"
 				}, {
-					"@odata.count" : "7",
+					"@odata.count" : "8",
 					value : [{
 						ArtistID : "10",
 						BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub1"},
@@ -76599,7 +76985,7 @@ sap.ui.define([
 					url : sMainUrl + "&$skip=2&$top=1"
 				}, new Promise(function (resolve) {
 					fnResolveMain = resolve.bind(null, {
-						"@odata.count" : "7",
+						"@odata.count" : "8",
 						value : [{
 							ArtistID : "30",
 							BestPublication : {CurrencyCode : "JPY", PublicationID : "Pub3"},
@@ -76668,7 +77054,7 @@ sap.ui.define([
 					batchNo : 10,
 					url : sMainUrl + "&$skip=3&$top=2"
 				}, {
-					"@odata.count" : "7",
+					"@odata.count" : "8",
 					value : [{
 						ArtistID : "40",
 						BestPublication : {CurrencyCode : "DKK", PublicationID : "Pub4"},
@@ -76744,7 +77130,7 @@ sap.ui.define([
 					batchNo : 14,
 					url : sMainUrl + "&$skip=5&$top=1"
 				}, {
-					"@odata.count" : "7",
+					"@odata.count" : "8",
 					value : [{
 						ArtistID : "60",
 						BestPublication : {CurrencyCode : "CAD", PublicationID : "Pub6"},
@@ -76789,7 +77175,7 @@ sap.ui.define([
 					batchNo : 17,
 					url : sMainUrl + "&$skip=6&$top=1"
 				}, {
-					"@odata.count" : "7",
+					"@odata.count" : "8",
 					value : [{
 						ArtistID : "70",
 						BestPublication : {CurrencyCode : "EUR", PublicationID : "Pub7"},
@@ -76829,6 +77215,109 @@ sap.ui.define([
 			await this.waitForChanges(assert, "resolve 60's BestFriend");
 
 			checkEvents([{property : "BestFriend", start : 5, length : 1}]);
+
+			this.expectChange("name", ["Artist X"])
+				.expectChange("publicationCurrency", [""])
+				.expectChange("friend", [""])
+				.expectChange("friendBusy__AS_COMPOSITE", [true])
+				.expectChange("friendBusy__AS_COMPOSITE", [true])
+				.expectChange("sibling", [""])
+				.expectRequest({
+					batchNo : 18,
+					method : "POST",
+					url : "Artists?custom=foo",
+					payload : {Name : "Artist X"}
+				}, {
+					ArtistID : "240",
+					IsActiveEntity : true,
+					Name : "Artist X"
+				})
+				.expectRequest({
+					batchNo : 19,
+					url : "Artists(ArtistID='240',IsActiveEntity=true)?custom=foo&$select=BestFriend"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ ",BestPublication($select=CurrencyCode,PublicationID)"
+						+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+				}, {
+					BestFriend : {ArtistID : "F24", IsActiveEntity : true, Name : "Friend X"},
+					BestPublication : {CurrencyCode : "IDR", PublicationID : "Pub24"},
+					SiblingEntity : {ArtistID : "S24", IsActiveEntity : true, Name : "Sibling X"}
+				})
+				.expectChange("publicationCurrency", ["IDR"])
+				.expectChange("friend", ["Friend X"])
+				.expectChange("friendBusy__AS_COMPOSITE", [false])
+				.expectChange("friendBusy__AS_COMPOSITE", [false])
+				.expectChange("sibling", ["Sibling X"]);
+
+			oListBinding.create({Name : "Artist X"}, /*bSkipRefresh*/true);
+
+			await this.waitForChanges(assert, "create new item");
+
+			this.expectRequest({
+					batchNo : 20,
+					url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+						+ "&$filter=(IsActiveEntity eq true)"
+						+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+						+ "&$orderby=ArtistID&$search=covfefe"
+						+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1"
+				}, {
+					value : [{
+						ArtistID : "80",
+						BestFriend : {ArtistID : "F8", IsActiveEntity : true, Name : "Friend H"},
+						IsActiveEntity : true
+					}]
+				})
+				.expectRequest({
+					batchNo : 21,
+					url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+						+ "&$filter=(IsActiveEntity eq true)"
+						+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+						+ "&$orderby=ArtistID&$search=covfefe"
+						+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1"
+				}, {
+					value : [{
+						ArtistID : "80",
+						IsActiveEntity : true,
+						SiblingEntity : {ArtistID : "S8", IsActiveEntity : true, Name : "Sibling H"}
+					}]
+				})
+				.expectRequest({
+					batchNo : 22,
+					url : sUrl + "&$count=true"
+						+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
+						+ "&$filter=(IsActiveEntity eq true)"
+						+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+						+ "&$orderby=ArtistID&$search=covfefe"
+						+ "&$select=ArtistID,IsActiveEntity,Name"
+						+ "&$skip=7&$top=1"
+				}, {
+					"@odata.count" : "9",
+					value : [{
+						ArtistID : "80",
+						BestPublication : {CurrencyCode : "CHF", PublicationID : "Pub8"},
+						IsActiveEntity : true,
+						Name : "Artist H"
+					}]
+				})
+				.expectChange("name", [,,,,,,, "Artist G", "Artist H"])
+				.expectChange("publicationCurrency", [,,,,,,, "EUR", "CHF"])
+				.expectChange("friend", [,,,,,,, "Friend G", "Friend H"])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,,,,, false, false])
+				.expectChange("friendBusy__AS_COMPOSITE", [,,,,,,, false, false])
+				.expectChange("sibling", [,,,,,,, "Sibling G", "Sibling H"]);
+
+			// 70 was hidden by the #create; requesting 2 items makes 70 visible again and loads 1 more
+			oTable.requestItems();
+
+			await this.waitForChanges(assert, "load item 80");
+
+			checkEvents([
+				{property : "BestFriend", start : 8, length : 1},
+				{property : "SiblingEntity", start : 8, length : 1}
+			]);
+
+			const [oArtistH] = await oListBinding.requestContexts(8, 1);
+			assert.deepEqual(oArtistH.getProperty("Name"), "Artist H");
 		});
 	});
 

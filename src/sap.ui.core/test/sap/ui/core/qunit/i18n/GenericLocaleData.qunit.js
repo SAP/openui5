@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date//CalendarType",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData"
 ], function(Localization, CalendarType, Locale, LocaleData) {

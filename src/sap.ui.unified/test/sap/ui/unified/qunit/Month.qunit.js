@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/delegate/ItemNavigation",

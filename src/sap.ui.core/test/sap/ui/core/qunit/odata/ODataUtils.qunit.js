@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",

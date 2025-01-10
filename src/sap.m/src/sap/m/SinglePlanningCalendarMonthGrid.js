@@ -5,6 +5,8 @@
 // Provides control sap.m.SinglePlanningCalendarMonthGrid.
 sap.ui.define([
 	'sap/base/i18n/Formatting',
+	'sap/base/i18n/date/CalendarType',
+	'sap/base/i18n/date/CalendarWeekNumbering',
 	'sap/ui/core/Control',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -33,6 +35,9 @@ sap.ui.define([
 ],
 	function(
 		Formatting,
+		CalendarType,
+		// type of `calendarWeekNumbering`
+		_CalendarWeekNumbering,
 		Control,
 		Element,
 		Library,
@@ -135,7 +140,7 @@ sap.ui.define([
 					 * Note: This property should not be used with firstDayOfWeek property.
 					 * @since 1.110.0
 					 */
-					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+					calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
 					/**
 					 * Determines whether more than one day will be selectable.
@@ -972,7 +977,7 @@ sap.ui.define([
 				iWeekNumber;
 
 			for (var i = 0; i < this._getRows(); i++) {
-				var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: "Gregorian", calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
+				var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: CalendarType.Gregorian, calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
 				var iFirstWeekDayInMonth = aDays[i * iColumns].toUTCJSDate();
 
 				if (iFirstWeekDayInMonth < oStartDate) {

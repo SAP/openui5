@@ -84,7 +84,7 @@ sap.ui.define([
 
 	new App({
 		pages: new Page({
-			title: "ObjectIdentifiers Accessibility Test Page",
+			title: "ObjectIdentifier Accessibility Test Page",
 			titleLevel: TitleLevel.H1,
 			content: oLayout
 		})

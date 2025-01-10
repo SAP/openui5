@@ -8,12 +8,10 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Table",
 	"sap/m/Text",
-	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/type/String",
 	"sap/ui/unified/Currency",
 	"sap/ui/core/library"
-], function(Formatting, App, Column, ColumnListItem, Label, mobileLibrary, Page, Table, Text, VerticalLayout, JSONModel, TypeString, Currency, coreLibrary) {
+], function(Formatting, App, Column, ColumnListItem, Label, mobileLibrary, Page, Table, Text, JSONModel, Currency, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -53,20 +51,6 @@ sap.ui.define([
 
 	Formatting.setCustomCurrencies({ "BGN4":{"digits": 4}, "Coins":{"digits": 5}});
 
-	const oCurrencyWithSymbol = new VerticalLayout({
-		content: {
-			path: "/modelData",
-			template: new Currency({
-				value: {
-					path: 'value',
-					type: new TypeString()
-				},
-				currency: '{currency}',
-				useSymbol: '{useSymbol}'
-			})
-		}
-	}).setModel(oModel).placeAt("content").addStyleClass("sapUiSmallMarginBottom");
-
 	oModel = new JSONModel({
 		modelData: [
 			{id: Math.random(), lastName: "Dente", currency: "EUR", useSymbol: true},
@@ -96,13 +80,15 @@ sap.ui.define([
 		columns : [
 			new Column({
 				header : new Label({
-					text : "LastName"
+					text : "LastName",
+					wrapping: true
 				})
 			}),
 			new Column({
 				hAlign: "Right",
 				header : new Label({
-					text : "Loan"
+					text : "Loan",
+					wrapping: true
 				}),
 				minScreenWidth : "Desktop",
 				popinDisplay : "Inline",
@@ -133,12 +119,14 @@ sap.ui.define([
 		key: "id"
 	});
 
+	const oApp = new App();
 	const oPage = new Page({
 		title: "Currency Accessibility Test page",
 		titleLevel: TitleLevel.H1,
 		enableScrolling : true,
-		content : [oCurrencyWithSymbol, oTable]
+		content: [oTable]
 	}).addStyleClass("sapUiContentPadding");
-	const oApp = new App();
-	oApp.addPage(oPage).placeAt("content");
+
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
 });
