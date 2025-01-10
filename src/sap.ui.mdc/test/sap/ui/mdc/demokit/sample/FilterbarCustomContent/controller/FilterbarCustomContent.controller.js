@@ -2,10 +2,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Messaging",
-	"../model/formatter",
-	// In order to have a correctly working custom control, we need to import and load all relevant data types.
-	"sap/ui/model/odata/type/String",
-	"sap/ui/model/odata/type/Int32"
+	"../model/formatter"
 ], function(
 	Controller,
 	JSONModel,

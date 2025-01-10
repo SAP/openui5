@@ -356,13 +356,17 @@ sap.ui.define([
 				assert.ok(fnValidateHelperProperties(aInitialProperties), "property helper properties valid.");
 
 				oSomeInstance.setPropertyInfo(aUpdatedProperties);
-				assert.ok(fnValidateHelperProperties(aUpdatedProperties), "property helper properties valid.");
-				// eslint-disable-next-line max-nested-callbacks
-				return oSomeInstance.finalizePropertyHelper().then(function () {
-					assert.ok(oSomeInstance._bPropertyHelperFinal, "property helper is final.");
-					assert.ok(fnValidateHelperProperties(aFinalProperties), "property helper properties valid.");
-					oSomeInstance.setPropertyInfo(aIgnoredProperties);
-					assert.ok(fnValidateHelperProperties(aFinalProperties), "propertyinfo updates have no effect on final propertyHelper");
+				return new Promise(function(resolve) { // as _createOrUpdatePropertyHelper could always be async before
+					setTimeout(resolve, 0);
+				}).then(() => {
+					assert.ok(fnValidateHelperProperties(aUpdatedProperties), "property helper properties valid.");
+					// eslint-disable-next-line max-nested-callbacks
+					return oSomeInstance.finalizePropertyHelper().then(function () {
+						assert.ok(oSomeInstance._bPropertyHelperFinal, "property helper is final.");
+						assert.ok(fnValidateHelperProperties(aFinalProperties), "property helper properties valid.");
+						oSomeInstance.setPropertyInfo(aIgnoredProperties);
+						assert.ok(fnValidateHelperProperties(aFinalProperties), "propertyinfo updates have no effect on final propertyHelper");
+					});
 				});
 			});
 		});

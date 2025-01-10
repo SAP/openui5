@@ -12,21 +12,13 @@ sap.ui.define([
 	'sap/ui/core/mvc/ViewType',
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/odata/v2/ODataModel',
-	'sap/ui/core/util/MockServer',
-	'sap/ui/model/type/String', // to have it loaded
-	'sap/ui/model/type/Unit', // to have it loaded
-	'sap/ui/model/odata/type/DateTime', // to have it loaded
-	'sap/ui/model/odata/type/String' // to have it loaded
+	'sap/ui/core/util/MockServer'
 ], function(
 	View,
 	ViewType,
 	UIComponent,
 	ODataModel,
-	MockServer,
-	StringType,
-	UnitType,
-	ODataDateTimeType,
-	ODataStringType
+	MockServer
 ) {
 	"use strict";
 

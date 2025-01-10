@@ -9,11 +9,10 @@ sap.ui.define([
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/odata/type/Decimal",
-	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/String",
 	"sap/m/Text",
 	'delegates/util/DelegateCache'
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, DelegateUtil, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, DelegateUtil, CurrencyType, DecimalType, StringType, Text, DelegateCache) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 	var getFullId = function(oControl, sVHId) {

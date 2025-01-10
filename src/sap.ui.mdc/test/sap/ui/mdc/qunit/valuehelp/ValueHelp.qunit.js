@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
-	"sap/ui/model/odata/type/String",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/Device"
 ],  (
@@ -33,7 +32,6 @@ sap.ui.define([
 		Icon,
 		FormatException,
 		ParseException,
-		StringType,
 		nextUIUpdate,
 		Device
 	) => {

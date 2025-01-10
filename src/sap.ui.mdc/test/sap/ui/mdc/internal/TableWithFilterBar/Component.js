@@ -2,16 +2,6 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/type/Currency", // to have it loaded
-	"sap/ui/model/odata/type/Decimal", // to have it loaded
-	"sap/ui/model/odata/type/Date", // to have it loaded
-	"sap/ui/model/odata/type/DateTimeOffset", // to have it loaded
-	"sap/ui/model/odata/type/DateTimeWithTimezone", // to have it loaded
-	"sap/ui/model/odata/type/Guid", // to have it loaded
-	"sap/ui/model/odata/type/Int32", // to have it loaded
-	"sap/ui/model/odata/type/String", // to have it loaded
-	"sap/ui/model/odata/type/TimeOfDay", // to have it loaded
-	"sap/ui/mdc/field/ConditionsType", // as used in XML view
 	"testutils/link/FakeUShellConnector",
 	"sap/base/util/LoaderExtensions",
 	"sap/m/routing/Router", // make sure Router is loaded
@@ -20,16 +10,6 @@ sap.ui.define([
 	ManagedObject,
 	UIComponent,
 	JSONModel,
-	ODataCurrencyType,
-	ODataDecimalType,
-	ODataDateType,
-	ODataDateTimeOffsetType,
-	ODataDateTimeWithTimezoneType,
-	ODataGuidType,
-	ODataInt32Type,
-	ODataStringType,
-	ODataTimeOfDayType,
-	ConditionsType,
 	FakeUShellConnector,
 	LoaderExtensions,
 	Router,

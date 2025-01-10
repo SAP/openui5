@@ -6,10 +6,8 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/common/ChangeCategories",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/model/odata/type/Int32",
-	'sap/ui/model/odata/type/String'
-], function (createAppEnvironment, ChartFlexibility, ChangesWriteAPI, ChangeCategories, JsControlTreeModifier, FlexTestAPI, nextUIUpdate, Int32Type, StringType) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (createAppEnvironment, ChartFlexibility, ChangesWriteAPI, ChangeCategories, JsControlTreeModifier, FlexTestAPI, nextUIUpdate) {
 	'use strict';
 
 	function clearChanges() {
