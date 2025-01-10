@@ -6,7 +6,6 @@ sap.ui.define([
   "sap/m/Text",
   "sap/ui/core/Popup",
   "sap/ui/model/json/JSONModel",
-  "sap/ui/core/CalendarType",
   "sap/ui/core/format/DateFormat",
   "sap/ui/unified/Calendar",
   "sap/ui/layout/form/Form",
@@ -36,7 +35,6 @@ sap.ui.define([
   Text,
   Popup,
   JSONModel,
-  CalendarType,
   DateFormat,
   Calendar,
   Form,
@@ -71,6 +69,7 @@ sap.ui.define([
   const BackgroundDesign = layoutLibrary.BackgroundDesign;
 
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+  const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
 
   var oCalendars = new JSONModel(CalendarType);
 

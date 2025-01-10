@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/date/CalendarWeekNumbering"
+	"sap/base/i18n/date/CalendarWeekNumbering"
 ], function(CalendarWeekNumbering) {
 	/*global QUnit */
 	"use strict";
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.core.date.CalendarWeekNumbering");
+	QUnit.module("sap.base.i18n.date.CalendarWeekNumbering");
 
 	//*********************************************************************************************
 	QUnit.test("CalendarWeekNumbering - getWeekConfigurationValues", function (assert) {

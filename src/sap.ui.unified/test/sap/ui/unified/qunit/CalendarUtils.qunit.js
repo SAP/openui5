@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/date/Buddhist",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/Locale",
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/date/UI5Date"
 ], function(Formatting, LanguageTag, Localization, nextUIUpdate, CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, UI5Date) {
 	"use strict";

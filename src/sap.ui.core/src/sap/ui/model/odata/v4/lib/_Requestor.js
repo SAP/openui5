@@ -1405,8 +1405,10 @@ sap.ui.define([
 			});
 		}
 
-		delete this.mBatchQueue[sGroupId];
+		// call the onSubmit handlers before resetting the batch queue, so that further requests may
+		// be added
 		onSubmit(aRequests);
+		delete this.mBatchQueue[sGroupId];
 		bHasChanges = this.cleanUpChangeSets(aRequests);
 		if (aRequests.length === 0) {
 			return Promise.resolve();
@@ -1795,8 +1797,11 @@ sap.ui.define([
 	 *   Data to be sent to the server; this object is live and can be modified until the request
 	 *   is really sent
 	 * @param {function} [fnSubmit]
-	 *   A function that is called when the request has been submitted, either immediately (when
-	 *   the group ID is "$direct") or via {@link #submitBatch}
+	 *   A function that is called when the request is being submitted, either immediately (when
+	 *   the group ID is "$direct") or via {@link #submitBatch}. It is possible to add another
+	 *   request to the same batch in this callback by calling {#request} with the same group ID. A
+	 *   request added in another request's <code>fnSubmit</code> must not have a
+	 *   <code>fnSubmit</code> of its own, it will not be called.
 	 * @param {function(boolean):boolean} [fnCancel]
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
 	 *   queue, ignored for GET requests; {@link #cancelChanges} cancels this request only if this

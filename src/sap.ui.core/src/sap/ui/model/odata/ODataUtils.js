@@ -14,14 +14,14 @@
 sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/i18n/date/CalendarType",
 	"sap/base/security/encodeURL",
 	"sap/base/util/each",
-	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Sorter"
-], function(assert, Log, encodeURL, each, CalendarType, DateFormat, _Helper, FilterProcessor, Sorter) {
+], function(assert, Log, CalendarType, encodeURL, each, DateFormat, _Helper, FilterProcessor, Sorter) {
 	"use strict";
 
 	let oDateTimeFormat, oDateTimeFormatMs, oDateTimeOffsetFormat, oDateTimeOffsetFormatMs, oTimeFormat;

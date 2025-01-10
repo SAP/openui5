@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/qunit/QUnitUtils",
@@ -16,7 +17,6 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/m/DatePicker",
 	"sap/ui/Device",
-	"sap/ui/core/library",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -31,6 +31,7 @@ sap.ui.define([
 ], function(
 	Formatting,
 	Localization,
+	CalendarType,
 	Library,
 	Locale,
 	qutils,
@@ -45,7 +46,6 @@ sap.ui.define([
 	InputBase,
 	DatePicker,
 	Device,
-	coreLibrary,
 	LocaleData,
 	XMLView,
 	ODataModel,
@@ -58,9 +58,6 @@ sap.ui.define([
 	DateInterval
 ) {
 	"use strict";
-
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
 
 	createAndAppendDiv("uiArea1");
 	createAndAppendDiv("uiArea2");

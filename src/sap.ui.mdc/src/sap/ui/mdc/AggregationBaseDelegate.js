@@ -89,7 +89,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/message/MessageType'], (B
 	 *
 	 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 	 * @param {Object} oState The theoretical external state representation of a mdc control. The representation of this format is similar as processed by {@link sap.ui.mdc.p13n.StateUtil StateUtil}
-	 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
+	 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link module:sap/ui/core/message/MessageType MessageType}.
 	 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
 	 *
 	 * @private

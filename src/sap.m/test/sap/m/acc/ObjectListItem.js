@@ -167,7 +167,6 @@ sap.ui.define([
 
 	var withImgIcon = new ObjectListItem({
 		intro: "On behalf of John Smith, Ñagçyfox",
-		icon: "images/action.png",
 		activeIcon: "images/action_pressed.png",
 		title: "Using image instead of icon font",
 		number: "103",
@@ -321,7 +320,7 @@ sap.ui.define([
 		intro: "On behalf of John Smith",
 		title: "First status using image",
 		number: "3.62449",
-		firstStatus: new ObjectStatus({icon: "images/favorite_24.png"}).setTooltip("golden star")
+		firstStatus: new ObjectStatus().setTooltip("golden star")
 	});
 	list.addItem(withFirstStatusImage);
 

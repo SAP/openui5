@@ -15,13 +15,13 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/CalendarType",
 	'sap/ui/core/date/UniversalDate',
 	'./CalendarDate',
-	'sap/ui/core/CalendarType',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	"sap/ui/core/date/UI5Date"
-], function(Formatting, Localization, UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, UI5Date) {
+], function(Formatting, Localization, CalendarType, UniversalDate, CalendarDate, Locale, LocaleData, UI5Date) {
 	"use strict";
 
 	// Static class
@@ -124,7 +124,7 @@ sap.ui.define([
 	/**
 	 * Creates a Date in UTC timezone from local timezone
 	 * @param {Date} oDate in local timezone
-	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the used calendar
+	 * @param {module:sap/base/i18n/date/CalendarType} sCalendarType the type of the used calendar
 	 * @param {boolean} bTime if set the time part of the date will be used too, otherwise it will be initial
 	 * @return {sap.ui.core.date.UniversalDate} in UTC timezone
 	 * @private
@@ -594,7 +594,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.core.CalendarType} sCalendarType The date type whose minimal date will be returned
+	 * @param {module:sap/base/i18n/date/CalendarType} sCalendarType The date type whose minimal date will be returned
 	 * @returns {sap.ui.unified.calendar.CalendarDate} The minimal date that this calendar supports
 	 * @private
 	 */
@@ -608,7 +608,7 @@ sap.ui.define([
 
 	/**
 	 * Creates a date corresponding to the max date this calendar supports.
-	 * @param {sap.ui.core.CalendarType} sCalendarType The date type whose maximal date will be returned
+	 * @param {module:sap/base/i18n/date/CalendarType} sCalendarType The date type whose maximal date will be returned
 	 * @returns {sap.ui.unified.calendar.CalendarDate} The maximum date that this calendar supports
 	 * @private
 	 */

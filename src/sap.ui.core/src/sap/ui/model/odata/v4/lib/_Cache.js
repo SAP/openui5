@@ -174,6 +174,14 @@ sap.ui.define([
 				}
 			}
 
+			if (_Helper.getPrivateAnnotation(oEntity, "upsert")) {
+				if (oGroupLock) {
+					oGroupLock.unlock();
+				}
+				that.resetChangesForPath(sEntityPath);
+
+				return undefined;
+			}
 			if (sTransientGroup) {
 				if (typeof sTransientGroup !== "string") {
 					throw new Error("No 'delete' allowed while waiting for server response");
@@ -559,7 +567,7 @@ sap.ui.define([
 				_Helper.deletePrivateAnnotation(oEntityData, "postBody");
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
 				// ensure that change listeners are informed via updateSelected
-				aResult[0]["@$ui5.context.isTransient"] = false;
+				oCreatedEntity["@$ui5.context.isTransient"] = false;
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
@@ -1882,6 +1890,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Uses a side-effects request to read the upserted entity.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the ID of the group that is associated with the request;
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string} sPath
+	 *   The entity's path relative to the cache
+	 * @returns {Promise<void>|sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails
+	 *
+	 * @name sap.ui.model.odata.lib._Cache#requestUpsertedEntity
+	 */
+
+	/**
 	 * Resets all pending changes below the given path.
 	 *
 	 * @param {string} sPath
@@ -2174,7 +2197,8 @@ sap.ui.define([
 		}
 
 		return oPromise.then(function (oEntity) {
-			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
+			var bUpsert = oEntity === null,
+				sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				oOldData,
 				oPatchPromise,
@@ -2192,7 +2216,16 @@ sap.ui.define([
 			function onCancel() {
 				_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
-				_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity, oOldData);
+				if (bUpsert) {
+					const aSegments = sEntityPath.split("/");
+					const sNavigationProperty = aSegments.pop();
+					const sParentPath = aSegments.join("/");
+					// reset to null notifying listeners
+					_Helper.updateAll(that.mChangeListeners, sParentPath,
+						that.getValue(sParentPath), {[sNavigationProperty] : null});
+				} else {
+					_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity, oOldData);
+				}
 			}
 
 			/*
@@ -2227,10 +2260,18 @@ sap.ui.define([
 				 * this request has returned and its response is applied to the cache.
 				 */
 				function onSubmit() {
+					if (bUpsert && that.iActiveUsages) {
+						that.requestUpsertedEntity(oPatchGroupLock, sEntityPath)
+							.catch(that.oRequestor.getModelInterface().getReporter());
+					}
 					oRequestLock = that.oRequestor.lockGroup(sGroupId, that, true);
 					fnPatchSent();
 				}
 
+				if (bUpsert) {
+					mHeaders["If-None-Match"] = "*";
+					bPatchWithoutSideEffects = true;
+				}
 				if (bPatchWithoutSideEffects) {
 					mHeaders.Prefer = "return=minimal";
 				}
@@ -2244,9 +2285,7 @@ sap.ui.define([
 				return SyncPromise.all([
 					oPatchPromise,
 					that.fetchTypes()
-				]).then(function (aResult) {
-					var oPatchResult = aResult[0];
-
+				]).then(function ([oPatchResult, mTypeForMetaPath]) {
 					_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
 					if (bSkip) {
 						// if a PATCH is skipped, because it is merged into another, nothing to do!
@@ -2254,7 +2293,7 @@ sap.ui.define([
 					}
 					if (!bPatchWithoutSideEffects) {
 						// visit response to report the messages
-						that.visitResponse(oPatchResult, aResult[1],
+						that.visitResponse(oPatchResult, mTypeForMetaPath,
 							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sEntityPath)),
 							sEntityPath
 						);
@@ -2262,8 +2301,9 @@ sap.ui.define([
 					// update the cache with the PATCH response
 					_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity,
 						bPatchWithoutSideEffects
-						? {"@odata.etag" : oPatchResult["@odata.etag"]}
-						: oPatchResult);
+							? {"@odata.etag" : oPatchResult["@odata.etag"]}
+							: oPatchResult);
+					_Helper.deletePrivateAnnotation(oEntity, "upsert");
 				}, function (oError) {
 					var sRetryGroupId = sGroupId;
 
@@ -2315,7 +2355,13 @@ sap.ui.define([
 				});
 			}
 
-			if (!oEntity) {
+			if (bUpsert) {
+				const aSegments = sEntityPath.split("/");
+				const sNavigationProperty = aSegments.pop();
+				const sParentPath = aSegments.join("/");
+				that.getValue(sParentPath)[sNavigationProperty] = oEntity = {};
+				_Helper.setPrivateAnnotation(oEntity, "upsert", true);
+			} else if (!oEntity) {
 				throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
 					+ "' does not exist");
 			}
@@ -2881,8 +2927,9 @@ sap.ui.define([
 	_CollectionCache.prototype.getQueryString = function (sSeparateProperty) {
 		var sExclusiveFilter = this.getExclusiveFilter(),
 			mQueryOptions = Object.assign({}, this.mQueryOptions),
-			sFilterOptions = mQueryOptions.$filter,
-			sQueryString = this.sQueryString;
+			sQueryString = this.sQueryString,
+			bRebuildQueryString,
+			bSortSystemQueryOptions;
 
 		if (this.aSeparateProperties.length) {
 			if (sSeparateProperty) {
@@ -2901,19 +2948,24 @@ sap.ui.define([
 					delete mQueryOptions.$expand;
 				}
 			}
-			sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
-				this.bSortExpandSelect, true);
+			bSortSystemQueryOptions = true;
+			bRebuildQueryString = true;
 		}
 
 		if (sExclusiveFilter) {
-			if (sFilterOptions) {
-				mQueryOptions.$filter = "(" + sFilterOptions + ") and " + sExclusiveFilter;
-				sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
-					false, this.bSortExpandSelect);
+			if (mQueryOptions.$filter) {
+				bRebuildQueryString = true;
 			} else {
 				sQueryString += (sQueryString ? "&" : "?") + "$filter="
 					+ _Helper.encode(sExclusiveFilter, false);
 			}
+			mQueryOptions.$filter = mQueryOptions.$filter
+				? "(" + mQueryOptions.$filter + ") and " + sExclusiveFilter
+				: sExclusiveFilter;
+		}
+		if (bRebuildQueryString) {
+			sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
+				false, this.bSortExpandSelect, bSortSystemQueryOptions);
 		}
 
 		return sQueryString;
@@ -3107,7 +3159,7 @@ sap.ui.define([
 
 					const iIndex = aElements.indexOf(oKeptElement);
 					if (iIndex >= 0 && iIndex !== iStart + i - iOffset) {
-						throw new Error("Duplicate predicate: " + sPredicate);
+						throw new Error("Duplicate key predicate: " + sPredicate);
 					}
 				}
 				aElements.$byPredicate[sPredicate] = oElement;
@@ -3565,7 +3617,7 @@ sap.ui.define([
 
 			return that.handleCount(oGroupLock, iTransientElements, oReadRequest.iStart,
 				oReadRequest.iEnd, aResult[0], iFiltered);
-		}).catch(function (oError) {
+		}, function (oError) {
 			if (!oError.canceled && !oReadRequest.bObsolete) {
 				that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
 				that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
@@ -3789,6 +3841,15 @@ sap.ui.define([
 					}
 				}
 			});
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.lib._Cache#requestUpsertedEntity
+	 */
+	_CollectionCache.prototype.requestUpsertedEntity = function (oGroupLock, sPath) {
+		return this.requestSideEffects(oGroupLock.getUnlockedCopy(), [_Helper.getMetaPath(sPath)],
+			[sPath.split("/")[0]], true);
 	};
 
 	/**
@@ -4458,6 +4519,14 @@ sap.ui.define([
 		});
 
 		return oResult;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.lib._Cache#requestUpsertedEntity
+	 */
+	_SingleCache.prototype.requestUpsertedEntity = function (oGroupLock, sPath) {
+		return this.requestSideEffects(oGroupLock.getUnlockedCopy(), [_Helper.getMetaPath(sPath)]);
 	};
 
 	/**

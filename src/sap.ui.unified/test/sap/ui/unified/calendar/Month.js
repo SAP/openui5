@@ -5,7 +5,6 @@ sap.ui.define([
   "sap/m/Label",
   "sap/m/Text",
   "sap/ui/core/format/DateFormat",
-  "sap/ui/core/CalendarType",
   "sap/ui/unified/calendar/Month",
   "sap/ui/core/library",
   "sap/ui/layout/form/Form",
@@ -28,7 +27,6 @@ sap.ui.define([
   Label,
   Text,
   DateFormat,
-  CalendarType,
   Month,
   coreLibrary,
   Form,
@@ -54,6 +52,7 @@ sap.ui.define([
   const ValueState = coreLibrary.ValueState;
 
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
+  const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
 
   var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 

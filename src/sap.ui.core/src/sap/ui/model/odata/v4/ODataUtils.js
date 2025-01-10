@@ -4,7 +4,7 @@
 
 //Provides class sap.ui.model.odata.v4.ODataUtils
 sap.ui.define([
-	"sap/ui/core/CalendarType",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Batch",

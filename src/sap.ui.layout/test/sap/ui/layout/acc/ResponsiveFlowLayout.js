@@ -55,7 +55,6 @@ sap.ui.define([
 	}).addStyleClass("sapUiContentPadding");
 
 	const oResponsiveFlowInnerLast = new ResponsiveFlowLayout({
-		id: "rfl_address",
 		responsive: bResponsive,
 		layoutData: new ResponsiveFlowLayoutData({
 			minWidth : 250,
@@ -87,7 +86,6 @@ sap.ui.define([
 	}).addStyleClass("sapUiContentPadding");
 
 	var oRFL = new ResponsiveFlowLayout({
-		id: "rfl_outer",
 		responsive : bResponsive,
 		content: [
 			oResponsiveFlowInnerFirst,
@@ -95,15 +93,14 @@ sap.ui.define([
 			oResponsiveFlowInnerLast
 		]
 	});
-	new App({
-		id: "myApp",
-		pages: [
-			new Page({
-				id: "area-default",
-				title: "ResponsiveFlowLayout",
-				titleLevel: TitleLevel.H1,
-				content: [oRFL]
-			})
-		]
-	}).placeAt("content");
+
+	var oPage = new Page({
+		title: "ResponsiveFlowLayout Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
+		content: [oRFL]
+	});
+
+	var oApp = new App();
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
 });

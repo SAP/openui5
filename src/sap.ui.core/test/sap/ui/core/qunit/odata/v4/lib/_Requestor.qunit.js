@@ -2036,7 +2036,21 @@ sap.ui.define([
 		var oBatchRequestSentExpectation,
 			oBatchResponseReceivedExpectation,
 			oCleanUpChangeSetsExpectation,
-			fnSubmit = function () {},
+			sGroupId = "group1",
+			aPromises = [],
+			oRequestor = _Requestor.create("/Service/", oModelInterface,
+				{"Accept-Language" : "ab-CD"}),
+			aResults = [{foo1 : "bar1"}, {foo2 : "bar2"}, {}, {foo3 : "bar3"}],
+			bWaitingIsOver,
+			fnSubmit = () => {
+				aPromises.push(oRequestor.request("GET", "Products('onSubmit')",
+						this.createGroupLock(sGroupId))
+					.then(function (oResult) {
+						assert.deepEqual(oResult, {foo3 : "bar3"});
+						aResults[3] = null;
+						assert.notOk(bWaitingIsOver);
+					}));
+			},
 			aExpectedRequests = [[{
 				method : "POST",
 				url : "~Customers",
@@ -2115,20 +2129,35 @@ sap.ui.define([
 				$resolve : sinon.match.func,
 				$resourcePath : "~Products('4711')",
 				$submit : undefined
+			}, {
+				method : "GET",
+				url : "~Products('onSubmit')",
+				headers : {
+					Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					"Accept-Language" : "ab-CD",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+				},
+				body : undefined,
+				$cancel : undefined,
+				$mergeRequests : undefined,
+				$metaPath : undefined,
+				$owner : undefined,
+				$promise : sinon.match.defined,
+				$queryOptions : undefined,
+				$reject : sinon.match.func,
+				$resolve : sinon.match.func,
+				$resourcePath : "~Products('onSubmit')",
+				$submit : undefined
 			}],
-			sGroupId = "group1",
 			aMergedRequests,
-			aPromises = [],
-			aResults = [{foo1 : "bar1"}, {foo2 : "bar2"}, {}],
 			aBatchResults = [
 				[createResponse(aResults[1]), createResponse()],
-				createResponse(aResults[0], {etAG : "ETag value"}), createResponse()
+				createResponse(aResults[0], {etAG : "ETag value"}),
+				createResponse(),
+				createResponse(aResults[3])
 			],
-			oRequestor = _Requestor.create("/Service/", oModelInterface,
-				{"Accept-Language" : "ab-CD"}),
 			oRequestorMock = this.mock(oRequestor),
-			oSendBatchExpectation,
-			bWaitingIsOver;
+			oSendBatchExpectation;
 
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('23')")
 			.returns("~Products('23')");
@@ -2176,6 +2205,8 @@ sap.ui.define([
 		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders")
 			.returns("~SalesOrders");
 		oRequestor.request("GET", "SalesOrders", this.createGroupLock("group2"));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('onSubmit')")
+			.returns("~Products('onSubmit')");
 		aExpectedRequests.iChangeSet = 0;
 		aExpectedRequests[0].iSerialNumber = 0; // Note: #cleanUpChangeSets would remove this
 
@@ -2196,7 +2227,7 @@ sap.ui.define([
 				return aRequests === aMergedRequests;
 			}), sGroupId, "~bHasChanges~")
 			.resolves(aBatchResults);
-		this.mock(oModelInterface).expects("onHttpResponse").exactly(4);
+		this.mock(oModelInterface).expects("onHttpResponse").exactly(5);
 		oBatchResponseReceivedExpectation = oRequestorMock.expects("batchResponseReceived")
 			.withExactArgs(sGroupId, sinon.match(function (aRequests) {
 				return aRequests === aMergedRequests;
@@ -2206,7 +2237,8 @@ sap.ui.define([
 		// code under test
 		aPromises.push(oRequestor.processBatch("group1").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
-			assert.deepEqual(aResults, [null, null, null], "all batch requests already resolved");
+			assert.deepEqual(aResults, [null, null, null, null],
+				"all batch requests already resolved");
 			sinon.assert.callOrder(oSendBatchExpectation, oBatchResponseReceivedExpectation);
 		}));
 

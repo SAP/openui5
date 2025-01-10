@@ -2,7 +2,6 @@ sap.ui.define([
   "sap/ui/core/Element",
   "sap/ui/model/type/Date",
   "sap/ui/core/format/DateFormat",
-  "sap/ui/core/CalendarType",
   "sap/ui/unified/CalendarRow",
   "sap/ui/unified/CalendarAppointment",
   "sap/ui/unified/library",
@@ -20,7 +19,6 @@ sap.ui.define([
   Element,
   TypeDate,
   DateFormat,
-  CalendarType,
   CalendarRow,
   CalendarAppointment,
   unifiedLibrary,
@@ -51,6 +49,8 @@ sap.ui.define([
 
   // shortcut for sap.ui.unified.CalendarDayType
   const CalendarDayType = unifiedLibrary.CalendarDayType;
+
+  const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
 
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
   var oFormatYyyyMMddHHmm = DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: CalendarType.Gregorian});

@@ -7,12 +7,18 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/layout/Grid",
 	"sap/m/VBox",
+	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/core/library"
-], function(MaskInputRule, JSONModel, MaskInput, Label, App, Page, Grid, VBox, SimpleForm, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/layout/library"
+], function(MaskInputRule, JSONModel, MaskInput, Label, App, Page, Grid, VBox, Title, SimpleForm, coreLibrary, layoutLibrary) {
 	"use strict";
 
+	// shortcut for sap.ui.core.TitleLevel
 	const TitleLevel = coreLibrary.TitleLevel;
+
+	// shortcut for sap.ui.layout.form.SimpleFormLayout
+	const SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	const ruleCollection = [
 		{name: "allCharactersRule", rule: new MaskInputRule("allCharactersRule", { maskFormatSymbol: "~", regex: "[^_]"})},
@@ -37,7 +43,8 @@ sap.ui.define([
 		return [
 			new Label({
 				text: sMaskLabelText ? sMaskLabelText : "",
-				labelFor: oMaskInput
+				labelFor: oMaskInput,
+				wrapping: true
 			}),
 			oMaskInput
 		];
@@ -47,7 +54,11 @@ sap.ui.define([
 		items: [
 			new SimpleForm({
 				editable: true,
-				title: "Generic Mask Input",
+				layout: SimpleFormLayout.ColumnLayout,
+				title: new Title({
+					text: "Generic Mask Input",
+					level: TitleLevel.H2
+				}),
 				content: [
 					addMask("Any character", "~~~~~~~~~~", "Enter text", "_", [ruleCollection[0].rule]),
 					addMask("Latin characters (case insensitive)", "aaaaaaaa", "Enter text", "_"),
@@ -62,33 +73,36 @@ sap.ui.define([
 		items: [
 			new SimpleForm({
 				editable: true,
-				title: "Possible usages (may require additional coding)",
+				layout: SimpleFormLayout.ColumnLayout,
+				title: new Title({
+					text: "Possible usages",
+					level: TitleLevel.H2
+				}),
 				content: [
 					addMask("Serial number", "CCCC-CCCC-CCCC-CCCC-CCCC", "Enter serial number", "_", [ruleCollection[4].rule]),
 					addMask("Product activation key", "SAP-CCCCC-CCCCC", "Enter activation key", "_", [ruleCollection[4].rule]),
 					addMask("ISBN", "999-99-999-9999-9", "Enter ISBN", "_")
 				]
-			})
+			}).addStyleClass("sapUiContentPadding")
 		]
 	});
 
-	new App({
-		pages: [
-			new Page({
-				title: "Mask Input - Testsuite example",
-				titleLevel: TitleLevel.H1,
+	var oApp = new App();
+	var oPage = new Page({
+		title: "MaskInput Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
+		content: [
+			new Grid({
+				vSpacing: 2,
+				defaultSpan: "XL12 L12 M12 S12",
 				content: [
-					new Grid({
-						vSpacing: 2,
-						defaultSpan: "XL12 L12 M12 S12",
-						content: [
-							oGenericMaskInput.addStyleClass("sapUiSmallMarginTop"),
-							oUsageMaskInput
-						]
-					})
+					oGenericMaskInput.addStyleClass("sapUiSmallMarginTop"),
+					oUsageMaskInput
 				]
 			})
-		],
-		models: oRulesModel
-	}).placeAt("body");
+		]
+	});
+	oApp.addPage(oPage);
+	oApp.setModel(oRulesModel);
+	oApp.placeAt("body");
 });

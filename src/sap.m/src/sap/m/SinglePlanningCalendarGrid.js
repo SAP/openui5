@@ -30,6 +30,8 @@ sap.ui.define([
 	'./PlanningCalendarLegend',
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
+	'sap/base/i18n/date/CalendarType',
+	'sap/base/i18n/date/CalendarWeekNumbering',
 	"sap/ui/core/date/CalendarUtils",
 	"sap/ui/core/date/UI5Date"
 ],
@@ -60,6 +62,9 @@ sap.ui.define([
 		PlanningCalendarLegend,
 		InvisibleMessage,
 		coreLibrary,
+		CalendarType,
+		// type of `calendarWeekNumbering`
+		_CalendarWeekNumbering,
 		CalendarDateUtils,
 		UI5Date
 	) {
@@ -77,7 +82,6 @@ sap.ui.define([
 			FIRST_HOUR_OF_DAY = 0,
 			LAST_HOUR_OF_DAY = 24,
 			InvisibleMessageMode = coreLibrary.InvisibleMessageMode,
-			CalendarType = coreLibrary.CalendarType,
 			SinglePlanningCalendarSelectionMode = library.SinglePlanningCalendarSelectionMode;
 
 		/**
@@ -197,7 +201,7 @@ sap.ui.define([
 					 * If not set, the calendar week numbering of the global configuration is used.
 					 * @since 1.110.0
 					 */
-					calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+					calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
 
 					/* Determines whether more than one day will be selectable.
 					* <b>Note:</b> selecting more than one day is possible with a combination of <code>Ctrl + mouse click</code>

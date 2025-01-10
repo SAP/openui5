@@ -157,6 +157,7 @@ sap.ui.define([
 		]
 	});
 
+	var oApp = new App();
 	var oPageLayout = new VerticalLayout({
 		content: [
 			oStandalonePanel,
@@ -164,16 +165,15 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiContentPadding");
 
-	var oPage = new Page("page", {
-		title:"ObjectMarker Accessibility Test Page",
+	var oPage = new Page({
+		title: "ObjectMarker Accessibility Test Page",
 		titleLevel: TitleLevel.H1,
 		content: [
 			oPageLayout
 		]
 	});
 
-	new App({
-		pages: [oPage] ,
-		models: oModel
-	}).placeAt("body");
+	oApp.addPage(oPage);
+	oApp.setModel(oModel);
+	oApp.placeAt("body");
 });

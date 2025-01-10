@@ -2,12 +2,14 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/date/TimezoneUtils",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/format/FormatUtils",
 	"sap/ui/core/format/TimezoneUtil"
-], function (Log, Localization, Locale, LocaleData, UI5Date, DateFormat, TimezoneUtil) {
+], function (Log, Localization, TimezoneUtils, Locale, LocaleData, UI5Date, DateFormat, FormatUtils, TimezoneUtil) {
 	"use strict";
 
 	var sDefaultTimezone = Localization.getTimezone();
@@ -60,6 +62,19 @@ sap.ui.define([
 			});
 		}, new TypeError("Invalid Configuration. One of the following format options must be "
 			+ "true: showDate, showTime or showTimezone."), "invalid configuration");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("format: TimezoneUtils#getABAPTimezone is called when formatting time zones", function (assert) {
+		const oFormat = DateFormat.getDateTimeWithTimezoneInstance();
+		const oTimezoneUtilsMock = this.mock(TimezoneUtils);
+
+		oTimezoneUtilsMock.expects("getABAPTimezone").withExactArgs("~sTimezone").returns("~sTimeABAPTimezone");
+		oTimezoneUtilsMock.expects("isValidTimezone").withExactArgs("~sTimeABAPTimezone").returns(false);
+		this.mock(Log).expects("error").withExactArgs("The given timezone isn't valid.");
+
+		// code under test
+		assert.strictEqual(oFormat.format(new Date(), "~sTimezone"), "");
 	});
 
 	QUnit.module("DateTimeWithTimezone format en-US", {
@@ -238,8 +253,8 @@ sap.ui.define([
 		assert.strictEqual(oDateFormat.format(undefined, "America/New_York"), "Americas, New York",
 			"date undefined, timezone present in pattern");
 
-		assert.strictEqual(oDateFormat.format(null, "Australia/Queensland"), "Australia/Queensland",
-			"timezone present in pattern (no translation available, but valid timezone)");
+		assert.strictEqual(oDateFormat.format(null, "Australia/Queensland"), "Australia, Brisbane",
+			"timezone present in pattern (valid timezone is mapped to available translation)");
 
 		oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({
 			pattern: "yyyy'-'MM'-'dd'T'HH':'mm':'ss' 'VV"
@@ -1043,6 +1058,55 @@ sap.ui.define([
 		assert.throws(function () {
 			oDateFormat.parse(sFormatted, "America/New_York");
 		}, new TypeError("The input can only be parsed back to date if both date and time are supplied."));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parse of format symbol 'V': TimezoneUtils#getABAPTimezone is called", function (assert) {
+		const oFormat = {
+			oLocaleData: {
+				sCLDRLocaleId: "~sCLDRLocaleId",
+				getTimezoneTranslations() {}
+			}
+		};
+
+		this.mock(oFormat.oLocaleData).expects("getTimezoneTranslations")
+			.withExactArgs()
+			.returns({Timezone1: "~sTranslated, Timezone1", Timezone2: "~sTranslated, Timezone2"});
+		const oTimezoneUtilMock = this.mock(TimezoneUtils);
+		oTimezoneUtilMock.expects("getABAPTimezone").withExactArgs("~sTimezone").returns("~sABAPTimezone");
+		this.mock(DateFormat._oParseHelper).expects("findEntry")
+			.withExactArgs("~sValue", ["~sTranslated, Timezone1", "~sTranslated, Timezone2"], "~sCLDRLocaleId")
+			.returns({index: -1});
+		oTimezoneUtilMock.expects("isValidTimezone").withExactArgs("~sValue").returns(true);
+		oTimezoneUtilMock.expects("getABAPTimezone").withExactArgs("~sValue").returns("~sOtherABAPTimezone");
+
+		// code under test
+		const oResult = DateFormat.prototype.oSymbols["V"].parse.call(oFormat, "~sValue", {digits : 2}, oFormat,
+			/*oConfig*/ undefined, "~sTimezone");
+
+		assert.deepEqual(oResult, {timezone: "~sOtherABAPTimezone", length: 7});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parse of format symbol 'V': given sTimezone is a time zone alias", function (assert) {
+		const oFormat = {
+			oLocaleData: {
+				sCLDRLocaleId: "~sCLDRLocaleId",
+				getTimezoneTranslations() {}
+			}
+		};
+
+		this.mock(oFormat.oLocaleData).expects("getTimezoneTranslations")
+			.withExactArgs()
+			.returns({"~sABAPTimezone": "~sTimezoneTranslation"});
+		const oTimezoneUtilMock = this.mock(TimezoneUtils);
+		oTimezoneUtilMock.expects("getABAPTimezone").withExactArgs("~sTimezoneAlias").returns("~sABAPTimezone");
+
+		// code under test
+		const oResult = DateFormat.prototype.oSymbols["V"].parse.call(oFormat, "~sTimezoneTranslation", {digits : 2},
+			oFormat, /*oConfig*/ undefined, "~sTimezoneAlias");
+
+		assert.deepEqual(oResult, {timezone: "~sABAPTimezone", length: 21});
 	});
 
 	QUnit.test("format and parse with show timezone and show date is set to false", function (assert) {

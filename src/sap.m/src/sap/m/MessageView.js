@@ -191,9 +191,8 @@ sap.ui.define([
 						item: {type: "sap.m.MessageItem"},
 						/**
 						 * Refers to the type of messages being shown.
-						 * See sap.ui.core.MessageType values for types.
 						 */
-						messageTypeFilter: {type: "sap.ui.core.MessageType"}
+						messageTypeFilter: {type: "module:sap/ui/core/message/MessageType"}
 					}
 				},
 
@@ -205,7 +204,7 @@ sap.ui.define([
 						/**
 						 * This parameter refers to the type of messages being shown.
 						 */
-						messageTypeFilter: {type: "sap.ui.core.MessageType"}
+						messageTypeFilter: {type: "module:sap/ui/core/message/MessageType"}
 					}
 				},
 
@@ -826,7 +825,7 @@ sap.ui.define([
 	/**
 	 * Map ValueState according the MessageType of the message.
 	 *
-	 * @param {sap.ui.core.MessageType} sType Type of Message
+	 * @param {module:sap/ui/core/message/MessageType} sType Type of Message
 	 * @returns {sap.ui.core.ValueState | null} The ValueState
 	 * @private
 	 */
@@ -852,7 +851,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Map a MessageType to the Icon URL.
+	 * Map a `ValueState` to the Icon URL.
 	 *
 	 * @param {sap.ui.core.ValueState} sIcon Type of Error
 	 * @returns {string | null} Icon string

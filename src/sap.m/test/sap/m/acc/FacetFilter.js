@@ -26,7 +26,7 @@ sap.ui.define([
 		}
 	};
 
-	var oFF1 = new FacetFilter({
+	var oFF1 = new FacetFilter("FF1", {
 		showPersonalization : true,
 		liveSearch : false,
 		showPopoverOKButton: true,
@@ -54,7 +54,7 @@ sap.ui.define([
 
 	oFF1.addList(oFFL1);
 
-	var oFF2 = new FacetFilter({
+	var oFF2 = new FacetFilter("FF2", {
 		type: FacetFilterType.Light,
 		showPersonalization : true,
 		liveSearch : false,

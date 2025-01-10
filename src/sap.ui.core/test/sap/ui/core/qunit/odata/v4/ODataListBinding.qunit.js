@@ -7079,14 +7079,27 @@ sap.ui.define([
 			{},
 			undefined // no metadata for entity type
 		].forEach((oEntityType, j) => {
-			const sTitle = "fetchFilter: list binding aggregates data " + i + ", data aggregation: "
-				+ bDataAggregation + ", entity type: " + JSON.stringify(oEntityType);
-			if (oEntityType && !bDataAggregation) {
-				return;
-			}
+			[false, true].forEach((bAdditionally) => {
+				const sTitle = "fetchFilter: list binding aggregates data " + i
+					+ ", data aggregation = " + bDataAggregation
+					+ ", entity type = " + JSON.stringify(oEntityType)
+					+ ", key in additionally = " + bAdditionally;
+				if (oEntityType && !bDataAggregation) {
+					return;
+				}
 
 	QUnit.test(sTitle, function (assert) {
-		var oAggregation = {
+		var oAggregation = bAdditionally ? {
+				aggregate : { // this must be ignored
+					baz : {unit : "baz"}
+				},
+				group : { // no "baz" here!
+					bar : {additionally : ["n/a", "foo"]}
+				}
+			} : {
+				aggregate : { // this must be ignored
+					baz : {unit : "baz"}
+				},
 				group : {
 					bar : {},
 					// no "baz" here!
@@ -7138,6 +7151,7 @@ sap.ui.define([
 			}
 		});
 	});
+			});
 		});
 	});
 });

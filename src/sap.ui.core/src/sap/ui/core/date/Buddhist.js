@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Buddhist
-sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
-	function(UniversalDate, CalendarType, _Calendars) {
+sap.ui.define(['./UniversalDate','./_Calendars', 'sap/base/i18n/date/CalendarType'],
+	function(UniversalDate, _Calendars, CalendarType) {
 	"use strict";
 
 	/**

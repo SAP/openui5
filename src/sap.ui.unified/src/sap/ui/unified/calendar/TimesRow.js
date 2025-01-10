@@ -5,6 +5,7 @@
 //Provides control sap.ui.unified.CalendarTimeInterval.
 sap.ui.define([
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarType",
 	'sap/ui/core/Control',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -24,6 +25,7 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText'
 ], function(
 	Formatting,
+	_CalendarType, // type of `primaryCalendarType` and `secondaryCalendarType`
 	Control,
 	Element,
 	Library,
@@ -129,7 +131,7 @@ sap.ui.define([
 			 * @ui5-restricted sap.ui.unified.TimesRow
 			 * @since 1.108.0
 			 */
-			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+			primaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"},
 
 			/**
 			 * If set, the days are also displayed in this calendar type
@@ -138,7 +140,7 @@ sap.ui.define([
 			 * @ui5-restricted sap.ui.unified.TimesRow
 			 * @since 1.109.0
 			 */
-			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
+			secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"}
 		},
 		aggregations : {
 
