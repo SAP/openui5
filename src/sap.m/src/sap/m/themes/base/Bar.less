@@ -7,10 +7,6 @@
 @_sap_m_Bar_HeaderHeight: 68px; /* should be 4.25rem */
 @_sap_m_Bar_MinHeightForHeader: (@_sap_m_Bar_AppHeight + @_sap_m_Bar_HeaderHeight);
 
-.sapMBarShadow(@color) {
-	box-shadow: inset 0 -0.0625rem @color;
-}
-
 .sapMBar {
 	display: block;
 	width: 100%;
@@ -22,7 +18,7 @@
 	/* 1px down white shadow with 50% opacity */
 	text-shadow: @sapUiShadowText;
 	/* 1px inside border line at the bottom of a bar */
-	.sapMBarShadow(var(--sapPageHeader_BorderColor));
+	box-shadow: var(--sapContent_HeaderShadow);
 }
 
 .sapMBarLeft.sapMBarContainer.sapMBarEmpty,
