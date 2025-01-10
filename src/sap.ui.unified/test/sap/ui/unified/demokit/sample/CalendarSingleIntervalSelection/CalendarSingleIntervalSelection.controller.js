@@ -1,8 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/m/MessageToast', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library'],
-	function(Controller, DateRange, MessageToast, DateFormat, coreLibrary) {
+sap.ui.define([
+		'sap/base/i18n/date/CalendarType',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/unified/DateRange',
+		'sap/m/MessageToast',
+		'sap/ui/core/format/DateFormat'
+	], function(CalendarType, Controller, DateRange, MessageToast, DateFormat) {
 	"use strict";
-
-	var CalendarType = coreLibrary.CalendarType;
 
 	return Controller.extend("sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection", {
 		oFormatYyyymmdd: null,

@@ -17,7 +17,6 @@
 
 		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
-				"sap/ui/core/library",
 				"sap/ui/core/Core",
 				"sap/ui/unified/library",
 				"sap/m/App",
@@ -26,7 +25,6 @@
 				"sap/m/Button",
 				"sap/ui/core/date/UI5Date"
 			], function(
-				coreLibrary,
 				Core,
 				unifiedLibrary,
 				App,
@@ -36,8 +34,7 @@
 				UI5Date
 			) {
 				"use strict";
-				var CalendarType = coreLibrary.CalendarType,
-					CalendarDayType = unifiedLibrary.CalendarDayType,
+				var CalendarDayType = unifiedLibrary.CalendarDayType,
 					DateRange = unifiedLibrary.DateRange,
 					DateTypeRange = unifiedLibrary.DateTypeRange,
 					oCalendar1;

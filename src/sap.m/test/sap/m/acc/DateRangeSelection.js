@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/m/Page",
@@ -7,9 +8,9 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/m/App",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/CalendarType"
+	"sap/ui/core/date/UI5Date"
 ], function(
+	CalendarType,
 	Element,
 	coreLibrary,
 	Page,
@@ -18,8 +19,7 @@ sap.ui.define([
 	FormattedText,
 	App,
 	VerticalLayout,
-	UI5Date,
-	CalendarType
+	UI5Date
 ) {
 	"use strict";
 

@@ -17,7 +17,7 @@
 
 		sap.ui.getCore().attachInit(function() {
 			sap.ui.require([
-				"sap/ui/core/library",
+				"sap/base/i18n/date/CalendarType",
 				"sap/ui/core/Core",
 				"sap/ui/unified/library",
 				"sap/m/App",
@@ -28,7 +28,7 @@
 				"sap/m/Button",
 				"sap/ui/layout/VerticalLayout"
 			], function(
-				coreLibrary,
+				CalendarType,
 				Core,
 				unifiedLibrary,
 				App,
@@ -40,8 +40,7 @@
 				VerticalLayout
 			) {
 				"use strict";
-				var CalendarType = coreLibrary.CalendarType,
-					CalendarDayType = unifiedLibrary.CalendarDayType,
+				var CalendarDayType = unifiedLibrary.CalendarDayType,
 					oCalendar1,
 					oButton1 = new Button("B1", {
 						text : "Single",
