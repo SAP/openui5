@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
@@ -22,9 +22,9 @@ sap.ui.define([
 ],
 	function(
 		Formatting,
+		CalendarType,
 		Element,
 		Library,
-		coreLibrary,
 		Control,
 		SimpleDateType,
 		ODataType,
@@ -40,8 +40,7 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		var DEFAULT_STEP = 1,
-			CalendarType = coreLibrary.CalendarType;
+		var DEFAULT_STEP = 1;
 
 		/**
 		 * Constructor for a new <code>TimePickerSliders</code>.

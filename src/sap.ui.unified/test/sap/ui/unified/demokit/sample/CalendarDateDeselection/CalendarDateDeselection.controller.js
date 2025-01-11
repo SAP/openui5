@@ -1,12 +1,10 @@
 sap.ui.define([
+		'sap/base/i18n/date/CalendarType',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/core/format/DateFormat',
-		'sap/ui/core/library',
 		'sap/ui/core/date/UI5Date'
-	], function(Controller, DateFormat, coreLibrary, UI5Date) {
+	], function(CalendarType, Controller, DateFormat, UI5Date) {
 	"use strict";
-
-	var CalendarType = coreLibrary.CalendarType;
 
 	return Controller.extend("sap.ui.unified.sample.CalendarDateDeselection.CalendarDateDeselection", {
 		oFormatYyyymmdd: null,

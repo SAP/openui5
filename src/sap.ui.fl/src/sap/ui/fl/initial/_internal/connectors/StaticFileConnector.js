@@ -81,6 +81,10 @@ sap.ui.define([
 
 		loadFeatures() {
 			return Promise.resolve({});
+		},
+
+		loadVariantsAuthors() {
+			return Promise.resolve({});
 		}
 	});
 

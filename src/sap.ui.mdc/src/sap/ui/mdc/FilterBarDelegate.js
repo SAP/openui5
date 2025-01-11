@@ -153,7 +153,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 			sErrorMessage = oFilterBar.getResourceFileText("filterbar.VALIDATION_ERROR");
 		}
 
-		if (oFilterBar.getShowMessages() && !oFilterBar._isLiveMode() && !oFilterBar._hasOpenMessageBox) {
+		if (oFilterBar.getShowMessages() && !oFilterBar._hasOpenMessageBox) {
 
 			sap.ui.require(["sap/m/MessageBox", "sap/base/Log"], function(MessageBox, Log) {
 				try {

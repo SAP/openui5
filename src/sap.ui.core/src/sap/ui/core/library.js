@@ -10,9 +10,10 @@ sap.ui.define([
 	'sap/ui/core/Lib',
 	'sap/ui/core/message/MessageType',
 	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
-	'./CalendarType' // provides sap.ui.core.CalendarType
+	'./CalendarType', // provides sap.ui.core.CalendarType
+	'sap/ui/core/date/CalendarWeekNumbering' // ensures availability of legacy DataType "sap.ui.core.date.CalendarWeekNumbering"
 ],
-	function(DataType, Library, MessageType, ViewType, CalendarType) {
+	function(DataType, Library, MessageType, ViewType, CalendarType, _CalendarWeekNumbering) {
 	 "use strict";
 
 	 /**

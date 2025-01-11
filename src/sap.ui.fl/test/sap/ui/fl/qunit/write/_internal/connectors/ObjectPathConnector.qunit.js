@@ -123,11 +123,9 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given loadVariantsAuthors is called", function(assert) {
-			return ObjectPathConnector.loadVariantsAuthors().then(function() {
-			}).catch((sError) => {
-				assert.equal(sError, "loadVariantsAuthors is not implemented", "correct error is returned");
-			});
+		QUnit.test("given loadVariantsAuthors is called", async function(assert) {
+			const oReturn = await ObjectPathConnector.loadVariantsAuthors();
+			assert.deepEqual(oReturn, {}, "an empty object is returned");
 		});
 	});
 
