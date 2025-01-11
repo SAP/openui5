@@ -693,10 +693,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			return Device.os.getPlatformInfo().then((oPlatformInfo) => {
 				const oOs = currentTest.expectedClientHints?.os || currentTest.expected.os;
 				assert.ok(oPlatformInfo === Device.os, "The platform info object is the same as the Device.os object");
-				for (sCategory in oOs) {
-					for (sProperty in oOs) {
-						assert.strictEqual(Device.os[sProperty], oOs[sProperty], currentTest.name + ": device detection property 'OS'." + sProperty + "' should match for " + currentTest.navigator.userAgent);
-					}
+				for (sProperty in oOs) {
+					assert.strictEqual(Device.os[sProperty], oOs[sProperty], currentTest.name + ": device detection property 'OS'." + sProperty + "' should match for " + currentTest.navigator.userAgent);
 				}
 
 				// Reset device API

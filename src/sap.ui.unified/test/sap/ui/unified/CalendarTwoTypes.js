@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/library",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/unified/library",
 	"sap/m/App",
 	"sap/m/FlexBox",
@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date"
 ], function(
 	Localization,
-	coreLibrary,
+	CalendarType,
 	unifiedLibrary,
 	App,
 	FlexBox,
@@ -20,8 +20,6 @@ sap.ui.define([
 	UI5Date
 ) {
 	"use strict";
-	var CalendarType = coreLibrary.CalendarType;
-
 	Localization.setLanguage("en-US");
 
 	new App("myApp", {

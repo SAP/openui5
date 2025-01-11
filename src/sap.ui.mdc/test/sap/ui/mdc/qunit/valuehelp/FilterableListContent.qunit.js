@@ -241,6 +241,7 @@ sap.ui.define([
 						ValueHelpDelegate.getFilterConditions.restore();
 						FilterBarDelegate.fetchProperties.restore();
 						oContent.applyFilters.restore();
+						StateUtil.applyExternalState.restore();
 					});
 				});
 			});

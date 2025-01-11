@@ -1,8 +1,10 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library'],
-	function(Controller, JSONModel, DateFormat, coreLibrary) {
+sap.ui.define([
+		'sap/base/i18n/date/CalendarType',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/core/format/DateFormat'
+	], function(CalendarType, Controller, JSONModel, DateFormat) {
 	"use strict";
-
-	var CalendarType = coreLibrary.CalendarType;
 
 	return Controller.extend("sap.ui.unified.sample.CalendarMultipleDaySelection.CalendarMultipleDaySelection", {
 		oFormatYyyymmdd: null,

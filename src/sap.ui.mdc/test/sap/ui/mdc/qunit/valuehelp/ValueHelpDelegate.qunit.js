@@ -80,7 +80,6 @@ sap.ui.define([
 		},
 		getFilterValue: () => "",
 		getActiveFilterBar: () => oFakeFilterBar,
-		getFilterFields: () => "*key,text*",
 		getSearch: () => "",
 		getCaseSensitive: () => true,
 		shouldOpenOnClick: () => false

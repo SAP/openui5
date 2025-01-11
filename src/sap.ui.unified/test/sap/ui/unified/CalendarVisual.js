@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/library",
+	"sap/base/i18n/date/CalendarType",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/library",
 	"sap/m/App",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout"
 ], function(
 	Localization,
-	coreLibrary,
+	CalendarType,
 	nextUIUpdate,
 	unifiedLibrary,
 	App,
@@ -24,8 +24,7 @@ sap.ui.define([
 	VerticalLayout
 ) {
 	"use strict";
-	var CalendarType = coreLibrary.CalendarType,
-		CalendarDayType = unifiedLibrary.CalendarDayType,
+	var CalendarDayType = unifiedLibrary.CalendarDayType,
 		oCalendar1,
 		oButton1 = new Button("B1", {
 			text : "Single",

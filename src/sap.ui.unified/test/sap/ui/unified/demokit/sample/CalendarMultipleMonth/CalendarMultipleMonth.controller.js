@@ -1,13 +1,11 @@
 sap.ui.define([
+		'sap/base/i18n/date/CalendarType',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/unified/DateRange',
 		'sap/ui/core/format/DateFormat',
-		'sap/ui/core/library',
 		'sap/ui/core/date/UI5Date'
-	], function(Controller, DateRange, DateFormat, coreLibrary, UI5Date) {
+	], function(CalendarType, Controller, DateRange, DateFormat, UI5Date) {
 	"use strict";
-
-	var CalendarType = coreLibrary.CalendarType;
 
 	return Controller.extend("sap.ui.unified.sample.CalendarMultipleMonth.CalendarMultipleMonth", {
 		oFormatYyyymmdd: null,

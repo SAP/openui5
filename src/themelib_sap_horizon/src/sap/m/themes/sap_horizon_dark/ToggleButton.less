@@ -65,11 +65,15 @@ html.sap-desktop .sapMToggleBtnPressed,
 	}
 }
 
-.sapMBtn .sapMBtnCritical.sapMBtnInner,
-.sapMBtn .sapMBtnNegative.sapMBtnInner,
-.sapMBtn .sapMBtnSuccess.sapMBtnInner,
-.sapMBtn .sapMBtnNeutral.sapMBtnInner{
-	text-shadow: none;
+.sapMBtn {
+	.sapMBtnCritical,
+	.sapMBtnNegative,
+	.sapMBtnSuccess,
+	.sapMBtnNeutral {
+		&.sapMBtnInner.sapMToggleBtnPressed {
+			text-shadow: none;
+		}
+	}
 }
 
 /* Focus of toggled button */

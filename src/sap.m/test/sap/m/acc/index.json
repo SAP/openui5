@@ -258,7 +258,7 @@
 			"accTest": {
 				"name": "sap.m.Menu",
 				"title": "ACC test for sap.m.Menu",
-				"module": "./Menu.qunit"
+				"module": "./menu.qunit"
 			}
 		},
 		{

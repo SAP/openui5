@@ -52,6 +52,28 @@ sap.ui.define([
 		Then.onTheMDCFilterBar.iShouldSeeTheAdaptFiltersButton();
 	});
 
+	opaTest("1.1. shows error popover correctly for invalid values without live mode", function(Given, When, Then) {
+
+		When.onTheMDCFilterField.iEnterTextOnTheFilterField({label: "String single"}, "thisisaninvalidfilter", {
+			pressEnterKey: true
+		});
+
+		Then.onTheMDCFilterBar.iShouldSeeTheErrorPopover();
+		When.onTheMDCFilterBar.iCloseTheErrorPopover();
+	});
+
+	opaTest("1.2. shows error popover correctly for invalid values with live mode", function(Given, When, Then) {
+
+		When.onTheMDCFilterBar.iSetLiveMode(true);
+		When.onTheMDCFilterField.iEnterTextOnTheFilterField({label: "String single"}, "thisisaninvalidfilter", {
+			pressEnterKey: true
+		});
+
+		Then.onTheMDCFilterBar.iShouldSeeTheErrorPopover();
+		When.onTheMDCFilterBar.iCloseTheErrorPopover();
+		When.onTheMDCFilterBar.iSetLiveMode(false);
+	});
+
 	opaTest("2. assign filter values via Adapt Filters dialog", function(Given, When, Then) {
 
 		When.onTheMDCFilterBar.iEnterFilterValue(sFBId, {
