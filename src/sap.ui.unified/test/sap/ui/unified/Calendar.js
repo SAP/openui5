@@ -1,6 +1,7 @@
 sap.ui.define([
   "sap/ui/core/Element",
   "sap/ui/model/type/Date",
+  "sap/base/i18n/date/CalendarType",
   "sap/m/Button",
   "sap/m/Label",
   "sap/m/Text",
@@ -30,6 +31,7 @@ sap.ui.define([
 ], function(
   Element,
   TypeDate,
+  CalendarType,
   Button,
   Label,
   Text,
@@ -69,7 +71,7 @@ sap.ui.define([
   const BackgroundDesign = layoutLibrary.BackgroundDesign;
 
   var UI5Date = sap.ui.require("sap/ui/core/date/UI5Date");
-  const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
+  const CalendarType = sap.ui.require("sap/base/i18n/date/CalendarType");
 
   var oCalendars = new JSONModel(CalendarType);
 

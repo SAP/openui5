@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/model/Sorter",
 	"sap/ui/rta/Utils"
@@ -18,14 +18,13 @@ sap.ui.define([
 	ManagedObject,
 	DateFormat,
 	Fragment,
-	coreLibrary,
+	MessageType,
 	Version,
 	Sorter,
 	Utils
 ) {
 	"use strict";
 
-	var {MessageType} = coreLibrary;
 	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
 
