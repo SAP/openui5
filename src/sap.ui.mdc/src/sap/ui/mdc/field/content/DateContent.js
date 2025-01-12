@@ -2,26 +2,25 @@
  * ${copyright}
  */
 sap.ui.define([
+	'sap/base/i18n/date/CalendarType',
 	'sap/ui/mdc/field/content/DefaultContent',
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/OperatorValueType',
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/core/library',
 	'sap/ui/model/Filter'
 ], (
+	CalendarType,
 	DefaultContent,
 	BaseType,
 	OperatorValueType,
 	OperatorName,
 	DateUtil,
 	FilterOperatorUtil,
-	coreLibrary,
 	Filter) => {
 	"use strict";
 
-	const { CalendarType } = coreLibrary;
 	let StandardDynamicDateRangeKeys;
 	let DynamicDateFormat;
 

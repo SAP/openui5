@@ -1,6 +1,7 @@
 sap.ui.define([
   "sap/ui/core/Element",
   "sap/ui/model/type/Date",
+  "sap/base/i18n/date/CalendarType",
   "sap/ui/core/format/DateFormat",
   "sap/ui/unified/calendar/MonthsRow",
   "sap/ui/core/library",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function(
   Element,
   TypeDate,
+  CalendarType,
   DateFormat,
   MonthsRow,
   coreLibrary,
@@ -30,7 +32,7 @@ sap.ui.define([
   // shortcut for sap.ui.core.ValueState
   const ValueState = coreLibrary.ValueState;
 
-  const CalendarType = sap.ui.requireSync("sap/base/i18n/date/CalendarType");
+  const CalendarType = sap.ui.require("sap/base/i18n/date/CalendarType");
 
   var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
@@ -20,7 +20,7 @@ sap.ui.define([
 	Control,
 	Fragment,
 	Lib,
-	coreLibrary,
+	MessageType,
 	Version,
 	Layer,
 	JSONModel,
@@ -32,7 +32,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var {MessageType} = coreLibrary;
 	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
 	var VERSION_TITLE = "Title_with_special_chars &<>\"'";
