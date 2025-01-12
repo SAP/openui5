@@ -1,4 +1,4 @@
-/*global QUnit, sinon, URI */
+/*global QUnit, sinon */
 QUnit.config.autostart = false;
 
 // Use module APIs to load sinon. Loading it via script tag would result in double execution
@@ -7,8 +7,9 @@ QUnit.config.autostart = false;
 // a shim as well. But that shim would depend on the QUnit version, which would be cumbersome.
 sap.ui.require([
 	"sap/ui/core/Core",
+	"sap/ui/thirdparty/URI",
 	"sap/ui/thirdparty/sinon"
-], async function(Core) {
+], async function(Core, URI) {
 	"use strict";
 
 	await Core.ready();
