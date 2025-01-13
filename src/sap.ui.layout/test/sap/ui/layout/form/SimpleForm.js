@@ -65,7 +65,7 @@ sap.ui.define([
 	"use strict";
 
 	var oButtonLayout = new SegmentedButton("MyLayout", {
-		selectedKey: "L3", // to test default
+		selectedKey: "L4", // to test default
 		items: [
 			new SegmentedButtonItem({key: "L3", text: "ResponsiveGridLayout"}),
 			new SegmentedButtonItem({key: "L4", text: "ColumnLayout"})
@@ -90,8 +90,8 @@ sap.ui.define([
 	var oSimpleForm1 = new SimpleForm(
 			"SF1",
 			{
-				// use ResponsiveGridLayout as Default - Layout for Form can only be created on rendering
-				// layout: LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout,
+				// use ColumnLayout as Default - Layout for Form can only be created on rendering
+				// layout: LayoutLib.form.SimpleFormLayout.ColumnLayout,
 				maxContainerCols: 2,
 				title: "Form title",
 				editable: true,
@@ -201,7 +201,7 @@ sap.ui.define([
 			});
 
 	var oSimpleForm2 = new SimpleForm("SF2", {
-		layout: LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout, // use ResponsiveGridLayout manual set - to force creating of layout directly
+		layout: LayoutLib.form.SimpleFormLayout.ColumnLayout, // use ColumnLayout manual set - to force creating of layout directly
 		maxContainerCols: 2,
 		editable: false,
 		backgroundDesign: LayoutLib.BackgroundDesign.Transparent,

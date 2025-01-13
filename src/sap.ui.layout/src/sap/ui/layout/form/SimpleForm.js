@@ -111,11 +111,9 @@ sap.ui.define([
 				 *
 				 * <b>Note</b> If possible, set the <code>layout</code> before adding content to prevent calculations for the default layout.
 				 *
-				 * <b>Note</b> The <code>ResponsiveLayout</code> has been deprecated and must no longer be used.
-				 *
-				 * <b>Note</b> As of version 1.117, the <code>ResponsiveGridLayout</code> is used as default.
+				 * <b>Note</b> As of version 2.0, the <code>ColumnLayout</code> is used as default.
 				 */
-				layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : SimpleFormLayout.ResponsiveGridLayout},
+				layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : SimpleFormLayout.ColumnLayout},
 
 				/**
 				 * Default span for labels in extra large size.

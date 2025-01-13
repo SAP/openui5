@@ -136,7 +136,7 @@ sap.ui.define([
 			assert.ok(oForm, "internal Form is created");
 			assert.equal(oForm.getId(), "SF1--Form", "Stable ID of Form");
 			assert.notOk(oFormLayout, "no FormLayout is created before rendering if no Layout is set");
-			assert.equal(oSimpleForm.getLayout(), library.form.SimpleFormLayout.ResponsiveGridLayout, "ResponsiveGridLayout is default");
+			assert.equal(oSimpleForm.getLayout(), library.form.SimpleFormLayout.ColumnLayout, "ResponsiveGridLayout is default");
 			var aContent = oSimpleForm.getContent();
 			assert.equal(aContent.length, 0, "SimpleForm has no content");
 			var aFormContainers = oForm.getFormContainers();
@@ -147,12 +147,12 @@ sap.ui.define([
 			// eslint-disable-next-line require-atomic-updates
 			oFormLayout = oForm.getLayout();
 
-			await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
+			await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", usedLayout);
 		});
 
 		QUnit.test("DefaultLayout explicit set", async function(assert) {
 			oSimpleForm.setLayout(oSimpleForm.getLayout());
-			await asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
+			await asyncLayoutTest(assert, "sap/ui/layout/form/ColumnLayout", usedLayout);
 		});
 
 		QUnit.test("width", async function(assert) {
