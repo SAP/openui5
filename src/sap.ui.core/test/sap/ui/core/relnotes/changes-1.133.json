@@ -1,0 +1,12 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "bbf459b5057085b0d572a803c6ebe8b2980cfdbf",
+        "type": "FIX",
+        "text": " MessageMixin: fix wrong additionalText"
+      }
+    ]
+  }
+}

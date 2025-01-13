@@ -1,0 +1,22 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "578478e6b45cef0bebbaa65f9d7f5cdb0a3485a7",
+        "type": "FIX",
+        "text": " sap.m.DraftIndicator: Fix cutting of text"
+      },
+      {
+        "id": "c025c855547d2ba2392d355f42ab6a783c05f415",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Decorative avatar acc behaviour"
+      },
+      {
+        "id": "700e8000af3a471fc0e703141af3245e32fdf43f",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: IntroPress event now fired properly"
+      }
+    ]
+  }
+}

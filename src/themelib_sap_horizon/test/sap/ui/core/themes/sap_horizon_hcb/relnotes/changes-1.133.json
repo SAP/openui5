@@ -1,0 +1,12 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "41fdec592e53b6cdad02790fa7fc8a1b13be7d21",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Apply correct text shadow for toggled state"
+      }
+    ]
+  }
+}
