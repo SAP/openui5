@@ -3683,7 +3683,7 @@ sap.ui.define([
 				}));
 
 			// code under test
-			oPromise = this.oMetaModel.fetchUpdateData(sPropertyPath, oContext);
+			oPromise = this.oMetaModel.fetchUpdateData(sPropertyPath, oContext, false);
 
 			assert.ok(!oPromise.isRejected());
 			return oPromise.then(function (oResult) {
@@ -3744,6 +3744,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[undefined, false, true].forEach((bNoEditUrl) => {
 	[{
 		dataPath : "/Foo/Bar",
 		message : "Not an entity set: Foo",
@@ -3754,7 +3755,8 @@ sap.ui.define([
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : undefined,
-		message : "No instance to calculate key predicate at /TEAMS/0"
+		message : "No instance to calculate key predicate at /TEAMS/0",
+		needsEditUrl : true
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : null,
@@ -3762,20 +3764,35 @@ sap.ui.define([
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : {"$@ui5._" : {upsert : true}},
-		message : "No key predicate known at /TEAMS/0"
+		message : "No key predicate known at /TEAMS/0",
+		needsEditUrl : true
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : new Error("failed to load team"),
-		message : "failed to load team at /TEAMS/0"
+		message : "failed to load team at /TEAMS/0",
+		needsEditUrl : true
 	}, {
 		dataPath : "/EMPLOYEES('1')/EMPLOYEE_2_TEAM",
 		instance : undefined,
+		message : "No instance to calculate key predicate at /EMPLOYEES('1')/EMPLOYEE_2_TEAM",
+		needsEditUrl : true
+	}, {
+		dataPath : "/EMPLOYEES('1')/EMPLOYEE_2_TEAM",
+		instance : null, // still, no upsert!
 		message : "No instance to calculate key predicate at /EMPLOYEES('1')/EMPLOYEE_2_TEAM"
 	}, {
 		dataPath : "/TEAMS/0/Foo@$ui5.something",
 		message : "Read-only path must not be updated"
 	}].forEach(function (oFixture) {
-		QUnit.test("fetchUpdateData: " + oFixture.message, function (assert) {
+		const sTitle = "fetchUpdateData: bNoEditUrl=" + bNoEditUrl + "; " + oFixture.message;
+		if (bNoEditUrl !== undefined && oFixture.instance === null) {
+			return; // upsert would not lead to error
+		}
+		if (bNoEditUrl && oFixture.needsEditUrl) {
+			return;
+		}
+
+		QUnit.test(sTitle, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
 				oPromise;
 
@@ -3795,18 +3812,20 @@ sap.ui.define([
 					.withExactArgs(oFixture.warning, oFixture.dataPath, sODataMetaModel);
 			}
 			this.mock(this.oModel).expects("reportError")
+				.exactly(typeof bNoEditUrl === "boolean" ? 1 : 0)
 				.withExactArgs(oFixture.message, sODataMetaModel, sinon.match({
 					message : oFixture.dataPath + ": " + oFixture.message,
 					name : "Error"
 				}));
 
-			oPromise = this.oMetaModel.fetchUpdateData("", oContext);
+			oPromise = this.oMetaModel.fetchUpdateData("", oContext, bNoEditUrl);
 			assert.ok(oPromise.isRejected());
 			assert.strictEqual(oPromise.getResult().message,
 				oFixture.dataPath + ": " + oFixture.message);
 			oPromise.caught(); // avoid "Uncaught (in promise)"
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCanonicalPath: success", function (assert) {

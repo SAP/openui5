@@ -324,6 +324,8 @@ sap.ui.define([
 				return Promise.resolve(); // already deleted, nothing to do
 			}
 			sGroupId = null;
+		} else if (_Helper.hasPrivateAnnotation(this.getValue() ?? {}, "upsert")) {
+			sGroupId = null;
 		} else if (sGroupId === null) {
 			if (!(this.isKeepAlive() && this.iIndex === undefined)) {
 				throw new Error("Cannot delete " + this);

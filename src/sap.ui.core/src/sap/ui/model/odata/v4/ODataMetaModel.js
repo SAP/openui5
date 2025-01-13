@@ -1815,7 +1815,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   A context, used for building the path and for determining the key predicate
 	 * @param {boolean} [bNoEditUrl]
-	 *   Whether no edit URL is required
+	 *   Whether no edit URL is required; must be <code>undefined</code> from APIs for canonical
+	 *   paths (based on {@link #fetchCanonicalPath}). Since 1.133.0, when a boolean value is given,
+	 *   the edit URL is allowed to be adjusted for upsert use cases.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with an object having the following properties:
 	 *   <ul>
@@ -1838,7 +1840,9 @@ sap.ui.define([
 		function error(sMessage) {
 			var oError = new Error(sResolvedPath + ": " + sMessage);
 
-			oModel.reportError(sMessage, sODataMetaModel, oError);
+			if (bNoEditUrl !== undefined) {
+				oModel.reportError(sMessage, sODataMetaModel, oError);
+			} // else: do not log to console or message model for APIs
 			throw oError;
 		}
 
@@ -1972,7 +1976,7 @@ sap.ui.define([
 				return oContext.fetchValue(vSegment.path).then(function (oEntity) {
 					var sPredicate;
 
-					if (i === aEditUrl.length - 1
+					if (bNoEditUrl !== undefined && i === aEditUrl.length - 1
 							&& (oEntity === null
 								|| oEntity && _Helper.hasPrivateAnnotation(oEntity, "upsert"))) {
 						bUpsert = true;
