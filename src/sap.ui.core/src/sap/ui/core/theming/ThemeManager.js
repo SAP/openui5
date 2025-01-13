@@ -394,13 +394,22 @@ sap.ui.define([
 
 		// Try to load a fallback theme for all libs that couldn't be loaded
 		if (aFailedLibs.length > 0) {
-
 			// Only retrieve the fallback theme once per ThemeManager cycle
 			if (!_sFallbackTheme) {
 				for (var sLib in mAllLoadedLibraries) {
 					var oThemeMetaData = ThemeHelper.getMetadata(sLib);
 					if (oThemeMetaData && oThemeMetaData.Extends && oThemeMetaData.Extends[0]) {
 						_sFallbackTheme = oThemeMetaData.Extends[0];
+					} else {
+						const sThemeRoot = Theming.getThemeRoot(sThemeName, sLib);
+						if (sThemeRoot) {
+							const rBaseTheme = /~v=[^\/]+\(([a-zA-Z0-9_]+)\)/;
+							// base theme should be matched in the first capturing group
+							_sFallbackTheme = rBaseTheme.exec(sThemeRoot)?.[1];
+						}
+					}
+
+					if (_sFallbackTheme) {
 						break;
 					}
 				}
