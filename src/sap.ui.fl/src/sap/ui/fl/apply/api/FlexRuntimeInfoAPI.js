@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/InitialFlexAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/VersionInfo"
@@ -23,6 +24,7 @@ sap.ui.define([
 	ManifestUtils,
 	FlexConfiguration,
 	FlexInfoSession,
+	InitialFlexAPI,
 	Layer,
 	Utils,
 	VersionInfo
@@ -196,7 +198,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ushell
 		 */
 		getFlexVersion(mPropertyBag) {
-			return FlexInfoSession.getByReference(mPropertyBag.reference)?.version;
+			return InitialFlexAPI.getFlexVersion(mPropertyBag);
 		},
 
 		/**
