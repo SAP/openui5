@@ -188,7 +188,7 @@ sap.ui.define([
 		assert.notOk(oCardRef.getAttribute("aria-labelledby"), "Card has no extra labeling");
 
 		const oContentListRef = oCard.getCardContent().getInnerList().getDomRef("listUl");
-		assert.strictEqual(oContentListRef.getAttribute("aria-labelledby"), oHeader.getTitleId() + "-inner", "List content has correct aria-labelledby attribute");
+		assert.strictEqual(oContentListRef.getAttribute("aria-labelledby"), oHeader.getTitleId(), "List content has correct aria-labelledby attribute");
 	});
 
 	QUnit.test("After manifest changes", async function (assert) {
