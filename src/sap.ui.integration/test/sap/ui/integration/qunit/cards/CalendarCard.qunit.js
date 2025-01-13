@@ -1407,6 +1407,29 @@ sap.ui.define([
 			assert.equal(aAppLegItems[0].getType(), oManifestData.legendItem[1].type, "Should have appointment legend item type");
 		});
 
+		QUnit.test("getStaticConfiguration - startDate and endDate", async function (assert) {
+			// Arrange
+			this.oCard.setManifest(oManifest_Simple);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			var oCalendarContent = this.oCard.getAggregation("_content");
+			var oStaticConfiguration = oCalendarContent.getStaticConfiguration();
+
+			// Appointment
+			var aItems = oStaticConfiguration.items;
+			assert.equal(aItems.length, 1, "Should have 1 item.");
+			assert.equal(aItems[0].startDate, oManifest_Simple["sap.card"].data.json.item[0].start + ":00.000Z", "Item start date correct");
+			assert.equal(aItems[0].endDate, oManifest_Simple["sap.card"].data.json.item[0].end + ":00.000Z", "Item end date correct");
+
+			// Special date
+			var aSpecialDates = oStaticConfiguration.specialDates;
+			assert.equal(aSpecialDates.length, 1, "Should have 1 special date.");
+			assert.equal(aSpecialDates[0].startDate, oManifest_Simple["sap.card"].data.json.specialDate[0].start + ":00.000Z", "Special date start date correct");
+			assert.equal(aSpecialDates[0].endDate, oManifest_Simple["sap.card"].data.json.specialDate[0].end + ":00.000Z", "Special date end date correct");
+		});
+
 		QUnit.module("Parameters", {
 			beforeEach: function () {
 				this.oCard = new Card({
