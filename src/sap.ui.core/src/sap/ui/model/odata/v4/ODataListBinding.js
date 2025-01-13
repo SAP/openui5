@@ -4599,14 +4599,6 @@ sap.ui.define([
 	 *   used to remove the data aggregation object, which allows to set <code>$apply</code>
 	 *   explicitly afterwards. <code>null</code> is not supported.
 	 *   <br>
-	 *   Since 1.89.0, the <b>deprecated</b> property <code>"grandTotal like 1.84" : true</code> can
-	 *   be used to turn on the handling of grand totals like in 1.84.0, using aggregates of
-	 *   aggregates and thus allowing to filter by aggregated properties while grand totals are
-	 *   needed. Beware that methods like "average" or "countdistinct" are not compatible with this
-	 *   approach, and it cannot be combined with group levels. Since 1.129.0, this property is not
-	 *   needed anymore and filtering by aggregated properties is supported even while grand totals
-	 *   or subtotals are needed.
-	 *   <br>
 	 *   Since 1.117.0, either a read-only recursive hierarchy or pure data aggregation is
 	 *   supported, but no mix; <code>hierarchyQualifier</code> is the leading property that decides
 	 *   between those two use cases. Since 1.125.0, maintenance of a recursive hierarchy is
@@ -4704,6 +4696,14 @@ sap.ui.define([
 	 *   separate row after all children, when a group level node is expanded (since 1.86.0);
 	 *   <code>true</code> for bottom only, <code>false</code> for top and bottom, the default is
 	 *   top only (that is, as part of the group level node)
+	 * @param {boolean} [oAggregation."grandTotal like 1.84"]
+	 *   Since 1.89.0, the <b>deprecated</b> property <code>"grandTotal like 1.84" : true</code> can
+	 *   be used to turn on the handling of grand totals like in 1.84.0, using aggregates of
+	 *   aggregates and thus allowing to filter by aggregated properties while grand totals are
+	 *   needed. Beware that methods like "average" or "countdistinct" are not compatible with this
+	 *   approach, and it cannot be combined with group levels. Since 1.129.0, this property is not
+	 *   needed anymore and filtering by aggregated properties is supported even while grand totals
+	 *   or subtotals are needed.
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the given data aggregation object is unsupported,
@@ -4741,6 +4741,7 @@ sap.ui.define([
 	 * @public
 	 * @see #getAggregation
 	 * @since 1.55.0
+	 * @ui5-transform-hint replace-param oAggregation."grandTotal like 1.84" false
 	 */
 	ODataListBinding.prototype.setAggregation = function (oAggregation) {
 		var mParameters;
