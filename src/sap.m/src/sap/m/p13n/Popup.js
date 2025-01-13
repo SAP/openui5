@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/syncStyleClass"
+	"sap/ui/core/syncStyleClass",
+	"sap/ui/model/json/JSONModel"
 ], (
 	Control,
 	Button,
@@ -32,7 +33,8 @@ sap.ui.define([
 	Element,
 	Library,
 	coreLibrary,
-	syncStyleClass
+	syncStyleClass,
+	JSONModel
 ) => {
 	"use strict";
 
@@ -136,10 +138,20 @@ sap.ui.define([
 		}
 	});
 
+	Popup.prototype.LOCALIZATION_MODEL = "$p13nPopupLocalization";
+
 	Popup.prototype.init = function() {
 		Control.prototype.init.apply(this, arguments);
 		this._aPanels = [];
 		this._aCustomStyles = [];
+
+		this.oResourceBundle = Library.getResourceBundleFor("sap.m");
+		const oModel = new JSONModel({
+			confirmText: this.oResourceBundle.getText("p13n.POPUP_OK"),
+			cancelText: this.oResourceBundle.getText("p13n.POPUP_CANCEL"),
+			resetText: this.oResourceBundle.getText("p13n.POPUP_RESET")
+		});
+		this.setModel(oModel, this.LOCALIZATION_MODEL);
 	};
 
 	/**
@@ -358,7 +370,6 @@ sap.ui.define([
 	Popup.prototype._createDialog = function(mDialogSettings) {
 		const aPanels = this.getPanels();
 		const bUseContainer = aPanels.length > 1;
-		const oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		let oInitialFocusedControl;
 		if (aPanels.length > 0) {
@@ -386,14 +397,14 @@ sap.ui.define([
 			},
 			buttons: [
 				new Button(this.getId() + this._getIdPrefix() + "-confirmBtn", {
-					text: mDialogSettings.confirm && mDialogSettings.confirm.text ? mDialogSettings.confirm.text : oResourceBundle.getText("p13n.POPUP_OK"),
+					text: mDialogSettings.confirm?.text ?? `{${this.LOCALIZATION_MODEL}>/confirmText}`,
 					type: "Emphasized",
 					press: () => {
 						this._onClose(oContainer, "Ok");
 					}
 
 				}), new Button(this.getId() + this._getIdPrefix() + "-cancelBtn", {
-					text: oResourceBundle.getText("p13n.POPUP_CANCEL"),
+					text: `{${this.LOCALIZATION_MODEL}>/cancelText}`,
 					press: () => {
 						this._onClose(oContainer, "Cancel");
 					}
@@ -435,7 +446,7 @@ sap.ui.define([
 			});
 
 			oBar.addContentRight(new Button(this.getId() + "-resetBtn", {
-				text: Library.getResourceBundleFor("sap.m").getText("p13n.POPUP_RESET"),
+				text: `{${this.LOCALIZATION_MODEL}>/resetText}`,
 				press: function(oEvt) {
 
 					const oDialog = oEvt.getSource().getParent().getParent();
@@ -498,6 +509,13 @@ sap.ui.define([
 		this.fireClose({
 			reason: sReason
 		});
+	};
+
+	Popup.prototype.onlocalizationChanged = function() {
+		this.oResourceBundle = Library.getResourceBundleFor("sap.m");
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/confirmText", this.oResourceBundle.getText("p13n.POPUP_OK"));
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/cancelText", this.oResourceBundle.getText("p13n.POPUP_CANCEL"));
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/resetText", this.oResourceBundle.getText("p13n.POPUP_RESET"));
 	};
 
 	Popup.prototype.exit = function() {

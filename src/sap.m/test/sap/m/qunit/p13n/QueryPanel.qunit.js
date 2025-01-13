@@ -2,8 +2,10 @@
 sap.ui.define([
 	"sap/m/p13n/QueryPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function (QueryPanel, JSONModel, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/base/i18n/Localization",
+	"sap/ui/thirdparty/sinon"
+], function (QueryPanel, JSONModel, nextUIUpdate, Localization, sinon) {
 	"use strict";
 
 	QUnit.module("QueryPanel API tests", {
@@ -256,5 +258,28 @@ sap.ui.define([
 		const p13nData = this.oQueryPanel.getP13nData();
 
 		assert.deepEqual(p13nData, [], "An empty array is an allowed value as p13nData");
+	});
+
+	QUnit.test("Check 'onlocalizationChanged'", function(assert) {
+		var oPanel = this.oQueryPanel;
+		// Arrange
+		let oBundle;
+		const sOriginalLanguage = "en_US";
+		const sChangedLanguage = "de";
+
+		const oSpy = sinon.spy(oPanel, "_updateLocalizationTexts");
+
+		oBundle = oPanel.oResourceBundle;
+
+		// Assert
+		assert.strictEqual(oBundle.sLocale, sOriginalLanguage, "Returned the already loaded bundle");
+
+		// Act
+		Localization.setLanguage(sChangedLanguage);
+		oBundle = oPanel.oResourceBundle;
+
+		// Assert
+		assert.equal(oSpy.called, true, "_updateLocalizationTexts called after Localization.setLanguage");
+		assert.strictEqual(oBundle.sLocale, sChangedLanguage, "Returned the newly loaded bundle");
 	});
 });
