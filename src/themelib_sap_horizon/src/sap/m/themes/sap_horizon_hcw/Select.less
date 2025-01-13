@@ -3,20 +3,18 @@
 /* Horizon High Contrast White theme  */
 /* ================================== */
 
-/* ------------------------------ */
 /* field                          */
-/* ------------------------------ */
 
 .sapMSlt.sapMSltIconOnly {
 	border-radius: 0.365rem;
 }
 
 .sapMSlt {
-	height: @sapUiElementHeight;
+	height: var(--sapElement_Height);
 }
 
 .sapUiSizeCompact .sapMSlt {
-	height: @sapUiElementCompactHeight;
+	height: var(--sapElement_Compact_Height);
 }
 
 /* arrow styles */
@@ -26,13 +24,13 @@
 }
 
 .sapMSltArrow {
-    width: 2.25rem;
-    height: 2.25rem;
+	width: 2.25rem;
+	height: 2.25rem;
 }
 
 .sapUiSizeCompact .sapMSltArrow {
-    width: 2rem;
-    height: 1.625rem;
+	width: 2rem;
+	height: 1.625rem;
 }
 
 
@@ -43,25 +41,25 @@
 }
 
 .sapMSlt.sapMSltDefault.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltPressed) {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentContrastFocusColor;
-	outline-offset:  calc(-2.5 * @sapUiContentFocusWidth);
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_ContrastFocusColor);
+	outline-offset: ~"calc(-2.5 * var(--sapContent_FocusWidth))";
 }
 
 html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltIconOnly):not(.sapMSltDisabled):not(.sapMSltInformation),
 .sapMSltHoverable:not(.sapMSltIconOnly):not(.sapMSltInformation):hover {
-	border-color: @sapUiFieldHoverBorderColor;
+	border-color: var(--sapField_Hover_BorderColor);
 }
 
 /* FIX: In FF bottom outline-offset is not working as expected when Select is in sap.m.Bar and is left-aligned */
 
-html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
+html[data-sap-ui-browser^='ff'] .sapMBar .sapMSlt.sapMSltFocused {
 	line-height: 0;
 }
 
 /* icon only hover and focus */
 
 .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
-	background: @sapUiButtonLiteHoverBackground;
+	background: var(--sapButton_Lite_Hover_Background);
 
 	&.sapMSltFocused:not(.sapMSltPressed) {
 		border-color: transparent;
@@ -92,11 +90,11 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
 }
 
 .sapMSltInformation {
-	border-color: @sapUiFieldWarningColor;
+	border-color: var(--sapField_WarningColor);
 }
 
 .sapMSltLabelState, .sapMSltArrowState {
-    line-height: initial;
+	line-height: initial;
 }
 
 .sapUiSizeCompact .sapMSltLabelState,
@@ -110,26 +108,26 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
 	opacity: 0.5;
 }
 
-/* ------------------------------ */
 /* picker                         */
-/* ------------------------------ */
+
 @_sap_m_SltPicker_SubHeader_BoxShadow_Bottom: 0.125rem;
+
 div.sapMSltPicker {
 	border-radius: 0.125rem;
 
 	.sapMBar {
-		box-shadow: inset 0 -@_sap_m_SltPicker_SubHeader_BoxShadow_Bottom @sapUiPageHeaderBorderColor;
+		box-shadow: inset 0 -@_sap_m_SltPicker_SubHeader_BoxShadow_Bottom var(--sapPageHeader_BorderColor);
 	}
 
 	.sapMSltPickerValueState {
 		padding-left: 1.5rem;
-		box-shadow:inset 0 -0.125rem @sapUiPageHeaderBorderColor;
+		box-shadow:inset 0 -0.125rem var(--sapPageHeader_BorderColor);
 		line-height: 1rem;
 		padding-right: 0.5rem;
 		padding-left: 2rem;
 
 		&::before {
-			font-family: "SAP-icons";
+			font-family: var(--sapContent_IconFontFamily);
 			vertical-align: middle;
 			font-size: 1rem;
 			position: absolute;
@@ -156,23 +154,21 @@ div.sapMSltPicker {
 }
 
 .sapMSlt > .sapMSltArrow {
-	border-left: 0.0625rem solid @sapUiListSelectionBorderColor;
+	border-left: 0.0625rem solid var(--sapList_SelectionBorderColor);
 }
 
 /* pressed */
 
 .sapMSltPressed > .sapMSltArrow:hover {
-	background: @sapUiButtonLiteHoverBackground;
+	background: var(--sapButton_Lite_Hover_Background);
 }
 
-/* ====================================================== */
 /* Select inside a Bar: all contexts                      */
-/* ====================================================== */
 
 /* focus: Select IconOnly in all contexts get dotted outline */
 
 html.sap-desktop .sapMSltIconOnly.sapMSltFocused:not(.sapMSltExpanded) {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline: 0.125rem dotted var(--sapContent_FocusColor);
 	outline-offset: -0.125rem;
 	border-color: transparent;
 }
@@ -183,15 +179,15 @@ html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not
 html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
 html.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt),
 html.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed):not(.sapMTSSlt) {
-	color: @sapUiContentIconColor;
-	background-color: @sapUiButtonLiteHoverBackground;
+	color: var(--sapContent_IconColor);
+	background-color: var(--sapButton_Lite_Hover_Background);
 }
 
 .sapMSltHoverable:not(.sapMSltError):not(.sapMSltPressed):hover > .sapMSltArrow,
 .sapMSltPressed.sapMSltError > .sapMSltArrow {
-	background-color: @sapUiButtonLiteHoverBackground;
+	background-color: var(--sapButton_Lite_Hover_Background);
 }
 
 .sapMSltPressed:not(.sapMSltError) > .sapMSltArrow {
-	background: @sapUiListSelectionBackgroundColor;
+	background: var(--sapList_SelectionBackgroundColor);
 }
