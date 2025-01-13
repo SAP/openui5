@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/p13n/SelectionPanel",
-	"sap/ui/model/json/JSONModel"
-], function(P13nPopup, Button, Element, Control, nextUIUpdate, SelectionPanel, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/base/i18n/Localization",
+	"sap/ui/thirdparty/sinon"
+], function(P13nPopup, Button, Element, Control, nextUIUpdate, SelectionPanel, JSONModel, Localization, sinon) {
 	"use strict";
 
 	QUnit.module("p13n.Popup API tests", {
@@ -407,6 +409,43 @@ sap.ui.define([
 		var oDialog = oPopup._createDialog({});
 		assert.equal(oDialog.getVerticalScrolling(), false, "In case there is only one panel which is scrollable, the panel provides the scrolling");
 
+	});
+
+	QUnit.test("Check 'onlocalizationChanged'", function(assert) {
+		var oPanel = new SelectionPanel();
+		this.oPopup.addPanel(oPanel);
+		this.oPopup.setReset(function(){});
+		this.oPopup.open(this.oSource);
+
+		// Arrange
+		let oBundle;
+		const sOriginalLanguage = "en_US";
+		const sChangedLanguage = "de";
+
+		const oSpy = sinon.spy(this.oPopup, "onlocalizationChanged");
+
+		oBundle = this.oPopup.oResourceBundle;
+
+		// Assert
+		let oModel = this.oPopup.getModel(this.oPopup.LOCALIZATION_MODEL);
+		assert.strictEqual(oBundle.sLocale, sOriginalLanguage, "Returned the already loaded bundle");
+		assert.strictEqual(this.oPopup.getResetButton().getText(), "Reset", "reset button text is correctly initialized");
+		assert.strictEqual(oModel.getProperty("/resetText"), "Reset", "reset button model text is correctly initialized");
+		assert.strictEqual(oModel.getProperty("/confirmText"), "OK", "confirm button model text is correctly initialized");
+		assert.strictEqual(oModel.getProperty("/cancelText"), "Cancel", "cancel button model text is correctly initialized");
+
+		// Act
+		Localization.setLanguage(sChangedLanguage);
+		oBundle = this.oPopup.oResourceBundle;
+
+		// Assert
+		oModel = this.oPopup.getModel(this.oPopup.LOCALIZATION_MODEL);
+		assert.equal(oSpy.called, true, "_updateLocalizationTexts called after Localization.setLanguage");
+		assert.strictEqual(oBundle.sLocale, sChangedLanguage, "Returned the newly loaded bundle");
+		assert.strictEqual(this.oPopup.getResetButton().getText(), "Zurücksetzen", "reset button text is correctly translated");
+		assert.strictEqual(oModel.getProperty("/resetText"), "Zurücksetzen", "reset button model text is correctly translated");
+		assert.strictEqual(oModel.getProperty("/confirmText"), "OK", "confirm button model text is correctly translated");
+		assert.strictEqual(oModel.getProperty("/cancelText"), "Abbrechen", "cancel button model text is correctly translated");
 	});
 
 });
