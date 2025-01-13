@@ -258,12 +258,17 @@ sap.ui.define(
             },
 
             _configIncludesUsageTracking: function () {
-                var oUri = new URI(window.location.href),
-                    sHostname = oUri.hostname();
+                var oUri = new URI(window.location.href);
+                if (oUri.hasQuery("sap-ui-xx-tracking")) {
+                    var trackingValue = oUri.query(true)["sap-ui-xx-tracking"];
+                    if (trackingValue === "true" || trackingValue === "false") {
+                        return trackingValue === "true";
+                    }
+                }
+
+                var sHostname = oUri.hostname();
                 return TRACKED_HOSTNAMES.LIST.includes(sHostname) ||
-                    TRACKED_HOSTNAMES.REGEX.test(sHostname) ||
-                    (oUri.hasQuery("sap-ui-xx-tracking") && // temporary feature flag
-                    oUri.query(true)["sap-ui-xx-tracking"] === "aa");
+                    TRACKED_HOSTNAMES.REGEX.test(sHostname);
             }
         };
 
