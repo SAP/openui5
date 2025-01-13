@@ -11,36 +11,36 @@ sap.ui.define([
 
 	Opa5.extendConfig({
 		assertions: {
-            checkResetEnablementInDialog: function(bEnabled) {
-                return this.waitFor({
-                    controlType: "sap.m.Dialog",
-                    success: function (aDialog) {
-                        const oResetBtn = aDialog[0].getParent().getResetButton();
-                        const sEnableStatus = bEnabled ? "enabled" : "disabled";
-                        Opa5.assert.ok(oResetBtn.getEnabled() === bEnabled, `The reset button should be ${sEnableStatus}`);
-                    }
-                });
-            },
-            checkResetEnablementInColumnMenu: function(bEnabled) {
-                return this.waitFor({
-                    searchOpenDialogs: true,
-                    controlType: "sap.m.table.columnmenu.Menu",
-                    success: function (oColumnMenu) {
-                        const oResetBtn = oColumnMenu[0].getDependents()[2].getHeader().getContentRight()[0];
-                        const sEnableStatus = bEnabled ? "enabled" : "disabled";
-                        Opa5.assert.ok(oResetBtn.getEnabled() === bEnabled, `The reset button should be ${sEnableStatus}`);
-                    }
-                });
-            }
-        },
-        arrangements: new Arrangement(),
-        actions: new Action(),
+			checkResetEnablementInDialog: function(bEnabled) {
+				return this.waitFor({
+					controlType: "sap.m.Dialog",
+					success: function (aDialog) {
+						const oResetBtn = aDialog[0].getParent().getResetButton();
+						const sEnableStatus = bEnabled ? "enabled" : "disabled";
+						Opa5.assert.ok(oResetBtn.getEnabled() === bEnabled, `The reset button should be ${sEnableStatus}`);
+					}
+				});
+			},
+			checkResetEnablementInColumnMenu: function(bEnabled) {
+				return this.waitFor({
+					searchOpenDialogs: true,
+					controlType: "sap.m.table.columnmenu.Menu",
+					success: function (oColumnMenu) {
+						const oResetBtn = oColumnMenu[0].getDependents()[2].getHeader().getContentRight()[0];
+						const sEnableStatus = bEnabled ? "enabled" : "disabled";
+						Opa5.assert.ok(oResetBtn.getEnabled() === bEnabled, `The reset button should be ${sEnableStatus}`);
+					}
+				});
+			}
+		},
+		arrangements: new Arrangement(),
+		actions: new Action(),
 		viewNamespace: "view.",
 		autoWait: true
 	});
 
-    const sTableID = "IDTableOfInternalSampleApp_01";
-    const sFilterBarID = "IDFilterBar";
+	const sTableID = "IDTableOfInternalSampleApp_01";
+	const sFilterBarID = "IDFilterBar";
 
 	opaTest("Table: Open the dialog, check the reset button enablement before and after some changes and after reset", function (Given, When, Then) {
 		//insert application
@@ -49,69 +49,48 @@ sap.ui.define([
 			autoWait: true
 		});
 
-        //no changes --> reset is disabled
-        When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-        Then.checkResetEnablementInDialog(false);
-        When.iPressDialogOk();
+		//no changes --> reset is disabled
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		Then.checkResetEnablementInDialog(false);
+		When.iPressDialogOk();
 
 		When.onTheMDCTable.iPersonalizeColumns(sTableID, ["Name", "Founding Year", "Changed By", "Created On", "Country"]);
 
-        //some changes done --> reset is enabled
-        When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-        Then.checkResetEnablementInDialog(true);
-        When.iPressDialogOk();
+		//some changes done --> reset is enabled
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		Then.checkResetEnablementInDialog(true);
+		When.iPressDialogOk();
 
-        When.onTheMDCTable.iResetThePersonalization(sTableID);
+		When.onTheMDCTable.iResetThePersonalization(sTableID);
 
-        //reset executed --> reset disabled again
-        When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-        Then.checkResetEnablementInDialog(false);
-        When.iPressDialogOk();
+		//reset executed --> reset disabled again
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		Then.checkResetEnablementInDialog(false);
+		When.iPressDialogOk();
 	});
 
-    opaTest("Table (ColumnMenu): Open the menu, check the reset button enablement before and after some changes and after reset", function(Given, When, Then){
+	opaTest("FilterBar: Open the dialog, check the reset button enablement before and after some changes and after reset", function (Given, When, Then) {
 
-        //no changes yet --> reset disabled
-        When.onTheAppMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
-		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-        When.onTheAppMDCTable.iPressOnColumnMenuItem(TableUtil.P13nDialogInfo.Titles.columns);
-        Then.checkResetEnablementInColumnMenu(false);
-
-        //do some changes --> reset enabled
-		When.P13nActions.iSelectColumns(["Name", "Founding Year", "Changed By", "Created On", "Country"], false);
-        Then.checkResetEnablementInColumnMenu(true);
-        When.onTheAppMDCTable.iConfirmColumnMenuItemContent();
-
-        //reset the changes --> reset disabled again
-        When.onTheMDCTable.iResetThePersonalization(sTableID);
-        When.onTheAppMDCTable.iPressOnColumnHeader(sTableID, "Founding Year");
-		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-        When.onTheAppMDCTable.iPressOnColumnMenuItem(TableUtil.P13nDialogInfo.Titles.columns);
-        Then.checkResetEnablementInColumnMenu(false);
-    });
-
-    opaTest("FilterBar: Open the dialog, check the reset button enablement before and after some changes and after reset", function (Given, When, Then) {
-
-        //no changes --> reset is disabled
-        When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
-        Then.checkResetEnablementInDialog(false);
-        When.iPressDialogOk();
+		//no changes --> reset is disabled
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
+		Then.checkResetEnablementInDialog(false);
+		When.iPressDialogOk();
 
 		When.onTheMDCFilterBar.iPersonalizeFilter(sFilterBarID, {Artists: ["Name"] });
 
-        //some changes done --> reset is enabled
-        When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
-        Then.checkResetEnablementInDialog(true);
-        When.iPressDialogOk();
+		//some changes done --> reset is enabled
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
+		Then.checkResetEnablementInDialog(true);
+		When.iPressDialogOk();
 
-        When.onTheMDCFilterBar.iResetThePersonalization(sFilterBarID);
+		When.onTheMDCFilterBar.iResetThePersonalization(sFilterBarID);
 
-        //reset executed --> reset disabled again
-        When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
-        Then.checkResetEnablementInDialog(false);
-        When.iPressDialogOk();
+		//reset executed --> reset disabled again
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
+		Then.checkResetEnablementInDialog(false);
+		When.iPressDialogOk();
 
-        Given.enableAndDeleteLrepLocalStorage();
+		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 	});
 

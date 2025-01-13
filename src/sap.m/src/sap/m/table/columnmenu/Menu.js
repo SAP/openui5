@@ -4,8 +4,17 @@
 sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/m/Button",
+	"sap/m/OverflowToolbar",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
+	"sap/m/Title",
+	"sap/m/List",
+	"sap/m/InputListItem",
+	"sap/m/CustomListItem",
+	"sap/m/Label",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize",
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -13,6 +22,11 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/StaticArea",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/ResponsiveGridLayout",
+	"sap/ui/layout/GridData",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/ControlEvents",
@@ -20,18 +34,21 @@ sap.ui.define([
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/m/p13n/Container",
 	"sap/m/table/columnmenu/MenuBase",
-	"sap/m/table/columnmenu/MenuRenderer",
-	"sap/ui/layout/form/Form",
-	"sap/ui/layout/GridData",
-	"sap/ui/layout/form/ResponsiveGridLayout",
-	"sap/ui/layout/form/FormContainer",
-	"sap/ui/layout/form/FormElement",
-	"sap/m/Label"
+	"sap/m/table/columnmenu/MenuRenderer"
 ], function (
 	ResponsivePopover,
 	Button,
+	OverflowToolbar,
 	Toolbar,
 	ToolbarSpacer,
+	Title,
+	List,
+	InputListItem,
+	CustomListItem,
+	Label,
+	IllustratedMessage,
+	IllustratedMessageType,
+	IllustratedMessageSize,
 	library,
 	Device,
 	Control,
@@ -39,6 +56,11 @@ sap.ui.define([
 	Library,
 	coreLibrary,
 	StaticArea,
+	Form,
+	FormContainer,
+	FormElement,
+	ResponsiveGridLayout,
+	GridData,
 	jQuery,
 	containsOrEquals,
 	ControlEvents,
@@ -46,18 +68,11 @@ sap.ui.define([
 	AbstractContainerItem,
 	Container,
 	MenuBase,
-	MenuRenderer,
-	Form,
-	GridData,
-	ResponsiveGridLayout,
-	FormContainer,
-	FormElement,
-	Label
+	MenuRenderer
 ) {
 	"use strict";
 
 	var HasPopup = coreLibrary.aria.HasPopup;
-	var VerticalAlign = coreLibrary.VerticalAlign;
 	var Category = library.table.columnmenu.Category;
 
 	/**
@@ -92,6 +107,12 @@ sap.ui.define([
 		metadata: {
 			library: "sap.m",
 			defaultAggregation: "quickActions",
+			properties: {
+				/**
+				 * Specifies whether the table settings button is visible.
+				 */
+				showTableSettingsButton: { type: "boolean", defaultValue: false }
+			},
 			aggregations: {
 				/**
 				 * Defines the quick actions of the column menu.
@@ -116,6 +137,10 @@ sap.ui.define([
 				_items: { type: "sap.m.table.columnmenu.ItemBase", visibility: "hidden" }
 			},
 			events: {
+				/**
+				 * Fires when the table settings button is pressed.
+				 */
+				tableSettingsPressed: {}
 			}
 		},
 		renderer: MenuRenderer
@@ -164,11 +189,35 @@ sap.ui.define([
 		const fnOpen = () => {
 			this._initPopover();
 
-			if (this._oQuickActionContainer) {
-				this._oQuickActionContainer.destroy();
-				this._oQuickActionContainer = null;
+			if (this._oQuickSortList) {
+				this._oQuickSortList.destroy();
+				this._oQuickSortList = null;
 			}
-			this._initQuickActionContainer();
+			this._oQuickSortList = this._initQuickActionList(Category.Sort);
+
+			if (this._oQuickFilterList) {
+				this._oQuickFilterList.destroy();
+				this._oQuickFilterList = null;
+			}
+			this._oQuickFilterList = this._initQuickActionList(Category.Filter);
+
+			if (this._oQuickGroupList) {
+				this._oQuickGroupList.destroy();
+				this._oQuickGroupList = null;
+			}
+			this._oQuickGroupList = this._initQuickActionList(Category.Group);
+
+			if (this._oQuickAggregateList) {
+				this._oQuickAggregateList.destroy();
+				this._oQuickAggregateList = null;
+			}
+			this._oQuickAggregateList = this._initQuickActionList(Category.Aggregate);
+
+			if (this._oQuickGenericList) {
+				this._oQuickGenericList.destroy();
+				this._oQuickGenericList = null;
+			}
+			this._oQuickGenericList = this._initQuickActionList(Category.Generic);
 
 			if (this._oItemsContainer) {
 				this._oItemsContainer.destroy();
@@ -180,6 +229,11 @@ sap.ui.define([
 				StaticArea.getUIArea().addContent(this, true);
 			}
 
+			if (this._getAllEffectiveQuickActions().length === 0 && this._getAllEffectiveItems().length === 0) {
+				this._initIllustratedMessage();
+			}
+
+			this._oPopover.setInitialFocus(this._oQuickSortList || this._oQuickFilterList || this._oQuickGroupList || this._oQuickAggregateList || this._oQuickGenericList || this._oItemsContainer);
 			this._oPopover.openBy(oAnchor);
 			this._oIsOpenBy = oAnchor;
 			ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
@@ -194,6 +248,34 @@ sap.ui.define([
 			fnOpen();
 		}
 	};
+
+	Menu.prototype.setShowTableSettingsButton = function(bShowTableSettingsButton) {
+		this.setProperty("showTableSettingsButton", bShowTableSettingsButton, true);
+		if (!this._oPopover) {
+			return this;
+		}
+
+		if (this._oPopover.getEndButton() && !bShowTableSettingsButton) {
+			this._oPopover.getEndButton().destroy();
+			this._oPopover.setEndButton(null);
+		} else {
+			this._oPopover.setEndButton(createTableSettingsButton(this));
+		}
+
+		return this;
+	};
+
+	function createTableSettingsButton(oMenu) {
+		return new Button({
+			text: oMenu._getResourceText("table.COLUMNMENU_TABLE_SETTINGS"),
+			icon: "sap-icon://action-settings",
+			type: "Transparent",
+			press: () => {
+				oMenu._oPopover.close();
+				oMenu.fireTableSettingsPressed();
+			}
+		});
+	}
 
 	/**
 	 * @inheritdoc
@@ -215,9 +297,31 @@ sap.ui.define([
 	Menu.prototype.close = function () {
 		this._previousView = null;
 		if (this._oPopover && this._oPopover.isOpen()) {
-			if (this._oQuickActionContainer) {
-				this._oQuickActionContainer.destroyFormContainers();
+			if (this._oQuickSortList) {
+				this._oQuickSortList.destroy();
+				this._oQuickSortList = null;
 			}
+
+			if (this._oQuickFilterList) {
+				this._oQuickFilterList.destroy();
+				this._oQuickFilterList = null;
+			}
+
+			if (this._oQuickGroupList) {
+				this._oQuickGroupList.destroy();
+				this._oQuickGroupList = null;
+			}
+
+			if (this._oQuickAggregateList) {
+				this._oQuickAggregateList.destroy();
+				this._oQuickAggregateList = null;
+			}
+
+			if (this._oQuickGenericList) {
+				this._oQuickGenericList.destroy();
+				this._oQuickGenericList = null;
+			}
+
 			if (this._oItemsContainer) {
 				this._oItemsContainer.destroy();
 				this._oItemsContainer = null;
@@ -238,14 +342,30 @@ sap.ui.define([
 		if (this._oPopover) {
 			delete this._oPopover;
 		}
-		if (this._oQuickActionContainer) {
-			delete this._oQuickActionContainer;
+		if (this._oQuickSortList) {
+			delete this._oQuickSortList;
+		}
+		if (this._oQuickFilterList) {
+			delete this._oQuickFilterList;
+		}
+		if (this._oQuickGroupList) {
+			delete this._oQuickGroupList;
+		}
+		if (this._oQuickAggregateList) {
+			delete this._oQuickAggregateList;
+		}
+		if (this._oQuickGenericList) {
+			delete this._oQuickGenericList;
 		}
 		if (this._oItemsContainer) {
 			delete this._oItemsContainer;
 		}
 		if (this._oIsOpenBy) {
 			delete this._oIsOpenBy;
+		}
+		if (this._oIllustratedMessage) {
+			this._oIllustratedMessage.destroy();
+			delete this._oIllustratedMessage;
 		}
 		ControlEvents.unbindAnyEvent(this.fAnyEventHandlerProxy);
 	};
@@ -256,22 +376,32 @@ sap.ui.define([
 		}
 
 		this._oPopover = new ResponsivePopover({
-			title: this._getResourceText("table.COLUMNMENU_TITLE"),
-			ariaLabelledBy: this.getId() + "-menuDescription",
 			showArrow: false,
 			showHeader: Device.system.phone,
 			placement: library.PlacementType.VerticalPreferredBottom,
 			content: new AssociativeControl({control: this, height: true}),
 			horizontalScrolling: false,
-			verticalScrolling: true, //Temporary Solution until UX design for a proper overflow of all areas in the menu exists
-			afterClose: [this._onPopoverAfterClose, this]
+			verticalScrolling: true,
+			afterClose: [this._onPopoverAfterClose, this],
+			customHeader: new OverflowToolbar({
+				content: [
+					new Title({text: this._getResourceText("table.COLUMNMENU_TITLE")}),
+					new ToolbarSpacer(),
+					new Button({
+						icon: "sap-icon://decline",
+						tooltip: this._getResourceText("table.COLUMNMENU_CLOSE"),
+						press: () => {
+							this._oPopover.close();
+						}
+					})
+				]
+			}).addStyleClass("sapMTBHeader-CTX")
 		});
+		if (this.getShowTableSettingsButton()) {
+			this._oPopover.setEndButton(createTableSettingsButton(this));
+		}
 		this.addDependent(this._oPopover);
 		this._oPopover.addStyleClass("sapMTCMenuPopup");
-
-		this._oPopover.addEventDelegate({
-			"onAfterRendering": this._focusItem
-		}, this);
 
 		this._oPopover.addEventDelegate({
 			"onsapfocusleave": this.handleFocusLeave
@@ -320,20 +450,15 @@ sap.ui.define([
 
 	Menu.prototype._initItemsContainer = function () {
 		var aMenuItems = this._getAllEffectiveItems();
-		var bHasQuickActions = this._hasQuickActions();
 		var bHasitems =  this._hasItems();
 
-		if (!this._oItemsContainer) {
+		if (bHasitems && !this._oItemsContainer) {
 			this._createItemsContainer();
 		}
 
-		aMenuItems.forEach(function (oColumnMenuItem, iIndex) {
+		aMenuItems.forEach((oColumnMenuItem) => {
 			this._addView(oColumnMenuItem);
-
-			if (bHasQuickActions && bHasitems && iIndex === 0) {
-				this._oItemsContainer.addSeparator();
-			}
-		}.bind(this));
+		});
 	};
 
 	var AssociativeControl = Control.extend("sap.m.table.columnmenu.AssociativeControl", {
@@ -366,14 +491,12 @@ sap.ui.define([
 			}),
 			key: oMenuItem.getId(),
 			text: oMenuItem.getLabel(),
-			icon: oMenuItem.getIcon()
+			icon: oMenuItem.getIcon(),
+			type: oMenuItem.isA("sap.m.table.columnmenu.ActionItem") ? library.ListType.Active : library.ListType.Navigation
 		});
 
 		this._oItemsContainer.addView(oItem);
 		this._setItemVisibility(oMenuItem, oMenuItem.getVisible());
-		oMenuItem.getScrollDelegate = function() {
-			return oItem.getParent().getLayout().getScrollDelegate();
-		};
 	};
 
 	Menu.prototype._createItemsContainer = function () {
@@ -443,14 +566,20 @@ sap.ui.define([
 				}
 			}, this]
 		});
+
+		const oResourceBundle = Library.getResourceBundleFor("sap.m");
+		this._oItemsContainer.setListHeader(new OverflowToolbar({
+			content: [
+				new Title({text: oResourceBundle.getText("table.COLUMNMENU_LIST_ITEMS_TITLE")})
+			]
+		}));
 		this._oItemsContainer.getHeader().addContentRight(new Button({
 			text: this._getResourceText("table.COLUMNMENU_RESET"),
 			press: [function () {
 				this._fireEvent(Element.getElementById(this._oItemsContainer.getCurrentViewKey()), "reset", false);
 			}, this]
 		}));
-		this._oItemsContainer?._getNavigationList().addAriaLabelledBy(this.getId() + "-itemContainerDescription");
-		this._oPopover.addDependent(this._oItemsContainer);
+
 		this.addDependent(this._oItemsContainer);
 	};
 
@@ -554,89 +683,119 @@ sap.ui.define([
 		oListItem?.setVisible(bVisible);
 	};
 
-	Menu.prototype._initQuickActionContainer = function () {
-		var oFormContainer = new FormContainer();
+	Menu.prototype._initQuickActionList = function (sCategory) {
+		var oList;
+		var aQuickActions = this._getAllEffectiveQuickActions().filter(function (oQuickAction) {
+			return oQuickAction.getVisible() && oQuickAction.getCategory() === sCategory;
+		});
 
-		if (!this._oQuickActionContainer) {
-			this._oQuickActionContainer = new Form({
-				layout: new ResponsiveGridLayout({
-					breakpointM: 600,
-					labelSpanXL: 4,
-					labelSpanL: 4,
-					labelSpanM: 4,
-					labelSpanS: 12,
-					columnsL: 1,
-					columnsM: 1,
-					adjustLabelSpan: false
+		if (aQuickActions.length) {
+			oList = new List({
+				headerToolbar: new OverflowToolbar({
+					content: [
+						new Title({text: this._getResourceText("table.COLUMNMENU_QUICK_" + sCategory.toUpperCase() + "_TITLE")})
+					]
 				}),
-				editable: true
+				keyboardMode: "Edit",
+				items: []
 			});
 
-			this._oQuickActionContainer.addStyleClass("sapMTCMenuQAForm");
-			this._oQuickActionContainer.addAriaLabelledBy(this.getId() + "-actionContainerDescription");
-			this._oQuickActionContainer.addEventDelegate({
-				onAfterRendering: function() {
-					this.getDomRef().classList.remove("sapUiFormLblColon");
-				}
-			}, this._oQuickActionContainer);
-		} else {
-			this._oQuickActionContainer.destroyFormContainers();
-		}
-
-		this._oQuickActionContainer.addFormContainer(oFormContainer);
-
-		this._getAllEffectiveQuickActions().forEach(function(oQuickAction) {
-			if (!oQuickAction.getVisible()) {
-				return;
-			}
-
-			// Create label
-			var oGridData = new GridData({span: "XL4 L4 M4 S12"});
-			var sQuickActionLabel = oQuickAction.getLabel();
-			var oLabel = new Label({
-				text: sQuickActionLabel,
-				layoutData: oGridData,
-				vAlign: VerticalAlign.Middle,
-				wrapping: true,
-				width: "100%",
-				showColon: sQuickActionLabel !== ""
-							&& !(oQuickAction.getParent() && oQuickAction.getParent().isA("sap.m.table.columnmenu.QuickSortItem"))
-							&& oQuickAction._bHideLabelColon !== true
-			});
-			oLabel.addStyleClass("sapMTCMenuQALabel");
-
-			// Create content
-			var aControls = [];
-			var aContent = oQuickAction.getContent() || [];
-
-			aContent.forEach(function(oItem, iIndex) {
-				var oGridData, sSpan, sIndent, oControl;
-
-				if (oItem.getLayoutData()) {
-					oGridData = oItem.getLayoutData().clone();
+			aQuickActions.map(function (oQuickAction) {
+				if (oQuickAction.getContent()?.length === 1 && oQuickAction.getContent()[0].isA("sap.ui.core.IFormContent")) {
+					oList.addItem(new InputListItem({
+						contentSize: oQuickAction.getContentSize(),
+						label: oQuickAction.getLabel(),
+						content: createAssociativeControlWrapper([].concat(oQuickAction.getContent()))
+					}));
 				} else {
-					sSpan = "L8 M8 S12";
-					sIndent = "";
-
-					if (iIndex > 0 || (iIndex == 0 && aContent.length > 1)) {
-						sSpan = "L4 M4 S6";
-
-						if (iIndex != 0 && (iIndex + 1) % 2 > 0) {
-							sIndent = "L4 M4 S0";
-						}
-					}
-					oGridData = new GridData({span: sSpan, indent: sIndent});
+					oList.addItem(new CustomListItem({
+						content: createAssociativeControlForm(oQuickAction)
+					}));
 				}
-				oItem.removeAllAssociation("ariaLabelledBy");
-				oItem.addAssociation("ariaLabelledBy", oLabel.getId());
-				oControl = new AssociativeControl({control: oItem.setWidth("100%")});
-				oControl.setLayoutData(oGridData);
-				aControls.push(oControl);
-			}, this);
-			oFormContainer.addFormElement(new FormElement({label: oLabel, fields: aControls}));
+			});
+		}
+		this.addDependent(oList);
+		return oList;
+	};
+
+	function createAssociativeControlForm(oQuickAction) {
+		var oLabel = new Label({
+			text: oQuickAction.getLabel(),
+			layoutData: new GridData({span: "XL4 L4 M4 S12"}),
+			wrapping: true,
+			width: "100%"
+		});
+
+		// Create content
+		var aContent = oQuickAction.getContent() || [];
+		var oFormContainer = new FormContainer();
+		var oForm = new Form({
+			layout: new ResponsiveGridLayout({
+				breakpointM: 600,
+				labelSpanXL: 4,
+				labelSpanL: 4,
+				labelSpanM: 4,
+				labelSpanS: 12,
+				columnsL: 1,
+				columnsM: 1,
+				adjustLabelSpan: false
+			}),
+			formContainers: [oFormContainer]
+		});
+
+		var aControls = [];
+		aContent.forEach(function(oItem, iIndex) {
+			var oGridData, sSpan, sIndent, oControl;
+
+			if (oItem.getLayoutData()) {
+				oGridData = oItem.getLayoutData().clone();
+			} else {
+				sSpan = "L8 M8 S12";
+				sIndent = "";
+
+				if (iIndex > 0 || (iIndex == 0 && aContent.length > 1)) {
+					sSpan = "L4 M4 S6";
+
+					if (iIndex != 0 && (iIndex + 1) % 2 > 0) {
+						sIndent = "L4 M4 S0";
+					}
+				}
+				oGridData = new GridData({span: sSpan, indent: sIndent});
+			}
+			oItem.removeAllAssociation("ariaLabelledBy");
+			oItem.addAssociation("ariaLabelledBy", oLabel.getId());
+			oControl = new AssociativeControl({control: oItem.setWidth("100%")});
+			oControl.setLayoutData(oGridData);
+			aControls.push(oControl);
 		}, this);
 
-		this.addDependent(this._oQuickActionContainer);
+		oFormContainer.addFormElement(new FormElement({label: oLabel, fields: aControls}));
+		return oForm;
+	}
+
+	function createAssociativeControlWrapper(aContent) {
+		var aControls = [];
+
+		aContent.forEach(function(oItem) {
+			var oControl = new AssociativeControl({control: oItem});
+			aControls.push(oControl);
+		});
+		return aControls;
+	}
+
+	Menu.prototype._initIllustratedMessage = function () {
+		if (this._oIllustratedMessage) {
+			return;
+		}
+
+		this._oIllustratedMessage = new IllustratedMessage({
+			title: this._getResourceText("table.COLUMNMENU_EMPTY"),
+			illustrationType: IllustratedMessageType.NoColumnsSet,
+			illustrationSize: IllustratedMessageSize.Dot,
+			enableDefaultTitleAndDescription: false
+		});
+
+		this.addDependent(this._oIllustratedMessage);
 	};
 
 	return Menu;

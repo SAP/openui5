@@ -1,7 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"./QUnitUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -9,14 +8,11 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/utils/Personalization",
 	"test-resources/sap/ui/mdc/delegates/TableDelegate",
-	"sap/m/table/columnmenu/Item",
-	"sap/m/table/Util",
 	"sap/m/Text",
 	"sap/m/plugins/ColumnResizer",
 	"sap/ui/performance/trace/FESRHelper"
 ], function(
 	TableQUnitUtils,
-	qutils,
 	nextUIUpdate,
 	Element,
 	Library,
@@ -24,8 +20,6 @@ sap.ui.define([
 	Column,
 	PersonalizationUtils,
 	TableDelegate,
-	ItemBase,
-	TableUtil,
 	Text,
 	ColumnResizer,
 	FESRHelper
@@ -104,16 +98,11 @@ sap.ui.define([
 		assert.ok(oTable._oQuickActionContainer, "The QuickActionContainer is initialized");
 		assert.ok(oTable._oQuickActionContainer.isA("sap.m.table.columnmenu.QuickActionContainer"),
 			"The QuickActionContainer is instance of the correct class");
-		assert.ok(oTable._oItemContainer, "The ItemContainer is initialized");
-		assert.ok(oTable._oItemContainer.isA("sap.m.table.columnmenu.ItemContainer"),
-			"The Item Container is instance of the correct class");
 		assert.equal(oTable._oQuickActionContainer.getEffectiveQuickActions().length, 0, "The ColumnMenu contains no quick actions");
-		assert.equal(oTable._oItemContainer.getEffectiveItems().length, 0, "The ColumnMenu contains no items");
 		assert.ok(!oTable._oColumnHeaderMenu._oPopover, "The popover is not initialized");
 
 		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			assert.equal(oTable._oQuickActionContainer.getEffectiveQuickActions().length, 1, "The ColumnMenu contains quick actions");
-			assert.equal(oTable._oItemContainer.getEffectiveItems().length, 1, "The ColumnMenu contains items");
 			assert.ok(oOpenSpy.calledWithExactly(oTable.getColumns()[0].getInnerColumn(), true), "openBy is called once with the correct parameters");
 		});
 	});
@@ -148,43 +137,6 @@ sap.ui.define([
 				});
 			})
 		]);
-	});
-
-	QUnit.test("Accessibility", function(assert) {
-		const oTable = this.oTable;
-
-		oTable.setP13nMode([
-			"Sort"
-		]);
-		oTable._setShowP13nButton(false);
-
-		function triggerClickAndWaitBeforeOpen(oColumn) {
-			const oMenu = oColumn.getHeaderMenuInstance();
-			const oColumnDomRef = oColumn.getDomRef();
-			oColumnDomRef.focus();
-			qutils.triggerMouseEvent(oColumnDomRef, "mousedown", null, null, null, null, 0);
-			qutils.triggerMouseEvent(oColumnDomRef, "click");
-
-			return new Promise(function(resolve) {
-				oMenu.attachEventOnce("beforeOpen", function() {
-					return wait(0).then(resolve);
-				});
-			});
-		}
-
-		const fnAnnounceEmptyColumnMenu = sinon.spy(TableUtil, "announceEmptyColumnMenu");
-		assert.equal(oTable.getColumns()[0].getInnerColumn().getDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup = dialog");
-		assert.equal(oTable.getColumns()[1].getInnerColumn().getDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup = dialog");
-
-		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
-			assert.ok(fnAnnounceEmptyColumnMenu.notCalled, "Column menu has items => announceEmptyColumnMenu not called");
-
-			const oColumn = oTable.getColumns()[1].getInnerColumn();
-			return triggerClickAndWaitBeforeOpen(oColumn);
-		}).then(function() {
-			assert.ok(fnAnnounceEmptyColumnMenu.calledOnce, "Column menu is empty => announceEmptyColumnMenu called once");
-			fnAnnounceEmptyColumnMenu.restore();
-		});
 	});
 
 	QUnit.module("QuickActionContainer", {
@@ -238,11 +190,11 @@ sap.ui.define([
 			const fSortSpy = sinon.spy(PersonalizationUtils, "createSortChange");
 			const aSortItemContent =  oQuickAction.getItems()[0]._getAction().getContent();
 
-			aSortItemContent[0].firePress();
+			aSortItemContent[0].getButtons()[1].firePress();
 			assert.ok(fSortSpy.calledOnce, "createSortChange is called");
 			assert.ok(fSortSpy.calledWithExactly(oTable, {
 				propertyKey: "test",
-				sortOrder: "None"
+				sortOrder: "Ascending"
 			}), "createSortChange is called with the correct parameters");
 
 			fSortSpy.restore();
@@ -282,9 +234,9 @@ sap.ui.define([
 			assert.ok(oQuickAction.isA("sap.m.table.columnmenu.QuickGroup"), "The QuickActionContainer contains a QuickGroup");
 
 			const fGroupSpy = sinon.spy(PersonalizationUtils, "createGroupChange");
-			const aGroupItemContent =  oQuickAction.getContent();
+			const aGroupItemContent =  oQuickAction.getItems()[0].getContent();
 
-			aGroupItemContent[0].firePress();
+			aGroupItemContent.fireChange();
 			assert.ok(fGroupSpy.calledOnce, "createGroupChange is called");
 			assert.ok(fGroupSpy.calledWithExactly(oTable, {
 				propertyKey: "test"
@@ -300,13 +252,12 @@ sap.ui.define([
 		function testUpdateQuickActions(sSortOrder, bGrouped, bTotaled) {
 			oTable._oQuickActionContainer.updateQuickActions(["Sort", "Group"]);
 			oTable._oQuickActionContainer.getEffectiveQuickActions().forEach(function(oQuickAction) {
-				if (oQuickAction.getParent().isA("sap.m.table.columnmenu.QuickSortItem")) {
-					assert.equal(oQuickAction.getContent()[0].getPressed(), sSortOrder === "Ascending");
-					assert.equal(oQuickAction.getContent()[1].getPressed(), sSortOrder === "Descending");
-				} else if (oQuickAction.isA("sap.m.table.columnmenu.QuickGroup")) {
-					assert.ok(oQuickAction.getContent()[0].getPressed() === bGrouped);
-				} else if (oQuickAction.isA("sap.m.table.columnmenu.QuickTotal")) {
-					assert.ok(oQuickAction.getContent()[0].getPressed() === bTotaled);
+				if (oQuickAction.getCategory() === "Sort") {
+					assert.equal(oQuickAction.getContent()[0].getSelectedKey(), sSortOrder);
+				} else if (oQuickAction.getCategory() === "Group") {
+					assert.ok(oQuickAction.getContent()[0].getState() === bGrouped);
+				} else if (oQuickAction.getCategory() === "Total") {
+					assert.ok(oQuickAction.getContent()[0].getState() === bTotaled);
 				}
 			});
 		}
@@ -331,123 +282,6 @@ sap.ui.define([
 				return [{ name: "test" }];
 			};
 			testUpdateQuickActions("None", true);
-		});
-	});
-
-	QUnit.module("ItemContainer", {
-		beforeEach: function() {
-			this.oTable = new Table({
-				p13nMode: ["Sort", "Filter", "Group", "Column"],
-				columns: [
-					new Column({
-						header: "test",
-						propertyKey: "test",
-						template: new Text()
-					})
-				],
-				delegate: {
-					name: sDelegatePath,
-					payload: {
-						collectionPath: "/testPath",
-						propertyInfo: [{
-							key: "test",
-							label: "Test",
-							path: "test",
-							dataType: "String",
-							groupable: true
-						}]
-					}
-				}
-			});
-
-			return this.oTable.initialized().then(async function() {
-				this.oTable.placeAt("qunit-fixture");
-				await nextUIUpdate();
-			}.bind(this));
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("Initialize Items", function(assert) {
-		const oTable = this.oTable, oItemBaseDestroySpy = sinon.spy(ItemBase.prototype, "destroyAggregation");
-		let oMenu;
-
-		function checkItems(aItems) {
-			let oItem;
-
-			assert.equal(aItems.length, 4, "The ItemContainer contains 3 Items");
-			oItem = aItems[0];
-			assert.equal(oItem.getKey(), "Sort", "Sort");
-			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the sort panel");
-			oItem = aItems[1];
-			assert.equal(oItem.getKey(), "Filter", "Filter");
-			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the filter panel");
-			oItem = aItems[2];
-			assert.equal(oItem.getKey(), "Group", "Group");
-			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the group panel");
-			oItem = aItems[3];
-			assert.equal(oItem.getKey(), "Column", "Column");
-			assert.ok(oItem.getContent().getProperty("_useFixedWidth"), "fixed width is applied to the column panel");
-		}
-
-		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
-			checkItems(oTable._oItemContainer.getItems());
-			assert.ok(oItemBaseDestroySpy.notCalled);
-
-			oMenu = oTable._oTable.getColumns()[0].getHeaderMenuInstance();
-			oMenu.close();
-			return wait(1000);
-		}).then(function() {
-			return TableQUnitUtils.openColumnMenu(oTable, 0);
-		}).then(function() {
-			assert.ok(oItemBaseDestroySpy.calledThrice); // the content of the sort, group and column items are destroyed, the content of the filter item is not
-			assert.ok(oItemBaseDestroySpy.alwaysCalledWith("content"));
-			checkItems(oTable._oItemContainer.getItems());
-
-			oTable._getP13nButton().firePress();
-			return wait(1000);
-		}).then(function() {
-			assert.notOk(oTable._oP13nFilter.getProperty("_useFixedWidth"), "in the P13nDialog the FilterPanel doesn't get a fixed width");
-		});
-	});
-
-	QUnit.test("Item", function(assert) {
-		const oTable = this.oTable;
-		let fUpdateSpy,
-			fHandleP13nSpy,
-			fResetSpy,
-			fUpdateQuickActionsSpy;
-
-		oTable.setP13nMode([
-			"Sort"
-		]);
-
-		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
-			const aItems = oTable._oItemContainer.getItems();
-			const oItem = aItems[0];
-
-			fUpdateSpy = sinon.spy(oTable.getEngine().getController(oTable, oItem.getKey()), "update");
-			fHandleP13nSpy = sinon.spy(oTable.getEngine(), "handleP13n");
-			fResetSpy = sinon.stub(oTable.getEngine(), "reset").returns(Promise.resolve());
-			fUpdateQuickActionsSpy = sinon.spy(oTable._oQuickActionContainer, "updateQuickActions");
-
-			oItem.onPress();
-			assert.ok(fUpdateSpy.calledOnce, "Controller update called once");
-			assert.ok(fUpdateSpy.calledWithExactly(oTable.getPropertyHelper()), "update called with the correct parameter");
-			oItem.onConfirm();
-			assert.ok(fHandleP13nSpy.calledOnce, "Engine handleP13n called once");
-			assert.ok(fHandleP13nSpy.calledWithExactly(oTable, [oItem.getKey()]), "handleP13n called with the correct parameters");
-			oItem.onReset();
-
-			return wait(0);
-		}).then(function() {
-			assert.ok(fResetSpy.calledOnce, "Engine reset called once");
-			assert.ok(fResetSpy.calledWithExactly(oTable, ["Sort"]), "reset called with the correct parameters");
-			assert.ok(fUpdateQuickActionsSpy.calledOnce, "updateQuickActions called once");
-			assert.ok(fUpdateQuickActionsSpy.calledWithExactly(["Sort"]), "updateQuickActions called with the correct parameters");
-			return Promise.resolve();
 		});
 	});
 });

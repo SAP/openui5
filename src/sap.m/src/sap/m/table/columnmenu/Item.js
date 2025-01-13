@@ -25,6 +25,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @since 1.110
+	 * @deprecated As of version 1.132, the concept has been discarded.
 	 *
 	 * @alias sap.m.table.columnmenu.Item
 	 */

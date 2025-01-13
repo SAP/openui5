@@ -3,15 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/m/table/columnmenu/QuickActionBase",
-	"sap/m/ToggleButton",
-	"sap/m/library",
-	"sap/ui/core/Lib"
+	"sap/m/table/columnmenu/QuickActionBase"
 ], function(
-	QuickActionBase,
-	ToggleButton,
-	library,
-	Library
+	QuickActionBase
 ) {
 	"use strict";
 
@@ -65,102 +59,25 @@ sap.ui.define([
 		}
 	});
 
-	QuickGroup.prototype.exit = function() {
-		this.destroyContent();
-	};
-
-	QuickGroup.prototype.getLabel = function() {
-		var oBundle = Library.getResourceBundleFor("sap.m");
-		return oBundle.getText("table.COLUMNMENU_QUICK_GROUP");
-	};
-
-	QuickGroup.prototype.getContent = function() {
-		if (!this._aContent) {
-			this._aContent = this.createContent(this.getItems());
-			this._aContent.forEach(function(oItem) {
-				this.addDependent(oItem);
-			}.bind(this));
-		}
-
-		return this._aContent;
-	};
-
-	QuickGroup.prototype.addItem = function(oItem) {
-		this.destroyContent();
-		return this.addAggregation("items", oItem);
-	};
-
-	QuickGroup.prototype.insertItem = function(oItem, iIndex) {
-		this.destroyContent();
-		return this.insertAggregation("items", oItem, iIndex);
-	};
-
-	QuickGroup.prototype.removeItem = function(oItem) {
-		this.destroyContent();
-		return this.removeAggregation("items", oItem);
-	};
-
-	QuickGroup.prototype.removeAllItems = function() {
-		this.destroyContent();
-		return this.removeAllAggregation("items");
-	};
-
-	QuickGroup.prototype.destroyItems = function() {
-		this.destroyContent();
-		return this.destroyAggregation("items");
-	};
-
-	QuickGroup.prototype.createContent = function(aItems) {
-		return aItems.map(function(oItem) {
-			return new ToggleButton({
-				text: oItem.getLabel(),
-				pressed: oItem.getGrouped(),
-				press: [oItem, this.onChange, this]
-			});
-		}, this);
-	};
-
-	QuickGroup.prototype.destroyContent = function() {
-		if (this._aContent) {
-			this._aContent.forEach(function (oContent) {
-				oContent.destroy();
-			});
-			delete this._aContent;
-		}
-	};
-
-	QuickGroup.prototype._updateContent = function() {
-		var aItems = this.getItems();
-		var aContent = this.getContent();
-		var oItem, oButton;
-
-		for (var i = 0; i < aItems.length; i++) {
-			oItem = aItems[i];
-			oButton = aContent[i];
-			if (!oButton) {
-				oButton = new ToggleButton({press: [oItem, this.onChange, this]});
-			}
-			oButton.setText(oItem.getLabel());
-			oButton.setPressed(oItem.getGrouped());
-		}
-
-		for (var j = aItems.length; j < aContent.length; j++) {
-			aContent[j].destroy();
-		}
-	};
-
 	QuickGroup.prototype.getEffectiveQuickActions = function() {
-		return (this.getVisible() && this.getItems().length) ? [this] : [];
+		var aEffectiveQuickActions = [];
+
+		if (this.getVisible()) {
+			var aItems = this.getItems().filter((oItem) => {
+				return oItem.getVisible();
+			});
+
+			aItems.forEach((oItem) => {
+				aEffectiveQuickActions.push(oItem._getAction());
+			});
+		}
+
+		return aEffectiveQuickActions;
 	};
 
-	QuickGroup.prototype.onChange = function(oEvent, oItem) {
-		oItem.setProperty("grouped", oEvent.getParameters().pressed, true);
+	QuickGroup.prototype.onChange = function(oItem) {
 		this.fireChange({item: oItem});
 		this.getMenu().close();
-	};
-
-	QuickGroup.prototype.getCategory = function() {
-		return library.table.columnmenu.Category.Group;
 	};
 
 	return QuickGroup;

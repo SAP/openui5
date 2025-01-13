@@ -300,15 +300,6 @@ sap.ui.define([
 		fnInvisibleMessageAnnounce.restore();
 	});
 
-	QUnit.test("announceEmptyColumnMenu", function(assert) {
-		const oRb = Library.getResourceBundleFor("sap.m"),
-			fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
-
-		Util.announceEmptyColumnMenu();
-		assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("table.ANNOUNCEMENT_EMPTY_COLUMN_MENU")), "Correct message is announced");
-		fnInvisibleMessageAnnounce.restore();
-	});
-
 	QUnit.test("isEmpty", function(assert) {
 		let iLength = 0,
 			sType = "";

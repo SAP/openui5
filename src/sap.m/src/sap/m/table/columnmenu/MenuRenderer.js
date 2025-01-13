@@ -12,42 +12,25 @@ sap.ui.define([], function () {
 		oRm.openStart("div", oMenu);
 		oRm.class("sapMTCMenu");
 		oRm.openEnd();
-		this.renderHiddenTexts(oRm, oMenu);
-		this.renderQuickActions(oRm, oMenu);
-		this.renderItems(oRm, oMenu);
 
-		oRm.close("div");
-	};
+		const bHasQuckActions = oMenu._getAllEffectiveQuickActions().length > 0;
+		if (bHasQuckActions) {
+			this.renderQuickActions(oRm, oMenu);
+		}
 
-	var renderInvisibleText = function(oRm, sId, sText) {
-		oRm.openStart("span", sId);
-		oRm.class("sapUiInvisibleText");
-		oRm.attr("aria-hidden", "true");
-		oRm.openEnd();
-		oRm.text(sText);
-		oRm.close("span");
-	};
+		const bHasItems = oMenu._getAllEffectiveItems().length > 0;
+		if (bHasItems) {
+			this.renderItems(oRm, oMenu);
+		}
 
-	MenuRenderer.renderHiddenTexts = function(oRm, oMenu) {
-		oRm.openStart("div");
-		oRm.class("sapMTCMenuHiddenTexts");
-		oRm.style("display", "none");
-		oRm.attr("aria-hidden", "true");
-		oRm.openEnd();
-
-		renderInvisibleText(oRm, oMenu.getId() + "-menuDescription", oMenu._getResourceText("table.COLUMNMENU_TITLE"));
-		renderInvisibleText(oRm, oMenu.getId() + "-actionContainerDescription", oMenu._getResourceText("table.COLUMNMENU_ACTION_CONTAINER_DESC"));
-		renderInvisibleText(oRm, oMenu.getId() + "-itemContainerDescription", oMenu._getResourceText("table.COLUMNMENU_ITEM_CONTAINER_DESC"));
+		if (!bHasQuckActions && !bHasItems) {
+			oRm.renderControl(oMenu._oIllustratedMessage);
+		}
 
 		oRm.close("div");
 	};
 
 	MenuRenderer.renderQuickActions = function (oRm, oMenu) {
-		// If no active QuickActions are found, do not render the quick action container.
-		if (oMenu._getAllEffectiveQuickActions().length === 0) {
-			return;
-		}
-
 		oRm.openStart("div");
 		if (oMenu._oItemsContainer) {
 			if (oMenu._oItemsContainer.getCurrentViewKey() === "$default") {
@@ -61,16 +44,16 @@ sap.ui.define([], function () {
 		oRm.attr("role", "region");
 		oRm.openEnd();
 
-		oRm.renderControl(oMenu._oQuickActionContainer);
+		oRm.renderControl(oMenu._oQuickSortList);
+		oRm.renderControl(oMenu._oQuickFilterList);
+		oRm.renderControl(oMenu._oQuickGroupList);
+		oRm.renderControl(oMenu._oQuickAggregateList);
+		oRm.renderControl(oMenu._oQuickGenericList);
 
 		oRm.close("div");
 	};
 
 	MenuRenderer.renderItems = function (oRm, oMenu) {
-		if (oMenu._getAllEffectiveItems().length === 0) {
-			return;
-		}
-
 		oRm.openStart("div");
 		oRm.class("sapMTCMenuContainerWrapper");
 		oRm.openEnd();

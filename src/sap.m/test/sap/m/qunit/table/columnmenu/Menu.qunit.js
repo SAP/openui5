@@ -10,11 +10,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickActionContainer",
 	"sap/ui/Device",
-	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/ui/core/StaticArea",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/layout/GridData",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -29,11 +27,9 @@ sap.ui.define([
 	QuickAction,
 	QuickActionContainer,
 	Device,
-	Element,
 	CoreItem,
 	StaticArea,
 	containsOrEquals,
-	GridData,
 	QUnitUtils,
 	createAndAppendDiv,
 	nextUIUpdate
@@ -253,42 +249,42 @@ sap.ui.define([
 		assert.equal(StaticArea.getUIArea().getContent().length, 0);
 	});
 
-	QUnit.test("Form containers and item container are created on open and destroyed on close", function(assert) {
+	QUnit.test("Quick action list and item container are created on open and destroyed on close", function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length);
+		assert.ok(this.oColumnMenu._oQuickGenericList);
 		assert.ok(this.oColumnMenu._oItemsContainer);
 
-		const oDestroyFormElementsSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroyFormContainers");
+		const oDestroyQuickActionListSpy = sinon.spy(this.oColumnMenu._oQuickGenericList, "destroy");
 		const oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
 		this.oColumnMenu.close();
-		assert.ok(oDestroyFormElementsSpy.calledOnce);
+		assert.ok(oDestroyQuickActionListSpy.calledOnce);
 		assert.ok(oDestroyItemContainerSpy.calledOnce);
 	});
 
-	QUnit.test("QuickActionContainer and ItemContainer are destroyed before the popover opens", function(assert) {
+	QUnit.test("Quick action list and item container are destroyed before the popover opens", function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu._oQuickActionContainer);
+		assert.ok(this.oColumnMenu._oQuickGenericList);
 		assert.ok(this.oColumnMenu._oItemsContainer);
 
-		const oDestroyQuickActionContainerSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroy");
+		const oDestroyQuickActionListSpy = sinon.spy(this.oColumnMenu._oQuickGenericList, "destroy");
 		const oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
 		const clock = sinon.useFakeTimers();
 		this.oColumnMenu._oPopover.close();
 
-		assert.ok(oDestroyQuickActionContainerSpy.notCalled);
+		assert.ok(oDestroyQuickActionListSpy.notCalled);
 		assert.ok(oDestroyItemContainerSpy.notCalled);
 		clock.tick(500);
 		clock.restore();
 
 		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(oDestroyQuickActionContainerSpy.calledOnce);
+		assert.ok(oDestroyQuickActionListSpy.calledOnce);
 		assert.ok(oDestroyItemContainerSpy.calledOnce);
 	});
 
 	QUnit.test("Check hidden header and footer in default view", async function(assert) {
-		this.createMenu(false);
+		this.createMenu(false, true);
 		this.oColumnMenu.openBy(this.oButton);
 		await nextUIUpdate();
 
@@ -319,27 +315,10 @@ sap.ui.define([
 		assert.equal(aCalls[0].target, sId);
 	});
 
-	QUnit.test("ScrollDelegate", async function(assert) {
-		this.createMenu(false, true, false, true);
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		const clock = sinon.useFakeTimers();
-		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		clock.tick(500);
-		clock.restore();
-
-		const oScrollDelegate = library.getScrollDelegate(this.oColumnMenu._getAllEffectiveItems()[0].getContent());
-		assert.ok(oScrollDelegate, "ScrollDelegate is set");
-		const oControl = oScrollDelegate._oControl;
-		assert.ok(oControl.isA("sap.m.Page"), "the control is of class sap.m.Page");
-		assert.ok(oControl.getParent().isA("sap.m.p13n.AbstractContainer"), "the parent control is of class sap.m.p13n.AbstractContainer");
-	});
-
 	QUnit.test("Check focus when control specific items are given", async function(assert) {
 		const clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, true);
+		this.oColumnMenu.setShowTableSettingsButton(true);
 		this.oColumnMenu.openBy(this.oButton);
 		clock.tick(500);
 		clock.restore();
@@ -352,6 +331,7 @@ sap.ui.define([
 	QUnit.test("Check focus when only application specific items are given", async function(assert) {
 		const clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, false);
+		this.oColumnMenu.setShowTableSettingsButton(true);
 		this.oColumnMenu.openBy(this.oButton);
 		clock.tick(500);
 		clock.restore();
@@ -466,7 +446,8 @@ sap.ui.define([
 		clock.restore();
 	});
 
-	QUnit.test("Check visibility", async function(assert) {
+	QUnit.test("Check visibility", function(assert) {
+		const clock = sinon.useFakeTimers();
 		function getActiveItems(oColumnMenu) {
 			return oColumnMenu._oItemsContainer._getNavigationList().getItems().filter(function(oItem) {
 				return oItem.getVisible();
@@ -478,12 +459,15 @@ sap.ui.define([
 		// Initial State
 		this.oColumnMenu.openBy(this.oButton);
 
-		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 2, "All quick actions are visible");
+		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 2, "All quick actions are visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 2, "All items are visible");
+		this.oColumnMenu.close();
+		clock.tick(500);
 
 		// Public Quick Action hidden
 		this.oColumnMenu.getQuickActions()[0].setVisible(false);
-		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "Only one quick action visible");
+		this.oColumnMenu.openBy(this.oButton);
+		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 1, "Only one quick action visible");
 
 		// One item hidden
 		this.oColumnMenu.getItems()[0].setVisible(false);
@@ -492,22 +476,24 @@ sap.ui.define([
 		// All items hidden
 		this.oColumnMenu.getItems()[1].setVisible(false);
 		assert.equal(getActiveItems(this.oColumnMenu).length, 0, "No items are visible");
+		this.oColumnMenu.close();
+		clock.tick(500);
 
 		// All Quick Actions hidden
 		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(false);
-		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 0, "No quick actions are in the form");
-		assert.notOk(document.getElementById(this.oColumnMenu.getId() + "-quickActions"), "Quick Actions Container is not rendered");
+		this.oColumnMenu.openBy(this.oButton);
+		assert.notOk(this.oColumnMenu._oQuickGenericList, "No quick action list is created");
+		this.oColumnMenu.close();
+		clock.tick(500);
 
 		// Make 1 QuickAction and 1 item visible
 		this.oColumnMenu.getItems()[0].setVisible(true);
 		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(true);
-		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "One quick action is visible");
+		this.oColumnMenu.openBy(this.oButton);
+		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 1, "One quick action is visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "One item is visible");
-
-		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
 		clock.tick(500);
-		clock.restore();
 
 		// Check Visibility when using a QuickActionContainer
 		const oQuickAction1 = new QuickAction({label: sText, content: new Button({text: sText})});
@@ -517,28 +503,25 @@ sap.ui.define([
 
 		// Case A: Both QuickActions in the container should be visible
 		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 3, "Three quick actions are visible");
-
+		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 3, "Three quick actions are visible");
 		this.oColumnMenu.close();
+		clock.tick(500);
 
 		// Case B: Container should not be visible
 		oQuickActionContainer.setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "One quick actions is visible");
-
+		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 1, "One quick actions is visible");
 		this.oColumnMenu.close();
+		clock.tick(500);
 
 		// Case C: One QuickAction in the container is hidden
 		oQuickActionContainer.setVisible(true);
 		oQuickAction1.setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 2, "Two quick actions are visible");
+		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 2, "Two quick actions are visible");
+		this.oColumnMenu.close();
+		clock.tick(500);
+		clock.restore();
 	});
 
 	QUnit.test("Add menu item", async function(assert) {
@@ -602,43 +585,35 @@ sap.ui.define([
 		];
 
 		oMenu.openBy(this.oButton);
-		oMenu.getDomRef().querySelectorAll(".sapMTCMenuQALabel").forEach(function(oLabelElement, iIndex) {
+		oMenu.getDomRef().querySelectorAll(".sapMILILabel").forEach(function(oLabelElement, iIndex) {
 			assert.equal(oLabelElement.innerText, aLabelsInExpectedOrder[iIndex], aLabelsInExpectedOrder[iIndex]);
 		});
 
 		oMenu.destroy();
 	});
 
-	QUnit.test("Accessibility", async function(assert) {
-		this.createMenu(true, true, true, true);
+	QUnit.test("Illustrated Message when columnmenu is empty", async function(assert) {
+		this.createMenu(false);
 		this.oColumnMenu.openBy(this.oButton);
 		await nextUIUpdate();
 
-		const oMenu = this.oColumnMenu;
+		const oIllustratedMessage = this.oColumnMenu._oIllustratedMessage;
+		assert.ok(oIllustratedMessage, "Illustrated message is initialized");
+		assert.equal(oIllustratedMessage.getTitle(), this.oColumnMenu._getResourceText("table.COLUMNMENU_EMPTY"), "Illustrated message has a title");
+		assert.equal(oIllustratedMessage.getDescription(), "", "Illustrated message does not have a description");
+		assert.equal(oIllustratedMessage.getIllustrationType(), library.IllustratedMessageType.NoColumnsSet, "Illustrated message has the correct illustration type");
+		assert.equal(oIllustratedMessage.getIllustrationSize(), library.IllustratedMessageSize.Dot, "Illustrated message has the correct illustration size");
+		assert.ok(oIllustratedMessage.getDomRef(), "Illustrated message is rendered");
+		const clock = sinon.useFakeTimers();
+		this.oColumnMenu.close();
+		clock.tick(500);
+		clock.restore();
 
-		assert.equal(oMenu._oPopover.getAriaLabelledBy(), oMenu.getId() + "-menuDescription",
-			"The popover is associated to the Menu description via aria-labelledby");
-		assert.equal(document.getElementById(oMenu.getId() + "-menuDescription").innerText,
-			oMenu._getResourceText("table.COLUMNMENU_TITLE"), "Menu description text is correct");
+		this.oColumnMenu.addQuickAction(new QuickAction({label: sText, content: new Button({text: sText})}));
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
 
-		assert.equal(oMenu._oQuickActionContainer.getAriaLabelledBy(), oMenu.getId() + "-actionContainerDescription",
-			"The QuickActions section is associated to the Action container description via aria-labelledby");
-		assert.equal(document.getElementById(oMenu.getId() + "-actionContainerDescription").innerText,
-			oMenu._getResourceText("table.COLUMNMENU_ACTION_CONTAINER_DESC"), "Action container description text is correct");
-
-		assert.equal(oMenu._oItemsContainer._getNavigationList().getAriaLabelledBy(), oMenu.getId() + "-itemContainerDescription",
-			"The Items section is associated to the Item container description via aria-labelledby");
-		assert.equal(document.getElementById(oMenu.getId() + "-itemContainerDescription").innerText,
-			oMenu._getResourceText("table.COLUMNMENU_ITEM_CONTAINER_DESC"), "Item container description text is correct");
-
-		const oFormElements = oMenu._oQuickActionContainer.getFormContainers()[0].getFormElements();
-		let sControlId, oControl;
-		for (let i = 0; i < oFormElements.length; i++) {
-			sControlId = oFormElements[i].getFields()[0].getControl();
-			oControl = document.getElementById(sControlId);
-			assert.ok(oControl.getAttribute("aria-labelledby").includes(oFormElements[i].getLabelControl().getId()),
-				"aria-labelledby is correct");
-		}
+		assert.notOk(this.oColumnMenu._oIllustratedMessage.getDomRef(), "Illustrated message is not rendered");
 	});
 
 	QUnit.module("Button states", {
@@ -784,124 +759,6 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		assert.equal(this.oColumnMenu.getUIArea(), this.oButton.getUIArea(), "After opening, the UIArea is inherited from the parent");
 		assert.equal(this.oColumnMenu.getParent(), this.oButton, "After opening, the parent is unchanged");
-	});
-
-	QUnit.module("Quick Action Container", {
-		beforeEach: async function() {
-			this.oColumnMenu = new Menu({
-				quickActions: [
-					new QuickAction({
-						label: sText,
-						content: new Button({
-							text: sText,
-							layoutData: new GridData({spanS: 2, spanM: 2, spanL: 2, spanXL: 2})
-						})
-					}),
-					new QuickAction({
-						label: sText,
-						content: new Button({text: sText})
-					}),
-					new QuickAction({
-						label: sText,
-						content: new Button({text: sText}),
-						visible: false
-					})
-				],
-				items: [new Item({label: sText, content: new Button({text: sText})})]
-			});
-
-			[
-				new QuickAction({label: sText, content: [new Button({text: sText + "1"}), new Button({text: sText + "2"})]}),
-				new QuickAction({label: sText, content: [
-					new Button({text: sText + "1"}),
-					new Button({text: sText + "2"}),
-					new Button({text: sText + "3"})
-				]})
-			].forEach((oQuickAction) => this.oColumnMenu.addAggregation("_quickActions", oQuickAction));
-			this.oColumnMenu.addAggregation("_items", new Item({label: sText, content: new Button({text: sText})}));
-
-			this.oButton = new Button();
-			this.oButton.placeAt("qunit-fixture");
-			await nextUIUpdate();
-		},
-		afterEach: function() {
-			this.oColumnMenu.destroy();
-			this.oButton.destroy();
-		}
-	});
-
-	QUnit.test("Check form content", async function(assert) {
-		let oControl;
-		this.oColumnMenu.openBy(this.oButton);
-
-		let oContainer = this.oColumnMenu._oQuickActionContainer.getFormContainers()[0];
-		let aFormElements = oContainer.getFormElements();
-
-		assert.equal(aFormElements.length, 4, "Form has only four Quick Action elements, as the last one is not visible");
-
-		// First Quick Action, expected S(6), M(4)
-		assert.equal(aFormElements[0].getLabel().getText(), sText, "First Quick Action has correct label");
-		oControl = Element.getElementById(aFormElements[0].getFields()[0].getControl());
-		assert.equal(aFormElements[0].getFields()[0].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), sText + "1", "Correct button with correct button text");
-		oControl = Element.getElementById(aFormElements[0].getFields()[1].getControl());
-		assert.equal(aFormElements[0].getFields()[1].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), sText + "2", "Correct button with correct button text");
-
-		// Second Quick Action, expected S(12), M(2)
-		assert.equal(aFormElements[1].getLabel().getText(), sText, "Second Quick Action has correct label");
-		oControl = Element.getElementById(aFormElements[1].getFields()[0].getControl());
-		assert.equal(aFormElements[1].getFields()[0].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
-		assert.ok(!aFormElements[1].getFields()[0].getLayoutData().getIndent(), "No Indent is set");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), sText + "1", "Correct button with correct button text");
-		oControl = Element.getElementById(aFormElements[1].getFields()[1].getControl());
-		assert.equal(aFormElements[1].getFields()[1].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
-		assert.ok(!aFormElements[1].getFields()[1].getLayoutData().getIndent(), "No Indent is set");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), sText + "2", "Correct button with correct button text");
-		oControl = Element.getElementById(aFormElements[1].getFields()[2].getControl());
-		assert.equal(aFormElements[1].getFields()[2].getLayoutData().getSpan(), "L4 M4 S6", "Span is set correctly to 'L4 M4 S6'");
-		assert.equal(aFormElements[1].getFields()[2].getLayoutData().getIndent(), "L4 M4 S0", "Indent is set correctly to 'L4 M4 S0'");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), sText + "3", "Correct button with correct button text");
-
-		// Third QuickAction, expected custom S(2), M(2)
-		assert.equal(aFormElements[2].getLabel().getText(), sText, "Third Quick Action has correct label");
-		oControl = Element.getElementById(aFormElements[2].getFields()[0].getControl());
-		assert.equal(aFormElements[2].getFields()[0].getLayoutData().getSpanS(), 2, "Span S is set correctly to 2");
-		assert.equal(aFormElements[2].getFields()[0].getLayoutData().getSpanM(), 2, "Span M is set correctly to 2");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), sText, "Correct button with correct button text");
-
-		// Fourth QuickAction, expected S(12), M(8)
-		assert.equal(aFormElements[3].getLabel().getText(), sText, "Fourth Quick Action has correct label");
-		oControl = Element.getElementById(aFormElements[3].getFields()[0].getControl());
-		assert.equal(aFormElements[3].getFields()[0].getLayoutData().getSpan(), "L8 M8 S12", "Span is set correctly to 'L8 M8 S12'");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), sText, "Correct button with correct button text");
-
-		const clock = sinon.useFakeTimers();
-		this.oColumnMenu.close();
-		clock.tick(500);
-		clock.restore();
-
-		this.oColumnMenu.addQuickAction(new QuickAction({label: "Added Action", content: [new Button({text: "Button Added"})]}));
-		await nextUIUpdate();
-
-		this.oColumnMenu.openBy(this.oButton);
-
-		oContainer = this.oColumnMenu._oQuickActionContainer.getFormContainers()[0];
-		aFormElements = oContainer.getFormElements();
-
-		// Check if added quick action is rendered
-		assert.equal(aFormElements[4].getLabel().getText(), "Added Action", "Added Quick Action has correct label");
-		oControl = Element.getElementById(aFormElements[4].getFields()[0].getControl());
-		assert.equal(aFormElements[4].getFields()[0].getLayoutData().getSpan(), "L8 M8 S12", "Span is set correctly to 'L8 M8 S12'");
-		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
-		assert.equal(oControl.getText(), "Button Added", "Correct button with correct button text");
 	});
 
 	QUnit.module("Events", {

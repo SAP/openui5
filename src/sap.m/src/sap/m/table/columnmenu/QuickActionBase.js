@@ -51,16 +51,6 @@ sap.ui.define([
 		return this.getVisible() ? [this] : [];
 	};
 
-	QuickActionBase.prototype.setVisible = function (bVisible) {
-		if (this.getVisible() == bVisible) {
-			return this;
-		}
-
-		this.setProperty("visible", bVisible);
-		this.getMenu() && this.getMenu()._initQuickActionContainer();
-		return this;
-	};
-
 	/**
 	 * Gets the category of this quick action.
 	 *
@@ -72,6 +62,19 @@ sap.ui.define([
 			return this.getProperty("category");
 		}
 		return library.table.columnmenu.Category.Generic;
+	};
+
+	/**
+	 * Gets the content size.
+	 *
+	 * @returns {sap.m.table.columnmenu.QuickActionContentSize} The content size
+	 * @virtual
+	 */
+	QuickActionBase.prototype.getContentSize = function() {
+		if (this.getMetadata().hasProperty("contentSize")) {
+			return this.getProperty("contentSize");
+		}
+		return library.table.columnmenu.QuickActionContentSize.L;
 	};
 
 	return QuickActionBase;
