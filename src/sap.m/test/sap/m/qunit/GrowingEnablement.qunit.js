@@ -838,6 +838,205 @@ sap.ui.define([
 		}, this);
 	});
 
+	QUnit.module("updateAccessbilityOfItems");
+
+	QUnit.test("List: accessibility position of items is updated after growing", async function(assert) {
+		const oData = {
+			items : [{
+				Title : "Title1"
+			}, {
+				Title : "Title2"
+			}, {
+				Title : "Title3"
+			}]
+		},
+		oModel = new JSONModel(oData),
+		oList = new List({
+			growing: true,
+			growingThreshold: 2,
+			items: {
+				path: "/items",
+				template: new StandardListItem({
+					header: "{Title}"
+				})
+			}
+		});
+		oList.setModel(oModel);
+		oList.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		function testAccAttributes(iItemsCount) {
+			const aItems = oList.getItems();
+			if (iItemsCount) {
+				assert.equal(aItems.length, iItemsCount, `getItems() count is correct for the ${oList}`);
+			}
+			aItems.forEach((oItem, iIndex) => {
+				const oDomRef = oItem.getFocusDomRef();
+				assert.equal(oDomRef.getAttribute("aria-setsize"), iItemsCount, `${oItem} has valid aria-setsize`);
+				assert.equal(oDomRef.getAttribute("aria-posinset"), iIndex + 1, `${oItem} has valid aria-posinset`);
+			});
+		}
+
+		oData.items.splice(0, 0, { Title : "Title0" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oList);
+		testAccAttributes(2);
+
+		const fnUpdateAccessbilityOfItemsSpy = sinon.spy(oList, "updateAccessbilityOfItems");
+
+		oList.requestItems();
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 1, "During growing updateAccessbilityOfItems method is called");
+		testAccAttributes(4);
+
+		oData.items.push({ Title : "Title4" });
+		oModel.setData(oData);
+		oList.setGrowingThreshold(20);
+		oList.requestItems();
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 2, "when items are appended to the end updateAccessbilityOfItems method is called");
+		testAccAttributes(5);
+
+		oData.items.splice(-1);
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 3, "when items are deleted from the end updateAccessbilityOfItems method is called");
+		testAccAttributes(4);
+
+		oList.getBinding("items").sort(new Sorter("Title", false, true));
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 3, "during grouping updateAccessbilityOfItems method is not called");
+		//testAccAttributes(8);
+
+		oData.items.push({ Title : "Title4" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 3, "while grouping when items are appended to the end updateAccessbilityOfItems method is not called");
+		//testAccAttributes(10);
+
+		oData.items.splice(1, 0, { Title : "TitleX" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 3, "while grouping when an item is inserted updateAccessbilityOfItems method is not called");
+		//testAccAttributes(12);
+
+		oList.getBinding("items").sort();
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 4, "during ungrouping updateAccessbilityOfItems method is called");
+		testAccAttributes(6);
+
+		oData.items.splice(2, 0, { Title : "TitleY" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oList);
+		assert.equal(fnUpdateAccessbilityOfItemsSpy.callCount, 5, "while ungrouped when an item is inserted updateAccessbilityOfItems method is called");
+		testAccAttributes(7);
+
+		fnUpdateAccessbilityOfItemsSpy.restore();
+		oList.destroy();
+	});
+
+	QUnit.test("Table: accessibility position of rows is updated after growing", async function(assert) {
+		const oData = {
+			items : [{
+				Title : "Title1"
+			}, {
+				Title : "Title2"
+			}, {
+				Title : "Title3"
+			}]
+		},
+		oModel = new JSONModel(oData),
+		oTable = new Table({
+			growing: true,
+			growingThreshold: 2,
+			columns: new Column({
+				header: new Text({
+					text: "Test"
+				})
+			}),
+			items: {
+				path: "/items",
+				template: new ColumnListItem({
+					cells: new Text({
+							text: "{Title}"
+					})
+				})
+			}
+		});
+		oTable.setModel(oModel);
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		function testAccAttributes(iItemsCount) {
+			const aItems = oTable.getItems();
+			if (iItemsCount) {
+				const iAriaRowCount = iItemsCount + 1; /* column header row counts as row for aria-rowcount */
+				assert.equal(aItems.length, iItemsCount, `getItems() count is correct for the ${oTable}`);
+				assert.equal(oTable.getNavigationRoot().getAttribute("aria-rowcount"), iAriaRowCount, `aria-rowcount is correct for ${oTable}`);
+			}
+			aItems.forEach((oItem, iIndex) => {
+				assert.equal(oItem.getFocusDomRef().getAttribute("aria-rowindex"), iIndex + 2, `${oItem} has valid aria-rowindex`);
+			});
+		}
+
+		oData.items.splice(0, 0, { Title : "Title0" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oTable);
+		testAccAttributes(2);
+
+		const fnUpdateAccessbilityOfItemsSpy = sinon.spy(oTable, "updateAccessbilityOfItems");
+
+		oTable.requestItems();
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.notCalled, "During growing updateAccessbilityOfItems method is not called");
+		testAccAttributes(4);
+
+		oData.items.push({ Title : "Title4" });
+		oModel.setData(oData);
+		oTable.setGrowingThreshold(20);
+		oTable.requestItems();
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.notCalled, "when items are appened to the end updateAccessbilityOfItems method is not called");
+		testAccAttributes(5);
+
+		oData.items.splice(-1);
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.notCalled, "when items are deleted from the end updateAccessbilityOfItems method is not called");
+		testAccAttributes(4);
+
+		oTable.getBinding("items").sort(new Sorter("Title", false, true));
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.notCalled, "during grouping updateAccessbilityOfItems method is not called");
+		testAccAttributes(8);
+
+		oData.items.push({ Title : "Title4" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.notCalled, "while grouping when items are appened to the end updateAccessbilityOfItems method is not called");
+		testAccAttributes(10);
+
+		oData.items.splice(1, 0, { Title : "TitleX" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.notCalled, "while grouping when an item is inserted updateAccessbilityOfItems method is not called");
+		testAccAttributes(12);
+
+		oTable.getBinding("items").sort();
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.calledOnce, "during ungrouping updateAccessbilityOfItems method is called");
+		testAccAttributes(6);
+
+		oData.items.splice(2, 0, { Title : "TitleY" });
+		oModel.setData(oData);
+		await ui5Event("updateFinished", oTable);
+		assert.ok(fnUpdateAccessbilityOfItemsSpy.calledTwice, "while ungrouped when an item is inserted updateAccessbilityOfItems method is called");
+		testAccAttributes(7);
+
+		fnUpdateAccessbilityOfItemsSpy.restore();
+		oTable.destroy();
+	});
+
 	QUnit.module("itemsPool");
 
 	/**

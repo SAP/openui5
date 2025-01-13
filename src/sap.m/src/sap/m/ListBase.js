@@ -2166,6 +2166,21 @@ function(
 		};
 	};
 
+	/**
+	 * Updates the accessibility state of all items after the binding update of individual items.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.GrowingEnablement
+	 */
+	ListBase.prototype.updateAccessbilityOfItems = function() {
+		const iSetSize = this.getSize();
+		this.getVisibleItems().forEach((oItem, iIndex) => {
+			const oFocusDomRef = oItem.getFocusDomRef();
+			oFocusDomRef?.setAttribute("aria-setsize", iSetSize);
+			oFocusDomRef?.setAttribute("aria-posinset", iIndex + 1);
+		});
+	};
+
 	ListBase.prototype.getSize = function() {
 		let aItems = this.getVisibleItems();
 		const bExcludeGroupHeaderFromCount = (this._hasNestedGrouping() || this._skipGroupHeaderFocus());
