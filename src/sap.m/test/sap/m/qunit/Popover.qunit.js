@@ -2837,6 +2837,45 @@ sap.ui.define([
 		oPopover.destroy();
 	});
 
+	QUnit.module("Invalidation");
+
+	QUnit.test("Invalidate while closing", async function (assert) {
+		var done = assert.async();
+		var oButton;
+
+		var oPopover = new Popover({
+			title: "Header",
+			content: new Button({
+				text: "click me"
+			}),
+			afterOpen: async function () {
+				oPopover.invalidate();
+				oPopover.oPopup.bOpen = false;
+				oPopover.oPopup._closed();
+				oPopover.removeDelegate(oPopover.oPopup);
+
+				await nextUIUpdate();
+
+				assert.strictEqual(window.getComputedStyle(oPopover.getDomRef()).visibility, "hidden", "Popover is hidden");
+
+				// cleanup
+				oButton.destroy();
+				oPopover.destroy();
+
+				done();
+			}
+		});
+
+		oButton = new Button({
+			text: "Open Popover"
+		});
+
+		page.addContent(oButton);
+		await nextUIUpdate();
+
+		oPopover.openBy(oButton);
+	});
+
 	// include stylesheet and let test starter wait for it
 	return includeStylesheet({
 		url: sap.ui.require.toUrl("test-resources/sap/m/qunit/Popover.css")
