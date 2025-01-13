@@ -3947,5 +3947,15 @@
         "text": " sap.m.TimePicker: fix cursor position when there is mask and no entry"
       }
     ]
+  },
+  "1.71.69": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "bcb1c75e415bc110b112f6733e209a40add8c841",
+        "type": "FIX",
+        "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
+      }
+    ]
   }
 }
