@@ -5,32 +5,24 @@
 
 .sapMSDItem {
 	display: block;
-	padding: 0px;
+	padding: 0;
 }
 
 .sapMSDItem > .sapMLIBContent {
-	padding: 0.5rem 0px;
+	padding: 0.5rem 0;
 	box-sizing: border-box;
 	width: 100%;
-
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
-	display: -webkit-flex;
 	display: flex;
 	align-items: center;
 }
 
 .sapMSDItem .sapMSDItemLines {
-	-webkit-box-flex: 1;
-	-webkit-flex: 1 1;
 	flex: 1 1;
 	max-width: ~"calc(100% - 3rem)";
 }
 
 .sapMSDItem .sapMSDItemActions {
 	width: 100%;
-	-webkit-flex: 0 0 100%;
 	flex: 0 0 100%;
 
 	.sapMTB {
@@ -41,7 +33,6 @@
 .sapMSDItem:not(.sapMLIBTypeNavigation) {
 
 	.sapMSDItemActions {
-		-webkit-flex-basis:  ~"calc(100% + 2rem)";
 		flex-basis: ~"calc(100% + 2rem)";
 	}
 }
@@ -51,15 +42,11 @@
 }
 
 .sapMSDItemLine {
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
 	overflow: hidden;
 }
 
 .sapMSDItem .sapMSDItemLineMarkerContainer {
-	-webkit-box-flex: 0;
-	-webkit-flex: 0 0 3rem;
 	flex: 0 0 3rem;
 	box-sizing: border-box;
 	display: flex;
@@ -71,44 +58,46 @@
 
 .sapMSDItem .sapMSDItemLineLabel,
 .sapMSDItem .sapMSDItemLineValue {
-	-webkit-box-flex: 1;
-	-webkit-flex: 1 1;
 	flex: 1 1;
-
 	padding: 0.25rem;
 	box-sizing: border-box;
 	font-size: smaller;
-	min-width: 0; //explicitly allow items to shrink to 0
+	min-width: 0; /* explicitly allow items to shrink to 0 */
 	word-wrap: break-word;
 }
 
 .sapMSDItem .sapMSDItemLineLabel {
 	margin-right: 1rem;
-	color: @sapUiContentLabelColor;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	color: var(--sapContent_LabelColor);
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .sapMSDWrapLabels .sapMSDItem .sapMSDItemLineLabel {
-  white-space: normal;
-  text-overflow: clip;
+	white-space: normal;
+	text-overflow: clip;
 }
 
 .sapMSDItem .sapMSDItemLineValue {
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 
 	&.sapMSDItemLineBold {
 		font-weight: bold;
 	}
 }
+
 .sapMSDItem .sapMSDItemLineUnit {
 	font-weight: normal;
 }
 
 .sapMSDItem.sapMLIBActive {
-	.sapMSDItemLineLabel, .sapMSDItemLineValue, .sapMBtnText, .sapMBtnTransparent > .sapMBtnIcon {
-		color: @sapUiListActiveTextColor;
+
+	.sapMSDItemLineLabel,
+	.sapMSDItemLineValue,
+	.sapMBtnText,
+	.sapMBtnTransparent > .sapMBtnIcon {
+		color: var(--sapList_Active_TextColor);
 		text-shadow: none;
 	}
 }
