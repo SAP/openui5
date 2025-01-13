@@ -1,0 +1,51 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.showCard.component.main",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://sap-ui5"
+			},
+			"title": "Open a component card in a dialog",
+			"actions": [
+				{
+					"type": "ShowCard",
+					"parameters": {
+						"manifest": "./detailsCard/manifest.json"
+					}
+				}
+			]
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Task",
+							"value": "Book a ticket"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Show a Component Card",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./detailsCard/manifest.json"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}
