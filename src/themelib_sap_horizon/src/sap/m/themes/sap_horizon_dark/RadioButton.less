@@ -87,7 +87,7 @@
 
 .sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc):not(.sapMRbDis) .sapMRbHoverable:hover .sapMRbBOut {
 	stroke: var(--sapField_Hover_BorderColor);
-	fill: var(--sapContent_Selected_Hover_Background);
+	fill: var(--sapField_Selector_Hover_Background);
 }
 
 .sapMRb:focus::before {
@@ -140,6 +140,10 @@
 	}
 }
 
+.sapMRb.sapMRbErr .sapMRbHoverable:hover .sapMRbBOut {
+	fill: var(--sapField_Selector_Hover_InvalidBackground);
+}
+
 .sapMRbWarn.sapMRbSel,
 .sapMRbWarn.sapMRbSel.sapMRbRo {
 
@@ -157,6 +161,10 @@
 		fill: var(--sapField_WarningBackground);
 		stroke-width: var(--sapField_WarningBorderWidth);
 	}
+}
+
+.sapMRb.sapMRbWarn .sapMRbHoverable:hover .sapMRbBOut {
+	fill: var(--sapField_Selector_Hover_WarningBackground);
 }
 
 .sapMRbSucc.sapMRbSel,
@@ -178,6 +186,10 @@
 	}
 }
 
+.sapMRb.sapMRbSucc .sapMRbHoverable:hover .sapMRbBOut {
+	fill: var(--sapField_Selector_Hover_SuccessBackground);
+}
+
 .sapMRbInfo.sapMRbSel,
 .sapMRbInfo.sapMRbSel.sapMRbRo {
 
@@ -195,6 +207,10 @@
 		fill: var(--sapField_InformationBackground);
 		stroke-width: var(--sapField_InformationBorderWidth);
 	}
+}
+
+.sapMRb.sapMRbInfo .sapMRbHoverable:hover .sapMRbBOut {
+	fill: var( --sapField_Selector_Hover_InformationBackground);
 }
 
 .sapMRbRo .sapMRbBOut {
