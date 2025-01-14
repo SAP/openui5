@@ -88,6 +88,9 @@ sap.ui.define([
 
 	ODataV4ValueHelpDelegate.isFilteringCaseSensitive = function(oValueHelp, oContent) {
 
+		/**
+		 *  @deprecated since 1.120.2
+		 */
 		if (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent")) {
 			const sFilterFields = oContent.getFilterFields();
 

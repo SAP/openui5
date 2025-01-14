@@ -147,11 +147,6 @@ sap.ui.define([
 		});
 	};
 
-	Delegate.determineSearchSupported = function(oValueHelp) {
-		oValueHelp.setFilterFields("$search");
-		return Promise.resolve();
-	};
-
 	function _formatText(sValue, sTextValue) {
 		return sValue + (sTextValue ? " (" + sTextValue + ")" : "");
 	}
