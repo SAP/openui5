@@ -928,6 +928,9 @@ sap.ui.define([
 		// oFormatOptions.trailingCurrencyCode = false
 		oFormat.oFormatOptions.trailingCurrencyCode = oFormat.showTrailingCurrencyCode();
 		oFormat._defineCustomCurrencySymbols();
+		if (oFormat.oFormatOptions.style === "long") {
+			oFormat.oFormatOptions.style = "short";
+		}
 
 		return oFormat;
 	};
