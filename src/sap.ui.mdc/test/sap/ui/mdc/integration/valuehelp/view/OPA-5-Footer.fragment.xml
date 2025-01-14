@@ -19,7 +19,7 @@
 	xmlns:demo="sap.ui.v4demo.controls">
 
 	<Label text="maxConditions 1 / -1" labelFor="switchMaxConditions" />
-	<Switch id="switchMaxConditions" state="{= ${settings>/maxConditions} === -1}" change=".onMaxConditionsSwitchChange" blocked="{settings>/maxConditionsBlocked}" />
+	<Switch id="switchMaxConditions" state="{= ${settings>/maxConditions} === -1}" change=".onMaxConditionsSwitchChange"/>
 
 	<Label text="SelectionStrategy:"/>
 	<Label text="by Payload Key" labelFor="swList"/>

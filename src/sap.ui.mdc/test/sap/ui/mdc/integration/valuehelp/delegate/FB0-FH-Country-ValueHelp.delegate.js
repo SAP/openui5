@@ -71,7 +71,7 @@ sap.ui.define([
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Dialog")) {
 
 			if (!oCurrentContent) {
-				oCurrentContent = new MTable({keyPath: "code", descriptionPath: "descr", filterFields: "$search", title: "Country"});
+				oCurrentContent = new MTable({keyPath: "code", descriptionPath: "descr", title: "Country"});
 				oContainer.addContent(oCurrentContent);
 			}
 
