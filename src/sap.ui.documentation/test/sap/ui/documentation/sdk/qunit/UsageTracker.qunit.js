@@ -13,14 +13,13 @@ function (UsageTracker, TestUtil) {
 		});
 	}
 
-	TestUtil.getManifest().then(function (oManifest) {
-		const aRoutes = oManifest["sap.ui5"].routing.routes,
-			aRoutesToTest = removeLegacyRoutes(aRoutes);
 
-		QUnit.module("getPageInfoFromRoute", {
-
-			before: function (assert) {
-				var done = assert.async(),
+	QUnit.module("getPageInfoFromRoute", {
+		before: function (assert) {
+			var done = assert.async();
+			TestUtil.getManifest().then(function (oManifest) {
+				const aRoutes = oManifest["sap.ui5"].routing.routes,
+					aRoutesToTest = removeLegacyRoutes(aRoutes),
 					oRouter = TestUtil.createRouterFromManifest(oManifest),
 					oMockComponent = {
 						getRouter: function () {
@@ -36,33 +35,36 @@ function (UsageTracker, TestUtil) {
 				oRouter.getConfig = function () {
 					return oManifest["sap.ui5"].routing;
 				};
+				this.aRoutesToTest = aRoutesToTest;
 				this.oRouter = oRouter;
 				this.oTracker = new UsageTracker(oMockComponent);
 				this.stubGetTitle = sinon.stub(this.oTracker, "_composeDefaultPageTitleFromRoute").returns(""); // not relevant to this test
 				done();
-			},
-			after: function () {
-				this.oTracker.destroy();
-				this.oTracker = null;
-				this.oRouter.destroy();
-				this.oRouter = null;
-			}
-		});
+			}.bind(this))
+			.catch(function(error) {
+				assert.ok(false, "Could not load manifest.json file: " + error);
+				done();
+			});
+		},
+		after: function () {
+			this.oTracker.destroy();
+			this.oTracker = null;
+			this.oRouter.destroy();
+			this.oRouter = null;
+		}
+	});
 
-		aRoutesToTest.forEach(function (oRouteConfig) {
-			var sRouteName = oRouteConfig.name;
 
-			QUnit.test("tracks correct section for route " + sRouteName, function (assert) {
-				var done = assert.async(),
-					oRouteMatchEventParameters = {
-						config: oRouteConfig
-					};
-				this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
-					var sSection = oPageInfo.section;
-					assert.ok(sSection, "section for route " + sRouteName + " is defined");
-					assert.ok(aSections.includes(sSection), "section " + sSection + " matches one of the main sections");
-					done();
-				});
+	QUnit.test("tracks correct section for each route", function (assert) {
+		this.aRoutesToTest.forEach(function (oRouteConfig) {
+			var sRouteName = oRouteConfig.name,
+				oRouteMatchEventParameters = {
+					config: oRouteConfig
+				};
+			this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
+				var sSection = oPageInfo.section;
+				assert.ok(sSection, "section for route " + sRouteName + " is defined");
+				assert.ok(aSections.includes(sSection), "section " + sSection + " matches one of the main sections");
 			});
 		}, this);
 	});
