@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
-	"sap/m/Title",
 	"sap/m/Text",
 	"sap/m/Label",
 	"sap/m/Image",
@@ -13,7 +12,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/library"
-], function (LinkDelegate, LinkItem, Title, Text, Label, Image, SimpleForm, LinkType, Button, Dialog, mobileLibrary) {
+], function (LinkDelegate, LinkItem, Text, Label, Image, SimpleForm, LinkType, Button, Dialog, mobileLibrary) {
 	"use strict";
 
 	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
@@ -123,10 +122,6 @@ sap.ui.define([
 			width: "100px"
 		});
 
-		const oTitle = new Title({
-			text: `{products>/${sProductId}/productId}`
-		});
-
 		const oTextName = new Text({
 			text: `{products>/${sProductId}/name}`
 		});
@@ -144,8 +139,8 @@ sap.ui.define([
 		});
 
 		const oForm = new SimpleForm({
+			title: `{products>/${sProductId}/productId}`,
 			content: [
-				oTitle,
 				oImage,
 				oLabelName,
 				oTextName,
