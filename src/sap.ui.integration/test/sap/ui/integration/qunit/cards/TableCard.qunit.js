@@ -617,7 +617,7 @@ sap.ui.define([
 		assert.equal(aColumns.length, 7, "Should have 7 columns.");
 
 		// Assert
-		assert.equal(oTable.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId() + "-inner", "Should have correct table aria label");
+		assert.equal(oTable.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId(), "Should have correct table aria label");
 
 		// Columns titles
 		assert.equal(aColumns[0].getHeader().getText(), oManifestContent.row.columns[0].title, "Should have correct column title");

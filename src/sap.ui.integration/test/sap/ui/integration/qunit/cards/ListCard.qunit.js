@@ -53,6 +53,7 @@ sap.ui.define([
 			"type": "List",
 			"header": {
 				"title": "L3 Request list content Card",
+				"titleMaxLines": 1,
 				"subTitle": "Card subtitle",
 				"icon": {
 					"src": "sap-icon://accept"
@@ -836,7 +837,8 @@ sap.ui.define([
 		var oManifestData = oManifest_ListCard["sap.card"].content.data.json;
 
 		// Assert
-		assert.equal(oList.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId() + "-inner", "Should have correct table aria label");
+		assert.equal(oList.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId(), "Should have correct aria label");
+		assert.ok(document.getElementById(oList.getAriaLabelledBy()[0]), "The element used for aria-labelledBy exists.");
 
 		// Assert
 		assert.ok(oContent, "List Card content form manifest should be set");
