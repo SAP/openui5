@@ -4302,7 +4302,7 @@ sap.ui.define([
 
 		this.oTable.setBusy(false);
 		this.oTable.setBusy(true, "customBusySection");
-		assert.ok(oControlSetBusy.calledWithExactly(true, "sapUiTableGridCnt"), "Control#setBusy");
+		assert.ok(oControlSetBusy.calledWithExactly(true, "sapUiTableCnt"), "Control#setBusy");
 		this.oTable.setBusy(true);
 		this.oTable.setBusy(false);
 		this.oTable.setBusy();

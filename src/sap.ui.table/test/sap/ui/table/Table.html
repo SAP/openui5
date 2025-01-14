@@ -49,11 +49,13 @@
 		}
 	}
 
+	const oTitle = new sap.m.Title({text: "Title of the Table", titleStyle: "H3"});
 	const oTable = new sap.ui.table.Table({
-		extension: new sap.m.Title({text: "Title of the Table", titleStyle: "H3"}),
+		extension: oTitle,
 		footer: "Footer of the Table",
 		rowMode: "Auto",
 		firstVisibleRow: 1,
+		ariaLabelledBy: oTitle,
 		noData: new sap.m.IllustratedMessage({
 			illustrationType: sap.m.IllustratedMessageType.NoSearchResults,
 			title: "No Items found",

@@ -213,8 +213,8 @@ sap.ui.define([
 				const oMenuOpenSpy = sinon.stub(ColumnMenu.prototype, "open");
 
 				for (let i = 0; i < 6; i++) {
-					triggerClick(aColumnHeaders[i]);
-					if (aColumnHeaders[i].getAttribute("colspan")) {
+					triggerClick(aColumnHeaders[i + 1]);
+					if (aColumnHeaders[i + 1].getAttribute("colspan")) {
 						assert.ok(oMenuOpenSpy.notCalled, "Menu#open not called because of the colspan attribute");
 					} else {
 						assert.ok(oMenuOpenSpy.calledOnceWithExactly(
@@ -228,6 +228,6 @@ sap.ui.define([
 				done();
 			});
 		});
-		triggerClick(aColumnHeaders[3]);
+		triggerClick(aColumnHeaders[4]);
 	});
 });

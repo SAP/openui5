@@ -1017,6 +1017,12 @@ sap.ui.define([
 		await nextUIUpdate();
 		assert.ok(!TableUtils.isBusyIndicatorVisible(oTable),
 			"The tables busy indicator is not visible, but a cells busy indicator is visible: Returned false");
+
+		oTable.setCreationRow(new CreationRow());
+		oTable.setBusy(true);
+		await nextUIUpdate();
+		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
+			"The tables busy indicator is visible, but doesn't cover the CreationRow");
 	});
 
 	QUnit.test("isA", function(assert) {
