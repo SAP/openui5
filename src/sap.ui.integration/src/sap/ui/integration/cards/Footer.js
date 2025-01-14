@@ -221,7 +221,7 @@ sap.ui.define([
 					oPaginator.openDialog();
 				},
 				visible: oPaginator.getPageCount() > 1
-			});
+			}).addStyleClass("sapFCardFooterShowMoreButton");
 
 			oPaginator.attachEvent("_ready", () => {
 				oMore.setVisible(oPaginator.getPageCount() > 1);
