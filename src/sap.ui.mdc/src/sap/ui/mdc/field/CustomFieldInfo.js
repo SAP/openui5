@@ -86,7 +86,9 @@ sap.ui.define([
 		if (!CustomFieldInfo._oBox) {
 			CustomFieldInfo._oBox = Control.extend("sap.ui.mdc.field.CustomFieldInfoBox", {
 
-				metadata: {},
+				metadata: {
+					library: "sap.ui.mdc"
+				},
 
 				renderer: {
 					apiVersion: 2,

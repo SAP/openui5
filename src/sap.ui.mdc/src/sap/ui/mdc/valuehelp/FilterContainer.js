@@ -32,6 +32,7 @@ sap.ui.define(
 		const FilterContainer = IFilterContainer.extend(
 			"sap.ui.mdc.valuehelp.FilterContainer", {
 				metadata: {
+					library: "sap.ui.mdc",
 					aggregations: {
 
 						/**

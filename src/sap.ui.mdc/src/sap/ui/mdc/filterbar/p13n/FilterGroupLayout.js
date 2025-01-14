@@ -18,6 +18,9 @@ sap.ui.define(['sap/ui/core/Control'], (Control) => {
 	 * @alias sap.ui.mdc.filterbar.p13n.FilterGroupLayout
 	 */
 	const FilterGroupLayout = Control.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
+		metadata: {
+			library: "sap.ui.mdc"
+		},
 		renderer: {
 			apiVersion: 2,
 			render: function(oRm, oControl) {

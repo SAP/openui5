@@ -27,7 +27,11 @@ sap.ui.define([
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.p13n.TableContainer
 	 */
-	const TableContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.TableContainer");
+	const TableContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.TableContainer", {
+		metadata: {
+			library: "sap.ui.mdc"
+		}
+	});
 
 	TableContainer.prototype.init = function() {
 		IFilterContainer.prototype.init.apply(this, arguments);

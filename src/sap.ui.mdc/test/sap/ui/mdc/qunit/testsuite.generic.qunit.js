@@ -344,6 +344,9 @@ sap.ui.define([
 					filterConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
 					propertyInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings
 				}
+			},
+			"sap.ui.mdc.table.ColumnHeaderLabel": {
+				moduleName: "sap/ui/mdc/table/Column"
 			}
 		}
 	});

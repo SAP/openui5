@@ -1489,6 +1489,7 @@ sap.ui.define([
 
 		var IntervalPlaceholder = Control.extend("sap.m.SinglePlanningCalendarMonthGrid._internal.IntervalPlaceholder", {
 			metadata: {
+				library: "sap.m",
 				properties: {
 					date: { type: "object", group: "Data" }
 				}

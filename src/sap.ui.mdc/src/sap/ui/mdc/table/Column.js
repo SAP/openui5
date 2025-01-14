@@ -317,6 +317,7 @@ sap.ui.define([
 	// select controls on the UI for editing.
 	const ColumnHeaderLabel = Control.extend("sap.ui.mdc.table.ColumnHeaderLabel", {
 		metadata: {
+			library: "sap.ui.mdc",
 			"final": true,
 			aggregations: {
 				label: { type: "sap.m.Label", multiple: false }

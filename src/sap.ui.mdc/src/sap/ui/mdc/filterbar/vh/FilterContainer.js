@@ -18,7 +18,11 @@ sap.ui.define([
 		 * @alias sap.ui.mdc.filterbar.vh.FilterContainer
 		 * @deprecated since 1.124.0 - Please use the <code>sap.ui.mdc.valuehelp.FilterContainer</code> control instead.
 		 */
-		const FilterContainer = ValueHelpFilterContainer.extend("sap.ui.mdc.filterbar.vh.FilterContainer");
+		const FilterContainer = ValueHelpFilterContainer.extend("sap.ui.mdc.filterbar.vh.FilterContainer", {
+			metadata: {
+				library: "sap.ui.mdc"
+			}
+		});
 
 		return FilterContainer;
 	}

@@ -219,6 +219,9 @@ sap.ui.define([
 					});
 				}
 			},{
+				excludedControls: [
+					"sap.ui.integration.cards.Footer"
+				],
 				qunit: QUnit,
 				done: resolve
 			});

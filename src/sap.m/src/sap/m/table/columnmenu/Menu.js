@@ -463,6 +463,7 @@ sap.ui.define([
 
 	var AssociativeControl = Control.extend("sap.m.table.columnmenu.AssociativeControl", {
 		metadata: {
+			library: "sap.m",
 			"final": true,
 			properties: {
 				height: {type: "boolean", defaultValue: false}
