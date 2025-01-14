@@ -373,7 +373,7 @@
 								press="handlePress">
 								<mdcField:fieldInfo>
 									<mdcField:CustomFieldInfo id="F8-I" >
-										<form:SimpleForm layout="ResponsiveGridLayout" editable="false"
+										<form:SimpleForm layout="ColumnLayout" editable="false"
 											title="Product details">
 										<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
 										<m:Text text="{ProductId}"></m:Text>
