@@ -95,7 +95,8 @@ sap.ui.define(["sap/ui/core/ControlBehavior", 'sap/ui/core/library', 'sap/ui/cor
 			oRm.accessibilityState(oCheckBox, {
 				role: "presentation",
 				selected: null,
-				required: null
+				required: null,
+				labelledby: null
 			});
 		} else {
 			if (bInteractive) {
