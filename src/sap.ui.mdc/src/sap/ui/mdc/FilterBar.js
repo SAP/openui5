@@ -2,22 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/p13n/subcontroller/FilterController',
-	'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController',
+	"sap/ui/mdc/p13n/subcontroller/FilterController",
+	"sap/ui/mdc/p13n/subcontroller/AdaptFiltersController",
 	"sap/ui/mdc/filterbar/aligned/FilterContainer",
 	"sap/ui/mdc/filterbar/aligned/FilterItemLayout",
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
-	'sap/m/library',
-	'sap/m/Button',
+	"sap/m/library",
+	"sap/m/Button",
 	"sap/base/util/merge",
-	'sap/base/Log',
-	"sap/ui/core/library",
+	"sap/base/Log",
 	"sap/ui/mdc/enums/FilterBarP13nMode"
-], (FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary, FilterBarP13nMode) => {
+], (FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, FilterBarP13nMode) => {
 	"use strict";
-
-	const { HasPopup } = CoreLibrary.aria;
 
 	/**
 	 *
@@ -158,12 +155,11 @@ sap.ui.define([
 				text: "{" + FilterBarBase.INNER_MODEL_NAME + ">/_filterCount}",
 				press: this.onAdaptFilters.bind(this)
 			});
-			this._btnAdapt.setAriaHasPopup(HasPopup.Dialog);
 			this._btnAdapt.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
 
 			this._btnAdapt.bindProperty("visible", {
 				parts: [{
-					path: '/showAdaptFiltersButton',
+					path: "/showAdaptFiltersButton",
 					model: FilterBarBase.INNER_MODEL_NAME
 				}, {
 					path: "/_p13nModeItem",
@@ -178,7 +174,7 @@ sap.ui.define([
 			this._btnSearch.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
 			this._btnSearch.bindProperty("visible", {
 				parts: [{
-					path: '/showGoButton',
+					path: "/showGoButton",
 					model: FilterBarBase.INNER_MODEL_NAME
 				}, {
 					path: "/liveMode",
