@@ -24,8 +24,11 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	// shortcut for sap.ui.core.TextDirection
+	// shortcut for sap.m.EmptyIndicatorMode
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
+
+	// shortcut for sap.m.ReactiveAreaMode
+	var ReactiveAreaMode = mobileLibrary.ReactiveAreaMode;
 
 	// shortcut for library resource bundle
 	var oRb = Library.getResourceBundleFor("sap.m");
@@ -270,6 +273,31 @@ sap.ui.define([
 		on6.destroy();
 		on7.destroy();
 
+	});
+
+	QUnit.test("reactiveAreaMode", async function(assert) {
+		// Prepare
+		var oObjectNumber = new ObjectNumber({
+			number: "123",
+			unit: "KG",
+			active: true
+		});
+
+		oObjectNumber.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oObjectNumber.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added by default");
+
+		// Act
+		oObjectNumber.setReactiveAreaMode(ReactiveAreaMode.Overlay);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oObjectNumber.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added");
+
+		// Clean
+		oObjectNumber.destroy();
 	});
 
 	QUnit.module("Screen reader support", {
