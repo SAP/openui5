@@ -1258,7 +1258,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Get currency format pattern for the given context.
+		 * Gets the currency format pattern for the given context and alternative.
 		 *
 		 * CLDR format pattern:
 		 *
@@ -1274,13 +1274,18 @@ sap.ui.define([
 		 *
 		 * @see https://cldr.unicode.org/translation/numbers-currency/number-patterns
 		 *
-		 * @param {"accounting"|"standard"} sContext the context of the currency pattern
-		 * @returns {string} The pattern
+		 * @param {"accounting"|"sap-accounting"|"sap-standard"|"standard"} sContext
+		 *   The context of the currency pattern; "sap-" prefix is used for the trailing currency code variant
+		 * @param {"alphaNextToNumber"|"noCurrency"} [sAlternative]
+		 *   The alternate currency pattern
+		 * @returns {string|undefined}
+		 *   The currency format pattern for the given parameters; <code>undefined</code> if no corresponding pattern is
+		 *   found
+		 *
 		 * @public
 		 */
-		getCurrencyPattern: function(sContext) {
-			// Undocumented contexts for NumberFormat internal use: "sap-standard" and "sap-accounting"
-			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
+		getCurrencyPattern: function (sContext, sAlternative) {
+			return this._get("currencyFormat")[sAlternative ? sContext + "-" + sAlternative : sContext];
 		},
 
 		getCurrencySpacing: function(sPosition) {
@@ -1787,81 +1792,55 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the short decimal format (like 1K, 1M....) of the given number in the given style and plural
-		 * category.
+		 * Returns the compact decimal format (like "000K" or "0M") for the given power of ten in the given style and
+		 * plural category.
 		 *
-		 * @param {"long"|"short"} sStyle the style
-		 * @param {string} sNumber the number in string representation as power of ten, for example "1000" or "10000"
-		 * @param {"one"|"other"} [sPlural="other"]
-		 *   the plural category; defaults to "other" if the given plural category does not exist for this locale
-		 * @returns {string} the short decimal format
+		 * @param {"long"|"short"|"short-indian"} sStyle
+		 *   The style; "short-indian" is only available since 1.133.0 for the "en-IN" locale
+		 * @param {string} sPowerOfTen
+		 *   The power of ten, for example "1000" or "10000"
+		 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
+		 *   The plural category; defaults to "other" if the given plural category does not exist for this locale
+		 * @returns {string|undefined}
+		 *   The compact decimal format, or <code>undefined</code> if no decimal format for the given parameters is
+		 *   found
+		 *
 		 * @public
 		 * @since 1.25.0
 		 */
-		getDecimalFormat: function(sStyle, sNumber, sPlural) {
+		getDecimalFormat: function(sStyle, sPowerOfTen, sPlural = "other") {
+			const oFormats = this._get("decimalFormat-" + sStyle);
 
-			var sFormat;
-			var oFormats;
-
-			switch (sStyle) {
-			case "long":
-				oFormats = this._get("decimalFormat-long");
-				break;
-
-			default: //short
-				oFormats = this._get("decimalFormat-short");
-				break;
-			}
-
-			if (oFormats) {
-				var sName = sNumber + "-" + sPlural;
-				sFormat = oFormats[sName];
-				if (!sFormat) {
-					sName = sNumber + "-other";
-					sFormat = oFormats[sName];
-				}
-			}
-
-			return sFormat;
-
+			return oFormats && (oFormats[sPowerOfTen + "-" + sPlural] || oFormats[sPowerOfTen + "-other"]);
 		},
 
 		/**
-		 * Returns the short currency format (like 1K USD, 1M USD....) of the given number in the given style and
-		 * plural category.
+		 * Returns the compact currency format (like "¤000K" or "¤0M") for the given power of ten in the given style,
+		 * plural category, and alternative.
 		 *
-		 * @param {"short"} sStyle the style
-		 * @param {string} sNumber the number in string representation as power of ten, for example "1000" or "10000"
+		 * @param {"short"|"sap-short"|"short-indian"|"sap-short-indian"} sStyle
+		 *   The style; "short-indian" and "sap-short-indian" are only available since 1.133.0 for the "en-IN" locale;
+		 *   "sap-" prefix is used for the trailing currency code variant
+		 * @param {string} sPowerOfTen
+		 *   The power of ten, for example "1000" or "10000"
 		 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
-		 *   the plural category; defaults to "other" if the given plural category does not exist for this locale
-		 * @returns {string} the short currency format
+		 *   The plural category; defaults to "other" if the given plural category does not exist for this locale
+		 * @param {"alphaNextToNumber"|"noCurrency"} [sAlternative]
+		 *   The alternate currency format; since 1.133.0
+		 * @returns {string|undefined}
+		 *   The compact currency format, or <code>undefined</code> if no currency format for the given parameters is
+		 *   found
+		 *
 		 * @public
 		 * @since 1.51.0
 		 */
-		getCurrencyFormat: function(sStyle, sNumber, sPlural) {
+		getCurrencyFormat: function(sStyle, sPowerOfTen, sPlural = "other", sAlternative = undefined) {
+			const oFormats = this._get("currencyFormat-" + sStyle);
+			const sAlternativeSuffix = sAlternative ? "-" + sAlternative : "";
 
-			var sFormat;
-			var oFormats = this._get("currencyFormat-" + sStyle);
-
-			// Defaults to "short" if not found
-			if (!oFormats) {
-				if (sStyle === "sap-short") {
-					throw new Error("Failed to get CLDR data for property \"currencyFormat-sap-short\"");
-				}
-				oFormats = this._get("currencyFormat-short");
-			}
-
-			if (oFormats) {
-				var sName = sNumber + "-" + sPlural;
-				sFormat = oFormats[sName];
-				if (!sFormat) {
-					sName = sNumber + "-other";
-					sFormat = oFormats[sName];
-				}
-			}
-
-			return sFormat;
-
+			return oFormats
+				&& (oFormats[sPowerOfTen + "-" + sPlural + sAlternativeSuffix]
+					|| oFormats[sPowerOfTen + "-other" + sAlternativeSuffix]);
 		},
 
 		/**

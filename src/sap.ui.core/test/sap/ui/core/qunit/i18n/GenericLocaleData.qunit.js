@@ -138,7 +138,21 @@ sap.ui.define([
 		assert.equal(typeof oLocaleData.getPluralCategory("123.456"), "string", "getPluralCategory(\"123.456\")");
 
 		assert.equal(typeof oLocaleData.getDecimalPattern(), "string", "getDecimalPattern");
-		assert.equal(typeof oLocaleData.getCurrencyPattern(), "string", "getCurrencyPattern");
+		assert.strictEqual(typeof oLocaleData.getCurrencyPattern("accounting"), "string", "getCurrencyPattern");
+		assert.strictEqual(typeof oLocaleData.getCurrencyPattern("sap-accounting"), "string");
+		assert.strictEqual(typeof oLocaleData.getCurrencyPattern("standard"), "string");
+		assert.strictEqual(typeof oLocaleData.getCurrencyPattern("sap-standard"), "string");
+		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("short", "100000000", "other"), "string",
+			"getCurrencyFormat");
+		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("sap-short", "100000000", "other"), "string");
+		assert.strictEqual(typeof oLocaleData.getDecimalFormat("short", "100000000"), "string", "getDecimalFormat");
+		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("short-indian", "100000000", "other"),
+			sLocale === "en_IN" ? "string" : "undefined", "short-indian");
+		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("sap-short-indian", "100000000", "other"),
+			sLocale === "en_IN" ? "string" : "undefined");
+		assert.strictEqual(typeof oLocaleData.getDecimalFormat("short-indian", "100000000"),
+			sLocale === "en_IN" ? "string" : "undefined");
+
 		assert.equal(typeof oLocaleData.getPercentPattern(), "string", "getPercentPattern");
 		assert.equal(typeof oLocaleData.getMiscPattern("approximately"), "string", "getMiscPattern approximately");
 		assert.equal(typeof oLocaleData.getMiscPattern("atLeast"), "string", "getMiscPattern atLeast");
@@ -386,6 +400,26 @@ sap.ui.define([
 			assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 			assert.equal(oLocaleData.getEras("abbreviated")[1], "AD", "Abbreviated Era Name");
 			assert.equal(oLocaleData.getEras("abbreviated")[0], "BC", "Abbreviated Era Name");
+		},
+
+		en_IN(assert, oLocaleData) {
+			const sPowerOfTen = "100000000000000";
+			const sAlternative = "alphaNextToNumber";
+			assert.strictEqual(oLocaleData.getCurrencyFormat("short", sPowerOfTen, "one"), "\xa4000T");
+			assert.strictEqual(oLocaleData.getCurrencyFormat("short", sPowerOfTen, "one", sAlternative),
+				"\xa4\xa0000T");
+			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short", sPowerOfTen, "other"), "000T\xa0¤");
+			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short", sPowerOfTen, "one", sAlternative),
+				undefined);
+			assert.strictEqual(oLocaleData.getCurrencyFormat("short-indian", sPowerOfTen, "one"), "\xa4000 Lk Cr");
+			assert.strictEqual(oLocaleData.getCurrencyFormat("short-indian", sPowerOfTen, "one", sAlternative),
+				"\xa4\xa0000 Lk Cr");
+			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short-indian", sPowerOfTen, "other"),
+				"000 Lk Cr\xa0¤");
+			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short-indian", sPowerOfTen, "one", sAlternative),
+				undefined);
+			assert.strictEqual(oLocaleData.getDecimalFormat("short-indian", sPowerOfTen), "000 Lk Cr");
+			assert.strictEqual(oLocaleData.getDecimalFormat("short", sPowerOfTen), "000T");
 		},
 
 		en_ZA: function customTests_en_ZA(assert, oLocaleData) {
@@ -708,7 +742,7 @@ sap.ui.define([
 	});
 
 [
-	"ar_SA", "de_AT", "de_CH", "de_DE", "da_DK", "en_AU", "en_CA", "en_GB", "en_US", "en_ZA",
+	"ar_SA", "de_AT", "de_CH", "de_DE", "da_DK", "en_AU", "en_CA", "en_GB", "en_IN", "en_US", "en_ZA",
 	"es_MX", "es_ES", "fa_IR", "fr_FR", "fr_CA", "fr_BE", "ja_JP", "id_ID", "it_IT", "ru_RU",
 	"sr_Latn", "sr", "pt_BR", "pt_PT", "hi_IN", "he_IL", "tr_TR", "nl_BE", "nl_NL", "pl_PL",
 	"ko_KR", "th_TH", "zh_SG", "zh_TW", "zh_CN", "de_XX", "xx_XX"
