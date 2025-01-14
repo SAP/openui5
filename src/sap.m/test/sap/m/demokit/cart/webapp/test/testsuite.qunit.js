@@ -12,6 +12,7 @@ sap.ui.define(() => {
 				version: 1
 			},
 			ui5: {
+				language: "en",
 				theme: "sap_horizon"
 			},
 			loader: {
