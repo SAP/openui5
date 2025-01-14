@@ -64,7 +64,8 @@ sap.ui.define([
 		}
 
 		var oContent = new Content({
-			card: oCard
+			card: oCard,
+			overflowWithShowMore: mConfig.overflowWithShowMore
 		});
 
 		if (oContent instanceof AdaptiveContent) {

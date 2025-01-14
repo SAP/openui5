@@ -353,6 +353,11 @@
 					"pattern": "cardActions",
 					"name": "cardActions",
 					"target": "cardActions"
+				},
+				{
+					"pattern": "fixedHeight",
+					"name": "fixedHeight",
+					"target": "fixedHeight"
 				}
 			],
 			"targets": {
@@ -627,7 +632,12 @@
 				},
 				"cardActions": {
 					"id": "cardActions",
-					"name": "cardActions",
+					"name": "CardActions",
+					"level": 1
+				},
+				"fixedHeight": {
+					"id": "fixedHeight",
+					"name": "FixedHeight",
 					"level": 1
 				}
 			}

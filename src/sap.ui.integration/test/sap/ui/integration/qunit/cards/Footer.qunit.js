@@ -1,15 +1,21 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/integration/library",
 	"sap/ui/integration/cards/Footer",
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
+	library,
 	Footer,
 	Card,
+	nextUIUpdate,
 	nextCardReadyEvent
 ) {
 	"use strict";
+
+	const CardOverflow = library.CardOverflow;
 
 	QUnit.module("Footer", {
 		beforeEach: function () {
@@ -429,5 +435,187 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(oSnackCard.getCardFooter().getShowCloseButton(), true, "Close Button is visible");
 		assert.ok(oSnackCard.getCardFooter().getDomRef().querySelector("#" + sFooterId + "-closeBtn"), "Close Button is rendered in DOM");
+	});
+
+	QUnit.module("Footer detectVisibility", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
+				overflow: CardOverflow.ShowMore
+			});
+			this.oCard.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Footer visibility with buttons", async function (assert) {
+		const oCard = this.oCard;
+		const oManifest = {
+			"sap.app": {
+				id: "card.test.footer.detectVisibility1"
+			},
+			"sap.card": {
+				type: "List",
+				data: {
+					json: []
+				},
+				header: {
+					title: "Test Card"
+				},
+				content: {
+					item: {
+						title: "{title}"
+					}
+				},
+				footer: {
+					actionsStrip: [
+						{
+							text: "Action"
+						}
+					]
+				}
+			}
+		};
+
+		// Act
+		oCard.setManifest(oManifest);
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		const oFooter = oCard.getCardFooter();
+
+		assert.ok(oFooter.getDetectVisibility(), "Property detectVisibility is true when card is overflow=ShowMore");
+		assert.ok(oFooter.getVisible(), "Footer is visible when there is a button");
+	});
+
+	QUnit.test("Footer visibility with buttons", async function (assert) {
+		const oCard = this.oCard;
+		const oManifest = {
+			"sap.app": {
+				id: "card.test.footer.detectVisibility2"
+			},
+			"sap.card": {
+				type: "List",
+				data: {
+					json: []
+				},
+				header: {
+					title: "Test Card"
+				},
+				content: {
+					item: {
+						title: "{title}"
+					}
+				},
+				footer: {
+					actionsStrip: [
+						{
+							text: "Action",
+							visible: false
+						}
+					]
+				}
+			}
+		};
+
+		// Act
+		oCard.setManifest(oManifest);
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		const oFooter = oCard.getCardFooter();
+
+		assert.notOk(oFooter.getVisible(), "Footer is not visible when all buttons are not visible");
+	});
+
+	QUnit.test("Footer visibility without buttons", async function (assert) {
+		const oCard = this.oCard;
+		const oManifest = {
+			"sap.app": {
+				id: "card.test.footer.detectVisibility3"
+			},
+			"sap.card": {
+				type: "List",
+				data: {
+					json: []
+				},
+				header: {
+					title: "Test Card"
+				},
+				content: {
+					item: {
+						title: "{title}"
+					}
+				}
+			}
+		};
+
+		// Act
+		oCard.setManifest(oManifest);
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		const oFooter = oCard.getCardFooter();
+
+		assert.ok(oFooter, "Footer is created even when there are no buttons");
+		assert.notOk(oFooter.getVisible(), "Footer is not visible");
+	});
+
+	QUnit.module("Footer showMore button", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
+				overflow: CardOverflow.ShowMore
+			});
+			this.oCard.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Footer visibility and showMore button", async function (assert) {
+		const oCard = this.oCard;
+		const oManifest = {
+			"sap.app": {
+				id: "card.test.footer.showMoreButton"
+			},
+			"sap.card": {
+				type: "List",
+				data: {
+					json: []
+				},
+				header: {
+					title: "Test Card"
+				},
+				content: {
+					item: {
+						title: "{title}"
+					}
+				}
+			}
+		};
+
+		// Act
+		oCard.setManifest(oManifest);
+		await nextCardReadyEvent(this.oCard);
+
+		// Assert
+		const oFooter = oCard.getCardFooter();
+
+		assert.notOk(oFooter.getVisible(), "Footer is not visible if no showMore");
+
+		// Act
+		oFooter.setShowMoreButton(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oFooter.getVisible(), "Footer is visible when there is a showMore button");
+
+		const oShowMoreButton = oFooter.getAggregation("_showMore");
+		assert.ok(oShowMoreButton, "Show more button is created");
+		assert.ok(oShowMoreButton.getVisible(), "Show more button is visible");
 	});
 });

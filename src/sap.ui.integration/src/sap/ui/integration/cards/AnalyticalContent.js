@@ -128,7 +128,7 @@ sap.ui.define([
 	AnalyticalContent.prototype.createLoadingPlaceholder = function (oConfiguration) {
 		return new AnalyticalPlaceholder({
 			chartType: oConfiguration.chartType,
-			minHeight: AnalyticalContentRenderer.getMinHeight(oConfiguration)
+			minHeight: this.getOverflowWithShowMore() ? 0 : AnalyticalContentRenderer.getMinHeight(oConfiguration)
 		});
 	};
 
@@ -221,6 +221,13 @@ sap.ui.define([
 		if (oResolvedConfiguration.popover && oResolvedConfiguration.popover.active) {
 			this._attachPopover();
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	AnalyticalContent.prototype._supportsOverflow = function () {
+		return false;
 	};
 
 	AnalyticalContent.prototype._updateChart = function () {

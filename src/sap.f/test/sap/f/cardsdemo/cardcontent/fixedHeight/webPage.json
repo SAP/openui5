@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.samples.fixedHeight.webPage",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "WebPage",
+		"configuration": {
+			"parameters": {
+				"minHeight": {
+					"label": "Minimum Content Height",
+					"description": "Minimum height of the content",
+					"type": "string",
+					"value": "50rem"
+				}
+			}
+		},
+		"header": {
+			"title": "OpenUI5 Events",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			}
+		},
+		"content": {
+			"src": "https://openui5.org/events",
+			"sandbox": "allow-scripts allow-popups allow-downloads",
+			"minHeight": "{parameters>/minHeight/value}",
+			"allowFullscreen": true
+		}
+	}
+}

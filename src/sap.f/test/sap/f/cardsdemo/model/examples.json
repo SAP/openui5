@@ -66,6 +66,12 @@
 		"group": "Card Type Examples"
 	},
 	{
+		"title": "Fixed Height",
+		"description": "The cards have fixed height and an overlay to represent it.",
+		"route": "fixedHeight",
+		"group": "Layout Examples"
+	},
+	{
 		"title": "Fit Container",
 		"description": "The cards fit the whole container allowing it to dynamically change their sizes.",
 		"route": "splitter",
