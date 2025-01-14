@@ -85,13 +85,8 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.None});
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: false});
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(4);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
-			Util.P13nDialogInfo.Titles.sort,
-			Util.P13nDialogInfo.Titles.filter,
-			Util.P13nDialogInfo.Titles.group,
-			Util.P13nDialogInfo.Titles.columns
-		]);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
+		Then.onTheAppMDCTable.iShouldSeeTableSettingsButton();
 	});
 
 	opaTest("Sort with column menu quick action", function(Given, When, Then) {
@@ -119,54 +114,6 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
-	opaTest("Sort with column menu item", function(Given, When, Then) {
-		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
-		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		When.onTheAppMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.sort);
-
-		When.onTheAppMDCTable.iSortByColumnInColumnMenuItemContent("Name");
-		When.onTheAppMDCTable.iPressConfirmInColumnMenuItemContent();
-		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
-
-		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
-		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		When.onTheAppMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItemContent(Util.P13nDialogInfo.Titles.sort);
-		Then.onTheAppMDCTable.iShouldSeeSortedByColumnInColumnMenuItem("Name");
-		Then.onTheAppMDCTable.iShouldSeeSortDirectionInColumnMenuItem(false);
-		When.onTheAppMDCTable.iPressConfirmInColumnMenuItemContent();
-		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
-
-		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
-		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.None});
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: true});
-		When.onTheAppMDCTable.iCloseTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
-
-		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Product Name");
-		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Name", label: "Name", sortOrder: coreLibrary.SortOrder.Ascending});
-		When.onTheAppMDCTable.iCloseTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
-	});
-
-	opaTest("Reset changes", function(Given, When, Then) {
-		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
-		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		When.onTheAppMDCTable.iPressOnColumnMenuItem(Util.P13nDialogInfo.Titles.sort);
-		When.onTheAppMDCTable.iPressResetInColumnMenuItemContent();
-		When.onTheAppMDCTable.iNavigateBackFromColumnMenuItemContent();
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Category", label: "Category", sortOrder: coreLibrary.SortOrder.None});
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Category", label: "Category", grouped: true});
-	});
-
-	opaTest("Close column menu", function(Given, When, Then) {
-		When.onTheAppMDCTable.iCloseTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
-	});
-
 	opaTest("Group with column menu quick action", function(Given, When, Then) {
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
@@ -186,6 +133,15 @@ sap.ui.define([
 		When.onTheApp.iGetTheTableInstance(sTableId, function(oTable) {
 			oTable._setShowP13nButton(true);
 		});
+	});
+
+	opaTest('Open P13nDialog via the column menu', function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+		Then.onTheAppMDCTable.iShouldSeeTableSettingsButton();
+		When.onTheAppMDCTable.iPressTableSettingsButton();
+		Then.P13nAssertions.iShouldSeeTheP13nDialog();
+		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 
 	QUnit.module("DataStateIndicator");

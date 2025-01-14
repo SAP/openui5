@@ -1,21 +1,21 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/rta/test/variantManagement/SmartLinkUtil",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/BindingMode",
-	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/initial/api/InitialFlexAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/Utils"
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/BindingMode",
+	"sap/ui/rta/test/variantManagement/SmartLinkUtil"
 ], function(
-	UIComponent,
-	SmartLinkUtil,
 	MockServer,
-	BindingMode,
-	ODataModel,
+	UIComponent,
+	InitialFlexAPI,
+	FlexUtils,
 	JSONModel,
-	FeaturesAPI,
-	FlexUtils
+	ODataModel,
+	BindingMode,
+	SmartLinkUtil
 ) {
 	"use strict";
 
@@ -77,7 +77,7 @@ sap.ui.define([
 			this.setModel(oAppModel, "app");
 
 			if (!FlexUtils.getUshellContainer()) {
-				FeaturesAPI.isKeyUser()
+				InitialFlexAPI.isKeyUser()
 				.then(function(bIsKeyUser) {
 					oAppModel.setProperty("/showAdaptButton", bIsKeyUser);
 				});

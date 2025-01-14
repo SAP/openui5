@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Lib",
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/initial/api/InitialFlexAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -17,7 +17,7 @@ sap.ui.define([
 	Control,
 	Lib,
 	UIComponent,
-	FeaturesAPI,
+	InitialFlexAPI,
 	PersistenceWriteAPI,
 	Layer,
 	FlexUtils,
@@ -28,7 +28,7 @@ sap.ui.define([
 
 	function checkKeyUser(sLayer) {
 		if (Layer.CUSTOMER === sLayer) {
-			return FeaturesAPI.isKeyUser()
+			return InitialFlexAPI.isKeyUser()
 			.then(function(bIsKeyUser) {
 				if (!bIsKeyUser) {
 					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");

@@ -7,5 +7,6 @@
 		<tnt:NavigationListItem icon="sap-icon://locked" key="privacy" text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
 		<tnt:NavigationListItem icon="sap-icon://permission" text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}" />
 		<tnt:NavigationListItem icon="sap-icon://document-text" key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" visible="{=!${versionData>/isOpenUI5}}" />
+		<tnt:NavigationListItem icon="sap-icon://user-settings" key="cookie_preferences" text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" />
 	</tnt:NavigationList>
 </core:FragmentDefinition>

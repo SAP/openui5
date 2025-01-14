@@ -66,6 +66,18 @@ sap.ui.define([
 				 */
 				iShouldSeeTheFilterDialog: function() {
 					return this.iShouldSeeDialogTitle(P13nArrangement.P13nDialog.Titles.filter);
+				},
+
+				/** Checks if the p13n dialog is open.
+				 *
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTheP13nDialog: function() {
+					return this.iShouldSeeDialogTitle(P13nArrangement.P13nDialog.Titles.settings);
+				},
+
+				iShouldSeeFiltersInPanel: function(aFilters) {
+					return this.iShouldSeeFiltersInPanelList(aFilters);
 				}
 			}
 		}

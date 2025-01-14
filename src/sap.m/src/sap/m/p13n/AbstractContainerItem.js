@@ -53,6 +53,13 @@ sap.ui.define(['sap/ui/core/Element'],
 					icon: {
 						type: "string",
 						defaultValue: null
+					},
+					/**
+					 * Item type.
+					 */
+					type: {
+						type: "string",
+						defaultValue: "Active"
 					}
 				},
 				aggregations: {

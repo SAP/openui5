@@ -181,8 +181,13 @@ sap.ui.define([
 			}.bind(this));
 
 			this._oCookiesConsentManager = this.getOwnerComponent().getCookiesConsentManager();
-
-			this._initUsageTracking();
+			this._oCookiesConsentManager.checkUserAcceptsUsageTracking(function(bAccepts) {
+				if (bAccepts) {
+					// start tracking, including the route visited at app-startup (before the check of the persisted consent-decision completed)
+					this.getOwnerComponent().getUsageTracker().start(this._aRouterCachedEventDetails);
+					this._aRouterCachedEventDetails = []; // clear the already logged route visits
+				}
+			}.bind(this));
 
 			// Config routes
 			this.oRouter = this.getRouter();
@@ -442,7 +447,7 @@ sap.ui.define([
 			} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 				this.settingsDialogOpen();
 			} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
-				this._oCookiesConsentManager.showDialog(this.getView());
+				this._oCookiesConsentManager.showPreferencesDialog(this.getView());
 			} else if (sTargetText === CHANGE_VERSION_TEXT) {
 				this.onChangeVersionButtonPress();
 			} else if (ThemePicker._getTheme()[sTargetText]) {
@@ -453,23 +458,6 @@ sap.ui.define([
 				URLHelper.redirect(sTarget, true);
 			}
 			this.sTarget = sTarget;
-		},
-
-		_initUsageTracking: function () {
-			this._oCookiesConsentManager.checkUserAcceptsUsageTracking(function(bAccepts) {
-				if (!bAccepts) {
-					return;
-				}
-				var oTracker = this.getOwnerComponent().getUsageTracker();
-
-				// track the routes visited before the usage tracker was initialized
-				this._aRouterCachedEventDetails.forEach(function(oEventDetails) {
-					oTracker.logRouteVisit(oEventDetails);
-				});
-
-				// clear the logged route visits
-				this._aRouterCachedEventDetails = [];
-			}.bind(this));
 		},
 
 		createSearchPopover: function () {

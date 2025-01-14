@@ -338,7 +338,7 @@ sap.ui.define([
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
 			assert.ok(oMenu, "Table column: header menu instance ok");
-			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			oInput = oMenu._getAllEffectiveQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "n");
 			return EditorQunitUtils.wait();
 		}).then(function () {
@@ -374,7 +374,7 @@ sap.ui.define([
 		}).then(function () {
 			oMenu = oURLColumn.getHeaderMenuInstance();
 			assert.ok(oMenu, "Table column: header menu instance ok");
-			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			oInput = oMenu._getAllEffectiveQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "http:");
 			return EditorQunitUtils.wait();
 		}).then(function () {
@@ -451,7 +451,7 @@ sap.ui.define([
 		}).then(function () {
 			oMenu = oKeyColumn.getHeaderMenuInstance();
 			assert.ok(oMenu, "Table column: header menu instance ok");
-			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
+			oInput = oMenu._getAllEffectiveQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "n");
 			return EditorQunitUtils.wait();
 		}).then(function() {

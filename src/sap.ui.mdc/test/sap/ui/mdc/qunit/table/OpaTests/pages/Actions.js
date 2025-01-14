@@ -609,19 +609,18 @@ sap.ui.define([
 						}],
 						success: function(aQuickSortItems) {
 							this.waitFor({
-								controlType: "sap.m.ToggleButton",
+								controlType: "sap.m.SegmentedButton",
 								matchers: [{
 									ancestor: aQuickSortItems[0]
 								}],
-								success: function(aToggleButtons) {
-									function pressButton(oButton, bShouldBePressed) {
-										if (mConfig.sortOrder === "None" && oButton.getPressed() || bShouldBePressed && !oButton.getPressed()) {
-											new Press().executeOn(oButton);
-										}
+								success: function(aSegmentedButtons) {
+									if (mConfig.sortOrder === "Ascending") {
+										new Press().executeOn(aSegmentedButtons[0].getButtons()[1]);
+									} else if (mConfig.sortOrder === "Descending") {
+										new Press().executeOn(aSegmentedButtons[0].getButtons()[2]);
+									} else {
+										new Press().executeOn(aSegmentedButtons[0].getButtons()[0]);
 									}
-
-									pressButton(aToggleButtons[0], mConfig.sortOrder === "Ascending");
-									pressButton(aToggleButtons[1], mConfig.sortOrder === "Descending");
 								},
 								errorMessage: "QuickSortItem content is not visible"
 							});
@@ -646,16 +645,13 @@ sap.ui.define([
 						}],
 						success: function(aQuickGroupItems) {
 							this.waitFor({
-								controlType: "sap.m.ToggleButton",
+								controlType: "sap.m.Switch",
 								matchers: [{
-									ancestor: aQuickGroupItems[0].getParent(),
-									properties: {
-										text: aQuickGroupItems[0].getLabel()
-									}
+									ancestor: aQuickGroupItems[0]
 								}],
-								success: function(aToggleButtons) {
-									if (mConfig.grouped && !aToggleButtons[0].getPressed() || !mConfig.grouped && aToggleButtons[0].getPressed()) {
-										new Press().executeOn(aToggleButtons[0]);
+								success: function(aSwitches) {
+									if (mConfig.grouped && !aSwitches[0].getState() || !mConfig.grouped && aSwitches[0].getState()) {
+										new Press().executeOn(aSwitches[0]);
 									}
 								},
 								errorMessage: "QuickSortItem content is not visible"
@@ -697,6 +693,26 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "Column menu QuickTotalItem not found"
+					});
+				}
+			});
+		},
+
+		iPressTableSettingsButton: function() {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					const oResourceBundle = Library.getResourceBundleFor("sap.m");
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								icon: "sap-icon://action-settings",
+								text: oResourceBundle.getText("table.COLUMNMENU_TABLE_SETTINGS")
+							}
+						}],
+						actions: new Press(),
+						errorMessage: "Table settings button not found"
 					});
 				}
 			});

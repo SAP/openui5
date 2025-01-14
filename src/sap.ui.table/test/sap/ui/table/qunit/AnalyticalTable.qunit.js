@@ -561,8 +561,9 @@ sap.ui.define([
 
 				await TableQUnitUtils.wait(0);
 
-				const oGroupButton = oColumnMenu._getAllEffectiveQuickActions()[2].getContent()[0];
-				oGroupButton.$().trigger("tap");
+				const oGroupSwitch = oColumnMenu._getAllEffectiveQuickActions()[2].getContent()[0];
+				oGroupSwitch.setState(true);
+				oGroupSwitch.fireChange();
 
 				this.oTable.getBinding().attachChange(() => {
 					this.oTable.attachEventOnce("rowsUpdated", () => {
