@@ -36,7 +36,6 @@ sap.ui.define([
 
 	const EXPAND_ICON_SRC = "sap-icon://navigation-right-arrow";
 	const COLLAPSE_ICON_SRC = "sap-icon://navigation-down-arrow";
-	const SELECTION_INDICATOR_ICON_SRC = "sap-icon://circle-task-2";
 
 	/**
 	 * Constructor for a new NavigationListItem.
@@ -485,8 +484,6 @@ sap.ui.define([
 		this._renderExternalLinkIcon(oRM);
 
 		if (bListExpanded) {
-			oRM.icon(SELECTION_INDICATOR_ICON_SRC, ["sapTntNLISelectionIndicator"]);
-
 			const oIcon = this._getExpandIconControl();
 			oIcon.setVisible(bExpanderVisible)
 				.setSrc(bExpanded ? COLLAPSE_ICON_SRC : EXPAND_ICON_SRC)
@@ -541,8 +538,6 @@ sap.ui.define([
 		this._renderIcon(oRM);
 
 		this._renderText(oRM);
-
-		oRM.icon(SELECTION_INDICATOR_ICON_SRC, ["sapTntNLISelectionIndicator"]);
 
 		this._renderExternalLinkIcon(oRM);
 
