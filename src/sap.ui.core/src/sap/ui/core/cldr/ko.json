@@ -4626,7 +4626,10 @@
 	},
 	"currencyFormat": {
 		"standard": "¤#,##0.00",
+		"standard-noCurrency": "#,##0.00",
 		"accounting": "¤#,##0.00;(¤#,##0.00)",
+		"accounting-alphaNextToNumber": "¤ #,##0.00;(¤ #,##0.00)",
+		"accounting-noCurrency": "#,##0.00;(#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[[:^S:]&[:^Z:]]",
@@ -4640,7 +4643,10 @@
 			}
 		},
 		"sap-standard": "#,##0.00¤",
-		"sap-accounting": "#,##0.00¤;(#,##0.00¤)"
+		"sap-accounting": "#,##0.00¤;(#,##0.00¤)",
+		"sap-accounting-alphaNextToNumber": "#,##0.00 ¤;(#,##0.00 ¤)",
+		"sap-standard-noCurrency": "#,##0.00",
+		"sap-accounting-noCurrency": "#,##0.00;(#,##0.00)"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
@@ -4649,18 +4655,30 @@
 		"range": "{0}~{1}"
 	},
 	"currencyFormat-short": {
-		"1000-other": "¤ 0천",
-		"10000-other": "¤ 0만",
-		"100000-other": "¤ 00만",
-		"1000000-other": "¤ 000만",
-		"10000000-other": "¤ 0000만",
-		"100000000-other": "¤ 0억",
-		"1000000000-other": "¤ 00억",
-		"10000000000-other": "¤ 000억",
-		"100000000000-other": "¤ 0000억",
-		"1000000000000-other": "¤ 0조",
-		"10000000000000-other": "¤ 00조",
-		"100000000000000-other": "¤ 000조"
+		"1000-other": "¤0천",
+		"1000-other-alphaNextToNumber": "¤ 0천",
+		"10000-other": "¤0만",
+		"10000-other-alphaNextToNumber": "¤ 0만",
+		"100000-other": "¤00만",
+		"100000-other-alphaNextToNumber": "¤ 00만",
+		"1000000-other": "¤000만",
+		"1000000-other-alphaNextToNumber": "¤ 000만",
+		"10000000-other": "¤0000만",
+		"10000000-other-alphaNextToNumber": "¤ 0000만",
+		"100000000-other": "¤0억",
+		"100000000-other-alphaNextToNumber": "¤ 0억",
+		"1000000000-other": "¤00억",
+		"1000000000-other-alphaNextToNumber": "¤ 00억",
+		"10000000000-other": "¤000억",
+		"10000000000-other-alphaNextToNumber": "¤ 000억",
+		"100000000000-other": "¤0000억",
+		"100000000000-other-alphaNextToNumber": "¤ 0000억",
+		"1000000000000-other": "¤0조",
+		"1000000000000-other-alphaNextToNumber": "¤ 0조",
+		"10000000000000-other": "¤00조",
+		"10000000000000-other-alphaNextToNumber": "¤ 00조",
+		"100000000000000-other": "¤000조",
+		"100000000000000-other-alphaNextToNumber": "¤ 000조"
 	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
