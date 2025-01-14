@@ -195,7 +195,7 @@
             <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.css</pattern>
             <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.js</pattern>
         </lib>
-        <lib name="jquery-migrate" displayName="jQuery-Migrate" npmName="jquery-migrate" version="3.3.1" hash="5421254af7837b366e32343522b87ef2" homepage="https://github.com/jquery/jquery-migrate/" id="73555000106100043843">
+        <lib name="jquery-migrate" displayName="jQuery-Migrate" npmName="jquery-migrate" version="3.3.1" hash="f0db1b18e75cbe903cedfdcf5fc4c706" homepage="https://github.com/jquery/jquery-migrate/" id="73555000106100043843">
             <license url="https://github.com/jquery/jquery-migrate/blob/3.3.1/LICENSE.txt" type="MIT" />
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery-compat.js</pattern>

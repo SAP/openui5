@@ -26,7 +26,7 @@
 	// 1. check for URL parameter
 	// 2. check for the attribute marker in the bootstrap
 	// 3. check in the global configuration object
-	if (/sap-ui-excludeJQueryCompat=(true|x)/.test(location.search)
+	if (/sap-ui-excludeJQueryCompat=(true|x)/.test(location.search) || /sap-ui-excludejquerycompat=(true|x)/.test(location.search)
 		|| (oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-excludejquerycompat") === "true")
 		|| oCfg["excludejquerycompat"] === true || oCfg["excludeJQueryCompat"] === true) {
 		return;
