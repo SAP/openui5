@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/m/table/columnmenu/QuickActionBase",
-	"sap/m/table/columnmenu/QuickSortItem"
+	"sap/m/table/columnmenu/QuickSortItem",
+	"sap/m/library"
 ], function (
 	QuickActionBase,
-	QuickSortItem
+	QuickSortItem,
+	library
 ) {
 	"use strict";
 
@@ -62,13 +64,16 @@ sap.ui.define([
 	});
 
 	QuickSort.prototype.getEffectiveQuickActions = function() {
-		var aItems = this.getItems();
 		var aEffectiveQuickActions = [];
 
 		if (this.getVisible()) {
-			aItems.forEach(function(oItem) {
+			var aItems = this.getItems().filter((oItem) => {
+				return oItem.getVisible();
+			});
+
+			aItems.forEach((oItem) => {
 				aEffectiveQuickActions.push(oItem._getAction());
-			}, this);
+			});
 		}
 
 		return aEffectiveQuickActions;

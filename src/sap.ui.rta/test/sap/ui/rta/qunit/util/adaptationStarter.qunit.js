@@ -5,12 +5,12 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
 	"sap/ui/core/Lib",
-	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/initial/api/InitialFlexAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/adaptationStarter",
 	"sap/ui/rta/util/ReloadManager",
+	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -18,12 +18,12 @@ sap.ui.define([
 	MessageBox,
 	Control,
 	Lib,
-	FeaturesAPI,
+	InitialFlexAPI,
 	PersistenceWriteAPI,
 	FlexUtils,
-	RuntimeAuthoring,
 	adaptationStarter,
 	ReloadManager,
+	RuntimeAuthoring,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -34,7 +34,7 @@ sap.ui.define([
 	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function setIsKeyUser(bIsKeyUser) {
-		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);
+		sandbox.stub(InitialFlexAPI, "isKeyUser").resolves(bIsKeyUser);
 	}
 
 	function checkMessageFromStub(assert, stubbedMessageCall, sExpectedMessage, sSuccessOutput) {
@@ -144,7 +144,7 @@ sap.ui.define([
 				}
 			})
 			.then(function() {
-				assert.strictEqual(FeaturesAPI.isKeyUser.callCount, 0, "the key user check was not performed");
+				assert.strictEqual(InitialFlexAPI.isKeyUser.callCount, 0, "the key user check was not performed");
 				assert.strictEqual(this.fnRtaStartStub.callCount, 1, "RTA was started");
 			}.bind(this));
 		});

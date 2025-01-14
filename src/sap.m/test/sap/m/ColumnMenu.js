@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickTotalItem",
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Table",
+	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
 	"sap/m/ComboBox",
 	"sap/m/Button",
 	"sap/ui/layout/GridData",
@@ -33,6 +35,8 @@ sap.ui.define([
 	QuickTotalItem,
 	ActionItem,
 	Table,
+	SegmentedButton,
+	SegmentedButtonItem,
 	ComboBox,
 	Button,
 	GridData,
@@ -68,13 +72,19 @@ sap.ui.define([
 				key: "propertyA",
 				label: "A",
 				sortOrder: "Ascending"
+			}),
+			new QuickSortItem({
+				key: "propertyB",
+				label: "B",
+				sortOrder: "Descending"
 			})
 		]
 	});
 
 	var oQuickFilter = new QuickAction({
 		label: "Quick Filter",
-		content: new ComboBox()
+		content: new ComboBox(),
+		category: "Filter"
 	});
 
 	var oQuickGroup = new QuickGroup({
@@ -87,11 +97,6 @@ sap.ui.define([
 			new QuickGroupItem({
 				key: "PropertyB",
 				label: "Criterion B",
-				grouped: false
-			}),
-			new QuickGroupItem({
-				key: "PropertyC",
-				label: "Criterion C",
 				grouped: false
 			})
 		]
@@ -112,9 +117,16 @@ sap.ui.define([
 		]
 	});
 
-	var oQuickCustomAction = new QuickAction({
+	new QuickAction({
 		label: "Quick Custom",
-		content: new Button({ text: "Execute Custom Action" })
+		content: new Button({ text: "Execute Custom Action" }),
+		category: "Sort"
+	});
+
+	new QuickAction({
+		label: "Quick Filter",
+		content: new Button({ text: "Execute Custom Filter" }),
+		category: "Filter"
 	});
 
 	var oQuickCustomLayoutNormal = new QuickAction({
@@ -147,21 +159,6 @@ sap.ui.define([
 				wrap: FlexWrap.Wrap
 			})
 		]
-	});
-
-	var oBtnReset = new Button({
-		text: "Switch Reset State"
-	});
-	var oReset = new Item({
-		label: "Reset",
-		icon: "sap-icon://sort",
-		content: oBtnReset,
-		visible: false
-	});
-	oBtnReset.attachPress(function (oEvent) {
-		oReset.changeButtonSettings({
-			reset: {enabled: !oReset.getButtonSettings()["reset"]["enabled"]}
-		});
 	});
 
 	var oItemFilter = new Item({
@@ -243,10 +240,9 @@ sap.ui.define([
 
 	// Test Menu
 	var oMenu = new ColumnMenu({
-		_quickActions: [oQuickSort, oQuickFilter, oQuickGroup, oQuickTotal],
-		quickActions: [oQuickCustomAction, oQuickCustomLayoutNormal, oQuickCustomActionLong, oQuickMultiCustomActionLong],
-		_items: [oReset, oItemFilter, oItemGroup, oItemTable, oActionItem],
-		items: aItems
+		showTableSettingsButton: true,
+		quickActions: [oQuickSort, oQuickFilter, oQuickGroup, oQuickTotal, oQuickCustomLayoutNormal, oQuickCustomActionLong, oQuickMultiCustomActionLong],
+		items: [oActionItem, oItemFilter, oItemGroup, oItemTable]
 	});
 
 	var oButton = new Button({
@@ -258,72 +254,4 @@ sap.ui.define([
 	});
 	oButton.addDependent(oMenu);
 	oButton.placeAt("body");
-
-	var oButton2 = new Button({
-		text: "Toggle Reset Visibility",
-		width: "200px",
-		press: function () {
-			oReset.setVisible(!oReset.getVisible());
-		}
-	});
-	oButton2.placeAt("body");
-
-	// Visual Design Example
-	var oSort = new Item({
-		label: "Sort",
-		icon: "sap-icon://sort",
-		content: oBtnReset
-	});
-	var oColumn = new Item({
-		label: "Column",
-		icon: "sap-icon://table-column",
-		content: new Button({text: "Column Button"}),
-		resetButtonEnabled: false
-	});
-	var oVDMenu = new ColumnMenu({
-		_quickActions: [oQuickSort.clone(), oQuickFilter.clone(), oQuickGroup.clone(), oQuickTotal.clone()],
-		quickActions: [new QuickAction({
-			label: "App-specific quick action",
-			content: [
-				new Button({
-					text: "Action A",
-					press: function() {
-						oVDMenu.close();
-					}
-				}),
-				new Button({
-					text: "Action B",
-					press: function() {
-						oVDMenu.close();
-					}
-				})
-			]
-		})],
-		_items: [oSort, oItemFilter.clone(), oItemGroup.clone(), oColumn],
-		items: [
-			new Item({
-				label: "App-specific menu entry 1",
-				icon: "sap-icon://pipeline-analysis",
-				content: new Button({
-					text: "Sample Button"
-				})
-			}),
-			new Item({
-				label: "App-specific menu entry 2",
-				icon: "sap-icon://lab",
-				content: new Button({
-					text: "Sample Button"
-				})
-			})
-		]
-	});
-
-	var oButton3 = new Button({
-		text: "Open VisualDesign ColumnMenu",
-		press: function () {
-			oVDMenu.openBy(this);
-		}
-	});
-	oButton3.addDependent(oVDMenu);
-	oButton3.placeAt("body");
 });

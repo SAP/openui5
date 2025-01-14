@@ -15,7 +15,7 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
-
+	var ContentSize = library.InputListItemContentSize;
 
 	/**
 	 * Constructor for a new InputListItem.
@@ -56,7 +56,7 @@ sap.ui.define([
 				 * Determines how much space is allocated for the input control.
 				 * @since 1.130
 				 */
-				contentSize: {type : "sap.m.InputListItemContentSize", group : "Appearance", defaultValue : library.InputListItemContentSize.L}
+				contentSize: {type : "sap.m.InputListItemContentSize", group : "Appearance", defaultValue : ContentSize.L}
 			},
 			defaultAggregation : "content",
 			aggregations : {

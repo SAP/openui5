@@ -149,6 +149,13 @@ sap.ui.define([
 				}
 			},
 
+			"initial/api/InitialFlexAPI": {
+				group: "Initial API",
+				coverage: {
+					only: ["sap/ui/fl/initial/api/InitialFlexAPI"]
+				}
+			},
+
 			"apply/api/AnnotationChangeHandlerAPI": {
 				group: "Apply API",
 				coverage: {

@@ -544,7 +544,7 @@ sap.ui.define([
 			return Util.waitForColumnMenu.call(this, {
 				success: function(oColumnMenu) {
 					this.waitFor({
-						controlType: "sap.m.Label", // QuickActions themselves are not rendered. We expect there's one label for every QuickAction.
+						controlType: "sap.m.InputListItem", // QuickActions themselves are not rendered. We expect there's one InputListItem for every QuickAction.
 						matchers: [{
 							ancestor: oColumnMenu
 						}],
@@ -586,16 +586,13 @@ sap.ui.define([
 						success: function(aQuickSortItems) {
 							Opa5.assert.equal(aQuickSortItems.length, 1, "Found column menu QuickSortItem");
 							this.waitFor({
-								controlType: "sap.m.ToggleButton",
+								controlType: "sap.m.SegmentedButton",
 								matchers: [{
 									ancestor: aQuickSortItems[0]
 								}],
-								success: function(aToggleButtons) {
-									Opa5.assert.equal(aToggleButtons.length, 2, "QuickSortItem content is visible");
-									Opa5.assert.equal(aToggleButtons[0].getPressed(), mSortItemInfo.sortOrder === CoreLibrary.SortOrder.Ascending,
-										"Ascending button pressed state");
-									Opa5.assert.equal(aToggleButtons[1].getPressed(), mSortItemInfo.sortOrder === CoreLibrary.SortOrder.Descending,
-										"Descending button pressed state");
+								success: function(aSegmentedButtons) {
+									Opa5.assert.equal(aSegmentedButtons[0].getButtons().length, 3, "QuickSortItem content is visible");
+									Opa5.assert.equal(aSegmentedButtons[0].getSelectedKey(), mSortItemInfo.sortOrder, "selectedKey is correct");
 								},
 								errorMessage: "QuickSortItem content is not visible"
 							});
@@ -623,16 +620,12 @@ sap.ui.define([
 						success: function(aQuickGroupItems) {
 							Opa5.assert.equal(aQuickGroupItems.length, 1, "Found column menu QuickGroupItem");
 							this.waitFor({
-								controlType: "sap.m.ToggleButton",
+								controlType: "sap.m.Switch",
 								matchers: [{
-									ancestor: aQuickGroupItems[0].getParent(),
-									properties: {
-										text: mGroupItemInfo.label,
-										pressed: mGroupItemInfo.grouped
-									}
+									ancestor: aQuickGroupItems[0]
 								}],
-								success: function(aToggleButton) {
-									Opa5.assert.equal(aToggleButton.length, 1, "QuickGroupItem content is visible");
+								success: function(aSwitches) {
+									Opa5.assert.equal(aSwitches.length, 1, "QuickGroupItem content is visible");
 								},
 								errorMessage: "QuickGroupItem content is not visible"
 							});
@@ -660,21 +653,39 @@ sap.ui.define([
 						success: function(aQuickTotalItems) {
 							Opa5.assert.equal(aQuickTotalItems.length, 1, "Found column menu QuickTotalItem");
 							this.waitFor({
-								controlType: "sap.m.ToggleButton",
+								controlType: "sap.m.Switch",
 								matchers: [{
-									ancestor: aQuickTotalItems[0].getParent(),
-									properties: {
-										text: mTotalItemInfo.label,
-										pressed: mTotalItemInfo.totaled
-									}
+									ancestor: aQuickTotalItems[0]
 								}],
-								success: function(aToggleButton) {
-									Opa5.assert.equal(aToggleButton.length, 1, "QuickTotalItem content is visible");
+								success: function(aSwitches) {
+									Opa5.assert.equal(aSwitches.length, 1, "QuickTotalItem content is visible");
 								},
 								errorMessage: "QuickTotalItem content is not visible"
 							});
 						},
 						errorMessage: "Column menu QuickTotalItem not found"
+					});
+				}
+			});
+		},
+
+		iShouldSeeTableSettingsButton: function() {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					const oResourceBundle = Library.getResourceBundleFor("sap.m");
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								icon: "sap-icon://action-settings",
+								text: oResourceBundle.getText("table.COLUMNMENU_TABLE_SETTINGS")
+							}
+						}],
+						success: function(aButtons) {
+							Opa5.assert.equal(aButtons.length, 1, "Found table settings button");
+						},
+						errorMessage: "Table settings button not found"
 					});
 				}
 			});

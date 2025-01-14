@@ -328,12 +328,8 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(1);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Region", label: "Region", sortOrder: coreLibrary.SortOrder.None});
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(3);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
-			Util.P13nDialogInfo.Titles.sort,
-			Util.P13nDialogInfo.Titles.filter,
-			Util.P13nDialogInfo.Titles.columns
-		]);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
+		Then.onTheAppMDCTable.iShouldSeeTableSettingsButton();
 	});
 
 	opaTest('Open column menu of aggregated column (p13nMode = ["Column","Sort","Filter"])', function(Given, When, Then) {
@@ -345,12 +341,8 @@ sap.ui.define([
 			label: "Sales Amount (local currency)",
 			sortOrder: coreLibrary.SortOrder.None
 		});
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(3);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
-			Util.P13nDialogInfo.Titles.sort,
-			Util.P13nDialogInfo.Titles.filter,
-			Util.P13nDialogInfo.Titles.columns
-		]);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
+		Then.onTheAppMDCTable.iShouldSeeTableSettingsButton();
 	});
 
 	opaTest('Open column menu with groupable property (p13nMode = ["Column","Sort","Filter","Group","Aggregate"])', function(Given, When, Then) {
@@ -360,13 +352,8 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Region", label: "Region", sortOrder: coreLibrary.SortOrder.None});
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Region", label: "Region", grouped: true});
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(4);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
-			Util.P13nDialogInfo.Titles.sort,
-			Util.P13nDialogInfo.Titles.filter,
-			Util.P13nDialogInfo.Titles.group,
-			Util.P13nDialogInfo.Titles.columns
-		]);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
+		Then.onTheAppMDCTable.iShouldSeeTableSettingsButton();
 	});
 
 	opaTest('Open column menu with aggregatable property (p13nMode = ["Column","Sort","Filter","Group","Aggregate"])', function(Given, When, Then) {
@@ -383,12 +370,13 @@ sap.ui.define([
 			label: "Sales Amount (local currency)",
 			totaled: true
 		});
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(4);
-		Then.onTheAppMDCTable.iShouldSeeColumnMenuItems([
-			Util.P13nDialogInfo.Titles.sort,
-			Util.P13nDialogInfo.Titles.filter,
-			Util.P13nDialogInfo.Titles.group,
-			Util.P13nDialogInfo.Titles.columns
-		]);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
+		Then.onTheAppMDCTable.iShouldSeeTableSettingsButton();
+	});
+
+	opaTest('Open P13nDialog via the column menu', function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressTableSettingsButton();
+		Then.P13nAssertions.iShouldSeeTheP13nDialog();
+		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
 	});
 });

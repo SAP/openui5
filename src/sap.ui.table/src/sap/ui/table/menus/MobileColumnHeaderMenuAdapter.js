@@ -5,20 +5,18 @@
 sap.ui.define([
 	"./ColumnHeaderMenuAdapter",
 	"../utils/TableUtils",
-	"../library",
 	"sap/m/library",
 	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/table/columnmenu/QuickActionContainer",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/table/columnmenu/QuickGroup",
 	"sap/m/table/columnmenu/QuickGroupItem",
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
-	"sap/m/table/columnmenu/Item",
 	"sap/m/table/columnmenu/ItemContainer",
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
+	"sap/m/Switch",
 	"sap/m/Input",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
@@ -26,20 +24,18 @@ sap.ui.define([
 ], function(
 	ColumnHeaderMenuAdapter,
 	TableUtils,
-	library,
 	MLibrary,
 	QuickAction,
-	QuickActionContainer,
 	QuickSort,
 	QuickSortItem,
 	QuickGroup,
 	QuickGroupItem,
 	QuickTotal,
 	QuickTotalItem,
-	Item,
 	ItemContainer,
 	ActionItem,
 	Button,
+	Switch,
 	Input,
 	Library,
 	CoreLibrary,
@@ -61,7 +57,8 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.menus.MobileColumnHeaderMenuAdapter
 	 */
-	const MobileColumnHeaderMenuAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.MobileColumnHeaderMenuAdapter", /** @lends sap.ui.table.menus.MobileColumnHeaderMenuAdapter.prototype */ {});
+	const MobileColumnHeaderMenuAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.MobileColumnHeaderMenuAdapter",
+		/** @lends sap.ui.table.menus.MobileColumnHeaderMenuAdapter.prototype */ {});
 
 	/**
 	 * Injects entries to the column menu needed to utilize built-in column features.
@@ -75,7 +72,12 @@ sap.ui.define([
 		this._oMenu = oMenu;
 
 		this._prepareQuickActions(oColumn);
-		oMenu.addAggregation("_quickActions", this._oQuickActionContainer);
+		this._oMenu.addAggregation("_quickActions", this._oQuickSort);
+		this._oMenu.addAggregation("_quickActions", this._oQuickFilter);
+		this._oMenu.addAggregation("_quickActions", this._oQuickGroup);
+		this._oMenu.addAggregation("_quickActions", this._oQuickTotal);
+		this._oMenu.addAggregation("_quickActions", this._oQuickFreeze);
+		this._oMenu.addAggregation("_quickActions", this._oQuickResize);
 
 		this._prepareItems(oColumn);
 		oMenu.addAggregation("_items", this._oItemContainer);
@@ -88,7 +90,13 @@ sap.ui.define([
 	 */
 	MobileColumnHeaderMenuAdapter.prototype.removeMenuItems = function(oMenu) {
 		delete this._oColumn;
-		oMenu.removeAggregation("_quickActions", this._oQuickActionContainer);
+		oMenu.removeAggregation("_quickActions", this._oQuickSort);
+		oMenu.removeAggregation("_quickActions", this._oQuickFilter);
+		oMenu.removeAggregation("_quickActions", this._oQuickGroup);
+		oMenu.removeAggregation("_quickActions", this._oQuickTotal);
+		oMenu.removeAggregation("_quickActions", this._oQuickFreeze);
+		oMenu.removeAggregation("_quickActions", this._oQuickResize);
+
 		oMenu.removeAggregation("_items", this._oItemContainer);
 	};
 
@@ -103,12 +111,12 @@ sap.ui.define([
 			return;
 		}
 
-		delete this._oQuickActionContainer;
 		delete this._oQuickSort;
-		delete this._oQuickFreeze;
 		delete this._oQuickFilter;
 		delete this._oQuickGroup;
 		delete this._oQuickTotal;
+		delete this._oQuickFreeze;
+		delete this._oQuickResize;
 
 		delete this._oItemContainer;
 		delete this._oCustomFilterItem;
@@ -128,27 +136,13 @@ sap.ui.define([
 		const oTable = oColumn._getTable();
 
 		this._prepareQuickSort(oColumn);
-
 		if (!oTable.getEnableCustomFilter()) {
 			this._prepareQuickFilter(oColumn);
 		}
-
 		this._prepareQuickGroup(oColumn);
-
 		this._prepareQuickTotal(oColumn);
 		this._prepareQuickFreeze(oColumn);
 		this._prepareQuickResize(oColumn);
-
-		if (!this._oQuickActionContainer) {
-			this._oQuickActionContainer = new QuickActionContainer();
-		}
-
-		this._oQuickActionContainer.addQuickAction(this._oQuickSort);
-		this._oQuickActionContainer.addQuickAction(this._oQuickFilter);
-		this._oQuickActionContainer.addQuickAction(this._oQuickGroup);
-		this._oQuickActionContainer.addQuickAction(this._oQuickTotal);
-		this._oQuickActionContainer.addQuickAction(this._oQuickFreeze);
-		this._oQuickActionContainer.addQuickAction(this._oQuickResize);
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareItems = function(oColumn) {
@@ -166,16 +160,31 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._destroyQuickActions = function() {
-		if (this._oQuickActionContainer) {
-			this._oQuickActionContainer.destroy();
+		if (this._oQuickSort) {
+			this._oQuickSort.destroy();
+		}
+		if (this._oQuickFilter) {
+			this._oQuickFilter.destroy();
+		}
+		if (this._oQuickGroup) {
+			this._oQuickGroup.destroy();
+		}
+		if (this._oQuickTotal) {
+			this._oQuickTotal.destroy();
+		}
+		if (this._oQuickFreeze) {
+			this._oQuickFreeze.destroy();
+		}
+		if (this._oQuickResize) {
+			this._oQuickResize.destroy();
 		}
 
-		delete this._oQuickActionContainer;
 		delete this._oQuickSort;
 		delete this._oQuickFilter;
 		delete this._oQuickGroup;
 		delete this._oQuickTotal;
 		delete this._oQuickFreeze;
+		delete this._oQuickResize;
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._destroyItems = function() {
@@ -219,7 +228,7 @@ sap.ui.define([
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickFilter = function(oColumn) {
 		if (oColumn.getShowFilterMenuEntry() && oColumn.isFilterableByMenu()) {
 			if (!this._oQuickFilter) {
-				this._oQuickFilter = this._createQuickFilter();
+				this._oQuickFilter = this._createQuickFilter(oColumn);
 				this._oQuickFilter._bHideLabelColon = true;
 			}
 			this._updateQuickFilter(oColumn);
@@ -249,10 +258,9 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickFilter = function(oColumn) {
-		const oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
 		const oFilterField = this._oQuickFilter.getContent()[0];
 
-		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", [TableUtils.Column.getHeaderText(oColumn)]));
+		this._oQuickFilter.setLabel(TableUtils.Column.getHeaderText(oColumn));
 		oFilterField.setValue(oColumn.getFilterValue());
 		oFilterField.setValueState(oColumn._getFilterState());
 	};
@@ -347,20 +355,21 @@ sap.ui.define([
 
 	MobileColumnHeaderMenuAdapter.prototype._createQuickFreeze = function() {
 		return new QuickAction({
-			content: new Button({
-				press: [function(oEvent) {
+			label: TableUtils.getResourceText("TBL_FREEZE"),
+			content: new Switch({
+				customTextOn: " ",
+				customTextOff: " ",
+				change: [function(oEvent) {
 					const oTable = this._oColumn._getTable();
 					const bExecuteDefault = oTable.fireColumnFreeze({
 						column: this._oColumn
 					});
 
 					if (bExecuteDefault) {
-						const bIsLastFixedColumn = oEvent.getSource().getText() === TableUtils.getResourceText("TBL_UNFREEZE");
-
-						if (bIsLastFixedColumn) {
-							oTable.setFixedColumnCount(0);
-						} else {
+						if (oEvent.getSource().getState()) {
 							oTable.setFixedColumnCount(this._oColumn.getIndex() + 1);
+						} else {
+							oTable.setFixedColumnCount(this._oColumn.getIndex());
 						}
 					}
 
@@ -371,10 +380,8 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickFreeze = function(oColumn) {
-		const bIsLastFixedColumn = oColumn.getIndex() + TableUtils.Column.getHeaderSpan(oColumn) === oColumn._getTable().getComputedFixedColumnCount();
-		const sResourceTextKey = bIsLastFixedColumn ? "TBL_UNFREEZE" : "TBL_FREEZE";
-
-		this._oQuickFreeze.getContent()[0].setText(TableUtils.getResourceText(sResourceTextKey));
+		const bFixed = oColumn.getIndex() + TableUtils.Column.getHeaderSpan(oColumn) <= oColumn._getTable().getComputedFixedColumnCount();
+		this._oQuickFreeze.getContent()[0].setState(bFixed);
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickResize = function(oColumn) {
@@ -390,10 +397,13 @@ sap.ui.define([
 
 	MobileColumnHeaderMenuAdapter.prototype._createQuickResize = function(oColumn) {
 		const oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
+		const sLabel = oSapMResourceBundle.getText("table.COLUMNMENU_RESIZE");
 
 		return new QuickAction({
+			label: sLabel,
 			content: new Button({
-				text: oSapMResourceBundle.getText("table.COLUMNMENU_RESIZE"),
+				icon: "sap-icon://resize-horizontal",
+				tooltip: sLabel,
 				press: [function(oEvent) {
 					this._startColumnResize(oColumn);
 					this._oMenu.close();

@@ -58,8 +58,22 @@ sap.ui.define([
 	 * Detects the completion of user personalization. The state can be checked with {@link isUserPersonalizationActive}.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable The table that is personalized with the dialog.
+	 * @param {sap.ui.mdc.table.Column} [oColumn] If provided, column-related filters are preselected in the filter panel.
 	 */
-	PersonalizationUtils.openSettingsDialog = function(oTable) {
+	PersonalizationUtils.openSettingsDialog = function(oTable, oColumn) {
+		const oInbuiltFilter = oTable.getInbuiltFilter();
+		if (oInbuiltFilter) {
+			if (!oColumn) {
+				oInbuiltFilter.setVisibleFields(null);
+			} else {
+				const aFilterableProperties = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey()).getFilterableProperties();
+				const aPropertyNames = aFilterableProperties.map((oProperty) => {
+					return oProperty.name;
+				});
+				oInbuiltFilter.setVisibleFields(aPropertyNames);
+			}
+		}
+
 		openP13nDialog(oTable, oTable.getActiveP13nModes(), {
 			reset: () => {
 				// By default, only changes related to the given keys (visible panels in the p13n dialog) are reset. Instead, all changes need to be
@@ -93,10 +107,6 @@ sap.ui.define([
 	 */
 	async function openP13nDialog(oTable, vChangeKeys, mSettings = {}) {
 		await oTable.finalizePropertyHelper();
-
-		if (oTable.getInbuiltFilter()) {
-			oTable.getInbuiltFilter().setVisibleFields(null);
-		}
 
 		const oEngine = oTable.getEngine();
 		const oP13nControl = await oEngine.show(oTable, vChangeKeys, {

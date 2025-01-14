@@ -175,7 +175,7 @@ sap.ui.define([
 								matchers: {
 									ancestor: oMenu,
 									properties: {
-										text: "Descending"
+										icon: "sap-icon://sort-descending"
 									}
 								},
 								actions: new Press(),

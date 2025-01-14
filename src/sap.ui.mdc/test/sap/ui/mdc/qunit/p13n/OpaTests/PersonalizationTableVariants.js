@@ -355,7 +355,7 @@ sap.ui.define([
 		When.iLookAtTheScreen();
 		When.iClickOnColumn("Name");
 
-		When.iPressOnButtonWithText(Arrangement.P13nDialog.Sort.Ascending);
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
 		//open Dialog
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		//open 'filter' tab
@@ -440,7 +440,7 @@ sap.ui.define([
 		When.iLookAtTheScreen();
 		When.iClickOnColumn("Name");
 
-		When.iPressOnButtonWithText(Arrangement.P13nDialog.Sort.Ascending);
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
 
 		//open Dialog
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);

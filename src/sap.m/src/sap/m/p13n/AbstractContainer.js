@@ -164,7 +164,7 @@ sap.ui.define([
 	};
 
 	AbstractContainer.prototype._initializeContent = function() {
-		this.oLayout = new Page(this.getId() + "-AbstractContainer");
+		this.oLayout = new Page({id: this.getId() + "-AbstractContainer", backgroundDesign: "Transparent"});
 		this.oLayout.onfocusfail = function() {};
 		this.setAggregation("_content", this.oLayout);
 	};

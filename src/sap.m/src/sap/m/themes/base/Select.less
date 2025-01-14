@@ -3,12 +3,11 @@
 /* Base theme                    */
 /* ============================= */
 
-/* ------------------------------ */
 /* commons styles                 */
-/* ------------------------------ */
-
 .sapMSltPicker-CTX {
+
 	.sapMSelectList {
+
 		.sapMSelectListRow {
 			height: auto;
 			display: flex;
@@ -41,10 +40,12 @@
 		}
 
 		&.sapMSelectListWrappedItems {
+
 			.sapMSelectListItem.sapMSelectListItemWithIcon,
 			.sapMSelectListRow.sapMSelectListItemWithIcon .sapMSelectListFirstCell {
 				position: relative;
 				padding-left: 2.25rem;
+
 				.sapMSelectListItemIcon {
 					position: absolute;
 					left: 1rem;
@@ -57,6 +58,7 @@
 				padding-bottom: 0.75rem;
 				line-height: 1rem;
 				height: auto;
+
 				&:empty {
 					height: 2.5rem;
 				}
@@ -64,6 +66,7 @@
 
 			.sapMSelectListRow {
 				display: table-row;
+
 				.sapMSelectListFirstCell {
 					white-space: normal;
 				}
@@ -72,11 +75,12 @@
 					vertical-align: top;
 				}
 
-				.sapMSelectListCell{
+				.sapMSelectListCell {
 					display: table-cell;
 				}
 			}
 		}
+
 		.sapMSelectListItem {
 			display: flex;
 			align-items: center;
@@ -84,52 +88,63 @@
 	}
 }
 
-// sets max-width of 600px to selectList, only when wrapItemsText property is false
-.sapMSltPicker-CTX:not(.sapMPickerWrappedItems){
+/* sets max-width of 600px to selectList, only when wrapItemsText property is false */
+.sapMSltPicker-CTX:not(.sapMPickerWrappedItems) {
 	max-width: 600px;
+
 	.sapMSelectList:not(.sapMSelectListWrappedItems) {
 		max-width: 600px;
-			.sapMSelectListRow {
-				max-width: 600px;
+
+		.sapMSelectListRow {
+			max-width: 600px;
 		}
 	}
 }
 
-// defines the ratio of columns inside selectList, when text is truncated
-.sapMSltPicker-CTX .sapMSelectList:not(.sapMSelectListWrappedItems){
+/* defines the ratio of columns inside selectList, when text is truncated */
+.sapMSltPicker-CTX .sapMSelectList:not(.sapMSelectListWrappedItems) {
+
 	.sapMSelectListFirstCell {
 		width: 60%;
 	}
+
 	.sapMSelectListLastCell {
 		width: 40%;
 	}
 }
 
-// sets max-width of 100% to selectList, only when wrapItemsText property is true
+/* sets max-width of 100% to selectList, only when wrapItemsText property is true */
 .sapMSltPicker-CTX.sapMDialogPhone {
 	max-width: 100%;
+
 	.sapMSelectList:not(.sapMSelectListWrappedItems) {
 		max-width: 100%;
-			.sapMSelectListRow {
-				max-width: 100%;
+
+		.sapMSelectListRow {
+			max-width: 100%;
 		}
 	}
 }
 
 .sapUiSizeCompact .sapMSltPicker-CTX .sapMSelectList {
+
 	.sapMSelectListRow {
+
 		.sapMSelectListFirstCell,
 		.sapMSelectListLastCell {
 			padding-top: 0.5rem;
 			padding-bottom: 0.5rem;
+
 			&:empty {
 				height: 2rem;
 			}
 		}
 	}
+
 	&.sapMSelectListWrappedItems .sapMSelectListItem {
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
+
 		&:empty {
 			height: 2rem;
 		}
@@ -159,8 +174,8 @@
 }
 
 .sapMSlt.sapMSltReadonly {
-	border-color: @sapUiFieldReadOnlyBorderColor;
-	background: @sapUiFieldReadOnlyBackground;
+	border-color: var(--sapField_ReadOnly_BorderColor);
+	background: var(--sapField_ReadOnly_Background);
 
 	.sapMSltArrow {
 		display: none;
@@ -182,29 +197,26 @@
 	padding: 0 3rem 0 0.625rem;
 }
 
-/* ------------------------------ */
 /* field                          */
-/* ------------------------------ */
-
 .sapMSlt {
 	position: relative;
 	vertical-align: top;
 	outline: none;
 	height: 2.5rem;
 	margin: 0.25rem 0 0.25rem 0;
-	border: 1px solid @sapUiFieldBorderColor;
-	background: @sapUiFieldBackground;
+	border: 1px solid var(--sapField_BorderColor);
+	background: var(--sapField_Background);
 	line-height: initial;
 }
 
 .sapMSltMinWidth {
-	min-width: 5.125rem; // enough for one letter, the ellipsis and the Select`s arrow
+	min-width: 5.125rem; /* enough for one letter, the ellipsis and the Select`s arrow */
 }
 
 /* pressed */
 
 .sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState) {
-	border-color: @sapUiFieldActiveBorderColor;
+	border-color: var(--sapField_Active_BorderColor);
 }
 
 .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
@@ -215,29 +227,26 @@
 /* value state */
 
 .sapMSltError {
-	background: @sapUiFieldInvalidBackground;
-	border-color: @sapUiFieldInvalidColor;
+	background: var(--sapField_InvalidBackground);
+	border-color: var(--sapField_InvalidColor);
 }
 
 .sapMSltWarning {
-	background: @sapUiFieldWarningBackground;
-	border-color: @sapUiFieldWarningColor;
+	background: var(--sapField_WarningBackground);
+	border-color: var(--sapField_WarningColor);
 }
 
 .sapMSltSuccess {
-	background: @sapUiFieldSuccessBackground;
-	border-color: @sapUiFieldSuccessColor;
+	background: var(--sapField_SuccessBackground);
+	border-color: var(--sapField_SuccessColor);
 }
 
 .sapMSltInformation {
-	background: @sapUiFieldBackground;
-	border-color: @sapUiHighlight;
+	background: var(--sapField_Background);
+	border-color: var(--sapHighlightColor);
 }
 
-/* ------------------------------ */
 /* label                          */
-/* ------------------------------ */
-
 .sapMSlt > .sapMSltLabel {
 	position: absolute;
 	width: 100%;
@@ -250,17 +259,20 @@
 	text-align: start;
 	-webkit-user-select: none;
 	-moz-user-select: none;
-	color: @sapUiFieldTextColor;
+	user-select: none;
+	color: var(--sapField_TextColor);
 	font-style: normal;
 	font-size: @sapMFontMediumSize;
 	vertical-align: middle;
+
 	&::after {
-		content: "";
+		content: '';
 		height: 100%;
 		display: inline-block;
 		vertical-align: middle;
 		width: 0;
 	}
+
 	.sapMSelectListItemText {
 		vertical-align: middle;
 	}
@@ -275,17 +287,14 @@
 	vertical-align: top;
 }
 
-/* ------------------------------ */
 /* icon                           */
-/* ------------------------------ */
-
 .sapMSltIcon {
 	position: absolute;
 	display: block;
 	font-size: 1.375rem;
 	line-height: 2.375rem;
 	padding: 0 0.4375rem;
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
 
 .sapMSltAutoAdjustedWidth .sapMSltIcon {
@@ -295,13 +304,10 @@
 /* pressed */
 
 .sapMSltPressed > .sapMSltIcon {
-	color: @sapUiContentContrastIconColor;
+	color: var(--sapContent_ContrastIconColor);
 }
 
-/* ------------------------------ */
 /* arrow                          */
-/* ------------------------------ */
-
 .sapMSltArrow {
 	position: absolute;
 	text-align: center;
@@ -309,24 +315,22 @@
 	line-height: 2.5rem;
 	top: 0;
 	right: 0;
-	color: @sapUiContentIconColor;
-	font-size: @sapMFontLargeSize;
+	color: var(--sapContent_IconColor);
+	font-size: var(--sapFontLargeSize);
 }
 
 .sapMSltArrow::before {
-	font-family: "SAP-icons";
+	font-family: var(--sapContent_IconFontFamily);
 	speak: none;
-	content: "\e1ef";
+	content: '\e1ef';
 }
 
 /* hover */
-
 .sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-	background: @sapUiButtonLiteHoverBackground;
+	background: var(--sapButton_Lite_Hover_Background);
 }
 
 /* pressed */
-
 .sapMSltPressed > .sapMSltArrow {
 	background: @sapUiToggleButtonPressedBackground;
 }
@@ -335,10 +339,7 @@
 	color: @sapUiToggleButtonPressedTextColor;
 }
 
-/* ------------------------------ */
 /* dropdown list                  */
-/* ------------------------------ */
-
 .sapMSlt > .sapMSelectList {
 	visibility: hidden;
 	position: relative;
@@ -349,10 +350,7 @@
 	min-width: 6rem;
 }
 
-/* ------------------------------ */
 /* table context                  */
-/* ------------------------------ */
-
 .sapUiSizeCondensed .sapUiTableCell .sapMSlt {
 	margin: 0;
 }
@@ -365,21 +363,16 @@
 	border-collapse: collapse;
 }
 
-/* ---------------------------------------- */
 /* value states commons styles adaptations  */
-/* ---------------------------------------- */
-
 .sapMSltLabelState,
 .sapMSltArrowState {
 	line-height: 2.25rem;
 }
 
-/* ====================================================== */
-/* Select inside a Bar: header and sub-header contexts    */
-/* ====================================================== */
 
+/* Select inside a Bar: header and sub-header contexts */
 .sapMSubHeader-CTX .sapMSltPressed > .sapMSltIcon {
-	color: @sapUiContentContrastIconColor;
+	color: var(--sapContent_ContrastIconColor);
 }
 
 .sapMHeader-CTX .sapMSltPressed,
@@ -391,46 +384,34 @@
 
 .sapMHeader-CTX .sapMSltIconOnly.sapMSltHoverable:hover,
 .sapMSubHeader-CTX .sapMSltIconOnly.sapMSltHoverable:hover {
-	border-color: @sapUiButtonLiteHoverBorderColor;
-	background: @sapUiButtonLiteHoverBackground;
+	border-color: var(--sapButton_Lite_Hover_BorderColor);
+	background: var(--sapButton_Lite_Hover_Background);
 }
 
 .sapMHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed),
 .sapMSubHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed) {
-	border-color: @sapUiButtonLiteBorderColor;
-	background-color: @sapUiButtonLiteBackground;
+	border-color: var(--sapButton_Lite_BorderColor);
+	background-color: var(--sapButton_Lite_Background);
 }
 
-/* ------------------------------ */
 /* icon                           */
-/* ------------------------------ */
-
 .sapMSubHeader-CTX .sapMSltPressed > .sapMSltIcon {
-	color: @sapUiContentContrastIconColor;
+	color: var(--sapContent_ContrastIconColor);
 }
 
-/* ====================================================== */
-/* Select inside a Bar: footer context                    */
-/* ====================================================== */
-
+/* Select inside a Bar: footer context */
 .sapMFooter-CTX .sapMSltIconOnly.sapMSltHoverable:not(.sapMSltPressed):hover {
 	background: @sapUiButtonFooterHoverBackground;
-	border-color: @sapUiButtonLiteBorderColor;
+	border-color: var(--sapButton_Lite_BorderColor);
 }
 
-/* ------------------------------ */
 /* icon                           */
-/* ------------------------------ */
-
 .sapMFooter-CTX .sapMSltIconOnly {
-	background: @sapUiButtonLiteBackground;
-	border-color: @sapUiButtonLiteBorderColor;
+	background: var(--sapButton_Lite_Background);
+	border-color: var(--sapButton_Lite_BorderColor);
 }
 
-/* ------------------------------ */
 /* label                          */
-/* ------------------------------ */
-
 .sapMIBar-CTX.sapMFooter-CTX .sapMSltArrow {
 	text-shadow: none;
 }
@@ -439,10 +420,7 @@
 	text-shadow: none;
 }
 
-/* ------------------------------ */
 /* picker                         */
-/* ------------------------------ */
-
 div.sapMSltPicker {
 	border: none;
 	box-shadow: @sapUiShadowLevel1;
@@ -453,24 +431,24 @@ div.sapMSltPicker {
 
 	.sapMSltPickerValueState {
 		padding: 0.5625rem 1rem;
-		color: @sapUiBaseText;
-		font-size: @sapMFontSmallSize;
-		box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
+		color: var(--sapTextColor);
+		font-size: var(--sapFontSmallSize);
+		box-shadow: inset 0 -0.0625rem var(--sapPageHeader_BorderColor);
 
 		&.sapMSltPickerErrorState {
-			background: @sapUiErrorBG;
+			background: var(--sapErrorBackground);
 		}
 
 		&.sapMSltPickerSuccessState {
-			background: @sapUiSuccessBG;
+			background: var(--sapSuccessBackground);
 		}
 
 		&.sapMSltPickerWarningState {
-			background: @sapUiWarningBG;
+			background: var(--sapWarningBackground);
 		}
 
 		&.sapMSltPickerInformationState {
-			background: @sapUiInformationBG;
+			background: var(--sapInformationBackground);
 		}
 
 		&.sapMSltPickerNoneState {
@@ -479,11 +457,7 @@ div.sapMSltPicker {
 	}
 }
 
-
-/* ------------------------------ */
 /* dialog                         */
-/* ------------------------------ */
-
 div.sapMSltPicker .sapMDialogScrollCont {
 	padding: 0;
 }
@@ -496,15 +470,9 @@ div.sapMSltPicker .sapMDialogScrollCont {
 		display: table;
 	}
 }
+/* CSS for control sap.m/Select.control Belize theme smaller sizes - common part */
 
-/* ================================================================================== */
-/* CSS for control sap.m/Select.control Belize theme smaller sizes - common part      */
-/* ================================================================================== */
-
-/* ------------------------------ */
 /* commons styles                 */
-/* ------------------------------ */
-
 .sapUiSizeCompact .sapMSltLabel,
 .sapUiSizeCompact .sapMSlt .sapMSelectListItemBase,
 .sapUiSizeCondensed .sapUiTableCell .sapMSltLabel,
@@ -517,27 +485,18 @@ div.sapMSltPicker .sapMDialogScrollCont {
 	line-height: 1.5rem;
 }
 
-/* ------------------------------ */
 /* arrow                          */
-/* ------------------------------ */
-
 .sapUiSizeCompact .sapMSltArrow {
 	width: 2rem;
 }
 
-/* ------------------------------ */
 /* label and arrow commons styles */
-/* ------------------------------ */
-
 .sapUiSizeCompact .sapMSltLabelState,
 .sapUiSizeCompact .sapMSltArrowState {
 	line-height: 1.375rem;
 }
 
-/* ------------------------------ */
 /* icon                           */
-/* ------------------------------ */
-
 .sapUiSizeCompact .sapMSltIcon {
 	font-size: 1rem;
 	line-height: 1.5rem;
@@ -548,56 +507,38 @@ div.sapMSltPicker .sapMDialogScrollCont {
 	line-height: 1.375rem; /* + 2*1px padding = 1.5rem */
 }
 
-/* ========================= */
 /* compact size              */
-/* ========================= */
 
-/* ------------------------------ */
 /* field                          */
-/* ------------------------------ */
-
 .sapUiSizeCompact .sapMSlt {
 	height: 1.625rem;
 	margin-top: 0.1875rem;
 	margin-bottom: 0.1875rem;
 }
 
-/* ============================== */
 /* condensed size (table context) */
-/* ============================== */
 
-/* ------------------------------ */
+
 /* field                          */
-/* ------------------------------ */
-
 .sapUiSizeCondensed .sapUiTableCell .sapMSlt {
 	height: 1.375rem; /* + 2*1px padding = 1.5rem */
 }
 
-/* ------------------------------ */
 /* label                          */
-/* ------------------------------ */
-
 .sapUiSizeCondensed .sapUiTableCell .sapMSlt .sapMSltLabel {
 	line-height: 1.375rem;
 }
 
-/* ------------------------------ */
 /* arrow                          */
-/* ------------------------------ */
-
 .sapUiSizeCondensed .sapUiTableCell .sapMSltArrow {
 	line-height: 1.375rem;
 }
 
 .sapUiSizeCondensed .sapUiTableCell .sapMSltHoverable:not(.sapMSltState):hover {
-	border-color: @sapUiFieldHoverBorderColor;
+	border-color: var(--sapField_Hover_BorderColor);
 }
 
-/* ------------------------------ */
 /* commons styles                 */
-/* ------------------------------ */
-
 .sapUiSizeCondensed .sapUiTableCell .sapMSltLabelState,
 .sapUiSizeCondensed .sapUiTableCell .sapMSltArrowState {
 	line-height: 1.25rem;
@@ -606,13 +547,13 @@ div.sapMSltPicker .sapMDialogScrollCont {
 /* hidden focus element */
 
 .sapMSltHiddenSelect {
-    width: 100%;
-    height: 100%;
-    border: none;
+	width: 100%;
+	height: 100%;
+	border: none;
 }
 
-// when the Busy Indicator is inside Select it should be with different positions - BCP 1870362962
-.sapMSlt .sapUiLocalBusyIndicator:focus:after {
+/* when the Busy Indicator is inside Select it should be with different positions - BCP 1870362962 */
+.sapMSlt .sapUiLocalBusyIndicator:focus::after {
 	left: 1px;
 	top: 1px;
 	right: 1px;

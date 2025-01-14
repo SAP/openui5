@@ -1,7 +1,7 @@
 sap.ui.define([
 	"./FormatHelper",
 	"sap/base/i18n/Formatting",
-	"sap/base/util/date/CalendarWeekNumbering",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/base/util/deepEqual",
 	"sap/base/util/JSTokenizer",
 	"sap/ui/core/Locale",

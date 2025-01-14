@@ -43,25 +43,21 @@ sap.ui.define([
 				/**
 				 * Defines the category. In the menu all <code>QuickActions</code> are implicitly ordered by their category.
 				 */
-				category: {type: "sap.m.table.columnmenu.Category", defaultValue: library.table.columnmenu.Category.Generic}
+				category: {type: "sap.m.table.columnmenu.Category", defaultValue: library.table.columnmenu.Category.Generic},
+				/**
+				 * Determines how much space is allocated for the content.
+				 */
+				contentSize: {type : "sap.m.table.columnmenu.QuickActionContentSize", defaultValue : "L"}
 			},
 			defaultAggregation : "content",
 			aggregations: {
 				/**
 				 * Defines the content that is shown for the quick action.
 				 *
-				 * <b>Notes:</b>
-				 * <ul>
-				 * <li>Adding additional content to the quick action or altering its layout will
-				 * only take effect once the popover has been closed and reopened again.</li>
-				 * <li>The layout of the content of <code>QuickAction</code> can be altered by providing {@link sap.ui.layout.GridData} for each
-				 * <code>layoutData</code> aggregation of each content control. In size S, content controls can take up to
-				 * 12 columns, while in sizes M and bigger, content controls can take up to 8 columns of space.</li>
-				 * <li>If there are more than 2 controls inside a quick action, they will be shown underneath each other if the
-				 * <code>ColumnMenu</code> is in size S.</li>
-				 * <li>By default, the content controls of <code>QuickAction</code> will take up the same amount of space and will have the same
-				 * size.</li>
-				 * </ul>
+				 * <b>Note:</b>Adding content to the quick action, altering its layout or visibility will only take effect once the popover has been closed and reopened again.
+				 *
+				 * The expected content are single controls that implement the <code>sap.ui.core.IFormContent</code> interface. The use case with more complex content and layouts
+				 * that use the <code>sap.ui.layout.GridData</code> is deprecated as of version 1.132.
 				 */
 				content: {type: "sap.ui.core.Control", multiple: true}
 			}
