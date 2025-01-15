@@ -4427,7 +4427,10 @@
 	},
 	"currencyFormat": {
 		"standard": "¤#,##0.00",
+		"standard-noCurrency": "#,##0.00",
 		"accounting": "¤#,##0.00;(¤#,##0.00)",
+		"accounting-alphaNextToNumber": "¤ #,##0.00;(¤ #,##0.00)",
+		"accounting-noCurrency": "#,##0.00;(#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[[:^S:]&[:^Z:]]",
@@ -4441,7 +4444,10 @@
 			}
 		},
 		"sap-standard": "#,##0.00¤",
-		"sap-accounting": "#,##0.00¤;(#,##0.00¤)"
+		"sap-accounting": "#,##0.00¤;(#,##0.00¤)",
+		"sap-accounting-alphaNextToNumber": "#,##0.00 ¤;(#,##0.00 ¤)",
+		"sap-standard-noCurrency": "#,##0.00",
+		"sap-accounting-noCurrency": "#,##0.00;(#,##0.00)"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
@@ -4450,18 +4456,30 @@
 		"range": "{0}–{1}"
 	},
 	"currencyFormat-short": {
-		"1000-other": "¤ 0K",
-		"10000-other": "¤ 00K",
-		"100000-other": "¤ 000K",
-		"1000000-other": "¤ 0J",
-		"10000000-other": "¤ 00J",
-		"100000000-other": "¤ 000J",
-		"1000000000-other": "¤ 0B",
-		"10000000000-other": "¤ 00B",
-		"100000000000-other": "¤ 000B",
-		"1000000000000-other": "¤ 0T",
-		"10000000000000-other": "¤ 00T",
-		"100000000000000-other": "¤ 000T"
+		"1000-other": "¤0K",
+		"1000-other-alphaNextToNumber": "¤ 0K",
+		"10000-other": "¤00K",
+		"10000-other-alphaNextToNumber": "¤ 00K",
+		"100000-other": "¤000K",
+		"100000-other-alphaNextToNumber": "¤ 000K",
+		"1000000-other": "¤0J",
+		"1000000-other-alphaNextToNumber": "¤ 0J",
+		"10000000-other": "¤00J",
+		"10000000-other-alphaNextToNumber": "¤ 00J",
+		"100000000-other": "¤000J",
+		"100000000-other-alphaNextToNumber": "¤ 000J",
+		"1000000000-other": "¤0B",
+		"1000000000-other-alphaNextToNumber": "¤ 0B",
+		"10000000000-other": "¤00B",
+		"10000000000-other-alphaNextToNumber": "¤ 00B",
+		"100000000000-other": "¤000B",
+		"100000000000-other-alphaNextToNumber": "¤ 000B",
+		"1000000000000-other": "¤0T",
+		"1000000000000-other-alphaNextToNumber": "¤ 0T",
+		"10000000000000-other": "¤00T",
+		"10000000000000-other-alphaNextToNumber": "¤ 00T",
+		"100000000000000-other": "¤000T",
+		"100000000000000-other-alphaNextToNumber": "¤ 000T"
 	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
