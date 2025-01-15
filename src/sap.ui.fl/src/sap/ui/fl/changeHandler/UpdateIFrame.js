@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @since 1.72
 	 * @private
 	 */
-	var UpdateIFrame = {};
+	const UpdateIFrame = {};
 
 	const aUpdatableProperties = ["width", "height", "url", "_settings", "advancedSettings"];
 
@@ -32,21 +32,13 @@ sap.ui.define([
 	 * @return {Promise<object>} Promise returning the settings
 	 * @ui5-restricted sap.ui.fl
 	 */
-	function getIFrameSettings(oModifier, oIFrame) {
-		var oSettings = {};
-		var aPromises = [];
-		aUpdatableProperties.forEach(function(sPropertyName) {
-			var oPromise = Promise.resolve()
-			.then(oModifier.getProperty.bind(oModifier, oIFrame, sPropertyName))
-			.then(function(vValue) {
-				oSettings[sPropertyName] = vValue;
-			});
-			aPromises.push(oPromise);
-		});
-		return Promise.all(aPromises)
-		.then(function() {
-			return oSettings;
-		});
+	async function getIFrameSettings(oModifier, oIFrame) {
+		const oSettings = {};
+		for (const sPropertyName of aUpdatableProperties) {
+			const vValue = await oModifier.getProperty(oIFrame, sPropertyName);
+			oSettings[sPropertyName] = vValue;
+		}
+		return oSettings;
 	}
 
 	/**
@@ -59,9 +51,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	function applySettings(oModifier, oIFrame, mSettings) {
-		var mFullSettings = extend({ _settings: mSettings }, mSettings);
-		return Promise.resolve()
-		.then(oModifier.applySettings.bind(oModifier, oIFrame, mFullSettings));
+		const mFullSettings = extend({ _settings: mSettings }, mSettings);
+		return oModifier.applySettings(oIFrame, mFullSettings);
 	}
 
 	/**
@@ -74,22 +65,18 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with applySettings
 	 * @ui5-restricted sap.ui.fl
 	 */
-	UpdateIFrame.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
+	UpdateIFrame.applyChange = async function(oChange, oControl, mPropertyBag) {
+		const oModifier = mPropertyBag.modifier;
 
-		return oModifier.getControlMetadata(oControl)
-		.then(function(oControlMetadata) {
-			if (oControlMetadata.getName() !== "sap.ui.fl.util.IFrame") {
-				return Promise.reject(new Error("UpdateIFrame only for sap.ui.fl.util.IFrame"));
-			}
-			return getIFrameSettings(oModifier, oControl);
-		})
-		.then(function(oOriginalSettings) {
-			oChange.setRevertData({
-				originalSettings: oOriginalSettings
-			});
-			return applySettings(oModifier, oControl, oChange.getContent());
+		const oControlMetadata = await oModifier.getControlMetadata(oControl);
+		if (oControlMetadata.getName() !== "sap.ui.fl.util.IFrame") {
+			throw Error("UpdateIFrame only for sap.ui.fl.util.IFrame");
+		}
+		const oOriginalSettings = await getIFrameSettings(oModifier, oControl);
+		oChange.setRevertData({
+			originalSettings: oOriginalSettings
 		});
+		return applySettings(oModifier, oControl, oChange.getContent());
 	};
 
 	/**
@@ -99,26 +86,22 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
-	 * @returns {Promise} Promise resolving with change being reverted
+	 * @returns {Promise<undefined>} Promise resolving with change being reverted
 	 * @ui5-restricted sap.ui.fl
 	 */
-	UpdateIFrame.revertChange = function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
+	UpdateIFrame.revertChange = async function(oChange, oControl, mPropertyBag) {
+		const mRevertData = oChange.getRevertData();
 
-		return Promise.resolve()
-		.then(function() {
-			if (mRevertData) {
-				// If available, the URL is reverted to before parsing the parameters (saved in "_settings")
-				if (mRevertData.originalSettings._settings && mRevertData.originalSettings._settings.url) {
-					mRevertData.originalSettings.url = mRevertData.originalSettings._settings.url;
-				}
-				return applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
+		if (mRevertData) {
+			// If available, the URL is reverted to before parsing the parameters (saved in "_settings")
+			if (mRevertData.originalSettings._settings && mRevertData.originalSettings._settings.url) {
+				mRevertData.originalSettings.url = mRevertData.originalSettings._settings.url;
 			}
-			return Promise.reject(new Error("Attempt to revert an unapplied change."));
-		})
-		.then(function() {
+			await applySettings(mPropertyBag.modifier, oControl, mRevertData.originalSettings);
 			oChange.resetRevertData();
-		});
+		} else {
+			throw Error("Attempt to revert an unapplied change.");
+		}
 	};
 
 	/**
@@ -151,4 +134,4 @@ sap.ui.define([
 	};
 
 	return UpdateIFrame;
-}, /* bExport= */true);
+});

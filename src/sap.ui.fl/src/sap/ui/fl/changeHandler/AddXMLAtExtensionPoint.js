@@ -20,10 +20,10 @@ sap.ui.define([
 	 * @since 1.75
 	 * @private
 	 */
-	var AddXMLAtExtensionPoint = {};
+	const AddXMLAtExtensionPoint = {};
 
 	function calculateExtensionPointIndex(mExtensionPointInfo) {
-		var iIndex = mExtensionPointInfo.index;
+		let iIndex = mExtensionPointInfo.index;
 		if (mExtensionPointInfo.referencedExtensionPoint) {
 			iIndex += calculateExtensionPointIndex(mExtensionPointInfo.referencedExtensionPoint);
 		}
@@ -39,62 +39,48 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.view Root view
 	 * @param {string} [mPropertyBag.viewId] View ID (XML Processing)
-	 * @returns {boolean} <true> if the change got applied successfully
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @name sap.ui.fl.changeHandler.AddXMLAtExtensionPoint#applyChange
 	 */
-	AddXMLAtExtensionPoint.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oView = mPropertyBag.view;
-		var oModifier = mPropertyBag.modifier;
+	AddXMLAtExtensionPoint.applyChange = async function(oChange, oControl, mPropertyBag) {
+		const oView = mPropertyBag.view;
+		const oModifier = mPropertyBag.modifier;
 		// during JS processing the viewId is not in the propertyBag (and should not be, as this would lead to wrong ID calculation)
-		var sViewId = mPropertyBag.viewId || oModifier.getId(oView);
-		var oSelector = oChange.getSelector();
-		var mExtensionPointInfo;
+		const sViewId = mPropertyBag.viewId || oModifier.getId(oView);
+		const oSelector = oChange.getSelector();
+		const mExtensionPointInfo = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo()
+			|| await oModifier.getExtensionPointInfo(oSelector.name, oView);
 
-		return Promise.resolve()
-		.then(function() {
-			var mChangeExtensionPointInfo = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo();
-			if (!mChangeExtensionPointInfo) {
-				return oModifier.getExtensionPointInfo(oSelector.name, oView);
+		if (!mExtensionPointInfo) {
+			throw new Error(`AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '${
+				oSelector && oSelector.name
+			}' or multiple Extension-Points available with the given name in the view (view.id='${
+				sViewId
+			}'). Multiple Extension-points with the same name in one view are not supported!`);
+		}
+		(mExtensionPointInfo.defaultContent || []).forEach(function(vControl) {
+			// Remove default implementation of extension points in async apply (xml-preprocessing)
+			// and create (via action handler) scenarios
+			if (vControl) {
+				oModifier.destroy(vControl);
 			}
-			return mChangeExtensionPointInfo;
-		})
-		.then(function(mRetrievedExtensionPointInfo) {
-			mExtensionPointInfo = mRetrievedExtensionPointInfo;
-			if (!mExtensionPointInfo) {
-				throw new Error(`AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name '${
-					 oSelector && oSelector.name
-					 }' or multiple Extension-Points available with the given name in the view (view.id='${
-					 sViewId
-					 }'). Multiple Extension-points with the same name in one view are not supported!`);
-			}
-			(mExtensionPointInfo.defaultContent || []).forEach(function(vControl) {
-				// Remove default implementation of extension points in async apply (xml-preprocessing)
-				// and create (via action handler) scenarios
-				if (vControl) {
-					oModifier.destroy(vControl);
-				}
-			});
-			mExtensionPointInfo.defaultContent = [];
-			// calculate index from nested extensionpoints
-			mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
-			if (oModifier.targets === "xmlTree") {
-				mExtensionPointInfo.skipAdjustIndex = true;
-			}
-			return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
-		})
-		.then(function(aNewControls) {
-			if (mExtensionPointInfo.ready) {
-				// Confirm with ready function in sync apply scenario (preprocessing with JSView)
-				mExtensionPointInfo.ready(aNewControls);
-			}
-			ExtensionPointRegistryAPI.addCreatedControlsToExtensionPointInfo({
-				name: oSelector.name,
-				viewId: sViewId,
-				createdControlsIds: aNewControls.map((oNewControl) => oModifier.getId(oNewControl))
-			});
-			return true;
+		});
+		mExtensionPointInfo.defaultContent = [];
+		// calculate index from nested extension points
+		mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
+		if (oModifier.targets === "xmlTree") {
+			mExtensionPointInfo.skipAdjustIndex = true;
+		}
+		const aNewControls = await BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
+		if (mExtensionPointInfo.ready) {
+			// Confirm with ready function in sync apply scenario (preprocessing with JSView)
+			mExtensionPointInfo.ready(aNewControls);
+		}
+		ExtensionPointRegistryAPI.addCreatedControlsToExtensionPointInfo({
+			name: oSelector.name,
+			viewId: sViewId,
+			createdControlsIds: aNewControls.map((oNewControl) => oModifier.getId(oNewControl))
 		});
 	};
 
@@ -126,9 +112,9 @@ sap.ui.define([
 	 */
 	AddXMLAtExtensionPoint.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 		// Complete change content could be called with a third parameter. That would override the
-		// optional changeDefinition parameter of the BaseAddXml used in e.g. addxml usecase
+		// optional changeDefinition parameter of the BaseAddXml used in e.g. add xml use case
 		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo/* , oContent */);
 	};
 
 	return AddXMLAtExtensionPoint;
-}, /* bExport= */true);
+});
