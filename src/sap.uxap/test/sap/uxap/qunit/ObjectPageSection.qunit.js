@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/MessageStrip",
 	"sap/m/Button"],
-function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
+function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
 	"use strict";
 	var Importance = library.Importance;
 
@@ -82,6 +83,7 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 
 		assert.strictEqual(oObjectPageLayout.getSections()[0]._getInternalTitleVisible(), true, "title is displayed when there is only 1 section");
 		assert.strictEqual(oObjectPageLayout.getSections()[0]._isTitleAriaVisible(), true, "title is displayed when there is only 1 section");
+		assert.strictEqual(oObjectPageLayout.getSections()[0].getTitleVisible(), true, "title is displayed when there is only 1 section");
 
 		oObjectPageLayout.destroy();
 	});
@@ -117,10 +119,96 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 
 		assert.strictEqual(aSections[0]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
 		assert.strictEqual(aSections[1]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
+		assert.strictEqual(aSections[0].getTitleVisible(), false, "title is hidden when there is more than 1 section");
+		assert.strictEqual(aSections[1].getTitleVisible(), false, "title is hidden when there is more than 1 section");
 
 		assert.strictEqual(aSections[0]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
 		assert.strictEqual(aSections[1]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
 
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("getTitleVisible with showTitle=false", function (assert) {
+		// Arrange
+		var	oSection,
+			oObjectPageLayout = new ObjectPageLayout("page02", {
+				useIconTabBar: true,
+				sections: [
+					new ObjectPageSection({
+						title: "Section Title",
+						subSections: [
+							new ObjectPageSubSection({
+								title: "Title",
+								blocks: [new Text({text: "test"})]
+							}),
+							new ObjectPageSubSection({
+								title: "Title2",
+								blocks: [new Text({text: "test"})]
+							})
+						]
+					})
+				]
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		oSection = oObjectPageLayout.getSections()[0];
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), true, "title is visible");
+
+		// Act
+		oSection.setShowTitle(false);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), false, "title is not visible");
+
+		// Clean up
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("getTitleVisible with importance level of SubSections", function (assert) {
+		// Arrange
+		var	oSection,
+			oObjectPageLayout = new ObjectPageLayout("page02", {
+				useIconTabBar: true,
+				sections: [
+					new ObjectPageSection({
+						title: "Section Title",
+						showTitle: false,
+						subSections: [
+							new ObjectPageSubSection({
+								title: "Title",
+								importance: "Low",
+								blocks: [new Text({text: "test"})]
+							}),
+							new ObjectPageSubSection({
+								title: "Title2",
+								blocks: [new Text({text: "test"})]
+							})
+						]
+					})
+				]
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		oSection = oObjectPageLayout.getSections()[0];
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), false, "title is not visible");
+
+		// Act
+		oObjectPageLayout.setShowOnlyHighImportance(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), true, "title is visible, as there is a hidden SubSection");
+
+		// Clean up
 		oObjectPageLayout.destroy();
 	});
 
@@ -468,6 +556,12 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 				setImportance: function (sImportance) {
 					this.getImportance = this.stub().returns(sImportance);
 				},
+				_isTitleVisible: function () {
+					return true;
+				},
+				setTitleVisible: function () {
+					return;
+				},
 				_updateShowHideState: this.spy(),
 				$: this.stub().returns(jQueryObject)
 			};
@@ -580,16 +674,18 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 	});
 
 	QUnit.test("Test aria-labelledby attribute", function (assert) {
-		assert.expect(6);
+		assert.expect(7);
 
 		var done = assert.async(),
 			oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
+			oSectionWithOneSubsection = this.ObjectPageSectionView.byId("SectionWithoneSubSection"),
+			sSectionWithOneSubsectionAriaLabelledBy = oSectionWithOneSubsection.$().attr("aria-labelledby"),
+			oThirdSubsection = this.ObjectPageSectionView.byId("subsection3"),
 			sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby"),
 			oSectionWithoutTitle = this.ObjectPageSectionView.byId("SectionWithNoTitleAndTwoSubSections"),
 			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-labelledby"),
 			oLastSection = this.ObjectPageSectionView.byId("SectionWithNoTitleAndOneSubSection"),
 			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby"),
-			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"),
 			oLastSectionFirstSubsection = oLastSection.getSubSections()[0],
 			oRenderingAfterTitleUpdate = {
 				onAfterRendering: function () {
@@ -604,9 +700,9 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		// assert
 		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
 			oFirstSection._getTitle(), "aria-labelledby is set properly");
-		assert.strictEqual(Core.byId(sSectionWithoutTitleAriaLabel).getText(),
-			sSectionText, "sections without title are labelled by 'Section' texts");
-		assert.strictEqual(Core.byId(sLastSectionAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sSectionWithoutTitleAriaLabel).getText(),
+			"", "sections without title, which have more than one subsection do not have aria-labelledby");
+		assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
 			oLastSection._getTitle(), "aria-labelledby is set properly");
 
 		// act
@@ -623,8 +719,10 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby");
 
 		// assert
-		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
-			sSectionText, "sections without title are labelled by 'Section' texts");
+		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
+			oFirstSection.getTitle(), "sections with hidden title are still labelled by it");
+		assert.strictEqual(Element.getElementById(sSectionWithOneSubsectionAriaLabelledBy).getText(),
+			oThirdSubsection.getTitle(), "sections without title and only one subsection are labelled by the section`s title");
 
 		// arrange
 		oLastSection.addEventDelegate(oRenderingAfterTitleUpdate);

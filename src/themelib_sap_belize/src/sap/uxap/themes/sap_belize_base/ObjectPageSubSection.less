@@ -49,6 +49,11 @@
 	display: block;
 }
 
+/* public sapUxAPObjectPageSubSectionTransparentBackground class that sets background transparency */
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer .sapUxAPObjectPageSubSection.sapUxAPObjectPageSubSectionTransparentBackground .sapUxAPBlockContainer {
+	background: transparent;
+}
+
 /* phone display */
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeader {
@@ -187,13 +192,10 @@ Doing so will result in less generated CSS, as well as less future maintanance i
 	.sapUxAPBlockContainer > .sapUiRespGrid,
 	.sapUxAPBlockContainer > .sapUiRespGrid > *,
 	.sapUxAPBlockContainer .sapUxAPBlockBase {
-		height: 100%;
-		margin-bottom: 0; // ServiceNow: CS20230006340900
-	}
-	.sapUxAPBlockContainer,
-	.sapUxAPBlockContainer > .sapUiRespGrid,
-	.sapUxAPBlockContainer > .sapUiRespGrid > * {
 		box-sizing: border-box;
+		height: 100%;
+		margin-bottom: 0;
+		margin-top: 0;
 	}
 }
 
@@ -203,7 +205,8 @@ Doing so will result in less generated CSS, as well as less future maintanance i
 		height: 2rem;
 		line-height: 2rem;
 	}
-	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUiFormResGrid > div{
+	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUiFormResGrid > div,
+	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUiFormCLContainer {
 		padding: 1rem 0;
 	}
 }
@@ -233,4 +236,3 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		pointer-events: none;
 	}
 }
-
