@@ -41,7 +41,7 @@ sap.ui.define([
 	opaTest("Should see the details for the selected item (sap.ui.base.Object)", function (Given, When, Then) {
 		Given.onTheApiMasterPage.iSearchFor("sap.ui.base.o");
 		When.onTheApiMasterPage.iSelectATreeNode("Object");
-		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectTitleAndSubtitle("abstract class sap.ui.base.Object", "").
+		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectTitle("abstract class sap.ui.base.Object").
 		and.iShouldSeeTheseSections("Overview", "Constructor", "Methods").
 		and.iShouldSeeTheCorrectSectionSelected("Overview");
 	});

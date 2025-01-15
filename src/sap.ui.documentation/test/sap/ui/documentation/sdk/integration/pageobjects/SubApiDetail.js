@@ -67,14 +67,14 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeTheCorrectTitleAndSubtitle: function (sTitle, sSubtitle) {
+				iShouldSeeTheCorrectTitle: function (sTitle) {
 					return this.waitFor({
-						id: "title",
-						matchers: new Properties({objectTitle: sTitle, objectSubtitle: sSubtitle}),
+						controlType: "sap.m.Title",
+						matchers: new Properties({text: sTitle}),
 						success: function() {
-							Opa5.assert.ok(true, "Title: " + sTitle + " and Subtitle: " + sSubtitle + "  found.");
+							Opa5.assert.ok(true, "Title: " + sTitle + "  found.");
 						},
-						errorMessage: "Title: " + sTitle + " and Subtitle: " + sSubtitle + "  not found."
+						errorMessage: "Title: " + sTitle + "  not found."
 					});
 				},
 

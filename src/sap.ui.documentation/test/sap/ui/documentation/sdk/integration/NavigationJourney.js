@@ -8,9 +8,17 @@ sap.ui.define([
 
 	QUnit.module("Navigation Journey");
 
-	opaTest("Should start the app and see the landing page", function (Given, When, Then) {
+	opaTest("Should start the app and see the cookie preferences blackbar", function (Given, When, Then) {
 		// Arrangements
-		Given.iStartMyApp();
+		Given.iClearAllData();
+		Given.iStartMyApp("sap-ui-xx-tracking=true");
+		// Assertions
+		Then.onTheAppPage.iShouldSeeTheCookiePreferencesBlackbar();
+	});
+
+	opaTest("Should accept all cookies and see the landing page", function (Given, When, Then) {
+		// Action
+		When.onTheAppPage.iPressTheAcceptAllCookiesButton();
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheAppPage();
 	});
