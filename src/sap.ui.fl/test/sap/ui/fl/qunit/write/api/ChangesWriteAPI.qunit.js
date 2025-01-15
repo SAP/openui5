@@ -196,7 +196,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(`${sName}with a component + sCBASuffix`, function(assert) {
+			QUnit.test(`${sName}with a component${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {changeType: "changeSpecificData"},
@@ -217,6 +217,31 @@ sap.ui.define([
 						"the adaptation Id is added to the change if needed"
 					);
 				});
+			});
+
+			QUnit.test(`${sName}with an annotation change${sCBASuffix}`, async function(assert) {
+				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
+				const mPropertyBag = {
+					annotationChange: true,
+					changeSpecificData: {
+						changeType: "annotationChange",
+						content: {
+							annotationPath: "annotationPath",
+							value: "value"
+						}
+					},
+					selector: this.vSelector
+				};
+				const oFlexObject = await ChangesWriteAPI.create(mPropertyBag);
+				assert.deepEqual(oFlexObject.getContent(), {
+					annotationPath: "annotationPath",
+					value: "value"
+				}, "the content is set correctly");
+				assert.strictEqual(
+					oFlexObject.getAdaptationId(),
+					bCBA ? "adaptationId" : undefined,
+					"the adaptation Id is added to the change if needed"
+				);
 			});
 		});
 
