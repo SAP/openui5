@@ -427,10 +427,10 @@ sap.ui.define([
 			sLabelledBy = oMessageStripDomRef.getAttribute("aria-labelledby");
 
 		//Assert
-		assert.strictEqual(sLabelledBy, oMessageStrip.getId(),
-			"should point to the element's id");
+		assert.strictEqual(sLabelledBy, oMessageStrip.getId() + "-info" + " " + oMessageStrip.getAggregation("_text").getId(),
+			"should point to the MessageStrip text content and the invisible message of the control.");
 		assert.notOk(oMessageStripWithLinkDomRef.hasAttribute("aria-labelledby"),
-			"When link is available, the Messagestrip has no aria-lablledby attribute set");
+			"When link is available, the MessageStrip has no aria-lablledby attribute set");
 
 		//Clean up
 		oMessageStrip.destroy();
@@ -444,7 +444,7 @@ sap.ui.define([
 			"only one element with class .sapUiPseudoInvisibleText should be present");
 	});
 
-	QUnit.test("When link is set it should have aria-descrribedby attribute", function (assert) {
+	QUnit.test("When link is set it should have aria-describedby attribute", function (assert) {
 		var link = this.oMessageStrip.getLink(),
 			linkDom = link.getDomRef(),
 			describedBy = linkDom.getAttribute("aria-describedby"),

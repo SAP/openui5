@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/Panel",
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/m/Title",
+	"sap/ui/core/Title",
 	"sap/ui/layout/library",
 	"sap/ui/mdc/enums/LinkType"
 ], (Element, Library, FieldInfoBase, jQuery, BindingMode, JSONModel, Log, SapBaseLog, Panel, PanelItem, SimpleForm, Title, layoutLibrary, LinkType) => {

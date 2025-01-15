@@ -83,10 +83,10 @@ sap.ui.define([
 							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: {path: 'name', type:'sap.ui.model.odata.type.String'}})}),
 							new MdcColumn({header: "Country", propertyKey : "countryOfOrigin_code_ComplexWithText", template: new Text({text: {parts: [{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}, {path: 'countryOfOrigin/name', type:'sap.ui.model.odata.type.String'}], formatter: _formatText}})})
 						],
-						...(bMultiSelect ? {
+						...bMultiSelect ? {
 							cellSelector: [new CellSelector({rangeLimit: 200})],
 							copyProvider: [new CopyProvider()]
-						} : {})
+						} : {}
 					});
 					break;
 
@@ -129,10 +129,10 @@ sap.ui.define([
 							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})}),
 							new MdcColumn({header: "Date of Birth", propertyKey : "dateOfBirth", template: new Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})})
 						],
-						...(bMultiSelect ? {
+						...bMultiSelect ? {
 							cellSelector: [new CellSelector({rangeLimit: 200})],
 							copyProvider: [new CopyProvider()]
-						} : {})
+						} : {}
 					});
 					break;
 			}
@@ -145,10 +145,6 @@ sap.ui.define([
 				setTimeout(resolve, 0);
 			});
 		});
-	};
-
-	Delegate.determineSearchSupported = function(oValueHelp) {
-		return Promise.resolve();
 	};
 
 	function _formatText(sValue, sTextValue) {

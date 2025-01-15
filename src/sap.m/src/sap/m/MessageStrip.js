@@ -260,7 +260,7 @@ sap.ui.define([
 
 	MessageStrip.prototype.setAggregation = function (sName, oControl, bSupressInvalidate) {
 		if (sName === "link" && oControl instanceof Link) {
-			var sId = this.getId() + "-info" + " " + this.getAggregation("_text").getId(),
+			var sId = this._ariaReferenceId(),
 				aAriaDescribedBy = oControl.getAriaDescribedBy();
 
 			if (!aAriaDescribedBy.includes(sId)) {
@@ -284,7 +284,7 @@ sap.ui.define([
 
 
 		if (!oLink) {
-			mAccessibilityState.labelledby = this.getId();
+			mAccessibilityState.labelledby = this._ariaReferenceId();
 		}
 
 		mAccessibilityState.roledescription = oResourceBundle.getText("MESSAGE_STRIP_ARIA_ROLE_DESCRIPTION");
@@ -351,6 +351,11 @@ sap.ui.define([
 			oCloseButton.addAssociation("ariaLabelledBy", this._oInvisibleText.getId(), true);
 		}
 	};
+
+	MessageStrip.prototype._ariaReferenceId = function () {
+		return this.getId() + "-info" + " " + this.getAggregation("_text").getId();
+	};
+
 
 	MessageStrip.prototype.exit = function () {
 		if (this._oInvisibleText) {

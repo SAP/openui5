@@ -373,7 +373,7 @@
 								press="handlePress">
 								<mdcField:fieldInfo>
 									<mdcField:CustomFieldInfo id="F8-I" >
-										<form:SimpleForm layout="ResponsiveGridLayout" editable="false"
+										<form:SimpleForm layout="ColumnLayout" editable="false"
 											title="Product details">
 										<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
 										<m:Text text="{ProductId}"></m:Text>
@@ -433,7 +433,7 @@
 								submit="handleSubmit">
 								<mdcField:dependents>
 									<mdc:ValueHelp id="VH-Status"
-										delegate='\{"name": "sap/ui/mdc/sample/field/fieldBase/ValueHelp-Status.delegate", "payload": \{\}\}'>
+										delegate='\{"name": "sap/ui/mdc/sample/field/fieldBase/ValueHelp-Status.delegate", "payload": \{"searchKeys":["StatusId","Name"]\}\}'>
 										<mdc:typeahead>
 											<mdcValueHelp:Popover id="VH-Status-Pop">
 												<mdcValueHelpContent:MTable id="VH-Status-Pop-MTable"/>
@@ -584,7 +584,7 @@
 								submit="handleSubmit"
 								valueHelp="VH-Country">
 								<mdcField:dependents>
-									<mdc:ValueHelp id="VH-Country" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+									<mdc:ValueHelp id="VH-Country" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["countryId","text"], "searchEnabledCheck": "CB-Search"\}\}'>
 										<mdc:dialog>
 											<mdcValueHelp:Dialog id="VH-Country-Dialog" title="Countries">
 												<mdcValueHelpContent:MTable id="VH-Country-Dialog-MTable"

@@ -6,7 +6,10 @@
 // Delegate class used to help create content in the filterbar and fill relevant metadata
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
-sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBarValidationStatus"], (AggregationBaseDelegate, FilterBarValidationStatus) => {
+sap.ui.define([
+	"sap/ui/mdc/AggregationBaseDelegate",
+	"sap/ui/mdc/enums/FilterBarValidationStatus"
+], (AggregationBaseDelegate, FilterBarValidationStatus) => {
 	"use strict";
 	/**
 	 * Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.FilterBar FilterBar}.
@@ -155,7 +158,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 
 		if (oFilterBar.getShowMessages() && !oFilterBar._hasOpenMessageBox) {
 
-			sap.ui.require(["sap/m/MessageBox", "sap/base/Log"], function(MessageBox, Log) {
+			sap.ui.require(["sap/m/MessageBox", "sap/base/Log"], (MessageBox, Log) => {
 				try {
 
 					if (oFilterBar._bIsBeingDestroyed) {
@@ -163,7 +166,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 					}
 					oFilterBar._hasOpenMessageBox = true;
 					MessageBox.error(sErrorMessage, {
-						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
+						styleClass: oFilterBar.getDomRef()?.closest(".sapUiSizeCompact") ? "sapUiSizeCompact" : "",
 						onClose: function() {
 							delete oFilterBar._hasOpenMessageBox;
 							oFilterBar.setFocusOnFirstErroneousField();
