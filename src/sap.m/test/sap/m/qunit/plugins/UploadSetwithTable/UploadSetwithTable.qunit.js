@@ -20,8 +20,9 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/upload/UploaderTableItem",
 	"sap/ui/model/type/Boolean",
-	"sap/ui/base/Event"
-], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase) {
+	"sap/ui/base/Event",
+	"sap/m/upload/UploadItem"
+], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -891,6 +892,61 @@ sap.ui.define([
 
 		// if files selected are ok to upload then the upload intiated
 		assert.ok(oInitiateItemUploadSpy.called, "Files selected are initiated for upload");
+
+		oMdcTable.destroy();
+		done();
+	});
+
+	QUnit.test("Plugin to set mediaType for vds files", async function (assert) {
+		const done = assert.async();
+		/**
+		 * MDC Table with ActionsPlaceholder
+		 */
+
+		// arrange
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id:"uploadButton", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"]
+		});
+
+		// act
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+
+		const oTargetAction = oMdcTable.getActions().find((oAction) => oAction?.getAction()?.isA("sap.m.upload.ActionsPlaceholder"));
+		const oActionPlaceholderControl = oTargetAction?.getAction();
+		const oActionButton = oActionPlaceholderControl?.getAggregation("_actionButton");
+
+		// Check if the upload is enabled
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
+
+		// act
+		// Simulate a file selection event on the action button
+		const oFileList = {
+			0: {
+				name: "sample.vds",
+				type: "",
+				size: 404450
+			},
+			length: 1
+		};
+		oActionButton?.fireChange({id:'file-uploads', newValue:'', files:oFileList});
+
+		// assert
+
+		// if files selected are ok to upload then the upload intiated
+		oUploadSetwithTablePlugin.attachEvent("uploadCompleted", function (oEvent) {
+			const oItemForUpload = oEvent.getParameter("item");
+			assert.ok(oItemForUpload.getMediaType() === UploadItem.MEDIATYPES.VDS, "Media type is set to vds manually for vds files");
+		}, oUploadSetwithTablePlugin);
 
 		oMdcTable.destroy();
 		done();

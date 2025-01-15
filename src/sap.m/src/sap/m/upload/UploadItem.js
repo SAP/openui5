@@ -320,6 +320,13 @@ sap.ui.define([
 
     UploadItem.IMAGE_FILE_ICON = "sap-icon://card";
 	UploadItem.MEGABYTE = 1048576;
+	UploadItem.FILETYPES = {
+		"VDS": ".vds"
+	};
+
+	UploadItem.MEDIATYPES = {
+		"VDS": "application/vnd.vds"
+	};
 
     return UploadItem;
 });
