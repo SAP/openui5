@@ -297,7 +297,7 @@ sap.ui.define([
 		NavigationListItemBase.prototype.onkeydown.apply(this, arguments);
 	};
 
-	NavigationListItemBase.prototype.onkeyup = function (oEvent) {
+	NavigationListItem.prototype.onkeyup = function (oEvent) {
 		if (oEvent.isMarked("subItem")) {
 			return;
 		}
