@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.27.0
 	 */
-	var StashControl = {};
+	const StashControl = {};
 
 	/**
 	 * Stashes and hides a control.
@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @public
 	 */
 	StashControl.applyChange = async function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
+		const oModifier = mPropertyBag.modifier;
 
 		const bStashed = await oModifier.getStashed(oControl);
 		const iOriginalIndex = await oModifier.findIndexInParentAggregation(oControl);

@@ -5,13 +5,12 @@
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/fl/changeHandler/common/revertAddedControls",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/changeHandler/common/revertAddedControls"
 ], function(
 	Base,
 	LoaderExtensions,
-	revertAddedControls,
-	FlUtils
+	revertAddedControls
+
 ) {
 	"use strict";
 
@@ -25,7 +24,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted change handlers
 	 */
-	var BaseAddXml = {};
+	const BaseAddXml = {};
 
 	/**
 	 * Adds the content of the XML fragment to the given aggregation of the control, if valid.
@@ -44,83 +43,47 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.apply.changes.Applier
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#applyChange
 	 */
-	BaseAddXml.applyChange = function(oChange, oControl, mPropertyBag, mChangeInfo) {
-		var oModifier = mPropertyBag.modifier;
-		var oView = mPropertyBag.view;
-		var sAggregationName = mChangeInfo.aggregationName;
-		var oAggregationDefinition;
-		var iIndex = mChangeInfo.index;
-		var aRevertData = [];
-		var sModuleName = oChange.getFlexObjectMetadata().moduleName;
-		var sFragment;
-		var aNewControls;
+	BaseAddXml.applyChange = async function(oChange, oControl, mPropertyBag, mChangeInfo) {
+		const oModifier = mPropertyBag.modifier;
+		const sAggregationName = mChangeInfo.aggregationName;
+		const sModuleName = oChange.getFlexObjectMetadata().moduleName;
 
-		var fnAddControls = function() {
-			var aPromises = [];
-			aNewControls.forEach(function(oNewControl, iIterator) {
-				var fnPromise = function() {
-					return Promise.resolve()
-					.then(oModifier.insertAggregation.bind(
-						oModifier,
-						oControl,
-						sAggregationName,
-						oNewControl,
-						iIndex + iIterator,
-						oView,
-						mChangeInfo.skipAdjustIndex
-					))
-					.then(function() {
-						aRevertData.push({
-							id: oModifier.getId(oNewControl),
-							aggregationName: sAggregationName
-						});
-					});
-				};
-				aPromises.push(fnPromise);
-			});
-			return FlUtils.execPromiseQueueSequentially(aPromises, true, true, true)
-			.then(function() {
-				oChange.setRevertData(aRevertData);
-				return aNewControls;
-			});
-		};
+		const oAggregationDefinition = await oModifier.findAggregation(oControl, sAggregationName);
+		if (!oAggregationDefinition) {
+			throw Error(`The given Aggregation is not available in the given control: ${oModifier.getId(oControl)}`);
+		}
+		const sFragment = await LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+		const aNewControls = await Base.instantiateFragment(oChange, mPropertyBag);
 
-		return Promise.resolve()
-		// validate aggregation
-		.then(oModifier.findAggregation.bind(oModifier, oControl, sAggregationName))
-		.then(function(oRetrievedAggregationDefinition) {
-			oAggregationDefinition = oRetrievedAggregationDefinition;
-			if (!oAggregationDefinition) {
-				return Promise.reject(new Error(`The given Aggregation is not available in the given control: ${oModifier.getId(oControl)}`));
+		let iIterator = 0;
+		for (const oNewControl of aNewControls) {
+			const bValidated = await oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment, iIterator);
+			iIterator++;
+			if (!bValidated) {
+				BaseAddXml._destroyArrayOfControls(aNewControls);
+				throw Error(`The content of the xml fragment does not match the type of the targetAggregation: ${oAggregationDefinition.type}`);
 			}
-			// load and instantiate fragment
-			return LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
-		})
-		.then(function(sLoadedFragment) {
-			sFragment = sLoadedFragment;
-			return Base.instantiateFragment(oChange, mPropertyBag);
-		})
-		// validate types
-		.then(function(aRetrievedControls) {
-			aNewControls = aRetrievedControls;
-			var aPromises = [];
-			aNewControls.forEach(function(oNewControl, iIterator) {
-				var fnPromise = function() {
-					return Promise.resolve()
-					.then(oModifier.validateType.bind(oModifier, oNewControl, oAggregationDefinition, oControl, sFragment, iIterator))
-					.then(function(bValidated) {
-						if (!bValidated) {
-							BaseAddXml._destroyArrayOfControls(aNewControls);
-							return Promise.reject(new Error(`The content of the xml fragment does not match the type of the targetAggregation: ${oAggregationDefinition.type}`));
-						}
-						return undefined;
-					});
-				};
-				aPromises.push(fnPromise);
+		}
+
+		const aRevertData = [];
+		let iIterator1 = 0;
+		for (const oNewControl of aNewControls) {
+			await oModifier.insertAggregation(
+				oControl,
+				sAggregationName,
+				oNewControl,
+				mChangeInfo.index + iIterator1,
+				mPropertyBag.view,
+				mChangeInfo.skipAdjustIndex
+			);
+			iIterator1++;
+			aRevertData.push({
+				id: oModifier.getId(oNewControl),
+				aggregationName: sAggregationName
 			});
-			return FlUtils.execPromiseQueueSequentially(aPromises, true, true, true)
-			.then(fnAddControls);
-		});
+		}
+		oChange.setRevertData(aRevertData);
+		return aNewControls;
 	};
 
 	/**
@@ -173,10 +136,10 @@ sap.ui.define([
 		oChange.setContent(oContent);
 
 		// Calculate the moduleName for the fragment
-		var sModuleName = oChange.getFlexObjectMetadata().reference.replace(/\.Component/g, "").replace(/\./g, "/");
+		let sModuleName = oChange.getFlexObjectMetadata().reference.replace(/\.Component/g, "").replace(/\./g, "/");
 		sModuleName += "/changes/";
 		sModuleName += oContent.fragmentPath;
-		var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+		const oFlexObjectMetadata = oChange.getFlexObjectMetadata();
 		oFlexObjectMetadata.moduleName = sModuleName;
 		oChange.setFlexObjectMetadata(oFlexObjectMetadata);
 	};

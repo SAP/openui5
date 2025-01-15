@@ -916,7 +916,7 @@ sap.ui.define([
 		jQuery(this.oFileUpload).appendTo(oStaticArea);
 
 		if (!this.getName()) {
-			Log.warning("Name property is not set. Id would be used instead to identify the control on the server.", this);
+			Log.warning("Name property is not set. It would be used instead to identify the control on the server.", this);
 		}
 
 		// unbind the custom event handlers
@@ -1203,6 +1203,8 @@ sap.ui.define([
 		var uploadForm = this.getDomRef("fu_form");
 		if (uploadForm) {
 			uploadForm.reset();
+		} else if (this.oFileUpload) {
+			this.oFileUpload.files = new DataTransfer().files;
 		}
 		//clear the value, don't fire change event, and suppress the refocusing of the file input field
 		return this.setValue("", false, true);

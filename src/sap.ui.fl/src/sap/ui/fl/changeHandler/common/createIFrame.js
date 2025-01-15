@@ -23,13 +23,13 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function(oChange, mPropertyBag, oSelector, mRenameInfo) {
-		var oModifier = mPropertyBag.modifier;
-		var oChangeContent = oChange.getContent();
-		var oView = mPropertyBag.view;
-		var oComponent = mPropertyBag.appComponent;
-		var mIFrameSettings = { _settings: {} };
+		const oModifier = mPropertyBag.modifier;
+		const oChangeContent = oChange.getContent();
+		const oView = mPropertyBag.view;
+		const oComponent = mPropertyBag.appComponent;
+		const mIFrameSettings = { _settings: {} };
 		["url", "width", "height"].forEach(function(sIFrameProperty) {
-			var vValue = oChangeContent[sIFrameProperty];
+			const vValue = oChangeContent[sIFrameProperty];
 			mIFrameSettings[sIFrameProperty] = vValue;
 			mIFrameSettings._settings[sIFrameProperty] = vValue;
 		});
@@ -44,9 +44,6 @@ sap.ui.define([
 			mIFrameSettings.asContainer = true;
 		}
 
-		return Promise.resolve()
-		.then(function() {
-			return oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);
-		});
+		return oModifier.createControl("sap.ui.fl.util.IFrame", oComponent, oView, oSelector, mIFrameSettings, false);
 	};
 });

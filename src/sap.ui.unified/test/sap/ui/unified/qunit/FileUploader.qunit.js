@@ -732,6 +732,36 @@ sap.ui.define([
 		oAfterRenderingHookSpy.restore();
 	});
 
+	QUnit.test("FileUploader.prototype.clear", async function (assert) {
+		// prepare
+		var oFileUploader = new FileUploader();
+		var oDataTransfer = new DataTransfer();
+		oFileUploader.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// act
+		var oFileInputField = oFileUploader.getDomRef("fu");
+		oDataTransfer.items.add(
+			new File(["test"], {type: "text/plain"})
+		);
+		oFileInputField.files = oDataTransfer.files;
+
+		// assert
+		assert.strictEqual(oFileInputField.files.length, 1, "A file is selected.");
+
+		// act
+		oFileUploader.setVisible(false);
+		await nextUIUpdate();
+
+		oFileUploader.clear();
+
+		// assert
+		assert.strictEqual(oFileUploader.getDomRef("fu").files.length, 0, "There are no selected files.");
+
+		// clean
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("'title' attribute of the internal <input type='file'>");
 	QUnit.test("Test 'title' attribute in different scenarios", async function (assert){
 		var oFileUploader = new FileUploader(),

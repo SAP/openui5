@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var PROPERTY_NAME = "visible";
+	const PROPERTY_NAME = "visible";
 
 	/**
 	 * Change handler for hiding of a control.
@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.27.0
 	 */
-	var HideControl = {};
+	const HideControl = {};
 
 	/**
 	 * Hides a control.
@@ -31,19 +31,16 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - map of properties
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {Promise} Promise resolving when change is applied
+	 * @return {Promise<undefined>} Promise resolving when change is applied
 	 * @public
 	 */
-	HideControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		return Promise.resolve()
-		.then(oModifier.getVisible.bind(oModifier, oControl))
-		.then(function(bVisible) {
-			oChange.setRevertData({
-				originalValue: bVisible
-			});
-			oModifier.setVisible(oControl, false);
+	HideControl.applyChange = async function(oChange, oControl, mPropertyBag) {
+		const oModifier = mPropertyBag.modifier;
+		const bVisible = await oModifier.getVisible(oControl);
+		oChange.setRevertData({
+			originalValue: bVisible
 		});
+		oModifier.setVisible(oControl, false);
 	};
 
 	/**
@@ -53,21 +50,17 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag	- map of properties
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {Promise} Promise resolving when change was successfully reverted
 	 * @public
 	 */
 	HideControl.revertChange = function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
+		const mRevertData = oChange.getRevertData();
 
-		return Promise.resolve()
-		.then(function() {
-			if (mRevertData) {
-				mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
-				oChange.resetRevertData();
-			} else {
-				Log.error("Attempt to revert an unapplied change.");
-			}
-		});
+		if (mRevertData) {
+			mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
+			oChange.resetRevertData();
+		} else {
+			Log.error("Attempt to revert an unapplied change.");
+		}
 	};
 
 	/**
@@ -77,8 +70,7 @@ sap.ui.define([
 	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
 	 * @public
 	 */
-	HideControl.completeChangeContent = function() {
-	};
+	HideControl.completeChangeContent = function() {};
 
 	/**
 	 * Retrieves the condenser-specific information.
