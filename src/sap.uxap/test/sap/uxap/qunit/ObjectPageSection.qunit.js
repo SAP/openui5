@@ -675,16 +675,18 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 	});
 
 	QUnit.test("Test aria-labelledby attribute", async function(assert) {
-		assert.expect(6);
+		assert.expect(7);
 
 		var done = assert.async(),
 			oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
+			oSectionWithOneSubsection = this.ObjectPageSectionView.byId("SectionWithoneSubSection"),
+			sSectionWithOneSubsectionAriaLabelledBy = oSectionWithOneSubsection.$().attr("aria-labelledby"),
+			oThirdSubsection = this.ObjectPageSectionView.byId("subsection3"),
 			sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby"),
 			oSectionWithoutTitle = this.ObjectPageSectionView.byId("SectionWithNoTitleAndTwoSubSections"),
 			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-labelledby"),
 			oLastSection = this.ObjectPageSectionView.byId("SectionWithNoTitleAndOneSubSection"),
 			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby"),
-			sSectionText = ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"),
 			oLastSectionFirstSubsection = oLastSection.getSubSections()[0],
 			oRenderingAfterTitleUpdate = {
 				onAfterRendering: function () {
@@ -700,7 +702,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
 			oFirstSection._getTitle(), "aria-labelledby is set properly");
 		assert.strictEqual(Element.getElementById(sSectionWithoutTitleAriaLabel).getText(),
-			sSectionText, "sections without title are labelled by 'Section' texts");
+			"", "sections without title, which have more than one subsection do not have aria-labelledby");
 		assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
 			oLastSection._getTitle(), "aria-labelledby is set properly");
 
@@ -719,7 +721,11 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 		// assert
 		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
-			sSectionText, "sections without title are labelled by 'Section' texts");
+			oFirstSection.getTitle(), "sections with hidden title are still labelled by it");
+
+		// assert
+		assert.strictEqual(Element.getElementById(sSectionWithOneSubsectionAriaLabelledBy).getText(),
+			oThirdSubsection.getTitle(), "sections without title and only one subsection are labelled by the section`s title");
 
 		// arrange
 		oLastSection.addEventDelegate(oRenderingAfterTitleUpdate);
