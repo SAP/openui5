@@ -5,7 +5,8 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/changeHandler/condenser/Classification"
-], function(
+],
+function(
 	Log,
 	CondenserClassification
 ) {
@@ -19,19 +20,19 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.46
 	 */
-	var MoveControls = { };
+	const MoveControls = { };
 
 	// Defines object which contains constants used in the handler
 	MoveControls.SOURCE_ALIAS = "source";
 	MoveControls.TARGET_ALIAS = "target";
 	MoveControls.MOVED_ELEMENTS_ALIAS = "movedElements";
 
-	 function checkConditions(oChange, oModifier, oView, oAppComponent) {
+	function checkConditions(oChange, oModifier, oView, oAppComponent) {
 		if (!oChange) {
 			throw new Error("No change instance");
 		}
 
-		var oChangeContent = oChange.getContent();
+		const oChangeContent = oChange.getContent();
 
 		if (!oChangeContent || !oChangeContent.movedElements || oChangeContent.movedElements.length === 0) {
 			throw new Error("Change format invalid");
@@ -99,22 +100,22 @@ sap.ui.define([
 		delete mSpecificChangeInfo.target.publicAggregation;
 
 		const oSourceParent =
-			mSpecificChangeInfo.source.parent || (await oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent));
+			mSpecificChangeInfo.source.parent || await oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent);
 		const oTargetParent =
-			mSpecificChangeInfo.target.parent || (await oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent));
-		var sSourceAggregation = mSpecificChangeInfo.source.aggregation;
-		var sTargetAggregation = mSpecificChangeInfo.target.aggregation;
-		var mAdditionalSourceInfo = {
+			mSpecificChangeInfo.target.parent || await oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent);
+		const sSourceAggregation = mSpecificChangeInfo.source.aggregation;
+		const sTargetAggregation = mSpecificChangeInfo.target.aggregation;
+		const mAdditionalSourceInfo = {
 			aggregation: mSpecificChangeInfo.source.aggregation,
 			type: oModifier.getControlType(oSourceParent)
 		};
 
-		var mAdditionalTargetInfo = {
+		const mAdditionalTargetInfo = {
 			aggregation: mSpecificChangeInfo.target.aggregation,
 			type: oModifier.getControlType(oTargetParent)
 		};
 
-		var mSpecificInfo = {
+		const mSpecificInfo = {
 			source: {
 				id: oSourceParent.getId(),
 				aggregation: sSourceAggregation,
@@ -164,7 +165,7 @@ sap.ui.define([
 			let oSourceParent = oModifier.getParent(oMovedElement);
 			// mPropertyBag.sourceAggregation and mPropertyBag.targetAggregation should always be used when available
 			let sSourceAggregation =
-				mPropertyBag.sourceAggregation || (await oModifier.getParentAggregationName(oMovedElement, oSourceParent));
+				mPropertyBag.sourceAggregation || await oModifier.getParentAggregationName(oMovedElement, oSourceParent);
 			const oTargetParent = await oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
 			const sTargetAggregation = mPropertyBag.targetAggregation || oChangeContent.target.selector.aggregation;
 			// save the current index, sourceParent and sourceAggregation for revert
@@ -182,7 +183,7 @@ sap.ui.define([
 					iSourceIndex = mMovedElement.sourceIndex;
 					sSourceAggregation = mPropertyBag.sourceAggregation || oChangeContent.source.selector.aggregation;
 					bChangeAlreadyPerformed = true;
-					oSourceParent = (await oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView)) || oSourceParent;
+					oSourceParent = await oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView) || oSourceParent;
 				}
 			}
 			if (iSourceIndex > -1) {
@@ -223,13 +224,13 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.MoveControls#revertChange
 	 */
 	MoveControls.revertChange = async function(oChange, oRelevantContainer, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oView = mPropertyBag.view;
-		var oAppComponent = mPropertyBag.appComponent;
+		const oModifier = mPropertyBag.modifier;
+		const oView = mPropertyBag.view;
+		const oAppComponent = mPropertyBag.appComponent;
 
 		// we still have to set sourceParent and sourceAggregation initially from the change data,
 		// because for XML changes this data can't be stored in the revertData yet.
-		var oChangeContent = oChange.getContent();
+		const oChangeContent = oChange.getContent();
 
 		checkConditions(oChange, oModifier, oView, oAppComponent);
 		let oSourceParent = await oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView);
@@ -246,10 +247,10 @@ sap.ui.define([
 			}
 			let iInsertIndex = mMovedElement.sourceIndex;
 			if (aRevertData) {
-				var mRevertData = aRevertData[iElementIndex];
+				const mRevertData = aRevertData[iElementIndex];
 				sSourceAggregation = mRevertData.aggregation;
 				iInsertIndex = mRevertData.index;
-				oSourceParent = (await oModifier.bySelector(mRevertData.sourceParent, oAppComponent, oView)) || oSourceParent;
+				oSourceParent = await oModifier.bySelector(mRevertData.sourceParent, oAppComponent, oView) || oSourceParent;
 			}
 			await oModifier.moveAggregation(
 				oTargetParent,
@@ -297,7 +298,7 @@ sap.ui.define([
 		};
 
 		for (const mElement of mCompleteSpecificChangeInfo.movedElements) {
-			const oElement = mElement.element || (await oModifier.bySelector(mElement.id, oAppComponent));
+			const oElement = mElement.element || await oModifier.bySelector(mElement.id, oAppComponent);
 			oContent.movedElements.push({
 				selector: oModifier.getSelector(oElement, oAppComponent),
 				sourceIndex: mElement.sourceIndex,
@@ -320,8 +321,8 @@ sap.ui.define([
 	 * @public
 	 */
 	MoveControls.getCondenserInfo = function(oChange) {
-		var oChangeContent = oChange.getContent();
-		var oRevertData = oChange.getRevertData()[0];
+		const oChangeContent = oChange.getContent();
+		const oRevertData = oChange.getRevertData()[0];
 		return {
 			affectedControl: oChangeContent.movedElements[0].selector,
 			classification: CondenserClassification.Move,
@@ -331,7 +332,7 @@ sap.ui.define([
 			sourceAggregation: oRevertData.aggregation,
 			targetAggregation: oChangeContent.target.selector.aggregation,
 			setTargetIndex(oChange, iNewTargetIndex) {
-				var oChangeContent = oChange.getContent();
+				const oChangeContent = oChange.getContent();
 				oChangeContent.movedElements[0].targetIndex = iNewTargetIndex;
 				oChange.setContent(oChangeContent);
 			},
@@ -339,7 +340,7 @@ sap.ui.define([
 				return oChange.getContent().movedElements[0].targetIndex;
 			},
 			setIndexInRevertData(oChange, iIndex) {
-				var aRevertData = oChange.getRevertData();
+				const aRevertData = oChange.getRevertData();
 				aRevertData[0].index = iIndex;
 				oChange.setRevertData(aRevertData);
 			}
@@ -347,8 +348,8 @@ sap.ui.define([
 	};
 
 	MoveControls.getChangeVisualizationInfo = function(oChange) {
-		var oChangeContent = oChange.getContent();
-		var oRevertData = oChange.getRevertData()[0];
+		const oChangeContent = oChange.getContent();
+		const oRevertData = oChange.getRevertData()[0];
 		return {
 			affectedControls: [oChangeContent.movedElements[0].selector],
 			dependentControls: [oChangeContent.source.selector],

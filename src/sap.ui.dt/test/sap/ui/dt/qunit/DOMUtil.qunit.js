@@ -5,15 +5,15 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	DOMUtil,
 	Button,
 	HTML,
 	HorizontalLayout,
-	jQuery,
-	nextUIUpdate
+	nextUIUpdate,
+	jQuery
 ) {
 	"use strict";
 
@@ -294,34 +294,53 @@ sap.ui.define([
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
 		beforeEach() {
 			// TODO: check why classes are not considered when using JS
-			jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#qunit-fixture");
-			jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#qunit-fixture");
+			var oLeftPart = document.createElement("div");
+			oLeftPart.style.cssText = "float: left; width: 50%; height: 100%;";
+			oLeftPart.id = "left-part";
+			document.getElementById("qunit-fixture").appendChild(oLeftPart);
 
-			this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
-			this.oDomElement.appendTo("#left-part");
+			var oRightPart = document.createElement("div");
+			oRightPart.style.cssText = "float: left; width: 50%; height: 100%;";
+			oRightPart.id = "right-part";
+			document.getElementById("qunit-fixture").appendChild(oRightPart);
+
+			this.oDomElement = document.createElement("div");
+			this.oDomElement.setAttribute("data-find", "div");
+			this.oDomElement.className = "withBeforeElement";
+			this.oDomElement.style.cssText = "width:200px; height: 200px;";
+
+			var oSpanElement = document.createElement("span");
+			oSpanElement.setAttribute("data-find", "span");
+			oSpanElement.className = "withAfterElement";
+			oSpanElement.style.color = "rgb(255, 0, 0)";
+			oSpanElement.textContent = "Text";
+
+			this.oDomElement.appendChild(oSpanElement);
+			document.getElementById("left-part").appendChild(this.oDomElement);
 		},
 		afterEach() {
 			this.oDomElement.remove();
-			jQuery("#qunit-fixture").empty();
+			document.getElementById("qunit-fixture").innerHTML = "";
 		}
 	}, function() {
 		QUnit.test("when this element, it's children and styling is copied", function(assert) {
-			DOMUtil.cloneDOMAndStyles(this.oDomElement.get(0), jQuery("#right-part").get(0));
+			DOMUtil.cloneDOMAndStyles(this.oDomElement, document.getElementById("right-part"));
 
-			var oCopyDiv = jQuery("#right-part > [data-find=div]");
+			var oCopyDiv = document.querySelector("#right-part > [data-find='div']");
 			assert.ok(oCopyDiv, "element is copied");
-			assert.strictEqual(oCopyDiv.css("width"), "200px", "styles for element are also copied");
+			assert.strictEqual(oCopyDiv.style.width, "200px", "styles for element are also copied");
 
-			var sBeforeDivContent = window.getComputedStyle(this.oDomElement.get(0), ":before").getPropertyValue("content").replace(/[\"\']/g, "");
-			var sBeforeCopyDivContent = oCopyDiv.children().first().html();
+			var sBeforeDivContent = window.getComputedStyle(this.oDomElement, ":before").getPropertyValue("content").replace(/[\"\']/g, "");
+			var sBeforeCopyDivContent = oCopyDiv.firstElementChild.innerHTML;
 			assert.strictEqual(sBeforeCopyDivContent, sBeforeDivContent, "and the pseudoElements are also copied");
 
-			var oCopySpan = oCopyDiv.find("> [data-find=span]");
-			assert.ok(oCopySpan, "child elemen is copied");
-			assert.strictEqual(oCopySpan.css("color"), "rgb(255, 0, 0)", "styles for child elemen are also copied");
+			var oCopySpan = oCopyDiv.querySelector("[data-find='span']");
+			assert.ok(oCopySpan, "child element is copied");
+			assert.strictEqual(window.getComputedStyle(oCopySpan).color, "rgb(255, 0, 0)", "styles for child element are also copied");
 
-			var sAfterSpanContent = window.getComputedStyle(jQuery(this.oDomElement).find(">span").get(0), ":after").getPropertyValue("content").replace(/[\"\']/g, "");
-			var sAfterCopySpanContent = oCopySpan.children().last().html();
+			var oOriginalSpan = this.oDomElement.querySelector("span");
+			var sAfterSpanContent = window.getComputedStyle(oOriginalSpan, ":after").getPropertyValue("content").replace(/[\"\']/g, "");
+			var sAfterCopySpanContent = oCopySpan.lastElementChild.innerHTML;
 			assert.strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
 		});
 	});
@@ -371,45 +390,65 @@ sap.ui.define([
 	QUnit.module("copyComputedStyle()", {
 		beforeEach() {
 			// TODO: check why classes are not considered when using JS
-			this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
-				"style='background: #000; width: 200px; height: 200px;'" +
-				"></div>")
-			.appendTo("#qunit-fixture");
-			this.oDestDomElement = jQuery("<div class='child' id='second-child'></div>")
-			.appendTo("#qunit-fixture");
+			this.oSrcDomElement = document.createElement("div");
+			this.oSrcDomElement.className = "child";
+			this.oSrcDomElement.id = "first-child";
+			this.oSrcDomElement.style.cssText = "background: #000; width: 200px; height: 200px;";
+			document.getElementById("qunit-fixture").appendChild(this.oSrcDomElement);
+
+			this.oDestDomElement = document.createElement("div");
+			this.oDestDomElement.className = "child";
+			this.oDestDomElement.id = "second-child";
+			document.getElementById("qunit-fixture").appendChild(this.oDestDomElement);
 		}
 	}, function() {
 		QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
-			this.oSrcDomElement.css({
-				display: "none"
-			});
-			DOMUtil.copyComputedStyle(this.oSrcDomElement.get(0), this.oDestDomElement.get(0));
-			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
-			var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
+			this.oSrcDomElement.style.display = "none";
+			DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
+			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement);
+			var mDestStyles = window.getComputedStyle(this.oDestDomElement);
 			assert.strictEqual(mDestStyles.display, "none", "css-attribute display is copied to source dom element");
 			assert.notEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
 				"css-attribute background on source and dest Element are not equal");
 		});
 
 		QUnit.test("when copyComputedStyle is called without pseudoElements", function(assert) {
-			DOMUtil.copyComputedStyle(this.oSrcDomElement.get(0), this.oDestDomElement.get(0));
-			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
-			var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
+			DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
+			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement);
+			var mDestStyles = window.getComputedStyle(this.oDestDomElement);
 			assert.strictEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
 				"css styles of source and dest element are equal");
 		});
 
 		QUnit.test("when copyComputedStyle is called with pseudoElements", function(assert) {
-			jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#qunit-fixture");
-			jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#qunit-fixture");
+			var oLeftPart = document.createElement("div");
+			oLeftPart.style.cssText = "float: left; width: 50%; height: 100%;";
+			oLeftPart.id = "left-part";
+			document.getElementById("qunit-fixture").appendChild(oLeftPart);
 
-			var oDomElement = jQuery("<div data-find='div' class='withBeforeElementAndAttrContent' style='width:200px; height: 200px;'>" +
-				"<span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
-			oDomElement.appendTo("#left-part");
+			var oRightPart = document.createElement("div");
+			oRightPart.style.cssText = "float: left; width: 50%; height: 100%;";
+			oRightPart.id = "right-part";
+			document.getElementById("qunit-fixture").appendChild(oRightPart);
 
-			DOMUtil.copyComputedStyle(oDomElement.get(0), this.oDestDomElement.get(0));
-			var oSpan = jQuery("#second-child").find("span");
-			assert.strictEqual(oSpan.length, 1, "oDestDomElement contains a span element as well as the source oDomElement");
+			var oDomElement = document.createElement("div");
+			oDomElement.setAttribute("data-find", "div");
+			oDomElement.className = "withBeforeElementAndAttrContent";
+			oDomElement.style.cssText = "width:200px; height: 200px;";
+
+			var oSpanElement = document.createElement("span");
+			oSpanElement.setAttribute("data-find", "span");
+			oSpanElement.className = "withAfterElement";
+			oSpanElement.style.color = "rgb(255, 0, 0)";
+			oSpanElement.textContent = "Text";
+
+			oDomElement.appendChild(oSpanElement);
+			document.getElementById("left-part").appendChild(oDomElement);
+
+			DOMUtil.copyComputedStyle(oDomElement, this.oDestDomElement);
+
+			var oSpan = document.querySelector("#second-child span");
+			assert.strictEqual(oSpan !== null, true, "oDestDomElement contains the span element");
 		});
 	});
 

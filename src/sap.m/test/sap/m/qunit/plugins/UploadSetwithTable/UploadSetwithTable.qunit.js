@@ -1014,4 +1014,273 @@ sap.ui.define([
 		});
 	});
 
+	// test case to check if associated file preview dialog is opened on file selection
+	QUnit.test("File Preview Dialog opens on file selection", async function (assert) {
+		const done = assert.async();
+		var oUploadSetwithTablePluginCarouselPlugin;
+		/**
+		 * MDC Table with ActionsPlaceholder
+		 */
+
+		// arrange
+
+		const oPreviewDialog = new FilePreviewDialog();
+
+		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
+		const oRow = new UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"],
+			previewDialog: oPreviewDialog,
+			rowConfiguration: oRow
+		});
+
+		// Simulate a file selection event on the action button
+		fnPreviewHandler = function (oEvent) {
+			const oSource = oEvent.getSource();
+			const oBindingContext = oSource.getBindingContext();
+			if (oBindingContext && oUploadSetwithTablePlugin) {
+				oUploadSetwithTablePlugin.openFilePreview(oBindingContext);
+			}
+		};
+
+		setFilePreviewHandler(fnPreviewHandler);
+
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id:"uploadButton", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		// use sap.m.upload.FilePreviewDialog instance
+
+		// act
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+
+		// Check if the upload is enabled
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
+
+		// act
+
+		// get Link control from the table and trigger press event
+		const oLink = oMdcTable._oTable.getItems()[0]?.getCells()[0]?.getItems()[2]?.getItems()[0];
+		if (!oLink) {
+			assert.ok(false, "File preview link not found in the table");
+		}
+		oLink.firePress();
+
+		let oDialog;
+
+		const afterDialogOpen = function (oEvent) {
+			oDialog = oEvent.getSource();
+			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file");
+			oDialog?.getButtons()[1].firePress();
+			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			oUploadSetwithTablePluginCarouselPlugin.restore();
+			oMdcTable.destroy();
+			done();
+		};
+
+		oPreviewDialog.attachEventOnce("beforePreviewDialogOpen", (oEvent) => {
+			oDialog = oEvent.getParameter("oDialog");
+			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
+			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
+		});
+	});
+
+	QUnit.test("File Preview Dialog moves to previous file on previous button press on carousel", async function (assert) {
+		const done = assert.async();
+		var oUploadSetwithTablePluginCarouselPlugin;
+		/**
+		 * MDC Table with ActionsPlaceholder
+		 */
+
+		// arrange
+
+		const oPreviewDialog = new FilePreviewDialog();
+
+		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
+		const oRow = new UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"],
+			previewDialog: oPreviewDialog,
+			rowConfiguration: oRow
+		});
+
+		// Simulate a file selection event on the action button
+		fnPreviewHandler = function (oEvent) {
+			const oSource = oEvent.getSource();
+			const oBindingContext = oSource.getBindingContext();
+			if (oBindingContext && oUploadSetwithTablePlugin) {
+				oUploadSetwithTablePlugin.openFilePreview(oBindingContext);
+			}
+		};
+
+		setFilePreviewHandler(fnPreviewHandler);
+
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id:"uploadButton", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		// use sap.m.upload.FilePreviewDialog instance
+
+		// act
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+
+		// Check if the upload is enabled
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
+
+		// act
+
+		// get Link control from the table and trigger press event
+		const oLink = oMdcTable._oTable.getItems()[1]?.getCells()[0]?.getItems()[2]?.getItems()[0];
+		if (!oLink) {
+			assert.ok(false, "File preview link not found in the table");
+		}
+		oLink.firePress();
+
+		let oDialog;
+
+		const afterDialogOpen = function (oEvent) {
+			oDialog = oEvent.getSource();
+			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file");
+			oDialog?.getButtons()[1].firePress();
+
+			const oCarousel = oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel;
+			oCarousel.previous();
+			const oDialogHeader = oDialog?.getCustomHeader()?.getContentLeft()[0];
+			const sFileName = oDialogHeader?.getText();
+			assert.ok(sFileName, "File preview dialog carousel moves to previous file");
+			oDialog.close();
+
+			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			oUploadSetwithTablePluginCarouselPlugin.restore();
+
+			oMdcTable.destroy();
+			done();
+		};
+
+		oPreviewDialog.attachEventOnce("beforePreviewDialogOpen", (oEvent) => {
+			oDialog = oEvent.getParameter("oDialog");
+			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
+			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
+		});
+
+	});
+
+	QUnit.test("File Preview Dialog moves to next file on next button press on carousel", async function (assert) {
+		const done = assert.async();
+		var oUploadSetwithTablePluginCarouselPlugin;
+		/**
+		 * MDC Table with ActionsPlaceholder
+		 */
+
+		// arrange
+
+		const oPreviewDialog = new FilePreviewDialog();
+
+		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
+		const oRow = new UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"],
+			previewDialog: oPreviewDialog,
+			rowConfiguration: oRow
+		});
+
+		// Simulate a file selection event on the action button
+		fnPreviewHandler = function (oEvent) {
+			const oSource = oEvent.getSource();
+			const oBindingContext = oSource.getBindingContext();
+			if (oBindingContext && oUploadSetwithTablePlugin) {
+				oUploadSetwithTablePlugin.openFilePreview(oBindingContext);
+			}
+		};
+
+		setFilePreviewHandler(fnPreviewHandler);
+
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id: "uploadButton", placeholderFor: "UploadButtonPlaceholder" })
+			]
+		});
+
+		// use sap.m.upload.FilePreviewDialog instance
+
+		// act
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+
+		// Check if the upload is enabled
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
+
+		// act
+
+		// get Link control from the table and trigger press event
+		const oLink = oMdcTable._oTable.getItems()[1]?.getCells()[0]?.getItems()[2]?.getItems()[0];
+		if (!oLink) {
+			assert.ok(false, "File preview link not found in the table");
+		}
+		oLink.firePress();
+
+		let oDialog;
+
+		const afterDialogOpen = function (oEvent) {
+			oDialog = oEvent.getSource();
+			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file");
+			oDialog?.getButtons()[1].firePress();
+
+			const oCarousel = oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel;
+			oCarousel.previous();
+			const oDialogHeader = oDialog?.getCustomHeader()?.getContentLeft()[0];
+			const sFileName = oDialogHeader?.getText();
+			assert.ok(sFileName, "File preview dialog carousel moves to next file");
+			oDialog.close();
+
+			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			oUploadSetwithTablePluginCarouselPlugin.restore();
+
+			oMdcTable.destroy();
+			done();
+		};
+
+		oPreviewDialog.attachEventOnce("beforePreviewDialogOpen", (oEvent) => {
+			oDialog = oEvent.getParameter("oDialog");
+			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
+			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
+		});
+	});
+
 });

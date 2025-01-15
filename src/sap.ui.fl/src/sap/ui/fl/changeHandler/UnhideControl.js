@@ -13,37 +13,33 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var PROPERTY_NAME = "visible";
+	const PROPERTY_NAME = "visible";
 
 	/**
-	 * Change handler for unhiding of a control.
+	 * Change handler for revealing of a control.
 	 * @alias sap.ui.fl.changeHandler.UnhideControl
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.27.0
 	 */
-	var UnhideControl = {};
+	const UnhideControl = {};
 
 	/**
-	 * Unhides a control.
+	 * Reveals a control.
 	 *
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {Promise} Promise resolving when the change is applied successfully
 	 * @public
 	 */
-	UnhideControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		return Promise.resolve()
-		.then(oModifier.getProperty.bind(oModifier, oControl, PROPERTY_NAME))
-		.then(function(oOriginalValue) {
-			oChange.setRevertData({
-				originalValue: oOriginalValue
-			});
-			mPropertyBag.modifier.setVisible(oControl, true);
+	UnhideControl.applyChange = async function(oChange, oControl, mPropertyBag) {
+		const oModifier = mPropertyBag.modifier;
+		const oOriginalValue = await oModifier.getProperty(oControl, PROPERTY_NAME);
+		oChange.setRevertData({
+			originalValue: oOriginalValue
 		});
+		mPropertyBag.modifier.setVisible(oControl, true);
 	};
 
 	/**
@@ -56,7 +52,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UnhideControl.revertChange = function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
+		const mRevertData = oChange.getRevertData();
 
 		if (mRevertData) {
 			mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);

@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @since 1.72
 	 * @private
 	 */
-	var AddIFrame = {};
+	const AddIFrame = {};
 
 	/**
 	 * Add the IFrame control to the target control within the target aggregation.
@@ -36,32 +36,19 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when the change is successfully applied
 	 * @ui5-restricted sap.ui.fl
 	 */
-	AddIFrame.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oChangeContent = oChange.getContent();
-		var oView = mPropertyBag.view;
-		var sAggregationName = oChangeContent.targetAggregation;
-		var iIndex;
-		var oIFrame;
-		return Promise.resolve()
-		.then(oModifier.findAggregation.bind(oModifier, oControl, sAggregationName))
-		.then(function(oAggregationDefinition) {
-			if (!oAggregationDefinition) {
-				throw new Error(`The given Aggregation is not available in the given control: ${oModifier.getId(oControl)}`);
-			}
-			return getTargetAggregationIndex(oChange, oControl, mPropertyBag);
-		})
-		.then(function(iRetrievedIndex) {
-			iIndex = iRetrievedIndex;
-			return createIFrame(oChange, mPropertyBag, oChangeContent.selector);
-		})
-		.then(function(oCreatedIFrame) {
-			oIFrame = oCreatedIFrame;
-			return oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
-		})
-		.then(function() {
-			oChange.setRevertData([oModifier.getId(oIFrame)]);
-		});
+	AddIFrame.applyChange = async function(oChange, oControl, mPropertyBag) {
+		const oModifier = mPropertyBag.modifier;
+		const oChangeContent = oChange.getContent();
+		const oView = mPropertyBag.view;
+		const sAggregationName = oChangeContent.targetAggregation;
+		const oAggregationDefinition = await oModifier.findAggregation(oControl, sAggregationName);
+		if (!oAggregationDefinition) {
+			throw new Error(`The given Aggregation is not available in the given control: ${oModifier.getId(oControl)}`);
+		}
+		const iIndex = await getTargetAggregationIndex(oChange, oControl, mPropertyBag);
+		const oIFrame = await createIFrame(oChange, mPropertyBag, oChangeContent.selector);
+		await oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
+		oChange.setRevertData([oModifier.getId(oIFrame)]);
 	};
 
 	/**
@@ -113,7 +100,7 @@ sap.ui.define([
 	};
 
 	AddIFrame.getCondenserInfo = function(oChange) {
-		var oContent = oChange.getContent();
+		const oContent = oChange.getContent();
 		return {
 			classification: Classification.Create,
 			uniqueKey: "iFrame",

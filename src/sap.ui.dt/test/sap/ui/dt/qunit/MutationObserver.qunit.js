@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/MutationObserver",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	Panel,
@@ -20,23 +19,22 @@ sap.ui.define([
 	MutationObserver,
 	OverlayRegistry,
 	VerticalLayout,
-	sinon,
-	jQuery
+	sinon
 ) {
 	"use strict";
 
 	// Styles on "qunit-fixture" influence the scrolling tests if positioned on the screen during test execution.
 	// Please keep this tag without any styling.
-	jQuery("#qunit-fixture").removeAttr("style");
+	document.getElementById("qunit-fixture").removeAttribute("style");
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a MutationObserver is created", {
 		beforeEach() {
 			this.sNodeId = "node-id";
-			this.$Node = jQuery("<div></div>", {
-				id: this.sNodeId
-			}).appendTo("#qunit-fixture");
+			this.oNode = document.createElement("div");
+			this.oNode.id = this.sNodeId;
+			document.getElementById("qunit-fixture").appendChild(this.oNode);
 
 			this.oMutationObserver = new MutationObserver();
 		},
@@ -68,9 +66,9 @@ sap.ui.define([
 					fnDone();
 				});
 			});
-			this.oMutationObserver.registerHandler(this.$Node.attr("id"), fnHandlerSpy, true);
+			this.oMutationObserver.registerHandler(this.oNode.getAttribute("id"), fnHandlerSpy, true);
 			for (var i = 0; i < 3; i++) {
-				jQuery(window).trigger("resize");
+				window.dispatchEvent(new Event("resize"));
 			}
 		});
 
@@ -82,14 +80,16 @@ sap.ui.define([
 				fnDone();
 			}, true);
 
-			this.$Node.text("test");
+			this.oNode.textContent = "test";
 		});
 
 		QUnit.test("when the overlay container is added to the body", function(assert) {
 			var fnDone = assert.async();
 			var oMutationHandlerSpy = sandbox.spy();
 			this.oMutationObserver.registerHandler(this.sNodeId, oMutationHandlerSpy, true);
-			jQuery("<div></div>").attr("id", "overlay-container").appendTo("body");
+			var oOverlayContainer = document.createElement("div");
+			oOverlayContainer.id = "overlay-container";
+			document.body.appendChild(oOverlayContainer);
 			// setTimeout required. requestAnimationFrame inside MutationObserver should be started first
 			setTimeout(function() {
 				window.requestAnimationFrame(function() {
@@ -101,20 +101,20 @@ sap.ui.define([
 
 		QUnit.test("when the text node of a relevant node is modified", function(assert) {
 			var fnDone = assert.async();
-			this.$Node.append("test");
+			this.oNode.appendChild(document.createTextNode("test"));
 			// setTimeout is needed to ignore a mutation from setting text to Node
 			setTimeout(function() {
 				this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
 					assert.ok(mParameters.type.includes("MutationObserver"), "then domChanged callback is called with a relevant node");
 					fnDone();
 				}, true);
-				this.$Node.contents().get(0).nodeValue = "123";
+				this.oNode.firstChild.nodeValue = "123";
 			}.bind(this));
 		});
 
 		QUnit.test("when an open shadow root node is added to the observer and then modified", function(assert) {
 			var fnDone = assert.async();
-			var oShadowRoot = this.$Node.get(0).attachShadow({mode: "open"});
+			var oShadowRoot = this.oNode.attachShadow({mode: "open"});
 			this.oMutationObserver.addNode(oShadowRoot);
 			this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
 				assert.ok(mParameters.type.includes("MutationObserver"), "then domChanged callback is called with the host node");
@@ -127,21 +127,25 @@ sap.ui.define([
 			var fnDone = assert.async();
 			assert.expect(4);
 			this.oMutationObserver.ignoreOnce({
-				target: this.$Node.get(0),
+				target: this.oNode,
 				type: "childList"
 			});
 			this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
 				// for the target node only one domChanged event should be fired
 				assert.ok(mParameters.type.includes("MutationObserver"), "then domChanged callback is called with a relevant node");
 				assert.ok(true, "the node change is part of the event, but emitted only once (first mutation is ignored)");
-				assert.equal(this.$Node[0].childNodes[0].id, "test1", "then first div is appended");
-				assert.equal(this.$Node[0].childNodes[1].id, "test2", "then second div is appended");
+				assert.equal(this.oNode.childNodes[0].id, "test1", "then first div is appended");
+				assert.equal(this.oNode.childNodes[1].id, "test2", "then second div is appended");
 				fnDone();
 			}.bind(this), true);
-			this.$Node.append('<div id="test1"></div>');
+			var oTestDiv = document.createElement("div");
+			oTestDiv.id = "test1";
+			this.oNode.appendChild(oTestDiv);
 			// setTimeout is needed to avoid native throttling by MutationObserver
 			setTimeout(function() {
-				this.$Node.append('<div id="test2"></div>');
+				var oTestDiv2 = document.createElement("div");
+				oTestDiv2.id = "test2";
+				this.oNode.appendChild(oTestDiv2);
 			}.bind(this));
 		});
 
@@ -174,18 +178,17 @@ sap.ui.define([
 				}
 			}, true);
 
-			this.$Node.addClass("customClass");
+			this.oNode.classList.add("customClass");
 		});
 
 		QUnit.test("when transitionend is called", function(assert) {
 			var fnDone = assert.async();
 
-			this.$Node.css({
-				width: "100px",
-				height: "30px",
-				backgroundColor: "blue",
-				transition: "width 0.05s linear"
-			});
+			this.oNode.style.width = "100px";
+			this.oNode.style.height = "30px";
+			this.oNode.style.backgroundColor = "blue";
+			this.oNode.offsetHeight; // trigger reflow
+			this.oNode.style.transition = "width 0.05s linear";
 
 			this.oMutationObserver.registerHandler(this.sNodeId, function(mParameters) {
 				if (mParameters.type === "MutationOnTransitionend") {
@@ -194,19 +197,20 @@ sap.ui.define([
 				}
 			}, true);
 
-			this.$Node.width("200px");
+			this.oNode.style.width = "200px";
 		});
 	});
 
 	QUnit.module("Static area mutations", {
 		beforeEach() {
-			this.$StaticUIArea = jQuery("<div></div>", {
-				id: StaticArea.STATIC_UIAREA_ID
-			}).appendTo("#qunit-fixture");
+			this.oStaticUIArea = document.createElement("div");
+			this.oStaticUIArea.id = StaticArea.STATIC_UIAREA_ID;
+			document.getElementById("qunit-fixture").appendChild(this.oStaticUIArea);
 
-			this.$Node = jQuery("<div></div>", {
-				id: "node-id"
-			}).appendTo(this.$StaticUIArea);
+			// Create the Node div
+			this.oNode = document.createElement("div");
+			this.oNode.id = "node-id";
+			this.oStaticUIArea.appendChild(this.oNode);
 
 			this.oMutationObserver = new MutationObserver();
 		},
@@ -218,8 +222,8 @@ sap.ui.define([
 		QUnit.test("when mutations in static UIArea happen inside irrelevant node", function(assert) {
 			var fnDone = assert.async();
 			var oSpy = sandbox.spy();
-			this.oMutationObserver.registerHandler(this.$Node.attr("id"), oSpy, true);
-			jQuery("<div></div>").appendTo("#sap-ui-static");
+			this.oMutationObserver.registerHandler(this.oNode.getAttribute("id"), oSpy, true);
+			document.getElementById("sap-ui-static").appendChild(document.createElement("div"));
 			// setTimeout is needed because of async nature of native MutationObserver
 			setTimeout(function() {
 				assert.notOk(oSpy.called, "then domChanged callback has not been called");
@@ -230,20 +234,22 @@ sap.ui.define([
 		QUnit.test("when mutations in static UIArea happen inside relevant node", function(assert) {
 			var fnDone = assert.async();
 			assert.expect(1);
-			this.oMutationObserver.registerHandler(this.$Node.attr("id"), function() {
+			this.oMutationObserver.registerHandler(this.oNode.getAttribute("id"), function() {
 				assert.ok(true, "then domChanged callback has been called");
 				fnDone();
 			}, true);
-			jQuery("<div></div>").appendTo(this.$Node);
+			document.getElementById("sap-ui-static").appendChild(this.oNode);
 		});
 
 		QUnit.test("when mutations in static UIArea happen on relevant node (simulate UI5 re-rendering)", function(assert) {
 			var fnDone = assert.async();
-			this.oMutationObserver.registerHandler(this.$Node.attr("id"), function() {
+			this.oMutationObserver.registerHandler(this.oNode.getAttribute("id"), function() {
 				assert.ok(true, "then domChanged callback has been called");
 				fnDone();
 			}, true);
-			this.$Node.replaceWith(this.$Node.clone());
+			var clonedNode = this.oNode.cloneNode(true);
+			this.oNode.parentNode.replaceChild(clonedNode, this.oNode);
+			this.oNode = clonedNode;
 		});
 	});
 
@@ -299,7 +305,9 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			// Makes the area where DT will be active more prominent
-			jQuery(this.oVerticalLayoutRoot.getDomRef()).css("outline", "solid");
+			var oDomRef = this.oVerticalLayoutRoot.getDomRef();
+			oDomRef.style.height = "100px";
+			oDomRef.style.width = "100px";
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayoutRoot]
@@ -373,7 +381,8 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			// Makes the area where DT will be active more prominent
-			jQuery(this.oVerticalLayoutInner.getDomRef()).css("outline", "solid");
+			var oDomRef = this.oVerticalLayoutInner.getDomRef();
+			oDomRef.style.outline = "solid";
 
 			this.oMutationObserver = new MutationObserver();
 		},
@@ -467,8 +476,11 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			// Makes the area where DT will be active more prominent
-			jQuery(this.oVerticalLayout0.getDomRef()).css("outline", "solid");
-			jQuery(this.oVerticalLayout1.getDomRef()).css("outline", "solid");
+			var oDomRef0 = this.oVerticalLayout0.getDomRef();
+			oDomRef0.style.outline = "solid";
+
+			var oDomRef1 = this.oVerticalLayout1.getDomRef();
+			oDomRef1.style.outline = "solid";
 
 			this.oMutationObserver = new MutationObserver();
 		},

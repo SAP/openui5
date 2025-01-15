@@ -331,56 +331,40 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.remove = function(mPropertyBag) {
-		return Promise.resolve()
-		.then(function() {
-			if (mPropertyBag.change && mPropertyBag.flexObjects) {
-				return Promise.reject(
-					new Error("Using 'flexObjects' and 'change' properties together not supported. Please use the 'flexObjects' property.")
-				);
-			}
-			if (!mPropertyBag.selector) {
-				return Promise.reject(
-					new Error(`An invalid selector was passed so change could not be removed with id: ${mPropertyBag.change.getId()}`));
-			}
-			var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
-			if (!oAppComponent) {
-				return Promise.reject(
-					new Error(
-						`Invalid application component for selector, change could not be removed with id: ${mPropertyBag.change.getId()}`
-					));
-			}
+		if (mPropertyBag.change && mPropertyBag.flexObjects) {
+			return Promise.reject(
+				new Error("Using 'flexObjects' and 'change' properties together not supported. Please use the 'flexObjects' property.")
+			);
+		}
+		if (!mPropertyBag.selector) {
+			return Promise.reject(
+				new Error(`An invalid selector was passed so change could not be removed with id: ${mPropertyBag.change.getId()}`));
+		}
+		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
+		if (!oAppComponent) {
+			return Promise.reject(
+				new Error(
+					`Invalid application component for selector, change could not be removed with id: ${mPropertyBag.change.getId()}`
+				));
+		}
 
-			function destroyAppliedCustomData(oFlexObject) {
-				var oElement = JsControlTreeModifier.bySelector(oFlexObject.getSelector(), oAppComponent);
+		const aFlexObjects = mPropertyBag.change ? [mPropertyBag.change] : mPropertyBag.flexObjects;
+		const sFlexReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+
+		aFlexObjects.forEach(function(oFlexObject) {
+			if (oFlexObject.isValidForDependencyMap()) {
+				const oElement = JsControlTreeModifier.bySelector(oFlexObject.getSelector(), oAppComponent);
 				if (oElement) {
 					FlexCustomData.destroyAppliedCustomData(oElement, oFlexObject, JsControlTreeModifier);
 				}
 			}
-
-			const sFlexReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-			if (mPropertyBag.change) {
-				if (!isDescriptorChange(mPropertyBag.change)) {
-					destroyAppliedCustomData(mPropertyBag.change);
-				}
-				FlexObjectManager.deleteFlexObjects({
-					reference: sFlexReference,
-					flexObjects: [mPropertyBag.change]
-				});
-				return undefined;
-			}
-
-			mPropertyBag.flexObjects.forEach(function(oFlexObject) {
-				if (!isDescriptorChange(oFlexObject)) {
-					destroyAppliedCustomData(oFlexObject);
-				}
-			});
-
-			FlexObjectManager.deleteFlexObjects({
-				reference: sFlexReference,
-				flexObjects: mPropertyBag.flexObjects
-			});
-			return undefined;
 		});
+
+		FlexObjectManager.deleteFlexObjects({
+			reference: sFlexReference,
+			flexObjects: aFlexObjects
+		});
+		return Promise.resolve();
 	};
 
 	/**
