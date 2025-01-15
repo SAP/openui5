@@ -66,6 +66,7 @@ sap.ui.define([
 			 "sap.ui.core.ImeMode",
 			 "sap.ui.core.IndicationColor",
 			 "sap.ui.core.ItemSelectionMode",
+			 /** @deprecated As of version 1.120. Please use {@link module:sap/ui/core/message/MessageType} instead. */
 			 "sap.ui.core.MessageType",
 			 "sap.ui.core.OpenState",
 			 "sap.ui.core.Orientation",
