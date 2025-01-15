@@ -171,10 +171,6 @@ sap.ui.define([
 			return createDescriptorChange(mPropertyBag);
 		}
 
-		if (mPropertyBag.annotationChange) {
-			return createAnnotationChange(mPropertyBag);
-		}
-
 		const mContextBasedAdaptationBag = {
 			layer: mPropertyBag.changeSpecificData.layer,
 			control: oAppComponent,
@@ -182,6 +178,10 @@ sap.ui.define([
 		};
 		if (ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag)) {
 			mPropertyBag.changeSpecificData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+		}
+
+		if (mPropertyBag.annotationChange) {
+			return createAnnotationChange(mPropertyBag);
 		}
 
 		// if a component instance is passed only a base change is created
