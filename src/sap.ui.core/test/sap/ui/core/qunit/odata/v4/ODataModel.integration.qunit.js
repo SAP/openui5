@@ -31861,10 +31861,7 @@ sap.ui.define([
 
 		expectTable("after expand", true);
 
-		if (bExpanded) {
-			this.expectChange("expanded", [, false]) // Beta is collapsed before being deleted
-				.expectChange("expanded", [, true]); // ...and expanded again after the error
-		} else {
+		if (!bExpanded) {
 			this.expectChange("expanded", [, false])
 				.expectChange("name", [,, "Delta"]);
 
@@ -32095,8 +32092,7 @@ sap.ui.define([
 			[false, 4, "3", "2", "Delta"]
 		], 6);
 
-		this.expectChange("expanded", [, false]) // Beta is collapsed before being deleted
-			.expectRequest("DELETE EMPLOYEES('1')")
+		this.expectRequest("DELETE EMPLOYEES('1')")
 			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
 					+ ",NodeProperty='ID',Levels=4)"
@@ -32505,7 +32501,6 @@ sap.ui.define([
 					Name : "Delta"
 				}]
 			})
-			.expectChange("expanded", [,,,, false]) // Epsilon is collapsed before the delete
 			.expectChange("name", [,,, "Delta", "Zeta", "Theta"]);
 
 		await Promise.all([
@@ -45387,7 +45382,7 @@ make root = ${bMakeRoot}`;
 				hierarchyQualifier : 'OrgChart'
 			}
 		}}" threshold="0" visibleRowCount="6">
-	<Text id="IsExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
 	<Text text="{Name}"/>
@@ -45422,7 +45417,7 @@ make root = ${bMakeRoot}`;
 					Name : "Zeta"
 				}]
 			})
-			.expectChange("IsExpanded", [true, false, undefined]); // JIRA: CPOUI5ODATAV4-2781
+			.expectChange("isExpanded", [true, false, undefined]); // JIRA: CPOUI5ODATAV4-2781
 
 		await this.createView(assert, sView, oModel);
 
@@ -45439,7 +45434,7 @@ make root = ${bMakeRoot}`;
 					Name : "Gamma"
 				}]
 			})
-			.expectChange("IsExpanded", [, true, false, undefined]);
+			.expectChange("isExpanded", [, true, false, undefined]);
 
 		assert.strictEqual(oBeta.getBinding().getLength(), 3, "before expand");
 
@@ -45450,13 +45445,13 @@ make root = ${bMakeRoot}`;
 
 		assert.strictEqual(oBeta.getBinding().getLength(), 4, "after expand");
 
-		this.expectChange("IsExpanded", [, false, undefined]);
+		this.expectChange("isExpanded", [, false, undefined]);
 
 		oBeta.collapse();
 
 		await this.waitForChanges(assert, "collapse Beta");
 
-		this.expectChange("IsExpanded", [, true, false]);
+		this.expectChange("isExpanded", [, true, false]);
 
 		await Promise.all([
 			// preparation for JIRA: CPOUI5ODATAV4-2781
@@ -45517,7 +45512,7 @@ make root = ${bMakeRoot}`;
 					Name : "Zeta"
 				}]
 			})
-			.expectChange("IsExpanded", [,, true, true, undefined, undefined]);
+			.expectChange("isExpanded", [,, true, true, undefined, undefined]);
 
 		await Promise.all([
 			// code under test
@@ -45542,9 +45537,9 @@ make root = ${bMakeRoot}`;
 		]);
 		const [,, oGamma, oDelta] = oTable.getBinding("rows").getCurrentContexts();
 
-		this.expectChange("IsExpanded", [,,, false]) // collapse Delta
-			.expectChange("IsExpanded", [,, false]) // collapse Gamma
-			.expectChange("IsExpanded", [, false, undefined]); // collapse Beta
+		this.expectChange("isExpanded", [,,, false]) // collapse Delta
+			.expectChange("isExpanded", [,, false]) // collapse Gamma
+			.expectChange("isExpanded", [, false, undefined]); // collapse Beta
 
 		oDelta.collapse();
 		oGamma.collapse();
@@ -45593,7 +45588,7 @@ make root = ${bMakeRoot}`;
 					Name : "Zeta"
 				}]
 			})
-			.expectChange("IsExpanded", [, true, true, true]);
+			.expectChange("isExpanded", [, true, true, true]);
 
 		await Promise.all([
 			// code under test
@@ -45615,6 +45610,137 @@ make root = ${bMakeRoot}`;
 			[true, 4, "1.1.1", "Delta"],
 			[undefined, 5, "1.1.1.1", "Epsilon"],
 			[undefined, 2, "2", "Zeta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1. Expand Alpha.
+	// Expand Beta. Expand Alpha completely without collapsing and see that all nodes under Beta
+	// are expanded.
+	// SNOW: DINC0386453
+	QUnit.test("Recursive Hierarchy: expand all on already expanded node", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="4">
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   1 Beta
+		//     1.1 Gamma
+		//       1.1.1 Delta
+
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+			+ ",NodeProperty='ID',Levels=1";
+		const sSelect = "&$select=DrillState,ID,Name";
+		this.expectRequest(sUrl + ")" + sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					Name : "Alpha"
+				}]
+			})
+			.expectChange("isExpanded", [false]);
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+				+ sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Beta"
+				}]
+			})
+			.expectChange("isExpanded", [true, false]);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+				+ sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1.1",
+					Name : "Gamma"
+				}]
+			})
+			.expectChange("isExpanded", [, true, false]);
+
+		const oBeta = oTable.getRows()[1].getBindingContext();
+
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
+
+		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : null}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "4",
+				value : [{
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "2",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "2",
+					DrillState : "expanded",
+					ID : "1.1",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "leaf",
+					ID : "1.1.1",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("isExpanded", [,, true, undefined]);
+
+		await Promise.all([
+			// code under test
+			oAlpha.expand(true),
+			this.waitForChanges(assert, "expand all below Alpha")
+		]);
+
+		checkTable("after expand all below Alpha", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.1.1')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[true, 3, "1.1", "Gamma"],
+			[undefined, 4, "1.1.1", "Delta"]
 		]);
 	});
 

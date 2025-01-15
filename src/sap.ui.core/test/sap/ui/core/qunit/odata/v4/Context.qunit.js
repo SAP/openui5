@@ -4216,6 +4216,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
+				collapse : function () {},
 				expand : function () {}
 			},
 			oModel = {
@@ -4227,6 +4228,8 @@ sap.ui.define([
 
 		this.mock(oContext).expects("isExpanded").withExactArgs()
 			.returns(bExpanded);
+		this.mock(oBinding).expects("collapse").exactly(bExpanded ? 1 : 0)
+			.withExactArgs(sinon.match.same(oContext), false, true);
 		this.mock(oBinding).expects("expand")
 			.withExactArgs(sinon.match.same(oContext), bAll === false ? 1 : Number.MAX_SAFE_INTEGER)
 			.returns(oSyncPromise);

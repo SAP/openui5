@@ -379,6 +379,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   An unlocked lock for the group to associate the clean-up request with; this indicates
 	 *   whether to collapse the node and all its descendants
+	 * @param {boolean} [bSilent]
+	 *   Whether no ("change") events should be fired
 	 * @param {boolean} [bNested]
 	 *   Whether the "collapse all" was performed at an ancestor
 	 * @returns {number}
@@ -387,10 +389,11 @@ sap.ui.define([
 	 * @public
 	 * @see #expand
 	 */
-	_AggregationCache.prototype.collapse = function (sGroupNodePath, oGroupLock, bNested) {
+	_AggregationCache.prototype.collapse = function (sGroupNodePath, oGroupLock, bSilent, bNested) {
 		const oGroupNode = this.getValue(sGroupNodePath);
 		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
-		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
+		_Helper.updateAll(bSilent ? {} : this.mChangeListeners, sGroupNodePath, oGroupNode,
+			oCollapsed);
 		const bAll = !!oGroupLock;
 		this.oTreeState.collapse(oGroupNode, bAll, bNested);
 
@@ -413,7 +416,7 @@ sap.ui.define([
 			}
 			if (bAll && oElement["@$ui5.node.isExpanded"]) {
 				iRemaining -= this.collapse(
-					_Helper.getPrivateAnnotation(oElement, "predicate"), oGroupLock, true);
+					_Helper.getPrivateAnnotation(oElement, "predicate"), oGroupLock, bSilent, true);
 			}
 			// exceptions of selection are effectively kept alive (with recursive hierarchy)
 			if (!this.isSelectionDifferent(oElement)) {
