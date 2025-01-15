@@ -1277,7 +1277,7 @@ sap.ui.define([
 			.returns(mQueryOptions.$orderby);
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{$orderby : "bar", "sap-client" : "111"}, false, undefined, false, undefined)
+				{$orderby : "bar", "sap-client" : "111"}, false, undefined, false)
 			.returns({});
 		this.mock(ODataListBinding.prototype).expects("restoreCreated").withExactArgs();
 		this.spy(ODataListBinding.prototype, "reset");
@@ -1300,7 +1300,7 @@ sap.ui.define([
 
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{$orderby : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false, undefined)
+				{$orderby : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false)
 			.returns({});
 
 		// code under test
@@ -7325,7 +7325,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", "~mInheritedQueryOptions~",
 				sinon.match.same(oBinding.mParameters.$$aggregation),
-				this.oModel.bAutoExpandSelect, false, "~isGrouped~", undefined)
+				this.oModel.bAutoExpandSelect, false, "~isGrouped~")
 			.returns("~oNewCache~");
 
 		assert.strictEqual(
@@ -7364,7 +7364,8 @@ sap.ui.define([
 			oCache = { // #setLateQueryOptions must not be called
 				getValue : mustBeMocked,
 				registerChangeListener : function () {},
-				setActive : mustBeMocked
+				setActive : mustBeMocked,
+				setSeparate : mustBeMocked
 			},
 			oCacheMock = this.mock(oCache),
 			oGetExpectation,
@@ -7380,7 +7381,7 @@ sap.ui.define([
 		if (bAggregation) {
 			oBinding.mParameters.$$aggregation = {/*hierarchyQualifier : "X"*/};
 		} else {
-			oBinding.mParameters.$$separate = "~$$separate~";
+			oBinding.mParameters.$$separate = "~separate~";
 		}
 		if (bWithOld) {
 			this.mock(oOldCache).expects("getResourcePath").withExactArgs()
@@ -7407,8 +7408,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", "~mergedQueryOptions~",
 				sinon.match.same(oBinding.mParameters.$$aggregation), "~autoExpandSelect~", bShared,
-				"~isGrouped~", bAggregation ? undefined : "~$$separate~")
+				"~isGrouped~")
 			.returns(bAggregation ? oAggregationCache : oCache);
+		oCacheMock.expects("setSeparate").exactly(bAggregation ? 0 : 1).withExactArgs("~separate~");
 		oCacheMock.expects("registerChangeListener").exactly(bShared ? 1 : 0)
 			.withExactArgs("", sinon.match.same(oBinding));
 
@@ -7434,7 +7436,8 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCache = {
-				registerChangeListener : function () {}
+				registerChangeListener : function () {},
+				setSeparate : mustBeMocked
 			},
 			oOldCache = {
 				$deepResourcePath : bDeep ? "W.R.O.N.G." : "deep/resource/path",
@@ -7453,8 +7456,9 @@ sap.ui.define([
 		this.mock(_AggregationCache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", "~mergedQueryOptions~", /*$$aggregation*/undefined,
-				"~autoExpandSelect~", "~sharedRequest~", "~isGrouped~", "~$$separate~")
+				"~autoExpandSelect~", "~sharedRequest~", "~isGrouped~")
 			.returns(oCache);
+		this.mock(oCache).expects("setSeparate").withExactArgs("~$$separate~");
 
 		assert.strictEqual(
 			// code under test
@@ -7472,7 +7476,10 @@ sap.ui.define([
 ].forEach(function (oFixture, i) {
 	QUnit.test("doCreateCache: use of bSortExpandSelect, " + i, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
-		const oCache = {registerChangeListener : function () {}};
+		const oCache = {
+			registerChangeListener : function () {},
+			setSeparate : mustBeMocked
+		};
 		this.oModel.bAutoExpandSelect = oFixture.autoExpandSelect;
 		oBinding.bSharedRequest = "~sharedRequest~";
 		if (oFixture.separate) {
@@ -7487,8 +7494,9 @@ sap.ui.define([
 		this.mock(_AggregationCache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", "~mergedQueryOptions~", /*$$aggregation*/undefined,
-				oFixture.sortExpandSelect, "~sharedRequest~", "~isGrouped~", oFixture.separate)
+				oFixture.sortExpandSelect, "~sharedRequest~", "~isGrouped~")
 			.returns(oCache);
+		this.mock(oCache).expects("setSeparate").withExactArgs(oFixture.separate);
 
 		assert.strictEqual(
 			// code under test

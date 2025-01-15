@@ -119,15 +119,14 @@ sap.ui.define([
 						assert.deepEqual(mQueryOptions, {$apply : "filter(foo)/bar"});
 					}
 					return oParam === mQueryOptions;
-				}), "~sortExpandSelect~", "deep/resource/path", "~sharedRequest~",
-				"~aSeparateProperties~")
+				}), "~sortExpandSelect~", "deep/resource/path", "~sharedRequest~")
 			.returns("~cache~");
 
 		assert.strictEqual(
 			// code under test
 			_AggregationCache.create("~requestor~", "resource/path", "deep/resource/path",
 				mQueryOptions, oAggregation, "~sortExpandSelect~", "~sharedRequest~",
-				/*bIsGrouped*/"n/a", "~aSeparateProperties~"),
+				/*bIsGrouped*/"n/a"),
 			"~cache~");
 	});
 });
@@ -146,7 +145,7 @@ sap.ui.define([
 			// code under test
 			_AggregationCache.create("~requestor~", "resource/path", "deep/resource/path",
 				mQueryOptions, /*oAggregation*/null, "~sortExpandSelect~", "~sharedRequest~",
-				/*bIsGrouped*/"n/a", "~aSeparateProperties~");
+				/*bIsGrouped*/"n/a");
 		}, new Error("Unsupported $$filterOnAggregate"));
 	});
 
