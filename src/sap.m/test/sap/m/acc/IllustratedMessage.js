@@ -9,6 +9,7 @@ sap.ui.define([
   // Note: the HTML page 'IllustratedMessage.html' loads this module via data-sap-ui-on-init
 
   new InvisibleText("illustatedMessage_label", {text: "No activities Illustration"}).toStatic();
+  new InvisibleText("illustatedMessage_describedby_label", {text: "This is additional description"}).toStatic();
 
   var oApp = new App("myApp"),
 	  oPage = new Page("myPage", {
@@ -18,6 +19,7 @@ sap.ui.define([
 				  new IllustratedMessage({
 					  illustrationType: "sapIllus-NoActivities",
 					  illustrationAriaLabelledBy: "illustatedMessage_label",
+					  illustrationAriaDescribedBy: "illustatedMessage_describedby_label",
 					  additionalContent: [
 						  new Button({
 							  text: "Add activity"

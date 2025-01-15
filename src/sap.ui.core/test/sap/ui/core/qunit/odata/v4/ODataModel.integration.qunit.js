@@ -45503,7 +45503,7 @@ sap.ui.define([
 
 		await Promise.all([
 			// code under test
-			oBeta.expand(Number.MAX_SAFE_INTEGER),
+			oBeta.expand(true),
 			this.waitForChanges(assert, "expand all below Beta")
 		]);
 
@@ -45579,7 +45579,7 @@ sap.ui.define([
 
 		await Promise.all([
 			// code under test
-			oBeta.expand(Number.MAX_SAFE_INTEGER),
+			oBeta.expand(true),
 			this.waitForChanges(assert, "expand all below Beta again")
 		]);
 
@@ -45677,7 +45677,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand all below Alpha");
 
@@ -46087,7 +46087,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand all below Alpha");
 
@@ -46778,7 +46778,7 @@ sap.ui.define([
 				}]
 			});
 
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand all below Alpha");
 
@@ -46868,7 +46868,7 @@ sap.ui.define([
 		const oTable = this.oView.byId("table");
 		const oAlpha = oTable.getRows()[0].getBindingContext();
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand Alpha completely");
 
@@ -47240,7 +47240,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		oAlpha.expand(Number.MAX_SAFE_INTEGER);
+		oAlpha.expand(true);
 
 		await this.waitForChanges(assert, "expand Alpha completely");
 

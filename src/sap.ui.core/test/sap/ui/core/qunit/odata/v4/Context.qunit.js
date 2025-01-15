@@ -4206,8 +4206,15 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
 	// Note: expanding a node while it is already expanded is only allowed with expand all
-	[undefined, 1, Number.MAX_SAFE_INTEGER, 1E16].forEach(function (iLevels) {
-	QUnit.test("expand: success=" + bSuccess + ", iLevels=" + iLevels, function (assert) {
+	[false, true, /*old usage*/ Number.MAX_SAFE_INTEGER].forEach(function (bAll) {
+		[false, true].forEach(function (bExpanded) {
+			const sTitle = "expand: success=" + bSuccess + ", expand all=" + bAll + ", expanded="
+				+ bExpanded;
+			if (!bAll && bExpanded) {
+				return;
+			}
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				expand : function () {}
 			},
@@ -4219,13 +4226,13 @@ sap.ui.define([
 			oSyncPromise = bSuccess ? SyncPromise.resolve("n/a") : SyncPromise.reject(oError);
 
 		this.mock(oContext).expects("isExpanded").withExactArgs()
-			.returns(iLevels >= Number.MAX_SAFE_INTEGER);
+			.returns(bExpanded);
 		this.mock(oBinding).expects("expand")
-			.withExactArgs(sinon.match.same(oContext), iLevels || 1)
+			.withExactArgs(sinon.match.same(oContext), bAll === false ? 1 : Number.MAX_SAFE_INTEGER)
 			.returns(oSyncPromise);
 
 		// code under test
-		const oResult = oContext.expand(iLevels);
+		const oResult = oContext.expand(bAll);
 
 		assert.strictEqual(oResult instanceof Promise, true);
 
@@ -4237,41 +4244,52 @@ sap.ui.define([
 			assert.strictEqual(oError0, oError);
 		});
 	});
+		});
 	});
 });
 
 	//*********************************************************************************************
-[-23, 0, 2, Number.MAX_SAFE_INTEGER - 1].forEach(function (iLevels) {
-	QUnit.test("expand: unsupported number of levels " + iLevels, function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
-
-		assert.throws(function () {
-			// code under test
-			oContext.expand(iLevels);
-		}, new Error("Unsupported number of levels: " + iLevels));
-	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("expand/collapse: not expandable", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path"),
-		oContextMock = this.mock(oContext);
-
-		this.mock(oContext).expects("isExpanded").twice().withExactArgs().returns({/*anything*/});
+	QUnit.test("expand: already expanded", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(true);
 
 		assert.throws(function () {
 			// code under test
 			oContext.expand();
-		}, new Error("Not expandable: " + oContext));
+		}, new Error("Already expanded: " + oContext));
+	});
 
-		oContextMock.expects("getProperty").withExactArgs("@$ui5.node.level")
-			.returns({/*anything*/});
+	//*********************************************************************************************
+[false, true].forEach(function (bAll) {
+	QUnit.test("expand: leaf, expand all=" + bAll, function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(undefined);
+
+		assert.throws(function () {
+			// code under test
+			oContext.expand(bAll);
+		}, new Error("Not expandable: " + oContext));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("collapse: leaf", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+		this.mock(oContext).expects("getProperty").withExactArgs("@$ui5.node.level").returns(1);
+		this.mock(oContext).expects("isExpanded").withExactArgs().returns(undefined);
+
 		assert.throws(function () {
 			// code under test
 			oContext.collapse();
 		}, new Error("Not expandable: " + oContext));
+	});
 
-		oContextMock.expects("getProperty").withExactArgs("@$ui5.node.level").returns(0);
+	//*********************************************************************************************
+	QUnit.test("collapse: grand total", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+		this.mock(oContext).expects("getProperty").withExactArgs("@$ui5.node.level").returns(0);
+		this.mock(oContext).expects("isExpanded").never();
+
 		assert.throws(function () {
 			// code under test
 			oContext.collapse();

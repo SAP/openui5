@@ -918,7 +918,7 @@ sap.ui.define([
 			return undefined;
 		}
 
-		return oCard.getId() + "-header-title-inner";
+		return oCard.getId() + "-header-title";
 	};
 
 	/**

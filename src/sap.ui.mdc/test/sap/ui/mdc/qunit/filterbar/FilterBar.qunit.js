@@ -108,7 +108,7 @@ sap.ui.define([
 		const oButton = oFilterBar._btnAdapt;
 		assert.ok(oButton);
 		assert.ok(!oButton.getVisible());
-		assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
+		assert.equal(oButton.getAriaHasPopup(), HasPopup.None, "button has correct ariaHasPopup value");
 
 		oFilterBar.setP13nMode(["Value"]);
 		assert.ok(!oButton.getVisible());

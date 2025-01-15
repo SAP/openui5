@@ -87,17 +87,7 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.isFilteringCaseSensitive = function(oValueHelp, oContent) {
-
-		if (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent")) {
-			const sFilterFields = "";
-
-			if (sFilterFields === "$search") {
-				return false; // for $search irgnore setting of caseSensitive
-			}
-		}
-
 		return ValueHelpDelegate.isFilteringCaseSensitive.apply(this, arguments);
-
 	};
 
 	return ODataV4ValueHelpDelegate;

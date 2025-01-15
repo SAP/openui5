@@ -64,7 +64,7 @@ sap.ui.define([
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
 
 			if (!oCurrentContent) {
-				oCurrentContent = new MTable(oValueHelp.getId() + "--MTable", {keyPath: "ID", descriptionPath: "name", filterFields: "$search"});
+				oCurrentContent = new MTable(oValueHelp.getId() + "--MTable", {keyPath: "ID", descriptionPath: "name"});
 				oContainer.addContent(oCurrentContent);
 			}
 
@@ -96,9 +96,9 @@ sap.ui.define([
 
 			if (!oCurrentContent) {
 
-				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Default Search Template"});
+				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", group:"group1", title: "Default Search Template"});
 				oContainer.addContent(oCurrentContent);
-				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", filterFields: "$search", group:"group1", title: "Search Template 1"});
+				oCurrentContent = new MDCTable({keyPath: "ID", descriptionPath: "name", group:"group1", title: "Search Template 1"});
 				oContainer.addContent(oCurrentContent);
 
 				if (bMultiSelect) {

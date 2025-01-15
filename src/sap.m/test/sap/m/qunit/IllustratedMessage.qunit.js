@@ -945,5 +945,20 @@ function(
 		assert.equal($illustration.attr("aria-labelledby"), 'illustration_label2');
 	});
 
+	QUnit.test("Testing illustrationAriaDescribedBy association", async function(assert) {
+
+		// Arrange
+		new InvisibleText("illustration_label3", {text: "My label"}).toStatic();
+
+		var $illustration = this.oIllustration.$();
+
+		// Act
+		this.oIllustratedMessage.addIllustrationAriaDescribedBy('illustration_label3');
+		await nextUIUpdate();
+
+		// Assert
+		assert.equal($illustration.attr("aria-describedby"), 'illustration_label3');
+	});
+
 
 });

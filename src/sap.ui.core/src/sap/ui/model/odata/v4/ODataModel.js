@@ -1857,10 +1857,10 @@ sap.ui.define([
 	/**
 	 * Returns a map of HTTP headers used for data and metadata requests. While the "X-CSRF-Token"
 	 * header is not used for metadata requests, it is still included here if available. The
-	 * "SAP-ContextId" header is only included if requested explicitly (@since 1.86.0).
+	 * "SAP-ContextId" header is only included if requested explicitly (since 1.86.0).
 	 *
 	 * @param {boolean} [bIncludeContextId]
-	 *   Whether to include the "SAP-ContextId" header (@since 1.86.0)
+	 *   Whether to include the "SAP-ContextId" header (since 1.86.0)
 	 * @returns {Object<string>}
 	 *   The map of HTTP headers
 	 *
