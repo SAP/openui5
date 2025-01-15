@@ -5111,6 +5111,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("getCurrencyInstance: style 'long' is formatted as 'short'; integrative", function (assert) {
+		// code under test - style=long is not supported
+		assert.strictEqual(NumberFormat.getCurrencyInstance({style: "long"}).oFormatOptions.style, "short");
+	});
+
+	//*********************************************************************************************
 [
 	{sType: "float"},
 	{iMaxFractionDigits: 0, bGroupingEnabled: false, sType: "integer"},
