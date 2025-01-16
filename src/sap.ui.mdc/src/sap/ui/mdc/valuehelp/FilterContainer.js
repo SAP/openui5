@@ -116,7 +116,7 @@ sap.ui.define(
 			const n = this.aLayoutItems.length;
 			const iThreshold = this.getParent().getFilterFieldThreshold();
 
-			let bUpdate = bShowAll || n <= iThreshold + 1;
+			let bUpdate = bShowAll || n <= iThreshold;
 
 			if (!bUpdate) {
 				const aItems = this.oAlgnLayout.getContent();
@@ -133,7 +133,7 @@ sap.ui.define(
 				this.oAlgnLayout.removeAllContent();
 
 				this.aLayoutItems.some((oLayoutItem, nIdx) => {
-					if (bShowAll || n <= iThreshold || nIdx + 1 < iThreshold) {
+					if (bShowAll || n <= iThreshold || nIdx < iThreshold) {
 						this.oAlgnLayout.insertContent(oLayoutItem, nIdx);
 						return false;
 					}

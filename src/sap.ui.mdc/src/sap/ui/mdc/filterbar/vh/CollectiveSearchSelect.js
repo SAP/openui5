@@ -4,9 +4,8 @@
 
 // Provides control sap.ui.mdc.filterbar.vh.CollectiveSearchSelect.
 sap.ui.define([
-	"sap/ui/mdc/valuehelp/CollectiveSearchSelect",
-	"sap/m/VariantManagement"
-], (ValueHelpCollectiveSearchSelect, VariantManagement) => {
+	"sap/ui/mdc/valuehelp/CollectiveSearchSelect"
+], (ValueHelpCollectiveSearchSelect) => {
 	"use strict";
 	/**
 	 * Constructor for a new <code>CollectiveSearchSelect</code>.
@@ -30,11 +29,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.RenderManager} oRm - <code>RenderManager</code> that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oControl - Object representation of the control that is rendered
 		 */
-		renderer: {
-			renderer: function(oRm, oControl) {
-				VariantManagement.getMetadata().getRenderer().render(oRm, oControl);
-			}
-		}
+		renderer: ValueHelpCollectiveSearchSelect.getMetadata().getRenderer()
 	});
 
 	return CollectiveSearchSelect;
