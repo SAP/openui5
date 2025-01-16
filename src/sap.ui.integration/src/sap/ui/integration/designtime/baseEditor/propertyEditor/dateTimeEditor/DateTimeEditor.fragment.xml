@@ -4,7 +4,7 @@
 >
 	<DateTimePicker
 		value="{displayValue}"
-		valueFormat="YYYY-MM-dd'T'HH:mm:ss.SSSSZ"
+		valueFormat="yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 		change="_onChange"
 	/>
 </core:FragmentDefinition>

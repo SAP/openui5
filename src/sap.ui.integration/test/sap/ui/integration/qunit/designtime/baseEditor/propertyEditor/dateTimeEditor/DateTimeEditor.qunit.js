@@ -74,9 +74,10 @@ sap.ui.define([
 		QUnit.test("When a value is edited in the editor", function (assert) {
 			var fnDone = assert.async();
 			var oCurrentDate = new Date();
-			var sCurrentDateTimeString = DateFormat.getDateTimeInstance().format(oCurrentDate);
-
 			oCurrentDate.setMilliseconds(0);
+			var sCurrentDateTimeString = DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
+			}).format(oCurrentDate);
 
 			this.oDateTimeEditor.attachValueChange(function (oEvent) {
 				assert.deepEqual(
