@@ -1456,4 +1456,93 @@ sap.ui.define([
 			assert.deepEqual(aEraDates, ["~eraOne", "~eraTwo"]);
 		});
 	});
+
+	//*********************************************************************************************
+	[
+		{sContext: "~sContext", sResult: "~foo"},
+		{sContext: "~sUnknownContext", sResult: undefined},
+		{sContext: "~sContext", sAlternative: "~sAlternative", sResult: "~alternative"},
+		{sContext: "~sContext", sAlternative: "~sUnknownAlternative", sResult: undefined}
+	].forEach(function ({sContext, sAlternative, sResult}, i) {
+		QUnit.test("getCurrencyPattern: #" + i, function (assert) {
+			const oLocaleData = {_get() {}};
+			const oCurrencyFormat = {
+				"~sContext": "~foo",
+				"~sContext-~sAlternative": "~alternative",
+				standard: "~standard"
+			};
+
+			this.mock(oLocaleData).expects("_get").withExactArgs("currencyFormat").returns(oCurrencyFormat);
+
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getCurrencyPattern.call(oLocaleData, sContext, sAlternative), sResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{sPowerOfTen: "1000", sPlural: "one", sResult: "~foo"},
+		{sPowerOfTen: "1000", sPlural: "two", sResult: "~bar"},
+		{sPowerOfTen: "1000", sPlural: "other", sResult: "~bar"},
+		{sPowerOfTen: "1000", sPlural: undefined, sResult: "~bar"},
+		{sPowerOfTen: "10", sPlural: "other", sResult: undefined}
+	].forEach(function ({sPowerOfTen, sPlural, sResult}, i) {
+		QUnit.test("getDecimalFormat: #" + i, function (assert) {
+			const oLocaleData = {_get() {}};
+			this.mock(oLocaleData).expects("_get").withExactArgs("decimalFormat-~style")
+				.returns({"1000-one": "~foo", "1000-other": "~bar"});
+
+			// code under test
+			assert.strictEqual(LocaleData.prototype.getDecimalFormat.call(oLocaleData, "~style", sPowerOfTen, sPlural),
+				sResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDecimalFormat: short-indian only defined for en_IN, undefined for other locales", function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(oLocaleData).expects("_get").withExactArgs("decimalFormat-short-indian").returns(undefined);
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getDecimalFormat.call(oLocaleData, "short-indian", "1000", "one"),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	[
+		{sPowerOfTen: "1000", sPlural: "one", sResult: "~foo"},
+		{sPowerOfTen: "1000", sPlural: "two", sResult: "~bar"},
+		{sPowerOfTen: "1000", sPlural: "other", sResult: "~bar"},
+		{sPowerOfTen: "1000", sPlural: undefined, sResult: "~bar"},
+		{sPowerOfTen: "10", sPlural: "other", sResult: undefined},
+		{sPowerOfTen: "1000", sPlural: "one", sAlternative: "alphaNextToNumber", sResult: "~alphaNextToNumber"},
+		{sPowerOfTen: "1000", sPlural: "two", sAlternative: "alphaNextToNumber", sResult: "~otheralphaNextToNumber"},
+		{sPowerOfTen: "1000", sPlural: "one", sAlternative: "noCurrency", sResult: undefined}
+	].forEach(function ({sPowerOfTen, sPlural, sResult, sAlternative}, i) {
+		QUnit.test("getCurrencyFormat: #" + i, function (assert) {
+			const oLocaleData = {_get() {}};
+			const oCompactFormat = {
+				"1000-one": "~foo",
+				"1000-one-alphaNextToNumber": "~alphaNextToNumber",
+				"1000-other": "~bar",
+				"1000-other-alphaNextToNumber": "~otheralphaNextToNumber"
+			};
+			this.mock(oLocaleData).expects("_get").withExactArgs("currencyFormat-~style").returns(oCompactFormat);
+
+			// code under test
+			assert.strictEqual(
+				LocaleData.prototype.getCurrencyFormat.call(oLocaleData, "~style", sPowerOfTen, sPlural, sAlternative),
+				sResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencyFormat: short-indian only defined for en_IN, undefined for others", function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(oLocaleData).expects("_get").withExactArgs("currencyFormat-short-indian").returns(undefined);
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getCurrencyFormat.call(oLocaleData, "short-indian", "1000", "one"),
+			undefined);
+	});
 });

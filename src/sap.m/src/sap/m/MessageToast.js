@@ -404,6 +404,12 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageToast.show = function(sMessage, mOptions) {
+		// disable opening of toasts then notoasts is set to true
+		// required for performance measurements
+		if (/sap-ui-xx-no-toasts=true/.test(document.location.search)) {
+			return;
+		}
+
 		var oOpener = Element.closestTo(document.activeElement);
 		var oUI5Area = oOpener && oOpener.getUIArea && oOpener.getUIArea();
 		var oAccSpan;

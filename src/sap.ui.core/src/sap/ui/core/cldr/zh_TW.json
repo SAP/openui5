@@ -4650,7 +4650,10 @@
 	},
 	"currencyFormat": {
 		"standard": "¤#,##0.00",
+		"standard-noCurrency": "#,##0.00",
 		"accounting": "¤#,##0.00;(¤#,##0.00)",
+		"accounting-alphaNextToNumber": "¤ #,##0.00;(¤ #,##0.00)",
+		"accounting-noCurrency": "#,##0.00;(#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[[:^S:]&[:^Z:]]",
@@ -4664,7 +4667,10 @@
 			}
 		},
 		"sap-standard": "#,##0.00¤",
-		"sap-accounting": "#,##0.00¤;(#,##0.00¤)"
+		"sap-accounting": "#,##0.00¤;(#,##0.00¤)",
+		"sap-accounting-alphaNextToNumber": "#,##0.00 ¤;(#,##0.00 ¤)",
+		"sap-standard-noCurrency": "#,##0.00",
+		"sap-accounting-noCurrency": "#,##0.00;(#,##0.00)"
 	},
 	"miscPattern": {
 		"approximately": "~{0}",
