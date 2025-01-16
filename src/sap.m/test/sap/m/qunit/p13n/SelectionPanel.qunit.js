@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/base/util/merge",
 	"sap/m/library",
-	"sap/ui/model/json/JSONModel"
-], function(SelectionPanel, VBox, Element, Library, sinon, qutils, nextUIUpdate, Input, merge, mLibrary, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/base/i18n/Localization"
+], function(SelectionPanel, VBox, Element, Library, sinon, qutils, nextUIUpdate, Input, merge, mLibrary, JSONModel, Localization) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -512,7 +513,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Check fieldColumn can by dynamically updated", function(assert){
+	QUnit.test("Check fieldColumn can be updated dynamically", function(assert){
 
 		const oSelectionPanel = new SelectionPanel();
 
@@ -551,5 +552,33 @@ sap.ui.define([
 
 		oPanel.setMultiSelectMode(MultiSelectMode.SelectAll);
 		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.SelectAll, "Correct value forwarded to inner ListControl.");
+	});
+
+	QUnit.test("Check 'onlocalizationChanged'", function(assert) {
+		var oPanel = this.oSelectionPanel;
+		oPanel.setShowHeader(true);
+		// Arrange
+		let oBundle;
+		const sOriginalLanguage = "en_US";
+		const sChangedLanguage = "de";
+
+		const oSpy = sinon.spy(oPanel, "_updateLocalizationTexts");
+
+		oBundle = oPanel.oResourceBundle;
+
+		// Assert
+		assert.strictEqual(oBundle.sLocale, sOriginalLanguage, "Returned the already loaded bundle");
+		assert.strictEqual(oPanel._oShowSelectedButton.getText(), "Show Selected", "showSelected text is correctly initialized");
+		assert.strictEqual(oPanel.getFieldColumn(), "Field", "fieldColumn value is correctly initialized");
+
+		// Act
+		Localization.setLanguage(sChangedLanguage);
+		oBundle = oPanel.oResourceBundle;
+
+		// Assert
+		assert.equal(oSpy.called, true, "_updateLocalizationTexts called after Localization.setLanguage");
+		assert.strictEqual(oBundle.sLocale, sChangedLanguage, "Returned the newly loaded bundle");
+		assert.strictEqual(oPanel._oShowSelectedButton.getText(), "Auswahl einblenden", "showSelected text is correctly initialized");
+		assert.strictEqual(oPanel.getFieldColumn(), "Feld", "fieldColumn value is correctly translated");
 	});
 });
