@@ -251,24 +251,29 @@ sap.ui.define([
 			manifest: oOwnerComponent?.getManifest() || oPropertyBag.manifest,
 			componentData: oComponentData
 		});
-		await FlexState.initialize({
-			componentData: oComponentData,
-			asyncHints: oPropertyBag.owner?.config.asyncHints || oPropertyBag.factoryConfig.asyncHints,
-			componentId: sAppComponentId,
-			reference: sReference
-		});
-		const sServiceUrl = ODataUtils.removeOriginSegmentParameters(oPropertyBag.model.getServiceUrl());
-		const aRelevantAnnotationChanges = FlexState.getAnnotationChanges(sReference)
-		.filter((oAnnotationChange) => oAnnotationChange.getServiceUrl() === sServiceUrl);
-
-		const aReturn = [];
-		for (const oAnnotationChange of aRelevantAnnotationChanges) {
-			const oChangeHandler = await ChangeHandlerRegistration.getAnnotationChangeHandler({
-				changeType: oAnnotationChange.getChangeType()
+		try {
+			await FlexState.initialize({
+				componentData: oComponentData,
+				asyncHints: oPropertyBag.owner?.config.asyncHints || oPropertyBag.factoryConfig.asyncHints,
+				componentId: sAppComponentId,
+				reference: sReference
 			});
-			aReturn.push(await oChangeHandler.applyChange(oAnnotationChange));
+			const sServiceUrl = ODataUtils.removeOriginSegmentParameters(oPropertyBag.model.getServiceUrl());
+			const aRelevantAnnotationChanges = FlexState.getAnnotationChanges(sReference)
+			.filter((oAnnotationChange) => oAnnotationChange.getServiceUrl() === sServiceUrl);
+
+			const aReturn = [];
+			for (const oAnnotationChange of aRelevantAnnotationChanges) {
+				const oChangeHandler = await ChangeHandlerRegistration.getAnnotationChangeHandler({
+					changeType: oAnnotationChange.getChangeType()
+				});
+				aReturn.push(await oChangeHandler.applyChange(oAnnotationChange));
+			}
+			return aReturn;
+		} catch (oError) {
+			Log.error("Annotation changes could not be applied.", oError);
+			return [];
 		}
-		return aReturn;
 	}
 
 	/**
