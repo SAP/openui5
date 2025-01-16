@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/RenderManager",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -32,6 +33,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/m/Page",
+	"sap/m/Panel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
@@ -41,6 +43,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/zIndex"
 ], function(
 	Element,
+	RenderManager,
 	Library,
 	qutils,
 	createAndAppendDiv,
@@ -72,6 +75,7 @@ sap.ui.define([
 	Text,
 	Toolbar,
 	Page,
+	Panel,
 	Filter,
 	FilterOperator,
 	FormattedText,
@@ -209,6 +213,32 @@ sap.ui.define([
 
 		// Clean
 		oInput.destroy();
+	});
+
+	QUnit.test("Inner input value - type number (DOM flush)", async function (assert) {
+		// Arrange
+		var oInput = new Input({
+			value: "Initial Value",
+			type: "Password"
+		});
+		var oPanel = new Panel({
+			content: [
+				oInput
+			]
+		}).placeAt("content");
+		await nextUIUpdate();
+
+		const oRM = new RenderManager().getInterface();
+		const oRenderer = oPanel.getRenderer();
+		oRenderer.renderContent(oRM, oPanel);
+		oRM.flush(oInput.getDomRef().parentElement.parentElement, false, false);
+		oRM.destroy();
+		await nextUIUpdate();
+
+		assert.strictEqual(oInput.getDomRef("inner").value, "Initial Value", "Value is set");
+
+		// Clean
+		oPanel.destroy();
 	});
 
 	QUnit.test("Type password - value not cleared on invalidation", async function(assert) {
