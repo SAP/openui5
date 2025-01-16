@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/documentation/sdk/controller/util/NewsInfo",
 	"sap/ui/documentation/sdk/controller/util/SearchUtil",
+	"sap/ui/documentation/sdk/controller/util/LocaleHelper",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
@@ -40,6 +41,7 @@ sap.ui.define([
 	BaseController,
 	NewsInfo,
 	SearchUtil,
+	LocaleHelper,
 	Filter,
 	FilterOperator,
 	JSONModel,
@@ -829,6 +831,10 @@ sap.ui.define([
 							// Chinese Simplified
 							sLangRegion = "zh_Hans";
 							break;
+					}
+
+					if (!LocaleHelper.hasRegion(sLangAbbreviation)) {
+						sLangAbbreviation = LocaleHelper.appendDefaultRegion(sLangAbbreviation);
 					}
 
 					result.push(new Promise(function (resolve, reject) {
