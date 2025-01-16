@@ -105,6 +105,7 @@ sap.ui.define([
 	overviewPage.addContent(new List({
 		inset : false,
 		headerText : "Pull variants",
+		headerLevel: "H2",
 		items: [
 			new StandardListItem({
 				id: "standard_pull_page",
