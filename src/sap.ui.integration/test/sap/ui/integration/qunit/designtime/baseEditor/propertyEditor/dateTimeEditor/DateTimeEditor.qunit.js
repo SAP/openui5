@@ -80,7 +80,7 @@ sap.ui.define([
 			var oCurrentDate = UI5Date.getInstance();
 			oCurrentDate.setMilliseconds(0);
 			var sCurrentDateTimeString = DateFormat.getDateTimeInstance({
-				pattern: "YYYY-MM-dd'T'HH:mm:ss.SSSSZ"
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 			}).format(oCurrentDate);
 
 			this.oDateTimeEditor.attachValueChange(function (oEvent) {
