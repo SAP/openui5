@@ -33,7 +33,7 @@ sap.ui.define([
 		 *   {@link module:sap/ui/core/fieldhelp/FieldHelpCustomData}
 		 *
 		 * @private
-		 * @ui5-restricted sap.ui.comp.filterbar, sap.fe.templates.ListReport
+		 * @ui5-restricted sap.ui.comp.filterbar, sap.fe.templates.ListReport, sap.nw.core.appjobs.lib.reuse
 		 */
 		static setDocumentationRef(oElement, vDocumentationRefs) {
 			const aValue = Array.isArray(vDocumentationRefs) ? vDocumentationRefs : [vDocumentationRefs];

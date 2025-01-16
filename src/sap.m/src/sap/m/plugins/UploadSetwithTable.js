@@ -933,9 +933,11 @@ sap.ui.define([
 			var oItem = new UploadItem({
 				uploadState: UploadState.Ready
 			});
-			oItem.setParent(this); // setting the parent as UploadSetwithTable for file validations
-			oItem._setFileObject(oFile);
-			oItem.setFileName(oFile.name);
+			this._setInitialFileSettings({
+				item: oItem,
+				file: oFile,
+				fileList: aFiles
+			});
 
 
 			if (this.getItemValidationHandler() && typeof this.getItemValidationHandler() === "function" ) {
@@ -971,6 +973,38 @@ sap.ui.define([
 				this._initateItemUpload(oItem);
 			}
 		});
+	};
+
+	// Private method to set the initial file settings
+	UploadSetwithTable.prototype._setInitialFileSettings = function(oSettings) {
+		const { item } =  oSettings;
+		let file = oSettings.file;
+		const sFileName = file.name;
+		const sMimeType = file.type;
+
+		if (!sMimeType) {
+			const sDocument = UploadItem._splitFileName(sFileName, true);
+			const sFileExtension = sDocument?.extension;
+
+			switch (sFileExtension) {
+
+				case UploadItem.FILETYPES.VDS:
+
+					// Create a new file object with the correct MIME type
+					file = new File([file] , sFileName, {type: UploadItem.MEDIATYPES.VDS});
+					// programatically set the MIME type to the item
+					item.setMediaType(UploadItem.MEDIATYPES.VDS);
+
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		item.setParent(this); // setting the parent as UploadSetwithTable for file validations
+		item._setFileObject(file);
+		item.setFileName(sFileName);
 	};
 
 	UploadSetwithTable.prototype._fireFileTypeMismatch = function (oItem) {

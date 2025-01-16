@@ -3722,7 +3722,7 @@ sap.ui.define([
 				}));
 
 			// code under test
-			oPromise = this.oMetaModel.fetchUpdateData(sPropertyPath, oContext);
+			oPromise = this.oMetaModel.fetchUpdateData(sPropertyPath, oContext, false);
 
 			assert.ok(!oPromise.isRejected());
 			return oPromise.then(function (oResult) {
@@ -3783,67 +3783,86 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		dataPath : "/Foo/Bar",
-		message : "Not an entity set: Foo",
-		warning : "Unknown child Foo of tea_busi.DefaultContainer"
-	}, {
-		dataPath : "/TEAMS/0/Foo/Bar",
-		message : "Not a (navigation) property: Foo"
-	}, {
-		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
-		instance : undefined,
-		message : "No instance to calculate key predicate at /TEAMS/0"
-	}, {
-		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
-		instance : null,
-		message : "No instance to calculate key predicate at /TEAMS/0"
-	}, {
-		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
-		instance : {"$@ui5._" : {upsert : true}},
-		message : "No key predicate known at /TEAMS/0"
-	}, {
-		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
-		instance : new Error("failed to load team"),
-		message : "failed to load team at /TEAMS/0"
-	}, {
-		dataPath : "/EMPLOYEES('1')/EMPLOYEE_2_TEAM",
-		instance : undefined,
-		message : "No instance to calculate key predicate at /EMPLOYEES('1')/EMPLOYEE_2_TEAM"
-	}, {
-		dataPath : "/TEAMS/0/Foo@$ui5.something",
-		message : "Read-only path must not be updated"
-	}].forEach(function (oFixture) {
-		QUnit.test("fetchUpdateData: " + oFixture.message, function (assert) {
-			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
-				oPromise;
-
-			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-				.returns(SyncPromise.resolve(mScope));
-			if ("instance" in oFixture) {
-				this.mock(oContext).expects("fetchValue")
-					.returns(oFixture.instance instanceof Error
-						? SyncPromise.reject(oFixture.instance)
-						: SyncPromise.resolve(oFixture.instance));
+	[undefined, false, true].forEach((bNoEditUrl) => {
+		[{
+			dataPath : "/Foo/Bar",
+			message : "Not an entity set: Foo",
+			warning : "Unknown child Foo of tea_busi.DefaultContainer"
+		}, {
+			dataPath : "/TEAMS/0/Foo/Bar",
+			message : "Not a (navigation) property: Foo"
+		}, {
+			dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+			instance : undefined,
+			message : "No instance to calculate key predicate at /TEAMS/0",
+			needsEditUrl : true
+		}, {
+			dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+			instance : null,
+			message : "No instance to calculate key predicate at /TEAMS/0"
+		}, {
+			dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+			instance : {"$@ui5._" : {upsert : true}},
+			message : "No key predicate known at /TEAMS/0",
+			needsEditUrl : true
+		}, {
+			dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+			instance : new Error("failed to load team"),
+			message : "failed to load team at /TEAMS/0",
+			needsEditUrl : true
+		}, {
+			dataPath : "/EMPLOYEES('1')/EMPLOYEE_2_TEAM",
+			instance : undefined,
+			message : "No instance to calculate key predicate at /EMPLOYEES('1')/EMPLOYEE_2_TEAM",
+			needsEditUrl : true
+		}, {
+			dataPath : "/EMPLOYEES('1')/EMPLOYEE_2_TEAM",
+			instance : null, // still, no upsert!
+			message : "No instance to calculate key predicate at /EMPLOYEES('1')/EMPLOYEE_2_TEAM"
+		}, {
+			dataPath : "/TEAMS/0/Foo@$ui5.something",
+			message : "Read-only path must not be updated"
+		}].forEach(function (oFixture) {
+			const sTitle = "fetchUpdateData: bNoEditUrl=" + bNoEditUrl + "; " + oFixture.message;
+			if (bNoEditUrl !== undefined && oFixture.instance === null) {
+				return; // upsert would not lead to error
 			}
-			if (oFixture.warning) {
-				this.oLogMock.expects("isLoggable")
-					.withExactArgs(Log.Level.WARNING, sODataMetaModel)
-					.returns(true);
-				this.oLogMock.expects("warning")
-					.withExactArgs(oFixture.warning, oFixture.dataPath, sODataMetaModel);
+			if (bNoEditUrl && oFixture.needsEditUrl) {
+				return;
 			}
-			this.mock(this.oModel).expects("reportError")
-				.withExactArgs(oFixture.message, sODataMetaModel, sinon.match({
-					message : oFixture.dataPath + ": " + oFixture.message,
-					name : "Error"
-				}));
 
-			oPromise = this.oMetaModel.fetchUpdateData("", oContext);
-			assert.ok(oPromise.isRejected());
-			assert.strictEqual(oPromise.getResult().message,
-				oFixture.dataPath + ": " + oFixture.message);
-			oPromise.caught(); // avoid "Uncaught (in promise)"
+			QUnit.test(sTitle, function (assert) {
+				var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
+					oPromise;
+
+				this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+					.returns(SyncPromise.resolve(mScope));
+				if ("instance" in oFixture) {
+					this.mock(oContext).expects("fetchValue")
+						.returns(oFixture.instance instanceof Error
+							? SyncPromise.reject(oFixture.instance)
+							: SyncPromise.resolve(oFixture.instance));
+				}
+				if (oFixture.warning) {
+					this.oLogMock.expects("isLoggable")
+						.withExactArgs(Log.Level.WARNING, sODataMetaModel)
+						.returns(true);
+					this.oLogMock.expects("warning")
+						.withExactArgs(oFixture.warning, oFixture.dataPath, sODataMetaModel);
+				}
+				this.mock(this.oModel).expects("reportError")
+					.exactly(typeof bNoEditUrl === "boolean" ? 1 : 0)
+					.withExactArgs(oFixture.message, sODataMetaModel, sinon.match({
+						message : oFixture.dataPath + ": " + oFixture.message,
+						name : "Error"
+					}));
+
+				oPromise = this.oMetaModel.fetchUpdateData("", oContext, bNoEditUrl);
+				assert.ok(oPromise.isRejected());
+				assert.strictEqual(oPromise.getResult().message,
+					oFixture.dataPath + ": " + oFixture.message);
+				oPromise.caught(); // avoid "Uncaught (in promise)"
+			});
 		});
 	});
 

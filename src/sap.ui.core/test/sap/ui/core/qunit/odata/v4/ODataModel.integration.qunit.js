@@ -20763,7 +20763,7 @@ sap.ui.define([
 				sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">'
 		+ (bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : "") + '\
-	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="blackBinding">\
+	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="binding">\
 		<Text id="note" text="{Note}"/>\
 	</FlexBox>\
 </FlexBox>',
@@ -20785,7 +20785,7 @@ sap.ui.define([
 				.expectChange("note", "Test");
 
 			return this.createView(assert, sView, oModel).then(function () {
-				oContext = that.oView.byId("blackBinding").getBindingContext();
+				oContext = that.oView.byId("binding").getBindingContext();
 				oParentContext = that.oView.byId("form").getBindingContext();
 
 				// Note: The value of the property binding is undefined because there is no
@@ -71495,6 +71495,8 @@ sap.ui.define([
 	// The upserted entity is reached via two navigation properties. This effects the URL for the
 	// upsert PATCH because we use the deep path for it then.
 	// JIRA: CPOUI5ODATAV4-2211
+	//
+	// Make sure that canonical path APIs behave unchanged (JIRA: CPOUI5ODATAV4-2864)
 	["submit", "reset", "delete"].forEach(function (sAction) {
 		[false, true].forEach(function (bIntermediate) {
 			const sTitle = "CPOUI5ODATAV4-2211: upsert, " + sAction
@@ -71546,6 +71548,16 @@ sap.ui.define([
 				.expectChange("currency", "");
 
 			await this.createView(assert, bIntermediate ? sViewWithIntermediate : sView, oModel);
+
+			const oContext = bIntermediate && this.oView.byId("publication").getBindingContext();
+			if (oContext) {
+				assert.strictEqual(oContext.getObject(), null);
+				assert.throws(function () {
+					// code under test (JIRA: CPOUI5ODATAV4-2864 - needed for FE!)
+					oContext.getCanonicalPath();
+				}, new Error(sPublicationPath
+					+ ": No instance to calculate key predicate at " + sPublicationPath));
+			}
 
 			this.expectChange("publicationId", "2")
 				.expectChange("price", "12");
@@ -71606,9 +71618,15 @@ sap.ui.define([
 
 			await this.waitForChanges(assert, "update");
 
-			let oContext;
-			if (bIntermediate) {
-				oContext = this.oView.byId("publication").getBindingContext();
+			if (oContext) {
+				assert.deepEqual(oContext.getObject(), {
+					Price : "11",
+					PublicationID : "2"
+				});
+				assert.throws(function () {
+					// code under test (JIRA: CPOUI5ODATAV4-2864 - just curious)
+					oContext.getCanonicalPath();
+				}, new Error(sPublicationPath + ": No key predicate known at " + sPublicationPath));
 			}
 			let oPromise;
 			if (sAction === "submit") {
@@ -71673,15 +71691,19 @@ sap.ui.define([
 				this.waitForChanges(assert, sAction)
 			]);
 
+			const oBestPublication = {
+				"@odata.etag" : "etag3",
+				CurrencyCode : "USD",
+				Price : "10.99",
+				PublicationID : "2"
+			};
 			assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"),
-				sAction === "submit"
-					? {
-						"@odata.etag" : "etag3",
-						CurrencyCode : "USD",
-						Price : "10.99",
-						PublicationID : "2"
-					}
-					: null);
+				sAction === "submit" ? oBestPublication : null);
+			if (oContext && sAction === "submit") {
+				assert.deepEqual(oContext.getObject(), oBestPublication);
+				// code under test (JIRA: CPOUI5ODATAV4-2864)
+				assert.strictEqual(oContext.getCanonicalPath(), "/Publications('2')");
+			}
 		});
 		});
 	});

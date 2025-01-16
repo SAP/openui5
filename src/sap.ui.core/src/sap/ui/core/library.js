@@ -6,14 +6,12 @@
  * Initialization Code and shared classes of library sap.ui.core.
  */
 sap.ui.define([
-	'sap/ui/base/DataType',
-	'sap/ui/core/Lib',
-	'sap/ui/core/message/MessageType',
-	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
-	'./CalendarType', // provides sap.ui.core.CalendarType
-	'sap/ui/core/date/CalendarWeekNumbering' // ensures availability of legacy DataType "sap.ui.core.date.CalendarWeekNumbering"
+ 'sap/ui/base/DataType',
+ 'sap/ui/core/Lib',
+ // provides sap.ui.core.mvc.ViewType
+ 'sap/ui/core/mvc/ViewType'
 ],
-	function(DataType, Library, MessageType, ViewType, CalendarType, _CalendarWeekNumbering) {
+	function(DataType, Library, ViewType) {
 	 "use strict";
 
 	 /**
@@ -35,58 +33,54 @@ sap.ui.define([
 		 designtime: "sap/ui/core/designtime/library.designtime",
 		 apiVersion: 2,
 		 types: [
-
-			 // builtin types
-			 "any",
-			 "boolean",
-			 "float",
-			 "int",
-			 "object",
-			 "string",
-			 "void",
-
-			 // simple types and enums
-			 "sap.ui.core.AbsoluteCSSSize",
-			 "sap.ui.core.AccessibleRole",
-			 "sap.ui.core.AccessibleLandmarkRole",
-			 "sap.ui.core.aria.HasPopup",
-			 "sap.ui.core.BarColor",
-			 "sap.ui.core.BusyIndicatorSize",
-			 "sap.ui.core.CalendarType",
-			 "sap.ui.core.CSSColor",
-			 "sap.ui.core.CSSSize",
-			 "sap.ui.core.CSSSizeShortHand",
-			 "sap.ui.core.Collision",
-			 "sap.ui.core.ComponentLifecycle",
-			 "sap.ui.core.Design",
-			 "sap.ui.core.Dock",
-			 "sap.ui.core.HorizontalAlign",
-			 "sap.ui.core.ID",
-			 "sap.ui.core.IconColor",
-			 "sap.ui.core.ImeMode",
-			 "sap.ui.core.IndicationColor",
-			 "sap.ui.core.ItemSelectionMode",
-			 "sap.ui.core.MessageType",
-			 "sap.ui.core.OpenState",
-			 "sap.ui.core.Orientation",
-			 "sap.ui.core.Percentage",
-			 "sap.ui.core.Priority",
-			 "sap.ui.core.ScrollBarAction",
-			 "sap.ui.core.Scrolling",
-			 "sap.ui.core.SortOrder",
-			 "sap.ui.core.TextAlign",
-			 "sap.ui.core.TextDirection",
-			 "sap.ui.core.TitleLevel",
-			 "sap.ui.core.URI",
-			 "sap.ui.core.ValueState",
-			 "sap.ui.core.VerticalAlign",
-			 "sap.ui.core.Wrapping",
-			 "sap.ui.core.InvisibleMessageMode",
-			 "sap.ui.core.dnd.DropEffect",
-			 "sap.ui.core.dnd.DropLayout",
-			 "sap.ui.core.dnd.DropPosition",
-			 "sap.ui.core.mvc.ViewType",
-			 "sap.ui.core.routing.HistoryDirection"
+		  // builtin types
+		  "any",
+		  "boolean",
+		  "float",
+		  "int",
+		  "object",
+		  "string",
+		  "void",
+		  // simple types and enums
+		  "sap.ui.core.AbsoluteCSSSize",
+		  "sap.ui.core.AccessibleRole",
+		  "sap.ui.core.AccessibleLandmarkRole",
+		  "sap.ui.core.aria.HasPopup",
+		  "sap.ui.core.BarColor",
+		  "sap.ui.core.BusyIndicatorSize",
+		  "sap.ui.core.CSSColor",
+		  "sap.ui.core.CSSSize",
+		  "sap.ui.core.CSSSizeShortHand",
+		  "sap.ui.core.Collision",
+		  "sap.ui.core.ComponentLifecycle",
+		  "sap.ui.core.Design",
+		  "sap.ui.core.Dock",
+		  "sap.ui.core.HorizontalAlign",
+		  "sap.ui.core.ID",
+		  "sap.ui.core.IconColor",
+		  "sap.ui.core.ImeMode",
+		  "sap.ui.core.IndicationColor",
+		  "sap.ui.core.ItemSelectionMode",
+		  "sap.ui.core.OpenState",
+		  "sap.ui.core.Orientation",
+		  "sap.ui.core.Percentage",
+		  "sap.ui.core.Priority",
+		  "sap.ui.core.ScrollBarAction",
+		  "sap.ui.core.Scrolling",
+		  "sap.ui.core.SortOrder",
+		  "sap.ui.core.TextAlign",
+		  "sap.ui.core.TextDirection",
+		  "sap.ui.core.TitleLevel",
+		  "sap.ui.core.URI",
+		  "sap.ui.core.ValueState",
+		  "sap.ui.core.VerticalAlign",
+		  "sap.ui.core.Wrapping",
+		  "sap.ui.core.InvisibleMessageMode",
+		  "sap.ui.core.dnd.DropEffect",
+		  "sap.ui.core.dnd.DropLayout",
+		  "sap.ui.core.dnd.DropPosition",
+		  "sap.ui.core.mvc.ViewType",
+		  "sap.ui.core.routing.HistoryDirection"
 		 ],
 		 interfaces: [
 			 "sap.ui.core.IShrinkable",
@@ -864,7 +858,7 @@ sap.ui.define([
 
 	 // this assignment here is kept so that imports via the library module continue to work
 	 // even when the export via globals is abandoned
-	 thisLib.CalendarType = CalendarType;
+	 thisLib.CalendarType = undefined/*CalendarType*/;
 
 	 /**
 	  * @classdesc A string type that represents CSS color values (CSS Color Level 3).
@@ -2388,22 +2382,6 @@ sap.ui.define([
 
 	 };
 	 DataType.registerEnum("sap.ui.core.ItemSelectionMode", thisLib.ItemSelectionMode);
-
-	 /**
-	  * Specifies possible message types.
-	  *
-	  * @enum {string}
-	  * @public
-	  * @name sap.ui.core.MessageType
-	  * @borrows module:sap/ui/core/message/MessageType.Information as Information
-	  * @borrows module:sap/ui/core/message/MessageType.Error as Error
-	  * @borrows module:sap/ui/core/message/MessageType.Warning as Warning
-	  * @borrows module:sap/ui/core/message/MessageType.Success as Success
-	  * @borrows module:sap/ui/core/message/MessageType.None as None
-	  */
-	 thisLib.MessageType = MessageType;
-
-	 DataType.registerEnum("sap.ui.core.MessageType", thisLib.MessageType);
 
 	 /**
 	  * Specifies possible view types.

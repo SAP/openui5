@@ -2083,7 +2083,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getScale", function (assert) {
 		var oFormat = getCurrencyInstance({style: "short", shortRefNumber: 1234});
-		assert.strictEqual(oFormat.getScale(), "\u00a4\u00a0K", "scale is correctly retrieved");
+		assert.strictEqual(oFormat.getScale(), "\u00a4K", "scale is correctly retrieved");
 
 		oFormat = getCurrencyInstance({style: "short"});
 		assert.strictEqual(oFormat.getScale(), undefined, "scale not retrieved");

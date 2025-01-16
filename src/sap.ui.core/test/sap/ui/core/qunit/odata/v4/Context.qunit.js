@@ -1310,6 +1310,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
+	{transient : false, groupId : "myGroup", upsert : true},
 	{transient : false, groupId : "myGroup"},
 	{transient : true, groupId : "myGroup"},
 	{transient : true, groupId : null},
@@ -1328,6 +1329,7 @@ sap.ui.define([
 				oFixture.transient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
 			oDeletePromise,
 			oExpectation,
+			bPreventRequest = oFixture.transient || oFixture.upsert,
 			bSelected = !!oFixture.groupId;
 
 		if (oFixture.hierarchy) {
@@ -1337,17 +1339,22 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(_Helper).expects("checkGroupId").exactly(oFixture.transient ? 0 : 1)
+		this.mock(oContext).expects("getValue").exactly(oFixture.transient ? 0 : 1)
+			.withExactArgs().returns(oFixture.upsert ? {
+				"@$ui5._" : {
+					upsert : false // just to force *has*PrivateAnnotation
+				}
+			} : undefined); // Note: we cannot rule out undefined for strange edge cases!
+		this.mock(_Helper).expects("checkGroupId").exactly(bPreventRequest ? 0 : 1)
 			.withExactArgs("myGroup", false, true);
-		this.mock(oContext).expects("fetchCanonicalPath").exactly(oFixture.transient ? 0 : 1)
+		this.mock(oContext).expects("fetchCanonicalPath").exactly(bPreventRequest ? 0 : 1)
 			.withExactArgs().returns(SyncPromise.resolve("/Bar('23')"));
-		this.mock(oBinding).expects("lockGroup").exactly(oFixture.transient ? 0 : 1)
+		this.mock(oBinding).expects("lockGroup").exactly(bPreventRequest ? 0 : 1)
 			.withExactArgs("myGroup", true, true).returns("~oGroupLock~");
 		oExpectation = this.mock(oBinding).expects("delete")
-			.withExactArgs(oFixture.transient ? null : "~oGroupLock~",
-				oFixture.transient ? undefined : "Bar('23')", sinon.match.same(oContext), null,
-				oFixture.transient ? true : "~bDoNotRequestCount~",
-				sinon.match.func)
+			.withExactArgs(bPreventRequest ? null : "~oGroupLock~",
+				bPreventRequest ? undefined : "Bar('23')", sinon.match.same(oContext), null,
+				bPreventRequest ? true : "~bDoNotRequestCount~", sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve()));
 
 		// code under test
@@ -1391,6 +1398,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(oContext).expects("isKeepAlive").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns(true);
 		this.mock(_Helper).expects("checkGroupId").exactly(sGroupId ? 1 : 0)
@@ -1434,6 +1442,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(oModel).expects("isApiGroup").withExactArgs("myGroup").returns(false);
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup", false, true);
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
@@ -1471,6 +1480,7 @@ sap.ui.define([
 	QUnit.test("delete: recursive hierarchy, restrictions not met", function (assert) {
 		const oBinding = {
 			checkSuspended : function () {},
+			fetchValue : function () { return SyncPromise.resolve(); },
 			getUpdateGroupId : mustBeMocked,
 			mParameters : {$$aggregation : {hierarchyQualifier : "X"}}
 		};
@@ -1512,6 +1522,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 
 		// code under test
 		assert.throws(function () {
@@ -1530,6 +1541,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns(true);
 
 		// code under test
@@ -1569,6 +1581,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(_Helper).expects("checkGroupId")
 			.withExactArgs("$invalid", false, true).throws(oError);
 
