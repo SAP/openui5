@@ -289,6 +289,15 @@ sap.ui.define(function() {
 					only: ["sap/ui/unified/calendar/YearPicker"]
 				}
 			},
+			"YearRangePicker": {
+				group: "Calendar",
+				qunit: {
+					reorder: false
+				},
+				coverage: {
+					only: ["sap/ui/unified/calendar/YearRangePicker"]
+				}
+			},
 			"IndexPicker": {
 				group: "Calendar",
 				qunit: {
