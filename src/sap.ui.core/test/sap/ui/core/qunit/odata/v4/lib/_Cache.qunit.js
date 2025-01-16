@@ -2113,11 +2113,17 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: transient entity, navigation property", function (assert) {
+[false, true].forEach((bUpsert) => {
+	const sTitle = "_Cache#drillDown: transient entity, navigation property; upsert=" + bUpsert;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders"),
-			oData = [{
+			oData = [bUpsert ? {
+				"@$ui5._" : {upsert : true}
+			} : {
 				"@$ui5.context.isTransient" : true
-			}];
+			}],
+			sJSON = JSON.stringify(oData);
 
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
 
@@ -2134,9 +2140,10 @@ sap.ui.define([
 		// code under test
 		return oCache.drillDown(oData, "($uid=id-1-23)/SO_2_BP").then(function (oValue) {
 			assert.strictEqual(oValue, null);
-			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
+			assert.strictEqual(JSON.stringify(oData), sJSON, "cache unchanged");
 		});
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bTransient) {
@@ -2522,6 +2529,14 @@ sap.ui.define([
 	}, {
 		bCanceled : false,
 		sEntityPath : "('42')/path/to/upsertable/entity",
+		sUnitOrCurrencyPath : "Pricing/Currency",
+		sUnitOrCurrencyValue : "~sUnitOrCurrencyValue~",
+		bUpsert : true
+	}, {
+		bCanceled : false,
+		sEntityPath : "('42')/path/to/upsertable/entity",
+		sUnitOrCurrencyPath : "Pricing/Currency",
+		sUnitOrCurrencyValue : undefined,
 		bUpsert : true
 	}, {
 		bCanceled : true,
@@ -2617,6 +2632,26 @@ sap.ui.define([
 			const oUpdateAllExpectation = oHelperMock.expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 					oEntityMatcher, sinon.match.same(oUpdateData));
+			oHelperMock.expects("buildPath").exactly(oFixture.sUnitOrCurrencyPath ? 1 : 0)
+				.withExactArgs("Address", "Pricing/Currency")
+				.returns("Address/Pricing/Currency");
+			oHelperMock.expects("buildPath").exactly(oFixture.sUnitOrCurrencyPath ? 1 : 0)
+				.withExactArgs(oFixture.sEntityPath, "Address/Pricing/Currency")
+				.returns("~sUnitOrCurrencyPath~");
+			oCacheMock.expects("getValue").exactly(oFixture.sUnitOrCurrencyPath ? 1 : 0)
+				.withExactArgs("~sUnitOrCurrencyPath~")
+				.returns(oFixture.sUnitOrCurrencyValue);
+			if (oFixture.sUnitOrCurrencyPath && oFixture.sUnitOrCurrencyValue === undefined) {
+				this.oLogMock.expects("debug").withExactArgs("Missing value for unit of measure"
+						+ " ~sUnitOrCurrencyPath~ when updating " + sFullPath,
+					oCache.toString(),
+					sClassName);
+			}
+			oHelperMock.expects("makeUpdateData").exactly(oFixture.sUnitOrCurrencyValue ? 1 : 0)
+				.withExactArgs(["Address", "Pricing", "Currency"], oFixture.sUnitOrCurrencyValue)
+				.returns("~oUnitOrCurrencyUpdateData~");
+			oHelperMock.expects("merge").exactly(oFixture.sUnitOrCurrencyValue ? 1 : 0)
+				.withExactArgs(sinon.match.same(oUpdateData), "~oUnitOrCurrencyUpdateData~");
 			this.oRequestorMock.expects("relocateAll").exactly(oFixture.bUpsert ? 0 : 1)
 				.withExactArgs("$parked.group", "group", oEntityMatcher);
 			oHelperMock.expects("buildPath")
@@ -2678,7 +2713,7 @@ sap.ui.define([
 				oHelperMock.expects("updateAll").exactly(oFixture.bUpsert ? 1 : 0)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners),
 						"('42')/path/to/upsertable", sinon.match.same(oParent), {entity : null});
-				oHelperMock.expects("updateExisting").exactly(oFixture.bUpsert ? 0 : 1)
+				oHelperMock.expects("updateAll").exactly(oFixture.bUpsert ? 0 : 1)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 						oEntityMatcher, sinon.match.same(oOldData));
 
@@ -2688,7 +2723,7 @@ sap.ui.define([
 
 			// code under test
 			oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
-					"/~/BusinessPartnerList('0')", sEntityPath, undefined,
+					"/~/BusinessPartnerList('0')", sEntityPath, oFixture.sUnitOrCurrencyPath,
 					oFixture.$$patchWithoutSideEffects, fnPatchSent)
 				.then(function (oResult) {
 					assert.notOk(fnError.called);
@@ -3031,10 +3066,10 @@ sap.ui.define([
 					oHelperMock.expects("removeByPath").twice()
 						.withExactArgs(sinon.match.same(oCache.mChangeRequests), sFullPath,
 							sinon.match.same(oPatchPromise2));
-					oHelperMock.expects("updateExisting")
+					oHelperMock.expects("updateAll")
 						.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 							sinon.match.same(oEntity), "~oOldData~0");
-					oRequestCall0.args[0][6](); // call onCancel
+					oRequestCall2.args[0][6](); // call onCancel
 				});
 			});
 
@@ -3106,7 +3141,7 @@ sap.ui.define([
 			assert.strictEqual(oRequestCall1.args[0][12](), "~oOldData~1");
 			assert.strictEqual(oRequestCall0.args[0][12]("~oOldData~1"), undefined);
 
-			return Promise.resolve([oCacheUpdatePromise0, oCacheUpdatePromise1]);
+			return Promise.all([oCacheUpdatePromise0, oCacheUpdatePromise1]);
 		});
 	});
 
@@ -3299,6 +3334,7 @@ sap.ui.define([
 			},
 			oError = new Error(),
 			oGroupLock = {getGroupId : function () {}},
+			oHelperMock = this.mock(_Helper),
 			oPatchPromise = Promise.reject(oError),
 			oUpdateData = {
 				Address : {
@@ -3319,15 +3355,17 @@ sap.ui.define([
 				oCache.sResourcePath + "('0')/path/to/entity", undefined, undefined, undefined,
 				sinon.match.func)
 			.returns(oPatchPromise);
-		this.mock(_Helper).expects("addByPath")
+		oHelperMock.expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeRequests),
 				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
 		this.oRequestorMock.expects("getGroupSubmitMode").never();
-		this.mock(_Helper).expects("updateExisting")
-			.exactly(bCanceled ? 0 : 1)
+		oHelperMock.expects("updateAll") // updateWithUnitOrCurrency
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('0')/path/to/entity",
+				sinon.match.same(oEntity), {Address : {City : "Walldorf"}});
+		oHelperMock.expects("updateAll").exactly(bCanceled ? 0 : 1) // onCancel
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('0')/path/to/entity",
 				sinon.match.same(oEntity), {Address : {City : "Heidelberg"}});
-		this.mock(_Helper).expects("removeByPath")
+		oHelperMock.expects("removeByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeRequests),
 				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
 

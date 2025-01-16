@@ -49432,6 +49432,9 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			var oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value");
 
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into ('42-0')/CurrencyCode"
+					+ ", invalid segment: CurrencyCode"); //TODO we'd better avoid this :-(
 			that.expectRequest({
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)/_Publication('42-0')",
@@ -57013,8 +57016,8 @@ make root = ${bMakeRoot}`;
 	// BCP: 2170193264
 	QUnit.test("Context#setProperty: write only", function (assert) {
 		var oContext,
-			iNoPatchCompleted = 0,
-			iNoPatchSent = 0,
+			iPatchCompleted = 0,
+			iPatchSent = 0,
 			oYetAnotherContext,
 			that = this;
 
@@ -57025,11 +57028,11 @@ make root = ${bMakeRoot}`;
 			oYetAnotherContext = that.oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext();
 
 			oContextBinding.attachPatchCompleted(function (oEvent) {
-				iNoPatchCompleted += 1;
+				iPatchCompleted += 1;
 				assert.strictEqual(oEvent.getParameter("success"), true);
 			});
 			oContextBinding.attachPatchSent(function () {
-				iNoPatchSent += 1;
+				iPatchSent += 1;
 			});
 			that.expectRequest({
 					headers : {"If-Match" : "*"},
@@ -57055,8 +57058,8 @@ make root = ${bMakeRoot}`;
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.strictEqual(iNoPatchCompleted, 1);
-			assert.strictEqual(iNoPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
+			assert.strictEqual(iPatchSent, 1);
 
 			// code under test
 			assert.strictEqual(oContext.getProperty("MEMBER_COUNT"), 99);
@@ -57286,6 +57289,9 @@ make root = ${bMakeRoot}`;
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into ('P1')/CurrencyCode"
+					+ ", invalid segment: CurrencyCode"); //TODO we'd better avoid this :-(
 			that.expectChange("name", "The Beatles (changed)")
 				.expectChange("price", ["12.99"]);
 
@@ -66735,8 +66741,8 @@ make root = ${bMakeRoot}`;
 		var oContext,
 			oListBinding,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
-			iPatchSentCount = 0,
-			iPatchCompletedCount = 0,
+			iPatchSent = 0,
+			iPatchCompleted = 0,
 			sView = '\
 <Table id="list" items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
 		suspended : true}">\
@@ -66769,10 +66775,10 @@ make root = ${bMakeRoot}`;
 			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=false)");
 			that.oView.byId("objectPage").setBindingContext(oContext);
 			oContext.getBinding().attachPatchSent(function () {
-				iPatchSentCount += 1;
+				iPatchSent += 1;
 			});
 			oContext.getBinding().attachPatchCompleted(function () {
-				iPatchCompletedCount += 1;
+				iPatchCompleted += 1;
 			});
 
 			return that.waitForChanges(assert, "getKeepAliveContext");
@@ -66788,8 +66794,8 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert, "change name");
 		}).then(function () {
-			assert.strictEqual(iPatchSentCount, 1);
-			assert.strictEqual(iPatchCompletedCount, 1);
+			assert.strictEqual(iPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
 
 			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel"
 					+ "&$skip=0&$top=100", {
@@ -71517,6 +71523,10 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2211
 	//
 	// Make sure that canonical path APIs behave unchanged (JIRA: CPOUI5ODATAV4-2864)
+	//
+	// Make sure no late property requests are sent. See what happens when upsert is caused by
+	// amount w/ currency. Test eventing for PATCH requests.
+	// JIRA: CPOUI5ODATAV4-2856
 ["submit", "reset", "delete"].forEach(function (sAction) {
 	[false, true].forEach(function (bIntermediate) {
 		const sTitle = "CPOUI5ODATAV4-2211: upsert, " + sAction
@@ -71534,20 +71544,20 @@ make root = ${bMakeRoot}`;
 		const sView = `
 <FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
 	<Text id="artistId" text="{ArtistID}"/>
+	<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 	<Input id="publicationId" value="{BestFriend/BestPublication/PublicationID}"/>
 	<Input id="price" value="{BestFriend/BestPublication/Price}"/>
 	<Input id="currency" value="{BestFriend/BestPublication/CurrencyCode}"/>
-	<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 </FlexBox>`;
 		const sViewWithIntermediate = `
 <FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
 	<Text id="artistId" text="{ArtistID}"/>
+	<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 	<FlexBox id="publication" binding="{BestFriend/BestPublication}">
 		<Input id="publicationId" value="{PublicationID}"/>
 		<Input id="price" value="{Price}"/>
 		<Input id="currency" value="{CurrencyCode}"/>
 	</FlexBox>
-	<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 </FlexBox>`;
 
 		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
@@ -71565,12 +71575,26 @@ make root = ${bMakeRoot}`;
 				}
 			})
 			.expectChange("artistId", "1")
+			.expectChange("isNull", true)
 			.expectChange("publicationId", "")
 			.expectChange("price", null)
-			.expectChange("currency", "")
-			.expectChange("isNull", true);
+			.expectChange("currency", "$MD"); // default value from $metadata
 
 		await this.createView(assert, bIntermediate ? sViewWithIntermediate : sView, oModel);
+
+		const oArtistContext = this.oView.byId("form").getBindingContext();
+		assert.strictEqual(oArtistContext.getObject("BestFriend/BestPublication"), null);
+
+		let iPatchCompleted = 0;
+		const oArtistBinding = oArtistContext.getBinding();
+		oArtistBinding.attachPatchCompleted(function (oEvent) {
+			iPatchCompleted += 1;
+			assert.strictEqual(oEvent.getParameter("success"), iPatchCompleted === 2);
+		});
+		let iPatchSent = 0;
+		oArtistBinding.attachPatchSent(function () {
+			iPatchSent += 1;
+		});
 
 		const oContext = bIntermediate && this.oView.byId("publication").getBindingContext();
 		if (oContext) {
@@ -71582,21 +71606,26 @@ make root = ${bMakeRoot}`;
 				+ ": No instance to calculate key predicate at " + sPublicationPath));
 		}
 
-		this.expectChange("publicationId", "2")
+		this.expectChange("isNull", false)
 			.expectChange("price", "12")
-			.expectChange("isNull", false);
+			.expectChange("publicationId", "2");
 
 		// code under test
-		this.oView.byId("publicationId").getBinding("value").setValue("2");
 		this.oView.byId("price").getBinding("value").setValue("12");
+		this.oView.byId("publicationId").getBinding("value").setValue("2");
 
 		await this.waitForChanges(assert, "upsert");
 
-		const oArtistContext = this.oView.byId("form").getBindingContext();
 		assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"), {
 			Price : "12",
 			PublicationID : "2"
 		});
+
+		assert.strictEqual(
+			// code under test (JIRA: CPOUI5ODATAV4-2856)
+			await oArtistContext.requestProperty("BestFriend/BestPublication/CurrencyCode"),
+			"$MD", // default value from $metadata
+			"no late property request");
 
 		this.oLogMock.expects("error")
 			.withArgs("Failed to update path " + sPublicationPath + "/PublicationID");
@@ -71610,7 +71639,11 @@ make root = ${bMakeRoot}`;
 					Prefer : "return=minimal"
 				},
 				url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
-				payload : {Price : "12", PublicationID : "2"}
+				payload : {
+					CurrencyCode : "$MD", // default value from $metadata
+					Price : "12",
+					PublicationID : "2"
+				}
 			}, createErrorInsideBatch({target : "Price"}))
 			.expectRequest({
 				batchNo : 2,
@@ -71627,11 +71660,17 @@ make root = ${bMakeRoot}`;
 				technical : true,
 				type : "Error"
 			}]);
+		assert.strictEqual(iPatchSent, 0);
+		assert.strictEqual(iPatchCompleted, 0);
 
 		await Promise.all([
 			oModel.submitBatch("update"),
 			this.waitForChanges(assert, "submit -> error")
 		]);
+
+		assert.strictEqual(iPatchSent, 1);
+		assert.strictEqual(iPatchCompleted, 1);
+
 		await this.checkValueState(assert, this.oView.byId("price"), "Error",
 			"Request intentionally failed");
 
@@ -71662,7 +71701,11 @@ make root = ${bMakeRoot}`;
 						Prefer : "return=minimal"
 					},
 					url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
-					payload : {Price : "11", PublicationID : "2"}
+					payload : {
+						CurrencyCode : "$MD", // default value from $metadata
+						Price : "11",
+						PublicationID : "2"
+					}
 				}, null, {ETag : "etag3"}) // 204 No Content
 				.expectRequest({
 					batchNo : 3,
@@ -71679,16 +71722,16 @@ make root = ${bMakeRoot}`;
 							PublicationID : "2"
 						}
 					}
-				})
+				});
+			this.expectChange("currency", "USD")
 				.expectChange("price", "10.99")
-				.expectChange("currency", "USD")
 				.expectChange("isNull", false); // this is accepted! (JIRA: CPOUI5ODATAV4-2638)
 		} else {
 			this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
 					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-				.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
-					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
 				.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+				.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
 					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update");
 			if (sAction === "delete") { // delete causes setContext(null) -> no default values
 				this.expectChange("publicationId", null)
@@ -71697,8 +71740,8 @@ make root = ${bMakeRoot}`;
 					.expectChange("isNull", true);
 			} else {
 				this.expectChange("price", "12") // from the second PATCH to "11"
-					.expectChange("publicationId", "")
 					.expectChange("price", null)
+					.expectChange("publicationId", "")
 					.expectChange("isNull", true);
 			}
 
@@ -71711,6 +71754,8 @@ make root = ${bMakeRoot}`;
 				oModel.resetChanges();
 			}
 		}
+		assert.strictEqual(iPatchSent, 1);
+		assert.strictEqual(iPatchCompleted, 1);
 
 		await Promise.all([
 			oPromise,
@@ -71718,6 +71763,8 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, sAction)
 		]);
 
+		assert.strictEqual(iPatchSent, sAction === "submit" ? 2 : 1);
+		assert.strictEqual(iPatchCompleted, sAction === "submit" ? 2 : 1);
 		const oBestPublication = {
 			"@odata.etag" : "etag3",
 			CurrencyCode : "USD",
@@ -77266,7 +77313,8 @@ make root = ${bMakeRoot}`;
 		checkEvents([{property : "BestFriend", start : 5, length : 1}]);
 
 		this.expectChange("name", ["Artist X"])
-			.expectChange("publicationCurrency", [""])
+			// Note: w/ $$separate, default values are not expected - this is just a bad example
+			.expectChange("publicationCurrency", ["$MD"]) // default value from $metadata
 			.expectChange("friend", [""])
 			.expectChange("friendBusy__AS_COMPOSITE", [true])
 			.expectChange("friendBusy__AS_COMPOSITE", [true])
