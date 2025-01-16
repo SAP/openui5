@@ -970,7 +970,7 @@ sap.ui.define([
 
 			if (Device.system.phone) {
 				sLabelId = this.$("inner").attr("aria-labelledby");
-				sLabel = sLabelId ? document.getElementById(sLabelId).textContent : "";
+				sLabel = sLabelId ? document.getElementById(sLabelId)?.textContent : "";
 				this._oPopup.setTitle(sLabel);
 				this._oPopup.setShowHeader(true);
 				this._oPopup.setShowCloseButton(true);
