@@ -995,6 +995,13 @@ sap.ui.define([
 		return mPosition;
 	};
 
+	Table.prototype.updateAccessbilityOfItems = function() {
+		const iStartIndex = this.hasHeaderRow() ? 1 : 0;
+		this.getVisibleItems().forEach((oItem, iIndex) => {
+			oItem.getFocusDomRef()?.setAttribute("aria-rowindex", iStartIndex + iIndex + 1);
+		});
+	};
+
 	Table.prototype._setHeaderAnnouncement = function() {
 		var oBundle = Library.getResourceBundleFor("sap.m"),
 			sAnnouncement = oBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " ";
