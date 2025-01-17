@@ -143,7 +143,9 @@ sap.ui.define([
 		oChildCard.attachEvent("_ready", () => {
 			_setDialogHeader(oDialog, oChildCard);
 			_setAriaAttributes(oDialog, oChildCard);
-			oDialog.open();
+			if (!oChildCard._isComponentCard()) {
+				oDialog.open();
+			}
 			_setFocus(oChildCard, oDialog);
 		});
 
@@ -152,8 +154,14 @@ sap.ui.define([
 			_enableResizing(oDialog, oChildCard);
 		}
 
-		oChildCard.startManifestProcessing();
+		oChildCard.attachManifestReady(() => {
+			// component card does not trigger the ready event if it hasn't been rendered yet
+			if (oChildCard._isComponentCard()) {
+				oDialog.open();
+			}
+		});
 
+		oChildCard.startManifestProcessing();
 		return oDialog;
 	}
 

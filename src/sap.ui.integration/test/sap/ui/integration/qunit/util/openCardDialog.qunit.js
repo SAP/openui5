@@ -248,6 +248,31 @@ sap.ui.define([
 		assert.strictEqual(oHeaderAfter.getTitle(), "Title After", "Title is correct after manifest changes");
 	});
 
+	QUnit.test("Component Card", async function (assert) {
+		// Act
+		const oDialog = openCardDialog(
+			this.oCard,
+			{
+				manifest: {
+					"sap.app": {
+						id: "test.card"
+					},
+					header: {
+						title: "Test Card"
+					},
+					"sap.card": {
+						type: "Component"
+					}
+				}
+			}
+		);
+
+		await nextDialogAfterOpenEvent(oDialog);
+
+		// Assert
+		assert.ok(oDialog.isOpen(), "Dialog is open");
+	});
+
 	QUnit.module("Dialog Header", {
 		beforeEach: function () {
 			this.oHost = new Host({

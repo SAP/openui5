@@ -2329,6 +2329,7 @@ sap.ui.define([
 	/**
 	 * Checks if this is a Component Card. Manifest must be loaded for that check.
 	 * @private
+	 * @ui5-restricted sap.ui.integration
 	 * @returns {boolean} True if this is a Component Card.
 	 */
 	Card.prototype._isComponentCard = function () {
