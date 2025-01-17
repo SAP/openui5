@@ -2635,14 +2635,12 @@ sap.ui.define([
 	 *   The deep resource path to be used to build the target path for bound messages
 	 * @param {boolean} [bSharedRequest]
 	 *   If this parameter is set, the cache is read-only and modifying calls lead to an error.
-	 * @param {string[]} [aSeparateProperties]
-	 *   An array of properties which are requested separately
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._CollectionCache
 	 * @constructor
 	 */
 	function _CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath, bSharedRequest, aSeparateProperties) {
+			sDeepResourcePath, bSharedRequest) {
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest);
 
@@ -2666,12 +2664,9 @@ sap.ui.define([
 		// - iStart: the start (inclusive)
 		// - iEnd: the end (exclusive)
 		this.aReadRequests = [];
-		this.aSeparateProperties = aSeparateProperties ?? []; // properties to be loaded separately
+		this.aSeparateProperties = []; // properties to be loaded separately
 		// maps separate property to an array of requested $skip/$top ranges (see aReadRequests)
 		this.mSeparateProperty2ReadRequests = {};
-		this.aSeparateProperties.forEach((sProperty) => {
-			this.mSeparateProperty2ReadRequests[sProperty] = [];
-		});
 		this.bServerDrivenPaging = false;
 		this.oSyncPromiseAll = undefined;
 	}
@@ -4030,6 +4025,24 @@ sap.ui.define([
 		this.iLimit = aElements.length;
 	};
 
+	/**
+	 * Sets the array of separate properties, see ODLB parameter $$separate.
+	 *
+	 * Note: Calling this function multiple times with different separate properties doesn't clear
+	 * previous this.mSeparateProperty2ReadRequests
+	 *
+	 * @param {string[]} [aSeparateProperties=[]]
+	 *   The array of separate properties
+	 *
+	 * @private
+	 */
+	_CollectionCache.prototype.setSeparate = function (aSeparateProperties = []) {
+		this.aSeparateProperties = aSeparateProperties;
+		this.aSeparateProperties.forEach((sProperty) => {
+			this.mSeparateProperty2ReadRequests[sProperty] = [];
+		});
+	};
+
 	//*********************************************************************************************
 	// PropertyCache
 	//*********************************************************************************************
@@ -4683,15 +4696,13 @@ sap.ui.define([
 	 *   If this parameter is set, multiple requests for a cache using the same resource path will
 	 *   always return the same, shared cache. This cache is read-only, modifying calls lead to an
 	 *   error.
-	 * @param {string[]} [aSeparateProperties]
-	 *   An array of properties which are requested separately
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
 	_Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath, bSharedRequest, aSeparateProperties) {
+			sDeepResourcePath, bSharedRequest) {
 		var iCount, aKeys, sPath, oSharedCollectionCache, mSharedCollectionCacheByPath;
 
 		if (bSharedRequest) {
@@ -4728,7 +4739,7 @@ sap.ui.define([
 		}
 
 		return new _CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-				sDeepResourcePath, bSharedRequest, aSeparateProperties);
+				sDeepResourcePath, bSharedRequest);
 	};
 
 	/**

@@ -77645,4 +77645,65 @@ make root = ${bMakeRoot}`;
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Calling ODM#getKeepAliveContext loads a kept-alive element via a temporary binding.
+	// Create a new list binding (matching the kept-alive element) with $$separate and see that the
+	// kept-alive element becomes part of the binding.
+	// JIRA: CPOUI5ODATAV4-2697
+	QUnit.test("$$separate: ODM#getKeepAliveContext", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table growing="true" growingThreshold="1" id="table"
+		items="{
+			path : 'EMPLOYEES',
+			parameters : {
+				$$getKeepAliveContext : true,
+				$$ownRequest : true,
+				$$separate : ['EMPLOYEE_2_TEAM']
+			}
+		}">
+	<Text id="name" text="{Name}"/>
+	<Text id="team" text="{EMPLOYEE_2_TEAM/Name}"/>
+</Table>`;
+
+		this.expectChange("name", [])
+			.expectChange("team", []);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EMPLOYEES('0')?$select=ID", {ID : "0"});
+
+		const oContext = oModel.getKeepAliveContext("/EMPLOYEES('0')");
+
+		await this.waitForChanges(assert, "load keep alive context");
+
+		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+				+ "&$skip=0&$top=1", {
+				value : [{
+					EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
+					ID : "0"
+				}]
+			})
+			.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=1", {
+				value : [{
+					ID : "0",
+					Name : "Frederic Fall"
+				}]
+			})
+			.expectChange("name", ["Frederic Fall"])
+			.expectChange("team", ["Team A"]);
+
+		const oTable = this.oView.byId("table");
+		// code under test
+		oTable.setBindingContext(oModel.createBindingContext("/"));
+
+		await this.waitForChanges(assert, "bind table");
+
+		assert.deepEqual(oContext.getObject(), {
+			EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
+			ID : "0",
+			Name : "Frederic Fall"
+		});
+	});
 });
