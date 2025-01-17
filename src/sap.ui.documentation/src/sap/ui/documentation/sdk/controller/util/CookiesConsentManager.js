@@ -38,16 +38,17 @@ sap.ui.define(
             CONSENT_DECISION:{
                 FOR_CATEGORY: {
                     "PENDING": 0,
-                    "REQUIRED_COOKIES_PEMITTED": 1,
-                    "FUNCTIONAL_COOKIES_PEMITTED": 2,
-                    "ADVERTISING_COOKIES_PEMITTED": 3
+                    "REQUIRED_COOKIES_PERMITTED": 1,
+                    "FUNCTIONAL_COOKIES_PERMITTED": 2,
+                    "ADVERTISING_COOKIES_PERMITTED": 3
                 },
                 FOR_DOMAIN: {
                     "OPTED_OUT": 0,
                     "OPTED_IN": 1,
                     "NO_PREFERENCE": 2
                 }
-            }
+            },
+            DOMAIN_FOR_DISPLAY_SETTINGS: ["ui5.sap.com", "openui5.hana.ondemand.com"]
         };
 
         const TRACKED_HOSTNAMES = {
@@ -85,8 +86,8 @@ sap.ui.define(
 
                     return this._oLoadPromise;
                 },
-                checkUserAcceptsRequiredCookies(fnCallback) {
-                    var bAccepts = this._oConfigUtil.getCookieValue(this._oConfigUtil.COOKIE_NAMES.ALLOW_REQUIRED_COOKIES) === "1";
+                checkUserAcceptsToPersistDisplaySettings(fnCallback) {
+                    var bAccepts = this._oConfigUtil.getCookieValue(this._oConfigUtil.COOKIE_NAMES.ALLOW_FUNCTIONAL_COOKIES) === "1";
                     fnCallback(bAccepts);
                 },
                 checkUserAcceptsUsageTracking(fnCallback) {
@@ -118,22 +119,25 @@ sap.ui.define(
                     this._oGetDecisionPromise = null;
                 },
                 // override
-                checkUserAcceptsRequiredCookies(fnCallback) {
+                checkUserAcceptsToPersistDisplaySettings(fnCallback) {
                     this.getConsentDecision(function(iConsentDecision) {
-                         fnCallback(iConsentDecision >= oCategoryDecisionType.REQUIRED_COOKIES_PEMITTED);
-                     });
-                 },
+                        var bAcceptsCategory = iConsentDecision >= oCategoryDecisionType.FUNCTIONAL_COOKIES_PERMITTED,
+                            bAccepts = false;
+                        if (bAcceptsCategory) {
+                            bAccepts = !this._areAdditionalPreferencesSpecified(oCookieCategories.FUNCTIONAL_COOKIES)
+                            || this._checkAdditionalPreferencesAllowDisplaySettings();
+                        }
+                        fnCallback(bAccepts);
+                    }.bind(this));
+                },
                 // override
                 checkUserAcceptsUsageTracking(fnCallback) {
                     this.getConsentDecision(function(iConsentDecision) {
-                        var bAccepts = iConsentDecision >= oCategoryDecisionType.FUNCTIONAL_COOKIES_PEMITTED;
-                        if (bAccepts) {
-                            var oAddionalPreferences = this._getAdditionalPreferences(oCookieCategories.FUNCTIONAL_COOKIES);
-                            if (oAddionalPreferences) {
-                                bAccepts = Object.values(oAddionalPreferences.domains).every(function (oDecisionForDomain) {
-                                    return parseInt(oDecisionForDomain) === oDomainDecisionType.OPTED_IN;
-                                });
-                            }
+                        var bAcceptsCategory = iConsentDecision >= oCategoryDecisionType.FUNCTIONAL_COOKIES_PERMITTED,
+                            bAccepts = false;
+                        if (bAcceptsCategory) {
+                            bAccepts = !this._areAdditionalPreferencesSpecified(oCookieCategories.FUNCTIONAL_COOKIES)
+                            || this._checkAdditionalPreferencesAllowUsageTracking();
                         }
                         fnCallback(bAccepts);
                     }.bind(this));
@@ -146,6 +150,25 @@ sap.ui.define(
                         return;
                     }
                     this._getConsentDecisionAsync().then(fnCallback);
+                },
+                _checkAdditionalPreferencesAllowUsageTracking: function () {
+                    var oPreferencesPerDomain = this._getAdditionalPreferencesPerDomain(oCookieCategories.FUNCTIONAL_COOKIES),
+                        aUsageTrackingDomains = Object.keys(oPreferencesPerDomain).filter(function(sDomain) {
+                            return !TRUST_ARC.DOMAIN_FOR_DISPLAY_SETTINGS.includes(sDomain);
+                        }),
+                        fnIsDomainOptedIn = function(sDomain) {
+                            return parseInt(oPreferencesPerDomain[sDomain]) === oDomainDecisionType.OPTED_IN;
+                        };
+                    return aUsageTrackingDomains.every(fnIsDomainOptedIn);
+                },
+                _checkAdditionalPreferencesAllowDisplaySettings: function () {
+                    var oPreferencesPerDomain = this._getAdditionalPreferencesPerDomain(oCookieCategories.FUNCTIONAL_COOKIES);
+                    return TRUST_ARC.DOMAIN_FOR_DISPLAY_SETTINGS.every(function(sDomain) {
+                        return this._isDomainOptedIn(sDomain, oPreferencesPerDomain);
+                    }.bind(this));
+                },
+                _isDomainOptedIn: function (sDomain, oPreferencesPerDomain) {
+                    return parseInt(oPreferencesPerDomain[sDomain]) === oDomainDecisionType.OPTED_IN;
                 },
                 _getConsentDecisionSync: function() {
                     return window.truste?.cma?.callApi("getConsentDecision", getHostName())?.consentDecision;
@@ -176,12 +199,19 @@ sap.ui.define(
                     }
                     return this._oGetDecisionPromise;
                 },
-                _getAdditionalPreferences: function (sConsentCategory) {
+                _areAdditionalPreferencesSpecified: function (sConsentCategory) {
+                    var oPreferencesPerDomain = this._getAdditionalPreferencesPerDomain(sConsentCategory);
+                    return Object.keys(oPreferencesPerDomain).length > 0;
+                },
+                _getAdditionalPreferencesPerDomain: function (sConsentCategory) {
                     var oCategories = window.truste?.cma?.callApi("getConsentCategories",getHostName())?.categories,
-                        bAdditionalPreferencesDefined = oCategories && oCategories[sConsentCategory];
+                        bAdditionalPreferencesDefined = oCategories && oCategories[sConsentCategory],
+                        oPreferencesPerDomain = {};
                     if (bAdditionalPreferencesDefined) {
-                        return oCategories[sConsentCategory];
+                        oPreferencesPerDomain = oCategories[sConsentCategory]?.domains;
+                        oPreferencesPerDomain = Object.assign({}, oPreferencesPerDomain); // keep the original object intact
                     }
+                    return oPreferencesPerDomain;
                 },
                 _isTrustArcReady: function() {
                     return typeof truste !== 'undefined' && window.truste.cma;

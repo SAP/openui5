@@ -56,7 +56,7 @@ sap.ui.define([
 			(window.matchMedia('(prefers-color-scheme: dark)').matches ||
 			window.matchMedia('(prefers-color-scheme: light)').matches));
 
-		this._oConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+		this._oConsentManager.checkUserAcceptsToPersistDisplaySettings(function(bAccepts) {
 			if (bAccepts && this._aConfiguration.length > 0) {
 				ThemePicker._applyCookiesConfiguration(this._aConfiguration);
 			} else {
@@ -103,7 +103,7 @@ sap.ui.define([
 			this.bus.publish("themeChanged", "onThemeChanged", {sThemeActive: this._getTheme()[sKey]});
 		}
 
-		this._oConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+		this._oConsentManager.checkUserAcceptsToPersistDisplaySettings(function(bAccepts) {
 			if (bAccepts) {
 				this._oConfigUtil.setCookie(CONFIGURATION_APPEARANCE, sKey);
 			}
