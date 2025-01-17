@@ -200,6 +200,54 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if a given calendar year range contains the start or end of a given selected date range.
+	 *
+	 * @private
+	 * @override
+	 * @param {sap.ui.unified.calendar.oYearRangeStartDate} oYearRangeStartDate Start date of the calendar year range
+	 */
+	YearRangePicker.prototype._fnShouldApplySelection = function(oYearRangeStartDate) {
+		const oSelectedDates = this._getSelectedDates()[0];
+		let oSelectionStartDate, oSelectionEndDate;
+
+		if (!oSelectedDates) {
+			return false;
+		}
+
+		oSelectionStartDate = oSelectedDates.getStartDate();
+		oSelectionEndDate = oSelectedDates.getEndDate();
+
+		if (!oSelectionStartDate) {
+			return false;
+		}
+
+		const oYearRangeEndDate = new CalendarDate(oYearRangeStartDate, this.getPrimaryCalendarType());
+		oYearRangeEndDate.setYear(oYearRangeEndDate.getYear() + this.getRangeSize() - 1);
+
+		oSelectionStartDate = CalendarDate.fromLocalJSDate(oSelectionStartDate, this._getPrimaryCalendarType());
+		oSelectionStartDate.setMonth(0, 1);
+
+		if (CalendarUtils._isBetween(oSelectionStartDate, oYearRangeStartDate, oYearRangeEndDate, true)) {
+			return true;
+		}
+
+		if (this.getIntervalSelection()) {
+			if (!oSelectionEndDate) {
+				return false;
+			}
+
+			oSelectionEndDate = CalendarDate.fromLocalJSDate(oSelectionEndDate, this._getPrimaryCalendarType());
+			oSelectionEndDate.setMonth(0, 1);
+
+			if (CalendarUtils._isBetween(oSelectionEndDate, oYearRangeStartDate, oYearRangeEndDate, true)) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
+	/**
 	 * Calculates the first and last displayed date about a given year range.
 	 * @param {sap.ui.unified.CalendarDate} oDate the year about which the dates are calculated
 	 * @returns {object} two values - start and end date

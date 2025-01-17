@@ -1830,16 +1830,15 @@ sap.ui.define([
 				} else {
 					sStyle = "short";
 				}
+				if (bIndianCurrency) {
+					sStyle += "-indian";
+				}
 
 				// Get correct format string based on actual decimal/fraction digits
 				// the plural category of a compact currency is determined for the reduced short number without compact
 				// notation, e.g. "1.2M" must check "1.2" (see CLDR "currencyFormat-short")
 				sPluralCategory = this._getPluralCategory(sIntegerPart, sFractionPart);
-				if (bIndianCurrency) {
-					sPattern = getIndianCurrencyFormat(sStyle, oShortFormat.key, sPluralCategory);
-				} else {
-					sPattern = this.oLocaleData.getCurrencyFormat(sStyle, oShortFormat.key, sPluralCategory);
-				}
+				sPattern = this.oLocaleData.getCurrencyFormat(sStyle, oShortFormat.key, sPluralCategory);
 				//formatString may contain '.' (quoted to differentiate them decimal separator)
 				//which must be replaced with .
 				sPattern = sPattern.replace(/'.'/g, ".");
@@ -2469,11 +2468,10 @@ sap.ui.define([
 				sStyle = "sap-short";
 			}
 			if (bIndianCurrency) {
-				sCldrFormat = getIndianCurrencyFormat(sStyle, sKey, "other", true);
-			} else {
-				// Use currency specific format because for some languages there is a difference between the decimalFormat and the currencyFormat
-				sCldrFormat = oLocaleData.getCurrencyFormat(sStyle, sKey, "other");
+				sStyle += "-indian";
 			}
+			// Use currency specific format because for some languages there is a difference between the decimalFormat and the currencyFormat
+			sCldrFormat = oLocaleData.getCurrencyFormat(sStyle, sKey, "other");
 		} else {
 			sCldrFormat = oLocaleData.getDecimalFormat(sStyle, sKey, "other");
 		}
@@ -2520,12 +2518,8 @@ sap.ui.define([
 			sCldrFormat,
 			bestResult = {number: undefined,
 				factor: iFactor},
-			fnGetFactor = function(sPlural, iKey, sStyle, bIndian) {
-				if (bIndian) {
-					sCldrFormat = getIndianCurrencyFormat(sStyle, iKey.toString(), sPlural, true);
-				} else {
-					sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
-				}
+			fnGetFactor = function(sPlural, iKey, sStyle) {
+				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
 
 				if (sCldrFormat) {
 					// Note: CLDR uses a non-breaking space and right-to-left mark u+200f in the format string
@@ -2584,7 +2578,7 @@ sap.ui.define([
 			while (iKey < 1e15) {
 				for (var i = 0; i < aPluralCategories.length; i++) {
 					var sPluralCategory = aPluralCategories[i];
-					fnGetFactor(sPluralCategory, iKey, "short", true);
+					fnGetFactor(sPluralCategory, iKey, "short-indian");
 				}
 				iKey = iKey * 10;
 			}
@@ -2613,106 +2607,6 @@ sap.ui.define([
 			? oFormatOptions.trailingCurrencyCode // overwritten by instance configuration
 			: Formatting.getTrailingCurrencyCode();
 	};
-
-	function getIndianCurrencyFormat(sStyle, sKey, sPlural, bDecimal) {
-		var sFormat,
-			oCurrencyFormats = {
-				"short": {
-					"1000-one": "\xa40000",
-					"1000-other": "\xa40000",
-					"10000-one": "\xa400000",
-					"10000-other": "\xa400000",
-					"100000-one": "\xa40 Lk",
-					"100000-other": "\xa40 Lk",
-					"1000000-one": "\xa400 Lk",
-					"1000000-other": "\xa400 Lk",
-					"10000000-one": "\xa40 Cr",
-					"10000000-other": "\xa40 Cr",
-					"100000000-one": "\xa400 Cr",
-					"100000000-other": "\xa400 Cr",
-					"1000000000-one": "\xa4000 Cr",
-					"1000000000-other": "\xa4000 Cr",
-					"10000000000-one": "\xa40000 Cr",
-					"10000000000-other": "\xa40000 Cr",
-					"100000000000-one": "\xa400000 Cr",
-					"100000000000-other": "\xa400000 Cr",
-					"1000000000000-one": "\xa40 Lk Cr",
-					"1000000000000-other": "\xa40 Lk Cr",
-					"10000000000000-one": "\xa400 Lk Cr",
-					"10000000000000-other": "\xa400 Lk Cr",
-					"100000000000000-one": "\xa40 Cr Cr",
-					"100000000000000-other": "\xa40 Cr Cr"
-				},
-				"sap-short": {
-					"1000-one": "0000\xa0\xa4",
-					"1000-other": "0000\xa0\xa4",
-					"10000-one": "00000\xa0\xa4",
-					"10000-other": "00000\xa0\xa4",
-					"100000-one": "0 Lk\xa0\xa4",
-					"100000-other": "0 Lk\xa0\xa4",
-					"1000000-one": "00 Lk\xa0\xa4",
-					"1000000-other": "00 Lk\xa0\xa4",
-					"10000000-one": "0 Cr\xa0\xa4",
-					"10000000-other": "0 Cr\xa0\xa4",
-					"100000000-one": "00 Cr\xa0\xa4",
-					"100000000-other": "00 Cr\xa0\xa4",
-					"1000000000-one": "000 Cr\xa0\xa4",
-					"1000000000-other": "000 Cr\xa0\xa4",
-					"10000000000-one": "0000 Cr\xa0\xa4",
-					"10000000000-other": "0000 Cr\xa0\xa4",
-					"100000000000-one": "00000 Cr\xa0\xa4",
-					"100000000000-other": "00000 Cr\xa0\xa4",
-					"1000000000000-one": "0 Lk Cr\xa0\xa4",
-					"1000000000000-other": "0 Lk Cr\xa0\xa4",
-					"10000000000000-one": "00 Lk Cr\xa0\xa4",
-					"10000000000000-other": "00 Lk Cr\xa0\xa4",
-					"100000000000000-one": "0 Cr Cr\xa0\xa4",
-					"100000000000000-other": "0 Cr Cr\xa0\xa4"
-				}
-			},
-			oDecimalFormats = {
-				"short": {
-					"1000-one": "0000",
-					"1000-other": "0000",
-					"10000-one": "00000",
-					"10000-other": "00000",
-					"100000-one": "0 Lk",
-					"100000-other": "0 Lk",
-					"1000000-one": "00 Lk",
-					"1000000-other": "00 Lk",
-					"10000000-one": "0 Cr",
-					"10000000-other": "0 Cr",
-					"100000000-one": "00 Cr",
-					"100000000-other": "00 Cr",
-					"1000000000-one": "000 Cr",
-					"1000000000-other": "000 Cr",
-					"10000000000-one": "0000 Cr",
-					"10000000000-other": "0000 Cr",
-					"100000000000-one": "00000 Cr",
-					"100000000000-other": "00000 Cr",
-					"1000000000000-one": "0 Lk Cr",
-					"1000000000000-other": "0 Lk Cr",
-					"10000000000000-one": "00 Lk Cr",
-					"10000000000000-other": "00 Lk Cr",
-					"100000000000000-one": "0 Cr Cr",
-					"100000000000000-other": "0 Cr Cr"
-				}
-			};
-		// decimal format for short and sap-short is the same
-		oDecimalFormats["sap-short"] = oDecimalFormats["short"];
-
-		// use the appropriate format (either decimal or currency)
-		var oTargetFormat = bDecimal ? oDecimalFormats : oCurrencyFormats;
-		var oStyledFormat = oTargetFormat[sStyle];
-		if (!oStyledFormat) {
-			oStyledFormat = oTargetFormat["short"];
-		}
-		if (sPlural !== "one") {
-			sPlural = "other";
-		}
-		sFormat = oStyledFormat[sKey + "-" + sPlural];
-		return sFormat;
-	}
 
 	/**
 	 * Checks if grouping is performed correctly (decimal separator is not confused with grouping separator).
