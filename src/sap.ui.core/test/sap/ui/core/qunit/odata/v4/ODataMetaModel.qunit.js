@@ -2070,10 +2070,10 @@ sap.ui.define([
 			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath@@this.is.ignored@sapui.name"
 				: "Unsupported path after @@this.is.ignored",
 			// ...is not a function but... --------------------------------------------------------
-			/** @deprecated As of version 1.120 */
+			/** @deprecated As of version 1.120.0 */
 			"/@@sap.ui.model.odata.v4.AnnotationHelper.invalid"
 				: "sap.ui.model.odata.v4.AnnotationHelper.invalid is not a function but: undefined",
-			/** @deprecated As of version 1.120 */
+			/** @deprecated As of version 1.120.0 */
 			"/@@sap.ui.model.odata.v4.AnnotationHelper"
 				: "sap.ui.model.odata.v4.AnnotationHelper is not a function but: "
 				+ AnnotationHelper,
@@ -2170,7 +2170,7 @@ sap.ui.define([
 		sSchemaChildName : "tea_busi.TEAM" // "Team_Id" is not part of this
 	}].forEach(function (oFixture) {
 		[
-			/** @deprecated As of version 1.120 */
+			/** @deprecated As of version 1.120.0 */
 			"@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple",
 			"@@AH.isMultiple"
 		].forEach((sFunction) => {
