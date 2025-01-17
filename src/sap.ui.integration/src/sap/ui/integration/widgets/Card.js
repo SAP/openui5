@@ -2388,10 +2388,6 @@ sap.ui.define([
 	Card.prototype.createFooter = function () {
 		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
 
-		if (!oManifestFooter) {
-			return null;
-		}
-
 		return Footer.create({
 			card: this,
 			configuration: oManifestFooter,
@@ -2429,6 +2425,7 @@ sap.ui.define([
 
 		return this._oContentFactory.create(mContentConfig);
 	};
+
 
 	/**
 	 * Sets a card content.

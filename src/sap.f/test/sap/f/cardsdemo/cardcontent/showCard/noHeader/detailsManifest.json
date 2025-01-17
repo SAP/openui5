@@ -83,19 +83,6 @@
 					]
 				}
 			]
-		},
-		"footer": {
-			"actionsStrip": [
-				{
-					"text": "Close",
-					"buttonType": "Reject",
-					"actions": [
-						{
-							"type": "HideCard"
-						}
-					]
-				}
-			]
 		}
 	}
 }

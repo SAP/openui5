@@ -46,10 +46,7 @@
 				"src": "./../../images/DonnaMoore.png"
 			},
 			"title": "Dona Moore",
-			"subTitle": "Purchase Requisition Denial",
-			"closeButton": {
-				"visible": false
-			}
+			"subTitle": "Purchase Requisition Denial"
 		},
 		"content": {
 			"groups": [
@@ -119,7 +116,10 @@
 						}
 					]
 				}
-			]
+			],
+			"closeButton": {
+				"visible": false
+			}
 		}
 	}
 }

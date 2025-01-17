@@ -118,17 +118,53 @@ sap.ui.define([
 	});
 
 	Footer.create = function ({ card, configuration, paginator, showCloseButton }) {
+		const bShouldShowCloseButton = showCloseButton || Footer._shouldShowCloseButton(card);
+
+		// Check if the configuration is effectively empty or only contains closeButton with visible set to false
+		const isEmptyConfiguration = !configuration || (Object.keys(configuration).length === 1 && configuration.closeButton && configuration.closeButton.visible === false);
+
+		if (isEmptyConfiguration && !bShouldShowCloseButton) {
+			return null;
+		}
+
 		const oFooter = new Footer({
 			configuration: BindingHelper.createBindingInfos(configuration, card.getBindingNamespaces()),
 			card,
-			showCloseButton,
-			actionsStrip: ActionsStrip.create(configuration.actionsStrip, card, true),
-			visible: configuration.visible
+			showCloseButton: bShouldShowCloseButton,
+			actionsStrip: ActionsStrip.create(configuration?.actionsStrip, card, true),
+			visible: configuration?.visible
 		});
 
 		oFooter.setPaginator(paginator);
 
 		return oFooter;
+	};
+
+	/**
+	 * Determines whether the Close button in the Footer should be visible.
+	 *
+	 * @private
+	 * @param {object} oCard The card object.
+	 * @returns {boolean} Whether the button will be visible.
+	 */
+	Footer._shouldShowCloseButton = function (oCard) {
+		const oManifestFooter = oCard._oCardManifest.get("/sap.card/footer");
+		const oManifestHeader = oCard._oCardManifest.get("/sap.card/header");
+		const bIsInDialog = !!oCard.getOpener();
+
+		if (!bIsInDialog) {
+			return false;
+		}
+
+		if (oManifestFooter?.closeButton && "visible" in oManifestFooter.closeButton) {
+			return oManifestFooter.closeButton.visible;
+		}
+
+		if (oManifestHeader?.closeButton && "visible" in oManifestHeader.closeButton) {
+			return oManifestHeader.closeButton.visible;
+		}
+
+		return true;
 	};
 
 	Footer.prototype.onBeforeRendering = function () {
@@ -237,7 +273,7 @@ sap.ui.define([
 		let oButton = this.getAggregation("_closeButton");
 
 		if (!oButton) {
-			oButton = new Button({
+			oButton = new Button(`${this.getId()}-closeBtn`,{
 				text: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_DIALOG_CLOSE_BUTTON"),
 				type: ButtonType.Emphasized,
 				press: this.getCardInstance().hide.bind(this.getCardInstance())
