@@ -63,21 +63,23 @@ sap.ui.define([
 
 	var oMaster = new MasterPage("masterPage", {
 		landmarkInfo: new PageAccessibleLandmarkInfo({
-			headerRole: AccessibleLandmarkRole.Banner,
+			headerRole: AccessibleLandmarkRole.None,
 			headerLabel: "Header label from LandmarkInfo",
 			subHeaderRole: AccessibleLandmarkRole.Banner,
 			subHeaderLabel: "SubHeader label from LandmarkInfo",
-			rootRole: AccessibleLandmarkRole.Region,
-			rootLabel: "Root label from LandmarkInfo",
+			rootRole: AccessibleLandmarkRole.None,
+			rootLabel: "Master Page Root label from LandmarkInfo",
 			contentRole: AccessibleLandmarkRole.Main,
 			contentLabel: "Content label from LandmarkInfo",
-			footerRole: AccessibleLandmarkRole.Banner,
-			footerLabel: "Footer label from LandmarkInfo"
+			footerRole: AccessibleLandmarkRole.Region,
+			footerLabel: "Master Page Footer label from LandmarkInfo"
 		}),
 		title:"Master Test page",
 		titleLevel: "H1",
 		showNavButton: true,
-		addAction: new AddAction(),
+		addAction: new AddAction({
+			tooltip: "Add Action"
+		}),
 		sort: new SortAction(),
 		filter: new FilterAction(),
 		group: new GroupAction(),
@@ -94,6 +96,18 @@ sap.ui.define([
 	});
 
 	var oDetail = new DetailPage("detailPage", {
+		landmarkInfo: new PageAccessibleLandmarkInfo({
+			headerRole: AccessibleLandmarkRole.None,
+			headerLabel: "Detail Page Header label from LandmarkInfo",
+			subHeaderRole: AccessibleLandmarkRole.Banner,
+			subHeaderLabel: "Detail Page SubHeader label from LandmarkInfo",
+			rootRole: AccessibleLandmarkRole.None ,
+			rootLabel: "Detail Page Root label from LandmarkInfo",
+			contentRole: AccessibleLandmarkRole.Main,
+			contentLabel: "Detail Page Content label from LandmarkInfo",
+			footerRole: AccessibleLandmarkRole.Banner,
+			footerLabel: "Detail Page Footer label from LandmarkInfo"
+		}),
 		title:"Detail Test page",
 		titleLevel: "H2",
 		editAction: new EditAction(),
@@ -107,11 +121,12 @@ sap.ui.define([
 		content: [
 			new SimpleForm({
 				layout: SimpleFormLayout.ColumnLayout,
+				ariaLabelledBy: "SF2-Title",
 				columnsL: 1,
 				columnsM: 1,
 				content: [
 					new Title({text:"Detailed Info", level: "H3"}),
-					new Label({text: "Name"}),
+					new Label({id: "SF2-Title", text: "Name"}),
 					new MText({text: "John Doe"}),
 					new Label({text: "Job Title"}),
 					new MText({text: "Developer"}),
