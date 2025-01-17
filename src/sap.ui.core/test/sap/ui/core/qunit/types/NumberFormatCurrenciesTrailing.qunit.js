@@ -1564,7 +1564,7 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(10000000, "INR"), "1 Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
 		assert.strictEqual(oFormat.format(10000000000, "INR"), "1,000 Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
 		assert.strictEqual(oFormat.format(1000000000000, "INR"), "1 Lk Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
-		assert.strictEqual(oFormat.format(100000000000000, "INR"), "1 Cr Cr" + "\xa0" + "INR", "INR is formatted as Lk/Cr");
+		assert.strictEqual(oFormat.format(100000000000000, "INR"), "100 Lk Cr" + "\xa0" + "INR");
 
 		assert.strictEqual(oFormat.format(100000, "USD"), "100K" + "\xa0" + "USD", "USD is formatted as M/B/T");
 		assert.strictEqual(oFormat.format(1000000, "USD"), "1M" + "\xa0" + "USD", "USD is formatted as M/B/T");

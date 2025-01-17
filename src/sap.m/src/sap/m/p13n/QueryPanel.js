@@ -2,8 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/layout/Grid", "./BasePanel", "sap/ui/core/ListItem", "sap/m/CustomListItem", "sap/m/ComboBox", "sap/m/List", "sap/m/HBox", "sap/m/library", "sap/m/Button", "sap/base/util/merge", "sap/ui/core/library", "sap/ui/core/InvisibleMessage"
-
+	"sap/ui/layout/Grid",
+	"./BasePanel",
+	"sap/ui/core/ListItem",
+	"sap/m/CustomListItem",
+	"sap/m/ComboBox",
+	"sap/m/List",
+	"sap/m/HBox",
+	"sap/m/library",
+	"sap/m/Button",
+	"sap/base/util/merge",
+	"sap/ui/core/library",
+	"sap/ui/core/InvisibleMessage"
 ], (
 	Grid,
 	BasePanel,
@@ -77,6 +87,8 @@ sap.ui.define([
 		this._bFocusOnRearrange = false;
 		this.setEnableReorder(true);
 		this.addStyleClass("sapMP13nQueryPanel");
+
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/placeholderText", this._getPlaceholderText());
 	};
 
 	/**
@@ -324,7 +336,7 @@ sap.ui.define([
 			},
 			items: this._getAvailableItems(sKey),
 			selectedKey: sKey,
-			placeholder: this._getPlaceholderText(),
+			placeholder: `{${this.LOCALIZATION_MODEL}>/placeholderText}`,
 			selectionChange: (oEvt) => {
 				const oComboBox = oEvt.getSource();
 				const oSelItem = oComboBox.getSelectedItem();
@@ -464,6 +476,10 @@ sap.ui.define([
 		return aContent[iIndex];
 	};
 
+
+	QueryPanel.prototype._updateLocalizationTexts = function() {
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/placeholderText", this._getPlaceholderText());
+	};
 
 	return QueryPanel;
 

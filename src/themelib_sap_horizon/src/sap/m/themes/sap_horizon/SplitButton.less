@@ -52,7 +52,7 @@
 
 .sapMSB .sapMSBArrow .sapMBtnInner,
 .sapMSB .sapMSBText .sapMBtnInner {
-	border-radius: 0.45rem;
+	border-radius: var(--sapButton_Segment_BorderCornerRadius);
 }
 
 .sapMSB .sapMSBInner .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
@@ -220,7 +220,6 @@
 	background-color: @sapUiButtonHoverTextColor;
 	pointer-events: none;
 	height: 1.25rem;
-	border-radius: 0.35rem;
 }
 
 .sapMSB.sapMSBEmphasized .sapMBtn:not(.sapMSBText) .sapMBtnInner.sapMBtnIconFirst::before {

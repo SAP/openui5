@@ -59,6 +59,8 @@ sap.ui.define([
 			oLocaleData = oYRP._getLocaleData(),
 			sPattern = oLocaleData.getIntervalPattern(),
 			sWidth = "",
+			bApplySelection,
+			bApplySelectionBetween,
 			mAccProps, sYyyymmdd, i;
 
 		oFirstDate.setYear(oFirstDate.getYear() - Math.floor(oYRP.getRangeSize() / 2));
@@ -94,6 +96,23 @@ sap.ui.define([
 
 			oRm.openStart("div", sId + "-y" + sYyyymmdd);
 			oRm.class("sapUiCalItem");
+
+			bApplySelection = oYRP._fnShouldApplySelection(oFirstDate);
+			bApplySelectionBetween = oYRP._fnShouldApplySelectionBetween(oFirstDate);
+
+			if (bApplySelection) {
+				oRm.class("sapUiCalItemSel");
+				mAccProps["selected"] = true;
+			}
+
+			if (bApplySelectionBetween && !bApplySelection) {
+				oRm.class("sapUiCalItemSelBetween");
+				mAccProps["selected"] = true;
+			}
+
+			if (!bApplySelection && !bApplySelectionBetween) {
+				mAccProps["selected"] = false;
+			}
 
 			if (!oYRP._checkDateEnabled(oFirstDate, oSecondDate)) {
 				oRm.class("sapUiCalItemDsbl"); // year range disabled

@@ -25,6 +25,9 @@ sap.ui.define([
 								reveal: null,
 								split: {
 									CAUTION_variantIndependent: true
+								},
+								combine: {
+									CAUTION_variantIndependent: true
 								}
 							}
 						};

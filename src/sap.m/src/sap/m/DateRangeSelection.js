@@ -228,6 +228,7 @@ sap.ui.define([
 
 			if (oCalendar instanceof CustomYearPicker) {
 				oCalendar._getYearPicker().setIntervalSelection(true);
+				oCalendar._getYearRangePicker().setIntervalSelection(true);
 			}
 
 			this._getCalendar().detachWeekNumberSelect(this._handleWeekSelect, this);
