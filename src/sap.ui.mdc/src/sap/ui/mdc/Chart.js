@@ -69,7 +69,11 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class The <code>Chart</code> control creates a chart based on metadata and the configuration specified.<br>
-		 * <b>Note:</b> The inner chart needs to be created inside the <code>ChartDelegate</code>.
+		 *
+		 * <b>Note:</b> The <code>Chart</code> control acts as a wrapper that is used to enhance
+		 * an instance of a given chart control framework (in the following texts referred to as inner chart) with functionalities, such as a <code>toolbar</code>, <code>p13n</code>, and <code>VariantManagement</code>.
+		 * The inner chart instance and its configuration must be provided via an implementation of a <code>ChartDelegate</code> module.
+		 *
 		 * @extends sap.ui.mdc.Control
 		 * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind
 		 * @author SAP SE
