@@ -203,6 +203,29 @@ sap.ui.define([
 				return Promise.reject("The backend does not support saving seen features.");
 			}
 			return Storage.setSeenFeatureIds(mPropertyBag);
+		},
+
+		/**
+		 * Checks the settings if variant adaptation is enabled. If the settings are not yet loaded, it returns false.
+		 *
+		 * @returns {boolean} Returns a boolean indicating if the variant adaptation is enabled
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		isVariantAdaptationEnabled() {
+			const oSettings = Settings.getInstanceOrUndef();
+			return oSettings?.isVariantAdaptationEnabled();
+		},
+
+		/**
+		 * Checks the settings if the local reset is enabled. If the settings are not yet loaded, it returns false.
+		 * @returns {boolean} Returns a boolean indicating if the local reset is enabled
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		isLocalResetEnabled() {
+			const oSettings = Settings.getInstanceOrUndef();
+			return oSettings?.isLocalResetEnabled();
 		}
 	};
 

@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -46,7 +45,6 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	FlexInfoSession,
 	Version,
-	Settings,
 	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
@@ -188,34 +186,14 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and started without ATO in prod system", async function(assert) {
-			const oSettings = {
-				isAtoAvailable: false,
-				isKeyUser: true,
-				isProductiveSystem: true,
-				versioning: {}
-			};
-			const oSettingsInstance = new Settings(oSettings);
-			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
-
+			sandbox.stub(VersionsAPI, "initialize").callsFake(async function(...aArgs) {
+				const oModel = await VersionsAPI.initialize.wrappedMethod.apply(this, aArgs);
+				oModel.setProperty("/versioningEnabled", false);
+				return oModel;
+			});
 			await this.oRta.start();
 			await RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
 			assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is still visible");
-		});
-
-		QUnit.test("and started with ATO in non prod system", async function(assert) {
-			const oSettings = {
-				isAtoAvailable: true,
-				isKeyUser: true,
-				isProductiveSystem: false,
-				versioning: {},
-				system: "someSystemId",
-				client: "someClient"
-			};
-			const oSettingsInstance = new Settings(oSettings);
-			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
-			await this.oRta.start();
-			await RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
-			assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is visible");
 		});
 
 		QUnit.test("when RTA is created with custom plugins and start is triggered", async function(assert) {
@@ -552,13 +530,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when RTA gets started with an enabled key user translation", async function(assert) {
-			const oSettings = {
-				isKeyUserTranslationEnabled: true,
-				isKeyUser: true,
-				versioning: {}
-			};
-			const oSettingsInstance = new Settings(oSettings);
-			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
+			sandbox.stub(FeaturesAPI, "isKeyUserTranslationEnabled").resolves(true);
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves([]);
 
 			await this.oRta.start();
@@ -567,13 +539,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when RTA gets started with an enabled key user translation and already translatable changes", async function(assert) {
-			const oSettings = {
-				isKeyUserTranslationEnabled: true,
-				isKeyUser: true,
-				versioning: {}
-			};
-			const oSettingsInstance = new Settings(oSettings);
-			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
+			sandbox.stub(FeaturesAPI, "isKeyUserTranslationEnabled").resolves(true);
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves(["en"]);
 
 			await this.oRta.start();

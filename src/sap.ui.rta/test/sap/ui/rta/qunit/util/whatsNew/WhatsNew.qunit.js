@@ -3,22 +3,22 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Element",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/rta/util/ReloadManager",
-	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
-	"sap/ui/rta/util/whatsNew/WhatsNew",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/rta/util/whatsNew/WhatsNew",
+	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
+	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	mLibrary,
 	Element,
-	Settings,
+	FlexRuntimeInfoAPI,
 	FeaturesAPI,
-	ReloadManager,
-	WhatsNewUtils,
-	WhatsNew,
 	nextUIUpdate,
+	WhatsNew,
+	WhatsNewUtils,
+	ReloadManager,
 	sinon
 ) {
 	"use strict";
@@ -175,11 +175,8 @@ sap.ui.define([
 			this.oCarousel.setActivePage(oFirstPage.getId());
 			await nextUIUpdate();
 			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
-			const oS4HanaSettings = {
-				isAtoEnabled: () => true,
-				getSystem: () => "test"
-			};
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(oS4HanaSettings);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
+			sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns("test");
 			const oLearnMoreButton = Element.getElementById("sapUiRtaWhatsNewDialog_LearnMore");
 			oLearnMoreButton.firePress();
 			await nextUIUpdate();
@@ -197,11 +194,8 @@ sap.ui.define([
 			const oFirstPage = Element.getElementById("sapWhatsNewDialogCarousel").getPages()[0];
 			this.oCarousel.setActivePage(oFirstPage.getId());
 			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
-			const oBTPSettings = {
-				isAtoEnabled: () => undefined,
-				getSystem: () => undefined
-			};
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(oBTPSettings);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(undefined);
+			sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns(undefined);
 			const oLearnMoreButton = Element.getElementById("sapUiRtaWhatsNewDialog_LearnMore");
 			oLearnMoreButton.firePress();
 			await nextUIUpdate();
@@ -217,11 +211,8 @@ sap.ui.define([
 			const oFirstPage = Element.getElementById("sapWhatsNewDialogCarousel").getPages()[0];
 			this.oCarousel.setActivePage(oFirstPage.getId());
 			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
-			const oOnPremSettings = {
-				isAtoEnabled: () => false,
-				getSystem: () => "test"
-			};
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(oOnPremSettings);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
+			sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns("test");
 			const oLearnMoreButton = Element.getElementById("sapUiRtaWhatsNewDialog_LearnMore");
 			oLearnMoreButton.firePress();
 			await nextUIUpdate();

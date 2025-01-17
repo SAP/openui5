@@ -5,10 +5,8 @@ sap.ui.define([
 	"sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
@@ -22,7 +20,6 @@ sap.ui.define([
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
-	"sap/ui/VersionInfo",
 	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -30,10 +27,8 @@ sap.ui.define([
 	RtaQunitUtils,
 	Lib,
 	FlexState,
-	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	Version,
-	Settings,
 	ContextBasedAdaptationsAPI,
 	VersionsAPI,
 	Layer,
@@ -47,7 +42,6 @@ sap.ui.define([
 	ReloadManager,
 	RuntimeAuthoring,
 	Utils,
-	VersionInfo,
 	MessageBox,
 	sinon
 ) {
@@ -1053,7 +1047,6 @@ sap.ui.define([
 				count: 0,
 				displayedAdaptation: {}
 			});
-			sandbox.stub(Settings.prototype, "isContextBasedAdaptationEnabled").returns(true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "initialize").resolves(oAdaptationsModel);
 			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
 		},

@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures"
 ], function(
-	Settings,
+	FlexRuntimeInfoAPI,
 	WhatsNewFeatures
 ) {
 	"use strict";
@@ -43,11 +43,12 @@ sap.ui.define([
 		 */
 		getLearnMoreURL(sPath, aFeatureCollection) {
 			const sFeaturePageIndex = sPath.slice(-1);
-			const oSettings = Settings.getInstanceOrUndef();
-			if (oSettings?.isAtoEnabled() && oSettings?.getSystem()) {
+			const sSystem = FlexRuntimeInfoAPI.getSystem();
+			const bIsAtoEnabled = FlexRuntimeInfoAPI.isAtoEnabled();
+			if (bIsAtoEnabled && sSystem) {
 				return aFeatureCollection[sFeaturePageIndex].documentationUrls.s4HanaCloudUrl;
 			}
-			if (!oSettings?.isAtoEnabled() && oSettings?.getSystem()) {
+			if (!bIsAtoEnabled && sSystem) {
 				return aFeatureCollection[sFeaturePageIndex].documentationUrls.s4HanaOnPremUrl;
 			}
 			return aFeatureCollection[sFeaturePageIndex].documentationUrls.btpUrl;

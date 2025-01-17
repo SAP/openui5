@@ -3,20 +3,20 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Element",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/rta/util/whatsNew/WhatsNewOverview",
-	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
-	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
+	"sap/ui/rta/util/whatsNew/WhatsNewOverview",
+	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	mLibrary,
 	Element,
-	Settings,
-	WhatsNewOverview,
-	WhatsNewFeatures,
-	WhatsNewUtils,
+	FlexRuntimeInfoAPI,
 	nextUIUpdate,
+	WhatsNewFeatures,
+	WhatsNewOverview,
+	WhatsNewUtils,
 	sinon
 ) {
 	"use strict";
@@ -105,11 +105,8 @@ sap.ui.define([
 
 		QUnit.test("Open S4Hana Learn more Link", async function(assert) {
 			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
-			const oS4HanaSettings = {
-				isAtoEnabled: () => true,
-				getSystem: () => "test"
-			};
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(oS4HanaSettings);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
+			sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns("test");
 			const aOverviewListItems = Element.getElementById("whatsNewOverview").getItems();
 			aOverviewListItems[0].firePress();
 			await nextUIUpdate();
@@ -128,11 +125,8 @@ sap.ui.define([
 
 		QUnit.test("Open BTP Learn more Link", async function(assert) {
 			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
-			const oBTPSettings = {
-				isAtoEnabled: () => undefined,
-				getSystem: () => undefined
-			};
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(oBTPSettings);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(undefined);
+			sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns(undefined);
 			const aOverviewListItems = Element.getElementById("whatsNewOverview").getItems();
 			aOverviewListItems[0].firePress();
 			await nextUIUpdate();
@@ -149,11 +143,8 @@ sap.ui.define([
 		QUnit.test("Open ABAP on-Premise  Learn more Link", async function(assert) {
 			const sLearnMoreUrl = aFeatureCollection[0].documentationUrls.s4HanaOnPremUrl;
 			const oGetLearnMoreURLSpy = sandbox.spy(WhatsNewUtils, "getLearnMoreURL");
-			const oOnPremSettings = {
-				isAtoEnabled: () => false,
-				getSystem: () => "test"
-			};
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(oOnPremSettings);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
+			sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns("test");
 			const aOverviewListItems = Element.getElementById("whatsNewOverview").getItems();
 			aOverviewListItems[0].firePress();
 			await nextUIUpdate();

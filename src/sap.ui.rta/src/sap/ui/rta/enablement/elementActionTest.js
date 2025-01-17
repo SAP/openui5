@@ -12,9 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeStatus",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/changeHandler/condenser/Classification",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/Model",
@@ -35,9 +33,7 @@ sap.ui.define([
 	DesignTimeStatus,
 	OverlayRegistry,
 	ChangesUtils,
-	FlexObjectStates,
 	CondenserClassification,
-	Settings,
 	PersistenceWriteAPI,
 	Layer,
 	Model,
@@ -650,7 +646,6 @@ sap.ui.define([
 				},
 				async beforeEach() {
 					await FlQUnitUtils.initializeFlexStateWithData(sandbox, UI_COMPONENT_NAME, {changes: []});
-					sandbox.stub(Settings, "getInstance").resolves({_oSettings: {}});
 				},
 				afterEach() {
 					this.oUiComponentContainer.destroy();
@@ -719,7 +714,6 @@ sap.ui.define([
 			},
 			async beforeEach(assert) {
 				await FlQUnitUtils.initializeFlexStateWithData(sandbox, UI_COMPONENT_NAME, {changes: []});
-				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
 
 				return createViewInComponent.call(this, SYNC)
 				.then(buildAndExecuteCommands.bind(this, assert))
