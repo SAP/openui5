@@ -25,11 +25,25 @@ sap.ui.define([
 				return { oChristmasStart, oChristmasEnd };
 			},
 
-			format: function () {
+			parse: function (sValue) {
 				const { oChristmasStart, oChristmasEnd } = this._getLastChristmasDates();
 				const oFormatOptions = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
 
-				return oChristmasStart.toLocaleString('en-US', oFormatOptions) + " - " + oChristmasEnd.toLocaleString('en-US', oFormatOptions);
+				if (sValue === this.format()) {
+					return {
+						operator: "LastChristmas",
+						values: [
+							oChristmasStart.toLocaleString('en-US', oFormatOptions),
+							oChristmasEnd.toLocaleString('en-US', oFormatOptions)
+						]
+					};
+				}
+
+				return undefined;
+			},
+
+			format: function () {
+				return "Last Christmas";
 			},
 
 			toDates: function () {
