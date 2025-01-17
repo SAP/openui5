@@ -10,7 +10,7 @@ sap.ui.define(
     function (BaseObject, Localization, DocuInfo, Log) {
         "use strict";
 
-        var sSiteLanguage = Localization.getLanguageTag().language;
+        var oUserLanguageTag;
         const aNotFoundViews = ["sap.ui.documentation.sdk.view.NotFound", "sap.ui.documentation.sdk.view.SampleNotFound"];
 
         var PageInfo = function(oRouteConfig, oRouter, sURL, referrer) {
@@ -23,8 +23,8 @@ sap.ui.define(
             this.name = oURL.pathname + oURL.hash;
             this.section = sSectionTitle || "/";
             this.title = undefined;
-            this.language = sSiteLanguage;
-            this.country = "glo";
+            this.language = oUserLanguageTag.language;
+            this.country = oUserLanguageTag.region;
             this.referrer = document.referrer;
         };
 
@@ -72,7 +72,9 @@ sap.ui.define(
                     this._initRemoteServiceConnector();
 
                     this._attachListenersForUserNavigations();
-                    Localization.attachChange(this._onLanguageChange);
+
+                    this._updateLanguageTag();
+                    Localization.attachChange(this._updateLanguageTag);
 
                     this._logPrecedingRouteVisits(aRouterEventsToLog);
                     this._isStarted = true;
@@ -82,7 +84,7 @@ sap.ui.define(
                         return;
                     }
                     this._detachListenersForUserNavigations();
-                    Localization.detachChange(this._onLanguageChange);
+                    Localization.detachChange(this._updateLanguageTag);
                     this._isStarted = false;
                 },
                 _initRemoteServiceConnector: function() {
@@ -289,8 +291,8 @@ sap.ui.define(
                             : "stlBeaconReady"
                     });
                 },
-                _onLanguageChange: function (oEvent) {
-                    sSiteLanguage = Localization.getLanguageTag().language;
+                _updateLanguageTag: function () {
+                    oUserLanguageTag = Localization.getLanguageTag();
                 },
                 _attachListenersForUserNavigations: function() {
                     this._oRouter.attachRouteMatched(this._onRouteMatched, this);
