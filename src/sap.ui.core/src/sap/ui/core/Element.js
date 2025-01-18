@@ -181,6 +181,8 @@ sap.ui.define([
 
 				/**
 				 * Custom Data, a data structure like a map containing arbitrary key value pairs.
+				 *
+				 * @default sap/ui/core/CustomData
 				 */
 				customData : {type : "sap.ui.core.CustomData", multiple : true, singularName : "customData"},
 
