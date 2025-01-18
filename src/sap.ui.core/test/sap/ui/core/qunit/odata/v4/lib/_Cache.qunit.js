@@ -6058,17 +6058,14 @@ sap.ui.define([
 
 		// code under test
 		oCache = _Cache.create(this.oRequestor, "resource/path", mQueryOptions,
-			"bSortExpandSelect", "deep/resource/path", bSharedRequest,
-			bSharedRequest ? undefined : ["separate0", "separate1"]);
+			"bSortExpandSelect", "deep/resource/path", bSharedRequest);
 
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.sOriginalResourcePath, "deep/resource/path");
 		assert.strictEqual(oCache.bSharedRequest, bSharedRequest);
-		assert.deepEqual(oCache.aSeparateProperties,
-			bSharedRequest ? [] : ["separate0", "separate1"]);
-		assert.deepEqual(oCache.mSeparateProperty2ReadRequests,
-			bSharedRequest ? {} : {separate0 : [], separate1 : []});
+		assert.deepEqual(oCache.aSeparateProperties, []);
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {});
 		assert.strictEqual(oCache.iActiveElements, 0);
 	});
 });
@@ -13708,8 +13705,8 @@ sap.ui.define([
 		+ bMainSuccessful;
 
 	QUnit.test(sTitle, async function (assert) {
-		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
-			undefined, undefined, ["foo", "bar"]);
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+		oCache.setSeparate(["foo", "bar"]);
 
 		let fnHandleMainPromise;
 		const oMainPromise = new Promise(function (resolve, reject) {
@@ -13863,8 +13860,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestSeparateProperties: separate failed",
 			async function (assert) {
-		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
-			undefined, undefined, ["foo", "bar"]);
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+		oCache.setSeparate(["foo", "bar"]);
 
 		const oCacheMock = this.mock(oCache);
 		oCacheMock.expects("fetchTypes").withExactArgs().resolves("n/a");
@@ -13950,8 +13947,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestSeparateProperties: skip import", async function (assert) {
-		const oCache = _Cache.create(this.oRequestor, "SalesOrders", undefined, undefined,
-			undefined, undefined, ["separate"]);
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+		oCache.setSeparate(["separate"]);
 
 		this.mock(oCache).expects("fetchTypes").withExactArgs().resolves("n/a");
 		this.mock(oCache).expects("getResourcePathWithQuery").withExactArgs(3, 5, "separate")
@@ -14001,6 +13998,33 @@ sap.ui.define([
 		const oResult = oCache.requestSeparateProperties(3, 5, "~oMainPromise~");
 
 		return oResult;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#setSeparate", function (assert) {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+
+		assert.deepEqual(oCache.aSeparateProperties, []);
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {});
+
+		// code under test: parameter defaulting
+		oCache.setSeparate();
+
+		assert.deepEqual(oCache.aSeparateProperties, []);
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {});
+
+		// code under test
+		oCache.setSeparate(["foo", "bar"]);
+
+		assert.deepEqual(oCache.aSeparateProperties, ["foo", "bar"]);
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {foo : [], bar : []});
+
+		// code under test
+		oCache.setSeparate(["baz"]);
+
+		assert.deepEqual(oCache.aSeparateProperties, ["baz"]);
+		// #setSeparate shouldn't be called multiple times, cleanup is not yet needed
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {foo : [], bar : [], baz : []});
 	});
 
 	//*********************************************************************************************

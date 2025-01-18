@@ -270,6 +270,13 @@ sap.ui.define([
 				flexObjects: []
 			}
 		};
+		if (!oFlexStateInstance.componentId) {
+			// the initial preparation needs the component Id to work properly
+			// as soon as the FlexState is initialized with the component Id, the state is rebuild and
+			// the initial preparation is executed
+			return oRuntimePersistence;
+		}
+
 		Object.keys(_mFlexObjectInfo).forEach(function(sMapName) {
 			var oUpdate = runInitialPreparation(sMapName, {
 				storageResponse: oStorageResponse,

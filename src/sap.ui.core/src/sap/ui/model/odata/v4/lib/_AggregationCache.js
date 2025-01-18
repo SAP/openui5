@@ -2679,8 +2679,6 @@ sap.ui.define([
 	 *   error.
 	 * @param {boolean} [bIsGrouped]
 	 *   Whether the list binding is grouped via its first sorter
-	 * @param {string[]} [aSeparateProperties]
-	 *   An array of properties which are requested separately
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 * @throws {Error}
@@ -2695,8 +2693,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_AggregationCache.create = function (oRequestor, sResourcePath, sDeepResourcePath,
-			mQueryOptions, oAggregation, bSortExpandSelect, bSharedRequest, bIsGrouped,
-			aSeparateProperties) {
+			mQueryOptions, oAggregation, bSortExpandSelect, bSharedRequest, bIsGrouped) {
 		var bHasGrandTotal, bHasGroupLevels;
 
 		function checkExpandSelect() {
@@ -2766,7 +2763,7 @@ sap.ui.define([
 		}
 
 		return _Cache.create(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			sDeepResourcePath, bSharedRequest, aSeparateProperties);
+			sDeepResourcePath, bSharedRequest);
 	};
 
 	return _AggregationCache;

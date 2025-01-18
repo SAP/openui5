@@ -158,12 +158,6 @@ InputRenderer.getAriaRole = function (oControl) {
 	return "";
 };
 
-InputRenderer.writeInnerValue = function(oRm, oControl) {
-	if (oControl.getType() !== InputType.Password) {
-		oRm.attr("value", oControl.getValue());
-	}
-};
-
 InputRenderer.getAccessibilityState = function (oControl) {
 	var bShowSuggestions = oControl.getShowSuggestion();
 

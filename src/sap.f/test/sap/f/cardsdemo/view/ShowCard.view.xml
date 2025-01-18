@@ -6,64 +6,88 @@
 	displayBlock="true"
 	controllerName="sap.f.cardsdemo.controller.ShowCard">
 	<Page title="{i18n>appTitle}">
-		<f:GridContainer class="sapUiSmallMargin">
-			<w:Card
-				id="showCard1"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/order/manifest.json"
-				referenceId="67d1ee24-2225-11ed-861d-0242ac120002">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card
-				id="showCard2"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/shareData/manifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card
-				id="showCard6"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/filter/manifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card
-				id="showCard3"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/task/manifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card
-				id="showCard4"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/approve/biteManifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card
-				id="showCard5"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/analytical/manifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card
-				id="showCard7"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/paginationAndActions/manifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card
-				id="showCard8"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/noHeader/manifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-		</f:GridContainer>
+		<Panel headerText="General" class="sapUiSmallMargin" backgroundDesign="Transparent">
+			<f:GridContainer class="sapUiSmallMargin">
+				<w:Card
+					id="showCard1"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/order/manifest.json"
+					referenceId="67d1ee24-2225-11ed-861d-0242ac120002">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card
+					id="showCard2"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/shareData/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card
+					id="showCard6"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/filter/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card
+					id="showCard3"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/task/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card
+					id="showCard4"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/approve/biteManifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card
+					id="showCard5"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/analytical/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card
+					id="showCard7"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/paginationAndActions/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card
+					id="showCard8"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/noHeader/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</Panel>
+		<Panel headerText="Component" class="sapUiSmallMargin" backgroundDesign="Transparent">
+			<f:GridContainer class="sapUiSmallMargin">
+				<w:Card
+					id="showCard9"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/component/main.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</Panel>
+		<Panel headerText="WebPage" class="sapUiSmallMargin" backgroundDesign="Transparent">
+			<f:GridContainer class="sapUiSmallMargin">
+				<w:Card
+					id="showCard10"
+					manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/webPage/showCard/manifest.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</Panel>
 	</Page>
 </mvc:View>

@@ -610,8 +610,6 @@ function(
 		this._setTypedInValue("");
 		this._bDoTypeAhead = false;
 		this._bBackspaceOrDelete = false;
-		this._isValueInitial = false;
-		this._previousInputType = this.getType();
 
 		// indicates whether input is clicked (on mobile) or the clear button
 		// used for identifying whether dialog should be open.
@@ -691,10 +689,6 @@ function(
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
-		if (!this.getDomRef() && this.getValue()) {
-			this._isValueInitial = true;
-		}
-
 		if (this.getShowClearIcon()) {
 			this._getClearIcon().setProperty("visible", bShowClearIcon);
 		} else if (this._oClearButton) {
@@ -752,12 +746,14 @@ function(
 	Input.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
 
-		if ((this._isValueInitial || this.getType() !== this._previousInputType ) && this.getType() === InputType.Password ) {
-			this.getDomRef("inner").value = this.getProperty("value");
-			this._isValueInitial = false;
-		}
+		// workaround to remove value attribute when having input type password
+		if (this.getType() === InputType.Password) {
+			const innerRef = this.getDomRef("inner");
+			const value = innerRef.value;
 
-		this._previousInputType = this.getType();
+			innerRef.removeAttribute("value");
+			innerRef.value = value;
+		}
 	};
 
 	/**

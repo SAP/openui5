@@ -27,7 +27,8 @@ sap.ui.define([
 		 *   The element on which to set the field help
 		 * @param {string|string[]} vDocumentationRefs
 		 *   The string value or an array of string values of
-		 *   <code>com.sap.vocabularies.Common.v1.DocumentationRef</code> OData annotations
+		 *   <code>com.sap.vocabularies.Common.v1.DocumentationRef</code> OData annotations, for example
+		 *   <code>"urn:sap-com:documentation:key?=type=DE&id=MY_ID&origin=MY_ORIGIN"</code>"
 		 * @throws {Error}
 		 *   If there is already a custom data with key <code>sap-ui-DocumentationRef</code> that is not of type
 		 *   {@link module:sap/ui/core/fieldhelp/FieldHelpCustomData}
