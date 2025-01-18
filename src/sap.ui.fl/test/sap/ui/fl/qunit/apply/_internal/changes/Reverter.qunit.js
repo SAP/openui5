@@ -6,12 +6,13 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -19,12 +20,13 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Control,
 	Applier,
-	ChangeUtils,
 	FlexCustomData,
 	Reverter,
+	ChangeUtils,
+	UIChange,
 	DependencyHandler,
 	FlexObjectState,
-	UIChange,
+	FlexState,
 	sinon
 ) {
 	"use strict";
@@ -221,6 +223,10 @@ sap.ui.define([
 			.onCall(0).resolves(false)
 			.onCall(1).resolves(true)
 			.onCall(2).resolves(this.oControl);
+			return FlexState.initialize({
+				reference: sReference,
+				componentId: "componentId"
+			});
 		},
 		afterEach() {
 			sandbox.restore();

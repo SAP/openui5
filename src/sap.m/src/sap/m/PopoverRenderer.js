@@ -4,14 +4,19 @@
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/m/library',
+	'sap/ui/core/library',
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
-], function(Device, library, ControlBehavior, getScrollbarSize) {
+], function(Device, library, coreLibrary, ControlBehavior, getScrollbarSize) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
+
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
+
 
 	/**
 	 * Popover renderer.
@@ -31,6 +36,10 @@ sap.ui.define([
 		oRm.openStart("div", oControl);
 		var aClassNames = this.generateRootClasses(oControl),
 			sContentWidth = oControl._getActualContentWidth();
+
+		if (!oControl.isOpen() && oControl.oPopup?.eOpenState !== OpenState.OPENING) {
+			oRm.class("sapMPopoverHidden");
+		}
 
 		aClassNames.forEach(function(sClassName) {
 			oRm.class(sClassName);

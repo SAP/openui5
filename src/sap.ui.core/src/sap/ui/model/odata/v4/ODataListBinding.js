@@ -1541,7 +1541,8 @@ sap.ui.define([
 		oCache ??= _AggregationCache.create(this.oModel.oRequestor, sResourcePath,
 			sDeepResourcePath, mQueryOptions, this.mParameters.$$aggregation,
 			this.oModel.bAutoExpandSelect || "$$separate" in this.mParameters,
-			this.bSharedRequest, this.isGrouped(), this.mParameters.$$separate);
+			this.bSharedRequest, this.isGrouped());
+		oCache.setSeparate?.(this.mParameters.$$separate);
 		if (mKeptElementsByPredicate) {
 			aKeepAlivePredicates.forEach(function (sPredicate) {
 				oCache.addKeptElement(mKeptElementsByPredicate[sPredicate]);

@@ -493,6 +493,21 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when initialize is called without a componentId", async function(assert) {
+			const aInitialPreparationSpies = Object.getOwnPropertyNames(InitialPrepareFunctions).map(function(sName) {
+				return sandbox.spy(InitialPrepareFunctions, sName);
+			});
+			await FlexState.initialize({
+				reference: sReference
+			});
+			assert.ok(
+				aInitialPreparationSpies.every(function(oSpy) {
+					return oSpy.notCalled;
+				}),
+				"then the initial prepare functions are not called during the state initialization"
+			);
+		});
+
 		QUnit.test("when initialize is called without appComponent", function(assert) {
 			this.oAppComponent.destroy();
 			return FlexState.initialize({
@@ -1544,7 +1559,8 @@ sap.ui.define([
 		async beforeEach() {
 			sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
 			await FlexState.initialize({
-				reference: sReference
+				reference: sReference,
+				componentId: "componentId"
 			});
 			// initial data
 			const aInitialChanges = [

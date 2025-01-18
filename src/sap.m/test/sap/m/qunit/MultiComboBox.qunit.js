@@ -5721,7 +5721,7 @@ sap.ui.define([
 		var oList = oMultiComboBox._getList();
 		assert.ok(oList, "List control available");
 		assert.strictEqual(oList.$("listUl").attr("role"), "listbox", "role='listbox' applied to the list");
-		assert.strictEqual(oList.getItems()[0].$().attr("role"), "listitem", "role='listitem' applied to the group header");
+		assert.strictEqual(oList.getItems()[0].$().attr("role"), "group", "role='group' applied to the group header");
 		assert.strictEqual(oList.getItems()[1].$().attr("role"), "option", "role='option' applied to the items");
 		assert.strictEqual(oList.getItems()[1].getMultiSelectControl().getDomRef().getAttribute("role"), "presentation", "role='presentation' should be applied to the checkboxes");
 		assert.notOk(oList.getItems()[1].getMultiSelectControl().getDomRef().getAttribute("tabindex"), "tabindex should not be present of checkboxes");

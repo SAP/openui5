@@ -328,13 +328,15 @@ ListItemBaseRenderer.getAccessibilityState = function(oLI) {
 	if (sRole === "listitem") {
 		mAccessibilityState.selected = null;
 		if (oLI.isGroupHeader()) {
+			const oList = oLI.getList();
 			bPositionNeeded = false;
+			mAccessibilityState.role = oList?.getAriaRole() === "listbox" ? "group" : "listitem";
+
 			if (oLI.getTitle) {
 				mAccessibilityState.label = oLI.getTitle();
 			}
 			mAccessibilityState.roledescription = Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_GROUP_HEADER");
 
-			const oList = oLI.getList();
 			if (!oList?._hasNestedGrouping()) {
 				const aGroupedItems = oLI.getGroupedItems();
 				if (aGroupedItems && aGroupedItems.length) {

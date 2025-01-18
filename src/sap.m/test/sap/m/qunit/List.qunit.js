@@ -2470,7 +2470,7 @@ sap.ui.define([
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
 			const $GroupItem = oGroupItem.$();
-			assert.strictEqual($GroupItem.attr("role"), "listitem", "role=group assigned to CustomListItem, since its groupHeader");
+			assert.strictEqual($GroupItem.attr("role"), "group", "role=group assigned to CustomListItem, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");
 			assert.ok($GroupItem.attr("aria-owns"), "aria-owns added");

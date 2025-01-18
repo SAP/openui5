@@ -1,8 +1,9 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/UsageTracker",
+	"sap/base/i18n/Localization",
 	"./TestUtil"],
-function (UsageTracker, TestUtil) {
+function (UsageTracker, Localization, TestUtil) {
 	"use strict";
 
 	const aSections = ["home", "documentation", "apiReference", "samples", "demoApps", "resources"];
@@ -13,6 +14,45 @@ function (UsageTracker, TestUtil) {
 		});
 	}
 
+	function MockObjectsFactory(oManifest) {
+		var oTracker,
+			oRouter = createMockRouter(oManifest),
+			oMockAppComponent = createMockAppComponent(oManifest);
+
+		associateRouterWithComponent(oRouter, oMockAppComponent);
+		oTracker = new UsageTracker(oMockAppComponent);
+
+		this.getRouter = function() {
+			return oRouter;
+		};
+		this.getTracker = function() {
+			return oTracker;
+		};
+
+		// keep in closure to prevent being called from outside
+		function createMockAppComponent(oManifest) {
+			return {
+				getConfig: function() {
+					return oManifest["sap.ui5"].config;
+				}
+			};
+		}
+		function createMockRouter(oManifest) {
+			var oRouter = TestUtil.createRouterFromManifest(oManifest);
+				oRouter.getConfig = function () {
+					return oManifest["sap.ui5"].routing;
+				};
+			return oRouter;
+		}
+		function associateRouterWithComponent(oRouter, oMockAppComponent) {
+			oMockAppComponent.getRouter = function () {
+				return oRouter;
+			};
+			oRouter._getOwnerComponent = function () {
+				return oMockAppComponent;
+			};
+		}
+	}
 
 	QUnit.module("getPageInfoFromRoute", {
 		before: function (assert) {
@@ -20,25 +60,13 @@ function (UsageTracker, TestUtil) {
 			TestUtil.getManifest().then(function (oManifest) {
 				const aRoutes = oManifest["sap.ui5"].routing.routes,
 					aRoutesToTest = removeLegacyRoutes(aRoutes),
-					oRouter = TestUtil.createRouterFromManifest(oManifest),
-					oMockComponent = {
-						getRouter: function () {
-							return oRouter;
-						},
-						getConfig: function() {
-							return oManifest["sap.ui5"].config;
-						}
-					};
-				oRouter._getOwnerComponent = function () {
-					return oMockComponent;
-				};
-				oRouter.getConfig = function () {
-					return oManifest["sap.ui5"].routing;
-				};
+					oMockObjectsFactory = new MockObjectsFactory(oManifest);
+				this.oRouter = oMockObjectsFactory.getRouter();
+				this.oTracker = oMockObjectsFactory.getTracker();
 				this.aRoutesToTest = aRoutesToTest;
-				this.oRouter = oRouter;
-				this.oTracker = new UsageTracker(oMockComponent);
 				this.stubGetTitle = sinon.stub(this.oTracker, "_composeDefaultPageTitleFromRoute").returns(""); // not relevant to this test
+
+				this.oTracker.start();
 				done();
 			}.bind(this))
 			.catch(function(error) {
@@ -67,5 +95,19 @@ function (UsageTracker, TestUtil) {
 				assert.ok(aSections.includes(sSection), "section " + sSection + " matches one of the main sections");
 			});
 		}, this);
+	});
+	QUnit.test("tracks localization info", function (assert) {
+			var oUserLanguageTag = Localization.getLanguageTag(),
+				sExpectedLanguage = oUserLanguageTag.language,
+				sExpectedRegion = oUserLanguageTag.region,
+				oRouteConfig = this.aRoutesToTest[0],
+				oRouteMatchEventParameters = {
+					config: oRouteConfig
+				};
+			this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
+				assert.equal(oPageInfo.language, sExpectedLanguage, "language is correct");
+				assert.equal(oPageInfo.country, sExpectedRegion, "region is correct");
+			});
+
 	});
 });

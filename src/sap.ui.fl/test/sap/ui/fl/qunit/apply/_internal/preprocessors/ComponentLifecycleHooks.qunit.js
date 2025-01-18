@@ -689,6 +689,22 @@ sap.ui.define([
 				"the first model was set with the correct annotation change"
 			);
 		});
+
+		QUnit.test("hook gets called with an error occurring inside the callback", async function(assert) {
+			sandbox.stub(Log, "error");
+			this.oFlexStateInitStub.reset();
+			this.oFlexStateInitStub.rejects(new Error("Error"));
+			ComponentLifecycleHooks.modelCreatedHook({
+				model: this.oFakeModel1,
+				modelId: "someModelId",
+				factoryConfig: {id: this.oAppComponent.getId(), componentData: {foo: "bar"}},
+				ownerId: undefined,
+				manifest: this.oAppComponent.getManifest()
+			});
+			const aAnnoChangesModel = await this.oSetAnnotationChangeStub1.getCall(0).args[0];
+			assert.strictEqual(aAnnoChangesModel.length, 0, "the model was set with no annotation change");
+			assert.strictEqual(Log.error.callCount, 1, "an error was logged");
+		});
 	});
 
 	QUnit.done(function() {
