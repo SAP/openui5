@@ -604,10 +604,10 @@ sap.ui.define([
 							}, 0); // simulate AMD
 						});
 				}
-				/**@deprecated As of version 1.120.0*/
+				/** @deprecated As of version 1.120.0 */
 				this.oSapUiMock.expects(`requireSync`).never();
 			} else {
-				/**@deprecated As of version 1.120.0*/
+				/** @deprecated As of version 1.120.0 */
 				aURNs.forEach(function (sURN, i) {
 					that.oSapUiMock.expects(`requireSync`).withArgs(sURN)
 						.callsFake(i === 0 ? fnCallback : undefined);
@@ -769,12 +769,10 @@ sap.ui.define([
 		);
 	});
 
+	/** @deprecated As of version 1.119.0 */
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
 	[`true`, true, 1, `X`].forEach(function (oFlag) {
-		/**
-		 * @deprecated since 1.119.0
-		 */
 		QUnit.test(`@deprecated XML with template:if test='{/flag}', truthy, async = false, flag = `
 				+ oFlag,
 			function (assert) {
@@ -829,9 +827,7 @@ sap.ui.define([
 		);
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	QUnit.test(`@deprecated XML with template:if test='{formatter:...}'`, function (assert) {
 		window.foo = {
@@ -873,9 +869,7 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	[{
 		aViewContent : [
@@ -1351,9 +1345,7 @@ sap.ui.define([
 		]);
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	QUnit.test(`@deprecated binding resolution`, function (assert) {
 		window.foo = {
@@ -1520,9 +1512,7 @@ sap.ui.define([
 	 * //[object String]: ManagedObject#getProperty unwraps String values
 	 */
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
 		var sTitle = `@deprecated binding resolution: interface to formatter, debug = ` + bDebug;
@@ -2143,9 +2133,7 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
 		QUnit.test(`@deprecated binding resolution, exception in formatter, debug = ` + bDebug,
@@ -2284,10 +2272,8 @@ sap.ui.define([
 	});
 	//TODO createBindingContext should also be used w/o var
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	[false, true].forEach(function (bHasHelper) {
 		QUnit.test(`@deprecated template:with and 'named context', has helper = ` + bHasHelper,
 			function (assert) {
@@ -2386,10 +2372,8 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	[false, true].forEach(function (bAsync) {
 		[false, true].forEach(function (bWithVar) {
 			QUnit.test(`@deprecated template:with and helper, async = ` + bAsync + `, with var = `
@@ -2475,10 +2459,8 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	[false, true].forEach(function (bWithVar) {
 		QUnit.test(`@deprecated template:with and helper changing the model, w/ var = ` + bWithVar,
 			function (assert) {
@@ -2557,10 +2539,8 @@ sap.ui.define([
 		);
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	[undefined, {}].forEach(function (fnHelper) {
 		QUnit.test(`@deprecated template:with and helper = ` + fnHelper, function (assert) {
 			window.foo = fnHelper;
@@ -2600,10 +2580,8 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	[false, true].forEach(function (bAsync) {
 		[true, ``].forEach(function (vResult) {
 			QUnit.test(`@deprecated template:with and helper returning ` + vResult + `, bAsync = `
@@ -2639,10 +2617,8 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	QUnit.test(`@deprecated template:with repeated w/ same variable and value`, function (assert) {
 		var oModel = new JSONModel(),
 			sTemplate1 = `<template:with path="bar>/my/path" var="bar"/>`,
@@ -2699,10 +2675,8 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	QUnit.test(`@deprecated template:with synchronously and helper returning Promise`,
 			function (assert) {
 		window.foo = function () {
@@ -2732,10 +2706,8 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	QUnit.test(`@deprecated template:with synchronously and helper returning SyncPromise`,
 			function (assert) {
 		var oModel = new JSONModel({
@@ -3034,9 +3006,7 @@ sap.ui.define([
 		], `Missing variable name for {0}`);
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	[false, true].forEach(function (bAsync) {
 		[false, true].forEach(function (bDebug) {
 			//**************************************************************************************
@@ -3627,10 +3597,8 @@ sap.ui.define([
 		process(oRootElement);
 	});
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	QUnit.test(`@deprecated template:alias`, function (assert) {
 		var oObjectPathMock = this.mock(ObjectPath);
 
@@ -3972,9 +3940,7 @@ sap.ui.define([
 		XMLPreprocessor.plugIn(fnVisitor, `foo`, `Bar`);
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	QUnit.test(`@deprecated plugIn, sLocalName: Bar`, function (assert) {
 		var fnVisitor = this.stub().returns(SyncPromise.resolve()),
@@ -4645,10 +4611,8 @@ sap.ui.define([
 	});
 	//TODO sanity check that visitor returns a *sync* promise in case of sync XML Templating?
 
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
 	QUnit.test(`@deprecated async fragment in template:alias/if/repeat/with`, function (assert) {
 		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
 		var aFragmentContent = [`<Text text="{formatter: '.bar', path: 'here>flag'}"/>`],
@@ -4812,9 +4776,7 @@ sap.ui.define([
 		], true);
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	QUnit.test(`@deprecated async binding resolution`, function (assert) {
 		var aViewContent = [
@@ -5011,9 +4973,7 @@ sap.ui.define([
 		}, undefined, true);
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 [false, true].forEach(function (bAllAvailable) {
 	QUnit.test(`@deprecated async require on view level, all available: ` + bAllAvailable,
@@ -5223,9 +5183,7 @@ sap.ui.define([
 		}, []);
 	});
 
-	/**
-	 * @deprecated As of version 1.120.0
-	 */
+	/** @deprecated As of version 1.120.0 */
 	//*********************************************************************************************
 	QUnit.test(`@deprecated Async formatter in sync view`, function (assert) {
 		window.foo = function () {
