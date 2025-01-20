@@ -25,6 +25,7 @@ sap.ui.define([
 	"./MessageItem",
 	"./GroupHeaderListItem",
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/library",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/base/ManagedObject",
@@ -56,6 +57,7 @@ sap.ui.define([
 	MessageItem,
 	GroupHeaderListItem,
 	InvisibleText,
+	InvisibleMessage,
 	coreLibrary,
 	MessageType,
 	ManagedObject,
@@ -388,6 +390,10 @@ sap.ui.define([
 			aListItems,
 			aItems = this.getItems();
 
+		if (!this._oInvisibleMessage) {
+			this._oInvisibleMessage = InvisibleMessage.getInstance();
+		}
+
 		this._clearLists();
 		this._detailsPage.setShowHeader(this.getShowDetailsPageHeader());
 
@@ -503,6 +509,11 @@ sap.ui.define([
 	MessageView.prototype.exit = function () {
 		if (this._oLists) {
 			this._destroyLists();
+		}
+
+		if (this._oInvisibleMessage) {
+			this._oInvisibleMessage.destroy();
+			this._oInvisibleMessage = null;
 		}
 
 		if (this._oMessageItemTemplate) {
@@ -1268,6 +1279,13 @@ sap.ui.define([
 		this._setIcon(oMessageItem, oListItem);
 		this._detailsPage.invalidate();
 		this.fireLongtextLoaded();
+
+		const oContentTitle = this._detailsPage.getContent()[0];
+
+		if (oContentTitle && !oContentTitle.isA("sap.m.Link")) {
+			const sAnnouncement = oContentTitle.getText() + " Additional information available via reading keys";
+			this._oInvisibleMessage.announce(sAnnouncement, "Assertive");
+		}
 
 		if (!bSuppressNavigate) {
 			this._navContainer.to(this._detailsPage, sTransiotionName);
