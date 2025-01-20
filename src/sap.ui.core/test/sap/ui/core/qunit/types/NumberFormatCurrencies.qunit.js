@@ -1567,7 +1567,7 @@ sap.ui.define([
 	{locale : "en", code : "AED", result : "42.00\u00a0AED", context : "sap-accounting"},
 	{locale : "ar", code : "AED", result : "\u200f42.00\u00a0\u202aد.إ.\u200f\u202c", context : "sap-standard"},
 	{locale : "ar", code : "AED", result : "\u200f42.00\u00a0\u202bد.إ.\u200f\u200e\u202c", context : "standard"},
-	{locale : "ar", code : "AED", result : "\u061c42.00\u202bد.إ.\u200f\u200e\u202c", context : "accounting"}
+	{locale : "ar", code : "AED", result : "\u061c42.00\u00a0\u202bد.إ.\u200f\u200e\u202c", context : "accounting"}
 ].forEach((oFixture) => {// JIRA: CPOUI5MODELS-1502
 	const sTitle = `Format and parse (RTL): ${oFixture.locale}, ${oFixture.code}, ${oFixture.context}`;
 	QUnit.test(sTitle, function (assert) {
@@ -1783,7 +1783,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("currency for 'he' locale with big number. Contains the RTL character u+200F", function (assert) {
+	QUnit.test("currency for 'he' locale with big number. Contains no RTL characters", function (assert) {
 		//setup
 		var oLocale = new Locale("he");
 		var oFormat = getCurrencyInstance({
@@ -1795,8 +1795,7 @@ sap.ui.define([
 
 		// execution
 		var sFormatted = oFormat.format(iExpectedNumber);
-		assert.strictEqual(sFormatted, "\u200f50,000.00\u00a0\u200f\u200e",
-			"can be formatted '" + sFormatted + "' (contains RTL character)");
+		assert.strictEqual(sFormatted, "50,000.00", "can be formatted '" + sFormatted + "' (no RTL character)");
 
 		var aParsed = oFormat.parse(sFormatted);
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);
@@ -2400,10 +2399,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("format: w/o decimal padding but showMeasure=false: keep RTL-characters", function (assert) {
+	QUnit.test("format: w/o decimal padding but showMeasure=false: don't keep RTL-characters", function (assert) {
 		const oFormat = NumberFormat.getCurrencyInstance({showMeasure: false}, new Locale("ar"));
 
 		// code under test
-		assert.strictEqual(oFormat.format(42.12, "EUR"), "\u200f42.12\xa0\u202a\u202c");
+		assert.strictEqual(oFormat.format(42.12, "EUR"), "42.12");
 	});
 });

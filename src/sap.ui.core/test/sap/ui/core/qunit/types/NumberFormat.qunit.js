@@ -5494,4 +5494,59 @@ sap.ui.define([
 		assert.strictEqual(NumberFormat.isAlphaNextToNumber(sPattern, sCurrency, bNegative), bResult);
 	});
 });
+
+	//*********************************************************************************************
+[{
+	sCurrencyPattern: "~pattern",
+	sExpectedAlternative: "noCurrency",
+	sResult: "~pattern",
+	bShowMeasure: false
+},{
+	sCurrencyPattern: "~pattern",
+	bIsAlphaNextToNumber: false,
+	sResult: "~pattern",
+	bShowMeasure: true
+},{
+	sAlphaNextToNumberPattern: "~alpahNextToNumberPattern",
+	sCurrencyPattern: "~pattern",
+	bIsAlphaNextToNumber: true,
+	sResult: "~alpahNextToNumberPattern",
+	bShowMeasure: true
+},{
+	sAlphaNextToNumberPattern: undefined,
+	sCurrencyPattern: "~pattern",
+	bIsAlphaNextToNumber: true,
+	sResult: "~pattern",
+	bShowMeasure: true
+}].forEach(({sAlphaNextToNumberPattern, sCurrencyPattern, sExpectedAlternative, bIsAlphaNextToNumber, sResult,
+		bShowMeasure}, i) => {
+	[true, false].forEach((bShowTrailingCurrencyCode) => {
+	QUnit.test("getCurrencyPattern: #" + i + "; trailing currency: " + bShowTrailingCurrencyCode, function (assert) {
+		const sContext = bShowTrailingCurrencyCode ? "sap-~sContext" : "~sContext";
+		const oNumberFormat = {
+			oLocaleData: {
+				getCurrencyPattern() {}
+			}
+		};
+		const oLocaleDataMock = this.mock(oNumberFormat.oLocaleData);
+		oLocaleDataMock.expects("getCurrencyPattern")
+			.withExactArgs(sContext, sExpectedAlternative)
+			.returns(sCurrencyPattern);
+		this.mock(NumberFormat).expects("isAlphaNextToNumber")
+			.withExactArgs(sCurrencyPattern, "~sCurrency", "~bNegative")
+			.exactly(bShowMeasure ? 1 : 0)
+			.returns(bIsAlphaNextToNumber);
+		oLocaleDataMock.expects("getCurrencyPattern")
+			.withExactArgs(sContext, "alphaNextToNumber")
+			.exactly(bIsAlphaNextToNumber ? 1 : 0)
+			.returns(sAlphaNextToNumberPattern);
+
+		// code under test
+		assert.strictEqual(
+			NumberFormat.prototype.getCurrencyPattern.call(oNumberFormat, "~sContext", bShowTrailingCurrencyCode,
+				bShowMeasure, "~sCurrency", "~bNegative"),
+			sResult);
+	});
+	});
+});
 });
