@@ -174,7 +174,7 @@ sap.ui.define([
 				}
 			}
 
-			if (_Helper.getPrivateAnnotation(oEntity, "upsert")) {
+			if (_Helper.hasPrivateAnnotation(oEntity, "upsert")) {
 				if (oGroupLock) {
 					oGroupLock.unlock();
 				}
@@ -558,9 +558,8 @@ sap.ui.define([
 					setCreatePending, cleanUp, undefined,
 					_Helper.buildPath(that.sResourcePath, sPath, sTransientPredicate)),
 				that.fetchTypes()
-			]).then(function (aResult) {
-				var oCreatedEntity = aResult[0],
-					sPredicate,
+			]).then(function ([oCreatedEntity, mTypeForMetaPath]) {
+				var sPredicate,
 					sResultingPath,
 					aSelect;
 
@@ -569,7 +568,7 @@ sap.ui.define([
 				// ensure that change listeners are informed via updateSelected
 				oCreatedEntity["@$ui5.context.isTransient"] = false;
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
-				that.visitResponse(oCreatedEntity, aResult[1],
+				that.visitResponse(oCreatedEntity, mTypeForMetaPath,
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
 					sPath + sTransientPredicate, undefined, true);
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
@@ -1163,6 +1162,7 @@ sap.ui.define([
 	 *   <code>$cached = true</code> then); implementing classes may have further preconditions
 	 *
 	 * @abstract
+	 * @function
 	 * @name sap.ui.model.odata.v4.lib._Cache#fetchValue
 	 * @public
 	 */
@@ -1452,7 +1452,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes a single entity within a cache.
+	 * Refreshes a single entity within a collection.
 	 * Since 1.84.0, for a kept-alive entity late properties are also taken into account.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
@@ -1537,6 +1537,27 @@ sap.ui.define([
 			});
 		});
 	};
+
+	/**
+	 * Requests a side-effects refresh for an (upserted) entity which is not part of a collection,
+	 * but reachable via a single-valued navigation property. (This should work likewise for complex
+	 * types.)
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the ID of the group that is associated with the request;
+	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string} sPath
+	 *   The entity's path relative to the cache; it must end with a single-valued navigation
+	 *   property and contain no key predicates, except maybe one right at the start
+	 * @returns {Promise<void>|sap.ui.base.SyncPromise}
+	 *   A promise which is resolved without a defined result, or rejected with an error if loading
+	 *   of side effects fails
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.lib._Cache#refreshSingleNoCollection
+	 * @private
+	 */
 
 	/**
 	 * Refreshes a single entity within a collection cache and removes it from the cache if the
@@ -1890,21 +1911,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Uses a side-effects request to read the upserted entity.
-	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the ID of the group that is associated with the request;
-	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
-	 * @param {string} sPath
-	 *   The entity's path relative to the cache
-	 * @returns {Promise<void>|sap.ui.base.SyncPromise}
-	 *   A promise which is resolved without a defined result, or rejected with an error if loading
-	 *   of side effects fails
-	 *
-	 * @name sap.ui.model.odata.lib._Cache#requestUpsertedEntity
-	 */
-
-	/**
 	 * Resets all pending changes below the given path.
 	 *
 	 * @param {string} sPath
@@ -2197,17 +2203,15 @@ sap.ui.define([
 		}
 
 		return oPromise.then(function (oEntity) {
-			var bUpsert = oEntity === null,
-				sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
+			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
-				oOldData,
+				sNavigationProperty, // upsert only
+				oOldData, // ignored for upsert
 				oPatchPromise,
-				oPostBody,
-				sParkedGroup,
-				bSkip,
-				sTransientGroup,
-				sUnitOrCurrencyValue,
-				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue);
+				sParentPath, // upsert only
+				bSkip, // MUST NOT happen with upsert
+				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue),
+				bUpsert = oEntity === null;
 
 			/*
 			 * Synchronous callback to cancel the PATCH request so that it is really gone when
@@ -2217,9 +2221,6 @@ sap.ui.define([
 				_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
 				if (bUpsert) {
-					const aSegments = sEntityPath.split("/");
-					const sNavigationProperty = aSegments.pop();
-					const sParentPath = aSegments.join("/");
 					// reset to null notifying listeners
 					_Helper.updateAll(that.mChangeListeners, sParentPath,
 						that.getValue(sParentPath), {[sNavigationProperty] : null});
@@ -2247,7 +2248,9 @@ sap.ui.define([
 					bSkip = true;
 					return oOldData; // my PATCH was merged
 				}
-				_Helper.updateNonExisting(oOldData, oOtherOldData);
+				if (oOldData) {
+					_Helper.updateNonExisting(oOldData, oOtherOldData);
+				} // else: upsert
 			}
 
 			function patch(oPatchGroupLock, bAtFront) {
@@ -2261,7 +2264,7 @@ sap.ui.define([
 				 */
 				function onSubmit() {
 					if (bUpsert && that.iActiveUsages) {
-						that.requestUpsertedEntity(oPatchGroupLock, sEntityPath)
+						that.refreshSingleNoCollection(oPatchGroupLock, sEntityPath)
 							.catch(that.oRequestor.getModelInterface().getReporter());
 					}
 					oRequestLock = that.oRequestor.lockGroup(sGroupId, that, true);
@@ -2357,18 +2360,34 @@ sap.ui.define([
 
 			if (bUpsert) {
 				const aSegments = sEntityPath.split("/");
-				const sNavigationProperty = aSegments.pop();
-				const sParentPath = aSegments.join("/");
-				that.getValue(sParentPath)[sNavigationProperty] = oEntity = {};
+				sNavigationProperty = aSegments.pop();
+				sParentPath = aSegments.join("/");
+				// create empty object notifying listeners
+				oEntity = {};
 				_Helper.setPrivateAnnotation(oEntity, "upsert", true);
-			} else if (!oEntity) {
+				// Note: _Helper.updateAll would not set the object reference! updateExisting would,
+				// but this should be much simpler (to understand)
+				that.getValue(sParentPath)[sNavigationProperty] = oEntity;
+				_Helper.fireChanges(that.mChangeListeners, sEntityPath, oEntity, false);
+
+				// write the changed value into the cache
+				_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+
+				// send and register the PATCH request
+				sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions,
+					/*bDropSystemQueryOptions*/true);
+				return patch(oGroupLock);
+			}
+
+			if (!oEntity) {
 				throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
 					+ "' does not exist");
 			}
 
 			_Helper.deleteUpdating(sPropertyPath, oEntity);
 
-			sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
+			let sParkedGroup;
+			let sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 			if (sTransientGroup) {
 				if (typeof sTransientGroup !== "string") {
 					throw new Error("No 'update' allowed while waiting for server response");
@@ -2387,7 +2406,7 @@ sap.ui.define([
 			oOldData
 				= _Helper.makeUpdateData(aPropertyPath, _Helper.drillDown(oEntity, aPropertyPath));
 
-			oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
+			const oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
 			if (oPostBody) {
 				// change listeners are informed later
 				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
@@ -2399,7 +2418,7 @@ sap.ui.define([
 					= _Helper.buildPath(aPropertyPath.slice(0, -1).join("/"), sUnitOrCurrencyPath);
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
-				sUnitOrCurrencyValue = that.getValue(sUnitOrCurrencyPath);
+				const sUnitOrCurrencyValue = that.getValue(sUnitOrCurrencyPath);
 				if (sUnitOrCurrencyValue === undefined) {
 					Log.debug("Missing value for unit of measure " + sUnitOrCurrencyPath
 							+ " when updating " + sFullPath, that.toString(), sClassName);
@@ -3531,6 +3550,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.lib._Cache#refreshSingleNoCollection
+	 */
+	_CollectionCache.prototype.refreshSingleNoCollection = function (oGroupLock, sPath) {
+		return this.requestSideEffects(oGroupLock.getUnlockedCopy(), [_Helper.getMetaPath(sPath)],
+			[sPath.split("/")[0]], true);
+	};
+
+	/**
 	 * Removes the element with the given predicate from $byPredicate of the cache's element list.
 	 *
 	 * @param {string} sPredicate - The predicate
@@ -3836,15 +3864,6 @@ sap.ui.define([
 					}
 				}
 			});
-	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.lib._Cache#requestUpsertedEntity
-	 */
-	_CollectionCache.prototype.requestUpsertedEntity = function (oGroupLock, sPath) {
-		return this.requestSideEffects(oGroupLock.getUnlockedCopy(), [_Helper.getMetaPath(sPath)],
-			[sPath.split("/")[0]], true);
 	};
 
 	/**
@@ -4449,6 +4468,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.lib._Cache#refreshSingleNoCollection
+	 */
+	_SingleCache.prototype.refreshSingleNoCollection = function (oGroupLock, sPath) {
+		return this.requestSideEffects(oGroupLock.getUnlockedCopy(), [_Helper.getMetaPath(sPath)]);
+	};
+
+	/**
 	 * Returns a promise to be resolved when the side effects have been loaded from the given
 	 * resource path.
 	 *
@@ -4532,14 +4559,6 @@ sap.ui.define([
 		});
 
 		return oResult;
-	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.lib._Cache#requestUpsertedEntity
-	 */
-	_SingleCache.prototype.requestUpsertedEntity = function (oGroupLock, sPath) {
-		return this.requestSideEffects(oGroupLock.getUnlockedCopy(), [_Helper.getMetaPath(sPath)]);
 	};
 
 	/**

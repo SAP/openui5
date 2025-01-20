@@ -1868,7 +1868,7 @@ sap.ui.define([
 				aSegments, // The resource path split in segments (encoded)
 				bTransient = false, // Whether the property is within a transient entity
 				oType, // The type of the data at sInstancePath
-				bUpsert = false; // Whether the entity is created via upsert
+				bUpsert = false; // Whether the entity is already or about to be created via upsert
 
 			// Determines the predicate from a segment (empty string if there is none)
 			function predicate(sSegment) {
