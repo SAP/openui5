@@ -1641,7 +1641,7 @@ sap.ui.define([
 
 		if (oOptions.shortLimit === undefined || Math.abs(vValue) >= oOptions.shortLimit) {
 			nShortRefNumber = oOptions.shortRefNumber === undefined ? vValue : oOptions.shortRefNumber;
-			oShortFormat = getShortenedFormat(nShortRefNumber, oOptions, this.oLocaleData, bIndianCurrency);
+			oShortFormat = this.getShortenedFormat(nShortRefNumber, oOptions, bIndianCurrency);
 			if (oShortFormat && oShortFormat.formatString != "0") {
 				vValue = vValue / oShortFormat.magnitude;
 				// If shortDecimals is defined, override the fractionDigits
@@ -1805,44 +1805,24 @@ sap.ui.define([
 			sResult += oOptions.decimalSeparator + sFractionPart;
 		}
 
-		if (oShortFormat && oShortFormat.formatString && oOptions.showScale && oOptions.type !== mNumberType.CURRENCY) {
+		const bUseCompactPattern = oShortFormat && oShortFormat.formatString && oOptions.showScale;
+		let sCompactPattern;
+		if (bUseCompactPattern) {
 			// Get correct format string based on actual decimal/fraction digits
-			// the plural category of a compact number is determined for the reduced short number without compact
-			// notation, e.g. "1.2M" must check "1.2" (see CLDR "decimalFormat-short" and "decimalFormat-long")
+			// the plural category of a compact number/currency is determined for the reduced short number without
+			// compact notation, e.g. "1.2M" must check "1.2"
+			// (see CLDR "decimalFormat-short" and "decimalFormat-long" or "currencyFormat-short")
 			sPluralCategory = this._getPluralCategory(sIntegerPart, sFractionPart);
-			oShortFormat.formatString = this.oLocaleData.getDecimalFormat(oOptions.style, oShortFormat.key, sPluralCategory);
-			//inject formatted shortValue in the formatString
-			sResult = oShortFormat.formatString.replace(oShortFormat.valueSubString, sResult);
-			//formatString may contain '.' (quoted to differentiate them decimal separator)
-			//which must be replaced with .
-			sResult = sResult.replace(/'.'/g, ".");
+			sCompactPattern = this.getCompactPattern(oOptions.type, oOptions.style, oShortFormat.key, sPluralCategory,
+				oOptions.trailingCurrencyCode, bIndianCurrency);
+			if (oOptions.type !== mNumberType.CURRENCY) {
+				// inject formatted shortValue in the formatString
+				sResult = sCompactPattern.replace(oShortFormat.valueSubString, sResult);
+			}
 		}
 
 		if (oOptions.type === mNumberType.CURRENCY) {
-			sPattern = oOptions.pattern;
-
-			if (oShortFormat && oShortFormat.formatString && oOptions.showScale) {
-				var sStyle;
-
-				// Currency formatting has only short style (no long)
-				if (oOptions.trailingCurrencyCode) {
-					sStyle = "sap-short";
-				} else {
-					sStyle = "short";
-				}
-				if (bIndianCurrency) {
-					sStyle += "-indian";
-				}
-
-				// Get correct format string based on actual decimal/fraction digits
-				// the plural category of a compact currency is determined for the reduced short number without compact
-				// notation, e.g. "1.2M" must check "1.2" (see CLDR "currencyFormat-short")
-				sPluralCategory = this._getPluralCategory(sIntegerPart, sFractionPart);
-				sPattern = this.oLocaleData.getCurrencyFormat(sStyle, oShortFormat.key, sPluralCategory);
-				//formatString may contain '.' (quoted to differentiate them decimal separator)
-				//which must be replaced with .
-				sPattern = sPattern.replace(/'.'/g, ".");
-			}
+			sPattern = bUseCompactPattern ? sCompactPattern : oOptions.pattern;
 
 			// The currency pattern is defined in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
 			// where the pattern after ';' should be used for negative numbers.
@@ -2338,7 +2318,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oShortFormat = getShortenedFormat(this.oFormatOptions.shortRefNumber, this.oFormatOptions, this.oLocaleData),
+		var oShortFormat = this.getShortenedFormat(this.oFormatOptions.shortRefNumber, this.oFormatOptions),
 			sScale;
 		if (oShortFormat && oShortFormat.formatString) {
 			// remove the placeholder of number
@@ -2444,8 +2424,86 @@ sap.ui.define([
 		}
 	};
 
-	function getShortenedFormat(fValue, oOptions, oLocaleData, bIndianCurrency) {
-		var oShortFormat, iKey, sKey, sCldrFormat,
+	/**
+	 * Gets the compact decimal or currency pattern for the given power of ten and plural category.
+	 *
+	 * @param {"integer"|"float"|"currency"|"unit"|"percent"} sType
+	 *   The number format type
+	 * @param {"long"|"short"} sStyle
+	 *   The style of the compact format
+	 * @param {string} sPowerOfTen
+	 *   The power of ten
+	 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} sPluralCategory
+	 *   The plural category
+	 * @param {boolean} [bTrailingCurrencyCode]
+	 *   Whether the currency code is formatted after the amount; only relevant if type "currency" is used
+	 * @param {boolean} [bIndianCurrency]
+	 *   Whether to use the Indian currency format; only relevant if type "currency" is used
+	 *
+	 * @returns {string|undefined}
+	 *   The compact decimal or currency pattern for the given power of ten and plural category; or
+	 *   <code>undefined</code> if there is no pattern for the given parameters
+	 *
+	 * @private
+	 */
+	NumberFormat.prototype.getCompactPattern = function (sType, sStyle, sPowerOfTen, sPluralCategory,
+			bTrailingCurrencyCode, bIndianCurrency) {
+		let sPattern;
+		if (sType === mNumberType.CURRENCY) {
+			if (bTrailingCurrencyCode) {
+				sStyle = "sap-short";
+			}
+			if (bIndianCurrency) {
+				sStyle += "-indian";
+			}
+			// Use currency specific format because for some languages there is a difference between the decimalFormat
+			// and the currencyFormat
+			sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory);
+		} else {
+			sPattern = this.oLocaleData.getDecimalFormat(sStyle, sPowerOfTen, sPluralCategory);
+		}
+
+		// pattern may contain a single quoted dot ('.') to differentiate them from decimal separator; replace it
+		// with an unquoted dot (.)
+		sPattern = sPattern?.replace(/'.'/g, ".");
+
+		return sPattern;
+	};
+
+	/**
+	 * Gets the compact decimal or currency format for the given value and parameters.
+	 *
+	 * @param {number|string} vValue
+	 *   The value for which the shortened format is determined
+	 * @param {object} oOptions
+	 *   The options used for getting the compact pattern
+	 * @param {int} [oOptions.precision = 2]
+	 *   The maximum number of digits in the formatted representation of the number
+	 * @param {"long"|"short"} oOptions.style
+	 *   The style of the compact format
+	 * @param {boolean} [oOptions.trailingCurrencyCode]
+	 *   Whether the currency code is formatted after the amount; only relevant if type "currency" is used
+	 * @param {"integer"|"float"|"currency"|"unit"|"percent"} oOptions.type
+	 *   The number format type
+	 * @param {boolean} [bIndianCurrency]
+	 *   Whether to use the Indian currency format; only relevant if type "currency" is used
+	 *
+	 * @returns {object|undefined}
+	 *   The compact decimal or currency format for the given value; or <code>undefined</code> if neither the "short"
+	 *   or the "long" style is used, or if there is no compact format for the given parameters; the returned object
+	 *   contains the following properties:
+	 *   <ul>
+	 *     <li><code>decimals</code>: The number of decimals used in the compact format pattern</li>
+	 *     <li><code>formatString</code>: The compact format pattern to use</li>
+	 *     <li><code>key</code>: The power of ten matching the given value</li>
+	 *     <li><code>magnitude</code>: The divisor to get the compact number to show from the given value</li>
+	 *     <li><code>valueSubString</code>: The number part of the format pattern</li>
+	 *  </ul>
+	 *
+	 * @private
+	 */
+	NumberFormat.prototype.getShortenedFormat = function (vValue, oOptions, bIndianCurrency) {
+		var oShortFormat, iKey, sKey,
 			sStyle = oOptions.style,
 			iPrecision = oOptions.precision !== undefined ? oOptions.precision : 2;
 
@@ -2455,7 +2513,7 @@ sap.ui.define([
 
 		for (var i = 0; i < 15; i++) {
 			iKey = Math.pow(10, i);
-			if (rounding(Math.abs(fValue) / iKey, iPrecision - 1) < 10) {
+			if (rounding(Math.abs(vValue) / iKey, iPrecision - 1) < 10) {
 				break;
 			}
 		}
@@ -2463,19 +2521,8 @@ sap.ui.define([
 
 		// Use "other" format to find the right magnitude, the actual format will be retrieved later
 		// after the value has been calculated
-		if (oOptions.type === mNumberType.CURRENCY) {
-			if (oOptions.trailingCurrencyCode) {
-				sStyle = "sap-short";
-			}
-			if (bIndianCurrency) {
-				sStyle += "-indian";
-			}
-			// Use currency specific format because for some languages there is a difference between the decimalFormat and the currencyFormat
-			sCldrFormat = oLocaleData.getCurrencyFormat(sStyle, sKey, "other");
-		} else {
-			sCldrFormat = oLocaleData.getDecimalFormat(sStyle, sKey, "other");
-		}
-
+		const sCldrFormat = this.getCompactPattern(oOptions.type, oOptions.style, sKey, "other",
+			oOptions.trailingCurrencyCode, bIndianCurrency);
 		if (!sCldrFormat || sCldrFormat == "0") {
 			//no format or special "0" format => number doesn't need to be shortened
 			return undefined;
@@ -2507,8 +2554,7 @@ sap.ui.define([
 		}
 
 		return oShortFormat;
-
-	}
+	};
 
 	function getNumberFromShortened(sValue, oLocaleData, bIndianCurrency) {
 		var sNumber,

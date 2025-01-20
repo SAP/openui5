@@ -5333,4 +5333,66 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oCurrencyFormat.format("1.23", "~currencyCode"), "~currencyCodeOrSymbol\xa01.23");
 	});
+
+	//*********************************************************************************************
+[
+	{sPattern: "~Pattern'.'", sResult: "~Pattern."},
+	{sPattern: undefined, sResult: undefined}
+].forEach(({sPattern, sResult}, i) => {
+	QUnit.test("getCompactPattern: no currency case - #" + i, function (assert) {
+		const oNumberFormat = {
+			oLocaleData: {getDecimalFormat() {}}
+		};
+
+		this.mock(oNumberFormat.oLocaleData).expects("getDecimalFormat")
+			.withExactArgs("~sStyle", "~sPowerOfTen", "~sPluralCategory")
+			.returns(sPattern);
+
+		// code under test
+		assert.strictEqual(
+			NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "~noCurrencyType", "~sStyle", "~sPowerOfTen",
+				"~sPluralCategory"),
+			sResult);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{bIndianCurrency: false, bTrailingCurrencyCode: false, sStyle: "~sStyle"},
+	{bIndianCurrency: true, bTrailingCurrencyCode: false, sStyle: "~sStyle-indian"},
+	{bIndianCurrency: false, bTrailingCurrencyCode: true, sStyle: "sap-short"},
+	{bIndianCurrency: true, bTrailingCurrencyCode: true, sStyle: "sap-short-indian"}
+].forEach(({bIndianCurrency, bTrailingCurrencyCode, sStyle}, i) => {
+	[true, false].forEach((bReturnsPattern) => {
+	QUnit.test("getCompactPattern: currency case #" + i + ", returns a pattern: " + bReturnsPattern, function (assert) {
+		const oNumberFormat = {
+			oLocaleData: {getCurrencyFormat() {}}
+		};
+
+		this.mock(oNumberFormat.oLocaleData).expects("getCurrencyFormat")
+			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory")
+			.returns(bReturnsPattern ? "~Pattern'.'" : undefined);
+
+		// code under test
+		assert.strictEqual(
+			NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "currency", "~sStyle", "~sPowerOfTen",
+				"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency),
+			bReturnsPattern ? "~Pattern." : undefined);
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getShortenedFormat: calls getCompactPattern", function (assert) {
+		const oNumberFormat = {getCompactPattern() {}};
+		const oOptions = {style: "short", trailingCurrencyCode: "~bTrailingCurrencyCode", type: "~anyType"};
+		this.mock(oNumberFormat).expects("getCompactPattern")
+			.withExactArgs("~anyType", "short", "100", "other", "~bTrailingCurrencyCode", "~bIndianCurrency")
+			.returns("0");
+
+		// code under test
+		assert.strictEqual(
+			NumberFormat.prototype.getShortenedFormat.call(oNumberFormat, "100", oOptions, "~bIndianCurrency"),
+			undefined);
+	});
 });
