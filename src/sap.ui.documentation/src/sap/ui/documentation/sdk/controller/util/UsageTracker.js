@@ -11,6 +11,11 @@ sap.ui.define(
         "use strict";
 
         var oUserLanguageTag;
+        const SITE_NAME = {
+            "openui5": "OpenUI5 Demo Kit",
+            "sapui5": "SAPUI5 Demo Kit"
+        };
+
         const aNotFoundViews = ["sap.ui.documentation.sdk.view.NotFound", "sap.ui.documentation.sdk.view.SampleNotFound"];
 
         var PageInfo = function(oRouteConfig, oRouter, sURL, referrer) {
@@ -89,7 +94,7 @@ sap.ui.define(
                 },
                 _initRemoteServiceConnector: function() {
                     window.adobeDataLayer = window.adobeDataLayer || [];
-                    this._logSessionStarted();
+                    this._getSiteName().then(this._logSessionStarted);
                 },
                 _logPrecedingRouteVisits: function(aRouterEventsToLog) {
                     if (aRouterEventsToLog) {
@@ -216,11 +221,11 @@ sap.ui.define(
                         return typeof sValue === "string";
                     });
                 },
-                _logSessionStarted: function () {
+                _logSessionStarted: function (sSiteName) {
                     window.adobeDataLayer.push({
                         event: "globalDL",
                         site: {
-                            name: "sapui5"
+                            name: sSiteName
                         },
                         'user': {
                             'loginStatus': 'no'
@@ -293,6 +298,24 @@ sap.ui.define(
                 },
                 _updateLanguageTag: function () {
                     oUserLanguageTag = Localization.getLanguageTag();
+                },
+                _getSiteName: function () {
+                    return this._getVersionName().then(function(sVersionName) {
+                        return this._getSiteNameFromVersion(sVersionName);
+                    }.bind(this));
+                },
+                _getVersionName: function () {
+                    return this._oComponent.loadVersionInfo().then(function() {
+                        return this._oComponent.getModel("versionData").getProperty("/versionName");
+                    }.bind(this));
+                },
+                _getSiteNameFromVersion: function (sVersionName) {
+                    if (sVersionName.toLowerCase().startsWith("openui5")) {
+                        return SITE_NAME.openui5;
+                    } else if (sVersionName.toLowerCase().startsWith("sapui5")) {
+                        return SITE_NAME.sapui5;
+                    }
+                    return sVersionName;
                 },
                 _attachListenersForUserNavigations: function() {
                     this._oRouter.attachRouteMatched(this._onRouteMatched, this);

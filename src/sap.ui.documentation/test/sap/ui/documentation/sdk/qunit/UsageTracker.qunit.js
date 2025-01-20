@@ -54,7 +54,7 @@ function (UsageTracker, Localization, TestUtil) {
 		}
 	}
 
-	QUnit.module("getPageInfoFromRoute", {
+	QUnit.module("getPageInfo", {
 		before: function (assert) {
 			var done = assert.async();
 			TestUtil.getManifest().then(function (oManifest) {
@@ -65,6 +65,7 @@ function (UsageTracker, Localization, TestUtil) {
 				this.oTracker = oMockObjectsFactory.getTracker();
 				this.aRoutesToTest = aRoutesToTest;
 				this.stubGetTitle = sinon.stub(this.oTracker, "_composeDefaultPageTitleFromRoute").returns(""); // not relevant to this test
+				this.stubGetVersion = sinon.stub(this.oTracker, "_getVersionName").returns(Promise.resolve("SAPUI5 Distribution"));
 
 				this.oTracker.start();
 				done();
@@ -74,11 +75,19 @@ function (UsageTracker, Localization, TestUtil) {
 				done();
 			});
 		},
+		beforeEach: function () {
+			this.sandbox = sinon.createSandbox();
+		},
 		after: function () {
 			this.oTracker.destroy();
 			this.oTracker = null;
 			this.oRouter.destroy();
 			this.oRouter = null;
+			this.stubGetTitle.restore();
+			this.stubGetVersion.restore();
+		},
+		afterEach: function () {
+			this.sandbox.restore();
 		}
 	});
 
@@ -97,17 +106,34 @@ function (UsageTracker, Localization, TestUtil) {
 		}, this);
 	});
 	QUnit.test("tracks localization info", function (assert) {
-			var oUserLanguageTag = Localization.getLanguageTag(),
-				sExpectedLanguage = oUserLanguageTag.language,
-				sExpectedRegion = oUserLanguageTag.region,
-				oRouteConfig = this.aRoutesToTest[0],
-				oRouteMatchEventParameters = {
-					config: oRouteConfig
-				};
-			this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
-				assert.equal(oPageInfo.language, sExpectedLanguage, "language is correct");
-				assert.equal(oPageInfo.country, sExpectedRegion, "region is correct");
-			});
+		var oUserLanguageTag = Localization.getLanguageTag(),
+			sExpectedLanguage = oUserLanguageTag.language,
+			sExpectedRegion = oUserLanguageTag.region,
+			oRouteConfig = this.aRoutesToTest[0],
+			oRouteMatchEventParameters = {
+				config: oRouteConfig
+			};
+		this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
+			assert.equal(oPageInfo.language, sExpectedLanguage, "language is correct");
+			assert.equal(oPageInfo.country, sExpectedRegion, "region is correct");
+		});
+	});
 
+	QUnit.test("site name is correct", function (assert) {
+		var done = assert.async();
+		this.oTracker._getSiteName().then(function (sSiteName) {
+			assert.strictEqual(sSiteName, "SAPUI5 Demo Kit", "Site name is correct");
+			done();
+		});
+	});
+
+	QUnit.test("site name is tracked", function (assert) {
+		var oSpy = this.sandbox.spy(this.oTracker, "_getSiteName");
+
+		// act
+		this.oTracker._initRemoteServiceConnector();
+
+		// assert
+		assert.ok(oSpy.calledOnce, "_getSiteName is called once");
 	});
 });
