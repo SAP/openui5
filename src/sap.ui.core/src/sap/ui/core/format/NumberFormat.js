@@ -48,6 +48,18 @@ sap.ui.define([
 
 	const rAllWhiteSpaces = /\s/g;
 	const rDigit = /\d/;
+	// Regex for checking whether the last character belongs to the Unicode General Category L (letter)
+	const rEndsWithLetter = /\p{L}$/u;
+	// Regex for checking whether the first character belongs to the Unicode General Category L (letter)
+	const rStartsWithLetter = /^\p{L}/u;
+	// splits a currency pattern into following matching groups:
+	// 0: complete match
+	// 1: the optional number pattern in front of the currency placeholder
+	// 2: the characters between the number pattern in front of the currency placeholder and the currency placeholder
+	// 3: the currency placeholder
+	// 4: the characters between the currency placeholder and the number pattern after the currency placeholder
+	// 5: the optional number pattern after the currency placeholder
+	const rSplitCurrencyPattern = /([0#.,]*)([^0#.,]*)(¤)([^0#.,]*)([0#.,]*)/;
 	// Regex for checking if a number has leading zeros
 	const rLeadingZeros = /^(-?)0+(\d)/;
 	// Not matching Sc (currency symbol) and Z (separator) characters
@@ -1814,7 +1826,8 @@ sap.ui.define([
 			// (see CLDR "decimalFormat-short" and "decimalFormat-long" or "currencyFormat-short")
 			sPluralCategory = this._getPluralCategory(sIntegerPart, sFractionPart);
 			sCompactPattern = this.getCompactPattern(oOptions.type, oOptions.style, oShortFormat.key, sPluralCategory,
-				oOptions.trailingCurrencyCode, bIndianCurrency);
+				oOptions.trailingCurrencyCode, bIndianCurrency, sMeasure && oOptions.showMeasure, sCurrencySymbolOrCode,
+				bNegative);
 			if (oOptions.type !== mNumberType.CURRENCY) {
 				// inject formatted shortValue in the formatString
 				sResult = sCompactPattern.replace(oShortFormat.valueSubString, sResult);
@@ -2425,6 +2438,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether there is a letter next to the number using the given currency pattern.
+	 *
+	 * @param {string} sPattern
+	 *   The currency pattern, e.g. "¤#,##0.00;(¤#,##0.00)" or "¤ 000K"
+	 * @param {string} sCurrency
+	 *   The currency code or the currency symbol to check, e.g. "USD" or "$"
+	 * @param {boolean} bNegative
+	 *   Whether the value to be formatted is negative
+	 *
+	 * @returns {boolean} Whether there is a letter next to the number for the given pattern and currency
+	 *
+	 * @private
+	 */
+	NumberFormat.isAlphaNextToNumber = function (sPattern, sCurrency, bNegative) {
+		if (!sPattern || !sCurrency) {
+			return false;
+		}
+		const aPatterns = sPattern.split(";");
+		sPattern = (aPatterns[bNegative ? 1 : 0] || aPatterns[0]).replace(rAllRTLCharacters, "");
+		const aMatches = rSplitCurrencyPattern.exec(sPattern);
+
+		// number in front of the currency placeholder
+		if (aMatches[1]) {
+			return rStartsWithLetter.test(sCurrency) && !aMatches[2];
+		}
+
+		// currency placeholder in front of the number
+		return !aMatches[4] // no characters between the placeholder and the number
+			&& rEndsWithLetter.test(sCurrency) // currency ends with a letter
+			// if there is no separate negative pattern and the value is negative, there is a minus sign between
+			// the currency and the number, so there is no need for the alphaNextToNumber pattern
+			&& (!bNegative || aPatterns.length !== 1);
+	};
+
+	/**
 	 * Gets the compact decimal or currency pattern for the given power of ten and plural category.
 	 *
 	 * @param {"integer"|"float"|"currency"|"unit"|"percent"} sType
@@ -2439,6 +2487,12 @@ sap.ui.define([
 	 *   Whether the currency code is formatted after the amount; only relevant if type "currency" is used
 	 * @param {boolean} [bIndianCurrency]
 	 *   Whether to use the Indian currency format; only relevant if type "currency" is used
+	 * @param {boolean} [bShowMeasure]
+	 *   Whether to show the measure
+	 * @param {string} [sCurrency]
+	 *   The currency code or symbol
+	 * @param {boolean} [bNegative]
+	 *   Whether the number is negative
 	 *
 	 * @returns {string|undefined}
 	 *   The compact decimal or currency pattern for the given power of ten and plural category; or
@@ -2447,7 +2501,7 @@ sap.ui.define([
 	 * @private
 	 */
 	NumberFormat.prototype.getCompactPattern = function (sType, sStyle, sPowerOfTen, sPluralCategory,
-			bTrailingCurrencyCode, bIndianCurrency) {
+			bTrailingCurrencyCode, bIndianCurrency, bShowMeasure, sCurrency, bNegative) {
 		let sPattern;
 		if (sType === mNumberType.CURRENCY) {
 			if (bTrailingCurrencyCode) {
@@ -2456,9 +2510,23 @@ sap.ui.define([
 			if (bIndianCurrency) {
 				sStyle += "-indian";
 			}
-			// Use currency specific format because for some languages there is a difference between the decimalFormat
-			// and the currencyFormat
-			sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory);
+			if (bShowMeasure) {
+				// Use currency specific format because for some languages there is a difference between the
+				// decimalFormat and the currencyFormat
+				sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory);
+				if (NumberFormat.isAlphaNextToNumber(sPattern, sCurrency, bNegative)) {
+					sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory,
+						"alphaNextToNumber") || sPattern;
+				}
+			} else {
+				sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory, "noCurrency");
+				if (!sPattern) {
+					if (sStyle.startsWith("sap-")) {
+						sStyle = sStyle.slice(4);
+					}
+					sPattern = this.oLocaleData.getDecimalFormat(sStyle, sPowerOfTen, sPluralCategory);
+				}
+			}
 		} else {
 			sPattern = this.oLocaleData.getDecimalFormat(sStyle, sPowerOfTen, sPluralCategory);
 		}
@@ -2522,7 +2590,7 @@ sap.ui.define([
 		// Use "other" format to find the right magnitude, the actual format will be retrieved later
 		// after the value has been calculated
 		const sCldrFormat = this.getCompactPattern(oOptions.type, oOptions.style, sKey, "other",
-			oOptions.trailingCurrencyCode, bIndianCurrency);
+			oOptions.trailingCurrencyCode, bIndianCurrency, oOptions.showMeasure);
 		if (!sCldrFormat || sCldrFormat == "0") {
 			//no format or special "0" format => number doesn't need to be shortened
 			return undefined;
