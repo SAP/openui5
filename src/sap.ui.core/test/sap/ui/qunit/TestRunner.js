@@ -1,7 +1,6 @@
 (function(globalThis) {
 	"use strict";
 	/*global CollectGarbage */
-	/* eslint radix: 0, no-console: 0 */
 	/*
 	 * Simulate the JSUnit Testsuite to collect the available
 	 * test pages per Suite
@@ -138,13 +137,13 @@
 		}
 		async #checkTestPage(sTestPage, bSequential) {
 			if (typeof sTestPage !== "string") {
-				console.log("QUnit: invalid test page specified");
+				console.log("QUnit: invalid test page specified"); // eslint-disable-line no-console
 				throw new Error("QUnit: invalid test page specified");
 			}
 			// console.log("QUnit: checking test page: " + sTestPage);
 			// check for an existing test page and check for test suite or page
 			const sData = await this.#fetchQueue.fetch(sTestPage).catch((err) => {
-				console.error(`QUnit: failed to load page '${sTestPage}':`, err);
+				console.error(`QUnit: failed to load page '${sTestPage}':`, err); // eslint-disable-line no-console
 				return null;
 			});
 			if ( sData == null ) {
@@ -154,7 +153,7 @@
 				|| (/data-sap-ui-testsuite/.test(sData) && !/sap\/ui\/test\/starter\/runTest/.test(sData))
 				|| /sap\/ui\/test\/starter\/createSuite/.test(sData) ) {
 				const aTestPages = await this.#collectPagesFromSuite(sTestPage, bSequential);
-				console.info(`got test pages for ${sTestPage}: ${aTestPages.length}`);
+				console.info(`got test pages for ${sTestPage}: ${aTestPages.length}`); // eslint-disable-line no-console
 				return aTestPages;
 			} else {
 				return [sTestPage];
@@ -164,13 +163,13 @@
 			const oDeferred = new Deferred();
 			const onSuiteReady = async (oIFrame) => {
 				const aTestPages = await this.#findTestPages(oIFrame, bSequential).catch((oError) => {
-					console.error(`QUnit: failed to load page '${sTestPage}', Error:`, oError);
+					console.error(`QUnit: failed to load page '${sTestPage}', Error:`, oError); // eslint-disable-line no-console
 					return [];
 				});
 				frame.remove();
 				// avoid duplicates in test pages
 				const aUniqueTestPages = aTestPages.filter((e, i, a) => a.indexOf(e) === i);
-				console.info(`test pages for ${sTestPage}: ${aUniqueTestPages.length}`);
+				console.info(`test pages for ${sTestPage}: ${aUniqueTestPages.length}`); // eslint-disable-line no-console
 				oDeferred.resolve(aUniqueTestPages);
 			};
 			const frame = h("frame", {
@@ -190,7 +189,6 @@
 				src: sTestPage
 			});
 			document.body.appendChild(frame);
-			console.info(oDeferred.promise);
 			return oDeferred.promise;
 		}
 		async #findTestPages(oIFrame, bSequential) {
@@ -225,7 +223,7 @@
 					}
 				}
 			} catch (ex) {
-				console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n", ex);
+				console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n", ex); // eslint-disable-line no-console
 			}
 			return [];
 		}
@@ -744,8 +742,6 @@
 			globalThis.oStartTime = new Date();
 			var aTests = [...querySelectorAll("#selectedTests > option")].map((option) => option.textContent);
 			var nStep = 100 / aTests.length;
-			console.log(aTests.length);
-			console.log(nStep);
 			setVisibile(["progressSection", "stop"], true);
 			testRunner.runTests(aTests, nStep).then(displayTestResults);
 		}
