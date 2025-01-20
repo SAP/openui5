@@ -5339,7 +5339,7 @@ sap.ui.define([
 	{sPattern: "~Pattern'.'", sResult: "~Pattern."},
 	{sPattern: undefined, sResult: undefined}
 ].forEach(({sPattern, sResult}, i) => {
-	QUnit.test("getCompactPattern: no currency case - #" + i, function (assert) {
+	QUnit.test("getCompactPattern: no currency type case - #" + i, function (assert) {
 		const oNumberFormat = {
 			oLocaleData: {getDecimalFormat() {}}
 		};
@@ -5356,28 +5356,94 @@ sap.ui.define([
 	});
 });
 
-	//*********************************************************************************************
 [
 	{bIndianCurrency: false, bTrailingCurrencyCode: false, sStyle: "~sStyle"},
 	{bIndianCurrency: true, bTrailingCurrencyCode: false, sStyle: "~sStyle-indian"},
 	{bIndianCurrency: false, bTrailingCurrencyCode: true, sStyle: "sap-short"},
 	{bIndianCurrency: true, bTrailingCurrencyCode: true, sStyle: "sap-short-indian"}
 ].forEach(({bIndianCurrency, bTrailingCurrencyCode, sStyle}, i) => {
-	[true, false].forEach((bReturnsPattern) => {
-	QUnit.test("getCompactPattern: currency case #" + i + ", returns a pattern: " + bReturnsPattern, function (assert) {
+	//*********************************************************************************************
+	[{
+		sPattern: undefined,
+		sResult: undefined
+	}, {
+		sPattern: "~Pattern'.'",
+		bIsAlphaNextToNumber: false,
+		sResult: "~Pattern."
+	}, {
+		sPattern: "~Pattern'.'",
+		bIsAlphaNextToNumber: true,
+		sAlphaNextToNumberPattern: "~AlphaNextToNumberPattern'.'",
+		sResult: "~AlphaNextToNumberPattern."
+	}, {
+		sPattern: "~Pattern'.'",
+		bIsAlphaNextToNumber: true,
+		sAlphaNextToNumberPattern: undefined,
+		sResult: "~Pattern."
+	}].forEach(({sPattern, bIsAlphaNextToNumber, sAlphaNextToNumberPattern, sResult}, i) => {
+	QUnit.test("getCompactPattern: currency case with measure; " + sStyle + "; #" + i, function (assert) {
 		const oNumberFormat = {
 			oLocaleData: {getCurrencyFormat() {}}
 		};
-
-		this.mock(oNumberFormat.oLocaleData).expects("getCurrencyFormat")
+		const oLocaleDataMock = this.mock(oNumberFormat.oLocaleData);
+		oLocaleDataMock.expects("getCurrencyFormat")
 			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory")
-			.returns(bReturnsPattern ? "~Pattern'.'" : undefined);
+			.returns(sPattern);
+		this.mock(NumberFormat).expects("isAlphaNextToNumber")
+			.withExactArgs(sPattern, "~sCurrency", "~bNegative")
+			.returns(bIsAlphaNextToNumber);
+		oLocaleDataMock.expects("getCurrencyFormat")
+			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "alphaNextToNumber")
+			.exactly(bIsAlphaNextToNumber ? 1 : 0)
+			.returns(sAlphaNextToNumberPattern);
 
 		// code under test
 		assert.strictEqual(
 			NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "currency", "~sStyle", "~sPowerOfTen",
-				"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency),
-			bReturnsPattern ? "~Pattern." : undefined);
+				"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency, true, "~sCurrency", "~bNegative"),
+			sResult);
+	});
+	});
+
+	//*********************************************************************************************
+	[{
+		sPattern: undefined,
+		sDecimalPattern: "~DecimalPattern'.'",
+		sResult: "~DecimalPattern."
+	}, {
+		sPattern: undefined,
+		sDecimalPattern: undefined,
+		sResult: undefined
+	}, {
+		sPattern: "~Pattern'.'",
+		sResult: "~Pattern."
+	}].forEach(({sPattern, sDecimalPattern, sResult}, i) => {
+	QUnit.test("getCompactPattern: currency case without measure; " + sStyle + "; #" + i, function (assert) {
+		const oNumberFormat = {
+			oLocaleData: {
+				getCurrencyFormat() {},
+				getDecimalFormat() {}
+			}
+		};
+		this.mock(oNumberFormat.oLocaleData).expects("getCurrencyFormat")
+			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "noCurrency")
+			.returns(sPattern);
+		let sExpectedDecimalStyle;
+		switch (sStyle) {
+			case "sap-short": sExpectedDecimalStyle = "short"; break;
+			case "sap-short-indian": sExpectedDecimalStyle = "short-indian"; break;
+			default: sExpectedDecimalStyle = sStyle;
+		}
+		this.mock(oNumberFormat.oLocaleData).expects("getDecimalFormat")
+			.withExactArgs(sExpectedDecimalStyle, "~sPowerOfTen", "~sPluralCategory")
+			.exactly(sPattern ? 0 : 1)
+			.returns(sDecimalPattern);
+
+		// code under test
+		assert.strictEqual(
+			NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "currency", "~sStyle", "~sPowerOfTen",
+				"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency, false, "~sCurrency", "~bNegative"),
+			sResult);
 	});
 	});
 });
@@ -5385,9 +5451,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getShortenedFormat: calls getCompactPattern", function (assert) {
 		const oNumberFormat = {getCompactPattern() {}};
-		const oOptions = {style: "short", trailingCurrencyCode: "~bTrailingCurrencyCode", type: "~anyType"};
+		const oOptions = {
+			showMeasure: "~bShowMeasure",
+			style: "short",
+			trailingCurrencyCode: "~bTrailingCurrencyCode",
+			type: "~anyType"
+		};
 		this.mock(oNumberFormat).expects("getCompactPattern")
-			.withExactArgs("~anyType", "short", "100", "other", "~bTrailingCurrencyCode", "~bIndianCurrency")
+			.withExactArgs("~anyType", "short", "100", "other", "~bTrailingCurrencyCode", "~bIndianCurrency",
+				"~bShowMeasure")
 			.returns("0");
 
 		// code under test
@@ -5395,4 +5467,31 @@ sap.ui.define([
 			NumberFormat.prototype.getShortenedFormat.call(oNumberFormat, "100", oOptions, "~bIndianCurrency"),
 			undefined);
 	});
+
+	//*********************************************************************************************
+[
+	{sPattern: undefined, sCurrency: "$", bResult: false},
+	{sPattern: "\xa4#,##0.00", sCurrency: undefined, bResult: false},
+	{sPattern: "\xa4#,##0.00", sCurrency: "$", bResult: false},
+	{sPattern: "\xa4#,##0.00", sCurrency: "USD", bResult: true},
+	{sPattern: "\xa4#,##0.00", sCurrency: "RD$", bResult: false},
+	{sPattern: "\xa4 #,##0.00", sCurrency: "USD", bResult: false},
+	{sPattern: "#,##0.00\xa4", sCurrency: "$", bResult: false},
+	{sPattern: "#,##0.00\xa4", sCurrency: "USD", bResult: true},
+	{sPattern: "#,##0.00\xa4", sCurrency: "RD$", bResult: true},
+	{sPattern: "#,##0.00 \xa4", sCurrency: "RD$", bResult: false},
+	{sPattern: "#,##0.00\xa4", sCurrency: "$XY", bResult: false},
+	{sPattern: "#,##0.00 \xa4", sCurrency: "$XY", bResult: false},
+	{sPattern: "\xa4#,##0.00;(\xa4#,##0.0)", sCurrency: "USD", bNegative: true, bResult: true},
+	{sPattern: "\xa4#,##0.00;(\xa4#,##0.0)", sCurrency: "$", bNegative: true, bResult: false},
+	{sPattern: "\xa4#,##0.00", sCurrency: "USD", bNegative: true, bResult: false},
+	{sPattern: "\xa4 #,##0.00;(\xa4#,##0.0)", sCurrency: "USD", bNegative: true, bResult: true},
+	{sPattern: "\xa4#,##0.00;(\xa4 #,##0.0)", sCurrency: "USD", bNegative: true, bResult: false},
+	{sPattern: "\u061c#,##0.00\u202b\xa4\u200e\u202c", sCurrency: "USD", bResult: true}
+].forEach(({sPattern, sCurrency, bNegative = false, bResult}, i) => {
+	QUnit.test("isAlphaNextToNumber: #" + i, function (assert) {
+		// code under test
+		assert.strictEqual(NumberFormat.isAlphaNextToNumber(sPattern, sCurrency, bNegative), bResult);
+	});
+});
 });
