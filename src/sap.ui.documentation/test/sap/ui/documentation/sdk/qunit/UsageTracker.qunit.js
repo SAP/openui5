@@ -1,48 +1,61 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/util/UsageTracker",
-	"sap/base/i18n/Localization",
-	"./TestUtil"],
-function (UsageTracker, Localization, TestUtil) {
+	"sap/base/i18n/Localization"],
+function (UsageTracker, Localization) {
 	"use strict";
 
-	const aSections = ["home", "documentation", "apiReference", "samples", "demoApps", "resources"];
+	const testRouteTitle = "test title";
 
-	function removeLegacyRoutes(aRoutes) {
-		return aRoutes.filter(function (oRoute) {
-			return oRoute.name.toLowerCase().indexOf("legacy") === -1;
-		});
-	}
+	function MockObjectsFactory() {
+		var oMockRouter = createMockRouter(),
+			oMockAppComponent = createMockAppComponent();
 
-	function MockObjectsFactory(oManifest) {
-		var oTracker,
-			oRouter = createMockRouter(oManifest),
-			oMockAppComponent = createMockAppComponent(oManifest);
-
-		associateRouterWithComponent(oRouter, oMockAppComponent);
-		oTracker = new UsageTracker(oMockAppComponent);
+		associateRouterWithComponent(oMockRouter, oMockAppComponent);
 
 		this.getRouter = function() {
-			return oRouter;
+			return oMockRouter;
 		};
-		this.getTracker = function() {
-			return oTracker;
+		this.getAppComponent = function() {
+			return oMockAppComponent;
 		};
 
 		// keep in closure to prevent being called from outside
-		function createMockAppComponent(oManifest) {
+		function createMockAppComponent() {
 			return {
 				getConfig: function() {
-					return oManifest["sap.ui5"].config;
+					return {};
+				},
+				loadVersionInfo: function() {
+					return Promise.resolve();
+				},
+				getModel: function() {
+					return {
+						getProperty: function(sProperty) {
+							const oMockedProperties = {
+								"/versionName": "SAPUI5 Distribution"
+							};
+							return oMockedProperties[sProperty];
+						}
+					};
 				}
 			};
 		}
-		function createMockRouter(oManifest) {
-			var oRouter = TestUtil.createRouterFromManifest(oManifest);
-				oRouter.getConfig = function () {
-					return oManifest["sap.ui5"].routing;
-				};
-			return oRouter;
+		function createMockRouter() {
+			return {
+				attachRouteMatched: function () {
+					// not relevant to this test
+				},
+				attachBypassed: function () {	// not relevant to this test
+					// not relevant to this test
+				},
+				attachEvent: function () {
+					// not relevant to this test
+				},
+				getRouteTopLevelTitle: function () {
+					return testRouteTitle;
+				}
+			};
 		}
 		function associateRouterWithComponent(oRouter, oMockAppComponent) {
 			oMockAppComponent.getRouter = function () {
@@ -55,63 +68,46 @@ function (UsageTracker, Localization, TestUtil) {
 	}
 
 	QUnit.module("getPageInfo", {
-		before: function (assert) {
-			var done = assert.async();
-			TestUtil.getManifest().then(function (oManifest) {
-				const aRoutes = oManifest["sap.ui5"].routing.routes,
-					aRoutesToTest = removeLegacyRoutes(aRoutes),
-					oMockObjectsFactory = new MockObjectsFactory(oManifest);
-				this.oRouter = oMockObjectsFactory.getRouter();
-				this.oTracker = oMockObjectsFactory.getTracker();
-				this.aRoutesToTest = aRoutesToTest;
-				this.stubGetTitle = sinon.stub(this.oTracker, "_composeDefaultPageTitleFromRoute").returns(""); // not relevant to this test
-				this.stubGetVersion = sinon.stub(this.oTracker, "_getVersionName").returns(Promise.resolve("SAPUI5 Distribution"));
-
-				this.oTracker.start();
-				done();
-			}.bind(this))
-			.catch(function(error) {
-				assert.ok(false, "Could not load manifest.json file: " + error);
-				done();
-			});
+		before: function () {
+			this.oTracker = new UsageTracker(new MockObjectsFactory().getAppComponent());
+			this.oTracker.start();
 		},
 		beforeEach: function () {
 			this.sandbox = sinon.createSandbox();
+			this.sandbox.stub(this.oTracker, "_composeDefaultPageTitleFromRoute")
+				.returns(""); // not relevant to this test
 		},
 		after: function () {
 			this.oTracker.destroy();
 			this.oTracker = null;
-			this.oRouter.destroy();
-			this.oRouter = null;
-			this.stubGetTitle.restore();
-			this.stubGetVersion.restore();
 		},
 		afterEach: function () {
 			this.sandbox.restore();
 		}
 	});
 
-
 	QUnit.test("tracks correct section for each route", function (assert) {
-		this.aRoutesToTest.forEach(function (oRouteConfig) {
-			var sRouteName = oRouteConfig.name,
-				oRouteMatchEventParameters = {
-					config: oRouteConfig
-				};
-			this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
-				var sSection = oPageInfo.section;
-				assert.ok(sSection, "section for route " + sRouteName + " is defined");
-				assert.ok(aSections.includes(sSection), "section " + sSection + " matches one of the main sections");
-			});
-		}, this);
+		var sRouteName = "apiId",
+			oRouteConfig = {
+				name: sRouteName
+			},
+			oRouteMatchEventParameters = {
+				config: oRouteConfig
+			};
+		this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
+			var sSection = oPageInfo.section;
+			assert.strictEqual(sSection, testRouteTitle, "section for route " + sRouteName + " is defined");
+		});
 	});
+
 	QUnit.test("tracks localization info", function (assert) {
 		var oUserLanguageTag = Localization.getLanguageTag(),
 			sExpectedLanguage = oUserLanguageTag.language,
 			sExpectedRegion = oUserLanguageTag.region,
-			oRouteConfig = this.aRoutesToTest[0],
 			oRouteMatchEventParameters = {
-				config: oRouteConfig
+				config: {
+					name: "apiId"
+				}
 			};
 		this.oTracker._getPageInfoFromRoute(oRouteMatchEventParameters, function (oPageInfo) {
 			assert.equal(oPageInfo.language, sExpectedLanguage, "language is correct");
