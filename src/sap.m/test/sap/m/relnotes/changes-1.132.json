@@ -3,6 +3,11 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "5afa528417d1d51166d4872b793c401c8f51badc",
+        "type": "FIX",
+        "text": " We've now fixed the issue with the preview load while back navigating to the file in preview dialog's carousel"
+      },
+      {
         "id": "c0ed69faa6489d131cb96bab69ee528e61e328eb",
         "type": "FIX",
         "text": " sap.m.MultiInput: prevent adding tokens to disabled input"
