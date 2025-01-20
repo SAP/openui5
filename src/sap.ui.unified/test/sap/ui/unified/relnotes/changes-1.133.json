@@ -1,0 +1,22 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "9a704edba20d1d0f6a8adf9fa40ace84b3a5fec6",
+        "type": "FEATURE",
+        "text": " sap.m.YearRangePicker: Selected year ranges now show as selected"
+      },
+      {
+        "id": "c382a7ddb95da651a5f1dffd1a0745ad98591905",
+        "type": "FEATURE",
+        "text": " sap.m.SegmentedButton: Introduce new parameters"
+      },
+      {
+        "id": "ec04ff448bb489297bc4dc8d23ff79255c364b22",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Clear files functionality adjusted"
+      }
+    ]
+  }
+}

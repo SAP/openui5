@@ -3,6 +3,11 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "ec163968c5fe10692849a781b69a0bd1b23e76da",
+        "type": "FIX",
+        "text": " Integration Cards: Card dialog can now open a Component Card"
+      },
+      {
         "id": "0b0f7262440861e1f9d04a51443cd7907d0d155e",
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Fix overlapping of busy indicator"

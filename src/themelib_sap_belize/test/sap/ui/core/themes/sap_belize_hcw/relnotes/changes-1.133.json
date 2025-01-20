@@ -1,0 +1,22 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "4b5086c4eb73a40beb4d403f584da7fa9622d81b",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover visibility is now fixed"
+      },
+      {
+        "id": "1352d3c38bcbb00c54f47c5594de200431d7e400",
+        "type": "FEATURE",
+        "text": " ColumnMenu: Update to latest design spec"
+      },
+      {
+        "id": "0431f81d73abecee9aec179549a4612c73b8f01d",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: The existing design is now updated according to the applicable standards"
+      }
+    ]
+  }
+}

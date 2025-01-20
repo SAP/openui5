@@ -3,9 +3,29 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "9a704edba20d1d0f6a8adf9fa40ace84b3a5fec6",
+        "type": "FEATURE",
+        "text": " sap.m.YearRangePicker: Selected year ranges now show as selected"
+      },
+      {
+        "id": "9247ff410ec5c72dc6ba8fbc0b28d2cb0ce4bd61",
+        "type": "FIX",
+        "text": " sap.m.Title: Fix SmartVariantManagement title style"
+      },
+      {
+        "id": "c382a7ddb95da651a5f1dffd1a0745ad98591905",
+        "type": "FEATURE",
+        "text": " sap.m.SegmentedButton: Introduce new parameters"
+      },
+      {
         "id": "41fdec592e53b6cdad02790fa7fc8a1b13be7d21",
         "type": "FIX",
         "text": " sap.m.ToggleButton: Apply correct text shadow for toggled state"
+      },
+      {
+        "id": "0431f81d73abecee9aec179549a4612c73b8f01d",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: The existing design is now updated according to the applicable standards"
       }
     ]
   }

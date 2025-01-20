@@ -1,0 +1,17 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "27148cc9410244e777bb53016b9143443af641c3",
+        "type": "FIX",
+        "text": "sap.NavigationList: error is not trown in console"
+      },
+      {
+        "id": "0431f81d73abecee9aec179549a4612c73b8f01d",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: The existing design is now updated according to the applicable standards"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "c9d8a76819b04ef4f7c12836548c92db1438fbf3",
+        "type": "FIX",
+        "text": " DemoKit: Improve error handling in UsageTracking.qunit"
+      }
+    ]
+  }
+}

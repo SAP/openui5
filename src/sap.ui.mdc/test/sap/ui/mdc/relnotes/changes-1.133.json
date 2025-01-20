@@ -1,0 +1,12 @@
+{
+  "1.133.0": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "1352d3c38bcbb00c54f47c5594de200431d7e400",
+        "type": "FEATURE",
+        "text": " ColumnMenu: Update to latest design spec"
+      }
+    ]
+  }
+}

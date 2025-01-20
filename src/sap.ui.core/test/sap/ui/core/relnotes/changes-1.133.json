@@ -3,6 +3,16 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "11610e2add9ebb16b88bd5ab5b2bb3c50ee0f802",
+        "type": "FIX",
+        "text": " ThemeManager: Add detection for CSS preloads"
+      },
+      {
+        "id": "0cca0e08f1589cb818d8766c2b9f76324911156c",
+        "type": "FIX",
+        "text": " sap/ui/core/format/NumberFormat: fix spacing in short currency format"
+      },
+      {
         "id": "bbf459b5057085b0d572a803c6ebe8b2980cfdbf",
         "type": "FIX",
         "text": " MessageMixin: fix wrong additionalText"

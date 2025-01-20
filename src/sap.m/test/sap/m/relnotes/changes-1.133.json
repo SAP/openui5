@@ -3,6 +3,66 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "bfa6dd5a7b3359d2c69f803b1eac635d9c5feed0",
+        "type": "FIX",
+        "text": " sap.m.Input: preserve value after rerendering of password field"
+      },
+      {
+        "id": "0fca7a0ee4ac78a3b7d13e3903e2deba7e51e44d",
+        "type": "FIX",
+        "text": " sap.m.semantic.MasterPage: Stabilized tests"
+      },
+      {
+        "id": "112ce9734c062d9c285a3a9da01f76921c502f6c",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Added optional chaining"
+      },
+      {
+        "id": "4b5086c4eb73a40beb4d403f584da7fa9622d81b",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover visibility is now fixed"
+      },
+      {
+        "id": "9a704edba20d1d0f6a8adf9fa40ace84b3a5fec6",
+        "type": "FEATURE",
+        "text": " sap.m.YearRangePicker: Selected year ranges now show as selected"
+      },
+      {
+        "id": "100d8aab3b8f700b0183bf6754b49fd783faa876",
+        "type": "FIX",
+        "text": " Plugin will now set valid vds media type for the vds file uploads"
+      },
+      {
+        "id": "c4e0bf562a4a589c5623ca1795537ecfe7b5a881",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: User input not overridden"
+      },
+      {
+        "id": "b04cea7080390c08a0def3900351d8b751df79f1",
+        "type": "FIX",
+        "text": " We've now fixed the issue with the preview load while back navigating to the file in preview dialog's carousel"
+      },
+      {
+        "id": "ffe8215cc346089e5b733dd46182b0cb40527e95",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Corrected header shadow color parameter"
+      },
+      {
+        "id": "6ef252c77a7faa625c5e69337365006ac12416a0",
+        "type": "FIX",
+        "text": " sap.m.Select: Selected item fixed"
+      },
+      {
+        "id": "3e4501f85090e5404289250d22475c60fed59e13",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Close button information shouldn't be read out"
+      },
+      {
+        "id": "c382a7ddb95da651a5f1dffd1a0745ad98591905",
+        "type": "FEATURE",
+        "text": " sap.m.SegmentedButton: Introduce new parameters"
+      },
+      {
         "id": "578478e6b45cef0bebbaa65f9d7f5cdb0a3485a7",
         "type": "FIX",
         "text": " sap.m.DraftIndicator: Fix cutting of text"
@@ -11,6 +71,11 @@
         "id": "c025c855547d2ba2392d355f42ab6a783c05f415",
         "type": "FIX",
         "text": " sap.m.Avatar: Decorative avatar acc behaviour"
+      },
+      {
+        "id": "1352d3c38bcbb00c54f47c5594de200431d7e400",
+        "type": "FEATURE",
+        "text": " ColumnMenu: Update to latest design spec"
       },
       {
         "id": "700e8000af3a471fc0e703141af3245e32fdf43f",
