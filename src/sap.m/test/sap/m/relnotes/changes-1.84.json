@@ -2282,5 +2282,15 @@
         "text": " sap.m.Fiori20Adapter: Performance issue fixed"
       }
     ]
+  },
+  "1.84.49": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "69edebc7597c1eb8868936de654f24a9a7255a6c",
+        "type": "FIX",
+        "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
+      }
+    ]
   }
 }

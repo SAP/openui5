@@ -635,5 +635,15 @@
         "text": " sap.ui.unified.FileUploader: change event listener is reattached correctly now"
       }
     ]
+  },
+  "1.84.49": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "19c2783c8a31d404ff81488b3748ed8e52936acc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
+      }
+    ]
   }
 }
