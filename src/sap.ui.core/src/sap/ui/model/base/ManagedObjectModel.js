@@ -303,12 +303,15 @@ sap.ui.define([
 	 * Provides model access to a given {@link sap.ui.base.ManagedObject}. Such access allows to bind to properties and aggregations of
 	 * this object.
 	 *
+ 	 * <b>Note:</b> Use with care! Creating complex control trees based on ManagedObjectModel state may lead to performance issues.
+	 *
 	 * @param {sap.ui.base.ManagedObject} oObject the managed object models root object
 	 * @param {object} [oData] an object for custom data
 	 * @alias sap.ui.model.base.ManagedObjectModel
 	 * @extends sap.ui.model.json.JSONModel
-	 * @public
-	 * @experimental since 1.58
+	 * @private
+	 * @ui5-restricted sap.m, sap.ui.comp, sap.ui.core, sap.ui.fl, sap.ui.mdc
+ 	 * @since 1.58
 	 */
 	var ManagedObjectModel = JSONModel.extend("sap.ui.model.base.ManagedObjectModel", /** @lends sap.ui.mdc.model.base.ManagedObjectModel.prototype */
 		{
