@@ -15,7 +15,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/Boolean", // use odata type because of language dependent text
 	"sap/m/library",
-	"sap/ui/core/library"
+	"sap/m/ScrollContainer",
+	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], (
 		ValueHelpDelegate,
 		Bool,
@@ -27,20 +29,23 @@ sap.ui.define([
 		FormatException,
 		BooleanType,
 		mLibrary,
-		coreLibrary
+		ScrollContainer,
+		coreLibrary,
+		nextUIUpdate
 	) => {
 	"use strict";
 
 	let oBool;
 	let oType;
 	let bIsOpen = true;
+	let oScrollContainer = null;
 
 	const oContainer = { //to fake Container
 		getScrollDelegate() {
-			return null;
+			return oScrollContainer;
 		},
 		isOpen() {
-			return bIsOpen;
+			return !!oScrollContainer?.getDomRef() && bIsOpen; // only open if rendered
 		},
 		invalidate() {},
 		getValueHelpDelegate() {}
@@ -52,7 +57,25 @@ sap.ui.define([
 		oType.destroy();
 		oType = undefined;
 		bIsOpen = true;
+		if (oScrollContainer) {
+			oScrollContainer.getContent.restore();
+			oScrollContainer.destroy();
+			oScrollContainer = null;
+			delete oContainer.getUIAreaForContent;
+		}
 	};
+
+	async function _renderScrollContainer(oList) {
+
+		oScrollContainer = new ScrollContainer(); // to test scrolling
+		sinon.stub(oScrollContainer, "getContent").returns([oList]); // to render List
+		oContainer.getUIAreaForContent = () => {
+			return oScrollContainer.getUIArea();
+		};
+		oScrollContainer.placeAt("content"); // render ScrollContainer
+		await nextUIUpdate();
+
+	}
 
 	QUnit.module("basic features", {
 		beforeEach() {
@@ -98,8 +121,9 @@ sap.ui.define([
 
 		const oContent = oBool.getContent();
 
-		return oContent?.then((oContent) => {
-			oBool.onShow(); // to update selection and scroll
+		return oContent?.then(async (oContent) => {
+			await _renderScrollContainer(oContent);
+			await oBool.onShow(); // to update selection and scroll
 			assert.ok(oContent, "Content returned");
 			assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 			assert.equal(oBool.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
@@ -188,19 +212,19 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - key: true", (assert) => {
 
-		_checkForKey(assert, true, false);
+		return _checkForKey(assert, true, false);
 
 	});
 
 	QUnit.test("getItemForValue - key: false", (assert) => {
 
-		_checkForKey(assert, false, false);
+		return _checkForKey(assert, false, false);
 
 	});
 
 	QUnit.test("getItemForValue - key: undefined", (assert) => {
 
-		_checkForKey(assert, undefined, true);
+		return _checkForKey(assert, undefined, true);
 
 	});
 
@@ -208,7 +232,7 @@ sap.ui.define([
 
 		const oConfig = oBool.getConfig();
 		delete oConfig.dataType;
-		_checkForKey(assert, true, true);
+		return _checkForKey(assert, true, true);
 
 	});
 
@@ -246,19 +270,19 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue - description: true", (assert) => {
 
-		_checkForDescription(assert, true, false);
+		return _checkForDescription(assert, true, false);
 
 	});
 
 	QUnit.test("getItemForValue - description: false", (assert) => {
 
-		_checkForDescription(assert, false, false);
+		return _checkForDescription(assert, false, false);
 
 	});
 
 	QUnit.test("getItemForValue - description: invalid", (assert) => {
 
-		_checkForDescription(assert, "XXX", true);
+		return _checkForDescription(assert, "XXX", true);
 
 	});
 

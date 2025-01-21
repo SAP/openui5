@@ -3396,6 +3396,7 @@ sap.ui.define([
 		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
 		assert.ok(oField.hasPendingUserInput(), "user interaction after navigation");
+		assert.deepEqual(oValueHelp.getConditions(), aConditions, "Navigated condition not set on Valuehelp");
 
 		sinon.spy(oContent, "focus");
 		oValueHelp.fireNavigated({ condition: undefined, leaveFocus: true });
@@ -3495,6 +3496,7 @@ sap.ui.define([
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
 		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.equal(oContent.getDOMValue(), "Navigate (Y)", "value shown in inner control");
+		assert.deepEqual(oValueHelp.getConditions(), [Condition.createItemCondition("Y", "Navigate")], "Navigated condition set on Valuehelp");
 
 		sinon.spy(oValueHelp, "onControlChange");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
@@ -5316,7 +5318,7 @@ sap.ui.define([
 
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Role Combobox set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), sText, "Role Description set - default from MultiInput");
-		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "aria-haspopup set");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "dialog", "aria-haspopup set");
 		assert.equal($FocusDomRef.attr("autocomplete"), "off", "autocomplete off set");
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
@@ -5338,7 +5340,7 @@ sap.ui.define([
 		await nextUIUpdate();
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Open: Role Combobox set");
 		assert.equal($FocusDomRef.attr("aria-roledescription"), "RoleDescription", "Open: Role Description set - from ValueHelp");
-		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "Open: aria-haspopup set");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "dialog", "Open: aria-haspopup set");
 		assert.equal($FocusDomRef.attr("autocomplete"), "off", "Open: autocomplete off set");
 		assert.equal($FocusDomRef.attr("aria-expanded"), "true", "Open: aria-expanded set to true");
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
@@ -5379,6 +5381,7 @@ sap.ui.define([
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
+		oField.setConditions([]); // no conditions
 		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const aContent = oField.getAggregation("_content");
@@ -5390,7 +5393,7 @@ sap.ui.define([
 		oField.focus(); // as ValueHelp is connected with focus
 
 		assert.equal($FocusDomRef.attr("role"), "combobox", "Role Combobox set");
-		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "aria-haspopup set");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "dialog", "aria-haspopup set");
 		assert.equal($FocusDomRef.attr("autocomplete"), "off", "autocomplete off set");
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
@@ -5475,7 +5478,7 @@ sap.ui.define([
 
 		assert.notOk(oVHIcon, "No value help icon");
 		assert.notOk($FocusDomRef.attr("role"), "No role set");
-		assert.equal($FocusDomRef.attr("aria-haspopup"), "listbox", "aria-haspopup set");
+		assert.equal($FocusDomRef.attr("aria-haspopup"), "dialog", "aria-haspopup set");
 		assert.equal($FocusDomRef.attr("autocomplete"), "off", "autocomplete off set");
 		assert.notOk($FocusDomRef.attr("aria-expanded"), "aria-expanded not set");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
@@ -5549,6 +5552,9 @@ sap.ui.define([
 		oContent.fireLiveChange({ value: "I" });
 
 		setTimeout(async () => { // to wait for Promises and opening
+			sinon.stub(oValueHelp, "isOpen").returns(true);
+			sinon.spy(oValueHelp, "setHighlightId");
+			sinon.spy(oValueHelp, "removeVisualFocus");
 			let oCondition = Condition.createItemCondition("I1", "Item1");
 			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", items: 1, caseSensitive: true});
 			assert.equal(oContent._$input.val(), "Item1", "Output text");
@@ -5558,6 +5564,8 @@ sap.ui.define([
 			assert.ok(oContent._applySuggestionAcc.calledWith(1), "_applySuggestionAcc called");
 			const oAriaAttributes = oField.getProperty("_ariaAttributes");
 			assert.notOk(oAriaAttributes.aria.activedescendant, "Aria-activedescendant not set");
+			assert.ok(oValueHelp.setHighlightId.calledWith("myItem"), "HighlightId set on ValueHelp");
+			assert.ok(oValueHelp.removeVisualFocus.calledOnce, "Visual Focus removed from ValueHelp");
 
 			oField.setDisplay(FieldDisplay.Value); // destroys and creates new content
 			await nextUIUpdate();

@@ -617,14 +617,15 @@ sap.ui.define([
 		this._resolvePromise("open");
 
 		const oContent = this._getContent();
-		let oShowResult;
 
 		if (oContent) {
 			oContent.onContainerOpen();
-			oShowResult = oContent.onShow(true);
+			oContent.onShow(true).then((oShowResult) => {
+				this.fireOpened({ itemId: oShowResult?.itemId, items: oShowResult?.items });
+			});
+		} else {
+			this.fireOpened({ itemId: undefined, items: undefined });
 		}
-
-		this.fireOpened({ itemId: oShowResult?.itemId, items: oShowResult?.items });
 
 	};
 

@@ -1750,7 +1750,7 @@ sap.ui.define([
 			if (sRoleDescription) {
 				oAttributes.aria["roledescription"] = sRoleDescription;
 			}
-			oAttributes.aria["haspopup"] = oAriaAttributes.ariaHasPopup;
+			oAttributes.aria["haspopup"] = "dialog";// always dialog, like in Input, ComboBox etc. //oAriaAttributes.ariaHasPopup;
 			oAttributes["autocomplete"] = "off";
 			if (bOpen) {
 				if (oAriaAttributes.role) {
@@ -2547,6 +2547,9 @@ sap.ui.define([
 			oValueHelp.setHighlightId();
 			this._oNavigateCondition = undefined; // navigation item is not longer valid
 			this.getContentFactory().updateConditionType();
+			if (this.getMaxConditionsForHelp() === 1) {
+				oValueHelp.setConditions([]); // remove navigation from ValueHelp
+			}
 		}
 
 		if ("previousValue" in oEvent.getParameters()) {
@@ -2559,10 +2562,10 @@ sap.ui.define([
 
 		if (oValueHelp && (!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
 			if (bEscPressed) {
+				_setConditionsOnValueHelp.call(this, this.getConditions(), oValueHelp); // reset conditions
 				// close ValueHelp if escape pressed and not repoen it for last typed characters
 				if (oValueHelp.isOpen()) {
 					oValueHelp.close();
-					_setConditionsOnValueHelp.call(this, this.getConditions(), oValueHelp); // reset conditions
 					_clearLiveChangeTimer.call(this);
 					this._sFilterValue = "";
 				}
@@ -2864,7 +2867,7 @@ sap.ui.define([
 			await this._oValueHelpRequestPromise;
 			if (!this.isFieldDestroyed()) {
 				oValueHelp.setFilterValue(this._sFilterValue); // use types value for filtering, even if reopening ValueHelp
-				const aConditions = this.getConditions();
+				const aConditions = this._oNavigateCondition && this.getMaxConditionsForHelp() === 1 ? [this._oNavigateCondition] : this.getConditions(); // if navigated in closed state use navigated condition
 				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 				oValueHelp.toggleOpen(!!bOpenAsTypeahed);
 				const bIsFocusInHelp = oValueHelp.isFocusInHelp();
@@ -3074,8 +3077,9 @@ sap.ui.define([
 		}
 
 		this._oNavigateCondition = _createNavigateCondition.call(this, oCondition, sItemId);
-		if (this._oNavigateCondition) {
+		if (this._oNavigateCondition && this.getMaxConditionsForHelp() === 1) {
 			[vKey, sValue] = this._oNavigateCondition.values;
+			oValueHelp.setConditions([oCondition]); // in single selection, the navigated condition should be selected one (use condition returned from valuehelp to prevent unneccessry update if not changed)
 		}
 
 		this._bPreventGetDescription = true; // if no description in navigated condition, no description exist. Don't try to read one
@@ -3119,6 +3123,10 @@ sap.ui.define([
 					oContent._doSelect();
 				}
 			}
+
+			if (oValueHelp.isOpen() && oContent.hasStyleClass("sapMFocus")) { // happens if navigated back from "show All items"-button
+				_setVisualFocusToValueHelp(oContent, oValueHelp);
+			}
 		}
 
 		this._bPreventGetDescription = false; // back to default
@@ -3152,6 +3160,7 @@ sap.ui.define([
 			if (sOutput) { // only if something returned
 				const oValueHelp = _getValueHelp.call(this);
 				if (oValueHelp?.isOpen()) {
+					_setVisualFocusToField(oContent, oValueHelp); // remove focus from dropdown
 					oValueHelp.setHighlightId(!this._bPreventAutocomplete && sItemId);
 				}
 
@@ -3278,8 +3287,10 @@ sap.ui.define([
 
 		// sync conditions with ValueHelp as we cannot e sure that it still is in sync
 		const oValueHelp = oEvent.getSource();
-		const aConditions = this.getConditions();
-		_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
+		if (!this._oNavigateCondition) { // if navigated keep state to allow closed navigation
+			const aConditions = this.getConditions();
+			_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
+		}
 
 		if (_isFocused.call(this)) { // restore focus visualization
 			_setVisualFocusToField(oContent, oValueHelp);
@@ -3304,8 +3315,10 @@ sap.ui.define([
 				sItemId = oEvent.getParameter("itemId");
 			}
 
-			// to focus selected item, typeahead match, or fist item (if none selected)
-			oValueHelp.navigate(0);
+			if (!this._sFilterValue && !this._oNavigateCondition && this.getConditions().length === 0) {
+				// to focus first item (if none selected)
+				oValueHelp.navigate(0);
+			}
 		}
 		_setAriaAttributes.call(this, true, sItemId);
 		_setShowValueStateMessage.call(this, false);// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
