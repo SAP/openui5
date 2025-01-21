@@ -457,11 +457,20 @@ sap.ui.define([
 
 			if (bSelectable) {
 				oLinkAriaProps.checked = oNavigationList._selectedItem === this;
+				oLinkAriaProps.selected = bSelected;
+			} else {
+				oLinkAriaProps.selected = false;
 			}
 
 			oLinkAriaProps.roledescription = this._resourceBundleTnt.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM");
 		} else {
 			oLinkAriaProps.role = "treeitem";
+
+			if (bSelectable) {
+				oLinkAriaProps.selected = bSelected;
+			} else {
+				oLinkAriaProps.selected = false;
+			}
 
 			if (bSelected) {
 				oLinkAriaProps.current = "page";
@@ -531,7 +540,8 @@ sap.ui.define([
 
 		const oLinkAriaProps = {
 			role: "treeitem",
-			current: this._isListExpanded() && bSelected ? "page" : undefined
+			current: this._isListExpanded() && bSelected ? "page" : undefined,
+			selected: bSelected
 		};
 		this._renderStartLink(oRM, oLinkAriaProps, bDisabled);
 
@@ -700,8 +710,10 @@ sap.ui.define([
 		if (bListExpanded) {
 			if (bSelected) {
 				oFocusRef.setAttribute("aria-current", "page");
+				oFocusRef.setAttribute("aria-selected", "true");
 			} else {
 				oFocusRef.removeAttribute("aria-current");
+				oFocusRef.setAttribute("aria-selected", "false");
 			}
 		} else {
 			oFocusRef.setAttribute("aria-checked", bSelected ? "true" : "false");

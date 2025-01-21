@@ -269,6 +269,10 @@ sap.ui.define([
 									key: 'child2'
 								})
 							]
+						}),
+						new NavigationListItem({
+							text: 'Root2',
+							key: 'root2'
 						})
 					]
 				}),
@@ -318,6 +322,29 @@ sap.ui.define([
 		assert.strictEqual(selectedItem.getText(), 'Child 2', 'selection is correct');
 		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
+	});
+
+	QUnit.test('aria-selected is correctly set', async function (assert) {
+		const selectedItem = Element.getElementById(this.sideNavigation.getSelectedItem());
+		assert.strictEqual(selectedItem.getDomRef().querySelector("a").getAttribute('aria-selected'), 'true', 'initial selected item has aria-selected="true"');
+
+		const getAllItems = (list) =>
+			list.getItems().flatMap((item) => [item, ...getAllItems(item)]);
+
+		const allItems = getAllItems(this.sideNavigation.getItem());
+		const nonSelectedItems = allItems.filter((item) => item.getKey() !== selectedItem.getKey());
+
+		assert.ok(
+			nonSelectedItems.every((item) => item.getDomRef().querySelector("a").getAttribute('aria-selected') === 'false'),
+			'all non-selected items have aria-selected="false"'
+		);
+
+		this.sideNavigation.setSelectedKey('root2');
+		await nextUIUpdate(this.clock);
+
+		const newSelectedItem = Element.getElementById(this.sideNavigation.getSelectedItem());
+		assert.strictEqual(newSelectedItem.getDomRef().querySelector("a").getAttribute('aria-selected'), 'true', 'new selected item has aria-selected="true"');
+		assert.strictEqual(selectedItem.getDomRef().querySelector("a").getAttribute('aria-selected'), 'false', 'initial selected item has aria-selected="false" after changing selection');
 	});
 
 	QUnit.test('interaction', async function (assert) {
