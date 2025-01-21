@@ -294,6 +294,11 @@ sap.ui.define([
 			this.getDomRef().classList.add("sapTntNLIActive");
 		}
 
+		//onkeyup is not called when new page is opened
+		if (this.getHref() && this.getTarget() === "_blank") {
+			this.getDomRef().classList.remove("sapTntNLIActive");
+		}
+
 		NavigationListItemBase.prototype.onkeydown.apply(this, arguments);
 	};
 

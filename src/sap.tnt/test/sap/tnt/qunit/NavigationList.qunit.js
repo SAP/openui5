@@ -259,6 +259,13 @@ sap.ui.define([
 							text: 'Child 3'
 						})
 					]
+				}),
+				new NavigationListItem({
+					text: 'External Link',
+					selectable: false,
+					target: "_blank",
+					href: "https://sap.com",
+					icon: "sap-icon://attachment"
 				})
 			]
 		});
@@ -288,7 +295,7 @@ sap.ui.define([
 
 	QUnit.test("contains elements and classes", function (assert) {
 		assert.ok(this.navigationList.$().hasClass("sapTntNL"), "sapTntNL class is set");
-		assert.strictEqual(this.navigationList.getDomRef().children.length, 8, "items number is correct");
+		assert.strictEqual(this.navigationList.getDomRef().children.length, 9, "items number is correct");
 		assert.strictEqual(this.navigationList.getDomRef().children[0].querySelector(".sapTntNLIItemsContainer").children.length, 3, "first root item's children are correct number");
 		assert.strictEqual(this.navigationList.getDomRef().querySelectorAll("#navGroup1 ul li").length, 3, "first group's children are correct number");
 
@@ -981,6 +988,24 @@ sap.ui.define([
 
 		// Act
 		QUnitUtils.triggerKeyup(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.ENTER);
+
+		// Assert
+		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is NOT set");
+		assert.strictEqual(fnEventSpy.callCount, 0, "select event should NOT be fired");
+
+		// Clean up
+		oStub.restore();
+	});
+
+	QUnit.test("enter on external link styles", function (assert) {
+		// Arrange
+		const fnEventSpy = sinon.spy();
+		const oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
+		const oTargetItem = this.navigationList.getItems()[6];
+		this.navigationList.attachItemSelect(fnEventSpy);
+
+		// Act
+		QUnitUtils.triggerKeydown(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.ENTER);
 
 		// Assert
 		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is NOT set");
