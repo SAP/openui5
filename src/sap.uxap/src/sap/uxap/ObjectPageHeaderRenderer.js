@@ -164,8 +164,8 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		// if we have markers or arrow we have to cut the last word and bind it to the markers and arrow so that the icons never occur in one line but are accompanied by the last word of the title.
 
 		if (bMarkers || oControl.getShowTitleSelector() || oControl.getMarkLocked() || oControl.getMarkChanges()) {
-			var sOHTitleEnd = sOHTitle.substr(sOHTitle.lastIndexOf(" ") + 1);
-			var sOHTitleStart = sOHTitle.substr(0, sOHTitle.lastIndexOf(" ") + 1);
+			var sOHTitleEnd = sOHTitle.substring(sOHTitle.lastIndexOf(" ") + 1);
+			var sOHTitleStart = sOHTitle.substring(0, sOHTitle.lastIndexOf(" ") + 1);
 
 			if (sOHTitleEnd.length === 1) {
 				sOHTitleEnd = sOHTitle;
