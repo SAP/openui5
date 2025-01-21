@@ -1288,10 +1288,6 @@ sap.ui.define([
 			return this._get("currencyFormat")[sAlternative ? sContext + "-" + sAlternative : sContext];
 		},
 
-		getCurrencySpacing: function(sPosition) {
-			return this._get("currencyFormat", "currencySpacing", sPosition === "after" ? "afterCurrency" : "beforeCurrency");
-		},
-
 		/**
 		 * Get percent format pattern.
 		 *
