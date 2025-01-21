@@ -50,7 +50,7 @@ sap.ui.define([
 					return vValue || [];
 				},
 				defaultValue: aDefaultValue,
-				external: true
+				external: false
 			});
 			return vFlexibilityServices;
 		},
