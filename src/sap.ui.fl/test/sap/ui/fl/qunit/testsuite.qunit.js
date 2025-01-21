@@ -684,6 +684,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/AppVariantWriteAPI"]
 				}
 			},
+			"write/api/BusinessNetworkAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/BusinessNetworkAPI"]
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
