@@ -5549,4 +5549,105 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+[{
+	sPattern: "\xa4\xa0#,##0.00;(\xa4\xa0#,##0.00)",
+	sResult: "~currency\xa0~amount"
+}, {
+	sAmount: "~minusSign~amount",
+	sPattern: "\xa4\xa0#,##0.00;(\xa4\xa0#,##0.00)",
+	bNegative: true,
+	sResult: "(~currency\xa0~amount)"
+}, {
+	sAmount: "-~amount",
+	sPattern: "\xa4#,##0.00",
+	sMinusSign: "-",
+	bNegative: true,
+	sResult: "~currency\ufeff-~amount"
+}, {
+	sAmount: "~minusSign~amount",
+	sPattern: "\u200f#,##0.00\xa0\u202b\xa4\u200e\u202c;\u200f-#,##0.00\xa0\u202b\xa4\u200e\u202c",
+	bNegative: true,
+	sResult: "\u200f~minusSign~amount\xa0\u202b~currency\u200e\u202c"
+}, {
+	sAmount: "-~amount",
+	sPattern: "\xa4\xa0#,##0.00;\xa4-#,##0.00",
+	sMinusSign: "-",
+	bNegative: true,
+	sResult: "~currency\ufeff-~amount"
+}, {
+	sAmount: "~minusSign~amount",
+	sPattern: "\xa4\u061c#,##0.00",
+	bNegative: true,
+	sResult: "~currency\u061c~minusSign~amount"
+}].forEach(({sAmount = "~amount", sMinusSign = "~minusSign", bNegative = false, sPattern, sResult}, i) => {
+	QUnit.test("_composeCurrencyResult: #" + i, function (assert) {
+
+		// code under test
+		assert.strictEqual(
+			NumberFormat._composeCurrencyResult(sPattern, sAmount, "~currency", sMinusSign, bNegative),
+			sResult
+		);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	oFormatOptions: {currencyCode: false, currencyContext: "accounting"},
+	sLocale: "en-US",
+	sExpectedResult: "($1,234,567.89)"
+}, {
+	oFormatOptions: {currencyContext: "accounting", showMeasure: false},
+	sLocale: "en-US",
+	sExpectedResult: "(1,234,567.89)"
+}, {
+	oFormatOptions: {showMeasure: false},
+	sLocale: "en-US",
+	sValue: "1234567.89",
+	sExpectedResult: "1,234,567.89"
+}, {
+	oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
+	sLocale: "en-US",
+	sExpectedResult: "(1,234,567.89\u00a0USD)"
+}, {
+	oFormatOptions: {currencyCode: false, style: "short"},
+	sExpectedResult: "$\ufeff-1.2M"
+}, {
+	oFormatOptions: {currencyCode: false, style: "short"},
+	sCurrency: "INR",
+	sExpectedResult: "\u20b9\ufeff-12 Lk"
+}, {
+	oFormatOptions: {style: "short", trailingCurrencyCode: false},
+	sExpectedResult: "USD\ufeff-1.2M"
+}, {
+	oFormatOptions: {style: "short", trailingCurrencyCode: false},
+	sCurrency: "INR",
+	sExpectedResult: "INR\ufeff-12 Lk"
+}, {
+	oFormatOptions: {style: "short", trailingCurrencyCode: true},
+	sExpectedResult: "-1.2M\u00a0USD"
+}, {
+	oFormatOptions: {style: "short", trailingCurrencyCode: true},
+	sCurrency: "INR",
+	sExpectedResult: "-12 Lk\u00a0INR"
+}, {
+	oFormatOptions: {currencyCode: false, currencyContext: "accounting"},
+	sCurrency: "INR",
+	sExpectedResult: "(\u20b91,234,567.89)"
+}, {
+	oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
+	sExpectedResult: "(1,234,567.89\u00a0USD)"
+}, {
+	oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
+	sCurrency: "INR",
+	sExpectedResult: "(1,234,567.89\u00a0INR)"
+}].forEach(({oFormatOptions, sLocale = "en-IN", sValue = "-1234567.89", sCurrency = "USD", sExpectedResult}, i) => {
+	QUnit.test("format: considering noCurrency/alphaNextToNumber alternatives - integrative; #" + i, function (assert) {
+		const oFormat = NumberFormat.getCurrencyInstance(oFormatOptions, new Locale(sLocale));
+
+		// code under test
+		assert.strictEqual(oFormat.format(sValue, sCurrency), sExpectedResult);
+	});
+});
 });

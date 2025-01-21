@@ -46,8 +46,9 @@ sap.ui.define([
 		}
 	});
 
+	// Regex for replacing the number part of a decimal or currency pattern
+	const rNumberPattern = /[0#.,]+/;
 	const rAllWhiteSpaces = /\s/g;
-	const rDigit = /\d/;
 	// Regex for checking whether the last character belongs to the Unicode General Category L (letter)
 	const rEndsWithLetter = /\p{L}$/u;
 	// Regex for checking whether the first character belongs to the Unicode General Category L (letter)
@@ -62,9 +63,6 @@ sap.ui.define([
 	const rSplitCurrencyPattern = /([0#.,]*)([^0#.,]*)(¤)([^0#.,]*)([0#.,]*)/;
 	// Regex for checking if a number has leading zeros
 	const rLeadingZeros = /^(-?)0+(\d)/;
-	// Not matching Sc (currency symbol) and Z (separator) characters
-	// https://www.unicode.org/reports/tr44/#General_Category_Values
-	const rNotSAndNotZ = /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6\u0020\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/;
 	// Regex for matching the number placeholder in pattern
 	const rNumPlaceHolder = /0+(\.0+)?/;
 	// Regex for checking that the given string only consists of '0' characters
@@ -1244,8 +1242,8 @@ sap.ui.define([
 	 *
 	 * @param {"integer"|"float"|"currency"|"unit"|"percent"} sType
 	 *   The number format type
-	 *
 	 * @returns {object} The default locale-dependent format options for the given number format type
+	 *
 	 * @private
 	 */
 	NumberFormat.prototype.getLocaleFormatOptions = function (sType) {
@@ -1533,7 +1531,6 @@ sap.ui.define([
 			oOrigOptions = this.oOriginalFormatOptions,
 			bIndianCurrency = oOptions.type === mNumberType.CURRENCY && sMeasure === "INR" &&
 				this.oLocale.getLanguage() === "en" && this.oLocale.getRegion() === "IN",
-			aPatternParts,
 			oShortFormat,
 			nShortRefNumber,
 			sPluralCategory,
@@ -1839,30 +1836,14 @@ sap.ui.define([
 				: this.getCurrencyPattern(oOptions.currencyContext, oOptions.trailingCurrencyCode,
 					sMeasure && oOptions.showMeasure, sCurrencySymbolOrCode, bNegative);
 
-			// The currency pattern is defined in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
-			// where the pattern after ';' should be used for negative numbers.
-			// Therefore it's needed to check whether the pattern contains ';' and use the later part for
-			// negative values
-			aPatternParts = sPattern.split(";");
-			if (aPatternParts.length === 2) {
-				sPattern = bNegative ? aPatternParts[1] : aPatternParts[0];
-				if (bNegative) {
-					sResult = sResult.substring(oOptions.minusSign.length);
-				}
-			}
-
-			sResult = this._composeCurrencyResult(sPattern, sResult, sCurrencySymbolOrCode, {
-				decimalPadding: iDecimalPadding,
-				showMeasure: oOptions.showMeasure,
-				negative: bNegative,
-				minusSign: oOptions.minusSign
-			});
+			sResult = NumberFormat._composeCurrencyResult(sPattern, sResult, sCurrencySymbolOrCode, oOptions.minusSign,
+				bNegative);
 		}
 
 		// format percent values:
 		if (oOptions.type === mNumberType.PERCENT) {
 			sPattern = oOptions.pattern;
-			sResult = sPattern.replace(/[0#.,]+/, sResult);
+			sResult = sPattern.replace(rNumberPattern, sResult);
 			sResult = sResult.replace(/%/, oOptions.percentSign);
 		}
 
@@ -1916,9 +1897,9 @@ sap.ui.define([
 	 *   Custom currencies, see {@link Numberformat.getCurrencyInstance}
 	 * @param {string} sCurrencyCode
 	 *   The currency code
-	 *
 	 * @returns {string}
 	 *   The currency symbol or the currency code
+	 *
 	 * @private
 	 */
 	NumberFormat.prototype.getCurrencySymbolOrCode = function (oFormatOptions, sCurrencyCode) {
@@ -1972,60 +1953,43 @@ sap.ui.define([
 		return sResult;
 	};
 
-
-	NumberFormat.prototype._composeCurrencyResult = function(sPattern, sFormattedNumber, sMeasure, oOptions) {
-		let sMinusSign = oOptions.minusSign;
-		let sResult = sPattern.replace(/[0#.,]+/, sFormattedNumber);
-		if (oOptions.showMeasure && sMeasure) {
-			var sPlaceHolder = "\u00a4",
-				mRegex = {
-					"[:digit:]": rDigit,
-					"[[:^S:]&[:^Z:]]": rNotSAndNotZ
-				},
-				iMeasureStart = sResult.indexOf(sPlaceHolder),
-				// determine whether the number is before the measure or after it by comparing the position of measure placeholder with half of the length of the pattern string
-				sPosition = iMeasureStart < sResult.length / 2 ? "after" : "before",
-				oSpacingSetting = this.oLocaleData.getCurrencySpacing(sPosition),
-				sCurrencyChar = (sPosition === "after" ? sMeasure.charAt(sMeasure.length - 1) : sMeasure.charAt(0)),
-				sNumberChar,
-				rCurrencyChar = mRegex[oSpacingSetting.currencyMatch],
-				rNumberChar = mRegex[oSpacingSetting.surroundingMatch],
-				iInsertPos;
-
-			sResult = sResult.replace(sPlaceHolder, sMeasure);
-
-			sNumberChar = (sPosition === "after" ? sResult.charAt(iMeasureStart + sMeasure.length)
-				: sResult.charAt(iMeasureStart - 1));
-
-			if (rCurrencyChar && rCurrencyChar.test(sCurrencyChar) && rNumberChar && rNumberChar.test(sNumberChar)) {
-				// when both checks are valid, insert the defined space
-
-				if (sPosition === "after") {
-					iInsertPos = iMeasureStart + sMeasure.length;
-				} else {
-					iInsertPos = iMeasureStart;
-				}
-
-				// insert the space char between the measure and the number
-				sResult = sResult.slice(0, iInsertPos) + oSpacingSetting.insertBetween + sResult.slice(iInsertPos);
-			} else if (oOptions.negative && sPosition === "after") {
-				// when no space is inserted between measure and number
-				// and when the number is negative and the measure is shown before the number
-				// a zero-width non-breakable space ("\ufeff") is inserted before the minus sign
-				// in order to prevent the formatted currency number from being wrapped after the
-				// minus sign when the space isn't enough for displaying the currency number within
-				// one line
-				sMinusSign = "\ufeff" + oOptions.minusSign;
+	/**
+	 * Replaces the amount, measure, and minus sign parts in the given pattern with the given values and returns the
+	 * result.
+	 *
+	 * @param {string} sPattern
+	 *   The currency pattern, e.g. "¤#,##0.00;(¤#,##0.00)", "¤#,##0.00;¤-#,##0.00", "#,##0.00", or "¤ 000K"
+	 * @param {string} sAmount
+	 *   The formatted amount, e.g. "1,234.56"
+	 * @param {string} sMeasure
+	 *   The currency symbol or code
+	 * @param {string} sMinusSign
+	 *   The locale specific minus sign
+	 * @param {boolean} bNegative
+	 *   Whether the amount is negative
+	 * @returns {string}
+	 *   The resulting string after replacing the amount, measure, and minus sign parts in the given pattern with the
+	 *   given values
+	 *
+	 * @private
+	 */
+	NumberFormat._composeCurrencyResult = function (sPattern, sAmount, sMeasure, sMinusSign, bNegative) {
+		const aPatternParts = sPattern.split(";");
+		if (aPatternParts.length === 2) {
+			sPattern = aPatternParts[bNegative ? 1 : 0];
+			if (bNegative) {
+				sAmount = sAmount.slice(sMinusSign.length);
 			}
-		} else {
-			if (oOptions.decimalPadding > 0) {
-				sResult = sResult.replace(rAllRTLCharacters, "");
-			}
-			sResult = sResult.replace(/\s*\u00a4\s*/, "");
 		}
-
-		if (oOptions.negative) {
-			sResult = sResult.replace(/-/, sMinusSign);
+		let sResult = sPattern.replace("-", sMinusSign).replace(rNumberPattern, sAmount).replace("\u00a4", sMeasure);
+		if (bNegative) {
+			// when no space is inserted between measure and number
+			// and when the number is negative and the measure is shown before the number
+			// a zero-width non-breakable space ("\ufeff") is inserted before the minus sign
+			// in order to prevent the formatted currency number from being wrapped after the
+			// minus sign when the space isn't enough for displaying the currency number within
+			// one line
+			sResult = sResult.replace(sMeasure + sMinusSign, sMeasure + "\ufeff" + sMinusSign);
 		}
 
 		return sResult;
@@ -2448,8 +2412,8 @@ sap.ui.define([
 	 *   The currency code or the currency symbol to check, e.g. "USD" or "$"
 	 * @param {boolean} bNegative
 	 *   Whether the value to be formatted is negative
-	 *
-	 * @returns {boolean} Whether there is a letter next to the number for the given pattern and currency
+	 * @returns {boolean}
+	 *   Whether there is a letter next to the number for the given pattern and currency
 	 *
 	 * @private
 	 */
@@ -2495,7 +2459,6 @@ sap.ui.define([
 	 *   The currency code or symbol
 	 * @param {boolean} [bNegative]
 	 *   Whether the number is negative
-	 *
 	 * @returns {string|undefined}
 	 *   The compact decimal or currency pattern for the given power of ten and plural category; or
 	 *   <code>undefined</code> if there is no pattern for the given parameters
@@ -2548,7 +2511,6 @@ sap.ui.define([
 	 * @param {boolean} [bShowMeasure] Whether to include the measure (currency code or currency symbol) in the pattern
 	 * @param {string} [sCurrency] The currency code or symbol to use
 	 * @param {boolean} [bNegative] Whether the current value is negative
-	 *
 	 * @returns {string} The currency pattern
 	 *
 	 * @private
