@@ -77380,6 +77380,10 @@ make root = ${bMakeRoot}`;
 	// When using getDownloadUrl, the result URL does not exclude the $expand for the separate
 	// property.
 	// JIRA: CPOUI5ODATAV4-2694
+	//
+	// Show that ETags do not affect $$separate and kept-alive handling. Also a late property is
+	// requested, but it only affects the keep alive request.
+	// JIRA: CPOUI5ODATAV4-2779
 [false, true].forEach(function (bReset) {
 	QUnit.test(`$$separate: refresh ${bReset ? "w/" : "w/o"} reset`, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -77402,22 +77406,36 @@ make root = ${bMakeRoot}`;
 		this.expectRequest(sFriendUrl + "&$skip=0&$top=2", new Promise(function (resolve) {
 				fnResolveBestFriend = resolve.bind(null, {
 					value : [{
+						"@odata.etag" : "etag.10.0",
 						ArtistID : "10",
-						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "OLD A"},
+						BestFriend : {
+							"@odata.etag" : "etag.F1.0",
+							ArtistID : "F1",
+							IsActiveEntity : true,
+							Name : "OLD A"
+						},
 						IsActiveEntity : true
 					}, {
+						"@odata.etag" : "etag.20.0",
 						ArtistID : "20",
-						BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "OLD B"},
+						BestFriend : {
+							"@odata.etag" : "etag.F2.0",
+							ArtistID : "F2",
+							IsActiveEntity : true,
+							Name : "OLD B"
+						},
 						IsActiveEntity : true
 					}]
 				});
 			}))
 			.expectRequest(sMainUrl + "&$skip=0&$top=2", {
 				value : [{
+					"@odata.etag" : "etag.10.0",
 					ArtistID : "10",
 					IsActiveEntity : true,
 					Name : "Artist A"
 				}, {
+					"@odata.etag" : "etag.20.0",
 					ArtistID : "20",
 					IsActiveEntity : true,
 					Name : "Artist B"
@@ -77430,19 +77448,44 @@ make root = ${bMakeRoot}`;
 
 		const oBinding = this.oView.byId("table").getBinding("items");
 		const [oArtistA] = oBinding.getAllCurrentContexts();
+
+		this.expectRequest("Artists(ArtistID='10',IsActiveEntity=true)?$select=Address/City", {
+				"@odata.etag" : "etag.10.0",
+				Address : {
+					City : "Heidelberg"
+				}
+			});
+
+		const [sCity] = await Promise.all([
+			oArtistA.requestProperty("Address/City"),
+			this.waitForChanges(assert, "request late property")
+		]);
+
+		assert.strictEqual(sCity, "Heidelberg");
+
 		if (bReset) {
 			// reset requests kept-alive element
 			this.expectRequest({
-					batchNo : 4,
+					batchNo : 5,
 					groupId : "$auto",
-					url : sMainUrl
+					url : "Artists?$select=Address/City,ArtistID,IsActiveEntity,Name"
 						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ "&$filter=ArtistID eq '10' and IsActiveEntity eq true"
 				}, {
 					value : [{
+						"@odata.etag" : "etag.10.1",
+						Address : {
+							City : "Heidelberg"
+						},
 						ArtistID : "10",
-						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A #2"},
+						BestFriend : {
+							"@odata.etag" : "etag.F1.1",
+							ArtistID : "F1",
+							IsActiveEntity : true,
+							Name : "Friend A #2"
+						},
 						IsActiveEntity : true,
+						// unrealistic; to demonstrate that keep alive response wins
 						Name : "Artist A #2"
 					}]
 				})
@@ -77451,30 +77494,44 @@ make root = ${bMakeRoot}`;
 			oArtistA.setKeepAlive(true); // set kept-alive to reset (instead of recreate) the cache
 		}
 		this.expectRequest({
-				batchNo : 3,
+				batchNo : 4,
 				groupId : "$single",
 				url : sFriendUrl + "&$skip=0&$top=2"
 			}, {
 				value : [{
+					"@odata.etag" : "etag.10.1",
 					ArtistID : "10",
-					BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A #1"},
+					BestFriend : {
+						"@odata.etag" : "etag.F1.1",
+						ArtistID : "F1",
+						IsActiveEntity : true,
+						Name : "Friend A #1"
+					},
 					IsActiveEntity : true
 				}, {
+					"@odata.etag" : "etag.20.1",
 					ArtistID : "20",
-					BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B #1"},
+					BestFriend : {
+						"@odata.etag" : "etag.F2.1",
+						ArtistID : "F2",
+						IsActiveEntity : true,
+						Name : "Friend B #1"
+					},
 					IsActiveEntity : true
 				}]
 			})
 			.expectRequest({
-				batchNo : 4,
+				batchNo : 5,
 				groupId : "$auto",
 				url : sMainUrl + "&$skip=0&$top=2"
 			}, {
 				value : [{
+					"@odata.etag" : "etag.10.1",
 					ArtistID : "10",
 					IsActiveEntity : true,
 					Name : "Artist A #1"
 				}, {
+					"@odata.etag" : "etag.20.1",
 					ArtistID : "20",
 					IsActiveEntity : true,
 					Name : "Artist B #1"
@@ -77500,6 +77557,22 @@ make root = ${bMakeRoot}`;
 		fnResolveBestFriend();
 
 		await this.waitForChanges(assert, "resolve old separate request, ignore response");
+
+		assert.deepEqual(oArtistA.getObject(), {
+			"@odata.etag" : "etag.10.1",
+			ArtistID : "10",
+			BestFriend : {
+				"@odata.etag" : "etag.F1.1",
+				ArtistID : "F1",
+				IsActiveEntity : true,
+				// unrealistic; to demonstrate that latest $$separate response wins
+				Name : "Friend A #1"
+			},
+			IsActiveEntity : true,
+			// unrealistic; to demonstrate that keep alive response wins
+			Name : `Artist A #${bReset ? "2" : "1"}`,
+			...(bReset && {Address : {City : "Heidelberg"}})
+		});
 
 		// code under test
 		assert.strictEqual(oBinding.getDownloadUrl(),
