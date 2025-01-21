@@ -19,8 +19,11 @@
 				<tnt:NavigationListItem text="Home" icon="sap-icon://home" />
 				<tnt:NavigationListGroup text="New">
 					<tnt:NavigationListItem text="People" icon="sap-icon://people-connected" />
-					<tnt:NavigationListItem text="Building" icon="sap-icon://building" />
-					<tnt:NavigationListItem text="Mileage" icon="sap-icon://mileage">
+					<tnt:NavigationListItem text="Building" icon="sap-icon://building" >
+						<tnt:NavigationListItem text="Office 01" />
+						<tnt:NavigationListItem text="Office 02" />
+					</tnt:NavigationListItem>
+					<tnt:NavigationListItem text="Mileage" icon="sap-icon://mileage" selectable="false">
 						<tnt:NavigationListItem text="Driven" />
 						<tnt:NavigationListItem text="Walked" id="walked" />
 					</tnt:NavigationListItem>
@@ -38,6 +41,7 @@
 			</tnt:NavigationList>
 			<tnt:fixedItem>
 				<tnt:NavigationList>
+					<tnt:NavigationListItem ariaHasPopup="Dialog" id="quickCreate" press=".quickActionPress" text="Quick Create" icon="sap-icon://write-new"  design="Action" selectable="false"/>
 					<tnt:NavigationListItem text="Bar Chart" icon="sap-icon://bar-chart" />
 					<tnt:NavigationListItem selectable="false" href="https://sap.com" target="_blank" text="External Link" icon="sap-icon://attachment" />
 					<tnt:NavigationListItem text="Compare" icon="sap-icon://compare" />

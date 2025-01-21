@@ -4,12 +4,16 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Popover",
 	"sap/m/Button",
-	"sap/m/library"
-], function (Device, Controller, JSONModel, Popover, Button, library) {
+	"sap/m/Dialog",
+	"sap/m/Text",
+	"sap/m/library",
+	"sap/tnt/library"
+], function (Device, Controller, JSONModel, Popover, Button, Dialog, Text, library, tntLibrary) {
 	"use strict";
 
 	var ButtonType = library.ButtonType,
-		PlacementType = library.PlacementType;
+		PlacementType = library.PlacementType,
+		NavigationListItemDesign = tntLibrary.NavigationListItemDesign;
 
 	return Controller.extend("sap.tnt.sample.ToolPage.ToolPage", {
 
@@ -54,6 +58,37 @@ sap.ui.define([
 			this._setToggleButtonTooltip(bSideExpanded);
 
 			oToolPage.setSideExpanded(!oToolPage.getSideExpanded());
+		},
+
+		onQuickActionPress: function (oEvent) {
+			if (oEvent.oSource.getDesign() !== NavigationListItemDesign.Action) {
+				return;
+			}
+			if (!this.oDefaultDialog) {
+				this.oDefaultDialog = new Dialog({
+					title: "Create Item",
+					type: "Message",
+					content: new Text({ text: "Create New Navigation List Item" }),
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "Create",
+						press: function () {
+							this.oDefaultDialog.close();
+						}.bind(this)
+					}),
+					endButton: new Button({
+						text: "Cancel",
+						press: function () {
+							this.oDefaultDialog.close();
+						}.bind(this)
+					})
+				});
+
+				// to get access to the controller's model
+				this.getView().addDependent(this.oDefaultDialog);
+			}
+
+			this.oDefaultDialog.open();
 		},
 
 		_setToggleButtonTooltip: function (bLarge) {

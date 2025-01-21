@@ -5,14 +5,16 @@ sap.ui.define([
 	'sap/tnt/NavigationListItem',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	'sap/ui/qunit/utils/nextUIUpdate'
+	'sap/ui/qunit/utils/nextUIUpdate',
+	"sap/ui/qunit/QUnitUtils"
 ], function(
 	SideNavigation,
 	NavigationList,
 	NavigationListItem,
 	Element,
 	Library,
-	nextUIUpdate) {
+	nextUIUpdate,
+	QUnitUtils) {
 	'use strict';
 
 	var DOM_RENDER_LOCATION = 'qunit-fixture';
@@ -210,6 +212,19 @@ sap.ui.define([
 		await clearPendingUIUpdates(this.clock);
 	});
 
+	QUnit.test('Action navigation list item', async function (assert) {
+
+		this.sideNavigation.getFixedItem().addItem(new NavigationListItem('actionItem', {
+			text: 'Action Item',
+			icon: 'sap-icon://write-new',
+			design: "Action"
+		}));
+		await nextUIUpdate(this.clock);
+
+		const oActionItem = this.sideNavigation.getFixedItem().getItems()[0].getDomRef().querySelector(".sapTntNLI");
+		assert.ok(oActionItem.classList.contains("sapTntNLIAction"), "sapTntNLIAction class is set when item has design = Action");
+	});
+
 	QUnit.module('Events', {
 		beforeEach: async function () {
 			this.sideNavigation = new SideNavigation({
@@ -248,6 +263,21 @@ sap.ui.define([
 		this.sideNavigation._itemSelectionHandler(eventMock);
 
 		assert.strictEqual(eventSpy.callCount, 1, 'should fire select event once');
+	});
+
+	QUnit.test("Press event", async function (assert) {
+		this.sideNavigation.getFixedItem().addItem(new NavigationListItem('actionItem', {
+			text: 'Action Item',
+			icon: 'sap-icon://write-new',
+			design: "Action"
+		}));
+		await nextUIUpdate(this.clock);
+
+		const oActionItem = this.sideNavigation.getFixedItem().getItems()[0];
+		const oAttachPressSpy = this.spy(oActionItem, "firePress");
+		QUnitUtils.triggerEvent("tap", oActionItem.getDomRef().querySelector(".sapTntNLI"));
+		await nextUIUpdate(this.clock);
+		assert.ok(oAttachPressSpy.called, "press event is fired on the action item");
 	});
 
 	QUnit.module('SelectedKey', {

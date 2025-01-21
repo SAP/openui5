@@ -390,12 +390,27 @@
 	padding-left: 0.25rem; // to center the icon. Value is the width of the expander.
 }
 
+
 .sapTntSideNavigationNotExpanded .sapTntNLIFirstLevel.sapTntNLIWithExpander .sapUiIcon:first-of-type::after {
 	content: @_sap_tnt_NavigationList_NavigationIndicator;
 	font-size: 0.75rem;
 	position: relative;
 	bottom: 0.125rem;
 	left: 0.25rem;;
+}
+.sapTntNLIAction .sapMText,
+.sapTntNLIAction .sapUiIcon {
+	color: @sapButton_Lite_TextColor;
+}
+
+.sapTntNLIFirstLevel:not(.sapTntNLIWithExpander) {
+	.sapTntNLISelectionIndicator {
+		margin: 0 0.5rem;
+	}
+}
+
+.sapTntNLISecondLevel .sapTntNLISelectionIndicator {
+	margin: 0 0.5rem;
 }
 
 .sapTntNLISelected .sapTntNLI:hover,
