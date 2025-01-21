@@ -681,15 +681,6 @@ sap.ui.define([
 				this.aLibs.unshift("sap.ui.core");
 			}
 
-			/**
-			 * enable LessSupport if specified in configuration
-			 * @deprecated As of Version 1.120
-			 */
-			if (BaseConfig.get({name: "sapUiXxLesssupport", type: BaseConfig.Type.Boolean}) && !this.aModules.includes("sap.ui.core.plugin.LessSupport")) {
-				Log.info("Including LessSupport into declared modules");
-				this.aModules.push("sap.ui.core.plugin.LessSupport");
-			}
-
 			var sPreloadMode = Library.getPreloadMode();
 			// This flag controls the core initialization flow.
 			// We can switch to async when an async preload is used or the ui5loader

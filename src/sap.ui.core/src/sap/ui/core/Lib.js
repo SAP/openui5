@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	'sap/base/util/Version',
 	'sap/base/util/array/uniqueSort',
+	'sap/ui/base/OwnStatics',
 	'sap/ui/Global', /* sap.ui.lazyRequire */
 	'sap/ui/VersionInfo',
 	'sap/ui/base/DataType',
@@ -26,7 +27,8 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/base/SyncPromise',
 	'sap/ui/core/_UrlResolver',
-	"sap/ui/core/Supportability"
+	"sap/ui/core/Supportability",
+	"sap/ui/core/Theming"
 ], function (
 	assert,
 	BaseConfig,
@@ -43,6 +45,7 @@ sap.ui.define([
 	ObjectPath,
 	Version,
 	uniqueSort,
+	OwnStatics,
 	Global,
 	VersionInfo,
 	DataType,
@@ -50,9 +53,12 @@ sap.ui.define([
 	BaseObject,
 	SyncPromise,
 	_UrlResolver,
-	Supportability
+	Supportability,
+	Theming
 ) {
 	"use strict";
+
+	const { includeLibraryTheme } = OwnStatics.get(Theming);
 
 	/**
 	 * Save the library instances by their keys
@@ -182,40 +188,6 @@ sap.ui.define([
 	});
 
 	/**
-	 * Set of libraries which require CSS.
-	 */
-	var aAllLibrariesRequiringCss = [];
-
-	var pThemeManager;
-
-	/**
-	 * Get the sap/ui/core/theming/ThemeManager on demand
-	 *
-	 * @param {boolean} [bClear=false] Whether to reset the ThemeManager
-	 * @returns {Promise} The promise that resolves with the sap/ui/core/theming/ThemeManager class
-	 */
-	function _getThemeManager(bClear) {
-		var ThemeManager = sap.ui.require("sap/ui/core/theming/ThemeManager");
-		if (!pThemeManager) {
-			if (!ThemeManager) {
-				pThemeManager = new Promise(function (resolve, reject) {
-					sap.ui.require(["sap/ui/core/theming/ThemeManager"], function (ThemeManager) {
-						resolve(ThemeManager);
-					}, reject);
-				});
-			} else {
-				pThemeManager = Promise.resolve(ThemeManager);
-			}
-		}
-		// This is only used within initLibrary to reset flag themeLoaded synchronously in case
-		// a theme for a new library will be loaded
-		if (ThemeManager && bClear) {
-			ThemeManager.reset();
-		}
-		return pThemeManager;
-	}
-
-	/**
 	 * This is an identifier to restrict the usage of constructor within this module
 	 */
 	var oConstructorKey = Symbol("sap.ui.core.Lib");
@@ -246,43 +218,6 @@ sap.ui.define([
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns the list of libraries for which the library.css was preloaded.
-	 *
-	 * This configuration setting specifies a list of UI libraries using the same syntax as the "libs" property,
-	 * for which the SAPUI5 core does not include the library.css stylesheet in the head of the page.
-	 * If the list starts with an exclamation mark (!), no stylesheet is loaded at all for the specified libs.
-	 * In this case, it is assumed that the application takes care of loading CSS.
-	 *
-	 * If the first library's name is an asterisk (*), it will be expanded to the list of already
-	 * configured libraries.
-	 *
-	 * @returns {string[]} the list of libraries for which the library.css was preloaded
-	 * @private
-	 */
-	function getPreloadLibCss() {
-		var aPreloadLibCSS = BaseConfig.get({name: "sapUiPreloadLibCss", type: BaseConfig.Type.StringArray, external: true});
-		if ( aPreloadLibCSS.length > 0 ) {
-			// remove leading '!' (legacy) as it does not make any difference
-			if ( aPreloadLibCSS[0].startsWith("!") ) {
-				aPreloadLibCSS[0] = aPreloadLibCSS[0].slice(1);
-			}
-			// "*"  means "add all bootstrap libraries"
-			if ( aPreloadLibCSS[0] === "*" ) {
-				aPreloadLibCSS.shift(); // remove * (inplace)
-
-				// The modules list also contains all configured libs
-				// we prepend them now to the preloaded libs css list
-				Object.keys(mLibraries).forEach(function(sLib) {
-					if (!aPreloadLibCSS.includes(sLib)) {
-						aPreloadLibCSS.unshift(sLib);
-					}
-				});
-			}
-		}
-		return aPreloadLibCSS;
 	}
 
 	/**
@@ -895,20 +830,10 @@ sap.ui.define([
 		 * @private
 		 * @deprecated
 		 */
-		_includeTheme: function(sVariant, sQuery) {
-			var sName = this.name,
-				bLibCssPreloaded = getPreloadLibCss().indexOf(sName) !== -1;
-
-			aAllLibrariesRequiringCss.push({
-				name: sName,
-				version: this.version,
-				variant: sVariant,
-				preloadedCss: bLibCssPreloaded
-			});
-
-			_getThemeManager().then(function(ThemeManager) {
-				ThemeManager.includeLibraryTheme(sName, sVariant, sQuery);
-			});
+		_includeTheme: function(sVariant) {
+			// sQuery is no longer applied, as the only relevant query parameter is the version,
+			// which is now handled directly by the framework itself.
+			includeLibraryTheme({ libName: this.name, variant: sVariant});
 		},
 
 		/**
@@ -1044,18 +969,6 @@ sap.ui.define([
 			return bSync ? vResult : Promise.resolve(vResult);
 		}
 	});
-
-
-	/**
-	 * Returns an array containing all libraries which require loading of CSS
-	 *
-	 * @returns {Array} Array containing all libraries which require loading of CSS
-	 * @private
-	 * @ui5-restricted sap.ui.core.theming.Parameters
-	 */
-	Library.getAllInstancesRequiringCss = function() {
-		return aAllLibrariesRequiringCss.slice();
-	};
 
 	/**
 	 * Checks whether the library for the given <code>sName</code> has been loaded or not.
@@ -1498,15 +1411,9 @@ sap.ui.define([
 
 			// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if (!oLib.noLibraryCSS) {
-			var oLibThemingInfo = {
-				name: oLib.name,
-				version: oLib.version,
-				preloadedCss: getPreloadLibCss().indexOf(oLib.name) !== -1
-			};
-			aAllLibrariesRequiringCss.push(oLibThemingInfo);
-			// Don't reset ThemeManager in case CSS for current library is already preloaded
-			_getThemeManager(/* bClear = */ !oLibThemingInfo.preloadedCss).then(function(ThemeManager) {
-				ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
+			includeLibraryTheme({
+				libName: oLib.name,
+				version: oLib.version
 			});
 		}
 

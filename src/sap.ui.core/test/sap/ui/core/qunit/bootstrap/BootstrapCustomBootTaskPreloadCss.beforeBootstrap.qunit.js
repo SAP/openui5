@@ -23,7 +23,6 @@ sap.ui.require([
 	document.head.appendChild(oLink);
 
 	window["sap-ui-config"] = window["sap-ui-config"] || {};
-	window["sap-ui-config"]["preloadLibCss"] = [ "!sap.ui.core", "sap.ui.testlib" ];
 	window["sap-ui-config"]["xx-bootTask"] = function(callback) {
 		sap.ui.require(["sap/ui/core/Lib"], function(Library) {
 			Library.load({

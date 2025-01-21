@@ -91,7 +91,6 @@ module.exports = function(grunt) {
 						'!sap-*',
 						// CorePlugin, shouldn't be installed by default
 						'!sap/ui/core/plugin/DeclarativeSupport.js',
-						'!sap/ui/core/plugin/LessSupport.js',
 						// exclude non-productive code
 						'!sap/ui/debug/**',
 						'!sap/ui/core/support/**',

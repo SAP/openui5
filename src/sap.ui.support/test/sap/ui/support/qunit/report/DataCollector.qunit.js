@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/support/supportRules/report/DataCollector",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/theming/ThemeManager"
-], function (Lib, Theming, DataCollector, UIComponent, ThemeManager) {
+	"sap/ui/core/UIComponent"
+], function (Lib, Theming, DataCollector, UIComponent) {
 		"use strict";
 
 		QUnit.module("Data collector", {
@@ -125,16 +124,17 @@ sap.ui.define([
 			var done = assert.async();
 			// Arrange
 			var oGetLoadedLibrariesMock = sinon.stub(Lib, "all").returns(["sap.m"]);
-			var oGetThemePathMock = sinon.stub(ThemeManager, "_getThemePath").returns("http://www.example.com/");
+			var oGetThemeRoot = sinon.stub(Theming, "getThemeRoot");
+			oGetThemeRoot.withArgs("fiori_3", "0").returns("http://www.example.com/");
 			var oGetThemeMock = sinon.stub(Theming, "getTheme").returns("fiori_3");
 
 			this.DataCollector.getTechInfoJSON().then(function (oTechData) {
 				// Assert
 				assert.equal(oTechData.themePaths[0].theme, "fiori_3", "Theme string is correctly set");
-				assert.equal(oTechData.themePaths[0].relativePath, "http://www.example.com/", "Theme path is correctly set");
+				assert.equal(oTechData.themePaths[0].relativePath, "http://www.example.com/0/themes/fiori_3/", "Theme path is correctly set");
 
 				oGetLoadedLibrariesMock.restore();
-				oGetThemePathMock.restore();
+				oGetThemeRoot.restore();
 				oGetThemeMock.restore();
 
 				done();

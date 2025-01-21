@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/config/GlobalConfigurationProvider",
 	"sap/base/util/Deferred",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Control",
 	"sap/ui/core/Theming",
@@ -17,6 +18,7 @@ sap.ui.define([
 	Log,
 	GlobalConfigurationProvider,
 	Deferred,
+	OwnStatics,
 	URLConfigurationProvider,
 	Control,
 	Theming,
@@ -24,6 +26,8 @@ sap.ui.define([
 	themeApplied
 ) {
 	"use strict";
+
+	const { attachChange, detachChange } = OwnStatics.get(Theming);
 
 	var oURLConfigurationProviderStub,
 		oGlobalConfigurationProviderStub,
@@ -72,20 +76,22 @@ sap.ui.define([
 			aChange: [],
 			aApplied: []
 		};
-		Theming.attachChange(checkChange);
+		attachChange(checkChange);
 		Theming.attachApplied(checkApplied);
 		if (bThemeManagerNotActive) {
 			assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
 			mEventCalls.aApplied.pop();
 		}
-		mEventCalls = {
-			aChange: [],
-			aApplied: []
-		};
+		return themeApplied().then(() => {
+			mEventCalls = {
+				aChange: [],
+				aApplied: []
+			};
+		});
 	}
 
 	function setupTestsAfterEach() {
-		Theming.detachChange(checkChange);
+		detachChange(checkChange);
 		Theming.detachApplied(checkApplied);
 		oURLConfigurationProviderStub.restore();
 	}
@@ -310,6 +316,9 @@ sap.ui.define([
 
 	QUnit.module("Theming runtime behavior", {
 		beforeEach: async function (assert) {
+			// Invalidate config to avoid using cache build up from the
+			// previous test with stubs
+			BaseConfig._.invalidate();
 			// make sure we have a fixed theme to begin with
 			Theming.setTheme("sap_horizon");
 			await themeApplied();
