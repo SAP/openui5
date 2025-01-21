@@ -23,6 +23,7 @@ sap.ui.define([
 					with : "string"
 				}
 			},
+			/** @deprecated As of version 1.89.0 */
 			"grandTotal like 1.84" : "boolean",
 			grandTotalAtBottomOnly : "boolean",
 			group : {

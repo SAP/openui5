@@ -26695,6 +26695,7 @@ sap.ui.define([
 	//
 	// Add searching before aggregating and sorting.
 	// JIRA: CPOUI5ODATAV4-1030
+	/** @deprecated As of version 1.89.0 */
 	QUnit.test("Data Aggregation: BCP: 2170032897 with UI5 filters", function (assert) {
 		var oListBinding,
 			oModel = this.createAggregationModel({autoExpandSelect : true}),
@@ -26775,6 +26776,7 @@ sap.ui.define([
 	// were needed (at least w/o visual grouping).
 	// BCP: 2170032897
 	// JIRA: CPOUI5ODATAV4-119
+	/** @deprecated As of version 1.89.0 */
 	QUnit.test("Data Aggregation: BCP: 2170032897 with $filter", function (assert) {
 		var oListBinding,
 			oModel = this.createAggregationModel({autoExpandSelect : true}),
