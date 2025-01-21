@@ -102,7 +102,7 @@ sap.ui.define([
 			trigger: "undetermined", // control which triggered interaction
 			component: "undetermined", // component or app identifier
 			appVersion: "undetermined", // application version as from app descriptor
-			start: iTime || window.performance.timing.fetchStart, // interaction start - page fetchstart if initial
+			start: iTime || window.performance.timeOrigin, // interaction start - page timeOrigin if initial
 			end: 0, // interaction end
 			navigation: 0, // sum over all navigation times
 			roundtrip: 0, // time from first request sent to last received response end - without gaps and ignored overlap
@@ -141,8 +141,8 @@ sap.ui.define([
 			oRequestTiming.startTime <= oRequestTiming.requestStart &&
 			oRequestTiming.requestStart <= oRequestTiming.responseEnd;
 
-		var bPartOfInteraction = oPendingInteraction.start <= (performance.timing.navigationStart + oRequestTiming.requestStart) &&
-			oPendingInteraction.end >= (performance.timing.navigationStart + oRequestTiming.responseEnd);
+		var bPartOfInteraction = oPendingInteraction.start <= (window.performance.timeOrigin + oRequestTiming.requestStart) &&
+			oPendingInteraction.end >= (window.performance.timeOrigin + oRequestTiming.responseEnd);
 
 		return bPartOfInteraction && bComplete && oRequestTiming.initiatorType === "xmlhttprequest";
 	}
@@ -191,14 +191,6 @@ sap.ui.define([
 			oPendingInteraction.networkTime = iTotalNetworkTime / aRequests.length;
 		} else {
 			oPendingInteraction.networkTime = 0;
-		}
-
-		// in case processing is not determined, which means no re-rendering occured, take start to end
-		if (oPendingInteraction.processing === 0) {
-			var iRelativeStart = oPendingInteraction.start - window.performance.timing.fetchStart;
-			oPendingInteraction.duration = oTimings.end - iRelativeStart;
-			// calculate processing time of before requests start
-			oPendingInteraction.processing = oTimings.start - iRelativeStart;
 		}
 	}
 
