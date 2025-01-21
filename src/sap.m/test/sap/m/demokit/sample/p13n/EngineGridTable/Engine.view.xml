@@ -22,11 +22,7 @@
                 </m:OverflowToolbar>
             </extension>
             <dependents>
-                <columnmenu:Menu id="menu">
-                    <columnmenu:items>
-                        <columnmenu:ActionItem icon="sap-icon://sort" label="Sort" press="onColumnHeaderItemPress"/>
-                        <columnmenu:ActionItem icon="sap-icon://table-column" label="Columns" press="onColumnHeaderItemPress"/>
-                    </columnmenu:items>
+                <columnmenu:Menu id="menu" showTableSettingsButton="true" tableSettingsPressed="openPersoDialog">
                 </columnmenu:Menu>
             </dependents>
             <noData>
