@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
@@ -5273,41 +5274,34 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getCurrencySymbolOrCode: currency code", function (assert) {
 		// code under test
-		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call({}, {currencyCode: true}, "~foo"),
-			"~foo");
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call({}, "~foo", true), "~foo");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getCurrencySymbolOrCode: with customCurrencies", function (assert) {
-		const oFormatOptions = {currencyCode: false, customCurrencies: {/*content not relevant*/}};
-		const oNumberFormat = {mKnownCurrencySymbols: {FOO: "~bar"}};
+		const oNumberFormat = {oFormatOptions: {customCurrencies: {}}, mKnownCurrencySymbols: {FOO: "~bar"}};
 
 		// code under test - currency symbol defined
-		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "FOO"),
-			"~bar");
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, "FOO", false), "~bar");
 
 		// code under test - currency symbol not defined
-		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "BAZ"),
-			"BAZ");
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, "BAZ", false), "BAZ");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getCurrencySymbolOrCode: currency symbols from CLDR", function (assert) {
-		const oFormatOptions = {currencyCode: false};
 		const oLocaleData = {getCurrencySymbol() {}};
 		const oLocaleDataMock = this.mock(oLocaleData);
-		const oNumberFormat = {oLocaleData: oLocaleData};
+		const oNumberFormat = {oFormatOptions: {}, oLocaleData: oLocaleData};
 		oLocaleDataMock.expects("getCurrencySymbol").withExactArgs("FOO").returns("~bar");
 
 		// code under test - currency symbol defined
-		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "FOO"),
-			"~bar");
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, "FOO", false), "~bar");
 
 		oLocaleDataMock.expects("getCurrencySymbol").withExactArgs("BAZ").returns(undefined);
 
 		// code under test - currency symbol not defined
-		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, oFormatOptions, "BAZ"),
-			"BAZ");
+		assert.strictEqual(NumberFormat.prototype.getCurrencySymbolOrCode.call(oNumberFormat, "BAZ", false), "BAZ");
 	});
 
 	//*********************************************************************************************
@@ -5315,7 +5309,7 @@ sap.ui.define([
 		const oFormatOptions = {foo: "~bar", showNumber: false};
 		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
 		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
-			.withExactArgs(sinon.match(oFormatOptions), "~currencyCode")
+			.withExactArgs("~currencyCode", true)
 			.returns("~currencyCodeOrSymbol");
 
 		// code under test
@@ -5323,16 +5317,87 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("format: calls getCurrencySymbolOrCode (showNumber: true)", function (assert) {
-		const oFormatOptions = {foo: "~bar"};
+[
+	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "USD"},
+	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "$"},
+	{sCurrencyCode: undefined, sCurrencyCodeOrSymbol: undefined}
+].forEach(({sCurrencyCode, sCurrencyCodeOrSymbol}, i) => {
+	[false, true].forEach((bNegative) => {
+		[false, true].forEach((bCurrencyCode) => {
+			["standard", "accounting"].forEach((sCurrencyContext) => {
+				[false, true].forEach((bTrailingCurrencyCode) => {
+	const sTitle = "format: (currency) calls getCurrencySymbolOrCode, getCurrencyPattern, _composeCurrencyResult"
+		+ " (showNumber: true); negative: " + bNegative + "; currencyCode: " + bCurrencyCode
+		+ " context: " + sCurrencyContext + "; trailing currency code: " + bTrailingCurrencyCode + "; #" + i;
+	QUnit.test(sTitle, function (assert) {
+		const oFormatOptions = {
+			currencyCode: bCurrencyCode,
+			currencyContext: sCurrencyContext,
+			minusSign: "~minusSign",
+			trailingCurrencyCode: bTrailingCurrencyCode
+		};
 		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
 		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
-			.withExactArgs(sinon.match(oFormatOptions), "~currencyCode")
-			.returns("~currencyCodeOrSymbol");
+			.withExactArgs(sCurrencyCode, bCurrencyCode)
+			.returns(sCurrencyCodeOrSymbol);
+		this.mock(oCurrencyFormat).expects("getCurrencyPattern")
+			.withExactArgs(sCurrencyContext, bCurrencyCode && bTrailingCurrencyCode, sCurrencyCode ? true : undefined,
+				sCurrencyCodeOrSymbol, bNegative)
+			.returns("~pattern");
+		this.mock(NumberFormat).expects("_composeCurrencyResult")
+			.withExactArgs("~pattern", bNegative ? "~minusSign1.23" : "1.23", sCurrencyCodeOrSymbol, "~minusSign",
+				bNegative)
+			.returns("~result");
 
 		// code under test
-		assert.strictEqual(oCurrencyFormat.format("1.23", "~currencyCode"), "~currencyCodeOrSymbol\xa01.23");
+		assert.strictEqual(oCurrencyFormat.format(bNegative ? "-1.23" : "1.23", sCurrencyCode), "~result");
 	});
+				});
+			});
+		});
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sCurrencyCode: "INR", sCurrencyCodeOrSymbol: "INR"},
+	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "USD"},
+	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "$"},
+	{sCurrencyCode: undefined, sCurrencyCodeOrSymbol: undefined}
+].forEach(({sCurrencyCode, sCurrencyCodeOrSymbol}, i) => {
+	[false, true].forEach((bNegative) => {
+		[false, true].forEach((bTrailingCurrencyCode) => {
+	const sTitle = "format: (currency) calls getCompactPattern; negative: " + bNegative
+		+ "; trailing currency code: " + bTrailingCurrencyCode + "; #" + i;
+	QUnit.test(sTitle, function (assert) {
+		const oFormatOptions = {style: "short", minusSign: "~minusSign", trailingCurrencyCode: bTrailingCurrencyCode};
+		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions, new Locale("en-IN"));
+
+		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
+			.withExactArgs(sCurrencyCode, true)
+			.returns(sCurrencyCodeOrSymbol);
+		const sValue = bNegative ? "-12345.67" : "12345.67";
+		const bIndianCurrency = sCurrencyCode === "INR";
+		this.mock(oCurrencyFormat).expects("getShortenedFormat")
+			.withExactArgs(sValue, sinon.match.object, bIndianCurrency)
+			.returns({decimals: 1, formatString: "\xa400K", key: "~sPowerOfTen", magnitude: 1000,
+				valueSubString: "00K"});
+		this.mock(oCurrencyFormat).expects("_getPluralCategory").withExactArgs("12", "").returns("~sPluralCategory");
+		this.mock(oCurrencyFormat).expects("getCompactPattern")
+			.withExactArgs("currency", "short", "~sPowerOfTen", "~sPluralCategory", bTrailingCurrencyCode,
+				bIndianCurrency, sCurrencyCode ? true : undefined, sCurrencyCodeOrSymbol, bNegative)
+			.returns("~compactPattern");
+		this.mock(NumberFormat).expects("_composeCurrencyResult")
+			.withExactArgs("~compactPattern", bNegative ? "~minusSign12" : "12", sCurrencyCodeOrSymbol, "~minusSign",
+				bNegative)
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(oCurrencyFormat.format(sValue, sCurrencyCode), "~result");
+	});
+		});
+	});
+});
 
 	//*********************************************************************************************
 [
