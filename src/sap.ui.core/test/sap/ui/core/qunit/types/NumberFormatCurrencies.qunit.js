@@ -785,7 +785,7 @@ sap.ui.define([
 		});
 
 		assert.deepEqual(oFormatEN.format("2", "EUR"), "2.00" + "\xa0" + "EUR", "2.00 EUR");
-		assert.deepEqual(oFormatEN.format("2", "1"), "2.0" + "\xa0" + "1", "2.0 1");
+		assert.deepEqual(oFormatEN.format("2", "1"), "2.01", "2.01");
 
 		// can only be parsed if there is no "1" in the value to be parsed
 		assert.deepEqual(oFormatEN.parse("10"), null, "10 contains currency 1");
@@ -855,7 +855,7 @@ sap.ui.define([
 		assert.deepEqual(oFormatEN.parse("D4OL 1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle");
 		assert.deepEqual(oFormatEN.parse("D4OL1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle - no delimiter");
 
-		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "DOL4" + "\xa0" + "1,234.568", "format in English locale - number at the end");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "DOL41,234.568");
 		assert.deepEqual(oFormatEN.parse("DOL4 1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("DOL41,234.568"), null, "parse in English locale - number at the end - no delimiter");
 
@@ -949,11 +949,11 @@ sap.ui.define([
 			}
 		});
 
-		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "!!\xa01,234.57", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "!!1,234.57");
 		assert.deepEqual(oFormatEN.parse("!! 1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("!!1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start - no delimiter");
 
-		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "§\xa01,234.6", "format in English locale - number in the middle");
+		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "§1,234.6");
 		assert.deepEqual(oFormatEN.parse("§ 1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle");
 		assert.deepEqual(oFormatEN.parse("§1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle - no delimiter");
 
@@ -961,7 +961,7 @@ sap.ui.define([
 		assert.deepEqual(oFormatEN.parse("$ 1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("$1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end - no delimiter");
 
-		assert.strictEqual(oFormatEN.format(1234.56789, "DO"), "My#\xa01,234.5679", "format in English locale - short match");
+		assert.strictEqual(oFormatEN.format(1234.56789, "DO"), "My#1,234.5679");
 		assert.deepEqual(oFormatEN.parse("My# 1,234.568"), [1234.568, "DO"], "parse in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("My#1,234.568"), [1234.568, "DO"], "parse in English locale - short match - no delimiter");
 
@@ -1063,8 +1063,8 @@ sap.ui.define([
 		assert.strictEqual(oFormatEN.format(-1234.5678, "D4OL"), "(D4OL\xa01,234.6)", "format in English locale - number in the middle");
 		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "D4OL\xa01,234.6", "format in English locale - number in the middle");
 
-		assert.strictEqual(oFormatEN.format(-1234.5678, "DOL4"), "(DOL4\xa01,234.568)", "format in English locale - number at the end");
-		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "DOL4\xa01,234.568", "format in English locale - number at the end");
+		assert.strictEqual(oFormatEN.format(-1234.5678, "DOL4"), "(DOL41,234.568)");
+		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "DOL41,234.568");
 
 		// German
 		var oFormatDE = getCurrencyInstance({
@@ -1258,7 +1258,7 @@ sap.ui.define([
 			}
 		});
 
-		assert.strictEqual(oFormat.format(170123.45, "180"), "180\xa0170,123.45", "formatting [123, '180']");
+		assert.strictEqual(oFormat.format(170123.45, "180"), "180170,123.45", "formatting [123, '180']");
 
 		assert.deepEqual(oFormat.parse("180\xa0170,123.45"), [170123.45, "180"], "parsing 170,123.45 (value from format)");
 		assert.deepEqual(oFormat.parse("170,123.45"), [170123.45, undefined], "parsing 170,123.45 (with thousands separator)");
@@ -2097,8 +2097,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function(bMock){
-	QUnit.test("Currency spacing [[:^S:]&[:^Z:]] " + (bMock ? "with mock" : "without mock"), function (assert) {
+	QUnit.test("special symbols in combination with alphaNextToNumber (integrative)", function (assert) {
 		var oFormat = getCurrencyInstance({
 				currencyCode : false,
 				customCurrencies : {
@@ -2113,25 +2112,17 @@ sap.ui.define([
 				}
 			});
 
-		if (bMock) {
-			this.mock(oFormat.oLocaleData).expects("getCurrencySpacing")
-				.withExactArgs("after")
-				.exactly(8)
-				.returns({currencyMatch : "[[:^S:]&[:^Z:]]", insertBetween : "\xa0", surroundingMatch : "[:digit:]"});
-		}
-
 		assert.strictEqual(oFormat.format(2, "BasicChar"), "foo\xa02");
 		assert.strictEqual(oFormat.format(2, "CurrencySymbol"), "$2");
 		assert.strictEqual(oFormat.format(2, "LineSeparator"), "$\u2028" + "2");
 		assert.strictEqual(oFormat.format(2, "ParagraphSeparator"), "$\u2029" + "2");
 		assert.strictEqual(oFormat.format(2, "SpaceSeparator"), "$\u3000" + "2");
 
-		// Symbols Sk (modifier), Sm (mathematical) and So (other) are not yet supported
-		assert.strictEqual(oFormat.format(2, "MathematicalSymbol"), "+\xa02");
-		assert.strictEqual(oFormat.format(2, "ModifierSymbol"), "^\xa02");
-		assert.strictEqual(oFormat.format(2, "OtherSymbol"), "©\xa02");
+		// Symbols Sk (modifier), Sm (mathematical) and So (other)
+		assert.strictEqual(oFormat.format(2, "MathematicalSymbol"), "+2");
+		assert.strictEqual(oFormat.format(2, "ModifierSymbol"), "^2");
+		assert.strictEqual(oFormat.format(2, "OtherSymbol"), "©2");
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("parse: custom currencies", function (assert) {
