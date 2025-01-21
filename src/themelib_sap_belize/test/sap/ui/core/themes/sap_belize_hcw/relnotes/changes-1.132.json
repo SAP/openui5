@@ -28,5 +28,15 @@
         "text": " We've now fixed the issue of image not rendering in the numeric content control"
       }
     ]
+  },
+  "1.132.1": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "ee0cb59dcefd358f138d56a57a127e765ad08634",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover visibility is now fixed"
+      }
+    ]
   }
 }
