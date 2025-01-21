@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/valuehelp/FilterBar",
-	"sap/ui/mdc/filterbar/FilterBarBaseRenderer"
-], (ValueHelpFilterBar, FilterBarBaseRenderer) => {
+	"sap/ui/mdc/valuehelp/FilterBar"
+], (ValueHelpFilterBar) => {
 	"use strict";
 		/**
 		 * Modules for value help dialog {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar}
@@ -37,7 +36,7 @@ sap.ui.define([
 			metadata: {
 				library: "sap.ui.mdc"
 			},
-			renderer: FilterBarBaseRenderer
+			renderer: ValueHelpFilterBar.getMetadata().getRenderer()
 		});
 
 		return FilterBar;

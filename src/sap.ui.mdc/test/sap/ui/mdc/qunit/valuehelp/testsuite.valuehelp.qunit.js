@@ -166,6 +166,21 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				sinon: {
 					qunitBridge: true
 				}
+			},
+			"CollectiveSearchSelect": {
+				module: "./CollectiveSearchSelect.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/valuehelp]"
+				}
+			},
+			"FilterBar": {
+				module: "./FilterBar.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/valuehelp]"
+				},
+				sinon: {
+					qunitBridge: true
+				}
 			}
 		}
 	};

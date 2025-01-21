@@ -51,7 +51,7 @@ sap.ui.define([
 			var oResult,
 				sVal = sValue,
 				iNumberEnd = sVal.indexOf(" ");
-			if (iNumberEnd > -1) {
+			if (iNumberEnd > -1 && parseInt(sVal.slice(0, iNumberEnd))) {
 				oResult = {};
 				oResult.operator = "XtoLastWorkWeek";
 				oResult.values = [parseInt(sVal.slice(0, iNumberEnd))];

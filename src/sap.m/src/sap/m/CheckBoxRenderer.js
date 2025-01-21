@@ -94,7 +94,8 @@ CheckBoxRenderer.render = function(oRm, oCheckBox){
 		oRm.accessibilityState(oCheckBox, {
 			role: "presentation",
 			selected: null,
-			required: null
+			required: null,
+			labelledby: null
 		});
 	} else {
 		if (bInteractive) {
