@@ -1506,7 +1506,7 @@ sap.ui.define([
 		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
-	QUnit.test("currency for 'he' locale with big number. Contains the RTL character u+200F", function (assert) {
+	QUnit.test("currency for 'he' locale with big number. Contains no RTL characters", function (assert) {
 		//setup
 		var oLocale = new Locale("he");
 		var oFormat = getCurrencyInstance({
@@ -1518,8 +1518,7 @@ sap.ui.define([
 
 		// execution
 		var sFormatted = oFormat.format(iExpectedNumber);
-		assert.strictEqual(sFormatted, "\u200f50,000.00\u00a0\u200f\u200e",
-			"can be formatted '" + sFormatted + "' (contains RTL character)");
+		assert.strictEqual(sFormatted, "50,000.00", "can be formatted '" + sFormatted + "' (no RTL character)");
 
 		var aParsed = oFormat.parse(sFormatted);
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);

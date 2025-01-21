@@ -1622,9 +1622,8 @@ sap.ui.define([
 			// it shouldn't be formatted with the "trailingCurrencyCode" pattern.
 			if (sMeasure && oOptions.trailingCurrencyCode) {
 				if (!this.mKnownCurrencyCodes[sMeasure] && !/(^[A-Z]{3}$)/.test(sMeasure)) {
-					oOptions.trailingCurrencyCode = false;
 					// Revert to non-"sap-" prefixed (trailing-currency-code) pattern. Also see code in getCurrencyInstance()
-					oOptions.pattern = this.oLocaleData.getCurrencyPattern(oOptions.currencyContext);
+					oOptions.trailingCurrencyCode = false;
 				}
 			}
 
@@ -1835,7 +1834,10 @@ sap.ui.define([
 		}
 
 		if (oOptions.type === mNumberType.CURRENCY) {
-			sPattern = bUseCompactPattern ? sCompactPattern : oOptions.pattern;
+			sPattern = bUseCompactPattern
+				? sCompactPattern
+				: this.getCurrencyPattern(oOptions.currencyContext, oOptions.trailingCurrencyCode,
+					sMeasure && oOptions.showMeasure, sCurrencySymbolOrCode, bNegative);
 
 			// The currency pattern is defined in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
 			// where the pattern after ';' should be used for negative numbers.
@@ -2534,6 +2536,32 @@ sap.ui.define([
 		// pattern may contain a single quoted dot ('.') to differentiate them from decimal separator; replace it
 		// with an unquoted dot (.)
 		sPattern = sPattern?.replace(/'.'/g, ".");
+
+		return sPattern;
+	};
+
+	/**
+	 * Gets the locale specific currency pattern for the given parameters.
+	 *
+	 * @param {"accounting"|"standard"} sContext The context of the currency pattern
+	 * @param {boolean} [bShowTrailingCurrencyCode] Whether the currency code shall be shown after the amount
+	 * @param {boolean} [bShowMeasure] Whether to include the measure (currency code or currency symbol) in the pattern
+	 * @param {string} [sCurrency] The currency code or symbol to use
+	 * @param {boolean} [bNegative] Whether the current value is negative
+	 *
+	 * @returns {string} The currency pattern
+	 *
+	 * @private
+	 */
+	NumberFormat.prototype.getCurrencyPattern = function (sContext, bShowTrailingCurrencyCode, bShowMeasure, sCurrency,
+			bNegative) {
+		if (bShowTrailingCurrencyCode) {
+			sContext = "sap-" + sContext;
+		}
+		let sPattern = this.oLocaleData.getCurrencyPattern(sContext, bShowMeasure ? undefined : "noCurrency");
+		if (bShowMeasure && NumberFormat.isAlphaNextToNumber(sPattern, sCurrency, bNegative)) {
+			sPattern = this.oLocaleData.getCurrencyPattern(sContext, "alphaNextToNumber") || sPattern;
+		}
 
 		return sPattern;
 	};
