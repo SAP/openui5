@@ -1247,7 +1247,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets the currency format pattern for the given context and alternative.
+		 * Gets the currency format pattern for the given context or selects an alternative pattern if desired.
 		 *
 		 * CLDR format pattern:
 		 *
@@ -1266,7 +1266,7 @@ sap.ui.define([
 		 * @param {"accounting"|"sap-accounting"|"sap-standard"|"standard"} sContext
 		 *   The context of the currency pattern; "sap-" prefix is used for the trailing currency code variant
 		 * @param {"alphaNextToNumber"|"noCurrency"} [sAlternative]
-		 *   The alternate currency pattern
+		 *   The alternate currency pattern; since 1.133.0
 		 * @returns {string|undefined}
 		 *   The currency format pattern for the given parameters; <code>undefined</code> if no corresponding pattern is
 		 *   found
@@ -1781,8 +1781,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the compact decimal format (like "000K" or "0M") for the given power of ten in the given style and
-		 * plural category.
+		 * Returns the compact decimal format pattern (like "000K" or "0M") for the given power of ten in the given
+		 * style and plural category, see {@link topic:91f2f2866f4d1014b6dd926db0e91070 Number Format - Compact Format}.
 		 *
 		 * @param {"long"|"short"|"short-indian"} sStyle
 		 *   The style; "short-indian" is only available since 1.133.0 for the "en-IN" locale
@@ -1791,8 +1791,8 @@ sap.ui.define([
 		 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
 		 *   The plural category; defaults to "other" if the given plural category does not exist for this locale
 		 * @returns {string|undefined}
-		 *   The compact decimal format, or <code>undefined</code> if no decimal format for the given parameters is
-		 *   found
+		 *   The compact decimal format pattern, or <code>undefined</code> if no decimal format for the given parameters
+		 *   is found
 		 *
 		 * @public
 		 * @since 1.25.0
@@ -1804,8 +1804,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the compact currency format (like "¤000K" or "¤0M") for the given power of ten in the given style,
-		 * plural category, and alternative.
+		 * Returns the compact currency format pattern (like "¤000K" or "¤0M") for the given power of ten in the given
+		 * style, plural category, and in an optional alternative format if desired, see
+		 * {@link topic:91f2f2866f4d1014b6dd926db0e91070 Number Format - Compact Format}.
 		 *
 		 * @param {"short"|"sap-short"|"short-indian"|"sap-short-indian"} sStyle
 		 *   The style; "short-indian" and "sap-short-indian" are only available since 1.133.0 for the "en-IN" locale;
@@ -1817,8 +1818,8 @@ sap.ui.define([
 		 * @param {"alphaNextToNumber"|"noCurrency"} [sAlternative]
 		 *   The alternate currency format; since 1.133.0
 		 * @returns {string|undefined}
-		 *   The compact currency format, or <code>undefined</code> if no currency format for the given parameters is
-		 *   found
+		 *   The compact currency format pattern, or <code>undefined</code> if no currency format pattern for the given
+		 *   parameters is found
 		 *
 		 * @public
 		 * @since 1.51.0

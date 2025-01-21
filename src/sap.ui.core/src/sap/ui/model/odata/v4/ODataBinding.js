@@ -1155,6 +1155,8 @@ sap.ui.define([
 	 * @param {string} sCanonicalPath
 	 *   The canonical path of the entity (as a context path with the leading "/")
 	 *
+	 * @abstract
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataBinding#onDelete
 	 * @private
 	 */

@@ -5,8 +5,6 @@
 	"use strict";
 	var Core;
 	var Lib;
-	//identify the own script include
-	var scriptTag = document.currentScript || document.querySelector("script[src*='/sap-ui-integration.js']");
 
 	//initialize the loader
 	function boot() {
@@ -28,12 +26,7 @@
 
 	function registerLibraryTags(oIntegrationLib) {
 		var mCustomElements = oIntegrationLib.extensions["sap.ui.integration"].customElements,
-			aTags = Object.keys(mCustomElements),
-			sTags = scriptTag.getAttribute("tags");
-
-		if (sTags) {
-			aTags = sTags.split(",");
-		}
+			aTags = Object.keys(mCustomElements);
 
 		//collect all the implementation classes and require them
 		window.sap.ui.require(

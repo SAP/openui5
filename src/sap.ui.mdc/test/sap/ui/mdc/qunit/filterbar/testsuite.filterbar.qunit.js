@@ -79,10 +79,16 @@ sap.ui.define([
 					]
 				}
 			},
+			/**
+			 * @deprecated since 1.124
+			 */
 			"valueHelp.FilterBar": {
 				group: "FilterBar",
 				module: "./vh/FilterBar.qunit"
 			},
+			/**
+			 * @deprecated since 1.124
+			 */
 			"valueHelp.CollectiveSearchSelect": {
 				group: "FilterBar",
 				module: "./vh/CollectiveSearchSelect.qunit"

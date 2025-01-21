@@ -597,6 +597,8 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the cache promise for this binding is not yet fulfilled, or if the cache is shared
 	 *
+	 * @abstract
+	 * @function
 	 * @name sap.ui.model.odata.v4.ODataParentBinding#delete
 	 * @private
 	 */
@@ -1018,6 +1020,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   A matching context or <code>undefined</code> if there is none
 	 *
+	 * @abstract
 	 * @function
 	 * @name sap.ui.model.odata.v4.ODataParentBinding#findContextForCanonicalPath
 	 * @private

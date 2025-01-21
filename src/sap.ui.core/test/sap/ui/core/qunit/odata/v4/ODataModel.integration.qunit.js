@@ -71517,6 +71517,7 @@ sap.ui.define([
 		<Input id="publicationId" value="{BestFriend/BestPublication/PublicationID}"/>
 		<Input id="price" value="{BestFriend/BestPublication/Price}"/>
 		<Input id="currency" value="{BestFriend/BestPublication/CurrencyCode}"/>
+		<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 	</FlexBox>`;
 			const sViewWithIntermediate = `
 	<FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
@@ -71526,6 +71527,7 @@ sap.ui.define([
 			<Input id="price" value="{Price}"/>
 			<Input id="currency" value="{CurrencyCode}"/>
 		</FlexBox>
+		<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 	</FlexBox>`;
 
 			this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
@@ -71545,7 +71547,8 @@ sap.ui.define([
 				.expectChange("artistId", "1")
 				.expectChange("publicationId", "")
 				.expectChange("price", null)
-				.expectChange("currency", "");
+				.expectChange("currency", "")
+				.expectChange("isNull", true);
 
 			await this.createView(assert, bIntermediate ? sViewWithIntermediate : sView, oModel);
 
@@ -71560,7 +71563,8 @@ sap.ui.define([
 			}
 
 			this.expectChange("publicationId", "2")
-				.expectChange("price", "12");
+				.expectChange("price", "12")
+				.expectChange("isNull", false);
 
 			// code under test
 			this.oView.byId("publicationId").getBinding("value").setValue("2");
@@ -71657,7 +71661,8 @@ sap.ui.define([
 						}
 					})
 					.expectChange("price", "10.99")
-					.expectChange("currency", "USD");
+					.expectChange("currency", "USD")
+					.expectChange("isNull", false); // this is accepted! (JIRA: CPOUI5ODATAV4-2638)
 			} else {
 				this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
 						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
@@ -71668,11 +71673,13 @@ sap.ui.define([
 				if (sAction === "delete") { // delete causes setContext(null) -> no default values
 					this.expectChange("publicationId", null)
 						.expectChange("price", null)
-						.expectChange("currency", null);
+						.expectChange("currency", null)
+						.expectChange("isNull", true);
 				} else {
 					this.expectChange("price", "12") // from the second PATCH to "11"
 						.expectChange("publicationId", "")
-						.expectChange("price", null);
+						.expectChange("price", null)
+						.expectChange("isNull", true);
 				}
 
 				// code under test
