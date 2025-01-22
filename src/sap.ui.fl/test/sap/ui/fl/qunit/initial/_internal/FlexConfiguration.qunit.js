@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/config/_Configuration",
+	"sap/base/config",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
