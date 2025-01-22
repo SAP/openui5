@@ -736,7 +736,7 @@ sap.ui.define([
 
 		iCount ??= this.oCache.collapse(
 			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
-			bAll ? this.lockGroup() : undefined);
+			bAll ? this.lockGroup() : undefined, bSilent);
 
 		if (iCount > 0) {
 			const aContexts = this.aContexts;

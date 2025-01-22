@@ -10219,7 +10219,7 @@ sap.ui.define([
 			.returns("~oGroupLock~");
 		oCollapseExpectation = this.mock(oBinding.oCache).expects("collapse")
 			.exactly(bCountGiven ? 0 : 1)
-			.withExactArgs("~cachepath~", bAll ? "~oGroupLock~" : undefined)
+			.withExactArgs("~cachepath~", bAll ? "~oGroupLock~" : undefined, bSilent)
 			.returns(iCount);
 		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
 			.exactly(iCount && !bSilent ? 1 : 0)
