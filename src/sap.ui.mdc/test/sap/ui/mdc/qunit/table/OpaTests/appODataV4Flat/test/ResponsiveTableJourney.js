@@ -1,10 +1,21 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/Opa5",
+	"sap/ui/test/opaQunit",
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion",
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action"
 ], function(
-	/** @type sap.ui.test.opaQunit */ opaTest
+	Opa5,
+	/** @type sap.ui.test.opaQunit */ opaTest,
+	P13nAssertion,
+	P13nActions
 ) {
 	"use strict";
+
+	Opa5.extendConfig({
+		actions: new P13nActions(),
+		assertions: new P13nAssertion()
+	});
 
 	const sTableId = "mdcTable";
 
@@ -46,8 +57,18 @@ sap.ui.define([
 	opaTest("Press the Show/Hide Details button", function(Given, When, Then) {
 		Then.onTheAppMDCTable.iShouldSeePopins(sTableId, false);
 		When.onTheAppMDCTable.iPressShowMoreButton(sTableId);
+		Then.theVariantManagementIsDirty(true);
+		When.iSaveVariantAs("Standard", "ShowDetails");
 		Then.onTheAppMDCTable.iShouldSeePopins(sTableId, true);
+
+		When.iSelectVariant("Standard");
+		Then.onTheAppMDCTable.iShouldSeePopins(sTableId, false);
+
+		When.iSelectVariant("ShowDetails");
 		When.onTheAppMDCTable.iPressShowLessButton(sTableId);
+		Then.onTheAppMDCTable.iShouldSeePopins(sTableId, false);
+		Then.theVariantManagementIsDirty(true);
+		When.iSaveVariantAs("ShowDetails", "HideDetails");
 		Then.onTheAppMDCTable.iShouldSeePopins(sTableId, false);
 	});
 
