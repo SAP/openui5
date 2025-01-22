@@ -71642,15 +71642,15 @@ make root = ${bMakeRoot}`;
 	// When it failed, see that transition messages are handled correctly, properties still are
 	// merged, and the PATCH is repeated. See that it is correctly reset upon ODM#resetChanges or
 	// Context#resetChanges. See that the GET request correctly updates the entity after a
-	// successful PATCH.
-	// The upserted entity is reached via two navigation properties. This effects the URL for the
-	// upsert PATCH because we use the deep path for it then.
+	// successful PATCH. The upserted entity is reached via two navigation properties. This effects
+	// the URL for the upsert PATCH because we use the deep path for it then.
 	// JIRA: CPOUI5ODATAV4-2211
 	//
 	// Make sure that canonical path APIs behave unchanged (JIRA: CPOUI5ODATAV4-2864)
 	//
 	// Make sure no late property requests are sent. See what happens when upsert is caused by
-	// amount w/ currency. Test eventing for PATCH requests.
+	// amount w/ currency. Test eventing for PATCH requests. Check "transient" handling, pending
+	// changes, and operation invocation.
 	// JIRA: CPOUI5ODATAV4-2856
 [false, true].forEach(function (bReset) {
 	[false, true].forEach(function (bIntermediate) {
@@ -71669,6 +71669,7 @@ make root = ${bMakeRoot}`;
 	<Input id="publicationId" value="{BestFriend/BestPublication/PublicationID}"/>
 	<Input id="price" value="{BestFriend/BestPublication/Price}"/>
 	<Input id="currency" value="{BestFriend/BestPublication/CurrencyCode}"/>
+<!--Text id="isTransient" text="{= %{BestFriend/BestPublication/@$ui5.context.isTransient} }"/-->
 </FlexBox>`;
 		const sViewWithIntermediate = `
 <FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
@@ -71678,6 +71679,7 @@ make root = ${bMakeRoot}`;
 		<Input id="publicationId" value="{PublicationID}"/>
 		<Input id="price" value="{Price}"/>
 		<Input id="currency" value="{CurrencyCode}"/>
+		<Text id="isTransient" text="{= %{@$ui5.context.isTransient} }"/>
 	</FlexBox>
 </FlexBox>`;
 
@@ -71700,6 +71702,13 @@ make root = ${bMakeRoot}`;
 			.expectChange("publicationId", "")
 			.expectChange("price", null)
 			.expectChange("currency", "$MD"); // default value from $metadata
+		if (bIntermediate) {
+			this.expectChange("isTransient", undefined);
+		} else {
+			// Error("Failed to enhance query options for auto-$expand/$select as the path "
+			// + sPublicationPath + "/@$ui5.context.isTransient does not point to a property")
+			//TODO .expectChange("isTransient");
+		}
 
 		await this.createView(assert, bIntermediate ? sViewWithIntermediate : sView, oModel);
 
@@ -71717,16 +71726,28 @@ make root = ${bMakeRoot}`;
 			iPatchSent += 1;
 		});
 
-		const oContext = bIntermediate && this.oView.byId("publication").getBindingContext();
+		const oContext = bIntermediate ? this.oView.byId("publication").getBindingContext() : null;
 		if (oContext) {
 			assert.strictEqual(oContext.getObject(), null);
+			//TODO assert.strictEqual(oContext.isInactive(), true);
+			assert.strictEqual(oContext.created(), undefined);
+			assert.strictEqual(oContext.isTransient(), undefined);
+
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-2864 - needed for FE!)
 				oContext.getCanonicalPath();
 			}, new Error(sPublicationPath
 				+ ": No instance to calculate key predicate at " + sPublicationPath));
-		}
 
+			assert.strictEqual(oContext.hasPendingChanges(), false);
+		}
+		assert.strictEqual(oArtistContext.hasPendingChanges(), false);
+		assert.strictEqual(oArtistBinding.hasPendingChanges(), false);
+		assert.strictEqual(oModel.hasPendingChanges(), false);
+
+		if (bIntermediate) {
+			this.expectChange("isTransient", true);
+		}
 		this.expectChange("isNull", false)
 			.expectChange("price", "12")
 			.expectChange("publicationId", "2");
@@ -71738,9 +71759,26 @@ make root = ${bMakeRoot}`;
 		await this.waitForChanges(assert, "upsert");
 
 		assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"), {
+			"@$ui5.context.isTransient" : true,
 			Price : "12",
 			PublicationID : "2"
 		});
+		let bCreated;
+		const oCreatedPromise = oContext?.created();
+		if (oContext) {
+			assert.ok(oCreatedPromise instanceof Promise);
+			oCreatedPromise.then(() => {
+				bCreated = true;
+			}, (oError) => {
+				assert.strictEqual(oError.canceled, true);
+				bCreated = false;
+			}); // avoid "Uncaught (in promise)"
+			assert.strictEqual(oContext.isTransient(), true);
+			assert.strictEqual(oContext.hasPendingChanges(), true);
+		}
+		assert.strictEqual(oArtistContext.hasPendingChanges(), true);
+		assert.strictEqual(oArtistBinding.hasPendingChanges(), true);
+		assert.strictEqual(oModel.hasPendingChanges(), true);
 
 		assert.strictEqual(
 			// code under test (JIRA: CPOUI5ODATAV4-2856)
@@ -71804,14 +71842,32 @@ make root = ${bMakeRoot}`;
 
 		if (oContext) {
 			assert.deepEqual(oContext.getObject(), {
+				"@$ui5.context.isTransient" : true,
 				Price : "11",
 				PublicationID : "2"
 			});
+			//TODO assert.strictEqual(oContext.isInactive(), false);
+			assert.strictEqual(oContext.created(), oCreatedPromise);
+			assert.strictEqual(bCreated, undefined);
+			assert.strictEqual(oContext.isTransient(), true);
+
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-2864 - just curious)
 				oContext.getCanonicalPath();
 			}, new Error(sPublicationPath + ": No key predicate known at " + sPublicationPath));
+
+			const oOperation = oModel.bindContext("special.cases.PreparationAction(...)", oContext);
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2856)
+				oOperation.invoke();
+			}, new Error("Invoke for transient context not allowed: "
+				+ oOperation.getResolvedPath()));
+
+			assert.strictEqual(oContext.hasPendingChanges(), true);
 		}
+		assert.strictEqual(oArtistContext.hasPendingChanges(), true);
+		assert.strictEqual(oArtistBinding.hasPendingChanges(), true);
+		assert.strictEqual(oModel.hasPendingChanges(), true);
 		let oPromise;
 		if (bReset) {
 			this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
@@ -71820,14 +71876,19 @@ make root = ${bMakeRoot}`;
 					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
 				.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
 					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-				.expectChange("price", "12") // from the second PATCH to "11"
-				.expectChange("price", null)
+				.expectChange("price", "12"); // from the second PATCH to "11"
+			if (bIntermediate) {
+				this.expectChange("isTransient", undefined);
+			}
+			this.expectChange("price", null)
 				.expectChange("publicationId", "")
 				.expectChange("isNull", true);
 
 			// code under test
-			if (oContext) {
-				oPromise = oContext.resetChanges();
+			if (bIntermediate) { // misuse to distinguish reset on context vs. model
+				// Note: #resetChanges throws if "this context is transient, but not inactive and
+				// therefore should rather be reset via {@link #delete}" --> that's OK!
+				oPromise = oArtistContext.resetChanges();
 			} else {
 				oModel.resetChanges();
 			}
@@ -71862,6 +71923,9 @@ make root = ${bMakeRoot}`;
 						}
 					}
 				});
+			if (bIntermediate) {
+				this.expectChange("isTransient", false);
+			}
 			this.expectChange("currency", "USD")
 				.expectChange("price", "10.99")
 				.expectChange("isNull", false); // this is accepted! (JIRA: CPOUI5ODATAV4-2638)
@@ -71878,6 +71942,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(iPatchSent, bReset ? 1 : 2);
 		assert.strictEqual(iPatchCompleted, bReset ? 1 : 2);
 		const oBestPublication = {
+			"@$ui5.context.isTransient" : false,
 			"@odata.etag" : "etag3",
 			CurrencyCode : "USD",
 			Price : "10.99",
@@ -71886,12 +71951,26 @@ make root = ${bMakeRoot}`;
 		assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"),
 			bReset ? null : oBestPublication);
 		if (oContext) {
-			assert.deepEqual(oContext.getObject(), bReset ? null : oBestPublication);
-			if (!bReset) {
+			if (bReset) {
+				assert.strictEqual(oContext.getObject(), null);
+				//TODO assert.strictEqual(oContext.isInactive(), true);
+				assert.strictEqual(oContext.created(), undefined);
+				assert.strictEqual(bCreated, false);
+				assert.strictEqual(oContext.isTransient(), undefined);
+			} else {
+				assert.deepEqual(oContext.getObject(), oBestPublication);
+				//TODO assert.strictEqual(oContext.isInactive(), false);
+				assert.strictEqual(oContext.created(), oCreatedPromise);
+				assert.strictEqual(bCreated, true);
+				assert.strictEqual(oContext.isTransient(), false);
 				// code under test (JIRA: CPOUI5ODATAV4-2864)
 				assert.strictEqual(oContext.getCanonicalPath(), "/Publications('2')");
 			}
+			assert.strictEqual(oContext.hasPendingChanges(), false);
 		}
+		assert.strictEqual(oArtistContext.hasPendingChanges(), false);
+		assert.strictEqual(oArtistBinding.hasPendingChanges(), false);
+		assert.strictEqual(oModel.hasPendingChanges(), false);
 	});
 	});
 });
@@ -71904,6 +71983,8 @@ make root = ${bMakeRoot}`;
 	// Using an ODLB here, because its #requestSideEffects is implemented differently.
 	// Using $$patchWithoutSideEffects here, to see that is has no effect.
 	// JIRA: CPOUI5ODATAV4-2211
+	//
+	// Check "transient" handling: row context is unaffected (JIRA: CPOUI5ODATAV4-2856)
 [false, true].forEach(function (bRefresh) {
 	const sTitle = `CPOUI5ODATAV4-2211: upsert & ${bRefresh ? "refresh" : "side-effects request"}`;
 
@@ -71943,6 +72024,9 @@ make root = ${bMakeRoot}`;
 		const oPromise = oOrderContext.setProperty("SO_2_BP/Address/City", "Heidelberg");
 
 		await this.waitForChanges(assert, "upsert");
+
+		assert.strictEqual(oOrderContext.created(), undefined, "JIRA: CPOUI5ODATAV4-2856");
+		assert.strictEqual(oOrderContext.isTransient(), undefined, "JIRA: CPOUI5ODATAV4-2856");
 
 		this.expectRequest({
 				batchNo : 2,
@@ -72010,7 +72094,10 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "submit")
 		]);
 
+		// Note: this proves that oOrderContext has been reused, not destroyed (because it does not
+		// appear created by mistake)
 		assert.deepEqual(oOrderContext.getObject("SO_2_BP"), {
+			...(bRefresh ? {} : {"@$ui5.context.isTransient" : false}),
 			"@odata.etag" : "etag2",
 			Address : {
 				City : "Heidelberg",

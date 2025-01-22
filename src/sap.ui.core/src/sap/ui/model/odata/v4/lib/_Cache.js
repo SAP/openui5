@@ -859,8 +859,7 @@ sap.ui.define([
 					iEntityPathLength = i;
 				}
 				oParentValue = vValue;
-				bTransient ||= vValue["@$ui5.context.isTransient"]
-					?? _Helper.hasPrivateAnnotation(vValue, "upsert");
+				bTransient ||= vValue["@$ui5.context.isTransient"];
 				aMatches = rSegmentWithPredicate.exec(sSegment);
 				if (aMatches) {
 					if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
@@ -2166,6 +2165,8 @@ sap.ui.define([
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} fnIsKeepAlive
 	 *   A function to tell whether the entity is kept alive
+	 * @param {function} fnSetUpsertPromise
+	 *   A function to (re)set a sync promise for the "upsert" use case
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
@@ -2175,9 +2176,10 @@ sap.ui.define([
 	 */
 	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback,
 			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent,
-			fnIsKeepAlive) {
+			fnIsKeepAlive, fnSetUpsertPromise) {
 		var oFetchPromise,
 			aPropertyPath = sPropertyPath.split("/"),
+			bUpsert,
 			that = this;
 
 		this.checkSharedRequest();
@@ -2194,14 +2196,13 @@ sap.ui.define([
 			oFetchPromise = this.oPromise = SyncPromise.resolve({"@odata.etag" : "*"});
 		}
 
-		return oFetchPromise.then(function (oEntity) {
+		const oUpdatePromise = oFetchPromise.then(function (oEntity) {
 			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				sNavigationProperty, // upsert only
 				oOldData, // ignored for upsert
 				sParentPath, // upsert only
-				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue),
-				bUpsert = oEntity === null;
+				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue);
 
 			/*
 			 * Sends a PATCH request.
@@ -2255,6 +2256,7 @@ sap.ui.define([
 						// reset to null notifying listeners
 						_Helper.updateAll(that.mChangeListeners, sParentPath,
 							that.getValue(sParentPath), {[sNavigationProperty] : null});
+						fnSetUpsertPromise?.();
 					} else {
 						_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oOldData);
 					}
@@ -2310,6 +2312,8 @@ sap.ui.define([
 							? {"@odata.etag" : oPatchResult["@odata.etag"]}
 							: oPatchResult);
 					if (bUpsert) {
+						_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity,
+							{"@$ui5.context.isTransient" : false});
 						_Helper.deletePrivateAnnotation(oEntity, "upsert");
 					}
 				}, function (oError) {
@@ -2392,12 +2396,13 @@ sap.ui.define([
 				}
 			}
 
+			bUpsert = oEntity === null;
 			if (bUpsert) {
 				const aSegments = sEntityPath.split("/");
 				sNavigationProperty = aSegments.pop();
 				sParentPath = aSegments.join("/");
 				// create empty object notifying listeners
-				oEntity = {};
+				oEntity = {"@$ui5.context.isTransient" : true};
 				_Helper.setPrivateAnnotation(oEntity, "upsert", true);
 				// Note: _Helper.updateAll would not set the object reference! updateExisting would,
 				// but this should be much simpler (to understand)
@@ -2459,6 +2464,11 @@ sap.ui.define([
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch(oGroupLock);
 		});
+		if (bUpsert) {
+			fnSetUpsertPromise?.(oUpdatePromise);
+		}
+
+		return oUpdatePromise;
 	};
 
 	/**

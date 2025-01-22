@@ -86,10 +86,7 @@ sap.ui.define([
 		}
 		BaseContext.call(this, oModel, sPath);
 		this.oBinding = oBinding;
-		this.oCreatedPromise = oCreatePromise
-			// ensure to return a promise that is resolved w/o data
-			&& Promise.resolve(oCreatePromise).then(function () {});
-		this.oSyncCreatePromise = oCreatePromise;
+		this.setCreated(oCreatePromise);
 		// a promise waiting for the deletion, also used as indicator for #isDeleted
 		this.oDeletePromise = null;
 		// avoids recursion when calling #doSetProperty within the createActivate event handler
@@ -323,8 +320,6 @@ sap.ui.define([
 			if (this.iIndex === undefined) {
 				return Promise.resolve(); // already deleted, nothing to do
 			}
-			sGroupId = null;
-		} else if (_Helper.hasPrivateAnnotation(this.getValue() ?? {}, "upsert")) {
 			sGroupId = null;
 		} else if (sGroupId === null) {
 			if (!(this.isKeepAlive() && this.iIndex === undefined)) {
@@ -596,6 +591,10 @@ sap.ui.define([
 						oCache.setInactive(sEntityPath, that.bInactive);
 					}
 
+					const fnSetUpsertPromise = _Helper.hasPathSuffix(that.sPath, sEntityPath)
+						? that.setCreated.bind(that)
+						: null;
+
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
 					// returned Promise is rejected -> no patch events
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
@@ -603,7 +602,7 @@ sap.ui.define([
 						// Note: use that.oModel intentionally, fails if already destroyed!
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent,
-						that.isEffectivelyKeptAlive.bind(that)
+						that.isEffectivelyKeptAlive.bind(that), fnSetUpsertPromise
 					).then(function () {
 						firePatchCompleted(true);
 					}, function (oError) {
@@ -1404,7 +1403,7 @@ sap.ui.define([
 	 * @since 1.43.0
 	 */
 	Context.prototype.isTransient = function () {
-		return this.oSyncCreatePromise && this.oSyncCreatePromise.isPending();
+		return this.oSyncCreatePromise?.isPending();
 	};
 
 	/**
@@ -2179,6 +2178,30 @@ sap.ui.define([
 	Context.prototype.resetKeepAlive = function () {
 		this.bKeepAlive = false;
 		this.bSelected = false;
+	};
+
+	/**
+	 * Sets this context's {@link #created created} promise based on the given one.
+	 *
+	 * Note: this is a private and internal API. Do not call this!
+	 *
+	 * @param {sap.ui.base.SyncPromise} [oSyncCreatePromise]
+	 *   A promise which is resolved with the created entity when the PATCH or POST request has been
+	 *   successfully sent and the entity has been marked as non-transient; used as base for
+	 *   {@link #created}. If missing, this context's {@link #created created} promise is removed
+	 *   again. Don't use <code>null</code>!
+	 * @throws {Error} If this context is not "created" or still transient
+	 *
+	 * @private
+	 */
+	Context.prototype.setCreated = function (oSyncCreatePromise) {
+		if (oSyncCreatePromise && this.oCreatedPromise) {
+			throw new Error("Already 'created'");
+		}
+		this.oCreatedPromise = oSyncCreatePromise
+			// ensure to return a promise that is resolved w/o data
+			&& Promise.resolve(oSyncCreatePromise).then(function () {});
+		this.oSyncCreatePromise = oSyncCreatePromise;
 	};
 
 	/**
