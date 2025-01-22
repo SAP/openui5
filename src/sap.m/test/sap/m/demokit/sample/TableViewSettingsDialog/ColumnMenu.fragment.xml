@@ -2,20 +2,14 @@
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core"
 		xmlns:tcm="sap.m.table.columnmenu">
-	<tcm:Menu id="columnHeaderMenu" beforeOpen="onBeforeMenuOpen">
-		<tcm:QuickAction label="Quick Action">
-			<Button text="Execute"></Button>
-		</tcm:QuickAction>
+	<tcm:Menu id="columnHeaderMenu">
+		<tcm:QuickSort change="onSortChange">
+			<tcm:items>
+				<tcm:QuickSortItem key="Name" label="Product" />
+			</tcm:items>
+		</tcm:QuickSort>
 		<tcm:items>
-			<tcm:Item label="Item" showResetButton="false">
-				<Panel>
-					<Button text="Execute"></Button>
-				</Panel>
-			</tcm:Item>
-			<tcm:ActionItem
-					label="Action Item"
-					press="onActionItemPress">
-			</tcm:ActionItem>
+			<tcm:ActionItem label="Action Item"	press="onActionItemPress" />
 		</tcm:items>
 	</tcm:Menu>
 </core:FragmentDefinition>
