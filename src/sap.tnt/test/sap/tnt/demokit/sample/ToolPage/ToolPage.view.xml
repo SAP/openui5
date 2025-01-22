@@ -82,6 +82,7 @@
 						enabled="{enabled}"
 						expanded="{expanded}"
 						items="{items}"
+						selectable="{= ${items}.length > 3}"
 						key="{key}">
 						<tnt:NavigationListItem
 							text="{title}"
@@ -91,7 +92,7 @@
 				</tnt:NavigationList>
 				<tnt:fixedItem>
 					<tnt:NavigationList items="{path: '/fixedNavigation'}">
-						<tnt:NavigationListItem text="{title}" icon="{icon}" />
+						<tnt:NavigationListItem text="{title}" icon="{icon}" ariaHasPopup="{ariaHasPopup}" design="{design}" press=".onQuickActionPress" selectable="{selectable}"/>
 					</tnt:NavigationList>
 				</tnt:fixedItem>
 			</tnt:SideNavigation>

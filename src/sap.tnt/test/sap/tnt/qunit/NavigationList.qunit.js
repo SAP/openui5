@@ -74,6 +74,7 @@ sap.ui.define([
 					icon: 'sap-icon://employee',
 					href: '#/rootChild1',
 					target: '_blank',
+					ariaHasPopup: 'Tree',
 					items: [
 						new NavigationListItem({
 							text: 'Child 1',
@@ -259,6 +260,54 @@ sap.ui.define([
 							text: 'Child 3'
 						})
 					]
+				})
+			]
+		});
+	}
+
+	function getSecondNavigationList () {
+		return new NavigationList({
+			expanded: true,
+			items: [
+				new NavigationListItem("nonSelectableItem", {
+					text: 'Root 5',
+					selectable: false,
+					icon: 'sap-icon://employee',
+					items: [
+						new NavigationListItem({
+							text: 'Child 1'
+						}),
+						new NavigationListItem({
+							text: 'Child 2'
+						}),
+						new NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				}),
+				new NavigationListItem("selectableItem", {
+					text: 'Root 3',
+					icon: 'sap-icon://employee',
+					items: [
+						new NavigationListItem({
+							text: 'Child 1'
+						}),
+						new NavigationListItem({
+							text: 'Child 2'
+						}),
+						new NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				}),
+				new NavigationListItem('actionItem', {
+					text: 'Action Item',
+					icon: 'sap-icon://write-new',
+					design: "Action"
+				}),
+				new NavigationListItem('defaultItem', {
+					text: 'Default Item',
+					icon: 'sap-icon://write-new'
 				})
 			]
 		});
@@ -556,11 +605,16 @@ sap.ui.define([
 		this.navigationList.setExpanded(true);
 		await nextUIUpdate(this.clock);
 
-		assert.strictEqual(currentItem.hasAttribute("aria-haspopup"), false, "no aria-haspopup attribute when NavigationList is expanded");
+		assert.strictEqual(this.navigationList.getItems()[1].getDomRef().querySelector("li a").getAttribute("aria-haspopup"), null, "aria-haspopup is not set");
 
 		this.navigationList.setExpanded(false);
 		await nextUIUpdate(this.clock);
-		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of type tree when NavigationList is collapsed");
+		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of correct type");
+		const oItem = this.navigationList.getItems()[1];
+		oItem.setAriaHasPopup("Dialog");
+		await nextUIUpdate(this.clock);
+		oItem.getDomRef().querySelector("li a");
+		assert.strictEqual(currentItem.getAttribute("aria-haspopup"), "tree", "aria-haspopup is of correct type when setting different value in collapsed mode");
 
 		//aria-roledescription
 		assert.strictEqual(currentItem.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, jQuery(currentItem).text() + ' has ARIA attribute roledescription.');
@@ -1230,7 +1284,12 @@ sap.ui.define([
 			this.navigationList._updateOverflowItems();
 		}
 
+		const oOverflowItem = this.navigationList._getOverflowItem();
+		const oAttachOverflowItemPressSpy = this.spy(oOverflowItem, "firePress");
+
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
+
+		assert.notOk(oAttachOverflowItemPressSpy.called, "Press event is not fired on the overflow item");
 
 		menuDomRef = document.querySelector(".sapUiMnu");
 
@@ -1290,11 +1349,25 @@ sap.ui.define([
 
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
 		assert.ok(menuDomRef, "overflow menu is shown");
+
+		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(2)"));
+		const oMenuNavigationItem = menu.getItems()[2]._navItem;
+		const oAttachItemPressSpy = this.spy(oMenuNavigationItem, "_firePress");
+
+		assert.notOk(oAttachItemPressSpy.called, "press event is not fired on the parent item in the overflow");
+
+		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
+
+		const oMenuSubNavigationItem = menu.getItems()[2].getItems()[2]._navItem;
+		const oAttachSubItemPressSpy = this.spy(oMenuSubNavigationItem, "_firePress");
+
 		const initiallySelectedImId = this.navigationList.getSelectedItem().sId;
 		menu = Element.closestTo(document.querySelector(".sapUiMnu"));
 		menu.openSubmenu(menu.getItems()[2]);
 		QUnitUtils.triggerEvent("click",  document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[2]);
 		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
+
+		assert.ok(oAttachSubItemPressSpy.called, "press event is fired on the sub item in the overflow menu");
 
 		menu.destroy();
 	});
@@ -1412,6 +1485,54 @@ sap.ui.define([
 
 		assert.strictEqual(aItemsInOverflow.includes(oNavigationListGroup), false, "group itself is not in the overflow");
 		assert.strictEqual(aGroupItems.every((oItem) => aItemsInOverflow.includes(oItem)), true, "group items are in the overflow");
+	});
+
+	QUnit.module("Item Designs", {
+		beforeEach: async function () {
+			this.navigationList = getSecondNavigationList();
+			oPage.addContent(this.navigationList);
+
+			await nextUIUpdate(); // no fake timer active in beforeEach
+		},
+		afterEach: async function () {
+			this.navigationList.destroy();
+			this.navigationList = null;
+
+			await nextUIUpdate(); // no fake timer active in afterEach
+		}
+	});
+
+	QUnit.test("selectable items", async function (assert) {
+
+		const oNonSelectableItem = this.navigationList.getItems()[0].getDomRef().querySelector(".sapTntNLI");
+		const oSelectableItem = this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLI");
+		QUnitUtils.triggerEvent("tap", oSelectableItem);
+
+		await nextUIUpdate(this.clock);
+
+		assert.ok(oSelectableItem.classList.contains("sapTntNLISelected"), "sapTntNLISelected class is set when item has selectable = false");
+
+		QUnitUtils.triggerEvent("tap", oNonSelectableItem);
+		await nextUIUpdate(this.clock);
+
+		assert.notOk(oNonSelectableItem.classList.contains("sapTntNLISelected"), "sapTntNLISelected class is not set when item has selectable = false");
+	});
+
+	QUnit.test("Design Action", function (assert) {
+
+		const oActionItem = this.navigationList.getItems()[2].getDomRef().querySelector(".sapTntNLI");
+		const oDefaultItem = this.navigationList.getItems()[3].getDomRef().querySelector(".sapTntNLI");
+		assert.ok(oActionItem.classList.contains("sapTntNLIAction"), "sapTntNLIAction class is set when item has design = Action");
+		assert.notOk(oDefaultItem.classList.contains("sapTntNLIAction"), "sapTntNLIAction class is not set when item has design = Default");
+	});
+
+	QUnit.test("Press event", function (assert) {
+		this.navigationList.getItems().forEach(async (item) => {
+			const oAttachPressSpy = this.spy(item, "firePress");
+			QUnitUtils.triggerEvent("tap", item.getDomRef().querySelector(".sapTntNLI"));
+			await nextUIUpdate(this.clock);
+			assert.ok(oAttachPressSpy.called, "press event is fired");
+		});
 	});
 
 	return waitForThemeApplied();

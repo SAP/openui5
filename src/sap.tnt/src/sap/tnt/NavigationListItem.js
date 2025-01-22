@@ -34,6 +34,12 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.tnt.NavigationListItemDesign
+	var NavigationListItemDesign = library.NavigationListItemDesign;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
+
 	const EXPAND_ICON_SRC = "sap-icon://navigation-right-arrow";
 	const COLLAPSE_ICON_SRC = "sap-icon://navigation-down-arrow";
 
@@ -95,7 +101,21 @@ sap.ui.define([
 				 * <code>_self</code>, <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>.
 				 * Alternatively, a frame name can be entered. This property is only used when the <code>href</code> property is set.
 				 */
-				target: { type: "string", group: "Behavior", defaultValue: null }
+				target: { type: "string", group: "Behavior", defaultValue: null },
+
+				/**
+				 * Specifies if the item has a special design.
+				 * NOTE: If <code>design</code> is not <code>NavigationListItemDesign.Default</code> sub-items can't be added.
+				 * @since 1.133.0
+				 * @experimental Behavior might change.
+				 */
+				design: { type: "sap.tnt.NavigationListItemDesign", group: "Behavior", defaultValue: NavigationListItemDesign.Default },
+
+				/**
+				 * Specifies the value of the <code>aria-haspopup</code> attribute
+				 * @since 1.133.0
+				 */
+				ariaHasPopup: { type: "sap.ui.core.aria.HasPopup", group: "Accessibility", defaultValue: AriaHasPopup.None }
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -418,6 +438,7 @@ sap.ui.define([
 			bDisabled = !this.getEnabled() || !this.getAllParentsEnabled(),
 			bExpanded = this.getExpanded(),
 			bSelectable = this.getSelectable(),
+			sDesign = this.getDesign(),
 			bExpanderVisible = !!aItems.length && this.getHasExpander();
 
 		oRM.openStart("div")
@@ -444,6 +465,15 @@ sap.ui.define([
 		}
 
 		const oLinkAriaProps = {};
+
+		if (this.getAriaHasPopup() !== AriaHasPopup.None) {
+			oLinkAriaProps.haspopup = this.getAriaHasPopup();
+		}
+
+		if (sDesign === NavigationListItemDesign.Action) {
+			oRM.class("sapTntNLIAction");
+		}
+
 		if (!bListExpanded) {
 			oLinkAriaProps.role = bSelectable ? "menuitemradio" : "menuitem";
 

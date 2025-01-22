@@ -202,11 +202,14 @@ sap.ui
 						 *    All regular expression groups are forwarded as arguments to the <code>response</code> function.
 						 *    In addition to this, parameters can be written in this notation: <code>:param</code>.
 						 *    These placeholders will be replaced by regular expression groups.
-						 * @property {function(sap.ui.core.util.MockServer.Response,...any)} response
+						 * @property {function(sap.ui.core.util.MockServer.Response,...any): boolean} response
 						 *    A response handler function that will be called when an incoming request
 						 *    matches <code>method</code> and <code>path</code>.
 						 *    The first parameter of the handler will be a <code>Response</code> object which can be used
 						 *    to respond on the request.
+						 *    A truthy return value indicates that the request handler has processed the request,
+						 *    meaning that no further request handlers are called.
+						 *    A falsy return value means that further request handlers with a matching path are called.
 						 * @public
 						 */
 

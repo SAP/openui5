@@ -629,7 +629,7 @@ sap.ui.define([
 		});
 
 		// these assertions also check if the longest match is found
-		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "1,234.57" + "\xa0" + "4DOL", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "1,234.574DOL");
 		assert.deepEqual(oFormatEN.parse("4DOL 1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("4DOL1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start - no delimiter");
 
@@ -735,11 +735,11 @@ sap.ui.define([
 			}
 		});
 
-		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "!!\xa01,234.57", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "!!1,234.57");
 		assert.deepEqual(oFormatEN.parse("!! 1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start");
 		assert.deepEqual(oFormatEN.parse("!!1,234.57"), [1234.57, "4DOL"], "parse in English locale - number at the start - no delimiter");
 
-		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "§\xa01,234.6", "format in English locale - number in the middle");
+		assert.strictEqual(oFormatEN.format(1234.5678, "D4OL"), "§1,234.6");
 		assert.deepEqual(oFormatEN.parse("§ 1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle");
 		assert.deepEqual(oFormatEN.parse("§1,234.6"), [1234.6, "D4OL"], "parse in English locale - number in the middle - no delimiter");
 
@@ -747,7 +747,7 @@ sap.ui.define([
 		assert.deepEqual(oFormatEN.parse("$ 1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end");
 		assert.deepEqual(oFormatEN.parse("$1,234.568"), [1234.568, "DOL4"], "parse in English locale - number at the end - no delimiter");
 
-		assert.strictEqual(oFormatEN.format(1234.56789, "DO"), "My#\xa01,234.5679", "format in English locale - short match");
+		assert.strictEqual(oFormatEN.format(1234.56789, "DO"), "My#1,234.5679");
 		assert.deepEqual(oFormatEN.parse("My# 1,234.568"), [1234.568, "DO"], "parse in English locale - short match");
 		assert.deepEqual(oFormatEN.parse("My#1,234.568"), [1234.568, "DO"], "parse in English locale - short match - no delimiter");
 
@@ -838,8 +838,8 @@ sap.ui.define([
 		});
 
 		// these assertation also check if the longest match is found
-		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "1,234.57\xa04DOL", "format in English locale - number at the start");
-		assert.strictEqual(oFormatEN.format(-1234.5678, "4DOL"), "(1,234.57\xa04DOL)", "format in English locale - number at the start");
+		assert.strictEqual(oFormatEN.format(1234.5678, "4DOL"), "1,234.574DOL");
+		assert.strictEqual(oFormatEN.format(-1234.5678, "4DOL"), "(1,234.574DOL)");
 
 		// smaller match should win
 		assert.strictEqual(oFormatEN.format(1234.5678, "DO"), "1,234.5678\xa0DO", "format in English locale - short match");
@@ -997,7 +997,7 @@ sap.ui.define([
 			}
 		});
 
-		assert.strictEqual(oFormat.format(123, "180"), "123.00\xa0180", "formatting [123, '180']");
+		assert.strictEqual(oFormat.format(123, "180"), "123.00180", "formatting [123, '180']");
 
 		assert.deepEqual(oFormat.parse("123.00 180"), [123, "180"], "parsing 123.00 180");
 		assert.deepEqual(oFormat.parse("123.00180"), [123, "180"], "parsing 123.00 180");
@@ -1506,7 +1506,7 @@ sap.ui.define([
 		assert.strictEqual(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
-	QUnit.test("currency for 'he' locale with big number. Contains the RTL character u+200F", function (assert) {
+	QUnit.test("currency for 'he' locale with big number. Contains no RTL characters", function (assert) {
 		//setup
 		var oLocale = new Locale("he");
 		var oFormat = getCurrencyInstance({
@@ -1518,8 +1518,7 @@ sap.ui.define([
 
 		// execution
 		var sFormatted = oFormat.format(iExpectedNumber);
-		assert.strictEqual(sFormatted, "\u200f50,000.00\u00a0\u200f\u200e",
-			"can be formatted '" + sFormatted + "' (contains RTL character)");
+		assert.strictEqual(sFormatted, "50,000.00", "can be formatted '" + sFormatted + "' (no RTL character)");
 
 		var aParsed = oFormat.parse(sFormatted);
 		assert.deepEqual(aParsed, [50000, undefined], "should match input number " + iExpectedNumber);

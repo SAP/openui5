@@ -8,8 +8,8 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/m/MessageToast',
 	'sap/base/Log',
-	'sap/m/Button'
-], function (Controller, MessageToast, Log, Button) {
+	'sap/m/CheckBox'
+], function (Controller, MessageToast, Log, CheckBox) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.HeapOfShards.controller.App", {

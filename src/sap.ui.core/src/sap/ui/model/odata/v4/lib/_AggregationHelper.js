@@ -23,13 +23,15 @@ sap.ui.define([
 					with : "string"
 				}
 			},
-			"grandTotal like 1.84" : "boolean",
+
 			grandTotalAtBottomOnly : "boolean",
+
 			group : {
 				"*" : {
 					additionally : ["string"]
 				}
 			},
+
 			groupLevels : ["string"],
 			search : "string",
 			subtotalsAtBottomOnly : "boolean"

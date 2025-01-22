@@ -294,12 +294,18 @@ sap.ui.define([
 			items: this._createNavigationMenuItems(),
 			itemSelected: (oEvent) => {
 				const oMenuItem = oEvent.getParameter("item");
-				this._selectItem({
-					item: oMenuItem._navItem
-				});
+				const oNavigationItem = oMenuItem._navItem;
 
-				const oSelectedItemDomRef = this.getDomRef().querySelector(".sapTntNLISelected [tabindex]");
-				oSelectedItemDomRef?.focus();
+				if (oNavigationItem.getSelectable()) {
+					this._selectItem({
+						item: oNavigationItem
+					});
+					oNavigationItem._firePress({
+						item: oNavigationItem
+					});
+					const oSelectedItemDomRef = this.getDomRef().querySelector(".sapTntNLISelected [tabindex]");
+					oSelectedItemDomRef?.focus();
+				}
 
 				oMenu.close();
 				oMenu.destroy();
