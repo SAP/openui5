@@ -31,7 +31,7 @@ sap.ui.require([], () => {
 				} else {
 					assert.notOk(oLinkSapM.hasAttribute("data-sap-ui-ready"), "'data-sap-ui-ready' flag has been removed from link tag.");
 					// Depending on CORS settings, we either detect immediately, that the CSS request failed or we need to wait for a second CSS request.
-					assert.notOk(oLinkFailingLib.hasAttribute("data-sap-ui-ready") || oLinkFailingLib.getAttribute("data-sap-ui-ready") === "false", "'data-sap-ui-ready' flag has been removed from link tag.");
+					assert.ok(!oLinkFailingLib.hasAttribute("data-sap-ui-ready") || oLinkFailingLib.getAttribute("data-sap-ui-ready") === "false", "'data-sap-ui-ready' flag has been removed from link tag.");
 				}
 
 				const themeApplied = function() {
