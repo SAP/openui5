@@ -41,11 +41,12 @@ sap.ui.define([
 	const CUSTOMCSSCHECK = /\.sapUiThemeDesignerCustomCss/i;
 	const _CUSTOMID = "sap-ui-core-customcss";
 	const _THEME_PREFIX = "sap-ui-theme-";
-	let bPreloadedCssReady = true;
+	let bAllPreloadedCssReady = true;
 
 	// Collect all UI5 relevant CSS files which have been added upfront
 	// and add them to UI5 theming lifecycle
 	document.querySelectorAll(`link[id^=${_THEME_PREFIX}]`).forEach(function(linkNode) {
+		let bPreloadedCssReady = true;
 		const sLibId = linkNode.getAttribute("id").replace(_THEME_PREFIX, "");
 
 		mAllLoadedLibraries[sLibId] = {};
@@ -57,18 +58,19 @@ sap.ui.define([
 			bPreloadedCssReady = !!(linkNode.sheet?.href === linkNode.href && linkNode.sheet?.cssRules);
 
 			if (!bPreloadedCssReady) {
+				bAllPreloadedCssReady = bPreloadedCssReady;
 				linkNode.addEventListener("load", (oEvent) => {
 					const bError = oEvent.type === "error";
 					linkNode.setAttribute("data-sap-ui-ready", !bError);
 				});
 			} else {
-				linkNode.setAttribute("data-sap-ui-ready", "true");
+				linkNode.setAttribute("data-sap-ui-ready", linkNode.sheet.cssRules.length > 0);
 			}
 		} catch (e) {
 			// If the stylesheet is cross-origin and throws a security error, we can't verify directly
 			Log.info("Could not detect ready state of preloaded CSS. Request stylesheet again to verify the response status", undefined, "sap.ui.core.theming.ThemeManager");
 
-			bPreloadedCssReady = false;
+			bAllPreloadedCssReady = false;
 
 			includeStylesheet({
 				url: linkNode.href,
@@ -102,7 +104,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		themeLoaded: bPreloadedCssReady,
+		themeLoaded: bAllPreloadedCssReady,
 
 		/**
 		 * Trigger ThemeManager
@@ -390,13 +392,22 @@ sap.ui.define([
 
 		// Try to load a fallback theme for all libs that couldn't be loaded
 		if (aFailedLibs.length > 0) {
-
 			// Only retrieve the fallback theme once per ThemeManager cycle
 			if (!_sFallbackTheme) {
 				for (var sLib in mAllLoadedLibraries) {
 					var oThemeMetaData = ThemeHelper.getMetadata(sLib);
 					if (oThemeMetaData && oThemeMetaData.Extends && oThemeMetaData.Extends[0]) {
 						_sFallbackTheme = oThemeMetaData.Extends[0];
+					} else {
+						const sThemeRoot = Theming.getThemeRoot(sThemeName, sLib);
+						if (sThemeRoot) {
+							const rBaseTheme = /~v=[^\/]+\(([a-zA-Z0-9_]+)\)/;
+							// base theme should be matched in the first capturing group
+							_sFallbackTheme = rBaseTheme.exec(sThemeRoot)?.[1];
+						}
+					}
+
+					if (_sFallbackTheme) {
 						break;
 					}
 				}

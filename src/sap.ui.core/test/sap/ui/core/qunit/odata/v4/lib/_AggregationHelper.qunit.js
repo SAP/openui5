@@ -1464,28 +1464,30 @@ sap.ui.define([
 
 		this.mock(_AggregationHelper).expects("checkTypeof")
 			.withExactArgs(sinon.match.same(oAggregation), {
-				aggregate : {
-					"*" : {
-						grandTotal : "boolean",
-						max : "boolean",
-						min : "boolean",
-						name : "string",
-						subtotals : "boolean",
-						unit : "string",
-						with : "string"
-					}
-				},
-				"grandTotal like 1.84" : "boolean",
-				grandTotalAtBottomOnly : "boolean",
-				group : {
-					"*" : {
-						additionally : ["string"]
-					}
-				},
-				groupLevels : ["string"],
-				search : "string",
-				subtotalsAtBottomOnly : "boolean"
-			}, "$$aggregation")
+			aggregate : {
+				"*" : {
+					grandTotal : "boolean",
+					max : "boolean",
+					min : "boolean",
+					name : "string",
+					subtotals : "boolean",
+					unit : "string",
+					with : "string"
+				}
+			},
+
+			grandTotalAtBottomOnly : "boolean",
+
+			group : {
+				"*" : {
+					additionally : ["string"]
+				}
+			},
+
+			groupLevels : ["string"],
+			search : "string",
+			subtotalsAtBottomOnly : "boolean"
+		}, "$$aggregation")
 			.throws(oError);
 
 		assert.throws(function () {
@@ -1628,13 +1630,6 @@ sap.ui.define([
 				}
 			});
 		}, new Error("Not a string value for '$$aggregation/aggregate/foo/unit'"));
-
-		assert.throws(function () {
-			// code under test
-			_AggregationHelper.validateAggregation({
-				"grandTotal like 1.84" : "1.84"
-			});
-		}, new Error("Not a boolean value for '$$aggregation/grandTotal like 1.84'"));
 
 		assert.throws(function () {
 			// code under test

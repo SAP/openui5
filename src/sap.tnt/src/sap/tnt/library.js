@@ -32,7 +32,8 @@ sap.ui.define([
 		designtime: "sap/tnt/designtime/library.designtime",
 		types: [
 			"sap.tnt.IllustratedMessageType",
-			"sap.tnt.RenderMode"
+			"sap.tnt.RenderMode",
+			"sap.tnt.NavigationListItemDesign"
 		],
 		interfaces: [
 			"sap.tnt.IToolHeader"
@@ -80,8 +81,32 @@ sap.ui.define([
 		Loose: "Loose"
 	};
 
+	/**
+	 * Available types for navigation list item.
+	 * @public
+	 * @enum {string}
+	 * @since 1.133.0
+	 * @experimental Behavior might change.
+	 */
+	thisLib.NavigationListItemDesign = {
+
+		/**
+		 * Navigation list item type which enables navigation or contains navigation child items, or both.
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Navigation list item type which provides access to frequent functionality.
+		 * @public
+		 */
+		Action: "Action"
+	};
+
 	// Register all above defined enums.
 	DataType.registerEnum("sap.tnt.RenderMode", thisLib.RenderMode);
+	DataType.registerEnum("sap.tnt.NavigationListItemDesign", thisLib.NavigationListItemDesign);
+
 
 	/**
 	 * Interface for controls suitable for the <code>header</code> aggregation of {@link sap.tnt.ToolPage}.

@@ -4966,18 +4966,6 @@
 		"standard-noCurrency": "#,##0.00",
 		"accounting": "#,##0.00 ¤;(#,##0.00 ¤)",
 		"accounting-noCurrency": "#,##0.00;(#,##0.00)",
-		"currencySpacing": {
-			"beforeCurrency": {
-				"currencyMatch": "[[:^S:]&[:^Z:]]",
-				"surroundingMatch": "[:digit:]",
-				"insertBetween": " "
-			},
-			"afterCurrency": {
-				"currencyMatch": "[[:^S:]&[:^Z:]]",
-				"surroundingMatch": "[:digit:]",
-				"insertBetween": " "
-			}
-		},
 		"sap-standard": "#,##0.00 ¤",
 		"sap-accounting": "#,##0.00 ¤;(#,##0.00 ¤)",
 		"sap-standard-noCurrency": "#,##0.00",

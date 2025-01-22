@@ -4589,159 +4589,151 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a new data aggregation object and derives the system query option <code>$apply</code>
-	 * implicitly from it.
-	 *
-	 * @param {object} [oAggregation]
-	 *   An object holding the information needed for data aggregation; see also
-	 *   <a href="https://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>. Since 1.76.0, <code>undefined</code> can be
-	 *   used to remove the data aggregation object, which allows to set <code>$apply</code>
-	 *   explicitly afterwards. <code>null</code> is not supported.
-	 *   <br>
-	 *   Since 1.89.0, the <b>deprecated</b> property <code>"grandTotal like 1.84" : true</code> can
-	 *   be used to turn on the handling of grand totals like in 1.84.0, using aggregates of
-	 *   aggregates and thus allowing to filter by aggregated properties while grand totals are
-	 *   needed. Beware that methods like "average" or "countdistinct" are not compatible with this
-	 *   approach, and it cannot be combined with group levels. Since 1.129.0, this property is not
-	 *   needed anymore and filtering by aggregated properties is supported even while grand totals
-	 *   or subtotals are needed.
-	 *   <br>
-	 *   Since 1.117.0, either a read-only recursive hierarchy or pure data aggregation is
-	 *   supported, but no mix; <code>hierarchyQualifier</code> is the leading property that decides
-	 *   between those two use cases. Since 1.125.0, maintenance of a recursive hierarchy is
-	 *   supported.
-	 * @param {object} [oAggregation.aggregate]
-	 *   A map from aggregatable property names or aliases to objects containing the following
-	 *   details:
-	 *   <ul>
-	 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total for
-	 *       this aggregatable property is needed (since 1.59.0); not supported in this case are:
-	 *       <ul>
-	 *         <li> "$search" (since 1.93.0),
-	 *         <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter}
-	 *           (since 1.107.0),
-	 *         <li> shared requests (since 1.108.0).
-	 *       </ul>
-	 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for this
-	 *       aggregatable property are needed
-	 *     <li> <code>with</code>: An optional string that provides the name of the method (for
-	 *       example "sum") used for aggregation of this aggregatable property; see
-	 *       "3.1.2 Keyword with".
-	 *     <li> <code>name</code>: An optional string that provides the original aggregatable
-	 *       property name in case a different alias is chosen as the name of the dynamic property
-	 *       used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
-	 *      <li> <code>unit</code>: An optional string that provides the name of the custom
-	 *       aggregate for a currency or unit of measure corresponding to this aggregatable property
-	 *       (since 1.86.0). The custom aggregate must return the single value of that unit in case
-	 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
-	 *       suggestion: <code>CASE WHEN MIN(Unit) = MAX(Unit) THEN MIN(Unit) END</code>)
-	 *   </ul>
-	 * @param {boolean} [oAggregation.createInPlace]
-	 *   Whether created nodes are shown in place at the position specified by the service
-	 *   (since 1.130.0); only the value <code>true</code> is allowed.
-	 *   Otherwise, created nodes are displayed out of place as the first children of their parent
-	 *   or as the first roots, but not in their usual position as defined by the service and the
-	 *   current sort order.
-	 * @param {number} [oAggregation.expandTo=1]
-	 *   The number (as a positive integer) of different levels initially available without calling
-	 *   {@link sap.ui.model.odata.v4.Context#expand} (since 1.117.0), supported only if a
-	 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
-	 *   only root nodes are available; they are not yet expanded. Since 1.120.0,
-	 *   <code>expandTo >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels
-	 *   (<code>1E16</code> is recommended inside XML views for simplicity).
-	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
-	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
-	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,
-	 *   the default is top only
-	 * @param {object} [oAggregation.group]
-	 *   A map from groupable property names to objects containing the following details:
-	 *   <ul>
-	 *     <li> <code>additionally</code>: An optional list of strings that provides the paths to
-	 *       properties (like texts or attributes) related to this groupable property in a 1:1
-	 *       relation (since 1.87.0). They are requested additionally via <code>groupby</code> and
-	 *       must not change the actual grouping; a <code>unit</code> for an aggregatable property
-	 *       must not be repeated here.
-	 *   </ul>
-	 * @param {string[]} [oAggregation.groupLevels]
-	 *   A list of groupable property names used to determine group levels. They may, but don't need
-	 *   to, be repeated in <code>oAggregation.group</code>. Since 1.132.0, the last group level is
-	 *   interpreted as the leaf level in case there are no other groups than those given here. In
-	 *   that case, {@link #getAggregation} returns a shorter <code>groupLevels</code> list.
-	 *   Group levels cannot be combined with:
-	 *   <ul>
-	 *     <li> filtering for aggregated properties,
-	 *     <li> "$search" (since 1.93.0),
-	 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter} (since 1.107.0),
-	 *     <li> shared requests (since 1.108.0).
-	 *   </ul>
-	 * @param {string} [oAggregation.hierarchyQualifier]
-	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
-	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
-	 *   entity type (since 1.117.0). If present, a recursive hierarchy without data aggregation is
-	 *   defined, and the only other supported properties are <code>createInPlace</code>,
-	 *   <code>expandTo</code>, and <code>search</code>. A recursive hierarchy cannot be combined
-	 *   with:
-	 *   <ul>
-	 *     <li> "$search",
-	 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter},
-	 *     <li> shared requests.
-	 *   </ul>
-	 * @param {string} [oAggregation.search]
-	 *   Like the <a href=
-	 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#_Search_System_Query"
-	 *   >"5.1.7 System Query Option $search"</a>, but applied before data aggregation
-	 *   (since 1.93.0). Note that certain content will break the syntax of the system query option
-	 *   <code>$apply</code> and result in an invalid request. If the OData service supports the
-	 *   proposal <a href="https://issues.oasis-open.org/browse/ODATA-1452">ODATA-1452</a>, then
-	 *   <code>ODataUtils.formatLiteral(sSearch, "Edm.String");</code> should be used to encapsulate
-	 *   the whole search string beforehand (see {@link
-	 *   sap.ui.model.odata.v4.ODataUtils.formatLiteral}). Since 1.120.13, all contexts, including
-	 *   the header context are deselected if the '$$clearSelectionOnFilter' binding parameter is
-	 *   set and the search parameter is changed.
-	 * @param {boolean} [oAggregation.subtotalsAtBottomOnly]
-	 *   Tells whether subtotals for aggregatable properties are displayed at the bottom only, as a
-	 *   separate row after all children, when a group level node is expanded (since 1.86.0);
-	 *   <code>true</code> for bottom only, <code>false</code> for top and bottom, the default is
-	 *   top only (that is, as part of the group level node)
-	 * @throws {Error} If
-	 *   <ul>
-	 *     <li> the given data aggregation object is unsupported,
-	 *     <li> the <code>$apply</code> system query option has been specified explicitly before,
-	 *     <li> the binding has a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
-	 *       context when switching the use case of data aggregation (recursive hierarchy, pure data
-	 *       aggregation, or none at all),
-	 *     <li> there are pending changes,
-	 *     <li> a recursive hierarchy is requested, but the model does not use the
-	 *       <code>autoExpandSelect</code> parameter,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
-	 *     <li> the binding has {@link sap.ui.model.Filter.NONE}
-	 *   </ul>
-	 *
-	 * @example <caption>First group level is product category including subtotals for the net
-	 *     amount in display currency. On leaf level, transaction currency is used as an additional
-	 *     dimension and the net amount is averaged.</caption>
-	 *   oListBinding.setAggregation({
-	 *     aggregate : {
-	 *       AverageNetAmountInTransactionCurrency : {
-	 *         name : "NetAmountInTransactionCurrency", // original name
-	 *         "with" : "average", // aggregation method
-	 *         unit : "TransactionCurrency"
-	 *       },
-	 *       NetAmountInDisplayCurrency : {subtotals : true, unit : "DisplayCurrency"},
-	 *       SalesNumber : {grandTotal : true}
-	 *     },
-	 *     group : {
-	 *       ProductCategory : {}, // optional
-	 *       TransactionCurrency : {}
-	 *     },
-	 *     groupLevels : ['ProductCategory']
-	 *   });
-	 * @public
-	 * @see #getAggregation
-	 * @since 1.55.0
-	 */
+		 * Sets a new data aggregation object and derives the system query option <code>$apply</code>
+		 * implicitly from it.
+		 *
+		 * @param {object} [oAggregation]
+		 *   An object holding the information needed for data aggregation; see also
+		 *   <a href="https://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+		 *   Extension for Data Aggregation Version 4.0</a>. Since 1.76.0, <code>undefined</code> can be
+		 *   used to remove the data aggregation object, which allows to set <code>$apply</code>
+		 *   explicitly afterwards. <code>null</code> is not supported.
+		 *   <br>
+		 *   Since 1.117.0, either a read-only recursive hierarchy or pure data aggregation is
+		 *   supported, but no mix; <code>hierarchyQualifier</code> is the leading property that decides
+		 *   between those two use cases. Since 1.125.0, maintenance of a recursive hierarchy is
+		 *   supported.
+		 * @param {object} [oAggregation.aggregate]
+		 *   A map from aggregatable property names or aliases to objects containing the following
+		 *   details:
+		 *   <ul>
+		 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total for
+		 *       this aggregatable property is needed (since 1.59.0); not supported in this case are:
+		 *       <ul>
+		 *         <li> "$search" (since 1.93.0),
+		 *         <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter}
+		 *           (since 1.107.0),
+		 *         <li> shared requests (since 1.108.0).
+		 *       </ul>
+		 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for this
+		 *       aggregatable property are needed
+		 *     <li> <code>with</code>: An optional string that provides the name of the method (for
+		 *       example "sum") used for aggregation of this aggregatable property; see
+		 *       "3.1.2 Keyword with".
+		 *     <li> <code>name</code>: An optional string that provides the original aggregatable
+		 *       property name in case a different alias is chosen as the name of the dynamic property
+		 *       used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
+		 *      <li> <code>unit</code>: An optional string that provides the name of the custom
+		 *       aggregate for a currency or unit of measure corresponding to this aggregatable property
+		 *       (since 1.86.0). The custom aggregate must return the single value of that unit in case
+		 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
+		 *       suggestion: <code>CASE WHEN MIN(Unit) = MAX(Unit) THEN MIN(Unit) END</code>)
+		 *   </ul>
+		 * @param {boolean} [oAggregation.createInPlace]
+		 *   Whether created nodes are shown in place at the position specified by the service
+		 *   (since 1.130.0); only the value <code>true</code> is allowed.
+		 *   Otherwise, created nodes are displayed out of place as the first children of their parent
+		 *   or as the first roots, but not in their usual position as defined by the service and the
+		 *   current sort order.
+		 * @param {number} [oAggregation.expandTo=1]
+		 *   The number (as a positive integer) of different levels initially available without calling
+		 *   {@link sap.ui.model.odata.v4.Context#expand} (since 1.117.0), supported only if a
+		 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
+		 *   only root nodes are available; they are not yet expanded. Since 1.120.0,
+		 *   <code>expandTo >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels
+		 *   (<code>1E16</code> is recommended inside XML views for simplicity).
+		 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
+		 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
+		 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,
+		 *   the default is top only
+		 * @param {object} [oAggregation.group]
+		 *   A map from groupable property names to objects containing the following details:
+		 *   <ul>
+		 *     <li> <code>additionally</code>: An optional list of strings that provides the paths to
+		 *       properties (like texts or attributes) related to this groupable property in a 1:1
+		 *       relation (since 1.87.0). They are requested additionally via <code>groupby</code> and
+		 *       must not change the actual grouping; a <code>unit</code> for an aggregatable property
+		 *       must not be repeated here.
+		 *   </ul>
+		 * @param {string[]} [oAggregation.groupLevels]
+		 *   A list of groupable property names used to determine group levels. They may, but don't need
+		 *   to, be repeated in <code>oAggregation.group</code>. Since 1.132.0, the last group level is
+		 *   interpreted as the leaf level in case there are no other groups than those given here. In
+		 *   that case, {@link #getAggregation} returns a shorter <code>groupLevels</code> list.
+		 *   Group levels cannot be combined with:
+		 *   <ul>
+		 *     <li> filtering for aggregated properties,
+		 *     <li> "$search" (since 1.93.0),
+		 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter} (since 1.107.0),
+		 *     <li> shared requests (since 1.108.0).
+		 *   </ul>
+		 * @param {string} [oAggregation.hierarchyQualifier]
+		 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
+		 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
+		 *   entity type (since 1.117.0). If present, a recursive hierarchy without data aggregation is
+		 *   defined, and the only other supported properties are <code>createInPlace</code>,
+		 *   <code>expandTo</code>, and <code>search</code>. A recursive hierarchy cannot be combined
+		 *   with:
+		 *   <ul>
+		 *     <li> "$search",
+		 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter},
+		 *     <li> shared requests.
+		 *   </ul>
+		 * @param {string} [oAggregation.search]
+		 *   Like the <a href=
+		 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#_Search_System_Query"
+		 *   >"5.1.7 System Query Option $search"</a>, but applied before data aggregation
+		 *   (since 1.93.0). Note that certain content will break the syntax of the system query option
+		 *   <code>$apply</code> and result in an invalid request. If the OData service supports the
+		 *   proposal <a href="https://issues.oasis-open.org/browse/ODATA-1452">ODATA-1452</a>, then
+		 *   <code>ODataUtils.formatLiteral(sSearch, "Edm.String");</code> should be used to encapsulate
+		 *   the whole search string beforehand (see {@link
+		 *   sap.ui.model.odata.v4.ODataUtils.formatLiteral}). Since 1.120.13, all contexts, including
+		 *   the header context are deselected if the '$$clearSelectionOnFilter' binding parameter is
+		 *   set and the search parameter is changed.
+		 * @param {boolean} [oAggregation.subtotalsAtBottomOnly]
+		 *   Tells whether subtotals for aggregatable properties are displayed at the bottom only, as a
+		 *   separate row after all children, when a group level node is expanded (since 1.86.0);
+		 *   <code>true</code> for bottom only, <code>false</code> for top and bottom, the default is
+		 *   top only (that is, as part of the group level node)
+		 * @throws {Error} If
+		 *   <ul>
+		 *     <li> the given data aggregation object is unsupported,
+		 *     <li> the <code>$apply</code> system query option has been specified explicitly before,
+		 *     <li> the binding has a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
+		 *       context when switching the use case of data aggregation (recursive hierarchy, pure data
+		 *       aggregation, or none at all),
+		 *     <li> there are pending changes,
+		 *     <li> a recursive hierarchy is requested, but the model does not use the
+		 *       <code>autoExpandSelect</code> parameter,
+		 *     <li> the binding is {@link #isTransient transient} (part of a
+		 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
+		 *     <li> the binding has {@link sap.ui.model.Filter.NONE}
+		 *   </ul>
+		 *
+		 * @example <caption>First group level is product category including subtotals for the net
+		 *     amount in display currency. On leaf level, transaction currency is used as an additional
+		 *     dimension and the net amount is averaged.</caption>
+		 *   oListBinding.setAggregation({
+		 *     aggregate : {
+		 *       AverageNetAmountInTransactionCurrency : {
+		 *         name : "NetAmountInTransactionCurrency", // original name
+		 *         "with" : "average", // aggregation method
+		 *         unit : "TransactionCurrency"
+		 *       },
+		 *       NetAmountInDisplayCurrency : {subtotals : true, unit : "DisplayCurrency"},
+		 *       SalesNumber : {grandTotal : true}
+		 *     },
+		 *     group : {
+		 *       ProductCategory : {}, // optional
+		 *       TransactionCurrency : {}
+		 *     },
+		 *     groupLevels : ['ProductCategory']
+		 *   });
+		 * @public
+		 * @see #getAggregation
+		 * @since 1.55.0
+		 */
 	ODataListBinding.prototype.setAggregation = function (oAggregation) {
 		var mParameters;
 

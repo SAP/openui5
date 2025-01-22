@@ -31,6 +31,20 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 						},
 						"legacy": {
 							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
+						},
+						"extendedfallback": ""
+					}
+				}
+			},
+
+			CustomThemeFallbackFromURL: {
+				title: "sap.ui.core: Custom Theme Fallback extracted from URL",
+				ui5: {
+					libs: ["sap.ui.core", "sap.m"],
+					theme: "fallbackfromurl",
+					themeRoots: {
+						"fallbackfromurl": {
+							"sap.ui.core": "themeroot/v1/~v=Base:11.1.41,*.*.opensap(sap_fiori_3):20220407T073020Z/UI5"
 						}
 					}
 				}
