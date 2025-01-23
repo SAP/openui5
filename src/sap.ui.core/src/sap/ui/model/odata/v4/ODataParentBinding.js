@@ -1030,6 +1030,7 @@ sap.ui.define([
 	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
 	 *
 	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
+	 *
 	 * @private
 	 */
 	ODataParentBinding.prototype.firePatchCompleted = function (bSuccess) {
@@ -1258,6 +1259,8 @@ sap.ui.define([
 	 * @param {string} sName - The parameter's name
 	 * @param {any} vOtherValue - The parameter's other value
 	 * @returns {boolean} Whether the parameter is "unchanged"
+	 *
+	 * @private
 	 */
 	ODataParentBinding.prototype.isUnchangedParameter = function (sName, vOtherValue) {
 		return this.mParameters[sName] === vOtherValue;
