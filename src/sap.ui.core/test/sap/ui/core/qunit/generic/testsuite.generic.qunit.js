@@ -58,6 +58,9 @@ sap.ui.define([
 			"sap.ui.core.mvc.View": {
 				create: false
 			},
+			"sap.ui.core.routing.Target.TitleProvider": {
+				moduleName: "sap/ui/core/routing/Target"
+			},
 			/**
 			 * @deprecated since 1.56
 			 */
