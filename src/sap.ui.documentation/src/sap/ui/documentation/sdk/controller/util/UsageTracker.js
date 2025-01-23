@@ -12,8 +12,8 @@ sap.ui.define(
 
         var oUserLanguageTag;
         const SITE_NAME = {
-            "openui5": "OpenUI5 Demo Kit",
-            "sapui5": "SAPUI5 Demo Kit"
+            "openui5": "oui5",
+            "sapui5": "ui5"
         };
 
         const aNotFoundViews = ["sap.ui.documentation.sdk.view.NotFound", "sap.ui.documentation.sdk.view.SampleNotFound"];
