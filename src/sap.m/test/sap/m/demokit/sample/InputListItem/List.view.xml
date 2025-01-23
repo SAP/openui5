@@ -41,7 +41,9 @@
 			</Select>
 		</InputListItem>
 		<InputListItem label="Volume">
-			<Slider min="0" max="10" value="7" width="200px" />
+			<HBox justifyContent="End">
+				<Slider min="0" max="10" value="7" width="200px" />
+			</HBox>
 		</InputListItem>
 	</List>
 </mvc:View>

@@ -34,7 +34,7 @@
             </infoToolbar>
             <dependents>
                 <plugins:ColumnResizer columnResize="onColumnResize"/>
-                <columnmenu:Menu id="menu" beforeOpen="beforeOpenColumnMenu">
+                <columnmenu:Menu id="menu" beforeOpen="beforeOpenColumnMenu" showTableSettingsButton="true" tableSettingsPressed="openPersoDialog">
                     <columnmenu:QuickSort change="onSort">
                         <columnmenu:items>
                             <columnmenu:QuickSortItem></columnmenu:QuickSortItem>
@@ -45,12 +45,6 @@
                             <columnmenu:QuickGroupItem></columnmenu:QuickGroupItem>
                         </columnmenu:items>
                     </columnmenu:QuickGroup>
-                    <columnmenu:items>
-                        <columnmenu:ActionItem icon="sap-icon://sort" label="Sort" press="onColumnHeaderItemPress"/>
-                        <columnmenu:ActionItem icon="sap-icon://group-2" label="Group" press="onColumnHeaderItemPress"/>
-                        <columnmenu:ActionItem icon="sap-icon://filter" label="Filter" press="onColumnHeaderItemPress"/>
-                        <columnmenu:ActionItem icon="sap-icon://table-column" label="Columns" press="onColumnHeaderItemPress"/>
-                    </columnmenu:items>
                 </columnmenu:Menu>
             </dependents>
 

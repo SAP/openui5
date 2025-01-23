@@ -256,20 +256,6 @@ sap.ui.define([
 			oGroupItem.setGrouped(oColumn.data("grouped"));
 		},
 
-		onColumnHeaderItemPress: function(oEvt) {
-			const oColumnHeaderItem = oEvt.getSource();
-			let sPanel = "Columns";
-			if (oColumnHeaderItem.getIcon().indexOf("group") >= 0) {
-				sPanel = "Groups";
-			} else if (oColumnHeaderItem.getIcon().indexOf("sort") >= 0) {
-				sPanel = "Sorter";
-			} else if (oColumnHeaderItem.getIcon().indexOf("filter") >= 0) {
-				sPanel = "Filter";
-			}
-
-			this._openPersoDialog([sPanel]);
-		},
-
 		onFilterInfoPress: function(oEvt) {
 			this._openPersoDialog(["Filter"], oEvt.getSource());
 		},

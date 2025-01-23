@@ -762,10 +762,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Note: "X" is really nothing special
-	[`true`, true, 1, `X`].forEach(function (oFlag) {});
-
-	//*********************************************************************************************
 	// Note: " " intentionally not included yet, should not matter for OData!
 	[`false`, false, 0, null, undefined, NaN, ``].forEach(function (oFlag) {
 		QUnit.test(`XML with template:if test='{/flag}', falsy, flag = ` + oFlag,
@@ -1743,7 +1739,6 @@ sap.ui.define([
 	//TODO createBindingContext should also be used w/o var
 
 	//*********************************************************************************************
-	//*********************************************************************************************
 	[false, true].forEach(function (bHasHelper) {
 		QUnit.test(`template:with and 'named context', has helper = ` + bHasHelper,
 			function (assert) {
@@ -1808,7 +1803,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	//*********************************************************************************************
 	[false, true].forEach(function (bWithVar) {
 		QUnit.test(`template:with and helper, with var = ` + bWithVar,
 				function (assert) {
@@ -1850,7 +1844,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	//*********************************************************************************************
 	[false, true].forEach(function (bWithVar) {
 		QUnit.test(`template:with and helper changing the model, with var = ` + bWithVar,
 			function (assert) {
@@ -1890,7 +1883,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	//*********************************************************************************************
 	[undefined, {}].forEach(function (fnHelper) {
 		QUnit.test(`template:with and helper = ` + fnHelper, function (assert) {
 			return this.checkError(assert, [
@@ -1916,7 +1908,6 @@ sap.ui.define([
 		});
 	});
 
-	//*********************************************************************************************
 	//*********************************************************************************************
 	[true, ``].forEach(function (vResult) {
 		QUnit.test(`template:with and helper returning ` + vResult, function (assert) {

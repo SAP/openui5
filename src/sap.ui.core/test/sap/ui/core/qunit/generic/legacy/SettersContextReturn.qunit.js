@@ -41,6 +41,9 @@ sap.ui.define([
 				"sap.ui.core.mvc.XMLAfterRenderingNotifier": NOT_A_MODULE,
 
 				// not a module of its own
+				"sap.ui.core.routing.Target.TitleProvider": NOT_A_MODULE,
+
+				// not a module of its own
 				"sap.ui.core._StashedControl": NOT_A_MODULE
 			}
 		},
