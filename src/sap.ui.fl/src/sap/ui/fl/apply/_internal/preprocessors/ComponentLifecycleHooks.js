@@ -252,11 +252,13 @@ sap.ui.define([
 			componentData: oComponentData
 		});
 		try {
+			// partialFlexState has to be true as there is no guarantee that the flex bundle is already available at this point
 			await FlexState.initialize({
 				componentData: oComponentData,
 				asyncHints: oPropertyBag.owner?.config.asyncHints || oPropertyBag.factoryConfig.asyncHints,
 				componentId: sAppComponentId,
-				reference: sReference
+				reference: sReference,
+				partialFlexState: true
 			});
 			const sServiceUrl = ODataUtils.removeOriginSegmentParameters(oPropertyBag.model.getServiceUrl());
 			const aRelevantAnnotationChanges = FlexState.getAnnotationChanges(sReference)
