@@ -438,7 +438,7 @@ sap.ui.define([
 		const sOriginalLanguage = "en_US";
 		const sChangedLanguage = "de";
 
-		const oSpy = sinon.spy(this.oPopup, "onlocalizationChanged");
+		const oSpy = sinon.spy(this.oPopup, "_onLocalizationChanged");
 
 		oBundle = this.oPopup.oResourceBundle;
 
@@ -456,7 +456,7 @@ sap.ui.define([
 
 		// Assert
 		oModel = this.oPopup.getModel(this.oPopup.LOCALIZATION_MODEL);
-		assert.equal(oSpy.called, true, "_updateLocalizationTexts called after Localization.setLanguage");
+		assert.equal(oSpy.called, true, "_onLocalizationChanged called after Localization.setLanguage");
 		assert.strictEqual(oBundle.sLocale, sChangedLanguage, "Returned the newly loaded bundle");
 		assert.strictEqual(this.oPopup.getResetButton().getText(), "Zurücksetzen", "reset button text is correctly translated");
 		assert.strictEqual(oModel.getProperty("/resetText"), "Zurücksetzen", "reset button model text is correctly translated");

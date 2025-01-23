@@ -906,7 +906,22 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	BasePanel.prototype.onlocalizationChanged = function() {
+		this._onLocalizationChanged();
+	};
+
+	/**
+	 * Localization changed
+	 * @private
+	 */
+	BasePanel.prototype.onLocalizationChanged = function() {
+		this._onLocalizationChanged();
+	};
+
+	BasePanel.prototype._onLocalizationChanged = function() {
 		this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 		if (this._updateLocalizationTexts && typeof this._updateLocalizationTexts === "function") {
 			this._updateLocalizationTexts();

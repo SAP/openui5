@@ -39,10 +39,10 @@ sap.ui.define([
 	"use strict";
 
 	//Shortcut to sap.m.P13nPopupMode
-	const P13nPopupMode = mLibrary.P13nPopupMode;
+	const {P13nPopupMode} = mLibrary;
 
 	//Shortcut to sap.ui.core.TitleLevel
-	const TitleLevel = coreLibrary.TitleLevel;
+	const {TitleLevel} = coreLibrary;
 
 	/**
 	 * Constructor for a new <code>Popup</code>.
@@ -511,7 +511,22 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	Popup.prototype.onlocalizationChanged = function() {
+		this._onLocalizationChanged();
+	};
+
+	/**
+	 * Localization changed
+	 * @private
+	 */
+	Popup.prototype.onLocalizationChanged = function() {
+		this._onLocalizationChanged();
+	};
+
+	Popup.prototype._onLocalizationChanged = function() {
 		this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 		this.getModel(this.LOCALIZATION_MODEL).setProperty("/confirmText", this.oResourceBundle.getText("p13n.POPUP_OK"));
 		this.getModel(this.LOCALIZATION_MODEL).setProperty("/cancelText", this.oResourceBundle.getText("p13n.POPUP_CANCEL"));
