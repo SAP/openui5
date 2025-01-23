@@ -2478,22 +2478,23 @@ sap.ui.define([
 			if (bShowMeasure) {
 				// Use currency specific format because for some languages there is a difference between the
 				// decimalFormat and the currencyFormat
-				sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory);
+				sPattern = this.oLocaleData.getCompactCurrencyPattern(sStyle, sPowerOfTen, sPluralCategory);
 				if (NumberFormat.isAlphaNextToNumber(sPattern, sCurrency, bNegative)) {
-					sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory,
+					sPattern = this.oLocaleData.getCompactCurrencyPattern(sStyle, sPowerOfTen, sPluralCategory,
 						"alphaNextToNumber") || sPattern;
 				}
 			} else {
-				sPattern = this.oLocaleData.getCurrencyFormat(sStyle, sPowerOfTen, sPluralCategory, "noCurrency");
+				sPattern = this.oLocaleData.getCompactCurrencyPattern(sStyle, sPowerOfTen, sPluralCategory,
+					"noCurrency");
 				if (!sPattern) {
 					if (sStyle.startsWith("sap-")) {
 						sStyle = sStyle.slice(4);
 					}
-					sPattern = this.oLocaleData.getDecimalFormat(sStyle, sPowerOfTen, sPluralCategory);
+					sPattern = this.oLocaleData.getCompactDecimalPattern(sStyle, sPowerOfTen, sPluralCategory);
 				}
 			}
 		} else {
-			sPattern = this.oLocaleData.getDecimalFormat(sStyle, sPowerOfTen, sPluralCategory);
+			sPattern = this.oLocaleData.getCompactDecimalPattern(sStyle, sPowerOfTen, sPluralCategory);
 		}
 
 		// pattern may contain a single quoted dot ('.') to differentiate them from decimal separator; replace it
@@ -2623,7 +2624,7 @@ sap.ui.define([
 			bestResult = {number: undefined,
 				factor: iFactor},
 			fnGetFactor = function(sPlural, iKey, sStyle) {
-				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
+				sCldrFormat = oLocaleData.getCompactDecimalPattern(sStyle, iKey.toString(), sPlural);
 
 				if (sCldrFormat) {
 					// Note: CLDR uses a non-breaking space and right-to-left mark u+200f in the format string
