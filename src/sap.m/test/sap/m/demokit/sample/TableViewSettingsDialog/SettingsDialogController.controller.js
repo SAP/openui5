@@ -187,6 +187,18 @@ sap.ui.define([
 			}
 		},
 
+		onSortChange: function(oEvent) {
+			const oTable = this.byId("idProductsTable");
+			const oBinding = oTable.getBinding("items");
+			const oQuickSortItem = oEvent.getParameter("item");
+
+			if (oQuickSortItem.getSortOrder() === "None") {
+				oBinding.sort();
+			} else {
+				oBinding.sort([new Sorter(oQuickSortItem.getKey(), oQuickSortItem.getSortOrder() === "Descending")]);
+			}
+		},
+
 		onActionItemPress: function() {
 			MessageToast.show('Action Item Pressed');
 		}

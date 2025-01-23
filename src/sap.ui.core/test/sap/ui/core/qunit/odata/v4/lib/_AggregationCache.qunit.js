@@ -3500,9 +3500,10 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bUnifiedCache) {
 	[1, 2].forEach(function (iExpandTo) {
-		[false, true, undefined].forEach(function (bNested) {
-			const sTitle = "collapse all, bUnifiedCache=" + bUnifiedCache + ", expandTo="
-				+ iExpandTo + ", bNested=" + bNested;
+		[false, true].forEach(function (bSilent) {
+			[false, true].forEach(function (bNested) {
+				const sTitle = "collapse all, bUnifiedCache=" + bUnifiedCache + ", expandTo="
+					+ iExpandTo + ", bSilent=" + bSilent + ", bNested=" + bNested;
 
 	QUnit.test(sTitle, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
@@ -3567,13 +3568,14 @@ sap.ui.define([
 			"('99')" : aElements[8]
 		};
 		const oCacheMock = this.mock(oCache);
-		oCacheMock.expects("collapse").withExactArgs("~path~", "~oGroupLock~", bNested)
+		oCacheMock.expects("collapse").withExactArgs("~path~", "~oGroupLock~", bSilent, bNested)
 			.callThrough();
 		oCacheMock.expects("getValue").withExactArgs("~path~").returns(aElements[1]);
 		this.mock(_AggregationHelper).expects("getCollapsedObject")
 			.withExactArgs(sinon.match.same(aElements[1])).returns("~collapsedObject~");
 		this.mock(_Helper).expects("updateAll")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+			.withExactArgs(
+				bSilent ? {} : sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(aElements[1]), "~collapsedObject~");
 		this.mock(oCache.oTreeState).expects("collapse")
 			.withExactArgs(sinon.match.same(aElements[1]), true, bNested);
@@ -3583,7 +3585,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(aElements[2])).returns(false);
 		oCacheMock.expects("isSelectionDifferent")
 			.withExactArgs(sinon.match.same(aElements[3])).returns(true);
-		oCacheMock.expects("collapse").withExactArgs("('4')", "~oGroupLock~", true)
+		oCacheMock.expects("collapse").withExactArgs("('4')", "~oGroupLock~", bSilent, true)
 			.callsFake(function () {
 				oCache.aElements.splice(5, 2);
 				oCache.aElements.$count -= 2;
@@ -3597,7 +3599,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oCache.collapse("~path~", "~oGroupLock~", bNested),
+			oCache.collapse("~path~", "~oGroupLock~", bSilent, bNested),
 			6);
 
 		assert.deepEqual(oCache.aElements, aExpectedElements);
@@ -3610,6 +3612,7 @@ sap.ui.define([
 			"('99')" : aElements[8]
 		});
 	});
+			});
 		});
 	});
 });

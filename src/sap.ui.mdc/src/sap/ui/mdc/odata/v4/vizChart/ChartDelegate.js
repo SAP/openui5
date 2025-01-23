@@ -551,22 +551,24 @@ sap.ui.define([
 		return new Promise((resolve, reject) => {
 
 			this._loadChart().then((aModules) => {
-				let oNoDataCont;
+                if (!oChart.isDestroyed()) {
+                    let oNoDataCont;
 
-				this._setInnerStructure(oChart, new ChartImplementationContainer(oChart.getId() + "--implementationContainer", {}));
-				oChart.addStyleClass("sapUiMDCChartTempTextOuter");
+                    this._setInnerStructure(oChart, new ChartImplementationContainer(oChart.getId() + "--implementationContainer", {}));
+                    oChart.addStyleClass("sapUiMDCChartTempTextOuter");
 
-				if (oChart.getNoData()) {
-					this._getInnerStructure(oChart).setChartNoDataContent(oChart.getNoData());
-				} else {
-					oNoDataCont = new Text({ text: oChart.getNoDataText() });
-					this._getInnerStructure(oChart).addStyleClass("sapUiMDCChartTempText");
-					this._getInnerStructure(oChart).setNoDataContent(oNoDataCont);
-				}
+                    if (oChart.getNoData()) {
+                        this._getInnerStructure(oChart).setChartNoDataContent(oChart.getNoData());
+                    } else {
+                        oNoDataCont = new Text({ text: oChart.getNoDataText() });
+                        this._getInnerStructure(oChart).addStyleClass("sapUiMDCChartTempText");
+                        this._getInnerStructure(oChart).setNoDataContent(oNoDataCont);
+                    }
 
-				this._setUpChartObserver(oChart);
+                    this._setUpChartObserver(oChart);
 
-				resolve(this._getInnerStructure(oChart)); //Not applicable in this case
+                    resolve(this._getInnerStructure(oChart)); //Not applicable in this case
+                }
 			});
 		});
 	};

@@ -867,7 +867,8 @@ sap.ui.define([
 					iEntityPathLength = i;
 				}
 				oParentValue = vValue;
-				bTransient ||= vValue["@$ui5.context.isTransient"];
+				bTransient ||= vValue["@$ui5.context.isTransient"]
+					?? _Helper.hasPrivateAnnotation(vValue, "upsert");
 				aMatches = rSegmentWithPredicate.exec(sSegment);
 				if (aMatches) {
 					if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
@@ -2183,15 +2184,14 @@ sap.ui.define([
 	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback,
 			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent,
 			fnIsKeepAlive) {
-		var oPromise,
+		var oFetchPromise,
 			aPropertyPath = sPropertyPath.split("/"),
-			aUnitOrCurrencyPath,
 			that = this;
 
 		this.checkSharedRequest();
 
 		try {
-			oPromise = this.fetchValue(_GroupLock.$cached, sEntityPath);
+			oFetchPromise = this.fetchValue(_GroupLock.$cached, sEntityPath);
 		} catch (oError) {
 			if (!oError.$cached || this.oPromise !== null) {
 				throw oError;
@@ -2199,63 +2199,74 @@ sap.ui.define([
 			// data has not been read, fake it
 			// Note: we need a unique "entity" instance to avoid merging of unrelated PATCH requests
 			// and sharing of data across bindings - the instance is modified below!
-			oPromise = this.oPromise = SyncPromise.resolve({"@odata.etag" : "*"});
+			oFetchPromise = this.oPromise = SyncPromise.resolve({"@odata.etag" : "*"});
 		}
 
-		return oPromise.then(function (oEntity) {
+		return oFetchPromise.then(function (oEntity) {
 			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				sNavigationProperty, // upsert only
 				oOldData, // ignored for upsert
-				oPatchPromise,
 				sParentPath, // upsert only
-				bSkip, // MUST NOT happen with upsert
 				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue),
 				bUpsert = oEntity === null;
 
 			/*
-			 * Synchronous callback to cancel the PATCH request so that it is really gone when
-			 * resetChangesForPath has been called on the binding or model.
-			 */
-			function onCancel() {
-				_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
-				// write the previous value into the cache
-				if (bUpsert) {
-					// reset to null notifying listeners
-					_Helper.updateAll(that.mChangeListeners, sParentPath,
-						that.getValue(sParentPath), {[sNavigationProperty] : null});
-				} else {
-					_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity, oOldData);
-				}
-			}
-
-			/*
-			 * Callback to merge the entity's old data into its one remaining PATCH. If
-			 * no old data from another PATCH is supplied, the PATCH is skipped and returns its
-			 * old data. Otherwise the given old data from the skipped patch is merged into the
-			 * surviving PATCH's own old data.
+			 * Sends a PATCH request.
 			 *
-			 * @param {object} [oOtherOldData]
-	 		 *   Either another PATCH's old data which is to be merged into this one or
-			 *   <code>undefined</code> if this PATCH is the skipped one and has to return its own
-			 *   old data.
-			 * @returns {object}
-			 *   This PATCH's old data which is to be merged into another one or
-			 *   <code>undefined</code> if this is the surviving PATCH.
+			 * @param {sap.ui.model.odata.v4.lib._GroupLock} oPatchGroupLock
+			 *   A lock for the group to associate the request with
+			 * @param {boolean} [bAtFront]
+			 *   Whether the request is added at the front of the first change set
+			 * @returns {sap.ui.base.SyncPromise}
+			 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in
+			 *   case of cancellation or if no <code>fnErrorCallback</code> is given
 			 */
-			function mergePatchRequests(oOtherOldData) {
-				if (arguments.length === 0) {
-					bSkip = true;
-					return oOldData; // my PATCH was merged
-				}
-				if (oOldData) {
-					_Helper.updateNonExisting(oOldData, oOtherOldData);
-				} // else: upsert
-			}
-
 			function patch(oPatchGroupLock, bAtFront) {
 				var mHeaders = {"If-Match" : oEntity},
-					oRequestLock;
+					oPatchPromise,
+					oRequestLock,
+					bSkip; // MUST NOT happen with upsert
+
+				/*
+				* Callback to merge the entity's old data into its one remaining PATCH. If
+				* no old data from another PATCH is supplied, the PATCH is skipped and returns its
+				* old data. Otherwise the given old data from the skipped patch is merged into the
+				* surviving PATCH's own old data.
+				*
+				* @param {object} [oOtherOldData]
+				*   Either another PATCH's old data which is to be merged into this one or
+				*   <code>undefined</code> if this PATCH is the skipped one and has to return its
+				*   own old data.
+				* @returns {object}
+				*   This PATCH's old data which is to be merged into another one or
+				*   <code>undefined</code> if this is the surviving PATCH.
+				*/
+				function mergePatchRequests(oOtherOldData) {
+					if (arguments.length === 0) {
+						bSkip = true;
+						return oOldData; // my PATCH was merged
+					}
+					if (oOldData) {
+						_Helper.updateNonExisting(oOldData, oOtherOldData);
+					} // else: upsert
+				}
+
+				/*
+				* Synchronous callback to cancel the PATCH request so that it is really gone when
+				* resetChangesForPath has been called on the binding or model.
+				*/
+				function onCancel() {
+					_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
+					// write the previous value into the cache
+					if (bUpsert) {
+						// reset to null notifying listeners
+						_Helper.updateAll(that.mChangeListeners, sParentPath,
+							that.getValue(sParentPath), {[sNavigationProperty] : null});
+					} else {
+						_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oOldData);
+					}
+				}
 
 				/*
 				 * Synchronous callback called when the request is put on the wire. Locks the group
@@ -2306,7 +2317,9 @@ sap.ui.define([
 						bPatchWithoutSideEffects
 							? {"@odata.etag" : oPatchResult["@odata.etag"]}
 							: oPatchResult);
-					_Helper.deletePrivateAnnotation(oEntity, "upsert");
+					if (bUpsert) {
+						_Helper.deletePrivateAnnotation(oEntity, "upsert");
+					}
 				}, function (oError) {
 					var sRetryGroupId = sGroupId;
 
@@ -2358,6 +2371,35 @@ sap.ui.define([
 				});
 			}
 
+			/*
+			 * Updates the current entity with <code>oUpdateData</code>, informing change listeners.
+			 * Also takes care of unit or currency handling, if applicable.
+			 *
+			 * BEWARE: This method must not be called twice as it modifies
+			 * <code>sUnitOrCurrencyPath</code>!
+			 *
+			 * @param {object} oUnitOrCurrencyTarget - Where to update unit or currency
+			 */
+			function updateWithUnitOrCurrency(oUnitOrCurrencyTarget) {
+				// write the changed value into the cache
+				_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+				if (sUnitOrCurrencyPath) {
+					sUnitOrCurrencyPath = _Helper.buildPath(aPropertyPath.slice(0, -1).join("/"),
+						sUnitOrCurrencyPath);
+					const aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
+					sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
+					const sUnitOrCurrencyValue = that.getValue(sUnitOrCurrencyPath);
+					if (sUnitOrCurrencyValue === undefined) {
+						Log.debug("Missing value for unit of measure " + sUnitOrCurrencyPath
+								+ " when updating " + sFullPath, that.toString(), sClassName);
+					} else {
+						// some servers need unit and currency information
+						_Helper.merge(oUnitOrCurrencyTarget,
+							_Helper.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
+					}
+				}
+			}
+
 			if (bUpsert) {
 				const aSegments = sEntityPath.split("/");
 				sNavigationProperty = aSegments.pop();
@@ -2369,10 +2411,7 @@ sap.ui.define([
 				// but this should be much simpler (to understand)
 				that.getValue(sParentPath)[sNavigationProperty] = oEntity;
 				_Helper.fireChanges(that.mChangeListeners, sEntityPath, oEntity, false);
-
-				// write the changed value into the cache
-				_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
-
+				updateWithUnitOrCurrency(oUpdateData);
 				// send and register the PATCH request
 				sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions,
 					/*bDropSystemQueryOptions*/true);
@@ -2411,23 +2450,7 @@ sap.ui.define([
 				// change listeners are informed later
 				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
 			}
-			// write the changed value into the cache
-			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
-			if (sUnitOrCurrencyPath) {
-				sUnitOrCurrencyPath
-					= _Helper.buildPath(aPropertyPath.slice(0, -1).join("/"), sUnitOrCurrencyPath);
-				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
-				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
-				const sUnitOrCurrencyValue = that.getValue(sUnitOrCurrencyPath);
-				if (sUnitOrCurrencyValue === undefined) {
-					Log.debug("Missing value for unit of measure " + sUnitOrCurrencyPath
-							+ " when updating " + sFullPath, that.toString(), sClassName);
-				} else {
-					// some servers need unit and currency information
-					_Helper.merge(sTransientGroup ? oPostBody : oUpdateData,
-						_Helper.makeUpdateData(aUnitOrCurrencyPath, sUnitOrCurrencyValue));
-				}
-			}
+			updateWithUnitOrCurrency(sTransientGroup ? oPostBody : oUpdateData);
 			if (sTransientGroup) {
 				// When updating a transient entity, the above _Helper.updateAll has already updated
 				// the POST request. An inactive entity must remain parked.

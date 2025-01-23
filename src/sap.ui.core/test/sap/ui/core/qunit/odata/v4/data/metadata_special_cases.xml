@@ -48,7 +48,7 @@
 				</Key>
 				<Property Name="PublicationID" Type="Edm.String" Nullable="false" />
 				<Property Name="Price" Type="Edm.Decimal" Precision="13" Scale="variable" />
-				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5"/>
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5" DefaultValue="$MD"/>
 				<Property Name="Messages" Type="Collection(special.cases.Message)" />
 				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
@@ -236,6 +236,9 @@
 						<PropertyPath>BestFriend/Name</PropertyPath>
 					</Collection>
 				</Annotation>
+			</Annotations>
+			<Annotations Target="special.cases.PublicationsType/Price">
+				<Annotation Term="Org.OData.Measures.V1.ISOCurrency" Path="CurrencyCode" />
 			</Annotations>
 			<Annotations Target="special.cases.EntityWithUnsupportedEdmTypes">
 				<Annotation Term="com.sap.vocabularies.UI.v1.SelectionFields">

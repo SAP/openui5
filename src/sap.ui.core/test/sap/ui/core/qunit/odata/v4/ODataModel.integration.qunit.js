@@ -31652,10 +31652,7 @@ sap.ui.define([
 
 			expectTable("after expand", true);
 
-			if (bExpanded) {
-				this.expectChange("expanded", [, false]) // Beta is collapsed before being deleted
-					.expectChange("expanded", [, true]); // ...and expanded again after the error
-			} else {
+			if (!bExpanded) {
 				this.expectChange("expanded", [, false])
 					.expectChange("name", [,, "Delta"]);
 
@@ -31886,8 +31883,7 @@ sap.ui.define([
 			[false, 4, "3", "2", "Delta"]
 		], 6);
 
-		this.expectChange("expanded", [, false]) // Beta is collapsed before being deleted
-			.expectRequest("DELETE EMPLOYEES('1')")
+		this.expectRequest("DELETE EMPLOYEES('1')")
 			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
 					+ ",NodeProperty='ID',Levels=4)"
@@ -32296,7 +32292,6 @@ sap.ui.define([
 					Name : "Delta"
 				}]
 			})
-			.expectChange("expanded", [,,,, false]) // Epsilon is collapsed before the delete
 			.expectChange("name", [,,, "Delta", "Zeta", "Theta"]);
 
 		await Promise.all([
@@ -45178,7 +45173,7 @@ sap.ui.define([
 				hierarchyQualifier : 'OrgChart'
 			}
 		}}" threshold="0" visibleRowCount="6">
-	<Text id="IsExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
 	<Text text="{Name}"/>
@@ -45213,7 +45208,7 @@ sap.ui.define([
 					Name : "Zeta"
 				}]
 			})
-			.expectChange("IsExpanded", [true, false, undefined]); // JIRA: CPOUI5ODATAV4-2781
+			.expectChange("isExpanded", [true, false, undefined]); // JIRA: CPOUI5ODATAV4-2781
 
 		await this.createView(assert, sView, oModel);
 
@@ -45230,7 +45225,7 @@ sap.ui.define([
 					Name : "Gamma"
 				}]
 			})
-			.expectChange("IsExpanded", [, true, false, undefined]);
+			.expectChange("isExpanded", [, true, false, undefined]);
 
 		assert.strictEqual(oBeta.getBinding().getLength(), 3, "before expand");
 
@@ -45241,13 +45236,13 @@ sap.ui.define([
 
 		assert.strictEqual(oBeta.getBinding().getLength(), 4, "after expand");
 
-		this.expectChange("IsExpanded", [, false, undefined]);
+		this.expectChange("isExpanded", [, false, undefined]);
 
 		oBeta.collapse();
 
 		await this.waitForChanges(assert, "collapse Beta");
 
-		this.expectChange("IsExpanded", [, true, false]);
+		this.expectChange("isExpanded", [, true, false]);
 
 		await Promise.all([
 			// preparation for JIRA: CPOUI5ODATAV4-2781
@@ -45308,7 +45303,7 @@ sap.ui.define([
 					Name : "Zeta"
 				}]
 			})
-			.expectChange("IsExpanded", [,, true, true, undefined, undefined]);
+			.expectChange("isExpanded", [,, true, true, undefined, undefined]);
 
 		await Promise.all([
 			// code under test
@@ -45333,9 +45328,9 @@ sap.ui.define([
 		]);
 		const [,, oGamma, oDelta] = oTable.getBinding("rows").getCurrentContexts();
 
-		this.expectChange("IsExpanded", [,,, false]) // collapse Delta
-			.expectChange("IsExpanded", [,, false]) // collapse Gamma
-			.expectChange("IsExpanded", [, false, undefined]); // collapse Beta
+		this.expectChange("isExpanded", [,,, false]) // collapse Delta
+			.expectChange("isExpanded", [,, false]) // collapse Gamma
+			.expectChange("isExpanded", [, false, undefined]); // collapse Beta
 
 		oDelta.collapse();
 		oGamma.collapse();
@@ -45384,7 +45379,7 @@ sap.ui.define([
 					Name : "Zeta"
 				}]
 			})
-			.expectChange("IsExpanded", [, true, true, true]);
+			.expectChange("isExpanded", [, true, true, true]);
 
 		await Promise.all([
 			// code under test
@@ -45406,6 +45401,137 @@ sap.ui.define([
 			[true, 4, "1.1.1", "Delta"],
 			[undefined, 5, "1.1.1.1", "Epsilon"],
 			[undefined, 2, "2", "Zeta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 1. Expand Alpha.
+	// Expand Beta. Expand Alpha completely without collapsing and see that all nodes under Beta
+	// are expanded.
+	// SNOW: DINC0386453
+	QUnit.test("Recursive Hierarchy: expand all on already expanded node", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="4">
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//   1 Beta
+		//     1.1 Gamma
+		//       1.1.1 Delta
+
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+			+ ",NodeProperty='ID',Levels=1";
+		const sSelect = "&$select=DrillState,ID,Name";
+		this.expectRequest(sUrl + ")" + sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					Name : "Alpha"
+				}]
+			})
+			.expectChange("isExpanded", [false]);
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+				+ sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Beta"
+				}]
+			})
+			.expectChange("isExpanded", [true, false]);
+
+		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getRows()[0].getBindingContext();
+
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+				+ sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1.1",
+					Name : "Gamma"
+				}]
+			})
+			.expectChange("isExpanded", [, true, false]);
+
+		const oBeta = oTable.getRows()[1].getBindingContext();
+
+		await Promise.all([
+			oBeta.expand(),
+			this.waitForChanges(assert, "expand Beta")
+		]);
+
+		this.expectRequest(sUrl + ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : null}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "4",
+				value : [{
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "2",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "2",
+					DrillState : "expanded",
+					ID : "1.1",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "leaf",
+					ID : "1.1.1",
+					Name : "Delta"
+				}]
+			})
+			.expectChange("isExpanded", [,, true, undefined]);
+
+		await Promise.all([
+			// code under test
+			oAlpha.expand(true),
+			this.waitForChanges(assert, "expand all below Alpha")
+		]);
+
+		checkTable("after expand all below Alpha", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('1.1.1')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"],
+			[true, 3, "1.1", "Gamma"],
+			[undefined, 4, "1.1.1", "Delta"]
 		]);
 	});
 
@@ -49221,6 +49347,9 @@ sap.ui.define([
 			}).then(function () {
 				var oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value");
 
+				that.oLogMock.expects("error")
+					.withArgs("Failed to drill-down into ('42-0')/CurrencyCode"
+						+ ", invalid segment: CurrencyCode"); //TODO we'd better avoid this :-(
 				that.expectRequest({
 						method : "PATCH",
 						url : "Artists(ArtistID='42',IsActiveEntity=false)/_Publication('42-0')",
@@ -56802,8 +56931,8 @@ sap.ui.define([
 	// BCP: 2170193264
 	QUnit.test("Context#setProperty: write only", function (assert) {
 		var oContext,
-			iNoPatchCompleted = 0,
-			iNoPatchSent = 0,
+			iPatchCompleted = 0,
+			iPatchSent = 0,
 			oYetAnotherContext,
 			that = this;
 
@@ -56814,11 +56943,11 @@ sap.ui.define([
 			oYetAnotherContext = that.oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext();
 
 			oContextBinding.attachPatchCompleted(function (oEvent) {
-				iNoPatchCompleted += 1;
+				iPatchCompleted += 1;
 				assert.strictEqual(oEvent.getParameter("success"), true);
 			});
 			oContextBinding.attachPatchSent(function () {
-				iNoPatchSent += 1;
+				iPatchSent += 1;
 			});
 			that.expectRequest({
 					headers : {"If-Match" : "*"},
@@ -56844,8 +56973,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.strictEqual(iNoPatchCompleted, 1);
-			assert.strictEqual(iNoPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
+			assert.strictEqual(iPatchSent, 1);
 
 			// code under test
 			assert.strictEqual(oContext.getProperty("MEMBER_COUNT"), 99);
@@ -57075,6 +57204,9 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into ('P1')/CurrencyCode"
+					+ ", invalid segment: CurrencyCode"); //TODO we'd better avoid this :-(
 			that.expectChange("name", "The Beatles (changed)")
 				.expectChange("price", ["12.99"]);
 
@@ -66524,8 +66656,8 @@ sap.ui.define([
 		var oContext,
 			oListBinding,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
-			iPatchSentCount = 0,
-			iPatchCompletedCount = 0,
+			iPatchSent = 0,
+			iPatchCompleted = 0,
 			sView = '\
 <Table id="list" items="{path : \'/Artists\', parameters : {$$getKeepAliveContext : true},\
 		suspended : true}">\
@@ -66558,10 +66690,10 @@ sap.ui.define([
 			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=false)");
 			that.oView.byId("objectPage").setBindingContext(oContext);
 			oContext.getBinding().attachPatchSent(function () {
-				iPatchSentCount += 1;
+				iPatchSent += 1;
 			});
 			oContext.getBinding().attachPatchCompleted(function () {
-				iPatchCompletedCount += 1;
+				iPatchCompleted += 1;
 			});
 
 			return that.waitForChanges(assert, "getKeepAliveContext");
@@ -66577,8 +66709,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "change name");
 		}).then(function () {
-			assert.strictEqual(iPatchSentCount, 1);
-			assert.strictEqual(iPatchCompletedCount, 1);
+			assert.strictEqual(iPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
 
 			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name,defaultChannel"
 					+ "&$skip=0&$top=100", {
@@ -71306,6 +71438,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2211
 	//
 	// Make sure that canonical path APIs behave unchanged (JIRA: CPOUI5ODATAV4-2864)
+	//
+	// Make sure no late property requests are sent. See what happens when upsert is caused by
+	// amount w/ currency. Test eventing for PATCH requests.
+	// JIRA: CPOUI5ODATAV4-2856
 	["submit", "reset", "delete"].forEach(function (sAction) {
 		[false, true].forEach(function (bIntermediate) {
 			const sTitle = "CPOUI5ODATAV4-2211: upsert, " + sAction
@@ -71323,20 +71459,20 @@ sap.ui.define([
 			const sView = `
 	<FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
 		<Text id="artistId" text="{ArtistID}"/>
+		<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 		<Input id="publicationId" value="{BestFriend/BestPublication/PublicationID}"/>
 		<Input id="price" value="{BestFriend/BestPublication/Price}"/>
 		<Input id="currency" value="{BestFriend/BestPublication/CurrencyCode}"/>
-		<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 	</FlexBox>`;
 			const sViewWithIntermediate = `
 	<FlexBox id="form" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
 		<Text id="artistId" text="{ArtistID}"/>
+		<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 		<FlexBox id="publication" binding="{BestFriend/BestPublication}">
 			<Input id="publicationId" value="{PublicationID}"/>
 			<Input id="price" value="{Price}"/>
 			<Input id="currency" value="{CurrencyCode}"/>
 		</FlexBox>
-		<Text id="isNull" text="{= %{BestFriend/BestPublication} === null }"/>
 	</FlexBox>`;
 
 			this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
@@ -71354,12 +71490,26 @@ sap.ui.define([
 					}
 				})
 				.expectChange("artistId", "1")
+				.expectChange("isNull", true)
 				.expectChange("publicationId", "")
 				.expectChange("price", null)
-				.expectChange("currency", "")
-				.expectChange("isNull", true);
+				.expectChange("currency", "$MD"); // default value from $metadata
 
 			await this.createView(assert, bIntermediate ? sViewWithIntermediate : sView, oModel);
+
+			const oArtistContext = this.oView.byId("form").getBindingContext();
+			assert.strictEqual(oArtistContext.getObject("BestFriend/BestPublication"), null);
+
+			let iPatchCompleted = 0;
+			const oArtistBinding = oArtistContext.getBinding();
+			oArtistBinding.attachPatchCompleted(function (oEvent) {
+				iPatchCompleted += 1;
+				assert.strictEqual(oEvent.getParameter("success"), iPatchCompleted === 2);
+			});
+			let iPatchSent = 0;
+			oArtistBinding.attachPatchSent(function () {
+				iPatchSent += 1;
+			});
 
 			const oContext = bIntermediate && this.oView.byId("publication").getBindingContext();
 			if (oContext) {
@@ -71371,21 +71521,26 @@ sap.ui.define([
 					+ ": No instance to calculate key predicate at " + sPublicationPath));
 			}
 
-			this.expectChange("publicationId", "2")
+			this.expectChange("isNull", false)
 				.expectChange("price", "12")
-				.expectChange("isNull", false);
+				.expectChange("publicationId", "2");
 
 			// code under test
-			this.oView.byId("publicationId").getBinding("value").setValue("2");
 			this.oView.byId("price").getBinding("value").setValue("12");
+			this.oView.byId("publicationId").getBinding("value").setValue("2");
 
 			await this.waitForChanges(assert, "upsert");
 
-			const oArtistContext = this.oView.byId("form").getBindingContext();
 			assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"), {
 				Price : "12",
 				PublicationID : "2"
 			});
+
+			assert.strictEqual(
+				// code under test (JIRA: CPOUI5ODATAV4-2856)
+				await oArtistContext.requestProperty("BestFriend/BestPublication/CurrencyCode"),
+				"$MD", // default value from $metadata
+				"no late property request");
 
 			this.oLogMock.expects("error")
 				.withArgs("Failed to update path " + sPublicationPath + "/PublicationID");
@@ -71399,7 +71554,11 @@ sap.ui.define([
 						Prefer : "return=minimal"
 					},
 					url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
-					payload : {Price : "12", PublicationID : "2"}
+					payload : {
+						CurrencyCode : "$MD", // default value from $metadata
+						Price : "12",
+						PublicationID : "2"
+					}
 				}, createErrorInsideBatch({target : "Price"}))
 				.expectRequest({
 					batchNo : 2,
@@ -71416,11 +71575,17 @@ sap.ui.define([
 					technical : true,
 					type : "Error"
 				}]);
+			assert.strictEqual(iPatchSent, 0);
+			assert.strictEqual(iPatchCompleted, 0);
 
 			await Promise.all([
 				oModel.submitBatch("update"),
 				this.waitForChanges(assert, "submit -> error")
 			]);
+
+			assert.strictEqual(iPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
+
 			await this.checkValueState(assert, this.oView.byId("price"), "Error",
 				"Request intentionally failed");
 
@@ -71451,7 +71616,11 @@ sap.ui.define([
 							Prefer : "return=minimal"
 						},
 						url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
-						payload : {Price : "11", PublicationID : "2"}
+						payload : {
+							CurrencyCode : "$MD", // default value from $metadata
+							Price : "11",
+							PublicationID : "2"
+						}
 					}, null, {ETag : "etag3"}) // 204 No Content
 					.expectRequest({
 						batchNo : 3,
@@ -71468,16 +71637,16 @@ sap.ui.define([
 								PublicationID : "2"
 							}
 						}
-					})
+					});
+				this.expectChange("currency", "USD")
 					.expectChange("price", "10.99")
-					.expectChange("currency", "USD")
 					.expectChange("isNull", false); // this is accepted! (JIRA: CPOUI5ODATAV4-2638)
 			} else {
 				this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
 						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-					.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
-						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
 					.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+					.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
 						"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update");
 				if (sAction === "delete") { // delete causes setContext(null) -> no default values
 					this.expectChange("publicationId", null)
@@ -71486,8 +71655,8 @@ sap.ui.define([
 						.expectChange("isNull", true);
 				} else {
 					this.expectChange("price", "12") // from the second PATCH to "11"
-						.expectChange("publicationId", "")
 						.expectChange("price", null)
+						.expectChange("publicationId", "")
 						.expectChange("isNull", true);
 				}
 
@@ -71500,6 +71669,8 @@ sap.ui.define([
 					oModel.resetChanges();
 				}
 			}
+			assert.strictEqual(iPatchSent, 1);
+			assert.strictEqual(iPatchCompleted, 1);
 
 			await Promise.all([
 				oPromise,
@@ -71507,6 +71678,8 @@ sap.ui.define([
 				this.waitForChanges(assert, sAction)
 			]);
 
+			assert.strictEqual(iPatchSent, sAction === "submit" ? 2 : 1);
+			assert.strictEqual(iPatchCompleted, sAction === "submit" ? 2 : 1);
 			const oBestPublication = {
 				"@odata.etag" : "etag3",
 				CurrencyCode : "USD",
@@ -77055,7 +77228,8 @@ sap.ui.define([
 			checkEvents([{property : "BestFriend", start : 5, length : 1}]);
 
 			this.expectChange("name", ["Artist X"])
-				.expectChange("publicationCurrency", [""])
+				// Note: w/ $$separate, default values are not expected - this is just a bad example
+				.expectChange("publicationCurrency", ["$MD"]) // default value from $metadata
 				.expectChange("friend", [""])
 				.expectChange("friendBusy__AS_COMPOSITE", [true])
 				.expectChange("friendBusy__AS_COMPOSITE", [true])
@@ -77169,6 +77343,10 @@ sap.ui.define([
 	// When using getDownloadUrl, the result URL does not exclude the $expand for the separate
 	// property.
 	// JIRA: CPOUI5ODATAV4-2694
+	//
+	// Show that ETags do not affect $$separate and kept-alive handling. Also a late property is
+	// requested, but it only affects the keep alive request.
+	// JIRA: CPOUI5ODATAV4-2779
 	[false, true].forEach(function (bReset) {
 		QUnit.test(`$$separate: refresh ${bReset ? "w/" : "w/o"} reset`, async function (assert) {
 			const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -77191,22 +77369,36 @@ sap.ui.define([
 			this.expectRequest(sFriendUrl + "&$skip=0&$top=2", new Promise(function (resolve) {
 					fnResolveBestFriend = resolve.bind(null, {
 						value : [{
+							"@odata.etag" : "etag.10.0",
 							ArtistID : "10",
-							BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "OLD A"},
+							BestFriend : {
+								"@odata.etag" : "etag.F1.0",
+								ArtistID : "F1",
+								IsActiveEntity : true,
+								Name : "OLD A"
+							},
 							IsActiveEntity : true
 						}, {
+							"@odata.etag" : "etag.20.0",
 							ArtistID : "20",
-							BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "OLD B"},
+							BestFriend : {
+								"@odata.etag" : "etag.F2.0",
+								ArtistID : "F2",
+								IsActiveEntity : true,
+								Name : "OLD B"
+							},
 							IsActiveEntity : true
 						}]
 					});
 				}))
 				.expectRequest(sMainUrl + "&$skip=0&$top=2", {
 					value : [{
+						"@odata.etag" : "etag.10.0",
 						ArtistID : "10",
 						IsActiveEntity : true,
 						Name : "Artist A"
 					}, {
+						"@odata.etag" : "etag.20.0",
 						ArtistID : "20",
 						IsActiveEntity : true,
 						Name : "Artist B"
@@ -77219,19 +77411,44 @@ sap.ui.define([
 
 			const oBinding = this.oView.byId("table").getBinding("items");
 			const [oArtistA] = oBinding.getAllCurrentContexts();
+
+			this.expectRequest("Artists(ArtistID='10',IsActiveEntity=true)?$select=Address/City", {
+					"@odata.etag" : "etag.10.0",
+					Address : {
+						City : "Heidelberg"
+					}
+				});
+
+			const [sCity] = await Promise.all([
+				oArtistA.requestProperty("Address/City"),
+				this.waitForChanges(assert, "request late property")
+			]);
+
+			assert.strictEqual(sCity, "Heidelberg");
+
 			if (bReset) {
 				// reset requests kept-alive element
 				this.expectRequest({
-						batchNo : 4,
+						batchNo : 5,
 						groupId : "$auto",
-						url : sMainUrl
+						url : "Artists?$select=Address/City,ArtistID,IsActiveEntity,Name"
 							+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 							+ "&$filter=ArtistID eq '10' and IsActiveEntity eq true"
 					}, {
 						value : [{
+							"@odata.etag" : "etag.10.1",
+							Address : {
+								City : "Heidelberg"
+							},
 							ArtistID : "10",
-							BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A #2"},
+							BestFriend : {
+								"@odata.etag" : "etag.F1.1",
+								ArtistID : "F1",
+								IsActiveEntity : true,
+								Name : "Friend A #2"
+							},
 							IsActiveEntity : true,
+							// unrealistic; to demonstrate that keep alive response wins
 							Name : "Artist A #2"
 						}]
 					})
@@ -77240,30 +77457,44 @@ sap.ui.define([
 				oArtistA.setKeepAlive(true); // set kept-alive to reset (instead of recreate) the cache
 			}
 			this.expectRequest({
-					batchNo : 3,
+					batchNo : 4,
 					groupId : "$single",
 					url : sFriendUrl + "&$skip=0&$top=2"
 				}, {
 					value : [{
+						"@odata.etag" : "etag.10.1",
 						ArtistID : "10",
-						BestFriend : {ArtistID : "F1", IsActiveEntity : true, Name : "Friend A #1"},
+						BestFriend : {
+							"@odata.etag" : "etag.F1.1",
+							ArtistID : "F1",
+							IsActiveEntity : true,
+							Name : "Friend A #1"
+						},
 						IsActiveEntity : true
 					}, {
+						"@odata.etag" : "etag.20.1",
 						ArtistID : "20",
-						BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B #1"},
+						BestFriend : {
+							"@odata.etag" : "etag.F2.1",
+							ArtistID : "F2",
+							IsActiveEntity : true,
+							Name : "Friend B #1"
+						},
 						IsActiveEntity : true
 					}]
 				})
 				.expectRequest({
-					batchNo : 4,
+					batchNo : 5,
 					groupId : "$auto",
 					url : sMainUrl + "&$skip=0&$top=2"
 				}, {
 					value : [{
+						"@odata.etag" : "etag.10.1",
 						ArtistID : "10",
 						IsActiveEntity : true,
 						Name : "Artist A #1"
 					}, {
+						"@odata.etag" : "etag.20.1",
 						ArtistID : "20",
 						IsActiveEntity : true,
 						Name : "Artist B #1"
@@ -77289,6 +77520,22 @@ sap.ui.define([
 			fnResolveBestFriend();
 
 			await this.waitForChanges(assert, "resolve old separate request, ignore response");
+
+			assert.deepEqual(oArtistA.getObject(), {
+				"@odata.etag" : "etag.10.1",
+				ArtistID : "10",
+				BestFriend : {
+					"@odata.etag" : "etag.F1.1",
+					ArtistID : "F1",
+					IsActiveEntity : true,
+					// unrealistic; to demonstrate that latest $$separate response wins
+					Name : "Friend A #1"
+				},
+				IsActiveEntity : true,
+				// unrealistic; to demonstrate that keep alive response wins
+				Name : `Artist A #${bReset ? "2" : "1"}`,
+				...(bReset && {Address : {City : "Heidelberg"}})
+			});
 
 			// code under test
 			assert.strictEqual(oBinding.getDownloadUrl(),
