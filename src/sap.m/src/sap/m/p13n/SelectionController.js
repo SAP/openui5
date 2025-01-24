@@ -281,41 +281,86 @@ sap.ui.define([
 	};
 
 	SelectionController.prototype._createMoveChanges = function(aExistingItems, aChangedItems, oControl, sOperation, aDeltaAttributes) {
-		var sKey, nIndex, oItem, aChanges = [];
+		var aChanges = [];
 
-		if (aExistingItems.length === aChangedItems.length) {
+		if (aExistingItems.length !== aChangedItems.length) {
+			return aChanges;
+		}
 
-			var fnSymbol = function(o) {
-				var sDiff = "";
-				aDeltaAttributes.forEach(function(sAttribute) {
-					sDiff = sDiff + o[sAttribute];
-				});
-				return sDiff;
-			};
+		var fnSymbol = function(o) {
+			var sDiff = "";
+			aDeltaAttributes.forEach(function(sAttribute) {
+				sDiff = sDiff + o[sAttribute];
+			});
+			return sDiff;
+		};
 
+		var INSERT_TYPE = "insert";
+		var DELETE_TYPE = "delete";
 
-			var aDiff = diff(aExistingItems, aChangedItems, fnSymbol);
-			var aDeleted = [];
-			for (var i = 0; i < aDiff.length; i++) {
-				if (aDiff[i].type === "delete") {
-					oItem = aExistingItems[aDiff[i].index];
-					aDeleted.push(oItem);
-				} else if (aDiff[i].type === "insert") {
-					sKey = aChangedItems[aDiff[i].index].key || aChangedItems[aDiff[i].index].name;
+		var aDeleted = [];
+		var aInserted = [];
+		var aDiff = diff(aExistingItems, aChangedItems, fnSymbol);
 
-					nIndex = aDiff[i].index;
-					// eslint-disable-next-line no-loop-func
-					aDeleted.forEach(function(oItem) {
-						if (sKey != oItem.key) {
-							var nDelIndex = this._indexOfByKeyName(aExistingItems, oItem.key || oItem.name);
-							if (nDelIndex < aDiff[i].index) {
-								nIndex++;
-							}
+		for (var i = 0; i < aDiff.length; i++) {
+			var sType = aDiff[i].type;
+			if (sType !== DELETE_TYPE && sType !== INSERT_TYPE) {continue;}
+
+			var index = aDiff[i].index;
+			var oItem = aChangedItems[index];
+			if (!oItem) {continue;}
+
+			if (sType === DELETE_TYPE) {
+				aDeleted.push({ ...oItem, index });
+				continue;
+			}
+			if (sType === INSERT_TYPE) {
+				aInserted.push({ ...oItem, index });
+				continue;
+			}
+		}
+
+		for (var j = 0; j < aDiff.length; j++) {
+			if (aDiff[j].type === "insert") {
+				// Due to the way 'var' works, there might be issues regarding in-loop-function definitions and
+				// using loop variables (e.g. like 'j') within functions. This issue is fixed with let and const.
+				// https://eslint.org/docs/latest/rules/no-loop-func
+				(function(nIndex) {
+					var sKey = aChangedItems[nIndex].key || aChangedItems[nIndex].name;
+
+					var fnFilter = function(item) {
+						if (!item) {
+							return false;
 						}
-					}.bind(this));
-					// eslint-enable-next-line no-loop-func
-					aChanges.push(this._createMoveChange(sKey, Math.min(nIndex, aChangedItems.length), sOperation, oControl));
-				}
+						if (item.index >= nIndex) {
+							return false;
+						}
+						return true;
+					};
+
+					// number of items that were deleted before current index
+					var nDeleted = aDeleted.filter(fnFilter).length;
+					// number of items that were inserted before current index
+					var nInserted = aInserted.filter(fnFilter).length;
+
+					var isNotFirstElement = nIndex > 0;
+					var hasDeletions = nDeleted > 0;
+
+					// either take all ins/dels or just take the ones that are before the current index
+					var hasInsertionAbundance = nInserted > nDeleted;
+					var hasDeletionAbundance = nDeleted > nInserted;
+
+					var shouldDecrease = hasInsertionAbundance && hasDeletions && isNotFirstElement;
+					var shouldIncrease = hasDeletionAbundance && isNotFirstElement;
+
+					if (shouldDecrease) {
+						nIndex -= nInserted;
+					} else if (shouldIncrease) {
+						nIndex += nDeleted;
+					}
+
+					aChanges.push(this._createMoveChange(sKey, Math.min(nIndex, aChangedItems.length - 1), sOperation, oControl));
+				}.bind(this))(aDiff[j].index);
 			}
 		}
 
