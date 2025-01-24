@@ -920,6 +920,300 @@ sap.ui.define([
 			oGrid.destroy();
 		});
 
+		// helper function to check cell selection in Shift selection tests
+		function assertCellSelected(assert, oGrid, iCellIndex, deselected) {
+			var oCell = oGrid.$().find('.sapMSPCMonthDay')[iCellIndex];
+			var oDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(parseInt(oCell.getAttribute("sap-ui-date"))));
+			if (deselected) {
+				assert.notOk(oCell.classList.contains("sapMSPCMonthDaySelected"), "cell is not selected");
+				assert.notOk(oGrid._checkDateSelected(oDate), "date is not added to selectedDates aggregation");
+			} else {
+				assert.ok(oCell.classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+				assert.ok(oGrid._checkDateSelected(oDate), "date is added to selectedDates aggregation");
+			}
+		}
+
+		QUnit.test("selectedDates: select/deselect multiple days with Shift (single selection mode)", async function (assert){
+			// arrange
+			var oGrid = new SinglePlanningCalendarMonthGrid({
+					startDate: UI5Date.getInstance(2022,0,1),
+					firstDayOfWeek: 1,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.SingleSelect
+				}),
+				i;
+
+			oGrid.placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+
+			// positive direction selection (start date is before end date)
+			// act (click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[10], srcControl: oGrid, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[10].classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 1, "1 date added to selectedDates");
+
+			// act (Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[20], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 11, "11 dates added to selectedDates");
+
+			// act (deselect 3 cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 17; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			for (i = 18; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i, true);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 8, "8 exist in selectedDates, 3 deselected");
+
+			// act (select 5 more cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[22], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 22; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 13, "13 dates added to selectedDates");
+
+			// select cell otside of already selected range to clear it
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[25], srcControl: oGrid, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// negative direction selection (start date is after end date)
+			// act (click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[20], srcControl: oGrid, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[20].classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 1, "1 date added to selectedDates");
+
+			// act (Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[10], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 11, "11 dates added to selectedDates");
+
+			// act (deselect 3 cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[13], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 13; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			for (i = 10; i <= 12; i++) {
+				assertCellSelected(assert, oGrid, i, true);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 8, "8 exist in selectedDates, 3 deselected");
+
+			// act (select 5 more cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[8], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 8; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 13, "13 dates added to selectedDates");
+
+			// clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("selectedDates: select/deselect multiple days with Shift (multi selection mode)", async function (assert){
+			// arrange
+			var oGrid = new SinglePlanningCalendarMonthGrid({
+					startDate: UI5Date.getInstance(2022,0,1),
+					firstDayOfWeek: 1,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
+				}),
+				i;
+
+			oGrid.placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+
+			// positive direction selection (start date is before end date)
+			// act (click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[10], srcControl: oGrid, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[10].classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 1, "1 date added to selectedDates");
+
+			// act (Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[20], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 11, "11 dates added to selectedDates");
+
+			// act (deselect 3 cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 17; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			for (i = 18; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i, true);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 8, "8 exist in selectedDates, 3 deselected");
+
+			// act (select 5 more cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[22], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 22; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 13, "13 dates added to selectedDates");
+
+			// deselect all cells by pressing Space twice on specific cell
+			oGrid.onkeydown({ target: oGrid.$().find('.sapMSPCMonthDay')[25], srcControl: oGrid, which: 32, preventDefault: function() {}, originalEvent: {type: "keydown"}});
+			await nextUIUpdate(this.clock);
+			oGrid.onkeydown({ target: oGrid.$().find('.sapMSPCMonthDay')[25], srcControl: oGrid, which: 32, preventDefault: function() {}, originalEvent: {type: "keydown"}});
+			await nextUIUpdate(this.clock);
+
+			// negative direction selection (start date is after end date)
+			// act (click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[20], srcControl: oGrid, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[20].classList.contains("sapMSPCMonthDaySelected"), "cell is selected");
+			assert.strictEqual(oGrid.getSelectedDates().length, 1, "1 date added to selectedDates");
+
+			// act (Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[10], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 10; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 11, "11 dates added to selectedDates");
+
+			// act (deselect 3 cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[13], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 13; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			for (i = 10; i <= 12; i++) {
+				assertCellSelected(assert, oGrid, i, true);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 8, "8 exist in selectedDates, 3 deselected");
+
+			// act (select 5 more cells with Shift + click)
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[8], srcControl: oGrid, shiftKey: true, originalEvent: {type: "click"}});
+			await nextUIUpdate(this.clock);
+
+			// assert
+			for (i = 8; i <= 20; i++) {
+				assertCellSelected(assert, oGrid, i);
+			}
+			assert.strictEqual(oGrid.getSelectedDates().length, 13, "13 dates added to selectedDates");
+
+			// clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("_rangeSelection: week selection/deselection", async function (assert){
+			// arrange
+			var oStartDate = UI5Date.getInstance(2022,0,10),
+				oEndDate = UI5Date.getInstance(2022,0,17),
+				oGrid = new SinglePlanningCalendarMonthGrid({
+					startDate: UI5Date.getInstance(2022,0,1),
+					firstDayOfWeek: 1,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.MultiSelect
+				}),
+				aSelectedDates;
+
+			oGrid.placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+
+			// act - select a week
+			oGrid._bCurrentWeekSelection = true;
+			oGrid._rangeSelection(oStartDate, oEndDate);
+			await nextUIUpdate(this.clock);
+			aSelectedDates = oGrid.getSelectedDates();
+
+			// assert
+			assert.strictEqual(aSelectedDates.length, 7, "7 days are selected");
+			assertWeekSelection();
+
+			// act - deselect the week
+			oGrid._bCurrentWeekSelection = true;
+			oGrid._rangeSelection(oStartDate, oEndDate);
+			await nextUIUpdate(this.clock);
+			aSelectedDates = oGrid.getSelectedDates();
+
+			// assert
+			assert.strictEqual(aSelectedDates.length, 0, "after deselecting the week, no selected days must remain");
+
+			// act - select a week when there is one day previously selected
+			oGrid._bCurrentWeekSelection = true;
+			oGrid._addSelectedDate(UI5Date.getInstance(2022,0,13));
+			oGrid._rangeSelection(oStartDate, oEndDate);
+			await nextUIUpdate(this.clock);
+			aSelectedDates = oGrid.getSelectedDates();
+
+			// assert
+			assert.strictEqual(aSelectedDates.length, 7, "7 days are selected");
+			assertWeekSelection();
+
+			// act - select a week when there is one day previously unselected
+			oGrid._bCurrentWeekSelection = true;
+			oGrid._rangeSelection(oStartDate, oEndDate);
+			await nextUIUpdate(this.clock);
+			oGrid.removeSelectedDate(4);
+			await nextUIUpdate(this.clock);
+			oGrid._rangeSelection(oStartDate, oEndDate);
+			await nextUIUpdate(this.clock);
+			aSelectedDates = oGrid.getSelectedDates();
+
+			// assert
+			assert.strictEqual(aSelectedDates.length, 7, "7 days are selected");
+			assertWeekSelection();
+
+			// clean up
+			oGrid.destroy();
+
+			// check if all days in a week are selected
+			function assertWeekSelection() {
+				var oCurrentDate = UI5Date.getInstance(oStartDate);
+				for (var i = 0; i < 7; i++) {
+					assert.ok(oGrid._checkDateSelected(CalendarDate.fromLocalJSDate(oCurrentDate)), "date " + (i + 1) + " in a week is selected");
+					oCurrentDate.setDate(oCurrentDate.getDate() + 1);
+				}
+			}
+		});
+
 		QUnit.test("hasSelected", function (assert) {
 			// arrange
 			var oTestSelectedDate = new CalendarDate(2022, 0, 10),
