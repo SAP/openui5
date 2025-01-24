@@ -39,7 +39,7 @@ sap.ui.define([
 
 	let oAdaptationFilterBar;
 	QUnit.module("AdaptationFilterBar - MDC Control specific tests", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oTestTable = new Table({
 				delegate: {
 					name: "test-resources/sap/ui/mdc/delegates/TableDelegate",
@@ -64,6 +64,7 @@ sap.ui.define([
 			if (FlexUtil.handleChanges.restore){
 				FlexUtil.handleChanges.restore();
 			}
+			await Promise.all([this.oTestTable.initialized(), this.oAdaptationFilterBar.initialized()]);
 		},
 
 		afterEach: function () {
