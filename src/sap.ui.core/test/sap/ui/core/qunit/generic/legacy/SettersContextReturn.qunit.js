@@ -64,6 +64,8 @@ sap.ui.define([
 				"sap.m.internal.NumericInput": NOT_A_MODULE, // not a module of its own
 				"sap.m.internal.ObjectMarkerCustomLink": NOT_A_MODULE, // not a module of its own
 				"sap.m.internal.ObjectMarkerCustomText": NOT_A_MODULE, // not a module of its own
+				"sap.m.internal.ToggleSpinButton": NOT_A_MODULE, // not a module of its own
+				"sap.m.internal.DateTimePickerPopup": NOT_A_MODULE, // not a module of its own
 				"sap.m.TablePopin": NOT_A_MODULE,  // not a module of its own,
 				"sap.m.PlanningCalendarHeader": {exclude:["actions"]}, // implementation of 'actions' is broken
 				"sap.m.SinglePlanningCalendar": NO_DESTROY
@@ -81,7 +83,9 @@ sap.ui.define([
 		},
 		"sap.ui.unified": {
 			elements: {
-				"sap.ui.unified._ColorPickerBox": NOT_A_MODULE
+				"sap.ui.unified._ColorPickerBox": NOT_A_MODULE,
+				"sap.ui.unified.internal.CustomMonthPicker": NOT_A_MODULE,
+				"sap.ui.unified.internal.CustomYearPicker": NOT_A_MODULE
 			}
 		},
 
