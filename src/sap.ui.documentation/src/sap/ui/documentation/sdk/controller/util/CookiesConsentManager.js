@@ -148,7 +148,7 @@ sap.ui.define(
                     this._getConsentDecisionAsync().then(fnCallback);
                 },
                 _getConsentDecisionSync: function() {
-                    return window.truste?.cma?.callApi("getConsentDecision", document.domain)?.consentDecision;
+                    return window.truste?.cma?.callApi("getConsentDecision", getHostName())?.consentDecision;
                 },
                 _getConsentDecisionAsync: function () {
                     if (!this._oGetDecisionPromise) {
@@ -177,7 +177,7 @@ sap.ui.define(
                     return this._oGetDecisionPromise;
                 },
                 _getAdditionalPreferences: function (sConsentCategory) {
-                    var oCategories = window.truste?.cma?.callApi("getConsentCategories",document.domain)?.categories,
+                    var oCategories = window.truste?.cma?.callApi("getConsentCategories",getHostName())?.categories,
                         bAdditionalPreferencesDefined = oCategories && oCategories[sConsentCategory];
                     if (bAdditionalPreferencesDefined) {
                         return oCategories[sConsentCategory];
@@ -221,7 +221,7 @@ sap.ui.define(
                         PrivacyManagerAPI:{
                             action: sAction,
                             timestamp: new Date().getTime(),
-                            self: document.domain
+                            self: getHostName()
                         }
                     };
                     return JSON.stringify(apiObject);
@@ -305,6 +305,11 @@ sap.ui.define(
                 }
             }
         );
+
+        // utility function
+        function getHostName() {
+            return new URI(window.location.href).hostname();
+        }
 
         var CookiesConsentManager = {
             create: function (oComponent, oConfig) {
