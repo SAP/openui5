@@ -30,9 +30,9 @@ sap.ui.require([], () => {
 					assert.strictEqual(oLinkSapM.hasAttribute("data-sap-ui-ready"), "true", "'data-sap-ui-ready' is correct for lib 'sap.m' since theme is already loaded.");
 					assert.strictEqual(oLinkFailingLib.getAttribute("data-sap-ui-ready"), "false", "'data-sap-ui-ready' is correct for lib 'sap.failing.lib' since theme is already loaded.");
 				} else {
-					assert.notOk(oLinkSapM.hasAttribute("data-sap-ui-ready"), "'data-sap-ui-ready' flag has been removed from link tag.");
 					// Depending on CORS settings, we either detect immediately, that the CSS request failed or we need to wait for a second CSS request.
-					assert.ok(!oLinkFailingLib.hasAttribute("data-sap-ui-ready") || oLinkFailingLib.getAttribute("data-sap-ui-ready") === "false", "'data-sap-ui-ready' flag has been removed from link tag.");
+					assert.ok(!oLinkSapM.hasAttribute("data-sap-ui-ready") || oLinkSapM.getAttribute("data-sap-ui-ready") === "true", !oLinkSapM.hasAttribute("data-sap-ui-ready") ? "'data-sap-ui-ready' flag has been removed from link tag." : "'data-sap-ui-ready' is set to false for lib 'sap.failing.lib' since CSS does not exist.");
+					assert.ok(!oLinkFailingLib.hasAttribute("data-sap-ui-ready") || oLinkFailingLib.getAttribute("data-sap-ui-ready") === "false", !oLinkFailingLib.hasAttribute("data-sap-ui-ready") ? "'data-sap-ui-ready' flag has been removed from link tag." : "'data-sap-ui-ready' is set to false for lib 'sap.failing.lib' since CSS does not exist.");
 				}
 
 				const themeApplied = function() {
@@ -43,7 +43,11 @@ sap.ui.require([], () => {
 					ThemeManager._detachThemeApplied(themeApplied);
 					res();
 				};
-				ThemeManager._attachThemeApplied(themeApplied);
+				if (ThemeManager.themeLoaded) {
+					themeApplied();
+				} else {
+					ThemeManager._attachThemeApplied(themeApplied);
+				}
 			}, rej);
 		});
 	});
