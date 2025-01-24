@@ -450,7 +450,7 @@ sap.ui.define([
 			} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 				this.settingsDialogOpen();
 			} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
-				this._oCookiesConsentManager.showPreferencesDialog(this.getView());
+				this.onEditCookiePreferencesRequest();
 			} else if (sTargetText === CHANGE_VERSION_TEXT) {
 				this.onChangeVersionButtonPress();
 			} else if (ThemePicker._getTheme()[sTargetText]) {
