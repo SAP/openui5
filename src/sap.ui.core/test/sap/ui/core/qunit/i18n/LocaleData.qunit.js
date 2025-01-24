@@ -783,8 +783,8 @@ sap.ui.define([
 		var sMinusSymbols = oLocaleData.getLenientNumberSymbols("minusSign");
 		var sPlusSymbols = oLocaleData.getLenientNumberSymbols("plusSign");
 
-		assert.strictEqual(sMinusSymbols, "-－﹣ ‐‑‒–−⁻₋➖", "Should match the minus symbols default");
-		assert.strictEqual(sPlusSymbols, "+＋﬩﹢⁺₊ ➕", "Should match the plus symbols default");
+		assert.strictEqual(sMinusSymbols, "-－﹣‐‑‒–−⁻₋➖", "Should match the minus symbols default");
+		assert.strictEqual(sPlusSymbols, "+＋﬩﹢⁺₊➕", "Should match the plus symbols default");
 	});
 
 	//*********************************************************************************************
