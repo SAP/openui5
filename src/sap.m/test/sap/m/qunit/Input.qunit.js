@@ -28,7 +28,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/m/Page",
+	"sap/m/Panel",
 	"sap/ui/model/Filter",
+	"sap/ui/core/RenderManager",
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
 	"sap/ui/thirdparty/jquery",
@@ -63,7 +65,9 @@ sap.ui.define([
 	Text,
 	Toolbar,
 	Page,
+	Panel,
 	Filter,
+	RenderManager,
 	FilterOperator,
 	FormattedText,
 	jQuery,
@@ -199,6 +203,32 @@ sap.ui.define([
 
 		// Clean
 		oInput.destroy();
+	});
+
+	QUnit.test("Inner input value - type number (DOM flush)", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			value: "Initial Value",
+			type: "Password"
+		});
+		var oPanel = new Panel({
+			content: [
+				oInput
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		const oRM = new RenderManager().getInterface();
+		const oRenderer = oPanel.getRenderer();
+		oRenderer.renderContent(oRM, oPanel);
+		oRM.flush(oInput.getDomRef().parentElement.parentElement, false, false);
+		oRM.destroy();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oInput.getDomRef("inner").value, "Initial Value", "Value is set");
+
+		// Clean
+		oPanel.destroy();
 	});
 
 	QUnit.test("Type password - value not cleared on invalidation", function(assert) {
