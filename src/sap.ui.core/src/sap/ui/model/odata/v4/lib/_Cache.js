@@ -174,14 +174,6 @@ sap.ui.define([
 				}
 			}
 
-			if (_Helper.hasPrivateAnnotation(oEntity, "upsert")) {
-				if (oGroupLock) {
-					oGroupLock.unlock();
-				}
-				that.resetChangesForPath(sEntityPath);
-
-				return undefined;
-			}
 			if (sTransientGroup) {
 				if (typeof sTransientGroup !== "string") {
 					throw new Error("No 'delete' allowed while waiting for server response");
