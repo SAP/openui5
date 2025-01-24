@@ -1612,24 +1612,27 @@ sap.ui.define([
 	{sPowerOfTen: "1000", sPlural: undefined, sResult: "~bar"},
 	{sPowerOfTen: "10", sPlural: "other", sResult: undefined}
 ].forEach(function ({sPowerOfTen, sPlural, sResult}, i) {
-	QUnit.test("getDecimalFormat: #" + i, function (assert) {
+	QUnit.test("getCompactDecimalPattern: #" + i, function (assert) {
 		const oLocaleData = {_get() {}};
 		this.mock(oLocaleData).expects("_get").withExactArgs("decimalFormat-~style")
 			.returns({"1000-one": "~foo", "1000-other": "~bar"});
 
 		// code under test
-		assert.strictEqual(LocaleData.prototype.getDecimalFormat.call(oLocaleData, "~style", sPowerOfTen, sPlural),
+		assert.strictEqual(
+			LocaleData.prototype.getCompactDecimalPattern.call(oLocaleData, "~style", sPowerOfTen, sPlural),
 			sResult);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("getDecimalFormat: short-indian only defined for en_IN, undefined for other locales", function (assert) {
+	QUnit.test("getCompactDecimalPattern: short-indian only defined for en_IN, undefined for other locales",
+			function (assert) {
 		const oLocaleData = {_get() {}};
 		this.mock(oLocaleData).expects("_get").withExactArgs("decimalFormat-short-indian").returns(undefined);
 
 		// code under test
-		assert.strictEqual(LocaleData.prototype.getDecimalFormat.call(oLocaleData, "short-indian", "1000", "one"),
+		assert.strictEqual(
+			LocaleData.prototype.getCompactDecimalPattern.call(oLocaleData, "short-indian", "1000", "one"),
 			undefined);
 	});
 
@@ -1644,7 +1647,7 @@ sap.ui.define([
 	{sPowerOfTen: "1000", sPlural: "two", sAlternative: "alphaNextToNumber", sResult: "~otheralphaNextToNumber"},
 	{sPowerOfTen: "1000", sPlural: "one", sAlternative: "noCurrency", sResult: undefined}
 ].forEach(function ({sPowerOfTen, sPlural, sResult, sAlternative}, i) {
-	QUnit.test("getCurrencyFormat: #" + i, function (assert) {
+	QUnit.test("getCompactCurrencyPattern: #" + i, function (assert) {
 		const oLocaleData = {_get() {}};
 		const oCompactFormat = {
 			"1000-one": "~foo",
@@ -1656,18 +1659,41 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			LocaleData.prototype.getCurrencyFormat.call(oLocaleData, "~style", sPowerOfTen, sPlural, sAlternative),
+			LocaleData.prototype.getCompactCurrencyPattern.call(oLocaleData, "~style", sPowerOfTen, sPlural,
+				sAlternative),
 			sResult);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("getCurrencyFormat: short-indian only defined for en_IN, undefined for others", function (assert) {
+	QUnit.test("getCompactCurrencyPattern: short-indian only defined for en_IN, undefined for others",
+			function (assert) {
 		const oLocaleData = {_get() {}};
 		this.mock(oLocaleData).expects("_get").withExactArgs("currencyFormat-short-indian").returns(undefined);
 
 		// code under test
-		assert.strictEqual(LocaleData.prototype.getCurrencyFormat.call(oLocaleData, "short-indian", "1000", "one"),
+		assert.strictEqual(
+			LocaleData.prototype.getCompactCurrencyPattern.call(oLocaleData, "short-indian", "1000", "one"),
 			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrencyFormat: deprecated alias for getCompactCurrencyPattern",function (assert) {
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getCurrencyFormat, LocaleData.prototype.getCompactCurrencyPattern);
+
+		const oCustomeLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
+		// code under test
+		assert.strictEqual(oCustomeLocaleData.getCurrencyFormat, LocaleData.prototype.getCompactCurrencyPattern);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDecimalFormat: deprecated alias for getCompactDecimalPattern",function (assert) {
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getDecimalFormat, LocaleData.prototype.getCompactDecimalPattern);
+
+		const oCustomeLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
+		// code under test
+		assert.strictEqual(oCustomeLocaleData.getDecimalFormat, LocaleData.prototype.getCompactDecimalPattern);
 	});
 });
