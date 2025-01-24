@@ -118,7 +118,7 @@ function (UsageTracker, Localization) {
 	QUnit.test("site name is correct", function (assert) {
 		var done = assert.async();
 		this.oTracker._getSiteName().then(function (sSiteName) {
-			assert.strictEqual(sSiteName, "SAPUI5 Demo Kit", "Site name is correct");
+			assert.strictEqual(sSiteName, "ui5", "Site name is correct as expected by remote site-registry (AA-side)");
 			done();
 		});
 	});
