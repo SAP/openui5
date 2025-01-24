@@ -1610,7 +1610,7 @@ sap.ui.define([
 		}
 		let sCurrencySymbolOrCode;
 		if (oOptions.type === mNumberType.CURRENCY) {
-			sCurrencySymbolOrCode = this.getCurrencySymbolOrCode(oOptions, sMeasure);
+			sCurrencySymbolOrCode = this.getCurrencySymbolOrCode(sMeasure, oOptions.currencyCode);
 			// Make sure the "trailingCurrencyCode" mode is only used on currency codes:
 			// The "customCurrencies" format option takes precedence over CLDR and global configuration. If the given measure isn't found
 			// there, we already return an empty string in the check above (look for error log 'Currency "xy" is unknown').
@@ -1889,25 +1889,21 @@ sap.ui.define([
 	/**
 	 * Gets the currency symbol or the currency code for the given currency code depending on the given format options.
 	 *
-	 * @param {Object<string, any>} oFormatOptions
-	 *   The currently used format options
-	 * @param {boolean} [oFormatOptions.currencyCode=true]
-	 *   Whether to show the currency code or the currency symbol, see {@link Numberformat.getCurrencyInstance}
-	 * @param {Object<string,object>} [oFormatOptions.customCurrencies]
-	 *   Custom currencies, see {@link Numberformat.getCurrencyInstance}
 	 * @param {string} sCurrencyCode
 	 *   The currency code
+	 * @param {boolean} bCurrencyCode
+	 *   Whether to show the currency code instead of the currency symbol, see {@link Numberformat.getCurrencyInstance}
 	 * @returns {string}
 	 *   The currency symbol or the currency code
 	 *
 	 * @private
 	 */
-	NumberFormat.prototype.getCurrencySymbolOrCode = function (oFormatOptions, sCurrencyCode) {
-		if (oFormatOptions.currencyCode) {
+	NumberFormat.prototype.getCurrencySymbolOrCode = function (sCurrencyCode, bCurrencyCode) {
+		if (bCurrencyCode) {
 			return sCurrencyCode;
 		}
 		// the custom currency symbol map was preprocessed on instance creation
-		return (typeof oFormatOptions.customCurrencies === "object"
+		return (typeof this.oFormatOptions.customCurrencies === "object"
 			? this.mKnownCurrencySymbols[sCurrencyCode]
 			: this.oLocaleData.getCurrencySymbol(sCurrencyCode)) || sCurrencyCode;
 	};
