@@ -1784,4 +1784,82 @@ sap.ui.define([
 
 		fnGetBinding.restore();
 	});
+
+	QUnit.module("Hide/Show table and suspend/resume binding with ODataV2", {
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+				models: new ODataModelV2(sServiceURI),
+				columns: [
+					createColumn({grouped: true, name: "CostCenter"}),
+					createColumn({name: "CostCenterText"}),
+					createColumn({grouped: true, name: "CostElement"}),
+					createColumn({name: "CostElementText"}),
+					createColumn({grouped: true, name: "Currency"}),
+					createColumn({summed: true, name: "ActualCosts"}),
+					createColumn({summed: true, name: "PlannedCosts"})
+				],
+				rows: {
+					path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+					parameters: {
+						useBatchRequests: true
+					},
+					suspended: true
+				},
+				visible: false
+			});
+			this.fnBindingNodesSpy = sinon.spy(this.oTable.getBinding(), "getNodes");
+		},
+		afterEach: function() {
+			this.oTable?.destroy();
+			this.fnBindingNodesSpy?.restore();
+		},
+		after: function() {
+			this.oDataModel?.destroy();
+		}
+	});
+
+	QUnit.test("Initialized hidden table with suspended binding", async function(assert) {
+		await TableQUnitUtils.wait(100);
+		assert.ok(this.fnBindingNodesSpy.notCalled, "Binding.getNodes was not called");
+		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Table has no rows with bindingContext");
+
+		this.fnBindingNodesSpy.resetHistory();
+		this.oTable.setVisible(true);
+		this.oTable.getBinding("rows").resume();
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.ok(this.fnBindingNodesSpy.called, "Binding.getNodes was called");
+		assert.ok(this.oTable.getRows()[0].getBindingContext(), "Table has rows with bindingContext");
+	});
+
+	QUnit.test("Table show/hide at runtime", async function(assert) {
+		await TableQUnitUtils.wait(100);
+		assert.ok(this.fnBindingNodesSpy.notCalled, "Binding.getNodes was not called");
+
+		this.oTable.setVisible(true);
+		this.oTable.getBinding("rows").resume();
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.ok(this.oTable.getRows()[0].getBindingContext(), "Table has rows with bindingContext");
+
+		this.fnBindingNodesSpy.resetHistory();
+		this.oTable.setVisible(false);
+		this.oTable.getBinding("rows").suspend();
+		await TableQUnitUtils.wait(100);
+		assert.ok(this.fnBindingNodesSpy.notCalled, "Binding.getNodes was not called");
+		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Table has no rows with bindingContext");
+	});
+
+	QUnit.test("#_getContexts", async function(assert) {
+		this.oTable.setVisible(false);
+		this.oTable.getBinding().suspend();
+		await TableQUnitUtils.wait(100);
+
+		assert.deepEqual(this.oTable._getContexts(), [], "Called without arguments on invisible and suspended table: []");
+		assert.equal(this.fnBindingNodesSpy.callCount, 0, "Called without arguments: Binding#getNodes not called");
+
+		this.fnBindingNodesSpy.restore();
+	});
 });

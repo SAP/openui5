@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/controlhelper/TreeBindingProxy",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
@@ -19,6 +20,7 @@ sap.ui.define([
 	TableUtils,
 	library,
 	JSONModel,
+	TreeBindingProxy,
 	jQuery
 ) {
 	"use strict";
@@ -312,6 +314,18 @@ sap.ui.define([
 		assert.ok(oChangeSpy.calledOnce, "The original change event listener was called once");
 		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
 		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
+	});
+
+	QUnit.test("#_getContexts", function(assert) {
+		const fnBindingContextSpy = sinon.spy(TreeBindingProxy.prototype, "getContexts");
+
+		fnBindingContextSpy.resetHistory();
+		this.table.setVisible(false);
+
+		assert.deepEqual(this.table._getContexts(), [], "Called without arguments on invisible and suspended table: Return value");
+		assert.equal(fnBindingContextSpy.callCount, 0, "Called without arguments: TreeBindingProxy#getContexts not called");
+
+		fnBindingContextSpy.restore();
 	});
 
 	QUnit.test("Hierarchy modes", async function(assert) {
