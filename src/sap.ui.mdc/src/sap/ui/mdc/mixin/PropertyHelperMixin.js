@@ -289,10 +289,16 @@ sap.ui.define([
 				return [aProperties, PropertyHelper];
 			});
 		}).then((aResult) => {
+			if (this.bIsDestroyed) {
+				return undefined;
+			}
 			return _checkValidationExceptions().then((bExceptionFound) => {
 				return aResult.concat(bExceptionFound);
 			});
 		}).then((aResult) => {
+			if (Array.isArray(aResult) === false) {
+				return undefined;
+			}
 			const [aProperties, PropertyHelper, bExceptionFound] = aResult;
 
 			if (bExceptionFound) {
@@ -330,14 +336,14 @@ sap.ui.define([
 
 	function _checkValidationExceptions () {
 		const affectedLibaries = ["sap.fe.core", "sap.fe.macros", "sap.sac.df"];
-		const mLoadedLibraries = affectedLibaries.filter((sLibrary) => Library.isLoaded(sLibrary));
+		const aLoadedLibraries = affectedLibaries.filter((sLibrary) => Library.isLoaded(sLibrary));
 
 		return VersionInfo.load()
 		.then((oVersionInfo) => {
 			const bDisabledViaConfig = window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation;
 			const bDisabledViaURLParam = new URLSearchParams(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true";
-			const bExceptionForFE = "sap.fe.core" in mLoadedLibraries || "sap.fe.macros" in mLoadedLibraries;
-			const bDisabledForDF = "sap.sac.df" in mLoadedLibraries;
+			const bExceptionForFE = aLoadedLibraries.includes("sap.fe.core") || aLoadedLibraries.includes("sap.fe.macros");
+			const bDisabledForDF = aLoadedLibraries.includes("sap.sac.df");
 			const bExplicitlyEnabled = (new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true");
 			const bUI5Version2 = oVersionInfo.version.indexOf("2.") === 0;
 
