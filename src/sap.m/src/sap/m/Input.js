@@ -642,10 +642,6 @@ function(
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
-		if (!this.getDomRef() && this.getValue()) {
-			this._isValueInitial = true;
-		}
-
 		if (this.getShowClearIcon()) {
 			this._getClearIcon().setProperty("visible", bShowClearIcon);
 		} else if (this._oClearButton) {
@@ -708,12 +704,14 @@ function(
 	Input.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
 
-		if ((this._isValueInitial || this.getType() !== this._previousInputType ) && this.getType() === InputType.Password ) {
-			this.getDomRef("inner").value = this.getProperty("value");
-			this._isValueInitial = false;
-		}
+		// workaround to remove value attribute when having input type password
+		if (this.getType() === InputType.Password) {
+			var innerRef = this.getDomRef("inner");
+			var value = innerRef.value;
 
-		this._previousInputType = this.getType();
+			innerRef.removeAttribute("value");
+			innerRef.value = value;
+		}
 	};
 
 	/**
