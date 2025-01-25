@@ -96,6 +96,10 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
+		if (!this.getVisible()) {
+			return [];
+		}
+
 		const oBinding = this.getBinding();
 		if (oBinding) {
 			// first call getContexts to trigger data load but return nodes instead of contexts

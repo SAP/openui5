@@ -140,15 +140,16 @@ sap.ui.define([
 		assert.strictEqual(typeof oLocaleData.getCurrencyPattern("sap-accounting"), "string");
 		assert.strictEqual(typeof oLocaleData.getCurrencyPattern("standard"), "string");
 		assert.strictEqual(typeof oLocaleData.getCurrencyPattern("sap-standard"), "string");
-		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("short", "100000000", "other"), "string",
-			"getCurrencyFormat");
-		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("sap-short", "100000000", "other"), "string");
-		assert.strictEqual(typeof oLocaleData.getDecimalFormat("short", "100000000"), "string", "getDecimalFormat");
-		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("short-indian", "100000000", "other"),
+		assert.strictEqual(typeof oLocaleData.getCompactCurrencyPattern("short", "100000000", "other"), "string",
+			"getCompactCurrencyPattern");
+		assert.strictEqual(typeof oLocaleData.getCompactCurrencyPattern("sap-short", "100000000", "other"), "string");
+		assert.strictEqual(typeof oLocaleData.getCompactDecimalPattern("short", "100000000"), "string",
+			"getCompactDecimalPattern");
+		assert.strictEqual(typeof oLocaleData.getCompactCurrencyPattern("short-indian", "100000000", "other"),
 			sLocale === "en_IN" ? "string" : "undefined", "short-indian");
-		assert.strictEqual(typeof oLocaleData.getCurrencyFormat("sap-short-indian", "100000000", "other"),
+		assert.strictEqual(typeof oLocaleData.getCompactCurrencyPattern("sap-short-indian", "100000000", "other"),
 			sLocale === "en_IN" ? "string" : "undefined");
-		assert.strictEqual(typeof oLocaleData.getDecimalFormat("short-indian", "100000000"),
+		assert.strictEqual(typeof oLocaleData.getCompactDecimalPattern("short-indian", "100000000"),
 			sLocale === "en_IN" ? "string" : "undefined");
 
 		assert.equal(typeof oLocaleData.getPercentPattern(), "string", "getPercentPattern");
@@ -403,21 +404,23 @@ sap.ui.define([
 		en_IN(assert, oLocaleData) {
 			const sPowerOfTen = "100000000000000";
 			const sAlternative = "alphaNextToNumber";
-			assert.strictEqual(oLocaleData.getCurrencyFormat("short", sPowerOfTen, "one"), "\xa4000T");
-			assert.strictEqual(oLocaleData.getCurrencyFormat("short", sPowerOfTen, "one", sAlternative),
+			assert.strictEqual(oLocaleData.getCompactCurrencyPattern("short", sPowerOfTen, "one"), "\xa4000T");
+			assert.strictEqual(oLocaleData.getCompactCurrencyPattern("short", sPowerOfTen, "one", sAlternative),
 				"\xa4\xa0000T");
-			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short", sPowerOfTen, "other"), "000T\xa0¤");
-			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short", sPowerOfTen, "one", sAlternative),
+			assert.strictEqual(oLocaleData.getCompactCurrencyPattern("sap-short", sPowerOfTen, "other"), "000T\xa0¤");
+			assert.strictEqual(oLocaleData.getCompactCurrencyPattern("sap-short", sPowerOfTen, "one", sAlternative),
 				undefined);
-			assert.strictEqual(oLocaleData.getCurrencyFormat("short-indian", sPowerOfTen, "one"), "\xa4000 Lk Cr");
-			assert.strictEqual(oLocaleData.getCurrencyFormat("short-indian", sPowerOfTen, "one", sAlternative),
+			assert.strictEqual(oLocaleData.getCompactCurrencyPattern("short-indian", sPowerOfTen, "one"),
+				"\xa4000 Lk Cr");
+			assert.strictEqual(oLocaleData.getCompactCurrencyPattern("short-indian", sPowerOfTen, "one", sAlternative),
 				"\xa4\xa0000 Lk Cr");
-			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short-indian", sPowerOfTen, "other"),
+			assert.strictEqual(oLocaleData.getCompactCurrencyPattern("sap-short-indian", sPowerOfTen, "other"),
 				"000 Lk Cr\xa0¤");
-			assert.strictEqual(oLocaleData.getCurrencyFormat("sap-short-indian", sPowerOfTen, "one", sAlternative),
+			assert.strictEqual(
+				oLocaleData.getCompactCurrencyPattern("sap-short-indian", sPowerOfTen, "one", sAlternative),
 				undefined);
-			assert.strictEqual(oLocaleData.getDecimalFormat("short-indian", sPowerOfTen), "000 Lk Cr");
-			assert.strictEqual(oLocaleData.getDecimalFormat("short", sPowerOfTen), "000T");
+			assert.strictEqual(oLocaleData.getCompactDecimalPattern("short-indian", sPowerOfTen), "000 Lk Cr");
+			assert.strictEqual(oLocaleData.getCompactDecimalPattern("short", sPowerOfTen), "000T");
 		},
 
 		en_ZA: function customTests_en_ZA(assert, oLocaleData) {

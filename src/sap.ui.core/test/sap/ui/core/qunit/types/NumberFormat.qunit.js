@@ -5406,10 +5406,10 @@ sap.ui.define([
 ].forEach(({sPattern, sResult}, i) => {
 	QUnit.test("getCompactPattern: no currency type case - #" + i, function (assert) {
 		const oNumberFormat = {
-			oLocaleData: {getDecimalFormat() {}}
+			oLocaleData: {getCompactDecimalPattern() {}}
 		};
 
-		this.mock(oNumberFormat.oLocaleData).expects("getDecimalFormat")
+		this.mock(oNumberFormat.oLocaleData).expects("getCompactDecimalPattern")
 			.withExactArgs("~sStyle", "~sPowerOfTen", "~sPluralCategory")
 			.returns(sPattern);
 
@@ -5448,16 +5448,16 @@ sap.ui.define([
 	}].forEach(({sPattern, bIsAlphaNextToNumber, sAlphaNextToNumberPattern, sResult}, i) => {
 	QUnit.test("getCompactPattern: currency case with measure; " + sStyle + "; #" + i, function (assert) {
 		const oNumberFormat = {
-			oLocaleData: {getCurrencyFormat() {}}
+			oLocaleData: {getCompactCurrencyPattern() {}}
 		};
 		const oLocaleDataMock = this.mock(oNumberFormat.oLocaleData);
-		oLocaleDataMock.expects("getCurrencyFormat")
+		oLocaleDataMock.expects("getCompactCurrencyPattern")
 			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory")
 			.returns(sPattern);
 		this.mock(NumberFormat).expects("isAlphaNextToNumber")
 			.withExactArgs(sPattern, "~sCurrency", "~bNegative")
 			.returns(bIsAlphaNextToNumber);
-		oLocaleDataMock.expects("getCurrencyFormat")
+		oLocaleDataMock.expects("getCompactCurrencyPattern")
 			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "alphaNextToNumber")
 			.exactly(bIsAlphaNextToNumber ? 1 : 0)
 			.returns(sAlphaNextToNumberPattern);
@@ -5486,11 +5486,11 @@ sap.ui.define([
 	QUnit.test("getCompactPattern: currency case without measure; " + sStyle + "; #" + i, function (assert) {
 		const oNumberFormat = {
 			oLocaleData: {
-				getCurrencyFormat() {},
-				getDecimalFormat() {}
+				getCompactCurrencyPattern() {},
+				getCompactDecimalPattern() {}
 			}
 		};
-		this.mock(oNumberFormat.oLocaleData).expects("getCurrencyFormat")
+		this.mock(oNumberFormat.oLocaleData).expects("getCompactCurrencyPattern")
 			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "noCurrency")
 			.returns(sPattern);
 		let sExpectedDecimalStyle;
@@ -5499,7 +5499,7 @@ sap.ui.define([
 			case "sap-short-indian": sExpectedDecimalStyle = "short-indian"; break;
 			default: sExpectedDecimalStyle = sStyle;
 		}
-		this.mock(oNumberFormat.oLocaleData).expects("getDecimalFormat")
+		this.mock(oNumberFormat.oLocaleData).expects("getCompactDecimalPattern")
 			.withExactArgs(sExpectedDecimalStyle, "~sPowerOfTen", "~sPluralCategory")
 			.exactly(sPattern ? 0 : 1)
 			.returns(sDecimalPattern);

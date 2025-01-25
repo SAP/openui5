@@ -81,6 +81,10 @@ sap.ui.define([
 				module: "./Table.ODataV2.qunit"
 			},
 
+			"Table with ODataV4": {
+				module: "./Table.ODataV4.qunit"
+			},
+
 			"Column": {
 				ui5: {
 					// Test has dependencies to sap.ui.unified and sap.m modules
@@ -137,6 +141,10 @@ sap.ui.define([
 				coverage: {
 					only: null /*full report*/
 				}
+			},
+
+			"TreeTable with ODataV4": {
+				module: "./TreeTable.ODataV4.qunit"
 			},
 
 			"AnalyticalTable": {},

@@ -205,6 +205,10 @@ sap.ui.define([
 		};
 
 		TreeTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
+			if (!this.getVisible()) {
+				return [];
+			}
+
 			return this._oProxy.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent);
 		};
 
