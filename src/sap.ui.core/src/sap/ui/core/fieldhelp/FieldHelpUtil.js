@@ -7,17 +7,17 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Util class to set field help information for controls like filter fields that don't have OData property bindings.
+	 * Utility class to set field help information for controls for which field help information cannot be deduced
+	 * automatically from OData metadata or for which the automatically deduced field help needs to be overwritten.
+	 * These can be controls like filter fields that don't have OData property bindings.
 	 *
 	 * @alias module:sap/ui/core/fieldhelp/FieldHelpUtil
 	 * @author SAP SE
 	 * @class
 	 *
 	 * @hideconstructor
-	 * @private
-	 * @ui5-restricted sap.ui.comp.filterbar, sap.fe.templates.ListReport
-	 * @since 1.126.0
-	 * @see module:sap/ui/core/fieldhelp/FieldHelp
+	 * @public
+	 * @since 1.133.0
 	 */
 	class FieldHelpUtil {
 		/**
@@ -33,8 +33,7 @@ sap.ui.define([
 		 *   If there is already a custom data with key <code>sap-ui-DocumentationRef</code> that is not of type
 		 *   {@link module:sap/ui/core/fieldhelp/FieldHelpCustomData}
 		 *
-		 * @private
-		 * @ui5-restricted sap.ui.comp.filterbar, sap.fe.templates.ListReport, sap.nw.core.appjobs.lib.reuse
+		 * @public
 		 */
 		static setDocumentationRef(oElement, vDocumentationRefs) {
 			const aValue = Array.isArray(vDocumentationRefs) ? vDocumentationRefs : [vDocumentationRefs];

@@ -1781,7 +1781,7 @@ sap.ui.define([
 		 * style and plural category, see {@link topic:91f2f2866f4d1014b6dd926db0e91070 Number Format - Compact Format}.
 		 *
 		 * @param {"long"|"short"|"short-indian"} sStyle
-		 *   The style; "short-indian" is only available since 1.133.0 for the "en-IN" locale
+		 *   The style
 		 * @param {string} sPowerOfTen
 		 *   The power of ten, for example "1000" or "10000"
 		 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
@@ -1791,9 +1791,9 @@ sap.ui.define([
 		 *   is found
 		 *
 		 * @public
-		 * @since 1.25.0
+		 * @since 1.133.0
 		 */
-		getDecimalFormat: function(sStyle, sPowerOfTen, sPlural = "other") {
+		getCompactDecimalPattern: function (sStyle, sPowerOfTen, sPlural = "other") {
 			const oFormats = this._get("decimalFormat-" + sStyle);
 
 			return oFormats && (oFormats[sPowerOfTen + "-" + sPlural] || oFormats[sPowerOfTen + "-other"]);
@@ -1805,22 +1805,21 @@ sap.ui.define([
 		 * {@link topic:91f2f2866f4d1014b6dd926db0e91070 Number Format - Compact Format}.
 		 *
 		 * @param {"short"|"sap-short"|"short-indian"|"sap-short-indian"} sStyle
-		 *   The style; "short-indian" and "sap-short-indian" are only available since 1.133.0 for the "en-IN" locale;
-		 *   "sap-" prefix is used for the trailing currency code variant
+		 *   The style; "sap-" prefix is used for the trailing currency code variant
 		 * @param {string} sPowerOfTen
 		 *   The power of ten, for example "1000" or "10000"
 		 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
 		 *   The plural category; defaults to "other" if the given plural category does not exist for this locale
 		 * @param {"alphaNextToNumber"|"noCurrency"} [sAlternative]
-		 *   The alternate currency format; since 1.133.0
+		 *   The alternate currency format
 		 * @returns {string|undefined}
 		 *   The compact currency format pattern, or <code>undefined</code> if no currency format pattern for the given
 		 *   parameters is found
 		 *
 		 * @public
-		 * @since 1.51.0
+		 * @since 1.133.0
 		 */
-		getCurrencyFormat: function(sStyle, sPowerOfTen, sPlural = "other", sAlternative = undefined) {
+		getCompactCurrencyPattern: function (sStyle, sPowerOfTen, sPlural = "other", sAlternative = undefined) {
 			const oFormats = this._get("currencyFormat-" + sStyle);
 			const sAlternativeSuffix = sAlternative ? "-" + sAlternative : "";
 
@@ -2838,6 +2837,49 @@ sap.ui.define([
 		}
 		return sValue;
 	};
+
+	/**
+	 * Replaced by {@link #getCompactCurrencyPattern}.
+	 *
+	 * @param {"short"|"sap-short"|"short-indian"|"sap-short-indian"} sStyle
+	 *   See {@link #getCompactCurrencyPattern}; "short-indian" and "sap-short-indian" are only available since 1.133.0
+	 *   for the "en-IN" locale
+	 * @param {string} sPowerOfTen
+	 *   See {@link #getCompactCurrencyPattern}
+	 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
+	 *   See {@link #getCompactCurrencyPattern}
+	 * @param {"alphaNextToNumber"|"noCurrency"} [sAlternative]
+	 *   See {@link #getCompactCurrencyPattern}; since 1.133.0
+	 * @returns {string|undefined}
+	 *   See {@link #getCompactCurrencyPattern}
+	 *
+	 * @function
+	 * @name sap.ui.core.LocaleData.prototype.getCurrencyFormat
+	 * @public
+	 * @since 1.51.0
+	 * @deprecated since 1.133.0, use {@link #getCompactCurrencyPattern} instead
+	 */
+	LocaleData.prototype.getCurrencyFormat = LocaleData.prototype.getCompactCurrencyPattern;
+
+	/**
+	 * Replaced by {@link #getCompactDecimalPattern}.
+	 *
+	 * @param {"long"|"short"|"short-indian"} sStyle
+	 *   See {@link #getCompactDecimalPattern}; "short-indian" is only available since 1.133.0 for the "en-IN" locale
+	 * @param {string} sPowerOfTen
+	 *   See {@link #getCompactDecimalPattern}
+	 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
+	 *   See {@link #getCompactDecimalPattern}
+	 * @returns {string|undefined}
+	 *   See {@link #getCompactDecimalPattern}
+	 *
+	 * @function
+	 * @name sap.ui.core.LocaleData.prototype.getDecimalFormat
+	 * @public
+	 * @since 1.25.0
+	 * @deprecated since 1.133.0, use {@link #getCompactDecimalPattern} instead
+	 */
+	LocaleData.prototype.getDecimalFormat = LocaleData.prototype.getCompactDecimalPattern;
 
 	return LocaleData;
 });

@@ -11,6 +11,8 @@ function (
 ) {
 	"use strict";
 
+	const aDemokitSections = ["home", "documentation", "apiReference", "samples", "demoApps", "resources"];
+
 	const SPECIAL_ROUTE_TEST_CASES = {
 		// Static i.e. conventional URLs:
 		// For these URLs, the URL tokens [listed below] FOLLOW the '#'
@@ -186,7 +188,7 @@ function (
 		}
 	};
 
-	const Utils = {
+	const Util = {
 		getDecoderExpectedReturnValue: function (oDecodedValue) {
 			return Object.assign({
 				id: undefined,
@@ -204,11 +206,15 @@ function (
 
 			return Object.assign(oResult, oArguments);
 		},
-		createRouter: function(oManifest) {
-			var oRoutingManifestEntry = oManifest["sap.ui5"].routing,
-				oRoutingConfig = oRoutingManifestEntry.config,
-				aRoutes = oRoutingManifestEntry.routes;
-			return new DocumentationRouter(aRoutes, oRoutingConfig, null, oRoutingManifestEntry.targets);
+		createRouter: function() {
+			return TestUtil.getManifest().then(function (oManifest) {
+				return TestUtil.createRouter(oManifest);
+			});
+		},
+		removeLegacyRoutes: function(aRoutes) {
+			return aRoutes.filter(function (oRoute) {
+				return oRoute.name.toLowerCase().indexOf("legacy") === -1;
+			});
 		}
 	};
 
@@ -230,7 +236,7 @@ function (
 
 				var done = assert.async();
 
-				TestUtil.createRouter()
+				Util.createRouter()
 					.then(function (oRouter) {
 						this.oRouter = oRouter;
 						done();
@@ -249,20 +255,20 @@ function (
 
 		QUnit.test("_decodeSpecialRouteArguments", function (assert) {
 			const oRoute = this.oRouter.getRoute("apiSpecialRoute");
-			const oRouteMatchedSpy = this.spy(oRoute, "_routeMatched");
 
 			Object.keys(this.oTestCases).forEach(function(sUrlPath) {
 				const oTestCase = this.oTestCases[sUrlPath],
-					oExpectedPatternMatch = Utils.getSpecialRouteEventArguments(oTestCase.expectedPatternMatch),
-					oExpectedDecoderOutput = Utils.getDecoderExpectedReturnValue(oTestCase.expectedDecoderOutput);
+					oExpectedPatternMatch = Util.getSpecialRouteEventArguments(oTestCase.expectedPatternMatch),
+					oExpectedDecoderOutput = Util.getDecoderExpectedReturnValue(oTestCase.expectedDecoderOutput);
 
-				oRouteMatchedSpy.reset();
+				// check test prerequisite: 'patternMatched' event arguments as expected
+				var oPatterMatchedStub = this.stub(oRoute, "_routeMatched", function(oArguments) {
+					assert.deepEqual(oArguments, oExpectedPatternMatch, "correct 'patternMatched' event arguments for " + sUrlPath);
+					oPatterMatchedStub.restore();
+				});
 
 				// Act: call the router to first verify the expected 'patternMatched' event arguments
 				this.oRouter.parse(sUrlPath);
-
-				// check 'patternMatched' event arguments as this is prerequisite for the actual test
-				assert.ok(oRouteMatchedSpy.calledWithMatch(oExpectedPatternMatch), "correct 'patternMatched' event arguments for " + sUrlPath);
 
 				// Act: synchronously call the tested function
 				const oOutput = this.oRouter._decodeSpecialRouteArguments(oExpectedPatternMatch);
@@ -275,4 +281,40 @@ function (
 
 	addSpecialRouteTests(true /* static */);
 	addSpecialRouteTests(false /* SEOptimized */);
+
+	QUnit.module("API", {
+
+		before: function(assert) {
+			var done = assert.async();
+
+			TestUtil.getManifest().then(function (oManifest) {
+				var oRouter = TestUtil.createRouter(oManifest);
+				oRouter.getConfig = function () {
+					return oManifest["sap.ui5"].routing;
+				};
+				this.oRouter = oRouter;
+
+				const aRoutes = oManifest["sap.ui5"].routing.routes;
+				this.aRoutesToTest = Util.removeLegacyRoutes(aRoutes);
+				done();
+			}.bind(this))
+			.catch(function (err) {
+				assert.notOk("invalid test setup " + err);
+				done();
+			});
+		},
+		after: function() {
+			this.oRouter.destroy();
+			this.oRouter = null;
+			this.aRoutesToTest = null;
+		}
+	});
+
+	QUnit.test("each route has topLevel title configured", function (assert) {
+		this.aRoutesToTest.forEach(function (oRouteConfig) {
+			var sTitle = this.oRouter.getRouteTopLevelTitle(oRouteConfig);
+			assert.ok(sTitle, "section for route " + oRouteConfig.name + " is defined");
+			assert.ok(aDemokitSections.includes(sTitle), "title " + sTitle + " matches one of the main sections");
+		}, this);
+	});
 });

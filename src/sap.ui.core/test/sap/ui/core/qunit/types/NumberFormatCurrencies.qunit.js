@@ -1145,13 +1145,13 @@ sap.ui.define([
 			}, new Locale("de"));
 
 		const oLocalDataMock = this.mock(oFormat.oLocaleData);
-		const fnOriginalGetDecimalFormat = oFormat.oLocaleData.getDecimalFormat;
-		oLocalDataMock.expects("getDecimalFormat")
+		const fnOriginalGetCompactDecimalPattern = oFormat.oLocaleData.getCompactDecimalPattern;
+		oLocalDataMock.expects("getCompactDecimalPattern")
 			.withExactArgs(sinon.match.string, sinon.match.string, sinon.match.string)
 			.atLeast(1)
 			.callsFake(function () { // inject RTL codes in the pattern retrieved from CLDR
 				const sRTLCodes = "\u061c\u200e\u200f\u202a\u202b\u202c";
-				const sFormat = fnOriginalGetDecimalFormat.apply(this, arguments);
+				const sFormat = fnOriginalGetCompactDecimalPattern.apply(this, arguments);
 				return sFormat && (sFormat.replace(" ", sRTLCodes + " ") + sRTLCodes);
 		});
 		assert.deepEqual(oFormat.parse("2000 F CFA"), [2000, "XOF"]);

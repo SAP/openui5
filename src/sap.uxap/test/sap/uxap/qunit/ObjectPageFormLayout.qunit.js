@@ -113,22 +113,29 @@ function(Element, nextUIUpdate, jQuery, XMLView) {
 
 	QUnit.test("ObjectPage SimpleForm layout", function (assert) {
 		var sExpectedClasses = ".sapUiFormCLColumnsL3.sapUiFormCLColumnsM2.sapUiFormCLColumnsXL4.sapUiFormCLContent",
-			oFormBlock,
-			aGridCells,
-			oTestInput,
-			iTestInputTop,
-			$GridCellsOuter;
+			oFormBlock = this.oObjectPageFormView.byId("personalSimpleFormBlock"),
+			aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>*"),
+			oTestInput = Element.getElementById("__input0"),
+			iTestInputTop = parseInt(oTestInput.$().offset().top),
+			$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first(),
+			done = assert.async();
 
-		oFormBlock = this.oObjectPageFormView.byId("personalSimpleFormBlock");
-		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>*");
-		oTestInput = Element.getElementById("__input0");
-		iTestInputTop = parseInt(oTestInput.$().offset().top);
-		$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first();
+		// Assert
+		assert.expect(3);
 
 		// Assert
 		assert.strictEqual(aGridCells.length, 4, "Form grid has 4 cells");
 		assert.ok($GridCellsOuter.is(sExpectedClasses),
 				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
+
+		oFormBlock.addEventDelegate({
+			onAfterRendering: function() {
+				// Assert
+				assert.strictEqual(parseInt(oTestInput.$().offset().top) < (iTestInputTop - oTestInput.$().height()), true, "Input field should be visible");
+				oFormBlock.removeEventDelegate(this);
+				done();
+			}
+		});
 
 		// Act
 		oFormBlock.setColumnLayout("3");
@@ -142,8 +149,6 @@ function(Element, nextUIUpdate, jQuery, XMLView) {
 		// Act
 		oTestInput.focus();
 
-		// Assert
-		assert.strictEqual(parseInt(oTestInput.$().offset().top) < (iTestInputTop - oTestInput.$().height()), true, "Input field should be visible");
 	});
 
 	QUnit.test("ObjectPage with TitleOnLeft SimpleForm layout", function (assert) {

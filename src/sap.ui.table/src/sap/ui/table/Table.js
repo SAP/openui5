@@ -2089,6 +2089,10 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getContexts
 	 */
 	Table.prototype._getContexts = function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
+		if (!this.getVisible()) {
+			return [];
+		}
+
 		const oBinding = this.getBinding();
 		return oBinding ? oBinding.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent) : [];
 	};

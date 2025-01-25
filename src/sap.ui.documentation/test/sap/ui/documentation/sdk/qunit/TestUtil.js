@@ -5,13 +5,6 @@ function (DocumentationRouter, jQuery) {
 	"use strict";
 
 	return {
-		createRouter: function () {
-			return new Promise(function (resolve, reject) {
-				this.getManifest().then(function (oManifest) {
-					resolve(this.createRouterFromManifest(oManifest));
-				}.bind(this));
-			}.bind(this));
-		},
 		getManifest: function () {
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
@@ -26,7 +19,7 @@ function (DocumentationRouter, jQuery) {
 				});
 			});
 		},
-		createRouterFromManifest: function (oManifest) {
+		createRouter: function (oManifest) {
 			var oRoutingManifestEntry = oManifest["sap.ui5"].routing,
 				oRoutingConfig = oRoutingManifestEntry.config,
 				aRoutes = oRoutingManifestEntry.routes;
