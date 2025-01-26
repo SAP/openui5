@@ -28,7 +28,7 @@ sap.ui.require(["sap/base/Log"], (Log) => {
 				const oLinkFailingLib = document.getElementById("sap-ui-theme-sap.failing.lib");
 				let aLinkElements = document.querySelectorAll("link[id^=sap-ui-theme-]");
 				if (ThemeManager.themeLoaded) {
-					assert.strictEqual(oLinkSapM.hasAttribute("data-sap-ui-ready"), "true", "'data-sap-ui-ready' is correct for lib 'sap.m' since theme is already loaded.");
+					assert.strictEqual(oLinkSapM.hasAttribute("data-sap-ui-ready"), true, "'data-sap-ui-ready' is correct for lib 'sap.m' since theme is already loaded.");
 					assert.strictEqual(oLinkFailingLib.getAttribute("data-sap-ui-ready"), "false", "'data-sap-ui-ready' is correct for lib 'sap.failing.lib' since theme is already loaded.");
 				} else {
 					// Depending on CORS settings, we either detect immediately, that the CSS request failed or we need to wait for a second CSS request.
