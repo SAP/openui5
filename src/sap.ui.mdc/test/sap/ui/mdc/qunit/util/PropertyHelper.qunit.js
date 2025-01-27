@@ -15,7 +15,7 @@ sap.ui.define([
 	"use strict";
 
 	const PropertyHelper = _PropertyHelper.extend("sap.ui.mdc.util.test.PropertyHelper", {
-		constructor: function(aProperties, oParent, mAdditionalAttributes) {
+		constructor: function(aProperties, oParent, mAdditionalAttributes, bValidationException) {
 			_PropertyHelper.call(this, aProperties, oParent, Object.assign({
 				filterable: true,
 				sortable: true,
@@ -30,7 +30,7 @@ sap.ui.define([
 					},
 					inComplexProperty: {allowed: true}
 				}
-			}, mAdditionalAttributes));
+			}, mAdditionalAttributes, bValidationException));
 		}
 	});
 
@@ -1844,9 +1844,10 @@ sap.ui.define([
 		});
 		const oMyPropertyHelper = new MyPropertyHelper(this.aOriginalProperties);
 
+		const _bValidationException = false;
 		oValidatePropertiesSpy.resetHistory();
 		oValidatePropertySpy.resetHistory();
-		oMyPropertyHelper.setProperties(aUpdatedProperties);
+		oMyPropertyHelper.setProperties(aUpdatedProperties, _bValidationException);
 		const aProperties = oMyPropertyHelper.getProperties();
 
 		assert.equal(aProperties.length, aUpdatedProperties.length,
@@ -1855,12 +1856,12 @@ sap.ui.define([
 			assert.strictEqual(aProperties[iIndex].key, oReplacementProperty.key,
 				"The property array references the correct replaced property at index " + iIndex);
 		});
-		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aUpdatedProperties, this.aOriginalProperties),
+		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aUpdatedProperties, this.aOriginalProperties, _bValidationException),
 			"#validateProperties called once with the correct arguments");
 		assert.equal(oValidatePropertySpy.callCount, aUpdatedProperties.length, "#validateProperty called for every incoming property");
-		assert.ok(oValidatePropertySpy.getCall(0).calledWithExactly(aUpdatedProperties[0], aUpdatedProperties, this.aOriginalProperties),
+		assert.ok(oValidatePropertySpy.getCall(0).calledWithExactly(aUpdatedProperties[0], aUpdatedProperties, this.aOriginalProperties, _bValidationException),
 			"Arguments of first call");
-		assert.ok(oValidatePropertySpy.getCall(1).calledWithExactly(aUpdatedProperties[1], aUpdatedProperties, this.aOriginalProperties),
+		assert.ok(oValidatePropertySpy.getCall(1).calledWithExactly(aUpdatedProperties[1], aUpdatedProperties, this.aOriginalProperties, _bValidationException),
 			"Arguments of first call");
 
 		assert.throws(function() {
@@ -2140,10 +2141,10 @@ sap.ui.define([
 		});
 		const oMyPropertyHelper = new MyPropertyHelper(aProperties);
 
-		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aProperties, undefined), "#validateProperties called once with the correct arguments");
+		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aProperties, undefined, undefined), "#validateProperties called once with the correct arguments");
 		assert.equal(oValidatePropertySpy.callCount, 2, "#validateProperty called twice");
-		assert.ok(oValidatePropertySpy.firstCall.calledWithExactly(aProperties[0], aProperties, undefined), "Arguments of first #validateProperty call");
-		assert.ok(oValidatePropertySpy.secondCall.calledWithExactly(aProperties[1], aProperties, undefined), "Arguments of second #validateProperty call");
+		assert.ok(oValidatePropertySpy.firstCall.calledWithExactly(aProperties[0], aProperties, undefined, undefined), "Arguments of first #validateProperty call");
+		assert.ok(oValidatePropertySpy.secondCall.calledWithExactly(aProperties[1], aProperties, undefined, undefined), "Arguments of second #validateProperty call");
 
 		oMyPropertyHelper.destroy();
 	});

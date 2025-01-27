@@ -285,23 +285,9 @@ sap.ui.define([
 		}) || "";
 	}
 
-	function reportInvalidProperty(sMessage, oProperty) {
-		const mLoadedLibraries = Lib.all();
-
-		// Enable strict validation if
-		// 1. it is not disabled explicitly
-		// 2. we're not in any library that is temporarily allowed to bypass (fe & df)
-		// 3. the explicit enablement via url param is activated --> overrules the first to conditions
-		if (
-			(
-				!(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation ||
-					new URLSearchParams(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true") &&
-				!("sap.fe.core" in mLoadedLibraries ||
-					"sap.fe.macros" in mLoadedLibraries ||
-					"sap.sac.df" in mLoadedLibraries)
-			) ||
-			(new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
-		) {
+	function reportInvalidProperty(sMessage, oProperty, bValidationException) {
+		// implementation for this flag is within PropertyHelperMixin#_checkValidationExceptions
+		if (!bValidationException) {
 			throwInvalidPropertyError(sMessage, oProperty);
 		}
 
@@ -504,7 +490,7 @@ sap.ui.define([
 	 *     The properties to process in this helper.
 	 * @throws {Error} If the properties are invalid.
 	 */
-	function processProperties(oPropertyHelper, aProperties) {
+	function processProperties(oPropertyHelper, aProperties, bValidationException) {
 		if (!Array.isArray(aProperties)) {
 			throwInvalidPropertyError("Property infos must be an array.");
 		}
@@ -512,14 +498,14 @@ sap.ui.define([
 		const mPrivate = _private.get(oPropertyHelper);
 		const aClonedProperties = merge([], aProperties);
 
-		oPropertyHelper.validateProperties(aClonedProperties, mPrivate.aPreviousRawProperties);
+		oPropertyHelper.validateProperties(aClonedProperties, mPrivate.aPreviousRawProperties, bValidationException);
 
 		const aClonedPropertiesWithAliases = addAttributeAliases(aClonedProperties);
 		const mNextPropertyMap = createPropertyMap(aClonedPropertiesWithAliases);
 		enrichProperties(oPropertyHelper, aClonedPropertiesWithAliases);
 		prepareProperties(oPropertyHelper, aClonedPropertiesWithAliases, mNextPropertyMap);
 
-		oPropertyHelper._validatePropertyConsistency(aClonedPropertiesWithAliases, mPrivate.aProperties);
+		oPropertyHelper._validatePropertyConsistency(aClonedPropertiesWithAliases, mPrivate.aProperties, bValidationException);
 
 		mPrivate.aProperties = aClonedPropertiesWithAliases;
 		mPrivate.mProperties = mNextPropertyMap;
@@ -563,6 +549,7 @@ sap.ui.define([
 	 *     of standard attributes cannot be overridden.
 	 *     The following common standard attributes are always included. They do not need to be added explicitly and cannot be excluded.
 	 *     name, label, visible, path, dataType, formatOptions, constraints, maxConditions, group, groupLabel, caseSensitive
+	 * @param {boolean} [bValidationException] Indicates whether a validation exception should be thrown in case of invalid properties
 	 *
 	 * @class
 	 * Property helpers in this SAPUI5 library provide a consistent and standardized structure of properties and their attributes.
@@ -579,7 +566,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.util.PropertyHelper
 	 */
 	const PropertyHelper = BaseObject.extend("sap.ui.mdc.util.PropertyHelper", {
-		constructor: function(aProperties, oParent, mAdditionalAttributes) {
+		constructor: function(aProperties, oParent, mAdditionalAttributes, bValidationException) {
 			BaseObject.call(this);
 
 			if (oParent && !BaseObject.isObjectA(oParent, "sap.ui.base.ManagedObject")) {
@@ -608,7 +595,7 @@ sap.ui.define([
 			mPrivate.oParent = oParent || null;
 			_private.set(this, mPrivate);
 
-			processProperties(this, aProperties);
+			this.setProperties(aProperties, bValidationException);
 		}
 	});
 
@@ -624,11 +611,11 @@ sap.ui.define([
 	 * @throws {Error} If the properties are invalid
 	 * @protected
 	 */
-	PropertyHelper.prototype.validateProperties = function(aProperties, aPreviousProperties) {
+	PropertyHelper.prototype.validateProperties = function(aProperties, aPreviousProperties, bValidationException) {
 		const oUniquePropertiesSet = new Set();
 
 		for (let i = 0; i < aProperties.length; i++) {
-			this.validateProperty(aProperties[i], aProperties, aPreviousProperties);
+			this.validateProperty(aProperties[i], aProperties, aPreviousProperties, bValidationException);
 			oUniquePropertiesSet.add(getPropertyKey(aProperties[i]));
 		}
 
@@ -650,7 +637,7 @@ sap.ui.define([
 	 * @throws {Error} If inconsistencies between property configurations are found
 	 * @private
 	 */
-	PropertyHelper.prototype._validatePropertyConsistency = function(aProperties, aPreviousProperties) {
+	PropertyHelper.prototype._validatePropertyConsistency = function(aProperties, aPreviousProperties, bValidationException) {
 		if (aPreviousProperties?.length) {
 			const mPrivate = _private.get(this);
 			const { mAttributeMetadata } = mPrivate;
@@ -674,7 +661,7 @@ sap.ui.define([
 			}
 
 			if (aAllInconsistencies.length) {
-				reportInvalidProperty(`Detected property info modifications after update:`, aAllInconsistencies);
+				reportInvalidProperty(`Detected property info modifications after update:`, aAllInconsistencies, bValidationException);
 			}
 		}
 	};
@@ -692,12 +679,12 @@ sap.ui.define([
 	 * @throws {Error} If the property is invalid
 	 * @protected
 	 */
-	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties, aPreviousProperties) {
+	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties, aPreviousProperties, bValidationException) {
 		if (!isPlainObject(oProperty)) {
 			throwInvalidPropertyError("Property info must be a plain object.");
 		}
 
-		validatePropertyDeep(this, oProperty, aProperties);
+		validatePropertyDeep(this, oProperty, aProperties, bValidationException);
 
 		if (PropertyHelper.isPropertyComplex(oProperty)) {
 			if (!oProperty.propertyInfos || oProperty.propertyInfos.length === 0) {
@@ -720,14 +707,14 @@ sap.ui.define([
 			}
 
 			if (!(sMandatoryAttribute in oProperty || bContainsAlias)) {
-				reportInvalidProperty("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty);
+				reportInvalidProperty("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty, bValidationException);
 			} else if (bAttrIsNull) {
 				throwInvalidPropertyError("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty);
 			}
 		});
 	};
 
-	function validatePropertyDeep(oPropertyHelper, oProperty, aProperties, sPath, oPropertySection, mAttributeSection) {
+	function validatePropertyDeep(oPropertyHelper, oProperty, aProperties, sPath, oPropertySection, mAttributeSection, bValidationException) {
 		const bTopLevel = sPath == null;
 
 		if (bTopLevel) {
@@ -746,12 +733,12 @@ sap.ui.define([
 			}
 
 			if (!mAttribute) {
-				reportInvalidProperty("Property contains invalid attribute '" + sAttributePath + "'.", oProperty);
+				reportInvalidProperty("Property contains invalid attribute '" + sAttributePath + "'.", oProperty, bValidationException);
 			} else if (PropertyHelper.isPropertyComplex(oProperty) && !mAttribute.inComplexProperty.allowed) {
-				reportInvalidProperty("Complex property contains invalid attribute '" + sAttributePath + "'.", oProperty);
+				reportInvalidProperty("Complex property contains invalid attribute '" + sAttributePath + "'.", oProperty, bValidationException);
 			} else if (typeof mAttribute.type === "object" && vValue && typeof vValue === "object") {
 				validatePropertyDeep(
-					oPropertyHelper, oProperty, aProperties, sAttributePath, vValue, mAttribute.type
+					oPropertyHelper, oProperty, aProperties, sAttributePath, vValue, mAttribute.type, bValidationException
 				);
 			} else if (vValue != null && !getAttributeDataType(mAttribute.type).isValid(vValue)) {
 				// Optional attributes may have null or undefined as value.
@@ -837,8 +824,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.util.PropertyInfo[]} aProperties The properties to process
 	 * @public
 	 */
-	PropertyHelper.prototype.setProperties = function(aProperties) {
-		processProperties(this, aProperties);
+	PropertyHelper.prototype.setProperties = function(aProperties, bValidationException) {
+		processProperties(this, aProperties, bValidationException);
 	};
 
 	/**
