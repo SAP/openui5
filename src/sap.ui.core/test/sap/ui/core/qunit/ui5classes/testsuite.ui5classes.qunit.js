@@ -36,7 +36,10 @@ sap.ui.define(function() {
 				title: "QUnit Page for sap/ui/base/DataType"
 			},
 			ManagedObject: {
-				title: "sap.ui.base.ManagedObject"
+				title: "sap.ui.base.ManagedObject",
+				ui5 : {
+					language : "en-US"
+				}
 			},
 			ManagedObject_BindingParser: {
 				title: "sap.ui.base.ManagedObject (no core boot)",
