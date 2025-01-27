@@ -181,5 +181,15 @@
         "text": " mdc.FilterBar: enhance check for wrong values of filter fields"
       }
     ]
+  },
+  "1.108.39": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "ad7f878990ddd5aef6500391d33ab0653c1657b1",
+        "type": "FIX",
+        "text": " odata.v4.TableDelegate: Clear selection when updating the binding"
+      }
+    ]
   }
 }

@@ -682,5 +682,15 @@
         "text": " sap/ui/model/analytics/AnalyticalBinding#updateAnalyticalInfo: keep attribute properties in additional select"
       }
     ]
+  },
+  "1.108.39": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "9c66b92b783c1bf483c84d7ae3e04137928c3f9a",
+        "type": "FIX",
+        "text": " sap/base/util/now: Migrate performance.timing"
+      }
+    ]
   }
 }

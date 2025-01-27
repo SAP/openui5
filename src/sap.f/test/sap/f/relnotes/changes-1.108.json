@@ -275,5 +275,15 @@
         ]
       }
     ]
+  },
+  "1.108.39": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "10e5f475876fd0194f3d2c4b93f37d7a123bcf40",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed failure to expand the header"
+      }
+    ]
   }
 }

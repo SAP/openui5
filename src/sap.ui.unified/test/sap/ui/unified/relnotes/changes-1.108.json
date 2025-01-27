@@ -324,5 +324,15 @@
         ]
       }
     ]
+  },
+  "1.108.39": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "8fa551b00bdecbbdf0cf82db64da6e7ba5d81589",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Prevent navigation when selecting a week"
+      }
+    ]
   }
 }

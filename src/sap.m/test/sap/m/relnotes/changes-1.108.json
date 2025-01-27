@@ -1821,5 +1821,15 @@
         "text": " We've now fixed the truncation of timestamp issue in the feedListItem"
       }
     ]
+  },
+  "1.108.39": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "73952c82fe4ac8d5886b28e353b9093400a2c50b",
+        "type": "FIX",
+        "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
+      }
+    ]
   }
 }

@@ -135,5 +135,15 @@
         "text": " sap.m.Button: Transparent button is correct in Bar for Belize theme"
       }
     ]
+  },
+  "1.108.39": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "421e07f12090c29be8390ed89b8bb2620ab4d9b6",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: slider handles are correct in Belize now"
+      }
+    ]
   }
 }
