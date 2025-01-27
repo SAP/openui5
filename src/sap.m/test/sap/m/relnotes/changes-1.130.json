@@ -175,5 +175,25 @@
         "text": " sap.m.MessagePage: Icon ignored from screen readers"
       }
     ]
+  },
+  "1.130.3": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "54d20f860fc14f1eb3e431e398c64e249dbe95b8",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed currentLocationText alignment"
+      },
+      {
+        "id": "e6ae01e1f29326619d6d91e8391b58c0b08fa07b",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: IntroPress event now fired properly"
+      },
+      {
+        "id": "57b89a3ed5ad17c4152338686825c03a9283d795",
+        "type": "FIX",
+        "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
+      }
+    ]
   }
 }

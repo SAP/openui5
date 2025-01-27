@@ -53,5 +53,30 @@
         "text": " FESR: semanticStepName not set for interaction"
       }
     ]
+  },
+  "1.130.3": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "5d55c11296655475e87734238ced2b0e0000a46a",
+        "type": "FIX",
+        "text": " ThemeManager: Fix failing QUnit"
+      },
+      {
+        "id": "3e1c758db343365d4c801a1e53f8915c369ba97c",
+        "type": "FIX",
+        "text": " ThemeManager: Add detection for CSS preloads"
+      },
+      {
+        "id": "4b1c2391755714509cd72a4e6a78a95463f8d23f",
+        "type": "FIX",
+        "text": " core/Element|Popup: get DOMRef after calling parent \"destroy\""
+      },
+      {
+        "id": "e3a6eba06483e42fa4507d982deda4e4fb9701fd",
+        "type": "FIX",
+        "text": " core/LabelEnablement: handle destroy of label when updating inner control"
+      }
+    ]
   }
 }

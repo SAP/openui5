@@ -23,5 +23,15 @@
         "text": " sap.uxap.ObjectPageLayout: Incorrect scrolling prevented"
       }
     ]
+  },
+  "1.130.3": {
+    "date": "January 2025",
+    "notes": [
+      {
+        "id": "aa5016909bb9aa1ef297c3c41c05bbc937111446",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Remove additional role"
+      }
+    ]
   }
 }
