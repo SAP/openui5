@@ -2,104 +2,21 @@
  * ${copyright}
  */
 
-/**
- * Device and Feature Detection API: Provides information about the used browser / device and cross platform support for certain events
- * like media queries, orientation change or resizing.
- *
- * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
- * dynamically depending on the capabilities of the browser or device.
- *
- * @version ${version}
- * @namespace
- * @name sap.ui.Device
- * @public
- */
-
-// Introduce namespace if it does not yet exist
-// ui5lint-disable no-globals
-if (typeof window.sap !== "object" && typeof window.sap !== "function") {
-	window.sap = {};
-}
-if (typeof window.sap.ui !== "object") {
-	window.sap.ui = {};
-}
-// ui5lint-enable no-globals
-
-(function() {
+sap.ui.define([
+	"sap/base/Log"
+],function(Log) {
 	"use strict";
 
-	// Skip initialization if API is already available
-	// ui5lint-disable no-globals
-	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function") {
-		var apiVersion = "${version}";
-		window.sap.ui.Device._checkAPIVersion(apiVersion);
-		return;
-	}
-	// ui5lint-enable no-globals
-
-	var Device = {};
-
-	////-------------------------- Logging -------------------------------------
-	/* since we cannot use the logging from sap/base/Log.js, we need to come up with a separate
-	 * solution for the device API
+	/**
+	 * Device and Feature Detection API: Provides information about the used browser / device and cross platform support for certain events
+	 * like media queries, orientation change or resizing.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.Device
+	 * @public
 	 */
-
-	var FATAL = 0,
-		ERROR = 1,
-		WARNING = 2,
-		INFO = 3,
-		DEBUG = 4,
-		TRACE = 5;
-
-	var DeviceLogger = function() {
-		// helper function for date formatting
-		function pad0(i, w) {
-			return ("000" + String(i)).slice(-w);
-		}
-		this.defaultComponent = 'DEVICE';
-		this.sWindowName = (window.top == window) ? "" : "[" + window.location.pathname.split('/').slice(-1)[0] + "] ";
-		// Creates a new log entry depending on its level and component.
-		this.log = function(iLevel, sMessage, sComponent) {
-			sComponent = sComponent || this.defaultComponent || '';
-			var oNow = new Date(),
-				oLogEntry = {
-					time: pad0(oNow.getHours(), 2) + ":" + pad0(oNow.getMinutes(), 2) + ":" + pad0(oNow.getSeconds(), 2),
-					date: pad0(oNow.getFullYear(), 4) + "-" + pad0(oNow.getMonth() + 1, 2) + "-" + pad0(oNow.getDate(), 2),
-					timestamp: oNow.getTime(),
-					level: iLevel,
-					message: sMessage || "",
-					component: sComponent || ""
-				};
-			/*eslint-disable no-console */
-			if (window.console) { // in FF, console might not exist; it might even disappear
-				var logText = oLogEntry.date + " " + oLogEntry.time + " " + this.sWindowName + oLogEntry.message + " - " + oLogEntry.component;
-				switch (iLevel) {
-					case FATAL:
-					case ERROR:
-						console.error(logText);
-						break;
-					case WARNING:
-						console.warn(logText);
-						break;
-					case INFO:
-						console.info ? console.info(logText) : console.log(logText);
-						break; // info not available in iOS simulator
-					case DEBUG:
-						console.debug(logText);
-						break;
-					case TRACE:
-						console.trace(logText);
-						break;
-				}
-			}
-			/*eslint-enable no-console */
-			return oLogEntry;
-		};
-	};
-	// instantiate new logger
-	var oLogger = new DeviceLogger();
-	oLogger.log(INFO, "Device API logging initialized");
-
+	var Device = {};
 
 	//******** Version Check ********
 
@@ -107,7 +24,7 @@ if (typeof window.sap.ui !== "object") {
 	Device._checkAPIVersion = function(sVersion) {
 		var v = "${version}";
 		if (v != sVersion) {
-			oLogger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
+			Log.warning("Device API version differs: " + v + " <-> " + sVersion);
 		}
 	};
 
@@ -347,7 +264,7 @@ if (typeof window.sap.ui !== "object") {
 					"versionStr": ""
 				};
 			}
-			oLogger.log(INFO, "OS detection returned no result");
+			Log.info("OS detection returned no result");
 			return null;
 		}
 
@@ -1177,7 +1094,7 @@ if (typeof window.sap.ui !== "object") {
 
 			return info;
 		}
-		oLogger.log(WARNING, "No queryset with name " + sName + " found", 'DEVICE.MEDIA');
+		Log.warning("No queryset with name " + sName + " found", 'DEVICE.MEDIA');
 		return null;
 	}
 
@@ -1368,7 +1285,7 @@ if (typeof window.sap.ui !== "object") {
 		}
 
 		if (Device.media.hasRangeSet(oConfig.name)) {
-			oLogger.log(INFO, "Range set " + oConfig.name + " has already been initialized", 'DEVICE.MEDIA');
+			Log.info("Range set " + oConfig.name + " has already been initialized", 'DEVICE.MEDIA');
 			return;
 		}
 
@@ -1463,13 +1380,13 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	Device.media.removeRangeSet = function(sName) {
 		if (!Device.media.hasRangeSet(sName)) {
-			oLogger.log(INFO, "RangeSet " + sName + " not found, thus could not be removed.", 'DEVICE.MEDIA');
+			Log.info("RangeSet " + sName + " not found, thus could not be removed.", 'DEVICE.MEDIA');
 			return;
 		}
 
 		for (var x in RANGESETS) {
 			if (sName === RANGESETS[x]) {
-				oLogger.log(WARNING, "Cannot remove default rangeset - no action taken.", 'DEVICE.MEDIA');
+				Log.warning("Cannot remove default rangeset - no action taken.", 'DEVICE.MEDIA');
 				return;
 			}
 		}
@@ -1932,10 +1849,6 @@ if (typeof window.sap.ui !== "object") {
 	setResizeInfo(Device.resize);
 	setOrientationInfo(Device.orientation);
 
-	// Add API to global namespace
-	// ui5lint-disable-next-line no-globals
-	window.sap.ui.Device = Device;
-
 	// Add handler for orientationchange and resize after initialization of Device API
 	if (Device.support.touch && Device.support.orientation) {
 		// logic for mobile devices which support orientationchange (like ios, android)
@@ -1972,11 +1885,5 @@ if (typeof window.sap.ui !== "object") {
 		setSystem();
 	};
 
-	// define module if API is available
-	if (sap.ui.define) {
-		sap.ui.define("sap/ui/Device", [], function() {
-			return Device;
-		});
-	}
-
-}());
+	return Device;
+});
