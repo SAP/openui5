@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/mdc/util/Common',
 	'sap/base/Log',
+	'sap/ui/core/library',
 	'sap/ui/core/Element',
 	'sap/ui/mdc/enums/TableSelectionMode',
 	'sap/ui/mdc/enums/TableType',
@@ -19,6 +20,7 @@ sap.ui.define([
 	loadModules,
 	Common,
 	Log,
+	coreLibrary,
 	Element,
 	TableSelectionMode,
 	TableType,
@@ -28,6 +30,8 @@ sap.ui.define([
 	DensityHelper
 ) => {
 	"use strict";
+
+	const {TitleLevel} = coreLibrary;
 
 	/**
 	 * Constructor for a new <code>MDCTable</code> content.
@@ -289,6 +293,14 @@ sap.ui.define([
 			// Adjust header
 			if (!this._oTable.getHeader()) {
 				this._oTable.setHeader(this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"));
+			}
+
+			if (this._oTable.isPropertyInitial("headerLevel")) {
+				this._oTable.setHeaderLevel(TitleLevel.H2);
+			}
+
+			if (this._oTable.isPropertyInitial("headerStyle")) {
+				this._oTable.setHeaderStyle(TitleLevel.H5);
 			}
 
 			// Adjust selection
