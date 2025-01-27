@@ -3,6 +3,11 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "bdf99dfbe12456c7f0f22e758a95c9c93d6eacfe",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Item design property and single click area are now added"
+      },
+      {
         "id": "27148cc9410244e777bb53016b9143443af641c3",
         "type": "FIX",
         "text": "sap.NavigationList: error is not trown in console"

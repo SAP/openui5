@@ -3,6 +3,16 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "2aa58d2ff8dc27c4a62d9d9c12a8ce4a9408fbd3",
+        "type": "FIX",
+        "text": " ThemeManager: Fix failing QUnit"
+      },
+      {
+        "id": "1cb72baa21f68f4a61081ad94980e67a1db82423",
+        "type": "FIX",
+        "text": " sap.ui.core.util.MockServer.RequestHandler#response: Fix wrong return value of 'response' method"
+      },
+      {
         "id": "11610e2add9ebb16b88bd5ab5b2bb3c50ee0f802",
         "type": "FIX",
         "text": " ThemeManager: Add detection for CSS preloads"

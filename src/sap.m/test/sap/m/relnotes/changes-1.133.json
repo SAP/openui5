@@ -8,6 +8,11 @@
         "text": " sap.m.Input: preserve value after rerendering of password field"
       },
       {
+        "id": "9abe986ab1484c9d614e1c421220e63f37c3bdad",
+        "type": "FIX",
+        "text": " sap.m.PullToRefresh: Stabilized tests"
+      },
+      {
         "id": "0fca7a0ee4ac78a3b7d13e3903e2deba7e51e44d",
         "type": "FIX",
         "text": " sap.m.semantic.MasterPage: Stabilized tests"

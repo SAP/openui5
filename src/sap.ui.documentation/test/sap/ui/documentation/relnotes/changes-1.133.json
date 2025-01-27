@@ -3,6 +3,21 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "371d35e3476db5f63b44196ab45d3ad6b0e8841a",
+        "type": "FIX",
+        "text": " DemoKit: Add missing callback"
+      },
+      {
+        "id": "40ffa53dce6db78c2fa95f0e9b42acd240b5f336",
+        "type": "FIX",
+        "text": " DemoKit: Replace deprecated API"
+      },
+      {
+        "id": "a025a66b2833ef6749ade3b34272ee8e479a5336",
+        "type": "FIX",
+        "text": " DemoKit: Tracked site name corrected"
+      },
+      {
         "id": "c9d8a76819b04ef4f7c12836548c92db1438fbf3",
         "type": "FIX",
         "text": " DemoKit: Improve error handling in UsageTracking.qunit"

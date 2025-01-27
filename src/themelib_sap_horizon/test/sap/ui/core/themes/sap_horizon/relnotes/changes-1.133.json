@@ -3,6 +3,11 @@
     "date": "January 2025",
     "notes": [
       {
+        "id": "b273f0097b91dcf467301269ddc4d69191220746",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed read only focused styles on horizon"
+      },
+      {
         "id": "9a704edba20d1d0f6a8adf9fa40ace84b3a5fec6",
         "type": "FEATURE",
         "text": " sap.m.YearRangePicker: Selected year ranges now show as selected"
