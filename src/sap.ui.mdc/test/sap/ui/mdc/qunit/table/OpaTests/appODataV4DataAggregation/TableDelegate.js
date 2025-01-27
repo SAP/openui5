@@ -18,10 +18,7 @@ sap.ui.define([
 			label: "Sales Amount (local currency)",
 			dataType: "Edm.Decimal",
 			aggregatable: true,
-			unit: "LocalCurrency",
-			extension: {
-				customAggregate: {}
-			}
+			unit: "LocalCurrency"
 		}, {
 			key: "LocalCurrency",
 			path: "LocalCurrency",
@@ -33,10 +30,7 @@ sap.ui.define([
 			path: "SalesNumber",
 			label: "Sales Number",
 			dataType: "Edm.Decimal",
-			aggregatable: true,
-			extension: {
-				customAggregate: {}
-			}
+			aggregatable: true
 		}, {
 			key: "AccountResponsible",
 			path: "AccountResponsible",
