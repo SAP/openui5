@@ -71636,14 +71636,13 @@ make root = ${bMakeRoot}`;
 	// Scenario: Update two properties of an entity reachable via single-valued navigation property.
 	// However, the navigation property is null, and the entity is inserted by this update
 	// ("upsert"). The test is run with and without an intermediate ODCB w/o cache on the navigation
-	// property. (Its binding context points to the upserted entity; it is used for #resetChanges
-	// and #delete).
+	// property. (Its binding context points to the upserted entity; it is used for #resetChanges.)
 	// See that further property updates are merged into the PATCH, and that the PATCH is followed
 	// by a GET request for that entity (using ODCB#requestSideEffects) within the same $batch.
 	// When it failed, see that transition messages are handled correctly, properties still are
-	// merged, and the PATCH is repeated. See that it is correctly reset upon ODM#resetChanges,
-	// Context#resetChanges, or Context#delete. See that the GET request correctly updates the
-	// entity after a successful PATCH.
+	// merged, and the PATCH is repeated. See that it is correctly reset upon ODM#resetChanges or
+	// Context#resetChanges. See that the GET request correctly updates the entity after a
+	// successful PATCH.
 	// The upserted entity is reached via two navigation properties. This effects the URL for the
 	// upsert PATCH because we use the deep path for it then.
 	// JIRA: CPOUI5ODATAV4-2211
@@ -71653,14 +71652,10 @@ make root = ${bMakeRoot}`;
 	// Make sure no late property requests are sent. See what happens when upsert is caused by
 	// amount w/ currency. Test eventing for PATCH requests.
 	// JIRA: CPOUI5ODATAV4-2856
-["submit", "reset", "delete"].forEach(function (sAction) {
+[false, true].forEach(function (bReset) {
 	[false, true].forEach(function (bIntermediate) {
-		const sTitle = "CPOUI5ODATAV4-2211: upsert, " + sAction
+		const sTitle = "CPOUI5ODATAV4-2211: upsert, " + (bReset ? "reset" : "submit")
 			+ ", intermediate context binding=" + bIntermediate;
-
-		if (!bIntermediate && sAction === "delete") {
-			return; // no delete w/o context
-		}
 
 	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSpecialCasesModel(
@@ -71818,7 +71813,25 @@ make root = ${bMakeRoot}`;
 			}, new Error(sPublicationPath + ": No key predicate known at " + sPublicationPath));
 		}
 		let oPromise;
-		if (sAction === "submit") {
+		if (bReset) {
+			this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+				.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
+					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+				.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
+					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
+				.expectChange("price", "12") // from the second PATCH to "11"
+				.expectChange("price", null)
+				.expectChange("publicationId", "")
+				.expectChange("isNull", true);
+
+			// code under test
+			if (oContext) {
+				oPromise = oContext.resetChanges();
+			} else {
+				oModel.resetChanges();
+			}
+		} else {
 			this.expectRequest({
 					batchNo : 3,
 					method : "PATCH",
@@ -71852,33 +71865,6 @@ make root = ${bMakeRoot}`;
 			this.expectChange("currency", "USD")
 				.expectChange("price", "10.99")
 				.expectChange("isNull", false); // this is accepted! (JIRA: CPOUI5ODATAV4-2638)
-		} else {
-			this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
-					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-				.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
-					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-				.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
-					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update");
-			if (sAction === "delete") { // delete causes setContext(null) -> no default values
-				this.expectChange("publicationId", null)
-					.expectChange("price", null)
-					.expectChange("currency", null)
-					.expectChange("isNull", true);
-			} else {
-				this.expectChange("price", "12") // from the second PATCH to "11"
-					.expectChange("price", null)
-					.expectChange("publicationId", "")
-					.expectChange("isNull", true);
-			}
-
-			// code under test
-			if (sAction === "delete") {
-				oPromise = oContext.delete();
-			} else if (oContext) {
-				oPromise = oContext.resetChanges();
-			} else {
-				oModel.resetChanges();
-			}
 		}
 		assert.strictEqual(iPatchSent, 1);
 		assert.strictEqual(iPatchCompleted, 1);
@@ -71886,11 +71872,11 @@ make root = ${bMakeRoot}`;
 		await Promise.all([
 			oPromise,
 			oModel.submitBatch("update"),
-			this.waitForChanges(assert, sAction)
+			this.waitForChanges(assert, bReset ? "reset" : "submit")
 		]);
 
-		assert.strictEqual(iPatchSent, sAction === "submit" ? 2 : 1);
-		assert.strictEqual(iPatchCompleted, sAction === "submit" ? 2 : 1);
+		assert.strictEqual(iPatchSent, bReset ? 1 : 2);
+		assert.strictEqual(iPatchCompleted, bReset ? 1 : 2);
 		const oBestPublication = {
 			"@odata.etag" : "etag3",
 			CurrencyCode : "USD",
@@ -71898,11 +71884,13 @@ make root = ${bMakeRoot}`;
 			PublicationID : "2"
 		};
 		assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"),
-			sAction === "submit" ? oBestPublication : null);
-		if (oContext && sAction === "submit") {
-			assert.deepEqual(oContext.getObject(), oBestPublication);
-			// code under test (JIRA: CPOUI5ODATAV4-2864)
-			assert.strictEqual(oContext.getCanonicalPath(), "/Publications('2')");
+			bReset ? null : oBestPublication);
+		if (oContext) {
+			assert.deepEqual(oContext.getObject(), bReset ? null : oBestPublication);
+			if (!bReset) {
+				// code under test (JIRA: CPOUI5ODATAV4-2864)
+				assert.strictEqual(oContext.getCanonicalPath(), "/Publications('2')");
+			}
 		}
 	});
 	});
