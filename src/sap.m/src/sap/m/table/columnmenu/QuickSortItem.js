@@ -116,6 +116,7 @@ sap.ui.define([
 			aButtons[0].setPressed(sSortOrder === SortOrder.Ascending);
 			aButtons[1].setPressed(sSortOrder === SortOrder.Descending);
 		}
+		return this;
 	};
 
 	return QuickSortItem;
