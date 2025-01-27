@@ -3,6 +3,11 @@
 /* Base theme                     */
 /* ============================== */
 
+@_sap_ui_table_DragDrop_BarActiveDecorationColors: @sapUiHighlight, @sapUiHighlight;
+@_sap_ui_table_DragDrop_BarDecorationColors: @sapUiHighlight, fade(@sapUiHighlight, 0);
+@_sap_ui_table_DragDrop_BarBorder: 0.0625rem solid @sapUiGroupContentBorderColor;
+@_sap_ui_table_DragDrop_BarHoverIconBorderColor: @sapUiButtonLiteBorderColor;
+@_sap_ui_table_DragDrop_BarHoverIconBackground: @sapUiButtonLiteBackground;
 @_sap_ui_table_DragDrop_ColumnDnDHighlightColor: @sapUiListHighlightColor;
 @_sap_ui_table_DragDrop_ReorderIndicatorWidth: 2px;
 
@@ -162,84 +167,90 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 /* Table Height Resizing */
 
 .sapUiTableHeightResizer {
-	box-sizing: border-box;
-	height: 5px;
-	width: 100%;
 	position: relative;
-	text-align: center;
-}
+	cursor: row-resize;
+	height: 1rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: @sapUiShellBackground;
+	border-top: @_sap_ui_table_DragDrop_BarBorder;
+	border-bottom: @_sap_ui_table_DragDrop_BarBorder;
 
-.sapUiTableHeightResizer::before {
-	font-family: SAP-icons;
-	content: "\e1fb";
-	position: absolute;
-	top: 0px;
-	line-height: 5px;
-}
-
-.sapUiTableHeightResizer:focus {
-	outline: 0;
-}
-
-.sapUiTableHeightResizer:hover {
-	cursor: n-resize;
-	background-color: darken(@sapUiContentForegroundBorderColor, 28.2);
-	color: @sapUiContentContrastTextColor;
-}
-
-.sapUiTableInteractiveResizerGhost {
-	position: absolute;
-	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
-	color: @sapUiContentContrastTextColor;
-	z-index: 10000;
-}
-
-.sapUiTableRowGhost {
-	z-index: auto;
-
-	> * {
-		z-index: auto;
+	.sapUiTableHeightResizerDecorationBefore {
+		width: 4rem;
+		height: 1rem;
+		background-image: linear-gradient(to left, @_sap_ui_table_DragDrop_BarDecorationColors);
+		background-size: 100% 0.0625rem;
+		background-repeat: no-repeat;
+		background-position: center;
 	}
 
-	> .sapUiTableRowGhostCount {
+	.sapUiTableHeightResizerDecorationAfter {
+		width: 4rem;
+		height: 1rem;
+		background-image: linear-gradient(to right, @_sap_ui_table_DragDrop_BarDecorationColors);
+		background-size: 100% 0.0625rem;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapUiTableHeightResizerGrip {
+		height: 1.5rem;
+		line-height: 1.5rem;
+		width: 2rem;
+		position: relative;
+		z-index: 1;
+
+		.sapUiTableHeightResizerGripIcon {
+			cursor: row-resize;
+			box-sizing: border-box;
+			width: 1.625rem;
+			height: 1.5rem;
+			line-height: 1.5rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth;
+			margin-left: 3px;
+			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+			border-radius: @sapUiButtonBorderCornerRadius;
+			background: @sapUiButtonLiteBackground;
+		}
+	}
+
+	&:hover {
+		.sapUiTableHeightResizerDecorationBefore,
+		.sapUiTableHeightResizerDecorationAfter {
+			flex-grow: 1;
+			transition: all 0.1s ease-in;
+		}
+
+		.sapUiTableHeightResizerGripIcon {
+			background: @_sap_ui_table_DragDrop_BarHoverIconBackground;
+			border-color: @_sap_ui_table_DragDrop_BarHoverIconBorderColor;
+		}
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus::after {
+		content: "";
+		display: block;
 		position: absolute;
-		top: -0.625rem;
+		top: 0;
 		right: 0;
-		height: @_sap_ui_table_RowHeight;
-		width: @_sap_ui_table_RowHeight;
+		bottom: 0;
+		left: 0;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
 
-		.sapUiSizeCozy &,
-		.sapUiSizeCozy& {
-			height: @_sap_ui_table_RowHeightCozy;
-			width: @_sap_ui_table_RowHeightCozy;
+	&.sapUiTableHeightResizerActive {
+		.sapUiTableHeightResizerDecorationBefore {
+			flex-grow: 1;
+			background-image: linear-gradient(to left, @_sap_ui_table_DragDrop_BarActiveDecorationColors);
 		}
-
-		.sapUiSizeCondensed &,
-		.sapUiSizeCondensed& {
-			height: @_sap_ui_table_RowHeightCondensed;
-			width: @_sap_ui_table_RowHeightCondensed;
-		}
-
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		background-color: @sapUiDragAndDropActiveBorderColor;
-		border-radius: 0.125rem;
-
-		> div {
-			font-size: @sapMFontMediumSize;
-			color: @sapUiListActiveTextColor;
-
-			.sapUiSizeCozy &,
-			.sapUiSizeCozy& {
-				font-size: @sapMFontLargeSize;
-			}
-
-			.sapUiSizeCondensed &,
-			.sapUiSizeCondensed& {
-				font-size: @sapMFontSmallSize;
-			}
+		.sapUiTableHeightResizerDecorationAfter {
+			flex-grow: 1;
+			background-image: linear-gradient(to right, @_sap_ui_table_DragDrop_BarActiveDecorationColors);
 		}
 	}
 }
