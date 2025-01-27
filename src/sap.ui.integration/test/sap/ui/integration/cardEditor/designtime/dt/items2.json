@@ -135,6 +135,7 @@
 		"manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
 		"label": "String with Static List",
 		"type": "string",
+		"allowDynamicValues": true,
 		"values": {
 			"data": {
 				"json": {
