@@ -7,9 +7,15 @@
 	text-transform: uppercase;
 }
 
-.sapUxAPObjectPageSubSectionFocusable:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
+// Page Sub Section Focus
+.sapUxAPObjectPageSubSectionFocusable:focus .sapUxAPObjectPageSubSectionFocusSpan {
+	content: '';
+	position: absolute;
+	display: block;
+	inset: 0;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	z-index: 6;
+	pointer-events: none;
 }
 
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {

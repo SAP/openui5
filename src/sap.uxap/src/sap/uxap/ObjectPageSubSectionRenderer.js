@@ -49,6 +49,8 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 
 		oRm.openEnd();
 
+		oRm.openStart("span").class("sapUxAPObjectPageSubSectionFocusSpan").openEnd().close("span");
+
 		if (bHasTitleLine) {
 			oRm.openStart("div", oControl.getId() + "-header")
 				.class("sapUxAPObjectPageSubSectionHeader");
