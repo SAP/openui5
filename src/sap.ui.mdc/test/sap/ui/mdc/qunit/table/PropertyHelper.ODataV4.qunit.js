@@ -288,7 +288,7 @@ sap.ui.define([
 		);
 	});
 
-	QUnit.test("Complex property with attribute 'extension.customAggregate'", function(assert) {
+	QUnit.test("Complex property with attribute 'extension.additionalProperties'", function(assert) {
 		assert.throws(function () {
             new PropertyHelper([{
 				key: "prop",
@@ -299,11 +299,11 @@ sap.ui.define([
 				label: "ComplexProperty",
 				propertyInfos: ["prop"],
 				extension: {
-					customAggregate: {}
+					additionalProperties: ["prop"]
 				}
 			}]).destroy();
-		}, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.customAggregate'."
-			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"customAggregate":{}}}')
+		}, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.additionalProperties'."
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"additionalProperties":["prop"]}}')
 		);
 	});
 
@@ -349,7 +349,6 @@ sap.ui.define([
 				extension: {
 					technicallyGroupable: false,
 					technicallyAggregatable: false,
-					customAggregate: null,
 					additionalProperties: []
 				}
 			};
@@ -449,12 +448,7 @@ sap.ui.define([
 			key: "prop",
 			label: "Property",
 			dataType: "String",
-			aggregatable: true,
-			extension: {
-				customAggregate: {
-					contextDefiningProperties: ["prop2"]
-				}
-			}
+			aggregatable: true
 		}, {
 			key: "prop2",
 			label: "Property 2",

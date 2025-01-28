@@ -240,9 +240,7 @@ sap.ui.define([
 
 						oPropertyInfo.aggregatable = true;
 						oPropertyInfo.extension = {
-							customAggregate: {
-								contextDefiningProperties: aContextDefiningPropertiesPaths
-							}
+							additionalProperties: aContextDefiningPropertiesPaths
 						};
 					}
 

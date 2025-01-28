@@ -51,11 +51,6 @@ sap.ui.define([
 						valueIfNotAllowed: false
 					}
 				},
-				customAggregate: {
-					type: {
-						contextDefiningProperties: {type: "PropertyReference[]"}
-					}
-				},
 				additionalProperties: {type: "PropertyReference[]"}
 			});
 		}
