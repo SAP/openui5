@@ -901,15 +901,6 @@ sap.ui.define([
 			const oProperty = oPropertyHelper.getProperty(sPropertyKey);
 			mAggregation.group[oProperty.path] = {};
 		}
-
-		if (!oProperty.extension.additionalProperties?.length && oProperty.extension.customAggregate?.contextDefiningProperties) {
-			oProperty.extension.customAggregate.contextDefiningProperties.forEach((sContextDefiningPropertyKey) => {
-				const oDefiningPropertyInfo = oPropertyHelper.getProperty(sContextDefiningPropertyKey);
-				if (oDefiningPropertyInfo) {
-					mAggregation.group[oDefiningPropertyInfo.path] = {};
-				}
-			});
-		}
 	}
 
 	function sanitize$$Aggregation(mAggregation) {

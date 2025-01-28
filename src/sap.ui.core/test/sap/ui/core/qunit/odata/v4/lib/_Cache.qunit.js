@@ -477,8 +477,6 @@ sap.ui.define([
 			.withExactArgs(aCacheData[1], "predicate").callThrough();
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(aCacheData[1], "transient").callThrough();
-		oHelperMock.expects("hasPrivateAnnotation")
-			.withExactArgs(aCacheData[1], "upsert").returns(false);
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(aCacheData[1], "transientPredicate").callThrough();
 		this.oModelInterfaceMock.expects("getMessagesByPath")
@@ -732,8 +730,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "transient").returns("updateGroup");
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "transientPredicate").returns("($uid=1)");
-		oHelperMock.expects("hasPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oElement), "upsert").returns(false);
 		this.mock(this.oRequestor).expects("removePost").never();
 		oRemoveElementExpectation = this.mock(oCache).expects("removeElement")
 			.withExactArgs(1, "($uid=1)", sinon.match.same(aElements), "SO_2_SOITEM");
@@ -749,41 +745,6 @@ sap.ui.define([
 		assert.deepEqual(aPostBodyCollection, ["~a~", "~c~"]);
 		assert.ok(fnReject.calledOnce);
 	});
-
-	//*********************************************************************************************
-[false, true].forEach(function (bGroupLock) {
-	QUnit.test(`_Cache#_delete: upserted entity, bGroupLock=${bGroupLock}`, function (assert) {
-		const oCache = new _Cache(this.oRequestor, "SalesOrderList");
-		const oGroupLock = {
-			unlock : mustBeMocked
-		};
-		const oParent = {
-			entity : "~entity~"
-		};
-
-		oCache.fetchValue = mustBeMocked;
-		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to")
-			.returns(SyncPromise.resolve(oParent));
-		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~entity~", "predicate")
-			.returns(undefined);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~entity~", "transient")
-			.returns(undefined);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~entity~", "transientPredicate")
-			.returns(undefined);
-		oHelperMock.expects("hasPrivateAnnotation").withExactArgs("~entity~", "upsert")
-			.returns(true);
-		this.mock(oGroupLock).expects("unlock").exactly(bGroupLock ? 1 : 0).withExactArgs();
-		this.mock(oCache).expects("resetChangesForPath").withExactArgs("path/to/entity");
-		this.mock(this.oRequestor).expects("request").never();
-
-		// code under test
-		const oPromise = oCache._delete(bGroupLock && oGroupLock, "edit/url", "path/to/entity");
-
-		assert.ok(oPromise.isFulfilled());
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#addDeleted", function (assert) {

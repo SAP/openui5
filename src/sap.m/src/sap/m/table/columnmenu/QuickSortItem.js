@@ -120,6 +120,7 @@ sap.ui.define([
 			var aButtons = oQuickAction.getContent();
 			aButtons[0].setSelectedKey(sSortOrder);
 		}
+		return this;
 	};
 
 	return QuickSortItem;

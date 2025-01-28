@@ -5892,9 +5892,9 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-－﹣ ‑‒−⁻₋➖",
-		"commaSign": ",，﹐︐ ،٫、﹑､︑",
-		"plusSign": "+＋﬩﹢⁺₊ ➕"
+		"minusSign": "-－﹣‑‒−⁻₋➖",
+		"commaSign": ",，﹐︐،٫、﹑､︑",
+		"plusSign": "+＋﬩﹢⁺₊➕"
 	},
 	"currencyFormat-sap-short": {
 		"1000-one": "0 t'.' ¤",

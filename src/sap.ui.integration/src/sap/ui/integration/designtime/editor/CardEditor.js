@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/designtime/editor/CardPreview",
 	"sap/base/util/extend",
-	"sap/ui/integration/util/Utils"
+	"sap/ui/integration/util/Utils",
+	"sap/base/Log"
 ], function(
 	Element,
 	Library,
@@ -27,7 +28,8 @@ sap.ui.define([
 	library,
 	CardPreview,
 	extend,
-	Utils
+	Utils,
+	Log
 ) {
 	"use strict";
 
@@ -172,6 +174,22 @@ sap.ui.define([
 			}.bind(this));
 			this._oEditorCard.onBeforeRendering();
 		}
+	};
+
+	CardEditor.prototype.initDestinations = function (vHost) {
+		this._destinationsModel = new JSONModel({});
+		this.setModel(this._destinationsModel, "destinations");
+		var oHostInstance = this.getHostInstance();
+
+		if (vHost && !oHostInstance) {
+			Log.error(
+				"sap.ui.integration.designtime.editor.CardEditor: Host with id '" + vHost + "' is not available during card editor initialization. It must be available for host specific features to work.",
+				"Make sure that the host already exists, before assigning it to the card editor.",
+				"sap.ui.integration.designtime.editor.CardEditor"
+			);
+		}
+
+		this._oDestinations = this._oEditorCard._oDestinations;
 	};
 
 	/**

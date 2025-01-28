@@ -23,7 +23,7 @@ sap.ui.define(() => {
 		NoError: -1,
 
 		/**
-		 * Required filter filed without a value.
+		 * Required filter field without a value.
 		 * @public
 		 */
 		RequiredHasNoValue: 0,
