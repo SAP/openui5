@@ -296,6 +296,10 @@ sap.ui.define([
 		 */
 		var DynamicDateRange = Control.extend("sap.m.DynamicDateRange", /** @lends sap.m.DynamicDateRange.prototype */ {
 			metadata: {
+				interfaces : [
+					"sap.ui.core.IFormContent",
+					"sap.ui.core.ISemanticFormContent"
+				],
 				library: "sap.m",
 				properties: {
 					/**
