@@ -1053,6 +1053,14 @@ sap.ui.define([
 			return this._oAppointmentsToRender;
 		};
 
+		SinglePlanningCalendarMonthGrid.prototype._getFirstAndLastVisibleDates = function() {
+			const aVisibleDays = this._getVisibleDays(this.getStartDate());
+			return {
+				oStartDate: aVisibleDays[0].toLocalJSDate(),
+				oEndDate: aVisibleDays[aVisibleDays.length - 1].toLocalJSDate()
+			};
+		};
+
 		SinglePlanningCalendarMonthGrid.prototype._calculateAppointmentsNodes = function(oStartDate) {
 			var aVisibleDays = this._getVisibleDays(oStartDate),
 				oFirstVisibleDay = aVisibleDays[0],

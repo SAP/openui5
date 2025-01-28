@@ -1641,6 +1641,16 @@ function(
 	};
 
 	/**
+	 * Finds the start and end dates in the visible range.
+	 * @public
+	 * @since 1.133
+	 * @returns {Object} returns an object that stores both the start and end date within the currently visible range.
+	 */
+	SinglePlanningCalendar.prototype.getFirstAndLastVisibleDates = function () {
+		return this._getCurrentGrid()._getFirstAndLastVisibleDates();
+	};
+
+	/**
 	 * Responsible for aligning the columns due to startDate or view change.
 	 * @private
 	 */

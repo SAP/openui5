@@ -582,6 +582,97 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("calculate First and last visible dates", async (assert) => {
+		let oTestStartDate = UI5Date.getInstance(2015, 0, 1, 8);
+		let oTestEndDate;
+		let oResultDates;
+		let iVisibleCellOffset = 0;
+		const oSPC = new SinglePlanningCalendar({
+			startDate: UI5Date.getInstance(2015, 0, 1, 8),
+			views: [
+				new SinglePlanningCalendarDayView("DayView", {
+					key: "DayView",
+					title: "Day View"
+				}),
+				new SinglePlanningCalendarWeekView("WeekView", {
+					key: "WeekView",
+					title: "Week View"
+				}),
+				new SinglePlanningCalendarWorkWeekView("WorkWeekView", {
+					key: "WorkWeekView",
+					title: "Work Week View"
+				}),
+				new SinglePlanningCalendarMonthView("MonthView", {
+					key: "MonthView",
+					title: "Month View"
+				})
+			]
+		});
+
+		// Prepare
+		oSPC.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		oResultDates = oSPC.getFirstAndLastVisibleDates();
+		oTestStartDate = UI5Date.getInstance(oSPC._getCurrentGrid().getStartDate());
+		oTestEndDate = UI5Date.getInstance(oTestStartDate);
+		oTestEndDate.setDate(oTestStartDate.getDate() + iVisibleCellOffset);
+
+		// Assert
+		assert.strictEqual(oResultDates.oStartDate.getTime(), oTestStartDate.getTime(), "The startDate corresponds to the visible range");
+		assert.strictEqual(oResultDates.oEndDate.getTime(), oTestEndDate.getTime(), "The endDate corresponds to the visible range");
+
+		// Act
+		oSPC.setSelectedView("WeekView");
+		await nextUIUpdate();
+
+		// Prepare
+		iVisibleCellOffset = 6;
+		oResultDates = oSPC.getFirstAndLastVisibleDates();
+		oTestStartDate = UI5Date.getInstance(oSPC._getCurrentGrid().getStartDate());
+		oTestEndDate = UI5Date.getInstance(oTestStartDate);
+		oTestEndDate.setDate(oTestStartDate.getDate() + iVisibleCellOffset);
+
+		// Assert
+		assert.strictEqual(oResultDates.oStartDate.getTime(), oTestStartDate.getTime(), "The startDate corresponds to the visible range");
+		assert.strictEqual(oResultDates.oEndDate.getTime(), oTestEndDate.getTime(), "The endDate corresponds to the visible range");
+
+		// Act
+		oSPC.setSelectedView("WorkWeekView");
+		await nextUIUpdate();
+
+		// Prepare
+		iVisibleCellOffset = 4;
+		oResultDates = oSPC.getFirstAndLastVisibleDates();
+		oTestStartDate = UI5Date.getInstance(oSPC._getCurrentGrid().getStartDate());
+		oTestEndDate = UI5Date.getInstance(oTestStartDate);
+		oTestEndDate.setDate(oTestStartDate.getDate() + iVisibleCellOffset);
+
+		// Assert
+		assert.strictEqual(oResultDates.oStartDate.getTime(), oTestStartDate.getTime(), "The startDate corresponds to the visible range");
+		assert.strictEqual(oResultDates.oEndDate.getTime(), oTestEndDate.getTime(), "The EndDate corresponds to the visible range");
+
+		// Act
+		oSPC.setSelectedView("MonthView");
+		await nextUIUpdate();
+
+		// Prepare
+		iVisibleCellOffset = 41;
+		const oStartDateInMonth = oSPC._getCurrentGrid()._getVisibleDays(oSPC.getStartDate())[0];
+		oResultDates = oSPC.getFirstAndLastVisibleDates();
+		oTestStartDate = UI5Date.getInstance(oStartDateInMonth.toLocalJSDate());
+		oTestEndDate = UI5Date.getInstance(oTestStartDate);
+		oTestEndDate.setDate(oTestStartDate.getDate() + iVisibleCellOffset);
+
+		// Assert
+		assert.strictEqual(oResultDates.oStartDate.getTime(), oTestStartDate.getTime(), "The startDate corresponds to the visible range");
+		assert.strictEqual(oResultDates.oEndDate.getTime(), oTestEndDate.getTime(), "The endDate corresponds to the visible range");
+
+		// cleanup
+		oSPC.destroy();
+		await nextUIUpdate();
+	});
+
+
 	QUnit.module("Multi dates selection");
 
 	QUnit.test("Multi dates selection - add/remove/get selectedDates", async function(assert) {
