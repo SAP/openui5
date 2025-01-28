@@ -97,6 +97,17 @@ sap.ui.define([
 				"sap.ui.layout.form.ResponsiveGridLayoutPanel": NOT_A_MODULE
 			}
 		},
+		"sap.ui.mdc": {
+			elements:{
+				"sap.ui.mdc.Chart": { exclude: ["delegate"] }, // delegate cannot be changed once initialized
+				"sap.ui.mdc.Control": { exclude: ["delegate"] }, // delegate cannot be changed once initialized
+				"sap.ui.mdc.Element": { exclude: ["delegate"] }, // delegate cannot be changed once initialized
+				"sap.ui.mdc.field.FieldBase": { exclude: ["delegate"] }, // delegate cannot be changed once initialized
+				"sap.ui.mdc.FilterBar": { exclude: ["delegate"] }, // delegate cannot be changed once initialized
+				"sap.ui.mdc.Table": { exclude: ["delegate"] }, // delegate cannot be changed once initialized
+				"sap.ui.mdc.ValueHelp": { exclude: ["delegate"] } // delegate cannot be changed once initialized
+			}
+		},
 
 		/*
 		 * sapui5.runtime
@@ -122,15 +133,6 @@ sap.ui.define([
 		},
 		"sap.ui.export": {
 			elements: {}
-		},
-		"sap.ui.mdc": {
-			elements:{
-				"sap.ui.mdc.XMLComposite": NO_CREATE, // abstract?
-				"sap.ui.mdc.base.filterbar.FilterBar": { exclude: ["setMetadataDelegate"] }, // setMetadataDelegate fails
-				"sap.ui.mdc.Table": { exclude: ["content", "rowAction"], failsOnDestroy: true }, // mutators for content are disabled, setRowAction fails
-				"sap.ui.mdc.TableOld": NO_CREATE, // fails to instantiate
-				"sap.ui.mdc.odata.v4.microchart.MicroChart": NO_CREATE // templating error due to missing dependency to v4 AnnotationHelper
-			}
 		},
 		"sap.viz": {
 			elements:{
