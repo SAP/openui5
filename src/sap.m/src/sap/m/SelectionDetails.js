@@ -335,7 +335,8 @@ function(
 		if (showBackButton) {
 			var oBackButton = new Button({
 				icon: "sap-icon://nav-back",
-				press: this._onBackButtonPress.bind(this)
+				press: this._onBackButtonPress.bind(this),
+				tooltip: this._oRb.getText("SELECTIONDETAILS_BACK_BUTTON")
 			});
 			oToolbar.addAggregation("content", oBackButton, true);
 		}
