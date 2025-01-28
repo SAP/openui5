@@ -1819,3 +1819,12 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 .sapUiFileEditor .sapUiFileEditorContent {
 	flex: 1;
 }
+
+/* Cookie Statement */
+table.cookieList {
+	width: 100%;
+}
+table.cookieList td {
+	padding: 1rem;
+	border-bottom: 2px solid var(--sapList_BorderColor);
+}

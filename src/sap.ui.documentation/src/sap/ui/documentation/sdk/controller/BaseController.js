@@ -246,6 +246,10 @@ sap.ui.define([
 					this.onEditCookiePreferencesRequest();
 					return;
 				}
+				if (sTargetText === FOOTER_MENU_OPTIONS.PRIVACY) {
+					this.navToPrivacyStatement();
+					return;
+				}
 				var sTarget = BaseController.LEGAL_LINKS[sTargetText];
 				URLHelper.redirect(sTarget, true);
 			},
@@ -296,6 +300,10 @@ sap.ui.define([
 						}
 					}.bind(this));
 				}.bind(this));
+			},
+
+			navToPrivacyStatement: function () {
+				this.getRouter().navTo("PrivacyStatement");
 			},
 
 			_isRouteBypassedEvent: function (oEvent) {

@@ -29,7 +29,9 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
 			/^(\/)?search\//,
 			/^(\/)?license[.]txt/,
 			/^(\/)?docs\/guide/,
-			/^(\/)?docs\/api\/symbols/
+			/^(\/)?docs\/api\/symbols/,
+			/^(\/)?static\/PrivacyStatement/,
+			/^(\/)?static\/CookieStatement/
 		];
 
 	function pathMatchesDemokitRoute (path) {

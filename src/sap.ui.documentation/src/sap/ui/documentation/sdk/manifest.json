@@ -77,6 +77,8 @@
 		},
 		"config": {
 			"docuPath": "./docs/topics/",
+			"cookieStatementURI": "sap/ui/documentation/sdk/CookieStatement.html",
+			"privacyStatementURI": "sap/ui/documentation/sdk/PrivacyStatement.html",
 			"exploredURI": "./",
 			"topicHtmlMainDivId": "d4h5-main-container",
 			"preservedContent": [
@@ -330,6 +332,20 @@
 						"BPSupport"
 					]
 				},
+				{
+					"pattern": "static/PrivacyStatement",
+					"name": "PrivacyStatement",
+					"target": [
+						"PrivacyStatement"
+					]
+				},
+				{
+					"pattern": "static/CookieStatement",
+					"name": "CookieStatement",
+					"target": [
+						"CookieStatement"
+					]
+				},
 
 				{
 					"pattern": "search/{searchParam}:?options:",
@@ -476,6 +492,18 @@
 					"viewName": "BPSupport",
 					"viewLevel": 2,
 					"viewId": "BPSupport",
+					"title": "home"
+				},
+				"CookieStatement": {
+					"viewName": "CookieStatement",
+					"viewLevel": 2,
+					"viewId": "CookieStatement",
+					"title": "home"
+				},
+				"PrivacyStatement": {
+					"viewName": "PrivacyStatement",
+					"viewLevel": 2,
+					"viewId": "PrivacyStatement",
 					"title": "home"
 				},
 				"apiDetailInitial": {
