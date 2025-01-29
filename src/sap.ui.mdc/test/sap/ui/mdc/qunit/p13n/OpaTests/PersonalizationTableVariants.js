@@ -407,7 +407,9 @@ sap.ui.define([
 		When.waitFor({
 			controlType: "sap.ui.mdc.Table",
 			success: function(aControls) {
-				const aEntries = Object.entries(window.localStorage);
+				const aLocalStorage = Object.entries(window.localStorage);
+				const aEntries = aLocalStorage.filter(([key, value]) => (key.indexOf("addCondition") > -1 || key.indexOf("removeCondition") > -1));
+
 				Opa5.assert.equal(aEntries.length, 3, "the correct amount of changes has been created");
 				aEntries.forEach(([sPersistenceKey, sChange]) => {
 					const oChange = JSON.parse(sChange);

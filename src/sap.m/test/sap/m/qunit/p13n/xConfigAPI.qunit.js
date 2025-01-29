@@ -414,4 +414,24 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Chckeck #getCurrentItemState (with inital control state in targetAggregation)", function(assert){
+
+		const oItem = new Item({id: "test_property"});
+
+		this.oControl.addItem(oItem);
+
+		sinon.stub(JsControlTreeModifier, "getProperty").returns(Promise.resolve(true)); //fake visible property, since "Item" does not have one..
+
+		return xConfigAPI.getCurrentItemState(this.oControl, {propertyBag: {modifier: JsControlTreeModifier}, changeType: "removeItem"}, {
+			"aggregations": {
+				"items": {
+				}
+			}
+		}, "items")
+		.then(function(aCurrentState){
+			assert.deepEqual(aCurrentState, [{key: "test_property"}], "The correct value has been created");
+			JsControlTreeModifier.getProperty.restore();
+		});
+	});
+
 });
