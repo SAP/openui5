@@ -4131,6 +4131,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasPathSuffix", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.hasPathSuffix("/some/path", "path"), true);
+
+		// code under test
+		assert.strictEqual(_Helper.hasPathSuffix("/some/path", "ath"), false);
+
+		// code under test
+		assert.strictEqual(_Helper.hasPathSuffix("/some(42)/path", "(42)/path"), true);
+	});
+	//TODO offer _Helper.getBasePath as well?
+
+	//*********************************************************************************************
 	QUnit.test("aggregateExpandSelect: recursion", function () {
 		var mAggregatedQueryOptions = {$expand : {foo : {}}},
 			oHelperMock = this.mock(_Helper),

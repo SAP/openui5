@@ -1816,9 +1816,29 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @see .getRelativePath
+		 * @see .hasPathSuffix
 		 */
 		hasPathPrefix : function (sPath, sBasePath) {
 			return _Helper.getRelativePath(sPath, sBasePath) !== undefined;
+		},
+
+		/**
+		 * Tells whether <code>sAbsolutePath</code> has <code>sRelativePath</code> as path suffix.
+		 * This is the case if there is some <code>sBasePath</code> so that
+		 * <code>_Helper.buildPath(sBasePath, sRelativePath) === sAbsolutePath</code>.
+		 *
+		 * @param {string} sAbsolutePath - An absolute path
+		 * @param {string} sRelativePath - A relative path
+		 * @returns {boolean}
+		 *   Whether <code>sAbsolutePath</code> has <code>sRelativePath</code> as path suffix
+		 *
+		 * @public
+		 * @see .hasPathPrefix
+		 */
+		hasPathSuffix : function (sAbsolutePath, sRelativePath) {
+			return sAbsolutePath.endsWith(sRelativePath)
+				&& (sRelativePath.startsWith("(")
+					|| sAbsolutePath.at(-(sRelativePath.length + 1)) === "/");
 		},
 
 		/**
