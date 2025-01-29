@@ -71481,7 +71481,8 @@ make root = ${bMakeRoot}`;
 		this.expectRequest("SalesOrderList?$select=Note,NoteLanguage,SalesOrderID&$skip=0&$top=100",
 				{value : []})
 			.expectChange("note", [])
-			.expectChange("noteLanguage", []);
+			.expectChange("noteLanguage", [])
+			.expectChange("inactive", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
@@ -71491,7 +71492,8 @@ make root = ${bMakeRoot}`;
 			});
 
 			that.expectChange("note", [""])
-				.expectChange("noteLanguage", ["E"]);
+				.expectChange("noteLanguage", ["E"])
+				.expectChange("inactive", [true]);
 
 			oContext = oBinding.create(undefined, true, true, /*bInactive*/true);
 
@@ -71501,8 +71503,9 @@ make root = ${bMakeRoot}`;
 			oNoteBinding = aCells[0].getBinding("value");
 			oNoteLanguageBinding = aCells[1].getBinding("value");
 
-			that.expectChange("note", ["My Note"]);
-			that.expectChange("noteLanguage", ["D"]);
+			that.expectChange("note", ["My Note"])
+				.expectChange("inactive", [1])
+				.expectChange("noteLanguage", ["D"]);
 
 			// code under test
 			oNoteBinding.setValue("My Note");
@@ -71510,16 +71513,18 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("note", [""]);
-			that.expectChange("noteLanguage", ["E"]);
+			that.expectChange("inactive", [true])
+				.expectChange("note", [""])
+				.expectChange("noteLanguage", ["E"]);
 
 			// code under test
 			oContext.resetChanges();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("note", ["My Note 2"]);
-			that.expectChange("noteLanguage", ["C"]);
+			that.expectChange("note", ["My Note 2"])
+				.expectChange("inactive", [1])
+				.expectChange("noteLanguage", ["C"]);
 
 			// code under test
 			oNoteBinding.setValue("My Note 2");
@@ -71737,7 +71742,6 @@ make root = ${bMakeRoot}`;
 		const oContext = bIntermediate ? this.oView.byId("publication").getBindingContext() : null;
 		if (oContext) {
 			assert.strictEqual(oContext.getObject(), null);
-			//TODO assert.strictEqual(oContext.isInactive(), true);
 			assert.strictEqual(oContext.created(), undefined);
 			assert.strictEqual(oContext.isTransient(), undefined);
 
@@ -71870,7 +71874,6 @@ make root = ${bMakeRoot}`;
 				Price : bMerge ? "11" : "12",
 				PublicationID : "2"
 			});
-			//TODO assert.strictEqual(oContext.isInactive(), false);
 			assert.strictEqual(oContext.created(), oCreatedPromise);
 			assert.strictEqual(bCreated, undefined);
 			assert.strictEqual(oContext.isTransient(), true);
@@ -71985,13 +71988,11 @@ make root = ${bMakeRoot}`;
 		if (oContext) {
 			if (bReset) {
 				assert.strictEqual(oContext.getObject(), null);
-				//TODO assert.strictEqual(oContext.isInactive(), true);
 				assert.strictEqual(oContext.created(), undefined);
 				assert.strictEqual(bCreated, false);
 				assert.strictEqual(oContext.isTransient(), undefined);
 			} else {
 				assert.deepEqual(oContext.getObject(), oBestPublication);
-				//TODO assert.strictEqual(oContext.isInactive(), false);
 				assert.strictEqual(oContext.created(), oCreatedPromise);
 				assert.strictEqual(bCreated, true);
 				assert.strictEqual(oContext.isTransient(), false);
