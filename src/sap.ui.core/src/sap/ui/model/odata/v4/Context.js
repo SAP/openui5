@@ -289,6 +289,8 @@ sap.ui.define([
 	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
 	 *     <li> the context's binding is a list binding with data aggregation,
+	 *     <li> the context is transient, but its binding is not a list binding ("upsert") and
+	 *       therefore it should rather be reset via {@link #resetChanges},
 	 *     <li> the restrictions for deleting from a recursive hierarchy (see above) are not met.
 	 *   </ul>
 	 *
@@ -317,6 +319,9 @@ sap.ui.define([
 		}
 		this.oBinding.checkSuspended();
 		if (this.isTransient()) {
+			if (!this.oBinding.getHeaderContext) { // upsert
+				throw new Error("Cannot delete " + this);
+			}
 			if (this.iIndex === undefined) {
 				return Promise.resolve(); // already deleted, nothing to do
 			}
@@ -2126,8 +2131,8 @@ sap.ui.define([
 	 *   <li> the binding's root binding is suspended,
 	 *   <li> a change of this context has already been sent to the server and there is no response
 	 *     yet,
-	 *   <li> this context is transient, but not inactive and therefore should rather be reset via
-	 *     {@link #delete}.
+	 *   <li> this context is a transient row context, but not inactive and therefore should rather
+	 *     be reset via {@link #delete}.
 	 *   <li> this context is a
 	 *     {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}.
 	 *   <li> this context is a
@@ -2144,7 +2149,8 @@ sap.ui.define([
 				: [],
 			that = this;
 
-		if (this.iIndex === iVIRTUAL || this.isTransient() && !this.isInactive()
+		if (this.iIndex === iVIRTUAL
+			|| this.oBinding.getHeaderContext && !this.bInactive && this.isTransient()
 			|| this === this.oBinding.getHeaderContext?.()
 			// only operation bindings have a parameter context, for others the function fails
 			|| this.oBinding.oOperation && this === this.oBinding.getParameterContext()) {

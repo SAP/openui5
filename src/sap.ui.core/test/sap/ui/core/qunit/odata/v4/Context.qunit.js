@@ -1526,6 +1526,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("delete: upsert", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+				// NO getHeaderContext
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+
+		this.mock(oContext).expects("isDeleted").atLeast(1).withExactArgs().returns(false);
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(undefined).returns(false);
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true); // upsert
+
+		// code under test
+		assert.throws(function () {
+			oContext.delete();
+		}, new Error("Cannot delete " + oContext));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("delete: no lock, but not a kept-alive context", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
@@ -1616,6 +1635,7 @@ sap.ui.define([
 	QUnit.test("delete: already removed via resetChanges", function (assert) {
 		const oBinding = {
 			checkSuspended : function () {},
+			getHeaderContext : mustBeMocked, // duck typing only
 			mParameters : "~mParameters~"
 			// no delete
 		};
@@ -4382,6 +4402,7 @@ sap.ui.define([
 	QUnit.test("resetChanges, w/o oDeletePromise, bInactive=" + bInactive, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
+				// NO getHeaderContext
 				getParameterContext : "must not be called",
 				resetChangesForPath : function () {}
 			},
@@ -4392,6 +4413,7 @@ sap.ui.define([
 			oResetChangesPromise;
 
 		oContext.bInactive = bInactive;
+		this.mock(oContext).expects("isTransient").never();
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("resetChangesForPath")
 			.withExactArgs("/path", sinon.match.array);
@@ -4487,11 +4509,13 @@ sap.ui.define([
 		+ bInactive;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path", -1,
+		var oBinding = {
+				getHeaderContext : mustBeMocked // duck typing only
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path", -1,
 				new SyncPromise(function () {}), bInactive);
 
 		this.mock(oContext).expects("isTransient").withExactArgs().twice().returns(true);
-		this.mock(oContext).expects("isInactive").withExactArgs().twice().returns(bInactive);
 
 		assert.throws(function () {
 			// code under test
@@ -4519,7 +4543,7 @@ sap.ui.define([
 		var oBinding = {oOperation : {}, getParameterContext : function () {}},
 			oContext = Context.create({/*oModel*/}, oBinding, "/Operation(...)/$Parameter");
 
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").never();
 		this.mock(oBinding).expects("getParameterContext").withExactArgs().returns(oContext);
 
 		assert.throws(function () {
