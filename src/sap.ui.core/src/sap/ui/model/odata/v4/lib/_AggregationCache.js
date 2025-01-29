@@ -249,7 +249,13 @@ sap.ui.define([
 			if (oKeptElement && oKeptElement !== oElement
 					&& !(oKeptElement instanceof SyncPromise)) {
 				if (!sHierarchyQualifier || aElements.includes(oKeptElement)) {
-					throw new Error("Duplicate key predicate: " + sPredicate);
+					const sNewPredicate = oCache.fixDuplicatePredicate(oElement, sPredicate);
+					if (sNewPredicate) {
+						sPredicate = sNewPredicate;
+						oKeptElement = oElement; // leads to no-op for _Helper.updateNonExisting
+					} else {
+						throw new Error("Duplicate key predicate: " + sPredicate);
+					}
 				}
 				if (!oKeptElement["@odata.etag"]
 						|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
@@ -703,6 +709,9 @@ sap.ui.define([
 				aAllProperties, bLeaf, bTotal);
 		if (sParentFilter) {
 			oCache.$parentFilter = sParentFilter;
+		}
+		if (!oAggregation.hierarchyQualifier) {
+			oCache.fixDuplicatePredicate = _AggregationCache.fixDuplicatePredicate.bind(oCache);
 		}
 
 		return oCache;
@@ -2767,6 +2776,21 @@ sap.ui.define([
 
 		return _Cache.create(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			sDeepResourcePath, bSharedRequest);
+	};
+
+	// @override sap.ui.model.odata.v4.lib._Cache#fixDuplicatePredicate
+	_AggregationCache.fixDuplicatePredicate = function (oElement, sPredicate) {
+		if (sPredicate === "('')" || sPredicate.includes("=''")) {
+			Log.warning("Duplicate key predicate: " + sPredicate, this.toString(),
+				"sap.ui.model.odata.v4.lib._AggregationCache");
+			const sNewPredicate = sPredicate.slice(0, -1) + ",$duplicate=" + _Helper.uid() + ")";
+			_Helper.setPrivateAnnotation(oElement, "predicate", sNewPredicate);
+			if (this.aElements.$byPredicate[sPredicate] === oElement) {
+				delete this.aElements.$byPredicate[sPredicate];
+				this.aElements.$byPredicate[sNewPredicate] = oElement;
+			}
+			return sNewPredicate;
+		}
 	};
 
 	return _AggregationCache;

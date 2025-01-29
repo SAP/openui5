@@ -55,6 +55,7 @@ sap.ui.define([
 		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
 		rCountUrl = /\/\$count(?:\?|$)/, // URL for ".../$count?..."
 		sDefaultLanguage = Localization.getLanguage(),
+		rDuplicatePredicate = /,\$duplicate=[-\w]+\)/g,
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sNextSiblingAction
 			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling",
@@ -98,7 +99,7 @@ sap.ui.define([
 	 * @param {object} assert - The QUnit assert object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - A list binding
 	 */
-	function checkAggregationCache(sTitle, assert, oListBinding) {
+	function checkAggregationCache4Hierarchy(sTitle, assert, oListBinding) {
 		const aParentByLevel = [];
 		const bUnifiedCache = oListBinding.oCache.bUnifiedCache;
 
@@ -133,12 +134,7 @@ sap.ui.define([
 		}
 
 		function strictEqual(vActual, vExpected, sMyTitle, oElement) {
-			if (vActual !== vExpected) {
-				if (oElement) {
-					sMyTitle += ": " + JSON.stringify(_Helper.publicClone(oElement));
-				}
-				assert.strictEqual(vActual, vExpected, sTitle + ": " + sMyTitle);
-			} // else: do not spam the output ;-)
+			strictEqualSilent(assert, vActual, vExpected, sTitle, sMyTitle, oElement);
 		}
 
 		function visitElements(aElements, bSkipByPredicate = false, iLevelOffset = 0,
@@ -270,6 +266,46 @@ sap.ui.define([
 					}
 				});
 			} // else: cannot count "descendants" this way
+		}
+	}
+
+	/**
+	 * Checks that the given list binding's non-hierarchical data aggregation has a consistent state
+	 * in relation to the elements of aElements matching to aElements.$byPredicate, for an
+	 * aggregation cache as well as for its group level caches. This is not applicable for
+	 * kept-alive elements outside the collection.
+	 *
+	 * @param {string} sTitle - A test title
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - A list binding
+	 */
+	function checkAggregationCache4NonHierarchy(sTitle, assert, oListBinding) {
+		function strictEqual(vActual, vExpected, sMyTitle, oElement) {
+			strictEqualSilent(assert, vActual, vExpected, sTitle, sMyTitle, oElement);
+		}
+
+		const aElements = oListBinding.oCache.aElements;
+		strictEqual(aElements.length, aElements.$count, "$count");
+		strictEqual(aElements.length, Object.keys(aElements.$byPredicate).length,
+			"number of items in $byPredicate");
+		for (const sPredicate in aElements.$byPredicate) {
+			const oElement = aElements.$byPredicate[sPredicate];
+			strictEqual(aElements.includes(oElement), true,
+				`$byPredicate[${sPredicate}] in aElements`, oElement);
+			strictEqual(_Helper.getPrivateAnnotation(oElement, "predicate"), sPredicate,
+				`unknown predicate ${sPredicate}`, oElement);
+			const oGroupLevelCache = _Helper.getPrivateAnnotation(oElement, "parent");
+			if (oGroupLevelCache) {
+				strictEqual(oGroupLevelCache.aElements.length, oGroupLevelCache.aElements.$count,
+					"group level cache: $count");
+				strictEqual(oGroupLevelCache.aElements.length,
+					Object.keys(oGroupLevelCache.aElements.$byPredicate).length,
+					"group level cache: number of items in $byPredicate");
+				strictEqual(oGroupLevelCache.aElements.includes(oElement), true,
+					`group level cache: ${sPredicate} in aElements`, oElement);
+				strictEqual(oGroupLevelCache.aElements.$byPredicate[sPredicate], oElement,
+					`group level cache: ${sPredicate} in aElements.$byPredicate`, oElement);
+			}
 		}
 	}
 
@@ -431,8 +467,13 @@ sap.ui.define([
 			}), aExpectedContent, sTitle);
 		}
 
-		if (oListBinding.getAggregation()?.hierarchyQualifier) {
-			checkAggregationCache(sTitle, assert, oListBinding);
+		const oAggregation = oListBinding.getAggregation();
+		if (oAggregation) {
+			if (oAggregation.hierarchyQualifier) {
+				checkAggregationCache4Hierarchy(sTitle, assert, oListBinding);
+			} else {
+				checkAggregationCache4NonHierarchy(sTitle, assert, oListBinding);
+			}
 		}
 	}
 
@@ -550,13 +591,15 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the given text with transient predicates normalized to "($uid=...)".
+	 * Returns the given text with transient predicates normalized to "($uid=...)". A predicate with
+	 * a $duplicate suffix is normalized on the same way.
 	 *
 	 * @param {string} sText - Any text
 	 * @returns {string} The text with normalized UIDs
 	 */
 	function normalizeUID(sText) {
-		return sText.replace(rTransientPredicate, "($uid=...)");
+		return sText.replace(rTransientPredicate, "($uid=...)")
+			.replace(rDuplicatePredicate, ",$duplicate=...)");
 	}
 
 	/**
@@ -593,6 +636,25 @@ sap.ui.define([
 		} else {
 			oContext.setSelected(bSelected);
 		}
+	}
+
+	/**
+	 * Strict comparison of two values, but only logs the QUnit assertion in case of a failure.
+	 *
+	 * @param {object} assert - The QUnit assert object
+	 * @param {any} vActual - The actual value
+	 * @param {any} vExpected - The expected value
+	 * @param {string} sTitle - A test title
+	 * @param {string} sDetails - Additional details about the assertion
+	 * @param {object} [oElement] - Additional element to be logged
+	 */
+	function strictEqualSilent(assert, vActual, vExpected, sTitle, sDetails, oElement) {
+		if (vActual !== vExpected) {
+			if (oElement) {
+				sDetails += ": " + JSON.stringify(_Helper.publicClone(oElement));
+			}
+			assert.strictEqual(vActual, vExpected, sTitle + ": " + sDetails);
+		} // else: do not spam the output ;-)
 	}
 
 	/**
@@ -1031,7 +1093,7 @@ sap.ui.define([
 			await this.waitForChanges(assert, sTitle);
 
 			if (oListBinding.getAggregation()?.hierarchyQualifier) {
-				checkAggregationCache(sTitle, assert, oListBinding);
+				checkAggregationCache4Hierarchy(sTitle, assert, oListBinding);
 			}
 		},
 
@@ -27228,6 +27290,323 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: The database layer distinguishes between initial and null values. When using data
+	// aggregation and grouping by such a property, this leads to separate groups, but on OData side
+	// this information gets lost. The service returns two groups (because initial and null are
+	// different values), which lead to the same client-side predicate, like (GroupKey=''). In this
+	// case the client must be more lenient and show both rows, without a "Duplicate key predicate"
+	// error. Expanding these nodes leads to the same request because of the same filter, and
+	// therefore the children of both groups are duplicates.
+	// SNOW: DINC0380951
+	QUnit.test("Data Aggregation: DINC0380951", async function (assert) {
+		const oModel = this.createAggregationModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/BusinessPartners',
+		parameters : {
+			$$aggregation : {
+				aggregate : {
+					SalesAmount : {subtotals : true}
+				},
+				groupLevels : ['Country', 'Region', 'Industry']
+			}
+		}}" threshold="0" visibleRowCount="15">
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>
+	<Text id="country" text="{Country}"/>
+	<Text id="region" text="{Region}"/>
+	<Text id="industry" text="{Industry}"/>
+	<Text id="salesAmount" text="{= %{SalesAmount} }"/>
+</t:Table>`;
+
+		// (Country="DE")
+		//     (Country="DE",Region="BW")
+		// (Country=initial)
+		//     (Country=initial,Region=initial)
+		//         (Country=initial,Region=initial,Industry="foo")
+		//     (Country=initial,Region=null)
+		//         (Country=initial,Region=null,Industry="foo")
+		//     (Country=null,Region=initial)
+		//         (Country=null,Region=initial,Industry="foo")
+		//     (Country=null,Region=null)
+		// (Country=null)
+		//     (Country=initial,Region=initial)
+		//     (Country=initial,Region=null)
+		//     (Country=null,Region=initial)
+		//     (Country=null,Region=null)
+
+		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
+				+ "&$count=true&$skip=0&$top=15", {
+				"@odata.count" : "3",
+				value : [{
+					Country : "DE",
+					SalesAmount : "42"
+				}, {
+					Country : "",
+					SalesAmount : "11"
+				}, {
+					Country : "",
+					SalesAmount : "22"
+				}]
+			});
+		this.oLogMock.expects("warning").withArgs("Duplicate key predicate: (Country='')");
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBinding = oTable.getBinding("rows");
+		checkTable("initial page", assert, oTable, [
+			"/BusinessPartners(Country='DE')",
+			"/BusinessPartners(Country='')",
+			"/BusinessPartners(Country='',$duplicate=...)"
+		], [
+			[false, true, 1, "DE", "", "", "42"],
+			[false, true, 1, "", "", "", "11"],
+			[false, true, 1, "", "", "", "22"]
+		]);
+		const [oCountry0, oCountry1, oCountry2] = oBinding.getCurrentContexts();
+
+		this.expectRequest("BusinessPartners?"
+				+ "$apply=filter(Country eq 'DE')/groupby((Region),aggregate(SalesAmount))"
+				+ "&$count=true&$skip=0&$top=15", {
+				"@odata.count" : "1",
+				value : [{
+					Region : "BW",
+					SalesAmount : "41"
+				}]
+			});
+
+		await Promise.all([
+			oCountry0.expand(),
+			this.waitForChanges(assert, "expand (Country='DE')")
+		]);
+		checkTable("expand (Country='DE')", assert, oTable, [
+			"/BusinessPartners(Country='DE')",
+			"/BusinessPartners(Country='DE',Region='BW')",
+			"/BusinessPartners(Country='')",
+			"/BusinessPartners(Country='',$duplicate=...)"
+		], [
+			[true, true, 1, "DE", "", "", "42"],
+			[false, true, 2, "DE", "BW", "", "41"],
+			[false, true, 1, "", "", "", "11"],
+			[false, true, 1, "", "", "", "22"]
+		]);
+
+		const sCountryEmpty = "BusinessPartners?"
+			+ "$apply=filter(Country eq '')/groupby((Region),aggregate(SalesAmount))"
+			+ "&$count=true&$skip=0&$top=15";
+		const oCountryEmpty = {
+			"@odata.count" : "4",
+			value : [{
+				Region : "",
+				SalesAmount : "4"
+			}, {
+				Region : "",
+				SalesAmount : "5"
+			}, {
+				Region : "",
+				SalesAmount : "6"
+			}, {
+				Region : "",
+				SalesAmount : "7"
+			}]
+		};
+		this.expectRequest(sCountryEmpty, oCountryEmpty);
+		this.oLogMock.expects("warning").exactly(3)
+			.withArgs("Duplicate key predicate: (Country='',Region='')");
+
+		await Promise.all([
+			oCountry1.expand(),
+			this.waitForChanges(assert, "expand (Country=initial)")
+		]);
+		checkTable("expand (Country=initial)", assert, oTable, [
+			"/BusinessPartners(Country='DE')",
+			"/BusinessPartners(Country='DE',Region='BW')",
+			"/BusinessPartners(Country='')",
+			"/BusinessPartners(Country='',Region='')",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',$duplicate=...)"
+		], [
+			[true, true, 1, "DE", "", "", "42"],
+			[false, true, 2, "DE", "BW", "", "41"],
+			[true, true, 1, "", "", "", "11"],
+			[false, true, 2, "", "", "", "4"],
+			[false, true, 2, "", "", "", "5"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"],
+			[false, true, 1, "", "", "", "22"]
+		]);
+
+		this.expectRequest(sCountryEmpty, oCountryEmpty);
+		this.oLogMock.expects("warning").exactly(4)
+			.withArgs("Duplicate key predicate: (Country='',Region='')");
+
+		await Promise.all([
+			oCountry2.expand(),
+			this.waitForChanges(assert, "expand (Country=null)")
+		]);
+		checkTable("expand (Country=null)", assert, oTable, [
+			"/BusinessPartners(Country='DE')",
+			"/BusinessPartners(Country='DE',Region='BW')",
+			"/BusinessPartners(Country='')",
+			"/BusinessPartners(Country='',Region='')",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)"
+		], [
+			[true, true, 1, "DE", "", "", "42"],
+			[false, true, 2, "DE", "BW", "", "41"],
+			[true, true, 1, "", "", "", "11"],
+			[false, true, 2, "", "", "", "4"],
+			[false, true, 2, "", "", "", "5"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"],
+			[true, true, 1, "", "", "", "22"],
+			[false, true, 2, "", "", "", "4"],
+			[false, true, 2, "", "", "", "5"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"]
+		]);
+		const [,,, oCountry1_0, oCountry1_1, oCountry1_2] = oBinding.getCurrentContexts();
+
+		const sCountryAndRegionEmpty = "BusinessPartners?"
+			+ "$apply=filter(Country eq '' and Region eq '')"
+			+ "/groupby((Industry),aggregate(SalesAmount))"
+			+ "&$count=true&$skip=0&$top=15";
+		const oCountryAndRegionEmpty = {
+			"@odata.count" : "1",
+			value : [{
+				Industry : "foo",
+				SalesAmount : "1"
+			}]
+		};
+		this.expectRequest(sCountryAndRegionEmpty, oCountryAndRegionEmpty);
+
+		await Promise.all([
+			oCountry1_0.expand(),
+			this.waitForChanges(assert, "expand (Country=initial,Region=initial)")
+		]);
+		checkTable("expand (Country=initial,Region=initial)", assert, oTable, [
+			"/BusinessPartners(Country='DE')",
+			"/BusinessPartners(Country='DE',Region='BW')",
+			"/BusinessPartners(Country='')",
+			"/BusinessPartners(Country='',Region='')",
+			"/BusinessPartners(Country='',Region='',Industry='foo')",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)"
+		], [
+			[true, true, 1, "DE", "", "", "42"],
+			[false, true, 2, "DE", "BW", "", "41"],
+			[true, true, 1, "", "", "", "11"],
+			[true, true, 2, "", "", "", "4"],
+			[undefined, false, 3, "", "", "foo", "1"],
+			[false, true, 2, "", "", "", "5"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"],
+			[true, true, 1, "", "", "", "22"],
+			[false, true, 2, "", "", "", "4"],
+			[false, true, 2, "", "", "", "5"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"]
+		]);
+
+		this.expectRequest(sCountryAndRegionEmpty, oCountryAndRegionEmpty);
+		this.oLogMock.expects("warning")
+			.withArgs("Duplicate key predicate: (Country='',Region='',Industry='foo')");
+
+		await Promise.all([
+			oCountry1_1.expand(),
+			this.waitForChanges(assert, "expand (Country=initial,Region=null)")
+		]);
+		checkTable("expand (Country=initial,Region=null)", assert, oTable, [
+			"/BusinessPartners(Country='DE')",
+			"/BusinessPartners(Country='DE',Region='BW')",
+			"/BusinessPartners(Country='')",
+			"/BusinessPartners(Country='',Region='')",
+			"/BusinessPartners(Country='',Region='',Industry='foo')",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',Industry='foo',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)"
+		], [
+			[true, true, 1, "DE", "", "", "42"],
+			[false, true, 2, "DE", "BW", "", "41"],
+			[true, true, 1, "", "", "", "11"],
+			[true, true, 2, "", "", "", "4"],
+			[undefined, false, 3, "", "", "foo", "1"],
+			[true, true, 2, "", "", "", "5"],
+			[undefined, false, 3, "", "", "foo", "1"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"],
+			[true, true, 1, "", "", "", "22"],
+			[false, true, 2, "", "", "", "4"],
+			[false, true, 2, "", "", "", "5"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"]
+		]);
+
+		this.expectRequest(sCountryAndRegionEmpty, oCountryAndRegionEmpty);
+		this.oLogMock.expects("warning")
+			.withArgs("Duplicate key predicate: (Country='',Region='',Industry='foo')");
+
+		await Promise.all([
+			oCountry1_2.expand(),
+			this.waitForChanges(assert, "expand (Country=null,Region=initial)")
+		]);
+		checkTable("expand (Country=null,Region=initial)", assert, oTable, [
+			"/BusinessPartners(Country='DE')",
+			"/BusinessPartners(Country='DE',Region='BW')",
+			"/BusinessPartners(Country='')",
+			"/BusinessPartners(Country='',Region='')",
+			"/BusinessPartners(Country='',Region='',Industry='foo')",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',Industry='foo',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',Industry='foo',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)",
+			"/BusinessPartners(Country='',Region='',$duplicate=...)"
+		], [
+			[true, true, 1, "DE", "", "", "42"],
+			[false, true, 2, "DE", "BW", "", "41"],
+			[true, true, 1, "", "", "", "11"],
+			[true, true, 2, "", "", "", "4"],
+			[undefined, false, 3, "", "", "foo", "1"],
+			[true, true, 2, "", "", "", "5"],
+			[undefined, false, 3, "", "", "foo", "1"],
+			[true, true, 2, "", "", "", "6"],
+			[undefined, false, 3, "", "", "foo", "1"],
+			[false, true, 2, "", "", "", "7"],
+			[true, true, 1, "", "", "", "22"],
+			[false, true, 2, "", "", "", "4"],
+			[false, true, 2, "", "", "", "5"],
+			[false, true, 2, "", "", "", "6"],
+			[false, true, 2, "", "", "", "7"]
+		]);
 	});
 
 	//*********************************************************************************************
