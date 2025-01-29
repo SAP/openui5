@@ -71655,12 +71655,13 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2856
 	//
 	// Use either submit mode API or Auto (JIRA: CPOUI5ODATAV4-2847)
-[false, true].forEach(function (bReset) {
+	// Support Context#resetChanges on transient "upsert" context (JIRA: CPOUI5ODATAV4-2887)
+[false, true, 1].forEach(function (bReset) { // true: on context, 1: on model
 	[false, true].forEach(function (bIntermediate) {
 		[false, true].forEach(function (bAuto) {
 			[false, true].forEach(function (bMerge) {
 				const sUpdateGroupId = bAuto ? "$auto" : "update";
-				const sTitle = "CPOUI5ODATAV4-2211: upsert, " + (bReset ? "reset" : "submit")
+				const sTitle = "CPOUI5ODATAV4-2211: upsert, reset=" + bReset
 					+ ", intermediate context binding=" + bIntermediate
 					+ ", update group=" + sUpdateGroupId + ", merge addt'l changes=" + bMerge;
 
@@ -71879,6 +71880,11 @@ make root = ${bMakeRoot}`;
 				oContext.getCanonicalPath();
 			}, new Error(sPublicationPath + ": No key predicate known at " + sPublicationPath));
 
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2887)
+				oContext.delete();
+			}, new Error("Cannot delete " + oContext));
+
 			const oOperation = oModel.bindContext("special.cases.PreparationAction(...)", oContext);
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-2856)
@@ -71911,12 +71917,10 @@ make root = ${bMakeRoot}`;
 				.expectChange("isNull", true);
 
 			// code under test
-			if (bIntermediate) { // misuse to distinguish reset on context vs. model
-				// Note: #resetChanges throws if "this context is transient, but not inactive and
-				// therefore should rather be reset via {@link #delete}" --> that's OK!
-				oPromise = oArtistContext.resetChanges();
-			} else {
+			if (bReset === 1) {
 				oModel.resetChanges(); // Note: does not return a Promise (yet)
+			} else {
+				oPromise = (oContext ?? oArtistContext).resetChanges();
 			}
 		} else {
 			this.expectRequest({
