@@ -5650,7 +5650,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.deepEqual(oHeaderContext.getObject(""), {
+			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				$count : 2
 			}, "JIRA: CPOUI5ODATAV4-1944");
@@ -71634,16 +71634,17 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: Update two properties of an entity reachable via single-valued navigation property.
-	// However, the navigation property is null, and the entity is inserted by this update
+	// However, the navigation property is null and the entity is inserted by this update
 	// ("upsert"). The test is run with and without an intermediate ODCB w/o cache on the navigation
 	// property. (Its binding context points to the upserted entity; it is used for #resetChanges.)
 	// See that further property updates are merged into the PATCH, and that the PATCH is followed
-	// by a GET request for that entity (using ODCB#requestSideEffects) within the same $batch.
+	// by a GET request for that entity (like ODCB#requestSideEffects) within the same $batch.
 	// When it failed, see that transition messages are handled correctly, properties still are
-	// merged, and the PATCH is repeated. See that it is correctly reset upon ODM#resetChanges or
-	// Context#resetChanges. See that the GET request correctly updates the entity after a
-	// successful PATCH. The upserted entity is reached via two navigation properties. This effects
-	// the URL for the upsert PATCH because we use the deep path for it then.
+	// merged (unless we simply resubmit), and the PATCH is repeated. See that it is correctly reset
+	// upon ODM#resetChanges or Context#resetChanges. See that the GET request correctly updates the
+	// entity after a successful PATCH. The upserted entity is reached via two navigation
+	// properties. This effects the URL for the upsert PATCH because we use the deep path for it
+	// then.
 	// JIRA: CPOUI5ODATAV4-2211
 	//
 	// Make sure that canonical path APIs behave unchanged (JIRA: CPOUI5ODATAV4-2864)
@@ -71652,14 +71653,20 @@ make root = ${bMakeRoot}`;
 	// amount w/ currency. Test eventing for PATCH requests. Check "transient" handling, pending
 	// changes, and operation invocation.
 	// JIRA: CPOUI5ODATAV4-2856
+	//
+	// Use either submit mode API or Auto (JIRA: CPOUI5ODATAV4-2847)
 [false, true].forEach(function (bReset) {
 	[false, true].forEach(function (bIntermediate) {
-		const sTitle = "CPOUI5ODATAV4-2211: upsert, " + (bReset ? "reset" : "submit")
-			+ ", intermediate context binding=" + bIntermediate;
+		[false, true].forEach(function (bAuto) {
+			[false, true].forEach(function (bMerge) {
+				const sUpdateGroupId = bAuto ? "$auto" : "update";
+				const sTitle = "CPOUI5ODATAV4-2211: upsert, " + (bReset ? "reset" : "submit")
+					+ ", intermediate context binding=" + bIntermediate
+					+ ", update group=" + sUpdateGroupId + ", merge addt'l changes=" + bMerge;
 
 	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSpecialCasesModel(
-			{autoExpandSelect : true, updateGroupId : "update"});
+			{autoExpandSelect : true, updateGroupId : sUpdateGroupId});
 		const sPublicationPath
 			= "/Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication";
 		const sView = `
@@ -71756,12 +71763,24 @@ make root = ${bMakeRoot}`;
 		this.oView.byId("price").getBinding("value").setValue("12");
 		this.oView.byId("publicationId").getBinding("value").setValue("2");
 
-		await this.waitForChanges(assert, "upsert");
+		if (!bAuto) { // Note: w/ $auto, #waitForChanges is too slow and PATCH is unexpected
+			await this.waitForChanges(assert, "upsert");
+		}
 
-		assert.deepEqual(oArtistContext.getObject("BestFriend/BestPublication"), {
-			"@$ui5.context.isTransient" : true,
-			Price : "12",
-			PublicationID : "2"
+		assert.deepEqual(oArtistContext.getObject(), {
+			"@odata.etag" : "etag1",
+			ArtistID : "1",
+			BestFriend : {
+				"@odata.etag" : "etag2",
+				ArtistID : "2",
+				BestPublication : {
+					"@$ui5.context.isTransient" : true,
+					Price : "12",
+					PublicationID : "2"
+				},
+				IsActiveEntity : false
+			},
+			IsActiveEntity : false
 		});
 		let bCreated;
 		const oCreatedPromise = oContext?.created();
@@ -71797,7 +71816,7 @@ make root = ${bMakeRoot}`;
 					"If-None-Match" : "*",
 					Prefer : "return=minimal"
 				},
-				url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
+				url : sPublicationPath.slice(1),
 				payload : {
 					CurrencyCode : "$MD", // default value from $metadata
 					Price : "12",
@@ -71823,7 +71842,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(iPatchCompleted, 0);
 
 		await Promise.all([
-			oModel.submitBatch("update"),
+			oModel.submitBatch(sUpdateGroupId),
 			this.waitForChanges(assert, "submit -> error")
 		]);
 
@@ -71833,17 +71852,21 @@ make root = ${bMakeRoot}`;
 		await this.checkValueState(assert, this.oView.byId("price"), "Error",
 			"Request intentionally failed");
 
-		this.expectChange("price", "11");
+		if (bMerge) {
+			this.expectChange("price", "11");
 
-		// code under test
-		this.oView.byId("price").getBinding("value").setValue("11");
+			// code under test
+			this.oView.byId("price").getBinding("value").setValue("11");
+		}
 
-		await this.waitForChanges(assert, "update");
+		if (!bAuto) {
+			await this.waitForChanges(assert, "update");
+		}
 
 		if (oContext) {
 			assert.deepEqual(oContext.getObject(), {
 				"@$ui5.context.isTransient" : true,
-				Price : "11",
+				Price : bMerge ? "11" : "12",
 				PublicationID : "2"
 			});
 			//TODO assert.strictEqual(oContext.isInactive(), false);
@@ -71870,13 +71893,16 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oModel.hasPendingChanges(), true);
 		let oPromise;
 		if (bReset) {
-			this.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
-					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-				.expectCanceledError("Failed to update path " + sPublicationPath + "/Price",
-					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-				.expectCanceledError("Failed to update path " + sPublicationPath + "/PublicationID",
-					"Request canceled: PATCH " + sPublicationPath.slice(1) + "; group: update")
-				.expectChange("price", "12"); // from the second PATCH to "11"
+			const aProperties = ["Price", "PublicationID"];
+			if (bMerge) {
+				aProperties.unshift("Price");
+				this.expectChange("price", "12"); // from the second PATCH to "11"
+			}
+			aProperties.forEach((sProperty) => {
+				this.expectCanceledError(`Failed to update path ${sPublicationPath}/${sProperty}`,
+						"Request canceled: PATCH " + sPublicationPath.slice(1)
+						+ "; group: " + (bAuto && !bMerge ? "$parked.$auto" : sUpdateGroupId));
+			});
 			if (bIntermediate) {
 				this.expectChange("isTransient", undefined);
 			}
@@ -71890,7 +71916,7 @@ make root = ${bMakeRoot}`;
 				// therefore should rather be reset via {@link #delete}" --> that's OK!
 				oPromise = oArtistContext.resetChanges();
 			} else {
-				oModel.resetChanges();
+				oModel.resetChanges(); // Note: does not return a Promise (yet)
 			}
 		} else {
 			this.expectRequest({
@@ -71900,10 +71926,10 @@ make root = ${bMakeRoot}`;
 						"If-None-Match" : "*",
 						Prefer : "return=minimal"
 					},
-					url : "Artists(ArtistID='1',IsActiveEntity=false)/BestFriend/BestPublication",
+					url : sPublicationPath.slice(1),
 					payload : {
 						CurrencyCode : "$MD", // default value from $metadata
-						Price : "11",
+						Price : bMerge ? "11" : "12",
 						PublicationID : "2"
 					}
 				}, null, {ETag : "etag3"}) // 204 No Content
@@ -71915,12 +71941,14 @@ make root = ${bMakeRoot}`;
 						+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))"
 				}, {
 					BestFriend : {
+						ArtistID : "2",
 						BestPublication : {
 							"@odata.etag" : "etag3",
 							CurrencyCode : "USD",
 							Price : "10.99",
 							PublicationID : "2"
-						}
+						},
+						IsActiveEntity : false
 					}
 				});
 			if (bIntermediate) {
@@ -71935,7 +71963,7 @@ make root = ${bMakeRoot}`;
 
 		await Promise.all([
 			oPromise,
-			oModel.submitBatch("update"),
+			oModel.submitBatch(sUpdateGroupId),
 			this.waitForChanges(assert, bReset ? "reset" : "submit")
 		]);
 
@@ -71972,6 +72000,8 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oArtistBinding.hasPendingChanges(), false);
 		assert.strictEqual(oModel.hasPendingChanges(), false);
 	});
+			});
+		});
 	});
 });
 
