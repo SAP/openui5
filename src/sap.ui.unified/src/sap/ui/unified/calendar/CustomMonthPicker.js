@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.unified.calendar.CustomYearPicker
+// Provides class sap.ui.unified.calendar.CustomMonthPicker
 sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/unified/Calendar",
