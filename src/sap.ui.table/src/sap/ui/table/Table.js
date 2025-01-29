@@ -3906,7 +3906,7 @@ sap.ui.define([
 			const sPath = mSettings.rows.path;
 			const iSeparatorPos = sPath.indexOf(">");
 			if (iSeparatorPos > 0) {
-				sModelName = sPath.substr(0, iSeparatorPos);
+				sModelName = sPath.substring(0, iSeparatorPos);
 			}
 		}
 

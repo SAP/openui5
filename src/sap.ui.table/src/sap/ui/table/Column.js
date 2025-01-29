@@ -832,22 +832,22 @@ sap.ui.define([
 				// determine the filter operator depending on the
 				if (sValue.indexOf("=") === 0) {
 					sOperator = FilterOperator.EQ;
-					sParsedValue = sValue.substr(1);
+					sParsedValue = sValue.substring(1);
 				} else if (sValue.indexOf("!=") === 0) {
 					sOperator = FilterOperator.NE;
-					sParsedValue = sValue.substr(2);
+					sParsedValue = sValue.substring(2);
 				} else if (sValue.indexOf("<=") === 0) {
 					sOperator = FilterOperator.LE;
-					sParsedValue = sValue.substr(2);
+					sParsedValue = sValue.substring(2);
 				} else if (sValue.indexOf("<") === 0) {
 					sOperator = FilterOperator.LT;
-					sParsedValue = sValue.substr(1);
+					sParsedValue = sValue.substring(1);
 				} else if (sValue.indexOf(">=") === 0) {
 					sOperator = FilterOperator.GE;
-					sParsedValue = sValue.substr(2);
+					sParsedValue = sValue.substring(2);
 				} else if (sValue.indexOf(">") === 0) {
 					sOperator = FilterOperator.GT;
-					sParsedValue = sValue.substr(1);
+					sParsedValue = sValue.substring(1);
 				} else if (aBetween) {
 					if (aBetween[1] && aBetween[2]) {
 						sOperator = FilterOperator.BT;
@@ -862,13 +862,13 @@ sap.ui.define([
 					}
 				} else if (bIsString && sValue.indexOf("*") === 0 && sValue.lastIndexOf("*") === sValue.length - 1) {
 					sOperator = FilterOperator.Contains;
-					sParsedValue = sValue.substr(1, sValue.length - 2);
+					sParsedValue = sValue.substring(1, sValue.length - 2);
 				} else if (bIsString && sValue.indexOf("*") === 0) {
 					sOperator = FilterOperator.EndsWith;
-					sParsedValue = sValue.substr(1);
+					sParsedValue = sValue.substring(1);
 				} else if (bIsString && sValue.lastIndexOf("*") === sValue.length - 1) {
 					sOperator = FilterOperator.StartsWith;
-					sParsedValue = sValue.substr(0, sValue.length - 1);
+					sParsedValue = sValue.substring(0, sValue.length - 1);
 				} else {
 					if (this.getDefaultFilterOperator()) {
 						sOperator = this.getDefaultFilterOperator();
@@ -878,7 +878,7 @@ sap.ui.define([
 						} else {
 							sOperator = FilterOperator.EQ;
 						}
-					sParsedValue = sValue.substr(0);
+					sParsedValue = sValue.substring(0);
 				}
 				if (!sSecondaryParsedValue) {
 					oFilter = new Filter(sPath, sOperator, this._parseFilterValue(sParsedValue));
