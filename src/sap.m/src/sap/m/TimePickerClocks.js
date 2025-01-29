@@ -405,7 +405,7 @@ sap.ui.define([
 						for (iIndex = this._clockConstraints[iActiveClock].min; iIndex <= this._clockConstraints[iActiveClock].max; iIndex++) {
 							if (iIndex % this._clockConstraints[iActiveClock].step === 0) {
 								sIndex = iIndex.toString();
-								if (sBuffer === sIndex.substr(0, sBuffer.length) || iBuffer === iIndex) {
+								if (sBuffer === sIndex.substring(0, sBuffer.length) || iBuffer === iIndex) {
 									iMatching++;
 									iValueMatching = iMatching === 1 ? iIndex : -1;
 									if (iBuffer === iIndex) {

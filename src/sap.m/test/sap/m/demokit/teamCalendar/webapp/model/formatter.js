@@ -30,7 +30,7 @@ sap.ui.define(
 		 * @returns {string} prefixed image URL (if necessary)
 		 */
 		fixImagePath : function (sImage) {
-			if (sImage && sImage.substr(0, 11) !== "sap-icon://") {
+			if (sImage && sImage.substring(0, 11) !== "sap-icon://") {
 				sImage = this.imagePath + sImage;
 
 			}

@@ -225,7 +225,7 @@ sap.ui.define([
 					const value = match[2];
 
 					aParameterMetadata.push({
-						name: name.substr(1), // remove the leading @
+						name: name.substring(1), // remove the leading @
 						value,
 						nameTP: name,
 						nameCP: mCustomProperties[value],

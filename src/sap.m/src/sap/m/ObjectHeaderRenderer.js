@@ -1321,15 +1321,15 @@ sap.ui.define([
 		oRM.openEnd();
 
 		if (oOH.getTitle().length > nCutLen) {
-			sOHTitle = oOH.getTitle().substr(0, nCutLen).trim();
+			sOHTitle = oOH.getTitle().substring(0, nCutLen).trim();
 			sEllipsis = '...';
 		} else {
 			sOHTitle = oOH.getTitle();
 		}
 
 		if (bMarkers) {
-			var sOHTitleEnd = sOHTitle.substr(sOHTitle.lastIndexOf(" ") + 1);
-			var sOHTitleStart = sOHTitle.substr(0, sOHTitle.lastIndexOf(" ") + 1);
+			var sOHTitleEnd = sOHTitle.substring(sOHTitle.lastIndexOf(" ") + 1);
+			var sOHTitleStart = sOHTitle.substring(0, sOHTitle.lastIndexOf(" ") + 1);
 
 			if (sOHTitleEnd.length === 1) {
 				sOHTitleEnd = sOHTitle;

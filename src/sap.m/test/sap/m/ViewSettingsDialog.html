@@ -279,7 +279,7 @@
 						// we use some internal logic to get the dialog instance and the filter instance from within the control
 						// if the control is not cloned, access the dialog and the filter by id directly
 						var source = oEvent.getSource(),
-							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substr(0,4)),
+							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substring(0,4)),
 							filters = vsd.getFilterItems(),
 							customFilter,
 							i = 0;
@@ -324,7 +324,7 @@
 						// we use some internal logic to get the dialog instance and the filter instance from within the control
 						// if the control is not cloned, access the dialog and the filter by id directly
 						var source = oEvent.getSource(),
-							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substr(0,4)),
+							vsd = sap.ui.getCore().byId(source.getParent().getParent().getId().substring(0,4)),
 							filters = vsd.getFilterItems(),
 							customFilter,
 							i = 0;

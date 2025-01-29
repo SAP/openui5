@@ -2754,7 +2754,7 @@ sap.ui.define([
 	 * @returns {string} the filled template text
 	 */
 	P13nConditionPanel._templateReplace = function(sTemplate, aValues) {
-		return sTemplate.replace(/\$\d/g, function(sMatch) { return aValues[parseInt(sMatch.substr(1))]; });
+		return sTemplate.replace(/\$\d/g, function(sMatch) { return aValues[parseInt(sMatch.substring(1))]; });
 	};
 
 	/**

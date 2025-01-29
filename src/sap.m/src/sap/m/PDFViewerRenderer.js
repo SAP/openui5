@@ -114,7 +114,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 				var sParametrizedSource = oControl.getSource();
 				var iCrossPosition = oControl.getSource().indexOf("#");
 				if (iCrossPosition > -1) {
-					sParametrizedSource = sParametrizedSource.substr(0, iCrossPosition);
+					sParametrizedSource = sParametrizedSource.substring(0, iCrossPosition);
 				}
 				if (!(Device.browser.safari && sParametrizedSource.startsWith("blob:"))) {
 					sParametrizedSource += "#view=FitH";

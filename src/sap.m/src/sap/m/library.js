@@ -6300,7 +6300,7 @@ sap.ui.define([
 			if (!oAnnotation) {
 				return false;
 			}
-			var sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
+			var sProperty = sPath.substring(sPath.lastIndexOf("/") + 1);
 			mValueListAnnotation.inProperty = sProperty;
 
 			jQuery.each(oAnnotation.record, function(i, aPropertyValues){

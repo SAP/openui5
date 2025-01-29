@@ -326,7 +326,7 @@ sap.ui.define([
 		};
 
 		function fnCapitalize(sName) {
-			return sName.substring(0, 1).toUpperCase() + sName.substr(1);
+			return sName.substring(0, 1).toUpperCase() + sName.substring(1);
 		}
 
 		return OverflowToolbarAssociativePopoverControls;

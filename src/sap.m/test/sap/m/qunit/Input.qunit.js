@@ -8215,7 +8215,7 @@ sap.ui.define([
 		var oItem = oSuggestionsPopover.getItemsContainer().getItems()[1]; // The first SsstandardListItem
 
 		// Simulate user input- the first 3 letters of a StandardListItem
-		this.oInput.setValue(oItem.getTitle().substr(0, 3));
+		this.oInput.setValue(oItem.getTitle().substring(0, 3));
 		this.oInput.focus();
 
 		// Act
@@ -8238,7 +8238,7 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		// Assert
-		assert.strictEqual(this.oInput.getValue(), oItem.getTitle().substr(0, 3), "User's input is kept.");
+		assert.strictEqual(this.oInput.getValue(), oItem.getTitle().substring(0, 3), "User's input is kept.");
 	});
 
 	QUnit.test("Behaviour for a 'contains' item selection", async function (assert) {
@@ -8250,7 +8250,7 @@ sap.ui.define([
 		var oItem = oSuggestionsPopover.getItemsContainer().getItems()[1]; // The first SsstandardListItem
 
 		// Simulate user input- some letters letters from a StandardListItem, but not the first ones
-		this.oInput.setValue(oItem.getTitle().substr(3));
+		this.oInput.setValue(oItem.getTitle().substring(3));
 		this.oInput.focus();
 
 		// Act
@@ -8287,7 +8287,7 @@ sap.ui.define([
 		var oItem = oSuggestionsPopover.getItemsContainer().getItems()[1]; // A StandardListItem
 
 		// Simulate user input- which matches some item
-		this.oInput.setValue(oItem.getTitle().substr(0, 3));
+		this.oInput.setValue(oItem.getTitle().substring(0, 3));
 		this.oInput.focus();
 
 		// Act

@@ -37,7 +37,7 @@ sap.ui.define([
 		rowSelectionHandler: function(oEvent) {
 			var oSelectedRow = oEvent.getParameter("rows")[0],
 				sSelectedId = oSelectedRow.getId();
-			this._sSelectedMember = sSelectedId.substr(sSelectedId.lastIndexOf('-') + 1);
+			this._sSelectedMember = sSelectedId.substring(sSelectedId.lastIndexOf('-') + 1);
 			oSelectedRow.setSelected(false);
 			this._loadCalendar("SinglePlanningCalendar");
 		},

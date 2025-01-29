@@ -455,7 +455,7 @@ sap.ui.define([
 	 * @private
 	 */
 	StandardListItem.prototype._getCollapsedText = function(sText) {
-		return sText.substr(0, this._getWrapCharLimit());
+		return sText.substring(0, this._getWrapCharLimit());
 	};
 
 	StandardListItem.prototype._getWrapCharLimit = function() {

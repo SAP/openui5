@@ -22,7 +22,7 @@
 					oItem = oItem.getParent();
 				}
 
-				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+				sItemPath = sItemPath.substring(0, sItemPath.lastIndexOf(" > "));
 
 				sap.m.MessageToast.show("itemSelected: " + sItemPath);
 			},

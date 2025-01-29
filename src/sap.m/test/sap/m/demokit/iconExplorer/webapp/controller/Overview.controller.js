@@ -172,7 +172,7 @@ sap.ui.define([
 			} else if (sSelectedCopyMode === "sym") {
 				this._onCopyIconToClipboard(sIconURI);
 			} else if (sSelectedCopyMode === "uni") {
-				this._onCopyUnicodeToClipboard(sIconURI.substr(sIconURI.lastIndexOf("/") + 1, sIconURI.length - 1));
+				this._onCopyUnicodeToClipboard(sIconURI.substring(sIconURI.lastIndexOf("/") + 1, sIconURI.length - 1));
 			}
 		},
 

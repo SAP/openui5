@@ -937,7 +937,7 @@ sap.ui.define([
 			iSlashIndex = sPlaceholder.indexOf("/");
 
 		if (iSlashIndex > 0) {
-			return oLocaleData.getCombinedDateTimePattern(sPlaceholder.substr(0, iSlashIndex), sPlaceholder.substr(iSlashIndex + 1));
+			return oLocaleData.getCombinedDateTimePattern(sPlaceholder.substring(0, iSlashIndex), sPlaceholder.substring(iSlashIndex + 1));
 		} else {
 			return oLocaleData.getCombinedDateTimePattern(sPlaceholder, sPlaceholder);
 		}
@@ -1241,7 +1241,7 @@ sap.ui.define([
 
 		var iSlashIndex = sDisplayFormat.indexOf("/");
 		if (iSlashIndex > 0 && this._checkStyle(sDisplayFormat)) {
-			sDisplayFormat = sDisplayFormat.substr(iSlashIndex + 1);
+			sDisplayFormat = sDisplayFormat.substring(iSlashIndex + 1);
 		}
 
 		if (sDisplayFormat == DateTimeFormatStyles.Short || sDisplayFormat == DateTimeFormatStyles.Medium || sDisplayFormat == DateTimeFormatStyles.Long || sDisplayFormat == DateTimeFormatStyles.Full) {

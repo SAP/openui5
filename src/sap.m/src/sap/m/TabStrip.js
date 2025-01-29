@@ -976,7 +976,7 @@ function(
 			var oSelectItem = this._findSelectItemFromTabStripItem(oEvent.getSource());
 			var sPropertyKey = oEvent['mParameters'].propertyKey;
 			// call it directly with the setter name so overwritten functions can be called and not setProperty method directly
-			var sMethodName = "set" + sPropertyKey.substr(0,1).toUpperCase() + sPropertyKey.substr(1);
+			var sMethodName = "set" + sPropertyKey.substring(0,1).toUpperCase() + sPropertyKey.substring(1);
 			oSelectItem[sMethodName](oEvent['mParameters'].propertyValue);
 		};
 

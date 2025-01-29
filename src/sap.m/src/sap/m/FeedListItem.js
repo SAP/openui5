@@ -586,7 +586,7 @@ function(
 			var sCollapsedPlainText = sPlainText.substring(0, this._nMaxCollapsedLength);
 			var nLastSpace = sCollapsedPlainText.lastIndexOf(" ");
 			if (nLastSpace > 0) {
-				sCollapsedPlainText = sCollapsedPlainText.substr(0, nLastSpace);
+				sCollapsedPlainText = sCollapsedPlainText.substring(0, nLastSpace);
 			}
 			if (sPlainText.length === this._sFullText.length) {//no HTML tags detected
 				sText = sCollapsedPlainText;

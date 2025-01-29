@@ -523,7 +523,7 @@ sap.ui.define([
 				iSubStringIndex = iIndexOfH;
 			}
 
-			var sValueWithoutHours = sValue.substr(0, iSubStringIndex) + sValue.substr(iSubStringIndex + iHoursDigits);
+			var sValueWithoutHours = sValue.substring(0, iSubStringIndex) + sValue.substring(iSubStringIndex + iHoursDigits);
 
 			if (oSignificantNumbers.test(sValueWithoutHours)) {
 				return sValue;
@@ -531,7 +531,7 @@ sap.ui.define([
 
 			sValue = sValue.replace(/[0-9]/g, "0");
 
-			return sValue.substr(0, iSubStringIndex) + "24" + sValue.substr(iSubStringIndex + iHoursDigits);
+			return sValue.substring(0, iSubStringIndex) + "24" + sValue.substring(iSubStringIndex + iHoursDigits);
 		};
 
 		/**
@@ -556,7 +556,7 @@ sap.ui.define([
 				iSubStringIndex = iIndexOfH;
 			}
 
-			return sValue.substr(0, iSubStringIndex) + strRepeat(0, iHoursDigits) + sValue.substr(iSubStringIndex + 2);
+			return sValue.substring(0, iSubStringIndex) + strRepeat(0, iHoursDigits) + sValue.substring(iSubStringIndex + 2);
 		};
 
 
@@ -575,7 +575,7 @@ sap.ui.define([
 				iSubStringIndex = iIndexOfH;
 			}
 
-			return sValue.substr(iSubStringIndex, 2) === "24";
+			return sValue.substring(iSubStringIndex, 2) === "24";
 		};
 
 		/**

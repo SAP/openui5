@@ -194,7 +194,7 @@ sap.ui.define([
 			}
 
 			// add trailing slash if necessary for more convenience
-			if (sPath.substr(sPath.length - 1) !== "/") {
+			if (sPath.substring(sPath.length - 1) !== "/") {
 				sPath += "/";
 			}
 

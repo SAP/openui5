@@ -448,7 +448,7 @@ sap.ui.define([
 		// then try to fallback to "original" text without appended version (_v*** after the original type key)
 		// then try to fallback to "original" text from the IllustratedMessage.FALLBACK_TEXTS map
 		return oBundle.getText(sPrepend + this._sIllustrationType, undefined, true) ||
-			oBundle.getText(sPrepend + this._sIllustrationType.substr(0, this._sIllustrationType.indexOf('_v')) , undefined, true) ||
+			oBundle.getText(sPrepend + this._sIllustrationType.substring(0, this._sIllustrationType.indexOf('_v')) , undefined, true) ||
 			oBundle.getText(sPrepend + IllustratedMessage.FALLBACK_TEXTS[this._sIllustrationType], undefined, true);
 	};
 

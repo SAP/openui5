@@ -1306,7 +1306,7 @@ function(
 				if (!this._bPaste) {
 					//if the characters after the decimal are more than the displayValuePrecision -> keep the current value after the decimal
 					if (iCharsAfterTheDecimalSign > iCharsSet) {
-						sValue = sCharsBeforeTheEventDecimalValue + (iCharsSet > 0 ? sDecimalSeparator + sCharsAfterTheEventDecimalValue.substr(0, iCharsSet) : '');
+						sValue = sCharsBeforeTheEventDecimalValue + (iCharsSet > 0 ? sDecimalSeparator + sCharsAfterTheEventDecimalValue.substring(0, iCharsSet) : '');
 						this._showWrongValueVisualEffect();
 					}
 

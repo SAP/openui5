@@ -783,7 +783,7 @@ function(
 			sValue = sValue || this._$input.val();
 			sThatValue = sValue;
 			bThatValue2400 = TimePickerInternals._isHoursValue24(sThatValue, iIndexOfHH, iIndexOfH);
-			bContains24 = sValue.substr(iIndexOfH, 2) === "24";
+			bContains24 = sValue.substring(iIndexOfH, 2) === "24";
 			bEnabled2400 = this.getSupport2400() && bThatValue2400 && bContains24;
 			this._bValid = true;
 			if (sValue !== "") {

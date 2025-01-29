@@ -391,7 +391,7 @@ sap.ui.define([
 					sPropertyKey = mTCItemToTSItemProperties[sPropertyKey];
 					var oTabStripItem = this._toTabStripItem(oEvent.getSource());
 					// call it directly with the setter name so overwritten functions can be called and not setProperty method directly
-					var sMethodName = "set" + sPropertyKey.substr(0,1).toUpperCase() + sPropertyKey.substr(1);
+					var sMethodName = "set" + sPropertyKey.substring(0,1).toUpperCase() + sPropertyKey.substring(1);
 					oTabStripItem && oTabStripItem[sMethodName](oEvent['mParameters'].propertyValue);
 				}
 			}.bind(this));
