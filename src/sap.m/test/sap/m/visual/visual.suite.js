@@ -83,6 +83,7 @@ module.exports = [
 	"PlanningCalendarRelativeView.spec.js",
 	"Popover.spec.js",
 	"PopoverPlacement.spec.js",
+	"PopoverEdgePlacement.spec.js",
 	"PopoverResize.spec.js",
 	"PopoverResizeRTL.spec.js",
 	"PopoverWithinArea.spec.js",

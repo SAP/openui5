@@ -73,8 +73,12 @@ sap.ui.define([
 
 				// resize suggestion popup to minimum size of the input field
 				setTimeout(function () {
-					if (oPopover && oPopover.isOpen() && oPopover.$().outerWidth() < oInput.$().outerWidth()) {
-						oPopover.setContentWidth((oInput.$().outerWidth()) + "px");
+					if (oPopover && oPopover.isOpen()) {
+						const fPopoverWidth = oPopover.$().outerWidth(true) + 2 * oPopover._fThickShadowSize;
+
+						if (fPopoverWidth < oInput.$().outerWidth()) {
+							oPopover.setContentWidth((oInput.$().outerWidth()) + "px");
+						}
 					}
 				}, 0);
 			}

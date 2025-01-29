@@ -3,14 +3,10 @@
 /* Base theme                     */
 /* ============================== */
 
-/* Forces the usage of compact arrow offset, because belize uses a compact arrow for all content densities. */
-@_sap_m_Popover_ForceCompactArrowOffset: true;
-
  /* Buffer width for the scroll bar */
 @_sap_m_Popover_Scroll_Width_Buffer: 20px;
-
-/* Arrow offset from the Popover's corners */
-@_sap_m_Popover_ArrowOffset: 8;
+@_sap_m_Popover_ArrowOffset: 0.5rem; /* Arrow offset from the Popover's corners */
+@_sap_m_Popover_CompactArrowOffset: @_sap_m_Popover_ArrowOffset; /* Arrow offset from the Popover's corners in compact mode */
 
 /* shared mixin for arrow shadow*/
 .sapMPopoverArrAfterShadow(@horizontalShadow, @verticalShadow) {
