@@ -60,9 +60,6 @@
 			"subTitle": "For {ShipAddress}",
 			"status": {
 				"text": "ID {OrderID}"
-			},
-			"closeButton": {
-				"visible": false
 			}
 		},
 		"content": {
@@ -88,19 +85,6 @@
 						{
 							"label": "Postal code",
 							"value": "{ShipPostalCode}"
-						}
-					]
-				}
-			]
-		},
-		"footer": {
-			"actionsStrip": [
-				{
-					"text": "Close",
-					"buttonType": "Reject",
-					"actions": [
-						{
-							"type": "HideCard"
 						}
 					]
 				}

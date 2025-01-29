@@ -147,10 +147,7 @@
 					}
 				}
 			},
-			"details": "{details}",
-			"closeButton": {
-				"visible": false
-			}
+			"details": "{details}"
 		},
 		"content": {
 			"data": {
@@ -161,19 +158,6 @@
 				"description": "{productsData>UnitsInStock} units in stock"
 			},
 			"maxItems": 10
-		},
-		"footer": {
-			"actionsStrip": [
-				{
-					"text": "Close",
-					"buttonType": "Reject",
-					"actions": [
-						{
-							"type": "HideCard"
-						}
-					]
-				}
-			]
 		}
 	}
 }
