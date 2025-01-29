@@ -55,6 +55,7 @@
 @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemZIndex: 0;
 @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPosition: relative;
 @_sap_tnt_NavigationList_Collapsed_ItemHoverBoxShadow: @_sap_tnt_SideNavigation_BoxShadow;
+@_sap_tnt_NavigationList_CollapsedIconPaddingLeft: 0;
 @_sap_tnt_NavigationList_NavigationIndicator: "";
 @_sap_tnt_NavigationList_ExpandIconWidth: 2rem;
 @_sap_tnt_NavigationList_ExpandIconMarginRight: 0;
@@ -387,7 +388,7 @@
 }
 
 .sapTntSideNavigationNotExpanded .sapTntNLIFirstLevel.sapTntNLIWithExpander .sapUiIcon {
-	padding-left: 0.25rem; // to center the icon. Value is the width of the expander.
+	padding-left: @_sap_tnt_NavigationList_CollapsedIconPaddingLeft; // to center the icon. Value is the width of the expander.
 }
 
 
