@@ -4,15 +4,14 @@
 /* =================================== */
 
 .sapMTabContainer {
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-direction: column;
 	flex-direction: column;
 	height: 100%;
+
 	.sapMTabContainerContent {
 		position: relative;
-		-webkit-flex-grow: 1;
 		flex-grow: 1;
+
 		.sapMTabContainerInnerContent {
 			position: absolute;
 			top: 0;
@@ -28,16 +27,20 @@
 .sapUiContainerContentPadding(~".sapMTabContainer", ~"> .sapMTabContainerContent > .sapMTabContainerInnerContent");
 
 .sapMTabContainer {
-	.sapMTabContainerContentTransparent{
+
+	.sapMTabContainerContentTransparent {
 		background-color: transparent;
 	}
-	.sapMTabContainerContentList{
-		background-color: @sapUiGroupContentBackground;
+
+	.sapMTabContainerContentList {
+		background-color: var(--sapGroup_ContentBackground);
 	}
-	.sapMTabContainerContentSolid{
-		background-color: @sapUiShellBackground;
+
+	.sapMTabContainerContentSolid {
+		background-color: var(--sapShell_Background);
 	}
-	.sapMTabContainerContentStandard{
-		background-color: @sapUiBaseBG;
+
+	.sapMTabContainerContentStandard {
+		background-color: var(--sapBackgroundColor);
 	}
 }
