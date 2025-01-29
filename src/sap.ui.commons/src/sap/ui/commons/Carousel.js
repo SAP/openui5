@@ -690,7 +690,7 @@ sap.ui.define([
 			var childWidth, childHeight;
 			try {
 				childWidth = aContent[i].getWidth();
-				if (childWidth.substr( -1) == "%") {
+				if (childWidth.substring( -1) == "%") {
 					childWidth = this.getDefaultItemWidth();
 				}
 			} catch (e) {
@@ -698,7 +698,7 @@ sap.ui.define([
 			}
 			try {
 				childHeight = aContent[i].getHeight();
-				if (childHeight.substr( -1) == "%") {
+				if (childHeight.substring( -1) == "%") {
 					childHeight = this.getDefaultItemHeight();
 				}
 			} catch (e) {

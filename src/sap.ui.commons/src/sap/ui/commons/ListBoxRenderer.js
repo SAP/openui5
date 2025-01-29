@@ -271,7 +271,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/u
 	ListBoxRenderer.fixWidth = function(sCssWidth) {
 		if (ListBoxRenderer.borderWidths > 0) {
 			if (/px$/i.test(sCssWidth)) {
-				var iWidth = parseInt(sCssWidth.substr(0, sCssWidth.length - 2));
+				var iWidth = parseInt(sCssWidth.substring(0, sCssWidth.length - 2));
 				var newWidth = iWidth - ListBoxRenderer.borderWidths;
 				if (newWidth >= 0) {
 					return newWidth + "px";

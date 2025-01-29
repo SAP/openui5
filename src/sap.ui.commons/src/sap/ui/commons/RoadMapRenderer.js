@@ -486,7 +486,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/base/security/e
 		var bIsShortened = false;
 		while (sText.length > 0 && jClone.height() > jStepLabel.height()) {
 			//TODO: Do we need special RTL handling here?
-			sText = sText.substr(0, sText.length - 1);
+			sText = sText.substring(0, sText.length - 1);
 			jClone.html(encodeXML(sText + "..."));
 			bIsShortened = true;
 		}

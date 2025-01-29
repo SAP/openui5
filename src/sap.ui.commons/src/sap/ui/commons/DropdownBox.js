@@ -191,7 +191,7 @@ sap.ui.define([
 				// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 				var $Ref = jQuery(this.getInputDomRef());
 				var iCursorPos = $Ref.cursorPos();
-				this._doTypeAhead($Ref.val().substr(0, iCursorPos), "");
+				this._doTypeAhead($Ref.val().substring(0, iCursorPos), "");
 			}
 			return this;
 		} else {
@@ -210,7 +210,7 @@ sap.ui.define([
 				// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 				var $Ref = jQuery(this.getInputDomRef());
 				var iCursorPos = $Ref.cursorPos();
-				this._doTypeAhead($Ref.val().substr(0, iCursorPos), "");
+				this._doTypeAhead($Ref.val().substring(0, iCursorPos), "");
 			}
 			return this;
 		} else {
@@ -253,7 +253,7 @@ sap.ui.define([
 				// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 				var $Ref = jQuery(this.getInputDomRef());
 				var iCursorPos = $Ref.cursorPos();
-				this._doTypeAhead($Ref.val().substr(0, iCursorPos), "");
+				this._doTypeAhead($Ref.val().substring(0, iCursorPos), "");
 			}
 			return oItem;
 		} else {
@@ -330,7 +330,7 @@ sap.ui.define([
 			// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 			var $Ref = jQuery(this.getInputDomRef());
 			var iCursorPos = $Ref.cursorPos();
-			this._doTypeAhead($Ref.val().substr(0, iCursorPos), "");
+			this._doTypeAhead($Ref.val().substring(0, iCursorPos), "");
 		}
 
 	};
@@ -424,7 +424,7 @@ sap.ui.define([
 			// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 			var $Ref = jQuery(this.getInputDomRef());
 			var iCursorPos = $Ref.cursorPos();
-			this._doTypeAhead($Ref.val().substr(0, iCursorPos), "");
+			this._doTypeAhead($Ref.val().substring(0, iCursorPos), "");
 		}
 
 		ComboBox.prototype._handleItemsChanged.apply(this, arguments);
@@ -624,7 +624,7 @@ sap.ui.define([
 				iCursorPos++;
 			} // 'normalize' cursor position for upcoming handling...
 			this._iCursorPosBeforeBackspace = null; // forget being called by backspace handling
-			bValid = this._doTypeAhead($Ref.val().substr(0, iCursorPos - 1), "");
+			bValid = this._doTypeAhead($Ref.val().substring(0, iCursorPos - 1), "");
 		} else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
 			// this must happen to check for valid entry after paste and if required -> rollback
 			$Ref.val(this._oValueBeforePaste);
@@ -743,9 +743,9 @@ sap.ui.define([
 			this.noTypeAheadByOpen = undefined;
 		}
 		if (iKC === KeyCodes.BACKSPACE) {// only happens in FF or other non-IE-browsers. Webkit or IE does not support BACKSPACE in keypress, but in Webkit it's called from keydown
-			this._doTypeAhead(sVal.substr(0, iCursorPos - 1), "");
+			this._doTypeAhead(sVal.substring(0, iCursorPos - 1), "");
 		} else {
-			this._doTypeAhead(sVal.substr(0, iCursorPos), oNewChar);
+			this._doTypeAhead(sVal.substring(0, iCursorPos), oNewChar);
 		}
 
 		if (sVal != $Ref.val()) {
@@ -880,7 +880,7 @@ sap.ui.define([
 			sVal = $Ref.val();
 		if (sVal.length > 0 && iNewCursor > 0) {
 			// if nothing is selected do not initialate value
-			this._doTypeAhead(sVal.substr(0,iNewCursor), "");
+			this._doTypeAhead(sVal.substring(0,iNewCursor), "");
 			if (!this.oPopup || !this.oPopup.isOpen()) {
 				// as popup is not open restore listbox item like on popup close
 				this._cleanupClose(this._getListBox());
@@ -949,7 +949,7 @@ sap.ui.define([
 		var $Ref = jQuery(this.getInputDomRef()),
 			iNewCursor = $Ref.cursorPos() + (iMoveBy || 0),
 			sVal = $Ref.val();
-		this._doTypeAhead(sVal.substr(0,iNewCursor), "");
+		this._doTypeAhead(sVal.substring(0,iNewCursor), "");
 		if (!this.oPopup || !this.oPopup.isOpen()) {
 			// as popup is not open restore listbox item like on popup close
 			this._cleanupClose(this._getListBox());

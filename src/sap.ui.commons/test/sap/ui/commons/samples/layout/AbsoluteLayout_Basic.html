@@ -31,7 +31,7 @@
 		<script>
 		var getUrlParameter = function(name) {
 			var url = document.URL;
-			var paramStr = url.substr((url.indexOf("?")+1));
+			var paramStr = url.substring((url.indexOf("?")+1));
 			var params = paramStr.split("&");
 			for(index in params){
 				var param = params[index];
