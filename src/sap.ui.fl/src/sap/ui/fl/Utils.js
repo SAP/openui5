@@ -607,7 +607,7 @@ sap.ui.define([
 		handleUrlParameters(sParameters, sParameterName, sParameterValue, oURLParsingService) {
 			if (Utils.hasParameterAndValue(sParameterName, sParameterValue, oURLParsingService)) {
 				if (sParameters.startsWith("?")) {
-					sParameters = sParameters.substr(1, sParameters.length);
+					sParameters = sParameters.substring(1, sParameters.length);
 				}
 				const aFilterUrl = sParameters.split("&").filter((sParameter) => {
 					return sParameter !== `${sParameterName}=${sParameterValue}`;

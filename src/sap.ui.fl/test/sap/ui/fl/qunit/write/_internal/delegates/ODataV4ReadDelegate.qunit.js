@@ -33,13 +33,13 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 								iIndex = sPart.indexOf("@");
 								if (iIndex >= 0) {
 									// has annotation?
-									sProp = sPart.substr(0, iIndex);
+									sProp = sPart.substring(0, iIndex);
 									oItem = oItem[sProp]; // e.g. property
 									if (sProp === "$Path") {
 										// resolve path
 										oItem = oTestContext.testGetObject(`/TestEntityT1/${oItem}`);
 									}
-									sPart = sPart.substr(iIndex); // annotation
+									sPart = sPart.substring(iIndex); // annotation
 									oItem &&= sPart === "@" ? oTestContext.testGetAllAnnotations(oItem) : oItem[sPart];
 								} else {
 									oItem = oItem[sPart];
