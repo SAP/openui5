@@ -162,7 +162,7 @@ sap.ui.define([
 	ControllerMetadata.prototype.getNamespace = function() {
 		var bIsAnonymous = this._sClassName.indexOf("anonymousExtension~") == 0;
 		var sNamespace = bIsAnonymous ? this._oParent._sClassName : this._sClassName;
-		return sNamespace.substr(0,sNamespace.lastIndexOf("."));
+		return sNamespace.substring(0,sNamespace.lastIndexOf("."));
 	};
 
 	/**

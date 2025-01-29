@@ -428,7 +428,7 @@ sap.ui.define([
 		iLastSlash = sResolvedPath.lastIndexOf("/");
 		// In case there is only one slash at the beginning, sObjectPath must contain this slash
 		sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
-		sProperty = sResolvedPath.substr(iLastSlash + 1);
+		sProperty = sResolvedPath.substring(iLastSlash + 1);
 		var aNodeStack = [], oObject = this._getObject(sObjectPath, null, aNodeStack);
 		if (oObject) {
 			if (oObject instanceof ManagedObject) {
@@ -470,7 +470,7 @@ sap.ui.define([
 					sPathInsideProperty = "/" + aParts.join("/") + sPathInsideProperty;
 				}
 				var iDelimiter = sResolvedPath.lastIndexOf(sPathInsideProperty);
-				var sPathUpToProperty = sResolvedPath.substr(0, iDelimiter);
+				var sPathUpToProperty = sResolvedPath.substring(0, iDelimiter);
 
 				//re-invoke now instead of:
 				// -> array case /objectArray/0/value/0 directly to /objectArray

@@ -797,7 +797,7 @@ sap.ui.define([
 		}
 		// invariant: path never ends with a slash ... if root is requested we return /
 		if (sResolvedPath && sResolvedPath !== "/" && sResolvedPath.endsWith("/")) {
-			sResolvedPath = sResolvedPath.substr(0, sResolvedPath.length - 1);
+			sResolvedPath = sResolvedPath.substring(0, sResolvedPath.length - 1);
 		}
 		return sResolvedPath;
 	};

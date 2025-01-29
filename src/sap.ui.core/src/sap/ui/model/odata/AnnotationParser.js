@@ -787,7 +787,7 @@ var AnnotationParser =  {
 	getEdmType: function(sPath, oProperties, sTarget, oSchema) {
 		var iPos = sPath.indexOf("/");
 		if (iPos > -1) {
-			var sPropertyName = sPath.substr(0, iPos);
+			var sPropertyName = sPath.substring(0, iPos);
 			var mNavProperty = AnnotationParser.findNavProperty(sTarget, sPropertyName);
 
 			if (mNavProperty) {
@@ -795,7 +795,7 @@ var AnnotationParser =  {
 
 				if (mToEntityType) {
 					sTarget = mToEntityType.entityType;
-					sPath = sPath.substr(iPos + 1);
+					sPath = sPath.substring(iPos + 1);
 				}
 			}
 		}

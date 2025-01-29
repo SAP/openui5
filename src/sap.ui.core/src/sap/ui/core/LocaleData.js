@@ -1571,7 +1571,7 @@ sap.ui.define([
 				oScale = this._get("dateFields", sScale + "-" + sStyle);
 				for (var sEntry in oScale) {
 					if (sEntry.indexOf("relative-type-") === 0) {
-						iValue = parseInt(sEntry.substr(14));
+						iValue = parseInt(sEntry.substring(14));
 						aPatterns.push({
 							scale: sScale,
 							value: iValue,
@@ -1579,7 +1579,7 @@ sap.ui.define([
 						});
 					} else if (sEntry.indexOf("relativeTime-type-") == 0) {
 						oTimeEntry = oScale[sEntry];
-						iSign = sEntry.substr(18) === "past" ? -1 : 1;
+						iSign = sEntry.substring(18) === "past" ? -1 : 1;
 						aPluralCategories.forEach(function(sKey) { // eslint-disable-line no-loop-func
 							var sPattern = oTimeEntry["relativeTimePattern-count-" + sKey];
 

@@ -57,7 +57,7 @@ sap.ui.define([
 			var loc = top.location.pathname;
 			var index = loc.indexOf("testframe.html");
 			if (index > -1) { // try to build an absolute URL, so settings changes do not lead to a 404 on the initial screen
-				sURL = loc.substr(0, index) + "welcome.html";
+				sURL = loc.substring(0, index) + "welcome.html";
 			}
 			testfwk.setContentURL(sURL, null); // no theme constraints
 		}

@@ -143,7 +143,7 @@ sap.ui.define(['./WebSocket', "sap/base/Log"],
 
 		if (iSplitPos !== -1) {
 			oEventData.pcpFields = this._extractPcpFields(oMessageEvent.data.substring(0, iSplitPos));
-			oEventData.data = oMessageEvent.data.substr(iSplitPos + SapPcpWebSocket._SEPARATOR.length);
+			oEventData.data = oMessageEvent.data.substring(iSplitPos + SapPcpWebSocket._SEPARATOR.length);
 		} else {
 			Log.warning("Invalid PCP message received: " + oMessageEvent.data);
 			oEventData.pcpFields = {};

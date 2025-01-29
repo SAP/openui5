@@ -80,14 +80,14 @@ sap.ui.define([
 
 			var id = oFragment.getId();
 
-			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated");
 			assert.ok(document.getElementById(id), "XML Fragment should be rendered");
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
 			var btn2 = aContent[1];
 			assert.equal(btn1.getId(), "btn1InXmlFragment", "Button with given ID should have exactly this ID");
-			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn2.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 
 			// Data binding
 			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
@@ -115,14 +115,14 @@ sap.ui.define([
 
 			var id = oFragment.getId();
 
-			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated");
 			assert.ok(document.getElementById(id), "XML Fragment should be rendered");
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
 			var btn2 = aContent[1];
 			assert.equal(btn1.getId(), "btnInXmlFragment", "Button with given ID should have exactly this ID");
-			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn2.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 
 			// Data binding
 			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
@@ -146,14 +146,14 @@ sap.ui.define([
 
 			var id = oFragment.getId();
 
-			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated");
 			assert.ok(document.getElementById(id), "XML Fragment should be rendered");
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
 			var btn2 = aContent[1];
 			assert.equal(btn1.getId(), "myXmlFrag--btnInXmlFragment", "Button with given ID should have this ID with Fragment ID prefix");
-			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn2.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 
 			// Data binding
 			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
@@ -196,14 +196,14 @@ sap.ui.define([
 
 			var id = oFragment.getId();
 
-			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated");
 			assert.ok(document.getElementById(id), "JS Fragment should be rendered");
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
 			var btn2 = aContent[1];
 			assert.equal(btn1.getId(), "btnInJsFragment", "Button with given ID should have exactly this ID");
-			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn2.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 
 			// Data binding
 			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
@@ -228,14 +228,14 @@ sap.ui.define([
 
 			var id = oFragment.getId();
 
-			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated");
 			assert.ok(document.getElementById(id), "JS Fragment should be rendered");
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
 			var btn2 = aContent[1];
 			assert.equal(btn1.getId(), "myJsFrag--btnInJsFragment", "Button with given ID should have this ID with Fragment ID prefix");
-			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn2.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 
 			// Data binding
 			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
@@ -346,14 +346,14 @@ sap.ui.define([
 
 		var id = oXmlFragmentInXmlView.getId();
 		assert.ok(document.getElementById(id), "XML Fragment should be rendered");
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
+		assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oXmlFragmentInXmlView.getContent()[0].getId();
 		assert.equal(btn1id, oXmlView.getId() + "--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
 		triggerClickEvent(btn1id);
 
 		var btn2 = oXmlFragmentInXmlView.getContent()[1];
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
+		assert.equal(btn2.getId().substring(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
 		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
 
 		// find controls by ID
@@ -367,14 +367,14 @@ sap.ui.define([
 
 		var id = oXmlFragmentWithIdInXmlView.getId();
 		assert.ok(document.getElementById(id), "Fragment should be rendered");
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
+		assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oXmlFragmentWithIdInXmlView.getContent()[0].getId();
 		assert.equal(btn1id, oXmlView.getId() + "--xmlInXml--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 		triggerClickEvent(btn1id);
 
 		var btn2 = oXmlFragmentWithIdInXmlView.getContent()[1];
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
+		assert.equal(btn2.getId().substring(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
 		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
 
 		// find controls by ID
@@ -390,14 +390,14 @@ sap.ui.define([
 
 		var id = oJsFragmentInXmlView.getId();
 		assert.ok(document.getElementById(id), "Fragment should be rendered");
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
+		assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oJsFragmentInXmlView.getContent()[0].getId();
 		assert.equal(btn1id, oXmlView.getId() + "--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID");
 		triggerClickEvent(btn1id);
 
 		var btn2 = oJsFragmentInXmlView.getContent()[1];
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
+		assert.equal(btn2.getId().substring(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
 		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
 
 		// find controls by ID
@@ -411,14 +411,14 @@ sap.ui.define([
 
 		var id = oJsFragmentWithIdInXmlView.getId();
 		assert.ok(document.getElementById(id), "Fragment should be rendered");
-		assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
+		assert.equal(id.substring(0, 8), "__layout", "Fragment ID should be generated, with no View prefix");
 
 		var btn1id = oJsFragmentWithIdInXmlView.getContent()[0].getId();
 		assert.equal(btn1id, oXmlView.getId() + "--jsInXml--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 		triggerClickEvent(btn1id);
 
 		var btn2 = oJsFragmentWithIdInXmlView.getContent()[1];
-		assert.equal(btn2.getId().substr(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
+		assert.equal(btn2.getId().substring(0, 8), "__button", "Second Button ID should be generated, with no View prefix");
 		assert.equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
 
 		// find controls by ID
@@ -535,7 +535,7 @@ sap.ui.define([
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
-			assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn1.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 
 			oFragment.destroy();
 		});
@@ -555,7 +555,7 @@ sap.ui.define([
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
-			assert.equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn1.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 
 			oFragment.destroy();
 		});
@@ -632,14 +632,14 @@ sap.ui.define([
 
 			var id = oFragment.getId();
 
-			assert.equal(id.substr(0,8), "__layout", "Fragment ID should be generated");
+			assert.equal(id.substring(0,8), "__layout", "Fragment ID should be generated");
 			assert.ok(document.getElementById(id), "JS Fragment should be rendered");
 
 			var aContent = oFragment.getContent();
 			var btn1 = aContent[0];
 			var btn2 = aContent[1];
 			assert.equal(btn1.getId(), "myJsFragLoadApi--btnInJsFragment", "Button with given ID should have this ID with Fragment ID prefix");
-			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+			assert.equal(btn2.getId().substring(0, 8), "__button", "Button with no given ID should have a generated ID");
 			triggerClickEvent(btn1.getId());
 
 			// Data binding

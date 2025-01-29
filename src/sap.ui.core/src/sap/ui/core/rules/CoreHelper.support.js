@@ -69,7 +69,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Theming"],
 
 				if (styleSheet.href) {
 					// This will get only the name of the styleSheet example: "/customstyle.css"
-					styleSheetSourceName = styleSheet.href.substr(styleSheet.href.lastIndexOf("/"), styleSheet.href.length - 1);
+					styleSheetSourceName = styleSheet.href.substring(styleSheet.href.lastIndexOf("/"), styleSheet.href.length - 1);
 				} else {
 					styleSheetSourceName = " <style> tag ";
 				}

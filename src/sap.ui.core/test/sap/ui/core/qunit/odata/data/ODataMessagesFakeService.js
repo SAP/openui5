@@ -324,7 +324,7 @@ var mPredefinedServiceResponses = {
 				default:
 					if (sUrl.startsWith(mServiceData["serviceUrl"])) {
 						// This one's for us...
-						sRandomServiceUrl = sUrl.substr(mServiceData["serviceUrl"].length);
+						sRandomServiceUrl = sUrl.substring(mServiceData["serviceUrl"].length);
 					} else {
 						/* eslint-disable no-debugger */
 						debugger;

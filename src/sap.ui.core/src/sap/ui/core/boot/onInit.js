@@ -20,7 +20,7 @@ sap.ui.define([
 		if (aParts.length > 1) {
 			var mPaths = {};
 			var sModulePath = /^.*[\/\\]/.exec(aParts[0])[0];
-			sModulePath = sModulePath.substr(0, sModulePath.length - 1);
+			sModulePath = sModulePath.substring(0, sModulePath.length - 1);
 			mPaths[sModulePath] = aParts[1];
 			sap.ui.loader.config({
 				paths: mPaths

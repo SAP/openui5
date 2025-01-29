@@ -104,7 +104,7 @@ sap.ui.define([
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
-			return this.currentTestData[path.substr(1)].map(function(entry, i) {
+			return this.currentTestData[path.substring(1)].map(function(entry, i) {
 				return this.oModel.bindProperty(path + "/" + i + "/" + property, context);
 				//this.oModel.bindProperty(".teamMembers.lastName", entry.lastName);
 			}, this);
@@ -293,7 +293,7 @@ sap.ui.define([
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
-			return this.currentTestData[path.substr(1)].map(function(entry, i) {
+			return this.currentTestData[path.substring(1)].map(function(entry, i) {
 				return this.oModel.bindProperty(path + "/" + i + "/" + property, context);
 				//this.oModel.bindProperty(".teamMembers.lastName", entry.lastName);
 			}, this);
@@ -396,7 +396,7 @@ sap.ui.define([
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
-			return this.currentTestData[path.substr(1)].map(function(entry, i) {
+			return this.currentTestData[path.substring(1)].map(function(entry, i) {
 				return this.oModel.bindProperty(path + "/" + i + "/" + property, context);
 				//this.oModel.bindProperty(".teamMembers.lastName", entry.lastName);
 			}, this);
@@ -550,7 +550,7 @@ sap.ui.define([
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
-			return this.currentTestData[path.substr(1)].map(function(entry, i) {
+			return this.currentTestData[path.substring(1)].map(function(entry, i) {
 				return this.oModel.bindProperty(path + "/" + i + "/" + property, context);
 				//this.oModel.bindProperty(".teamMembers.lastName", entry.lastName);
 			}, this);

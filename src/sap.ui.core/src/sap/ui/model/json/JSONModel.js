@@ -388,7 +388,7 @@ sap.ui.define([
 		iLastSlash = sResolvedPath.lastIndexOf("/");
 		// In case there is only one slash at the beginning, sObjectPath must contain this slash
 		sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
-		sProperty = sResolvedPath.substr(iLastSlash + 1);
+		sProperty = sResolvedPath.substring(iLastSlash + 1);
 
 		var oObject = this._getObject(sObjectPath);
 		if (oObject) {

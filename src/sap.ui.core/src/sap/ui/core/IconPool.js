@@ -247,7 +247,7 @@ sap.ui.define([
 			}
 
 			// add trailing slash if necessary for more convenience
-			if (oConfig.fontURI.substr(oConfig.fontURI.length - 1) !== "/") {
+			if (oConfig.fontURI.substring(oConfig.fontURI.length - 1) !== "/") {
 				oConfig.fontURI += "/";
 			}
 

@@ -680,8 +680,8 @@ sap.ui.define([
 
 		//we need to handle url params that can be passed from the manual CRUD methods due to compatibility
 		if (sPath && sPath.indexOf('?') != -1 ) {
-			sUrlParams = sPath.substr(sPath.indexOf('?') + 1);
-			sPath = sPath.substr(0, sPath.indexOf('?'));
+			sUrlParams = sPath.substring(sPath.indexOf('?') + 1);
+			sPath = sPath.substring(0, sPath.indexOf('?'));
 		}
 
 		sResolvedPath = this._normalizePath(sPath, oContext);
@@ -689,7 +689,7 @@ sap.ui.define([
 		if (!bBatch) {
 			sUrl = this.sServiceUrl + sResolvedPath;
 		} else {
-			sUrl = sResolvedPath.substr(sResolvedPath.indexOf('/') + 1);
+			sUrl = sResolvedPath.substring(sResolvedPath.indexOf('/') + 1);
 		}
 
 		aUrlParams = ODataUtils._createUrlParamsArray(oUrlParams);
@@ -826,7 +826,7 @@ sap.ui.define([
 
 				// reset change key if refresh was triggered on that entry
 				if (that.sChangeKey && mChangedEntities) {
-					var sEntry = that.sChangeKey.substr(that.sChangeKey.lastIndexOf('/') + 1);
+					var sEntry = that.sChangeKey.substring(that.sChangeKey.lastIndexOf('/') + 1);
 					if (mChangedEntities[sEntry]) {
 						delete that.oRequestQueue[that.sChangeKey];
 						that.sChangeKey = null;
@@ -1248,7 +1248,7 @@ sap.ui.define([
 					if (sKey && oContext && bIsRelative) {
 						var sContextPath = oContext.getPath();
 						// remove starting slash
-						sContextPath = sContextPath.substr(1);
+						sContextPath = sContextPath.substring(1);
 						// when model is refreshed, parent entity might not be available yet
 						if (that.oData[sContextPath]) {
 							that.oData[sContextPath][sPath] = {__ref: sKey};
@@ -1518,10 +1518,10 @@ sap.ui.define([
 	ODataModel.prototype._getKey = function(oObject, bDecode) {
 		var sKey, sURI;
 		if (oObject instanceof Context) {
-			sKey = oObject.getPath().substr(1);
+			sKey = oObject.getPath().substring(1);
 		} else if (oObject && oObject.__metadata && oObject.__metadata.uri) {
 			sURI = oObject.__metadata.uri;
-			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
+			sKey = sURI.substring(sURI.lastIndexOf("/") + 1);
 		}
 		if (bDecode) {
 			sKey = decodeURIComponent(sKey);
@@ -1661,8 +1661,8 @@ sap.ui.define([
 				if (!this.bMetaModelLoaded) {
 					return null;
 				}
-				sDataPath = sResolvedPath.substr(0, iSeparator);
-				sMetaPath = sResolvedPath.substr(iSeparator + 3);
+				sDataPath = sResolvedPath.substring(0, iSeparator);
+				sMetaPath = sResolvedPath.substring(iSeparator + 3);
 				oMetaContext = oMetaModel.getMetaContext(sDataPath);
 				oNode = oMetaModel.getProperty(sMetaPath, oMetaContext);
 			} else {
@@ -1673,7 +1673,7 @@ sap.ui.define([
 			if (oContext) {
 				sKey = oContext.getPath();
 				// remove starting slash
-				sKey = sKey.substr(1);
+				sKey = sKey.substring(1);
 				oNode = this.oData[sKey];
 			}
 			if (!sPath) {
@@ -2165,7 +2165,7 @@ sap.ui.define([
 			sEntry = sPath.replace(this.sServiceUrl + '/','');
 			iIndex = sEntry.indexOf("?");
 			if (iIndex > -1) {
-				sEntry = sEntry.substr(0, iIndex);
+				sEntry = sEntry.substring(0, iIndex);
 			}
 			if (this.oData.hasOwnProperty(sEntry)) {
 				sETagHeader = this.getProperty('/' + sEntry + '/__metadata/etag');
@@ -2478,10 +2478,10 @@ sap.ui.define([
 		}
 
 		_fnSuccess = function(oData, oResponse) {
-			sEntry = sUrl.substr(sUrl.lastIndexOf('/') + 1);
+			sEntry = sUrl.substring(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
 			if (sEntry.indexOf('?') != -1) {
-				sEntry = sEntry.substr(0, sEntry.indexOf('?'));
+				sEntry = sEntry.substring(0, sEntry.indexOf('?'));
 			}
 			delete that.oData[sEntry];
 			delete that.mContexts["/" + sEntry]; // contexts are stored starting with /
@@ -2713,7 +2713,7 @@ sap.ui.define([
 
 		// for batch remove starting / if any
 		if (sPath.startsWith("/")) {
-			sPath = sPath.substr(1);
+			sPath = sPath.substring(1);
 		}
 
 		if (oParameters) {
@@ -2761,7 +2761,7 @@ sap.ui.define([
 			// remove URL params
 			var sNormalizedPath = sPath;
 			if (sPath.indexOf('?') != -1 ) {
-				sNormalizedPath = sPath.substr(0, sPath.indexOf('?'));
+				sNormalizedPath = sPath.substring(0, sPath.indexOf('?'));
 			}
 			oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (oEntityType) {
@@ -3172,7 +3172,7 @@ sap.ui.define([
 		sChangeKey = sChangeKey.substring(0, sChangeKey.indexOf("/"));
 		sChangeKey = this.sServiceUrl + '/' + sChangeKey;
 
-		sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
+		sProperty = sPath.substring(sPath.lastIndexOf("/") + 1);
 
 		oData = this._getObject(sObjectPath, oContext);
 		if (!oData) {
@@ -3373,7 +3373,7 @@ sap.ui.define([
 			delete this.mContexts[sPath]; // contexts are stored starting with /
 			// remove starting / if any
 			if (sPath.startsWith("/")) {
-				sPath = sPath.substr(1);
+				sPath = sPath.substring(1);
 			}
 			delete this.oRequestQueue[sPath];
 			delete this.oData[sPath];
@@ -3514,7 +3514,7 @@ sap.ui.define([
 
 		// remove query params from path if any
 		if (sPath && sPath.indexOf('?') != -1 ) {
-			sPath = sPath.substr(0, sPath.indexOf('?'));
+			sPath = sPath.substring(0, sPath.indexOf('?'));
 		}
 
 		if (!oContext && !sPath.startsWith("/")) {
@@ -3546,7 +3546,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.isList = function(sPath, oContext) {
 		sPath = this.resolve(sPath, oContext);
-		return sPath && sPath.substr(sPath.lastIndexOf("/")).indexOf("(") === -1;
+		return sPath && sPath.substring(sPath.lastIndexOf("/")).indexOf("(") === -1;
 	};
 
 	/**

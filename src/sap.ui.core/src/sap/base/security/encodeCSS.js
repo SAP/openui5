@@ -15,7 +15,7 @@ sap.ui.define(["sap/base/strings/toHex"], function(toHex) {
 		if (sChar.length === 1) {
 			return "\\" + toHex(iChar);
 		} else {
-			return "\\" + toHex(iChar) + " " + sChar.substr(1);
+			return "\\" + toHex(iChar) + " " + sChar.substring(1);
 		}
 	};
 

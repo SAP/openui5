@@ -264,7 +264,7 @@ sap.ui.define([
 		},
 
 		formatLocaleIcon: function(sLocale) {
-			return "flags/" + sLocale.substr(3) + ".png";
+			return "flags/" + sLocale.substring(3) + ".png";
 		},
 
 		onLocaleChange: function() {

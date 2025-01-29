@@ -469,8 +469,8 @@ sap.ui.define([
 
 		var oSorter = new Sorter("@firstName", false);
 		oSorter.fnCompare = function(a, b) {
-			a = a.substr(1);
-			b = b.substr(1);
+			a = a.substring(1);
+			b = b.substring(1);
 			if (a < b) {
 				return -1;
 			}

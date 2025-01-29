@@ -260,7 +260,7 @@ sap.ui.define([
 		var sData = oEvent.data;
 
 		if (typeof sData === "string" && sData.indexOf("SAPUI5SupportTool*") === 0) {
-			sData = sData.substr(18); // length of SAPUI5SupportTool*
+			sData = sData.substring(18); // length of SAPUI5SupportTool*
 		} else {
 			return;
 		}
@@ -316,7 +316,7 @@ sap.ui.define([
 				var sRootPath = sap.ui.require.toUrl("");
 				var sBootstrapSrc = oBootstrap.getAttribute('src');
 				if (typeof sBootstrapSrc === 'string' && sBootstrapSrc.indexOf(sRootPath) === 0) {
-					sBootstrapScript = sBootstrapSrc.substr(sRootPath.length);
+					sBootstrapScript = sBootstrapSrc.substring(sRootPath.length);
 				}
 			}
 		}

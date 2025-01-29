@@ -99,7 +99,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 		prefix = prefix.concat(getBytesFromString(new Array(32 + 1 - prefix.length).join(' ')));
 
 		if (component) {
-			component = getBytesFromString(component.substr(-32,32));
+			component = getBytesFromString(component.substring(-32,32));
 			component = component.concat(getBytesFromString(new Array(32 + 1 - component.length).join(' ')));
 			SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(component));
 			SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(component));
@@ -112,7 +112,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 		SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, traceFlgsOffset.concat(trcLvl));
 
 		if (action) {
-			action = getBytesFromString(action.substr(-40,40));
+			action = getBytesFromString(action.substring(-40,40));
 			action = action.concat(getBytesFromString(new Array(40 + 1 - action.length).join(' ')));
 			SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, actionOffset.concat(action));
 		}

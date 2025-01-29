@@ -1468,7 +1468,7 @@ sap.ui.define([
 		if (!bBatch) {
 			sUrl = this.sServiceUrl + sNormalizedPath;
 		} else {
-			sUrl = sNormalizedPath.substr(sNormalizedPath.indexOf('/') + 1);
+			sUrl = sNormalizedPath.substring(sNormalizedPath.indexOf('/') + 1);
 		}
 
 		return this._addUrlParams(sUrl, aUrlParams);
@@ -1510,7 +1510,7 @@ sap.ui.define([
 			each(oData.results, function(i, entry) {
 				var sKey = that._getKey(entry);
 				sKey = that._importData(entry, mChangedEntities, oResponse, /*oRequest*/undefined,
-					sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey,
+					sPath.substring(0, sPath.lastIndexOf("/")), sDeepPath, sKey,
 					/*bFunctionImport*/undefined, /*sPathFromCanonicalParent*/undefined,
 					bSideEffects);
 				if (sKey) {
@@ -1522,7 +1522,7 @@ sap.ui.define([
 			// data is single entity
 			if (sKey) {
 				sPath =  "/" + sKey;
-				sDeepPath += sKey.substr(sKey.indexOf("(")); /*e.g. SalesOrder(123)/ToLineItems + (345)*/
+				sDeepPath += sKey.substring(sKey.indexOf("(")); /*e.g. SalesOrder(123)/ToLineItems + (345)*/
 			} else {
 				sKey = this._getKey(oData);
 			}
@@ -1584,7 +1584,7 @@ sap.ui.define([
 					} else {
 						if (oCurrentEntry[sName] && oCurrentEntry[sName].__ref) {
 							if (oCurrentEntry[sName].__ref !== oResult) {
-								that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = "/" + oResult;
+								that.mInvalidatedPaths[sPath.substring(sPath.lastIndexOf("(")) + "/" + sName] = "/" + oResult;
 							}
 						}
 						oEntry[sName] = { __ref: oResult };
@@ -1592,7 +1592,7 @@ sap.ui.define([
 				} else if (!oProperty || !oProperty.__deferred) { //do not store deferred navprops
 					//'null' is a valid value for navigation properties (e.g. if no entity is assigned). We need to invalidate the path cache
 					if (oCurrentEntry[sName] && oProperty === null) {
-						that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = null;
+						that.mInvalidatedPaths[sPath.substring(sPath.lastIndexOf("(")) + "/" + sName] = null;
 					}
 					oEntry[sName] = oProperty;
 				}
@@ -2375,7 +2375,7 @@ sap.ui.define([
 			if (oContext && bIsRelative && bLink) {
 				sContextPath = oContext.getPath();
 				// remove starting slash
-				sContextPath = sContextPath.substr(1);
+				sContextPath = sContextPath.substring(1);
 				// when model is refreshed, parent entity might not be available yet
 				oEntity = that._getEntity(sContextPath);
 				if (oEntity) {
@@ -2390,7 +2390,7 @@ sap.ui.define([
 			if (oError.statusCode == '404' && oContext && bIsRelative) {
 				var sContextPath = oContext.getPath();
 				// remove starting slash
-				sContextPath = sContextPath.substr(1);
+				sContextPath = sContextPath.substring(1);
 				// when model is refreshed, parent entity might not be available yet
 				oEntity = that._getEntity(sContextPath);
 				if (oEntity) {
@@ -2854,12 +2854,12 @@ sap.ui.define([
 	ODataModel.prototype._getKey = function(vValue) {
 		var sKey, sURI;
 		if (vValue instanceof BaseContext) {
-			sKey = vValue.getPath().substr(1);
+			sKey = vValue.getPath().substring(1);
 		} else if (vValue && vValue.__metadata && vValue.__metadata.uri) {
 			sURI = vValue.__metadata.uri;
-			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
+			sKey = sURI.substring(sURI.lastIndexOf("/") + 1);
 		} else if (typeof vValue === 'string') {
-			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
+			sKey = vValue.substring(vValue.lastIndexOf("/") + 1);
 		}
 		if (!this.oData[sKey]) {
 			sKey = sKey && ODataUtils._normalizeKey(sKey);
@@ -3203,8 +3203,8 @@ sap.ui.define([
 						return null;
 					}
 					iSeparator = sResolvedPath.indexOf('/##');
-					sDataPath = sResolvedPath.substr(0, iSeparator);
-					sMetaPath = sResolvedPath.substr(iSeparator + 3);
+					sDataPath = sResolvedPath.substring(0, iSeparator);
+					sMetaPath = sResolvedPath.substring(iSeparator + 3);
 					oMetaContext = oMetaModel.getMetaContext(sDataPath);
 					oNode = oMetaModel.getProperty(sMetaPath, oMetaContext);
 				} else {
@@ -3975,7 +3975,7 @@ sap.ui.define([
 					iIndex = sKey.indexOf(sUpdateKey);
 					if (iIndex > -1) {
 						if (iIndex + sUpdateKey.length !== sKey.length) {
-							var sEnd = sKey.substr(iIndex + sUpdateKey.length);
+							var sEnd = sKey.substring(iIndex + sUpdateKey.length);
 							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey] === null ? null : that.mInvalidatedPaths[sUpdateKey] + sEnd;
 						} else {
 							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey];
@@ -5510,7 +5510,7 @@ sap.ui.define([
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams,
 				that.bUseBatch);
-			sKey = sUrl.substr(sUrl.lastIndexOf('/') + 1);
+			sKey = sUrl.substring(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
 			sKey = sKey.split("?")[0];
 			oContextToRemove = that.mContexts["/" + sKey];
@@ -7223,7 +7223,7 @@ sap.ui.define([
 			that = this;
 
 		if (oContext) {
-			sKey = oContext.getPath().substr(1);
+			sKey = oContext.getPath().substring(1);
 			sGroupId = this._resolveGroup(sKey).groupId;
 			that.oMetadata.loaded().then(function() {
 				that.abortInternalRequest(sGroupId, {requestKey: sKey});
@@ -7715,7 +7715,7 @@ sap.ui.define([
 	ODataModel.prototype._normalizePath = function(sPath, oContext, bCanonical) {
 		// remove query params from path if any
 		if (sPath && sPath.indexOf('?') !== -1 ) {
-			sPath = sPath.substr(0, sPath.indexOf('?'));
+			sPath = sPath.substring(0, sPath.indexOf('?'));
 		}
 		if (!oContext && !sPath.startsWith("/")) {
 			Log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
@@ -7801,7 +7801,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.isList = function(sPath, oContext) {
 		sPath = this.resolve(sPath, oContext);
-		return sPath && sPath.substr(sPath.lastIndexOf("/")).indexOf("(") === -1;
+		return sPath && sPath.substring(sPath.lastIndexOf("/")).indexOf("(") === -1;
 	};
 
 	/**
@@ -8270,8 +8270,8 @@ sap.ui.define([
 			sStartingPath = sCanonicalPath || sPath;
 			if (!sCanonicalPath) {
 				iIndex = sStartingPath.lastIndexOf("/");
-				sEndingPathPart = sStartingPath.substr(iIndex);
-				sStartingPath = sStartingPath.substr(0, iIndex);
+				sEndingPathPart = sStartingPath.substring(iIndex);
+				sStartingPath = sStartingPath.substring(0, iIndex);
 			}
 			sNextMatch = this.resolveFromCache(sStartingPath);
 

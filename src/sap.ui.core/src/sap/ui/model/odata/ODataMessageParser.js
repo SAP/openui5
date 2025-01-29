@@ -333,7 +333,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 				// must be sent for affected entity)
 				var iPropertyPos = sTarget.lastIndexOf(")/");
 				if (iPropertyPos > 0) {
-					sTarget = sTarget.substr(0, iPropertyPos + 1);
+					sTarget = sTarget.substring(0, iPropertyPos + 1);
 				}
 
 				return sTarget;
@@ -847,15 +847,15 @@ ODataMessageParser.prototype._parseUrl = function(sUrl) {
 
 	iPos = sUrl.indexOf("#");
 	if (iPos > -1) {
-		mUrlData.hash = mUrlData.url.substr(iPos + 1);
-		mUrlData.url = mUrlData.url.substr(0, iPos);
+		mUrlData.hash = mUrlData.url.substring(iPos + 1);
+		mUrlData.url = mUrlData.url.substring(0, iPos);
 	}
 
 	iPos = sUrl.indexOf("?");
 	if (iPos > -1) {
-		var sParameters = mUrlData.url.substr(iPos + 1);
+		var sParameters = mUrlData.url.substring(iPos + 1);
 		mUrlData.parameters = URI.parseQuery(sParameters);
-		mUrlData.url = mUrlData.url.substr(0, iPos);
+		mUrlData.url = mUrlData.url.substring(0, iPos);
 	}
 
 	return mUrlData;

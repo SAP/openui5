@@ -12238,7 +12238,7 @@
 						if (array) {
 							str = str.split('\n').map(function(line) {
 								return '  ' + line;
-							}).join('\n').substr(2);
+							}).join('\n').substring(2);
 						} else {
 							str = '\n' + str.split('\n').map(function(line) {
 								return '   ' + line;
@@ -12255,7 +12255,7 @@
 				}
 				name = JSON.stringify('' + key);
 				if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-					name = name.substr(1, name.length - 2);
+					name = name.substring(1, name.length - 2);
 					name = ctx.stylize(name, 'name');
 				} else {
 					name = name.replace(/'/g, "\\'")
@@ -13046,7 +13046,7 @@
 						var fileName = data[0].replace(/\\\\/g, '\\');
 
 						if (/^".*"$/.test(fileName)) {
-							fileName = fileName.substr(1, fileName.length - 2);
+							fileName = fileName.substring(1, fileName.length - 2);
 						}
 
 						index[keyPrefix + 'FileName'] = fileName;
@@ -13220,7 +13220,7 @@
 					for (var j = 0; j < hunk.lines.length; j++) {
 						var line = hunk.lines[j],
 							operation = line.length > 0 ? line[0] : ' ',
-							content = line.length > 0 ? line.substr(1) : line;
+							content = line.length > 0 ? line.substring(1) : line;
 
 						if (operation === ' ' || operation === '-') {
 							// Context sanity check
@@ -13275,7 +13275,7 @@
 					for (var j = 0; j < _hunk.lines.length; j++) {
 						var line = _hunk.lines[j],
 							operation = line.length > 0 ? line[0] : ' ',
-							content = line.length > 0 ? line.substr(1) : line,
+							content = line.length > 0 ? line.substring(1) : line,
 							delimiter = _hunk.linedelimiters[j];
 
 						if (operation === ' ') {
@@ -13849,7 +13849,7 @@
 						}
 					}
 
-					if (match.substr(1) === change.substr(1)) {
+					if (match.substring(1) === change.substring(1)) {
 						changes.push(change);
 						state.index++;
 					} else {
@@ -13883,7 +13883,7 @@
 
 			function skipRemoveSuperset(state, removeChanges, delta) {
 				for (var i = 0; i < delta; i++) {
-					var changeContent = removeChanges[removeChanges.length - delta + i].substr(1);
+					var changeContent = removeChanges[removeChanges.length - delta + i].substring(1);
 
 					if (state.lines[state.index + i] !== ' ' + changeContent) {
 						return false;
@@ -16738,7 +16738,7 @@
 
 			// Match any characters still remaining.
 			if (index < str.length) {
-				path += str.substr(index)
+				path += str.substring(index)
 			}
 
 			// If the path exists, push it onto the end.

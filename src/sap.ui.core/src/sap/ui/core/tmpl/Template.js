@@ -512,7 +512,7 @@ function(
 							if (aTmplInfo.length == 3) {
 								sController = aTmplInfo[2];
 							}
-							sContent = sContent.substr(aTmplInfo[0].length);
+							sContent = sContent.substring(aTmplInfo[0].length);
 						}
 					},
 					error: function() {

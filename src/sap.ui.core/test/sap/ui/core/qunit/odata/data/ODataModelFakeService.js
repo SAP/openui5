@@ -604,7 +604,7 @@ sap.ui.define([], function() {
       }
 
       // Look up response
-      respond.apply(this, getResponse(request.method, request.url.substr(baseURL.length), request.requestHeaders));
+      respond.apply(this, getResponse(request.method, request.url.substring(baseURL.length), request.requestHeaders));
     };
   };
 
@@ -618,7 +618,7 @@ sap.ui.define([], function() {
     for (var i = 1; i < parts.length - 1; i++) {
       part = parts[i];
       if (part.indexOf("\r\nContent-Type: multipart/mixed") == 0) {
-        nestedRequests = parseBatchRequest("\r\n" + part.substr(part.indexOf("--")));
+        nestedRequests = parseBatchRequest("\r\n" + part.substring(part.indexOf("--")));
         requests.push(nestedRequests);
       } else {
         var request = {};

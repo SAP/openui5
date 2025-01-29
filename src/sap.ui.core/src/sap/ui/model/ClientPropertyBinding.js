@@ -48,7 +48,7 @@ sap.ui.define(['./PropertyBinding'],
 	 * @return {object} the current value of the bound target
 	 */
 	ClientPropertyBinding.prototype._getValue = function(){
-		var sProperty = this.sPath.substr(this.sPath.lastIndexOf("/") + 1);
+		var sProperty = this.sPath.substring(this.sPath.lastIndexOf("/") + 1);
 		if (this.oContext && sProperty == "__name__") {
 			var aPath = this.oContext.getPath().split("/");
 			return aPath[aPath.length - 1];

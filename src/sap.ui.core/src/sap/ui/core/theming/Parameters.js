@@ -388,7 +388,7 @@ sap.ui.define([
 			if (!sParamValue) {
 				var iIndex = mOptions.parameterName.indexOf(":");
 				if (iIndex != -1) {
-					var sParamNameWithoutColon = mOptions.parameterName.substr(iIndex + 1);
+					var sParamNameWithoutColon = mOptions.parameterName.substring(iIndex + 1);
 					sParamValue = oParams[sParamNameWithoutColon];
 				}
 			}
@@ -806,7 +806,7 @@ sap.ui.define([
 			};
 			sTheme = Theming.getTheme();
 			forEachStyleSheet(function(sId) {
-				var sLibname = sId.substr(13); // length of sap-ui-theme-
+				var sLibname = sId.substring(13); // length of sap-ui-theme-
 				if (mLibraryParameters[sLibname]) {
 					// if parameters are already provided for this lib, use them (e.g. from LessSupport)
 					extend(mParameters["default"], mLibraryParameters[sLibname]);

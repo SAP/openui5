@@ -18,7 +18,7 @@
 	var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
 
 	// test-page url/name as module prefix
-	var sTestPageName = document.location.pathname.substr(1).replace(/\./g, "_").replace(/\//g, ".") + document.location.search.replace(/\./g, '_');
+	var sTestPageName = document.location.pathname.substring(1).replace(/\./g, "_").replace(/\//g, ".") + document.location.search.replace(/\./g, '_');
 
 	// avoid . in module names to avoid displaying issues in Jenkins results
 	function formatModuleName(sName) {

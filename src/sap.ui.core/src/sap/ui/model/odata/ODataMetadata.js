@@ -737,7 +737,7 @@ sap.ui.define([
 			}
 
 			//extract property
-			sPropertyPath = aParts[1].substr(aParts[1].indexOf('/') + 1);
+			sPropertyPath = aParts[1].substring(aParts[1].indexOf('/') + 1);
 			oProperty = this._getPropertyMetadata(oEntityType,sPropertyPath);
 
 			assert(oProperty, sPropertyPath + " is not a valid property path");
@@ -745,8 +745,8 @@ sap.ui.define([
 				return undefined;
 			}
 
-			sMetaPath = sPropertyPath.substr(sPropertyPath.indexOf(oProperty.name));
-			sMetaPath = sMetaPath.substr(sMetaPath.indexOf('/') + 1);
+			sMetaPath = sPropertyPath.substring(sPropertyPath.indexOf(oProperty.name));
+			sMetaPath = sMetaPath.substring(sMetaPath.indexOf('/') + 1);
 		} else {
 			//getentityType from data Path
 			oEntityType = this._getEntityTypeByPath(aParts[0]);
@@ -761,7 +761,7 @@ sap.ui.define([
 			sPath = aParts[0].replace(/^\/|\/$/g, "");
 			sPropertyPath = sPath;
 			while (!oProperty && sPropertyPath.indexOf("/") > 0) {
-				sPropertyPath = sPropertyPath.substr(sPropertyPath.indexOf('/') + 1);
+				sPropertyPath = sPropertyPath.substring(sPropertyPath.indexOf('/') + 1);
 				oProperty = this._getPropertyMetadata(oEntityType, sPropertyPath);
 			}
 
@@ -817,7 +817,7 @@ sap.ui.define([
 			sMetaDataPath = aParts.splice(0,1);
 			oAnnotation = this._getAnnotationObject(oEntityType, oNode, aParts.join('/'));
 		} else if (aParts[0].indexOf('@') > -1) { //handle attributes
-			sAnnotation = aParts[0].substr(1);
+			sAnnotation = aParts[0].substring(1);
 			aAnnotationParts = sAnnotation.split(':');
 			oAnnotation = oNode[aAnnotationParts[0]];
 			if (!oAnnotation && oNode.extensions) {
@@ -907,8 +907,8 @@ sap.ui.define([
 		var oInfo = {};
 		if (sFullName) {
 			var iSepIdx = sFullName.lastIndexOf(".");
-			oInfo.name = sFullName.substr(iSepIdx + 1);
-			oInfo.namespace = sFullName.substr(0, iSepIdx);
+			oInfo.name = sFullName.substring(iSepIdx + 1);
+			oInfo.namespace = sFullName.substring(0, iSepIdx);
 		}
 		return oInfo;
 	};
@@ -1031,7 +1031,7 @@ sap.ui.define([
 	 */
 	ODataMetadata.prototype._getFunctionImportMetadataByName = function(sFunctionName) {
 		if (sFunctionName.indexOf("/") > -1) {
-			sFunctionName = sFunctionName.substr(sFunctionName.indexOf("/") + 1);
+			sFunctionName = sFunctionName.substring(sFunctionName.indexOf("/") + 1);
 		}
 		return this._getFunctionImportMetadataIterate(function(oFunctionImport) {
 			return oFunctionImport.name === sFunctionName;
@@ -1048,7 +1048,7 @@ sap.ui.define([
 	 */
 	ODataMetadata.prototype._getFunctionImportMetadata = function(sFunctionName, sMethod) {
 		if (sFunctionName.indexOf("/") > -1) {
-			sFunctionName = sFunctionName.substr(sFunctionName.indexOf("/") + 1);
+			sFunctionName = sFunctionName.substring(sFunctionName.indexOf("/") + 1);
 		}
 		return this._getFirstMatchingFunctionImportMetadata(function(oFunctionImport) {
 			return oFunctionImport.name === sFunctionName && oFunctionImport.httpMethod === sMethod;
@@ -1516,7 +1516,7 @@ sap.ui.define([
 		if (sPath) {
 			iIndex = sPath.lastIndexOf(")");
 			if (iIndex !== -1) {
-				sTempPath = sPath.substr(0, iIndex + 1);
+				sTempPath = sPath.substring(0, iIndex + 1);
 				var oEntitySet = this._getEntitySetByPath(sTempPath);
 				if (oEntitySet) {
 					if (oEntitySet.__entityType.isFunction) {
@@ -1531,7 +1531,7 @@ sap.ui.define([
 
 						} else {
 							aParts = sTempPath.split("/");
-							sTempPath = '/' + oEntitySet.name + aParts[aParts.length - 1].substr(aParts[aParts.length - 1].indexOf("(")) + sPath.substr(iIndex + 1);
+							sTempPath = '/' + oEntitySet.name + aParts[aParts.length - 1].substring(aParts[aParts.length - 1].indexOf("(")) + sPath.substring(iIndex + 1);
 							if (sTempPath !== sPath) {
 								sCanonicalPath = sTempPath;
 							}

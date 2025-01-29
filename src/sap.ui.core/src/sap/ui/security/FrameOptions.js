@@ -137,10 +137,10 @@ sap.ui.define(['sap/base/Log'], function(Log) {
 			sPattern = sPattern.replace(/\*/gi, ".*");  // replace *   with .*
 			sPattern = sPattern.replace(/:\.\*$/gi, ":\\d*"); // replace :.* with :\d* (only at the end)
 
-			if (sPattern.substr(sPattern.length - 1, 1) !== '$') {
+			if (sPattern.substring(sPattern.length - 1, 1) !== '$') {
 				sPattern = sPattern + '$'; // if not already there add $ at the end
 			}
-			if (sPattern.substr(0, 1) !== '^') {
+			if (sPattern.substring(0, 1) !== '^') {
 				sPattern = '^' + sPattern; // if not already there add ^ at the beginning
 			}
 

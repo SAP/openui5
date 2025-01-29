@@ -3372,10 +3372,10 @@ sap.ui.define([
 			assert.equal(oEntry.CategoryID, 99, "category ID check");
 			assert.equal(oEntry.Description, "Food Desc", "category ID check");
 			assert.ok(oModel.mContexts[oContext.getPath()], "context check");
-			assert.equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
+			assert.equal(oModel.oData[oContext.getPath().substring(1)].CategoryName, "Food", "data check");
 
 			oContext.delete();
-			assert.equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
+			assert.equal(oModel.oData[oContext.getPath().substring(1)], undefined, "data check");
 			assert.equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
 
 			// check default values
@@ -3459,7 +3459,7 @@ sap.ui.define([
 			}
 		};
 		each(aRequestEvents, function(i, sEvent) {
-			oInfo[sEvent.charAt(0).toLowerCase() + sEvent.substr(1)] = 0;
+			oInfo[sEvent.charAt(0).toLowerCase() + sEvent.substring(1)] = 0;
 			oModel["attach" + sEvent](fnHandler);
 		});
 		return fnHandler;

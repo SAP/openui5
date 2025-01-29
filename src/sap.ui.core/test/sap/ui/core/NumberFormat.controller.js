@@ -229,8 +229,8 @@ sap.ui.define([
 
 		formatImageSrc: function(sLocale) {
 			if (sLocale && sLocale.length > 3) {
-				if (FormatHelper.territories.includes(sLocale.substr(3))) {
-					return "flags/" + sLocale.substr(3) + ".png";
+				if (FormatHelper.territories.includes(sLocale.substring(3))) {
+					return "flags/" + sLocale.substring(3) + ".png";
 				}
 			}
 		},
@@ -338,7 +338,7 @@ sap.ui.define([
 		},
 
 		formatLocaleIcon: function(sLocale) {
-			return "flags/" + sLocale.substr(3) + ".png";
+			return "flags/" + sLocale.substring(3) + ".png";
 		},
 
 		onLocaleChange: function(oEvent) {

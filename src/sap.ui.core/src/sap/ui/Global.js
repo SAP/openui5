@@ -169,8 +169,8 @@ sap.ui.define([
 
 		var sFullClass = sClassName.replace(/\//gi,"\."),
 			iLastDotPos = sFullClass.lastIndexOf("."),
-			sPackage = sFullClass.substr(0, iLastDotPos),
-			sClass = sFullClass.substr(iLastDotPos + 1),
+			sPackage = sFullClass.substring(0, iLastDotPos),
+			sClass = sFullClass.substring(iLastDotPos + 1),
 			oPackage = ObjectPath.create(sPackage),
 			oClass = oPackage[sClass],
 			aMethods = (sMethods || "new").split(" "),

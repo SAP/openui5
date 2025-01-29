@@ -221,19 +221,19 @@ sap.ui.define([
 			_oPattern;
 
 		if (sPattern.startsWith("{0}")) {
-			_oPattern = sPattern.substr(3, sPattern.length);
+			_oPattern = sPattern.substring(3, sPattern.length);
 			if ((typeof _oPattern == "string" && _oPattern != "" ? sValue.toLowerCase().endsWith(_oPattern.toLowerCase()) : false)) {
-				return sValue.substr(0, sValue.length - _oPattern.length);
+				return sValue.substring(0, sValue.length - _oPattern.length);
 			}
 		} else if (sPattern.endsWith("{0}")) {
-			_oPattern = sPattern.substr(0, sPattern.length - 3);
+			_oPattern = sPattern.substring(0, sPattern.length - 3);
 			if ((typeof _oPattern == "string" && _oPattern != "" ? sValue.toLowerCase().startsWith(_oPattern.toLowerCase()) : false)) {
-				return sValue.substr(_oPattern.length, sValue.length);
+				return sValue.substring(_oPattern.length, sValue.length);
 			}
 		} else {
 			_oPattern = sPattern.split("{0}");
 			if (_oPattern.length == 2 && ((typeof _oPattern[0] == "string" && _oPattern[0] != "" ? sValue.toLowerCase().startsWith(_oPattern[0].toLowerCase()) : false)) && ((typeof _oPattern[1] == "string" && _oPattern[1] != "" ? sValue.toLowerCase().endsWith(_oPattern[1].toLowerCase()) : false))) {
-				return sValue.substr(_oPattern[0].length, sValue.length - _oPattern[1].length);
+				return sValue.substring(_oPattern[0].length, sValue.length - _oPattern[1].length);
 			}
 		}
 

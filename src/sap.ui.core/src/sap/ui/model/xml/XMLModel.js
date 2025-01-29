@@ -226,7 +226,7 @@ sap.ui.define([
 	 */
 	XMLModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 		var sObjectPath = sPath.substring(0, sPath.lastIndexOf("/") + 1),
-			sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
+			sProperty = sPath.substring(sPath.lastIndexOf("/") + 1);
 
 		// check if path / context is valid
 		if (!this.resolve(sPath, oContext)) {
@@ -241,7 +241,7 @@ sap.ui.define([
 		if (sProperty.indexOf("@") == 0) {
 			oObject = this._getObject(sObjectPath, oContext);
 			if (oObject[0]) {
-				oObject[0].setAttribute(sProperty.substr(1), oValue);
+				oObject[0].setAttribute(sProperty.substring(1), oValue);
 				this.checkUpdate(false, bAsyncUpdate);
 				return true;
 			}
@@ -332,7 +332,7 @@ sap.ui.define([
 		while (oNode && oNode.length > 0 && aParts[iIndex]) {
 			sPart = aParts[iIndex];
 			if (sPart.indexOf("@") == 0) {
-				oNode = this._getAttribute(oNode[0], sPart.substr(1));
+				oNode = this._getAttribute(oNode[0], sPart.substring(1));
 			} else if (sPart == "text()") {
 				oNode = oNode[0] ? oNode[0].textContent : "";
 			} else if (isNaN(sPart)) {
@@ -405,7 +405,7 @@ sap.ui.define([
 		var iColonPos = sName.indexOf(":"),
 			sPrefix = "";
 		if (iColonPos > 0) {
-			sPrefix = sName.substr(0, iColonPos);
+			sPrefix = sName.substring(0, iColonPos);
 		}
 		return this.oNameSpaces[sPrefix];
 	};
@@ -421,7 +421,7 @@ sap.ui.define([
 		var iColonPos = sName.indexOf(":"),
 			sLocalName = sName;
 		if (iColonPos > 0) {
-			sLocalName = sName.substr(iColonPos + 1);
+			sLocalName = sName.substring(iColonPos + 1);
 		}
 		return sLocalName;
 	};
@@ -445,7 +445,7 @@ sap.ui.define([
 			if (name == "xmlns") {
 				oPrefixes[value] = "";
 			} else if (name.indexOf("xmlns") == 0) {
-				oPrefixes[value] = name.substr(6);
+				oPrefixes[value] = name.substring(6);
 			}
 		});
 		return oPrefixes;

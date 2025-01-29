@@ -513,7 +513,7 @@ sap.ui.define([
 	 */
 	DeclarativeSupport.convertAttributeToSettingName = function(sAttribute, sId, bDeprecationWarning) {
 		if (sAttribute.indexOf("data-") === 0) {
-			sAttribute = sAttribute.substr(5);
+			sAttribute = sAttribute.substring(5);
 		} else if (bDeprecationWarning) {
 			Log.warning('[Deprecated] Control "' + sId + '": The attribute "' + sAttribute + '" is not prefixed with "data-*". Future version of declarative support will only suppport attributes with "data-*" prefix.');
 		} else {

@@ -34,7 +34,7 @@
 
 				var iPos = request.url.indexOf("?");
 				if (iPos > -1) {
-					request.url = request.url.substr(0, iPos);
+					request.url = request.url.substring(0, iPos);
 				}
 
 
@@ -93,7 +93,7 @@
 				apiVersion: 2,
 				render: function(oRm, oControl) {
 					var sId = oControl.getId();
-	
+
 					oRm.openStart("div", oControl);
 					oRm.style("width", "100%");
 					oRm.style("height", "100%");
@@ -101,7 +101,7 @@
 					oRm.style("margin-bottom", "1rem");
 					oRm.attr("title", "Age: " + oControl.getAge());
 					oRm.openEnd();
-	
+
 						var fAge = Math.round((Date.now() - oControl.getAge()) / 1000);
 						oRm.openStart("div", sId + "-label");
 						oRm.style("display", "inline-block");
@@ -109,14 +109,14 @@
 						oRm.openEnd();
 						oRm.text(oControl.getLabel());
 						oRm.close("div");
-	
+
 						oRm.openStart("div", sId + "-value");
 						oRm.style("display", "inline-block");
 						oRm.style("width", "28%");
 						oRm.openEnd();
 						oRm.text(oControl.getValue());
 						oRm.close("div");
-	
+
 						oRm.openStart("div", sId + "-age");
 						oRm.style("display", "inline-block");
 						oRm.style("width", "28%");
@@ -125,14 +125,14 @@
 						oRm.text(oControl.getValue());
 						oRm.text("s");
 						oRm.close("div");
-	
+
 						oRm.openStart("button", sId + "-refresh");
 						oRm.style("display", "inline-block");
 						oRm.style("width", "10%");
 						oRm.openEnd();
 						oRm.text("Refresh");
 						oRm.close("button");
-	
+
 					oRm.close("div");
 				}
 			},

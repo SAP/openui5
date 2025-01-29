@@ -972,7 +972,7 @@ sap.ui.define([
 		assert.equal(_uri.isValid("http://www.sap.com"), true, "the given url should be valid for the URI type");
 		assert.equal(_uri.normalize("http://www.sap.com"), "http://www.sap.com", "the url must not be normalized");
 		_uri.setNormalizer(function (sValue) {
-			return "/proxy/http/" + sValue.substr(7);
+			return "/proxy/http/" + sValue.substring(7);
 		});
 		assert.ok(!!_uri._fnNormalizer, "normalizer should be set");
 		assert.equal(_uri.normalize("http://www.sap.com"), "/proxy/http/www.sap.com", "the url should be normalized");

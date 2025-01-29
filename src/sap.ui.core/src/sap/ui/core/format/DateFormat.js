@@ -129,7 +129,7 @@ sap.ui.define([
 			// If style is mixed ("medium/short") split it and pass both parts separately
 			var iSlashIndex = sStyle.indexOf("/");
 			if (iSlashIndex > 0) {
-				return oLocaleData.getCombinedDateTimePattern(sStyle.substr(0, iSlashIndex), sStyle.substr(iSlashIndex + 1), sCalendarType);
+				return oLocaleData.getCombinedDateTimePattern(sStyle.substring(0, iSlashIndex), sStyle.substring(iSlashIndex + 1), sCalendarType);
 			} else {
 				return oLocaleData.getCombinedDateTimePattern(sStyle, sStyle, sCalendarType);
 			}
@@ -824,7 +824,7 @@ sap.ui.define([
 				iLength++;
 			}
 
-			return sValue.substr(0, iLength);
+			return sValue.substring(0, iLength);
 		},
 
 		/**
@@ -927,7 +927,7 @@ sap.ui.define([
 			}
 
 			iLength++; //"+" or "-"
-			sPart = this.findNumbers(sValue.substr(iLength), 2);
+			sPart = this.findNumbers(sValue.substring(iLength), 2);
 
 			var iTZDiffHour = parseInt(sPart);
 			iLength += 2; //hh: 2 digits for hours
@@ -935,7 +935,7 @@ sap.ui.define([
 			if (bColonSeparated) {
 				iLength++; //":"
 			}
-			sPart = this.findNumbers(sValue.substr(iLength), 2);
+			sPart = this.findNumbers(sValue.substring(iLength), 2);
 			var iTZDiff = 0;
 			// timezone pattern "X": will produce only 2 digits: "-08"
 			if (sPart) {
@@ -1172,7 +1172,7 @@ sap.ui.define([
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
 
 				if (oField.digits === 2 && sYear.length > 2) {
-					sYear = sYear.substr(sYear.length - 2);
+					sYear = sYear.substring(sYear.length - 2);
 				}
 				// When parsing we assume dates less than 100 to be in the current/last century,
 				// so when formatting we have to make sure they are differentiable by prefixing with zeros
@@ -1245,7 +1245,7 @@ sap.ui.define([
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
 
 				if (oField.digits === 2 && sWeekYear.length > 2) {
-					sWeekYear = sWeekYear.substr(sWeekYear.length - 2);
+					sWeekYear = sWeekYear.substring(sWeekYear.length - 2);
 				}
 				// When parsing we assume dates less than 100 to be in the current/last century,
 				// so when formatting we have to make sure they are differentiable by prefixing with zeros
@@ -2065,7 +2065,7 @@ sap.ui.define([
 				var iMilliseconds = oDate.getUTCMilliseconds();
 				var sMilliseconds = String(iMilliseconds);
 				var sFractionalseconds = sMilliseconds.padStart(3, "0");
-				sFractionalseconds = sFractionalseconds.substr(0, oField.digits);
+				sFractionalseconds = sFractionalseconds.substring(0, oField.digits);
 				sFractionalseconds = sFractionalseconds.padEnd(oField.digits, "0");
 				return sFractionalseconds;
 			},
@@ -2074,7 +2074,7 @@ sap.ui.define([
 					iLength = sPart.length,
 					bPartInvalid = oConfig.exactLength && iLength < oPart.digits;
 
-				sPart = sPart.substr(0, 3);
+				sPart = sPart.substring(0, 3);
 				sPart = sPart.padEnd(3, "0");
 
 				var iMilliseconds = parseInt(sPart);
@@ -2136,7 +2136,7 @@ sap.ui.define([
 				}
 
 				if (sValue.charAt(0) !== "Z") {
-					var oParsedTZ = oParseHelper.parseTZ(sValue.substr(iLength), true);
+					var oParsedTZ = oParseHelper.parseTZ(sValue.substring(iLength), true);
 
 					iLength += oParsedTZ.length;
 					iTZDiff = oParsedTZ.tzDiff;
@@ -2581,7 +2581,7 @@ sap.ui.define([
 		function isNumeric(oPart0) { return !!oPart0 && getSymbol(oPart0).isNumeric(oPart0.digits); }
 
 		for (var i = 0; i < aFormatArray.length; i++) {
-			sSubValue = sValue.substr(iIndex);
+			sSubValue = sValue.substring(iIndex);
 			oPart = aFormatArray[i];
 			oPrevPart = aFormatArray[i - 1];
 			oNextPart = aFormatArray[i + 1];

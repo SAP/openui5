@@ -20,8 +20,8 @@ sap.ui.define([], function() {
 		// if a model name is specified in the binding path
 		// we extract this binding path
 		if (iSeparatorPos > 0) {
-			sModelName = sPath.substr(0, iSeparatorPos);
-			sPath = sPath.substr(iSeparatorPos + 1);
+			sModelName = sPath.substring(0, iSeparatorPos);
+			sPath = sPath.substring(iSeparatorPos + 1);
 		}
 
 		// returns the path information

@@ -82,7 +82,7 @@ sap.ui.define([
 				} else {
 					//check for command usage - create handler that triggers the CommandExecution
 					if (sName.startsWith("cmd:")) {
-						var sCommand = sName.substr(4);
+						var sCommand = sName.substring(4);
 						fnHandler = function(oEvent) {
 							var oCommandExecution = CommandExecution.find(oEvent.getSource(), sCommand);
 							if (oCommandExecution) {
@@ -299,8 +299,8 @@ sap.ui.define([
 				// if a model separator is found in the path, extract model name and path
 				var iSeparatorPos = oPart.path.indexOf(">");
 				if (iSeparatorPos > 0) {
-					oPart.model = oPart.path.substr(0, iSeparatorPos);
-					oPart.path = oPart.path.substr(iSeparatorPos + 1);
+					oPart.model = oPart.path.substring(0, iSeparatorPos);
+					oPart.path = oPart.path.substring(iSeparatorPos + 1);
 				}
 			}
 

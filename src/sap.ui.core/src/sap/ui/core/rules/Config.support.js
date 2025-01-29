@@ -143,7 +143,7 @@ sap.ui.define([
 			}
 			for (var i = 0; i < aAppNames.length; i++) {
 				sAppName = aAppNames[i];
-				var sICFPath = sUI5ICFNode + (sAppName.charAt(0) === "/" ? sAppName.substr(1) : "sap/" + sAppName);
+				var sICFPath = sUI5ICFNode + (sAppName.charAt(0) === "/" ? sAppName.substring(1) : "sap/" + sAppName);
 				oIssueManager.addIssue({
 					severity: Severity.Medium,
 					details: "Application '" + sAppName + "' has no cache buster tokens in some or all of its requests.\n " +

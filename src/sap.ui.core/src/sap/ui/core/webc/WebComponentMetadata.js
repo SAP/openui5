@@ -113,7 +113,7 @@ function(ElementMetadata, WebComponentRenderer, camelize) {
 
 		// Generate accessors for proxied public getters - only if not created explicitly already
 		this._aGetters.forEach(function(name) {
-			var functionName = "get" + name.substr(0, 1).toUpperCase() + name.substr(1);
+			var functionName = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
 			if (!proto[functionName]) {
 				proto[functionName] = function() {
 					return this.__callPublicGetter(name);

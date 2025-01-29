@@ -1735,14 +1735,14 @@ sap.ui.define([
 
 		// if number is negative remove minus
 		if (bNegative) {
-			sNumber = sNumber.substr(1);
+			sNumber = sNumber.substring(1);
 		}
 
 		// if number contains fraction, extract it
 		iDotPos = sNumber.indexOf(".");
 		if (iDotPos > -1) {
-			sIntegerPart = sNumber.substr(0, iDotPos);
-			sFractionPart = sNumber.substr(iDotPos + 1);
+			sIntegerPart = sNumber.substring(0, iDotPos);
+			sFractionPart = sNumber.substring(iDotPos + 1);
 		} else {
 			sIntegerPart = sNumber;
 		}
@@ -1758,7 +1758,7 @@ sap.ui.define([
 		if (sFractionPart.length < oOptions.minFractionDigits) {
 			sFractionPart = sFractionPart.padEnd(oOptions.minFractionDigits, "0");
 		} else if (sFractionPart.length > oOptions.maxFractionDigits && !oOptions.preserveDecimals) {
-			sFractionPart = sFractionPart.substr(0, oOptions.maxFractionDigits);
+			sFractionPart = sFractionPart.substring(0, oOptions.maxFractionDigits);
 		}
 
 		if (oOptions.type === mNumberType.UNIT && !oOptions.showNumber) {

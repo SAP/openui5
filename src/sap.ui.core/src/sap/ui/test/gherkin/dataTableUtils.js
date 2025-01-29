@@ -79,7 +79,7 @@ sap.ui.define([
 			titleCase : function(sString) {
 				dataTableUtils._testNormalizationInput(sString, "titleCase");
 				return normalize(sString)
-					.replace(/\w*/g, function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();});
+					.replace(/\w*/g, function(s){return s.charAt(0).toUpperCase() + s.substring(1).toLowerCase();});
 			},
 
 			/**

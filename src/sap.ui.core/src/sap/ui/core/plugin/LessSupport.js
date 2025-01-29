@@ -116,7 +116,7 @@
 					var _bUseLess = that.initLink(this);
 					bUseLess = _bUseLess || bUseLess;
 					if (_bUseLess){
-						aLibs.push(this.id.substr(13)); // length of "sap-ui-theme-"
+						aLibs.push(this.id.substring(13)); // length of "sap-ui-theme-"
 					}
 				});
 
@@ -172,7 +172,7 @@
 					delete this.iCheckThemeAppliedTimeout;
 					// remove the content of the LESS style element
 					jQuery("link[id^=sap-ui-theme-]").each(function() {
-						var sLibName = this.id.substr(13); // length of "sap-ui-theme-"
+						var sLibName = this.id.substring(13); // length of "sap-ui-theme-"
 						jQuery(document.getElementById("less:" + sLibName)).remove();
 					});
 					// remove the hooks from the Core
@@ -194,7 +194,7 @@
 
 				// add the section for the generated CSS code
 				jQuery("<style>").
-					attr("id", "less:" + oLink.id.substr(13)).
+					attr("id", "less:" + oLink.id.substring(13)).
 					attr("type", "text/css").
 					attr("media", this.media || "screen").
 					insertAfter(oLink);
@@ -216,10 +216,10 @@
 
 				// modify style sheet URL to point to the new theme
 				// be aware of custom css included with the colon (see includeLibraryTheme) // TODO: what is this??
-				var sLibName = oLink.id.substr(13); // length of "sap-ui-theme-"
+				var sLibName = oLink.id.substring(13); // length of "sap-ui-theme-"
 				var pos;
 				if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
-					sLibName = sLibName.substr(0, pos);
+					sLibName = sLibName.substring(0, pos);
 				}
 				var sBaseUrl = ThemeManager._getThemePath(sLibName, Theming.getTheme());
 
@@ -363,7 +363,7 @@
 			 */
 			LessSupport.prototype.unregisterLink = function(oLink) {
 				if (window.less && window.less.sheets) {
-					var sLibName = oLink.id.substr(13);
+					var sLibName = oLink.id.substring(13);
 					var iIndex = window.less.sheets.indexOf(oLink);
 					if (iIndex >= 0) {
 						window.less.sheets.splice(iIndex, 1);
@@ -462,7 +462,7 @@
 
 					// fill the href - lib map using less stylesheets
 					jQuery(window.less.sheets).each(function() {
-						mLessHrefToLib[this.href] = jQuery(this).attr("id").substr(13);
+						mLessHrefToLib[this.href] = jQuery(this).attr("id").substring(13);
 					});
 
 					// Save original function
@@ -480,7 +480,7 @@
 								mVariables = mLibVariables[sLibName] = {};
 							}
 							try {
-								mVariables[this.name.substr(1)] = this.value.eval(env).toCSS(env);
+								mVariables[this.name.substring(1)] = this.value.eval(env).toCSS(env);
 							} catch (ex) {
 								// causes an exception when variable is not defined. ignore it here, less will take care of it
 							}

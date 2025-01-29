@@ -13,7 +13,7 @@
 				sBaseUrl = null,
 				sTestTimeout,
 				sOrigin = window.location.origin ? window.location.origin : (window.location.protocol + "//" + window.location.host),
-				sTestUrl = window.location.href.substr(sOrigin.length);
+				sTestUrl = window.location.href.substring(sOrigin.length);
 
 		for (var i = 0; i < aScripts.length; i++) {
 			var oScript = aScripts[i];

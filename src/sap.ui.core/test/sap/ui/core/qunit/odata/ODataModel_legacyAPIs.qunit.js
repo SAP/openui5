@@ -106,7 +106,7 @@ sap.ui.define([
 
 	// assertion methods for the next 3 constructor tests
 	function assertCommonArguments(assert, oModel) {
-		assert.equal(oModel.sServiceUrl, sURI.substr(0, sURI.length - 1), 'serviceUrl');
+		assert.equal(oModel.sServiceUrl, sURI.substring(0, sURI.length - 1), 'serviceUrl');
 		assert.equal(oModel.bJSON, true, 'json');
 		assert.equal(oModel.sUser, 'user', 'user');
 		assert.equal(oModel.sPassword, 'pa$$w0rd', 'password');
@@ -1168,12 +1168,12 @@ sap.ui.define([
 			assert.equal(oEntry.Description, "Food Desc", "category ID check");
 			assert.ok(oEntry._bCreate, "check create flag");
 
-			assert.ok(oModel.oRequestQueue[oContext.getPath().substr(1)], "queue check");
+			assert.ok(oModel.oRequestQueue[oContext.getPath().substring(1)], "queue check");
 			assert.ok(oModel.mContexts[oContext.getPath()], "context check");
-			assert.equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
+			assert.equal(oModel.oData[oContext.getPath().substring(1)].CategoryName, "Food", "data check");
 			oModel.deleteCreatedEntry(oContext);
-			assert.equal(oModel.oRequestQueue[oContext.getPath().substr(1)], undefined, "queue check");
-			assert.equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
+			assert.equal(oModel.oRequestQueue[oContext.getPath().substring(1)], undefined, "queue check");
+			assert.equal(oModel.oData[oContext.getPath().substring(1)], undefined, "data check");
 			assert.equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
 
 			// check default values

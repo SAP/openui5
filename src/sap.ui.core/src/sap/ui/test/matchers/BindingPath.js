@@ -212,7 +212,7 @@ sap.ui.define([
 			var oMatcherRegex;
 			var aDelimiterMatch = vMatcherPath.source.match(/\^?\//);
 			if (bWithContext && aDelimiterMatch) {
-				oMatcherRegex = new RegExp(vMatcherPath.source.substr(aDelimiterMatch.index + 1), vMatcherPath.flags);
+				oMatcherRegex = new RegExp(vMatcherPath.source.substring(aDelimiterMatch.index + 1), vMatcherPath.flags);
 			} else if (!bWithContext && !aDelimiterMatch) {
 				oMatcherRegex = new RegExp("\/" + vMatcherPath.source, vMatcherPath.flags);
 			} else {
@@ -222,7 +222,7 @@ sap.ui.define([
 		} else if (sPath) {
 			var bHasDelimiter = sPath.charAt(0) === "/";
 			if (bWithContext && bHasDelimiter) {
-				vMatcherPath = vMatcherPath.substr(1);
+				vMatcherPath = vMatcherPath.substring(1);
 			} else if (!bWithContext && !bHasDelimiter) {
 				vMatcherPath = "/" + vMatcherPath;
 			}

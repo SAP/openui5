@@ -39,8 +39,8 @@ sap.ui.define([
 			// if a model separator is found in the path, extract model name and path
 			const iSeparatorPos = oPart.path.indexOf(">");
 			if (iSeparatorPos > 0) {
-				oPart.model = oPart.path.substr(0, iSeparatorPos);
-				oPart.path = oPart.path.substr(iSeparatorPos + 1);
+				oPart.model = oPart.path.substring(0, iSeparatorPos);
+				oPart.path = oPart.path.substring(iSeparatorPos + 1);
 				oPart[MODEL_NAME_EXTRACTED] = true;
 			}
 		}

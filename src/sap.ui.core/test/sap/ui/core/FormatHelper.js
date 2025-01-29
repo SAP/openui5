@@ -78,10 +78,10 @@ sap.ui.define([
 					.style("height", "40px")
 					.openEnd();
 
-					if (aTerritories.includes(sLocale.substr(3))) {
+					if (aTerritories.includes(sLocale.substring(3))) {
 						oRM.voidStart("img")
 							.attr("title", sLocale)
-							.attr("src", "flags/" + sLocale.substr(3) + ".png")
+							.attr("src", "flags/" + sLocale.substring(3) + ".png")
 							.style("width", "30px")
 							.style("margin", "10px")
 							.voidEnd();
@@ -288,7 +288,7 @@ sap.ui.define([
 			this.bUseRawValues = true;
 		},
 		parseValue: function(sValue) {
-			var aParts = sValue.substr(1).split("&"),
+			var aParts = sValue.substring(1).split("&"),
 				oParams = {}, aParams, vValue;
 			aParts.forEach(function(oParam) {
 				var aSplit = oParam.split("="),

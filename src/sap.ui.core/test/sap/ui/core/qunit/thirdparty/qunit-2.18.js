@@ -4976,7 +4976,7 @@
                 }
 
                 if (matchesIndex === matchesBest.length) {
-                  highlighted += char + hClose + target.substr(i + 1);
+                  highlighted += char + hClose + target.substring(i + 1);
                   break;
                 }
               } else {

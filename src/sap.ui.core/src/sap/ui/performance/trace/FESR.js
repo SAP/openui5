@@ -166,7 +166,7 @@ sap.ui.define([
 				vField = "-1";
 			}
 		} else {
-			vField = bCutFromFront ? vField.substr(-iLength, iLength) : vField.substr(0, iLength);
+			vField = bCutFromFront ? vField.substring(-iLength, iLength) : vField.substring(0, iLength);
 		}
 		return vField;
 	}

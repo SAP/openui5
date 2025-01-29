@@ -578,8 +578,8 @@ sap.ui.define([
 
 		var listBinding = bindings[0];
 		var oSorter = new Sorter("firstName", false, false, function(a, b) {
-			a = a.substr(1);
-			b = b.substr(1);
+			a = a.substring(1);
+			b = b.substring(1);
 			if (a < b) {
 				return -1;
 			}

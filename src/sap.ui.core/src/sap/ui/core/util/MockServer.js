@@ -805,7 +805,7 @@ sap.ui
 						sValue = parseFloat(sValue);
 					} else if ((sValue.charAt(0) === "'") && (sValue.charAt(sValue.length - 1) === "'")) {
 						//fix for filtering on properties of type string
-						sValue = sValue.substr(1, sValue.length - 2);
+						sValue = sValue.substring(1, sValue.length - 2);
 					}
 					// support for 1 level complex type property
 					var iComplexType = sPath.indexOf("/");
@@ -1044,7 +1044,7 @@ sap.ui
 							return (path + '/').indexOf(currentPath) === 0;
 						}).forEach(function(path, _, innerSelect) {
 							// then get the next property in given path
-							var propertyKey = path.substr(currentPath.length).split('/')[0];
+							var propertyKey = path.substring(currentPath.length).split('/')[0];
 							// Check if we have that propertyKey on the current object
 							if (data[propertyKey] !== undefined) {
 								// in this case recurse again while adding this to the current path

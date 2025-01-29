@@ -197,7 +197,7 @@ sap.ui.define([
 
 		var iScrollBarSize = this.getSize();
 		if (iScrollBarSize.endsWith("px")) {
-			iScrollBarSize = iScrollBarSize.substr(0, iScrollBarSize.length - 2);
+			iScrollBarSize = iScrollBarSize.substring(0, iScrollBarSize.length - 2);
 		} else {
 			iScrollBarSize = this.getVertical() ? this.$().height() : this.$().width();
 		}
@@ -211,7 +211,7 @@ sap.ui.define([
 				// the following code is used if a container of the scrollbar is rendered invisible and afterwards is set to visible
 				stepSize = window.getComputedStyle(jQuery("body").get(0))["font-size"];
 				if (stepSize.endsWith("px")) {
-					stepSize = stepSize.substr(0, stepSize.length - 2);
+					stepSize = stepSize.substring(0, stepSize.length - 2);
 				}
 				stepSize = parseInt(stepSize);
 			}
