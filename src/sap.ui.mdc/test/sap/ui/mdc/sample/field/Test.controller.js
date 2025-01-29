@@ -258,7 +258,7 @@ sap.ui.define([
 		handleIconPress: function(oEvent) {
 			var oButton = oEvent.oSource;
 			var oValueHelp = oButton.getParent().getParent();
-			var vKey = oButton.getIcon().substr(11);
+			var vKey = oButton.getIcon().substring(11);
 			oValueHelp.fireSelectEvent([Condition.createCondition(OperatorName.EQ, [vKey])]);
 		},
 
@@ -273,7 +273,7 @@ sap.ui.define([
 			}
 			for (var i = 0; i < aButtons.length; i++) {
 				var oButton = aButtons[i];
-				if (oButton.getIcon().substr(11) == vKey) {
+				if (oButton.getIcon().substring(11) == vKey) {
 					oButton.setType(ButtonType.Emphasized);
 				} else {
 					oButton.setType(ButtonType.Default);

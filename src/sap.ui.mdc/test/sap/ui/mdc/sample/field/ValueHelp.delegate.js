@@ -42,8 +42,8 @@ sap.ui.define([
 					for (var sId in aTables) {
 						var iIndex = sContentId.indexOf(sId);
 						if (iIndex >= 0) {
-							var sView = sContentId.substr(0, iIndex);
-							var sTableId = sView + (aTables[sContentId.substr(iIndex)]);
+							var sView = sContentId.substring(0, iIndex);
+							var sTableId = sView + (aTables[sContentId.substring(iIndex)]);
 							var oTable = Element.getElementById(sTableId);
 							if (oTable) {
 								oContent.setTable(oTable);

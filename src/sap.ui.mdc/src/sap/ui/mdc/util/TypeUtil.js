@@ -197,7 +197,7 @@ sap.ui.define([
 
 				case BaseType.Date:
 					if (sValue.indexOf("T") >= 0) { // old variant with DateTime for DateValues
-						sValue = sValue.substr(0, sValue.indexOf("T")); // just take the date part
+						sValue = sValue.substring(0, sValue.indexOf("T")); // just take the date part
 					}
 					return DateUtil.stringToType(sValue, oTypeInstance, sDatePattern);
 

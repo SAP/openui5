@@ -3247,7 +3247,7 @@ sap.ui.define([
 
 		if (sOutput) { // only if something returned
 			// while typing the types user input should not be changed. As the output might have a diffrent upper/lower case, replace the beginning with the user input.
-			sOutput = typeof sOutput === 'string' ? sFilterValue + sOutput.substr(sFilterValue.length) : sFilterValue;
+			sOutput = typeof sOutput === 'string' ? sFilterValue + sOutput.substring(sFilterValue.length) : sFilterValue;
 
 			oContent.setDOMValue(sOutput);
 			oContent.focus(); // otherwise focus stays in table in some cases

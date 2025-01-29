@@ -62,8 +62,8 @@ sap.ui.define([
 								var iIndex = sKeyPath.indexOf("/");
 								if (iIndex >= 0) {
 									// TODO: how to get the object if bound to key of an object?
-									var sPropertyPath = sKeyPath.substr(iIndex + 1);
-									sKeyPath = sKeyPath.substr(0, iIndex);
+									var sPropertyPath = sKeyPath.substring(iIndex + 1);
+									sKeyPath = sKeyPath.substring(0, iIndex);
 									var oKey = {};
 									oKey[sPropertyPath] = oCondition.values[0];
 									oItem[sKeyPath] = oKey;
