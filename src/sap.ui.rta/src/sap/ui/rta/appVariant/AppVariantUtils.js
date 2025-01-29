@@ -62,7 +62,7 @@ sap.ui.define([
 				sTrimmedId = sTrimmedId.substring(0, sTrimmedId.length - sGuidLength);
 			} else {
 				// If the length of GUID is longer than the length of rest of the id(without GUID), then just trim the GUID so that the whole id length remains 56 characters
-				return sId.substr(0, HANA_CLOUD_ID_LENGTH);
+				return sId.substring(0, HANA_CLOUD_ID_LENGTH);
 			}
 
 			// After adjusting the id, if the last character of string has period '.', just append the guid string otherwise append period '.' in between

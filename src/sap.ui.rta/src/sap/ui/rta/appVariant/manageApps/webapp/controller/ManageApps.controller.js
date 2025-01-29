@@ -222,7 +222,7 @@ sap.ui.define([
 				oItem = oItem.getParent();
 			}
 
-			sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+			sItemPath = sItemPath.substring(0, sItemPath.lastIndexOf(" > "));
 
 			if (!oI18n) {
 				this._createResourceBundle();
