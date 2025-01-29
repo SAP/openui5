@@ -5,15 +5,13 @@
 sap.ui.define([
 	"sap/base/util/Deferred",
 	"sap/ui/mdc/util/loadModules",
-	"sap/ui/VersionInfo",
-	"sap/ui/core/Lib",
-	"sap/base/future"
+	"sap/base/future",
+	"sap/ui/mdc/util/PropertyHelperUtil"
 ], (
 	Deferred,
 	loadModules,
-	VersionInfo,
-	Library,
-	future
+	future,
+	PropertyHelperUtil
 ) => {
 	"use strict";
 
@@ -289,7 +287,7 @@ sap.ui.define([
 				return [aProperties, PropertyHelper];
 			});
 		}).then((aResult) => {
-			return _checkValidationExceptions().then((bExceptionFound) => {
+			return PropertyHelperUtil.checkValidationExceptions().then((bExceptionFound) => {
 				return aResult.concat(bExceptionFound);
 			});
 		}).then((aResult) => {
@@ -307,7 +305,7 @@ sap.ui.define([
 				});
 			}
 
-			this._oPropertyHelper = new PropertyHelper(aProperties, this, undefined/*additional attributes*/, bExceptionFound);
+			this._oPropertyHelper = new PropertyHelper(aProperties, this, undefined/*additional attributes*/);
 
 			this._bPropertyHelperInitializing = false;
 			if (bFinal) {
@@ -334,29 +332,6 @@ sap.ui.define([
 		return this._oPropertyHelper;
 	}
 
-	function _checkValidationExceptions () {
-		const affectedLibaries = ["sap.fe.core", "sap.fe.macros", "sap.sac.df"];
-		const aLoadedLibraries = affectedLibaries.filter((sLibrary) => Library.isLoaded(sLibrary));
-
-		return VersionInfo.load()
-		.then((oVersionInfo) => {
-			const bDisabledViaConfig = window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation;
-			const bDisabledViaURLParam = new URLSearchParams(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true";
-			const bExceptionForFE = aLoadedLibraries.includes("sap.fe.core") || aLoadedLibraries.includes("sap.fe.macros");
-			const bDisabledForDF = aLoadedLibraries.includes("sap.sac.df");
-			const bExplicitlyEnabled = (new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true");
-			const bUI5Version2 = oVersionInfo.version.indexOf("2.") === 0;
-
-			// Disable strict validation if
-			// 1. it is disabled explicitly via config
-			// 2. it is disabled via url param
-			// 3. a library with an exception is loaded in the app (FE)
-			// 4. a library with an exception is loaded in the app (DF)
-			// 5. it has not explicitly been enabled via url param
-			// 6. UI5 version < 2.0
-			return bDisabledViaConfig || bDisabledViaURLParam || bExceptionForFE || bDisabledForDF && !bExplicitlyEnabled && !bUI5Version2;
-		});
-	}
 
 	// use delegate for final properties
 	function _getDelegateProperties(oControl) {
