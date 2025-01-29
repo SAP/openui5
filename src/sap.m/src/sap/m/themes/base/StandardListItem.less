@@ -59,14 +59,14 @@
 
 .sapMSLITitle,
 .sapMSLITitleOnly {
-	font-size: @sapMFontLargeSize;
-	color: @sapUiListTextColor;
+	font-size: var(--sapFontLargeSize);
+	color: var(--sapList_TextColor);
 }
 
 .sapMSLIDescription,
 .sapMSLIDescriptionText {
 	font-size: @sapMFontMediumSize;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMSLIWithDescription .sapMSLIDescription {
@@ -85,9 +85,9 @@
 
 .sapMSLIImgIcon,
 .sapMSLIImgNoInsetIcon {
-	font-family: "SAP-icons";
+	font-family: var(----sapContent_IconFontFamily);
 	font-size: 1.375rem;
-	color: @sapUiContentNonInteractiveIconColor;
+	color: var(--sapContent_NonInteractiveIconColor);
 }
 
 .sapMSLIImgNoInsetIcon,
@@ -100,7 +100,7 @@
 .sapMLIBActive .sapMSLIImgNoInsetIcon,
 .sapMLIBActive .sapMSLIImgIcon,
 .sapMLIBActive .sapMSLIExpandCollapse {
-	color: @sapUiListActiveTextColor;
+	color: var(--sapList_Active_TextColor);
 	text-shadow: none;
 }
 
@@ -128,7 +128,7 @@
 }
 
 .sapMSLIInfo:not(.sapMSLIInfoStateInverted) {
-	text-shadow: @sapUiContentTextShadow;
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMSLIInfoMiddle > .sapMSLIInfo {
@@ -141,60 +141,60 @@ html[dir=rtl] .sapMSLIInfo {
 }
 
 .sapMSLIInfoNone {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMSLIInfoError {
-	color: @sapUiNegativeText;
+	color: var(--sapNegativeTextColor);
 }
 
 .sapMSLIInfoWarning {
-	color: @sapUiCriticalText;
+	color: var(--sapCriticalTextColor);
 }
 
 .sapMSLIInfoSuccess {
-	color: @sapUiPositiveText;
+	color: var(--sapPositiveTextColor);
 }
 
 .sapMSLIInfoInformation {
-	color: @sapUiInformativeText;
+	color: var(--sapInformativeTextColor);
 }
 
 /* inverted info text */
 .sapMSLIInfoStateInverted {
-	font-size: @sapMFontSmallSize;
+	font-size: var(--sapFontSmallSize);
 	font-weight: bold;
 	color: @sapUiContentContrastTextColor;
 	border-radius: 0.25rem;
 	box-sizing: border-box;
 	height: 0.875rem;
-	line-height: calc(@sapMFontSmallSize - 0.0625rem);
+	line-height: ~"calc(var(--sapFontSmallSize) - 0.0625rem);"
 }
 
 .sapMSLIInfo.sapMSLIInfoStateInverted {
 	padding: 0.0625rem 0.25rem;
 	text-align: center;
-	text-shadow: @sapContent_ContrastTextShadow;
+	text-shadow: var(--sapContent_ContrastTextShadow);
 }
 
 .sapMSLIInfoStateInverted.sapMSLIInfoNone {
-	background: @sapUiNeutralElement;
+	background: var(--sapNeutralElementColor);
 }
 
 .sapMSLIInfoStateInverted.sapMSLIInfoError {
-	background: @sapUiNegativeElement;
+	background: var(--sapNegativeElementColor);
 }
 
 .sapMSLIInfoStateInverted.sapMSLIInfoWarning {
-	background: @sapUiCriticalElement;
+	background: var(--sapCriticalElementColor);
 }
 
 .sapMSLIInfoStateInverted.sapMSLIInfoSuccess {
-	background: @sapUiPositiveElement;
+	background: var(--sapPositiveElementColor);
 }
 
 .sapMSLIInfoStateInverted.sapMSLIInfoInformation {
-	background: @sapUiInformativeElement;
+	background: var(--sapInformativeElementColor);
 }
 
 /* Wrapping */
@@ -242,6 +242,7 @@ html[dir=rtl] .sapMSLIInfo {
 
 	&:has(.sapMSLIDescription) {
 		padding-bottom: 0.5rem;
+
 		.sapMSLITitle {
 			padding-bottom: 0.25rem;
 		}
@@ -264,13 +265,13 @@ html[dir=rtl] .sapMSLIInfo {
 .sapMSLIExpandCollapse {
 	text-wrap: nowrap;
 	position: relative;
-	color: @sapUiLink;
+	color: var(--sapLinkColor);
 	cursor: pointer;
 	padding: 0 1px;
 }
 
 .sapMSLIExpandCollapse:hover {
-	color: @sapUiLinkHover;
+	color: var(--sapLink_Hover_Color);
 	text-decoration: underline;
 }
 
@@ -278,7 +279,7 @@ html[dir=rtl] .sapMSLIInfo {
 	outline: @_sap_m_ListItemBase_Focus_Outline;
 }
 
-.sapMSLIExpandCollapse:before {
+.sapMSLIExpandCollapse::before {
 	position: absolute;
 	content: '';
 	height: 1.5rem;
