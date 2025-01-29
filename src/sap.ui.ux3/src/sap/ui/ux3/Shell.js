@@ -868,7 +868,7 @@ sap.ui.define([
 	Shell._updateToolIcon = function(oDomRef) {
 		if (oDomRef && oDomRef.firstChild) {
 			var $elem = jQuery(oDomRef);
-			var toolId = oDomRef.id.substr(oDomRef.id.indexOf(Shell.TOOL_PREFIX) + 6);
+			var toolId = oDomRef.id.substring(oDomRef.id.indexOf(Shell.TOOL_PREFIX) + 6);
 			var tool = sap.ui.getCore().byId(toolId);
 			var icon;
 			if ($elem.is(".sapUiUx3ShellToolSelected")) {
@@ -1058,7 +1058,7 @@ sap.ui.define([
 
 		// identify new tool
 		var tool;
-		var toolId = sId.substr(sId.indexOf(Shell.TOOL_PREFIX) + 6);
+		var toolId = sId.substring(sId.indexOf(Shell.TOOL_PREFIX) + 6);
 		if (toolId == (this.getId() + "-searchTool")) {
 			tool = this._getSearchTool();
 		} else if (toolId == (this.getId() + "-feederTool")) {
