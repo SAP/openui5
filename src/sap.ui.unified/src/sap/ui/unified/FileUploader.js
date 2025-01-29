@@ -1023,7 +1023,7 @@ sap.ui.define([
 		var oDomRef = this._oFilePathDomRef;
 		var sWidth = this.getWidth();
 
-		if (sWidth.substr( -1) == "%" && oDomRef) {
+		if (sWidth.substring( -1) == "%" && oDomRef) {
 			// Special case - if the width is not in px, we only change the top element
 
 			// Resize all elements from the input field up to the control element itself.

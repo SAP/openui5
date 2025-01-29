@@ -916,7 +916,7 @@ sap.ui.define([
 		});
 
 		this.oHexField = this.oColorPickerHelper.factory.createInput(sId + "-hxF", {
-			value: this.Color.hex.substr(1),
+			value: this.Color.hex.substring(1),
 			change: this._handleHexValueChange.bind(this),
 			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_HEX")
 		}).addStyleClass(CONSTANTS.HEXClass);
@@ -1225,7 +1225,7 @@ sap.ui.define([
 		this._parseColorString(this.getColorString());
 
 		// update UI
-		this.oHexField.setValue(this.Color.hex.substr(1));
+		this.oHexField.setValue(this.Color.hex.substring(1));
 		this.oRedField.setValue(this.Color.r);
 		this.oGreenField.setValue(this.Color.g);
 		this.oBlueField.setValue(this.Color.b);
@@ -1625,15 +1625,15 @@ sap.ui.define([
 			re;
 
 		// check for correct value
-		if (sHexValue.substr(0, 1) === '#') {
-			sHexValue = sHexValue.substr(1);
+		if (sHexValue.substring(0, 1) === '#') {
+			sHexValue = sHexValue.substring(1);
 		}
 
 		// parse #RRGGBBAA
 		re = /^([0-9a-fA-F]{8})$/;
 		if (re.test(sHexValue) !== false) {
-			flAlphaValue = Number((parseInt(sHexValue.substr(6, 2), 16) / 255).toFixed(2));
-			sHexValue = sHexValue.substr(0, 6);
+			flAlphaValue = Number((parseInt(sHexValue.substring(6, 2), 16) / 255).toFixed(2));
+			sHexValue = sHexValue.substring(0, 6);
 		}
 
 		re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -2091,9 +2091,9 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._convertRGB = function(sHex) {
 		// Convert values
-		this.Color.r = parseInt(sHex.substr(0, 2), 16);
-		this.Color.g = parseInt(sHex.substr(2, 2), 16);
-		this.Color.b = parseInt(sHex.substr(4, 2), 16);
+		this.Color.r = parseInt(sHex.substring(0, 2), 16);
+		this.Color.g = parseInt(sHex.substring(2, 2), 16);
+		this.Color.b = parseInt(sHex.substring(4, 2), 16);
 	};
 
 	/**
@@ -2135,8 +2135,8 @@ sap.ui.define([
 		var hexValue;
 
 		// delete #, trim and lowercase
-		if (sColor.substr(0, 1) === '#') {
-			sColor = sColor.substr(1);
+		if (sColor.substring(0, 1) === '#') {
+			sColor = sColor.substring(1);
 		}
 		sColor = sColor.trim().toLowerCase();
 
@@ -2148,7 +2148,7 @@ sap.ui.define([
 			}
 
 			if (hexValue.length === 8) {
-				this.Color.a = this.Color.oldA = Number((parseInt(hexValue.substr(6, 2), 16) / 255).toFixed(2));
+				this.Color.a = this.Color.oldA = Number((parseInt(hexValue.substring(6, 2), 16) / 255).toFixed(2));
 				hexValue = hexValue.substring(0, 6);
 			}
 
@@ -2177,12 +2177,12 @@ sap.ui.define([
 			}
 			return true;
 		}
-		if (sColor.substr(0, 3) === 'rgb') {
+		if (sColor.substring(0, 3) === 'rgb') {
 			return this._parseRGB(sColor, bCheckOnly);
 		}
 		if (this._bHSLMode) {
 			return this._parseHSL(sColor, bCheckOnly);
-		} else if (sColor.substr(0, 3) === 'hsv') {
+		} else if (sColor.substring(0, 3) === 'hsv') {
 			return this._parseHSV(sColor, bCheckOnly);
 		}
 		return false;
@@ -2204,7 +2204,7 @@ sap.ui.define([
 			iV;
 
 		// remove hsv, "(", ")" and blanks
-		sColor = sColor.substr(3).replace("(", '').replace(")", '').split(' ').join('');
+		sColor = sColor.substring(3).replace("(", '').replace(")", '').split(' ').join('');
 		if (re.test(sColor) === true) {
 			// If we are in check only mode we don't do any control adaptation
 			if (bCheckOnly) {
@@ -2247,7 +2247,7 @@ sap.ui.define([
 	 */
 	ColorPicker.prototype._parseHSL = function(sColor, bCheckOnly) {
 		var aHSLColor,
-			sBeginning = sColor.substr(0, 4),
+			sBeginning = sColor.substring(0, 4),
 			bHSLA,
 			iH,
 			iS,
@@ -2264,7 +2264,7 @@ sap.ui.define([
 		}
 
 		// remove hsl|a, "(", ")" and blanks
-		sColor = sColor.substr(bHSLA ? 4 : 3).replace("(", '').replace(")", '').split(' ').join('');
+		sColor = sColor.substring(bHSLA ? 4 : 3).replace("(", '').replace(")", '').split(' ').join('');
 
 		// split string to array of values
 		aHSLColor = sColor.split(",");
@@ -2351,7 +2351,7 @@ sap.ui.define([
 		}
 
 		// remove rgb|a, "(", ")" and blanks
-		sColor = sColor.substr(bRGBA ? 4 : 3).replace("(", '').replace(")", '').split(' ').join('');
+		sColor = sColor.substring(bRGBA ? 4 : 3).replace("(", '').replace(")", '').split(' ').join('');
 
 		if (re.test(sColor)) {
 			if (bCheckOnly) {

@@ -308,7 +308,7 @@ sap.ui.define([
 			if (iPadding > 0) {
 				sFormattedCurrencyValue = sFormattedCurrencyValue.padEnd(sFormattedCurrencyValue.length + iPadding, Currency.FIGURE_SPACE);
 			} else if (iPadding < 0) {
-				sFormattedCurrencyValue = sFormattedCurrencyValue.substr(0, sFormattedCurrencyValue.length + iPadding);
+				sFormattedCurrencyValue = sFormattedCurrencyValue.substring(0, sFormattedCurrencyValue.length + iPadding);
 			}
 
 			return sFormattedCurrencyValue;

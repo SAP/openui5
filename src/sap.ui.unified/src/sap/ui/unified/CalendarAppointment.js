@@ -254,9 +254,9 @@ sap.ui.define([
 			sHex = '#' + sHex.charAt(1) + sHex.charAt(1) + sHex.charAt(2) + sHex.charAt(2) + sHex.charAt(3) + sHex.charAt(3);
 		}
 		return "rgba(" + [
-				parseInt(sHex.substr(1, 2), 16), // Red
-				parseInt(sHex.substr(3, 2), 16), // Green
-				parseInt(sHex.substr(5, 2), 16) // Blue
+				parseInt(sHex.substring(1, 2), 16), // Red
+				parseInt(sHex.substring(3, 2), 16), // Green
+				parseInt(sHex.substring(5, 2), 16) // Blue
 			].join(", ") + ", 0.2)";
 	};
 
