@@ -3406,6 +3406,8 @@ sap.ui.define([
 	 *   The insertion index
 	 * @param {boolean} [bAtEnd]
 	 *   The relative position in the creation area
+	 *
+	 * @private
 	 */
 	ODataListBinding.prototype.insertContext = function (oContext, iIndex, bAtEnd) {
 		if (iIndex !== undefined) {
@@ -3560,6 +3562,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context[]} The list of kept contexts
 	 *
+	 * @private
 	 * @see #getCurrentContexts
 	 */
 	ODataListBinding.prototype.keepOnlyVisibleContexts = function () {
