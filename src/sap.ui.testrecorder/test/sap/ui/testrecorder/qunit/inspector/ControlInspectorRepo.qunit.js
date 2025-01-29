@@ -111,7 +111,7 @@ sap.ui.define([
 
 	QUnit.test("Should get all data of type", function (assert) {
 		["request", "selector", "snippet"].forEach(function (sType) {
-			var aResult = ControlInspectorRepo["get" + sType.charAt(0).toUpperCase() + sType.substr(1) + "s"]();
+			var aResult = ControlInspectorRepo["get" + sType.charAt(0).toUpperCase() + sType.substring(1) + "s"]();
 			assert.deepEqual(aResult[0], this.testData[0][sType]);
 			assert.deepEqual(aResult[1], this.testData[1][sType]);
 		}.bind(this));
