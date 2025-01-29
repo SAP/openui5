@@ -104,6 +104,18 @@
 			color: @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor;
 		}
 
+		.sapUiRtaVersionButton.sapUiRtaVersionColor > span > span > bdi,
+		.sapUiRtaVersionButton.sapUiRtaVersionColor > span > span.sapMBtnIcon {
+			color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+		}
+
+		.sapUiRtaVersionButton.sapUiRtaVersionColor:hover  {
+			> span.sapMBtnHoverable.sapMBtnTransparent > span.sapMBtnIcon,
+			> span > span > bdi {
+				color: @_sap_ui_rta_Toolbar_Adaptation_TextColor;
+			}
+		}
+
 		.sapUiRtaToolbarActionsSection > div:first-child {
 			width: 100%;
 		}

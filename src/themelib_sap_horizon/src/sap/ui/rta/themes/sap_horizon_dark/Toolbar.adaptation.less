@@ -13,6 +13,7 @@
 @_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiShellPositiveColor; //#97dd40
 @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineColor: @sapUiContentFocusColor; //#9ad3ff
 @_sap_ui_rta_Toolbar_Adaptation_VersionListBackgroundColor: @sapUiShellBorderColor; //#1d232a
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor: @sapUiButtonLiteHoverTextColor; //#4db1ff
 
 .sapUiRtaMode {
 	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
@@ -134,6 +135,12 @@
 			}
 		}
 
+		.sapUiRtaVersionButton.sapUiRtaVersionColor:hover  {
+			> span.sapMBtnHoverable.sapMBtnTransparent > span.sapMBtnIcon,
+			> span > span > bdi {
+				color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor;
+			}
+		}
 	}
 	.sapUiRtaVersionHistory {
 		.sapMLIB:not(:hover) {
