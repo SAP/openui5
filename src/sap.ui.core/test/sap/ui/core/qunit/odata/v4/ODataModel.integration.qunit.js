@@ -72006,17 +72006,22 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
-	// Scenario: Update a property of a complex type on an entity reachable via single-valued
-	// navigation property, resulting in an upsert. Request side effects for a property of that
-	// entity or the full binding. See that there is only one GET request. Then change a property
-	// after the successful upsert, and see that the PATCH uses the canonical path.
-	// Using an ODLB here, because its #requestSideEffects is implemented differently.
-	// Using $$patchWithoutSideEffects here, to see that is has no effect.
+	// Scenario: Items table on object page, upsert happens inside a row, side-effects refresh.
+	//
+	// Update a property of a complex type on an entity reachable via single-valued navigation
+	// property, resulting in an upsert. Request side effects for a property of that entity or the
+	// full binding. See that there is only one GET request. Then change a property after the
+	// successful upsert, and see that the PATCH uses the canonical path. Using an ODLB here,
+	// because its #requestSideEffects is implemented differently. Using $$patchWithoutSideEffects
+	// here, to see that is has no effect.
 	// JIRA: CPOUI5ODATAV4-2211
 	//
 	// Check "transient" handling: row context is unaffected (JIRA: CPOUI5ODATAV4-2856)
+	// Check how keep-alive affects refresh (JIRA: CPOUI5ODATAV4-2847)
 [false, true].forEach(function (bRefresh) {
-	const sTitle = `CPOUI5ODATAV4-2211: upsert & ${bRefresh ? "refresh" : "side-effects request"}`;
+	[false, true].forEach(function (bKeepAlive) {
+		const sTitle = `CPOUI5ODATAV4-2211: upsert
+			& ${bRefresh ? "refresh" : "side-effects request"} w/ keep-alive: ${bKeepAlive}`;
 
 	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSalesOrdersModel(
@@ -72030,8 +72035,9 @@ make root = ${bMakeRoot}`;
 	<Input id="postalCode" value="{SO_2_BP/Address/PostalCode}"/>
 </Table>`;
 
-		this.expectRequest("SalesOrderList?$select=BuyerID,SalesOrderID"
-				+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)"
+		const sExpand
+			= "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)";
+		this.expectRequest("SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
 				+ "&$skip=0&$top=100", {
 				value : [{
 					"@odata.etag" : "etag1",
@@ -72050,6 +72056,8 @@ make root = ${bMakeRoot}`;
 		this.expectChange("city", ["Heidelberg"]);
 
 		const oOrderContext = this.oView.byId("table").getItems()[0].getBindingContext();
+		oOrderContext.setKeepAlive(bKeepAlive);
+
 		// code under test
 		const oPromise = oOrderContext.setProperty("SO_2_BP/Address/City", "Heidelberg");
 
@@ -72068,48 +72076,51 @@ make root = ${bMakeRoot}`;
 				url : "SalesOrderList('1')/SO_2_BP",
 				payload : {Address : {City : "Heidelberg"}}
 			}, null, {ETag : "etag2"}); // 204 No Content
+		const oSalesOrder = {
+			"@odata.etag" : "etag1",
+			BuyerID : "2",
+			SalesOrderID : "1",
+			SO_2_BP : {
+				"@odata.etag" : "etag2",
+				Address : {
+					City : "Heidelberg",
+					PostalCode : "12345"
+				},
+				BusinessPartnerID : "2"
+			}
+		};
 		if (bRefresh) {
+			if (bKeepAlive) { // ODLB#refreshKeptElements
+				this.expectRequest({
+						batchNo : 2,
+						method : "GET",
+						url : "SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
+							+ "&$filter=SalesOrderID eq '1'"
+					}, {
+						value : [oSalesOrder]
+					});
+			}
 			this.expectRequest({
 					batchNo : 2,
 					method : "GET",
-					url : "SalesOrderList?$select=BuyerID,SalesOrderID"
-						+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
-							+ ",BusinessPartnerID)"
+					url : "SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
 						+ "&$skip=0&$top=100"
-				}, {
-					value : [{
-						"@odata.etag" : "etag1",
-						BuyerID : "2",
-						SalesOrderID : "1",
-						SO_2_BP : {
-							"@odata.etag" : "etag2",
-							Address : {
-								City : "Heidelberg",
-								PostalCode : "12345"
-							},
-							BusinessPartnerID : "2"
-						}
-					}]
+				}, { // w/ keep-alive, simulate that ('1') does not match filter anymore ;-)
+					value : bKeepAlive ? [] : [oSalesOrder]
 				});
-		} else {
+			if (bKeepAlive) { // _Cache#refreshSingleNoCollection
+				this.expectRequest({
+						batchNo : 2,
+						method : "GET",
+						url : "SalesOrderList('1')?$select=SO_2_BP" + sExpand
+					}, oSalesOrder); // Note: no BuyerID,SalesOrderID needed => updateSelected
+			}
+		} else { // _Cache#refreshSingleNoCollection merged with #requestSideEffects
 			this.expectRequest({
 					batchNo : 2,
 					method : "GET",
-					url : "SalesOrderList('1')?$select=BuyerID"
-						+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
-							+ ",BusinessPartnerID)"
-				}, {
-					"@odata.etag" : "etag1",
-					BuyerID : "2",
-					SO_2_BP : {
-						"@odata.etag" : "etag2",
-						Address : {
-							City : "Heidelberg",
-							PostalCode : "12345"
-						},
-						BusinessPartnerID : "2"
-					}
-				});
+					url : "SalesOrderList('1')?$select=BuyerID" + sExpand
+				}, oSalesOrder); // Note: no SalesOrderID needed, but never mind => updateSelected
 		}
 		this.expectChange("buyerId", ["2"])
 			.expectChange("postalCode", ["12345"]);
@@ -72126,18 +72137,28 @@ make root = ${bMakeRoot}`;
 
 		// Note: this proves that oOrderContext has been reused, not destroyed (because it does not
 		// appear created by mistake)
-		assert.deepEqual(oOrderContext.getObject("SO_2_BP"), {
-			...(bRefresh ? {} : {"@$ui5.context.isTransient" : false}),
-			"@odata.etag" : "etag2",
-			Address : {
-				City : "Heidelberg",
-				PostalCode : "12345"
-			},
-			BusinessPartnerID : "2"
+		assert.deepEqual(oOrderContext.getObject(), {
+			"@odata.etag" : "etag1",
+			BuyerID : "2",
+			SalesOrderID : "1",
+			SO_2_BP : {
+				...(bRefresh && !bKeepAlive || {"@$ui5.context.isTransient" : false}),
+				"@odata.etag" : "etag2",
+				Address : {
+					City : "Heidelberg",
+					PostalCode : "12345"
+				},
+				BusinessPartnerID : "2"
+			}
 		});
 
-		this.expectChange("city", ["Walldorf"])
-			.expectRequest({
+		if (bRefresh && bKeepAlive) {
+			assert.strictEqual(oOrderContext.getBinding().getLength(), 0,
+				"w/ keep-alive, simulate that ('1') does not match filter anymore ;-)");
+		} else {
+			this.expectChange("city", ["Walldorf"]);
+		}
+		this.expectRequest({
 				method : "PATCH",
 				headers : {
 					"If-Match" : "etag2",
@@ -72153,6 +72174,7 @@ make root = ${bMakeRoot}`;
 			oModel.submitBatch("update"),
 			this.waitForChanges(assert, "patch")
 		]);
+	});
 	});
 });
 
