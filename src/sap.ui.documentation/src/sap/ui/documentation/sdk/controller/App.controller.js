@@ -243,7 +243,7 @@ sap.ui.define([
 			this._createConfigurationBasedOnURIInput();
 
 			this._oCookiesConsentManager = this.getOwnerComponent().getCookiesConsentManager();
-			this._oCookiesConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+			this._oCookiesConsentManager.checkUserAcceptsToPersistDisplaySettings(function(bAccepts) {
 				if (bAccepts && this._aConfiguration.length > 0) {
 					this._applyCookiesConfiguration(this._aConfiguration);
 				} else {
@@ -860,7 +860,7 @@ sap.ui.define([
 		_setSelectedLanguage: function (sLanguage) {
 			this._oSupportedLangModel.setProperty("/selectedLang", sLanguage);
 			Localization.setLanguage(sLanguage);
-			this._oCookiesConsentManager.checkUserAcceptsRequiredCookies(function(bAccepts) {
+			this._oCookiesConsentManager.checkUserAcceptsToPersistDisplaySettings(function(bAccepts) {
 				if (bAccepts) {
 					this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_LANGUAGE, sLanguage);
 				}

@@ -7,9 +7,19 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/mdc/enums/OperatorName', 'sap/ui/mdc/field/ConditionsType', 'delegates/util/DelegateCache'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, OperatorName, ConditionsType, DelegateCache) {
+	"delegates/odata/v4/FilterBarDelegate",
+	"sap/ui/fl/Utils",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/mdc/field/ConditionsType",
+	"delegates/util/DelegateCache",
+	"sap/ui/mdc/enums/FilterBarValidationStatus",
+	"sap/ui/core/library"
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, OperatorName, ConditionsType, DelegateCache, FilterBarValidationStatus, coreLibrary) {
 	"use strict";
+
+	const { ValueState } = coreLibrary;
 
 	var FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
 
@@ -130,6 +140,31 @@ sap.ui.define([
 				FilterBarDelegate.visualizeValidationState.apply(this, arguments);
 			}
 		}
+	};
+
+	FilterBarBooksSampleDelegate.determineValidationState = function(oFilterBar, mValidation) {
+		const oFilterBarConditions = oFilterBar.getConditions();
+		const sPriceConditionName = "price",
+			sCurrencyConditionName = "currency_code";
+
+		const bPriceConditionPresent = !!oFilterBarConditions?.[sPriceConditionName]?.length,
+			bCurrencyConditionPresent = !!oFilterBarConditions[sCurrencyConditionName]?.length;
+
+		const oPriceFilterField = [].find((oFilterItem) => oFilterItem.getPropertyKey() === sPriceConditionName);
+
+		if (!bPriceConditionPresent || (bPriceConditionPresent && bCurrencyConditionPresent)) {
+			oPriceFilterField?.setValueState(ValueState.None);
+			oPriceFilterField?.setValueStateText();
+		}
+
+		if (bPriceConditionPresent && !bCurrencyConditionPresent) {
+			oPriceFilterField?.setValueState(ValueState.Warning);
+			oPriceFilterField?.setValueStateText("Please select a Currency!");
+
+			return FilterBarValidationStatus.RequiredHasNoValue;
+		}
+
+		return oFilterBar.checkFilters();
 	};
 
 	return FilterBarBooksSampleDelegate;

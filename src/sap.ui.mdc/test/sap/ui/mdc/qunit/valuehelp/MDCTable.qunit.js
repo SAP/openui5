@@ -22,7 +22,9 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/ScrollContainer",
 	"sap/m/Text",
-	"sap/m/p13n/Engine"
+	"sap/m/p13n/Engine",
+	"sap/ui/core/Lib",
+	'sap/ui/core/library'
 ], (
 	qutils,
 	nextUIUpdate,
@@ -43,11 +45,15 @@ sap.ui.define([
 	ColumnListItem,
 	ScrollContainer,
 	Text,
-	Engine
+	Engine,
+	Library,
+	coreLibrary
 ) => {
 	"use strict";
 
 	const ListItemType = mLibrary.ListType;
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+	const {TitleLevel} = coreLibrary;
 
 	let oMdcTableWrapper;
 	let oModel;
@@ -243,6 +249,9 @@ sap.ui.define([
 					assert.equal(oTable.getType().getRowCount(), 3, "Table RowCount");
 					assert.ok(oTable.scrollToIndex.calledWith(0), "Table scrolled to top");
 					assert.ok(oTable.hasStyleClass("sapUiSizeCozy"), "A density style is applied.");
+					assert.equal(oTable.getHeader(), oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"), "Table header");
+					assert.equal(oTable.getHeaderLevel(), TitleLevel.H2, "Table headerLevel");
+					assert.equal(oTable.getHeaderStyle(), TitleLevel.H5, "Table headerStyle");
 
 
 					oTable.isTableBound.restore();
