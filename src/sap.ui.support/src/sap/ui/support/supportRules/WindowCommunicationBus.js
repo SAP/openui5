@@ -152,7 +152,7 @@ sap.ui.define([
 		// check if the URL matches: 2. check if the path to the iframe matches.
 		// if the frame URL is relative to the parent window's URL, remove relative path segments
 		var iFrameUrlQuery = this._frame.url.indexOf("?");
-		var sFrameUrl = this._frame.url.substr(0, iFrameUrlQuery).replace(/\.\.\//g, "").replace(/\.\//g, "") + this._frame.url.substr(iFrameUrlQuery);
+		var sFrameUrl = this._frame.url.substring(0, iFrameUrlQuery).replace(/\.\.\//g, "").replace(/\.\//g, "") + this._frame.url.substring(iFrameUrlQuery);
 		var bMatchUrl = eMessage.data._origin.indexOf(sFrameUrl) > -1;
 
 		return bMatchIdentifier && bMatchOrigin && bMatchUrl;
