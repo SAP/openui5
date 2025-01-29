@@ -7,7 +7,7 @@
 	<Dialog title="{i18n>COOKIE_SETTINGS_DIALOG_TITLE}" contentWidth="45rem">
 		<content>
 			<custom:DivContainer class="sapUiSmallMargin">
-				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"
+				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TEXT}"
 					  visible="{= !${cookieData>/showCookieDetails} }"/>
 				<f:GridList visible="{cookieData>/showCookieDetails}">
 					<f:customLayout>
@@ -16,14 +16,14 @@
 					<f:GridListItem>
 						<HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop">
 							<VBox>
-								<Title text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TITLE}" />
-								<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_SUMMARY}"/>
+								<Title text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TITLE}" />
+								<Text text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SUMMARY}"/>
 							</VBox>
 							<Switch id="requiredCookiesSwitch" class="sapUiSmallMarginBegin"
-								state="{path: 'cookieData>/dk_allow_required_cookies', type: 'sap.ui.model.type.Boolean', formatter: '.formatCookieValue'}"/>
+								state="{path: 'cookieData>/dk_allow_functional_cookies', type: 'sap.ui.model.type.Boolean', formatter: '.formatCookieValue'}"/>
 						</HBox>
 						<Panel headerText="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_MORE_INFO}" expandable="true" class="sapUiTinyMarginTop">
-							<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"/>
+							<Text text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TEXT}"/>
 						</Panel>
 					</f:GridListItem>
 				</f:GridList>
