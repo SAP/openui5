@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "阿法文",
 		"ab": "阿布哈茲文",
@@ -74,6 +74,7 @@
 		"bjn": "班亞爾文",
 		"bkm": "康姆文",
 		"bla": "錫克錫卡文",
+		"blo": "阿尼文",
 		"bm": "班巴拉文",
 		"bn": "孟加拉文",
 		"bo": "藏文",
@@ -109,6 +110,7 @@
 		"chp": "奇佩瓦揚文",
 		"chr": "柴羅基文",
 		"chy": "沙伊安文",
+		"cic": "契卡索文",
 		"ckb": "中庫德文",
 		"ckb_alt-menu": "中庫德文",
 		"ckb_alt-variant": "庫德文（索拉尼）",
@@ -119,7 +121,7 @@
 		"cps": "卡皮茲文",
 		"cr": "克里文",
 		"crg": "米奇夫語",
-		"crh": "土耳其文（克里米亞半島）",
+		"crh": "克里米亞韃靼文",
 		"crj": "東南克里語",
 		"crk": "平原克里語",
 		"crl": "北部東克里語",
@@ -204,7 +206,6 @@
 		"gmh": "中古高地德文",
 		"gn": "瓜拉尼文",
 		"goh": "古高地德文",
-		"gom": "孔卡尼文",
 		"gon": "岡德文",
 		"gor": "科隆達羅文",
 		"got": "哥德文",
@@ -225,7 +226,7 @@
 		"he": "希伯來文",
 		"hi": "印地文",
 		"hi_Latn": "印地語（拉丁文）",
-		"hi_Latn-alt-variant": "印地語",
+		"hi_Latn-alt-variant": "印地英語",
 		"hif": "斐濟印地文",
 		"hil": "希利蓋農文",
 		"hit": "赫梯文",
@@ -316,6 +317,7 @@
 		"kv": "科米文",
 		"kw": "康瓦耳文",
 		"kwk": "誇誇嘉誇語",
+		"kxv": "庫維文",
 		"ky": "吉爾吉斯文",
 		"la": "拉丁文",
 		"lad": "拉迪諾文",
@@ -398,7 +400,7 @@
 		"nan": "閩南語",
 		"nap": "拿波里文",
 		"naq": "納馬文",
-		"nb": "巴克摩挪威文",
+		"nb": "書面挪威文",
 		"nd": "北地畢列文",
 		"nds": "低地德文",
 		"nds_NL": "低地薩克遜文",
@@ -411,7 +413,7 @@
 		"nl": "荷蘭文",
 		"nl_BE": "法蘭德斯文",
 		"nmg": "夸西奧文",
-		"nn": "耐諾斯克挪威文",
+		"nn": "新挪威文",
 		"nnh": "恩甘澎文",
 		"no": "挪威文",
 		"nog": "諾蓋文",
@@ -530,7 +532,7 @@
 		"sn": "紹納文",
 		"snk": "索尼基文",
 		"so": "索馬利文",
-		"sog": "索格底亞納文",
+		"sog": "粟特文",
 		"sq": "阿爾巴尼亞文",
 		"sr": "塞爾維亞文",
 		"srn": "蘇拉南東墎文",
@@ -610,6 +612,7 @@
 		"vi": "越南文",
 		"vls": "西佛蘭德文",
 		"vmf": "美茵-法蘭克尼亞文",
+		"vmw": "馬庫瓦文",
 		"vo": "沃拉普克文",
 		"vot": "沃提克文",
 		"vro": "佛羅文",
@@ -625,6 +628,7 @@
 		"xal": "卡爾梅克文",
 		"xh": "科薩文",
 		"xmf": "明格列爾文",
+		"xnr": "康格里",
 		"xog": "索加文",
 		"yao": "瑤文",
 		"yap": "雅浦文",
@@ -690,7 +694,7 @@
 		"Dupl": "杜普洛伊速記",
 		"Egyd": "古埃及世俗體",
 		"Egyh": "古埃及僧侶體",
-		"Egyp": "古埃及象形文字",
+		"Egyp": "古埃及聖書體",
 		"Elba": "愛爾巴桑文",
 		"Ethi": "衣索比亞文",
 		"Geok": "喬治亞語系（阿索他路里和努斯克胡里文）",
@@ -703,7 +707,7 @@
 		"Gujr": "古吉拉特文",
 		"Guru": "古魯穆奇文",
 		"Hanb": "標上注音符號的漢字",
-		"Hang": "韓文字",
+		"Hang": "諺文",
 		"Hani": "漢字",
 		"Hano": "哈努諾文",
 		"Hans": "簡體",
@@ -733,10 +737,10 @@
 		"Kpel": "克培列文",
 		"Kthi": "凱提文",
 		"Lana": "藍拿文",
-		"Laoo": "寮國文",
+		"Laoo": "寮文",
 		"Latf": "拉丁文（尖角體活字變體）",
 		"Latg": "拉丁文（蓋爾語變體）",
-		"Latn": "拉丁文",
+		"Latn": "拉丁字母",
 		"Lepc": "雷布查文",
 		"Limb": "林佈文",
 		"Lina": "線性文字（A）",
@@ -748,7 +752,7 @@
 		"Mahj": "印地文",
 		"Mand": "曼底安文",
 		"Mani": "摩尼教文",
-		"Marc": "藏文",
+		"Marc": "瑪欽文",
 		"Maya": "瑪雅象形文字",
 		"Mend": "門德文",
 		"Merc": "麥羅埃文（曲線字體）",
@@ -766,7 +770,7 @@
 		"Newa": "Vote 尼瓦爾文",
 		"Nkgb": "納西格巴文",
 		"Nkoo": "西非書面語言 (N’Ko)",
-		"Nshu": "女書文字",
+		"Nshu": "女書",
 		"Ogam": "歐甘文",
 		"Olck": "桑塔利文",
 		"Orkh": "鄂爾渾文",
@@ -821,7 +825,7 @@
 		"Tglg": "塔加拉文",
 		"Thaa": "塔安那文",
 		"Thai": "泰文",
-		"Tibt": "西藏文",
+		"Tibt": "藏文",
 		"Tirh": "邁蒂利文",
 		"Ugar": "烏加列文",
 		"Vaii": "瓦依文",
@@ -1731,7 +1735,7 @@
 				"Ehms": "E Bh:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "Gy年",
-				"GyMd": "G y/M/d",
+				"GyMd": "GGGGG y/M/d",
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日E",
@@ -1777,11 +1781,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1789,45 +1793,45 @@
 					"d": "d日至d日"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"B": "Bh時至Bh時",
 					"h": "Bh時至h時"
 				},
@@ -1835,7 +1839,7 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"B": "Bh:mm至Bh:mm",
 					"h": "Bh:mm至h:mm",
 					"m": "Bh:mm至h:mm"
@@ -1845,7 +1849,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"B": "Bh:mm至Bh:mm [v]",
 					"h": "Bh:mm至h:mm [v]",
 					"m": "Bh:mm至h:mm [v]"
@@ -1855,7 +1859,7 @@
 					"m": "HH:mm–HH:mm [v]"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"B": "Bh時至Bh時 [v]",
 					"h": "Bh時至h時 [v]"
 				},
@@ -2312,11 +2316,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2324,45 +2328,45 @@
 					"d": "d日至d日"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"B": "Bh時至Bh時",
 					"h": "Bh時至h時"
 				},
@@ -2370,7 +2374,7 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"B": "Bh:mm至Bh:mm",
 					"h": "Bh:mm至h:mm",
 					"m": "Bh:mm至h:mm"
@@ -2380,7 +2384,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"B": "Bh:mm至Bh:mm [v]",
 					"h": "Bh:mm至h:mm [v]",
 					"m": "Bh:mm至h:mm [v]"
@@ -2390,7 +2394,7 @@
 					"m": "HH:mm–HH:mm [v]"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"B": "Bh時至Bh時 [v]",
 					"h": "Bh時至h時 [v]"
 				},
@@ -2867,11 +2871,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2879,45 +2883,45 @@
 					"d": "d日至d日"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"B": "Bh時至Bh時",
 					"h": "Bh時至h時"
 				},
@@ -2925,7 +2929,7 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"B": "Bh:mm至Bh:mm",
 					"h": "Bh:mm至h:mm",
 					"m": "Bh:mm至h:mm"
@@ -2935,7 +2939,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"B": "Bh:mm至Bh:mm [v]",
 					"h": "Bh:mm至h:mm [v]",
 					"m": "Bh:mm至h:mm [v]"
@@ -2945,7 +2949,7 @@
 					"m": "HH:mm–HH:mm [v]"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"B": "Bh時至Bh時 [v]",
 					"h": "Bh時至h時 [v]"
 				},
@@ -3402,11 +3406,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3414,45 +3418,45 @@
 					"d": "d日至d日"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"B": "Bh時至Bh時",
 					"h": "Bh時至h時"
 				},
@@ -3460,7 +3464,7 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"B": "Bh:mm至Bh:mm",
 					"h": "Bh:mm至h:mm",
 					"m": "Bh:mm至h:mm"
@@ -3470,7 +3474,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"B": "Bh:mm至Bh:mm [v]",
 					"h": "Bh:mm至h:mm [v]",
 					"m": "Bh:mm至h:mm [v]"
@@ -3480,7 +3484,7 @@
 					"m": "HH:mm–HH:mm [v]"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"B": "Bh時至Bh時 [v]",
 					"h": "Bh時至h時 [v]"
 				},
@@ -3861,7 +3865,7 @@
 	},
 	"dateFields": {
 		"era": {
-			"displayName": "年代"
+			"displayName": "紀元"
 		},
 		"year-wide": {
 			"displayName": "年",
@@ -3900,7 +3904,7 @@
 			}
 		},
 		"quarter-wide": {
-			"displayName": "季",
+			"displayName": "季度",
 			"relative-type--1": "上一季",
 			"relative-type-0": "這一季",
 			"relative-type-1": "下一季",
@@ -3912,7 +3916,7 @@
 			}
 		},
 		"quarter-short": {
-			"displayName": "季",
+			"displayName": "季度",
 			"relative-type--1": "上一季",
 			"relative-type-0": "這一季",
 			"relative-type-1": "下一季",
@@ -3924,7 +3928,7 @@
 			}
 		},
 		"quarter-narrow": {
-			"displayName": "季",
+			"displayName": "季度",
 			"relative-type--1": "上一季",
 			"relative-type-0": "這一季",
 			"relative-type-1": "下一季",
@@ -4053,7 +4057,7 @@
 			}
 		},
 		"weekday": {
-			"displayName": "週天"
+			"displayName": "星期"
 		},
 		"hour-wide": {
 			"displayName": "小時",
@@ -4066,7 +4070,7 @@
 			}
 		},
 		"hour-short": {
-			"displayName": "小時",
+			"displayName": "時",
 			"relative-type-0": "這一小時",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 小時後"
@@ -4076,7 +4080,7 @@
 			}
 		},
 		"hour-narrow": {
-			"displayName": "小時",
+			"displayName": "時",
 			"relative-type-0": "這一小時",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 小時後"
@@ -4096,7 +4100,7 @@
 			}
 		},
 		"minute-short": {
-			"displayName": "分鐘",
+			"displayName": "分",
 			"relative-type-0": "這一分鐘",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 分鐘後"
@@ -4106,7 +4110,7 @@
 			}
 		},
 		"minute-narrow": {
-			"displayName": "分鐘",
+			"displayName": "分",
 			"relative-type-0": "這一分鐘",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 分鐘後"
@@ -4395,7 +4399,6 @@
 			"Bishkek": "比什凱克",
 			"Brunei": "汶萊",
 			"Chita": "赤塔",
-			"Choibalsan": "喬巴山",
 			"Colombo": "可倫坡",
 			"Damascus": "大馬士革",
 			"Dhaka": "達卡",
@@ -4712,6 +4715,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
@@ -5271,8 +5275,8 @@
 				"unitPattern-count-other": "{0} 海里"
 			},
 			"length-mile-scandinavian": {
-				"displayName": "斯堪地那維亞英里",
-				"unitPattern-count-other": "{0} 斯堪地那維亞英里"
+				"displayName": "斯堪地那維亞里",
+				"unitPattern-count-other": "{0} 斯堪地那維亞里"
 			},
 			"length-point": {
 				"displayName": "點",
@@ -5610,6 +5614,19 @@
 			"volume-quart-imperial": {
 				"displayName": "英制夸脫",
 				"unitPattern-count-other": "{0} 英制夸脫"
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "濃度/十億",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "夜",
+				"unitPattern-count-other": "{0} 夜",
+				"perUnitPattern": "{0}/夜"
 			},
 			"coordinateUnit": {
 				"displayName": "方向",

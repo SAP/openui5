@@ -500,7 +500,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 
 	/**
-	 * CLDR 44.0.0 time zone IDs which are extracted from the first entries of the <code>_alias</code> properties of the
+	 * CLDR 46.1.0 time zone IDs which are extracted from the first entries of the <code>_alias</code> properties of the
 	 * <code>timezone.json</code> file in the BCP47 CLDR package, see
 	 * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-bcp47/bcp47/timezone.json.
 	 *
@@ -736,7 +736,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Asia/Brunei",
 		"Asia/Calcutta",
 		"Asia/Chita",
-		"Asia/Choibalsan",
 		"Asia/Colombo",
 		"Asia/Damascus",
 		"Asia/Dhaka",
@@ -822,8 +821,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Australia/Melbourne",
 		"Australia/Perth",
 		"Australia/Sydney",
-		"CST6CDT",
-		"EST5EDT",
 		"Etc/GMT",
 		"Etc/GMT+1",
 		"Etc/GMT+10",
@@ -921,8 +918,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"Indian/Mauritius",
 		"Indian/Mayotte",
 		"Indian/Reunion",
-		"MST7MDT",
-		"PST8PDT",
 		"Pacific/Apia",
 		"Pacific/Auckland",
 		"Pacific/Bougainville",
@@ -964,7 +959,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	];
 
 	/**
-	 * Version: tz 2023d (excluding backzone and factory)
+	 * Version: tz 2025a (excluding backzone and factory)
 	 * The IANA time zones are also available in a parsable format under:
 	 * https://github.com/eggert/tz
 	 *

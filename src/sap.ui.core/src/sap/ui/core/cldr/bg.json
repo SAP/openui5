@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "афарски",
 		"ab": "абхазки",
@@ -55,6 +55,7 @@
 		"bik": "биколски",
 		"bin": "бини",
 		"bla": "сиксика",
+		"blo": "ании",
 		"bm": "бамбара",
 		"bn": "бенгалски",
 		"bo": "тибетски",
@@ -208,7 +209,7 @@
 		"iba": "ибан",
 		"ibb": "ибибио",
 		"id": "индонезийски",
-		"ie": "оксидентал",
+		"ie": "интерлингве",
 		"ig": "игбо",
 		"ii": "съчуански йи",
 		"ik": "инупиак",
@@ -271,6 +272,7 @@
 		"kv": "коми",
 		"kw": "корнуолски",
 		"kwk": "куак’уала",
+		"kxv": "кови",
 		"ky": "киргизки",
 		"la": "латински",
 		"lad": "ладино",
@@ -281,6 +283,7 @@
 		"lez": "лезгински",
 		"lg": "ганда",
 		"li": "лимбургски",
+		"lij": "лигурски",
 		"lil": "лилоует",
 		"lkt": "лакота",
 		"lmo": "ломбардски",
@@ -471,6 +474,7 @@
 		"swb": "коморски",
 		"syc": "класически сирийски",
 		"syr": "сирийски",
+		"szl": "силезийски",
 		"ta": "тамилски",
 		"tce": "южен тучоне",
 		"te": "телугу",
@@ -519,7 +523,9 @@
 		"uz": "узбекски",
 		"vai": "ваи",
 		"ve": "венда",
+		"vec": "венециански",
 		"vi": "виетнамски",
+		"vmw": "макува",
 		"vo": "волапюк",
 		"vot": "вотик",
 		"vun": "вунджо",
@@ -533,6 +539,7 @@
 		"wuu": "ву китайски",
 		"xal": "калмик",
 		"xh": "кхоса",
+		"xnr": "кангри",
 		"xog": "сога",
 		"yao": "яо",
 		"yap": "япезе",
@@ -1094,11 +1101,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -1647,11 +1654,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2197,11 +2204,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2769,11 +2776,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -3319,11 +3326,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -4368,7 +4375,6 @@
 			"Bishkek": "Бишкек",
 			"Brunei": "Бруней",
 			"Chita": "Чита",
-			"Choibalsan": "Чойбалсан",
 			"Colombo": "Коломбо",
 			"Damascus": "Дамаск",
 			"Dhaka": "Дака",
@@ -4705,6 +4711,7 @@
 		"EUR": "€",
 		"USD": "щ.д.",
 		"XAF": "FCFA",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5662,6 +5669,21 @@
 				"displayName": "имп. кварта",
 				"unitPattern-count-one": "{0} имп. кварта",
 				"unitPattern-count-other": "{0} имп. кварти"
+			},
+			"speed-light-speed": {
+				"displayName": "светлина",
+				"unitPattern-count-one": "{0} светлина",
+				"unitPattern-count-other": "{0} светлина"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "части/милиард",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "нощи",
+				"unitPattern-count-one": "{0} нощ",
+				"unitPattern-count-other": "{0} нощи",
+				"perUnitPattern": "{0}/нощ"
 			},
 			"coordinateUnit": {
 				"displayName": "посока",

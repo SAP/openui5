@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "афарська",
 		"ab": "абхазька",
@@ -70,6 +70,7 @@
 		"bjn": "банджарська",
 		"bkm": "ком",
 		"bla": "сіксіка",
+		"blo": "анії",
 		"bm": "бамбара",
 		"bn": "бенгальська",
 		"bo": "тибетська",
@@ -291,6 +292,7 @@
 		"kv": "комі",
 		"kw": "корнська",
 		"kwk": "кваквала",
+		"kxv": "куві",
 		"ky": "киргизька",
 		"la": "латинська",
 		"lad": "ладино",
@@ -304,6 +306,7 @@
 		"lij": "лігурійська",
 		"lil": "лілуетська",
 		"lkt": "лакота",
+		"lld": "ладинська",
 		"lmo": "ломбардська",
 		"ln": "лінгала",
 		"lo": "лаоська",
@@ -313,6 +316,7 @@
 		"lrc": "північнолурська",
 		"lsm": "самія",
 		"lt": "литовська",
+		"ltg": "латгальська",
 		"lu": "луба-катанга",
 		"lua": "луба-лулуа",
 		"lui": "луїсеньо",
@@ -443,7 +447,7 @@
 		"rwk": "рва",
 		"sa": "санскрит",
 		"sad": "сандаве",
-		"sah": "саха",
+		"sah": "якутська",
 		"sam": "самаритянська арамейська",
 		"saq": "самбуру",
 		"sas": "сасакська",
@@ -498,6 +502,7 @@
 		"swb": "коморська",
 		"syc": "сирійська класична",
 		"syr": "сирійська",
+		"szl": "сілезька",
 		"ta": "тамільська",
 		"tce": "південна тутчон",
 		"te": "телугу",
@@ -546,7 +551,9 @@
 		"uz": "узбецька",
 		"vai": "ваї",
 		"ve": "венда",
+		"vec": "венеційська",
 		"vi": "вʼєтнамська",
+		"vmw": "макува",
 		"vo": "волапюк",
 		"vot": "водська",
 		"vun": "вуньо",
@@ -560,6 +567,7 @@
 		"wuu": "китайська уська",
 		"xal": "калмицька",
 		"xh": "кхоса",
+		"xnr": "кангрі",
 		"xog": "сога",
 		"yao": "яо",
 		"yap": "яп",
@@ -1138,11 +1146,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1434,13 +1442,13 @@
 					"сб"
 				],
 				"wide": [
-					"неділю",
+					"неділя",
 					"понеділок",
 					"вівторок",
-					"середу",
+					"середа",
 					"четвер",
-					"пʼятницю",
-					"суботу"
+					"пʼятниця",
+					"субота"
 				]
 			},
 			"stand-alone": {
@@ -1557,8 +1565,8 @@
 		"flexibleDayPeriods": {
 			"format": {
 				"abbreviated": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -1573,8 +1581,8 @@
 					"night1": "ночі"
 				},
 				"wide": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -1700,11 +1708,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1960,13 +1968,13 @@
 					"сб"
 				],
 				"wide": [
-					"неділю",
+					"неділя",
 					"понеділок",
 					"вівторок",
-					"середу",
+					"середа",
 					"четвер",
-					"пʼятницю",
-					"суботу"
+					"пʼятниця",
+					"субота"
 				]
 			},
 			"stand-alone": {
@@ -2083,8 +2091,8 @@
 		"flexibleDayPeriods": {
 			"format": {
 				"abbreviated": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -2099,8 +2107,8 @@
 					"night1": "ночі"
 				},
 				"wide": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -2223,11 +2231,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2519,13 +2527,13 @@
 					"сб"
 				],
 				"wide": [
-					"неділю",
+					"неділя",
 					"понеділок",
 					"вівторок",
-					"середу",
+					"середа",
 					"четвер",
-					"пʼятницю",
-					"суботу"
+					"пʼятниця",
+					"субота"
 				]
 			},
 			"stand-alone": {
@@ -2642,8 +2650,8 @@
 		"flexibleDayPeriods": {
 			"format": {
 				"abbreviated": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -2658,8 +2666,8 @@
 					"night1": "ночі"
 				},
 				"wide": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -2794,11 +2802,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3054,13 +3062,13 @@
 					"сб"
 				],
 				"wide": [
-					"неділю",
+					"неділя",
 					"понеділок",
 					"вівторок",
-					"середу",
+					"середа",
 					"четвер",
-					"пʼятницю",
-					"суботу"
+					"пʼятниця",
+					"субота"
 				]
 			},
 			"stand-alone": {
@@ -3177,8 +3185,8 @@
 		"flexibleDayPeriods": {
 			"format": {
 				"abbreviated": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -3193,8 +3201,8 @@
 					"night1": "ночі"
 				},
 				"wide": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -3317,11 +3325,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3613,13 +3621,13 @@
 					"сб"
 				],
 				"wide": [
-					"неділю",
+					"неділя",
 					"понеділок",
 					"вівторок",
-					"середу",
+					"середа",
 					"четвер",
-					"пʼятницю",
-					"суботу"
+					"пʼятниця",
+					"субота"
 				]
 			},
 			"stand-alone": {
@@ -3736,8 +3744,8 @@
 		"flexibleDayPeriods": {
 			"format": {
 				"abbreviated": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -3752,8 +3760,8 @@
 					"night1": "ночі"
 				},
 				"wide": {
-					"midnight": "опівночі",
-					"noon": "опівдні",
+					"midnight": "ночі",
+					"noon": "дня",
 					"morning1": "ранку",
 					"afternoon1": "дня",
 					"evening1": "вечора",
@@ -4477,7 +4485,6 @@
 			"Bishkek": "Бішкек",
 			"Brunei": "Бруней",
 			"Chita": "Чита",
-			"Choibalsan": "Чойбалсан",
 			"Colombo": "Коломбо",
 			"Damascus": "Дамаск",
 			"Dhaka": "Дакка",
@@ -4862,6 +4869,7 @@
 		"UAH": "₴",
 		"UAK": "крб.",
 		"XAF": "FCFA",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5139,7 +5147,7 @@
 				"unitPattern-count-other": "{0} мг/дл"
 			},
 			"concentr-millimole-per-liter": {
-				"displayName": "мілімоль/літер",
+				"displayName": "мілімоль/літр",
 				"unitPattern-count-one": "{0} ммоль/л",
 				"unitPattern-count-few": "{0} ммоль/л",
 				"unitPattern-count-many": "{0} ммоль/л",
@@ -5153,23 +5161,32 @@
 				"unitPattern-count-other": "{0} ел."
 			},
 			"concentr-permillion": {
-				"displayName": "мільйонні долі",
+				"displayName": "м. д.",
 				"unitPattern-count-one": "{0} м. д.",
 				"unitPattern-count-few": "{0} м. д.",
 				"unitPattern-count-many": "{0} м. д.",
 				"unitPattern-count-other": "{0} м. д."
 			},
 			"concentr-percent": {
-				"displayName": "відсоток",
-				"unitPattern-count-other": "{0}%"
+				"displayName": "%",
+				"unitPattern-count-one": "{0} %",
+				"unitPattern-count-few": "{0} %",
+				"unitPattern-count-many": "{0} %",
+				"unitPattern-count-other": "{0} %"
 			},
 			"concentr-permille": {
-				"displayName": "проміле",
-				"unitPattern-count-other": "{0}‰"
+				"displayName": "‰",
+				"unitPattern-count-one": "{0} ‰",
+				"unitPattern-count-few": "{0} ‰",
+				"unitPattern-count-many": "{0} ‰",
+				"unitPattern-count-other": "{0} ‰"
 			},
 			"concentr-permyriad": {
-				"displayName": "проміріада",
-				"unitPattern-count-other": "{0}‱"
+				"displayName": "‱",
+				"unitPattern-count-one": "{0} ‱",
+				"unitPattern-count-few": "{0} ‱",
+				"unitPattern-count-many": "{0} ‱",
+				"unitPattern-count-other": "{0} ‱"
 			},
 			"concentr-mole": {
 				"displayName": "моль",
@@ -5193,21 +5210,21 @@
 				"unitPattern-count-other": "{0} л/100 км"
 			},
 			"consumption-mile-per-gallon": {
-				"displayName": "милі/гал.",
-				"unitPattern-count-one": "{0} миля/гал.",
-				"unitPattern-count-few": "{0} милі/гал.",
-				"unitPattern-count-many": "{0} миль/гал.",
-				"unitPattern-count-other": "{0} милі/гал."
+				"displayName": "милі/гал",
+				"unitPattern-count-one": "{0} миля/гал",
+				"unitPattern-count-few": "{0} милі/гал",
+				"unitPattern-count-many": "{0} миль/гал",
+				"unitPattern-count-other": "{0} милі/гал"
 			},
 			"consumption-mile-per-gallon-imperial": {
-				"displayName": "милі/англ. гал.",
-				"unitPattern-count-one": "{0} миля/англ. гал.",
-				"unitPattern-count-few": "{0} милі/англ. гал.",
-				"unitPattern-count-many": "{0} миль/англ. гал.",
-				"unitPattern-count-other": "{0} милі/англ. гал."
+				"displayName": "милі/англ. гал",
+				"unitPattern-count-one": "{0} миля/англ. гал",
+				"unitPattern-count-few": "{0} милі/англ. гал",
+				"unitPattern-count-many": "{0} миль/англ. гал",
+				"unitPattern-count-other": "{0} милі/англ. гал"
 			},
 			"digital-petabyte": {
-				"displayName": "ПБ",
+				"displayName": "Пбайт",
 				"unitPattern-count-one": "{0} ПБ",
 				"unitPattern-count-few": "{0} ПБ",
 				"unitPattern-count-many": "{0} ПБ",
@@ -5291,11 +5308,11 @@
 				"unitPattern-count-other": "{0} ст."
 			},
 			"duration-decade": {
-				"displayName": "10-річчя",
-				"unitPattern-count-one": "{0} 10-річчя",
-				"unitPattern-count-few": "{0} 10-річчя",
-				"unitPattern-count-many": "{0} 10-річ",
-				"unitPattern-count-other": "{0} 10-річ"
+				"displayName": "10-ліття",
+				"unitPattern-count-one": "{0} 10-ліття",
+				"unitPattern-count-few": "{0} 10-ліття",
+				"unitPattern-count-many": "{0} 10-літь",
+				"unitPattern-count-other": "{0} 10-ліття"
 			},
 			"duration-year": {
 				"displayName": "р.",
@@ -5327,10 +5344,10 @@
 				"unitPattern-count-few": "{0} тиж.",
 				"unitPattern-count-many": "{0} тиж.",
 				"unitPattern-count-other": "{0} тиж.",
-				"perUnitPattern": "{0}/тиж."
+				"perUnitPattern": "{0}/тиж"
 			},
 			"duration-day": {
-				"displayName": "дні",
+				"displayName": "дн.",
 				"unitPattern-count-one": "{0} дн.",
 				"unitPattern-count-few": "{0} дн.",
 				"unitPattern-count-many": "{0} дн.",
@@ -5814,7 +5831,7 @@
 				"unitPattern-count-few": "{0} унц.",
 				"unitPattern-count-many": "{0} унц.",
 				"unitPattern-count-other": "{0} унц.",
-				"perUnitPattern": "{0}/унц."
+				"perUnitPattern": "{0}/унц"
 			},
 			"mass-ounce-troy": {
 				"displayName": "тр. унції",
@@ -5824,11 +5841,11 @@
 				"unitPattern-count-other": "{0} тр. унції"
 			},
 			"mass-carat": {
-				"displayName": "карати",
-				"unitPattern-count-one": "{0} кар",
-				"unitPattern-count-few": "{0} кар",
-				"unitPattern-count-many": "{0} кар",
-				"unitPattern-count-other": "{0} кар"
+				"displayName": "кар.",
+				"unitPattern-count-one": "{0} кар.",
+				"unitPattern-count-few": "{0} кар.",
+				"unitPattern-count-many": "{0} кар.",
+				"unitPattern-count-other": "{0} кар."
 			},
 			"mass-dalton": {
 				"displayName": "дальтони",
@@ -5925,9 +5942,9 @@
 			"pressure-millibar": {
 				"displayName": "мбар",
 				"unitPattern-count-one": "{0} мбар",
-				"unitPattern-count-few": "{0} мбари",
-				"unitPattern-count-many": "{0} мбарів",
-				"unitPattern-count-other": "{0} мбара"
+				"unitPattern-count-few": "{0} мбар",
+				"unitPattern-count-many": "{0} мбар",
+				"unitPattern-count-other": "{0} мбар"
 			},
 			"pressure-atmosphere": {
 				"displayName": "атм",
@@ -6078,9 +6095,9 @@
 			"volume-cubic-foot": {
 				"displayName": "фути³",
 				"unitPattern-count-one": "{0} фут³",
-				"unitPattern-count-few": "{0} фт³",
-				"unitPattern-count-many": "{0} фт³",
-				"unitPattern-count-other": "{0} фт³"
+				"unitPattern-count-few": "{0} фути³",
+				"unitPattern-count-many": "{0} футів³",
+				"unitPattern-count-other": "{0} фута³"
 			},
 			"volume-cubic-inch": {
 				"displayName": "дюйми³",
@@ -6133,7 +6150,7 @@
 				"unitPattern-count-other": "{0} мл"
 			},
 			"volume-pint-metric": {
-				"displayName": "метр. пінта",
+				"displayName": "метр. пінти",
 				"unitPattern-count-one": "{0} метр. пінта",
 				"unitPattern-count-few": "{0} метр. пінти",
 				"unitPattern-count-many": "{0} метр. пінт",
@@ -6166,7 +6183,7 @@
 				"unitPattern-count-few": "{0} гал.",
 				"unitPattern-count-many": "{0} гал.",
 				"unitPattern-count-other": "{0} гал.",
-				"perUnitPattern": "{0}/гал."
+				"perUnitPattern": "{0}/гал"
 			},
 			"volume-gallon-imperial": {
 				"displayName": "англ. галони",
@@ -6268,11 +6285,11 @@
 				"unitPattern-count-other": "{0} мірки"
 			},
 			"volume-pinch": {
-				"displayName": "дрібки",
-				"unitPattern-count-one": "{0} дрібка",
-				"unitPattern-count-few": "{0} дрібки",
-				"unitPattern-count-many": "{0} дрібок",
-				"unitPattern-count-other": "{0} дрібки"
+				"displayName": "дріб.",
+				"unitPattern-count-one": "{0} дріб.",
+				"unitPattern-count-few": "{0} дріб.",
+				"unitPattern-count-many": "{0} дріб.",
+				"unitPattern-count-other": "{0} дріб."
 			},
 			"volume-quart-imperial": {
 				"displayName": "англ. кварти",
@@ -6280,6 +6297,25 @@
 				"unitPattern-count-few": "{0} англ. кварти",
 				"unitPattern-count-many": "{0} англ. кварт",
 				"unitPattern-count-other": "{0} англ. кварти"
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "частини/млрд",
+				"unitPattern-count-one": "{0} част/млрд",
+				"unitPattern-count-few": "{0} част/млрд",
+				"unitPattern-count-many": "{0} част/млрд",
+				"unitPattern-count-other": "{0} част/млрд"
+			},
+			"duration-night": {
+				"displayName": "нч.",
+				"unitPattern-count-one": "{0} нч.",
+				"unitPattern-count-few": "{0} нч.",
+				"unitPattern-count-many": "{0} нч.",
+				"unitPattern-count-other": "{0} нч.",
+				"perUnitPattern": "{0}/ніч"
 			},
 			"coordinateUnit": {
 				"displayName": "напрямок",

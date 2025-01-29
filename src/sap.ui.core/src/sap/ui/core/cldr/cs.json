@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afarština",
 		"ab": "abcházština",
@@ -73,6 +73,7 @@
 		"bjn": "bandžarština",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "aniiština",
 		"bm": "bambarština",
 		"bn": "bengálština",
 		"bo": "tibetština",
@@ -209,7 +210,6 @@
 		"gmh": "hornoněmčina (středověká)",
 		"gn": "guaranština",
 		"goh": "hornoněmčina (stará)",
-		"gom": "konkánština (Goa)",
 		"gon": "góndština",
 		"gor": "gorontalo",
 		"got": "gótština",
@@ -320,6 +320,7 @@
 		"kv": "komijština",
 		"kw": "kornština",
 		"kwk": "kvakiutština",
+		"kxv": "kúvi",
 		"ky": "kyrgyzština",
 		"la": "latina",
 		"lad": "ladinština",
@@ -608,13 +609,13 @@
 		"und": "neznámý jazyk",
 		"ur": "urdština",
 		"uz": "uzbečtina",
-		"vai": "vai",
 		"ve": "venda",
 		"vec": "benátština",
 		"vep": "vepština",
 		"vi": "vietnamština",
 		"vls": "vlámština (západní)",
 		"vmf": "němčina (mohansko-franské dialekty)",
+		"vmw": "makhuwština",
 		"vo": "volapük",
 		"vot": "votština",
 		"vro": "võruština",
@@ -630,6 +631,7 @@
 		"xal": "kalmyčtina",
 		"xh": "xhoština",
 		"xmf": "mingrelština",
+		"xnr": "kángrí",
 		"xog": "sogština",
 		"yao": "jaoština",
 		"yap": "japština",
@@ -4605,7 +4607,6 @@
 			"Bishkek": "Biškek",
 			"Brunei": "Brunej",
 			"Chita": "Čita",
-			"Choibalsan": "Čojbalsan",
 			"Colombo": "Kolombo",
 			"Damascus": "Damašek",
 			"Dhaka": "Dháka",
@@ -5003,6 +5004,7 @@
 		"USD": "US$",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XEU": "ECU",
 		"XOF": "F CFA",
 		"XPF": "CFPF"
@@ -5142,7 +5144,7 @@
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
-				"compoundUnitPattern": "{0}{1}"
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "G",
@@ -5647,7 +5649,7 @@
 				"unitPattern-count-other": "{0} smi"
 			},
 			"length-point": {
-				"displayName": "pt",
+				"displayName": "body",
 				"unitPattern-count-other": "{0} pt"
 			},
 			"length-solar-radius": {
@@ -6039,6 +6041,28 @@
 			"volume-quart-imperial": {
 				"displayName": "qt Imp.",
 				"unitPattern-count-other": "{0} qt Imp."
+			},
+			"speed-light-speed": {
+				"displayName": "světlo",
+				"unitPattern-count-one": "{0} světlo",
+				"unitPattern-count-few": "{0} světla",
+				"unitPattern-count-many": "{0} světla",
+				"unitPattern-count-other": "{0} světel"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "částic/mld.",
+				"unitPattern-count-one": "{0} částice na mld",
+				"unitPattern-count-few": "{0} částice na mld",
+				"unitPattern-count-many": "{0} částic na mld",
+				"unitPattern-count-other": "{0} částic na mld"
+			},
+			"duration-night": {
+				"displayName": "noci",
+				"unitPattern-count-one": "{0} noc",
+				"unitPattern-count-few": "{0} noci",
+				"unitPattern-count-many": "{0} noci",
+				"unitPattern-count-other": "{0} nocí",
+				"perUnitPattern": "{0}/noc"
 			},
 			"coordinateUnit": {
 				"displayName": "směr",

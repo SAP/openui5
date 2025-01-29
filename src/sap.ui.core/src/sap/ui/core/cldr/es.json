@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abjasio",
@@ -59,6 +59,7 @@
 		"bin": "bini",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengalí",
 		"bo": "tibetano",
@@ -289,6 +290,7 @@
 		"kv": "komi",
 		"kw": "córnico",
 		"kwk": "kwakʼwala",
+		"kxv": "kuvi",
 		"ky": "kirguís",
 		"la": "latín",
 		"lad": "ladino",
@@ -299,6 +301,7 @@
 		"lez": "lezgiano",
 		"lg": "ganda",
 		"li": "limburgués",
+		"lij": "ligur",
 		"lil": "lillooet",
 		"lkt": "lakota",
 		"lmo": "lombardo",
@@ -314,7 +317,6 @@
 		"lua": "luba-lulua",
 		"lui": "luiseño",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "mizo",
 		"luy": "luyia",
 		"lv": "letón",
@@ -497,6 +499,7 @@
 		"swb": "comorense",
 		"syc": "siríaco clásico",
 		"syr": "siriaco",
+		"szl": "silesio",
 		"ta": "tamil",
 		"tce": "tutchone meridional",
 		"te": "telugu",
@@ -544,9 +547,10 @@
 		"und": "lengua desconocida",
 		"ur": "urdu",
 		"uz": "uzbeko",
-		"vai": "vai",
 		"ve": "venda",
+		"vec": "veneciano",
 		"vi": "vietnamita",
+		"vmw": "makua",
 		"vo": "volapük",
 		"vot": "vótico",
 		"vun": "vunjo",
@@ -560,6 +564,7 @@
 		"wuu": "chino wu",
 		"xal": "kalmyk",
 		"xh": "xhosa",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapés",
@@ -1126,11 +1131,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1741,11 +1746,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2263,11 +2268,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2877,11 +2882,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3399,11 +3404,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -4493,7 +4498,6 @@
 			"Bishkek": "Bishkek",
 			"Brunei": "Brunéi",
 			"Chita": "Chitá",
-			"Choibalsan": "Choibalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damasco",
 			"Dhaka": "Daca",
@@ -4831,6 +4835,7 @@
 		"THB": "฿",
 		"USD": "US$",
 		"VND": "₫",
+		"XCG": "Cg.",
 		"XPF": "CFPF",
 		"XXX": "¤"
 	},
@@ -5794,6 +5799,21 @@
 				"displayName": "qt imp.",
 				"unitPattern-count-one": "{0} qt imp.",
 				"unitPattern-count-other": "{0} qt imp."
+			},
+			"speed-light-speed": {
+				"displayName": "luz",
+				"unitPattern-count-one": "{0} luz",
+				"unitPattern-count-other": "{0} luz"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "partes/millardo",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "noches",
+				"unitPattern-count-one": "{0} noche",
+				"unitPattern-count-other": "{0} noches",
+				"perUnitPattern": "{0}/noche"
 			},
 			"coordinateUnit": {
 				"displayName": "punto",

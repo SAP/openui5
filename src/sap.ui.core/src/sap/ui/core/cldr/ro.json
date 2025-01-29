@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abhază",
@@ -59,6 +59,7 @@
 		"bin": "bini",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengaleză",
 		"bo": "tibetană",
@@ -279,6 +280,7 @@
 		"kv": "komi",
 		"kw": "cornică",
 		"kwk": "kwakʼwala",
+		"kxv": "kuvi",
 		"ky": "kârgâză",
 		"la": "latină",
 		"lad": "ladino",
@@ -292,6 +294,7 @@
 		"lij": "liguriană",
 		"lil": "lillooet",
 		"lkt": "lakota",
+		"lmo": "lombardă",
 		"ln": "lingala",
 		"lo": "laoțiană",
 		"lol": "mongo",
@@ -304,7 +307,6 @@
 		"lua": "luba-lulua",
 		"lui": "luiseno",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "mizo",
 		"luy": "luyia",
 		"lv": "letonă",
@@ -485,6 +487,7 @@
 		"swb": "comoreză",
 		"syc": "siriacă clasică",
 		"syr": "siriacă",
+		"szl": "sileziană",
 		"ta": "tamilă",
 		"tce": "tutchone de sud",
 		"te": "telugu",
@@ -531,10 +534,10 @@
 		"und": "limbă necunoscută",
 		"ur": "urdu",
 		"uz": "uzbecă",
-		"vai": "vai",
 		"ve": "venda",
 		"vec": "venetă",
 		"vi": "vietnameză",
+		"vmw": "makhuwa",
 		"vo": "volapuk",
 		"vot": "votică",
 		"vun": "vunjo",
@@ -548,6 +551,7 @@
 		"wuu": "chineză wu",
 		"xal": "calmucă",
 		"xh": "xhosa",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapeză",
@@ -1166,11 +1170,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1692,11 +1696,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2215,11 +2219,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2758,11 +2762,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -4357,7 +4361,6 @@
 			"Bishkek": "Bișkek",
 			"Brunei": "Brunei",
 			"Chita": "Cita",
-			"Choibalsan": "Choibalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damasc",
 			"Dhaka": "Dacca",
@@ -4715,6 +4718,7 @@
 	"symbols-latn-timeSeparator": ":",
 	"currencySymbols": {
 		"XAF": "FCFA",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5722,6 +5726,23 @@
 				"unitPattern-count-one": "{0} qt imp.",
 				"unitPattern-count-few": "{0} qt imp.",
 				"unitPattern-count-other": "{0} qt imp."
+			},
+			"speed-light-speed": {
+				"displayName": "lumină",
+				"unitPattern-count-one": "{0} lumină",
+				"unitPattern-count-few": "{0} lumină",
+				"unitPattern-count-other": "{0} lumină"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "părți/miliard",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "nopți",
+				"unitPattern-count-one": "{0} noapte",
+				"unitPattern-count-few": "{0} nopți",
+				"unitPattern-count-other": "{0} de nopți",
+				"perUnitPattern": "{0}/noapte"
 			},
 			"coordinateUnit": {
 				"displayName": "direcție",

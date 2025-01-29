@@ -187,10 +187,10 @@ License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/caja-html-sanitizer.js
 
-Component: Unicode Common Locale Data Repository, version: 44
-Copyright: 1991-2023 Unicode, Inc.
-License: Unicode-DFS-2015
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt
+Component: Unicode Common Locale Data Repository, version: 46.1.0
+Copyright: 1991-2024 Unicode, Inc.
+License: LicenseRef-Unicode-3.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-Unicode-3.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cldr/*
 
 Component: MobiScroll, version: 2.9.0
@@ -342,7 +342,7 @@ License: ISC
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/ISC.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cache/LRUPersistentCache.js
 
-Component: Time Zone Database, version: 2023d
+Component: Time Zone Database, version: 2025a
 Copyright: Arthur David Olson, Paul Eggert and other contributors
 License: LicenseRef-tzdata-PublicDomain
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-tzdata-PublicDomain.txt
@@ -967,6 +967,55 @@ END of license: LicenseRef-JSONinJSPublicDomain
 
 
 =================================
+BEGIN of license: LicenseRef-Unicode-3.0
+=================================
+
+UNICODE LICENSE V3
+
+COPYRIGHT AND PERMISSION NOTICE
+
+Copyright © 1991-2024 Unicode, Inc.
+
+NOTICE TO USER: Carefully read the following legal agreement. BY
+DOWNLOADING, INSTALLING, COPYING OR OTHERWISE USING DATA FILES, AND/OR
+SOFTWARE, YOU UNEQUIVOCALLY ACCEPT, AND AGREE TO BE BOUND BY, ALL OF THE
+TERMS AND CONDITIONS OF THIS AGREEMENT. IF YOU DO NOT AGREE, DO NOT
+DOWNLOAD, INSTALL, COPY, DISTRIBUTE OR USE THE DATA FILES OR SOFTWARE.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of data files and any associated documentation (the "Data Files") or
+software and any associated documentation (the "Software") to deal in the
+Data Files or Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, and/or sell
+copies of the Data Files or Software, and to permit persons to whom the
+Data Files or Software are furnished to do so, provided that either (a)
+this copyright and permission notice appear with all copies of the Data
+Files or Software, or (b) this copyright and permission notice appear in
+associated Documentation.
+
+THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+THIRD PARTY RIGHTS.
+
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE
+BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES,
+OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE DATA
+FILES OR SOFTWARE.
+
+Except as contained in this notice, the name of a copyright holder shall
+not be used in advertising or otherwise to promote the sale, use or other
+dealings in these Data Files or Software without prior written
+authorization of the copyright holder.
+
+=================================
+END of license: LicenseRef-Unicode-3.0
+=================================
+
+
+=================================
 BEGIN of license: LicenseRef-tzdata-PublicDomain
 =================================
 
@@ -1007,66 +1056,5 @@ OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 =================================
 END of license: MIT
-=================================
-
-
-=================================
-BEGIN of license: Unicode-DFS-2015
-=================================
-
-UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE
-
-Unicode Data Files include all data files under the directories http://www.unicode.org/Public/,
-http://www.unicode.org/reports/, and http://www.unicode.org/cldr/data/. Unicode
-Data Files do not include PDF online code charts under the directory http://www.unicode.org/Public/.
-Software includes any source code published in the Unicode Standard or under
-the directories http://www.unicode.org/Public/, http://www.unicode.org/reports/,
-and http://www.unicode.org/cldr/data/.
-
-NOTICE TO USER: Carefully read the following legal agreement. BY DOWNLOADING,
-INSTALLING, COPYING OR OTHERWISE USING UNICODE INC.'S DATA FILES ("DATA FILES"),
-AND/OR SOFTWARE ("SOFTWARE"), YOU UNEQUIVOCALLY ACCEPT, AND AGREE TO BE BOUND
-BY, ALL OF THE TERMS AND CONDITIONS OF THIS AGREEMENT. IF YOU DO NOT AGREE,
-DO NOT DOWNLOAD, INSTALL, COPY, DISTRIBUTE OR USE THE DATA FILES OR SOFTWARE.
-
-COPYRIGHT AND PERMISSION NOTICE
-
-Copyright © 1991-2015 Unicode, Inc. All rights reserved. Distributed under
-the Terms of Use in http://www.unicode.org/copyright.html.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of the Unicode data files and any associated documentation (the "Data Files")
-or Unicode software and any associated documentation (the "Software") to deal
-in the Data Files or Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, and/or sell copies
-of the Data Files or Software, and to permit persons to whom the Data Files
-or Software are furnished to do so, provided that
-
-(a) this copyright and permission notice appear with all copies of the Data
-Files or Software,
-
-(b) this copyright and permission notice appear in associated documentation,
-and
-
-(c) there is clear notice in each modified Data File or in the Software as
-well as in the documentation associated with the Data File(s) or Software
-that the data or software has been modified.
-
-THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
-KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE
-BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES,
-OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
-OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE DATA FILES OR SOFTWARE.
-
-Except as contained in this notice, the name of a copyright holder shall not
-be used in advertising or otherwise to promote the sale, use or other dealings
-in these Data Files or Software without prior written authorization of the
-copyright holder.
-
-=================================
-END of license: Unicode-DFS-2015
 =================================
 

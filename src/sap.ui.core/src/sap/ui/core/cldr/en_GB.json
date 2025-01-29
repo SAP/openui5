@@ -1,11 +1,11 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abkhazian",
-		"ace": "Achinese",
+		"ace": "Acehnese",
 		"ach": "Acoli",
 		"ada": "Adangme",
 		"ady": "Adyghe",
@@ -74,6 +74,7 @@
 		"bjn": "Banjar",
 		"bkm": "Kom",
 		"bla": "Siksika",
+		"blo": "Anii",
 		"blt": "Tai Dam",
 		"bm": "Bambara",
 		"bn": "Bangla",
@@ -220,7 +221,6 @@
 		"gmh": "Middle High German",
 		"gn": "Guarani",
 		"goh": "Old High German",
-		"gom": "Goan Konkani",
 		"gon": "Gondi",
 		"gor": "Gorontalo",
 		"got": "Gothic",
@@ -335,6 +335,7 @@
 		"kv": "Komi",
 		"kw": "Cornish",
 		"kwk": "Kwakʼwala",
+		"kxv": "Kuvi",
 		"ky": "Kyrgyz",
 		"ky_alt-variant": "Kirghiz",
 		"la": "Latin",
@@ -407,6 +408,7 @@
 		"mua": "Mundang",
 		"mul": "Multiple languages",
 		"mus": "Creek",
+		"mus_alt-official": "Mvskoke",
 		"mwl": "Mirandese",
 		"mwr": "Marwari",
 		"mwv": "Mentawai",
@@ -659,6 +661,7 @@
 		"xal": "Kalmyk",
 		"xh": "Xhosa",
 		"xmf": "Mingrelian",
+		"xnr": "Kangri",
 		"xog": "Soga",
 		"yao": "Yao",
 		"yap": "Yapese",
@@ -734,6 +737,7 @@
 		"Elba": "Elbasan",
 		"Elym": "Elymaic",
 		"Ethi": "Ethiopic",
+		"Gara": "Garay",
 		"Geok": "Georgian Khutsuri",
 		"Geor": "Georgian",
 		"Glag": "Glagolitic",
@@ -743,6 +747,7 @@
 		"Gran": "Grantha",
 		"Grek": "Greek",
 		"Gujr": "Gujarati",
+		"Gukh": "Gurung Khema",
 		"Guru": "Gurmukhi",
 		"Hanb": "Han with Bopomofo",
 		"Hang": "Hangul",
@@ -776,6 +781,7 @@
 		"Knda": "Kannada",
 		"Kore": "Korean",
 		"Kpel": "Kpelle",
+		"Krai": "Kirat Rai",
 		"Kthi": "Kaithi",
 		"Lana": "Lanna",
 		"Laoo": "Lao",
@@ -818,6 +824,7 @@
 		"Nshu": "Nüshu",
 		"Ogam": "Ogham",
 		"Olck": "Ol Chiki",
+		"Onao": "Ol Onal",
 		"Orkh": "Orkhon",
 		"Orya": "Odia",
 		"Osge": "Osage",
@@ -854,6 +861,7 @@
 		"Sora": "Sora Sompeng",
 		"Soyo": "Soyombo",
 		"Sund": "Sundanese",
+		"Sunu": "Sunuwar",
 		"Sylo": "Syloti Nagri",
 		"Syrc": "Syriac",
 		"Syre": "Estrangelo Syriac",
@@ -875,7 +883,9 @@
 		"Tibt": "Tibetan",
 		"Tirh": "Tirhuta",
 		"Tnsa": "Tangsa",
+		"Todr": "Todhri",
 		"Toto": "Toto",
+		"Tutg": "Tulu-Tigalari",
 		"Ugar": "Ugaritic",
 		"Vaii": "Vai",
 		"Visp": "Visible Speech",
@@ -1217,7 +1227,7 @@
 	"orientation": "left-to-right",
 	"ca-gregorian": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y",
+			"full": "EEEE, d MMMM y",
 			"long": "d MMMM y",
 			"medium": "d MMM y",
 			"short": "dd/MM/y"
@@ -1263,11 +1273,11 @@
 				"Hmv": "HH:mm v",
 				"M": "L",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E dd/MM",
 				"MMdd": "dd/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
-				"MMMEd": "E, d MMM",
+				"MMMEd": "E d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
 				"y": "y",
@@ -1282,11 +1292,11 @@
 				"yQQQQ": "QQQQ y",
 				"MMMMW": "'week' W 'of' MMMM",
 				"yw": "'week' w 'of' Y",
-				"GyMMMEEEEd": "EEEE d MMM y G",
+				"GyMMMEEEEd": "EEEE, d MMM y G",
 				"MMMEEEEd": "EEEE d MMM",
 				"MMMMEEEEd": "EEEE d MMMM",
-				"yMMMEEEEd": "EEEE d MMM y",
-				"yMMMMEEEEd": "EEEE d MMMM y"
+				"yMMMEEEEd": "EEEE, d MMM y",
+				"yMMMMEEEEd": "EEEE, d MMMM y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1834,11 +1844,11 @@
 				"yyyyMMMM": "MMMM y G",
 				"yyyyQQQ": "QQQ y G",
 				"yyyyQQQQ": "QQQQ y G",
-				"GyMMMEEEEd": "EEEE d MMM y G",
+				"GyMMMEEEEd": "EEEE, d MMM y G",
 				"MMMEEEEd": "EEEE d MMM",
 				"MMMMEEEEd": "EEEE d MMMM",
-				"yyyyMMMEEEEd": "EEEE d MMM y G",
-				"yyyyMMMMEEEEd": "EEEE d MMMM y G"
+				"yyyyMMMEEEEd": "EEEE, d MMM y G",
+				"yyyyMMMMEEEEd": "EEEE, d MMMM y G"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2360,10 +2370,10 @@
 				"Hms": "HH:mm:ss",
 				"M": "LL",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E dd/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
-				"MMMEd": "E, d MMM",
+				"MMMEd": "E d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
 				"y": "y G",
@@ -2377,11 +2387,11 @@
 				"yyyyMMMM": "MMMM y G",
 				"yyyyQQQ": "QQQ y G",
 				"yyyyQQQQ": "QQQQ y G",
-				"GyMMMEEEEd": "EEEE d MMM y G",
+				"GyMMMEEEEd": "EEEE, d MMM y G",
 				"MMMEEEEd": "EEEE d MMM",
 				"MMMMEEEEd": "EEEE d MMMM",
-				"yyyyMMMEEEEd": "EEEE d MMM y G",
-				"yyyyMMMMEEEEd": "EEEE d MMMM y G"
+				"yyyyMMMEEEEd": "EEEE, d MMM y G",
+				"yyyyMMMMEEEEd": "EEEE, d MMMM y G"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2889,7 +2899,7 @@
 	},
 	"ca-persian": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
 			"medium": "d MMM y G",
 			"short": "dd/MM/y GGGGG"
@@ -2931,10 +2941,10 @@
 				"Hms": "HH:mm:ss",
 				"M": "LL",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E dd/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
-				"MMMEd": "E, d MMM",
+				"MMMEd": "E d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
 				"y": "y G",
@@ -2948,11 +2958,11 @@
 				"yyyyMMMM": "MMMM y G",
 				"yyyyQQQ": "QQQ y G",
 				"yyyyQQQQ": "QQQQ y G",
-				"GyMMMEEEEd": "EEEE d MMM y G",
+				"GyMMMEEEEd": "EEEE, d MMM y G",
 				"MMMEEEEd": "EEEE d MMM",
 				"MMMMEEEEd": "EEEE d MMMM",
-				"yyyyMMMEEEEd": "EEEE d MMM y G",
-				"yyyyMMMMEEEEd": "EEEE d MMMM y G"
+				"yyyyMMMEEEEd": "EEEE, d MMM y G",
+				"yyyyMMMMEEEEd": "EEEE, d MMMM y G"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -3432,7 +3442,7 @@
 	},
 	"ca-buddhist": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y G",
+			"full": "EEEE, d MMMM y G",
 			"long": "d MMMM y G",
 			"medium": "d MMM y G",
 			"short": "dd/MM/y GGGGG"
@@ -3474,10 +3484,10 @@
 				"Hms": "HH:mm:ss",
 				"M": "LL",
 				"Md": "dd/MM",
-				"MEd": "E, dd/MM",
+				"MEd": "E dd/MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
-				"MMMEd": "E, d MMM",
+				"MMMEd": "E d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
 				"y": "y G",
@@ -3491,11 +3501,11 @@
 				"yyyyMMMM": "MMMM y G",
 				"yyyyQQQ": "QQQ y G",
 				"yyyyQQQQ": "QQQQ y G",
-				"GyMMMEEEEd": "EEEE d MMM y G",
+				"GyMMMEEEEd": "EEEE, d MMM y G",
 				"MMMEEEEd": "EEEE d MMM",
 				"MMMMEEEEd": "EEEE d MMMM",
-				"yyyyMMMEEEEd": "EEEE d MMM y G",
-				"yyyyMMMMEEEEd": "EEEE d MMMM y G"
+				"yyyyMMMEEEEd": "EEEE, d MMM y G",
+				"yyyyMMMMEEEEd": "EEEE, d MMMM y G"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -4557,7 +4567,6 @@
 			"Bishkek": "Bishkek",
 			"Brunei": "Brunei",
 			"Chita": "Chita",
-			"Choibalsan": "Choibalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damascus",
 			"Dhaka": "Dhaka",
@@ -4937,6 +4946,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5127,7 +5137,7 @@
 				"unitPattern-count-other": "{0} ha"
 			},
 			"area-square-meter": {
-				"displayName": "metres²",
+				"displayName": "m²",
 				"unitPattern-count-one": "{0} m²",
 				"unitPattern-count-other": "{0} m²",
 				"perUnitPattern": "{0}/m²"
@@ -5515,7 +5525,7 @@
 				"perUnitPattern": "{0}/km"
 			},
 			"length-meter": {
-				"displayName": "metres",
+				"displayName": "m",
 				"unitPattern-count-one": "{0} m",
 				"unitPattern-count-other": "{0} m",
 				"perUnitPattern": "{0}/m"
@@ -5714,8 +5724,8 @@
 			},
 			"mass-grain": {
 				"displayName": "grains",
-				"unitPattern-count-one": "{0} grains",
-				"unitPattern-count-other": "{0} grains"
+				"unitPattern-count-one": "{0} gr",
+				"unitPattern-count-other": "{0} gr"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -6004,7 +6014,7 @@
 			},
 			"volume-drop": {
 				"displayName": "drops",
-				"unitPattern-count-one": "{0} drops",
+				"unitPattern-count-one": "{0} drop",
 				"unitPattern-count-other": "{0} drops"
 			},
 			"volume-dram": {
@@ -6019,7 +6029,7 @@
 			},
 			"volume-pinch": {
 				"displayName": "pinches",
-				"unitPattern-count-one": "{0} pinches",
+				"unitPattern-count-one": "{0} pinch",
 				"unitPattern-count-other": "{0} pinches"
 			},
 			"volume-quart-imperial": {
@@ -6031,6 +6041,22 @@
 				"displayName": "gas-equiv",
 				"unitPattern-count-one": "{0} gas-equiv",
 				"unitPattern-count-other": "{0} gas-equiv"
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-one": "{0} light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "parts/billion",
+				"unitPattern-count-one": "{0} ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "nights",
+				"unitPattern-count-one": "{0} night",
+				"unitPattern-count-other": "{0} nights",
+				"perUnitPattern": "{0}/night"
 			},
 			"coordinateUnit": {
 				"displayName": "direction",
