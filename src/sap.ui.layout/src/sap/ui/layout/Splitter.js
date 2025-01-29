@@ -434,7 +434,7 @@ sap.ui.define([
 		this._disableAutoResize(/* temporarily: */ true);
 
 		var iPos = oEvent[this._moveCord];
-		var iBar = parseInt(oBar.id.substr((sId + "-splitbar-").length));
+		var iBar = parseInt(oBar.id.substring((sId + "-splitbar-").length));
 		var $bar = jQuery(oBar);
 		var mCalcSizes = this._calculatedSizes;
 		var iBarSize = this._bHorizontal ? $bar.outerWidth() : $bar.outerHeight();
@@ -1086,7 +1086,7 @@ sap.ui.define([
 
 		var iBigStep  = 999999;
 
-		var iBar = parseInt(oEvent.target.id.substr(sBarId.length));
+		var iBar = parseInt(oEvent.target.id.substring(sBarId.length));
 		var mCalcSizes = this._calculatedSizes;
 		// TODO: These two lines are incomprehensible magic - find better solution
 		this._move.c1Size = mCalcSizes[iBar];

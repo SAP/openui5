@@ -133,7 +133,7 @@ sap.ui.define([
 		var oCell1 = fnCreateCell(1),
 				oCell2 = fnCreateCell(1, "An Icon", new Icon({src: "sap-icon://arrow-right"})),
 				oCell3 = fnCreateCell(1, "Tomato Heading", [
-					new Text({text: sText.substr(0, 20)})
+					new Text({text: sText.substring(0, 20)})
 				], "Center"),
 				oCell4 = fnCreateCell(3, null, fnCreateForm());
 

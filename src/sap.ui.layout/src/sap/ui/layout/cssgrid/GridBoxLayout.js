@@ -309,9 +309,9 @@ sap.ui.define([
 				}
 
 				sSpan = sSpan.toUpperCase();
-				switch (sSpan.substr(0, 1)) {
+				switch (sSpan.substring(0, 1)) {
 					case "X":
-						if (sSpan.substr(1, 1) === "L") {
+						if (sSpan.substring(1, 1) === "L") {
 							sSpanXLargeClass = this._getBoxesPerRowClass(sSpan, 2);
 						}
 						break;
@@ -349,7 +349,7 @@ sap.ui.define([
 	 * @returns {string|undefined} The class which should be used
 	 */
 	GridBoxLayout.prototype._getBoxesPerRowClass = function (sSpan, iIndex) {
-		var iSpan = parseInt(sSpan.substr(iIndex, sSpan.length));
+		var iSpan = parseInt(sSpan.substring(iIndex, sSpan.length));
 		if (iSpan && iSpan > 0 && iSpan < 13) {
 			return "sapUiLayoutCSSGridBoxLayoutSpan" + sSpan;
 		}

@@ -271,8 +271,8 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 				var span = aSpan[0];
 				if (span) {
 					span = span.toUpperCase();
-					if (span.substr(0,2) === "XL") {
-						return parseInt(span.substr(2));
+					if (span.substring(0,2) === "XL") {
+						return parseInt(span.substring(2));
 					}
 				}
 			}
@@ -300,8 +300,8 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 				var span = aSpan[0];
 				if (span) {
 					span = span.toUpperCase();
-					if (span.substr(0,1) === "L") {
-						return parseInt(span.substr(1));
+					if (span.substring(0,1) === "L") {
+						return parseInt(span.substring(1));
 					}
 				}
 			}
@@ -327,8 +327,8 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 				var span = aSpan[0];
 				if (span) {
 					span = span.toUpperCase();
-					if (span.substr(0,1) === "M") {
-						return parseInt(span.substr(1));
+					if (span.substring(0,1) === "M") {
+						return parseInt(span.substring(1));
 					}
 				}
 			}
@@ -355,8 +355,8 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 				var span = aSpan[0];
 				if (span) {
 					span = span.toUpperCase();
-					if (span.substr(0,1) === "S") {
-						return parseInt(span.substr(1));
+					if (span.substring(0,1) === "S") {
+						return parseInt(span.substring(1));
 					}
 				}
 			}

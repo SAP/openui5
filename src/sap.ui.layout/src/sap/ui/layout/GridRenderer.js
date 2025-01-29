@@ -186,8 +186,8 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 							}
 						}
 
-						if (span.substr(0, 1) === "L") {
-							sSpanL = span.substr(1, 2);
+						if (span.substring(0, 1) === "L") {
+							sSpanL = span.substring(1, 2);
 						}
 
 						// Catch the Individual Spans
@@ -197,18 +197,18 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 						var iSpanSmall = oLay.getSpanS();
 
 						span = span.toUpperCase();
-						if ((span.substr(0, 2) === "XL") && (iSpanXLarge > 0)	&& (iSpanXLarge < 13)) {
+						if ((span.substring(0, 2) === "XL") && (iSpanXLarge > 0)	&& (iSpanXLarge < 13)) {
 							oRm.class("sapUiRespGridSpanXL" + iSpanXLarge);
 							bCellSpanXLChanged = true;
-						} else if ((span.substr(0, 1) === "L") && (iSpanLarge > 0)	&& (iSpanLarge < 13)) {
+						} else if ((span.substring(0, 1) === "L") && (iSpanLarge > 0)	&& (iSpanLarge < 13)) {
 							oRm.class("sapUiRespGridSpanL" + iSpanLarge);
 							sSpanL = iSpanLarge;
-						} else if ((span.substr(0, 1) === "M") && (iSpanMedium > 0)	&& (iSpanMedium < 13)) {
+						} else if ((span.substring(0, 1) === "M") && (iSpanMedium > 0)	&& (iSpanMedium < 13)) {
 							oRm.class("sapUiRespGridSpanM" + iSpanMedium);
-						} else if ((span.substr(0, 1) === "S") && (iSpanSmall > 0) && (iSpanSmall < 13)) {
+						} else if ((span.substring(0, 1) === "S") && (iSpanSmall > 0) && (iSpanSmall < 13)) {
 							oRm.class("sapUiRespGridSpanS" + iSpanSmall);
 						} else {
-							if ((span.substr(0, 2) !== "XL") || bDefaultSpanXLChanged || bCellSpanXLChanged){
+							if ((span.substring(0, 2) !== "XL") || bDefaultSpanXLChanged || bCellSpanXLChanged){
 								oRm.class("sapUiRespGridSpan" + span);
 							}
 						}
@@ -264,23 +264,23 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 						}
 						if (indent) {
 							indent = indent.toUpperCase();
-							if (indent.substr(0, 1) === "L") {
-								sIndentL = indent.substr(1, 2);
+							if (indent.substring(0, 1) === "L") {
+								sIndentL = indent.substring(1, 2);
 							}
 
 
 
-							if ((indent.substr(0, 2) === "XL") && (iIndentXLarge > 0) && (iIndentXLarge < 12)) {
+							if ((indent.substring(0, 2) === "XL") && (iIndentXLarge > 0) && (iIndentXLarge < 12)) {
 									oRm.class("sapUiRespGridIndentXL" + iIndentXLarge);
 									bDefaultIndentXLChanged = true;
-							} else if ((indent.substr(0, 1) === "L") && (iIndentLarge > 0)
+							} else if ((indent.substring(0, 1) === "L") && (iIndentLarge > 0)
 									&& (iIndentLarge < 12)) {
 								oRm.class("sapUiRespGridIndentL" + iIndentLarge);
 								sIndentL = iIndentLarge;
-							} else if ((indent.substr(0, 1) === "M")
+							} else if ((indent.substring(0, 1) === "M")
 									&& (iIndentMedium > 0) && (iIndentMedium < 12)) {
 								oRm.class("sapUiRespGridIndentM"	+ iIndentMedium);
-							} else if ((indent.substr(0, 1) === "S")
+							} else if ((indent.substring(0, 1) === "S")
 									&& (iIndentSmall > 0) && (iIndentSmall < 12)) {
 								oRm.class("sapUiRespGridIndentS" + iIndentSmall);
 							} else {
@@ -395,7 +395,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 								indent = aInitialIndent[j];
 							}
 						}
-						if (((indent.substr(0,1) !== "X") && (indent.substr(1,1) !== "0")) || ((indent.substr(0,1) == "X") && (indent.substr(2,1) !== "0"))) {
+						if (((indent.substring(0,1) !== "X") && (indent.substring(1,1) !== "0")) || ((indent.substring(0,1) == "X") && (indent.substring(2,1) !== "0"))) {
 							oRm.class("sapUiRespGridIndent" + indent.toUpperCase());
 						}
 					}

@@ -106,7 +106,7 @@ sap.ui.define([
 			return;
 		}
 
-		iBar = parseInt(this._oLastDOMclicked.id.substr((sId + "-splitbar-").length));
+		iBar = parseInt(this._oLastDOMclicked.id.substring((sId + "-splitbar-").length));
 		oContentArea = this._getContentAreas()[iBar];
 		oContentArea._currentPosition = this._calculatedSizes[iBar];
 		oContentArea._lastPosition = oContentArea._lastPosition || oContentArea._currentPosition;
