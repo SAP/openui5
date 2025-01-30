@@ -65,6 +65,7 @@ sap.ui.define([
 				"sap.m.internal.ObjectMarkerCustomLink": NOT_A_MODULE, // not a module of its own
 				"sap.m.internal.ObjectMarkerCustomText": NOT_A_MODULE, // not a module of its own
 				"sap.m.internal.ToggleSpinButton": NOT_A_MODULE, // not a module of its own
+				"sap.m.HeaderContainerItemContainer": NOT_A_MODULE, // not a module of its own
 				"sap.m.internal.DateTimePickerPopup": NOT_A_MODULE, // not a module of its own
 				"sap.m.TablePopin": NOT_A_MODULE,  // not a module of its own,
 				"sap.m.PlanningCalendarHeader": {exclude:["actions"]}, // implementation of 'actions' is broken
