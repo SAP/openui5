@@ -67,5 +67,9 @@ sap.ui.define([
 		return this.getServiceUrl();
 	};
 
+	AnnotationChange.prototype.canBeCondensed = function() {
+		return true;
+	};
+
 	return AnnotationChange;
 });

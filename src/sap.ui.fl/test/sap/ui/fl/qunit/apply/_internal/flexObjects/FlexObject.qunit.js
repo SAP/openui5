@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/Layer",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	LoaderExtensions,
+	FlexObject,
 	FlexObjectFactory,
 	States,
 	Layer,
@@ -271,6 +273,17 @@ sap.ui.define([
 					oFlexObjectWithoutImplementation.getIdForCondensing();
 				},
 				/Method getIdForCondensing must be implemented/
+			);
+		});
+
+		QUnit.test("when checking if the base FlexObject can be condensed", function(assert) {
+			const oBaseFlexObject = FlexObjectFactory.createFromFileContent({
+				fileName: "someChange"
+			}, FlexObject);
+			assert.strictEqual(
+				oBaseFlexObject.canBeCondensed(),
+				false,
+				"then the base FlexObject cannot be condensed"
 			);
 		});
 	});

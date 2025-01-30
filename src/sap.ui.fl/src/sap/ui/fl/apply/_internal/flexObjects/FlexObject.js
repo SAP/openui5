@@ -556,7 +556,8 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the flex object can be condensed
 	 */
 	FlexObject.prototype.canBeCondensed = function() {
-		return true;
+		// Requires opt-in for each relevant object type to ensure that getIdForCondensing is implemented
+		return false;
 	};
 
 	return FlexObject;
