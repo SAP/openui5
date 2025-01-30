@@ -83,8 +83,8 @@
 		"footer": {
 			"actionsStrip": [
 				{
-					"text": "Close with HideCard Action",
-					"buttonType": "Reject",
+					"text": "Discard (with Card Action)",
+					"buttonType": "Transparent",
 					"actions": [
 						{
 							"type": "HideCard"
