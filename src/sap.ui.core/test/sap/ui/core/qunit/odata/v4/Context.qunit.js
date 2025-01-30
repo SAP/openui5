@@ -1573,7 +1573,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext).expects("isKeepAlive").never(); // iIndex is 0, not undefined
 
 		// code under test
 		assert.throws(function () {
@@ -2497,7 +2497,7 @@ sap.ui.define([
 		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')");
 		// Note: cannot easily mock #toString which calls #isDeleted etc.
 		this.mock(oContext).expects("isDeleted").withExactArgs().atLeast(1).returns(false);
-		this.mock(oContext).expects("isTransient").withExactArgs().atLeast(1).returns(false);
+		this.mock(oContext).expects("isTransient").never();
 
 		assert.throws(function () {
 			// code under test
@@ -2538,7 +2538,7 @@ sap.ui.define([
 		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')");
 		// Note: cannot easily mock #toString which calls #isDeleted etc.
 		this.mock(oParent).expects("isDeleted").withExactArgs().atLeast(1).returns(false);
-		this.mock(oParent).expects("isTransient").withExactArgs().atLeast(1).returns(false);
+		this.mock(oParent).expects("isTransient").never();
 
 		assert.throws(function () {
 			// code under test
@@ -5175,7 +5175,7 @@ sap.ui.define([
 			.withExactArgs().returns(oHeaderContext);
 		this.mock(oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		this.mock(oContext).expects("isSelected").withExactArgs().returns(true);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isRelative").never();
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 
