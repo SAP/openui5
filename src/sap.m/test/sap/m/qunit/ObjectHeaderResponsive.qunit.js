@@ -109,6 +109,7 @@ sap.ui.define([
 		var $objectHeader = oObjectHeader.$();
 
 		assert.ok($objectHeader.hasClass("sapMOHROuter"), "Object header is rendered in responsive mode.");
+		assert.ok($objectHeader.find("sapMOHRMaxWidth"), "Object header has max width class set.");
 
 		// Clean up
 		oObjectHeader.destroy();
