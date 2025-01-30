@@ -12,6 +12,7 @@ sap.ui.define([
 	"./ParseException",
 	"./ValidateException",
 	"./Context",
+	"./Type",
 	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/assert",
@@ -28,6 +29,7 @@ sap.ui.define([
 	ParseException,
 	ValidateException,
 	Context,
+	Type,
 	future,
 	Log,
 	assert,
@@ -601,8 +603,6 @@ sap.ui.define([
 				oBinding,
 				sMode,
 				sCompositeMode = BindingMode.TwoWay,
-				oType,
-				clType,
 				oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName), // TODO fix handling of hidden entities?
 				sInternalType = oPropertyInfo._iKind === /* PROPERTY */ 0 ? oPropertyInfo.type : oPropertyInfo.altTypes[0],
 				that = this,
@@ -666,6 +666,22 @@ sap.ui.define([
 					}
 
 					return TypeClass;
+				},
+				fnCreateTypeInstance = function(oBindingInfo) {
+					const vType = oBindingInfo.type;
+					let clType;
+
+					if (typeof vType == "string") {
+						clType = fnResolveTypeClass(vType, that);
+					} else if (typeof vType === "function" && vType.prototype instanceof Type) {
+						clType = vType;
+					}
+
+					if (clType) {
+						return new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
+					} else {
+						return vType;
+					}
 				};
 
 			oBindingInfo.parts.forEach(function(oPart) {
@@ -674,11 +690,7 @@ sap.ui.define([
 				oModel = that.getModel(oPart.model);
 
 				// Create type instance if needed
-				oType = oPart.type;
-				if (typeof oType == "string") {
-					clType = fnResolveTypeClass(oType, that);
-					oType = new clType(oPart.formatOptions, oPart.constraints);
-				}
+				const oType = fnCreateTypeInstance(oPart);
 
 				if (oPart.value !== undefined) {
 					oBinding = new StaticBinding(oPart.value);
@@ -705,11 +717,8 @@ sap.ui.define([
 			// check if we have a composite binding or a formatter function created by the BindingParser which has property textFragments
 			if (aBindings.length > 1 || ( oBindingInfo.formatter && oBindingInfo.formatter.textFragments )) {
 				// Create type instance if needed
-				oType = oBindingInfo.type;
-				if (typeof oType == "string") {
-					clType = fnResolveTypeClass(oType, this);
-					oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
-				}
+				const oType = fnCreateTypeInstance(oBindingInfo);
+
 				oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
 				oBinding.setType(oType, oBindingInfo.targetType || sInternalType);
 				oBinding.setBindingMode(oBindingInfo.mode || sCompositeMode);
