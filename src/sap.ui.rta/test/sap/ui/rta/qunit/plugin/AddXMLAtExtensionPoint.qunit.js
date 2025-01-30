@@ -36,7 +36,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	var sXmlString =
-	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+	'<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 		'<Panel id="panel">' +
 			"<content>" +
 				'<core:ExtensionPoint name="ExtensionPoint1" />' +
