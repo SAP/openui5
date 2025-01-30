@@ -55,6 +55,7 @@ sap.ui.define([
 				"sap.ui.core.mvc.XMLView": NO_CREATE, // needs constructor arguments
 				"sap.ui.core.mvc.XMLAfterRenderingNotifier": NOT_A_MODULE, // not a module of its own
 				"sap.ui.core.routing.Target.TitleProvider": NOT_A_MODULE, // not a module of its own
+				"sap.m.HeaderContainerItemContainer": NOT_A_MODULE, // not a module of its own
 				"sap.ui.core._StashedControl": NOT_A_MODULE // not a module of its own
 			}
 		},
