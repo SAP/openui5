@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/ui/core/Component"],
-	function(future, Log, View, Component) {
+sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View", "sap/ui/core/Component"],
+	function(Log, View, Component) {
 		"use strict";
 
 
@@ -86,12 +86,11 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 
 						vResult = View.create(oFactoryConfig);
 					} else {
-						// unknown extension class
-						future.warningThrows("Customizing: Unknown extension className configured in Component.js for extension point '" + sExtName
-								+ "' in View '" + oView.sViewName + "': " + oExtensionConfig.className + ".", { suffix: "Extension className will be ignored."});
+						throw new Error("Customizing: Unknown extension className configured in Component.js for extension point '" + sExtName
+								+ "' in View '" + oView.sViewName + "': " + oExtensionConfig.className + ".");
 					}
 				} else {
-					future.warningThrows("Customizing: no extension className configured in Component.js for extension point '" + sExtName
+					throw new Error("Customizing: no extension className configured in Component.js for extension point '" + sExtName
 							+ "' in View '" + oView.sViewName + "': " + oExtensionConfig.className);
 				}
 			} else if (ExtensionPoint._fnExtensionProvider) {
@@ -114,9 +113,7 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 
 				if (sExtensionProvider) {
 					if (!oView) {
-						// Someone could create a Fragment via the factory with a Controller without an associated view,
-						// e.g. by creating a Controller instance via Controller.create().
-						future.warningThrows("View instance could not be passed to ExtensionPoint Provider for extension point '" + sExtName + "' " +
+						throw new Error("View instance could not be passed to ExtensionPoint Provider for extension point '" + sExtName + "' " +
 									"in fragment '" + sFragmentId + "'.");
 					}
 					/**
@@ -210,8 +207,7 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 							oTargetControl[oAggregationInfo._sMutator](vResult[i]);
 						}
 					} else {
-						// the target control has no default aggregation, or the aggregationName provided doesn't match an existing aggregation as defined at the targetControl
-						future.errorThrows("Creating extension point failed - Tried to add extension point with name " + sExtName + " to an aggregation of " +
+						throw new Error("Creating extension point failed - Tried to add extension point with name " + sExtName + " to an aggregation of " +
 								oTargetControl.getId() + " in view " + oView.sViewName + ", but sAggregationName was not provided correctly and I could not find a default aggregation");
 					}
 				}
@@ -246,7 +242,7 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 			} else if (typeof fnExtensionProvider == "function") {
 				ExtensionPoint._fnExtensionProvider = fnExtensionProvider;
 			} else {
-				future.errorThrows("ExtensionPoint provider must be a function!");
+				throw new Error("ExtensionPoint provider must be a function!");
 			}
 		};
 

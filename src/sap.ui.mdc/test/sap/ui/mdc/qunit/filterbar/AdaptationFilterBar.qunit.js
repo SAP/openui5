@@ -507,14 +507,14 @@ sap.ui.define([
 						return new Promise(function(resolve){
 							setTimeout(function(){
 								resolve(new FilterField({
-									label: "key1",
+									label: "Key 1",
 									conditions: "{$filters>/conditions/key1}"
 								}));
 							}, 500);
 						});
 					}
 					return Promise.resolve(new FilterField({
-						label: "key2",
+						label: "Key 2",
 						conditions: "{$filters>/conditions/key2}"
 					}));
 				},
@@ -530,8 +530,8 @@ sap.ui.define([
 		.then(function(){
 			oAdaptationFilterBar.createFilterFields().then(function(){
 				//key1 takes longer to create but should still be the first item to be displayed, as the order is reiterated after all promises have been resolved
-				assert.equal(oAdaptationFilterBar.getFilterItems()[0].getLabel(), "key1", "The order of filter items is similar to the provided p13n model");
-				assert.equal(oAdaptationFilterBar.getFilterItems()[1].getLabel(), "key2", "The order of filter items is similar to the provided p13n model");
+				assert.equal(oAdaptationFilterBar.getFilterItems()[0].getLabel(), "Key 1", "The order of filter items is similar to the provided p13n model");
+				assert.equal(oAdaptationFilterBar.getFilterItems()[1].getLabel(), "Key 2", "The order of filter items is similar to the provided p13n model");
 				done();
 			});
 
@@ -820,7 +820,7 @@ sap.ui.define([
 						collectionName: "test"
 					}
 				},
-				propertyInfo: [{name: "key1", label: "Key 1", dataType: "sap.ui.model.type.String"}],
+				propertyInfo: [{name: "key1", label: "Some custom label", dataType: "sap.ui.model.type.String"}],
 				filterItems: {
 					path: "$custom>/data",
 					template: new FilterField({

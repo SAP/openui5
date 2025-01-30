@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/resolveReference",
-	"sap/base/future",
 	"sap/ui/base/DesignTime"
 ],
 	function(
@@ -24,7 +23,6 @@ sap.ui.define([
 		MOM,
 		JSTokenizer,
 		resolveReference,
-		future,
 		DesignTime
 	) {
 		"use strict";
@@ -72,7 +70,6 @@ sap.ui.define([
 			 * @private
 			 */
 			resolveEventHandler: function(sName, oController, mLocals) {
-
 				var fnHandler, iStartBracket, sFunctionName;
 				sName = sName.trim();
 
@@ -88,7 +85,7 @@ sap.ui.define([
 							if (oCommandExecution) {
 								oCommandExecution.trigger();
 							} else {
-								future.errorThrows("Handler '" + sName + "' could not be resolved. No CommandExecution defined for command: " + sCommand);
+								throw new Error("Handler '" + sName + "' could not be resolved. No CommandExecution defined for command: " + sCommand);
 							}
 						};
 						fnHandler._sapui_commandName = sCommand;
@@ -121,7 +118,7 @@ sap.ui.define([
 						if (iEndBracket > iStartBracket) {
 
 							if (sName.substring(iStartBracket).indexOf("{=") > -1) {
-								future.warningThrows("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed " +
+								throw new Error("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed " +
 									"because the entire event handler is already considered an expression: " + sName);
 							}
 
@@ -182,7 +179,7 @@ sap.ui.define([
 								};
 							})(sFunctionName, oController);
 						} else {
-							future.errorThrows("Syntax error in event handler '" + sName + "': arguments must be enclosed in a pair of brackets");
+							throw new Error("Syntax error in event handler '" + sName + "': arguments must be enclosed in a pair of brackets");
 						}
 					}
 				}
@@ -195,8 +192,7 @@ sap.ui.define([
 					return [ fnHandler, oController ];
 				}
 
-				future.warningThrows("Event handler name '" + sName + "' could not be resolved to an event handler function");
-				// return undefined
+				throw new Error("Event handler name '" + sName + "' could not be resolved to an event handler function");
 			},
 
 			/**

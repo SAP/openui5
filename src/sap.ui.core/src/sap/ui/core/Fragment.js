@@ -6,7 +6,6 @@ sap.ui.define([
 	'../base/ManagedObject',
 	'./Element',
 	'./XMLTemplateProcessor',
-	'sap/base/future',
 	'sap/base/Log',
 	'sap/base/util/merge',
 	'sap/ui/util/XMLHelper',
@@ -16,7 +15,6 @@ function(
 	ManagedObject,
 	Element,
 	XMLTemplateProcessor,
-	future,
 	Log,
 	merge,
 	XMLHelper,
@@ -170,8 +168,7 @@ function(
 	 */
 	Fragment.registerType = function(sType, oFragmentImpl) {
 		if (typeof (sType) !== "string") {
-			future.errorThrows("Invalid non-string Fragment type: '" + sType + "'.", { suffix: "It will be ignored." });
-			return;
+			throw new Error("Invalid non-string Fragment type: '" + sType + "'.");
 		}
 
 		if (mTypes[sType]) {
@@ -255,8 +252,7 @@ function(
 	 */
 	Fragment.byId = function(sFragmentId, sId) {
 		if (!(typeof (sFragmentId) === "string" && typeof (sId) === "string")) {
-			future.errorThrows("sap.ui.core.Fragment.byId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
-			return undefined;
+			throw new Error("sap.ui.core.Fragment.byId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
 		}
 		return Element.getElementById(sFragmentId + "--" + sId);
 	};
@@ -273,8 +269,7 @@ function(
 	 */
 	Fragment.createId = function(sFragmentId, sId) {
 		if (!(typeof (sFragmentId) === "string" && typeof (sId) === "string")) {
-			future.errorThrows("sap.ui.core.Fragment.createId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
-			return undefined;
+			throw new Error("sap.ui.core.Fragment.createId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
 		}
 		return sFragmentId + "--" + sId;
 	};
@@ -576,13 +571,14 @@ function(
 				try {
 					pContentPromise.unwrap();
 				} catch (e) {
-					future.errorThrows(this.getMetadata().getName() +
+					throw new Error(this.getMetadata().getName() +
 							": An Error occured during XML processing of '" +
 							(mSettings.fragmentName || mSettings.fragmentContent) +
 							"' with id '" +
 							this.getId() +
-							"'",
-							{ cause: e });
+							"'", {
+						cause: e
+					});
 				}
 			}
 			return pContentPromise;

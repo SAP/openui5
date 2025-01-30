@@ -11,7 +11,6 @@ sap.ui.define([
 	"./BindingInfo",
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/util/_enforceNoReturnValue",
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/util/deepClone",
@@ -27,7 +26,6 @@ sap.ui.define([
 	BindingInfo,
 	ActivityDetection,
 	_enforceNoReturnValue,
-	future,
 	Log,
 	assert,
 	deepClone,
@@ -1286,7 +1284,7 @@ sap.ui.define([
 						if (Array.isArray(oValue)){
 							// assumption: we have an extensionPoint here which is always an array, even if it contains a single control
 							if (oValue.length > 1){
-								future.errorThrows("Tried to add an array of controls to a single aggregation");
+								throw new Error("Tried to add an array of controls to a single aggregation");
 							}
 							oValue = oValue[0];
 						}
@@ -2577,8 +2575,7 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
 		if (!sAggregationName) {
-			// an aggregation name has to be specified!
-			future.errorThrows(`${this}: Cannot remove aggregated child without aggregation name.`);
+			throw new Error(`${this}: Cannot remove aggregated child without aggregation name.`);
 		} else {
 			// set suppress invalidate flag
 			if (bSuppressInvalidate) {
@@ -3160,7 +3157,7 @@ sap.ui.define([
 	};
 
 	function logError(sFunctionName) {
-		future.errorThrows("Unexpected call of '" + sFunctionName + "'.");
+		throw new Error("Unexpected call of '" + sFunctionName + "'.");
 	}
 
 	/**
@@ -3604,7 +3601,7 @@ sap.ui.define([
 			throw new Error("Aggregation \"" + sName + "\" does not exist in " + this);
 		}
 		if (!oAggregationInfo.multiple) {
-			future.errorThrows("Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
+			throw new Error("Binding of single aggregation \"" + sName + "\" of " + this + " is not supported!");
 		}
 
 		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
@@ -3796,7 +3793,9 @@ sap.ui.define([
 	* @since 1.28
 	*/
 	ManagedObject.prototype.propagateMessages = function(sName, aMessages) {
-		future.warningThrows("Message for " + this + ", Property " + sName + " received. Control " + this.getMetadata().getName() + " does not support messaging without using data binding.");
+		throw new Error(
+			"Message for " + this + ", Property " + sName + " received. Control " + this.getMetadata().getName() + " does not support messaging without using data binding."
+		);
 	};
 
 	/**

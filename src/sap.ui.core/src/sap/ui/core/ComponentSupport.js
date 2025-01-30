@@ -7,14 +7,12 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/library',
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/strings/camelize"
 ], function(
 	DataType,
 	ComponentContainer,
 	library,
-	future,
 	Log,
 	camelize
 ) {
@@ -176,8 +174,7 @@ sap.ui.define([
 					var oProperty = ComponentContainerMetadata.getProperty(sKey);
 					var oEvent = !oProperty && ComponentContainerMetadata.getEvent(sKey);
 					if (!oProperty && !oEvent) {
-						future.warningThrows("Property or event \"" + sKey + "\" does not exist in sap.ui.core.ComponentContainer.", { suffix: "It will be ignored."});
-						continue;
+						throw new Error("Property or event \"" + sKey + "\" does not exist in sap.ui.core.ComponentContainer.");
 					}
 					if (oProperty) {
 						var oType = DataType.getType(oProperty.type);
@@ -214,9 +211,9 @@ sap.ui.define([
 		if (mSettings.manifest === undefined || mSettings.manifest === "true") {
 			mSettings.manifest = true;
 		} else if (mSettings.manifest === "false") {
-			future.errorThrows("Defining \"manifest=false\" for ComponentContainer of component \"" + mSettings.name + "\" is not supported by ComponentSupport.", {
-				suffix: "Forcing \"manifest=true\""}, "", "sap/ui/core/ComponentSupport");
-			mSettings.manifest = true;
+			throw new Error(
+				"Defining \"manifest=false\" for ComponentContainer of component \"" + mSettings.name + "\" is not supported by ComponentSupport."
+			);
 		}
 
 		// different default value behavior for declarative components

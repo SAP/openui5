@@ -6,12 +6,11 @@
 
 // Provides class sap.ui.base.DataType
 sap.ui.define([
-	'sap/base/future',
 	"sap/base/assert",
 	"sap/base/util/isPlainObject",
 	'sap/base/util/resolveReference',
 	"sap/base/i18n/date/_EnumHelper"
-], function(future, assert, isPlainObject, resolveReference, _EnumHelper) {
+], function(assert, isPlainObject, resolveReference, _EnumHelper) {
 	"use strict";
 
 	/**
@@ -532,11 +531,9 @@ sap.ui.define([
 					oType = mTypes[sTypeName] = createEnumType(sTypeName, oType);
 					delete mEnumRegistry[sTypeName];
 				} else if ( oType ) {
-					future.warningThrows("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
-					oType = mTypes.any;
+					throw new Error("'" + sTypeName + "' is not a valid data type. Falling back to type 'any'.");
 				} else {
-					future.errorThrows("data type '" + sTypeName + "' could not be found.");
-					oType = undefined;
+					throw new Error("data type '" + sTypeName + "' could not be found.");
 				}
 			}
 		}
@@ -593,23 +590,23 @@ sap.ui.define([
 		assert(vBase == null || vBase instanceof DataType || typeof vBase === "string" && vBase,
 				"DataType.createType: base type must be empty or a DataType or a non-empty string");
 		if ( /[\[\]]/.test(sName) ) {
-			future.errorThrows(
-				"DataType.createType: array types ('something[]') must not be created with createType, " +
-				"they're created on-the-fly by DataType.getType");
+			throw new Error("DataType.createType: array types ('something[]') must not be created with createType, " +
+			"they're created on-the-fly by DataType.getType");
 		}
 		if ( typeof vBase === "string" ) {
 			vBase = DataType.getType(vBase);
 		}
 		vBase = vBase || mTypes.any;
 		if ( vBase.isArrayType() || vBase.isEnumType() ) {
-			future.errorThrows("DataType.createType: base type must not be an array- or enum-type");
+			throw new Error("DataType.createType: base type must not be an array- or enum-type");
 		}
 		if ( sName === 'array' || mTypes[sName] instanceof DataType ) {
 			if ( sName === 'array' || mTypes[sName].getBaseType() == null ) {
 				throw new Error("DataType.createType: primitive or hidden type " + sName + " can't be re-defined");
 			}
-			future.warningThrows("DataTypes.createType: type " + sName + " is redefined. " +
-				"This is an unsupported usage of DataType and might cause issues." );
+
+			throw new Error("DataTypes.createType: type " + sName + " is redefined. " +
+				"This is an unsupported usage of DataType and might cause issues.");
 		}
 		var oType = mTypes[sName] = createType(sName, mSettings, vBase);
 		return oType;

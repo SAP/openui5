@@ -22,6 +22,7 @@ sap.ui.define([
 	'sap/ui/core/StaticArea',
 	'./PopoverRenderer',
 	"sap/ui/dom/containsOrEquals",
+	"sap/ui/dom/units/Rem",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/events/KeyCodes",
@@ -51,6 +52,7 @@ sap.ui.define([
 		StaticArea,
 		PopoverRenderer,
 		containsOrEquals,
+		Rem,
 		jQuery,
 		getScrollbarSize,
 		KeyCodes,
@@ -70,13 +72,6 @@ sap.ui.define([
 
 		// shortcut for sap.m.TitleAlignment
 		var TitleAlignment = library.TitleAlignment;
-
-		var arrowOffset = Parameters.get({
-			name: "_sap_m_Popover_ArrowOffset",
-			callback: function(sValue) {
-				arrowOffset = parseFloat(sValue);
-			}
-		});
 
 		/**
 		* Constructor for a new Popover.
@@ -465,6 +460,7 @@ sap.ui.define([
 			this.setFollowOf(true);
 
 			this._initResponsivePaddingsEnablement();
+			this._loadThemeParameters();
 
 			this._oRestoreFocusDelegate = {
 				onBeforeRendering: function () {
@@ -800,30 +796,13 @@ sap.ui.define([
 			// initialFocus, beginButton, endButton, and popover itself.
 			// focus has to be inside/on popover otherwise autoclose() will not work
 				sFocusId = this._getInitialFocusId(),
-				oParentDomRef, iPlacePos, bForceCompactArrowOffset, aCompactParents;
+				oParentDomRef, iPlacePos, aCompactParents;
 
 			oParentDomRef = (oControl.getDomRef && oControl.getDomRef()) || oControl;
 			aCompactParents = jQuery(oParentDomRef).closest(".sapUiSizeCompact");
 
-			// A theme can force the usage of compact arrow offset in all content density modes, by setting sapMPopoverForceCompactArrowOffset variable.
-			// This is needed when a theme defines only a compact arrow for all modes.
-			bForceCompactArrowOffset = Parameters.get({
-					name: "_sap_m_Popover_ForceCompactArrowOffset"
-			}) || "true"; // ensure a default value is added in case the parameter is not loaded
-
-			arrowOffset = Parameters.get({
-				name: "_sap_m_Popover_ArrowOffset",
-				callback: function(sValue) {
-					arrowOffset = parseFloat(sValue);
-				}
-			}) || 8;
-
-			// cast the string value to boolean
-			bForceCompactArrowOffset = bForceCompactArrowOffset === "true";
-
 			// Determines if the Popover will be rendered in a compact mode
 			this._bSizeCompact = library._bSizeCompact || !!aCompactParents.length || this.hasStyleClass("sapUiSizeCompact");
-			this._bUseCompactArrow = this._bSizeCompact || bForceCompactArrowOffset;
 
 			this._adaptPositionParams();
 
@@ -1011,6 +990,11 @@ sap.ui.define([
 		/* =========================================================== */
 		/*                      begin: event handlers                  */
 		/* =========================================================== */
+
+		Popover.prototype.onThemeChanged = function() {
+			this._loadThemeParameters();
+		};
+
 		Popover.prototype._clearCSSStyles = function () {
 			if (!this.getDomRef()) {
 				return;
@@ -1966,10 +1950,10 @@ sap.ui.define([
 			oPosParams._fPopoverOffsetX = this._getOffsetX();
 			oPosParams._fPopoverOffsetY = this._getOffsetY();
 
-			oPosParams._fPopoverMarginTop = oPosParams._fWindowTop + this._marginTop + oWithinOffset.top;
-			oPosParams._fPopoverMarginLeft = oPosParams._fWindowLeft + this._marginLeft + oWithinOffset.left;
-			oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - oWithinOffset.left - oPosParams._fWithinAreaWidth + this._marginRight;
-			oPosParams._fPopoverMarginBottom = oPosParams._fWindowHeight - oWithinOffset.top - oPosParams._fWithinAreaHeight + this._marginBottom;
+			oPosParams._fPopoverMarginTop = oPosParams._fWindowTop + this._marginTop + oWithinOffset.top + this._fThickShadowSize;
+			oPosParams._fPopoverMarginLeft = oPosParams._fWindowLeft + this._marginLeft + oWithinOffset.left + this._fThickShadowSize;
+			oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - oWithinOffset.left - oPosParams._fWithinAreaWidth + this._marginRight + this._fThickShadowSize;
+			oPosParams._fPopoverMarginBottom = oPosParams._fWindowHeight - oWithinOffset.top - oPosParams._fWithinAreaHeight + this._marginBottom + this._fThickShadowSize;
 
 			oPosParams._fPopoverBorderTop = parseFloat(oComputedStyle.borderTopWidth);
 			oPosParams._fPopoverBorderRight = parseFloat(oComputedStyle.borderRightWidth);
@@ -1997,24 +1981,26 @@ sap.ui.define([
 			switch (sCalculatedPlacement) {
 				case PlacementType.Left:
 					if (bRtl) {
-						oPosParams._fPopoverMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset - oPosParams._fPopoverOffsetX;
+						oPosParams._fPopoverMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset - oPosParams._fPopoverOffsetX + this._fThickShadowSize;
 					} else {
-						oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fPopoverOffsetX;
+						oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fPopoverOffsetX + this._fThickShadowSize;
 					}
 					break;
 				case PlacementType.Right:
 					if (bRtl) {
-						oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$parent.offset().left + this._arrowOffset;
+						oPosParams._fPopoverMarginRight = oPosParams._fWindowWidth - Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$parent.offset().left + this._arrowOffset + this._fThickShadowSize;
 					} else {
-						oPosParams._fPopoverMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fPopoverOffsetX;
+						oPosParams._fPopoverMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fPopoverOffsetX + this._fThickShadowSize;
 					}
 					break;
 				case PlacementType.Top:
-					fNewCalc = oPosParams._fWindowHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fPopoverOffsetY;
+					fNewCalc = oPosParams._fWindowHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fPopoverOffsetY + this._fThickShadowSize;
 					oPosParams._fPopoverMarginBottom = fNewCalc > oPosParams._fPopoverMarginBottom ? fNewCalc : oPosParams._fPopoverMarginBottom;
 					break;
 				case PlacementType.Bottom:
-					oPosParams._fPopoverMarginTop = oPosParams._$parent.offset().top + Popover.outerHeight(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fPopoverOffsetY;
+					oPosParams._fPopoverMarginTop = oPosParams._$parent.offset().top + Popover.outerHeight(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fPopoverOffsetY + this._fThickShadowSize;
+					break;
+				default:
 					break;
 			}
 
@@ -2182,19 +2168,19 @@ sap.ui.define([
 			// Set arrow offset
 			if (sCalculatedPlacement === PlacementType.Left || sCalculatedPlacement === PlacementType.Right) {
 				iPosArrow = oPosParams._$parent.offset().top - oPosParams._$popover.offset().top - oPosParams._fPopoverBorderTop + oPosParams._fPopoverOffsetY + 0.5 * (Popover.outerHeight(oPosParams._$parent[0], false) - oPosParams._$arrow.outerHeight(false));
-				iPosArrow = Math.max(iPosArrow - this._getOffsetY(), arrowOffset);
-				iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverHeight - arrowOffset - oPosParams._$arrow.outerHeight());
+				iPosArrow = Math.max(iPosArrow - this._getOffsetY(), this._arrowOffset);
+				iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverHeight - this._arrowOffset - oPosParams._$arrow.outerHeight());
 				return {"top": iPosArrow};
 			} else if (sCalculatedPlacement === PlacementType.Top || sCalculatedPlacement === PlacementType.Bottom) {
 				if (bRtl) {
 					iPosArrow = oPosParams._$popover.offset().left + Popover.outerWidth(oPosParams._$popover[0], false) - (oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false)) + oPosParams._fPopoverBorderRight + oPosParams._fPopoverOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
-					iPosArrow = Math.max(iPosArrow - this._getOffsetX(), arrowOffset);
-					iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverWidth - arrowOffset - oPosParams._$arrow.outerWidth(false));
+					iPosArrow = Math.max(iPosArrow - this._getOffsetX(), this._arrowOffset);
+					iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverWidth - this._arrowOffset - oPosParams._$arrow.outerWidth(false));
 					return {"right": iPosArrow};
 				} else {
 					iPosArrow = oPosParams._$parent.offset().left - oPosParams._$popover.offset().left - oPosParams._fPopoverBorderLeft + oPosParams._fPopoverOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
-					iPosArrow = Math.max(iPosArrow - this._getOffsetX(), arrowOffset);
-					iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverWidth - arrowOffset - oPosParams._$arrow.outerWidth(false));
+					iPosArrow = Math.max(iPosArrow - this._getOffsetX(), this._arrowOffset);
+					iPosArrow = Math.min(iPosArrow, oPosParams._fPopoverWidth - this._arrowOffset - oPosParams._$arrow.outerWidth(false));
 					return {"left": iPosArrow};
 				}
 			}
@@ -2372,13 +2358,13 @@ sap.ui.define([
 				this._marginRight = 10;
 				this._marginBottom = 10;
 
-				this._arrowOffset = 18;
-				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
-
-				if (this._bUseCompactArrow) {
-					this._arrowOffset = 9;
-					this._offsets = ["0 -9", "9 0", "0 9", "-9 0"];
+				if (this._bSizeCompact) {
+					this._arrowOffset = this._fArrowOffsetCompactParameter;
+				} else {
+					this._arrowOffset = this._fArrowOffsetParameter;
 				}
+
+				this._offsets = [`0 -${this._arrowOffset}`, `${this._arrowOffset} 0`, `0 ${this._arrowOffset}`, `-${this._arrowOffset} 0`];
 
 				this._myPositions = ["center bottom", "begin center", "center top", "end center"];
 				this._atPositions = ["center top", "end center", "center bottom", "begin center"];
@@ -2686,6 +2672,29 @@ sap.ui.define([
 		 */
 		Popover.prototype.getHeaderTitle = function () {
 			return this._headerTitle;
+		};
+
+		Popover.prototype._loadThemeParameters = function () {
+			this._fArrowOffsetParameter = Rem.toPx(Parameters.get({
+				name: "_sap_m_Popover_ArrowOffset",
+				callback: (sValue) => {
+					this._fArrowOffsetParameter = Rem.toPx(sValue);
+				}
+			}) || "0.5rem");
+
+			this._fArrowOffsetCompactParameter = Rem.toPx(Parameters.get({
+				name: "_sap_m_Popover_CompactArrowOffset",
+				callback: (sValue) => {
+					this._fArrowOffsetCompactParameter = Rem.toPx(sValue);
+				}
+			}) || "0.5rem");
+
+			this._fThickShadowSize = Rem.toPx(Parameters.get({
+				name: "_sap_m_Popover_ThickShadowSize",
+				callback: (sValue) => {
+					this._fThickShadowSize = Rem.toPx(sValue);
+				}
+			}) || "0.0625rem");
 		};
 
 		/**

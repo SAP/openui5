@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/base/future',
 	'sap/base/Log'
-], function (future, Log) {
+], function(Log) {
 	"use strict";
 
 	var mLibThemeMetadata = {};
@@ -104,7 +103,7 @@ sap.ui.define([
 			oMetadata = JSON.parse(sMetadataJSON);
 			mLibThemeMetadata[sLibName] = oMetadata;
 		} catch (ex) {
-			future.errorThrows("Could not parse theme metadata for library " + sLibName + ".");
+			throw new Error("Could not parse theme metadata for library " + sLibName + ".");
 		}
 		return oMetadata;
 	};
@@ -146,7 +145,9 @@ sap.ui.define([
 
 			} catch (e) {
 				if (bLog) {
-					future.errorThrows(`sap.ui.core.theming.ThemeHelper: Error during check styles for Id: "${sId}"`, { cause: e });
+					throw new Error(`sap.ui.core.theming.ThemeHelper: Error during check styles for Id: "${sId}"`, {
+						cause: e
+					});
 				}
 			}
 

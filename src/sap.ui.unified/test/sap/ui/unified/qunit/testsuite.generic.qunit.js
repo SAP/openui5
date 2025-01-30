@@ -45,6 +45,9 @@ sap.ui.define([
 			"sap.ui.unified.internal.CustomYearPicker": {
 				moduleName: "sap/ui/unified/calendar/CustomYearPicker"
 			},
+			"sap.ui.unified.internal.CustomMonthPicker": {
+				moduleName: "sap/ui/unified/calendar/CustomMonthPicker"
+			},
 			"sap.ui.unified._ColorPickerBox": {
 				moduleName: "sap/ui/unified/ColorPicker"
 			}

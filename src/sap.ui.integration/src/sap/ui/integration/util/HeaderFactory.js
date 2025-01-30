@@ -38,13 +38,9 @@ sap.ui.define([
 
 	var ActionType = library.CardActionType;
 
-	var ButtonType = mLibrary.ButtonType;
-
 	var CardDisplayVariant = library.CardDisplayVariant;
 
 	var SemanticRole = fLibrary.cards.SemanticRole;
-
-	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 	/**
 	 * Constructor for a new <code>HeaderFactory</code>.
@@ -75,10 +71,6 @@ sap.ui.define([
 			oHeader;
 
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
-
-		if (bIsInDialog && !oCard.hasPaginator()) {
-			oToolbar = this._createCloseButton(mConfiguration);
-		}
 
 		if (oCard.isCompactHeader()) {
 			mConfiguration.type = "";
@@ -138,25 +130,6 @@ sap.ui.define([
 			oHeader.setProperty("focusable", false);
 		}
 		return oHeader;
-	};
-
-	HeaderFactory.prototype._createCloseButton = function (mConfiguration) {
-		var bVisible = true;
-		if (mConfiguration.closeButton && "visible" in mConfiguration.closeButton) {
-			bVisible = mConfiguration.closeButton.visible;
-		}
-
-		var oButton = new Button({
-			type: ButtonType.Transparent,
-			tooltip: oResourceBundle.getText("CARD_DIALOG_CLOSE_BUTTON"),
-			visible: bVisible,
-			icon: "sap-icon://decline",
-			press: function () {
-				this._oCard.hide();
-			}.bind(this)
-		});
-
-		return oButton;
 	};
 
 	HeaderFactory.prototype._setTileDisplayDefaults = function (oHeader, mConfiguration) {

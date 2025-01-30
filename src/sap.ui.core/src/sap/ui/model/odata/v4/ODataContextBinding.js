@@ -839,6 +839,8 @@ sap.ui.define([
 	/**
 	 * Handles setting a parameter property in case of a deferred operation binding, otherwise it
 	 * returns <code>undefined</code>.
+	 *
+	 * @private
 	 */
 	// @override sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
 	ODataContextBinding.prototype.doSetProperty = function (sPath, vValue, oGroupLock) {

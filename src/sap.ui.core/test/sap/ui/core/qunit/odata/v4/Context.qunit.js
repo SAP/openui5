@@ -36,11 +36,8 @@ sap.ui.define([
 	QUnit.test("create", function (assert) {
 		var oBinding = {},
 			oContext,
-			oCreatedPromise,
-			bCreatedPromisePending = true,
 			oModel = {},
-			sPath = "/foo",
-			fnResolve;
+			sPath = "/foo";
 
 		// see below for tests with oBinding parameter
 		// no createdPromise
@@ -63,22 +60,37 @@ sap.ui.define([
 		assert.strictEqual(oContext.bFiringCreateActivate, false);
 
 		// code under test
-		oContext = Context.create(oModel, oBinding, sPath, 42, undefined, false);
-
-		assert.strictEqual(oContext.isInactive(), undefined, "bInactive: false -> undefined");
-
-		// code under test
-		oContext = Context.create(oModel, oBinding, sPath, 42,
-			new SyncPromise(function (resolve) {
-				fnResolve = resolve;
-			}), true);
+		oContext = Context.create(oModel, oBinding, sPath, 42, undefined, true);
 
 		assert.strictEqual(oContext.isInactive(), true);
 
+		const oSetCreatedExpectation = this.mock(oContext.constructor.prototype)
+			.expects("setCreated").withExactArgs("~oCreatePromise~");
+
 		// code under test
-		oCreatedPromise = oContext.created();
+		oContext = Context.create(oModel, oBinding, sPath, 42, "~oCreatePromise~", false);
+
+		assert.strictEqual(oContext.isInactive(), undefined, "bInactive: false -> undefined");
+		assert.ok(oSetCreatedExpectation.alwaysCalledOn(oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setCreated", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/foo", 42);
+		let fnResolve;
+
+		// code under test
+		oContext.setCreated(new SyncPromise(function (resolve) {
+			fnResolve = resolve;
+		}));
+
+		assert.strictEqual(oContext.isTransient(), true);
+
+		// code under test
+		const oCreatedPromise = oContext.created();
 
 		assert.ok(oCreatedPromise instanceof Promise, "Instance of Promise");
+		let bCreatedPromisePending = true;
 		oCreatedPromise.then(function (oResult) {
 				bCreatedPromisePending = false;
 				assert.strictEqual(oResult, undefined, "create promise resolves w/o data ('bar')");
@@ -89,12 +101,24 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
+			oContext.setCreated(SyncPromise.resolve());
+		}, new Error("Already 'created'"));
+
+		assert.throws(function () {
+			// code under test
 			oContext.setPersisted();
 		}, new Error("Not 'created persisted'"));
 
 		fnResolve("bar");
 		return oCreatedPromise.then(function () {
 			assert.strictEqual(bCreatedPromisePending, false, "Created Promise resolved");
+			assert.strictEqual(oContext.isTransient(), false);
+
+			// code under test
+			oContext.setCreated();
+
+			assert.strictEqual(oContext.created(), undefined);
+			assert.strictEqual(oContext.isTransient(), undefined);
 		});
 	});
 
@@ -1310,7 +1334,6 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{transient : false, groupId : "myGroup", upsert : true},
 	{transient : false, groupId : "myGroup"},
 	{transient : true, groupId : "myGroup"},
 	{transient : true, groupId : null},
@@ -1329,7 +1352,6 @@ sap.ui.define([
 				oFixture.transient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
 			oDeletePromise,
 			oExpectation,
-			bPreventRequest = oFixture.transient || oFixture.upsert,
 			bSelected = !!oFixture.groupId;
 
 		if (oFixture.hierarchy) {
@@ -1339,22 +1361,16 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getValue").exactly(oFixture.transient ? 0 : 1)
-			.withExactArgs().returns(oFixture.upsert ? {
-				"@$ui5._" : {
-					upsert : false // just to force *has*PrivateAnnotation
-				}
-			} : undefined); // Note: we cannot rule out undefined for strange edge cases!
-		this.mock(_Helper).expects("checkGroupId").exactly(bPreventRequest ? 0 : 1)
+		this.mock(_Helper).expects("checkGroupId").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs("myGroup", false, true);
-		this.mock(oContext).expects("fetchCanonicalPath").exactly(bPreventRequest ? 0 : 1)
+		this.mock(oContext).expects("fetchCanonicalPath").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs().returns(SyncPromise.resolve("/Bar('23')"));
-		this.mock(oBinding).expects("lockGroup").exactly(bPreventRequest ? 0 : 1)
+		this.mock(oBinding).expects("lockGroup").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs("myGroup", true, true).returns("~oGroupLock~");
 		oExpectation = this.mock(oBinding).expects("delete")
-			.withExactArgs(bPreventRequest ? null : "~oGroupLock~",
-				bPreventRequest ? undefined : "Bar('23')", sinon.match.same(oContext), null,
-				bPreventRequest ? true : "~bDoNotRequestCount~", sinon.match.func)
+			.withExactArgs(oFixture.transient ? null : "~oGroupLock~",
+				oFixture.transient ? undefined : "Bar('23')", sinon.match.same(oContext), null,
+				oFixture.transient ? true : "~bDoNotRequestCount~", sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve()));
 
 		// code under test
@@ -1398,7 +1414,6 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(oContext).expects("isKeepAlive").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns(true);
 		this.mock(_Helper).expects("checkGroupId").exactly(sGroupId ? 1 : 0)
@@ -1442,7 +1457,6 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(oModel).expects("isApiGroup").withExactArgs("myGroup").returns(false);
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup", false, true);
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
@@ -1512,6 +1526,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("delete: upsert", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+				// NO getHeaderContext
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+
+		this.mock(oContext).expects("isDeleted").atLeast(1).withExactArgs().returns(false);
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(undefined).returns(false);
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true); // upsert
+
+		// code under test
+		assert.throws(function () {
+			oContext.delete();
+		}, new Error("Cannot delete " + oContext));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("delete: no lock, but not a kept-alive context", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
@@ -1522,7 +1555,6 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 
 		// code under test
 		assert.throws(function () {
@@ -1541,7 +1573,6 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns(true);
 
 		// code under test
@@ -1581,7 +1612,6 @@ sap.ui.define([
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("getValue").withExactArgs().returns({});
 		this.mock(_Helper).expects("checkGroupId")
 			.withExactArgs("$invalid", false, true).throws(oError);
 
@@ -1605,6 +1635,7 @@ sap.ui.define([
 	QUnit.test("delete: already removed via resetChanges", function (assert) {
 		const oBinding = {
 			checkSuspended : function () {},
+			getHeaderContext : mustBeMocked, // duck typing only
 			mParameters : "~mParameters~"
 			// no delete
 		};
@@ -3557,6 +3588,7 @@ sap.ui.define([
 			fnReporter = sinon.spy(),
 			oSetPropertyExpectation,
 			bSkipRetry = i === 1,
+			bSuffix = i === 0, // simulate that oContext corresponds to upsert
 			vWithCacheResult = {},
 			that = this;
 
@@ -3568,11 +3600,10 @@ sap.ui.define([
 				"/BusinessPartnerList('0100000000')[42;inactive]");
 		}
 		oContext.bFiringCreateActivate = bFiringCreateActivate;
-		this.mock(oContext).expects("isDeleted").exactly(bFireCreateActivate ? 4 : 3)
+		// Note: invoked via #toString from sinon.match.same(oContext) etc.
+		this.mock(oContext).expects("isDeleted").exactly(bFireCreateActivate ? 5 : 4)
 			.withExactArgs().returns(false);
 		this.mock(oContext).expects("getValue").never();
-		this.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs().on(oContext)
-			.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
 		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
 			"some/relative/path", /*bSync*/false, /*bWithOrWithoutCache*/true)
 			.callsFake(function (fnProcessor) {
@@ -3595,8 +3626,6 @@ sap.ui.define([
 					}));
 				oBindingMock.expects("firePatchCompleted").never();
 				oBindingMock.expects("firePatchSent").never();
-				oBindingMock.expects("isPatchWithoutSideEffects").withExactArgs()
-					.returns(bPatchWithoutSideEffects);
 				oBindingMock.expects("getResolvedPath").atLeast(1) // fnErrorCallback also needs it
 					.withExactArgs()
 					.returns("/resolved/binding/path");
@@ -3621,15 +3650,25 @@ sap.ui.define([
 					that.mock(oCache).expects("setInactive")
 						.withExactArgs("helper/path", bInactive);
 				}
+				that.mock(_Helper).expects("hasPathSuffix")
+					.withExactArgs("/BusinessPartnerList('0100000000')", "helper/path")
+					.returns(bSuffix);
+				that.mock(oContext.setCreated).expects("bind").exactly(bSuffix ? 1 : 0)
+					.withExactArgs(sinon.match.same(oContext)).returns("~setCreated~");
 				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
 					.withExactArgs("/resolved/data/path")
 					.returns("unit/or/currency/path");
+				oBindingMock.expects("isPatchWithoutSideEffects").withExactArgs()
+					.returns(bPatchWithoutSideEffects);
+				that.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs().on(oContext)
+					.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
 				that.mock(oCache).expects("update")
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "/edit/url",
 						"helper/path", "unit/or/currency/path",
 						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func,
-						/*fnIsKeepAlive*/sinon.match.func)
+						/*fnIsKeepAlive*/sinon.match.func,
+						/*fnSetUpsertPromise*/bSuffix ? "~setCreated~" : null)
 					.callsFake(function () {
 						assert.strictEqual(oContext.bFiringCreateActivate, bFiringCreateActivate);
 						assert.strictEqual(oContext.isInactive(),
@@ -3747,7 +3786,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
-						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
+						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
+						/*fnSetUpsertPromise*/null)
 					.resolves();
 
 				return fnProcessor(oCache, "some/relative/path", oBinding);
@@ -3830,7 +3870,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
-						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
+						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
+						/*fnSetUpsertPromise*/null)
 					.resolves();
 
 				return fnProcessor(oCache, "/reduced/path", oBinding);
@@ -3971,7 +4012,8 @@ sap.ui.define([
 							/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func,
 							"/edit/url", "helper/path", "unit/or/currency/path",
 							sinon.match.same(bPatchWithoutSideEffects),
-							/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func)
+							/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
+							/*fnSetUpsertPromise*/null)
 						.resolves();
 				}
 
@@ -4360,6 +4402,7 @@ sap.ui.define([
 	QUnit.test("resetChanges, w/o oDeletePromise, bInactive=" + bInactive, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
+				// NO getHeaderContext
 				getParameterContext : "must not be called",
 				resetChangesForPath : function () {}
 			},
@@ -4370,6 +4413,7 @@ sap.ui.define([
 			oResetChangesPromise;
 
 		oContext.bInactive = bInactive;
+		this.mock(oContext).expects("isTransient").never();
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("resetChangesForPath")
 			.withExactArgs("/path", sinon.match.array);
@@ -4465,11 +4509,13 @@ sap.ui.define([
 		+ bInactive;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path", -1,
+		var oBinding = {
+				getHeaderContext : mustBeMocked // duck typing only
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/path", -1,
 				new SyncPromise(function () {}), bInactive);
 
 		this.mock(oContext).expects("isTransient").withExactArgs().twice().returns(true);
-		this.mock(oContext).expects("isInactive").withExactArgs().twice().returns(bInactive);
 
 		assert.throws(function () {
 			// code under test
@@ -4497,7 +4543,7 @@ sap.ui.define([
 		var oBinding = {oOperation : {}, getParameterContext : function () {}},
 			oContext = Context.create({/*oModel*/}, oBinding, "/Operation(...)/$Parameter");
 
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").never();
 		this.mock(oBinding).expects("getParameterContext").withExactArgs().returns(oContext);
 
 		assert.throws(function () {

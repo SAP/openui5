@@ -8,11 +8,10 @@ sap.ui.define([
 	'sap/ui/core/routing/Target',
 	'sap/ui/core/routing/async/Route',
 	'sap/ui/core/Component',
-	"sap/base/future",
 	"sap/base/assert",
 	"sap/base/util/deepExtend"
 ],
-	function(EventProvider, Target, asyncRoute, Component, future, assert, deepExtend) {
+	function(EventProvider, Target, asyncRoute, Component, assert, deepExtend) {
 	"use strict";
 
 		/**
@@ -134,10 +133,9 @@ sap.ui.define([
 				if (oConfig.parent) {
 					var oRoute = this._getParentRoute(oConfig.parent);
 					if (!oRoute) {
-						future.errorThrows(`${this}: No parent route with "${oConfig.parent}" could be found`);
+						throw new Error(`${this}: No parent route with "${oConfig.parent}" could be found`);
 					} else if (oRoute._aPattern.length > 1) {
-						future.errorThrows(`${this}: Routes with multiple patterns cannot be used as parent for nested routes`);
-						return;
+						throw new Error(`${this}: Routes with multiple patterns cannot be used as parent for nested routes`);
 					} else {
 						this._oNestingParent = oRoute;
 						vRoute.forEach(function(sRoute, i) {
@@ -365,7 +363,9 @@ sap.ui.define([
 										oHashChanger.setHash(oRoute.getURL(oRouteInfo.parameters), bParentRouteSwitched || !bRouteSwitched);
 										return oRoute._changeHashWithComponentTargets(oRouteInfo.componentTargetInfo, bParentRouteSwitched || bRouteSwitched);
 									} else {
-										future.errorThrows("Can not navigate to route with name '" + sRouteName + "' because the route does not exist in component with id '" + oComponent.getId() + "'");
+										throw new Error(
+											"Can not navigate to route with name '" + sRouteName + "' because the route does not exist in component with id '" + oComponent.getId() + "'"
+										);
 									}
 								}
 							});
@@ -636,11 +636,11 @@ sap.ui.define([
 
 			_validateConfig: function(oConfig) {
 				if (!oConfig.name) {
-					future.errorThrows(`${this}: A name has to be specified for every route`);
+					throw new Error(`${this}: A name has to be specified for every route`);
 				}
 
 				if (oConfig.viewName) {
-					future.errorThrows(`${this}: The 'viewName' option shouldn't be used in Route. please use 'view' instead`);
+					throw new Error(`${this}: The 'viewName' option shouldn't be used in Route. please use 'view' instead`);
 				}
 			},
 

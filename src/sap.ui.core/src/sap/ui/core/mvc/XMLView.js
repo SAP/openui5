@@ -8,7 +8,6 @@ sap.ui.define([
 	"./ViewType",
 	"./XMLViewRenderer",
 	"sap/base/config",
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/strings/hash",
@@ -30,7 +29,6 @@ sap.ui.define([
 		ViewType,
 		XMLViewRenderer,
 		BaseConfig,
-		future,
 		Log,
 		Localization,
 		hash,
@@ -670,7 +668,7 @@ sap.ui.define([
 			if (XMLView.PreprocessorType[sType]) {
 				View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, sOwnViewType, bSyncSupport, bOnDemand, mSettings);
 			} else {
-				future.errorThrows(`${this.getMetadata().getName()}: Preprocessor could not be registered due to unknown sType "${sType}"`);
+				throw new Error(`${this.getMetadata().getName()}: Preprocessor could not be registered due to unknown sType "${sType}"`);
 			}
 		};
 

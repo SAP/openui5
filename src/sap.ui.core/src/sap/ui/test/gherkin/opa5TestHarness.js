@@ -9,7 +9,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
-	"sap/base/future",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/gherkin/GherkinTestGenerator",
@@ -18,8 +17,7 @@ sap.ui.define([
 	"sap/ui/test/launchers/componentLauncher",
 	"sap/ui/test/launchers/iFrameLauncher",
 	"sap/ui/qunit/qunit-junit"
-], function(Log, ObjectPath, future, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher,
-	iFrameLauncher) {
+], function(Log, ObjectPath, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher, iFrameLauncher) {
 	"use strict";
 
 	QUnit.config.urlConfig.splice(0, 0, {
@@ -77,7 +75,9 @@ sap.ui.define([
 				};
 			} else {
 				func = function(Given, When, Then) {
-					future.errorThrows("[GHERKIN]: Deprecated Step Generation method (eval) detected! Replace the following with an OPA5 page object call: " + sToEval);
+					throw new Error(
+						"[GHERKIN]: Deprecated Step Generation method (eval) detected! Replace the following with an OPA5 page object call: " + sToEval
+					);
 				};
 			}
 

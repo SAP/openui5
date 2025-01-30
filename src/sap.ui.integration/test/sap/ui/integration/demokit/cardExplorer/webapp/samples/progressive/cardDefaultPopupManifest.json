@@ -104,17 +104,6 @@
 			}
 		},
 		"footer": {
-			"actionsStrip": [
-				{
-			    "buttonType": "Emphasized",
-					"text": "Close",
-					"actions": [
-						{
-							"type": "HideCard"
-						}
-					]
-				}
-			]
 		}
 	}
 }

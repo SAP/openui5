@@ -258,6 +258,10 @@
         "visible": {
           "description": "[Experimental] Visibility of the footer",
           "$ref": "#/$defs/visibility"
+        },
+        "closeButton": {
+          "description": "[Experimental] Defines the Close button when the card is opened by the ShowCard action.",
+          "$ref": "#/$defs/closeButton"
         }
       }
     },
@@ -515,7 +519,8 @@
         },
         "closeButton": {
           "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
-          "$ref": "#/$defs/closeButton"
+          "$ref": "#/$defs/closeButton",
+          "deprecated": true
         },
         "wrappingType": {
           "description": "[Experimental] The wrapping type for texts inside the header.",
@@ -645,7 +650,8 @@
         },
         "closeButton": {
           "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
-          "$ref": "#/$defs/closeButton"
+          "$ref": "#/$defs/closeButton",
+          "deprecated": true
         },
         "wrappingType": {
           "description": "[Experimental] The wrapping type for texts inside the header.",

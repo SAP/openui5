@@ -6,13 +6,12 @@ sap.ui.define([
 	'sap/ui/core/Theming',
 	'sap/ui/thirdparty/URI',
 	'../Element',
-	'sap/base/future',
 	'sap/base/Log',
 	'sap/base/util/extend',
 	'sap/base/util/syncFetch',
 	'sap/ui/core/theming/ThemeManager',
 	'./ThemeHelper'
-], function(Library, Theming, URI, Element, future, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
+], function(Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
 	"use strict";
 
 	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
@@ -140,7 +139,9 @@ sap.ui.define([
 					try {
 						sParams = decodeURIComponent(sParams);
 					} catch (ex) {
-						future.warningThrows("Could not decode theme parameters URI from " + oUrl.styleSheetUrl, { cause: ex });
+						throw new Error("Could not decode theme parameters URI from " + oUrl.styleSheetUrl, {
+							cause: ex
+						});
 					}
 				}
 				try {
@@ -148,7 +149,9 @@ sap.ui.define([
 					mergeParameters(oParams, oUrl.themeBaseUrl);
 					return true; // parameters successfully parsed
 				} catch (ex) {
-					future.warningThrows("Could not parse theme parameters from " + oUrl.styleSheetUrl + ".", { cause: ex , suffix: "Loading library-parameters.json as fallback solution." });
+					throw new Error("Could not parse theme parameters from " + oUrl.styleSheetUrl + ".", {
+						cause: ex
+					});
 				}
 			}
 		}
@@ -212,8 +215,7 @@ sap.ui.define([
 		var oLink = document.getElementById(sId);
 
 		if (!oLink) {
-			future.warningThrows(`sap.ui.core.theming.Parameters: Could not find stylesheet element with ID "${sId}"`);
-			return undefined;
+			throw new Error(`sap.ui.core.theming.Parameters: Could not find stylesheet element with ID "${sId}"`);
 		}
 
 		var sStyleSheetUrl = oLink.href;
@@ -246,22 +248,9 @@ sap.ui.define([
 		}
 
 		function fnErrorCallback(error) {
-			// ignore failure at least temporarily as long as there are libraries built using outdated tools which produce no json file
-			future.errorThrows("Could not load theme parameters from: " + sUrl, { cause: error }); // could be an error as well, but let's avoid more CSN messages...
-
-			if (aWithCredentials.length > 0) {
-				// In a CORS scenario, IF we have sent credentials on the first try AND the request failed,
-				// we expect that a service could have answered with the following Allow header:
-				//     Access-Control-Allow-Origin: *
-				// In this case we must not send credentials, otherwise the service would have answered with:
-				//     Access-Control-Allow-Origin: https://...
-				//     Access-Control-Allow-Credentials: true
-				// Due to security constraints, the browser does not hand out any more information in a CORS scenario,
-				// so now we try again without credentials.
-				Log.warning("Initial library-parameters.json request failed ('withCredentials=" + bCurrentWithCredentials + "'; sUrl: '" + sUrl + "').\n" +
-							"Retrying with 'withCredentials=" + !bCurrentWithCredentials + "'.", "sap.ui.core.theming.Parameters");
-				loadParametersJSON(sUrl, sThemeBaseUrl, aWithCredentials);
-			}
+			throw new Error("Could not load theme parameters from: " + sUrl, {
+				cause: error
+			});
 		}
 
 		// load and evaluate parameter file
@@ -657,8 +646,7 @@ sap.ui.define([
 		if (vName instanceof Object && !Array.isArray(vName)) {
 			// async variant of Parameters.get
 			if (!vName.name) {
-				future.warningThrows("sap.ui.core.theming.Parameters: Get was called with an object argument without one or more parameter names.");
-				return undefined;
+				throw new Error("sap.ui.core.theming.Parameters: Get was called with an object argument without one or more parameter names.");
 			}
 			oElement = vName.scopeElement;
 			fnAsyncCallback = vName.callback;

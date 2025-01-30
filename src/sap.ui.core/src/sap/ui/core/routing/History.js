@@ -4,9 +4,8 @@
 sap.ui.define([
 	'sap/ui/core/library',
 	'./HashChanger',
-	"sap/base/future",
 	"sap/base/Log"
-], function(library, HashChanger, future, Log) {
+], function(library, HashChanger, Log) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -58,7 +57,7 @@ sap.ui.define([
 		}
 
 		if (!oHashChanger) {
-			future.errorThrows("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
+			throw new Error("sap.ui.core.routing.History constructor was called and it did not get a hashChanger as parameter");
 		}
 
 		this._setHashChanger(oHashChanger);

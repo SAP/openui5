@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/future"], function(future) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -117,11 +117,7 @@ sap.ui.define(["sap/base/future"], function(future) {
 				return oTarget._display(vData, oSequencePromise, oTargetCreateInfo);
 			} else {
 				var sErrorMessage = `${this}: The target with the name "${sName}" does not exist!`;
-				future.errorThrows(sErrorMessage);
-				return Promise.resolve({
-					name: sName,
-					error: sErrorMessage
-				});
+				throw new Error(sErrorMessage);
 			}
 		}
 	};

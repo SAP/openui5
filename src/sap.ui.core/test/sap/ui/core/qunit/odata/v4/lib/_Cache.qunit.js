@@ -2074,17 +2074,11 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach((bUpsert) => {
-	const sTitle = "_Cache#drillDown: transient entity, navigation property; upsert=" + bUpsert;
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("_Cache#drillDown: transient entity, navigation property", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "SalesOrders"),
-			oData = [bUpsert ? {
-				"@$ui5._" : {upsert : true}
-			} : {
+			oData = [{
 				"@$ui5.context.isTransient" : true
-			}],
-			sJSON = JSON.stringify(oData);
+			}];
 
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
 
@@ -2101,10 +2095,9 @@ sap.ui.define([
 		// code under test
 		return oCache.drillDown(oData, "($uid=id-1-23)/SO_2_BP").then(function (oValue) {
 			assert.strictEqual(oValue, null);
-			assert.strictEqual(JSON.stringify(oData), sJSON, "cache unchanged");
+			assert.deepEqual(oData[0], {"@$ui5.context.isTransient" : true}, "cache unchanged");
 		});
 	});
-});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bTransient) {
@@ -2548,6 +2541,7 @@ sap.ui.define([
 				fnPatchSent = this.spy(),
 				oRequestCall,
 				oRequestLock = {unlock : function () {}},
+				fnSetUpsertPromise = this.spy(),
 				mTypeForMetaPath = {},
 				oUnlockCall,
 				oUpdateData = {},
@@ -2568,7 +2562,10 @@ sap.ui.define([
 				oFetchValueExpectation.returns(SyncPromise.resolve(null));
 				oCacheMock.expects("getValue").withExactArgs("('42')/path/to/upsertable")
 					.returns(oParent);
-				oEntityMatcher = {"@$ui5._" : {upsert : true}};
+				oEntityMatcher = {
+					"@$ui5._" : {upsert : true},
+					"@$ui5.context.isTransient" : true
+				};
 				oHelperMock.expects("fireChanges")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 						oEntityMatcher, false);
@@ -2657,6 +2654,9 @@ sap.ui.define([
 						bPatchWithoutSideEffects
 							? {"@odata.etag" : oPatchResult["@odata.etag"]}
 							: sinon.match.same(oPatchResult));
+				oHelperMock.expects("updateAll").exactly(oFixture.bUpsert ? 1 : 0)
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
+						oEntityMatcher, {"@$ui5.context.isTransient" : false});
 				oUnlockCall = that.mock(oRequestLock).expects("unlock").withExactArgs();
 			}, function () {
 				if (oFixture.bUpsert) {
@@ -2684,24 +2684,9 @@ sap.ui.define([
 
 			// code under test
 			oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
-					"/~/BusinessPartnerList('0')", sEntityPath, oFixture.sUnitOrCurrencyPath,
-					oFixture.$$patchWithoutSideEffects, fnPatchSent)
-				.then(function (oResult) {
-					assert.notOk(fnError.called);
-					assert.strictEqual(bCanceled, false);
-					assert.strictEqual(oResult, undefined, "no result");
-					if (oUpdateExistingCall.called) {
-						sinon.assert.callOrder(oUpdateExistingCall, oUnlockCall);
-					}
-					if (oFixture.bUpsert) {
-						assert.strictEqual(oParent.entity, oUpdateAllExpectation.args[0][2]);
-						assert.notOk(_Helper.hasPrivateAnnotation(oParent.entity, "upsert"));
-					}
-				}, function (oResult) {
-					assert.notOk(fnError.called);
-					assert.strictEqual(bCanceled, true);
-					assert.strictEqual(oResult, oError);
-				});
+				"/~/BusinessPartnerList('0')", sEntityPath, oFixture.sUnitOrCurrencyPath,
+				oFixture.$$patchWithoutSideEffects, fnPatchSent, /*fnIsKeepAlive*/null,
+				fnSetUpsertPromise);
 
 			if (oFixture.$cached) {
 				assert.deepEqual(oCache.oPromise.getResult(), {"@odata.etag" : "*"});
@@ -2723,6 +2708,10 @@ sap.ui.define([
 				.returns(oRequestLock);
 
 			assert.ok(fnPatchSent.notCalled, "patchSent handler not yet called");
+			if (oFixture.bUpsert) {
+				assert.ok(fnSetUpsertPromise.calledOnceWithExactly(
+						sinon.match.same(oCacheUpdatePromise)));
+			}
 
 			// code under test
 			oRequestCall.args[0][5](); // call onSubmit
@@ -2739,7 +2728,27 @@ sap.ui.define([
 			// code under test - call fnMergeRequests
 			assert.strictEqual(oRequestCall.args[0][12]("~oOtherOldData~"), undefined);
 
-			return oCacheUpdatePromise;
+			return oCacheUpdatePromise.then(function (oResult) {
+					assert.notOk(fnError.called);
+					assert.strictEqual(fnSetUpsertPromise.callCount, oFixture.bUpsert ? 1 : 0);
+					assert.strictEqual(bCanceled, false);
+					assert.strictEqual(oResult, undefined, "no result");
+					if (oUpdateExistingCall.called) {
+						sinon.assert.callOrder(oUpdateExistingCall, oUnlockCall);
+					}
+					if (oFixture.bUpsert) {
+						assert.strictEqual(oParent.entity, oUpdateAllExpectation.args[0][2]);
+						assert.notOk(_Helper.hasPrivateAnnotation(oParent.entity, "upsert"));
+					}
+				}, function (oResult) {
+					assert.notOk(fnError.called);
+					assert.strictEqual(fnSetUpsertPromise.callCount, oFixture.bUpsert ? 2 : 0);
+					if (oFixture.bUpsert) {
+						assert.ok(fnSetUpsertPromise.secondCall.calledWithExactly());
+					}
+					assert.strictEqual(bCanceled, true);
+					assert.strictEqual(oResult, oError);
+				});
 		});
 	});
 
@@ -2762,7 +2771,8 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oCache.update({/*oGroupLock*/}, "Address/City", "Walldorf", /*fnError*/null,
-				"/~/BusinessPartnerList('0')", "path/to/entity");
+				"/~/BusinessPartnerList('0')", "path/to/entity", "", false, null, null,
+				/*fnSetUpsertPromise*/mustBeMocked);
 		}, oError);
 
 		assert.strictEqual(oCache.oPromise, oPromise);
@@ -2858,7 +2868,8 @@ sap.ui.define([
 
 				// code under test
 				return oCache.update(oGroupLock, "ProductInfo/Amount", "123", fnError,
-						"ProductList('0')", "path/to/entity", "Pricing/Currency")
+						"ProductList('0')", "path/to/entity", "Pricing/Currency", false, null,
+						null, /*fnSetUpsertPromise*/mustBeMocked)
 					.then(function (oResult) {
 						assert.notOk(fnError.called);
 						assert.strictEqual(oResult, undefined, "no result");
@@ -3037,7 +3048,7 @@ sap.ui.define([
 			// code under test - 1st PATCH
 			oCacheUpdatePromise0 = oCache.update(oGroupLock0, "Address/City", "Walldorf", fnError0,
 					"/~/BusinessPartnerList('0')", "path/to/entity", sUnitOrCurrencyPath,
-					bPatchWithoutSideEffects, fnPatchSent)
+					bPatchWithoutSideEffects, fnPatchSent, null, /*fnSetUpsertPromise*/mustBeMocked)
 				.then(function (oResult) {
 					assert.notOk(bCanceled);
 					sinon.assert.calledOnceWithExactly(fnError0, oError1);
@@ -3077,7 +3088,7 @@ sap.ui.define([
 			// code under test - 2nd PATCH to be merged and skipped
 			oCacheUpdatePromise1 = oCache.update(oGroupLock1, "Address/PostalCode", "69190",
 					fnError1, "/~/BusinessPartnerList('0')", "path/to/entity", sUnitOrCurrencyPath,
-					bPatchWithoutSideEffects, fnPatchSent)
+					bPatchWithoutSideEffects, fnPatchSent, null, /*fnSetUpsertPromise*/mustBeMocked)
 				.then(function (oResult) {
 					assert.notOk(bCanceled);
 					sinon.assert.calledOnceWithExactly(fnError0, oError1);
@@ -3181,7 +3192,8 @@ sap.ui.define([
 
 		// code under test
 		oUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
-			"/~/BusinessPartnerList('0')", "path/to/entity", undefined, false, fnPatchSent);
+			"/~/BusinessPartnerList('0')", "path/to/entity", undefined, false, fnPatchSent, null,
+			/*fnSetUpsertPromise*/mustBeMocked);
 
 		this.oRequestorMock.expects("lockGroup")
 			.withExactArgs("group", sinon.match.same(oCache), true)
@@ -3263,13 +3275,7 @@ sap.ui.define([
 		oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
 				"/~/BusinessPartnerList('0')", "('0')/path/to/entity",
 				/*sUnitOrCurrencyPath*/undefined, /*bPatchWithoutSideEffects*/undefined,
-				function fnPatchSent() {}, fnIsKeepAlive)
-			.then(function () {
-				assert.ok(false);
-			}, function (oResult) {
-				sinon.assert.calledOnceWithExactly(fnError, oError);
-				assert.strictEqual(oResult, oError);
-			});
+				function fnPatchSent() {}, fnIsKeepAlive, /*fnSetUpsertPromise*/mustBeMocked);
 
 		this.mock(this.oRequestor).expects("lockGroup")
 			.withExactArgs("group", sinon.match.same(oCache), true)
@@ -3278,7 +3284,12 @@ sap.ui.define([
 		// code under test
 		oRequestCall.args[0][5](); // call onSubmit
 
-		return oCacheUpdatePromise;
+		return oCacheUpdatePromise.then(function () {
+				assert.ok(false);
+			}, function (oResult) {
+				sinon.assert.calledOnceWithExactly(fnError, oError);
+				assert.strictEqual(oResult, oError);
+			});
 	});
 
 	//*********************************************************************************************
@@ -3333,7 +3344,7 @@ sap.ui.define([
 		// code under test
 		return oCache.update(oGroupLock, "Address/City", "Walldorf",
 				/*fnErrorCallback*/undefined, "/~/BusinessPartnerList('0')", "('0')/path/to/entity",
-				undefined, undefined, function () {})
+				undefined, undefined, function () {}, null, /*fnSetUpsertPromise*/mustBeMocked)
 			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
@@ -3355,7 +3366,8 @@ sap.ui.define([
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
 
 		return oCache.update(oGroupLock, "foo", "bar", this.mock().never(),
-			"/~/BusinessPartnerList('0')", "path/to/entity"
+			"/~/BusinessPartnerList('0')", "path/to/entity", "", false, null, null,
+			/*fnSetUpsertPromise*/mustBeMocked
 		).then(function () {
 			assert.ok(false);
 		}, function (oError) {
@@ -3376,7 +3388,8 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oCache.update(null, "foo", "bar", this.mock().never(), "/n/a", "path/to/entity");
+			oCache.update(null, "foo", "bar", this.mock().never(), "/n/a", "path/to/entity", "",
+				false, null, null, /*fnSetUpsertPromise*/mustBeMocked);
 		}, oError);
 	});
 
@@ -9719,13 +9732,13 @@ sap.ui.define([
 
 		// code under test
 		oPatchPromise1 = oCache.update(oUpdateGroupLock0, "bar", "baz", this.spy(), "n/a",
-			sTransientPredicate);
+			sTransientPredicate, "", false, null, null, /*fnSetUpsertPromise*/mustBeMocked);
 
 		this.mock(oUpdateGroupLock1).expects("getGroupId").withExactArgs().returns("anotherGroup");
 
 		// code under test
 		oPatchPromise2 = oCache.update(oUpdateGroupLock1, "bar", "qux", this.spy(), "n/a",
-			sTransientPredicate);
+			sTransientPredicate, "", false, null, null, /*fnSetUpsertPromise*/mustBeMocked);
 
 		this.mock(oReadGroupLock).expects("unlock").withExactArgs();
 
@@ -9786,7 +9799,8 @@ sap.ui.define([
 				.returns("updateGroup");
 
 			// code under test
-			oCache.update(oUpdateGroupLock, "foo", "baz", that.spy(), "n/a", sTransientPredicate)
+			oCache.update(oUpdateGroupLock, "foo", "baz", that.spy(), "n/a", sTransientPredicate,
+					"", false, null, null, /*fnSetUpsertPromise*/mustBeMocked)
 				.then(function () {
 					assert.ok(false, "unexpected success - update");
 				}, function (oError) {
@@ -9816,7 +9830,7 @@ sap.ui.define([
 
 			// code under test
 			return oCache.update(oUpdateGroupLock, "foo", sWhen, that.spy(), "Employees",
-					sTransientPredicate)
+					sTransientPredicate, "", false, null, null, /*fnSetUpsertPromise*/mustBeMocked)
 				.then(function () {
 					assert.ok(true, "Update works " + sWhen);
 					assert.strictEqual(
@@ -9903,7 +9917,7 @@ sap.ui.define([
 
 			// code under test
 			return oCache.update(oGroupLock, "foo", "baz2", that.spy(), "Employees('42')",
-				"('42')");
+				"('42')", "", false, null, null, /*fnSetUpsertPromise*/mustBeMocked);
 		});
 	});
 
@@ -9992,7 +10006,8 @@ sap.ui.define([
 				that.mock(oGroupLock0).expects("getGroupId").withExactArgs().returns(sWrongGroupId);
 				// code under test - try to update via wrong $direct/auto group
 				aPromises.push(oCache.update(oGroupLock0, "Name", "John Doe", that.spy(), "n/a",
-						sTransientPredicate)
+						sTransientPredicate, "", false, null, null,
+						/*fnSetUpsertPromise*/mustBeMocked)
 					.then(undefined, function (oError) {
 						assert.strictEqual(oError.message, "The entity will be created via group '"
 							+ sUpdateGroupId + "'. Cannot patch via group '" + sWrongGroupId + "'");
@@ -10009,7 +10024,8 @@ sap.ui.define([
 				}
 				// code under test - first update -> relocate
 				aPromises.push(oCache.update(oGroupLock1, "Name", "John Doe", that.spy(), "n/a",
-					sTransientPredicate));
+					sTransientPredicate, "", false, null, null,
+					/*fnSetUpsertPromise*/mustBeMocked));
 
 				that.mock(oGroupLock2).expects("getGroupId").withExactArgs()
 					.returns(sUpdateGroupId);
@@ -10017,7 +10033,8 @@ sap.ui.define([
 
 				// code under test - second update -> do not relocate again
 				aPromises.push(oCache.update(oGroupLock2, "Name", "John Doe1", that.spy(), "n/a",
-					sTransientPredicate));
+					sTransientPredicate, "", false, null, null,
+					/*fnSetUpsertPromise*/mustBeMocked));
 
 				return Promise.all(aPromises);
 			});
@@ -10118,7 +10135,8 @@ sap.ui.define([
 		this.mock(oUpdateGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
-		oCache.update(oUpdateGroupLock, "Name", "foo", this.spy(), undefined, sTransientPredicate);
+		const oSyncPromise = oCache.update(oUpdateGroupLock, "Name", "foo", this.spy(), undefined,
+			sTransientPredicate, "", false, null, null, /*fnSetUpsertPromise*/mustBeMocked);
 
 		assert.strictEqual(oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5._"].transient,
 			bInactive ? "$inactive.updateGroup" : "updateGroup");
@@ -10130,7 +10148,7 @@ sap.ui.define([
 			bInactive ? true : undefined, "isInactive");
 		assert.strictEqual(oCache.iActiveElements, bInactive ? 0 : 1);
 
-		return oPromise;
+		return Promise.all([oPromise, oSyncPromise]);
 	});
 	});
 });
@@ -12348,9 +12366,9 @@ sap.ui.define([
 			// code under test
 			oUpdatePromise = Promise.all([
 				oCache.update(oGroupLock0, "Note", "foo", that.spy(), sResourcePath, "", undefined,
-					false, sinon.spy()),
+					false, sinon.spy(), null, /*fnSetUpsertPromise*/mustBeMocked),
 				oCache.update(oGroupLock1, "Note", "bar", that.spy(), sResourcePath, "", undefined,
-					false, sinon.spy()
+					false, sinon.spy(), null, /*fnSetUpsertPromise*/mustBeMocked
 				).then(function () {
 					assert.ok(false);
 				}, function (oError0) {
@@ -12451,9 +12469,11 @@ sap.ui.define([
 
 			// code under test
 			aUpdatePromises = [
-				oCache.update(oGroupLock0, "Note", "foo", that.spy(), sResourcePath)
+				oCache.update(oGroupLock0, "Note", "foo", that.spy(), sResourcePath, "", "", false,
+					null, null, /*fnSetUpsertPromise*/mustBeMocked)
 					.then(unexpected, rejected),
-				oCache.update(oGroupLock1, "Foo", "baz", that.spy(), sResourcePath)
+				oCache.update(oGroupLock1, "Foo", "baz", that.spy(), sResourcePath, "", "", false,
+					null, null, /*fnSetUpsertPromise*/mustBeMocked)
 					.then(unexpected, rejected)
 			];
 
