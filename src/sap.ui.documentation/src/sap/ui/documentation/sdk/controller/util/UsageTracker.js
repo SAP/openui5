@@ -70,11 +70,11 @@ sap.ui.define(
                     this._oLastRouteParameters = null;
                     this._isStarted = false;
                 },
-                start: function(aRouterEventsToLog) {
+                start: function(sVersionName, aRouterEventsToLog) {
                     if (this._isStarted) {
                         return;
                     }
-                    this._initRemoteServiceConnector();
+                    this._initRemoteServiceConnector(sVersionName);
 
                     this._attachListenersForUserNavigations();
 
@@ -91,10 +91,12 @@ sap.ui.define(
                     this._detachListenersForUserNavigations();
                     Localization.detachChange(this._updateLanguageTag);
                     this._isStarted = false;
+                    this._oLastRouteParameters = null;
                 },
-                _initRemoteServiceConnector: function() {
+                _initRemoteServiceConnector: function(sVersionName) {
                     window.adobeDataLayer = window.adobeDataLayer || [];
-                    this._getSiteName().then(this._logSessionStarted);
+                    var sSiteName = this._getSiteName(sVersionName);
+                    this._logSessionStarted(sSiteName);
                 },
                 _logPrecedingRouteVisits: function(aRouterEventsToLog) {
                     if (aRouterEventsToLog) {
@@ -222,7 +224,7 @@ sap.ui.define(
                     });
                 },
                 _logSessionStarted: function (sSiteName) {
-                    window.adobeDataLayer.push({
+                    this._addToLogs({
                         event: "globalDL",
                         site: {
                             name: sSiteName
@@ -232,8 +234,11 @@ sap.ui.define(
                         }
                     });
                 },
+                _addToLogs: function (oLog) {
+                    window.adobeDataLayer.push(oLog);
+                },
                 _logPageVisit: function (oPageInfo) {
-                    window.adobeDataLayer.push({
+                    this._addToLogs({
                         event: "pageView",
                         page: oPageInfo.toObject()
                     });
@@ -242,7 +247,7 @@ sap.ui.define(
                  * Triggered when router does not find the route
                  */
                 _logPageNotFound: function (sHash) {
-                    window.adobeDataLayer.push({
+                    this._addToLogs({
                         event: "errorPage",
                         page: {
                             name: "notFound",
@@ -273,7 +278,7 @@ sap.ui.define(
                         };
                     }
 
-                    window.adobeDataLayer.push({
+                    this._addToLogs({
                         event: "errorPage",
                         page: {
                             name: "notFound",
@@ -290,7 +295,7 @@ sap.ui.define(
                     this._oLastRouteParameters = null; // clear last route parameters after logging
                 },
                 _publishLoggedInfo: function (bIncrementPageCount) {
-                    window.adobeDataLayer.push({
+                    this._addToLogs({
                         event: bIncrementPageCount
                             ? "stBeaconReady"
                             : "stlBeaconReady"
@@ -299,17 +304,7 @@ sap.ui.define(
                 _updateLanguageTag: function () {
                     oUserLanguageTag = Localization.getLanguageTag();
                 },
-                _getSiteName: function () {
-                    return this._getVersionName().then(function(sVersionName) {
-                        return this._getSiteNameFromVersion(sVersionName);
-                    }.bind(this));
-                },
-                _getVersionName: function () {
-                    return this._oComponent.loadVersionInfo().then(function() {
-                        return this._oComponent.getModel("versionData").getProperty("/versionName");
-                    }.bind(this));
-                },
-                _getSiteNameFromVersion: function (sVersionName) {
+                _getSiteName: function (sVersionName) {
                     if (sVersionName.toLowerCase().startsWith("openui5")) {
                         return SITE_NAME.openui5;
                     } else if (sVersionName.toLowerCase().startsWith("sapui5")) {

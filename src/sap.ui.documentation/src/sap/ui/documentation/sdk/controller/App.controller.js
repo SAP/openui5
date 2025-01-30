@@ -255,9 +255,11 @@ sap.ui.define([
 			}.bind(this));
 			this._oCookiesConsentManager.checkUserAcceptsUsageTracking(function(bAccepts) {
 				if (bAccepts) {
-					// start tracking, including the route visited at app-startup (before the check of the persisted consent-decision completed)
-					this.getOwnerComponent().getUsageTracker().start(this._aRouterCachedEventDetails);
-					this._aRouterCachedEventDetails = []; // clear the already logged route visits
+					this._getVersionName().then(function(sVersionName) {
+						// start tracking, including the route visited at app-startup (before the check of the persisted consent-decision completed)
+						this.getOwnerComponent().getUsageTracker().start(sVersionName, this._aRouterCachedEventDetails);
+						this._aRouterCachedEventDetails = []; // clear the already logged route visits
+					}.bind(this));
 				}
 			}.bind(this));
 

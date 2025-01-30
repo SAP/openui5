@@ -286,17 +286,21 @@ sap.ui.define([
 			},
 
 			onEditCookiePreferencesRequest: function () {
-				var oConsentManager = this.getOwnerComponent().getCookiesConsentManager();
+				var oConsentManager = this.getOwnerComponent().getCookiesConsentManager(),
+					oTracker;
+
 				oConsentManager.showPreferencesDialog(this.getView());
 				if (!oConsentManager.supportsWaitForPreferencesSubmission()) {
 					return;
 				}
+				oTracker = this.getOwnerComponent().getUsageTracker();
+
 				oConsentManager.waitForPreferencesSubmission().then(function () {
 					oConsentManager.checkUserAcceptsUsageTracking(function(bAcceptsUsageTracking) {
 						if (bAcceptsUsageTracking) {
-							this.getOwnerComponent().getUsageTracker().start();
+							this._getVersionName().then(oTracker.start.bind(oTracker));
 						} else {
-							this.getOwnerComponent().getUsageTracker().stop();
+							oTracker.stop();
 						}
 					}.bind(this));
 				}.bind(this));
@@ -304,6 +308,13 @@ sap.ui.define([
 
 			navToPrivacyStatement: function () {
 				this.getRouter().navTo("PrivacyStatement");
+			},
+
+			_getVersionName: function () {
+				var oComponent = this.getOwnerComponent();
+				return oComponent.loadVersionInfo().then(function() {
+					return oComponent.getModel("versionData").getProperty("/versionName");
+				});
 			},
 
 			_isRouteBypassedEvent: function (oEvent) {
