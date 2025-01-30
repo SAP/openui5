@@ -5,7 +5,6 @@
 // Provides control sap.ui.core.mvc.View.
 sap.ui.define([
 	"sap/base/assert",
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"./ViewType"
 ], function(
 	assert,
-	future,
 	Log,
 	extend,
 	isEmptyObject,
@@ -536,8 +534,9 @@ sap.ui.define([
 							// only 'visible' property can be customized
 							for (var sProperty in oCustomSetting) {
 								if (sProperty !== "visible") {
-									future.warningThrows(`Customizing: property '${sProperty}' of control '${sId}' in View '${that.sViewName}' cannot be customized, only 'visible' can.`, { suffix: "Property will be ignored" });
-									delete oCustomSetting[sProperty];
+									throw new Error(
+										`Customizing: property '${sProperty}' of control '${sId}' in View '${that.sViewName}' cannot be customized, only 'visible' can.`
+									);
 								}
 							}
 							Log.info("Customizing: custom value for property 'visible' of control '" + sId + "' in View '" + that.sViewName + "' applied: " + oCustomSetting.visible);
@@ -882,8 +881,7 @@ sap.ui.define([
 		if (vPreprocessor) {
 			initGlobalPreprocessorsRegistry(sType, sViewType);
 			if (bOnDemand && onDemandPreprocessorExists(sViewType, sType)) {
-				future.errorThrows(`${this.getMetadata().getName()}: Registration for "${sType}" failed, only one on-demand-preprocessor allowed`);
-				return;
+				throw new Error(`${this.getMetadata().getName()}: Registration for "${sType}" failed, only one on-demand-preprocessor allowed`);
 			}
 			View._mPreprocessors[sViewType][sType].push({
 				preprocessor: vPreprocessor,
@@ -894,7 +892,7 @@ sap.ui.define([
 			Log.debug("Registered " + (bOnDemand ? "on-demand-" : "") + "preprocessor for \"" + sType + "\"" +
 			(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
 		} else {
-			future.errorThrows(`${this.getMetadata().getName()}: Registration for "${sType}" failed, no preprocessor specified`);
+			throw new Error(`${this.getMetadata().getName()}: Registration for "${sType}" failed, no preprocessor specified`);
 		}
 	};
 
@@ -1140,7 +1138,7 @@ sap.ui.define([
 	function createView(sViewClass, oViewSettings) {
 		var ViewClass = sap.ui.require(sViewClass);
 		if (!ViewClass) {
-			future.warningThrows(`The view class '${sViewClass}' needs to be required before an instance of the view can be created.`);
+			throw new Error(`The view class '${sViewClass}' needs to be required before an instance of the view can be created.`);
 		}
 		return new ViewClass(oViewSettings);
 	}

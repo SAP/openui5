@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/base/config',
 	'sap/base/i18n/Localization',
 	'sap/base/i18n/ResourceBundle',
-	'sap/base/future',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
 	"sap/base/util/isEmptyObject",
@@ -29,7 +28,6 @@ sap.ui.define([
 	BaseConfig,
 	Localization,
 	ResourceBundle,
-	future,
 	Log,
 	deepExtend,
 	isEmptyObject,
@@ -372,8 +370,7 @@ sap.ui.define([
 						// only set values for properties that are still undefined
 						vValueToSet = vValue;
 					} else if ( sKey != "name" ) {
-						// ignore other values (silently ignore "name")
-						future.warningThrows("library info setting ignored: " + sKey + "=" + vValue);
+						throw new Error("library info setting ignored: " + sKey + "=" + vValue);
 					}
 
 					if (vValueToSet !== undefined) {
@@ -433,10 +430,10 @@ sap.ui.define([
 		 */
 		preload: function(mOptions) {
 			if (mOptions && (mOptions.hasOwnProperty("async") || mOptions.hasOwnProperty("sync"))) {
-				future.errorThrows("The 'preload' function of class sap/ui/core/Lib only supports preloading a library asynchronously.", { suffix: "The given 'async' or 'sync' setting is ignored."});
+				throw new Error("The 'preload' function of class sap/ui/core/Lib only supports preloading a library asynchronously.");
 			}
 			if (mOptions && mOptions.hasOwnProperty("json")) {
-				future.errorThrows("The 'preload' function of class sap/ui/core/Lib only supports preloading in JS Format.", { suffix: "The given 'json' setting is ignored."});
+				throw new Error("The 'preload' function of class sap/ui/core/Lib only supports preloading in JS Format.");
 			}
 
 			return this._preload(["url", "lazy"].reduce(function(acc, sProperty) {

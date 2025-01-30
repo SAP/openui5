@@ -6,10 +6,9 @@
 sap.ui.define([
 	'sap/ui/base/Metadata',
 	'sap/base/util/merge',
-	'sap/ui/core/mvc/OverrideExecution',
-	"sap/base/future"
+	'sap/ui/core/mvc/OverrideExecution'
 ],
-	function(Metadata, merge, OverrideExecution, future) {
+	function(Metadata, merge, OverrideExecution) {
 	"use strict";
 
 	/**
@@ -91,8 +90,9 @@ sap.ui.define([
 				if (!n.match(rPrivateCheck)) {
 					//final check
 					if (bExtendsController && this._oParent && this._oParent.isMethodFinal(n)) {
-						future.errorThrows("Method: '" + n + "' of controller '" + this._oParent.getName() + "' is final and cannot be overridden by controller '" + this.getName() + "'");
-						delete this._oClass.prototype[n];
+						throw new Error(
+							"Method: '" + n + "' of controller '" + this._oParent.getName() + "' is final and cannot be overridden by controller '" + this.getName() + "'"
+						);
 					}
 					// default metadata for methods
 					if (!(n in this._mMethods) && typeof oClassInfo[n] === 'function') {

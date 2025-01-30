@@ -16,7 +16,6 @@ sap.ui.define([
 	'./ExtensionPoint',
 	'./StashedControlSupport',
 	'sap/ui/base/SyncPromise',
-	'sap/base/future',
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/LoaderExtensions',
@@ -37,7 +36,6 @@ sap.ui.define([
 	ExtensionPoint,
 	StashedControlSupport,
 	SyncPromise,
-	future,
 	Log,
 	assert,
 	LoaderExtensions,
@@ -85,7 +83,7 @@ sap.ui.define([
 
 				// if the parsed value is not valid, we don't fail but only log an error
 				if (!oType.isValid(vValue)) {
-					future.errorThrows("Value '" + sValue + "' is not valid for type '" + oType.getName() + "'.");
+					throw new Error("Value '" + sValue + "' is not valid for type '" + oType.getName() + "'.");
 				}
 			}
 			// else keep original sValue (e.g. for enums)
@@ -433,7 +431,7 @@ sap.ui.define([
 				if (oResult.throwError) {
 					throw new Error(sErrorMessage);
 				} else {
-					future.fatalThrows(`${sErrorMessage}. Keys that begin with '$' are reserved by the framework.`);
+					throw new Error(`${sErrorMessage}. Keys that begin with '$' are reserved by the framework.`);
 				}
 			}
 
@@ -671,7 +669,9 @@ sap.ui.define([
 			sNodeName = localName(node);
 			if (oView.isA("sap.ui.core.mvc.XMLView")) {
 				if ((sNodeName !== "View" && sNodeName !== "XMLView") || node.namespaceURI !== CORE_MVC_NAMESPACE) {
-					future.errorThrows("XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
+					throw new Error(
+						"XMLView's root node must be 'View' or 'XMLView' and have the namespace 'sap.ui.core.mvc'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : "")
+					);
 				}
 				// createRegularControls
 				pResultChain = pChain.then(function() {
@@ -731,8 +731,7 @@ sap.ui.define([
 			function validateClass(fnClass) {
 				if (!fnClass) {
 					const sErrorLogMessage = `Control '${sClassName}' did not return a class definition from sap.ui.define.`;
-
-					future.errorThrows(`XMLTemplateProcessor: ${sErrorLogMessage}`);
+					throw new Error(`XMLTemplateProcessor: ${sErrorLogMessage}`);
 				}
 				return fnClass;
 			}
@@ -781,7 +780,7 @@ sap.ui.define([
 			if (node.nodeType === 1 /* ELEMENT_NODE */) {
 				// Using native HTML in future is not allowed. We need to check explicitely in order to throw
 				if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE) {
-					future.warningThrows(`${oView.getId()}: Using native HTML content in XMLViews is deprecated.`);
+					throw new Error(`${oView.getId()}: Using native HTML content in XMLViews is deprecated.`);
 				}
 				pResult = createControlOrExtension(node, pRequireContext, oClosestBinding);
 				if (bRenderingRelevant) {
@@ -1009,7 +1008,9 @@ sap.ui.define([
 								try {
 									mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue, oView._oContainingView.oController, true);
 								} catch (e) {
-									future.errorThrows(`Failed to parse metadataContexts in view "${oView}"`,  { cause: e });
+									throw new Error(`Failed to parse metadataContexts in view "${oView}"`, {
+										cause: e
+									});
 								}
 
 								if (mMetaContextsInfo) {
@@ -1070,7 +1071,9 @@ sap.ui.define([
 								if ( oBindingInfo ) {
 									mSettings[sName] = oBindingInfo;
 								} else {
-									future.errorThrows("" + oView + ": aggregations with cardinality 0..n specifies a non valid BindingInfo (wrong value: " + sName + "='" + sValue + "')");
+									throw new Error(
+										"" + oView + ": aggregations with cardinality 0..n specifies a non valid BindingInfo (wrong value: " + sName + "='" + sValue + "')"
+									);
 								}
 							}
 
@@ -1096,7 +1099,7 @@ sap.ui.define([
 									if (vEventHandler) {
 										aEventHandlers.push(vEventHandler);
 									} else  {
-										future.warningThrows("" + oView + ": event handler function \"" + sEventHandler + "\" is not a function or does not exist in the controller.");
+										throw new Error("" + oView + ": event handler function \"" + sEventHandler + "\" is not a function or does not exist in the controller.");
 									}
 								});
 
@@ -1111,10 +1114,10 @@ sap.ui.define([
 							if (oMetadata.isA("sap.ui.core.mvc.View") && (sName == "async" || (sName == "type" && ViewType[sValue]))) {
 								mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController, oRequireModules);
 							} else {
-								future.warningThrows("" + oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
+								throw new Error("" + oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
 							}
 						} else {
-							future.assertThrows(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
+							assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
 							if (XMLTemplateProcessor._supportInfo) {
 								XMLTemplateProcessor._supportInfo({
 									context : node,

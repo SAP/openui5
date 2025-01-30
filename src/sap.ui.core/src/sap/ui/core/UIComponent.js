@@ -11,8 +11,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/ViewType',
 	'./UIComponentMetadata',
 	'./mvc/Controller',
-	'./mvc/View',
-	'sap/base/future'
+	'./mvc/View'
 ],
 	function(
 		ManagedObject,
@@ -22,8 +21,7 @@ sap.ui.define([
 		ViewType,
 		UIComponentMetadata,
 		Controller,
-		View,
-		future
+		View
 	) {
 		"use strict";
 
@@ -417,7 +415,7 @@ sap.ui.define([
 				fnConstructor = sap.ui.require(sRoutingClassName);
 
 				if (!fnConstructor) {
-					future.errorThrows(`${this}: The specified class for router or targets "${vRoutingObjectConstructor}" is undefined.`);
+					throw new Error(`${this}: The specified class for router or targets "${vRoutingObjectConstructor}" is undefined.`);
 				}
 			} else {
 				fnConstructor = vRoutingObjectConstructor;
@@ -446,13 +444,8 @@ sap.ui.define([
 		 */
 		UIComponent.prototype.rootControlLoaded = function() {
 			if (!this.pRootControlLoaded) {
-				future.errorThrows(
-					"Mandatory init() not called for UIComponent: '" + this.getManifestObject().getComponentName() + "'. A sub-class of sap.ui.core.UIComponent which overrides the init() function must apply the super init() function as well.",
-					null,
-					"sap.ui.support",
-					function() {
-						return { type: "missingInitInUIComponent" };
-					}
+				throw new Error(
+					"Mandatory init() not called for UIComponent: '" + this.getManifestObject().getComponentName() + "'. A sub-class of sap.ui.core.UIComponent which overrides the init() function must apply the super init() function as well."
 				);
 			}
 			return this.pRootControlLoaded || Promise.resolve(this.getRootControl());

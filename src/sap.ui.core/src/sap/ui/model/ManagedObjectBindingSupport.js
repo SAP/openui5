@@ -12,7 +12,6 @@ sap.ui.define([
 	"./ParseException",
 	"./ValidateException",
 	"./Context",
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/base/BindingInfo",
@@ -27,7 +26,6 @@ sap.ui.define([
 	ParseException,
 	ValidateException,
 	Context,
-	future,
 	Log,
 	assert,
 	BindingInfo,
@@ -417,7 +415,7 @@ sap.ui.define([
 							oClone.destroy("KeepDom");
 							break;
 						default:
-							future.errorThrows("Unknown diff type \"" + oDiff.type + "\"");
+							throw new Error("Unknown diff type \"" + oDiff.type + "\"");
 					}
 				}
 

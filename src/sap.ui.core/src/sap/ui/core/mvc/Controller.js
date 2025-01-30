@@ -13,7 +13,6 @@ sap.ui.define([
 	'sap/ui/core/mvc/ControllerExtensionProvider',
 	'sap/ui/core/mvc/OverrideExecution',
 	'sap/ui/util/_enforceNoReturnValue',
-	"sap/base/future",
 	"sap/base/Log"
 ], function(
 	ObjectPath,
@@ -25,7 +24,6 @@ sap.ui.define([
 	ControllerExtensionProvider,
 	OverrideExecution,
 	_enforceNoReturnValue,
-	future,
 	Log
 ) {
 	"use strict";
@@ -160,7 +158,9 @@ sap.ui.define([
 				if (!oOrigExtensionMetadata.isMethodFinal(sOverrideMember)) {
 					ControllerExtension.overrideMethod(sOverrideMember, oExtension, oStaticOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sOverrideMember));
 				}  else {
-					future.errorThrows("Method '" + sOverrideMember + "' of extension '" + sNamespace + "' is flagged final and cannot be overridden by calling 'override'");
+					throw new Error(
+						"Method '" + sOverrideMember + "' of extension '" + sNamespace + "' is flagged final and cannot be overridden by calling 'override'"
+					);
 				}
 			}
 			//handle 'normal' overrides
@@ -179,13 +179,17 @@ sap.ui.define([
 								if (!oOrigExtensionMetadata.isMethodFinal(sExtensionOverride)) {
 									ControllerExtension.overrideMethod(sExtensionOverride, fnOriginal, vMember, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
 								}  else {
-									future.errorThrows("Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+									throw new Error(
+										"Method '" + sExtensionOverride + "' of extension '" + oOrigExtensionInfo.namespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'"
+									);
 								}
 							}
 						} else if (!oControllerMetadata.isMethodFinal(sOverrideMember)) {
 							ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension, oControllerMetadata.getOverrideExecution(sOverrideMember));
 						} else {
-							future.errorThrows("Method '" + sOverrideMember + "' of controller '" + oController.getMetadata().getName() + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+							throw new Error(
+								"Method '" + sOverrideMember + "' of controller '" + oController.getMetadata().getName() + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'"
+							);
 						}
 					} else if (sOverrideMember in mLifecycleConfig) {
 						//apply lifecycle hooks even if they don't exist on controller
@@ -196,7 +200,9 @@ sap.ui.define([
 					} else if (sOverrideMember.startsWith("extHook") && oController[sOverrideMember] === null) {
 						ControllerExtension.overrideMethod(sOverrideMember, oController, oOverrides, oExtension);
 					} else {
-						future.errorThrows("Method '" + sOverrideMember + "' does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden");
+						throw new Error(
+							"Method '" + sOverrideMember + "' does not exist in controller " + oController.getMetadata().getName() + " and cannot be overridden"
+						);
 					}
 				}
 				oExtensionInfo.reloadNeeded = true;
@@ -216,7 +222,9 @@ sap.ui.define([
 							//override Extension so 'this' is working for overrides
 							ControllerExtension.overrideMethod(sExtensionOverride, oOrigExtension, oExtensionOverrides, oExtension, oOrigExtensionMetadata.getOverrideExecution(sExtensionOverride));
 						} else {
-							future.errorThrows("Method '" + sExtensionOverride + "' of extension '" + sExtensionNamespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'");
+							throw new Error(
+								"Method '" + sExtensionOverride + "' of extension '" + sExtensionNamespace + "' is flagged final and cannot be overridden by extension '" + sNamespace + "'"
+							);
 						}
 					}
 				}
@@ -364,18 +372,17 @@ sap.ui.define([
 				oExtControllerDef = mRegistry[sControllerName] || oExtControllerDef;
 				if (oExtControllerDef !== undefined) {
 					if (oExtControllerDef.getMetadata && oExtControllerDef.getMetadata().isA("sap.ui.core.mvc.Controller")) {
-						future.fatalThrows("Attempt to load Extension Controller " + sControllerName + " was not successful. Controller extension should be a plain object.", "", null, function() {
-							return {
-								type: "ControllerExtension",
-								name: sControllerName
-							};
-						});
+						throw new Error(
+							"Attempt to load Extension Controller " + sControllerName + " was not successful. Controller extension should be a plain object."
+						);
 					}
 					return oExtControllerDef;
 				}
 
 			}, function(err) {
-				future.errorThrows("Attempt to load Extension Controller " + sControllerName + " was not successful - is the Controller correctly defined in its file?");
+				throw new Error(
+					"Attempt to load Extension Controller " + sControllerName + " was not successful - is the Controller correctly defined in its file?"
+				);
 			});
 		}
 
@@ -396,9 +403,8 @@ sap.ui.define([
 					return oController;
 				});
 			}, function(err){
-				future.errorThrows("Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + ".", { suffix: "Extension provider is ignored." });
-				return oController;
-			});
+			throw new Error("Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + ".");
+		});
 	};
 
 	/**
@@ -496,13 +502,9 @@ sap.ui.define([
 	 */
 	Controller.prototype._getDestroyables = function() {
 		if (!this._aDestroyables) {
-			future.errorThrows(`${this.getMetadata().getName()}: A sub-class of sap.ui.core.mvc.Controller which overrides the constructor must apply the super constructor as well.`,
-				null,
-				"sap.ui.support",
-				function() {
-					return { type: "missingSuperConstructor" };
-				});
-			this._aDestroyables = [];
+			throw new Error(
+				`${this.getMetadata().getName()}: A sub-class of sap.ui.core.mvc.Controller which overrides the constructor must apply the super constructor as well.`
+			);
 		}
 		return this._aDestroyables;
 	};

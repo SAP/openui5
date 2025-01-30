@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/deepEqual",
 	"sap/base/util/isEmptyObject",
-	"sap/base/future",
 	"sap/base/Log",
 	"./RouterHashChanger",
 	"sap/ui/core/Component"
@@ -31,7 +30,6 @@ sap.ui.define([
 		each,
 		deepEqual,
 		isEmptyObject,
-		future,
 		Log,
 		RouterHashChanger,
 		Component
@@ -352,7 +350,7 @@ sap.ui.define([
 			 */
 			addRoute : function (oConfig, oParent) {
 				if (!oConfig.name) {
-					future.errorThrows(`${this}: A name has to be specified for every route`);
+					throw new Error(`${this}: A name has to be specified for every route`);
 				}
 
 				if (this._oRoutes[oConfig.name]) {
@@ -371,7 +369,9 @@ sap.ui.define([
 				if (this._oRouter) {
 					this._oRouter.parse(sNewHash);
 				} else {
-					future.warningThrows(`${this}: This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.`);
+					throw new Error(
+						`${this}: This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.`
+					);
 				}
 			},
 
@@ -404,8 +404,9 @@ sap.ui.define([
 				};
 
 				if (!this.oHashChanger) {
-					future.errorThrows(`${this}: navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.`);
-					return this;
+					throw new Error(
+						`${this}: navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.`
+					);
 				}
 
 				if (this._oTargets) {
@@ -623,7 +624,7 @@ sap.ui.define([
 				if (oRoute) {
 					return oRoute.getURL(oParameters);
 				} else {
-					future.warningThrows(`${this}: Route with name "${sName}" does not exist`);
+					throw new Error(`${this}: Route with name "${sName}" does not exist`);
 				}
 			},
 
@@ -809,8 +810,7 @@ sap.ui.define([
 				}
 
 				if (!oRoute) {
-					future.warningThrows(`${this}: Route with name "${sName}" does not exist`);
-					return this;
+					throw new Error(`${this}: Route with name "${sName}" does not exist`);
 				}
 
 				var bRouteSwitched = this._getLastMatchedRouteName() !== sName && this._sRouteInProgress !== sName;
@@ -1496,7 +1496,7 @@ sap.ui.define([
 					title: sAppTitle
 				};
 			} else {
-				future.errorThrows("Routes with dynamic parts cannot be resolved as home route.");
+				throw new Error("Routes with dynamic parts cannot be resolved as home route.");
 			}
 		}
 

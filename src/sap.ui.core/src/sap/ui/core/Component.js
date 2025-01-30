@@ -9,7 +9,6 @@ sap.ui.define([
 	'./ComponentMetadata',
 	'./ElementRegistry',
 	'sap/base/config',
-	'sap/base/future',
 	'sap/base/i18n/Localization',
 	'sap/base/util/extend',
 	'sap/base/util/deepExtend',
@@ -37,7 +36,6 @@ sap.ui.define([
 	ComponentMetadata,
 	ElementRegistry,
 	BaseConfig,
-	future,
 	Localization,
 	extend,
 	deepExtend,
@@ -793,13 +791,9 @@ sap.ui.define([
 	 */
 	Component.prototype._getDestroyables = function() {
 		if (!this._aDestroyables) {
-			future.errorThrows(`${this.getManifestObject().getComponentName()}: A sub-class of sap.ui.core.Component which overrides the constructor must apply the super constructor as well.`,
-				null,
-				"sap.ui.support",
-				function() {
-					return { type: "missingSuperConstructor" };
-				});
-			this._aDestroyables = [];
+			throw new Error(
+				`${this.getManifestObject().getComponentName()}: A sub-class of sap.ui.core.Component which overrides the constructor must apply the super constructor as well.`
+			);
 		}
 		return this._aDestroyables;
 	};
@@ -901,7 +895,10 @@ sap.ui.define([
 			var EventBus = sap.ui.require("sap/ui/core/EventBus");
 			if (!EventBus) {
 				var sClassName = this.getMetadata().getName();
-				future.warningThrows("The module 'sap/ui/core/EventBus' needs to be required before calling #getEventBus() on Component '" + sClassName + "'.");
+
+				throw new Error(
+					"The module 'sap/ui/core/EventBus' needs to be required before calling #getEventBus() on Component '" + sClassName + "'."
+				);
 			}
 
 			this._oEventBus = new EventBus();
@@ -1496,9 +1493,9 @@ sap.ui.define([
 									// 2.0 is the default in case no version is provided
 									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
 								} else {
-									future.errorThrows(`${sLogComponentName}: Component Manifest: Provided OData version "${sODataVersion}" in dataSource "${oModelConfig.dataSource}" for model "${sModelName}" is unknown. ["sap.app"]["dataSources"]["${oModelConfig.dataSource}"].`,
-										{ suffix: 'Falling back to default model type "sap.ui.model.odata.v2.ODataModel".' });
-									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
+									throw new Error(
+										`${sLogComponentName}: Component Manifest: Provided OData version "${sODataVersion}" in dataSource "${oModelConfig.dataSource}" for model "${sModelName}" is unknown. ["sap.app"]["dataSources"]["${oModelConfig.dataSource}"].`
+									);
 								}
 								break;
 							case 'JSON':
@@ -1516,8 +1513,9 @@ sap.ui.define([
 
 			// model type is required!
 			if (!oModelConfig.type) {
-				future.errorThrows(`${sLogComponentName}: Component Manifest: Missing "type" for model "${sModelName}". ["sap.ui5"]["models"]["${sModelName}"].`);
-				continue;
+				throw new Error(
+					`${sLogComponentName}: Component Manifest: Missing "type" for model "${sModelName}". ["sap.ui5"]["models"]["${sModelName}"].`
+				);
 			}
 
 			// Add final configuration to result map
@@ -1595,8 +1593,9 @@ sap.ui.define([
 			// class could not be loaded by _loadManifestModelClasses, or module export is not
 			// a valid UI5 class (no metadata available) -> a legacy testcases exist for this scenario!
 			if (!fnClass?.getMetadata) {
-				future.errorThrows(`${sLogComponentName}: Component Manifest: Class "${oModelConfig.type}" for model "${sModelName}" could not be found. ["sap.ui5"]["models"]["${sModelName}"].`);
-				continue;
+				throw new Error(
+					`${sLogComponentName}: Component Manifest: Class "${oModelConfig.type}" for model "${sModelName}" could not be found. ["sap.ui5"]["models"]["${sModelName}"].`
+				);
 			}
 			var oClassMetadata = fnClass.getMetadata();
 
@@ -1663,20 +1662,23 @@ sap.ui.define([
 
 								// dataSource entry should be defined!
 								if (!oAnnotation) {
-									future.errorThrows(`${sLogComponentName}: Component Manifest: ODataAnnotation "${sAnnotation}" for dataSource "${oModelConfig.dataSource}" could not be found in manifest. ["sap.app"]["dataSources"]["${sAnnotation}"].`);
-									continue;
+									throw new Error(
+										`${sLogComponentName}: Component Manifest: ODataAnnotation "${sAnnotation}" for dataSource "${oModelConfig.dataSource}" could not be found in manifest. ["sap.app"]["dataSources"]["${sAnnotation}"].`
+									);
 								}
 
 								// type should be ODataAnnotation!
 								if (oAnnotation.type !== 'ODataAnnotation') {
-									future.errorThrows(`${sLogComponentName}: Component Manifest: dataSource "${sAnnotation}" was expected to have type "ODataAnnotation" but was "${oAnnotation.type}". ["sap.app"]["dataSources"]["${sAnnotation}"].`);
-									continue;
+									throw new Error(
+										`${sLogComponentName}: Component Manifest: dataSource "${sAnnotation}" was expected to have type "ODataAnnotation" but was "${oAnnotation.type}". ["sap.app"]["dataSources"]["${sAnnotation}"].`
+									);
 								}
 
 								// uri is required!
 								if (!oAnnotation.uri) {
-									future.errorThrows(`${sLogComponentName}: Component Manifest: Missing "uri" for ODataAnnotation "${sAnnotation}". ["sap.app"]["dataSources"]["${sAnnotation}"].`);
-									continue;
+									throw new Error(
+										`${sLogComponentName}: Component Manifest: Missing "uri" for ODataAnnotation "${sAnnotation}". ["sap.app"]["dataSources"]["${sAnnotation}"].`
+									);
 								}
 
 								var oAnnotationUri = new URI(oAnnotation.uri);
@@ -1714,8 +1716,9 @@ sap.ui.define([
 					}
 
 				} else {
-					future.errorThrows(`${sLogComponentName}: Component Manifest: dataSource "${oModelConfig.dataSource}" for model "${sModelName}" not found or invalid. ["sap.app"]["dataSources"]["${oModelConfig.dataSource}"].`);
-					continue;
+					throw new Error(
+						`${sLogComponentName}: Component Manifest: dataSource "${oModelConfig.dataSource}" for model "${sModelName}" not found or invalid. ["sap.app"]["dataSources"]["${oModelConfig.dataSource}"].`
+					);
 				}
 			}
 
@@ -1919,7 +1922,12 @@ sap.ui.define([
 		const aLoadPromises = [];
 
 		function logLoadingError(sModelClassName, sModelName, oError) {
-			future.errorThrows(`${sLogComponentName}: Component Manifest: Class "${sModelClassName}" for model "${sModelName}" could not be loaded. ["sap.ui5"]["models"]["${sModelName}"].`, { cause: oError });
+			throw new Error(
+				`${sLogComponentName}: Component Manifest: Class "${sModelClassName}" for model "${sModelName}" could not be loaded. ["sap.ui5"]["models"]["${sModelName}"].`,
+				{
+					cause: oError
+				}
+			);
 		}
 
 		for (const sModelName in mModelConfigurations) {
@@ -2262,7 +2270,9 @@ sap.ui.define([
 		const def = new Deferred();
 
 		sap.ui.require([sModuleName], def.resolve, (err) => {
-			future.warningRejects(def.resolve, def.reject, `sap.ui.core.Component: Cannot load module '${sModuleName}' during creation of component: "${sComponentName}".`);
+			def.reject(
+				new Error(`sap.ui.core.Component: Cannot load module '${sModuleName}' during creation of component: "${sComponentName}".`)
+			);
 			Log.warning(err);
 		});
 
@@ -2689,7 +2699,7 @@ sap.ui.define([
 				if (mOptions.failOnError) {
 					throw new Error(sMsg);
 				} else {
-					future.warningThrows(sMsg);
+					throw new Error(sMsg);
 				}
 			}
 
@@ -3126,8 +3136,10 @@ sap.ui.define([
 					try {
 						return ComponentHooks.onComponentLoaded.execute(oConfigCopy, oLoadedManifest);
 					} catch (oError) {
-						future.errorThrows("sap.ui.core.Component: Callback for loading the component \"" + oLoadedManifest.getComponentName() +
-							"\" run into an error.", { cause: oError , suffix: "The callback was skipped and the component loading resumed." });
+						throw new Error("sap.ui.core.Component: Callback for loading the component \"" + oLoadedManifest.getComponentName() +
+							"\" run into an error.", {
+							cause: oError
+						});
 					}
 				}
 			};

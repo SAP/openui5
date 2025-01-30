@@ -13,7 +13,6 @@ sap.ui.define([
 	'./RenderManager',
 	'./BusyIndicatorUtils',
 	'./BlockLayerUtils',
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/performance/trace/Interaction",
 	"sap/ui/thirdparty/jquery",
@@ -29,7 +28,6 @@ sap.ui.define([
 	RenderManager,
 	BusyIndicatorUtils,
 	BlockLayerUtils,
-	future,
 	Log,
 	Interaction,
 	jQuery
@@ -642,8 +640,7 @@ sap.ui.define([
 
 			if (oContainer instanceof Element) {
 				if (!isSuitableAsContainer(oContainer)) {
-					future.warningThrows("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
-					return this;
+					throw new Error("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
 				}
 			} else {
 				// if no container control is found, use the corresponding UIArea
@@ -671,7 +668,7 @@ sap.ui.define([
 						oContainer.addContent(this);
 						break;
 					default:
-						future.warningThrows("Position " + vPosition + " is not supported for function placeAt.");
+						throw new Error("Position " + vPosition + " is not supported for function placeAt.");
 				}
 			}
 		}.bind(this));

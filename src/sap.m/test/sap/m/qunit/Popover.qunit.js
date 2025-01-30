@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/dom/includeStylesheet",
+	"sap/ui/dom/units/Rem",
 	"sap/m/Button",
 	"sap/m/App",
 	"sap/m/Page",
@@ -34,6 +35,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	includeStylesheet,
+	Rem,
 	Button,
 	App,
 	Page,
@@ -77,8 +79,13 @@ sap.ui.define([
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
-	// var iBarHeight = 48;
-	var iArrowOffset = 9;
+	const fArrowOffset = Rem.toPx(Parameters.get({
+		name: "_sap_m_Popover_ArrowOffset"
+	}));
+
+	const fCompactArrowOffset = Rem.toPx(Parameters.get({
+		name: "_sap_m_Popover_ArrowOffset"
+	}));
 
 	var app = new App("myApp", {
 		initialPage: "myFirstPage"
@@ -226,7 +233,7 @@ sap.ui.define([
 
 		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
-		assert.ok(Math.ceil($popover.offset().top - iArrowOffset) >= Math.floor($Button.offset().top + $Button.outerHeight()), "Popover should be opened at the bottom of the button");
+		assert.ok(Math.ceil($popover.offset().top - fArrowOffset) >= Math.floor($Button.offset().top + $Button.outerHeight()), "Popover should be opened at the bottom of the button");
 		if (!Device.support.touch) {
 			assert.ok(containsOrEquals($popover[0], document.activeElement), "Popover should have the focus");
 		}
@@ -261,7 +268,7 @@ sap.ui.define([
 
 		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
-		assert.ok(Math.ceil($popover.offset().left - iArrowOffset) >= Math.floor($Button.offset().left + $Button.outerWidth()), "Popover should be opened at the right side of the button");
+		assert.ok(Math.ceil($popover.offset().left - fArrowOffset) >= Math.floor($Button.offset().left + $Button.outerWidth()), "Popover should be opened at the right side of the button");
 		//the window size of the test machine is too small, this test can't be executed successfully
 		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
 		//		assert.ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
@@ -285,7 +292,7 @@ sap.ui.define([
 
 		assert.ok($popover.length, "Popover is rendered after it's opened.");
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
-		assert.ok(Math.floor($popover.offset().left + $popover.outerWidth() + iArrowOffset) <= Math.ceil($Button.offset().left), "Popover should be opened at the left side of the button");
+		assert.ok(Math.floor($popover.offset().left + $popover.outerWidth() + fArrowOffset) <= Math.ceil($Button.offset().left), "Popover should be opened at the left side of the button");
 		//the window size of the test machine is too small, this test can't be executed successfully
 		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
 		//		assert.ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
@@ -311,7 +318,7 @@ sap.ui.define([
 		assert.ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 		if (jQuery(window).height() > 150) {
 			// when the browser window is really short, this has to be disabled.
-			assert.ok(Math.floor($popover.offset().top + $popover.outerHeight() + iArrowOffset) <= Math.ceil($Button.offset().top), "Popover should be opened at the top of the button");
+			assert.ok(Math.floor($popover.offset().top + $popover.outerHeight() + fArrowOffset) <= Math.ceil($Button.offset().top), "Popover should be opened at the top of the button");
 		}
 		//the window size of the test machine is too small, this test can't be executed successfully
 		//		assert.ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
@@ -1940,8 +1947,8 @@ sap.ui.define([
 		assert.equal(this.oPopover._marginRight, 10, "_marginTop should be 10");
 		assert.equal(this.oPopover._marginBottom, 10, "_marginTop should be 10");
 		assert.equal(this.oPopover._marginLeft, 10, "_marginTop should be 10");
-		assert.equal(this.oPopover._arrowOffset, 18, "_arrowoffset should be 18");
-		assert.deepEqual(this.oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
+		assert.equal(this.oPopover._arrowOffset, fArrowOffset, "_arrowOffset should have correct value");
+		assert.deepEqual(this.oPopover._offsets, [`0 -${fArrowOffset}`, `${fArrowOffset} 0`, `0 ${fArrowOffset}`, `-${fArrowOffset} 0`], "offsets should be correct according the arrowOffset");
 		assert.deepEqual(this.oPopover._myPositions, ["center bottom", "begin center", "center top", "end center"], "myPositions should be correct");
 		assert.deepEqual(this.oPopover._atPositions, ["center top", "end center", "center bottom", "begin center"], "atPositions should be correct");
 	});
@@ -1960,29 +1967,21 @@ sap.ui.define([
 		assert.deepEqual(this.oPopover._atPositions, ["begin top", "end center", "begin bottom", "begin center"], "atPositions should be correct");
 	});
 
-	QUnit.test("Popover should use compact arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to true", async function (assert){
-		var stubGetParameters = sinon.stub(Parameters, "get");
-
-		stubGetParameters.withArgs({name: "_sap_m_Popover_ForceCompactArrowOffset"}).returns("true");
+	QUnit.test("Popover should use compact arrow offset if _bSizeCompact is true", async function (assert){
+		this.oPopover.addStyleClass("sapUiSizeCompact");
 		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate();
 
-		assert.equal(this.oPopover._arrowOffset, 9, "_arrowoffset should be 9");
-		assert.deepEqual(this.oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
-
-		stubGetParameters.restore();
+		assert.equal(this.oPopover._arrowOffset, fCompactArrowOffset, "_arrowoffset should have correct value");
+		assert.deepEqual(this.oPopover._offsets, [`0 -${fArrowOffset}`, `${fArrowOffset} 0`, `0 ${fArrowOffset}`, `-${fArrowOffset} 0`], "offsets should be correct according the arrowOffset");
 	});
 
-	QUnit.test("Popover should use normal arrow offset if a theme sets less variable _sap_m_Popover_ForceCompactArrowOffset to be false", async function (assert){
-		var stubGetParameters = sinon.stub(Parameters, "get").callsFake(function () { return "false";});
-
+	QUnit.test("Popover should use normal arrow offset if _bSizeCompact is false", async function (assert){
 		this.oPopover.openBy(this.oButton);
 		await nextUIUpdate();
 
-		assert.equal(this.oPopover._arrowOffset, 18, "_arrowoffset should be 18");
-		assert.deepEqual(this.oPopover._offsets, ["0 -18", "18 0", "0 18", "-18 0"], "offsets should be correct according the arrowOffset");
-
-		stubGetParameters.restore();
+		assert.equal(this.oPopover._arrowOffset, fArrowOffset, "_arrowoffset should have correct value");
+		assert.deepEqual(this.oPopover._offsets, [`0 -${fArrowOffset}`, `${fArrowOffset} 0`, `0 ${fArrowOffset}`, `-${fArrowOffset} 0`], "offsets should be correct according the arrowOffset");
 	});
 
 	QUnit.test("Popover should be in compact mode if one of it's parents is compact", async function (assert){
@@ -1995,8 +1994,8 @@ sap.ui.define([
 		await nextUIUpdate();
 		this.oPopover.openBy(oButton2);
 
-		assert.equal(this.oPopover._arrowOffset, 9, "_arrowoffset should be 9");
-		assert.deepEqual(this.oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+		assert.equal(this.oPopover._arrowOffset, fArrowOffset, "_arrowoffset should have correct value");
+		assert.deepEqual(this.oPopover._offsets, [`0 -${fArrowOffset}`, `${fArrowOffset} 0`, `0 ${fArrowOffset}`, `-${fArrowOffset} 0`], "offsets should be correct according the arrowOffset");
 
 		oScrollContainer.destroy();
 		oButton2.destroy();

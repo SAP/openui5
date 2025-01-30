@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/VersionInfo',
 	'sap/base/util/Version',
-	'sap/base/future',
 	'sap/base/Log',
 	'sap/ui/dom/includeStylesheet',
 	'sap/base/i18n/ResourceBundle',
@@ -27,7 +26,6 @@ sap.ui.define([
 	URI,
 	VersionInfo,
 	Version,
-	future,
 	Log,
 	includeStylesheet,
 	ResourceBundle,
@@ -377,8 +375,9 @@ sap.ui.define([
 		 */
 		getEntry: function(sPath) {
 			if (!sPath || sPath.indexOf(".") <= 0) {
-				future.warningThrows("Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName());
-				return null;
+				throw new Error(
+					"Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName()
+				);
 			}
 
 			var oManifest = this.getJson();
@@ -386,8 +385,7 @@ sap.ui.define([
 
 			// top-level manifest section must be an object (e.g. sap.ui5)
 			if (sPath && sPath[0] !== "/" && oEntry !== undefined && !isPlainObject(oEntry)) {
-				future.warningThrows("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
-				return null;
+				throw new Error("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
 			}
 			return oEntry;
 		},
@@ -567,8 +565,9 @@ sap.ui.define([
 					var sResourceRootPath = mResourceRoots[sResourceRoot];
 					var oResourceRootURI = new URI(sResourceRootPath);
 					if (oResourceRootURI.is("absolute") || (oResourceRootURI.path() && oResourceRootURI.path()[0] === "/")) {
-						future.errorThrows(`${this.getComponentName()}: Resource root for "${sResourceRoot}" is absolute and therefore won't be registered! "${sResourceRootPath}"`);
-						continue;
+						throw new Error(
+							`${this.getComponentName()}: Resource root for "${sResourceRoot}" is absolute and therefore won't be registered! "${sResourceRootPath}"`
+						);
 					}
 					sResourceRootPath = this.resolveUri(sResourceRootPath);
 					var mPaths = {};

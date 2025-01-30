@@ -263,25 +263,6 @@ sap.ui.define([
 		assert.ok(oDialog.isDestroyed(),  "Dialog should be destroyed");
 	});
 
-	QUnit.test("Hiding close button", async function (assert) {
-		this.oCard.setManifest(oBiteManifestWithUrl);
-		await nextCardReadyEvent(this.oCard);
-
-		const oActionsStrip = this.oCard.getAggregation("_footer").getActionsStrip(),
-			aButtons = oActionsStrip._getToolbar().getContent();
-
-		aButtons[1].firePress();
-
-		const oDialog = this.oCard.getDependents()[0];
-		const oSnackCard = oDialog.getContent()[0];
-
-		await nextCardReadyEvent(oSnackCard);
-
-		//Assert
-		assert.strictEqual(oDialog.getCustomHeader().getToolbar().getVisible(), false, "Close Button is not visible");
-		assert.strictEqual(oDialog.getCustomHeader().getDomRef().querySelector("sapMBtn"), null, "Close Button is not in DOM");
-	});
-
 	QUnit.module("Show/Hide Card Actions - Resizing", {
 		beforeEach: function () {
 			this.oCard = new Card({

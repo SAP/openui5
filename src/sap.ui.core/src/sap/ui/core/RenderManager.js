@@ -10,7 +10,6 @@ sap.ui.define([
 	'./LabelEnablement',
 	"./Patcher",
 	"sap/base/assert",
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/security/encodeCSS",
 	"sap/base/security/encodeXML",
@@ -28,7 +27,6 @@ sap.ui.define([
 	LabelEnablement,
 	Patcher,
 	assert,
-	future,
 	Log,
 	encodeCSS,
 	encodeXML,
@@ -1635,20 +1633,7 @@ sap.ui.define([
 	RenderManager.prototype.icon = function(sURI, aClasses, mAttributes){
 		var IconPool = sap.ui.require("sap/ui/core/IconPool");
 		if (!IconPool) {
-			future.warningThrows(
-				"sap/ui/core/IconPool must be loaded before sap.ui.core.RenderManager#icon can be called.",
-				{
-					suffix: "Falling back to synchronous loading of IconPool"
-				},
-				"SyncXHR",
-				null,
-				function() {
-					return {
-						type: "SyncXHR",
-						name: "rendermanager-icon"
-					};
-				}
-			);
+			throw new Error("sap/ui/core/IconPool must be loaded before sap.ui.core.RenderManager#icon can be called.");
 		}
 
 		var bIconURI = IconPool.isIconURI(sURI),

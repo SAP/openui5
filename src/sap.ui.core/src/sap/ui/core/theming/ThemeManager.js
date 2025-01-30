@@ -7,7 +7,6 @@
 sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Eventing",
-	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/util/each",
@@ -21,7 +20,6 @@ sap.ui.define([
 ], function(
 	assert,
 	Eventing,
-	future,
 	Log,
 	Localization,
 	each,
@@ -496,8 +494,9 @@ sap.ui.define([
 				return content === "true";
 
 			} catch (e) {
-				// parsing error
-				future.errorThrows("Custom check: Error parsing JSON string for custom.css indication.", { cause: e });
+				throw new Error("Custom check: Error parsing JSON string for custom.css indication.", {
+					cause: e
+				});
 			}
 		}
 
@@ -548,7 +547,7 @@ sap.ui.define([
 			ThemeManager.themeLoaded = true;
 			ThemeManager.fireThemeApplied();
 			if (bEmergencyExit) {
-				future.errorThrows("ThemeManager: max. check cycles reached.");
+				throw new Error("ThemeManager: max. check cycles reached.");
 			}
 		} else {
 			ThemeManager.themeLoaded = true;

@@ -859,8 +859,7 @@ sap.ui.define([
 					iEntityPathLength = i;
 				}
 				oParentValue = vValue;
-				bTransient ||= vValue["@$ui5.context.isTransient"]
-					?? _Helper.hasPrivateAnnotation(vValue, "upsert");
+				bTransient ||= vValue["@$ui5.context.isTransient"];
 				aMatches = rSegmentWithPredicate.exec(sSegment);
 				if (aMatches) {
 					if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
@@ -1537,8 +1536,8 @@ sap.ui.define([
 	 * types.)
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the ID of the group that is associated with the request;
-	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 *   An original lock for the group ID to be used for the GET request, to be cloned via
+	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @param {string} sPath
 	 *   The entity's path relative to the cache; it must end with a single-valued navigation
 	 *   property and contain no key predicates, except maybe one right at the start
@@ -2166,6 +2165,8 @@ sap.ui.define([
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} fnIsKeepAlive
 	 *   A function to tell whether the entity is kept alive
+	 * @param {function} fnSetUpsertPromise
+	 *   A function to (re)set a sync promise for the "upsert" use case
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
@@ -2175,9 +2176,10 @@ sap.ui.define([
 	 */
 	_Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback,
 			sEditUrl, sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent,
-			fnIsKeepAlive) {
+			fnIsKeepAlive, fnSetUpsertPromise) {
 		var oFetchPromise,
 			aPropertyPath = sPropertyPath.split("/"),
+			bUpsert,
 			that = this;
 
 		this.checkSharedRequest();
@@ -2194,14 +2196,13 @@ sap.ui.define([
 			oFetchPromise = this.oPromise = SyncPromise.resolve({"@odata.etag" : "*"});
 		}
 
-		return oFetchPromise.then(function (oEntity) {
+		const oUpdatePromise = oFetchPromise.then(function (oEntity) {
 			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				sNavigationProperty, // upsert only
 				oOldData, // ignored for upsert
 				sParentPath, // upsert only
-				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue),
-				bUpsert = oEntity === null;
+				oUpdateData = _Helper.makeUpdateData(aPropertyPath, vValue);
 
 			/*
 			 * Sends a PATCH request.
@@ -2255,6 +2256,7 @@ sap.ui.define([
 						// reset to null notifying listeners
 						_Helper.updateAll(that.mChangeListeners, sParentPath,
 							that.getValue(sParentPath), {[sNavigationProperty] : null});
+						fnSetUpsertPromise?.();
 					} else {
 						_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oOldData);
 					}
@@ -2267,7 +2269,8 @@ sap.ui.define([
 				 */
 				function onSubmit() {
 					if (bUpsert && that.iActiveUsages) {
-						that.refreshSingleNoCollection(oPatchGroupLock, sEntityPath)
+						// Note: oPatchGroupLock might refer to a parked group
+						that.refreshSingleNoCollection(oGroupLock, sEntityPath)
 							.catch(that.oRequestor.getModelInterface().getReporter());
 					}
 					oRequestLock = that.oRequestor.lockGroup(sGroupId, that, true);
@@ -2310,6 +2313,8 @@ sap.ui.define([
 							? {"@odata.etag" : oPatchResult["@odata.etag"]}
 							: oPatchResult);
 					if (bUpsert) {
+						_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity,
+							{"@$ui5.context.isTransient" : false});
 						_Helper.deletePrivateAnnotation(oEntity, "upsert");
 					}
 				}, function (oError) {
@@ -2392,73 +2397,76 @@ sap.ui.define([
 				}
 			}
 
+			bUpsert = oEntity === null;
 			if (bUpsert) {
 				const aSegments = sEntityPath.split("/");
 				sNavigationProperty = aSegments.pop();
 				sParentPath = aSegments.join("/");
 				// create empty object notifying listeners
-				oEntity = {};
+				oEntity = {"@$ui5.context.isTransient" : true};
 				_Helper.setPrivateAnnotation(oEntity, "upsert", true);
 				// Note: _Helper.updateAll would not set the object reference! updateExisting would,
 				// but this should be much simpler (to understand)
 				that.getValue(sParentPath)[sNavigationProperty] = oEntity;
 				_Helper.fireChanges(that.mChangeListeners, sEntityPath, oEntity, false);
 				updateWithUnitOrCurrency(oUpdateData);
-				// send and register the PATCH request
-				sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions,
-					/*bDropSystemQueryOptions*/true);
-				return patch(oGroupLock);
+			} else {
+				if (!oEntity) {
+					throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
+						+ "' does not exist");
+				}
+
+				_Helper.deleteUpdating(sPropertyPath, oEntity);
+
+				let sParkedGroup;
+				let sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
+				if (sTransientGroup) {
+					if (typeof sTransientGroup !== "string") {
+						throw new Error("No 'update' allowed while waiting for server response");
+					}
+					if (sTransientGroup.startsWith("$parked.")
+							|| sTransientGroup.startsWith("$inactive.")) {
+						sParkedGroup = sTransientGroup;
+						sTransientGroup = sTransientGroup.slice(sTransientGroup.indexOf(".") + 1);
+					}
+					if (sTransientGroup !== sGroupId) {
+						throw new Error("The entity will be created via group '" + sTransientGroup
+							+ "'. Cannot patch via group '" + sGroupId + "'");
+					}
+				}
+				// remember the old value
+				oOldData = _Helper.makeUpdateData(aPropertyPath,
+					_Helper.drillDown(oEntity, aPropertyPath));
+
+				const oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
+				if (oPostBody) {
+					// change listeners are informed later
+					_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
+				}
+				updateWithUnitOrCurrency(sTransientGroup ? oPostBody : oUpdateData);
+				if (sTransientGroup) {
+					// When updating a transient entity, the above _Helper.updateAll has already
+					// updated the POST request. An inactive entity must remain parked.
+					if (sParkedGroup && !oEntity["@$ui5.context.isInactive"]) {
+						_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
+						that.oRequestor.relocate(sParkedGroup, oPostBody, sTransientGroup);
+					}
+					oGroupLock.unlock();
+					return Promise.resolve();
+				}
+				// Note: there should be only *one* parked PATCH per entity, but don't rely on that
+				that.oRequestor.relocateAll("$parked." + sGroupId, sGroupId, oEntity);
 			}
 
-			if (!oEntity) {
-				throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
-					+ "' does not exist");
-			}
-
-			_Helper.deleteUpdating(sPropertyPath, oEntity);
-
-			let sParkedGroup;
-			let sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
-			if (sTransientGroup) {
-				if (typeof sTransientGroup !== "string") {
-					throw new Error("No 'update' allowed while waiting for server response");
-				}
-				if (sTransientGroup.startsWith("$parked.")
-						|| sTransientGroup.startsWith("$inactive.")) {
-					sParkedGroup = sTransientGroup;
-					sTransientGroup = sTransientGroup.slice(sTransientGroup.indexOf(".") + 1);
-				}
-				if (sTransientGroup !== sGroupId) {
-					throw new Error("The entity will be created via group '" + sTransientGroup
-						+ "'. Cannot patch via group '" + sGroupId + "'");
-				}
-			}
-			// remember the old value
-			oOldData
-				= _Helper.makeUpdateData(aPropertyPath, _Helper.drillDown(oEntity, aPropertyPath));
-
-			const oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
-			if (oPostBody) {
-				// change listeners are informed later
-				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
-			}
-			updateWithUnitOrCurrency(sTransientGroup ? oPostBody : oUpdateData);
-			if (sTransientGroup) {
-				// When updating a transient entity, the above _Helper.updateAll has already updated
-				// the POST request. An inactive entity must remain parked.
-				if (sParkedGroup && !oEntity["@$ui5.context.isInactive"]) {
-					_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
-					that.oRequestor.relocate(sParkedGroup, oPostBody, sTransientGroup);
-				}
-				oGroupLock.unlock();
-				return Promise.resolve();
-			}
-			// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
-			that.oRequestor.relocateAll("$parked." + sGroupId, sGroupId, oEntity);
 			// send and register the PATCH request
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch(oGroupLock);
 		});
+		if (bUpsert) {
+			fnSetUpsertPromise?.(oUpdatePromise);
+		}
+
+		return oUpdatePromise;
 	};
 
 	/**

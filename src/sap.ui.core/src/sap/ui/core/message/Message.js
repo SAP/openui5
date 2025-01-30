@@ -5,11 +5,10 @@
 // Provides the implementation for a Message
 sap.ui.define([
 	'./MessageType',
-	'sap/base/future',
 	'sap/base/util/uid',
 	'sap/ui/base/Object'
 ],
-	function(MessageType, future, uid, BaseObject) {
+	function(MessageType, uid, BaseObject) {
 		"use strict";
 
 		const mMessageType2Severity = {
@@ -257,7 +256,7 @@ sap.ui.define([
 			if (sType in MessageType) {
 				this.type = sType;
 			} else {
-				future.errorThrows("MessageType must be of type sap/ui/core/message/MessageType");
+				throw new Error("MessageType must be of type sap/ui/core/message/MessageType");
 			}
 		};
 
@@ -306,7 +305,7 @@ sap.ui.define([
 			if (BaseObject.isObjectA(oMessageProcessor, "sap.ui.core.message.MessageProcessor")) {
 				this.processor = oMessageProcessor;
 			} else {
-				future.errorThrows("oMessageProcessor must be an instance of 'sap.ui.core.message.MessageProcessor'");
+				throw new Error("oMessageProcessor must be an instance of 'sap.ui.core.message.MessageProcessor'");
 			}
 		};
 

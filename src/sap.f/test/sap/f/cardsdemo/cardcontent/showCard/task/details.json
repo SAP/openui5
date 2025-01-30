@@ -86,7 +86,10 @@
 						}
 					]
 				}
-			]
+			],
+			"closeButton": {
+				"visible": false
+			}
 		}
 	}
 }

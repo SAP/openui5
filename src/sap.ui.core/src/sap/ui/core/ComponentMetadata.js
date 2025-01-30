@@ -6,12 +6,11 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/Manifest',
-	'sap/base/future',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions'
-], function(ManagedObjectMetadata, Manifest, future, Log, deepExtend, isPlainObject, LoaderExtensions) {
+], function(ManagedObjectMetadata, Manifest, Log, deepExtend, isPlainObject, LoaderExtensions) {
 	"use strict";
 
 	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
@@ -50,7 +49,7 @@ sap.ui.define([
 		    sPackage = sName.replace(/\.\w+?$/, "");
 
 		if (oClassInfo && typeof oClassInfo.metadata === "string") {
-			future.errorThrows("Component Metadata must not be a string. Please use \"metadata: { manifest: 'json' }\" instead.");
+			throw new Error("Component Metadata must not be a string. Please use \"metadata: { manifest: 'json' }\" instead.");
 		}
 
 		ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);

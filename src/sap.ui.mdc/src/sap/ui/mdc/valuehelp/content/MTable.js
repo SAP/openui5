@@ -1229,10 +1229,14 @@ sap.ui.define([
 
 		const oListBinding = this.getListBinding();
 		const oBindingInfo = this.getListBindingInfo();
-		if (oListBinding?.isLengthFinal() || oBindingInfo.length) { // there are no additional unread items or shown items are limited.
+		let iCount = oListBinding?.getCount(); // on oData V4 only defined if $count ist used or all items are known.
+
+		if (iCount === undefined && (oListBinding?.isLengthFinal() || oBindingInfo.length)) { // there are no additional unread items or shown items are limited.
 			const aRelevantContexts = this.getListBinding().getCurrentContexts();
-			return aRelevantContexts?.length;
+			iCount = aRelevantContexts?.length;
 		}
+
+		return iCount;
 
 	}
 

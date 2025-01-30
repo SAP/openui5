@@ -1887,9 +1887,12 @@ sap.ui.define([
 		oMTable.setHighlightId(aItems[0].getId());
 		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId not added class sapMLIBFocused");
 
+		const oListBinding = oMTable.getListBinding();
+		sinon.stub(oListBinding, "getCount").returns(undefined); // to check item count calculation from contexts
 		const oShowResult = oMTable.onShow();
 		assert.equal(oShowResult?.itemId, oTable.getItems()[0].getId(), "OnShow returns navigated Item ID");
 		assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
+		oListBinding.getCount.restore();
 
 		oMTable.setHighlightId(aItems[1].getId());
 		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId don't have class sapMLIBFocused");

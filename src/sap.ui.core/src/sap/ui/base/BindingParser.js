@@ -8,7 +8,6 @@ sap.ui.define([
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/Filter',
 	'sap/ui/model/Sorter',
-	"sap/base/future",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/resolveReference"
 ], function(
@@ -16,7 +15,6 @@ sap.ui.define([
 	BindingMode,
 	Filter,
 	Sorter,
-	future,
 	JSTokenizer,
 	resolveReference
 ) {
@@ -168,7 +166,9 @@ sap.ui.define([
 		try {
 			BindingParser.mergeParts(oBindingInfo);
 		} catch (e) {
-			future.errorThrows(`sap.ui.base.BindingParser: Cannot merge parts for binding "${sBinding}"`, { cause: e });
+			throw new Error(`sap.ui.base.BindingParser: Cannot merge parts for binding "${sBinding}"`, {
+				cause: e
+			});
 		}
 	}
 
@@ -228,7 +228,7 @@ sap.ui.define([
 						oEnv.aFunctionsNotFound = oEnv.aFunctionsNotFound || [];
 						oEnv.aFunctionsNotFound.push(sName);
 					} else {
-						future.errorThrows(sProp + " function " + sName + " not found!");
+						throw new Error(sProp + " function " + sName + " not found!");
 					}
 				}
 
@@ -273,7 +273,7 @@ sap.ui.define([
 					}
 
 					if (!o.type) {
-						future.errorThrows("Failed to resolve type '" + sType + "'. Maybe not loaded or a typo?");
+						throw new Error("Failed to resolve type '" + sType + "'. Maybe not loaded or a typo?");
 					}
 
 					// TODO why are formatOptions and constraints also removed for an already instantiated type?
@@ -299,9 +299,7 @@ sap.ui.define([
 						pType = new Promise(function(fnResolve, fnReject) {
 							sap.ui.require([sType.replace(/\./g, "/")], fnResolve, fnReject);
 						}).catch(function(oError){
-							// [Compatibility]: We must not throw an error during type creation (except constructor failures!).
-							//                  We catch any require() rejection and log the error.
-							future.errorThrows(oError);
+							throw new Error(oError);
 						}).then(fnInstantiateType);
 					}
 
