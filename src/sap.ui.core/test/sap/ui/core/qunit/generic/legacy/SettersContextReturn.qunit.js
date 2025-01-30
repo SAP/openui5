@@ -88,6 +88,15 @@ sap.ui.define([
 				"sap.ui.unified.internal.CustomYearPicker": NOT_A_MODULE
 			}
 		},
+		"sap.ui.layout": {
+			elements: {
+				/**
+				 * @deprecated As of version 1.93
+				 */
+				"sap.ui.layout.form.ResponsiveLayoutPanel": NOT_A_MODULE,
+				"sap.ui.layout.form.ResponsiveGridLayoutPanel": NOT_A_MODULE
+			}
+		},
 
 		/*
 		 * sapui5.runtime
