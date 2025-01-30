@@ -90,6 +90,7 @@ sap.ui.define([
 		CHANGE_SETTINGS_TEXT = "settings",
 		CHANGE_COOKIE_PREFERENCES_TEXT = "cookie_preferences",
 		DEMOKIT_DEFAULT_LANGUAGE = "en_US",
+		PRIVACY_TEXT = "privacy",
 		DEMOKIT_CONFIGURATION_LANGUAGE = "language",
 		DEMOKIT_CONFIGURATION_APPEARANCE = "appearance",
 		SITEMAP = "sitemap";
@@ -449,6 +450,8 @@ sap.ui.define([
 				this.aboutDialogOpen();
 			} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 				this.settingsDialogOpen();
+			} else if (sTargetText === PRIVACY_TEXT) {
+				this.navToPrivacyStatement();
 			} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
 				this.onEditCookiePreferencesRequest();
 			} else if (sTargetText === CHANGE_VERSION_TEXT) {

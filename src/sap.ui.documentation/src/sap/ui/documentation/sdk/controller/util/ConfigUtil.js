@@ -12,6 +12,12 @@ sap.ui.define([
 ], function (BaseObject, capitalize, jQuery, ResourcesUtil, Log) {
 	"use strict";
 
+	const STATIC_RESOURCE_PATH_KEYNAME = {
+		BP_STATEMENT: "browserSupportPath",
+		COOKIE_STATEMENT: "cookieStatementURI",
+		PRIVACY_STATEMENT: "privacyStatementURI"
+	};
+
 	return BaseObject.extend("sap.ui.documentation.sdk.controller.util.ConfigUtil", {
 
 		"COOKIE_NAMES": {
@@ -107,6 +113,33 @@ sap.ui.define([
 		destroy: function () {
 			this._oComponent = null;
 			return BaseObject.prototype.destroy.apply(this, arguments);
+		},
+
+		/**
+		 * @returns {Promise<string>} Path to the browser support statement
+		 */
+		getPathToBPSupportStatement: function() {
+			return this._requireConfigJSON().then(function(oConfig) {
+				var sPath = oConfig[STATIC_RESOURCE_PATH_KEYNAME.BP_STATEMENT],
+					sResolvedPath = ResourcesUtil.getResourceOriginPath(sPath);
+				return sResolvedPath;
+			});
+		},
+
+		/**
+		 * @returns {string} Path to the cookie statement
+		 */
+		getPathToCookieStatement: function() {
+			var sUri = this._oComponent.getConfig()[STATIC_RESOURCE_PATH_KEYNAME.COOKIE_STATEMENT];
+			return sap.ui.require.toUrl(sUri);
+		},
+
+		/**
+		 * @returns {string} Path to the privacy statement
+		 */
+		getPathToPrivacyStatement: function() {
+			var sUri = this._oComponent.getConfig()[STATIC_RESOURCE_PATH_KEYNAME.PRIVACY_STATEMENT];
+			return sap.ui.require.toUrl(sUri);
 		},
 
 		// Require the configuration file for static pages paths
