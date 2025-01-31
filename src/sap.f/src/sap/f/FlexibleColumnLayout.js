@@ -1726,12 +1726,17 @@ sap.ui.define([
 		this._previewResizedColumnsOnMoveSeparator(iCursonX, true /* resize end */);
 		this._saveResizedColumWidths();
 
-		if (this._oMoveInfo.layout !== this.getLayout()) {
-			this.setLayout(this._oMoveInfo.layout);
-			this._fireStateChange(true, false);
+		if (this._oMoveInfo.layout == this.getLayout()) {
+			this._exitInteractiveResizeMode();
+			return;
 		}
+		this.setLayout(this._oMoveInfo.layout);
 
-		this._exitInteractiveResizeMode();
+		try {
+			this._fireStateChange(true, false);
+		} finally {
+			this._exitInteractiveResizeMode();
+		}
 	};
 
 	/**

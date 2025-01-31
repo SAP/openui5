@@ -490,6 +490,31 @@ function(
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
+	QUnit.test("_onColumnSeparatorMoveEnd handles possible errors, that can preventthe dragging from ending", function (assert) {
+
+		//Arrange
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded
+		});
+		var oStub,
+			oSpy;
+			oStub = this.stub(this.oFCL, "_fireStateChange").callsFake(function() {
+				throw new Error("test Error");
+			});
+			oSpy = this.spy(this.oFCL, "_exitInteractiveResizeMode");
+
+		//Act
+        try {
+            dragSeparator("begin", 100, this.oFCL);
+        } catch (e) {
+            //Assert
+            assert.ok(oSpy.called, "Interactive resize mode is exited and drag separator is released");
+        }
+
+		//Clean-up
+		oStub.restore();
+	});
+
 	QUnit.test("_liveStateChange event is fired upon drag to a new layout", function (assert) {
 		var sInitLayout = LT.ThreeColumnsMidExpanded;
 		this.oFCL = oFactory.createFCL({
