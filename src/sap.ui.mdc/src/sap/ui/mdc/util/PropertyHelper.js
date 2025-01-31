@@ -295,7 +295,7 @@ sap.ui.define([
 
 		// TODO: warning is logged momentarily so that consumers can adapt to have valid property definitions
 		//  valid use case would be to throw an error
-		if (Log.getLevel() < Log.WARNING) {
+		if (Log.getLevel() < Log.Level.WARNING) {
 			return; // Avoid stringification overhead if logging is not required.
 		}
 
