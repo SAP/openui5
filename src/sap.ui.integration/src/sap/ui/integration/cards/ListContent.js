@@ -4,6 +4,7 @@
 sap.ui.define([
 	"./BaseListContent",
 	"./ListContentRenderer",
+	"sap/m/AvatarColor",
 	"sap/ui/util/openWindow",
 	"sap/m/library",
 	"sap/m/List",
@@ -18,9 +19,10 @@ sap.ui.define([
 	"sap/ui/integration/controls/ActionsStrip",
 	"sap/ui/integration/cards/list/MicrochartsResizeHelper",
 	"sap/ui/integration/util/SorterHelper"
-], function (
+], function(
 	BaseListContent,
 	ListContentRenderer,
+	AvatarColor,
 	openWindow,
 	mLibrary,
 	List,
@@ -37,9 +39,6 @@ sap.ui.define([
 	SorterHelper
 ) {
 	"use strict";
-
-	// shortcut for sap.m.AvatarColor
-	var AvatarColor = mLibrary.AvatarColor;
 
 	// shortcut for sap.m.ListType;
 	var ListType = mLibrary.ListType;

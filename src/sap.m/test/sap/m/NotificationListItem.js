@@ -1,8 +1,8 @@
 sap.ui.define([
 	"sap/m/App",
+	"sap/m/AvatarColor",
 	"sap/m/Button",
 	"sap/m/Page",
-	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/m/NotificationListItem",
 	"sap/m/MessageToast",
@@ -11,9 +11,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel"
 ], function(
 	App,
+	AvatarColor,
 	Button,
 	Page,
-	mLibrary,
 	coreLibrary,
 	NotificationListItem,
 	MessageToast,
@@ -24,8 +24,7 @@ sap.ui.define([
 	"use strict";
 
 	//shortcuts
-	const AvatarColor = mLibrary.AvatarColor,
-			Priority = coreLibrary.Priority;
+	const Priority = coreLibrary.Priority;
 
 	var app = new App("myApp", {initialPage:"tabBarPage"});
 	app.placeAt("body");

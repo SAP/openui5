@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/m/AvatarColor",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
 	"sap/f/cards/Header",
 	"sap/f/cards/HeaderRenderer",
-	"sap/m/library",
 	"sap/m/Text",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
@@ -15,12 +15,12 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/formatters/IconFormatter"
 ], function (
+	AvatarColor,
 	Element,
 	JSONModel,
 	merge,
 	FHeader,
 	FHeaderRenderer,
-	mLibrary,
 	Text,
 	BindingHelper,
 	BindingResolver,
@@ -29,9 +29,6 @@ sap.ui.define([
 	IconFormatter
 ) {
 	"use strict";
-
-	// shortcut for sap.m.AvatarColor
-	var AvatarColor = mLibrary.AvatarColor;
 
 	/**
 	 * Constructor for a new <code>Header</code>.

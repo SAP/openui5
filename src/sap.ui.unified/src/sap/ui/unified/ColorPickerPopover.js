@@ -12,7 +12,8 @@ sap.ui.define([
 	'./library',
 	'sap/m/library',
 	"sap/ui/core/Lib",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/ColorPickerDisplayMode"
 ], function(
 	Control,
 	Device,
@@ -22,7 +23,8 @@ sap.ui.define([
 	library,
 	mLibrary,
 	Library,
-	jQuery
+	jQuery,
+	ColorPickerDisplayMode
 ) {
 		"use strict";
 
@@ -30,8 +32,7 @@ sap.ui.define([
 		var PlacementType = mLibrary.PlacementType;
 
 		// shortcut for sap.ui.unified.ColorPickerMode & sap.ui.unified.ColorPickerDisplayMode
-		var ColorPickerMode = library.ColorPickerMode,
-			ColorPickerDisplayMode = library.ColorPickerDisplayMode;
+		var ColorPickerMode = library.ColorPickerMode;
 
 		// shortcut for sap.m.ButtonType
 		var ButtonType = mLibrary.ButtonType;

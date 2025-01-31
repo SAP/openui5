@@ -1,7 +1,5 @@
-sap.ui.define(["sap/ui/core/library", 'sap/uxap/BlockBase'], function (coreLibrary, BlockBase) {
+sap.ui.define(["sap/ui/core/mvc/ViewType", 'sap/uxap/BlockBase'], function (ViewType, BlockBase) {
 	"use strict";
-
-	var ViewType = coreLibrary.mvc.ViewType;
 
 	var GoalsBlock = BlockBase.extend("sap.uxap.sample.SharedBlocks.goals.GoalsBlock", {
 		metadata: {

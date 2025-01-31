@@ -4,7 +4,8 @@
 
 // Provides control sap.m.IllustratedMessage.
 sap.ui.define([
-	"./library",
+	"sap/m/IllustratedMessageSize",
+	"sap/m/IllustratedMessageType",
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/FormattedText",
@@ -20,7 +21,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"./IllustratedMessageRenderer"
 ], function(
-	library,
+	IllustratedMessageSize,
+	IllustratedMessageType,
 	Text,
 	Title,
 	FormattedText,
@@ -37,12 +39,6 @@ sap.ui.define([
 	IllustratedMessageRenderer
 ) {
 	"use strict";
-
-	// shortcut for sap.m.IllustratedMessageSize
-	var IllustratedMessageSize = library.IllustratedMessageSize;
-
-	// shortcut for sap.m.IllustratedMessageType
-	var IllustratedMessageType = library.IllustratedMessageType;
 
 	// shortcut for sap.ui.core.IllustratedMessageType
 	var TextAlign = coreLibrary.TextAlign;
@@ -728,20 +724,20 @@ sap.ui.define([
 	 * @private
 	 */
 
-	 IllustratedMessage.prototype._updateSymbol = function (sCurrentMedia) {
-		// No need to require a resource for BASE illustrationSize, since there is none
-		if (sCurrentMedia === IllustratedMessage.MEDIA.BASE) {
-			return;
-		}
+	IllustratedMessage.prototype._updateSymbol = function (sCurrentMedia) {
+	   // No need to require a resource for BASE illustrationSize, since there is none
+	   if (sCurrentMedia === IllustratedMessage.MEDIA.BASE) {
+		   return;
+	   }
 
-		var sIdMedia = sCurrentMedia.substring(sCurrentMedia.indexOf('-') + 1);
+	   var sIdMedia = sCurrentMedia.substring(sCurrentMedia.indexOf('-') + 1);
 
-		this._getIllustration()
-			.setSet(this._sIllustrationSet, true)
-			.setMedia(sIdMedia, true)
-			.setType(this._sIllustrationType);
+	   this._getIllustration()
+		   .setSet(this._sIllustrationSet, true)
+		   .setMedia(sIdMedia, true)
+		   .setType(this._sIllustrationType);
 
-	};
+   };
 
 	/**
 	 * Returns a fallback media size, for cases when the initially requested asset is not found.
@@ -751,17 +747,17 @@ sap.ui.define([
 	 * @return {string} The fallback media size
 	 * @private
 	 */
-	 IllustratedMessage.prototype._getFallbackMedia = function () {
-		var sMedia = this._sLastKnownMedia,
-			aMediaValues = Object.values(IllustratedMessage.MEDIA),
-			iIndexOfMedia = aMediaValues.indexOf(sMedia);
+	IllustratedMessage.prototype._getFallbackMedia = function () {
+	   var sMedia = this._sLastKnownMedia,
+		   aMediaValues = Object.values(IllustratedMessage.MEDIA),
+		   iIndexOfMedia = aMediaValues.indexOf(sMedia);
 
-		if (iIndexOfMedia > -1 && iIndexOfMedia < aMediaValues.length - 1) {
-			return aMediaValues[iIndexOfMedia + 1];
-		} else {
-			return aMediaValues[aMediaValues.length - 1];
-		}
-	};
+	   if (iIndexOfMedia > -1 && iIndexOfMedia < aMediaValues.length - 1) {
+		   return aMediaValues[iIndexOfMedia + 1];
+	   } else {
+		   return aMediaValues[aMediaValues.length - 1];
+	   }
+   };
 
 	/**
 	 * Handles missing assets by setting the media to a larger size.
@@ -844,12 +840,12 @@ sap.ui.define([
 	 * @since 1.98.0
 	 * @returns {object} Object with 2 fields representing the ID references of the title and description in the IllustratedMessage
 	 */
-	 IllustratedMessage.prototype.getAccessibilityReferences = function () {
-		return {
-			title: this._getTitle().getId(),
-			description: this._getDescription().getId()
-		};
-	};
+	IllustratedMessage.prototype.getAccessibilityReferences = function () {
+	   return {
+		   title: this._getTitle().getId(),
+		   description: this._getDescription().getId()
+	   };
+   };
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
@@ -944,5 +940,4 @@ sap.ui.define([
 	};
 
 	return IllustratedMessage;
-
 });

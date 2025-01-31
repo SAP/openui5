@@ -289,8 +289,8 @@ sap.ui.define([
 	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
 	 *     <li> the context's binding is a list binding with data aggregation,
-	 *     <li> the context is transient, but its binding is not a list binding ("upsert") and
-	 *       therefore it should rather be reset via {@link #resetChanges},
+	 *     <li> the context is transient but its binding is not a list binding ("upsert") and it
+	 *       therefore must be reset via {@link #resetChanges},
 	 *     <li> the restrictions for deleting from a recursive hierarchy (see above) are not met.
 	 *   </ul>
 	 *
@@ -327,7 +327,7 @@ sap.ui.define([
 			}
 			sGroupId = null;
 		} else if (sGroupId === null) {
-			if (!(this.isKeepAlive() && this.iIndex === undefined)) {
+			if (this.iIndex !== undefined || !this.isKeepAlive()) {
 				throw new Error("Cannot delete " + this);
 			}
 		}
@@ -584,7 +584,7 @@ sap.ui.define([
 							bUpdating);
 					}
 
-					if (that.isInactive() && !that.bFiringCreateActivate) {
+					if (that.bInactive && !that.bFiringCreateActivate) {
 						// early cache update so that the new value is properly available on the
 						// event listener
 						// runs synchronously - setProperty calls fetchValue with $cached
@@ -1200,7 +1200,7 @@ sap.ui.define([
 		var that = this;
 
 		return this.isTransient() && this.isInactive() !== true
-			|| this.oDeletePromise && this.oDeletePromise.isPending()
+			|| this.oDeletePromise?.isPending()
 			|| this.oBinding.hasPendingChangesForPath(this.sPath)
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.oCache
@@ -1292,7 +1292,7 @@ sap.ui.define([
 			|| !mParameters.$$sharedRequest
 			&& this.oBinding.getHeaderContext?.()
 			&& this.oBinding.getHeaderContext().isSelected() !== this.isSelected()
-			&& !(this.oBinding.isRelative() && !mParameters.$$ownRequest)
+			&& (mParameters.$$ownRequest || !this.oBinding.isRelative())
 			&& !_Helper.isDataAggregation(mParameters)
 			// check for key predicate in the last path segment
 			&& this.sPath.indexOf("(", this.sPath.lastIndexOf("/")) > 0;
@@ -1480,11 +1480,11 @@ sap.ui.define([
 		if (oNextSibling === undefined && oParent === undefined) {
 			return Promise.resolve(); // "no move happens"
 		}
-		if (this.isDeleted() || this.isTransient() || this.iIndex === undefined) {
+		if (this.iIndex === undefined || this.isDeleted() || this.isTransient()) {
 			throw new Error("Cannot move " + this);
 		}
 		if (oParent
-			&& (oParent.isDeleted() || oParent.isTransient() || oParent.iIndex === undefined)) {
+			&& (oParent.iIndex === undefined || oParent.isDeleted() || oParent.isTransient())) {
 			throw new Error("Cannot move to " + oParent);
 		}
 		if (this.isAncestorOf(oParent)) {
@@ -2131,8 +2131,8 @@ sap.ui.define([
 	 *   <li> the binding's root binding is suspended,
 	 *   <li> a change of this context has already been sent to the server and there is no response
 	 *     yet,
-	 *   <li> this context is a transient row context, but not inactive and therefore should rather
-	 *     be reset via {@link #delete}.
+	 *   <li> this context is a transient row context but not inactive and therefore must be reset
+	 *     via {@link #delete}.
 	 *   <li> this context is a
 	 *     {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context}.
 	 *   <li> this context is a

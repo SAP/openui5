@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/unified/ColorPicker",
+	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/ui/unified/ColorPickerPopover",
 	"sap/m/App",
 	"sap/m/Page",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	Label,
 	ColorPicker,
+	ColorPickerDisplayMode,
 	ColorPickerPopover,
 	App,
 	Page,
@@ -25,9 +27,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
-
-	// shortcut for sap.ui.unified.ColorPickerDisplayMode
-	var ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode;
 
 	// shortcut for sap.ui.unified.ColorPickerMode
 	var ColorPickerMode = unifiedLibrary.ColorPickerMode;

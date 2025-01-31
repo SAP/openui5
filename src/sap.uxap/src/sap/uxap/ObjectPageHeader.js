@@ -4,6 +4,8 @@
 
 // Provides control sap.uxap.ObjectPageHeader.
 sap.ui.define([
+	"sap/m/AvatarColor",
+	"sap/m/AvatarShape",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
@@ -22,6 +24,8 @@ sap.ui.define([
 	"sap/m/library",
 	"./ObjectPageHeaderRenderer"
 ], function(
+	ObjectPageHeaderPictureBackgroundColor,
+	ObjectPageHeaderPictureShape,
 	Element,
 	Library,
 	jQuery,
@@ -50,12 +54,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
-
-	// shortcut for sap.m.AvatarShape
-	var ObjectPageHeaderPictureShape = mobileLibrary.AvatarShape;
-
-	// shortcut for sap.m.AvatarColor
-	var ObjectPageHeaderPictureBackgroundColor = mobileLibrary.AvatarColor;
 
 	function isFunction(oObject) {
 		return typeof oObject === "function";

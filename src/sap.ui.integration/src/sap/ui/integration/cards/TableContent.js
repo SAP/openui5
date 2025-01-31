@@ -5,6 +5,9 @@
 sap.ui.define([
 	"./BaseListContent",
 	"./TableContentRenderer",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/AvatarSize",
 	"sap/ui/integration/library",
 	"sap/f/cards/loading/TablePlaceholder",
 	"sap/m/Table",
@@ -22,10 +25,12 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/base/Log",
 	"sap/ui/integration/util/SorterHelper"
-
-], function (
+], function(
 	BaseListContent,
 	TableContentRenderer,
+	AvatarColor,
+	AvatarImageFitType,
+	AvatarSize,
 	library,
 	TablePlaceholder,
 	ResponsiveTable,
@@ -45,15 +50,6 @@ sap.ui.define([
 	SorterHelper
 ) {
 	"use strict";
-
-	// shortcut for sap.f.AvatarSize
-	var AvatarSize = mobileLibrary.AvatarSize;
-
-	// shortcut for sap.m.AvatarColor
-	var AvatarColor = mobileLibrary.AvatarColor;
-
-	// shortcut for sap.m.AvatarImageFitType
-	var AvatarImageFitType = mobileLibrary.AvatarImageFitType;
 
 	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;

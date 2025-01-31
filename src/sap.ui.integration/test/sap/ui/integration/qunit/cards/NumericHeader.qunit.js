@@ -1,11 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/AvatarImageFitType",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"sap/m/library"
 ], (
+	AvatarImageFitType,
 	Card,
 	nextUIUpdate,
 	nextCardReadyEvent,
@@ -13,7 +15,6 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const AvatarImageFitType = mLibrary.AvatarImageFitType;
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const WrappingType = mLibrary.WrappingType;
 

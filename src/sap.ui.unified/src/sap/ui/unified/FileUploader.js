@@ -7,7 +7,6 @@
 // Provides control sap.ui.unified.FileUploader.
 sap.ui.define([
 	'sap/ui/core/Control',
-	'./library',
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	'sap/ui/core/LabelEnablement',
@@ -23,11 +22,11 @@ sap.ui.define([
 	'sap/base/security/encodeXML',
 	"sap/ui/thirdparty/jquery",
 	"./FileUploaderHelper",
+	"sap/ui/unified/FileUploaderHttpRequestMethod",
 	// jQuery Plugin "addAriaDescribedBy"
 	'sap/ui/dom/jquery/Aria'
 ], function(
 	Control,
-	library,
 	ControlBehavior,
 	Element,
 	LabelEnablement,
@@ -42,11 +41,11 @@ sap.ui.define([
 	Log,
 	encodeXML,
 	jQuery,
-	FileUploaderHelper
+	FileUploaderHelper,
+	HttpRequestMethod
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
-	var HttpRequestMethod = library.FileUploaderHttpRequestMethod;
 
 
 

@@ -4,13 +4,19 @@
 
 sap.ui.define([
 	"./library",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize",
 	"sap/m/GenericTile",
 	"sap/m/Avatar",
 	"sap/m/ToDoCardRenderer",
 	"sap/m/GenericTileRenderer",
 	"sap/ui/core/library"
-], function (
+], function(
 	library,
+	AvatarColor,
+	AvatarShape,
+	AvatarSize,
 	GenericTile,
 	Avatar,
 	ToDoCardRenderer,
@@ -23,9 +29,6 @@ sap.ui.define([
 		GenericTileMode = library.GenericTileMode,
 		LoadState = library.LoadState,
 		Priority = library.Priority,
-		AvatarSize = library.AvatarSize,
-		AvatarShape = library.AvatarShape,
-		AvatarColor = library.AvatarColor,
 		ValueState = coreLibrary.ValueState;
 
 	/**

@@ -5,6 +5,8 @@
 sap.ui.define([
 	'./library',
 	'./NotificationListBase',
+	"sap/m/AvatarColor",
+	"sap/m/AvatarSize",
 	'sap/ui/core/InvisibleText',
 	"sap/ui/core/Lib",
 	'sap/ui/core/library',
@@ -16,6 +18,8 @@ sap.ui.define([
 function(
 	library,
 	NotificationListBase,
+	AvatarColor,
+	AvatarSize,
 	InvisibleText,
 	Library,
 	coreLibrary,
@@ -23,7 +27,7 @@ function(
 	Avatar,
 	KeyCodes,
 	NotificationListItemRenderer
-	) {
+) {
 	'use strict';
 
 	var RESOURCE_BUNDLE = Library.getResourceBundleFor('sap.m'),
@@ -33,12 +37,6 @@ function(
 		UNREAD_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_UNREAD');
 
 	var maxTruncationHeight = 44;
-
-	// shortcut for sap.m.AvatarSize
-	var AvatarSize = library.AvatarSize;
-
-	// shortcut for sap.m.AvatarColor
-	var AvatarColor = library.AvatarColor;
 
 	// shortcut for sap.m.LinkAccessibleRole
 	var LinkAccessibleRole = library.LinkAccessibleRole;

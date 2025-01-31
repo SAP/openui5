@@ -2,16 +2,14 @@
 sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/library",
 	"./testdata/TestPreprocessor",
 	"sap/base/Log"
-], function(deepExtend, View, XMLView, XMLPreprocessor, JSONModel, coreLibrary, TestPreprocessor, Log) {
+], function(deepExtend, View, ViewType, XMLView, XMLPreprocessor, JSONModel, TestPreprocessor, Log) {
 	"use strict";
-
-	var ViewType = coreLibrary.mvc.ViewType;
 
 	QUnit.module("sap.ui.core.mvc.View");
 

@@ -14,12 +14,13 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(MessageBox, Title, VBox, library, UIComponent, View, ODataModel) {
+], function(MessageBox, Title, VBox, library, UIComponent, View, ViewType, ODataModel) {
 	"use strict";
 
-	var TitleLevel = library.TitleLevel, // shortcut for sap.ui.core.TitleLevel
-		ViewType = library.mvc.ViewType; // shortcut for sap.ui.core.mvc.ViewType
+	var // shortcut for sap.ui.core.TitleLevel
+	TitleLevel = library.TitleLevel; // shortcut for sap.ui.core.mvc.ViewType
 
 	return UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component", {
 		metadata : {

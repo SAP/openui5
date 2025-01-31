@@ -3,12 +3,12 @@
 */
 
 sap.ui.define([
+	"sap/m/AvatarImageFitType",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"./ListContentItemRenderer",
 	"./ActionsStrip",
 	"sap/ui/integration/controls/ObjectStatus",
-	"sap/m/library",
 	"sap/m/Avatar",
 	"sap/m/AvatarShape",
 	"sap/m/AvatarSize",
@@ -16,12 +16,12 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/integration/util/BindingResolver"
 ], function (
+	AvatarImageFitType,
 	Library,
 	library,
 	ListContentItemRenderer,
 	ActionsStrip,
 	ObjectStatus,
-	mLibrary,
 	Avatar,
 	AvatarShape,
 	AvatarSize,
@@ -33,7 +33,6 @@ sap.ui.define([
 
 	var AttributesLayoutType = library.AttributesLayoutType;
 	var ValueState = coreLibrary.ValueState;
-	var AvatarImageFitType = mLibrary.AvatarImageFitType;
 
 	/**
 	 * Constructor for a new ListContentItem.

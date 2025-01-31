@@ -33,8 +33,7 @@
 						<Link
 								class="sapUiLargeMarginEnd sapUiTinyMarginBottom sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_PRIVACY}"
-								href="https://www.sap.com/corporate/en/legal/privacy.html"
-								target="_blank"/>
+								press="navToPrivacyStatement"/>
 						<Link
 								class="sapUiTinyMarginBottom sapUiLargeMarginEnd sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_TERMS}"

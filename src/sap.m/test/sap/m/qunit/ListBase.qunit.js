@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/m/GrowingEnablement",
 	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
 	"sap/m/Input",
 	"sap/m/InputListItem",
 	"sap/m/Label",
@@ -44,13 +45,51 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
-			App, Button, Column, ColumnListItem, CustomListItem, GroupHeaderListItem, GrowingEnablement,
-			IllustratedMessage, Input, InputListItem, Label, library, List, ListBase, Menu, MenuItem,
-			MessageToast, Page, ScrollContainer, StandardListItem, Table, Text, Title,
-			Toolbar, ToolbarSpacer, VBox, DataStateIndicator, Device, Element, InvisibleMessage,
-			Library, coreLibrary, Theming, KeyCodes, VerticalLayout, Filter, FilterOperator,
-			Sorter, JSONModel, qutils, createAndAppendDiv, nextUIUpdate, jQuery
-		) {
+	App,
+	Button,
+	Column,
+	ColumnListItem,
+	CustomListItem,
+	GroupHeaderListItem,
+	GrowingEnablement,
+	IllustratedMessage,
+	IllustratedMessageType,
+	Input,
+	InputListItem,
+	Label,
+	library,
+	List,
+	ListBase,
+	Menu,
+	MenuItem,
+	MessageToast,
+	Page,
+	ScrollContainer,
+	StandardListItem,
+	Table,
+	Text,
+	Title,
+	Toolbar,
+	ToolbarSpacer,
+	VBox,
+	DataStateIndicator,
+	Device,
+	Element,
+	InvisibleMessage,
+	Library,
+	coreLibrary,
+	Theming,
+	KeyCodes,
+	VerticalLayout,
+	Filter,
+	FilterOperator,
+	Sorter,
+	JSONModel,
+	qutils,
+	createAndAppendDiv,
+	nextUIUpdate,
+	jQuery
+) {
 	"use strict";
 	jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -3986,7 +4025,7 @@ sap.ui.define([
 
 	QUnit.test("No Data Illustrated Message", async function(assert) {
 		const oMessage = new IllustratedMessage("nodataIllustratedMessage", {
-			illustrationType: library.IllustratedMessageType.NoSearchResults,
+			illustrationType: IllustratedMessageType.NoSearchResults,
 			title: "Custom Title",
 			description: "This is a custom description."
 		});

@@ -3,11 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"./library",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/core/EventBus",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/StaticArea"
-], function(Log, mLibrary, EventBus, jQuery, StaticArea) {
+], function(Log, IllustratedMessageType, EventBus, jQuery, StaticArea) {
 	"use strict";
 
 	/**
@@ -17,7 +17,7 @@ sap.ui.define([
 		SAP_ILLUSTRATION_PATTERNS_NAME = '-Patterns',
 		SAP_ILLUSTRATION_SET_NAME = 'sapIllus',
 		SAP_ILLUSTRATION_SET_PATH = sap.ui.require.toUrl("sap/m/themes/base/illustrations/"),
-		SAP_ILLUSTRATION_SET_SYMBOLS = Object.keys(mLibrary.IllustratedMessageType);
+		SAP_ILLUSTRATION_SET_SYMBOLS = Object.keys(IllustratedMessageType);
 
 	/*
 	 * A map of registered sets

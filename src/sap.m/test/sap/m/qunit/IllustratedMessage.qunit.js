@@ -1,6 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/m/library",
+	"sap/m/IllustratedMessageSize",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
@@ -11,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dom/getScrollbarSize"
 ],
 function(
-	library,
+	IllustratedMessageSize,
+	IllustratedMessageType,
 	Library,
 	nextUIUpdate,
 	jQuery,
@@ -22,12 +24,6 @@ function(
 	getScrollbarSize
 ) {
 	"use strict";
-
-	// shortcut for sap.m.IllustratedMessageSize
-	var IllustratedMessageSize = library.IllustratedMessageSize;
-
-	// shortcut for sap.m.IllustratedMessageType
-	var IllustratedMessageType = library.IllustratedMessageType;
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -959,6 +955,4 @@ function(
 		// Assert
 		assert.equal($illustration.attr("aria-describedby"), 'illustration_label3');
 	});
-
-
 });

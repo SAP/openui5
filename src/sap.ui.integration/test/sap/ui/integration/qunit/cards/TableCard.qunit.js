@@ -1,13 +1,15 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/m/library",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarSize",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
-], function (
-	mLibrary,
+], function(
+	AvatarColor,
+	AvatarSize,
 	Card,
 	QUnitUtils,
 	nextUIUpdate,
@@ -16,9 +18,6 @@ sap.ui.define([
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
-
-	var AvatarSize = mLibrary.AvatarSize;
-	var AvatarColor = mLibrary.AvatarColor;
 
 	var oManifest_TableCard = {
 		"sap.app": {
@@ -1204,5 +1203,4 @@ sap.ui.define([
 		assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
 		assert.strictEqual(aItems[0].getTitle(), "Cheap", "The group title is correct");
 	});
-
 });

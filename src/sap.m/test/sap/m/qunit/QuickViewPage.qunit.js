@@ -1,31 +1,28 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/m/AvatarShape",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
 	"sap/m/Avatar",
-	"sap/m/library",
 	"sap/m/Page",
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
-	"sap/m/QuickViewGroupElement",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/m/QuickViewGroupElement"
 ], function(
+	AvatarShape,
 	JSONModel,
 	App,
 	Avatar,
-	library,
 	Page,
 	QuickViewPage,
 	QuickViewGroup,
-	QuickViewGroupElement,
-	nextUIUpdate
+	nextUIUpdate,
+	QuickViewGroupElement
 ) {
 	"use strict";
 
 	var AVATAR_INDEX = 0;
-
-	// shortcut for sap.m.AvatarShape
-	var AvatarShape = library.AvatarShape;
 
 	//create JSON model instance
 	var oModel = new JSONModel();

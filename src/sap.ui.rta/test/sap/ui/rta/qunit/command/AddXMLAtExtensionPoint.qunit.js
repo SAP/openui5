@@ -32,7 +32,7 @@ sap.ui.define([
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			var oXmlString =
-				'<mvc:View id="testapp---view" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<HBox id="hbox">' +
 						"<items>" +
 							'<core:ExtensionPoint name="ExtensionPoint1" />' +

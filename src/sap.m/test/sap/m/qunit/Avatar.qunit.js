@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/m/AvatarColor",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/Device",
@@ -9,13 +10,12 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/ImageCustomData",
 	"sap/m/LightBox",
-	"sap/m/library",
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/InvisibleText",
-	"sap/m/AvatarColor"
+	"sap/ui/core/InvisibleText"
 ], function(
+	AvatarColor,
 	Library,
 	coreLibrary,
 	Device,
@@ -25,12 +25,10 @@ sap.ui.define([
 	Avatar,
 	ImageCustomData,
 	LightBox,
-	library,
 	Log,
 	extend,
 	nextUIUpdate,
-	InvisibleText,
-	AvatarColor
+	InvisibleText
 ) {
 	"use strict";
 
@@ -42,8 +40,6 @@ sap.ui.define([
 		sPreAvatarType = "Avatar's type is ",
 		sDefaultIconRendered = "Avatar is a default icon",
 		sPreAvatarFitType = "Avatar's image fit type is ",
-		// shortcut for sap.m.AvatarColor
-		AvatarColor = library.AvatarColor,
 		ValueState = coreLibrary.ValueState;
 
 	function createAvatar(oProps, sId) {

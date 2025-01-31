@@ -77,6 +77,11 @@ sap.ui.define([
 				"sap.ui.unified.internal.CustomYearPicker": NOT_A_MODULE
 			}
 		},
+		"sap.ui.layout": {
+			elements: {
+				"sap.ui.layout.form.ResponsiveGridLayoutPanel": NOT_A_MODULE
+			}
+		},
 
 		/*
 		 * sapui5.runtime

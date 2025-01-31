@@ -3,15 +3,13 @@ sap.ui.define([
 	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/core/Element",
-	"sap/ui/core/library",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(future, Log, Element, library, View, JSONModel, Button, nextUIUpdate) {
+], function(future, Log, Element, View, ViewType, JSONModel, Button, nextUIUpdate) {
 	"use strict";
-
-	var ViewType = library.mvc.ViewType;
 
 	QUnit.module("Custom Data", {
 		beforeEach: function() {

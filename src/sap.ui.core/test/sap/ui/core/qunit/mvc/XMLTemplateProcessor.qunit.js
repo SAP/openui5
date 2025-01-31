@@ -1,17 +1,14 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/library",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/util/XMLHelper",
 	"sap/base/future",
 	"sap/ui/base/DesignTime"
-], function(coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, future, DesignTime) {
+], function(XMLTemplateProcessor, View, ViewType, XMLView, XMLHelper, future, DesignTime) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
 
 
 	const sView =

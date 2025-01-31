@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/m/App",
+	"sap/m/AvatarColor",
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/library",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/m/Text"
 ], function(
 	App,
+	AvatarColor,
 	Button,
 	Page,
 	mLibrary,
@@ -32,9 +34,8 @@ sap.ui.define([
 	"use strict";
 
 	//shortcuts
-	const AvatarColor = mLibrary.AvatarColor,
-		OverflowToolbarPriority = mLibrary.OverflowToolbarPriority,
-		Priority = coreLibrary.Priority;
+	const OverflowToolbarPriority = mLibrary.OverflowToolbarPriority,
+		  Priority = coreLibrary.Priority;
 
 	var listItem = new NotificationListItem('firstNotification', {
 		title: 'Notification List Title1',

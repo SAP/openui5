@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
@@ -37,7 +38,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/TextArea",
 	"sap/ui/core/Control"
-], function(Localization, Element, Library, qutils, nextUIUpdate, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, GroupHeaderListItem, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea, Control) {
+], function(Localization, IllustratedMessageType, Element, Library, qutils, nextUIUpdate, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, GroupHeaderListItem, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea, Control) {
 	"use strict";
 
 	const TestControl = Control.extend("sap.m.test.TestControl", {
@@ -107,7 +108,7 @@ sap.ui.define([
 
 		if (bNoDataIllustrated) {
 			sut.setNoData(new IllustratedMessage("noDataIllustratedMessage", {
-				illustrationType: library.IllustratedMessageType.NoSearchResults,
+				illustrationType: IllustratedMessageType.NoSearchResults,
 				title: "Custom Title",
 				description: "This is a custom description."
 			}));

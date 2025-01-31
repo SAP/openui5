@@ -1,14 +1,14 @@
 sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
+	"sap/ui/unified/ColorPickerDisplayMode",
 	'sap/ui/unified/ColorPickerPopover',
 	'sap/ui/unified/library',
 	'sap/m/MessageToast'
-], function (coreLibrary, Controller, ColorPickerPopover, unifiedLibrary, MessageToast) {
+], function(coreLibrary, Controller, ColorPickerDisplayMode, ColorPickerPopover, unifiedLibrary, MessageToast) {
 	"use strict";
 
 	var ColorPickerMode = unifiedLibrary.ColorPickerMode,
-		ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode,
 		CSSColor = coreLibrary.CSSColor,
 		ValueState = coreLibrary.ValueState;
 

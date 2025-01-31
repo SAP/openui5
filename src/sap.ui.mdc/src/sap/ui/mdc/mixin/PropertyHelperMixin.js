@@ -2,7 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/base/Log"], (Deferred, loadModules, Log) => {
+sap.ui.define([
+	"sap/base/util/Deferred",
+	"sap/ui/mdc/util/loadModules",
+	"sap/ui/mdc/util/PropertyHelperUtil"
+], (
+	Deferred,
+	loadModules,
+	PropertyHelperUtil
+) => {
 	"use strict";
 
 	/**
@@ -270,19 +278,31 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 			oDelegate = oControlDelegate;
 			return bFinal ? _getDelegateProperties(this) : aProperties;
 		}).then((aProperties) => {
-			if (this.bIsDestroyed) {
+			if (this.isDestroyed()) {
 				return [];
 			}
 			return fetchPropertyHelperClass(this, oDelegate).then((PropertyHelper) => {
 				return [aProperties, PropertyHelper];
 			});
 		}).then((aResult) => {
-			if (this.bIsDestroyed) {
+			return PropertyHelperUtil.checkValidationExceptions().then((bExceptionFound) => {
+				return aResult.concat(bExceptionFound);
+			});
+		}).then((aResult) => {
+			if (this.isDestroyed()) {
 				return undefined;
 			}
+			if (Array.isArray(aResult) === false) {
+				return undefined;
+			}
+			const [aProperties, PropertyHelper, bExceptionFound] = aResult;
 
-			const [aProperties, PropertyHelper] = aResult;
-			this._oPropertyHelper = new PropertyHelper(aProperties, this);
+			if (bExceptionFound) {
+				throw new Error(`PropertyInfo validation is disabled for control ${this.getId()}.`);
+			}
+
+			this._oPropertyHelper = new PropertyHelper(aProperties, this, undefined/*additional attributes*/);
+
 			this._bPropertyHelperInitializing = false;
 			if (bFinal) {
 				this._bPropertyHelperFinal = true;
@@ -307,6 +327,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 
 		return this._oPropertyHelper;
 	}
+
 
 	// use delegate for final properties
 	function _getDelegateProperties(oControl) {

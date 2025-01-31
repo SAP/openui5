@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/Log",
 	"sap/ui/core/Lib",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/mdc/util/PropertyHelperUtil"
 ], (
 	BaseObject,
 	DataType,
@@ -17,7 +18,8 @@ sap.ui.define([
 	isPlainObject,
 	Log,
 	Lib,
-	deepEqual
+	deepEqual,
+	PropertyHelperUtil
 ) => {
 	"use strict";
 
@@ -286,22 +288,8 @@ sap.ui.define([
 	}
 
 	function reportInvalidProperty(sMessage, oProperty) {
-		const mLoadedLibraries = Lib.all();
-
-		// Enable strict validation if
-		// 1. it is not disabled explicitly
-		// 2. we're not in any library that is temporarily allowed to bypass (fe & df)
-		// 3. the explicit enablement via url param is activated --> overrules the first to conditions
-		if (
-			(
-				!(window['sap-ui-mdc-config'] && window['sap-ui-mdc-config'].disableStrictPropertyInfoValidation ||
-					new URLSearchParams(window.location.search).get("sap-ui-xx-disableStrictPropertyValidation") == "true") &&
-				!("sap.fe.core" in mLoadedLibraries ||
-					"sap.fe.macros" in mLoadedLibraries ||
-					"sap.sac.df" in mLoadedLibraries)
-			) ||
-			(new URLSearchParams(window.location.search).get("sap-ui-xx-enableStrictPropertyValidation") == "true")
-		) {
+		// implementation for this flag is within PropertyHelperMixin#_checkValidationExceptions
+		if (!PropertyHelperUtil.bValidationException) {
 			throwInvalidPropertyError(sMessage, oProperty);
 		}
 
@@ -608,7 +596,7 @@ sap.ui.define([
 			mPrivate.oParent = oParent || null;
 			_private.set(this, mPrivate);
 
-			processProperties(this, aProperties);
+			this.setProperties(aProperties);
 		}
 	});
 

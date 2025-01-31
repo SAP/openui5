@@ -4,6 +4,7 @@
 
 // Provides control sap.m.VariantManagement.
 sap.ui.define([
+	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
@@ -47,6 +48,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
+	IllustratedMessageType,
 	Element,
 	Library,
 	JSONModel,
@@ -1140,7 +1142,7 @@ sap.ui.define([
 				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_DESCR"),
 				enableVerticalResponsiveness: true,
 				illustrationSize: "Auto",
-				illustrationType: mobileLibrary.IllustratedMessageType.SimpleEmptyList
+				illustrationType: IllustratedMessageType.SimpleEmptyList
 			});
 		}
 		if (!this._oNoDataFoundIllustratedMessage || this._oNoDataFoundIllustratedMessage.bIsDestroyed) {
@@ -1149,7 +1151,7 @@ sap.ui.define([
 				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND_DESCR"),
 				enableVerticalResponsiveness: true,
 				illustrationSize: "Auto",
-				illustrationType: mobileLibrary.IllustratedMessageType.NoSearchResults
+				illustrationType: IllustratedMessageType.NoSearchResults
 			});
 			this._oNoDataFoundIllustratedMessage.addStyleClass("sapMVarMngmtIllustratedMessage");
 		}

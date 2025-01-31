@@ -1,11 +1,15 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"sap/m/library"
 ], (
+	AvatarColor,
+	AvatarImageFitType,
 	Card,
 	nextUIUpdate,
 	nextCardReadyEvent,
@@ -15,8 +19,6 @@ sap.ui.define([
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const WrappingType = mLibrary.WrappingType;
-	const AvatarColor = mLibrary.AvatarColor;
-	const AvatarImageFitType = mLibrary.AvatarImageFitType;
 
 	QUnit.module("Default Header", {
 		beforeEach: async function () {

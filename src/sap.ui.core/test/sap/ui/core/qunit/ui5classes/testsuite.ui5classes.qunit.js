@@ -38,7 +38,10 @@ sap.ui.define(function() {
 			},
 
 			ManagedObject: {
-				title: "sap.ui.base.ManagedObject"
+				title: "sap.ui.base.ManagedObject",
+				ui5 : {
+					language : "en-US"
+				}
 			},
 
 			ManagedObject_BindingParser: {

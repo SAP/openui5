@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/f/cards/NumericSideIndicator",
-	"sap/m/library",
+	"sap/m/AvatarColor",
 	"sap/m/Text",
 	"sap/ui/core/Element",
 	"sap/ui/integration/util/BindingHelper",
@@ -19,7 +19,7 @@ sap.ui.define([
 	FNumericHeader,
 	FNumericHeaderRenderer,
 	NumericSideIndicator,
-	mLibrary,
+	AvatarColor,
 	Text,
 	Element,
 	BindingHelper,
@@ -29,9 +29,6 @@ sap.ui.define([
 	Microchart
 ) {
 	"use strict";
-
-	// shortcut for sap.m.AvatarColor
-	var AvatarColor = mLibrary.AvatarColor;
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.

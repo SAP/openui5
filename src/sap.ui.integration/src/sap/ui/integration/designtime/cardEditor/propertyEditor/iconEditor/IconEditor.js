@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"sap/ui/core/Fragment",
+	"sap/ui/unified/ColorPickerDisplayMode",
 	'sap/ui/unified/ColorPickerPopover',
 	'sap/ui/unified/library',
 	"sap/ui/model/json/JSONModel",
@@ -19,6 +20,7 @@ sap.ui.define([
 	BasePropertyEditor,
 	isValidBindingString,
 	Fragment,
+	ColorPickerDisplayMode,
 	ColorPickerPopover,
 	UnifiedLibrary,
 	JSONModel,
@@ -110,7 +112,6 @@ sap.ui.define([
 
 
 	var ColorPickerMode = UnifiedLibrary.ColorPickerMode;
-	var ColorPickerDisplayMode = UnifiedLibrary.ColorPickerDisplayMode;
 
 	/**
 	 * Initialization hook

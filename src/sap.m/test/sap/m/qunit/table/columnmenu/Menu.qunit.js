@@ -3,6 +3,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ComboBox",
 	"sap/m/Dialog",
+	"sap/m/IllustratedMessageSize",
+	"sap/m/IllustratedMessageType",
 	"sap/m/library",
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/table/columnmenu/Item",
@@ -20,6 +22,8 @@ sap.ui.define([
 	Button,
 	ComboBox,
 	Dialog,
+	IllustratedMessageSize,
+	IllustratedMessageType,
 	library,
 	ActionItem,
 	Item,
@@ -601,8 +605,8 @@ sap.ui.define([
 		assert.ok(oIllustratedMessage, "Illustrated message is initialized");
 		assert.equal(oIllustratedMessage.getTitle(), this.oColumnMenu._getResourceText("table.COLUMNMENU_EMPTY"), "Illustrated message has a title");
 		assert.equal(oIllustratedMessage.getDescription(), "", "Illustrated message does not have a description");
-		assert.equal(oIllustratedMessage.getIllustrationType(), library.IllustratedMessageType.NoColumnsSet, "Illustrated message has the correct illustration type");
-		assert.equal(oIllustratedMessage.getIllustrationSize(), library.IllustratedMessageSize.Dot, "Illustrated message has the correct illustration size");
+		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoColumnsSet, "Illustrated message has the correct illustration type");
+		assert.equal(oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Dot, "Illustrated message has the correct illustration size");
 		assert.ok(oIllustratedMessage.getDomRef(), "Illustrated message is rendered");
 		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();

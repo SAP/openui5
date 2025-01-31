@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/type/String",
+	"sap/ui/model/type/Unit",
 	"sap/ui/core/Control",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/future"
-], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath, future) {
+], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, UnitType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath, future) {
 	"use strict";
 	var mObjects = {};
 
@@ -202,6 +203,8 @@ sap.ui.define([
 	};
 
 	var oModel = new JSONModel({
+		number: 123,
+		unit: "KG",
 		value: "testvalue",
 		value2: "testvalue2",
 		objectValue: {
@@ -693,6 +696,22 @@ sap.ui.define([
 		oModel.setProperty("/value", "testvalue");
 	});
 
+	QUnit.test("Bind property TwoWay with type as class", function(assert) {
+		this.obj.bindProperty("value", {
+			path: "/value",
+			mode: "TwoWay",
+			type: StringType
+		});
+		assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+		assert.equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+		oModel.setProperty("/value", "newvalue");
+		assert.equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+		this.obj.setProperty("value", "othervalue");
+		assert.equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+		assert.equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+		oModel.setProperty("/value", "testvalue");
+	});
+
 	QUnit.test("Bind property TwoWay with unkown type as string", function(assert) {
 		assert.throws(function() {
 			this.obj.bindProperty("value", {
@@ -721,6 +740,28 @@ sap.ui.define([
 		assert.equal(oModel.getProperty("/value"), "newvalue", "Control property change must not update model");
 		assert.equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
 		oModel.setProperty("/value", "testvalue");
+	});
+
+	QUnit.test("Bind property Composite with type set as class", function(assert) {
+		this.obj.bindProperty("value", {
+			parts: [
+				{
+					path: "/number"
+				},
+				{
+					path: "/unit"
+				}
+			],
+			mode: "TwoWay",
+			type: UnitType
+		});
+		assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+		assert.equal(this.obj.getProperty("value"), "123.000 KG", "Property must return model value");
+		oModel.setProperty("/number", 234);
+		assert.equal(this.obj.getProperty("value"), "234.000 KG", "New model value must be reflected");
+		this.obj.setProperty("value", "345 KG");
+		assert.equal(oModel.getProperty("/number"), 345, "Control property change must update model");
+		oModel.setProperty("/number", 123);
 	});
 
 	QUnit.test("Bind property Composite with mixed binding modes", function(assert) {
