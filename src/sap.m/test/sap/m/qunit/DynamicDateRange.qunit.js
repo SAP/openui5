@@ -657,6 +657,36 @@ sap.ui.define([
 		oOptionLast.destroy();
 	});
 
+	QUnit.test("last x - 'Units of Time' not shown if there is only one option", function(assert) {
+		const oDDR = new DynamicDateRange();
+		oDDR.setStandardOptions(["LASTDAYS"]);
+
+		var oOptionLastDays = new StandardDynamicDateOption({ key: "LASTDAYS" }),
+			oOptionLastMonths = new StandardDynamicDateOption({ key: "LASTMONTHS" }),
+			aInputControls,
+			oSelectOption;
+
+		aInputControls = oOptionLastDays.createValueHelpUI(oDDR, oDDR._updateInternalControls.bind(oDDR));
+		oDDR.aInputControls = aInputControls;
+		oOptionLastDays.alignValueHelpUI(oDDR);
+
+		oSelectOption = aInputControls[3];
+		assert.notOk(oSelectOption.getVisible(), "Select option is not visible when there is only a 'Last X' option");
+
+		oDDR.addStandardOption("LASTMONTHS");
+
+		aInputControls = oOptionLastMonths.createValueHelpUI(oDDR, oDDR._updateInternalControls.bind(oDDR));
+		oDDR.aInputControls = aInputControls;
+		oOptionLastMonths.alignValueHelpUI(oDDR);
+
+		oSelectOption = aInputControls[3];
+		assert.ok(oSelectOption.getVisible(), "Select option is now visible when there are two 'Last X' options");
+
+		oOptionLastDays.destroy();
+		oOptionLastMonths.destroy();
+		oDDR.destroy();
+	});
+
 	QUnit.test("today -x/+y creating and validating the option UI", function(assert) {
 		this.ddr.open();
 		this.ddr.addStandardOption("TODAYFROMTO");
