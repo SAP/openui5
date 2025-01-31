@@ -2444,6 +2444,14 @@ sap.ui.define([
 				Math.min(mRowCounts.fixedTop + mRowCounts.scrollable, Math.max(this._getTotalRowCount() - mRowCounts.fixedBottom, 0)));
 		}
 
+		if (typeof aContexts.bExpectMore === 'boolean') {
+
+			// Store the bExpectMore flag in the internal state of the table to prevent
+			// multiple busyStateChange events.
+			_private(this).bIsWaitingForData = aContexts.bExpectMore;
+			updateAutomaticBusyIndicator(this);
+		}
+
 		return aContexts;
 	};
 
@@ -2451,6 +2459,8 @@ sap.ui.define([
 		for (let i = 0; i < aSource.length; i++) {
 			aTarget[iStartIndex + i] = aSource[i];
 		}
+
+		aTarget.bExpectMore ||= aSource.bExpectMore;
 	}
 
 	/**
@@ -4002,11 +4012,10 @@ sap.ui.define([
 		updateAutomaticBusyIndicator(this);
 	};
 
-	/**
-	 * @private
-	 */
-	Table.prototype._hasPendingRequests = function() {
-		return _private(this).iPendingRequests > 0;
+	Table.prototype._isWaitingForData = function() {
+		const oState = _private(this);
+
+		return oState.iPendingRequests > 0 && oState.bIsWaitingForData !== false;
 	};
 
 	function updateAutomaticBusyIndicator(oTable) {
@@ -4016,7 +4025,7 @@ sap.ui.define([
 
 		clearHideBusyIndicatorTimeout(oTable);
 
-		if (oTable._hasPendingRequests()) {
+		if (oTable._isWaitingForData()) {
 			oTable.setBusy(true);
 		} else {
 			// This timer should avoid flickering of the busy indicator and unnecessary updates of NoData in case a request will be sent

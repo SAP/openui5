@@ -612,7 +612,7 @@ sap.ui.define([
 			const oTable = this.getTable();
 
 			assert.deepEqual({
-				pendingRequests: oTable._hasPendingRequests(),
+				pendingRequests: oTable._isWaitingForData(),
 				busy: oTable.getBusy()
 			}, mExpectation, sMessage);
 		},
