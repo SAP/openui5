@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Minimum Target Size</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+	<script src="../../../../../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_horizon"></script>
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Minimum Target Size</h1>
+			<p>In accordance with the WCAG 2.2 Target Size Criterion 2.5.8, application developers have to ensure that targets meet a minimum size or have sufficient spacing around them. This helps avoid cases where users try to activate an interactive element but instead accidentally activate another element.</p>
+			<ul>
+				<li>The size of the target for pointer inputs is at least 24 by 24 CSS pixels.</li>
+				<li>Position any undersized targets (those less than 24 by 24 CSS pixels) carefully. Ensure that if you center a 24 CSS pixel diameter circle on the bounding box of each target, the circles don't intersect with another target or with the circle of another undersized target.</li>
+			</ul>
+			<h2 id="links">Controls Displayed as Links</h2>
+			<p>The following list of controls can display links in different scenarios:</p>
+			<ul>
+				<li>sap.m.Link</li>
+				<li>sap.m.ObjectStatus</li>
+				<li>sap.m.ObjectNumber</li>
+				<li>sap.m.ObjectIdentifier</li>
+				<li>sap.m.ObjectMarker</li>
+				<li>sap.m.ObjectAttribute</li>
+			</ul>
+			<h3 id="inline">Inline Display</h3>
+			<p>The link is displayed as part of a sentence or its size is limited by the line-height of the surrounding text.</p>
+			<p>This is the default scenario and no further actions are necessary. For example:</p>
+			<pre class="lang-xml">
+&lt;FormattedText
+	htmlText="Lorem %%0 dolor sit amet, sed diam nonumy eirmod tempor invidunt ut labore et %%1 magna aliquyam erat, sed diam voluptua."
+&gt;
+	&lt;controls&gt;
+		&lt;Link href="https://www.sap.com/" text="home page" /&gt;
+		&lt;Link href="https://www.sap.com/" text="home page" /&gt;
+	&lt;/controls&gt;
+&lt;/FormattedText&gt;
+			</pre>
+			<a class="try-button" href="../../../index.html#/explore/inlineLink" target="_parent">See Example</a>
+			<h3 id="overlay">Display as Overlay</h3>
+			<p>The link is displayed as an overlay on top of other interactive parts of the page and needs an additional invisible active touch area.</p>
+			<p>For example, in the following snippet we've increased the active touch area of the links in the context of a <code>sap.m.List</code> by using the <code>ReactiveAreaMode</code> property:</p>
+			<pre class="lang-xml">
+&lt;List mode="SingleSelect" includeItemInSelection="true"&gt;
+	&lt;CustomListItem&gt;
+		&lt;l:VerticalLayout class="sapUiSmallMargin"&gt;
+			&lt;Text text="Notebook Basic 15" /&gt;
+				&lt;ObjectIdentifier
+				<mark>reactiveAreaMode="Overlay"</mark>
+				title="HH-1000"
+				titleActive="true"
+				titlePress="onObjectIdentifierPress"
+			/&gt;
+		&lt;/l:VerticalLayout&gt;
+	&lt;/CustomListItem&gt;
+	&lt;CustomListItem&gt;
+		&lt;l:VerticalLayout class="sapUiSmallMargin"&gt;
+			&lt;Text text="Notebook Basic 16" /&gt;
+			&lt;ObjectIdentifier
+				<mark>reactiveAreaMode="Overlay"</mark>
+				title="HH-1001"
+				titleActive="true"
+				titlePress="onObjectIdentifierPress"
+			/&gt;
+		&lt;/l:VerticalLayout&gt;
+	&lt;/CustomListItem&gt;
+	&lt;CustomListItem&gt;
+		&lt;l:VerticalLayout class="sapUiSmallMargin"&gt;
+			&lt;Text text="Notebook Basic 17" /&gt;
+			&lt;ObjectIdentifier
+				<mark>reactiveAreaMode="Overlay"</mark>
+				title="HH-1002"
+				titleActive="true"
+				titlePress="onObjectIdentifierPress"
+			&gt;
+		&lt;/l:VerticalLayout&gt;
+	&lt;/CustomListItem&gt;
+&lt;/List&gt;
+			</pre>
+			<a class="try-button" href="../../../index.html#/explore/overlayLink" target="_parent">See Example</a>
+			<h3 id="spacing">Display with Spacing</h3>
+			<p>Links with dimensions less than 24 X 24 CSS pixels should be positioned carefilly. Make sure that every interactive element has enough space around it to separate it from other interactive elements.</p>
+			<p>For example, in the following snippet we've increased the horizontal spacing between the links in the context of a <code>sap.m.OverflowToolbar</code> by providing additional left and right margins and with the help of the <code>sapUiTinyMarginBeginEnd</code> class:</p>
+			<pre class="lang-xml">
+&lt;OverflowToolbar&gt;
+	&lt;ObjectIdentifier
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		titleActive="true"
+		title="HT-2001"
+		titlePress="onObjectIdentifierPress"
+	/&gt;
+	&lt;Link
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		text="10 Portable DVD player"
+		press="onLinkPress"
+	/&gt;
+	&lt;ObjectStatus
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		active="true"
+		state="Success"
+		text="Product Shipped"
+		icon="sap-icon://sys-enter-2"
+		press="onObjectStatusPress"
+	/&gt;
+	&lt;ObjectNumber
+		<mark>class="sapUiTinyMarginBeginEnd"</mark>
+		active="true"
+		number="150"
+		state="Success"
+		unit="EUR"
+		press="onObjectNumberPress"
+	/&gt;
+&lt;/OverflowToolbar&gt;
+			</pre>
+			<a class="try-button" href="../../../index.html#/explore/linkSpacing" target="_parent">See Example</a>
+			<div id="network-graph">
+				<h2>Network Graph</h2>
+				<p>For Network Graph, to address the WCAG 2.2 Target Size Criterion 2.5.8, we recommend setting a minimum zoom level of 125%.</p>
+				<p>XML View</p>
+				<pre class="lang-xml">
+&lt;Graph id="graph"&gt;
+				</pre>
+				<p>Controller</p>
+				<pre class="lang-js">
+this.byId("graph").attachGraphReady(function() {
+	this.zoom({
+		zoomLevel: 1.25
+	});
+});
+				</pre>
+				<a id="network-graph-example" class="try-button" href="../../../index.html#/explore/networkGraph" target="_parent">See Example</a>
+			</div>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#links">Controls Displayed as Links</a></div>
+			<div><a href="#inline">Inline Display</a></div>
+			<div><a href="#overlay">Display as Overlay</a></div>
+			<div><a href="#spacing">Display with Spacing</a></div>
+			<div><a href="#network-graph" id="network-graph-link">Network Graph</a></div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<mvc:View
+		controllerName="sap.m.sample.overlayLink.Controller"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<VBox class="sapUiSmallMargin">
+					<List mode="SingleSelect" includeItemInSelection="true">
+						<CustomListItem>
+							<l:VerticalLayout class="sapUiSmallMargin">
+								<Text text="Notebook Basic 15" />
+								<ObjectIdentifier
+									reactiveAreaMode="Overlay"
+									title="HH-1000"
+									titleActive="true"
+									titlePress="onObjectIdentifierPress"
+								/>
+							</l:VerticalLayout>
+						</CustomListItem>
+						<CustomListItem>
+							<l:VerticalLayout class="sapUiSmallMargin">
+								<Text text="Notebook Basic 16" />
+								<ObjectIdentifier
+									reactiveAreaMode="Overlay"
+									title="HH-1001"
+									titleActive="true"
+									titlePress="onObjectIdentifierPress"
+								/>
+							</l:VerticalLayout>
+						</CustomListItem>
+						<CustomListItem>
+							<l:VerticalLayout class="sapUiSmallMargin">
+								<Text text="Notebook Basic 17" />
+								<ObjectIdentifier
+									reactiveAreaMode="Overlay"
+									title="HH-1002"
+									titleActive="true"
+									titlePress="onObjectIdentifierPress"
+								/>
+							</l:VerticalLayout>
+						</CustomListItem>
+					</List>
+				</VBox>
+			</Page>
+		</App>
+</mvc:View>
