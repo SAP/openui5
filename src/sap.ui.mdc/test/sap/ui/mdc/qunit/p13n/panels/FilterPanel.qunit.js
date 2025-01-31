@@ -169,4 +169,32 @@ sap.ui.define([
         const sLabelFor = sap.ui.getCore().byId(oFieldBox.getItems()[0].getLabelFor()).getIdForLabel();
         assert.equal(sLabelFor, "testAccInput", "Correct 'labelFor' reference on label control");
     });
+
+    QUnit.test("Check focus control", function(assert){
+        const aTestData = getTestData();
+        this.oFilterPanel.setP13nData(aTestData);
+
+        this.oFilterPanel.setItemFactory(function(sKey){
+            const oContainer = new VBox({
+                items: [
+                    new Input("testAccInput2", {})
+                ]
+            });
+
+            oContainer.getIdForLabel = function() {
+                return oContainer.getItems()[0].getId();
+            };
+
+            return oContainer;
+        });
+
+        const sKey = "key3";
+
+        const oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
+        const oControlForFocus = this.oFilterPanel._getControlToFocus(oFilterItem);
+        const sFocusControlName = oControlForFocus?.getMetadata().getName();
+
+        assert.equal(sFocusControlName, "sap.m.VBox", "Correct control to focus");
+        assert.equal(sFocusControlName.includes("sap.ui.mdc"), false, "Correct control to focus");
+    });
 });

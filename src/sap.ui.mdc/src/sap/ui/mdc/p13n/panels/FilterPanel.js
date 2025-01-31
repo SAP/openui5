@@ -188,6 +188,7 @@ sap.ui.define([
 			oComboBox = this._oComboBox;
 			oQueryRowGrid = oComboBox.getParent();
 			sKey = oComboBox.getSelectedKey();
+			let oFilterItem;
 
 			if (sKey) {
 				QueryPanel.prototype._selectKey.call(this, oComboBox);
@@ -200,7 +201,7 @@ sap.ui.define([
 				const oFieldBox = this._createRowContainer(sText, sKey); //Create a container with a VBox and a label with some padding inside and insert it in the grid
 				oQueryRowGrid.insertContent(oFieldBox,0);
 
-				const oFilterItem = this._createFactoryControl({name: sKey}); //Create the actual filterable control and insert it in the grid
+				oFilterItem = this._createFactoryControl({name: sKey}); //Create the actual filterable control and insert it in the grid
 				this._setLabelForOnBox(oFilterItem, oFieldBox);
 
 				oQueryRowGrid.insertContent(oFilterItem, 1);
@@ -208,14 +209,24 @@ sap.ui.define([
 			}
 
 			//FIXME: Check why this workaround is necessary
-			setTimeout(function(){
+			setTimeout(() => {
 				if (this._oListControl && !this._oListControl.bIsDestroyed) {
 					this._oListControl.setKeyboardMode(ListKeyboardMode.Edit);
 				}
-			}.bind(this), 20);
+
+				// Note: the control in mdc is wrapped in a filter group layout, hence it needs to be checked if the item is in mdc context to
+				// properly set the focus. In comp and freestyle, the item itself is the filterable control
+				const oControlForFocus = this._getControlToFocus(oFilterItem);
+				oControlForFocus.focus();
+			}, 20);
 
 			delete this._oComboBox;
 		}
+	};
+
+	FilterPanel.prototype._getControlToFocus = function(oFilterItem) {
+		const oControlForFocus = oFilterItem?.getMetadata().getName().includes("sap.ui.mdc") ? oFilterItem.getItems()?.[0] : oFilterItem;
+		return oControlForFocus;
 	};
 
 	/**
