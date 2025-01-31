@@ -648,7 +648,11 @@ sap.ui.define([
 			 */
 			sinon.assert.notCalled(mSpies.requireSync);
 		}
-	}, {
+	},
+		/**
+		 * @deprecated
+		 */
+		{
 			testDescription: "core:require in XMLView with binding ($control, $controller) contexts in formatter functions - (future = false)",
 			viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter",
 			settings: {
