@@ -478,8 +478,7 @@ function(
 		src: sIconSrc,
 		displayShape: this.getIconDisplayShape(),
 		initials: this.getIconInitials(),
-		displaySize: this.getIconSize(),
-		ariaLabelledBy: this.getSender()
+		displaySize: this.getIconSize()
 		});
 
 		var that = this;
