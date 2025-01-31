@@ -28,6 +28,9 @@ function(library, Localization, Control, coreLibrary, Text, Element, Locale, Key
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
+	// shortcut for sap.m.ReactiveAreaMode
+	var ReactiveAreaMode = library.ReactiveAreaMode;
+
 	/**
 	 * Constructor for a new <code>ObjectAttribute</code>.
 	 *
@@ -73,6 +76,20 @@ function(library, Localization, Control, coreLibrary, Text, Element, Locale, Key
 				 * <b>Note:</b> When <code>active</code> property is set to <code>true</code>, and the text direction of the <code>title</code> or the <code>text</code> does not match the text direction of the application, the <code>textDirection</code> property should be set to ensure correct display.
 				 */
 				active : {type : "boolean", group : "Misc", defaultValue : null},
+
+				/**
+				 * Defines the size of the reactive area of the link:<ul>
+				 * <li><code>ReactiveAreaMode.Inline</code> - The link is displayed as part of a sentence.</li>
+				 * <li><code>ReactiveAreaMode.Overlay</code> - The link is displayed as an overlay on top of other interactive parts of the page.</li></ul>
+				 *
+				 * <b>Note:</b>It is designed to make links easier to activate and helps meet the WCAG 2.2 Target Size requirement. It is applicable only for the SAP Horizon themes.
+				 * <b>Note:</b>The Reactive area size is sufficiently large to help users avoid accidentally selecting (clicking or tapping) on unintented UI elements.
+				 * UI elements positioned over other parts of the page may need an invisible active touch area.
+				 * This will ensure that no elements beneath are activated accidentally when the user tries to interact with the overlay element.
+				 *
+				 * @since 1.133.0
+				 */
+				reactiveAreaMode : {type : "sap.m.ReactiveAreaMode", group : "Appearance", defaultValue : ReactiveAreaMode.Inline},
 
 				/**
 				 * Determines the direction of the text.
@@ -374,7 +391,9 @@ function(library, Localization, Control, coreLibrary, Text, Element, Locale, Key
 	 * @private
 	 */
 	ObjectAttribute.prototype._isClickable = function() {
-		return (this.getActive() && this.getText() !== "") || ( this.getAggregation('customContent') && this.getAggregation('customContent').isA('sap.m.Link'));
+		return this.getAggregation('customContent')
+			? this.getAggregation('customContent').isA('sap.m.Link')
+			: this.getActive() && this.getText() !== "";
 	};
 
 	return ObjectAttribute;

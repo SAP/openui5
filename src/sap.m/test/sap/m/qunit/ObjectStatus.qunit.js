@@ -40,8 +40,11 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	// shortcut for sap.ui.core.TextDirection
+	// shortcut for sap.m.EmptyIndicatorMode
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
+
+	// shortcut for sap.m.ReactiveAreaMode
+	var ReactiveAreaMode = mobileLibrary.ReactiveAreaMode;
 
 	// shortcut for library resource bundle
 	var oRb = Library.getResourceBundleFor("sap.m");
@@ -494,6 +497,30 @@ sap.ui.define([
 		oOS.setStateAnnouncementText(null);
 		assert.strictEqual(oOS.getStateAnnouncementText(), undefined, "stateAnnouncementText is undefined");
 
+	});
+
+	QUnit.test("reactiveAreaMode", async function(assert) {
+		// Prepare
+		var oObjectStatus = new ObjectStatus({
+			text: "text",
+			active: true
+		});
+
+		oObjectStatus.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oObjectStatus.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added by default");
+
+		// Act
+		oObjectStatus.setReactiveAreaMode(ReactiveAreaMode.Overlay);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oObjectStatus.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added");
+
+		// Clean
+		oObjectStatus.destroy();
 	});
 
 	QUnit.module("Screen reader ARIA support");

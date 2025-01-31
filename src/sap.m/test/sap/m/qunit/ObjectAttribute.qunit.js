@@ -36,9 +36,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.m.EmptyIndicatorMode and sap.ui.core.TextDirection
+	// shortcut for sap.m.EmptyIndicatorMode, sap.ui.core.TextDirection and sap.m.ReactiveAreaMode
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode,
-		TextDirection = coreLibrary.TextDirection;
+		TextDirection = coreLibrary.TextDirection,
+		ReactiveAreaMode = mobileLibrary.ReactiveAreaMode;
 
 	// shortcut for library resource bundle
 	var oRb = Library.getResourceBundleFor("sap.m");
@@ -451,6 +452,23 @@ sap.ui.define([
 		assert.ok(oa4._isEmpty(), "Object attribute #4 is empty");
 		assert.ok(oa5._isEmpty(), "Object attribute #5 is empty");
 		assert.ok(oa6._isEmpty(), "Object attribute #6 is empty");
+	});
+
+	QUnit.test("ObjectAttribute.prototype._isClickable", function(assert) {
+		// prepare
+		var oObjectAttribute = new ObjectAttribute({
+			active: true,
+			text: "text",
+			customContent: [
+				new Text({
+					text: "Text"
+				})
+			]
+		});
+
+		// act
+		// assert
+		assert.notOk(oObjectAttribute._isClickable(), "ObjectAttribute is not clickable");
 	});
 
 	/******************************************************************/
@@ -871,5 +889,56 @@ sap.ui.define([
 		// Cleanup
 		oAttrActive.destroy();
 		oAttrCustomLink.destroy();
+	});
+
+	QUnit.test("reactiveAreaMode", async function(assert) {
+		// Prepare
+		var oObjectAttribute = new ObjectAttribute({
+				active: true,
+				title: "Title",
+				text: "Text"
+			}),
+			oCustomContent;
+
+		oObjectAttribute.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oObjectAttribute.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added by default");
+
+		// Act
+		oObjectAttribute.setReactiveAreaMode(ReactiveAreaMode.Overlay);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oObjectAttribute.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added");
+
+		// Act
+		oObjectAttribute.setCustomContent(new Link({text: "text"}));
+		oObjectAttribute.resetProperty("text");
+		await nextUIUpdate();
+
+		oCustomContent = oObjectAttribute.getCustomContent();
+
+		// Assert
+		assert.strictEqual(oCustomContent.getReactiveAreaMode(), ReactiveAreaMode.Inline, "Reactive area mode of the custom content has default value");
+		assert.ok(oObjectAttribute.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added");
+
+		// Act
+		oCustomContent.setReactiveAreaMode(ReactiveAreaMode.Overlay);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oCustomContent.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode of the custom content is set to Overlay");
+
+		// Act
+		oObjectAttribute.setReactiveAreaMode(ReactiveAreaMode.Inline);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oObjectAttribute.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added");
+
+		// Clean
+		oObjectAttribute.destroy();
 	});
 });
