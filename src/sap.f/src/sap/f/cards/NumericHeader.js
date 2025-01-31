@@ -5,18 +5,24 @@ sap.ui.define([
 	"./BaseHeader",
 	"./NumericIndicators",
 	"sap/base/Log",
-	"sap/m/library",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize",
 	"sap/m/Text",
 	"sap/m/ObjectStatus",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/ui/core/library",
 	"sap/m/Avatar",
 	"sap/ui/core/InvisibleText"
-], function (
+], function(
 	BaseHeader,
 	NumericIndicators,
 	Log,
-	mLibrary,
+	AvatarColor,
+	AvatarImageFitType,
+	AvatarShape,
+	AvatarSize,
 	Text,
 	ObjectStatus,
 	NumericHeaderRenderer,
@@ -27,10 +33,6 @@ sap.ui.define([
 	"use strict";
 
 	const ValueState = coreLibrary.ValueState;
-	const AvatarShape = mLibrary.AvatarShape;
-	const AvatarColor = mLibrary.AvatarColor;
-	const AvatarImageFitType = mLibrary.AvatarImageFitType;
-	const AvatarSize = mLibrary.AvatarSize;
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.

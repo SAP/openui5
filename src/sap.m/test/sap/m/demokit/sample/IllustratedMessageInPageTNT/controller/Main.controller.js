@@ -1,13 +1,12 @@
 sap.ui.define([
+	"sap/m/IllustratedMessageSize",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller",
-	"sap/m/library",
 	"sap/tnt/library"
-], function (JSONModel, Controller, library, tntLib) {
+], function (oIllustratedMessageSize, JSONModel, Controller, tntLib) {
 		"use strict";
 
-		var oIllustratedMessageSize = library.IllustratedMessageSize,
-			IllustratedMessageType = tntLib.IllustratedMessageType;
+		var IllustratedMessageType = tntLib.IllustratedMessageType;
 
 		return Controller.extend("sap.m.sample.IllustratedMessageInPageTNT.controller.Main", {
 

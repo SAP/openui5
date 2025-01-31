@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/f/cards/Header",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
+	"sap/m/AvatarColor",
 	"sap/m/BadgeCustomData",
 	"sap/m/library",
 	"sap/f/library",
@@ -19,11 +20,12 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Lib"
 ],
-function(
+function (
 	Card,
 	CardHeader,
 	CardNumericHeader,
 	CardNumericSideIndicator,
+	AvatarColor,
 	BadgeCustomData,
 	mLibrary,
 	fLibrary,
@@ -41,7 +43,6 @@ function(
 	"use strict";
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
-	const AvatarColor = mLibrary.AvatarColor;
 	const ValueColor = mLibrary.ValueColor;
 	const WrappingType = mLibrary.WrappingType;
 	const SemanticRole = fLibrary.cards.SemanticRole;

@@ -3,15 +3,21 @@
  */
 sap.ui.define([
 	"./BaseHeader",
-	"sap/m/library",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize",
 	"sap/f/library",
 	"sap/m/Text",
 	"sap/m/Avatar",
 	"sap/f/cards/HeaderRenderer",
 	"sap/ui/core/InvisibleText"
-], function (
+], function(
 	BaseHeader,
-	mLibrary,
+	AvatarColor,
+	AvatarImageFitType,
+	AvatarShape,
+	AvatarSize,
 	library,
 	Text,
 	Avatar,
@@ -19,11 +25,6 @@ sap.ui.define([
 	InvisibleText
 ) {
 	"use strict";
-
-	const AvatarShape = mLibrary.AvatarShape;
-	const AvatarColor = mLibrary.AvatarColor;
-	const AvatarImageFitType = mLibrary.AvatarImageFitType;
-	const AvatarSize = mLibrary.AvatarSize;
 
 	/**
 	 * Constructor for a new <code>Header</code>.
@@ -268,12 +269,12 @@ sap.ui.define([
 	 * @param {{role: string, level: string}} mAriaProps - The mapping of "aria-" prefixed attributes
 	 * @protected
 	 */
-	 Header.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
-		if (oElement === this.getAggregation("_title")) {
-			mAriaProps.role = this.getTitleAriaRole();
-			mAriaProps.level = this.getAriaHeadingLevel();
-		}
-	};
+	Header.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+	   if (oElement === this.getAggregation("_title")) {
+		   mAriaProps.role = this.getTitleAriaRole();
+		   mAriaProps.level = this.getAriaHeadingLevel();
+	   }
+   };
 
 	/**
 	 * Helper function used to create aria-labelledby attribute.

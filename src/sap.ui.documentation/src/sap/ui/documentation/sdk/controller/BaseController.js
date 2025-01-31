@@ -246,6 +246,10 @@ sap.ui.define([
 					this.onEditCookiePreferencesRequest();
 					return;
 				}
+				if (sTargetText === FOOTER_MENU_OPTIONS.PRIVACY) {
+					this.navToPrivacyStatement();
+					return;
+				}
 				var sTarget = BaseController.LEGAL_LINKS[sTargetText];
 				URLHelper.redirect(sTarget, true);
 			},
@@ -282,20 +286,35 @@ sap.ui.define([
 			},
 
 			onEditCookiePreferencesRequest: function () {
-				var oConsentManager = this.getOwnerComponent().getCookiesConsentManager();
+				var oConsentManager = this.getOwnerComponent().getCookiesConsentManager(),
+					oTracker;
+
 				oConsentManager.showPreferencesDialog(this.getView());
 				if (!oConsentManager.supportsWaitForPreferencesSubmission()) {
 					return;
 				}
+				oTracker = this.getOwnerComponent().getUsageTracker();
+
 				oConsentManager.waitForPreferencesSubmission().then(function () {
 					oConsentManager.checkUserAcceptsUsageTracking(function(bAcceptsUsageTracking) {
 						if (bAcceptsUsageTracking) {
-							this.getOwnerComponent().getUsageTracker().start();
+							this._getVersionName().then(oTracker.start.bind(oTracker));
 						} else {
-							this.getOwnerComponent().getUsageTracker().stop();
+							oTracker.stop();
 						}
 					}.bind(this));
 				}.bind(this));
+			},
+
+			navToPrivacyStatement: function () {
+				this.getRouter().navTo("PrivacyStatement");
+			},
+
+			_getVersionName: function () {
+				var oComponent = this.getOwnerComponent();
+				return oComponent.loadVersionInfo().then(function() {
+					return oComponent.getModel("versionData").getProperty("/versionName");
+				});
 			},
 
 			_isRouteBypassedEvent: function (oEvent) {

@@ -1,20 +1,18 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/ui/unified/ColorPickerPopover",
-	"sap/ui/unified/library",
 	"sap/m/ResponsivePopover",
 	"sap/m/Button"
 ], function(
 	nextUIUpdate,
+	ColorPickerDisplayMode,
 	ColorPickerPopover,
-	unifiedLibrary,
 	ResponsivePopover,
 	Button
 ) {
 	"use strict";
-
-	var ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode;
 
 	QUnit.module("Control API");
 
@@ -255,5 +253,4 @@ sap.ui.define([
 		// Cleanup
 		oCPP.destroy();
 	});
-
 });

@@ -1,9 +1,6 @@
-sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap/m/library'],
-	function (JSONModel, Controller, library) {
+sap.ui.define(["sap/m/IllustratedMessageSize", "sap/m/IllustratedMessageType", "sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller'],
+	function(oIllustratedMessageSize, oIllustratedMessageType, JSONModel, Controller) {
 		"use strict";
-
-		var oIllustratedMessageSize = library.IllustratedMessageSize,
-			oIllustratedMessageType = library.IllustratedMessageType;
 
 		return Controller.extend("sap.m.sample.IllustratedMessageInPageSimple.controller.Main", {
 
@@ -52,5 +49,4 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 				this.oModel.setProperty("/sSelectedEVS", oEvent.getParameter("state"));
 			}
 		});
-
 	});

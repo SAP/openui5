@@ -1,8 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/library",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/mvc/View"
-], function (library, Controller, View) {
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType"
+], function (Controller, View, ViewType) {
 	"use strict";
 
 	var VIEW_DEFINITION =
@@ -26,7 +26,7 @@ sap.ui.define([
 		.then(function () {
 			return View.create({
 				definition: VIEW_DEFINITION,
-				type: library.mvc.ViewType.XML
+				type: ViewType.XML
 			});
 		})
 		.then(function (oView) {

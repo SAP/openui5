@@ -3,14 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.Avatar
-sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", 	"sap/ui/core/IconPool"], function (library, encodeCSS, IconPool) {
+sap.ui.define(["sap/m/AvatarSize", "sap/m/AvatarType", "sap/base/security/encodeCSS", "sap/ui/core/IconPool"], function(AvatarSize, AvatarType, encodeCSS, IconPool) {
 	"use strict";
-
-	// shortcut for sap.m.AvatarSize
-	var AvatarSize = library.AvatarSize;
-
-	// shortcut for sap.m.AvatarType
-	var AvatarType = library.AvatarType;
 
 	/**
 	 * <code>Avatar</code> renderer.

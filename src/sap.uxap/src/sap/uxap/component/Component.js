@@ -3,17 +3,14 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/mvc/ViewType",
 	"sap/uxap/library",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/library",
 	"sap/base/Log",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Component"
-], function (library, UIComponent, coreLibrary, Log, View) {
+], function (ViewType, library, UIComponent, Log, View) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
 
 	// shortcut for sap.uxap.ObjectPageConfigurationMode
 	var ObjectPageConfigurationMode = library.ObjectPageConfigurationMode;

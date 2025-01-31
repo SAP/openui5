@@ -4,6 +4,12 @@
 
 // Provides control sap.m.Avatar.
 sap.ui.define([
+	"sap/m/AvatarBadgeColor",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize",
+	"sap/m/AvatarType",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"./AvatarRenderer",
@@ -11,30 +17,11 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/core/Icon",
-	"./library",
 	"sap/ui/core/library",
 	'sap/ui/core/InvisibleText',
 	'sap/m/imageUtils/getCacheBustedUrl'
-], function(Control, IconPool, AvatarRenderer, Library, KeyCodes, Log, Icon, library, coreLibrary, InvisibleText, getCacheBustedUrl) {
+], function(AvatarBadgeColor, AvatarColor, AvatarImageFitType, AvatarShape, AvatarSize, AvatarType, Control, IconPool, AvatarRenderer, Library, KeyCodes, Log, Icon, coreLibrary, InvisibleText, getCacheBustedUrl) {
 	"use strict";
-
-	// shortcut for sap.m.AvatarType
-	var AvatarType = library.AvatarType;
-
-	// shortcut for sap.m.AvatarImageFitType
-	var AvatarImageFitType = library.AvatarImageFitType;
-
-	// shortcut for sap.m.AvatarColor
-	var AvatarColor = library.AvatarColor;
-
-	// shortcut for sap.m.AvatarBadgeColor
-	var AvatarBadgeColor = library.AvatarBadgeColor;
-
-	// shortcut for sap.m.AvatarSize
-	var AvatarSize = library.AvatarSize;
-
-	// shortcut for sap.m.AvatarShape
-	var AvatarShape = library.AvatarShape;
 
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
@@ -576,17 +563,17 @@ sap.ui.define([
 	 * @returns {boolean} The initials are valid or not
 	 * @private
 	 */
-	 Avatar.prototype._areInitialsValid = function (sInitials) {
-		var validInitials = /^[a-zA-Z\xc0-\xd6\xd8-\xdc\xe0-\xf6\xf8-\xfc]{1,3}$/;
-		if (!validInitials.test(sInitials)) {
-			Log.warning("Initials should consist of only 1,2 or 3 latin letters", this);
-			this._sActualType = AvatarType.Icon;
-			this._bIsDefaultIcon = true;
-			return false;
-		}
+	Avatar.prototype._areInitialsValid = function (sInitials) {
+	   var validInitials = /^[a-zA-Z\xc0-\xd6\xd8-\xdc\xe0-\xf6\xf8-\xfc]{1,3}$/;
+	   if (!validInitials.test(sInitials)) {
+		   Log.warning("Initials should consist of only 1,2 or 3 latin letters", this);
+		   this._sActualType = AvatarType.Icon;
+		   this._bIsDefaultIcon = true;
+		   return false;
+	   }
 
-		return true;
-	};
+	   return true;
+   };
 
 	/**
 	 * Validates the <code>src</code> parameter, and sets the actual type appropriately.
@@ -820,20 +807,20 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 Avatar.prototype._onImageError = function(sSrc) {
-		if (this.getSrc() !== sSrc) {
-			return;
-		}
+	Avatar.prototype._onImageError = function(sSrc) {
+	   if (this.getSrc() !== sSrc) {
+		   return;
+	   }
 
-		this._cleanCSS();
+	   this._cleanCSS();
 
-		if (!this._bIsDefaultIcon) {
-			this._bIsDefaultIcon = true;
-			this.getDetailBox() && this.invalidate();
-		}
-		delete this.preloadedImage;
-		this._bImageLoadError = true;
-	};
+	   if (!this._bIsDefaultIcon) {
+		   this._bIsDefaultIcon = true;
+		   this.getDetailBox() && this.invalidate();
+	   }
+	   delete this.preloadedImage;
+	   this._bImageLoadError = true;
+   };
 
 	Avatar.prototype._cleanCSS = function () {
 		var sFallBackType = this._getImageFallbackType();
@@ -997,5 +984,4 @@ sap.ui.define([
 	};
 
 	return Avatar;
-
 });

@@ -433,24 +433,23 @@ sap.ui.define([
 		assert.deepEqual(aTarget, data.changedState);
 	});
 
-	QUnit.test("check 'getArrayDeltaChanges (moving)'", function(assert){
+	QUnit.test("check 'getArrayDeltaChanges (moving) - 1'", function(assert) {
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
 
-		var aChanges;
-		var oAdaptationControl = this.oSelectionController.getAdaptationControl();
-
-		var data = {
+		const data = {
 			control: oAdaptationControl,
 			deltaAttributes: ["key", "name"],
-			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"}
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],
+			changedState: [{"name":"F","key":"F"},{"name":"E","key":"E"},{"name":"D","key":"D"},{"name":"C","key":"C"},{"name":"B","key":"B"},{"name":"A","key":"A"}]
 		};
+		const aTarget = data.existingState;
 
-		// moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
-		data.changedState  = [{"name":"F","key":"F"},{"name":"E","key":"E"},{"name":"D","key":"D"},{"name":"C","key":"C"},{"name":"B","key":"B"},{"name":"A","key":"A"}];
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
 
-		var aTarget = data.existingState;
-
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// assert
 		assert.equal(aChanges.length, 5, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
@@ -479,14 +478,24 @@ sap.ui.define([
 		simulateMoveItem(aTarget, "B", aChanges[4].changeSpecificData.content.index);
 
 		assert.deepEqual(aTarget, data.changedState);
+	});
 
-		//-----------------------------------------------------------------------
-		// moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
-		data.changedState  = [{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"F","key":"F"},{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"E","key":"E"}];
-		aTarget = data.existingState;
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 2", function(assert) {
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
+		const data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],
+			changedState: [{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"F","key":"F"},{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"E","key":"E"}]
+		};
+		const aTarget = data.existingState;
 
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+
+		// assert
 		assert.equal(aChanges.length, 2, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
@@ -500,14 +509,24 @@ sap.ui.define([
 		simulateMoveItem(aTarget, "A", aChanges[1].changeSpecificData.content.index);
 
 		assert.deepEqual(aTarget, data.changedState);
+	});
 
-		//-----------------------------------------------------------------------
-		// moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
-		data.changedState  = [{"name":"F","key":"F"},{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"}];
-		aTarget = data.existingState;
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 3'", function(assert) {
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
+		const data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],
+			changedState: [{"name":"F","key":"F"},{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"}]
+		};
+		const aTarget = data.existingState;
 
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+
+		// assert
 		assert.equal(aChanges.length, 1, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
@@ -516,14 +535,24 @@ sap.ui.define([
 		simulateMoveItem(aTarget, "F", aChanges[0].changeSpecificData.content.index);
 
 		assert.deepEqual(aTarget, data.changedState);
+	});
 
-		//-----------------------------------------------------------------------
-		// moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
-		data.changedState  = [{"name":"B","key":"B"},{"name":"F","key":"F"},{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"}];
-		aTarget = data.existingState;
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 4", function(assert) {
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
+		const data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],
+			changedState: [{"name":"B","key":"B"},{"name":"F","key":"F"},{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"}]
+		};
+		const aTarget = data.existingState;
 
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+
+		// assert
 		assert.equal(aChanges.length, 2, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
@@ -537,14 +566,24 @@ sap.ui.define([
 		simulateMoveItem(aTarget, "A", aChanges[1].changeSpecificData.content.index);
 
 		assert.deepEqual(aTarget, data.changedState);
+	});
 
-		//-----------------------------------------------------------------------
-		// moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}];
-		data.changedState  =  [{"name":"C","key":"C"},{"name":"B","key":"B"},{"name":"A","key":"A"},{"name":"D","key":"D"}];
-		aTarget = data.existingState;
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 5", function(assert) {
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
+		const data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}],
+			changedState: [{"name":"C","key":"C"},{"name":"B","key":"B"},{"name":"A","key":"A"},{"name":"D","key":"D"}]
+		};
+		const aTarget = data.existingState;
 
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+
+		// assert
 		assert.equal(aChanges.length, 2, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
@@ -560,23 +599,23 @@ sap.ui.define([
 		assert.deepEqual(aTarget, data.changedState);
 	});
 
-	QUnit.test("check 'getArrayDeltaChanges (moving) part 2'", function(assert){
-
-		let aChanges;
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 6", function(assert) {
+		// adding removing moving
+		// arrange
 		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
-
-		var data = {
+		const data = {
 			control: oAdaptationControl,
 			deltaAttributes: ["key", "name"],
-			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"}
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}],
+			changedState:  [{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"F","key":"F"}]
 		};
+		const aTarget = data.existingState;
 
-		// adding removing moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}];
-		data.changedState  =  [{"name":"D","key":"D"},{"name":"A","key":"A"},{"name":"F","key":"F"}];
-		let aTarget = data.existingState;
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
 
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// assert
 		assert.equal(aChanges.length, 4, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "removeFilter", "Returned value is of correct type");
@@ -598,14 +637,24 @@ sap.ui.define([
 		simulateAddItem(aTarget, data.changedState[aChanges[3].changeSpecificData.content.index], aChanges[3].changeSpecificData.content.index);
 
 		assert.deepEqual(aTarget, data.changedState);
+	});
 
-		//-----------------------------------------------------------------------
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 7", function(assert) {
 		// adding removing moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}];
-		data.changedState  = [{"name":"D","key":"D"},{"name":"F","key":"F"}, {"name":"A","key":"A"}];
-		aTarget = data.existingState;
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
+		const data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"}],
+			changedState: [{"name":"D","key":"D"},{"name":"F","key":"F"}, {"name":"A","key":"A"}]
+		};
+		const aTarget = data.existingState;
 
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		// assert
 		assert.equal(aChanges.length, 4, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "removeFilter", "Returned value is of correct type");
@@ -627,14 +676,26 @@ sap.ui.define([
 		simulateAddItem(aTarget, data.changedState[aChanges[3].changeSpecificData.content.index], aChanges[3].changeSpecificData.content.index);
 
 		assert.deepEqual(aTarget, data.changedState);
+	});
 
-		//-----------------------------------------------------------------------
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 8", function(assert) {
 		// moving
-		data.existingState = [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}];
-		data.changedState  = [{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"F","key":"F"},{"name":"B","key":"B"},{"name":"E","key":"E"}];
-		aTarget = data.existingState;
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
 
-		aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [{"name":"A","key":"A"},{"name":"B","key":"B"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"E","key":"E"},{"name":"F","key":"F"}],
+			changedState: [{"name":"A","key":"A"},{"name":"C","key":"C"},{"name":"D","key":"D"},{"name":"F","key":"F"},{"name":"B","key":"B"},{"name":"E","key":"E"}]
+		};
+		const aTarget = data.existingState;
+
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+
+		// assert
 		assert.equal(aChanges.length, 2, "Returned value is an array of change objects");
 
 		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
@@ -644,11 +705,10 @@ sap.ui.define([
 
 		assert.equal(aChanges[1].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
 		assert.equal(aChanges[1].changeSpecificData.content.key, "E", "Returned the expected name");
-		assert.equal(aChanges[1].changeSpecificData.content.index, 6, "Returned the expected index");
+		assert.equal(aChanges[1].changeSpecificData.content.index, 5, "Returned the expected index");
 		simulateMoveItem(aTarget, "E", aChanges[1].changeSpecificData.content.index);
 
 		assert.deepEqual(aTarget, data.changedState);
-
 	});
 
 	QUnit.test("check 'getArrayDeltaChanges (adding/deleting moving up&down)'", function(assert){
@@ -663,115 +723,74 @@ sap.ui.define([
 		};
 
 		//adding/deleting moving up&down
-		data.existingState = [{"name":"title","key":"title","visible":true,"label":"Title","tooltip":""},
-								{"name":"descr","key":"descr","visible":true,"label":"Description","tooltip":""},
-								{"name":"author_ID","key":"author_ID","visible":true,"label":"Author ID","tooltip":""},
-								{"name":"price","key":"price","visible":true,"label":"Price","tooltip":""},
-								{"name":"stock","key":"stock","visible":true,"label":"Stock","tooltip":""},
-								{"name":"genre_code","key":"genre_code","visible":true,"label":"Genre","tooltip":""},
-								{"name":"subgenre_code","key":"subgenre_code","visible":true,"label":"Sub Genre","tooltip":""}];
-		data.changedState = [{"key":"genre_code","name":"genre_code","visible":true,"label":"Genre","tooltip":""},
-								{"key":"stock","name":"stock","visible":true,"label":"Stock","tooltip":""},
-								{"key":"price","name":"price","visible":true,"label":"Price","tooltip":""},
-								{"key":"language_code","name":"language_code","visible":true,"label":"Language","tooltip":""},
-								{"key":"metricsSyllables","name":"metricsSyllables","visible":true,"label":"Syllables","tooltip":""},
-								{"key":"subgenre_code","name":"subgenre_code","visible":true,"label":"Sub Genre","tooltip":""},
-								{"key":"author_ID","name":"author_ID","visible":true,"label":"Author ID","tooltip":""},
-								{"key":"published","name":"published","visible":true,"label":"Published","tooltip":""},
-								{"key":"modifiedAt","name":"modifiedAt","visible":true,"label":"Changed On","tooltip":""},
-								{"key":"descr","name":"descr","visible":true,"label":"Description","tooltip":""},
-								{"key":"metricsSentences","name":"metricsSentences","visible":true,"label":"Sentences","tooltip":""},
-								{"key":"ID","name":"ID","visible":true,"label":"Book ID","tooltip":""},
-								{"key":"metricsCharacters","name":"metricsCharacters","visible":true,"label":"Characters","tooltip":""},
-								{"key":"classification_code","name":"classification_code","visible":true,"label":"Classification","tooltip":""},
-								{"key":"createdAt","name":"createdAt","visible":true,"label":"Created On","tooltip":""},
-								{"key":"currency_code","name":"currency_code","visible":true,"label":"Currency","tooltip":""},
-								{"key":"detailgenre_code","name":"detailgenre_code","visible":true,"label":"DetailGenre","tooltip":""},
-								{"key":"title","name":"title","visible":true,"label":"Title","tooltip":""}];
-		data.changeOperations = {add: "addColumn", remove: "removeColumn", move: "moveColumn"};
+		data.existingState = [
+			{ name: "title", key: "title", visible: true, label: "Title", tooltip:"" },
+			{ name: "descr", key: "descr", visible: true, label: "Description", tooltip:"" },
+			{ name: "author_ID", key: "author_ID", visible: true, label: "Author ID", tooltip:"" },
+			{ name: "price", key: "price", visible: true, label: "Price", tooltip:"" },
+			{ name: "stock", key: "stock", visible: true, label: "Stock", tooltip:"" },
+			{ name: "genre_code", key: "genre_code", visible: true, label: "Genre", tooltip:"" },
+			{ name: "subgenre_code", key: "subgenre_code", visible: true, label: "Sub Genre", tooltip:"" }
+		];
+		data.changedState = [
+			{ key: "genre_code", name: "genre_code", visible: true, label: "Genre", tooltip: "" },
+			{ key: "stock", name: "stock", visible: true, label: "Stock", tooltip: "" },
+			{ key: "price", name: "price", visible: true, label: "Price", tooltip: "" },
+			{ key: "language_code", name: "language_code", visible: true, label: "Language", tooltip: "" },
+			{ key: "metricsSyllables", name: "metricsSyllables", visible: true, label: "Syllables", tooltip: "" },
+			{ key: "subgenre_code", name: "subgenre_code", visible: true, label: "Sub Genre", tooltip: "" },
+			{ key: "author_ID", name: "author_ID", visible: true, label: "Author ID", tooltip: "" },
+			{ key: "published", name: "published", visible: true, label: "Published", tooltip: "" },
+			{ key: "modifiedAt", name: "modifiedAt", visible: true, label: "Changed On", tooltip: "" },
+			{ key: "descr", name: "descr", visible: true, label: "Description", tooltip: "" },
+			{ key: "metricsSentences", name: "metricsSentences", visible: true, label: "Sentences", tooltip: "" },
+			{ key: "ID", name: "ID", visible: true, label: "Book ID", tooltip: "" },
+			{ key: "metricsCharacters", name: "metricsCharacters", visible: true, label: "Characters", tooltip: "" },
+			{ key: "classification_code", name: "classification_code", visible: true, label: "Classification", tooltip: "" },
+			{ key: "createdAt", name: "createdAt", visible: true, label: "Created On", tooltip: "" },
+			{ key: "currency_code", name: "currency_code", visible: true, label: "Currency", tooltip: "" },
+			{ key: "detailgenre_code", name: "detailgenre_code", visible: true, label: "DetailGenre", tooltip: "" },
+			{ key: "title", name: "title", visible: true, label: "Title", tooltip: "" }
+		];
+		data.changeOperations = { add: "addColumn", remove: "removeColumn", move: "moveColumn" };
 		data.deltaAttributes = ['key', 'name'];
 		const aTarget = data.existingState;
 
 	    aChanges = this.oSelectionController.getArrayDeltaChanges(data);
 		assert.equal(aChanges.length, 16, "Returned value is an array of change objects");
 
-		assert.equal(aChanges[0].changeSpecificData.changeType, "moveColumn", "Returned value is of correct type");
-		assert.equal(aChanges[0].changeSpecificData.content.key, "genre_code", "Returned the expected name");
-		assert.equal(aChanges[0].changeSpecificData.content.index, 0, "Returned the expected index");
-        simulateMoveItem(aTarget, "genre_code", aChanges[0].changeSpecificData.content.index);
+		const aExpectedChanges = [
+			{ type: "moveColumn", key: "genre_code", index: 0 },
+			{ type: "moveColumn", key: "stock", index: 4 },
+			{ type: "moveColumn", key: "author_ID", index: 6 },
+			{ type: "moveColumn", key: "descr", index: 6 },
+			{ type: "moveColumn", key: "title", index: 6 },
+			{ type: "addColumn", key: "language_code", index: 3 },
+			{ type: "addColumn", key: "metricsSyllables", index: 4 },
+			{ type: "addColumn", key: "published", index: 7 },
+			{ type: "addColumn", key: "modifiedAt", index: 8 },
+			{ type: "addColumn", key: "metricsSentences", index: 10 },
+			{ type: "addColumn", key: "ID", index: 11 },
+			{ type: "addColumn", key: "metricsCharacters", index: 12 },
+			{ type: "addColumn", key: "classification_code", index: 13 },
+			{ type: "addColumn", key: "createdAt", index: 14 },
+			{ type: "addColumn", key: "currency_code", index: 15 },
+			{ type: "addColumn", key: "detailgenre_code", index: 16 }
+		];
 
-		assert.equal(aChanges[1].changeSpecificData.changeType, "moveColumn", "Returned value is of correct type");
-		assert.equal(aChanges[1].changeSpecificData.content.key, "stock", "Returned the expected name");
-        simulateMoveItem(aTarget, "stock", aChanges[1].changeSpecificData.content.index);
-
-        assert.equal(aChanges[2].changeSpecificData.changeType, "moveColumn", "Returned value is of correct type");
-		assert.equal(aChanges[2].changeSpecificData.content.key, "author_ID", "Returned the expected name");
-        simulateMoveItem(aTarget, "author_ID", aChanges[2].changeSpecificData.content.index);
-
-        assert.equal(aChanges[3].changeSpecificData.changeType, "moveColumn", "Returned value is of correct type");
-		assert.equal(aChanges[3].changeSpecificData.content.key, "descr", "Returned the expected name");
-		assert.equal(aChanges[3].changeSpecificData.content.index, 7, "Returned the expected index");
-        simulateMoveItem(aTarget, "descr", aChanges[3].changeSpecificData.content.index);
-
-        assert.equal(aChanges[4].changeSpecificData.changeType, "moveColumn", "Returned value is of correct type");
-		assert.equal(aChanges[4].changeSpecificData.content.key, "title", "Returned the expected name");
-		assert.equal(aChanges[4].changeSpecificData.content.index, 7, "Returned the expected index");
-        simulateMoveItem(aTarget, "title", aChanges[4].changeSpecificData.content.index);
-
-        assert.equal(aChanges[5].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[5].changeSpecificData.content.key, "language_code", "Returned the expected name");
-		assert.equal(aChanges[5].changeSpecificData.content.index, 3, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[5].changeSpecificData.content.index], aChanges[5].changeSpecificData.content.index);
-
-        assert.equal(aChanges[6].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[6].changeSpecificData.content.key, "metricsSyllables", "Returned the expected name");
-		assert.equal(aChanges[6].changeSpecificData.content.index, 4, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[6].changeSpecificData.content.index], aChanges[6].changeSpecificData.content.index);
-
-        assert.equal(aChanges[7].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[7].changeSpecificData.content.key, "published", "Returned the expected name");
-		assert.equal(aChanges[7].changeSpecificData.content.index, 7, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[7].changeSpecificData.content.index], aChanges[7].changeSpecificData.content.index);
-
-        assert.equal(aChanges[8].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[8].changeSpecificData.content.key,"modifiedAt", "Returned the expected name");
-		assert.equal(aChanges[8].changeSpecificData.content.index, 8, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[8].changeSpecificData.content.index], aChanges[8].changeSpecificData.content.index);
-
-        assert.equal(aChanges[9].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[9].changeSpecificData.content.key,"metricsSentences", "Returned the expected name");
-		assert.equal(aChanges[9].changeSpecificData.content.index, 10, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[9].changeSpecificData.content.index], aChanges[9].changeSpecificData.content.index);
-
-        assert.equal(aChanges[10].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[10].changeSpecificData.content.key,"ID", "Returned the expected name");
-		assert.equal(aChanges[10].changeSpecificData.content.index, 11, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[10].changeSpecificData.content.index], aChanges[10].changeSpecificData.content.index);
-
-        assert.equal(aChanges[11].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[11].changeSpecificData.content.key, "metricsCharacters", "Returned the expected name");
-		assert.equal(aChanges[11].changeSpecificData.content.index, 12, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[11].changeSpecificData.content.index], aChanges[11].changeSpecificData.content.index);
-
-        assert.equal(aChanges[12].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[12].changeSpecificData.content.key, "classification_code", "Returned the expected name");
-		assert.equal(aChanges[12].changeSpecificData.content.index, 13, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[12].changeSpecificData.content.index], aChanges[12].changeSpecificData.content.index);
-
-        assert.equal(aChanges[13].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[13].changeSpecificData.content.key, "createdAt", "Returned the expected name");
-		assert.equal(aChanges[13].changeSpecificData.content.index, 14, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[13].changeSpecificData.content.index], aChanges[13].changeSpecificData.content.index);
-
-        assert.equal(aChanges[14].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[14].changeSpecificData.content.key, "currency_code", "Returned the expected name");
-		assert.equal(aChanges[14].changeSpecificData.content.index, 15, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[14].changeSpecificData.content.index], aChanges[14].changeSpecificData.content.index);
-
-        assert.equal(aChanges[15].changeSpecificData.changeType, "addColumn", "Returned value is of correct type");
-		assert.equal(aChanges[15].changeSpecificData.content.key, "detailgenre_code", "Returned the expected name");
-		assert.equal(aChanges[15].changeSpecificData.content.index, 16, "Returned the expected index");
-		simulateAddItem(aTarget, data.changedState[aChanges[15].changeSpecificData.content.index], aChanges[15].changeSpecificData.content.index);
+		aExpectedChanges.forEach((oExpectedChange, index) => {
+			const actualChange = aChanges[index].changeSpecificData;
+			assert.equal(actualChange.changeType, oExpectedChange.type, `Returned value is of correct type for expected key '${oExpectedChange.key}'`);
+			assert.equal(actualChange.content.key, oExpectedChange.key, "Returned the expected name");
+			if (typeof oExpectedChange.index === "number"){
+				assert.equal(actualChange.content.index, oExpectedChange.index, `Returned the expected index for expected key '${oExpectedChange.key}'`);
+			}
+			if (oExpectedChange.type === "moveColumn"){
+				simulateMoveItem(aTarget, oExpectedChange.key, oExpectedChange.index);
+			} else if (oExpectedChange.type === "addColumn"){
+				simulateAddItem(aTarget, data.changedState[oExpectedChange.index], oExpectedChange.index);
+			}
+		});
 
 		assert.deepEqual(aTarget, data.changedState);
 	});

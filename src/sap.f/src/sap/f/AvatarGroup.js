@@ -5,25 +5,22 @@
 // Provides control sap.f.AvatarGroup.
 sap.ui.define([
 	"./library",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarSize",
 	"sap/ui/core/Control",
 	"sap/ui/core/Lib",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/dom/units/Rem",
 	"./AvatarGroupRenderer",
 	"sap/m/Button",
-	"sap/m/library",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/Theming"
-], function(library, Control, Library, ItemNavigation, Rem, AvatarGroupRenderer, Button, mLibrary, ResizeHandler, KeyCodes, Core, Theming) {
+], function(library, AvatarColor, AvatarSize, Control, Library, ItemNavigation, Rem, AvatarGroupRenderer, Button, ResizeHandler, KeyCodes, Core, Theming) {
 	"use strict";
 
 	var AvatarGroupType = library.AvatarGroupType;
-
-	var AvatarColor = mLibrary.AvatarColor;
-
-	var AvatarSize = mLibrary.AvatarSize;
 
 	var AVATAR_WIDTH = {
 		XS: 2,

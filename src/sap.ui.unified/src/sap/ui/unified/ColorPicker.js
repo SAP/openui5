@@ -22,6 +22,7 @@ sap.ui.define([
 	"./ColorPickerHelper",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/ui/Global"
 ], function(
 	Library,
@@ -41,15 +42,15 @@ sap.ui.define([
 	ColorPickerRenderer,
 	ColorPickerHelper,
 	Log,
-	jQuery
+	jQuery,
+	ColorPickerDisplayMode
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState,
 		// shortcut for sap.ui.unified.ColorPickerMode & sap.ui.unified.ColorPickerDisplayMode
-		ColorPickerMode = Library.ColorPickerMode,
-		ColorPickerDisplayMode = Library.ColorPickerDisplayMode;
+		ColorPickerMode = Library.ColorPickerMode;
 
 	/**
 	 * Constructor for a new <code>ColorPicker</code>.

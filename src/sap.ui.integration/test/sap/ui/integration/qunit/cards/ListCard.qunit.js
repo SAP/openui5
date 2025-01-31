@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/m/library",
+	"sap/m/AvatarColor",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/cards/ListContent",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
-	mLibrary,
+	AvatarColor,
 	Library,
 	BaseListContent,
 	ListContent,
@@ -26,7 +26,6 @@ sap.ui.define([
 	"use strict";
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
-	const AvatarColor = mLibrary.AvatarColor;
 	const pIfMicrochartsAvailable = Library.load("sap.suite.ui.microchart");
 
 	function testWithMicrochart(assert, oCard, oManifest, fnTest) {

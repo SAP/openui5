@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/unified/FileUploader",
-	"sap/ui/unified/library",
+	"sap/ui/unified/FileUploaderHttpRequestMethod",
 	"sap/ui/core/StaticArea",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/InvisibleText",
@@ -13,11 +13,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function(Library, qutils, nextUIUpdate, FileUploader, unifiedLibrary, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, jQuery) {
+], function(Library, qutils, nextUIUpdate, FileUploader, FileUploaderHttpRequestMethod, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, jQuery) {
 	"use strict";
-
-	// shortcut for sap.ui.unified.FileUploaderHttpRequestMethod
-	var FileUploaderHttpRequestMethod = unifiedLibrary.FileUploaderHttpRequestMethod;
 
 	/**
 	* Helper function to create a FileUploader with useful default value

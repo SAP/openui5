@@ -2,8 +2,10 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/AvatarSize",
 	"sap/ui/core/AnimationMode",
-	"sap/m/library",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
@@ -19,8 +21,10 @@ sap.ui.define([
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Log,
+	AvatarColor,
+	AvatarImageFitType,
+	AvatarSize,
 	CoreAnimationMode,
-	mLibrary,
 	ControlBehavior,
 	Library,
 	coreLibrary,
@@ -39,10 +43,6 @@ sap.ui.define([
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
-	// shortcut for sap.m.AvatarSize
-	var AvatarSize = mLibrary.AvatarSize;
-	var AvatarColor = mLibrary.AvatarColor;
-	var AvatarImageFitType = mLibrary.AvatarImageFitType;
 	var CardActionType = library.CardActionType;
 	var ValueState = coreLibrary.ValueState;
 	var AnimationMode = CoreAnimationMode;

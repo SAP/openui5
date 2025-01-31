@@ -312,43 +312,81 @@ sap.ui.define([
 	};
 
 	SelectionController.prototype._createMoveChanges = function(aExistingItems, aChangedItems, oControl, sOperation, aDeltaAttributes) {
-		let sKey;
-		let nIndex;
-		let oItem;
 		const aChanges = [];
 
-		if (aExistingItems.length === aChangedItems.length) {
+		if (aExistingItems.length !== aChangedItems.length) {
+			return aChanges;
+		}
 
-			const fnSymbol = (o) => {
-				let sDiff = "";
-				aDeltaAttributes.forEach((sAttribute) => {
-					sDiff = sDiff + o[sAttribute];
-				});
-				return sDiff;
-			};
+		const fnSymbol = (o) => {
+			let sDiff = "";
+			aDeltaAttributes.forEach((sAttribute) => {
+				sDiff = sDiff + o[sAttribute];
+			});
+			return sDiff;
+		};
 
-			const aDiff = diff(aExistingItems, aChangedItems, fnSymbol);
-			const aDeleted = [];
-			for (let i = 0; i < aDiff.length; i++) {
-				if (aDiff[i].type === "delete") {
-					oItem = aExistingItems[aDiff[i].index];
-					aDeleted.push(oItem);
-				} else if (aDiff[i].type === "insert") {
-					sKey = aChangedItems[aDiff[i].index].key || aChangedItems[aDiff[i].index].name;
+		const INSERT_TYPE = "insert";
+		const DELETE_TYPE = "delete";
 
-					nIndex = aDiff[i].index;
-					// eslint-disable-next-line no-loop-func
-					aDeleted.forEach((oItem) => {
-						if (sKey != oItem.key) {
-							const nDelIndex = this._indexOfByKeyName(aExistingItems, oItem.key || oItem.name);
-							if (nDelIndex < aDiff[i].index) {
-								nIndex++;
-							}
-						}
-					});
-					// eslint-enable-next-line no-loop-func
-					aChanges.push(this._createMoveChange(sKey, Math.min(nIndex, aChangedItems.length), sOperation, oControl));
+		const aDeleted = [];
+		const aInserted = [];
+		const aDiff = diff(aExistingItems, aChangedItems, fnSymbol);
+
+		for (let i = 0; i < aDiff.length; i++) {
+			const sType = aDiff[i].type;
+			if (sType !== DELETE_TYPE && sType !== INSERT_TYPE) {continue;}
+
+			const {index} = aDiff[i];
+			const oItem = aChangedItems[index];
+			if (!oItem) {continue;}
+
+			if (sType === DELETE_TYPE) {
+			  aDeleted.push({ ...oItem, index });
+			  continue;
+			}
+			if (sType === INSERT_TYPE) {
+			  aInserted.push({ ...oItem, index });
+			  continue;
+			}
+		  }
+
+
+		for (let i = 0; i < aDiff.length; i++) {
+			if (aDiff[i].type === "insert") {
+				const sKey = aChangedItems[aDiff[i].index].key || aChangedItems[aDiff[i].index].name;
+
+				let nIndex = aDiff[i].index;
+
+				const fnFilter = (item) => {
+					if (!item) {return false;}
+					if (item.index >= nIndex) {return false;}
+					return true;
+				};
+
+				// number of items that were deleted before current index
+				const nDeleted = aDeleted.filter(fnFilter).length;
+				// number of items that were inserted before current index
+				const nInserted = aInserted.filter(fnFilter).length;
+
+				const isNotFirstElement = nIndex > 0;
+				const hasDeletions = nDeleted > 0;
+
+				// either take all ins/dels or just take the ones that are before the current index
+				const hasInsertionAbundance = nInserted > nDeleted;
+				const hasDeletionAbundance = nDeleted > nInserted;
+
+				const shouldDecrease = hasInsertionAbundance && hasDeletions && isNotFirstElement;
+				const shouldIncrease = hasDeletionAbundance && isNotFirstElement;
+
+				if (shouldDecrease) {
+					nIndex -= nInserted;
+				} else if (shouldIncrease) {
+					nIndex += nDeleted;
 				}
+
+				// eslint-enable-next-line no-loop-func
+				aChanges.push(this._createMoveChange(sKey, Math.min(nIndex, aChangedItems.length - 1), sOperation, oControl));
 			}
 		}
 

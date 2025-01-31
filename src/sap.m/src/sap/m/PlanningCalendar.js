@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
+	"sap/m/AvatarShape",
 	'sap/m/delegate/DateNavigation',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
@@ -57,6 +58,7 @@ sap.ui.define([
 ], function(
 	Formatting,
 	Localization,
+	AvatarShape,
 	DateNavigation,
 	Control,
 	ManagedObjectObserver,
@@ -82,8 +84,10 @@ sap.ui.define([
 	DropInfo,
 	DragDropInfo,
 	DateFormat,
-	_CalendarType, // indirectly used for properties `primaryCalendarType` and `secondaryCalendarType`
-	_CalendarWeekNumbering, // indirectly required for property `calendarWeekNumbering`
+	// indirectly used for properties `primaryCalendarType` and `secondaryCalendarType`
+	_CalendarType,
+	// indirectly required for property `calendarWeekNumbering`
+	_CalendarWeekNumbering,
 	CalendarDateUtils,
 	Locale,
 	UI5Date,
@@ -140,8 +144,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.unified.CalendarAppointmentRoundWidth
 	var CalendarAppointmentRoundWidth = unifiedLibrary.CalendarAppointmentRoundWidth;
-
-	var AvatarShape = library.AvatarShape;
 
 	var DRAG_DROP_CONFIG_NAME = "DragDropConfig";
 	var RESIZE_CONFIG_NAME = "ResizeConfig";

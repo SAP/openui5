@@ -1,0 +1,10 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.PrivacyStatement"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<Page showNavButton="false" showFooter="false" showHeader="false"
+		class="sapUiResponsiveContentPadding">
+		<core:HTML id="content" />
+	</Page>
+</mvc:View>

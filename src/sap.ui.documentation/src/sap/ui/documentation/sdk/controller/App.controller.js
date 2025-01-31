@@ -88,6 +88,7 @@ sap.ui.define([
 		CHANGE_SETTINGS_TEXT = "settings",
 		CHANGE_COOKIE_PREFERENCES_TEXT = "cookie_preferences",
 		DEMOKIT_DEFAULT_LANGUAGE = "en_US",
+		PRIVACY_TEXT = "privacy",
 		DEMOKIT_CONFIGURATION_LANGUAGE = "language",
 		DEMOKIT_CONFIGURATION_APPEARANCE = "appearance",
 		SITEMAP = "sitemap";
@@ -252,9 +253,11 @@ sap.ui.define([
 			}.bind(this));
 			this._oCookiesConsentManager.checkUserAcceptsUsageTracking(function(bAccepts) {
 				if (bAccepts) {
-					// start tracking, including the route visited at app-startup (before the check of the persisted consent-decision completed)
-					this.getOwnerComponent().getUsageTracker().start(this._aRouterCachedEventDetails);
-					this._aRouterCachedEventDetails = []; // clear the already logged route visits
+					this._getVersionName().then(function(sVersionName) {
+						// start tracking, including the route visited at app-startup (before the check of the persisted consent-decision completed)
+						this.getOwnerComponent().getUsageTracker().start(sVersionName, this._aRouterCachedEventDetails);
+						this._aRouterCachedEventDetails = []; // clear the already logged route visits
+					}.bind(this));
 				}
 			}.bind(this));
 
@@ -447,6 +450,8 @@ sap.ui.define([
 				this.aboutDialogOpen();
 			} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 				this.settingsDialogOpen();
+			} else if (sTargetText === PRIVACY_TEXT) {
+				this.navToPrivacyStatement();
 			} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
 				this.onEditCookiePreferencesRequest();
 			} else if (sTargetText === CHANGE_VERSION_TEXT) {

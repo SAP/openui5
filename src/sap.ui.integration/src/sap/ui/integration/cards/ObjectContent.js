@@ -4,6 +4,9 @@
 sap.ui.define([
 	"./BaseContent",
 	"./ObjectContentRenderer",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/AvatarSize",
 	"sap/ui/integration/library",
 	"sap/m/library",
 	"sap/m/IllustratedMessageType",
@@ -44,9 +47,12 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"sap/ui/core/ListItem"
-], function (
+], function(
 	BaseContent,
 	ObjectContentRenderer,
+	AvatarColor,
+	AvatarImageFitType,
+	AvatarSize,
 	library,
 	mLibrary,
 	IllustratedMessageType,
@@ -89,15 +95,6 @@ sap.ui.define([
 	ListItem
 ) {
 	"use strict";
-
-	// shortcut for sap.m.AvatarSize
-	var AvatarSize = mLibrary.AvatarSize;
-
-	// shortcut for sap.m.AvatarColor
-	var AvatarColor = mLibrary.AvatarColor;
-
-	// shortcut for sap.m.AvatarImageFitType
-	var AvatarImageFitType = mLibrary.AvatarImageFitType;
 
 	var ButtonType = mLibrary.ButtonType;
 

@@ -4,6 +4,7 @@
 
 // Provides control sap.m.StandardListItem.
 sap.ui.define([
+	"sap/m/AvatarSize",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/IconPool",
@@ -15,7 +16,7 @@ sap.ui.define([
 	"./StandardListItemRenderer",
 	"sap/base/Log"
 ],
-	function(Library, coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer, Log) {
+	function(AvatarSize, Library, coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer, Log) {
 	"use strict";
 
 
@@ -241,7 +242,7 @@ sap.ui.define([
 	// overwrite base method to hook into the inactive handling
 	StandardListItem.prototype._getAvatar = function() {
 		var oAvatar = this.getAvatar();
-		var sSize = this.getIconInset() ? library.AvatarSize.XS : library.AvatarSize.S;
+		var sSize = this.getIconInset() ? AvatarSize.XS : AvatarSize.S;
 		oAvatar.setProperty("displaySize", sSize, true);
 		return oAvatar;
 	};

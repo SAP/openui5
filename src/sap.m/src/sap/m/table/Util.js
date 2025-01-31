@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/m/IllustratedMessageType",
 	"sap/m/library",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/m/Text",
 	"sap/ui/core/InvisibleMessage"
-], function(Localization, MLibrary, Library, Locale, LocaleData, syncStyleClass, Theming, ThemeParameters, IllustratedMessage, Button, CustomListItem, HBox, ResponsivePopover, Text, InvisibleMessage) {
+], function(Localization, IllustratedMessageType, MLibrary, Library, Locale, LocaleData, syncStyleClass, Theming, ThemeParameters, IllustratedMessage, Button, CustomListItem, HBox, ResponsivePopover, Text, InvisibleMessage) {
 	"use strict";
 	/*global Intl*/
 
@@ -318,7 +319,7 @@ sap.ui.define([
 		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		var oIllustratedMessage = new IllustratedMessage({
-			illustrationType: MLibrary.IllustratedMessageType.AddColumn,
+			illustrationType: IllustratedMessageType.AddColumn,
 			title: oResourceBundle.getText("TABLE_NO_COLUMNS_TITLE"),
 			description: oResourceBundle.getText("TABLE_NO_COLUMNS_DESCRIPTION")
 		});

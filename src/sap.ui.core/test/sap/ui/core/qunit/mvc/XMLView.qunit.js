@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	'sap/base/i18n/ResourceBundle',
 	"sap/ui/core/Element",
-	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/View',
+	"sap/ui/core/mvc/ViewType",
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/RenderManager',
 	'sap/ui/model/json/JSONModel',
@@ -16,11 +16,8 @@ sap.ui.define([
 	'./AnyView.qunit',
 	'sap/ui/thirdparty/jquery',
 	"sap/ui/test/utils/nextUIUpdate"
-], function(future, Log, Localization, ResourceBundle, Element, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, XMLHelper, testsuite, jQuery, nextUIUpdate) {
+], function(future, Log, Localization, ResourceBundle, Element, Controller, View, ViewType, XMLView, RenderManager, JSONModel, ResourceModel, XMLHelper, testsuite, jQuery, nextUIUpdate) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
 
 	// load the XML without parsing
 	var sViewXML;
