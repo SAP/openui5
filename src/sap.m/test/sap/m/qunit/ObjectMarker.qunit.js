@@ -34,6 +34,8 @@ sap.ui.define([
 	// shortcut for sap.m.ObjectMarkerType
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
+	// shortcut for sap.m.ReactiveAreaMode
+	var ReactiveAreaMode = mobileLibrary.ReactiveAreaMode;
 
 	var oRB = Library.getResourceBundleFor("sap.m");
 
@@ -233,6 +235,93 @@ sap.ui.define([
 
 		// Cleanup
 		oMarker.destroy();
+	});
+
+	QUnit.test("reactiveAreaMode", async function(assert) {
+		// Prepare
+		var oObjectMarker = new ObjectMarker({
+			reactiveAreaMode: ReactiveAreaMode.Overlay,
+			type: ObjectMarkerType.Locked,
+			additionalInfo: "Additional info",
+			press: function () {}
+		}),
+		oInnerControl;
+
+		oObjectMarker.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added with Locked type");
+
+		// Act
+		oObjectMarker.setType(ObjectMarkerType.Flagged);
+		await nextUIUpdate();
+
+		oInnerControl = oObjectMarker._getInnerControl();
+
+		// Assert
+		assert.strictEqual(oInnerControl.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode is set to Overlay for the internal control");
+		assert.ok(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added with Flagged type");
+
+		// Act
+		oObjectMarker.setType(ObjectMarkerType.Favorite);
+		await nextUIUpdate();
+
+		oInnerControl = oObjectMarker._getInnerControl();
+
+		// Assert
+		assert.strictEqual(oInnerControl.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode is set to Overlay for the internal control");
+		assert.ok(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added with Flagged type");
+
+		// Act
+		oObjectMarker.setReactiveAreaMode(ReactiveAreaMode.Inline);
+		await nextUIUpdate();
+
+		oInnerControl = oObjectMarker._getInnerControl();
+
+		// Assert
+		assert.strictEqual(oInnerControl.getReactiveAreaMode(), ReactiveAreaMode.Inline, "Reactive area mode is set to Inline for the internal control");
+		assert.notOk(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added with Inline reactive area mode");
+
+		oObjectMarker.setType(ObjectMarkerType.UnsavedBy);
+		oObjectMarker.setReactiveAreaMode(ReactiveAreaMode.Overlay);
+		await nextUIUpdate();
+
+		oInnerControl = oObjectMarker._getInnerControl();
+
+		// Assert
+		assert.strictEqual(oInnerControl.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode is set to Overlay for the internal control");
+		assert.notOk(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added with UnsavedBy type");
+
+		oObjectMarker.setType(ObjectMarkerType.Unsaved);
+		await nextUIUpdate();
+
+		oInnerControl = oObjectMarker._getInnerControl();
+
+		// Assert
+		assert.strictEqual(oInnerControl.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode is set to Overlay for the internal control");
+		assert.notOk(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added with Unsaved type");
+
+		oObjectMarker.setType(ObjectMarkerType.LockedBy);
+		await nextUIUpdate();
+
+		oInnerControl = oObjectMarker._getInnerControl();
+
+		// Assert
+		assert.strictEqual(oInnerControl.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode is set to Overlay for the internal control");
+		assert.notOk(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added with LockedBy type");
+
+		oObjectMarker.setType(ObjectMarkerType.Draft);
+		await nextUIUpdate();
+
+		oInnerControl = oObjectMarker._getInnerControl();
+
+		// Assert
+		assert.strictEqual(oInnerControl.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode is set to Overlay for the internal control");
+		assert.notOk(oObjectMarker.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added with Draft type");
+
+		// Clean
+		oObjectMarker.destroy();
 	});
 
 	QUnit.module("Visibility");

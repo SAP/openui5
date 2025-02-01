@@ -49,8 +49,11 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	// shortcut for sap.ui.core.TextDirection
+	// shortcut for sap.m.EmptyIndicatorMode
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
+
+	// shortcut for sap.m.ReactiveAreaMode
+	var ReactiveAreaMode = mobileLibrary.ReactiveAreaMode;
 
 	// shortcut for library resource bundle
 	var oRb = Library.getResourceBundleFor("sap.m");
@@ -424,6 +427,38 @@ sap.ui.define([
 		assert.equal(sTextDir, "LTR", "Control has 'dir' property set to left-to-right");
 
 		// Clean up
+		oObjectIdentifier.destroy();
+	});
+
+	QUnit.test("reactiveAreaMode", function(assert) {
+		// Prepare
+		var oObjectIdentifier = new ObjectIdentifier({
+			title: "Title",
+			text: "text",
+			titleActive: true
+		}),
+		oTitleControl;
+
+		oObjectIdentifier.placeAt("qunit-fixture");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		oTitleControl = oObjectIdentifier._getTitleControl();
+
+		// Assert
+		assert.strictEqual(oTitleControl.getReactiveAreaMode(), ReactiveAreaMode.Inline, "Reactive area mode is set to the default value");
+		assert.notOk(oTitleControl.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added by default");
+
+		// Act
+		oObjectIdentifier.setReactiveAreaMode(ReactiveAreaMode.Overlay);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		oTitleControl = oObjectIdentifier._getTitleControl();
+
+		// Assert
+		assert.strictEqual(oTitleControl.getReactiveAreaMode(), ReactiveAreaMode.Overlay, "Reactive area mode is set to the title control");
+		assert.ok(oTitleControl.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added");
+
+		// Clean
 		oObjectIdentifier.destroy();
 	});
 

@@ -452,35 +452,6 @@ sap.ui.define([
 
 		}
 	}, {
-			testDescription: "core:require in XMLView with binding ($control, $controller) contexts in formatter functions - (future = false)",
-			viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter",
-			settings: {
-				async: {
-					create: createView,
-					spies: {
-						error: [Log, "error"],
-						fatal: [Log, "fatal"]
-					}
-				}
-			},
-			future: false,
-			runAssertions: async function (oView, mSpies, assert, bAsync) {
-				const oErrorSpy = mSpies.error;
-				const oFatalSpy = mSpies.fatal;
-				oView.placeAt("qunit-fixture");
-				await nextUIUpdate();
-
-				const oButton1 = oView.byId("btn_1");
-				oButton1.firePress();
-
-				const oButton2 = oView.byId("btn_2");
-				assert.equal(oButton2.getText(), "$controller", "'$controller' shouldn't be resolved without a binding.");
-				assert.equal(oErrorSpy.getCall(0).args[0], "[FUTURE FATAL] formatter function $controller.formatter not found!", "'$controller.formatter': Correct Error Log shown.");
-				assert.equal(oFatalSpy.getCall(0).args[0], "[FUTURE FATAL] core:require in XMLView contains an invalid identifier: '$InvalidAlias' on Node: App. Keys that begin with '$' are reserved by the framework.", "'core:require': Correct Error Log shown when invalid alias is defined.");
-
-				oView.destroy();
-			}
-		}, {
 		testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid $controller usage in XML view (future=true)",
 		viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalid$controllerUsage",
 		settings: {

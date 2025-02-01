@@ -12,6 +12,9 @@ var TextDirection = coreLibrary.TextDirection;
 // shortcut for sap.m.EmptyIndicator
 var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
+// shortcut for sap.m.ReactiveAreaMode
+var ReactiveAreaMode = library.ReactiveAreaMode;
+
 // shortcut for library resource bundle
 var oRb = Library.getResourceBundleFor("sap.m");
 
@@ -63,6 +66,9 @@ ObjectStatusRenderer.render = function(oRm, oObjStatus){
 
 		if (oObjStatus._isActive()) {
 			oRm.class("sapMObjStatusActive");
+			if (oObjStatus.getReactiveAreaMode() === ReactiveAreaMode.Overlay) {
+				oRm.class("sapMLnkLargeReactiveArea");
+			}
 			oRm.attr("tabindex", "0");
 			oAccAttributes.role = "button";
 			oAccAttributes.roledescription = Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ACTIVE");

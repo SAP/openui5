@@ -6,9 +6,13 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/PageAccessibleLandmarkInfo",
 	"sap/m/Toolbar",
-	"sap/m/ToolbarSpacer"
-], function(App, CheckBox, Input, Label, Page, PageAccessibleLandmarkInfo, Toolbar, ToolbarSpacer) {
+	"sap/m/ToolbarSpacer",
+	"sap/ui/core/library"
+], function(App, CheckBox, Input, Label, Page, PageAccessibleLandmarkInfo, Toolbar, ToolbarSpacer, library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.AccessibleLandmarkRole
+	const AccessibleLandmarkRole = library.AccessibleLandmarkRole;
 
 	var oApp = new App("myApp", {
 			initialPage: "page"
@@ -32,7 +36,16 @@ sap.ui.define([
 		}).addStyleClass("customLabel"),
 
 		oPage = new Page("page", {
-			landmarkInfo: new PageAccessibleLandmarkInfo(),
+			landmarkInfo: new PageAccessibleLandmarkInfo({
+				headerRole: AccessibleLandmarkRole.Banner,
+				headerLabel: "Header label from LandmarkInfo",
+				rootRole: AccessibleLandmarkRole.Region,
+				rootLabel: "Root label from LandmarkInfo",
+				contentRole: AccessibleLandmarkRole.Main,
+				contentLabel: "Content label from LandmarkInfo",
+				footerRole: AccessibleLandmarkRole.ContentInfo,
+				footerLabel: "Footer label from LandmarkInfo"
+			}),
 			title: "Page Accessibility Test Page",
 			content: [
 				oLabel,

@@ -163,6 +163,7 @@ sap.ui.define([
 		  "sap.m.PopinLayout",
 		  "sap.m.QuickViewGroupElementType",
 		  "sap.m.RatingIndicatorVisualMode",
+		  "sap.m.ReactiveAreaMode",
 		  "sap.m.ScreenSize",
 		  "sap.m.CarouselScrollMode",
 		  "sap.m.SelectColumnRatio",
@@ -4338,6 +4339,28 @@ sap.ui.define([
 
 	 };
 
+	 /**
+	  * Reactive area modes of interactable elements.
+	  *
+	  * @enum {string}
+	  * @public
+	  */
+	 thisLib.ReactiveAreaMode = {
+
+		 /**
+		  * The target element is displayed as part of a sentence.
+		  * @public
+		  */
+		 Inline : "Inline",
+
+		 /**
+		  * The target element is displayed as on overlay on top of other interactive parts of the page.
+		  * @public
+		  */
+		 Overlay : "Overlay"
+
+	 };
+
 
 	 /**
 	  * Breakpoint names for different screen sizes.
@@ -6124,6 +6147,7 @@ sap.ui.define([
 	 DataType.registerEnum("sap.m.PopinLayout", thisLib.PopinLayout);
 	 DataType.registerEnum("sap.m.QuickViewGroupElementType", thisLib.QuickViewGroupElementType);
 	 DataType.registerEnum("sap.m.RatingIndicatorVisualMode", thisLib.RatingIndicatorVisualMode);
+	 DataType.registerEnum("sap.m.ReactiveAreaMode", thisLib.ReactiveAreaMode);
 	 DataType.registerEnum("sap.m.ScreenSize", thisLib.ScreenSize);
 	 DataType.registerEnum("sap.m.CarouselScrollMode", thisLib.CarouselScrollMode);
 	 DataType.registerEnum("sap.m.SelectColumnRatio", thisLib.SelectColumnRatio);

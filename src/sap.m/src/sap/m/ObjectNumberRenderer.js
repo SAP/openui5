@@ -17,6 +17,9 @@ var ValueState = coreLibrary.ValueState;
 // shortcut for sap.ui.core.TextDirection
 var TextDirection = coreLibrary.TextDirection;
 
+// shortcut for sap.m.ReactiveAreaMode
+var ReactiveAreaMode = library.ReactiveAreaMode;
+
 /**
  * String to prefix CSS class for number status.
  */
@@ -50,6 +53,9 @@ ObjectNumberRenderer.render = function(oRm, oON) {
 
 	if (oON._isActive()) {
 		oRm.class("sapMObjectNumberActive");
+		if (oON.getReactiveAreaMode() === ReactiveAreaMode.Overlay) {
+			oRm.class("sapMLnkLargeReactiveArea");
+		}
 		oRm.attr("tabindex", "0");
 		oAccAttributes.role = "button";
 	}

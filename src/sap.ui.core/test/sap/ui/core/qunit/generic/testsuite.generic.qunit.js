@@ -34,6 +34,10 @@ sap.ui.define([
 
 			"sap.ui.core.routing.Target.TitleProvider": {
 				moduleName: "sap/ui/core/routing/Target"
+			},
+
+			"sap.m.HeaderContainerItemContainer": {
+				moduleName: "sap/m/HeaderContainer"
 			}
 		}
 	});
