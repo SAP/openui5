@@ -22,10 +22,14 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
-	// shortcut for sap.ui.core.TextDirection
+	// shortcut for sap.m.EmptyIndicatorMode
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
+	// shortcut for sap.m.LinkAccessibleRole
 	var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
+
+	// shortcut for sap.m.ReactiveAreaMode
+	var ReactiveAreaMode = mobileLibrary.ReactiveAreaMode;
 
 	// shortcut for library resource bundle
 	var oRb = Library.getResourceBundleFor("sap.m");
@@ -659,7 +663,13 @@ sap.ui.define([
 	QUnit.test("Prevent navigation on mobile devices", async function(assert) {
 		// Prepare
 		var oLink = new Link({ text: "text", href: "#" }),
-			oTouchStartEvent = new Event("touchstart", { bubbles: true, cancelable: true }),
+			oTouchStartEvent = new TouchEvent("touchstart", { bubbles: true, cancelable: true }),
+			oTouchStartEventStub = this.stub(oTouchStartEvent, "touches").value([{
+				identifier: 0,
+				target: oLink.getDomRef(),
+				pageX: 10,
+				pageY: 10
+			}]),
 			oClickEvent = new Event("click", { bubbles: true, cancelable: true }),
 			oPressSpy = this.spy(oLink, "firePress"),
 			oPreventDefaultSpy = this.spy(oTouchStartEvent, "preventDefault"),
@@ -699,6 +709,7 @@ sap.ui.define([
 		// Clean
 		oLink.destroy();
 		oDeviceStub.restore();
+		oTouchStartEventStub.restore();
 	});
 
 	QUnit.test("The press event is prevented even if the link's DOM is moved into the static area", function(assert) {
@@ -721,6 +732,29 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented");
+	});
+
+	QUnit.test("reactiveAreaMode", async function(assert) {
+		// Prepare
+		var oLink = new Link({
+			text: "text"
+		});
+
+		oLink.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oLink.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is not added by default");
+
+		// Act
+		oLink.setReactiveAreaMode(ReactiveAreaMode.Overlay);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oLink.getDomRef().classList.contains("sapMLnkLargeReactiveArea"), "Reactive area class is added");
+
+		// Clean
+		oLink.destroy();
 	});
 
 	QUnit.module("EmptyIndicator", {

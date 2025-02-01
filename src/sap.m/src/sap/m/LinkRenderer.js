@@ -21,6 +21,9 @@
  // shortcut for sap.m.LinkAccessibleRole
  var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
 
+ // shortcut for sap.m.ReactiveAreaMode
+ var ReactiveAreaMode = mobileLibrary.ReactiveAreaMode;
+
  /**
   * Link renderer
   * @namespace
@@ -63,6 +66,10 @@
 	 oRm.openStart("a", oControl);
 
 	 oRm.class("sapMLnk");
+	 if (oControl.getReactiveAreaMode() === ReactiveAreaMode.Overlay) {
+		 oRm.class("sapMLnkLargeReactiveArea");
+	 }
+
 	 if (oControl.getSubtle()) {
 		 oRm.class("sapMLnkSubtle");
 		 sTypeSemanticInfo += oControl._sAriaLinkSubtleId;

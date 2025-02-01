@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/library", "sap/ui/core/Locale"], function(Localization, coreLibrary, Locale) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/library", "sap/ui/core/Locale", "./library"], function(Localization, coreLibrary, Locale, library) {
 "use strict";
 
 
@@ -10,6 +10,10 @@ var TextDirection = coreLibrary.TextDirection;
 
 // shortcut for sap.ui.core.aria.HasPopup
 var AriaHasPopup = coreLibrary.aria.HasPopup;
+
+// shortcut for sap.m.ReactiveAreaMode
+var ReactiveAreaMode = library.ReactiveAreaMode;
+
 /**
  * ObjectAttribute renderer.
  * @namespace
@@ -51,6 +55,9 @@ ObjectAttributeRenderer.render = function(oRm, oOA) {
 	// e.g. when is active or the CustomContent is sap.m.Link
 	if (oOA._isClickable()) {
 		oRm.class("sapMObjectAttributeActive");
+		if (oOA.getReactiveAreaMode() === ReactiveAreaMode.Overlay) {
+			oRm.class("sapMLnkLargeReactiveArea");
+		}
 		if (!oOA.getTitle() && oOA.getText()) {
 		// in case of title only or text only, allow 100% of width to be taken
 			oRm.class("sapMObjectAttributeTextOnly");

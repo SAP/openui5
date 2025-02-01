@@ -56,6 +56,9 @@ function(
 	// shortcut for sap.m.EmptyIndicator
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
+	// shortcut for sap.m.ReactiveAreaMode
+	var ReactiveAreaMode = library.ReactiveAreaMode;
+
 	/**
 	 * Constructor for a new <code>Link</code>.
 	 *
@@ -245,6 +248,20 @@ function(
 				 * @since 1.104.0
 				 */
 				accessibleRole : {type : "sap.m.LinkAccessibleRole", group : "Accessibility", defaultValue : LinkAccessibleRole.Default},
+
+				/**
+				 * Defines the size of the reactive area of the link:<ul>
+				 * <li><code>ReactiveAreaMode.Inline</code> - The link is displayed as part of a sentence.</li>
+				 * <li><code>ReactiveAreaMode.Overlay</code> - The link is displayed as an overlay on top of other interactive parts of the page.</li></ul>
+				 *
+				 * <b>Note:</b>It is designed to make links easier to activate and helps meet the WCAG 2.2 Target Size requirement. It is applicable only for the SAP Horizon themes.
+				 * <b>Note:</b>The Reactive area size is sufficiently large to help users avoid accidentally selecting (clicking or tapping) on unintented UI elements.
+				 * UI elements positioned over other parts of the page may need an invisible active touch area.
+				 * This will ensure that no elements beneath are activated accidentally when the user tries to interact with the overlay element.
+				 *
+				 * @since 1.133.0
+				 */
+				reactiveAreaMode : {type : "sap.m.ReactiveAreaMode", group : "Appearance", defaultValue : ReactiveAreaMode.Inline},
 
 				/**
 				 * Specifies if an empty indicator should be displayed when there is no text.

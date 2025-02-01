@@ -778,6 +778,7 @@ ObjectHeaderRenderer._renderResponsive = function(oRM, oOH) {
 	oRM.class("sapMOHRBg" + oOH._getBackground());
 	oRM.openEnd();
 	oRM.openStart("div");
+	oRM.class("sapMOHRMaxWidth");
 
 	if (Device.system.desktop && oOH._isMediaSize("Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
 		oRM.class("sapMOHRStatesOneOrThree");
