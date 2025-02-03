@@ -1,7 +1,12 @@
 {
   "1.133.0": {
-    "date": "January 2025",
+    "date": "February 2025",
     "notes": [
+      {
+        "id": "245881603fa6b29dccbc72490e406a2236244ef6",
+        "type": "FIX",
+        "text": " sap.m.Popover: Box shadow is now fully visible when the popover is placed at the edge of the screen"
+      },
       {
         "id": "1352d3c38bcbb00c54f47c5594de200431d7e400",
         "type": "FEATURE",

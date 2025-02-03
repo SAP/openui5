@@ -1,7 +1,17 @@
 {
   "1.133.0": {
-    "date": "January 2025",
+    "date": "February 2025",
     "notes": [
+      {
+        "id": "209f252936f9e9700823848829c87f5267ad1549",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: errors prevented"
+      },
+      {
+        "id": "119ddcffa1246da7f0bfd81459253bfc48e0c564",
+        "type": "FIX",
+        "text": " sap.f.CardHeader: Status text is not overflowing"
+      },
       {
         "id": "ec163968c5fe10692849a781b69a0bd1b23e76da",
         "type": "FIX",

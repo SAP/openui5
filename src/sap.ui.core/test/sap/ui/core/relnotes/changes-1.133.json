@@ -1,7 +1,12 @@
 {
   "1.133.0": {
-    "date": "January 2025",
+    "date": "February 2025",
     "notes": [
+      {
+        "id": "c39f18ad50aaf82b94643870713da928ffde51e9",
+        "type": "FEATURE",
+        "text": " ManagedObjectBindingSupport: support setting type with Class"
+      },
       {
         "id": "2aa58d2ff8dc27c4a62d9d9c12a8ce4a9408fbd3",
         "type": "FIX",

@@ -1,7 +1,42 @@
 {
   "1.133.0": {
-    "date": "January 2025",
+    "date": "February 2025",
     "notes": [
+      {
+        "id": "67fb6dd6ba1ddce601a14508f79e95cc7a0ccb61",
+        "type": "FIX",
+        "text": " We've now removed the redundant aria-labelledby property for the avatar of FeedListItem control"
+      },
+      {
+        "id": "b5adc34a5bb43e8dc850e7ef53010c807e51139a",
+        "type": "FIX",
+        "text": " sap.m.Page: ACC automation tests improvements"
+      },
+      {
+        "id": "161316ac553c3ac64a6483375a09e4755c103981",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: is correctly displayed on large screens"
+      },
+      {
+        "id": "b7d44aef80f5125b20f3d1e0cf1a6a003d1bc98b",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Reactive area size API introduced"
+      },
+      {
+        "id": "9500c2ccce3069e2f244cbc1e877f224ad13d32d",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: wraps correctly when is active"
+      },
+      {
+        "id": "245881603fa6b29dccbc72490e406a2236244ef6",
+        "type": "FIX",
+        "text": " sap.m.Popover: Box shadow is now fully visible when the popover is placed at the edge of the screen"
+      },
+      {
+        "id": "a571c473981dbc536f7c503a70d567db65e21c5d",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Aligned with visual specification"
+      },
       {
         "id": "bfa6dd5a7b3359d2c69f803b1eac635d9c5feed0",
         "type": "FIX",

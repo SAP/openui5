@@ -1,7 +1,22 @@
 {
   "1.133.0": {
-    "date": "January 2025",
+    "date": "February 2025",
     "notes": [
+      {
+        "id": "9460e424ab2397980e9f01f33e62705f5704cf19",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: sliders touch areas don't overlap in belize theme now"
+      },
+      {
+        "id": "9500c2ccce3069e2f244cbc1e877f224ad13d32d",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: wraps correctly when is active"
+      },
+      {
+        "id": "245881603fa6b29dccbc72490e406a2236244ef6",
+        "type": "FIX",
+        "text": " sap.m.Popover: Box shadow is now fully visible when the popover is placed at the edge of the screen"
+      },
       {
         "id": "4b5086c4eb73a40beb4d403f584da7fa9622d81b",
         "type": "FIX",

@@ -1,7 +1,12 @@
 {
   "1.133.0": {
-    "date": "January 2025",
+    "date": "February 2025",
     "notes": [
+      {
+        "id": "bff0ddb2249b14878e65568a14b8d4f503720e33",
+        "type": "FIX",
+        "text": " DemoKit: Sequence of tracked events corrected"
+      },
       {
         "id": "371d35e3476db5f63b44196ab45d3ad6b0e8841a",
         "type": "FIX",
