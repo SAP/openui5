@@ -4,7 +4,7 @@
 /* ============================== */
 
 html.sap-phone .sapMSupport .sapMDialogScrollCont {
-	padding : 0;
+	padding: 0;
 }
 
 .sapMSupport .sapUiSupportLabel{
@@ -12,12 +12,12 @@ html.sap-phone .sapMSupport .sapMDialogScrollCont {
 }
 
 .sapMSupport .sapUiSupportTechInfoBorder {
-	border: 1px solid @sapUiListBorderColor;
+	border: 1px solid var(--sapList_BorderColor);
 }
 
 .sapMSupport .sapUiSupportTxtFld,
 .sapMSupport .sapUiSupportBtn {
-	border: 1px solid @sapUiFieldBorderColor;
+	border: 1px solid var(--sapField_BorderColor);
 	font-size: 14px;
 	height: 22px;
 	box-sizing: border-box;
@@ -41,25 +41,25 @@ html.sap-phone .sapMSupport .sapMDialogScrollCont {
 }
 
 .sapMSupport .sapUiSupportTxtFld {
-	background-color: @sapUiFieldBackground;
+	background-color: var(--sapField_Background);
 	padding: 1px;
 }
 
 .sapMSupport .sapUiSupportTxtFld:focus {
-	outline: 1px dashed @sapUiContentFocusColor;
+	outline: 1px dashed var(--sapContent_FocusColor);
 	outline-offset: 2px;
 }
 
 .sapMSupport .sapUiSupportBtn {
-	background-color: @sapUiButtonBackground;
-	border-color: @sapUiButtonBorderColor;
+	background-color: var(--sapButton_Background);
+	border-color: var(--sapButton_BorderColor);
 	padding-bottom: 3px;
 	cursor: pointer;
 }
 
 .sapMSupport .sapUiSupportBtn:focus,
 .sapMSupport .sapUiSupportBtn.sapUiSupportRunningTrace {
-	outline: 1px dashed @sapUiContentFocusColor;
+	outline: 1px dashed var(--sapContent_FocusColor);
 	outline-offset: 2px;
 }
 
