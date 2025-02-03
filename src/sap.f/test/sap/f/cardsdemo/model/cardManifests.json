@@ -2224,6 +2224,13 @@
 			}
 		  }
 		}
+	  },
+	  "NoContent-NoHeader": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.NoContent-NoHeader",
+		  "type": "card"
+		},
+		"sap.card": { }
 	  }
 	},
 	"minHeight": {
