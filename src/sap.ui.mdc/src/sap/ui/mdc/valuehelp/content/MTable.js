@@ -258,6 +258,11 @@ sap.ui.define([
 		if (!bIsTypeahead || !this.isSingleSelect()) {
 			const oParams = oEvent.getParameters();
 			const aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
+
+			if (bIsTypeahead && aListItems.length === 1 && containsOrEquals(aListItems[0].getDomRef(), document.activeElement) && aListItems[0].getDomRef() !== document.activeElement) {
+				aListItems[0].focus(); // if CheckBox clicked focus whole row, as Checkox must not get the Focus inside dropdown
+			}
+
 			const aConditions = aListItems.map((oItem) => {
 				const oItemContext = this._getListItemBindingContext(oItem);
 				const oValues = this.getItemFromContext(oItemContext);
