@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
+	"sap/ui/core/fieldhelp/FieldHelp",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
@@ -40,9 +41,9 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, Localization, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip,
-		Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, Message,
-		Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode,
-		Decimal, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel,
+		Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, FieldHelp,
+		Message, Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter,
+		OperationMode, Decimal, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel,
 		ODataPropertyBinding, ValueListType, _Helper, Security, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
@@ -78093,5 +78094,58 @@ make root = ${bMakeRoot}`;
 			ID : "0",
 			Name : "Frederic Fall"
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If a text property is bound, the field help for the corresponding ID property is
+	// provided instead of the field help for the text property itself. The test covers the
+	// following cases:
+	// A: control binding to text property only
+	// B: control binding to text and ID in a composite binding
+	// C: control binding different control properties to text and ID
+	// D: control binding to text property only, text and ID property are defined in a complex type
+	// JIRA: CPOUI5MODELS-1886
+	QUnit.test("Field help for text properties", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="root" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
+	<Label labelFor="idA" text="A" />
+	<Text id="idA" text="{Name}"/>
+	<Label labelFor="idB" text="B" />
+	<Text id="idB" text="{ArtistID} {Name}"/>
+	<Label labelFor="idC" text="C" />
+	<ObjectIdentifier id="idC" text="{ArtistID}" title="{Name}"/>
+	<Label labelFor="idD" text="D" />
+	<Text id="idD" text="{Address/RegionName}"/>
+</FlexBox>`;
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+				+ "?$select=Address/RegionName,ArtistID,IsActiveEntity,Name", {
+					Address : {RegionName : "Caribbean"},
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Dr No"
+				});
+		// simplicity: no expectChange on controls, as this aspect is not subject of this test
+
+		await this.createView(assert, sView, oModel);
+
+		const {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+
+		// code under test
+		FieldHelp.getInstance().activate(fnResolve);
+
+		const aHotspots = await oFieldHelpUpdatePromise;
+		const aExpectedHotspots = [["A"], ["B"], ["C"], ["D", "REGION_ID"]]
+			.map(([sCase, sId]) => ({
+				backendHelpKey : {
+					id : sId ?? "ARTIST_ID",
+					type : "DTEL"
+				},
+				hotspotId : this.oView.createId("id" + sCase),
+				labelText : sCase
+			}));
+		assert.deepEqual(aHotspots, aExpectedHotspots, "field help hotspots");
+		FieldHelp.getInstance().deactivate();
 	});
 });
