@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/mdc/DefaultTypeMap",
@@ -11,7 +11,10 @@ sap.ui.define([
 	"sap/ui/model/type/Unit",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Integer",
-	"sap/ui/model/type/Float"
+	"sap/ui/model/type/Float",
+	"sap/base/util/ObjectPath",
+	"sap/base/future"
+
 ],
 function(
 	DefaultTypeMap,
@@ -24,7 +27,9 @@ function(
 	Unit,
 	Currency,
 	Integer,
-	Float
+	Float,
+	ObjectPath,
+	future
 ) {
     "use strict";
 
@@ -108,6 +113,34 @@ function(
 		assert.equal(oTypeConfig.baseType, BaseType.Unit , "expected basetype returned");
 	});
 
+	QUnit.test("getTypeConfig with not existing data type", function (assert) {
+		try {
+			const oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.NotExisting");
+			assert.notOk(oTypeConfig, "no TypeConfig must be returned");
+		} catch (oError) {
+			assert.ok(oError, "Error trhown");
+		}
+	});
+
+	/**
+	 * @deprecated As of version 1.120 with no replacement.
+	 */
+	QUnit.test("getTypeConfig with not loaded data type", function (assert) {
+		const oStub = sinon.stub(sap.ui, "require");
+		oStub.withArgs("sap/ui/model/type/Date").onFirstCall().returns(undefined); // fake not loaded
+		oStub.callThrough();
+		sinon.spy(ObjectPath, "get");
+		sinon.spy(future, "errorThrows");
+
+		const oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.Date");
+		assert.equal(oTypeConfig.className, "sap.ui.model.type.Date", "expected typestring returned");
+		assert.ok(oTypeConfig.typeInstance.isA("sap.ui.model.type.Date") , "expected model type returned");
+		assert.equal(oTypeConfig.baseType, BaseType.Date , "expected basetype returned");
+		assert.ok(future.errorThrows.calledOnce, "Future Error called");
+		assert.ok(ObjectPath.get.calledWith("sap.ui.model.type.Date"), "ObjectPath.get used");
+		oStub.restore();
+	});
+
 	QUnit.test("_normalizeType", function (assert) {
 
 		let oTypeInstance = DefaultTypeMap._normalizeType("sap.ui.model.type.Currency", {showMeasure: false}, {maximum: 999});
@@ -177,4 +210,28 @@ function(
 		assert.equal(oStringifiedValue, "10:10:10", "stringified value returned");
 		oType.destroy();
 	});
+
+	QUnit.test("retrieveDataTypeClasses", (assert) => {
+		const aDataTypes = ["sap.ui.model.type.String", "sap.ui.model.type.Date", "sap.ui.model.type.Integer"];
+
+		return DefaultTypeMap.retrieveDataTypeClasses(aDataTypes).then((aClasses) => {
+			assert.equal(aClasses?.length, 3, "Classes returned");
+			assert.equal(aClasses[0].getMetadata().getName(), "sap.ui.model.type.String", "first class");
+			assert.equal(aClasses[1].getMetadata().getName(), "sap.ui.model.type.Date", "second class");
+			assert.equal(aClasses[2].getMetadata().getName(), "sap.ui.model.type.Integer", "third class");
+		}).catch((oException) => {
+			assert.ok(false, "Exception fired");
+		});
+	});
+
+	QUnit.test("retrieveDataTypeClasses - not exising type", (assert) => {
+		const aDataTypes = ["sap.ui.model.type.NotExisting"];
+
+		return DefaultTypeMap.retrieveDataTypeClasses(aDataTypes).then((aClasses) => {
+			assert.ok(false, "No exception fired");
+		}).catch((oException) => {
+			assert.ok(oException, "Exception fired");
+		});
+	});
+
 });

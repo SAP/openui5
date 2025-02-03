@@ -257,7 +257,7 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		this.oTable.initialized().then(function(){
+		this.oTable._fullyInitialized().then(function(){
 			Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
 
 				//check container
@@ -304,7 +304,7 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		this.oTable.initialized().then(function(){
+		this.oTable._fullyInitialized().then(function(){
 			Engine.getInstance().uimanager.show(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
 				//check container

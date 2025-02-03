@@ -3,13 +3,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/condition/FilterConverter",
 	"../Operators",
-	"../model/formatter",
-	// In order to have a correctly working custom operator, we need to import and load all relevant data types.
-	"sap/ui/model/type/String",
-	"sap/ui/model/type/Integer",
-	"sap/ui/model/type/Boolean",
-	"sap/ui/model/type/Float",
-	"sap/ui/model/odata/type/Date"
+	"../model/formatter"
 ], function(
 	Controller,
 	JSONModel,

@@ -10,8 +10,6 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
 	'sap/ui/mdc/FilterField',
 	"sap/ui/mdc/enums/OperatorName",
-	'sap/ui/model/odata/type/String',
-	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/mdc/odata/TypeMap"
 ], function(createAppEnvironment,
 	Localization,
@@ -23,8 +21,6 @@ sap.ui.define([
 	FilterBarDelegate,
 	FilterField,
 	OperatorName,
-	StringType,
-	DateTimeType,
 	ODataTypeMap
 	) {
 	'use strict';
