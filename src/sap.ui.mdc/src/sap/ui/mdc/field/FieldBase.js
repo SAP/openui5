@@ -2454,8 +2454,9 @@ sap.ui.define([
 		if (this._oNavigateCondition) {
 			this._oNavigateCondition = undefined; // navigation now finished
 			this.getContentFactory().updateConditionType();
-			if (oSource.selectText && oSource.getDOMValue) {
-				oSource.selectText(oSource.getDOMValue().length, oSource.getDOMValue().length); // deselect highlighting
+			const sDomValue = oSource.getDOMValue?.();
+			if (oSource.selectText && sDomValue) {
+				oSource.selectText(sDomValue.length, sDomValue.length); // deselect highlighting
 			}
 		}
 
