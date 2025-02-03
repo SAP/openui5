@@ -430,7 +430,7 @@ sap.ui.define([
 						// Note: config option is internally converted to lowercase
 						if (oConfig.ui5["xx-waitfortheme"] === "init") {
 							return new Promise(function(resolve, reject) {
-								sap.ui.require(["sap/ui/qunit/utils/waitForThemeApplied"], resolve, reject);
+								sap.ui.require(["sap/ui/test/utils/waitForThemeApplied"], resolve, reject);
 							}).then(function(waitForThemeApplied) {
 								return waitForThemeApplied();
 							});
