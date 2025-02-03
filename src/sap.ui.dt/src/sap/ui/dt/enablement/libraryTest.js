@@ -127,22 +127,25 @@ sap.ui.define([
 			optional: true,
 			check(assert, mActions, sControlName) {
 				Object.keys(mActions).forEach(function(sAction) {
-					if (mActions[sAction].changeType) {
-						assert.strictEqual(typeof mActions[sAction].changeType, "string", `${sControlName} defines ${sAction} with changetype:${mActions[sAction].changeType}`);
-					} else if (typeof mActions[sAction] === "string") {
-						assert.strictEqual(typeof mActions[sAction], "string", `${sControlName} defines ${sAction} as string`);
-					} else if (sAction === "settings" && typeof mActions[sAction] === "object") {
-						if (mActions[sAction].handler) {
-							assert.strictEqual(typeof mActions[sAction].handler, "function", `${sControlName} defines ${sAction} with handler function`);
-						} else if (Object.keys(mActions[sAction]).length) {
-							assert.strictEqual(typeof mActions[sAction], "object", `${sControlName} defines ${sAction} with multiple action definitions`);
-							Object.keys(mActions[sAction]).forEach((sKey) => {
-								const oValue = mActions[sAction][sKey];
-								assert.strictEqual(typeof oValue.handler, "function", `${sControlName} defines ${sAction} action with ${sKey} with handler function`);
-							});
+					// Actions like addXML can be set to null to disable them in the developer scenario
+					if (mActions[sAction]) {
+						if (mActions[sAction].changeType) {
+							assert.strictEqual(typeof mActions[sAction].changeType, "string", `${sControlName} defines ${sAction} with changetype:${mActions[sAction].changeType}`);
+						} else if (typeof mActions[sAction] === "string") {
+							assert.strictEqual(typeof mActions[sAction], "string", `${sControlName} defines ${sAction} as string`);
+						} else if (sAction === "settings" && typeof mActions[sAction] === "object") {
+							if (mActions[sAction].handler) {
+								assert.strictEqual(typeof mActions[sAction].handler, "function", `${sControlName} defines ${sAction} with handler function`);
+							} else if (Object.keys(mActions[sAction]).length) {
+								assert.strictEqual(typeof mActions[sAction], "object", `${sControlName} defines ${sAction} with multiple action definitions`);
+								Object.keys(mActions[sAction]).forEach((sKey) => {
+									const oValue = mActions[sAction][sKey];
+									assert.strictEqual(typeof oValue.handler, "function", `${sControlName} defines ${sAction} action with ${sKey} with handler function`);
+								});
+							}
+						} else {
+							assert.strictEqual(typeof mActions[sAction], "function", `${sControlName} defines ${sAction} as function`);
 						}
-					} else {
-						assert.strictEqual(typeof mActions[sAction], "function", `${sControlName} defines ${sAction} as function`);
 					}
 				});
 			}
