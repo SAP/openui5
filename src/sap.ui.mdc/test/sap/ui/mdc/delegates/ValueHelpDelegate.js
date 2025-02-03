@@ -20,7 +20,7 @@ sap.ui.define([
 
 	TestValueHelpDelegate.getFilters = function(oValueHelp, oContent) {
 		return PayloadSearchKeys.combineFilters([
-			...ValueHelpDelegate.getFilters(oValueHelp, oContent),
+			...ValueHelpDelegate.getFilters.apply(this, arguments),
 			...PayloadSearchKeys.getFilters(oValueHelp, oContent?.getSearch(), oContent)
 		], true);
 	};

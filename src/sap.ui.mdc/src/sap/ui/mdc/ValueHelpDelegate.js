@@ -9,19 +9,21 @@
 sap.ui.define([
 	"sap/ui/mdc/BaseDelegate",
 	"sap/ui/model/FilterType",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/condition/Condition",
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/model/FilterProcessor',
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
 	"sap/ui/mdc/condition/FilterConverter",
-	'sap/ui/mdc/condition/FilterOperatorUtil',
+	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/Device",
 	"sap/ui/mdc/enums/FieldDisplay"
 ], (
 	BaseDelegate,
 	FilterType,
+	BaseType,
 	ConditionValidated,
 	OperatorName,
 	Condition,
@@ -371,10 +373,11 @@ sap.ui.define([
 		const oListBindingInfo = oContent && oContent.getListBindingInfo();
 
 		if (oListBindingInfo && oListBindingInfo.template) {
+			const oTypeMap = this.getTypeMap();
 			oListBindingInfo.template.mAggregations.cells.forEach((oCell) => {
 				Object.values(oCell.mBindingInfos).forEach((oBindingInfo) => {
 					oBindingInfo.parts.forEach((oPartInfo) => {
-						oConditionTypes[oPartInfo.path] = { type: oPartInfo.type || null };
+						oConditionTypes[oPartInfo.path] = { type: oPartInfo.type || null, baseType: oPartInfo.type ? oTypeMap.getBaseTypeForType(oPartInfo.type) : BaseType.String};
 					});
 				});
 			}, {});
