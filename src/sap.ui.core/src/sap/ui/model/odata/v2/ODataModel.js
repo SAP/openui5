@@ -122,7 +122,7 @@ sap.ui.define([
 	 *   Sets the default count mode for the model
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
 	 *   Sets the default operation mode for the model
-	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=Merge]
+	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=MERGE]
 	 *   Default update method which is used for all update requests
 	 * @param {boolean} [mParameters.disableHeadRequestForToken=false]
 	 *   Set this flag to <code>true</code> if your service does not support <code>HEAD</code>
@@ -335,7 +335,7 @@ sap.ui.define([
 			this.mChangeHandles = {};
 			this.mDeferredGroups = {};
 			this.mLaunderingState = {};
-			this.sDefaultUpdateMethod = sDefaultUpdateMethod || UpdateMethod.Merge;
+			this.sDefaultUpdateMethod = ODataModel._fixUpdateMethod(sDefaultUpdateMethod) || UpdateMethod.MERGE;
 
 			this.bTokenHandling = vTokenHandling !== false;
 			this.bWithCredentials = bWithCredentials === true;
@@ -963,6 +963,23 @@ sap.ui.define([
 		server: {},
 		service: {},
 		meta: {}
+	};
+
+	/**
+	 * Maps "Put" to "PUT" and "Merge" to "MERGE" to fix wrong usage of deprecated enum keys as manifest entries. If
+	 * the given update method is neither "Put" nor "Merge", it is returned as is.
+	 *
+	 * @param {string} [sUpdateMethod] The update method to fix
+	 * @returns {string|undefined} The fixed update method
+	 * @private
+	 */
+	ODataModel._fixUpdateMethod = function (sUpdateMethod) {
+		if (sUpdateMethod === "Put") {
+			return UpdateMethod.PUT;
+		} else if (sUpdateMethod === "Merge") {
+			return UpdateMethod.MERGE;
+		}
+		return sUpdateMethod;
 	};
 
 	/**
@@ -4147,7 +4164,7 @@ sap.ui.define([
 				oStoredRequest.data = oRequest.data;
 				oStoredRequest.sideEffects = oRequest.sideEffects;
 
-				if (oRequest.method === "PUT") {
+				if (oRequest.method === UpdateMethod.PUT) {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
 					delete oStoredRequest.headers["x-http-method"];
@@ -4741,8 +4758,8 @@ sap.ui.define([
 	 *   The entry data
 	 * @param {string} sGroupId
 	 *   The group ID
-	 * @param {boolean} [sUpdateMethod]
-	 *   Sets <code>MERGE/PUT</code> method, defaults to <code>MERGE</code> if not provided
+	 * @param {sap.ui.model.odata.UpdateMethod} [sUpdateMethod]
+	 *   The update method, defaults to the model's default update method
 	 * @returns {object}
 	 *   The request object
 	 *
@@ -4784,12 +4801,12 @@ sap.ui.define([
 				//delete the uri flag when a new entity was created, since the uri for the create request is generated and does not point to a valid resource
 				delete oPayload.__metadata['uri'];
 			}
-		} else if (sUpdateMethod === "MERGE") {
-			sMethod = "MERGE";
+		} else if (sUpdateMethod === UpdateMethod.MERGE) {
+			sMethod = UpdateMethod.MERGE;
 			// get original unmodified entry for diff
 			oUnModifiedEntry = this._getEntity(sKey);
 		} else {
-			sMethod = "PUT";
+			sMethod = UpdateMethod.PUT;
 		}
 
 		// remove metadata, navigation properties to reduce payload
@@ -4809,7 +4826,7 @@ sap.ui.define([
 			});
 		}
 
-		if (sMethod === "MERGE" && oEntityType && oUnModifiedEntry) {
+		if (sMethod === UpdateMethod.MERGE && oEntityType && oUnModifiedEntry) {
 			each(oPayload, function(sPropName, oPropValue) {
 				if (sPropName !== '__metadata') {
 					// remove unmodified properties and keep only modified properties for delta MERGE
@@ -5132,8 +5149,8 @@ sap.ui.define([
 			mHeaders["Accept"] = "text/plain, */*;q=0.5";
 		}
 
-		if (sMethod === "MERGE" && !this.bUseBatch) {
-			mHeaders["x-http-method"] = "MERGE";
+		if (sMethod === UpdateMethod.MERGE && !this.bUseBatch) {
+			mHeaders["x-http-method"] = UpdateMethod.MERGE;
 			sMethod = "POST";
 		}
 
@@ -5254,7 +5271,7 @@ sap.ui.define([
 	 * Trigger a <code>PUT/MERGE</code> request to the OData service that was specified in the model constructor.
 	 *
 	 * The update method used is defined by the global <code>defaultUpdateMethod</code> parameter which is
-	 * <code>sap.ui.model.odata.UpdateMethod.Merge</code> by default. Please note that deep updates are not
+	 * <code>sap.ui.model.odata.UpdateMethod.MERGE</code> by default. Please note that deep updates are not
 	 * supported and may not work. These should be done separately and directly on the corresponding entry.
 	 *
 	 * @param {string} sPath A string containing the path to the data that should be updated.
@@ -5302,7 +5319,7 @@ sap.ui.define([
 			bCanonical = mParameters.canonicalRequest;
 			// ensure merge parameter backwards compatibility
 			if (mParameters.merge !== undefined) {
-				sMethod =  mParameters.merge ? "MERGE" : "PUT";
+				sMethod = mParameters.merge ? UpdateMethod.MERGE : UpdateMethod.PUT;
 			}
 		}
 
@@ -6341,7 +6358,8 @@ sap.ui.define([
 	 * Submits the collected changes which were collected by the {@link #setProperty} method and other deferred requests.
 	 *
 	 * The update method is defined by the global <code>defaultUpdateMethod</code> parameter which is
-	 * <code>sap.ui.model.odata.UpdateMethod.Merge</code> by default. In case of a <code>sap.ui.model.odata.UpdateMethod.Merge</code>
+	 * <code>sap.ui.model.odata.UpdateMethod.MERGE</code> by default. In case of a
+	 * <code>sap.ui.model.odata.UpdateMethod.MERGE</code>
 	 * request only the changed properties will be updated.
 	 * If a URI with a <code>$expand</code> query option was used then the expand entries will be removed from the collected changes.
 	 * Changes to this entries should be done on the entry itself. So no deep updates are supported.
@@ -6366,8 +6384,8 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.merge]
 	 *   <b>Deprecated</b> since 1.38.0; use the <code>defaultUpdateMethod</code> constructor parameter instead.
 	 *   If unset, the update method is determined from the <code>defaultUpdateMethod</code> constructor parameter.
-	 *   If <code>true</code>, <code>sap.ui.model.odata.UpdateMethod.Merge</code> is used for update operations;
-	 *   if set to <code>false</code>, <code>sap.ui.model.odata.UpdateMethod.Put</code> is used.
+	 *   If <code>true</code>, <code>sap.ui.model.odata.UpdateMethod.MERGE</code> is used for update operations;
+	 *   if set to <code>false</code>, <code>sap.ui.model.odata.UpdateMethod.PUT</code> is used.
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request or requests
 	 *
 	 * @public
@@ -6400,8 +6418,8 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId]
 	 *   <b>Deprecated</b>, use <code>groupId</code> instead
 	 * @param {boolean} [mParameters.merge]
-	 *   <b>Deprecated</b> since 1.38.0; whether the update method <code>sap.ui.model.odata.UpdateMethod.Merge</code>
-	 *   is used
+	 *   <b>Deprecated</b> since 1.38.0; whether the update method
+	 *   <code>sap.ui.model.odata.UpdateMethod.MERGE</code> is used
 	 * @returns {object}
 	 *   An object which has an <code>abort</code> function
 	 * @throws {Error}
@@ -6425,7 +6443,7 @@ sap.ui.define([
 		fnError = mParameters.error;
 		// ensure merge parameter backwards compatibility
 		if (mParameters.merge !== undefined) {
-			sMethod =  mParameters.merge ? "MERGE" : "PUT";
+			sMethod = mParameters.merge ? UpdateMethod.MERGE : UpdateMethod.PUT;
 		}
 		sPrivateHeader = Object.keys(mParameters.changeHeaders || {}).find(function (sHeader) {
 			return that._isHeaderPrivate(sHeader);
