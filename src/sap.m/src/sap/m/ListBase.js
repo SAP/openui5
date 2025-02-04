@@ -599,6 +599,7 @@ function(
 	ListBase.prototype.sNavItemClass = "sapMLIB";
 
 	ListBase.prototype.init = function() {
+		this._bGrouped = false;
 		this._aNavSections = [];
 		this._aSelectedPaths = [];
 		this._iItemNeedsHighlight = 0;
@@ -1342,6 +1343,11 @@ function(
 	 * @protected
 	 */
 	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
+		const bGrouped = this._bGrouped;
+		this._bGrouped = this.isGrouped();
+		if (bGrouped != this._bGrouped) {
+			this._updateStickyClasses();
+		}
 		this._fireUpdateFinished(oGrowingInfo);
 		this.fireGrowingFinished(oGrowingInfo);
 	};
@@ -3046,21 +3052,23 @@ function(
 	};
 
 	ListBase.prototype._onToolbarPropertyChanged = function(oEvent) {
-		if (oEvent.getParameter("name") !== "visible") {
-			return;
+		if (oEvent.getParameter("name") === "visible") {
+			this._updateStickyClasses();
 		}
+	};
 
-		// update the sticky style class
+	ListBase.prototype._updateStickyClasses = function() {
 		var iOldStickyValue = this._iStickyValue,
 			iNewStickyValue = this.getStickyStyleValue();
 
 		if (iOldStickyValue !== iNewStickyValue) {
-			var oDomRef = this.getDomRef();
+			const oDomRef = this.getDomRef();
 			if (oDomRef) {
-				var aClassList = oDomRef.classList;
-				aClassList.toggle("sapMSticky", !!iNewStickyValue);
+				const bSticky = iNewStickyValue > 0;
+				const aClassList = oDomRef.classList;
+				aClassList.toggle("sapMSticky", bSticky);
 				aClassList.remove("sapMSticky" + iOldStickyValue);
-				aClassList.toggle("sapMSticky" + iNewStickyValue, !!iNewStickyValue);
+				aClassList.toggle("sapMSticky" + iNewStickyValue, bSticky);
 			}
 		}
 	};
