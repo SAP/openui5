@@ -76,31 +76,28 @@ sap.ui.define([
 	}
 
 	QUnit.module("API tests for FilterBar", {
-		before: function(){
-
+		beforeEach: function(){
 			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Item,Value"></mdc:FilterBar></mvc:View>';
 
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.addItem = createFilterItem;
 			FilterBarDelegate.getTypeMap = getTypeMap;
+
 			return createAppEnvironment(sFilterBarView, "FilterBar").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
+				this.oFilterBar = this.oView.byId('myFilterBar');
+				this.oFilterBar.setPropertyInfo([]);
+				this.oFilterBar.removeAllFilterItems([]);
 			}.bind(this));
-		},
-		beforeEach: function(){
-			this.oFilterBar = this.oView.byId('myFilterBar');
-			this.oFilterBar.setPropertyInfo([]);
-			this.oFilterBar.removeAllFilterItems([]);
 		},
 		afterEach: function(){
 			this.oFilterBar.setFilterConditions({});
-		},
-		after: function(){
 			delete FilterBarDelegate.apiVersion;//CLEANUP_DELEGATTE
+			this.oUiComponentContainer.destroy();
 			this.oUiComponentContainer = null;
 			this.oView = null;
-			this.oFilterBar.destroy();
+			this.oFilterBar = null;
 		}
 	});
 
