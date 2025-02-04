@@ -2711,6 +2711,9 @@ function(
 	};
 
 	ListBase.prototype.onItemContextMenu = function(oLI, oEvent) {
+		// Clear the range selection after the context menu is opened by shift+f10
+		this._mRangeSelection = null;
+
 		var oContextMenu = this.getContextMenu();
 		if (!oContextMenu) {
 			return;
