@@ -863,6 +863,40 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.test("Check #handleP13n using a FilterController", function(assert){
+		var done = assert.async();
+
+		var oFilterController = Engine.getInstance().getController(this.oControl, "Test2");
+
+		// use a test modification handler, not flex for this test
+		var fnTestAppliance = function() {};
+		var oModificationHandler = TestModificationHandler.getInstance();
+		oModificationHandler.processChanges = fnTestAppliance;
+		Engine.getInstance()._setModificationHandler(this.oControl, oModificationHandler);
+
+		// we can not import the mdc FilterController here, therefore as if it would be one
+		sinon.stub(oFilterController, "isA").callsFake(function(sType) {
+			if (sType === "sap.ui.mdc.p13n.subcontroller.FilterController") {
+				return true;
+			}
+			return false;
+		});
+
+		sinon.stub(oFilterController, "getP13nData").returns([]);
+
+		// check that only the getBefore will be applied
+		var oFilterSpy = sinon.spy(oFilterController, "getDelta");
+		var oBeforeApply = sinon.spy(oFilterController, "getBeforeApply");
+
+		Engine.getInstance().handleP13n(this.oControl, ["Test2"]).then(function(){
+			assert.equal(oFilterSpy.callCount, 0, "#handleP13n does not trigger #getDelta on a FilterController");
+			assert.equal(oBeforeApply.callCount, 1, "#handleP13n does not trigger #getBeforeApply on a FilterController");
+			oFilterController.getDelta.restore();
+			done();
+		});
+	});
+
 	QUnit.module("Error handling", {
 		prepareSetup: function() {
 			var TestClass = CoreControl.extend("adaptationTestControl-Engine", {
