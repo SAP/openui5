@@ -40,15 +40,12 @@ sap.ui.define([
 		assert.strictEqual(this.tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
 	});
 
-	QUnit.test("scrollToEnd after tokenizer is rendered", async function(assert) {
-		var fnScrollToEndSpy = this.spy(this.tokenizer, "scrollToEnd");
-
+	QUnit.test("Resize handler is attached", async function(assert) {
 		//arrange
 		this.tokenizer.placeAt("content");
 		await nextUIUpdate();
 
 		// assert
-		assert.ok(fnScrollToEndSpy.callCount, "scrollToEnd was called");
 		assert.ok(this.tokenizer._sResizeHandlerId, "Tokenizer has resize handler.");
 	});
 
@@ -113,7 +110,7 @@ sap.ui.define([
 		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
 	});
 
-	QUnit.test("_handleResize should call _useCollapsedMode and scrollToEnd so as to show properly the tokens", function(assert) {
+	QUnit.test("_handleResize should call _useCollapsedMode and not scrollToEnd so as to show properly the tokens", function(assert) {
 		var oUseCollapsedModeSpy = this.spy(this.tokenizer, "_useCollapsedMode"),
 			oScrollToEndSpy = this.spy(this.tokenizer, "scrollToEnd");
 
@@ -122,7 +119,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oUseCollapsedModeSpy.callCount, 1, "_useCollapsedMode was called.");
-		assert.strictEqual(oScrollToEndSpy.callCount, 1, "scrollToEnd was called.");
+		assert.strictEqual(oScrollToEndSpy.callCount, 0, "scrollToEnd was called.");
 	});
 
 	QUnit.test("DestroyTokens should call setFirstTokenTruncated with 'false'", async function (assert) {
@@ -320,6 +317,41 @@ sap.ui.define([
 		assert.ok(oSpecialToken.$().offset().left >= jQuery(oTokenizerDomRef).offset().left, "token 5 left side is visible.");
 
 		oMultiInput.destroy();
+	});
+
+	QUnit.test("click on token or nMore indicator should expand tokenizer", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+
+		var oTokenizer = new Tokenizer({width: "150px", renderMode: "Narrow"});
+		var oToken1 = new Token({text:"Dente", editable: false}),
+			oToken2 = new Token({text:"Friese", editable: false}),
+			oToken3 = new Token({text:"Mann", editable: true});
+		var oFakeEvent = {
+			srcControl: oToken1
+		};
+
+		[oToken1, oToken2, oToken3].forEach(function(oToken) {
+			oTokenizer.addToken(oToken);
+		});
+
+		oTokenizer.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oTokenizer.onfocusin(oFakeEvent);
+		this.clock.tick();
+
+		assert.strictEqual(oTokenizer.getRenderMode(), "Loose", 'Tokenizer gets expanded on focus');
+
+		oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
+		this.clock.tick();
+
+		oTokenizer._handleNMoreIndicatorPress();
+		this.clock.tick(500);
+
+		assert.strictEqual(oTokenizer.getRenderMode(), "Loose", 'Tokenizer gets expanded on nMoreIndicator click');
+
+		this.clock.restore();
+		oTokenizer.destroy();
 	});
 
 	QUnit.test("test setEditable=false Tokenizer with editable tokens", async function(assert) {
@@ -570,6 +602,293 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
+	QUnit.test("Should select and deselect token on click", async function (assert) {
+		// Setup
+		var oTokenizer = new Tokenizer({
+			tokens: [
+				new Token({text: "Just a simple little token"})
+			],
+			width: "285px",
+			renderMode: "Narrow"
+		}).placeAt("content");
+		var oToken = oTokenizer.getTokens()[0];
+
+		await nextUIUpdate();
+
+
+		qutils.triggerEvent("tap", oToken.getDomRef());
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oToken.getSelected(), "First token is selected");
+
+		qutils.triggerEvent("tap", oToken.getDomRef());
+		await nextUIUpdate();
+
+		assert.notOk(oToken.getSelected(), "First token is not selected");
+
+		// Cleanup
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Should open/close suggestion popover on CTRL + I", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		await nextUIUpdate();
+
+		var oToken = oTokenizer.getTokens()[1];
+
+		oToken.focus();
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.I, false, false, true);
+		this.clock.tick(300);
+
+		var oTokenPopover = oTokenizer.getTokensPopup();
+		var oListToken = oTokenizer._getTokensList().getItems()[0].getDomRef();
+
+		// Assert
+		assert.ok(oTokenPopover.isOpen(), "Should open suggestion popover");
+
+		// Act
+		qutils.triggerKeydown(oListToken, KeyCodes.I, false, false, true);
+		this.clock.tick(600);
+
+		// Assert
+		assert.notOk(oTokenPopover.isOpen(), "Should close suggestion popover");
+		assert.strictEqual(oToken.getDomRef(), document.activeElement, "The focus should be on the token that was focused before the opening of the popover");
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.I, false, false, true);
+		this.clock.tick(300);
+
+		oListToken = oTokenizer._getTokensList().getItems()[0].getDomRef();
+
+		qutils.triggerKeydown(oListToken, KeyCodes.ESCAPE);
+		this.clock.tick(600);
+
+		assert.notOk(oTokenPopover.isOpen(), "ESC should close suggestion popover");
+
+		this.clock.restore();
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Should open/close suggestion popover on F4, ALT + ARROW DOWN and ALT + ARROW UP", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		await nextUIUpdate();
+
+		var oToken = oTokenizer.getTokens()[1];
+
+		oToken.focus();
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.F4);
+		this.clock.tick(300);
+
+		var oTokenPopover = oTokenizer.getTokensPopup();
+		var oListToken = oTokenizer._getTokensList().getItems()[0].getDomRef();
+
+		// Assert
+		assert.ok(oTokenPopover.isOpen(), "Should open suggestion popover");
+
+		// Act
+		qutils.triggerKeydown(oListToken, KeyCodes.F4);
+		this.clock.tick(600);
+
+		// Assert
+		assert.notOk(oTokenPopover.isOpen(), "Should close suggestion popover");
+		assert.strictEqual(oToken.getDomRef(), document.activeElement, "The focus should be on the token that was focused before the opening of the popover");
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.ARROW_DOWN, false, true, false);
+		this.clock.tick(300);
+
+		assert.ok(oTokenPopover.isOpen(), "ALT + ARROW DOWN should open suggestion popover");
+
+		oListToken = oTokenizer._getTokensList().getItems()[0].getDomRef();
+
+		qutils.triggerKeydown(oListToken, KeyCodes.ARROW_DOWN, false, true, false);
+		this.clock.tick(600);
+
+		assert.notOk(oTokenPopover.isOpen(), "ALT + ARROW DOWN should close suggestion popover");
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.ARROW_UP, false, true, false);
+		this.clock.tick(300);
+
+		assert.ok(oTokenPopover.isOpen(), "ALT + ARROW UP should open suggestion popover");
+
+		oListToken = oTokenizer._getTokensList().getItems()[0].getDomRef();
+
+		qutils.triggerKeydown(oListToken, KeyCodes.ARROW_UP, false, true, false);
+		this.clock.tick(600);
+
+		assert.notOk(oTokenPopover.isOpen(), "ALT + ARROW UP should close suggestion popover");
+
+		this.clock.restore();
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Should reset focus on the nMore tokens popover after re-open", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+
+		var oListToken;
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		await nextUIUpdate();
+
+		var oToken = oTokenizer.getTokens()[1];
+		oToken.focus();
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.F4);
+		this.clock.tick(300);
+
+		oListToken = oTokenizer._getTokensList().getItems()[0].getDomRef();
+
+		qutils.triggerKeydown(oListToken, KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oListToken, KeyCodes.ESCAPE);
+		this.clock.tick(600);
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.F4);
+		this.clock.tick(600);
+
+		assert.strictEqual(oTokenizer._getTokensList().getItems()[0].getDomRef(), document.activeElement, "First list item should be focused");
+
+		this.clock.restore();
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Should focus the closest token after multiple token deletion", async function (assert) {
+		var oToken;
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001", selected: true}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002",  selected: true}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		await nextUIUpdate();
+
+		oToken = oTokenizer.getTokens()[1];
+		oToken.focus();
+
+		qutils.triggerKeydown(oToken.getDomRef(), KeyCodes.DELETE);
+		assert.strictEqual(oTokenizer.getTokens()[2].getDomRef(), document.activeElement, "The closest token should be focused");
+
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Non-editable tokens should not have aria-readonly attribute", async function(assert) {
+		var oToken = new Token({text: "Token 1", key: "0001", editable: false});
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(oToken);
+		await nextUIUpdate();
+
+		// aria-readonly is not valid for the current role of the token.
+		assert.notOk(oToken.getDomRef().hasAttribute("aria-readonly"), "The token should not have aria-readonly attribute");
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("The nMore indicator should have the correct accessibility attributes", async function(assert) {
+		var oTokenizer = new Tokenizer({
+			width: "150px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001", selected: true}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002",  selected: true}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		await nextUIUpdate();
+
+		var nMoreLink = oTokenizer.getDomRef().querySelector(".sapMTokenizerIndicator");
+		var oPopover = oTokenizer.getTokensPopup();
+
+		assert.strictEqual(nMoreLink.getAttribute("role"), "button", "The role of the nMore indicator should be button");
+		assert.strictEqual(nMoreLink.getAttribute("aria-expanded"), "false", "The aria-expanded attribute should be false");
+		assert.strictEqual(nMoreLink.getAttribute("aria-haspopup"), "dialog", "The aria-haspopup attribute should be dialog");
+		assert.strictEqual(nMoreLink.getAttribute("aria-controls"), oPopover.getId(), "The aria-haspopup attribute should be dialog");
+
+		oTokenizer._handleNMoreIndicatorPress();
+		oTokenizer.rerender();
+
+		assert.strictEqual(nMoreLink.getAttribute("aria-expanded"), "true", "The aria-expanded attribute should be true");
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Should render and not focus disabled tokenizer", async function(assert) {
+		var oTokenizer = new Tokenizer({
+			width: "300px",
+			enabled: false
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		await nextUIUpdate();
+
+		assert.ok(oTokenizer.getDomRef().classList.contains("sapMTokenizerDisabled"), "The aria-expanded attribute should be true");
+		assert.ok(oTokenizer.getTokens()[0].getDomRef().getAttribute("tabindex"), "-1", "tabindex should be -1");
+
+		oTokenizer.destroy();
+	});
+
+
+	QUnit.test("Should fire renderModeChange event when expanding/collapsing", async function (assert) {
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		await nextUIUpdate();
+
+		var oRenderModeChangeSpy = this.spy(oTokenizer, "fireRenderModeChange");
+		var oFakeEvent = {
+			srcControl: oTokenizer.getTokens()[0]
+		};
+
+		// renderModeChange when expanding on focusin
+		oTokenizer.onfocusin(oFakeEvent);
+		assert.ok(oRenderModeChangeSpy.calledWithMatch({renderMode: "Loose"}), "Should fire renderModeChange event when expanding on focusin");
+
+		// renderModeChange when expanding on focus out
+		oTokenizer.onsapfocusleave();
+		assert.ok(oRenderModeChangeSpy.calledWithMatch({renderMode: "Narrow"}), "Should fire renderModeChange event when collapsing on focus out");
+
+		// renderModeChange on nMore link click
+		oTokenizer._handleNMoreIndicatorPress();
+		assert.ok(oRenderModeChangeSpy.calledWithMatch({renderMode: "Loose"}), "Should fire renderModeChange event when expanding on nMore indicator click");
+
+		// renderModeChange on nMore link click
+		oTokenizer.getTokensPopup().close();
+		assert.ok(oRenderModeChangeSpy.calledWithMatch({renderMode: "Narrow"}), "Should fire renderModeChange event when collapsing after nMore popover is closed");
+
+		oTokenizer.destroy();
+	});
+
 	QUnit.module("Setters", {
 		beforeEach : async function() {
 			this.tokenizer = new Tokenizer();
@@ -636,7 +955,6 @@ sap.ui.define([
 
 	QUnit.test("setMaxWidth in adjustable tokenizer calls _adjustTokensVisibility", async function(assert) {
 		var MAX_WIDTH = "300px";
-		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		this.tokenizer.addToken(new Token({key:"XXX", text: "XXX"}));
 		await nextUIUpdate();
 
@@ -755,7 +1073,8 @@ sap.ui.define([
 					new Token("t1", { text : "Token 1", selected : true}),
 					new Token("t2", { text : "Token 2", selected : false}),
 					new Token("t3", { text : "Token 3", selected : true})
-				]
+				],
+				width: "500px"
 			});
 
 			this.tokenizer.placeAt("content");
@@ -932,15 +1251,15 @@ sap.ui.define([
 
 	QUnit.test("Arrow_right when tokenizer is focused", function(assert) {
 		//arrange
-		this.tokenizer.focus();
+		this.tokenizer.getTokens()[0].getDomRef().focus();
 
 		// act
 		qutils.triggerKeydown(this.tokenizer.getId(), KeyCodes.ARROW_RIGHT);
 
 		// assert
-		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There aren't any selected token");
-		assert.strictEqual(this.tokenizer.getTokens()[0].getId(), document.activeElement.id,
-			"The first token in the multiinput is focused.");
+		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "There are 2 selected tokens");
+		assert.strictEqual(this.tokenizer.getTokens()[1].getId(), document.activeElement.id,
+			"The second token in the multiinput is focused.");
 	});
 
 	QUnit.test("Arrow_right when last token in tokenizer is focused", function(assert) {
@@ -962,6 +1281,8 @@ sap.ui.define([
 		// to bubble up.
 		assert.equal(oSpy.callCount, 1, "Only one event is triggered");
 		assert.equal(oEventArg.isMarked(), false, "The event was not processed by the Tokenizer");
+
+		oTokenizer.destroy();
 	});
 
 	QUnit.test("Arrow_up", function(assert) {
@@ -976,7 +1297,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_selectRange(true)", async function(assert) {
-		var oTokenizer = new Tokenizer().placeAt("content"),
+		var oTokenizer = new Tokenizer({ width: "500px"}).placeAt("content"),
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
 
@@ -1007,44 +1328,52 @@ sap.ui.define([
 	QUnit.test("RIGHT_ARROW + invisible token", async function(assert) {
 		// arrange
 		var oTokenizer = new Tokenizer({
+			width: "500px",
 			tokens: [
-				new Token({text: "Token1", visible: true}),
+				new Token({text: "Token1"}),
 				new Token({text: "Token2", visible: false}),
-				new Token({text: "Token3", visible: true})
+				new Token({text: "Token3"})
 			]
 		}).placeAt("content");
 		await nextUIUpdate();
 
 		// act
-		oTokenizer.getTokens()[0].focus();
+		oTokenizer.getTokens()[0].getDomRef().focus();
+		await nextUIUpdate();
+
 		qutils.triggerKeydown(oTokenizer.getTokens()[0].getDomRef(), KeyCodes.ARROW_RIGHT);
 		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oTokenizer.getTokens()[2].getDomRef(), document.activeElement, "The navigation was successful.");
+		oTokenizer.destroy();
 	});
 
 	QUnit.test("LEFT_ARROW + invisible token", async function(assert) {
 		// arrange
 		var oTokenizer = new Tokenizer({
+			width: "500px",
 			tokens: [
-				new Token({text: "Token1", visible: true}),
+				new Token({text: "Token1"}),
 				new Token({text: "Token2", visible: false}),
-				new Token({text: "Token3", visible: true})
+				new Token({text: "Token3"})
 			]
 		}).placeAt("content");
 		await nextUIUpdate();
 
 		// act
-		oTokenizer.getTokens()[2].focus();
+		oTokenizer.getTokens()[2].getDomRef().focus();
+		await nextUIUpdate();
+
 		qutils.triggerKeydown(oTokenizer.getTokens()[2].getDomRef(), KeyCodes.ARROW_LEFT);
 		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef(), document.activeElement, "The navigation was successful.");
+		oTokenizer.destroy();
 	});
 
-	QUnit.test("Should render tabindex only if there are no tokens ", async function(assert) {
+	QUnit.test("Should not render tabindex on the Tokenizer but on the first token", async function(assert) {
 		// Arrange
 		var oTokenizer = new Tokenizer({}).placeAt("content");
 		await nextUIUpdate();
@@ -1055,7 +1384,7 @@ sap.ui.define([
 		oTokenizer.addToken(new Token("token"));
 		await nextUIUpdate();
 
-		assert.strictEqual(oTokenizer.getDomRef().hasAttribute("tabindex"), true, "tabindex is rendererd");
+		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef().hasAttribute("tabindex"), true, "tabindex is rendererd on the first token");
 
 		oTokenizer.destroy();
 	});
@@ -1075,7 +1404,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_selectRange(false)", async function(assert) {
-		var oTokenizer = new Tokenizer().placeAt("content"),
+		var oTokenizer = new Tokenizer({ width: "500px"}).placeAt("content"),
 			aSelectedTokens,
 			oSecondToken = new Token("tok1");
 
@@ -1107,6 +1436,7 @@ sap.ui.define([
 		var oEvent = new jQuery.Event(),
 			aTokens,
 			oTokenizer = new Tokenizer({
+				width: "500px",
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
 
@@ -1127,6 +1457,7 @@ sap.ui.define([
 	QUnit.test("onsaphome", async function(assert) {
 		var oEvent = new jQuery.Event(),
 			oTokenizer = new Tokenizer({
+				width: "500px",
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
 
@@ -1145,6 +1476,7 @@ sap.ui.define([
 	QUnit.test("onsaphome + hidden tokens", async function(assert) {
 		var oEvent = new jQuery.Event(),
 			oTokenizer = new Tokenizer({
+				width: "500px",
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
 		await nextUIUpdate();
@@ -1362,6 +1694,8 @@ sap.ui.define([
 				new Token({text: "Token 3"})
 			]
 		});
+
+		this.tokenizer.setRenderMode(TokenizerRenderMode.Loose);
 
 		this.tokenizer.placeAt("content");
 		await nextUIUpdate();
@@ -1669,11 +2003,8 @@ sap.ui.define([
 
 	QUnit.test("hasOneTruncatedToken returns correct value", function(assert) {
 		// Assert
-		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "hasOneTruncatedToken should return false");
-		// Act
-		this.tokenizer.getTokens()[0].setTruncated(true);
-		// Assert
-		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "hasOneTruncatedToken should return true");
+		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "hasOneTruncatedToken should return false");
+
 		// Act
 		this.tokenizer.addToken(new Token({text: "test"}));
 		// Assert

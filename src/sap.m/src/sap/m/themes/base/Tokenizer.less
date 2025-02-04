@@ -15,11 +15,7 @@
 	overflow: hidden;
 	box-sizing: border-box;
 	vertical-align: inherit;
-}
-
-html.sap-desktop .sapMTokenizer:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -@_sap_m_Tokenizer_OutlineOffset;
+	width:100%;
 }
 
 .sapMTokenizer .sapMToken {
@@ -33,7 +29,7 @@ html.sap-desktop .sapMTokenizer:focus {
 .sapMTokenizer.sapMTokenizerReadonly {
 	.sapMToken {
 		padding: 0 0.375rem;
-	}
+		}
 
 	.sapMTokenIcon {
 		display: none;
@@ -45,6 +41,16 @@ html.sap-desktop .sapMTokenizer:focus {
 		&:hover{
 			color: @sapUiLinkHover;
 		}
+	}
+}
+
+.sapMTokenizer.sapMTokenizerDisabled {
+	opacity: var(--sapContent_DisabledOpacity);
+	pointer-events: none;
+
+	.sapMToken.sapMTokenSelected::before {
+		background-color: none;
+		height: 0;
 	}
 }
 
@@ -75,6 +81,13 @@ html.sap-desktop .sapMTokenizer:focus {
 	line-height: 2rem;
 	overflow: hidden;
 	vertical-align: middle;
+
+	&:hover {
+		text-decoration: underline;
+	}
+	&:active {
+		text-decoration: none;
+	}
 }
 
 .sapUiSizeCompact .sapMTokenizer {

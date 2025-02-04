@@ -691,6 +691,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.Tokenizer",
+		  "name": "Tokenizer",
+		  "category": "User Input",
+		  "since": "1.133",
+		  "samples": [
+			"sap.m.sample.TokenizerBasic"
+		  ]
+		},
+		{
 		  "id": "sap.m.InputListItem",
 		  "name": "Input List Item",
 		  "category": "List",
@@ -2714,6 +2723,11 @@
 			"id": "sap.m.sample.MultiComboBoxClearIcon",
 			"name": "MultiComboBox - Clear Icon",
 			"description": "The multi combo box control can show 'clear' icon, which when pressed will remove the user's input."
+		},
+		{
+			"id": "sap.m.sample.TokenizerBasic",
+			"name": "Basic Tokenizer",
+			"description": "Basic Tokenizer with tokens"
 		},
 		{
 			"id": "sap.m.sample.MultiComboBoxWrapping",

@@ -125,7 +125,7 @@ sap.ui.define([
 
 		qutils.triggerEvent("tap", this.token1.getDomRef());
 		await nextUIUpdate();
-		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
+		assert.notOk(this.token1.$().hasClass("sapMTokenSelected"), "token is deselected");
 
 	});
 
