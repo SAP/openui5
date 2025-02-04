@@ -2,10 +2,10 @@
 sap.ui.define([
 	"sap/m/p13n/Engine",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
-	"sap/ui/mdc/TableDelegate",
+	"sap/ui/mdc/odata/v4/TableDelegate",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/p13n/StateUtil",
-	"sap/ui/mdc/FilterBarDelegate",
+	"test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
 	"sap/ui/mdc/chart/Item",
@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/base/util/merge",
-	"sap/ui/mdc/odata/TypeMap"
+	"sap/ui/mdc/odata/v4/TypeMap"
 ], function (
 	Engine,
 	createAppEnvironment,
@@ -71,17 +71,12 @@ sap.ui.define([
 		return Promise.resolve(aProperties);
 	}
 
-	function getTypeMap() {
-		return TypeMap;
-	}
-
 	QUnit.module("API tests for FilterBar", {
 		beforeEach: function(){
-			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Item,Value"></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Item,Value" delegate="\{name: \'test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate\', payload: \{\}\}"></mdc:FilterBar></mvc:View>';
 
-			FilterBarDelegate.fetchProperties = fetchProperties;
-			FilterBarDelegate.addItem = createFilterItem;
-			FilterBarDelegate.getTypeMap = getTypeMap;
+			sinon.stub(FilterBarDelegate, "fetchProperties").callsFake(fetchProperties);
+			sinon.stub(FilterBarDelegate, "addItem").callsFake(createFilterItem);
 
 			return createAppEnvironment(sFilterBarView, "FilterBar").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
@@ -93,7 +88,8 @@ sap.ui.define([
 		},
 		afterEach: function(){
 			this.oFilterBar.setFilterConditions({});
-			delete FilterBarDelegate.apiVersion;//CLEANUP_DELEGATTE
+			FilterBarDelegate.fetchProperties.restore();
+			FilterBarDelegate.addItem.restore();
 			this.oUiComponentContainer.destroy();
 			this.oUiComponentContainer = null;
 			this.oView = null;
@@ -729,14 +725,13 @@ sap.ui.define([
 
 	QUnit.module("API tests for Table", {
 		before: function(){
-			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate" delegate="\{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: \{\}\}"></mdc:Table></mvc:View>';
+			sinon.stub(TableDelegate, "fetchProperties").callsFake(fetchProperties);
+			sinon.stub(TableDelegate, "addItem").callsFake(function(oControl, sPropertyName) {
+				return Promise.resolve(new Column({propertyKey: sPropertyName}));
+			});
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
-				TableDelegate.fetchProperties = fetchProperties;
-				TableDelegate.getTypeMap = getTypeMap;
-				TableDelegate.addItem = function(oControl, sPropertyName) {
-					return Promise.resolve(new Column({propertyKey: sPropertyName}));
-				};
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 			}.bind(this));
@@ -759,6 +754,8 @@ sap.ui.define([
 			this.oUiComponentContainer = null;
 			this.oTable.destroy();
 			this.oView = null;
+			TableDelegate.fetchProperties.restore();
+			TableDelegate.addItem.restore();
 		}
 	});
 
@@ -1017,14 +1014,13 @@ sap.ui.define([
 	QUnit.module("API tests for Table with V4 Analytics", {
 		before: function(){
 			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate" ' +
-				'delegate="{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: {}}"></mdc:Table></mvc:View>';
+				'delegate="\{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: \{\}\}"></mdc:Table></mvc:View>';
+			sinon.stub(TableDelegate, "fetchProperties").callsFake(fetchProperties);
+			sinon.stub(TableDelegate, "addItem").callsFake(function(oControl, sPropertyName) {
+				return Promise.resolve(new Column({propertyKey: sPropertyName}));
+			});
 
 			return createAppEnvironment(sTableView, "V4AnalyticsTable").then(function(mCreatedApp){
-				TableDelegate.fetchProperties = fetchProperties;
-				TableDelegate.getTypeMap = getTypeMap;
-				TableDelegate.addItem = function(oControl, sPropertyName) {
-					return Promise.resolve(new Column({propertyKey: sPropertyName}));
-				};
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 			}.bind(this));
@@ -1047,6 +1043,8 @@ sap.ui.define([
 			this.oUiComponentContainer = null;
 			this.oTable.destroy();
 			this.oView = null;
+			TableDelegate.fetchProperties.restore();
+			TableDelegate.addItem.restore();
 		}
 	});
 
@@ -1168,18 +1166,17 @@ sap.ui.define([
 	QUnit.module("API tests for Chart", {
 		before: function(){
 			sinon.stub(ChartDelegate, "fetchProperties").callsFake(myChartDelegatefetchProperties);
-			ChartDelegate.apiVersion = 2;
-			ChartDelegate.addItem = function (oChart, sPropertyName, mPropertyBag, sRole) {
+			sinon.stub(ChartDelegate, "addItem").callsFake(function (oChart, sPropertyName, mPropertyBag, sRole) {
 				if (oChart.getModel) {
 					return Promise.resolve(this._createMDCChartItem(sPropertyName, oChart, sRole));
 				}
-			};
+			});
 			const sChartView = '<mvc:View' +
 				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
 				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
 				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
 				'\t\t  >\n' +
-				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\',\'Type\']}" delegate="{\'name\': \'sap/ui/mdc/odata/v4/vizChart/ChartDelegate\',\'payload\': {}}" >\n' +
+				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\',\'Type\']}" delegate="\{\'name\': \'sap/ui/mdc/odata/v4/vizChart/ChartDelegate\',\'payload\': \{\}\}" >\n' +
 				'\t\t\t\t\t\t<mdc:items><chart:Item id="item0" propertyKey="Name" label="Name" role="category"></chart:Item>\n' +
 				'\t\t\t\t\t\t<chart:Item id="item1" propertyKey="agSalesAmount" label="Depth" role="axis1"></chart:Item>\n' +
 				'\t\t\t\t\t\t<chart:Item id="item2" propertyKey="SalesNumber" label="Width" role="axis2"></chart:Item></mdc:items>\n' +
@@ -1203,6 +1200,7 @@ sap.ui.define([
 			this.oView = null;
 
 			ChartDelegate.fetchProperties.restore();
+			ChartDelegate.addItem.restore();
 		}
 	});
 
@@ -1429,16 +1427,15 @@ sap.ui.define([
 			};
 		},
 		before: function(){
-			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
-			TableDelegate.getSupportedFeatures = function() {
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group,Aggregate" delegate="\{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: \{\}\}"></mdc:Table></mvc:View>';
+			sinon.stub(TableDelegate, "getSupportedFeatures").callsFake(function() {
 				return {p13nModes: ["Column", "Sort", "Filter", "Group", "Aggregate"]};
-			};
+			});
+			sinon.stub(TableDelegate, "fetchProperties").callsFake(fetchProperties);
+			sinon.stub(TableDelegate, "addItem").callsFake(function(oControl, sPropertyName) {
+				return Promise.resolve(new Column({propertyKey: sPropertyName}));
+			});
 			return createAppEnvironment(sTableView, "StateDiff").then(function(mCreatedApp){
-				TableDelegate.fetchProperties = fetchProperties;
-				TableDelegate.getTypeMap = getTypeMap;
-				TableDelegate.addItem = function(oControl, sPropertyName) {
-					return Promise.resolve(new Column({propertyKey: sPropertyName}));
-				};
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 			}.bind(this));
@@ -1460,6 +1457,9 @@ sap.ui.define([
 			this.oUiComponentContainer = null;
 			this.oTable.destroy();
 			this.oView = null;
+			TableDelegate.fetchProperties.restore();
+			TableDelegate.addItem.restore();
+			TableDelegate.getSupportedFeatures.restore();
 		}
 	});
 
