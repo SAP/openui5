@@ -6826,6 +6826,17 @@
 			"vehicle"
 		]
 	},
+	"verified": {
+		"tags": [
+			"approved",
+			"checkmark",
+			"confirmation",
+			"tick",
+			"valid",
+			"validation",
+			"verified"
+		]
+	},
 	"vertical-bar-chart": {
 		"tags": [
 			"analytics",
@@ -6905,6 +6916,17 @@
 			"money bag",
 			"percentage",
 			"waiver"
+		]
+	},
+	"walk-me": {
+		"tags": [
+			"guidance",
+			"help",
+			"onboarding",
+			"training",
+			"walk",
+			"walkme",
+			"walkthrough"
 		]
 	},
 	"wallet": {

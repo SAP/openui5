@@ -265,9 +265,11 @@
 				{ "name" : "user-settings" },
 				{ "name" : "validate" },
 				{ "name" : "value-help" },
+				{ "name" : "verified" },
 				{ "name" : "vertical-grip" },
 				{ "name" : "video" },
 				{ "name" : "visits" },
+				{ "name" : "walk-me" },
 				{ "name" : "web-cam" },
 				{ "name" : "workflow-tasks" },
 				{ "name" : "wrench" },
@@ -368,7 +370,8 @@
 				{ "name" : "up" },
 				{ "name" : "upload" },
 				{ "name" : "upload-to-cloud" },
-				{ "name" : "visits" }
+				{ "name" : "visits" },
+				{ "name" : "walk-me" }
 			]
 		},
 		{
@@ -690,6 +693,7 @@
 				{ "name" : "trip-report" },
 				{ "name" : "unlocked" },
 				{ "name" : "validate" },
+				{ "name" : "verified" },
 				{ "name" : "warning2" }
 			]
 		},
@@ -1113,6 +1117,7 @@
 				{ "name" : "trip-report" },
 				{ "name" : "unlocked" },
 				{ "name" : "validate" },
+				{ "name" : "verified" },
 				{ "name" : "warning" },
 				{ "name" : "warning2" }
 			]
