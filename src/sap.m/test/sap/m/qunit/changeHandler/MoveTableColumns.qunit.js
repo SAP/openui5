@@ -310,11 +310,10 @@ sap.ui.define([
 				oCore.applyChanges();
 
 				this.oTable = this.oView.byId('myTable');
-
-
 				this.oColumn0 = this.oView.byId('column0');
 				this.oColumn0Template = this.oTable.getBindingInfo('items').template.getCells()[0];
 				this.oColumn0Items = this.oTable.getItems()[0].getCells()[0];
+				this.fnUpdateAggregationSpy = this.spy(this.oTable, "updateAggregation");
 
 				var oDOMParser = new DOMParser();
 				var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
@@ -332,9 +331,12 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oChange = null;
 			this.oUiComponentContainer.destroy();
+			assert.ok(this.fnUpdateAggregationSpy.notCalled, "updateAggregation is not called, aggregations are only moved");
+			this.fnUpdateAggregationSpy.restore();
+			this.fnUpdateAggregationSpy = null;
 		}
 	});
 
