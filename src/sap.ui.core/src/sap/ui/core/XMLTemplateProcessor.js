@@ -907,7 +907,7 @@ function(
 					}, reject);
 				});
 			} else {
-				// even when retreiving a class with sap.ui.require, we should validate the module content
+				// even when retrieving a class with sap.ui.require, we should validate the module content
 				validateModuleContent(sResourceName, oClassObject);
 			}
 			return oClassObject;
