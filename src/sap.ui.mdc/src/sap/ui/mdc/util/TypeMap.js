@@ -6,11 +6,13 @@ sap.ui.define([
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/model/SimpleType',
 	'sap/ui/mdc/util/DateUtil',
+	'sap/ui/mdc/util/loadModules',
 	'sap/base/util/merge'
 ], (
 	BaseType,
 	SimpleType,
 	DateUtil,
+	loadModules,
 	merge
 ) => {
 	"use strict";
@@ -23,8 +25,6 @@ sap.ui.define([
 	/**
 	 * Configuration class for type handling in delegates.
 	 * Allows mapping of model types to {@link sap.ui.mdc.enums.BaseType} and enables model-specific type configuration.
-	 *
-	 * <b>Note:</b> The modules of all data types registered in a <code>TypeMap</code> must be loaded in advance.
 	 *
 	 * @namespace
 	 * @author SAP SE
@@ -214,6 +214,7 @@ sap.ui.define([
 	/**
 	 * Gets a data type class based on a given name.
 	 *
+	 * <b>Note:</b> All modules of the required data types must be loaded before. To do this, {@link #retrieveDataTypeClasses} can be used.
 	 * @final
 	 * @param {string} sDataType Class path as <code>string</code> where each name is separated by '.'
 	 * @returns {function(new: sap.ui.model.SimpleType)} Corresponding data type class
@@ -234,8 +235,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Loads modules for all requested data types.
+	 *
+	 * @final
+	 * @param {string[]} aDataTypes Array of class path as <code>string</code> where each name is separated by '.'
+	 * @returns {Promise<sap.ui.model.SimpleType[]>} Array of corresponding data type classes
+	 * @since 1.133.0
+	 * @public
+	 */
+	TypeMap.retrieveDataTypeClasses = function(aDataTypes) {
+		const aTypeNames = [];
+
+		aDataTypes.forEach((sDataType) => {
+			const sTypeName = this.getDataTypeClassName(sDataType);
+			aTypeNames.push(sTypeName.replace(/\./g, "/"));
+		});
+
+		return new Promise((resolve, reject) => { // map SyncPromise to real Promise
+			loadModules(aTypeNames).then((aClasses) => {
+				resolve(aClasses);
+			}).catch((oError) => {
+				reject(oError);
+			});
+		});
+	};
+
+	/**
 	 * Gets a data type instance based on a given <code>ObjectPath</code>, <code>FormatOptions</code>, and <code>Constraints</code>.
 	 *
+	 * <b>Note:</b> All modules of the required data types must be loaded before. To do this, {@link #retrieveDataTypeClasses} can be used.
 	 * @final
 	 * @param {string} sDataType Class path as <code>string</code> where each name is separated by '.'
 	 * @param {object} [oFormatOptions] Format options for the data type

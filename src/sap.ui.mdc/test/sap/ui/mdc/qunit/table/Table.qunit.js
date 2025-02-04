@@ -55,11 +55,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/fl/variants/VariantManagement",
-	// load used data types as in legacyFree UI5 they are not loaded automatically
-	"sap/ui/model/odata/type/String",
-	"sap/ui/model/odata/type/Byte",
-	"sap/ui/model/odata/type/Boolean"
+	"sap/ui/fl/variants/VariantManagement"
 ], function(
 	TableQUnitUtils,
 	Element,
@@ -114,10 +110,7 @@ sap.ui.define([
 	OperatorName,
 	Menu,
 	MenuItem,
-	VariantManagement,
-	StringType,
-	ByteType,
-	BooleanType
+	VariantManagement
 ) {
 	"use strict";
 
@@ -5374,6 +5367,7 @@ sap.ui.define([
 
 		await this.oTable._fullyInitialized();
 		await this.oTable.propertiesFinalized();
+		await wait(100);
 
 		const oPropertyHelper = this.oTable.getPropertyHelper();
 		const aColumns = this.oTable.getColumns();

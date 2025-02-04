@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/FieldEditMode",
-	"sap/ui/model/odata/type/Int32",
 	'delegates/util/DelegateCache'
-], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, FieldEditMode, Int32Type, DelegateCache) {
+], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, FieldEditMode, DelegateCache) {
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);

@@ -331,6 +331,95 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getContent for typeahead (multi-value)", (assert) => {
+
+		let iSelect = 0;
+		let aConditions;
+		let sType;
+		oMTable.attachEvent("select", (oEvent) => {
+			iSelect++;
+			aConditions = oEvent.getParameter("conditions");
+			sType = oEvent.getParameter("type");
+		});
+		let iConfirm = 0;
+		let bClose = false;
+		oMTable.attachEvent("confirm", (oEvent) => {
+			iConfirm++;
+			bClose = oEvent.getParameter("close");
+		});
+
+		oTable.setMode(ListMode.MultiSelect);
+		oMTable.setConfig({
+			maxConditions: -1,
+			operators: [OperatorName.EQ, OperatorName.BT]
+		});
+
+		const oContent = oMTable.getContent();
+
+		if (oContent) {
+			return oMTable.onBeforeShow(true).then(async () => {
+				await _renderScrollContainer();
+				const oShowResult = oMTable.onShow(); // to update selection and scroll
+				assert.ok(oContent, "Content returned");
+				assert.equal(oContent, oTable, "Content is given Table");
+				assert.equal(oTable.getMode(), ListMode.MultiSelect, "Table mode");
+				assert.notOk(oShowResult?.itemId, "OnShow returns no itemId");
+
+				const aItems = oTable.getItems();
+				let oItem = aItems[0];
+				assert.notOk(oItem.getSelected(), "Item0 not selected");
+				oItem = aItems[1];
+				assert.ok(oItem.getSelected(), "Item1 is selected");
+				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item1 is focused");
+				assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
+				oItem = aItems[2];
+				assert.notOk(oItem.getSelected(), "Item2 not selected");
+
+				let aNewConditions = [
+					Condition.createItemCondition("I1", "Item 1")
+				];
+
+				aItems[0].focus();
+				qutils.triggerKeydown(aItems[0].getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+				await new Promise((resolve) => {setTimeout(resolve, 0);}); // as Item handles event async
+				assert.equal(iSelect, 1, "select event fired");
+				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+				assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+				assert.equal(iConfirm, 1, "confirm event fired");
+				assert.ok(bClose, "should be closed");
+				iSelect = 0;
+				iConfirm = 0;
+
+				qutils.triggerKeydown(aItems[0].getFocusDomRef().id, KeyCodes.SPACE, false, false, false);
+				await new Promise((resolve) => {setTimeout(resolve, 0);}); // as Item handles event async
+				assert.equal(iSelect, 1, "select event fired");
+				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+				assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
+				assert.equal(iConfirm, 1, "confirm event fired");
+				assert.notOk(bClose, "should not be closed");
+				iSelect = 0;
+				iConfirm = 0;
+
+				aNewConditions = [
+					Condition.createItemCondition("I3", "X-Item 3")
+				];
+
+				const oCheckBox = aItems[2].getMultiSelectControl();
+				oCheckBox.focus();
+				oCheckBox.fireSelect(true); // doesn't matter if via click or keyboard
+				assert.equal(iSelect, 1, "select event fired");
+				assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+				assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
+				assert.equal(iConfirm, 1, "confirm event fired");
+				assert.notOk(bClose, "should not be closed");
+				assert.equal(aItems[2].getFocusDomRef(), document.activeElement, "Whole item is focused");
+
+				oMTable.onHide();
+			});
+		}
+
+	});
+
 	QUnit.test("getContainerConfig - footer without length limitation", (assert) => {
 
 		const oContainerConfig = oMTable.getContainerConfig();

@@ -2,28 +2,29 @@
 /* CSS for control sap.m/Slider  */
 /* Fiori 3 theme                 */
 /* ============================= */
+
 @_sap_m_Slider_Height: 2.75rem;
 @_sap_m_Slider_Progress: .25rem;
 
 /* slider */
 .sapMSliderInner {
-	background: @sapUiFieldBorderColor;
+	background: var(--sapField_BorderColor);
 }
 
 .sapMSliderProgress {
-	background: @sapUiActive;
+	background: var(--sapActiveColor);
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
 .sapMSliderHandle:hover {
-	background: @sapUiButtonHoverBackground;
-	border-color: @sapUiButtonHoverBorderColor;
+	background: var(--sapButton_Hover_Background);
+	border-color: var(--sapButton_Hover_BorderColor);
 }
 
 /* slider handle */
 .sapMSliderInner .sapMSliderHandle {
-	background: @sapUiButtonBackground;
-	border: solid 0.125rem @sapUiFieldBorderColor;
+	background: var(--sapButton_Background);
+	border: solid 0.125rem var(--sapField_BorderColor);
 	width: 1.875rem;
 	height: 1.875rem;
 	margin-left: -0.9375rem;
@@ -31,14 +32,15 @@
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle {
+
 	&:hover {
-		background: @sapUiButtonHoverBackground;
-		border-color: @sapUiButtonHoverBorderColor;
+		background: var(--sapButton_Hover_Background);
+		border-color: var(--sapButton_Hover_BorderColor);
 	}
 
 	&:active {
-		background: @sapUiButtonActiveBackground;
-		border-color: @sapUiButtonActiveBorderColor;
+		background: var(--sapButton_Active_Background);
+		border-color: var(--sapButton_Active_BorderColor);
 	}
 }
 
@@ -47,8 +49,8 @@
 	height: 1rem;
 	width: 2rem;
 	left: -1rem;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapContent_LabelColor);
 }
 
 .sapMSliderTick {
@@ -60,8 +62,8 @@
 
 	.sapMSliderRangeLabel {
 		width: 2rem;
-		font-size: @sapMFontSmallSize;
-		color: @sapUiContentLabelColor;
+		font-size: var(--sapFontSmallSize);
+		color: var(--sapContent_LabelColor);
 	}
 }
 
@@ -73,11 +75,12 @@
 /* pressed */
 .sapMSliderPressed:not(.sapMSliderInnerDisabled) > .sapMSliderHandle,
 .sapMSlider .sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
-	background-color: @sapUiButtonActiveBackground;
-	border: 0.125rem solid @sapUiButtonActiveBorderColor;
+	background-color: var(--sapButton_Active_Background);
+	border: 0.125rem solid var(--sapButton_Active_BorderColor);
 }
 
 .sapUiSizeCompact {
+
 	.sapMSliderHandle {
 		width: 1.5rem;
 		height: 1.5rem;
@@ -90,6 +93,6 @@
 	}
 }
 
-.sapMSliderTick[data-ui5-active-tickmark="true"] {
-	border-left: 0.0625rem solid @sapActiveColor;
+.sapMSliderTick[data-ui5-active-tickmark='true'] {
+	border-left: 0.0625rem solid var(--sapActiveColor);
 }

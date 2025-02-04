@@ -9,10 +9,9 @@ sap.ui.define([
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/model/Filter",
 	'sap/ui/model/FilterOperator',
-	"sap/ui/model/odata/type/Int32",
 	"sap/m/Text",
 	"delegates/util/DelegateCache"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Filter, FilterOperator, Int32Type, Text, DelegateCache) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Filter, FilterOperator, Text, DelegateCache) {
 	"use strict";
 	var OrderItemssTableDelegate = Object.assign({}, ODataTableDelegate);
 

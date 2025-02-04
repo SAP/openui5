@@ -120,6 +120,8 @@
 			</ComplexType>
 			<ComplexType Name="Address">
 				<Property Name="City" Type="Edm.String"/>
+				<Property Name="RegionName" Type="Edm.String"/>
+				<Property Name="RegionID" Type="Edm.Int16"/>
 				<Property Name="ZIP" Type="Edm.String" MaxLength="5" />
 			</ComplexType>
 			<ComplexType Name="ComplexKey">
@@ -215,10 +217,24 @@
 				<Singleton Name="MyFavoriteArtist" Type="special.cases.ArtistsType"/>
 				<ActionImport Name="HirePerson" Action="special.cases.AcHirePerson"/>
 			</EntityContainer>
+			<Annotations Target="special.cases.Address/RegionName">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=REGION_NAME"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Region Name" />
+			</Annotations>
+			<Annotations Target="special.cases.Address/RegionID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=REGION_ID"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="RegionName" />
+			</Annotations>
 			<Annotations Target="special.cases.ArtistsType/ArtistID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=ARTIST_ID"/>
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="Name" />
 			</Annotations>
 			<Annotations Target="special.cases.ArtistsType/Name">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=ARTIST_NAME"/>
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist Name" />
 			</Annotations>
 			<Annotations Target="special.cases.Container/Artists">

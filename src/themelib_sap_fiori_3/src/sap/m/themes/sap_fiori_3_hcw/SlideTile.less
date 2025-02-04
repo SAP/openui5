@@ -12,21 +12,21 @@
 	top: 0;
 	right: 0;
 	bottom: 0;
-	border: 0.125rem dotted @sapUiContentFocusColor;
+	border: 0.125rem dotted var(--sapContent_FocusColor);
 }
 
 .sapMST:focus:not([tabindex]) {
 	border-color: transparent;
 }
 
-/* Bulleted indicator of multiple tiles*/
+/* Bulleted indicator of multiple tiles */
 .sapMSTBulleted .sapMSTIndicator {
-	background-color: @sapUiTileBackground;
-	border: 1px solid @sapUiTileBorderColor;
+	background-color: var(--sapTile_Background);
+	border: 1px solid var(--sapTile_BorderColor);
 }
 
 .sapMSTBulleted .sapMSTIndicator.sapMSTActive {
-	background-color: @sapUiContentContrastIconColor;
+	background-color: var(--sapContent_ContrastIconColor);
 }
 
 .sapMST .sapMSTIconDisplayArea {
@@ -34,7 +34,7 @@
 }
 
 .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
-	background-color: @sapUiHighlight;
+	background-color: var(--sapHighlightColor);
 }
 
 .sapMST .sapMGT {

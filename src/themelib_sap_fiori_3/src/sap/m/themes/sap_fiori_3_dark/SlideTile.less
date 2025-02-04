@@ -4,19 +4,20 @@
 /* ================================ */
 
 .sapMST:active .sapMSTFocusDiv {
-	border: 1px solid @sapUiTileBackground;
+	border: 1px solid var(--sapTile_Background);
 }
 
 .sapMST.sapMSTScopeActions.sapMSTDarkBackground .sapMSTMoreIcon {
-	.sapMBtnIcon{
-		color: @sapUiContentContrastTextColor;
+
+	.sapMBtnIcon {
+		color: var(--sapContent_ContrastTextColor);
 	}
 }
 
-/* This part is used to achieve dotted white black interlace border*/
-.sapMST:focus .sapMSTFocusDiv:after,
-.sapMST:active .sapMSTFocusDiv:after {
-	content: "";
+/* This part is used to achieve dotted white black interlace border */
+.sapMST:focus .sapMSTFocusDiv::after,
+.sapMST:active .sapMSTFocusDiv::after {
+	content: '';
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -24,17 +25,17 @@
 	right: 0;
 	border-radius: 0.25rem;
 	margin: -1px;
-	border: 1px dotted @sapUiContentFocusColor;
+	border: 1px dotted var(--sapContent_FocusColor);
 }
 
-/* Bulleted indicator of multiple tiles*/
+/* Bulleted indicator of multiple tiles */
 .sapMSTBulleted .sapMSTIndicator {
-	background-color: @sapUiContentNonInteractiveIconColor;
+	background-color: var(--sapContent_NonInteractiveIconColor);
 	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
 }
 
 .sapMSTBulleted .sapMSTIndicator.sapMSTActive {
-	background-color: @sapUiContentContrastIconColor;
+	background-color: var(--sapContent_ContrastIconColor);
 	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
 }
 
@@ -43,14 +44,14 @@
 }
 
 .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
-	background-color: @sapUiBrand;
+	background-color: var(--sapBrandColor);
 }
 
 .sapMST .sapMSTIconNestedArea {
-	text-shadow: 0px 1px @sapUiButtonEmphasizedTextShadow;
+	text-shadow: 0 1px var(--sapButton_Emphasized_TextShadow);
 }
 
 .sapMST .sapMGT:active .sapMGTFocusDiv,
-.sapMST .sapMGT:active .sapMGTFocusDiv:after {
+.sapMST .sapMGT:active .sapMGTFocusDiv::after {
 	border: none;
 }
