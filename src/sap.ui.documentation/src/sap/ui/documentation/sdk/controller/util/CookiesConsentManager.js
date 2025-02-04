@@ -371,6 +371,10 @@ sap.ui.define(
                 }
 
                 var sHostname = oUri.hostname();
+                return CookiesConsentManager._checkHostnameIsTracked(sHostname);
+            },
+
+            _checkHostnameIsTracked: function (sHostname) {
                 return TRACKED_HOSTNAMES.LIST.includes(sHostname) ||
                     TRACKED_HOSTNAMES.REGEX.test(sHostname);
             }

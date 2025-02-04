@@ -118,4 +118,14 @@ function (CookiesConsentManager) {
 				}));
 		assert.strictEqual(this.oConsentManager._checkAdditionalPreferencesAllowUsageTracking(), true, "consent is given");
 	});
+
+	QUnit.module("supported hostnames", {
+	});
+
+	QUnit.test("_checkHostnameIsTracked", function (assert) {
+		var aTrackerHostnames = ["openui5.hana.ondemand.com", "sapui5.hana.ondemand.com", "ui5.sap.com", "sdk.openui5.org"];
+		aTrackerHostnames.forEach(function (sHostname) {
+			assert.strictEqual(CookiesConsentManager._checkHostnameIsTracked(sHostname), true, "hostname is tracked: " + sHostname);
+		});
+	});
 });
