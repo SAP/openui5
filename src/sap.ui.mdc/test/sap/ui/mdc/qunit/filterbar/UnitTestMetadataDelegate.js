@@ -1,9 +1,13 @@
 sap.ui.define([
-	"sap/ui/mdc/FilterBarDelegate", 'sap/ui/mdc/FilterField', 'sap/ui/mdc/util/IdentifierUtil', 'sap/base/util/merge'
-], function (FilterBarDelegate, FilterField, IdentifierUtil, merge) {
+	"sap/ui/mdc/FilterBarDelegate", 'sap/ui/mdc/FilterField', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/odata/TypeMap', 'sap/base/util/merge'
+], function (FilterBarDelegate, FilterField, IdentifierUtil, ODataTypeMap, merge) {
 	"use strict";
 
 	const UnitTestFilterBarDelegate = Object.assign({}, FilterBarDelegate);
+
+	UnitTestFilterBarDelegate.getTypeMap = function (oField) {
+        return ODataTypeMap; // as Edm.types are used
+    };
 
 	UnitTestFilterBarDelegate.fetchProperties = function (oFilterBar) {
 		return Promise.resolve([{name: "key1", label:"key1", dataType:"Edm.String"}, {name: "key2", label:"Key2",dataType:"Edm.String"}]);

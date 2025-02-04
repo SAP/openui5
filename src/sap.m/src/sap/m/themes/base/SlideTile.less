@@ -28,16 +28,18 @@
 			right: 0.75rem;
 			bottom: 0.563rem;
 			z-index: 1;
-			color: @sapUiButtonIconColor;
+			color: var(--sapButton_IconColor);
 			pointer-events: none;
 			background-color: transparent;
 			border: 0;
-			.sapMBtnIcon{
+
+			.sapMBtnIcon {
 				bottom: 0.6rem;
 				left: 0.9rem;
 				border: 0;
-				color: @sapButton_Lite_TextColor;
+				color: var(--sapButton_Lite_TextColor);
 			}
+
 			&:focus {
 				outline: none;
 			}
@@ -47,14 +49,14 @@
 			width: 1.375rem;
 			height: 1.375rem;
 			border-radius: 50%;
-			padding: 0px;
+			padding: 0;
 			position: absolute;
 			top: -0.5rem;
 			right: -0.5rem;
 			z-index: 3;
-			border: 1px solid @sapUiButtonBorderColor;
-			background-color: @sapUiButtonBackground;
-			color: @sapUiButtonTextColor;
+			border: 1px solid var(--sapButton_BorderColor);
+			background-color: var(--sapButton_Background);
+			color: var(--sapButton_TextColor);
 			overflow: visible;
 
 			.sapMBtnFocusDiv {
@@ -64,7 +66,7 @@
 			.sapMBtnInner {
 				width: 100%;
 				height: 100%;
-				min-width: 0px;
+				min-width: 0;
 				border-radius: 50%;
 				border: none;
 				outline-offset: -2px;
@@ -72,10 +74,10 @@
 
 			.sapMBtnIcon {
 				font-size: 0.75rem;
-				margin: 0px;
+				margin: 0;
 				width: 100%;
 
-				&:before {
+				&::before {
 					position: relative;
 					top: -0.125rem;
 				}
@@ -87,9 +89,9 @@
 			}
 
 			/* The touch area has a different size and is slightly moved to the left and bottom */
-			&:before {
-				content: "";
-				color: @sapUiButtonIconColor;
+			&::before {
+				content: '';
+				color: var(--sapButton_IconColor);
 				position: absolute;
 				top: -1px;
 				bottom: -0.6875rem;
@@ -100,13 +102,16 @@
 	}
 }
 
-.sapMST{
-	.sapMGT.sapMGTStateLoading{
-		.sapMTileCnt.News{
+.sapMST {
+
+	.sapMGT.sapMGTStateLoading {
+
+		.sapMTileCnt.News {
 			background-color: transparent;
 		}
 	}
 }
+
 .sapMST.sapMSTGridContainerOneRemGap.TwoByOne {
 	width: 23rem;
 }
@@ -115,25 +120,31 @@
 	width: 23rem;
 }
 
-.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByOne{
+.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByOne {
 	width: 19.5rem;
 }
 
-.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByHalf{
+.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByHalf {
 	width: 19.5rem;
 }
 
 .sapMST.sapMTileSmallPhone {
+
 	.sapMGT.sapMGTStateLoading.TwoByOne {
-		.sapMTileCntContentShimmerPlaceholderItemTextFooter{
+
+		.sapMTileCntContentShimmerPlaceholderItemTextFooter {
 			width: 5.875rem;
 		}
 	}
 }
+
 .sapUiSizeCompact{
+
 	.sapMST {
+
 		.sapMSTMoreIcon {
-			.sapMBtnIcon{
+
+			.sapMBtnIcon {
 				left: 0.3rem;
 				bottom: 0.4rem;
 			}
@@ -173,7 +184,7 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	width: 100%;
 }
 
-.sapMGTTileStretch .sapMGT{
+.sapMGTTileStretch .sapMGT {
 	height: 100%;
 	width: 100%;
 }
@@ -189,7 +200,7 @@ html.sap-tablet .sapMGTHvrOutln:active {
 }
 
 .sapMST:focus .sapMSTFocusDiv {
-	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 }
 
 /* Bulleted indicator of multiple tiles*/
@@ -205,10 +216,12 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	align-items: center;
 	height: 1.5rem;
 	bottom: 0.25rem;
+
 	.sapMSTIndicatorWrapper {
 		display: flex;
 		max-width: 7.5rem;
 		overflow: hidden;
+
 		.sapMSTIndicatorTapArea {
 			min-width: 24px;
 			min-height: 24px;
@@ -256,7 +269,6 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	opacity: 0.8;
 }
 
-
 .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	opacity: 1.0;
 }
@@ -284,6 +296,7 @@ html.sap-tablet .sapMST .sapMSTIconClickTapArea {
 }
 
 .sapMTileSmallPhone {
+
 	&.sapMST.OneByOne {
 		width: 9.25rem;
 		height: 9.25rem;
@@ -300,9 +313,12 @@ html.sap-tablet .sapMST .sapMSTIconClickTapArea {
 }
 
 .sapMST {
+
 	.sapMTileCnt.News {
+
 		.sapMNwCCTxt {
 			margin-top: 0;
+
 			.sapMFT {
 				display: -webkit-box;
 				-webkit-box-orient: vertical;
@@ -311,7 +327,9 @@ html.sap-tablet .sapMST .sapMSTIconClickTapArea {
 				text-overflow: ellipsis;
 			}
 		}
+
 		.sapMNwCSbh {
+
 			.sapMFT {
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -319,7 +337,9 @@ html.sap-tablet .sapMST .sapMSTIconClickTapArea {
 			}
 		}
 	}
+
 	&.sapMSTIndicatorVisible {
+
 		.sapMGenericTileFtrFld {
 			top: 0.5rem;
 		}
@@ -327,189 +347,238 @@ html.sap-tablet .sapMST .sapMSTIconClickTapArea {
 }
 
 .sapMST.sapMSTIndicatorVisible.Stretch {
+
 	.sapMGenericTileFtrFldTxt {
+
 		.sapMText {
 			width: -webkit-calc(~'100% - 40px');
-			font-family: @sapFontBoldFamily;
-			font-size: @sapFontSize;
+			font-family: var(--sapFontBoldFamily);
+			font-size: var(--sapFontSize);
 			line-height: normal;
-			text-shadow: @sapContent_TextShadow;
+			text-shadow: var(--sapContent_TextShadow);
 		}
 	}
 }
 
 .sapMST.sapMSTIndicatorVisible.Stretch.sapMTileSmallPhone {
+
 	.sapMGenericTileFtrFldTxt {
+
 		.sapMText {
-			font-size: @sapFontSmallSize;
+			font-size: var(--sapFontSmallSize);
 		}
 	}
 }
 
 .sapMST.sapMSTIndicatorVisible.TwoByOne {
+
 	.sapMGT.TwoByOne {
+
 		.sapMTileCnt.News {
 			height: 6.375rem;
 			margin-top: 0;
+
 			.sapMTileCntContent{
 				height: 3rem;
+
 				.sapMNwC {
 					max-height: 3rem;
+
 					.sapMNwCCTxt {
 						max-height: 2rem;
+
 						.sapMText {
-							font-size: @sapFontSize;
-							font-family: @sapFontBoldFamily;
+							font-size: var(--sapFontSize);
+							font-family: var(--sapFontBoldFamily);
 						}
+
 						.sapMFT {
-							font-size: @sapFontSize;
-							font-family: @sapFontBoldFamily;
+							font-size: var(--sapFontSize);
+							font-family: var(--sapFontBoldFamily);
 						}
 					}
 				}
 			}
+
 			.sapMTileCntFtrTxt {
 				bottom: 1.875rem;
-				font-family: @sapFontFamily;
-				font-size: @sapFontSmallSize;
+				font-family: var(--sapFontFamily);
+				font-size: var(--sapFontSmallSize);
 				line-height: normal;
 			}
 		}
 	}
+
 	.sapMSTBulleted {
 		bottom: 0.25rem;
 	}
+
 	.sapMGenericTileFtrFldTxt {
+
 		.sapMText {
 			width: 17.125rem;
-			font-family: @sapFontBoldFamily;
-			font-size: @sapFontSize;
+			font-family: var(--sapFontBoldFamily);
+			font-size: var(--sapFontSize);
 			line-height: normal;
-			text-shadow: @sapContent_TextShadow;
+			text-shadow: var(--sapContent_TextShadow);
 		}
 	}
 }
 
 .sapMST.sapMSTIndicatorVisible.OneByOne {
+
 	.sapMGT.OneByOne {
+
 		.sapMGTHdrContent {
 			height: 3.375rem;
 			padding: 0;
 		}
+
 		.sapMGTContent {
 			height: 7.625rem;
+
 			.sapMTileCnt.News {
 				height: 100%;
 				margin: 0;
-				.sapMTileCntContent{
+
+				.sapMTileCntContent {
 					margin: 0.5rem 0 0.5rem 0;
 					height: 2.625rem;
+
 					.sapMFT {
-						font-size: @sapFontSmallSize;
+						font-size: var(--sapFontSmallSize);
 					}
 				}
+
 				.sapMTileCntFtrTxt {
 					bottom: 3rem;
-					font-family: @sapFontFamily;
-					font-size: @sapFontSmallSize;
+					font-family: var(--sapFontFamily);
+					font-size: var(--sapFontSmallSize);
 					line-height: normal;
 				}
 			}
 		}
 	}
+
 	.sapMSTBulleted {
 		bottom: 1rem;
+
 		.sapMSTIndicatorWrapper {
 			max-width: 6rem;
 		}
 	}
+
 	.sapMGenericTileFtrFld {
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
+
 		.sapMGenericTileFtrFldTxt {
 			padding: 0;
+
 			.sapMText {
 				width: 7.8125rem;
-				font-family: @sapFontBoldFamily;
-				font-size: @sapFontSmallSize;
+				font-family: var(--sapFontBoldFamily);
+				font-size: var(--sapFontSmallSize);
 				line-height: normal;
-				text-shadow: @sapContent_TextShadow;
+				text-shadow: var(--sapContent_TextShadow);
 			}
 		}
 	}
 }
 
 .sapMST.sapMSTIndicatorVisible.sapMTileSmallPhone.TwoByOne {
+
 	.sapMGT.TwoByOne {
+
 		.sapMGTHdrContent {
 			height: 3.1875rem;
 			padding: 0;
 		}
+
 		.sapMGTContent {
 			height: 6.125rem;
+
 			.sapMTileCnt.News {
 				height: 100%;
+
 				.sapMTileCntContent {
 					height: 2.5rem;
+
 					.sapMNwC {
-					height: 2.5rem;
+						height: 2.5rem;
+
 						.sapMNwCCTxt {
 							height: 1.75rem;
 						}
+
 						.sapMNwCSbh {
 							height: 14px;
 						}
+
 						.sapMFT {
-							font-size: @sapFontSmallSize;
+							font-size: var(--sapFontSmallSize);
 						}
 					}
 				}
 			}
+
 			.sapMTileCntFtrTxt {
 				bottom: 2.25rem;
 			}
 		}
 	}
+
 	.sapMSTBulleted {
 		bottom: 0.5rem;
 	}
+
 	.sapMGenericTileFtrFldTxt {
+
 		.sapMText {
 			width: 13.6875rem;
-			font-size: @sapFontSmallSize;
+			font-size: var(--sapFontSmallSize);
 		}
 	}
 }
 
 .sapMST.sapMSTIndicatorVisible.sapMTileSmallPhone.OneByOne {
+
 	.sapMGT.OneByOne {
+
 		.sapMGTContent {
 			height: 5.875rem;
+
 			.sapMTileCnt.News {
 				height: inherit;
 				margin-top: 0;
+
 				.sapMTileCntContent {
 					height: 2.625rem;
 					margin-bottom: 0.125rem;
+
 					.sapMNwC {
 						height: inherit;
 					}
-
 				}
+
 				.sapMTileCntFtrTxt {
 					bottom: 1.6875rem
 				}
 			}
 		}
 	}
+
 	.sapMSTBulleted {
 		bottom: 0.25rem;
+
 		.sapMSTIndicatorWrapper {
 			max-width: 4.5rem;
 		}
 	}
+
 	.sapMGenericTileFtrFldTxt {
+
 		.sapMText {
 			width: 6.125rem;
 		}

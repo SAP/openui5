@@ -184,7 +184,6 @@
 								/>
 								<core:Icon
 									src="{parts: ['documents>mediaType', 'documents>fileName'], formatter: '.getIconSrc' }"
-									color="white"
 									visible="{= ${documents>imageUrl} === undefined || ${documents>imageUrl} === '' }"
 									class="sapMUSTItemImage sapMUSTItemIcon"
 								/>

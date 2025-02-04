@@ -26,7 +26,7 @@ function(
 	Integer,
 	Float
 ) {
-    "use strict";
+	"use strict";
 
 	QUnit.test("DefaultTypeMap.getUnitBaseType", function(assert) {
 		assert.equal(DefaultTypeMap.getUnitBaseType(undefined), BaseType.Unit, "Returns BaseType.Unit - no oFormatOptions");
@@ -108,6 +108,15 @@ function(
 		assert.equal(oTypeConfig.baseType, BaseType.Unit , "expected basetype returned");
 	});
 
+	QUnit.test("getTypeConfig with not existing data type", function (assert) {
+		try {
+			const oTypeConfig = DefaultTypeMap.getTypeConfig("sap.ui.model.type.NotExisting");
+			assert.notOk(oTypeConfig, "no TypeConfig must be returned");
+		} catch (oError) {
+			assert.ok(oError, "Error trhown");
+		}
+	});
+
 	QUnit.test("_normalizeType", function (assert) {
 
 		let oTypeInstance = DefaultTypeMap._normalizeType("sap.ui.model.type.Currency", {showMeasure: false}, {maximum: 999});
@@ -176,5 +185,28 @@ function(
 		oStringifiedValue = DefaultTypeMap.externalizeValue(oDate, oType);
 		assert.equal(oStringifiedValue, "10:10:10", "stringified value returned");
 		oType.destroy();
+	});
+
+	QUnit.test("retrieveDataTypeClasses", (assert) => {
+		const aDataTypes = ["sap.ui.model.type.String", "sap.ui.model.type.Date", "sap.ui.model.type.Integer"];
+
+		return DefaultTypeMap.retrieveDataTypeClasses(aDataTypes).then((aClasses) => {
+			assert.equal(aClasses?.length, 3, "Classes returned");
+			assert.equal(aClasses[0].getMetadata().getName(), "sap.ui.model.type.String", "first class");
+			assert.equal(aClasses[1].getMetadata().getName(), "sap.ui.model.type.Date", "second class");
+			assert.equal(aClasses[2].getMetadata().getName(), "sap.ui.model.type.Integer", "third class");
+		}).catch((oException) => {
+			assert.ok(false, "Exception fired");
+		});
+	});
+
+	QUnit.test("retrieveDataTypeClasses - not exising type", (assert) => {
+		const aDataTypes = ["sap.ui.model.type.NotExisting"];
+
+		return DefaultTypeMap.retrieveDataTypeClasses(aDataTypes).then((aClasses) => {
+			assert.ok(false, "No exception fired");
+		}).catch((oException) => {
+			assert.ok(oException, "Exception fired");
+		});
 	});
 });

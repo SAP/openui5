@@ -244,7 +244,7 @@ sap.ui.define([
 	};
 
 	function _createOrUpdatePropertyHelper(aProperties, bFinal) {
-		if (!this.bIsDestroyed) {
+		if (!this.isDestroyed()) {
 			if (this._bPropertyHelperInitializing && typeof aProperties !== "undefined") {
 				return this._oPropertyHelperDeferred.promise.then(() => {
 					return _updatePropertyHelper.call(this, aProperties, bFinal);
@@ -252,13 +252,15 @@ sap.ui.define([
 			}
 
 			if (this._oPropertyHelper && typeof aProperties !== "undefined") {
-				_updatePropertyHelper.call(this, aProperties, bFinal);
+				return _updatePropertyHelper.call(this, aProperties, bFinal).then(() => {
+					return this._oPropertyHelperDeferred?.promise;
+				});
 			}
 			if (!this._oPropertyHelper) {
 				_createPropertyHelper.call(this, aProperties, bFinal);
 			}
 		}
-		return this._oPropertyHelperDeferred && this._oPropertyHelperDeferred.promise;
+		return this._oPropertyHelperDeferred?.promise;
 	}
 
 	function _createPropertyHelper(aProperties, bFinal) {
@@ -277,6 +279,13 @@ sap.ui.define([
 		}).then((oControlDelegate) => {
 			oDelegate = oControlDelegate;
 			return bFinal ? _getDelegateProperties(this) : aProperties;
+		}).then((aProperties) => {
+			if (this.isDestroyed()) {
+				return [];
+			}
+			return retrieveDataTypes.call(this, aProperties).then(() => {
+				return aProperties;
+			});
 		}).then((aProperties) => {
 			if (this.isDestroyed()) {
 				return [];
@@ -318,14 +327,16 @@ sap.ui.define([
 		if (this._bPropertyHelperFinal) {
 			throw new Error("This property helper is already final and cannot be updated further.");
 		}
-		this._oPropertyHelper.setProperties(aProperties);
-		this._bPropertyHelperFinal = bFinal || this._bPropertyHelperFinal;
+		return retrieveDataTypes.call(this, aProperties).then((aClasses) => {
+			this._oPropertyHelper.setProperties(aProperties);
+			this._bPropertyHelperFinal = bFinal || this._bPropertyHelperFinal;
 
-		if (this._bPropertyHelperFinal) {
-			this._oPropertiesFinalizedDeferred.resolve();
-		}
+			if (this._bPropertyHelperFinal) {
+				this._oPropertiesFinalizedDeferred.resolve();
+			}
 
-		return this._oPropertyHelper;
+			return this._oPropertyHelper;
+		});
 	}
 
 
@@ -362,6 +373,18 @@ sap.ui.define([
 		return loadModules("sap/ui/mdc/util/PropertyHelper").then((aResult) => {
 			return aResult[0];
 		});
+	}
+
+	function retrieveDataTypes(aProperties) {
+		const aDataTypes = [];
+
+		aProperties?.forEach((oProperty) => {
+			if (oProperty.dataType && aDataTypes.indexOf(oProperty.dataType) === -1) {
+				aDataTypes.push(oProperty.dataType);
+			}
+		});
+
+		return this.getTypeMap().retrieveDataTypeClasses(aDataTypes);
 	}
 
 	return function() {

@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
+	"sap/ui/core/fieldhelp/FieldHelp",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
@@ -40,7 +41,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function(Log, Localization, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, Message, Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, Decimal, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper, Security, TestUtils, XMLHelper, jQuery) {
+], function(Log, Localization, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, FieldHelp, Message, Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode, Decimal, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, ValueListType, _Helper, Security, TestUtils, XMLHelper, jQuery) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -71800,17 +71801,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Update a property of a complex type on an entity reachable via single-valued
-	// navigation property, resulting in an upsert. Request side effects for a property of that
-	// entity or the full binding. See that there is only one GET request. Then change a property
-	// after the successful upsert, and see that the PATCH uses the canonical path.
-	// Using an ODLB here, because its #requestSideEffects is implemented differently.
-	// Using $$patchWithoutSideEffects here, to see that is has no effect.
+	// Scenario: Items table on object page, upsert happens inside a row, side-effects refresh.
+	//
+	// Update a property of a complex type on an entity reachable via single-valued navigation
+	// property, resulting in an upsert. Request side effects for a property of that entity or the
+	// full binding. See that there is only one GET request. Then change a property after the
+	// successful upsert, and see that the PATCH uses the canonical path. Using an ODLB here,
+	// because its #requestSideEffects is implemented differently. Using $$patchWithoutSideEffects
+	// here, to see that is has no effect.
 	// JIRA: CPOUI5ODATAV4-2211
 	//
 	// Check "transient" handling: row context is unaffected (JIRA: CPOUI5ODATAV4-2856)
+	// Check how keep-alive affects refresh (JIRA: CPOUI5ODATAV4-2847)
 	[false, true].forEach(function (bRefresh) {
-		const sTitle = `CPOUI5ODATAV4-2211: upsert & ${bRefresh ? "refresh" : "side-effects request"}`;
+		[false, true].forEach(function (bKeepAlive) {
+			const sTitle = `CPOUI5ODATAV4-2211: upsert
+				& ${bRefresh ? "refresh" : "side-effects request"} w/ keep-alive: ${bKeepAlive}`;
 
 		QUnit.test(sTitle, async function (assert) {
 			const oModel = this.createSalesOrdersModel(
@@ -71824,8 +71830,9 @@ sap.ui.define([
 		<Input id="postalCode" value="{SO_2_BP/Address/PostalCode}"/>
 	</Table>`;
 
-			this.expectRequest("SalesOrderList?$select=BuyerID,SalesOrderID"
-					+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)"
+			const sExpand
+				= "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)";
+			this.expectRequest("SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
 					+ "&$skip=0&$top=100", {
 					value : [{
 						"@odata.etag" : "etag1",
@@ -71844,6 +71851,8 @@ sap.ui.define([
 			this.expectChange("city", ["Heidelberg"]);
 
 			const oOrderContext = this.oView.byId("table").getItems()[0].getBindingContext();
+			oOrderContext.setKeepAlive(bKeepAlive);
+
 			// code under test
 			const oPromise = oOrderContext.setProperty("SO_2_BP/Address/City", "Heidelberg");
 
@@ -71862,48 +71871,51 @@ sap.ui.define([
 					url : "SalesOrderList('1')/SO_2_BP",
 					payload : {Address : {City : "Heidelberg"}}
 				}, null, {ETag : "etag2"}); // 204 No Content
+			const oSalesOrder = {
+				"@odata.etag" : "etag1",
+				BuyerID : "2",
+				SalesOrderID : "1",
+				SO_2_BP : {
+					"@odata.etag" : "etag2",
+					Address : {
+						City : "Heidelberg",
+						PostalCode : "12345"
+					},
+					BusinessPartnerID : "2"
+				}
+			};
 			if (bRefresh) {
+				if (bKeepAlive) { // ODLB#refreshKeptElements
+					this.expectRequest({
+							batchNo : 2,
+							method : "GET",
+							url : "SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
+								+ "&$filter=SalesOrderID eq '1'"
+						}, {
+							value : [oSalesOrder]
+						});
+				}
 				this.expectRequest({
 						batchNo : 2,
 						method : "GET",
-						url : "SalesOrderList?$select=BuyerID,SalesOrderID"
-							+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
-								+ ",BusinessPartnerID)"
+						url : "SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
 							+ "&$skip=0&$top=100"
-					}, {
-						value : [{
-							"@odata.etag" : "etag1",
-							BuyerID : "2",
-							SalesOrderID : "1",
-							SO_2_BP : {
-								"@odata.etag" : "etag2",
-								Address : {
-									City : "Heidelberg",
-									PostalCode : "12345"
-								},
-								BusinessPartnerID : "2"
-							}
-						}]
+					}, { // w/ keep-alive, simulate that ('1') does not match filter anymore ;-)
+						value : bKeepAlive ? [] : [oSalesOrder]
 					});
-			} else {
+				if (bKeepAlive) { // _Cache#refreshSingleNoCollection
+					this.expectRequest({
+							batchNo : 2,
+							method : "GET",
+							url : "SalesOrderList('1')?$select=SO_2_BP" + sExpand
+						}, oSalesOrder); // Note: no BuyerID,SalesOrderID needed => updateSelected
+				}
+			} else { // _Cache#refreshSingleNoCollection merged with #requestSideEffects
 				this.expectRequest({
 						batchNo : 2,
 						method : "GET",
-						url : "SalesOrderList('1')?$select=BuyerID"
-							+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode"
-								+ ",BusinessPartnerID)"
-					}, {
-						"@odata.etag" : "etag1",
-						BuyerID : "2",
-						SO_2_BP : {
-							"@odata.etag" : "etag2",
-							Address : {
-								City : "Heidelberg",
-								PostalCode : "12345"
-							},
-							BusinessPartnerID : "2"
-						}
-					});
+						url : "SalesOrderList('1')?$select=BuyerID" + sExpand
+					}, oSalesOrder); // Note: no SalesOrderID needed, but never mind => updateSelected
 			}
 			this.expectChange("buyerId", ["2"])
 				.expectChange("postalCode", ["12345"]);
@@ -71920,18 +71932,28 @@ sap.ui.define([
 
 			// Note: this proves that oOrderContext has been reused, not destroyed (because it does not
 			// appear created by mistake)
-			assert.deepEqual(oOrderContext.getObject("SO_2_BP"), {
-				...(bRefresh ? {} : {"@$ui5.context.isTransient" : false}),
-				"@odata.etag" : "etag2",
-				Address : {
-					City : "Heidelberg",
-					PostalCode : "12345"
-				},
-				BusinessPartnerID : "2"
+			assert.deepEqual(oOrderContext.getObject(), {
+				"@odata.etag" : "etag1",
+				BuyerID : "2",
+				SalesOrderID : "1",
+				SO_2_BP : {
+					...(bRefresh && !bKeepAlive || {"@$ui5.context.isTransient" : false}),
+					"@odata.etag" : "etag2",
+					Address : {
+						City : "Heidelberg",
+						PostalCode : "12345"
+					},
+					BusinessPartnerID : "2"
+				}
 			});
 
-			this.expectChange("city", ["Walldorf"])
-				.expectRequest({
+			if (bRefresh && bKeepAlive) {
+				assert.strictEqual(oOrderContext.getBinding().getLength(), 0,
+					"w/ keep-alive, simulate that ('1') does not match filter anymore ;-)");
+			} else {
+				this.expectChange("city", ["Walldorf"]);
+			}
+			this.expectRequest({
 					method : "PATCH",
 					headers : {
 						"If-Match" : "etag2",
@@ -71947,6 +71969,7 @@ sap.ui.define([
 				oModel.submitBatch("update"),
 				this.waitForChanges(assert, "patch")
 			]);
+		});
 		});
 	});
 
@@ -77860,5 +77883,58 @@ sap.ui.define([
 			ID : "0",
 			Name : "Frederic Fall"
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If a text property is bound, the field help for the corresponding ID property is
+	// provided instead of the field help for the text property itself. The test covers the
+	// following cases:
+	// A: control binding to text property only
+	// B: control binding to text and ID in a composite binding
+	// C: control binding different control properties to text and ID
+	// D: control binding to text property only, text and ID property are defined in a complex type
+	// JIRA: CPOUI5MODELS-1886
+	QUnit.test("Field help for text properties", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="root" binding="{/Artists(ArtistID='1',IsActiveEntity=false)}">
+	<Label labelFor="idA" text="A" />
+	<Text id="idA" text="{Name}"/>
+	<Label labelFor="idB" text="B" />
+	<Text id="idB" text="{ArtistID} {Name}"/>
+	<Label labelFor="idC" text="C" />
+	<ObjectIdentifier id="idC" text="{ArtistID}" title="{Name}"/>
+	<Label labelFor="idD" text="D" />
+	<Text id="idD" text="{Address/RegionName}"/>
+</FlexBox>`;
+
+		this.expectRequest("Artists(ArtistID='1',IsActiveEntity=false)"
+				+ "?$select=Address/RegionName,ArtistID,IsActiveEntity,Name", {
+					Address : {RegionName : "Caribbean"},
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Dr No"
+				});
+		// simplicity: no expectChange on controls, as this aspect is not subject of this test
+
+		await this.createView(assert, sView, oModel);
+
+		const {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+
+		// code under test
+		FieldHelp.getInstance().activate(fnResolve);
+
+		const aHotspots = await oFieldHelpUpdatePromise;
+		const aExpectedHotspots = [["A"], ["B"], ["C"], ["D", "REGION_ID"]]
+			.map(([sCase, sId]) => ({
+				backendHelpKey : {
+					id : sId ?? "ARTIST_ID",
+					type : "DTEL"
+				},
+				hotspotId : this.oView.createId("id" + sCase),
+				labelText : sCase
+			}));
+		assert.deepEqual(aHotspots, aExpectedHotspots, "field help hotspots");
+		FieldHelp.getInstance().deactivate();
 	});
 });

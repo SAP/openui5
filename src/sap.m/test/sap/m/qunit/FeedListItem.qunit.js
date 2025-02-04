@@ -321,9 +321,7 @@ sap.ui.define([
 		assert.ok(oFeedList.getItems()[0].oAvatar.getDisplayShape(), "Avatar should have DisplayShape properties");
 		assert.ok(oFeedList.getItems()[0].oAvatar.getInitials(), "Avatar should have initials properties");
 		assert.ok(oFeedList.getItems()[0].oAvatar.getDisplaySize(), "Avatar should have DisplaySize properties");
-		assert.ok(oFeedList.getItems()[0].oAvatar.getAriaLabelledBy(), "Avatar should have ariaLabelledBy set");
 		assert.ok(oFeedList.getItems()[0]._oLinkControl.getEnabled(), "Sender link enabled (senderActive = true)");
-		assert.ok(oFeedList.getItems()[0].getAriaLabelledBy(), "aria-labelledby property has been added on focus");
 		assert.ok(!!oFeedList.getItems()[0]._oLinkControl.$(), "Name Link rendered");
 		assert.ok(jQuery('#__item1-oFeedItemList-0 .sapMFeedListItemFooter').length === 1, "Footer displayed");
 		assert.ok(oFeedList.getItems()[0].$("timestamp").length === 1, "timestamp should be rendered");

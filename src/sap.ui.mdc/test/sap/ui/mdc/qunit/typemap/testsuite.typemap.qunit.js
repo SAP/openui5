@@ -36,7 +36,10 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
                 module: "./TypeMap.qunit"
 			},
 			"DefaultTypeMap": {
-                module: "./DefaultTypeMap.qunit"
+                module: "./DefaultTypeMap.qunit",
+                sinon: {
+					qunitBridge: true
+				}
 			},
             "ODataTypeMape": {
                 module: "./ODataTypeMap.qunit"

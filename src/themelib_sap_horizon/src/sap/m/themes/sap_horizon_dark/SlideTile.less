@@ -3,23 +3,24 @@
 /* Evening Horizon theme            */
 /* ================================ */
 
-.sapMST:active{
-	background-color: @sapTile_Active_Background;
-	.sapMSTFocusDiv{
-		border: 1px solid @sapTile_Interactive_BorderColor;
-		border-radius:  @sapTile_BorderCornerRadius;
+.sapMST:active {
+	background-color: var(--sapTile_Active_Background);
+
+	.sapMSTFocusDiv {
+		border: 1px solid var(--sapTile_Interactive_BorderColor);
+		border-radius: var(--sapTile_BorderCornerRadius);
 		inset: 0;
 	}
 }
 
 .sapMST.sapMSTScopeActions.sapMSTDarkBackground .sapMSTMoreIcon {
-	color: @sapUiContentContrastTextColor;
+	color: var(--sapContent_ContrastTextColor);
 }
 
-/* This part is used to achieve dotted white black interlace border*/
-.sapMST:focus .sapMSTFocusDiv:after,
-.sapMST:active .sapMSTFocusDiv:after {
-	content: "";
+/* This part is used to achieve dotted white black interlace border */
+.sapMST:focus .sapMSTFocusDiv::after,
+.sapMST:active .sapMSTFocusDiv::after {
+	content: '';
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -27,27 +28,27 @@
 	right: 0;
 	border-radius: 0.25rem;
 	margin: -1px;
-	border: 1px dotted @sapUiContentFocusColor;
+	border: 1px dotted var(--sapContent_FocusColor);
 }
 
-/* Bulleted indicator of multiple tiles*/
+/* Bulleted indicator of multiple tiles */
 .sapMSTBulleted .sapMSTIndicator {
-	border: solid 0.0625rem @sapTile_OverlayForegroundColor;
+	border: solid 0.0625rem var(--sapTile_OverlayForegroundColor);
 	opacity: 0.6;
-	box-shadow : 0 0 0.125rem @sapContent_ShadowColor;
+	box-shadow: 0 0 0.125rem var(--sapContent_ShadowColor);
 	margin: 0 0.094rem;
 }
 
 .sapMSTBulleted .sapMSTIndicator.sapMSTActive {
-	background: @sapTile_OverlayForegroundColor;
-	box-shadow: 0 0 0.063rem @sapContent_ShadowColor;
+	background: var(--sapTile_OverlayForegroundColor);
+	box-shadow: 0 0 0.063rem var(--sapContent_ShadowColor);
 }
 
 .sapMST {
-	border-radius: @sapTile_BorderCornerRadius;
-	border-color: @sapTile_BorderColor;
-	box-shadow: @sapContent_Shadow0;
-	background: @sapTile_Background;
+	border-radius: var(--sapTile_BorderCornerRadius);
+	border-color: var(--sapTile_BorderColor);
+	box-shadow: var(--sapContent_Shadow0);
+	background: var(--sapTile_Background);
 	overflow: hidden;
 }
 
@@ -60,50 +61,54 @@
 }
 
 .sapMST .sapMSTIconDisplayArea {
-	background-color: @sapBlockLayer_Background;
+	background-color: var(--sapBlockLayer_Background);
 }
-.sapMST.sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea{
+
+.sapMST.sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	opacity: 0.8;
 }
 
 .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
-	background-color: @sapUiBrand;
+	background-color: var(--sapBrandColor);
 }
 
 .sapMST .sapMSTIconNestedArea {
-	text-shadow: 0px 1px @sapUiButtonEmphasizedTextShadow;
+	text-shadow: 0 1px var(--sapButton_Emphasized_TextShadow);
 }
 
 .sapMST:focus .sapMSTFocusDiv {
-	border-radius: @sapTile_BorderCornerRadius;
+	border-radius: var(--sapTile_BorderCornerRadius);
 	box-shadow: none;
 	inset: 0;
 }
 
-.sapMST:focus .sapMSTFocusDiv:after,
-.sapMST:active .sapMSTFocusDiv:after {
+.sapMST:focus .sapMSTFocusDiv::after,
+.sapMST:active .sapMSTFocusDiv::after {
 	border: none;
-	border-radius: @sapElement_BorderCornerRadius;
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
 .sapMST:hover {
-	box-shadow: @sapContent_Shadow2 !important;
+	box-shadow: var(--sapContent_Shadow2) !important;
 
 	.sapMGT:hover {
 		box-shadow: none !important;
 		opacity: 0.9;
 	}
-
 }
 
-.sapMST:active{
-	.sapMGT{
+.sapMST:active {
+
+	.sapMGT {
 		opacity: 0.8;
 	}
 }
 
-.sapMST{
-	.sapMGT.OneByOne,.sapMGT.TwoByOne{
+.sapMST {
+
+	.sapMGT.OneByOne,
+	.sapMGT.TwoByOne {
+
 		.sapMTileCnt.News {
 			border-bottom-left-radius: 0;
 			border-bottom-right-radius: 0;
@@ -111,9 +116,10 @@
 	}
 }
 
-.sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea{
+.sapMST:not(.sapMSTPauseIcon) .sapMSTIconNestedArea {
+
 	.sapUiIcon {
-		top: 0rem;
+		top: 0;
 		left: 0.15rem;
 	}
 }

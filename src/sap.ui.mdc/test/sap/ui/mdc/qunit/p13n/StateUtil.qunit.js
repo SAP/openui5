@@ -13,18 +13,6 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/base/util/merge",
-	"sap/ui/model/odata/type/String", // to have types loaded, needed for legacy-free UI5
-	"sap/ui/model/odata/type/Boolean",
-	"sap/ui/model/odata/type/Int16",
-	"sap/ui/model/odata/type/Int32",
-	"sap/ui/model/odata/type/Int64",
-	"sap/ui/model/odata/type/SByte",
-	"sap/ui/model/odata/type/Decimal",
-	"sap/ui/model/odata/type/Double",
-	"sap/ui/model/odata/type/Date",
-	"sap/ui/model/odata/type/TimeOfDay",
-	"sap/ui/model/odata/type/DateTimeOffset",
-	"sap/ui/model/odata/type/Guid",
 	"sap/ui/mdc/odata/TypeMap"
 ], function (
 	Engine,
@@ -40,18 +28,6 @@ sap.ui.define([
 	OperatorName,
 	StateHandlerRegistry,
 	merge,
-	StringType,
-	BooleanType,
-	Int16Type,
-	Int32Type,
-	Int64Type,
-	SByteType,
-	DecimalType,
-	DoubleType,
-	DateType,
-	TimeOfDayType,
-	DateTimeOffsetType,
-	GuidType,
 	TypeMap
 ) {
 	"use strict";
@@ -59,6 +35,7 @@ sap.ui.define([
 	function createFilterItem(oFilterBar, sPropertyName, mPropertyBag) {
 		return new Promise(function(resolve, reject){
 			resolve(new FilterField({
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 				conditions: "{$filters>/conditions/" + sPropertyName + "}",
 				propertyKey: sPropertyName
 			}));
@@ -67,19 +44,19 @@ sap.ui.define([
 
 	function fetchProperties() {
 		const mProperties = {
-			String: {label: "String",name:"String",dataType:"Edm.String", groupable: true},
-			Boolean: {label: "Boolean",name:"Boolean",dataType:"Edm.Boolean"},
-			Int16: {label: "Int16",name:"Int16",dataType:"Edm.Int16"},
-			Int32: {label: "Int32",name:"Int32",dataType:"Edm.Int32"},
-			Int64: {label: "Int64",name:"Int64",dataType:"Edm.Int64"},
-			SByte: {label: "SByte",name:"SByte",dataType:"Edm.SByte"},
-			Decimal: {label: "Decimal",name:"Decimal",dataType:"Edm.Decimal"},
-			Single: {label: "Single",name:"Single",dataType:"Edm.String"},
-			Double: {label: "Double",name:"Double",dataType:"Edm.Double"},
-			Date: {label: "Date",name:"Date",dataType:"Edm.Date"},
-			TimeOfDay: {label: "TimeOfDay",name:"TimeOfDay",dataType:"Edm.TimeOfDay"},
-			DateTimeOffset: {label: "DateTimeOffset",name:"DateTimeOffset",dataType:"Edm.DateTimeOffset"},
-			Guid: {label: "Guid",name:"Guid",dataType:"Edm.Guid"}
+			String: {label: "String",name:"String",dataType:"sap.ui.model.odata.type.String", groupable: true},
+			Boolean: {label: "Boolean",name:"Boolean",dataType:"sap.ui.model.odata.type.Boolean"},
+			Int16: {label: "Int16",name:"Int16",dataType:"sap.ui.model.odata.type.Int16"},
+			Int32: {label: "Int32",name:"Int32",dataType:"sap.ui.model.odata.type.Int32"},
+			Int64: {label: "Int64",name:"Int64",dataType:"sap.ui.model.odata.type.Int64"},
+			SByte: {label: "SByte",name:"SByte",dataType:"sap.ui.model.odata.type.SByte"},
+			Decimal: {label: "Decimal",name:"Decimal",dataType:"sap.ui.model.odata.type.Decimal"},
+			Single: {label: "Single",name:"Single",dataType:"sap.ui.model.odata.type.String"},
+			Double: {label: "Double",name:"Double",dataType:"sap.ui.model.odata.type.Double"},
+			Date: {label: "Date",name:"Date",dataType:"sap.ui.model.odata.type.Date"},
+			TimeOfDay: {label: "TimeOfDay",name:"TimeOfDay",dataType:"sap.ui.model.odata.type.TimeOfDay"},
+			DateTimeOffset: {label: "DateTimeOffset",name:"DateTimeOffset",dataType:"sap.ui.model.odata.type.DateTimeOffset"},
+			Guid: {label: "Guid",name:"Guid",dataType:"sap.ui.model.odata.type.Guid"}
 		};
 
 		const aProperties = [];
@@ -619,6 +596,7 @@ sap.ui.define([
 
 		const fnCreateFilterItem = function(sPath) {
 			return new FilterField({
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 				conditions: "{$filters>/conditions/" + sPath + "}",
 				propertyKey: sPath
 			});
@@ -663,6 +641,7 @@ sap.ui.define([
 
 		const fnCreateFilterItem = function(sPath) {
 			return new FilterField({
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 				conditions: "{$filters>/conditions/" + sPath + "}",
 				propertyKey: sPath
 			});
@@ -710,6 +689,7 @@ sap.ui.define([
 
 		const fnCreateFilterItem = function(sPath) {
 			return new FilterField({
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 				conditions: "{$filters>/conditions/" + sPath + "}",
 				propertyKey: sPath
 			});
@@ -1150,7 +1130,7 @@ sap.ui.define([
             {
                 name: "SalesNumber",
                 path: "SalesNumber",
-                dataType: "Edm.Int32",
+                dataType: "sap.ui.model.odata.type.Int32",
                 aggregatable: true,
                 label: "Sales Number"
             }, {

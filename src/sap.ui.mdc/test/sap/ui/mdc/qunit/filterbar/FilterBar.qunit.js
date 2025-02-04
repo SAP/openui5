@@ -3,6 +3,7 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
+	"./UnitTestMetadataDelegate",
 	"sap/base/i18n/Localization",
 	'sap/ui/qunit/QUnitUtils',
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -13,7 +14,6 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/m/p13n/FlexUtil",
 	"sap/ui/mdc/odata/TypeMap",
-	'sap/ui/model/odata/type/String',
 	"sap/ui/mdc/util/FilterUtil",
 	'sap/base/util/merge',
 	"sap/ui/core/library",
@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName"
 ], function(
+	FBTestDelegate,
 	Localization,
 	QUnitUtils,
 	createAndAppendDiv,
@@ -32,7 +33,6 @@ sap.ui.define([
 	JSONModel,
 	FlexUtil,
 	ODataTypeMap,
-	StringType,
 	FilterUtil,
 	merge,
 	CoreLibrary,
@@ -993,17 +993,19 @@ sap.ui.define([
 			dataType: "Edm.String"
 		};
 
-		const oDelegate = {
-			fetchProperties: function() { return Promise.resolve([oProperty1, oProperty2]); },
-			getTypeMap: function() { return ODataTypeMap; }
-		};
+		sinon.stub(FBTestDelegate, "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2]));
 
 		const oMyModel = new JSONModel();
 
 		const oFB = new FilterBar({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate",
+				payload: {
+					modelName: "Model",
+					collectionName: "Collection"
+				}
+			}
 		});
-		sinon.stub(oFB, "getControlDelegate").returns(oDelegate);
-		sinon.stub(oFB, "awaitControlDelegate").returns(new Promise((resolve) => { resolve(oDelegate); }));
 
 		const done = assert.async();
 
@@ -1013,8 +1015,11 @@ sap.ui.define([
 			const aProperties = oFB.getPropertyInfoSet();
 			assert.ok(aProperties);
 			assert.equal(aProperties.length, 2);
+			assert.deepEqual(aProperties[0]?.constraints, { maxLength: 40 }, "given Property used"); // to check given properties are used, nor defaluts of test-delegate
+			assert.deepEqual(aProperties[1]?.name, "key3", "given Property used");
 
 			oFB.destroy();
+			FBTestDelegate.fetchProperties.restore();
 			done();
 		});
 	});

@@ -99,13 +99,13 @@
 		<effective.npm.package.phase>${npm.package.phase}</effective.npm.package.phase>
 
 		<!-- Node.js settings -->
-		<node.version>20.11.0</node.version>
+		<node.version>22.13.1</node.version>
 		<node.gav>gav:org.nodejs.download.node:node</node.gav>
 		<node.location>${node.gav}</node.location>
 		<node.forceNoProxy>true</node.forceNoProxy>
 
 		<!-- NPM settings -->
-		<npm.version>10.2.4</npm.version>
+		<npm.version>10.9.2</npm.version>
 		<npm.registry>${xmake.import.NPM.0}</npm.registry>
 
 		<!-- skip eslint validation -->
