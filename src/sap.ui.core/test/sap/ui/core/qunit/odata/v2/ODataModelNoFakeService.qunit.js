@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/UpdateMethod",
 	"sap/ui/model/odata/v2/_CreatedContextsCache",
 	"sap/ui/model/odata/v2/Context",
 	"sap/ui/model/odata/v2/ODataAnnotations",
@@ -31,7 +32,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/datajs"
 ], function (Log, Localization, Metadata, SyncPromise, Messaging, Supportability, UI5Date, Message, _Helper, BaseContext,
 		FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser,
-		ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context,
+		ODataMetaModel, ODataPropertyBinding, ODataUtils, UpdateMethod, _CreatedContextsCache, Context,
 		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData
 ) {
 	/*global QUnit,sinon*/
@@ -82,7 +83,7 @@ sap.ui.define([
 }].forEach(function (oFixture, i) {
 	var sTitle = "constructor: aSideEffectCleanUpFunctions, oCreatedContextsCache,"
 		+ " codeListModelParameters and sMetadataUrl stored #" + i + ", sServiceUrl: "
-		+ oFixture.sServiceUrl;
+		+ oFixture.sServiceUrl + "; _fixUpdateMethod called";
 	QUnit.test(sTitle, function (assert) {
 		var oDataModelMock = this.mock(ODataModel),
 			oExpectedHeaders = {
@@ -100,6 +101,7 @@ sap.ui.define([
 			},
 			mParameters = {
 				annotationURI : "~annotationURI",
+				defaultUpdateMethod : "~defaultUpdateMethod",
 				headers : oFixture.oHeaderParameter || {},
 				serviceUrl : oFixture.sServiceUrl,
 				skipMetadataAnnotationParsing : true,
@@ -109,6 +111,8 @@ sap.ui.define([
 				then : function () {}
 			};
 
+		this.mock(ODataModel).expects("_fixUpdateMethod").withExactArgs("~defaultUpdateMethod")
+			.returns(i % 2 ? "~fixedDefaultUpdateMethod" : undefined);
 		this.mock(ODataModel.prototype).expects("createCodeListModelParameters")
 			.withExactArgs(sinon.match.same(mParameters))
 			.returns("~codeListModelParameters");
@@ -154,6 +158,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.oRetryAfterError, null);
 		assert.strictEqual(oModel.pRetryAfter, null);
 		assert.strictEqual(oModel.pAnnotationChanges, null);
+		assert.strictEqual(oModel.sDefaultUpdateMethod, i % 2 ? "~fixedDefaultUpdateMethod" : UpdateMethod.MERGE);
 	});
 });
 
@@ -9959,4 +9964,20 @@ sap.ui.define([
 			oExpectation.args[0][1]();
 		});
 	});
+
+	//*********************************************************************************************
+[
+	{sUpdateMethod: undefined, sResult: undefined},
+	{sUpdateMethod: "", sResult: ""},
+	{sUpdateMethod: "foo", sResult: "foo"},
+	{sUpdateMethod: "Merge", sResult: UpdateMethod.MERGE},
+	{sUpdateMethod: UpdateMethod.MERGE, sResult: UpdateMethod.MERGE},
+	{sUpdateMethod: "Put", sResult: UpdateMethod.PUT},
+	{sUpdateMethod: UpdateMethod.PUT, sResult: UpdateMethod.PUT}
+].forEach(({sUpdateMethod, sResult}, i) => {
+	QUnit.test("_fixUpdateMethod: #" + i, function (assert) {
+		// code under test
+		assert.strictEqual(ODataModel._fixUpdateMethod(sUpdateMethod), sResult);
+	});
+});
 });
