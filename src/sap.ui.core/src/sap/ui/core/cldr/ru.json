@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "афарский",
 		"ab": "абхазский",
@@ -60,6 +60,7 @@
 		"bin": "бини",
 		"bkm": "ком",
 		"bla": "сиксика",
+		"blo": "ании",
 		"bm": "бамбара",
 		"bn": "бенгальский",
 		"bo": "тибетский",
@@ -290,6 +291,7 @@
 		"kv": "коми",
 		"kw": "корнский",
 		"kwk": "квакиутль",
+		"kxv": "куви",
 		"ky": "киргизский",
 		"la": "латинский",
 		"lad": "ладино",
@@ -300,8 +302,10 @@
 		"lez": "лезгинский",
 		"lg": "ганда",
 		"li": "лимбургский",
+		"lij": "лигурский",
 		"lil": "лиллуэт",
 		"lkt": "лакота",
+		"lmo": "ломбардский",
 		"ln": "лингала",
 		"lo": "лаосский",
 		"lol": "монго",
@@ -496,6 +500,7 @@
 		"swb": "коморский",
 		"syc": "классический сирийский",
 		"syr": "сирийский",
+		"szl": "силезский",
 		"ta": "тамильский",
 		"tce": "южный тутчоне",
 		"te": "телугу",
@@ -545,7 +550,9 @@
 		"uz": "узбекский",
 		"vai": "ваи",
 		"ve": "венда",
+		"vec": "венецианский",
 		"vi": "вьетнамский",
+		"vmw": "макуа",
 		"vo": "волапюк",
 		"vot": "водский",
 		"vun": "вунджо",
@@ -559,6 +566,7 @@
 		"wuu": "у",
 		"xal": "калмыцкий",
 		"xh": "коса",
+		"xnr": "кангри",
 		"xog": "сога",
 		"yao": "яо",
 		"yap": "яп",
@@ -1154,13 +1162,13 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
-					"h": "h:mm – h:mm B",
-					"m": "h:mm – h:mm B"
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
 				},
 				"d": {
 					"d": "d–d"
@@ -1171,14 +1179,14 @@
 				},
 				"GyM": {
 					"G": "MM.y G – MM.y G",
-					"M": "MM.y – MM.y G",
-					"y": "MM.y – MM.y G"
+					"M": "MM.y–MM.y G",
+					"y": "MM.y–MM.y G"
 				},
 				"GyMd": {
-					"d": "dd.MM.y – dd.MM.y G",
+					"d": "dd.MM.y–dd.MM.y G",
 					"G": "dd.MM.y G – dd.MM.y G",
-					"M": "dd.MM.y – dd.MM.y G",
-					"y": "dd.MM.y – dd.MM.y G"
+					"M": "dd.MM.y–dd.MM.y G",
+					"y": "dd.MM.y–dd.MM.y G"
 				},
 				"GyMEd": {
 					"d": "ccc, dd.MM.y – ccc, dd.MM.y G",
@@ -1239,8 +1247,8 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd.MM – dd.MM",
-					"M": "dd.MM – dd.MM"
+					"d": "dd.MM–dd.MM",
+					"M": "dd.MM–dd.MM"
 				},
 				"MEd": {
 					"d": "E, dd.MM – E, dd.MM",
@@ -1264,13 +1272,13 @@
 					"y": "y–y"
 				},
 				"yM": {
-					"M": "MM.y – MM.y",
-					"y": "MM.y – MM.y"
+					"M": "MM.y–MM.y",
+					"y": "MM.y–MM.y"
 				},
 				"yMd": {
-					"d": "dd.MM.y – dd.MM.y",
-					"M": "dd.MM.y – dd.MM.y",
-					"y": "dd.MM.y – dd.MM.y"
+					"d": "dd.MM.y–dd.MM.y",
+					"M": "dd.MM.y–dd.MM.y",
+					"y": "dd.MM.y–dd.MM.y"
 				},
 				"yMEd": {
 					"d": "ccc, dd.MM.y – ccc, dd.MM.y",
@@ -1682,11 +1690,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2207,11 +2215,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2752,11 +2760,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -3277,11 +3285,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -4404,7 +4412,6 @@
 			"Bishkek": "Бишкек",
 			"Brunei": "Бруней",
 			"Chita": "Чита",
-			"Choibalsan": "Чойбалсан",
 			"Colombo": "Коломбо",
 			"Damascus": "Дамаск",
 			"Dhaka": "Дакка",
@@ -4808,6 +4815,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "XXXX"
@@ -6223,6 +6231,22 @@
 				"unitPattern-count-few": "{0} имп. кварт.",
 				"unitPattern-count-many": "{0} имп. кварт.",
 				"unitPattern-count-other": "{0} имп. кварт."
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "ноч.",
+				"unitPattern-count-one": "{0} ноч.",
+				"unitPattern-count-few": "{0} ноч.",
+				"unitPattern-count-many": "{0} ноч.",
+				"unitPattern-count-other": "{0} ноч.",
+				"perUnitPattern": "{0}/ноч."
 			},
 			"coordinateUnit": {
 				"displayName": "направление",

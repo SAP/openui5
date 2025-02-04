@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abchaziska",
@@ -74,6 +74,7 @@
 		"bjn": "banjariska",
 		"bkm": "bamekon",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengali",
 		"bo": "tibetanska",
@@ -209,7 +210,7 @@
 		"gay": "gayo",
 		"gba": "gbaya",
 		"gbz": "zoroastrisk dari",
-		"gd": "skotsk gäliska",
+		"gd": "skotsk gaeliska",
 		"gez": "etiopiska",
 		"gil": "gilbertiska",
 		"gl": "galiciska",
@@ -217,7 +218,6 @@
 		"gmh": "medelhögtyska",
 		"gn": "guaraní",
 		"goh": "fornhögtyska",
-		"gom": "Goa-konkani",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gotiska",
@@ -329,6 +329,7 @@
 		"kv": "kome",
 		"kw": "korniska",
 		"kwk": "kwakʼwala",
+		"kxv": "kuvi",
 		"ky": "kirgiziska",
 		"la": "latin",
 		"lad": "ladino",
@@ -358,7 +359,6 @@
 		"lua": "luba-lulua",
 		"lui": "luiseño",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "lushai",
 		"luy": "luhya",
 		"lv": "lettiska",
@@ -627,6 +627,7 @@
 		"vi": "vietnamesiska",
 		"vls": "västflamländska",
 		"vmf": "Main-frankiska",
+		"vmw": "makua",
 		"vo": "volapük",
 		"vot": "votiska",
 		"vro": "võru",
@@ -642,6 +643,7 @@
 		"xal": "kalmuckiska",
 		"xh": "xhosa",
 		"xmf": "mingrelianska",
+		"xnr": "kangri",
 		"xog": "lusoga",
 		"yao": "kiyao",
 		"yap": "japetiska",
@@ -891,7 +893,7 @@
 		"017": "Centralafrika",
 		"018": "södra Afrika",
 		"019": "Nord- och Sydamerika",
-		"021": "Norra Amerika",
+		"021": "norra Amerika",
 		"029": "Karibien",
 		"030": "Östasien",
 		"034": "Sydasien",
@@ -1324,7 +1326,7 @@
 					"y": "E d MMM y G – E d MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
@@ -1349,8 +1351,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -1807,7 +1809,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
@@ -3964,7 +3966,7 @@
 			}
 		},
 		"month-short": {
-			"displayName": "m",
+			"displayName": "mån",
 			"relative-type--1": "förra mån.",
 			"relative-type-0": "denna mån.",
 			"relative-type-1": "nästa mån.",
@@ -4007,7 +4009,7 @@
 			"relativePeriod": "veckan för {0}"
 		},
 		"week-short": {
-			"displayName": "v",
+			"displayName": "v.",
 			"relative-type--1": "förra v.",
 			"relative-type-0": "denna v.",
 			"relative-type-1": "nästa v.",
@@ -4022,7 +4024,7 @@
 			"relativePeriod": "veckan för {0}"
 		},
 		"week-narrow": {
-			"displayName": "v",
+			"displayName": "v.",
 			"relative-type--1": "förra v.",
 			"relative-type-0": "denna v.",
 			"relative-type-1": "nästa v.",
@@ -4053,7 +4055,7 @@
 			}
 		},
 		"day-short": {
-			"displayName": "dag",
+			"displayName": "d.",
 			"relative-type--2": "i förrgår",
 			"relative-type--1": "i går",
 			"relative-type-0": "i dag",
@@ -4069,7 +4071,7 @@
 			}
 		},
 		"day-narrow": {
-			"displayName": "dag",
+			"displayName": "d",
 			"relative-type--2": "i förrgår",
 			"relative-type--1": "igår",
 			"relative-type-0": "idag",
@@ -4356,7 +4358,7 @@
 			"Menominee": "Menominee",
 			"Merida": "Mérida",
 			"Metlakatla": "Metlakatla",
-			"Mexico_City": "Mexiko City",
+			"Mexico_City": "Mexico City",
 			"Miquelon": "Miquelon",
 			"Moncton": "Moncton",
 			"Monterrey": "Monterrey",
@@ -4445,7 +4447,6 @@
 			"Bishkek": "Bisjkek",
 			"Brunei": "Brunei",
 			"Chita": "Tjita",
-			"Choibalsan": "Tjojbalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damaskus",
 			"Dhaka": "Dhaka",
@@ -4800,6 +4801,7 @@
 		"USD": "US$",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5781,6 +5783,21 @@
 				"displayName": "br. qt",
 				"unitPattern-count-one": "{0} br. qt",
 				"unitPattern-count-other": "{0} br. qt"
+			},
+			"speed-light-speed": {
+				"displayName": "ljus",
+				"unitPattern-count-one": "{0} ljus",
+				"unitPattern-count-other": "{0} ljus"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "nätter",
+				"unitPattern-count-one": "{0} natt",
+				"unitPattern-count-other": "{0} nätter",
+				"perUnitPattern": "{0}/natt"
 			},
 			"coordinateUnit": {
 				"displayName": "väderstreck",

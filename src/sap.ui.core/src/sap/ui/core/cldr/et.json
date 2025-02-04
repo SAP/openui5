@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afari",
 		"ab": "abhaasi",
@@ -205,7 +205,6 @@
 		"fur": "friuuli",
 		"fy": "läänefriisi",
 		"ga": "iiri",
-		"gaa": "gaa",
 		"gag": "gagauusi",
 		"gan": "kani",
 		"gay": "gajo",
@@ -342,6 +341,7 @@
 		"lil": "lillueti",
 		"liv": "liivi",
 		"lkt": "lakota",
+		"lld": "ladiini",
 		"lmo": "lombardi",
 		"ln": "lingala",
 		"lo": "lao",
@@ -356,7 +356,6 @@
 		"lua": "lulua",
 		"lui": "luisenjo",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "lušei",
 		"luy": "luhja",
 		"lv": "läti",
@@ -380,6 +379,7 @@
 		"mgh": "makhuwa-meetto",
 		"mgo": "meta",
 		"mh": "maršalli",
+		"mhn": "mohheni",
 		"mi": "maoori",
 		"mic": "mikmaki",
 		"min": "minangkabau",
@@ -616,7 +616,6 @@
 		"und": "määramata keel",
 		"ur": "urdu",
 		"uz": "usbeki",
-		"vai": "vai",
 		"ve": "venda",
 		"vec": "veneti",
 		"vep": "vepsa",
@@ -639,6 +638,7 @@
 		"xal": "kalmõki",
 		"xh": "koosa",
 		"xmf": "megreli",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "jao",
 		"yap": "japi",
@@ -710,6 +710,7 @@
 		"Elba": "Elbasani",
 		"Elym": "elümi",
 		"Ethi": "etioopia",
+		"Gara": "garai",
 		"Geok": "hutsuri",
 		"Geor": "gruusia",
 		"Glag": "glagoolitsa",
@@ -823,6 +824,7 @@
 		"Sora": "sora",
 		"Soyo": "sojombo",
 		"Sund": "sunda",
+		"Sunu": "sunvari",
 		"Sylo": "siloti",
 		"Syrc": "süüria",
 		"Syre": "süüria estrangelo",
@@ -1265,11 +1267,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1792,11 +1794,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1842,14 +1844,14 @@
 					"y": "E, d. MMM y G – E, d. MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1867,7 +1869,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -2316,11 +2318,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2366,14 +2368,14 @@
 					"y": "E, d. MMM y G – E, d. MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2391,7 +2393,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -2860,11 +2862,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2910,14 +2912,14 @@
 					"y": "E, d. MMM y G – E, d. MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2935,7 +2937,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -3384,11 +3386,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3434,14 +3436,14 @@
 					"y": "E, d. MMM y G – E, d. MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -3459,7 +3461,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -4188,7 +4190,7 @@
 			"Dar_es_Salaam": "Dar es Salaam",
 			"Djibouti": "Djibouti",
 			"Douala": "Douala",
-			"El_Aaiun": "El Aaiun",
+			"El_Aaiun": "El Aaiún",
 			"Freetown": "Freetown",
 			"Gaborone": "Gaborone",
 			"Harare": "Harare",
@@ -4200,7 +4202,7 @@
 			"Kinshasa": "Kinshasa",
 			"Lagos": "Lagos",
 			"Libreville": "Libreville",
-			"Lome": "Lome",
+			"Lome": "Lomé",
 			"Luanda": "Luanda",
 			"Lubumbashi": "Lubumbashi",
 			"Lusaka": "Lusaka",
@@ -4208,7 +4210,7 @@
 			"Maputo": "Maputo",
 			"Maseru": "Maseru",
 			"Mbabane": "Mbabane",
-			"Mogadishu": "Mogadishu",
+			"Mogadishu": "Muqdisho",
 			"Monrovia": "Monrovia",
 			"Nairobi": "Nairobi",
 			"Ndjamena": "N’Djamena",
@@ -4412,7 +4414,6 @@
 			"Bishkek": "Biškek",
 			"Brunei": "Brunei",
 			"Chita": "Tšita",
-			"Choibalsan": "Tšojbalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damaskus",
 			"Dhaka": "Dhaka",
@@ -4422,7 +4423,7 @@
 			"Famagusta": "Famagusta",
 			"Gaza": "Gaza",
 			"Hebron": "Hebron",
-			"Ho_Chi_Minh": "Ho Chi Minh",
+			"Ho_Chi_Minh": "Hô Chi Minh",
 			"Hong_Kong": "Hongkong",
 			"Hovd": "Hovd",
 			"Irkutsk": "Irkutsk",
@@ -4578,7 +4579,7 @@
 			"Cocos": "Kookossaared",
 			"Comoro": "Comoro",
 			"Kerguelen": "Kerguelen",
-			"Mahe": "Mahe",
+			"Mahe": "Mahé",
 			"Maldives": "Maldiivid",
 			"Mauritius": "Mauritius",
 			"Mayotte": "Mayotte",
@@ -4600,7 +4601,7 @@
 			"Guadalcanal": "Guadalcanal",
 			"Guam": "Guam",
 			"Honolulu": "Honolulu",
-			"Kanton": "Kanton",
+			"Kanton": "Abariringa",
 			"Kiritimati": "Kiritimati",
 			"Kosrae": "Kosrae",
 			"Kwajalein": "Kwajalein",
@@ -4610,7 +4611,7 @@
 			"Nauru": "Nauru",
 			"Niue": "Niue",
 			"Norfolk": "Norfolk",
-			"Noumea": "Noumea",
+			"Noumea": "Nouméa",
 			"Pago_Pago": "Pago Pago",
 			"Palau": "Belau",
 			"Pitcairn": "Pitcairn",
@@ -4765,6 +4766,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5722,6 +5724,21 @@
 				"unitPattern-count-one": "{0} ingl kvart",
 				"unitPattern-count-other": "{0} ingl kvarti"
 			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "osakesed/miljard",
+				"unitPattern-count-one": "{0} miljardikosa",
+				"unitPattern-count-other": "{0} miljardikosa"
+			},
+			"duration-night": {
+				"displayName": "ööd",
+				"unitPattern-count-one": "{0} öö",
+				"unitPattern-count-other": "{0} ööd",
+				"perUnitPattern": "{0}/öö"
+			},
 			"coordinateUnit": {
 				"displayName": "ilmakaar",
 				"east": "{0} ip",
@@ -5732,7 +5749,7 @@
 		}
 	},
 	"lenient-scope-number": {
-		"minusSign": "-－﹣‑‒−⁻₋➖",
+		"minusSign": "-－﹣‐‑‒–−⁻₋➖",
 		"commaSign": ",，﹐︐⹁،٫、﹑､︑",
 		"plusSign": "+＋﬩﹢⁺₊➕"
 	},

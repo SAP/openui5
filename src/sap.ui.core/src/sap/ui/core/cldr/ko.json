@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "아파르어",
 		"ab": "압카즈어",
@@ -63,6 +63,7 @@
 		"bin": "비니어",
 		"bkm": "콤어",
 		"bla": "식시카어",
+		"blo": "아니이어",
 		"bm": "밤바라어",
 		"bn": "벵골어",
 		"bo": "티베트어",
@@ -186,7 +187,6 @@
 		"gmh": "중세 고지 독일어",
 		"gn": "과라니어",
 		"goh": "고대 고지 독일어",
-		"gom": "고아 콘칸어",
 		"gon": "곤디어",
 		"gor": "고론탈로어",
 		"got": "고트어",
@@ -288,6 +288,7 @@
 		"kv": "코미어",
 		"kw": "콘월어",
 		"kwk": "곽왈라어",
+		"kxv": "쿠비어",
 		"ky": "키르기스어",
 		"la": "라틴어",
 		"lad": "라디노어",
@@ -299,8 +300,10 @@
 		"lfn": "링구아 프랑카 노바",
 		"lg": "간다어",
 		"li": "림버거어",
+		"lij": "리구리아어",
 		"lil": "릴루엣어",
 		"lkt": "라코타어",
+		"lmo": "롬바르드어",
 		"ln": "링갈라어",
 		"lo": "라오어",
 		"lol": "몽고어",
@@ -497,6 +500,7 @@
 		"swb": "코모로어",
 		"syc": "고전 시리아어",
 		"syr": "시리아어",
+		"szl": "실레시아어",
 		"ta": "타밀어",
 		"tce": "남부 투톤어",
 		"te": "텔루구어",
@@ -524,7 +528,7 @@
 		"tog": "니아사 통가어",
 		"tok": "도기 보나",
 		"tpi": "토크 피신어",
-		"tr": "터키어",
+		"tr": "튀르키예어",
 		"trv": "타로코어",
 		"ts": "총가어",
 		"tsi": "트심시안어",
@@ -547,7 +551,9 @@
 		"uz": "우즈베크어",
 		"vai": "바이어",
 		"ve": "벤다어",
+		"vec": "베네치아어",
 		"vi": "베트남어",
+		"vmw": "마쿠와어",
 		"vo": "볼라퓌크어",
 		"vot": "보틱어",
 		"vun": "분조어",
@@ -561,6 +567,7 @@
 		"wuu": "우어",
 		"xal": "칼미크어",
 		"xh": "코사어",
+		"xnr": "캉리어",
 		"xog": "소가어",
 		"yao": "야오족어",
 		"yap": "얍페세어",
@@ -1250,8 +1257,8 @@
 					"M": "M월~M월"
 				},
 				"Md": {
-					"d": "M. d ~ M. d",
-					"M": "M. d ~ M. d"
+					"d": "M/d ~ M/d",
+					"M": "M/d ~ M/d"
 				},
 				"MEd": {
 					"d": "M. d (E) ~ M. d (E)",
@@ -1558,7 +1565,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -1567,7 +1574,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -1576,7 +1583,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -1587,7 +1594,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -1596,7 +1603,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -1605,7 +1612,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2108,7 +2115,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2117,7 +2124,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2126,7 +2133,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2137,7 +2144,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2146,7 +2153,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2155,7 +2162,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2664,7 +2671,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2673,7 +2680,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2682,7 +2689,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2693,7 +2700,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2702,7 +2709,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -2711,7 +2718,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3223,7 +3230,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3232,7 +3239,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3241,7 +3248,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3252,7 +3259,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3261,7 +3268,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3270,7 +3277,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3770,7 +3777,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3779,7 +3786,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3788,7 +3795,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3799,7 +3806,7 @@
 				"abbreviated": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3808,7 +3815,7 @@
 				"narrow": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -3817,7 +3824,7 @@
 				"wide": {
 					"midnight": "자정",
 					"noon": "정오",
-					"morning1": "새벽",
+					"morning1": "아침",
 					"morning2": "오전",
 					"afternoon1": "오후",
 					"evening1": "저녁",
@@ -4371,7 +4378,6 @@
 			"Bishkek": "비슈케크",
 			"Brunei": "브루나이",
 			"Chita": "치타",
-			"Choibalsan": "초이발산",
 			"Colombo": "콜롬보",
 			"Damascus": "다마스쿠스",
 			"Dhaka": "다카",
@@ -4700,6 +4706,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5603,6 +5610,19 @@
 			"volume-quart-imperial": {
 				"displayName": "qt Imp",
 				"unitPattern-count-other": "{0}qt Imp."
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0}ppb"
+			},
+			"duration-night": {
+				"displayName": "박",
+				"unitPattern-count-other": "{0}박",
+				"perUnitPattern": "{0}/박"
 			},
 			"coordinateUnit": {
 				"displayName": "쪽",

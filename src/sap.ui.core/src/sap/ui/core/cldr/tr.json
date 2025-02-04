@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abhazca",
@@ -75,6 +75,7 @@
 		"bjn": "Banjar Dili",
 		"bkm": "Kom",
 		"bla": "Karaayak dili",
+		"blo": "Aniice",
 		"bm": "Bambara",
 		"bn": "Bengalce",
 		"bo": "Tibetçe",
@@ -218,7 +219,6 @@
 		"gmh": "Ortaçağ Yüksek Almancası",
 		"gn": "Guarani dili",
 		"goh": "Eski Yüksek Almanca",
-		"gom": "Goa Konkanicesi",
 		"gon": "Gondi dili",
 		"gor": "Gorontalo dili",
 		"got": "Gotça",
@@ -329,6 +329,7 @@
 		"kv": "Komi",
 		"kw": "Kernevekçe",
 		"kwk": "Kwakʼwala dili",
+		"kxv": "Kuvi",
 		"ky": "Kırgızca",
 		"la": "Latince",
 		"lad": "Ladino",
@@ -625,6 +626,7 @@
 		"vi": "Vietnamca",
 		"vls": "Batı Flamanca",
 		"vmf": "Main Frankonya Dili",
+		"vmw": "Makuaca",
 		"vo": "Volapük",
 		"vot": "Votça",
 		"vro": "Võro",
@@ -640,6 +642,7 @@
 		"xal": "Kalmıkça",
 		"xh": "Zosa dili",
 		"xmf": "Megrelce",
+		"xnr": "Kangrice",
 		"xog": "Soga",
 		"yao": "Yao",
 		"yap": "Yapça",
@@ -691,7 +694,6 @@
 		"Cakm": "Chakma",
 		"Cans": "UCAS",
 		"Cari": "Karya",
-		"Cham": "Cham",
 		"Cher": "Çeroki",
 		"Cirt": "Cirth",
 		"Copt": "Kıpti",
@@ -730,7 +732,6 @@
 		"Hung": "Eski Macar",
 		"Inds": "Indus",
 		"Ital": "Eski İtalyan",
-		"Jamo": "Jamo",
 		"Java": "Cava Dili",
 		"Jpan": "Japon",
 		"Jurc": "Jurchen",
@@ -764,7 +765,6 @@
 		"Merc": "Meroitik El Yazısı",
 		"Mero": "Meroitik",
 		"Mlym": "Malayalam",
-		"Modi": "Modi",
 		"Mong": "Moğol",
 		"Moon": "Moon",
 		"Mroo": "Mro",
@@ -1189,7 +1189,7 @@
 				"Ehms": "E a h:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y",
-				"GyMd": "d/M/y GGGGG",
+				"GyMd": "GGGGG dd.MM.y",
 				"GyMMM": "G MMM y",
 				"GyMMMd": "G d MMM y",
 				"GyMMMEd": "G d MMM y E",
@@ -1255,7 +1255,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -1795,7 +1795,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -2332,7 +2332,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -2889,7 +2889,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -3426,7 +3426,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -4258,7 +4258,7 @@
 			"Nouakchott": "Nouakchott",
 			"Ouagadougou": "Ouagadougou",
 			"Porto-Novo": "Porto-Novo",
-			"Sao_Tome": "Sao Tome",
+			"Sao_Tome": "São Tomé",
 			"Tripoli": "Trablus",
 			"Tunis": "Tunus",
 			"Windhoek": "Windhoek",
@@ -4454,7 +4454,6 @@
 			"Bishkek": "Bişkek",
 			"Brunei": "Brunei",
 			"Chita": "Çita",
-			"Choibalsan": "Çoybalsan",
 			"Colombo": "Kolombo",
 			"Damascus": "Şam",
 			"Dhaka": "Dakka",
@@ -4624,7 +4623,7 @@
 			"Maldives": "Maldivler",
 			"Mauritius": "Mauritius",
 			"Mayotte": "Mayotte",
-			"Reunion": "Reunion"
+			"Reunion": "Réunion"
 		},
 		"Pacific": {
 			"Apia": "Apia",
@@ -4809,6 +4808,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5785,6 +5785,21 @@
 				"displayName": "İng quart",
 				"unitPattern-count-one": "{0} İng. quart",
 				"unitPattern-count-other": "{0} İng. quart"
+			},
+			"speed-light-speed": {
+				"displayName": "ışık",
+				"unitPattern-count-one": "{0} ışık",
+				"unitPattern-count-other": "{0} ışık"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "parça/milyar",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "gece",
+				"unitPattern-count-one": "{0} gece",
+				"unitPattern-count-other": "{0} gece",
+				"perUnitPattern": "{0}/gece"
 			},
 			"coordinateUnit": {
 				"displayName": "yön",

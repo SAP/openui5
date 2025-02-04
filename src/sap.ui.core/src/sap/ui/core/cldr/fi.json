@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abhaasi",
@@ -221,7 +221,6 @@
 		"gmh": "keskiyläsaksa",
 		"gn": "guarani",
 		"goh": "muinaisyläsaksa",
-		"gom": "goankonkani",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gootti",
@@ -351,6 +350,7 @@
 		"lil": "lillooet",
 		"liv": "liivi",
 		"lkt": "lakota",
+		"lld": "ladin",
 		"lmo": "lombardi",
 		"ln": "lingala",
 		"lo": "lao",
@@ -365,7 +365,6 @@
 		"lua": "luluanluba",
 		"lui": "luiseño",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "lusai",
 		"luy": "luhya",
 		"lv": "latvia",
@@ -627,7 +626,6 @@
 		"und": "tuntematon kieli",
 		"ur": "urdu",
 		"uz": "uzbekki",
-		"vai": "vai",
 		"ve": "venda",
 		"vec": "venetsia",
 		"vep": "vepsä",
@@ -1237,8 +1235,8 @@
 				"Gy": "y G",
 				"GyMd": "M.d.y G",
 				"GyMMM": "LLL y G",
-				"GyMMMd": "d. MMM y G",
-				"GyMMMEd": "E d. MMM y G",
+				"GyMMMd": "d.M.y G",
+				"GyMMMEd": "E d.M.y G",
 				"GyMMMMd": "d. MMMM y G",
 				"GyMMMMEd": "E d. MMMM y G",
 				"h": "h a",
@@ -1255,8 +1253,8 @@
 				"Md": "d.M.",
 				"MEd": "E d.M.",
 				"MMM": "LLL",
-				"MMMd": "d. MMM",
-				"MMMEd": "ccc d. MMM",
+				"MMMd": "d.M.",
+				"MMMEd": "ccc d.M.",
 				"MMMMd": "d. MMMM",
 				"MMMMEd": "ccc d. MMMM",
 				"ms": "m.ss",
@@ -1266,8 +1264,8 @@
 				"yMEd": "E d.M.y",
 				"yMM": "M.y",
 				"yMMM": "LLL y",
-				"yMMMd": "d. MMM y",
-				"yMMMEd": "E d. MMM y",
+				"yMMMd": "d.M.y",
+				"yMMMEd": "E d.M.y",
 				"yMMMM": "LLLL y",
 				"yMMMMccccd": "cccc d. MMMM y",
 				"yMMMMd": "d. MMMM y",
@@ -1293,7 +1291,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
@@ -1474,18 +1472,54 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"tammik.",
-					"helmik.",
-					"maalisk.",
-					"huhtik.",
-					"toukok.",
-					"kesäk.",
-					"heinäk.",
-					"elok.",
-					"syysk.",
-					"lokak.",
-					"marrask.",
-					"jouluk."
+					[
+						"tammi",
+						"tammik."
+					],
+					[
+						"helmi",
+						"helmik."
+					],
+					[
+						"maalis",
+						"maalisk."
+					],
+					[
+						"huhti",
+						"huhtik."
+					],
+					[
+						"touko",
+						"toukok."
+					],
+					[
+						"kesä",
+						"kesäk."
+					],
+					[
+						"heinä",
+						"heinäk."
+					],
+					[
+						"elo",
+						"elok."
+					],
+					[
+						"syys",
+						"syysk."
+					],
+					[
+						"loka",
+						"lokak."
+					],
+					[
+						"marras",
+						"marrask."
+					],
+					[
+						"joulu",
+						"jouluk."
+					]
 				],
 				"narrow": [
 					"T",
@@ -1591,7 +1625,7 @@
 					"la"
 				],
 				"wide": [
-					"sunnuntaina",
+					"sunnuntai",
 					"maanantaina",
 					"tiistaina",
 					"keskiviikkona",
@@ -1864,7 +1898,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
@@ -2144,7 +2178,7 @@
 					"la"
 				],
 				"wide": [
-					"sunnuntaina",
+					"sunnuntai",
 					"maanantaina",
 					"tiistaina",
 					"keskiviikkona",
@@ -2414,7 +2448,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
@@ -2585,18 +2619,54 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"tammik.",
-					"helmik.",
-					"maalisk.",
-					"huhtik.",
-					"toukok.",
-					"kesäk.",
-					"heinäk.",
-					"elok.",
-					"syysk.",
-					"lokak.",
-					"marrask.",
-					"jouluk."
+					[
+						"tammi",
+						"tammik."
+					],
+					[
+						"helmi",
+						"helmik."
+					],
+					[
+						"maalis",
+						"maalisk."
+					],
+					[
+						"huhti",
+						"huhtik."
+					],
+					[
+						"touko",
+						"toukok."
+					],
+					[
+						"kesä",
+						"kesäk."
+					],
+					[
+						"heinä",
+						"heinäk."
+					],
+					[
+						"elo",
+						"elok."
+					],
+					[
+						"syys",
+						"syysk."
+					],
+					[
+						"loka",
+						"lokak."
+					],
+					[
+						"marras",
+						"marrask."
+					],
+					[
+						"joulu",
+						"jouluk."
+					]
 				],
 				"narrow": [
 					"T",
@@ -2702,7 +2772,7 @@
 					"la"
 				],
 				"wide": [
-					"sunnuntaina",
+					"sunnuntai",
 					"maanantaina",
 					"tiistaina",
 					"keskiviikkona",
@@ -2984,7 +3054,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
@@ -3264,7 +3334,7 @@
 					"la"
 				],
 				"wide": [
-					"sunnuntaina",
+					"sunnuntai",
 					"maanantaina",
 					"tiistaina",
 					"keskiviikkona",
@@ -3534,7 +3604,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
@@ -3697,18 +3767,54 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"tammik.",
-					"helmik.",
-					"maalisk.",
-					"huhtik.",
-					"toukok.",
-					"kesäk.",
-					"heinäk.",
-					"elok.",
-					"syysk.",
-					"lokak.",
-					"marrask.",
-					"jouluk."
+					[
+						"tammi",
+						"tammik."
+					],
+					[
+						"helmi",
+						"helmik."
+					],
+					[
+						"maalis",
+						"maalisk."
+					],
+					[
+						"huhti",
+						"huhtik."
+					],
+					[
+						"touko",
+						"toukok."
+					],
+					[
+						"kesä",
+						"kesäk."
+					],
+					[
+						"heinä",
+						"heinäk."
+					],
+					[
+						"elo",
+						"elok."
+					],
+					[
+						"syys",
+						"syysk."
+					],
+					[
+						"loka",
+						"lokak."
+					],
+					[
+						"marras",
+						"marrask."
+					],
+					[
+						"joulu",
+						"jouluk."
+					]
 				],
 				"narrow": [
 					"T",
@@ -3814,7 +3920,7 @@
 					"la"
 				],
 				"wide": [
-					"sunnuntaina",
+					"sunnuntai",
 					"maanantaina",
 					"tiistaina",
 					"keskiviikkona",
@@ -4588,7 +4694,6 @@
 			"Bishkek": "Biškek",
 			"Brunei": "Brunei",
 			"Chita": "Tšita",
-			"Choibalsan": "Tšoibalsa",
 			"Colombo": "Colombo",
 			"Damascus": "Damaskos",
 			"Dhaka": "Dhaka",
@@ -4927,6 +5032,7 @@
 		"JPY": "¥",
 		"USD": "$",
 		"XAF": "FCFA",
+		"XCG": "Cg.",
 		"XOF": "F CFA"
 	},
 	"rtl": false,
@@ -5881,6 +5987,20 @@
 				"displayName": "qt br",
 				"unitPattern-count-one": "{0} qt br.",
 				"unitPattern-count-other": "{0} qt br."
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "yöt",
+				"unitPattern-count-one": "{0} yö",
+				"unitPattern-count-other": "{0} yö",
+				"perUnitPattern": "{0}/yö"
 			},
 			"coordinateUnit": {
 				"displayName": "ilmansuunta",

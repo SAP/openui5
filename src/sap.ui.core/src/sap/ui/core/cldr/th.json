@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "อะฟาร์",
 		"ab": "อับฮาเซีย",
@@ -73,6 +73,7 @@
 		"bjn": "บันจาร์",
 		"bkm": "กม",
 		"bla": "สิกสิกา",
+		"blo": "อานี",
 		"bm": "บัมบารา",
 		"bn": "บังกลา",
 		"bo": "ทิเบต",
@@ -216,7 +217,6 @@
 		"gmh": "เยอรมันสูงกลาง",
 		"gn": "กัวรานี",
 		"goh": "เยอรมันสูงโบราณ",
-		"gom": "กอนกานีของกัว",
 		"gon": "กอนดิ",
 		"gor": "กอรอนทาโล",
 		"got": "โกธิก",
@@ -327,6 +327,7 @@
 		"kv": "โกมิ",
 		"kw": "คอร์นิช",
 		"kwk": "ควักวาลา",
+		"kxv": "กูวี",
 		"ky": "คีร์กีซ",
 		"la": "ละติน",
 		"lad": "ลาดิโน",
@@ -624,6 +625,7 @@
 		"vi": "เวียดนาม",
 		"vls": "เฟลมิชตะวันตก",
 		"vmf": "เมน-ฟรานโกเนีย",
+		"vmw": "มากัววา",
 		"vo": "โวลาพึค",
 		"vot": "โวทิก",
 		"vro": "โวโร",
@@ -639,6 +641,7 @@
 		"xal": "คัลมืยค์",
 		"xh": "คะห์โอซา",
 		"xmf": "เมเกรเลีย",
+		"xnr": "กังกรี",
 		"xog": "โซกา",
 		"yao": "เย้า",
 		"yap": "ยัป",
@@ -1191,7 +1194,7 @@
 				"GyMMMd": "d MMM G y",
 				"GyMMMEd": "E d MMM G y",
 				"GyMMMEEEEd": "EEEEที่ d MMM G y",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm น.",
@@ -1246,11 +1249,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -1258,7 +1261,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -1296,14 +1299,14 @@
 					"y": "E d MMM G y – E d MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1312,7 +1315,7 @@
 					"m": "HH:mm น. – HH:mm น."
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -1321,8 +1324,8 @@
 					"m": "H:mm น. – H:mm น. v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -1342,7 +1345,7 @@
 					"M": "MMM – MMM"
 				},
 				"MMMd": {
-					"d": "MMM d–d",
+					"d": "d–d MMM",
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
@@ -1766,7 +1769,7 @@
 				"GyMMMd": "d MMM G y",
 				"GyMMMEd": "E d MMM G y",
 				"GyMMMEEEEd": "EEEEที่ d MMM G y",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -1810,11 +1813,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -1822,7 +1825,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -1860,14 +1863,14 @@
 					"y": "E d MMM G y – E d MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1876,7 +1879,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -1885,8 +1888,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -2312,7 +2315,7 @@
 				"GyMMMd": "d MMM G y",
 				"GyMMMEd": "E d MMM G y",
 				"GyMMMEEEEd": "EEEEที่ d MMM G y",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -2356,11 +2359,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2368,7 +2371,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -2406,14 +2409,14 @@
 					"y": "E d MMM G y – E d MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2422,7 +2425,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2431,8 +2434,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -2879,7 +2882,7 @@
 				"GyMMMd": "d MMM G y",
 				"GyMMMEd": "E d MMM G y",
 				"GyMMMEEEEd": "EEEEที่ d MMM G y",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -2923,11 +2926,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2935,7 +2938,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -2973,14 +2976,14 @@
 					"y": "E d MMM G y – E d MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2989,7 +2992,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2998,8 +3001,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -3425,7 +3428,7 @@
 				"GyMMMd": "d MMM G y",
 				"GyMMMEd": "E d MMM G y",
 				"GyMMMEEEEd": "EEEEที่ d MMM G y",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -3471,11 +3474,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -3483,7 +3486,7 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
@@ -3521,14 +3524,14 @@
 					"y": "E d MMM G y – E d MMM y"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -3537,7 +3540,7 @@
 					"m": "H:mm–H:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -3546,8 +3549,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -4472,7 +4475,6 @@
 			"Bishkek": "บิชเคก",
 			"Brunei": "บรูไน",
 			"Chita": "ชิตา",
-			"Choibalsan": "ชอยบาลซาน",
 			"Colombo": "โคลัมโบ",
 			"Damascus": "ดามัสกัส",
 			"Dhaka": "ดากา",
@@ -4802,6 +4804,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
@@ -5704,6 +5707,19 @@
 			"volume-quart-imperial": {
 				"displayName": "qt Imp",
 				"unitPattern-count-other": "{0} qt Imp."
+			},
+			"speed-light-speed": {
+				"displayName": "แสง",
+				"unitPattern-count-other": "{0} แสง"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ส่วน/พันล้าน",
+				"unitPattern-count-other": "{0} สตพล."
+			},
+			"duration-night": {
+				"displayName": "คืน",
+				"unitPattern-count-other": "{0} คืน",
+				"perUnitPattern": "{0}/คืน"
 			},
 			"coordinateUnit": {
 				"displayName": "ทิศหลัก",

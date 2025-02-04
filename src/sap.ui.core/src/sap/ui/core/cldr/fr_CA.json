@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abkhaze",
@@ -73,6 +73,7 @@
 		"bjn": "banjar",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengali",
 		"bo": "tibétain",
@@ -165,7 +166,7 @@
 		"en_AU": "anglais australien",
 		"en_CA": "anglais canadien",
 		"en_GB": "anglais britannique",
-		"en_GB-alt-short": "anglais britannique",
+		"en_GB-alt-short": "anglais (R.-U.)",
 		"en_US": "anglais américain",
 		"en_US-alt-short": "anglais (É.-U.)",
 		"enm": "moyen anglais",
@@ -216,7 +217,6 @@
 		"gmh": "moyen haut-allemand",
 		"gn": "guarani",
 		"goh": "vieux haut-allemand",
-		"gom": "konkani de Goa",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gotique",
@@ -290,7 +290,7 @@
 		"kea": "capverdien",
 		"ken": "kenyang",
 		"kfo": "koro",
-		"kg": "kongo",
+		"kg": "kikongo",
 		"kgp": "caingangue",
 		"kha": "khasi",
 		"kho": "khotanais",
@@ -327,6 +327,7 @@
 		"kv": "komi",
 		"kw": "cornique",
 		"kwk": "kwak’wala",
+		"kxv": "kuvi",
 		"ky": "kirghize",
 		"la": "latin",
 		"lad": "ladino",
@@ -356,7 +357,6 @@
 		"lua": "luba-kasaï (ciluba)",
 		"lui": "luiseño",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "lushaï",
 		"luy": "luyia",
 		"lv": "letton",
@@ -391,7 +391,7 @@
 		"moe": "innu-aimun",
 		"moh": "mohawk",
 		"mos": "moré",
-		"mr": "marathe",
+		"mr": "marathi",
 		"mrj": "mari occidental",
 		"ms": "malais",
 		"mt": "maltais",
@@ -625,6 +625,7 @@
 		"vi": "vietnamien",
 		"vls": "flamand occidental",
 		"vmf": "franconien du Main",
+		"vmw": "macua",
 		"vo": "volapük",
 		"vot": "vote",
 		"vro": "võro",
@@ -640,6 +641,7 @@
 		"xal": "kalmouk",
 		"xh": "xhosa",
 		"xmf": "mingrélien",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapois",
@@ -898,7 +900,7 @@
 		"CM": "Cameroun",
 		"CN": "Chine",
 		"CO": "Colombie",
-		"CP": "Île Clipperton",
+		"CP": "île Clipperton",
 		"CR": "Costa Rica",
 		"CU": "Cuba",
 		"CV": "Cap-Vert",
@@ -1643,7 +1645,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -2171,7 +2173,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -2704,7 +2706,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -3241,7 +3243,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -3766,7 +3768,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -4288,7 +4290,7 @@
 			"North_Dakota": {
 				"Beulah": "Beulah [Dakota du Nord]",
 				"Center": "Center [Dakota du Nord]",
-				"New_Salem": "New Salem, Dakota du Nord"
+				"New_Salem": "New Salem [Dakota du Nord]"
 			},
 			"Nuuk": "Nuuk",
 			"Ojinaga": "Ojinaga",
@@ -4318,7 +4320,7 @@
 			"St_Thomas": "Saint Thomas",
 			"St_Vincent": "Saint-Vincent",
 			"Swift_Current": "Swift Current",
-			"Tegucigalpa": "Tégucigalpa",
+			"Tegucigalpa": "Tegucigalpa",
 			"Thule": "Thulé",
 			"Tijuana": "Tijuana",
 			"Toronto": "Toronto",
@@ -4364,7 +4366,6 @@
 			"Bishkek": "Bichkek",
 			"Brunei": "Brunei",
 			"Chita": "Tchita",
-			"Choibalsan": "Tchoïbalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damas",
 			"Dhaka": "Dacca",
@@ -4435,7 +4436,7 @@
 		"Atlantic": {
 			"Azores": "Açores",
 			"Bermuda": "Bermudes",
-			"Canary": "Îles Canaries",
+			"Canary": "îles Canaries",
 			"Cape_Verde": "Cap-Vert",
 			"Faroe": "îles Féroé",
 			"Madeira": "Madère",
@@ -4741,6 +4742,7 @@
 		"RHD": "$RH",
 		"SGD": "$ SG",
 		"USD": "$ US",
+		"XCG": "Cg.",
 		"XXX": "¤"
 	},
 	"rtl": false,
@@ -5815,6 +5817,22 @@
 				"displayName": "pte imp",
 				"unitPattern-count-one": "{0} pte imp",
 				"unitPattern-count-other": "{0} pte imp"
+			},
+			"speed-light-speed": {
+				"displayName": "lumière",
+				"unitPattern-count-one": "{0} lumière",
+				"unitPattern-count-other": "{0} lumière"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "p.p. 10⁹",
+				"unitPattern-count-one": "{0} p.p. 10⁹",
+				"unitPattern-count-other": "{0} p.p. 10⁹"
+			},
+			"duration-night": {
+				"displayName": "nuits",
+				"unitPattern-count-one": "{0} nuit",
+				"unitPattern-count-other": "{0} nuits",
+				"perUnitPattern": "{0}/nuit"
 			},
 			"coordinateUnit": {
 				"displayName": "direction",

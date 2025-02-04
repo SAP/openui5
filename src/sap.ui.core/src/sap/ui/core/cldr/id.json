@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abkhaz",
@@ -69,6 +69,7 @@
 		"bjn": "Banjar",
 		"bkm": "Kom",
 		"bla": "Siksika",
+		"blo": "Anii",
 		"bm": "Bambara",
 		"bn": "Bengali",
 		"bo": "Tibet",
@@ -117,7 +118,7 @@
 		"crm": "Moose Cree",
 		"crr": "Carolina Algonquian",
 		"crs": "Seselwa Kreol Prancis",
-		"cs": "Cheska",
+		"cs": "Ceko",
 		"csb": "Kashubia",
 		"csw": "Cree Rawa",
 		"cu": "Bahasa Gereja Slavonia",
@@ -157,7 +158,7 @@
 		"eo": "Esperanto",
 		"es": "Spanyol",
 		"es_ES": "Spanyol (Eropa)",
-		"et": "Esti",
+		"et": "Estonia",
 		"eu": "Basque",
 		"ewo": "Ewondo",
 		"fa": "Persia",
@@ -292,6 +293,7 @@
 		"kv": "Komi",
 		"kw": "Kornish",
 		"kwk": "Kwakʼwala",
+		"kxv": "Kuvi",
 		"ky": "Kirgiz",
 		"la": "Latin",
 		"lad": "Ladino",
@@ -313,7 +315,7 @@
 		"loz": "Lozi",
 		"lrc": "Luri Utara",
 		"lsm": "Saamia",
-		"lt": "Lituavi",
+		"lt": "Lituania",
 		"lu": "Luba-Katanga",
 		"lua": "Luba-Lulua",
 		"lui": "Luiseno",
@@ -321,7 +323,7 @@
 		"luo": "Luo",
 		"lus": "Mizo",
 		"luy": "Luyia",
-		"lv": "Latvi",
+		"lv": "Latvia",
 		"lzz": "Laz",
 		"mad": "Madura",
 		"maf": "Mafa",
@@ -473,7 +475,7 @@
 		"si": "Sinhala",
 		"sid": "Sidamo",
 		"sk": "Slovak",
-		"sl": "Sloven",
+		"sl": "Slovenia",
 		"slh": "Lushootseed Selatan",
 		"sli": "Silesia Rendah",
 		"sly": "Selayar",
@@ -559,6 +561,7 @@
 		"ve": "Venda",
 		"vec": "Venesia",
 		"vi": "Vietnam",
+		"vmw": "Makhuwa",
 		"vo": "Volapuk",
 		"vot": "Votia",
 		"vun": "Vunjo",
@@ -572,6 +575,7 @@
 		"wuu": "Wu Tionghoa",
 		"xal": "Kalmuk",
 		"xh": "Xhosa",
+		"xnr": "Kangri",
 		"xog": "Soga",
 		"yao": "Yao",
 		"yap": "Yapois",
@@ -600,7 +604,6 @@
 		"Adlm": "Adlam",
 		"Afak": "Afaka",
 		"Aghb": "Albania Kaukasia",
-		"Arab": "Arab",
 		"Arab-alt-variant": "Arab Persia",
 		"Aran": "Nastaliq",
 		"Armi": "Aram Imperial",
@@ -667,7 +670,6 @@
 		"Hung": "Hungaria Kuno",
 		"Inds": "Indus",
 		"Ital": "Italia Lama",
-		"Jamo": "Jamo",
 		"Java": "Jawa",
 		"Jpan": "Jepang",
 		"Jurc": "Jurchen",
@@ -771,7 +773,6 @@
 		"Tfng": "Tifinagh",
 		"Tglg": "Tagalog",
 		"Thaa": "Thaana",
-		"Thai": "Thai",
 		"Tibt": "Tibet",
 		"Tirh": "Tirhuta",
 		"Tnsa": "Tangsa",
@@ -1194,7 +1195,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
@@ -1720,7 +1721,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
@@ -1770,7 +1771,7 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h – h a"
 				},
 				"H": {
@@ -1795,7 +1796,7 @@
 					"m": "HH.mm – HH.mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h – h a v"
 				},
 				"Hv": {
@@ -2285,7 +2286,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
@@ -2335,7 +2336,7 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h – h a"
 				},
 				"H": {
@@ -2360,7 +2361,7 @@
 					"m": "HH.mm–HH.mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h – h a v"
 				},
 				"Hv": {
@@ -2828,7 +2829,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
@@ -2878,7 +2879,7 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h – h a"
 				},
 				"H": {
@@ -2903,7 +2904,7 @@
 					"m": "HH.mm–HH.mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h – h a v"
 				},
 				"Hv": {
@@ -4135,7 +4136,7 @@
 			"Nouakchott": "Nouakchott",
 			"Ouagadougou": "Ouagadougou",
 			"Porto-Novo": "Porto-Novo",
-			"Sao_Tome": "Sao Tome",
+			"Sao_Tome": "São Tomé",
 			"Tripoli": "Tripoli",
 			"Tunis": "Tunis",
 			"Windhoek": "Windhoek",
@@ -4163,7 +4164,7 @@
 				"_parent": "Argentina"
 			},
 			"Aruba": "Aruba",
-			"Asuncion": "Asuncion",
+			"Asuncion": "Asunción",
 			"Atikokan": "Atikokan",
 			"Bahia": "Bahia",
 			"Bahia_Banderas": "Bahia Banderas",
@@ -4186,7 +4187,7 @@
 			"Costa_Rica": "Kosta Rika",
 			"Creston": "Creston",
 			"Cuiaba": "Cuiaba",
-			"Curacao": "Curacao",
+			"Curacao": "Curaçao",
 			"Danmarkshavn": "Danmarkshavn",
 			"Dawson": "Dawson",
 			"Dawson_Creek": "Dawson Creek",
@@ -4278,7 +4279,7 @@
 			"Sao_Paulo": "Sao Paulo",
 			"Scoresbysund": "Ittoqqortoormiit",
 			"Sitka": "Sitka",
-			"St_Barthelemy": "St. Barthelemy",
+			"St_Barthelemy": "St. Barthélemy",
 			"St_Johns": "St. John’s",
 			"St_Kitts": "St. Kitts",
 			"St_Lucia": "St. Lucia",
@@ -4331,7 +4332,6 @@
 			"Bishkek": "Bishkek",
 			"Brunei": "Brunei",
 			"Chita": "Chita",
-			"Choibalsan": "Choibalsan",
 			"Colombo": "Kolombo",
 			"Damascus": "Damaskus",
 			"Dhaka": "Dhaka",
@@ -4501,7 +4501,7 @@
 			"Maldives": "Maladewa",
 			"Mauritius": "Mauritius",
 			"Mayotte": "Mayotte",
-			"Reunion": "Reunion"
+			"Reunion": "Réunion"
 		},
 		"Pacific": {
 			"Apia": "Apia",
@@ -4660,6 +4660,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
@@ -5562,6 +5563,19 @@
 			"volume-quart-imperial": {
 				"displayName": "qt Imp.",
 				"unitPattern-count-other": "{0} qt Imp."
+			},
+			"speed-light-speed": {
+				"displayName": "cahaya",
+				"unitPattern-count-other": "{0} cahaya"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "bagian/miliar",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "malam",
+				"unitPattern-count-other": "{0} malam",
+				"perUnitPattern": "{0}/malam"
 			},
 			"coordinateUnit": {
 				"displayName": "arah",

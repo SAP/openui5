@@ -235,8 +235,8 @@ License: Apache-2.0
 Comment: these files belong to: Google-Caja JS HTML Sanitizer
 
 Files: src/sap.ui.core/src/sap/ui/core/cldr/*
-Copyright: 1991-2023 Unicode, Inc.
-License: Unicode-DFS-2015
+Copyright: 1991-2024 Unicode, Inc.
+License: LicenseRef-Unicode-3.0
 Comment: these files belong to: Unicode Common Locale Data Repository
 
 Files: src/sap.ui.core/src/sap/ui/thirdparty/mobiscroll/*
