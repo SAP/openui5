@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpPropagationReason",
@@ -20,6 +21,7 @@ sap.ui.define([
 		ValueHelpDelegate,
 		FieldDisplay,
 		Condition,
+		BaseType,
 		ConditionValidated,
 		OperatorName,
 		ValueHelpPropagationReason,
@@ -287,9 +289,9 @@ sap.ui.define([
 
 		const oConditionTypes = ValueHelpDelegate.getTypesForConditions(oFakeValueHelp, oFakeContent, oConditions);
 		const oCompare = {
-			key: {type: oIntegerType},
-			text: {type: oStringType},
-			info: {type: null}
+			key: {type: oIntegerType, baseType: BaseType.Numeric},
+			text: {type: oStringType, baseType: BaseType.String},
+			info: {type: null, baseType: BaseType.String}
 		};
 		assert.deepEqual(oConditionTypes, oCompare, "CondtitionTypes returned");
 

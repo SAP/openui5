@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 		"sap/ui/mdc/condition/FilterOperatorUtil",
+		"sap/ui/mdc/enums/BaseType",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		"sap/base/Log"
@@ -10,6 +11,7 @@ sap.ui.define([
 
 	(
 		FilterOperatorUtil,
+		BaseType,
 		Filter,
 		FilterOperator,
 		Log
@@ -142,13 +144,13 @@ sap.ui.define([
 
 					let oDataType;
 					let bCaseSensitiveType = true;
-					let sBaseType;
+					let sBaseType = BaseType.String; // String is always default
 
 					if (oConditionTypes) {
 						if (oConditionTypes[sFieldPath]) {
 							oDataType = oConditionTypes[sFieldPath].type;
 							bCaseSensitiveType = oConditionTypes[sFieldPath].caseSensitive;
-							sBaseType = oConditionTypes[sFieldPath].baseType;
+							sBaseType = oConditionTypes[sFieldPath].baseType || BaseType.String;
 
 							if (!oDataType) {
 								// We only shown a warning, because the oDataType might not be required for creating the Filter.
