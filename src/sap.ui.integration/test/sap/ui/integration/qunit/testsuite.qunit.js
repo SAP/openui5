@@ -362,6 +362,13 @@ sap.ui.define([
 					]
 				}
 			},
+			"util/openCardShowMore":  {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/openCardShowMore"
+					]
+				}
+			},
 			"model/ContextModel": {
 				coverage: {
 					only: [
@@ -439,6 +446,20 @@ sap.ui.define([
 				},
 				sinon: {
 					useFakeTimers: true
+				}
+			},
+			"delegate/OverflowHandler": {
+				coverage: {
+					only: [
+						"sap/ui/integration/delegate/OverflowHandler"
+					]
+				}
+			},
+			"delegate/PreventKeyboardScrolling": {
+				coverage: {
+					only: [
+						"sap/ui/integration/delegate/PreventKeyboardScrolling"
+					]
 				}
 			},
 			"extensions/OAuth3LO": {

@@ -49,7 +49,7 @@ sap.ui.define([
 			oRm.class("sapFCardSectionClickable");
 		}
 
-		if (oCard && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+		if (oCard && oCard.getHeight() === "auto" && !oCardContent.getOverflowWithShowMore()) { // if there is no height specified the default value is "auto"
 			var sHeight = this.getMinHeight(oCardContent.getParsedConfiguration(), oCardContent, oCard);
 			oRm.style("min-height", sHeight);
 		}
