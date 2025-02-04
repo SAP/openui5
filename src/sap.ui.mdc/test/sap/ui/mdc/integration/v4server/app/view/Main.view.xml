@@ -14,8 +14,7 @@
 						items="{
 							path: '/Books'
 						}"
-						busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-						updateFinished=".onUpdateFinished">
+						busyIndicatorDelay="{worklistView>/tableBusyDelay}">
 					<columns>
 						<Column width="50%" id="titleColumn">
 							<Text text="Title" id="titleColumnTitle"/>
