@@ -20,8 +20,8 @@ function (DocumentationRouter, jQuery) {
 					success : function(oResponse) {
 						resolve(oResponse);
 					},
-					error : function (err) {
-						reject(err);
+					error : function (oXHR, sError, oDetails) {
+						reject(sError + " - " + oDetails);
 					}
 				});
 			});
