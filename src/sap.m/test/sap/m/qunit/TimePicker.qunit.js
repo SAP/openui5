@@ -1237,7 +1237,8 @@ sap.ui.define([
 				path: "/timeValue",
 				type: new Time({
 					style: "short",
-					strictParsing: true
+					strictParsing: true,
+					maskMode: "Enforce"
 				})
 			}
 		});
@@ -1258,7 +1259,7 @@ sap.ui.define([
 		//act
 		qutils.triggerEvent("focusin", tp.getDomRef());
 		//assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
-		assert.equal(tp._getInputValue(), " 4:35\u202fPM", "the value property is formatted correctly (with leading space)");
+		assert.equal(tp._getInputValue(), " 4:35\u202fPM", "the value property is formatted correctly");
 
 		//act
 		tp._openPicker();
@@ -1439,6 +1440,13 @@ sap.ui.define([
 
 		//assert
 		assert.equal(oTP.getValue(), "24:00", "Value is set to 24:00 when format is HH:mm");
+
+		oTP.setDisplayFormat(null);
+		oTP.setValueFormat(null);
+		Localization.setLanguage("GB");
+		await nextUIUpdate();
+
+		assert.notOk(oTP._getSupport2400(), "The support for 2400 is disabled when the display format or valueFormat are not 'H' or 'HH'.");
 
 		//cleanup
 		oTP.destroy();

@@ -511,7 +511,10 @@ sap.ui.define([
 		 */
 		TimePickerInternals._replaceZeroHoursWith24 = function (sValue, iIndexOfHH, iIndexOfH) {
 			var iHoursDigits = 2,
-				iSubStringIndex = iIndexOfHH;
+				sTrailingSpaces = ' ',
+				iSubStringIndex = iIndexOfHH,
+				bTrailingSpaces = sValue.charAt(iIndexOfH) === sTrailingSpaces,
+				iExtraIndex = bTrailingSpaces ? 1 : 0;
 			var oSignificantNumbers = /[1-9]/g;
 
 			if (iIndexOfH === -1) {
@@ -523,7 +526,7 @@ sap.ui.define([
 				iSubStringIndex = iIndexOfH;
 			}
 
-			var sValueWithoutHours = sValue.substr(0, iSubStringIndex) + sValue.substr(iSubStringIndex + iHoursDigits);
+			var sValueWithoutHours = sValue.substring(0, iSubStringIndex) + sValue.substring(iSubStringIndex + iExtraIndex + iHoursDigits);
 
 			if (oSignificantNumbers.test(sValueWithoutHours)) {
 				return sValue;
@@ -531,7 +534,7 @@ sap.ui.define([
 
 			sValue = sValue.replace(/[0-9]/g, "0");
 
-			return sValue.substr(0, iSubStringIndex) + "24" + sValue.substr(iSubStringIndex + iHoursDigits);
+			return sValue.substring(0, iSubStringIndex) + "24" + sValue.substring(iSubStringIndex + iExtraIndex + iHoursDigits);
 		};
 
 		/**
