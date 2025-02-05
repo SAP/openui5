@@ -1578,6 +1578,19 @@ sap.ui.define([
 			});
 		};
 
+		SinglePlanningCalendarGrid.prototype._getFirstAndLastVisibleDates = function (){
+			const oStartDate = this.getStartDate();
+			const iOffset = this._getColumns() - 1;
+			const oEndDate = UI5Date.getInstance(oStartDate);
+
+			oEndDate.setDate(oEndDate.getDate() + iOffset);
+
+			return {
+				oStartDate,
+				oEndDate
+			};
+		};
+
 		SinglePlanningCalendarGrid.prototype._getCellDescription = function () {
 			return Core.getLibraryResourceBundle("sap.m").getText("SPC_CELL_DESCRIPTION");
 		};
