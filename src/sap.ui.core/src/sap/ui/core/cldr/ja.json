@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "アファル語",
 		"ab": "アブハズ語",
@@ -74,6 +74,7 @@
 		"bjn": "バンジャル語",
 		"bkm": "コム語",
 		"bla": "シクシカ語",
+		"blo": "アニ語 (blo)",
 		"bm": "バンバラ語",
 		"bn": "ベンガル語",
 		"bo": "チベット語",
@@ -212,7 +213,6 @@
 		"gmh": "中高ドイツ語",
 		"gn": "グアラニー語",
 		"goh": "古高ドイツ語",
-		"gom": "ゴア・コンカニ語",
 		"gon": "ゴーンディー語",
 		"gor": "ゴロンタロ語",
 		"got": "ゴート語",
@@ -323,6 +323,7 @@
 		"kv": "コミ語",
 		"kw": "コーンウォール語",
 		"kwk": "クヮキゥワラ語",
+		"kxv": "クーヴィンガ語",
 		"ky": "キルギス語",
 		"la": "ラテン語",
 		"lad": "ラディノ語",
@@ -619,6 +620,7 @@
 		"vi": "ベトナム語",
 		"vls": "西フラマン語",
 		"vmf": "マインフランク語",
+		"vmw": "マクア語",
 		"vo": "ヴォラピュク語",
 		"vot": "ヴォート語",
 		"vro": "ヴォロ語",
@@ -634,6 +636,7 @@
 		"xal": "カルムイク語",
 		"xh": "コサ語",
 		"xmf": "メグレル語",
+		"xnr": "カーングリー語",
 		"xog": "ソガ語",
 		"yao": "ヤオ語",
 		"yap": "ヤップ語",
@@ -4470,7 +4473,6 @@
 			"Bishkek": "ビシュケク",
 			"Brunei": "ブルネイ",
 			"Chita": "チタ",
-			"Choibalsan": "チョイバルサン",
 			"Colombo": "コロンボ",
 			"Damascus": "ダマスカス",
 			"Dhaka": "ダッカ",
@@ -4818,6 +4820,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
@@ -5789,9 +5792,22 @@
 				"displayName": "石",
 				"unitPattern-count-other": "{0} 石"
 			},
+			"speed-light-speed": {
+				"displayName": "光",
+				"unitPattern-count-other": "{0} 光"
+			},
 			"mass-fun": {
 				"displayName": "分 - 質量",
 				"unitPattern-count-other": "{0} 分 - 質量"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "泊",
+				"unitPattern-count-other": "{0} 泊",
+				"perUnitPattern": "{0}/泊"
 			},
 			"coordinateUnit": {
 				"displayName": "方位",

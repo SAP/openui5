@@ -121,6 +121,27 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Gets the first focusable item in the actions strip which is visible and enabled.
+	 * @returns {sap.m.Button|sap.m.Link} The first focusable item in the actions strip.
+	 */
+	ActionsStrip.prototype.getFirstFocusableItem = function () {
+		const oToolbar = this._getToolbar();
+
+		// @todo should return the overflow button if all items are in the overflow?
+		return oToolbar.getContent().find((oItem) => {
+			if (!(oItem.isA("sap.m.Button") || oItem.isA("sap.m.Link"))) {
+				return false;
+			}
+
+			if (!(oItem.getVisible() && oItem.getEnabled())) {
+				return false;
+			}
+
+			return true;
+		});
+	};
+
 	ActionsStrip.prototype._getToolbar = function () {
 		var oToolbar = this.getAggregation("_toolbar");
 		if (!oToolbar) {

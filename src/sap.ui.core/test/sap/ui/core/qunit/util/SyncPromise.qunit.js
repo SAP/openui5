@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise"
 ], function (Log, SyncPromise) {
-	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";
 
@@ -74,8 +73,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[42, undefined, {then : 42}, [SyncPromise.resolve()]
-	].forEach(function (vResult) {
+	[42, undefined, {then : 42}, [SyncPromise.resolve()]].forEach(function (vResult) {
 		QUnit.test("SyncPromise.resolve with non-Promise value: " + vResult, function (assert) {
 			assertFulfilled(assert, SyncPromise.resolve(vResult), vResult);
 		});
@@ -532,7 +530,6 @@ sap.ui.define([
 		// avoid "Uncaught (in promise)"
 		assertRejected(assert, oPromise, oError);
 
-
 		oPromise = SyncPromise.resolve(Promise.reject(oError));
 		assert.strictEqual(oPromise.toString(), "SyncPromise: pending");
 		return oPromise.catch(function () {
@@ -756,12 +753,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-//	QUnit.skip("Why does this hang?", function (assert) {
-//		// Note: looks like a QUnit issue, not a (Sync)Promise issue
-//		return Promise.all([
-//			SyncPromise.resolve()
-//		]); // Note: .then(function () {}) heals it!
-//	});
+//    QUnit.skip("Why does this hang?", function (assert) {
+//        // Note: looks like a QUnit issue, not a (Sync)Promise issue
+//        return Promise.all([
+//            SyncPromise.resolve()
+//        ]); // Note: .then(function () {}) heals it!
+//    });
 
 	//*********************************************************************************************
 	QUnit.test("Uncaught (in promise): listener", function () {
@@ -839,15 +836,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Uncaught (in promise)", function () {
-//		// Note: it's as simple as this...
-//		Promise.reject(42); // logs "Uncaught (in promise) 42" and this call's stack
+//        // Note: it's as simple as this...
+//        Promise.reject(42); // logs "Uncaught (in promise) 42" and this call's stack
 //
-//		var done = assert.async(),
-//			p = Promise.reject(23); // this logs an error which may later be removed ;-)
-//		setTimeout(function () {
-//			p.catch(function () {}); // it does not matter when you attach the "catch" handler
-//			done();
-//		}, 1000);
+//        var done = assert.async(),
+//            p = Promise.reject(23); // this logs an error which may later be removed ;-)
+//        setTimeout(function () {
+//            p.catch(function () {}); // it does not matter when you attach the "catch" handler
+//            done();
+//        }, 1000);
 
 		// Note: When a SyncPromise wraps a native Promise which is rejected, no native
 		// "Uncaught (in promise)" appears anymore!
@@ -1231,8 +1228,37 @@ sap.ui.define([
 		assert.strictEqual(SyncPromise.isThenable(vValue), false);
 	});
 });
+
+	//*********************************************************************************************
+[false, true].forEach((bResolve) => {
+	[false, true].forEach((bShim) => { //TODO drop shim once ES2024 becomes our baseline
+		const sTitle = "withResolvers: resolve=" + bResolve + ", shim=" + bShim;
+
+	QUnit.test(sTitle, function (assert) {
+		// code under test
+		const oResult = bShim ? SyncPromise._withResolvers() : SyncPromise.withResolvers();
+
+		assert.deepEqual(Object.keys(oResult), ["promise", "resolve", "reject"]);
+		assert.ok(oResult.promise instanceof SyncPromise);
+		assert.ok(oResult.promise.isPending());
+
+		// code under test (first one wins)
+		if (bResolve) {
+			oResult.resolve("~result~", "n/a");
+		} else {
+			oResult.reject("~result~", "n/a");
+		}
+		oResult.resolve("n/a");
+		oResult.reject("n/a");
+
+		assert.strictEqual(oResult.promise.isFulfilled(), bResolve);
+		assert.strictEqual(oResult.promise.isRejected(), !bResolve);
+		assert.strictEqual(oResult.promise.getResult(), "~result~");
+	});
+	});
+});
 });
 //TODO Promise.race
-//TODO treat rejection via RangeError, ReferenceError, SyntaxError(?), TypeError, URIError specially?!
+//TODO treat rejection via RangeError,ReferenceError,SyntaxError(?),TypeError,URIError specially?!
 // --> vReason instanceof Error && vReason.constructor !== Error
 // Error itself is often used during testing!

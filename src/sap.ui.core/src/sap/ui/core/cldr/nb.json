@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abkhasisk",
@@ -74,6 +74,7 @@
 		"bjn": "banjar",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengali",
 		"bo": "tibetansk",
@@ -204,7 +205,6 @@
 		"gmh": "mellomhøytysk",
 		"gn": "guarani",
 		"goh": "gammelhøytysk",
-		"gom": "goansk konkani",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gotisk",
@@ -315,6 +315,7 @@
 		"kv": "komi",
 		"kw": "kornisk",
 		"kwk": "kwak̓wala",
+		"kxv": "kuvi",
 		"ky": "kirgisisk",
 		"la": "latin",
 		"lad": "ladinsk",
@@ -344,7 +345,6 @@
 		"lua": "luba-lulua",
 		"lui": "luiseno",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "mizo",
 		"luy": "luhya",
 		"lv": "latvisk",
@@ -603,13 +603,13 @@
 		"und": "ukjent språk",
 		"ur": "urdu",
 		"uz": "usbekisk",
-		"vai": "vai",
 		"ve": "venda",
 		"vec": "venetiansk",
 		"vep": "vepsisk",
 		"vi": "vietnamesisk",
 		"vls": "vestflamsk",
 		"vmf": "Main-frankisk",
+		"vmw": "makhuwa",
 		"vo": "volapyk",
 		"vot": "votisk",
 		"vro": "sørestisk",
@@ -625,6 +625,7 @@
 		"xal": "kalmukkisk",
 		"xh": "xhosa",
 		"xmf": "mingrelsk",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapesisk",
@@ -4006,14 +4007,14 @@
 			"relative-type-0": "denne uken",
 			"relative-type-1": "neste uke",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} u.",
-				"relativeTimePattern-count-other": "+{0} u."
+				"relativeTimePattern-count-one": "om {0} u.",
+				"relativeTimePattern-count-other": "om {0} u."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "-{0} u.",
-				"relativeTimePattern-count-other": "-{0} u."
+				"relativeTimePattern-count-one": "for {0} u. siden",
+				"relativeTimePattern-count-other": "for {0} u. siden"
 			},
-			"relativePeriod": "u. {0}"
+			"relativePeriod": "uken med {0}"
 		},
 		"day-wide": {
 			"displayName": "dag",
@@ -4424,7 +4425,6 @@
 			"Bishkek": "Bisjkek",
 			"Brunei": "Brunei",
 			"Chita": "Tsjita",
-			"Choibalsan": "Choybalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damaskus",
 			"Dhaka": "Dhaka",
@@ -4761,6 +4761,7 @@
 		"EUR": "€",
 		"GBP": "£",
 		"NOK": "kr",
+		"XCG": "Cg.",
 		"XOF": "F CFA"
 	},
 	"rtl": false,
@@ -5719,13 +5720,28 @@
 			},
 			"volume-pinch": {
 				"displayName": "klype",
-				"unitPattern-count-one": "{0} klype",
-				"unitPattern-count-other": "{0} klype"
+				"unitPattern-count-one": "{0} klyper",
+				"unitPattern-count-other": "{0} klyper"
 			},
 			"volume-quart-imperial": {
 				"displayName": "imp. quart",
 				"unitPattern-count-one": "{0} imp. quart",
 				"unitPattern-count-other": "{0} imp. quart"
+			},
+			"speed-light-speed": {
+				"displayName": "lys",
+				"unitPattern-count-one": "{0} lys",
+				"unitPattern-count-other": "{0} lys"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "deler/milliard",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "netter",
+				"unitPattern-count-one": "{0} natt",
+				"unitPattern-count-other": "{0} netter",
+				"perUnitPattern": "{0}/natt"
 			},
 			"coordinateUnit": {
 				"displayName": "retning",

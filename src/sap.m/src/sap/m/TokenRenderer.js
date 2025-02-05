@@ -55,6 +55,7 @@ TokenRenderer.render = function(oRm, oControl){
 
 	if (!oControl.getEditable()) {
 		oRm.class("sapMTokenReadOnly");
+		oAccAttributes.readonly = null;
 	}
 
 	if (oControl.getTruncated()) {

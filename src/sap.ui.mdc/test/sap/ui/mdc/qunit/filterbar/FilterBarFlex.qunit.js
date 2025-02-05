@@ -7,10 +7,12 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/common/ChangeCategories",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/mdc/FilterBarDelegate",
-	'sap/ui/mdc/FilterField',
+	"test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate",
+	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/enums/OperatorName",
-	"sap/ui/mdc/odata/TypeMap"
+	"sap/ui/model/odata/type/String", // as used in TypeMap.getTypeConfig in Test without using PropertyHelperMixin
+	"sap/ui/model/odata/type/DateTimeOffset", // as used in TypeMap.getTypeConfig in Test without using PropertyHelperMixin
+	"sap/ui/mdc/odata/v4/TypeMap"
 ], function(createAppEnvironment,
 	Localization,
 	FilterBarFlexHandler,
@@ -21,8 +23,10 @@ sap.ui.define([
 	FilterBarDelegate,
 	FilterField,
 	OperatorName,
+	StringType,
+	DateTimeType,
 	ODataTypeMap
-	) {
+) {
 	'use strict';
 
 	function createAddConditionChangeDefinition(sOperator) {
@@ -177,15 +181,12 @@ sap.ui.define([
 	QUnit.module("Basic FilterBar.flexibility functionality with XML- & JsControlTreeModifier", {
 		before: function() {
 			// Implement required Delgate APIs
-			this._fnFetchPropertiers = FilterBarDelegate.fetchProperties;
-			this._fnAddCondition = FilterBarDelegate.addCondition;
-			this._fnAddItem = FilterBarDelegate.addItem;
-			FilterBarDelegate.fetchProperties = fetchProperties;
-			FilterBarDelegate.addCondition = addCondition;
-			FilterBarDelegate.addItem = addItem;
+			sinon.stub(FilterBarDelegate, "fetchProperties").callsFake(fetchProperties);
+			sinon.stub(FilterBarDelegate, "addCondition").callsFake(addCondition);
+			sinon.stub(FilterBarDelegate, "addItem").callsFake(addItem);
 		},
 		beforeEach: function() {
-			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" propertyKey="Category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" propertyKey="Name" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}" propertyKey="ProductID" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value" delegate="\{name: \'test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate\', payload: \{\}\}"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" propertyKey="Category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" propertyKey="Name" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}" propertyKey="ProductID" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "FilterBar")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;
@@ -198,12 +199,9 @@ sap.ui.define([
 			this.oUiComponentContainer.destroy();
 		},
 		after: function() {
-			FilterBarDelegate.fetchProperties = this._fnFetchPropertiers;
-			FilterBarDelegate.addCondition = this._fnAddCondition;
-			FilterBarDelegate.addItem = this._fnAddItem;
-			this._fnFetchPropertiers = null;
-			this._fnAddCondition = null;
-			this._fnAddItem = null;
+			FilterBarDelegate.fetchProperties.restore();
+			FilterBarDelegate.addCondition.restore();
+			FilterBarDelegate.addItem.restore();
 		}
 	});
 
@@ -702,19 +700,16 @@ sap.ui.define([
 	QUnit.module("Simulate RTA UI Visualisation", {
 		before: function() {
 			// Implement required Delgate APIs
-			this._fnFetchPropertiers = FilterBarDelegate.fetchProperties;
-			this._fnAddCondition = FilterBarDelegate.addCondition;
-			this._fnAddItem = FilterBarDelegate.addItem;
-			FilterBarDelegate.fetchProperties = fetchProperties;
-			FilterBarDelegate.addCondition = addCondition;
-			FilterBarDelegate.addItem = addItem;
+			sinon.stub(FilterBarDelegate, "fetchProperties").callsFake(fetchProperties);
+			sinon.stub(FilterBarDelegate, "addCondition").callsFake(addCondition);
+			sinon.stub(FilterBarDelegate, "addItem").callsFake(addItem);
 
 			this._sLanguage = Localization.getLanguage();
 			Localization.setLanguage("EN");
 		},
 
 		beforeEach: function() {
-			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" delegate="\{name: \'test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate\', payload: \{\}\}"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "FilterBar")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;
@@ -727,12 +722,9 @@ sap.ui.define([
 			this.oUiComponentContainer.destroy();
 		},
 		after: function() {
-			FilterBarDelegate.fetchProperties = this._fnFetchPropertiers;
-			FilterBarDelegate.addCondition = this._fnAddCondition;
-			FilterBarDelegate.addItem = this._fnAddItem;
-			this._fnFetchPropertiers = null;
-			this._fnAddCondition = null;
-			this._fnAddItem = null;
+			FilterBarDelegate.fetchProperties.restore();
+			FilterBarDelegate.addCondition.restore();
+			FilterBarDelegate.addItem.restore();
 
 			this.oFilterBar.getPropertyHelper.reset();
 			Localization.setLanguage(this._sLanguage);
@@ -962,16 +954,13 @@ sap.ui.define([
 	QUnit.module("Check change appliance at RT with additional handling", {
 		before: function() {
 			// Implement required Delgate APIs
-			this._fnFetchPropertiers = FilterBarDelegate.fetchProperties;
-			this._fnAddCondition = FilterBarDelegate.addCondition;
-			this._fnAddItem = FilterBarDelegate.addItem;
-			FilterBarDelegate.fetchProperties = fetchProperties;
-			FilterBarDelegate.addCondition = addCondition;
-			FilterBarDelegate.addItem = addItem;
+			sinon.stub(FilterBarDelegate, "fetchProperties").callsFake(fetchProperties);
+			sinon.stub(FilterBarDelegate, "addCondition").callsFake(addCondition);
+			sinon.stub(FilterBarDelegate, "addItem").callsFake(addItem);
 		},
 
 		beforeEach: function() {
-			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" delegate="\{name: \'test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate\', payload: \{\}\}"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "FilterBar")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;
@@ -984,12 +973,9 @@ sap.ui.define([
 			this.oUiComponentContainer.destroy();
 		},
 		after: function() {
-			FilterBarDelegate.fetchProperties = this._fnFetchPropertiers;
-			FilterBarDelegate.addCondition = this._fnAddCondition;
-			FilterBarDelegate.addItem = this._fnAddItem;
-			this._fnFetchPropertiers = null;
-			this._fnAddCondition = null;
-			this._fnAddItem = null;
+			FilterBarDelegate.fetchProperties.restore();
+			FilterBarDelegate.addCondition.restore();
+			FilterBarDelegate.addItem.restore();
 		}
 	});
 
@@ -1028,7 +1014,7 @@ sap.ui.define([
 		before: function() {},
 
 		beforeEach: function() {
-			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBarDirty"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBarDirty" delegate="\{name: \'test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate\', payload: \{\}\}"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "myFilterBarDirty")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;

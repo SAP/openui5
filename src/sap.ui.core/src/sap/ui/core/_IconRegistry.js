@@ -738,6 +738,8 @@ sap.ui.define([
 				'ai': 0x1e2a5,
 				'in-progress-2': 0x1e2a6,
 				'unsynchronize': 0x1e2a7,
+				'verified': 0x1e2a8,
+				'walk-me': 0x1e2a9,
 				'gender-male-and-female': 0x1e300,
 				'rotate': 0xe301,
 				'locate-me-2': 0xe302,

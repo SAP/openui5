@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abcázio",
@@ -60,6 +60,7 @@
 		"bin": "bini",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengalês",
 		"bo": "tibetano",
@@ -290,6 +291,7 @@
 		"kv": "komi",
 		"kw": "córnico",
 		"kwk": "kwakʼwala",
+		"kxv": "kuvi",
 		"ky": "quirguiz",
 		"la": "latim",
 		"lad": "ladino",
@@ -300,6 +302,7 @@
 		"lez": "lezghiano",
 		"lg": "ganda",
 		"li": "limburguês",
+		"lij": "ligure",
 		"lil": "lillooet",
 		"lkt": "lacota",
 		"lmo": "lombardo",
@@ -315,7 +318,6 @@
 		"lua": "luba-lulua",
 		"lui": "luiseno",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "mizo",
 		"luy": "luyia",
 		"lv": "letão",
@@ -334,7 +336,7 @@
 		"mfe": "crioulo mauriciano",
 		"mg": "malgaxe",
 		"mga": "irlandês médio",
-		"mgh": "macua",
+		"mgh": "macua-mêto",
 		"mgo": "meta’",
 		"mh": "marshalês",
 		"mi": "maori",
@@ -498,6 +500,7 @@
 		"swb": "comoriano",
 		"syc": "siríaco clássico",
 		"syr": "siríaco",
+		"szl": "silesiano",
 		"ta": "tâmil",
 		"tce": "tutchone do sul",
 		"te": "telugu",
@@ -544,9 +547,10 @@
 		"und": "idioma desconhecido",
 		"ur": "urdu",
 		"uz": "usbeque",
-		"vai": "vai",
 		"ve": "venda",
+		"vec": "véneto",
 		"vi": "vietnamita",
+		"vmw": "macua",
 		"vo": "volapuque",
 		"vot": "vótico",
 		"vun": "vunjo",
@@ -560,6 +564,7 @@
 		"wuu": "wu",
 		"xal": "kalmyk",
 		"xh": "xosa",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapese",
@@ -1744,11 +1749,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2279,11 +2284,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2907,11 +2912,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3442,11 +3447,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -4551,7 +4556,6 @@
 			"Bishkek": "Bishkek",
 			"Brunei": "Brunei",
 			"Chita": "Chita",
-			"Choibalsan": "Choibalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damasco",
 			"Dhaka": "Daca",
@@ -4904,6 +4908,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5872,6 +5877,22 @@
 				"displayName": "quarto imp.",
 				"unitPattern-count-one": "{0} quarto imp.",
 				"unitPattern-count-other": "{0} quartos imp."
+			},
+			"speed-light-speed": {
+				"displayName": "luz",
+				"unitPattern-count-one": "{0} luz",
+				"unitPattern-count-other": "{0} luzes"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "partes/mil milhões",
+				"unitPattern-count-one": "{0} ppmm",
+				"unitPattern-count-other": "{0} ppmm"
+			},
+			"duration-night": {
+				"displayName": "noites",
+				"unitPattern-count-one": "{0} noite",
+				"unitPattern-count-other": "{0} noites",
+				"perUnitPattern": "{0}/noite"
 			},
 			"coordinateUnit": {
 				"displayName": "direção",

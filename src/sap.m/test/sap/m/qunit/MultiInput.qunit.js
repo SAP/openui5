@@ -3247,13 +3247,12 @@ sap.ui.define([
 		]);
 
 		var oTokenizer = this.multiInput.getAggregation("tokenizer");
-		var oTokensPopup = oTokenizer.getTokensPopup();
 
 		// Act
 		oTokenizer._handleNMoreIndicatorPress();
 		this.clock.tick(nPopoverAnimationTick + 1);
 
-		qutils.triggerKeydown(oTokensPopup.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeydown(oTokenizer._getTokensList().getItems()[0].getDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(nPopoverAnimationTick + 1);
 
 		assert.strictEqual(document.activeElement, oTokenizer.getAggregation("tokens")[0].getDomRef(), "The first token is focused after nMore popover is closed");
@@ -3357,7 +3356,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		assert.strictEqual(this.multiInput.getAggregation("tokenizer").getRenderMode(), TokenizerRenderMode.Narrow, "The tokenizer is in Narrow mode");
+		assert.strictEqual(this.multiInput.getAggregation("tokenizer").getRenderMode(), TokenizerRenderMode.Loose, "The tokenizer is in Loose mode");
 	});
 
 	QUnit.test("_mapTokenToListItem", function(assert) {
@@ -4481,14 +4480,10 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		oMultiInput.getAggregation("tokenizer")._handleNMoreIndicatorPress();
-
 		await nextUIUpdate(this.clock);
-		this.clock.tick(nPopoverAnimationTick + 1);
 
 		oMultiInput.showItems();
-
 		await nextUIUpdate(this.clock);
-		this.clock.tick(nPopoverAnimationTick + 1);
 
 		assert.ok(oMultiInput._getSuggestionsPopover().getItemsContainer().getVisible(), true, "List should be visible");
 

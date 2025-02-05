@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/controls/ActionsStrip",
 	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/openCardShowMore",
 	"sap/m/library",
 	"sap/m/Button"
 ], function (
@@ -17,6 +18,7 @@ sap.ui.define([
 	Library,
 	ActionsStrip,
 	BindingHelper,
+	openCardShowMore,
 	mLibrary,
 	Button
 ) {
@@ -52,7 +54,13 @@ sap.ui.define([
 				configuration: {
 					type: "object"
 				},
+				showMoreButton: {
+					type: "boolean"
+				},
 				showCloseButton: {
+					type: "boolean"
+				},
+				detectVisibility: {
 					type: "boolean"
 				}
 			},
@@ -117,13 +125,13 @@ sap.ui.define([
 		}
 	});
 
-	Footer.create = function ({ card, configuration, paginator, showCloseButton }) {
+	Footer.create = function ({ card, configuration, paginator, showCloseButton, detectVisibility }) {
 		const bShouldShowCloseButton = showCloseButton || Footer._shouldShowCloseButton(card);
 
 		// Check if the configuration is effectively empty or only contains closeButton with visible set to false
 		const isEmptyConfiguration = !configuration || (Object.keys(configuration).length === 1 && configuration.closeButton && configuration.closeButton.visible === false);
 
-		if (isEmptyConfiguration && !bShouldShowCloseButton) {
+		if (isEmptyConfiguration && !bShouldShowCloseButton && !detectVisibility) {
 			return null;
 		}
 
@@ -131,6 +139,7 @@ sap.ui.define([
 			configuration: BindingHelper.createBindingInfos(configuration, card.getBindingNamespaces()),
 			card,
 			showCloseButton: bShouldShowCloseButton,
+			detectVisibility,
 			actionsStrip: ActionsStrip.create(configuration?.actionsStrip, card, true),
 			visible: configuration?.visible
 		});
@@ -168,7 +177,7 @@ sap.ui.define([
 	};
 
 	Footer.prototype.onBeforeRendering = function () {
-		if (this._oPaginator && !this._oPaginator.getActive()) {
+		if (this._shouldCreateShowMoreButton()) {
 			this._createShowMore();
 		} else {
 			this.destroyAggregation("_showMore");
@@ -179,12 +188,63 @@ sap.ui.define([
 		} else {
 			this.destroyAggregation("_closeButton");
 		}
+
+		if (this.getDetectVisibility()) {
+			const bIsVisible = this.hasVisibleItems();
+			this.setVisible(bIsVisible);
+			this.getCardInstance().toggleStyleClass("sapUiIntCardFooterInvisible", !bIsVisible);
+		}
 	};
 
 	Footer.prototype.onDataChanged = function () {
 		if (this.getActionsStrip()) {
 			this.getActionsStrip().onDataChanged();
 		}
+	};
+
+	/**
+	 * Gets the first focusable item in the actions strip which is visible and enabled.
+	 * @returns {sap.m.Button|sap.m.Link} The first focusable item in the actions strip.
+	 */
+	Footer.prototype.getFirstFocusableItem = function () {
+		const oActionsStripItem = this.getActionsStrip()?.getFirstFocusableItem();
+		if (oActionsStripItem) {
+			return oActionsStripItem;
+		}
+
+		const oShowMore = this.getAggregation("_showMore");
+		if (oShowMore?.getVisible()) {
+			return oShowMore;
+		}
+
+		const oCloseButton = this.getAggregation("_closeButton");
+		if (oCloseButton?.getVisible()) {
+			return oCloseButton;
+		}
+
+		return false;
+	};
+
+	/**
+	 * Checks if the footer has visible items.
+	 * @returns {boolean} Whether the footer has visible items.
+	 */
+	Footer.prototype.hasVisibleItems = function () {
+		if (this.getActionsStrip()?.hasVisibleItems()) {
+			return true;
+		}
+
+		const oShowMore = this.getAggregation("_showMore");
+		if (oShowMore?.getVisible()) {
+			return true;
+		}
+
+		const oCloseButton = this.getAggregation("_closeButton");
+		if (oCloseButton?.getVisible()) {
+			return true;
+		}
+
+		return false;
 	};
 
 	Footer.prototype._hasBinding = function () {
@@ -244,23 +304,51 @@ sap.ui.define([
 		this._oPaginator = oPaginator;
 	};
 
+	Footer.prototype._shouldCreateShowMoreButton = function () {
+		if (this.getShowMoreButton()) {
+			return true;
+		}
+
+		const oPaginator = this._oPaginator;
+		if (oPaginator && !oPaginator.getActive()) {
+			return true;
+		}
+
+		return false;
+	};
+
+	Footer.prototype._shouldShowMoreButtonBeVisible = function () {
+		let bResult = this._shouldCreateShowMoreButton();
+
+		const oPaginator = this._oPaginator;
+		if (oPaginator) {
+			bResult = bResult && oPaginator.getPageCount() > 1;
+		}
+
+		return bResult;
+	};
+
 	Footer.prototype._createShowMore = function () {
 		let oMore = this.getAggregation("_showMore");
 
 		if (!oMore) {
 			const oPaginator = this._oPaginator;
 
-			oMore = new Button({
+			oMore = new Button(`${this.getId()}-showMore`, {
 				text: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FOOTER_SHOW_MORE"),
 				type: ButtonType.Transparent,
 				press: () => {
-					oPaginator.openDialog();
+					if (oPaginator) {
+						oPaginator.openDialog();
+					} else {
+						openCardShowMore(this.getCardInstance());
+					}
 				},
-				visible: oPaginator.getPageCount() > 1
+				visible: this._shouldShowMoreButtonBeVisible()
 			}).addStyleClass("sapFCardFooterShowMoreButton");
 
-			oPaginator.attachEvent("_ready", () => {
-				oMore.setVisible(oPaginator.getPageCount() > 1);
+			oPaginator?.attachEvent("_ready", () => {
+				oMore.setVisible(this._shouldShowMoreButtonBeVisible());
 			});
 
 			this.setAggregation("_showMore", oMore);

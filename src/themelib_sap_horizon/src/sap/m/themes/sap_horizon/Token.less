@@ -32,7 +32,7 @@
 	line-height: 1;
 }
 
-.sapMToken.sapMTokenSelected::before {
+.sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly)::before {
 	content: '';
 	position: absolute;
 	pointer-events: none;
@@ -57,7 +57,6 @@ html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
 
 .sapMToken.sapMTokenReadOnly {
 	padding: 0.25rem 0.3125rem;
-	color: @sapUiContentLabelColor;
 
 	.sapMTokenText {
 		line-height: 1rem;

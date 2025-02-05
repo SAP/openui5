@@ -229,6 +229,40 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Unsupported: Promises as module content", {
+		before: function() {
+			this.errorSpy = sinon.spy(Log, "error");
+
+			this.rExpectedClassError = /The module 'testdata\/mvc\/controls\/ModuleWithPromiseExport' returns a Promise where a control class was expected. Promises as module content are not supported. Please also refer to/;
+		},
+		afterEach: function() {
+			this.errorSpy.resetHistory();
+		},
+		after: function() {
+			this.errorSpy.restore();
+		}
+	});
+
+	QUnit.test("Promise where a control class is expected", async function(assert) {
+		try {
+			await XMLView.create({
+				definition:
+				`<mvc:View
+					xmlns:core="sap.ui.core"
+					xmlns:mvc="sap.ui.core.mvc"
+					xmlns:td="testdata.mvc.controls">
+					<td:RegularControl />
+					<td:ModuleWithPromiseExport />
+				</mvc:View>`
+			});
+			assert.ok(false, "View Factory should throw an error in 'future=true' mode.");
+		} catch (err) {
+			assert.ok(
+				err.message.match(this.rExpectedClassError),
+			"Error message contains information about the unsupported Promise as module content.");
+		}
+	});
+
 	QUnit.module("Nested XMLViews");
 
 	QUnit.test("Directly Nested XMLViews (async)", function(assert) {

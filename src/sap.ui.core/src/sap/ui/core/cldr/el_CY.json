@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "Αφάρ",
 		"ab": "Αμπχαζικά",
@@ -59,6 +59,7 @@
 		"bin": "Μπίνι",
 		"bkm": "Κομ",
 		"bla": "Σικσίκα",
+		"blo": "Ανίι",
 		"bm": "Μπαμπάρα",
 		"bn": "Βεγγαλικά",
 		"bo": "Θιβετιανά",
@@ -286,6 +287,7 @@
 		"kv": "Κόμι",
 		"kw": "Κορνουαλικά",
 		"kwk": "Κουακουάλα",
+		"kxv": "Κούβι",
 		"ky": "Κιργιζικά",
 		"la": "Λατινικά",
 		"lad": "Λαδίνο",
@@ -296,8 +298,10 @@
 		"lez": "Λεζγκικά",
 		"lg": "Γκάντα",
 		"li": "Λιμβουργιανά",
+		"lij": "Λιγουριανά",
 		"lil": "Λιλουέτ",
 		"lkt": "Λακότα",
+		"lmo": "Λομβαρδικά",
 		"ln": "Λινγκάλα",
 		"lo": "Λαοτινά",
 		"lol": "Μόνγκο",
@@ -491,6 +495,7 @@
 		"swb": "Κομοριανά",
 		"syc": "Κλασικά Συριακά",
 		"syr": "Συριακά",
+		"szl": "Σιλεσικά",
 		"ta": "Ταμιλικά",
 		"tce": "Νότια Τουτσόνε",
 		"te": "Τελούγκου",
@@ -540,7 +545,9 @@
 		"uz": "Ουζμπεκικά",
 		"vai": "Βάι",
 		"ve": "Βέντα",
+		"vec": "Βενετικά",
 		"vi": "Βιετναμικά",
+		"vmw": "Μακούα",
 		"vo": "Βολαπιούκ",
 		"vot": "Βότικ",
 		"vun": "Βούντζο",
@@ -554,6 +561,7 @@
 		"wuu": "Κινεζικά Γου",
 		"xal": "Καλμίκ",
 		"xh": "Κόσα",
+		"xnr": "Κάνγκρι",
 		"xog": "Σόγκα",
 		"yao": "Γιάο",
 		"yap": "Γιαπίζ",
@@ -1119,11 +1127,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -1633,11 +1641,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2151,11 +2159,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2682,11 +2690,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -3193,11 +3201,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -4209,7 +4217,6 @@
 			"Bishkek": "Μπισκέκ",
 			"Brunei": "Μπρουνέι",
 			"Chita": "Τσιτά",
-			"Choibalsan": "Τσοϊμπαλσάν",
 			"Colombo": "Κολόμπο",
 			"Damascus": "Δαμασκός",
 			"Dhaka": "Ντάκα",
@@ -4562,6 +4569,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5564,6 +5572,21 @@
 				"displayName": "αγγλ. τέτ. γαλ.",
 				"unitPattern-count-one": "{0} αγγλ. τέτ. γαλ.",
 				"unitPattern-count-other": "{0} αγγλ. τέτ. γαλ."
+			},
+			"speed-light-speed": {
+				"displayName": "φως",
+				"unitPattern-count-one": "{0} φως",
+				"unitPattern-count-other": "{0} φως"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "μέρη/δισεκατομμύριο",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "νύχτ.",
+				"unitPattern-count-one": "{0} νύχτ.",
+				"unitPattern-count-other": "{0} νύχτ.",
+				"perUnitPattern": "{0}/νύχτ."
 			},
 			"coordinateUnit": {
 				"displayName": "σημείο",

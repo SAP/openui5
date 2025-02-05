@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abchaski",
@@ -73,6 +73,7 @@
 		"bjn": "banjar",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengalski",
 		"bo": "tybetański",
@@ -216,7 +217,6 @@
 		"gmh": "średnio-wysoko-niemiecki",
 		"gn": "guarani",
 		"goh": "staro-wysoko-niemiecki",
-		"gom": "konkani (Goa)",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gocki",
@@ -328,6 +328,7 @@
 		"kv": "komi",
 		"kw": "kornijski",
 		"kwk": "kwakiutl",
+		"kxv": "kuvi",
 		"ky": "kirgiski",
 		"la": "łaciński",
 		"lad": "ladyński",
@@ -357,7 +358,6 @@
 		"lua": "luba-lulua",
 		"lui": "luiseno",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "mizo",
 		"luy": "luhya",
 		"lv": "łotewski",
@@ -378,7 +378,7 @@
 		"mfe": "kreolski Mauritiusa",
 		"mg": "malgaski",
 		"mga": "średnioirlandzki",
-		"mgh": "makua",
+		"mgh": "makua-meetto",
 		"mgo": "meta",
 		"mh": "marszalski",
 		"mi": "maoryjski",
@@ -625,6 +625,7 @@
 		"vi": "wietnamski",
 		"vls": "zachodnioflamandzki",
 		"vmf": "meński frankoński",
+		"vmw": "makua",
 		"vo": "wolapik",
 		"vot": "wotiacki",
 		"vro": "võro",
@@ -640,6 +641,7 @@
 		"xal": "kałmucki",
 		"xh": "khosa",
 		"xmf": "megrelski",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "japski",
@@ -1720,7 +1722,7 @@
 				"GyMMM": "LLL y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E, d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -2250,7 +2252,7 @@
 				"GyMMM": "LLL y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E, d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -2800,7 +2802,7 @@
 				"GyMMM": "LLL y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E, d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -3330,7 +3332,7 @@
 				"GyMMM": "LLL y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E, d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -4026,7 +4028,7 @@
 				"relativeTimePattern-count-many": "{0} tyg. temu",
 				"relativeTimePattern-count-other": "{0} tyg. temu"
 			},
-			"relativePeriod": "tydzień {0}"
+			"relativePeriod": "tydz. {0}"
 		},
 		"week-narrow": {
 			"displayName": "tydz.",
@@ -4045,7 +4047,7 @@
 				"relativeTimePattern-count-many": "{0} tyg. temu",
 				"relativeTimePattern-count-other": "{0} tyg. temu"
 			},
-			"relativePeriod": "tydzień {0}"
+			"relativePeriod": "tydz. {0}"
 		},
 		"day-wide": {
 			"displayName": "dzień",
@@ -4398,7 +4400,7 @@
 			"Juneau": "Juneau",
 			"Kentucky": {
 				"Louisville": "Louisville",
-				"Monticello": "Monticello"
+				"Monticello": "Monticello, Kentucky"
 			},
 			"Kralendijk": "Kralendijk",
 			"La_Paz": "La Paz",
@@ -4504,7 +4506,6 @@
 			"Bishkek": "Biszkek",
 			"Brunei": "Brunei",
 			"Chita": "Czyta",
-			"Choibalsan": "Czojbalsan",
 			"Colombo": "Kolombo",
 			"Damascus": "Damaszek",
 			"Dhaka": "Dhaka",
@@ -4890,6 +4891,7 @@
 		"PLN": "zł",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5298,11 +5300,11 @@
 				"perUnitPattern": "{0}/tydz."
 			},
 			"duration-day": {
-				"displayName": "doby",
-				"unitPattern-count-one": "{0} doba",
-				"unitPattern-count-few": "{0} doby",
-				"unitPattern-count-many": "{0} dób",
-				"unitPattern-count-other": "{0} doby",
+				"displayName": "dzień",
+				"unitPattern-count-one": "{0} dzień",
+				"unitPattern-count-few": "{0} dni",
+				"unitPattern-count-many": "{0} dni",
+				"unitPattern-count-other": "{0} dnia",
 				"perUnitPattern": "{0}/dobę"
 			},
 			"duration-hour": {
@@ -5996,6 +5998,25 @@
 				"unitPattern-count-few": "{0} kwarty ang.",
 				"unitPattern-count-many": "{0} kwart ang.",
 				"unitPattern-count-other": "{0} kwarty ang."
+			},
+			"speed-light-speed": {
+				"displayName": "św.",
+				"unitPattern-count-one": "{0} św.",
+				"unitPattern-count-few": "{0} św.",
+				"unitPattern-count-many": "{0} św.",
+				"unitPattern-count-other": "{0} św."
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "noce",
+				"unitPattern-count-one": "{0} noc",
+				"unitPattern-count-few": "{0} noce",
+				"unitPattern-count-many": "{0} nocy",
+				"unitPattern-count-other": "{0} nocy",
+				"perUnitPattern": "{0}/noc"
 			},
 			"coordinateUnit": {
 				"displayName": "kierunek",

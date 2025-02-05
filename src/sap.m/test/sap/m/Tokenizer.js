@@ -5,16 +5,44 @@ sap.ui.define([
   "sap/m/Table",
   "sap/m/List",
   "sap/m/StandardListItem",
+  "sap/m/library",
+  "sap/m/OverflowToolbarLayoutData",
   "sap/m/Label",
   "sap/m/Button",
-  "sap/m/library",
+  "sap/m/Toolbar",
+  "sap/m/Text",
+  "sap/m/Title",
+  "sap/ui/core/Icon",
+  "sap/m/ToolbarSpacer",
+  "sap/m/OverflowToolbar",
+  "sap/m/MessageToast",
   "sap/m/App",
   "sap/m/Page"
-], function(MessageBox, Tokenizer, Token, Table, List, StandardListItem, Label, Button, mobileLibrary, App, Page) {
+], function(
+  MessageBox,
+  Tokenizer,
+  Token,
+  Table,
+  List,
+  StandardListItem,
+  mobileLibrary,
+  OverflowToolbarLayoutData,
+  Label,
+  Button,
+  Toolbar,
+  Text,
+  Title,
+  Icon,
+  ToolbarSpacer,
+  OverflowToolbar,
+  MessageToast,
+  App,
+  Page
+) {
   "use strict";
 
-  // shortcut for sap.m.TokenizerRenderMode
-  const TokenizerRenderMode = mobileLibrary.TokenizerRenderMode;
+  // shortcut for sap.m.OverflowToolbarPriority
+  const OverflowToolbarPriority0 = mobileLibrary.OverflowToolbarPriority;
 
   //*******************************
   var oEventList = new List();
@@ -23,10 +51,9 @@ sap.ui.define([
 	  var item = new StandardListItem({title: "token: " + type});
 	  oEventList.addItem(item);
   };
-
+  var OverflowToolbarPriority = OverflowToolbarPriority0;
   //*******************************
   var oTokenizer0 = new Tokenizer("editableTokenizerNarrow", {
-	  renderMode: "Narrow",
 	  width: "400px",
 	  tokens: [
 		  new Token({text: "Token 1", key: "0001"}),
@@ -49,7 +76,6 @@ sap.ui.define([
 
   //*******************************
   var oTokenizer01 = new Tokenizer("readonlyTokenizerNarrow", {
-	  renderMode: "Narrow",
 	  editable: false,
 	  width: "400px",
 	  tokens: [
@@ -121,7 +147,7 @@ sap.ui.define([
 		  new Token({text:"Friese", editable: false}),
 		  new Token("tokenToSelect3", {text:"Mann", editable: true})
 	  ],
-	  width: "100px"
+	  width: "150px"
   });
 
   var oTokenizer5 = new Tokenizer("editableAndReadonly",{
@@ -151,7 +177,6 @@ sap.ui.define([
 		  new Token("longToken", {text:"Very long long long long long long long text"})
 	  ]
   });
-  oTokenizer7.setRenderMode(TokenizerRenderMode.Narrow);
 
   var oTokenizer8 = new Tokenizer("tokenizerReadOnlyLongToken", {
 	  width: "200px",
@@ -160,12 +185,171 @@ sap.ui.define([
 		  new Token("longTokenNotEditable", {text:"Very long long long long long long long text"})
 	  ]
   });
-  oTokenizer8.setRenderMode(TokenizerRenderMode.Narrow);
+
+  var oTokenizer9 = new Tokenizer("overflowToolbarTokenizer", {
+	  width: "50%",
+	  tokens: [
+		  new Token({text: "Token 1", key: "0001"}),
+		  new Token({text: "Token 2", key: "0002"}),
+		  new Token({text: "Token 3", key: "0003"}),
+		  new Token({text: "Token 4 - long text example", key: "0004"}),
+		  new Token({text: "Token 5", key: "0005"}),
+		  new Token({text: "Token 6", key: "0006"}),
+		  new Token({text: "Token 7", key: "0007"}),
+		  new Token({text: "Token 8", key: "0008"}),
+		  new Token({text: "Token 9 - ABCDEF", key: "0009"}),
+		  new Token({text: "Token with text", key: "0010"}),
+		  new Token({text: "Token 11", key: "0011"}),
+		  new Token({text: "Token 12", key: "0012"})
+	  ],
+	  tokenChange: fEventWriter,
+	  layoutData: new OverflowToolbarLayoutData({
+		  priority: OverflowToolbarPriority.Low,
+		  shrinkable: true,
+		  minWidth: "200px"
+	  })
+  });
+
+  const oTokenizer10 = new Tokenizer("toolbarTokenizer", {
+	  tokens: [
+		  new Token({text: "Token 1", key: "0001"}),
+		  new Token({text: "Token 2", key: "0002"}),
+		  new Token({text: "Token 3", key: "0003"}),
+		  new Token({text: "Token 4 - long text example", key: "0004"}),
+		  new Token({text: "Token 5", key: "0005"}),
+	  ],
+	  tokenChange: fEventWriter
+  });
+
+  const oToolbarTokenizer = new Toolbar("toolbar-tokenizer", {
+	  active : true,
+	  ariaHasPopup: "dialog",
+	  tooltip : "This is a bar with tokenizer",
+	  content : [
+		  new Label({text : "Filter by:", tooltip: "Filter by:"}),
+		  oTokenizer10,
+		  new Text({text: "Text"}),
+		  new Title({text: "Title", level: "H1"}),
+		  new Icon({src : "sap-icon://collaborate"}),
+		  new ToolbarSpacer(),
+		  new Button({
+			  text : "Remove",
+			  type : "Reject"
+		  })
+	  ]
+  })
+
+  const overflowToolbarContent = [
+	  new Label({
+		  text : "Filtered by:"
+	  }),
+	  oTokenizer9,
+	  new ToolbarSpacer(),
+	  new Button({
+		  text: "Add",
+		  layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Low})
+	  }),
+	  new Button({
+		  text: "Delete",
+		  layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Low})
+	  }),
+	  new Button({
+		  text: "Change",
+		  layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Low})
+	  }),
+	  new Button({text: "Notes"}),
+
+	  new ToolbarSpacer(),
+	  new Button({
+		  text : "Cut",
+		  layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})
+	  }),
+	  new Button({
+		  text : "Copy",
+		  layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})
+	  }),
+	  new Button({
+		  text : "Paste",
+		  layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})
+	  })
+  ];
+
+  const overflowToolbar = new OverflowToolbar("otb2", {
+	  content : overflowToolbarContent
+  });
+
+  const oDisabledTokenizer = new Tokenizer("disabled-tokenizer", {
+	  enabled: false,
+	  tokens: [
+		  new Token({text: "Disabled Token 1", key: "0001"}),
+		  new Token({text: "Disabled Token 2", key: "0002"})
+	  ],
+  });
+
+  var oDisabledNMoreTokenizer = new Tokenizer("disabled-tokenizer-nmore", {
+	  enabled: false,
+	  width: "400px",
+	  tokens: [
+		  new Token({text: "Token 1", key: "0001"}),
+		  new Token({text: "Token 2", key: "0002"}),
+		  new Token({text: "Token 3", key: "0003"}),
+		  new Token({text: "Token 4 - long text example", key: "0004"}),
+		  new Token({text: "Token 5", key: "0005"}),
+		  new Token({text: "Token 6", key: "0006"}),
+		  new Token({text: "Token 7", key: "0007"}),
+		  new Token({text: "Token 8", key: "0008"}),
+		  new Token({text: "Token 9 - ABCDEF", key: "0009"}),
+		  new Token({text: "Token 10 - ABCDEFGHIKL", key: "0010"}),
+		  new Token({text: "Token 11", key: "0011"}),
+		  new Token({text: "Token 12", key: "0012"})
+	  ]
+  });
+
+  var oNMoreTokenizerWithLongToken = new Tokenizer("long-token-nmore", {
+	  width: "400px",
+	  tokens: [
+		  new Token({text: "Token 1", key: "0001"}),
+		  new Token({text: "Token 2", key: "0002"}),
+		  new Token({text: "Token 3", key: "0003"}),
+		  new Token({text: "Token 4 - long token text example - as last token it is put (hidden) in the nMore first", key: "0004"})
+	  ]
+  });
+
+  fHandleTokenDelete = (oEvent) => {
+	  var aDeletedTokens = oEvent.getParameter("tokens");
+	  aDeletedTokens.forEach(function (oToken) {
+		  MessageToast.show("Token deleted: " + oToken.getText());
+		  oAddRemoveTokens.removeToken(oToken);
+	  });
+  }
+
+  var oAddRemoveTokens = new Tokenizer("add-remove-tokens", {
+	  width: "100%",
+	  tokens: [
+		  new Token({text: "One", key: "0001"}),
+		  new Token({text: "Two", key: "0002"}),
+		  new Token({text: "Three", key: "0003"})
+	  ],
+	  tokenDelete: fHandleTokenDelete
+  });
+
+  var oAddTokensButton = new Button({
+	  text: "Add Tokens",
+	  press: function() {
+		  oAddRemoveTokens.addToken(new Token({
+			  text: "And another one",
+			  key: Math.random().toString().substring(3)
+		  }));
+
+		  MessageToast.show("Token added");
+		  }
+	  }
+  );
 
   var app = new App("myApp");
 
   var page1 = new Page("page1", {
-	  title:"Mobile MultiInput Control",
+	  title:"sap.m.Tokenizer Test Samples",
 	  content : [
 		  new Label({ text : "Tokenizer.editable = true, Narrow", width:"100%"}),
 		  oTokenizer0,
@@ -187,7 +371,20 @@ sap.ui.define([
 		  new Label({ text : "Tokenizer with single long token.", width: "100%"}),
 		  oTokenizer7,
 		  new Label({ text : "Tokenizer with single long token - read only.", width: "100%"}),
-		  oTokenizer8
+		  oTokenizer8,
+		  new Label({ text : "NMore tokenizer with one long token", width: "100%"}),
+		  oNMoreTokenizerWithLongToken,
+		  new Label({ text : "OverflowToolbar with Tokenizer", width: "100%"}),
+		  overflowToolbar,
+		  new Label({ text : "Toolbar with Tokenizer", width: "100%"}),
+		  oToolbarTokenizer,
+		  new Label({ text : "Tokenizer with disabled='true'", width: "100%"}),
+		  oDisabledTokenizer,
+		  new Label({ text : "Disabled Tokenizer with nMore indicator", width: "100%"}),
+		  oDisabledNMoreTokenizer,
+		  new Label({ text : "Add/Remove tokens", width: "100%"}),
+		  oAddRemoveTokens,
+		  oAddTokensButton
 	  ]
   }).addStyleClass("sapUiContentPadding");
 

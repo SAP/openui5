@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "афар тілі",
 		"ab": "абхаз тілі",
@@ -45,6 +45,7 @@
 		"bi": "бислама тілі",
 		"bin": "бини тілі",
 		"bla": "сиксика тілі",
+		"blo": "ании тілі",
 		"bm": "бамбара тілі",
 		"bn": "бенгал тілі",
 		"bo": "тибет тілі",
@@ -212,6 +213,7 @@
 		"kv": "коми тілі",
 		"kw": "корн тілі",
 		"kwk": "квакиутль тілі",
+		"kxv": "куви тілі",
 		"ky": "қырғыз тілі",
 		"la": "латын тілі",
 		"lad": "ладино тілі",
@@ -223,7 +225,7 @@
 		"lij": "лигур тілі",
 		"lil": "лиллуэт тілі",
 		"lkt": "лакота тілі",
-		"lmo": "Ломбард",
+		"lmo": "ломбард тілі",
 		"ln": "лингала тілі",
 		"lo": "лаос тілі",
 		"lou": "креоль тілі (Луизиана)",
@@ -381,6 +383,7 @@
 		"sw_CD": "конго суахили тілі",
 		"swb": "комор тілі",
 		"syr": "сирия тілі",
+		"szl": "силез тілі",
 		"ta": "тамил тілі",
 		"tce": "оңтүстік тутчоне тілі",
 		"te": "телугу тілі",
@@ -423,6 +426,7 @@
 		"ve": "венда тілі",
 		"vec": "венеция тілі",
 		"vi": "вьетнам тілі",
+		"vmw": "макуа тілі",
 		"vo": "волапюк тілі",
 		"vun": "вунджо тілі",
 		"wa": "валлон тілі",
@@ -434,6 +438,7 @@
 		"wuu": "қытай тілі (У)",
 		"xal": "қалмақ тілі",
 		"xh": "кхоса тілі",
+		"xnr": "кангри тілі",
 		"xog": "сога тілі",
 		"yav": "янгбен тілі",
 		"ybb": "йемба тілі",
@@ -442,6 +447,7 @@
 		"yrl": "ньенгату тілі",
 		"yue": "кантон тілі",
 		"yue_alt-menu": "қытай тілі (кантон)",
+		"za": "чжуан тілі",
 		"zgh": "марокколық стандартты тамазигхт тілі",
 		"zh": "қытай тілі",
 		"zh_alt-menu": "қытай тілі (мандарин)",
@@ -1032,11 +1038,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -1044,30 +1050,30 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y 'ж'. d–d MMM",
@@ -1557,11 +1563,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -1569,30 +1575,30 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y 'ж'. d–d MMM",
@@ -1607,14 +1613,14 @@
 					"y": "G y 'ж'. d MMM, E – y 'ж'. d MMM, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1623,7 +1629,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -1632,7 +1638,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -1701,47 +1707,61 @@
 			"format": {
 				"abbreviated": [
 					[
+						"Мұх.",
 						"Қаң.",
 						"Muh."
 					],
 					[
+						"Саф.",
 						"Ақп.",
 						"Saf."
 					],
 					[
+						"Раб. I",
 						"Нау.",
 						"Rab. I"
 					],
 					[
+						"Раб. II",
 						"Сәу.",
 						"Rab. II"
 					],
 					[
+						"Жұм. I",
 						"Мам.",
 						"Jum. I"
 					],
-					"Jum. II",
 					[
+						"Жұм. II",
+						"Jum. II"
+					],
+					[
+						"Ереж.",
 						"шіл.",
 						"Raj."
 					],
 					[
+						"Шағ.",
 						"там.",
 						"Sha."
 					],
 					[
+						"Рам.",
 						"Қыр.",
 						"Ram."
 					],
 					[
+						"Шәу.",
 						"Қаз.",
 						"Shaw."
 					],
 					[
+						"Зұлқ.",
 						"Қар.",
 						"Dhuʻl-Q."
 					],
 					[
+						"Зұлх.",
 						"Жел.",
 						"Dhuʻl-H."
 					]
@@ -1763,16 +1783,16 @@
 				"wide": [
 					"Мұхаррам",
 					"Сафар",
-					"Рабиғ әл-әууәл",
-					"Рабиғ әс-сәни",
-					"Джумада әл-әууәл",
-					"Жумад ас-сәни",
-					"Раджаб",
+					"Рабиғул әууәл",
+					"Рабиғул ахир",
+					"Жұмадәл аууәл",
+					"Жұмадәл ахир",
+					"Ережеп",
 					"Шағбан",
-					"Рамадан",
-					"Шәууәл",
-					"Зул-Қағда",
-					"Зул-Хиджа"
+					"Рамазан",
+					"Шәууал",
+					"Зұлқағда",
+					"Зұлхижжа"
 				]
 			},
 			"stand-alone": {
@@ -1798,15 +1818,18 @@
 						"Rab. II"
 					],
 					[
+						"Жұм. I",
 						"Жум. І",
 						"Мам.",
 						"Jum. I"
 					],
 					[
+						"Жұм. II",
 						"Жум. ІІ",
 						"Jum. II"
 					],
 					[
+						"Ереж.",
 						"Радж.",
 						"шіл.",
 						"Raj."
@@ -1827,11 +1850,13 @@
 						"Shaw."
 					],
 					[
+						"Зұлқ.",
 						"Зул-Қ.",
 						"Қар.",
 						"Dhuʻl-Q."
 					],
 					[
+						"Зұлх.",
 						"Зул-Х.",
 						"Жел.",
 						"Dhuʻl-H."
@@ -1854,16 +1879,16 @@
 				"wide": [
 					"Мұхаррам",
 					"Сафар",
-					"Рабиғ әл-әууәл",
-					"Рабиғ әс-сәни",
-					"Джумада әл-әууәл",
-					"Жумад ас-сәни",
-					"Раджаб",
+					"Рабиғул әууәл",
+					"Рабиғул ахир",
+					"Жұмадәл аууәл",
+					"Жұмадәл ахир",
+					"Ережеп",
 					"Шағбан",
-					"Рамадан",
-					"Шәууәл",
-					"Зул-Қағда",
-					"Зул-Хиджа"
+					"Рамазан",
+					"Шәууал",
+					"Зұлқағда",
+					"Зұлхижжа"
 				]
 			}
 		},
@@ -2072,13 +2097,13 @@
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "ХЖ"
 		},
 		"era-abbreviated": {
-			"0": "AH"
+			"0": "ХЖ"
 		},
 		"era-narrow": {
-			"0": "AH"
+			"0": "ХЖ"
 		}
 	},
 	"ca-japanese": {
@@ -2159,11 +2184,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2171,30 +2196,30 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y 'ж'. d–d MMM",
@@ -2209,14 +2234,14 @@
 					"y": "G y 'ж'. d MMM, E – y 'ж'. d MMM, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2225,7 +2250,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2234,7 +2259,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -2701,11 +2726,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2713,30 +2738,30 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y 'ж'. d–d MMM",
@@ -2751,14 +2776,14 @@
 					"y": "G y 'ж'. d MMM, E – y 'ж'. d MMM, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2767,7 +2792,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2776,7 +2801,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -3295,11 +3320,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -3307,30 +3332,30 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y 'ж'. d–d MMM",
@@ -3345,14 +3370,14 @@
 					"y": "G y 'ж'. d MMM, E – y 'ж'. d MMM, E"
 				},
 				"h": {
-					"a": "h a – h a",
+					"a": "h a – h a",
 					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -3361,7 +3386,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -3370,7 +3395,7 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
+					"a": "h a – h a v",
 					"h": "h–h a v"
 				},
 				"Hv": {
@@ -4323,7 +4348,6 @@
 			"Bishkek": "Бішкек",
 			"Brunei": "Бруней",
 			"Chita": "Чита",
-			"Choibalsan": "Чойбалсан",
 			"Colombo": "Коломбо",
 			"Damascus": "Дамаск",
 			"Dhaka": "Дакка",
@@ -4678,6 +4702,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5745,6 +5770,22 @@
 				"displayName": "брит. кварта",
 				"unitPattern-count-one": "{0} брит. кварта",
 				"unitPattern-count-other": "{0} брит. кварта"
+			},
+			"speed-light-speed": {
+				"displayName": "жарық",
+				"unitPattern-count-one": "{0} жарық",
+				"unitPattern-count-other": "{0} жарық"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "бөлік/миллиард",
+				"unitPattern-count-one": "{0} б/млрд",
+				"unitPattern-count-other": "{0} б/млрд"
+			},
+			"duration-night": {
+				"displayName": "түн",
+				"unitPattern-count-one": "{0} түн",
+				"unitPattern-count-other": "{0} түн",
+				"perUnitPattern": "{0}/түн"
 			},
 			"coordinateUnit": {
 				"displayName": "бағыт",
