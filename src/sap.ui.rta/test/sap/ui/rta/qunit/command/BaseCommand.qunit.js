@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/type/Integer",
 	"sap/ui/table/Column",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -41,6 +42,8 @@ sap.ui.define([
 	List,
 	CustomListItem,
 	VerticalLayout,
+	// the Integer type must be  available for the binding definition
+	Integer,
 	Column,
 	DesignTime,
 	OverlayRegistry,
