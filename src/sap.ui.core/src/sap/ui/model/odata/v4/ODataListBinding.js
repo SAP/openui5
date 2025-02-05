@@ -1929,20 +1929,21 @@ sap.ui.define([
 				return bToLower ? "tolower(" + sText + ")" : sText;
 			}
 
-			bToLower = sEdmType === "Edm.String" && oFilter.bCaseSensitive === false;
+			bToLower = sEdmType === "Edm.String" && oFilter.isCaseSensitive() === false;
 			sFilterPath = bThese && !aFiltersNoThese?.includes(oFilter)
-				? setCase(`$these/aggregate(${oFilter.sPath})`)
-				: setCase(decodeURIComponent(oFilter.sPath));
-			sValue = setCase(_Helper.formatLiteral(oFilter.oValue1, sEdmType));
+				? setCase(`$these/aggregate(${oFilter.getPath()})`)
+				: setCase(decodeURIComponent(oFilter.getPath()));
+			sValue = setCase(_Helper.formatLiteral(oFilter.getValue1(), sEdmType));
 
-			switch (oFilter.sOperator) {
+			switch (oFilter.getOperator()) {
 				case FilterOperator.BT:
 					sFilter = sFilterPath + " ge " + sValue + " and " + sFilterPath + " le "
-						+ setCase(_Helper.formatLiteral(oFilter.oValue2, sEdmType));
+						+ setCase(_Helper.formatLiteral(oFilter.getValue2(), sEdmType));
 					break;
 				case FilterOperator.NB:
 					sFilter = wrap(sFilterPath + " lt " + sValue + " or " + sFilterPath + " gt "
-						+ setCase(_Helper.formatLiteral(oFilter.oValue2, sEdmType)), bWithinAnd);
+						+ setCase(_Helper.formatLiteral(oFilter.getValue2(), sEdmType)),
+						bWithinAnd);
 					break;
 				case FilterOperator.EQ:
 				case FilterOperator.GE:
@@ -1950,7 +1951,8 @@ sap.ui.define([
 				case FilterOperator.LE:
 				case FilterOperator.LT:
 				case FilterOperator.NE:
-					sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " " + sValue;
+					sFilter = sFilterPath + " " + oFilter.getOperator().toLowerCase() + " "
+						+ sValue;
 					break;
 				case FilterOperator.Contains:
 				case FilterOperator.EndsWith:
@@ -1958,11 +1960,11 @@ sap.ui.define([
 				case FilterOperator.NotEndsWith:
 				case FilterOperator.NotStartsWith:
 				case FilterOperator.StartsWith:
-					sFilter = oFilter.sOperator.toLowerCase().replace("not", "not ")
+					sFilter = oFilter.getOperator().toLowerCase().replace("not", "not ")
 						+ "(" + sFilterPath + "," + sValue + ")";
 					break;
 				default:
-					throw new Error("Unsupported operator: " + oFilter.sOperator);
+					throw new Error("Unsupported operator: " + oFilter.getOperator());
 			}
 			return sFilter;
 		}
@@ -1983,18 +1985,18 @@ sap.ui.define([
 				return SyncPromise.resolve();
 			}
 
-			if (oFilter.aFilters) {
-				return SyncPromise.all(oFilter.aFilters.map(function (oSubFilter) {
-					return fetchFilter(oSubFilter, mLambdaVariableToPath, oFilter.bAnd, bThese);
+			if (oFilter.getFilters()) {
+				return SyncPromise.all(oFilter.getFilters().map(function (oSubFilter) {
+					return fetchFilter(oSubFilter, mLambdaVariableToPath, oFilter.isAnd(), bThese);
 				})).then(function (aFilterStrings) {
 					// wrap it if it's an 'or' filter embedded in an 'and'
-					return wrap(aFilterStrings.join(oFilter.bAnd ? " and " : " or "),
-						bWithinAnd && !oFilter.bAnd);
+					return wrap(aFilterStrings.join(oFilter.isAnd() ? " and " : " or "),
+						bWithinAnd && !oFilter.isAnd());
 				});
 			}
 
 			sResolvedPath = oMetaModel.resolve(
-				replaceLambdaVariables(oFilter.sPath, mLambdaVariableToPath), oMetaContext);
+				replaceLambdaVariables(oFilter.getPath(), mLambdaVariableToPath), oMetaContext);
 
 			return oMetaModel.fetchObject(sResolvedPath).then(function (oPropertyMetadata) {
 				var oCondition, sLambdaVariable, sOperator;
@@ -2004,23 +2006,23 @@ sap.ui.define([
 						+ sResolvedPath);
 				}
 
-				sOperator = oFilter.sOperator;
+				sOperator = oFilter.getOperator();
 				if (sOperator === FilterOperator.All || sOperator === FilterOperator.Any) {
-					oCondition = oFilter.oCondition;
-					sLambdaVariable = oFilter.sVariable;
+					oCondition = oFilter.getCondition();
+					sLambdaVariable = oFilter.getVariable();
 					if (sOperator === FilterOperator.Any && !oCondition) {
-						return oFilter.sPath + "/any()";
+						return oFilter.getPath() + "/any()";
 					}
 					// multifilters are processed in parallel, so clone mLambdaVariableToPath
 					// to allow same lambda variables in different filters
 					mLambdaVariableToPath = Object.create(mLambdaVariableToPath);
 					mLambdaVariableToPath[sLambdaVariable]
-						= replaceLambdaVariables(oFilter.sPath, mLambdaVariableToPath);
+						= replaceLambdaVariables(oFilter.getPath(), mLambdaVariableToPath);
 
 					return fetchFilter(
 						oCondition, mLambdaVariableToPath
 					).then(function (sFilterValue) {
-						return oFilter.sPath + "/" + oFilter.sOperator.toLowerCase()
+						return oFilter.getPath() + "/" + oFilter.getOperator().toLowerCase()
 							+ "(" + sLambdaVariable + ":" + sFilterValue + ")";
 					});
 				}

@@ -7116,7 +7116,7 @@ sap.ui.define([
 
 		oBinding.mParameters.$$aggregation = oAggregation;
 		// aFiltersNoThese: map index to instance
-		aSplitFilters[3] = aSplitFilters[3]?.map((iIndex) => aSplitFilters[2].aFilters[iIndex]);
+		aSplitFilters[3] = aSplitFilters[3]?.map((iIndex) => aSplitFilters[2].getFilters()[iIndex]);
 
 		this.oMetaModelMock.expects("getMetaContext").withExactArgs("~").returns(oMetaContext);
 		this.mock(FilterProcessor).expects("combineFilters").returns(oFilter);
@@ -10469,10 +10469,10 @@ sap.ui.define([
 
 				return;
 			}
-			assert.strictEqual(oFilter.aFilters.length, oFixture.predicates.length);
-			assert.notOk(oFilter.bAnd);
+			assert.strictEqual(oFilter.getFilters().length, oFixture.predicates.length);
+			assert.notOk(oFilter.isAnd());
 			oFixture.predicates.forEach(function (_sPredicate, i) {
-				assert.strictEqual(oFilter.aFilters[i], aFilters[i]);
+				assert.strictEqual(oFilter.getFilters()[i], aFilters[i]);
 			});
 			if (fnCallback) {
 				oFixture.messages.forEach(function (oMessage) {
