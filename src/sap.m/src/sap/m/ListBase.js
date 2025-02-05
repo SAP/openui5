@@ -1340,7 +1340,6 @@ function(
 	 * @protected
 	 */
 	ListBase.prototype.onBeforePageLoaded = function(oGrowingInfo, sChangeReason) {
-		this._oLastGroupHeaderBeforeGrowing = this._oLastGroupHeader;
 		this._fireUpdateStarted(sChangeReason, oGrowingInfo);
 		this.fireGrowingStarted(oGrowingInfo);
 	};
@@ -1350,9 +1349,7 @@ function(
 	 * @protected
 	 */
 	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
-		if (Boolean(this._oLastGroupHeaderBeforeGrowing) ^ Boolean(this._oLastGroupHeader)) {
-			this._updateStickyClasses();
-		}
+		this._updateStickyClasses();
 		this._oLastGroupHeaderBeforeGrowing = null;
 		this._fireUpdateFinished(oGrowingInfo);
 		this.fireGrowingFinished(oGrowingInfo);
