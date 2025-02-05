@@ -409,9 +409,9 @@ sap.ui.define([
 					}.bind(this));
 
 					oResolvedDate = BindingResolver.resolveValue(oBindingInfo, this);
-					oResolvedDate.startDate = new Date(oResolvedDate.startDate).toISOString();
+					oResolvedDate.startDate = this.formatDate(oResolvedDate.startDate).toISOString();
 					if (oResolvedDate.endDate) {
-						oResolvedDate.endDate = new Date(oResolvedDate.endDate).toISOString();
+						oResolvedDate.endDate = this.formatDate(oResolvedDate.endDate).toISOString();
 					}
 
 					aResolvedSpecialDates.push(oResolvedDate);
@@ -443,9 +443,9 @@ sap.ui.define([
 
 						singleAssembledItem[sKey] = BindingResolver.resolveValue(oBindingInfo, this);
 					}.bind(this));
-					singleAssembledItem.startDate = new Date(singleAssembledItem.startDate).toISOString();
+					singleAssembledItem.startDate = this.formatDate(singleAssembledItem.startDate).toISOString();
 					if (singleAssembledItem.endDate) {
-						singleAssembledItem.endDate = new Date(singleAssembledItem.endDate).toISOString();
+						singleAssembledItem.endDate = this.formatDate(singleAssembledItem.endDate).toISOString();
 					}
 					aResolvedItems.push(singleAssembledItem);
 					if (aResolvedItems.length > oConfiguration.maxItems) {
@@ -463,7 +463,7 @@ sap.ui.define([
 		/**
 		 * @override
 		 */
-		 CalendarContent.prototype.getStaticConfiguration = function () {
+		CalendarContent.prototype.getStaticConfiguration = function () {
 			var oConfiguration = this.getParsedConfiguration(),
 				aAppointments = this.getAppointments(),
 				aSpecialDates = this._oCalendar.getSpecialDates(),

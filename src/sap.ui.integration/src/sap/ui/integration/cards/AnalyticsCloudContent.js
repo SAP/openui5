@@ -109,6 +109,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	AnalyticsCloudContent.prototype._supportsOverflow = function () {
+		return false;
+	};
+
+	/**
 	 * Creates Widgets' chart inside the card content.
 	 */
 	AnalyticsCloudContent.prototype._renderWidget = function () {

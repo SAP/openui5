@@ -203,7 +203,7 @@ sap.ui.define([
 	Token.prototype._onTokenPress = function(oEvent) {
 		var bSelected = this.getSelected(),
 			bCtrlKey = oEvent.ctrlKey || oEvent.metaKey,
-			bNewSelectedValue = true;
+			bNewSelectedValue = !bSelected;
 
 		if (bCtrlKey || (oEvent.which === KeyCodes.SPACE)) {
 			bNewSelectedValue = !bSelected;

@@ -771,12 +771,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getABAPTimezone: Provides mapping from IANA to ABAP IDs", function (assert) {
-		const aNotSupportedInABAP = ["CET", "CST6CDT", "EET", "EST5EDT", "MET", "MST7MDT", "PST8PDT", "WET"];
 		timezones.aTzTimezoneIDs.forEach((sIANATimezoneID) => {
 			// code under test
-			assert.strictEqual(
-				timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sIANATimezoneID)),
-				!aNotSupportedInABAP.includes(sIANATimezoneID),
+			assert.ok(timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sIANATimezoneID)),
 				sIANATimezoneID);
 		});
 	});

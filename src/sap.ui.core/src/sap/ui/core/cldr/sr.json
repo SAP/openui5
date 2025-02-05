@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "афарски",
 		"ab": "абхаски",
@@ -46,6 +46,7 @@
 		"be": "белоруски",
 		"bej": "беџа",
 		"bem": "бемба",
+		"bew": "бетави",
 		"bez": "бена",
 		"bg": "бугарски",
 		"bgc": "харијански",
@@ -55,6 +56,7 @@
 		"bik": "бикол",
 		"bin": "бини",
 		"bla": "сисика",
+		"blo": "ании",
 		"bm": "бамбара",
 		"bn": "бенгалски",
 		"bo": "тибетански",
@@ -62,6 +64,7 @@
 		"bra": "брај",
 		"brx": "бодо",
 		"bs": "босански",
+		"bss": "акосе",
 		"bua": "бурјатски",
 		"bug": "бугијски",
 		"byn": "блински",
@@ -84,6 +87,7 @@
 		"chp": "чипевјански",
 		"chr": "чероки",
 		"chy": "чејенски",
+		"cic": "чикасо",
 		"ckb": "централни курдски",
 		"ckb_alt-menu": "централни курдски",
 		"ckb_alt-variant": "централни курдски",
@@ -196,6 +200,7 @@
 		"hil": "хилигајнонски",
 		"hit": "хетитски",
 		"hmn": "хмоншки",
+		"hnj": "хмонг нџуа",
 		"ho": "хири моту",
 		"hr": "хрватски",
 		"hsb": "горњолужичкосрпски",
@@ -273,6 +278,7 @@
 		"kv": "коми",
 		"kw": "корнволски",
 		"kwk": "кваквала",
+		"kxv": "куви",
 		"ky": "киргиски",
 		"la": "латински",
 		"lad": "ладино",
@@ -283,6 +289,7 @@
 		"lez": "лезгински",
 		"lg": "ганда",
 		"li": "лимбуршки",
+		"lij": "лигурски",
 		"lil": "лилут",
 		"lkt": "лакота",
 		"lmo": "ломбард",
@@ -464,7 +471,7 @@
 		"ssy": "сахо",
 		"st": "сесото",
 		"str": "стреицсалиш",
-		"su": "сундански",
+		"su": "сундски",
 		"suk": "сукума",
 		"sus": "сусу",
 		"sux": "сумерски",
@@ -474,6 +481,7 @@
 		"swb": "коморски",
 		"syc": "сиријачки",
 		"syr": "сиријски",
+		"szl": "силежански",
 		"ta": "тамилски",
 		"tce": "јужни тачон",
 		"te": "телугу",
@@ -522,7 +530,9 @@
 		"uz": "узбечки",
 		"vai": "ваи",
 		"ve": "венда",
+		"vec": "венецијански",
 		"vi": "вијетнамски",
+		"vmw": "макува",
 		"vo": "волапик",
 		"vot": "водски",
 		"vun": "вунџо",
@@ -536,6 +546,7 @@
 		"wuu": "ву кинески",
 		"xal": "калмички",
 		"xh": "коса",
+		"xnr": "кангри",
 		"xog": "сога",
 		"yao": "јао",
 		"yap": "јапски",
@@ -762,7 +773,7 @@
 		"BI": "Бурунди",
 		"BJ": "Бенин",
 		"BL": "Свети Бартоломеј",
-		"BM": "Бермуда",
+		"BM": "Бермуди",
 		"BN": "Брунеј",
 		"BO": "Боливија",
 		"BQ": "Карипска Холандија",
@@ -941,7 +952,7 @@
 		"PW": "Палау",
 		"PY": "Парагвај",
 		"QA": "Катар",
-		"QO": "Океанија (удаљена острва)",
+		"QO": "удаљена острва Океаније",
 		"RE": "Реинион",
 		"RO": "Румунија",
 		"RS": "Србија",
@@ -1006,7 +1017,7 @@
 		"VU": "Вануату",
 		"WF": "Валис и Футуна",
 		"WS": "Самоа",
-		"XA": "Псеудоакценти",
+		"XA": "симулиране дијакритике",
 		"XB": "Псеудобиди",
 		"XK": "Косово",
 		"YE": "Јемен",
@@ -1014,7 +1025,7 @@
 		"ZA": "Јужноафричка Република",
 		"ZM": "Замбија",
 		"ZW": "Зимбабве",
-		"ZZ": "Непознат регион"
+		"ZZ": "непознат регион"
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
@@ -1022,7 +1033,7 @@
 			"full": "EEEE, d. MMMM y.",
 			"long": "d. MMMM y.",
 			"medium": "d. M. y.",
-			"short": "d.M.yy."
+			"short": "d. M. y."
 		},
 		"timeFormats": {
 			"full": "HH:mm:ss zzzz",
@@ -1041,8 +1052,8 @@
 				"Bhms": "hh:mm:ss B",
 				"d": "d",
 				"E": "E",
-				"EBhm": "E hh:mm B",
-				"EBhms": "E hh:mm:ss B",
+				"EBhm": "E h:mm B",
+				"EBhms": "E, hh:mm:ss B",
 				"Ed": "E d.",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1086,8 +1097,8 @@
 				"yMMMM": "MMMM y.",
 				"yQQQ": "QQQ y.",
 				"yQQQQ": "QQQQ y.",
-				"MMMMW": "W. 'седмица' 'у' MMMM.",
-				"yw": "w. 'седмица' 'у' Y."
+				"MMMMW": "MMMM: W. 'недеља'",
+				"yw": "w. 'недеља' 'у' Y."
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1105,11 +1116,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1117,42 +1128,42 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1476,8 +1487,8 @@
 					"PM"
 				],
 				"narrow": [
-					"пре подне",
-					"по подне"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -1490,7 +1501,7 @@
 				"abbreviated": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -1506,7 +1517,7 @@
 				"wide": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -1635,11 +1646,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1647,42 +1658,42 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2078,8 +2089,8 @@
 					"PM"
 				],
 				"narrow": [
-					"пре подне",
-					"по подне"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -2092,7 +2103,7 @@
 				"abbreviated": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -2108,7 +2119,7 @@
 				"wide": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -2234,11 +2245,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2246,42 +2257,42 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2613,8 +2624,8 @@
 					"PM"
 				],
 				"narrow": [
-					"пре подне",
-					"по подне"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -2627,7 +2638,7 @@
 				"abbreviated": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -2643,7 +2654,7 @@
 				"wide": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -2781,11 +2792,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2793,42 +2804,42 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -3152,8 +3163,8 @@
 					"PM"
 				],
 				"narrow": [
-					"пре подне",
-					"по подне"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -3166,7 +3177,7 @@
 				"abbreviated": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -3182,7 +3193,7 @@
 				"wide": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -3308,11 +3319,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3320,42 +3331,42 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "G y – G y",
+					"G": "G y – G y",
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"M": "GGGGG y-MM-dd – y-MM-dd",
+					"y": "GGGGG y-MM-dd – y-MM-dd"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
+					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
+					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
+					"G": "G y MMM – G y MMM",
 					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"y": "G y MMM – y MMM"
 				},
 				"GyMMMd": {
 					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"G": "G y MMM d – G y MMM d",
+					"M": "G y MMM d – MMM d",
+					"y": "G y MMM d – y MMM d"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y MMM d, E – MMM d, E",
+					"G": "G y MMM d, E – G y MMM d, E",
+					"M": "G y MMM d, E – MMM d, E",
+					"y": "G y MMM d, E – y MMM d, E"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -3679,8 +3690,8 @@
 					"PM"
 				],
 				"narrow": [
-					"пре подне",
-					"по подне"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -3693,7 +3704,7 @@
 				"abbreviated": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -3709,7 +3720,7 @@
 				"wide": {
 					"midnight": "поноћ",
 					"noon": "подне",
-					"morning1": "ујутро",
+					"morning1": "ујутру",
 					"afternoon1": "по подне",
 					"evening1": "увече",
 					"night1": "ноћу"
@@ -4384,7 +4395,6 @@
 			"Bishkek": "Бишкек",
 			"Brunei": "Брунеј",
 			"Chita": "Чита",
-			"Choibalsan": "Чојбалсан",
 			"Colombo": "Коломбо",
 			"Damascus": "Дамаск",
 			"Dhaka": "Дака",
@@ -4756,6 +4766,7 @@
 		"USD": "US$",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5374,7 +5385,7 @@
 				"unitPattern-count-other": "{0} smi"
 			},
 			"length-point": {
-				"displayName": "pt",
+				"displayName": "типографске тачке",
 				"unitPattern-count-other": "{0} pt"
 			},
 			"length-solar-radius": {
@@ -5732,12 +5743,29 @@
 				"displayName": "qt Imp",
 				"unitPattern-count-other": "{0} qt Imp."
 			},
+			"speed-light-speed": {
+				"displayName": "светло",
+				"unitPattern-count-one": "{0} светло",
+				"unitPattern-count-few": "{0} светла",
+				"unitPattern-count-other": "{0} светала"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "делови/милијарда",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "ноћ",
+				"unitPattern-count-one": "{0} ноћ",
+				"unitPattern-count-few": "{0} ноћи",
+				"unitPattern-count-other": "{0} ноћи",
+				"perUnitPattern": "{0}/ноћ"
+			},
 			"coordinateUnit": {
 				"displayName": "правац",
-				"east": "{0}И",
-				"north": "{0}С",
-				"south": "{0}Ј",
-				"west": "{0}З"
+				"east": "{0} E",
+				"north": "{0} N",
+				"south": "{0} S",
+				"west": "{0} W"
 			}
 		}
 	},

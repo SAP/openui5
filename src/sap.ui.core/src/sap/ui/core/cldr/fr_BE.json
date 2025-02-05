@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abkhaze",
@@ -73,6 +73,7 @@
 		"bjn": "banjar",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengali",
 		"bo": "tibétain",
@@ -216,7 +217,6 @@
 		"gmh": "moyen haut-allemand",
 		"gn": "guarani",
 		"goh": "ancien haut-allemand",
-		"gom": "konkani de Goa",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gotique",
@@ -327,6 +327,7 @@
 		"kv": "komi",
 		"kw": "cornique",
 		"kwk": "kwak’wala",
+		"kxv": "kuvi",
 		"ky": "kirghize",
 		"la": "latin",
 		"lad": "ladino",
@@ -356,7 +357,6 @@
 		"lua": "luba-kasaï (ciluba)",
 		"lui": "luiseño",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "lushaï",
 		"luy": "luyia",
 		"lv": "letton",
@@ -625,6 +625,7 @@
 		"vi": "vietnamien",
 		"vls": "flamand occidental",
 		"vmf": "franconien du Main",
+		"vmw": "macua",
 		"vo": "volapük",
 		"vot": "vote",
 		"vro": "võro",
@@ -640,6 +641,7 @@
 		"xal": "kalmouk",
 		"xh": "xhosa",
 		"xmf": "mingrélien",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapois",
@@ -1598,7 +1600,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -1606,7 +1608,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -1624,7 +1626,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -1632,7 +1634,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -1640,7 +1642,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -2123,7 +2125,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -2131,7 +2133,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -2149,7 +2151,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -2157,7 +2159,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -2165,7 +2167,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -2653,7 +2655,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -2661,7 +2663,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -2679,7 +2681,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -2687,7 +2689,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -2695,7 +2697,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -3187,7 +3189,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -3195,7 +3197,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -3213,7 +3215,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -3221,7 +3223,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -3229,7 +3231,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -3709,7 +3711,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -3717,7 +3719,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -3735,7 +3737,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"narrow": {
 					"midnight": "minuit",
@@ -3743,7 +3745,7 @@
 					"morning1": "mat.",
 					"afternoon1": "ap.m.",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				},
 				"wide": {
 					"midnight": "minuit",
@@ -3751,7 +3753,7 @@
 					"morning1": "matin",
 					"afternoon1": "après-midi",
 					"evening1": "soir",
-					"night1": "nuit"
+					"night1": "matin"
 				}
 			}
 		},
@@ -4349,7 +4351,6 @@
 			"Bishkek": "Bichkek",
 			"Brunei": "Brunei",
 			"Chita": "Tchita",
-			"Choibalsan": "Tchoïbalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damas",
 			"Dhaka": "Dhaka",
@@ -4721,6 +4722,7 @@
 		"VND": "₫",
 		"WST": "$WS",
 		"XAF": "FCFA",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "FCFP",
 		"XXX": "¤"
@@ -5174,7 +5176,7 @@
 			},
 			"energy-foodcalorie": {
 				"unitPattern-count-one": "{0} kcal",
-				"unitPattern-count-other": "{0}  kcal"
+				"unitPattern-count-other": "{0} kcal"
 			},
 			"energy-kilojoule": {
 				"displayName": "kJ",
@@ -5796,6 +5798,21 @@
 				"displayName": "qt imp.",
 				"unitPattern-count-one": "{0} qt imp.",
 				"unitPattern-count-other": "{0} qt imp."
+			},
+			"speed-light-speed": {
+				"displayName": "lumière",
+				"unitPattern-count-one": "{0} lumière",
+				"unitPattern-count-other": "{0} lumière"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "nuits",
+				"unitPattern-count-one": "{0} nuit",
+				"unitPattern-count-other": "{0} nuits",
+				"perUnitPattern": "{0}/nuit"
 			},
 			"coordinateUnit": {
 				"displayName": "direction",

@@ -47,6 +47,7 @@ sap.ui.define([
 			"sap.ui.integration.CardDisplayVariant",
 			"sap.ui.integration.CardBlockingMessageType",
 			"sap.ui.integration.CardPreviewMode",
+			"sap.ui.integration.CardOverflow",
 			"sap.ui.integration.AttributesLayoutType"
 		],
 		controls: [
@@ -388,6 +389,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines the overflow behaviour of the card.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @experimental Since 1.133
+	 * @since 1.133
+	 */
+	thisLib.CardOverflow = {
+		/**
+		 * The overflowing part of the card is hidden.
+		 *
+		 * <b>Note</b>: If the "Default" option is used, the card must be allowed to grow in height as much as it needs to avoid overflowing. Use a layout which allows this.
+		 *
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * The overflowing part of the card is hidden, but a 'Show More' button is displayed in the footer. By pressing the button, the full content will be displayed.
+		 *
+		 * <b>Note</b>: If this option is used, the "minHeight" setting for cards of type Analytical, AnalyticsCloud and WebPage will be ignored.
+		 *
+		 * <b>Disclaimer</b>: This feature is not suitable for object cards with forms. It might lead to undesired user interaction.
+		 *
+		 * @public
+		 */
+		ShowMore: "ShowMore"
+	};
+
+	/**
 	 * Defines the layout type of the List card attributes.
 	 * @enum {string}
 	 * @public
@@ -446,6 +477,7 @@ sap.ui.define([
 	DataType.registerEnum("sap.ui.integration.CardMessageType", thisLib.CardMessageType);
 	DataType.registerEnum("sap.ui.integration.CardBlockingMessageType", thisLib.CardBlockingMessageType);
 	DataType.registerEnum("sap.ui.integration.CardPreviewMode", thisLib.CardPreviewMode);
+	DataType.registerEnum("sap.ui.integration.CardOverflow", thisLib.CardOverflow);
 	DataType.registerEnum("sap.ui.integration.AttributesLayoutType", thisLib.AttributesLayoutType);
 
 	return thisLib;

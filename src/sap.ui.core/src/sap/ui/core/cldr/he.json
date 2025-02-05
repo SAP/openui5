@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "אפארית",
 		"ab": "אבחזית",
@@ -60,6 +60,7 @@
 		"bin": "ביני",
 		"bkm": "קום",
 		"bla": "סיקסיקה",
+		"blo": "אני",
 		"bm": "במבארה",
 		"bn": "בנגלית",
 		"bo": "טיבטית",
@@ -119,7 +120,6 @@
 		"dar": "דרגווה",
 		"dav": "טאיטה",
 		"de": "גרמנית",
-		"de_CH": "גרמנית (שוויץ)",
 		"del": "דלאוור",
 		"den": "סלאבית",
 		"dgr": "דוגריב",
@@ -159,7 +159,6 @@
 		"fo": "פארואזית",
 		"fon": "פון",
 		"fr": "צרפתית",
-		"fr_CH": "צרפתית (שוויץ)",
 		"frc": "צרפתית קייג׳ונית",
 		"frm": "צרפתית תיכונה",
 		"fro": "צרפתית עתיקה",
@@ -279,6 +278,7 @@
 		"kv": "קומי",
 		"kw": "קורנית",
 		"kwk": "קוואקוואלה",
+		"kxv": "קווי",
 		"ky": "קירגיזית",
 		"la": "לטינית",
 		"lad": "לדינו",
@@ -292,6 +292,7 @@
 		"lij": "ליגורית",
 		"lil": "לילואט",
 		"lkt": "לקוטה",
+		"lmo": "לומברדית",
 		"ln": "לינגלה",
 		"lo": "לאו",
 		"lol": "מונגו",
@@ -485,6 +486,7 @@
 		"swb": "קומורית",
 		"syc": "סירית קלאסית",
 		"syr": "סורית",
+		"szl": "שלזית",
 		"ta": "טמילית",
 		"tce": "טצ׳ון דרומית",
 		"te": "טלוגו",
@@ -533,7 +535,9 @@
 		"uz": "אוזבקית",
 		"vai": "וואי",
 		"ve": "וונדה",
+		"vec": "ונציאנית",
 		"vi": "וייטנאמית",
+		"vmw": "מאקואה",
 		"vo": "‏וולאפיק",
 		"vot": "ווטיק",
 		"vun": "וונג׳ו",
@@ -547,6 +551,7 @@
 		"wuu": "סינית וו",
 		"xal": "קלמיקית",
 		"xh": "קוסה",
+		"xnr": "קאנגרי",
 		"xog": "סוגה",
 		"yao": "יאו",
 		"yap": "יאפזית",
@@ -1104,7 +1109,7 @@
 				"Ehms": "E h:mm:ss a",
 				"EHms": "E H:mm:ss",
 				"Gy": "y G",
-				"GyMd": "d/M/y GGGGG",
+				"GyMd": "d/M/y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d בMMM y G",
 				"GyMMMEd": "E, d בMMM y G",
@@ -1156,11 +1161,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1173,19 +1178,19 @@
 				},
 				"GyM": {
 					"G": "M.y GGGGG – M.y GGGGG",
-					"M": "M.y – M.y GGGGG",
-					"y": "M.y – M.y GGGGG"
+					"M": "M.y – M.y G",
+					"y": "M.y – M.y G"
 				},
 				"GyMd": {
-					"d": "d.M.y – d.M.y GGGGG",
-					"G": "d.M.y GGGGG – d.M.y GGGGG",
-					"M": "d.M.y – d.M.y GGGGG",
-					"y": "d.M.y – d.M.y GGGGG"
+					"d": "d.M.y – d.M.y G",
+					"G": "d.M.y G – d.M.y G",
+					"M": "d.M.y – d.M.y G",
+					"y": "d.M.y – d.M.y G"
 				},
 				"GyMEd": {
-					"d": "E, d.M.y – E, d.M.y GGGGG",
-					"G": "E, d.M.y GGGGG – E, d.M.y GGGGG",
-					"M": "E, d.M.y – E, d.M.y GGGGG",
+					"d": "E, d.M.y – E, d.M.y G",
+					"G": "E, d.M.y G – E, d.M.y G",
+					"M": "E, d.M.y – E, d.M.y G",
 					"y": "E, d.M.y – E, d.M.y GGGGG"
 				},
 				"GyMMM": {
@@ -1206,14 +1211,14 @@
 					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1222,7 +1227,7 @@
 					"m": "H:mm–H:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -1231,8 +1236,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -1512,16 +1517,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -1691,11 +1696,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1707,13 +1712,13 @@
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
 					"M": "d.M.y – d.M.y GGGGG",
 					"y": "d.M.y – d.M.y GGGGG"
 				},
@@ -1741,14 +1746,14 @@
 					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1757,7 +1762,7 @@
 					"m": "H:mm–H:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -1766,8 +1771,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -2047,16 +2052,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -2223,11 +2228,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2239,13 +2244,13 @@
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
 					"M": "d.M.y – d.M.y GGGGG",
 					"y": "d.M.y – d.M.y GGGGG"
 				},
@@ -2273,14 +2278,14 @@
 					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2289,7 +2294,7 @@
 					"m": "H:mm–H:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2298,8 +2303,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -2579,16 +2584,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -2767,11 +2772,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2783,13 +2788,13 @@
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
 					"M": "d.M.y – d.M.y GGGGG",
 					"y": "d.M.y – d.M.y GGGGG"
 				},
@@ -2817,14 +2822,14 @@
 					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2833,7 +2838,7 @@
 					"m": "H:mm–H:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2842,8 +2847,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -3123,16 +3128,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -3299,11 +3304,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3315,13 +3320,13 @@
 					"y": "G y–y"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y-MM – GGGGG y-MM",
+					"M": "GGGGG y-MM – y-MM",
+					"y": "GGGGG y-MM – y-MM"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
+					"d": "GGGGG y-MM-dd – y-MM-dd",
+					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
 					"M": "d.M.y – d.M.y GGGGG",
 					"y": "d.M.y – d.M.y GGGGG"
 				},
@@ -3349,14 +3354,14 @@
 					"y": "E, d בMMM y – E, d בMMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -3365,7 +3370,7 @@
 					"m": "H:mm–H:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -3374,8 +3379,8 @@
 					"m": "H:mm–H:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -3655,16 +3660,16 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"narrow": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				],
 				"wide": [
-					"לפנה״צ",
-					"אחה״צ"
+					"AM",
+					"PM"
 				]
 			},
 			"stand-alone": {
@@ -3764,13 +3769,11 @@
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "בעוד שנה",
 				"relativeTimePattern-count-two": "בעוד שנתיים",
-				"relativeTimePattern-count-many": "בעוד {0} שנה",
 				"relativeTimePattern-count-other": "בעוד {0} שנים"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "לפני שנה",
 				"relativeTimePattern-count-two": "לפני שנתיים",
-				"relativeTimePattern-count-many": "לפני {0} שנה",
 				"relativeTimePattern-count-other": "לפני {0} שנים"
 			}
 		},
@@ -3782,13 +3785,11 @@
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "בעוד שנה",
 				"relativeTimePattern-count-two": "בעוד שנתיים",
-				"relativeTimePattern-count-many": "בעוד {0} שנה",
 				"relativeTimePattern-count-other": "בעוד {0} שנים"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "לפני שנה",
 				"relativeTimePattern-count-two": "לפני שנתיים",
-				"relativeTimePattern-count-many": "לפני {0} שנה",
 				"relativeTimePattern-count-other": "לפני {0} שנים"
 			}
 		},
@@ -3800,13 +3801,11 @@
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "בעוד שנה",
 				"relativeTimePattern-count-two": "בעוד שנתיים",
-				"relativeTimePattern-count-many": "בעוד {0} שנה",
 				"relativeTimePattern-count-other": "בעוד {0} שנים"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "לפני שנה",
 				"relativeTimePattern-count-two": "לפני שנתיים",
-				"relativeTimePattern-count-many": "לפני {0} שנה",
 				"relativeTimePattern-count-other": "לפני {0} שנים"
 			}
 		},
@@ -4412,7 +4411,6 @@
 			"Bishkek": "בישקק",
 			"Brunei": "ברוניי",
 			"Chita": "צ׳יטה",
-			"Choibalsan": "צ׳ויבלסן",
 			"Colombo": "קולומבו",
 			"Damascus": "דמשק",
 			"Dhaka": "דאקה",
@@ -4849,6 +4847,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5016,13 +5015,13 @@
 			},
 			"angle-arc-minute": {
 				"displayName": "דק׳ קשת",
-				"unitPattern-count-one": "ד׳ קשת {0}",
+				"unitPattern-count-one": "{0} ד׳ קשת",
 				"unitPattern-count-two": "{0} דק׳ קשת",
 				"unitPattern-count-other": "{0} דק׳ קשת"
 			},
 			"angle-arc-second": {
 				"displayName": "שנ׳ קשת",
-				"unitPattern-count-one": "שנ׳ קשת {0}",
+				"unitPattern-count-one": "{0} שנ׳ קשת",
 				"unitPattern-count-two": "{0} שנ׳ קשת",
 				"unitPattern-count-other": "{0} שנ׳ קשת"
 			},
@@ -5035,13 +5034,13 @@
 			},
 			"area-hectare": {
 				"displayName": "הקטאר",
-				"unitPattern-count-one": "‎{0} ha",
-				"unitPattern-count-two": "‎{0} ha",
-				"unitPattern-count-other": "‎{0} ha"
+				"unitPattern-count-one": "{0} ha",
+				"unitPattern-count-two": "{0} ha",
+				"unitPattern-count-other": "{0} ha"
 			},
 			"area-square-meter": {
 				"displayName": "מ״ר",
-				"unitPattern-count-one": "מ״ר {0}",
+				"unitPattern-count-one": "{0} מ״ר",
 				"unitPattern-count-two": "{0} מ״ר",
 				"unitPattern-count-other": "{0} מ״ר",
 				"perUnitPattern": "{0}/מ״ר"
@@ -5055,35 +5054,35 @@
 			},
 			"area-square-mile": {
 				"displayName": "מייל רבוע",
-				"unitPattern-count-one": "‎{0} sq mi",
-				"unitPattern-count-two": "‎{0} sq mi",
-				"unitPattern-count-other": "‎{0} sq mi",
-				"perUnitPattern": "‎{0}/mi²"
+				"unitPattern-count-one": "{0} sq mi",
+				"unitPattern-count-two": "{0} sq mi",
+				"unitPattern-count-other": "{0} sq mi",
+				"perUnitPattern": "{0}/mi²"
 			},
 			"area-acre": {
 				"displayName": "אקר",
-				"unitPattern-count-one": "‎{0} ac",
-				"unitPattern-count-two": "{0} ac",
-				"unitPattern-count-other": "‎{0} ac"
+				"unitPattern-count-one": "{0} אקר",
+				"unitPattern-count-two": "{0} אקר",
+				"unitPattern-count-other": "{0} אקר"
 			},
 			"area-square-yard": {
 				"displayName": "yards²",
-				"unitPattern-count-one": "‎{0} yd²",
-				"unitPattern-count-two": "‎{0} yd²",
-				"unitPattern-count-other": "‎{0} yd²"
+				"unitPattern-count-one": "{0} yd²",
+				"unitPattern-count-two": "{0} yd²",
+				"unitPattern-count-other": "{0} yd²"
 			},
 			"area-square-foot": {
 				"displayName": "ft²",
-				"unitPattern-count-one": "‎{0} sq ft",
-				"unitPattern-count-two": "‎{0} sq ft",
-				"unitPattern-count-other": "‎{0} sq ft"
+				"unitPattern-count-one": "{0} sq ft",
+				"unitPattern-count-two": "{0} sq ft",
+				"unitPattern-count-other": "{0} sq ft"
 			},
 			"area-square-inch": {
 				"displayName": "in²",
-				"unitPattern-count-one": "‎{0} in²",
-				"unitPattern-count-two": "‎{0} in²",
-				"unitPattern-count-other": "‎{0} in²",
-				"perUnitPattern": "‎{0}/in²"
+				"unitPattern-count-one": "{0} in²",
+				"unitPattern-count-two": "{0} in²",
+				"unitPattern-count-other": "{0} in²",
+				"perUnitPattern": "{0}/in²"
 			},
 			"area-dunam": {
 				"displayName": "דונם",
@@ -5093,10 +5092,14 @@
 			},
 			"concentr-karat": {
 				"displayName": "kt",
+				"unitPattern-count-one": "{0} kt",
+				"unitPattern-count-two": "{0} kt",
 				"unitPattern-count-other": "{0} kt"
 			},
 			"concentr-milligram-ofglucose-per-deciliter": {
 				"displayName": "mg/dL",
+				"unitPattern-count-one": "{0} mg/dL",
+				"unitPattern-count-two": "{0} mg/dL",
 				"unitPattern-count-other": "{0} mg/dL"
 			},
 			"concentr-millimole-per-liter": {
@@ -5105,7 +5108,7 @@
 			},
 			"concentr-item": {
 				"displayName": "פריט",
-				"unitPattern-count-one": "פריט {0}",
+				"unitPattern-count-one": "{0} פריט",
 				"unitPattern-count-two": "{0} פריטים",
 				"unitPattern-count-other": "{0} פריטים"
 			},
@@ -5137,7 +5140,7 @@
 			},
 			"consumption-liter-per-100-kilometer": {
 				"displayName": "ל׳/100 ק״מ",
-				"unitPattern-count-one": "ל׳ {0}/100 ק״מ",
+				"unitPattern-count-one": "{0} ל׳/100 ק״מ",
 				"unitPattern-count-two": "{0} ל׳/100 ק״מ",
 				"unitPattern-count-other": "{0} ל׳/100 ק״מ"
 			},
@@ -5201,19 +5204,19 @@
 			},
 			"duration-century": {
 				"displayName": "מאות",
-				"unitPattern-count-one": "מאה {0}",
+				"unitPattern-count-one": "{0} מאה",
 				"unitPattern-count-two": "{0} מאות",
 				"unitPattern-count-other": "{0} מאות"
 			},
 			"duration-decade": {
 				"displayName": "עשור",
-				"unitPattern-count-one": "עשור {0}",
+				"unitPattern-count-one": "{0} עשור",
 				"unitPattern-count-two": "{0} עשורים",
 				"unitPattern-count-other": "{0} עשורים"
 			},
 			"duration-year": {
 				"displayName": "שנים",
-				"unitPattern-count-one": "שנה {0}",
+				"unitPattern-count-one": "{0} שנה",
 				"unitPattern-count-two": "{0} שנים",
 				"unitPattern-count-other": "{0} שנים",
 				"perUnitPattern": "{0}/שנה"
@@ -5225,43 +5228,43 @@
 			},
 			"duration-month": {
 				"displayName": "חודשים",
-				"unitPattern-count-one": "חודש",
-				"unitPattern-count-two": "חודשיים",
+				"unitPattern-count-one": "{0} ח׳",
+				"unitPattern-count-two": "{0} ח׳",
 				"unitPattern-count-other": "{0} ח׳",
 				"perUnitPattern": "{0}/חודש"
 			},
 			"duration-week": {
 				"displayName": "שבועות",
-				"unitPattern-count-one": "שבוע {0}",
+				"unitPattern-count-one": "{0} שבוע",
 				"unitPattern-count-two": "שבועיים",
 				"unitPattern-count-other": "{0} שבועות",
 				"perUnitPattern": "{0}/שבוע"
 			},
 			"duration-day": {
 				"displayName": "ימים",
-				"unitPattern-count-one": "יום",
+				"unitPattern-count-one": "{0} יום",
 				"unitPattern-count-two": "יומיים",
 				"unitPattern-count-other": "{0} ימ׳",
 				"perUnitPattern": "{0}/יום"
 			},
 			"duration-hour": {
 				"displayName": "שע׳",
-				"unitPattern-count-one": "שעה",
+				"unitPattern-count-one": "{0} שעה",
 				"unitPattern-count-two": "שעתיים",
 				"unitPattern-count-other": "{0} שע׳",
 				"perUnitPattern": "{0}/שעה"
 			},
 			"duration-minute": {
 				"displayName": "דק׳",
-				"unitPattern-count-one": "דקה",
-				"unitPattern-count-two": "שתי דק׳",
+				"unitPattern-count-one": "{0} דק׳",
+				"unitPattern-count-two": "{0} דק׳",
 				"unitPattern-count-other": "{0} דק׳",
 				"perUnitPattern": "{0}/ד׳"
 			},
 			"duration-second": {
 				"displayName": "שנ׳",
-				"unitPattern-count-one": "שנ׳",
-				"unitPattern-count-two": "שתי שנ׳",
+				"unitPattern-count-one": "{0} שנ׳",
+				"unitPattern-count-two": "{0} שנ׳",
 				"unitPattern-count-other": "{0} שנ׳",
 				"perUnitPattern": "{0}/שנ׳"
 			},
@@ -5303,8 +5306,8 @@
 			},
 			"energy-foodcalorie": {
 				"displayName": "קלו׳",
-				"unitPattern-count-one": "קלו׳ אחת",
-				"unitPattern-count-two": "שתי קלו׳",
+				"unitPattern-count-one": "{0} קלו׳",
+				"unitPattern-count-two": "{0} קלו׳",
 				"unitPattern-count-many": "{0} קלו׳",
 				"unitPattern-count-other": "{0} קלו׳"
 			},
@@ -5344,9 +5347,10 @@
 			},
 			"force-kilowatt-hour-per-100-kilometer": {
 				"displayName": "קוט״ש/100 ק״מ",
-				"unitPattern-count-one": "{0} קוט\"ש/100 ק\"מ",
-				"unitPattern-count-two": "{0} קוט\"ש/100 ק\"מ",
-				"unitPattern-count-other": "{0} קוט\"ש/100 ק\"מ"
+				"unitPattern-count-one": "{0} קוט״ש/100 ק״מ",
+				"unitPattern-count-two": "{0} קוט״ש/100 ק״מ",
+				"unitPattern-count-many": "{0} קוט״ש/100 ק״מ",
+				"unitPattern-count-other": "{0} קוט״ש/100 ק״מ"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -5366,39 +5370,39 @@
 			},
 			"graphics-em": {
 				"displayName": "em",
-				"unitPattern-count-one": "‎{0} em ‎",
-				"unitPattern-count-two": "‎{0} em ‎",
-				"unitPattern-count-other": "‎{0} em ‎"
+				"unitPattern-count-one": "{0} em",
+				"unitPattern-count-two": "{0} em",
+				"unitPattern-count-other": "{0} em"
 			},
 			"graphics-pixel": {
 				"displayName": "px",
-				"unitPattern-count-one": "‎{0} px ‎",
-				"unitPattern-count-two": "‎{0} px ‎",
-				"unitPattern-count-other": "‎{0} px ‎"
+				"unitPattern-count-one": "{0} px",
+				"unitPattern-count-two": "{0} px",
+				"unitPattern-count-other": "{0} px"
 			},
 			"graphics-megapixel": {
 				"displayName": "MP",
-				"unitPattern-count-one": "‎{0} MP ‎",
-				"unitPattern-count-two": "‎{0} MP ‎",
-				"unitPattern-count-other": "‎{0} MP ‎"
+				"unitPattern-count-one": "{0} MP",
+				"unitPattern-count-two": "{0} MP",
+				"unitPattern-count-other": "{0} MP"
 			},
 			"graphics-pixel-per-centimeter": {
 				"displayName": "ppcm",
-				"unitPattern-count-one": "‎{0} ppcm‎",
-				"unitPattern-count-two": "‎{0} ppcm‎",
-				"unitPattern-count-other": "‎{0} ppcm‎"
+				"unitPattern-count-one": "{0} ppcm",
+				"unitPattern-count-two": "{0} ppcm",
+				"unitPattern-count-other": "{0} ppcm"
 			},
 			"graphics-pixel-per-inch": {
 				"displayName": "ppi",
-				"unitPattern-count-one": "‎{0} ppi‎",
-				"unitPattern-count-two": "‎{0} ppi‎",
-				"unitPattern-count-other": "‎{0} ppi‎"
+				"unitPattern-count-one": "{0} ppi",
+				"unitPattern-count-two": "{0} ppi",
+				"unitPattern-count-other": "{0} ppi"
 			},
 			"graphics-dot-per-inch": {
-				"displayName": "נקודות לאינץ׳",
-				"unitPattern-count-one": "{0} dpi",
-				"unitPattern-count-two": "‎{0} ppi‎",
-				"unitPattern-count-other": "‎{0} dpi‎"
+				"displayName": "dpi",
+				"unitPattern-count-one": "{0} ppi",
+				"unitPattern-count-two": "{0} ppi",
+				"unitPattern-count-other": "{0} dpi"
 			},
 			"graphics-dot": {
 				"displayName": "נקודה קטנה"
@@ -5436,26 +5440,26 @@
 			},
 			"length-millimeter": {
 				"displayName": "מ״מ",
-				"unitPattern-count-one": "מ″מ {0}",
+				"unitPattern-count-one": "{0} מ″מ",
 				"unitPattern-count-two": "{0} מ״מ",
 				"unitPattern-count-other": "{0} מ״מ"
 			},
 			"length-micrometer": {
 				"displayName": "μm",
-				"unitPattern-count-one": "‎{0} μm‎",
-				"unitPattern-count-two": "‎{0} μm‎",
-				"unitPattern-count-other": "‎{0} μm‎"
+				"unitPattern-count-one": "{0} μm",
+				"unitPattern-count-two": "{0} μm",
+				"unitPattern-count-other": "{0} μm"
 			},
 			"length-nanometer": {
 				"displayName": "nm",
-				"unitPattern-count-one": "‎{0} nm",
-				"unitPattern-count-two": "‎{0} nm",
-				"unitPattern-count-other": "‎{0} nm"
+				"unitPattern-count-one": "{0} nm",
+				"unitPattern-count-two": "{0} nm",
+				"unitPattern-count-other": "{0} nm"
 			},
 			"length-picometer": {
 				"displayName": "פ״מ",
-				"unitPattern-count-one": "פ“מ {0}",
-				"unitPattern-count-two": "{0} פ\"מ",
+				"unitPattern-count-one": "{0} פ“מ",
+				"unitPattern-count-two": "{0} פ״מ",
 				"unitPattern-count-other": "{0} פ\"מ"
 			},
 			"length-mile": {
@@ -5466,41 +5470,41 @@
 			},
 			"length-yard": {
 				"displayName": "יארד",
-				"unitPattern-count-one": "יארד {0}",
+				"unitPattern-count-one": "{0} יארד",
 				"unitPattern-count-two": "{0} יארד",
 				"unitPattern-count-other": "{0} יארד"
 			},
 			"length-foot": {
 				"displayName": "רגל",
-				"unitPattern-count-one": "‎{0} ft",
-				"unitPattern-count-two": "‎{0} ft",
-				"unitPattern-count-other": "‎{0} ft",
-				"perUnitPattern": "‎{0}/ft"
+				"unitPattern-count-one": "{0} ft",
+				"unitPattern-count-two": "{0} ft",
+				"unitPattern-count-other": "{0} ft",
+				"perUnitPattern": "{0} ‎/ft"
 			},
 			"length-inch": {
 				"displayName": "אינץ׳",
-				"unitPattern-count-one": "‎{0} in",
-				"unitPattern-count-two": "‎{0} in",
-				"unitPattern-count-other": "‎{0} in",
-				"perUnitPattern": "‎{0}/in"
+				"unitPattern-count-one": "{0} in",
+				"unitPattern-count-two": "{0} in",
+				"unitPattern-count-other": "{0} in",
+				"perUnitPattern": "{0} ‎/in"
 			},
 			"length-parsec": {
 				"displayName": "pc",
-				"unitPattern-count-one": "‎{0} pc",
-				"unitPattern-count-two": "‎{0} pc",
-				"unitPattern-count-other": "‎{0} pc"
+				"unitPattern-count-one": "{0} pc",
+				"unitPattern-count-two": "{0} pc",
+				"unitPattern-count-other": "{0} pc"
 			},
 			"length-light-year": {
 				"displayName": "שנות אור",
-				"unitPattern-count-one": "שנת אור {0}",
+				"unitPattern-count-one": "{0} שנת אור",
 				"unitPattern-count-two": "{0} שנות אור",
 				"unitPattern-count-other": "{0} שנות אור"
 			},
 			"length-astronomical-unit": {
 				"displayName": "au",
-				"unitPattern-count-one": "‎{0} au",
-				"unitPattern-count-two": "‎{0} au",
-				"unitPattern-count-other": "‎{0} au"
+				"unitPattern-count-one": "{0} au",
+				"unitPattern-count-two": "{0} au",
+				"unitPattern-count-other": "{0} au"
 			},
 			"length-furlong": {
 				"displayName": "fur",
@@ -5522,15 +5526,15 @@
 			},
 			"length-point": {
 				"displayName": "נקודות",
-				"unitPattern-count-one": "{0} נק'",
-				"unitPattern-count-two": "{0} נק'",
+				"unitPattern-count-one": "{0} נק׳",
+				"unitPattern-count-two": "{0} נק׳",
 				"unitPattern-count-other": "{0} נק'"
 			},
 			"length-solar-radius": {
 				"displayName": "R☉",
-				"unitPattern-count-one": "‎{0} R☉‎",
-				"unitPattern-count-two": "‎{0} R☉‎",
-				"unitPattern-count-other": "‎{0} R☉‎"
+				"unitPattern-count-one": "{0} R☉‎",
+				"unitPattern-count-two": "{0} R☉‎",
+				"unitPattern-count-other": "{0} R☉‎"
 			},
 			"light-lux": {
 				"displayName": "lux",
@@ -5549,21 +5553,21 @@
 				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-tonne": {
-				"displayName": "t",
+				"displayName": "טון מ׳",
 				"unitPattern-count-one": "{0} טון מ׳",
 				"unitPattern-count-two": "{0} טון מ׳",
 				"unitPattern-count-other": "{0} טון מ׳"
 			},
 			"mass-kilogram": {
 				"displayName": "ק״ג",
-				"unitPattern-count-one": "ק״ג {0}",
+				"unitPattern-count-one": "{0} ק״ג",
 				"unitPattern-count-two": "{0} ק״ג",
 				"unitPattern-count-other": "{0} ק״ג",
 				"perUnitPattern": "{0}/ק״ג"
 			},
 			"mass-gram": {
 				"displayName": "גרם",
-				"unitPattern-count-one": "גר׳ {0}",
+				"unitPattern-count-one": "{0} גר׳",
 				"unitPattern-count-two": "{0} גר׳",
 				"unitPattern-count-other": "{0} גר׳",
 				"perUnitPattern": "{0}/גר׳"
@@ -5582,13 +5586,13 @@
 			},
 			"mass-ton": {
 				"displayName": "טונה",
-				"unitPattern-count-one": "ט׳ {0}",
+				"unitPattern-count-one": "{0} ט׳",
 				"unitPattern-count-two": "{0} ט׳",
 				"unitPattern-count-other": "{0} ט׳"
 			},
 			"mass-stone": {
 				"displayName": "סטון",
-				"unitPattern-count-one": "סטון {0}",
+				"unitPattern-count-one": "{0} סטון",
 				"unitPattern-count-two": "{0} סטון",
 				"unitPattern-count-other": "{0} סטון"
 			},
@@ -5626,7 +5630,7 @@
 			},
 			"mass-grain": {
 				"displayName": "גרעין",
-				"unitPattern-count-one": "גרעין {0}",
+				"unitPattern-count-one": "{0} גרעין",
 				"unitPattern-count-two": "{0} גרעינים",
 				"unitPattern-count-other": "{0} גרעינים"
 			},
@@ -5652,7 +5656,7 @@
 			},
 			"power-horsepower": {
 				"displayName": "כ״ס",
-				"unitPattern-count-one": "כ״ס {0}",
+				"unitPattern-count-one": "{0} כ״ס",
 				"unitPattern-count-two": "{0} כ״ס",
 				"unitPattern-count-other": "{0} כ״ס"
 			},
@@ -5750,15 +5754,15 @@
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "קמ״ק",
-				"unitPattern-count-one": "קמ״ק {0}",
+				"unitPattern-count-one": "{0} קמ״ק",
 				"unitPattern-count-two": "{0} קמ״ק",
 				"unitPattern-count-other": "{0} קמ״ק"
 			},
 			"volume-cubic-meter": {
 				"displayName": "m³",
-				"unitPattern-count-one": "‎{0} m³",
-				"unitPattern-count-two": "‎{0} m³",
-				"unitPattern-count-other": "‎{0} m³",
+				"unitPattern-count-one": "{0} m³",
+				"unitPattern-count-two": "{0} m³",
+				"unitPattern-count-other": "{0} m³",
 				"perUnitPattern": "{0}/m³"
 			},
 			"volume-cubic-centimeter": {
@@ -5770,43 +5774,43 @@
 			},
 			"volume-cubic-mile": {
 				"displayName": "mi³",
-				"unitPattern-count-one": "‎{0} mi³",
-				"unitPattern-count-two": "‎{0} mi³",
-				"unitPattern-count-other": "‎{0} mi³"
+				"unitPattern-count-one": "{0} mi³",
+				"unitPattern-count-two": "{0} mi³",
+				"unitPattern-count-other": "{0} mi³"
 			},
 			"volume-cubic-yard": {
 				"displayName": "yd³",
-				"unitPattern-count-one": "‎{0} yd³",
-				"unitPattern-count-two": "‎{0} yd³",
-				"unitPattern-count-other": "‎{0} yd³"
+				"unitPattern-count-one": "{0} yd³",
+				"unitPattern-count-two": "{0} yd³",
+				"unitPattern-count-other": "{0} yd³"
 			},
 			"volume-cubic-foot": {
 				"displayName": "feet³",
-				"unitPattern-count-one": "‎{0} ft³",
-				"unitPattern-count-two": "‎{0} ft³",
-				"unitPattern-count-other": "‎{0} ft³"
+				"unitPattern-count-one": "{0} ft³",
+				"unitPattern-count-two": "{0} ft³",
+				"unitPattern-count-other": "{0} ft³"
 			},
 			"volume-cubic-inch": {
 				"displayName": "in³",
-				"unitPattern-count-one": "‎{0} in³",
-				"unitPattern-count-two": "‎{0} in³",
-				"unitPattern-count-other": "‎{0} in³"
+				"unitPattern-count-one": "{0} in³",
+				"unitPattern-count-two": "{0} in³",
+				"unitPattern-count-other": "{0} in³"
 			},
 			"volume-megaliter": {
 				"displayName": "ML",
-				"unitPattern-count-one": "‎{0} ML",
-				"unitPattern-count-two": "‎{0} ML",
-				"unitPattern-count-other": "‎{0} ML"
+				"unitPattern-count-one": "{0} ML",
+				"unitPattern-count-two": "{0} ML",
+				"unitPattern-count-other": "{0} ML"
 			},
 			"volume-hectoliter": {
 				"displayName": "hL",
-				"unitPattern-count-one": "‎{0} hL",
-				"unitPattern-count-two": "‎{0} hL",
-				"unitPattern-count-other": "‎{0} hL"
+				"unitPattern-count-one": "{0} hL",
+				"unitPattern-count-two": "{0} hL",
+				"unitPattern-count-other": "{0} hL"
 			},
 			"volume-liter": {
 				"displayName": "ליטר",
-				"unitPattern-count-one": "ל׳ {0}",
+				"unitPattern-count-one": "{0} ל׳",
 				"unitPattern-count-two": "{0} ל׳",
 				"unitPattern-count-other": "{0} ל׳",
 				"perUnitPattern": "{0}/ל׳"
@@ -5819,33 +5823,33 @@
 			},
 			"volume-centiliter": {
 				"displayName": "cL",
-				"unitPattern-count-one": "‎{0} cL",
-				"unitPattern-count-two": "‎{0} cL",
-				"unitPattern-count-other": "‎{0} cL"
+				"unitPattern-count-one": "{0} cL",
+				"unitPattern-count-two": "{0} cL",
+				"unitPattern-count-other": "{0} cL"
 			},
 			"volume-milliliter": {
 				"displayName": "מ״ל",
-				"unitPattern-count-one": "מ״ל {0}",
+				"unitPattern-count-one": "{0} מ״ל",
 				"unitPattern-count-two": "{0} מ״ל",
 				"unitPattern-count-other": "{0} מ״ל"
 			},
 			"volume-pint-metric": {
 				"displayName": "mpt",
-				"unitPattern-count-one": "‎{0} mpt",
-				"unitPattern-count-two": "‎{0} mpt",
-				"unitPattern-count-other": "‎{0} mpt"
+				"unitPattern-count-one": "{0} mpt",
+				"unitPattern-count-two": "{0} mpt",
+				"unitPattern-count-other": "{0} mpt"
 			},
 			"volume-cup-metric": {
 				"displayName": "mcup",
-				"unitPattern-count-one": "‎{0} mc",
-				"unitPattern-count-two": "‎{0} mc",
-				"unitPattern-count-other": "‎{0} mc"
+				"unitPattern-count-one": "{0} mc",
+				"unitPattern-count-two": "{0} mc",
+				"unitPattern-count-other": "{0} mc"
 			},
 			"volume-acre-foot": {
 				"displayName": "ac ft",
-				"unitPattern-count-one": "‎{0} ac ft",
-				"unitPattern-count-two": "‎{0} ac ft",
-				"unitPattern-count-other": "‎{0} ac ft"
+				"unitPattern-count-one": "{0} ac ft",
+				"unitPattern-count-two": "{0} ac ft",
+				"unitPattern-count-other": "{0} ac ft"
 			},
 			"volume-bushel": {
 				"displayName": "bu",
@@ -5867,33 +5871,33 @@
 			},
 			"volume-quart": {
 				"displayName": "qts",
-				"unitPattern-count-one": "‎{0} qt",
-				"unitPattern-count-two": "‎{0} qt",
-				"unitPattern-count-other": "‎{0} qt"
+				"unitPattern-count-one": "{0} qt",
+				"unitPattern-count-two": "{0} qt",
+				"unitPattern-count-other": "{0} qt"
 			},
 			"volume-pint": {
 				"displayName": "פינט",
-				"unitPattern-count-one": "‎{0} pt",
-				"unitPattern-count-two": "‎{0} pt",
-				"unitPattern-count-other": "‎{0} pt"
+				"unitPattern-count-one": "{0} pt",
+				"unitPattern-count-two": "{0} pt",
+				"unitPattern-count-other": "{0} pt"
 			},
 			"volume-cup": {
 				"displayName": "כוסות",
-				"unitPattern-count-one": "כ׳ {0}",
+				"unitPattern-count-one": "{0} כ׳",
 				"unitPattern-count-two": "{0} כ׳",
 				"unitPattern-count-other": "{0} כ׳"
 			},
 			"volume-fluid-ounce": {
 				"displayName": "fl oz",
-				"unitPattern-count-one": "‎{0} fl oz",
-				"unitPattern-count-two": "‎{0} fl oz",
-				"unitPattern-count-other": "‎{0} fl oz"
+				"unitPattern-count-one": "{0} fl oz",
+				"unitPattern-count-two": "{0} fl oz",
+				"unitPattern-count-other": "{0} fl oz"
 			},
 			"volume-fluid-ounce-imperial": {
 				"displayName": "Imp. fl oz",
-				"unitPattern-count-one": "‎{0} fl oz Imp.‎",
-				"unitPattern-count-two": "‎{0} fl oz Imp.‎",
-				"unitPattern-count-other": "‎{0} fl oz Imp.‎"
+				"unitPattern-count-one": "{0} fl oz Imp.",
+				"unitPattern-count-two": "{0} fl oz Imp.",
+				"unitPattern-count-other": "{0} fl oz Imp."
 			},
 			"volume-tablespoon": {
 				"displayName": "כפות",
@@ -5909,9 +5913,9 @@
 			},
 			"volume-barrel": {
 				"displayName": "bbl",
-				"unitPattern-count-one": "‎{0} bbl",
-				"unitPattern-count-two": "‎{0} bbl",
-				"unitPattern-count-other": "‎{0} bbl"
+				"unitPattern-count-one": "{0} bbl",
+				"unitPattern-count-two": "{0} bbl",
+				"unitPattern-count-other": "{0} bbl"
 			},
 			"volume-dessert-spoon": {
 				"displayName": "dstspn",
@@ -5944,6 +5948,23 @@
 			"volume-quart-imperial": {
 				"displayName": "qt Imp",
 				"unitPattern-count-other": "{0} qt Imp."
+			},
+			"speed-light-speed": {
+				"displayName": "אור",
+				"unitPattern-count-one": "{0} אור",
+				"unitPattern-count-two": "{0} אור",
+				"unitPattern-count-other": "{0} אור"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "לילות",
+				"unitPattern-count-one": "{0} לילה",
+				"unitPattern-count-two": "{0} לילות",
+				"unitPattern-count-other": "{0} לילות",
+				"perUnitPattern": "{0}/לילה"
 			},
 			"coordinateUnit": {
 				"displayName": "כיוון",

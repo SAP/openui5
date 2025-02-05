@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "àfar",
 		"ab": "abkhaz",
@@ -66,6 +66,7 @@
 		"bin": "edo",
 		"bkm": "kom",
 		"bla": "blackfoot",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengalí",
 		"bo": "tibetà",
@@ -201,7 +202,6 @@
 		"gmh": "alt alemany mitjà",
 		"gn": "guaraní",
 		"goh": "alt alemany antic",
-		"gom": "concani de Goa",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gòtic",
@@ -306,6 +306,7 @@
 		"kv": "komi",
 		"kw": "còrnic",
 		"kwk": "kwak’wala",
+		"kxv": "kuvi",
 		"ky": "kirguís",
 		"la": "llatí",
 		"lad": "judeocastellà",
@@ -332,7 +333,6 @@
 		"lua": "luba-lulua",
 		"lui": "luisenyo",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "mizo",
 		"luy": "luyia",
 		"lv": "letó",
@@ -576,12 +576,12 @@
 		"und": "idioma desconegut",
 		"ur": "urdú",
 		"uz": "uzbek",
-		"vai": "vai",
 		"ve": "venda",
 		"vec": "vènet",
 		"vep": "vepse",
 		"vi": "vietnamita",
 		"vls": "flamenc occidental",
+		"vmw": "makua",
 		"vo": "volapük",
 		"vot": "vòtic",
 		"vun": "vunjo",
@@ -596,6 +596,7 @@
 		"xal": "calmuc",
 		"xh": "xosa",
 		"xmf": "mingrelià",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapeà",
@@ -917,8 +918,8 @@
 		"EZ": "zona euro",
 		"FI": "Finlàndia",
 		"FJ": "Fiji",
-		"FK": "Illes Malvines",
-		"FK-alt-variant": "Illes Malvines (Illes Falkland)",
+		"FK": "Illes Falkland",
+		"FK-alt-variant": "Illes Falkland (Illes Malvines)",
 		"FM": "Micronèsia",
 		"FO": "Illes Fèroe",
 		"FR": "França",
@@ -957,7 +958,7 @@
 		"IN": "Índia",
 		"IO": "Territori Britànic de l’Oceà Índic",
 		"IO-alt-biot": "Territori Britànic de l’Oceà Índic",
-		"IO-alt-chagos": "Arxipèlag de Chagos",
+		"IO-alt-chagos": "Illes Chagos",
 		"IQ": "Iraq",
 		"IR": "Iran",
 		"IS": "Islàndia",
@@ -977,7 +978,7 @@
 		"KW": "Kuwait",
 		"KY": "Illes Caiman",
 		"KZ": "Kazakhstan",
-		"LA": "Laos",
+		"LA": "Lao",
 		"LB": "Líban",
 		"LC": "Saint Lucia",
 		"LI": "Liechtenstein",
@@ -1015,7 +1016,7 @@
 		"NA": "Namíbia",
 		"NC": "Nova Caledònia",
 		"NE": "Níger",
-		"NF": "Norfolk",
+		"NF": "Illa Norfolk",
 		"NG": "Nigèria",
 		"NI": "Nicaragua",
 		"NL": "Països Baixos",
@@ -1073,7 +1074,7 @@
 		"TA": "Tristan da Cunha",
 		"TC": "Illes Turks i Caicos",
 		"TD": "Txad",
-		"TF": "Territoris Australs Francesos",
+		"TF": "Terres Australs Antàrtiques Franceses",
 		"TG": "Togo",
 		"TH": "Tailàndia",
 		"TJ": "Tadjikistan",
@@ -1085,13 +1086,13 @@
 		"TO": "Tonga",
 		"TR": "Turquia",
 		"TR-alt-variant": "Turquia",
-		"TT": "Trinitat i Tobago",
+		"TT": "Trinidad i Tobago",
 		"TV": "Tuvalu",
 		"TW": "Taiwan",
 		"TZ": "Tanzània",
 		"UA": "Ucraïna",
 		"UG": "Uganda",
-		"UM": "Illes Perifèriques Menors dels EUA",
+		"UM": "Illes Menors Allunyades dels Estats Units",
 		"UN": "Nacions Unides",
 		"UN-alt-short": "ONU",
 		"US": "Estats Units",
@@ -1101,8 +1102,8 @@
 		"VA": "Ciutat del Vaticà",
 		"VC": "Saint Vincent i les Grenadines",
 		"VE": "Veneçuela",
-		"VG": "Illes Verges britàniques",
-		"VI": "Illes Verges nord-americanes",
+		"VG": "Illes Verges Britàniques",
+		"VI": "Illes Verges dels Estats Units",
 		"VN": "Vietnam",
 		"VU": "Vanuatu",
 		"WF": "Wallis i Futuna",
@@ -1112,7 +1113,7 @@
 		"XK": "Kosovo",
 		"YE": "Iemen",
 		"YT": "Mayotte",
-		"ZA": "República de Sud-àfrica",
+		"ZA": "Sud-àfrica",
 		"ZM": "Zàmbia",
 		"ZW": "Zimbàbue",
 		"ZZ": "regió desconeguda"
@@ -1191,7 +1192,7 @@
 				"yMMMMd": "d MMMM 'del' y",
 				"yMMMMEd": "E, d MMMM 'del' y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y",
+				"yQQQQ": "QQQQ 'del' y",
 				"MMMMW": "'setmana' W MMMM",
 				"yw": "'setmana' w 'del' Y"
 			},
@@ -1211,11 +1212,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1614,7 +1615,7 @@
 				},
 				"narrow": {
 					"midnight": "mitjanit",
-					"morning1": "mat.",
+					"morning1": "matinada",
 					"morning2": "matí",
 					"afternoon1": "migdia",
 					"afternoon2": "tarda",
@@ -1808,8 +1809,8 @@
 					"y": "E, d MMM, y – E, d MMM, y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
@@ -1833,8 +1834,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -2161,7 +2162,7 @@
 				},
 				"narrow": {
 					"midnight": "mitjanit",
-					"morning1": "mat.",
+					"morning1": "matinada",
 					"morning2": "matí",
 					"afternoon1": "migdia",
 					"afternoon2": "tarda",
@@ -2352,8 +2353,8 @@
 					"y": "E, d MMM, y – E, d MMM, y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
@@ -2377,8 +2378,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -2715,7 +2716,7 @@
 				},
 				"narrow": {
 					"midnight": "mitjanit",
-					"morning1": "mat.",
+					"morning1": "matinada",
 					"morning2": "matí",
 					"afternoon1": "migdia",
 					"afternoon2": "tarda",
@@ -2918,8 +2919,8 @@
 					"y": "E, d MMM, y – E, d MMM, y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
@@ -2943,8 +2944,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -3271,7 +3272,7 @@
 				},
 				"narrow": {
 					"midnight": "mitjanit",
-					"morning1": "mat.",
+					"morning1": "matinada",
 					"morning2": "matí",
 					"afternoon1": "migdia",
 					"afternoon2": "tarda",
@@ -3462,8 +3463,8 @@
 					"y": "E, d MMM, y – E, d MMM, y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "H–H"
@@ -3487,8 +3488,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "H–H v"
@@ -3815,7 +3816,7 @@
 				},
 				"narrow": {
 					"midnight": "mitjanit",
-					"morning1": "mat.",
+					"morning1": "matinada",
 					"morning2": "matí",
 					"afternoon1": "migdia",
 					"afternoon2": "tarda",
@@ -4456,7 +4457,6 @@
 			"Bishkek": "Bishkek",
 			"Brunei": "Brunei",
 			"Chita": "Txità",
-			"Choibalsan": "Choibalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damasc",
 			"Dhaka": "Dhaka",
@@ -4803,6 +4803,7 @@
 		"TWD": "NT$",
 		"VND": "₫",
 		"XAF": "FCFA",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
@@ -5766,6 +5767,21 @@
 				"displayName": "quart imperial",
 				"unitPattern-count-one": "{0} quart imperial",
 				"unitPattern-count-other": "{0} quarts imperials"
+			},
+			"speed-light-speed": {
+				"displayName": "llum",
+				"unitPattern-count-one": "{0} llum",
+				"unitPattern-count-other": "{0} llum"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "part/mil milions",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "nits",
+				"unitPattern-count-one": "{0} nit",
+				"unitPattern-count-other": "{0} nits",
+				"perUnitPattern": "{0}/nit"
 			},
 			"coordinateUnit": {
 				"displayName": "punt",

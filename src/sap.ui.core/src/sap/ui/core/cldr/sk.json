@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afarčina",
 		"ab": "abcházčina",
@@ -59,6 +59,7 @@
 		"bin": "bini",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambarčina",
 		"bn": "bengálčina",
 		"bo": "tibetčina",
@@ -205,7 +206,7 @@
 		"hax": "haida (juh)",
 		"he": "hebrejčina",
 		"hi": "hindčina",
-		"hi_Latn-alt-variant": "hingliš",
+		"hi_Latn-alt-variant": "hingličtina",
 		"hil": "hiligajnončina",
 		"hit": "chetitčina",
 		"hmn": "hmongčina",
@@ -286,6 +287,7 @@
 		"kv": "komijčina",
 		"kw": "kornčina",
 		"kwk": "kwakʼwala",
+		"kxv": "kuvi",
 		"ky": "kirgizština",
 		"la": "latinčina",
 		"lad": "židovská španielčina",
@@ -296,8 +298,10 @@
 		"lez": "lezginčina",
 		"lg": "gandčina",
 		"li": "limburčina",
+		"lij": "ligurčina",
 		"lil": "lillooet",
 		"lkt": "lakotčina",
+		"lmo": "lombardčina",
 		"ln": "lingalčina",
 		"lo": "laoština",
 		"lol": "mongo",
@@ -310,7 +314,6 @@
 		"lua": "lubčina (luluánska)",
 		"lui": "luiseňo",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "mizorámčina",
 		"luy": "luhja",
 		"lv": "lotyština",
@@ -491,6 +494,7 @@
 		"swb": "komorčina",
 		"syc": "sýrčina (klasická)",
 		"syr": "sýrčina",
+		"szl": "sliezština",
 		"ta": "tamilčina",
 		"tce": "tutchone (juh)",
 		"te": "telugčina",
@@ -537,9 +541,10 @@
 		"und": "neznámy jazyk",
 		"ur": "urdčina",
 		"uz": "uzbečtina",
-		"vai": "vai",
 		"ve": "vendčina",
+		"vec": "benátčina",
 		"vi": "vietnamčina",
+		"vmw": "makhuwčina",
 		"vo": "volapük",
 		"vot": "vodčina",
 		"vun": "vunjo",
@@ -553,6 +558,7 @@
 		"wuu": "čínština (wu)",
 		"xal": "kalmyčtina",
 		"xh": "xhoština",
+		"xnr": "kángrí",
 		"xog": "soga",
 		"yao": "jao",
 		"yap": "japčina",
@@ -1053,11 +1059,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -1591,11 +1597,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2126,11 +2132,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -2681,11 +2687,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -3216,11 +3222,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h – h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm – h:mm B",
 					"m": "h:mm – h:mm B"
 				},
@@ -4106,7 +4112,7 @@
 	"timezoneNames": {
 		"Africa": {
 			"Abidjan": "Abidjan",
-			"Accra": "Accra",
+			"Accra": "Akkra",
 			"Addis_Ababa": "Addis Abeba",
 			"Algiers": "Alžír",
 			"Asmara": "Asmara",
@@ -4120,7 +4126,7 @@
 			"Cairo": "Káhira",
 			"Casablanca": "Casablanca",
 			"Ceuta": "Ceuta",
-			"Conakry": "Conakry",
+			"Conakry": "Konakry",
 			"Dakar": "Dakar",
 			"Dar_es_Salaam": "Dar es Salaam",
 			"Djibouti": "Džibuti",
@@ -4333,7 +4339,7 @@
 		},
 		"Asia": {
 			"Aden": "Aden",
-			"Almaty": "Almaty",
+			"Almaty": "Alma‑Ata",
 			"Amman": "Ammán",
 			"Anadyr": "Anadyr",
 			"Aqtau": "Aktau",
@@ -4349,7 +4355,6 @@
 			"Bishkek": "Biškek",
 			"Brunei": "Brunej",
 			"Chita": "Čita",
-			"Choibalsan": "Čojbalsan",
 			"Colombo": "Kolombo",
 			"Damascus": "Damask",
 			"Dhaka": "Dháka",
@@ -4735,6 +4740,7 @@
 		"MXN": "MX$",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF"
 	},
@@ -4873,7 +4879,7 @@
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
-				"compoundUnitPattern": "{0}{1}"
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "jednotka preťaženia",
@@ -5237,8 +5243,11 @@
 				"unitPattern-count-other": "{0} N"
 			},
 			"force-kilowatt-hour-per-100-kilometer": {
-				"displayName": "kWh/100km",
-				"unitPattern-count-other": "{0} kWh/100km"
+				"displayName": "kWh/100 km",
+				"unitPattern-count-one": "{0} kWh/100 km",
+				"unitPattern-count-few": "{0} kWh/100 km",
+				"unitPattern-count-many": "{0} kWh/100 km",
+				"unitPattern-count-other": "{0} kWh/100 km"
 			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
@@ -5790,6 +5799,22 @@
 				"unitPattern-count-few": "{0} qt Imp",
 				"unitPattern-count-many": "{0} qt Imp",
 				"unitPattern-count-other": "{0} qt Imp"
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "ppb",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "noci",
+				"unitPattern-count-one": "{0} noc",
+				"unitPattern-count-few": "{0} noci",
+				"unitPattern-count-many": "{0} noci",
+				"unitPattern-count-other": "{0} nocí",
+				"perUnitPattern": "{0}/noc"
 			},
 			"coordinateUnit": {
 				"displayName": "svetová strana",

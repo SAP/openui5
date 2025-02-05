@@ -121,6 +121,11 @@ sap.ui.define([], function() {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/UsageTracker"]
 				}
+			},
+			"CookiesConsentManager": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/util/CookiesConsentManager"]
+				}
 			}
 			// "Forwarding": {
 			// 	coverage: {

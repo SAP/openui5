@@ -25,7 +25,9 @@ sap.ui.define(["./BaseContentRenderer", "sap/ui/integration/util/BindingResolver
 		oRm.openStart("iframe", oWebPageContent.getId() + "-frame")
 			.class("sapUiIntWPCFrame");
 
-		oRm.style("height", "calc(" + oWebPageContent.getMinHeight() + " - " + PADDING + ")");
+		if (!oWebPageContent.getOverflowWithShowMore()) {
+			oRm.style("height", "calc(" + oWebPageContent.getMinHeight() + " - " + PADDING + ")");
+		}
 
 		if (oWebPageContent._bSrcChecked) {
 			oRm.attr("src", oWebPageContent.getSrc());

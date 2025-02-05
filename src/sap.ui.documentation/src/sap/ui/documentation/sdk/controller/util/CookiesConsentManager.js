@@ -48,7 +48,12 @@ sap.ui.define(
                     "NO_PREFERENCE": 2
                 }
             },
-            DOMAIN_FOR_DISPLAY_SETTINGS: ["ui5.sap.com", "openui5.hana.ondemand.com"]
+            DOMAINS: {
+                FOR_DISPLAY_SETTINGS: ["ui5.sap.com", "openui5.hana.ondemand.com"],
+                FOR_VIDEOS: ["youtube.com", "www.youtube.com"],
+                OF_THIRD_PARTY_INTEREST: ["google.com"]
+            },
+            CONSENT_PREFERENCES_ORIGIN_WHITELIST: ["https://consent-pref.trustarc.com", window.origin]
         };
 
         const TRACKED_HOSTNAMES = {
@@ -153,9 +158,7 @@ sap.ui.define(
                 },
                 _checkAdditionalPreferencesAllowUsageTracking: function () {
                     var oPreferencesPerDomain = this._getAdditionalPreferencesPerDomain(oCookieCategories.FUNCTIONAL_COOKIES),
-                        aUsageTrackingDomains = Object.keys(oPreferencesPerDomain).filter(function(sDomain) {
-                            return !TRUST_ARC.DOMAIN_FOR_DISPLAY_SETTINGS.includes(sDomain);
-                        }),
+                        aUsageTrackingDomains = Object.keys(oPreferencesPerDomain).filter(this._isDomainForUsageTracking),
                         fnIsDomainOptedIn = function(sDomain) {
                             return parseInt(oPreferencesPerDomain[sDomain]) === oDomainDecisionType.OPTED_IN;
                         };
@@ -163,7 +166,7 @@ sap.ui.define(
                 },
                 _checkAdditionalPreferencesAllowDisplaySettings: function () {
                     var oPreferencesPerDomain = this._getAdditionalPreferencesPerDomain(oCookieCategories.FUNCTIONAL_COOKIES);
-                    return TRUST_ARC.DOMAIN_FOR_DISPLAY_SETTINGS.every(function(sDomain) {
+                    return TRUST_ARC.DOMAINS.FOR_DISPLAY_SETTINGS.every(function(sDomain) {
                         return this._isDomainOptedIn(sDomain, oPreferencesPerDomain);
                     }.bind(this));
                 },
@@ -237,6 +240,9 @@ sap.ui.define(
                         var oMessage = this._composeApiRequest("getConsentDecision");
                         window.top.postMessage(oMessage,"*");
                         var fnListener = function(oEvent) {
+                            if (!TRUST_ARC.CONSENT_PREFERENCES_ORIGIN_WHITELIST.includes(oEvent.origin)) {
+                                return;
+                            }
                             var oData = JSON.parse(oEvent.data);
                             if (oData.source === "preference_manager" && oData.message === "submit_preferences") {
                                 resolve();
@@ -332,6 +338,11 @@ sap.ui.define(
                         cancelable: true
                     });
                     element.dispatchEvent(event);
+                },
+                _isDomainForUsageTracking: function(sDomain) {
+                    return !TRUST_ARC.DOMAINS.FOR_DISPLAY_SETTINGS.includes(sDomain)
+                        && !TRUST_ARC.DOMAINS.FOR_VIDEOS.includes(sDomain)
+                        && !TRUST_ARC.DOMAINS.OF_THIRD_PARTY_INTEREST.includes(sDomain);
                 }
             }
         );
@@ -360,6 +371,10 @@ sap.ui.define(
                 }
 
                 var sHostname = oUri.hostname();
+                return CookiesConsentManager._checkHostnameIsTracked(sHostname);
+            },
+
+            _checkHostnameIsTracked: function (sHostname) {
                 return TRACKED_HOSTNAMES.LIST.includes(sHostname) ||
                     TRACKED_HOSTNAMES.REGEX.test(sHostname);
             }

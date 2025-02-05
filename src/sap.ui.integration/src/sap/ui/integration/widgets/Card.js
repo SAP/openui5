@@ -80,7 +80,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var MANIFEST_PATHS = {
+	const MANIFEST_PATHS = {
 		TYPE: "/sap.card/type",
 		ACTIONS: "/sap.card/actions",
 		DATA: "/sap.card/data",
@@ -99,35 +99,37 @@ sap.ui.define([
 		MODEL_SIZE_LIMIT: "/sap.card/configuration/modelSizeLimit"
 	};
 
-	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
+	const RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
 
-	var HeaderPosition = fLibrary.cards.HeaderPosition;
+	const HeaderPosition = fLibrary.cards.HeaderPosition;
 
-	var SemanticRole = fLibrary.cards.SemanticRole;
+	const SemanticRole = fLibrary.cards.SemanticRole;
 
-	var ActionArea = library.CardActionArea;
+	const ActionArea = library.CardActionArea;
 
-	var CardArea = library.CardArea;
+	const CardArea = library.CardArea;
 
-	var CardDataMode = library.CardDataMode;
+	const CardDataMode = library.CardDataMode;
 
-	var CardDesign = library.CardDesign;
+	const CardDesign = library.CardDesign;
 
-	var CardDisplayVariant = library.CardDisplayVariant;
+	const CardDisplayVariant = library.CardDisplayVariant;
 
-	var CardPreviewMode = library.CardPreviewMode;
+	const CardPreviewMode = library.CardPreviewMode;
 
-	var CARD_DESTROYED_ERROR = "Card is destroyed!";
+	const CardOverflow = library.CardOverflow;
 
-	var MODULE_PREFIX = "module:";
+	const CARD_DESTROYED_ERROR = "Card is destroyed!";
 
-	var DEFAULT_MODEL_SIZE_LIMIT = 1000;
+	const MODULE_PREFIX = "module:";
+
+	const DEFAULT_MODEL_SIZE_LIMIT = 1000;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] ID for the new control. ID generated automatically if no ID is provided.
+	 * @param {object} [mSettings] Initial settings for the new control.
 	 *
 	 * @class
 	 * A control that represents a container with a header and content.
@@ -334,6 +336,20 @@ sap.ui.define([
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: false
+				},
+
+				/**
+				 * Allows to control the overflow behaviour of the card.
+				 *
+				 * <b>Note</b>: If the "Default" option is used, the card must be allowed to grow in height as much as it needs to avoid overflowing. Use a layout which allows this.
+				 *
+				 * @experimental Since 1.133
+				 * @since 1.133
+				 */
+				overflow: {
+					type: "sap.ui.integration.CardOverflow",
+					group: "Behavior",
+					defaultValue: CardOverflow.Default
 				},
 
 				/**
@@ -760,9 +776,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.onBeforeRendering = function () {
-		var oCardContent = this.getCardContent();
+		const oCardContent = this.getCardContent();
 		if (oCardContent && oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
 			oCardContent.setDesign(this.getDesign());
+			oCardContent.setOverflowWithShowMore(this.getOverflow() === CardOverflow.ShowMore);
+		}
+
+		const oFooter = this.getCardFooter();
+		if (oFooter) {
+			oFooter.setDetectVisibility(this.getOverflow() === CardOverflow.ShowMore);
 		}
 
 		if (this._getActualDataMode() !== CardDataMode.Active) {
@@ -2195,7 +2217,8 @@ sap.ui.define([
 				dataProviderFactory: this._oDataProviderFactory,
 				iconFormatter: this._oIconFormatter,
 				noDataConfiguration: this._oCardManifest.get(MANIFEST_PATHS.NO_DATA_MESSAGES),
-				paginator: this._oPaginator
+				paginator: this._oPaginator,
+				overflowWithShowMore: this.getOverflow() === CardOverflow.ShowMore
 			});
 		} catch (e) {
 			this._handleError({
@@ -2348,6 +2371,7 @@ sap.ui.define([
 			card: this,
 			configuration: oManifestFooter,
 			showCloseButton: this.getProperty("showCloseButton"),
+			detectVisibility: this.getOverflow() === CardOverflow.ShowMore,
 			paginator: this._oPaginator
 		});
 	};

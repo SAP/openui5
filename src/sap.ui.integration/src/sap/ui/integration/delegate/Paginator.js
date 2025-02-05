@@ -3,17 +3,15 @@
 */
 
 sap.ui.define([
-	"sap/base/util/uid",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/openCardDialog",
+	"sap/ui/integration/util/openCardShowMore",
 	"sap/ui/integration/util/Utils",
 	"sap/m/BusyIndicator"
 ], (
-	uid,
 	ManagedObject,
 	BindingResolver,
-	openCardDialog,
+	openCardShowMore,
 	Utils,
 	BusyIndicator
 ) => {
@@ -97,15 +95,7 @@ sap.ui.define([
 
 	Paginator.prototype.openDialog = function() {
 		const oCard = this.getCard();
-
-		openCardDialog(
-			oCard,
-			{
-				manifest: this._createManifest(),
-				baseUrl: oCard.getBaseUrl(),
-				showCloseButton: true
-			}
-		);
+		openCardShowMore(oCard);
 	};
 
 	Paginator.prototype.isServerSide = function() {
@@ -264,19 +254,6 @@ sap.ui.define([
 
 	Paginator.prototype._getLastPageNumber = function () {
 		return Math.max(0, this._iPageCount - 1);
-	};
-
-	Paginator.prototype._createManifest = function() {
-		const oCard = this.getCard();
-		const oManifest = oCard.getManifestEntry("/");
-
-		oManifest["sap.app"].id = oManifest["sap.app"].id + uid();
-
-		oCard.getAggregation("_filterBar")?._getFilters().forEach((oFilter) => {
-			oFilter.writeValueToConfiguration(oManifest["sap.card"].configuration.filters[oFilter.getKey()]);
-		});
-
-		return oManifest;
 	};
 
 	return Paginator;

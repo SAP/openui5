@@ -20,11 +20,28 @@ sap.ui.define(function() {
 		 *
 		 * @public
 		 */
-		Merge: "MERGE",
+		MERGE: "MERGE",
 
 		/**
 		 * Update requests will be send with HTTP method <code>PUT</code>.
+		 *
 		 * @public
+		 */
+		PUT: "PUT",
+
+		/**
+		 * Deprecated to avoid different spellings, use {@link sap.ui.model.odata.UpdateMethod.MERGE} instead.
+		 *
+		 * @public
+		 * @deprecated Since 1.133.0, use {@link sap.ui.model.odata.UpdateMethod.MERGE} instead
+		 */
+		Merge: "MERGE",
+
+		/**
+		 * Deprecated to avoid different spellings, use {@link sap.ui.model.odata.UpdateMethod.PUT} instead.
+		 *
+		 * @public
+		 * @deprecated Since 1.133.0, use {@link sap.ui.model.odata.UpdateMethod.PUT} instead
 		 */
 		Put: "PUT"
 	};

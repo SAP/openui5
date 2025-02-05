@@ -45,7 +45,7 @@ sap.ui.define([
 	ODataV4ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
 		const $count = oBindingInfo.parameters?.$count;
 
-		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
+		ValueHelpDelegate.updateBindingInfo.apply(this, arguments);
 
 		if (!PayloadSearchKeys.inUse(oValueHelp) && oContent.isSearchSupported()){
 			const sSearch = this.adjustSearch ? this.adjustSearch(oValueHelp, oContent.isTypeahead(), oContent.getSearch()) : oContent.getSearch();

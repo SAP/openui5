@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "afar",
 		"ab": "abkhasisk",
@@ -60,6 +60,7 @@
 		"bin": "bini",
 		"bkm": "kom",
 		"bla": "siksika",
+		"blo": "anii",
 		"bm": "bambara",
 		"bn": "bengali",
 		"bo": "tibetansk",
@@ -290,6 +291,7 @@
 		"kv": "komi",
 		"kw": "cornisk",
 		"kwk": "kwakʼwala",
+		"kxv": "kuvi",
 		"ky": "kirgisisk",
 		"la": "latin",
 		"lad": "ladino",
@@ -300,8 +302,10 @@
 		"lez": "lezghian",
 		"lg": "ganda",
 		"li": "limburgsk",
+		"lij": "ligurisk",
 		"lil": "lillooet",
 		"lkt": "lakota",
+		"lmo": "lombardisk",
 		"ln": "lingala",
 		"lo": "lao",
 		"lol": "mongo",
@@ -314,7 +318,6 @@
 		"lua": "luba-Lulua",
 		"lui": "luiseno",
 		"lun": "lunda",
-		"luo": "luo",
 		"lus": "lushai",
 		"luy": "luyana",
 		"lv": "lettisk",
@@ -347,7 +350,7 @@
 		"moe": "innu-aimun",
 		"moh": "mohawk",
 		"mos": "mossi",
-		"mr": "marathisk",
+		"mr": "marathi",
 		"ms": "malajisk",
 		"mt": "maltesisk",
 		"mua": "mundang",
@@ -402,7 +405,7 @@
 		"os": "ossetisk",
 		"osa": "osage",
 		"ota": "osmannisk tyrkisk",
-		"pa": "punjabisk",
+		"pa": "punjabi",
 		"pag": "pangasinan",
 		"pal": "pahlavi",
 		"pam": "pampanga",
@@ -496,6 +499,7 @@
 		"swb": "comorisk",
 		"syc": "klassisk syrisk",
 		"syr": "syrisk",
+		"szl": "schlesisk",
 		"ta": "tamil",
 		"tce": "sydtutchone",
 		"te": "telugu",
@@ -543,9 +547,10 @@
 		"und": "ukendt sprog",
 		"ur": "urdu",
 		"uz": "usbekisk",
-		"vai": "vai",
 		"ve": "venda",
+		"vec": "venetiansk",
 		"vi": "vietnamesisk",
+		"vmw": "makhuwa",
 		"vo": "volapyk",
 		"vot": "votisk",
 		"vun": "vunjo",
@@ -559,6 +564,7 @@
 		"wuu": "wu-kinesisk",
 		"xal": "kalmyk",
 		"xh": "xhosa",
+		"xnr": "kangri",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapese",
@@ -4298,7 +4304,6 @@
 			"Bishkek": "Bisjkek",
 			"Brunei": "Brunei",
 			"Chita": "Chita",
-			"Choibalsan": "Tsjojbalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damaskus",
 			"Dhaka": "Dhaka",
@@ -4651,6 +4656,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -4790,7 +4796,7 @@
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
-				"compoundUnitPattern": "{0} ⋅ {1}"
+				"compoundUnitPattern": "{0}⋅{1}"
 			},
 			"acceleration-g-force": {
 				"displayName": "G-kraft",
@@ -5617,6 +5623,20 @@
 				"displayName": "britisk qt",
 				"unitPattern-count-one": "{0} britisk qt",
 				"unitPattern-count-other": "{0} britiske qt"
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "dele/milliard",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "nætter",
+				"unitPattern-count-one": "{0} nat",
+				"unitPattern-count-other": "{0} nætter",
+				"perUnitPattern": "{0}/nat"
 			},
 			"coordinateUnit": {
 				"displayName": "retning",

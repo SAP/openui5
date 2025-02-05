@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "آفاری",
 		"ab": "آبخازی",
@@ -64,6 +64,7 @@
 		"bik": "بیکولی",
 		"bin": "بینی",
 		"bla": "سیکسیکا",
+		"blo": "باسیلا",
 		"bm": "بامبارایی",
 		"bn": "بنگالی",
 		"bo": "تبتی",
@@ -208,6 +209,7 @@
 		"hax": "هایدا جنوبی",
 		"he": "عبری",
 		"hi": "هندی",
+		"hi_Latn-alt-variant": "هندی (انگلیسی)",
 		"hif": "هندی فیجیایی",
 		"hil": "هیلی‌گاینونی",
 		"hit": "هیتی",
@@ -289,6 +291,7 @@
 		"kv": "کومیایی",
 		"kw": "کورنی",
 		"kwk": "کواک والا",
+		"kxv": "کووی",
 		"ky": "قرقیزی",
 		"la": "لاتین",
 		"lad": "لادینو",
@@ -299,6 +302,7 @@
 		"lez": "لزگی",
 		"lg": "گاندایی",
 		"li": "لیمبورگی",
+		"lij": "لیگوری",
 		"lil": "لیلوئت",
 		"lkt": "لاکوتا",
 		"lmo": "لومبارد",
@@ -544,7 +548,9 @@
 		"uz": "ازبکی",
 		"vai": "ویایی",
 		"ve": "وندایی",
+		"vec": "ونیزی",
 		"vi": "ویتنامی",
+		"vmw": "ماکوا",
 		"vo": "ولاپوک",
 		"vot": "وتی",
 		"vun": "ونجو",
@@ -558,6 +564,7 @@
 		"wuu": "وو چینی",
 		"xal": "قلموقی",
 		"xh": "خوسایی",
+		"xnr": "کانگری",
 		"xog": "سوگایی",
 		"yao": "یائویی",
 		"yap": "یاپی",
@@ -568,7 +575,7 @@
 		"yrl": "نهین گاتو",
 		"yue": "کانتونی",
 		"yue_alt-menu": "چینی کانتونی",
-		"za": "چوانگی",
+		"za": "ژوانگی",
 		"zap": "زاپوتکی",
 		"zen": "زناگا",
 		"zgh": "آمازیغی معیار مراکش",
@@ -1069,7 +1076,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "H",
 				"HHmmZ": "HH:mm (Z)",
 				"hm": "h:mm a",
@@ -1503,8 +1510,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق‌ظ",
+					"ب‌ظ"
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -1523,12 +1530,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -1549,12 +1556,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -1615,7 +1622,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "H",
 				"HHmmZ": "HH:mm (Z)",
 				"hm": "h:mm a",
@@ -2044,8 +2051,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق‌ظ",
+					"ب‌ظ"
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -2064,12 +2071,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -2090,12 +2097,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -2153,7 +2160,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "H",
 				"HHmmZ": "HH:mm (Z)",
 				"hm": "h:mm a",
@@ -2588,8 +2595,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق‌ظ",
+					"ب‌ظ"
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -2608,12 +2615,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -2634,12 +2641,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -2709,7 +2716,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "H",
 				"HHmmZ": "HH:mm (Z)",
 				"hm": "h:mm a",
@@ -3124,8 +3131,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق‌ظ",
+					"ب‌ظ"
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -3144,12 +3151,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -3170,12 +3177,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -3233,7 +3240,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "H",
 				"HHmmZ": "HH:mm (Z)",
 				"hm": "h:mm a",
@@ -3660,8 +3667,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق‌ظ",
+					"ب‌ظ"
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -3680,12 +3687,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -3706,12 +3713,12 @@
 					"night2": "نیمه‌شب"
 				},
 				"narrow": {
-					"morning1": "ب",
-					"morning2": "ص",
-					"afternoon1": "ظ",
-					"afternoon2": "ع",
-					"night1": "ش",
-					"night2": "ن"
+					"morning1": "بامداد",
+					"morning2": "صبح",
+					"afternoon1": "ظهر",
+					"afternoon2": "عصر",
+					"night1": "شب",
+					"night2": "نیمه‌شب"
 				},
 				"wide": {
 					"morning1": "بامداد",
@@ -4244,7 +4251,7 @@
 				"New_Salem": "نیوسالم، داکوتای شمالی"
 			},
 			"Nuuk": "نووک",
-			"Ojinaga": "اخیناگا",
+			"Ojinaga": "اوجیناگا",
 			"Panama": "پاناما",
 			"Paramaribo": "پاراماریبو",
 			"Phoenix": "فینکس",
@@ -4317,7 +4324,6 @@
 			"Bishkek": "بیشکک",
 			"Brunei": "برونئی",
 			"Chita": "چیتا",
-			"Choibalsan": "چویبالسان",
 			"Colombo": "کلمبو",
 			"Damascus": "دمشق",
 			"Dhaka": "داکا",
@@ -4493,7 +4499,7 @@
 			"Apia": "آپیا",
 			"Auckland": "اوکلند",
 			"Bougainville": "بوگنویل",
-			"Chatham": "چتم",
+			"Chatham": "چت‌هام",
 			"Chuuk": "چوک",
 			"Easter": "ایستر",
 			"Efate": "افاته",
@@ -4671,6 +4677,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "$EC",
+		"XCG": "Cg.",
 		"XOF": "فرانک CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -4856,8 +4863,8 @@
 			},
 			"area-hectare": {
 				"displayName": "هکتار",
-				"unitPattern-count-one": "{0} هک",
-				"unitPattern-count-other": "{0} هک"
+				"unitPattern-count-one": "{0} هکتار",
+				"unitPattern-count-other": "{0} هکتار"
 			},
 			"area-square-meter": {
 				"displayName": "متر مربع",
@@ -5025,8 +5032,8 @@
 			},
 			"duration-quarter": {
 				"displayName": "سه‌ماه",
-				"unitPattern-count-one": "{0} فصل",
-				"unitPattern-count-other": "{0} فصل",
+				"unitPattern-count-one": "{0} سه‌ماه",
+				"unitPattern-count-other": "{0}سه‌ماه",
 				"perUnitPattern": "{0}/سه‌ماه"
 			},
 			"duration-month": {
@@ -5347,8 +5354,9 @@
 				"unitPattern-count-other": "{0} ☉L"
 			},
 			"mass-tonne": {
-				"displayName": "t",
-				"unitPattern-count-other": "{0} t"
+				"displayName": "تُن",
+				"unitPattern-count-one": "{0} تُن",
+				"unitPattern-count-other": "{0} تُن"
 			},
 			"mass-kilogram": {
 				"displayName": "کیلوگرم",
@@ -5360,7 +5368,7 @@
 				"displayName": "گرم",
 				"unitPattern-count-one": "{0} گرم",
 				"unitPattern-count-other": "{0} گرم",
-				"perUnitPattern": "{0} در گرم"
+				"perUnitPattern": "{0}/g"
 			},
 			"mass-milligram": {
 				"displayName": "mg",
@@ -5368,7 +5376,7 @@
 				"unitPattern-count-other": "{0} میلی‌گرم"
 			},
 			"mass-microgram": {
-				"displayName": "μg",
+				"displayName": "میکروگرم",
 				"unitPattern-count-one": "{0} میکروگرم",
 				"unitPattern-count-other": "{0} میکروگرم"
 			},
@@ -5383,7 +5391,7 @@
 				"unitPattern-count-other": "{0} سنگ"
 			},
 			"mass-pound": {
-				"displayName": "پوند",
+				"displayName": "lb",
 				"unitPattern-count-one": "{0} پوند",
 				"unitPattern-count-other": "{0} پوند",
 				"perUnitPattern": "{0} در پوند"
@@ -5683,10 +5691,10 @@
 			"volume-tablespoon": {
 				"displayName": "قاشق غ.",
 				"unitPattern-count-one": "{0} ق.غ.خ",
-				"unitPattern-count-other": "{0} قاشق غ."
+				"unitPattern-count-other": "{0} ق.غ.خ"
 			},
 			"volume-teaspoon": {
-				"displayName": "قاشق چ.",
+				"displayName": "ق.چای‌خوری",
 				"unitPattern-count-one": "{0} ق.چ.",
 				"unitPattern-count-other": "{0} ق.چ."
 			},
@@ -5729,6 +5737,20 @@
 				"displayName": "کوارت انگلیسی",
 				"unitPattern-count-one": "{0} کوارت انگلیسی",
 				"unitPattern-count-other": "{0} کوارت انگلیسی"
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "بخش در بیلیون",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "شب",
+				"unitPattern-count-one": "{0} شب",
+				"unitPattern-count-other": "{0} شب",
+				"perUnitPattern": "{0}/شب"
 			},
 			"coordinateUnit": {
 				"displayName": "جهت",

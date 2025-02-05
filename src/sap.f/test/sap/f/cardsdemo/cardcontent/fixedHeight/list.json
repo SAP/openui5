@@ -1,0 +1,79 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.samples.fixedHeight.list",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"top": {
+					"value": 5,
+					"type": "integer"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+				"parameters": {
+					"$format": "json",
+					"$count": true,
+					"$skip": "{paginator>/skip}",
+					"$top": "{parameters>/top/value}"
+				}
+			},
+			"path": "/value"
+		},
+		"header": {
+			"title": "Products (Server Side Pagination)",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": "${parameters>/visibleItems} of ${/@odata.count}"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock, {QuantityPerUnit} per unit, {= format.currency(${UnitPrice}, 'USD')} per unit",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"totalCount": "{/@odata.count}",
+				"pageSize": "{parameters>/top/value}"
+			},
+			"actionsStrip": [
+				{
+					"type": "Link",
+					"text": "Agenda",
+					"icon": "sap-icon://action",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "https://sap.com"
+							}
+						}
+					]
+				},
+				{
+					"text": "Approve",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "https://sap.com"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

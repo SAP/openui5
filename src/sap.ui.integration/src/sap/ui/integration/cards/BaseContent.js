@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/integration/delegate/OverflowHandler",
 	"sap/base/util/merge",
 	"sap/ui/integration/library",
 	"sap/ui/core/message/MessageType"
@@ -41,6 +42,7 @@ sap.ui.define([
 	LoadingProvider,
 	BindingHelper,
 	BindingResolver,
+	OverflowHandler,
 	merge,
 	library,
 	MessageType
@@ -106,6 +108,14 @@ sap.ui.define([
 				 */
 				noDataConfiguration: {
 					type: "object"
+				},
+
+				/**
+				 * Set this property if the height is insufficient and the card should show a footer with "Show More" button.
+				 */
+				overflowWithShowMore:  {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -215,6 +225,11 @@ sap.ui.define([
 				oLoadingPlaceholder.setHasContent((this._getTable().getColumns().length > 0));
 			}
 		}
+
+		if (!this._oOverflowHandler && this.getOverflowWithShowMore() && this._supportsOverflow()) {
+			this._oOverflowHandler = new OverflowHandler(this);
+			this._oOverflowHandler.attach();
+		}
 	};
 
 	/**
@@ -256,6 +271,11 @@ sap.ui.define([
 		}
 
 		this._sContentBindingPath = null;
+
+		if (this._oOverflowHandler)	{
+			this._oOverflowHandler.destroy();
+			this._oOverflowHandler = null;
+		}
 	};
 
 	/**
@@ -329,6 +349,14 @@ sap.ui.define([
 				this.fireReady();
 			}
 		}.bind(this));
+	};
+
+	/**
+	 * Whether the content supports overflowing and needs the OverflowHandler.
+	 * @returns {boolean} True if the content can support overflow.
+	 */
+	BaseContent.prototype._supportsOverflow = function () {
+		return true;
 	};
 
 	BaseContent.prototype._forceCompleteAwaitedEvents = function () {

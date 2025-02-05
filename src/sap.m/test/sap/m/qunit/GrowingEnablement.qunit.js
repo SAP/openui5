@@ -425,7 +425,8 @@ sap.ui.define([
 	QUnit.test("Should group and ungroup a List", async function(assert) {
 		const oMockServer = startMockServer(),
 			oList = new List({
-				growing : true
+				growing : true,
+				sticky: ["GroupHeaders"]
 			});
 
 		oList.placeAt("qunit-fixture");
@@ -434,17 +435,22 @@ sap.ui.define([
 		setODataModelAndBindItems(oList);
 		await ui5Event("updateFinished", oList);
 
+		assert.notOk(oList.getDomRef().classList.contains("sapMSticky"), "List does not have sticky class");
 		const iInitialItemCount = oList.getItems().length;
 		oList.setBusyIndicatorDelay(0);
 		oList.focus();
 		oList.setBusy(true);
 		groupList(oList);
 		await ui5Event("updateFinished", oList);
+		assert.ok(oList.getDomRef().classList.contains("sapMSticky"), "List now has the sticky class after grouping");
+		assert.ok(oList.getDomRef().classList.contains("sapMSticky8"), "List has the grouping specific sticky class");
 
 		assert.strictEqual(document.activeElement, oList.getItems()[0].getDomRef(), "The focus is set correctly");
 		oList.getBinding("items").sort([]);
 		await ui5Event("updateFinished", oList);
 
+		assert.notOk(oList.getDomRef().classList.contains("sapMSticky"), "List does not have sticky class after ungroup");
+		assert.notOk(oList.getDomRef().classList.contains("sapMSticky"), "List does not have grouping specific sticky class after ungroup");
 		assert.strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
 
 		oList.destroy();

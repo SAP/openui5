@@ -345,6 +345,8 @@ sap.ui.define([
 			this._aMoreCountPerDay = [];
 			this._aMoreCountPerDay.length = iCellsInView;
 			this._aMoreCountPerDay.fill(0);
+			this._oSelectionStartDate = null;
+			this._bReversiveSelection = false;
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getDateColumn = function(aCells, oNextDate, iColumns) {
@@ -551,31 +553,67 @@ sap.ui.define([
 			this._oItemNavigation.focusItem(iIndex);
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype._rangeSelection = function(oStartDate) {
+		SinglePlanningCalendarMonthGrid.prototype._addSelectedDate = function(oDate) {
+			var aSelectedDates = this.getAggregation("selectedDates");
+			var bDateExists = aSelectedDates && aSelectedDates.some(function(oRange) {
+				return CalendarDate.fromLocalJSDate(oRange.getStartDate()).isSame(CalendarDate.fromLocalJSDate(oDate));
+			});
+
+			if (!bDateExists) {
+				this.addAggregation("selectedDates", new DateRange({ startDate: UI5Date.getInstance(oDate) }));
+			}
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._rangeSelection = function(oStartDate, oEndDate) {
 			var oCurrentDate = UI5Date.getInstance(oStartDate),
-				_bSelectWeek = false,
+				iDaysInRange = 0,
+				iDaysSelected = 0,
+				bPositiveSelection = true,
+				bTargetContainsSelectedClass = false,
+				bShouldToggleMarkCell,
 				oTarget,
-				i,
 				oCurrentDateUTCTimestamp;
 
-			for (i = 0; i < 7; i++) {
-				if (!this._checkDateSelected(CalendarDate.fromLocalJSDate(oCurrentDate))) {
-					_bSelectWeek = true;
-					break;
+			while (oCurrentDate.getTime() < oEndDate.getTime()) {
+				iDaysInRange++;
+				if (this._checkDateSelected(CalendarDate.fromLocalJSDate(oCurrentDate))) {
+					iDaysSelected++;
 				}
 				oCurrentDate.setDate(oCurrentDate.getDate() + 1);
 			}
+			if (iDaysSelected === iDaysInRange) {
+				bPositiveSelection = false;
+			}
+
+			if (!this._bCurrentWeekSelection && !bPositiveSelection && oStartDate.getTime() < oEndDate.getTime()) {
+				if (this._bReversiveSelection) {
+					oStartDate.setDate(oStartDate.getDate() + 1);
+				} else {
+					oEndDate.setDate(oEndDate.getDate() - 1);
+				}
+			}
+
 
 			oCurrentDate = UI5Date.getInstance(oStartDate);
 
-			for (i = 0; i < 7; i++) {
+			while (oCurrentDate.getTime() < oEndDate.getTime()) {
 				oCurrentDateUTCTimestamp = Date.UTC(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate());
 				oTarget = document.querySelector('[sap-ui-date="' + oCurrentDateUTCTimestamp + '"]');
-				if (!(_bSelectWeek && oTarget && oTarget.classList.contains("sapMSPCMonthDaySelected"))){
-					this._toggleMarkCell(oTarget, oCurrentDate);
+
+				if (oTarget) {
+					bTargetContainsSelectedClass = oTarget.classList.contains("sapMSPCMonthDaySelected");
+					bShouldToggleMarkCell = (bPositiveSelection && !bTargetContainsSelectedClass) || (!bPositiveSelection && bTargetContainsSelectedClass);
+					if (bShouldToggleMarkCell) {
+						this._toggleMarkCell(oTarget, oCurrentDate);
+					}
+				} else if (bPositiveSelection) {
+					this._addSelectedDate(oCurrentDate);
 				}
+
 				oCurrentDate.setDate(oCurrentDate.getDate() + 1);
 			}
+
+			this._bCurrentWeekSelection = false;
 		};
 
 		/**
@@ -707,18 +745,32 @@ sap.ui.define([
 			return this._findSelectedRow(oEvent);
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype._handelMultiDateSelection = function (oTarget, oStartDate,  oEndDate, oEvent) {
+		SinglePlanningCalendarMonthGrid.prototype._handleMultiDateSelection = function (oTarget, oStartDate,  oEndDate, oEvent, bShiftSelection) {
 			const aOldSelectedDateState = this.getAggregation("selectedDates");
-			const bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
-			const bSingleDateSelect = !this._bMultiDateSelectWithArrow && !this._bCurrentWeekSelection;
+			const bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode() && !bShiftSelection;
+			const bSingleDateSelect = !this._bMultiDateSelectWithArrow && !this._bCurrentWeekSelection && !bShiftSelection;
+			const bShiftClickSelection = bShiftSelection && !!this._oSelectionStartDate;
+			const bWeekSelection = this._bCurrentWeekSelection && bMultiDateSelection;
 
-			if (((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) && !oEvent.shiftKey) || (!bMultiDateSelection && !(oEvent.metaKey || oEvent.ctrlKey))) {
+			this._bReversiveSelection = false;
+
+			// swap dates if necessary
+			if (oStartDate.getTime() > oEndDate.getTime()) {
+				[oStartDate, oEndDate] = [oEndDate, oStartDate];
+				this._oSelectionStartDate = UI5Date.getInstance(oStartDate);
+				this._bReversiveSelection = true;
+			} else {
+				this._oSelectionStartDate = UI5Date.getInstance(oEndDate);
+			}
+
+			oEndDate.setDate(oEndDate.getDate() + 1);
+
+			if (((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) && !oEvent.shiftKey) || (!bMultiDateSelection && !(oEvent.metaKey || oEvent.ctrlKey || bShiftClickSelection))) {
 				this.removeAllAggregation("selectedDates");
 			}
 
-			if (bSingleDateSelect) {
+			if (bSingleDateSelect && !bShiftSelection) {
 				this._toggleMarkCell(oTarget, oStartDate);
-
 			} else if (this._bMultiDateSelectWithArrow){
 				this._bMultiDateSelectWithArrow = false;
 				var oDate = UI5Date.getInstance(CalendarDate.fromLocalJSDate(oStartDate));
@@ -734,16 +786,17 @@ sap.ui.define([
 				oTarget = document.querySelector('[sap-ui-date="' + oDate.getTime() + '"]');
 				oStartDate = UI5Date.getInstance(oDate.getTime());
 				oStartDate = UI5Date.getInstance(oDate.getUTCFullYear(), oStartDate.getUTCMonth(), oStartDate.getUTCDate());
+				this._oSelectionStartDate = UI5Date.getInstance(oStartDate);
 				this._toggleMarkCell(oTarget, oStartDate);
 
-			} else if (this._bCurrentWeekSelection && bMultiDateSelection){
+			} else if (bWeekSelection){
+				this._oSelectionStartDate = null;
 				var iStartDate = oStartDate.getDate(),
 				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(new Locale(Formatting.getLanguageTag()).toString())),
 					iAPIFirstDayOfWeek = this.getFirstDayOfWeek(),
 					iFirstDayOfWeek,
 					iWeekStartDate;
 
-				this._bCurrentWeekSelection = false;
 				if (iAPIFirstDayOfWeek < 0 || iAPIFirstDayOfWeek > 6) {
 
 					if (oWeekConfigurationValues) {
@@ -760,7 +813,10 @@ sap.ui.define([
 					iWeekStartDate -= 7;
 				}
 				oStartDate.setDate(iWeekStartDate);
-				oEndDate.setDate(oStartDate.getDate() + 6);
+				oEndDate = UI5Date.getInstance(oStartDate);
+				oEndDate.setDate(oStartDate.getDate() + 7);
+				this._rangeSelection(oStartDate, oEndDate);
+			} else if (bShiftSelection) {
 				this._rangeSelection(oStartDate, oEndDate);
 			}
 			this._fireSelectionChange(aOldSelectedDateState);
@@ -828,20 +884,37 @@ sap.ui.define([
 			});
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype._fireGridCellSelectionEvent = function (oEvent, bWeekNumberSelect){
-			const iExtraDayCount = 6;
-			const iSingleDay = 1;
+		SinglePlanningCalendarMonthGrid.prototype._fireGridCellSelectionEvent = function (oEvent, bWeekNumberSelect) {
 			const oSelectedCell = bWeekNumberSelect
 				? oEvent.target.nextSibling.querySelectorAll(".sapMSPCMonthDay")[0]
 				: this._findSelectCell(oEvent.target);
-			const iNextDays = bWeekNumberSelect ? iExtraDayCount : iSingleDay;
 			const iTimestamp = parseInt(oSelectedCell.getAttribute("sap-ui-date"));
 			let oStartDate = UI5Date.getInstance(iTimestamp);
 			oStartDate = UI5Date.getInstance(oStartDate.getUTCFullYear(), oStartDate.getUTCMonth(), oStartDate.getUTCDate());
-			const oEndDate = UI5Date.getInstance(oStartDate);
-			oEndDate.setDate(oEndDate.getDate() + iNextDays);
+			let oEndDate = UI5Date.getInstance(oStartDate);
+			let bShiftSelection = false;
 
-			this._handelMultiDateSelection(oSelectedCell, oStartDate, oEndDate, oEvent, bWeekNumberSelect);
+			if (oEvent.ctrlKey || oEvent.metaKey || bWeekNumberSelect || this.getDateSelectionMode() === SinglePlanningCalendarSelectionMode.MultiSelect) {
+				if (this._oSelectionStartDate && oEvent.type !== "keydown" && oEvent.shiftKey && !bWeekNumberSelect) {
+					// Shift selection in multiple mode
+					oEndDate = UI5Date.getInstance(oStartDate);
+					oStartDate = UI5Date.getInstance(this._oSelectionStartDate);
+					bShiftSelection = true;
+				} else {
+					// Ctrl+click in single mode and click in multiple mode, Shift+Arrow in multiple mode
+					this._oSelectionStartDate = UI5Date.getInstance(oStartDate);
+				}
+			} else if (!oEvent.shiftKey || !this._oSelectionStartDate) {
+				// Single click in single mode
+				this._oSelectionStartDate = UI5Date.getInstance(oStartDate);
+			} else {
+				// Shift selection in single mode
+				oEndDate = UI5Date.getInstance(oStartDate);
+				oStartDate = UI5Date.getInstance(this._oSelectionStartDate);
+				bShiftSelection = true;
+			}
+
+			this._handleMultiDateSelection(oSelectedCell, oStartDate, oEndDate, oEvent, bShiftSelection);
 
 			// eslint-disable-next-line no-unused-expressions
 			!bWeekNumberSelect && this.fireEvent("cellPress", {startDate: oStartDate, endDate: oEndDate});
@@ -849,7 +922,7 @@ sap.ui.define([
 
 		SinglePlanningCalendarMonthGrid.prototype._toggleMarkCell = function (oTarget, oDay) {
 			if (oTarget && !oTarget.classList.contains("sapMSPCMonthDaySelected")) {
-				this.addAggregation("selectedDates", new DateRange({startDate: UI5Date.getInstance(oDay)}));
+				this._addSelectedDate(oDay);
 			} else {
 				var aSelectedDates = this.getAggregation("selectedDates");
 

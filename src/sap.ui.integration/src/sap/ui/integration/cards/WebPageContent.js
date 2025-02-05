@@ -173,6 +173,13 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * @override
+	 */
+	WebPageContent.prototype._supportsOverflow = function () {
+		return false;
+	};
+
 	WebPageContent.prototype._isDataReady = function () {
 		if (!this.getCardInstance()) {
 			return this._bDataReady;

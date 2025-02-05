@@ -283,7 +283,7 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Map outdated IANA timezone IDs used in CLDR to correct and up-to-date IANA IDs as maintained in ABAP systems.
+	 * Map outdated IANA timezone IDs used in CLDR to correct and IANA IDs as maintained in ABAP systems.
 	 *
 	 * @private
  	 */
@@ -318,6 +318,7 @@ sap.ui.define([], function() {
 		"Antarctica/South_Pole": "Pacific/Auckland",
 		"Asia/Ashkhabad": "Asia/Ashgabat",
 		"Asia/Calcutta": "Asia/Kolkata",
+		"Asia/Choibalsan": "Asia/Ulaanbaatar",
 		"Asia/Chongqing": "Asia/Shanghai",
 		"Asia/Chungking": "Asia/Shanghai",
 		"Asia/Dacca": "Asia/Dhaka",
@@ -350,6 +351,8 @@ sap.ui.define([], function() {
 		"Brazil/DeNoronha": "America/Noronha",
 		"Brazil/East": "America/Sao_Paulo",
 		"Brazil/West": "America/Manaus",
+		"CET": "Europe/Brussels",
+		"CST6CDT": "America/Chicago",
 		"Canada/Atlantic": "America/Halifax",
 		"Canada/Central": "America/Winnipeg",
 		"Canada/East-Saskatchewan": "America/Regina",
@@ -362,7 +365,9 @@ sap.ui.define([], function() {
 		"Chile/Continental": "America/Santiago",
 		"Chile/EasterIsland": "Pacific/Easter",
 		"Cuba": "America/Havana",
-		"EST": "Etc/GMT+5",
+		"EET": "Europe/Athens",
+		"EST": "America/Panama",
+		"EST5EDT": "America/New_York",
 		"Egypt": "Africa/Cairo",
 		"Eire": "Europe/Dublin",
 		"Etc/GMT+0": "Etc/GMT",
@@ -384,7 +389,7 @@ sap.ui.define([], function() {
 		"GMT-0": "Etc/GMT",
 		"GMT0": "Etc/GMT",
 		"Greenwich": "Etc/GMT",
-		"HST": "Etc/GMT+10",
+		"HST": "Pacific/Honolulu",
 		"Hongkong": "Asia/Hong_Kong",
 		"Iceland": "Atlantic/Reykjavik",
 		"Iran": "Asia/Tehran",
@@ -393,7 +398,9 @@ sap.ui.define([], function() {
 		"Japan": "Asia/Tokyo",
 		"Kwajalein": "Pacific/Kwajalein",
 		"Libya": "Africa/Tripoli",
-		"MST": "Etc/GMT+7",
+		"MET": "Europe/Brussels",
+		"MST": "America/Phoenix",
+		"MST7MDT": "America/Denver",
 		"Mexico/BajaNorte": "America/Tijuana",
 		"Mexico/BajaSur": "America/Mazatlan",
 		"Mexico/General": "America/Mexico_City",
@@ -401,6 +408,7 @@ sap.ui.define([], function() {
 		"NZ-CHAT": "Pacific/Chatham",
 		"Navajo": "America/Denver",
 		"PRC": "Asia/Shanghai",
+		"PST8PDT": "America/Los_Angeles",
 		"Pacific/Enderbury": "Pacific/Kanton",
 		"Pacific/Johnston": "Pacific/Honolulu",
 		"Pacific/Ponape": "Pacific/Pohnpei",
@@ -430,6 +438,7 @@ sap.ui.define([], function() {
 		"UTC": "Etc/UTC",
 		"Universal": "Etc/UTC",
 		"W-SU": "Europe/Moscow",
+		"WET": "Europe/Lisbon",
 		"Zulu": "Etc/UTC"
 	};
 

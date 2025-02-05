@@ -265,8 +265,8 @@ sap.ui.define([
 
 		const oFilter = FilterConverter.createFilters( oCM.getAllConditions(), {
 			"fieldPath1" : {type: oStringType, baseType: BaseType.String, caseSensitive: false},	// the first property should be handled caseInsensitive
-			"fieldPath2" : {type: oStringType, baseType: BaseType.String, caseSensitive: true},
-			"fieldPath3" : {type: oStringType, baseType: BaseType.String}
+			"fieldPath2" : {type: oStringType, caseSensitive: true},
+			"fieldPath3" : {type: null}
 		});
 
 		const result = FilterConverter.prettyPrintFilters(oFilter);

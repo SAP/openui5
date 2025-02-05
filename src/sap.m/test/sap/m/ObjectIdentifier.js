@@ -280,7 +280,7 @@ sap.ui.define([
   });
 
   var app = new App();
-  var page = new Page({
+  var page = new Page("page", {
 	  showHeader : false,
 	  enableScrolling : true
   });

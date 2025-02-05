@@ -1,0 +1,143 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.FixedHeight">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Cards With Fixed Height" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<Panel headerText="No height limitation">
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/listWithActions.json"
+				width="270px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/tinyList.json"
+				width="270px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/list.json"
+				width="360px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+		<Panel headerText="Height is too small">
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/listWithActions.json"
+				width="270px"
+				height="335px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/tinyList.json"
+				width="270px"
+				height="295px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/list.json"
+				width="360px"
+				height="300px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+		<Panel headerText="More samples">
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/object.json"
+				width="360px"
+				height="400px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/objectForm.json"
+				width="360px"
+				height="310px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+		<Panel>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/table.json"
+				width="450px"
+				height="400px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+		<Panel>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/analytical.json"
+				width="450px"
+				height="400px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+		<Panel>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/calendar.json"
+				width="360px"
+				height="300px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+		<Panel>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/webPage.json"
+				width="360px"
+				height="300px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+		<Panel>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/componentCard/booking/manifest.json"
+				width="360px"
+				height="250px"
+				overflow="ShowMore"
+				class="sapUiSmallMargin" />
+		</Panel>
+
+		<Panel headerText="Resizable container">
+			<l:Splitter orientation="Vertical" height="1500px">
+				<HBox height="80%" class="sapUiSmallMargin">
+					<layoutData>
+						<l:SplitterLayoutData size="500px" />
+					</layoutData>
+					<w:Card
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/tinyList.json"
+						width="270px"
+						height="100%"
+						overflow="ShowMore"
+						class="sapUiSmallMarginBegin" />
+					<w:Card
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/listWithActions.json"
+						width="270px"
+						height="100%"
+						overflow="ShowMore"
+						class="sapUiSmallMarginBegin" />
+					<w:Card
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/fixedHeight/object.json"
+						width="360px"
+						height="100%"
+						overflow="ShowMore"
+						class="sapUiSmallMarginBegin" />
+				</HBox>
+				<HBox>
+					<layoutData>
+						<l:SplitterLayoutData size="auto" />
+					</layoutData>
+					<Text text="Use the handler to resize" />
+				</HBox>
+			</l:Splitter>
+		</Panel>
+	</Page>
+</mvc:View>

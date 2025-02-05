@@ -356,6 +356,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether the given module has an invalid module content.
+	 * Invalid in the sense of the XMLTP means: a Promise.
+	 *
+	 * @param {string} sModulePath the module to check for validity
+	 * @param {any} vContent the module content to check for validity
+	 */
+	function validateModuleContent(sModulePath, vContent) {
+		if (vContent instanceof Promise) {
+			throw new Error(`The module '${sModulePath}' returns a Promise where a control class was expected. Promises as module content are not supported. Please also refer to https://ui5.sap.com/#/topic/0cb44d7a147640a0890cefa5fd7c7f8e.`);
+		}
+	}
+
+	/**
 	 * Validate the parsed require context object
 	 *
 	 * The require context object should be an object. Every key in the object should be a valid
@@ -728,11 +741,14 @@ sap.ui.define([
 			 * @param {sap.ui.core.Control|undefined} fnClass control class or undefined if not returned as module content for its sap.ui.define factory
 			 * @return {sap.ui.core.Control|undefined} the resolved class.
 			 */
-			function validateClass(fnClass) {
+			function validateClass(fnClass, sResourceName) {
 				if (!fnClass) {
 					const sErrorLogMessage = `Control '${sClassName}' did not return a class definition from sap.ui.define.`;
 					throw new Error(`XMLTemplateProcessor: ${sErrorLogMessage}`);
 				}
+
+				validateModuleContent(sResourceName, fnClass);
+
 				return fnClass;
 			}
 
@@ -742,13 +758,16 @@ sap.ui.define([
 				return new Promise(function(resolve, reject) {
 					sap.ui.require([sResourceName], function(oClassObject) {
 						try {
-							oClassObject = validateClass(oClassObject);
+							oClassObject = validateClass(oClassObject, sResourceName);
 							resolve(oClassObject);
 						} catch (e) {
 							reject(e);
 						}
 					}, reject);
 				});
+			} else {
+				// even when retreiving a class with sap.ui.require, we should validate the module content
+				validateModuleContent(sResourceName, oClassObject);
 			}
 			return oClassObject;
 		}

@@ -27,11 +27,6 @@ TokenizerRenderer.render = function(oRm, oControl){
 	oRm.openStart("div", oControl);
 
 
-	if (oControl.getEffectiveTabIndex()) {
-		oRm.attr("tabindex", "0");
-	}
-
-
 	oRm.class("sapMTokenizer");
 
 	if (!oControl.getEditable()) {
@@ -40,6 +35,7 @@ TokenizerRenderer.render = function(oRm, oControl){
 
 	if (!oControl.getEnabled()) {
 		oRm.class("sapMTokenizerDisabled");
+
 	}
 
 	if (!aTokens.length) {
@@ -124,6 +120,9 @@ TokenizerRenderer._renderTokens = function(oRm, oControl){
  * @param {sap.m.Tokenizer} oControl an object representation of the control that should be rendered
  */
 TokenizerRenderer._renderIndicator = function(oRm, oControl){
+	var bExpanded = oControl.getTokensPopup().isOpen();
+	var sPopoverId = oControl.getTokensPopup().getId();
+
 	oRm.openStart("span");
 	oRm.class("sapMTokenizerIndicator");
 
@@ -132,6 +131,11 @@ TokenizerRenderer._renderIndicator = function(oRm, oControl){
 	if (oControl.getHiddenTokensCount() === 0) {
 		oRm.class("sapUiHidden");
 	}
+
+	oRm.attr("role", "button")
+		.attr("aria-haspopup", "dialog")
+		.attr("aria-expanded", bExpanded)
+		.attr("aria-controls", sPopoverId);
 	oRm.openEnd().close("span");
 };
 

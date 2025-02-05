@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "الأفارية",
 		"ab": "الأبخازية",
@@ -60,6 +60,7 @@
 		"bin": "البينية",
 		"bkm": "لغة الكوم",
 		"bla": "السيكسيكية",
+		"blo": "الآنية",
 		"bm": "البامبارا",
 		"bn": "البنغالية",
 		"bo": "التبتية",
@@ -120,7 +121,6 @@
 		"dav": "تيتا",
 		"de": "الألمانية",
 		"de_AT": "الألمانية النمساوية",
-		"de_CH": "الألمانية العليا السويسرية",
 		"del": "الديلوير",
 		"den": "السلافية",
 		"dgr": "الدوجريب",
@@ -143,11 +143,7 @@
 		"el": "اليونانية",
 		"elx": "الإمايت",
 		"en": "الإنجليزية",
-		"en_AU": "الإنجليزية الأسترالية",
-		"en_CA": "الإنجليزية الكندية",
-		"en_GB": "الإنجليزية البريطانية",
 		"en_GB-alt-short": "الإنجليزية المملكة المتحدة",
-		"en_US": "الإنجليزية الأمريكية",
 		"en_US-alt-short": "الإنجليزية الولايات المتحدة",
 		"enm": "الإنجليزية الوسطى",
 		"eo": "الإسبرانتو",
@@ -169,8 +165,6 @@
 		"fo": "الفاروية",
 		"fon": "الفون",
 		"fr": "الفرنسية",
-		"fr_CA": "الفرنسية الكندية",
-		"fr_CH": "الفرنسية السويسرية",
 		"frc": "الفرنسية الكاجونية",
 		"frm": "الفرنسية الوسطى",
 		"fro": "الفرنسية القديمة",
@@ -290,6 +284,7 @@
 		"kv": "الكومي",
 		"kw": "الكورنية",
 		"kwk": "الكواكوالا",
+		"kxv": "الكوفية",
 		"ky": "القيرغيزية",
 		"la": "اللاتينية",
 		"lad": "اللادينو",
@@ -300,6 +295,7 @@
 		"lez": "الليزجية",
 		"lg": "الغاندا",
 		"li": "الليمبورغية",
+		"lij": "الليغورية",
 		"lil": "الليلويتية",
 		"lkt": "لاكوتا",
 		"lmo": "اللومبردية",
@@ -372,7 +368,6 @@
 		"nia": "النياس",
 		"niu": "النيوي",
 		"nl": "الهولندية",
-		"nl_BE": "الفلمنكية",
 		"nmg": "كواسيو",
 		"nn": "النرويجية نينورسك",
 		"nnh": "لغة النجيمبون",
@@ -496,6 +491,7 @@
 		"swb": "القمرية",
 		"syc": "سريانية تقليدية",
 		"syr": "السريانية",
+		"szl": "السيليزية",
 		"ta": "التاميلية",
 		"tce": "التوتشون الجنوبية",
 		"te": "التيلوغوية",
@@ -545,7 +541,9 @@
 		"uz": "الأوزبكية",
 		"vai": "الفاي",
 		"ve": "الفيندا",
+		"vec": "البندقية",
 		"vi": "الفيتنامية",
+		"vmw": "الماكوا",
 		"vo": "لغة الفولابوك",
 		"vot": "الفوتيك",
 		"vun": "الفونجو",
@@ -559,6 +557,7 @@
 		"wuu": "الوو الصينية",
 		"xal": "الكالميك",
 		"xh": "الخوسا",
+		"xnr": "كانغري",
 		"xog": "السوغا",
 		"yao": "الياو",
 		"yap": "اليابيز",
@@ -1065,7 +1064,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E، d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -1115,11 +1114,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1165,14 +1164,14 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1181,7 +1180,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -1190,8 +1189,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -1239,22 +1238,22 @@
 					"y": "E، d‏/M‏/y – E، d‏/M‏/y"
 				},
 				"yMMM": {
-					"M": "MMM – MMM، y",
-					"y": "MMM، y – MMM، y"
+					"M": "MMM – MMM y",
+					"y": "MMM y – MMM y"
 				},
 				"yMMMd": {
-					"d": "d–d MMM، y",
-					"M": "d MMM – d MMM، y",
-					"y": "d MMM، y – d MMM، y"
+					"d": "d–d MMM y",
+					"M": "d MMM – d MMM y",
+					"y": "d MMM y – d MMM y"
 				},
 				"yMMMEd": {
 					"d": "E، d – E، d MMM، y",
 					"M": "E، d MMM – E، d MMM، y",
-					"y": "E، d MMM، y – E، d MMM، y"
+					"y": "E، d MMM y – E، d MMM y"
 				},
 				"yMMMM": {
-					"M": "MMMM – MMMM، y",
-					"y": "MMMM، y – MMMM، y"
+					"M": "MMMM – MMMM y",
+					"y": "MMMM y – MMMM y"
 				}
 			}
 		},
@@ -1607,7 +1606,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E، d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -1649,11 +1648,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1699,14 +1698,14 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -1715,7 +1714,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -1724,8 +1723,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -2138,7 +2137,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E، d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -2180,11 +2179,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2230,14 +2229,14 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2246,7 +2245,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2255,8 +2254,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -2689,7 +2688,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E، d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -2731,11 +2730,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2781,14 +2780,14 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -2797,7 +2796,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -2806,8 +2805,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -3220,7 +3219,7 @@
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E، d MMM y G",
-				"h": "h a",
+				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
@@ -3262,11 +3261,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3312,14 +3311,14 @@
 					"y": "E, d MMM y – E, d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
+					"a": "h:mm a – h:mm a",
 					"h": "h:mm–h:mm a",
 					"m": "h:mm–h:mm a"
 				},
@@ -3328,7 +3327,7 @@
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
+					"a": "h:mm a – h:mm a v",
 					"h": "h:mm–h:mm a v",
 					"m": "h:mm–h:mm a v"
 				},
@@ -3337,8 +3336,8 @@
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -4491,7 +4490,6 @@
 			"Bishkek": "بشكيك",
 			"Brunei": "بروناي",
 			"Chita": "تشيتا",
-			"Choibalsan": "تشوبالسان",
 			"Colombo": "كولومبو",
 			"Damascus": "دمشق",
 			"Dhaka": "دكا",
@@ -4972,6 +4970,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤",
@@ -5282,13 +5281,13 @@
 				"unitPattern-count-other": "{0} قيراط"
 			},
 			"concentr-milligram-ofglucose-per-deciliter": {
-				"displayName": "مغم/ديسبل",
-				"unitPattern-count-zero": "{0} مغم/ديسبل",
-				"unitPattern-count-one": "{0} مغم/ديسبل",
-				"unitPattern-count-two": "{0} مغم/ديسبل",
-				"unitPattern-count-few": "{0} مغم/ديسبل",
-				"unitPattern-count-many": "{0} مغم/ديسبل",
-				"unitPattern-count-other": "{0} مغم/ديسبل"
+				"displayName": "مغم/ديسيل",
+				"unitPattern-count-zero": "{0} مغم/ديسيل",
+				"unitPattern-count-one": "{0} مغم/ديسيل",
+				"unitPattern-count-two": "{0} مغم/ديسيل",
+				"unitPattern-count-few": "{0} مغم/ديسيل",
+				"unitPattern-count-many": "{0} مغم/ديسيل",
+				"unitPattern-count-other": "{0} مغم/ديسيل"
 			},
 			"concentr-millimole-per-liter": {
 				"displayName": "م.مول/ل",
@@ -5837,16 +5836,16 @@
 				"displayName": "نقطة/سم",
 				"unitPattern-count-zero": "{0} نقطة/سم",
 				"unitPattern-count-one": "{0} نقطة/سم",
-				"unitPattern-count-two": "{0} نقطتان/سم",
+				"unitPattern-count-two": "{0} نقطة/سم",
 				"unitPattern-count-few": "{0} نقاط/سم",
 				"unitPattern-count-many": "{0} نقطة/سم",
 				"unitPattern-count-other": "{0} نقطة/سم"
 			},
 			"graphics-dot-per-inch": {
-				"displayName": "نقطة لكل بوصة",
+				"displayName": "نقطة/بوصة",
 				"unitPattern-count-zero": "{0} نقطة/بوصة",
 				"unitPattern-count-one": "{0} نقطة/بوصة",
-				"unitPattern-count-two": "نقطة/بوصة",
+				"unitPattern-count-two": "{0} نقطة/بوصة",
 				"unitPattern-count-few": "{0} نقاط/بوصة",
 				"unitPattern-count-many": "{0} نقطة/بوصة",
 				"unitPattern-count-other": "{0} نقطة/بوصة"
@@ -6777,6 +6776,29 @@
 				"unitPattern-count-few": "{0} ربع غالون إمبراطوري",
 				"unitPattern-count-many": "{0} ربع غالون إمبراطوري",
 				"unitPattern-count-other": "{0} ربع غالون إمبراطوري"
+			},
+			"speed-light-speed": {
+				"displayName": "light",
+				"unitPattern-count-other": "{0} light"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "جزء/مليار",
+				"unitPattern-count-zero": "{0} جزء/مليار",
+				"unitPattern-count-one": "{0} جزء/مليار",
+				"unitPattern-count-two": "جزآن/مليار",
+				"unitPattern-count-few": "{0} أجزاء/مليار",
+				"unitPattern-count-many": "{0} جزءًا/مليار",
+				"unitPattern-count-other": "{0} جزء/مليار"
+			},
+			"duration-night": {
+				"displayName": "ليلة",
+				"unitPattern-count-zero": "{0} ليلة",
+				"unitPattern-count-one": "ليلة",
+				"unitPattern-count-two": "ليلتان",
+				"unitPattern-count-few": "{0} ليالٍ",
+				"unitPattern-count-many": "{0} ليلةً",
+				"unitPattern-count-other": "{0} ليلة",
+				"perUnitPattern": "{0}/ل"
 			},
 			"coordinateUnit": {
 				"displayName": "اتجاه",

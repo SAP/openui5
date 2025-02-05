@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "44.0.0",
-	"__buildtime": "2024-01-12T14:24:50.280Z",
+	"__version": "46.1.0",
+	"__buildtime": "2025-01-28T09:40:27.437Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abkhazia",
@@ -57,6 +57,7 @@
 		"bin": "Bini",
 		"bkm": "Kom",
 		"bla": "Siksika",
+		"blo": "Anii",
 		"bm": "Bambara",
 		"bn": "Benggali",
 		"bo": "Tibet",
@@ -254,6 +255,7 @@
 		"kv": "Komi",
 		"kw": "Cornish",
 		"kwk": "Kwak’wala",
+		"kxv": "Kuvi",
 		"ky": "Kirghiz",
 		"la": "Latin",
 		"lad": "Ladino",
@@ -263,8 +265,10 @@
 		"lez": "Lezghian",
 		"lg": "Ganda",
 		"li": "Limburgish",
+		"lij": "Liguria",
 		"lil": "Lillooet",
 		"lkt": "Lakota",
+		"lmo": "Lombard",
 		"ln": "Lingala",
 		"lo": "Laos",
 		"lou": "Kreol Louisiana",
@@ -428,6 +432,7 @@
 		"sw_CD": "Congo Swahili",
 		"swb": "Comoria",
 		"syr": "Syriac",
+		"szl": "Silesia",
 		"ta": "Tamil",
 		"tce": "Tutchone Selatan",
 		"te": "Telugu",
@@ -470,7 +475,9 @@
 		"uz": "Uzbekistan",
 		"vai": "Vai",
 		"ve": "Venda",
+		"vec": "Venetia",
 		"vi": "Vietnam",
+		"vmw": "Makhuwa",
 		"vo": "Volapük",
 		"vun": "Vunjo",
 		"wa": "Walloon",
@@ -482,6 +489,7 @@
 		"wuu": "Cina Wu",
 		"xal": "Kalmyk",
 		"xh": "Xhosa",
+		"xnr": "Kangri",
 		"xog": "Soga",
 		"yav": "Yangben",
 		"ybb": "Yemba",
@@ -490,6 +498,7 @@
 		"yrl": "Nheengatu",
 		"yue": "Kantonis",
 		"yue_alt-menu": "Cina, Kantonis",
+		"za": "Zhuang",
 		"zgh": "Tamazight Maghribi Standard",
 		"zh": "Cina",
 		"zh_alt-menu": "Cina, Mandarin",
@@ -505,7 +514,6 @@
 	"scripts": {
 		"Adlm": "Adlam",
 		"Aghb": "Kaukasia Albania",
-		"Arab": "Arab",
 		"Arab-alt-variant": "Perso-Arab",
 		"Aran": "Nastaliq",
 		"Armi": "Aramia Imperial",
@@ -563,7 +571,6 @@
 		"Hrkt": "Ejaan sukuan Jepun",
 		"Hung": "Hungary Lama",
 		"Ital": "Italik Lama",
-		"Jamo": "Jamo",
 		"Java": "Jawa",
 		"Jpan": "Jepun",
 		"Kali": "Kayah Li",
@@ -603,7 +610,6 @@
 		"Nand": "Nandinagari",
 		"Narb": "Arab Utara Lama",
 		"Nbat": "Nabataean",
-		"Newa": "Newa",
 		"Nkoo": "N’ko",
 		"Nshu": "Nushu",
 		"Ogam": "Ogham",
@@ -652,7 +658,6 @@
 		"Tfng": "Tifinagh",
 		"Tglg": "Tagalog",
 		"Thaa": "Thaana",
-		"Thai": "Thai",
 		"Tibt": "Tibet",
 		"Tirh": "Tirhuta",
 		"Ugar": "Ugaritic",
@@ -1050,8 +1055,8 @@
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "'week' W 'of' MMMM",
-				"yw": "'week' w 'of' Y"
+				"MMMMW": "'minggu' W 'daripada' MMMM",
+				"yw": "'minggu' w 'daripada' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1069,11 +1074,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1426,8 +1431,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -1440,8 +1445,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -1588,11 +1593,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1987,8 +1992,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -2001,8 +2006,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -2511,8 +2516,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -2525,8 +2530,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -2682,11 +2687,11 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3039,8 +3044,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -3053,8 +3058,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -3555,8 +3560,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -3569,8 +3574,8 @@
 					"PTG"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"PG",
+					"PTG"
 				],
 				"wide": [
 					"PG",
@@ -3976,7 +3981,7 @@
 			"Nouakchott": "Nouakchott",
 			"Ouagadougou": "Ouagadougou",
 			"Porto-Novo": "Porto-Novo",
-			"Sao_Tome": "Sao Tome",
+			"Sao_Tome": "São Tomé",
 			"Tripoli": "Tripoli",
 			"Tunis": "Tunis",
 			"Windhoek": "Windhoek",
@@ -4004,7 +4009,7 @@
 				"_parent": "Argentina"
 			},
 			"Aruba": "Aruba",
-			"Asuncion": "Asuncion",
+			"Asuncion": "Asunción",
 			"Atikokan": "Atikokan",
 			"Bahia": "Bahia",
 			"Bahia_Banderas": "Bahia Banderas",
@@ -4027,7 +4032,7 @@
 			"Costa_Rica": "Costa Rica",
 			"Creston": "Creston",
 			"Cuiaba": "Cuiaba",
-			"Curacao": "Curacao",
+			"Curacao": "Curaçao",
 			"Danmarkshavn": "Danmarkshavn",
 			"Dawson": "Dawson",
 			"Dawson_Creek": "Dawson Creek",
@@ -4172,7 +4177,6 @@
 			"Bishkek": "Bishkek",
 			"Brunei": "Brunei",
 			"Chita": "Chita",
-			"Choibalsan": "Choibalsan",
 			"Colombo": "Colombo",
 			"Damascus": "Damsyik",
 			"Dhaka": "Dhaka",
@@ -4342,7 +4346,7 @@
 			"Maldives": "Maldives",
 			"Mauritius": "Mauritius",
 			"Mayotte": "Mayotte",
-			"Reunion": "Reunion"
+			"Reunion": "Réunion"
 		},
 		"Pacific": {
 			"Apia": "Apia",
@@ -4499,6 +4503,7 @@
 		"VND": "₫",
 		"XAF": "FCFA",
 		"XCD": "EC$",
+		"XCG": "Cg.",
 		"XOF": "F CFA",
 		"XPF": "CFPF",
 		"XXX": "¤"
@@ -5402,6 +5407,19 @@
 			"volume-quart-imperial": {
 				"displayName": "qt Imp",
 				"unitPattern-count-other": "{0} qt Imp."
+			},
+			"speed-light-speed": {
+				"displayName": "cahaya",
+				"unitPattern-count-other": "{0} cahaya"
+			},
+			"concentr-portion-per-1e9": {
+				"displayName": "bahagian/bilion",
+				"unitPattern-count-other": "{0} ppb"
+			},
+			"duration-night": {
+				"displayName": "malam",
+				"unitPattern-count-other": "{0} malam",
+				"perUnitPattern": "{0}/malam"
 			},
 			"coordinateUnit": {
 				"displayName": "arah",
