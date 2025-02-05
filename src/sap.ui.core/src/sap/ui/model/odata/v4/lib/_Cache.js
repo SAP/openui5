@@ -3176,28 +3176,29 @@ sap.ui.define([
 			if (sPredicate) {
 				oKeptElement = aElements.$byPredicate[sPredicate];
 				if (oKeptElement) {
+					if (iCreated && aElements.lastIndexOf(oKeptElement, iCreated - 1) >= 0) {
+						// client-side filter for newly created persisted
+						iOffset += 1;
+						aElements[iStart + iResultLength - iOffset] = undefined;
+						continue;
+					}
+
+					const iIndex = aElements.indexOf(oKeptElement);
+					if (iIndex >= 0 && iIndex !== iStart + i - iOffset) {
+						throw new Error("Duplicate key predicate: " + sPredicate);
+					}
+
 					// only check for ETag change if the cache contains one; otherwise either the
 					// cache element is empty (via #addKeptElement) or the server did not send
 					// one last time
 					if (!oKeptElement["@odata.etag"]
 							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
-						if (iCreated && aElements.lastIndexOf(oKeptElement, iCreated - 1) >= 0) {
-							// client-side filter for newly created persisted
-							iOffset += 1;
-							aElements[iStart + iResultLength - iOffset] = undefined;
-							continue;
-						}
 						_Helper.updateNonExisting(oKeptElement, oElement);
 						oElement = oKeptElement;
 					} else if (this.hasPendingChangesForPath(sPredicate)) {
 						throw new Error("Modified on client and on server: "
 							+ this.sResourcePath + sPredicate);
 					} // else: ETag changed, ignore kept element!
-
-					const iIndex = aElements.indexOf(oKeptElement);
-					if (iIndex >= 0 && iIndex !== iStart + i - iOffset) {
-						throw new Error("Duplicate key predicate: " + sPredicate);
-					}
 				}
 				aElements.$byPredicate[sPredicate] = oElement;
 			}
