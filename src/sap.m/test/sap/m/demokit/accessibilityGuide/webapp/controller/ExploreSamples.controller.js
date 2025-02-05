@@ -4,14 +4,16 @@ sap.ui.define([
 	"../model/ExploreSettingsModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"../util/LibLoading"
 ], function (
 	BaseController,
 	exploreNavigationModel,
 	exploreSettingsModel,
 	JSONModel,
 	BindingMode,
-	Device
+	Device,
+	LibLoading
 ) {
 	"use strict";
 
@@ -36,7 +38,12 @@ sap.ui.define([
 			this._registerResize();
 			this._initIFrameCreation();
 		},
-
+		onBeforeRendering: function() {
+			if (!LibLoading.bCommonsLibAvailable) {
+				const oNetworkGraphSample = this._findSample("networkGraph");
+				oNetworkGraphSample.hidden = true;
+			}
+		},
 		onExit: function () {
 			this._deregisterResize();
 		},

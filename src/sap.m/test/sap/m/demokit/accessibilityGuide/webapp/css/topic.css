@@ -171,3 +171,10 @@ code {
 	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 	font-size: 0.875rem;
 }
+
+.sapSuiteUiCommonsView #network-graph,
+.sapSuiteUiCommonsView #network-graph-link,
+.sapSuiteUiCommonsView #network-graph-sample,
+.sapSuiteUiCommonsView #network-graph-example{
+	display: none;
+}

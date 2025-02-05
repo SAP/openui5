@@ -1,7 +1,9 @@
 sap.ui.define([
-	"sap/ui/demo/accessibilityGuide/controller/BaseController"
+	"sap/ui/demo/accessibilityGuide/controller/BaseController",
+	"../util/LibLoading"
 ], function (
-	BaseController
+	BaseController,
+	LibLoading
 ) {
 	"use strict";
 
@@ -32,7 +34,11 @@ sap.ui.define([
 				this._onFrameLoaded();
 			}
 		},
-
+		onBeforeRendering: function() {
+			if (!LibLoading.bCommonsLibAvailable) {
+				this.getView().addStyleClass("sapSuiteUiCommonsView");
+			}
+		},
 		_onFrameLoaded: function () {
 			// sync sapUiSizeCompact with the iframe
 			var sClass = this.getOwnerComponent().getContentDensityClass();
@@ -41,6 +47,9 @@ sap.ui.define([
 			// navigate to the id in the URL
 			var sCurrentHash = this.getRouter().getHashChanger().getHash();
 			var oArgs = this.getRouter().getRouteInfoByHash(sCurrentHash).arguments;
+			if (!LibLoading.bCommonsLibAvailable) {
+				this._getIFrame().contentDocument.body.classList.add("sapSuiteUiCommonsView");
+			}
 
 			this.scrollTo(oArgs.id);
 		},

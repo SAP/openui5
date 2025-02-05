@@ -2,12 +2,16 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"./util/LibLoading",
+	"sap/base/Log"
 ], function (
 	Localization,
 	UIComponent,
 	Device,
-	IconPool
+	IconPool,
+	LibLoading,
+	Log
 ) {
 	"use strict";
 
@@ -37,8 +41,15 @@ sap.ui.define([
 				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
 			});
 
-			// create the views based on the url/hash
-			this.getRouter().initialize();
+			LibLoading._loadLibrary("sap.suite.ui.commons").then(function () {
+				LibLoading.bCommonsLibAvailable = true;
+			}).catch(function (sMessage){
+				LibLoading.bCommonsLibAvailable = false;
+				Log.error(sMessage);
+			}).finally(function() {
+				// create the views based on the url/hash
+				this.getRouter().initialize();
+			}.bind(this));
 		},
 
 		/**
