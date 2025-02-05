@@ -267,7 +267,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} oParentElement - Parent Element
 	 * @param {sap.ui.core.Element} oChildElement - Element which position is being looked for
 	 * @param {string} sAggregationName - Aggregation name
-	 * @param {Function} [fnGetIndex] - Custom handler for retreiving index
+	 * @param {Function} [fnGetIndex] - Custom handler for retrieving index
 	 * @returns {int} index of the element
 	 */
 	Utils.getIndex = function(oParentElement, oChildElement, sAggregationName, fnGetIndex) {
