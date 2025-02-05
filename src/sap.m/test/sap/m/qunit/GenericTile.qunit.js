@@ -4879,7 +4879,6 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 			this.oGenericTile = new GenericTile("generic-tile", {
 				header: "GenericTile Header",
 				frameType: sFrameType,
-				size: sSize,
 				mode: GenericTileMode.IconMode,
 				sizeBehavior: sSizeBehavior,
 				backgroundColor:"red",

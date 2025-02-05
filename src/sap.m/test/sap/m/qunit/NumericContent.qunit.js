@@ -37,9 +37,6 @@ sap.ui.define([
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
 
-	// shortcut for sap.m.Size
-	var Size = library.Size;
-
 	Mobile.init();
 
 	QUnit.module("Rendering test - sap.m.NumericContent", {
@@ -728,7 +725,6 @@ sap.ui.define([
 	QUnit.module("Create numeric Content with Image", {
 		beforeEach: async function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
-				size: Size.L, // deprecated since 1.38
 				state: LoadState.Loaded,
 				scale: "M",
 				indicator: DeviationIndicator.Up,
@@ -832,7 +828,6 @@ sap.ui.define([
 
 	function fnCreateExampleNumericContent () {
 		return new NumericContent("numeric-cnt", {
-			size: Size.L, // deprecated since 1.38
 			state: LoadState.Loaded,
 			scale: "M",
 			indicator: DeviationIndicator.Up,
