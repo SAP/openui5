@@ -39,12 +39,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.dt
 	 */
 	return function(vValue, oReferenceControl) {
-		if (!FlUtils.isBinding(vValue)) {
-			return undefined;
-		}
-
 		const oView = FlUtils.getViewForControl(oReferenceControl);
 		const oController = oView && oView.getController();
+		if (!FlUtils.isBinding(vValue, oController)) {
+			return undefined;
+		}
 		const oBindingInfo = typeof vValue === "string"
 			? ManagedObject.bindingParser(vValue, oController)
 			: { ...vValue };
