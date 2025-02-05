@@ -3,6 +3,11 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "a49a615915e3f12027322ac3e673391edeaac2a9",
+        "type": "FEATURE",
+        "text": " Integration Cards: Added option for overflowing with a \"Show More\" button"
+      },
+      {
         "id": "ec163968c5fe10692849a781b69a0bd1b23e76da",
         "type": "FIX",
         "text": " Integration Cards: Card dialog can now open a Component Card"

@@ -3,6 +3,11 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "540ddade45f5efa6d406033dcf74a1fa94e9c319",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.11 and v4.23"
+      },
+      {
         "id": "b7d44aef80f5125b20f3d1e0cf1a6a003d1bc98b",
         "type": "FEATURE",
         "text": " sap.m.Link: Reactive area size API introduced"

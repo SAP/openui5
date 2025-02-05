@@ -3,6 +3,16 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "98da08da0698f2c6818a1c773a4effb76187a95f",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: external link has corect styling"
+      },
+      {
+        "id": "b2f64f08cbe9adfb0b90bd42b124b1cd5bd362c9",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: \"selected\" no longer announced on every focused item"
+      },
+      {
         "id": "bdf99dfbe12456c7f0f22e758a95c9c93d6eacfe",
         "type": "FEATURE",
         "text": " sap.tnt.SideNavigation: Item design property and single click area are now added"

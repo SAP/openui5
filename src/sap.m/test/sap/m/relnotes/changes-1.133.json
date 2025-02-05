@@ -3,6 +3,26 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "6d49a717559605b0669d9202b441700d09e61972",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Option to get the first and last visible days is now provided"
+      },
+      {
+        "id": "d8c120b4a089c11b092f132e8541ad2c26f97d0b",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: focus state is displayed with proper text color now"
+      },
+      {
+        "id": "bfb6ebfce92cfdba104a4c57682e027e6b9c8e56",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The support for 2400 is disabled if there is no appropriate displayFormat"
+      },
+      {
+        "id": "540ddade45f5efa6d406033dcf74a1fa94e9c319",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.11 and v4.23"
+      },
+      {
         "id": "67fb6dd6ba1ddce601a14508f79e95cc7a0ccb61",
         "type": "FIX",
         "text": " We've now removed the redundant aria-labelledby property for the avatar of FeedListItem control"
@@ -13,9 +33,19 @@
         "text": " sap.m.Page: ACC automation tests improvements"
       },
       {
+        "id": "ccd0355ba0180f0b1440391e59587764dd561f0b",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Shift+click selection of date ranges in Month view"
+      },
+      {
         "id": "161316ac553c3ac64a6483375a09e4755c103981",
         "type": "FIX",
         "text": " sap.m.ObjectHeader: is correctly displayed on large screens"
+      },
+      {
+        "id": "c4ae8e2fd3c13e10260c52f51724d957889beb01",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Appointments text is resized depending of the scale factor now"
       },
       {
         "id": "b7d44aef80f5125b20f3d1e0cf1a6a003d1bc98b",

@@ -3,6 +3,16 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "080b5d04091eae40fe6ede73a33b3f9de9bf1cd8",
+        "type": "FIX",
+        "text": " FilterConverter: Empty-Operator filters for null instead for \"\""
+      },
+      {
+        "id": "d795759f9129e7715f1377ecb54ecb2c4dd498c9",
+        "type": "FIX",
+        "text": " FilterField, MultiValueField: click on CheckBox in value help"
+      },
+      {
         "id": "2eded14707387ccff97bf672d244271ea24fd954",
         "type": "FIX",
         "text": " MTable: item count wrong if $count used"

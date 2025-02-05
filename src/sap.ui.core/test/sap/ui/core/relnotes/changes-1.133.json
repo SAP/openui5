@@ -3,6 +3,21 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "c5694884873aff5a89cc15c092a26d94e770443b",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/UpdateMethod: Align spelling of key and value"
+      },
+      {
+        "id": "540ddade45f5efa6d406033dcf74a1fa94e9c319",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.11 and v4.23"
+      },
+      {
+        "id": "e3e02334bc6aa8b6944c2225a50858ed64388bf8",
+        "type": "FEATURE",
+        "text": " Upgrade to CLDR version 46.1.0"
+      },
+      {
         "id": "c39f18ad50aaf82b94643870713da928ffde51e9",
         "type": "FEATURE",
         "text": " ManagedObjectBindingSupport: support setting type with Class"
