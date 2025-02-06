@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Text",
 	"sap/m/Link",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 	function(
 		Element,

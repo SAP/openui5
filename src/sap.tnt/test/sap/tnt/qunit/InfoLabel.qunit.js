@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	log,

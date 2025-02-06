@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/m/ObjectMarker",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/library",
 	"sap/ui/base/ManagedObjectObserver"
 ], function(

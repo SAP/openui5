@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Log,
 	XMLView,

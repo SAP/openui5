@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Input",
 	"sap/base/util/merge",
 	"sap/m/library",

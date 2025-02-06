@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	qutils,
 	Formatting,

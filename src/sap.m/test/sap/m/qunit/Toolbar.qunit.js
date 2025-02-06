@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Toolbar",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/InvisibleRenderer",
 	"sap/m/ToolbarSeparator",

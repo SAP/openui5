@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/SelectList",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Element,
 	createAndAppendDiv,

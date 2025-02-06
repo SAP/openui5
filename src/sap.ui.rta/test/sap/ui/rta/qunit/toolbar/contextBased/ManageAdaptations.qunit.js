@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/Utils",

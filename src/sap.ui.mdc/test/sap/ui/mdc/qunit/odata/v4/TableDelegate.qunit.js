@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/plugins/PluginBase",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",

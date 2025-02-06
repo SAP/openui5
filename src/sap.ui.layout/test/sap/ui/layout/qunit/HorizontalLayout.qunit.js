@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(Element, HorizontalLayout, Button, Input, Label, Device, nextUIUpdate, jQuery) {
 	"use strict";

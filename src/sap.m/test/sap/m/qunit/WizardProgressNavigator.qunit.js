@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ], function(WizardProgressNavigator, Library, JSONModel, Device, InvisibleText, nextUIUpdate, QUnitUtils, KeyCodes) {

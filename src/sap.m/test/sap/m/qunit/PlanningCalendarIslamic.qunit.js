@@ -29,7 +29,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Locale",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// load all required calendars in advance
 	"sap/ui/core/date/Islamic"
 ], function(

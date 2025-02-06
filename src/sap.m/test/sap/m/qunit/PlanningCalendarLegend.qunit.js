@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PlanningCalendarLegend",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/CalendarLegendItem"
 ], function(XMLView, JSONModel, PlanningCalendarLegend, nextUIUpdate, CalendarLegendItem) {
 	"use strict";

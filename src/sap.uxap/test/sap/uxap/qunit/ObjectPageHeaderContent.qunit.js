@@ -1,5 +1,5 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Element", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/m/Label", "sap/m/Text", "sap/f/DynamicPageHeader", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/testblocks/GenericDiv", "sap/ui/core/mvc/XMLView"],
+sap.ui.define(["sap/ui/core/Element", "sap/ui/test/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/m/Label", "sap/m/Text", "sap/f/DynamicPageHeader", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout", "sap/uxap/testblocks/GenericDiv", "sap/ui/core/mvc/XMLView"],
 function(Element, nextUIUpdate, jQuery, Core, Label, Text, DynamicPageHeader, ObjectPageDynamicHeaderTitle, ObjectPageLayout, GenericDiv, XMLView) {
 	"use strict";
 

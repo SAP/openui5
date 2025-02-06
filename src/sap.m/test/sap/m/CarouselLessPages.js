@@ -1,4 +1,4 @@
-sap.ui.define(["sap/m/Image", "sap/m/Carousel", "sap/m/App", "sap/m/Page", "sap/ui/qunit/utils/nextUIUpdate"], function(MImage, Carousel, App, Page, nextUIUpdate) {
+sap.ui.define(["sap/m/Image", "sap/m/Carousel", "sap/m/App", "sap/m/Page", "sap/ui/test/utils/nextUIUpdate"], function(MImage, Carousel, App, Page, nextUIUpdate) {
 	"use strict";
 
 			// Create Images

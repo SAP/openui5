@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/MultiComboBox",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/Item",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (
 	Device,
 	qutils,

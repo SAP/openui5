@@ -36,7 +36,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(

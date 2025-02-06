@@ -1,6 +1,6 @@
 /*global QUnit, */
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Title",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",

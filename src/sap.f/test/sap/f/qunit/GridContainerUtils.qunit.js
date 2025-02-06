@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/f/GridContainerUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Text"
 ],
 function (

@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/util/validateFlexEnabled",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
@@ -43,7 +43,7 @@ sap.ui.define([
 			"sap.app": {
 				id: "fixture.application"
 			},
-			"sap.ui5": { ...bFlexEnabled && {flexEnabled: true} }
+			"sap.ui5": { ...(bFlexEnabled && {flexEnabled: true}) }
 		};
 		var oContent = new VerticalLayout({
 			id: "layoutId",

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/BusyIndicator",
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(BusyIndicator, AnimationMode, ControlBehavior, nextUIUpdate) {
 	"use strict";
 

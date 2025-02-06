@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/SplitContainer",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	OverlayRegistry,

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
-    "sap/ui/qunit/utils/nextUIUpdate",
+    "sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/CalendarOneMonthInterval",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/events/KeyCodes",

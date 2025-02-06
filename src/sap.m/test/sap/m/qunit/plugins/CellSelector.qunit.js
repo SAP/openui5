@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",

@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesWriteAPI,

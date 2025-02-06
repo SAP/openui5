@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/TileAttribute",
 	"sap/m/library",
 	"sap/m/ContentConfig",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(TileAttribute,library,ContentConfig,nextUIUpdate) {
 	"use strict";
 

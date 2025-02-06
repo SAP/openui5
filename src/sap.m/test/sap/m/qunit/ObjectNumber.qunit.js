@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Library, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Device, Version, Label, Panel, Text, mobileLibrary, nextUIUpdate) {
 	"use strict";
 

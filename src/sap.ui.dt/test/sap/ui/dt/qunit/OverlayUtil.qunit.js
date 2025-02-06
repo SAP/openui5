@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",

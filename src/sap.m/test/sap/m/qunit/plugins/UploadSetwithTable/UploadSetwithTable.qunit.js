@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
 	"./templateHelper",

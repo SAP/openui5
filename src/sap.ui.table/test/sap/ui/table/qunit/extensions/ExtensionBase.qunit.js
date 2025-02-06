@@ -1,7 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",

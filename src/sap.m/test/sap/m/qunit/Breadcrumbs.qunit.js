@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],

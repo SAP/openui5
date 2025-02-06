@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"

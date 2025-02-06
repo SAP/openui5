@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/ViewSettingsFilterItem",
 	"sap/m/ViewSettingsCustomItem",
 	"sap/m/ViewSettingsDialog",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/ui/base/ManagedObject",

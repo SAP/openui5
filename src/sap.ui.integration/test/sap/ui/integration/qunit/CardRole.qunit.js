@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ],
 	function(

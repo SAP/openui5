@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/InstanceManager",
 	"sap/ui/core/HTML",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,

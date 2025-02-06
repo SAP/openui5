@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/util/whatsNew/WhatsNewOverview",
 	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
 	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	mLibrary,

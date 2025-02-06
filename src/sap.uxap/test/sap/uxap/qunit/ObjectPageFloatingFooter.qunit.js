@@ -1,5 +1,5 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/ui/qunit/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
+sap.ui.define(["sap/ui/core/AnimationMode", "sap/ui/core/ControlBehavior", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/ui/test/utils/nextUIUpdate", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
 function(AnimationMode, ControlBehavior, XMLView, OverflowToolbar, HBox, nextUIUpdate, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
 	"use strict";
 

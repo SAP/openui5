@@ -3,7 +3,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/MonthPicker",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/deepExtend",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"

@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CompVariant",
 	"sap/ui/rta/Utils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(

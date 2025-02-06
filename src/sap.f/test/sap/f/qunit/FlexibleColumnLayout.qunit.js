@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/ResizeHandler",
 	'sap/ui/events/KeyCodes',
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/f/library"
 ],
 function(

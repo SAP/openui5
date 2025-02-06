@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextCardDataReadyEvent",
 	"qunit/testResources/nextCardContentReadyEvent",

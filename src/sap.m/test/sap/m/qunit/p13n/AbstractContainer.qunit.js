@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/p13n/AbstractContainer",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/m/Table",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(AbstractContainer, ContainerItem, Table, nextUIUpdate) {
 	"use strict";
 

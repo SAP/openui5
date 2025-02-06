@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
 	"sap/ui/rta/util/whatsNew/WhatsNew",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	mLibrary,

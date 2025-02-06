@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/DragDropConfig",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"./QUnitUtils"
 ], function(Text, MDCTable, MDCColumn, DragDropConfig, JSONModel, nextUIUpdate, MDCTableQUnitUtils) {
 

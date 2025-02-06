@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabSeparator",

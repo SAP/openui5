@@ -42,7 +42,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	App,

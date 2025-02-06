@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/m/Button",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	XMLView,
 	IconPool,

@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/WheelSlider",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Item,

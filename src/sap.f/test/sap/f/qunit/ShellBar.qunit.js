@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MenuItem",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function(
 	SearchManager,

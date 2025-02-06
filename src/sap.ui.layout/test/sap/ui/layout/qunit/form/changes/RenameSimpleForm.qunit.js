@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	Element,

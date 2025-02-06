@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
 	"sap/ui/integration/widgets/Card",

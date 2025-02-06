@@ -15,7 +15,7 @@ sap.ui.define([
 		"sap/ui/events/KeyCodes",
 		"sap/ui/qunit/QUnitUtils",
 		"sap/m/library",
-		"sap/ui/qunit/utils/nextUIUpdate",
+		"sap/ui/test/utils/nextUIUpdate",
 		"qunit/testResources/nextCardReadyEvent"
 ],
 	function (

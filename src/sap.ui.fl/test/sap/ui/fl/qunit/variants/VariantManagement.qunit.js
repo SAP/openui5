@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Localization,
 	ControlVariantApplyAPI,

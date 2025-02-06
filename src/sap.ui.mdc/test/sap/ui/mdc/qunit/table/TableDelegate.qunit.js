@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/m/Text",
 	"sap/m/plugins/PluginBase",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Lib",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/model/Filter",

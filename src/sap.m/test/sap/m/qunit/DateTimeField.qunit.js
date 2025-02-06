@@ -1,6 +1,6 @@
 /*global QUnit */
 sap.ui.define(
-	["sap/m/DateTimeField", "sap/ui/qunit/utils/nextUIUpdate"],
+	["sap/m/DateTimeField", "sap/ui/test/utils/nextUIUpdate"],
 	function(DateTimeField, nextUIUpdate) {
 		"use strict";
 

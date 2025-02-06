@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragInfo",
 	"sap/m/Panel",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ], function(Library, qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, DragInfo, Panel, mobileLibrary, nextUIUpdate, jQuery, Device) {

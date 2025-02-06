@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/ToolbarLayoutData",
 	"sap/ui/core/LayoutData",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(ToolbarSpacer, ToolbarLayoutData, LayoutData, nextUIUpdate) {
 	"use strict";
 

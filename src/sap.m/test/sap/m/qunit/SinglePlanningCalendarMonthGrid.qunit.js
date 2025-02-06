@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/SinglePlanningCalendar",
 	"sap/m/SinglePlanningCalendarMonthView",
 	"sap/m/SinglePlanningCalendarMonthGrid",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/m/library",
 	'sap/ui/unified/DateTypeRange',

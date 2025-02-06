@@ -120,8 +120,8 @@ TokenizerRenderer._renderTokens = function(oRm, oControl){
  * @param {sap.m.Tokenizer} oControl an object representation of the control that should be rendered
  */
 TokenizerRenderer._renderIndicator = function(oRm, oControl){
-	var bExpanded = oControl.getTokensPopup().isOpen();
-	var sPopoverId = oControl.getTokensPopup().getId();
+	var bExpanded = !!oControl._oPopup && oControl._oPopup.isOpen();
+	var sPopoverId = oControl._oPopup && oControl._oPopup.getId();
 
 	oRm.openStart("span");
 	oRm.class("sapMTokenizerIndicator");
@@ -134,8 +134,12 @@ TokenizerRenderer._renderIndicator = function(oRm, oControl){
 
 	oRm.attr("role", "button")
 		.attr("aria-haspopup", "dialog")
-		.attr("aria-expanded", bExpanded)
-		.attr("aria-controls", sPopoverId);
+		.attr("aria-expanded", bExpanded);
+
+	if (sPopoverId) {
+		oRm.attr("aria-controls", sPopoverId);
+	}
+
 	oRm.openEnd().close("span");
 };
 

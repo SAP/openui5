@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/FeedInput",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Library, qutils, FeedInput, TooltipBase, KeyCodes, nextUIUpdate) {
 	"use strict";
 

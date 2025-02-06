@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ImageContent",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(jQuery, ImageContent, nextUIUpdate) {
 	"use strict";
 

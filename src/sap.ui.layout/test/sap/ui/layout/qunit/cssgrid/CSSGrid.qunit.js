@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function (
 	CSSGrid,

@@ -11,7 +11,7 @@ sap.ui.require([
 	"sap/m/Panel",
 	"sap/ui/core/Core",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	PerformanceTestUtil,
 	Panel,

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/RadioButton",
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/util/Mobile",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",

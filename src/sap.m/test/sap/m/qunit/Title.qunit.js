@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/core/Title",
 	"sap/ui/core/Renderer",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, Toolbar, coreTitle, Renderer, nextUIUpdate) {
 	"use strict";
 

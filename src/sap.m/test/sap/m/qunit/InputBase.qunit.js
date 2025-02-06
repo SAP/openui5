@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// provides jQuery.fn.cursorPos
 	"sap/ui/dom/jquery/cursorPos"
 ], function(

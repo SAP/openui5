@@ -7,7 +7,7 @@ sap.ui.define([
 	"qunit/designtime/EditorQunitUtils",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	IconEditor,

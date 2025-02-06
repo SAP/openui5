@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	DesignTimeConfig,
 	Component,

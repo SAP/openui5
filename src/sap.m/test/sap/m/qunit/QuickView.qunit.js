@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/QuickViewGroupElement",
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,

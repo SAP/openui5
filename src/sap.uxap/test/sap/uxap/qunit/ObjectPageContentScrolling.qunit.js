@@ -1,6 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageLayout",

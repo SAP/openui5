@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TimePicker",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(createAndAppendDiv, TimePicker, UI5Date, nextUIUpdate) {
 	"use strict";
 

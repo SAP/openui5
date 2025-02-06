@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/deepEqual",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (
 	Localization,
 	merge,

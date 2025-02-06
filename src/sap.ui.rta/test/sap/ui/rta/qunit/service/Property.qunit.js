@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4"

@@ -38,7 +38,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// provides jQuery.fn.zIndex
 	"sap/ui/dom/jquery/zIndex"
 ], function(

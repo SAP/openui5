@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Button,
 	IconTabBar,

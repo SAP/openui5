@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/Component",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	jQuery,

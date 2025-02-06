@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
 	nextUIUpdate

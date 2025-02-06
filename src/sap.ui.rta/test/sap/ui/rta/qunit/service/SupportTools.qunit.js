@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/RuntimeAuthoring",

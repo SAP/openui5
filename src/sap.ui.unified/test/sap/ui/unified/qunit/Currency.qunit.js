@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/Currency",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/VBox",

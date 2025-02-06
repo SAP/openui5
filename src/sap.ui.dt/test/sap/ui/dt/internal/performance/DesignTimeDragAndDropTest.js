@@ -6,7 +6,7 @@ sap.ui.require([
 	"dt/performance/PerformanceTestUtil",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Label"
 ], function(
 	PerformanceTestUtil,

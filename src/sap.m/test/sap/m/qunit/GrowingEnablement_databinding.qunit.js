@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/jquery"
 ], function(App, List, Page, StandardListItem, Sorter, JSONModel, ODataV4Model, createAndAppendDiv, nextUIUpdate, TestUtils, jQuery) {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/mdc/field/FieldBase",
 	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/ValueHelpDelegate",

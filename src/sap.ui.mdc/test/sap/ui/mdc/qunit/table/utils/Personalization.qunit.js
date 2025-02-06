@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/ProcessingStrategy",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/util/Deferred"
 ], function(
 	TableQUnitUtils,

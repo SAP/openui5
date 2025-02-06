@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/util/DateRangeHelper",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Log,

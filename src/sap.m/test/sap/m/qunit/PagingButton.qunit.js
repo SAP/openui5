@@ -1,7 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/m/PagingButton",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(PagingButton, nextUIUpdate, $) {

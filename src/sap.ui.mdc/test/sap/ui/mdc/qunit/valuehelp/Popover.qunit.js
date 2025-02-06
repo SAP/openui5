@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Toolbar",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/Device",
 	"sap/ui/core/IconPool",
 	"sap/ui/model/ParseException"

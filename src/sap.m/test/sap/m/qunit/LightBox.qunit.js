@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(LightBox, LightBoxItem, Library, qutils, KeyCodes, library, nextUIUpdate) {
 		'use strict';
 

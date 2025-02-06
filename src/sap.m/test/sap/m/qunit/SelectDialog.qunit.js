@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/StandardListItemRenderer",

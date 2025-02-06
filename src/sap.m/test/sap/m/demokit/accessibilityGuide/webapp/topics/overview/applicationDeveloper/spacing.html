@@ -5,6 +5,8 @@
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
+	<script src="../../../../../../../../../resources/sap-ui-core.js"
+	></script>
 </head>
 <body class="sapUiBody topicBody">
 	<div class="topic">
@@ -54,11 +56,27 @@
 &lt;/OverflowToolbar&gt;
 			</pre>
 			<a class="try-button" href="../../../index.html#/explore/linkSpacing" target="_parent">See Example</a>
+			<div id="network-graph">
+			<h2>Network Graph</h2>
+			<p>For Network Graph, to address the WCAG 2.2 Target Size Criterion 2.5.8, we recommend setting a minimum zoom level of 125%.</p>
+			<p>XML View</p>
+			<pre class="lang-xml">&lt;Graph id="graph"&gt;</pre>
+			<p>Controller</p>
+			<pre class="lang-js">this.byId("graph").attachGraphReady(function() {
+	this.zoom({
+		zoomLevel: 1.25
+	});
+});
+			</pre>
+
+		</div>
+<a class="try-button" href="../../../index.html#/explore/networkGraph" target="_parent" id="network-graph-example">See Example</a>
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Overview</a></div>
 			<div><a href="#link">Controls Displayed as Links</a></div>
+			<div><a href="#network-graph" id="network-graph-link">Network Graph</a></div>
 		</div>
 	</div>
 </body>

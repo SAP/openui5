@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/mvc/View",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Button,
 	CheckBox,

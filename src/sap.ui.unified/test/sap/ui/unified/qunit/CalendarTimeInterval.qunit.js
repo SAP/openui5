@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Formatting, Localization, Element, qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, UI5Date, nextUIUpdate) {
 	"use strict";
 

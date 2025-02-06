@@ -10,8 +10,8 @@ sap.ui.define([
 	'sap/m/ToolbarSpacer',
 	'sap/tnt/ToolHeader',
 	'sap/tnt/ToolHeaderUtilitySeparator',
-	'sap/ui/qunit/utils/nextUIUpdate',
-	'sap/ui/qunit/utils/waitForThemeApplied'
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/test/utils/waitForThemeApplied"
 ], function(
 	Element,
 	jQuery,

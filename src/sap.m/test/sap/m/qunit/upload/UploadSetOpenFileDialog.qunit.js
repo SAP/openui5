@@ -7,7 +7,7 @@ sap.ui.define("sap.m.qunit.UploadSetOpenFileDialog", [
 	"sap/m/upload/UploadSetItem",
 	"sap/m/ObjectMarker",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (jQuery, UploadSet, JSONModel, UploadSetItem, ObjectMarker, Log, nextUIUpdate) {
 	"use strict";
 

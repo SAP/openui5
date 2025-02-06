@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/unified/Menu",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(Text, Table, Column, ColumnListItem, GridTable, GridColumn, MDCTable, MDCColumn, PluginBase, ContextMenuSetting, JSONModel, List, Menu, MenuItem, UnifiedMenu, nextUIUpdate, jQuery) {
 

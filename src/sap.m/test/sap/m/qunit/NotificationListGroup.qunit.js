@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	QUnitUtils,
 	ScrollContainer,

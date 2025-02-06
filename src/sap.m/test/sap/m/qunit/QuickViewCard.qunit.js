@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
 	"sap/m/QuickViewGroupElement",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Element,
 	JSONModel,

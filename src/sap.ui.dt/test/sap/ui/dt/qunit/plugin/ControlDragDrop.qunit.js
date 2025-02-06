@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	OverlayUtil,
 	ControlDragDrop,

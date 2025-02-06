@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",

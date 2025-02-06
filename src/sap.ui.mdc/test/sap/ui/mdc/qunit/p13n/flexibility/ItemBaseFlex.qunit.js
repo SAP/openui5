@@ -1,6 +1,6 @@
 /* global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate", "sap/ui/mdc/Control", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "./TestChangeHandler", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/mdc/AggregationBaseDelegate", "sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+	"sap/ui/test/utils/nextUIUpdate", "sap/ui/mdc/Control", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "./TestChangeHandler", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/mdc/AggregationBaseDelegate", "sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
 ], function(nextUIUpdate, MDCControl, createAppEnvironment, TestChangeHandler, JsControlTreeModifier, AggregationBaseDelegate, ControlPersonalizationWriteAPI) {
 	"use strict";
 

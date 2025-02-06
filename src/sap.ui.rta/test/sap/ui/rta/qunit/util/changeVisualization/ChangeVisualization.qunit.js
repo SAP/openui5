@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",

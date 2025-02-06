@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Control",
 	"sap/ui/core/ElementRegistry",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/p13n/SelectionPanel",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/Localization",

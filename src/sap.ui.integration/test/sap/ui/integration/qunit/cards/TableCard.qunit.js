@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/AvatarSize",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	AvatarColor,

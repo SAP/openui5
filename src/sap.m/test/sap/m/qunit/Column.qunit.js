@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Item",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(Button, Column, ColumnListItem, Label, library, Page, Table, Text, ColumnMenu, QuickAction, Item, Device, InvisibleText, nextUIUpdate, jQuery) {
 	"use strict";

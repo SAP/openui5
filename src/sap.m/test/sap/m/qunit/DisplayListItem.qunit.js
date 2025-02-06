@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/DisplayListItem",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(coreLibrary, DisplayListItem, nextUIUpdate) {
 	"use strict";
 

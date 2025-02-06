@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/m/semantic/DetailPage",
 	"sap/m/semantic/MasterPage",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/strings/capitalize"
 ], function(

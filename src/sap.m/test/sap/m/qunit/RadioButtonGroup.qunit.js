@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	qutils,
 	jQuery,

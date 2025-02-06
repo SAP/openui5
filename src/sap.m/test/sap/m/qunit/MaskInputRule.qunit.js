@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/MaskInputRule",
 	"sap/m/MaskInput",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(createAndAppendDiv, MaskInputRule, MaskInput, Log, nextUIUpdate) {
 	"use strict";
 

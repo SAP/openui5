@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/m/p13n/PersistenceProvider",
 	"sap/m/p13n/enums/PersistenceMode",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Control",
 	"sap/ui/core/StaticArea"
 ], function (PersistenceProvider, mode, nextUIUpdate, Control, StaticArea) {

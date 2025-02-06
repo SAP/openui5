@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/TimePickerSliders",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Library,
 	TimePickerSliders,

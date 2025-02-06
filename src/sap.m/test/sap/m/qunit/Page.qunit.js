@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/includeStylesheet",
 	"require",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Element,
 	createAndAppendDiv,

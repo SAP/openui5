@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/BadgeEnabler",
 	"sap/m/BadgeCustomData",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Control,
 	BadgeEnabler,

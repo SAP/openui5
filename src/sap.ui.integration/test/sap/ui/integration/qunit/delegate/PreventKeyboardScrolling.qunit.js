@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/CardOverflow",
 	"sap/m/VBox",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], (
 	Card,

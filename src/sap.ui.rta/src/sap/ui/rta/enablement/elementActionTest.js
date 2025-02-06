@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils",
@@ -206,7 +206,7 @@ sap.ui.define([
 				if (
 					bLastAction // exclude previous actions from duplicate change check
 					&& mCreateCasePropertyBag?.relevantForDuplicateChangeCheck
-					&& await isCreateCaseAvailable.call(this, oCommand, oAction)
+					&& (await isCreateCaseAvailable.call(this, oCommand, oAction))
 				) {
 					await waitForDtSync(this.oDesignTime);
 					mCreateCasePropertyBag.duplicateChangeCheckActive = true;
@@ -604,7 +604,7 @@ sap.ui.define([
 				if (
 					bLastAction // exclude previous actions from duplicate change check
 					&& mCreateCasePropertyBag?.relevantForDuplicateChangeCheck // Activates duplicate change checks
-					&& await isCreateCaseAvailable.call(this, oCommand, oAction)
+					&& (await isCreateCaseAvailable.call(this, oCommand, oAction))
 				) {
 					mCreateCasePropertyBag.duplicateChangeCheckActive = true;
 					oSecondCommand = await buildCommand.call(this, assert, oAction);

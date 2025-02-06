@@ -1,6 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickGroup",

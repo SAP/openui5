@@ -832,6 +832,46 @@ sap.ui.define([
 								key: 'Component.js'
 							}
 						]
+					},
+					{
+						key: 'networkGraph',
+						target: 'exploreSamples',
+						title: 'Network Graph',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/NetworkGraph/NetworkGraph.controller.js',
+								name: 'NetworkGraph.controller.jss',
+								key: 'NetworkGraph.controller.js'
+							},
+							{
+								url: '/samples/networkGraph/NetworkGraph.view.xml',
+								name: 'NetworkGraph.view.xml',
+								key: 'NetworkGraph.view.xml'
+							},
+							{
+								url: '/samples/networkGraph/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/networkGraph/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/networkGraph/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							},
+							{
+								url: '/samples/networkGraph/graph.json',
+								name: 'graph.json',
+								key: 'graph.json'
+							}
+						]
 					}
 				]
 			}

@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Stack",

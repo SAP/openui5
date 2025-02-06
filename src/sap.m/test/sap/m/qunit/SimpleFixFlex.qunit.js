@@ -5,7 +5,7 @@ sap.ui.define(
 	  "sap/m/Button",
 	  "sap/m/Text",
 	  "sap/base/Log",
-	  "sap/ui/qunit/utils/nextUIUpdate"
+	  "sap/ui/test/utils/nextUIUpdate"
 	],
 	function(SimpleFixFlex, Button, Text, Log, nextUIUpdate) {
 	  "use strict";

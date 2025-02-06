@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(

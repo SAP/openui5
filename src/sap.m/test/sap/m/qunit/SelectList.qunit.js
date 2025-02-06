@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/model/Filter",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,

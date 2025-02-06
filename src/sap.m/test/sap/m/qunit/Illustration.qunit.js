@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/IllustrationPool",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Theming",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function (
 	Log,

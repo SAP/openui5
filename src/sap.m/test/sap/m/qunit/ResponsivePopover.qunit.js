@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/m/Page",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbar"

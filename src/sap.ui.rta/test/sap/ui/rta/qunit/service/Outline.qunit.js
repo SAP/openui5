@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/ReloadManager",

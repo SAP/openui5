@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/Sorter",
 	"sap/m/IllustratedMessageType",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/IllustratedMessage"
 ], function (Element, Library0, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, MenuButton, Dialog, Device, MessageBox, JSONModel, TestUtils, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, nextUIUpdate, IllustratedMessage) {
 	"use strict";

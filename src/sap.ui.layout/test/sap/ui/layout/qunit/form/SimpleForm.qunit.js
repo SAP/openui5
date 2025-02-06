@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 	function(
 		Element,

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextCardDataReadyEvent",
 	"../testResources/localService/oauth3lo/mockServer",

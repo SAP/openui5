@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/m/P13nSelectionItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	qutils,
 	createAndAppendDiv,

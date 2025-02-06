@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/plugin/Settings",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	sinon,
 	BaseLog,

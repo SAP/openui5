@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/ViewSettingsCustomItem",
 	"sap/m/ViewSettingsDialog",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,

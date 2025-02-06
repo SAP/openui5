@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/base/strings/formatMessage",
 	"sap/base/util/merge",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], (
 	ControlBehavior,
 	Library,

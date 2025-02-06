@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/m/p13n/QueryPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/sinon"
 ], function (QueryPanel, JSONModel, nextUIUpdate, Localization, sinon) {

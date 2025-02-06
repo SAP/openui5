@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/LightBox",
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/InvisibleText"
 ], function(
 	AvatarColor,

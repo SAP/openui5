@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
 	ResourceBundle,

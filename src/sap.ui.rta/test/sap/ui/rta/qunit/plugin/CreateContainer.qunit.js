@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	uid,
 	XMLView,

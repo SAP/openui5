@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
 	"sap/m/ObjectStatus",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/ValueStateSupport",

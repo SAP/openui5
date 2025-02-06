@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/message/MessageType",
 	"sap/m/library",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function (
 	GridListItem,

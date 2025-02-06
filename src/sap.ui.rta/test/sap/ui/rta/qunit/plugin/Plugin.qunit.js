@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Button,
 	Label,

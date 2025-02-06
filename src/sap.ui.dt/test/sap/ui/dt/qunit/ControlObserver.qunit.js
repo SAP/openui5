@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/dt/ControlObserver",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function(
 	ControlObserver,

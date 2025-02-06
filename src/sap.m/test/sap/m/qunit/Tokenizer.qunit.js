@@ -1,7 +1,7 @@
 
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
@@ -779,11 +779,12 @@ sap.ui.define([
 
 		assert.strictEqual(nMoreLink.getAttribute("role"), "button", "The role of the nMore indicator should be button");
 		assert.strictEqual(nMoreLink.getAttribute("aria-expanded"), "false", "The aria-expanded attribute should be false");
-		assert.strictEqual(nMoreLink.getAttribute("aria-haspopup"), "dialog", "The aria-haspopup attribute should be dialog");
-		assert.strictEqual(nMoreLink.getAttribute("aria-controls"), oPopover.getId(), "The aria-haspopup attribute should be dialog");
 
 		oTokenizer._handleNMoreIndicatorPress();
 		oTokenizer.invalidate();
+
+		assert.strictEqual(nMoreLink.getAttribute("aria-haspopup"), "dialog", "The aria-haspopup attribute should be dialog");
+		assert.strictEqual(nMoreLink.getAttribute("aria-controls"), oPopover.getId(), "The aria-haspopup attribute should be dialog");
 
 		assert.strictEqual(nMoreLink.getAttribute("aria-expanded"), "true", "The aria-expanded attribute should be true");
 		oTokenizer.destroy();

@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/model/odata/type/Boolean",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	P13nConditionPanel,

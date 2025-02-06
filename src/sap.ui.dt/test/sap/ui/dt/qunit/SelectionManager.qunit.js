@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Button,
 	VerticalLayout,

@@ -252,6 +252,24 @@ sap.ui.define([
 						errorMessage: "The Menu Item was not pressable"
 					});
 				},
+				iClickOnAContextMenuEntryWithKey(sKey) {
+					return this.waitFor({
+						controlType: "sap.ui.unified.Menu",
+						matchers(oMenu) {
+							return oMenu.getDomRef().classList.contains("sapUiDtContextMenu");
+						},
+						success(aMenu) {
+							// The key is only available in the parent menu (sap.m.Menu)
+							// This works only because the indices are the same in the parent and the context menu
+							const oParentMenu = aMenu[0].getParent();
+							const aItems = oParentMenu.getItems();
+							// get the index of the item with the key
+							const iIndex = aItems.findIndex((oItem) => oItem.getKey() === sKey);
+							aMenu[0].getItems()[iIndex].getDomRef().click();
+						},
+						errorMessage: "Did not find the Context Menu"
+					});
+				},
 				iEnterANewName(sNewLabel) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",

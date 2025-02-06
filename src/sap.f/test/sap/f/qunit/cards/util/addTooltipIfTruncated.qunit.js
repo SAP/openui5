@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/f/cards/util/addTooltipIfTruncated",
 	"sap/m/Text",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(addTooltipIfTruncated, Text, QUnitUtils, nextUIUpdate) {
 	"use strict";
 

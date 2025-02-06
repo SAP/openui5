@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,

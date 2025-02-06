@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -16,10 +16,10 @@ sap.ui.define([
 	Element,
 	Controller,
 	elementDesigntimeTest,
-	nextUIUpdate,
 	elementActionTest,
 	JSONModel,
 	CustomData,
+	nextUIUpdate,
 	sinon,
 	jQuery
 ) {

@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Item",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"

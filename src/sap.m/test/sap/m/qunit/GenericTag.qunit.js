@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbar",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(GenericTag, GenericTagRenderer, library, ObjectNumber, Library, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, InvisibleText, nextUIUpdate) {
 	"use strict";
 

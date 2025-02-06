@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	OverlayRegistry,

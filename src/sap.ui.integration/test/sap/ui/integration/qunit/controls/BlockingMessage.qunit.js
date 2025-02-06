@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/util/ErrorHandler",
 	"sap/m/InstanceManager",
 	"sap/m/IllustratedMessageType",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Supportability,
 	Card,

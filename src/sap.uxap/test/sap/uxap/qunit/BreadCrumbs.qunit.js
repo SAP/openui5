@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Link",
 	"sap/m/Text",

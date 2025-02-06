@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/WebPageContent",
 	"sap/ui/integration/cards/WebPageContentRenderer",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextCardManifestAppliedEvent"
 ], function (

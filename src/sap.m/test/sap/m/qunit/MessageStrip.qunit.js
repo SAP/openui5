@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/m/Link",
 	"sap/m/FormattedText",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery"

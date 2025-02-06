@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/ShortcutHintsMixin",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Button, Table, OverflowToolbarButton, PasteProvider, Device, Element, Library, ShortcutHintsMixin, nextUIUpdate) {
 
 	"use strict";

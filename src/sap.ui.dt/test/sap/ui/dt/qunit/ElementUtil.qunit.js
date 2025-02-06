@@ -28,7 +28,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DynamicPage,

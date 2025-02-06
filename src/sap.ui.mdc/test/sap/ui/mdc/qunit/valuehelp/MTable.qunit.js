@@ -33,7 +33,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/mdc/p13n/StateUtil',
 	"sap/m/p13n/Engine",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",

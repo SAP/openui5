@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/library",
 	"sap/m/App",
 	"sap/m/Page",

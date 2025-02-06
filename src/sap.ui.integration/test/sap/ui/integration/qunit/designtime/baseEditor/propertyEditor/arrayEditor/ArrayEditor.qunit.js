@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/restricted/_merge",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
 	QUnitUtils,

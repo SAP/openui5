@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/EventBus",
 	"sap/ui/core/LabelEnablement"

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function (
 	Page,

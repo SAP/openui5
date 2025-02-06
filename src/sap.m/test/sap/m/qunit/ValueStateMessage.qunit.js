@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	Device,

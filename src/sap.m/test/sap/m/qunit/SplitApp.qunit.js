@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/library",

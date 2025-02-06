@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Table",
 	"sap/m/Text",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/util/Mobile"
 ], function(Column, ColumnListItem, Input, Label, MessageToast, Table, Text, nextUIUpdate, Mobile) {
 	"use strict";

@@ -1,5 +1,5 @@
 sap.ui.define([
-  "sap/ui/qunit/utils/nextUIUpdate",
+  "sap/ui/test/utils/nextUIUpdate",
   "sap/m/App",
   "sap/m/BusyDialog",
   "sap/ui/model/json/JSONModel",

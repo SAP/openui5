@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/m/Button",
 	"sap/m/ScrollContainer",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	AssociativeSplitter,
 	SplitterLayoutData,

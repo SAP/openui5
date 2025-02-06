@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/Shell",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",

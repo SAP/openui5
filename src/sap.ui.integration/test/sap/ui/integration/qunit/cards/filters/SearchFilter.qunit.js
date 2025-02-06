@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Element,

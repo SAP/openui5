@@ -29,7 +29,7 @@ sap.ui.define([
 	"sap/f/DynamicPageHeader",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	SimpleScrollControl,
 	Bar,

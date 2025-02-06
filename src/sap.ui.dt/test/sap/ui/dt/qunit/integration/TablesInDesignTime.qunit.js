@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	OverlayRegistry,

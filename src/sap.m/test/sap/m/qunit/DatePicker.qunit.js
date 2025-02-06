@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",

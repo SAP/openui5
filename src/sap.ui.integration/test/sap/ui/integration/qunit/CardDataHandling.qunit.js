@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/integration/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ],
 function(

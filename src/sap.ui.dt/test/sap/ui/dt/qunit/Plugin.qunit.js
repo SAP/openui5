@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Lib,
 	DesignTime,

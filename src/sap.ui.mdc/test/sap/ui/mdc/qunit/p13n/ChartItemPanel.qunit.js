@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/test/actions/Press",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/library"
 ], function(Library, ChartItemPanel, JSONModel, VBox, sinon, Press, nextUIUpdate, coreLibrary) {
 	"use strict";

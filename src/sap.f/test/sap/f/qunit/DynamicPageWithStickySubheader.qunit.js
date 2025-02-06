@@ -3,7 +3,7 @@ sap.ui.define([
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 	function(
 		DynamicPageUtil,

@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/m/AdditionalTextButton",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	AdditionalTextButton,
 	nextUIUpdate

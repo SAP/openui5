@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/dt/enablement/report/LibraryReport",
 	"sap/ui/dt/enablement/report/Table",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// ensure the test library is loaded so it can be used in the library enablement test
 	"sap/ui/testLibrary/library"
 ],

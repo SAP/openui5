@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/ElementRegistry",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",

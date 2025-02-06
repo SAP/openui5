@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/StandardDynamicDateOption",
 	"sap/m/DynamicDateValueHelpUIType",
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Element",
 	"sap/ui/core/format/DateFormat",

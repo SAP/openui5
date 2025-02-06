@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Column",

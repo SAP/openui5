@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",

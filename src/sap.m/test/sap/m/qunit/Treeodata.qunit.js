@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(StandardTreeItem, Tree, MockServer, ODataModelV2, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 

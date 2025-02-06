@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/BaseAddXml",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

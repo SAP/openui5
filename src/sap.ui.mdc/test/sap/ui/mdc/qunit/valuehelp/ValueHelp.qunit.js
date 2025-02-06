@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/Device"
 ],  (
 		ValueHelp,

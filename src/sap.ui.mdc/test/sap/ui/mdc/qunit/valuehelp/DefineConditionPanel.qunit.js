@@ -40,7 +40,7 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// needed for FixedList getContent
 	"sap/m/List",
 	// needed for FixedList getContent

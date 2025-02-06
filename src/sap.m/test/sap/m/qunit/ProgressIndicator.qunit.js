@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ProgressIndicator",
 	"sap/m/Page",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/ControlBehavior"

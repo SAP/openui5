@@ -16,7 +16,7 @@ sap.ui.define([
 	'sap/ui/core/HTML',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/dom/units/Rem',
-	'sap/ui/qunit/utils/nextUIUpdate'
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Log,
 	Element,

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/ToggleButton",
 	"sap/m/Toolbar",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Element, Library, qutils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes, nextUIUpdate) {
 	"use strict";
 

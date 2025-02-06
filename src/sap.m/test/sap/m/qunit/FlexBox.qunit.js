@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/dom/includeStylesheet",
 	"require",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (
 	FlexBox,
 	HTML,

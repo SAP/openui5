@@ -15,8 +15,8 @@ sap.ui.define([
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
 	'sap/tnt/NavigationListGroup',
-	'sap/ui/qunit/utils/nextUIUpdate',
-	'sap/ui/qunit/utils/waitForThemeApplied'
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/test/utils/waitForThemeApplied"
 ], function(
 	Log,
 	Element,

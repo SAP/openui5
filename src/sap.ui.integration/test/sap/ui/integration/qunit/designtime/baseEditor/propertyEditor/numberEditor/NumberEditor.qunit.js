@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/NumberFormat",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (
 	BaseEditor,
 	EditorQunitUtils,

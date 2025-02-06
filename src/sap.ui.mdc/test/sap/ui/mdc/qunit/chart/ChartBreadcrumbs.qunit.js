@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
     "sap/ui/mdc/chart/DrillBreadcrumbs",

@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Log,
 	Button,

@@ -1,5 +1,5 @@
 /*global QUnit*/
-sap.ui.define(["sap/f/ProductSwitchItem", "sap/ui/qunit/utils/nextUIUpdate"],
+sap.ui.define(["sap/f/ProductSwitchItem", "sap/ui/test/utils/nextUIUpdate"],
 	function (ProductSwitchItem, nextUIUpdate) {
 		"use strict";
 

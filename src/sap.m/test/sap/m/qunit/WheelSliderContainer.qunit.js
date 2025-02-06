@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/WheelSlider",
 	"sap/m/WheelSliderContainer",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Device,

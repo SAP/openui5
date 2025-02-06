@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/BadgeCustomData",
 	"sap/f/library",
 	"sap/m/Text",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ],
 function (

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/unified/CalendarLegend",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/library",

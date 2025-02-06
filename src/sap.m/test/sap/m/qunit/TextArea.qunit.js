@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/InputBase",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery.fn.cursorPos

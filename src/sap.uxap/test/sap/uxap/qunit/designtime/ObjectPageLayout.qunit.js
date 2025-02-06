@@ -1,7 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/enablement/elementActionTest",
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSection',

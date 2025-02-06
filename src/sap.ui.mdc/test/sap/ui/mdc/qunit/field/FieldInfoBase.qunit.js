@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/CustomFieldInfo",
 	"sap/ui/mdc/field/FieldInfoBase",
 	"sap/ui/core/Icon",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 		CustomFieldInfo,
 		FieldInfoBase,

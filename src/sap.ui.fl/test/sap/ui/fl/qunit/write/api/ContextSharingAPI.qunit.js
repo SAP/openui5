@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ContextBasedAdaptationsAPI,

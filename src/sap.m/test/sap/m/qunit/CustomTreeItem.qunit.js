@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Element, createAndAppendDiv, CustomTreeItem, Tree, Image, Text, JSONModel, nextUIUpdate) {
 	"use strict";
 

@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
 	'sap/base/util/merge',
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName"

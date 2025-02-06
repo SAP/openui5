@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/qunit/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/mvc/XMLView", "sap/m/App"],
+sap.ui.define(["sap/ui/test/utils/nextUIUpdate", "sap/ui/thirdparty/jquery", "sap/ui/core/mvc/XMLView", "sap/m/App"],
 function(nextUIUpdate, $, XMLView, App) {
 	"use strict";
 

@@ -14,7 +14,7 @@ sap.ui.define([
 		"sap/ui/core/UIComponent",
 		"sap/ui/thirdparty/jquery",
 		"sap/ui/integration/library",
-		"sap/ui/qunit/utils/nextUIUpdate",
+		"sap/ui/test/utils/nextUIUpdate",
 		"qunit/testResources/nextCardReadyEvent",
 		"qunit/testResources/nextCardContentReadyEvent",
 		"qunit/testResources/nextCardManifestReadyEvent"

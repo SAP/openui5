@@ -30,7 +30,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	qutils,
 	createAndAppendDiv,

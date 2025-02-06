@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/core/Icon",
 	"sap/m/p13n/Engine",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Text",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/link/LinkItem",

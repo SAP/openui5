@@ -42,7 +42,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Library,
 	DomUnitsRem,

@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/Remove",
