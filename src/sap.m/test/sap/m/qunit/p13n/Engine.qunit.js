@@ -1074,4 +1074,182 @@ sap.ui.define([
 	});
 */
 
+	QUnit.module("Combined State Keys", {
+		beforeEach: function() {
+			this.oControl = new Control("MyCustomModificationHandlerControl");
+			this.oController1 = new Controller({
+				control: this.oControl,
+				targetAggregation: "type"
+			});
+			this.oController2 = new Controller({
+				control: this.oControl,
+				targetAggregation: "type"
+			});
+			this.oController3 = new Controller({
+				control: this.oControl,
+				targetAggregation: "columns"
+			});
+			Engine.getInstance().register(this.oControl, {
+				helper: new MetadataHelper(),
+				controller: {
+					TypeHandler1: this.oController1,
+					TypeHandler2: this.oController2,
+					TypeHandler3: this.oController3
+				}
+			});
+		},
+		afterEach: function() {
+			this.oControl.destroy();
+		}
+	});
+
+	QUnit.test("Check 'internalizeKeys' with multiple controllers with same state key", function(assert) {
+		sinon.stub(this.oController1, "getStateKey").returns("supplementaryConfig");
+		sinon.stub(this.oController2, "getStateKey").returns("supplementaryConfig");
+		sinon.stub(this.oController3, "getStateKey").returns("supplementaryConfig");
+		sinon.stub(this.oController1, "formatToInternalState").returns({type: { value1: "value1" }});
+		sinon.stub(this.oController2, "formatToInternalState").returns({type: { value2: "value2" }});
+		sinon.stub(this.oController3, "formatToInternalState").returns();
+
+		let oExternalState = {
+			supplementaryConfig: {
+				type: {
+					value1: "value1",
+					value2: "value2"
+				}
+			}
+		};
+
+		assert.deepEqual(Engine.getInstance().internalizeKeys(this.oControl, oExternalState), {
+			TypeHandler1: {
+				type: {
+					value1: "value1"
+				}
+			},
+			TypeHandler2: {
+				type: {
+					value2: "value2"
+				}
+			}
+		}, "The internalized state is correct");
+
+		this.oController3.formatToInternalState.returns({columns: { value3: "value3" }});
+		this.oController1.formatToInternalState.returns();
+		oExternalState = {
+			supplementaryConfig: {
+				columns: {
+					value1: "value1"
+				},
+				type: {
+					value2: "value2"
+				}
+			}
+		};
+		assert.deepEqual(Engine.getInstance().internalizeKeys(this.oControl, oExternalState), {
+			TypeHandler3: {
+				columns: {
+					value3: "value3"
+				}
+			},
+			TypeHandler2: {
+				type: {
+					value2: "value2"
+				}
+			}
+		}, "The internalized state is correct");
+
+		this.oController1.getStateKey.restore();
+		this.oController2.getStateKey.restore();
+		this.oController3.getStateKey.restore();
+		this.oController1.formatToInternalState.restore();
+		this.oController2.formatToInternalState.restore();
+		this.oController3.formatToInternalState.restore();
+	});
+
+	QUnit.test("Check 'externalizeKeys' with multiple controllers with same state key", function(assert) {
+		sinon.stub(this.oController1, "getStateKey").returns("supplementaryConfig");
+		sinon.stub(this.oController2, "getStateKey").returns("supplementaryConfig");
+		sinon.stub(this.oController3, "getStateKey").returns("supplementaryConfig");
+
+		let oInternalState = {
+			TypeHandler1: {
+				type: {
+					value1: "value1"
+				}
+			},
+			TypeHandler2: {
+				type: {
+					value2: "value2"
+				}
+			}
+		};
+
+		assert.deepEqual(Engine.getInstance().externalizeKeys(this.oControl, oInternalState), {
+			supplementaryConfig: {
+				type: {
+					value1: "value1",
+					value2: "value2"
+				}
+			}
+		}, "The externalized state is correct");
+
+		oInternalState = {
+			TypeHandler2: {
+				type: {
+					value2: "value2"
+				}
+			},
+			TypeHandler3: {
+				columns: {
+					value1: "value1"
+				}
+			}
+		};
+
+		assert.deepEqual(Engine.getInstance().externalizeKeys(this.oControl, oInternalState), {
+			supplementaryConfig: {
+				type: {
+					value2: "value2"
+				},
+				columns: {
+					value1: "value1"
+				}
+			}
+		}, "The externalized state is correct");
+
+		oInternalState = {
+			TypeHandler1: {
+				type: {
+					value1: "value1"
+				}
+			},
+			TypeHandler2: {
+				type: {
+					value2: "value2"
+				}
+			},
+			TypeHandler3: {
+				columns: {
+					value1: "value1"
+				}
+			}
+		};
+
+		assert.deepEqual(Engine.getInstance().externalizeKeys(this.oControl, oInternalState), {
+			supplementaryConfig: {
+				type: {
+					value2: "value2",
+					value1: "value1"
+				},
+				columns: {
+					value1: "value1"
+				}
+			}
+		}, "The externalized state is correct");
+
+		this.oController1.getStateKey.restore();
+		this.oController2.getStateKey.restore();
+		this.oController3.getStateKey.restore();
+	});
+
 });
