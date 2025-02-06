@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/m/StandardListItem",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/m/qunit/localService/mockserver"
 ],
 	function(

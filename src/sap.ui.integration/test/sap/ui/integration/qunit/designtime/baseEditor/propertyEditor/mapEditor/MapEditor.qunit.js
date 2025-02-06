@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/base/util/ObjectPath",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	BaseEditor,
 	BasePropertyEditor,

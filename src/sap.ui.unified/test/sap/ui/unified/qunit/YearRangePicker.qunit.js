@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(YearRangePicker, DateRange, CalendarDate, UI5Date, nextUIUpdate) {
 	"use strict";
 

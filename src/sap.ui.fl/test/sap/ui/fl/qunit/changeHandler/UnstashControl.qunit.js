@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnstashControl",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	XMLView,
 	JsControlTreeModifier,

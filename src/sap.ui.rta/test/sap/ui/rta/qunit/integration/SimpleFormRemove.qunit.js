@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/layout/library",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	XMLView,

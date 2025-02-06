@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/FeedInput", // just to test "value" fallback - should not really be supported
 	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 	],
 	function(
 			SemanticFormElement,

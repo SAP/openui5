@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
 	"sap/m/MessageStrip",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/VBox",
 	"sap/m/Text",
 	"sap/ui/events/KeyCodes",

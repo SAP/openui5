@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	QUnitUtils,
 	NotificationListItem,

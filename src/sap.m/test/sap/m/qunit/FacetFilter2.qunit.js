@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/m/FacetFilterItem",

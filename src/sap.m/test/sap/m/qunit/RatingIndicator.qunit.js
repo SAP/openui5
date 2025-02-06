@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/RatingIndicator',
-	'sap/ui/qunit/utils/nextUIUpdate',
+	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/core/IconPool',
 	'sap/m/library',
 	'sap/ui/events/KeyCodes',

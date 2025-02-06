@@ -4,7 +4,7 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"delegates/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/condition/Condition",

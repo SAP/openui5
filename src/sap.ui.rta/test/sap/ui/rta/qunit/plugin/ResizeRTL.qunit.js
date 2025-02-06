@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Text",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RuntimeAuthoring,

@@ -1,6 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enums/ActionToolbarActionAlignment", "sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enums/ActionToolbarActionAlignment", "sap/ui/test/utils/nextUIUpdate"
 ], function(ActionToolbar, Button, Title, Text, ActionToolbarAction, ActionToolbarActionAlignment, nextUIUpdate) {
 	"use strict";
 

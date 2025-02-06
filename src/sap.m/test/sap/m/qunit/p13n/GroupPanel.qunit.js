@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/m/p13n/GroupPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (GroupPanel, JSONModel, nextUIUpdate) {
 	"use strict";
 

@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainer",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	/* jQuery custom selectors ":sapTabbable"*/
 	"sap/ui/dom/jquery/Selectors"
 ], function(Localization, Library, Theming, jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, GridContainerItemLayoutData, GridContainer, nextUIUpdate) {

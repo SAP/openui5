@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/m/Label",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Menu,
 	MenuItem,

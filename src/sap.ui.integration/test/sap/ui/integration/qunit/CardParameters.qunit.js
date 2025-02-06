@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
 	Log,

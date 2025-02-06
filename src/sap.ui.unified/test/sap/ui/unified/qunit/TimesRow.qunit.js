@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
-    "sap/ui/qunit/utils/nextUIUpdate",
+    "sap/ui/test/utils/nextUIUpdate",
 	"sap/base/i18n/Localization",
 	"sap/ui/unified/calendar/TimesRow"
 ], function (Library, nextUIUpdate, Localization, TimesRow) {

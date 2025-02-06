@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/p13n/enums/PersistenceMode",
 	"sap/ui/core/Control",
 	"sap/ui/core/message/MessageType",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/m/p13n/MetadataHelper",
 	"sap/ui/core/CustomData"

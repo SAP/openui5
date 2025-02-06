@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/integration/controls/MicrochartLegend",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	mLibrary,
 	Control,

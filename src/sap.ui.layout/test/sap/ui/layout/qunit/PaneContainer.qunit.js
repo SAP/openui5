@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveSplitter",
 	"sap/ui/layout/SplitPane",
 	"sap/m/Text",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	PaneContainer,
 	ResponsiveSplitter,

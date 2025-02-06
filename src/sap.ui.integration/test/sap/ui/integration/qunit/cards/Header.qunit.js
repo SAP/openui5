@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/AvatarColor",
 	"sap/m/AvatarImageFitType",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"sap/m/library"
 ], (

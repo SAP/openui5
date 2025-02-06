@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/ui/dt/ElementOverlay",
-	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/test/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Test,

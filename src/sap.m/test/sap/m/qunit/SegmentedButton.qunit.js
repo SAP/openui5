@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/LayoutData",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Element,
 	Library,

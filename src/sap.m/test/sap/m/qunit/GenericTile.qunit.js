@@ -33,7 +33,7 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/m/LinkTileContent",
 	"sap/m/TileInfo",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	/* jQuery custom selectors ":sapTabbable"*/
 	"sap/ui/dom/jquery/Selectors",
 	// used only indirectly
@@ -4584,7 +4584,6 @@ sap.ui.define([
 			this.oGenericTile = new GenericTile("generic-tile", {
 				header: "GenericTile Header",
 				frameType: sFrameType,
-				size: sSize,
 				mode: GenericTileMode.IconMode,
 				sizeBehavior: sSizeBehavior,
 				backgroundColor:"red",

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/f/SidePanel",
 	"sap/f/SidePanelItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Library,

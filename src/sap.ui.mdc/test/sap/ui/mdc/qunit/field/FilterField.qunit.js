@@ -23,7 +23,7 @@ sap.ui.define([
 	// make sure delegate is loaded (test delegate loading in FieldBase test)
 	"delegates/odata/v4/FieldBaseDelegate",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// make sure types are loaded
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Integer",

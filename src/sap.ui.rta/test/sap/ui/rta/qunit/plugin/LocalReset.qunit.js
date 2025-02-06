@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	LocalResetPlugin,
 	CommandFactory,

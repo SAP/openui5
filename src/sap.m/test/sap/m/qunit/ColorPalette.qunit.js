@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/ColorPalettePopover",
 	"sap/ui/core/Lib",
 	"sap/ui/unified/ColorPickerDisplayMode",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Dialog",
 	"sap/m/ResponsivePopover",
 	"sap/ui/Device",

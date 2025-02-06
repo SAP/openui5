@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	validateStableIds,
 	UIComponent,

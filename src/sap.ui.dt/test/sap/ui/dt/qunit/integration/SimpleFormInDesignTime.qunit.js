@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	OverlayRegistry,

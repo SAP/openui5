@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	layoutLibrary,

@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
 ], function(ClipboardUtils, Column, ColumnListItem, MessageToast, Text, Table, PluginBase, CopyProvider, CellSelector, Device, CustomData, coreLib, ShortcutHintsMixin, KeyCodes, MDCTable, MDCColumn, Filter, JSONModel, GridColumn, GridTable, MultiSelectionPlugin, QUnitUtils, nextUIUpdate, MDCQUnitUtils, MDCTableQUnitUtils) {

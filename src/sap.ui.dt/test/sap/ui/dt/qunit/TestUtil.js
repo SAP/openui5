@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	List,
 	CustomListItem,

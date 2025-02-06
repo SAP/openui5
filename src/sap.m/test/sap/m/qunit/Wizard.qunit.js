@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/DesignTime",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/m/Button",

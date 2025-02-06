@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
-    "sap/ui/qunit/utils/nextUIUpdate",
+    "sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UniversalDate",

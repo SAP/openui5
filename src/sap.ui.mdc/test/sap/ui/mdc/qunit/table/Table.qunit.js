@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/mdc/Table",

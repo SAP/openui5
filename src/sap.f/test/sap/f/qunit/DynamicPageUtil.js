@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/GenericTag",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 	function(
 		Library,

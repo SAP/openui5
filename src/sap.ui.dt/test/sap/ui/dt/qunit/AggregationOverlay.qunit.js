@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Panel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 
 ], function(

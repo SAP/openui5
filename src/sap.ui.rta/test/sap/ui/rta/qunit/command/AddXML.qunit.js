@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	CommandFactory,
 	AddXML,

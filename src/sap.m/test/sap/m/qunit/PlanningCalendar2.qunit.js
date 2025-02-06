@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/calendar/IndexPicker",

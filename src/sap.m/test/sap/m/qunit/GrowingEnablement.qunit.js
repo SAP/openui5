@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(Column, ColumnListItem, CustomListItem, GrowingEnablement, mLibrary, List, Page, StandardListItem, Table, Text, HTML, Library, MockServer, KeyCodes, Sorter, JSONModel, ODataModel, qutils, createAndAppendDiv, nextUIUpdate, jQuery) {
 	"use strict";

@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Panel",
 	"sap/m/GenericTile",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Localization, Element, jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary, Log, Text, oCore, Panel, GenericTile, nextUIUpdate) {
 	"use strict";
 

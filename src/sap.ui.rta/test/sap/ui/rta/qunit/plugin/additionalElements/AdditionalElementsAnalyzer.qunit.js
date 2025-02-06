@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/comp/designtime/smartfield/SmartField.designtime",
 	"./TestUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	AdditionalElementsAnalyzer,
 	BindingsExtractor,

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function(
 	EnablementUtil,

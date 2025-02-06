@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/upload/UploadSetItem",
 	"sap/ui/model/json/JSONModel",
 	"./UploadSetTestUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (UploadSet, UploadSetItem, JSONModel, TestUtils, nextUIUpdate) {
 	"use strict";
 

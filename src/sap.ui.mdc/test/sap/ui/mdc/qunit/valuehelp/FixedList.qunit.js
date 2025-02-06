@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/strings/whitespaceReplacer"
 ], (
 		ValueHelpDelegate,

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
 	"sap/ui/qunit/QUnitUtils",

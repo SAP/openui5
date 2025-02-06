@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/TabContainer",
 	"sap/m/TabStripItem",
 	"sap/ui/core/CustomData",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/m/library",

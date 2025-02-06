@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/mdc/util/PropertyHelper",
 	"sap/m/VBox",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(AdaptFiltersPanel, P13nBuilder, JSONModel, CustomListItem, Toolbar, Event, Text, List, SegmentedButtonItem, PropertyHelper, VBox, nextUIUpdate) {
 	"use strict";
 

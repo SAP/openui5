@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/m/GenericTile",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Button"
 ],
 function (

@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
 	"sap/uxap/ObjectPageAccessibleLandmarkInfo",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function(
 	Element,

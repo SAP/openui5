@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/PlanningCalendarHeader",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/ui/unified/calendar/CustomYearPicker",

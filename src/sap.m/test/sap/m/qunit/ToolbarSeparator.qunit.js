@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(ToolbarSeparator, Button, OverflowToolbar, nextUIUpdate) {
 	"use strict";
 

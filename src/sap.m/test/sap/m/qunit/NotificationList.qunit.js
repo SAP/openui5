@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/NotificationList",
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	NotificationList,
 	NotificationListGroup,

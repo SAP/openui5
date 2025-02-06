@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/CheckBox",
 	"sap/ui/core/library",
 	"sap/m/Label",

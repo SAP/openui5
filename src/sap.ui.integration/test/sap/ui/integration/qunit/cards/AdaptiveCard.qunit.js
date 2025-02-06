@@ -7,7 +7,7 @@ sap.ui.define([
 		"sap/ui/integration/util/DataProvider",
 		"sap/ui/integration/cards/actions/CardActions",
 		"sap/ui/integration/thirdparty/adaptivecards",
-		"sap/ui/qunit/utils/nextUIUpdate",
+		"sap/ui/test/utils/nextUIUpdate",
 		"qunit/testResources/nextCardReadyEvent"
 ],
 	function (

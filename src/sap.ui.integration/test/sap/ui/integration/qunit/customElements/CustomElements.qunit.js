@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Lib,
 	nextUIUpdate

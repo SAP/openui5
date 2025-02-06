@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/rta/toolbar/FioriLike",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Lib"
 ], function(
 	FioriLike,

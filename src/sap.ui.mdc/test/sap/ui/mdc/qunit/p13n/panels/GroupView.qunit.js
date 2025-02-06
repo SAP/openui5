@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/VBox",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Element, GroupView, P13nBuilder, VBox, Input, nextUIUpdate) {
 	"use strict";
 

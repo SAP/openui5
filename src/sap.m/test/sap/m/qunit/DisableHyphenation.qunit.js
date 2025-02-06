@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/hyphenation/Hyphenation",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Text, Hyphenation, nextUIUpdate) {
 	"use strict";
 

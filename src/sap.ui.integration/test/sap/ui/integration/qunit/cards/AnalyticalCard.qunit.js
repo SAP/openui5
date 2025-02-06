@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/cards/actions/CardActions",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"../services/SampleServices"
 ], function (

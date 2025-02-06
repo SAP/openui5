@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItemBase",
 	"sap/ui/thirdparty/jquery",

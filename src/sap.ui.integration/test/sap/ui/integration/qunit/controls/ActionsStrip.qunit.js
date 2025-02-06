@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	ActionsStrip,

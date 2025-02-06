@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/Select",
 	"sap/ui/core/Item",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Element,
 	createAndAppendDiv,

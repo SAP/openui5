@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"./QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/mdc/Table",

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/m/Text",
 	"sap/ui/core/dnd/DragInfo",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	GridDropInfo,

@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/IllustratedMessage",
 	"sap/ui/mdc/chart/DrillBreadcrumbs",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Theming",
 	"sap/base/util/Deferred"
 ],

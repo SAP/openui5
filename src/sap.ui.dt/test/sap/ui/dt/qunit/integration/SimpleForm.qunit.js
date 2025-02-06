@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/plugin/CutPaste",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	// preload simple form layouts to avoid async requests during test execution
 	"sap/ui/layout/form/SimpleForm",

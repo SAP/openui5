@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/f/dnd/GridDragOver",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"./testResources/nextCardReadyEvent"
 ],
 function(

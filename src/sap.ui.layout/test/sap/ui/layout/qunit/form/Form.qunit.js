@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 	function(
 		Element,

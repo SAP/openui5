@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Extension",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustrationPool"

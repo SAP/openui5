@@ -2,7 +2,7 @@
 sap.ui.define([
     "sap/ui/core/Element",
     "sap/m/p13n/FilterPanel",
-    "sap/ui/qunit/utils/nextUIUpdate",
+    "sap/ui/test/utils/nextUIUpdate",
     "sap/m/VBox",
     "sap/m/Input"
 ], function(Element, FilterPanel, nextUIUpdate, VBox, Input) {

@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/OverflowToolbar",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ], function(

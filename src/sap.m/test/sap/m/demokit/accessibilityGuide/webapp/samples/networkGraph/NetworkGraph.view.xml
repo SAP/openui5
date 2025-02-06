@@ -1,0 +1,137 @@
+<mvc:View
+		controllerName="sap.m.sample.networkGraph.NetworkGraph"
+		xmlns="sap.suite.ui.commons.networkgraph"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
+		xmlns:layout="sap.suite.ui.commons.networkgraph.layout"
+		xmlns:m="sap.m"
+		height="100%">
+	<m:App>
+		<m:Page id="messageHandlingPage" showHeader="false">
+			<m:content>
+				<l:FixFlex vertical="true">
+					<l:fixContent>
+						<m:OverflowToolbar>
+							<m:content>
+								<m:Label text="Orientation:" labelFor="orientation"></m:Label>
+								<m:Select id="orientation"  selectedKey="{settings>/orientation}" autoAdjustWidth="true">
+									<core:Item key="LeftRight" text="Left-Right"/>
+									<core:Item key="RightLeft" text="Right-Left"/>
+									<core:Item key="TopBottom" text="Top-Bottom"/>
+								</m:Select>
+								<m:Label text="Node placement:" labelFor="nodePlacement"></m:Label>
+								<m:Select id="nodePlacement" selectedKey="{settings>/nodePlacement}" autoAdjustWidth="true">
+									<core:Item key="BrandesKoepf" text="Brandes-Koepf"/>
+									<core:Item key="LinearSegments" text="Linear Segments"/>
+									<core:Item key="Simple" text="Simple"/>
+								</m:Select>
+								<m:Label text="Arrow position:" labelFor="arrowPosition"></m:Label>
+								<m:Select id="arrowPosition" selectedKey="{settings>/arrowPosition}" autoAdjustWidth="true">
+									<core:Item key="Start" text="Arrow Start"/>
+									<core:Item key="Middle" text="Arrow Middle"/>
+									<core:Item key="End" text="Arrow End"/>
+								</m:Select>
+								<m:Label text="Arrow orientation:" labelFor="arrowOrientation"></m:Label>
+								<m:Select id="arrowOrientation" selectedKey="{settings>/arrowOrientation}" autoAdjustWidth="true">
+									<core:Item key="ParentOf" text="Parent -> Child"/>
+									<core:Item key="ChildOf" text="Child -> Parent"/>
+									<core:Item key="None" text="Hidden"/>
+									<core:Item key="Both" text="Both"/>
+								</m:Select>
+								<m:Label text="Merge Edges:" labelFor="mergeEdges"></m:Label>
+								<m:Select id="mergeEdges" change="mergeChanged" selectedKey="0" autoAdjustWidth="true">
+									<core:Item key="0" text="Split edges"/>
+									<core:Item key="1" text="Merged edges"/>
+								</m:Select>
+								<m:Label text="Node Spacing:" labelFor="nodeSpacing"></m:Label>
+								<m:Select id="nodeSpacing" selectedKey="55" change="spacingChanged" autoAdjustWidth="true">
+									<core:Item key="20" text="Node spacing (20)"/>
+									<core:Item key="40" text="Node spacing (40)"/>
+									<core:Item key="55" text="Node spacing (55)"/>
+									<core:Item key="80" text="Node spacing (80)"/>
+									<core:Item key="100" text="Node spacing (100)"/>
+								</m:Select>
+							</m:content>
+						</m:OverflowToolbar>
+					</l:fixContent>
+					<l:flexContent>
+						<m:FlexBox fitContainer="true" renderType="Bare" wrap="Wrap" id="graphWrapper">
+							<m:items>
+								<Graph
+										enableWheelZoom="false"
+										orientation="{settings>/orientation}"
+										nodes="{/nodes}"
+										lines="{/lines}"
+										groups="{/groups}"
+										id="graph">
+									<statuses>
+										<Status key="AttributeLabel" contentColor="#e90c09"/>
+										<Status key="Dashed" borderWidth="2px" borderStyle="dashed"/>
+										<Status key="LineBorderStatus" title="Line border status" borderColor="red" backgroundColor="red" borderWidth="2px"
+												borderStyle="3,3"/>
+										<Status key="GroupCustomStatus" title="Group custom status" contentColor="white" backgroundColor="darkblue" borderColor="darkblue" />
+									</statuses>
+									<layoutData>
+										<m:FlexItemData growFactor="1" shrinkFactor="1" baseSize="0%" minWidth="300px"/>
+									</layoutData>
+									<layoutAlgorithm>
+										<layout:LayeredLayout
+												mergeEdges="{settings>/mergeEdges}"
+												nodePlacement="{settings>/nodePlacement}"
+												nodeSpacing="{settings>/nodeSpacing}"/>
+									</layoutAlgorithm>
+									<nodes>
+										<Node maxWidth="{maxWidth}"
+											headerCheckBoxState="{headerCheckBoxState}"
+											key="{key}"
+											title="{title}"
+											icon="{icon}"
+											group="{group}"
+											attributes="{path:'attributes', templateShareable:true}"
+											shape="{shape}"
+											status="{status}">
+											<attributes>
+												<ElementAttribute
+														icon="{icon}"
+														labelStatus="{status}"
+														valueStatus="{status}"
+														label="{label}"
+														value="{value}"/>
+											</attributes>
+										</Node>
+									</nodes>
+									<lines>
+										<Line arrowPosition="{settings>/arrowPosition}"
+											arrowOrientation="{settings>/arrowOrientation}"
+											from="{from}"
+											to="{to}"
+											status="{status}">
+											<actionButtons>
+												<ActionButton icon="sap-icon://lab"/>
+												<ActionButton icon="sap-icon://bubble-chart" />
+											</actionButtons>
+										</Line>
+									</lines>
+									<groups>
+										<Group key="{key}"
+											icon="sap-icon://measure"
+											headerCheckBoxState="{headerCheckboxState}"
+											title="{title}"
+											status="{status}">
+										</Group>
+									</groups>
+								</Graph>
+								<GraphMap id="map" graph="graph">
+									<layoutData>
+										<m:FlexItemData minWidth="200px" maxWidth="25%"/>
+									</layoutData>
+								</GraphMap>
+							</m:items>
+						</m:FlexBox>
+					</l:flexContent>
+				</l:FixFlex>
+			</m:content>
+		</m:Page>
+	</m:App>
+</mvc:View>

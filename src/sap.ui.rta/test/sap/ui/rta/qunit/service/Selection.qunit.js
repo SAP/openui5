@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",

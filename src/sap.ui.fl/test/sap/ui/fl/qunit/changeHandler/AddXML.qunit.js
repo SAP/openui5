@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper",
 	"sap/m/Button",
 	"sap/m/HBox",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	JsControlTreeModifier,
 	XmlTreeModifier,

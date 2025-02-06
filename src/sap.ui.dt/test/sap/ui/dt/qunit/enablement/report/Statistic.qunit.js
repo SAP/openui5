@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/dt/enablement/report/Statistic",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	Statistic,

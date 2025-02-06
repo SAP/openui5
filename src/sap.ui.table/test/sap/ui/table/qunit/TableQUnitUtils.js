@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/UIArea",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/util/merge",
 	"sap/base/i18n/Localization",
 	// provides jQuery.fn.scrollLeftRTL

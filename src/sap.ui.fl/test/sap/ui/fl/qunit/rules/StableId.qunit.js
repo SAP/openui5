@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/support/Bootstrap",
 	"sap/ui/support/RuleAnalyzer",
 	"test-resources/sap/ui/support/TestHelper",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	UIComponent,
 	ComponentContainer,

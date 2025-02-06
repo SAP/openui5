@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/flexibility/xConfigFlex",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function (MDCControl, xConfigFlex, nextUIUpdate, createAppEnvironment, JsControlTreeModifier) {

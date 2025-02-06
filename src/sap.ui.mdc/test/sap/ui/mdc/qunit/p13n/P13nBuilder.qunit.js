@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/p13n/BasePanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/rta/Utils"
 ], function(ElementRegistry, Library, P13nBuilder, BasePanel, JSONModel, nextUIUpdate, FieldExtensibility, Utils) {

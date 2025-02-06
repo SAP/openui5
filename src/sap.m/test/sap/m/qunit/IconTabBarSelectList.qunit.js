@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	IconTabHeader,
 	IconTabFilter,

@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/m/GenericTile",
@@ -36,9 +36,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
-
-	// shortcut for sap.m.Size
-	var Size = library.Size;
 
 	Mobile.init();
 
@@ -699,7 +696,6 @@ sap.ui.define([
 	QUnit.module("Create numeric Content with Image", {
 		beforeEach: async function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
-				size: Size.L, // deprecated since 1.38
 				state: LoadState.Loaded,
 				scale: "M",
 				indicator: DeviationIndicator.Up,
@@ -803,7 +799,6 @@ sap.ui.define([
 
 	function fnCreateExampleNumericContent () {
 		return new NumericContent("numeric-cnt", {
-			size: Size.L, // deprecated since 1.38
 			state: LoadState.Loaded,
 			scale: "M",
 			indicator: DeviationIndicator.Up,

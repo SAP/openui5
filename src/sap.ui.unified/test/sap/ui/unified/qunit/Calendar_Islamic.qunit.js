@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/LocaleData",
 	"sap/ui/unified/DateRange",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// load all required calendars in advance
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Islamic"

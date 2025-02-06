@@ -30,7 +30,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Log,
 	merge,

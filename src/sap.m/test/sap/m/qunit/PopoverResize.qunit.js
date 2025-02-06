@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/FlexBox",
 	"sap/m/Text",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	qutils,
 	createAndAppendDiv,

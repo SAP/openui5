@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(CalendarInCard, CalendarDate, DateTypeRange, UI5Date, nextUIUpdate) {
 	"use strict";
 

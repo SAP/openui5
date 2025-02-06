@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Library,
 	qutils,

@@ -32,7 +32,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function (
 	AddAction,

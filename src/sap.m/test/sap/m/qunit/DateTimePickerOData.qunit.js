@@ -1,14 +1,14 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
-	nextUIUpdate,
 	TestUtils,
 	XMLView,
-	ODataModel
+	ODataModel,
+	nextUIUpdate
 ) {
 	"use strict";
 

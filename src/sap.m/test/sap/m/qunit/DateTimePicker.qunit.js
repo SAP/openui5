@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/TimePickerClocks",
 	"sap/ui/core/Popup",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/unified/DateRange",

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TabStrip",
 	"sap/m/TabStripItem",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(qutils, createAndAppendDiv, TabStrip, TabStripItem, nextUIUpdate) {
 	"use strict";
 

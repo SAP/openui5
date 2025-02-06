@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/PDFViewerRenderer",
 	"sap/m/library",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, library, Device, nextUIUpdate) {
 	"use strict";
 

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	DOMUtil,

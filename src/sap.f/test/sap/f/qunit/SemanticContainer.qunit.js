@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/library",
 	"./SemanticUtil",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function (
 	coreLibrary,

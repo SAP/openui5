@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"./DynamicPageUtil",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Title",

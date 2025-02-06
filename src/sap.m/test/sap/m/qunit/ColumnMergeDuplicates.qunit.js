@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils"
 ], function(extend, Column, ColumnListItem, Label, Table, Icon, Sorter, JSONModel, ODataV4Model, nextUIUpdate, TestUtils) {
 	"use strict";

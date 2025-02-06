@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(SelectionDetailsItem, SelectionDetailsItemLine, Element, Item, library, nextUIUpdate) {
 	"use strict";
 

@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	layoutLibrary,

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/restricted/_debounce",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	BaseEditor,
 	QUnitUtils,

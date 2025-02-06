@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/CollectiveSearchSelect",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/VariantItem"
 ], (
 	CollectiveSearchSelect,

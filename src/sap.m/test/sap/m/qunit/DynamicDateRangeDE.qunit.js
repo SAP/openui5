@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/DynamicDateOption",
 	"sap/m/StandardDynamicDateOption",
 	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/date/UI5Date"
 ], function(

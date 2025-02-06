@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/integration/util/AnalyticsCloudHelper",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextCardStateChangedEvent",
 	"sap/ui/integration/util/ManifestResolver"

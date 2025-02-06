@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/p13n/MessageStrip",
     "sap/ui/core/InvisibleMessage",
     "sap/ui/core/Lib",
-    "sap/ui/qunit/utils/nextUIUpdate"
+    "sap/ui/test/utils/nextUIUpdate"
 ], function(MessageStrip, InvisibleMessage, Library, nextUIUpdate) {
 	"use strict";
 

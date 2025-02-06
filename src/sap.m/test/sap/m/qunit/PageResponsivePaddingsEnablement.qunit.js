@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	Button,

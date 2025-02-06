@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/write/_internal/delegates/ODataV2ReadDelegate",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(

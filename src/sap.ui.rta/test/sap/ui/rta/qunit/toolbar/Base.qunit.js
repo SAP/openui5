@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/util/Animation",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Button,
 	ManagedObject,

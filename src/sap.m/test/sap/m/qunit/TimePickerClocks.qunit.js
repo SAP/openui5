@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/TimePickerInternals",
 	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/date/UI5Date"
 ], function(TimePickerClocks, TimePickerInternals, Element, KeyCodes, nextUIUpdate, jQuery, UI5Date) {

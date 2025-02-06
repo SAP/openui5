@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
 	ElementDesignTimeMetadata,

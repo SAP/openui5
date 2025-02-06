@@ -42,7 +42,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"./FieldBaseDelegateODataDefaultTypes"
 ], (
 	Messaging,

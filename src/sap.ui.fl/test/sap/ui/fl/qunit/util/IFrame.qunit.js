@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/security/URLListValidator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	IFrame,

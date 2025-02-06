@@ -1,6 +1,6 @@
 /*global QUnit sinon */
 sap.ui.define([
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/thirdparty/jquery',
 	'sap/base/Log',
 	'sap/ui/layout/BlockLayoutCell',

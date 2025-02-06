@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/integration/controls/Microchart",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/Log",
 	"sap/base/util/deepClone"
 ], function(

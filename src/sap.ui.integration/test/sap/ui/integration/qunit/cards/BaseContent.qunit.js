@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/integration/util/ContentFactory",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/integration/widgets/Card"
 ], function (

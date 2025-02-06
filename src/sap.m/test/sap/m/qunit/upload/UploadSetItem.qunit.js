@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/upload/Uploader",
 	"sap/ui/core/Item",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/m/ObjectStatus"
 ], function (KeyCodes, UploadSet, UploadSetItem, JSONModel, TestUtils, IconPool, Uploader, Item, nextUIUpdate, Element,ObjectStatus) {

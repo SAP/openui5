@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/DataState",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(List, StandardListItem, DataStateIndicator, ManagedObjectObserver, Messaging, Message, DataState, Filter, JSONModel, nextUIUpdate) {
 
 	"use strict";

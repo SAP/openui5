@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/events/KeyCodes",
 	"sap/m/BadgeCustomData",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Element,
 	Library,

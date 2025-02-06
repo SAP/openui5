@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/ProgressIndicator",
 	"sap/m/ObjectHeader",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ObjectNumber",
 	"sap/m/ObjectMarker",

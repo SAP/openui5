@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"./testResources/localService/SEPMRA_PROD_MAN/mockServer",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ],
 function (

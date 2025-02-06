@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/units/Rem",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Theming"
 ], function(
 	Log,

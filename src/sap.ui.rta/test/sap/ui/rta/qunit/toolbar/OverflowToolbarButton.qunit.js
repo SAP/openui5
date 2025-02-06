@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/OverflowToolbarButton",
 	"sap/ui/dt/DOMUtil",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	mLibrary,

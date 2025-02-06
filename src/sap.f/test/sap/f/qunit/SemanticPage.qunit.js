@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/Device",
 	"sap/f/semantic/SemanticPage",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function(
 	SemanticUtil,

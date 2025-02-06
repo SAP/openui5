@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/library",
 	"sap/m/Link",
 	"sap/ui/core/message/Message",

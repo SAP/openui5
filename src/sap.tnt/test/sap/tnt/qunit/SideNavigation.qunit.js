@@ -5,7 +5,7 @@ sap.ui.define([
 	'sap/tnt/NavigationListItem',
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	'sap/ui/qunit/utils/nextUIUpdate',
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils"
 ], function(
 	SideNavigation,

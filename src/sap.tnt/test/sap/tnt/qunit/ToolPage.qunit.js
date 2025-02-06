@@ -17,8 +17,8 @@ sap.ui.define([
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
-	'sap/ui/qunit/utils/nextUIUpdate',
-	'sap/ui/qunit/utils/waitForThemeApplied'
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/test/utils/waitForThemeApplied"
 ], function (
 	Device,
 	Element,

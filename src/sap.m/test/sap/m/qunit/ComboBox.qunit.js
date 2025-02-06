@@ -31,7 +31,7 @@ sap.ui.define([
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// provides jQuery.fn.getSelectedText
 	"sap/ui/dom/jquery/getSelectedText",
 	// provides jQuery.fn.cursorPos

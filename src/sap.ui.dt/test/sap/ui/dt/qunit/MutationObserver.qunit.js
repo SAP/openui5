@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/StaticArea",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/MutationObserver",

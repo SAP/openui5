@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/ContentConfig",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Link",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element"
 ], function(
 	ActionTile,

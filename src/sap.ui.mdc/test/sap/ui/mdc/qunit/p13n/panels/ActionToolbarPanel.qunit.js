@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/message/MessageType",
 	"sap/m/Text"
 ], function(ActionToolbarPanel, ColumnListItem, sinon, Event, nextUIUpdate, MessageType, Text) {

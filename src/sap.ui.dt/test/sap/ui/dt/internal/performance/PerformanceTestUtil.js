@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/base/Log",
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	ControlDragDrop,

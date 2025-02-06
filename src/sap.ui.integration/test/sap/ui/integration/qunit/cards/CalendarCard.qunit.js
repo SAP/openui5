@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/integration/cards/CalendarContent",
 	"sap/ui/core/date/UI5Date",

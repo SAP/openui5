@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/codeEditor/CodeEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/deepEqual",
 	"qunit/designtime/EditorQunitUtils"

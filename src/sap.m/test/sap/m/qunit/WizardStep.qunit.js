@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/core/Lib"], function(WizardStep, nextUIUpdate, Library) {
+sap.ui.define(["sap/m/WizardStep", "sap/ui/test/utils/nextUIUpdate", "sap/ui/core/Lib"], function(WizardStep, nextUIUpdate, Library) {
 	"use strict";
 
 	var oRb = Library.getResourceBundleFor("sap.m");

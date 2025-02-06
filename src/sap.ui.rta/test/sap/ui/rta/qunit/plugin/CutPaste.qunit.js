@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/m/Page",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function(
 	Layer,

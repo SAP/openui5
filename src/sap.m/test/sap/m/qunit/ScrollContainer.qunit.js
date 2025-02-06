@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Image",
 	"sap/m/Select",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/HTML",
 	"sap/m/App",
 	"sap/m/Page",

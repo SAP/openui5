@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/m/p13n/SortPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Item"
 ], function (SortPanel, JSONModel, nextUIUpdate, Item) {
 	"use strict";

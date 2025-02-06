@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/p13n/FlexUtil",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/core/Control",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
 ], function (FlexModificationHandler, FlexUtil, FlexRuntimeInfoAPI, MDCControl, nextUIUpdate, ControlPersonalizationWriteAPI) {
 	"use strict";

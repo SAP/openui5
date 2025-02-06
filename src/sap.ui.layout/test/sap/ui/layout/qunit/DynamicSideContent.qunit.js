@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(Library, DynamicSideContent, layoutLibrary, Button, List, Panel, Page, StandardListItem, Device, ResizeHandler, nextUIUpdate, $) {
 	"use strict";

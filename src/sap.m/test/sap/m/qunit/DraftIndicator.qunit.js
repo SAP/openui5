@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DraftIndicator",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Element, Library, createAndAppendDiv, DraftIndicator, nextUIUpdate) {
 	"use strict";
 

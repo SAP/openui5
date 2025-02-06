@@ -758,6 +758,32 @@ function(
 			return oValueHelpIcon && oValueHelpIcon[0];
 		};
 
+		TimePicker.prototype._format2400Value = function (sValue, iIndexOfH, iIndexOfHH) {
+			if (sValue.substring(iIndexOfH, 2) === "24") {
+				return;
+			}
+
+			var iHoursDigits = 2,
+				sTrailingSpaces = ' ',
+				iSubStringIndex = iIndexOfHH,
+				bTrailingSpaces = sValue.charAt(iIndexOfH) === sTrailingSpaces,
+				iExtraIndex = bTrailingSpaces ? 1 : 0,
+				oSignificantNumbers = /[1-9]/g;
+
+			if (iIndexOfH === -1) {
+				return sValue;
+			}
+
+			if (iIndexOfHH === -1) {
+				iHoursDigits = 1;
+				iSubStringIndex = iIndexOfH;
+			}
+
+			sValue = sValue.replace(oSignificantNumbers, "0");
+
+			return sValue.substring(0, iSubStringIndex) + "24" + sValue.substring(iSubStringIndex + iExtraIndex + iHoursDigits);
+		};
+
 		/**
 		 * Handles input's change event by synchronizing <code>value</code>,
 		 * and <code>dateValue</code> properties with the input field.
@@ -780,11 +806,11 @@ function(
 			iIndexOfHH = sFormat.indexOf("HH");
 			iIndexOfH = sFormat.indexOf("H");
 
-			sValue = sValue || this._$input.val();
+			sValue = sValue?.trim() || this._$input.val()?.trim();
 			sThatValue = sValue;
 			bThatValue2400 = TimePickerInternals._isHoursValue24(sThatValue, iIndexOfHH, iIndexOfH);
 			bContains24 = sValue.substr(iIndexOfH, 2) === "24";
-			bEnabled2400 = this.getSupport2400() && bThatValue2400 && bContains24;
+			bEnabled2400 = this._getSupport2400() && bThatValue2400 && bContains24;
 			this._bValid = true;
 			if (sValue !== "") {
 				//keep the oDate not changed by the 24 hrs
@@ -805,7 +831,7 @@ function(
 					}
 				}
 			}
-			sThatValue = bEnabled2400 ? "24:" + sValue.replace(/[0-9]/g, "0").slice(0, -3) : sValue;
+			sThatValue = bEnabled2400 ? this._format2400Value(sValue, iIndexOfH,iIndexOfHH) : sValue;
 			//instead on key stroke zeroes could be added after entering '24'
 			this.updateDomValue(sThatValue);
 
@@ -959,9 +985,9 @@ function(
 		 * @public
 		 */
 		TimePicker.prototype.setSupport2400 = function (bSupport2400) {
+
 			var oClocks = this._getClocks(),
 				oInputs = this._getInputs();
-
 			this.setProperty("support2400", bSupport2400, true); // no rerendering
 
 			if (oClocks) {
@@ -973,6 +999,14 @@ function(
 
 			this._initMask();
 			return this;
+		};
+
+		TimePicker.prototype._getSupport2400 = function () {
+			if (this.getDisplayFormat().indexOf("H") === -1) {
+				return false;
+			}
+
+			return this.getSupport2400();
 		};
 
 		/**
@@ -1089,7 +1123,7 @@ function(
 			}
 
 			// convert to output
-			if (oDate && !this.getSupport2400()) {
+			if (oDate && !this._getSupport2400()) {
 				sOutputValue = this._formatValue(oDate);
 			} else {
 				sOutputValue = sValue;
@@ -1545,7 +1579,7 @@ function(
 			sTitle = this._oResourceBundle.getText("TIMEPICKER_SET_TIME");
 
 			oClocks = new TimePickerClocks(this.getId() + "-clocks", {
-				support2400: this.getSupport2400(),
+				support2400: this._getSupport2400(),
 				displayFormat: sFormat,
 				valueFormat: sFormat,
 				localeId: sLocaleId,
@@ -1663,7 +1697,7 @@ function(
 				],
 				content: [
 					new TimePickerInputs(this.getId() + "-inputs", {
-						support2400: this.getSupport2400(),
+						support2400: this._getSupport2400(),
 						displayFormat: sFormat,
 						valueFormat: sFormat,
 						localeId: sLocaleId,
@@ -1841,8 +1875,8 @@ function(
 		 * @private
 		 */
 		TimePicker.prototype._formatValue = function(oDate, bValueFormat, bNotReplace00with24) {
-			var sValue = DateTimeField.prototype._formatValue.apply(this, arguments),
-				sFormat = this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern),
+			var sValue = DateTimeField.prototype._formatValue.apply(this, arguments)?.trim(),
+				sFormat = bValueFormat ?  this.getValueFormat() || (this._sValueFormat && this._sValueFormat.oFormatOptions.pattern) : this.getDisplayFormat(),
 				iIndexOfHH,
 				iIndexOfH,
 				bFieldValueIs24;
@@ -1856,7 +1890,7 @@ function(
 				// that we use in the mask - "9:15" instead of " 9:15"
 				// that's because the mask is fixed length
 
-				// this._oTimeSemanticMaskHelper will always exist if we have displayformat and localeId set
+				// this._oTimeSemanticMaskHelper will always exist (if mask is enabled) if we have displayFormat and localeId set
 				// and they both have default values, but check just in case
 				if (!bValueFormat && this._oTimeSemanticMaskHelper) {
 					sValue = this._oTimeSemanticMaskHelper.formatValueWithLeadingTrailingSpaces(sValue);
@@ -1871,7 +1905,7 @@ function(
 
 			//2400 scenario - be sure that the correct value will be set in all cases - when binding,
 			//setting the value by clocks or only via setValue
-			if (oDate && oDate.getHours() === 0 && this.getSupport2400() && bFieldValueIs24) {
+			if (oDate && oDate.getHours() === 0 && this._getSupport2400() && bFieldValueIs24) {
 				sValue = TimePickerInternals._replaceZeroHoursWith24(sValue, iIndexOfHH, iIndexOfH);
 			}
 

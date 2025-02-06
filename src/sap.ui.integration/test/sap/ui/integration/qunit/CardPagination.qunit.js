@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/Host",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextCardDataReadyEvent",
 	"qunit/testResources/nextCardManifestAppliedEvent",

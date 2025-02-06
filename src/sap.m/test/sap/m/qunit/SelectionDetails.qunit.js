@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/ResponsivePopover",

@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	MetadataPropagationUtil,
 	OverlayRegistry,

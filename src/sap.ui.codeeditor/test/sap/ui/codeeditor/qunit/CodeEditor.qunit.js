@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/codeeditor/js/ace/ace",
 	"sap/ui/codeeditor/js/ace/ext-themelist"

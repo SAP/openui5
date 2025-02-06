@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	'sap/ui/qunit/QUnitUtils',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(VariantItem, VariantManagement, Element, ContextSharingAPI, QUnitUtils, nextUIUpdate) {
 	"use strict";
 

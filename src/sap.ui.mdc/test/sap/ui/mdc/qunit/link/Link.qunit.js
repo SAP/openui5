@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
 	"sap/m/MessageToast",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Text",
 	"sap/ui/mdc/enums/LinkType"
 ], function(QUnit, LinkItem, Button, Link, MessageToast, nextUIUpdate, Text, LinkType) {

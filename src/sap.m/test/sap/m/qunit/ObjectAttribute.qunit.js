@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Text",
 	"sap/ui/core/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Localization,
 	Library,

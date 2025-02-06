@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/ComboBoxBaseRenderer",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/library",
 	"sap/m/InputBase",
 	"sap/m/Input",

@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Label",
 	"sap/ui/core/TooltipBase"
 ], function(Menu, MenuItem, nextUIUpdate, Label, TooltipBase) {

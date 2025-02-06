@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/m/TileContent",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/NumericContent",
 	"sap/m/GenericTile"
 ], function(TileContent, Text, library, nextUIUpdate, NumericContent, GenericTile) {

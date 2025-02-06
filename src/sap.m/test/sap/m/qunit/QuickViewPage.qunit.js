@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/QuickViewGroupElement"
 ], function(
 	AvatarShape,

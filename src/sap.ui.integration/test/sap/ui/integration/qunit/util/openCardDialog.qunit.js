@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/openCardDialog",
 	"sap/ui/integration/util/DataProvider",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextDialogAfterOpenEvent"
 ], (

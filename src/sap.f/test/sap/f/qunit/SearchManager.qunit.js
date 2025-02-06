@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/SuggestionItem",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 	function (SearchManager, SuggestionItem, KeyCodes, qutils, nextUIUpdate) {
 		"use strict";

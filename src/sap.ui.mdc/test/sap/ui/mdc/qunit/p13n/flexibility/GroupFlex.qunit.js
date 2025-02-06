@@ -1,6 +1,6 @@
 /* global QUnit */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/GroupFlex", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/qunit/utils/nextUIUpdate"
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/GroupFlex", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/test/utils/nextUIUpdate"
 ], function(createAppEnvironment, GroupFlex, ChangesWriteAPI, JsControlTreeModifier, nextUIUpdate) {
 	"use strict";
 

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/StashedControlSupport",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/uxap/ObjectPageLazyLoader"
 ],
 function(XMLView, StashedSupport, nextUIUpdate, ObjectPageLazyLoader) {

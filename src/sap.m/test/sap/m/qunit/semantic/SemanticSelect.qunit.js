@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/semantic/SortSelect",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Item",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(createAndAppendDiv, SortSelect, JSONModel, Item, nextUIUpdate) {
 	"use strict";
 

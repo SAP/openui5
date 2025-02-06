@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Lib",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(ChartSelectionDetails, FieldInfo, Text, CoreLib, MLibrary, nextUIUpdate) {
 	"use strict";
 
