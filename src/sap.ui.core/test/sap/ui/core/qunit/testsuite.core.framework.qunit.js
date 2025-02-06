@@ -90,24 +90,14 @@ sap.ui.define(function() {
 				}
 			},
 
-			/**
-			 * The tests for the preload files all share the same test configuration.
-			 * There is only one HTML test page, which is opened with different URL parameters.
-			 * The HTML test page then points to this general configuration.
-			 */
 			Lib_preloadFiles: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Lib_preloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none",
+				page: "test-resources/sap/ui/core/qunit/Lib_preloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js",
 				loader: {
 					paths: {
 						testlibs: "testdata/libraries/"
 					}
 				}
-			},
-
-			Lib_preloadFiles2: {
-				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Lib_preloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js"
 			}
 		}
 	};

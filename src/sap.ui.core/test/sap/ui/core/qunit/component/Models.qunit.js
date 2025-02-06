@@ -2154,7 +2154,7 @@ sap.ui.define([
 
 		}, function(vError) {
 
-			assert.ok(vError && vError.message && vError.message.indexOf("failed to") === 0,
+			assert.ok(vError && vError.message && vError.message.includes("could not"),
 				"Component Promise should get rejected with library loading issue.");
 
 			// Models with preload flag should be created

@@ -366,6 +366,7 @@ sap.ui.define([
 			};
 			return thisLib;
 		});
+		sap.ui.require.preload({"sap/test/enumlib/manifest.json":"{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {}\n\t\t}\n\t}\n}"});
 
 		await Library.load("sap.test.enumlib");
 		const oColorEnum = sap.ui.require("sap/test/enumlib/library").LibColor;
@@ -405,6 +406,7 @@ sap.ui.define([
 			};
 			return thisLib;
 		});
+		sap.ui.require.preload({"sap/test/otherlib/manifest.json":"{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {}\n\t\t}\n\t}\n}"});
 
 		await Library.load("sap.test.otherlib");
 		const oColorEnum = sap.ui.require("sap/test/otherlib/library").deeply.nested.LibColor;

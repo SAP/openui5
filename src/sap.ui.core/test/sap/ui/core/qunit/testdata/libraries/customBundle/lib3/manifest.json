@@ -1,0 +1,1 @@
+{"_version":"1.45.0","sap.app":{"id":"testlibs.customBundle.lib3","type":"library"},"sap.ui5":{"dependencies":{"libs":{"sap.ui.core":{}}},"library":{"css":false,"i18n":{"bundleUrl":"i18n/i18n.properties","supportedLocales":["en"],"fallbackLocale":"en"}}}}

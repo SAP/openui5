@@ -95,34 +95,6 @@ function makeManifest(lib, dependencies) {
 	return JSON.stringify(manifest, null, "\t");
 }
 
-function makeLibPreloadJSON(lib, dependencies) {
-
-	const preloadJSON = {
-		"version":"2.0",
-		"name": makeName(lib) + ".library-preload",
-		"dependencies": undefined,
-		"modules": {}
-	};
-
-	if ( dependencies ) {
-		preloadJSON.dependencies = [];
-		dependencies.forEach((dep) => {
-			if ( typeof dep === 'object' ) {
-				if ( dep.lazy ) {
-					return;
-				}
-				dep = dep.name;
-			}
-			preloadJSON.dependencies.push(makeName(dep) + ".library-preload");
-		});
-	}
-
-	preloadJSON.modules[makeModule(lib + ".library") + ".js"] = makeLib(lib, dependencies);
-	preloadJSON.modules[makeModule(lib + ".manifest") + ".json"] = makeManifest(lib, dependencies);
-
-	return JSON.stringify(preloadJSON, null, "\t");
-}
-
 function makeLibPreloadJS(lib, dependencies) {
 	const preloadJS = [];
 	const options = _components[lib];
@@ -134,10 +106,7 @@ function makeLibPreloadJS(lib, dependencies) {
 	}
 	preloadJS.push("sap.ui.require.preload({");
 	if (options && options.manifest) {
-		preloadJS.push(`	"${makeModule(`${lib}.manifest`)}.json":"${makeLiteral(makeManifest(lib, dependencies))}",`);
 		preloadJS.push(`	"${makeModule(`${lib}.${options.name}.manifest`)}.json":"${makeLiteral(JSON.stringify(options.manifest))}"`);
-	} else {
-		preloadJS.push(`	"${makeModule(`${lib}.manifest`)}.json":"${makeLiteral(makeManifest(lib, dependencies))}"`);
 	}
 	preloadJS.push("});");
 
@@ -207,10 +176,6 @@ function makeLibWith(lib, features, dependencies) {
 	writeFileSync(makePath(lib) + "/library.js", makeLib(lib, dependencies));
 
 	writeFileSync(makePath(lib) + "/manifest.json", makeManifest(lib, dependencies));
-
-	if ( features && features.json ) {
-		writeFileSync(makePath(lib) + "/library-preload.json", makeLibPreloadJSON(lib, dependencies));
-	}
 
 	if ( features && features.js ) {
 		writeFileSync(makePath(lib) + "/library-preload.js", makeLibPreloadJS(lib, dependencies));
@@ -316,55 +281,55 @@ function makeVersionInfo() {
 
 scenario("scenario1");
 makeLibWith("lib1", {js:true}, ['lib3', 'lib4', 'lib5']);
-makeLibWith("lib2", {json:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
+makeLibWith("lib2", {js:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
 makeLibWith("lib3", {js:true}, ['lib4']);
-makeLibWith("lib4", {js: true, json:true});
-makeLibWith("lib5", {json:true});
+makeLibWith("lib4", {js:true});
+makeLibWith("lib5", {js:true});
 makeLibWith("lib6", {js:true});
 makeLibWith("lib7", {});
 
 scenario("scenario2");
 makeLibWith("lib1", {js:true}, ['lib3', 'lib4', 'lib5']);
-makeLibWith("lib2", {json:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
+makeLibWith("lib2", {js:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
 makeLibWith("lib3", {js:true}, ['lib4']);
-makeLibWith("lib4", {js: true, json:true});
-makeLibWith("lib5", {json:true});
+makeLibWith("lib4", {js:true});
+makeLibWith("lib5", {js:true});
 makeLibWith("lib6", {js:true});
 makeLibWith("lib7", {});
 
 scenario("scenario3");
 makeLibWith("lib1", {js:true}, ['lib2']);
-makeLibWith("lib2", {json:true}, ['lib3', 'lib4']);
+makeLibWith("lib2", {js:true}, ['lib3', 'lib4']);
 makeLibWith("lib3", {js:true});
 
 scenario("scenario4");
 makeLibWith("lib1", {js:true}, ['lib2']);
-makeLibWith("lib2", {json:true}, ['lib1']);
+makeLibWith("lib2", {js:true}, ['lib1']);
 
 scenario("scenario5");
 makeLibWith("lib1", {js:true}, ['lib3', 'lib4', 'lib5']);
 makeLibWith("lib2", {js:true}, ['lib3', { name: 'lib6', lazy: true}, 'lib5']);
 makeLibWith("lib3", {js:true}, ['lib6']);
-makeLibWith("lib4", {js: true, json:true});
-makeLibWith("lib5", {json:true});
+makeLibWith("lib4", {js:true});
+makeLibWith("lib5", {js:true});
 makeLibWith("lib6", {js:true});
 
 scenario("scenario6");
-makeLibWith("lib1", {json:true});
-makeLibWith("lib2", {json:true});
+makeLibWith("lib1", {js:true});
+makeLibWith("lib2", {js:true});
 
 scenario("scenario7");
-makeLibWith("lib1", {js:true,json:true});
-makeLibWith("lib2", {json:true});
+makeLibWith("lib1", {js:true});
+makeLibWith("lib2", {js:true});
 makeLibWith("lib3", {js:true});
-makeLibWith("lib4", {json:true});
+makeLibWith("lib4", {js:true});
 makeLibWith("lib5", {js:true});
 
 scenario("scenario8");
-makeLibWith("lib1", {js:true,json:true});
-makeLibWith("lib2", {json:true});
+makeLibWith("lib1", {js:true});
+makeLibWith("lib2", {js:true});
 makeLibWith("lib3", {js:true});
-makeLibWith("lib4", {json:true});
+makeLibWith("lib4", {js:true});
 makeLibWith("lib5", {js:true});
 
 scenario("scenario9");
@@ -379,10 +344,10 @@ makeLibWith("lib1", {});
 
 scenario("scenario13");
 makeLibWith("lib1", {js:true}, ['lib3', 'lib4', 'lib5']);
-makeLibWith("lib2", {json:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
+makeLibWith("lib2", {js:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
 makeLibWith("lib3", {js:true}, ['lib4']);
-makeLibWith("lib4", {js: true, json:true});
-makeLibWith("lib5", {json:true});
+makeLibWith("lib4", {js:true});
+makeLibWith("lib5", {js:true});
 makeLibWith("lib6", {js:true});
 makeLibWith("lib7", {});
 makeVersionInfo();
@@ -406,10 +371,10 @@ makeComponent({
 	extraDependencies: ["lib8", "lib9"]
 });
 makeLibWith("lib1", {js:true}, ['lib3', 'lib4', { name: 'lib5', lazy:true }]);
-makeLibWith("lib2", {json:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
+makeLibWith("lib2", {js:true}, ['lib4', 'lib1', { name: 'lib6', lazy: true}, 'lib7']);
 makeLibWith("lib3", {js:true}, ['lib4']);
-makeLibWith("lib4", {js: true, json:true});
-makeLibWith("lib5", {json:true});
+makeLibWith("lib4", {js:true});
+makeLibWith("lib5", {js:true});
 makeLibWith("lib6", {js:true});
 makeLibWith("lib7", {js:true});
 makeLibWith("lib8", {js:true}, ['lib6']);

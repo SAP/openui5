@@ -19,6 +19,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
+
 		get _content() {
 			return oVersionInfo;
 		}
@@ -248,16 +249,13 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	VersionInfo._getTransitiveDependencyForLibraries = function(aLibraries) {
 
 		transformVersionInfo();
-
 		const closure = Object.create(null);
 
 		function addLibDependency(name, lazy) {
 			if (closure[name] == null ) {
-				closure[name] = {name, ...(lazy && {lazy})};
-			} else {
-				if (closure[name].lazy && !lazy) {
-					delete closure[name].lazy;
-				}
+				closure[name] = {name, ...lazy && {lazy}};
+			} else if (closure[name].lazy && !lazy) {
+				delete closure[name].lazy;
 			}
 		}
 

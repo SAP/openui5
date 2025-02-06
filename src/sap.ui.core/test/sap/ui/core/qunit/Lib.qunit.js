@@ -8,6 +8,8 @@ sap.ui.define([
 ], function(Log, ResourceBundle, LoaderExtensions, Library, includeScript) {
 	"use strict";
 
+	QUnit.config.reorder = false;
+
 	QUnit.module("Instance methods");
 
 	QUnit.test("Constructor isn't allowed to be called", function(assert) {
@@ -108,15 +110,12 @@ sap.ui.define([
 		this.spy(ResourceBundle, "create");
 
 		return oLib1.loadResourceBundle().then(function(oResourceBundle) {
-			assert.ok(ResourceBundle.create.calledOnce, "ResourceBundle.create is called");
-			var oCall = ResourceBundle.create.getCall(0);
-			assert.ok(oCall.args[0].bundleUrl.match(/scenario1\/lib1\/messagebundle\.properties$/), "bundle settings are correct");
-			assert.ok(oCall.args[0].async, "bundle should be loaded async");
+			assert.equal(ResourceBundle.create.callCount, 0, "ResourceBundle.create is not called");
 
 			var oResourceBundle1 = oLib1.getResourceBundle();
 
 			assert.strictEqual(oResourceBundle1, oResourceBundle, "'getResourceBundle' should return the cached resource bundle");
-			assert.ok(ResourceBundle.create.calledOnce, "ResourceBundle.create isn't called again");
+			assert.equal(ResourceBundle.create.callCount, 0, "ResourceBundle.create is not called");
 		});
 	});
 
@@ -344,49 +343,6 @@ sap.ui.define([
 		assert.equal(oResourceBundle.getText("TITLE1"), "i18n.properties", "The configured resource bundle file in manifest.json is loaded (i18n.properties)");
 	});
 
-	QUnit.test("Static method 'getResourceBundleFor' called on known library where manifest.json does NOT exist", function(assert) {
-		var sLibraryName = "testlibs.resourcebundle.lib2";
-
-		return Library.load({name: sLibraryName}).then(function(oLibrary) {
-			var oErrorLogSpy = this.spy(Log, "error");
-			var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
-
-			assert.ok(oResourceBundle, "Resource bundle can be created successfully");
-			assert.equal(oResourceBundle.getText("TITLE1"), "messagebundle.properties", "The fallback file 'messagebundle.properties' is loaded because no manifest.json is available for the library");
-			assert.equal(oErrorLogSpy.callCount, 0, "The failed request isn't logged");
-
-			var oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
-
-			// try to get the resource bundle again
-			oResourceBundle = Library.getResourceBundleFor(sLibraryName);
-			assert.equal(oLoadResourceSpy.callCount, 0, "no further call is done for loading the manifest.json after the previous request failed");
-			assert.equal(oErrorLogSpy.callCount, 0, "No new error is logged");
-		}.bind(this));
-
-	});
-
-	QUnit.test("Static method 'getResourceBundleFor' called on unknown library where manifest.json does NOT exist", function(assert) {
-		var sLibraryName = "testlibs.resourcebundle.unknownLib";
-
-		var oErrorLogSpy = this.spy(Log, "error");
-		var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
-
-		assert.ok(oResourceBundle, "Resource bundle can be created successfully");
-
-		assert.equal(oErrorLogSpy.callCount, 1, "Error is logged");
-		var oExpectedErr = sinon.match.instanceOf(Error).and(sinon.match.has('message', sinon.match(/unknownLib\/manifest.json(?:.)+not(?:.)*loaded/)));
-		sinon.assert.calledWith(oErrorLogSpy.getCall(0), oExpectedErr);
-
-		oErrorLogSpy.reset();
-
-		var oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
-
-		// try to get the resource bundle again
-		oResourceBundle = Library.getResourceBundleFor(sLibraryName);
-		assert.equal(oLoadResourceSpy.callCount, 0, "no further call is done for loading the manifest.json after the previous request failed");
-		assert.equal(oErrorLogSpy.callCount, 0, "No new error is logged");
-	});
-
 	QUnit.module("Library.js included in custom bundle");
 
 	/**
@@ -416,7 +372,7 @@ sap.ui.define([
 			assert.ok(oPreloadJSFormatSpy.calledOn(oPreloadJSFormatSpy.getCall(0).thisValue), "library-preload of testlibs/customBundle/lib2 is loaded asynchronously");
 			assert.notOk(oPreloadJSFormatSpy.getCall(0).args[0].sync, "library-preload of lib2 should be loaded async");
 
-			assert.ok(oPreloadJSFormatSpy.calledOn(oPreloadJSFormatSpy.getCall(0).thisValue), "library-preload of testlibs/customBundle/lib3 is loaded asynchronously");
+			assert.ok(oPreloadJSFormatSpy.calledOn(oPreloadJSFormatSpy.getCall(1).thisValue), "library-preload of testlibs/customBundle/lib3 is loaded asynchronously");
 			assert.notOk(oPreloadJSFormatSpy.getCall(1).args[0].sync, "library-preload of lib3 should be loaded async");
 
 			assert.equal(oLoadResourceBundleSpy.callCount, 4, "Lib#loadResourceBundle should be called four times");

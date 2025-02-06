@@ -13,5 +13,4 @@ sap.ui.predefine("testlibs/scenario2/lib6/library",[
 	});
 });
 sap.ui.require.preload({
-	"testlibs/scenario2/lib6/manifest.json":"{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {}\n\t\t}\n\t}\n}"
 });

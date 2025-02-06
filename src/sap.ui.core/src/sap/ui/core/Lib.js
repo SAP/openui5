@@ -10,12 +10,12 @@ sap.ui.define([
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
+	'sap/base/util/Deferred',
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/Version',
 	'sap/base/util/array/uniqueSort',
-	'sap/ui/Global',
 	/* sap.ui.lazyRequire */
 	'sap/ui/VersionInfo',
 	'sap/ui/base/DataType',
@@ -30,12 +30,12 @@ sap.ui.define([
 	ResourceBundle,
 	Log,
 	deepExtend,
+	Deferred,
 	isEmptyObject,
 	isPlainObject,
 	LoaderExtensions,
 	Version,
 	uniqueSort,
-	Global,
 	VersionInfo,
 	DataType,
 	EventProvider,
@@ -49,7 +49,6 @@ sap.ui.define([
 	 * Save the library instances by their keys
 	 */
 	var mLibraries = {};
-
 
 	/**
 	 * Bookkeeping for the guessing of library names.
@@ -96,38 +95,6 @@ sap.ui.define([
 	function registerModulePath(sModuleNamePrefix, sUrlPrefix) {
 		LoaderExtensions.registerResourcePath(sModuleNamePrefix.replace(/\./g, "/"), sUrlPrefix);
 	}
-
-	/**
-	 * Configured type of preload file per library.
-	 * The empty name represents the default for all libraries not explicitly listed.
-	 *
-	 * A type can be one of
-	 * - 'none' (do not preload),
-	 * - 'js' (preload JS file),
-	 * - 'json' (preload a json file)
-	 * or 'both (try js first, then 'json')
-	 *
-	 * @private
-	 */
-	var mLibraryPreloadFileTypes = {};
-
-	// evaluate configuration for library preload file types
-	BaseConfig.get({
-		name: "sapUiXxLibraryPreloadFiles",
-		type: BaseConfig.Type.StringArray,
-		external: true
-	}).forEach(function(v){
-		var fields = String(v).trim().split(/\s*:\s*/),
-			name = fields[0],
-			fileType = fields[1];
-		if ( fields.length === 1 ) {
-			fileType = name;
-			name = '';
-		}
-		if ( /^(?:none|js|json|both)$/.test(fileType) ) {
-			mLibraryPreloadFileTypes[name] = fileType;
-		}
-	});
 
 	/**
 	 * Set of libraries which require CSS.
@@ -231,6 +198,26 @@ sap.ui.define([
 			}
 		}
 		return aPreloadLibCSS;
+	}
+
+	/**
+	 * Load the Library css
+	 * @param {sap/ui/core/Lib} oLib The library instance to load the css for
+	 */
+	function loadLibraryCss(oLib) {
+		var oLibThemingInfo = {
+			name: oLib.name,
+			version: oLib.version || oLib.oManifest?.["sap.app"]?.applicationVersion?.version,
+			preloadedCss: getPreloadLibCss().indexOf(oLib.name) !== -1
+		};
+
+		// Don't reset ThemeManager in case CSS for current library is already preloadeds
+		oLibThemingInfo.started = _getThemeManager(/* bClear = */ !oLibThemingInfo.preloadedCss).then(function(ThemeManager) {
+			return ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
+		});
+		oLib.cssLoaded = true;
+
+		aAllLibrariesRequiringCss.push(oLibThemingInfo);
 	}
 
 	/**
@@ -384,33 +371,6 @@ sap.ui.define([
 		},
 
 		/**
-				 * Returns the file type (either js, json, none, or both) that should be used for preloading this library
-				 * instance.
-				 *
-				 * When <code>bJSON</code> is set to <code>true</code>, type "json" is returned directly. When
-				 * <code>bJSON</code> is set to <code>false</code>, type "js" is returned. Otherwise it takes the configured
-				 * file type into consideration. In case of conflict between the given <code>bJSON</code> and the configured
-				 * file type, type "none" is returned.
-				 *
-				 * @returns {string} The determined file type. It can be "js", "json", "none", or "both".
-				 * @private
-				 */
-		_getFileType: function() {
-			var sFileType;
-			var sConfiguredFileType = mLibraryPreloadFileTypes[this.name] || mLibraryPreloadFileTypes[''] || 'both';
-
-			sFileType = 'js';
-
-			if (sConfiguredFileType !== 'both' && sFileType !== 'both' &&  sConfiguredFileType !== sFileType ) {
-				// if the configured and the supported file type are not equal and the library doesn't support 'both',
-				// then there is no compromise -> 'none'
-				sFileType = 'none';
-			}
-
-			return sFileType;
-		},
-
-		/**
 		 * Loads the library-preload bundle and the resource bundle for a library and apply the same for its
 		 * dependencies.
 		 *
@@ -432,9 +392,6 @@ sap.ui.define([
 			if (mOptions && (mOptions.hasOwnProperty("async") || mOptions.hasOwnProperty("sync"))) {
 				throw new Error("The 'preload' function of class sap/ui/core/Lib only supports preloading a library asynchronously.");
 			}
-			if (mOptions && mOptions.hasOwnProperty("json")) {
-				throw new Error("The 'preload' function of class sap/ui/core/Lib only supports preloading in JS Format.");
-			}
 
 			return this._preload(["url", "lazy"].reduce(function(acc, sProperty) {
 				if (mOptions && mOptions.hasOwnProperty(sProperty)) {
@@ -445,48 +402,32 @@ sap.ui.define([
 		},
 
 		/**
-				 * Internal function for preloading a library which still supports the legacy parameters:
-				 *
-				 * <ul>
-				 * <li><code>mOptions.sync</code>: load the preload file in sync mode</li>
-				 * <li><code>mOptions.json</code>: load the preload file in "json" format</li>
-				 * </ul>
-				 *
-				 * @param [mOptions] The options object that contains the following properties
-				 * @param [mOptions.url] URL to load the library from
-				 * @param [mOptions.lazy] Whether the library-preload-lazy bundle should be loaded instead of the
-				 *  library-preload bundle
-				 * @returns {Promise<Lib>|Lib} A promise that resolves with the library instance in async mode and the library
-				 *  instance itself in sync mode
-				 * @private
-				 */
-		_preload: function(mOptions) {
+		 * Internal function for preloading a library:
+		 *
+		 * @param [mOptions] The options object that contains the following properties
+		 * @param [mOptions.url] URL to load the library from
+		 * @param [mOptions.lazy] Whether the library-preload-lazy bundle should be loaded instead of the
+		 *  library-preload bundle
+		 * @returns {Promise<Lib>} A promise that resolves with the library instance
+		 * @private
+		 */
+		_preload: async function(mOptions) {
 			mOptions = mOptions || {};
 
-			var sFileType = this._getFileType(false),
-				sLibPackage = this.name.replace(/\./g, '/'),
+			var sLibPackage = this.name.replace(/\./g, '/'),
 				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js'),
 				bHttp2 = Library.isDepCacheEnabled();
-
-			if (sFileType === 'none') {
-				return Promise.resolve(this);
-			}
 
 			if (this._loadingStatus == null && mOptions.url) {
 				registerModulePath(this.name, mOptions.url);
 			}
 
-			this._loadingStatus = this._loadingStatus || {};
+			this._loadingStatus = this._loadingStatus ??= {};
+			this._loadingStatus.initiator = new Set();
 
-			if (this._loadingStatus.pending) {
-				if (this._loadingStatus.preloadFinished) { // async
-					// When it's already in progress for loading a library and loading its own preload file (either JS,
-					// JSON or doesn't need to load the preload at all) is finished, a dependency cycle between
-					// libraries is detected. A resolved promise is returned instead of this._loadingStatus.promise to
-					// avoid the deadlock between the libraries which have dependency of each other
-					return Promise.resolve(this);
-				}
-			}
+			// A library should load dependencies first to ensure correct css order. Therefore a deferred is needed to delay the library promise resolve.
+			this._loadingStatus.cssLoaded = new Deferred();
+			await this.loadManifest();
 
 			if (this._loadingStatus.promise) {
 				// in the sync case, we can do a immediate return only when the library is fully loaded.
@@ -499,6 +440,7 @@ sap.ui.define([
 				// (but the loader avoids double loading).
 				Log.debug("Lazy dependency to '" + this.name + "' encountered, loading library-preload-lazy.js");
 
+				this._loadingStatus.cssLoaded.resolve();
 				return sap.ui.loader._.loadJSResourceAsync(
 					sLibPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
 			}
@@ -507,98 +449,88 @@ sap.ui.define([
 			this._loadingStatus.pending = true;
 			this._loadingStatus.async = true;
 
-			var pPreload;
+			const aAllPromises = [];
+
 			if (bEntryModuleExists) {
-				pPreload = (Promise).resolve();
+				aAllPromises.push(Promise.resolve(this));
 			} else {
 				// first preload code, resolves with list of dependencies (or undefined)
-				pPreload = sFileType !== 'json' ?
-					/* 'js' or 'both', not forced to JSON */
-					this._preloadJSFormat({
-						fallbackToJSON: sFileType !== "js",
+				var bPreload = Library.getPreloadMode() === 'sync' || Library.getPreloadMode() === 'async';
+				if (bPreload) {
+					aAllPromises.push(this._preloadJSFormat({
 						http2: bHttp2,
 						sync: false
-					})
-					: this._preloadJSONFormat({sync: false});
+					}));
+				}
 			}
 
 			// load dependencies, if there are any
-			this._loadingStatus.promise = pPreload.then(function(aDependencies) {
-				// resolve dependencies via manifest "this._getDependencies()" except for libary-preload.json
-				aDependencies = aDependencies || this._getDependencies();
+			const aDependencies = this._getDependencies();
 
-				this._loadingStatus.preloadFinished = true;
+			//css loading promises of dependent libs
+			const aDependentLibCss = [];
 
-				var oManifest = this.getManifest(),
-					aPromises;
-
-				if (aDependencies && aDependencies.length) {
-					aDependencies = VersionInfo._getTransitiveDependencyForLibraries(aDependencies);
-
-					aPromises = aDependencies.map(function(oDependency) {
-						var oLibrary = Library._get(oDependency.name, true/* bCreate */);
-						return oLibrary._preload({
+			if (aDependencies && aDependencies.length) {
+				const aAllDependencies = VersionInfo._getTransitiveDependencyForLibraries(aDependencies);
+				aAllDependencies.forEach((oDependency) => {
+					let oLibrary = Library._get(oDependency.name);
+					if (oLibrary && oLibrary._loadingStatus) {
+						if (!this._loadingStatus.initiator.has(oDependency.name)) {
+							aAllPromises.push(oLibrary._loadingStatus.promise);
+							aDependentLibCss.push(oLibrary._loadingStatus.cssLoaded.promise);
+						} else {
+							aAllPromises.push(Promise.resolve(oLibrary));
+						}
+						oLibrary._loadingStatus.initiator = new Set([...oLibrary._loadingStatus.initiator, ...this._loadingStatus.initiator]);
+					} else {
+						oLibrary = Library._get(oDependency.name, true/* bCreate */);
+						aAllPromises.push(oLibrary._preload({
 							lazy: oDependency.lazy
-						});
-					});
-				} else {
-					aPromises = [];
+						}));
+						// We must process all dependent manifests first to ensure the correct css order. Then we could resolve the Lib itself with the deferred.
+						aDependentLibCss.push(oLibrary._loadingStatus.cssLoaded.promise);
+					}
+					// Add current Lib as initiator to the dependent lib
+					oLibrary._loadingStatus.initiator.add(this.name);
+				});
+			}
+
+			//all manifest promises
+			Promise.all(aDependentLibCss).then(() => {
+				// load css
+				if (!this.cssLoaded && this.oManifest["sap.ui5"].library && this.oManifest["sap.ui5"].library.css !== false) {
+					loadLibraryCss(this);
 				}
+				this._loadingStatus.cssLoaded.resolve();
+			});
 
-				if (oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0) {
-					aPromises.push(this.loadResourceBundle());
-				}
+			aAllPromises.push(this.loadResourceBundle());
 
-				var pFinish = Promise.all(aPromises);
-				return pFinish.then(function() {
-					this._loadingStatus.pending = false;
-					return this;
-				}.bind(this));
-
-			}.bind(this));
-
+			this._loadingStatus.promise = Promise.all(aAllPromises);
+			await this._loadingStatus.promise;
+			this._loadingStatus.preloadFinished = true;
+			this._loadingStatus.pending = false;
 			return this._loadingStatus.promise;
 		},
 
 		/**
-				 * Loads the library's preload bundle in JS format. In case the resource "library-preload.js" doesn't exist and
-				 * <code>mOptions.fallbackToJSON</code> is set to <code>true</code>, the library's preload in JSON format will
-				 * be loaded.
-				 *
-				 * @param {object} [mOptions] The options object that contains the following properties
-				 * @param {boolean} [mOptions.fallbackToJSON] Whether to load the preload in JSON format when loading the JS
-				 *  format fails
-				 * @param {boolean} [mOptions.http2] Whether to load the "library-h2-preload" bundle instead of the
-				 * "library-preload" bundle
-				 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
-				 *  mode or the dependency information directly in sync mode
-				 * @private
-				 */
+		 * Loads the library's preload bundle in JS format.
+		 *
+		 * @param {object} [mOptions] The options object that contains the following properties
+		 * @param {boolean} [mOptions.http2] Whether to load the "library-h2-preload" bundle instead of the
+		 * "library-preload" bundle
+		 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
+		 *  mode or the dependency information directly in sync mode
+		 * @private
+		 */
 		_preloadJSFormat: function(mOptions) {
 			mOptions = mOptions || {};
 
-			var that = this;
 			var sPreloadModule = this.name.replace(/\./g, '/')
 				+ (mOptions.http2 ? '/library-h2-preload' : '/library-preload')
 				+ ('.js');
-			var pResult;
 
-			pResult = sap.ui.loader._.loadJSResourceAsync(sPreloadModule);
-
-			return pResult.catch(function(e) {
-				if (mOptions.fallbackToJSON) {
-					var bFallback;
-					// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
-					// with mOptions.fallbackToJSON === false, this fallback can be suppressed
-					bFallback = true;
-
-					if (bFallback) {
-						Log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
-						return that._preloadJSONFormat({sync: false});
-					}
-					// ignore other errors
-				}
-			});
+			return sap.ui.loader._.loadJSResourceAsync(sPreloadModule, true);
 		},
 
 		/**
@@ -613,30 +545,61 @@ sap.ui.define([
 		 * @private
 		 */
 		getManifest: function(bSync) {
-			if (!this.oManifest) {
-				var manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
-
-				if (sap.ui.loader._.getModuleState(manifestModule) || (bSync && !this._manifestFailed)) {
-					try {
-						this.oManifest = LoaderExtensions.loadResource(manifestModule, {
-							dataType: 'json',
-							async: false,
-							failOnError: !this.isSettingsEnhanced()
-						});
-
-						if (this._oManifest) {
-							deepFreeze(this.oManifest);
-						} else {
-							this._manifestFailed = true;
-						}
-					} catch (e) {
-						this._manifestFailed = true;
-					}
-
+			const manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
+			if (sap.ui.loader._.getModuleState(manifestModule) || (bSync && !this._manifestFailed)) {
+				this.oManifest = this.loadManifestSync();
+				if (this.oManifest) {
+					deepFreeze(this.oManifest);
 				}
 			}
-
 			return this.oManifest;
+		},
+
+		/**
+		 * Load the library's manifest.json.
+		 *
+		 * @returns {object|undefined} The manifest or undefined
+		 * @private
+		 */
+		loadManifestSync: function() {
+			const manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
+			if (!this.oManifest) {
+				try {
+					this.oManifest = LoaderExtensions.loadResource(manifestModule, {
+						dataType: 'json',
+						async: false,
+						failOnError: !this.isSettingsEnhanced()
+					});
+				} catch (e) {
+					this._manifestFailed = true;
+				}
+			}
+			return this.oManifest;
+		},
+
+		/**
+		 * Load the library's manifest.json.
+		 *
+		 * @returns {Promise<object|undefined>} A Promise that resolves with the manifest or undefined
+		 * @private
+		 */
+		loadManifest: function() {
+			const manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
+			if (this.oManifest && !this._loadingStatus.manifest) {
+				this._loadingStatus.manifest = Promise.resolve(this._oManifest);
+			} else if (!this.oManifest && !this._loadingStatus.manifest) {
+				this._loadingStatus.manifest = LoaderExtensions.loadResource(manifestModule, {
+					dataType: 'json',
+					async: true,
+					failOnError: !this.isSettingsEnhanced()
+				}).then((oManifest) => {
+					this.oManifest = oManifest;
+				});
+				this._loadingStatus.manifest.catch(() => {
+					this._manifestFailed = true;
+				});
+			}
+			return this._loadingStatus.manifest;
 		},
 
 		/**
@@ -648,7 +611,7 @@ sap.ui.define([
 		 * @returns {Array<{name:string, lazy:boolean}>} The dependency information of the library
 		 */
 		_getDependencies: function() {
-			var oManifest = this.getManifest();
+			var oManifest = this.oManifest;
 			var aDependencies = [];
 
 			var mDependencies = oManifest && oManifest["sap.ui5"] && oManifest["sap.ui5"].dependencies && oManifest["sap.ui5"].dependencies.libs;
@@ -1211,19 +1174,9 @@ sap.ui.define([
 		// register interface types
 		DataType.registerInterfaceTypes(oLib.interfaces);
 
-		if (!oLib.noLibraryCSS) {
-			var oLibThemingInfo = {
-				name: oLib.name,
-				version: oLib.version,
-				preloadedCss: getPreloadLibCss().indexOf(oLib.name) !== -1
-			};
-
-			// Don't reset ThemeManager in case CSS for current library is already preloadeds
-			oLibThemingInfo.started = _getThemeManager(/* bClear = */ !oLibThemingInfo.preloadedCss).then(function(ThemeManager) {
-				return ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
-			});
-
-			aAllLibrariesRequiringCss.push(oLibThemingInfo);
+		// can be removed if all libs declare their dependencies correctly and all libs are loaded before using it...
+		if (!oLib.noLibraryCSS && !oLib.cssLoaded) {
+			loadLibraryCss(oLib);
 		}
 
 		// expose some legacy names
@@ -1239,28 +1192,6 @@ sap.ui.define([
 
 		return oLibNamespace;
 	};
-
-	function getLibraryModuleNames(aLibs) {
-		return aLibs.map(function(oLib) {
-			return oLib.name.replace(/\./g, "/") + "/library";
-		});
-	}
-
-	function requireLibrariesAsync(aLibs) {
-		var aLibraryModuleNames = getLibraryModuleNames(aLibs);
-
-		return new Promise(function(resolve, reject) {
-			sap.ui.require(
-				aLibraryModuleNames,
-				function () {
-					// Wrapper function is needed to omit parameters for resolve()
-					// which is always one library (first from the list), not an array of libraries.
-					resolve(aLibs);
-				},
-				reject
-			);
-		});
-	}
 
 	/**
 	 * Loads the given library and its dependencies and makes its content available to the application.
@@ -1338,6 +1269,8 @@ sap.ui.define([
 		}
 
 		return Library._load(mOptions).then(function(aLibs) {
+			// Wrapper function is needed to omit parameters for resolve()
+			// which is always one library (first from the list), not an array of libraries.
 			return aLibs[0];
 		});
 	};
@@ -1348,7 +1281,6 @@ sap.ui.define([
 	 * <ul>
 	 * <li>loading multiple libraries: libraries are preloaded firstly and their entry modules are executed within a
 	 * single <code>sap.ui.require</code> call after their preloads are finished</li>
-	 * <li><code>oLibConfig.json</code>: load the library preload in JSON format</li>
 	 * <li><code>mOptions.sync</code>: load the preload file in sync mode</li>
 	 * <li><code>mOptions.preloadOnly</code>: load the preload file in sync mode</li>
 	 * </ul>
@@ -1357,7 +1289,6 @@ sap.ui.define([
 	 *  which contain the following properties
 	 * @param {string} vLibConfigs.name The name of the library
 	 * @param {string} [vLibConfigs.url] URL to load the library from
-	 * @param {boolean} [vLibConfigs.json] Whether to load the library's preload bundle in JSON format
 	 * @param {object} [mOptions] The options object that contains the following properties
 	 * @param {boolean} [mOptions.sync] Whether to load the preload bundle(s) in sync mode
 	 * @param {boolean} [mOptions.preloadOnly] Whether to skip executing the entry module(s) after preloading the
@@ -1366,7 +1297,7 @@ sap.ui.define([
 	 *  array of library instances in async mode or an array of library instances in sync mode
 	 * @private
 	 */
-	Library._load = function(vLibConfigs, mOptions) {
+	Library._load = async function(vLibConfigs, mOptions) {
 		mOptions = mOptions || {};
 
 		if (!Array.isArray(vLibConfigs)) {
@@ -1377,7 +1308,7 @@ sap.ui.define([
 		var aAllLibraries = [];
 		vLibConfigs.forEach(function(vLibrary) {
 			if (typeof vLibrary === "object") {
-				if (vLibrary.hasOwnProperty("url") || vLibrary.hasOwnProperty("json")) {
+				if (vLibrary.hasOwnProperty("url")) {
 					mAdditionalConfig[vLibrary.name] = vLibrary;
 				}
 				aAllLibraries.push(vLibrary);
@@ -1385,9 +1316,6 @@ sap.ui.define([
 				aAllLibraries.push({name: vLibrary});
 			}
 		});
-
-		var bPreload = Library.getPreloadMode() === 'sync' || Library.getPreloadMode() === 'async',
-			bRequire = !mOptions.preloadOnly;
 
 		if (!mOptions.sync) {
 			aAllLibraries = VersionInfo._getTransitiveDependencyForLibraries(aAllLibraries);
@@ -1403,17 +1331,26 @@ sap.ui.define([
 			return oLib;
 		});
 
-		const pPreloaded = bPreload ?
-			Promise.all(aLibs.map(function(oLib) {
-				const mOptions = {};
-				if (mAdditionalConfig[oLib.name] && mAdditionalConfig[oLib.name].hasOwnProperty("json")) {
-					mOptions.json = mAdditionalConfig[oLib.name].json;
-				}
-				return oLib._preload(mOptions);
-			})) :
-			Promise.resolve(aLibs);
+		const aLibraryModuleNames = [];
 
-		return bRequire ? pPreloaded.then(requireLibrariesAsync) : pPreloaded;
+		await Promise.all(aLibs.map(function(oLib) {
+			const mOptions = {};
+			aLibraryModuleNames.push(oLib.name.replace(/\./g, "/") + "/library");
+			return oLib._preload(mOptions);
+		}));
+
+		if (!mOptions.preloadOnly) {
+			await new Promise(function(resolve, reject) {
+				sap.ui.require(
+					aLibraryModuleNames,
+					function () {
+						resolve();
+					},
+					reject
+				);
+			});
+		}
+		return aLibs;
 	};
 
 	/**

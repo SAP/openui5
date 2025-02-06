@@ -371,10 +371,22 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			this.loadScript = sinon.stub(privateLoaderAPI, "loadJSResourceAsync");
 			this.requireSpy = sinon.stub(sap.ui, "require").callsArgWith(1);
+			this.getManifestStub = sinon.stub(Library.prototype, "loadManifest").callsFake(function() {
+				this.oManifest = {
+					"sap.ui5": {
+						library: {
+							css: false
+						}
+					}
+				};
+				this._loadingStatus.manifest = Promise.resolve(this.oManifest);
+				return this._loadingStatus.manifest;
+			});
 		},
 		afterEach: function(assert) {
 			this.requireSpy.restore();
 			this.loadScript.restore();
+			this.getManifestStub.restore();
 		}
 	});
 
@@ -685,6 +697,12 @@ sap.ui.define([
 					},
 					JSON.stringify(oVersionInfo)
 				]);
+				sinon.FakeXMLHttpRequest.useFilters = true;
+                sinon.FakeXMLHttpRequest.addFilter(function (_sMethod, sUrl) {
+                    // If the filter returns true, the request will NOT be faked.
+                    // We only want to fake requests that go to the intended service.
+                    return !sUrl.includes("sap-ui-version.json");
+                });
 			}.bind(this));
 		},
 		afterEach: function() {
