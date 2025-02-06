@@ -84,5 +84,8 @@
 				</w:Card>
 			</f:GridContainer>
 		</Panel>
+		<Panel headerText="Empty Card">
+			<w:Card id="NoContent-NoHeader" manifest="{manifests>/noHeaderNoContent/NoContent-NoHeader}"></w:Card>
+		</Panel>
 	</Page>
 </mvc:View>
