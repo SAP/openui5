@@ -20,6 +20,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			loader: {
 				paths: {
+					"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
 					"delegates": "test-resources/sap/ui/mdc/delegates",
 					"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa"
 				}
