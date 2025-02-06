@@ -146,15 +146,22 @@
 /* Custom focus outline:                                                */
 /* ---------------------------------------------------------------------*/
 
+.sapMBtn:focus-visible > .sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMFocusable {
 	outline: var(--sapContent_FocusWidth) dotted var(--sapContent_FocusColor);
 	outline-offset: -0.25rem;
 }
 
+.sapMBtn:focus-visible > .sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 	outline-color: var(--sapContent_ContrastFocusColor);
 }
 
+.sapMBtn:focus-visible > .sapMBtnEmphasized.sapMFocusable,
+.sapMBtn:focus-visible > .sapMBtnCritical.sapMFocusable,
+.sapMBtn:focus-visible > .sapMBtnNegative.sapMFocusable,
+.sapMBtn:focus-visible > .sapMBtnSuccess.sapMFocusable,
+.sapMBtn:focus-visible > .sapMBtnNeutral.sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnCritical.sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnNegative.sapMFocusable,
@@ -163,6 +170,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable {
 	outline-color: var(--sapContent_ContrastFocusColor);
 }
 
+.sapMBtn:focus-visible > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable {
 	outline-color: var(--sapContent_ContrastFocusColor);
 }
