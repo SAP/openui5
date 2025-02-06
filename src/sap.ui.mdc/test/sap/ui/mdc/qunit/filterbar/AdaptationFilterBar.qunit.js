@@ -255,11 +255,9 @@ sap.ui.define([
 				return {
 					addItem: function(oControl, sProperty) {
 						return Promise.resolve(new FilterField({conditions: "{$filters>/conditions/" + sProperty + '}'}));
-					},
-					apiVersion: 2
+					}
 				};
 			};
-			AggregationBaseDelegate.apiVersion = 2;
 
 			//Provide simple 'addItem' hook for testing on 'AggregationBaseDelegate'
 			this.addItem = function(oControl, sKey){
@@ -516,8 +514,7 @@ sap.ui.define([
 						label: "Key 2",
 						conditions: "{$filters>/conditions/key2}"
 					}));
-				},
-				apiVersion: 2
+				}
 			};
 		};
 

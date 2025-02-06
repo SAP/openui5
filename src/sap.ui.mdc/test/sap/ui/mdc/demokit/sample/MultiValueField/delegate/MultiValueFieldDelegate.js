@@ -9,7 +9,6 @@ sap.ui.define([
     "use strict";
 
     const MultiValueFieldDelegate = Object.assign({}, BaseDelegate);
-	MultiValueFieldDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
     MultiValueFieldDelegate.updateItems = function(oPayload, aConditions, oMultiValueField) {
 

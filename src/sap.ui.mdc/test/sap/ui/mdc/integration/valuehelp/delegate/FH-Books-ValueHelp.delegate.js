@@ -36,7 +36,6 @@ sap.ui.define([
 	"use strict";
 
 	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
 	ValueHelpDelegate.retrieveContent = function (_oValueHelp, oContainer) {
 		const oPayload = _oValueHelp.getPayload();
