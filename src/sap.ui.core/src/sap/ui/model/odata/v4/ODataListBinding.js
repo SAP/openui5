@@ -3246,7 +3246,7 @@ sap.ui.define([
 
 		this.aSorters.forEach(function (oSorter) {
 			if (oSorter instanceof Sorter) {
-				aOrderbyOptions.push(oSorter.sPath + (oSorter.bDescending ? " desc" : ""));
+				aOrderbyOptions.push(oSorter.getPath() + (oSorter.isDescending() ? " desc" : ""));
 			} else {
 				throw new Error("Unsupported sorter: " + oSorter + " - " + that);
 			}
