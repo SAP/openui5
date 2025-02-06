@@ -1188,9 +1188,9 @@ sap.ui.define([
 				// returns true if the array contains a filter affected by the side effect path
 				function hasAffectedFilter(aFilters0) {
 					return aFilters0.some(function (oFilter) {
-						return oFilter.aFilters
-							? hasAffectedFilter(oFilter.aFilters)
-							: isAffected(oFilter.sPath);
+						return oFilter.getFilters()
+							? hasAffectedFilter(oFilter.getFilters())
+							: isAffected(oFilter.getPath());
 					});
 				}
 
@@ -1328,9 +1328,9 @@ sap.ui.define([
 			 *   Whether the filter relates to an aggregate
 			 */
 			function isRelatedToAggregate(oFilter0) {
-				return oFilter0.aFilters
-					? oFilter0.aFilters.some(isRelatedToAggregate)
-					: oFilter0.sPath in oAggregation.aggregate;
+				return oFilter0.getFilters()
+					? oFilter0.getFilters().some(isRelatedToAggregate)
+					: oFilter0.getPath() in oAggregation.aggregate;
 			}
 
 			/*
@@ -1355,9 +1355,9 @@ sap.ui.define([
 			 *   A filter
 			 */
 			function split(oFilter0) {
-				if (oFilter0.aFilters && oFilter0.bAnd) {
-					oFilter0.aFilters.forEach(split);
-				} else if (oFilter0.sPath && isRelatedToUnit(oFilter0.sPath)) {
+				if (oFilter0.getFilters() && oFilter0.isAnd()) {
+					oFilter0.getFilters().forEach(split);
+				} else if (oFilter0.getPath() && isRelatedToUnit(oFilter0.getPath())) {
 					aFiltersNoAggregate.push(oFilter0);
 					aFiltersNoThese.push(oFilter0); // avoid "$these/..." here
 					aFiltersOnAggregate.push(oFilter0);
