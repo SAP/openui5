@@ -268,7 +268,8 @@ sap.ui.define([
 			}
 
 			// Creates a parameters map to be used for the instantiation of the code list model,
-			// based on this OData model's parameters
+			// based on this OData model's parameters; createCodeListModelParameters has to be
+			// called before the service URL is modified
 			this.mCodeListModelParams = this.createCodeListModelParameters(mParameters);
 
 			if (mParameters) {

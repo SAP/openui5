@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/ui/model/message/MessageModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
+	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/v2/Context",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -44,7 +45,7 @@ sap.ui.define([
 ], function (Log, Localization, merge, uid, Input, Label, Device, BindingInfo, ManagedObjectObserver, SyncPromise,
 		Library, Messaging, UI5Date, FieldHelp, FieldHelpUtil, Message, MessageType, Controller, View, Rendering,
 		BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode,
-		MessageScope, Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
+		MessageScope, ODataMetaModel, Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -629,6 +630,8 @@ sap.ui.define([
 			if (this.oModel) {
 				this.oModel.destroy();
 			}
+			// reset the currency and unit code list cache
+			ODataMetaModel.clearCodeListsCache();
 			// reset the language
 			Localization.setLanguage(sDefaultLanguage);
 			// reset the time zone
@@ -11583,8 +11586,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Observe different formats if the scale of the amount part type's changes
 	// JIRA: CPOUI5MODELS-1600
 	QUnit.test("CPOUI5MODELS-1600: UnitType with unit decimals places > measure scale", function (assert) {
-		const URLParameter = "CPOUI5MODELS-1600=true"; // unqiue URL for each test needed
-		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${URLParameter}`,
+		const oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?sap-client=123",
 				{defaultBindingMode : "TwoWay", tokenHandling : false});
 		const sView = `\
 <FlexBox binding="{/ProductSet('P1')}">
@@ -11607,12 +11609,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	}"/>
 </FlexBox>`;
 		let oBindingPart;
-		this.expectRequest(`ProductSet('P1')?${URLParameter}`, {
+		this.expectRequest("ProductSet('P1')?sap-client=123", {
 				ProductID : "P1",
 				WeightMeasure : "12.341",
 				WeightUnit : "KWH"
 			})
-			.expectRequest(`SAP__UnitsOfMeasure?${URLParameter}&$skip=0&$top=5000`, {
+			.expectRequest("SAP__UnitsOfMeasure?sap-client=123&sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					DecimalPlaces : 7, // more decimals than WeightMeasure's scale
 					ExternalCode : "KWH"
@@ -11662,8 +11664,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12 KWH"}
 ].forEach(({iMaxFractionDigits, iScale, sExpected}, i) => {
 	QUnit.test(`CPOUI5MODELS-1600: UnitType with unit maxFractionDigits, ${i}`, function (assert) {
-		const sURLParameter = "CPOUI5MODELS-1600=true" + i; // unique URL for each test needed
-		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${sURLParameter}`,
+		const oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?sap-language=EN",
 			{defaultBindingMode : "TwoWay", tokenHandling : false});
 		const sScaleConstraint = iScale ? `, scale : ${iScale}` : "";
 		const sMaxFractionDigitsOption = iMaxFractionDigits ? `, maxFractionDigits : ${iMaxFractionDigits}` : "";
@@ -11688,12 +11689,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	}"/>\
 </FlexBox>`;
 
-		this.expectRequest(`ProductSet('P1')?${sURLParameter}`, {
+		this.expectRequest("ProductSet('P1')?sap-language=EN", {
 				ProductID : "P1",
 				WeightMeasure : "12.341",
 				WeightUnit : "KWH"
 			})
-			.expectRequest(`SAP__UnitsOfMeasure?${sURLParameter}&$skip=0&$top=5000`, {
+			.expectRequest("SAP__UnitsOfMeasure?sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					DecimalPlaces : 7, // more decimals than WeightMeasure's scale
 					ExternalCode : "KWH",
@@ -11713,9 +11714,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Observe different formats if the scale of the amount part type changes
 	// JIRA: CPOUI5MODELS-1619
 	QUnit.test("CPOUI5MODELS-1619: CurrencyType with currency decimals places > measure scale", function (assert) {
-		const sURLParameter = "CPOUI5MODELS-1619=true"; // unqiue URL for each test needed
-		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${sURLParameter}`,
-			{defaultBindingMode : "TwoWay", tokenHandling : false});
+		const oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", {
+			defaultBindingMode : "TwoWay",
+			metadataUrlParams : {"sap-language" : "EN"},
+			tokenHandling : false
+		});
 		const sView = `\
 <FlexBox binding="{/ProductSet('P1')}">
 	<Input id="price" value="{
@@ -11737,12 +11740,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	}"/>
 </FlexBox>`;
 		let oBindingPart;
-		this.expectRequest(`ProductSet('P1')?${sURLParameter}`, {
+		this.expectRequest("ProductSet('P1')", {
 				ProductID : "P1",
 				Price : "12.341",
 				CurrencyCode : "FOO"
 			})
-			.expectRequest(`SAP__Currencies?${sURLParameter}&$skip=0&$top=5000`, {
+			.expectRequest("SAP__Currencies?sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					CurrencyCode : "FOO",
 					DecimalPlaces : 7 // more decimals than Price's scale
@@ -11787,13 +11790,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	{iMaxFractionDigits: 1, iScale: 3, sExpected: "12.3\u00a0FOO"},  // maxFractionDigits wins
 	{iMaxFractionDigits: 9, iScale: 3, sExpected: "12.3410000\u00a0FOO"}, // currency's decimal places wins
 	{iMaxFractionDigits: undefined, iScale: 3, sExpected: "12.341\u00a0FOO"}, // scale wins
-	{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000\u00a0FOO"}, // currency's decimal places wins
+	// currency's decimal places wins
+	{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000\u00a0FOO"},
 	// DINC0152691: Decimal type scale defaults to 0 => scale wins
 	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12\u00a0FOO"}
 ].forEach(({iMaxFractionDigits, iScale, sExpected}, i) => {
 	QUnit.test(`CPOUI5MODELS-1619: CurrencyType with unit maxFractionDigits: ${i}`, function (assert) {
-		const sURLParameter = "CPOUI5MODELS-1619=" + i; // unqiue URL for each test needed
-		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${sURLParameter}`,
+		const oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/",
 			{defaultBindingMode : "TwoWay", tokenHandling : false});
 		const sScaleConstraint = iScale ? `, scale : ${iScale}` : "";
 		const sMaxFractionDigitsOption = iMaxFractionDigits ? `, maxFractionDigits : ${iMaxFractionDigits}` : "";
@@ -11818,12 +11821,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	}" />
 </FlexBox>`;
 
-		this.expectRequest(`ProductSet('P1')?${sURLParameter}`, {
+		this.expectRequest("ProductSet('P1')", {
 				ProductID : "P1",
 				Price : "12.341",
 				CurrencyCode : "FOO"
 			})
-			.expectRequest(`SAP__Currencies?${sURLParameter}&$skip=0&$top=5000`, {
+			.expectRequest("SAP__Currencies?sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					CurrencyCode : "FOO",
 					DecimalPlaces : 7 // more decimals than Price's scale
@@ -12412,7 +12415,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	QUnit.test(sTitle, function (assert) {
 		var oControl,
 			// Make URI distinct for each test to prevent code list caching
-			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?foo=bar" + i, {
+			oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC", {
 				defaultBindingMode : "TwoWay",
 				metadataUrlParams : {customMeta : "custom/meta"},
 				serviceUrlParams : {customService : "custom/service"},
@@ -12439,13 +12442,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("ProductSet('P1')?foo=bar" + i + "&customService=custom%2Fservice", {
+		this.expectRequest("ProductSet('P1')?customService=custom%2Fservice", {
 				ProductID : "P1",
 				WeightMeasure : "12.34",
 				WeightUnit : "KG"
 			})
-			.expectRequest("SAP__UnitsOfMeasure?foo=bar" + i + "&customService=custom%2Fservice"
-					+ "&$skip=0&$top=5000", {
+			.expectRequest("SAP__UnitsOfMeasure?sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					DecimalPlaces : 0,
 					ExternalCode : "EA",
@@ -12554,8 +12556,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				Price : "12.3",
 				CurrencyCode : "EUR"
 			})
-			.expectRequest(
-				"SAP__Currencies?foo=bar&customService=custom%2Fservice&$skip=0&$top=5000", {
+			.expectRequest("SAP__Currencies?sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					CurrencyCode : "EUR",
 					DecimalPlaces : 2,
@@ -12675,7 +12676,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				Price : "12.3",
 				CurrencyCode : "EUR"
 			})
-			.expectRequest("SAP__Currencies?foo=baz&$skip=0&$top=5000", {
+			.expectRequest("SAP__Currencies?sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					CurrencyCode : "EUR",
 					DecimalPlaces : 2,
@@ -12807,7 +12808,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				WeightMeasure : "12.34",
 				WeightUnit : "KG"
 			})
-			.expectRequest("SAP__UnitsOfMeasure?foo=baz&$skip=0&$top=5000", {
+			.expectRequest("SAP__UnitsOfMeasure?sap-language=EN&$skip=0&$top=5000", {
 				results : [{
 					DecimalPlaces : 3,
 					ExternalCode : "KG",
@@ -26373,8 +26374,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		const oCompanyCodeMetaContext = oMetaModel.getMetaContext("/Items('~guid')/CompanyCode");
 		this.expectRequest(`Items('~guid')/CompanyCode?${sCustomParam}`, create503ErrorResponse())
-			.expectRequest(`SAP__Currencies?${sCustomParam}&$skip=0&$top=5000`, create503ErrorResponse())
-			.expectRequest(`SAP__UnitsOfMeasure?${sCustomParam}&$skip=0&$top=5000`, create503ErrorResponse());
+			.expectRequest("SAP__Currencies?sap-language=EN&$skip=0&$top=5000", create503ErrorResponse())
+			.expectRequest("SAP__UnitsOfMeasure?sap-language=EN&$skip=0&$top=5000", create503ErrorResponse());
 		this.bAnswerWith503 = true; // $metadata request for valuehelp will be answered with 503
 
 		// code under test c)
@@ -26389,13 +26390,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		if (bResolve) {
 			this.expectRequest(`Items('~guid')/CompanyCode?${sCustomParam}`, {results: "42"})
-				.expectRequest(`SAP__Currencies?${sCustomParam}&$skip=0&$top=5000`, {
+				.expectRequest("SAP__Currencies?sap-language=EN&$skip=0&$top=5000", {
 					results : [{
 						CurrencyCode : "FOO",
 						DecimalPlaces : 42
 					}]
 				})
-				.expectRequest(`SAP__UnitsOfMeasure?${sCustomParam}&$skip=0&$top=5000`, {
+				.expectRequest("SAP__UnitsOfMeasure?sap-language=EN&$skip=0&$top=5000", {
 					results : [{
 						ExternalCode : "BAR",
 						DecimalPlaces : 42
