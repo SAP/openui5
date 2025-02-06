@@ -88,7 +88,7 @@ sap.ui.define([
 		},
 		{
 			title: "1 hour app. 2 with additional info",
-			text: "Additional info 2",
+			text: "Additional info 2, with longer text that should wrap and take the whole space",
 			type: "Type02",
 			startDate: UI5Date.getInstance(2018, 6, 8, 10, 0, 0),
 			endDate: UI5Date.getInstance(2018, 6, 8, 11, 0, 0)
@@ -272,6 +272,7 @@ sap.ui.define([
 		},
 		{
 			title: "25 min. appointment 26",
+			text: "Long description text for 25 min. appointment 26 that will wrap",
 			type: "Type20",
 			startDate: UI5Date.getInstance(2018, 6, 10, 17, 0, 0),
 			endDate: UI5Date.getInstance(2018, 6, 10, 17, 25, 0)
