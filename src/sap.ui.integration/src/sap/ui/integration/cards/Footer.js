@@ -333,16 +333,29 @@ sap.ui.define([
 
 		if (!oMore) {
 			const oPaginator = this._oPaginator;
+			let bOpening = false;
 
 			oMore = new Button(`${this.getId()}-showMore`, {
 				text: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FOOTER_SHOW_MORE"),
 				type: ButtonType.Transparent,
 				press: () => {
-					if (oPaginator) {
-						oPaginator.openDialog();
-					} else {
-						openCardShowMore(this.getCardInstance());
+					if (bOpening) {
+						return;
 					}
+
+					let oDialog;
+
+					if (oPaginator) {
+						oDialog = oPaginator.openDialog();
+					} else {
+						oDialog = openCardShowMore(this.getCardInstance());
+					}
+
+					bOpening = true;
+
+					oDialog.attachAfterOpen(() => {
+						bOpening = false;
+					});
 				},
 				visible: this._shouldShowMoreButtonBeVisible()
 			}).addStyleClass("sapFCardFooterShowMoreButton");
