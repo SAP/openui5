@@ -2500,6 +2500,17 @@ sap.ui.define([
 		return {};
 	};
 
+	DynamicPage.prototype._getAccessibilityStateTitle = function () {
+		var oInfo = this._formatLandmarkInfo(this.getLandmarkInfo(), "Header"),
+			oTitle = this.getTitle();
+
+		if (oTitle) {
+			oInfo.label = oTitle._getTitleText() || oInfo.label;
+		}
+
+		return oInfo;
+	};
+
 	/**
 	 * Returns HTML tag of the page header.
 	 *

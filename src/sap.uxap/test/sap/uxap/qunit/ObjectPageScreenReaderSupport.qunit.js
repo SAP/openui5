@@ -205,4 +205,30 @@ function(nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 				"The 'aria-labelledby' attribute is correctly set to the section");
 	});
 
+	QUnit.module("Screen reader support - ObjectPageDynamicHeaderTitle", {
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-72_ObjectPageScreenReaderSupport",
+				viewName: "view.UxAP-72_ObjectPageScreenReaderSupport"
+			}).then(async function(oView) {
+				this.objectPageView = oView;
+				this.objectPageView.placeAt("qunit-fixture");
+				await nextUIUpdate();
+				this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.objectPageView.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("Header element aria-label - nested Title", function (assert) {
+		var sBundleTextWithTitle = getResourceBundleText("HEADER_ARIA_LABEL_WITH_TITLE");
+
+		assert.strictEqual(this.oObjectPage.$("headerTitle").attr("aria-label"), "Denise Smith "
+				+ sBundleTextWithTitle, "The header element has correct aria-label with nested Title in 'heading' aggregation");
+	});
 });
