@@ -270,9 +270,11 @@ function(
 					draggable: {type: "boolean", group: "Behavior", defaultValue: false},
 
 					/**
-					 * This property expects a function with one parameter of type Promise. In the function, you should call either <code>resolve()</code> or <code>reject()</code> on the Promise object.<br/>
-					 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the Dialog is immediately closed.
+					 * This property allows to define custom behavior if the Escape key is pressed. By default, the Dialog is closed.<br/>
+					 * The property expects a function with one object parameter with <code>resolve</code> and <code>reject</code> properties.
+					 * In the function, either call <code>resolve</code> to close the dialog or call <code>reject</code> to prevent it from being closed.
 					 * @since 1.44
+					 * @type {sap.m.Dialog.EscapeHandler}
 					 */
 					escapeHandler : {type: "function", group: "Behavior", defaultValue: null},
 
@@ -458,30 +460,14 @@ function(
 		});
 
 		/**
-		 * Sets a new value for property {@link #setEscapeHandler escapeHandler}.
+		 * Escape handler for sap.m.Dialog control.
 		 *
-		 * This property expects a function with one parameter of type Promise. In the function, you should call either <code>resolve()</code> or <code>reject()</code> on the Promise object.
-		 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the dialog is immediately closed.
-		 *
-		 * When called with a value of <code>null</code> or <code>undefined</code>, the default value of the property will be restored.
-		 *
-		 * @method
-		 * @param {function({resolve: function, reject: function})} [fnEscapeHandler] New value for property <code>escapeHandler</code>
+		 * @callback sap.m.Dialog.EscapeHandler
+		 * @param {object} oHandlers Object with <code>resolve</code> and <code>reject</code> functions.
+		 * @param {function():void} oHandlers.resolve Call this function if the dialog should be closed.
+		 * @param {function():void} oHandlers.reject Call this function if the dialog should not be closed.
+		 * @returns {void}
 		 * @public
-		 * @name sap.m.Dialog#setEscapeHandler
-		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-		 */
-
-		/**
-		 * Gets current value of property {@link #getEscapeHandler escapeHandler}.
-		 *
-		 * This property expects a function with one parameter of type Promise. In the function, you should call either <code>resolve()</code> or <code>reject()</code> on the Promise object.
-		 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the dialog is immediately closed.
-		 *
-		 * @method
-		 * @returns {function({resolve: function, reject: function})|null} Value of property <code>escapeHandler</code>
-		 * @public
-		 * @name sap.m.Dialog#getEscapeHandler
 		 */
 
 		ResponsivePaddingsEnablement.call(Dialog.prototype, {
