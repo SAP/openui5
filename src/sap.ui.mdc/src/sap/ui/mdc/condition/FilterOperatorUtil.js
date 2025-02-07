@@ -1953,7 +1953,7 @@ sap.ui.define([
 						iValueTypesLength = iValueTypesLength - 1;
 					}
 
-					if (oOperator.valueTypes[0] === "static") {
+					if (oOperator.valueTypes[0] === OperatorValueType.Static) {
 						oCondition.values = []; // static operators have no values
 					} else {
 						while (oCondition.values.length != iValueTypesLength) {
