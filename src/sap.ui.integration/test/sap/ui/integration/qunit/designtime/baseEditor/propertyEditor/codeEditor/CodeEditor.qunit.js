@@ -26,7 +26,7 @@ sap.ui.define([
 	function setCodeEditorValue (oCodeEditor, sInput) {
 		oCodeEditor.setValue(sInput);
 		Core.applyChanges();
-		oCodeEditor.getInternalEditorInstance().getSession().setUseWorker(true);
+		oCodeEditor.getAceEditor().getSession().setUseWorker(true);
 	}
 
 	QUnit.module("Code Editor: Given an editor config", {
@@ -174,12 +174,12 @@ sap.ui.define([
 			this.oCodeEditorElement.attachValueHelpRequest(function () {
 				this.oCodeEditor._openCodeEditor.returnValues[0].then(function (oDialog) {
 					var oCodeEditor = oDialog.getContent()[0];
-					oCodeEditor.getInternalEditorInstance().getSession().on("changeAnnotation", function () {
+					oCodeEditor.getAceEditor().getSession().on("changeAnnotation", function () {
 						assert.ok(oCodeEditor.getValue().length > 0, "Then an error is displayed in the editor dialog");
-						oCodeEditor.getInternalEditorInstance().getSession().removeAllListeners("changeAnnotation");
+						oCodeEditor.getAceEditor().getSession().removeAllListeners("changeAnnotation");
 						fnDone();
 					});
-					oCodeEditor.getInternalEditorInstance().getSession().setUseWorker(true);
+					oCodeEditor.getAceEditor().getSession().setUseWorker(true);
 				});
 			}.bind(this));
 
