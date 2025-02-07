@@ -29,6 +29,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 			},
 			loader: {
 				paths: {
+					"sap/ui/mdc/qunit": "test-resources/sap/ui/mdc/qunit",
 					"delegates": "test-resources/sap/ui/mdc/delegates",
 					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 				}

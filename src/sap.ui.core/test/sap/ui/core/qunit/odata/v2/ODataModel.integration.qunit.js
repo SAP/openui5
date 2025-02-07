@@ -25978,4 +25978,56 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: If a text property is bound, the field help for the corresponding ID property is
+	// provided instead of the field help for the text property itself. The test covers the
+	// following cases:
+	// A: control binding to text property only
+	// B: control binding to text and ID in a composite binding
+	// C: control binding different control properties to text and ID
+	// D: control binding to text property only, text and ID property are defined in a complex type
+	// JIRA: CPOUI5MODELS-1896
+	QUnit.test("Field help for text properties", async function (assert) {
+		const oModel = createSpecialCasesModel();
+		const sView = `
+<FlexBox id="root" binding="{/BusinessPartnerSet('1')}">
+	<Label labelFor="idA" text="A" />
+	<Text id="idA" text="{CompanyName}"/>
+	<Label labelFor="idB" text="B" />
+	<Text id="idB" text="{BusinessPartnerID} {CompanyName}"/>
+	<Label labelFor="idC" text="C" />
+	<ObjectIdentifier id="idC" text="{BusinessPartnerID}" title="{CompanyName}"/>
+	<Label labelFor="idD" text="D" />
+	<Text id="idD" text="{Address/RegionName}"/>
+</FlexBox>`;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet('1')", {
+				Address : {RegionName : "Caribbean"},
+				BusinessPartnerID : "1",
+				CompanyName : "Tropical Ventures"
+			});
+		// simplicity: no expectValue on controls, as this aspect is not subject of this test
+
+		await this.createView(assert, sView, oModel);
+
+		const {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+
+		// code under test
+		FieldHelp.getInstance().activate(fnResolve);
+
+		const aHotspots = await oFieldHelpUpdatePromise;
+		const aExpectedHotspots = [["A"], ["B"], ["C"], ["D", "REGION_ID"]]
+			.map(([sCase, sId]) => ({
+				backendHelpKey : {
+					id : sId ?? "BP_ID",
+					type : "DTEL"
+				},
+				hotspotId : this.oView.createId("id" + sCase),
+				labelText : sCase
+			}));
+		assert.deepEqual(aHotspots, aExpectedHotspots, "field help hotspots");
+		FieldHelp.getInstance().deactivate();
+	});
 });

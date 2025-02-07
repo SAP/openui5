@@ -858,7 +858,6 @@ sap.ui.define([
 			assert.ok(ValueHelpDelegate.retrieveContent.calledWith(oValueHelp, oContainer), "ValueHelpDelegate.retrieveContent called for typeahead");
 
 			ValueHelpDelegate.retrieveContent.restore();
-			delete ValueHelpDelegate.apiVersion;
 			fnDone();
 		}, 0);
 

@@ -128,6 +128,18 @@
 					FromRole="FromRole_assoc_1"
 					ToRole="ToRole_assoc_1"/>
 			</EntityType>
+			<EntityType Name="BusinessPartner">
+				<Key>
+					<PropertyRef Name="BusinessPartnerID" />
+				</Key>
+				<Property Name="Address" Type="special.cases.CT_Address" Nullable="false" />
+				<Property Name="BusinessPartnerID" Type="Edm.String" Nullable="false" sap:label="Bus. Part. ID"/>
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false" sap:label="Company Name" />
+			</EntityType>
+			<ComplexType Name="CT_Address">
+				<Property Name="RegionName" Type="Edm.String" sap:label="Region Name"/>
+				<Property Name="RegionID" Type="Edm.Int16" sap:label="Region ID"/>
+			</ComplexType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -183,6 +195,7 @@
 					EntityType="special.cases.C_BPAdditionalCustomerType" sap:content-version="1"/>
 				<EntitySet Name="C_BusinessPartnerCustomer"
 					EntityType="special.cases.C_BusinessPartnerCustomerType" sap:content-version="1"/>
+				<EntitySet Name="BusinessPartnerSet" EntityType="special.cases.BusinessPartner"/>
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"
@@ -225,6 +238,26 @@
 						sap:display-format="Date"/>
 				</FunctionImport>
 			</EntityContainer>
+			<Annotations Target="special.cases.BusinessPartner/BusinessPartnerID"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=BP_ID"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CompanyName" />
+			</Annotations>
+			<Annotations Target="special.cases.BusinessPartner/CompanyName"
+					xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=COMPANY_NAME"/>
+			</Annotations>
+			<Annotations Target="special.cases.CT_Address/RegionID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=REGION_ID"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="RegionName"/>
+			</Annotations>
+			<Annotations Target="special.cases.CT_Address/RegionName" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=REGION_NAME"/>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

@@ -252,6 +252,32 @@ sap.ui.define([
 		assert.ok(oPaginatedCard.getCardFooter().getAggregation("_closeButton").getDomRef(), "'Close' is rendered");
 	});
 
+	QUnit.module("'Show More' interaction", {
+		beforeEach: async function () {
+			this.oCard = new Card({
+				manifest: oManifestClientSideWithStaticData
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("'Show More' opens only 1 dialog", function (assert) {
+		const oSpy = this.spy(this.oCard._oPaginator, "openDialog");
+
+		// Act
+		openPaginationCard(this.oCard);
+		openPaginationCard(this.oCard);
+		openPaginationCard(this.oCard);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Only one dialog is being opened");
+	});
+
 	QUnit.module("Client-Side Pagination", {
 		beforeEach: function () {
 			this.oCard = new Card({

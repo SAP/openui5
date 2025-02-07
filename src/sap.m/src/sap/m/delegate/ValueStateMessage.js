@@ -104,12 +104,6 @@ sap.ui.define([
 			oPopup.setContent(oMessageDomRef);
 			oPopup.close(0);
 
-			if (oPopup.getContent()) {
-				oPopup.getContent().style.maxWidth = oControl.getDomRef().offsetWidth + "px";
-			} else {
-				oPopup.getContent().style.maxWidth = "";
-			}
-
 			oPopup.open(
 				this.getOpenDuration(),
 				mDock.BeginTop,

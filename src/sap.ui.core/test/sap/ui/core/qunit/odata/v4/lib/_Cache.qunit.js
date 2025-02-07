@@ -7838,9 +7838,11 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oElement2, "predicate", "new2");
 				_Helper.setPrivateAnnotation(oElement3, "predicate", "bar");
 			});
-		this.mock(_Helper).expects("updateNonExisting").exactly(sKeptETag === "other" ? 0 : 1)
+		this.mock(_Helper).expects("updateNonExisting")
+			.exactly(bDuplicate || sKeptETag === "other" ? 0 : 1)
 			.withExactArgs(sinon.match.same(oKeptElement), sinon.match.same(oElement3));
-		this.mock(oCache).expects("hasPendingChangesForPath").exactly(sKeptETag === "other" ? 1 : 0)
+		this.mock(oCache).expects("hasPendingChangesForPath")
+			.exactly(bDuplicate || sKeptETag !== "other" ? 0 : 1)
 			.withExactArgs("bar").returns(false);
 
 		if (bDuplicate) {

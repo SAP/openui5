@@ -3,25 +3,13 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Application under test</title>
-
-		<script id="sap-ui-bootstrap"
-				src="../../../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-language="EN"
-				data-sap-ui-resource-roots='{
-					"applicationUnderTestMDCChart": "./",
-					"sap.ui.mdc.integration": "../../../../integration/",
-					"sap.ui.mdc.qunit": "../../../../qunit",
-					"test-resources": "../../../../../../../../test-resources",
-					"delegates": "../../../../delegates"
-				}'
-		>
-		</script>
-		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js"></script>
-		<script src="../../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="./MDCChart.qunit.js"></script>
+		<script
+			src="../../../../../../resources/resources/sap/ui/test/starter/runTest.js"
+			data-sap-ui-testsuite="test-resources/sap/ui/mdc/qunit/chart/OpaTests/applicationUnderTestMDCChart/MDCChart.qunit"
+			data-sap-ui-resource-roots='{
+				"test-resources.sap.ui.mdc.qunit.chart.OpaTests.applicationUnderTestMDCChart": "./"
+			}'
+		></script>
 	</head>
 <body>
 	<div id="qunit" class="sapUiBody"></div>

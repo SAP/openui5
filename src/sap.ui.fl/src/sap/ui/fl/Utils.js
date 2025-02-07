@@ -95,6 +95,7 @@ sap.ui.define([
 		 * Indicates if the property value represents a binding
 		 *
 		 * @param {object} vPropertyValue - Property value
+		 * @param {object} [oContext] - Binding context
 		 * @returns {boolean} true if value represents a binding
 		 * @function
 		 * @name sap.ui.fl.Utils.isBinding
@@ -102,11 +103,17 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		isBinding(vPropertyValue) {
+		isBinding(vPropertyValue, oContext) {
+			let sBinding;
+			try {
+				sBinding = ManagedObject.bindingParser(vPropertyValue, oContext);
+			} catch (e) {
+				return false;
+			}
 			return (
 				(
 					typeof vPropertyValue === "string"
-					&& !!ManagedObject.bindingParser(vPropertyValue)
+					&& !!sBinding
 				)
 				|| (
 					isPlainObject(vPropertyValue)
