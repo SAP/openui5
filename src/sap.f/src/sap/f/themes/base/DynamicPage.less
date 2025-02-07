@@ -420,3 +420,8 @@ To be used in Comparison pattern scenario. */
 .sapUiComparisonContainer .sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper .sapUiComparisonContent  {
 	margin-right: -1rem;
 }
+
+// Avoid visible gap between content and header when title is snapped
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper > .sapFDynamicPageHeaderWrapper {
+	background: @sapUiObjectHeaderBackground;
+}
