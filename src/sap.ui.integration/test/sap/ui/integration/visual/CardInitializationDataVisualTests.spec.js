@@ -20,7 +20,8 @@ describe("sap.ui.integration.CardInitializationDataVisualTests", function () {
 		var aCards = [
 			{ id: "i2", focus: true },
 			{ id: "i5", focus: true },
-			{ id: "i6-error", focus: true }
+			{ id: "i6-error", focus: true },
+			{ id: "NoContent-NoHeader", focus: true }
 		];
 
 		aCards.forEach(function (oCard) {
