@@ -257,7 +257,7 @@ sap.ui.define([
 
 			// remove sorter for same path
 			this.mSorters[sId] = this.mSorters[sId].filter(function (oSorter) {
-				return oSorter.sPath !== sProperty;
+				return oSorter.getPath() !== sProperty;
 			});
 			// add sorter if necessary before all others
 			if (bSortDesc !== undefined) {

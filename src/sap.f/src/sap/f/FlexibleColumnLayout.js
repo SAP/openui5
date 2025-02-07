@@ -849,9 +849,9 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._onColumnsLabelChanged = function (oEvent) {
 		var sColumn = oEvent.getParameter("column"),
 			sLabel = oEvent.getParameter("label"),
-			$Column = this._$columns[sColumn];
+			$Column = this._$columns?.[sColumn];
 
-		$Column.attr("aria-label", sLabel);
+		$Column?.length && $Column.attr("aria-label", sLabel);
 	};
 
 	/**

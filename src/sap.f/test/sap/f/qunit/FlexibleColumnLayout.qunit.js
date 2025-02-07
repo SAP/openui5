@@ -1495,6 +1495,34 @@ function(
 		assert.strictEqual(fnGetLabelText("endColumn"), sTestNewLastColumnLabel, "End column has its label changed by the Landmark Info");
 	});
 
+	QUnit.test("Setting columns' Landmark Info does not throw an error when FCL is not rendered yet", async function (assert) {
+		// Arrange
+		var oFCL = new FlexibleColumnLayout(),
+			sTestNewFirstColumnLabel = "This is test first column label",
+			oLandmarkInfo = new FlexibleColumnLayoutAccessibleLandmarkInfo({
+				firstColumnLabel: "first column label",
+				middleColumnLabel: "middle column label",
+				lastColumnLabel: "last column label"
+			});
+
+		// Act
+		oFCL.setLandmarkInfo(oLandmarkInfo);
+		oLandmarkInfo.setFirstColumnLabel(sTestNewFirstColumnLabel);
+
+		// Assert
+		assert.ok(true, "Error is not thrown");
+
+		// Act
+		oFCL.placeAt(sQUnitFixture);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oFCL.$("beginColumn").attr("aria-label"), sTestNewFirstColumnLabel, "Begin column has correct (new) label");
+
+		// Clean up
+		oFCL.destroy();
+	});
+
 	QUnit.module("FlexibleColumnLayoutSemanticHelper");
 
 	QUnit.test("SemanticHelper cleans destroyed FCL instance data", function (assert) {

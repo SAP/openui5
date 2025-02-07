@@ -95,7 +95,8 @@ sap.ui.define([
 
 	Paginator.prototype.openDialog = function() {
 		const oCard = this.getCard();
-		openCardShowMore(oCard);
+
+		return openCardShowMore(oCard);
 	};
 
 	Paginator.prototype.isServerSide = function() {

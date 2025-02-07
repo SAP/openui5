@@ -1935,8 +1935,10 @@ sap.ui.define([
 					+ (bVarArgs ? "" : "]");
 			}
 			if (oObject instanceof Filter) {
-				if (oObject.aFilters) {
-					return (oObject.bAnd ? "and(" : "or(") + toString(oObject.aFilters, true) + ")";
+				if (oObject.getFilters()) {
+					return (oObject.isAnd()
+						? "and("
+						: "or(") + toString(oObject.getFilters(), true) + ")";
 				}
 				return `f('${oObject.getPath()}')`; // Note: " is bad for QUnit's diff output
 			}
@@ -1962,8 +1964,8 @@ sap.ui.define([
 		// code under test
 		const aActual = _AggregationHelper.splitFilter(oFixture.filter, oAggregation);
 
-		const aFiltersNoThese = oFixture.noThese?.map((iIndex) => oFixture.filter.aFilters[iIndex])
-			 || [];
+		const aFiltersNoThese
+			= oFixture.noThese?.map((iIndex) => oFixture.filter.getFilters()[iIndex]) || [];
 		const aExpected = bHasGroupLevels || bHasGrandTotal && !bOldSchool
 			? [undefined, oFixture.result[1], oFixture.result[0], aFiltersNoThese]
 			: oFixture.result;

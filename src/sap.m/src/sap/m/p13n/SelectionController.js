@@ -147,6 +147,10 @@ sap.ui.define([
 		return oState;
 	};
 
+	SelectionController.prototype.formatToInternalState = (oExternalState) => {
+		return oExternalState;
+	};
+
 	/**
 	 * The actual UI used for personalization.
 	 *

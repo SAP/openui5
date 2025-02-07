@@ -26,10 +26,9 @@ sap.ui.define([
 	/**
 	 * Opens the same card in a dialog with scrolling.
 	 * @function
-	 * @since 1.58
+	 * @since 1.133
 	 * @private
 	 * @ui5-restricted sap.ui.integration
-	 * @alias module:sap/base/util/merge
 	 * @param {sap.ui.integration.widgets.Card} oCard The card to be opened.
 	 * @returns {sap.m.Dialog} The opened dialog.
 	 */
