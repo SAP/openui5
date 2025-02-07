@@ -854,6 +854,28 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
+	QUnit.test("Should not throw exception on rendering when first token is hidden", async function(assert) {
+		var oTokenizer = new Tokenizer({
+			width: "300px",
+			enabled: false
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001", visible: false}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		await nextUIUpdate();
+
+		assert.ok(true, "No exception is thrown");
+
+		oTokenizer.getTokens()[0].setSelected(true);
+
+		// Cause a re-rendering
+		oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
+		await nextUIUpdate();
+
+		assert.ok(true, "No exception is thrown");
+
+		oTokenizer.destroy();
+	});
 
 	QUnit.test("Should fire renderModeChange event when expanding/collapsing", async function (assert) {
 		var oTokenizer = new Tokenizer({
@@ -1374,18 +1396,24 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
-	QUnit.test("Should not render tabindex on the Tokenizer but on the first token", async function(assert) {
+	QUnit.test("Should not render tabindex on the Tokenizer but on the first visible token", async function(assert) {
 		// Arrange
-		var oTokenizer = new Tokenizer({}).placeAt("content");
+		var oTokenizer = new Tokenizer({
+			width: "500px",
+			tokens: [
+				new Token({text: "Token1", visible: false}),
+				new Token({text: "Token2"}),
+				new Token({text: "Token3"})
+			]
+		}).placeAt("content");
 		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oTokenizer.getDomRef().hasAttribute("tabindex"), false, "tabindex is not rendererd");
 
-		oTokenizer.addToken(new Token("token"));
 		await nextUIUpdate();
 
-		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef().hasAttribute("tabindex"), true, "tabindex is rendererd on the first token");
+		assert.strictEqual(oTokenizer.getTokens()[1].getDomRef().hasAttribute("tabindex"), true, "tabindex is rendererd on the first visible token (second token overall)");
 
 		oTokenizer.destroy();
 	});
