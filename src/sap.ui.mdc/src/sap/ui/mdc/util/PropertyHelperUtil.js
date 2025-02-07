@@ -59,7 +59,7 @@ sap.ui.define([
 		// 4. a library with an exception is loaded in the app (DF)
 		// 5. it has not explicitly been enabled via url param
 		// 6. UI5 version < 2.0
-		return bDisabledViaConfig || bDisabledViaURLParam || bExceptionForFE || bDisabledForDF && !bExplicitlyEnabled && !bUI5Version2;
+		return (bDisabledViaConfig || bDisabledViaURLParam || bExceptionForFE || bDisabledForDF) && !bExplicitlyEnabled && !bUI5Version2;
 	};
 
     return PropertyHelperUtil;
