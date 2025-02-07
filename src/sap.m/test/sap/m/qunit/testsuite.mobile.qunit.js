@@ -1874,6 +1874,9 @@ sap.ui.define([
 					"./UploadCollectionToolbar.qunit"
 				]
 			},
+			/**
+ 			 * @deprecated As of version 1.129, replaced by {@link sap.m.plugins.UploadSetwithTable}
+			 */
 			UploadSet: {
 				title: "Test Page for sap.m.upload.UploadSet",
 				coverage: {
