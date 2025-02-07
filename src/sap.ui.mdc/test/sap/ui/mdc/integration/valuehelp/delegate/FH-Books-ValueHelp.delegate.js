@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/ui/mdc/enums/TableSelectionMode"
+	"sap/ui/mdc/enums/TableSelectionMode",
+	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/String"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -31,7 +33,9 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	TableSelectionMode
+	TableSelectionMode,
+	Int32Type,
+	StringType
 ) {
 	"use strict";
 
@@ -69,8 +73,8 @@ sap.ui.define([
 						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
-								new Text({text: "{path: 'title', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: {path: 'ID', type: new Int32Type({groupingEnabled: false})}}),
+								new Text({text: {path: 'title', type: new StringType()}})
 							]
 						})
 					}
@@ -191,9 +195,9 @@ sap.ui.define([
 							template : new ColumnListItem({
 								type: "Active",
 								cells: [
-									new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
-									new Text({text: "{path: 'title', type:'sap.ui.model.odata.type.String'}"}),
-									new Text({text: "{path: 'descr', type:'sap.ui.model.odata.type.String'}"})
+									new Text({text: {path: 'ID', type: new Int32Type({groupingEnabled: false})}}),
+									new Text({text: {path: 'title', type: new StringType()}}),
+									new Text({text: {path: 'descr', type: new StringType()}})
 								]
 							})
 						}

@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/m/MessageToast',
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Boolean",
 	"sap/ui/mdc/enums/TableRowActionType"
-], function(Element, Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, RowActionItem, JSONModel, TableRowAction) {
+], function(Element, Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, RowActionItem, JSONModel, BooleanType, TableRowAction) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
@@ -171,7 +172,7 @@ sap.ui.define([
 				oRowActionTemplate.attachPress(this.onRowActionPress);
 				oRowActionTemplate.bindProperty("visible", {
 					path: "Category",
-					type: "sap.ui.model.type.Boolean",
+					type: new BooleanType(),
 					formatter: this.formatNav
 				});
 
@@ -205,7 +206,7 @@ sap.ui.define([
 				oRowActionTemplate.attachPress(this.onRowActionPress);
 				oRowActionTemplate.bindProperty("visible", {
 					path: "Category",
-					type: "sap.ui.model.type.Boolean",
+					type: new BooleanType(),
 					formatter: this.formatNav
 				});
 
@@ -231,7 +232,7 @@ sap.ui.define([
 			if (oEvent.getSource().getSelected()) {
 				oSettings.bindProperty("navigated", {
 					path: 'ProductID',
-					type : 'sap.ui.model.type.Boolean',
+					type : new BooleanType(),
 					formatter: this.formatNavigated});
 			} else {
 				oSettings.unbindProperty("navigated");

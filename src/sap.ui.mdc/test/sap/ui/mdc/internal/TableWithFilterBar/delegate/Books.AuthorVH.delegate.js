@@ -12,8 +12,11 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableSelectionMode",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/m/plugins/CellSelector",
-	"sap/m/plugins/CopyProvider"
-], function (ODataValueHelpDelegate, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text, GrowingMode, TableRowCountMode, TableSelectionMode, TableP13nMode, CellSelector, CopyProvider) {
+	"sap/m/plugins/CopyProvider",
+	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/String"
+], function (ODataValueHelpDelegate, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text, GrowingMode, TableRowCountMode, TableSelectionMode, TableP13nMode, CellSelector, CopyProvider, DateType, Int32Type, StringType) {
 	"use strict";
 	var Delegate = Object.assign({}, ODataValueHelpDelegate);
 
@@ -79,9 +82,9 @@ sap.ui.define([
 						enableAutoColumnWidth: true,
 						type: new GridTableType({rowCountMode: TableRowCountMode.Auto}),
 						columns: [
-							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: {path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}})}),
-							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: {path: 'name', type:'sap.ui.model.odata.type.String'}})}),
-							new MdcColumn({header: "Country", propertyKey : "countryOfOrigin_code_ComplexWithText", template: new Text({text: {parts: [{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}, {path: 'countryOfOrigin/name', type:'sap.ui.model.odata.type.String'}], formatter: _formatText}})})
+							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: {path: 'ID', type: new Int32Type(), formatOptions: {groupingEnabled: false}}})}),
+							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: {path: 'name', type: new StringType()}})}),
+							new MdcColumn({header: "Country", propertyKey : "countryOfOrigin_code_ComplexWithText", template: new Text({text: {parts: [{path: 'countryOfOrigin_code', type: new StringType()}, {path: 'countryOfOrigin/name', type: new StringType()}], formatter: _formatText}})})
 						],
 						...bMultiSelect ? {
 							cellSelector: [new CellSelector({rangeLimit: 200})],
@@ -125,9 +128,9 @@ sap.ui.define([
 						enableAutoColumnWidth: true,
 						type: new ResponsiveTableType({growingMode: GrowingMode.Scroll}),
 						columns: [
-							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"})}),
-							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})}),
-							new MdcColumn({header: "Date of Birth", propertyKey : "dateOfBirth", template: new Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})})
+							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: {path: 'ID', type: new Int32Type({groupingEnabled: false})}})}),
+							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: {path: 'name', type: new StringType()}})}),
+							new MdcColumn({header: "Date of Birth", propertyKey : "dateOfBirth", template: new Text({text: {path: 'dateOfBirth', type: new DateType()}})})
 						],
 						...bMultiSelect ? {
 							cellSelector: [new CellSelector({rangeLimit: 200})],

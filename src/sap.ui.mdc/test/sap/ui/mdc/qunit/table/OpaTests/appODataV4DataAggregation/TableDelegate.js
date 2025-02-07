@@ -1,11 +1,13 @@
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/mdc/table/Column",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/model/odata/type/Currency"
 ], function(
 	TableDelegate,
 	Column,
-	Text
+	Text,
+	CurrencyType
 ) {
 	"use strict";
 
@@ -78,7 +80,7 @@ sap.ui.define([
 							"LocalCurrency",
 							{path: "/##@@requestCurrencyCodes", mode: "OneTime", targetType: "any"}
 						],
-						type: "sap.ui.model.odata.type.Currency"
+						type: new CurrencyType()
 					}
 				})
 			}));

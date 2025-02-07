@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/enums/ConditionValidated'
+	'sap/ui/mdc/enums/ConditionValidated',
+	"sap/ui/model/odata/type/String"
 ], function(
 	ODataV4ValueHelpDelegate,
 	Element,
@@ -37,7 +38,8 @@ sap.ui.define([
 	ColumnListItem,
 	Text,
 	Condition,
-	ConditionValidated
+	ConditionValidated,
+	StringType
 ) {
 	"use strict";
 
@@ -77,8 +79,8 @@ sap.ui.define([
 						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new Text({text: "{path: 'city', type:'sap.ui.model.odata.type.String'}"}),
-								new Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: {path: 'city', type: new StringType()}}),
+								new Text({text: {path: 'text', type: new StringType()}})
 							]
 						})
 					}

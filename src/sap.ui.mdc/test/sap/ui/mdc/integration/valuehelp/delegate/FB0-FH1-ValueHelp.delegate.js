@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/model/odata/type/String"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Table,
 	Column,
 	ColumnListItem,
-	Text
+	Text,
+	StringType
 ) {
 	"use strict";
 
@@ -66,8 +68,8 @@ sap.ui.define([
 						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-								new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: {path: 'ID', type: new StringType()}}),
+								new Text({text: {path: 'name', type: new StringType()}})
 							]
 						})
 					}
@@ -168,9 +170,9 @@ sap.ui.define([
 							template : new ColumnListItem({
 								type: "Active",
 								cells: [
-									new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-									new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
-									new Text({text: "{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}"})
+									new Text({text: {path: 'ID', type: new StringType()}}),
+									new Text({text: {path: 'name', type: new StringType()}}),
+									new Text({text: {path: 'countryOfOrigin_code', type: new StringType()}})
 								]
 							})
 						}
@@ -229,8 +231,8 @@ sap.ui.define([
 							template : new ColumnListItem({
 								type: "Active",
 								cells: [
-									new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-									new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
+									new Text({text: {path: 'ID', type: new StringType()}}),
+									new Text({text: {path: 'name', type: new StringType()}})
 								]
 							})
 						}
