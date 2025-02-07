@@ -343,7 +343,8 @@ sap.ui.define([
 	 *   <li>The column must be child of an <code>AnalyticalTable</code>.</li>
 	 *   <li>The <code>rows</code> aggregation of the table must be bound.</li>
 	 *   <li>The metadata of the model must be loaded.</li>
-	 *   <li>The column's <code>leadingProperty</code> must be a sortable and filterable dimension.</li>
+	 *   <li>The dimension to which the column's <cide>leadingProperty</code> is related, must be sortable and filterable (For example: the ID for
+	 *   Text and ID relationship).</li>
 	 * </ul>
 	 *
 	 * @private
@@ -352,20 +353,24 @@ sap.ui.define([
 	 */
 	AnalyticalColumn.prototype.isGroupableByMenu = function() {
 		const oParent = this.getParent();
-
-		if (isInstanceOfAnalyticalTable(oParent)) {
-			const oBinding = oParent.getBinding();
-			if (oBinding) {
-				const oResultSet = oBinding.getAnalyticalQueryResult();
-				if (oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
-					&& oBinding.getSortablePropertyNames().indexOf(this.getLeadingProperty()) > -1
-					&& oBinding.getFilterablePropertyNames().indexOf(this.getLeadingProperty()) > -1) {
-					return true;
-				}
-			}
+		if (!isInstanceOfAnalyticalTable(oParent)) {
+			return false;
 		}
 
-		return false;
+		const oBinding = oParent.getBinding();
+		if (!oBinding) {
+			return false;
+		}
+
+		const oResultSet = oBinding.getAnalyticalQueryResult();
+		if (!oResultSet) {
+			return false;
+		}
+
+		const oDimension = oResultSet.findDimensionByPropertyName(this.getLeadingProperty());
+		return !!(oDimension
+			&& oBinding.getSortablePropertyNames().indexOf(oDimension.getName()) > -1
+			&& oBinding.getFilterablePropertyNames().indexOf(oDimension.getName()) > -1);
 	};
 
 	AnalyticalColumn.prototype._isGroupableByMenu = function() {
