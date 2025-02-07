@@ -324,9 +324,11 @@ sap.ui.define([
 				const mText2IdByType = new Map();
 				const mAllTypes = new Map([...mEntityTypes, ...mComplexTypes]);
 				const iEntityTypesCount = mEntityTypes.size;
-				mAllTypes.entries().forEach(([sType, oType], i) => {
+				let i = 0;
+				for (const [sType, oType] of mAllTypes) {
 					const bComplexType = i >= iEntityTypesCount;
 					const iTypeIndex = bComplexType ? i - iEntityTypesCount : i;
+					i += 1;
 					oMetaModelInterface.getProperties(oType).forEach((sProperty, iPropertyIndex) => {
 						const sTextPropertyPath = oMetaModelInterface.getTextPropertyPath(sType, sProperty, iTypeIndex,
 							iPropertyIndex, bComplexType);
@@ -337,7 +339,7 @@ sap.ui.define([
 							mText2IdByType.set(sTextPropertyPath, new Map()).get(sTextPropertyPath);
 						mIdByType.set(sType, sProperty);
 					});
-				});
+				}
 				return mText2IdByType;
 			});
 			FieldHelp.#mMetaModel2TextMappingPromise.set(oMetaModelInterface.oMetaModel, oTextMappingPromise);
