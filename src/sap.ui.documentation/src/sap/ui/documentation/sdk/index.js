@@ -109,9 +109,6 @@
                         Utils.checkControlId = function() {
                             return true;
                         };
-                        Utils.isApplication = function() {
-                            return true;
-                        };
                         postMessageToOrigin({
                             type: "RTA",
                             data: {
