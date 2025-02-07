@@ -78,20 +78,12 @@ sap.ui.define([
 			oRm.attr("aria-hidden", "true");
 			oRm.openEnd();
 
-			// aria description for the row and column count
-			_writeAccText(oRm, sTableId, "ariacount");
-			// aria description for toggling the edit mode
-			_writeAccText(oRm, sTableId, "toggleedit", TableUtils.getResourceText("TBL_TOGGLE_EDIT_KEY"));
 			// aria label for group rows
 			_writeAccText(oRm, sTableId, "ariarowgrouplabel", TableUtils.getResourceText("TBL_ROW_GROUP_LABEL"));
 			// aria label for grand total sums
 			_writeAccText(oRm, sTableId, "ariagrandtotallabel", TableUtils.getResourceText("TBL_GRAND_TOTAL_ROW"));
 			// aria label for group total sums
 			_writeAccText(oRm, sTableId, "ariagrouptotallabel", TableUtils.getResourceText("TBL_GROUP_TOTAL_ROW"));
-			// aria description for table row count
-			_writeAccText(oRm, sTableId, "rownumberofrows");
-			// aria description for table column count
-			_writeAccText(oRm, sTableId, "colnumberofcols");
 			// aria description for table cell content
 			_writeAccText(oRm, sTableId, "cellacc");
 			// aria description for column menu

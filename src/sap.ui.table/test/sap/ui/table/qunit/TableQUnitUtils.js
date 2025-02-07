@@ -895,6 +895,15 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets the row action header cell.
+		 *
+		 * @returns {HTMLElement} The cell DOM element.
+		 */
+		oTable.qunit.getRowActionHeaderCell = function() {
+			return oTable.getDomRef("rowacthdr");
+		};
+
+		/**
 		 * Adds a column that has test controls as template and label. Both template and label are text controls.
 		 *
 		 * @param {string|Object} [mConfig] A string that is set as the text of the template, or a config object. If no config is provided, the label
@@ -1891,6 +1900,25 @@ sap.ui.define([
 				assert.deepEqual(oCell, document.activeElement, "Row Action " + iRow + " focused");
 			} else {
 				assert.notEqual(oCell, document.activeElement, "Row Action " + iRow + " not focused");
+			}
+		}
+		return jQuery(oCell);
+	};
+
+	window.getRowActionHeader = function(bFocus, assert, oTableInstance) {
+		if (oTableInstance == null) {
+			oTableInstance = oTable;
+		}
+
+		const oCell = oTableInstance.getDomRef("rowacthdr");
+		if (bFocus) {
+			oCell.focus();
+		}
+		if (assert) {
+			if (bFocus) {
+				assert.deepEqual(oCell, document.activeElement, "Row Action header focused");
+			} else {
+				assert.notEqual(oCell, document.activeElement, "Row Action header not focused");
 			}
 		}
 		return jQuery(oCell);
