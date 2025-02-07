@@ -1315,14 +1315,13 @@ sap.ui.define([
 
 			var vP13nData = oController.getP13nData();
 			if (vP13nData) {
-				var p = this.createChanges({
+				var p = (oController.isA("sap.ui.mdc.p13n.subcontroller.FilterController") ? Promise.resolve([]) : this.createChanges({
 					control: oControl,
 					key: sControllerKey,
 					state: vP13nData,
 					suppressAppliance: true,
 					applyAbsolute: true
-				})
-					.then(function (aItemChanges) {
+				})).then(function (aItemChanges) {
 
 						return oController.getBeforeApply().then(function (aChanges) {
 
