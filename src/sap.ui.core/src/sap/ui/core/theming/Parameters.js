@@ -669,12 +669,7 @@ sap.ui.define([
 				bParseUrls = vName._restrictedParseUrls || false;
 				aNames = typeof vName.name === "string" ? [vName.name] : vName.name;
 				bAsync = true;
-			}
-
-			/**
-			 * @deprecated As of Version 1.120
-			 */
-			if (!(vName instanceof Object && !Array.isArray(vName))) {
+			} else {
 				// legacy variant
 				if (typeof vName === "string") {
 					aNames = [vName];
