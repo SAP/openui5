@@ -6,13 +6,15 @@ sap.ui.define([
 	"../utils/TableUtils",
 	"sap/ui/Device",
 	"sap/m/Menu",
-	"sap/m/MenuItem"
+	"sap/m/MenuItem",
+	"sap/ui/core/InvisibleMessage"
 ], function(
 	RowMode,
 	TableUtils,
 	Device,
 	Menu,
-	MenuItem
+	MenuItem,
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -85,6 +87,11 @@ sap.ui.define([
 	 * Provides drag&drop resize capabilities.
 	 */
 	const ResizeHelper = {};
+
+	function setNewRowCount(iRowCount) {
+		_private(this).rowCount = iRowCount;
+		InvisibleMessage.getInstance().announce(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount]));
+	}
 
 	/**
 	 * @inheritDoc
@@ -304,7 +311,7 @@ sap.ui.define([
 
 	InteractiveRowMode.prototype.setRowCount = function(iRowCount) {
 		this.setProperty("rowCount", iRowCount);
-		_private(this).rowCount = iRowCount;
+		setNewRowCount.call(this, iRowCount);
 		return this;
 	};
 
@@ -357,22 +364,22 @@ sap.ui.define([
 			switch (oEvent.key) {
 				case "ArrowUp":
 					oEvent.preventDefault();
-					_private(this).rowCount = Math.max(this.getActualRowCount() - 1, this.getMinRowCount());
+					setNewRowCount.call(this, Math.max(this.getActualRowCount() - 1, this.getMinRowCount()));
 					this.updateTable(TableUtils.RowsUpdateReason.Render);
 					break;
 				case "ArrowDown":
 					oEvent.preventDefault();
-					_private(this).rowCount = Math.min(this.getActualRowCount() + 1, this._getMaxRowCount());
+					setNewRowCount.call(this, Math.min(this.getActualRowCount() + 1, this._getMaxRowCount()));
 					this.updateTable(TableUtils.RowsUpdateReason.Render);
 					break;
 				case "Home":
 					oEvent.preventDefault();
-					_private(this).rowCount = this.getMinRowCount();
+					setNewRowCount.call(this, this.getMinRowCount());
 					this.updateTable(TableUtils.RowsUpdateReason.Render);
 					break;
 				case "End":
 					oEvent.preventDefault();
-					_private(this).rowCount = this._getMaxRowCount();
+					setNewRowCount.call(this, this._getMaxRowCount());
 					this.updateTable(TableUtils.RowsUpdateReason.Render);
 					break;
 				default:
@@ -387,11 +394,11 @@ sap.ui.define([
 
 		const iActualRowCount = this.getActualRowCount();
 		if (iActualRowCount === this._getMaxRowCount()) {
-			_private(this).rowCount = this.getMinRowCount();
+			setNewRowCount.call(this, this.getMinRowCount());
 		} else if (iActualRowCount === this.getMinRowCount()) {
-			_private(this).rowCount = this.getRowCount();
+			setNewRowCount.call(this, this.getRowCount());
 		} else {
-			_private(this).rowCount = this._getMaxRowCount();
+			setNewRowCount.call(this, this._getMaxRowCount());
 		}
 		this.updateTable(TableUtils.RowsUpdateReason.Render);
 	};
@@ -448,7 +455,7 @@ sap.ui.define([
 			iNewRowCount = Math.min(iNewRowCount, iMaxRowCount);
 		}
 
-		_private(oMode).rowCount = iNewRowCount;
+		setNewRowCount.call(oMode, iNewRowCount);
 		oMode.updateTable(TableUtils.RowsUpdateReason.Render);
 
 		document.removeEventListener("touchmove", ResizeHelper.onResizerMove);

@@ -215,7 +215,7 @@ sap.ui.define([
 
 		if (oCellInfo.rowIndex === 0) {
 			// Let the item navigation focus the column header cell, but not in the row action column.
-			preventItemNavigation(oEvent, oCellInfo.isOfType(CellType.ROWACTION) || bActionModeNavigation);
+			preventItemNavigation(oEvent, bActionModeNavigation);
 
 			// Leave the action mode when trying to navigate up on the first row.
 			if (!bActionMode && $ParentCell) {
@@ -237,34 +237,6 @@ sap.ui.define([
 		// If only the up or down key was pressed in text input elements, navigation should not be performed.
 		return !oEvent.isMarked()
 			   && (bCtrlKeyPressed || !(oEvent.target instanceof window.HTMLInputElement) && !(oEvent.target instanceof window.HTMLTextAreaElement));
-	}
-
-	/**
-	 * Sets the focus to the previous cell in the same row.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {jQuery.Event} oEvent The keyboard event object.
-	 */
-	function navigateLeft(oTable, oEvent) {
-		if (oEvent.isMarked()) {
-			return; // Do not interfere with embedded controls that react on the keyboard event.
-		}
-
-		const oCellInfo = TableUtils.getCellInfo(TableUtils.getCell(oTable, oEvent.target));
-		const bIsRTL = Localization.getRTL();
-
-		if (!oCellInfo.isOfType(CellType.COLUMNHEADER) || !bIsRTL) {
-			return;
-		}
-
-		const oFocusedItemInfo = TableUtils.getFocusedItemInfo(oTable);
-		const iFocusedColumn = oFocusedItemInfo.cellInRow - (TableUtils.hasRowHeader(oTable) ? 1 : 0);
-		const iColumnCount = TableUtils.getVisibleColumnCount(oTable);
-
-		if (TableUtils.hasRowActions(oTable) && iFocusedColumn === iColumnCount - 1) {
-			// Do not navigate to the row actions column header cell.
-			preventItemNavigation(oEvent);
-		}
 	}
 
 	function waitForRowsUpdated(oTable) {
@@ -1400,7 +1372,7 @@ sap.ui.define([
 			}
 
 		} else if (oCellInfo.isOfType(CellType.ANYCONTENTCELL) || oEvent.target === this.getDomRef("noDataCnt")) {
-			if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || this.getSelectionMode() !== SelectionMode.None) && !oCellInfo.isOfType(CellType.ROWACTION)) {
+			if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || this.getSelectionMode() !== SelectionMode.None)) {
 				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 				oEvent.preventDefault();
 			} else {
@@ -1602,7 +1574,6 @@ sap.ui.define([
 
 	KeyboardDelegate.prototype.onsapleft = function(oEvent) {
 		handleNavigationEvent(oEvent);
-		navigateLeft(this, oEvent);
 	};
 
 	KeyboardDelegate.prototype.onsapleftmodifiers = function(oEvent) {
@@ -1779,7 +1750,7 @@ sap.ui.define([
 
 		const oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
-		if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION | CellType.COLUMNHEADER)) {
+		if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION | CellType.COLUMNHEADER | CellType.ROWACTIONCOLUMNHEADER)) {
 			const oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			const iFocusedIndex = oFocusedItemInfo.cell;
 			const iFocusedCellInRow = oFocusedItemInfo.cellInRow;
@@ -1851,7 +1822,7 @@ sap.ui.define([
 				preventItemNavigation(oEvent);
 				TableUtils.focusItem(this, iFocusedIndex + iFixedColumnCount - iFocusedCellInRow, null);
 
-			} else if (TableUtils.hasRowActions(this) && oCellInfo.isOfType(CellType.DATACELL) && iFocusedCellInRow < iColumnCount - 2) {
+			} else if (TableUtils.hasRowActions(this) && iFocusedCellInRow < iColumnCount - 2) {
 				// If the focus is on a data cell in the scrollable column area (except last cell),
 				// then set the focus to the row actions cell.
 				// Note: The END navigation from the last cell to the row action cell is handled by the item navigation.
@@ -1888,22 +1859,14 @@ sap.ui.define([
 					/* Column header area */
 					/* Top fixed area */
 					if (iFocusedRow < iHeaderRowCount + mRowCounts.fixedTop) {
-						if (oCellInfo.isOfType(CellType.ROWACTION)) {
-							// Set the focus to the first row (row actions do not have a header).
-							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount), oEvent);
-						} else {
-							// In case a column header exists, set the focus to the first row of the column header,
-							// otherwise set the focus to the first row of the top fixed area.
-							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iFocusedRow, oEvent);
-						}
-
+						TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iFocusedRow, oEvent);
 					/* Scrollable area */
 					} else if (iFocusedRow >= iHeaderRowCount + mRowCounts.fixedTop &&
 							   iFocusedRow < iHeaderRowCount + TableUtils.getNonEmptyRowCount(this) - mRowCounts.fixedBottom) {
 						this._getScrollExtension().scrollVerticallyMax(false);
-						// If a fixed top area exists or we are in the row action column (has no header), then set the focus to the first row (of
+						// If a fixed top area exists, then set the focus to the first row (of
 						// the top fixed area), otherwise set the focus to the first row of the column header area.
-						if (mRowCounts.fixedTop > 0 || oCellInfo.isOfType(CellType.ROWACTION)) {
+						if (mRowCounts.fixedTop > 0) {
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * (iFocusedRow - iHeaderRowCount), oEvent);
 						} else {
 							TableUtils.focusItem(this, iFocusedIndex - iColumnCount * iFocusedRow, oEvent);

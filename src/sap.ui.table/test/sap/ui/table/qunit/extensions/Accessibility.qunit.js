@@ -196,21 +196,11 @@ sap.ui.define([
 	function testAriaLabelsForFocusedDataCell(oTable, oCellElement, iRow, iCol, assert, mParams = {}) {
 		const bFirstTime = !!mParams.firstTime;
 		const bRowChange = !!mParams.rowChange;
-		const bColChange = !!mParams.colChange;
 		const sTableId = oTable.getId();
 		const bGroup = !!mParams.group;
 		const bSum = !!mParams.sum;
 
 		const aLabels = [];
-		if (bFirstTime) {
-			aLabels.push(sTableId + "-ariacount");
-			aLabels.push(sTableId + "-ariaselection");
-		}
-
-		aLabels.push(sTableId + "-rownumberofrows");
-		aLabels.push(sTableId + "-colnumberofcols");
-
-		const oColumn = oTable._getVisibleColumns()[iCol];
 		const oRow = oTable.getRows()[iRow];
 		const sRowId = oRow.getId();
 		const oCell = oRow.getCells()[iCol];
@@ -231,8 +221,6 @@ sap.ui.define([
 			aLabels.push(sRowId + "-highlighttext");
 		}
 
-		aLabels.push(oColumn.getId() + "-inner");
-
 		if (iIndex === 0) {
 			aLabels.push(sTableId + "-ariafixedcolumn");
 		}
@@ -242,10 +230,6 @@ sap.ui.define([
 				aLabels.push(oCell.getId());
 			} else {
 				aLabels.push(sTableId + "-cellacc");
-			}
-
-			if (iIndex === 0 || iIndex === 2 || iIndex === 4) {
-				aLabels.push(sTableId + "-toggleedit");
 			}
 		}
 
@@ -258,29 +242,14 @@ sap.ui.define([
 			aLabels.join(" "),
 			"aria-labelledby of cell [" + iRow + ", " + iCol + "]"
 		);
-
-		let sText = oTable.$("rownumberofrows").text().trim();
-		if (bFirstTime || bRowChange) {
-			assert.ok(sText.length > 0 && sText !== ".", "Number of rows are set on row change: " + sText);
-		} else {
-			assert.ok(sText === ".", "Number of rows are not set when row not changed: " + sText);
-		}
-		sText = oTable.$("colnumberofcols").text().trim();
-		if (bFirstTime || bColChange) {
-			assert.ok(sText.length > 0 && sText !== ".", "Number of columns are set on column change: " + sText);
-		} else {
-			assert.ok(sText === ".", "Number of columns are not set when column not changed: " + sText);
-		}
 	}
 
 	function testAriaLabelsForNonFocusedDataCell(oTable, oCellElement, iRow, iCol, assert) {
 		const aLabels = [];
-		const oColumn = oTable._getVisibleColumns()[iCol];
 		const oRow = oTable.getRows()[iRow];
 		const oCell = oRow.getCells()[iCol];
 		const iIndex = Column.ofCell(oCell).getIndex();
 
-		aLabels.push(oColumn.getId() + "-inner");
 		if (iIndex === 0) {
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
 		}
@@ -297,12 +266,18 @@ sap.ui.define([
 		const oCell = oRow.getCells()[iCol];
 		const iIndex = Column.ofCell(oCell).getIndex();
 		const aExpected = [];
+		const aDescription = [];
 
 		const sText = oTable.$("cellacc").text().trim();
 
 		if (iIndex < 3) {
-			aExpected.push("TYPE_" + oCell.getText());
-			aExpected.push("DESCRIPTION_" + oCell.getText());
+			aDescription.push("TYPE_" + oCell.getText());
+			aDescription.push("DESCRIPTION_" + oCell.getText());
+			if (iIndex === 0 || iIndex === 2) {
+				aExpected.push(TableUtils.getResourceText("TBL_CELL_INCLUDES", [aDescription.join(" ")]));
+			} else {
+				aExpected.push(aDescription.join(" "));
+			}
 		}
 		if (iIndex === 0) {
 			aExpected.push(TableUtils.getResourceText("TBL_CTRL_STATE_READONLY"));
@@ -443,33 +418,6 @@ sap.ui.define([
 		for (let i = 0; i < this.oTable.getColumns().length; i++) {
 			testAriaLabelsForNonFocusedDataCell(this.oTable, this.oTable.qunit.getDataCell(0, i), 0, i, assert);
 			testAriaLabelsForNonFocusedDataCell(this.oTable, this.oTable.qunit.getDataCell(1, i), 1, i, assert);
-		}
-	});
-
-	QUnit.test("no aria-labelledby '-inner' in cell when columnHeaderVisible=false", async function(assert) {
-		this.oTable.setColumnHeaderVisible(false);
-		await this.oTable.qunit.whenRenderingFinished();
-
-		for (let i = 0; i < this.oTable.getColumns().length; i++) {
-			const oColumn = this.oTable._getVisibleColumns()[i];
-			const oCell = this.oTable.qunit.getDataCell(0, i);
-
-			assert.strictEqual(
-				(oCell.getAttribute("aria-labelledby") || "").trim().indexOf(oColumn.getId() + "-inner"),
-				-1,
-				"no aria-labelledby '" + oColumn.getId() + "-inner' in cell pointing to its column label"
-			);
-		}
-
-		for (let i = 0; i < this.oTable.getColumns().length; i++) {
-			const oColumn = this.oTable._getVisibleColumns()[i];
-			const oCell = this.oTable.qunit.getDataCell(1, i);
-
-			assert.strictEqual(
-				(oCell.getAttribute("aria-labelledby") || "").trim().indexOf(oColumn.getId() + "-inner"),
-				-1,
-				"no aria-labelledby '" + oColumn.getId() + "-inner' in cell pointing to its column label"
-			);
 		}
 	});
 
@@ -754,24 +702,9 @@ sap.ui.define([
 	});
 
 	function testAriaLabelsForColumnHeader($Cell, iCol, assert, mParams = {}) {
-		const bFirstTime = !!mParams.firstTime;
 		const bFocus = !!mParams.focus;
-		const bColChange = !!mParams.colChange;
 		const sTableId = oTable.getId();
-
 		const aLabels = [];
-		if (bFirstTime && bFocus) {
-			aLabels.push(sTableId + "-ariacount");
-			aLabels.push(sTableId + "-ariaselection");
-		}
-
-		if (bFocus) {
-			aLabels.push(sTableId + "-colnumberofcols");
-		}
-
-		const oColumn = oTable._getVisibleColumns()[iCol];
-
-		aLabels.push(oColumn.getId() + "-inner");
 
 		if (iCol === 0) {
 			aLabels.push(sTableId + "-ariafixedcolumn");
@@ -789,20 +722,16 @@ sap.ui.define([
 			aLabels.push(sTableId + "-ariarequired");
 		}
 
+		if ($Cell.attr("colspan")) {
+			aLabels.push($Cell.attr("id") + "-inner");
+			aLabels.push(sTableId + "-ariacolspan");
+		}
+
 		assert.strictEqual(
 			($Cell.attr("aria-labelledby") || "").trim(),
 			aLabels.join(" "),
 			"aria-labelledby of colum header " + iCol
 		);
-
-		if (bFocus) {
-			const sText = oTable.$("colnumberofcols").text().trim();
-			if (bFirstTime || bColChange) {
-				assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
-			} else {
-				assert.ok(sText.length === 0, "Number of columns are not set when column not changed: " + sText);
-			}
-		}
 	}
 
 	QUnit.test("aria-labelledby with Focus", async function(assert) {
@@ -825,6 +754,72 @@ sap.ui.define([
 			testAriaLabelsForColumnHeader($Cell, oTable.columnCount - 1, assert);
 			done();
 		}, 100);
+	});
+
+	QUnit.test("aria-labelledby with Focus multi header", async function(assert) {
+		const oColumn1 = new Column({
+			multiLabels: [
+				new TestControl({text: "Person"}),
+				new TestControl({text: "Name"}),
+				new TestControl({text: "First Name"})
+			],
+			headerSpan: [3, 2],
+			hAlign: "Center",
+			template: new TestControl()
+		});
+		const oColumn2 = new Column({
+			multiLabels: [
+				new TestControl(),
+				new TestControl(),
+				new TestControl({text: "Last Name"})
+			],
+			hAlign: "Center",
+			template: new TestControl()
+		});
+		const oColumn3 = new Column({
+			multiLabels: [
+				new TestControl(),
+				new TestControl({text: "Age"})
+			],
+			hAlign: "Center",
+			template: new TestControl()
+		});
+
+		oTable.destroyColumns();
+		oTable.addColumn(oColumn1);
+		oTable.addColumn(oColumn2);
+		oTable.addColumn(oColumn3);
+		await nextUIUpdate();
+
+		let oCell = document.getElementById(oColumn1.getId());
+		oCell.focus();
+		let $Cell = jQuery(oCell);
+		testAriaLabelsForColumnHeader($Cell, 0, assert, {firstTime: true, colChange: true, focus: true});
+
+		oCell = document.getElementById(oColumn1.getId() + "_1");
+		oCell.focus();
+		$Cell = jQuery(oCell);
+		testAriaLabelsForColumnHeader($Cell, 0, assert, {firstTime: false, colChange: true, focus: true});
+
+		oCell = document.getElementById(oColumn1.getId() + "_2");
+		oCell.focus();
+		$Cell = jQuery(oCell);
+		testAriaLabelsForColumnHeader($Cell, 0, assert, {firstTime: false, colChange: true, focus: true});
+
+		oCell = document.getElementById(oColumn1.getId() + "_2");
+		oCell.focus();
+		$Cell = jQuery(oCell);
+		testAriaLabelsForColumnHeader($Cell, 0, assert, {firstTime: false, colChange: true, focus: true});
+
+		oCell = document.getElementById(oColumn2.getId() + "_2");
+		oCell.focus();
+		$Cell = jQuery(oCell);
+		testAriaLabelsForColumnHeader($Cell, 0, assert, {firstTime: false, colChange: true, focus: true});
+
+		oCell = document.getElementById(oColumn3.getId() + "_2");
+		oCell.focus();
+		$Cell = jQuery(oCell);
+		testAriaLabelsForColumnHeader($Cell, 0, assert, {firstTime: false, colChange: true, focus: true});
 	});
 
 	QUnit.test("aria-labelledby without Focus", function(assert) {
@@ -1014,16 +1009,9 @@ sap.ui.define([
 			const sTableId = this.oTable.getId();
 			const oRow = this.oTable.getRows()[iRow];
 			const sRowId = oRow.getId();
-
 			const aLabels = [];
-			if (bFirstTime && bFocus) {
-				aLabels.push(sTableId + "-ariacount");
-				aLabels.push(sTableId + "-ariaselection");
-			}
 
 			if (bFocus) {
-				aLabels.push(sTableId + "-rownumberofrows");
-				aLabels.push(sTableId + "-colnumberofcols");
 				if (bGroup) {
 					aLabels.push(sTableId + "-ariarowgrouplabel");
 					aLabels.push(sRowId + "-groupHeader");
@@ -1045,15 +1033,6 @@ sap.ui.define([
 				aLabels.join(" "),
 				"aria-labelledby of row header " + iRow
 			);
-
-			if (bFocus) {
-				const sText = this.oTable.getDomRef("rownumberofrows").innerText.trim();
-				if (bFirstTime || bRowChange) {
-					assert.ok(sText.length > 0 && sText !== ".", "Number of rows are set on row change: " + sText);
-				} else {
-					assert.ok(sText === ".", "Number of rows are not set when row not changed: " + sText);
-				}
-			}
 		}
 	});
 
@@ -1266,16 +1245,9 @@ sap.ui.define([
 			const sTableId = this.oTable.getId();
 			const oRow = this.oTable.getRows()[iRow];
 			const sRowId = oRow.getId();
-
 			const aLabels = [];
-			if (bFirstTime && bFocus) {
-				aLabels.push(sTableId + "-ariacount");
-				aLabels.push(sTableId + "-ariaselection");
-			}
 
 			if (bFocus) {
-				aLabels.push(sTableId + "-rownumberofrows");
-				aLabels.push(sTableId + "-colnumberofcols");
 				aLabels.push(sTableId + "-rowacthdr");
 				if (!bGroup && !bSum) {
 					aLabels.push(sRowId + "-highlighttext");
@@ -1302,15 +1274,6 @@ sap.ui.define([
 				aLabels.join(" "),
 				"aria-labelledby of row action " + iRow
 			);
-
-			if (bFocus) {
-				const sText = this.oTable.getDomRef("rownumberofrows").innerText.trim();
-				if (bFirstTime || bRowChange) {
-					assert.ok(sText.length > 0 && sText !== ".", "Number of rows are set on row change: " + sText);
-				} else {
-					assert.ok(sText === ".", "Number of rows are not set when row not changed: " + sText);
-				}
-			}
 		}
 	});
 
@@ -1465,38 +1428,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("aria-labelledby with Focus", function(assert) {
-		const done = assert.async();
-		const sTableId = oTable.getId();
-		let $Cell = getSelectAll(true, assert);
-
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sTableId + "-ariacount " + sTableId + "-ariaselection " + sTableId + "-colnumberofcols", "aria-labelledby of select all");
-
-		$Cell = getCell(1, 1, true, assert); //set focus somewhere else on the table
-		testAriaLabelsForFocusedDataCell(oTable, $Cell[0], 1, 1, assert, {firstTime: false, rowChange: true, colChange: true});
-
-		$Cell = getSelectAll(true, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), sTableId + "-colnumberofcols",
-			"aria-labelledby of select all");
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		setTimeout(function() {
-			done();
-		}, 100);
-	});
-
-	QUnit.test("aria-labelledby with Focus (Single Selection)", async function(assert) {
-		oTable.setSelectionMode(SelectionMode.Single);
-		await nextUIUpdate();
-
-		const sTableId = oTable.getId();
-		const $Cell = getSelectAll(true, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sTableId + "-ariacount " + sTableId + "-ariaselection " + sTableId + "-colnumberofcols", "aria-labelledby of select all");
-		getRowHeader(0, true, assert); //set focus somewhere else on the table
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-	});
-
 	QUnit.test("aria-labelledby without Focus", function(assert) {
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		const $Cell = getSelectAll(false, assert);
@@ -1596,6 +1527,7 @@ sap.ui.define([
 		const $Elem = oTable.$("sapUiTableGridCnt");
 
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
+		assert.strictEqual($Elem.attr("aria-describedby"), oTable.getId() + "-ariaselection", "aria-describedby");
 		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
@@ -1672,19 +1604,29 @@ sap.ui.define([
 		const sTableId = oTable.getId();
 		let $Elem = getCell(0, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
-		assert.strictEqual($Elem.attr("aria-owns"), undefined, "aria-owns");
+
+		function getExpectedAriaOwnsForRow(iIndex) {
+			const aAriaOwns = [sTableId + "-rowsel" + iIndex];
+			for (let i = 0; i < 5; i++) {
+				aAriaOwns.push(sTableId + "-rows-row" + iIndex + "-col" + i);
+			}
+			aAriaOwns.push(sTableId + "-rowact" + iIndex);
+			return aAriaOwns.join(" ");
+		}
+
+		assert.strictEqual($Elem.attr("aria-owns"), getExpectedAriaOwnsForRow(0), "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(0, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
-		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowsel0 " + sTableId + "-rows-row0-col0 " + sTableId + "-rowact0", "aria-owns");
+		assert.strictEqual($Elem.attr("aria-owns"), getExpectedAriaOwnsForRow(0), "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 		$Elem = getCell(1, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
-		assert.strictEqual($Elem.attr("aria-owns"), undefined, "aria-owns");
+		assert.strictEqual($Elem.attr("aria-owns"), getExpectedAriaOwnsForRow(1), "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		$Elem = getCell(1, 1, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
-		assert.strictEqual($Elem.attr("aria-owns"), sTableId + "-rowsel1 " + sTableId + "-rows-row1-col0 " + sTableId + "-rowact1", "aria-owns");
+		assert.strictEqual($Elem.attr("aria-owns"), getExpectedAriaOwnsForRow(1), "aria-owns");
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
@@ -1716,44 +1658,6 @@ sap.ui.define([
 		}
 		oTable.attachEventOnce("rowsUpdated", onAfterRowsUpdated);
 		oTable.setFirstVisibleRow(3);
-	});
-
-	QUnit.test("Row index and count", async function(assert) {
-		const oAriaCount = oTable.getDomRef("ariacount");
-		const oNumberOfRows = oTable.getDomRef("rownumberofrows");
-		const oNumberOfColumns = oTable.getDomRef("colnumberofcols");
-
-		getCell(0, 0, true);
-		assert.equal(oAriaCount.textContent, TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [9, 6]),
-			"Data cell in row 1 column 1: ariacount");
-		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [2, 9]),
-			"Data cell in row 1 column 1: rownumberofrows");
-		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [2, 6]),
-			"Data cell in row 1 column 1: colnumberofcols");
-
-		getCell(1, 1, true);
-		assert.equal(oAriaCount.textContent.trim(), ".", "Data cell in row 2 column 2: ariacount");
-		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [3, 9]),
-			"Data cell in row 2 column 2: rownumberofrows");
-		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [3, 6]),
-			"Data cell in row 2 column 2: colnumberofcols");
-
-		getColumnHeader(0, true);
-		assert.equal(oAriaCount.textContent.trim(), ".", "1st Column header cell: ariacount");
-		assert.equal(oNumberOfRows.textContent.trim(), ".", "1st Column header cell: rownumberofrows");
-		assert.equal(oNumberOfColumns.textContent, TableUtils.getResourceText("TBL_COL_COLCOUNT", [2, 6]),
-			"1st Column header cell: colnumberofcols");
-
-		sinon.stub(oTable, "_getTotalRowCount").returns(1);
-		oTable.getRowMode().setRowCount(1);
-		oTable._bVariableRowHeightEnabled = true;
-		await nextUIUpdate();
-
-		getCell(0, 0, true);
-		assert.equal(oAriaCount.textContent.trim(), ".", "Data cell in row 1 column 1: ariacount");
-		assert.equal(oNumberOfRows.textContent, TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [2, 2]),
-			"Data cell in row 1 column 1: rownumberofrows");
-		assert.equal(oNumberOfColumns.textContent.trim(), ".", "Data cell in row 1 column 1: colnumberofcols");
 	});
 
 	QUnit.test("ARIA colindices", async function(assert) {
@@ -1911,10 +1815,9 @@ sap.ui.define([
 
 	QUnit.test("HiddenTexts", function(assert) {
 		const aHiddenTexts = [
-			"ariacount", "toggleedit", "ariarowgrouplabel", "ariagrandtotallabel",
-			"ariagrouptotallabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariacolmenu",
-			"ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes", "ariafixedcolumn", "ariainvalid", "ariaselection",
-			"ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext", "rownavigatedtext", "ariarequired"
+			"ariarowgrouplabel", "ariagrandtotallabel", "ariagrouptotallabel", "cellacc", "ariacolmenu", "ariacolspan", "ariacolfiltered",
+			"ariacolsortedasc", "ariacolsorteddes", "ariafixedcolumn", "ariainvalid", "ariaselection", "ariashowcolmenu", "ariahidecolmenu",
+			"rowexpandtext", "rowcollapsetext", "rownavigatedtext", "ariarequired"
 		];
 		let $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 		assert.strictEqual($Elem.length, 1, "Hidden Text Area available");

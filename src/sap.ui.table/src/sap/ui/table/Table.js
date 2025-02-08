@@ -3306,7 +3306,8 @@ sap.ui.define([
 
 	Table.prototype.setBusy = function(bBusy) {
 		const bOldBusyState = this.getBusy();
-		const vReturn = Control.prototype.setBusy.call(this, bBusy, "sapUiTableGridCnt");
+		const sBusySection = this.getCreationRow() ? "sapUiTableGridCnt" : "sapUiTableCnt";
+		const vReturn = Control.prototype.setBusy.call(this, bBusy, sBusySection);
 		const bNewBusyState = this.getBusy();
 
 		if (bOldBusyState !== bNewBusyState) {

@@ -854,9 +854,7 @@ sap.ui.define([
 		 */
 		Tokenizer.prototype.onAfterRendering = function() {
 			var sRenderMode = this.getRenderMode();
-			var aSelectedTokens = this.getSelectedTokens();
-			var aTokens = this.getTokens();
-			var oTokenToFocus = (aSelectedTokens.length && aSelectedTokens[0]) || (aTokens && aTokens[0]);
+			var oTokenToFocus = this._getTokenToFocus();
 
 			this._oIndicator = this.$().find(".sapMTokenizerIndicator");
 
@@ -868,13 +866,16 @@ sap.ui.define([
 			this._useCollapsedMode(sRenderMode);
 			this._registerResizeHandler();
 
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() && this.getTokens().length) {
 				this.getTokens().forEach(function(oToken) {
+					if (!oToken.getDomRef()) {
+						return;
+					}
 					oToken.getDomRef().setAttribute("tabindex", "-1");
 				});
 			}
 
-			if (oTokenToFocus && this.getEffectiveTabIndex()) {
+			if (oTokenToFocus && oTokenToFocus.getDomRef() && this.getEffectiveTabIndex()) {
 				oTokenToFocus.getDomRef().setAttribute("tabindex", "0");
 			}
 
@@ -913,6 +914,16 @@ sap.ui.define([
 					this._oTokensWidthMap[oToken.getId()] = oToken.$().outerWidth(true);
 				}
 			}, this);
+		};
+
+		/**
+		 * Returns the first selected visible token or if there is none - the first visible token.
+		 *
+		 * @private
+		 */
+		Tokenizer.prototype._getTokenToFocus = function() {
+			var aVisibleTokens = this._getVisibleTokens();
+			return aVisibleTokens.find((oToken) => oToken.getSelected()) || aVisibleTokens[0];
 		};
 
 		/**

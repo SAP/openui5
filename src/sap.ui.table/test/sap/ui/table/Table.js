@@ -1,6 +1,6 @@
 sap.ui.define([
-  "sap/ui/table/Table",
   "sap/m/Title",
+  "sap/ui/table/Table",
   "sap/m/IllustratedMessage",
   "sap/m/IllustratedMessageType",
   "sap/m/Button",
@@ -33,8 +33,8 @@ sap.ui.define([
   "sap/m/FlexItemData",
   "sap/base/Log"
 ], function(
-  Table,
   Title,
+  Table,
   IllustratedMessage,
   IllustratedMessageType,
   Button,
@@ -84,11 +84,13 @@ sap.ui.define([
 	  }
   }
 
+  const oTitle = new Title({text: "Title of the Table", titleStyle: "H3"});
   const oTable = new Table({
-	  extension: new Title({text: "Title of the Table", titleStyle: "H3"}),
+	  extension: oTitle,
 	  footer: "Footer of the Table",
 	  rowMode: "Auto",
 	  firstVisibleRow: 1,
+	  ariaLabelledBy: oTitle,
 	  noData: new IllustratedMessage({
 		  illustrationType: IllustratedMessageType.NoSearchResults,
 		  title: "No Items found",

@@ -53,6 +53,7 @@ sap.ui.define([
 	const getColumnHeader = window.getColumnHeader;
 	const getRowHeader = window.getRowHeader;
 	const getRowAction = window.getRowAction;
+	const getRowActionHeader = window.getRowActionHeader;
 	const getSelectAll = window.getSelectAll;
 	const iNumberOfRows = window.iNumberOfRows;
 	const checkFocus = window.checkFocus;
@@ -1136,6 +1137,8 @@ sap.ui.define([
 		simulateTabEvent(oElem, true);
 		oElem = checkFocus(getRowAction(1), assert);
 		simulateTabEvent(oElem, true);
+		oElem = checkFocus(getRowActionHeader(), assert);
+		simulateTabEvent(oElem, true);
 		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
@@ -1387,18 +1390,16 @@ sap.ui.define([
 				oTarget = this.oTable.qunit.getRowActionCell(0);
 			}
 
-			this.triggerKey(Key.Arrow.RIGHT, oTarget, oTarget);
 			this.triggerKey(Key.Arrow.UP, oTarget, oTarget);
 
-			// The row action column header cell should not be accessible by keyboard navigation.
+			// The row action column header cell should be accessible by keyboard navigation.
 			if (bHasColumnHeaders && bHasRowActions) {
-				this.triggerKey(Key.Arrow.RIGHT, oTarget, oTarget);
-				this.triggerKey(Key.Arrow.DOWN, oTarget, this.oTable.qunit.getDataCell(0, -1));
-				this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getDataCell(0, -1), this.oTable.qunit.getRowActionCell(0));
+				this.triggerKey(Key.Arrow.RIGHT, oTarget, this.oTable.qunit.getRowActionHeaderCell());
+				this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getRowActionHeaderCell(), this.oTable.qunit.getRowActionCell(0));
 
 				oTarget = this.oTable.qunit.getRowActionCell(0);
 				this.triggerKey(Key.Arrow.RIGHT, oTarget, oTarget);
-				this.triggerKey(Key.Arrow.UP, oTarget, oTarget);
+				this.triggerKey(Key.Arrow.UP, oTarget, this.oTable.qunit.getRowActionHeaderCell());
 			}
 
 			for (i = (bHasColumnHeaders && !bHasRowActions) ? 0 : 1; i < iRowCount; i++) {
@@ -1565,10 +1566,10 @@ sap.ui.define([
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
 		await this.oTable.qunit.whenRenderingFinished();
 
-		this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(-1));
+		this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getRowActionHeaderCell());
 		this.triggerKey(Key.Arrow.RIGHT,
 			document.getElementById(this.oTable.qunit.getColumnHeaderCell(-1).getAttribute("id") + "_1"),
-			document.getElementById(this.oTable.qunit.getColumnHeaderCell(-1).getAttribute("id") + "_1"));
+			this.oTable.qunit.getRowActionHeaderCell());
 		this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(0));
 	});
 
@@ -2992,7 +2993,7 @@ sap.ui.define([
 		const iRowCount = this.oTable._getRowCounts().count;
 
 		// *HOME* -> First Row Action
-		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(0));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionHeaderCell());
 
 		// *END* -> Last row (scrolled to bottom)
 		this.triggerKey(Key.END, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(-1));
@@ -3003,7 +3004,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 
 		// *HOME* -> First Row Action
-		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(-1), this.oTable.qunit.getRowActionCell(0));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(-1), this.oTable.qunit.getRowActionHeaderCell());
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 
 		// Last row -> *END* -> Last row (scrolled to bottom)
@@ -3029,7 +3030,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iNonEmptyRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 
 		// *HOME* -> First Row Action
-		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1), this.oTable.qunit.getRowActionCell(0));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(iNonEmptyRowCount - 1), this.oTable.qunit.getRowActionHeaderCell());
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 
 		// Empty area - Last row -> *HOME* -> First row
@@ -3078,7 +3079,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(mRowCounts.fixedTop), this.oTable.qunit.getRowActionCell(0));
 
 		// *HOME* -> First Row Action
-		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(0));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionHeaderCell());
 
 		// Empty area - Last row -> *HOME* -> Scrollable area - First row
 		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(mRowCounts.count - 1), this.oTable.qunit.getRowActionCell(mRowCounts.fixedTop));
@@ -3135,7 +3136,7 @@ sap.ui.define([
 		const iLastScrollableIndex = mRowCounts.count - mRowCounts.fixedBottom - 1;
 
 		// *HOME* -> First Row Action
-		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(0));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionHeaderCell());
 
 		// *END* -> Scrollable area - Last row (scrolled to bottom)
 		this.triggerKey(Key.END, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(iLastScrollableIndex));
@@ -3162,7 +3163,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(mRowCounts.fixedTop), this.oTable.qunit.getRowActionCell(0));
 
 		// *HOME* -> First Row Action
-		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(0));
+		this.triggerKey(Key.HOME, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionHeaderCell());
 	});
 
 	QUnit.module("Navigation > Shift+Home & Shift+End", {

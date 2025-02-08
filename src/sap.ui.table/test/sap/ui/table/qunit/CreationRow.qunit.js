@@ -151,7 +151,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Horizontal scrollbar position in the DOM", async function(assert) {
-		const sBusySection = "sapUiTableGridCnt";
+		let sBusySection = "sapUiTableGridCnt";
 
 		this.oTable.setCreationRow(this.oCreationRow);
 		await this.oTable.qunit.whenRenderingFinished();
@@ -160,18 +160,21 @@ sap.ui.define([
 			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
 
 		this.oCreationRow.setVisible(false);
+		sBusySection = "sapUiTableCnt";
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.ok(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After making the creation row invisible,"
 			+ " the horizontal scrollbar is rendered inside the element that is covered by the busy indicator.");
 
 		this.oCreationRow.setVisible(true);
+		sBusySection = "sapUiTableGridCnt";
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.notOk(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After making the creation row visible,"
 			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
 
 		this.oTable.setCreationRow();
+		sBusySection = "sapUiTableCnt";
 		await this.oTable.qunit.whenRenderingFinished();
 		this.oCreationRow.setVisible(false);
 		this.oTable.setCreationRow(this.oCreationRow);
