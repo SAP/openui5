@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/Element",
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/qunit/rowmodes/shared/FixedRowHeight",
 	"sap/ui/table/qunit/rowmodes/shared/RowCountConstraints",
@@ -17,6 +18,7 @@ sap.ui.define([
 ], function(
 	Title,
 	Element,
+	InvisibleMessage,
 	TableQUnitUtils,
 	FixedRowHeightTest,
 	RowCountConstraintsTest,
@@ -86,7 +88,7 @@ sap.ui.define([
 			oTable.getRowMode().setRowCount(10);
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Increased row count: Method to get contexts called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(10, 10, 100), "Decreased row count: The call considers the row count");
+			assert.ok(oGetContextsSpy.calledWithExactly(10, 10, 100), "Increased row count: The call considers the row count");
 
 			oTable.setFirstVisibleRow(100);
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
@@ -173,6 +175,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Drag&Drop", function(assert) {
+		const oAnnounceChangeSpy = sinon.spy(InvisibleMessage.prototype, "announce");
 		const oResizerDomRef = this.oTable.getDomRef("heightResizer");
 		const oMode = this.oTable.getRowMode();
 
@@ -205,21 +208,40 @@ sap.ui.define([
 		assert.equal(oMode.getActualRowCount(), 12, "Row count after resize");
 		assert.notOk(oResizerDomRef.classList.contains("sapUiTableHeightResizerActive"), "The resizer is not active");
 		assert.equal(oResizerDomRef.style.top, "", "Top position is set to empty");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [12])),
+			"Resize is announced with the correct number of rows");
+		oAnnounceChangeSpy.restore();
 		fnTestTextSelection(false);
 	});
 
 	QUnit.test("Auto-resize", function(assert) {
+		const oAnnounceChangeSpy = sinon.spy(InvisibleMessage.prototype, "announce");
 		const oResizerDomRef = this.oTable.getDomRef("heightResizer");
 		const oMode = this.oTable.getRowMode();
 		oMode.setMaxRowCount(15);
 
-		assert.equal(oMode.getActualRowCount(), 10, "Initial row count");
+		let iRowCount = 10;
+		assert.equal(oMode.getActualRowCount(), iRowCount, "Initial row count");
 		qutils.triggerMouseEvent(oResizerDomRef, "dblclick");
-		assert.equal(oMode.getActualRowCount(), oMode.getMaxRowCount(), "Table is auto-resized to maxRowCount");
+		iRowCount = oMode.getMaxRowCount();
+		assert.equal(oMode.getActualRowCount(), iRowCount, "Table is auto-resized to maxRowCount");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount])),
+			"Resize is announced with the correct number of rows");
+		oAnnounceChangeSpy.resetHistory();
+
 		qutils.triggerMouseEvent(oResizerDomRef, "dblclick");
-		assert.equal(oMode.getActualRowCount(), oMode.getMinRowCount(), "Table is auto-resized to minRowCount");
+		iRowCount = oMode.getMinRowCount();
+		assert.equal(oMode.getActualRowCount(), iRowCount, "Table is auto-resized to minRowCount");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount])),
+			"Resize is announced with the correct number of rows");
+		oAnnounceChangeSpy.resetHistory();
+
 		qutils.triggerMouseEvent(oResizerDomRef, "dblclick");
-		assert.equal(oMode.getActualRowCount(), 10, "Table is auto-resized to initial row count");
+		iRowCount = 10;
+		assert.equal(oMode.getActualRowCount(), iRowCount, "Table is auto-resized to initial row count");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount])),
+			"Resize is announced with the correct number of rows");
+		oAnnounceChangeSpy.restore();
 	});
 
 	QUnit.test("Context menu", function(assert) {
@@ -270,6 +292,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Keyboard interaction", function(assert) {
+		const oAnnounceChangeSpy = sinon.spy(InvisibleMessage.prototype, "announce");
 		const oResizerDomRef = this.oTable.getDomRef("heightResizer");
 		const oMode = this.oTable.getRowMode();
 		oMode.setMaxRowCount(15);
@@ -279,16 +302,31 @@ sap.ui.define([
 		qutils.triggerKeydown(oResizerDomRef, KeyCodes.ARROW_UP);
 		iRowCount--;
 		assert.equal(oMode.getActualRowCount(), iRowCount, "On ArrowUp press row count decreases by 1");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount])),
+			"Resize is announced with the correct number of rows");
+		oAnnounceChangeSpy.resetHistory();
 
 		qutils.triggerKeydown(oResizerDomRef, KeyCodes.ARROW_DOWN);
 		iRowCount++;
 		assert.equal(oMode.getActualRowCount(), iRowCount, "On ArrowDown press row count increases by 1");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount])),
+			"Resize is announced with the correct number of rows");
+		oAnnounceChangeSpy.resetHistory();
 
 		qutils.triggerKeydown(oResizerDomRef, KeyCodes.HOME);
-		assert.equal(oMode.getActualRowCount(), oMode.getMinRowCount(), "On Home press row count decreases to minRowCount");
+		iRowCount = oMode.getMinRowCount();
+		assert.equal(oMode.getActualRowCount(), iRowCount, "On Home press row count decreases to minRowCount");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount])),
+			"Resize is announced with the correct number of rows");
 
+		oAnnounceChangeSpy.resetHistory();
 		qutils.triggerKeydown(oResizerDomRef, KeyCodes.END);
-		assert.equal(oMode.getActualRowCount(), oMode.getMaxRowCount(), "On End press row count increases to maxRowCount");
+		iRowCount = oMode.getMaxRowCount();
+		assert.equal(oMode.getActualRowCount(), iRowCount, "On End press row count increases to maxRowCount");
+		assert.ok(oAnnounceChangeSpy.calledOnceWithExactly(TableUtils.getResourceText("TBL_RSZ_RESIZED", [iRowCount])),
+			"Resize is announced with the correct number of rows");
+
+		oAnnounceChangeSpy.restore();
 	});
 
 	FixedRowHeightTest.registerTo(QUnit);

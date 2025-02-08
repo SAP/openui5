@@ -79,7 +79,7 @@ sap.ui.define([
 	  editable: false,
 	  width: "400px",
 	  tokens: [
-		  new Token({text: "Token 1", key: "0001"}),
+		  new Token({text: "Token 1", key: "0001", visible: false}),
 		  new Token({text: "Token 2", key: "0002"}),
 		  new Token({text: "Token 3", key: "0003"}),
 		  new Token({text: "Token 4 - long text example", key: "0004"}),

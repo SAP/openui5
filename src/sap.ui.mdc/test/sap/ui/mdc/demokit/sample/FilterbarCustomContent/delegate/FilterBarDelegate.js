@@ -3,12 +3,13 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
 	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/field/ConditionsType",
 	"sap/m/Slider",
 	"sap/m/Token",
 	"sap/m/SegmentedButtonItem",
 	"../controls/CustomSegmentedButton",
 	"../controls/CustomMultiInput"
-], function (FilterBarDelegate, JSONPropertyInfo, FilterField, Slider, Token, SegmentedButtonItem, CustomSegmentedButton, CustomMultiInput) {
+], function (FilterBarDelegate, JSONPropertyInfo, FilterField, ConditionsType, Slider, Token, SegmentedButtonItem, CustomSegmentedButton, CustomMultiInput) {
 	"use strict";
 
 	const JSONFilterBarDelegate = Object.assign({}, FilterBarDelegate);
@@ -21,18 +22,18 @@ sap.ui.define([
 
 		if (sId.includes("numberWords")) {
 			oContentEdit = new Slider({
-				value: "{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}",
+				value: {path: '$field>/conditions', type: new ConditionsType()},
 				min: 0,
 				max: 100000
 			});
 		} else if (sId.includes("descr")) {
 			oContentEdit = new CustomMultiInput({
-				value: "{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}",
+				value: {path: '$field>/conditions', type: new ConditionsType()},
 				tokens: {
 					path: '$field>/conditions',
 					template: new Token({
-						text: "{path: '$field>', type: 'sap.ui.mdc.field.ConditionType'}",
-						key: "{path: '$field>', type: 'sap.ui.mdc.field.ConditionType'}"
+						text: {path: '$field>', type: new ConditionsType()},
+						key: {path: '$field>', type: new ConditionsType()}
 					})
 				}
 			});

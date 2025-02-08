@@ -35,7 +35,7 @@ sap.ui.define([
 
 		oRm.openStart("div", oCreationRow);
 		oRm.attr("data-sap-ui-fastnavgroup", "true");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "CREATIONROW", {creationRow: oCreationRow});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "CreationRow", {creationRow: oCreationRow});
 		oRm.class("sapUiTableCreationRow");
 		oRm.openEnd();
 
@@ -109,7 +109,7 @@ sap.ui.define([
 		const oCreationRow = oTable.getCreationRow();
 
 		oRm.openStart("table");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "CREATIONROW_TABLE");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "Presentation");
 		oRm.class("sapUiTableCtrl");
 		oRm.style(bFixedTable ? "width" : "min-width", oTable._getColumnsWidth(iStartColumnIndex, iEndColumnIndex) + "px");
 		oRm.openEnd();

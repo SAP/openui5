@@ -72,10 +72,11 @@ sap.ui.define([
 		ROWHEADER: 1 << 3,
 		ROWACTION: 1 << 4,
 		COLUMNROWHEADER: 1 << 5,
-		PSEUDO: 1 << 6
+		ROWACTIONCOLUMNHEADER: 1 << 6,
+		PSEUDO: 1 << 7
 	};
 	CELLTYPE.ANYCONTENTCELL = CELLTYPE.ROWHEADER | CELLTYPE.DATACELL | CELLTYPE.ROWACTION;
-	CELLTYPE.ANYCOLUMNHEADER = CELLTYPE.COLUMNHEADER | CELLTYPE.COLUMNROWHEADER;
+	CELLTYPE.ANYCOLUMNHEADER = CELLTYPE.COLUMNHEADER | CELLTYPE.COLUMNROWHEADER | CELLTYPE.ROWACTIONCOLUMNHEADER;
 	CELLTYPE.ANYROWHEADER = CELLTYPE.ROWHEADER | CELLTYPE.COLUMNROWHEADER;
 	CELLTYPE.ANY = CELLTYPE.ANYCONTENTCELL | CELLTYPE.ANYCOLUMNHEADER;
 
@@ -364,7 +365,8 @@ sap.ui.define([
 				return false;
 			}
 
-			return oTable.getDomRef().querySelector('[id="' + oTable.getId() + '-sapUiTableGridCnt"] > .sapUiLocalBusyIndicator') != null;
+			const sSelector = oTable.getCreationRow() ? "-sapUiTableGridCnt" : "-sapUiTableCnt";
+			return oTable.getDomRef().querySelector('[id="' + oTable.getId() + sSelector + '"] > .sapUiLocalBusyIndicator') != null;
 		},
 
 		/**
@@ -788,6 +790,11 @@ sap.ui.define([
 			} else if ($Cell.hasClass("sapUiTableRowActionCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.ROWACTION;
 				oCellInfo.rowIndex = parseInt($Cell.parent().attr("data-sap-ui-rowindex"));
+				oCellInfo.columnIndex = -2;
+				oCellInfo.columnSpan = 1;
+
+			} else if ($Cell.hasClass("sapUiTableRowActionHeaderCell")) {
+				oCellInfo.type = TableUtils.CELLTYPE.ROWACTIONCOLUMNHEADER;
 				oCellInfo.columnIndex = -2;
 				oCellInfo.columnSpan = 1;
 

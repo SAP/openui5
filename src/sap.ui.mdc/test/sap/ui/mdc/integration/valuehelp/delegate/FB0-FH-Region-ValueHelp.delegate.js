@@ -20,7 +20,8 @@ sap.ui.define([
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
-	'sap/ui/model/odata/v4/OPropertyKeyBinding'
+	'sap/ui/model/odata/v4/OPropertyKeyBinding',
+	"sap/ui/model/odata/type/String"
 ], function(
 	ODataV4ValueHelpDelegate,
 	Element,
@@ -39,7 +40,8 @@ sap.ui.define([
 	OperatorName,
 	StateUtil,
 	deepEqual,
-	OPropertyKeyBinding
+	OPropertyKeyBinding,
+	StringType
 ) {
 	"use strict";
 
@@ -82,9 +84,9 @@ sap.ui.define([
 						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
-								new Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"}),
-								new Text({text: "{path: 'country_code', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: {path: 'code', type: new StringType()}}),
+								new Text({text: {path: 'text', type: new StringType()}}),
+								new Text({text: {path: 'country_code', type: new StringType()}})
 							]
 						})
 					}
@@ -157,9 +159,9 @@ sap.ui.define([
 					template : new ColumnListItem({
 						type: "Active",
 						cells: [
-							new Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
-							new Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"}),
-							new Text({text: "{path: 'country_code', type:'sap.ui.model.odata.type.String'}"})
+							new Text({text: {path: 'code', type: new StringType()}}),
+							new Text({text: {path: 'text', type: new StringType()}}),
+							new Text({text: {path: 'country_code', type: new StringType()}})
 						]
 					})
 				}
