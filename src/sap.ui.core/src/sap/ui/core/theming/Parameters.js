@@ -618,27 +618,6 @@ sap.ui.define([
 			sTheme = Theming.getTheme();
 		}
 
-		// Parameters.get() without arguments returns
-		// copy of complete default parameter set
-		if (arguments.length === 0) {
-			Log.warning(
-				"[FUTURE FATAL] Legacy variant usage of sap.ui.core.theming.Parameters.get API detected. Do not use the Parameters.get() API to retrieve ALL theming parameters, " +
-				"as this will lead to unwanted synchronous requests. " +
-				"Use the asynchronous API variant instead and retrieve a fixed set of parameters.",
-				"LegacyParametersGet",
-				"sap.ui.support",
-				function() { return { type: "LegacyParametersGet" }; }
-			);
-
-			// first try to load all pending parameters
-			loadPendingLibraryParameters();
-
-			// retrieve parameters
-			// optionally might also trigger a sync JSON request, if a library was loaded but not parsed yet
-			var oParams = getParameters();
-			return Object.assign({}, oParams["default"]);
-		}
-
 		if (!vName) {
 			return undefined;
 		}

@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/FilterField",
