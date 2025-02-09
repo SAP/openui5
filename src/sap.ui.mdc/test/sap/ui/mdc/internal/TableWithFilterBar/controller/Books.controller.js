@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/FilterBar",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/MessageToast",
