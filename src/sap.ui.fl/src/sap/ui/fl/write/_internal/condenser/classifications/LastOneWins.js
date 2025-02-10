@@ -18,11 +18,17 @@ sap.ui.define([
 		 */
 		addToChangesMap(mProperties, oCondenserInfo, oChange) {
 			if (!mProperties[oCondenserInfo.uniqueKey]) {
-				mProperties[oCondenserInfo.uniqueKey] = [oChange];
+				oCondenserInfo.change = oChange;
+				mProperties[oCondenserInfo.uniqueKey] = oCondenserInfo;
 				oChange.condenserState = "select";
 			} else {
+				mProperties[oCondenserInfo.uniqueKey].oldestChange = oChange;
 				oChange.condenserState = "delete";
 			}
+		},
+
+		getChangesFromMap(mObjects, sUniqueKey) {
+			return Object.values(mObjects[sUniqueKey]).map((oCondenserInfo) => oCondenserInfo.change);
 		}
 	};
 });

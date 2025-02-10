@@ -168,7 +168,33 @@ sap.ui.define([
 		await applyChangeSequentially(this.aChanges);
 	}
 
-	function checkInitialStateAfterRevert(assert) {
+	function waitForInitialize(oGroupElement) {
+		return new Promise(function(resolve) {
+			if (!oGroupElement.getLabelText()) {
+				oGroupElement.getFields()[0].attachEventOnce("initialise", resolve);
+			} else {
+				resolve();
+			}
+		});
+	}
+
+	async function fetchLabels() {
+		const oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+		const aGroups = oSmartForm.getGroups();
+		const aFirstGroupElements = aGroups[0].getGroupElements();
+		await Promise.all([
+			waitForInitialize(aFirstGroupElements[0]),
+			waitForInitialize(aFirstGroupElements[1]),
+			waitForInitialize(aFirstGroupElements[2])
+		]);
+		return {
+			[sNameFieldId]: aFirstGroupElements[0].getLabelText(),
+			[sVictimFieldId]: aFirstGroupElements[1].getLabelText(),
+			[sCompanyCodeFieldId]: aFirstGroupElements[2].getLabelText()
+		};
+	}
+
+	function checkInitialStateAfterRevert(assert, oLabels) {
 		assert.ok(true, "after the test, the Initial UI is shown again");
 		const oSmartForm = oAppComponent.byId(sLocalSmartFormId);
 		const aGroups = oSmartForm.getGroups();
@@ -189,6 +215,23 @@ sap.ui.define([
 			getControlSelectorId(sCompanyCodeFieldId),
 			getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId
 		);
+		if (oLabels) {
+			assert.strictEqual(
+				aFirstGroupElements[0].getLabelText(),
+				oLabels[sNameFieldId],
+				"the label is correct after revert"
+			);
+			assert.strictEqual(
+				aFirstGroupElements[1].getLabelText(),
+				oLabels[sVictimFieldId],
+				"the label is correct after revert"
+			);
+			assert.strictEqual(
+				aFirstGroupElements[2].getLabelText(),
+				oLabels[sCompanyCodeFieldId],
+				"the label is correct after revert"
+			);
+		}
 		const aSecondGroupElements = aGroups[1].getGroupElements();
 		assert.strictEqual(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
 		assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), `${getMessage(sAffectedControlMgs, undefined, 0)}SpecificFlexibility`);
@@ -200,14 +243,19 @@ sap.ui.define([
 			oComponentContainer = await RtaQunitUtils.renderTestAppAtAsync("qunit-fixture");
 			oAppComponent = oComponentContainer.getComponentInstance();
 		},
-		beforeEach() {
+		async beforeEach() {
 			this.aChanges = [];
 			this.bSkipRevertOnEnd = false;
+			try {
+				this.oLabels = await fetchLabels();
+			} catch (error) {
+				this.bSkipLabelCheck = true;
+			}
 		},
 		async afterEach(assert) {
 			if (!this.bSkipRevertOnEnd) {
 				await revertMultipleChanges(this.aChanges);
-				checkInitialStateAfterRevert(assert);
+				checkInitialStateAfterRevert(assert, this.bSkipLabelCheck ? null : this.oLabels);
 			}
 			sandbox.restore();
 		},
@@ -296,6 +344,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("rename / combine / split", async function(assert) {
+			this.bSkipLabelCheck = true;
 			const aRemainingChanges = await loadApplyCondenseChanges.call(this, "renameSourceSelectorCombineRenameSplitChanges.json", 4, 3, assert);
 			assert.strictEqual(aRemainingChanges[0].getChangeType(), COMBINE_CHANGE_TYPE, sChangeTypeMsg + COMBINE_CHANGE_TYPE);
 			assert.strictEqual(aRemainingChanges[1].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);

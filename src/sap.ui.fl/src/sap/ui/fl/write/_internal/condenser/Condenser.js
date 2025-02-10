@@ -10,9 +10,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
-	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
@@ -32,9 +30,7 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Element,
-	DescriptorChangeTypes,
 	ChangesUtils,
-	AppDescriptorChange,
 	FlexObject,
 	States,
 	UIChange,
@@ -495,6 +491,21 @@ sap.ui.define([
 		});
 	}
 
+	function updateRevertData(mReducedChanges) {
+		for (const sId in mReducedChanges) {
+			for (const sClassification of ["lastOneWins", "update"]) {
+				const oUniqueKeys = ObjectPath.get([sId, CondenserUtils.NOT_INDEX_RELEVANT, sClassification], mReducedChanges);
+				if (oUniqueKeys) {
+					for (const oCondenserInfo of Object.values(oUniqueKeys)) {
+						if (oCondenserInfo.oldestChange?.getRevertData) {
+							oCondenserInfo.change.setRevertData(oCondenserInfo.oldestChange.getRevertData());
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Adding a change of the same classification to the map will only add it as updateChange to the condenser info,
 	 * which means that the condenser info holds the first (updateChange) and the last (change) change of the same classification.
@@ -590,6 +601,10 @@ sap.ui.define([
 		Measurement.start("Condenser_defineMaps", "defining of maps - CondenserClass", ["sap.ui.fl", "Condenser"]);
 		await defineMaps(oAppComponent, mReducedChanges, mUIReconstructions, aAllIndexRelatedChanges, aCondensableChanges);
 		Measurement.end("Condenser_defineMaps");
+
+		// for Update and LastOneWins changes only the last change is kept, but the revert data of that change does not revert
+		// to the initial state of the control. Thus we need to update the revert data with the oldest change per unique key
+		updateRevertData(mReducedChanges);
 
 		const bUnclassifiedChanges = mReducedChanges[UNCLASSIFIED];
 		if (!bUnclassifiedChanges) {
