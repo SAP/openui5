@@ -82,5 +82,20 @@
         "text": " sap.uxap.ObjectPageHeaderContent: correct box-shadow styles"
       }
     ]
+  },
+  "1.120.26": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "c4368b951ddbe204499b6c67a40c972b2fa60af8",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Update ARIA role for anchor bar buttons"
+      },
+      {
+        "id": "82f990dcd01672dbeab814adacaddb43230f476e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Calc FIX"
+      }
+    ]
   }
 }

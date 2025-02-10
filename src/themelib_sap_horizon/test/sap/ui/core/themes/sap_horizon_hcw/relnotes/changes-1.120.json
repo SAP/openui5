@@ -286,5 +286,15 @@
         "text": " sap.m.Tokenizer: Prevent focus outline overflow"
       }
     ]
+  },
+  "1.120.26": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "54f9d9fc97815617bef70c8a3240970b90ff2635",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus inverted has correct style when placed in HBox"
+      }
+    ]
   }
 }

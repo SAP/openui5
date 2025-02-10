@@ -1071,5 +1071,45 @@
         "text": " sap.m.TimePicker: displayFormat is taken into account when formatting the output in 24-hour mode support"
       }
     ]
+  },
+  "1.120.26": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "d0d6f777973650dc41ffd3cad87b9bfb4ee5823f",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: User input not overridden"
+      },
+      {
+        "id": "471430f314ccb8bf438125351d18c17f72d1e8b1",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Appointments text is resized depending of the scale factor now"
+      },
+      {
+        "id": "1a0a0fd87582ac0e9d7ad820f5328ad8a9bb334f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: inverted status is correctly displayed in ObjectListItem"
+      },
+      {
+        "id": "1dc88149a9858795dcf378f9378233685f69f551",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Added optional chaining"
+      },
+      {
+        "id": "f9c013a84f484f4f1ed5a8b25b79c88757f6ea23",
+        "type": "FIX",
+        "text": " sap.m.Input: preserve value after rerendering of password field"
+      },
+      {
+        "id": "abf313e45b8ec92a557fbaa64b2437af1bc28a15",
+        "type": "FIX",
+        "text": " sap.m.Select: Selected item fixed"
+      },
+      {
+        "id": "99b1404bacc684d7e9cd6623f70784f53a6c4a7d",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Removed maximum width of the MenuButton"
+      }
+    ]
   }
 }

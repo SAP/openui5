@@ -240,5 +240,20 @@
         "text": " sap.f.DynamicPage: Scrollbar issue fixed"
       }
     ]
+  },
+  "1.120.26": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "d103c16f5cc10e22ea7a48091bced9b94bc11939",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: errors prevented"
+      },
+      {
+        "id": "699b25a858a6a684dd9d1135096e586ec59b519d",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed failure to expand the header"
+      }
+    ]
   }
 }

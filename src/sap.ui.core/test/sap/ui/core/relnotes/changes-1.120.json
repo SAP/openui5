@@ -933,5 +933,15 @@
         "text": " core/Icon: fix keyboard support for keys \"Space\" and \"Enter\""
       }
     ]
+  },
+  "1.120.26": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "c060301c6c269166eee2d3162b4c65f423aa2fe7",
+        "type": "FIX",
+        "text": " sap/base/util/now: Migrate performance.timing"
+      }
+    ]
   }
 }
