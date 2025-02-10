@@ -233,5 +233,11 @@ sap.ui.define([
 		return "annotation";
 	};
 
+	AnnotationPlugin.prototype.destroy = function(...args) {
+		Plugin.prototype.destroy.apply(this, args);
+		this._oDialog.destroy();
+		delete this._oDialog;
+	};
+
 	return AnnotationPlugin;
 });
