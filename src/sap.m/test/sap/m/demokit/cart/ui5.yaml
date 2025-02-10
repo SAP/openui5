@@ -4,7 +4,7 @@ metadata:
 type: application
 framework:
   name: OpenUI5
-  version: "1.120.26-SNAPSHOT" #MainVersion#
+  version: "1.120.26" #MainVersion#
   libraries:
     - name: sap.m
     - name: sap.f
