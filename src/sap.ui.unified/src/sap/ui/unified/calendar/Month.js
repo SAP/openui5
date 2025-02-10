@@ -4,11 +4,12 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
-	"sap/base/i18n/Formatting",
+	'sap/base/i18n/Formatting',
+	'sap/base/i18n/date/CalendarType',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
+	'sap/ui/core/Element',
+	'sap/ui/core/Lib',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -19,17 +20,17 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
-	"./MonthRenderer",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
+	'./MonthRenderer',
+	'sap/ui/dom/containsOrEquals',
+	'sap/ui/events/KeyCodes',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/InvisibleMessage',
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/date/CalendarUtils",
+	'sap/ui/core/date/CalendarUtils',
 	'sap/ui/core/date/UI5Date',
-	"sap/base/Log"
+	'sap/base/Log'
 ], function(
 	Formatting,
+	CalendarType,
 	Control,
 	Device,
 	Element,
@@ -49,7 +50,6 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	InvisibleMessage,
-	CalendarWeekNumbering,
 	CalendarDateUtils,
 	UI5Date,
 	Log
@@ -395,6 +395,14 @@ sap.ui.define([
 		} else {
 			this._markDatesBetweenStartAndHoveredDate(iDate1, iDate2);
 		}
+	};
+
+	Month.prototype._getCalendarWeekNumbering = function () {
+		if (this.isPropertyInitial("calendarWeekNumbering")) {
+			return;
+		}
+
+		return this.getCalendarWeekNumbering();
 	};
 
 	Month.prototype._markDatesBetweenStartAndHoveredDate = function(iDate1, iDate2) {
@@ -811,7 +819,7 @@ sap.ui.define([
 		}
 
 		if (iFirstDayOfWeek < 0 || iFirstDayOfWeek > 6) {
-			var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(this._getLocale()));
+			var oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this._getCalendarWeekNumbering(), new Locale(this._getLocale()));
 
 			if (oWeekConfigurationValues) {
 				iFirstDayOfWeek = oWeekConfigurationValues.firstDayOfWeek;
@@ -1677,7 +1685,7 @@ sap.ui.define([
 		var oDateFormat;
 		var iWeekNumber;
 
-		oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this._getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, oLocale);
+		oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this._getPrimaryCalendarType(), calendarWeekNumbering: this._getCalendarWeekNumbering()}, oLocale);
 
 		const bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
 
