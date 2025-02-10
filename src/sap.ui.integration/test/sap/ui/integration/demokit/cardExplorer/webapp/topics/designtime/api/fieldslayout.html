@@ -115,7 +115,7 @@
 							}
 							CardEditor.prototype._startEditor.apply(this, arguments);
 						};
-						oAdvancedEditor.attachReady(function (oEditor, i) {
+						oAdvancedEditor.attachFieldReady(function (oEditor, i) {
 							domElement.innerHTML = "";
 							oAdvancedEditor.placeAt(domElement);
 						}.bind(null, oEditor, i));
@@ -148,7 +148,7 @@
 										}
 									}
 								});
-								oEditor.attachReady(function (oEditor, i) {
+								oEditor.attachFieldReady(function (oEditor, i) {
 									aSamples[i].innerHTML = "";
 									oEditor.placeAt(aSamples[i]);
 								}.bind(null, oEditor, i));
@@ -490,13 +490,13 @@
 		},
 		"icon": {
 			"label": "Icon",
+			"type": "icon",
 			"defaultValue": "sap-icon://add",
 			"column": {
 				"hAlign": "Center",
 				"width": "4rem"
 			},
 			"cell": {
-				"type": "Icon",
 				"color": "{iconcolor}"
 			}
 		},
@@ -623,13 +623,13 @@
 		},
 		"icon": {
 			"label": "Icon",
+			"type": "icon",
 			"defaultValue": "sap-icon://add",
 			"column": {
 				"hAlign": "Center",
 				"width": "4rem"
 			},
 			"cell": {
-				"type": "Icon",
 				"color": "{iconcolor}"
 			}
 		},
@@ -898,13 +898,13 @@
 		},
 		"icon": {
 			"label": "Icon",
+			"type": "icon",
 			"defaultValue": "sap-icon://add",
 			"column": {
 				"hAlign": "Center",
 				"width": "4rem"
 			},
 			"cell": {
-				"type": "Icon",
 				"color": "{iconcolor}"
 			}
 		},
@@ -1006,13 +1006,13 @@
 		},
 		"icon": {
 			"label": "Icon",
+			"type": "icon",
 			"defaultValue": "sap-icon://add",
 			"column": {
 				"hAlign": "Center",
 				"width": "4rem"
 			},
 			"cell": {
-				"type": "Icon",
 				"color": "{iconcolor}"
 			}
 		},

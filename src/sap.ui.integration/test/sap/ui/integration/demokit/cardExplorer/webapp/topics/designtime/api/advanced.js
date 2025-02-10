@@ -162,13 +162,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"icon": {
 								"label": "Icon",
+								"type": "icon",
 								"defaultValue": "sap-icon://add",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
 								},
 								"cell": {
-									"type": "Icon",
 									"color": "{iconcolor}"
 								}
 							},
@@ -286,13 +286,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"icon": {
 								"label": "Icon",
+								"type": "icon",
 								"defaultValue": "sap-icon://add",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
 								},
 								"cell": {
-									"type": "Icon",
 									"color": "{iconcolor}"
 								}
 							},
@@ -526,13 +526,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"icon": {
 								"label": "Icon",
+								"type": "icon",
 								"defaultValue": "sap-icon://add",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
 								},
 								"cell": {
-									"type": "Icon",
 									"color": "{iconcolor}"
 								}
 							},
@@ -625,13 +625,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"icon": {
 								"label": "Icon",
+								"type": "icon",
 								"defaultValue": "sap-icon://add",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
 								},
 								"cell": {
-									"type": "Icon",
 									"color": "{iconcolor}"
 								}
 							},
