@@ -956,7 +956,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oTargetOverlay - ElementOverlay to destroy children for
 	 * @param {string} sAggregationName - Aggregation name
 	 */
-	DesignTime.prototype._destroyChildrenForAggregationBindingTemplate = function(oTargetOverlay, sAggregationName) {
+	DesignTime.prototype._destroyChildrenForAggregationBindingTemplate = async function(oTargetOverlay, sAggregationName) {
+		await Util.waitForSynced(this)();
 		const oTemplateRootOverlays = oTargetOverlay.getAggregationBindingTemplateOverlays();
 		oTemplateRootOverlays.forEach((oTemplateRootOverlay) => {
 			if (oTemplateRootOverlay.getAggregationName() === sAggregationName) {
@@ -972,7 +973,8 @@ sap.ui.define([
 	 * @returns {Promise} Resolves when whole hierarchy of children for specified ElementOverlay is created
 	 * @private
 	 */
-	DesignTime.prototype._createChildrenForAggregationBindingTemplate = function(oElementOverlay) {
+	DesignTime.prototype._createChildrenForAggregationBindingTemplate = async function(oElementOverlay) {
+		await Util.waitForSynced(this)();
 		const aAggregationNames = oElementOverlay.getAggregationNames();
 		const mParentAggregationMetadata = oElementOverlay.getDesignTimeMetadata().getData();
 		const mAggregationBindingTemplates = getAggregationBindingTemplates(oElementOverlay, aAggregationNames);
