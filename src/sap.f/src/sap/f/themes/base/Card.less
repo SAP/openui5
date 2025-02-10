@@ -103,6 +103,18 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 		border-top: @_sap_f_Card_HeaderBorder;
 		border-bottom: none;
 		border-radius: 0 0 @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius;
+
+		.sapFCardHeaderMainPart {
+			border-radius: 0;
+		}
+
+		&.sapFCardHeaderMainPartOnly .sapFCardHeaderMainPart {
+			border-radius: 0 0 @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius;
+		}
+
+		.sapFCardHeaderLastPart {
+			padding-bottom: @_sap_f_Card_ContentPadding;
+		}
 	}
 
 	.sapFCardContent {
@@ -181,7 +193,20 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 .sapFCard.sapFCardNoContent .sapFCardHeader {
 	border-bottom: none;
 	border-radius: @_sap_f_Card_BorderRadius;
-	flex-grow: 1;
+
+	&.sapFCardHeaderMainPartOnly {
+		flex-grow: 1;
+
+		.sapFCardHeaderMainPart {
+			border-radius: @_sap_f_Card_BorderRadius;
+			flex-grow: 1;
+			align-items: flex-start;
+		}
+	}
+
+	.sapFCardHeaderLastPart {
+		padding-bottom: @_sap_f_Card_ContentPadding;
+	}
 }
 
 .sapFCard.sapFCardInteractive:hover {

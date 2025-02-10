@@ -1,4 +1,7 @@
-// ${copyright}
+/*!
+ * ${copyright}
+ */
+
 sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/core/mvc/View"
