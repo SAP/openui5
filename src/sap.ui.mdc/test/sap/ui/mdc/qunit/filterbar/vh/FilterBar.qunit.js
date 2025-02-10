@@ -1,19 +1,23 @@
-/* global QUnit */
+/* global QUnit, sinon*/
 
 sap.ui.define([
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect"
+	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
+	"sap/ui/core/Lib"
 ], function (
 	FilterBar,
 	FilterBarBase,
 	Condition,
 	FilterField,
-	CollectiveSearchSelect
+	CollectiveSearchSelect,
+	Library
 ) {
 	"use strict";
+
+	const mdcMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	QUnit.module("FilterBar", {
 		beforeEach: function () {
@@ -167,5 +171,40 @@ sap.ui.define([
 		assert.ok(oCtrl === undefined, "CollectiveSearchSelect should not exist");
 	});
 
+	QUnit.test("Properties", function (assert) {
+		sinon.stub(this.oFilterBar, "getParent").returns({
+			isPropertyInitial(sName) {return true;},
+			isInvalidateSuppressed() {return false;},
+			invalidate() {}
+		});
+		return this.oFilterBar._retrieveMetadata().then(() => {
+			const aPropertyInfos = this.oFilterBar.getPropertyInfoSet();
+
+			assert.equal(aPropertyInfos?.length, 1, "One Property");
+			assert.equal(aPropertyInfos?.[0].name, "$search", "Name");
+			assert.equal(aPropertyInfos?.[0].dataType, "sap.ui.model.type.String", "dataType");
+			assert.equal(aPropertyInfos?.[0].label, mdcMessageBundle.getText("filterbar.SEARCH"), "Label");
+		});
+	});
+
+	/**
+	 *  @deprecated since 1.120.2
+	 */
+	QUnit.test("Properties using FilterFields", function (assert) {
+		sinon.stub(this.oFilterBar, "getParent").returns({
+			isPropertyInitial(sName) {return sName !== "filterFields";},
+			getFilterFields() {return "myField";},
+			isInvalidateSuppressed() {return false;},
+			invalidate() {}
+		});
+		return this.oFilterBar._retrieveMetadata().then(() => {
+			const aPropertyInfos = this.oFilterBar.getPropertyInfoSet();
+
+			assert.equal(aPropertyInfos?.length, 1, "One Property");
+			assert.equal(aPropertyInfos?.[0].name, "myField", "Name");
+			assert.equal(aPropertyInfos?.[0].dataType, "sap.ui.model.type.String", "dataType");
+			assert.equal(aPropertyInfos?.[0].label, mdcMessageBundle.getText("filterbar.SEARCH"), "Label");
+		});
+	});
 
 });
