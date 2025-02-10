@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/unified/library",
+	"sap/ui/unified/calendar/Month",
 	"sap/ui/unified/calendar/MonthRenderer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
@@ -49,6 +50,7 @@ sap.ui.define([
 	InvisibleText,
 	DateFormat,
 	unifiedLibrary,
+	Month,
 	MonthRenderer,
 	jQuery,
 	oCore,
@@ -789,6 +791,31 @@ sap.ui.define([
 		// Clean
 		oCal.destroy();
 		oAdjustYearRangeDisplaySpy.restore();
+	});
+
+	QUnit.test("CalendarWeekNumbering is correctly passed to the Month control", function (assert) {
+		// Arrange
+		const oCalendarSetMonthWeekNumberSpy = this.spy(Calendar.prototype, "_setMonthCalendarWeekNumbering");
+		const oMonthSetCalendarWeekNumberingSpy = this.spy(Month.prototype, "setCalendarWeekNumbering");
+
+		// Act
+		const oCalendar = new Calendar();
+
+		//	Assert
+		assert.equal(oCalendarSetMonthWeekNumberSpy.callCount, 1, "The _setMonthCalendarWeekNumbering method is called initially");
+		assert.equal(oMonthSetCalendarWeekNumberingSpy.callCount, 0, "The setCalendarWeekNumbering method of the Month control is not called initially with the default value");
+
+		// Act
+		oCalendar.setCalendarWeekNumbering("ISO_8601");
+
+		// Assert
+		assert.equal(oCalendarSetMonthWeekNumberSpy.callCount, 2, "The _setMonthCalendarWeekNumbering method is called twice");
+		assert.equal(oMonthSetCalendarWeekNumberingSpy.callCount, 1, "The setCalendarWeekNumbering method of the Month control is called once with the new value");
+
+		// Clean
+		oCalendar.destroy();
+		oCalendarSetMonthWeekNumberSpy.restore();
+		oMonthSetCalendarWeekNumberingSpy.restore();
 	});
 
 	QUnit.test("Month Button appearance (hidden/visible)", function (assert) {
