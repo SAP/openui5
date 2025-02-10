@@ -1,0 +1,12 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "3b0458eff391643877c5206165a90fc1a2e69ebd",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Prevent error when FCL is not rendered"
+      }
+    ]
+  }
+}

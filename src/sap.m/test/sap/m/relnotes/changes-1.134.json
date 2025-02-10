@@ -1,0 +1,27 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "c91adf90922a35a587dc7d1c59e949940a17d1b3",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: Invisible tokens related exceptions are now prevented"
+      },
+      {
+        "id": "f15b0c971784598592a12609b7d7e2a2b4a3baa1",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Named type for escapeHandler property now provided"
+      },
+      {
+        "id": "d6c72bb228c66562a8b66cebedc57a5050300a4c",
+        "type": "FIX",
+        "text": "sap.m.ValueStateMessage: max-width now is set according to specification"
+      },
+      {
+        "id": "411d4f9391b09134dce0d70fa58915ba30253d43",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: n-more popover is now not created on initial rendering"
+      }
+    ]
+  }
+}
