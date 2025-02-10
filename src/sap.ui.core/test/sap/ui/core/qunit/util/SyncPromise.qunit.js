@@ -1238,7 +1238,8 @@ sap.ui.define([
 		// code under test
 		const oResult = bShim ? SyncPromise._withResolvers() : SyncPromise.withResolvers();
 
-		assert.deepEqual(Object.keys(oResult), ["promise", "resolve", "reject"]);
+		// Note: order may be browser-specific and must not matter
+		assert.deepEqual(Object.keys(oResult).sort(), ["promise", "reject", "resolve"]);
 		assert.ok(oResult.promise instanceof SyncPromise);
 		assert.ok(oResult.promise.isPending());
 
@@ -1254,6 +1255,8 @@ sap.ui.define([
 		assert.strictEqual(oResult.promise.isFulfilled(), bResolve);
 		assert.strictEqual(oResult.promise.isRejected(), !bResolve);
 		assert.strictEqual(oResult.promise.getResult(), "~result~");
+
+		oResult.promise.caught();
 	});
 	});
 });
