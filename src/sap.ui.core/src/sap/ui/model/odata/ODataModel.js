@@ -3791,7 +3791,7 @@ sap.ui.define([
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
 				that.checkUpdate(false, false, null, true);
-			});
+			}).catch(() => { /* avoid uncaught in promise */ });
 		}
 		return this.oMetaModel;
 	};
