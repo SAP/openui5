@@ -4,15 +4,18 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/valuehelp/CollectiveSearchSelect"
+	"sap/ui/mdc/valuehelp/CollectiveSearchSelect",
+	"sap/ui/core/Lib"
 ], (
 	FilterBar,
 	FilterBarBase,
 	FilterField,
-	CollectiveSearchSelect
+	CollectiveSearchSelect,
+	Library
 ) => {
 	"use strict";
 
+	const mdcMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	let oFilterBar;
 
 	QUnit.module("FilterBar", {
@@ -274,5 +277,40 @@ sap.ui.define([
 		assert.equal(oControl, oBSField, "Control is SearchField");
 	});
 
+	QUnit.test("Properties", (assert) => {
+		sinon.stub(oFilterBar, "getParent").returns({
+			isPropertyInitial(sName) {return true;},
+			isInvalidateSuppressed() {return false;},
+			invalidate() {}
+		});
+		return oFilterBar._retrieveMetadata().then(() => {
+			const aPropertyInfos = oFilterBar.getPropertyInfoSet();
+
+			assert.equal(aPropertyInfos?.length, 1, "One Property");
+			assert.equal(aPropertyInfos?.[0].key, "$search", "Key");
+			assert.equal(aPropertyInfos?.[0].dataType, "sap.ui.model.type.String", "dataType");
+			assert.equal(aPropertyInfos?.[0].label, mdcMessageBundle.getText("filterbar.SEARCH"), "Label");
+		});
+	});
+
+	/**
+	 *  @deprecated since 1.120.2
+	 */
+	QUnit.test("Properties using FilterFields", (assert) => {
+		sinon.stub(oFilterBar, "getParent").returns({
+			isPropertyInitial(sName) {return sName !== "filterFields";},
+			getFilterFields() {return "myField";},
+			isInvalidateSuppressed() {return false;},
+			invalidate() {}
+		});
+		return oFilterBar._retrieveMetadata().then(() => {
+			const aPropertyInfos = oFilterBar.getPropertyInfoSet();
+
+			assert.equal(aPropertyInfos?.length, 1, "One Property");
+			assert.equal(aPropertyInfos?.[0].key, "myField", "Key");
+			assert.equal(aPropertyInfos?.[0].dataType, "sap.ui.model.type.String", "dataType");
+			assert.equal(aPropertyInfos?.[0].label, mdcMessageBundle.getText("filterbar.SEARCH"), "Label");
+		});
+	});
 
 });
