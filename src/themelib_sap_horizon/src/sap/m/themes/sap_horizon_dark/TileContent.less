@@ -3,16 +3,16 @@
 /* Evening Horizon theme              */
 /* ================================== */
 
-@_sap_m_TileContent_NewsContentBackgroundColor: fade(@sapTile_Background, 96);
+@_sap_m_TileContent_NewsContentBackgroundColor: @sapTile_Background;
 @_sap_m_TileContent_NewsFooterTextColor: @_sap_m_NewsContent_SubHeaderTextColor;
 
 .sapMTileCnt.News {
-	background-color: @sapTile_OverlayBackground;
+	background-color: var(--sapTile_OverlayBackground);
 	.sapMTileCntContent{
 		height: 3.625rem;
 	}
 }
 
 .sapMTileCnt.News .sapMTileCntFtrTxt {
-	color: @sapTile_OverlayForegroundColor;
+	color: var(--sapTile_OverlayForegroundColor);
 }
