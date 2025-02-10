@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/base/i18n/Formatting",
 	"sap/ui/core/Lib",
 	"sap/ui/unified/calendar/Month",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date"
 ], function(
 	Localization,
+	Formatting,
 	Library,
 	Month,
 	nextUIUpdate,
@@ -157,6 +159,42 @@ sap.ui.define([
 			// Clean
 			oMonth.destroy();
 			Localization.setLanguage(sOldLanguage);
+		});
+
+		QUnit.test("Correct application of configuration settings", async function (assert) {
+			// Act
+			const oMonth = new Month({
+					calendarWeekNumbering: "ISO_8601"
+				}).placeAt("qunit-fixture");
+			const oMonthWithoutWeekNumberConfig = new Month().placeAt("qunit-fixture");
+			const sOldLanguage = Localization.getLanguage();
+			const sOldConfiguration = Formatting.getCalendarWeekNumbering();
+
+			Localization.setLanguage("en-US");
+			Formatting.setCalendarWeekNumbering("ISO_8601");
+
+			await nextUIUpdate();
+
+			const oStartYearDate = createCalendarDate(2025,0,1);
+			const oEndYearDate = createCalendarDate(2024, 11, 30);
+
+			let iWeekNumberUsingProp = oMonth._calculateWeekNumber(oStartYearDate);
+			let iWeekNumberUsingConfig = oMonthWithoutWeekNumberConfig._calculateWeekNumber(oStartYearDate);
+
+			// Assert
+			assert.strictEqual(iWeekNumberUsingProp, iWeekNumberUsingConfig, "Week number is calculated correctly");
+
+			iWeekNumberUsingProp = oMonth._calculateWeekNumber(oEndYearDate);
+			iWeekNumberUsingConfig = oMonthWithoutWeekNumberConfig._calculateWeekNumber(oEndYearDate);
+
+			// Assert
+			assert.strictEqual(iWeekNumberUsingProp, iWeekNumberUsingConfig, "Week number is calculated correctly");
+
+			// Clean
+			oMonth.destroy();
+			oMonthWithoutWeekNumberConfig.destroy();
+			Localization.setLanguage(sOldLanguage);
+			Formatting.setCalendarWeekNumbering(sOldConfiguration);
 		});
 
 		QUnit.test("Special dates are properly displayed", async function(assert) {
