@@ -1,0 +1,162 @@
+<mvc:View
+	controllerName="sap.tnt.sample.SideNavigationOverlayMode.C"
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m" 
+	xmlns:tnt="sap.tnt"
+	xmlns:f="sap.f"
+	height="100%">
+	<App>
+		<Page id="myPage" title="Side Navigation Example" enableScrolling="true">
+			<customHeader>
+				<OverflowToolbar>
+					<Button icon="sap-icon://menu2" press=".onToggleSideNav" />
+					<Image src="./resources/sap/ui/documentation/sdk/images/logo_sap.png" height="30px" />
+					<Title text="Product Name" level="H2" />
+					<ToolbarSpacer />
+					<Button icon="sap-icon://search"/>
+					<Button icon="sap-icon://bell"/>
+					<Avatar initials="SN" displaySize="XS" />
+				</OverflowToolbar>
+			</customHeader>
+
+			<content>
+				<NavContainer id="pageContainer" initialPage="home" height="100%">
+					<pages>
+						<ScrollContainer
+							id="home"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							width="100%"
+							class="sapUiContentPadding SCROLLCONT">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." />
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page1"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							width="100%"
+							class="sapUiContentPadding SCROLLCONT">
+							<VBox renderType="Bare" justifyContent="Center" alignItems="Center">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page2"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox alignItems="Center" renderType="Bare" justifyContent="Center">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page3"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page4"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page5"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page6"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page7"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page8"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page9"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page10"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page11"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+						<ScrollContainer
+							id="page12"
+							horizontal="false"
+							vertical="true"
+							height="100%"
+							class="sapUiContentPadding">
+							<VBox justifyContent="Center" alignItems="Center" height="100%">
+								<Text/>
+							</VBox>
+						</ScrollContainer>
+					</pages>
+				</NavContainer>
+			</content>
+		</Page>
+	</App>
+</mvc:View>

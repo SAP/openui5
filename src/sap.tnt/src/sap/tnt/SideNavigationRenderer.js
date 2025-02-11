@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Lib"
-], function (Lib) {
+	"sap/ui/core/Lib",
+	"sap/tnt/library"
+], function (Lib, library) {
 	"use strict";
+
+	// shortcut for SideNavigationDesign in sap.tnt library
+	const SideNavigationDesign = library.SideNavigationDesign;
 
 	/**
 	 * SideNavigation renderer.
@@ -37,7 +41,8 @@ sap.ui.define([
 
 	SideNavigationRenderer.startSideNavigation = function (oRM, oControl) {
 		const bExpanded = oControl.getExpanded(),
-			sAriaLabel = oControl.getAriaLabel();
+			sAriaLabel = oControl.getAriaLabel(),
+			sDesign = oControl.getDesign();
 
 		oRM.openStart("nav", oControl)
 			.class("sapTntSideNavigation")
@@ -57,6 +62,10 @@ sap.ui.define([
 		if (!bExpanded) {
 			oRM.class("sapTntSideNavigationNotExpanded")
 				.class("sapTntSideNavigationNotExpandedWidth");
+		}
+
+		if (sDesign !== SideNavigationDesign.Decorated) {
+			oRM.class("sapTntSideNavigationDesignPlain");
 		}
 
 		const sWidth = oControl.getWidth();
