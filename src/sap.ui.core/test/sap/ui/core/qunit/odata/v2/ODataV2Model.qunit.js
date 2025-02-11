@@ -7163,7 +7163,7 @@ sap.ui.define([
 		this.oModel = initModel(sURI);
 		this.oModel.read("/Categories");
 		this.oModel.attachRequestCompleted(function(oRequest) {
-			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on single request.");
+			assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "true");
 			done();
 		});
 	});
@@ -7174,23 +7174,23 @@ sap.ui.define([
 
 		var firstRead = function(oRequest) {
 			this.oModel.detachBatchRequestCompleted(firstRead);
-			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on batch request.");
-			assert.equal(oRequest.getParameter("requests")[0].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on single request.");
+			assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "true");
+			assert.strictEqual(oRequest.getParameter("requests")[0].headers["sap-cancel-on-close"], "true");
 
 			this.oModel.read("/Categories(1)");
 			this.oModel.remove("/Categories(1)");
 			this.oModel.attachBatchRequestCompleted(function(oRequest) {
 				var aRequests = oRequest.getParameter("requests");
-				assert.equal(oRequest.getParameter('headers')["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on batch request.");
-				assert.equal(aRequests[0].headers["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on single request.");
-				assert.equal(aRequests[1].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on single request.");
+				assert.strictEqual(oRequest.getParameter('headers')["sap-cancel-on-close"], "false");
+				assert.strictEqual(aRequests[0].headers["sap-cancel-on-close"], "false");
+				assert.strictEqual(aRequests[1].headers["sap-cancel-on-close"], "true");
 				done();
 			});
 		}.bind(this);
 
 		this.oModel.attachMetadataLoaded(this, function() {
 			assert.strictEqual(this.spy.getCalls()[1].args[0].method, "HEAD", "Security token request found.");
-			assert.equal(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on security token request.");
+			assert.strictEqual(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], "true");
 		}.bind(this));
 		this.oModel.read("/Categories");
 		this.oModel.attachBatchRequestCompleted(firstRead);
@@ -7198,14 +7198,14 @@ sap.ui.define([
 
 	QUnit.test("Set to true via Model contructor parameter", function(assert) {
 		var done = assert.async();
-		this.oModel = initModel(sURI, {headers: {"sap-cancel-on-close": true}});
+		this.oModel = initModel(sURI, {headers: {"sap-cancel-on-close": "true"}});
 		this.oModel.refreshSecurityToken(function() {
 			assert.strictEqual(this.spy.getCalls()[1].args[0].method, "HEAD", "Security token request found.");
-			assert.equal(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on security token request.");
+			assert.strictEqual(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], "true");
 		}.bind(this));
 		this.oModel.read("/Categories");
 		this.oModel.attachRequestCompleted(function(oRequest) {
-			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on single request.");
+			assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "true");
 			done();
 		});
 	});
@@ -7213,14 +7213,14 @@ sap.ui.define([
 
 	QUnit.test("Set to false via Model contructor parameter", function(assert) {
 		var done = assert.async();
-		this.oModel = initModel(sURI, {headers: {"sap-cancel-on-close": false}});
+		this.oModel = initModel(sURI, {headers: {"sap-cancel-on-close": "false"}});
 		this.oModel.refreshSecurityToken(function() {
 			assert.strictEqual(this.spy.getCalls()[1].args[0].method, "HEAD", "Security token request found.");
-			assert.equal(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on security token request.");
+			assert.strictEqual(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], "false");
 		}.bind(this));
 		this.oModel.read("/Categories");
 		this.oModel.attachRequestCompleted(function(oRequest) {
-			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on single request.");
+			assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "false");
 			done();
 		});
 	});
@@ -7228,14 +7228,14 @@ sap.ui.define([
 	QUnit.test("Set to true via setHeader API parameter", function(assert) {
 		var done = assert.async();
 		this.oModel = initModel(sURI);
-		this.oModel.setHeaders({"sap-cancel-on-close": true});
+		this.oModel.setHeaders({"sap-cancel-on-close": "true"});
 		this.oModel.refreshSecurityToken(function() {
 			assert.strictEqual(this.spy.getCalls()[1].args[0].method, "HEAD", "Security token request found.");
-			assert.equal(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on security token request.");
+			assert.strictEqual(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], "true");
 		}.bind(this));
 		this.oModel.read("/Categories");
 		this.oModel.attachRequestCompleted(function(oRequest) {
-			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on single request.");
+			assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "true");
 			done();
 		});
 	});
@@ -7244,14 +7244,14 @@ sap.ui.define([
 	QUnit.test("Set to false via setHeader API parameter", function(assert) {
 		var done = assert.async();
 		this.oModel = initModel(sURI);
-		this.oModel.setHeaders({"sap-cancel-on-close": false});
+		this.oModel.setHeaders({"sap-cancel-on-close": "false"});
 		this.oModel.refreshSecurityToken(function() {
 			assert.strictEqual(this.spy.getCalls()[1].args[0].method, "HEAD", "Security token request found.");
-			assert.equal(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on security token request.");
+			assert.strictEqual(this.spy.getCalls()[1].args[0].headers["sap-cancel-on-close"], "false");
 		}.bind(this));
 		this.oModel.read("/Categories");
 		this.oModel.attachRequestCompleted(function(oRequest) {
-			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on single request.");
+			assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "false");
 			done();
 		});
 	});
@@ -7260,12 +7260,12 @@ sap.ui.define([
 	QUnit.test("Set to true via read API parameter", function(assert) {
 		var done = assert.async();
 		this.oModel = initModel(sURI);
-		this.oModel.read("/Categories", {headers: {"sap-cancel-on-close": true}});
+		this.oModel.read("/Categories", {headers: {"sap-cancel-on-close": "true"}});
 		this.oModel.attachRequestCompleted(function(oRequest) {
-				assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on single request.");
+				assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "true");
 				this.oModel.refreshSecurityToken(function() {
 					assert.strictEqual(this.spy.getCalls()[2].args[0].method, "HEAD", "Security token request found.");
-					assert.equal(this.spy.getCalls()[2].args[0].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on security token request.");
+					assert.strictEqual(this.spy.getCalls()[2].args[0].headers["sap-cancel-on-close"], "true");
 					done();
 			}.bind(this));
 		}.bind(this));
@@ -7274,12 +7274,12 @@ sap.ui.define([
 	QUnit.test("Set to false via read API parameter", function(assert) {
 		var done = assert.async();
 		this.oModel = initModel(sURI);
-		this.oModel.read("/Categories", {headers: {"sap-cancel-on-close": false}});
+		this.oModel.read("/Categories", {headers: {"sap-cancel-on-close": "false"}});
 		this.oModel.attachRequestCompleted(function(oRequest) {
-				assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], false, "sap-cancel-on-close header was set correctly on single request.");
+				assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "false");
 				this.oModel.refreshSecurityToken(function() {
 					assert.strictEqual(this.spy.getCalls()[2].args[0].method, "HEAD", "Security token request found.");
-					assert.equal(this.spy.getCalls()[2].args[0].headers["sap-cancel-on-close"], true, "sap-cancel-on-close header was set correctly on security token request.");
+					assert.strictEqual(this.spy.getCalls()[2].args[0].headers["sap-cancel-on-close"], "true");
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -7288,22 +7288,22 @@ sap.ui.define([
 
 	QUnit.test("Check setter priority", function(assert) {
 		var done = assert.async();
-		this.oModel = initModel(sURI, {headers: {"sap-cancel-on-close": true}});
-		this.oModel.setHeaders({"sap-cancel-on-close": false});
+		this.oModel = initModel(sURI, {headers: {"sap-cancel-on-close": "true"}});
+		this.oModel.setHeaders({"sap-cancel-on-close": "false"});
 
 		var fnFirstRead = function(oRequest) {
 			this.oModel.detachRequestCompleted(fnFirstRead);
-			assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], false, "Set header API overrides constructor parameter.");
+			assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "false");
 
 			var fnSecondRead = function(oRequest) {
 				this.oModel.detachRequestCompleted(fnSecondRead);
-				assert.equal(oRequest.getParameter("headers")["sap-cancel-on-close"], true, "API parameter is of highest prio.");
+				assert.strictEqual(oRequest.getParameter("headers")["sap-cancel-on-close"], "true");
 				done();
 			}.bind(this);
 
 			this.oModel.attachRequestCompleted(fnSecondRead);
 
-			this.oModel.read("/Categories", {headers: {"sap-cancel-on-close": true}});
+			this.oModel.read("/Categories", {headers: {"sap-cancel-on-close": "true"}});
 
 		}.bind(this);
 

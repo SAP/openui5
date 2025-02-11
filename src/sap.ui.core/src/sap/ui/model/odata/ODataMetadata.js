@@ -1304,7 +1304,7 @@ sap.ui.define([
 	ODataMetadata.prototype._createRequest = function(sUrl) {
 		// The 'sap-cancel-on-close' header marks the OData metadata request as cancelable. This helps to save resources at the back-end.
 		var oDefaultHeaders = {
-				"sap-cancel-on-close": true
+				"sap-cancel-on-close": "true"
 			},
 			oLangHeader = {
 				"Accept-Language": Configuration.getLanguageTag()
