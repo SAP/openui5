@@ -26,7 +26,7 @@ sap.ui.define([
 			color: white;\
 		}\
 		#left-part .withBeforeElementAndAttrContent::before {\
-			content: attr(data-sap-ui-icon-content);\
+			content: ":";\
 		}\
 		.shrink {\
 			transform: scale(0.1, 0.5);\
