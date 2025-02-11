@@ -131,7 +131,7 @@ sap.ui.define([
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 	});
 	opaTest("When I click on 'Settings' in the context menu, selection dialog should open", function(Given, When, Then) {
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithText("More Links");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		Then.thePersonalizationDialogOpens();
 
@@ -182,7 +182,7 @@ sap.ui.define([
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 	});
 	opaTest("When I click on 'Settings' in the context menu, selection dialog should open", function(Given, When, Then) {
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithText("More Links");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		Then.thePersonalizationDialogOpens();
 
@@ -229,7 +229,7 @@ sap.ui.define([
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 	});
 	opaTest("When I click on 'Settings' in the context menu, selection dialog should open", function(Given, When, Then) {
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithText("More Links");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		Then.thePersonalizationDialogOpens();
 

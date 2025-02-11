@@ -44,14 +44,14 @@ sap.ui.define([
 
 	opaTest("I create a Change in context of the second VM control", (Given, When, Then) => {
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sTitleId)
-		.and.iClickOnAContextMenuEntry(1);
+		.and.iClickOnAContextMenuEntryWithKey("CTX_REMOVE");
 
 		Then.onFlVariantManagement.theModifiedIndicatorShouldBeDisplayed(sContainedVMControlId);
 	});
 
 	opaTest("I save the change in a new Variant", (Given, When, Then) => {
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sContainedVMControlId)
-		.and.iClickOnAContextMenuEntry(2); // save as
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SAVEAS");
 		When.onFlVariantManagement.iCreateNewVariant(sContainedVMControlId, sNewContainedVariantName, true);
 
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
@@ -64,7 +64,7 @@ sap.ui.define([
 
 		When.onPageWithRTA.iScrollIntoView(sElementId)
 		.and.iRightClickOnAnElementOverlay(sElementId)
-		.and.iClickOnAContextMenuEntry(0)
+		.and.iClickOnAContextMenuEntryWithKey("CTX_RENAME")
 		.and.iEnterANewName(sLabel);
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
@@ -95,7 +95,7 @@ sap.ui.define([
 	opaTest("I save the change in a new variant", (Given, When, Then) => {
 		const sLabel = "Rename Label";
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(2); // save as
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SAVEAS");
 		When.onFlVariantManagement.iCreateNewVariant(sVMControlId, sNewVariantName, true);
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
@@ -131,7 +131,7 @@ sap.ui.define([
 		const sLabel = "SaveRenameChangeLabel";
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sElementId)
-		.and.iClickOnAContextMenuEntry(0)
+		.and.iClickOnAContextMenuEntryWithKey("CTX_RENAME")
 		.and.iEnterANewName(sLabel);
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
@@ -140,16 +140,16 @@ sap.ui.define([
 
 	opaTest("I switch to the standard variant", (Given, When, Then) => {
 		const sDialogId = "controlVariantWarningDialog";
-		const sButton = "BTN_MODIFIED_VARIANT_SAVE";
+		const sButtonTextKey = "BTN_MODIFIED_VARIANT_SAVE";
 		const sDialogType = "Warning";
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(4) // switch variant
-		.and.iClickOnAContextMenuEntryWithText(sStandardVariantName);
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SWITCH_SUBMENU")
+		.and.iClickOnAVariantMenu(sStandardVariantName);
 
 		Then.onPageWithRTA.iShouldSeeTheDialog(sDialogId, sDialogType);
 
-		When.onPageWithRTA.iClickTheButtonWithText(sButton);
+		When.onPageWithRTA.iClickTheButtonWithTextKey(sButtonTextKey);
 
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName)
 		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
@@ -195,8 +195,8 @@ sap.ui.define([
 	opaTest("I check if the change was saved correctly", (Given, When, Then) => {
 		const sLabel = "SaveRenameChangeLabel";
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(4) // switch variant
-		.and.iClickOnAContextMenuEntryWithText(sNewVariantName);
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SWITCH_SUBMENU")
+		.and.iClickOnAVariantMenu(sNewVariantName);
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
@@ -239,7 +239,7 @@ sap.ui.define([
 		const sLabel = "DiscardRenameChangeLabel";
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sElementId)
-		.and.iClickOnAContextMenuEntry(0)
+		.and.iClickOnAContextMenuEntryWithKey("CTX_RENAME")
 		.and.iEnterANewName(sLabel);
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
@@ -248,16 +248,16 @@ sap.ui.define([
 
 	opaTest("I switch to the standard variant", (Given, When, Then) => {
 		const sDialogId = "controlVariantWarningDialog";
-		const sButton = "BTN_MODIFIED_VARIANT_DISCARD";
+		const sButtonTextKey = "BTN_MODIFIED_VARIANT_DISCARD";
 		const sDialogType = "Warning";
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(4) // switch variant
-		.and.iClickOnAContextMenuEntryWithText(sStandardVariantName);
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SWITCH_SUBMENU")
+		.and.iClickOnAVariantMenu(sStandardVariantName);
 
 		Then.onPageWithRTA.iShouldSeeTheDialog(sDialogId, sDialogType);
 
-		When.onPageWithRTA.iClickTheButtonWithText(sButton);
+		When.onPageWithRTA.iClickTheButtonWithTextKey(sButtonTextKey);
 
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sStandardVariantName)
 		.and.theVariantShouldBeDisplayed(sContainedVMControlId, sNewContainedVariantName)
@@ -267,8 +267,8 @@ sap.ui.define([
 	opaTest("I check if the change was aborted correctly", (Given, When, Then) => {
 		const sLabel = "SaveRenameChangeLabel";
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(4) // switch variant
-		.and.iClickOnAContextMenuEntryWithText(sNewVariantName);
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SWITCH_SUBMENU")
+		.and.iClickOnAVariantMenu(sNewVariantName);
 
 		Then.onPageWithRTA.iShouldSeeTheElementWithText(sLabel);
 		Then.onFlVariantManagement.theVariantShouldBeDisplayed(sVMControlId, sNewVariantName)
@@ -279,7 +279,7 @@ sap.ui.define([
 	opaTest("I rename the variant via the VM control", (Given, When, Then) => {
 		const sNewVariantName = "RenameViaVMControl";
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(0)
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SET_TITLE")
 		.and.iEnterANewName(sNewVariantName);
 		When.onPageWithRTA.iPressOnEscape();
 
@@ -291,7 +291,7 @@ sap.ui.define([
 		const sPreviousVariantName = "RenameViaVMControl";
 		const sNewVariantName = "RenameViaMVDialog";
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(3);
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_MANAGE");
 
 		Then.onFlVariantManagement.theOpenManageViewsDialog(sVMControlId)
 		.and.theOpenManageViewsDialogDefaultShouldBe(sPreviousVariantName)
@@ -363,7 +363,7 @@ sap.ui.define([
 		const sDefaultVariantName = "RenameViaMVDialog";
 		const sLabelText = "EntityType02 Title 2 Complex";
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
-		.and.iClickOnAContextMenuEntry(3);
+		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_MANAGE");
 
 		Then.onFlVariantManagement.theOpenManageViewsDialog(sVMControlId)
 		.and.theOpenManageViewsDialogTitleShouldContain([sStandardVariantName, sDefaultVariantName]);

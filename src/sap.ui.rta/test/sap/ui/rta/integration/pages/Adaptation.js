@@ -115,7 +115,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers(oButton) {
-							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://undo";
+							return oButton.getId().includes("sapUiRta_undo");
 						},
 						actions: new Press(),
 						errorMessage: "Did not find the undo button"
@@ -125,7 +125,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers(oButton) {
-							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://redo";
+							return oButton.getId().includes("sapUiRta_redo");
 						},
 						actions: new Press(),
 						errorMessage: "Did not find the redo button"
@@ -135,19 +135,19 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers(oButton) {
-							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://save";
+							return oButton.getId().includes("sapUiRta_save");
 						},
 						actions: new Press(),
 						errorMessage: "Did not find the save button"
 					});
 				},
-				iClickTheButtonWithText(sText) {
+				iClickTheButtonWithTextKey(sKey) {
 					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({
 							name: "text",
-							value: oResources.getText(sText)
+							value: oResources.getText(sKey)
 						}),
 						actions: new Press(),
 						errorMessage: "The button could not be pressed"
@@ -240,18 +240,6 @@ sap.ui.define([
 						errorMessage: "The Menu Item was not pressable"
 					});
 				},
-				iClickOnAContextMenuEntryWithIcon(sIcon) {
-					return this.waitFor({
-						controlType: "sap.ui.unified.MenuItem",
-						matchers: [
-							new PropertyStrictEquals({
-								name: "icon",
-								value: sIcon
-							})],
-						actions: new Press(),
-						errorMessage: "The Menu Item was not pressable"
-					});
-				},
 				iClickOnAContextMenuEntryWithKey(sKey) {
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
@@ -268,6 +256,18 @@ sap.ui.define([
 							aMenu[0].getItems()[iIndex].getDomRef().click();
 						},
 						errorMessage: "Did not find the Context Menu"
+					});
+				},
+				iClickOnAVariantMenu(sVariantName) {
+					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
+					return this.waitFor({
+						controlType: "sap.ui.unified.MenuItem",
+						matchers: new PropertyStrictEquals({
+							name: "text",
+							value: oResources.getText(sVariantName)
+						}),
+						actions: new Press(),
+						errorMessage: "The Menu Item was not pressable"
 					});
 				},
 				iEnterANewName(sNewLabel) {
@@ -297,17 +297,6 @@ sap.ui.define([
 							const sBindingContextPath = oListItem.getBindingContextPath();
 							const oBindingData = oListItem.getBindingContext().getModel().getProperty(sBindingContextPath);
 							return oBindingData.bindingPath && oBindingData.bindingPath === sBindingPath;
-						},
-						actions: new Press(),
-						errorMessage: "List Item with this label not found"
-					});
-				},
-				iSelectAFieldByLabelInTheAddSectionDialog(sLabel) {
-					return this.waitFor({
-						searchOpenDialogs: true,
-						controlType: "sap.m.CustomListItem",
-						matchers(oListItem) {
-							return oListItem.getContent()[0].getItems()[0].getText() === sLabel;
 						},
 						actions: new Press(),
 						errorMessage: "List Item with this label not found"
@@ -412,7 +401,6 @@ sap.ui.define([
 						}
 					});
 				},
-
 				enableAndDeleteLrepLocalStorageAfterRta() {
 					return this.waitFor({
 						check() {
@@ -496,18 +484,6 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "Did not find the Toolbar"
-					});
-				},
-				iShouldSeeTheUndoButton() {
-					return this.waitFor({
-						controlType: "sap.m.Button",
-						matchers(oButton) {
-							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://undo";
-						},
-						success(oButton) {
-							Opa5.assert.ok(oButton.getVisible(), "then the button is visible");
-						},
-						errorMessage: "Did not find UndoButton"
 					});
 				},
 				iShouldSeeTheFLPToolbarAndChangesInLRep(iCount, sReference) {
@@ -677,6 +653,26 @@ sap.ui.define([
 								aIsContextEntries.push(oItem.getText());
 							});
 							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, `expected [${aContextEntries}] context entries found`);
+						},
+						errorMessage: "Did not find the Context Menu entries"
+					});
+				},
+				iShouldSeetheContextMenuEntriesWithKeys(aContextEntriesKeys) {
+					return this.waitFor({
+						controlType: "sap.ui.unified.Menu",
+						matchers(oMenu) {
+							return oMenu.hasStyleClass("sapUiDtContextMenu");
+						},
+						success(aMenu) {
+							const aIsContextEntriesKeys = [];
+							// The key is only available in the parent menu (sap.m.Menu)
+							// This works only because the indices are the same in the parent and the context menu
+							const oParentMenu = aMenu[0].getParent();
+							const aItems = oParentMenu.getItems();
+							aItems.forEach(function(oItem) {
+								aIsContextEntriesKeys.push(oItem.getKey());
+							});
+							Opa5.assert.deepEqual(aIsContextEntriesKeys, aContextEntriesKeys, `expected [${aContextEntriesKeys}] context entries found`);
 						},
 						errorMessage: "Did not find the Context Menu entries"
 					});
