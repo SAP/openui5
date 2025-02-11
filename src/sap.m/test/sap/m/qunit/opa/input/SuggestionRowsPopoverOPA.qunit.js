@@ -80,18 +80,11 @@ sap.ui.define([
 		Given.iStartMyAppInAFrame("./test-resources/sap/m/qunit/opa/input/SuggestionRowsPopover/SuggestionRowsPopover.html");
 		// Act
 		When.iFocusTheInput();
-		When.iPressKey(KeyCodes.DIGIT_7);
-		When.iEnterText("7");
-		When.iPressKey(KeyCodes.DIGIT_0);
-		When.iEnterText("0");
-		When.iPressKey(KeyCodes.DIGIT_0);
-		When.iEnterText("0");
-		When.iPressKey(KeyCodes.DIGIT_0);
-		When.iEnterText("0");
-		When.iPressKeyBackspace();
+		When.iEnterText("7000");
 		When.iPressKeyBackspace();
 		When.iPressKey(KeyCodes.DIGIT_2);
 		When.iEnterText("2");
+
 		// Assert
 		Then.iSeePopoverOpen();
 		// Destroy

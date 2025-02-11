@@ -154,15 +154,7 @@ sap.ui.define([
 
 		// Act
 		When.iFocusTheInput("iTypeAhead");
-		When.iEnterText("iTypeAhead", "b");
-		When.iPressKey("b");
-		When.iEnterText("iTypeAhead", "n");
-		When.iPressKey("n");
-
-		When.iMoveCursor("iTypeAhead", "n", "backward");
-		When.iPressKey("g");
-		When.iEnterText("iTypeAhead", "g");
-		When.iMoveCursor("iTypeAhead", "n", "backward");
+		When.iEnterText("iTypeAhead", "bgn");
 
 		// Assert
 		Then.iSeeTheSuggestionsPopover("iTypeAhead-popup");
