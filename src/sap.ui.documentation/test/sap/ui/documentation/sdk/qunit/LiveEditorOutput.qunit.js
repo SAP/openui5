@@ -28,6 +28,9 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 				'            return Controller.extend("HelloWorld.App", {\n' +
 				'                onInit : function () {\n' +
 				'                    this.getView().byId("helloButton").setVisible(true);\n' +
+				'                },\n' +
+				'                onShowHello : function () {\n' +
+				'                    MessageToast.show("Hello World");\n' +
 				'                }\n' +
 				'            });\n' +
 				'        });',

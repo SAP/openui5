@@ -26,6 +26,7 @@
 				"stretch": true,
 				"files": [
 					"view/ObjectPageOnJSON.view.xml",
+					"controller/ObjectPageOnJSON.controller.js",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlockJS.js",
 					"../SharedBlocks/goals/GoalsBlockJSON.js",
