@@ -1677,6 +1677,7 @@ sap.ui.define([
 			undefined);
 	});
 
+	/** @deprecated As of version 1.133.0, reason sap.ui.core.LocaleData#getCurrencyFormat */
 	//*********************************************************************************************
 	QUnit.test("getCurrencyFormat: deprecated alias for getCompactCurrencyPattern",function (assert) {
 		// code under test
@@ -1687,6 +1688,7 @@ sap.ui.define([
 		assert.strictEqual(oCustomeLocaleData.getCurrencyFormat, LocaleData.prototype.getCompactCurrencyPattern);
 	});
 
+	/** @deprecated As of version 1.133.0, reason sap.ui.core.LocaleData#getDecimalFormat */
 	//*********************************************************************************************
 	QUnit.test("getDecimalFormat: deprecated alias for getCompactDecimalPattern",function (assert) {
 		// code under test
