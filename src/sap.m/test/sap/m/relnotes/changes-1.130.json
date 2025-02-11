@@ -195,5 +195,15 @@
         "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
       }
     ]
+  },
+  "1.130.4": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "a3c133c9d3937518d030b902b03d5c67df8e3f1a",
+        "type": "FIX",
+        "text": " We now ensure that the Uploadset illustrated message properties are correctly updated when they are bound with a model"
+      }
+    ]
   }
 }
