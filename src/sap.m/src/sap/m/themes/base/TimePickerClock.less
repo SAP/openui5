@@ -13,7 +13,7 @@
 	display: none;
 }
 
-.sapMTPClock.sapMTPCActive {
+.sapMTPClock.sapMTPCFadeIn {
 	display: block;
 }
 
@@ -56,10 +56,10 @@
 
 .sapMTPClockCover {
 	position: absolute;
-	top: 0.5625rem;
-	left: 0.5625rem;
-	bottom: 0.5625rem;
-	right: 0.5625rem;
+	top: -0.25rem;
+	left: -0.25rem;
+	bottom: -0.25rem;
+	right: -0.25rem;
 	border-radius: 100%;
 	z-index: 10;
 	touch-action: none;
@@ -96,6 +96,20 @@
 	border: 0.0625rem solid @sapUiButtonSelectedBorderColor;
 }
 
+.sapMTPCHoverMarker {
+	box-sizing: border-box;
+	width: 0.25rem;
+	height: 0.5625rem;
+	margin: 0 auto;
+	border-radius: 100%;
+	background-color: var(--sapList_Hover_Background);
+	border: 0.0625rem solid var(--sapGroup_TitleBorderColor);
+}
+
+.sapMTPCHoveredItem {
+	display: block;
+}
+
 .sapMTPCItem {
 	position: absolute;
 	top: 0px;
@@ -114,6 +128,9 @@
 	&.sapMTPCMarker {
 		z-index: 4;
 	}
+	&.sapMTPCHoverMarker {
+		z-index: 5;
+	}
 }
 
 .sapMTPCNumber {
@@ -128,6 +145,7 @@
 	font-family: @sapUiFontFamily;
 	font-size:@sapMFontMediumSize;
 	color: @sapUiBaseText;
+	border: 0.0625rem solid transparent;
 
 	&.sapMTPCNumberHover:not(.sapMTPCSelected) {
 		background-color: @sapUiListHoverBackground;
@@ -139,9 +157,16 @@
 }
 
 .sapMTPCSelected {
+	box-sizing: border-box;
 	color: @sapUiButtonSelectedTextColor;
 	background-color: @sapUiButtonSelectedBackground;
 	border: 0.0625rem solid @sapUiButtonSelectedBorderColor;
+}
+
+.sapMTPCHovered {
+	box-sizing: border-box;
+	background-color: var(--sapList_Hover_Background);
+	border: 0.0625rem solid var(--sapGroup_TitleBorderColor);
 }
 
 // Degree related classes
@@ -181,61 +206,262 @@
 
 .degreeMixIn(sapMTPCDeg6, 6deg);
 .degreeMixIn(sapMTPCDeg12, 12deg);
+.degreeMixIn(sapMTPCDeg15, 15deg);
 .degreeMixIn(sapMTPCDeg18, 18deg);
 .degreeMixIn(sapMTPCDeg24, 24deg);
 .degreeMixIn(sapMTPCDeg30, 30deg);
 .degreeMixIn(sapMTPCDeg36, 36deg);
 .degreeMixIn(sapMTPCDeg42, 42deg);
+.degreeMixIn(sapMTPCDeg45, 45deg);
 .degreeMixIn(sapMTPCDeg48, 48deg);
 .degreeMixIn(sapMTPCDeg54, 54deg);
 .degreeMixIn(sapMTPCDeg60, 60deg);
 .degreeMixIn(sapMTPCDeg66, 66deg);
 .degreeMixIn(sapMTPCDeg72, 72deg);
+.degreeMixIn(sapMTPCDeg75, 75deg);
 .degreeMixIn(sapMTPCDeg78, 78deg);
 .degreeMixIn(sapMTPCDeg84, 84deg);
 .degreeMixIn(sapMTPCDeg90, 90deg);
 .degreeMixIn(sapMTPCDeg96, 96deg);
 .degreeMixIn(sapMTPCDeg102, 102deg);
+.degreeMixIn(sapMTPCDeg105, 105deg);
 .degreeMixIn(sapMTPCDeg108, 108deg);
 .degreeMixIn(sapMTPCDeg114, 114deg);
 .degreeMixIn(sapMTPCDeg120, 120deg);
 .degreeMixIn(sapMTPCDeg126, 126deg);
 .degreeMixIn(sapMTPCDeg132, 132deg);
+.degreeMixIn(sapMTPCDeg135, 135deg);
 .degreeMixIn(sapMTPCDeg138, 138deg);
 .degreeMixIn(sapMTPCDeg144, 144deg);
 .degreeMixIn(sapMTPCDeg150, 150deg);
 .degreeMixIn(sapMTPCDeg156, 156deg);
 .degreeMixIn(sapMTPCDeg162, 162deg);
+.degreeMixIn(sapMTPCDeg165, 165deg);
 .degreeMixIn(sapMTPCDeg168, 168deg);
 .degreeMixIn(sapMTPCDeg174, 174deg);
 .degreeMixIn(sapMTPCDeg180, 180deg);
 .degreeMixIn(sapMTPCDeg186, 186deg);
 .degreeMixIn(sapMTPCDeg192, 192deg);
+.degreeMixIn(sapMTPCDeg195, 195deg);
 .degreeMixIn(sapMTPCDeg198, 198deg);
 .degreeMixIn(sapMTPCDeg204, 204deg);
 .degreeMixIn(sapMTPCDeg210, 210deg);
 .degreeMixIn(sapMTPCDeg216, 216deg);
 .degreeMixIn(sapMTPCDeg222, 222deg);
+.degreeMixIn(sapMTPCDeg225, 225deg);
 .degreeMixIn(sapMTPCDeg228, 228deg);
 .degreeMixIn(sapMTPCDeg234, 234deg);
 .degreeMixIn(sapMTPCDeg240, 240deg);
 .degreeMixIn(sapMTPCDeg246, 246deg);
 .degreeMixIn(sapMTPCDeg252, 252deg);
+.degreeMixIn(sapMTPCDeg255, 255deg);
 .degreeMixIn(sapMTPCDeg258, 258deg);
 .degreeMixIn(sapMTPCDeg264, 264deg);
 .degreeMixIn(sapMTPCDeg270, 270deg);
 .degreeMixIn(sapMTPCDeg276, 276deg);
 .degreeMixIn(sapMTPCDeg282, 282deg);
+.degreeMixIn(sapMTPCDeg285, 285deg);
 .degreeMixIn(sapMTPCDeg288, 288deg);
 .degreeMixIn(sapMTPCDeg294, 294deg);
 .degreeMixIn(sapMTPCDeg300, 300deg);
 .degreeMixIn(sapMTPCDeg306, 306deg);
 .degreeMixIn(sapMTPCDeg312, 312deg);
+.degreeMixIn(sapMTPCDeg315, 315deg);
 .degreeMixIn(sapMTPCDeg318, 318deg);
 .degreeMixIn(sapMTPCDeg324, 324deg);
 .degreeMixIn(sapMTPCDeg330, 330deg);
 .degreeMixIn(sapMTPCDeg336, 336deg);
 .degreeMixIn(sapMTPCDeg342, 342deg);
+.degreeMixIn(sapMTPCDeg345, 345deg);
 .degreeMixIn(sapMTPCDeg348, 348deg);
 .degreeMixIn(sapMTPCDeg354, 354deg);
 .degreeMixIn(sapMTPCDeg360, 360deg);
+
+/* animation CSS classes */
+
+.sapMTPClock.sapMTPCDisplay {
+	display: block;
+}
+
+.sapMTPCFadeIn:not(.sapMTPCSkipAnimation):not(.sapMTPCFadeOut) {
+
+	.sapMTPCItems .sapMTPCNumber,
+	.sapMTPCDial::before,
+	.sapMTPCItems .sapMTPCMidDot,
+	.sapMTPCSelectedItem .sapMTPCNumber,
+	.sapMTPCMarker {
+		opacity: 0;
+	}
+
+}
+
+.sapMTPCFadeIn.sapMTPCFadeOut:not(.sapMTPCSkipAnimation) {
+
+	.sapMTPCHoveredItem {
+		display: none;
+	}
+
+	.sapMTPCItems .sapMTPCNumber {
+		animation-name: fadeOutClockItems;
+		animation-delay: 0.15s;
+		animation-duration: 0.2s;
+		animation-timing-function: ease-out;
+		animation-fill-mode: forwards;
+	}
+
+	.sapMTPCDial::before {
+		animation-name: fadeOutClockLabel;
+		animation-duration: 0.35s;
+		animation-timing-function: ease-out;
+		animation-fill-mode: forwards;
+	}
+
+	.sapMTPCSelectedItem .sapMTPCNumber,
+	.sapMTPCMarker {
+		animation-name: fadeOutSelectedItem;
+		animation-delay: 0.1s;
+		animation-duration: 0.15s;
+		animation-timing-function: ease-out;
+		animation-fill-mode: forwards;
+	}
+
+	.sapMTPCItems .sapMTPCMidDot {
+		animation-name: fadeOutSelectedItem;
+		animation-delay: 0.15s;
+		animation-duration: 0.2s;
+		animation-timing-function: ease-out;
+		animation-fill-mode: forwards;
+	}
+
+}
+
+.sapMTPCFadeIn:not(.sapMTPCSkipAnimation) {
+
+	.sapMTPCItems .sapMTPCNumber {
+		animation-name: fadeInClockItems;
+		animation-delay: 0.15s;
+		animation-duration: 0.2s;
+		animation-timing-function: ease-in;
+		animation-fill-mode: forwards;
+	}
+
+	.sapMTPCDial::before {
+		animation-name: fadeInClockLabel;
+		animation-duration: 0.35s;
+		animation-timing-function: ease-in;
+		animation-fill-mode: forwards;
+	}
+
+	.sapMTPCSelectedItem .sapMTPCNumber,
+	.sapMTPCMarker {
+		animation-name: fadeInSelectedItem;
+		animation-delay: 0.1s;
+		animation-duration: 0.15s;
+		animation-timing-function: ease-in;
+		animation-fill-mode: forwards;
+	}
+
+	.sapMTPCItems .sapMTPCMidDot {
+		animation-name: fadeInSelectedItem;
+		animation-delay: 0.15s;
+		animation-duration: 0.2s;
+		animation-timing-function: ease-in;
+		animation-fill-mode: forwards;
+	}
+
+}
+
+/* @keyframes */
+
+@keyframes fadeOutClockItems {
+
+	from {
+		opacity: 1;
+		display: block;
+	}
+
+	to {
+		opacity: 0;
+		display: block;
+	}
+
+}
+
+@keyframes fadeOutClockLabel {
+
+	from {
+		opacity: 1;
+		display: flex;
+		transform: translateY(0);
+	}
+
+	to {
+		opacity: 0;
+		display: flex;
+		transform: translateY(-16px);
+	}
+
+}
+
+@keyframes fadeOutSelectedItem {
+
+	from {
+		opacity: 1;
+		display: block;
+	}
+
+	to {
+		opacity: 0;
+		display: block;
+	}
+
+}
+
+@keyframes fadeInClockItems {
+
+	from {
+		opacity: 0;
+		display: block;
+	}
+
+	to {
+		opacity: 1;
+		display: block;
+	}
+
+}
+
+@keyframes fadeInClockLabel {
+
+	from {
+		opacity: 0;
+		display: flex;
+		transform: translateY(16px);
+	}
+
+	to {
+		opacity: 1;
+		display: flex;
+		transform: translateY(0px);
+	}
+
+}
+
+@keyframes fadeInSelectedItem {
+
+	from {
+		opacity: 0;
+		display: block;
+	}
+
+	50% {
+		opacity: 0.5;
+		display: block;
+	}
+
+	to {
+		opacity: 1;
+		display: block;
+	}
+
+}
