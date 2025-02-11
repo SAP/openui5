@@ -1397,6 +1397,58 @@ sap.ui.define([
 			"then the button overlay inside aggregation template is not visible");
 	});
 
+	QUnit.module("Given a control including aggregation binding", {
+		async beforeEach() {
+			const oModel = getJsonModelWithData(2);
+			this.oCustomListItemTemplate = new CustomListItem(
+				"boundListItem",
+				{content: [new Button("boundListItem-btn", {text: "{text}"})]}
+			);
+			this.oBoundList = new List("boundlist").setModel(oModel);
+			this.oBoundList.bindAggregation("items", {
+				path: "/",
+				template: this.oCustomListItemTemplate,
+				templateShareable: true
+			});
+
+			// create a HorizontalLayout containing the two lists
+			this.oHorizontalLayout = new HorizontalLayout("horLayout", {
+				content: [this.oBoundList]
+			});
+			this.oHorizontalLayout.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach() {
+			this.oDesignTime.destroy();
+			this.oHorizontalLayout.destroy();
+			this.oCustomListItemTemplate.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("rebind during element overlay creation", async function(assert) {
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oHorizontalLayout]
+			});
+			sandbox.stub(this.oDesignTime, "_createElementOverlay").callsFake(async function(...aArgs) {
+				const oReturn = await this.oDesignTime._createElementOverlay.wrappedMethod.apply(this.oDesignTime, aArgs);
+				if (aArgs[0].element === this.oBoundList) {
+					this.oBoundList.bindAggregation("items", {
+						path: "/",
+						template: this.oCustomListItemTemplate,
+						templateShareable: true
+					});
+				}
+				return oReturn;
+			}.bind(this));
+			await DtUtil.waitForSynced(this.oDesignTime)();
+
+			const oBoundListOverlay = OverlayRegistry.getOverlay(this.oBoundList);
+			const aAggregationTemplateOverlays = oBoundListOverlay.getAggregationBindingTemplateOverlays();
+			assert.strictEqual(aAggregationTemplateOverlays.length, 1, "then the aggregation overlay for the aggregation template exists");
+			assert.strictEqual(aAggregationTemplateOverlays[0].getChildren().length, 1, "and has the template as child");
+		});
+	});
+
 	// *Controls*
 	// VerticalLayout
 	//	List -> with aggregation binding on items aggregation: "root-list"
