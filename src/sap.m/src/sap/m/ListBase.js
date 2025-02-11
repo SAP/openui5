@@ -1770,7 +1770,7 @@ function(
 			iIndex > -1 && this._aSelectedPaths.splice(iIndex, 1);
 		}
 
-		if (oBindingContext.setSelected && !oBindingContext.isTransient()) {
+		if (oBindingContext.setSelected) {
 			oBindingContext.setSelected(bSelect);
 		}
 	};
