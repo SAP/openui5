@@ -2173,11 +2173,14 @@ sap.ui.define([
 			}, function (ex0) {
 				assert.strictEqual(ex0, oError, ex0.message);
 
-				that.mock(oDataModel.oMetadata).expects("refresh").rejects(oError);
+				const oRejectedPromise = Promise.reject(oError);
+				that.mock(oDataModel.oMetadata).expects("refresh").returns(oRejectedPromise);
 				that.mock(Log).expects("fatal").withExactArgs(oError);
 
 				// code under test (failed refresh results in console error)
 				oDataModel.refreshMetadata();
+
+				return oRejectedPromise.catch(() => {/* test only finishes when promise is rejected*/});
 			});
 		});
 	});
