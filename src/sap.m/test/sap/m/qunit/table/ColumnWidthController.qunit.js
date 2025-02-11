@@ -129,4 +129,32 @@ sap.ui.define([
 		}, currentState, "The state is properly retrieved using the xConfig");
 	});
 
+	QUnit.test("Check #formatToInternalState", function(assert) {
+		const oExternalState = {
+			"aggregations": {
+				"columns": {
+					"title": {
+						"width": "100px"
+					}
+				},
+				"type": {
+					"ResponsiveTable": {
+						"showDetails": true
+					}
+				}
+			}
+		};
+
+		const oInternalState = this.oWidthController.formatToInternalState(oExternalState);
+		assert.deepEqual(oInternalState, {
+			aggregations: {
+				columns: {
+					"title": {
+						width: "100px"
+					}
+				}
+			}
+		}, "The state is properly formatted");
+	});
+
 });

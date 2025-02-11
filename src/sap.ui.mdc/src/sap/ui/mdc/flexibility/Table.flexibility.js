@@ -8,8 +8,9 @@ sap.ui.define([
 	'./ConditionFlex',
 	'./GroupFlex',
 	'./AggregateFlex',
-	'./xConfigFlex'
-], (SortFlex, ColumnFlex, ConditionFlex, GroupFlex, AggregateFlex, xConfigFlex) => {
+	'./xConfigFlex',
+	'sap/ui/fl/changeHandler/condenser/Classification'
+], (SortFlex, ColumnFlex, ConditionFlex, GroupFlex, AggregateFlex, xConfigFlex, CondenserClassification) => {
 	"use strict";
 
 	return {
@@ -31,6 +32,16 @@ sap.ui.define([
 		setColumnWidth: xConfigFlex.createSetChangeHandler({
 			aggregation: "columns",
 			property: "width"
+		}),
+		setShowDetails: xConfigFlex.createSetChangeHandler({
+			aggregation: "type",
+			property: "showDetails",
+			classification: CondenserClassification.Reverse
+		}),
+		resetShowDetails: xConfigFlex.createSetChangeHandler({
+			aggregation: "type",
+			property: "showDetails",
+			classification: CondenserClassification.Reverse
 		})
 	};
 

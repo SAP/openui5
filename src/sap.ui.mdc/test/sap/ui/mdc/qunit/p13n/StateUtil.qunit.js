@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/base/util/merge",
-	"sap/ui/mdc/odata/v4/TypeMap"
+	"sap/ui/mdc/odata/v4/TypeMap",
+	"sap/ui/mdc/table/ResponsiveTableType"
 ], function (
 	Engine,
 	createAppEnvironment,
@@ -28,7 +29,8 @@ sap.ui.define([
 	OperatorName,
 	StateHandlerRegistry,
 	merge,
-	TypeMap
+	TypeMap,
+	ResponsiveTableType
 ) {
 	"use strict";
 
@@ -1009,6 +1011,43 @@ sap.ui.define([
 			done();
 		}.bind(this));
 
+	});
+
+	QUnit.test("call 'applyExternalState' to show and hide details", async function(assert) {
+		const applyState = async (bShowDetails) => {
+			const oState = {
+				supplementaryConfig: {
+					aggregations: {
+						type: {
+							ResponsiveTable: {
+								showDetails: bShowDetails || null
+							}
+						}
+					}
+				}
+			};
+
+			const sChangeType = bShowDetails ? "setShowDetails" : "resetShowDetails";
+
+			const aChanges = await StateUtil.applyExternalState(this.oTable, oState);
+			assert.equal(aChanges.length, 1, "Only one change was created");
+			assert.equal(aChanges[0].getChangeType(), sChangeType, `Only ${sChangeType} change should be created`);
+
+			const oRetrievedState = await StateUtil.retrieveExternalState(this.oTable);
+			assert.ok(oRetrievedState.supplementaryConfig, "supplementaryConfig is available");
+			assert.equal(!!oRetrievedState.supplementaryConfig.aggregations?.type, bShowDetails, `type is available - expected ${bShowDetails}`);
+			assert.equal(!!oRetrievedState.supplementaryConfig.aggregations?.type?.ResponsiveTable, bShowDetails, `ResponsiveTable is available - expected ${bShowDetails}`);
+			assert.equal(!!oRetrievedState.supplementaryConfig.aggregations?.type?.ResponsiveTable?.showDetails, bShowDetails, `showDetails is available - expected ${bShowDetails}`);
+		};
+
+		this.oTable.setType(new ResponsiveTableType({
+			showDetailsButton: true
+		}));
+
+		await applyState(true);
+		await applyState(false);
+
+		this.oTable.setType("Table");
 	});
 
 	QUnit.module("API tests for Table with V4 Analytics", {

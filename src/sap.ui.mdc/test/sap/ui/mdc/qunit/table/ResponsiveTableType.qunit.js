@@ -17,7 +17,9 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Icon",
 	"sap/ui/model/Filter",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/fl/variants/VariantManagement",
+	"test-resources/sap/m/qunit/p13n/TestModificationHandler"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
@@ -34,7 +36,9 @@ sap.ui.define([
 	Lib,
 	Icon,
 	Filter,
-	Device
+	Device,
+	VariantManagement,
+	TestModificationHandler
 ) {
 	"use strict";
 
@@ -177,7 +181,7 @@ sap.ui.define([
 				]
 			});
 
-			this.oTable = new Table({
+			this.oTable = new Table("table_test", {
 				delegate: {
 					name: sDelegatePath,
 					payload: {
@@ -385,6 +389,132 @@ sap.ui.define([
 		assert.strictEqual(oShowDetailsButton.isDestroyed(), true,
 			"Show Details button is destroyed when the type is destroyed with Table#destroyType");
 		assert.notOk(oType._oShowDetailsButton, "Reference to Show Details button is removed when the type is destroyed Table#destroyType");
+	});
+
+	QUnit.test("State is persisted", async function(assert) {
+		const done = assert.async();
+
+		const oVariant = new VariantManagement("mdc_test_vm", {
+			"for": ["table_test"]
+		});
+		this.oTable.setVariant(oVariant);
+
+		let counter = 0;
+		const oModificationHandler = TestModificationHandler.getInstance();
+		oModificationHandler.processChanges = function(aChanges) {
+			counter++;
+			let bExpectedValue, sExpectedName, sAction;
+
+			if (counter === 1) {
+				bExpectedValue = true;
+				sAction = "setShowDetails";
+				sExpectedName = "ResponsiveTable";
+			} else if (counter === 2) {
+				bExpectedValue = null;
+				sAction = "resetShowDetails";
+				sExpectedName = "ResponsiveTable";
+			}
+
+			assert.strictEqual(aChanges.length, 1, "One change is created");
+			assert.strictEqual(aChanges[0].changeSpecificData.changeType, sAction, "Change type is correct");
+			assert.strictEqual(aChanges[0].changeSpecificData.content.value, bExpectedValue, "Change content value is correct");
+			assert.strictEqual(aChanges[0].changeSpecificData.content.name, sExpectedName, "Name is correct");
+
+			if (counter === 2) {
+				done();
+			}
+
+			return Promise.resolve(aChanges);
+		};
+
+		this.oTable.getEngine()._setModificationHandler(this.oTable, oModificationHandler);
+
+		const oType = this.oTable.getType();
+
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		assert.ok(oType._oShowDetailsButton.getVisible(), "Show Details button is visible since table has popins");
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are initially hidden");
+
+		oType._oShowDetailsButton.getItems()[0].firePress();
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are now shown");
+
+		oType._oShowDetailsButton.getItems()[0].firePress();
+		await nextUIUpdate();
+
+		sinon.stub(this.oTable, "getCurrentState").returns({
+			xConfig: { aggregations: { type: { ResponsiveTable: { showDetails: true } } } }
+		});
+
+		assert.equal(counter, 1, "No modification happened since show/hide state did not change");
+
+		oType._oShowDetailsButton.getItems()[1].firePress();
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are now hidden");
+
+		this.oTable.getCurrentState.restore();
+	});
+
+	QUnit.test("State is applied (emulation)", async function(assert) {
+		const oType = this.oTable.getType();
+		const oVariant = new VariantManagement("mdc_test_vm", {
+			"for": ["table_test"]
+		});
+		this.oTable.setVariant(oVariant);
+
+		const fnGetCurrentStateStub = sinon.stub(this.oTable, "getCurrentState");
+		fnGetCurrentStateStub.returns({
+			"xConfig": {
+				"aggregations": {
+					"type": {
+						"ResponsiveTable": {
+							"showDetails": true
+						}
+					}
+				}
+			}
+		});
+
+		const fnOnModificationsSpy = sinon.spy(oType, "onModifications");
+		const fnToggleShowDetailsSpy = sinon.spy(oType, "_toggleShowDetails");
+
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		assert.ok(oType._oShowDetailsButton.getVisible(), "Show Details button is visible since table has popins");
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are initially hidden");
+
+		this.oTable._onModifications(["ShowDetails"]);
+		await nextUIUpdate();
+
+		assert.ok(fnOnModificationsSpy.calledOnce, "onModifications is called");
+		assert.ok(fnToggleShowDetailsSpy.calledOnce, "_toggleShowDetails is called");
+		assert.ok(fnToggleShowDetailsSpy.calledWith(false), "_toggleShowDetails is called with false");
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are now shown");
+
+		fnGetCurrentStateStub.returns({
+			"xConfig": {
+				"aggregations": {
+					"type": {
+						"ResponsiveTable": {
+							"showDetails": false
+						}
+					}
+				}
+			}
+		});
+
+		this.oTable._onModifications(["ShowDetails"]);
+		await nextUIUpdate();
+
+		assert.ok(fnOnModificationsSpy.calledTwice, "onModifications is called");
+		assert.ok(fnToggleShowDetailsSpy.calledTwice, "_toggleShowDetails is called");
+		assert.ok(fnToggleShowDetailsSpy.calledWith(true), "_toggleShowDetails is called with false");
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are now hidden");
 	});
 
 	QUnit.module("extendedSettings");

@@ -147,6 +147,12 @@ sap.ui.define([
 		return oState;
 	};
 
+	/**
+	 * Formats an external state to the appropriate internal state containg only the relevant information for the controller.
+	 *
+	 * @param {object} oExternalState external state to format
+	 * @returns {object} formatted internal state
+	 */
 	SelectionController.prototype.formatToInternalState = (oExternalState) => {
 		return oExternalState;
 	};
@@ -512,7 +518,7 @@ sap.ui.define([
 
 		const oChangeContent = oContent;
 
-		if (sOperation.indexOf("set") !== 0) {
+		if (sOperation.indexOf("set") !== 0 && sOperation.indexOf("reset") !== 0) {
 			oChangeContent.value = (sOperation == this.getChangeOperations()["add"]);
 		}
 

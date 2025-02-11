@@ -102,7 +102,11 @@ sap.ui.define([
 	ColumnWidthController.prototype.getCurrentState = function() {
 
 		if (this._bExposeXConfig) {
-			return this.getAdaptationControl().getCurrentState().xConfig;
+			const oXConfig = this.getAdaptationControl().getCurrentState().xConfig;
+			if (oXConfig?.hasOwnProperty("aggregations") && oXConfig.aggregations.hasOwnProperty("columns")) {
+				return { aggregations: { columns: oXConfig.aggregations.columns } };
+			}
+			return {};
 		} else {
 			var oXConfig = xConfigAPI.readConfig(this.getAdaptationControl());
 
@@ -115,6 +119,17 @@ sap.ui.define([
 			return columnWidthState;
 		}
 
+	};
+
+	ColumnWidthController.prototype.formatToInternalState = function(oExternalState) {
+		if (oExternalState?.aggregations?.columns) {
+			return {
+				aggregations: {
+					columns: oExternalState.aggregations.columns
+				}
+			};
+		}
+		return {};
 	};
 
 	/**

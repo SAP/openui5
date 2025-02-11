@@ -39,6 +39,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/m/table/ColumnWidthController",
+	"sap/ui/mdc/p13n/subcontroller/ShowDetailsController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
 	"sap/ui/core/theming/Parameters",
@@ -89,6 +90,7 @@ sap.ui.define([
 	GroupController,
 	AggregateController,
 	ColumnWidthController,
+	ShowDetailsController,
 	ActionToolbarAction,
 	QuickActionContainer,
 	ThemeParameters,
@@ -1167,6 +1169,7 @@ sap.ui.define([
 		this._resetContent();
 		this.setAggregation("type", vType);
 		this._initializeContent();
+		this._updateAdaptation();
 
 		return this;
 	};
@@ -1348,6 +1351,7 @@ sap.ui.define([
 			oColumn._onModifications();
 		});
 
+		this._getType().onModifications(aAffectedP13nControllers);
 		if (fCheckIfRebindIsRequired(aAffectedP13nControllers) && this.isTableBound()) {
 			await this.finalizePropertyHelper();
 			await this.rebind();
@@ -1420,6 +1424,11 @@ sap.ui.define([
 
 		if (this.getEnableColumnResize()) {
 			oRegisterConfig.controller["ColumnWidth"] = mRegistryOptions["ColumnWidth"];
+		}
+
+		if (this._isOfType(TableType.ResponsiveTable)) {
+			mRegistryOptions["ShowDetails"] = new ShowDetailsController({ control: this });
+			oRegisterConfig.controller["ShowDetails"] = mRegistryOptions["ShowDetails"];
 		}
 
 		this.getEngine().register(this, oRegisterConfig);
@@ -2075,7 +2084,7 @@ sap.ui.define([
 			oState.aggregations = this._getAggregatedProperties();
 		}
 
-		if (this.getEnableColumnResize()) {
+		if (this.getEnableColumnResize() || this._getType().showXConfigState()) {
 			oState.xConfig = this._getXConfig();
 		}
 

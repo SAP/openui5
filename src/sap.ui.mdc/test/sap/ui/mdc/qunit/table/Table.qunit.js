@@ -4092,6 +4092,34 @@ sap.ui.define([
 
 		this.oTable.setP13nMode();
 		assert.deepEqual(this.oTable.getCurrentState(), {}, "Deactivate 'Column' and 'Filter'");
+
+		sinon.stub(this.oTable, "getEnableColumnResize").returns(false);
+		sinon.stub(this.oTable._getType(), "showXConfigState").returns(true);
+		sinon.stub(this.oTable, "_getXConfig").returns({
+			aggregations: {
+				ResponsiveTableType: {
+					table: {
+						hideDetails: false
+					}
+				}
+			}
+		});
+
+		assert.deepEqual(this.oTable.getCurrentState(), {
+			xConfig: {
+				aggregations: {
+					ResponsiveTableType: {
+						table: {
+							hideDetails: false
+						}
+					}
+				}
+			}
+		}, "xConfig is returned, despite column resize being deactivated.");
+
+		this.oTable.getEnableColumnResize.restore();
+		this.oTable._getXConfig.restore();
+		this.oTable._getType().showXConfigState.restore();
 	});
 
 	QUnit.module("Column resize", {
