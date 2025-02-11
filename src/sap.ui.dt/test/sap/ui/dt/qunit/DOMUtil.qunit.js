@@ -32,7 +32,7 @@ sap.ui.define([
 	');
 	style.sheet.insertRule('\
 		#left-part .withBeforeElementAndAttrContent::before {\
-			content: attr(data-sap-ui-icon-content);\
+			content: ":";\
 		}\
 	');
 	style.sheet.insertRule('\
