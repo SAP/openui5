@@ -1371,9 +1371,7 @@ function(
 	 */
 	Input.prototype._isIncrementalType = function () {
 		var sTypeOfInput = this.getType();
-		if (sTypeOfInput === "Number" || sTypeOfInput === "Date" ||
-			sTypeOfInput === "Datetime" || sTypeOfInput === "Month" ||
-			sTypeOfInput === "Time" || sTypeOfInput === "Week") {
+		if (sTypeOfInput === "Number") {
 			return true;
 		}
 		return false;

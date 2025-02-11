@@ -317,6 +317,26 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("When the plugin is destroyed", async function(assert) {
+		configureDefaultActionAndUpdateOverlay.call(this);
+		const oDialog = this.oAnnotationPlugin._oDialog;
+		sandbox.stub(oDialog, "openDialogAndHandleChanges").resolves([]);
+
+		const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
+		const oMenuItem = aMenuItems[0];
+		await oMenuItem.handler([this.oButtonOverlay]);
+		this.oAnnotationPlugin.destroy();
+		assert.ok(
+			oDialog.bIsDestroyed,
+			"then the dialog is destroyed"
+		);
+		assert.strictEqual(
+			this.oAnnotationPlugin._oDialog,
+			undefined,
+			"then the dialog reference is removed"
+		);
+	});
+
 	QUnit.done(function() {
 		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
