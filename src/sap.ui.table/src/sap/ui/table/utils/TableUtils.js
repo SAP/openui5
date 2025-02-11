@@ -634,6 +634,10 @@ sap.ui.define([
 			const sTitle = TableUtils.getResourceText("TBL_SELECT_LIMIT_TITLE");
 			const sMessage = TableUtils.getResourceText("TBL_SELECT_LIMIT", [iLimit]);
 
+			if (!oRow) {
+				return Promise.resolve();
+			}
+
 			return new Promise(function(resolve) {
 				sap.ui.require([
 					"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library"
