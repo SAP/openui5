@@ -8240,6 +8240,40 @@ sap.ui.define([
 
 		QUnit.module("onsapenter");
 
+		QUnit.test("onsapenter - open list box", function (assert) {
+			// system under test
+			var oSelect = new Select({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+			oSelect.focus();
+			var fnEnterSpy = this.spy(oSelect, "onsapenter");
+
+			// act
+			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ENTER);
+			qutils.triggerKeyup(oSelect.getDomRef(), KeyCodes.ENTER);
+			this.clock.tick(1000); // Wait for animations
+
+			// assert
+			assert.strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
+			assert.ok(oSelect.isOpen(), "Popover is opened");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.test("onsapenter - close list box", function (assert) {
 
 			// system under test
