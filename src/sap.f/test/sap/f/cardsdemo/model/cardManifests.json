@@ -1725,6 +1725,88 @@
 					]
 				}
 			}
+		},
+		"adaptive4": {
+			"_version": "1.17.0",
+			"sap.app": {
+				"id": "adaptivecard.adaptive4",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "AdaptiveCard",
+				"content": {
+						"type": "AdaptiveCard",
+						"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+						"version": "1.3",
+						"body": [
+							{
+								"type": "ColumnSet",
+								"columns": [
+										{
+											"type": "Column",
+											"width": "stretch",
+											"items": [
+												{
+														"type": "TextBlock",
+														"text": "Summary page",
+														"wrap": true
+												}
+											]
+										},
+										{
+											"type": "Column",
+											"width": "auto",
+											"items": [
+												{
+														"type": "TextBlock",
+														"text": "❯",
+														"wrap": true,
+														"color": "Accent"
+												}
+											],
+											"backgroundImage": {
+												"verticalAlignment": "Center"
+											},
+											"verticalContentAlignment": "Center",
+											"selectAction": {
+												"type": "Action.ToggleVisibility",
+												"targetElements": [
+														"summary",
+														"details"
+												]
+											}
+										}
+								],
+								"id": "summary"
+							},
+							{
+								"type": "Container",
+								"id": "details",
+								"items": [
+										{
+											"type": "TextBlock",
+											"text": "details page",
+											"wrap": true
+										},
+										{
+											"type": "ActionSet",
+											"actions": [
+												{
+														"type": "Action.ToggleVisibility",
+														"title": "Back",
+														"targetElements": [
+															"summary",
+															"details"
+														]
+												}
+											]
+										}
+								],
+								"isVisible": false
+							}
+						]
+				}
+			}
 		}
 	},
 	"calendarCard": {

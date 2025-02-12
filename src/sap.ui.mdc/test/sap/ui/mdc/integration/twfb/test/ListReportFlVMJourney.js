@@ -74,12 +74,12 @@ sap.ui.define([
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sFLVM_ID);
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
+		Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(["CTX_VARIANT_SET_TITLE", "CTX_VARIANT_SAVE", "CTX_VARIANT_SAVEAS", "CTX_VARIANT_MANAGE", "CTX_VARIANT_SWITCH_SUBMENU"]);
 	});
 
 	opaTest("3. create new variant and check context menu", function(Given, When, Then) {
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sFLVM_ID);
-		When.onPageWithRTA.iClickOnAContextMenuEntry(2); //save as
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SAVEAS");
 		Then.onFlVariantManagement.theOpenSaveViewDialog(sFLVM_ID);
 
 		// Act
@@ -88,13 +88,13 @@ sap.ui.define([
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sFLVM_ID);
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
+		Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(["CTX_VARIANT_SET_TITLE", "CTX_VARIANT_SAVE", "CTX_VARIANT_SAVEAS", "CTX_VARIANT_MANAGE", "CTX_VARIANT_SWITCH_SUBMENU"]);
 	});
 
 	opaTest("4. open Manage views and check content", function(Given, When, Then) {
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sFLVM_ID);
 
-		When.onPageWithRTA.iClickOnAContextMenuEntry(3); //manage views
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_MANAGE");
 
 		Then.onFlVariantManagement.theOpenManageViewsDialog(sFLVM_ID);
 		Then.onFlVariantManagement.theOpenManageViewsDialogDefaultShouldBe("KUVariant1");

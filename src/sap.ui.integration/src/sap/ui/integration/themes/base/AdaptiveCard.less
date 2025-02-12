@@ -4,5 +4,19 @@
 /* ====================================================== */
 
 .ac-actionSet {
-    padding: 0.125rem;
+	padding: 0.125rem;
+}
+
+/*
+	The following is based on the public css classes for styling of Adaptive Cards.
+	See https://learn.microsoft.com/en-us/adaptive-cards/sdk/rendering-cards/javascript/native-styling.
+*/
+.ac-container.ac-selectable:hover {
+	background-color: var(--sapTile_Hover_Background);
+	cursor: pointer;
+}
+
+.ac-container.ac-selectable:active {
+	background-color: var(--sapTile_Active_Background);
+	cursor: pointer;
 }

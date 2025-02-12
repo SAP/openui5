@@ -738,6 +738,8 @@ sap.ui.define([
 				"~oElement~", "~mTypeForMetaPath~", "~metapath~")
 			.returns("~sPredicate~");
 		this.mock(_AggregationCache).expects("calculateKeyPredicateRH").never();
+		this.mock(_AggregationCache).expects("fixDuplicatePredicate").on(oCache)
+			.withExactArgs("~oElement~", "~sPredicate~").returns("~fixedPredicate~");
 
 		assert.strictEqual(
 			// code under test
@@ -749,6 +751,11 @@ sap.ui.define([
 		assert.strictEqual(
 			oCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~"),
 			"~sPredicate~");
+
+		// code under test: non-hierarchy uses _AggregationCache implementation
+		assert.strictEqual(
+			oCache.fixDuplicatePredicate("~oElement~", "~sPredicate~"),
+			"~fixedPredicate~");
 
 		if (oPICT.oParentGroupNode) {
 			assert.strictEqual(oCache.$parentFilter, "~filter~");
@@ -818,6 +825,7 @@ sap.ui.define([
 			oCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~"),
 			"~sPredicate~");
 
+		assert.notOk("fixDuplicatePredicate" in oCache); // no override for hierarchy
 		if (oParentGroupNode) {
 			assert.strictEqual(oCache.$parentFilter, "~filter~");
 		} else {
@@ -4072,17 +4080,20 @@ sap.ui.define([
 				groupLevels : ["a"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-			oElement = {};
+			oElement = {},
+			oGroupLevelCache = {fixDuplicatePredicate : mustBeMocked};
 
 		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
 		oCache.aElements.$byPredicate["foo"] = {/*unexpected element outside*/};
 		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
+		this.mock(oGroupLevelCache).expects("fixDuplicatePredicate")
+			.withExactArgs(sinon.match.same(oElement), "foo").returns(undefined);
 		this.mock(_Helper).expects("updateNonExisting").never();
 		this.mock(oCache).expects("hasPendingChangesForPath").never();
 
 		assert.throws(function () {
 			// code under test
-			oCache.addElements([oElement], 1); // oCache/iStart does not matter here
+			oCache.addElements([oElement], 1, oGroupLevelCache); // iStart does not matter here
 		}, new Error("Duplicate key predicate: foo"));
 	});
 
@@ -4092,19 +4103,48 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-			oElement = {};
+			oElement = {},
+			oGroupLevelCache = {fixDuplicatePredicate : mustBeMocked};
 
 		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
 		oCache.aElements[0] = {/*unexpected element inside*/};
 		oCache.aElements.$byPredicate["foo"] = oCache.aElements[0];
 		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
+		this.mock(oGroupLevelCache).expects("fixDuplicatePredicate")
+			.withExactArgs(sinon.match.same(oElement), "foo").returns(undefined);
 		this.mock(_Helper).expects("updateNonExisting").never();
 		this.mock(oCache).expects("hasPendingChangesForPath").never();
 
 		assert.throws(function () {
 			// code under test
-			oCache.addElements([oElement], 1); // oCache/iStart does not matter here
+			oCache.addElements([oElement], 1, oGroupLevelCache); // iStart does not matter here
 		}, new Error("Duplicate key predicate: foo"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addElements: fix duplicate key predicate", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			groupLevels : ["foo"]
+		});
+		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
+		oCache.aElements[0] = "~any element~";
+		oCache.aElements.$byPredicate["foo"] = oCache.aElements[0];
+		const oElement = {};
+		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
+		this.mock(_AggregationHelper).expects("beforeOverwritePlaceholder").never();
+		const oGroupLevelCache = {fixDuplicatePredicate : mustBeMocked};
+		this.mock(oGroupLevelCache).expects("fixDuplicatePredicate")
+			.withExactArgs(sinon.match.same(oElement), "foo").returns("bar");
+		this.mock(_Helper).expects("updateNonExisting")
+			.withExactArgs(sinon.match.same(oElement), sinon.match.same(oElement)); // no-op
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+		this.mock(_Helper).expects("copySelected").never();
+
+		// code under test
+		oCache.addElements([oElement], 1, oGroupLevelCache); // iStart does not matter here
+
+		assert.deepEqual(oCache.aElements, ["~any element~", oElement]);
+		assert.deepEqual(oCache.aElements.$byPredicate, {foo : "~any element~", bar : oElement});
 	});
 
 	//*********************************************************************************************
@@ -7321,4 +7361,44 @@ sap.ui.define([
 		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
 		sinon.assert.callOrder(...aExpectations);
 	});
+
+	//*********************************************************************************************
+[
+	{predicate : "(foo='')", newPredicate : "(foo='',$duplicate=id-1-23)"},
+	{predicate : "('')", newPredicate : "('',$duplicate=id-1-23)"},
+	{predicate : "(foo='bar')", newPredicate : undefined},
+	{predicate : "('bar')", newPredicate : undefined}
+].forEach(function (oFixture) {
+	[false, true].forEach(function (bUpdateByPredicate) {
+		const sTitle = "fixDuplicatePredicate: " + JSON.stringify(oFixture)
+			+ ", bUpdateByPredicate=" + bUpdateByPredicate;
+
+	QUnit.test(sTitle, function (assert) {
+		const oCache = {
+			aElements : [],
+			toString : () => "~toString~"
+		};
+		oCache.aElements.$byPredicate = {};
+		const bFix = oFixture.newPredicate !== undefined;
+		const mExpectedByPredicate = {};
+		if (!bFix || bUpdateByPredicate) {
+			oCache.aElements.$byPredicate[oFixture.predicate] = "~oElement~";
+			mExpectedByPredicate[bFix ? oFixture.newPredicate : oFixture.predicate] = "~oElement~";
+		}
+		this.oLogMock.expects("warning").exactly(bFix ? 1 : 0)
+			.withExactArgs("Duplicate key predicate: " + oFixture.predicate, "~toString~",
+				"sap.ui.model.odata.v4.lib._AggregationCache");
+		this.mock(_Helper).expects("uid").exactly(bFix ? 1 : 0).withExactArgs().returns("id-1-23");
+		this.mock(_Helper).expects("setPrivateAnnotation").exactly(bFix ? 1 : 0)
+			.withExactArgs("~oElement~", "predicate", oFixture.newPredicate);
+
+		// code under test
+		assert.strictEqual(
+			_AggregationCache.fixDuplicatePredicate.call(oCache, "~oElement~", oFixture.predicate),
+			oFixture.newPredicate);
+
+		assert.deepEqual(oCache.aElements.$byPredicate, mExpectedByPredicate);
+	});
+	});
+});
 });

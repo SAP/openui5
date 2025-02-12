@@ -41,7 +41,11 @@ sap.ui.define([
 		},
 
 		onCollapseAll : function (oEvent) {
-			oEvent.getSource().getBindingContext().collapse(true);
+			try {
+				oEvent.getSource().getBindingContext().collapse(true);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			}
 		},
 
 		onCreate : function (oEvent, bFilteredOut) {
@@ -67,27 +71,11 @@ sap.ui.define([
 			} // else: invalid value (has not reached model)
 		},
 
-		onExpandLevels : function (oEvent) {
-			this.byId("expandLevelsDialog")
-				.setBindingContext(oEvent.getSource().getBindingContext())
-				.open();
-		},
-
-		onExpandLevelsCancel : function () {
-			this.byId("expandLevelsDialog").close();
-		},
-
-		onExpandLevelsConfirm : function (oEvent) {
-			const sValue = this.byId("expandLevels").getValue();
+		onExpandAll : async function (oEvent) {
 			try {
-				oEvent.getSource().getBindingContext()
-					.expand(sValue === "*"
-						? Number.MAX_SAFE_INTEGER
-						: parseFloat(sValue)); // Note: parseInt("1E16") === 1
+				await oEvent.getSource().getBindingContext().expand(true);
 			} catch (oError) {
 				MessageBox.error(oError.message);
-			} finally {
-				this.byId("expandLevelsDialog").close();
 			}
 		},
 

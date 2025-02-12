@@ -255,31 +255,15 @@ sap.ui.define([
 						);
 					}
 				},
-				expandLevels : function (vRowIndexOrId, iLevels, sComment) {
+				expandAll : function (vRowIndexOrId, sComment) {
 					pressButtonInRow.call(this, vRowIndexOrId,
-						bTreeTable ? /expandLevelsTreeTable/ : /expandLevelsTable/,
+						bTreeTable ? /expandAllTreeTable/ : /expandAll/,
 						"Expand Levels", sComment
-					);
-
-					this.waitFor({
-						actions : new EnterText({clearTextFirst : true, text : "" + iLevels}),
-						controlType : "sap.m.Input",
-						errorMessage : "Could not change 'Expand Levels'",
-						id : /levelsToExpand/,
-						success : function () {
-							Opa5.assert.ok(true,
-								`Changed 'Expand Levels' to ${iLevels}. ${sComment}`);
-						},
-						viewName : sViewName
-					});
-
-					pressButton.call(this, /expandLevelsConfirm/, null,
-						`'Expand Levels Confirm'. ${sComment}`
 					);
 				},
 				collapseAll : function (vRowIndexOrId, sComment) {
 					pressButtonInRow.call(this, vRowIndexOrId,
-						bTreeTable ? /collapseAllTreeTable/ : /collapseAllTable/,
+						bTreeTable ? /collapseAllTreeTable/ : /collapseAll/,
 						"Collapse All", sComment
 					);
 				}

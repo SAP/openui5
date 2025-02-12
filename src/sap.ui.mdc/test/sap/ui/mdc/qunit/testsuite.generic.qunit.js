@@ -24,7 +24,12 @@ sap.ui.define([
 			},
 			"sap.ui.mdc.Element": {
 				properties: {
-					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit,
+					sortConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					filterConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					groupConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					aggregateConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					propertyInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings
 				}
 			},
 			"sap.ui.mdc.Table": {
@@ -37,13 +42,24 @@ sap.ui.define([
 			},
 			"sap.ui.mdc.FilterBar": {
 				properties: {
-					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit,
+					filterConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					propertyInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings
+				}
+			},
+			"sap.ui.mdc.filterbar.FilterBarBase": {
+				properties: {
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit,
+					filterConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					propertyInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings
 				}
 			},
 			"sap.ui.mdc.filterbar.p13n.AdaptationFilterBar": {
 				properties: {
 					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit,
-					adaptationControl: GenericTestCollection.ExcludeReason.CantSetDefaultValue
+					adaptationControl: GenericTestCollection.ExcludeReason.CantSetDefaultValue,
+					filterConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					propertyInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings
 				}
 			},
 			"sap.ui.mdc.field.FieldBase": {
@@ -70,6 +86,16 @@ sap.ui.define([
 					contentDisplay: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings, // we want to test creation of internal content
 					contentEdit: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings, // we want to test creation of internal content
 					fieldInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings // we want to test standard content
+				}
+			},
+			"sap.ui.mdc.field.FieldInput": {
+				properties: {
+					ariaAttributes: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings // tested inside Field
+				}
+			},
+			"sap.ui.mdc.field.FieldMultiInput": {
+				properties: {
+					ariaAttributes: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings // tested inside MultiValueField
 				}
 			},
 			"sap.ui.mdc.Field": {
@@ -301,17 +327,24 @@ sap.ui.define([
 					return oDCP;
 				},
 				properties: {
-					dataType: "sap.ui.model.type.String",
-					dataTypeFormatOptions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
-					dataTypeConstraints: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
 					conditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
-					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+					config: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings
 				},
 				aggregations: {
-					content: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings, // we want to test creation of internal content
-					contentDisplay: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings, // we want to test creation of internal content
-					contentEdit: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings, // we want to test creation of internal content
-					fieldInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings // we want to test standard content
+				}
+			},
+			"sap.ui.mdc.ValueHelp": {
+				properties: {
+					conditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit
+				}
+			},
+			"sap.ui.mdc.Chart": {
+				properties: {
+					delegate: GenericTestCollection.ExcludeReason.NotChangeableAfterInit,
+					sortConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					filterConditions: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings,
+					propertyInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings
 				}
 			}
 		}

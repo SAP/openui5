@@ -75,6 +75,14 @@ sap.ui.define([
             }));
 	};
 
+    CondenserTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
+        TableDelegate.updateBindingInfo.call(CondenserTableDelegate, oTable, oBindingInfo);
+        const oPayload = oTable.getPayload();
+        if (oPayload) {
+            oBindingInfo.path = "/" + oPayload.collectionName;
+        }
+    };
+
     return CondenserTableDelegate;
 
 });

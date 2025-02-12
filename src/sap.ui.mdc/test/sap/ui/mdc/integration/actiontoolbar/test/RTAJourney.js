@@ -52,7 +52,7 @@ sap.ui.define([
 		{
 			name: "StandAlone",
 			toolbarID: "ActionToolbarTesting---app--actionToolbarId",
-			contextMenuEntries: ["Cut", "Paste", "Toolbar Actions"],
+			contextMenuEntriesKeys: ["CTX_CUT", "CTX_PASTE", "CTX_SETTINGS"],
 			renameActionID: "standaloneButton4",
 			splitActionID: "standaloneMenuButton",
 			blockAdaptationActionID: "standaloneButton3"
@@ -60,7 +60,7 @@ sap.ui.define([
 		{
 			name: "Table",
 			toolbarID: "ActionToolbarTesting---app--actionToolbarTable-toolbar",
-			contextMenuEntries: ["Toolbar Actions"],
+			contextMenuEntriesKeys: ["CTX_SETTINGS"],
 			renameActionID: "tableButton4",
 			splitActionID: "tableMenuButton",
 			blockAdaptationActionID: "tableButton3",
@@ -69,7 +69,7 @@ sap.ui.define([
 		{
 			name: "Chart",
 			toolbarID: "ActionToolbarTesting---app--actionToolbarChart--toolbar",
-			contextMenuEntries: ["Toolbar Actions"],
+			contextMenuEntriesKeys: ["CTX_SETTINGS"],
 			renameActionID: "chartButton4",
 			splitActionID: "chartMenuButton",
 			blockAdaptationActionID: "chartButton3",
@@ -120,8 +120,8 @@ sap.ui.define([
 			When.onPageWithRTA.iRightClickOnAnElementOverlay(oTestSetting.toolbarID);
 
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
-			Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
+			Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(oTestSetting.contextMenuEntriesKeys);
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 			// Check if Dialog opened (included in personalization)
 			// Do personalization
@@ -172,8 +172,8 @@ sap.ui.define([
 			When.onPageWithRTA.iRightClickOnAnElementOverlay(oTestSetting.toolbarID);
 
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
-			Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
+			Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(oTestSetting.contextMenuEntriesKeys);
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 			// Change button order
 			When.onTheApp.iMoveActionDown("Action 2");
@@ -218,8 +218,8 @@ sap.ui.define([
 			When.onPageWithRTA.iRightClickOnAnElementOverlay(oTestSetting.toolbarID);
 
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
-			Then.onPageWithRTA.iShouldSeetheContextMenuEntries(oTestSetting.contextMenuEntries);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Toolbar Actions");
+			Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(oTestSetting.contextMenuEntriesKeys);
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 			// Change button order
 			When.onTheApp.iCannotMoveAction("Action 3");
@@ -263,8 +263,8 @@ sap.ui.define([
 			// Open Context Menu of ActionToolbarAction
 			When.onPageWithRTA.iRightClickOnAnElementOverlay("ActionToolbarTesting---app--" + oTestSetting.renameActionID);
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
-			Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename"]);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Rename");
+			Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(["CTX_RENAME"]);
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_RENAME");
 
 			When.onPageWithRTA.iEnterANewName("Rename Test");
 
@@ -302,8 +302,8 @@ sap.ui.define([
 
 			When.onPageWithRTA.iRightClickOnAnElementOverlay("ActionToolbarTesting---app--" + oTestSetting.splitActionID);
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
-			Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Split"]);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Split");
+			Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(["CTX_UNGROUP_FIELDS"]);
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_UNGROUP_FIELDS");
 
 			// Check button order
 			Then.onTheApp.iShouldSeeActionToolbarWithActions(oTestSetting.toolbarID, {
@@ -403,8 +403,8 @@ sap.ui.define([
 			]);
 
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
-			Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename", "Combine"]);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithText("Combine");
+			Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(["CTX_RENAME", "CTX_GROUP_FIELDS"]);
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_GROUP_FIELDS");
 
 			// Check button order
 			Then.onTheApp.iShouldSeeActionToolbarWithActions(oTestSetting.toolbarID, {
@@ -525,7 +525,7 @@ sap.ui.define([
 				// Open Context Menu of VariantManagement
 				When.onPageWithRTA.iRightClickOnAnElementOverlay(oTestSetting.variantManagementID);
 				Then.onPageWithRTA.iShouldSeetheContextMenu();
-				Then.onPageWithRTA.iShouldSeetheContextMenuEntries(["Rename", "Save View", "Save View As", "Manage Views", "Switch Views"]);
+				Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(["CTX_VARIANT_SET_TITLE", "CTX_VARIANT_SAVE", "CTX_VARIANT_SAVEAS", "CTX_VARIANT_MANAGE", "CTX_VARIANT_SWITCH_SUBMENU"]);
 
 				// Close RTA
 				When.onPageWithRTA.iExitRtaMode(false, /*bNoChanges =*/true);

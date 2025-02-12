@@ -2912,6 +2912,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether an element with a duplicate key predicate is allowed to be imported into
+	 * aElements, and if so, creates a new unique key predicate.
+	 *
+	 * @param {object} oElement
+	 *   The element with the duplicate key predicate
+	 * @param {string} sPredicate
+	 *   The duplicate key predicate
+	 * @returns {string|undefined}
+	 *   The newly created predicate, or <code>undefined</code> if the predicate cannot be fixed
+	 *
+	 * @public
+	 */
+	// eslint-disable-next-line no-unused-vars
+	_CollectionCache.prototype.fixDuplicatePredicate = function (oElement, sPredicate) {
+		// Note: overridden by _AggregationCache.fixDuplicatePredicate
+	};
+
+	/**
 	 * Returns a filter that excludes all created entities in this cache's collection and all
 	 * entities that have been deleted on the client, but not on the server yet.
 	 *
@@ -3185,7 +3203,13 @@ sap.ui.define([
 
 					const iIndex = aElements.indexOf(oKeptElement);
 					if (iIndex >= 0 && iIndex !== iStart + i - iOffset) {
-						throw new Error("Duplicate key predicate: " + sPredicate);
+						const sNewPredicate = this.fixDuplicatePredicate(oElement, sPredicate);
+						if (sNewPredicate) {
+							sPredicate = sNewPredicate;
+							oKeptElement = oElement; // leads to no-op for _Helper.updateNonExisting
+						} else {
+							throw new Error("Duplicate key predicate: " + sPredicate);
+						}
 					}
 
 					// only check for ETag change if the cache contains one; otherwise either the

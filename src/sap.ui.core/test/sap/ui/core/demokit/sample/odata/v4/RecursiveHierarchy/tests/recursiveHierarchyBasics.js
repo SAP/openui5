@@ -21,7 +21,7 @@ sap.ui.define([
 		// }
 
 		function expandAll(sId, sComment) {
-			When.onTheMainPage.expandLevels(sId, Number.MAX_SAFE_INTEGER, sComment);
+			When.onTheMainPage.expandAll(sId, sComment);
 		}
 
 		function collapseAll(sId, sComment) {

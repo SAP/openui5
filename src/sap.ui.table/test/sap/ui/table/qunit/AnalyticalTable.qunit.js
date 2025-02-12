@@ -846,6 +846,11 @@ sap.ui.define([
 		beforeEach: function() {
 			this._oTable = new AnalyticalTable();
 			this._oTable.addColumn(createColumn({name: "CostCenter"}));
+			this._oTable.addColumn(createColumn({name: "d1"}));
+			this._oTable.addColumn(createColumn({name: "d2_filterable"}));
+			this._oTable.addColumn(createColumn({name: "d3_filterable"}));
+			this._oTable.addColumn(createColumn({name: "d4"}));
+			this._oTable.addColumn(createColumn({name: "d5_filterable"}));
 
 			this._oTable.removeColumn = function(oColumn) {
 				return this.removeAggregation('columns', oColumn);
@@ -857,8 +862,11 @@ sap.ui.define([
 				const aProperties = [
 					{name: "m1", type: "measure", filterable: false},
 					{name: "m2_filterable", type: "measure", filterable: true},
-					{name: "d1", type: "dimension", filterable: false},
-					{name: "d2_filterable", type: "dimension", filterable: true}
+					{name: "d1", type: "dimension", filterable: false, sortProperty: "d1"},
+					{name: "d2_filterable", type: "dimension", filterable: true, sortProperty: "d2_filterable"},
+					{name: "d3_filterable", type: "dimension", filterable: true, sortProperty: "d3_filterable"},
+					{name: "d4", type: "dimension", filterable: false, sortProperty: "d4", filterProperty: "d3_filterable"},
+					{name: "d5_filterable", type: "dimension", filterable: false, filterProperty: "d5_filterable"}
 				];
 
 				oBinding.isMeasure = function(sPropertyName) {
@@ -878,6 +886,16 @@ sap.ui.define([
 					}
 				};
 
+				oBinding.getSortablePropertyNames = function() {
+					const aPropertyNames = [];
+					for (let i = 0; i < aProperties.length; i++) {
+						if (aProperties[i].sortProperty) {
+							aPropertyNames.push(aProperties[i].name);
+						}
+					}
+					return aPropertyNames;
+				};
+
 				oBinding.getFilterablePropertyNames = function() {
 					const aPropertyNames = [];
 					for (let i = 0; i < aProperties.length; i++) {
@@ -892,6 +910,21 @@ sap.ui.define([
 					return {
 						findMeasureByPropertyName: function(arg1) {
 							return {value: true, argument: arg1};
+						},
+						findDimensionByPropertyName: function(arg1) {
+							if (arg1 === "d1" || arg1 === "d2_filterable" || arg1 === "d5_filterable") {
+								return {
+									getName: function() {
+										return arg1;
+									}
+								};
+							} else {
+								return {
+									getName: function() {
+										return "d3_filterable";
+									}
+								};
+							}
 						}
 					};
 				};
@@ -913,6 +946,15 @@ sap.ui.define([
 		const oReturnValue = oColumn._isAggregatableByMenu();
 		assert.ok(oReturnValue.value, "", "findMeasureByPropertyName is called");
 		assert.equal(oReturnValue.argument, "CostCenter", "findMeasureByPropertyName is called with the correct parameter");
+	});
+
+	QUnit.test("isGroupableByMenu", function(assert) {
+		const aColumns = this._oTable.getColumns();
+		assert.notOk(aColumns[1].isGroupableByMenu(), "Column is not groupable by menu");
+		assert.ok(aColumns[2].isGroupableByMenu(), "Column is groupable by menu");
+		assert.ok(aColumns[3].isGroupableByMenu(), "Column is groupable by menu");
+		assert.ok(aColumns[4].isGroupableByMenu(), "Column is groupable by menu");
+		assert.notOk(aColumns[5].isGroupableByMenu(), "Column is not groupable by menu");
 	});
 
 	QUnit.test("Pre-Check Menu Item Creation without Parent", function(assert) {
