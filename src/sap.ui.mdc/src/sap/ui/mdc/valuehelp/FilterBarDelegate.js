@@ -20,8 +20,11 @@ sap.ui.define([
 	const ValueHelpFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
 	ValueHelpFilterBarDelegate.fetchProperties = function(oFilterBar) {
+		oFilterBar.getParent();
+		const sSearchPath = "$search";
+
 		return Promise.resolve([{
-			name: "$search",
+			name: sSearchPath,
 			label: mdcMessageBundle.getText("filterbar.SEARCH"),
 			dataType: "sap.ui.model.type.String"
 		}]);

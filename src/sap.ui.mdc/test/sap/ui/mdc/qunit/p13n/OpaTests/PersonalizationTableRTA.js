@@ -82,7 +82,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -116,7 +116,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		//Add two filters --> PRESS CANCEL
 		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
@@ -148,7 +148,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		//Add two filters & confirm
 		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
@@ -182,7 +182,7 @@ sap.ui.define([
 
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -221,7 +221,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -259,7 +259,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -322,7 +322,7 @@ sap.ui.define([
 		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 		Then.onPageWithRTA.iShouldSeetheContextMenu();
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
+		When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
 		Then.iShouldSeeP13nItems(aTableItems);

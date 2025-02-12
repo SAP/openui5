@@ -743,92 +743,28 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		});
 	}
 
+	// beforeEach for all test modules, <code>this</code> is the current test
+	function globalBeforeEach() {
+		const oModel = new JSONModel({bar : "world", foo : "hello"});
+		const oControl = new TestControl({models : {"undefined" : oModel, "model" : oModel}});
+
+		// control instance for integration-like tests
+		this.oControl = oControl;
+		// candidate for a root formatter
+		this.formatter = function () {
+			// turn arguments into a real array and return its JSON representation
+			return JSON.stringify.call(JSON, Array.prototype.slice.apply(arguments));
+		};
+
+		TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
+		this.oLogMock = this.mock(Log);
+		this.oLogMock.expects("warning").never();
+		this.oLogMock.expects("error").never();
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.AnnotationHelper", {
-		beforeEach : function () {
-			var oModel = new JSONModel({bar : "world", foo : "hello"}),
-				oControl = new TestControl({
-					models : {
-						"undefined" : oModel,
-						"model" : oModel
-					}
-				});
-
-			// control instance for integration-like tests
-			this.oControl = oControl;
-			// candidate for a root formatter
-			this.formatter = function formatter() {
-				// turn arguments into a real array and return its JSON representation
-				var aArray = Array.prototype.slice.apply(arguments);
-				return JSON.stringify.call(JSON, aArray);
-			};
-
-			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.oLogMock = this.mock(Log);
-			this.oLogMock.expects("warning").never();
-			this.oLogMock.expects("error").never();
-		},
-
-		/**
-		 * Checks that createPropertySetting() works as expected for multiple bindings.
-		 *
-		 * @param {object} assert the assertions
-		 * @param {any[]} aParts
-		 *   non-empty array of constants or data binding expressions
-		 * @param {any[]} aExpectedValues
-		 *   the expected values of each part
-		 */
-		checkMultiple : function checkMultiple(assert, aParts, aExpectedValues) {
-			var oControl = this.oControl;
-
-			// test without and with root formatter
-			[undefined, this.formatter].forEach(function (fnRootFormatter) {
-				var sExpectedText = fnRootFormatter
-					? JSON.stringify(aExpectedValues)
-					// @see sap.ui.model.CompositeBinding#getExternalValue
-					// "default: multiple values are joined together as space separated list if no
-					// formatter or type specified"
-					: aExpectedValues.join(" ");
-
-				oControl.applySettings({
-					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter, {
-						help: oHelper.help,
-						Helper: oHelper
-					})
-				});
-
-				assert.strictEqual(oControl.getText(), sExpectedText);
-			});
-		},
-
-		/*
-		 * Checks that createPropertySetting() works as expected for a single binding.
-		 *
-		 * @param {string} sBinding
-		 *   a constant or data binding expression
-		 * @param {string} sExpectedText
-		 *   the expected value of the test control's "text" property
-		 */
-		checkSingle : function checkSingle(assert, sBinding, sExpectedText) {
-			var oControl = this.oControl,
-				aParts = [sBinding];
-
-			[undefined, this.formatter].forEach(function (fnRootFormatter) {
-				if (fnRootFormatter) {
-					sExpectedText = JSON.stringify([sExpectedText]);
-				}
-
-				oControl.applySettings({
-					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter, {
-						help: oHelper.help,
-						Helper: oHelper
-					})
-				});
-
-				assert.strictEqual(oControl.getText(), sExpectedText, "sBinding: " + sBinding);
-				assert.strictEqual(aParts[0], sBinding, "array argument unchanged");
-			});
-		}
+		beforeEach : globalBeforeEach
 	});
 
 	//*********************************************************************************************
@@ -2001,6 +1937,73 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			assert.strictEqual(AnnotationHelper.gotoFunctionImport(oContext), undefined);
 		});
+	});
+
+	/** @deprecated As of version 1.121.0, reason sap.ui.model.odata.AnnotationHelper.createPropertySetting */
+	//*********************************************************************************************
+	QUnit.module("sap.ui.model.odata.AnnotationHelper#createPropertySetting", {
+		beforeEach : globalBeforeEach,
+
+		/**
+		 * Checks that createPropertySetting() works as expected for multiple bindings.
+		 *
+		 * @param {object} assert the assertions
+		 * @param {any[]} aParts
+		 *   non-empty array of constants or data binding expressions
+		 * @param {any[]} aExpectedValues
+		 *   the expected values of each part
+		 */
+		checkMultiple : function (assert, aParts, aExpectedValues) {
+			var oControl = this.oControl;
+
+			// test without and with root formatter
+			[undefined, this.formatter].forEach(function (fnRootFormatter) {
+				var sExpectedText = fnRootFormatter
+					? JSON.stringify(aExpectedValues)
+					// @see sap.ui.model.CompositeBinding#getExternalValue
+					// "default: multiple values are joined together as space separated list if no
+					// formatter or type specified"
+					: aExpectedValues.join(" ");
+
+				oControl.applySettings({
+					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter, {
+						help : oHelper.help,
+						Helper : oHelper
+					})
+				});
+
+				assert.strictEqual(oControl.getText(), sExpectedText);
+			});
+		},
+
+		/*
+		 * Checks that createPropertySetting() works as expected for a single binding.
+		 *
+		 * @param {string} sBinding
+		 *   a constant or data binding expression
+		 * @param {string} sExpectedText
+		 *   the expected value of the test control's "text" property
+		 */
+		checkSingle : function (assert, sBinding, sExpectedText) {
+			var oControl = this.oControl,
+				aParts = [sBinding];
+
+			[undefined, this.formatter].forEach(function (fnRootFormatter) {
+				if (fnRootFormatter) {
+					sExpectedText = JSON.stringify([sExpectedText]);
+				}
+
+				oControl.applySettings({
+					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter, {
+						help : oHelper.help,
+						Helper : oHelper
+					})
+				});
+
+				assert.strictEqual(oControl.getText(), sExpectedText, "sBinding: " + sBinding);
+				assert.strictEqual(aParts[0], sBinding, "array argument unchanged");
+			});
+		}
 	});
 
 	//*********************************************************************************************

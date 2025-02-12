@@ -35,6 +35,13 @@
 				width="700px"
 				height="auto"
 				class="sapUiSmallMargin" />
+			<w:Card
+				id="adaptivecard4"
+				manifest="{manifests>/adaptiveCard/adaptive4}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+				width="700px"
+				height="auto"
+				class="sapUiSmallMargin" />
 		</Panel>
 	</Page>
 </mvc:View>

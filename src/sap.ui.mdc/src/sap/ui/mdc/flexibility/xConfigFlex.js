@@ -41,6 +41,7 @@ sap.ui.define([
 	 * @param {object} mMetaConfig A map describing the metadata structure that is affected by this changehandler
 	 * @param {object} mMetaConfig.aggregation The aggregation name (such as <code>columns</code> or <code>filterItemes</code>)
 	 * @param {object} mMetaConfig.property The property name (such as <code>width</code> or <code>label</code>)
+	 * @param {string} mMetaConfig.classification The condenser classification for the changehandler
 	 *
 	 * @returns {object} The created changehandler object
 	 */
@@ -110,7 +111,7 @@ sap.ui.define([
 			revert: fRevert,
 			getCondenserInfo: function(oChange, mPropertyBag) {
 				return {
-					classification: CondenserClassification.LastOneWins,
+					classification: mMetaConfig.classification ?? CondenserClassification.LastOneWins,
 					affectedControl: oChange.getSelector(),
 					uniqueKey: oChange.getContent().name + "_" + mMetaConfig.aggregation + "_" + mMetaConfig.property
 				};

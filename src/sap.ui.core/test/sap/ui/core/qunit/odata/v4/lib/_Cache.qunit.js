@@ -7838,6 +7838,8 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oElement2, "predicate", "new2");
 				_Helper.setPrivateAnnotation(oElement3, "predicate", "bar");
 			});
+		this.mock(oCache).expects("fixDuplicatePredicate").exactly(bDuplicate ? 1 : 0)
+			.withExactArgs(sinon.match.same(oElement3), "bar").returns(undefined);
 		this.mock(_Helper).expects("updateNonExisting")
 			.exactly(bDuplicate || sKeptETag === "other" ? 0 : 1)
 			.withExactArgs(sinon.match.same(oKeptElement), sinon.match.same(oElement3));
@@ -7870,6 +7872,27 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#handleResponse: fix duplicate key predicate", function (assert) {
+		const oCache = this.createCache("Employees");
+		oCache.aElements[0] = "~any element~";
+		oCache.aElements.$byPredicate["foo"] = oCache.aElements[0];
+		const oElement = {};
+		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
+		this.mock(oCache).expects("fixDuplicatePredicate")
+			.withExactArgs(sinon.match.same(oElement), "foo").returns("bar");
+		this.mock(_Helper).expects("updateNonExisting")
+			.withExactArgs(sinon.match.same(oElement), sinon.match.same(oElement)); // no-op
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+		const oResult = {value : [oElement]};
+
+		// code under test
+		assert.strictEqual(oCache.handleResponse(oResult, 1, "~mTypeForMetaPath~"), 0);
+
+		assert.deepEqual(oCache.aElements, ["~any element~", oElement]);
+		assert.deepEqual(oCache.aElements.$byPredicate, {foo : "~any element~", bar : oElement});
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bIn) {
@@ -14055,6 +14078,14 @@ sap.ui.define([
 		assert.deepEqual(oCache.aSeparateProperties, ["baz"]);
 		// #setSeparate shouldn't be called multiple times, cleanup is not yet needed
 		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {foo : [], bar : [], baz : []});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fixDuplicatePredicate", function (assert) {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+
+		// code under test
+		assert.strictEqual(oCache.fixDuplicatePredicate("~oElement~", "~sPredicate~"), undefined);
 	});
 
 	//*********************************************************************************************

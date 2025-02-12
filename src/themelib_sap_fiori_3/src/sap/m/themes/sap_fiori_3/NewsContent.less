@@ -7,23 +7,23 @@
 @_sap_m_NewsContent_SubHeaderTextColor: contrast(@_sap_m_TileContent_NewsContentBackgroundColor, @sapUiTileTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 
 .sapMNwC {
-	background-color: fade(@sapUiTileBackground, 60);
+	background-color: var(--sapTile_OverlayBackground);
+	opacity: 0.8;
 	height: 3.625rem;
 }
 
 .sapMTileCnt.News {
 
 	.sapMNwC {
-		text-shadow: 0 0 0.125rem contrast(@_sap_m_NewsContent_SubHeaderTextColor, @sapUiContentShadowColor, @sapUiContentContrastShadowColor, @sapUiContentContrastTextThreshold);
 
 		.sapMNwCSbh {
-			color: @_sap_m_NewsContent_SubHeaderTextColor;
+			color: var(--sapTile_OverlayForegroundColor);
 			line-height: normal;
 		}
 
 		.sapMNwCCTxt .sapMText,
 		.sapMNwCCTxt .sapMFT {
-			color: @_sap_m_NewsContent_HeaderTextColor;
+			color: var(--sapTile_OverlayForegroundColor);
 			line-height: normal;
 		}
 	}

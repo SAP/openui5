@@ -30,11 +30,11 @@ sap.ui.define([
 			color: white;\
 		}\
 	');
-	style.sheet.insertRule("\
+	style.sheet.insertRule('\
 		#left-part .withBeforeElementAndAttrContent::before {\
-			content: attr(data-sap-ui-icon-content);\
+			content: ":";\
 		}\
-	");
+	');
 	style.sheet.insertRule("\
 		.shrink {\
 			transform: scale(0.1, 0.5);\

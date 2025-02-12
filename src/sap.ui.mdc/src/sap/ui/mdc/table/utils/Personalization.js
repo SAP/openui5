@@ -266,5 +266,23 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Create a show/hide details change and applies it to the table.
+	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change
+	 * @param {object} mSettings The change details
+	 * @param {boolean} mSettings.hideDetails Whether the details should be hidden
+	 */
+	PersonalizationUtils.createShowDetailsChange = function(oTable, mSettings) {
+		oTable.getEngine().createChanges({
+			control: oTable,
+			key: "ShowDetails",
+			state: [{
+				name: "ResponsiveTable",
+				showDetails: mSettings.showDetails || null
+			}],
+			applyAbsolute: true
+		});
+	};
+
 	return PersonalizationUtils;
 });

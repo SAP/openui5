@@ -394,7 +394,7 @@ sap.ui.define([
 	/**
 	 * Tries to attach the itemPress event to the inner table. If a listener is already attached, this function does nothing.
 	 *
-	 * @returns whether event was attached or not
+	 * @returns {boolean} whether event was attached or not
 	 * @private
 	 */
 	ResponsiveTableType.prototype._attachItemPress = function() {
@@ -409,7 +409,7 @@ sap.ui.define([
 	/**
 	 * Tries to detach the itemPress listener on the inner table. If there is no listener, this function does nothing.
 	 *
-	 * @returns whether event was detached or not
+	 * @returns {boolean} whether event was detached or not
 	 * @private
 	 */
 	ResponsiveTableType.prototype._detachItemPress = function() {
@@ -432,12 +432,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveTableType.prototype._toggleShowDetails = function(bValue) {
-		if (!this._oShowDetailsButton || (bValue === this.bHideDetails)) {
+		if (bValue === this.bHideDetails) {
+			return;
+		}
+		// Set show/hide details even if the button is not visible (e.g. set via variant if popin is not visible yet)
+		this.bHideDetails = bValue;
+
+		if (!this._oShowDetailsButton) {
 			return;
 		}
 
 		const oResponsiveTable = this.getInnerTable();
-		this.bHideDetails = bValue;
 
 		if (this.bHideDetails) {
 			oResponsiveTable.setHiddenInPopin(this._getImportanceToHide());
@@ -464,6 +469,7 @@ sap.ui.define([
 						tooltip: oRb.getText("table.SHOWDETAILS_TEXT"),
 						press: [
 							function() {
+								this._persistShowDetails(true);
 								this._toggleShowDetails(false);
 							}, this
 						]
@@ -474,6 +480,7 @@ sap.ui.define([
 						tooltip: oRb.getText("table.HIDEDETAILS_TEXT"),
 						press: [
 							function() {
+								this._persistShowDetails(false);
 								this._toggleShowDetails(true);
 							}, this
 						]
@@ -482,6 +489,21 @@ sap.ui.define([
 			});
 		}
 		return this._oShowDetailsButton;
+	};
+
+	/**
+	 * Persists the Show / Hide Details state in the personalization.
+	 * @param {boolean} bShowDetails whether to show details or not
+	 * @private
+	 */
+	ResponsiveTableType.prototype._persistShowDetails = function(bShowDetails) {
+		if (this.bHideDetails === !bShowDetails) {
+			return;
+		}
+
+		PersonalizationUtils.createShowDetailsChange(this.getTable(), {
+			showDetails: bShowDetails
+		});
 	};
 
 	/**
@@ -621,6 +643,24 @@ sap.ui.define([
 			(oTable.getColumns().pop() === oColumn)) {
 			this._toggleShowDetails(false);
 		}
+	};
+
+	ResponsiveTableType.prototype.onModifications = function(aAffectedControllers) {
+		const oTable = this.getTable();
+		const oState = oTable.getCurrentState().xConfig;
+		const oTypeState = oState?.aggregations?.type;
+
+		if (aAffectedControllers.indexOf("ShowDetails") !== -1) {
+			this._toggleShowDetails(!(oTypeState?.ResponsiveTable?.showDetails ?? false));
+		}
+	};
+
+	/**
+	 * Determines whether the xConfig state should be shown.
+	 * @returns {boolean} whether the xConfig state should be shown
+	 */
+	ResponsiveTableType.prototype.showXConfigState = function() {
+		return this._oShowDetailsButton?.getVisible();
 	};
 
 	ResponsiveTableType.prototype.exit = function() {

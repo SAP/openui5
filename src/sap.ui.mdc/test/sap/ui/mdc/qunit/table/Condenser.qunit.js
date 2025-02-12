@@ -1,7 +1,8 @@
 /* global */
 sap.ui.define([
-    "sap/ui/rta/enablement/elementActionTest"
-], function(elementActionTest) {
+    "sap/ui/rta/enablement/elementActionTest",
+    "sap/ui/model/json/JSONModel"
+], function(elementActionTest, JSONModel) {
     'use strict';
 
     function fnGetView() {
@@ -320,4 +321,174 @@ sap.ui.define([
 		afterRedo: fnConfirmInitialSortingState
     });
 
+    // ---------------------------------------------------------------------
+
+    function fnGetDataView() {
+        const sDelegate = '\\{"name": "sap/ui/mdc/qunit/table/CondenserDelegate", "payload": \\{"collectionName": "Creation"\\}\\}';
+        const sView =
+        '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc.table" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc">' +
+            '<mdc:Table id="myMDCTable" ' +
+                'selectionMode="Multi" ' +
+                'delegate=\'' +  sDelegate + '\' ' +
+                'p13nMode="Column,Group,Sort">' +
+                '<mdc:columns>' +
+                    '<Column id="IDTableName_01" header="Name" propertyKey="name" importance="High"></Column>' +
+                    '<Column id="IDTableYear" header="Founding Year" propertyKey="foundingYear" importance="Medium"></Column>' +
+                    '<Column id="IDTablemodified" header="Changed By" propertyKey="modifiedBy" importance="Low"></Column>' +
+                    '<Column id="IDTableCreated" header="Created On" propertyKey="createdAt" importance="Low"></Column>' +
+                '</mdc:columns>' +
+                '<mdc:type>' +
+                    '<mdc:table.ResponsiveTableType showDetailsButton="true" detailsButtonSetting="High" />' +
+                '</mdc:type>' +
+            '</mdc:Table>' +
+        '</mvc:View>';
+
+        return sView;
+    }
+
+    function fnConfirmShowDetailsStateSet(bShowDetails) {
+        return function(oUiComponent, oViewAfterAction, assert) {
+            const oTable = oViewAfterAction.byId("myMDCTable");
+            const oType = oTable.getType();
+            assert.ok(oTable, "then the mdc.Table exists");
+            assert.ok(oType, "then the mdc.Table has a type");
+            assert.ok(oType.isA("sap.ui.mdc.table.ResponsiveTableType"), "then the type is a ResponsiveTableType");
+            assert.ok(oType.bHideDetails === !bShowDetails, "then the showDetails property is set correctly");
+        };
+    }
+
+    elementActionTest("Single setShowDetails change", {
+        xmlView: fnGetDataView(),
+        jsOnly: true,
+        action: {
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function (oView) {
+                return {
+					changeType: "setShowDetails",
+					content: {
+						name: "ResponsiveTable",
+                        value: true
+					}
+				};
+            }
+        },
+        changesAfterCondensing: 1, // OPTIONAL
+		afterAction: fnConfirmShowDetailsStateSet(true),
+		afterUndo: fnConfirmShowDetailsStateSet(false),
+		afterRedo: fnConfirmShowDetailsStateSet(true),
+        model: new JSONModel({
+            Creation: Array.from({length: 10}, (v, i) => {
+                return {
+                    name: "Name " + i,
+                    foundingYear: 2020 - i,
+                    modifiedBy: "User " + i,
+                    createdAt: "2020-01-01"
+                };
+            })
+        })
+    });
+
+    elementActionTest("setShowDetails, resetShowDetails and setShowDetails results in 1 change", {
+        xmlView: fnGetDataView(),
+        jsOnly: true,
+        action: {
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function (oView) {
+                return {
+					changeType: "setShowDetails",
+					content: {
+						name: "ResponsiveTable",
+                        value: true
+					}
+				};
+            }
+        },
+        previousActions: [
+            {
+                name: "settings",
+                controlId: "myMDCTable",
+                parameter: function (oView) {
+                    return {
+                        changeType: "setShowDetails",
+                        content: {
+                            name: "ResponsiveTable",
+                            value: true
+                        }
+                    };
+                }
+            } ,{
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function() {
+                return {
+					changeType: "resetShowDetails",
+					content: {
+						name: "ResponsiveTable",
+                        value: false
+					}
+                };
+            }
+        }],
+        changesAfterCondensing: 1, // OPTIONAL
+		afterAction: fnConfirmShowDetailsStateSet(true),
+		afterUndo: fnConfirmShowDetailsStateSet(false),
+		afterRedo: fnConfirmShowDetailsStateSet(true),
+        model: new JSONModel({
+            Creation: Array.from({length: 10}, (v, i) => {
+                return {
+                    name: "Name " + i,
+                    foundingYear: 2020 - i,
+                    modifiedBy: "User " + i,
+                    createdAt: "2020-01-01"
+                };
+            })
+        })
+    });
+
+    elementActionTest("setShowDetails and resetShowDetails results in 0 changes", {
+        xmlView: fnGetDataView(),
+        jsOnly: true,
+        action: {
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function (oView) {
+                return {
+					changeType: "resetShowDetails",
+					content: {
+						name: "ResponsiveTable",
+                        value: false
+					}
+				};
+            }
+        },
+        previousActions: [{
+            name: "settings",
+            controlId: "myMDCTable",
+            parameter: function() {
+                return {
+					changeType: "setShowDetails",
+					content: {
+						name: "ResponsiveTable",
+                        value: true
+					}
+                };
+            }
+        }],
+        changesAfterCondensing: 0, // OPTIONAL
+		afterAction: fnConfirmShowDetailsStateSet(false),
+		afterUndo: fnConfirmShowDetailsStateSet(false),
+		afterRedo: fnConfirmShowDetailsStateSet(false),
+        model: new JSONModel({
+            Creation: Array.from({length: 10}, (v, i) => {
+                return {
+                    name: "Name " + i,
+                    foundingYear: 2020 - i,
+                    modifiedBy: "User " + i,
+                    createdAt: "2020-01-01"
+                };
+            })
+        })
+    });
 });
