@@ -45,7 +45,13 @@ sap.ui.define(function() {
 				},
 				module : ["test-resources/sap/ui/core/qunit/internal/1RingModels.qunit"],
 				qunit : {
-					version : "edge",
+					versions : {
+						"2.18" : {
+							module : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18",
+							css : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.css"
+						}
+					},
+					version : "2.18",
 					reorder : false
 				},
 				sinon : {
