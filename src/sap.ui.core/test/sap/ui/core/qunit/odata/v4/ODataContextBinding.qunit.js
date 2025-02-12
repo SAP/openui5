@@ -1224,9 +1224,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	/**
-	 * @deprecated As of version 1.123.0
-	 */
+	/** @deprecated As of version 1.123.0 */
 	QUnit.test("execute", function (assert) {
 		assert.strictEqual(ODataContextBinding.prototype.execute,
 			ODataContextBinding.prototype.invoke);

@@ -72,11 +72,11 @@ sap.ui.define([
 	QUnit.test("basics", function (assert) {
 		var oModel;
 
-		/** @deprecated As of Version 1.110.0 */
+		/** @deprecated As of version 1.110.0 */
 		assert.throws(function () {
 			return new ODataModel({synchronizationMode : undefined});
 		}, new Error("Synchronization mode must be 'None'"));
-		/** @deprecated As of Version 1.110.0 */
+		/** @deprecated As of version 1.110.0 */
 		assert.throws(function () {
 			return new ODataModel({synchronizationMode : "Nope"});
 		}, new Error("Synchronization mode must be 'None'"));
@@ -99,7 +99,7 @@ sap.ui.define([
 		// code under test: operation mode Server must not throw an error
 		oModel = this.createModel("", {
 			operationMode : OperationMode.Server,
-			/** @deprecated As of Version 1.110.0 */
+			/** @deprecated As of version 1.110.0 */
 			synchronizationMode : "None" // deprecated and optional, but still allowed
 		});
 
@@ -628,9 +628,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	/**
-	 * @deprecated since 1.39.0
-	 */
+	/** @deprecated As of version 1.39.0 */
 	QUnit.test("requestCanonicalPath", function (assert) {
 		var oModel = this.createModel(),
 			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
@@ -957,9 +955,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	/**
-	 * @deprecated since 1.88.0
-	 */
+	/** @deprecated As of version 1.88.0 */
 	QUnit.test("forbidden & deprecated", function (assert) {
 		var oModel = this.createModel();
 
@@ -3662,9 +3658,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("No extend in UI5 2.x", function (assert) {
-		/** @deprecated */
+		/** @deprecated As of version 1.120.0 */
 		const bVersion1 = true;
-		/** @deprecated */
+		/** @deprecated As of version 1.120.0 */
 		if (bVersion1) {
 			this.oLogMock.expects("error")
 				.withExactArgs("[FUTURE FATAL] sap.ui.model.odata.v4.ODataModel must not be"

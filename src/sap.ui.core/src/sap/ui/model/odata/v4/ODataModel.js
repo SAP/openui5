@@ -91,7 +91,7 @@ sap.ui.define([
 			serviceUrl : true,
 			sharedRequests : true,
 			supportReferences : true,
-			/** @deprecated As of Version 1.110.0 */
+			/** @deprecated As of version 1.110.0 */
 			synchronizationMode : true,
 			updateGroupId : true,
 			withCredentials : true
@@ -276,7 +276,7 @@ sap.ui.define([
 		// do not pass any parameters to Model
 		Model.call(this);
 
-		/** @deprecated As of Version 1.110.0 */
+		/** @deprecated As of version 1.110.0 */
 		if ("synchronizationMode" in mParameters && mParameters.synchronizationMode !== "None") {
 			throw new Error("Synchronization mode must be 'None'");
 		}
@@ -2690,7 +2690,7 @@ sap.ui.define([
 	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
 	 *   e.g. when the given context does not point to an entity
 	 *
-	 * @deprecated since 1.39.0
+	 * @deprecated As of version 1.39.0
 	 *   Use {@link sap.ui.model.odata.v4.Context#requestCanonicalPath} instead.
 	 * @public
 	 * @since 1.37.0
@@ -3108,14 +3108,14 @@ sap.ui.define([
 		});
 	};
 
-	/** @deprecated */
+	/** @deprecated As of version 1.120.0 */
 	(() => {
 		const fnOriginalExtend = ODataModel.extend;
 		/**
 		 * DO NOT EXTEND THIS CLASS.
 		 *
 		 * @returns {function} The created class / constructor function
-		 * @deprecated
+		 * @deprecated As of version 1.120.0
 		 */
 		ODataModel.extend = function () {
 			Log.error("[FUTURE FATAL] sap.ui.model.odata.v4.ODataModel must not be extended");

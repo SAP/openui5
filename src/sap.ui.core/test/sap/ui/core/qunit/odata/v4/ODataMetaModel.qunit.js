@@ -4658,9 +4658,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	/**
-	 * @deprecated since 1.51.0
-	 */
+	/** @deprecated As of version 1.51.0 */
 	QUnit.test("getLastModified", function (assert) {
 		var mEmptyScope = {
 				$Version : "4.0"

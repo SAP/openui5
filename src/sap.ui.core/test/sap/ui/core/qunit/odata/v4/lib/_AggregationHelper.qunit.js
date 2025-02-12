@@ -1475,7 +1475,7 @@ sap.ui.define([
 						with : "string"
 					}
 				},
-				/** @deprecated As of 1.89.0 */
+				/** @deprecated As of version 1.89.0 */
 				"grandTotal like 1.84" : "boolean",
 				grandTotalAtBottomOnly : "boolean",
 				group : {
@@ -1630,7 +1630,7 @@ sap.ui.define([
 			});
 		}, new Error("Not a string value for '$$aggregation/aggregate/foo/unit'"));
 
-		/** @deprecated As of 1.89.0 */
+		/** @deprecated As of version 1.89.0 */
 		assert.throws(function () {
 			// code under test
 			_AggregationHelper.validateAggregation({
