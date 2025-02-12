@@ -83,7 +83,7 @@ sap.ui.define([
 }].forEach(function (oFixture, i) {
 	var sTitle = "constructor: aSideEffectCleanUpFunctions, oCreatedContextsCache,"
 		+ " codeListModelParameters and sMetadataUrl stored #" + i + ", sServiceUrl: "
-		+ oFixture.sServiceUrl + "; _fixUpdateMethod called";
+		+ oFixture.sServiceUrl;
 	QUnit.test(sTitle, function (assert) {
 		var oDataModelMock = this.mock(ODataModel),
 			oExpectedHeaders = {
@@ -101,7 +101,6 @@ sap.ui.define([
 			},
 			mParameters = {
 				annotationURI : "~annotationURI",
-				defaultUpdateMethod : "~defaultUpdateMethod",
 				headers : oFixture.oHeaderParameter || {},
 				serviceUrl : oFixture.sServiceUrl,
 				skipMetadataAnnotationParsing : true,
@@ -111,8 +110,6 @@ sap.ui.define([
 				then : function () {}
 			};
 
-		this.mock(ODataModel).expects("_fixUpdateMethod").withExactArgs("~defaultUpdateMethod")
-			.returns(i % 2 ? "~fixedDefaultUpdateMethod" : undefined);
 		this.mock(ODataModel.prototype).expects("createCodeListModelParameters")
 			.withExactArgs(sinon.match.same(mParameters))
 			.returns("~codeListModelParameters");
@@ -158,7 +155,40 @@ sap.ui.define([
 		assert.strictEqual(oModel.oRetryAfterError, null);
 		assert.strictEqual(oModel.pRetryAfter, null);
 		assert.strictEqual(oModel.pAnnotationChanges, null);
-		assert.strictEqual(oModel.sDefaultUpdateMethod, i % 2 ? "~fixedDefaultUpdateMethod" : UpdateMethod.MERGE);
+	});
+});
+
+	/** @deprecated As of version 1.133.0, reason sap.ui.model.odata.UpdateMethod.Merge|Put */
+	//*********************************************************************************************
+[undefined, "~fixedUpdateMethod"].forEach((vUpdateMethod, i) => {
+	QUnit.test("constructor call _fixUpdateMethod: " + i, function (assert) {
+		const mParameters = {
+			defaultUpdateMethod: "~defaultUpdateMethod",
+			serviceUrl: "/foo/bar",
+			skipMetadataAnnotationParsing: true,
+			tokenHandling: false
+		};
+		const oDataModelMock = this.mock(ODataModel);
+		oDataModelMock.expects("_fixUpdateMethod").withExactArgs("~defaultUpdateMethod").returns(vUpdateMethod);
+		this.mock(ODataModel.prototype).expects("_createMetadataUrl")
+			.withExactArgs("/$metadata")
+			.returns("~metadataUrl");
+		this.mock(ODataModel.prototype).expects("_getServerUrl").withExactArgs().returns("~serverUrl");
+		oDataModelMock.expects("_getSharedData").withExactArgs("server", "~serverUrl").returns(undefined);
+		oDataModelMock.expects("_getSharedData").withExactArgs("service", "/foo/bar").returns(undefined);
+		const oMetadata = {oMetadata : {isLoaded: function () {}, loaded : function () {}}};
+		oDataModelMock.expects("_getSharedData").withExactArgs("meta", "~metadataUrl").returns(oMetadata);
+		this.mock(ODataModel.prototype).expects("_getAnnotationCacheKey")
+			.withExactArgs("~metadataUrl")
+			.returns(undefined);
+		// called in ODataModel#constructor and ODataAnnotations#constructor
+		this.mock(oMetadata.oMetadata).expects("loaded").withExactArgs().atLeast(2).returns({then: function () {}});
+		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+
+		// code under test
+		var oModel = new ODataModel(mParameters);
+
+		assert.strictEqual(oModel.sDefaultUpdateMethod, vUpdateMethod ? vUpdateMethod : UpdateMethod.MERGE);
 	});
 });
 
@@ -9965,6 +9995,7 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.133.0, reason sap.ui.model.odata.UpdateMethod.Merge|Put */
 	//*********************************************************************************************
 [
 	{sUpdateMethod: undefined, sResult: undefined},
