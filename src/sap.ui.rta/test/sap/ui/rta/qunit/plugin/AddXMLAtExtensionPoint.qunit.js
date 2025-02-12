@@ -2,34 +2,36 @@
 
 sap.ui.define([
 	"sap/ui/base/DesignTime",
-	"sap/ui/core/Component",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/core/Component",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/fl/Layer",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/Layer",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",
 	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DesignTimeConfig,
-	Component,
 	XMLView,
-	OverlayRegistry,
+	Component,
 	DesignTime,
-	Layer,
+	OverlayRegistry,
+	Util,
 	ManifestUtils,
+	Layer,
+	nextUIUpdate,
 	AddXMLAtExtensionPointCommand,
 	AppDescriptorCommand,
 	CommandFactory,
 	CompositeCommand,
 	AddXMLAtExtensionPointPlugin,
-	sinon,
-	nextUIUpdate
+	sinon
 ) {
 	"use strict";
 
@@ -79,51 +81,71 @@ sap.ui.define([
 		});
 	}
 
-	function createBeforeEach() {
-		return createComponent()
-		.then(function(oComponent) {
-			this.oComponent = oComponent;
-			return createAsyncView("myView", oComponent);
-		}.bind(this))
-		.then(async function(oXmlView) {
-			this.oXmlView = oXmlView;
-			[this.oPanel, this.oPanelWithoutId, this.oInvisiblePanel] = oXmlView.getContent();
-			[, this.oLabel] = this.oPanel.getContent();
-			oXmlView.placeAt("qunit-fixture");
-			await nextUIUpdate();
+	async function createBeforeEach(sViewId) {
+		this.oComponent = await createComponent();
+		this.oXmlView = await createAsyncView(sViewId, this.oComponent);
+		[this.oPanel, this.oPanelWithoutId, this.oInvisiblePanel] = this.oXmlView.getContent();
+		[, this.oLabel] = this.oPanel.getContent();
+		this.oXmlView.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-			this.oCommandFactory = new CommandFactory({
-				flexSettings: {
-					layer: Layer.VENDOR
-				}
-			});
-			this.oAddXmlAtExtensionPointPlugin = new AddXMLAtExtensionPointPlugin({
-				commandFactory: this.oCommandFactory,
-				fragmentHandler: this.oFragmentHandlerStub
-			});
+		this.oCommandFactory = new CommandFactory({
+			flexSettings: {
+				layer: Layer.VENDOR
+			}
+		});
+		this.oAddXmlAtExtensionPointPlugin = new AddXMLAtExtensionPointPlugin({
+			commandFactory: this.oCommandFactory,
+			fragmentHandler: this.oFragmentHandlerStub
+		});
 
-			return new Promise(function(resolve) {
-				this.oDesignTime = new DesignTime({
-					rootElements: this.oXmlView,
-					plugins: [this.oAddXmlAtExtensionPointPlugin]
-				});
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
-					this.oPanelWithoutIdOverlay = OverlayRegistry.getOverlay(this.oPanelWithoutId);
-					this.oInvisiblePanelOverlay = OverlayRegistry.getOverlay(this.oInvisiblePanel);
-					this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
-					resolve();
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+		this.oDesignTime = new DesignTime({
+			rootElements: this.oXmlView,
+			plugins: [this.oAddXmlAtExtensionPointPlugin]
+		});
+		await Util.waitForSynced(this.oDesignTime)();
+
+		this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
+		this.oPanelWithoutIdOverlay = OverlayRegistry.getOverlay(this.oPanelWithoutId);
+		this.oInvisiblePanelOverlay = OverlayRegistry.getOverlay(this.oInvisiblePanel);
+		this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
 	}
+
+	QUnit.module("Given a view with an unstable ID", {
+		beforeEach() {
+			sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
+			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
+			return createBeforeEach.call(this, undefined);
+		},
+		afterEach() {
+			this.oDesignTime.destroy();
+			this.oComponent.destroy();
+			this.oXmlView.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the plugins is called with an overlay containing extension points", async function(assert) {
+			assert.strictEqual(
+				this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oPanelOverlay]),
+				true,
+				"isAvailable is called and returns true"
+			);
+			assert.strictEqual(
+				this.oAddXmlAtExtensionPointPlugin.isEnabled([this.oPanelOverlay]),
+				false,
+				"isEnabled is called and returns false"
+			);
+			const bEditable = await this.oAddXmlAtExtensionPointPlugin._isEditable(this.oPanelOverlay);
+			assert.strictEqual(bEditable, false, "then the overlay is not editable");
+		});
+	});
 
 	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin without fragment handler function are created "
 	+ "and the DesignTime is started ", {
 		beforeEach() {
 			sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
-			return createBeforeEach.call(this);
+			return createBeforeEach.call(this, "myView");
 		},
 		afterEach() {
 			this.oDesignTime.destroy();
@@ -136,7 +158,7 @@ sap.ui.define([
 			assert.strictEqual(this.oAddXmlAtExtensionPointPlugin.isEnabled([]), false, "isEnabled is called and returns false");
 		});
 
-		QUnit.test("when an overlay without extensionpoints assigned is given", function(assert) {
+		QUnit.test("when an overlay without extension points assigned is given", function(assert) {
 			assert.strictEqual(
 				this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oLabelOverlay]),
 				false,
@@ -144,8 +166,8 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				this.oAddXmlAtExtensionPointPlugin.isEnabled([this.oLabelOverlay]),
-				true,
-				"isEnabled is called and returns true"
+				false,
+				"isEnabled is called and returns false"
 			);
 			return this.oAddXmlAtExtensionPointPlugin._isEditable(this.oLabelOverlay)
 			.then(function(bEditable) {
@@ -153,7 +175,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when an overlay with extensionpoints available is given", function(assert) {
+		QUnit.test("when an overlay with extension points available is given", function(assert) {
 			assert.strictEqual(
 				this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oPanelOverlay]),
 				true,
@@ -170,7 +192,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when an invisible overlay with extensionpoints available is given", function(assert) {
+		QUnit.test("when an invisible overlay with extension points available is given", function(assert) {
 			assert.strictEqual(
 				this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oInvisiblePanelOverlay]),
 				true,
@@ -187,7 +209,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when an overlay with extensionpoints but without stable ID available is given", function(assert) {
+		QUnit.test("when an overlay with extension points but without stable ID available is given", function(assert) {
 			assert.strictEqual(
 				this.oAddXmlAtExtensionPointPlugin.isAvailable([this.oPanelWithoutIdOverlay]),
 				true,
@@ -239,7 +261,7 @@ sap.ui.define([
 				fragmentPath: this.sInitialFragmentPath,
 				fragment: "fragment/fragmentName"
 			});
-			return createBeforeEach.call(this);
+			return createBeforeEach.call(this, "myView");
 		},
 		afterEach() {
 			this.oDesignTime.destroy();
@@ -270,10 +292,10 @@ sap.ui.define([
 					this.sInitialFragmentPath,
 					"then the returned command contains the fragment path from the initial fragmentHandler function"
 				);
-				var mAppDescriptorparameters = { flexExtensionPointEnabled: true };
+				var mManifestParameters = { flexExtensionPointEnabled: true };
 				assert.deepEqual(
 					oCommand.getCommands()[1].getParameters(),
-					mAppDescriptorparameters,
+					mManifestParameters,
 					"then the CompositeCommand contains AppDescriptorCommand"
 				);
 				fnDone();
@@ -287,7 +309,7 @@ sap.ui.define([
 					"then the fragment handler function is called with panel overlay as first parameter");
 				var aPassedExtensionPointObjects = this.oFragmentHandlerStub.firstCall.args[1];
 				assert.ok(Array.isArray(aPassedExtensionPointObjects),
-					"then the fragment handler function is called with array of ExtensionPointInformations as second parameter");
+					"then the fragment handler function is called with array of ExtensionPointInformation as second parameter");
 				assert.deepEqual(aPassedExtensionPointObjects.map(function(oExtensionPoint) { return oExtensionPoint.name; }),
 					["ExtensionPoint1", "ExtensionPoint2", "ExtensionPoint3", "ExtensionPoint4"],
 					"then the expected extension points for the view are returned");
@@ -325,10 +347,10 @@ sap.ui.define([
 					sSecondFragmentPath,
 					"then the returned command contains the fragment path from the passed as property fragmentHandler function"
 				);
-				var mAppDescriptorparameters = { flexExtensionPointEnabled: true };
+				var mManifestParameters = { flexExtensionPointEnabled: true };
 				assert.deepEqual(
 					oCommand.getCommands()[1].getParameters(),
-					mAppDescriptorparameters,
+					mManifestParameters,
 					"then the CompositeCommand contains AppDescriptorCommand"
 				);
 				fnDone();
@@ -343,7 +365,7 @@ sap.ui.define([
 				);
 				assert.ok(
 					Array.isArray(oSecondFragmentHandlerStub.firstCall.args[1]),
-					"then the fragment handler function is called with array of ExtensionPointInformations as second parameter"
+					"then the fragment handler function is called with array of ExtensionPointInformation as second parameter"
 				);
 				fnDone();
 			}.bind(this));
