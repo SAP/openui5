@@ -88,6 +88,11 @@ sap.ui.define([
 		return DesignTime.isDesignModeEnabled();
 	}
 
+	function checkViewId(oElementOverlay) {
+		const oView = getExtensionPointList(oElementOverlay.getElement())[0]?.view;
+		return oView && FlUtils.checkControlId(oView);
+	}
+
 	AddXMLAtExtensionPoint.prototype.bAppDescriptorCommandAlreadyAvailable = false;
 
 	/**
@@ -102,7 +107,7 @@ sap.ui.define([
 		if (isDesignMode()) {
 			var oElement = oOverlay.getElement();
 			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement).then(function(bHasChangeHandler) {
-				return bHasChangeHandler && hasExtensionPoints(oElement);
+				return bHasChangeHandler && hasExtensionPoints(oElement) && checkViewId(oOverlay);
 			});
 		}
 		return Promise.resolve(false);
@@ -115,7 +120,8 @@ sap.ui.define([
 	 * @public
 	 */
 	AddXMLAtExtensionPoint.prototype.isEnabled = function(aElementOverlays) {
-		return aElementOverlays.length === 1;
+		const bEnabled = aElementOverlays.length === 1;
+		return bEnabled && !!checkViewId(aElementOverlays[0]);
 	};
 
 	AddXMLAtExtensionPoint.prototype.isAvailable = function(aOverlays) {
