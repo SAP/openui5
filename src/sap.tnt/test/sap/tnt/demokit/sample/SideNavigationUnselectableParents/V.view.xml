@@ -1,0 +1,39 @@
+<mvc:View
+	controllerName="sap.tnt.sample.SideNavigationUnselectableParents.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+	height="100%">
+	<VBox renderType="Bare" alignItems="Start" height="100%">
+		<Button
+			text="Toggle Collapse/Expand"
+			icon="sap-icon://menu2"
+			press=".onCollapseExpandPress" />
+
+		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="false"
+			itemSelect="onItemSelect">
+			<tnt:NavigationList>
+					<tnt:NavigationListItem text="Building" icon="sap-icon://building" selectable="false" >
+						<tnt:NavigationListItem text="Office 01" />
+						<tnt:NavigationListItem text="Office 02" />
+					</tnt:NavigationListItem>
+					<tnt:NavigationListItem text="Mileage" icon="sap-icon://mileage" selectable="false">
+						<tnt:NavigationListItem text="Driven" />
+						<tnt:NavigationListItem text="Walked" id="walked" />
+					</tnt:NavigationListItem>
+				<tnt:NavigationListItem text="Transport" icon="sap-icon://map-2" selectable="false">
+						<tnt:NavigationListItem text="Flight" />
+						<tnt:NavigationListItem text="Train" />
+						<tnt:NavigationListItem text="Taxi" />
+					</tnt:NavigationListItem>
+			</tnt:NavigationList>
+			<tnt:fixedItem>
+				<tnt:NavigationList>
+					<tnt:NavigationListItem text="Bar Chart" icon="sap-icon://bar-chart" />
+					<tnt:NavigationListItem selectable="false" href="https://sap.com" target="_blank" text="External Link" icon="sap-icon://attachment" />
+					<tnt:NavigationListItem text="Compare" icon="sap-icon://compare" />
+				</tnt:NavigationList>
+			</tnt:fixedItem>
+		</tnt:SideNavigation>
+	</VBox>
+</mvc:View>
