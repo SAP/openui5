@@ -19,14 +19,14 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 *
 		 * @public
 		 */
-		Self: "self",
+		Self: "Self",
 
 		/**
 		 * A simple string type is used to display static text.
 		 *
 		 * @public
 		 */
-		Static: "static",
+		Static: "Static",
 
 		/**
 		 * The <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used
@@ -34,7 +34,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 *
 		 * @public
 		 */
-		SelfNoParse: "selfNoParse"
+		SelfNoParse: "SelfNoParse"
 	};
 
 	DataType.registerEnum("sap.ui.mdc.enums.OperatorValueType", OperatorValueType);

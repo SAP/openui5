@@ -39,7 +39,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 * Used if the mentioned reasons are not applicable.
 		 * @public
 		 */
-		Unclear: ""
+		Unclear: "Unclear"
 	};
 
 	DataType.registerEnum("sap.ui.mdc.enums.ReasonMode", ReasonMode);
