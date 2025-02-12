@@ -96,6 +96,8 @@ sap.ui.define([
 		if (aAttributes.length > 0) {
             this._addEventHandlersToAttributes(aAttributes);
         }
+
+        this._addEventHandlerToHeaderLink();
 		TileContent.prototype.onAfterRendering.apply(this, arguments);
 	};
 
@@ -128,6 +130,23 @@ sap.ui.define([
             }
         });
 	};
+
+    /**
+	 * Attaches the press event to the header link aggregation of tileAttribute
+	 *
+	 * @private
+	 */
+    ActionTileContent.prototype._addEventHandlerToHeaderLink = function() {
+        var oHeaderLink = this.getHeaderLink();
+
+        if (oHeaderLink && !oHeaderLink._bIseventAttached) {
+            oHeaderLink._bIseventAttached = true;
+            oHeaderLink.attachPress((oEvent) => {
+                oEvent.preventDefault();
+                this._isLinkPressed = true;
+            });
+        }
+    };
 
     /**
     * Returns the text inside the control so that it can be used for setting the tooltip,aria-label
