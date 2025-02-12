@@ -4015,16 +4015,17 @@ sap.ui.define([
 		var sUrl, oRequest,
 		oChangeHeader = {},
 		oPayload = {},
-		bCancelOnClose = true;
+		sCancelOnClose = "true";
 
 		oPayload.__batchRequests = aBatchRequests;
 
 
 		// If one requests leads to data changes at the back-end side, the canceling of the batch request must be prevented.
 		for (var sIndex in aBatchRequests) {
-			if (aBatchRequests[sIndex] && aBatchRequests[sIndex].__changeRequests ||
-				aBatchRequests[sIndex] && aBatchRequests[sIndex].headers && !aBatchRequests[sIndex].headers['sap-cancel-on-close']) {
-				bCancelOnClose = false;
+			if (aBatchRequests[sIndex] && aBatchRequests[sIndex].__changeRequests
+				|| aBatchRequests[sIndex] && aBatchRequests[sIndex].headers
+					&& aBatchRequests[sIndex].headers['sap-cancel-on-close'] !== "true") {
+				sCancelOnClose = "false";
 				break;
 			}
 		}
@@ -4043,7 +4044,7 @@ sap.ui.define([
 		// reset
 		delete oChangeHeader["Content-Type"];
 
-		oChangeHeader['sap-cancel-on-close'] = bCancelOnClose;
+		oChangeHeader['sap-cancel-on-close'] = sCancelOnClose;
 
 		oRequest = {
 				headers : oChangeHeader,
@@ -7080,8 +7081,10 @@ sap.ui.define([
 				}
 			});
 		}
-		//The 'sap-cancel-on-close' header marks the OData request as cancelable. This helps to save resources at the back-end.
-		return extend({'sap-cancel-on-close': !!bCancelOnClose}, this.mCustomHeaders, mCheckedHeaders, this.oHeaders);
+		// The 'sap-cancel-on-close' header marks the OData request as cancelable. This helps to save resources at the
+		// back-end.
+		return extend({'sap-cancel-on-close': String(!!bCancelOnClose)}, this.mCustomHeaders, mCheckedHeaders,
+			this.oHeaders);
 	};
 
 	/**
