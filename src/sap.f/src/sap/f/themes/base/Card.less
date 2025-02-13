@@ -1,12 +1,12 @@
-/* ================================== */
-/* CSS for control sap.f/Card         */
-/* Base theme                         */
-/* ================================== */
+/* =========================== */
+/* CSS for control sap.f/Card  */
+/* Base theme                  */
+/* =========================== */
 
-@_sap_f_Card_BoxShadow: @sapUiContentShadow0;
-@_sap_f_Card_HeaderBorder: 0.0625rem solid @sapUiTileSeparatorColor; // used as top or bottom border
+@_sap_f_Card_BoxShadow: var(--sapContent_Shadow0);
+@_sap_f_Card_HeaderBorder: 0.0625rem solid var(--sapTile_SeparatorColor); /* used as top or bottom border */
 @_sap_f_Card_FocusBorderRadius: none;
-@_sap_f_Card_BorderRadius: @sapUiElementBorderCornerRadius;
+@_sap_f_Card_BorderRadius: var(--sapElement_BorderCornerRadius);
 @_sap_f_Card_ContentPadding: 1rem;
 @_sap_f_Card_FocusBorderBottomOffset: 1px;
 @_sap_f_Card_FocusBorderTopOffset: 1px;
@@ -19,15 +19,15 @@
 	flex-direction: column;
 	vertical-align: top;
 	box-sizing: border-box;
-	background: @sapUiTileBackground;
+	background: var(--sapTile_Background);
 	box-shadow: @_sap_f_Card_BoxShadow;
 	border-radius: @_sap_f_Card_BorderRadius;
-	border: 0.0625rem solid @sapUiTileBorderColor;
+	border: 0.0625rem solid var(--sapTile_BorderColor);
 	width: 100%;
 	height: auto;
-	font-family: @sapUiFontFamily;
-	font-size: @sapMFontMediumSize;
-	color: @sapUiGroupTitleTextColor;
+	font-family: var(--sapFontFamily);
+	font-size: var(--sapFontSize);
+	color: var(--sapGroup_TitleTextColor);
 	outline: none;
 }
 
@@ -35,7 +35,7 @@
 .sapFCardTransparent.sapFCard,
 ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	border: none;
-	border-radius: 0%;
+	border-radius: 0;
 	background: transparent;
 	box-shadow: unset;
 	overflow: visible;
@@ -49,7 +49,7 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	& > .sapFCardFooter {
 		background: transparent;
 		border: none;
-		border-radius: 0%;
+		border-radius: 0;
 	}
 
 	& > .sapFCardFooter .sapMTB {
@@ -64,7 +64,7 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 
 .sapFCard .sapFCardFilterBar {
 	padding: 0.5rem @_sap_f_Card_ContentPadding;
-	background: @sapUiTileBackground;
+	background: var(--sapTile_Background);
 	border-bottom: @_sap_f_Card_HeaderBorder;
 
 	.sapFCardFilterBarContent {
@@ -99,6 +99,7 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 }
 
 .sapFCard.sapFCardBottomHeader {
+
 	.sapFCardHeader {
 		border-top: @_sap_f_Card_HeaderBorder;
 		border-bottom: none;
@@ -146,6 +147,7 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 }
 
 .sapFCard .sapFCardContent {
+
 	.sapVizFrame {
 		min-height: inherit;
 
@@ -155,34 +157,39 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	}
 
 	.sapMLIB.sapMSLINoDescIcon {
-		padding: 0 1rem 0 0.125rem; // padding left is for alignment with the header
+		padding: 0 1rem 0 0.125rem; /* padding left is for alignment with the header */
 	}
 
 	.sapMLIBContent {
+
 		.sapMSLIDiv {
 			flex: 1 1 auto;
 		}
 	}
 
 	.sapUiView.sapUiXMLView > .sapMImg {
-		display: block; // Fix for unwanted space under the only image inside Component Card content
+		display: block; /* Fix for unwanted space under the only image inside Component Card content */
 	}
 
 	.sapFCardIcon.sapFAvatarColorTransparent {
+
 		.sapUiIcon {
-			color: @sapUiContentNonInteractiveIconColor;
+			color: var(--sapContent_NonInteractiveIconColor);
 		}
 	}
 }
 
-html[data-sap-ui-browser^="sf"] .sapFCard,
-html[data-sap-ui-browser^="cr"] .sapFCard {
+html[data-sap-ui-browser^='sf'] .sapFCard,
+html[data-sap-ui-browser^='cr'] .sapFCard {
+
 	.sapFCardHeaderText {
 		flex: 1;
 	}
 
 	.sapFCardContent {
+
 		.sapMLIBContent {
+
 			.sapMSLIDiv {
 				flex: 1;
 			}
@@ -210,29 +217,33 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 }
 
 .sapFCard.sapFCardInteractive:hover {
-	box-shadow: @sapUiContentShadow2;
+	box-shadow: var(--sapContent_Shadow2);
 	cursor: pointer;
 }
-//Todo HC should use the active background:  --sapTile_Hover_Background
+
+/* Todo HC should use the active background: --sapTile_Hover_Background */
 .sapFCard.sapFCardInteractive:focus:active {
 	box-shadow: none;
-	border: 0.0625rem solid @sapTile_Interactive_BorderColor;
+	border: .0625rem solid var(--sapTile_Interactive_BorderColor);
 }
 
 .sapFCard.sapFCardSectionInteractive {
+
 	&[data-sap-ui-draggable=true] {
+
 		.sapMText {
 			cursor: grab;
 		}
 	}
 
 	&:not(.sapFCardTransparent) {
+
 		.sapFCardSectionClickable:hover {
-			background: @sapUiTileHoverBackground;
+			background: var(--sapTile_Hover_Background);
 		}
 
 		.sapFCardSectionClickable:active {
-			background: @sapUiTileActiveBackground;
+			background: var(--sapTile_Active_Background);
 		}
 	}
 
@@ -254,7 +265,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	bottom: @_sap_f_Card_FocusBorderBottomOffset;
 	right: @_sap_f_Card_FocusBorderRightOffset;
 	top: @_sap_f_Card_FocusBorderTopOffset;
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	border-radius: @_sap_f_Card_FocusBorderRadius;
 	pointer-events: none;
 	z-index: 1;
@@ -264,6 +275,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 /* ui5-restricted work zone */
 .sapFCard.sapFCardFocusFullCard,
 ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
+
 	&:has(.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within)::before {
 		content: '';
 		display: block;
@@ -272,7 +284,7 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 		bottom: @_sap_f_Card_FocusBorderBottomOffset;
 		right: @_sap_f_Card_FocusBorderRightOffset;
 		top: @_sap_f_Card_FocusBorderTopOffset;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		border-radius: @_sap_f_Card_FocusBorderRadius;
 		pointer-events: none;
 		z-index: 1;
@@ -294,6 +306,7 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 				line-height: 1rem;
 			}
 		}
+
 		.sapMListTbl {
 			padding-bottom: 0.5rem;
 		}
@@ -301,6 +314,7 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 }
 
 .sapFCardAdaptiveContent {
+
 	.sapFCardAdaptiveContentChoiceSetWrapper {
 		display: flex;
 		flex-direction: column;
@@ -309,12 +323,14 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 		align-items: flex-start;
 		height: fit-content;
 	}
+
 	.sapFTimeInput {
 		width: 13.125rem;
 	}
 }
 
 .sapFCardTableContent {
+
 	.sapMListTbl {
 		border: none;
 	}
@@ -325,6 +341,7 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 }
 
 .sapFCardExperimentalCaching {
+
 	.sapFCardDataTimestamp {
 		min-width: 100px;
 		padding-right: 1px;
@@ -332,9 +349,10 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 
 	.sapFCardDataTimestamp:not(.sapFCardDataTimestampUpdating) {
 		cursor: pointer;
-		&:hover:before {
-			content: "\e010";
-			font-family: "SAP-icons";
+
+		&:hover::before {
+			content: '\e010';
+			font-family: var(--sapContent_IconFontFamily);
 			margin-right: 4px;
 			font-size: 0.7rem;
 		}
@@ -360,4 +378,3 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 		box-shadow: @sapUiShadow;
 	}
 }
-
