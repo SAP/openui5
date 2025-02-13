@@ -348,23 +348,44 @@ sap.ui.define([
 		});
 	});
 
-
-	QUnit.test("registerFont (lazy loading)", function(assert) {
+	/**
+	 * @deprecated As of version 1.120
+	 */
+	QUnit.test("registerFont (lazy loading), sync getIconInfo", function(assert) {
 		var oFetchSpy = TestUtils.spyFetch(this);
 		// register TNT icon font
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
-			collectionName: "tntlazy",
+			collectionName: "tntlazysync",
 			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
 			lazy: true
 		});
 
 		assert.ok(oFetchSpy.notCalled, "The font metadata is not loaded before an icon is queried");
 
-		IconPool.getIconInfo("sap-icon://tntlazy/technicalsystem");
+		IconPool.getIconInfo("sap-icon://tntlazysync/technicalsystem");
 		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded once");
 
-		IconPool.getIconInfo("sap-icon://tntlazy/technicalsystem");
+		IconPool.getIconInfo("sap-icon://tntlazysync/technicalsystem");
+		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded only once");
+	});
+
+	QUnit.test("registerFont (lazy loading), async getIconInfo", async function(assert) {
+		var oFetchSpy = TestUtils.spyFetch(this);
+		// register TNT icon font
+		IconPool.registerFont({
+			fontFamily: "SAP-icons-TNT",
+			collectionName: "tntlazyasync",
+			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
+			lazy: true
+		});
+
+		assert.ok(oFetchSpy.notCalled, "The font metadata is not loaded before an icon is queried");
+
+		await IconPool.getIconInfo("sap-icon://tntlazyasync/technicalsystem", "async");
+		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded once");
+
+		await IconPool.getIconInfo("sap-icon://tntlazyasync/technicalsystem", "async");
 		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded only once");
 	});
 
@@ -470,6 +491,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	QUnit.module("Sync getIconInfo");
 
 	QUnit.test("Calling getIconInfo with 'sync' mode on the default icon font returns the result immediately", function(assert) {
@@ -568,6 +592,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	QUnit.test("Calling getIconInfo on a separate font first with 'async' and immediately with 'sync' afterwards returns correct results for both", function(assert) {
 		var done = assert.async();
 		// register an additional icon font without loading metadata immediately
