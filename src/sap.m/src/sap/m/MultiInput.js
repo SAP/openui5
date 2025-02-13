@@ -689,13 +689,18 @@ function(
 	};
 
 	MultiInput.prototype._onLiveChange = function (eventArgs) {
-		var bClearTokens = this.getAggregation("tokenizer").getTokens().every(function(oToken) {
-			return oToken.getSelected();
-		});
+		var aTokens = this.getAggregation("tokenizer").getTokens();
+		var bClearTokens = aTokens.length > 0 && aTokens.every((oToken) => oToken.getSelected());
 
 		if (!bClearTokens) {
 			return;
 		}
+
+		this.fireTokenUpdate({
+			type: Tokenizer.TokenUpdateType.Removed,
+			addedTokens: [],
+			removedTokens: aTokens
+		});
 
 		this.removeAllTokens();
 	};
