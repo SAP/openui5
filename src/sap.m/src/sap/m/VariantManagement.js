@@ -107,6 +107,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = mobileLibrary.ListKeyboardMode;
 
+	// shortcut for sap.m.Sticky
+	var Sticky = mobileLibrary.Sticky;
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -1904,6 +1907,7 @@ sap.ui.define([
 				fixedLayout: false,
 				growing: true,
 				keyboardMode: ListKeyboardMode.Edit,
+				sticky: [ Sticky.ColumnHeaders ],
 				columns: [
 					new Column({
 						header: new InvisibleText({
