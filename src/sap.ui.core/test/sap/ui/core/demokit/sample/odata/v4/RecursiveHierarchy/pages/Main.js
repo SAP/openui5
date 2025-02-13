@@ -83,34 +83,34 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
-				createNewChild : function (iRow, sComment) {
+				createNewChild : function (sId, sComment) {
 					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
-						errorMessage : `Could not create new child below row ${iRow}`,
+						errorMessage : `Could not create new child below node ${sId}`,
 						id : bTreeTable ? /createInTreeTable/ : /create/,
 						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
+							return oControl.getBindingContext().getProperty("ID") === sId;
 						},
 						success : function () {
 							Opa5.assert.ok(true,
-								`Create new child below row ${iRow}. ${sComment}`);
+								`Create new child below node ${sId}. ${sComment}`);
 						},
 						viewName : sViewName
 					});
 				},
-				editName : function (iRow, sName, sComment) {
+				editName : function (sId, sName, sComment) {
 					this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sName}),
 						controlType : "sap.m.Input",
-						errorMessage : `Could not edit name in row ${iRow}`,
+						errorMessage : `Could not edit name of node with ID ${sId}`,
 						id : bTreeTable ? /nameInTreeTable/ : /name/,
 						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
+							return oControl.getBindingContext().getProperty("ID") === sId;
 						},
 						success : function () {
 							Opa5.assert.ok(true,
-								`Entered name in row ${iRow} as "${sName}". ${sComment}`);
+								`Entered name of node ${sId} as "${sName}". ${sComment}`);
 						},
 						viewName : sViewName
 					});

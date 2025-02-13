@@ -9,16 +9,16 @@ sap.ui.define([
 	"use strict";
 
 	return function (Given, When, Then) {
-		function createNewChild(iRow, sComment) {
-			When.onTheMainPage.createNewChild(iRow, sComment);
+		function createNewChild(sId, sComment) {
+			When.onTheMainPage.createNewChild(sId, sComment);
 		}
 
 		function checkTable(sComment, sExpected) {
 			Then.onTheMainPage.checkTable(sComment, sExpected, /*bCheckName*/true);
 		}
 
-		function editName(iRow, sName, sComment) {
-			When.onTheMainPage.editName(iRow, sName, sComment);
+		function editName(sId, sName, sComment) {
+			When.onTheMainPage.editName(sId, sName, sComment);
 		}
 
 		function scrollToRow(iRow, sComment) {
@@ -52,7 +52,7 @@ sap.ui.define([
 	+ 4 Mu
 	+ 5 Xi`);
 
-		createNewChild(0, "Create new child of 0 (Alpha)");
+		createNewChild("0", "Create new child of 0 (Alpha)");
 		checkTable("After create new child of 0 (Alpha)", `
 - 0 Alpha
 	* 6
@@ -62,7 +62,7 @@ sap.ui.define([
 	+ 4 Mu
 	+ 5 Xi`);
 
-		editName(1, "1st new child", "Edit new child's name");
+		editName("6", "1st new child", "Edit new child's name");
 		checkTable("After edit new child's name", `
 - 0 Alpha
 	* 6 1st new child #0+1
@@ -72,7 +72,7 @@ sap.ui.define([
 	+ 4 Mu
 	+ 5 Xi`);
 
-		createNewChild(3, "Create new child of 2 (Kappa)");
+		createNewChild("2", "Create new child of 2 (Kappa)");
 		checkTable("After create new child of 2 (Kappa)", `
 - 0 Alpha
 	* 6 1st new child #0+1
@@ -83,7 +83,7 @@ sap.ui.define([
 	+ 4 Mu
 	+ 5 Xi`);
 
-		editName(4, "2nd new child", "Edit new child's name");
+		editName("2.1", "2nd new child", "Edit new child's name");
 		checkTable("After edit new child's name", `
 - 0 Alpha
 	* 6 1st new child #0+1
@@ -127,7 +127,7 @@ sap.ui.define([
 	- 5 Xi
 		- 5.1 Omicron`);
 
-		createNewChild(8, "Create new child of 5.1 (Omicron)"); // still invisible
+		createNewChild("5.1", "Create new child of 5.1 (Omicron)"); // still invisible
 		scrollToRow(2, "5.1.10 comes into view");
 		checkTable("After 5.1.10 comes into view", `
 	+ 1 Beta
