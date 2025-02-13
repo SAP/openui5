@@ -1,9 +1,10 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
-		   height="100%">
+				xmlns="sap.uxap"
+				xmlns:layout="sap.ui.layout"
+				xmlns:m="sap.m"
+				xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+				height="100%"
+				controllerName="sap.uxap.sample.ObjectPageOnJSON.controller.ObjectPageOnJSON">
 	<ObjectPageLayout id="ObjectPageLayout"
 					  enableLazyLoading="false"
 					  showTitleInHeaderContent="true"

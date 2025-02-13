@@ -972,7 +972,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 								'<uxap:headerTitle>' +
 									'<uxap:ObjectPageHeader objectTitle="Title" objectSubtitle="Subtitle">' +
 										'<uxap:actions>' +
-											'<m:Button press="doSomething" text="Remove Button"/>' +
+											'<m:Button text="Remove Button"/>' +
 										'</uxap:actions>' +
 										'<uxap:breadcrumbs/>' +
 										'<uxap:navigationBar/>' +
