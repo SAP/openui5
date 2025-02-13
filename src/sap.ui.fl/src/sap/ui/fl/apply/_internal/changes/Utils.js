@@ -90,7 +90,7 @@ sap.ui.define([
 		async getChangeHandler(mPropertyBag) {
 			const sChangeType = mPropertyBag.changeType || mPropertyBag.flexObject?.getChangeType();
 			if (mPropertyBag.flexObject instanceof AppDescriptorChange || mPropertyBag.appDescriptorChange) {
-				const mStrategy = await ApplyStrategyFactory.getRuntimeStrategy();
+				const mStrategy = mPropertyBag.strategy || await ApplyStrategyFactory.getRuntimeStrategy();
 				try {
 					const oRegistry = await mStrategy.registry();
 					return await oRegistry[sChangeType]?.();
