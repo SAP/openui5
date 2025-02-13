@@ -2155,6 +2155,9 @@ sap.ui.define([
 	 * <b>not</b> support the operation modes <code>Client</code> and <code>Auto</code>.
 	 * <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
 	 *
+	 * <b>Note:</b> OData tree bindings do neither support
+	 * {@link sap.ui.model.Binding#suspend suspend} nor {@link sap.ui.model.Binding#resume resume}.
+	 *
 	 * @param {string} sPath
 	 *   The binding path, either absolute or relative to a given <code>oContext</code>
 	 * @param {sap.ui.model.Context} [oContext]
