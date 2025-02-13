@@ -533,7 +533,7 @@ sap.ui.define([
 					index: $Cell.attr("data-sap-ui-colindex")
 				});
 			const sText = ExtensionHelper.getColumnTooltip(oColumn);
-			const aLabels = [].concat(mAttributes["aria-labelledby"]);
+			const aLabels = mAttributes["aria-labelledby"] || [];
 			const iSpan = oCellInfo.columnSpan;
 
 			if (oColumnLabel?.getRequired?.()) {
@@ -541,7 +541,6 @@ sap.ui.define([
 			}
 
 			if (iSpan > 1) {
-				aLabels.push($Cell.attr("id") + "-inner");
 				aLabels.push(oTable.getId() + "-ariacolspan");
 				// Update Span information
 				oTable.$("ariacolspan").text(TableUtils.getResourceText("TBL_COL_DESC_SPAN", ["" + iSpan]));
@@ -553,6 +552,10 @@ sap.ui.define([
 
 			if (iSpan <= 1 && oColumn && oColumn.getFiltered()) {
 				aLabels.push(oTable.getId() + "-ariacolfiltered");
+			}
+
+			if (aLabels.length > 0) {
+				aLabels.unshift($Cell.attr("id") + "-inner");
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
@@ -828,7 +831,7 @@ sap.ui.define([
 
 			mAttributes["role"] = TableUtils.Grouping.isInGroupMode(oTable) || TableUtils.Grouping.isInTreeMode(oTable) ? "treegrid" : "grid";
 			mAttributes["aria-describedby"] = [sTableId + "-ariaselection"];
-			mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
+			mAttributes["aria-labelledby"] = oTable.getAriaLabelledBy() || [];
 			if (oTable.getTitle()) {
 				mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 			}
