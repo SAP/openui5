@@ -8,18 +8,19 @@
 	bottom: 0.375rem;
 	left: 0.125rem;
 	right: 0.125rem;
-	border: 0.125rem dotted @sapUiContentFocusColor;
+	border: 0.125rem dotted var(--sapContent_FocusColor);
 	border-radius: 0.375rem
 }
 
 .sapUiSizeCompact {
+
 	.sapMSB:focus .sapMSBInner:not(.sapMSBInnerDisabled)::after {
 		top: 0.3125rem;
 		bottom: 0.3125rem;
 	}
 }
 
-//ie
+/* ie */
 .sapMSBTextIE.sapMSBText {
 	padding-right: 2.25rem;
 }

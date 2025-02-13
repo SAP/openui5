@@ -352,17 +352,18 @@ sap.ui.define([
 
 	QUnit.module("ODataMetadata: sap-cancel-on-close header handling");
 
-	var fnTestHeaderRequest = function(bCancelOnClose, bExpectedValue) {
+	var fnTestHeaderRequest = function(sCancelOnClose, sExpectedValue) {
 		return function(assert){
-			var oMetaData = new ODataMetadata("testUri",{"async": true, headers: {"sap-cancel-on-close": bCancelOnClose}});
+			var oMetaData = new ODataMetadata("testUri",
+				{"async": true, headers: {"sap-cancel-on-close": sCancelOnClose}});
 			var oRequest = oMetaData._createRequest("testUrl");
-			assert.strictEqual(oRequest.headers["sap-cancel-on-close"], bExpectedValue, "sap-cancel-on-close header was set correctly.");
+			assert.strictEqual(oRequest.headers["sap-cancel-on-close"], sExpectedValue);
 		};
 	};
 
-	QUnit.test("Default value", fnTestHeaderRequest(undefined, true));
-	QUnit.test("Set to true via parameter", fnTestHeaderRequest(true, true));
-	QUnit.test("Set to false via parameter", fnTestHeaderRequest(false, false));
+	QUnit.test("Default value", fnTestHeaderRequest(undefined, "true"));
+	QUnit.test("Set to true via parameter", fnTestHeaderRequest("true", "true"));
+	QUnit.test("Set to false via parameter", fnTestHeaderRequest("false", "false"));
 
 	QUnit.module("ODataMetadata: Nav property reference info and getKeyPropertyNamesByPath", {
 		before : function () {

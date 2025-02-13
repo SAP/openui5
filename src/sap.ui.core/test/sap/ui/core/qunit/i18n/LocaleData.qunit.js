@@ -1551,26 +1551,4 @@ sap.ui.define([
 			LocaleData.prototype.getCompactCurrencyPattern.call(oLocaleData, "short-indian", "1000", "one"),
 			undefined);
 	});
-
-	/** @deprecated As of version 1.133.0, reason sap.ui.core.LocaleData#getCurrencyFormat */
-	//*********************************************************************************************
-	QUnit.test("getCurrencyFormat: deprecated alias for getCompactCurrencyPattern",function (assert) {
-		// code under test
-		assert.strictEqual(LocaleData.prototype.getCurrencyFormat, LocaleData.prototype.getCompactCurrencyPattern);
-
-		const oCustomeLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
-		// code under test
-		assert.strictEqual(oCustomeLocaleData.getCurrencyFormat, LocaleData.prototype.getCompactCurrencyPattern);
-	});
-
-	/** @deprecated As of version 1.133.0, reason sap.ui.core.LocaleData#getDecimalFormat */
-	//*********************************************************************************************
-	QUnit.test("getDecimalFormat: deprecated alias for getCompactDecimalPattern",function (assert) {
-		// code under test
-		assert.strictEqual(LocaleData.prototype.getDecimalFormat, LocaleData.prototype.getCompactDecimalPattern);
-
-		const oCustomeLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
-		// code under test
-		assert.strictEqual(oCustomeLocaleData.getDecimalFormat, LocaleData.prototype.getCompactDecimalPattern);
-	});
 });

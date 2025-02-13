@@ -14,13 +14,12 @@ sap.ui.define([
     "sap/m/StepInput",
     "sap/m/HBox",
     "sap/m/Select",
-    "sap/m/upload/UploadSet",
-    "sap/m/upload/UploadSetItem",
     "sap/ui/core/Item",
     "sap/ui/model/json/JSONModel",
     "sap/m/library",
     "sap/ui/core/library"
-], function(App, Page, Toolbar, List, ListItem, Button, CheckBox, ObjectAttribute, ObjectMarker, ObjectStatus, Label, Input, StepInput, HBox, Select, UploadSet, UploadSetItem, Item, JSONModel, mobileLibrary, coreLibrary) {
+], function(App, Page, Toolbar, List, ListItem, Button, CheckBox, ObjectAttribute, ObjectMarker, ObjectStatus,
+    Label, Input, StepInput, HBox, Select, Item, JSONModel, mobileLibrary, coreLibrary) {
     "use strict";
 
     // shortcut for sap.ui.core.TextAlign
@@ -90,7 +89,7 @@ sap.ui.define([
     var oModel = new JSONModel();
     oModel.setData(oUploadSetData);
 
-    var oUploadSet = new UploadSet({
+    var oUploadSet = new undefined/*UploadSet*/({
         instantUpload: "{/instantUpload}",
         showIcons: "{/showIcons}",
         uploadEnabled: "{/uploadEnabled}",
@@ -102,7 +101,7 @@ sap.ui.define([
         uploadUrl: "{/uploadUrl}",
         items: {
             path: "/items",
-            template: new UploadSetItem({
+            template: new undefined/*UploadSetItem*/({
                 fileName: "{fileName}",
                 mediaType: "{mediaType}",
                 url: "{url}",
@@ -183,7 +182,7 @@ sap.ui.define([
             new Button({
                 text: "Add via API",
                 press: function () {
-                    oUploadSet.addIncompleteItem(new UploadSetItem({
+                    oUploadSet.addIncompleteItem(new undefined/*UploadSetItem*/({
                         fileName: "Document.txt",
                         mediaType: "text/plain",
                         thumbnailUrl: "https://upload.wikimedia.org/wikipedia/commons/8/8f/SAP-Logo.svg",

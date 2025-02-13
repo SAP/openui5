@@ -120,10 +120,10 @@ sap.ui.define([
 	t6.placeAt("content6");
 
 	var t8 = new Text("Text8", {text: "pneumonoultramicroscopicsilicovolcanoconiosis"}); // longest word in English
-		t8.setWidth("400px");
-		t8.setWrapping(true);
-		t8.setWrappingType("Hyphenated");
-		t8.placeAt("content8");
+	t8.setWidth("400px");
+	t8.setWrapping(true);
+	t8.setWrappingType("Hyphenated");
+	t8.placeAt("content8");
 
 	// run tests
 	// =========
@@ -316,52 +316,6 @@ sap.ui.define([
 		assert.strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Text does not have resize handler");
 	});
 
-	/**
-	 * @deprecated As of version 1.121
-	 */
-	QUnit.test("non-native max lines", async function(assert) {
-		var done = assert.async();
-
-		t5.addEventDelegate({
-			onAfterRendering : function() {
-				t5.clampHeight();
-				t5.clampText();
-			}
-		}, t5);
-
-		t5.invalidate();
-		await nextUIUpdate();
-
-		assert.strictEqual(t5.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");
-
-		setTimeout(function() {
-			// need to wait ellipsis is correctly calculated
-			assert.ok(t5.$("inner").css("max-height") && t5.$("inner").css("max-height") != "none", "Text has max-height");
-			assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis(" + t5.ellipsis + ")");
-
-			t5.setWidth(Math.pow(10, 5) + "px");
-			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			assert.strictEqual(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis), -1, "Text does not include ellipsis.");
-
-			t5.$("inner").width("400px");	// change dom width
-
-			setTimeout(function() {
-				t5.clampText();
-				assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis (" + t5.ellipsis + ") after dom changed");
-
-				t5.setMaxLines(1);	// should use native textoverflow ellipsis
-				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-
-				assert.strictEqual(t5.$().hasClass("sapMTextMaxLine"), false, "For 1 MaxLine we do not have sapMTextMaxLine class");
-				assert.strictEqual(t5.$().hasClass("sapMTextNoWrap"), true, "For 1 MaxLine we have sapMTextNoWrap class");
-				assert.strictEqual(t5.$().css("white-space"), "nowrap", "Text has correct style for 1 MaxLine");
-
-				assert.strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Everything must be clean we do not have resize handler anymore");
-				done();
-			}, 400);
-
-		}, 200);
-	});
 	QUnit.test("When width is not set max-width should apply to control", async function(assert) {
 		var sut = new Text({text : "text"}).placeAt("qunit-fixture");
 		await nextUIUpdate();

@@ -844,13 +844,13 @@ sap.ui.define([
 
 	QUnit.module("sap-cancel-on-close header handling");
 
-	var fnCheckHeader = function(bCancelOnClose, bExpectedValue){
+	var fnCheckHeader = function(sCancelOnClose, sExpectedValue){
 		return function(assert){
 			var done = assert.async();
 			var mService = aServices[0];
 
 			var oModel = new ODataModel(mService.service, {
-				headers: {"sap-cancel-on-close": bCancelOnClose},
+				headers: {"sap-cancel-on-close": sCancelOnClose},
 				annotationURI: mService.annotations,
 				skipMetadataAnnotationParsing: false
 			});
@@ -859,14 +859,14 @@ sap.ui.define([
 
 			var check = function(event, jqXHR, ajaxOptions){
 				jQuery(document).off("ajaxSuccess", check);
-				assert.strictEqual(ajaxOptions.headers["sap-cancel-on-close"], bExpectedValue, "Header was set correctly.");
+				assert.strictEqual(ajaxOptions.headers["sap-cancel-on-close"], sExpectedValue);
 				done();
 			};
 			jQuery(document).on("ajaxSuccess", check);
 		};
 	};
 
-	QUnit.test("Default true value", fnCheckHeader(undefined, true));
-	QUnit.test("Set to false via model header parameter", fnCheckHeader(false, false));
-	QUnit.test("Set to true via model header parameter", fnCheckHeader(true, true));
+	QUnit.test("Default true value", fnCheckHeader(undefined, "true"));
+	QUnit.test("Set to false via model header parameter", fnCheckHeader("false", "false"));
+	QUnit.test("Set to true via model header parameter", fnCheckHeader("true", "true"));
 });

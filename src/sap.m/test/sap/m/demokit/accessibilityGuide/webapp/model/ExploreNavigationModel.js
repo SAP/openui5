@@ -797,12 +797,72 @@ sap.ui.define([
 				]
 			},
 			{
-				title: "Spacing",
+				title: "Target Size",
 				icon: 'sap-icon://tree',
-				key: 'spacing',
+				key: 'minimumTargetSize',
 				target: 'exploreOverview',
 				hasExpander: false,
 				items:[
+					{
+						key: 'inlineLink',
+						target: 'exploreSamples',
+						title: 'Inline Link',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/inlineLink/View.view.xml',
+								name: 'inlineLink.view.xml',
+								key: 'inlineLink.view.xml'
+							},
+							{
+								url: '/samples/inlineLink/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/inlineLink/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/inlineLink/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
+					{
+						key: 'overlayLink',
+						target: 'exploreSamples',
+						title: 'Overlay Link',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/overlayLink/View.view.xml',
+								name: 'overlayLink.view.xml',
+								key: 'overlayLink.view.xml'
+							},
+							{
+								url: '/samples/overlayLink/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/overlayLink/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/overlayLink/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
 					{
 						key: 'linkSpacing',
 						target: 'exploreSamples',
@@ -842,7 +902,7 @@ sap.ui.define([
 						files: [
 							{
 								url: '/samples/NetworkGraph/NetworkGraph.controller.js',
-								name: 'NetworkGraph.controller.jss',
+								name: 'NetworkGraph.controller.js',
 								key: 'NetworkGraph.controller.js'
 							},
 							{

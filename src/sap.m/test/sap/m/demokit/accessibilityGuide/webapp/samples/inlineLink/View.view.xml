@@ -1,0 +1,23 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<VBox class="sapUiSmallMargin">
+					<FormattedText
+						htmlText="Lorem %%0 dolor sit amet, sed diam nonumy eirmod tempor invidunt ut labore et %%1 magna aliquyam erat, sed diam voluptua."
+					>
+						<controls>
+							<Link href="https://www.sap.com/" text="home page" />
+							<Link href="https://www.sap.com/" text="home page" />
+						</controls>
+					</FormattedText>
+				</VBox>
+			</Page>
+		</App>
+</mvc:View>

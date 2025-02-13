@@ -49,9 +49,9 @@ sap.ui.define([
 						key: 'messageHandling'
 					},
 					{
-						title: 'Spacing',
+						title: 'Target Size',
 						target: 'overview',
-						key: 'spacing'
+						key: 'minimumTargetSize'
 					}
 				]
 			},

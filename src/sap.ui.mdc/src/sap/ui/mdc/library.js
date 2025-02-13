@@ -6,11 +6,12 @@
  * Initialization Code and shared classes of library sap.ui.mdc.
  */
 sap.ui.define([
-	"sap/ui/base/DataType",
-	"sap/ui/core/Lib",
-	"sap/ui/core/library", // library dependency
-	"sap/m/library" // library dependency
-], (DataType, Library) => {
+ "sap/ui/core/Lib",
+ // library dependency
+ "sap/ui/core/library",
+ // library dependency
+ "sap/m/library"
+], Library => {
  "use strict";
 
  /**
@@ -794,71 +795,6 @@ sap.ui.define([
   * @interface
   * @public
   */
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.FilterBarP13nMode", thisLib.FilterBarP13nMode);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.TableType", thisLib.TableType);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.TableP13nMode", thisLib.TableP13nMode);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.GrowingMode", thisLib.GrowingMode);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.RowCountMode", thisLib.RowCountMode);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.ChartToolbarActionType", thisLib.ChartToolbarActionType);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.ChartP13nMode", thisLib.ChartP13nMode);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.SelectionMode", thisLib.SelectionMode);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.RowAction", thisLib.RowAction);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.FilterExpression", thisLib.FilterExpression);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.ChartItemType", thisLib.ChartItemType);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.ChartItemRoleType", thisLib.ChartItemRoleType);
-
- /**
-  * @deprecated As of version 1.121
-  */
- DataType.registerEnum("sap.ui.mdc.MultiSelectMode", thisLib.MultiSelectMode);
 
  /**
   * @typedef {object} sap.ui.mdc.TypeConfig

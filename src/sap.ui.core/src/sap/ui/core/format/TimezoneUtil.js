@@ -8,19 +8,6 @@ sap.ui.define([
 ) {
 	"use strict";
 	/**
-	 * Static collection of utility functions to handle time zone related conversions.
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 * @namespace
-	 * @name module:sap/ui/core/format/TimezoneUtil
-	 * @private
-	 * @ui5-restricted sap.viz
-	 *
-	 * @deprecated As of 1.124.0, use {@link module:sap/base/i18n/date/TimezoneUtils} instead.
-	 */
-
-	/**
 	 * Use {@link module:sap/base/i18n/date/TimezoneUtils.isValidTimezone} instead.
 	 *
 	 * @param {string} sTimezone The IANA timezone ID which is checked, e.g <code>"Europe/Berlin"</code>
@@ -77,28 +64,28 @@ sap.ui.define([
 	 * @name module:sap/ui/core/format/TimezoneUtil._getParts
 	 */
 
-   /**
-	* Use {@link module:sap/base/i18n/date/TimezoneUtils._getDateFromParts} instead.
-	*
-	* @param {object} oParts Separated date and time fields as object, see {@link #_getParts}.
-	* @returns {Date} Returns the date object created from the provided parts.
-	* @private
-	* @ui5-restricted sap.viz
-	* @function
-	* @name module:sap/ui/core/format/TimezoneUtil._getDateFromParts
-	*/
+	/**
+	 * Use {@link module:sap/base/i18n/date/TimezoneUtils._getDateFromParts} instead.
+	 *
+	 * @param {object} oParts Separated date and time fields as object, see {@link #_getParts}.
+	 * @returns {Date} Returns the date object created from the provided parts.
+	 * @private
+	 * @ui5-restricted sap.viz
+	 * @function
+	 * @name module:sap/ui/core/format/TimezoneUtil._getDateFromParts
+	 */
 
-   /**
-	* Use {@link module:sap/base/i18n/date/TimezoneUtils.calculateOffset} instead.
-	*
-	* @param {Date} oDate The date in the time zone used to calculate the offset to UTC.
-	* @param {string} sTimezoneSource The source IANA timezone ID, e.g <code>"Europe/Berlin"</code>
-	* @returns {number} The difference to UTC between the date in the time zone.
-	* @private
-	* @ui5-restricted sap.m.DynamicDateUtil, sap.viz
-	* @function
-	* @name module:sap/ui/core/format/TimezoneUtil.calculateOffset
-	*/
+	/**
+	 * Use {@link module:sap/base/i18n/date/TimezoneUtils.calculateOffset} instead.
+	 *
+	 * @param {Date} oDate The date in the time zone used to calculate the offset to UTC.
+	 * @param {string} sTimezoneSource The source IANA timezone ID, e.g <code>"Europe/Berlin"</code>
+	 * @returns {number} The difference to UTC between the date in the time zone.
+	 * @private
+	 * @ui5-restricted sap.m.DynamicDateUtil, sap.viz
+	 * @function
+	 * @name module:sap/ui/core/format/TimezoneUtil.calculateOffset
+	 */
 
 	return TimezoneUtils;
 });

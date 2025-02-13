@@ -195,11 +195,6 @@ function(
 					parameters: {
 						/**
 						 * Reference to the button that has been pressed
-						 * @deprecated Since version 1.121
-						 */
-						image : {type: "sap.m.Image"},
-						/**
-						 * Reference to the button that has been pressed
 						 */
 						button : {type: "sap.m.Button"}
 					}
