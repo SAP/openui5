@@ -5,9 +5,13 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	'sap/ui/qunit/QUnitUtils',
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(VariantItem, VariantManagement, Element, ContextSharingAPI, QUnitUtils, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/m/library"
+], function(VariantItem, VariantManagement, Element, ContextSharingAPI, QUnitUtils, nextUIUpdate, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.Sticky
+	var Sticky = mobileLibrary.Sticky;
 
 	var fChangeApplyAutomatic = async function(oManagementTable, iRow, vValue) {
 		var aItems = oManagementTable.getItems();
@@ -825,6 +829,8 @@ sap.ui.define([
 			assert.ok(this.oVM.oManagementDialog, "manage dialog exist");
 
 			assert.ok(this.oVM.oManagementTable, "management table exists");
+			assert.equal(this.oVM.oManagementTable.getSticky().length, 1);
+			assert.equal(this.oVM.oManagementTable.getSticky()[0], Sticky.ColumnHeaders, "management table has sticky column headers");
 			var aColumns = this.oVM.oManagementTable.getColumns();
 			assert.ok(aColumns, "columns in the management table exists");
 			assert.equal(aColumns.length, 9, "columns in the management table exists");
