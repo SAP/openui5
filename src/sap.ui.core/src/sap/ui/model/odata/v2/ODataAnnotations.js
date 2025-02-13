@@ -818,8 +818,9 @@ sap.ui.define([
 	 * @returns {Object<string,string>} A map of all public and private headers.
 	 */
 	ODataAnnotations.prototype._getHeaders = function() {
-		//The 'sap-cancel-on-close' header marks the OData annotation request as cancelable. This helps to save resources at the back-end.
-		return extend({"sap-cancel-on-close": true}, this.getHeaders(), {
+		// The 'sap-cancel-on-close' header marks the OData annotation request as cancelable. This helps to save
+		// resources at the back-end.
+		return extend({"sap-cancel-on-close": "true"}, this.getHeaders(), {
 			"Accept-Language": Localization.getLanguageTag().toString() // Always overwrite
 		});
 	};

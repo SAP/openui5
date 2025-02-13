@@ -20,6 +20,7 @@ sap.ui.define([], function() {
 				mProperties[oCondenserInfo.uniqueKey] = oCondenserInfo;
 				oChange.condenserState = "select";
 			} else {
+				mProperties[oCondenserInfo.uniqueKey].oldestChange = oChange;
 				oChange.condenserState = "delete";
 			}
 		},

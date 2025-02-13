@@ -5,14 +5,13 @@
 // Provides control sap.m.Text
 sap.ui.define([
 	'./library',
-	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/HyphenationSupport',
 	"./TextRenderer"
 ],
-function(library, Localization, Control, coreLibrary, Device, HyphenationSupport, TextRenderer) {
+function(library, Control, coreLibrary, Device, HyphenationSupport, TextRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -183,18 +182,6 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 	Text.prototype.ellipsis = '...';
 
 	/**
-	 * Defines whether browser supports native line clamp or not
-	 *
-	 * @since 1.13.2
-	 * @returns {boolean}
-	 * @protected
-	 * @readonly
-	 * @static
-	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
-	 */
-	Text.hasNativeLineClamp = ("webkitLineClamp" in document.documentElement.style);
-
-	/**
 	 * To prevent from the layout thrashing of the <code>textContent</code> call, this method
 	 * first tries to set the <code>nodeValue</code> of the first child if it exists.
 	 *
@@ -262,35 +249,6 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 		}
 
 		return this.getDomRef();
-	};
-
-	/**
-	 * Decides whether the control can use native line clamp feature or not.
-	 *
-	 * In RTL mode native line clamp feature is not supported.
-	 *
-	 * @since 1.20
-	 * @protected
-	 * @return {boolean}
-	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
-	 */
-	Text.prototype.canUseNativeLineClamp = function () {
-		// has line clamp feature
-		if (!Text.hasNativeLineClamp) {
-			return false;
-		}
-
-		// is text direction rtl
-		if (this.getTextDirection() == TextDirection.RTL) {
-			return false;
-		}
-
-		// is text direction inherited as rtl
-		if (this.getTextDirection() == TextDirection.Inherit && Localization.getRTL()) {
-			return false;
-		}
-
-		return true;
 	};
 
 	/**
@@ -539,5 +497,4 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 	HyphenationSupport.mixInto(Text.prototype);
 
 	return Text;
-
 });

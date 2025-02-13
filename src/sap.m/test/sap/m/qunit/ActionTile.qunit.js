@@ -286,12 +286,22 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("One press event has been attached to the link after rerendering the tile", async function(assert) {
+	QUnit.test("One press event has been attached to the header and attribute links after rerendering the tile", async function(assert) {
+		//Act
 		this.oToDo.setHeader("Demo Tile");
 		await nextUIUpdate();
+
+		//Assert
 		var oLink = this.oToDo.getTileContent()[0].getAttributes()[1].getContentConfig().getInnerControl();
 		assert.equal(oLink.mEventRegistry.press.length,1,"Only one event has been attached to the press event of the link");
 
+		//Act
+		this.oToDo.getTileContent()[0].setHeaderLink(new Link());
+		await nextUIUpdate();
+
+		//Assert
+		var oHeaderLink = this.oToDo.getTileContent()[0].getHeaderLink();
+		assert.equal(oHeaderLink.mEventRegistry.press.length,1,"Only one event has been attached to the press event of the header link");
 	});
 
 	QUnit.test("ActionTile on whether the height is set to auto when dynamicHeight is enabled", async function (assert) {

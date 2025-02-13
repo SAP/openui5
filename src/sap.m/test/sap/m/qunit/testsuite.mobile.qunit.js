@@ -1937,27 +1937,6 @@ sap.ui.define([
 				}
 			},
 
-			/**
- 			 * @deprecated As of version 1.129, replaced by {@link sap.m.plugins.UploadSetwithTable}
-			 */
-			UploadSet: {
-				title: "Test Page for sap.m.upload.UploadSet",
-				coverage: {
-					only: "[sap/m/upload/UploadSet.js,sap/m/upload/UploadSetItem.js,sap/m/upload/UploadSetRenderer.js,sap/m/upload/Uploader.js]"
-				},
-				ui5: {
-					language: "en",
-					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
-				},
-				module: [
-					"./upload/UploadSet.qunit",
-					"./upload/UploadSetItem.qunit",
-					"./upload/UploadSetRestrictions.qunit",
-					"./upload/UploadSetToolbar.qunit",
-					"./upload/UploadSetOpenFileDialog.qunit"
-				]
-			},
-
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"
 			},

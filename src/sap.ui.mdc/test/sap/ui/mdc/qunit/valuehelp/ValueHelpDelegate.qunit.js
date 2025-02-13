@@ -276,18 +276,6 @@ sap.ui.define([
 			getOpensOnFocus: () => true
 		};
 
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		{
-			let bShouldOpen = await ValueHelpDelegate.shouldOpenOnFocus(oFakeValueHelp, oFakeContainer);
-			assert.ok(bShouldOpen, "Popover should open");
-
-			oFakeContainer.getOpensOnFocus = () => false;
-			bShouldOpen = await ValueHelpDelegate.shouldOpenOnFocus(oFakeValueHelp, oFakeContainer);
-			assert.notOk(bShouldOpen, "Popover should notopen");
-		}
-
 		oFakeContainer.getOpensOnFocus = () => true;
 		oFakeContainer.isA = () => false;
 		const bShouldOpen = await ValueHelpDelegate.shouldOpenOnFocus(oFakeValueHelp, oFakeContainer);
@@ -325,19 +313,6 @@ sap.ui.define([
 		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
 		assert.ok(bShouldOpen, "Popover on Phone and not-Dialog: Content should open");
 		oDeviceStub.restore();
-
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		{
-			oFakeContainer.isPropertyInitial = (sProperty) => (sProperty === "opensOnClick" ? false : true);
-			let bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
-			assert.ok(bShouldOpen, "Popover: Container should open");
-
-			oFakeContainer.getOpensOnClick = () => false;
-			bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
-			assert.notOk(bShouldOpen, "Popover: Container not should open");
-		}
 
 		oFakeContainer.getOpensOnClick = () => true;
 		oFakeContainer.isA = () => false;

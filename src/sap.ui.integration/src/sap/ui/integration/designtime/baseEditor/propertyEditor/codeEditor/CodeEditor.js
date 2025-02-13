@@ -126,10 +126,10 @@ sap.ui.define([
 		}).then(function (oDialog) {
 			this._oDialog = oDialog;
 			this._oEditor = this._oDialog.getContent()[0];
-			this._oEditor.getInternalEditorInstance().getSession().on("changeAnnotation", this.onChangeAnnotation.bind(this));
+			this._oEditor.getAceEditor().getSession().on("changeAnnotation", this.onChangeAnnotation.bind(this));
 			this._oDialog.attachAfterOpen(function () {
-				this._oEditor.getInternalEditorInstance().focus();
-				this._oEditor.getInternalEditorInstance().navigateFileEnd();
+				this._oEditor.getAceEditor().focus();
+				this._oEditor.getAceEditor().navigateFileEnd();
 			}, this);
 			this.addDependent(this._oDialog);
 			this._openDialog();
@@ -167,13 +167,13 @@ sap.ui.define([
 		if (!this._oDialog.isOpen()) {
 			return;
 		}
-		var oErrors = (this._oEditor.getInternalEditorInstance().getSession().getAnnotations() || []).filter(function (oError) {
+		var oErrors = (this._oEditor.getAceEditor().getSession().getAnnotations() || []).filter(function (oError) {
 			return oError.type === "error";
 		});
 		if (oErrors.length > 0) {
 			this._oDialog.getBeginButton().setEnabled(false);
 		} else {
-			var sValue = this._oEditor.getInternalEditorInstance().getValue();
+			var sValue = this._oEditor.getAceEditor().getValue();
 			if (sValue && sValue !== "") {
 				//TODO: validate js format manually since the value maybe just as "aaa;" which will not be recognized as error by code editor itself
 				/*

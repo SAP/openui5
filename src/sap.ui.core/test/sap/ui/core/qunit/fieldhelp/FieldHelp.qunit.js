@@ -781,12 +781,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{bHasModel: false}, // e.g. StaticBinding
-	{bHasModel: true, oMetaModel: undefined},
-	{bHasModel: true, oMetaModel: {/* no getMetaContext */}}
-].forEach(({bHasModel, oMetaModel}, i) => {
-	QUnit.test("_requestDocumentationRef: no meta model with getMetaContext, #" + i, function (assert) {
+	QUnit.test("_requestDocumentationRef: undefined, if model is not OData V2 or OData V4", function (assert) {
 		const oBinding = {
 			getModel() {},
 			getResolvedPath() {},
@@ -794,51 +789,33 @@ sap.ui.define([
 		};
 		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
-		const oModel = {getMetaModel() {}};
-		this.mock(oModel).expects("getMetaModel").withExactArgs().exactly(bHasModel ? 1 : 0). returns(oMetaModel);
-		this.mock(oBinding).expects("getModel").withExactArgs().returns(bHasModel ? oModel : undefined);
+		this.mock(oBinding).expects("getModel").withExactArgs().returns("~oModel");
+		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs("~oModel").returns(undefined);
 
 		// code under test
 		assert.strictEqual(FieldHelp._requestDocumentationRef(oBinding), undefined);
 	});
-});
 
 	//*********************************************************************************************
-[
-	{bHasAnnotation: false, oPropertyMetadata: undefined}, // no metadata at all
-	{bHasAnnotation: false, oPropertyMetadata: {}}, // metadata for meta context available, but no annotation
-	{
-		bHasAnnotation: true,
-		oPropertyMetadata: {
-			"com.sap.vocabularies.Common.v1.DocumentationRef": {String: "~DocumentationRefValue"}
-		}
-	}
-].forEach(({bHasAnnotation, oPropertyMetadata}, i) => {
-	QUnit.test("_requestDocumentationRef: V2 binding, #" + i, function (assert) {
+	QUnit.test("_requestDocumentationRef: success", function (assert) {
 		const oBinding = {
 			getModel() {},
 			getResolvedPath() {},
 			isDestroyed() {}
 		};
+		const oMetaModelInterface = {
+			getDocumentationRef() {}
+		};
 		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
-		const oModel = {getMetaModel() {}};
-		const oMetaModel = {
-			getMetaContext() {},
-			getObject() {},
-			isA() {},
-			loaded() {}
-		};
-		this.mock(oModel).expects("getMetaModel").withExactArgs(). returns(oMetaModel);
-		this.mock(oBinding).expects("getModel").withExactArgs().returns(oModel);
-		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs(sinon.match.same(oMetaModel))
-			.returns("~metaModelInterface");
+		this.mock(oBinding).expects("getModel").withExactArgs().returns("~oModel");
+		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs("~oModel").returns(oMetaModelInterface);
 		this.mock(FieldHelp).expects("_requestIDPropertyPath")
-			.withExactArgs("~metaModelInterface", "/resolved/data/path")
+			.withExactArgs(sinon.match.same(oMetaModelInterface), "/resolved/data/path")
 			.resolves("/resolved/IDPath");
-		this.mock(oMetaModel).expects("isA").withExactArgs("sap.ui.model.odata.ODataMetaModel").returns(true);
-		this.mock(oMetaModel).expects("getMetaContext").withExactArgs("/resolved/IDPath").returns("~metaContext");
-		this.mock(oMetaModel).expects("getObject").withExactArgs("", "~metaContext").returns(oPropertyMetadata);
+		this.mock(oMetaModelInterface).expects("getDocumentationRef")
+			.withExactArgs("/resolved/IDPath")
+			.returns("~DocumentationRefValue");
 
 		// code under test
 		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
@@ -846,162 +823,31 @@ sap.ui.define([
 		assert.ok(oPromise instanceof Promise);
 
 		return oPromise.then((sDocumentationRefValue) => {
-			assert.strictEqual(sDocumentationRefValue, bHasAnnotation ? "~DocumentationRefValue" : undefined);
+			assert.strictEqual(sDocumentationRefValue, "~DocumentationRefValue");
 		});
 	});
-});
 
 	//*********************************************************************************************
-	QUnit.test("_requestDocumentationRef: V2 binding, _requestIDPropertyPath rejects", function (assert) {
+	QUnit.test("_requestDocumentationRef: _requestIDPropertyPath rejects", function (assert) {
 		const oBinding = {
 			getModel() {},
 			getResolvedPath() {},
 			isDestroyed() {}
 		};
+		const oMetaModelInterface = {
+			getDocumentationRef() {}
+		};
 		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
-		const oModel = {getMetaModel() {}};
-		const oMetaModel = {
-			getMetaContext() {},
-			getObject() {},
-			isA() {},
-			loaded() {}
-		};
-		this.mock(oModel).expects("getMetaModel").withExactArgs(). returns(oMetaModel);
-		this.mock(oBinding).expects("getModel").withExactArgs().returns(oModel);
-		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs(sinon.match.same(oMetaModel))
-			.returns("~metaModelInterface");
+		this.mock(oBinding).expects("getModel").withExactArgs().returns("~oModel");
+		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs("~oModel").returns(oMetaModelInterface);
 		const oError = new Error("~_requestIDPropertyPath rejected");
 		this.mock(FieldHelp).expects("_requestIDPropertyPath")
-			.withExactArgs("~metaModelInterface", "/resolved/data/path")
+			.withExactArgs(sinon.match.same(oMetaModelInterface), "/resolved/data/path")
 			.rejects(oError);
-		this.mock(oMetaModel).expects("isA").withExactArgs("sap.ui.model.odata.ODataMetaModel").returns(true);
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to request 'com.sap.vocabularies.Common.v1.DocumentationRef' annotation for path "
 				+ "'/resolved/data/path'", sinon.match.same(oError), sClassName);
-
-		// code under test
-		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
-
-		assert.ok(oPromise instanceof Promise);
-
-		return oPromise.then((sDocumentationRefValue) => {
-			assert.strictEqual(sDocumentationRefValue, undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_requestDocumentationRef: V2 binding, error while fetching metadata", function (assert) {
-		const oBinding = {
-			getModel() {},
-			getResolvedPath() {},
-			isDestroyed() {}
-		};
-		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
-		const oModel = {getMetaModel() {}};
-		const oMetaModel = {
-			getMetaContext() {},
-			getObject() {},
-			isA() {},
-			loaded() {}
-		};
-		this.mock(oModel).expects("getMetaModel").withExactArgs(). returns(oMetaModel);
-		this.mock(oBinding).expects("getModel").withExactArgs().returns(oModel);
-		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs(sinon.match.same(oMetaModel))
-			.returns("~metaModelInterface");
-		this.mock(FieldHelp).expects("_requestIDPropertyPath")
-			.withExactArgs("~metaModelInterface", "/resolved/data/path")
-			.resolves("/resolved/IDPath");
-		this.mock(oMetaModel).expects("isA").withExactArgs("sap.ui.model.odata.ODataMetaModel").returns(true);
-		this.mock(oMetaModel).expects("getMetaContext").withExactArgs("/resolved/IDPath").returns("~metaContext");
-		const oError = new Error("Context cannot be determined");
-		this.mock(oMetaModel).expects("getObject").withExactArgs("", "~metaContext").throws(oError);
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to request 'com.sap.vocabularies.Common.v1.DocumentationRef' annotation for path "
-				+ "'/resolved/IDPath'", sinon.match.same(oError), sClassName);
-
-		// code under test
-		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
-
-		assert.ok(oPromise instanceof Promise);
-
-		return oPromise.then((sDocumentationRefValue) => {
-			assert.strictEqual(sDocumentationRefValue, undefined);
-		});
-	});
-
-	//*********************************************************************************************
-[false, true].forEach((bHasAnnotation) => {
-	QUnit.test("_requestDocumentationRef: V4 binding, has annotation=" + bHasAnnotation, function (assert) {
-		const oBinding = {
-			getModel() {},
-			getResolvedPath() {},
-			isDestroyed() {}
-		};
-		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
-		const oModel = {getMetaModel() {}};
-		const oMetaModel = {
-			getMetaContext() {},
-			isA() {},
-			requestObject() {}
-		};
-		this.mock(oModel).expects("getMetaModel").withExactArgs(). returns(oMetaModel);
-		this.mock(oBinding).expects("getModel").withExactArgs().returns(oModel);
-		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs(sinon.match.same(oMetaModel))
-			.returns("~metaModelInterface");
-		this.mock(FieldHelp).expects("_requestIDPropertyPath")
-			.withExactArgs("~metaModelInterface", "/resolved/data/path")
-			.resolves("/resolved/IDPath");
-		this.mock(oMetaModel).expects("isA").withExactArgs("sap.ui.model.odata.ODataMetaModel").returns(false);
-		this.mock(oMetaModel).expects("getMetaContext").withExactArgs("/resolved/IDPath").returns("~metaContext");
-		this.mock(oMetaModel).expects("requestObject")
-			.withExactArgs("@com.sap.vocabularies.Common.v1.DocumentationRef", "~metaContext")
-			.resolves(bHasAnnotation ? "~DocumentationRefValue" : undefined);
-
-		// code under test
-		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
-
-		assert.ok(oPromise instanceof Promise);
-
-		return oPromise.then((sDocumentationRefValue) => {
-			assert.strictEqual(sDocumentationRefValue, bHasAnnotation ? "~DocumentationRefValue" : undefined);
-		});
-	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("_requestDocumentationRef: V4 binding, requestObject rejects", function (assert) {
-		const oBinding = {
-			getModel() {},
-			getResolvedPath() {},
-			isDestroyed() {}
-		};
-		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
-		const oModel = {getMetaModel() {}};
-		const oMetaModel = {
-			getMetaContext() {},
-			isA() {},
-			requestObject() {}
-		};
-		this.mock(oModel).expects("getMetaModel").withExactArgs(). returns(oMetaModel);
-		this.mock(oBinding).expects("getModel").withExactArgs().returns(oModel);
-		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs(sinon.match.same(oMetaModel))
-			.returns("~metaModelInterface");
-		this.mock(FieldHelp).expects("_requestIDPropertyPath")
-			.withExactArgs("~metaModelInterface", "/resolved/data/path")
-			.resolves("/resolved/IDPath");
-		this.mock(oMetaModel).expects("isA").withExactArgs("sap.ui.model.odata.ODataMetaModel").returns(false);
-		this.mock(oMetaModel).expects("getMetaContext").withExactArgs("/resolved/IDPath").returns("~metaContext");
-		const oError = new Error("~requestObjectRejected");
-		this.mock(oMetaModel).expects("requestObject")
-			.withExactArgs("@com.sap.vocabularies.Common.v1.DocumentationRef", "~metaContext")
-			.rejects(oError);
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to request 'com.sap.vocabularies.Common.v1.DocumentationRef' annotation for path "
-				+ "'/resolved/IDPath'", sinon.match.same(oError), sClassName);
 
 		// code under test
 		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
@@ -1332,44 +1178,77 @@ sap.ui.define([
 	//*********************************************************************************************
 [true, false].forEach((bV4) => {
 	QUnit.test(`_getMetamodelInterface, OData ${bV4 ? "V4" : "V2"}`, function (assert) {
-		const oMetaModel = {
+		const oModel = {
+			getMetaModel() {},
 			isA() {}
 		};
 
-		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(bV4);
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(bV4);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel")
+			.exactly(bV4 ? 0 : 1)
+			.returns(!bV4);
+		oModelMock.expects("getMetaModel").withExactArgs().returns("~oMetaModel");
 
 		// code under test
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 
 		["getProperties", "getTextPropertyPath", "getTypeQName", "requestTypes"].forEach((sFunctionName) => {
 			assert.strictEqual(typeof oInterface[sFunctionName], "function", "interface has function " + sFunctionName);
 		});
-		assert.strictEqual(oInterface.oMetaModel, oMetaModel);
+		assert.strictEqual(oInterface.oMetaModel, "~oMetaModel");
 
-		const oMetaModel2 = {
+		const oModel2 = {
+			getMetaModel() {},
 			isA() {}
 		};
-		this.mock(oMetaModel2).expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(bV4);
+		const oModelMock2 = this.mock(oModel2);
+		oModelMock2.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(bV4);
+		oModelMock2.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel")
+			.exactly(bV4 ? 0 : 1)
+			.returns(!bV4);
+		oModelMock2.expects("getMetaModel").withExactArgs().returns("~oMetaModel2");
 
 		// code under test: returns different interface instance when calling again
-		const oInterface2 = FieldHelp._getMetamodelInterface(oMetaModel2);
+		const oInterface2 = FieldHelp._getMetamodelInterface(oModel2);
 
-		assert.strictEqual(oInterface2.oMetaModel, oMetaModel2);
+		assert.strictEqual(oInterface2.oMetaModel, "~oMetaModel2");
 		assert.notStrictEqual(oInterface, oInterface2);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("Metamodel interface V4: requestTypes", async function (assert) {
-		const oMetaModel = {
-			isA() {},
-			requestObject() {}
+	QUnit.test("_getMetamodelInterface, model not supported or not set", function (assert) {
+		// code under test
+		assert.strictEqual(FieldHelp._getMetamodelInterface(undefined), undefined);
+		assert.strictEqual(FieldHelp._getMetamodelInterface(null), undefined);
+
+		const oModel = {
+			isA() {}
 		};
 
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel").returns(false);
+
+		// code under test
+		assert.strictEqual(FieldHelp._getMetamodelInterface(oModel), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Metamodel interface V4: requestTypes", async function (assert) {
+		const oMetaModel = {
+			requestObject() {}
+		};
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
+		};
+
+		this.mock(oModel).expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(true);
+		this.mock(oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(true);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
 		oMetaModelMock.expects("requestObject").withExactArgs("/$").resolves({
 			"C0": {$kind: "ComplexType"},
 			"E0": {$kind: "EntityType"}, "E1": {$kind: "EntityType"},
@@ -1397,14 +1276,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Metamodel interface V4: getProperties", function (assert) {
+	QUnit.test("Metamodel interface V4: getDocumentationRef", function (assert) {
 		const oMetaModel = {
-			isA() {}
+			getMetaContext() {},
+			getObject() {}
+		};
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
 		};
 
+		this.mock(oModel).expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(true);
+		this.mock(oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(true);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
+		oMetaModelMock.expects("getMetaContext").withExactArgs("propertyPath").returns("~oMetaContext");
+		oMetaModelMock.expects("getObject")
+			.withExactArgs("@com.sap.vocabularies.Common.v1.DocumentationRef", "~oMetaContext")
+			.returns("~documentationRef");
+
+		// code under test
+		assert.strictEqual(oInterface.getDocumentationRef("propertyPath"), "~documentationRef");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Metamodel interface V4: getProperties", function (assert) {
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
+		};
+
+		this.mock(oModel).expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(true);
+		this.mock(oModel).expects("getMetaModel").withExactArgs().returns("~oMetaModel");
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oType = {
 			"NP0": {$kind: "NavigationProperty"},
 			"P0": {$kind: "Property"}, "P1": {$kind: "Property"}
@@ -1417,13 +1321,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Metamodel interface V4: getTextPropertyPath", function (assert) {
 		const oMetaModel = {
-			isA() {},
 			getObject() {}
 		};
 
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
+		};
+
+		this.mock(oModel).expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(true);
+		this.mock(oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(true);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
 		oMetaModelMock.expects("getObject")
 			.withExactArgs("/~TypeName/~PropertyName@com.sap.vocabularies.Common.v1.Text/$Path")
 			.returns("~TextPropertyPath");
@@ -1435,14 +1344,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Metamodel interface V4: getTypeQName", function (assert) {
 		const oMetaModel = {
-			isA() {},
 			getMetaPath() {},
 			getObject() {}
 		};
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
+		};
 
+		this.mock(oModel).expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(true);
+		this.mock(oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(true);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
 		oMetaModelMock.expects("getMetaPath").withExactArgs("/resolvedPath").returns("/metaPath");
 		oMetaModelMock.expects("getObject").withExactArgs("/metaPath/$Type").returns("~typeQName");
 
@@ -1454,13 +1367,19 @@ sap.ui.define([
 	QUnit.test("Metamodel interface V2: requestTypes", async function (assert) {
 		const oMetaModel = {
 			getObject() {},
-			isA() {},
 			loaded() {}
 		};
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
+		};
 
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel").returns(true);
+		oModelMock.expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(false);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
 		const {promise: oLoadedPromise, resolve: fnResolve} = Promise.withResolvers();
 		oMetaModelMock.expects("loaded").withExactArgs().returns(oLoadedPromise);
 		oMetaModelMock.expects("getObject").never(); // only access metamodel when loaded
@@ -1502,14 +1421,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Metamodel interface V2: getProperties", function (assert) {
+[{
+	property: {},
+	result: undefined
+}, {
+	property: {"com.sap.vocabularies.Common.v1.DocumentationRef" : {String: "~documentationRef"}},
+	result: "~documentationRef"
+}].forEach(({property: oProperty, result: vResult}, i) => {
+	QUnit.test("Metamodel interface V2: getDocumentationRef, #" + i, function (assert) {
 		const oMetaModel = {
-			isA() {}
+			getMetaContext() {},
+			getObject() {}
+		};
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
 		};
 
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel").returns(true);
+		oModelMock.expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(false);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
+		oMetaModelMock.expects("getMetaContext").withExactArgs("propertyPath").returns("~oMetaContext");
+		oMetaModelMock.expects("getObject").withExactArgs("", "~oMetaContext").returns(oProperty);
+
+		// code under test
+		assert.strictEqual(oInterface.getDocumentationRef("propertyPath"), vResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("Metamodel interface V2: getProperties", function (assert) {
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
+		};
+
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel").returns(true);
+		oModelMock.expects("getMetaModel").withExactArgs().returns("~oMetaModel");
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oType = {
 			navigationProperty: [{name: "NP0"}],
 			property: [{name: "P0"}, {name: "P1"}]
@@ -1531,14 +1485,20 @@ sap.ui.define([
 ["entityType", "complexType"].forEach((sKindOfType) => {
 	QUnit.test(`Metamodel interface V2: getTextPropertyPath, ${sKindOfType}`, function (assert) {
 		const oMetaModel = {
-			isA() {},
 			getObject() {}
+		};
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
 		};
 		const bComplex = sKindOfType === "complexType";
 
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel").returns(true);
+		oModelMock.expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(false);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
 		oMetaModelMock.expects("getObject")
 			.withExactArgs(`/dataServices/schema/0/${sKindOfType}/typeIndex/property/propertyIndex`
 				+ "/com.sap.vocabularies.Common.v1.Text")
@@ -1564,14 +1524,20 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Metamodel interface V2: getTypeQName", function (assert) {
 		const oMetaModel = {
-			isA() {},
 			getMetaContext() {},
 			getObject() {}
 		};
+		const oModel = {
+			isA() {},
+			getMetaModel() {}
+		};
 
+		const oModelMock = this.mock(oModel);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
+		oModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v2.ODataModel").returns(true);
+		oModelMock.expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		const oInterface = FieldHelp._getMetamodelInterface(oModel);
 		const oMetaModelMock = this.mock(oMetaModel);
-		oMetaModelMock.expects("isA").withExactArgs("sap.ui.model.odata.v4.ODataMetaModel").returns(false);
-		const oInterface = FieldHelp._getMetamodelInterface(oMetaModel);
 		oMetaModelMock.expects("getMetaContext").withExactArgs("/BusinessPartnerSet('42')").returns("~oMetaContext");
 		// entity types in metamodel JSON always have QName as namespace and name
 		const oEntityType = {namespace: "name.space", name: "BusinessPartner"};

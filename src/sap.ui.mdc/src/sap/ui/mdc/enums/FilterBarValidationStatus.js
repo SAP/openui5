@@ -20,33 +20,33 @@ sap.ui.define(() => {
 		 * No errors detected.
 		 * @public
 		 */
-		NoError: -1,
+		NoError: "NoError",
 
 		/**
 		 * Required filter field without a value.
 		 * @public
 		 */
-		RequiredHasNoValue: 0,
+		RequiredHasNoValue: "RequiredHasNoValue",
 
 		/**
 		 * Filter field in error state.
 		 * @public
 		 */
-		FieldInErrorState: 1,
+		FieldInErrorState: "FieldInErrorState",
 
 		/**
 		 * Ongoing asynchronous validation.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		AsyncValidation: 2,
+		AsyncValidation: "AsyncValidation",
 
 		/**
 		 * Change is being applied.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
-		OngoingChangeAppliance: 3
+		OngoingChangeAppliance: "OngoingChangeAppliance"
 	};
 
 	return FilterBarValidationStatus;

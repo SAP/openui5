@@ -3,7 +3,7 @@
  */
 
 // sap.ui.mdc.AggregationBaseDelegate
-sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/message/MessageType'], (BaseDelegate, MessageType) => {
+sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/message/MessageType', 'sap/ui/mdc/enums/FilterBarValidationStatus'], (BaseDelegate, MessageType, FilterBarValidationStatus) => {
 	"use strict";
 
 	/**
@@ -128,7 +128,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/message/MessageType'], (B
 	 * @private
 	 */
 	AggregationBaseDelegate.determineValidationState = function(oControl) {
-		return -1;
+		return FilterBarValidationStatus.NoError;
 	};
 
 	/**

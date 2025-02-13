@@ -60,10 +60,6 @@ sap.ui.define([
 			if (mSettings.csrfTokensConfig) {
 				this._oCsrfTokensModel = new JSONModel();
 				this._oCsrfTokenHandler = new CsrfTokenHandler({
-					/**
-					 * @deprecated As of version 1.121.0
-					 */
-					host: mSettings.host,
 					configuration: mSettings.csrfTokensConfig,
 					model: this._oCsrfTokensModel,
 					dataProviderFactory: this
@@ -221,13 +217,6 @@ sap.ui.define([
 
 	DataProviderFactory.prototype.setHost = function (oHost) {
 		this._oHost = oHost;
-
-		/**
-		 * @deprecated As of version 1.121.0
-		 */
-		if (this._oCsrfTokenHandler) {
-			this._oCsrfTokenHandler.setHost(oHost);
-		}
 	};
 
 	DataProviderFactory.prototype._createDataProviderSettings = function (oDataConfiguration, bConfigurationResolved) {

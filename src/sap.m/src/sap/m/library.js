@@ -383,8 +383,6 @@ sap.ui.define([
 		  "sap.m.ToolbarSeparator",
 		  "sap.m.Tree",
 		  "sap.m.TreeItemBase",
-		  "sap.m.upload.UploadSet",
-		  "sap.m.upload.UploadSetToolbarPlaceholder",
 		  "sap.m.VariantManagement",
 		  "sap.m.VBox",
 		  "sap.m.ViewSettingsDialog",
@@ -452,9 +450,7 @@ sap.ui.define([
 		  "sap.m.ToolbarLayoutData",
 		  "sap.m.TileInfo",
 		  "sap.m.upload.FilePreviewDialog",
-		  "sap.m.upload.Uploader",
 		  "sap.m.upload.UploaderTableItem",
-		  "sap.m.upload.UploadSetItem",
 		  "sap.m.upload.FilePreviewDialog",
 		  "sap.m.VariantItem",
 		  "sap.m.ViewSettingsCustomItem",
@@ -677,29 +673,18 @@ sap.ui.define([
 	 * @since 1.120
 	 */
 	 thisLib.UploadSetwithTableActionPlaceHolder = {
-		/**
-		 * Placeholder for variant management.
-		 * @deprecated As of version 1.124, the concept has been discarded.
-		 * @public
-		 */
-		VariantManagementPlaceholder: "VariantManagementPlaceholder",
-		/**
-		 * Placeholder for personalization settings button.
-		 * @deprecated As of version 1.124, the concept has been discarded.
-		 * @public
-		 */
-		PersonalizationSettingsPlaceholder: "PersonalizationSettingsPlaceholder",
-		/**
-		 * Placeholder for upload button control.
-		 * @public
-		 */
-		UploadButtonPlaceholder : "UploadButtonPlaceholder",
-		/**
-		 * Placeholder for cloud file picker button.
-		 * @public
-		*/
-		CloudFilePickerButtonPlaceholder : "CloudFilePickerButtonPlaceholder"
-	};
+	  /**
+	   * Placeholder for upload button control.
+	   * @public
+	   */
+	  UploadButtonPlaceholder : "UploadButtonPlaceholder",
+
+	  /**
+	   * Placeholder for cloud file picker button.
+	   * @public
+	  */
+	  CloudFilePickerButtonPlaceholder : "CloudFilePickerButtonPlaceholder"
+	 };
 
 	 /**
 	  * Types of state of {@link sap.m.BadgeEnabler} to expose its current state.

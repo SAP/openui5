@@ -427,14 +427,7 @@ sap.ui.define([
 	 * @since 1.121.0
 	 */
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
-		let bShouldOpenOnFocus = false;
-
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
-			bShouldOpenOnFocus = oContainer.getOpensOnFocus();
-		}
+		const bShouldOpenOnFocus = false;
 
 		return Promise.resolve(bShouldOpenOnFocus);
 	};
@@ -461,15 +454,7 @@ sap.ui.define([
 				// - for singleSelect only if typeahead is not used as ValueHelp (ComboBox don't opens on click)
 				bShouldOpenOnClick = true;
 			} else {
-				let bUseConent = true;
-
-				/**
-				 *  @deprecated since 1.121.0
-				 */
-				if (!oContainer.isPropertyInitial("opensOnClick")) {
-					bUseConent = false;
-					bShouldOpenOnClick = oContainer.getOpensOnClick();
-				}
+				const bUseConent = true;
 
 				if (bUseConent) {
 					const oContent = oContainer._getContent();

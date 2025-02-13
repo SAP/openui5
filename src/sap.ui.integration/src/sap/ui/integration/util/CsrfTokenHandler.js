@@ -49,10 +49,6 @@ sap.ui.define([
 
 			this._mTokens = new Map();
 			this._oModel = mSettings.model;
-			/**
-			 * @deprecated As of version 1.121.0
-			 */
-			this._oHost = mSettings.host;
 			this._oConfiguration = mSettings.configuration;
 			this._oDataProviderFactory = mSettings.dataProviderFactory;
 

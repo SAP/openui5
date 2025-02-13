@@ -50,26 +50,32 @@ sap.ui.define([
 					  }
 				}
 			},
+
 			"Condenser": {
 				sinon: false,
 				group: "FilterBar"
 			},
+
 			"FilterBar": {
 				group: "FilterBar",
 				module: "./FilterBar.qunit"
 			},
+
 			"FilterBarBase": {
 				group: "FilterBarBase",
 				module: "./FilterBarBase.qunit"
 			},
+
 			"AdaptationFilterBar": {
 				group: "FilterBar",
 				module: "./AdaptationFilterBar.qunit"
 			},
+
 			"FilterBarWithVariants": {
 				group: "FilterBar",
 				module: "./FilterBarWithVariants.qunit"
 			},
+
 			"FilterBarFlex": {
 				group: "FilterBar",
 				module: "./FilterBarFlex.qunit",
@@ -79,20 +85,7 @@ sap.ui.define([
 					]
 				}
 			},
-			/**
-			 * @deprecated since 1.124
-			 */
-			"valueHelp.FilterBar": {
-				group: "FilterBar",
-				module: "./vh/FilterBar.qunit"
-			},
-			/**
-			 * @deprecated since 1.124
-			 */
-			"valueHelp.CollectiveSearchSelect": {
-				group: "FilterBar",
-				module: "./vh/CollectiveSearchSelect.qunit"
-			},
+
 			"PropertyInfoValidator": {
 				group: "Util",
 				module: "./PropertyInfoValidator.qunit"
