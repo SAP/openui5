@@ -1440,7 +1440,7 @@ sap.ui.define([
 		beforeEach: function() {
 			ODataTreeBindingFakeService.setup();
 			oModel = new ODataModel("ZTJ_SFIN_HIERARCHY_02_SRV", {
-				defaultUpdateMethod: UpdateMethod.Put
+				defaultUpdateMethod: UpdateMethod.PUT
 			});
 			return oModel.metadataLoaded(); // Wait for metadata loaded promise
 		},

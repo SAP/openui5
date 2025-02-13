@@ -65,7 +65,7 @@
 				"settings" : {
 					"refreshAfterChange": false,
 					"defaultBindingMode": "TwoWay",
-					"defaultUpdateMethod" : "Put",
+					"defaultUpdateMethod" : "PUT",
 					"skipMetadataAnnotationParsing" : true,
 					"disableHeadRequestForToken" : true
 				}

@@ -2545,7 +2545,7 @@ sap.ui.define([
 		var bSetProp = false;
 		var bSuccess = false;
 
-		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.PUT});
 
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
@@ -2682,7 +2682,7 @@ sap.ui.define([
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
-		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.PUT});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -2829,7 +2829,7 @@ sap.ui.define([
 		var bRead2 = false;
 		var bSuccess = false;
 
-		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.PUT});
 
 		oModel.read("/ProductSet('HT-1000')", {
 			success : function(oData, oResponse) {
@@ -2913,7 +2913,7 @@ sap.ui.define([
 		var iCount = 0;
 		var bRead = false;
 		var bUpdate = false;
-		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Merge});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.MERGE});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {
@@ -2970,7 +2970,7 @@ sap.ui.define([
 		var iCount = 0;
 		var bRead = false;
 		var bUpdate = false;
-		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.Put});
+		oModel = initModel({json: true, defaultUpdateMethod: UpdateMethod.PUT});
 		oModel.setUseBatch(false);
 
 		oModel.read("/ProductSet('HT-1000')", {

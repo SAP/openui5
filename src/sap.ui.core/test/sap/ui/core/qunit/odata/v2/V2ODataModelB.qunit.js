@@ -1989,7 +1989,7 @@ sap.ui.define([
 		var bSetProp = false;
 		var bSuccess = false;
 
-		oModel = initModel(true, UpdateMethod.Put);
+		oModel = initModel(true, UpdateMethod.PUT);
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
 				success : function(oData, oResponse) {
@@ -2200,7 +2200,7 @@ sap.ui.define([
 
 	QUnit.test("test oDataModel setProperty defaultUpdateMethod = PUT option", function(assert) {
 		var done = assert.async();
-		oModel = initModel(true, UpdateMethod.Put);
+		oModel = initModel(true, UpdateMethod.PUT);
 		oModel.setUseBatch(false);
 		spy = sinon.spy(oModel, "_processChange");
 
@@ -2329,7 +2329,7 @@ sap.ui.define([
 		var bRead2 = false;
 		var bSuccess = false;
 
-		oModel = initModel(true, UpdateMethod.Put);
+		oModel = initModel(true, UpdateMethod.PUT);
 
 		var fnTest = function(){
 			oModel.read("/ProductSet('HT-1000')", {
@@ -2419,7 +2419,7 @@ sap.ui.define([
 		var iCount = 0;
 		var bRead = false;
 		var bUpdate = false;
-		oModel = initModel(true, UpdateMethod.Merge);
+		oModel = initModel(true, UpdateMethod.MERGE);
 		oModel.setUseBatch(false);
 
 		var fnTest = function(){
@@ -2482,7 +2482,7 @@ sap.ui.define([
 		var iCount = 0;
 		var bRead = false;
 		var bUpdate = false;
-		oModel = initModel(true, UpdateMethod.Put);
+		oModel = initModel(true, UpdateMethod.PUT);
 		oModel.setUseBatch(false);
 
 		var fnTest = function(){

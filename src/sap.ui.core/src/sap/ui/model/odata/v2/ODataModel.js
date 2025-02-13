@@ -335,7 +335,9 @@ sap.ui.define([
 			this.mChangeHandles = {};
 			this.mDeferredGroups = {};
 			this.mLaunderingState = {};
-			this.sDefaultUpdateMethod = ODataModel._fixUpdateMethod(sDefaultUpdateMethod) || UpdateMethod.MERGE;
+			/** @deprecated As of version 1.133.0, reason sap.ui.model.odata.UpdateMethod.Merge|Put */
+			sDefaultUpdateMethod = ODataModel._fixUpdateMethod(sDefaultUpdateMethod);
+			this.sDefaultUpdateMethod = sDefaultUpdateMethod || UpdateMethod.MERGE;
 
 			this.bTokenHandling = vTokenHandling !== false;
 			this.bWithCredentials = bWithCredentials === true;
@@ -971,6 +973,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sUpdateMethod] The update method to fix
 	 * @returns {string|undefined} The fixed update method
+	 * @deprecated As of version 1.133.0, reason sap.ui.model.odata.UpdateMethod.Merge|Put
 	 * @private
 	 */
 	ODataModel._fixUpdateMethod = function (sUpdateMethod) {
