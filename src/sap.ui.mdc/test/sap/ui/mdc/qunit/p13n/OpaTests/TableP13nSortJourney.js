@@ -1,134 +1,135 @@
 sap.ui.define([
 	'sap/ui/test/Opa5',
-	'sap/ui/test/opaQunit',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
 	'sap/ui/Device'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+], function (Opa5, Arrangement, TestUtil, Action, Assertion, Device) {
 	'use strict';
 
-	Opa5.extendConfig({
-		arrangements: new Arrangement(),
-		actions: new Action(),
-		assertions: new Assertion(),
-		viewNamespace: "view.",
-		autoWait: true
-	});
-
-	const aSortItems = [
-		{p13nItem: "artistUUID", descending: false},
-		{p13nItem: "Breakout Year", descending: false},
-		{p13nItem: "Changed By", descending: false},
-		{p13nItem: "Changed On", descending: false},
-		{p13nItem: "City of Origin", descending: false},
-		{p13nItem: "Country", descending: false},
-		{p13nItem: "Created By", descending: false},
-		{p13nItem: "Created On", descending: false},
-		{p13nItem: "Founding Year", descending: false},
-		{p13nItem: "Name", descending: false},
-		{p13nItem: "regionOfOrigin_code", descending: false}
-	];
-
-	opaTest("Open TableOpaApp", function (Given, When, Then) {
-		//insert application
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+	return function (opaTestOrSkip) {
+		Opa5.extendConfig({
+			arrangements: new Arrangement(),
+			actions: new Action(),
+			assertions: new Assertion(),
+			viewNamespace: "view.",
 			autoWait: true
 		});
-		When.iLookAtTheScreen();
 
-		Then.theVariantManagementIsDirty(false);
-	});
+		const aSortItems = [
+			{p13nItem: "artistUUID", descending: false},
+			{p13nItem: "Breakout Year", descending: false},
+			{p13nItem: "Changed By", descending: false},
+			{p13nItem: "Changed On", descending: false},
+			{p13nItem: "City of Origin", descending: false},
+			{p13nItem: "Country", descending: false},
+			{p13nItem: "Created By", descending: false},
+			{p13nItem: "Created On", descending: false},
+			{p13nItem: "Founding Year", descending: false},
+			{p13nItem: "Name", descending: false},
+			{p13nItem: "regionOfOrigin_code", descending: false}
+		];
 
-    opaTest("Check empty sort tab", function(Given, When, Then){
-        //Open settings Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		opaTestOrSkip("Open TableOpaApp", function (Given, When, Then) {
+			//insert application
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+				autoWait: true
+			});
+			When.iLookAtTheScreen();
 
-		//open 'sort' tab
-		When.iSwitchToP13nTab("Sort");
+			Then.theVariantManagementIsDirty(false);
+		});
 
-		//check that dialog is open
-		Then.thePersonalizationDialogOpens();
+		opaTestOrSkip("Check empty sort tab", function(Given, When, Then){
+			//Open settings Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-		//open the select control in the sort tab
-		When.iClickOnP13nSelect("");
+			//open 'sort' tab
+			When.iSwitchToP13nTab("Sort");
 
-		//check that the expected keys are visible in the sort dialog
-		Then.iShouldSeeP13nMenuItems(aSortItems);
+			//check that dialog is open
+			Then.thePersonalizationDialogOpens();
 
-        //close Dialog
-		When.iPressDialogOk();
-    });
+			//open the select control in the sort tab
+			When.iClickOnP13nSelect("");
 
-    opaTest("Add a sorter for 'Founding Year'", function(Given, When, Then){
-        //Open settings Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//check that the expected keys are visible in the sort dialog
+			Then.iShouldSeeP13nMenuItems(aSortItems);
 
-        //open 'sort' tab
-		When.iSwitchToP13nTab("Sort");
+			//close Dialog
+			When.iPressDialogOk();
+		});
 
-        //check that dialog is open
-		Then.thePersonalizationDialogOpens();
+		opaTestOrSkip("Add a sorter for 'Founding Year'", function(Given, When, Then){
+			//Open settings Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-		//open select (empty) select control in sort panel and select 'Founding Year'
-		When.iClickOnP13nSelect("");
-		When.iSelectP13nMenuItem("Founding Year");
+			//open 'sort' tab
+			When.iSwitchToP13nTab("Sort");
 
-        //close Dialog
-		When.iPressDialogOk();
+			//check that dialog is open
+			Then.thePersonalizationDialogOpens();
 
-        //Check sorter on Table column
-        Then.iShouldSeeColumnSorted("Founding Year", true);
+			//open select (empty) select control in sort panel and select 'Founding Year'
+			When.iClickOnP13nSelect("");
+			When.iSelectP13nMenuItem("Founding Year");
 
-    });
+			//close Dialog
+			When.iPressDialogOk();
 
-	opaTest("Add a second sorter for 'Name'", function(Given, When, Then){
-        //Open settings Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//Check sorter on Table column
+			Then.iShouldSeeColumnSorted("Founding Year", true);
 
-        //open 'sort' tab
-		When.iSwitchToP13nTab("Sort");
+		});
 
-        //check that dialog is open
-		Then.thePersonalizationDialogOpens();
+		opaTestOrSkip("Add a second sorter for 'Name'", function(Given, When, Then){
+			//Open settings Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-		//open select (empty) select control in sort panel and select 'Founding Year'
-		When.iClickOnP13nSelect("");
-		When.iSelectP13nMenuItem("Name");
+			//open 'sort' tab
+			When.iSwitchToP13nTab("Sort");
 
-        //close Dialog
-		When.iPressDialogOk();
+			//check that dialog is open
+			Then.thePersonalizationDialogOpens();
 
-        //Check sorter on Table column
-		Then.iShouldSeeColumnSorted("Founding Year", true);
-        Then.iShouldSeeColumnSorted("Name", true);
+			//open select (empty) select control in sort panel and select 'Founding Year'
+			When.iClickOnP13nSelect("");
+			When.iSelectP13nMenuItem("Name");
 
-    });
+			//close Dialog
+			When.iPressDialogOk();
 
-    opaTest("Remove the sorter for 'Founding Year' and 'Name'", function(Given, When, Then){
-        //Open settings Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//Check sorter on Table column
+			Then.iShouldSeeColumnSorted("Founding Year", true);
+			Then.iShouldSeeColumnSorted("Name", true);
 
-        //open 'sort' tab
-		When.iSwitchToP13nTab("Sort");
+		});
 
-        //check that dialog is open
-		Then.thePersonalizationDialogOpens();
+		opaTestOrSkip("Remove the sorter for 'Founding Year' and 'Name'", function(Given, When, Then){
+			//Open settings Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-        When.iRemoveSorting();
+			//open 'sort' tab
+			When.iSwitchToP13nTab("Sort");
 
-        //close Dialog
-		When.iPressDialogOk();
+			//check that dialog is open
+			Then.thePersonalizationDialogOpens();
 
-        //Check sorter has been removed on Table column
-		Then.iShouldSeeColumnSorted("Founding Year", false);
-        Then.iShouldSeeColumnSorted("Name", false);
+			When.iRemoveSorting();
 
-		//shut down app frame for next test
-		Given.enableAndDeleteLrepLocalStorage();
-		Then.iTeardownMyAppFrame();
-    });
+			//close Dialog
+			When.iPressDialogOk();
+
+			//Check sorter has been removed on Table column
+			Then.iShouldSeeColumnSorted("Founding Year", false);
+			Then.iShouldSeeColumnSorted("Name", false);
+
+			//shut down app frame for next test
+			Given.enableAndDeleteLrepLocalStorage();
+			Then.iTeardownMyAppFrame();
+		});
+	};
 
 });

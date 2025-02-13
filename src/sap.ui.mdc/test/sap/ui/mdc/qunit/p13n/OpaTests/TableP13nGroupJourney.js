@@ -1,117 +1,117 @@
 sap.ui.define([
 	'sap/ui/test/Opa5',
-	'sap/ui/test/opaQunit',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
 	'sap/ui/Device'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+], function (Opa5, Arrangement, TestUtil, Action, Assertion, Device) {
 	'use strict';
 
-	Opa5.extendConfig({
-		arrangements: new Arrangement(),
-		actions: new Action(),
-		assertions: new Assertion(),
-		viewNamespace: "view.",
-		autoWait: true
-	});
-	const aGroupItems = [
-		{p13nItem: "artistUUID"},
-		{p13nItem: "Breakout Year"},
-		{p13nItem: "Changed By"},
-		{p13nItem: "Changed On"},
-		{p13nItem: "City of Origin"},
-		{p13nItem: "Country"},
-		{p13nItem: "Created By"},
-		{p13nItem: "Created On"},
-		{p13nItem: "Founding Year"},
-		{p13nItem: "Name"},
-		{p13nItem: "regionOfOrigin_code"}
-	];
-
-	opaTest("Open TableOpaApp", function (Given, When, Then) {
-		//insert application
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+	return function (opaTestOrSkip) {
+		Opa5.extendConfig({
+			arrangements: new Arrangement(),
+			actions: new Action(),
+			assertions: new Assertion(),
+			viewNamespace: "view.",
 			autoWait: true
 		});
-		When.iLookAtTheScreen();
+		const aGroupItems = [
+			{p13nItem: "artistUUID"},
+			{p13nItem: "Breakout Year"},
+			{p13nItem: "Changed By"},
+			{p13nItem: "Changed On"},
+			{p13nItem: "City of Origin"},
+			{p13nItem: "Country"},
+			{p13nItem: "Created By"},
+			{p13nItem: "Created On"},
+			{p13nItem: "Founding Year"},
+			{p13nItem: "Name"},
+			{p13nItem: "regionOfOrigin_code"}
+		];
 
-		Then.theVariantManagementIsDirty(false);
-	});
+		opaTestOrSkip("Open TableOpaApp", function (Given, When, Then) {
+			//insert application
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+				autoWait: true
+			});
+			When.iLookAtTheScreen();
 
-    opaTest("Check empty group tab", function(Given, When, Then){
-        //Open settings Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			Then.theVariantManagementIsDirty(false);
+		});
 
-		//open 'group' tab
-		When.iSwitchToP13nTab("Group");
+		opaTestOrSkip("Check empty group tab", function(Given, When, Then){
+			//Open settings Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-		//check that dialog is open
-		Then.thePersonalizationDialogOpens();
+			//open 'group' tab
+			When.iSwitchToP13nTab("Group");
 
-		//open the select control in the group tab
-		When.iClickOnP13nSelect("");
+			//check that dialog is open
+			Then.thePersonalizationDialogOpens();
 
-		//check that the expected keys are visible in the group dialog
-		Then.iShouldSeeP13nMenuItems(aGroupItems);
+			//open the select control in the group tab
+			When.iClickOnP13nSelect("");
 
-        //close Dialog
-		When.iPressDialogOk();
+			//check that the expected keys are visible in the group dialog
+			Then.iShouldSeeP13nMenuItems(aGroupItems);
 
-    });
+			//close Dialog
+			When.iPressDialogOk();
 
-    opaTest("Add a grouping for 'Founding Year'", function(Given, When, Then){
-        //Open settings Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		});
 
-        //open 'group' tab
-		When.iSwitchToP13nTab("Group");
+		opaTestOrSkip("Add a grouping for 'Founding Year'", function(Given, When, Then){
+			//Open settings Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-        //check that dialog is open
-		Then.thePersonalizationDialogOpens();
+			//open 'group' tab
+			When.iSwitchToP13nTab("Group");
 
-		//open select (empty) select control in group panel and select 'Founding Year'
-		When.iClickOnP13nSelect("");
-		When.iSelectP13nMenuItem("Founding Year");
+			//check that dialog is open
+			Then.thePersonalizationDialogOpens();
 
-        //close Dialog
-		When.iPressDialogOk();
+			//open select (empty) select control in group panel and select 'Founding Year'
+			When.iClickOnP13nSelect("");
+			When.iSelectP13nMenuItem("Founding Year");
 
-        //Check grouping on Table column
-		const oGroupConditions = {
-			groupLevels: [
-				{name: "foundingYear"}
-			]
-		};
-        Then.iShouldSeeGroupConditions(oGroupConditions);
-    });
+			//close Dialog
+			When.iPressDialogOk();
 
-	opaTest("Remove the grouping for 'Founding Year'", function(Given, When, Then){
-        //Open settings Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//Check grouping on Table column
+			const oGroupConditions = {
+				groupLevels: [
+					{name: "foundingYear"}
+				]
+			};
+			Then.iShouldSeeGroupConditions(oGroupConditions);
+		});
 
-        //open 'group' tab
-		When.iSwitchToP13nTab("Group");
+		opaTestOrSkip("Remove the grouping for 'Founding Year'", function(Given, When, Then){
+			//Open settings Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-        //check that dialog is open
-		Then.thePersonalizationDialogOpens();
+			//open 'group' tab
+			When.iSwitchToP13nTab("Group");
 
-        When.iRemoveSorting();
+			//check that dialog is open
+			Then.thePersonalizationDialogOpens();
 
-        //close Dialog
-		When.iPressDialogOk();
+			When.iRemoveSorting();
 
-        //Check grouping on Table column
-		const oGroupConditions = {
-			groupLevels: []
-		};
-        Then.iShouldSeeGroupConditions(oGroupConditions);
+			//close Dialog
+			When.iPressDialogOk();
 
-		//shut down app frame for next test
-		Given.enableAndDeleteLrepLocalStorage();
-		Then.iTeardownMyAppFrame();
-    });
+			//Check grouping on Table column
+			const oGroupConditions = {
+				groupLevels: []
+			};
+			Then.iShouldSeeGroupConditions(oGroupConditions);
 
+			//shut down app frame for next test
+			Given.enableAndDeleteLrepLocalStorage();
+			Then.iTeardownMyAppFrame();
+		});
+	};
 });
