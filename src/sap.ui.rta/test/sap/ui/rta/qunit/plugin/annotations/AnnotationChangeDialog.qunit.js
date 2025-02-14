@@ -96,7 +96,7 @@ sap.ui.define([
 
 				// Initial rendering checks
 				assert.strictEqual(
-					Element.getElementById("sapUiRtaChangeAnnotationDialog_title").getText(),
+					Element.getElementById("sapUiRtaChangeAnnotationDialog").getTitle(),
 					"Change Text Arrangement",
 					"then the correct title is set"
 				);
@@ -104,6 +104,11 @@ sap.ui.define([
 					Element.getElementById("sapUiRtaChangeAnnotationDialog_description").getText(),
 					"Select The Preferred Text Arrangement For Each Entry:",
 					"then the correct description is set"
+				);
+				assert.strictEqual(
+					Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton").getEnabled(),
+					false,
+					"then the save button is disabled"
 				);
 				assert.strictEqual(aFormElements.length, 2, "then for each property a form element is created");
 				assert.strictEqual(
@@ -132,6 +137,11 @@ sap.ui.define([
 				const oListItem = oSelect.getItems()[1];
 				oSelect.setSelectedItem(oListItem);
 				oSelect.fireChange({ selectedItem: oListItem });
+				assert.strictEqual(
+					Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton").getEnabled(),
+					true,
+					"then the save button is enabled"
+				);
 				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 				oSaveButton.firePress();
 			};
@@ -216,6 +226,11 @@ sap.ui.define([
 				const oFirstListItem = oSelect.getItems()[0];
 				oSelect.setSelectedItem(oFirstListItem);
 				oSelect.fireChange({ selectedItem: oFirstListItem });
+				assert.strictEqual(
+					Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton").getEnabled(),
+					false,
+					"then the save button is disabled"
+				);
 				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 				oSaveButton.firePress();
 			};
@@ -349,8 +364,8 @@ sap.ui.define([
 				delegate: oTestDelegate
 			};
 			const fnAfterOpen = () => {
-				const oToggleButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_toggleShowAllPropertiesButton");
-				oToggleButton.firePress();
+				const oToggleAllPropertiesSwitch = Element.getElementById("sapUiRtaChangeAnnotationDialog_toggleShowAllPropertiesSwitch");
+				oToggleAllPropertiesSwitch.fireChange({ state: true});
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
 				const aFormElements = oList.getFormElements();
 				assert.strictEqual(
@@ -363,7 +378,7 @@ sap.ui.define([
 					oAnnotationChange.getContent().annotationPath,
 					"then only the property for which a change exists is displayed"
 				);
-				oToggleButton.firePress();
+				oToggleAllPropertiesSwitch.fireChange({ state: false });
 				assert.strictEqual(
 					oList.getFormElements().length,
 					2,
@@ -411,17 +426,17 @@ sap.ui.define([
 				);
 				const oCheckBox = aVisibleFields[0];
 				assert.strictEqual(
-					oCheckBox.getSelected(),
+					oCheckBox.getState(),
 					false,
 					"then the correct value is set"
 				);
 				assert.ok(
-					oCheckBox.isA("sap.m.CheckBox"),
-					"then the input field for the boolean type is a checkbox"
+					oCheckBox.isA("sap.m.Switch"),
+					"then the input field for the boolean type is a switch"
 				);
 
-				oCheckBox.setSelected(true);
-				oCheckBox.fireSelect({ selected: true });
+				oCheckBox.setState(true);
+				oCheckBox.fireChange({ state: true });
 				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 				oSaveButton.firePress();
 			};
