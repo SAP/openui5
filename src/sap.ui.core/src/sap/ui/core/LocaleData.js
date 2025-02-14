@@ -49,6 +49,7 @@ sap.ui.define([
 		rNumberInScientificNotation = /^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/,
 		rTrailingZeroes = /0+$/;
 	const rFallbackPatternTextParts = /(.*)?\{[0|1]}(.*)?\{[0|1]}(.*)?/;
+	const rOnlyZeros = /^0+$/;
 	const aSupportedWidths = ["narrow", "abbreviated", "wide"];
 
 	/**
@@ -2360,6 +2361,10 @@ sap.ui.define([
 		aResult = sValue.match(rNumberInScientificNotation);
 		bNegative = aResult[1] === "-";
 		sValue = aResult[2].replace(".", "");
+		if (rOnlyZeros.test(sValue)) {
+			return "0";
+		}
+
 		iIntegerLength = aResult[3] ? aResult[3].length : 0;
 		iFractionLength = aResult[4] ? aResult[4].length : 0;
 		iExponent = parseInt(aResult[5]);

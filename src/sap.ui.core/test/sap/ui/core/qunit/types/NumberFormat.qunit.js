@@ -4994,4 +4994,40 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+[
+	{sValue: "0E-10", sResult: "0.00"}, // see DINC0325193
+	{sValue: "0E+10", sResult: "0.00"},
+	{sValue: "0.1E-4", sResult: "0.00001"},
+	{sValue: "1.234567E+3", sResult: "1,234.567"},
+	{sValue: "1.2E+3", sResult: "1,200.00"},
+	{sValue: "0.1E-4", bPreserveDecimals: false, sResult: "0.00"},
+	{sValue: "1.234567E+3", bPreserveDecimals: false, sResult: "1,234.57"}
+].forEach(({sValue, bPreserveDecimals = true, sResult}) => {
+	QUnit.test("format: Currency wit E-notation: " + sValue, function (assert) {
+		const oFormat = NumberFormat.getCurrencyInstance({preserveDecimals: bPreserveDecimals});
+
+		// code under test
+		assert.strictEqual(oFormat.format(sValue, "USD"), sResult + "\xa0USD");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sValue: "0E-10", sResult: "0.000"}, // see DINC0325193
+	{sValue: "0E+10", sResult: "0.000"},
+	{sValue: "0.1E-4", sResult: "0.00001"},
+	{sValue: "1.234567E+3", sResult: "1,234.567"},
+	{sValue: "1.2E+3", sResult: "1,200.000"},
+	{sValue: "0.1E-4", bPreserveDecimals: false, sResult: "0.000"},
+	{sValue: "1.2345678E+3", bPreserveDecimals: false, sResult: "1,234.568"}
+].forEach(({sValue, bPreserveDecimals = true, sResult}) => {
+	QUnit.test("format: Unit wit E-notation: " + sValue, function (assert) {
+		const oFormat = NumberFormat.getUnitInstance({decimals: 3, preserveDecimals: bPreserveDecimals});
+
+		// code under test
+		assert.strictEqual(oFormat.format(sValue, "mass-kilogram"), sResult + " kg");
+	});
+});
 });
