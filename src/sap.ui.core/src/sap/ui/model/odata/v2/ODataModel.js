@@ -329,7 +329,7 @@ sap.ui.define([
 			this.mChangeHandles = {};
 			this.mDeferredGroups = {};
 			this.mLaunderingState = {};
-			this.sDefaultUpdateMethod = ODataModel._fixUpdateMethod(sDefaultUpdateMethod) || UpdateMethod.MERGE;
+			this.sDefaultUpdateMethod = sDefaultUpdateMethod || UpdateMethod.MERGE;
 
 			this.bTokenHandling = vTokenHandling !== false;
 			this.bWithCredentials = bWithCredentials === true;
@@ -951,23 +951,6 @@ sap.ui.define([
 		server: {},
 		service: {},
 		meta: {}
-	};
-
-	/**
-	 * Maps "Put" to "PUT" and "Merge" to "MERGE" to fix wrong usage of deprecated enum keys as manifest entries. If
-	 * the given update method is neither "Put" nor "Merge", it is returned as is.
-	 *
-	 * @param {string} [sUpdateMethod] The update method to fix
-	 * @returns {string|undefined} The fixed update method
-	 * @private
-	 */
-	ODataModel._fixUpdateMethod = function (sUpdateMethod) {
-		if (sUpdateMethod === "Put") {
-			return UpdateMethod.PUT;
-		} else if (sUpdateMethod === "Merge") {
-			return UpdateMethod.MERGE;
-		}
-		return sUpdateMethod;
 	};
 
 	/**
@@ -2121,6 +2104,9 @@ sap.ui.define([
 	 * annotations including the <code>hierarchy-node-descendant-count-for</code> annotation, do
 	 * <b>not</b> support the operation modes <code>Client</code> and <code>Auto</code>.
 	 * <b>Note:</b> {@link sap.ui.model.odata.OperationMode.Auto} is deprecated since 1.102.0.
+	 *
+	 * <b>Note:</b> OData tree bindings do neither support
+	 * {@link sap.ui.model.Binding#suspend suspend} nor {@link sap.ui.model.Binding#resume resume}.
 	 *
 	 * @param {string} sPath
 	 *   The binding path, either absolute or relative to a given <code>oContext</code>

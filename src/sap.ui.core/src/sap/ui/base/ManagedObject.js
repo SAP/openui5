@@ -3235,19 +3235,22 @@ sap.ui.define([
 	 *   of the specified types from the binding parts.
 	 *
 	 *   <b>Note</b>: use this flag only when using multiple bindings.
-	 * @property {sap.ui.model.Type|string} [type]
-	 *   A type object or the name of a type class to create such a type object; the type
-	 *   will be used for converting model data to a property value (aka "formatting") and
-	 *   vice versa (in binding mode <code>TwoWay</code>, aka "parsing")
+	 * @property {sap.ui.model.Type|string|function(new: sap.ui.model.Type, object=, object=)} [type]
+	 *   A type object, or the name or constructor of a type class which is used to create a type object.
+	 *
+	 *   The type will be used for converting model data to a property value (aka "formatting") and vice
+	 *   versa (in binding mode <code>TwoWay</code>, aka "parsing")
+	 * @property {object} [formatOptions]
+	 *   Format options to be used when creating the type instance; the structure of the options depends on
+	 *   the given type class. If a type object is given as <code>type</code>, it won't be modified - the
+	 *   <code>formatOptions<code> will be ignored
+	 * @property {object} [constraints]
+	 *   Additional constraints to be used when constructing a type instance. Their structure depends on the
+	 *   given type class. If a type object is given as <code>type</code>, it won't be modified - the
+	 *   <code>constraints</code> will be ignored
 	 * @property {string} [targetType]
 	 *   Target type to be used by the type when formatting model data, for example "boolean"
 	 *   or "string" or "any"; defaults to the property's type
-	 * @property {object} [formatOptions]
-	 *   Format options to be used for the type; only taken into account when the type is
-	 *   specified by its name - a given type object won't be modified
-	 * @property {object} [constraints]
-	 *   Additional constraints to be used when constructing a type object from a type name,
-	 *   ignored when a type object is given
 	 * @property {sap.ui.model.BindingMode} [mode=Default]
 	 *   Binding mode to be used for this property binding (e.g. one way)
 	 * @property {object} [parameters=null]

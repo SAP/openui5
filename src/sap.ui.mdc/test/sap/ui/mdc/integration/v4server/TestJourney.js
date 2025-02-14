@@ -2,38 +2,40 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/opaQunit",
 	"./arrangements/Startup",
 	"./pages/Main"
-], function (Opa5, opaTest, Startup) {
+], function (Opa5, Startup) {
 	"use strict";
 
-	Opa5.extendConfig({
-		arrangements: new Startup(),
-		viewNamespace: "v4server.integration.app.view.",
-		autoWait: true
-	});
+	return function (opaTestOrSkip) {
 
-	QUnit.module("Books");
+		Opa5.extendConfig({
+			arrangements: new Startup(),
+			viewNamespace: "v4server.integration.app.view.",
+			autoWait: true
+		});
 
-	opaTest("Should see the table with all books", function (Given, When, Then) {
-		// Arrangements
-		Given.iStartMyApp();
+		QUnit.module("Books");
 
-		// Assertions
-		Then.onTheMainPage.theTableShouldHavePagination();
-	});
+		opaTestOrSkip("Should see the table with all books", function (Given, When, Then) {
+			// Arrangements
+			Given.iStartMyApp();
 
-	opaTest("Should be able to load more items", function (Given, When, Then) {
-		//Actions
-		When.onTheMainPage.iPressOnMoreData();
+			// Assertions
+			Then.onTheMainPage.theTableShouldHavePagination();
+		});
 
-		// Assertions
-		Then.onTheMainPage.theTableShouldHaveMoreEntries();
+		opaTestOrSkip("Should be able to load more items", function (Given, When, Then) {
+			//Actions
+			When.onTheMainPage.iPressOnMoreData();
 
-		// Intentionally do not test more specific things about the data because this test should be low-maintenance
+			// Assertions
+			Then.onTheMainPage.theTableShouldHaveMoreEntries();
 
-		// Cleanup
-		Then.iTeardownMyApp();
-	});
+			// Intentionally do not test more specific things about the data because this test should be low-maintenance
+
+			// Cleanup
+			Then.iTeardownMyApp();
+		});
+	};
 });

@@ -4,26 +4,23 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
-	<u:ObjectPageLayout 
-		id="PartProfileObjectPage" 
-		enableLazyLoading="false" 
-		showAnchorBarPopover="false" 
+	<u:ObjectPageLayout
+		id="PartProfileObjectPage"
+		enableLazyLoading="false"
+		showAnchorBarPopover="false"
 		alwaysShowContentHeader="true"
 		flexEnabled="true"
 		upperCaseAnchorBar="false"
 		selectedSection="testSection1">
-		
+
 		<u:sections>
-			<u:ObjectPageSection 
+			<u:ObjectPageSection
 				id="testSection1"
-				title="{
-					path : 'ProjectCount',
-					formatter : '.formatProjectSectionTitle'
-				}"
+				title="{ProjectCount}"
 				titleUppercase="false">
-				
+
 				<u:subSections>
-					
+
 				</u:subSections>
 			</u:ObjectPageSection>
 
@@ -31,7 +28,7 @@
 				id="testSection2"
 				titleUppercase="false">
 				<u:subSections>
-					
+
 					<u:ObjectPageSubSection>
 						<u:blocks>
 							<l:Grid defaultSpan="XL12 L12 M12 S12">
@@ -45,7 +42,7 @@
 
 				</u:subSections>
 			</u:ObjectPageSection>
-			
+
 		</u:sections>
 	</u:ObjectPageLayout>
 </mvc:View>

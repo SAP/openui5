@@ -25,7 +25,6 @@
 				"files": [
                     "controller/ObjectPageSubSectionHiddenTitle.controller.js",
 					"view/ObjectPageSubSectionHiddenTitle.view.xml",
-					"Formatter.js",
 					"manifest.json"
 				]
 			}
