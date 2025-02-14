@@ -77,18 +77,6 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "Did not find the Unsaved button"
 					});
-				},
-				iClickOnTheAllButton() {
-					const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
-					const sButtonText = oRtaResourceBundle.getText("BUT_CHANGEVISUALIZATION_VERSIONING_ALL");
-					return this.waitFor({
-						controlType: "sap.m.Button",
-						matchers(oButton) {
-							return oButton.getText() === sButtonText;
-						},
-						actions: new Press(),
-						errorMessage: "Did not find the All button"
-					});
 				}
 			},
 
@@ -111,16 +99,6 @@ sap.ui.define([
 							Opa5.assert.notOk(oPopover.getContent()[0].getAggregation("buttons")[iSegmentedButtonPosition].getEnabled(), "then the button is disabled");
 						},
 						errorMessage: "The segmented button is enabled"
-					});
-				},
-				iShouldNotSeeTheHiddenSegmentedButton(sCVizDropDownId, iSegmentedButtonPosition) {
-					return this.waitFor({
-						id: sCVizDropDownId,
-						controlType: "sap.m.Popover",
-						success(oPopover) {
-							Opa5.assert.notOk(oPopover.getContent()[0].getAggregation("buttons")[iSegmentedButtonPosition].getVisible(), "then the button is hidden");
-						},
-						errorMessage: "The segmented Button is visible"
 					});
 				},
 				iShouldSeeTheCorrectChangesCategoriesCount(sCVizDropDownId, oChangesCount) {
@@ -197,15 +175,15 @@ sap.ui.define([
 						errorMessage: "Could not find the popover information or it doesn't match the change type"
 					});
 				},
-				iShouldSeeTheHighlightedOverlay() {
+				iShouldSeeTheSourceElementOverlay() {
 					return this.waitFor({
 						asyncPolling: true,
 						controlType: "sap.ui.dt.ElementOverlay",
 						matchers(oOverlay) {
-							return oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorHovered");
+							return oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorDependent");
 						},
 						success(oOverlay) {
-							Opa5.assert.ok(oOverlay[0], "then hover style class is shown on the overlay");
+							Opa5.assert.ok(oOverlay[0], "then dependent element indicator is shown");
 						},
 						errorMessage: "Did not find the dependent element with the style class"
 					});
