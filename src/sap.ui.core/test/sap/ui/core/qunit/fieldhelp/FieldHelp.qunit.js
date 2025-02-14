@@ -430,6 +430,73 @@ sap.ui.define([
 		});
 	});
 
+
+	//*********************************************************************************************
+	QUnit.test("integrative test: text -> ID property mapping with lazily loaded metadata", async function (assert) {
+		const oFieldHelp = FieldHelp.getInstance();
+		const oMetaModelInterface = {
+			oMetaModel: "~oMetaModel",
+			getProperties() {},
+			getTextPropertyPath() {},
+			requestTypes() {}
+		};
+		const oInterfaceMock = this.mock(oMetaModelInterface);
+		oInterfaceMock.expects("requestTypes").withExactArgs()
+			.resolves([new Map([["E0", "~oEntityType0"]]), new Map()]);
+		oInterfaceMock.expects("getProperties").withExactArgs("~oEntityType0").returns(["P0_0"]);
+		oInterfaceMock.expects("getTextPropertyPath").withExactArgs("E0", "P0_0", 0, 0, false).returns("Text0");
+
+		// code under test: get promise for text -> ID mapping
+		const oText2IdByTypePromise = oFieldHelp._requestText2IdByType(oMetaModelInterface);
+
+		const mText2IdByType = await oText2IdByTypePromise;
+		assert.strictEqual(mText2IdByType.size, 1);
+		assert.deepEqual(Array.from(mText2IdByType.get("Text0")), [["E0", "P0_0"]]);
+
+		oFieldHelp.activate(() => {});
+
+		// code under test: _updateHotspots clears cache mMetaModel2TextMappingPromise if field help is active
+		await oFieldHelp._updateHotspots();
+
+		oInterfaceMock.expects("requestTypes").withExactArgs()
+			.resolves([new Map([["E0", "~oEntityType0"], ["E1", "~oEntityType1"]]), new Map()]);
+		// performance: only properties of the lazily loaded type "E1" are analyzed
+		oInterfaceMock.expects("getProperties").withExactArgs("~oEntityType1").returns(["P1_0"]);
+		oInterfaceMock.expects("getTextPropertyPath").withExactArgs("E1", "P1_0", 1, 0, false).returns("Text1");
+
+		// code under test: get promise for text -> ID mapping
+		const oText2IdByTypePromise2 = oFieldHelp._requestText2IdByType(oMetaModelInterface);
+
+		assert.notStrictEqual(oText2IdByTypePromise, oText2IdByTypePromise2, "mMetaModel2TextMappingPromise cleared");
+		const mText2IdByType2 = await oText2IdByTypePromise2;
+		assert.strictEqual(mText2IdByType2, mText2IdByType, "map reused as long as field help is active");
+		assert.strictEqual(mText2IdByType2.size, 2);
+		assert.deepEqual(Array.from(mText2IdByType2.get("Text0")), [["E0", "P0_0"]]);
+		assert.deepEqual(Array.from(mText2IdByType2.get("Text1")), [["E1", "P1_0"]]);
+
+		// code under test: deactivate clears cache #mMetamodel2TextPropertyInfo
+		oFieldHelp.deactivate();
+		oFieldHelp.activate(() => {});
+
+		oInterfaceMock.expects("requestTypes").withExactArgs()
+			.resolves([new Map([["E0", "~oEntityType0"], ["E1", "~oEntityType1"]]), new Map()]);
+		// #mMetamodel2TextPropertyInfo cache cleared => both entity types are analyzed again
+		oInterfaceMock.expects("getProperties").withExactArgs("~oEntityType0").returns(["P0_0"]);
+		oInterfaceMock.expects("getTextPropertyPath").withExactArgs("E0", "P0_0", 0, 0, false).returns("Text0");
+		oInterfaceMock.expects("getProperties").withExactArgs("~oEntityType1").returns(["P1_0"]);
+		oInterfaceMock.expects("getTextPropertyPath").withExactArgs("E1", "P1_0", 1, 0, false).returns("Text1");
+
+		// code under test: get promise for text -> ID mapping
+		const oText2IdByTypePromise3 = oFieldHelp._requestText2IdByType(oMetaModelInterface);
+
+		assert.notStrictEqual(oText2IdByTypePromise2, oText2IdByTypePromise3, "mMetaModel2TextMappingPromise cleared");
+		const mText2IdByType3 = await oText2IdByTypePromise3;
+		assert.notStrictEqual(mText2IdByType3, mText2IdByType, "map is created anew");
+		assert.strictEqual(mText2IdByType2.size, 2);
+		assert.deepEqual(Array.from(mText2IdByType2.get("Text0")), [["E0", "P0_0"]]);
+		assert.deepEqual(Array.from(mText2IdByType2.get("Text1")), [["E1", "P1_0"]]);
+	});
+
 	//*********************************************************************************************
 	QUnit.test("_getFieldHelpHotspots and _setFieldHelpDocumentationRefs", function (assert) {
 		const oFieldHelp = new FieldHelp();
