@@ -205,14 +205,14 @@ sap.ui.define([
 		oElementMock.expects("getMetadata").withExactArgs().returns(oMetadata);
 		oMetadataMock.expects("getProperty").withExactArgs("~property").returns({group: "Data"});
 		const oBinding = {isA() {}};
-		const oPromise = Promise.resolve(); // resolves with undefined, means no documentation ref
-		this.mock(FieldHelp).expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding))
-			.returns(oPromise);
 		oElementMock.expects("getBinding").withExactArgs("~property").returns(oBinding);
 		this.mock(oBinding).expects("isA").withExactArgs("sap.ui.model.CompositeBinding").returns(false);
 		const oFieldHelp = FieldHelp.getInstance();
+		const oPromise = Promise.resolve(); // resolves with undefined, means no documentation ref
+		this.mock(oFieldHelp).expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding))
+			.returns(oPromise);
 		oFieldHelp.activate("~fnCallback");
-		// call _setFieldHelpDocumentationRefs even if there ar no documentation refs for proper cleanup
+		// call _setFieldHelpDocumentationRefs even if there are no documentation refs for proper cleanup
 		this.mock(oFieldHelp).expects("_setFieldHelpDocumentationRefs")
 			.withExactArgs(sinon.match.same(oElement), "~property", []);
 
@@ -223,7 +223,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_updateProperty: PropertyBinding with DocumenatationRef", function (assert) {
+	QUnit.test("_updateProperty: PropertyBinding with DocumentationRef", function (assert) {
 		const oElement = {
 			getBinding() {},
 			getMetadata() {}
@@ -236,12 +236,11 @@ sap.ui.define([
 		const oBinding = {isA() {}};
 		oElementMock.expects("getBinding").withExactArgs("~property").returns(oBinding);
 		this.mock(oBinding).expects("isA").withExactArgs("sap.ui.model.CompositeBinding").returns(false);
-		const oPromise = Promise.resolve("~documentationRef");
-		this.mock(FieldHelp).expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding))
-			.returns(oPromise);
 		const oFieldHelp = FieldHelp.getInstance();
 		const oFieldHelpMock = this.mock(oFieldHelp);
 		oFieldHelp.activate("~fnCallback");
+		const oPromise = Promise.resolve("~documentationRef");
+		oFieldHelpMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding)).returns(oPromise);
 		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs").never();
 
 		// code under test - property is in "Data" group, has a binding and it is not a CompositeBinding
@@ -278,28 +277,24 @@ sap.ui.define([
 		oCompositeBindingMock.expects("getType").withExactArgs().returns(bHasType ? oCompositeType : undefined);
 		this.mock(oCompositeType).expects("getPartsIgnoringMessages").withExactArgs()
 			.exactly(bHasType ? 1 : 0)
-			.returns([3]);
+			.returns([2]);
 		const oBinding0 = {};
 		const oBinding1 = {};
 		const oBinding2 = {};
-		const oBinding3 = {};
 		oCompositeBindingMock.expects("getBindings").withExactArgs()
-			.returns([oBinding0, oBinding1, oBinding2, oBinding3]);
-		const oDocumentationRefPromise0 = Promise.resolve("~documentationRef0");
-		const oFieldHelpModuleMock = this.mock(FieldHelp);
-		oFieldHelpModuleMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding0))
-			.returns(oDocumentationRefPromise0);
-		oFieldHelpModuleMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding1))
-			.returns(undefined); // binding does not support documentation refs
-		const oDocumentationRefPromise2 = Promise.resolve(); // resolves with undefined, means no documentation ref
-		oFieldHelpModuleMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding2))
-			.returns(oDocumentationRefPromise2);
-		const oDocumentationRefPromise3 = Promise.resolve("~documentationRef3");
-		oFieldHelpModuleMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding3))
-			.exactly(bHasType ? 0 : 1)
-			.returns("~documentationRef3");
+			.returns([oBinding0, oBinding1, oBinding2]);
 		const oFieldHelp = FieldHelp.getInstance();
 		const oFieldHelpMock = this.mock(oFieldHelp);
+		const oDocumentationRefPromise0 = Promise.resolve("~documentationRef0");
+		oFieldHelpMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding0))
+			.returns(oDocumentationRefPromise0);
+		const oDocumentationRefPromise1 = Promise.resolve(undefined); // binding has no documentation refs
+		oFieldHelpMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding1))
+			.returns(oDocumentationRefPromise1);
+		const oDocumentationRefPromise2 = Promise.resolve("~documentationRef2");
+		oFieldHelpMock.expects("_requestDocumentationRef").withExactArgs(sinon.match.same(oBinding2))
+			.exactly(bHasType ? 0 : 1)
+			.returns(oDocumentationRefPromise2);
 		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs").never();
 		oFieldHelp.activate("~fnCallback");
 
@@ -308,14 +303,14 @@ sap.ui.define([
 
 		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
 			.withExactArgs(sinon.match.same(oElement), "~property",
-				bHasType ? ["~documentationRef0"] : ["~documentationRef0", "~documentationRef3"]);
+				bHasType ? ["~documentationRef0"] : ["~documentationRef0", "~documentationRef2"]);
 
-		return Promise.all([oDocumentationRefPromise0, oDocumentationRefPromise2, oDocumentationRefPromise3]);
+		return Promise.all([oDocumentationRefPromise0, oDocumentationRefPromise1, oDocumentationRefPromise2]);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("_updateElement: elements that are destroyed or are beeing destroyed", function (assert) {
+	QUnit.test("_updateElement: elements that are destroyed or are being destroyed", function (assert) {
 		const oFieldHelp = new FieldHelp();
 		const oFieldHelpMock = this.mock(oFieldHelp);
 		const oElement = {
@@ -734,7 +729,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("deactivate clears mMetaModel2TextMappingPromise", function (assert) {
-		const oFieldHelp = new FieldHelp();
+		const oFieldHelp = FieldHelp.getInstance();
 		const oMetaModelInterface = {
 			requestTypes() {}
 		};
@@ -743,7 +738,7 @@ sap.ui.define([
 		oInterfaceMock.expects("requestTypes").withExactArgs().resolves([new Map(), new Map()]);
 
 		// code under test: get promise for text mapping
-		const oText2IdByTypePromise = FieldHelp._requestText2IdByType(oMetaModelInterface);
+		const oText2IdByTypePromise = oFieldHelp._requestText2IdByType(oMetaModelInterface);
 
 		// code under test: deactivate the field help => clear cache
 		oFieldHelp.deactivate();
@@ -751,14 +746,14 @@ sap.ui.define([
 		oInterfaceMock.expects("requestTypes").withExactArgs().resolves([new Map(), new Map()]);
 
 		// code under test: get promise for text mapping
-		const oText2IdByTypePromise2 = FieldHelp._requestText2IdByType(oMetaModelInterface);
+		const oText2IdByTypePromise2 = oFieldHelp._requestText2IdByType(oMetaModelInterface);
 
 		assert.notStrictEqual(oText2IdByTypePromise, oText2IdByTypePromise2, "mMetaModel2TextMappingPromise cleared");
 	});
 
 	//*********************************************************************************************
 [undefined, "/foo#meta", "/bar@annotation"].forEach((sResolvedPath) => {
-	QUnit.test("_requestDocumentationRef: unsupported binding path: " + sResolvedPath, function (assert) {
+	QUnit.test("_requestDocumentationRef: unsupported binding path: " + sResolvedPath, async function (assert) {
 		const oBinding = {
 			getResolvedPath() {},
 			isDestroyed() {}
@@ -767,21 +762,21 @@ sap.ui.define([
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
 
 		// code under test
-		assert.strictEqual(FieldHelp._requestDocumentationRef(oBinding), undefined);
+		assert.strictEqual(await FieldHelp.getInstance()._requestDocumentationRef(oBinding), undefined);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("_requestDocumentationRef: binding is being destroyed", function (assert) {
+	QUnit.test("_requestDocumentationRef: binding is being destroyed", async function (assert) {
 		const oBinding = {isDestroyed() {}};
 		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(true);
 
 		// code under test - binding is being destroyed
-		assert.strictEqual(FieldHelp._requestDocumentationRef(oBinding), undefined);
+		assert.strictEqual(await FieldHelp.getInstance()._requestDocumentationRef(oBinding), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_requestDocumentationRef: undefined, if model is not OData V2 or OData V4", function (assert) {
+	QUnit.test("_requestDocumentationRef: undefined, if model is not OData V2 or OData V4", async function (assert) {
 		const oBinding = {
 			getModel() {},
 			getResolvedPath() {},
@@ -793,16 +788,17 @@ sap.ui.define([
 		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs("~oModel").returns(undefined);
 
 		// code under test
-		assert.strictEqual(FieldHelp._requestDocumentationRef(oBinding), undefined);
+		assert.strictEqual(await FieldHelp.getInstance()._requestDocumentationRef(oBinding), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_requestDocumentationRef: success", function (assert) {
+	QUnit.test("_requestDocumentationRef: success", async function (assert) {
 		const oBinding = {
 			getModel() {},
 			getResolvedPath() {},
 			isDestroyed() {}
 		};
+		const oFieldHelp = FieldHelp.getInstance();
 		const oMetaModelInterface = {
 			getDocumentationRef() {}
 		};
@@ -810,7 +806,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
 		this.mock(oBinding).expects("getModel").withExactArgs().returns("~oModel");
 		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs("~oModel").returns(oMetaModelInterface);
-		this.mock(FieldHelp).expects("_requestIDPropertyPath")
+		this.mock(oFieldHelp).expects("_requestIDPropertyPath")
 			.withExactArgs(sinon.match.same(oMetaModelInterface), "/resolved/data/path")
 			.resolves("/resolved/IDPath");
 		this.mock(oMetaModelInterface).expects("getDocumentationRef")
@@ -818,22 +814,20 @@ sap.ui.define([
 			.returns("~DocumentationRefValue");
 
 		// code under test
-		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
+		const oPromise = oFieldHelp._requestDocumentationRef(oBinding);
 
 		assert.ok(oPromise instanceof Promise);
-
-		return oPromise.then((sDocumentationRefValue) => {
-			assert.strictEqual(sDocumentationRefValue, "~DocumentationRefValue");
-		});
+		assert.strictEqual(await oPromise, "~DocumentationRefValue");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_requestDocumentationRef: _requestIDPropertyPath rejects", function (assert) {
+	QUnit.test("_requestDocumentationRef: _requestIDPropertyPath rejects", async function (assert) {
 		const oBinding = {
 			getModel() {},
 			getResolvedPath() {},
 			isDestroyed() {}
 		};
+		const oFieldHelp = FieldHelp.getInstance();
 		const oMetaModelInterface = {
 			getDocumentationRef() {}
 		};
@@ -842,7 +836,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("getModel").withExactArgs().returns("~oModel");
 		this.mock(FieldHelp).expects("_getMetamodelInterface").withExactArgs("~oModel").returns(oMetaModelInterface);
 		const oError = new Error("~_requestIDPropertyPath rejected");
-		this.mock(FieldHelp).expects("_requestIDPropertyPath")
+		this.mock(oFieldHelp).expects("_requestIDPropertyPath")
 			.withExactArgs(sinon.match.same(oMetaModelInterface), "/resolved/data/path")
 			.rejects(oError);
 		this.oLogMock.expects("error")
@@ -850,13 +844,10 @@ sap.ui.define([
 				+ "'/resolved/data/path'", sinon.match.same(oError), sClassName);
 
 		// code under test
-		const oPromise = FieldHelp._requestDocumentationRef(oBinding);
+		const oPromise = oFieldHelp._requestDocumentationRef(oBinding);
 
 		assert.ok(oPromise instanceof Promise);
-
-		return oPromise.then((sDocumentationRefValue) => {
-			assert.strictEqual(sDocumentationRefValue, undefined);
-		});
+		assert.strictEqual(await oPromise, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1600,10 +1591,10 @@ sap.ui.define([
 		oInterfaceMock.expects("getTextPropertyPath").withExactArgs("C0", "P2_1", 0, 1, true).returns(undefined);
 
 		// code under test
-		const oText2IdByTypePromise = FieldHelp._requestText2IdByType(oMetaModelInterface);
+		const oText2IdByTypePromise = FieldHelp.getInstance()._requestText2IdByType(oMetaModelInterface);
 
 		// code under test: promise is cached
-		const oText2IdByTypePromise2 = FieldHelp._requestText2IdByType(oMetaModelInterface);
+		const oText2IdByTypePromise2 = FieldHelp.getInstance()._requestText2IdByType(oMetaModelInterface);
 
 		assert.strictEqual(oText2IdByTypePromise, oText2IdByTypePromise2, "promise is cached");
 
@@ -1658,7 +1649,7 @@ sap.ui.define([
 			["ToBusinessPartner/Name", new Map([["SalesOrder", "BusinessPartner_ID"]])]
 		]);
 		const oInterfaceMock = this.mock(oMetaModelInterface);
-		const oFieldHelpMock = this.mock(FieldHelp);
+		const oFieldHelpMock = this.mock(FieldHelp.getInstance());
 		oFieldHelpMock.expects("_requestText2IdByType")
 			.withExactArgs(sinon.match.same(oMetaModelInterface))
 			.resolves(mText2IdByType);
@@ -1667,7 +1658,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		const sResultPath = await FieldHelp._requestIDPropertyPath(oMetaModelInterface, sPath);
+		const sResultPath = await FieldHelp.getInstance()._requestIDPropertyPath(oMetaModelInterface, sPath);
 
 		assert.strictEqual(sResultPath, sIDPath, "correct ID path");
 	});
