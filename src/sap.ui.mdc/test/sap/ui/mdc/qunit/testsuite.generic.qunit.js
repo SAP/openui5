@@ -5,11 +5,9 @@ sap.ui.define([
 	"use strict";
 
 	const fnRequire = function(aModules) {
-		return Core.ready().then(() => {
-			return new Promise(function(fnResolve, fnReject) {
-				sap.ui.require(aModules, function() {
-					fnResolve(arguments);
-				});
+		return new Promise(function(fnResolve, fnReject) {
+			sap.ui.require(aModules, function() {
+				fnResolve(arguments);
 			});
 		});
 	};

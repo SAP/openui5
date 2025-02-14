@@ -22,7 +22,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.52
 	 */
-
 	var DnD = {},
 		oDragControl = null,        // the control being dragged
 		oDropControl = null,        // the current drop target control
@@ -37,6 +36,7 @@ sap.ui.define([
 		mLastIndicatorStyle = {},   // holds the last style settings of the indicator
 		oDraggableAncestorNode,     // reference to ancestor node that has draggable=true attribute
 		iDragEndTimer,              // timer for the dragend event to ensure it is dispatched after the drop event
+		iDragLeaveTimer,			// timer for the dragleave event to ensure dragging leaves the browser window
 		bDraggedOutOfBrowser;       // determines whether something dragged out of the browser context e.g. for file upload
 
 
@@ -359,6 +359,7 @@ sap.ui.define([
 	}
 
 	function closeDragSession() {
+		hideDropIndicator();
 		oDragControl = oDropControl = oValidDropControl = oDragSession = null;
 		sCalculatedDropPosition = "";
 		bDraggedOutOfBrowser = false;
@@ -581,6 +582,11 @@ sap.ui.define([
 		if (oDragSession && oEvent.type.indexOf("dr") == 0) {
 			// attach dragSession to all drag events
 			oEvent.dragSession = oDragSession;
+
+			// stop the drag leave timer in case of any drag event
+			if (iDragLeaveTimer) {
+				iDragLeaveTimer = clearTimeout(iDragLeaveTimer);
+			}
 		}
 
 		var sEventHandler = "onbefore" + oEvent.type;
@@ -836,9 +842,13 @@ sap.ui.define([
 
 	DnD.onafterdragleave = function(oEvent) {
 		// clean up the drop indicator if the user left the browser window while dragging
-		if (bDraggedOutOfBrowser && !oEvent.relatedTarget) {
-			hideDropIndicator();
-			closeDragSession();
+		if (bDraggedOutOfBrowser) {
+			if (Device.browser.safari) {
+				// Safari does not provide the relatedTarget: https://bugs.webkit.org/show_bug.cgi?id=66547
+				iDragLeaveTimer = setTimeout(closeDragSession, 100);
+			} else if (!oEvent.relatedTarget) {
+				closeDragSession();
+			}
 		}
 	};
 
@@ -873,9 +883,6 @@ sap.ui.define([
 
 		// retain the scrolling behavior of the html element after dragend
 		jQuery("html").removeClass("sapUiDnDNoScrolling");
-
-		// hide the indicator
-		hideDropIndicator();
 
 		// finalize drag session
 		closeDragSession();

@@ -817,6 +817,39 @@ sap.ui.define([
 		assert.notOk(oSession.getDropControl(), "there is no more drop control");
 	});
 
+	QUnit.test("dragging out the browser window should close the drag session lately in 100ms", function(assert) {
+		let oSession;
+		this.oTargetDomRef.focus();
+		this.oDropInfo.attachDragEnter(function(oEvent) {
+			oSession = oEvent.getParameter("dragSession");
+			assert.notOk(oSession.getDragControl(), "there is no drag control, something dragged outside the browser window");
+		});
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		assert.equal(oSession.getDropControl(), this.oTargetControl, "drop control accessible from the session");
+		assert.ok(jQuery(".sapUiDnDIndicator").is(":visible"), "drop indicator is visible");
+
+		const clock = sinon.useFakeTimers();
+		const oBrowserStub = sinon.stub(Device, "browser");
+		oBrowserStub.value({ safari: true });
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragleave"));
+		clock.tick(99);
+		assert.ok(jQuery(".sapUiDnDIndicator").is(":visible"), "drop indicator is still visible, 100ms is not passed yet");
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragover"));
+		clock.tick(1);
+		assert.ok(jQuery(".sapUiDnDIndicator").is(":visible"), "drop indicator is still visible, 100ms timer was cleared in dragover event");
+
+		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragleave"));
+		clock.tick(100);
+		assert.ok(jQuery(".sapUiDnDIndicator").is(":hidden"), "drop indicator is hidden");
+		assert.notOk(oSession.getDropControl(), "there is no more drop control");
+
+		oBrowserStub.restore();
+		clock.restore();
+	});
+
 	QUnit.test("setDropControl", function(assert) {
 		this.oSourceDomRef.focus();
 		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));

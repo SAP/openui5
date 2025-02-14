@@ -348,23 +348,22 @@ sap.ui.define([
 		});
 	});
 
-
-	QUnit.test("registerFont (lazy loading)", function(assert) {
+	QUnit.test("registerFont (lazy loading), async getIconInfo", async function(assert) {
 		var oFetchSpy = TestUtils.spyFetch(this);
 		// register TNT icon font
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
-			collectionName: "tntlazy",
+			collectionName: "tntlazyasync",
 			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
 			lazy: true
 		});
 
 		assert.ok(oFetchSpy.notCalled, "The font metadata is not loaded before an icon is queried");
 
-		IconPool.getIconInfo("sap-icon://tntlazy/technicalsystem");
+		await IconPool.getIconInfo("sap-icon://tntlazyasync/technicalsystem", "async");
 		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded once");
 
-		IconPool.getIconInfo("sap-icon://tntlazy/technicalsystem");
+		await IconPool.getIconInfo("sap-icon://tntlazyasync/technicalsystem", "async");
 		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded only once");
 	});
 
@@ -470,50 +469,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Sync getIconInfo");
-
-	QUnit.test("Calling getIconInfo with 'sync' mode on the default icon font returns the result immediately", function(assert) {
-		var oIconInfo = IconPool.getIconInfo("sap-icon://card", undefined, "sync");
-		assert.equal(oIconInfo.collection, undefined, "Icon collection is correct");
-		assert.equal(oIconInfo.fontFamily, "SAP-icons", "Icon font family is correct");
-		assert.equal(oIconInfo.content, String.fromCharCode(0xe044), "Icon content has been resolved properly");
-
-		oIconInfo = IconPool.getIconInfo("sap-icon://card", "sync");
-		assert.equal(oIconInfo.collection, undefined, "Icon collection is correct when not giving the iconCollection parameter");
-		assert.equal(oIconInfo.fontFamily, "SAP-icons", "Icon font family is correct when not giving the iconCollection parameter");
-		assert.equal(oIconInfo.content, String.fromCharCode(0xe044), "Icon content has been resolved properly when not giving the iconCollection parameter");
-	});
-
-	QUnit.test("Calling getIconInfo with 'sync' mode on a separate icon font returns the result immediately", function(assert) {		// stub the ajax method
-		// register an additional icon font
-		IconPool.registerFont({
-			fontFamily: "some-font-family",
-			collectionName: "somefont",
-			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
-			lazy: true
-		});
-
-		var oIconInfo = IconPool.getIconInfo("sap-icon://somefont/customicon", undefined, "sync");
-		assert.equal(oIconInfo.collection, "somefont", "Icon collection is correct");
-		assert.equal(oIconInfo.fontFamily, "some-font-family", "Icon font family is correct");
-		assert.equal(oIconInfo.content, String.fromCharCode(0xe001), "Icon content has been resolved properly");
-	});
-
-	QUnit.test("Calling getIconInfo with 'sync' mode on a separate icon font and without an iconCollection parameter returns the result immediately", function(assert) {
-		// register an additional icon font
-		IconPool.registerFont({
-			fontFamily: "some-font-family1",
-			collectionName: "somefont1",
-			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
-			lazy: true
-		});
-
-		var oIconInfo = IconPool.getIconInfo("sap-icon://somefont1/customicon", "sync");
-		assert.equal(oIconInfo.collection, "somefont1", "Icon collection is correct");
-		assert.equal(oIconInfo.fontFamily, "some-font-family1", "Icon font family is correct");
-		assert.equal(oIconInfo.content, String.fromCharCode(0xe001), "Icon content has been resolved properly");
-	});
-
 	QUnit.module("Async getIconInfo");
 
 	QUnit.test("Calling getIconInfo with 'async' mode on a default font icon returns a Promise", function(assert) {
@@ -568,33 +523,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Calling getIconInfo on a separate font first with 'async' and immediately with 'sync' afterwards returns correct results for both", function(assert) {
-		var done = assert.async();
-		// register an additional icon font without loading metadata immediately
-		IconPool.registerFont({
-			fontFamily: "SAP-icons-TNT",
-			collectionName: "tntAsyncSync",
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
-			lazy: true
-		});
-
-		// get icon info asynchronously
-		var oIconInfoAsync = IconPool.getIconInfo("sap-icon://tntAsyncSync/arrow", "async");
-
-		// get icon info synchronously
-		var oIconInfoSync = IconPool.getIconInfo("sap-icon://tntAsyncSync/arrow", "sync");
-
-		assert.ok(oIconInfoAsync instanceof Promise, "The asynchronous load returns a promise");
-		assert.equal(oIconInfoSync.collection, "tntAsyncSync", "Icon collection from the synchronous load is correct");
-		assert.equal(oIconInfoSync.fontFamily, "SAP-icons-TNT", "Font family from the synchronous load is correct");
-
-		oIconInfoAsync.then(function(result) {
-			assert.equal(result.collection, "tntAsyncSync", "Icon collection from the asynchronous load is correct");
-			assert.equal(result.fontFamily, "SAP-icons-TNT", "Font family from the asynchronous load is correct");
-			done();
-		});
-	});
-
 	QUnit.module("Mixed getIconInfo");
 
 	QUnit.test("Calling getIconInfo with 'mixed' mode on a default font icon returns the result immediately", function(assert) {
@@ -634,5 +562,4 @@ sap.ui.define([
 			assert.equal(oIconInfo.content, String.fromCharCode(0xe00f), "Icon content has been resolved properly");
 		});
 	});
-
 });

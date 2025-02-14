@@ -1,6 +1,5 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/opaQunit",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action",
@@ -8,501 +7,505 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName"
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary, ConditionValidated, OperatorName) {
+], function (Opa5, Arrangement, TestUtil, Action, Assertion, TestLibrary, ConditionValidated, OperatorName) {
 	"use strict";
 
-	Opa5.extendConfig({
-		arrangements: new Arrangement(),
-		actions: new Action(),
-		assertions: new Assertion(),
-		viewNamespace: "view.",
-		autoWait: true
-	});
-
-	const aTableItems = [
-		{p13nItem: "Name", selected: true},
-		{p13nItem: "Founding Year", selected: true},
-		{p13nItem: "Changed By", selected: true},
-		{p13nItem: "Created On", selected: true},
-		{p13nItem: "artistUUID", selected: false},
-		{p13nItem: "Breakout Year", selected: false},
-		{p13nItem: "Changed On", selected: false},
-		{p13nItem: "City of Origin", selected: false},
-		{p13nItem: "City of Origin + Text", selected: false},
-		{p13nItem: "Country", selected: false},
-		{p13nItem: "Country + Text", selected: false},
-		{p13nItem: "Created (Complex)", selected: false},
-		{p13nItem: "Created By", selected: false},
-		{p13nItem: "regionOfOrigin_code", selected: false},
-		{p13nItem: "regionOfOrigin_code + Text", selected: false}
-	];
-
-	let aSortItems = [
-		{p13nItem: "artistUUID", descending: false},
-		{p13nItem: "Breakout Year", descending: false},
-		{p13nItem: "Changed By", descending: false},
-		{p13nItem: "Changed On", descending: false},
-		{p13nItem: "City of Origin", descending: false},
-		{p13nItem: "Country", descending: false},
-		{p13nItem: "Created By", descending: false},
-		{p13nItem: "Created On", descending: false},
-		{p13nItem: "Founding Year", descending: false},
-		{p13nItem: "Name", descending: false},
-		{p13nItem: "regionOfOrigin_code", descending: false}
-	];
-
-	const sTableID = "IDTableOfInternalSampleApp_01";
-
-
-	// ----------------------------------------------------------------
-	// Check if the application is running normaly
-	// ----------------------------------------------------------------
-	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
-		//insert application
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
-			autoWait: true
-		});
-		Given.enableAndDeleteLrepLocalStorage();
-		When.iLookAtTheScreen();
-
-		//check icons
-		Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-
-		//check initially visible columns
-		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
-			"name", "foundingYear", "modifiedBy", "createdAt"
-		]);
-
-		Then.theVariantManagementIsDirty(false);
-	});
-
-	opaTest("When I press on 'Add/Remove Columns' button, the table-specific-dialog opens", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
-
-		Then.iShouldSeeP13nItems(aTableItems);
-	});
-
-	opaTest("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
-		When.iPressDialogOk();
-
-		//close p13n dialog
-		Then.thePersonalizationDialogShouldBeClosed();
-
-		//check initially visible columns
-		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
-			"name", "foundingYear", "modifiedBy", "createdAt"
-		]);
-
-		//check dirty flag
-		Then.theVariantManagementIsDirty(false);
-	});
-
-	opaTest("When I press on 'Sort' tab, sort dialog should open", function (Given, When, Then) {
-
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Sort");
-
-		Then.thePersonalizationDialogOpens();
-
-		//open the select control in the sort tab
-		When.iClickOnP13nSelect("");
-
-		//check that the expected keys are visible in the sort dialog
-		Then.iShouldSeeP13nMenuItems(aSortItems);
-	});
-
-	opaTest("When I close the 'Sort' tab, the table has not been changed", function (Given, When, Then) {
-		When.iPressDialogOk();
-
-		//close p13n dialog
-		Then.thePersonalizationDialogShouldBeClosed();
-
-		//check initially visible columns
-		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
-			"name", "foundingYear", "modifiedBy", "createdAt"
-		]);
-
-		//check dirty flag
-		Then.theVariantManagementIsDirty(false);
-	});
-
-	// ----------------------------------------------------------------
-	// Variant Management tests + set default variant
-	// ----------------------------------------------------------------
-
-	opaTest("When I select 2 additional row and also remove 1 and save a new Variant the personalization should change", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.thePersonalizationDialogOpens();
-
-		When.iSelectColumn("Breakout Year", undefined, aTableItems);
-		When.iSelectColumn("City of Origin", undefined, aTableItems);
-		When.iSelectColumn("Founding Year", undefined, aTableItems);
-
-		checkTestVariantColumnsDialog(Then);
-
-		When.iPressDialogOk();
-
-		//close p13n dialog
-		Then.thePersonalizationDialogShouldBeClosed();
-
-		Then.iShouldSeeVisibleColumnsInOrderInTable(
-			"sap.ui.mdc.Table",
-			"sap.ui.mdc.table.Column", [
-			"name", "modifiedBy", "createdAt", "breakupYear", "cityOfOrigin_city"
-		]);
-
-		Then.iShouldSeeSelectedVariant("Standard");
-		When.iSaveVariantAs("Standard", "TestVariant");
-		Then.iShouldSeeSelectedVariant("TestVariant");
-
-		//select a default variant
-		When.iSelectDefaultVariant("TestVariant");
-		Then.iShouldSeeSelectedVariant("TestVariant");
-
-		//shut down app frame for next test
-		Then.iTeardownMyAppFrame();
-	});
-
-	// ----------------------------------------------------------------
-	// Select a default variant and restart the app (mock preprocessing)
-	// ----------------------------------------------------------------
-	opaTest("When I select the default variant and restart the application, it should load the default variant", function(Given, When, Then){
-		//simulate restart
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+	return function (opaTestOrSkip) {
+		Opa5.extendConfig({
+			arrangements: new Arrangement(),
+			actions: new Action(),
+			assertions: new Assertion(),
+			viewNamespace: "view.",
 			autoWait: true
 		});
 
-		//check if the correct variant is selected
-		Then.iShouldSeeSelectedVariant("TestVariant");
+		const aTableItems = [
+			{p13nItem: "Name", selected: true},
+			{p13nItem: "Founding Year", selected: true},
+			{p13nItem: "Changed By", selected: true},
+			{p13nItem: "Created On", selected: true},
+			{p13nItem: "artistUUID", selected: false},
+			{p13nItem: "Breakout Year", selected: false},
+			{p13nItem: "Changed On", selected: false},
+			{p13nItem: "City of Origin", selected: false},
+			{p13nItem: "City of Origin + Text", selected: false},
+			{p13nItem: "Country", selected: false},
+			{p13nItem: "Country + Text", selected: false},
+			{p13nItem: "Created (Complex)", selected: false},
+			{p13nItem: "Created By", selected: false},
+			{p13nItem: "regionOfOrigin_code", selected: false},
+			{p13nItem: "regionOfOrigin_code + Text", selected: false}
+		];
 
-		//check if the correct columns are there from default variant "TestVariant"
-		Then.iShouldSeeVisibleColumnsInOrderInTable(
-			"sap.ui.mdc.Table",
-			"sap.ui.mdc.table.Column", [
-			"name", "modifiedBy", "createdAt", "breakupYear", "cityOfOrigin_city"
-		]);
-	});
+		let aSortItems = [
+			{p13nItem: "artistUUID", descending: false},
+			{p13nItem: "Breakout Year", descending: false},
+			{p13nItem: "Changed By", descending: false},
+			{p13nItem: "Changed On", descending: false},
+			{p13nItem: "City of Origin", descending: false},
+			{p13nItem: "Country", descending: false},
+			{p13nItem: "Created By", descending: false},
+			{p13nItem: "Created On", descending: false},
+			{p13nItem: "Founding Year", descending: false},
+			{p13nItem: "Name", descending: false},
+			{p13nItem: "regionOfOrigin_code", descending: false}
+		];
 
-	opaTest("When I switch the variant back to 'Standard' I should see the default personalization again", function (Given, When, Then) {
-		When.iSelectVariant("Standard");
+		const sTableID = "IDTableOfInternalSampleApp_01";
 
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeP13nItem("Name", 0, true);
-		Then.iShouldSeeP13nItem("Founding Year", 1, true);
-		Then.iShouldSeeP13nItem("Changed By", 2, true);
-		Then.iShouldSeeP13nItem("Created On", 3, true);
-		Then.iShouldSeeP13nItem("artistUUID", 4, false);
-		Then.iShouldSeeP13nItem("Breakout Year", 5, false);
-		Then.iShouldSeeP13nItem("Changed On", 6, false);
-		Then.iShouldSeeP13nItem("City of Origin", 7, false);
-		Then.iShouldSeeP13nItem("City of Origin + Text", 8, false);
-		Then.iShouldSeeP13nItem("Country", 9, false);
-		Then.iShouldSeeP13nItem("Country + Text", 10, false);
-		Then.iShouldSeeP13nItem("Created (Complex)", 11, false);
-		Then.iShouldSeeP13nItem("Created By", 12, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code", 13, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
+		// ----------------------------------------------------------------
+		// Check if the application is running normaly
+		// ----------------------------------------------------------------
+		opaTestOrSkip("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
+			//insert application
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+				autoWait: true
+			});
+			Given.enableAndDeleteLrepLocalStorage();
+			When.iLookAtTheScreen();
 
-		When.iPressDialogOk();
+			//check icons
+			Then.iShouldSeeButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
-		//close p13n dialog
-		Then.thePersonalizationDialogShouldBeClosed();
+			//check initially visible columns
+			Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
+				"name", "foundingYear", "modifiedBy", "createdAt"
+			]);
 
-		Then.iShouldSeeVisibleColumnsInOrderInTable(
-			"sap.ui.mdc.Table",
-			"sap.ui.mdc.table.Column", [
-			"name", "foundingYear", "modifiedBy", "createdAt"
-		]);
-	});
+			Then.theVariantManagementIsDirty(false);
+		});
 
-	const oTableConditions = {
-		foundingYear:[
-			{operator: OperatorName.EQ, values: ["1989"], validated: ConditionValidated.NotValidated},
-			{operator: OperatorName.EQ, values: ["1904"], validated: ConditionValidated.NotValidated}
-		],
-		name:[
-			{operator: OperatorName.Contains, values: ["S"], validated: ConditionValidated.NotValidated}
-		]
+		opaTestOrSkip("When I press on 'Add/Remove Columns' button, the table-specific-dialog opens", function (Given, When, Then) {
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+
+			Then.thePersonalizationDialogOpens();
+			Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
+
+			Then.iShouldSeeP13nItems(aTableItems);
+		});
+
+		opaTestOrSkip("When I close the 'Add/Remove Columns' button, the table has not been changed", function (Given, When, Then) {
+			When.iPressDialogOk();
+
+			//close p13n dialog
+			Then.thePersonalizationDialogShouldBeClosed();
+
+			//check initially visible columns
+			Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
+				"name", "foundingYear", "modifiedBy", "createdAt"
+			]);
+
+			//check dirty flag
+			Then.theVariantManagementIsDirty(false);
+		});
+
+		opaTestOrSkip("When I press on 'Sort' tab, sort dialog should open", function (Given, When, Then) {
+
+			//open Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//open 'filter' tab
+			When.iSwitchToP13nTab("Sort");
+
+			Then.thePersonalizationDialogOpens();
+
+			//open the select control in the sort tab
+			When.iClickOnP13nSelect("");
+
+			//check that the expected keys are visible in the sort dialog
+			Then.iShouldSeeP13nMenuItems(aSortItems);
+		});
+
+		opaTestOrSkip("When I close the 'Sort' tab, the table has not been changed", function (Given, When, Then) {
+			When.iPressDialogOk();
+
+			//close p13n dialog
+			Then.thePersonalizationDialogShouldBeClosed();
+
+			//check initially visible columns
+			Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
+				"name", "foundingYear", "modifiedBy", "createdAt"
+			]);
+
+			//check dirty flag
+			Then.theVariantManagementIsDirty(false);
+		});
+
+		// ----------------------------------------------------------------
+		// Variant Management tests + set default variant
+		// ----------------------------------------------------------------
+
+		opaTestOrSkip("When I select 2 additional row and also remove 1 and save a new Variant the personalization should change", function (Given, When, Then) {
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			Then.thePersonalizationDialogOpens();
+
+			When.iSelectColumn("Breakout Year", undefined, aTableItems);
+			When.iSelectColumn("City of Origin", undefined, aTableItems);
+			When.iSelectColumn("Founding Year", undefined, aTableItems);
+
+			checkTestVariantColumnsDialog(Then);
+
+			When.iPressDialogOk();
+
+			//close p13n dialog
+			Then.thePersonalizationDialogShouldBeClosed();
+
+			Then.iShouldSeeVisibleColumnsInOrderInTable(
+				"sap.ui.mdc.Table",
+				"sap.ui.mdc.table.Column", [
+				"name", "modifiedBy", "createdAt", "breakupYear", "cityOfOrigin_city"
+			]);
+
+			Then.iShouldSeeSelectedVariant("Standard");
+			When.iSaveVariantAs("Standard", "TestVariant");
+			Then.iShouldSeeSelectedVariant("TestVariant");
+
+			//select a default variant
+			When.iSelectDefaultVariant("TestVariant");
+			Then.iShouldSeeSelectedVariant("TestVariant");
+
+			//shut down app frame for next test
+			Then.iTeardownMyAppFrame();
+		});
+
+		// ----------------------------------------------------------------
+		// Select a default variant and restart the app (mock preprocessing)
+		// ----------------------------------------------------------------
+		opaTestOrSkip("When I select the default variant and restart the application, it should load the default variant", function(Given, When, Then){
+			//simulate restart
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+				autoWait: true
+			});
+
+			//check if the correct variant is selected
+			Then.iShouldSeeSelectedVariant("TestVariant");
+
+			//check if the correct columns are there from default variant "TestVariant"
+			Then.iShouldSeeVisibleColumnsInOrderInTable(
+				"sap.ui.mdc.Table",
+				"sap.ui.mdc.table.Column", [
+				"name", "modifiedBy", "createdAt", "breakupYear", "cityOfOrigin_city"
+			]);
+		});
+
+		opaTestOrSkip("When I switch the variant back to 'Standard' I should see the default personalization again", function (Given, When, Then) {
+			When.iSelectVariant("Standard");
+
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			Then.thePersonalizationDialogOpens();
+
+			Then.iShouldSeeP13nItem("Name", 0, true);
+			Then.iShouldSeeP13nItem("Founding Year", 1, true);
+			Then.iShouldSeeP13nItem("Changed By", 2, true);
+			Then.iShouldSeeP13nItem("Created On", 3, true);
+			Then.iShouldSeeP13nItem("artistUUID", 4, false);
+			Then.iShouldSeeP13nItem("Breakout Year", 5, false);
+			Then.iShouldSeeP13nItem("Changed On", 6, false);
+			Then.iShouldSeeP13nItem("City of Origin", 7, false);
+			Then.iShouldSeeP13nItem("City of Origin + Text", 8, false);
+			Then.iShouldSeeP13nItem("Country", 9, false);
+			Then.iShouldSeeP13nItem("Country + Text", 10, false);
+			Then.iShouldSeeP13nItem("Created (Complex)", 11, false);
+			Then.iShouldSeeP13nItem("Created By", 12, false);
+			Then.iShouldSeeP13nItem("regionOfOrigin_code", 13, false);
+			Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
+
+			When.iPressDialogOk();
+
+			//close p13n dialog
+			Then.thePersonalizationDialogShouldBeClosed();
+
+			Then.iShouldSeeVisibleColumnsInOrderInTable(
+				"sap.ui.mdc.Table",
+				"sap.ui.mdc.table.Column", [
+				"name", "foundingYear", "modifiedBy", "createdAt"
+			]);
+		});
+
+		const oTableConditions = {
+			foundingYear:[
+				{operator: OperatorName.EQ, values: ["1989"], validated: ConditionValidated.NotValidated},
+				{operator: OperatorName.EQ, values: ["1904"], validated: ConditionValidated.NotValidated}
+			],
+			name:[
+				{operator: OperatorName.Contains, values: ["S"], validated: ConditionValidated.NotValidated}
+			]
+		};
+
+		opaTestOrSkip("Open the filter personalization dialog and save some conditions as variant 'FilterVariantTest'", function (Given, When, Then) {
+			//open Dialog & add two new filter values
+			When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+				{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+				{key : "Name", values: ["*S*"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+			]);
+
+			Then.iShouldSeeVisibleItemsInTable(2);
+
+			//create a new variant 'FilterVariantTest'
+			When.iSaveVariantAs("Standard", "FilterVariantTest");
+			Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+			//select a default variant
+			When.iSelectDefaultVariant("FilterVariantTest");
+			Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+			//Check Table conditions
+			Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
+
+			//restart app
+			Then.iTeardownMyAppFrame();
+
+		});
+
+		opaTestOrSkip("Switch Variant after restart without opening the dialog", function (Given, When, Then) {
+
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+				autoWait: true
+			});
+
+			//check default variant appliance
+			Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+			Then.iShouldSeeVisibleItemsInTable(2);
+
+			When.iSelectVariant("Standard");
+
+			Then.iShouldSeeVisibleItemsInTable(100);
+		});
+
+		opaTestOrSkip("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
+			When.iSelectVariant("FilterVariantTest");
+
+			//Recheck default variant appliance
+			Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
+
+			Then.iShouldSeeVisibleItemsInTable(2);
+
+			//open Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//open 'filter' tab
+			When.iSwitchToP13nTab("Filter");
+
+			When.iPressDialogOk();
+		});
+
+		opaTestOrSkip("Reopen the filter personalization dialog to validate 'FilterVariantTest'", function (Given, When, Then) {
+			//open Dialog & add two new filter values
+			Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
+				{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+				{key : "Name", values: ["S"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+			]);
+
+			Then.iShouldSeeVisibleItemsInTable(2);
+
+			//Check Table conditions
+			Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
+		});
+
+		opaTestOrSkip("Check if Variant remains unchanged after dialog closes", function (Given, When, Then) {
+
+			//Variant Management is not dirty --> no changes made
+			Then.theVariantManagementIsDirty(false);
+
+		});
+
+		opaTestOrSkip("Check that filter dialog changes values upon variant switch", function (Given, When, Then) {
+
+			When.iSelectVariant("Standard");
+
+			//no filters on standard
+			Then.iShouldSeeConditons("sap.ui.mdc.Table", {foundingYear: [], name: []});
+
+			//check empty filter values from standard variant
+			Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
+
+			Then.iShouldSeeVisibleItemsInTable(100);
+
+			Then.theVariantManagementIsDirty(false);
+		});
+
+		opaTestOrSkip("Switch back to 'FilterVariantTest' to check reappliance of condition values", function (Given, When, Then) {
+
+			//Switch back to check condition appliance in filter dialog
+			When.iSelectVariant("FilterVariantTest");
+
+			//open Dialog & add two new filter values
+			Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
+				{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+				{key : "Name", values: ["S"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+			]);
+
+			Then.iShouldSeeVisibleItemsInTable(2);
+
+			//tear down app
+			Then.iTeardownMyAppFrame();
+
+		});
+
+		opaTestOrSkip("When i use a PersistenceProvider having mode='Global', the changes should implicitly be stored.", function (Given, When, Then) {
+			Given.enableAndDeleteLrepLocalStorage();
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Implicit',
+				autoWait: true
+			});
+
+			When.iLookAtTheScreen();
+			When.iClickOnColumn("Name");
+
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
+			//open Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//open 'filter' tab
+			When.iSwitchToP13nTab("Sort");
+
+			Then.thePersonalizationDialogOpens();
+
+			aSortItems = [
+				{p13nItem: "Name", sorted: true, descending: false}
+			];
+
+			Then.iShouldSeeP13nSortItems(aSortItems);
+
+			When.iPressDialogOk();
+
+			Then.iTeardownMyAppFrame();
+		});
+
+		opaTestOrSkip("'Implicit' changes are applied when i restart the 'appUnderTestTable' app", function (Given, When, Then) {
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+				autoWait: true
+			});
+			When.iLookAtTheScreen();
+			//open Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//open 'filter' tab
+			When.iSwitchToP13nTab("Sort");
+
+			Then.thePersonalizationDialogOpens();
+
+			aSortItems = [
+				{p13nItem: "Name", sorted: true, descending: false}
+			];
+
+			Then.iShouldSeeP13nSortItems(aSortItems);
+			When.iPressDialogOk();
+			Then.iTeardownMyAppFrame();
+
+		});
+
+		opaTestOrSkip("'Implicit' filter changes are only applied on table level (not on the inner)", function (Given, When, Then) {
+			Given.enableAndDeleteLrepLocalStorage();
+
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Implicit',
+				autoWait: true
+			});
+
+			When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+				{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+				{key : "Name", values: ["*S*"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+			]);
+
+			When.waitFor({
+				controlType: "sap.ui.mdc.Table",
+				success: function(aControls) {
+					const aLocalStorage = Object.entries(window.localStorage);
+					const aEntries = aLocalStorage.filter(([key, value]) => (key.indexOf("addCondition") > -1 || key.indexOf("removeCondition") > -1));
+
+					Opa5.assert.equal(aEntries.length, 3, "the correct amount of changes has been created");
+					aEntries.forEach(([sPersistenceKey, sChange]) => {
+						const oChange = JSON.parse(sChange);
+						Opa5.assert.equal(oChange.changeType, "addCondition", "The changeType has been properly created");
+						Opa5.assert.equal(oChange.selector.id, "IDTableOfInternalSampleApp_01", "The change has been created on the table");
+					});
+				}
+			});
+
+			Then.iTeardownMyAppFrame();
+
+		});
+
+
+		opaTestOrSkip("When i use a PersistenceProvider having mode='Transient', the changes are never stored and never affect an existing VariantManagement", function (Given, When, Then) {
+			Given.enableAndDeleteLrepLocalStorage();
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Transient',
+				autoWait: true
+			});
+
+			When.iLookAtTheScreen();
+			When.iClickOnColumn("Name");
+
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
+
+			//open Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//open 'filter' tab
+			When.iSwitchToP13nTab("Sort");
+
+			Then.thePersonalizationDialogOpens();
+
+			aSortItems = [
+				{p13nItem: "Name", sorted: true, descending: false}
+			];
+
+			Then.iShouldSeeP13nSortItems(aSortItems);
+			When.iPressDialogOk();
+
+			Then.theVariantManagementIsDirty(false);
+
+			Then.iTeardownMyAppFrame();
+		});
+
+		opaTestOrSkip("'Transient' changes are never applied after i restart the 'appUnderTestTable' app", function (Given, When, Then) {
+
+			Given.iStartMyAppInAFrame({
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Transient',
+				autoWait: true
+			});
+			When.iLookAtTheScreen();
+
+			//open Dialog
+			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+			//open 'filter' tab
+			When.iSwitchToP13nTab("Sort");
+
+			Then.thePersonalizationDialogOpens();
+
+			Then.iShouldSeeP13nSortItems([]);
+			When.iPressDialogOk();
+
+			Given.enableAndDeleteLrepLocalStorage();
+			Then.iTeardownMyAppFrame();
+
+		});
+
+		// ----------------------------------------------------------------
+		// Methods
+		// ----------------------------------------------------------------
+
+		function checkTestVariantColumnsDialog(Then) {
+			Then.iShouldSeeP13nItem("Name", 0, true);
+			Then.iShouldSeeP13nItem("Founding Year", 1, false);
+			Then.iShouldSeeP13nItem("Changed By", 2, true);
+			Then.iShouldSeeP13nItem("Created On", 3, true);
+			Then.iShouldSeeP13nItem("artistUUID", 4, false);
+			Then.iShouldSeeP13nItem("Breakout Year", 5, true);
+			Then.iShouldSeeP13nItem("Changed On", 6, false);
+			Then.iShouldSeeP13nItem("City of Origin", 7, true);
+			Then.iShouldSeeP13nItem("City of Origin + Text", 8, false);
+			Then.iShouldSeeP13nItem("Country", 9, false);
+			Then.iShouldSeeP13nItem("Country + Text", 10, false);
+			Then.iShouldSeeP13nItem("Created (Complex)", 11, false);
+			Then.iShouldSeeP13nItem("Created By", 12, false);
+			Then.iShouldSeeP13nItem("regionOfOrigin_code", 13, false);
+			Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
+		}
 	};
 
-	opaTest("Open the filter personalization dialog and save some conditions as variant 'FilterVariantTest'", function (Given, When, Then) {
-		//open Dialog & add two new filter values
-		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
-			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
-			{key : "Name", values: ["*S*"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
-		]);
 
-		Then.iShouldSeeVisibleItemsInTable(2);
-
-		//create a new variant 'FilterVariantTest'
-		When.iSaveVariantAs("Standard", "FilterVariantTest");
-		Then.iShouldSeeSelectedVariant("FilterVariantTest");
-
-		//select a default variant
-		When.iSelectDefaultVariant("FilterVariantTest");
-		Then.iShouldSeeSelectedVariant("FilterVariantTest");
-
-		//Check Table conditions
-		Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
-
-		//restart app
-		Then.iTeardownMyAppFrame();
-
-	});
-
-	opaTest("Switch Variant after restart without opening the dialog", function (Given, When, Then) {
-
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
-			autoWait: true
-		});
-
-		//check default variant appliance
-		Then.iShouldSeeSelectedVariant("FilterVariantTest");
-
-		Then.iShouldSeeVisibleItemsInTable(2);
-
-		When.iSelectVariant("Standard");
-
-		Then.iShouldSeeVisibleItemsInTable(100);
-	});
-
-	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
-		When.iSelectVariant("FilterVariantTest");
-
-		//Recheck default variant appliance
-		Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
-
-		Then.iShouldSeeVisibleItemsInTable(2);
-
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		When.iPressDialogOk();
-	});
-
-	opaTest("Reopen the filter personalization dialog to validate 'FilterVariantTest'", function (Given, When, Then) {
-		//open Dialog & add two new filter values
-		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
-			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
-			{key : "Name", values: ["S"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
-		]);
-
-		Then.iShouldSeeVisibleItemsInTable(2);
-
-		//Check Table conditions
-		Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
-	});
-
-	opaTest("Check if Variant remains unchanged after dialog closes", function (Given, When, Then) {
-
-		//Variant Management is not dirty --> no changes made
-		Then.theVariantManagementIsDirty(false);
-
-	});
-
-	opaTest("Check that filter dialog changes values upon variant switch", function (Given, When, Then) {
-
-		When.iSelectVariant("Standard");
-
-		//no filters on standard
-		Then.iShouldSeeConditons("sap.ui.mdc.Table", {foundingYear: [], name: []});
-
-		//check empty filter values from standard variant
-		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
-
-		Then.iShouldSeeVisibleItemsInTable(100);
-
-		Then.theVariantManagementIsDirty(false);
-	});
-
-	opaTest("Switch back to 'FilterVariantTest' to check reappliance of condition values", function (Given, When, Then) {
-
-		//Switch back to check condition appliance in filter dialog
-		When.iSelectVariant("FilterVariantTest");
-
-		//open Dialog & add two new filter values
-		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
-			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
-			{key : "Name", values: ["S"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
-		]);
-
-		Then.iShouldSeeVisibleItemsInTable(2);
-
-		//tear down app
-		Then.iTeardownMyAppFrame();
-
-	});
-
-	opaTest("When i use a PersistenceProvider having mode='Global', the changes should implicitly be stored.", function (Given, When, Then) {
-		Given.enableAndDeleteLrepLocalStorage();
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Implicit',
-			autoWait: true
-		});
-
-		When.iLookAtTheScreen();
-		When.iClickOnColumn("Name");
-
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Sort");
-
-		Then.thePersonalizationDialogOpens();
-
-		aSortItems = [
-			{p13nItem: "Name", sorted: true, descending: false}
-		];
-
-		Then.iShouldSeeP13nSortItems(aSortItems);
-
-		When.iPressDialogOk();
-
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("'Implicit' changes are applied when i restart the 'appUnderTestTable' app", function (Given, When, Then) {
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
-			autoWait: true
-		});
-		When.iLookAtTheScreen();
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Sort");
-
-		Then.thePersonalizationDialogOpens();
-
-		aSortItems = [
-			{p13nItem: "Name", sorted: true, descending: false}
-		];
-
-		Then.iShouldSeeP13nSortItems(aSortItems);
-		When.iPressDialogOk();
-		Then.iTeardownMyAppFrame();
-
-	});
-
-	opaTest("'Implicit' filter changes are only applied on table level (not on the inner)", function (Given, When, Then) {
-		Given.enableAndDeleteLrepLocalStorage();
-
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Implicit',
-			autoWait: true
-		});
-
-		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
-			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
-			{key : "Name", values: ["*S*"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
-		]);
-
-		When.waitFor({
-			controlType: "sap.ui.mdc.Table",
-			success: function(aControls) {
-				const aLocalStorage = Object.entries(window.localStorage);
-				const aEntries = aLocalStorage.filter(([key, value]) => (key.indexOf("addCondition") > -1 || key.indexOf("removeCondition") > -1));
-
-				Opa5.assert.equal(aEntries.length, 3, "the correct amount of changes has been created");
-				aEntries.forEach(([sPersistenceKey, sChange]) => {
-					const oChange = JSON.parse(sChange);
-					Opa5.assert.equal(oChange.changeType, "addCondition", "The changeType has been properly created");
-					Opa5.assert.equal(oChange.selector.id, "IDTableOfInternalSampleApp_01", "The change has been created on the table");
-				});
-			}
-		});
-
-		Then.iTeardownMyAppFrame();
-
-	});
-
-
-	opaTest("When i use a PersistenceProvider having mode='Transient', the changes are never stored and never affect an existing VariantManagement", function (Given, When, Then) {
-		Given.enableAndDeleteLrepLocalStorage();
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Transient',
-			autoWait: true
-		});
-
-		When.iLookAtTheScreen();
-		When.iClickOnColumn("Name");
-
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Ascending);
-
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Sort");
-
-		Then.thePersonalizationDialogOpens();
-
-		aSortItems = [
-			{p13nItem: "Name", sorted: true, descending: false}
-		];
-
-		Then.iShouldSeeP13nSortItems(aSortItems);
-		When.iPressDialogOk();
-
-		Then.theVariantManagementIsDirty(false);
-
-		Then.iTeardownMyAppFrame();
-	});
-
-	opaTest("'Transient' changes are never applied after i restart the 'appUnderTestTable' app", function (Given, When, Then) {
-
-		Given.iStartMyAppInAFrame({
-			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Transient',
-			autoWait: true
-		});
-		When.iLookAtTheScreen();
-
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Sort");
-
-		Then.thePersonalizationDialogOpens();
-
-		Then.iShouldSeeP13nSortItems([]);
-		When.iPressDialogOk();
-
-		Given.enableAndDeleteLrepLocalStorage();
-		Then.iTeardownMyAppFrame();
-
-	});
-
-	// ----------------------------------------------------------------
-	// Methods
-	// ----------------------------------------------------------------
-
-	function checkTestVariantColumnsDialog(Then) {
-		Then.iShouldSeeP13nItem("Name", 0, true);
-		Then.iShouldSeeP13nItem("Founding Year", 1, false);
-		Then.iShouldSeeP13nItem("Changed By", 2, true);
-		Then.iShouldSeeP13nItem("Created On", 3, true);
-		Then.iShouldSeeP13nItem("artistUUID", 4, false);
-		Then.iShouldSeeP13nItem("Breakout Year", 5, true);
-		Then.iShouldSeeP13nItem("Changed On", 6, false);
-		Then.iShouldSeeP13nItem("City of Origin", 7, true);
-		Then.iShouldSeeP13nItem("City of Origin + Text", 8, false);
-		Then.iShouldSeeP13nItem("Country", 9, false);
-		Then.iShouldSeeP13nItem("Country + Text", 10, false);
-		Then.iShouldSeeP13nItem("Created (Complex)", 11, false);
-		Then.iShouldSeeP13nItem("Created By", 12, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code", 13, false);
-		Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
-	}
 });
