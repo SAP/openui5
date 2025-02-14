@@ -45,7 +45,7 @@
 		<Panel expandable="false" visible="{ui>/bCodeVisible}" headerText="Source Code after Templating" width="auto" class="sapUiResponsiveMargin">
 			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/sCode}"/>
 		</Panel>
-		<form:SimpleForm columnsL="3" columnsM="2" editable="true" id="simpleForm" labelSpanL="12"
+		<form:SimpleForm columnsL="3" columnsM="2" editable="true" labelSpanL="12"
 				labelSpanM="12" layout="ResponsiveGridLayout">
 			<!--TODO: sap.ui.model.odata.type.Binary not yet available
 			<core:Title text="sap.ui.model.odata.type.Binary" />
