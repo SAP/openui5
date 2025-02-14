@@ -2,6 +2,7 @@
 	controllerName="sap.ui.demo.MockServer.controller.App"
 	displayBlock="true"
 	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Shell>
 		<App>
@@ -12,9 +13,10 @@
 				<List id="list" items="{/FindUpcomingMeetups}" noDataText="{i18n>noDataText}">
 					<items>
 						<ObjectListItem
+							core:require="{DateTime: 'sap/ui/model/type/DateTime'}"
 							number="{
 								path: 'EventDate',
-								type: 'sap.ui.model.type.DateTime',
+								type: 'DateTime',
 								formatOptions: {
 									style: 'medium'
 								}
