@@ -3190,6 +3190,8 @@ sap.ui.define([
 		this.mock(ODataModel.prototype._request).expects("bind")
 			.withExactArgs(sinon.match.same(oDataModel))
 			.returns("~_request");
+		this.mock(ODataMetaModel).expects("cleanupCodeListModelURLParameters")
+			.withExactArgs(sinon.match.same(oCodeListModel), "~sMetadataUrl");
 		oCodeListModelMock.expects("_read")
 			.withExactArgs("/~Currencies", sinon.match.object, undefined, "~_request")
 			.callsFake(function (sPath, mParams) {
@@ -3229,8 +3231,7 @@ sap.ui.define([
 
 			return oFetchCodeListPromise.catch(function () {/*avoid uncaught in Promise*/});
 		}).finally(function () {
-			// clear global cache
-			mCodeListUrl2Promise.clear();
+			ODataMetaModel.clearCodeListsCache();
 		});
 	});
 
@@ -3381,6 +3382,8 @@ sap.ui.define([
 				});
 			this.mock(oMetaModel).expects("_getOrCreateSharedModelCache").withExactArgs()
 				.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
+			this.mock(ODataMetaModel).expects("cleanupCodeListModelURLParameters")
+				.withExactArgs(sinon.match.same(oCodeListModel), "/fake/emptySchema/$metadata");
 			this.mock(oCodeListModel).expects("_read")
 				.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 				.callsFake(function (sPath, mParams) {
@@ -3464,6 +3467,8 @@ sap.ui.define([
 		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
 		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
+		this.mock(ODataMetaModel).expects("cleanupCodeListModelURLParameters")
+			.withExactArgs(sinon.match.same(oCodeListModel), "/fake/emptySchema/$metadata");
 		this.mock(oCodeListModel).expects("_read")
 			.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
@@ -3517,6 +3522,8 @@ sap.ui.define([
 		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
 		oMetaModelMock.expects("_getOrCreateSharedModelCache").withExactArgs()
 			.returns({/* bFirstCodeListRequested : false, */oModel : oCodeListModel});
+		this.mock(ODataMetaModel).expects("cleanupCodeListModelURLParameters")
+			.withExactArgs(sinon.match.same(oCodeListModel), "/GWSAMPLE_BASIC/$metadata");
 		this.mock(oCodeListModel).expects("_read")
 			.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {
@@ -3604,6 +3611,9 @@ sap.ui.define([
 
 					return oCodeListModelCache;
 				});
+			const oODataMetaModelMock = this.mock(ODataMetaModel);
+			oODataMetaModelMock.expects("cleanupCodeListModelURLParameters")
+				.withExactArgs(sinon.match.same(oCodeListModel), "~sMetadataUrl");
 			oCodeListModelMock.expects("_read")
 				.withExactArgs("/~" + sFirstCodeList, sinon.match.object, undefined, sinon.match.func)
 				.callsFake(function (sPath, mParams) {
@@ -3640,6 +3650,8 @@ sap.ui.define([
 
 							return oCodeListModelCache;
 						});
+					oODataMetaModelMock.expects("cleanupCodeListModelURLParameters")
+						.withExactArgs(sinon.match.same(oCodeListModel), "~sMetadataUrl");
 					oCodeListModelMock.expects("_read")
 						.withExactArgs("/~" + sSecondCodeList, sinon.match.object, undefined, sinon.match.func)
 						.callsFake(function (sPath, mParams) {
@@ -3670,84 +3682,16 @@ sap.ui.define([
 						.catch(function () {/*avoid uncaught in Promise*/});
 				}).finally(function () {
 					assert.strictEqual(oMetaModel.oSharedModelCache, undefined);
-					mCodeListUrl2Promise.clear(); // clear promise cache
+				}).then(() => {
+					assert.ok(mCodeListUrl2Promise.size > 0);
+
+					// code under test
+					ODataMetaModel.clearCodeListsCache();
+
+					assert.strictEqual(mCodeListUrl2Promise.size, 0);
 				});
 		});
 			});
-		});
-	});
-
-	//*********************************************************************************************
-	[{
-		sMetadataUrl : "/fake/emptySchema/$metadata",
-		mReadUrlParams : {$skip : 0, $top : 5000}
-	}, {
-		sMetadataUrl : "/fake/emptySchema/$metadata?sap-client=123",
-		mReadUrlParams : {"sap-client" : "123", $skip : 0, $top : 5000}
-	}, {
-		sMetadataUrl : "/fake/emptySchema/$metadata?sap-language=EN",
-		mReadUrlParams : {"sap-language" : "EN", $skip : 0, $top : 5000}
-	}, {
-		sMetadataUrl : "/fake/emptySchema/$metadata?sap-language=EN&sap-documentation=heading"
-			+ "&sap-client=123",
-		mReadUrlParams : {"sap-client" : "123", "sap-language" : "EN", $skip : 0, $top : 5000}
-	}].forEach(function (oFixture, i) {
-		["CurrencyCodes", "UnitsOfMeasure"].forEach(function (sCodeList) {
-		var sTitle = "fetchCodeList: consider client and language; " + sCodeList + "; #" + i;
-
-		QUnit.test(sTitle, function (assert) {
-			var mCodeListUrl2Promise,
-				oCodeListModel = {
-					_read : function () {}
-				},
-				oCodeListModelCache = {bFirstCodeListRequested : false, oModel : oCodeListModel},
-				oCodeListModelMock = this.mock(oCodeListModel),
-				oDataModel = new ODataModel("/fake/emptySchema"),
-				oDataModelMock = this.mock(oDataModel),
-				oEntityContainer = {
-					"com.sap.vocabularies.CodeList.v1.CurrencyCodes" : {
-						CollectionPath : {String : "CurrencyCodes"},
-						Url : {String : "./$metadata"}
-					},
-					"com.sap.vocabularies.CodeList.v1.UnitsOfMeasure" : {
-						CollectionPath : {String : "UnitsOfMeasure"},
-						Url : {String : "./$metadata"}
-					}
-				},
-				oMetaModel = oDataModel.getMetaModel(),
-				oMetaModelMock = this.mock(oMetaModel);
-
-			oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
-			oDataModelMock.expects("getMetadataUrl").withExactArgs().returns(oFixture.sMetadataUrl);
-			// A workaround to get the global cache instances as they are not visible to the test, don't
-			// mock Map.prototype as test framework uses also Map i.e. for storing uncaught promises
-			this.mock(Map.prototype).expects("get")
-				.withExactArgs(oFixture.sMetadataUrl + "#" + sCodeList)
-				.callsFake(function (sKey) {
-					mCodeListUrl2Promise = this;
-					Map.prototype.get.restore();
-
-					return undefined;
-				});
-			oMetaModelMock.expects("_getOrCreateSharedModelCache")
-				.withExactArgs()
-				.returns(oCodeListModelCache);
-			oCodeListModelMock.expects("_read")
-				.withExactArgs("/" + sCodeList, sinon.match.object, undefined, sinon.match.func)
-				.callsFake(function (sPath, mParams) {
-					assert.deepEqual(mParams.urlParameters, oFixture.mReadUrlParams);
-					mParams.success({results : []});
-				});
-			oMetaModelMock.expects("_getPropertyNamesForCodeListCustomizing")
-				.withExactArgs(sCodeList)
-				.returns({});
-
-			// code under test
-			return oMetaModel.fetchCodeList(sCodeList)
-				.finally(function () {
-					mCodeListUrl2Promise.clear(); // clear promise cache
-				});
-		});
 		});
 	});
 
@@ -3804,6 +3748,8 @@ sap.ui.define([
 
 				return this.oSharedModelCache;
 			});
+		this.mock(ODataMetaModel).expects("cleanupCodeListModelURLParameters")
+			.withExactArgs(sinon.match.same(oCodeListModel), "~sMetadataUrl");
 		oCodeListModelMock.expects("_read")
 			.withExactArgs("/~CollectionPath", sinon.match.object, undefined, sinon.match.func)
 			.callsFake(function (sPath, mParams) {

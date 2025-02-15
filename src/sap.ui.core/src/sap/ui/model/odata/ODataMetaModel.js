@@ -5,6 +5,7 @@
 sap.ui.define([
 	"./_ODataMetaModelUtils",
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/json/JSONTreeBinding"
-], function (Utils, Log, isEmptyObject, BindingParser, ManagedObject, SyncPromise, _Helper, BindingMode,
+], function (Utils, Log, Localization, isEmptyObject, BindingParser, ManagedObject, SyncPromise, _Helper, BindingMode,
 		ClientContextBinding, Context, FilterProcessor, MetaModel, JSONListBinding, JSONModel, JSONPropertyBinding,
 		JSONTreeBinding) {
 	"use strict";
@@ -1228,6 +1229,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes all parameters from the given model's <code>aUrlParams</code> except "sap-language" and "sap-client".
+	 * Other parameters are not relevant for fetching the code lists.
+	 *
+	 * @param {sap.ui.model.odata.v2.ODataModel} oModel The code list OData model
+	 * @param {string} sMetaDataUrl The metadata URL
+	 *
+	 * @private
+	 */
+	ODataMetaModel.cleanupCodeListModelURLParameters = function (oModel, sMetaDataUrl) {
+		let bHasLanguage = false;
+		// aUrlParams may have single or multiple with "&" joined parameters per entry, e.g.
+		// ["sap-language=EN&sap-client=123", "sap-statistics=true", ...]
+		oModel.aUrlParams = oModel.aUrlParams.join("&").split("&").filter((sParameter) => {
+			if (sParameter.startsWith("sap-language=")) {
+				bHasLanguage = true;
+				return true;
+			}
+			return sParameter.startsWith("sap-client=");
+		});
+		if (!bHasLanguage) {
+			const oURLSearchParams = new URL(sMetaDataUrl, "https://localhost").searchParams;
+			// ensure that "sap-language" is always set for caching purposes (browser cache);
+			// if the model has been created via sap.ui.core.Component the metadata URL always contains
+			// "sap-language" parameter; if the model is created otherwise "sap-language" parameter might
+			// be missing; no need to add sap-client, as is automatically added if given via
+			// configuration or parameters
+			oModel.aUrlParams.push("sap-language="
+				+ (oURLSearchParams.get("sap-language") ?? Localization.getSAPLogonLanguage()));
+		}
+	};
+
+	/**
 	 * Requests the customizing based on the code list reference given in the entity container's
 	 * <code>com.sap.vocabularies.CodeList.v1.*</code> annotation for the term specified in the
 	 * <code>sTerm</code> parameter. Once a code list has been requested, the promise is cached.
@@ -1299,21 +1332,11 @@ sap.ui.define([
 			oCodeListModel = oCodeListModelCache.oModel;
 
 			oReadPromise = new SyncPromise(function (fnResolve, fnReject) {
-				const oURLSearchParams = new URL(sMetaDataUrl, "https://localhost").searchParams;
-				const sClient = oURLSearchParams.get("sap-client");
-				const sLanguage = oURLSearchParams.get("sap-language");
-				const mUrlParameters = {$skip : 0, $top : 5000}; // avoid server-driven paging
-
-				if (sClient) {
-					mUrlParameters["sap-client"] = sClient;
-				}
-				if (sLanguage) {
-					mUrlParameters["sap-language"] = sLanguage;
-				}
+				ODataMetaModel.cleanupCodeListModelURLParameters(oCodeListModel, sMetaDataUrl);
 				oCodeListModel._read("/" + sCollectionPath, {
 					error : fnReject,
 					success : fnResolve,
-					urlParameters : mUrlParameters
+					urlParameters : {$skip : 0, $top : 5000}
 				}, undefined, that.oDataModel._request.bind(that.oDataModel));
 			});
 			oMappingPromise = new SyncPromise(function (fnResolve, fnReject) {
@@ -2075,6 +2098,15 @@ sap.ui.define([
 		}
 
 		return undefined;
+	};
+
+	/**
+	 * Clears the cache used in {@link #fetchCodeList}. To be used by test code only!
+	 *
+	 * @private
+	 */
+	ODataMetaModel.clearCodeListsCache = function () {
+		mCodeListUrl2Promise.clear();
 	};
 
 	return ODataMetaModel;

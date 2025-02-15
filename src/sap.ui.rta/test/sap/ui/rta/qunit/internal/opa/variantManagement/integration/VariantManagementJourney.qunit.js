@@ -1,5 +1,6 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"test-resources/sap/ui/rta/integration/pages/Common",
@@ -7,6 +8,7 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/integration/pages/ChangeVisualization",
 	"test-resources/sap/ui/fl/testutils/opa/TestLibrary"
 ], (
+	Lib,
 	opaTest,
 	Opa5,
 	Common
@@ -26,6 +28,7 @@ sap.ui.define([
 	const sStandardVariantName = "Standard";
 	const sNewVariantName = "TestVariant1";
 	const sTitleId = "__component0---app--TitleForVM1";
+	const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	QUnit.module("VariantManagement");
 
@@ -141,13 +144,13 @@ sap.ui.define([
 	opaTest("I switch to the standard variant", (Given, When, Then) => {
 		const sDialogId = "controlVariantWarningDialog";
 		const sButtonTextKey = "BTN_MODIFIED_VARIANT_SAVE";
-		const sDialogType = "Warning";
+		const sDialogTitle = oRtaResourceBundle.getText("HEADER_WARNING");
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
 		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SWITCH_SUBMENU")
 		.and.iClickOnAVariantMenu(sStandardVariantName);
 
-		Then.onPageWithRTA.iShouldSeeTheDialog(sDialogId, sDialogType);
+		Then.onPageWithRTA.iShouldSeeTheDialog(sDialogId, sDialogTitle);
 
 		When.onPageWithRTA.iClickTheButtonWithTextKey(sButtonTextKey);
 
@@ -249,13 +252,13 @@ sap.ui.define([
 	opaTest("I switch to the standard variant", (Given, When, Then) => {
 		const sDialogId = "controlVariantWarningDialog";
 		const sButtonTextKey = "BTN_MODIFIED_VARIANT_DISCARD";
-		const sDialogType = "Warning";
+		const sDialogTitle = oRtaResourceBundle.getText("HEADER_WARNING");
 
 		When.onPageWithRTA.iRightClickOnAnElementOverlay(sVMControlId)
 		.and.iClickOnAContextMenuEntryWithKey("CTX_VARIANT_SWITCH_SUBMENU")
 		.and.iClickOnAVariantMenu(sStandardVariantName);
 
-		Then.onPageWithRTA.iShouldSeeTheDialog(sDialogId, sDialogType);
+		Then.onPageWithRTA.iShouldSeeTheDialog(sDialogId, sDialogTitle);
 
 		When.onPageWithRTA.iClickTheButtonWithTextKey(sButtonTextKey);
 

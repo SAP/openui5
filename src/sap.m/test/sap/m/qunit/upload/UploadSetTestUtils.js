@@ -1,14 +1,15 @@
 sap.ui.define([
+	"sap/m/upload/UploadSetItem",
 	"sap/m/ObjectMarker",
 	"sap/m/ObjectStatus",
 	"sap/m/ObjectAttribute"
-], function(ObjectMarker, ObjectStatus, ObjectAttribute) {
+], function (UploadSetItem, ObjectMarker, ObjectStatus, ObjectAttribute) {
 	"use strict";
 
 	var UploadSetTestUtils = {};
 
 	UploadSetTestUtils.createItemTemplate = function () {
-		return new undefined/*UploadSetItem*/({
+		return new UploadSetItem({
 			enabledRemove: "{enabledRemove}",
 			enabledEdit: "{enabledEdit}",
 			fileName: "{fileName}",

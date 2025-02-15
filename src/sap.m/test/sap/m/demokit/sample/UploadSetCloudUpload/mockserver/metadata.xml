@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+	xmlns="http://docs.oasis-open.org/odata/ns/edm" Version="4.0">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SESSION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="Session"/>
+		<edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="SAP__session"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HTML5',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.HTML5.v1" Alias="SAP__HTML5"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PDF',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.PDF.v1" Alias="SAP__PDF"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.srvd.cmis_myfiles.v0001" Alias="SAP__self">
+			<Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+			<EntityType Name="FileSharesType">
+				<Key>
+					<PropertyRef Name="FileShare"/>
+				</Key>
+				<Property Name="FileShare" Type="Edm.String" Nullable="false" MaxLength="15"/>
+				<Property Name="FileShareType" Type="Edm.String" Nullable="false" MaxLength="1"/>
+				<Property Name="FileShareRoot" Type="Edm.String" Nullable="false" MaxLength="100"/>
+				<Property Name="FileShareDescription" Type="Edm.String" Nullable="false" MaxLength="60"/>
+				<NavigationProperty Name="_Root" Type="com.sap.gateway.srvd.cmis_myfiles.v0001.FileShareItemsType"/>
+			</EntityType>
+			<EntityType Name="FileShareItemsType">
+				<Key>
+					<PropertyRef Name="FileShare"/>
+					<PropertyRef Name="FileShareItem"/>
+				</Key>
+				<Property Name="FileShare" Type="Edm.String" Nullable="false" MaxLength="15"/>
+				<Property Name="FileShareItem" Type="Edm.String" Nullable="false" MaxLength="255"/>
+				<Property Name="ParentFileShareItem" Type="Edm.String" Nullable="false" MaxLength="255"/>
+				<Property Name="FileShareItemKind" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="FileShareItemName" Type="Edm.String" Nullable="false"/>
+				<Property Name="CreatedByUser" Type="Edm.String" Nullable="false"/>
+				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="LastChangedByUser" Type="Edm.String" Nullable="false"/>
+				<Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="isDocumentCreationAllowed" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="FileShareItemContent" Type="Edm.Stream"/>
+				<Property Name="FileShareItemContentType" Type="Edm.String" Nullable="false" MaxLength="128"/>
+				<Property Name="FileShareItemContentSize" Type="Edm.Int64" Nullable="false"/>
+				<Property Name="FileShareItemContentLink" Type="Edm.String" Nullable="false"/>
+				<Property Name="__CreateByAssociationControl" Type="com.sap.gateway.srvd.cmis_myfiles.v0001.FileShareItemsCbAControl"/>
+				<Property Name="__EntityControl" Type="com.sap.gateway.srvd.cmis_myfiles.v0001.EntityControl"/>
+				<NavigationProperty Name="_Children" Type="Collection(com.sap.gateway.srvd.cmis_myfiles.v0001.FileShareItemsType)"/>
+				<NavigationProperty Name="_Parent" Type="com.sap.gateway.srvd.cmis_myfiles.v0001.FileShareItemsType" Nullable="false">
+					<ReferentialConstraint Property="FileShare" ReferencedProperty="FileShare"/>
+					<ReferentialConstraint Property="ParentFileShareItem" ReferencedProperty="FileShareItem"/>
+				</NavigationProperty>
+			</EntityType>
+			<ComplexType Name="FileShareItemsCbAControl">
+				<Property Name="_Children" Type="Edm.Boolean" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="EntityControl">
+				<Property Name="Deletable" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="Updatable" Type="Edm.Boolean" Nullable="false"/>
+			</ComplexType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="FileShareItems" EntityType="com.sap.gateway.srvd.cmis_myfiles.v0001.FileShareItemsType">
+					<NavigationPropertyBinding Path="_Children" Target="FileShareItems"/>
+					<NavigationPropertyBinding Path="_Parent" Target="FileShareItems"/>
+				</EntitySet>
+				<EntitySet Name="FileShares" EntityType="com.sap.gateway.srvd.cmis_myfiles.v0001.FileSharesType">
+					<NavigationPropertyBinding Path="_Root" Target="FileShareItems"/>
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.FileSharesType/FileShare">
+				<Annotation Term="SAP__common.Text" Path="FileShareDescription">
+					<Annotation Term="SAP__UI.TextArrangement" EnumMember="SAP__UI.TextArrangementType/TextFirst"/></Annotation>
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Label" String="File Share ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileSharesType/FileShareType">
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Label" String="File Share Type"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/FileShares">
+				<Annotation Term="SAP__capabilities.NavigationRestrictions">
+					<Record>
+						<PropertyValue Property="RestrictedProperties">
+							<Collection>
+								<Record>
+									<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_Root"/>
+									<PropertyValue Property="InsertRestrictions">
+										<Record>
+											<PropertyValue Property="Insertable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+									<PropertyValue Property="SortRestrictions">
+										<Record>
+											<PropertyValue Property="Sortable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+									<PropertyValue Property="FilterRestrictions">
+										<Record>
+											<PropertyValue Property="Filterable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__core.OptimisticConcurrency">
+					<Collection/>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FileShare"/>
+									<PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FileShareType"/>
+									<PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.FileSharesType">
+				<Annotation Term="SAP__common.Label" String="File Share"/>
+				<Annotation Term="SAP__UI.Facets">
+					<Collection>
+						<Record Type="SAP__UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Root"/>
+							<PropertyValue Property="Target" AnnotationPath="_Root/@SAP__UI.FieldGroup"/>
+						</Record>
+						<Record Type="SAP__UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Root Items"/>
+							<PropertyValue Property="Target" AnnotationPath="_Root/_Children/@SAP__UI.LineItem"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__UI.FieldGroup">
+					<Record>
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="SAP__UI.DataField">
+									<PropertyValue Property="Value" Path="FileShare"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="File Share"/>
+						<PropertyValue Property="TypeNamePlural" String="File Shares"/>
+						<PropertyValue Property="Title">
+							<Record Type="SAP__UI.DataField">
+								<PropertyValue Property="Value" Path="FileShare"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record Type="SAP__UI.DataField">
+								<PropertyValue Property="Value" Path="FileShareDescription"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__UI.LineItem">
+					<Collection>
+						<Record Type="SAP__UI.DataField">
+							<PropertyValue Property="Value" Path="FileShare"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShare">
+				<Annotation Term="SAP__common.Label" String="File Share"/>
+				<Annotation Term="SAP__common.QuickInfo" String="File Share ID"/>
+				<Annotation Term="SAP__core.Computed"/>
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Heading" String="File Share ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShareItem">
+				<Annotation Term="SAP__common.Label" String="Item"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Item ID"/>
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/ParentFileShareItem">
+				<Annotation Term="SAP__common.Label" String="Parent Item"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Parent Item"/>
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShareItemKind">
+				<Annotation Term="SAP__common.Label" String="Kind"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Kind"/>
+				<Annotation Term="SAP__core.Immutable"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShareItemName">
+				<Annotation Term="SAP__common.Label" String="Name"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Name"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/CreatedByUser">
+				<Annotation Term="SAP__common.Label" String="Created by"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Created by"/>
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/CreationDateTime">
+				<Annotation Term="SAP__common.Label" String="Created at"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Created at"/>
+				<Annotation Term="SAP__core.Computed"/>
+				<Annotation Term="SAP__common.Heading" String="Time Stamp"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/LastChangedByUser">
+				<Annotation Term="SAP__common.Label" String="Changed by"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Changed by"/>
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/LastChangeDateTime">
+				<Annotation Term="SAP__common.Label" String="Changed at"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Changed at"/>
+				<Annotation Term="SAP__core.Computed"/>
+				<Annotation Term="SAP__common.Heading" String="Time Stamp"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/isDocumentCreationAllowed">
+				<Annotation Term="SAP__common.Label" String="Is Document Creation Allowed"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Is Document Creation Allowed"/>
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Heading" String="Truth Value"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShareItemContent">
+				<Annotation Term="SAP__core.ContentDisposition">
+					<Record>
+						<PropertyValue Property="Filename" Path="FileShareItemName"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__core.MediaType" Path="FileShareItemContentType"/>
+				<Annotation Term="SAP__common.Label" String="Content"/>
+				<Annotation Term="SAP__common.QuickInfo" String="File Content"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShareItemContentType">
+				<Annotation Term="SAP__core.IsMediaType"/>
+				<Annotation Term="SAP__common.Label" String="Content Type"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Content Type"/>
+				<Annotation Term="SAP__common.Heading" String="Type"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShareItemContentSize">
+				<Annotation Term="SAP__common.Label" String="Size"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Content Size"/>
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/FileShareItemContentLink">
+				<Annotation Term="SAP__common.Label" String="Link"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Content Link"/>
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/__CreateByAssociationControl">
+				<Annotation Term="SAP__core.Computed"/>
+				<Annotation Term="SAP__UI.HiddenFilter"/>
+				<Annotation Term="SAP__UI.Hidden"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType/__EntityControl">
+				<Annotation Term="SAP__core.Computed"/>
+				<Annotation Term="SAP__UI.HiddenFilter"/>
+				<Annotation Term="SAP__UI.Hidden"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/FileShareItems">
+				<Annotation Term="SAP__capabilities.NavigationRestrictions">
+					<Record>
+						<PropertyValue Property="RestrictedProperties">
+							<Collection>
+								<Record>
+									<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_Children"/>
+									<PropertyValue Property="InsertRestrictions">
+										<Record>
+											<PropertyValue Property="Insertable" Path="__CreateByAssociationControl/_Children"/>
+										</Record>
+									</PropertyValue>
+									<PropertyValue Property="FilterRestrictions">
+										<Record>
+											<PropertyValue Property="Filterable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+								</Record>
+								<Record>
+									<PropertyValue Property="NavigationProperty" NavigationPropertyPath="_Parent"/>
+									<PropertyValue Property="InsertRestrictions">
+										<Record>
+											<PropertyValue Property="Insertable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+									<PropertyValue Property="SortRestrictions">
+										<Record>
+											<PropertyValue Property="Sortable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+									<PropertyValue Property="FilterRestrictions">
+										<Record>
+											<PropertyValue Property="Filterable" Bool="false"/>
+										</Record>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="Filterable" Bool="true"/>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FileShareItem"/>
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="ParentFileShareItem"/>
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FileShareItemKind"/>
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FileShareItemName"/>
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="CreatedByUser"/>
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="LastChangedByUser"/>
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FileShareItemContentLink"/>
+									<PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="NonFilterableProperties">
+							<Collection>
+								<PropertyPath>FileShareItem</PropertyPath>
+								<PropertyPath>ParentFileShareItem</PropertyPath>
+								<PropertyPath>FileShareItemKind</PropertyPath>
+								<PropertyPath>FileShareItemName</PropertyPath>
+								<PropertyPath>CreatedByUser</PropertyPath>
+								<PropertyPath>CreationDateTime</PropertyPath>
+								<PropertyPath>LastChangedByUser</PropertyPath>
+								<PropertyPath>LastChangeDateTime</PropertyPath>
+								<PropertyPath>isDocumentCreationAllowed</PropertyPath>
+								<PropertyPath>FileShareItemContent</PropertyPath>
+								<PropertyPath>FileShareItemContentType</PropertyPath>
+								<PropertyPath>FileShareItemContentSize</PropertyPath>
+								<PropertyPath>FileShareItemContentLink</PropertyPath>
+								<PropertyPath>__CreateByAssociationControl</PropertyPath>
+								<PropertyPath>__EntityControl</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>FileShareItem</PropertyPath>
+								<PropertyPath>ParentFileShareItem</PropertyPath>
+								<PropertyPath>FileShareItemKind</PropertyPath>
+								<PropertyPath>FileShareItemName</PropertyPath>
+								<PropertyPath>CreatedByUser</PropertyPath>
+								<PropertyPath>LastChangedByUser</PropertyPath>
+								<PropertyPath>isDocumentCreationAllowed</PropertyPath>
+								<PropertyPath>FileShareItemContentLink</PropertyPath>
+								<PropertyPath>__CreateByAssociationControl</PropertyPath>
+								<PropertyPath>__EntityControl</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Path="__EntityControl/Deletable"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Path="__EntityControl/Updatable"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__core.OptimisticConcurrency">
+					<Collection/>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShareItemsType">
+				<Annotation Term="SAP__common.Label" String="File Share Item"/>
+				<Annotation Term="SAP__UI.Facets">
+					<Collection>
+						<Record Type="SAP__UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="File Share Item"/>
+							<PropertyValue Property="Target" AnnotationPath="@SAP__UI.FieldGroup"/>
+						</Record>
+						<Record Type="SAP__UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Children"/>
+							<PropertyValue Property="Target" AnnotationPath="_Children/@SAP__UI.LineItem"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__UI.FieldGroup">
+					<Record>
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="SAP__UI.DataField">
+									<PropertyValue Property="Value" Path="FileShareItemName"/>
+								</Record>
+								<Record Type="SAP__UI.DataField">
+									<PropertyValue Property="Value" Path="FileShareItemKind"/>
+								</Record>
+								<Record Type="SAP__UI.DataField">
+									<PropertyValue Property="Value" Path="FileShareItemContent"/>
+								</Record>
+								<Record Type="SAP__UI.DataField">
+									<PropertyValue Property="Value" Path="FileShareItem"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="File Share Item"/>
+						<PropertyValue Property="TypeNamePlural" String="File Share Items"/>
+						<PropertyValue Property="Title">
+							<Record Type="SAP__UI.DataField">
+								<PropertyValue Property="Value" Path="FileShareItemName"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__UI.LineItem">
+					<Collection>
+						<Record Type="SAP__UI.DataField">
+							<PropertyValue Property="Value" Path="FileShareItemName"/>
+						</Record>
+						<Record Type="SAP__UI.DataField">
+							<PropertyValue Property="Value" Path="FileShareItemKind"/>
+						</Record>
+						<Record Type="SAP__UI.DataField">
+							<PropertyValue Property="Value" Path="FileShareItemContent"/>
+						</Record>
+						<Record Type="SAP__UI.DataField">
+							<PropertyValue Property="Value" Path="FileShareItem"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container">
+				<Annotation Term="SAP__aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>groupby</String>
+								<String>filter</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Rollup" EnumMember="SAP__aggregation.RollupType/None"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+				<Annotation Term="SAP__capabilities.FilterFunctions">
+					<Collection>
+						<String>eq</String>
+						<String>ne</String>
+						<String>gt</String>
+						<String>ge</String>
+						<String>lt</String>
+						<String>le</String>
+						<String>and</String>
+						<String>or</String>
+						<String>contains</String>
+						<String>startswith</String>
+						<String>endswith</String>
+						<String>any</String>
+						<String>all</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.SupportedFormats">
+					<Collection>
+						<String>application/json</String>
+						<String>application/pdf</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__PDF.Features">
+					<Record>
+						<PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
+						<PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
+						<PropertyValue Property="ArchiveFormat" Bool="true"/>
+						<PropertyValue Property="Border" Bool="true"/>
+						<PropertyValue Property="CoverPage" Bool="true"/>
+						<PropertyValue Property="FitToPage" Bool="true"/>
+						<PropertyValue Property="FontName" Bool="true"/>
+						<PropertyValue Property="FontSize" Bool="true"/>
+						<PropertyValue Property="Margin" Bool="true"/>
+						<PropertyValue Property="Signature" Bool="true"/>
+						<PropertyValue Property="ResultSizeDefault" Int="20000"/>
+						<PropertyValue Property="ResultSizeMaximum" Int="20000"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.FileSharesType/FileShareRoot">
+				<Annotation Term="SAP__common.Label" String="Root Folder Path"/>
+				<Annotation Term="SAP__common.Heading" String="File Share Repository Root Folder Path"/>
+				<Annotation Term="SAP__common.QuickInfo" String="File Share Repository Root Folder Path"/>
+			</Annotations>
+			<Annotations Target="SAP__self.FileSharesType/FileShareDescription">
+				<Annotation Term="SAP__common.Label" String="Description"/>
+				<Annotation Term="SAP__common.Heading" String="File Share Description"/>
+				<Annotation Term="SAP__common.QuickInfo" String="File Share Description"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

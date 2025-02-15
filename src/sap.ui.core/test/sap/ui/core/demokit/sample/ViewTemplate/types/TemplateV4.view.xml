@@ -7,8 +7,7 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	template:require="{AH: 'sap/ui/model/odata/v4/AnnotationHelper'}"
 	width="100%">
-	<form:SimpleForm columnsM="1" editable="true" id="simpleForm" labelSpanL="12"
-			labelSpanM="12" layout="ResponsiveGridLayout">
+	<form:SimpleForm columnsM="1" editable="true" labelSpanL="12" labelSpanM="12" layout="ResponsiveGridLayout">
 		<core:Title text="com.sap.vocabularies.UI.v1.Identification"/>
 		<template:repeat list="{meta>@com.sap.vocabularies.UI.v1.Identification}" var="field">
 			<Label labelFor="Identification::{field>Value/$Path}" text="{field>Label}"/>

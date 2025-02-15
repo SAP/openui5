@@ -666,7 +666,7 @@ sap.ui.define([
 		}
 		var oBox = new VBox().addStyleClass("commonSettings");
 		oSettingsPanel.addItem(oBox);
-		oBox.addItem(new Title({
+		oBox.addItem(new Text({
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN"),
 			wrapping: true
 		}).addStyleClass("stitle"));
