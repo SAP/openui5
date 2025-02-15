@@ -1,0 +1,38 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		title="Grouping, Sorting and Filtering of Items"
+		confirm="onViewSettingsConfirm">
+		<sortItems>
+			<ViewSettingsItem text="File Name" key="fileName" />
+			<ViewSettingsItem text="Mime Type" key="mimeType" />
+		</sortItems>
+		<groupItems>
+			<ViewSettingsItem text="Uploaded By" key="uploadedBy" selected="true" />
+			<ViewSettingsItem text="Mime Type" key="mimeType" />
+			<ViewSettingsItem text="File Name" key="fileName" />
+		</groupItems>
+		<filterItems>
+			<ViewSettingsFilterItem
+				text="File Size"
+				key="fileSize"
+				multiSelect="true">
+				<items>
+					<ViewSettingsItem text="Less than 100 KB" key="fileSize LT 102400" />
+					<ViewSettingsItem text="Between 100 KB and 1 MB" key="fileSize BT 102400 1048576" />
+					<ViewSettingsItem text="More Than 1 MB" key="fileSize GT 1048576" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem
+				text="Upload State"
+				key="uploadState"
+				multiSelect="true">
+				<items>
+					<ViewSettingsItem text="Complete" key="uploadState EQ Complete" />
+					<ViewSettingsItem text="InComplete" key="uploadState EQ InComplete" />
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

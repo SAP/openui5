@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/base/i18n/Localization",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/MetaModel",
@@ -11,7 +12,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/ODataMetaModel"
-], (Log, SyncPromise, _Helper, BindingMode, MetaModel, Model, JSONModel, ODataMetaModelUtils, ODataMetaModel) => {
+], (Log, SyncPromise, Localization, _Helper, BindingMode, MetaModel, Model, JSONModel, ODataMetaModelUtils,
+		ODataMetaModel) => {
 	/*global QUnit, sinon*/
 	"use strict";
 
@@ -724,6 +726,38 @@ sap.ui.define([
 			assert.throws(() => {
 				ODataMetaModel.prototype._getPropertyNamesForCodeListCustomizing.call(oMetaModel, "~collectionPath");
 			}, oFixture.error);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		aUrlParams: [],
+		sMetadataUrl: "/~metadataUrl",
+		bUseDefaultLanguage: true,
+		aExpectedUrlParams: ["sap-language=~defaultLanguage"]
+	}, {
+		aUrlParams: [], sMetadataUrl: "/~metadataUrl?sap-language=EN", aExpectedUrlParams: ["sap-language=EN"]
+	}, {
+		aUrlParams: ["sap-client=123&sap-language=FR"],
+		sMetadataUrl: "/~metadataUrl?sap-language=~fromMetadataUrl",
+		aExpectedUrlParams: ["sap-client=123", "sap-language=FR"]
+	}, {
+		aUrlParams: ["a=b", "c=d&sap-language=FR&e=f&sap-client=123&g=h", "mysap-language=Foo", "sap-client2=456"],
+		sMetadataUrl: "/~metadataUrl?sap-language=~fromMetadataUrl",
+		aExpectedUrlParams: ["sap-language=FR","sap-client=123"]
+	}].forEach(({aUrlParams, sMetadataUrl, bUseDefaultLanguage, aExpectedUrlParams}, i) => {
+		QUnit.test("cleanupCodeListModelURLParameters: #" + i, function (assert) {
+			const oCodelistODataModel = {aUrlParams};
+
+			this.mock(Localization).expects("getSAPLogonLanguage").withExactArgs()
+				.exactly(bUseDefaultLanguage ? 1 : 0)
+				.returns("~defaultLanguage");
+
+			// code under test
+			ODataMetaModel.cleanupCodeListModelURLParameters(oCodelistODataModel, sMetadataUrl);
+
+			assert.notStrictEqual(oCodelistODataModel.aUrlParams, aUrlParams);
+			assert.deepEqual(oCodelistODataModel.aUrlParams, aExpectedUrlParams);
 		});
 	});
 });

@@ -624,9 +624,9 @@ sap.ui.define([
 							return !oHashChanger.getHash().includes("sap-ui-fl-control-variant-id");
 						},
 						success() {
-							Opa5.assert.ok(true, "The URL parameter for variant id is present");
+							Opa5.assert.ok(true, "The URL parameter for variant id is not present");
 						},
-						errorMessage: "The URL parameter for variant id is not being added"
+						errorMessage: "The URL parameter for variant id is being added"
 					});
 				},
 				iShouldSeetheContextMenu() {
@@ -695,14 +695,14 @@ sap.ui.define([
 						errorMessage: "Did not find the Context Menu entries"
 					});
 				},
-				iShouldSeeTheDialog(sId, sType) {
+				iShouldSeeTheDialog(sId, sTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Dialog",
 						id: sId,
 						searchOpenDialogs: true,
 						success(oDialog) {
 							const oControl = oDialog[0] || oDialog;
-							Opa5.assert.strictEqual(oControl.getTitle(), sType, "The dialog is shown");
+							Opa5.assert.strictEqual(oControl.getTitle(), sTitle, "The dialog is shown");
 						},
 						errorMessage: "Did not find the Dialog"
 					});

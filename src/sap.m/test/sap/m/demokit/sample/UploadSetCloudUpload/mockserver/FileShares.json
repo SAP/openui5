@@ -1,0 +1,30 @@
+{
+    "@odata.context": "$metadata#FileShares",
+    "@odata.metadataEtag": "W/\"20220618141941\"",
+    "value": [
+      {
+        "FileShare": "Z_DEBAPRIYA_TES",
+        "FileShareType": "2",
+        "FileShareRoot": "/root/My Drive",
+        "FileShareDescription": "Debapriya Test"
+      },
+      {
+        "FileShare": "ZPERSONAL",
+        "FileShareType": "2",
+        "FileShareRoot": "",
+        "FileShareDescription": "YI3CLNT325 on GOOGLE_DRIVE via ZPERSONAL"
+      },
+      {
+        "FileShare": "ZPERSONAL2",
+        "FileShareType": "2",
+        "FileShareRoot": "",
+        "FileShareDescription": "YI3CLNT325 on GOOGLE_DRIVE via ZPERSONAL2"
+      },
+      {
+        "FileShare": "ZPERSONAL3",
+        "FileShareType": "2",
+        "FileShareRoot": "/root/SharedDrives",
+        "FileShareDescription": "Google Workspace Repository (SM Temp Test - do not remove)"
+      }
+    ]
+}

@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/type/DateTime",
 	"sap/m/ObjectListItem",
 	"sap/m/ObjectAttribute"
-], function(Controller, ObjectListItem, ObjectAttribute) {
+], function(Controller, DateTime, ObjectListItem, ObjectAttribute) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.MockServer.controller.App", {
@@ -24,7 +25,7 @@ sap.ui.define([
 					title: "{Title}",
 					number: {
 						path: 'EventDate',
-						type: 'sap.ui.model.type.DateTime',
+						type: DateTime,
 						formatOptions: {
 							style: 'medium'
 						}
