@@ -829,7 +829,8 @@ sap.ui.define([
 		assert.strictEqual(nMoreLink.getAttribute("aria-expanded"), "false", "The aria-expanded attribute should be false");
 
 		oTokenizer._handleNMoreIndicatorPress();
-		oTokenizer.rerender();
+		oTokenizer.invalidate();
+		await nextUIUpdate();
 
 		assert.strictEqual(nMoreLink.getAttribute("aria-haspopup"), "dialog", "The aria-haspopup attribute should be dialog");
 		assert.strictEqual(nMoreLink.getAttribute("aria-controls"), oPopover.getId(), "The aria-haspopup attribute should be dialog");
