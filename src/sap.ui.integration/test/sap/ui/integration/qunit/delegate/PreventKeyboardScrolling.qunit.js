@@ -2,20 +2,22 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/CardOverflow",
+	"sap/ui/integration/library",
 	"sap/m/VBox",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], (
 	Card,
-	CardOverflow,
+	integrationLibrary,
 	VBox,
 	QUnitUtils,
 	nextUIUpdate,
 	nextCardReadyEvent
 ) => {
 	"use strict";
+	const {CardOverflow} = integrationLibrary;
+
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 
 	const oTestManifest1 = {
