@@ -741,6 +741,9 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/SmartBusinessWriteAPI"]
 				}
 			},
+			/**
+			 * @deprecated Since 1.124
+			 */
 			"write/api/SACIntegrationUpdateVariant": {
 				group: "Write API",
 				coverage: {
