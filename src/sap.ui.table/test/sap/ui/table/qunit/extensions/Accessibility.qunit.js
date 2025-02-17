@@ -725,8 +725,11 @@ sap.ui.define([
 		}
 
 		if ($Cell.attr("colspan")) {
-			aLabels.push($Cell.attr("id") + "-inner");
 			aLabels.push(sTableId + "-ariacolspan");
+		}
+
+		if (bFocus && aLabels.length > 0) {
+			aLabels.unshift($Cell.attr("id") + "-inner");
 		}
 
 		assert.strictEqual(
