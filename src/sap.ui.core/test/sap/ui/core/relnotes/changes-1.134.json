@@ -1,0 +1,17 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "28ccb291baa8526c48736b7be73e32ff4ea0e0f6",
+        "type": "FIX",
+        "text": " ui5loader: make sap.ui.loader.config visible again in SDK"
+      },
+      {
+        "id": "0638f98c9ed2143edf24db341c21fd491df97d4b",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/*: use string value for sap-cancel-on-close"
+      }
+    ]
+  }
+}

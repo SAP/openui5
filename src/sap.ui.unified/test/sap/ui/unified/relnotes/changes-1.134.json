@@ -1,0 +1,12 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "fa523f9dc834faf3d263437abd8d755bb5c5f12b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Drag and drop interaction adjusted"
+      }
+    ]
+  }
+}

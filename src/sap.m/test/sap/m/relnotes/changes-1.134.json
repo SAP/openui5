@@ -3,6 +3,11 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "a43cc1feebac91cd6a55ad761e023f0717da1e16",
+        "type": "FEATURE",
+        "text": " MDCTable: Add \"Show/Hide Details\" state to P13n"
+      },
+      {
         "id": "c91adf90922a35a587dc7d1c59e949940a17d1b3",
         "type": "FIX",
         "text": "sap.m.Tokenizer: Invisible tokens related exceptions are now prevented"

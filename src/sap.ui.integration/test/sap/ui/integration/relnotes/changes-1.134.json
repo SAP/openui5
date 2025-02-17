@@ -3,6 +3,11 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "8f1f4a5935b7542aafc0485573cf721ce42b1b38",
+        "type": "FEATURE",
+        "text": " Integration Cards: Better styling for Adaptive Card's selectable containers"
+      },
+      {
         "id": "d5990ddbc7268937498e3c4dcab8d86979a99749",
         "type": "FIX",
         "text": " Integration Cards: Prevent multiple paginator dialogs from opening"

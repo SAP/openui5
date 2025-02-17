@@ -1,0 +1,12 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "04c21cc6a0065b6670c16eb9eccd6032930de206",
+        "type": "FIX",
+        "text": " InputListItem: Wrapping behavior in Belize"
+      }
+    ]
+  }
+}

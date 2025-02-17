@@ -1,0 +1,12 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "15b48eebe575b90b396820da3c72afbc2d65ae9a",
+        "type": "FIX",
+        "text": " UI5 2.0: failing tests fixed"
+      }
+    ]
+  }
+}
