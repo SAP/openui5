@@ -28,9 +28,9 @@
 			<mdc:ValueHelp
 				id="FH1"
 				validateInput="false"
-				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 				<mdc:typeahead>
-					<mdcvh:Popover title="Popover1" opensOnFocus="true">
+					<mdcvh:Popover title="Popover1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
@@ -61,9 +61,9 @@
 			<mdc:ValueHelp
 				id="FH2"
 				validateInput="false"
-				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 				<mdc:typeahead>
-					<mdcvh:Popover title="Popover2" opensOnFocus="true">
+					<mdcvh:Popover title="Popover2">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>

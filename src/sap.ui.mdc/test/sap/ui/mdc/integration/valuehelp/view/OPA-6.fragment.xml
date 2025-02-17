@@ -28,9 +28,9 @@
 			<mdc:ValueHelp
 				id="FH1"
 				validateInput="false"
-				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnClick": true\}\}'>
 				<mdc:typeahead>
-					<mdcvh:Popover title="Test1" opensOnClick="true">
+					<mdcvh:Popover title="Test1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
