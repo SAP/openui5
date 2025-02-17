@@ -3,7 +3,7 @@
 /* Belize High Contrast Black theme               */
 /* ============================================== */
 
-.sapUxAPObjectPageSubSection:focus {
+.sapUxAPObjectPageSubSectionFocusable:focus {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 	border-color: transparent;
@@ -13,7 +13,7 @@
 /* IE ignores outline-offset. Use an overlay: */
 /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop {
-	.sapUxAPObjectPageSubSection:focus:before {
+	.sapUxAPObjectPageSubSectionFocusable:focus:before {
 		border-width: 0.125rem;
 	}
 }
