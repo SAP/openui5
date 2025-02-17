@@ -3,8 +3,13 @@
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:layout="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc">
-
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		DateTimeOffsetType: 'sap/ui/model/odata/type/DateTimeOffset',
+		DateTimeWithTimezoneType: 'sap/ui/model/odata/type/DateTimeWithTimezone',
+		StringType: 'sap/ui/model/odata/type/String'
+	}">
 	<App>
 	<Page id="page" floatingFooter="true" showHeader="false"
 		title="Example how to use OData V4 Edm.DateTimeOffset in SAPUI5 applications">
@@ -38,18 +43,18 @@
 				<Text text="{
 						path: 'Timestamp',
 						formatter: '.formatTimestamp',
-						type: 'sap.ui.model.odata.type.String'
+						type: 'StringType'
 					}" />
 				<Label text="'Timestamp' in Current Time Zone" />
 				<Text text="{
-						parts: ['Timestamp', {value: null}],
-						type: 'sap.ui.model.odata.type.DateTimeWithTimezone'
+						parts: ['Timestamp', {value: ''}],
+						type: 'DateTimeWithTimezoneType'
 					}" />
 				<Label text="'Timestamp' Value as URI Parameter Value" />
 				<Text text="{
 						path: 'Timestamp',
 						formatter: '.formatTimestampAsURIParameter',
-						type: 'sap.ui.model.odata.type.String'
+						type: 'StringType'
 					}" />
 				<Label text="JSON Model Value '/Timestamp'" />
 				<Text text="{path: 'json>/Timestamp', formatter: '.formatTimestamp'}" />
@@ -71,19 +76,19 @@
 					<Text text="{
 							constraints: {V4: true},
 							path: 'json>Timestamp',
-							type: 'sap.ui.model.odata.type.DateTimeOffset'
+							type: 'DateTimeOffsetType'
 						}" />
 					<Label text="sap.m.Input" />
 					<Input value="{
 							constraints: {V4: true},
 							path: 'json>Timestamp',
-							type: 'sap.ui.model.odata.type.DateTimeOffset'
+							type: 'DateTimeOffsetType'
 						}" />
 					<Label text="sap.m.DateTimePicker" />
 					<DateTimePicker value="{
 							constraints: {V4: true},
 							path: 'json>Timestamp',
-							type: 'sap.ui.model.odata.type.DateTimeOffset'
+							type: 'DateTimeOffsetType'
 						}" />
 				</form:SimpleForm>
 			</Dialog>
