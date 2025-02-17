@@ -376,9 +376,6 @@ sap.ui.define([
 
 		if (oItemTitleRef &&  (oItemTitleRef.offsetWidth < oItemTitleRef.scrollWidth)) {
 
-			// if title's text overflows, make the item type Navigation
-			oListItem.setType(ListType.Navigation);
-
 			if (this.getItems().length === 1) {
 				this._fnHandleForwardNavigation(oListItem, "show");
 			}
@@ -451,6 +448,7 @@ sap.ui.define([
 	MessageView.prototype._updateDescriptionPage = function (oMessageItem, oListItem) {
 		this._clearDetailsPage();
 		this._setTitle(oMessageItem, oListItem);
+		this._setSubtitle(oMessageItem);
 		this._setDescription(oMessageItem);
 		this._setIcon(oMessageItem, oListItem);
 		this._detailsPage.invalidate();
@@ -808,7 +806,7 @@ sap.ui.define([
 		if (!oMessageItem) {
 			return null;
 		}
-
+		const nCharLimit = 140;
 		var sType = oMessageItem.getType(),
 			that = this,
 			listItemType = this._getItemType(oMessageItem),
@@ -822,6 +820,8 @@ sap.ui.define([
 				type: listItemType,
 				messageType: oMessageItem.getType(),
 				activeTitle: oMessageItem.getActiveTitle(),
+				wrapping: true,
+				wrapCharLimit: nCharLimit,
 				activeTitlePress: function () {
 					that.fireActiveTitlePress({ item: oMessageItem });
 				}
@@ -1003,6 +1003,21 @@ sap.ui.define([
 
 		oDetailsContent.addStyleClass("sapMMsgViewTitleText");
 		this._detailsPage.addAggregation("content", oDetailsContent);
+	};
+
+	/**
+	 * Sets subtitle part of details page
+	 * @param {sap.m.MessageItem} oMessageItem The message item
+	 * @private
+	 */
+	MessageView.prototype._setSubtitle = function (oMessageItem) {
+		var sText = oMessageItem.getSubtitle(),
+			sId = this.getId() + "MessageSubtitleText";
+
+		this._oMessageSubtitleText = new Text(sId, {
+			text: sText
+		}).addStyleClass("sapMMsgViewSubtitleText");
+		this._detailsPage.addContent(this._oMessageSubtitleText);
 	};
 
 	/**
@@ -1275,6 +1290,7 @@ sap.ui.define([
 
 	MessageView.prototype._navigateToDetails = function(oMessageItem, oListItem, sTransiotionName, bSuppressNavigate) {
 		this._setTitle(oMessageItem, oListItem);
+		this._setSubtitle(oMessageItem);
 		this._setDescription(oMessageItem);
 		this._setIcon(oMessageItem, oListItem);
 		this._detailsPage.invalidate();
