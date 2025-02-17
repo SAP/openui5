@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	'./ToolbarRenderer',
 	"sap/m/Button",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library"
 ],
 function(
@@ -27,6 +28,7 @@ function(
 	KeyCodes,
 	ToolbarRenderer,
 	Button,
+	jQuery,
 	coreLibrary
 ) {
 	"use strict";
@@ -362,14 +364,45 @@ function(
 		}
 	};
 
-	Toolbar.prototype._moveFocus = function(sDirection, oEvent) {
-		var aFocusableElements = this._getToolbarInteractiveControls(),
-			oActiveElement = Element.getActiveElement(),
-			oActiveDomElement = document.activeElement;
+	/**
+	 * A custom function to get the active element in the document
+	 * without relying on jQuery.is(":focus") selector check
+	 * @static
+	 * @returns {sap.ui.core.Element|undefined}
+	 */
+	Toolbar._getActiveElement = () => {
+		try {
+			var $Act = jQuery(document.activeElement);
+
+			return Element.closestTo($Act[0]);
+		} catch (err) {
+			//escape eslint check for empty block
+		}
+	};
+
+	/**
+	 * Try to find the parent of the active element assuming it is a child of the toolbar.
+	 * If the active element is not a child of the toolbar, return original active element
+	 * (in cases like associative toolbar)
+	 * @param {sap.ui.core.Element} oActiveElement
+	 * @returns {sap.ui.core.Element}
+	 */
+	Toolbar.prototype._getParent = function(oActiveElement) {
+		var originalActiveElement = oActiveElement;
 
 		while (oActiveElement && oActiveElement.getParent() !== this) {
 			oActiveElement = oActiveElement.getParent();
 		}
+
+		return oActiveElement || originalActiveElement;
+	};
+
+	Toolbar.prototype._moveFocus = function(sDirection, oEvent) {
+		var aFocusableElements = this._getToolbarInteractiveControls(),
+			oActiveElement = Toolbar._getActiveElement(),
+			oActiveDomElement = document.activeElement;
+
+		oActiveElement = this._getParent(oActiveElement);
 
 		var iCurrentIndex = aFocusableElements.indexOf(oActiveElement),
 			iNextIndex = this._calculateNextIndex(sDirection, iCurrentIndex, aFocusableElements.length),
