@@ -7,6 +7,7 @@ sap.ui.define(['sap/uxap/BlockBase'],
 
 		var BlockBlue = BlockBase.extend("sap.ui.documentation.sdk.blocks.IndexEntry", {
 			metadata: {
+				library: "sap.ui.documentation",
 				views: {
 					Collapsed: {
 						viewName: "sap.ui.documentation.sdk.blocks.IndexEntry",

@@ -244,7 +244,7 @@ sap.ui.define([
 			var oCard = this.byId("demoCard");
 			var iTimerDelay = 1000;
 
-			this.byId("output").getInternalEditorInstance().scrollToLine(Infinity); // scroll to last
+			this.byId("output").getAceEditor().scrollToLine(Infinity); // scroll to last
 
 			setTimeout(function() {
 				var aFirstUpdate = [{

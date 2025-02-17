@@ -16,9 +16,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(nextUIUpdate, Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery, Core) {
+	"sap/ui/thirdparty/jquery"
+], function(nextUIUpdate, Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -782,6 +781,7 @@ sap.ui.define([
 
 		oTokenizer._handleNMoreIndicatorPress();
 		oTokenizer.invalidate();
+		await nextUIUpdate();
 
 		assert.strictEqual(nMoreLink.getAttribute("aria-haspopup"), "dialog", "The aria-haspopup attribute should be dialog");
 		assert.strictEqual(nMoreLink.getAttribute("aria-controls"), oPopover.getId(), "The aria-haspopup attribute should be dialog");

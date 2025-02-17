@@ -87,6 +87,12 @@ sap.ui.define([
 			},
 			"sap.m.TablePopin": {
 				moduleName: "sap/m/ColumnListItem"
+			},
+			"sap.m.table.columnmenu.AssociativeControl": {
+				moduleName: "sap/m/table/columnmenu/Menu"
+			},
+			"sap.m.internal.CustomNumericInput": {
+				moduleName: "sap/m/TimePickerInputs"
 			}
 		}
 	});

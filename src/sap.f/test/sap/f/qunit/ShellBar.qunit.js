@@ -203,7 +203,9 @@ function(
 			{name: "homeIconPressed", parameters: {icon: {type: "sap.m.Image"}}},
 			{name: "menuButtonPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "navButtonPressed", parameters: {button: {type: "sap.m.Button"}}},
-			{name: "copilotPressed", parameters: {image: {type: "sap.m.Image"}, button: {type: "sap.m.Button"}}},
+			{name: "copilotPressed", parameters: {
+				button: {type: "sap.m.Button"}
+			}},
 			{name: "searchButtonPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "notificationsPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "productSwitcherPressed", parameters: {button: {type: "sap.m.Button"}}},

@@ -47,6 +47,7 @@ sap.ui.define([
 	 */
 	var Footer = Control.extend("sap.ui.integration.cards.Footer", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				/**
 				 * Footer configuration from the manifest

@@ -775,6 +775,9 @@ sap.ui.define([
 		};
 
 		var CustomNumericInput = Input.extend("sap.m.internal.CustomNumericInput", {
+			metadata: {
+				library: "sap.m"
+			},
 			renderer: CustomNumericInputRenderer
 		});
 
