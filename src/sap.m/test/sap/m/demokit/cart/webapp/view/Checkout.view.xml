@@ -5,7 +5,8 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core">
+	xmlns:core="sap.ui.core"
+	core:require="{StringType: 'sap/ui/model/type/String'}">
 	<NavContainer id="wizardNavContainer">
 		<pages>
 			<Page
@@ -145,7 +146,7 @@
 									placeholder="{i18n>creditCardHolderText}"
 									value="{
 										path: '/CreditCard/Name',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 3,
 											search: '^[a-zA-Z]+[\\s]?[a-zA-Z]+$'
@@ -171,7 +172,7 @@
 									placeholderSymbol = "_"
 									value="{
 										path: '/CreditCard/CardNumber',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											search: '^[0-9-]+$',
 											minLength: 16
@@ -202,7 +203,7 @@
 									placeholderSymbol = "_"
 									value="{
 										path: '/CreditCard/SecurityCode',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 3,
 											search: '^[0-9]+$'
@@ -227,7 +228,7 @@
 									id="creditCardExpirationDate"
 									value="{
 										path: '/CreditCard/Expire',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 7,
 											maxLength: 7
@@ -290,7 +291,7 @@
 									placeholder="{i18n>firstNameText}"
 									value="{
 										path: '/CashOnDelivery/FirstName',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 2
 										}
@@ -313,7 +314,7 @@
 									placeholder="{i18n>lastNameText}"
 									value="{
 										path: '/CashOnDelivery/LastName',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 2
 										}
@@ -336,7 +337,7 @@
 									placeholder="{i18n>phoneNumberText}"
 									value="{
 										path: '/CashOnDelivery/PhoneNumber',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											search: '^[(0-9+]+[)\\s]?[0-9\\/\\s]+$'
 										}
@@ -405,7 +406,7 @@
 									placeholder="{i18n>addressText}"
 									value="{
 										path: '/InvoiceAddress/Address',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 4,
 											search: '^[a-zA-Z-]+\\.?\\s?[0-9a-zA-Z\\s]*$'
@@ -429,7 +430,7 @@
 									placeholder="{i18n>cityText}"
 									value="{
 										path: '/InvoiceAddress/City',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 3,
 											search: '^[a-zA-Z\\s]+$'
@@ -453,7 +454,7 @@
 									placeholder="{i18n>zipCodeText}"
 									value="{
 										path: '/InvoiceAddress/ZipCode',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 3,
 											search: '^[0-9]+$'
@@ -477,7 +478,7 @@
 									placeholder="{i18n>countryText}"
 									value="{
 										path: '/InvoiceAddress/Country',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 2,
 											search: '^[a-zA-Z]+$'
@@ -528,7 +529,7 @@
 									placeholder="{i18n>addressText}"
 									value="{
 										path: '/DeliveryAddress/Address',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 4,
 											search: '^[a-zA-Z-]+\\.?\\s?[0-9a-zA-Z\\s]*$'
@@ -552,7 +553,7 @@
 									placeholder="{i18n>cityText}"
 									value="{
 										path: '/DeliveryAddress/City',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 3,
 											search: '^[a-zA-Z\\s]+$'
@@ -576,7 +577,7 @@
 									placeholder="{i18n>zipCodeText}"
 									value="{
 										path: '/DeliveryAddress/ZipCode',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 3,
 											search: '^[0-9]+$'
@@ -600,7 +601,7 @@
 									placeholder="{i18n>countryText}"
 									value="{
 										path: '/DeliveryAddress/Country',
-										type: 'sap.ui.model.type.String',
+										type: 'StringType',
 										constraints: {
 											minLength: 2,
 											search: '^[a-zA-Z]+$'
