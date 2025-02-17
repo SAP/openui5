@@ -9,8 +9,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
 
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdct="sap.ui.mdc.table"
@@ -30,7 +30,7 @@
 								validateInput="false"
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover title="Title">
+									<mdcvh:Popover title="Title">
 										<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 											<Table id="mTable1_2_title" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="50rem" mode="SingleSelectMaster">
 												<columns>
@@ -49,16 +49,16 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 			<mdc:ValueHelp
 				id="FH-DC"
 				delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:dialog>
-					<mdcv:Popover title="Define Filter Conditions">
+					<mdcvh:Popover title="Define Filter Conditions">
 						<mdcvc:Conditions label="My Define Conditions Panel" valueHelp="FH4_DEFCOND"></mdcvc:Conditions>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</mdc:dependents>

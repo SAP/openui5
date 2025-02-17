@@ -3,8 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
-	xmlns:mdcVH="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
@@ -37,11 +36,11 @@
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Status">
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH-Status-Pop">
+								<mdcvh:Popover id="VH-Status-Pop">
 									<mdcValueHelpContent:FixedList id="VH-Status-FL" useFirstMatch="false" items="{path: '/StatusCollection'}">
 										<mdcValueHelpContent:FixedListItem key="{StatusId}" text="{Name}" additionalText="{StatusId}" />
 									</mdcValueHelpContent:FixedList>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:typeahead>
 						</mdc:ValueHelp>
 					</mdc:dependents>
@@ -58,7 +57,7 @@
 						<mdc:ValueHelp id="VH-Material"
 							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["MatrId","Text"], "out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH-Material-Pop">
+								<mdcvh:Popover id="VH-Material-Pop">
 									<mdcValueHelpContent:MTable id="VH-Material-Pop-MTable"
 										title="{/#Product/MatrId/@sap:label}"
 										keyPath="MatrId"
@@ -86,10 +85,10 @@
 											</m:items>
 										</m:Table>
 									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:typeahead>
 							<mdc:dialog>
-								<mdcValueHelp:Dialog id="VH-Material-Dialog" title="Material">
+								<mdcvh:Dialog id="VH-Material-Dialog" title="Material">
 									<mdcValueHelpContent:MTable id="VH-Material-Dialog-MTable"
 										title="{/#Product/MatrId/@sap:label}"
 										keyPath="MatrId"
@@ -116,7 +115,7 @@
 											</m:items>
 										</m:Table>
 									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Dialog>
+								</mdcvh:Dialog>
 							</mdc:dialog>
 						</mdc:ValueHelp>
 					</mdc:dependents>
@@ -133,7 +132,7 @@
 						<mdc:ValueHelp id="VH-Quantity"
 							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["unit","text"], "in": [\{"path": "MatrId", "source": "MatrId"}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH-Quantity-Pop">
+								<mdcvh:Popover id="VH-Quantity-Pop">
 									<mdcValueHelpContent:MTable id="VH-Quantity-Pop-MTable"
 										keyPath="unit"
 										descriptionPath="text"
@@ -160,10 +159,10 @@
 											</m:items>
 										</m:Table>
 									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:typeahead>
 							<mdc:dialog>
-								<mdcValueHelp:Dialog id="VH-Quantity-Dialog" title="{/#Product/MatrQuantity/@sap:label}">
+								<mdcvh:Dialog id="VH-Quantity-Dialog" title="{/#Product/MatrQuantity/@sap:label}">
 									<mdcValueHelpContent:MTable id="VH-Quantity-Dialog-MTable"
 										keyPath="unit"
 										descriptionPath="text"
@@ -213,7 +212,7 @@
 											</mdcVH:FilterBar>
 										</mdcValueHelpContent:filterBar>
 									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Dialog>
+								</mdcvh:Dialog>
 							</mdc:dialog>
 						</mdc:ValueHelp>
 					</mdc:dependents>

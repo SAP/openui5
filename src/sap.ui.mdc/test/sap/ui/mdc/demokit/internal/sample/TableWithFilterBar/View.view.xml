@@ -3,8 +3,7 @@
 		xmlns:mdcTable="sap.ui.mdc.table"
 		xmlns="sap.m"
 		xmlns:mdcf="sap.ui.mdc.field"
-		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-		xmlns:mdcv="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -23,7 +22,7 @@
 		<mdc:ValueHelp id="VH2"
 			delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 			<mdc:typeahead>
-				<mdcv:Popover id="VH2-Pop" title="Title">
+				<mdcvh:Popover id="VH2-Pop" title="Title">
 					<mdcvc:MTable id="VH2-Pop-Cont" keyPath="title" descriptionPath="title"  useAsValueHelp="false">
 						<Table id="VH2-Pop-Table" items='{path : "/Books", length: 10}' width="20rem">
 							<columns>
@@ -42,17 +41,17 @@
 							</items>
 						</Table>
 					</mdcvc:MTable>
-				</mdcv:Popover>
+				</mdcvh:Popover>
 			</mdc:typeahead>
 			<mdc:dialog>
-				<mdcv:Dialog id="VH2-Dia" title="Title">
+				<mdcvh:Dialog id="VH2-Dia" title="Title">
 					<mdcvc:MDCTable id="VH2-Dia-Cont" keyPath="title" descriptionPath="title" >
 						<mdcvc:filterBar>
-							<vhfb:FilterBar id="VH2-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": "Books"\}\}' >
-								<vhfb:filterItems>
+							<mdcvh:FilterBar id="VH2-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": "Books"\}\}' >
+								<mdcvh:filterItems>
 									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions="{$filters>/conditions/title}" />
-								</vhfb:filterItems>
-							</vhfb:FilterBar>
+								</mdcvh:filterItems>
+							</mdcvh:FilterBar>
 						</mdcvc:filterBar>
 						<mdc:Table id="VH2-Dia-Table" autoBindOnInit="true" width="100%"
 							selectionMode="Multi"
@@ -80,14 +79,14 @@
 						</mdc:Table>
 					</mdcvc:MDCTable>
 					<mdcvc:Conditions id="VH2-Dia-Cond" label="Book Title"/>
-				</mdcv:Dialog>
+				</mdcvh:Dialog>
 			</mdc:dialog>
 		</mdc:ValueHelp>
 
 		<mdc:ValueHelp id="VH1"
 			delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 			<mdc:typeahead>
-				<mdcv:Popover id="VH1-Pop" title="Author ID">
+				<mdcvh:Popover id="VH1-Pop" title="Author ID">
 					<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 						<Table id="VH1-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem">
 							<columns>
@@ -118,14 +117,14 @@
 							</items>
 						</Table>
 					</mdcvc:MTable>
-				</mdcv:Popover>
+				</mdcvh:Popover>
 			</mdc:typeahead>
 			<mdc:dialog>
-				<mdcv:Dialog id="VH1-Dia" title="Author ID">
+				<mdcvh:Dialog id="VH1-Dia" title="Author ID">
 					<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="name" >
 						<mdcvc:filterBar>
-							<vhfb:FilterBar id="VH1-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-								<vhfb:basicSearchField>
+							<mdcvh:FilterBar id="VH1-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+								<mdcvh:basicSearchField>
 									<mdc:FilterField
 										delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 										dataType= "Edm.String"
@@ -134,12 +133,12 @@
 										width="50%"
 										maxConditions="1"
 										placeholder="Search" />
-								</vhfb:basicSearchField>
-								<vhfb:filterItems>
+								</mdcvh:basicSearchField>
+								<mdcvh:filterItems>
 									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
 									<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions= "{$filters>/conditions/name}" />
-								</vhfb:filterItems>
-							</vhfb:FilterBar>
+								</mdcvh:filterItems>
+							</mdcvh:FilterBar>
 						</mdcvc:filterBar>
 						<mdc:Table id="VH1-Dia-Table" autoBindOnInit="true" width="100%"
 							selectionMode="Multi"
@@ -161,7 +160,7 @@
 						</mdc:Table>
 					</mdcvc:MDCTable>
 					<mdcvc:Conditions id="VH1-Dia-Cond" label="Author ID"/>
-				</mdcv:Dialog>
+				</mdcvh:Dialog>
 			</mdc:dialog>
 		</mdc:ValueHelp>
 

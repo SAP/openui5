@@ -2,13 +2,13 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mdc="sap.ui.mdc"
-	xmlns:vh="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:vhc="sap.ui.mdc.valuehelp.content"
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh">
+	>
 
 	<mdc:ValueHelp id="range-vh" delegate="{name: 'mdc/sample/delegate/JSONValueHelpDelegate', payload: {searchKeys: ['range']}}">
 		<mdc:typeahead>
-			<vh:Popover title="Range">
+			<mdcvh:Popover title="Range">
 				<vhc:MTable keyPath="range" >
 					<Table id="range-vh-table" items='{path : "mountains>/ranges"}' width="30rem">
 						<columns>
@@ -27,7 +27,7 @@
 						</items>
 					</Table>
 				</vhc:MTable>
-			</vh:Popover>
+			</mdcvh:Popover>
 		</mdc:typeahead>
 	</mdc:ValueHelp>
 

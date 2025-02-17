@@ -8,7 +8,7 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdct="sap.ui.mdc.table"
 	xmlns:vm="sap.ui.fl.variants"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:ce="sap.ui.codeeditor"
 	controllerName="mdc.sample.controller.FilterbarTypes"
@@ -35,7 +35,7 @@
 							<mdc:dependents>
 								<mdc:ValueHelp id="VH1" delegate='\{"name": "mdc/sample/delegate/JSONValueHelpDelegate", "payload": \{"searchKeys": ["name"]\}\}'>
 									<mdc:typeahead>
-										<mdcv:Popover title="Select Mountain">
+										<mdcvh:Popover title="Select Mountain">
 											<mdcvc:MTable keyPath="name" descriptionPath="name">
 												<Table id="ddListMountains" items='{path : "mountains>/mountains" }' width="30rem">
 													<columns>
@@ -66,7 +66,7 @@
 													</items>
 												</Table>
 											</mdcvc:MTable>
-										</mdcv:Popover>
+										</mdcvh:Popover>
 									</mdc:typeahead>
 								</mdc:ValueHelp>
 							</mdc:dependents>

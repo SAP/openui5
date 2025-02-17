@@ -2,8 +2,7 @@
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcf="sap.ui.mdc.field"
-		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-		xmlns:mdcv="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -32,7 +31,7 @@
 										   \{"contentId":"GenreTypeAhead", "path":"classification_code"\}]
 				\}\}'>
 				<mdc:typeahead>
-					<mdcv:Popover title="Genre">
+					<mdcvh:Popover title="Genre">
 						<mdcvc:MTable id="GenreTypeAhead" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 							<Table id="GenreTypeAheadTable" items='{path : "/Genres", length: 10, parameters: {$select: ["classification_code"]}}' width="30rem" mode="SingleSelectMaster">
 								<columns>
@@ -57,18 +56,18 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcv:Dialog title="Genre">
+					<mdcvh:Dialog title="Genre">
 						<mdcvc:MDCTable id="GenreDialog" keyPath="code" descriptionPath="title" >
 							<mdcvc:filterBar>
-								<vhfb:FilterBar id="GenreDialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-									<vhfb:filterItems>
+								<mdcvh:FilterBar id="GenreDialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+									<mdcvh:filterItems>
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" conditions="{$filters>/conditions/code}" />
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
-									</vhfb:filterItems>
-								</vhfb:FilterBar>
+									</mdcvh:filterItems>
+								</mdcvh:FilterBar>
 							</mdcvc:filterBar>
 							<mdc:Table id="GenreDialog-Table" autoBindOnInit="true" selectionMode="SingleMaster" p13nMode="Column,Sort" width="100%"
 								delegate='\{"name": "sap/ui/mdc/sample/FieldInOutParameter/GridTable.delegate", "payload": \{"collectionName": "Genres"\}\}'
@@ -86,7 +85,7 @@
 								</mdc:type>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-					</mdcv:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 
@@ -102,7 +101,7 @@
 										   \{"contentId":"SubGenreTypeAhead", "path":["classification_code", "genre_code"]\}]
 				\}\}'>
 				<mdc:typeahead>
-					<mdcv:Popover title="Subgenre">
+					<mdcvh:Popover title="Subgenre">
 						<mdcvc:MTable id="SubGenreTypeAhead" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 							<Table id="SubGenreTypeAheadTable" items='{path : "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="SingleSelectMaster">
 								<columns>
@@ -133,19 +132,19 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcv:Dialog title="Subgenre">
+					<mdcvh:Dialog title="Subgenre">
 						<mdcvc:MDCTable id="SubGenreDialog" keyPath="code" descriptionPath="title" >
 							<mdcvc:filterBar>
-								<vhfb:FilterBar id="SubGenreDialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-									<vhfb:filterItems>
+								<mdcvh:FilterBar id="SubGenreDialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+									<mdcvh:filterItems>
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" conditions="{$filters>/conditions/code}" />
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre Code" conditions= "{$filters>/conditions/genre_code}"/>
-									</vhfb:filterItems>
-								</vhfb:FilterBar>
+									</mdcvh:filterItems>
+								</mdcvh:FilterBar>
 							</mdcvc:filterBar>
 							<mdc:Table id="SubGenreDialog-Table" autoBindOnInit="true" selectionMode="SingleMaster" p13nMode="Column,Sort" width="100%"
 								delegate='\{"name": "sap/ui/mdc/sample/FieldInOutParameter/GridTable.delegate", "payload": \{"collectionName": "SubGenres"\}\}'
@@ -166,7 +165,7 @@
 								</mdc:type>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-					</mdcv:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</form:dependents>

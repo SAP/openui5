@@ -9,8 +9,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
 
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdct="sap.ui.mdc.table"
@@ -30,7 +30,7 @@
 				validateInput="false"
 				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
-					<mdcv:Popover title="Test1" opensOnClick="true">
+					<mdcvh:Popover title="Test1" opensOnClick="true">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
@@ -55,14 +55,14 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcv:Dialog title="MDC Table with ui.Table">
+					<mdcvh:Dialog title="MDC Table with ui.Table">
 						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template">
 							<mdcvc:filterBar>
-								<vhfb:FilterBar id="mdcFilterbar1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
-									<vhfb:basicSearchField>
+								<mdcvh:FilterBar id="mdcFilterbar1" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
+									<mdcvh:basicSearchField>
 										<mdc:FilterField
 											delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 											dataType= "Edm.String"
@@ -71,11 +71,11 @@
 											width="50%"
 											maxConditions="1"
 											placeholder="Search" />
-									</vhfb:basicSearchField>
-									<vhfb:filterItems>
+									</mdcvh:basicSearchField>
+									<mdcvh:filterItems>
 										<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" propertyKey="name"/>
-									</vhfb:filterItems>
-								</vhfb:FilterBar>
+									</mdcvh:filterItems>
+								</mdcvh:FilterBar>
 							</mdcvc:filterBar>
 
 								<!-- type="ResponsiveTable" -->
@@ -103,7 +103,7 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-					</mdcv:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 
