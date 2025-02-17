@@ -3458,7 +3458,7 @@ sap.ui.define([
 				}
 			}
 			processSingleGroupFromLevelSubset(bProcessFirstLoadedGroup,
-											oData.results.length == oRequestDetails.iLength && i == oData.results.length - 1);
+				oData.results.length === oRequestDetails.iLength && sPreviousParentGroupId === sParentGroupId);
 			// setup for processing next parent group
 			bProcessFirstLoadedGroup = false;
 			if (sPreviousParentGroupId != sParentGroupId) {

@@ -4174,12 +4174,87 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.mFinalLength["~groupMissing"], true, "final length updated");
 	});
-	//TODO: _processLevelMembersQueryResponse: if the last data record belongs to a new group, then
-	// processSingleGroupFromLevelSubset is called with bIncompleteGroupMembersSet = true for the
-	// group of the second last entry which sets oGroupMembersRequestDetails.iLength to the
-	// number of entries for that group which causes in _processGroupMembersQueryResponse that the
-	// final length is not set for that group. So the watermark is set wrongly and data is requested
-	// twice.
+
+	//*********************************************************************************************
+	QUnit.test("_processLevelMembersQueryResponse: last record belongs to a new group", function (assert) {
+		const oModel = {
+			_getKey() {},
+			getContext() {}
+		};
+		const oModelMock = this.mock(oModel);
+		const oBinding = {
+			oModel,
+			_getGroupIdFromContext() {},
+			_getKeyIndexMapping() {},
+			_getRequestId() {},
+			_processGroupMembersQueryResponse() {}
+		};
+		const oBindingMock = this.mock(oBinding);
+		const oRequestDetails = {
+			aAggregationLevel: "~aAggregationLevel",
+			oAnalyticalQueryRequest: "~oAnalyticalQueryRequest",
+			bAvoidLengthUpdate: "~bAvoidLengthUpdate",
+			bIsFlatListRequest: "~bIsFlatListRequest",
+			bIsLeafGroupsRequest: "~bIsLeafGroupsRequest",
+			iLength: 2,
+			iLevel: 3,
+			aSelectedUnitPropertyName: "~aSelectedUnitPropertyName",
+			iStartIndex: 0
+		};
+		const oResponseData = {
+			results: ["~DataGroup0", "~DataGroup1"]
+		};
+
+		oModelMock.expects("_getKey").withExactArgs("~DataGroup0").returns("~key0");
+		oModelMock.expects("getContext").withExactArgs("/~key0").returns("~oContext0");
+		oBindingMock.expects("_getGroupIdFromContext").withExactArgs("~oContext0", 2).returns("~group0");
+		oModelMock.expects("_getKey").withExactArgs("~DataGroup0").returns("~key0");
+		oModelMock.expects("getContext").withExactArgs("/~key0").returns("~oContext0");
+		oBindingMock.expects("_getGroupIdFromContext").withExactArgs("~oContext0", 2).returns("~group0");
+		oModelMock.expects("_getKey").withExactArgs("~DataGroup1").returns("~key1");
+		oModelMock.expects("getContext").withExactArgs("/~key1").returns("~oContext1");
+		oBindingMock.expects("_getGroupIdFromContext").withExactArgs("~oContext1", 2).returns("~group1");
+		// processSingleGroupFromLevelSubset for group ~group0
+		oBindingMock.expects("_getRequestId").withExactArgs(1, {groupId: "~group0"}).returns("~requestId0");
+		oBindingMock.expects("_getKeyIndexMapping").withExactArgs("~group0", 0).returns("~keyMapping0");
+		oBindingMock.expects("_processGroupMembersQueryResponse")
+			.withExactArgs({
+				aAggregationLevel: "~aAggregationLevel",
+				oAnalyticalQueryRequest: "~oAnalyticalQueryRequest",
+				bAvoidLengthUpdate: "~bAvoidLengthUpdate",
+				sGroupId: "~group0",
+				bIsFlatListRequest: "~bIsFlatListRequest",
+				bIsLeafGroupsRequest: "~bIsLeafGroupsRequest",
+				oKeyIndexMapping: "~keyMapping0",
+				iLength: 2, // iLength > results.length; that means short read and group length is final
+				sRequestId: "~requestId0",
+				iRequestType: 1,
+				aSelectedUnitPropertyName: "~aSelectedUnitPropertyName",
+				iStartIndex: 0
+			}, {results: ["~DataGroup0"]});
+
+		// processSingleGroupFromLevelSubset for group ~group1
+		oBindingMock.expects("_getRequestId").withExactArgs(1, {groupId: "~group1"}).returns("~requestId1");
+		oBindingMock.expects("_getKeyIndexMapping").withExactArgs("~group1", 0).returns("~keyMapping1");
+		oBindingMock.expects("_processGroupMembersQueryResponse")
+			.withExactArgs({
+				aAggregationLevel: "~aAggregationLevel",
+				oAnalyticalQueryRequest: "~oAnalyticalQueryRequest",
+				bAvoidLengthUpdate: "~bAvoidLengthUpdate",
+				sGroupId: "~group1",
+				bIsFlatListRequest: "~bIsFlatListRequest",
+				bIsLeafGroupsRequest: "~bIsLeafGroupsRequest",
+				oKeyIndexMapping: "~keyMapping1",
+				iLength: 1,
+				sRequestId: "~requestId1",
+				iRequestType: 1,
+				aSelectedUnitPropertyName: "~aSelectedUnitPropertyName",
+				iStartIndex: 0
+			}, {results: ["~DataGroup1"]});
+
+		// code under test
+		AnalyticalBinding.prototype._processLevelMembersQueryResponse.call(oBinding, oRequestDetails, oResponseData);
+	});
 
 	//*********************************************************************************************
 	// BCP: 2380036006 fire data received also in error case and updated analytical info
