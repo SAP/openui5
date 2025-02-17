@@ -7,6 +7,9 @@ sap.ui.define([
 	"use strict";
 
 	return FilterPanel.extend("sap.ui.mdc.p13n.panels.FilterPanel", {
+		metadata: {
+			library: "sap.ui.mdc"
+		},
 		renderer: {
 			apiVersion: 2
 		}

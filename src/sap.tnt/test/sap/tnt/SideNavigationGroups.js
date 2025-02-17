@@ -13,14 +13,15 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Title",
 	"sap/m/Image",
-	"sap/m/OverflowToolbar"
+	"sap/m/OverflowToolbar",
+	"sap/m/OverflowToolbarLayoutData"
 ], (Device, SideNavigation, NavigationList, NavigationListItem, NavigationListGroup,
-	ToolPage, ToolHeader, Button, CheckBox, mLibrary, Title, Image, OverflowToolbar) => {
+	ToolPage, ToolHeader, Button, CheckBox, mLibrary, Title, Image, OverflowToolbar,
+	OverflowToolbarLayoutData) => {
 	"use strict";
 
 	const ButtonType = mLibrary.ButtonType;
 	const OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
-	const OverflowToolbarLayoutData = mLibrary.OverflowToolbarLayoutData;
 
 	const oSN = new SideNavigation("SN", {
 		item: new NavigationList("NL", {

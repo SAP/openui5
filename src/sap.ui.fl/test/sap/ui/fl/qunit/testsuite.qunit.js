@@ -806,16 +806,6 @@ sap.ui.define([
 				}
 			},
 
-			"write/api/SACIntegrationUpdateVariant": {
-				group: "Write API",
-				coverage: {
-					only: ["sap/ui/fl/write/api/SACIntegrationUpdateVariant"]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "JsObjectConnector"}]'
-				}
-			},
-
 			"write/api/SmartVariantManagementWriteAPI": {
 				group: "Write API",
 				coverage: {

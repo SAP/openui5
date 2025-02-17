@@ -32,7 +32,8 @@ sap.ui.define([
 	var QuickActionItem = Entry.extend("sap.m.table.columnmenu.QuickActionItem", {
 
 		metadata: {
-			library: "sap.m", properties: {
+			library: "sap.m",
+			properties: {
 				/**
 				 * The property name
 				 */

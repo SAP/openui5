@@ -20,7 +20,11 @@ sap.ui.define([
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.filterbar.p13n.GroupContainer
 	 */
-	const GroupContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.GroupContainer");
+	const GroupContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.GroupContainer", {
+		metadata: {
+			library: "sap.ui.mdc"
+		}
+	});
 
 	GroupContainer.prototype.init = function() {
 

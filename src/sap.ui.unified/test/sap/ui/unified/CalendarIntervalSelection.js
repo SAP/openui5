@@ -5,6 +5,8 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/unified/Calendar",
+	"sap/ui/unified/DateRange",
+	"sap/ui/unified/DateTypeRange",
 	"sap/m/Button",
 	"sap/ui/core/date/UI5Date"
 ], function(
@@ -14,14 +16,15 @@ sap.ui.define([
 	App,
 	Page,
 	Calendar,
+	DateRange,
+	DateTypeRange,
 	Button,
 	UI5Date
 ) {
 	"use strict";
-	var CalendarDayType = unifiedLibrary.CalendarDayType,
-		DateRange = unifiedLibrary.DateRange,
-		DateTypeRange = unifiedLibrary.DateTypeRange,
-		oCalendar1;
+	const CalendarDayType = unifiedLibrary.CalendarDayType;
+
+	var oCalendar1;
 
 	var oButton2 = new Button("B2", {
 		text : "Interval",

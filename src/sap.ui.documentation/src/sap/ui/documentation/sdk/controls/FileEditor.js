@@ -16,6 +16,7 @@ sap.ui.define(
 		"use strict";
 		var FileEditor = Control.extend("sap.ui.documentation.sdk.controls.FileEditor", {
 			metadata: {
+				library: "sap.ui.documentation",
 				properties: {
 					/**
 					 * Array containing list of objects which have property name and link
