@@ -17,26 +17,23 @@ sap.ui.define(["sap/base/Log"], (Log) => {
 		getUShellContainer: function() {
 			return sap.ui.require("sap/ushell/Container");
 		},
-		getService: function(sServiceName, bAsync) {
+		getServiceAsync: function(sServiceName) {
 			const oContainer = this.getUShellContainer();
 			if (!oContainer) {
-				return bAsync ? Promise.resolve(null) : null;
+				return Promise.resolve(null);
 			}
 
 			switch (sServiceName) {
 				case "CrossApplicationNavigation":
 					Log.error("sap.ui.mdc.link.Factory: tried to retrieve deprecated service 'CrossApplicationNavigation', please use 'Navigation' instead!");
-					return bAsync ? oContainer.getServiceAsync("CrossApplicationNavigation") : oContainer.getService("CrossApplicationNavigation");
+					return oContainer.getServiceAsync("CrossApplicationNavigation");
 				case "Navigation":
-					return bAsync ? oContainer.getServiceAsync("Navigation") : oContainer.getService("Navigation");
+					return oContainer.getServiceAsync("Navigation");
 				case "URLParsing":
-					return bAsync ? oContainer.getServiceAsync("URLParsing") : oContainer.getService("URLParsing");
+					return oContainer.getServiceAsync("URLParsing");
 				default:
-					return bAsync ? Promise.resolve(null) : null;
+					return Promise.resolve(null);
 			}
-		},
-		getServiceAsync: function(sServiceName) {
-			return this.getService(sServiceName, true);
 		}
 	};
 });
