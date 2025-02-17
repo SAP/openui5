@@ -2,8 +2,9 @@
 	controllerName="sap.ui.core.sample.TypeCurrency.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
-	xmlns="sap.m">
-
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	core:require="{CurrencyType: 'sap/ui/model/type/Currency'}">
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -15,26 +16,25 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Input" >
+		title="Input">
 		<form:content>
 			<!--Note, the number of entered decimals is validated only with
 				sap.ui.model.odata.type.Currency but not with sap.ui.model.type.Currency.-->
 			<Label text="One field" />
-			<Input value="{parts: ['/amount', '/currency'], type:'sap.ui.model.type.Currency'}"/>
+			<Input value="{parts: ['/amount', '/currency'], type: 'CurrencyType'}" />
 			<Label text="Two field" />
 			<Input value="{
-				parts: ['/amount', '/currency'], 
-				type:'sap.ui.model.type.Currency',
+				parts: ['/amount', '/currency'],
+				type: 'CurrencyType',
 				formatOptions: {showMeasure: false}
-			}"/>
+			}" />
 			<Input value="{
-				parts: ['/amount', '/currency'], 
-				type:'sap.ui.model.type.Currency',
+				parts: ['/amount', '/currency'],
+				type: 'CurrencyType',
 				formatOptions: {showNumber: false}
-			}"/>
+			}" />
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -52,45 +52,40 @@
 			<Label text="Default" />
 			<Text text="{
 				parts: ['/amount', '/currency'],
-				type: 'sap.ui.model.type.Currency'
+				type: 'CurrencyType'
 			}" />
-
 			<Label text="preserveDecimals:false" />
 			<Text text="{
 				parts: ['/amount', '/currency'],
-				type: 'sap.ui.model.type.Currency',
+				type: 'CurrencyType',
 				formatOptions: {
 					preserveDecimals : false
 				}
 			}" />
-
 			<Label text="currencyCode:false" />
 			<Text text="{
 				parts: ['/amount', '/currency'],
-				type: 'sap.ui.model.type.Currency',
+				type: 'CurrencyType',
 				formatOptions: {
 					currencyCode : false
 				}
 			}" />
-
 			<Label text="style:'short'" />
 			<Text text="{
 				parts: ['/amount', '/currency'],
-				type: 'sap.ui.model.type.Currency',
+				type: 'CurrencyType',
 				formatOptions: {
 					style : 'short'
 				}
 			}" />
-
 			<Label text="style:'long'" />
 			<Text text="{
 				parts: ['/amount', '/currency'],
-				type: 'sap.ui.model.type.Currency',
+				type: 'CurrencyType',
 				formatOptions: {
 					style : 'long'
 				}
 			}" />
 		</form:content>
 	</form:SimpleForm>
-
 </mvc:View>
