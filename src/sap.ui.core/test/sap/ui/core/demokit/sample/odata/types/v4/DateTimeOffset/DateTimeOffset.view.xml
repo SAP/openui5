@@ -47,7 +47,7 @@
 					}" />
 				<Label text="'Timestamp' in Current Time Zone" />
 				<Text text="{
-						parts: ['Timestamp', {value: ''}],
+						parts: ['Timestamp', {value: null}],
 						type: 'DateTimeWithTimezoneType'
 					}" />
 				<Label text="'Timestamp' Value as URI Parameter Value" />
