@@ -1220,6 +1220,15 @@ sap.ui.define([
 		this._updateColorString();
 	};
 
+	/**
+	 * Updates the value of the Alpha channel to the provided value.
+	 * @private
+	 * @param {number} vAlphaValue the new value of the Alpha channel
+	 */
+	ColorPicker.prototype._updateAlphaValue = function(vAlphaValue) {
+		this.Color.a = this._getValueInRange(vAlphaValue, 0, 1);
+	};
+
 	ColorPicker.prototype._updateColorString = function() {
 		// parse string; get the color object
 		this._parseColorString(this.getColorString());

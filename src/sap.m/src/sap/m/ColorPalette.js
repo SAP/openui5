@@ -397,15 +397,22 @@ sap.ui.define([
 
 		/**
 		 * Sets a selected color for the ColorPicker control.
-		 * @param {sap.ui.core.CSSColor} color the selected color
+		 * @param {sap.ui.core.CSSColor} sColor the selected color
 		 * @public
 		 * @returns {this} Reference to <code>this</code> for method chaining
 		 */
-		ColorPalette.prototype.setColorPickerSelectedColor = function (color) {
-			if (!CSSColor.isValid(color)) {
-				throw new Error("Cannot set the selected color - invalid value: " + color);
+		ColorPalette.prototype.setColorPickerSelectedColor = function (sColor) {
+			if (!CSSColor.isValid(sColor)) {
+				throw new Error("Cannot set the selected color - invalid value: " + sColor);
 			}
-			this._getColorPicker().setColorString(color);
+
+			const oColorPicker = this._getColorPicker();
+			oColorPicker.setColorString(sColor);
+			sColor = sColor.toLowerCase();
+			if (sColor.indexOf("rgba") === -1 && sColor.indexOf("hsla") === -1) {
+				oColorPicker._updateAlphaValue(1);
+			}
+
 			return this;
 		};
 
@@ -542,11 +549,17 @@ sap.ui.define([
 		/**
 		 * Opens a color picker in a Dialog.
 		 * The function assumes that there is a "more colors.." button visible.
-		 * @return void
 		 * @private
 		 */
 		ColorPalette.prototype._openColorPicker = function () {
+			const sSelectedColor = this.getSelectedColor();
+
 			this.fireEvent("_beforeOpenColorPicker"); //hook for program consumers (i.e. ColorPalettePopover)
+
+			if (sSelectedColor !== '') {
+				this.setColorPickerSelectedColor(sSelectedColor);
+			}
+
 			this._ensureMoreColorsDialog().open();
 		};
 
