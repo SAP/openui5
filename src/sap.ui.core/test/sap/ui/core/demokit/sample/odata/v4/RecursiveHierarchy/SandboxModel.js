@@ -38,7 +38,6 @@ sap.ui.define([
 			sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
 		});
 	}
-	SandboxModel.getMetadata = ODataModel.getMetadata;
 
 	// IDEAS:
 	// - AGE determines sibling order (ascending), parents are older than their children
@@ -171,55 +170,6 @@ sap.ui.define([
 	let mNodeById; // contains all nodes incl. those filtered out
 	let iRevision;
 	let mRevisionOfAgeById;
-
-	function findLastIndex(aArray, fnPredicate) {
-		return aArray.reduce((iLast, oItem, i) => (fnPredicate(oItem) ? i : iLast), -1);
-	}
-
-	function reset() {
-		aAllNodes = aOriginalData.map((oNode) => ({...oNode}));
-		mChildrenByParentId = {};
-		mNodeById = {};
-		iRevision = 0;
-		mRevisionOfAgeById = {};
-
-		aAllNodes.forEach((oNode) => {
-			oNode.STATUS = "";
-			// oNode.DescendantCount = 0; // @see computeDescendantCount
-			oNode.DistanceFromRoot = oNode.ID === "0"
-				? 0
-				: oNode.ID.split(".").length; // Note: ID is hierarchical
-			oNode.DrillState = "collapsed";
-			if (oNode.ID === "0") {
-				oNode.MANAGER_ID = null;
-			} else {
-				oNode.MANAGER_ID = oNode.ID.includes(".")
-					? oNode.ID.slice(0, oNode.ID.lastIndexOf("."))
-					: "0";
-			}
-
-			if (oNode.MANAGER_ID) {
-				(mChildrenByParentId[oNode.MANAGER_ID] ??= []).push(oNode);
-			}
-			mNodeById[oNode.ID] = oNode;
-			mRevisionOfAgeById[oNode.ID] = 0;
-		});
-
-		// mark all leaves; others are by default collapsed (and expanded only via TopLevels)
-		aAllNodes.filter((oNode) => !(oNode.ID in mChildrenByParentId))
-			.forEach((oNode) => { oNode.DrillState = "leaf"; });
-
-		// compute DescendantCount of unlimited hierarchy
-		(function computeDescendantCount(sId) {
-			const aChildren = mChildrenByParentId[sId] || [];
-			mNodeById[sId].DescendantCount = aChildren.reduce((iCount, oChild) => {
-				computeDescendantCount(oChild.ID);
-				return iCount + oChild.DescendantCount;
-			}, aChildren.length);
-		})("0");
-	}
-
-	reset();
 
 	/**
 	 * Adjust the DescendantCount of the node with given ID (and all of its ancestors) by the
@@ -451,7 +401,7 @@ sap.ui.define([
 		delete oNode.DistanceFromRoot;
 		delete oNode.DrillState;
 		// Note: bSkipCopy due to select
-		oResponse.message = JSON.stringify(SandboxModel.update([oNode], true)[0]);
+		oResponse.message = JSON.stringify(update([oNode], true)[0]);
 	}
 
 	/**
@@ -473,6 +423,10 @@ sap.ui.define([
 			oNode.DistanceFromRoot += iDiff;
 			(mChildrenByParentId[oNode.ID] || [])
 				.forEach((oChild) => { adjustDistanceFromRoot(oChild, iDiff); });
+		}
+
+		function findLastIndex(aArray, fnPredicate) {
+			return aArray.reduce((iLast, oItem, i) => (fnPredicate(oItem) ? i : iLast), -1);
 		}
 
 		if (oRequest.requestHeaders.Prefer !== "return=minimal") {
@@ -656,7 +610,7 @@ sap.ui.define([
 			}
 		}
 
-		const oCopy = {...SandboxModel.update([oNewChild])[0]};
+		const oCopy = {...update([oNewChild])[0]};
 		// RAP would not respond w/ DescendantCount,DistanceFromRoot,DrillState!
 		delete oCopy.DescendantCount;
 		delete oCopy.DistanceFromRoot;
@@ -678,6 +632,49 @@ sap.ui.define([
 		}
 
 		return mQueryOptions;
+	}
+
+	function reset() {
+		aAllNodes = aOriginalData.map((oNode) => ({...oNode}));
+		mChildrenByParentId = {};
+		mNodeById = {};
+		iRevision = 0;
+		mRevisionOfAgeById = {};
+
+		aAllNodes.forEach((oNode) => {
+			oNode.STATUS = "";
+			// oNode.DescendantCount = 0; // @see computeDescendantCount
+			oNode.DistanceFromRoot = oNode.ID === "0"
+				? 0
+				: oNode.ID.split(".").length; // Note: ID is hierarchical
+			oNode.DrillState = "collapsed";
+			if (oNode.ID === "0") {
+				oNode.MANAGER_ID = null;
+			} else {
+				oNode.MANAGER_ID = oNode.ID.includes(".")
+					? oNode.ID.slice(0, oNode.ID.lastIndexOf("."))
+					: "0";
+			}
+
+			if (oNode.MANAGER_ID) {
+				(mChildrenByParentId[oNode.MANAGER_ID] ??= []).push(oNode);
+			}
+			mNodeById[oNode.ID] = oNode;
+			mRevisionOfAgeById[oNode.ID] = 0;
+		});
+
+		// mark all leaves; others are by default collapsed (and expanded only via TopLevels)
+		aAllNodes.filter((oNode) => !(oNode.ID in mChildrenByParentId))
+			.forEach((oNode) => { oNode.DrillState = "leaf"; });
+
+		// compute DescendantCount of unlimited hierarchy
+		(function computeDescendantCount(sId) {
+			const aChildren = mChildrenByParentId[sId] || [];
+			mNodeById[sId].DescendantCount = aChildren.reduce((iCount, oChild) => {
+				computeDescendantCount(oChild.ID);
+				return iCount + oChild.DescendantCount;
+			}, aChildren.length);
+		})("0");
 	}
 
 	/**
@@ -708,7 +705,7 @@ sap.ui.define([
 		const iSkip = "$skip" in mQueryOptions ? parseInt(mQueryOptions.$skip) : 0;
 		const iTop = "$top" in mQueryOptions ? parseInt(mQueryOptions.$top) : Infinity;
 		// Note: bSkipCopy due to select
-		oMessage.value = SandboxModel.update(aRows.slice(iSkip, iSkip + iTop).map(select), true);
+		oMessage.value = update(aRows.slice(iSkip, iSkip + iTop).map(select), true);
 		oResponse.message = JSON.stringify(oMessage);
 	}
 
@@ -757,15 +754,6 @@ sap.ui.define([
 			});
 	}
 
-	SandboxModel.getChildren = function (sParentId, iSkip = 0, iTop = Infinity) {
-		return mChildrenByParentId[sParentId].slice(iSkip, iSkip + iTop)
-			.map((oNode) => ({...oNode})); // return clones only!
-	};
-	SandboxModel.getTopLevels = function (iLevels, iSkip = 0, iTop = Infinity) {
-		return topLevels(iLevels - 1).slice(iSkip, iSkip + iTop);
-	};
-	SandboxModel.reset = reset;
-
 	/**
 	 * Returns a copy of the given nodes, updated to the current revision.
 	 *
@@ -776,7 +764,7 @@ sap.ui.define([
 	 * @returns {object[]}
 	 *   An updated copy or the original(!) in case no update is needed
 	 */
-	SandboxModel.update = function (aNodes, bSkipCopy = false) {
+	function update(aNodes, bSkipCopy = false) {
 		return aNodes.map((oNode) => {
 			if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
 				if (!bSkipCopy) {
@@ -796,7 +784,12 @@ sap.ui.define([
 
 			return oNode;
 		});
-	};
+	}
+
+	SandboxModel.getMetadata = ODataModel.getMetadata;
+	SandboxModel.reset = reset;
+
+	reset();
 
 	return SandboxModel;
 });
