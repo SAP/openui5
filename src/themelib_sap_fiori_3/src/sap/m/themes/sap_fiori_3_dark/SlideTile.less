@@ -30,17 +30,17 @@
 
 /* Bulleted indicator of multiple tiles */
 .sapMSTBulleted .sapMSTIndicator {
-	background-color: var(--sapContent_NonInteractiveIconColor);
-	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
+	background-color: @sapUiContentNonInteractiveIconColor;
+	box-shadow: 0 0 0.125rem var(--sapContent_ShadowColor);
 }
 
 .sapMSTBulleted .sapMSTIndicator.sapMSTActive {
-	background-color: var(--sapContent_ContrastIconColor);
-	box-shadow: 0 0 0.25rem fade(@sapUiContentShadowColor, 25);
+	background-color: @sapUiContentContrastIconColor;
+	box-shadow: 0 0 0.063rem var(--sapContent_ShadowColor);
 }
 
 .sapMST .sapMSTIconDisplayArea {
-	background-color: darken(@sapUiBrand, 18);
+	background-color: var(--sapBlockLayer_Background);
 }
 
 .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {

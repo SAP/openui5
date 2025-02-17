@@ -31,7 +31,7 @@
 }
 
 .sapMGT.sapMGTLineMode:not(.sapMGTDisabled).sapMGTLineModePress {
-	background: fade(@sapUiShellHoverBackground, 12);
+	background: var(--sapTile_Background);
 }
 
 .sapMGT.sapMGTLineMode .sapMGTFocusDiv {
@@ -201,37 +201,30 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 }
 
 .sapMGT.sapMGTPressActive {
-	box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
+	box-shadow: none;
 
 	&:not(.sapMGTBackgroundImage) {
 		background: var(--sapTile_Active_Background);
 	}
 
 	&.sapMGTScopeActions .sapMTileCntContent::after {
-		background-color: fade(@sapUiTileActiveBackground, 70);
+		background-color: var(--sapTile_Active_Background);
+		// opacity: 0.7;
 	}
-}
-
-.sapMGTWithImageHoverOverlay.sapMGTPressActive {
-	background: fade(@sapUiTileActiveBackground, 20%);
 }
 
 .sapMGT:hover:not(.sapMGTPressActive) {
-	box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
-	transition: background 0.2s;
+	box-shadow: none;
+	outline: 1px solid var(--sapTile_Interactive_BorderColor);
+	background-color: var(--sapTile_Hover_Background);
 
-	&:not(.sapMGTBackgroundImage) {
-		background: var(--sapTile_Hover_Background);
-	}
-
-	.sapMGTWithImageHoverOverlay {
-		background: fade(@sapUiTileHoverBackground, 10%);
-		transition: background 0.2s;
+	&.sapMGTBackgroundImage {
+		background-color: var(--sapTile_Hover_Background);
+		opacity: 0.9;
 	}
 
 	&.sapMGTScopeActions .sapMTileCntContent::after {
-		background-color: fade(@sapUiTileHoverBackground, 70);
-		transition: background 0.2s;
+		background-color: var(--sapTile_Hover_Background);
 	}
 }
 
