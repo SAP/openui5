@@ -555,7 +555,7 @@ sap.ui.define([
 				},
 				"content": {
 					"item": {
-						"title": "{ formatter: '' }"
+						"title": "{ nonexistent training }"
 					}
 				}
 			}
