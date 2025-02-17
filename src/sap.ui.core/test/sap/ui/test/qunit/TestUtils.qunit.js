@@ -175,7 +175,7 @@ sap.ui.define([
 			/**
 			 * workaround: Chrome extension "UI5 Inspector" calls this method which loads the
 			 * resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			 * @deprecated since 1.56, together with sap.ui.getVersioninfo
+			 * @deprecated As of version 1.56
 			 */
 			this.mock(sap.ui).expects("getVersionInfo").atLeast(0);
 		},
