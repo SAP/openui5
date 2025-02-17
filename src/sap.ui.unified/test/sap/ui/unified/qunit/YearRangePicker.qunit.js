@@ -21,7 +21,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_fnShouldApplySelection", function(assert) {
+	QUnit.test("_isYearSelected", function(assert) {
 		// Arrange
 		const oYear1989 = UI5Date.getInstance(1989, 0, 1);
 		const oYear2009 = UI5Date.getInstance(2009, 0, 1);
@@ -36,17 +36,17 @@ sap.ui.define([
 
 		// Act & Assert
 		assert.equal(
-			this.YRP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oYear1989)),
+			this.YRP._isYearSelected(CalendarDate.fromLocalJSDate(oYear1989)),
 			false,
 			"year range 1989-2008 does not apply selection"
 		);
 		assert.equal(
-			this.YRP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oYear2009)),
+			this.YRP._isYearSelected(CalendarDate.fromLocalJSDate(oYear2009)),
 			true,
 			"year range 2009-2028 applies selection"
 		);
 		assert.equal(
-			this.YRP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oYear2029)),
+			this.YRP._isYearSelected(CalendarDate.fromLocalJSDate(oYear2029)),
 			false,
 			"year range 2009-2028 does not apply selection"
 		);

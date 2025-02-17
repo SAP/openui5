@@ -41,19 +41,18 @@ sap.ui.define([
 		 */
 		QUnit.test("setYear", async function(assert) {
 			// Prepare
-			var oGridItemRefs = this.oYP._oItemNavigation.getItemDomRefs(),
-				iFocusedIndex;
+			const oItemNavigation = this.oYP._oItemNavigation;
 
 			// Act
 			this.oYP.setYear(2017);
-
 			await nextUIUpdate();
-			iFocusedIndex = this.oYP._oItemNavigation.getFocusedIndex();
+
+			const oGridItemRefs = oItemNavigation.getItemDomRefs();
+			const iFocusedIndex = oItemNavigation.getFocusedIndex();
 
 			// Assert
 			assert.equal(this.oYP.getSelectedDates()[0].getStartDate().getFullYear(), 2017, "There is a selected date");
 			assert.ok(oGridItemRefs[iFocusedIndex].classList.contains("sapUiCalItemSel"));
-
 		});
 
 		/**
@@ -199,7 +198,7 @@ sap.ui.define([
 			assert.notOk(this.YP._isSelectionInProgress(), "Selection is finished");
 		});
 
-		QUnit.test("_fnShouldApplySelection", function(assert) {
+		QUnit.test("_isYearSelected", function(assert) {
 			// arrange
 			var oJan_01_2019 = UI5Date.getInstance(2019, 0, 1),
 				oJan_01_2020 = UI5Date.getInstance(2020, 0, 1),
@@ -212,23 +211,23 @@ sap.ui.define([
 
 			// act & assert
 			assert.equal(
-				this.YP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oJan_01_2019)),
+				this.YP._isYearSelected(CalendarDate.fromLocalJSDate(oJan_01_2019)),
 				true,
 				"is correct with the start date"
 			);
 			assert.equal(
-				this.YP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oJan_01_2020)),
+				this.YP._isYearSelected(CalendarDate.fromLocalJSDate(oJan_01_2020)),
 				false,
 				"is correct with a date between"
 			);
 			assert.equal(
-				this.YP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oJan_01_2021)),
+				this.YP._isYearSelected(CalendarDate.fromLocalJSDate(oJan_01_2021)),
 				true,
 				"is correct with the end date"
 			);
 		});
 
-		QUnit.test("_fnShouldApplySelectionBetween", function(assert) {
+		QUnit.test("_isYearInsideSelectionRange", function(assert) {
 			// arrange
 			var oJan_01_2019 = UI5Date.getInstance(2019, 0, 1),
 				oJan_01_2020 = UI5Date.getInstance(2020, 0, 1),
@@ -236,29 +235,29 @@ sap.ui.define([
 				oJan_01_2022 = UI5Date.getInstance(2022, 0, 1);
 
 			this.YP.addSelectedDate(new DateRange({
-				startDate: oJan_01_2019,
+				startDate: oJan_01_2020,
 				endDate: oJan_01_2022
 			}));
 
 			// act & assert
 			assert.equal(
-				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2019)),
+				this.YP._isYearInsideSelectionRange(CalendarDate.fromLocalJSDate(oJan_01_2019)),
 				false,
+				"is correct with a date outside the range"
+			);
+			assert.equal(
+				this.YP._isYearInsideSelectionRange(CalendarDate.fromLocalJSDate(oJan_01_2020)),
+				true,
 				"is correct with the start date"
 			);
 			assert.equal(
-				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2020)),
+				this.YP._isYearInsideSelectionRange(CalendarDate.fromLocalJSDate(oJan_01_2021)),
 				true,
 				"is correct with a date between"
 			);
 			assert.equal(
-				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2021)),
+				this.YP._isYearInsideSelectionRange(CalendarDate.fromLocalJSDate(oJan_01_2022)),
 				true,
-				"is correct with another date between"
-			);
-			assert.equal(
-				this.YP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oJan_01_2022)),
-				false,
 				"is correct with the end date"
 			);
 		});

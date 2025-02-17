@@ -90,12 +90,16 @@ sap.ui.define([
 		properties : {
 
 			/**
-			 * If set, interval selection is allowed
+			 * Determines if an interval of dates can be selected.
+			 *
+			 * <b>Note:</b> This property should be set to <code>false</code> if <code>singleSelection</code> is set to <code>false</code>, as selecting multiple intervals is not supported.
 			 */
 			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * If set, only a single date or interval, if intervalSelection is enabled, can be selected
+			 * Determines if a single date or single interval, when <code>intervalSelection</code> is set to <code>true</code>, can be selected.
+			 *
+			 * <b>Note:</b> This property should be set to <code>true</code> if <code>intervalSelection</code> is set to <code>true</code>, as selecting multiple intervals is not supported.
 			 */
 			singleSelection : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -1142,6 +1146,60 @@ sap.ui.define([
 	Calendar.prototype.setShowCurrentDateButton = function(bShow){
 		this.getAggregation("header").setVisibleCurrentDateButton(bShow);
 		return this.setProperty("showCurrentDateButton", bShow);
+	};
+
+	/**
+	 * Setter for the property <code>intervalSelection</code>. If set to <code>true</code>, an interval of dates can be selected.
+	 *
+	 * <b>Note:</b> This property should be set to <code>false</code> if <code>singleSelection</code> is set to <code>false</code>, as selecting multiple intervals is not supported.
+	 *
+	 * @param {boolean} bEnabled Indicates if <code>intervalSelection</code> should be enabled
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
+	Calendar.prototype.setIntervalSelection = function(bEnabled){
+		const oMonthPicker = this._getMonthPicker();
+		if (oMonthPicker) {
+			oMonthPicker.setIntervalSelection(bEnabled);
+		}
+
+		const oYearPicker = this._getYearPicker();
+		if (oYearPicker) {
+			oYearPicker.setIntervalSelection(bEnabled);
+		}
+
+		const oYearRangePicker = this._getYearRangePicker();
+		if (oYearRangePicker) {
+			oYearRangePicker.setIntervalSelection(bEnabled);
+		}
+
+		return this.setProperty("intervalSelection", bEnabled);
+	};
+
+	/**
+	 * Setter for the property <code>singleSelection</code>. If set to <code>true</code> only a single date or single interval, when <code>intervalSelection</code> is set to <code>true</code>, can be selected.
+	 *
+	 * <b>Note:</b> This property should be set to <code>true</code> if <code>intervalSelection</code> is set to <code>true</code>, as selecting multiple intervals is not supported.
+	 *
+	 * @param {boolean} bEnabled Indicates if <code>singleSelection</code> should be enabled
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 */
+	Calendar.prototype.setSingleSelection = function(bEnabled){
+		const oMonthPicker = this._getMonthPicker();
+		if (oMonthPicker) {
+			oMonthPicker.setProperty("_singleSelection", bEnabled);
+		}
+
+		const oYearPicker = this._getYearPicker();
+		if (oYearPicker) {
+			oYearPicker.setProperty("_singleSelection", bEnabled);
+		}
+
+		const oYearRangePicker = this._getYearRangePicker();
+		if (oYearRangePicker) {
+			oYearRangePicker.setProperty("_singleSelection", bEnabled);
+		}
+
+		return this.setProperty("singleSelection", bEnabled);
 	};
 
 	/**
