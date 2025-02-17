@@ -98,6 +98,7 @@ sap.ui.define([], function () {
 		var mStylesInfo = this.getStylesForItemWrapper(oItem, oControl),
 			mStyles = mStylesInfo.styles,
 			aClasses = mStylesInfo.classes,
+			bIsListItem = oControl._isListItem(oItem),
 			mAccState = {
 				role: "listitem"
 			};
@@ -106,9 +107,13 @@ sap.ui.define([], function () {
 			mAccState.roledescription = oItem.getAriaRoleDescription();
 		}
 
-		oRM.openStart("div", this.generateWrapperId(oItem, oControl))
-			.attr("tabindex", "0")
-			.accessibilityState(oControl, mAccState);
+		oRM.openStart("div", this.generateWrapperId(oItem, oControl));
+
+		if (!bIsListItem) {
+			oRM.attr("tabindex", "0")
+				.class("sapFGCFocusable")
+				.accessibilityState(oControl, mAccState);
+		}
 
 		mStyles.forEach(function (sValue, sKey) {
 			oRM.style(sKey, sValue);

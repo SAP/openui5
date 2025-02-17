@@ -111,6 +111,12 @@
 		"group": "Card Actions"
 	},
 	{
+		"title": "Card Actions in GridContainer",
+		"description": "Examples of actions on card level in sap.f.GridContainer",
+		"route": "cardActionsGridContainer",
+		"group": "Card Actions"
+	},
+	{
 		"title": "Navigation Action",
 		"description": "Navigation action examples",
 		"route": "navigationService",

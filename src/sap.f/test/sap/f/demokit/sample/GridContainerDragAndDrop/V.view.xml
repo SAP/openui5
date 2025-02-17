@@ -91,6 +91,12 @@
 				</TileContent>
 			</GenericTile>
 
+			<Text text="Some text">
+				<layoutData>
+					<f:GridContainerItemLayoutData minRows="2" columns="2" />
+				</layoutData>
+			</Text>
+
 			<GenericTile header="My Team Calendar">
 				<layoutData>
 					<f:GridContainerItemLayoutData minRows="2" columns="2" />

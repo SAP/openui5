@@ -25,8 +25,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/f/dnd/GridDragOver",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"./testResources/nextCardReadyEvent"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	Localization,
@@ -53,8 +52,7 @@ function(
 	JSONModel,
 	GridDragOver,
 	ResizeHandler,
-	nextUIUpdate,
-	nextCardReadyEvent
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -483,12 +481,11 @@ function(
 		this.oGrid.addItem(oInvisibleItem);
 		Core.applyChanges();
 
-		var aWrappers = this.oGrid.$("listUl").children();
-		Core.applyChanges();
-
 		// Act
 		oInvisibleItem.setVisible(true);
 		Core.applyChanges();
+
+		var aWrappers = this.oGrid.$("listUl").children();
 
 		// Assert
 		assert.ok(aWrappers[1].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
@@ -1027,24 +1024,24 @@ function(
 
 	QUnit.test("Right Arrow navigation through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
-			oItemWrapper2 = this.oGrid.getDomRef("listUl").children[1],
+		var oItem1 = this.oGrid.getDomRef("listUl").children[0].firstChild,
+			oItem2 = this.oGrid.getDomRef("listUl").children[1].firstChild,
 			oScrollSpy = this.spy(this.oGrid.getItems()[1].getCardHeader().getDomRef(), "scrollIntoView");
 
-		oItemWrapper1.focus();
+		oItem1.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oItemWrapper1, KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeydown(oItem1, KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should be on the second GridItem");
+		assert.strictEqual(oItem2.getAttribute("tabindex"), "0", "Focus should be on the second GridItem");
 
 		// Act - continue with arrow right
-		qutils.triggerKeydown(oItemWrapper2, KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeydown(oItem2, KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0", "Focus should stay on the same item");
+		assert.strictEqual(oItem2.getAttribute("tabindex"), "0", "Focus should stay on the same item");
 
 		// Assert
 		assert.ok(oScrollSpy.notCalled, "scrollIntoView is not called");
@@ -1055,99 +1052,105 @@ function(
 	QUnit.test("Down Arrow navigating through grid container", function (assert) {
 		// Arrange
 		var done = assert.async();
-		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
-			oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2],
-			oItemWrapper5 = this.oGrid.getDomRef("listUl").children[4];
+		var aItems = this.oGrid.getItems(),
+			oItem1 = aItems[0].getDomRef(),
+			oItem3 = aItems[2].getDomRef(),
+			oItem5 = aItems[4].getDomRef();
 
-		oItemWrapper1.focus();
+		oItem1.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oItemWrapper1, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeydown(oItem1, KeyCodes.ARROW_DOWN, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0", "Focus should be on the third GridItem (the item below)");
+		assert.strictEqual(oItem3.getAttribute("tabindex"), "0", "Focus should be on the third GridItem (the item below)");
 
 		// Act
-		this.oGrid._oItemNavigation._onFocusLeave();
-		oItemWrapper5.focus();
+		oItem5.focus();
 		Core.applyChanges();
-		qutils.triggerKeydown(oItemWrapper5.firstElementChild, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeydown(oItem5, KeyCodes.ARROW_DOWN, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper5.getAttribute("tabindex"), "0", "Focus should remain on the fifth GridItem if there is no other item below it");
+		assert.strictEqual(oItem5.getAttribute("tabindex"), "0", "Focus should remain on the fifth GridItem if there is no other item below it");
 		setTimeout(function () {
-			assert.ok(this.isVerticallyScrolledTo(oItemWrapper5), "scrollIntoView is called 1");
+			assert.ok(this.isVerticallyScrolledTo(oItem5), "scrollIntoView is called 1");
 			done();
 		}.bind(this), 50);
 	});
 
 	QUnit.test("Left Arrow navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2];
-		oItemWrapper3.focus();
+		var oItem2 = this.oGrid.getItems()[2].getDomRef();
+		oItem2.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oItemWrapper3, KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(oItem2, KeyCodes.ARROW_LEFT, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper3.getAttribute("tabindex"), "0", "Focus should stay on the same item");
+		assert.strictEqual(oItem2.getAttribute("tabindex"), "0", "Focus should stay on the same item");
 	});
 
 	QUnit.test("Up Arrow navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
-			oItemWrapper3 = this.oGrid.getDomRef("listUl").children[2];
-		oItemWrapper3.focus();
+		var aItems = this.oGrid.getItems(),
+			oItem = aItems[0].getDomRef(),
+			oItem2 = aItems[2].getDomRef();
+
+		oItem2.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oItemWrapper3, KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeydown(oItem2, KeyCodes.ARROW_UP, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper1.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
+		assert.strictEqual(oItem.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
 	});
 
 	QUnit.test("Page Down navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
-			oItemWrapper5 = this.oGrid.getDomRef("listUl").children[4];
-		oItemWrapper1.focus();
+		var aItems = this.oGrid.getItems(),
+			oItem = aItems[0].getDomRef(),
+			oItem4 = aItems[4].getDomRef();
+
+		oItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oItemWrapper1, KeyCodes.PAGE_DOWN, false, false, false);
+		qutils.triggerKeydown(oItem, KeyCodes.PAGE_DOWN, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper5.getAttribute("tabindex"), "0",  "Focus should be on the third GridItem");
+		assert.strictEqual(oItem4.getAttribute("tabindex"), "0",  "Focus should be on the third GridItem");
 	});
 
 	QUnit.test("Page Up navigating through grid container", function (assert) {
 		// Arrange
-		var oItemWrapper2 = this.oGrid.getDomRef("listUl").children[1],
-			oItemWrapper4 = this.oGrid.getDomRef("listUl").children[3];
-			oItemWrapper4.focus();
+		var aItems = this.oGrid.getItems(),
+			oItem1 = aItems[1].getDomRef(),
+			oItem3 = aItems[3].getDomRef();
+
+		oItem3.focus();
+
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oItemWrapper4, KeyCodes.PAGE_UP, false, false, false);
+		qutils.triggerKeydown(oItem3, KeyCodes.PAGE_UP, false, false, false);
 
 		// Assert
-		assert.strictEqual(oItemWrapper2.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
+		assert.strictEqual(oItem1.getAttribute("tabindex"), "0",  "Focus should be on the first GridItem");
 	});
 
 	QUnit.test("Tabbing through a tile - focus should leave the grid container", function (assert) {
 
 		// Arrange
-		var oItemWrapperTile = this.oGrid.getDomRef("listUl").children[3],
-			oTile = oItemWrapperTile.children[0],
+		var oTile = this.oGrid.getItems()[3].getDomRef(),
 			oForwardTabSpy = this.spy(this.oGrid._oItemNavigation, "forwardTab");
 
-		oItemWrapperTile.focus();
+		oTile.focus();
 		Core.applyChanges();
 		// Act
-		qutils.triggerKeydown(oItemWrapperTile, KeyCodes.TAB, false, false, false);
+		qutils.triggerKeydown(oTile, KeyCodes.TAB, false, false, false);
 
 		// Assert
 		assert.ok(oForwardTabSpy.called, "Focus should leave the GridContainer");
@@ -1156,7 +1159,7 @@ function(
 		Core.applyChanges();
 
 		// Assert
-		assert.strictEqual(document.activeElement, oTile.parentNode, "Focus is moved to the list item.");
+		assert.strictEqual(document.activeElement, oTile, "Focus is moved to the tile.");
 	});
 
 	QUnit.test("Tabbing through a List Card should leave the grid container at last focusable element", function (assert) {
@@ -1169,7 +1172,7 @@ function(
 			// Arrange
 			this.oGrid._oItemNavigation.setFocusedIndex(4);
 			var listDomRef = this.oCard.getCardContent()._getList().getDomRef(),
-				firstListItem = listDomRef.children[1].children[0],
+				firstListItem = listDomRef.children[1].children[0].firstChild,
 				oForwardTabSpy = this.spy(this.oGrid._oItemNavigation, "forwardTab");
 
 			firstListItem.focus();
@@ -1192,14 +1195,14 @@ function(
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
-			var oItemWrapper = this.oGrid.getDomRef("listUl").children[1];
-			oItemWrapper.focus();
+			var oItem = this.oGrid.getItems()[1].getDomRef();
+			oItem.focus();
 
 			// Assert
 			assert.ok(oCardFocusInSpy.called, "onfocusin is called");
 
-			oItemWrapper = this.oGrid.getDomRef("listUl").children[4];
-			oItemWrapper.focus();
+			oItem = this.oGrid.getItems()[4].getDomRef();
+			oItem.focus();
 
 			// Assert
 			assert.ok(oIntegrationCardFocusInSpy.called, "onfocusin is called");
@@ -1208,31 +1211,15 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("Press on wrapper should transfer events to the inner control", function (assert) {
-
-		// Arrange
-		var oItemWrapper = this.oGrid.getDomRef("listUl").children[3],
-			oAttachPressSpy = this.spy(this.oTile, "firePress");
-
-		oItemWrapper.focus();
-		Core.applyChanges();
-
-		// Act
-		qutils.triggerKeyup(oItemWrapper, KeyCodes.ENTER, false, false, false);
-
-		// Assert
-		assert.strictEqual(oAttachPressSpy.callCount, 1, "Tile is pressed");
-	});
-
 	QUnit.test("FocusDomRef tab index", function (assert) {
 		var oCard = this.oGrid.getItems()[0];
 
-		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), null, "Focus DomRef should not have tabindex");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex");
 
 		oCard.getHeader().invalidate();
 		Core.applyChanges();
 
-		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), null, "Focus DomRef should not have tabindex");
+		assert.strictEqual(oCard.getFocusDomRef().getAttribute("tabindex"), "-1", "Focus DomRef should have tabindex");
 	});
 
 	QUnit.module("'borderReached' event and 'focusItemByDirection' method", {
@@ -1271,7 +1258,7 @@ function(
 
 	QUnit.test("Arrow Left on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
-		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
+		var oFirstItem = this.oGrid.getItems()[0].getDomRef(),
 			done = assert.async();
 
 		this.oGrid.attachBorderReached(function (oEvent) {
@@ -1285,16 +1272,16 @@ function(
 			done();
 		});
 
-		oFirstItemWrapper.focus();
+		oFirstItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(oFirstItem, KeyCodes.ARROW_LEFT, false, false, false);
 	});
 
 	QUnit.test("Arrow Up on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
-		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
+		var oFirstItem = this.oGrid.getItems()[0].getDomRef(),
 			done = assert.async();
 
 		this.oGrid.attachBorderReached(function (oEvent) {
@@ -1307,16 +1294,16 @@ function(
 			done();
 		});
 
-		oFirstItemWrapper.focus();
+		oFirstItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeydown(oFirstItem, KeyCodes.ARROW_UP, false, false, false);
 	});
 
 	QUnit.test("Arrow Right on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
-		var oFourthItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
+		var oItem = this.oGrid.getItems()[3].getDomRef(),
 			done = assert.async();
 
 		this.oGrid.attachBorderReached(function (oEvent) {
@@ -1329,16 +1316,16 @@ function(
 			done();
 		});
 
-		oFourthItemWrapper.focus();
+		oItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oFourthItemWrapper, KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeydown(oItem, KeyCodes.ARROW_RIGHT, false, false, false);
 	});
 
 	QUnit.test("Arrow Down on edge element should trigger 'borderReached' event", function (assert) {
 		// Arrange
-		var oThirdItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
+		var oItem = this.oGrid.getItems()[3].getDomRef(),
 			done = assert.async();
 
 		this.oGrid.attachBorderReached(function (oEvent) {
@@ -1351,25 +1338,25 @@ function(
 			done();
 		});
 
-		oThirdItemWrapper.focus();
+		oItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeydown(oItem, KeyCodes.ARROW_DOWN, false, false, false);
 	});
 
 	QUnit.test("focusItemByDirection method", function (assert) {
 		this.oGrid.focusItemByDirection(NavigationDirection.Down, 0, 0);
-		assert.strictEqual(document.activeElement, this.oGrid.getItems()[0].getDomRef().parentElement, "the item is correctly focused");
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[0].getDomRef(), "the item is correctly focused");
 
 		this.oGrid.focusItemByDirection(NavigationDirection.Up, 0, 1);
-		assert.strictEqual(document.activeElement, this.oGrid.getItems()[3].getDomRef().parentElement, "the item is correctly focused");
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[3].getDomRef(), "the item is correctly focused");
 
 		this.oGrid.focusItemByDirection(NavigationDirection.Right, 1, 0);
-		assert.strictEqual(document.activeElement, this.oGrid.getItems()[2].getDomRef().parentElement, "the item is correctly focused");
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[2].getDomRef(), "the item is correctly focused");
 
 		this.oGrid.focusItemByDirection(NavigationDirection.Left, 1, 0);
-		assert.strictEqual(document.activeElement, this.oGrid.getItems()[3].getDomRef().parentElement, "the item is correctly focused");
+		assert.strictEqual(document.activeElement, this.oGrid.getItems()[3].getDomRef(), "the item is correctly focused");
 	});
 
 	QUnit.module("Keyboard Drag&Drop - suggested positions in different directions", {
@@ -1426,10 +1413,10 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Down", function (assert) {
 		// Arrange
-		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement;
+		var oFirstItem = this.oGrid.getItems()[0].getDomRef();
 
 		// Act
-		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oFirstItem, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
 
 		// Assert
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 0, "The dragged item is the first one");
@@ -1439,10 +1426,10 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Right", function (assert) {
 		// Arrange
-		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement;
+		var oFirstItem = this.oGrid.getItems()[0].getDomRef();
 
 		// Act
-		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oFirstItem, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
 
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 0, "The dragged item is the first one");
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 1, "The dropped item is the second one");
@@ -1451,10 +1438,10 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Left", function (assert) {
 		// Arrange
-		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+		var oSecondItem = this.oGrid.getItems()[1].getDomRef();
 
 		// Act
-		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_LEFT, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oSecondItem, KeyCodes.ARROW_LEFT, false, false, /**ctrl */ true );
 
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 1, "The dragged item is the second one");
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 0, "The dropped item is the first one");
@@ -1463,13 +1450,13 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Up", function (assert) {
 		// Arrange
-		var oThirdItemWrapper = this.oGrid.getItems()[2].getDomRef().parentElement;
+		var oThirdItem = this.oGrid.getItems()[2].getDomRef();
 
-		oThirdItemWrapper.focus();
+		oThirdItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oThirdItem, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
 
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), 2, "The dragged item is the third one");
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 0, "The dropped item is the first one");
@@ -1479,7 +1466,7 @@ function(
 	QUnit.test("Keyboard Drag&Drop: No errors when moving items out of bounds", function (assert) {
 		// Arrange
 		var oItem = this.oGrid.getItems()[0],
-			oItemDomRef = oItem.getDomRef().parentElement;
+			oItemDomRef = oItem.getDomRef();
 
 		// Act - moving first item upwards
 		qutils.triggerKeydown(oItemDomRef, KeyCodes.ARROW_UP, false, false, /**ctrl */ true );
@@ -1489,7 +1476,7 @@ function(
 
 		// Arrange
 		oItem = this.oGrid.getItems()[3];
-		oItemDomRef = oItem.getDomRef().parentElement;
+		oItemDomRef = oItem.getDomRef();
 
 		// Act - moving last item downwards
 		qutils.triggerKeydown(oItemDomRef, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
@@ -1500,10 +1487,10 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Alt + Arrow Right", function (assert) {
 		// Arrange
-		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement;
+		var oFirstItem = this.oGrid.getItems()[0].getDomRef();
 
 		// Act
-		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_RIGHT, false, /**alt */true,  false );
+		qutils.triggerKeydown(oFirstItem, KeyCodes.ARROW_RIGHT, false, /**alt */true,  false );
 
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDraggedControl), -1, "Dragging should be disabled for alt + arrow keys");
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), -1, "Dragging should be disabled for alt + arrow keys");
@@ -1511,11 +1498,11 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Check that GridDragOver is not used", function (assert) {
 		// Arrange
-		var oFirstItemWrapper = this.oGrid.getItems()[0].getDomRef().parentElement,
+		var oFirstItem = this.oGrid.getItems()[0].getDomRef(),
 			fnGetInstanceSpy = this.spy(GridDragOver, "getInstance");
 
 		// Act
-		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oFirstItem, KeyCodes.ARROW_DOWN, false, false, /**ctrl */ true );
 
 		// Assert
 		assert.ok(fnGetInstanceSpy.notCalled, "GridDragOver#getInstance() is not called during keyboard drag and drop.");
@@ -1528,10 +1515,10 @@ function(
 		var oSecondItem = this.oGrid.getItems()[1];
 		var sSecondItemWrapperId = oSecondItem.getDomRef().parentElement.id;
 
-		var oFirstItemWrapper = oFirstItem.getDomRef().parentElement;
+		var oFirstItem = oFirstItem.getDomRef();
 
 		// Act
-		qutils.triggerKeydown(oFirstItemWrapper, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oFirstItem, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
 
 		Core.applyChanges();
 
@@ -1590,15 +1577,16 @@ function(
 			this.oDraggedControl = null;
 			this.oDroppedControl = null;
 			this.sInsertPosition = "";
+			this.oRTLStub.restore();
 		}
 	});
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Right", function (assert) {
 		// Arrange
-		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+		var oSecondItem = this.oGrid.getItems()[1].getDomRef();
 
 		// Act
-		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oSecondItem, KeyCodes.ARROW_RIGHT, false, false, /**ctrl */ true );
 
 		// Assert
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 0, "The dropped item is the in the right when in RTL");
@@ -1606,10 +1594,10 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Left", function (assert) {
 		// Arrange
-		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+		var oSecondItem = this.oGrid.getItems()[1].getDomRef();
 
 		// Act
-		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_LEFT, false, false, /**ctrl */ true );
+		qutils.triggerKeydown(oSecondItem, KeyCodes.ARROW_LEFT, false, false, /**ctrl */ true );
 
 		// Assert
 		assert.strictEqual(this.oGrid.indexOfItem(this.oDroppedControl), 2, "The dropped item is the one in the left when in RTL");
@@ -1683,7 +1671,7 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Down from the first container to the second container", function (assert) {
 		// Arrange
-		var oFirstContainerItem = this.oGrid1.getItems()[3].getDomRef().parentElement,
+		var oFirstContainerItem = this.oGrid1.getItems()[3].getDomRef(),
 			oExpectedSuggestion = this.oGrid2.getItems()[1];
 
 		this.oGrid2.addDragDropConfig(new GridDropInfo({
@@ -1702,7 +1690,7 @@ function(
 
 	QUnit.test("Keyboard Drag&Drop: Ctrl + Arrow Up from the second container to the first container", function (assert) {
 		// Arrange
-		var oSecondContainerItem = this.oGrid2.getItems()[0].getDomRef().parentElement,
+		var oSecondContainerItem = this.oGrid2.getItems()[0].getDomRef(),
 			oExpectedSuggestion = this.oGrid1.getItems()[2];
 
 		this.oGrid1.addDragDropConfig(new GridDropInfo({
@@ -1772,26 +1760,9 @@ function(
 		// Act
 		qutils.triggerEvent("mousedown", oTile.getDomRef());
 		oTile.getFocusDomRef().focus();
-		oGrid._oItemNavigation._onMouseUp();
 
 		// Assert
-		assert.strictEqual(document.activeElement, oTile.getDomRef().parentElement, "The item wrapper of the tile is focused instead of the tile itself.");
-
-		// Clean up
-		oGrid.destroy();
-	});
-
-	QUnit.test("Item with own focus, when the item has no focusable content", function (assert) {
-		// Arrange
-		var oCard = new Card({height: "100%"}),
-			oGrid = new GridContainer({
-				items: [ oCard ]
-			});
-		oGrid.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
-
-		// Assert
-		assert.notOk(GridContainerUtils.getItemWrapper(oCard).classList.contains("sapFGridContainerItemWrapperNoVisualFocus"), "Class for own focus is not added");
+		assert.strictEqual(document.activeElement, oTile.getDomRef(), "The item wrapper of the tile is focused instead of the tile itself.");
 
 		// Clean up
 		oGrid.destroy();
@@ -1811,7 +1782,7 @@ function(
 		qutils.triggerEvent("focusin", oGrid.getDomRef("after"));
 
 		// Assert - check if the "after" element correctly forwarded the focus to grid element
-		assert.strictEqual(document.activeElement, GridContainerUtils.getItemWrapper(oCard), "Correct grid item wrapper is focused");
+		assert.strictEqual(document.activeElement, oCard.getFocusDomRef(), "Correct grid item is focused");
 
 		// Clean up
 		oGrid.destroy();
@@ -1867,7 +1838,7 @@ function(
 		oGrid.focusItem(1);
 
 		// Assert - check if the "before" element correctly forwarded the focus to grid element
-		assert.strictEqual(oGrid._oItemNavigation._mCurrentPosition, null, "Matrix position should be reset");
+		assert.notOk(oGrid._oItemNavigation._mCurrentPosition, "Matrix position should be reset");
 
 		// Clean up
 		oGrid.destroy();
@@ -1899,27 +1870,6 @@ function(
 		afterEach: function () {
 			this.oGrid.destroy();
 		}
-	});
-
-	QUnit.test("Wrapper attributes", async function (assert) {
-		await nextCardReadyEvent(this.oGrid.getItems()[2]);
-		await nextUIUpdate();
-
-		var oWrapper = this.oGrid.$("listUl").children().eq(0),
-			oCard,
-			oHeader,
-			sAriaLabelledByIds;
-
-		assert.notOk(oWrapper.attr("aria-keyshortcuts"), "there is not aria-keyshortcuts attribute");
-		assert.strictEqual(oWrapper.attr("tabindex"), "-1", "tabindex is set");
-
-			oCard = this.oGrid.getItems()[2];
-			oHeader = oCard.getCardHeader();
-			oWrapper = this.oGrid.$("listUl").children().eq(2);
-			sAriaLabelledByIds = oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-dataTimestamp" + " " + oHeader.getId() + "-ariaAvatarText";
-
-			assert.notOk(oWrapper.attr("aria-roledescription"), "aria-roledescription attribute is not set");
-			assert.strictEqual(oWrapper.children()[0].getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header element should have aria-labelledby - pointing to the ID of an element describing the card type, title, subtitle, status text, dataTimestamp or avatar, if there is such element");
 	});
 
 	QUnit.module("2D Navigation", {
@@ -2008,7 +1958,7 @@ function(
 
 	QUnit.test("Arrow Up at the top of the matrix should trigger 'borderReached' event", function (assert) {
 		// Arrange
-		var oTopMostItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement,
+		var oTopMostItemWrapper = this.oGrid.getItems()[1].getDomRef(),
 			oSpy = this.spy();
 
 		this.oGrid.attachBorderReached(oSpy);
@@ -2025,16 +1975,16 @@ function(
 
 	QUnit.test("Arrow Down at the bottom of the matrix should trigger 'borderReached' event", function (assert) {
 		// Arrange
-		var oBottomMostItemWrapper = this.oGrid.getItems()[3].getDomRef().parentElement,
+		var oBottomMostItem = this.oGrid.getItems()[3].getDomRef(),
 			oSpy = this.spy();
 
 		this.oGrid.attachBorderReached(oSpy);
 
-		oBottomMostItemWrapper.focus();
+		oBottomMostItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oBottomMostItemWrapper, KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeydown(oBottomMostItem, KeyCodes.ARROW_DOWN, false, false, false);
 
 		// Assert
 		assert.ok(oSpy.called, "'borderReached' event is fired");
@@ -2042,34 +1992,33 @@ function(
 
 	QUnit.test("Navigation between items of different size based on starting position top", function (assert) {
 		// ArrangeKeyCodes.
-		var oSecondItemWrapper = this.oGrid.getItems()[1].getDomRef().parentElement;
+		var oSecondItem = this.oGrid.getItems()[1].getDomRef();
 
-		oSecondItemWrapper.focus();
+		oSecondItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oSecondItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(oSecondItem, KeyCodes.ARROW_LEFT, false, false, false);
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT, false, false, false );
 
 		// Assert
-		assert.strictEqual(document.activeElement, oSecondItemWrapper, "Focus is moved back to the top starting item.");
+		assert.strictEqual(document.activeElement, oSecondItem, "Focus is moved back to the top starting item.");
 
 	});
 
 	QUnit.test("Navigation between items of different size based on starting position bottom", function (assert) {
 		// Arrange
+		var oThirdItem = this.oGrid.getItems()[2].getDomRef();
 
-		var oThirdItemWrapper = this.oGrid.getItems()[2].getDomRef().parentElement;
-
-		oThirdItemWrapper.focus();
+		oThirdItem.focus();
 		Core.applyChanges();
 
 		// Act
-		qutils.triggerKeydown(oThirdItemWrapper, KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(oThirdItem, KeyCodes.ARROW_LEFT, false, false, false);
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT, false, false, false );
 
 		// Assert
-		assert.strictEqual(document.activeElement, oThirdItemWrapper, "Focus is moved back to the bottom starting item.");
+		assert.strictEqual(document.activeElement, oThirdItem, "Focus is moved back to the bottom starting item.");
 	});
 
 	QUnit.module("Tickets");

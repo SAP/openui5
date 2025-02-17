@@ -43,7 +43,7 @@ sap.ui.define([
 
 	QUnit.test("Scrolling is prevented when navigating with keyboard", function (assert) {
 		// Arrange
-		const $itemWrapper = jQuery(this.oGrid.getItems()[0].getDomRef().parentElement);
+		const $item = this.oGrid.getItems()[0].$();
 
 		[
 			KeyCodes.ARROW_DOWN,
@@ -58,7 +58,7 @@ sap.ui.define([
 			});
 
 			// Act
-			$itemWrapper.trigger(oFakeEvent);
+			$item.trigger(oFakeEvent);
 
 			// Assert
 			assert.ok(oFakeEvent.isDefaultPrevented(), "Default action (scroll) is prevented for event with keycode: " + iKeyCode);

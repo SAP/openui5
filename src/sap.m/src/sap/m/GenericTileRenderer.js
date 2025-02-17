@@ -42,7 +42,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 		var sScopeClass;
 		var frameType = oControl.getFrameType();
 		var sAriaRoleDescription = oControl.getAriaRoleDescription();
-		var sAriaRole = oControl.getAriaRole();
+		var sAriaRole = oControl.getGridItemRole() || oControl.getAriaRole();
 		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 		var sBGColor = oControl._oBadgeColors["backgroundColor"];
 		var bIsIconModeOneByOne = oControl._isIconMode() && frameType === frameTypes.OneByOne;

@@ -461,9 +461,7 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	}
 }
 
-.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard > .sapFCardHeader:not(.sapFCardHeaderToolbarFocused)::before, // focus inside Grid Container
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard.sapFCardNoHeader::before { // ... focus on a card without header
+.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before { // ... focus on a card without header
 	content: '';
 	display: block;
 	position: absolute;
@@ -499,11 +497,6 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 }
 
 .sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
-
-.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard.sapFCardNoHeader::before { // focus inside GridContainer on a card without header
-	bottom: 1px;
-	z-index: 1;
-}
 
 .sapUiSizeCompact {
 	.sapFCard .sapFCardContent {

@@ -95,8 +95,10 @@ sap.ui.define([
 	 */
 	var GenericTile = Control.extend("sap.m.GenericTile", /** @lends sap.m.GenericTile.prototype */ {
 		metadata: {
-
 			library: "sap.m",
+			interfaces: [
+				"sap.f.IGridContainerItem"
+			],
 			properties: {
 				/**
 				 * The mode of the GenericTile.
@@ -167,6 +169,10 @@ sap.ui.define([
 				ariaLabel: {type: "string", group: "Accessibility", defaultValue: null},
 				/**
 				 * Additional description for aria-role.
+				 *
+				 * **Note:** When the control is placed inside a <code>sap.f.GridContainer</code>,
+				 * its accessibility role is overridden by the accessibility role specified by the <code>sap.f.GridContainer</code>.
+				 *
 				 * @since 1.83
 				 */
 				ariaRole: {type: "string", group: "Accessibility", defaultValue: null},
@@ -429,6 +435,8 @@ sap.ui.define([
 		this._oBadgeColors = {
 			backgroundColor: DEFAULT_BG_COLOR
 		};
+
+		this._sGridItemRole = null;
 	};
 
 	GenericTile.prototype.setWrappingType = function (sWrappingType) {
@@ -2146,6 +2154,26 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 		}
 
 		return mDropRect;
+	};
+
+	/**
+	 * Sets the accessibility role for the <code>sap.f.GridContainer</code> item.
+	 *
+	 * @param {string} sRole The accessibility role for the <code>sap.f.GridContainer</code> item
+	 * @public
+	 */
+	GenericTile.prototype.setGridItemRole = function (sRole) {
+		this._sGridItemRole = sRole;
+	};
+
+	/**
+	 * Returns the accessibility role for the <code>sap.f.GridContainer</code> item.
+	 *
+	 * @returns {string} The accessibility role for the <code>sap.f.GridContainer</code> item
+	 * @public
+	 */
+	GenericTile.prototype.getGridItemRole = function () {
+		return this._sGridItemRole;
 	};
 
 	/**

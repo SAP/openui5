@@ -2724,6 +2724,10 @@ sap.ui.define([
 	 * @protected
 	 */
 	Card.prototype.getFocusDomRef = function () {
+		if (this.getGridItemRole()) {
+			return this.getDomRef();
+		}
+
 		if (this.isInteractive() && this.getSemanticRole() === SemanticRole.ListItem) {
 			return this.getDomRef();
 		}
