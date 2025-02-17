@@ -3,6 +3,21 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "2bc694acfef23a192f4620b0bcbefe45666b8fd2",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: Invisible tokens related exceptions are now prevented"
+      },
+      {
+        "id": "a0090a24fdf2872bc9916da918891527167a4e05",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: n-more popover is now not created on initial rendering"
+      },
+      {
+        "id": "11c55c8509196bd80753ba7503447b9dd2f3366c",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: Remove the 100% width"
+      },
+      {
         "id": "6d49a717559605b0669d9202b441700d09e61972",
         "type": "FEATURE",
         "text": " sap.m.SinglePlanningCalendar: Option to get the first and last visible days is now provided"

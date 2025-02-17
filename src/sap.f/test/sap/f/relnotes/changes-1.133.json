@@ -3,6 +3,11 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "36e7c9630d70d8499180d5c8b7cd7d5b13d49025",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Prevent error when FCL is not rendered"
+      },
+      {
         "id": "a49a615915e3f12027322ac3e673391edeaac2a9",
         "type": "FEATURE",
         "text": " Integration Cards: Added option for overflowing with a \"Show More\" button"
