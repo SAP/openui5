@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
-	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/IconPool"
 ], function(
@@ -18,8 +19,9 @@ sap.ui.define([
 	FixedRowMode,
 	TableUtils,
 	library,
-	ODataModel,
 	qutils,
+	Sorter,
+	Filter,
 	MockServer,
 	IconPool
 ) {
@@ -313,7 +315,6 @@ sap.ui.define([
 		let $SelectAll;
 		const oSelectionPlugin = oTable._getSelectionPlugin();
 		const oIcon = oSelectionPlugin.getAggregation("icon");
-		const oOnBindingChangeSpy = sinon.spy(oSelectionPlugin, "_onBindingChange");
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			$SelectAll = oTable.$("selall");
@@ -326,11 +327,9 @@ sap.ui.define([
 			assert.strictEqual($SelectAll.attr("aria-disabled"), "true", "Aria-Disabled set to true");
 			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "DeselectAll icon has the correct css class applied");
 
-			oTable.bindRows({path: "/Products"});
-			oTable.setModel(new ODataModel(sServiceURI, {
-				json: true
-			}));
-		}).then(oTable.qunit.whenBindingChange).then(oTable.qunit.whenRenderingFinished).then(function() {
+			oTable.bindRows({path: "/"});
+			oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(10));
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oTable.getBinding().getLength() > 0, "After bindRows: Table has data");
 			assert.strictEqual($SelectAll.attr("role"), "button", "role attribute is set to button");
 			assert.notOk($SelectAll.attr("aria-disabled"), "After bindRows: aria-disabled is undefined");
@@ -339,7 +338,6 @@ sap.ui.define([
 
 			assert.ok(!oIcon.getUseIconTooltip(), "SelectAll icon has no tooltip");
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon icon is correct");
-			assert.ok(oOnBindingChangeSpy.called, "_onBindingChange has been called");
 			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
 			assert.strictEqual($SelectAll.attr("aria-disabled"), undefined, "Aria-Disabled is undefined");
 			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "AllSelected icon has the correct css class applied");
@@ -359,34 +357,53 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Event parameters of internal default selection plugin", function(assert) {
-		const oMultiSelectionPlugin = new MultiSelectionPlugin();
-
-		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable({
-			rows: {path: "/"},
-			dependents: [
-				oMultiSelectionPlugin
-			],
-			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
-		});
-		assert.expect(2);
-		oMultiSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-			assert.deepEqual(oEvent.getParameter("_internalTrigger"), undefined,
-				"SelectionChange _internalTrigger parameter is undefined");
-
-			oMultiSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-				assert.deepEqual(oEvent.getParameter("_internalTrigger"), true,
-					"SelectionChange _internalTrigger parameter is true after growing table and changing binding length");
+	QUnit.module("_internalTrigger selectionChange event parameter", {
+		beforeEach: async function() {
+			this.oMockServer = startMockServer();
+			this.oMultiSelectionPlugin = new MultiSelectionPlugin();
+			this.oTable = TableQUnitUtils.createTable({
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
+				dependents: this.oMultiSelectionPlugin
 			});
-		});
+			await this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+			this.oMockServer.destroy();
+		}
+	});
 
-		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			return oMultiSelectionPlugin.addSelectionInterval(0, 4).then(function() {
-				this.oTable.getBinding().getModel().getData().push({});
-				this.oTable.getBinding().refresh();
-			}.bind(this));
-		}.bind(this));
+	QUnit.test("Selection change", async function(assert) {
+		this.oMultiSelectionPlugin.attachEventOnce("selectionChange", (oEvent) => {
+			assert.deepEqual(oEvent.getParameter("_internalTrigger"), undefined);
+		});
+		await this.oMultiSelectionPlugin.addSelectionInterval(0, 4);
+	});
+
+	QUnit.test("Binding length change", async function(assert) {
+		await this.oMultiSelectionPlugin.addSelectionInterval(0, 4);
+		this.oMultiSelectionPlugin.attachEventOnce("selectionChange", (oEvent) => {
+			assert.deepEqual(oEvent.getParameter("_internalTrigger"), true);
+		});
+		this.oTable.getBinding().getModel().getData().push({});
+		this.oTable.getBinding().refresh();
+	});
+
+	QUnit.test("Sort", async function(assert) {
+		await this.oMultiSelectionPlugin.addSelectionInterval(0, 4);
+		this.oMultiSelectionPlugin.attachEventOnce("selectionChange", (oEvent) => {
+			assert.deepEqual(oEvent.getParameter("_internalTrigger"), true);
+		});
+		this.oTable.getBinding().sort(new Sorter({path: "something"}));
+	});
+
+	QUnit.test("Filter", async function(assert) {
+		await this.oMultiSelectionPlugin.addSelectionInterval(0, 4);
+		this.oMultiSelectionPlugin.attachEventOnce("selectionChange", (oEvent) => {
+			assert.deepEqual(oEvent.getParameter("_internalTrigger"), true);
+		});
+		this.oTable.getBinding().filter(new Filter({path: "something", operator: "EQ", value1: "something"}));
 	});
 
 	QUnit.module("Multi selection behavior", {
@@ -396,16 +413,12 @@ sap.ui.define([
 				dependents: [
 					new MultiSelectionPlugin()
 				],
-				rows: {
-					path: "/Products"
-				},
-				models: new ODataModel(sServiceURI, {
-					json: true
-				}),
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(16),
 				rowMode: new FixedRowMode()
 			});
 
-			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();

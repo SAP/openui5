@@ -389,7 +389,9 @@ sap.ui.define([
 		const sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 
 		if (sReason === "sort" || sReason === "filter") {
+			this._bInternalTrigger = true;
 			this.clearSelection();
+			delete this._bInternalTrigger;
 		}
 	}
 
