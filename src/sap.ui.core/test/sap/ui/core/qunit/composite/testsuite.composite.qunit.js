@@ -13,7 +13,6 @@ sap.ui.define(function() {
 				title: "QUnit: XMLComposite - sap.ui.core",
 				ui5: {
 					libs: "sap.m",
-					noConflict: true,
 					theme: "sap_belize"
 				},
 				loader: {
@@ -23,7 +22,6 @@ sap.ui.define(function() {
 						bundles: "test-resources/sap/ui/core/qunit/composite/bundles"
 					}
 				},
-				bootCore: true,
 				qunit: {
 					version: 2
 				},
@@ -41,7 +39,6 @@ sap.ui.define(function() {
 			XMLCompositeMemoryLeak: {
 				title: "QUnit Page for sap.ui.core.XMLComposite Memory Leaks",
 				ui5: {
-					noConflict: true,
 					theme: "sap_belize"
 				},
 				loader: {
@@ -49,7 +46,6 @@ sap.ui.define(function() {
 						composites: "test-resources/sap/ui/core/qunit/composite/composites"
 					}
 				},
-				bootCore: true,
 				qunit: {
 					version: 1
 				}

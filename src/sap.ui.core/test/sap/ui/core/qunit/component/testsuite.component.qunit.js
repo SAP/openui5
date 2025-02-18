@@ -18,11 +18,7 @@ sap.ui.define(function() {
 				version: 4,
 				qunitBridge: true,
 				useFakeTimer: false
-			},
-			ui5: {
-				noConflict: true
-			},
-			bootCore: true
+			}
 		},
 		tests: {
 			Cleanup: {
