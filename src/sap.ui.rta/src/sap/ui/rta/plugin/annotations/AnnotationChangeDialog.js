@@ -5,19 +5,19 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
-	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/rta/plugin/annotations/AnnotationChangeDialogController"
+	"sap/ui/rta/plugin/annotations/AnnotationChangeDialogController",
+	"sap/ui/rta/Utils"
 ], function(
 	ManagedObject,
 	Fragment,
-	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	JSONModel,
 	ResourceModel,
-	AnnotationChangeDialogController
+	AnnotationChangeDialogController,
+	RtaUtils
 ) {
 	"use strict";
 
@@ -35,19 +35,20 @@ sap.ui.define([
 
 	AnnotationChangeDialog.prototype._createDialog = async function() {
 		this._oController = new AnnotationChangeDialogController();
-		const oPopover = await Fragment.load({
+		const oDialog = await Fragment.load({
 			name: "sap.ui.rta.plugin.annotations.AnnotationChangeDialog",
 			controller: this._oController
 		});
+		oDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
 		this.oChangeAnnotationModel = new JSONModel();
-		oPopover.setModel(this.oChangeAnnotationModel);
+		oDialog.setModel(this.oChangeAnnotationModel);
 		const oI18nModel = new ResourceModel({ bundleName: "sap.ui.rta.messagebundle" });
-		oPopover.setModel(oI18nModel, "i18n");
-		return oPopover;
+		oDialog.setModel(oI18nModel, "i18n");
+		return oDialog;
 	};
 
 	AnnotationChangeDialog.prototype._openDialog = function() {
-		this._oPopover.open();
+		this._oDialog.open();
 		return this._oController.initialize();
 	};
 
@@ -114,10 +115,14 @@ sap.ui.define([
 		} = mPropertyBag;
 		const {
 			serviceUrl: sServiceUrl,
-			properties: aProperties,
+			properties: aDelegateProperties,
 			possibleValues: aPossibleValues,
 			preSelectedProperty: sPreSelectedPropertyKey
 		} = oDelegate.getAnnotationsChangeInfo(oControl, sAnnotation);
+		const aProperties = aDelegateProperties.map((oProperty) => ({
+			...oProperty,
+			originalValue: oProperty.currentValue
+		}));
 
 		const aExistingChanges = PersistenceWriteAPI._getAnnotationChanges({
 			control: oControl
@@ -127,12 +132,7 @@ sap.ui.define([
 			return oChange.getContent().annotationPath;
 		});
 
-		this._oPopover ||= await this._createDialog();
-
-		const oOriginalProperties = {};
-		aProperties.forEach(({ annotationPath, currentValue }) => {
-			oOriginalProperties[annotationPath] = currentValue;
-		});
+		this._oDialog ||= await this._createDialog();
 
 		const sFilterText = sPreSelectedPropertyKey
 			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).propertyName
@@ -146,31 +146,21 @@ sap.ui.define([
 			showChangedPropertiesOnly: false,
 			filterText: sFilterText,
 			possibleValues: aPossibleValues,
-			valueType: sAnnotationValueType
+			valueType: sAnnotationValueType,
+			serviceUrl: sServiceUrl
 		});
 		if (sFilterText) {
 			this._oController.filterProperties(sFilterText);
 		}
-		const oChangedProperties = await this._openDialog();
-		this._oPopover.close();
-		return Object.entries(oChangedProperties).map(([sPath, vNewValue]) => {
-			if (oOriginalProperties[sPath] === vNewValue) {
-				return null;
-			}
-			return {
-				serviceUrl: sServiceUrl,
-				content: {
-					annotationPath: sPath,
-					value: vNewValue
-				}
-			};
-		}).filter(Boolean);
+		const aChangedProperties = await this._openDialog();
+		this._oDialog.close();
+		return aChangedProperties;
 	};
 
 	AnnotationChangeDialog.prototype.destroy = function(...aArgs) {
 		ManagedObject.prototype.destroy.apply(this, aArgs);
-		if (this._oPopover) {
-			this._oPopover.destroy();
+		if (this._oDialog) {
+			this._oDialog.destroy();
 		}
 		if (this._oController) {
 			this._oController.destroy();

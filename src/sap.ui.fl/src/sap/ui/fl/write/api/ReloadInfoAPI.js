@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils"
 ], function(
+	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
 	Version,
@@ -81,28 +83,26 @@ sap.ui.define([
 	 * @param {string} sReference - Flex reference of the app
 	 * @return {boolean} true if allContextsProvided false and RTA wasn't started yet, otherwise false.
 	 */
-	function needContextSpecificReload(oReloadInfo, sReference) {
+	async function needContextSpecificReload(oReloadInfo, sReference) {
 		// TODO: could be disabled when ContextBasedAdaptationAPI is enabled
-		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+		let oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		if (oFlexInfoSession.initialAllContexts) {
 			return false; // if we are already in RTA mode, no reload needed again
 		}
 		if (oFlexInfoSession.allContextsProvided === undefined) {
-			var mPropertyBag = {
+			const mPropertyBag = {
 				selector: oReloadInfo.selector,
 				layer: oReloadInfo.layer
 			};
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
-			.then(function(oResult) {
-				if (!oFlexInfoSession.initialAllContexts) {
-					oResult.initialAllContexts = true;
-				}
-				FlexInfoSession.setByReference(oResult, sReference);
-				return !oResult.allContextsProvided;
-			});
+			const oFlexInfo = await PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag);
+			oFlexInfoSession = {...oFlexInfoSession, ...oFlexInfo };
+			oFlexInfoSession.initialAllContexts =
+				oFlexInfoSession.allContextsProvided === false || oFlexInfoSession.allContextsProvided === undefined;
+		} else {
+			oFlexInfoSession.initialAllContexts = !oFlexInfoSession.allContextsProvided;
 		}
-		oFlexInfoSession.initialAllContexts = true;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
+		FlexState.setAllContextsProvided(sReference, oFlexInfoSession.allContextsProvided);
 		return !oFlexInfoSession.allContextsProvided;
 	}
 

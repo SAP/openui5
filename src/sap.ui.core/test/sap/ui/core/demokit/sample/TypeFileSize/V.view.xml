@@ -2,8 +2,9 @@
 	controllerName="sap.ui.core.sample.TypeFileSize.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
-	xmlns="sap.m">
-
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	core:require="{FileSizeType: 'sap/ui/model/type/FileSize'}">
 	<form:SimpleForm
 		class="sapUiResponsiveMargin"
 		layout="ResponsiveGridLayout"
@@ -14,13 +15,12 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="FileSize Input" >
+		title="FileSize Input">
 		<form:content>
 			<Label text="FileSize" />
-			<Input value="{path:'/fileSize', type: 'sap.ui.model.type.FileSize'}"/>
+			<Input value="{path:'/fileSize', type: 'FileSizeType'}"/>
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		class="sapUiResponsiveMargin"
 		layout="ResponsiveGridLayout"
@@ -35,23 +35,21 @@
 			<Label text="3 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					minIntegerDigits: 3
 				}
 			}" />
-
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					minIntegerDigits: 5
 				}
 			}" />
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -67,23 +65,21 @@
 			<Label text="2 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					maxIntegerDigits: 2
 				}
 			}" />
-
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					maxIntegerDigits: 5
 				}
 			}" />
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -99,23 +95,21 @@
 			<Label text="2 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					minFractionDigits: 2
 				}
 			}" />
-
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					minFractionDigits: 5
 				}
 			}" />
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -131,22 +125,19 @@
 			<Label text="2 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					maxFractionDigits: 2
 				}
 			}" />
-
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/fileSize',
-				type: 'sap.ui.model.type.FileSize',
+				type: 'FileSizeType',
 				formatOptions: {
 					maxFractionDigits: 5
 				}
 			}" />
 		</form:content>
 	</form:SimpleForm>
-
-
 </mvc:View>

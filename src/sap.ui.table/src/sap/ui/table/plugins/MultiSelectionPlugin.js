@@ -657,8 +657,8 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.onTableRowsBound = function(oBinding) {
-			SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
-			attachToBinding(this, oBinding);
+		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+		attachToBinding(this, oBinding);
 	};
 
 	function attachToBinding(oPlugin, oBinding) {

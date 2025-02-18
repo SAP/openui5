@@ -678,6 +678,7 @@ sap.ui.define([
 		this.refreshSeeMoreVisibility();
 
 		this.toggleStyleClass("sapUxAPObjectPageSubSectionStashed", this._aStashedControls.length ? true : false);
+		this.toggleStyleClass("sapUxAPObjectPageSubSectionFocusable", this.getTitleVisible());
 	};
 
 	ObjectPageSubSection.prototype._adaptDomHeight = function() {
@@ -1242,18 +1243,19 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype._setToFocusable = function (bFocusable) {
-		var sFocusable = '0',
-			sNotFocusable = '-1',
-			sTabIndex = "tabindex";
-
-		if (bFocusable) {
-			this.$().attr(sTabIndex, sFocusable);
+		if (this._shouldBeFocusable()) {
+			this.$().attr("tabindex", bFocusable ? "0" : "-1");
 		} else {
-			this.$().attr(sTabIndex, sNotFocusable);
+			this.$().removeAttr("tabindex");
 		}
-
 		return this;
 	};
+
+
+	ObjectPageSubSection.prototype._shouldBeFocusable = function() {
+		return this.getTitleVisible() && this.getTitle().trim() !== "";
+	};
+
 
 	ObjectPageSubSection.prototype._getUseTitleOnTheLeft = function () {
 		var oObjectPageLayout = this._getObjectPageLayout();

@@ -11,6 +11,16 @@
 	}
 }
 
+.sapFGridContainerItemWrapper:focus::before {
+	content: '';
+	position: absolute;
+	inset: @_sap_f_GridContainer_FocusBorderOffset;
+	z-index: 1;
+	border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
+	border-radius: var(--sapElement_BorderCornerRadius);
+	pointer-events: none;
+}
+
 .sapFGridContainerListUl {
 	position: relative;
 	display: grid;
@@ -35,19 +45,6 @@
 		&.sapFGridContainerInvisiblePlaceholder {
 			display: none;
 		}
-	}
-
-	.sapFGridContainerItemWrapper:not(.sapFGridContainerItemWrapperNoVisualFocus):focus::before {
-		content: '';
-		position: absolute;
-		left: @_sap_f_GridContainer_FocusBorderOffset;
-		bottom: @_sap_f_GridContainer_FocusBorderOffset;
-		right: @_sap_f_GridContainer_FocusBorderOffset;
-		top: @_sap_f_GridContainer_FocusBorderOffset;
-		z-index: 1;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-		pointer-events: none;
-
 	}
 
 	.sapFGridContainerItemWrapper {

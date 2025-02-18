@@ -2,93 +2,25 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (SandboxModel, Opa5, EnterText, Press) {
+], function (Opa5, EnterText, Press) {
 	"use strict";
 
-	var mIcon2DrillState = {
-			"sap-icon://collapse" : "expanded",
-			"sap-icon://expand" : "collapsed",
-			"sap-icon://e-care" : "leaf"
-		},
-		bTreeTable,
+	var bTreeTable,
 		sViewName = "sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy";
 
-	function checkRow(oTable, mDefaults, oExpected, iRowIndex) {
-		var oActual,
-			aCells,
-			sDrillState,
-			aRows = oTable.getRows();
-
-		if (iRowIndex >= aRows.length) {
-			Opa5.assert.ok(false, "Row " + iRowIndex + " is missing");
-			return;
-		}
-
-		aCells = aRows[iRowIndex].getCells();
-		if (oExpected === null) {
-			aCells.forEach(function (oCell, i) {
-				if (oCell.getText || oCell.getValue) {
-					strictEqual(oCell.getText?.() ?? oCell.getValue(), "",
-						"Row " + iRowIndex + ", cell " + i + " is empty");
-				} // else: don't care about invisible icon in 2nd column here (or button column)
-			});
-			return;
-		}
-
-		if (bTreeTable) {
-			sDrillState = aCells[0].getBindingContext().getProperty("@$ui5.node.isExpanded");
-			switch (sDrillState) {
-				case true:
-					sDrillState = "expanded";
-					break;
-				case false:
-					sDrillState = "collapsed";
-					break;
-				case undefined:
-					sDrillState = "leaf";
-					break;
-				default:
-					// sDrillState now contains the wrong value, albeit not necessarily as a string
-			}
-		}
-
-		oExpected = Object.assign({}, mDefaults, oExpected);
-		oActual = bTreeTable ? {
-			// Note: no good way to extract Level from aCells[0]'s indentation
-			Level : parseInt(aCells[1].getText()),
-			// Note: no stable way to extract DrillState from aCells[0]'s list of CSS classes
-			DrillState : sDrillState,
-			ID : aCells[0].getText(),
-			MANAGER_ID : aCells[2].getText() || null,
-			Name : aCells[3].getValue(),
-			AGE : parseInt(aCells[4].getText().replace(",", ""))
-		} : {
-			Level : parseInt(aCells[0].getText()),
-			DrillState : mIcon2DrillState[aCells[1].getIcon()],
-			ID : aCells[2].getText(),
-			MANAGER_ID : aCells[3].getText() || null,
-			Name : aCells[4].getValue(),
-			AGE : parseInt(aCells[5].getText().replace(",", ""))
+	function getDetails(sId) {
+		const sIsIdText = "with ID " + sId;
+		const fnMatch = function (oControl) {
+			return oControl.getBindingContext()?.getProperty("ID") === sId;
 		};
-		strictEqual(oActual.Level, oExpected.DistanceFromRoot + 1,
-			"Row " + iRowIndex + ": Level is " + oActual.Level);
-		strictEqual(oActual.DrillState, oExpected.DrillState,
-			"Row " + iRowIndex + ": DrillState is " + oActual.DrillState);
-		strictEqual(oActual.ID, oExpected.ID,
-			"Row " + iRowIndex + ": ID is " + oActual.ID);
-		strictEqual(oActual.MANAGER_ID, oExpected.MANAGER_ID,
-			"Row " + iRowIndex + ": Manager's ID is " + oActual.MANAGER_ID);
-		strictEqual(oActual.Name, oExpected.Name,
-			"Row " + iRowIndex + ": Name is " + oActual.Name);
-		strictEqual(oActual.AGE, oExpected.AGE,
-			"Row " + iRowIndex + ": Age is " + oActual.AGE);
+
+		return [sIsIdText, fnMatch];
 	}
 
-	function getTableAsString(oTable) {
+	function getTableAsString(oTable, bCheckName, bCheckAge) {
 		let sResult = "";
 
 		for (const oRow of oTable.getRows()) {
@@ -106,8 +38,16 @@ sap.ui.define([
 			}
 
 			const iLevel = oRowContext.getProperty("@$ui5.node.level");
-			const sID = oRow.getCells()[bTreeTable ? 0 : 2].getText();
+			const aCells = oRow.getCells();
+			const sID = aCells[bTreeTable ? 0 : 2].getText();
 			sResult += "\n" + "\t".repeat(iLevel - 1) + sDrillState + sID;
+			const sName = aCells[bTreeTable ? 3 : 4].getValue();
+			if (sName && bCheckName) {
+				sResult += " " + sName;
+			}
+			if (bCheckAge) {
+				sResult += " " + aCells[bTreeTable ? 4 : 5].getText();
+			}
 		}
 
 		return sResult;
@@ -119,24 +59,6 @@ sap.ui.define([
 
 	function getTableType() {
 		return bTreeTable ? "sap.ui.table.TreeTable" : "sap.ui.table.Table";
-	}
-
-	function strictEqual(vActual, vExpected, sTitle) {
-		if (vActual !== vExpected) {
-			Opa5.assert.strictEqual(vActual, vExpected, sTitle);
-		} // else: do not spam the output ;-)
-	}
-
-	function getIdOrRowDetails(vRowIndexOrId) {
-		const bIsId = typeof vRowIndexOrId === "string";
-		const sIsIdText = (bIsId ? "with ID " : "in row ") + vRowIndexOrId;
-		const fnMatch = function (oControl) {
-			return (bIsId)
-				? oControl.getBindingContext()?.getProperty("ID") === vRowIndexOrId
-				: oControl.getBindingContext().getIndex() === vRowIndexOrId;
-		};
-
-		return [bIsId, sIsIdText, fnMatch];
 	}
 
 	function pressButton(rButtonId, fnMatchers, sComment) {
@@ -153,42 +75,42 @@ sap.ui.define([
 		});
 	}
 
-	function pressButtonInRow(vRowIndexOrId, rButtonId, sText, sComment) {
-		const [, sIsIdText, fnMatch] = getIdOrRowDetails(vRowIndexOrId);
+	function pressButtonInRow(sId, rButtonId, sText, sComment) {
+		const [sIsIdText, fnMatch] = getDetails(sId);
 		pressButton.call(this, rButtonId, fnMatch, `'${sText}' ${sIsIdText}. ${sComment}`);
 	}
 
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
-				createNewChild : function (iRow, sComment) {
+				createNewChild : function (sId, sComment) {
 					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
-						errorMessage : `Could not create new child below row ${iRow}`,
+						errorMessage : `Could not create new child below node ${sId}`,
 						id : bTreeTable ? /createInTreeTable/ : /create/,
 						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
+							return oControl.getBindingContext().getProperty("ID") === sId;
 						},
 						success : function () {
 							Opa5.assert.ok(true,
-								`Create new child below row ${iRow}. ${sComment}`);
+								`Create new child below node ${sId}. ${sComment}`);
 						},
 						viewName : sViewName
 					});
 				},
-				editName : function (iRow, sName, sComment) {
+				editName : function (sId, sName, sComment) {
 					this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sName}),
 						controlType : "sap.m.Input",
-						errorMessage : `Could not edit name in row ${iRow}`,
+						errorMessage : `Could not edit name of node with ID ${sId}`,
 						id : bTreeTable ? /nameInTreeTable/ : /name/,
 						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
+							return oControl.getBindingContext().getProperty("ID") === sId;
 						},
 						success : function () {
 							Opa5.assert.ok(true,
-								`Entered name in row ${iRow} as "${sName}". ${sComment}`);
+								`Entered name of node ${sId} as "${sName}". ${sComment}`);
 						},
 						viewName : sViewName
 					});
@@ -225,14 +147,13 @@ sap.ui.define([
 						`'Refresh (keeping tree state)'. ${sComment}`
 					);
 				},
-				toggleExpand : function (vRowIndexOrId, sComment) {
+				toggleExpand : function (sId, sComment) {
 					if (bTreeTable) {
-						const [bIsId, sIsIdText, fnMatch] = getIdOrRowDetails(vRowIndexOrId);
+						const [sIsIdText, fnMatch] = getDetails(sId);
 						this.waitFor({
 							actions : function (oTable) {
-								const iRow = bIsId
-									? oTable.getRows().find(fnMatch).getBindingContext().getIndex()
-									: vRowIndexOrId;
+								const iRow = oTable.getRows().find(fnMatch).getBindingContext()
+									.getIndex();
 
 								if (oTable.isExpanded(iRow)) {
 									oTable.collapse(iRow);
@@ -250,38 +171,30 @@ sap.ui.define([
 							viewName : sViewName
 						});
 					} else {
-						pressButtonInRow.call(this,
-							vRowIndexOrId, /expandToggle/, "Expand", sComment
-						);
+						pressButtonInRow.call(this, sId, /expandToggle/, "Expand", sComment);
 					}
 				},
-				expandAll : function (vRowIndexOrId, sComment) {
-					pressButtonInRow.call(this, vRowIndexOrId,
+				expandAll : function (sId, sComment) {
+					pressButtonInRow.call(this, sId,
 						bTreeTable ? /expandAllTreeTable/ : /expandAll/,
 						"Expand Levels", sComment
 					);
 				},
-				collapseAll : function (vRowIndexOrId, sComment) {
-					pressButtonInRow.call(this, vRowIndexOrId,
+				collapseAll : function (sId, sComment) {
+					pressButtonInRow.call(this, sId,
 						bTreeTable ? /collapseAllTreeTable/ : /collapseAll/,
 						"Collapse All", sComment
 					);
 				}
 			},
 			assertions : {
-				checkTable : function (vExpected, mDefaults, sComment) {
+				checkTable : function (sComment, sExpected, bCheckName, bCheckAge) {
 					this.waitFor({
 						controlType : getTableType(),
 						id : getTableId(),
 						success : function (oTable) {
-							if (typeof vExpected === "string") {
-								const sResult = getTableAsString(oTable);
-								Opa5.assert.strictEqual(sResult, vExpected, sComment);
-							} else {
-								SandboxModel.update(vExpected).forEach(
-									checkRow.bind(null, oTable, mDefaults)
-								);
-							}
+							const sResult = getTableAsString(oTable, bCheckName, bCheckAge);
+							Opa5.assert.strictEqual(sResult, sExpected, sComment);
 						},
 						viewName : sViewName
 					});

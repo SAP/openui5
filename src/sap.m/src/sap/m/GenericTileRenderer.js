@@ -41,7 +41,7 @@ GenericTileRenderer.render = function(oRm, oControl) {
 	var sScopeClass;
 	var frameType = oControl.getFrameType();
 	var sAriaRoleDescription = oControl.getAriaRoleDescription();
-	var sAriaRole = oControl.getAriaRole();
+	var sAriaRole = oControl.getGridItemRole() || oControl.getAriaRole();
 	var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 	var sBGColor = oControl._oBadgeColors["backgroundColor"];
 	var bIsIconModeOneByOne = oControl._isIconMode() && frameType === frameTypes.OneByOne;

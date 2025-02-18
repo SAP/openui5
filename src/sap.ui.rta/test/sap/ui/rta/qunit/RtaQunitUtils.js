@@ -74,7 +74,7 @@ sap.ui.define([
 			await Reverter.revertMultipleChanges(aChangesToRevert, {
 				modifier: JsControlTreeModifier,
 				appComponent: oComponent,
-				reference: FlexRuntimeInfoAPI.getFlexReference({element: oComponent})
+				reference: FlexRuntimeInfoAPI.getFlexReference({ element: oComponent })
 			});
 		}
 
@@ -181,7 +181,7 @@ sap.ui.define([
 			oTarget.setSelected(true);
 			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oTarget)
 			.then(function() {
-				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
+				var { oContextMenuControl } = this.oRta.getPlugins().contextMenu;
 				iItemCount = oContextMenuControl.getItems().length;
 				return oContextMenuControl;
 			}.bind(this))
@@ -192,7 +192,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	RtaQunitUtils.createAndStubAppComponent = function(sandbox, sId, oManifest, oContent) {
+	RtaQunitUtils.createAndStubAppComponent = function(sandbox, sId, oManifest, oContent, oAsyncHints) {
 		sId ||= "someName";
 		oManifest ||= {
 			"sap.app": {
@@ -209,7 +209,7 @@ sap.ui.define([
 			}
 		});
 
-		var oComponent = new Component(sId);
+		var oComponent = new Component(sId, { _componentConfig: { asyncHints: oAsyncHints } });
 		sandbox.stub(flUtils, "getAppComponentForControl").returns(oComponent);
 		oComponent._restoreGetAppComponentStub = flUtils.getAppComponentForControl.restore;
 		return oComponent;

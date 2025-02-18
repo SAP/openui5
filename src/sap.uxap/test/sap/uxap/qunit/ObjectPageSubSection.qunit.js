@@ -1407,22 +1407,14 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 
     QUnit.test("Test aria-labelledby attribute", async function(assert) {
 		// Arrange
-		var oObjectPage = this.ObjectPageSectionView.byId("ObjectPageLayout"),
-			oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
-			sSubSectionWithoutTitleAriaLabelledBy = oSubSectionWithoutTitle.$().attr("aria-labelledby"),
-			oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),
-			sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby"),
-			oPromotedSubSection = this.ObjectPageSectionView.byId("subsection8"),
-			sPromotedSubSectionAriaLabelledBy = oPromotedSubSection.$().attr("aria-labelledby"),
-			sSubSectionControlName = ObjectPageSubSectionClass._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
+		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+		sSubSectionWithoutTitleAriaLabelledBy = oSubSectionWithoutTitle.$().attr("aria-labelledby"),
+		oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),
+		sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby");
 
 		// Assert
-		assert.strictEqual(Element.getElementById(sSubSectionWithoutTitleAriaLabelledBy).getText(),
-			sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
-
-		// Assert
-		assert.strictEqual(Element.getElementById(sSubSectionWithTitleAriaLabelledBy).getText(),
-			oSubSectionWithTitle.getTitle(), "Subsection title is properly labelled");
+		assert.strictEqual(sSubSectionWithoutTitleAriaLabelledBy,
+			undefined, "Subsections without titles should not have aria-labelledby");
 
 		// Act
 		oSubSectionWithTitle.setShowTitle(false);
@@ -1432,18 +1424,89 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby");
 
 		// Assert
-		assert.strictEqual(Element.getElementById(sSubSectionWithTitleAriaLabelledBy).getText(),
-			sSubSectionControlName, "Subsection with hidden title should not not contain its title in aria-labelledby");
-		assert.strictEqual(Element.getElementById(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) === -1,
-			true, "Promoted Subsection title is properly labelled");
+		assert.strictEqual(sSubSectionWithTitleAriaLabelledBy, undefined, "Subsection with hidden title should not have aria-labelledby");
 
 		// Act
-		oObjectPage.setSubSectionLayout("TitleOnLeft");
+		oSubSectionWithTitle.setShowTitle(true);
+		await nextUIUpdate();
+
+		// Arrange
+		sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Element.getElementById(sSubSectionWithTitleAriaLabelledBy).getText(),
+			oSubSectionWithTitle.getTitle(), "Subsection with visible title are correctly labelled");
+	});
+
+	QUnit.test("Test tabindex attribute", async function(assert) {
+		// Arrange
+		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+		oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1");
+
+		// Assert
+		assert.strictEqual(oSubSectionWithoutTitle.$().attr("tabindex"), undefined, "Subsections without titles should not have tabindex attribute");
+		assert.strictEqual(oSubSectionWithTitle.$().attr("tabindex"), '0', "Subsections with titles should have tabindex='0'");
+
+		// Act
+		oSubSectionWithTitle.setShowTitle(false);
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(Element.getElementById(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) > -1,
-			true, "Promoted Subsection title is properly labelled");
+		assert.strictEqual(oSubSectionWithTitle.$().attr("tabindex"), undefined, "Subsections with hidden titles should not have tabindex attribute");
+
+		// Act
+		oSubSectionWithTitle.setShowTitle(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSubSectionWithTitle.$().attr("tabindex"), '0', "Subsections with titles should have tabindex='0'");
+	});
+
+	QUnit.test("Test role attribute", async function(assert) {
+		// Arrange
+		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+		oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1");
+
+		// Assert
+		assert.strictEqual(oSubSectionWithoutTitle.$().attr("role"), undefined, "Subsections without titles should not have role attribute");
+		assert.strictEqual(oSubSectionWithTitle.$().attr("role"), 'region', "Subsections with titles should have role='region");
+
+		// Act
+		oSubSectionWithTitle.setShowTitle(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSubSectionWithTitle.$().attr("role"), undefined, "Subsections with hidden titles should not have role attribute");
+
+		// Act
+		oSubSectionWithTitle.setShowTitle(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSubSectionWithTitle.$().attr("role"), 'region', "Subsections with titles should have role='region");
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFocusable class is added only to focusable subsections", async function(assert) {
+		// Arrange
+		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+		oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1");
+
+		// Assert
+		assert.notOk(oSubSectionWithoutTitle.$().hasClass("sapUxAPObjectPageSubSectionFocusable"), "Subsections without titles should not be fosucable");
+		assert.ok(oSubSectionWithTitle.$().hasClass("sapUxAPObjectPageSubSectionFocusable"), 'region', "Subsections with titles should be focusable");
+		// Act
+		oSubSectionWithTitle.setShowTitle(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oSubSectionWithTitle.$().hasClass("sapUxAPObjectPageSubSectionFocusable"), undefined, "Subsections with hidden titles should not be fosucable");
+
+		// Act
+		oSubSectionWithTitle.setShowTitle(true);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oSubSectionWithTitle.$().hasClass("sapUxAPObjectPageSubSectionFocusable"), 'region', "Subsections with titles should be focusable");
 	});
 
 	QUnit.test("_handleInteractiveElF7 not called on marked events", function(assert) {

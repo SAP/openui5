@@ -41,6 +41,14 @@ sap.ui.define([
 			return null;
 		},
 
+		getItemFocusDomRef: function (oItem) {
+			if (oItem.isA("sap.f.IGridContainerItem")) {
+				return oItem.getFocusDomRef();
+			}
+
+			return this.getItemWrapper(oItem);
+		},
+
 		createConfig: function (oGrid, oItem) {
 			return {
 				grid: oGrid,
