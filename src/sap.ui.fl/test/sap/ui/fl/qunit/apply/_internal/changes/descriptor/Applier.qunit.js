@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/requireAsync"
 ], function(
 	_omit,
 	Applier,
@@ -25,7 +26,8 @@ sap.ui.define([
 	AddNewModelEnhanceWith,
 	AppDescriptorChange,
 	Log,
-	sinon
+	sinon,
+	requireAsync
 ) {
 	"use strict";
 
@@ -54,6 +56,11 @@ sap.ui.define([
 			}.bind(this));
 
 			this.RuntimeStrategy = ApplyStrategyFactory.getRuntimeStrategy();
+			this.BuildStrategy = {
+				registry() {
+					return requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/RegistrationBuild");
+				}
+			};
 
 			this.fnAddLibrarySpy = sandbox.spy(AddLibrary, "applyChange");
 			this.fnAddComponentUsageSpy = sandbox.spy(AddComponentUsages, "applyChange");
@@ -360,6 +367,30 @@ sap.ui.define([
 			return Applier.applyChanges(this.oManifest, aChanges, this.RuntimeStrategy).then(function(oNewManifest) {
 				assert.equal(oNewManifest["sap.app"].description, "{{sap.app.descriptor.test_sap.app.description}}", "description is replaced correctly");
 				assert.equal(fnProcessTextsSpy.callCount, 0, "Strategy.processTexts is not called");
+			});
+		});
+
+		QUnit.test("when calling 'applyChange' for Runtime and Build changes ", function(assert) {
+			var aChanges = [
+				{
+					changeType: "appdescr_app_setDescription",
+					content: {}
+				},
+				{
+					changeType: "appdescr_ui5_setMinUI5Version",
+					content:
+					{
+						minUI5Version: "1.132.1"
+					}
+				}
+			];
+
+			aChanges = convertChanges(aChanges);
+			var sExpectedDescription = "{{sap.app.descriptor.test_sap.app.description}}";
+
+			return Applier.applyChanges(this.oManifest, aChanges, this.BuildStrategy).then(function(oNewManifest) {
+				assert.equal(oNewManifest["sap.app"].description, sExpectedDescription, "runtime changes applied correctly");
+				assert.equal(oNewManifest["sap.ui5"].dependencies.minUI5Version, "1.132.1", "build changes applied correctly");
 			});
 		});
 	});
