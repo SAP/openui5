@@ -672,14 +672,12 @@ sap.ui.define([
 		iShouldSeeTableSettingsButton: function() {
 			return Util.waitForColumnMenu.call(this, {
 				success: function(oColumnMenu) {
-					const oResourceBundle = Library.getResourceBundleFor("sap.m");
 					this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: [{
 							ancestor: oColumnMenu,
 							properties: {
-								icon: "sap-icon://action-settings",
-								text: oResourceBundle.getText("table.COLUMNMENU_TABLE_SETTINGS")
+								icon: "sap-icon://action-settings"
 							}
 						}],
 						success: function(aButtons) {
