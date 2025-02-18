@@ -11,6 +11,7 @@
 		contentWidth="50rem"
 		contentHeight="25rem"
 		title="{/title}"
+		class="sapUiContentPadding"
 	>
 		<content>
 			<VBox>
