@@ -14,6 +14,8 @@ sap.ui.define([],
 			apiVersion: 2
 		};
 
+		var CLOCK_ANGLE_STEP = 6;
+
 		/**
 		 * Renders the HTML for a {@link sap.m.TimePickerClock}, using the provided {@link sap.ui.core.RenderManager}.
 		 *
@@ -23,50 +25,49 @@ sap.ui.define([],
 		TimePickerClockRenderer.render = function(oRm, oControl) {
 			var	iReplacement = oControl.getLastItemReplacement(),
 				iDisplayStep = oControl.getDisplayStep(),
-				iAngleStep = oControl._getAngleStep(),
-				iVisualItemsCount = 360 / iAngleStep,
-				iMultiplier = iVisualItemsCount / oControl._getItemsCount(),
-				bFractions = true,
+				iValueStep = oControl.getValueStep(),
+				bFractions = oControl.getFractions(),
+				bInnerItems = oControl.getInnerItems(),
 				sLabel = oControl.getLabel(),
 				bLastReplacement = iReplacement !== -1 ? true : false,
 				iItemMin = oControl.getItemMin(),
 				iItemMax = oControl.getItemMax(),
 				iSelectedValue = oControl.getSelectedValue(),
-				iHoveredValue = oControl.getHoveredValue(),
-				bSelectedItem = (iSelectedValue >= iItemMin && iSelectedValue <= iItemMax) || (iSelectedValue === iReplacement),
-				bHoveredItem = iHoveredValue !== -1,
+				bSelectedOuter = (iSelectedValue >= iItemMin && iSelectedValue <= iItemMax) || (!bInnerItems && iSelectedValue === iReplacement),
+				bSelectedInner = ((iSelectedValue >= iItemMin + iItemMax && iSelectedValue < iItemMax * 2) || iSelectedValue === iReplacement) && bInnerItems,
 				aValues = [],
+				aInnerValues = [],
 				iItemStep,
 				iIndex,
 				iValueIndex;
 
 			// prepare values except the last one
 			for (iIndex = iItemMin; iIndex <= iItemMax - 1; iIndex++) {
-				if (iIndex % iDisplayStep === 0) {
-					aValues.push(iIndex);
+				aValues.push(iIndex);
+				if (bInnerItems) {
+					aInnerValues.push(iIndex + iItemMax);
 				}
 			}
 
 			// prepare last value
-			aValues.push(bLastReplacement ? iReplacement : iItemMax);
+			aValues.push(bLastReplacement && !bInnerItems ? iReplacement : iItemMax);
+			if (bInnerItems) {
+				aInnerValues.push(bLastReplacement ? iReplacement.toString().padStart(2, "0") : oControl._getMaxValue());
+			}
 
 			// determines angle step for values display
-			iItemStep = 360 / aValues.length;
+			iItemStep = 360 / CLOCK_ANGLE_STEP / aValues.length;
+			// determines step for values display in units
+			if (iValueStep * iItemStep > iDisplayStep) {
+				iDisplayStep = iValueStep * iItemStep;
+			}
 
 			// output clock body
 			oRm.openStart("div", oControl.getId()); // clock wrapper
 			oRm.class("sapMTPClock");
-
-			if (oControl.getSkipAnimation()) {
-				oRm.class("sapMTPCSkipAnimation");
+			if (bInnerItems) {
+				oRm.class("sapMTPCInner");
 			}
-			if (oControl.getFadeIn()) {
-				oRm.class("sapMTPCFadeIn");
-			}
-			if (oControl.getFadeOut()) {
-				oRm.class("sapMTPCFadeOut");
-			}
-
 			oRm.attr("ondragstart", "return false;");
 			oRm.attr("ondrop", "return false;");
 			oRm.attr("aria-hidden", "true");
@@ -79,20 +80,19 @@ sap.ui.define([],
 			oRm.close("div");
 
 			oRm.openStart("div"); // clock items list wrapper
-			oRm.class("sapMTPCItems");
 			oRm.openEnd();
 
 			// output items
-			for (iIndex = 1; iIndex <= iVisualItemsCount; iIndex++) {
+			for (iIndex = 1; iIndex <= 60; iIndex++) {
 				oRm.openStart("div"); // item wrapper
 				oRm.class("sapMTPCItem");
-				oRm.class("sapMTPCDeg" + (iIndex * oControl._getAngleStep()));
+				oRm.class("sapMTPCDeg" + (iIndex * CLOCK_ANGLE_STEP));
 
-				iValueIndex = iIndex / (iDisplayStep * iMultiplier) - 1;
+				iValueIndex = iIndex / iItemStep - 1;
 
 				oRm.openEnd();
 
-				if (iIndex % (iDisplayStep * iMultiplier) !== 0) {
+				if (iIndex % iDisplayStep !== 0) {
 					if (bFractions) {
 						// output fraction dot
 						oRm.openStart("span");
@@ -102,17 +102,30 @@ sap.ui.define([],
 					}
 				} else {
 					// output item
+
 					oRm.openStart("span"); // item dot
 					oRm.class("sapMTPCDot");
 					oRm.openEnd();
 					oRm.close('span');
 
-					oRm.openStart("span", oControl.getId() + "-" + (aValues[iValueIndex])); // item number
+					oRm.openStart("span", oControl.getId() + "-" + (iValueIndex + 1)); // item number
 					oRm.class("sapMTPCNumber");
 					oRm.openEnd();
 					// put number here
 					oRm.text(aValues[iValueIndex]);
 					oRm.close('span');
+
+					if (bInnerItems) {
+						oRm.openStart("span", oControl.getId() + "-" + (iValueIndex + iItemMax + 1)); // inner item number
+						oRm.class("sapMTPCNumber");
+						if (iValueIndex === 11 && (iSelectedValue === 0 || iSelectedValue === 24) && oControl.getSupport2400() && oControl._selectToggledElement) {
+							oRm.class("sapMTPCSelected");
+						}
+						oRm.openEnd();
+						// put number here
+						oRm.text(aInnerValues[iValueIndex]);
+						oRm.close('span');
+					}
 				}
 				oRm.close('div'); // item wrapper close
 			}
@@ -120,15 +133,16 @@ sap.ui.define([],
 			oRm.close("div"); // clock items list wrapper close
 
 			// output selection marker
-			if (bSelectedItem) {
-				if (iReplacement !== -1 && iSelectedValue === iReplacement) {
-					iSelectedValue = iItemMax;
-				}
+			if (bSelectedOuter || bSelectedInner) {
 
+				if (iSelectedValue === 0) {
+					iSelectedValue = oControl._getMaxValue();
+				}
+				iValueIndex = iSelectedValue - 1;
 				oRm.openStart("div");
-				oRm.class("sapMTPCSelectedItem");
 				oRm.class("sapMTPCItem");
-				oRm.class("sapMTPCDeg" + iSelectedValue * (iItemMax === 12 ? iItemStep : iAngleStep));
+				iIndex = bSelectedInner ? iSelectedValue - iItemMax : iSelectedValue;
+				oRm.class("sapMTPCDeg" + iIndex * CLOCK_ANGLE_STEP * iItemStep);
 				oRm.openEnd();
 
 				oRm.openStart("div"); // item dot
@@ -138,46 +152,27 @@ sap.ui.define([],
 
 				oRm.openStart("div"); // item number outer
 				oRm.class("sapMTPCNumber");
-				oRm.class("sapMTPCSelected");
-				oRm.attr("id", oControl.getId() + "-selected");
+				if (bSelectedOuter) {
+					oRm.class("sapMTPCSelected");
+					oRm.attr("id", oControl.getId() + "-selected");
+				} else {
+					oRm.class("sapMTPCInvisible");
+				}
 				oRm.openEnd();
-				oRm.text(iSelectedValue === iItemMax && iReplacement !== -1 ? iReplacement : iSelectedValue);
+				oRm.text(aValues[iValueIndex]);
 				oRm.close('div');
+
+				if (bSelectedInner) {
+					oRm.openStart("div", oControl.getId() + "-selected"); // item number inner (if necessary)
+					oRm.class("sapMTPCNumber");
+					oRm.class("sapMTPCSelected");
+					oRm.openEnd();
+					oRm.text(aInnerValues[iValueIndex - iItemMax]);
+					oRm.close('div');
+				}
 
 				oRm.close("div"); // selection marker close
-			}
 
-			// output hover marker
-			if (bHoveredItem) {
-				if (iReplacement !== -1 && iHoveredValue === iReplacement) {
-					iHoveredValue = iItemMax;
-				}
-
-				iIndex = iHoveredValue * (iItemMax === 12 ? iItemStep : iAngleStep);
-				if (iIndex === 0) {
-					iIndex = 360;
-				}
-
-				oRm.openStart("div");
-				oRm.class("sapMTPCHoveredItem");
-				oRm.class("sapMTPCItem");
-				oRm.class("sapMTPCDeg" + iIndex);
-				oRm.openEnd();
-
-				oRm.openStart("div"); // item dot
-				oRm.class("sapMTPCHoverMarker");
-				oRm.openEnd();
-				oRm.close('div');
-
-				oRm.openStart("div"); // item number outer
-				oRm.class("sapMTPCNumber");
-				oRm.class("sapMTPCHovered");
-				oRm.attr("id", oControl.getId() + "-hovered");
-				oRm.openEnd();
-				oRm.text(iHoveredValue === iItemMax && iReplacement !== -1 ? iReplacement : iHoveredValue);
-				oRm.close('div');
-
-				oRm.close("div"); // hover marker close
 			}
 
 			// output clock cover
@@ -187,6 +182,7 @@ sap.ui.define([],
 			oRm.close("div");
 
 			oRm.close("div"); // clock wrapper close
+
 		};
 
 		return TimePickerClockRenderer;

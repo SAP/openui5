@@ -60,26 +60,15 @@ sap.ui.define([
 
 		var TimePickerClocks = TimePickerInternals.extend("sap.m.TimePickerClocks", /** @lends sap.m.TimePickerClocks.prototype */ {
 			metadata : {
-				properties: {
-
-					/**
-					 * When set to <code>true</code>, the clock will be displayed without the animation.
-					 */
-					skipAnimation: {type: "boolean", group: "Misc", defaultValue: false}
-
-				},
 				aggregations: {
-
 					/**
 					 * Holds the inner buttons.
 					 */
 					_buttons: { type: "sap.m.internal.ToggleSpinButton", multiple: true, visibility: "hidden" },
-
 					/**
 					 * Holds the inner clocks.
 					 */
 					_clocks: { type: "sap.m.TimePickerClock", multiple: true, visibility: "hidden" }
-
 				}
 			},
 
@@ -261,6 +250,7 @@ sap.ui.define([
 		 */
 		 TimePickerClocks.prototype.init = function() {
 			TimePickerInternals.prototype.init.apply(this, arguments);
+			this._activeClock = 0;
 		};
 
 		/**
@@ -349,7 +339,7 @@ sap.ui.define([
 					oClock = this._getSecondsClock();
 				}
 				oClock && oClock.getEnabled() && oClock.modifyValue(iKey === KeyCodes.PAGE_UP);
-				oClock && this._switchClock(this._getClockIndex(oClock), true);
+				oClock && this._switchClock(this._getClockIndex(oClock));
 			} else if (iKey === KeyCodes.P || iKey === KeyCodes.A) {
 				// AM/PM
 				oEvent.preventDefault();
@@ -370,7 +360,7 @@ sap.ui.define([
 				this._kbdBuffer = "";
 				this._resetCooldown(true);
 				setTimeout(function() {
-					this._switchNextClock(true, true);
+					this._switchNextClock(true);
 				}.bind(this), 0);
 			} else if (aNumbersAndColon.indexOf(iChar) !== -1) {
 				// direct number enter
@@ -380,7 +370,7 @@ sap.ui.define([
 				if (iChar === ":") {
 					this._kbdBuffer = "";
 					this._resetCooldown(true);
-					this._switchNextClock(true, true);
+					this._switchNextClock(true);
 				} else if (this._clockConstraints[iActiveClock]) {
 
 					sBuffer = this._kbdBuffer + iChar;
@@ -392,7 +382,7 @@ sap.ui.define([
 							// value accumulated in the buffer (old entry + new entry) is greater than the clock maximum value,
 							// so assign old entry to the current clock and then switch to the next clock, and add new entry as an old value
 							aClocks[iActiveClock].setSelectedValue(parseInt(this._kbdBuffer));
-							this._switchNextClock(false, true);
+							this._switchNextClock();
 							this._kbdBuffer = iChar;
 							iActiveClock = this._getActiveClockIndex();
 							aClocks[iActiveClock].setSelectedValue(parseInt(iChar));
@@ -406,7 +396,7 @@ sap.ui.define([
 								// there is no place for more entry - just set buffer as a value, and switch to the next clock
 								this._resetCooldown(this._kbdBuffer.length === 2 ? false : true);
 								this._kbdBuffer = "";
-								this._switchNextClock(false, true);
+								this._switchNextClock();
 							}
 						}
 					} else {
@@ -430,7 +420,7 @@ sap.ui.define([
 							this._exactMatch = null;
 							this._kbdBuffer = "";
 							this._resetCooldown(true);
-							this._switchNextClock(false, true);
+							this._switchNextClock();
 						} else if (sBuffer.length === 2) {
 							// no matches, but 2 numbers are entered, start again
 							this._exactMatch = null;
@@ -525,26 +515,16 @@ sap.ui.define([
 		};
 
 		/**
-		 * Prepare the control for opening.
-		 * If there are already clock and button objects created, set their appearance-related properties.
+		 * Opens first clock.
 		 *
 		 * @returns {this} Pointer to the control instance to allow method chaining
 		 * @public
 		 */
-		TimePickerClocks.prototype.prepareForOpen = function() {
-			const aClocks = this.getAggregation("_clocks"),
-				aButtons = this.getAggregation("_buttons");
-			this.setSkipAnimation(true);
-			if (aClocks.length) {
-				this._activeClock = 0;
-				aClocks.forEach((oClock, iIndex) => {
-					oClock.setSkipAnimation(iIndex === 0).setFadeOut(false).setFadeIn(iIndex === 0);
-					aButtons[iIndex].setPressed(iIndex === 0);
-				});
-			}
-
+		TimePickerClocks.prototype.showFirstClock = function() {
+			this._switchClock(0);
 			return this;
 		};
+
 
 		/*
 		 * PRIVATE API
@@ -626,12 +606,11 @@ sap.ui.define([
 		 * Switches to the next clock that can de focused.
 		 *
 		 * @param {boolean} bWrapAround whether to start with first clock after reaching the last one, or not
-		 * @param {boolean} bSkipAnimation whether to skip the animation or not
 		 * @private
 		 */
-		 TimePickerClocks.prototype._switchNextClock = function(bWrapAround, bSkipAnimation) {
-			let	iActiveClock = this._getActiveClockIndex();
-			const aClocks = this.getAggregation("_clocks"),
+		 TimePickerClocks.prototype._switchNextClock = function(bWrapAround) {
+			var	iActiveClock = this._getActiveClockIndex(),
+				aClocks = this.getAggregation("_clocks"),
 				iClocksCount = aClocks.length,
 				oActiveClock = this._getActiveClock(),
 				iStartActiveClock = iActiveClock;
@@ -658,7 +637,7 @@ sap.ui.define([
 
 			this._ctrlKeyDown = 0; // 0 = Ctrl is released, 1 = Ctrl is pressed, 2 = Ctrl key down flag must be reset due to value change
 			if (iActiveClock !== iStartActiveClock && aClocks[iActiveClock].getEnabled()) {
-				this._switchClock(iActiveClock, bSkipAnimation);
+				this._switchClock(iActiveClock);
 			}
 		};
 
@@ -682,7 +661,7 @@ sap.ui.define([
 
 				for (iIndex = 0; iIndex < aClocks.length; iIndex++) {
 					iMin = aClocks[iIndex].getItemMin();
-					iMax = aClocks[iIndex].getItemMax();
+					iMax = aClocks[iIndex]._getMaxValue();
 					iStep = aClocks[iIndex].getValueStep();
 					iReplacement = aClocks[iIndex].getLastItemReplacement();
 					if (iReplacement !== -1 && iReplacement < iMin) {
@@ -936,10 +915,10 @@ sap.ui.define([
 					label: oLabels["hours"],
 					selectedValue: iSelectedHours,
 					itemMin: 1,
-					itemMax: bFormatSupport24 ? 24 : 12,
+					itemMax: 12,
 					valueStep: 1,
-					displayStep: bFormatSupport24 ? 2 : 1,
-					fractions: bFormatSupport24,
+					displayStep: 1,
+					innerItems: bFormatSupport24,
 					lastItemReplacement: iLastReplacement,
 					prependZero: bPrependZero,
 					support2400: bSupport2400
@@ -957,7 +936,6 @@ sap.ui.define([
 			}
 
 			if (sFormat.indexOf("m") !== -1) {
-
 				if (sFormat.indexOf("mm") !== -1) {
 					iLastReplacement = 0;
 					bPrependZero = true;
@@ -1015,11 +993,11 @@ sap.ui.define([
 				// add AM/PM segmented button
 				this.setAggregation("_buttonAmPm", new SegmentedButton(sId + "-format", {
 					items: [
-						new sap.m.SegmentedButtonItem({
+						new SegmentedButtonItem({
 							text: this._sAM,
 							key: "am"
 						}),
-						new sap.m.SegmentedButtonItem({
+						new SegmentedButtonItem({
 							text: this._sPM,
 							key: "pm"
 						})
@@ -1035,11 +1013,9 @@ sap.ui.define([
 
 			aButtons = this.getAggregation("_buttons");
 			aClocks = this.getAggregation("_clocks");
-
-			// skip animation for the first clock
 			this._clockCount = aClocks ? aClocks.length : 0;
 			if (this._clockCount) {
-				aClocks[0].setSkipAnimation(true).setFadeIn(true);
+				this._switchClock(0);
 			}
 
 			// attach events to the controls
@@ -1076,22 +1052,20 @@ sap.ui.define([
 					sClockSuffix = oEvent.getParameter("id").slice(-1);
 
 				// update corresponding button
-				aButtons[this._clockIndexes[sClockSuffix]] && aButtons[this._clockIndexes[sClockSuffix]].setText(sValue);
+				aButtons[this._clockIndexes[sClockSuffix]] && aButtons[this._clockIndexes[sClockSuffix]].setText(sValue).focus();
 
-				// handle hours change
-				if (!bIsFinal || (sClockSuffix === "H" && (iSelected === 24 || iSelected === 0))) {
+				// "soft" change event (only for Hours change)
+				if (!bIsFinal) {
 					if (sClockSuffix === "H") {
 						this._handleHoursChange(oEvent);
 					}
-					if (!bIsFinal) {
-						return;
-					}
+					return;
 				}
 
 				// switch to the next clock (if possible)
 				if (!this.getSupport2400() || iSelected !== 24) {
 					setTimeout(function() {
-						this._switchNextClock(false);
+						this._switchNextClock();
 					}.bind(this), 0);
 				}
 			}.bind(this));
@@ -1104,67 +1078,42 @@ sap.ui.define([
 					this._switchClock(this._clockIndexes[sButtonSuffix]);
 				}
 			}.bind(this));
+
+			oButton.onfocusin = function(oEvent) {
+				var sButtonSuffix = oEvent.target.id.slice(-1),
+					aClocks = this.getAggregation("_clocks");
+
+				if (aClocks[this._clockIndexes[sButtonSuffix]].getEnabled()) {
+					this._switchClock(this._clockIndexes[sButtonSuffix]);
+				}
+			}.bind(this);
+
 		};
 
 		/**
 		 * Switches to the specific clock.
 		 *
-		 * @param {int} iNewClock the index (in _clocks aggregation) of the clock
-		 * @param {boolean} bSkipAnimation whether to skip the animation (when switch is by keyboard shortcut)
+		 * @param {int} iClockIndex the index (in _clocks aggregation) of the clock
 		 * @private
 		 */
-		TimePickerClocks.prototype._switchClock = function(iNewClock, bSkipAnimation) {
-			if (this._activeClock === iNewClock) {
-				return;
-			}
-
-			if (this.getSkipAnimation()) {
-				bSkipAnimation = true;
-			}
-
-			const oCurrentClock = this._getActiveClock(),
-				oNewClock = this.getAggregation("_clocks")[iNewClock],
-				aButtons = this.getAggregation("_buttons");
-
-
-			if (iNewClock !== this._activeClock) {
-				oCurrentClock._save2400State();
-			}
-
-			if (this.getSkipAnimation() && iNewClock !== 0 && this._activeClock === 0 && oNewClock) {
-				oCurrentClock.setSkipAnimation(false);
-				this.setSkipAnimation(bSkipAnimation);
-			}
-
-			if (oNewClock && bSkipAnimation) {
-				oCurrentClock.setFadeIn(false);
-				oNewClock.setSkipAnimation(true).setFadeIn(true);
-				this._activeClock = iNewClock;
-				aButtons[iNewClock].setPressed(true);
-				aButtons[iNewClock].focus();
-			} else {
-				// oCurrentClock.getDomRef().querySelector(".sapMTPCItems .sapMTPCNumber").addEventListener("animationend", jQuery.proxy(this._swapClocks, this, this._activeClock, iNewClock), {once: true});
-				oCurrentClock.setFadeOut(true);
-				setTimeout(() => this._swapClocks(this._activeClock, iNewClock), 350);
-			}
-		};
-
-		TimePickerClocks.prototype._swapClocks = function(iPrevClock, iNextClock) {
-			const aClocks = this.getAggregation("_clocks"),
+		TimePickerClocks.prototype._switchClock = function(iClockIndex) {
+			var aClocks = this.getAggregation("_clocks"),
 				aButtons = this.getAggregation("_buttons"),
-				oPrevClock = aClocks[iPrevClock],
-				oNextClock = aClocks[iNextClock],
-				bIsTherePrevClock = iPrevClock !== undefined && aClocks[iPrevClock];
+				oActiveClock = this._getActiveClock();
 
-			if (bIsTherePrevClock) {
-				oPrevClock.setFadeIn(false).setFadeOut(false).setSkipAnimation(false);
-				aButtons[iPrevClock].setPressed(false);
+			if (iClockIndex !== this._activeClock) {
+				oActiveClock._save2400State();
 			}
 
-			this._activeClock = iNextClock;
-			oNextClock.setFadeIn(true);
-			aButtons[iNextClock].setPressed(true);
-			aButtons[iNextClock].focus();
+			if (this._activeClock !== undefined) {
+				aButtons[this._activeClock].setPressed(false);
+				aClocks[this._activeClock].removeStyleClass("sapMTPCActive");
+			}
+
+			aClocks[iClockIndex].addStyleClass("sapMTPCActive");
+			aButtons[iClockIndex].setPressed(true);
+			aButtons[iClockIndex].focus();
+			this._activeClock = iClockIndex;
 		};
 
 		/**
@@ -1175,7 +1124,9 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClocks.prototype._getClockIndex = function(oClock) {
-			return this._clockIndexes[oClock.getId().slice(-1)];
+			var sSuffix = oClock.getId().slice(-1);
+
+			return this._clockIndexes[sSuffix];
 		};
 
 		/**
