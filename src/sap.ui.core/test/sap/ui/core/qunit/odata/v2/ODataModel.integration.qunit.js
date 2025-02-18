@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
+	"sap/m/FlexBox",
 	"sap/m/Input",
 	"sap/m/Label",
+	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObjectObserver",
@@ -42,9 +44,9 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, Localization, merge, uid, Input, Label, Device, BindingInfo, ManagedObjectObserver, SyncPromise,
-		Library, Messaging, UI5Date, FieldHelp, FieldHelpUtil, Message, MessageType, Controller, View, Rendering,
-		BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode,
+], function (Log, Localization, merge, uid, FlexBox, Input, Label, Text, Device, BindingInfo, ManagedObjectObserver,
+		SyncPromise, Library, Messaging, UI5Date, FieldHelp, FieldHelpUtil, Message, MessageType, Controller, View,
+		Rendering, BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode,
 		MessageScope, ODataMetaModel, Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
@@ -557,6 +559,8 @@ sap.ui.define([
 					: {source : "qunit/odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"},
 				"/special/cases/$metadata"
 					: {source : "qunit/odata/v2/data/metadata_special_cases.xml"},
+				"/special/cases/$metadata?sap-value-list=special.cases.BusinessPartner%2FCurrencyCode"
+					: {source : "qunit/odata/v2/data/metadata_special_cases.VH_CurrencyWaers.xml"},
 				"/hierarchy/maintenance/$metadata"
 					: {source : "qunit/odata/v2/data/metadata_hierarchy_maintenance.xml"},
 				"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata"
@@ -26454,6 +26458,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// B: control binding to text and ID in a composite binding
 	// C: control binding different control properties to text and ID
 	// D: control binding to text property only, text and ID property are defined in a complex type
+	// E: control added later binding to lazily loaded value help metadata
 	// JIRA: CPOUI5MODELS-1896
 	QUnit.test("Field help for text properties", async function (assert) {
 		const oModel = createSpecialCasesModel();
@@ -26479,22 +26484,45 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		await this.createView(assert, sView, oModel);
 
-		const {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+		let {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+		const fnUpdateHotspots = (aHotspots) => fnResolve(aHotspots);
 
 		// code under test
-		FieldHelp.getInstance().activate(fnResolve);
+		FieldHelp.getInstance().activate(fnUpdateHotspots);
 
-		const aHotspots = await oFieldHelpUpdatePromise;
-		const aExpectedHotspots = [["A"], ["B"], ["C"], ["D", "REGION_ID"]]
-			.map(([sCase, sId]) => ({
-				backendHelpKey : {
-					id : sId ?? "BP_ID",
-					type : "DTEL"
-				},
-				hotspotId : this.oView.createId("id" + sCase),
-				labelText : sCase
-			}));
+		let aHotspots = await oFieldHelpUpdatePromise;
+		const getFieldHelpForCase = ([sCase, sId]) => ({
+			backendHelpKey : {
+				id : sId ?? "BP_ID",
+				type : "DTEL"
+			},
+			hotspotId : this.oView.createId("id" + sCase),
+			labelText : sCase
+		});
+		const aExpectedHotspots = [["A"], ["B"], ["C"], ["D", "REGION_ID"]].map(getFieldHelpForCase);
 		assert.deepEqual(aHotspots, aExpectedHotspots, "field help hotspots");
+
+		// lazily load metadata for value help on currency code
+		const oMetaModel = oModel.getMetaModel();
+		const oMetaContextForCurrencyProperty = oMetaModel.getMetaContext("/BusinessPartnerSet('1')/CurrencyCode");
+		await oMetaModel.getODataValueLists(oMetaContextForCurrencyProperty);
+		// add control(s) bound to value help entity resp. properties
+		const sNewControlId = this.oView.createId("idE");
+		const oValueHelpBox = new FlexBox();
+		this.expectRequest("VH_CurrencySet('EUR')", {Ltext : "Euro", Waers : "EUR"});
+		oValueHelpBox.bindObject("/VH_CurrencySet('EUR')");
+		this.oView.addContent(oValueHelpBox);
+		oValueHelpBox.addItem(new Label({labelFor : sNewControlId, text : "E"}));
+		({promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers());
+
+		// code under test: add control bound to the lazily loaded value help *text* property
+		oValueHelpBox.addItem(new Text({id : sNewControlId, text : "{Ltext}"}));
+
+		aHotspots = await oFieldHelpUpdatePromise;
+		aExpectedHotspots.push(getFieldHelpForCase(["E", "WAERS"]));
+		assert.deepEqual(aHotspots, aExpectedHotspots,
+			"field help hotspots contain ID property from lazily loaded metadata");
+		await this.waitForChanges(assert);
 		FieldHelp.getInstance().deactivate();
 	});
 });
