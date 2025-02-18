@@ -1420,7 +1420,7 @@ sap.ui.define([
 				oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
 				oHeaderTitleDomRef = oHeaderDomRef.querySelector(".sapFCardTitle"),
 				oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
-				sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-dataTimestamp" + " " + oHeader.getId() + "-ariaAvatarText";
+				sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-dataTimestamp" + " " + oHeader.getAggregation("_avatar").getId();
 
 			// Assert Card Container
 			assert.strictEqual(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
@@ -1483,7 +1483,7 @@ sap.ui.define([
 			// Assert
 			var oHeader = this.oCard.getAggregation("_header"),
 				oHeaderFocusDomRef = oHeader.getDomRef("focusable"),
-				sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
+				sAriaLabelledByIds = this.oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getAggregation("_avatar").getId();
 
 			// Assert Card Header
 			assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "button", "Card header focusable element should have a role - button");
