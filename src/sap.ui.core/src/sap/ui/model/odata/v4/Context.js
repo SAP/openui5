@@ -206,8 +206,7 @@ sap.ui.define([
 	 *   A promise which is resolved without a defined result when the entity represented by this
 	 *   context has been created in the back end. It is rejected with an <code>Error</code>
 	 *   instance where <code>oError.canceled === true</code> if the transient entity is deleted
-	 *   before it is created in the back end, for example via
-	 *   {@link sap.ui.model.odata.v4.Context#delete},
+	 *   before it is created in the back end, for example via {@link #delete},
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
 	 *   {@link sap.ui.model.odata.v4.ODataModel#resetChanges}, and for all nested contexts within a
 	 *   deep create. It is rejected with an <code>Error</code> instance without
@@ -433,7 +432,7 @@ sap.ui.define([
 	 *   instance of <code>Error</code> in case of failure
 	 *
 	 * @private
-	 * @see sap.ui.model.odata.v4.Context#delete
+	 * @see #delete
 	 */
 	Context.prototype.doDelete = function (oGroupLock, sEditUrl, sPath, oETagEntity, oBinding,
 			fnCallback) {
@@ -1644,8 +1643,7 @@ sap.ui.define([
 	 * any part thereof. The data is a JSON structure as described in <a href=
 	 * "https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html"
 	 * >"OData JSON Format Version 4.0"</a>.
-	 * Note that the function clones the result. Modify values via
-	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
+	 * Note that the function clones the result. Modify values via {@link #setProperty}.
 	 *
 	 * The header context of a list binding only delivers <code>$count</code> and
 	 * <code>@$ui5.context.isSelected</code> (wrapped in an object if <code>sPath</code> is "").
@@ -2117,8 +2115,7 @@ sap.ui.define([
 	/**
 	 * Resets all property changes, created entities, and entity deletions of this context. Resets
 	 * also invalid user input and inactive contexts which had their activation prevented (see
-	 * {@link sap.ui.model.odata.v4.Context#isInactive}). This function does not reset the
-	 * invocation of OData operations (see
+	 * {@link #isInactive}). This function does not reset the invocation of OData operations (see
 	 * {@link sap.ui.model.odata.v4.ODataContextBinding#invoke}). For a context which is currently
 	 * {@link #delete deleted} on the client, but not yet on the server, this method cancels the
 	 * deletion and restores the context.

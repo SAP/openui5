@@ -420,8 +420,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
-	 * this binding with the given resource path and query options.
+	 * Hook method for {@link #fetchCache} to create a cache for this binding with the given
+	 * resource path and query options.
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path, for example "EMPLOYEES"
@@ -1560,7 +1560,7 @@ sap.ui.define([
 	 * @param {Promise[]} aPromises
 	 *   List of (sync) promises which is extended for each call to
 	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects} or
-	 *   {@link sap.ui.model.odata.v4.ODataBinding#refreshInternal}.
+	 *   {@link #refreshInternal}
 	 * @param {string} [sPrefix=""]
 	 *   Prefix for navigation property meta paths; must only be used during recursion
 	 *
