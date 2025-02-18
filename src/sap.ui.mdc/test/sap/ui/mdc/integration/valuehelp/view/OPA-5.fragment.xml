@@ -27,7 +27,7 @@
 				<mdc:typeahead>
 					<mdcvh:Popover id="FB0-FH-SO-Popover" title="City">
 						<mdcvc:MTable  id="FB0-FH-SO-Popover-MTable" keyPath="key" descriptionPath="text" title="Sales Organization">
-							<Table id="FB0-FH-SO-Popover-MTable-mTable" items="{path: 'settings>/salesOrganisations', length: 10}" width="30rem">
+							<Table id="FB0-FH-SO-Popover-MTable-mTable" items="{path: 'runtimeState>/salesOrganisations', length: 10}" width="30rem">
 								<columns>
 									<Column>
 										<Label text="Key"/>
@@ -38,8 +38,8 @@
 								</columns>
 								<items>
 									<ColumnListItem type="Active">
-										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
-										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>text', type: 'sap.ui.model.type.String'}"/>
 									</ColumnListItem>
 								</items>
 							</Table>
@@ -52,7 +52,7 @@
 				<mdc:typeahead>
 					<mdcvh:Popover id="FB0-FH-DC-Popover" title="City">
 						<mdcvc:MTable  id="FB0-FH-DC-Popover-MTable" keyPath="key" descriptionPath="text"  title="Sales Organization">
-							<Table id="FB0-FH-DC-Popover-MTable-mTable" items="{path: 'settings>/distributionChannels', length: 10}" width="30rem">
+							<Table id="FB0-FH-DC-Popover-MTable-mTable" items="{path: 'runtimeState>/distributionChannels', length: 10}" width="30rem">
 								<columns>
 									<Column>
 										<Label text="Key"/>
@@ -66,9 +66,9 @@
 								</columns>
 								<items>
 									<ColumnListItem type="Active">
-										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
-										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
-										<Text text="{settings>salesOrganization}"/>
+										<Text text="{path: 'runtimeState>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{runtimeState>salesOrganization}"/>
 									</ColumnListItem>
 								</items>
 							</Table>
@@ -81,7 +81,7 @@
 				<mdc:typeahead>
 					<mdcvh:Popover id="FB0-FH-D-Popover" title="Divisions">
 						<mdcvc:MTable  id="FB0-FH-D-Popover-MTable" keyPath="key" descriptionPath="text"  title="Divisions" useAsValueHelp="false">
-							<Table id="FB0-FH-D-Popover-MTable-mTable" items="{path: 'settings>/divisions', length: 10}" width="30rem">
+							<Table id="FB0-FH-D-Popover-MTable-mTable" items="{path: 'runtimeState>/divisions', length: 10}" width="30rem">
 								<columns>
 									<Column>
 										<Label text="Key"/>
@@ -98,10 +98,10 @@
 								</columns>
 								<items>
 									<ColumnListItem type="Active">
-										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
-										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
-										<Text text="{path: 'settings>salesOrganization', type: 'sap.ui.model.type.String'}"/>
-										<Text text="{path: 'settings>distributionChannel', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>salesOrganization', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>distributionChannel', type: 'sap.ui.model.type.String'}"/>
 									</ColumnListItem>
 								</items>
 							</Table>
@@ -127,7 +127,7 @@
 								type="ResponsiveTable"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
 								threshold="50">
@@ -136,10 +136,10 @@
 								</mdc:type>
 								<mdc:columns>
 									<mdc:table.Column id="mdcTable-Divisions-1-col-1" header="key" propertyKey="key">
-										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>key', type: 'sap.ui.model.type.String'}"/>
 									</mdc:table.Column>
 									<mdc:table.Column id="mdcTable-Divisions-1-col-2" header="text" propertyKey="text">
-										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>text', type: 'sap.ui.model.type.String'}"/>
 									</mdc:table.Column>
 								</mdc:columns>
 							</mdc:Table>
@@ -160,7 +160,7 @@
 								type="ResponsiveTable"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
 								threshold="50">
@@ -169,13 +169,13 @@
 								</mdc:type>
 								<mdc:columns>
 									<mdc:table.Column id="mdcTable-Divisions-2-col-1" header="key" propertyKey="key">
-										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>key', type: 'sap.ui.model.type.String'}"/>
 									</mdc:table.Column>
 									<mdc:table.Column id="mdcTable-Divisions-2-col-2" header="text" propertyKey="text">
-										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>text', type: 'sap.ui.model.type.String'}"/>
 									</mdc:table.Column>
 									<mdc:table.Column id="mdcTable-Divisions-2-col-3" header="salesOrganization" propertyKey="salesOrganization">
-										<Text text="{settings>salesOrganization}"/>
+										<Text text="{runtimeState>salesOrganization}"/>
 									</mdc:table.Column>
 								</mdc:columns>
 							</mdc:Table>
@@ -188,7 +188,7 @@
 								type="ResponsiveTable"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
 								threshold="50">
@@ -197,10 +197,10 @@
 								</mdc:type>
 								<mdc:columns>
 									<mdc:table.Column id="mdcTable-Divisions-3-col-1" header="key" propertyKey="key">
-										<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>key', type: 'sap.ui.model.type.String'}"/>
 									</mdc:table.Column>
 									<mdc:table.Column id="mdcTable-Divisions-3-col-2" header="text" propertyKey="text">
-										<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+										<Text text="{path: 'runtimeState>text', type: 'sap.ui.model.type.String'}"/>
 									</mdc:table.Column>
 								</mdc:columns>
 							</mdc:Table>
@@ -221,7 +221,7 @@
 									type="ResponsiveTable"
 									width="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+									selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate='\{"name": "sap/ui/v4demo/delegate/salesorganization/Table.delegate", "payload": \{"collectionName": "divisions", "model": "settings"\}\}'
 									threshold="50">
@@ -230,13 +230,13 @@
 									</mdc:type>
 									<mdc:columns>
 										<mdc:table.Column id="mdcTable-Divisions-4-col-1" header="key" propertyKey="key">
-											<Text text="{path: 'settings>key', type: 'sap.ui.model.type.String'}"/>
+											<Text text="{path: 'runtimeState>key', type: 'sap.ui.model.type.String'}"/>
 										</mdc:table.Column>
 										<mdc:table.Column id="mdcTable-Divisions-4-col-2" header="text" propertyKey="text">
-											<Text text="{path: 'settings>text', type: 'sap.ui.model.type.String'}"/>
+											<Text text="{path: 'runtimeState>text', type: 'sap.ui.model.type.String'}"/>
 										</mdc:table.Column>
 										<mdc:table.Column id="mdcTable-Divisions-4-col-3" header="distributionChannel" propertyKey="distributionChannel">
-											<Text text="{settings>distributionChannel}"/>
+											<Text text="{runtimeState>distributionChannel}"/>
 										</mdc:table.Column>
 									</mdc:columns>
 								</mdc:Table>
@@ -257,7 +257,7 @@
 				conditions="{$filters>/conditions/salesOrganization}"
 				propertyKey="salesOrganization"
 				valueHelp="FB0-FH-SO"
-				maxConditions="{settings>/maxConditions}"
+				maxConditions="{runtimeState>/maxConditions}"
 				display="DescriptionValue"
 				/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -266,7 +266,7 @@
 				conditions="{$filters>/conditions/distributionChannel}"
 				propertyKey="distributionChannel"
 				valueHelp="FB0-FH-DC"
-				maxConditions="{settings>/maxConditions}"
+				maxConditions="{runtimeState>/maxConditions}"
 				display="DescriptionValue"
 				/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -275,7 +275,7 @@
 				conditions="{$filters>/conditions/division}"
 				propertyKey="division"
 				valueHelp="FB0-FH-D"
-				maxConditions="{settings>/maxConditions}"
+				maxConditions="{runtimeState>/maxConditions}"
 				display="DescriptionValue"
 				/>
 		</mdc:filterItems>

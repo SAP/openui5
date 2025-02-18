@@ -37,7 +37,7 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheOPAPage: {
-			viewName: "sap.ui.v4demo.view.App",
+			viewName: 'module:sap/ui/v4demo/view/App',
 			actions: _createMethods([ValueHelpActions, FieldActions, FilterFieldActions]),
 			assertions: _createMethods([ValueHelpAssertions, FieldAssertions, FilterFieldAssertions])
 		}

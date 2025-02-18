@@ -83,7 +83,7 @@
 								id="mdcTable1"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 								threshold="50">
@@ -127,7 +127,7 @@
 								id="mdcTable2"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 								threshold="50">
@@ -149,7 +149,7 @@
 										<Text text="{regionOfOrigin_code}" />
 									</mdc:table.Column>
 									<mdc:table.Column id="mdcTable2_col_city" header="City" propertyKey="cityOfOrigin_city">
-										<Text text="{cityOfOrigin_code}" />
+										<Text text="{cityOfOrigin_city}" />
 									</mdc:table.Column>
 								</mdc:columns>
 							</mdc:Table>
@@ -197,7 +197,7 @@
 				required="false"
 				valueHelp="FB0-FH1-10"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 		</mdc:filterItems>
 	</mdc:FilterBar>
 

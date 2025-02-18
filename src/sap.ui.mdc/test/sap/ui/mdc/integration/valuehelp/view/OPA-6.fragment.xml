@@ -8,8 +8,6 @@
 	xmlns:f2="sap.f"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
-
-	
 	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
@@ -30,9 +28,9 @@
 				validateInput="false"
 				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnClick": true\}\}'>
 				<mdc:typeahead>
-					<mdcvh:Popover title="Test1">
+					<mdcvh:Popover id="FH1-Popover" title="Test1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
-							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
+							<Table items='{path : "/Authors", length: 10}' mode="{= ${runtimeState>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -83,7 +81,7 @@
 								id="mdcTable1"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}}"
 								threshold="50">
@@ -120,7 +118,7 @@
 				required="false"
 				valueHelp="FH1"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 		</mdc:filterItems>
 	</mdc:FilterBar>
 
