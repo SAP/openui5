@@ -1426,8 +1426,9 @@ sap.ui.define([
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> there is a change of this binding which has been sent to the server and for which
 	 *       there is no response yet,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}).
+	 *     <li> the binding is part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create} because it is
+	 *       relative to a {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
 	 *   </ul>
 	 *
 	 * @public
