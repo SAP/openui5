@@ -2,13 +2,16 @@
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<ColumnListItem vAlign="Middle"
+		core:require="{
+			Formatter: 'sap/m/sample/TableBreadcrumb/Formatter'
+		}"
 		type="{
 			path: 'ProductId',
-			formatter: 'sap.m.sample.TableBreadcrumb.Formatter.listItemType'
+			formatter: 'Formatter.listItemType'
 		}"
 		selected="{
 			path: 'ProductId',
-			formatter: 'sap.m.sample.TableBreadcrumb.Formatter.isProductSelected'
+			formatter: 'Formatter.isProductSelected.bind($control)'
 		}">
 		<cells>
 			<ObjectIdentifier
@@ -22,19 +25,19 @@
 						{ path: 'Height' },
 						{ path: 'DimUnit' }
 					],
-					formatter: 'sap.m.sample.TableBreadcrumb.Formatter.dimensions'
+					formatter: 'Formatter.dimensions'
 				}" />
 			<ObjectNumber
 				number="{WeightMeasure}"
 				unit="{WeightUnit}"
 				state="{
 					path: 'WeightMeasure',
-					formatter: 'sap.m.sample.TableBreadcrumb.Formatter.weightState'
+					formatter: 'Formatter.weightState'
 				}" />
 			<ObjectNumber
 				number="{
 					path: 'Price',
-					formatter: 'sap.m.sample.TableBreadcrumb.Formatter.round2DP'
+					formatter: 'Formatter.round2DP'
 				}"
 				unit="{CurrencyCode}" />
 		</cells>
