@@ -4344,8 +4344,6 @@ sap.ui.define([
 	 * Note: Data for all selected contexts is reread from the server, even if it is already
 	 * available on the client. Any data updates are reflected on the UI but no order is changed.
 	 *
-	 * Note: This is only supported if the model uses the <code>autoExpandSelect</code> parameter.
-	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
 	 *   used, see {@link #getGroupId}. Valid values are <code>undefined</code>, '$auto', '$auto.*',
@@ -4413,8 +4411,6 @@ sap.ui.define([
 	/**
 	 * Validates the selected contexts against the list binding's filter criteria and removes the
 	 * selection from contexts that no longer match.
-	 *
-	 * Note: This is only supported if the model uses the <code>autoExpandSelect</code> parameter.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
