@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="ui5.walkthrough.controller.Detail"
 	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:wt="ui5.walkthrough.control"
 >
@@ -10,6 +11,10 @@
 		navButtonPress=".onNavBack"
 	>
 		<ObjectHeader
+			core:require="{
+				Date: 'sap/ui/model/type/Date',
+				Currency: 'sap/ui/model/type/Currency'
+			}"
 			responsive="true"
 			fullScreenOptimized="true"
 			number="{
@@ -17,7 +22,7 @@
 					'invoice>ExtendedPrice',
 					'view>/currency'
 				],
-				type: 'sap.ui.model.type.Currency',
+				type: 'Currency',
 				formatOptions: {
 					showMeasure: false
 				}
@@ -35,7 +40,7 @@
 					title="{i18n>dateTitle}"
 					text="{
 						path: 'invoice>ShippedDate',
-						type: 'sap.ui.model.type.Date',
+						type: 'Date',
 						formatOptions: {
 							style: 'long',
 							source: {
