@@ -4,11 +4,11 @@
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
@@ -55,7 +55,7 @@
 										<mdc:dependents>
 											<mdc:ValueHelp id="IOFFVHCountry" delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 												<mdc:typeahead>
-													<mdcv:Popover id="IOFFVHCountry-Pop">
+													<mdcvh:Popover id="IOFFVHCountry-Pop">
 														<mdcvc:MTable  id="IOFFVHCountry-Pop-Cont"  keyPath="code"	descriptionPath="descr">
 															<Table  id="IOFFVHCountry-Pop-Table" items="{path: '/Countries'}" width="30rem" mode="SingleSelectMaster">
 																<columns>
@@ -74,10 +74,10 @@
 																</items>
 															</Table>
 														</mdcvc:MTable>
-													</mdcv:Popover >
+													</mdcvh:Popover >
 												</mdc:typeahead>
 												<mdc:dialog>
-													<mdcv:Dialog id="IOFFVHCountry-Dia" title="Countries">
+													<mdcvh:Dialog id="IOFFVHCountry-Dia" title="Countries">
 														<mdcvc:MTable id="IOFFVHCountry-Dia-Cont"  keyPath="code"	descriptionPath="descr">
 															<Table id="IOFFVHCountry-Dia-Table" items="{path: '/Countries'}" width="30rem" mode="SingleSelectLeft">
 																<columns>
@@ -96,7 +96,7 @@
 																</items>
 															</Table>
 														</mdcvc:MTable>
-													</mdcv:Dialog >
+													</mdcvh:Dialog >
 												</mdc:dialog>
 											</mdc:ValueHelp>
 										</mdc:dependents>
@@ -113,7 +113,7 @@
 										   							\{"contentId":"container-v4demo---authordetails--regionsTypeAhead", "path":"country_code"\}]
 												\}\}'>
 												<mdc:typeahead>
-													<mdcv:Popover id="IOFFVHRegion-Pop">
+													<mdcvh:Popover id="IOFFVHRegion-Pop">
 														<mdcvc:MTable id="regionsTypeAhead" keyPath="code" descriptionPath="text" >
 															<Table id="regionsTypeAhead-Table" items="{path: '/Regions', length: 10}" width="30rem" mode="SingleSelectMaster">
 																<columns>
@@ -136,13 +136,13 @@
 																</items>
 															</Table>
 														</mdcvc:MTable>
-													</mdcv:Popover>
+													</mdcvh:Popover>
 												</mdc:typeahead>
 												<mdc:dialog>
-													<mdcv:Dialog id="IOFFVHRegion-Dia" title="Regions">
+													<mdcvh:Dialog id="IOFFVHRegion-Dia" title="Regions">
 														<mdcvc:MTable id="regions" keyPath="code" descriptionPath="text" >
 															<mdcvc:filterBar>
-																<vhfb:FilterBar id="regions-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+																<mdcvh:FilterBar id="regions-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 																	<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry"
 																		label="Country"
 																		editMode="Editable"
@@ -156,7 +156,7 @@
 																		valueStateText="{ path:'$filters>/fieldPath/country_code/valueStateText'}"
 																		valueHelp="IOFFVHCountry">
 																	</mdc:FilterField>
-																</vhfb:FilterBar>
+																</mdcvh:FilterBar>
 															</mdcvc:filterBar>
 
 															<Table id="regions-Table" items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
@@ -180,7 +180,7 @@
 																</items>
 															</Table>
 														</mdcvc:MTable>
-													</mdcv:Dialog>
+													</mdcvh:Dialog>
 												</mdc:dialog>
 											</mdc:ValueHelp>
 										</mdc:dependents>
@@ -200,7 +200,7 @@
 										   							\{"contentId":"container-v4demo---authordetails--citiesTypeAhead", "path":["country_code", "region_code"]\}]
 												\}\}'>
 												<mdc:typeahead>
-													<mdcv:Popover id="IOFFVHCity-Pop">
+													<mdcvh:Popover id="IOFFVHCity-Pop">
 													<mdcvc:MTable id="citiesTypeAhead" keyPath="city" descriptionPath="text" >
 														<Table id="citiesTypeAhead-Table" items="{path: '/Cities', length: 10}" width="30rem" mode="SingleSelectMaster">
 															<columns>
@@ -227,16 +227,16 @@
 															</items>
 														</Table>
 													</mdcvc:MTable>
-													</mdcv:Popover>
+													</mdcvh:Popover>
 												</mdc:typeahead>
 												<mdc:dialog>
-													<mdcv:Dialog id="IOFFVHCity-Dia" title= "Cities">
+													<mdcvh:Dialog id="IOFFVHCity-Dia" title= "Cities">
 													<mdcvc:MTable id="cities" keyPath="city" descriptionPath="text" >
 														<mdcvc:filterBar>
-															<vhfb:FilterBar id="cities-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+															<mdcvh:FilterBar id="cities-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 																<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/country_code}" propertyKey="country_code" operators="EQ,NE" />
 																<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.odata.type.String" width="100%" conditions="{$filters>/conditions/region_code}" propertyKey="region_code"/>
-															</vhfb:FilterBar>
+															</mdcvh:FilterBar>
 														</mdcvc:filterBar>
 														<Table id="cities-table" items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 															<columns>
@@ -263,7 +263,7 @@
 															</items>
 														</Table>
 													</mdcvc:MTable>
-													</mdcv:Dialog>
+													</mdcvh:Dialog>
 												</mdc:dialog>
 											</mdc:ValueHelp>
 										</mdc:dependents>
@@ -275,7 +275,7 @@
 										<mdc:dependents>
 											<mdc:ValueHelp id="FHAuthorGenre" delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 												<mdc:typeahead>
-													<mdcv:Popover id="fGenres-Pop" title="Genre">
+													<mdcvh:Popover id="fGenres-Pop" title="Genre">
 														<mdcvc:MTable id="fGenres-Pop-Cont" keyPath="code" descriptionPath="title" >
 															<Table id="fGenres-Pop-Table" items='{path : "/Genres", length: 10}' width="30rem" mode="SingleSelectMaster">
 																<columns>
@@ -306,10 +306,10 @@
 																</items>
 															</Table>
 														</mdcvc:MTable>
-													</mdcv:Popover>
+													</mdcvh:Popover>
 												</mdc:typeahead>
 												<mdc:dialog>
-													<mdcv:Dialog id="fGenres-Dia" title="Genre">
+													<mdcvh:Dialog id="fGenres-Dia" title="Genre">
 														<mdcvc:MTable id="fGenres-Dia-Cont" keyPath="code" descriptionPath="title" >
 															<Table id="fGenres-Dia-Table" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 																<columns>
@@ -340,7 +340,7 @@
 																</items>
 															</Table>
 														</mdcvc:MTable>
-													</mdcv:Dialog>
+													</mdcvh:Dialog>
 												</mdc:dialog>
 											</mdc:ValueHelp>
 										</mdc:dependents>

@@ -9,8 +9,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
 
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdct="sap.ui.mdc.table"
@@ -28,7 +28,7 @@
 				id="FB0-FH1-10"
 				delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:dialog>
-					<mdcv:Dialog title="MDC Table with ui.Table">
+					<mdcvh:Dialog title="MDC Table with ui.Table">
 						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template" forceBind="true">
 							<mdc:Table autoBindOnInit="false"
 								id="mdcTable1"
@@ -55,7 +55,7 @@
 							</mdc:Table>
 						</mdcvc:MDCTable>
 
-					</mdcv:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</mdc:dependents>

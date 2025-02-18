@@ -2,8 +2,7 @@
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcf="sap.ui.mdc.field"
-		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-		xmlns:mdcv="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -23,11 +22,11 @@
 				<mdc:ValueHelp id="VH1"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
-						<mdcv:Popover>
+						<mdcvh:Popover>
 							<mdcvc:FixedList items="{/Authors}" useAsValueHelp="true">
 								<mdcvc:FixedListItem key="{ID}" text="{name}"/>
 							</mdcvc:FixedList>
-						</mdcv:Popover>
+						</mdcvh:Popover>
 					</mdc:typeahead>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -39,11 +38,11 @@
 				<mdc:ValueHelp id="VH2"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
-						<mdcv:Popover id="VH2-Pop">
+						<mdcvh:Popover id="VH2-Pop">
 							<mdcvc:FixedList id="VH2-FL" items="{/Authors}" useAsValueHelp="true" filterList="false" useFirstMatch="true">
 								<mdcvc:FixedListItem key="{ID}" text="{name}" additionalText="{ID}"/>
 							</mdcvc:FixedList>
-						</mdcv:Popover>
+						</mdcvh:Popover>
 					</mdc:typeahead>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -55,7 +54,7 @@
 				<mdc:ValueHelp id="VH3"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
-						<mdcv:Popover id="VH3-Pop" title="Author">
+						<mdcvh:Popover id="VH3-Pop" title="Author">
 							<mdcvc:MTable id="VH3-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="true">
 								<Table id="VH3-Pop-Table" items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 									<columns>
@@ -86,7 +85,7 @@
 									</items>
 								</Table>
 							</mdcvc:MTable>
-						</mdcv:Popover>
+						</mdcvh:Popover>
 					</mdc:typeahead>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -98,7 +97,7 @@
 				<mdc:ValueHelp id="VH4"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
-						<mdcv:Popover id="VH4-Pop" title="Author">
+						<mdcvh:Popover id="VH4-Pop" title="Author">
 							<mdcvc:MTable id="VH4-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 								<Table id="VH4-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 									<columns>
@@ -129,29 +128,29 @@
 									</items>
 								</Table>
 							</mdcvc:MTable>
-						</mdcv:Popover>
+						</mdcvh:Popover>
 					</mdc:typeahead>
 					<mdc:dialog>
-						<mdcv:Dialog id="VH4-Dia" title="Author">
+						<mdcvh:Dialog id="VH4-Dia" title="Author">
 							<mdcvc:MTable id="VH4-Dia-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 								<mdcvc:filterBar>
-									<vhfb:FilterBar id="VH4-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-										<vhfb:filterItems>
+									<mdcvh:FilterBar id="VH4-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+										<mdcvh:filterItems>
 											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType="Edm.Int32"  conditions="{$filters>/conditions/ID}"/>
 											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions="{$filters>/conditions/name}"/>
 											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Date of Birth" dataType="Edm.Date" maxConditions="-1" conditions="{$filters>/conditions/dateOfBirth}" valueHelp="VH2-2">
 												<mdc:dependents>
 													<mdc:ValueHelp id="VH2-2" delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 														<mdc:dialog>
-															<mdcv:Dialog title="Date of Birth">
+															<mdcvh:Dialog title="Date of Birth">
 																<mdcvc:Conditions label="Date of Birth"/>
-															</mdcv:Dialog>
+															</mdcvh:Dialog>
 														</mdc:dialog>
 													</mdc:ValueHelp>
 												</mdc:dependents>
 											</mdc:FilterField>
-										</vhfb:filterItems>
-									</vhfb:FilterBar>
+										</mdcvh:filterItems>
+									</mdcvh:FilterBar>
 								</mdcvc:filterBar>
 								<Table id="VH4-Dia-Table" items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 									<columns>
@@ -182,7 +181,7 @@
 									</items>
 								</Table>
 							</mdcvc:MTable>
-						</mdcv:Dialog>
+						</mdcvh:Dialog>
 					</mdc:dialog>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -194,7 +193,7 @@
 				<mdc:ValueHelp id="VH5"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
-						<mdcv:Popover id="VH5-Pop" title="Author">
+						<mdcvh:Popover id="VH5-Pop" title="Author">
 							<mdcvc:MTable id="VH5-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 								<Table id="VH5-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 									<columns>
@@ -225,18 +224,18 @@
 									</items>
 								</Table>
 							</mdcvc:MTable>
-						</mdcv:Popover>
+						</mdcvh:Popover>
 					</mdc:typeahead>
 					<mdc:dialog>
-						<mdcv:Dialog id="VH5-Dia" title="Author">
+						<mdcvh:Dialog id="VH5-Dia" title="Author">
 							<mdcvc:MDCTable id="VH5-Dia-Cont" keyPath="ID" descriptionPath="name" >
 								<mdcvc:filterBar>
-									<vhfb:FilterBar id="VH5-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-										<vhfb:filterItems>
+									<mdcvh:FilterBar id="VH5-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+										<mdcvh:filterItems>
 											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType="Edm.Int32"  conditions="{$filters>/conditions/ID}"/>
 											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions="{$filters>/conditions/name}"/>
-										</vhfb:filterItems>
-									</vhfb:FilterBar>
+										</mdcvh:filterItems>
+									</mdcvh:FilterBar>
 								</mdcvc:filterBar>
 								<mdc:Table id="VH5-Dia-Table" autoBindOnInit="true" selectionMode="SingleMaster" p13nMode="Column,Sort" width="100%"
 									delegate='\{"name": "sap/ui/mdc/sample/FieldValueHelp/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
@@ -257,7 +256,7 @@
 									</mdc:type>
 								</mdc:Table>
 							</mdcvc:MDCTable>
-						</mdcv:Dialog>
+						</mdcvh:Dialog>
 					</mdc:dialog>
 				</mdc:ValueHelp>
 			</mdc:dependents>
