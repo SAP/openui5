@@ -16,6 +16,11 @@
 			.sapFCardHeaderToolbarCont {
 				display: none;
 			}
+
+			.sapFCardHeaderMainPart {
+				align-items: unset;
+			}
+
 			.sapFCardHeaderText {
 				margin-inline-end: 0;
 			}
@@ -26,7 +31,7 @@
 			display: none;
 		}
 
-		.sapFCardHeaderWrapper {
+		.sapFCardHeaderMainPart {
 			padding: 1rem;
 			box-sizing: border-box;
 			flex-direction: column;
@@ -40,18 +45,45 @@
 		}
 
 		&.sapFCardNumericHeader {
-			.sapFCardHeaderContent {
-				padding: 1rem;
-				box-sizing: border-box;
-				display: flex;
-				flex-direction: column;
-				text-decoration: none;
+			.sapFCardHeaderMainPart .sapFCardSubtitle {
+				align-items: flex-start;
+			}
 
-				.sapFCardSubtitle {
-					align-items: flex-start;
+			.sapFCardAvatarAndIndicatorsLine {
+				display: flex;
+				align-items: center;
+				overflow: hidden;
+
+				.sapFCardIcon.sapFAvatar {
+					margin-top: 0.5rem;
+					margin-right: 0.5rem;
+
+					&.sapFAvatarImage {
+						margin-right: 0.5rem;
+					}
 				}
 			}
+
+			.sapFCardNumericIndicators {
+				margin-top: 0.5rem;
+			}
 		}
+	}
+
+	
+
+	&.sapFCardNoContent .sapFCardHeader .sapFCardHeaderMainPart {
+		border-radius: inherit;
+	}
+}
+
+.sapUiIntCardTileStandard,
+.sapUiIntCardTileStandardWide,
+.sapUiIntCardTileFlat,
+.sapUiIntCardTileFlatWide,
+.sapUiIntCardStandardHeader {
+	&.sapFCardNoContent .sapFCardHeader.sapFCardHeaderMainPartOnly .sapFCardHeaderMainPart {
+		align-items: unset;
 	}
 }
 
@@ -59,7 +91,7 @@
 .sapFCard.sapUiIntCardTileFlatWide {
 	.sapFCardHeader {
 
-		.sapFCardHeaderWrapper {
+		.sapFCardHeaderMainPart {
 			padding: 1rem 1rem 0.75rem;
 		}
 
@@ -84,7 +116,7 @@
 		}
 
 		&.sapFCardNumericHeader {
-			.sapFCardHeaderContent {
+			.sapFCardHeaderMainPart {
 				padding: 1rem 1rem 0.75rem;
 			}
 
@@ -213,7 +245,11 @@
 	min-height: 3rem;
 
 	.sapFCardHeader {
-		padding: 0.5rem 0.75rem;
+		padding: 0;
+
+		.sapFCardHeaderMainPart {
+			padding: 0.5rem 0.75rem
+		}
 
 		.sapFCardIcon.sapFAvatar {
 			height: 1.9rem;
@@ -243,4 +279,8 @@
 	.sapFCardHeaderToolbarCont {
 		padding-top: 0.25rem;
 	}
+}
+
+.sapUiIntCardSmallHeader.sapFCard.sapFCardNoContent .sapFCardHeader.sapFCardHeaderMainPartOnly .sapFCardHeaderMainPart {
+	align-items: center;
 }

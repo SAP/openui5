@@ -399,7 +399,7 @@ sap.ui.define([
 				id: this.getId() + "-title",
 				wrapping: true,
 				maxLines: this.getTitleMaxLines()
-			});
+			}).addStyleClass("sapFCardTitle");
 
 			this.setAggregation("_title", oControl);
 		}

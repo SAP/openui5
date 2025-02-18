@@ -11,13 +11,24 @@
 		position: relative;
 		padding: 0;
 
+		&.sapFCardHeaderHasToolbar {
+
+			// Always hide toolbar for tiles
+			.sapFCardHeaderToolbarCont {
+				display: none;
+			}
+
+			.sapFCardHeaderText {
+				margin-inline-end: 0;
+			}
+		}
+
 		.sapFCardDataTimestamp,
-		.sapFCardStatus,
-		.sapFCardHeaderToolbarCont {
+		.sapFCardStatus {
 			display: none;
 		}
 
-		.sapFCardHeaderWrapper {
+		.sapFCardHeaderMainPart {
 			padding: 1rem;
 			box-sizing: border-box;
 			flex-direction: column;
@@ -31,18 +42,25 @@
 		}
 
 		&.sapFCardNumericHeader {
-			.sapFCardHeaderContent {
-				padding: 1rem;
-				box-sizing: border-box;
-				display: flex;
-				flex-direction: column;
-				text-decoration: none;
+			.sapFCardHeaderMainPart .sapFCardSubtitle {
+				align-items: flex-start;
+			}
 
-				.sapFCardSubtitle {
-					align-items: flex-start;
+			.sapFCardAvatarAndIndicatorsLine {
+				display: flex;
+				align-items: center;
+				overflow: hidden;
+		
+				.sapFCardIcon.sapFAvatar {
+					margin-top: 0.5rem;
+					margin-right: 0;
 				}
 			}
 		}
+	}
+
+	&.sapFCardNoContent .sapFCardHeader.sapFCardHeaderMainPartOnly .sapFCardHeaderMainPart {
+		align-items: unset;
 	}
 }
 
@@ -50,7 +68,7 @@
 .sapFCard.sapUiIntCardTileFlatWide {
 	.sapFCardHeader {
 
-		.sapFCardHeaderWrapper {
+		.sapFCardHeaderMainPart {
 			padding: 1rem 1rem 0.75rem;
 		}
 
@@ -75,7 +93,7 @@
 		}
 
 		&.sapFCardNumericHeader {
-			.sapFCardHeaderContent {
+			.sapFCardHeaderMainPart {
 				padding: 1rem 1rem 0.75rem;
 			}
 

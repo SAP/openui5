@@ -281,7 +281,7 @@ sap.ui.define([
 	};
 
 	BaseHeader.prototype._handleTap = function (oEvent) {
-		if (!this.isInteractive() || this._isInsideToolbar(oEvent.target)) {
+		if (!oEvent.target.closest(".sapFCardSectionClickable") || !this.isInteractive() || this._isInsideToolbar(oEvent.target)) {
 			return;
 		}
 

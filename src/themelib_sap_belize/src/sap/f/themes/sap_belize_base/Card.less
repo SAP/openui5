@@ -92,14 +92,27 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 .sapFCard .sapFCardHeader {
 	position: relative;
 	flex-shrink: 0;
-	justify-content: space-between;
 	background: @sapUiTileBackground;
 	border-bottom: @_sap_f_Card_HeaderBorder;
 	border-radius: @_sap_f_Card_BorderRadius @_sap_f_Card_BorderRadius 0 0;
 	padding: @_sap_f_Card_ContentPadding;
 	display: flex;
+	flex-direction: column;
 
-	.sapFCardHeaderWrapper {
+	&.sapFCardHeaderHasToolbar {
+		min-height: 2rem;
+
+		.sapFCardHeaderText {
+			margin-inline-end: 3rem;
+			width: unset;
+		}
+
+		.sapFCardNumericHeaderNumericPart {
+			margin-inline-end: 3rem;
+		}
+	}
+
+	.sapFCardHeaderMainPart {
 		outline: none;
 		display: flex;
 		min-width: 0;
@@ -194,8 +207,14 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 		margin-right: 1rem;
 	}
 
-	.sapFCardHeaderToolbarCont .sapFCardHeaderToolbar {
-		margin: -0.25rem 0 -0.25rem 0.5rem;
+	.sapFCardHeaderToolbarCont {
+		position: absolute;
+		right: 1rem;
+		top: 1rem;
+
+		.sapFCardHeaderToolbar {
+			margin: -0.25rem 0 -0.25rem 0.5rem;
+		}
 	}
 
 	.sapFCardHeaderBanner {
@@ -250,7 +269,13 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
 
-	.sapFCardHeaderContent {
+	.sapFCardNumericHeaderNumericPart .sapFCardHeaderNumericPartFirstLine {
+		display: flex;
+		overflow: hidden;
+		align-items: center;
+	}
+
+	.sapFCardHeaderMainPart {
 		outline: none;
 		min-width: 0; // fixes Chrome issue
 		flex: 1;
@@ -279,17 +304,6 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 
 	.sapFCardHeaderText .sapFCardSubtitle .sapMText {
 		color: @sapUiTileTextColor;
-	}
-
-	.sapFCardAvatarAndIndicatorsLine {
-		display: flex;
-		align-items: center;
-		overflow: hidden;
-
-		.sapFCardIcon.sapFAvatar {
-			margin-top: 0.5rem;
-			margin-right: 0;
-		}
 	}
 
 	.sapFCardNumericIndicators {
@@ -453,8 +467,15 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 
 .sapFCard.sapFCardNoContent .sapFCardHeader {
 	border-bottom: none;
-	border-radius: @_sap_f_Card_BorderRadius;
-	flex-grow: 1;
+
+	&.sapFCardHeaderMainPartOnly {
+		flex-grow: 1;
+
+		.sapFCardHeaderMainPart {
+			flex-grow: 1;
+			align-items: flex-start;
+		}
+	}
 }
 
 .sapFCard.sapFCardSectionInteractive {
