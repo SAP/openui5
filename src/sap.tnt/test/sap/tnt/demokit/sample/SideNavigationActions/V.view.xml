@@ -1,0 +1,27 @@
+<mvc:View
+	controllerName="sap.tnt.sample.SideNavigationActions.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+	height="100%">
+	<VBox renderType="Bare" alignItems="Start" height="100%">
+		<Button
+			text="Toggle Collapse/Expand"
+			icon="sap-icon://menu2"
+			press=".onCollapseExpandPress" />
+		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="false">
+			<tnt:NavigationList>
+				<tnt:NavigationListItem text="Home" icon="sap-icon://home" />
+				<tnt:NavigationListItem text="Building" icon="sap-icon://building" />
+				<tnt:NavigationListItem text="Mileage" icon="sap-icon://mileage" />
+				<tnt:NavigationListItem text="Transport" icon="sap-icon://map-2" />
+			</tnt:NavigationList>
+			<tnt:fixedItem>
+				<tnt:NavigationList>
+					<tnt:NavigationListItem ariaHasPopup="Dialog" id="quickCreate" press=".quickActionPress" text="Quick Create" icon="sap-icon://write-new"  design="Action" selectable="false" />
+					<tnt:NavigationListItem selectable="false" href="https://sap.com" target="_blank" text="External Link" icon="sap-icon://attachment" />
+				</tnt:NavigationList>
+			</tnt:fixedItem>
+		</tnt:SideNavigation>
+	</VBox>
+</mvc:View>

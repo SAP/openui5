@@ -336,6 +336,7 @@ sap.ui.define([
 
 		if (this.getEnabled() && !(oEvent.srcControl.isA("sap.ui.core.Icon")) && !this._isOverflow && !(!this.getNavigationList().getExpanded() && this.getItems().length)) {
 			this._firePress(oParams);
+			oEvent.stopPropagation();
 		}
 
 		if (oEvent.isMarked("subItem")) {
