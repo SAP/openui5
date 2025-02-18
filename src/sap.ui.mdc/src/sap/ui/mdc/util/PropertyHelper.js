@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Lib",
 	"sap/base/util/deepEqual",
-	"sap/ui/mdc/util/PropertyHelperUtil"
+	"sap/ui/mdc/util/PropertyHelperUtil",
+	"sap/base/future"
 ], (
 	BaseObject,
 	DataType,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Log,
 	Lib,
 	deepEqual,
-	PropertyHelperUtil
+	PropertyHelperUtil,
+	future
 ) => {
 	"use strict";
 
@@ -288,19 +290,15 @@ sap.ui.define([
 	}
 
 	function reportInvalidProperty(sMessage, oProperty) {
+		const sAdditionalInfo = stringifyPlainObject(oProperty);
 		// implementation for this flag is within PropertyHelperMixin#_checkValidationExceptions
-		if (!PropertyHelperUtil.bValidationException) {
+		if (PropertyHelperUtil.bValidationException) {
+			future.errorThrows(`Invalid property definition: ${sMessage} ${sAdditionalInfo ? `\n${sAdditionalInfo}` : ""}.`, {
+				suffix: `Migrate this control's propertyInfo to avoid breaking changes in the future.`
+			});
+		} else {
 			throwInvalidPropertyError(sMessage, oProperty);
 		}
-
-		// TODO: warning is logged momentarily so that consumers can adapt to have valid property definitions
-		//  valid use case would be to throw an error
-		if (Log.getLevel() < Log.Level.WARNING) {
-			return; // Avoid stringification overhead if logging is not required.
-		}
-
-		const sAdditionalInfo = stringifyPlainObject(oProperty);
-		Log.warning("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
 
 	function throwInvalidPropertyError(sMessage, oProperty) {

@@ -296,8 +296,8 @@ sap.ui.define([
 				return [aProperties, PropertyHelper];
 			});
 		}).then((aResult) => {
-			return PropertyHelperUtil.checkValidationExceptions().then((bExceptionFound) => {
-				return aResult.concat(bExceptionFound);
+			return PropertyHelperUtil.checkValidationExceptions().then((bValidationDisabled) => {
+				return aResult.concat(bValidationDisabled);
 			});
 		}).then((aResult) => {
 			if (this.isDestroyed()) {
@@ -306,9 +306,9 @@ sap.ui.define([
 			if (Array.isArray(aResult) === false) {
 				return undefined;
 			}
-			const [aProperties, PropertyHelper, bExceptionFound] = aResult;
+			const [aProperties, PropertyHelper, bValidationDisabled] = aResult;
 
-			if (bExceptionFound) {
+			if (bValidationDisabled) {
 				future.errorThrows(`PropertyInfo validation is disabled for control ${this.getId()}.`, {
 					suffix: `Migrate this control's propertyInfo to avoid breaking changes in the future.`
 				});
