@@ -49,6 +49,12 @@ sap.ui.define([
 
 	var oGridContainer = new GridContainer("gridContainer", {
 		items: [
+			new Title("title", {
+				text: "This is an sap.m.Title control inside sap.f.GridContainer",
+				layoutData: new GridContainerItemLayoutData({
+					columns: 100
+				})
+			}),
 			new GenericTile({
 				header: "Sales Fulfillment Application Title",
 				subheader: "Has Action",
