@@ -355,6 +355,11 @@
 					"target": "cardActions"
 				},
 				{
+					"pattern": "cardActionsGridContainer",
+					"name": "cardActionsGridContainer",
+					"target": "cardActionsGridContainer"
+				},
+				{
 					"pattern": "fixedHeight",
 					"name": "fixedHeight",
 					"target": "fixedHeight"
@@ -633,6 +638,11 @@
 				"cardActions": {
 					"id": "cardActions",
 					"name": "CardActions",
+					"level": 1
+				},
+				"cardActionsGridContainer": {
+					"id": "cardActionsGridContainer",
+					"name": "CardActionsGridContainer",
 					"level": 1
 				},
 				"fixedHeight": {

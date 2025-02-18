@@ -46,7 +46,8 @@ sap.ui.define([
 			library: "sap.f",
 			interfaces: [
 				"sap.f.ICard",
-				"sap.m.IBadge"
+				"sap.m.IBadge",
+				"sap.f.IGridContainerItem"
 			],
 			properties: {
 
@@ -61,7 +62,10 @@ sap.ui.define([
 				height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto"},
 
 				/**
-				 * Defines the role of the Card Header.
+				 * Defines the accessibility role of the control.
+				 *
+				 * **Note:** When the control is placed inside a <code>sap.f.GridContainer</code>,
+				 * its accessibility role is overridden by the accessibility role specified by the <code>sap.f.GridContainer</code>.
 				 *
 				 * @experimental since 1.131
 				 */
@@ -90,7 +94,9 @@ sap.ui.define([
 			events: {
 				/**
 				 * Fired when action is added on card level.
-				 * Note: Can be used only if <code>semanticRole</code> is <code>sap.f.cards.SemanticRole.ListItem</code>.
+				 *
+				 * **Note**: Can be used only if <code>semanticRole</code> is <code>sap.f.cards.SemanticRole.ListItem</code>
+				 * or the control is placed inside a <code>sap.f.GridContainer</code>.
 				 * @experimental since 1.131
 				 */
 				press: {}
@@ -115,6 +121,8 @@ sap.ui.define([
 
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
+
+		this._sGridItemRole = null;
 
 		this.initCardBadgeEnablement();
 	};
@@ -203,7 +211,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	CardBase.prototype.getFocusDomRef = function () {
-		if (this.isInteractive() && this.getSemanticRole() === SemanticRole.ListItem) {
+		if (this.isRoleListItem()) {
 			return this.getDomRef();
 		}
 
@@ -259,13 +267,6 @@ sap.ui.define([
 		const sBlockingMessageAriaLabelsIds = this._getBlockingMessageAriaLabelledByIds();
 
 		if (oHeader) {
-			if (this._isInsideGridContainer()) {
-				if (sBlockingMessageAriaLabelsIds) {
-					return oHeader._getAriaLabelledBy() + " " + sBlockingMessageAriaLabelsIds;
-				}
-				return oHeader._getAriaLabelledBy();
-			}
-
 			if (oHeader._getTitle && oHeader._getTitle()) {
 				if (sBlockingMessageAriaLabelsIds) {
 					return oHeader._getTitle().getId() + " " + sBlockingMessageAriaLabelsIds;
@@ -321,7 +322,9 @@ sap.ui.define([
 	 * @param {object} oEvent event
 	 */
 	CardBase.prototype._handleTapOrSelect = function (oEvent) {
-		if (!this.isInteractive() || oEvent.isMarked() || this.getSemanticRole() !== SemanticRole.ListItem) {
+		if (!this.isInteractive() ||
+			oEvent.isMarked() ||
+			!this.isRoleListItem()) {
 			return;
 		}
 
@@ -333,16 +336,6 @@ sap.ui.define([
 			originalEvent: oEvent
 		});
 		oEvent.preventDefault();
-	};
-
-	/**
-	 * Returns if the control is inside a sap.f.GridContainer
-	 *
-	 * @private
-	 */
-	CardBase.prototype._isInsideGridContainer = function() {
-		var oParent = this.getParent();
-		return oParent && oParent.isA("sap.f.GridContainer");
 	};
 
 	/**
@@ -361,10 +354,34 @@ sap.ui.define([
 	CardBase.prototype.isInteractive = function() {
 		const bIsInteractive = this.hasListeners("press");
 
-		if (bIsInteractive && this.getSemanticRole() !== SemanticRole.ListItem) {
-			Log.error("The full card cannot be interactive if the 'semanticRole' is not 'ListItem'", this);
+		if (bIsInteractive && !this.isRoleListItem()) {
+			Log.error("The full card cannot be interactive if the 'semanticRole' is not 'ListItem' or the control is not placed inside a sap.f.GridContainer", this);
 		}
 		return bIsInteractive;
+	};
+
+	/**
+	 * Sets the accessibility role for the <code>sap.f.GridContainer</code> item.
+	 *
+	 * @param {string} sRole The accessibility role for the <code>sap.f.GridContainer</code> item
+	 * @public
+	 */
+	CardBase.prototype.setGridItemRole = function (sRole) {
+		this._sGridItemRole = sRole;
+	};
+
+	/**
+	 * Returns the accessibility role for the <code>sap.f.GridContainer</code> item.
+	 *
+	 * @returns {string} The accessibility role for the <code>sap.f.GridContainer</code> item
+	 * @public
+	 */
+	CardBase.prototype.getGridItemRole = function () {
+		return this._sGridItemRole;
+	};
+
+	CardBase.prototype.isRoleListItem = function () {
+		return (this.getSemanticRole() === SemanticRole.ListItem) || this.getGridItemRole();
 	};
 
 	return CardBase;

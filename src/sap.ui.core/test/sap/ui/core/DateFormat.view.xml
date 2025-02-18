@@ -1,5 +1,5 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form"
-	displayBlock="true"> 
+	displayBlock="true">
 	<App autoFocus="false">
 		<Page title="DateFormat" enableScrolling="false">
 			<HBox fitContainer="true">
@@ -8,7 +8,11 @@
 						<FlexItemData baseSize="100%" />
 					</layoutData>
 					<content>
-						<form:SimpleForm layout="ResponsiveGridLayout" columnsL="1" width="100%" editable="true">
+						<form:SimpleForm layout="ResponsiveGridLayout" columnsL="1" width="100%" editable="true"
+							core:require="{
+								DateTimeType: 'sap/ui/model/type/DateTime',
+								StringType: 'sap/ui/model/type/String'
+							}">
 
 
 							<core:Title text="Output" />
@@ -44,10 +48,10 @@
 							</Select>
 
 							<Label text="Local Date/Time" />
-							<Input class="large largeinput" 
+							<Input class="large largeinput"
 									value="{
 											path: '/date',
-											type: 'sap.ui.model.type.DateTime',
+											type: 'DateTimeType',
 											formatOptions: {
 												calendarType: 'Gregorian',
 												pattern: 'yyyy-MM-dd HH:mm:ss'
@@ -59,7 +63,7 @@
 							<Input class="large largeinput" showSuggestion="true"
 									value="{
 										path: '/timezone',
-										type: 'sap.ui.model.type.String'
+										type: 'StringType'
 									}"
 									suggestionItems="{/timezonesSuggestions}"
 									visible="{= ${/type} === 'DateTimeWithTimezone'}" >
@@ -73,7 +77,7 @@
 							<Input class="large largeinput"
 										value="{
 											path: '/todate',
-											type: 'sap.ui.model.type.DateTime',
+											type: 'DateTimeType',
 											formatOptions: {
 												calendarType: 'Gregorian',
 												pattern: 'yyyy-MM-dd HH:mm:ss'

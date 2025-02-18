@@ -2,8 +2,9 @@
 	controllerName="sap.ui.core.sample.TypeTimeAsTime.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
-	xmlns="sap.m">
-
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	core:require="{TimeType: 'sap/ui/model/type/Time'}">
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -15,15 +16,14 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Time Input" >
+		title="Time Input">
 		<form:content>
 			<Label text="Time" />
 			<TimePicker value="{
 				path: '/time',
-				type: 'sap.ui.model.type.Time'}" />
+				type: 'TimeType'}" />
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -34,30 +34,28 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Style" >
+		title="Style">
 		<form:content>
 			<Label text="Short" />
 			<Text text="{
 				path: '/time',
-				type: 'sap.ui.model.type.Time',
+				type: 'TimeType',
 				formatOptions: {
 					style: 'short'
 				}
 			}" />
-
 			<Label text="Medium" />
 			<Text text="{
 				path: '/time',
-				type: 'sap.ui.model.type.Time',
+				type: 'TimeType',
 				formatOptions: {
 					style: 'medium'
 				}
 			}" />
-
 			<Label text="Long" />
 			<Text text="{
 				path: '/time',
-				type: 'sap.ui.model.type.Time',
+				type: 'TimeType',
 				formatOptions: {
 					style: 'long'
 				}

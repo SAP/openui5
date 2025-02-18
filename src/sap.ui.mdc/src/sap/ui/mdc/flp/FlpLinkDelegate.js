@@ -65,27 +65,27 @@ sap.ui.define([
 				return mSemanticObjects[sSemanticObject] && (mSemanticObjects[sSemanticObject].exists === true);
 			});
 		};
-		const fnRetrieveDistinctSemanticObjects = function() {
+		const fnRetrieveDistinctSemanticObjects = async function() {
 			if (!oPromise) {
-				oPromise = new Promise((resolve) => {
-					const oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
-					if (!oCrossApplicationNavigation) {
-						SapBaseLog.error("FlpLinkDelegate: Service 'CrossApplicationNavigation' could not be obtained");
-						resolve({});
-						return;
-					}
-					oCrossApplicationNavigation.getDistinctSemanticObjects().then((aDistinctSemanticObjects) => {
-						aDistinctSemanticObjects.forEach((sSemanticObject) => {
-							mSemanticObjects[sSemanticObject] = {
-								exists: true
-							};
-						});
-						oPromise = null;
-						return resolve(mSemanticObjects);
-					}, () => {
-						SapBaseLog.error("FlpLinkDelegate: getDistinctSemanticObjects() of service 'CrossApplicationNavigation' failed");
-						return resolve({});
+				const { promise, resolve } = Promise.withResolver();
+				oPromise = promise;
+				const oCrossApplicationNavigation = await Factory.getServiceAsync("CrossApplicationNavigation");
+				if (!oCrossApplicationNavigation) {
+					SapBaseLog.error("FlpLinkDelegate: Service 'CrossApplicationNavigation' could not be obtained");
+					resolve({});
+					return;
+				}
+				oCrossApplicationNavigation.getDistinctSemanticObjects().then((aDistinctSemanticObjects) => {
+					aDistinctSemanticObjects.forEach((sSemanticObject) => {
+						mSemanticObjects[sSemanticObject] = {
+							exists: true
+						};
 					});
+					oPromise = null;
+					return resolve(mSemanticObjects);
+				}, () => {
+					SapBaseLog.error("FlpLinkDelegate: getDistinctSemanticObjects() of service 'CrossApplicationNavigation' failed");
+					return resolve({});
 				});
 			}
 			return oPromise;

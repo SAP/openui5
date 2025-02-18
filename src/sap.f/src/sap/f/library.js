@@ -360,6 +360,37 @@ sap.ui.define([
 	  */
 
 	 /**
+	  * Interface for controls suitable for the <code>items</code>
+	  * aggregation of <code>{@link sap.f.GridContainer}</code>.
+	  *
+	  * Classes implementing this interface should use the
+	  * accessibility role provided by the <code>sap.f.IGridContainerItem.getGridItemRole</code> method.
+	  *
+	  * @since 1.134
+	  * @name sap.f.IGridContainerItem
+	  * @interface
+	  * @public
+	  */
+
+	 /**
+	  * Returns the accessibility role for the <code>sap.f.GridContainer</code> item.
+	  *
+	  * @function
+	  * @name sap.f.IGridContainerItem.getGridItemRole
+	  * @returns {string} The accessibility role for the <code>sap.f.GridContainer</code> item
+	  * @public
+	  */
+
+	 /**
+	  * Sets the accessibility role for the <code>sap.f.GridContainer</code> item.
+	  *
+	  * @function
+	  * @name sap.f.IGridContainerItem.setGridItemRole
+	  * @param {string} sRole The accessibility role for the <code>sap.f.GridContainer</code> item
+	  * @public
+	  */
+
+	 /**
 	  * Group modes for the {@link sap.f.AvatarGroup} control.
 	  *
 	  * @enum {string}

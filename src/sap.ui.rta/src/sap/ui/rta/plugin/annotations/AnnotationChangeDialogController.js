@@ -3,14 +3,24 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/m/Input",
+	"sap/m/Select",
+	"sap/m/Switch",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Element",
+	"sap/ui/core/Item",
+	"sap/ui/layout/form/FormElement",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/rta/plugin/annotations/AnnotationTypes"
 ], function(
+	Input,
+	Select,
+	Switch,
 	Controller,
 	Element,
+	Item,
+	FormElement,
 	Filter,
 	FilterOperator,
 	AnnotationTypes
@@ -30,7 +40,6 @@ sap.ui.define([
 	const AnnotationChangeDialogController = Controller.extend("sap.ui.rta.plugin.annotations.AnnotationChangeDialogController");
 
 	AnnotationChangeDialogController.prototype.initialize = function() {
-		this._oChangedProperties = {};
 		return new Promise((resolve) => {
 			this._fnResolveAfterClose = resolve;
 		});
@@ -53,9 +62,9 @@ sap.ui.define([
 		this.filterProperties(sQuery);
 	};
 
-	AnnotationChangeDialogController.prototype.switchDisplayMode = function() {
+	AnnotationChangeDialogController.prototype.switchDisplayMode = function(oEvent) {
+		const bShowChangedPropertiesOnly = oEvent.getParameter("state");
 		const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
-		const bShowChangedPropertiesOnly = !oList.getModel().getProperty("/showChangedPropertiesOnly");
 		oList.getModel().setProperty("/showChangedPropertiesOnly", bShowChangedPropertiesOnly);
 		oList.getModel().setProperty(
 			"/propertiesToDisplay",
@@ -65,42 +74,89 @@ sap.ui.define([
 		);
 	};
 
-	AnnotationChangeDialogController.prototype.onValueListChange = function(oEvent) {
-		const sPath = oEvent.getSource().getBindingContext().getObject().annotationPath;
-		const sSelectedKey = oEvent.getParameters().selectedItem.getKey();
-		this._oChangedProperties[sPath] = sSelectedKey;
-	};
-
-	AnnotationChangeDialogController.prototype.onBooleanChange = function(oEvent) {
-		const sPath = oEvent.getSource().getBindingContext().getObject().annotationPath;
-		const bSelected = oEvent.getParameters().selected;
-		this._oChangedProperties[sPath] = bSelected;
-	};
-
-	AnnotationChangeDialogController.prototype.onStringChange = function(oEvent) {
-		const sPath = oEvent.getSource().getBindingContext().getObject().annotationPath;
-		const sValue = oEvent.getParameters().value;
-		this._oChangedProperties[sPath] = sValue;
-	};
-
-	AnnotationChangeDialogController.prototype.onSavePress = function() {
-		this._fnResolveAfterClose(this._oChangedProperties);
+	AnnotationChangeDialogController.prototype.onSavePress = function(oEvent) {
+		const oModelData = oEvent.getSource().getModel().getData();
+		const aChanges = oModelData.properties
+		.map((oProperty) => {
+			if (oProperty.originalValue === oProperty.currentValue) {
+				return null;
+			}
+			return {
+				serviceUrl: oModelData.serviceUrl,
+				content: {
+					annotationPath: oProperty.annotationPath,
+					value: oProperty.currentValue
+				}
+			};
+		})
+		.filter(Boolean);
+		this._fnResolveAfterClose(aChanges);
 	};
 
 	AnnotationChangeDialogController.prototype.onCancelPress = function() {
-		this._fnResolveAfterClose({});
+		this._fnResolveAfterClose([]);
 	};
 
-	AnnotationChangeDialogController.prototype.formatters = {
-		isValueList(sType) {
-			return sType === AnnotationTypes.ValueListType;
-		},
-		isBoolean(sType) {
-			return sType === AnnotationTypes.BooleanType;
-		},
-		isString(sType) {
-			return sType === AnnotationTypes.StringType;
+	function createEditorField(sValueType) {
+		const onChange = () => {
+			// Property updates are handled via two-way binding
+			// However, the binding of the save button doesn't detect changes
+			// within nested object properties, so it has to be refreshed explicitly
+			const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
+			oSaveButton.getBinding("enabled").refresh(true);
+		};
+
+		if (sValueType === AnnotationTypes.ValueListType) {
+			const oSelect = new Select({
+				selectedKey: "{currentValue}",
+				change: onChange
+			});
+
+			const oItemTemplate = new Item({
+				key: "{key}",
+				text: "{text}"
+			});
+
+			oSelect.bindItems({
+				path: "/possibleValues",
+				template: oItemTemplate,
+				templateShareable: false
+			});
+
+			return oSelect;
 		}
+
+		if (sValueType === AnnotationTypes.StringType) {
+			return new Input({
+				value: "{currentValue}",
+				change: onChange
+			});
+		}
+
+		if (sValueType === AnnotationTypes.BooleanType) {
+			return new Switch({
+				state: "{currentValue}",
+				change: onChange
+			});
+		}
+
+		throw new Error(`Unsupported value type: ${sValueType}`);
+	}
+
+	AnnotationChangeDialogController.prototype.editorFactory = function(sId, oContext) {
+		const sValueType = oContext.getProperty("/valueType");
+
+		return new FormElement({
+			id: sId,
+			label: "{propertyName}",
+			fields: [
+				createEditorField.call(this, sValueType)
+			]
+		});
+	};
+
+	AnnotationChangeDialogController.prototype.hasChangesFormatter = function(aProperties) {
+		return aProperties?.some((oProperty) => oProperty.originalValue !== oProperty.currentValue);
 	};
 
 	return AnnotationChangeDialogController;

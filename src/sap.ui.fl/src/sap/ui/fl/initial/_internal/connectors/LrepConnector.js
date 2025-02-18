@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/ui/dom/includeScript",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/interfaces/BaseLoadConnector",
 	"sap/ui/fl/Utils"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	_pick,
 	includeScript,
 	Utils,
+	StorageUtils,
 	BaseConnector,
 	FlexUtils
 ) {
@@ -120,7 +122,7 @@ sap.ui.define([
 		 */
 		loadFlexData(mPropertyBag) {
 			if (mPropertyBag.cacheKey === "<NO CHANGES>") {
-				return Promise.resolve();
+				return Promise.resolve({ ...StorageUtils.getEmptyFlexDataResponse(), info: { allContextsProvided: true } });
 			}
 
 			var mParameters = _pick(mPropertyBag, ["version", "allContexts", "adaptationId"]);

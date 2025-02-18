@@ -82,12 +82,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sort", function(assert) {
+		assert.expect(3);
+		this.oTable._getSelectionPlugin().attachEventOnce("selectionChange", function(oEvent) {
+			assert.deepEqual(oEvent.getParameter("_internalTrigger"), true, "SelectionChange _internalTrigger parameter");
+		});
 		this.oTable.getBinding().sort(new Sorter({path: "something"}));
 		assert.deepEqual(this.oTable.getSelectedIndices(), [], "Selection");
 		assert.equal(this.oSelectionChangeSpy.callCount, 1, "rowSelectionChange event fired");
 	});
 
 	QUnit.test("Filter", function(assert) {
+		assert.expect(3);
+		this.oTable._getSelectionPlugin().attachEventOnce("selectionChange", function(oEvent) {
+			assert.deepEqual(oEvent.getParameter("_internalTrigger"), true, "SelectionChange _internalTrigger parameter");
+		});
 		this.oTable.getBinding().filter(new Filter({path: "something", operator: "EQ", value1: "something"}));
 		assert.deepEqual(this.oTable.getSelectedIndices(), [], "Selection");
 		assert.equal(this.oSelectionChangeSpy.callCount, 1, "rowSelectionChange event fired");
@@ -99,8 +107,7 @@ sap.ui.define([
 			rows: {path: "/"},
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 		}, function(oTable) {
-			const oSelectionPlugin = oTable._getSelectionPlugin();
-			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+			oTable._getSelectionPlugin().attachEventOnce("selectionChange", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("_internalTrigger"), undefined,
 					"SelectionChange _internalTrigger parameter is undefined");
 			});

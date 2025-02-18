@@ -3,8 +3,13 @@
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:layout="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc">
-
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		DateIntervalType: 'sap/ui/model/type/DateInterval',
+		DateType: 'sap/ui/model/odata/type/Date',
+		StringType: 'sap/ui/model/odata/type/String'
+	}">
 	<App>
 	<Page id="page" floatingFooter="true" showHeader="false"
 		title="Example how to use OData V4 Edm.Date in SAPUI5 applications">
@@ -25,7 +30,7 @@
 				<DateRangeSelection value="{
 						formatOptions: {UTC: true},
 						parts: ['Date', 'EndDate'],
-						type: 'sap.ui.model.type.DateInterval'
+						type: 'DateIntervalType'
 					}" />
 				<Button text="Use JSON Model with sap.ui.model.odata.type.Date Type"
 					press=".onDialogOpen">
@@ -44,19 +49,19 @@
 				<Text text="{
 						path: 'Date',
 						formatter: '.formatDate',
-						type: 'sap.ui.model.odata.type.String'
+						type: 'StringType'
 					}" />
 				<Label text="'Date' Value as URI Parameter Value" />
 				<Text text="{
 						path: 'Date',
 						formatter: '.formatDateAsURIParameter',
-						type: 'sap.ui.model.odata.type.String'
+						type: 'StringType'
 					}" />
 				<Label text="OData Model Value 'EndDate'" />
 				<Text text="{
 						path: 'EndDate',
 						formatter: '.formatDate',
-						type: 'sap.ui.model.odata.type.String'
+						type: 'StringType'
 					}" />
 				<Label text="JSON Model Value '/Date'" />
 				<Text text="{path: 'json>/Date', formatter: '.formatDate'}" />
@@ -77,25 +82,25 @@
 				<form:SimpleForm columnsL="1" columnsM="1" editable="true"
 					labelSpanL="4" labelSpanM="4" layout="ResponsiveGridLayout">
 					<Label text="sap.m.Text" />
-					<Text text="{path: 'json>Date', type: 'sap.ui.model.odata.type.Date'}" />
+					<Text text="{path: 'json>Date', type: 'DateType'}" />
 					<Label text="sap.m.Input" />
-					<Input value="{path: 'json>Date', type: 'sap.ui.model.odata.type.Date'}" />
+					<Input value="{path: 'json>Date', type: 'DateType'}" />
 					<Label text="sap.m.DatePicker" />
 					<DatePicker value="{
 							path: 'json>Date',
-							type: 'sap.ui.model.odata.type.Date'
+							type: 'DateType'
 						}" />
 					<Label text="sap.m.DateRangeSelection" />
 					<DateRangeSelection value="{
 							formatOptions: {UTC: true},
 							parts: [{
 								path: 'json>Date',
-								type: 'sap.ui.model.odata.type.Date'
+								type: 'DateType'
 							}, {
 								path: 'json>EndDate',
-								type: 'sap.ui.model.odata.type.Date'
+								type: 'DateType'
 							}],
-							type: 'sap.ui.model.type.DateInterval'
+							type: 'DateIntervalType'
 						}" />
 				</form:SimpleForm>
 			</Dialog>

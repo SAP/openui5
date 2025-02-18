@@ -4,48 +4,34 @@
 sap.ui.define([
 	"sap/ui/core/sample/common/pages/Any",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/pages/Main",
-	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/TestUtils"
-], function (_Any, _Main, SandboxModel, TestUtils) {
+], function (_Any, _Main, TestUtils) {
 	"use strict";
 
 	return function (Given, When, Then) {
-		const aNodes = SandboxModel.getTopLevels(1);
-		let iFirstVisibleRow = 0;
-		// Note: If more rows are visible, no placeholders for paging will be created!
-		const iVisibleRowCount = 8;
-
-		function createNewChild(iRow, sComment) {
-			When.onTheMainPage.createNewChild(iRow, sComment);
+		function createNewChild(sId, sComment) {
+			When.onTheMainPage.createNewChild(sId, sComment);
 		}
 
-		// Note: iRow is always in model coordinates! Thus aExpected behaves the same!
-		function checkTable(aExpected, mDefaults) {
-			aExpected = aExpected.slice(iFirstVisibleRow, iFirstVisibleRow + iVisibleRowCount);
-			// Note: clone aExpected in order to deal with OPA's async nature
-			Then.onTheMainPage.checkTable(JSON.parse(JSON.stringify(aExpected)), mDefaults);
+		function checkTable(sComment, sExpected) {
+			Then.onTheMainPage.checkTable(sComment, sExpected, /*bCheckName*/true);
 		}
 
-		function editName(iRow, sName, sComment) {
-			When.onTheMainPage.editName(iRow, sName, sComment);
+		function editName(sId, sName, sComment) {
+			When.onTheMainPage.editName(sId, sName, sComment);
 		}
 
 		function scrollToRow(iRow, sComment) {
-			if (iRow + iVisibleRowCount > aNodes.length) {
-				throw new Error(
-					`Cannot scroll that far! ${iRow} > ${aNodes.length - iVisibleRowCount}`);
-			}
-			iFirstVisibleRow = iRow;
 			When.onTheMainPage.scrollToRow(iRow, sComment);
 		}
 
-		function toggleExpandInRow(iRow, sComment) {
-			When.onTheMainPage.toggleExpand(iRow, sComment);
+		function toggleExpand(sId, sComment) {
+			When.onTheMainPage.toggleExpand(sId, sComment);
 		}
 
 		TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.expandTo", "1");
-		TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount",
-			"" + iVisibleRowCount);
+		// Note: If more rows are visible, no placeholders for paging will be created!
+		TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount", "8");
 		Given.iStartMyUIComponent({
 			autoWait : true,
 			componentConfig : {
@@ -54,74 +40,115 @@ sap.ui.define([
 		});
 		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
-		checkTable(aNodes);
+		checkTable("Initial state", `
++ 0 Alpha`);
 
-		toggleExpandInRow(0, "Expand 0 (Alpha)");
-		aNodes[0].DrillState = "expanded";
-		aNodes.splice(1, 0, ...SandboxModel.getChildren("0"));
-		checkTable(aNodes);
+		toggleExpand("0", "Expand 0 (Alpha)");
+		checkTable("After expand 0 (Alpha)", `
+- 0 Alpha
+	+ 1 Beta
+	* 2 Kappa
+	* 3 Lambda
+	+ 4 Mu
+	+ 5 Xi`);
 
-		createNewChild(0, "Create New Child of 0 (Alpha)");
-		aNodes.splice(1, 0, {
-			AGE : 54,
-			DistanceFromRoot : 1,
-			DrillState : "leaf",
-			ID : "6",
-			MANAGER_ID : "0",
-			Name : ""
-		});
-		checkTable(aNodes);
+		createNewChild("0", "Create new child of 0 (Alpha)");
+		checkTable("After create new child of 0 (Alpha)", `
+- 0 Alpha
+	* 6
+	+ 1 Beta
+	* 2 Kappa
+	* 3 Lambda
+	+ 4 Mu
+	+ 5 Xi`);
 
-		const sName1 = "1st new child";
-		editName(1, sName1, "Edit New Child's Name");
-		aNodes[1].Name = sName1;
-		checkTable(aNodes);
+		editName("6", "1st new child", "Edit new child's name");
+		checkTable("After edit new child's name", `
+- 0 Alpha
+	* 6 1st new child #0+1
+	+ 1 Beta
+	* 2 Kappa
+	* 3 Lambda
+	+ 4 Mu
+	+ 5 Xi`);
 
-		createNewChild(3, "Create New Child of 2 (Kappa)");
-		aNodes[3].DrillState = "expanded";
-		aNodes.splice(4, 0, {
-			AGE : 55,
-			DistanceFromRoot : 2,
-			DrillState : "leaf",
-			ID : "2.1",
-			MANAGER_ID : "2",
-			Name : ""
-		});
-		checkTable(aNodes);
+		createNewChild("2", "Create new child of 2 (Kappa)");
+		checkTable("After create new child of 2 (Kappa)", `
+- 0 Alpha
+	* 6 1st new child #0+1
+	+ 1 Beta
+	- 2 Kappa
+		* 2.1
+	* 3 Lambda
+	+ 4 Mu
+	+ 5 Xi`);
 
-		const sName2 = "2nd new child";
-		editName(4, sName2, "Edit New Child's Name");
-		aNodes[4].Name = sName2;
-		checkTable(aNodes);
+		editName("2.1", "2nd new child", "Edit new child's name");
+		checkTable("After edit new child's name", `
+- 0 Alpha
+	* 6 1st new child #0+1
+	+ 1 Beta
+	- 2 Kappa
+		* 2.1 2nd new child #0+1
+	* 3 Lambda
+	+ 4 Mu
+	+ 5 Xi`);
 
-		toggleExpandInRow(7, "Expand 5 (Xi)");
-		aNodes[7].DrillState = "expanded";
-		checkTable(aNodes);
+		toggleExpand("5", "Expand 5 (Xi)");
+		checkTable("After expand 5 (Xi)", `
+- 0 Alpha
+	* 6 1st new child #0+1
+	+ 1 Beta
+	- 2 Kappa
+		* 2.1 2nd new child #0+1
+	* 3 Lambda
+	+ 4 Mu
+	- 5 Xi`);
 
-		aNodes.splice(8, 0, ...SandboxModel.getChildren("5"));
 		scrollToRow(1, "5.1 (Omicron) comes into view");
-		checkTable(aNodes);
+		checkTable("After 5.1 (Omicron) comes into view", `
+	* 6 1st new child #0+1
+	+ 1 Beta
+	- 2 Kappa
+		* 2.1 2nd new child #0+1
+	* 3 Lambda
+	+ 4 Mu
+	- 5 Xi
+		+ 5.1 Omicron`);
 
-		toggleExpandInRow(8, "Expand 5.1 (Omicron)");
-		aNodes[8].DrillState = "expanded";
-		aNodes.splice(9, 0, ...SandboxModel.getChildren("5.1"));
-		checkTable(aNodes);
+		toggleExpand("5.1", "Expand 5.1 (Omicron)");
+		checkTable("After expand 5.1 (Omicron)", `
+	* 6 1st new child #0+1
+	+ 1 Beta
+	- 2 Kappa
+		* 2.1 2nd new child #0+1
+	* 3 Lambda
+	+ 4 Mu
+	- 5 Xi
+		- 5.1 Omicron`);
 
-		createNewChild(8, "Create New Child of 5.1 (Omicron)"); // still invisible
-		aNodes.splice(9, 0, {
-			AGE : 20,
-			DistanceFromRoot : 3,
-			DrillState : "leaf",
-			ID : "5.1.10",
-			MANAGER_ID : "5.1",
-			Name : ""
-		});
+		createNewChild("5.1", "Create new child of 5.1 (Omicron)"); // still invisible
+		scrollToRow(2, "5.1.10 comes into view");
+		checkTable("After 5.1.10 comes into view", `
+	+ 1 Beta
+	- 2 Kappa
+		* 2.1 2nd new child #0+1
+	* 3 Lambda
+	+ 4 Mu
+	- 5 Xi
+		- 5.1 Omicron
+			* 5.1.10`);
 
-		scrollToRow(2, "5.10 comes into view");
-		checkTable(aNodes);
-
-		scrollToRow(11, "scroll to bottom");
-		checkTable(aNodes);
+		scrollToRow(11, "Scroll to bottom");
+		checkTable("After scroll to bottom", `
+			* 5.1.2 Rho
+			* 5.1.3 Sigma
+			* 5.1.4 Tau
+			* 5.1.5 Upsilon
+			* 5.1.6 Phi
+			* 5.1.7 Chi
+			* 5.1.8 Psi
+			* 5.1.9 Omega`);
 
 		Then.onAnyPage.checkLog();
 	};

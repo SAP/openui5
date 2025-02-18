@@ -435,10 +435,8 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype._getAriaLabelledByText = function () {
 		// Each section should be labelled as:
-		// 'titleName' - if the section has a title
-		// 'Section' - if it does not have a title or its hidden (for example, showTitle=false)
-		var sTitle = this._getShouldLabelTitle() && this._getTitle();
-		return sTitle || this.getSectionText();
+		// 'titleName' - no matter if the section has a title or not
+		return this._getTitle();
 	};
 
 	ObjectPageSectionBase.prototype._getInvisibleText = function () {

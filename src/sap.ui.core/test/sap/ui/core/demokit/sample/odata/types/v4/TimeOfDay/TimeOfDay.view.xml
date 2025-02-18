@@ -3,8 +3,12 @@
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:layout="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc">
-
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	core:require="{
+		TimeOfDayType: 'sap/ui/model/odata/type/TimeOfDay',
+		StringType: 'sap/ui/model/odata/type/String'
+	}">
 	<App>
 	<Page id="page" floatingFooter="true" showHeader="false"
 		title="Example how to use OData V4 Edm.TimeOfDay in SAPUI5 applications">
@@ -38,13 +42,13 @@
 				<Text text="{
 						path: 'TimeOfDay',
 						formatter: '.formatTimeOfDay',
-						type: 'sap.ui.model.odata.type.String'
+						type: 'StringType'
 					}" />
 				<Label text="'TimeOfDay' Value as URI Parameter Value" />
 				<Text text="{
 						path: 'TimeOfDay',
 						formatter: '.formatTimeOfDayAsURIParameter',
-						type: 'sap.ui.model.odata.type.String'
+						type: 'StringType'
 					}" />
 				<Label text="JSON Model Value '/TimeOfDay'" />
 				<Text text="{path: 'json>/TimeOfDay', formatter: '.formatTimeOfDay'}" />
@@ -65,17 +69,17 @@
 					<Label text="sap.m.Text" />
 					<Text text="{
 							path: 'json>TimeOfDay',
-							type: 'sap.ui.model.odata.type.TimeOfDay'
+							type: 'TimeOfDayType'
 						}" />
 					<Label text="sap.m.Input" />
 					<Input value="{
 							path: 'json>TimeOfDay',
-							type: 'sap.ui.model.odata.type.TimeOfDay'
+							type: 'TimeOfDayType'
 						}" />
 					<Label text="sap.m.TimePicker" />
 					<TimePicker value="{
 							path: 'json>TimeOfDay',
-							type: 'sap.ui.model.odata.type.TimeOfDay'
+							type: 'TimeOfDayType'
 						}" />
 				</form:SimpleForm>
 			</Dialog>

@@ -8,8 +8,8 @@ sap.ui.define([
 	"use strict";
 
 	return function (Given, When, Then) {
-		function checkTable(vExpected, sComment) {
-			Then.onTheMainPage.checkTable(vExpected, /* mDefaults */ null, sComment);
+		function checkTable(sComment, sExpected) {
+			Then.onTheMainPage.checkTable(sComment, sExpected);
 		}
 
 		function toggleExpand(sId, sComment) {
@@ -37,41 +37,36 @@ sap.ui.define([
 
 		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
-		checkTable(`
+		checkTable("Initial state", `
 - 0
 	- 1
 		+ 1.1
 		+ 1.2
-	* 2`,
-			"initial state");
+	* 2`);
 
-		collapseAll("0", "collapse all below 0 (Alpha)");
-		checkTable(`
-+ 0`,
-			"after collapse all below 0 (Alpha)");
+		collapseAll("0", "Collapse all below 0 (Alpha)");
+		checkTable("After collapse all below 0 (Alpha)", `
++ 0`);
 
-		toggleExpand("0", "expand 0 (Alpha)");
-		checkTable(`
+		toggleExpand("0", "Expand 0 (Alpha)");
+		checkTable("After expand 0 (Alpha)", `
 - 0
 	+ 1
 	* 2
 	* 3
-	+ 4`,
-			"after expand 0 (Alpha)");
+	+ 4`);
 
-		toggleExpand("0", "collapse 0 (Alpha)");
-		checkTable(`
-+ 0`,
-			"after collapse 0 (Alpha)");
+		toggleExpand("0", "Collapse 0 (Alpha)");
+		checkTable("After collapse 0 (Alpha)", `
++ 0`);
 
 		// expandLevels(0, 4, "expand 4 levels below 0 (Alpha)"); // TODO should be the same
-		expandAll("0", "expand all below 0 (Alpha)");
-		checkTable(`
+		expandAll("0", "Expand all below 0 (Alpha)");
+		checkTable("After expand all below 0 (Alpha)", `
 - 0
 	- 1
 		- 1.1
 			* 1.1.1
-			* 1.1.2`,
-			"after expand all below 0 (Alpha)");
+			* 1.1.2`);
 	};
 });

@@ -2,8 +2,9 @@
 	controllerName="sap.ui.core.sample.TypeInteger.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
-	xmlns="sap.m">
-
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	core:require="{IntegerType: 'sap/ui/model/type/Integer'}">
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -18,10 +19,9 @@
 		title="Number Input">
 		<form:content>
 			<Label text="Number"/>
-			<Input value="{path:'/number', type:'sap.ui.model.type.Integer'}"/>
+			<Input value="{path: '/number', type: 'IntegerType'}"/>
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -37,23 +37,21 @@
 			<Label text="3 digits" />
 			<Text text="{
 				path: '/number',
-				type: 'sap.ui.model.type.Integer',
+				type: 'IntegerType',
 				formatOptions: {
 					minIntegerDigits: 3
 				}
 			}" />
-
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/number',
-				type: 'sap.ui.model.type.Integer',
+				type: 'IntegerType',
 				formatOptions: {
 					minIntegerDigits: 5
 				}
 			}" />
 		</form:content>
 	</form:SimpleForm>
-
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -69,16 +67,15 @@
 			<Label text="2 digits" />
 			<Text text="{
 				path: '/number',
-				type: 'sap.ui.model.type.Integer',
+				type: 'IntegerType',
 				formatOptions: {
 					maxIntegerDigits: 2
 				}
 			}" />
-
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/number',
-				type: 'sap.ui.model.type.Integer',
+				type: 'IntegerType',
 				formatOptions: {
 					maxIntegerDigits: 5
 				}

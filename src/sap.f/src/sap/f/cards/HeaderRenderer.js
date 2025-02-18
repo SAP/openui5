@@ -63,17 +63,15 @@ sap.ui.define([
 		oRm.attr("id", sId + "-focusable")
 			.class("sapFCardHeaderWrapper");
 
-		if (oHeader.getProperty("focusable") && !oHeader._isInsideGridContainer()) {
+		if (oHeader.isFocusable()) {
 			oRm.attr("tabindex", "0");
 		}
 
-		if (!oHeader._isInsideGridContainer()) {
-			oRm.accessibilityState({
-				labelledby: {value: oHeader._getAriaLabelledBy(), append: true},
-				role: oHeader.getFocusableElementAriaRole(),
-				roledescription: oHeader.getAriaRoleDescription()
-			});
-		}
+		oRm.accessibilityState({
+			labelledby: {value: oHeader._getAriaLabelledBy(), append: true},
+			role: oHeader.getFocusableElementAriaRole(),
+			roledescription: oHeader.getAriaRoleDescription()
+		});
 
 		oRm.openEnd();
 

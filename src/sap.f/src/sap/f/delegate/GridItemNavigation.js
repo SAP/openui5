@@ -108,7 +108,7 @@ sap.ui.define([
 	};
 
 	GridItemNavigation.prototype._moveFocus = function (oEvent) {
-		const oCurrentItem = oEvent.target;
+		let oCurrentItem = oEvent.target;
 
 		// only react on events of the domrefs
 		if (this.getItemDomRefs().indexOf(oCurrentItem) === -1) {
@@ -123,6 +123,8 @@ sap.ui.define([
 			// grid control is not rendered or theme is not applied yet
 			return;
 		}
+
+		oCurrentItem = this.getWrapperItem(oCurrentItem);
 
 		const oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
 
@@ -179,8 +181,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.setFocusPosition(oNextItemPosition);
-		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
+		this.customFocusItem(oNextItemPosition, oNextFocusItem, oEvent);
 	};
 
 	GridItemNavigation.prototype._moveFocusRight = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
@@ -203,8 +204,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.setFocusPosition(oStartPosition);
-		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
+		this.customFocusItem(oStartPosition, oNextFocusItem, oEvent);
 	};
 
 	GridItemNavigation.prototype._moveFocusUp = function (oStartPosition, aMatrix, oCurrentItem, oEvent, iMinSkipRows = 1) {
@@ -237,8 +237,7 @@ sap.ui.define([
 			oNextItemPosition.row -= 1;
 		}
 
-		this.setFocusPosition(oNextItemPosition);
-		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
+		this.customFocusItem(oNextItemPosition, oNextFocusItem, oEvent);
 	};
 
 	GridItemNavigation.prototype._moveFocusLeft = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
@@ -266,7 +265,13 @@ sap.ui.define([
 			oStartPosition.column -= 1;
 		}
 
-		this.setFocusPosition(oStartPosition);
+		this.customFocusItem(oStartPosition, oNextFocusItem, oEvent);
+	};
+
+	GridItemNavigation.prototype.customFocusItem = function (oNextItemPosition, oNextFocusItem, oEvent) {
+		oNextFocusItem = this.getInnerFocusItem(oNextFocusItem);
+
+		this.setFocusPosition(oNextItemPosition);
 		this.focusItem(this.getItemDomRefs().indexOf(oNextFocusItem), oEvent);
 	};
 
@@ -389,11 +394,19 @@ sap.ui.define([
 			row: iRowIndex
 		});
 
-		oCurrentItem.focus();
+		this.getInnerFocusItem(oCurrentItem).focus();
 	};
 
 	GridItemNavigation.prototype._getGridInstance = function () {
 		return Element.closestTo(this.oDomRef);
+	};
+
+	GridItemNavigation.prototype.getInnerFocusItem = function (oItem) {
+		return oItem;
+	};
+
+	GridItemNavigation.prototype.getWrapperItem = function (oItem) {
+		return oItem;
 	};
 
 	return GridItemNavigation;
