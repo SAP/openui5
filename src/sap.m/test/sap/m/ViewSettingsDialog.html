@@ -43,11 +43,10 @@
 		 ******************************/
 
 		// make the util namespace known globally
-		var util = globalThis.util = {};
+		var util = {};
 
 		/* custom formatters (taken from cart app to test custom formatters) */
 
-		jQuery.sap.declare("util.Formatter");
 		util.Formatter = {
 			price:  function (value) {
 				jQuery.sap.require("sap.ui.core.format.NumberFormat");
@@ -57,7 +56,7 @@
 					groupingSeparator: ".",
 					decimalSeparator: ","
 				});
-				return numberFormat.format(value);
+				return numberFormat.format(value) + " EUR";
 			},
 			_statusTextMap: {
 				"A": "Approved",
@@ -157,11 +156,11 @@
 					text: "{name}"
 				}),
 				new sap.m.Label({
-					text: "{path: 'status', formatter: 'util.Formatter.statusState'}"
+					text: {path: 'status', formatter: util.Formatter.statusState}
 				}), new sap.m.Label({
-					text: "{path: 'limit', formatter: 'util.Formatter.price'} EUR"
+					text: {path: 'limit', formatter: util.Formatter.price}
 				}), new sap.m.Label({
-					text: "{path: 'price', formatter: 'util.Formatter.price'} EUR"
+					text: {path: 'price', formatter: util.Formatter.price}
 				})
 			]
 		});
@@ -228,7 +227,6 @@
 
 		/* custom grouping functions */
 
-		jQuery.sap.declare("util.Formatter");
 		util.Grouper = {
 			name: function (oContext) { // take first 3 letters of name
 				return oContext.getProperty("name").toString().substring(0, 3);
