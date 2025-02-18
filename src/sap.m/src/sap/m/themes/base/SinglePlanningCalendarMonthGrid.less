@@ -45,8 +45,9 @@
 	flex: 1 1;
 	display: flex;
 	flex-direction: column;
-	border-left: 0.0625rem solid var(--sapList_BorderColor);
-	border-top: 0.0625rem solid var(--sapList_BorderColor);
+	border: 0.0625rem solid transparent;
+	border-left-color: var(--sapList_BorderColor);
+	border-top-color: var(--sapList_BorderColor);
 	box-sizing: border-box;
 	background-color: var(--sapList_Background);
 	position: relative;
@@ -326,4 +327,11 @@ html.sap-phone {
 	.sapMSPCMonthGrid > :not(.sapMSinglePCGridContent) {
 		margin-left: 10%;
 	}
+}
+
+/* Disable text selection while dragging the cursor */
+.sapMSinglePCGrid * {
+	-webkit-user-select: none; /* Safari */
+	-ms-user-select: none; /* IE 10 and IE 11 */
+	user-select: none; /* Standard syntax */
 }
