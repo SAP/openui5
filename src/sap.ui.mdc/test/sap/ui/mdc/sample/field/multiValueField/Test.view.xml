@@ -29,9 +29,9 @@
 					valueHelp="VH1">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
+						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"],"shouldOpenOnClick": true, "shouldOpenOnFocus": true, "showWithoutFilter": true\}\}'>
 							<mdc:typeahead>
-								<mdcvh:Popover id="VH1-Pop" opensOnClick ="true" opensOnFocus="true">
+								<mdcvh:Popover id="VH1-Pop">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
 										keyPath="ProductId"
 										descriptionPath="Name"
