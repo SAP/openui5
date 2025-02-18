@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @since 1.58
-	 * @private
+	 * @public
 	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
 	 */
 	const ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {
