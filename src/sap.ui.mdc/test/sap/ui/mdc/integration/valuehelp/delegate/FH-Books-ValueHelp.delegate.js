@@ -43,7 +43,13 @@ sap.ui.define([
 
 	ValueHelpDelegate.retrieveContent = function (_oValueHelp, oContainer) {
 		const oPayload = _oValueHelp.getPayload();
-		const sFilterFields = oPayload.filter;
+
+		/**
+		 *  @deprecated As of version 1.120.2
+		 */
+		const oFilterFields = {filterFields: oPayload.filter};
+
+
 		const oValueHelp = oContainer && oContainer.getParent();
 		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 		const sId = oValueHelp.getId();
@@ -87,7 +93,10 @@ sap.ui.define([
 					title: "mdcTable",
 					keyPath: "ID",
 					descriptionPath: "title",
-					filterFields: sFilterFields,
+					/**
+					 *  @deprecated since 1.120.2
+					 */
+					...oFilterFields,
 					filterBar: new FilterBar(sId + "-MDCTable-FB", {
 						liveMode: false,
 						delegate: {
@@ -148,7 +157,10 @@ sap.ui.define([
 					title: "mTable",
 					keyPath: "ID",
 					descriptionPath: "title",
-					filterFields: sFilterFields,
+					/**
+					 *  @deprecated since 1.120.2
+					 */
+					...oFilterFields,
 					filterBar: new FilterBar(sId + "-MTable-FB", {
 						liveMode: false,
 						delegate: {
