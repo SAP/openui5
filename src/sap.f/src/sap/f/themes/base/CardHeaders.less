@@ -6,7 +6,7 @@
 @_sap_f_CardHeaders_Padding: 1rem;
 @_sap_f_CardHeaders_TitleFontSize: @sapMFontHeader5Size;
 @_sap_f_CardHeaders_HeaderFocusBorderLeftOffset: 1px;
-@_sap_f_CardHeaders_HeaderFocusBorderBottomOffset: 2px;
+@_sap_f_CardHeaders_HeaderFocusBorderBottomOffset: 1px;
 @_sap_f_CardHeaders_HeaderFocusBorderRightOffset: 1px;
 @_sap_f_CardHeaders_HeaderFocusBorderTopOffset: 1px;
 @_sap_f_CardHeaders_MainHeaderBorderRadius: 0;
@@ -338,11 +338,6 @@
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 	border-radius: inherit;
 	pointer-events: none;
-}
-
-// TODO: merge with the above
-.sapFCardHeader:not(.sapFCardHeaderToolbarFocused) .sapFCardHeaderFocusable:focus::before {
-	bottom: 1px;
 	z-index: 1;
 }
 
