@@ -72,6 +72,36 @@ sap.ui.define([
 					 * Header fields to be included in the header section of an XMLHttpRequest (XHR) request
 					 */
 					headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"}
+				},
+			events: {
+				/**
+				 * The event is fired every time an XHR request reports progress while uploading.
+				 */
+				uploadProgress: {
+					parameters: {
+						/**
+						 * The number of bytes transferred since the beginning of the operation.
+						 * laoded parameter doesn't include headers and other overhead, but only the content itself
+						 */
+						loaded: {type: "int"},
+						/**
+						 * The total number of bytes of content that is transferred during the operation.
+						 * If the total size is unknown, this value is zero.
+						 */
+						total: {type: "int"}
+					}
+				},
+                 /**
+				 * This event is fired right after the upload is terminated.
+				 */
+				uploadTerminated: {
+					parameters: {
+						/**
+						 * The file whose upload has just been terminated.
+						 */
+						item: {type: "sap.m.upload.UploadSetItem"}
+					}
+				}
 				}
 			}
     });
@@ -90,6 +120,10 @@ sap.ui.define([
 		this._bMediaTypeRestricted = false;
 		this._oRb = Library.getResourceBundleFor("sap.m");
 		this._oCloudFileInfo = null;
+
+                sap.ui.require(["sap/m/plugins/UploadSetwithTable"], (UploadSetwithTable) => {
+			UploadItem.UploadSetwithTableControl = UploadSetwithTable;
+		});
     };
 
 	/* ===================== */
@@ -158,6 +192,22 @@ sap.ui.define([
 	 */
 	UploadItem.prototype.getCloudFileInfo = function() {
 		return this._oCloudFileInfo;
+	};
+
+        /**
+	 * API to terminate the upload of an item.
+	 * With success, the event <code>uploadTerminated</code> is fired on the <code>UploadItem</code>.
+	 * Termination is only possible if the item is in <code>Uploading</code> state and uploadItem is associated with <code>UploadSetwithTable</code> plugin.
+	 * @public
+	 * @since 1.134
+	 */
+	UploadItem.prototype.terminateUpload = function () {
+		const oParent = this.getParent();
+		if (oParent && oParent instanceof UploadItem.UploadSetwithTableControl) {
+			oParent?._terminateItemUpload(this);
+		} else {
+			Log.error("Upload termination cannot proceed without an association to UploadSetwithTable plugin.");
+		}
 	};
 
 	/* =============== */
@@ -327,6 +377,7 @@ sap.ui.define([
 	UploadItem.MEDIATYPES = {
 		"VDS": "application/vnd.vds"
 	};
+    UploadItem.UploadSetwithTableControl = null;
 
     return UploadItem;
 });

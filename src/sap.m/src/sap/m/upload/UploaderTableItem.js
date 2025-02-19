@@ -109,6 +109,17 @@ sap.ui.define([
 						 */
 						responseXHR: {type: "object"}
 					}
+				},
+				/**
+				 * The event is fired when an XHR request reports its termination.
+				 */
+				uploadTerminated: {
+					parameters: {
+						/**
+						 * The item that is going to be deleted.
+						 */
+						item: {type: "sap.m.upload.UploadItem"}
+					}
 				}
 			}
 		}
@@ -208,6 +219,15 @@ sap.ui.define([
 			});
 		}
 
+		oXhr.upload.addEventListener("progress", function (oEvent) {
+			that.fireUploadProgressed({
+				item: oItem,
+				loaded: oEvent.loaded,
+				total: oEvent.total,
+				aborted: false
+			});
+		});
+
 		oXhr.onreadystatechange = function () {
 			var oHandler = that._mRequestHandlers[oItem.getId()],
 				oResponseXHRParams = {};
@@ -302,6 +322,24 @@ sap.ui.define([
 			MobileLibrary.URLHelper.redirect(sUrl, true);
 			return true;
 		}
+	};
+
+	/**
+	 * Attempts to terminate the process of uploading the specified file.
+	 *
+	 * @param {sap.m.upload.UploadItem} oItem Item representing the file whose ongoing upload process is to be terminated.
+	 * @public
+	 */
+	Uploader.prototype.terminateItem = function (oItem) {
+		var oHandler = this._mRequestHandlers[oItem.getId()],
+			that = this;
+
+		oHandler.xhr.onabort = function () {
+			oHandler.aborted = false;
+			that.fireUploadTerminated({item: oItem});
+		};
+		oHandler.aborted = true;
+		oHandler.xhr.abort();
 	};
 
 	return Uploader;
