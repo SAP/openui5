@@ -1,3 +1,8 @@
+/* ======================================= */
+/* CSS for control sap.m/ValueStateHeader  */
+/* Base theme                              */
+/* ======================================= */
+
 .sapMValueStateHeaderRoot {
 	width: auto;
 	padding: 0.5625rem 1rem;
@@ -7,14 +12,14 @@
 	z-index: 42;
 }
 
-// When not on mobile (in sap.m.Dialog) the ValueStateHeader's width
-// must be 0 to get calculated correctly and set by the sap.m.Popover
+/* When not on mobile (in sap.m.Dialog) the ValueStateHeader's width */
+/* must be 0 to get calculated correctly and set by the sap.m.Popover */
 html.sap-desktop .sapMValueStateHeaderRoot {
 	width: 0;
 }
 
 .sapMPseudoFocus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: -0.125rem;
 }
 
@@ -23,35 +28,35 @@ html.sap-desktop .sapMValueStateHeaderRoot {
 	line-height: normal;
 	white-space: pre-line;
 	word-wrap: break-word;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiListTextColor;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapList_TextColor);
 
 	.sapMFT {
-		font-size: @sapMFontSmallSize;
+		font-size: var(--sapFontSmallSize);
 	}
 }
 
 .sapMValueStateHeaderError,
 .sapMSuggestionsPopoverErrorState .sapMPopoverHeader {
-	background: @sapUiErrorBG;
-	color: @sapUiBaseText;
+	background: var(--sapErrorBackground);
+	color: var(--sapTextColor);
 }
 
 .sapMValueStateHeaderInformation,
 .sapMSuggestionsPopoverInformationState .sapMPopoverHeader {
-	background: @sapUiInformationBG;
+	background: var(--sapInformationBackground);
 }
 
 .sapMValueStateHeaderSuccess,
 .sapMSuggestionsPopoverSuccessState .sapMPopoverHeader {
-	background: @sapUiSuccessBG;
-	color: @sapUiBaseText;
+	background: var(--sapSuccessBackground);
+	color: var(--sapTextColor);
 }
 
 .sapMValueStateHeaderWarning,
 .sapMSuggestionsPopoverWarningState .sapMPopoverHeader {
-	background: @sapUiWarningBG;
-	color: @sapUiBaseText;
+	background: var(--sapWarningBackground);
+	color: var(--sapTextColor);
 }
 
 .sapMValueStateHeaderNone {
