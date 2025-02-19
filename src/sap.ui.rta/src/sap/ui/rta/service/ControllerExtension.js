@@ -60,11 +60,17 @@ sap.ui.define([
 				add(sCodeRef, sViewId) {
 					var oFlexSettings = oRta.getFlexSettings();
 					if (!oFlexSettings.developerMode) {
-						throw DtUtil.createError("service.ControllerExtension#add", "code extensions can only be created in developer mode", "sap.ui.rta");
+						throw DtUtil.createError(
+							"service.ControllerExtension#add", "code extensions can only be created in developer mode",
+							"sap.ui.rta"
+						);
 					}
 
 					if (!sCodeRef) {
-						throw DtUtil.createError("service.ControllerExtension#add", "can't create controller extension without codeRef", "sap.ui.rta");
+						throw DtUtil.createError(
+							"service.ControllerExtension#add", "can't create controller extension without codeRef",
+							"sap.ui.rta"
+						);
 					}
 
 					if (!sCodeRef.endsWith(".js")) {
@@ -73,7 +79,7 @@ sap.ui.define([
 
 					var oView = Element.getElementById(sViewId);
 					var oAppComponent = FlexUtils.getAppComponentForControl(oView);
-					var sControllerName = oView.getControllerName && oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
+					var sControllerName = oView.getControllerModuleName() ? `module:${oView.getControllerModuleName()}` : oView.getController()?.getMetadata().getName();
 					// Calculate moduleName for code extension
 					var sReference = FlexRuntimeInfoAPI.getFlexReference({element: oAppComponent});
 					var sModuleName = sReference.replace(/\.Component/g, "").replace(/\./g, "/");
