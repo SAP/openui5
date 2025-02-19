@@ -2317,8 +2317,8 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> there are pending changes that cannot be ignored,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link #create deep create}),
+	 *     <li> the binding is part of a {@link #create deep create} because it is relative to a
+	 *       {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
 	 *     <li> an unsupported operation mode is used (see
 	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}),
 	 *     <li> the {@link sap.ui.model.Filter.NONE} filter instance is contained in
@@ -3108,8 +3108,8 @@ sap.ui.define([
 	 *     <li> the binding is unresolved,
 	 *     <li> the given context path does not match this binding,
 	 *     <li> the binding's root binding is suspended,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link #create deep create}).
+	 *     <li> the binding is part of a {@link #create deep create} because it is relative to a
+	 *       {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
 	 *     <li> {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
 	 *   </ul>
 	 *
@@ -4281,7 +4281,8 @@ sap.ui.define([
 	 *   messages; it resolves with <code>null</code> if the binding is not resolved or if there is
 	 *   no message for any entry
 	 * @throws {Error}
-	 *   If the binding is {@link #isTransient transient} (part of a {@link #create deep create}).
+	 *   If the binding is part of a {@link #create deep create} because it is relative to a
+	 *   {@link sap.ui.model.odata.v4.Context#isTransient transient} context
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#requestFilterForMessages
@@ -4859,8 +4860,8 @@ sap.ui.define([
 	 *     <li> there are pending changes,
 	 *     <li> a recursive hierarchy is requested, but the model does not use the
 	 *       <code>autoExpandSelect</code> parameter,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link #create deep create}),
+	 *     <li> the binding is part of a {@link #create deep create} because it is relative to a
+	 *       {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
 	 *     <li> the binding has {@link sap.ui.model.Filter.NONE}
 	 *   </ul>
 	 *
@@ -5040,8 +5041,8 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> there are pending changes that cannot be ignored,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link #create deep create}),
+	 *     <li> the binding is part of a {@link #create deep create} because it is relative to a
+	 *       {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
 	 *     <li> an unsupported operation mode is used (see
 	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 *   </ul>
