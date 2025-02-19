@@ -188,7 +188,7 @@
 											</m:items>
 										</m:Table>
 										<mdcValueHelpContent:filterBar>
-											<mdcVH:FilterBar id="VH-Quantity-FB" liveMode= "false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+											<mdcvh:FilterBar id="VH-Quantity-FB" liveMode= "false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 												<mdc:FilterField
 													id="VHFBMaterialFF"
 													label= "{/#ODataUnits/MatrId/@sap:label}"
@@ -209,7 +209,7 @@
 													width="100%"
 													conditions="{$filters>/conditions/text}">
 												</mdc:FilterField>
-											</mdcVH:FilterBar>
+											</mdcvh:FilterBar>
 										</mdcValueHelpContent:filterBar>
 									</mdcValueHelpContent:MTable>
 								</mdcvh:Dialog>
