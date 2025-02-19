@@ -5,11 +5,11 @@
 
 .sapMValueStateMessage {
 	box-sizing: border-box;
-	background: @sapUiFieldBackground;
+	background: var(--sapField_Background);
 	display: inline-block;
-	color: @sapUiBaseText;
-	font-size: @sapMFontSmallSize;
-	font-family: @sapUiFontFamily;
+	color: var(--sapTextColor);
+	font-size: var(--sapFontSmallSize);
+	font-family: var(--sapFontFamily);
 	padding: 0.3rem 0.625rem;
 	min-width: 6rem;
 	max-width: 22rem;
@@ -19,18 +19,18 @@
 	text-overflow: ellipsis;
 
 	.sapMFT {
-		font-size: @sapMFontSmallSize;
+		font-size: var(--sapFontSmallSize);
 	}
 }
 
 .sapMValueStateMessageError {
-	background: @sapErrorBackground;
+	background: var(--sapErrorBackground);
 }
 
 .sapMValueStateMessageWarning {
-	background: @sapWarningBackground;
+	background: var(--sapWarningBackground);
 }
 
 .sapMValueStateMessageInformation {
-	background: @sapInformationBackground;
+	background: var(--sapInformationBackground);
 }
