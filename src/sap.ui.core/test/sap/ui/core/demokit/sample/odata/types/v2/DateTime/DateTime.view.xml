@@ -5,7 +5,10 @@
 	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
-	core:require="{DateTimeType: 'sap/ui/model/odata/type/DateTime'}">
+	core:require="{
+		DateIntervalType: 'sap/ui/model/type/DateInterval',
+		DateTimeType: 'sap/ui/model/odata/type/DateTime'
+	}">
 	<App>
 	<Page id="page" floatingFooter="true" showHeader="false"
 		title="Example how to use OData V2 Edm.DateTime in SAPUI5 applications">
@@ -45,7 +48,7 @@
 							path: 'EndDate',
 							type: 'DateTimeType'
 						}],
-						type: 'sap.ui.model.type.DateInterval'
+						type: 'DateIntervalType'
 					}" />
 				<Button text="Use JSON Model with sap.ui.model.odata.type.DateTime Type"
 					press="onDialogOpen">
@@ -114,7 +117,7 @@
 								path: 'json>EndDate',
 								type: 'DateTimeType'
 							}],
-							type: 'sap.ui.model.type.DateInterval'
+							type: 'DateIntervalType'
 						}" />
 				</form:SimpleForm>
 			</Dialog>

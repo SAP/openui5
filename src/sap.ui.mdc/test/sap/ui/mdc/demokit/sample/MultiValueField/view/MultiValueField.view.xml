@@ -2,7 +2,7 @@
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcField="sap.ui.mdc.field"
-		xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -42,7 +42,7 @@
 			<mdc:ValueHelp id="VH-Countries"
 				delegate='\{"name": "mdc/sample/delegate/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover id="VH-Countries-Pop">
+					<mdcvh:Popover id="VH-Countries-Pop">
 						<mdcValueHelpContent:MTable id="VH-Countries-Pop-MTable"
 							keyPath="key"
 							descriptionPath="name"
@@ -65,10 +65,10 @@
 								</items>
 							</Table>
 						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcValueHelp:Dialog id="VH-Countries-Dialog" title="Countries">
+					<mdcvh:Dialog id="VH-Countries-Dialog" title="Countries">
 						<mdcValueHelpContent:MTable id="VH-Countries-Dialog-MTable"
 							keyPath="key"
 							descriptionPath="name"
@@ -90,7 +90,7 @@
 								</items>
 							</Table>
 						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</form:dependents>

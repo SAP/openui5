@@ -55,6 +55,16 @@ sap.ui.define([
 		}
 	};
 
+	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
+		var oPayload = oValueHelp.getPayload();
+
+		if (oPayload?.hasOwnProperty("shouldOpenOnClick") && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+			return oPayload.shouldOpenOnClick;
+		} else {
+			return TestValueHelpDelegate.shouldOpenOnClick.apply(this, arguments);
+		}
+	};
+
 	ValueHelpDelegate.showTypeahead = function(oValueHelp, oContent) {
 		var oPayload = oValueHelp.getPayload();
 

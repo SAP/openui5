@@ -128,6 +128,22 @@ sap.ui.define([
 		#mMetaModel2TextMappingPromise = new Map();
 
 		/**
+		 * @typedef {object} sap.ui.core.fieldhelp.TextPropertyInfo
+		 *
+		 * Information about the text to ID property mapping for a meta model including the visited types, that is the
+		 * types, for which this mapping has already been computed.
+		 *
+		 * @property {Set<string>} visitedTypes
+		 *   Set of QNames of already visited types for the meta model
+		 * @property {sap.ui.core.fieldhelp.Text2IdByType} text2IdByType
+		 *   The mapping of text properties to id properties by type for the meta model
+		 */
+		// metamodel -> text property info
+		// Map<sap.ui.model.odata.ODataMetaModel|sap.ui.model.odata.v4.ODataMetaModel,
+		//     sap.ui.core.fieldhelp.TextPropertyInfo>
+		#mMetamodel2TextPropertyInfo = new Map();
+
+		/**
 		 * @interface
 		 * @name sap.ui.core.fieldhelp.MetaModelInterface
 		 * @description Interface for uniform access to OData V4 and OData V2 meta models to retrieve information
@@ -351,12 +367,15 @@ sap.ui.define([
 		 *   cannot be loaded.
 		 */
 		_requestText2IdByType(oMetaModelInterface) {
-			if (this.#mMetaModel2TextMappingPromise.has(oMetaModelInterface.oMetaModel)) {
-				return this.#mMetaModel2TextMappingPromise.get(oMetaModelInterface.oMetaModel);
+			const oMetaModel = oMetaModelInterface.oMetaModel;
+			if (this.#mMetaModel2TextMappingPromise.has(oMetaModel)) {
+				return this.#mMetaModel2TextMappingPromise.get(oMetaModel);
 			}
 
 			const oTextMappingPromise = oMetaModelInterface.requestTypes().then(([mEntityTypes, mComplexTypes]) => {
-				const mText2IdByType = new Map();
+				const oTextPropertyInfo = this.#mMetamodel2TextPropertyInfo.get(oMetaModel);
+				const mText2IdByType = oTextPropertyInfo?.text2IdByType ?? new Map();
+				const oVisitedTypes = oTextPropertyInfo?.visitedTypes ?? new Set();
 				const mAllTypes = new Map([...mEntityTypes, ...mComplexTypes]);
 				const iEntityTypesCount = mEntityTypes.size;
 				let i = 0;
@@ -364,6 +383,10 @@ sap.ui.define([
 					const bComplexType = i >= iEntityTypesCount;
 					const iTypeIndex = bComplexType ? i - iEntityTypesCount : i;
 					i += 1;
+					if (oVisitedTypes.has(sType)) {
+						continue;
+					}
+					oVisitedTypes.add(sType);
 					oMetaModelInterface.getProperties(oType).forEach((sProperty, iPropertyIndex) => {
 						const sTextPropertyPath = oMetaModelInterface.getTextPropertyPath(sType, sProperty, iTypeIndex,
 							iPropertyIndex, bComplexType);
@@ -375,6 +398,10 @@ sap.ui.define([
 						mIdByType.set(sType, sProperty);
 					});
 				}
+				this.#mMetamodel2TextPropertyInfo.set(oMetaModel, {
+					text2IdByType: mText2IdByType,
+					visitedTypes: oVisitedTypes
+				});
 				return mText2IdByType;
 			});
 			this.#mMetaModel2TextMappingPromise.set(oMetaModelInterface.oMetaModel, oTextMappingPromise);
@@ -552,7 +579,7 @@ sap.ui.define([
 		 * Calls the <code>fnUpdateHotspotsCallback</code> as given in {@link #activate} asynchronously with the latest
 		 * field help hotspots.
 		 *
-		 * @returns {Promise}
+		 * @returns {Promise<undefined>}
 		 *   A Promise that resolves when the <code>fnUpdateHotspotsCallback</code> as given in {@link #activate} has
 		 *   been called with the latest field help hotspots; rejects if the field help has been deactivated in between.
 		 */
@@ -570,6 +597,7 @@ sap.ui.define([
 			setTimeout(() => {
 				if (this.isActive()) {
 					this.#fnUpdateHotspotsCallback(this._getFieldHelpHotspots());
+					this.#mMetaModel2TextMappingPromise.clear();
 					fnResolve();
 				} else {
 					fnReject();
@@ -678,6 +706,7 @@ sap.ui.define([
 			this.#mDocuRefControlToFieldHelp = {};
 			this.#fnUpdateHotspotsCallback = null;
 			this.#mMetaModel2TextMappingPromise.clear();
+			this.#mMetamodel2TextPropertyInfo.clear();
 			ManagedObject.prototype.updateFieldHelp = undefined; // restore the default
 		}
 

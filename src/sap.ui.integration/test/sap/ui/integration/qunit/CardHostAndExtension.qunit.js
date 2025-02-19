@@ -104,12 +104,13 @@ function (
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 
 		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
 
 		var oHeader = this.oCard.getCardHeader(),
 			oLogSpy = sinon.spy(Log, "error");
 
 		//Act
-		QUnitUtils.triggerEvent("tap", oHeader);
+		QUnitUtils.triggerEvent("tap", oHeader.getFocusDomRef());
 
 		//Assert
 		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
@@ -154,12 +155,13 @@ function (
 		this.oCardHostPreventDefault.placeAt(DOM_RENDER_LOCATION);
 
 		await nextCardReadyEvent(this.oCardHostPreventDefault);
+		await nextUIUpdate();
 
 		var oHeader = this.oCardHostPreventDefault.getCardHeader(),
 			oLogSpy = sinon.spy(Log, "error");
 
 		//Act
-		QUnitUtils.triggerEvent("tap", oHeader);
+		QUnitUtils.triggerEvent("tap", oHeader.getFocusDomRef());
 
 		//Assert
 		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
@@ -205,12 +207,13 @@ function (
 		this.oCardHostPreventDefault.placeAt(DOM_RENDER_LOCATION);
 
 		await nextCardReadyEvent(this.oCardHostPreventDefault);
+		await nextUIUpdate();
 
 		var oHeader = this.oCardHostPreventDefault.getCardHeader(),
 			oLogSpy = sinon.spy(Log, "error");
 
 		//Act
-		QUnitUtils.triggerEvent("tap", oHeader);
+		QUnitUtils.triggerEvent("tap", oHeader.getFocusDomRef());
 
 		//Assert
 		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");
@@ -256,12 +259,13 @@ function (
 		this.oCardPreventDefault.placeAt(DOM_RENDER_LOCATION);
 
 		await nextCardReadyEvent(this.oCardPreventDefault);
+		await nextUIUpdate();
 
 		var oHeader = this.oCardPreventDefault.getCardHeader(),
 			oLogSpy = sinon.spy(Log, "error");
 
 		//Act
-		QUnitUtils.triggerEvent("tap", oHeader);
+		QUnitUtils.triggerEvent("tap", oHeader.getFocusDomRef());
 
 		//Assert
 		assert.ok(oLogSpy.calledWith("Extension"), "Action called from extension");

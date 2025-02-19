@@ -9,8 +9,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
 
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdct="sap.ui.mdc.table"
@@ -30,7 +30,7 @@
 				id="FB0-FH1-10"
 				delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
-					<mdcv:Popover title="Test1">
+					<mdcvh:Popover title="Test1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
@@ -55,14 +55,14 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcv:Dialog title="MDC Table with ui.Table">
+					<mdcvh:Dialog title="MDC Table with ui.Table">
 						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template" forceBind="true">
 							<mdcvc:filterBar>
-								<vhfb:FilterBar id="mdcFilterbar1" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
-									<vhfb:basicSearchField>
+								<mdcvh:FilterBar id="mdcFilterbar1" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
+									<mdcvh:basicSearchField>
 										<mdc:FilterField
 											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 											dataType= "Edm.String"
@@ -71,11 +71,11 @@
 											width="50%"
 											maxConditions="1"
 											placeholder="Search" />
-									</vhfb:basicSearchField>
-									<vhfb:filterItems>
+									</mdcvh:basicSearchField>
+									<mdcvh:filterItems>
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions="{$filters>/conditions/name}" propertyKey="name"/>
-									</vhfb:filterItems>
-								</vhfb:FilterBar>
+									</mdcvh:filterItems>
+								</mdcvh:FilterBar>
 							</mdcvc:filterBar>
 
 								<!-- type="ResponsiveTable" -->
@@ -105,8 +105,8 @@
 						</mdcvc:MDCTable>
 						<mdcvc:MDCTable id="mdcTableContent2" keyPath="ID" descriptionPath="name"  group="group1" title="Search Template 1" forceBind="true">
 							<mdcvc:filterBar>
-								<vhfb:FilterBar id="mdcFilterbar2" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
-									<vhfb:basicSearchField>
+								<mdcvh:FilterBar id="mdcFilterbar2" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
+									<mdcvh:basicSearchField>
 										<mdc:FilterField
 											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 											dataType= "Edm.String"
@@ -115,11 +115,11 @@
 											width="50%"
 											maxConditions="1"
 											placeholder="Search" />
-									</vhfb:basicSearchField>
-									<vhfb:filterItems>
+									</mdcvh:basicSearchField>
+									<mdcvh:filterItems>
 										<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Country of Origin" conditions="{$filters>/conditions/countryOfOrigin_code}" propertyKey="countryOfOrigin_code"/>
-									</vhfb:filterItems>
-								</vhfb:FilterBar>
+									</mdcvh:filterItems>
+								</mdcvh:FilterBar>
 							</mdcvc:filterBar>
 
 								<!-- type="ResponsiveTable" -->
@@ -154,7 +154,7 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-					</mdcv:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 
@@ -162,7 +162,7 @@
 								validateInput="false"
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover title="Title">
+									<mdcvh:Popover title="Title">
 										<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 											<Table id="mTable1_2_title" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="50rem" mode="SingleSelectMaster">
 												<columns>
@@ -181,7 +181,7 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 

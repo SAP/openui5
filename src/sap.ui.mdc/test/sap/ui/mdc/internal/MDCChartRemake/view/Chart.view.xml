@@ -5,11 +5,11 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:f2="sap.f"
 	xmlns:mdc="sap.ui.mdc"
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	
 	xmlns:mdcc="sap.ui.mdc.chart"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
@@ -48,7 +48,7 @@
 							<mdc:ValueHelp id="FH4"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover id="FH4-Pop" title="Title">
+									<mdcvh:Popover id="FH4-Pop" title="Title">
 										<mdcvc:MTable id="FH4-Pop-Cont" keyPath="title" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FH4-Pop-Table" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 												<columns>
@@ -67,17 +67,17 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcv:Dialog id="FH4-Dia" title="Title">
+									<mdcvh:Dialog id="FH4-Dia" title="Title">
 										<mdcvc:MDCTable id="FH4-Dia-Cont" keyPath="title" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="FH4-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
-													<vhfb:filterItems>
+												<mdcvh:FilterBar id="FH4-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+													<mdcvh:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions="{$filters>/conditions/title}" />
-													</vhfb:filterItems>
-												</vhfb:FilterBar>
+													</mdcvh:filterItems>
+												</mdcvh:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FH4-Dia-Table"
 												autoBindOnInit="false"
@@ -107,14 +107,14 @@
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions id="FH4-Dia-Cond" label="Title"/>
-									</mdcv:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FH1"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover id="FH1-Pop" title="Author ID">
+									<mdcvh:Popover id="FH1-Pop" title="Author ID">
 										<mdcvc:MTable id="FH1-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 											<Table id="FH1-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="MultiSelect">
 												<columns>
@@ -139,18 +139,18 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcv:Dialog id="FH1-Dia" title="Author ID">
+									<mdcvh:Dialog id="FH1-Dia" title="Author ID">
 										<mdcvc:MDCTable id="FH1-Dia-Cont" title="Author ID" keyPath="ID" descriptionPath="name"  group="colsearch" forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="FH1-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
-													<vhfb:filterItems>
+												<mdcvh:FilterBar id="FH1-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+													<mdcvh:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="ID" dataType= "Edm.Int32" dataTypeFormatOptions= '\{"groupingEnabled": false\}' conditions= "{$filters>/conditions/ID}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Name" conditions= "{$filters>/conditions/name}" />
-													</vhfb:filterItems>
-												</vhfb:FilterBar>
+													</mdcvh:filterItems>
+												</mdcvh:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FH1-Dia-Table"
 												autoBindOnInit="false"
@@ -177,23 +177,23 @@
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions id="FH1-Dia-Cond" label="Author ID"/>
-									</mdcv:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHPublished"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:dialog>
-									<mdcv:Dialog title="Published">
+									<mdcvh:Dialog title="Published">
 										<mdcvc:Conditions label="Published"/>
-									</mdcv:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHLanguage"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover id="FHLanguage-Pop" title="Langugages">
+									<mdcvh:Popover id="FHLanguage-Pop" title="Langugages">
 										<mdcvc:MTable id="FHLanguage-Pop-Cont" keyPath="code" descriptionPath="name"  useAsValueHelp="false">
 											<Table id="FHLanguage-Pop-Table" items='{path : "/Languages", length: 10}' width="30rem" mode="SingleSelectMaster">
 												<columns>
@@ -218,10 +218,10 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcv:Dialog id="FHLanguage-Dia" title="Languages">
+									<mdcvh:Dialog id="FHLanguage-Dia" title="Languages">
 										<mdcvc:MDCTable id="FHLanguage-Dia-Cont" keyPath="code" descriptionPath="name"  forceBind="true">
 											<mdc:Table id="FHLanguage-Dia-Table"
 												autoBindOnInit="false"
@@ -248,14 +248,14 @@
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions id="FHLanguage-Dia-Cond" label="Languages"/>
-									</mdcv:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHClassification"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover id="FHClassification-Pop" title="Classification">
+									<mdcvh:Popover id="FHClassification-Pop" title="Classification">
 										<mdcvc:MTable id="FHClassification-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="true">
 											<Table id="FHClassification-Table" items='{path : "/Classification"}' width="30rem" mode="SingleSelectMaster">
 												<columns>
@@ -280,14 +280,14 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHGenre"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover id="FHGenre-Pop" title="Genre">
+									<mdcvh:Popover id="FHGenre-Pop" title="Genre">
 										<mdcvc:MTable id="FHGenre-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FHGenre-Pop-Table" items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}' width="30rem" mode="MultiSelect">
 												<columns>
@@ -318,19 +318,19 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcv:Dialog id="FHGenre-Dia" title="Genre">
+									<mdcvh:Dialog id="FHGenre-Dia" title="Genre">
 										<mdcvc:MDCTable id="FHGenre-Dia-Cont" keyPath="code" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="FHGenre-Dia-FB" liveMode="false" expandFilterFields="true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-													<vhfb:filterItems>
+												<mdcvh:FilterBar id="FHGenre-Dia-FB" liveMode="false" expandFilterFields="true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+													<mdcvh:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" valueHelp="FHClassification"/>
-													</vhfb:filterItems>
-												</vhfb:FilterBar>
+													</mdcvh:filterItems>
+												</mdcvh:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FHGenre-Dia-Table"
 												autoBindOnInit="false"
@@ -357,14 +357,14 @@
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions id="FHGenre-Dia-Cond" label="Genre"/>
-									</mdcv:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHSubGenre"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover id="FHSubGenre-Pop" title="Sub Genre">
+									<mdcvh:Popover id="FHSubGenre-Pop" title="Sub Genre">
 										<mdcvc:MTable id="FHSubGenre-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FHSubGenre-Pop-Table" items='{path: "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
@@ -401,20 +401,20 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcv:Dialog id="FHSubGenre-Dia" title="Sub Genre">
+									<mdcvh:Dialog id="FHSubGenre-Dia" title="Sub Genre">
 										<mdcvc:MDCTable id="FHSubGenre-Dia-Cont" keyPath="code" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="FHSubGenre-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-													<vhfb:filterItems>
+												<mdcvh:FilterBar id="FHSubGenre-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+													<mdcvh:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" valueHelp="FHClassification"/>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" valueHelp="FHGenre"/>
-													</vhfb:filterItems>
-												</vhfb:FilterBar>
+													</mdcvh:filterItems>
+												</mdcvh:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FHSubGenre-Dia-Table"
 												autoBindOnInit="false"
@@ -444,14 +444,14 @@
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions id="FHSubGenre-Dia-Cond" label="Sub Genre"/>
-									</mdcv:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHDetailGenre"
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
-									<mdcv:Popover id="FHDetailGenre-Pop" title="Detail Genre">
+									<mdcvh:Popover id="FHDetailGenre-Pop" title="Detail Genre">
 										<mdcvc:MTable id="FHDetailGenre-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FHDetailGenre-Pop-Table" items='{path: "/DetailGenres", length: 10, parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
@@ -494,21 +494,21 @@
 												</items>
 											</Table>
 										</mdcvc:MTable>
-									</mdcv:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcv:Dialog id="FHDetailGenre-Dia" title="Detail Genre">
+									<mdcvh:Dialog id="FHDetailGenre-Dia" title="Detail Genre">
 										<mdcvc:MDCTable id="FHDetailGenre-Dia-Cont" keyPath="code" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="FHDetailGenre-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-													<vhfb:filterItems>
+												<mdcvh:FilterBar id="FHDetailGenre-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+													<mdcvh:filterItems>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" />
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" valueHelp="FHClassification"/>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" valueHelp="FHGenre"/>
 														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Sub Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/subgenre_code}" display="Description" valueHelp="FHSubGenre"/>
-													</vhfb:filterItems>
-												</vhfb:FilterBar>
+													</mdcvh:filterItems>
+												</mdcvh:FilterBar>
 											</mdcvc:filterBar>
 											<mdc:Table id="FHDetailGenre-Dia-Table"
 												autoBindOnInit="false"
@@ -541,7 +541,7 @@
 											</mdc:Table>
 										</mdcvc:MDCTable>
 										<mdcvc:Conditions id="FHDetailGenre-Dia-Cond" label="Detail Genre"/>
-									</mdcv:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 

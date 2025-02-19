@@ -4,7 +4,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:m="sap.m"
 	controllerName="sap.ui.core.samples.unittable.controller.UnitTable"
-	height="100%">
+	height="100%"
+	xmlns:core="sap.ui.core"
+	core:require="{MeterType: 'sap/ui/core/samples/unittable/model/MeterType'}">
 	<m:Panel>
 		<m:content>
 			<Table rows="{meters>/data}" >
@@ -36,7 +38,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>jan', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -45,7 +47,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>feb', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -54,7 +56,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>mar', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -63,7 +65,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>apr', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -72,7 +74,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>may', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -81,7 +83,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>jun', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -90,7 +92,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>jul', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -99,7 +101,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>aug', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -108,7 +110,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>sep', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -117,7 +119,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>oct', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -126,7 +128,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>nov', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -135,7 +137,7 @@
 						<template>
 							<m:Label text="{
 								parts:['meters>dec', 'meters>unit', 'meters>decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -168,7 +170,7 @@
 						<template>
 							<m:Label text="{
 								parts:['months>meter1/value', 'months>meter1/unit', 'months>meter1/decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -177,7 +179,7 @@
 						<template>
 							<m:Label text="{
 								parts:['months>meter2/value', 'months>meter2/unit', 'months>meter2/decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -186,7 +188,7 @@
 						<template>
 							<m:Label text="{
 								parts:['months>meter3/value', 'months>meter3/unit', 'months>meter3/decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>
@@ -195,7 +197,7 @@
 						<template>
 							<m:Label text="{
 								parts:['months>meter4/value', 'months>meter4/unit', 'months>meter4/decimals'],
-								type: 'sap.ui.core.samples.unittable.model.MeterType'
+								type: 'MeterType'
 							}"/>
 						</template>
 					</Column>

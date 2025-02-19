@@ -11,7 +11,26 @@ sap.ui.define([
 
 	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
-	ValueHelpDelegate.showTypeahead = function (oPayload, oContent, oConfig) {
+	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
+		const vShouldOpenOnClick = oValueHelp.getPayload()?.shouldOpenOnClick;
+		if (typeof vShouldOpenOnClick === "boolean" && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+			return vShouldOpenOnClick;
+		} else {
+			return BaseValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
+		}
+	};
+
+	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
+		const vShouldOpenOnFocus = oValueHelp.getPayload()?.shouldOpenOnFocus;
+		if (typeof vShouldOpenOnFocus === "boolean" && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+			return vShouldOpenOnFocus;
+		} else {
+			return BaseValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
+		}
+	};
+
+
+	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
 		//return true;
 		return new Promise((resolve) => {
 			setTimeout(() => {

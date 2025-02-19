@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="special.cases">
+			<EntityType Name="VH_Currency" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Waers" />
+				</Key>
+				<Property Name="Waers" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="Currency" />
+				<Property Name="Ltext" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Long Text"/>
+			</EntityType>
+			<EntityContainer Name="Container" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true">
+				<EntitySet Name="VH_CurrencySet" EntityType="special.cases.VH_Currency" sap:content-version="1" />
+			</EntityContainer>
+			<Annotations Target="special.cases.VH_Currency/Waers" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=WAERS"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="Ltext" />
+			</Annotations>
+			<Annotations Target="special.cases.VH_Currency/Ltext" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=LTEXT"/>
+			</Annotations>
+			<Annotations Target="special.cases.BusinessPartner/CurrencyCode"
+					 xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Currency" />
+						<PropertyValue Property="CollectionPath" String="VH_CurrencySet" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode" />
+									<PropertyValue Property="ValueListProperty" String="Waers" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

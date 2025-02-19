@@ -2,7 +2,7 @@
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcField="sap.ui.mdc.field"
-		xmlns:mdcv="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -32,7 +32,7 @@
 				<mdc:ValueHelp id="VH1"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
-						<mdcv:Popover id="VH1-Pop" title="Book Title">
+						<mdcvh:Popover id="VH1-Pop" title="Book Title">
 							<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="title"  useAsValueHelp="false">
 								<Table id="VH1-Pop-Table" items='{path : "/Books", length: 10}' width="20rem" mode="MultiSelect">
 									<columns>
@@ -57,10 +57,10 @@
 									</items>
 								</Table>
 							</mdcvc:MTable>
-						</mdcv:Popover>
+						</mdcvh:Popover>
 					</mdc:typeahead>
 					<mdc:dialog>
-						<mdcv:Dialog id="VH1-Dia" title="Book Title">
+						<mdcvh:Dialog id="VH1-Dia" title="Book Title">
 							<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="title" >
 								<mdc:Table id="VH1-Dia-Table" autoBindOnInit="true" selectionMode="Multi" p13nMode="Column,Sort" width="100%"
 									delegate='\{"name": "delegates/odata/v4/TableDelegate", "payload": \{"collectionName": "Books"\}\}'
@@ -79,7 +79,7 @@
 								</mdc:Table>
 							</mdcvc:MDCTable>
 							<mdcvc:Conditions id="VH1-Dia-Cond" label="Book Title"/>
-						</mdcv:Dialog>
+						</mdcvh:Dialog>
 					</mdc:dialog>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -100,9 +100,9 @@
 				<mdc:ValueHelp id="VH2"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:dialog>
-						<mdcv:Dialog title="Dates">
+						<mdcvh:Dialog title="Dates">
 							<mdcvc:Conditions label="Dates"/>
-						</mdcv:Dialog>
+						</mdcvh:Dialog>
 					</mdc:dialog>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -123,9 +123,9 @@
 				<mdc:ValueHelp id="VH3"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:dialog>
-						<mdcv:Dialog title="double Values">
+						<mdcvh:Dialog title="double Values">
 							<mdcvc:Conditions label="double Values"/>
-						</mdcv:Dialog>
+						</mdcvh:Dialog>
 					</mdc:dialog>
 				</mdc:ValueHelp>
 			</mdc:dependents>
@@ -148,9 +148,9 @@
 				<mdc:ValueHelp id="VH4"
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:dialog>
-						<mdcv:Popover title="Dates">
+						<mdcvh:Popover title="Dates">
 							<mdcvc:Conditions label="Dates"/>
-						</mdcv:Popover>
+						</mdcvh:Popover>
 					</mdc:dialog>
 				</mdc:ValueHelp>
 			</mdc:dependents>

@@ -180,7 +180,6 @@ sap.ui.define([
 		},
 		ui5: {
 			bindingSyntax: 'complex',
-			noConflict: true,
 			libs: [],
 			theme: "sap_horizon"
 		},

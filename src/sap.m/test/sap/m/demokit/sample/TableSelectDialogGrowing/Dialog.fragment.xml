@@ -9,6 +9,10 @@
 		confirm=".handleClose"
 		cancel=".handleClose"
 		multiSelect="true"
+		core:require="{
+			Currency: 'sap/ui/model/type/Currency',
+			Formatter: 'sap/m/sample/TableSelectDialogGrowing/Formatter'
+		}"
 		items="{
 			path : '/ProductCollection',
 			sorter : {
@@ -26,12 +30,12 @@
 					unit="{WeightUnit}"
 					state="{
 						path: 'WeightMeasure',
-						formatter: 'sap.m.sample.TableSelectDialogGrowing.Formatter.weightState'
+						formatter: 'Formatter.weightState'
 					}" />
 				<ObjectNumber
 					number="{
 						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
+						type: 'Currency',
 						formatOptions: {showMeasure: false}
 					}"
 					unit="{CurrencyCode}" />

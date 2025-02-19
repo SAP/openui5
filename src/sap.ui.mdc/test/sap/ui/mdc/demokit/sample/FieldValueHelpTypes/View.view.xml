@@ -1,7 +1,7 @@
 <mvc:View
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
-		xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -35,7 +35,7 @@
 			<mdc:ValueHelp id="VH-TypeAhead"
 				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover id="VH-TypeAhead-Pop">
+					<mdcvh:Popover id="VH-TypeAhead-Pop">
 						<mdcValueHelpContent:MTable id="VH-TypeAhead-Pop-MTable"
 							keyPath="key"
 							descriptionPath="name"
@@ -58,63 +58,63 @@
 								</items>
 							</Table>
 						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-TypeAheadDropdown"
 				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover id="VH-TypeAheadDropdown-Pop">
+					<mdcvh:Popover id="VH-TypeAheadDropdown-Pop">
 						<mdcValueHelpContent:FixedList id="H-TypeAheadDropdown-Pop-FixedList" items="{path: 'data>/countries'}" >
 							<mdcValueHelpContent:FixedListItem text="{path: 'data>name', type:'sap.ui.model.type.String'}" additionalText="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}" key="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}"/>
 						</mdcValueHelpContent:FixedList>
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-TypeAheadDropdownFocus"
 				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "shouldOpenOnFocus": true\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover id="VH-TypeAheadDropdownFocus-Pop">
+					<mdcvh:Popover id="VH-TypeAheadDropdownFocus-Pop">
 						<mdcValueHelpContent:MTable id="VH-TypeAheadDropdownFocus-Pop-MTable"
 							keyPath="key"
 							descriptionPath="name"
 							caseSensitive="false"
 							useAsValueHelp="true"/> <!-- create table via delegate-->
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-DropdownOnly"
 				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "shouldOpenOnClick": true\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover id="VH-DropdownOnly-Pop">
+					<mdcvh:Popover id="VH-DropdownOnly-Pop">
 						<mdcValueHelpContent:FixedList id="H-DropdownOnly-Pop-FixedList" filterList="false" useFirstMatch="false" items="{path: 'data>/countries'}" >
 							<mdcValueHelpContent:FixedListItem text="{path: 'data>name', type:'sap.ui.model.type.String'}" additionalText="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}" key="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}"/>
 						</mdcValueHelpContent:FixedList>
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-DialogOnly"
 				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
 				<mdc:dialog>
-					<mdcValueHelp:Dialog id="VH-DialogOnly-Dialog" title="Countries">
+					<mdcvh:Dialog id="VH-DialogOnly-Dialog" title="Countries">
 						<mdcValueHelpContent:MTable id="VH-DialogOnly-Dialog-MTable"
 							keyPath="key"
 							descriptionPath="name"
 							caseSensitive="true">
 							 <!-- create table via delegate-->
 						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-Countries"
 				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover id="VH-Countries-Pop">
+					<mdcvh:Popover id="VH-Countries-Pop">
 						<mdcValueHelpContent:MTable id="VH-Countries-Pop-MTable"
 							keyPath="key"
 							descriptionPath="name"
@@ -122,17 +122,17 @@
 							useAsValueHelp="false">
  							<!-- create table via delegate-->
  						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcValueHelp:Dialog id="VH-Countries-Dialog" title="Countries">
+					<mdcvh:Dialog id="VH-Countries-Dialog" title="Countries">
 						<mdcValueHelpContent:MTable id="VH-Countries-Dialog-MTable"
 							keyPath="key"
 							descriptionPath="name"
 							caseSensitive="true">
 							 <!-- create table via delegate-->
 						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</form:dependents>

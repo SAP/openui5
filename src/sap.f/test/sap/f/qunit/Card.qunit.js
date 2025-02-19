@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericSideIndicator",
 	"sap/m/AvatarColor",
-	"sap/m/BadgeCustomData",
 	"sap/m/library",
 	"sap/f/library",
 	"sap/m/Button",
@@ -20,13 +19,12 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Lib"
 ],
-function (
+function(
 	Card,
 	CardHeader,
 	CardNumericHeader,
 	CardNumericSideIndicator,
 	AvatarColor,
-	BadgeCustomData,
 	mLibrary,
 	fLibrary,
 	Button,
@@ -409,6 +407,47 @@ function (
 		oHeader.destroy();
 	});
 
+	QUnit.test("Header with main part only", async function (assert) {
+		// Arrange
+		const oHeader = new CardHeader({
+				title: "Title"
+			}),
+			oCard = new Card({
+				header: oHeader
+			});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+		const oMainPartDomRef = oHeader.getDomRef().querySelector(".sapFCardHeaderMainPart");
+
+		// Assert
+		assert.ok(oHeader.getDomRef().classList.contains("sapFCardHeaderMainPartOnly"), "Header has correct class applied");
+		assert.ok(oMainPartDomRef.classList.contains("sapFCardHeaderLastPart"), "Main part has correct class applied");
+	});
+
+	QUnit.test("Header with numeric part", async function (assert) {
+		// Arrange
+		const oHeader = new CardNumericHeader({
+				title: "Title",
+				number: "5"
+			}),
+			oCard = new Card({
+				header: oHeader
+			});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+		const oMainPartDomRef = oHeader.getDomRef().querySelector(".sapFCardHeaderMainPart");
+		const oNumericPartDomRef = oHeader.getDomRef().querySelector(".sapFCardNumericHeaderNumericPart");
+
+		// Assert
+		assert.notOk(oHeader.getDomRef().classList.contains("sapFCardHeaderMainPartOnly"), "Header has correct class applied");
+		assert.notOk(oMainPartDomRef.classList.contains("sapFCardHeaderLastPart"), "Main part does NOT have 'sapFCardHeaderLastPart' class");
+		assert.ok(oNumericPartDomRef.classList.contains("sapFCardHeaderLastPart"), "Numeric part has correct class applied");
+	});
+
 	QUnit.module("Headers press event", {
 		afterEach
 	});
@@ -426,7 +465,7 @@ function (
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate(this.clock);
-		QUnitUtils.triggerKeydown(oHeader.getDomRef(), KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown(oHeader.getDomRef().querySelector(".sapFCardHeaderMainPart"), KeyCodes.ENTER);
 
 		// Assert
 		assert.ok(fnPressHandler.calledOnce, "The press event is fired on Enter keydown");
@@ -448,7 +487,7 @@ function (
 		// Act
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate(this.clock);
-		QUnitUtils.triggerKeyup(oHeader.getDomRef(), KeyCodes.SPACE);
+		QUnitUtils.triggerKeyup(oHeader.getDomRef().querySelector(".sapFCardHeaderMainPart"), KeyCodes.SPACE);
 
 		// Assert
 		assert.ok(fnPressHandler.calledOnce, "The press event is fired on Space keyup");
@@ -484,7 +523,7 @@ function (
 		oCard.destroy();
 	});
 
-	QUnit.test("Press is NOT fired when the header is tapped", async function (assert) {
+	QUnit.test("Press is fired when the header is tapped", async function (assert) {
 		// Arrange
 		const oHeader = new CardNumericHeader({
 				title: "Title"
@@ -500,6 +539,12 @@ function (
 
 		// Act
 		QUnitUtils.triggerEvent("tap", oHeader.getDomRef());
+
+		// Assert
+		assert.notOk(fnPressHandler.called, "Tapping the header should NOT result in press event");
+
+		// Act
+		QUnitUtils.triggerEvent("tap", oHeader.getDomRef().querySelector(".sapFCardHeaderMainPart"));
 
 		// Assert
 		assert.ok(fnPressHandler.calledOnce, "Tapping the header should result in press event");
@@ -524,7 +569,7 @@ function (
 		await nextUIUpdate(this.clock);
 
 		// Act
-		QUnitUtils.triggerEvent("tap", oHeader.getDomRef(), { ctrlKey: true });
+		QUnitUtils.triggerEvent("tap", oHeader.getDomRef().querySelector(".sapFCardHeaderMainPart"), { ctrlKey: true });
 
 		// Assert
 		assert.ok(fnPressHandler.notCalled, "Tapping the header with href should NOT result in press event");
@@ -621,18 +666,17 @@ function (
 		assert.strictEqual(oTitleDomRef.getAttribute("role"), "heading", "Card title's role is correct.");
 		assert.strictEqual(oTitleDomRef.getAttribute("aria-level"), "3", "Card title's heading level is correct.");
 
-		var $header = oCard.getHeader().$();
+		const oMainPartDomRef = oCard.getHeader().getDomRef().querySelector(".sapFCardHeaderMainPart");
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "group" , "Header role is correct.");
-		assert.notOk($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is not set");
+		assert.notOk(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "sapFCardSectionClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
 		oCard.invalidate();
 
 		await nextUIUpdate(this.clock);
 
-		$header = oCard.getHeader().$();
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "button" , "Header role is correct.");
-		assert.ok($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is set");
+		assert.ok(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "sapFCardSectionClickable class is set");
 
 		oCard.destroy();
 	});
@@ -647,18 +691,17 @@ function (
 		assert.strictEqual(oTitleDomRef.getAttribute("role"), "heading", "Card title's role is correct.");
 		assert.strictEqual(oTitleDomRef.getAttribute("aria-level"), "3", "Card title's heading level is correct.");
 
-		var $header = oCard.getHeader().$();
+		const oMainPartDomRef = oCard.getHeader().getDomRef().querySelector(".sapFCardHeaderMainPart");
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "group" , "Header role is correct.");
-		assert.notOk($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is not set");
+		assert.notOk(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "sapFCardSectionClickable class is not set");
 
 		oCard.getHeader().attachPress(function () { });
 		oCard.invalidate();
 
 		await nextUIUpdate(this.clock);
 
-		$header = oCard.getHeader().$();
 		assert.strictEqual(oCard.getFocusDomRef().getAttribute("role"), "button" , "Header role is correct.");
-		assert.ok($header.hasClass("sapFCardSectionClickable"), "sapFCardSectionClickable class is set");
+		assert.ok(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "sapFCardSectionClickable class is set");
 
 		oCard.destroy();
 	});
@@ -749,7 +792,7 @@ function (
 
 		assert.strictEqual(oCard.getDomRef().getAttribute("role"), "listitem", "Card has correct role attribute");
 
-		QUnitUtils.triggerMouseEvent(oHeader.getDomRef(), "tap");
+		QUnitUtils.triggerMouseEvent(oHeader.getDomRef().querySelector(".sapFCardHeaderMainPart"), "tap");
 		assert.ok(fnHeaderPressHandler.callCount === 1, "Card header is clicked and header press event is fired");
 		assert.ok(fnCardPressHandler.callCount === 0, "Card header is clicked and card press event is not fired");
 

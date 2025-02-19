@@ -1452,7 +1452,7 @@ sap.ui.define([
 	 * @returns {string} the number with stripped trailing zero decimals, e.g. "1.230"
 	 */
 	function stripTrailingZeroDecimals(sNumber, minDecimalsPreserved) {
-		if (sNumber.indexOf(".") >= 0 && !isScientificNotation(sNumber) && sNumber.endsWith("0")) {
+		if (sNumber.indexOf(".") >= 0 && sNumber.endsWith("0")) {
 			var iFractionDigitsLength = sNumber.length - sNumber.lastIndexOf(".") - 1;
 			var iFractionsToRemove = iFractionDigitsLength - minDecimalsPreserved;
 			if (iFractionsToRemove > 0) {
@@ -1713,6 +1713,13 @@ sap.ui.define([
 			bNegative = false;
 		}
 
+		if (!bValueIsNullOrUndefined) {
+			sNumber = LocaleData.convertToDecimal(vValue);
+		}
+		if (sNumber === "NaN") {
+			return sNumber;
+		}
+
 		// strip of trailing zeros in decimals
 		// "1000.00" -> "1000"   (maxFractionDigits: 0)
 		// "1000.0"  -> "1000.0" (maxFractionDigits: 1)
@@ -1721,16 +1728,8 @@ sap.ui.define([
 		// These zeros are cut off until maxFractionDigits is reached to be backward compatible.
 		// If more trailing decimal zeros are required the option maxFractionDigits can be increased.
 		// Note: default maxFractionDigits for Unit and Float is 99.
-		if (oOptions.preserveDecimals && (typeof vValue === "string" || vValue instanceof String)) {
-			vValue = stripTrailingZeroDecimals(vValue, oOptions.maxFractionDigits);
-		}
-
-		if (!bValueIsNullOrUndefined) {
-			sNumber = LocaleData.convertToDecimal(vValue);
-		}
-
-		if (sNumber == "NaN") {
-			return sNumber;
+		if (oOptions.preserveDecimals) {
+			sNumber = stripTrailingZeroDecimals(sNumber, oOptions.maxFractionDigits);
 		}
 
 		// if number is negative remove minus

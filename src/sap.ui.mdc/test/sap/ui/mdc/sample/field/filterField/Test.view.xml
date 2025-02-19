@@ -3,9 +3,9 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
-	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
+	
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:c="sap.ui.core"
@@ -33,7 +33,7 @@
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH1-Pop">
+									<mdcvh:Popover id="VH1-Pop">
 										<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
 											keyPath="ProductId"
 											descriptionPath="Name"
@@ -60,10 +60,10 @@
 												</m:items>
 											</m:Table>
 										</mdcValueHelpContent:MTable>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcValueHelp:Dialog id="VH1-Dialog" title="Product">
+									<mdcvh:Dialog id="VH1-Dialog" title="Product">
 										<mdcValueHelpContent:MTable id="VH1-Dialog-MTable"
 											keyPath="ProductId"
 											descriptionPath="Name"
@@ -90,7 +90,7 @@
 												</m:items>
 											</m:Table>
 										</mdcValueHelpContent:MTable>
-									</mdcValueHelp:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -289,11 +289,11 @@
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Status" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH-Status-Pop">
+									<mdcvh:Popover id="VH-Status-Pop">
 										<mdcValueHelpContent:FixedList id="VH-Status-FL" useFirstMatch="false" items="{path: '/StatusCollection'}">
 											<mdcValueHelpContent:FixedListItem key="{StatusId}" text="{Name}"/>
 										</mdcValueHelpContent:FixedList>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -313,11 +313,11 @@
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Status2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH-Status2-Pop">
+									<mdcvh:Popover id="VH-Status2-Pop">
 										<mdcValueHelpContent:FixedList id="VH-Status2-FL" useFirstMatch="true" filterList="false" items="{path: '/StatusCollection'}">
 											<mdcValueHelpContent:FixedListItem key="{StatusId}" text="{Name}"/>
 										</mdcValueHelpContent:FixedList>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -397,11 +397,11 @@
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-WeightUnit" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH-WeightUnit-Pop">
+									<mdcvh:Popover id="VH-WeightUnit-Pop">
 										<mdcValueHelpContent:FixedList id="VH-WeightUnit-FL" useFirstMatch="false" items="{/weightUnits}">
 											<mdcValueHelpContent:FixedListItem key="{id}" text="{unit}" additionalText="{text}"/>
 										</mdcValueHelpContent:FixedList>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -436,7 +436,7 @@
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Material" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["MatrId","Text"], "showWithoutFilter": true, "shouldOpenOnFocus": true\}\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH-Material-Pop">
+									<mdcvh:Popover id="VH-Material-Pop">
 										<mdcValueHelpContent:MTable id="VH-Material-Pop-MTable"
 											keyPath="MatrId"
 											descriptionPath="Text"
@@ -459,10 +459,10 @@
 												</m:items>
 											</m:Table>
 										</mdcValueHelpContent:MTable>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcValueHelp:Dialog id="VH-Material-Dialog" title="Material">
+									<mdcvh:Dialog id="VH-Material-Dialog" title="Material">
 										<mdcValueHelpContent:MTable id="VH-Material-Dialog-MTable"
 											keyPath="MatrId"
 											descriptionPath="Text"
@@ -485,7 +485,7 @@
 												</m:items>
 											</m:Table>
 										</mdcValueHelpContent:MTable>
-									</mdcValueHelp:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -523,14 +523,14 @@
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-DateDescription" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH-DateDescription-Pop">
+									<mdcvh:Popover id="VH-DateDescription-Pop">
 										<mdcValueHelpContent:FixedList id="VH-DateDescription-FL" useFirstMatch="true" items="{path: '/ProductCollection'}" >
 											<mdcValueHelpContent:FixedListItem 
 												text="{path: 'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}, constraints: {displayFormat: 'Date'}}" 
 												additionalText="{path: 'Name', type: 'sap.ui.model.type.String', constraints: {maxLength: 30}}" 
 												key="{path: 'Name', type: 'sap.ui.model.type.String', constraints: {maxLength: 30}}"/>
 										</mdcValueHelpContent:FixedList>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -553,7 +553,7 @@
 						<mdc:dependents>
 							<mdc:ValueHelp id="VH-Country" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["countryId","text"]\}\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH-Country-Pop">
+									<mdcvh:Popover id="VH-Country-Pop">
 										<mdcValueHelpContent:MTable id="VH-Country-Pop-MTable"
 											keyPath="countryId"
 											descriptionPath="text"
@@ -576,10 +576,10 @@
 												</m:items>
 											</m:Table>
 										</mdcValueHelpContent:MTable>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcValueHelp:Dialog id="VH-Country-Dialog" title="Countries">
+									<mdcvh:Dialog id="VH-Country-Dialog" title="Countries">
 										<mdcValueHelpContent:MTable id="VH-Country-Dialog-MTable"
 											keyPath="countryId"
 											descriptionPath="text"
@@ -603,7 +603,7 @@
 											</m:Table>
 										</mdcValueHelpContent:MTable>
 										<mdcValueHelpContent:Conditions id="VH-Country-Dialog-Conditions"/>
-									</mdcValueHelp:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -625,7 +625,7 @@
 							<mdc:ValueHelp id="VH-Region"
 								delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["regionId","text"], "in": [\{"path": "countryId", "source": "conditions/CountryId"\}], "out": [\{"path": "countryId", "target": "conditions/CountryId"\}]\}\}'>
 								<mdc:typeahead>
-									<mdcValueHelp:Popover id="VH-Region-Pop">
+									<mdcvh:Popover id="VH-Region-Pop">
 										<mdcValueHelpContent:MTable id="VH-Region-Pop-MTable"
 											keyPath="regionId"
 											descriptionPath="text"
@@ -652,17 +652,17 @@
 												</m:items>
 											</m:Table>
 										</mdcValueHelpContent:MTable>
-									</mdcValueHelp:Popover>
+									</mdcvh:Popover>
 								</mdc:typeahead>
 								<mdc:dialog>
-									<mdcValueHelp:Dialog id="VH-Region-Dialog" title="Regions">
+									<mdcvh:Dialog id="VH-Region-Dialog" title="Regions">
 										<mdcValueHelpContent:MTable id="VH-Region-Dialog-MTable"
 											keyPath="regionId"
 											descriptionPath="text"
 											caseSensitive="true"
 											useAsValueHelp="false">
 											<mdcValueHelpContent:filterBar>
-												<vhfb:FilterBar id="VH-Region-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+												<mdcvh:FilterBar id="VH-Region-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 													<mdc:FilterField
 														id="VH-Region-FF-countryId"
 														label= "{/#Region/countryId/@sap:label}"
@@ -675,7 +675,7 @@
 														propertyKey="countryId"
 														operators="EQ,NE,EUROPE"
 														valueHelp="VH-Country"/>
-												</vhfb:FilterBar>
+												</mdcvh:FilterBar>
 											</mdcValueHelpContent:filterBar>
 											<m:Table id="VH-Region-Dialog-Table" items="{path: '/RegionCollection', suspended: true}">
 												<m:columns>
@@ -699,7 +699,7 @@
 											</m:Table>
 										</mdcValueHelpContent:MTable>
 										<mdcValueHelpContent:Conditions id="VH-Region-Dialog-Conditions"/>
-									</mdcValueHelp:Dialog>
+									</mdcvh:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
 						</mdc:dependents>
@@ -736,9 +736,9 @@
 					<form:dependents>
 						<mdc:ValueHelp id="VH-Conditions" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:dialog>
-								<mdcValueHelp:Popover id="VH-Conditions-Pop" title="Conditions">
+								<mdcvh:Popover id="VH-Conditions-Pop" title="Conditions">
 									<mdcValueHelpContent:Conditions id="VH-Conditions-Pop-Conditions"/>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:dialog>
 						</mdc:ValueHelp>
 					</form:dependents>
@@ -750,7 +750,7 @@
 							"in": [\{"path": "countryId", "source": "conditions/CountryId"\}, \{"path": "regionId", "source": "conditions/RegionId"\}, \{"path": "info", "source": "view>/info", "initialValueFilterEmpty": false\}],
 							"out": [\{"path": "countryId", "target": "conditions/CountryId"\}, \{"path": "regionId", "target": "conditions/RegionId"\}]\}\}'>
 						<mdc:typeahead>
-							<mdcValueHelp:Popover id="VH-City-Pop">
+							<mdcvh:Popover id="VH-City-Pop">
 								<mdcValueHelpContent:MTable id="VH-City-Pop-MTable"
 									keyPath="cityId"
 									descriptionPath="text"
@@ -781,17 +781,17 @@
 										</m:items>
 									</m:Table>
 								</mdcValueHelpContent:MTable>
-							</mdcValueHelp:Popover>
+							</mdcvh:Popover>
 						</mdc:typeahead>
 						<mdc:dialog>
-							<mdcValueHelp:Dialog id="VH-City-Dialog" title="Cities">
+							<mdcvh:Dialog id="VH-City-Dialog" title="Cities">
 								<mdcValueHelpContent:MTable id="VH-City-Dialog-MTable"
 									keyPath="cityId"
 									descriptionPath="text"
 									caseSensitive="true"
 									useAsValueHelp="false">
 									<mdcValueHelpContent:filterBar>
-										<vhfb:FilterBar id="VH-City-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+										<mdcvh:FilterBar id="VH-City-FB" liveMode= "true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 											<mdc:FilterField
 												id="VH-City-FF-countryId"
 												label= "{/#Region/countryId/@sap:label}"
@@ -830,12 +830,12 @@
 												width="100%"
 												conditions="{$filters>/conditions/info}"
 												propertyKey="info"/>
-											<vhfb:dependents>
+											<mdcvh:dependents>
 												<mdc:ValueHelp id="VH-Region2"
 													delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["regionId","countryId","text"],
 "in": [\{"path": "countryId", "source": "conditions/countryId"\}], "out": [\{"path": "countryId", "target": "conditions/countryId"\}]\}\}'>
 													<mdc:typeahead>
-														<mdcValueHelp:Popover id="VH-Region2-Pop">
+														<mdcvh:Popover id="VH-Region2-Pop">
 															<mdcValueHelpContent:MTable id="VH-Region2-Pop-MTable"
 																keyPath="regionId"
 																descriptionPath="text"
@@ -862,11 +862,11 @@
 																	</m:items>
 																</m:Table>
 															</mdcValueHelpContent:MTable>
-														</mdcValueHelp:Popover>
+														</mdcvh:Popover>
 													</mdc:typeahead>
 												</mdc:ValueHelp>
-											</vhfb:dependents>
-										</vhfb:FilterBar>
+											</mdcvh:dependents>
+										</mdcvh:FilterBar>
 									</mdcValueHelpContent:filterBar>
 									<m:Table id="VH-City-Dialog-Table" items="{path: '/CityCollection', suspended: true}">
 										<m:columns>
@@ -898,7 +898,7 @@
 									</m:Table>
 								</mdcValueHelpContent:MTable>
 								<mdcValueHelpContent:Conditions id="VH-City-Dialog-Conditions"/>
-							</mdcValueHelp:Dialog>
+							</mdcvh:Dialog>
 						</mdc:dialog>
 					</mdc:ValueHelp>
 				</m:dependents>

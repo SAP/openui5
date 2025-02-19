@@ -7,9 +7,9 @@
     xmlns="sap.m"
     xmlns:f="sap.ui.layout.form"
     xmlns:core="sap.ui.core"
-    xmlns:mdcv="sap.ui.mdc.valuehelp"
+    xmlns:mdcvh="sap.ui.mdc.valuehelp"
     xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
-    xmlns:vhfb="sap.ui.mdc.filterbar.vh">
+    >
 
     <VBox class="sapUiSmallMargin">
         <f:SimpleForm id="result" editable="true" layout="ColumnLayout" title="Office Location" columnsXL="2" columnsL="2" columnsM="2">
@@ -26,7 +26,7 @@
                         <mdc:dependents>
                         <mdc:ValueHelp id="vhSelectBuilding" delegate="{name: 'mdc/sample/delegate/SearchValueHelpDelegate', payload: { searchKeys: ['name', 'city'] }}">
                             <mdc:typeahead>
-                                <mdcv:Popover title="Select Building">
+                                <mdcvh:Popover title="Select Building">
                                     <mdcvc:MTable keyPath="id" descriptionPath="name">
                                         <Table id="ddListBuildings" items='{path : "facilities>/buildings" }' width="30rem">
                                             <columns>
@@ -49,16 +49,16 @@
                                             </items>
                                         </Table>
                                     </mdcvc:MTable>
-                                </mdcv:Popover>
+                                </mdcvh:Popover>
                             </mdc:typeahead>
                             <mdc:dialog>
-                                <mdcv:Dialog id="diaSelectBuilding" title="SAP Buildings">
+                                <mdcvh:Dialog id="diaSelectBuilding" title="SAP Buildings">
                                     <mdcvc:MDCTable keyPath="id" id="mdcvcTableBuildings" descriptionPath="name">
                                         <mdcvc:filterBar>
-                                            <vhfb:FilterBar
+                                            <mdcvh:FilterBar
                                                 id="fbSelectBuildingDialog"
                                                 delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate', payload: {}}">
-                                                <vhfb:filterItems>
+                                                <mdcvh:filterItems>
                                                     <mdc:FilterField
                                                         id="ffCountry"
                                                         label="Country"
@@ -72,7 +72,7 @@
                                                                 id="vhCountry"
                                                                 delegate="{name: 'sap/ui/mdc/ValueHelpDelegate', payload: {}}">
                                                                 <mdc:typeahead>
-                                                                    <mdcv:Popover title="Country Selection">
+                                                                    <mdcvh:Popover title="Country Selection">
                                                                         <mdcvc:MTable id="countryTypeAhead" keyPath="id" descriptionPath="name">
                                                                             <Table
                                                                                 id="ddListCountries"
@@ -89,7 +89,7 @@
                                                                                 </items>
                                                                             </Table>
                                                                         </mdcvc:MTable>
-                                                                    </mdcv:Popover>
+                                                                    </mdcvh:Popover>
                                                                 </mdc:typeahead>
                                                             </mdc:ValueHelp>
                                                         </mdc:dependents>
@@ -107,7 +107,7 @@
                                                                 id="vhLocation"
                                                                 delegate="{name: 'mdc/sample/delegate/JSONValueHelpDelegate', payload: {}}">
                                                                 <mdc:typeahead>
-                                                                    <mdcv:Popover title="Location Selection">
+                                                                    <mdcvh:Popover title="Location Selection">
                                                                         <mdcvc:MTable
                                                                             id="locationTypeAhead"
                                                                             keyPath="id"
@@ -127,13 +127,13 @@
                                                                                 </items>
                                                                             </Table>
                                                                         </mdcvc:MTable>
-                                                                    </mdcv:Popover>
+                                                                    </mdcvh:Popover>
                                                                 </mdc:typeahead>
                                                             </mdc:ValueHelp>
                                                         </mdc:dependents>
                                                     </mdc:FilterField>
-                                                </vhfb:filterItems>
-                                            </vhfb:FilterBar>
+                                                </mdcvh:filterItems>
+                                            </mdcvh:FilterBar>
                                         </mdcvc:filterBar>
                                         <mdc:Table id="mdcTableBuildings"
                                             autoBindOnInit="true"
@@ -166,7 +166,7 @@
                                             </mdc:type>
                                         </mdc:Table>
                                     </mdcvc:MDCTable>
-                                </mdcv:Dialog>
+                                </mdcvh:Dialog>
                             </mdc:dialog>
                         </mdc:ValueHelp>
                     </mdc:dependents>

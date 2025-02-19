@@ -47,6 +47,7 @@ sap.ui.define([], function() {
 		},
 
 		// Returns whether a given product has been selected
+		// This formatter has to be bound against $control
 		isProductSelected : function (sProductId) {
 			var aProductsSelected = Formatter.listProductsSelected(this);
 			return aProductsSelected.map(function(mProduct) {
