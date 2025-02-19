@@ -5,23 +5,23 @@
 
 /* until the central focus concept is implemented, a workaround is built in sap.m.UploadCollection so that all focus frames are visible */
 /* to remove the workaround the changes below are necessary: */
-/* for .sapMLIB.sapMUCItem.sapMUCListSingleItem, .sapMLIB.sapMUCItem.sapMUCListFirstItem,.sapMLIB.sapMUCItem.sapMUCListLastItem, .sapMLIB.sapMUCItem.sapMUCListItem change padding-left from 0.9rem to 1rem    */
+/* for .sapMLIB.sapMUCItem.sapMUCListSingleItem, .sapMLIB.sapMUCItem.sapMUCListFirstItem,.sapMLIB.sapMUCItem.sapMUCListLastItem, .sapMLIB.sapMUCItem.sapMUCListItem change padding-left from 0.9rem to 1rem */
 /* for .sapMUCFileName.sapMLnk delete margin-left:	0.1rem */
 /* for .sapMUCItemIcon, .sapMUCItemImage change margin-right from 0.65rem to 0.75rem, delete margin-top: 0.1rem; margin-bottom:	0.1rem; margin-left: 0.1rem; */
-/* for .sapMUCAttrContainer, .sapMUCStatusContainer delete margin-left: 0.1rem*/
+/* for .sapMUCAttrContainer, .sapMUCStatusContainer delete margin-left: 0.1re m*/
 
 /* List Header */
 .sapMTB.sapMUCListHeader {
-	width:				100%;
-	height:				3rem;
-	padding-left:		1rem;
-	padding-right:		1rem;
+	width: 100%;
+	height: 3rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 	border-bottom-width: 0.0625rem;
 	border-bottom-style: solid;
-	white-space:		nowrap;
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	vertical-align:		middle;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
 }
 
 .sapMTB.sapMUCListHeader > .sapMBarChild:first-child {
@@ -33,25 +33,27 @@
 .sapMLIB.sapMUCItem.sapMUCListFirstItem,
 .sapMLIB.sapMUCItem.sapMUCListLastItem,
 .sapMLIB.sapMUCItem.sapMUCListItem {
-	padding-left:			0.9rem;       /* a workaround until the central focus concept is implemented( after that make it 1rem); 0.1rem gets the image/icon so that the left side of the keyboard frame is displayed */
-	padding-top:			1rem;
-	padding-bottom: 		1rem;
-	border-bottom-width: 	0.0625rem;
-	border-bottom-style: 	solid;
-	padding-right:			1rem;
+	padding-left: 0.9rem; /* a workaround until the central focus concept is implemented( after that make it 1rem); 0.1rem gets the image/icon so that the left side of the keyboard frame is displayed */
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	border-bottom-width: 0.0625rem;
+	border-bottom-style: solid;
+	padding-right: 1rem;
 }
 
 /* List containing no borders */
 .sapMListShowSeparatorsNone {
+
 	.sapMLIB.sapMUCListFirstItem,
 	.sapMLIB.sapMUCListLastItem,
 	.sapMLIB.sapMUCListItem {
-		border-bottom-color: 	transparent; /* this is the central switch to have inner separators or not */
+		border-bottom-color: transparent; /* this is the central switch to have inner separators or not */
 	}
 }
 
 /* List containing no borders */
 .sapMListShowSeparatorsNone {
+
 	.sapMLIB.sapMUCListLastItem,
 	.sapMLIB.sapMUCListItem {
 		padding-top: 0.5rem;
@@ -60,6 +62,7 @@
 
 /* List containing no borders */
 .sapMListShowSeparatorsNone {
+
 	.sapMLIB.sapMUCListFirstItem,
 	.sapMLIB.sapMUCListItem {
 		padding-bottom: 0.5rem;
@@ -79,19 +82,19 @@
 }
 
 .sapMImg.sapMUCItemImage{
-	background-size:	cover;
+	background-size: cover;
 }
 
 .sapMUCItemIconInactive,
 .sapMUCItemIcon,
 .sapMUCItemImage {
-	height:				3rem;
-	width:				3rem;
-	margin-right:		0.75rem; /* because of the keyboard frame it should be margin and not padding */
-	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
-	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
-	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
-	flex:				none;
+	height: 3rem;
+	width: 3rem;
+	margin-right: 0.75rem; /* because of the keyboard frame it should be margin and not padding */
+	margin-top: 0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-bottom: 0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-left: 0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	flex: none;
 }
 
 /*if no image is provided a standard placeholder is displayed */
@@ -102,13 +105,13 @@
 
 /* Text: File name */
 .sapMUCFileName.sapMLnk {
-	font-family:		@sapUiFontFamily;
-	font-weight:		normal;
-	padding-top:		0.25rem; /* Padding top instead of padding bottom due to in-line placement with Objectmarker */
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	opacity:			100;
-	margin-left:		0.1rem;
+	font-family: var(--sapFontFamily);
+	font-weight: normal;
+	padding-top: 0.25rem; /* Padding top instead of padding bottom due to in-line placement with Objectmarker */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	opacity: 100;
+	margin-left: 0.1rem;
 }
 
 .sapMUCObjectMarker {
@@ -137,23 +140,23 @@
 
 /* Busy Indicator */
 .sapMBusyIndicator.sapMUCloadingIcon {
-	padding-top:		1.25rem;
-	padding-bottom:		1.25rem;
-	padding-right:		1.3rem;
-	padding-left:		0.5rem;
-	margin-top:			0rem;
+	padding-top: 1.25rem;
+	padding-bottom: 1.25rem;
+	padding-right: 1.3rem;
+	padding-left: 0.5rem;
+	margin-top: 0;
 }
 
 .sapMBusyIndicator.sapMUCloadingIcon .sapMBusySvg {
-	height:				2rem;
-	width:				2rem;
+	height: 2rem;
+	width: 2rem;
 }
 
 /* No data indicator */
 .sapMUCNoDataPage {
 	padding: 1rem;
 	text-align: center;
-	background: @sapUiGroupContentBackground;
+	background: var(--sapGroup_ContentBackground);
 	display: block;
 
 	.sapUiIcon {
@@ -161,16 +164,16 @@
 	}
 
 	.sapMUCNoDataText {
-		padding: 1rem 0rem;
+		padding: 1rem 0;
 		line-height: 2rem;
-		font-size: @sapMFontHeader2Size;
-		color: @sapUiGroupTitleTextColor;
+		font-size: var(--sapFontHeader2Size);
+		color: var(--sapGroup_TitleTextColor);
 	}
 
 	.sapMUCNoDataDescription {
-		padding: 0rem 0rem 2rem 0rem;
-		font-size: @sapMFontHeader5Size;
-		color: @sapUiContentLabelColor;
+		padding: 0 0 2rem 0;
+		font-size: var(--sapFontHeader5Size);
+		color: var(--sapContent_LabelColor);
 	}
 }
 
@@ -179,6 +182,7 @@
 	position: relative;
 
 	.sapMUCDragDropOverlay:not(.sapMUCDragDropOverlayHide) ~ .sapMList {
+
 		.sapMUCNoDataPage {
 			visibility: hidden;
 		}
@@ -187,9 +191,9 @@
 	.sapMUCDragDropOverlay {
 		position: absolute;
 		top: 3rem;
-		right: 0rem;
-		left: 0rem;
-		bottom: 0rem;
+		right: 0;
+		left: 0;
+		bottom: 0;
 		background-color: fade(@sapUiDragAndDropBackground, 80);
 		z-index: 1;
 
@@ -197,14 +201,14 @@
 			display: none;
 		}
 
-		&:after {
+		&::after {
 			display: block;
-			content: "";
+			content: '';
 			position: absolute;
-			top: 0rem;
-			left: 0rem;
-			bottom: 0rem;
-			right: 0rem;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
 			margin: 0.5rem;
 			border: 0.125rem dashed @sapUiDragAndDropBorderColor;
 		}
@@ -224,18 +228,20 @@
 
 			.sapMText {
 				position: relative;
-				font-size: @sapMFontHeader4Size;
+				font-size: var(--sapFontHeader4Size);
 				color: @sapUiDragAndDropColor;
 			}
 		}
 
-		&.sapMUCDropIndicator:after {
+		&.sapMUCDropIndicator::after {
 			background-color: @sapUiDragAndDropActiveBackground;
 			border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
 		}
 
 		&.sapMUCDropIndicator {
+
 			.sapMUCDragDropIndicator {
+
 				.sapMText {
 					color: @sapUiDragAndDropActiveColor;
 				}
@@ -247,54 +253,53 @@
 	}
 }
 
-/* ************************************************************************************* */
-/* local fixes: should be done by used simple controls                                   */
-/* ************************************************************************************* */
+/* local fixes: should be done by used simple controls */
+
 .sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
-	padding-left:		0rem;
+	padding-left: 0;
 }
 
 .sapMUC .sapUiIcon:focus {
-	outline-style: @sapUiContentFocusStyle;
-	outline-width: @sapUiContentFocusWidth;
+	outline-style: var(--sapContent_FocusStyle);
+	outline-width: var(--sapContent_FocusWidth);
 }
-/* ************************************************************************************* */
-
 
 .sapMUCListFirstItem > .sapMLIBContent,
 .sapMUCListLastItem > .sapMLIBContent,
 .sapMUCListSingleItem > .sapMLIBContent,
 .sapMUCListItem > .sapMLIBContent {
-	display:		flex;
-	padding:		0;
+	display: flex;
+	padding: 0;
 }
 
 /*Container for a textContainer and a button container */
 @media(min-width: 30rem) {
+
 	.sapMUCTextButtonContainer {
-		display:		flex;
-		width: 			100%;
-		min-width: 		0; /* to avoid FF bug with flex*/
+		display: flex;
+		width: 100%;
+		min-width: 0; /* to avoid FF bug with flex*/
 	}
 }
 
 .sapMUCTextButtonContainer {
-	min-width: 		0; /* to avoid FF bug with truncation */
-	width: 			100%; /* it is necessary for the file name truncation in IE10 */
+	min-width: 0; /* to avoid FF bug with truncation */
+	width: 100%; /* it is necessary for the file name truncation in IE10 */
 }
 
 /*text container holding the file name, a container for attributes and a container for statuses */
 @media(min-width: 30rem) {
+
 	.sapMUCTextContainer {
-		flex:	 			10 10 auto;
-		padding-top: 		0.125rem;
-		padding-bottom: 	0.125rem;
-		display: 			block;
+		flex: 10 10 auto;
+		padding-top: 0.125rem;
+		padding-bottom: 0.125rem;
+		display: block;
 	}
 }
 
 .sapMUCTextContainer.sapMUCEditMode {
-	padding-top: 0rem;
+	padding-top: 0;
 }
 
 .sapMUCTextContainer {
@@ -329,6 +334,7 @@
 }
 
 @media(min-width: 30rem) {
+
 	/* !important is necessary here for overriding inline style of sap.m.input */
 	.sapMUCEditBox >.sapMInputBaseInner {
 		width: 60% !important;
@@ -340,16 +346,18 @@
 }
 
 @media(min-width: 30rem) {
+
 	.sapMUCButtonContainer {
 		white-space: nowrap; /* so that buttons are displayed in a row */
 		padding-left: 1rem;
-		padding-top: 0rem;
+		padding-top: 0;
 		align-self: center; /* for buttons alignment at the center */
 		flex: none;
 	}
 }
 
 @media(max-width: 30rem) {
+
 	.sapMUCButtonContainer {
 		padding-top: 0.75rem;
 	}
@@ -364,6 +372,7 @@
 /* this padding is only needed if both buttons are displayed */
 /* for the width >=30rem */
 @media(min-width: 30rem) {
+
 	.sapMBtn.sapMUCFirstButton {
 		padding-right: 0.125rem;
 	}
@@ -376,15 +385,16 @@
 
 /* for compact form: this padding is only needed if both buttons are displayed */
 @media(min-width: 30rem) {
+
 	.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
 		padding-right: 0.125rem;
 	}
 }
 
 .sapMUCButtonContainer > .sapMBtn {
-	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
-	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
-	height:			2.5rem;
+	padding-top: 0; /* the padding of the sap.m.Button should be removed */
+	padding-bottom: 0; /* the padding of the sap.m.Button should be removed */
+	height: 2.5rem;
 }
 
 
@@ -401,13 +411,13 @@
 	align-items: center;
 }
 
-.sapMUCItem.sapMCLI>.sapMLIBSelectM {
+.sapMUCItem.sapMCLI > .sapMLIBSelectM {
 	margin-top: -0.8125rem;
 	margin-left: -0.875rem;
 	margin-right: -0.125rem;
 }
 
-.sapUiSizeCompact .sapMUCItem>.sapMLIBSelectM {
+.sapUiSizeCompact .sapMUCItem > .sapMLIBSelectM {
 	margin-left: -0.9rem;
 	padding-top: 0.3rem;
 	margin-right: -0.1rem;
@@ -425,71 +435,77 @@
 
 /* Item Icon */
 .sapMUCItemIcon {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
+
 /* Item Icon Inactive */
 .sapMUCItemIconInactive {
-	color: @sapUiContentNonInteractiveIconColor;
+	color: var(--sapContent_NonInteractiveIconColor);
 }
 
 /*if no image is provided a standard placeholder is displayed */
 .sapMUCItemPlaceholder {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
 
 .sapMUCItemPlaceholderInactive {
-	color: @sapUiContentNonInteractiveIconColor;
+	color: var(--sapContent_NonInteractiveIconColor);
 }
 
 /*if no link is provided the file name is displayed as an disabled link */
 .sapMLnkDsbl.sapMUCFileName {
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 	text-decoration: none;
 }
 
 /* disabled state */
 .sapMBtnDisabled.sapMUCDeleteBtn > .sapMBtnInner > .sapMBtnIcon {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
 
 .sapMUCAttrContainer {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
 /* Text: Filename */
 .sapMUCFileName.sapMLnk {
-	font-size: @sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
+	font-size: var(--sapFontLargeSize); /* it cannot be moved to base as the LESS constant is not known there */
 }
 
-.sapMUCAttrContainer, .sapMUCStatusContainer {
+.sapMUCAttrContainer,
+.sapMUCStatusContainer {
 	font-size: @sapMFontMediumSize; /* it cannot be moved to base as the LESS constant is not known there */
 }
 
 /*for width > 30rem the buttons should be displayed as buttons of type transparent */
 @media(min-width: 30rem) {
-	.sapMUCButtonContainer >.sapMBtn >.sapMBtnInner {
+
+	.sapMUCButtonContainer > .sapMBtn > .sapMBtnInner {
 		background-image: none;
-		background-color: @sapUiButtonLiteBackground;
-		border-color: @sapUiButtonLiteBorderColor;
+		background-color: var(--sapButton_Lite_Background);
+		border-color: var(--sapButton_Lite_BorderColor);
 		text-shadow: none;
 	}
 }
 
 /* an edit and delete button in a hover state; it should look like a transparent button in a hover state */
 @media(min-width: 30rem) {
-	.sapMUCEditBtn:hover >.sapMBtnHoverable, .sapMUCDeleteBtn:hover >.sapMBtnHoverable {
-		background-color: @sapUiButtonLiteHoverBackground;
-		border-color: @sapUiButtonLiteHoverBorderColor;
+
+	.sapMUCEditBtn:hover > .sapMBtnHoverable,
+	 .sapMUCDeleteBtn:hover > .sapMBtnHoverable {
+		background-color: var(--sapButton_Lite_Hover_Background);
+		border-color: var(--sapButton_Lite_Hover_BorderColor);
 	}
 }
 
 /*an edit and delete button in a pressed state; it should look like a transparent button in a pressed state */
 @media(min-width: 30rem) {
+
 	:not(.sapMBtnDisabled).sapMUCEditBtn > .sapMBtnActive,
 	:not(.sapMBtnDisabled).sapMUCEditBtn:hover > .sapMBtnActive,
 	:not(.sapMBtnDisabled).sapMUCDeleteBtn > .sapMBtnActive,
 	:not(.sapMBtnDisabled).sapMUCDeleteBtn:hover > .sapMBtnActive {
-		background-color: @sapUiButtonLiteActiveBackground;
-		border-color: @sapUiButtonLiteActiveBorderColor;
+		background-color: var(--sapButton_Lite_Active_Background);
+		border-color: var(--sapButton_Lite_Active_BorderColor);
 	}
 }
