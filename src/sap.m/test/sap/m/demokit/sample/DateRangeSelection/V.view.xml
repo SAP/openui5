@@ -7,7 +7,6 @@
 		<DateRangeSelection
 			id="DRS1"
 			class="DRS1"
-			delimiter="–"
 			value= "{
 				'type': 'sap.ui.model.type.DateInterval',
 				'formatOptions': {
@@ -30,7 +29,6 @@
 		<DateRangeSelection
 			id="DRS2"
 			change="handleChange"
-			delimiter="–"
 			value= "{
 				'type': 'sap.ui.model.type.DateInterval',
 				'parts': [
@@ -48,7 +46,6 @@
 		<Label text="DateRangeSelection with OK button in the footer and with shortcut for today:" labelFor="DRS3"/>
 		<DateRangeSelection
 			id="DRS3"
-			delimiter="–"
 			showCurrentDateButton="true"
 			showFooter="true"
 			change="handleChange"
@@ -70,7 +67,6 @@
 		<DateRangeSelection
 			id="DRS4"
 			change="handleChange"
-			delimiter="–"
 			value= "{
 				'type': 'sap.ui.model.type.DateInterval',
 				'formatOptions': {
@@ -91,7 +87,6 @@
 		<Label text="DateRangeSelection with displayFormat 'yyyy':" labelFor="DRS5"/>
 		<DateRangeSelection
 			id="DRS5"
-			delimiter="–"
 			displayFormat="yyyy"
 			change="handleChange"
 			value= "{
