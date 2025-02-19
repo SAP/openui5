@@ -134,8 +134,7 @@ sap.ui.define([
 	 *       when it gets a new type via {@link #setType}, or when the data state is reset via
 	 *       {@link sap.ui.model.odata.v4.ODataModel#resetChanges},
 	 *       {@link sap.ui.model.odata.v4.ODataContextBinding#resetChanges},
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or
-	 *       {@link sap.ui.model.odata.v4.ODataPropertyBinding#resetChanges},
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#resetChanges} or {@link #resetChanges},
 	 *     <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} when the binding is refreshed,
 	 *     <li> {@link sap.ui.model.ChangeReason.Context Context} when the parent context is
 	 *       changed.
