@@ -1560,5 +1560,17 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Press event on child items", function (assert) {
+		this.navigationList.getItems().forEach(async (item) => {
+			const oAttachPressSpy = this.spy(item, "firePress");
+			if (item.getItems().length) {
+				QUnitUtils.triggerEvent("tap", item.getItems()[0].getDomRef());
+				await nextUIUpdate(this.clock);
+				assert.notOk(oAttachPressSpy.calledOnce, "press event is not fired on parent item if child item is pressed");
+			}
+		});
+	});
+
+
 	return waitForThemeApplied();
 });

@@ -11,6 +11,10 @@ sap.ui.define([
 
 	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
+	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
+		return oValueHelp.getModel("settings").getProperty("/opensOnClick");
+	};
+
 	ValueHelpDelegate.showTypeahead = function (oPayload, oContent, oConfig) {
 		const sShowTypeahead = oContent.getModel("settings").getData().showTypeahead;
 

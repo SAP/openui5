@@ -288,19 +288,13 @@ sap.ui.define([
 	}
 
 	function reportInvalidProperty(sMessage, oProperty) {
+		const sAdditionalInfo = stringifyPlainObject(oProperty);
 		// implementation for this flag is within PropertyHelperMixin#_checkValidationExceptions
-		if (!PropertyHelperUtil.bValidationException) {
+		if (PropertyHelperUtil.bValidationException) {
+			throw new Error(`Invalid property definition: ${sMessage} ${sAdditionalInfo ? `\n${sAdditionalInfo}` : ""}.`);
+		} else {
 			throwInvalidPropertyError(sMessage, oProperty);
 		}
-
-		// TODO: warning is logged momentarily so that consumers can adapt to have valid property definitions
-		//  valid use case would be to throw an error
-		if (Log.getLevel() < Log.Level.WARNING) {
-			return; // Avoid stringification overhead if logging is not required.
-		}
-
-		const sAdditionalInfo = stringifyPlainObject(oProperty);
-		Log.warning("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
 
 	function throwInvalidPropertyError(sMessage, oProperty) {

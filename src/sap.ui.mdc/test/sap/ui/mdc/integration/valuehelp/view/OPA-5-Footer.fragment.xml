@@ -7,8 +7,8 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:f2="sap.f"
 	xmlns:mdc="sap.ui.mdc"
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdct="sap.ui.mdc.table"

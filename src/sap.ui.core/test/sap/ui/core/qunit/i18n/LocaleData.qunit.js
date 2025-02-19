@@ -954,7 +954,13 @@ sap.ui.define([
 		{vValue: "12.345e-7", sResult : "0.0000012345"},
 		// values with sign
 		{vValue: "-1.0123456789012345678901e+21", sResult : "-1012345678901234567890.1"},
-		{vValue: "+1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"}
+		{vValue: "+1.0123456789012345678901e+21", sResult : "1012345678901234567890.1"},
+		// zero values
+		{vValue: "0e10", sResult : "0"},
+		{vValue: "0e+10", sResult : "0"},
+		{vValue: "0e-10", sResult : "0"},
+		{vValue: "-0e10", sResult : "0"},
+		{vValue: "+0e-10", sResult : "0"}
 	].forEach(function (oFixture, i) {
 		QUnit.test("convertToDecimal, " + i, function (assert) {
 			// code under test

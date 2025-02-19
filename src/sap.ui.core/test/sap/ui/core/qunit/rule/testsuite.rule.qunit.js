@@ -9,7 +9,6 @@ sap.ui.define(function () {
 			},
 			ui5: {
 				support: "silent",
-				noConflict: true,
 				libs: "sap.m, sap.ui.support"
 			}
 		},

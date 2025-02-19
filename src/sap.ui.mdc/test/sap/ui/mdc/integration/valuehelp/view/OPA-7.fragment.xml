@@ -9,8 +9,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
 
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdct="sap.ui.mdc.table"
@@ -28,9 +28,9 @@
 			<mdc:ValueHelp
 				id="FH1"
 				validateInput="false"
-				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 				<mdc:typeahead>
-					<mdcv:Popover title="Popover1" opensOnFocus="true">
+					<mdcvh:Popover title="Popover1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
@@ -55,15 +55,15 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>
 			<mdc:ValueHelp
 				id="FH2"
 				validateInput="false"
-				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
+				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 				<mdc:typeahead>
-					<mdcv:Popover title="Popover2" opensOnFocus="true">
+					<mdcvh:Popover title="Popover2">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
@@ -88,12 +88,12 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 				<mdc:dialog>
-					<mdcv:Dialog>
+					<mdcvh:Dialog>
 						<mdcvc:Conditions/>
-					</mdcv:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</mdc:dependents>

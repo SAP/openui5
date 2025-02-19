@@ -42,8 +42,9 @@ sap.ui.define([
 	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
 	ValueHelpDelegate.retrieveContent = function (_oValueHelp, oContainer) {
-		const oPayload = _oValueHelp.getPayload();
-		const sFilterFields = oPayload.filter;
+		_oValueHelp.getPayload();
+
+
 		const oValueHelp = oContainer && oContainer.getParent();
 		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 		const sId = oValueHelp.getId();
@@ -87,7 +88,7 @@ sap.ui.define([
 					title: "mdcTable",
 					keyPath: "ID",
 					descriptionPath: "title",
-					filterFields: sFilterFields,
+
 					filterBar: new FilterBar(sId + "-MDCTable-FB", {
 						liveMode: false,
 						delegate: {
@@ -121,6 +122,7 @@ sap.ui.define([
 							})
 						]
 					}),
+
 					table: new mdcTable(sId + "-MDCTable-table", {
 						header: "",
 						p13nMode: ['Column','Sort'],
@@ -148,7 +150,7 @@ sap.ui.define([
 					title: "mTable",
 					keyPath: "ID",
 					descriptionPath: "title",
-					filterFields: sFilterFields,
+
 					filterBar: new FilterBar(sId + "-MTable-FB", {
 						liveMode: false,
 						delegate: {
@@ -182,6 +184,7 @@ sap.ui.define([
 							})
 						]
 					}),
+
 					table: new Table(sId + "-MTable-table", {
 						mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 						columns: [

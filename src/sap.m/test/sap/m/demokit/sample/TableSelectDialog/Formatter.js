@@ -22,5 +22,4 @@ sap.ui.define(function () {
 	};
 
 	return Formatter;
-
 });

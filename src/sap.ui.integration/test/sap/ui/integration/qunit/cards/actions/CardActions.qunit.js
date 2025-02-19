@@ -1123,7 +1123,7 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
+			assert.ok(oCardHeader.getDomRef().querySelector(".sapFCardHeaderMainPart").classList.contains("sapFCardSectionClickable"), "Card Header main part has clickable class");
 
 			//Act
 			oCardLContent.firePress();
@@ -1208,7 +1208,6 @@ sap.ui.define([
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oLogSpy = sinon.spy(Log, "error");
 
-
 			// Act
 			this.oCard.setManifest(oManifest_Header_Service);
 
@@ -1217,7 +1216,7 @@ sap.ui.define([
 
 			var oCardHeader = this.oCard.getCardHeader();
 
-			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
+			assert.ok(oCardHeader.getDomRef().querySelector(".sapFCardHeaderMainPart").classList.contains("sapFCardSectionClickable"), "Card Header main part has clickable class");
 
 			this.oCard.attachAction(function () {
 				// Assert
@@ -1248,7 +1247,7 @@ sap.ui.define([
 
 			// Assert
 			var oCardHeader = this.oCard.getCardHeader();
-			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header has a clickable style is added");
+			assert.ok(oCardHeader.getDomRef().querySelector(".sapFCardHeaderMainPart").classList.contains("sapFCardSectionClickable"), "Card Header main part has clickable class");
 
 			// Act
 			oCardHeader.firePress();
@@ -1313,12 +1312,13 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
-			var oCardHeader = this.oCard.getCardHeader();
+			const oMainPartDomRef = this.oCard.getCardHeader().getDomRef().querySelector(".sapFCardHeaderMainPart");
+
 			// Assert
-			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+			assert.notOk(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 			//Act
-			qutils.triggerEvent("tap", oCardHeader);
+			qutils.triggerEvent("tap", oMainPartDomRef);
 
 			// Assert
 			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
@@ -1359,13 +1359,13 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
-			var oCardHeader = this.oCard.getCardHeader();
+			const oMainPartDomRef = this.oCard.getCardHeader().getDomRef().querySelector(".sapFCardHeaderMainPart");
 
 			// Assert
-			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+			assert.notOk(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 			// Act
-			qutils.triggerEvent("tap", oCardHeader);
+			qutils.triggerEvent("tap", oMainPartDomRef);
 
 			// Assert
 			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
@@ -1456,12 +1456,13 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
-			var oCardHeader = this.oCard.getCardHeader();
+			const oMainPartDomRef = this.oCard.getCardHeader().getDomRef().querySelector(".sapFCardHeaderMainPart");
+
 			// Assert
-			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+			assert.notOk(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 			//Act
-			qutils.triggerEvent("tap", oCardHeader);
+			qutils.triggerEvent("tap", oMainPartDomRef);
 
 			// Assert
 			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");
@@ -1503,13 +1504,13 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
-			var oCardHeader = this.oCard.getCardHeader();
+			const oMainPartDomRef = this.oCard.getCardHeader().getDomRef().querySelector(".sapFCardHeaderMainPart");
 
 			// Assert
-			assert.notOk(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
+			assert.notOk(oMainPartDomRef.classList.contains("sapFCardSectionClickable"), "Card Header doesn't have a clickable style");
 
 			// Act
-			qutils.triggerEvent("tap", oCardHeader);
+			qutils.triggerEvent("tap", oMainPartDomRef);
 
 			// Assert
 			assert.ok(oActionSpy.notCalled, "Clicking on the header shouldn't fire action event");

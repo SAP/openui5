@@ -6,25 +6,26 @@
 @_sap_f_CardHeaders_Padding: 1rem;
 @_sap_f_CardHeaders_TitleFontSize: @sapMFontHeader5Size;
 @_sap_f_CardHeaders_HeaderFocusBorderLeftOffset: 1px;
-@_sap_f_CardHeaders_HeaderFocusBorderBottomOffset: 2px;
+@_sap_f_CardHeaders_HeaderFocusBorderBottomOffset: 1px;
 @_sap_f_CardHeaders_HeaderFocusBorderRightOffset: 1px;
 @_sap_f_CardHeaders_HeaderFocusBorderTopOffset: 1px;
-@_sap_f_CardHeaders_HeaderFocusBorderRadius: none;
+@_sap_f_CardHeaders_MainHeaderBorderRadius: 0;
 
 .sapFCardHeader {
 	position: relative;
 	flex-shrink: 0;
-	justify-content: space-between;
 	background: @sapUiTileBackground;
-	padding: @_sap_f_CardHeaders_Padding;
 	display: flex;
+	flex-direction: column;
 
-	.sapFCardHeaderWrapper {
+	.sapFCardHeaderMainPart {
 		outline: none;
 		display: flex;
 		min-width: 0;
-		flex: 1;
 		height: fit-content;
+		padding: @_sap_f_CardHeaders_Padding @_sap_f_CardHeaders_Padding 0.75rem @_sap_f_CardHeaders_Padding;
+		position: relative;
+		border-radius: @_sap_f_CardHeaders_MainHeaderBorderRadius;
 	}
 
 	.sapFCardHeaderImage {
@@ -122,7 +123,10 @@
 	}
 
 	&.sapFCardHeaderHasToolbar {
-		min-height: 2rem;
+		&:not(.sapFCardHeaderHasIcon) .sapFCardHeaderMainPart {
+			min-height: 2rem;
+			align-items: flex-start;
+		}
 
 		.sapFCardHeaderText {
 			margin-inline-end: 2rem;
@@ -159,7 +163,7 @@
 		}
 	}
 
-	&.sapFCardSectionClickable {
+	.sapFCardSectionClickable {
 		cursor: pointer !important;
 
 		.sapMText {
@@ -188,10 +192,18 @@
 
 .sapFCardHeader.sapFCardNumericHeader {
 
-	.sapFCardHeaderContent {
-		outline: none;
-		min-width: 0; // fixes Chrome issue
-		flex: 1;
+	.sapFCardNumericHeaderNumericPart {
+		padding: 0.25rem 1rem 0.5rem 1rem;
+
+		.sapFCardHeaderNumericPartFirstLine {
+			display: flex;
+			align-items: center;
+			overflow: hidden;
+
+			.sapFCardNumericIndicators  {
+				flex: 1;
+			}
+		}
 	}
 
 	.sapFCardStatus {
@@ -219,23 +231,7 @@
 		color: @sapUiTileTextColor;
 	}
 
-	.sapFCardAvatarAndIndicatorsLine {
-		display: flex;
-		align-items: center;
-		overflow: hidden;
-
-		.sapFCardIcon.sapFAvatar {
-			margin-top: 0.5rem;
-			margin-right: 0.5rem;
-
-			&.sapFAvatarImage {
-				margin-right: 0.5rem;
-			}
-		}
-	}
-
 	.sapFCardNumericIndicators {
-		margin-top: 0.25rem;
 		flex: 1;
 		min-width: 0; // allows items to shrink and truncate the content inside
 
@@ -326,12 +322,12 @@
 }
 
 .sapUiSizeCompact {
-	.sapFCardHeaderHasToolbar {
+	.sapFCardHeaderHasToolbar:not(.sapFCardHeaderHasIcon) .sapFCardHeaderMainPart{
 		min-height: 1rem;
 	}
 }
 
-.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before {
+.sapFCardHeader:not(.sapFCardHeaderToolbarFocused) .sapFCardHeaderFocusable:focus::before {
 	content: '';
 	display: block;
 	position: absolute;
@@ -340,12 +336,8 @@
 	right: @_sap_f_CardHeaders_HeaderFocusBorderRightOffset;
 	top: @_sap_f_CardHeaders_HeaderFocusBorderTopOffset;
 	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-	border-radius: @_sap_f_CardHeaders_HeaderFocusBorderRadius;
+	border-radius: inherit;
 	pointer-events: none;
-}
-
-.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before {
-	bottom: 1px;
 	z-index: 1;
 }
 

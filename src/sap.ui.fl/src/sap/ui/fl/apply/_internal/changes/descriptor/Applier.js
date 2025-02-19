@@ -44,7 +44,8 @@ sap.ui.define([
 			const aChangeHandlers = [];
 			for (const oAppDescriptorChange of aAppDescriptorChanges) {
 				aChangeHandlers.push(await Utils.getChangeHandler({
-					flexObject: oAppDescriptorChange
+					flexObject: oAppDescriptorChange,
+					strategy: mStrategy
 				}));
 			}
 			aChangeHandlers.forEach(function(oChangeHandler, iIndex) {

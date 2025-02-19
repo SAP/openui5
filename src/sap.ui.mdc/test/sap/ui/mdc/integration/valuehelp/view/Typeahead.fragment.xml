@@ -9,8 +9,8 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
 
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdct="sap.ui.mdc.table"
@@ -26,7 +26,7 @@
 				id="FH1"
 				delegate='\{"name": "sap/ui/v4demo/delegate/typeahead/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
-					<mdcv:Popover title="Test1" opensOnClick="{settings>/opensOnClick}">
+					<mdcvh:Popover title="Test1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
@@ -51,7 +51,7 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-					</mdcv:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>			
 

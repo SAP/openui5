@@ -2,9 +2,8 @@
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcField="sap.ui.mdc.field"
-		xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
-		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form"
@@ -25,7 +24,7 @@
 			<mdc:ValueHelp id="VH-Title"
 				delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover title="Title">
+					<mdcvh:Popover title="Title">
 						<mdcValueHelpContent:MTable id="VH-Title-MTable" keyPath="title" descriptionPath="title"  useAsValueHelp="true">
 							<Table id="VH-Title-table" items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
@@ -44,16 +43,16 @@
 								</items>
 							</Table>
 						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-Conditions"
 				delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:dialog>
-					<mdcValueHelp:Dialog title="Description">
+					<mdcvh:Dialog title="Description">
 						<mdcValueHelpContent:Conditions label="Description"/>
-					</mdcValueHelp:Dialog>
+					</mdcvh:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
 		</form:dependents>

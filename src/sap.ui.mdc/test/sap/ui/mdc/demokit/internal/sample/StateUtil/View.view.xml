@@ -4,7 +4,6 @@
 		xmlns="sap.m"
 		xmlns:fl="sap.ui.fl.variants"
 		xmlns:mdcf="sap.ui.mdc.field"
-		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 		xmlns:core="sap.ui.core"
 		xmlns:mdcc="sap.ui.mdc.chart"
 		xmlns:mvc="sap.ui.core.mvc"

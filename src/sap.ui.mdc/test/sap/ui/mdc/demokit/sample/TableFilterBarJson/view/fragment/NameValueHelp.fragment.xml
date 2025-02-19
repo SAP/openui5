@@ -3,13 +3,13 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdct="sap.ui.mdc.table"
-	xmlns:vh="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:vhc="sap.ui.mdc.valuehelp.content"
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh">
+	>
 
 	<mdc:ValueHelp id="name-vh" delegate="{name: 'mdc/sample/delegate/JSONValueHelpDelegate', payload: {searchKeys: ['name']}}">
 		<mdc:typeahead>
-			<vh:Popover title="Name">
+			<mdcvh:Popover title="Name">
 				<vhc:MTable keyPath="name" >
 					<Table id="name-vht-table" items='{path : "mountains>/mountains", length: 10}'
 						width="30rem">
@@ -29,22 +29,22 @@
 						</items>
 					</Table>
 				</vhc:MTable>
-			</vh:Popover>
+			</mdcvh:Popover>
 		</mdc:typeahead>
 		<mdc:dialog>
-			<vh:Dialog title="Name">
+			<mdcvh:Dialog title="Name">
 				<vhc:MDCTable keyPath="name">
 					<vhc:filterBar>
-						<vhfb:FilterBar id="name-vhd-fb" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}">
-							<vhfb:basicSearchField>
+						<mdcvh:FilterBar id="name-vhd-fb" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}">
+							<mdcvh:basicSearchField>
 								<mdc:FilterField delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
 									dataType="sap.ui.model.type.String"
 									placeholder= "Search Mountains"
 									conditions="{$filters>/conditions/$search}"
 									propertyKey="$search"
 									maxConditions="1"/>
-							</vhfb:basicSearchField>
-						</vhfb:FilterBar>
+							</mdcvh:basicSearchField>
+						</mdcvh:FilterBar>
 					</vhc:filterBar>
 					<mdc:Table id="name-vhd-table"
 						type="ResponsiveTable"
@@ -67,7 +67,7 @@
 					</mdc:Table>
 				</vhc:MDCTable>
 				<vhc:Conditions label="Name"/>
-			</vh:Dialog>
+			</mdcvh:Dialog>
 		</mdc:dialog>
 	</mdc:ValueHelp>
 

@@ -888,7 +888,8 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(oCardLContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-			assert.ok(oCardHeader.$().hasClass("sapFCardSectionClickable"), "Card Header is clickable");
+			assert.ok(oCardHeader.getDomRef().querySelector(".sapFCardHeaderMainPart").classList.contains("sapFCardSectionClickable"), "Card Header main part has clickable class");
+
 			//Act
 			oCardLContent.firePress();
 			oCardHeader.firePress();

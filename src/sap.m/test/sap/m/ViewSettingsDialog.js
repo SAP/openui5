@@ -1,5 +1,3 @@
-/* custom formatters (taken from cart app to test custom formatters) */
-
 sap.ui.define([
   "sap/m/MessageBox",
   "sap/m/MessageToast",
@@ -93,7 +91,9 @@ sap.ui.define([
    ******************************/
 
   // make the util namespace known globally
-  var util = globalThis.util = {};
+  var util = {};
+
+  /* custom formatters (taken from cart app to test custom formatters) */
 
   util.Formatter = {
 	  price:  function (value) {
@@ -103,7 +103,7 @@ sap.ui.define([
 			  groupingSeparator: ".",
 			  decimalSeparator: ","
 		  });
-		  return numberFormat.format(value);
+		  return numberFormat.format(value) + " EUR";
 	  },
 	  _statusTextMap: {
 		  "A": "Approved",
@@ -203,11 +203,11 @@ sap.ui.define([
 			  text: "{name}"
 		  }),
 		  new Label({
-			  text: "{path: 'status', formatter: 'util.Formatter.statusState'}"
+			  text: {path: 'status', formatter: util.Formatter.statusState}
 		  }), new Label({
-			  text: "{path: 'limit', formatter: 'util.Formatter.price'} EUR"
+			  text: {path: 'limit', formatter: util.Formatter.price}
 		  }), new Label({
-			  text: "{path: 'price', formatter: 'util.Formatter.price'} EUR"
+			  text: {path: 'price', formatter: util.Formatter.price}
 		  })
 	  ]
   });
@@ -267,6 +267,12 @@ sap.ui.define([
   };
   var oModel18n = new JSONModel();
   oModel18n.setData(dataI18n);
+
+  /********************************************************
+   * Dialog grouping functions and custom filter controls *
+   ********************************************************/
+
+  /* custom grouping functions */
 
   util.Grouper = {
 	  name: function (oContext) { // take first 3 letters of name

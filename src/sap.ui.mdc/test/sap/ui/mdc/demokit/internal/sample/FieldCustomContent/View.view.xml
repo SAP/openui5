@@ -2,9 +2,8 @@
 		xmlns="sap.m"
 		xmlns:mdc="sap.ui.mdc"
 		xmlns:mdcField="sap.ui.mdc.field"
-		xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+		xmlns:mdcvh="sap.ui.mdc.valuehelp"
 		xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
-		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form"
@@ -23,14 +22,14 @@
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-EditMode">
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH-EditMode-Pop">
+								<mdcvh:Popover id="VH-EditMode-Pop">
 									<mdcValueHelpContent:FixedList id="VH-EditMode-FL" useFirstMatch="true" useAsValueHelp="true">
 										<mdcValueHelpContent:FixedListItem text="Disabled" key="Disabled"/>
 										<mdcValueHelpContent:FixedListItem text="Display" key="Display"/>
 										<mdcValueHelpContent:FixedListItem text="Editable" key="Editable"/>
 										<mdcValueHelpContent:FixedListItem text="ReadOnly" key="ReadOnly"/>
 									</mdcValueHelpContent:FixedList>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:typeahead>
 						</mdc:ValueHelp>
 					</mdc:dependents>
@@ -42,7 +41,7 @@
 			<mdc:ValueHelp id="VH-Title"
 				delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:typeahead>
-					<mdcValueHelp:Popover title="Title">
+					<mdcvh:Popover title="Title">
 						<mdcValueHelpContent:MTable id="VH-Title-MTable" keyPath="title" descriptionPath="title"  useAsValueHelp="true">
 							<Table id="VH-Title-table" items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
@@ -61,7 +60,7 @@
 								</items>
 							</Table>
 						</mdcValueHelpContent:MTable>
-					</mdcValueHelp:Popover>
+					</mdcvh:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>
 		</form:dependents>

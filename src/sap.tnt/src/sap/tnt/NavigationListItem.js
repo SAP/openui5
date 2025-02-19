@@ -79,8 +79,18 @@ sap.ui.define([
 				visible: { type: "boolean", group: "Appearance", defaultValue: true },
 
 				/**
-				 * Specifies if the item can be selected.
-				 * It is recommended to set this property to <code>false</code> when the property <code>href</code> is also used.
+				 * Specifies if the item can be selected. By default all items are selectable.
+				 *
+				 * When a parent item's <code>selectable</code> property is set to <code>false</code>,
+				 * selecting it will only expand or collapse its sub-items.
+				 *
+				 * To improve user experience do not mix selectable parent items with not selectable parent items within a single side navigation.
+				 *
+				 * <b>Guidelines:</b>
+				 * <ul>
+				 * <li>External links should not be selectable.</li>
+				 * <li>Items that trigger actions (with design "Action") should not be selectable.</li>
+				 * </ul>
 				 *
 				 * @since 1.116
 				 * @experimental Since 1.116. Disclaimer: this property is in a beta state

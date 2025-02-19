@@ -135,6 +135,8 @@
 				<Property Name="Address" Type="special.cases.CT_Address" Nullable="false" />
 				<Property Name="BusinessPartnerID" Type="Edm.String" Nullable="false" sap:label="Bus. Part. ID"/>
 				<Property Name="CompanyName" Type="Edm.String" Nullable="false" sap:label="Company Name" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" sap:label="Currency"
+					sap:value-list="standard"/>
 			</EntityType>
 			<ComplexType Name="CT_Address">
 				<Property Name="RegionName" Type="Edm.String" sap:label="Region Name"/>

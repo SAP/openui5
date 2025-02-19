@@ -3,7 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
-	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
@@ -29,9 +29,9 @@
 					valueHelp="VH1">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
+						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"],"shouldOpenOnClick": true, "shouldOpenOnFocus": true, "showWithoutFilter": true\}\}'>
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH1-Pop" opensOnClick ="true" opensOnFocus="true">
+								<mdcvh:Popover id="VH1-Pop">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
 										keyPath="ProductId"
 										descriptionPath="Name"
@@ -58,10 +58,10 @@
 											</m:items>
 										</m:Table>
 									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:typeahead>
 							<mdc:dialog>
-								<mdcValueHelp:Dialog id="VH1-Dialog" title="Product">
+								<mdcvh:Dialog id="VH1-Dialog" title="Product">
 									<mdcValueHelpContent:MTable id="VH1-Dialog-MTable"
 										keyPath="ProductId"
 										descriptionPath="Name"
@@ -88,7 +88,7 @@
 											</m:items>
 										</m:Table>
 									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Dialog>
+								</mdcvh:Dialog>
 							</mdc:dialog>
 						</mdc:ValueHelp>
 					</mdc:dependents>
@@ -129,7 +129,7 @@
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH2-Pop">
+								<mdcvh:Popover id="VH2-Pop">
 									<mdcValueHelpContent:MTable id="VH2-Pop-MTable"
 										keyPath="ProductId"
 										descriptionPath="Name"
@@ -152,7 +152,7 @@
 											</m:items>
 										</m:Table>
 									</mdcValueHelpContent:MTable>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:typeahead>
 						</mdc:ValueHelp>
 					</mdc:dependents>
@@ -193,14 +193,14 @@
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-F8" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH-F8-Pop">
+								<mdcvh:Popover id="VH-F8-Pop">
 									<mdcValueHelpContent:FixedList id="VH-F8-FL" useFirstMatch="true" items="{path: '/ProductCollection'}" >
 										<mdcValueHelpContent:FixedListItem 
 											text="{path: 'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}, constraints: {displayFormat: 'Date'}}" 
 											additionalText="{path: 'ProductId', type: 'sap.ui.model.type.String', constraints: {maxLength: 20}}" 
 											key="{path: 'ProductId', type: 'sap.ui.model.type.String', constraints: {maxLength: 20}}"/>
 									</mdcValueHelpContent:FixedList>
-								</mdcValueHelp:Popover>
+								</mdcvh:Popover>
 							</mdc:typeahead>
 						</mdc:ValueHelp>
 					</mdc:dependents>

@@ -9,7 +9,7 @@
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:mdcl="sap.ui.mdc.link"
-	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
@@ -59,11 +59,11 @@
 										<mdc:ValueHelp id="FVH-Currency"
 											delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 											<mdc:typeahead>
-												<mdcv:Popover title="Currencies">
+												<mdcvh:Popover title="Currencies">
 													<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
 														<mdcvc:FixedListItem key="{code}" text="{descr}" additionalText="{code}" />
 													</mdcvc:FixedList>
-												</mdcv:Popover>
+												</mdcvh:Popover>
 											</mdc:typeahead>
 										</mdc:ValueHelp>
 									</mdc:dependents>
@@ -75,11 +75,11 @@
 										<mdc:ValueHelp id="FVH-Customer"
 											delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 											<mdc:typeahead>
-												<mdcv:Popover title="Customer">
+												<mdcvh:Popover title="Customer">
 													<mdcvc:FixedList items="{/Customers}" useAsValueHelp="true">
 														<mdcvc:FixedListItem key="{ID}" text="{name}" additionalText="{ID}" />
 													</mdcvc:FixedList>
-												</mdcv:Popover>
+												</mdcvh:Popover>
 											</mdc:typeahead>
 										</mdc:ValueHelp>
 									</mdc:dependents>
@@ -134,7 +134,7 @@
 									<mdc:ValueHelp id="FH-Books"
 										delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 										<mdc:typeahead>
-											<mdcv:Popover title="Books">
+											<mdcvh:Popover title="Books">
 												<mdcvc:MTable keyPath="ID" descriptionPath="title" >
 													<Table id="mTable1_title" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 														<columns>
@@ -159,10 +159,10 @@
 														</items>
 													</Table>
 												</mdcvc:MTable>
-											</mdcv:Popover>
+											</mdcvh:Popover>
 										</mdc:typeahead>
 										<mdc:dialog>
-											<mdcv:Dialog title="Title">
+											<mdcvh:Dialog title="Title">
 												<mdcvc:MDCTable keyPath="ID" descriptionPath="title"  forceBind="true">
 													<mdc:Table id="FH-Books--mdc--gridtable"
 														autoBindOnInit="false"
@@ -186,7 +186,7 @@
 													</mdc:Table>
 												</mdcvc:MDCTable>
 												<mdcvc:Conditions label="Books"/>
-											</mdcv:Dialog>
+											</mdcvh:Dialog>
 										</mdc:dialog>
 									</mdc:ValueHelp>
 								</mdc:dependents>

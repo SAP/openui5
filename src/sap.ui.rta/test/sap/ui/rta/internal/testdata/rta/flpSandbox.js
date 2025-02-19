@@ -65,6 +65,7 @@ document.write('\
 		data-sap-ui-language="en" \
 		data-sap-ui-noConflict="true" \
 		data-sap-ui-async="true" \
+		data-sap-ui-compat-version="edge" \
 		data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta" \
 		data-sap-ui-xx-bindingSyntax="complex" \
 		data-sap-ui-resourceroots=\'{"sap.ui.rta.test": "", "flpSandboxConfig": "./flpSandboxConfig"}\'\

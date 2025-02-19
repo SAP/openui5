@@ -206,6 +206,38 @@
 					}
 				}
 			}
+		},
+		"bottomHeader": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.bottomHeader",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": [
+						{
+							"Name": "Name 1"
+						},
+						{
+							"Name": "Name 2"
+						},
+						{
+							"Name": "Name 3"
+						}
+					]
+				},
+				"headerPosition": "Bottom",
+				"header": {
+					"title": "Header Bottom"
+					
+				},
+				"content": {
+					"item": {
+						"title": "{Name}"
+					}
+				}
+			}
 		}
 	},
 	"splitter": {

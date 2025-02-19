@@ -51,7 +51,9 @@
 				"category": "Action",
 				"since": "1.34",
 				"samples": [
-					"sap.tnt.sample.SideNavigation"
+					"sap.tnt.sample.SideNavigation",
+					"sap.tnt.sample.SideNavigationUnselectableParents",
+					"sap.tnt.sample.SideNavigationActions"
 				]
 			},
 			{
@@ -101,6 +103,16 @@
 				"id": "sap.tnt.sample.SideNavigation",
 				"name": "Side Navigation",
 				"description": "SideNavigation in container with fixed width."
+			},
+			{
+				"id": "sap.tnt.sample.SideNavigationUnselectableParents",
+				"name": "Side Navigation - Unselectable Parent Items",
+				"description": "SideNavigation with unselectable parent items."
+			},
+			{
+				"id": "sap.tnt.sample.SideNavigationActions",
+				"name": "Side Navigation - Actions",
+				"description": "SideNavigation with a quick create action button."
 			},
 			{
 				"id": "sap.tnt.sample.ToolHeader",

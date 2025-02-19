@@ -182,7 +182,6 @@ sap.ui.define(function() {
 					language: "en",
 					calendarType: "islamic",
 					logLevel: "WARNING",
-					noConflict: "true",
 					libs: "sap.ui.core"
 				}
 			},

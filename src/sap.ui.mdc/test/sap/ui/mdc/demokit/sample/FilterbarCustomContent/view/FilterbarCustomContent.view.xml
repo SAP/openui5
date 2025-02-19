@@ -7,7 +7,7 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:ce="sap.ui.codeeditor"
 	xmlns:custom="mdc.sample.controls"
-	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
 	controllerName="mdc.sample.controller.FilterbarCustomContent"
 	>
@@ -72,9 +72,9 @@
 						<mdc:ValueHelp id="VH-Conditions"
 							delegate='\{"name": "sap/ui/mdc/ValueHelpDelegate", "payload": \{\}\}'>
 							<mdc:dialog>
-								<mdcValueHelp:Dialog title="Description">
+								<mdcvh:Dialog title="Description">
 									<mdcValueHelpContent:Conditions label="Description"/>
-								</mdcValueHelp:Dialog>
+								</mdcvh:Dialog>
 							</mdc:dialog>
 						</mdc:ValueHelp>
 					</mdc:dependents>

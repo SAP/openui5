@@ -545,13 +545,17 @@ sap.ui.define([
 
 	QUnit.test("shouldOpenOnFocus", async (assert) => {
 
-		oPopover.setOpensOnFocus(true);
+		const fnFocusStub = sinon.stub(oValueHelp.getControlDelegate(), "shouldOpenOnFocus").returns(true);
+
 		let bShouldOpen = await oPopover.shouldOpenOnFocus();
 		assert.ok(bShouldOpen, "shouldOpenOnFocus enabled by container property");
 
-		oPopover.setOpensOnFocus(false);
+		fnFocusStub.returns(false);
+
 		bShouldOpen = await oPopover.shouldOpenOnFocus();
 		assert.notOk(bShouldOpen, "shouldOpenOnFocus disabled by container property");
+
+		fnFocusStub.restore();
 
 	});
 
@@ -564,15 +568,19 @@ sap.ui.define([
 		assert.ok(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content called");
 		oContent.shouldOpenOnClick.reset();
 
-		oPopover.setOpensOnClick(true);
+		const fnClickStub = sinon.stub(oValueHelp.getControlDelegate(), "shouldOpenOnClick").returns(true);
+
 		bShouldOpen = await oPopover.shouldOpenOnClick();
 		assert.ok(bShouldOpen, "shouldOpenOnClick enabled by container property");
 		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
 
-		oPopover.setOpensOnClick(false);
+		fnClickStub.returns(false);
+
 		bShouldOpen = await oPopover.shouldOpenOnClick();
 		assert.notOk(bShouldOpen, "shouldOpenOnClick disabled by container property");
 		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
+
+		fnClickStub.restore();
 
 	});
 
