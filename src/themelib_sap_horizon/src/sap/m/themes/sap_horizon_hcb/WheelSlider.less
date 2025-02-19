@@ -4,18 +4,25 @@
 /* ================================== */
 
 .sapMWS {
+
 	.sapMWSInner {
+
 		.sapMWSItem {
+
 			&:focus {
-				outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+				outline: 0.125rem dotted var(--sapContent_ContrastFocusColor);
 			}
 		}
 	}
+
 	&.sapMWSExpanded {
+
 		.sapMWSInner {
+
 			.sapMWSItem {
+
 				&:focus {
-					outline: 0.125rem dotted @sapUiContentFocusColor;
+					outline: 0.125rem dotted var(--sapContent_FocusColor);
 				}
 			}
 		}
@@ -23,27 +30,37 @@
 }
 
 .sapUiSizeCompact {
+
 	.sapMWS:not(.sapMWSShort) {
+
 		.sapMWSInner {
-			box-shadow: 0 0 0 1px @sapUiListBorderColor;
+			box-shadow: 0 0 0 1px var(--sapList_BorderColor);
 		}
 	}
 }
 
 .sap-phone {
+
 	.sapMWS {
+
 		.sapMWSInner {
+
 			.sapMWSItem {
+
 				&:focus {
-					outline: 0.125rem dotted @sapUiContentContrastFocusColor;
+					outline: 0.125rem dotted var(--sapContent_ContrastFocusColor);
 				}
 			}
 		}
+
 		&.sapMWSExpanded {
+
 			.sapMWSInner {
+
 				.sapMWSItem {
+
 					&:focus {
-						outline: 0.125rem dotted @sapUiContentFocusColor;
+						outline: 0.125rem dotted var(--sapContent_FocusColor);
 					}
 				}
 			}
