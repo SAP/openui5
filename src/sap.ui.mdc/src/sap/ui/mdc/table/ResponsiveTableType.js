@@ -431,12 +431,16 @@ sap.ui.define([
 	 * @param {boolean} bValue - Whether to hide details and display the Show Details button
 	 * @private
 	 */
-	ResponsiveTableType.prototype._toggleShowDetails = function(bValue) {
-		if (bValue === this.bHideDetails) {
+	ResponsiveTableType.prototype._setShowDetailsState = function(bValue, bSkipPersist) {
+		if (bValue === this.bShowDetails) {
 			return;
 		}
 		// Set show/hide details even if the button is not visible (e.g. set via variant if popin is not visible yet)
-		this.bHideDetails = bValue;
+		this.bShowDetails = bValue;
+
+		if (!bSkipPersist) {
+			this._persistShowDetails(bValue);
+		}
 
 		if (!this._oShowDetailsButton) {
 			return;
@@ -444,12 +448,12 @@ sap.ui.define([
 
 		const oResponsiveTable = this.getInnerTable();
 
-		if (this.bHideDetails) {
-			oResponsiveTable.setHiddenInPopin(this._getImportanceToHide());
-			this._oShowDetailsButton.setSelectedKey("hideDetails");
-		} else {
+		if (this.bShowDetails) {
 			oResponsiveTable.setHiddenInPopin();
 			this._oShowDetailsButton.setSelectedKey("showDetails");
+		} else {
+			oResponsiveTable.setHiddenInPopin(this._getImportanceToHide());
+			this._oShowDetailsButton.setSelectedKey("hideDetails");
 		}
 	};
 
@@ -457,7 +461,7 @@ sap.ui.define([
 		if (!this._oShowDetailsButton) {
 			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 			const sId = this.getTable().getId();
-			this.bHideDetails = true;
+			this.bShowDetails = false;
 			this._oShowDetailsButton = new SegmentedButton(sId + "-showHideDetails", {
 				visible: false,
 				selectedKey: "hideDetails",
@@ -469,8 +473,7 @@ sap.ui.define([
 						tooltip: oRb.getText("table.SHOWDETAILS_TEXT"),
 						press: [
 							function() {
-								this._persistShowDetails(true);
-								this._toggleShowDetails(false);
+								this._setShowDetailsState(true);
 							}, this
 						]
 					}), new SegmentedButtonItem({
@@ -480,8 +483,7 @@ sap.ui.define([
 						tooltip: oRb.getText("table.HIDEDETAILS_TEXT"),
 						press: [
 							function() {
-								this._persistShowDetails(false);
-								this._toggleShowDetails(true);
+								this._setShowDetailsState(false);
 							}, this
 						]
 					})
@@ -497,10 +499,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveTableType.prototype._persistShowDetails = function(bShowDetails) {
-		if (this.bHideDetails === !bShowDetails) {
-			return;
-		}
-
 		PersonalizationUtils.createShowDetailsChange(this.getTable(), {
 			showDetails: bShowDetails
 		});
@@ -533,7 +531,7 @@ sap.ui.define([
 		const aHiddenInPopin = oEvent.getParameter("hiddenInPopin");
 		const aVisibleItemsLength = oEvent.getSource().getVisibleItems().length;
 
-		if (aVisibleItemsLength && (aHiddenInPopin.length || (bHasPopin && !this.bHideDetails))) {
+		if (aVisibleItemsLength && (aHiddenInPopin.length || (bHasPopin && this.bShowDetails))) {
 			this._oShowDetailsButton.setVisible(true);
 		} else {
 			this._oShowDetailsButton.setVisible(false);
@@ -641,7 +639,7 @@ sap.ui.define([
 		if (PersonalizationUtils.isUserPersonalizationActive(oTable) &&
 			oResponsiveTable.getHiddenInPopin()?.includes(oColumn.getInnerColumn().getImportance()) &&
 			(oTable.getColumns().pop() === oColumn)) {
-			this._toggleShowDetails(false);
+			this._setShowDetailsState(true);
 		}
 	};
 
@@ -651,7 +649,7 @@ sap.ui.define([
 		const oTypeState = oState?.aggregations?.type;
 
 		if (aAffectedControllers.indexOf("ShowDetails") !== -1) {
-			this._toggleShowDetails(!(oTypeState?.ResponsiveTable?.showDetails ?? false));
+			this._setShowDetailsState(oTypeState?.ResponsiveTable?.showDetails ?? false, true); // Skip persistance if modified by flex
 		}
 	};
 

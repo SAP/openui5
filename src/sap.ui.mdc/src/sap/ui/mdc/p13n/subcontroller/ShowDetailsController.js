@@ -52,8 +52,7 @@ sap.ui.define([
 	 */
 	ShowDetailsController.prototype.getChangeOperations = function() {
 		return {
-			set: "setShowDetails",
-			reset: "resetShowDetails"
+			set: "setShowDetails"
 		};
 	};
 
@@ -66,12 +65,12 @@ sap.ui.define([
 	 */
 	ShowDetailsController.prototype.getCurrentState = function() {
 		const vState = this.getAdaptationControl().getCurrentState().xConfig;
-		if (vState.aggregations?.type?.ResponsiveTable?.showDetails) {
+		if (vState.aggregations?.type?.ResponsiveTable) {
 			return {
 				aggregations: {
 					type: {
 						ResponsiveTable: {
-							showDetails: true
+							showDetails: vState.aggregations.type.ResponsiveTable.showDetails
 						}
 					}
 				}
@@ -94,10 +93,9 @@ sap.ui.define([
 	ShowDetailsController.prototype.sanityCheck = function(oState) {
 		const aState = [];
 		if (oState?.aggregations?.type?.ResponsiveTable) {
-			// showDetails == null, for a reset (instead of false)
 			aState.push({
 				name: "ResponsiveTable",
-				showDetails: oState.aggregations.type.ResponsiveTable.showDetails || null
+				showDetails: oState.aggregations.type.ResponsiveTable.showDetails
 			});
 		}
 		return aState;
@@ -119,21 +117,10 @@ sap.ui.define([
 	ShowDetailsController.prototype.getDelta = function(mDeltaInfo) {
 		mDeltaInfo.changedState = mDeltaInfo.changedState instanceof Array ? mDeltaInfo.changedState : this.sanityCheck(mDeltaInfo.changedState);
 		mDeltaInfo.deltaAttribute = "showDetails";
-		mDeltaInfo.operation = this._getOperation(mDeltaInfo.changedState?.[0] ?? {});
+		mDeltaInfo.operation = "setShowDetails";
 		mDeltaInfo.existingState = this.sanityCheck(mDeltaInfo.existingState);
 
-		if (mDeltaInfo.existingState.length === 0 && mDeltaInfo.operation === "resetShowDetails") {
-			return [];
-		}
-
 		return this.getPropertySetterChanges(mDeltaInfo);
-	};
-
-	ShowDetailsController.prototype._getOperation = function(oState) {
-		if (oState?.showDetails) {
-			return "setShowDetails";
-		}
-		return "resetShowDetails";
 	};
 
 	return ShowDetailsController;

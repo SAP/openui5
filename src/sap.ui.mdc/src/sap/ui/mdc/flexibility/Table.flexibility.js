@@ -35,13 +35,7 @@ sap.ui.define([
 		}),
 		setShowDetails: xConfigFlex.createSetChangeHandler({
 			aggregation: "type",
-			property: "showDetails",
-			classification: CondenserClassification.Reverse
-		}),
-		resetShowDetails: xConfigFlex.createSetChangeHandler({
-			aggregation: "type",
-			property: "showDetails",
-			classification: CondenserClassification.Reverse
+			property: "showDetails"
 		})
 	};
 

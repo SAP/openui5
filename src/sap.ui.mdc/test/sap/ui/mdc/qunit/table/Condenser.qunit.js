@@ -353,7 +353,7 @@ sap.ui.define([
             assert.ok(oTable, "then the mdc.Table exists");
             assert.ok(oType, "then the mdc.Table has a type");
             assert.ok(oType.isA("sap.ui.mdc.table.ResponsiveTableType"), "then the type is a ResponsiveTableType");
-            assert.ok(oType.bHideDetails === !bShowDetails, "then the showDetails property is set correctly");
+            assert.ok(oType.bShowDetails === bShowDetails, "then the showDetails property is set correctly");
         };
     }
 
@@ -423,7 +423,7 @@ sap.ui.define([
             controlId: "myMDCTable",
             parameter: function() {
                 return {
-					changeType: "resetShowDetails",
+					changeType: "setShowDetails",
 					content: {
 						name: "ResponsiveTable",
                         value: false
@@ -435,51 +435,6 @@ sap.ui.define([
 		afterAction: fnConfirmShowDetailsStateSet(true),
 		afterUndo: fnConfirmShowDetailsStateSet(false),
 		afterRedo: fnConfirmShowDetailsStateSet(true),
-        model: new JSONModel({
-            Creation: Array.from({length: 10}, (v, i) => {
-                return {
-                    name: "Name " + i,
-                    foundingYear: 2020 - i,
-                    modifiedBy: "User " + i,
-                    createdAt: "2020-01-01"
-                };
-            })
-        })
-    });
-
-    elementActionTest("setShowDetails and resetShowDetails results in 0 changes", {
-        xmlView: fnGetDataView(),
-        jsOnly: true,
-        action: {
-            name: "settings",
-            controlId: "myMDCTable",
-            parameter: function (oView) {
-                return {
-					changeType: "resetShowDetails",
-					content: {
-						name: "ResponsiveTable",
-                        value: false
-					}
-				};
-            }
-        },
-        previousActions: [{
-            name: "settings",
-            controlId: "myMDCTable",
-            parameter: function() {
-                return {
-					changeType: "setShowDetails",
-					content: {
-						name: "ResponsiveTable",
-                        value: true
-					}
-                };
-            }
-        }],
-        changesAfterCondensing: 0, // OPTIONAL
-		afterAction: fnConfirmShowDetailsStateSet(false),
-		afterUndo: fnConfirmShowDetailsStateSet(false),
-		afterRedo: fnConfirmShowDetailsStateSet(false),
         model: new JSONModel({
             Creation: Array.from({length: 10}, (v, i) => {
                 return {
