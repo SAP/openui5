@@ -4,35 +4,39 @@
 /* ========================================= */
 
 @_sap_m_ViewSettingsDialog_HeaderBorderColor: darken(@sapUiGroupContentBackground, 8);
-.sapMVSD .sapMPageHeader{
+
+.sapMVSD .sapMPageHeader {
 	z-index: 2;
+
 	.sapMBarTitleStart .sapMBarPH {
 		padding-left: 0rem;
 	}
 }
 
 .sapMTB.sapMVSDFilterHeaderToolbar {
-	background-color:  @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 	border-bottom: 1px solid @_sap_m_ViewSettingsDialog_HeaderBorderColor;
 	padding-left: 0;
+
 	.sapMBarChild.sapMCb {
+
 		.sapMCbLabel {
-			font-family: @sapUiFontFamily;
-			color: @sapUiGroupTitleTextColor;
+			font-family: var(--sapFontFamily);
+			color: var(--sapGroup_TitleTextColor);
 		}
 	}
 }
 
 .sapMVSD.sapMDialog.sapMPopup-CTX .sapMIBar.sapMHeader-CTX,
 .sapMVSD.sapMDialog.sapMPopup-CTX .sapMIBar.sapMSubHeader-CTX {
-	background-color: @sapUiGroupContentBackground;
+	background-color: var(--sapGroup_ContentBackground);
 }
 
 .sapMVSD .sapMVSDBar {
 	box-shadow: @sapUiShadowHeader;
 }
 
-.sapMVSDBarWithSearch.sapMBar ,
+.sapMVSDBarWithSearch.sapMBar,
 .sapMVSD.sapMDialog.sapMPopup-CTX .sapMIBar.sapMHeader-CTX .sapMVSDBarWithSearch,
 .sapMVSD.sapMDialog.sapMPopup-CTX .sapMIBar.sapMSubHeader-CTX .sapMVSDBarWithSearch {
 	box-shadow: none;
