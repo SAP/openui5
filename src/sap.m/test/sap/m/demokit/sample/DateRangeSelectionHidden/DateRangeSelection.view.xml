@@ -31,6 +31,7 @@
 	</VBox>
 	<DateRangeSelection
 		id="HiddenDRS"
+		delimiter="–"
 		hideInput="true"
 		change=".changeDateHandler" />
 
