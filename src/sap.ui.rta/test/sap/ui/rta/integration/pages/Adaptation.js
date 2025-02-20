@@ -216,30 +216,6 @@ sap.ui.define([
 						errorMessage: "Did not find the Element Overlay"
 					});
 				},
-				iClickOnAContextMenuEntry(iIndex) {
-					return this.waitFor({
-						controlType: "sap.ui.unified.Menu",
-						matchers(oMenu) {
-							return oMenu.getDomRef().classList.contains("sapUiDtContextMenu");
-						},
-						success(aMenu) {
-							aMenu[0].getItems()[iIndex].getDomRef().click();
-						},
-						errorMessage: "Did not find the Context Menu"
-					});
-				},
-				iClickOnAContextMenuEntryWithText(sText) {
-					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
-					return this.waitFor({
-						controlType: "sap.ui.unified.MenuItem",
-						matchers: new PropertyStrictEquals({
-							name: "text",
-							value: oResources.getText(sText)
-						}),
-						actions: new Press(),
-						errorMessage: "The Menu Item was not pressable"
-					});
-				},
 				iClickOnAContextMenuEntryWithKey(sKey) {
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
@@ -641,22 +617,6 @@ sap.ui.define([
 						errorMessage: "Did not find the Context Menu"
 					});
 				},
-				iShouldSeetheContextMenuEntries(aContextEntries) {
-					return this.waitFor({
-						controlType: "sap.ui.unified.Menu",
-						matchers(oMenu) {
-							return oMenu.hasStyleClass("sapUiDtContextMenu");
-						},
-						success(oMenu) {
-							const aIsContextEntries = [];
-							oMenu[0].getItems().forEach(function(oItem) {
-								aIsContextEntries.push(oItem.getText());
-							});
-							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, `expected [${aContextEntries}] context entries found`);
-						},
-						errorMessage: "Did not find the Context Menu entries"
-					});
-				},
 				iShouldSeetheContextMenuEntriesWithKeys(aContextEntriesKeys) {
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
@@ -733,19 +693,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The correct MessageStrip exists.");
 						},
 						errorMessage: "Did not find the MessageStrip, the text was wrong or the type was wrong."
-					});
-				},
-				iShouldSeeTheSourceElementOverlay() {
-					return this.waitFor({
-						asyncPolling: true,
-						controlType: "sap.ui.dt.ElementOverlay",
-						matchers(oOverlay) {
-							return oOverlay.getDomRef().classList.contains("sapUiRtaChangeIndicatorDependent");
-						},
-						success(oOverlay) {
-							Opa5.assert.ok(oOverlay[0], "then dependent element indicator is shown");
-						},
-						errorMessage: "Did not find the dependent element with the style class"
 					});
 				}
 			}
