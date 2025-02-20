@@ -529,7 +529,31 @@ sap.ui.define([
 							}, true).addStyleClass("sapUiDocumentationCommaList");
 						},
 						_getModuleBlock: function (oControlData, oEntityData) {
-							return _getObjectAttributeBlock("Module", oControlData.module);
+							const versionData = this.getModel("versionData").getData();
+							const isModuleAvailable = oControlData.module !== this.NOT_AVAILABLE;
+							const library = versionData?.libraries?.find((lib) => lib.name === oEntityData.lib);
+
+							if (!isModuleAvailable || !library?.version) {
+								return _getObjectAttributeBlock("Module", oControlData.module);
+							}
+
+							const sGitHubUrl = `https://github.com/SAP/openui5/blob/${library.version}/src/${oEntityData.lib}/src/${oControlData.module}.js`;
+
+							return _getHBox({
+								items: [
+									_getLabel({text: "Module:"}),
+									_getLink({
+										emphasized: true,
+										text: oControlData.module,
+										href: sGitHubUrl
+									}),
+									new Image({
+										src: "./resources/sap/ui/documentation/sdk/images/link-external.png",
+										tooltip: "{i18n>LEGAL_DISCLAIMER_EXTERNAL_TOOLTIP}",
+										press: BaseController.prototype.onDisclaimerLinkPress.bind(this._oContainerController)
+									})
+								]
+							}, true);
 						},
 						_getLibraryBlock: function (oControlData, oEntityData) {
 							return _getObjectAttributeBlock("Library", oEntityData.lib);
