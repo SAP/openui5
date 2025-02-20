@@ -2421,10 +2421,10 @@ sap.ui.define([
 	 * @returns {string[]|null} The designtime property e.g. ['ar', 'fa', 'he']
 	 * @private
 	 */
-	 function getDesigntimePropertyAsArray(sValue) {
-		var m = /\$([-a-z0-9A-Z._]+)(?::([^$]*))?\$/.exec(sValue);
-		return (m && m[2]) ? m[2].split(/,/) : null;
-	}
+	function getDesigntimePropertyAsArray(sValue) {
+	   var m = /\$([-a-z0-9A-Z._]+)(?::([^$]*))?\$/.exec(sValue);
+	   return (m && m[2]) ? m[2].split(/,/) : null;
+   }
 
 	/**
 	 * A list of locales for which CLDR data is bundled with the UI5 runtime.
@@ -2842,49 +2842,6 @@ sap.ui.define([
 		}
 		return sValue;
 	};
-
-	/**
-	 * Replaced by {@link #getCompactCurrencyPattern}.
-	 *
-	 * @param {"short"|"sap-short"|"short-indian"|"sap-short-indian"} sStyle
-	 *   See {@link #getCompactCurrencyPattern}; "short-indian" and "sap-short-indian" are only available since 1.133.0
-	 *   for the "en-IN" locale
-	 * @param {string} sPowerOfTen
-	 *   See {@link #getCompactCurrencyPattern}
-	 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
-	 *   See {@link #getCompactCurrencyPattern}
-	 * @param {"alphaNextToNumber"|"noCurrency"} [sAlternative]
-	 *   See {@link #getCompactCurrencyPattern}; since 1.133.0
-	 * @returns {string|undefined}
-	 *   See {@link #getCompactCurrencyPattern}
-	 *
-	 * @function
-	 * @name sap.ui.core.LocaleData.prototype.getCurrencyFormat
-	 * @public
-	 * @since 1.51.0
-	 * @deprecated since 1.133.0, use {@link #getCompactCurrencyPattern} instead
-	 */
-	LocaleData.prototype.getCurrencyFormat = LocaleData.prototype.getCompactCurrencyPattern;
-
-	/**
-	 * Replaced by {@link #getCompactDecimalPattern}.
-	 *
-	 * @param {"long"|"short"|"short-indian"} sStyle
-	 *   See {@link #getCompactDecimalPattern}; "short-indian" is only available since 1.133.0 for the "en-IN" locale
-	 * @param {string} sPowerOfTen
-	 *   See {@link #getCompactDecimalPattern}
-	 * @param {"few"|"many"|"one"|"other"|"two"|"zero"} [sPlural="other"]
-	 *   See {@link #getCompactDecimalPattern}
-	 * @returns {string|undefined}
-	 *   See {@link #getCompactDecimalPattern}
-	 *
-	 * @function
-	 * @name sap.ui.core.LocaleData.prototype.getDecimalFormat
-	 * @public
-	 * @since 1.25.0
-	 * @deprecated since 1.133.0, use {@link #getCompactDecimalPattern} instead
-	 */
-	LocaleData.prototype.getDecimalFormat = LocaleData.prototype.getCompactDecimalPattern;
 
 	return LocaleData;
 });

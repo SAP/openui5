@@ -7,7 +7,8 @@
 		xmlns:variants="sap.ui.fl.variants"
 		xmlns:unified="sap.ui.unified"
 		xmlns:plugins="sap.m.plugins"
-		controllerName="sap.ui.mdc.sample.controller.Controller">
+		controllerName="sap.ui.mdc.sample.controller.Controller"
+		core:require="{Toast:'sap/m/MessageToast'}">
 	<OverflowToolbar>
 		<ToolbarSpacer/>
 		<Button text="Table Settings" press="onGridTableSettingsPress" />
@@ -18,7 +19,6 @@
 			selectionMode="Multi"
 			p13nMode="Column,Sort"
 			noData="This text is shown when no data is present in the table"
-			core:require="{Toast:'sap/m/MessageToast'}"
 			paste="Toast.show(${$parameters>data})"
 			enableExport="true"
 			showPasteButton="true"
@@ -82,7 +82,7 @@
 			<FlexItemData growFactor="1" baseSize="0%"/>
 		</mdc:layoutData>
 		<mdc:creationRow>
-			<mdcTable:CreationRow visible="false" apply="sap.m.MessageToast.show('Apply fired')"/>
+			<mdcTable:CreationRow visible="false" apply="Toast.show('Apply fired')"/>
 		</mdc:creationRow>
 		<mdc:copyProvider>
 			<plugins:CopyProvider />

@@ -3707,6 +3707,64 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sends a request for the elements identified by the given key predicates. Returns predicates
+	 * for elements matching the current filter, arranged according to the current sort order.
+	 *
+	 * @param {string[]} aPredicates
+	 *   A list of key predicates for known elements, in no special order
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @param {boolean} [bSelectKeysOnly]
+	 *   Whether to select only key properties (and not expand anything); in this case no data is
+	 *   updated from the response
+	 * @returns {Promise<string[]>}
+	 *   A promise that resolves with an array of predicates (see above), or rejects with an
+	 *   instance of <code>Error</code> in case of failure, for exmaple if the cache is shared
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.requestFilteredOrderedPredicates = async function (aPredicates,
+			oGroupLock, bSelectKeysOnly) {
+		this.checkSharedRequest();
+
+		const mTypeForMetaPath = this.getTypes();
+		const aKeyFilters = aPredicates.map((sPredicate) => _Helper.getKeyFilter(
+			this.aElements.$byPredicate[sPredicate], this.sMetaPath, mTypeForMetaPath));
+
+		const mQueryOptions = {...this.mQueryOptions};
+		delete mQueryOptions.$count;
+		mQueryOptions.$filter = mQueryOptions.$filter
+			? `${mQueryOptions.$filter} and (${aKeyFilters.join(" or ")})`
+			: aKeyFilters.join(" or ");
+		mQueryOptions.$top = aKeyFilters.length;
+		if (bSelectKeysOnly) {
+			delete mQueryOptions.$expand;
+			mQueryOptions.$select = [];
+			_Helper.selectKeyProperties(mQueryOptions, mTypeForMetaPath[this.sMetaPath]);
+		}
+		const sResourcePath = this.sResourcePath
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true, true);
+
+		const oResponse = await this.oRequestor.request("GET", sResourcePath, oGroupLock);
+
+		this.visitResponse(oResponse, mTypeForMetaPath, undefined, undefined, 0);
+
+		return oResponse.value.map((oNewElement) => {
+			const sPredicate = _Helper.getPrivateAnnotation(oNewElement, "predicate");
+			if (!bSelectKeysOnly) {
+				const oOldElement = this.aElements.$byPredicate[sPredicate];
+				_Helper.copySelected(oOldElement, oNewElement);
+				this.aElements.$byPredicate[sPredicate] = oNewElement;
+				this.aElements[this.aElements.indexOf(oOldElement)] = oNewElement;
+				_Helper.fireChanges(this.mChangeListeners, sPredicate, oOldElement, true);
+				_Helper.fireChanges(this.mChangeListeners, sPredicate, oNewElement);
+			}
+
+			return sPredicate;
+		});
+	};
+
+	/**
 	 * Requests the separate properties for the given range and merges them into the aElements list.
 	 *
 	 * @param {number} iStart

@@ -60,6 +60,7 @@ sap.ui.define([
 		let sTestname = `when homePage is ${oTestSetup.isHomePage} and onAppLoaded is triggered`;
 		sTestname += bViaOnAppLoaded ? " via onAppLoadedListener" : " via existing currentApplication";
 		sTestname += oTestSetup.isUI5Application ? " for an UI5 application" : " for a non UI5 application";
+		sTestname += oTestSetup.adaptationId ? ` with adaptationId: ${oTestSetup.adaptationId}` : " without adaptationId";
 		return sTestname;
 	}
 
@@ -67,15 +68,13 @@ sap.ui.define([
 	 * Stubs the settings for context-based adaptation in the FlexRuntimeInfoAPI and Settings.
 	 *
 	 * @param {object} oTestSetup - The test setup configuration.
-	 * @param {boolean} oTestSetup.isDefaultAdaptation - Indicates if the default adaptation ID should be used.
+	 * @param {string | undefined} oTestSetup.adaptationId - The adaptation ID to be used.
 	 * @param {boolean} oTestSetup.isContextBasedEnabled - Indicates if context-based adaptation is enabled.
 	 * @param {boolean} oTestSetup.isHomePage - Indicates if it is the home page.
 	 * @param {boolean} oTestSetup.isUI5Application - Indicates if it is a UI5 application.
 	 */
 	function setIsContextBasedAdaptationEnabledSettingsStub(oTestSetup) {
-		sandbox.stub(FlexRuntimeInfoAPI, "getContextBasedAdaptationId").returns(
-			oTestSetup.isDefaultAdaptation ? sDefaultAdaptationId : sAdaptationId
-		);
+		sandbox.stub(FlexRuntimeInfoAPI, "getContextBasedAdaptationId").returns(oTestSetup.adaptationId);
 		sandbox.stub(FlexRuntimeInfoAPI, "getContextBasedAdaptationTitle").returns(sAdaptationTitle);
 	}
 
@@ -106,27 +105,29 @@ sap.ui.define([
 	/**
 	 * Prepares a mocked version of the getCurrentApplication method for the App Lifecycle Service.
 	 *
-	 * @param {Object} oMockedLifecyleSerive - The mocked lifecycle service object to be extended.
-	 * @param {Object} oTestSetup - The test setup object containing configuration for the mock.
+	 * @param {object} oMockedLifecyleSerive - The mocked lifecycle service object to be extended.
+	 * @param {object} oTestSetup - The test setup object containing configuration for the mock.
 	 * @param {boolean} oTestSetup.isHomePage - Indicates if the current application is the home page.
 	 * @param {boolean} oTestSetup.isUI5Application - Indicates if the current application is a UI5 application.
 	 * @returns {object} The extended lifecycle service object with the mocked getCurrentApplication method.
 	 */
 	function prepareMockedGetCurrentApplicationAppLifecycleService(oMockedLifecyleSerive, oTestSetup) {
-		return {...oMockedLifecyleSerive, getCurrentApplication: () => {
-			return {
-				homePage: oTestSetup.isHomePage,
-				applicationType: oTestSetup.isUI5Application ? "UI5" : "",
-				getAllAppInfo: () => {
-					return Promise.resolve({
-						technicalAppComponentId: {
-							value: "sample.app.id"
-						}
-					});
-				},
-				componentInstance: oComponentInstance
-			};
-		}};
+		return {
+			...oMockedLifecyleSerive, getCurrentApplication: () => {
+				return {
+					homePage: oTestSetup.isHomePage,
+					applicationType: oTestSetup.isUI5Application ? "UI5" : "",
+					getAllAppInfo: () => {
+						return Promise.resolve({
+							technicalAppComponentId: {
+								value: "sample.app.id"
+							}
+						});
+					},
+					componentInstance: oComponentInstance
+				};
+			}
+		};
 	}
 
 	/**
@@ -150,11 +151,12 @@ sap.ui.define([
 	 * @param {object} oTestSetup - The test setup object.
 	 * @param {boolean} oTestSetup.isHomePage - Indicates if the current page is the home page.
 	 * @param {boolean} oTestSetup.isUI5Application - Indicates if the current application is a UI5 application.
-	 * @param {boolean} oTestSetup.isDefaultAdaptation - Indicates if the default adaptation is being used.
+	 * @param {string | undefined} oTestSetup.adaptationId - The adaptation ID to be used.
 	 * @returns {boolean} - Returns true if the application info should be called, otherwise false.
 	 */
-	function shouldAppInfoShouldBeCalled(oTestSetup) {
-		return !oTestSetup.isHomePage && oTestSetup.isUI5Application && !oTestSetup.isDefaultAdaptation;
+	function shouldAppInfoBeCalled(oTestSetup) {
+		return !!(!oTestSetup.isHomePage && oTestSetup.isUI5Application &&
+			oTestSetup.adaptationId && oTestSetup.adaptationId !== sDefaultAdaptationId);
 	}
 
 	QUnit.module("setAppInfo", {
@@ -178,20 +180,25 @@ sap.ui.define([
 		}
 	}, function() {
 		[
+			{ isHomePage: true, isUI5Application: true, adaptationId: sDefaultAdaptationId },
+			{ isHomePage: true, isUI5Application: true, adaptationId: sAdaptationId },
 			{ isHomePage: true, isUI5Application: true },
+			{ isHomePage: true, isUI5Application: false, adaptationId: sDefaultAdaptationId },
+			{ isHomePage: true, isUI5Application: false, adaptationId: sAdaptationId },
 			{ isHomePage: true, isUI5Application: false },
+			{ isHomePage: false, isUI5Application: true, adaptationId: sDefaultAdaptationId },
+			{ isHomePage: false, isUI5Application: true, adaptationId: sAdaptationId },
 			{ isHomePage: false, isUI5Application: true },
-			{ isHomePage: false, isUI5Application: true, isDefaultAdaptation: true },
+			{ isHomePage: false, isUI5Application: false, adaptationId: sDefaultAdaptationId },
+			{ isHomePage: false, isUI5Application: false, adaptationId: sAdaptationId },
 			{ isHomePage: false, isUI5Application: false },
-			{ isHomePage: true, isUI5Application: true },
-			{ isHomePage: true, isUI5Application: false },
-			{ isHomePage: false, isUI5Application: true },
-			{ isHomePage: false, isUI5Application: false }
+			{ isHomePage: false, isUI5Application: false, adaptationId: "" },
+			{ isHomePage: false, isUI5Application: false, adaptationId: 123 }
 		].forEach((oTestSetup) => {
 			let sTestname = generateTestDescription(oTestSetup, true);
 			QUnit.test(sTestname, (assert) => {
 				const done = assert.async();
-				const bSetAppInfoShouldBeCalled = shouldAppInfoShouldBeCalled(oTestSetup);
+				const bSetAppInfoShouldBeCalled = shouldAppInfoBeCalled(oTestSetup);
 				const oAttachAppLoadedSpy = sandbox.stub(mockedAppLifecycleService, "attachAppLoaded");
 				sandbox.stub(FlexUtils, "getUShellService").resolves(mockedAppLifecycleService);
 				sandbox.spy(mockedAppLifecycleService, "setAppInfo");
@@ -215,7 +222,7 @@ sap.ui.define([
 			sTestname = generateTestDescription(oTestSetup, false);
 			QUnit.test(sTestname, (assert) => {
 				const done = assert.async();
-				const bSetAppInfoShouldBeCalled = shouldAppInfoShouldBeCalled(oTestSetup);
+				const bSetAppInfoShouldBeCalled = shouldAppInfoBeCalled(oTestSetup);
 				const copiedMockedAppLifecycleService =
 					prepareMockedGetCurrentApplicationAppLifecycleService(mockedAppLifecycleService, oTestSetup);
 				const oAttachAppLoadedSpy = sandbox.stub(copiedMockedAppLifecycleService, "attachAppLoaded");

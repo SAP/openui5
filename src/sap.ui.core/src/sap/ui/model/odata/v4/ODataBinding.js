@@ -420,8 +420,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
-	 * this binding with the given resource path and query options.
+	 * Hook method for {@link #fetchCache} to create a cache for this binding with the given
+	 * resource path and query options.
 	 *
 	 * @param {string} sResourcePath
 	 *   The resource path, for example "EMPLOYEES"
@@ -1426,8 +1426,9 @@ sap.ui.define([
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> there is a change of this binding which has been sent to the server and for which
 	 *       there is no response yet,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}).
+	 *     <li> the binding is part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create} because it is
+	 *       relative to a {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
 	 *   </ul>
 	 *
 	 * @public
@@ -1559,7 +1560,7 @@ sap.ui.define([
 	 * @param {Promise[]} aPromises
 	 *   List of (sync) promises which is extended for each call to
 	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects} or
-	 *   {@link sap.ui.model.odata.v4.ODataBinding#refreshInternal}.
+	 *   {@link #refreshInternal}
 	 * @param {string} [sPrefix=""]
 	 *   Prefix for navigation property meta paths; must only be used during recursion
 	 *

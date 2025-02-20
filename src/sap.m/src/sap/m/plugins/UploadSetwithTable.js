@@ -604,6 +604,8 @@ sap.ui.define([
 	UploadSetwithTable.prototype.registerUploaderEvents = function (oUploader) {
 		oUploader.attachUploadStarted(this._onUploadStarted.bind(this));
 		oUploader.attachUploadCompleted(this._onUploadCompleted.bind(this));
+		oUploader.attachUploadProgressed(this._onUploadProgressed.bind(this));
+		oUploader.attachUploadTerminated(this._onUploadAborted.bind(this));
 	};
 
 	/**
@@ -1077,6 +1079,15 @@ sap.ui.define([
 		}
 		oItem.setUploadState(UploadState.Complete);
 		this.fireUploadCompleted(oXhrParams);
+	};
+
+	UploadSetwithTable.prototype._onUploadProgressed = function (oEvent) {
+		var oItem = oEvent.getParameter("item");
+
+		oItem.fireUploadProgress({
+			loaded: oEvent.getParameter("loaded"),
+			total: oEvent.getParameter("total")
+		});
 	};
 
 	UploadSetwithTable.prototype._uploadItemIfGoodToGo = function (oItem) {
@@ -1620,6 +1631,27 @@ sap.ui.define([
 			oItem.bindProperty(property, oBindingInfo);
 		});
 
+	};
+
+	UploadSetwithTable.prototype._onUploadAborted = function (oEvent) {
+		var oItem = oEvent.getParameter("item");
+		oItem.setUploadState(UploadState.Error);
+		oItem.fireUploadTerminated({item: oItem});
+	};
+
+	UploadSetwithTable.prototype._handleUploadTermination = function (oItem) {
+		this._getActiveUploader().terminateItem(oItem);
+	};
+
+	/**
+	 * API to terminate the upload of an item.
+	 * @param {sap.m.upload.UploadItem} oItem item to be terminated.
+	 * @private
+	 */
+	UploadSetwithTable.prototype._terminateItemUpload = function (oItem) {
+		if (oItem && oItem instanceof UploadItem) {
+			this._getActiveUploader()?.terminateItem(oItem);
+		}
 	};
 
 

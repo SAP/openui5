@@ -76122,6 +76122,7 @@ sap.ui.define([
 	//
 	// Check for selectionChanged events (JIRA: CPOUI5ODATAV4-2198)
 	// Automatic type detection for client-side annotations (JIRA: CPOUI5ODATAV4-2728)
+	// Expect error for ODLB#requestSelectedContexts & "select all" (JIRA: CPOUI5ODATAV4-2851)
 	QUnit.test("Selection on header context and row context", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
@@ -76239,6 +76240,11 @@ sap.ui.define([
 
 		checkSelected(assert, oHeaderContext, true);
 		await this.waitForChanges(assert, "headerContext selected via setProperty");
+
+		// code under test (CPOUI5ODATAV4-2851)
+		assert.throws(function () {
+			oListBinding.requestSelectedContexts();
+		}, new Error('Unsupported "Select All": /SalesOrderList;selected'));
 
 		this.expectChange("selectAll", "No")
 			.expectChange("selected", ["No", "No", "No"]);
@@ -76509,6 +76515,198 @@ sap.ui.define([
 			await this.waitForChanges(assert, "after (2)");
 		});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Select some contexts in a filtered and sorted list, change data for one so that
+	// it no longer matches the filter. First call ODLB#requestSelectedContexts to see that the one
+	// is not returned but others are updated. Then call ODLB#requestSelectionValidation and
+	// #refresh to have the selection validated and the one context which is no longer matching the
+	// filter deselected.
+	// JIRA: CPOUI5ODATAV4-2851
+	QUnit.test("CPOUI5ODATAV4-2851", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{
+	filters: {path: 'LifecycleStatus', operator: 'EQ', value1: 'N'},
+	parameters: {
+		custom : 'foo',
+		$count: true,
+		$filter : 'SalesOrderID ge \\'1\\'',
+		$orderby : 'Note desc',
+		$search : 'lorem ipsum',
+		$$clearSelectionOnFilter : true
+	},
+	path: '/SalesOrderList',
+	sorter : {path : 'LifecycleStatus'}
+}">
+	<Text id="selected" text="{@$ui5.context.isSelected}"/>
+	<Text id="id" text="{SalesOrderID}"/>
+	<Text id="note" text="{Note}"/>
+	<Input id="status" value="{LifecycleStatus}"/>
+	<Text id="bp" text="{SO_2_BP/BusinessPartnerID}"/>
+</Table>
+<FlexBox id="form">
+	<Input id="noteLanguage" value="{NoteLanguage}"/>
+</FlexBox>'`;
+
+		this.expectRequest("SalesOrderList?custom=foo&$count=true"
+				+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
+				+ "&$orderby=LifecycleStatus,Note desc&$search=lorem ipsum"
+				+ "&$select=LifecycleStatus,Note,SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$skip=0&$top=100", {
+				"@odata.count" : "4",
+				value : [
+					{SalesOrderID : "1", Note : "Note Z", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}},
+					{SalesOrderID : "2", Note : "Note Y", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}},
+					{SalesOrderID : "3", Note : "Note X", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}},
+					{SalesOrderID : "4", Note : "Note W", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}}
+				]
+			})
+			.expectChange("selected", [null, null, null, null])
+			.expectChange("id", ["1", "2", "3", "4"])
+			.expectChange("note", ["Note Z", "Note Y", "Note X", "Note W"])
+			.expectChange("status", ["N", "N", "N", "N"])
+			.expectChange("bp", ["0", "0", "0", "0"])
+			.expectChange("noteLanguage");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("selected", ["Yes", "Yes", "Yes"]);
+
+		const oListBinding = this.oView.byId("table").getBinding("items");
+		const [oContext0, oContext1, oContext2] = oListBinding.getAllCurrentContexts();
+		oContext0.setSelected(true);
+		oContext1.setSelected(true);
+		oContext2.setSelected(true);
+
+		this.expectRequest("SalesOrderList('3')?custom=foo&$select=NoteLanguage", {
+				NoteLanguage : "EN"
+			})
+			.expectChange("noteLanguage", "EN");
+
+		this.oView.byId("form").setBindingContext(oContext2);
+
+		await this.waitForChanges(assert, "form bound to oContext2");
+
+		this.expectRequest({
+				method : "PATCH",
+				url : "SalesOrderList('2')?custom=foo",
+				payload : {LifecycleStatus : "P"}
+			})
+			.expectChange("status", [, "P"]);
+
+		await Promise.all([
+			oContext1.setProperty("LifecycleStatus", "P"), // $filter=LifecycleStatus eq 'N'
+			this.waitForChanges(assert, "oContext1 no longer matches the filter")
+		]);
+
+		this.expectRequest({
+				batchNo : 4,
+				url : "SalesOrderList?custom=foo&$expand=SO_2_BP($select=BusinessPartnerID)"
+					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
+						+ " and (SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3')"
+					+ "&$orderby=LifecycleStatus,Note desc&$search=lorem ipsum"
+					+ "&$select=LifecycleStatus,Note,SalesOrderID&$top=3"
+			}, {
+				value : [
+					{SalesOrderID : "1", Note : "Note Z", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}},
+					{SalesOrderID : "3", Note : "Notiz X (aktualisiert)", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "42"}}
+				]
+			})
+			.expectChange("note", [,, "Notiz X (aktualisiert)"])
+			.expectChange("bp", [,, "42"])
+			.expectRequest({
+				batchNo : 5,
+				url : "SalesOrderList('3')?custom=foo&$select=NoteLanguage"
+			}, {
+				NoteLanguage : "DE"
+			})
+			.expectChange("noteLanguage", "DE");
+
+		const [aContexts] = await Promise.all([
+			// code under test
+			oListBinding.requestSelectedContexts(),
+			this.waitForChanges(assert, "request selected contexts")
+		]);
+
+		assert.deepEqual(aContexts, [oContext0, oContext2]);
+		assert.strictEqual(oContext0.isSelected(), true);
+		assert.strictEqual(oContext1.isSelected(), true, "selection state is unchanged");
+		assert.strictEqual(oContext2.isSelected(), true);
+
+		this.expectRequest({ // ODLB#requestSelectionValidation
+				batchNo : 6,
+				url : "SalesOrderList?custom=foo"
+					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
+						+ " and (SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3')"
+					+ "&$orderby=LifecycleStatus,Note desc&$search=lorem ipsum"
+					+ "&$select=SalesOrderID&$top=3"
+			}, {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "3"}
+				]
+			})
+			.expectRequest({ // ODLB#refreshKeptElements via "refresh"
+					batchNo : 6,
+					url : "SalesOrderList?custom=foo"
+					+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3'"
+					+ "&$select=LifecycleStatus,Note,NoteLanguage,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$top=3"
+			}, {
+				value : [
+					{SalesOrderID : "1", Note : "Z", NoteLanguage : "n/a", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}},
+					{SalesOrderID : "2", Note : "Y", NoteLanguage : "n/a", LifecycleStatus : "P",
+						SO_2_BP : {BusinessPartnerID : "0"}},
+					{SalesOrderID : "3", Note : "X", NoteLanguage : "DE", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "42"}}
+				]
+			})
+			.expectRequest({ // "table refresh"
+				batchNo : 6,
+				url : "SalesOrderList?custom=foo&$count=true"
+					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
+					+ "&$orderby=LifecycleStatus,Note desc&$search=lorem ipsum"
+					+ "&$select=LifecycleStatus,Note,SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$skip=0&$top=100"
+			}, {
+				"@odata.count" : "3",
+				value : [
+					{SalesOrderID : "1", Note : "Z", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}},
+					{SalesOrderID : "3", Note : "X", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "42"}},
+					{SalesOrderID : "4", Note : "W", LifecycleStatus : "N",
+						SO_2_BP : {BusinessPartnerID : "0"}}
+				]
+			})
+			.expectChange("note", ["Z", "Y", "X"]) // refreshKeptElements
+			// refresh:
+			.expectChange("selected", [, "No"])
+			.expectChange("selected", [, "Yes", null])
+			.expectChange("id", [, "3", "4"])
+			.expectChange("note", [, "X", "W"])
+			.expectChange("status", [, "N"])
+			.expectChange("bp", [, "42", "0"]);
+
+		await Promise.all([
+			// code under test
+			oListBinding.requestSelectionValidation(),
+			oListBinding.requestRefresh(),
+			this.waitForChanges(assert, "requestSelectionValidation")
+		]);
+
+		assert.strictEqual(oContext0.isSelected(), true); // still selected
+		assert.strictEqual(oContext1.isSelected(), false); // no longer selected
+		assert.strictEqual(oContext2.isSelected(), true); // still selected
 	});
 
 	//*********************************************************************************************

@@ -292,8 +292,9 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> there are pending changes that cannot be ignored,
-	 *     <li> the binding is {@link #isTransient transient} (part of a
-	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create}),
+	 *     <li> the binding is part of a
+	 *       {@link sap.ui.model.odata.v4.ODataListBinding#create deep create} because it is
+	 *       relative to a {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
 	 *     <li> <code>mParameters</code> is missing, contains binding-specific or unsupported
 	 *       parameters, contains unsupported values, or contains the property "$expand" or
 	 *       "$select" when the model is in auto-$expand/$select mode.

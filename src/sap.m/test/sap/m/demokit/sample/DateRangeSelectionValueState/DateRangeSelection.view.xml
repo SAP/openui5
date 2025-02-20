@@ -6,6 +6,7 @@
 		<VBox class="sapUiTinyMargin" >
 			<Label text="{label}" />
 			<DateRangeSelection
+				delimiter="–"
 				width="100%"
 				valueState="{valueState}"
 				valueStateText="{valueStateText}"/>
