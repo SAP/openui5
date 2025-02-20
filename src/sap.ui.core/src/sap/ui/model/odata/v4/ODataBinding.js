@@ -401,7 +401,7 @@ sap.ui.define([
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
-	 * @since 1.66
+	 * @since 1.66.0
 	 */
 	ODataBinding.prototype.destroy = function () {
 		this.mCacheByResourcePath = undefined;
