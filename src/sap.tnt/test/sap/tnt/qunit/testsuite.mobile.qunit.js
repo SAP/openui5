@@ -38,9 +38,6 @@ sap.ui.define(function () {
 			"NavigationList": {
 				coverage: {
 					only : ["sap/tnt/NavigationList"]
-				},
-				sinon: {
-					useFakeTimers: true
 				}
 			},
 			"SideNavigation": {
