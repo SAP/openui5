@@ -827,29 +827,12 @@ sap.ui.define([
 	 *
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/gap}
 	 * @since 1.60.0
+	 * @extends sap.ui.core.CSSSizeShortHand
 	 * @public
 	 * @namespace
 	 * @final
 	 */
-	thisLib.cssgrid.CSSGridGapShortHand = DataType.createType("sap.ui.layout.cssgrid.CSSGridGapShortHand", {
-			isValid: function (vValue) {
-				var bResult = true,
-					aValues = vValue.split(/\s+/);
-
-				aValues.forEach(function (sValue) {
-					if (!library.CSSSize.isValid(sValue)) {
-						bResult = false;
-					}
-				});
-
-				return bResult;
-			},
-			parseValue: function (sValue) {
-				return sValue.trim().split(/\s+/).join(" ");
-			}
-		},
-		DataType.getType("string")
-	);
+	thisLib.cssgrid.CSSGridGapShortHand = DataType.createType("sap.ui.layout.cssgrid.CSSGridGapShortHand", {}, DataType.getType("sap.ui.core.CSSGapShortHand"));
 
 	/**
 	 * @classdesc A string type that represents one or two grid lines. Used to define the position and size of a single grid item.

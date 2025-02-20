@@ -156,13 +156,65 @@
 				]
 			});
 
+			const oButton5 = new sap.m.Button({
+				width: "50px",
+				type: "Accept",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 0,
+					growFactor: 3
+				})
+			});
+
+			// Create a flexbox with bare items and gaps between them
+			var oFlexBox5 = new sap.m.FlexBox({
+				renderType: "Bare",
+				alignItems: "Center",
+				justifyContent: "Center",
+				wrap: "Wrap",
+				width: "150px",
+				gap: "20px",
+				rowGap: "10px",
+				columnGap: "15px",
+				items: [
+					oButton5.clone().setText("1"),
+					oButton5.clone().setText("2"),
+					oButton5.clone().setText("3"),
+					oButton5.clone().setText("4"),
+					oButton5.clone().setText("5")
+				]
+			});
+
+			var oInput2 = new sap.m.Input({
+				width: "auto",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			// Create a flexbox with wrapped items and gaps between them
+			var oFlexBox6 = new sap.m.FlexBox({
+				renderType: "Div",
+				wrap: "Wrap",
+				width: "200px",
+				gap: "20px",
+				columnGap: "15px",
+				items: [
+					oInput2.clone().setPlaceholder("1"),
+					oInput2.clone().setPlaceholder("2"),
+					oInput2.clone().setPlaceholder("3"),
+					oInput2.clone().setPlaceholder("4"),
+					oInput2.clone().setPlaceholder("5"),
+					oInput2.clone().setPlaceholder("6"),
+				]
+			});
+
 			var page1 = new sap.m.Page("page1", {
 				title:"FlexBox Test Page",
 				content:[
 					oLayout1,
 					oFlexBox2,
 					oFlexBox3,
-					oFlexBox4
+					oFlexBox4,
+					oFlexBox5,
+					oFlexBox6
 				]
 			});
 
