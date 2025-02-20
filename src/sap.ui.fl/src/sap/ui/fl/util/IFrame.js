@@ -5,24 +5,25 @@
 // Provides control sap.ui.fl.util.IFrame
 sap.ui.define([
 	"../library",
+	"sap/base/util/uid",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"./getContainerUserInfo",
 	"sap/base/util/extend",
 	"sap/base/security/URLWhitelist",
-	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/Log",
-	"sap/ui/core/library",
-	"./IFrameRenderer"
+	"./IFrameRenderer",
+	"sap/ui/core/library"
 ], function(
 	library,
+	uid,
 	Control,
 	JSONModel,
 	getContainerUserInfo,
 	extend,
 	URLWhitelist,
-	CancelablePromise,
-	Log
+	Log,
+	IFrameRenderer
 ) {
 	"use strict";
 
@@ -107,34 +108,54 @@ sap.ui.define([
 			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
 
 			if (IFrame.isValidUrl(sEncodedUrl)) {
-				// Setting the url of the IFrame directly can lead to issues
-				// if the change doesn't result in a reload of the embedded page
-				// e.g. when a navigation parameter is changed
-				// To avoid problems with the ushell and the embedded apps, it is safer
-				// to unload the iframe content first and thus force a full browser reload
-
-				if (this._oSetUrlPromise) {
-					this._oSetUrlPromise.cancel();
-					delete this._oSetUrlPromise;
+				// Set by replacing the last entry
+				var oNewUrl = IFrame._toUrl(sEncodedUrl);
+				var oOldUrl = IFrame._toUrl(this.getUrl() || "about:blank");
+				if (oOldUrl.searchParams.has("sap-ui-xx-fl-forceEmbeddedContentRefresh")) {
+					// Always keep the refresh parameter and update it to avoid false negatives
+					// when the URL doesn't change except for the refresh parameter itself + hash
+					oNewUrl.searchParams.set("sap-ui-xx-fl-forceEmbeddedContentRefresh", uid().substring(3));
+				} else if (
+					oOldUrl.origin === oNewUrl.origin
+					&& oOldUrl.pathname === oNewUrl.pathname
+					&& oOldUrl.search === oNewUrl.search
+					&& oOldUrl.hash !== oNewUrl.hash
+				) {
+					// Only the hash changed, site is not going to reload automatically
+					// Set an artificial search parameter to force a refresh
+					oNewUrl.searchParams.append("sap-ui-xx-fl-forceEmbeddedContentRefresh", uid().substring(3));
 				}
-
-				this.setProperty("url", "");
-
-				this._oSetUrlPromise = new CancelablePromise(function (fnResolve, fnReject, onCancel) {
-					onCancel.shouldReject = false;
-					// Use a timeout here to avoid issues with browser caching in Chrome
-					// that seem to lead to a mismatch between IFrame content and src,
-					// see Chromium issue 324102
-					setTimeout(fnResolve, 0);
-				});
-
-				this._oSetUrlPromise.then(function() {
-					this.setProperty("url", sEncodedUrl);
-				}.bind(this));
+				this.setProperty("url", oNewUrl.toString());
 			} else {
 				Log.error("Provided URL is not valid as an IFrame src");
 			}
 			return this;
+		},
+
+		// Used for testing since retrieving or spying on the Iframe location
+		// is not possible due to cross-origin restrictions
+		_replaceIframeLocation: function (sNewUrl) {
+			this.getDomRef().contentWindow.location.replace(sNewUrl);
+		},
+
+		onAfterRendering: function () {
+			this._replaceIframeLocation(this.getUrl());
+
+			// The contentWindow might change without causing a rerender, e.g.
+			// when the parent element changes due to an appendChild call
+			// This will cause the iframe src to change and we need to replace the
+			// location again to ensure the correct content
+			this._oLastContentWindow = this.getDomRef().contentWindow;
+			this.getDomRef().addEventListener("load", function() {
+				if (!this.getDomRef()) {
+					// The iframe was removed before the load event was triggered
+					return;
+				}
+				if (this._oLastContentWindow !== this.getDomRef().contentWindow) {
+					this._oLastContentWindow = this.getDomRef().contentWindow;
+					this._replaceIframeLocation(this.getUrl());
+				}
+			}.bind(this));
 		},
 
 		applySettings: function (mSettings) {
@@ -161,18 +182,40 @@ sap.ui.define([
 				this._oUserModel.destroy();
 				delete this._oUserModel;
 			}
-		}
+		},
 
+		renderer: IFrameRenderer
 	});
 
+	// Used for test stubbing
+	IFrame._getDocumentLocation = function() {
+		return document.location;
+	};
+
+	IFrame._toUrl = function(sUrl) {
+		var oDocumentLocation = IFrame._getDocumentLocation();
+		return new window.URL(sUrl, oDocumentLocation.href);
+	};
+
 	IFrame.isValidUrl = function(sUrl) {
-		// Make sure that pseudo protocols are not allowed as IFrame src
-		return (
-			!URLWhitelist.entries().some(function(oValidatorEntry) {
-				return /javascript/i.test(oValidatorEntry.protocol);
-			})
-			&& URLWhitelist.validate(sUrl)
-		);
+		try {
+			var oUrl = IFrame._toUrl(sUrl);
+
+			// Make sure that pseudo protocols are not allowed as IFrame src
+			return (
+				!/javascript/i.test(oUrl.protocol)
+				&& (
+					// Forbid unsafe http embedding within https to conform with mixed content security restrictions
+					!/http(?!s)/.test(oUrl.protocol)
+					// Exception: Host is using http, no protocol downgrade happening
+					// Required for local testing and onPrem systems
+					|| /http(?!s)/.test(IFrame._getDocumentLocation().protocol)
+				)
+				&& URLWhitelist.validate(sUrl)
+			);
+		} catch (error) {
+			return false;
+		}
 	};
 
 	return IFrame;

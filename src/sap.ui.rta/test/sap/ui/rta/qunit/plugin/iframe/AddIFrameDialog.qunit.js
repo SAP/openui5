@@ -288,14 +288,12 @@ sap.ui.define([
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
 				var oIFrame = Core.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
-				oIFrame._oSetUrlPromise.then(function() {
-					assert.strictEqual(
-						oIFrame.getUrl(),
-						"https://example.com/Ice%20Cream",
-						"then the preview url is encoded properly"
-					);
-					clickOnCancel();
-				});
+				assert.strictEqual(
+					oIFrame.getUrl(),
+					"https://example.com/Ice%20Cream",
+					"then the preview url is encoded properly"
+				);
+				clickOnCancel();
 			}, this);
 
 			return this.oAddIFrameDialog.open(mParameters);

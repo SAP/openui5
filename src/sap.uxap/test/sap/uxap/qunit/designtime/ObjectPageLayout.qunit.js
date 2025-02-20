@@ -407,12 +407,14 @@ sap.ui.define([
 		var aHeaderContent = oObjectPageLayout.getHeaderContent();
 		assert.strictEqual(aHeaderContent.length, 4, "Header Content aggregation contains new elements");
 		var oIframe = aHeaderContent[1];
-		oIframe._oSetUrlPromise.then(function() {
-			assert.strictEqual(oIframe.getId(), oViewAfterAction.createId("foo"), "Added Iframe has expected properties set - id");
-			assert.strictEqual(oIframe.getUrl(), "someUrl", "Added Iframe has expected properties set - url");
-			assert.strictEqual(oIframe.getWidth(), "10px", "Added Iframe has expected properties set - width");
-			assert.strictEqual(oIframe.getHeight(), "11px", "Added Iframe has expected properties set - height");
-		});
+		assert.strictEqual(oIframe.getId(), oViewAfterAction.createId("foo"), "Added Iframe has expected properties set - id");
+		assert.strictEqual(
+			oIframe.getUrl(),
+			new window.URL("someUrl", document.location.href).href,
+			"Added Iframe has expected properties set - url"
+		);
+		assert.strictEqual(oIframe.getWidth(), "10px", "Added Iframe has expected properties set - width");
+		assert.strictEqual(oIframe.getHeight(), "11px", "Added Iframe has expected properties set - height");
 	}
 	function fnConfirmIframeRemoved(oAppComponent, oViewAfterAction, assert){
 		var oObjectPageLayout = oViewAfterAction.byId("objectPage");

@@ -22,7 +22,7 @@ sap.ui.define([
 	"use strict";
 
 	var BASE_ID = "test";
-	var EXAMPLE_URL = "http://www.sap.com";
+	var EXAMPLE_URL = new window.URL("exampleurl", document.location.href).href;
 
 	QUnit.module("Given a AddIFrameObjectPageLayout Change Handler", {
 		beforeEach : function() {
@@ -177,9 +177,7 @@ sap.ui.define([
 			assert.strictEqual(aBlocks.length, 1, "The created sub section contains one block");
 			var oCreatedIFrame = aBlocks[0];
 			assert.ok(oCreatedIFrame.getId().indexOf(BASE_ID) === 0, "the created IFrame starts with the expected baseId");
-			oCreatedIFrame._oSetUrlPromise.then(function() {
-				assert.strictEqual(oCreatedIFrame.getUrl(), EXAMPLE_URL, "the created IFrame has the correct URL");
-			});
+			assert.strictEqual(oCreatedIFrame.getUrl(), EXAMPLE_URL, "the created IFrame has the correct URL");
 		}
 
 		QUnit.test("When applying the change on a js control tree", function(assert) {

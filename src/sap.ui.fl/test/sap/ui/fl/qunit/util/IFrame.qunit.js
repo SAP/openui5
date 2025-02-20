@@ -1,24 +1,18 @@
 /*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/fl/library",
-	"sap/ui/fl/util/IFrame",
 	"sap/base/security/URLWhitelist",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/Core",
+	"sap/ui/fl/util/IFrame",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	qutils,
-	createAndAppendDiv,
-	flexibleLibrary,
-	IFrame,
 	URLWhitelist,
-	JSONModel,
-	Core,
 	XMLView,
+	Core,
+	IFrame,
+	JSONModel,
 	sinon
 ) {
 	"use strict";
@@ -37,14 +31,11 @@ sap.ui.define([
 	var sUserEmail = (sUserFirstName + "." + sUserLastName).toLowerCase() + "@sap.com";
 
 	function checkUrl(assert, oIFrame, sExpectedUrl, sDescription) {
-		return (oIFrame._oSetUrlPromise || Promise.resolve())
-			.then(function() {
-				assert.strictEqual(
-					oIFrame.getUrl(),
-					sExpectedUrl,
-					"then the url is properly updated" || sDescription
-				);
-			});
+		assert.strictEqual(
+			oIFrame.getUrl(),
+			sExpectedUrl,
+			"then the url is properly updated" || sDescription
+		);
 	}
 
 	QUnit.module("Basic properties", {
@@ -55,7 +46,7 @@ sap.ui.define([
 				url: sOpenUI5Url,
 				title: sTitle
 			});
-			return this.oIFrame._oSetUrlPromise;
+			this.oIFrame.placeAt("qunit-fixture");
 		},
 		afterEach : function () {
 			this.oIFrame.destroy();
@@ -71,7 +62,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("url", function (assert) {
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url);
+			checkUrl(assert, this.oIFrame, sOpenUI5Url);
 		});
 
 		QUnit.test("title", function (assert) {
@@ -80,22 +71,60 @@ sap.ui.define([
 
 		QUnit.test("when trying to set the url to an invalid value", function(assert) {
 			this.oIFrame.setUrl("javascript:someJs"); // eslint-disable-line no-script-url
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url, "then the value is rejected");
+			checkUrl(assert, this.oIFrame, sOpenUI5Url, "then the value is rejected");
 		});
 
-		QUnit.test("when changing a navigation parameter", function(assert) {
-			var oSetUrlSpy = sandbox.spy(this.oIFrame, "setProperty").withArgs("url");
+		QUnit.test("when changing a navigation parameter only", function(assert) {
 			var sNewUrl = sOpenUI5Url + "#someNavParameter";
+			var oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oIFrame.setUrl(sNewUrl);
-			return checkUrl(assert, this.oIFrame, sNewUrl)
-				.then(function() {
-					assert.strictEqual(oSetUrlSpy.callCount, 2);
-					assert.strictEqual(
-						oSetUrlSpy.firstCall.args[1],
-						"",
-						"then the iframe is unloaded"
-					);
-				});
+			var sTestUrlRegex = new RegExp(sOpenUI5Url + "\\?sap-ui-xx-fl-forceEmbeddedContentRefresh=([\\d-]+)#someNavParameter");
+			assert.ok(
+				sTestUrlRegex.test(this.oIFrame.getUrl()),
+				"then the url is properly updated"
+			);
+			var sFrameRefreshSearchParameter = sTestUrlRegex.exec(this.oIFrame.getUrl())[1];
+			Core.applyChanges();
+			assert.strictEqual(oReplaceLocationSpy.callCount, 1, "then the iframe location is properly replaced");
+			assert.ok(
+				sTestUrlRegex.test(oReplaceLocationSpy.lastCall.args[0]),
+				"then the proper url is loaded and a frame refresh search parameter is added"
+			);
+
+			// Change the navigation parameter again
+			this.oIFrame.setUrl(sOpenUI5Url + "#someNavParameter,someOtherNavParameter");
+			assert.ok(
+				sTestUrlRegex.test(this.oIFrame.getUrl()),
+				"then the url still contains a frame refresh search parameter"
+			);
+			var sNewFrameRefreshSearchParameter = sTestUrlRegex.exec(this.oIFrame.getUrl())[1];
+			assert.notStrictEqual(
+				sFrameRefreshSearchParameter,
+				sNewFrameRefreshSearchParameter,
+				"then the frame refresh search parameter is updated"
+			);
+		});
+
+		QUnit.test("when the iframe parent changes resulting in the re-creation of the contentWindow", function(assert) {
+			Core.applyChanges();
+			var oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
+
+			// Move the iframe to a new parent
+			var oNewDiv = document.createElement("div");
+			document.getElementById("qunit-fixture").appendChild(oNewDiv);
+			oNewDiv.appendChild(this.oIFrame.getDomRef());
+			Core.applyChanges();
+
+			assert.strictEqual(
+				oReplaceLocationSpy.lastCall.args[0],
+				sOpenUI5Url,
+				"then the iframe retains its url"
+			);
+			assert.strictEqual(
+				oReplaceLocationSpy.callCount,
+				1,
+				"then the iframe location is only set again once"
+			);
 		});
 	});
 
@@ -174,7 +203,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("url", function (assert) {
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url);
+			checkUrl(assert, this.oIFrame, sOpenUI5Url);
 		});
 
 		QUnit.test("getFocusDomRef", function (assert) {
@@ -186,15 +215,17 @@ sap.ui.define([
 		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe", function(assert) {
 			var oFocusDomRef = this.oIFrame.getFocusDomRef();
 			var sSapUI5Url = sProtocol + "://sapui5." + sServer + "/";
-
+			var oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oModel.setProperty("/flavor", "sapui5");
 
-			return checkUrl(assert, this.oIFrame, sSapUI5Url)
-				.then(function() {
-					Core.applyChanges();
-					assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
-					assert.strictEqual(oFocusDomRef.getAttribute("src"), sSapUI5Url, "iframe src has changed to the expected one");
-				}.bind(this));
+			checkUrl(assert, this.oIFrame, sSapUI5Url);
+			Core.applyChanges();
+			assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
+			assert.strictEqual(
+				oReplaceLocationSpy.lastCall.args[0],
+				sSapUI5Url,
+				"iframe src has changed to the expected one"
+			);
 		});
 	});
 
@@ -258,7 +289,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("URL should contain user information", function(assert) {
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url + "?domain=sap.com");
+			checkUrl(assert, this.oIFrame, sOpenUI5Url + "?domain=sap.com");
 		});
 	});
 
@@ -279,7 +310,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("URL should contain user information", function(assert) {
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url + "?domain=");
+			checkUrl(assert, this.oIFrame, sOpenUI5Url + "?domain=");
 		});
 	});
 
@@ -300,7 +331,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("URL should not contain user information", function(assert) {
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url + "?domain=");
+			checkUrl(assert, this.oIFrame, sOpenUI5Url + "?domain=");
 		});
 	});
 
@@ -347,7 +378,7 @@ sap.ui.define([
 			var iFrame = this.myView.byId("iframe2");
 			var sEncodedUrl = encodeURI(sOpenUI5Url + "?someParameter=" + sUserFullName);
 			iFrame.setUrl(sEncodedUrl);
-			return checkUrl(assert, iFrame, sEncodedUrl, "then it is not encoded again");
+			checkUrl(assert, iFrame, sEncodedUrl, "then it is not encoded again");
 		});
 		QUnit.test("Simple binding URL (with unexpected reference) should be reverted back to binding in settings", function(assert) {
 			var iFrame = this.myView.byId("iframe3");
@@ -366,7 +397,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("URL validation", function() {
+	QUnit.module("URL validation", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
 		QUnit.test("when providing a valid url", function(assert) {
 			assert.ok(IFrame.isValidUrl("https://example.com"));
 			assert.ok(IFrame.isValidUrl("someRelativeUrl.html"));
@@ -376,15 +411,56 @@ sap.ui.define([
 			assert.notOk(IFrame.isValidUrl("https://example."));
 		});
 
-		QUnit.test("when using a pseudo protocol", function(assert) {
-			assert.notOk(IFrame.isValidUrl("about:blank"));
+		QUnit.test("when embedding the javascript pseudo protocol", function(assert) {
 			assert.notOk(IFrame.isValidUrl("javascript:someJs")); // eslint-disable-line no-script-url
+		});
+
+		QUnit.test("when embedding a protocol that is blocked by the URLWhitelist", function(assert) {
+			assert.notOk(IFrame.isValidUrl("about:blank"));
 		});
 
 		QUnit.test("when allowing the javascript pseudo protocol", function(assert) {
 			URLWhitelist.add("javascript");
 			assert.notOk(IFrame.isValidUrl("javascript:someJs")); // eslint-disable-line no-script-url
 			URLWhitelist.clear();
+		});
+
+		QUnit.test("when allowing a non-critical protocol", function(assert) {
+			URLWhitelist.add("about");
+			assert.ok(IFrame.isValidUrl("about:blank"));
+			URLWhitelist.clear();
+		});
+
+		QUnit.test("when embedding http content from a https document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "https:",
+				href: "https://example.com"
+			});
+			assert.notOk(IFrame.isValidUrl("http://example.com"));
+		});
+
+		QUnit.test("when embedding https content from a https document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "https:",
+				href: "https://example.com"
+			});
+			assert.ok(IFrame.isValidUrl("https://example.com"));
+		});
+
+		QUnit.test("when embedding http content from a http document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "http:",
+				href: "http://example.com"
+			});
+			assert.ok(IFrame.isValidUrl("http://example.com"));
+		});
+
+		QUnit.test("when embedding https content from a http document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "http:",
+				href: "http://example.com"
+			});
+			assert.ok(IFrame.isValidUrl("https://example.com"));
 		});
 	});
 

@@ -38,7 +38,8 @@ sap.ui.define([
 		oRm.style("border", "none");
 
 		oRm.attr("sandbox", "allow-forms allow-popups allow-scripts allow-same-origin");
-		oRm.attr("src", oIFrame.getUrl());
+		// Always set the src to about:blank to avoid adding history entries when parameters are resolved
+		oRm.attr("src", "about:blank");
 		var sTitle = oIFrame.getTitle();
 		if (sTitle) {
 			oRm.attr("title", sTitle);
