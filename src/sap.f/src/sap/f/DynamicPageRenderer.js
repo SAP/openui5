@@ -58,7 +58,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		if (!bHeaderHasContent) {
 			oRm.class("sapFDynamicPageTitleOnly");
 		}
-		oRm.accessibilityState(oDynamicPage, oDynamicPage._formatLandmarkInfo(oLandmarkInfo, "Header"));
+		oRm.accessibilityState(oDynamicPage, oDynamicPage._getAccessibilityStateTitle());
 		oRm.attr("data-sap-ui-customfastnavgroup", true);
 
 		oRm.openEnd();
