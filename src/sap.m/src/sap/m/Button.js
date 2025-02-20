@@ -607,7 +607,7 @@ sap.ui.define([
 		// fire tap event
 		if (this.getEnabled() && this.getVisible()) {
 			// note: on mobile, the press event should be fired after the focus is on the button
-			if ((oEvent.originalEvent && oEvent.originalEvent.type === "touchend")) {
+			if (Device.system.desktop && (oEvent.originalEvent && oEvent.originalEvent.type === "touchend")) {
 					this.focus();
 			}
 

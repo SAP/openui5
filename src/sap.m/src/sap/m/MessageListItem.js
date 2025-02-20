@@ -18,6 +18,9 @@ sap.ui.define([
 		// shortcut for sap.m.ListType
 		var ListType = library.ListType;
 
+		// shortcut for sap.m.ReactiveAreaMode
+		var ReactiveAreaMode = library.ReactiveAreaMode;
+
 		/**
 		 * Constructor for a new MessageListItem.
 		 *
@@ -60,8 +63,8 @@ sap.ui.define([
 
 			if (!oLink && this.getActiveTitle()) {
 				oLink = new Link({
-					press: [this.fireActiveTitlePress, this]
-
+					press: [this.fireActiveTitlePress, this],
+					reactiveAreaMode: ReactiveAreaMode.Overlay
 				});
 				this.setLink(oLink);
 			}

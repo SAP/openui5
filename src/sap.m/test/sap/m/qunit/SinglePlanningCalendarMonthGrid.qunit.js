@@ -923,7 +923,7 @@ sap.ui.define([
 		// helper function to check cell selection in Shift selection tests
 		function assertCellSelected(assert, oGrid, iCellIndex, deselected) {
 			var oCell = oGrid.$().find('.sapMSPCMonthDay')[iCellIndex];
-			var oDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(parseInt(oCell.getAttribute("sap-ui-date"))));
+			var oDate = CalendarDate.fromUTCDate(UI5Date.getInstance(parseInt(oCell.getAttribute("sap-ui-date"))));
 			if (deselected) {
 				assert.notOk(oCell.classList.contains("sapMSPCMonthDaySelected"), "cell is not selected");
 				assert.notOk(oGrid._checkDateSelected(oDate), "date is not added to selectedDates aggregation");
@@ -936,7 +936,7 @@ sap.ui.define([
 		QUnit.test("selectedDates: select/deselect multiple days with Shift (single selection mode)", async function (assert){
 			// arrange
 			var oGrid = new SinglePlanningCalendarMonthGrid({
-					startDate: UI5Date.getInstance(2022,0,1),
+					startDate: UI5Date.getInstance(2022,1,1),
 					firstDayOfWeek: 1,
 					dateSelectionMode: SinglePlanningCalendarSelectionMode.SingleSelect
 				}),

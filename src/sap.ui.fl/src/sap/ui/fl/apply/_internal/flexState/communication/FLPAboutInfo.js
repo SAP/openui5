@@ -58,12 +58,12 @@ sap.ui.define([
 			await FlexState.initialize(mPropertyBag);
 			const sAdaptationId = FlexRuntimeInfoAPI.getContextBasedAdaptationId(mPropertyBag);
 			/**
-			 * In case the adaptationId is "DEFAULT", which is the case, if
+			 * In case the adaptationId is "DEFAULT" or undefined, which is the case, if
 			 * 	1. no context based adaptation has been created yet or
 			 * 	2. the end user contexts do not meet any of the contexts in the created context-based adaptations
 			 * we must not show any ui5.flex.adaptation information in the about dialog.
 			 */
-			if (sAdaptationId === "DEFAULT") {
+			if (sAdaptationId === "DEFAULT" || !sAdaptationId) {
 				return;
 			}
 			const sAdaptationTitle = FlexRuntimeInfoAPI.getContextBasedAdaptationTitle(mPropertyBag);

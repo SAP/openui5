@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/Dialog",
 	"sap/m/IllustratedMessageSize",
-	"sap/m/IllustratedMessageType",
 	"sap/m/library",
+	"sap/m/IllustratedMessageType",
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/table/columnmenu/Menu",
@@ -23,8 +23,8 @@ sap.ui.define([
 	ComboBox,
 	Dialog,
 	IllustratedMessageSize,
-	IllustratedMessageType,
 	library,
+	IllustratedMessageType,
 	ActionItem,
 	Item,
 	Menu,
@@ -203,6 +203,60 @@ sap.ui.define([
 			this.oButton.destroy();
 			this.oButton1.destroy();
 		}
+	});
+
+	QUnit.test("Icons, Labels and Tooltips", function(assert) {
+		const clock = sinon.useFakeTimers();
+		this.createMenu();
+		this.oColumnMenu.setShowTableSettingsButton(true);
+		this.oColumnMenu.openBy(this.oButton);
+
+		const oHeader = this.oColumnMenu._oPopover.getCustomHeader();
+		assert.equal(oHeader.getTitleControl().getText(), this.oColumnMenu._getResourceText("table.COLUMNMENU_TITLE"), "Dialog title is correct");
+		const oCloseButton = oHeader.getContent()[2];
+		assert.equal(oCloseButton.getIcon(), "sap-icon://decline", "Close button icon is correct");
+		assert.equal(oCloseButton.getTooltip(), this.oColumnMenu._getResourceText("table.COLUMNMENU_CLOSE"), "Close button tooltip is correct");
+
+		const oTableSettingsButton = this.oColumnMenu._oPopover.getFooter().getContent()[1];
+		assert.equal(oTableSettingsButton.getIcon(), "sap-icon://action-settings", "Table settings button icon is correct");
+		assert.equal(oTableSettingsButton.getText(), "", "Table settings button is icon-only button");
+		assert.equal(oTableSettingsButton.getTooltip(), this.oColumnMenu._getResourceText("table.COLUMNMENU_TABLE_SETTINGS"),
+					"Table settings button tooltip is correct");
+
+		const oIllustratedMessage = this.oColumnMenu._oIllustratedMessage;
+		assert.equal(oIllustratedMessage.getTitle(), this.oColumnMenu._getResourceText("table.COLUMNMENU_EMPTY"),
+					"Illustrated message title is correct");
+		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoColumnsSet,
+					"Illustrated message has correct illustration type");
+		this.oColumnMenu.close();
+		clock.tick(500);
+
+		this.oColumnMenu.addItem(new ActionItem({label: "Action Item"}));
+		this.oColumnMenu.openBy(this.oButton);
+		let sActionsListTitle = this.oColumnMenu._oItemsContainer._oNavigationList.getHeaderToolbar().getTitleControl().getText();
+		assert.equal(sActionsListTitle, this.oColumnMenu._getResourceText("table.COLUMNMENU_LIST_ITEMS_ONLY_TITLE"), "Items list title is correct");
+		this.oColumnMenu.close();
+		clock.tick(500);
+
+		this.oColumnMenu.addQuickAction(new QuickAction({label: "Quick Generic Action", content: new Button({text: "Button"})}));
+		this.oColumnMenu.openBy(this.oButton);
+		let sGenericListTitle = this.oColumnMenu._oQuickGenericList.getHeaderToolbar().getTitleControl().getText();
+		assert.equal(sGenericListTitle, this.oColumnMenu._getResourceText("table.COLUMNMENU_QUICK_GENERIC_ONLY_TITLE"),
+					"Quick actions list title is correct");
+		sActionsListTitle = this.oColumnMenu._oItemsContainer._oNavigationList.getHeaderToolbar().getTitleControl().getText();
+		assert.equal(sActionsListTitle, this.oColumnMenu._getResourceText("table.COLUMNMENU_LIST_ITEMS_TITLE"), "Items list title is correct");
+		this.oColumnMenu.close();
+		clock.tick(500);
+		clock.restore();
+
+		this.oColumnMenu.addQuickAction(new QuickAction({label: "Quick Sort", content: new Button({text: "Button"}), category: "Sort"}));
+		this.oColumnMenu.openBy(this.oButton);
+		const sSortListTitle = this.oColumnMenu._oQuickSortList.getHeaderToolbar().getTitleControl().getText();
+		assert.equal(sSortListTitle, this.oColumnMenu._getResourceText("table.COLUMNMENU_QUICK_SORT_TITLE"), "Quick sort list title is correct");
+		sGenericListTitle = this.oColumnMenu._oQuickGenericList.getHeaderToolbar().getTitleControl().getText();
+		assert.equal(sGenericListTitle, this.oColumnMenu._getResourceText("table.COLUMNMENU_QUICK_GENERIC_TITLE"),
+					"Quick actions list title is correct");
+
 	});
 
 	QUnit.test("_getAllEffectiveQuickActions", function(assert) {

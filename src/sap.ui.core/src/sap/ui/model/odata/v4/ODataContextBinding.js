@@ -1285,9 +1285,8 @@ sap.ui.define([
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor} and
-	 *   {@link #getGroupId}. To use the update group ID, see {@link #getUpdateGroupId}, it needs to
-	 *   be specified explicitly.
+	 *   used, see {@link #constructor} and {@link #getGroupId}. To use the update group ID, see
+	 *   {@link #getUpdateGroupId}, it needs to be specified explicitly.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct', '$single', or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}. If
 	 *   '$single' is used, the request will be sent as fast as '$direct', but wrapped in a batch
@@ -1419,32 +1418,6 @@ sap.ui.define([
 			_Helper.publicClone(this.oOperation.mParameters, true), bIgnoreETag,
 				fnOnStrictHandlingFailed, bReplaceWithRVC);
 	};
-
-	/**
-	 * Invokes the OData operation that corresponds to this operation binding.
-	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for the request.
-	 * @param {boolean} [bIgnoreETag]
-	 *   Whether the entity's ETag should be actively ignored (If-Match:*).
-	 * @param {function(sap.ui.core.message.Message[]):Promise<boolean>} [fnOnStrictHandlingFailed]
-	 *   If this callback is given for an action, the preference "handling=strict" is applied.
-	 * @param {boolean} [bReplaceWithRVC]
-	 *   Whether this operation binding's parent context, which must belong to a list binding, is
-	 *   replaced with the operation's return value context and that list context is returned
-	 *   instead.
-	 * @returns {Promise<sap.ui.model.odata.v4.Context|undefined>}
-	 *   A promise that is resolved without data or with a return value context when the operation
-	 *   call succeeded, or rejected with an <code>Error</code> instance <code>oError</code> in case
-	 *   of failure.
-	 * @throws {Error} If {@link #invoke} fails
-	 *
-	 * @deprecated As of version 1.123.0, use {@link #invoke} instead
-	 * @function
-	 * @public
-	 * @since 1.37.0
-	 */
-	ODataContextBinding.prototype.execute = ODataContextBinding.prototype.invoke;
 
 	/**
 	 * Determines whether an operation's return value is like its binding parameter in the following

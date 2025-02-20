@@ -15,7 +15,7 @@
 @_sap_m_InputBase_IconMinWidth: 2.25rem;
 @_sap_m_InputBase_FocusOffset_Busy: 3px;
 
-.sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperError):not(.sapMInputBaseContentWrapperWarning):not(.sapMInputBaseContentWrapperInformation):not(.sapMInputBaseDisabledWrapper) {
+.sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperError):not(.sapMInputBaseContentWrapperWarning):not(.sapMInputBaseContentWrapperInformation):not(.sapMInputBaseDisabledWrapper):not(.sapMInputBaseReadonlyWrapper) {
 	border: var(--sapContent_FocusWidth) var(--sapField_BorderStyle) var(--sapField_BorderColor);
 }
 
@@ -99,6 +99,10 @@
 .sapMILI-CTX .sapMInputBaseDisabled .sapMInputBaseInner,
 .sapMILI-CTX .sapMInputBaseReadonlyWrapper .sapMInputBaseInner {
 	text-align: right;
+}
+
+.sapMInputBaseReadonly:not(.sapMInputBaseDisabled) .sapMInputBaseContentWrapper {
+	border: var(--sapElement_BorderWidth) var(--sapField_BorderStyle) var(--sapField_BorderColor);
 }
 
 .sapMLIBActive {
