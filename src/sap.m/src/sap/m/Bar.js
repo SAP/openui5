@@ -24,6 +24,8 @@ sap.ui.define([
 	// shortcut for sap.m.TitleAlignment
 	var TitleAlignment = library.TitleAlignment;
 
+	var MIN_INTERACTIVE_CONTROLS = 2;
+
 	/**
 	 * Constructor for a new <code>Bar</code>.
 	 *
@@ -124,6 +126,8 @@ sap.ui.define([
 
 				/**
 				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 *
+				 * <b>Note:</b>The aria-labelledby attribute will not be rendered when there are less than two interactive elements inside the Bar (for example, one Button).
 				 */
 				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 			},
@@ -598,6 +602,15 @@ sap.ui.define([
 	 */
 	Bar.prototype._getRootAccessibilityRole = BarInAnyContentEnabler.prototype._getRootAccessibilityRole;
 
+	Bar.prototype._getAccessibilityRole = function () {
+		var sRootAccessibilityRole = this._getRootAccessibilityRole(),
+			sRole = sRootAccessibilityRole;
+		if (this._getBarInteractiveControlsCount() < MIN_INTERACTIVE_CONTROLS && sRootAccessibilityRole === "toolbar") {
+			sRole = "";
+		}
+		return sRole;
+	};
+
 	/**
 	 * Sets accessibility aria-level attribute of the Root HTML element.
 	 *
@@ -618,6 +631,32 @@ sap.ui.define([
 	 * @function
 	 */
 	Bar.prototype._getRootAriaLevel = BarInAnyContentEnabler.prototype._getRootAriaLevel;
+
+	/**
+	 *
+	 * @returns {number} Bar interactive Controls count
+	 * @private
+	 */
+	Bar.prototype._getBarInteractiveControlsCount = function () {
+		var count = 0;
+		count += this.getContentLeft().filter(this._isInteractiveControl).length;
+		count += this.getContentRight().filter(this._isInteractiveControl).length;
+		count += this.getContentMiddle().filter(this._isInteractiveControl).length;
+
+		return count;
+	};
+
+	/**
+	 *
+	 * @param {object} oControl control to be checked
+	 * @returns {boolean} returns weather the given control is interactive
+	 * @private
+	 */
+	Bar.prototype._isInteractiveControl = function (oControl) {
+		return oControl.getVisible()
+			&& oControl.isA("sap.m.IToolbarInteractiveControl")
+			&& typeof (oControl._getToolbarInteractive) === "function" && oControl._getToolbarInteractive();
+	};
 
 	return Bar;
 

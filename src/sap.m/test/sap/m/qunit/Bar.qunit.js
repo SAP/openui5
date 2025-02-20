@@ -965,24 +965,37 @@ sap.ui.define([
 	QUnit.module("Accessibility",{
 		beforeEach: function() {
 			this.Bar = new Bar({
+				ariaLabelledBy: ["label1"],
 				contentMiddle: [ new Label("myLabel", {text: "my Bar"})]
 			});
 			this.Bar.placeAt("qunit-fixture");
+			this.InterctiveControlsBar = new Bar({
+				ariaLabelledBy: ["label2"],
+				contentMiddle: [ new Button("myButton", {text: "my Button"})],
+				contentLeft: [ new Button("myButton2", {text: "my Button2"})]
+			});
+			this.InterctiveControlsBar.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.Bar.destroy();
 			this.Bar = null;
-
+			this.InterctiveControlsBar.destroy();
+			this.InterctiveControlsBar = null;
+			oCore.applyChanges();
 		}
 	});
 
 	QUnit.test("Accessibility role should be set correctly", function(assert) {
-		assert.strictEqual(this.Bar.$().attr("role"), "toolbar", "Default role is set correctly");
+		assert.notOk(this.Bar.$().attr("role"), "Default role shouldn't be set if there are no interactive controls in the Bar content");
+		assert.notOk(this.Bar.$().attr("aria-labelledby"), "The aria-labelledby attribute isn't rendered for a Bar without a role attribute");
+		assert.strictEqual(this.InterctiveControlsBar.$().attr("role"), "toolbar", "Default role is set correctly for Bar with 2 or more interactive controls");
+		assert.strictEqual(this.InterctiveControlsBar.$().attr("aria-labelledby"), "label2", "The aria-labelledby attribute is rendered for Bar with a role attribute");
 	});
 
 	QUnit.test("aria-level should not be set", function(assert) {
 		assert.strictEqual(this.Bar.$().attr("aria-level"), undefined, "aria-level is not set");
+		assert.strictEqual(this.InterctiveControlsBar.$().attr("aria-level"), undefined, "aria-level is not set");
 	});
 
 	QUnit.module("Title Alignment");

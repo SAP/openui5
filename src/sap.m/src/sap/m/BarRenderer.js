@@ -43,8 +43,9 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 		oRM.class(this.getContext(oControl));
 
 		oRM.accessibilityState(oControl, {
-			"role": oControl._getRootAccessibilityRole(),
-			"level":  oControl._getRootAriaLevel()
+			"role": oControl._getAccessibilityRole(),
+			"level":  oControl._getRootAriaLevel(),
+			"labelledby": {value: oControl._getAccessibilityRole() ? oControl.getAriaLabelledBy() : "", append: false}
 		});
 
 		/**
