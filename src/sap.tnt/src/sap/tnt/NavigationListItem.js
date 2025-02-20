@@ -493,6 +493,14 @@ sap.ui.define([
 			oRM.class("sapTntNLIAction");
 		}
 
+		if (!bSelectable) {
+			oRM.class("sapTntNLIUnselectable");
+		}
+
+		if (this._isInsidePopover()) {
+			oRM.class("sapTntNLIInPopover");
+		}
+
 		if (!bListExpanded) {
 			oLinkAriaProps.role = bSelectable ? "menuitemradio" : "menuitem";
 
@@ -583,6 +591,10 @@ sap.ui.define([
 
 		if (bDisabled) {
 			oRM.class("sapTntNLIDisabled");
+		}
+
+		if (this._isInsidePopover()) {
+			oRM.class("sapTntNLIInPopover");
 		}
 
 		oRM.openEnd();
@@ -782,7 +794,9 @@ sap.ui.define([
 			return aDomRefs;
 		}
 
-		aDomRefs.push(this.getDomRef("a"));
+		if (!this._isInsidePopover() || this.getSelectable() && this.getLevel() === 0) {
+			aDomRefs.push(this.getDomRef("a"));
+		}
 
 		if (this._isListExpanded() && this.getExpanded()) {
 			aDomRefs.push(...this.getDomRef().querySelectorAll(".sapTntNLISecondLevel:not(.sapTntNLIDisabled) a"));
