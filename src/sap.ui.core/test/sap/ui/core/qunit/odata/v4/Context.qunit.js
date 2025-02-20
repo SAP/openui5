@@ -2401,17 +2401,20 @@ sap.ui.define([
 [null, Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23)].forEach((oParent) => {
 	[undefined, null, Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('24')", 24)]
 		.forEach((oSibling) => {
-	QUnit.test(`move: parent=${oParent}, nextSibling=${oSibling}`, function (assert) {
+			[false, true].forEach((bCopy) => {
+				const sTitle = `move: copy=${bCopy}, parent=${oParent}, nextSibling=${oSibling}`;
+
+	QUnit.test(sTitle, function (assert) {
 		const oBinding = {
 			move : mustBeMocked
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
-		this.mock(oContext).expects("isAncestorOf")
+		this.mock(oContext).expects("isAncestorOf").exactly(bCopy ? 0 : 1)
 			.withExactArgs(sinon.match.same(oParent)).returns(false);
 		let bResolved = false;
 		this.mock(oBinding).expects("move")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent),
-				sinon.match.same(oSibling))
+				sinon.match.same(oSibling), bCopy)
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bResolved = true;
@@ -2420,13 +2423,14 @@ sap.ui.define([
 			}));
 
 		// code under test
-		const oPromise = oContext.move({nextSibling : oSibling, parent : oParent});
+		const oPromise = oContext.move({copy : bCopy, nextSibling : oSibling, parent : oParent});
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise.then(function () {
 			assert.ok(bResolved, "not too soon");
 		});
 	});
+		});
 	});
 });
 
@@ -2453,7 +2457,8 @@ sap.ui.define([
 		this.mock(oContext).expects("isAncestorOf").withExactArgs(sinon.match.same(oParent))
 			.returns(false);
 		this.mock(oBinding).expects("move")
-			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent), undefined)
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent), undefined,
+				undefined)
 			.returns(SyncPromise.reject("~error~"));
 
 		// code under test

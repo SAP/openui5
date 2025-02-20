@@ -11570,7 +11570,7 @@ sap.ui.define([
 		};
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~",
-				bMakeRoot ? null : "~parent~", undefined, undefined, undefined)
+				bMakeRoot ? null : "~parent~", undefined, undefined, undefined, "~copy~")
 			.returns({promise : new SyncPromise((resolve) => {
 				setTimeout(() => {
 					if (oParentContext) {
@@ -11606,7 +11606,8 @@ sap.ui.define([
 			}), refresh : false});
 
 		// code under test
-		const oSyncPromise = oBinding.move(oChildContext, bMakeRoot ? null : oParentContext);
+		const oSyncPromise = oBinding.move(oChildContext, bMakeRoot ? null : oParentContext,
+			/*oSiblingContext*/undefined, "~copy~");
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 
@@ -11682,7 +11683,7 @@ sap.ui.define([
 		this.mock(oCache).expects("move")
 			.withExactArgs("~oGroupLock~", "~child~", bMakeRoot ? null : "~parent~", sSiblingPath,
 				bHasSibling ? "~childNonCanonical~" : undefined,
-				oSiblingContext ? bUpdateSiblingIndex : undefined)
+				oSiblingContext ? bUpdateSiblingIndex : undefined, "~copy~")
 			.returns({promise : "A", refresh : true});
 		this.mock(oBinding).expects("requestSideEffects").withExactArgs("~group~", [""])
 			.returns("B");
@@ -11693,7 +11694,7 @@ sap.ui.define([
 
 		// code under test
 		const oSyncPromise = oBinding.move(oChildContext, bMakeRoot ? null : oParentContext,
-			oSiblingContext);
+			oSiblingContext, "~copy~");
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.notOk(fnGetIndices.called);
@@ -11734,12 +11735,14 @@ sap.ui.define([
 		};
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move")
-			.withExactArgs("~oGroupLock~", "~child~", "~parent~", undefined, undefined, undefined)
+			.withExactArgs("~oGroupLock~", "~child~", "~parent~", undefined, undefined, undefined,
+				"~copy~")
 			.returns({promise : SyncPromise.reject("~error~"), refresh : false});
 		this.mock(oBinding).expects("expand").never();
 
 		// code under test
-		const oSyncPromise = oBinding.move(oChildContext, oParentContext);
+		const oSyncPromise = oBinding.move(oChildContext, oParentContext,
+			/*oSiblingContext*/undefined, "~copy~");
 
 		assert.strictEqual(oSyncPromise.isRejected(), true);
 		assert.strictEqual(oSyncPromise.getResult(), "~error~");
@@ -11768,7 +11771,8 @@ sap.ui.define([
 		};
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move")
-			.withExactArgs("~oGroupLock~", "~child~", null, undefined, undefined, undefined)
+			.withExactArgs("~oGroupLock~", "~child~", null, undefined, undefined, undefined,
+				"~copy~")
 			.returns({promise : SyncPromise.resolve([1, 43, "~iCollapseCount~"]), refresh : false});
 		this.mock(oBinding).expects("requestSideEffects").never();
 		this.mock(oBinding).expects("insertGap").never();
@@ -11785,7 +11789,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("_fireChange").never();
 
 		// code under test
-		const oSyncPromise = oBinding.move(oChildContext, null);
+		const oSyncPromise = oBinding.move(oChildContext, null, /*oSiblingContext*/undefined,
+			"~copy~");
 
 		assert.strictEqual(oSyncPromise.isRejected(), true);
 		assert.strictEqual(oSyncPromise.getResult(), "~error~");

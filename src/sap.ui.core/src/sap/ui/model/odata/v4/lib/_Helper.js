@@ -1951,8 +1951,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Inserts the given element into the given array at the given index, even it is beyond the
-		 * array's current length.
+		 * Inserts the given element into the given array at the given index, even if it is beyond
+		 * the array's current length.
 		 *
 		 * @param {any[]} aElements - Some array
 		 * @param {number} iIndex - Some index
