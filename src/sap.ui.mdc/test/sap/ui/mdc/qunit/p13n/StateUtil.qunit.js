@@ -1020,23 +1020,22 @@ sap.ui.define([
 					aggregations: {
 						type: {
 							ResponsiveTable: {
-								showDetails: bShowDetails || null
+								showDetails: bShowDetails
 							}
 						}
 					}
 				}
 			};
 
-			const sChangeType = bShowDetails ? "setShowDetails" : "resetShowDetails";
-
 			const aChanges = await StateUtil.applyExternalState(this.oTable, oState);
 			assert.equal(aChanges.length, 1, "Only one change was created");
-			assert.equal(aChanges[0].getChangeType(), sChangeType, `Only ${sChangeType} change should be created`);
+			assert.equal(aChanges[0].getChangeType(), "setShowDetails", `setShowDetails change should be created`);
+			assert.equal(aChanges[0].getContent().value, bShowDetails, `showDetails should be ${bShowDetails}`);
 
 			const oRetrievedState = await StateUtil.retrieveExternalState(this.oTable);
 			assert.ok(oRetrievedState.supplementaryConfig, "supplementaryConfig is available");
-			assert.equal(!!oRetrievedState.supplementaryConfig.aggregations?.type, bShowDetails, `type is available - expected ${bShowDetails}`);
-			assert.equal(!!oRetrievedState.supplementaryConfig.aggregations?.type?.ResponsiveTable, bShowDetails, `ResponsiveTable is available - expected ${bShowDetails}`);
+			assert.ok(!!oRetrievedState.supplementaryConfig.aggregations?.type, `type is available`);
+			assert.ok(!!oRetrievedState.supplementaryConfig.aggregations?.type?.ResponsiveTable, `ResponsiveTable is available`);
 			assert.equal(!!oRetrievedState.supplementaryConfig.aggregations?.type?.ResponsiveTable?.showDetails, bShowDetails, `showDetails is available - expected ${bShowDetails}`);
 		};
 
