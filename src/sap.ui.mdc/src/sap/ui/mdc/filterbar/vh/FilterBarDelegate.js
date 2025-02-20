@@ -17,8 +17,18 @@ sap.ui.define([
 	const ValueHelpFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 
 	ValueHelpFilterBarDelegate.fetchProperties = function(oFilterBar) {
+		const oFilterableListContent = oFilterBar.getParent();
+		let sSearchPath = "$search";
+
+		/**
+		 *  @deprecated since 1.120.2
+		 */
+		if (oFilterableListContent && !oFilterableListContent.isPropertyInitial("filterFields")) {
+			sSearchPath = oFilterableListContent.getFilterFields();
+		}
+
 		return Promise.resolve([{
-			name: "$search",
+			name: sSearchPath,
 			label: mdcMessageBundle.getText("filterbar.SEARCH"),
 			dataType: "sap.ui.model.type.String"
 		}]);
