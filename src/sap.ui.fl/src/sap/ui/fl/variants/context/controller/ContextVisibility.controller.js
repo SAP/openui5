@@ -136,6 +136,7 @@ sap.ui.define([
 		 */
 		_addContexts(oDialog) {
 			oDialog.clearSelection();
+			oDialog.destroyItems();
 			this.oCurrentSelection = this.oSelectedContextsModel.getProperty("/selected") || [];
 			return getData.call(this, {}).then(function() {
 				return oDialog.open();
