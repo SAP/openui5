@@ -81,7 +81,7 @@ sap.ui.define([
 		};
 		const fnRetrieveDistinctSemanticObjects = async function() {
 			if (!oPromise) {
-				const { promise, resolve } = Promise.withResolver();
+				const { promise, resolve } = Promise.withResolvers();
 				oPromise = promise;
 				const oCrossApplicationNavigation = await Factory.getServiceAsync("CrossApplicationNavigation");
 				if (!oCrossApplicationNavigation) {
