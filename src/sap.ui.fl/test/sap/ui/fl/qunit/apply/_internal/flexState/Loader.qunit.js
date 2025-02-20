@@ -379,7 +379,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and static preload when loading flex data, get name/reference from mComponent", function(assert) {
+		QUnit.test("and static preload when loading flex data, get name/reference from mComponent", async function(assert) {
 			// simulate a component-preload
 			sap.ui.require.preload({
 				"test/app/changes/changes-bundle.json": '[{"otherDummy":true}]'
@@ -391,11 +391,10 @@ sap.ui.define([
 				componentData: oComponentData
 			};
 
-			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
-				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
-				var oChange = oResult.changes.changes[0];
-				assert.equal(oChange.otherDummy, true, "the change dummy data is correctly loaded");
-			});
+			const oResult = await Loader.loadFlexData(mPropertyBag);
+			assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
+			const oChange = oResult.changes.changes[0];
+			assert.equal(oChange.otherDummy, true, "the change dummy data is correctly loaded");
 		});
 	});
 
@@ -405,7 +404,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When load variant author name is triggered and feature is not available", function(assert) {
+		QUnit.test("When load variant author name is triggered and feature is not available", async function(assert) {
 			const oBackEndResult = {
 				compVariants: {
 					comp_id1: "comp_name1"
@@ -414,20 +413,28 @@ sap.ui.define([
 					id1: "name1"
 				}
 			};
-			sandbox.stub(Settings, "getInstance").resolves({
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVariantAuthorNameAvailable() {
 					return false;
 				}
 			});
-			const oStubloadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors").resolves(oBackEndResult);
+			const oStubLoadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors").resolves(oBackEndResult);
 
-			return Loader.loadVariantsAuthors("test.app").then(function(oResult) {
-				assert.deepEqual(oResult, {}, "then empty result is returned");
-				assert.notOk(oStubloadVariantsAuthors.calledOnce, "then correct function of storage is not called");
-			});
+			const oResult = await Loader.loadVariantsAuthors("test.app");
+			assert.deepEqual(oResult, {}, "then empty result is returned");
+			assert.equal(oStubLoadVariantsAuthors.callCount, 0, "then correct function of storage is not called");
 		});
 
-		QUnit.test("When load variant author name is triggered and feature is available", function(assert) {
+		QUnit.test("When load variant author name is triggered and the settings are not loaded (i.e. '<NO CACHE>' mentioned in the asyncHints)", async function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef");
+			const oStubLoadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors");
+
+			const oResult = await Loader.loadVariantsAuthors("test.app");
+			assert.deepEqual(oResult, {}, "then empty result is returned");
+			assert.equal(oStubLoadVariantsAuthors.callCount, 0, "then correct function of storage is not called");
+		});
+
+		QUnit.test("When load variant author name is triggered and feature is available", async function(assert) {
 			const oBackEndResult = {
 				compVariants: {
 					comp_id1: "comp_name1"
@@ -436,18 +443,17 @@ sap.ui.define([
 					id1: "name1"
 				}
 			};
-			sandbox.stub(Settings, "getInstance").resolves({
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isVariantAuthorNameAvailable() {
 					return true;
 				}
 			});
-			const oStubloadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors").resolves(oBackEndResult);
+			const oStubLoadVariantsAuthors = sandbox.stub(ApplyStorage, "loadVariantsAuthors").resolves(oBackEndResult);
 
-			return Loader.loadVariantsAuthors("test.app").then(function(oResult) {
-				assert.deepEqual(oResult, oBackEndResult, "then result is get from LRep back end");
-				assert.ok(oStubloadVariantsAuthors.calledOnce, "then correct function of storage is called");
-				assert.equal(oStubloadVariantsAuthors.getCall(0).args[0], "test.app", "with correct reference");
-			});
+			const oResult = await Loader.loadVariantsAuthors("test.app");
+			assert.deepEqual(oResult, oBackEndResult, "then result is get from LRep back end");
+			assert.equal(oStubLoadVariantsAuthors.callCount, 1, "then correct function of storage is called");
+			assert.equal(oStubLoadVariantsAuthors.getCall(0).args[0], "test.app", "with correct reference");
 		});
 	});
 

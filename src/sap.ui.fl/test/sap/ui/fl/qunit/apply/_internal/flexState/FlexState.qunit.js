@@ -90,19 +90,18 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When the State is initialized", function(assert) {
-			return FlexState.initialize({
+		QUnit.test("When the State is initialized", async function(assert) {
+			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
-			})
-			.then(function() {
-				assert.ok(FlexState.getFlexObjectsDataSelector(), "then the data selector is created");
-				assert.strictEqual(
-					this.oCheckUpdateSelectorStub.callCount,
-					1,
-					"then the selector is updated during the state initialization"
-				);
-			}.bind(this));
+			});
+
+			assert.ok(FlexState.getFlexObjectsDataSelector(), "then the data selector is created");
+			assert.equal(
+				this.oCheckUpdateSelectorStub.callCount,
+				1,
+				"then the selector is updated during the state initialization"
+			);
 		});
 
 		QUnit.test("when waiting for the state initialization", async function(assert) {
