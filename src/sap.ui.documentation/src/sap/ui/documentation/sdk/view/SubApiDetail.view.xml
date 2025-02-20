@@ -209,9 +209,14 @@
 													<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : '.formatter.formatVisibility'}"
 															state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 													<m:ObjectStatus visible="{=${since} !== undefined}" text="Since: {since}" />
-													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
-														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
-													</m:FormattedText>
+													<m:HBox visible="{=${borrowedFrom} !== undefined}">
+														<m:items>
+															<m:Text text="Borrowed from: " renderWhitespace="true"></m:Text>
+															<m:Link
+																text="{borrowedFrom}" style='vertical-align:initial' target='_self' href='api/{borrowedFrom}'>
+															</m:Link>
+														</m:items>
+													</m:HBox>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -318,9 +323,14 @@
 														enableFormattedText="true"
 														class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
-													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
-														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
-													</m:FormattedText>
+													<m:HBox visible="{=${borrowedFrom} !== undefined}">
+														<m:items>
+															<m:Text text="Borrowed from: " renderWhitespace="true"></m:Text>
+															<m:Link
+																text="{borrowedFrom}" style='vertical-align:initial' target='_self' href='api/{borrowedFrom}'>
+															</m:Link>
+														</m:items>
+													</m:HBox>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -387,9 +397,14 @@
 														showCloseButton="false"
 														class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 													</m:MessageStrip>
-													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
-														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
-													</m:FormattedText>
+													<m:HBox visible="{=${borrowedFrom} !== undefined}">
+														<m:items>
+															<m:Text text="Borrowed from: " renderWhitespace="true"></m:Text>
+															<m:Link
+																text="{borrowedFrom}" style='vertical-align:initial' target='_self' href='api/{borrowedFrom}'>
+															</m:Link>
+														</m:items>
+													</m:HBox>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
@@ -437,9 +452,14 @@
 															enableFormattedText="true"
 															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 													</m:MessageStrip>
-													<m:FormattedText visible="{=${borrowedFrom} !== undefined}"
-														htmlText="Borrowed from: &lt;a style='vertical-align:initial' target='_self' href='api/{borrowedFrom}' &gt;{borrowedFrom}&lt;/a&gt;">
-													</m:FormattedText>
+													<m:HBox visible="{=${borrowedFrom} !== undefined}">
+														<m:items>
+															<m:Text text="Borrowed from: " renderWhitespace="true"></m:Text>
+															<m:Link
+																text="{borrowedFrom}" style='vertical-align:initial' target='_self' href='api/{borrowedFrom}'>
+															</m:Link>
+														</m:items>
+													</m:HBox>
 												</layout:VerticalLayout>
 											</custom:Row>
 										</custom:LightTable>
