@@ -118,6 +118,7 @@ function(
 		});
 
 		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
+		this.oDynamicPage.getTitle().destroyHeading();
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		assert.strictEqual(this.oDynamicPage.$().attr("role"), "region", "Root role is set correctly.");
@@ -3565,10 +3566,12 @@ function(
 		// Arrange
 		var $oDynamicPage = this.oDynamicPage.$(),
 		    sExpectedRoleDescription = Library.getResourceBundleFor("sap.f")
-			    .getText(DynamicPage.ARIA_ROLE_DESCRIPTION);
+			    .getText(DynamicPage.ARIA_ROLE_DESCRIPTION),
+			sExpectedAriaLabel = this.oDynamicPage.getTitle().getHeading().getText();
 
 		// Assert
 		assert.strictEqual($oDynamicPage.attr('aria-roledescription'),sExpectedRoleDescription, "aria-roledescription is set");
+		assert.strictEqual(this.oDynamicPage.$("header").attr("aria-label"), sExpectedAriaLabel, "Header label is set according to Title in 'heading' aggregation");
 	});
 
 	QUnit.test("_setAriaRoleDescription/_getAriaRoleDescription", function(assert) {

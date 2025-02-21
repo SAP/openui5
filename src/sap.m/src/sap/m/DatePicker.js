@@ -1286,6 +1286,14 @@ sap.ui.define([
 		}
 	};
 
+	DatePicker.prototype._getCalendarWeekNumbering = function () {
+		if (this.isPropertyInitial("calendarWeekNumbering")) {
+			return;
+		}
+
+		return this.getCalendarWeekNumbering();
+	};
+
 	// to be overwritten by DateTimePicker
 	DatePicker.prototype._openPopup = function(oDomRef){
 		if (!this._oPopup) {
@@ -1345,7 +1353,6 @@ sap.ui.define([
 				minDate: this.getMinDate(),
 				maxDate: this.getMaxDate(),
 				legend: this.getLegend(),
-				calendarWeekNumbering: this.getCalendarWeekNumbering(),
 				startDateChange: function () {
 						this.fireNavigate({
 							dateRange: this._getVisibleDatesRange(this._getCalendar())
@@ -1354,6 +1361,7 @@ sap.ui.define([
 				});
 
 			this._oCalendar.setShowCurrentDateButton(this.getShowCurrentDateButton());
+			!this.isPropertyInitial("calendarWeekNumbering") && this._oCalendar.setCalendarWeekNumbering(this._getCalendarWeekNumbering());
 			this._oDateRange = new DateRange();
 			this._getCalendar().addSelectedDate(this._oDateRange);
 			this._getCalendar()._setSpecialDatesControlOrigin(this);

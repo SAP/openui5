@@ -2171,8 +2171,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the count of active entries in the list if the list length is final, otherwise
-	 * <code>undefined</code>. Contrary to {#getLength}, this method does not consider inactive
-	 * entries which are created via {#create}.
+	 * <code>undefined</code>. Contrary to {@link #getLength}, this method does not consider inactive
+	 * entries which are created via {@link #create}.
 	 *
 	 * @returns {number|undefined} The count of entries
 	 *

@@ -521,7 +521,8 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._createMonth = function(sId){
-		var oMonth = new Month(sId, {width: "100%", calendarWeekNumbering: this.getCalendarWeekNumbering()});
+		var oMonth = new Month(sId, {width: "100%"});
+		this._setMonthCalendarWeekNumbering(oMonth);
 		oMonth._bCalendar = true;
 		oMonth.attachEvent("datehovered", this._handleDateHovered, this);
 		oMonth.attachEvent("weekNumberSelect", this._handleWeekNumberSelect, this);
@@ -682,6 +683,14 @@ sap.ui.define([
 	 */
 	Calendar.prototype._setSpecialDatesControlOrigin = function (oControl) {
 		this._oSpecialDatesControlOrigin = oControl;
+	};
+
+	Calendar.prototype._getCalendarWeekNumbering = function () {
+		if (this.isPropertyInitial("calendarWeekNumbering")) {
+			return;
+		}
+
+		return this.getCalendarWeekNumbering();
 	};
 
 	/**
@@ -845,10 +854,18 @@ sap.ui.define([
 		this.setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
 
 		for (var i = 0; i < aMonths.length; i++) {
-			aMonths[i].setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
+			this._setMonthCalendarWeekNumbering(aMonths[i]);
 		}
 
 		return this;
+	};
+
+	Calendar.prototype._setMonthCalendarWeekNumbering = function(oMonth) {
+		if (this.isPropertyInitial("calendarWeekNumbering")) {
+			return this;
+		}
+
+		return oMonth.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
 	};
 
 	Calendar.prototype.setMonths = function(iMonths) {
@@ -870,8 +887,8 @@ sap.ui.define([
 				oMonth.attachEvent("_bindMousemove", _handleBindMousemove, this);
 				oMonth.attachEvent("_unbindMousemove", _handleUnbindMousemove, this);
 				oMonth._bNoThemeChange = true;
-				oMonth.setCalendarWeekNumbering(this.getCalendarWeekNumbering());
 				oMonth.setSecondaryCalendarType(this._getSecondaryCalendarType());
+				this._setMonthCalendarWeekNumbering(oMonth);
 				this.addAggregation("month", oMonth);
 			}
 			this._toggleTwoMonthsInColumnsCSS();

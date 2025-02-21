@@ -106,20 +106,13 @@ sap.ui.define([
 			return true;
 		};
 
-		ObjectPageDynamicHeaderTitle.KNOWN_HEADING_CONTROL_CLASS_NAMES = ["sap.m.Title", "sap.m.Text", "sap.m.FormattedText", "sap.m.Label"];
-
 		/**
 		 * Returns the text that represents the title of the page.
 		 * Since the structure is not guaranteed, this is not universal for this header, and only covers the most common usage.
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 */
 		ObjectPageDynamicHeaderTitle.prototype.getTitleText = function () {
-			var oHeading = this.getHeading(),
-				sClassName = oHeading && oHeading.getMetadata().getName();
-
-			if (ObjectPageDynamicHeaderTitle.KNOWN_HEADING_CONTROL_CLASS_NAMES.indexOf(sClassName) > -1) {
-				return oHeading.getText();
-			}
+			return this._getTitleText();
 		};
 
 		/**
