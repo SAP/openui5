@@ -96,14 +96,6 @@ sap.ui.define(function() {
 					language : "en-US"
 				}
 			},
-			NumberFormatCurrenciesTrailing : {
-				// not in 1RingModels.qunit because test has to be refactored
-				title : "sap.ui.core.format.NumberFormatCurrenciesTrailing",
-				module : ["test-resources/sap/ui/core/qunit/types/NumberFormatCurrenciesTrailing.qunit"],
-				ui5 : {
-					language : "en-US"
-				}
-			},
 			// *************************************************************************
 			// Tests considering model base types
 			// *************************************************************************
