@@ -11,9 +11,11 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel"
 ],
-function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
+function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView, Controller, JSONModel) {
 	"use strict";
 
 	QUnit.module("BlockBase");
@@ -183,6 +185,85 @@ function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, O
 			// Check if the scrollTop [of the lazy-loaded section] matches the expected one
 			iActualScrollTop = Math.ceil(oOPL._$opWrapper.scrollTop());
 			assert.ok(iTargetScrollTop === iActualScrollTop || iTargetScrollTop === iActualScrollTop + 1, "scrollTop of lazy-loaded section not did not change upon lazy-loading");
+			done();
+		});
+	});
+
+	QUnit.module("'visible' property data binding", {
+		beforeEach: function() {
+			this.fnCreatePageWithSingleBlock = function (oOptions) {
+
+				var oJSONModelData = oOptions.JSONModelData,
+					sPageProperties = objectToString(oOptions.pageProperties),
+					sBlockProperties = objectToString(oOptions.blockProperties);
+
+				Controller.extend("myapp.controller.Main", {
+					onInit: function () {
+						this.getView().setModel(new JSONModel(oJSONModelData), "viewModel");
+					}
+				});
+
+				return XMLView.create({
+					definition: `<mvc:View
+						xmlns:mvc="sap.ui.core.mvc"
+						xmlns="sap.uxap"
+						xmlns:opblock="sap.uxap.testblocks.objectpageblock"
+						controllerName="myapp.controller.Main"
+						height="100%">
+						<ObjectPageLayout ${sPageProperties}>
+							<sections>
+								<ObjectPageSection title="Section1">
+									<ObjectPageSubSection title="Section1SubSection1">
+										<opblock:InfoButton ${sBlockProperties} />
+									</ObjectPageSubSection>
+								</ObjectPageSection>
+							</sections>
+						</ObjectPageLayout>
+					</mvc:View>`
+				}).then(function(oView) {
+					this.oView = oView;
+					return oView;
+				}.bind(this));
+			};
+		},
+		afterEach: function() {
+			this.oView.destroy();
+		}
+	});
+
+	QUnit.test("resolves databinding when lazyLoading disabled", function (assert) {
+		var done = assert.async();
+
+		assert.expect(1);
+
+		this.fnCreatePageWithSingleBlock({
+			blockProperties: { id: "block1", visible:"{viewModel>/blockVisible}" },
+			JSONModelData: { blockVisible: false },
+			pageProperties: { enableLazyLoading: false }
+		}).then(function(oView) {
+			assert.strictEqual(oView.byId("block1").getVisible(), false, "Block visibility is false");
+			done();
+		});
+	});
+
+	QUnit.test("resolves databinding when lazyLoading enabled", function (assert) {
+		var done = assert.async();
+
+		assert.expect(2);
+
+		this.fnCreatePageWithSingleBlock({
+			blockProperties: { id: "block1", visible:"{viewModel>/blockVisible}" },
+			JSONModelData: { blockVisible: false },
+			pageProperties: { enableLazyLoading: true }
+		}).then(function(oView) {
+
+			// before connecting to models
+			var oBlock = oView.byId("block1");
+			assert.strictEqual(oBlock.getVisible(), true, "Block visibility still has the default value of true");
+
+			// after connecting to models
+			oBlock.connectToModels();
+			assert.strictEqual(oBlock.getVisible(), false, "Block visibility is false as binding is now resolved");
 			done();
 		});
 	});
@@ -412,5 +493,12 @@ function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, O
 			});
 		});
 	});
+
+	// utils:
+	function objectToString(obj) {
+		return Object.entries(obj)
+			.map(([key, value]) => `${key}="${String(value)}"`)
+			.join(' ');
+	}
 
 });

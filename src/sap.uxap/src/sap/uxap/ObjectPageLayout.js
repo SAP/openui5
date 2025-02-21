@@ -1950,6 +1950,15 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Checks if lazy loading is effectively enabled based on multiple conditions
+	 * @restricted
+	 * @returns {boolean}
+	 */
+	ObjectPageLayout.prototype._isLazyLoadingEffectivelyEnabled = function() {
+		return this.getEnableLazyLoading() || this.getUseIconTabBar();
+	};
+
 	/* AnchorBar management */
 
 	ObjectPageLayout.prototype.setShowAnchorBarPopover = function (bValue, bSuppressInvalidate) {
