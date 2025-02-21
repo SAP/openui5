@@ -435,7 +435,6 @@ sap.ui.define([
 		if (!mInitProperties.reInitialize && sFlexInstanceVersion !== mInitProperties.version) {
 			mInitProperties.reInitialize = true;
 		}
-
 		const bFlexInstanceAllContexts = _mInstances[mInitProperties.reference].allContextsProvided;
 		if (!mInitProperties.reInitialize && bFlexInstanceAllContexts !== mInitProperties.allContextsProvided) {
 			mInitProperties.reInitialize = true;
@@ -873,6 +872,20 @@ sap.ui.define([
 
 	FlexState.getComponentData = function(sReference) {
 		return _mInstances[sReference] && _mInstances[sReference].componentData;
+	};
+
+	/**
+	 * This function is temporary and will be removed once the allContextsProvided property is part of the flex/data requests in ABAP
+	 * The allContextsProvided property is not part of the initial flex/data request and needs to be set later to prevent
+	 * FlexState from being reinitialized
+	 *
+	 * @param {string} sReference - Flexibility reference of the app
+	 * @param {boolean} bAllContextsProvided - Flag to indicate if all contexts are provided
+	 */
+	FlexState.setAllContextsProvided = function(sReference, bAllContextsProvided) {
+		if (_mInstances[sReference] && _mInstances[sReference].allContextsProvided === undefined) {
+			_mInstances[sReference].allContextsProvided = bAllContextsProvided;
+		}
 	};
 
 	return FlexState;

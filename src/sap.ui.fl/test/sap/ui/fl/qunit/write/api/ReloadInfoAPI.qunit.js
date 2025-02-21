@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
 	Version,
@@ -31,7 +33,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start,", {
+	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start, ", {
 		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 			this.oCheckSVMStub = sandbox.stub(CompVariantState, "checkSVMControlsForDirty").returns(false);
@@ -41,7 +43,7 @@ sap.ui.define([
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		}
 	}, function() {
-		QUnit.test("allContexts is not saved in the session storage", function(assert) {
+		QUnit.test("initialAllContexts is not saved in the session storage", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
@@ -71,7 +73,7 @@ sap.ui.define([
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
-				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, true, "initialAllContexts is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, false, "initialAllContexts is set to false");
 				assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, true, "isResetEnabled is set to true");
 				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
 				window.sessionStorage.removeItem("sap.ui.fl.info.true");
@@ -106,60 +108,175 @@ sap.ui.define([
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
-				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, true, "initialAllContexts is set to true");
-				assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, undefined, "isResetEnabled is set to true");
+				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, false, "initialAllContexts is set to false");
+				assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, undefined, "isResetEnabled is set to undefined");
 				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
 				window.sessionStorage.removeItem("sap.ui.fl.info.true");
 			});
 		});
 
-		QUnit.test("allContextsProvided false and initialAllContexts true", function(assert) {
-			var oFlexInfoResponse = {allContextsProvided: false, initialAllContexts: true};
-			var oStubs = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
+		[
+			{
+				oFlexInfoSession: { allContextsProvided: undefined, initialAllContexts: undefined },
+				oFlexInfoResponse: { allContextsProvided: false, isResetEnabled: true },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: true }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: undefined, initialAllContexts: undefined },
+				oFlexInfoResponse: { allContextsProvided: true, isResetEnabled: false },
+				oExpected: { allContextsProvided: true, initialAllContexts: true, isResetEnabled: false }
+			},
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function(oReloadInfo) {
-				assertReloadReasonsAndSession(oReloadInfo, oStubs, assert);
-				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, false, "allContextsProvided is set to true");
-				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
-				window.sessionStorage.removeItem("sap.ui.fl.info.true");
+			{
+				oFlexInfoSession: { allContextsProvided: false, initialAllContexts: undefined },
+				oFlexInfoResponse: { allContextsProvided: false },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: false, initialAllContexts: undefined },
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: undefined }
+			},
+
+			{
+				oFlexInfoSession: { allContextsProvided: true, initialAllContexts: undefined },
+				oFlexInfoResponse: { allContextsProvided: false },
+				oExpected: { allContextsProvided: true, initialAllContexts: true, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: true, initialAllContexts: undefined },
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: true, initialAllContexts: true, isResetEnabled: undefined }
+			},
+
+			{
+				oFlexInfoSession: { allContextsProvided: undefined, initialAllContexts: false },
+				oFlexInfoResponse: { allContextsProvided: false },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: undefined, initialAllContexts: false },
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: true, initialAllContexts: true, isResetEnabled: undefined }
+			},
+
+			{
+				oFlexInfoSession: { allContextsProvided: undefined, initialAllContexts: true },
+				oFlexInfoResponse: { allContextsProvided: false},
+				oExpected: { allContextsProvided: undefined, initialAllContexts: true, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: undefined, initialAllContexts: true },
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: undefined, initialAllContexts: true, isResetEnabled: undefined }
+			},
+
+			{
+				oFlexInfoSession: { allContextsProvided: false, initialAllContexts: false},
+				oFlexInfoResponse: { allContextsProvided: false },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: false, initialAllContexts: false},
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: undefined }
+			},
+
+			{
+				oFlexInfoSession: { allContextsProvided: false, initialAllContexts: true},
+				oFlexInfoResponse: { allContextsProvided: false },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: false, initialAllContexts: true},
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: false, initialAllContexts: true, isResetEnabled: undefined }
+			},
+
+			{
+				oFlexInfoSession: { allContextsProvided: true, initialAllContexts: false},
+				oFlexInfoResponse: { allContextsProvided: false },
+				oExpected: { allContextsProvided: true, initialAllContexts: false, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: true, initialAllContexts: false},
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: true, initialAllContexts: false, isResetEnabled: undefined }
+			},
+
+			{
+				oFlexInfoSession: { allContextsProvided: true, initialAllContexts: true},
+				oFlexInfoResponse: { allContextsProvided: false },
+				oExpected: { allContextsProvided: true, initialAllContexts: true, isResetEnabled: undefined }
+			},
+			{
+				oFlexInfoSession: { allContextsProvided: true, initialAllContexts: true},
+				oFlexInfoResponse: { allContextsProvided: true },
+				oExpected: { allContextsProvided: true, initialAllContexts: true, isResetEnabled: undefined }
+			}
+		].forEach((oSetup) => {
+			var sTestDescription = Object.entries(oSetup.oFlexInfoSession).map(([key, value]) => `${key} ${value}`).join(" and ");
+			QUnit.test(sTestDescription, function(assert) {
+				var oStubs = setFlexInfoSessionAndPrepareMocks({ ...oSetup.oFlexInfoSession}, {...oSetup.oFlexInfoResponse });
+				return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function(oReloadInfo) {
+					assertReloadReasonsAndSession(oReloadInfo, oStubs, oSetup, assert);
+					window.sessionStorage.removeItem("sap.ui.fl.info.true");
+				});
 			});
 		});
 
-		QUnit.test("allContextsProvided false and initialAllContexts false/undefined", function(assert) {
-			var oFlexInfoResponse = {allContextsProvided: false};
-			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
+		function setFlexInfoSessionAndPrepareMocks(oFlexInfoSession, oFlexInfoResponse) {
+			var oReloadInfo = {
+				ignoreMaxLayerParameter: false,
+				layer: Layer.CUSTOMER,
+				selector: {}
+			};
+			FlexInfoSession.setByReference(oFlexInfoSession);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
+			var oSetAllContextsProvided = sandbox.spy(FlexState, "setAllContextsProvided");
+			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(oFlexInfoResponse);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			return {
+				oReloadInfo,
+				oSetAllContextsProvided,
+				oHasHigherLayerChangesAPIStub,
+				oGetResetAndPublishInfoAPIStub
+			};
+		}
 
-			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function(oReloadInfo) {
-				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
-				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, false, "allContextsProvided is set to true");
-				assert.deepEqual(oReloadInfo.allContexts, true, "allContexts is set to false");
-				window.sessionStorage.removeItem("sap.ui.fl.info.true");
-			});
-		});
+		function assertReloadReasonsAndSession(oReloadInfo, oStubs, oSetup, assert) {
+			var oExpectedArgs = {
+				selector: oReloadInfo.selector,
+				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
+				upToLayer: oReloadInfo.layer,
+				includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+				includeDirtyChanges: true
+			};
+			assert.deepEqual(oStubs.oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
+			assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
+			assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
+			assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, oSetup.oExpected.isResetEnabled, `isResetEnabled is set to ${oSetup.oExpected.isResetEnabled}`);
 
-		QUnit.test("allContextsProvided true and initialAllContexts true", function(assert) {
-			var oFlexInfoResponse = {allContextsProvided: true, initialAllContexts: true};
-			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
-
-			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function(oReloadInfo) {
-				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
-				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
-				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
-				window.sessionStorage.removeItem("sap.ui.fl.info.true");
-			});
-		});
-
-		QUnit.test("allContextsProvided true and initialAllContexts false/undefined", function(assert) {
-			var oFlexInfoResponse = {allContextsProvided: true};
-			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
-
-			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function(oReloadInfo) {
-				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
-				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
-				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
-				window.sessionStorage.removeItem("sap.ui.fl.info.true");
-			});
-		});
+			const iSetAllContextsProvidedCallCount = oStubs.oSetAllContextsProvided.callCount;
+			if (!oSetup.oFlexInfoSession.initialAllContexts) {
+				assert.deepEqual(iSetAllContextsProvidedCallCount, 1, "setAllContextsProvided was called");
+				assert.deepEqual(oStubs.oSetAllContextsProvided.getCall(0).args[1], oSetup.oExpected.allContextsProvided, `setAllContextsProvided was called with ${oSetup.oExpected.allContextsProvided}`);
+				assert.deepEqual(oReloadInfo.allContexts, !oSetup.oExpected.allContextsProvided, `allContexts is set to ${!oSetup.oExpected.allContextsProvided}`);
+			} else {
+				assert.deepEqual(iSetAllContextsProvidedCallCount, 0, "setAllContextsProvided was not called");
+				assert.deepEqual(oStubs.oGetResetAndPublishInfoAPIStub.callCount, 0, "getResetAndPublishInfo was not called");
+				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, oSetup.oExpected.initialAllContexts, `initialAllContexts is set to ${oSetup.oExpected.initialAllContexts}`);
+			}
+			if (oSetup.oFlexInfoSession.initialAllContexts === undefined && oSetup.oFlexInfoSession.allContextsProvided === undefined) {
+				assert.deepEqual(oStubs.oGetResetAndPublishInfoAPIStub.callCount, 1, "getResetAndPublishInfo was called");
+			} else if (!oSetup.oFlexInfoSession.initialAllContexts && oSetup.oFlexInfoSession.allContextsProvided !== undefined) {
+				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, !oSetup.oExpected.allContextsProvided, `initialAllContexts is set to ${oSetup.oExpected.initialAllContexts}`);
+			}
+			assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, oSetup.oExpected.allContextsProvided, `allContextsProvided is set to ${oSetup.oExpected.allContextsProvided}`);
+		}
 
 		QUnit.test("allContextsProvided is true and a draft is available and the draft is not present in the session", function(assert) {
 			var oReloadInfo = {
@@ -897,40 +1014,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
-
-	function assertReloadReasonsAndSession(oReloadInfo, oStubs, assert) {
-		var oExpectedArgs = {
-			selector: oReloadInfo.selector,
-			ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-			upToLayer: oReloadInfo.layer,
-			includeCtrlVariants: oReloadInfo.includeCtrlVariants,
-			includeDirtyChanges: true
-		};
-		assert.deepEqual(oStubs.oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
-		assert.deepEqual(oStubs.oGetResetAndPublishInfoAPIStub.callCount, 0, "getResetAndPublishInfo was not called");
-		assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
-		assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
-		assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, true, "initialAllContexts is set to true");
-		assert.deepEqual(FlexInfoSession.getByReference().isResetEnabled, undefined, "isResetEnabled is set to true");
-	}
-
-	function setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse) {
-		var oReloadInfo = {
-			ignoreMaxLayerParameter: false,
-			layer: Layer.CUSTOMER,
-			selector: {}
-		};
-		FlexInfoSession.setByReference(oFlexInfoResponse);
-		sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
-		sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
-		sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-		var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-		var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
-		sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-		return {
-			oReloadInfo,
-			oHasHigherLayerChangesAPIStub,
-			oGetResetAndPublishInfoAPIStub
-		};
-	}
 });

@@ -63,6 +63,7 @@ sap.ui.define([
 				delete oFlexInfoSession.version;
 				delete oFlexInfoSession.maxLayer;
 				delete oFlexInfoSession.adaptationLayer;
+				delete oFlexInfoSession.initialAllContexts;
 				FlexInfoSession.setByReference(oFlexInfoSession, mPropertyBag.reference);
 			}
 			// Disable cacheKey when request data for a specific version
