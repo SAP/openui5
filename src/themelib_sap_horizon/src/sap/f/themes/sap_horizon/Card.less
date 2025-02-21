@@ -1,18 +1,19 @@
-/* ============================= */
-/* CSS for control sap.f/Card    */
-/* Horizon theme                 */
-/* ============================= */
+/* =========================== */
+/* CSS for control sap.f/Card  */
+/* Morning Horizon theme       */
+/* =========================== */
 
-@_sap_f_Card_FocusBorderBottomOffset: 0px;
-@_sap_f_Card_FocusBorderTopOffset: 0px;
-@_sap_f_Card_FocusBorderLeftOffset: 0px;
-@_sap_f_Card_FocusBorderRightOffset: 0px;
+@_sap_f_Card_FocusBorderBottomOffset: 0;
+@_sap_f_Card_FocusBorderTopOffset: 0;
+@_sap_f_Card_FocusBorderLeftOffset: 0;
+@_sap_f_Card_FocusBorderRightOffset: 0;
 @_sap_f_Card_FocusBorderRadius: inherit;
 @_sap_f_Card_BorderRadius: 1rem;
-@_sap_f_Card_HoverBoxShadow: @sapUiContentShadow2;
-@_sap_f_Card_Badge_Background: @sapUiHighlight;
+@_sap_f_Card_HoverBoxShadow: var(--sapContent_Shadow2);
+@_sap_f_Card_Badge_Background: var(--sapHighlightColor);
 
 .sapFCard {
+
 	&.sapFCardNoContent .sapFCardHeader::before,
 	&.sapFCardNoHeader::before {
 		border-radius: @_sap_f_Card_BorderRadius;
@@ -32,7 +33,7 @@
 }
 
 .sapFCard .sapFCardHeader .sapFCardStatus {
-	font-size: @sapMFontSmallSize;
+	font-size: var(--sapFontSmallSize);
 	margin-top: 0.125rem;
 }
 
