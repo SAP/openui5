@@ -672,6 +672,7 @@ function(
 		assert.strictEqual($oHiddenTitle.text(), sTitle, "Hidden title text is correct");
 		assert.strictEqual($oHiddenTitle.attr("role"), "heading", "Hidden title role is correct");
 		assert.strictEqual($oHiddenTitle.attr("aria-level"), "1", "Hidden title aria-level is correct");
+		assert.strictEqual($oHiddenTitle.attr("aria-hidden"), "true", "Hidden title aria-hidden is correct");
 
 		// Act
 		this.oSB.setTitle(sNewTitle);
