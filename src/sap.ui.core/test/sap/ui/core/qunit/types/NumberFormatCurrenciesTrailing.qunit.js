@@ -1,12 +1,13 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData",
 	"sap/base/Log"
-], function (Formatting, NumberFormat, Locale, LocaleData, Log) {
+], function (Formatting, Localization, NumberFormat, Locale, Log) {
 	"use strict";
+	const sDefaultLanguage = Localization.getLanguage();
 
 	var getCurrencyInstance = function(options, oLocale) {
 		if (!options) {
@@ -22,7 +23,24 @@ sap.ui.define([
 		CLDR uses different whitespace characters in its patterns
 	*/
 
-	QUnit.module("NumberFormat#getCurrencyInstance");
+	QUnit.module("sap.ui.core.format.NumberFormat - trailing currencies", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
+		beforeEach() {
+			Localization.setLanguage("en-US");
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
+		},
+		after() {
+			Localization.setLanguage(sDefaultLanguage);
+		},
+		afterEach() {
+			// ensure custom currencies are reset
+			Formatting.setCustomCurrencies();
+		}
+	});
 
 	QUnit.test("Currency format with sMeasure", function (assert) {
 		var oLocale = new Locale("en-US");
@@ -185,13 +203,6 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format([-123456.789, "EUR"]), "-123,456.79", "123456.789 EUR");
 	});
 
-	QUnit.module("Custom currencies - Unknown currencies", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
-	});
-
 	QUnit.test("Format using currency instance", function (assert) {
 		var oFormat = getCurrencyInstance({
 			customCurrencies: {
@@ -201,6 +212,7 @@ sap.ui.define([
 				}
 			}
 		});
+		this.oLogMock.expects("error").withExactArgs("Currency 'EUR' is unknown.");
 		var sFormatted = oFormat.format(123456.789, "EUR"); // Empty string "";
 
 		assert.strictEqual(sFormatted, "", "Empty string formatted.");
@@ -216,6 +228,7 @@ sap.ui.define([
 				}
 			}
 		});
+		this.oLogMock.expects("error").withExactArgs("Currency 'EUR' is unknown.");
 		var sFormatted2 = oFormat2.format(123456.789, "EUR"); // Empty string "";
 
 		assert.strictEqual(sFormatted2, "", "Empty string formatted.");
@@ -229,15 +242,9 @@ sap.ui.define([
 				}
 			}
 		});
+		this.oLogMock.expects("error").withExactArgs("Currency 'Ƀ' is unknown.");
 		assert.strictEqual(oFormat3.format(123456.789, "Ƀ"), "", "Empty string formatted");
 		assert.deepEqual(oFormat3.parse("123,456.789Ƀ"), [123456.789, "BTC"], "[123456.789, \"BTC\"] is returned.");
-	});
-
-	QUnit.module("Custom currencies - simple formatting", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
 	});
 
 	QUnit.test("Parse symbol only", function(assert) {
@@ -436,13 +443,6 @@ sap.ui.define([
 		assert.strictEqual(oFormatDE.format(1234.5728, "HUF"), "1.235" + "\xa0" + "HUF", "formatted with default 2 decimals - de");
 	});
 
-	QUnit.module("Custom currencies - currencyCode: false", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
-	});
-
 	QUnit.test("Format with currency symbol w/o symbol mixed in", function (assert) {
 		var oFormat = getCurrencyInstance({
 			currencyCode: false,
@@ -552,13 +552,6 @@ sap.ui.define([
 		assert.deepEqual(oFormat.parse(oFormat.format(123456.789, "DOLLAR")), [123456.789, "DOLLAR"], "[123456.789, 'DOLLAR']");
 	});
 
-	QUnit.module("Custom currencies - exclusive behaviour", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
-	});
-
 	QUnit.test("Custom Currencies instance overwrites global configuration", function (assert) {
 		// global configuration
 		Formatting.addCustomCurrencies({
@@ -593,13 +586,6 @@ sap.ui.define([
 
 		assert.strictEqual(oFormat2.format(12345.6789, "DOLLAR"), "$12,345.679", "$12,345.679");
 		assert.deepEqual(oFormat2.parse(oFormat2.format(12345.6789, "DOLLAR")), [12345.679, "DOLLAR"], "[12345.679, 'DOLLAR']");
-	});
-
-	QUnit.module("Custom currencies - complex cases", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
 	});
 
 	QUnit.test("Currencies with numbers in their names", function(assert) {
@@ -893,7 +879,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Currencies with numbers in their names - Log", function(assert) {
-		var oLogSpy = this.spy(Log, "error");
+		this.oLogMock.expects("error")
+			.withExactArgs("Symbol '$' is defined multiple times in custom currencies.", undefined, "NumberFormat");
 
 		// English
 		var oFormatEN = getCurrencyInstance({
@@ -914,23 +901,13 @@ sap.ui.define([
 			}
 		});
 
-		assert.ok(oLogSpy.calledOnceWith("Symbol '$' is defined multiple times in custom currencies.", undefined, "NumberFormat"),
-			"Correct error log is displayed.");
 		assert.strictEqual(oFormatEN.format(1234.5678, "DOL"), "$1,234.6", "format in English locale - number at the start");
 		assert.strictEqual(oFormatEN.format(1234.5678, "DOL4"), "$1,234.568", "format in English locale - number at the start");
-
-		// restore spy
-		oLogSpy.resetHistory();
-	});
-
-	QUnit.module("Custom currencies - Ambiguous currency information", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
 	});
 
 	QUnit.test("Multiple custom currencies with same currency symbol", function(assert) {
+		this.oLogMock.expects("error")
+			.withExactArgs("Symbol 'µ' is defined multiple times in custom currencies.", undefined, "NumberFormat");
 		var oFormat = getCurrencyInstance({
 			customCurrencies: {
 				"IOTA": {
@@ -950,8 +927,13 @@ sap.ui.define([
 
 		assert.strictEqual(oFormat.format(12345.6789, "MON"), "12,345.68" + "\xa0" + "MON", "MON 12,345.68");
 		assert.strictEqual(oFormat.format(12345.6789, "MONERO"), "12,345.67890" + "\xa0" + "MONERO", "MONERO 12,345.6789");
+		this.oLogMock.expects("error")
+			.withExactArgs("The parsed currency symbol 'µ' is defined multiple times in custom currencies."
+				+ "Therefore the result is not distinct.");
 		assert.deepEqual(oFormat.parse("µ12,345.679"), [12345.679, undefined], "[12345.679, undefined] returned.");
 
+		this.oLogMock.expects("error")
+			.withExactArgs("Symbol '€' is defined multiple times in custom currencies.", undefined, "NumberFormat");
 		var oFormat2 = getCurrencyInstance({
 			currencyCode: false,
 			customCurrencies: {
@@ -968,6 +950,9 @@ sap.ui.define([
 
 		assert.strictEqual(oFormat2.format(12345.6789, "EUR5"), "€12,345.67890", "€12,345.68");
 		assert.strictEqual(oFormat2.format(12345.6789, "EU"), "€12,345.68", "€12,345.6789");
+		this.oLogMock.expects("error")
+			.withExactArgs("The parsed currency symbol '€' is defined multiple times in custom currencies."
+				+ "Therefore the result is not distinct.");
 		assert.deepEqual(oFormat2.parse("€12,345.679"), [12345.679, undefined], "[12345.679, undefined] returned.");
 	});
 
@@ -979,10 +964,15 @@ sap.ui.define([
 			}
 		});
 
+		this.oLogMock.expects("error")
+			.withExactArgs("Symbol '€' is defined multiple times in custom currencies.", undefined, "NumberFormat");
 		var oFormat = getCurrencyInstance({
 			currencyCode: false
 		});
 
+		this.oLogMock.expects("error")
+			.withExactArgs("The parsed currency symbol '€' is defined multiple times in custom currencies."
+				+ "Therefore the result is not distinct.");
 		assert.deepEqual(oFormat.parse("€12,345.679"), [12345.679, undefined], "Duplicated symbol found");
 	});
 
@@ -1005,7 +995,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Currencies with undefined symbol", function(assert) {
-		var oSpy = this.spy(Log, "error");
 
 		var oFormat = getCurrencyInstance({
 			currencyCode: false,
@@ -1025,10 +1014,6 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(oFormat.format(123, "Bitcoin"), "Bitcoin\xa0123.000");
-
-		assert.strictEqual(oSpy.callCount, 0, "Error log for duplicated currencies was was not called");
-
-		oSpy.restore();
 	});
 
 	QUnit.test("decimals = 0", function (assert) {
@@ -1057,13 +1042,6 @@ sap.ui.define([
 		assert.strictEqual(oFormatDE.format(undefined, undefined), "", "no values returns an empty string - de");
 		assert.strictEqual(oFormatDE.format(1234.56, undefined), "1.234,56", "only number formatted - de");
 		assert.strictEqual(oFormatDE.format(1234.5728, "HOD"), "1.235" + "\xa0" + "H$", "formatted both - de");
-	});
-
-	QUnit.module("Custom currencies - parseAsString: true", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
 	});
 
 	QUnit.test("Parse simple number", function(assert) {
@@ -1166,13 +1144,6 @@ sap.ui.define([
 		});
 
 		assert.deepEqual(oFormat.parse("$"), null, "Null is returned.");
-	});
-
-	QUnit.module("Standard Currency Formatting", {
-		afterEach: function() {
-			// reset global configuration
-			Formatting.setCustomCurrencies();
-		}
 	});
 
 	QUnit.test("Currency format with showMeasure true and currencyContext accounting", function (assert) {
@@ -1729,8 +1700,6 @@ sap.ui.define([
 		var sFormattedBig = oFormat.format(100000000, "EUR");
 		assert.ok(isLeading(sFormattedBig), "Locale " + "he_IL" +  " '" + sFormattedBig + "'");
 	});
-
-	QUnit.module("NumberFormat#getCurrencyInstance configuration");
 
 	QUnit.test("overwrite configuration config", function (assert) {
 		Formatting.setTrailingCurrencyCode(false);
