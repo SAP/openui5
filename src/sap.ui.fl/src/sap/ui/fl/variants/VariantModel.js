@@ -916,10 +916,9 @@ sap.ui.define([
 						changeType: "setTitle",
 						layer: oVariant.layer,
 						fileType: "ctrl_variant_change",
-						selector: JsControlTreeModifier.getSelector(oVariant.key, this.oAppComponent)
-
+						variantId: oVariant.key
 					};
-					const oSetTitleChange = FlexObjectFactory.createUIChange(mChangeProperties);
+					const oSetTitleChange = FlexObjectFactory.createVariantChange(mChangeProperties);
 					oSetTitleChange.setText("title", sResolvedTitle, "XFLD");
 					oVariant.instance.setName(sResolvedTitle, true);
 					// The change cannot be added as a dirty change but must survive a state invalidation

@@ -560,5 +560,15 @@ sap.ui.define([
 		return false;
 	};
 
+	/**
+	 * Checks if the flex object can be visualized.
+	 * This function is called before even the ChangeHandler is fetched and getChangeVisualizationInfo is called.
+	 *
+	 * @returns {boolean} <code>true</code> if the flex object can be visualized
+	 */
+	FlexObject.prototype.canBeVisualized = function() {
+		return false;
+	};
+
 	return FlexObject;
 });

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/LayerUtils"
 ], function(
@@ -22,10 +23,30 @@ sap.ui.define([
 	DependencyHandler,
 	DataSelector,
 	FlexState,
+	Classification,
 	Storage,
 	LayerUtils
 ) {
 	"use strict";
+
+	const oChangeInformationProviders = {
+		ctrl_variant_change: {
+			getCondenserInfo(oFlexObject) {
+				return {
+					classification: Classification.LastOneWins,
+					uniqueKey: oFlexObject.getVariantId() + oFlexObject.getChangeType()
+				};
+			}
+		},
+		ctrl_variant_management_change: {
+			getCondenserInfo(oFlexObject, mPropertyBag) {
+				return {
+					classification: Classification.LastOneWins,
+					uniqueKey: mPropertyBag.modifier.getControlIdBySelector(oFlexObject.getSelector(), mPropertyBag.appComponent)
+				};
+			}
+		}
+	};
 
 	/**
 	 * Handler class to manipulate control variant changes in a variants map. See also {@link sap.ui.fl.variants.VariantManagement}.
@@ -124,7 +145,7 @@ sap.ui.define([
 		return {
 			instance: oVariantInstance,
 			variantChanges: oGroupedFlexObjects.variantChanges.filter(function(oFlexObject) {
-				return oFlexObject.getSelector().id === oVariantInstance.getId();
+				return oFlexObject.getVariantId() === oVariantInstance.getId();
 			}),
 			controlChanges: oGroupedFlexObjects.changes.filter(function(oFlexObject) {
 				var bCorrectFlexObjectType = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.UIChange");
@@ -302,7 +323,7 @@ sap.ui.define([
 		var oFoundVariant;
 		Object.values(oVariantsMap).some(function(oVariantsMapEntry) {
 			return oVariantsMapEntry.variants.some(function(oVariant) {
-				if (oVariantChange.getSelector().id === oVariant.key) {
+				if (oVariantChange.getVariantId() === oVariant.key) {
 					oFoundVariant = oVariant;
 					return true;
 				}
@@ -402,6 +423,10 @@ sap.ui.define([
 
 	VariantManagementState.getVariantDependentFlexObjects = function(sReference) {
 		return oVariantDependentFlexObjectsDataSelector.get({reference: sReference});
+	};
+
+	VariantManagementState.getChangeInformationProvider = function(oFlexObject) {
+		return oChangeInformationProviders[oFlexObject.getFileType()];
 	};
 
 	/**
@@ -733,7 +758,7 @@ sap.ui.define([
 				// eslint-disable-next-line camelcase
 				ctrl_variant: () => (oFilteredFlexObject.getVariantId()),
 				// eslint-disable-next-line camelcase
-				ctrl_variant_change: () => (oFilteredFlexObject.getSelector().id),
+				ctrl_variant_change: () => (oFilteredFlexObject.getVariantId()),
 				change: () => (oFilteredFlexObject.getVariantReference())
 			}[oFilteredFlexObject.getFileType()]?.();
 			return !aHiddenVariants.includes(sVariantReference);

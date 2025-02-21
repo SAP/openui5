@@ -1394,6 +1394,33 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given some variant related flex objects", {
+		beforeEach() {
+			oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "appComponentId");
+		},
+		afterEach() {
+			sandbox.restore();
+			oAppComponent.destroy();
+		}
+	}, function() {
+		QUnit.test("When there are multiple variant management and variant changes", async function(assert) {
+			const aFlexObjects = await loadChangesFromPath("variantChanges.json", assert, 17);
+			const aRemainingChanges = await Condenser.condense(oAppComponent, aFlexObjects);
+			assert.strictEqual(aRemainingChanges.length, 9, "only 9 changes remain");
+
+			const aFileNames = aRemainingChanges.map((oChange) => oChange.getId());
+			assert.ok(aFileNames.indexOf("id_1570000000000_2_setDefault") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_4_setDefault") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_5_setDefault") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_2_setVisible") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_3_setVisible") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_3_setFavorite") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_2_setTitle") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_3_setTitle") > -1, "the change is still there");
+			assert.ok(aFileNames.indexOf("id_1570000000000_3_setContexts") > -1, "the change is still there");
+		});
+	});
+
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

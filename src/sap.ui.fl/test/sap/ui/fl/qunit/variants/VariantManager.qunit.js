@@ -150,7 +150,7 @@ sap.ui.define([
 					executeOnSelect: true,
 					contexts: { role: [], country: [] }
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setDefault",
@@ -162,26 +162,22 @@ sap.ui.define([
 						defaultVariant: "variant1"
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setFavoriteChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setFavorite",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant1"
-					},
+					variantId: "variant1",
 					content: {
 						favorite: false
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setExecuteOnSelectChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setExecuteOnSelect",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant1"
-					},
+					variantId: "variant1",
 					content: {
 						executeOnSelect: true
 					}
@@ -401,7 +397,8 @@ sap.ui.define([
 			const oSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
 			const oDeleteFlexObjectsSpy = sandbox.spy(FlexObjectManager, "deleteFlexObjects");
 			const oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
-			const oCreateChangeSpy = sandbox.spy(FlexObjectFactory, "createUIChange");
+			const oCreateVManagementChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantManagementChange");
+			const oCreateVChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantChange");
 			const oCreateDefaultFileNameSpy = sandbox.spy(Utils, "createDefaultFileName");
 
 			await VariantManager.handleSaveEvent(this.oVMControl, oParameters, this.oModel);
@@ -411,7 +408,8 @@ sap.ui.define([
 				"flVariant",
 				"then the file type was passed to sap.ui.fl.Utils.createDefaultFileName"
 			);
-			assert.strictEqual(oCreateChangeSpy.callCount, 2, "two changes were created");
+			assert.strictEqual(oCreateVManagementChangeSpy.callCount, 1, "one variant management change was created");
+			assert.strictEqual(oCreateVChangeSpy.callCount, 1, "one variant change was created");
 			assert.ok(oCopyVariantSpy.calledOnce, "then copyVariant() was called once");
 			assert.deepEqual(oCopyVariantSpy.lastCall.args[0], {
 				appComponent: oComponent,
@@ -426,7 +424,7 @@ sap.ui.define([
 				title: "Test",
 				variantManagementReference: sVMReference,
 				adaptationId: undefined,
-				additionalVariantChanges: [oCreateChangeSpy.getCall(0).returnValue, oCreateChangeSpy.getCall(1).returnValue]
+				additionalVariantChanges: [oCreateVManagementChangeSpy.getCall(0).returnValue, oCreateVChangeSpy.getCall(0).returnValue]
 			}, "then copyVariant() was called with the right parameters");
 
 			assert.strictEqual(oSaveDirtyChangesStub.callCount, 1, "then dirty changes were saved");
@@ -477,7 +475,8 @@ sap.ui.define([
 			const oDeleteFlexObjectsSpy = sandbox.spy(FlexObjectManager, "deleteFlexObjects");
 			const oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
 			const oCreateDefaultFileNameSpy = sandbox.spy(Utils, "createDefaultFileName");
-			const oCreateChangeSpy = sandbox.spy(FlexObjectFactory, "createUIChange");
+			const oCreateVManagementChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantManagementChange");
+			const oCreateVChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantChange");
 
 			await VariantManager.handleSaveEvent(this.oVMControl, oParameters, this.oModel);
 			const sNewVariantReference = oCreateDefaultFileNameSpy.getCall(0).returnValue;
@@ -487,7 +486,8 @@ sap.ui.define([
 				"then the file type was passed to sap.ui.fl.Utils.createDefaultFileName"
 			);
 			assert.ok(oCopyVariantSpy.calledOnce, "then copyVariant() was called once");
-			assert.strictEqual(oCreateChangeSpy.callCount, 3, "three changes were created");
+			assert.strictEqual(oCreateVManagementChangeSpy.callCount, 1, "one variant management change was created");
+			assert.strictEqual(oCreateVChangeSpy.callCount, 2, "two variant changes were created");
 			assert.deepEqual(oCopyVariantSpy.lastCall.args[0], {
 				appComponent: oComponent,
 				layer: Layer.PUBLIC,
@@ -501,7 +501,7 @@ sap.ui.define([
 				title: "Test",
 				variantManagementReference: sVMReference,
 				adaptationId: undefined,
-				additionalVariantChanges: [oCreateChangeSpy.getCall(0).returnValue, oCreateChangeSpy.getCall(1).returnValue]
+				additionalVariantChanges: [oCreateVManagementChangeSpy.getCall(0).returnValue, oCreateVChangeSpy.getCall(0).returnValue]
 			}, "then copyVariant() was called with the right parameters");
 
 			assert.strictEqual(
@@ -694,7 +694,8 @@ sap.ui.define([
 			});
 			const oDeleteFlexObjectsSpy = sandbox.spy(FlexObjectManager, "deleteFlexObjects");
 			const oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
-			const oCreateChangeSpy = sandbox.spy(FlexObjectFactory, "createUIChange");
+			const oCreateVManagementChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantManagementChange");
+			const oCreateVChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantChange");
 
 			// Copy a variant from the CUSTOMER layer
 			VariantManagementState.setCurrentVariant({
@@ -705,7 +706,8 @@ sap.ui.define([
 			this.oModel._bDesignTimeMode = true;
 			const aDirtyChanges = await VariantManager.handleSaveEvent(this.oVMControl, mParameters, this.oModel);
 			assert.ok(oCopyVariantSpy.calledOnce, "then copyVariant() was called once");
-			assert.strictEqual(oCreateChangeSpy.callCount, 2, "two changes were created");
+			assert.strictEqual(oCreateVManagementChangeSpy.callCount, 1, "one variant management change was created");
+			assert.strictEqual(oCreateVChangeSpy.callCount, 1, "one variant change was created");
 			assert.deepEqual(oCopyVariantSpy.lastCall.args[0], {
 				appComponent: oComponent,
 				layer: Layer.CUSTOMER,
@@ -719,7 +721,7 @@ sap.ui.define([
 					role: ["testRole"]
 				},
 				adaptationId: undefined,
-				additionalVariantChanges: [oCreateChangeSpy.getCall(0).returnValue, oCreateChangeSpy.getCall(1).returnValue]
+				additionalVariantChanges: [oCreateVManagementChangeSpy.getCall(0).returnValue, oCreateVChangeSpy.getCall(0).returnValue]
 			}, "then copyVariant() was called with the right parameters");
 			assert.strictEqual(oSaveDirtyChangesStub.callCount, 0, "then dirty changes were not saved");
 			assert.strictEqual(

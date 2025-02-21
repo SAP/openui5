@@ -418,7 +418,7 @@ sap.ui.define([
 			return sCommand;
 		}
 
-		if (!oChange.getSelector || !oChange.getSelector() || isEmptyObject(oChange.getSelector())) {
+		if (!oChange.canBeVisualized()) {
 			return false;
 		}
 

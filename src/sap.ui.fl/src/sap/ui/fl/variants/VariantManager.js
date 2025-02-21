@@ -307,7 +307,7 @@ sap.ui.define([
 					fileType: "ctrl_variant_management_change",
 					selector: JsControlTreeModifier.getSelector(sVariantManagementReference, mPropertyBag.appComponent)
 				}, oBaseChangeProperties);
-				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createUIChange(mPropertyBagSetDefault));
+				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createVariantManagementChange(mPropertyBagSetDefault));
 			}
 			if (mParameters.execute) {
 				var mPropertyBagSetExecute = merge({
@@ -316,9 +316,9 @@ sap.ui.define([
 						executeOnSelect: true
 					},
 					fileType: "ctrl_variant_change",
-					selector: JsControlTreeModifier.getSelector(mPropertyBag.newVariantReference, mPropertyBag.appComponent)
+					variantId: mPropertyBag.newVariantReference
 				}, oBaseChangeProperties);
-				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createUIChange(mPropertyBagSetExecute));
+				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createVariantChange(mPropertyBagSetExecute));
 			}
 
 			const aCopiedVariantDirtyChanges = await VariantManager.copyVariant(mPropertyBag);
@@ -437,7 +437,7 @@ sap.ui.define([
 		if (mPropertyBag.layer === Layer.PUBLIC) {
 			oDuplicateVariantData.instance.setFavorite(false);
 			var oChangeProperties = {
-				selector: JsControlTreeModifier.getSelector(mPropertyBag.newVariantReference, mPropertyBag.appComponent),
+				variantId: mPropertyBag.newVariantReference,
 				changeType: "setFavorite",
 				fileType: "ctrl_variant_change",
 				generator: mPropertyBag.generator,
@@ -445,7 +445,7 @@ sap.ui.define([
 				reference: oVariantModel.sFlexReference,
 				content: {favorite: true}
 			};
-			aChanges.push(FlexObjectFactory.createUIChange(oChangeProperties));
+			aChanges.push(FlexObjectFactory.createVariantChange(oChangeProperties));
 		}
 
 		// sets copied variant and associated changes as dirty
@@ -558,15 +558,17 @@ sap.ui.define([
 			mNewChangeData.adaptationId = getAdaptationId(mPropertyBag.layer, mPropertyBag.appComponent, oVariantModel.sFlexReference);
 		}
 
+		let oChange;
 		if (mPropertyBag.changeType === "setDefault") {
 			mNewChangeData.fileType = "ctrl_variant_management_change";
 			mNewChangeData.selector = JsControlTreeModifier.getSelector(sVariantManagementReference, mPropertyBag.appComponent);
+			oChange = FlexObjectFactory.createVariantManagementChange(mNewChangeData);
 		} else {
 			mNewChangeData.fileType = "ctrl_variant_change";
-			mNewChangeData.selector = JsControlTreeModifier.getSelector(mPropertyBag.variantReference, mPropertyBag.appComponent);
+			mNewChangeData.variantId = mPropertyBag.variantReference;
+			oChange = FlexObjectFactory.createVariantChange(mNewChangeData);
 		}
 
-		var oChange = FlexObjectFactory.createUIChange(mNewChangeData);
 		// update change with additional content
 		oChange.setContent(mAdditionalChangeContent);
 		if (mPropertyBag.changeType === "setTitle") {

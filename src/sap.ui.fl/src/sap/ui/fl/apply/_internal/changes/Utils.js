@@ -7,6 +7,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
+	"sap/ui/fl/apply/_internal/flexObjects/VariantChange",
+	"sap/ui/fl/apply/_internal/flexObjects/VariantManagementChange",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/requireAsync",
 	"sap/ui/fl/Utils"
@@ -15,6 +18,9 @@ sap.ui.define([
 	FlexCustomData,
 	AnnotationChange,
 	AppDescriptorChange,
+	VariantChange,
+	VariantManagementChange,
+	VariantManagementState,
 	ChangeHandlerStorage,
 	requireAsync,
 	FlUtils
@@ -38,6 +44,10 @@ sap.ui.define([
 			return false;
 		}
 		return true;
+	}
+
+	function isVariantRelated(mPropertyBag) {
+		return mPropertyBag.flexObject instanceof VariantChange || mPropertyBag.flexObject instanceof VariantManagementChange;
 	}
 
 	const Utils = {
@@ -72,8 +82,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Fetches the change handler for a specific flex object or for the given parameters (e.g. for UI changes
-		 * or when the flex object is not available yet).
+		 * Fetches the change handler or ChangeInformationProvider for a specific flex object or for the given parameters
+		 * (e.g. for UI changes or when the flex object is not available yet).
+		 * ChangeInformationProvider only provide functions to condense or visualize the changes.
 		 * If the change handler is currently being registered, the function waits for the registration.
 		 *
 		 * @param {object} mPropertyBag - Data required to retrieve the change handler
@@ -101,6 +112,8 @@ sap.ui.define([
 				return ChangeHandlerStorage.getAnnotationChangeHandler({
 					changeType: sChangeType
 				});
+			} else if (isVariantRelated(mPropertyBag)) {
+				return VariantManagementState.getChangeInformationProvider(mPropertyBag.flexObject);
 			} else if (mPropertyBag.control) {
 				const sLibraryName = await mPropertyBag.modifier.getLibraryName(mPropertyBag.control);
 				// the ChangeHandlerRegistration includes all the predefined ChangeHandlers.

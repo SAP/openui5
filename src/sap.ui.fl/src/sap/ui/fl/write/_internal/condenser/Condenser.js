@@ -213,18 +213,17 @@ sap.ui.define([
 	async function getCondenserInfoFromChangeHandler(oAppComponent, oFlexObject) {
 		let oChangeHandler;
 		let bTemplateAffected = false;
-		let mPropertyBag = {};
+		const mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent
+		};
 		try {
 			// UI changes require template handling
 			if (oFlexObject instanceof UIChange) {
 				const sControlId = JsControlTreeModifier.getControlIdBySelector(oFlexObject.getSelector(), oAppComponent);
 				const oControl = Element.getElementById(sControlId);
 				if (oControl) {
-					mPropertyBag = {
-						modifier: JsControlTreeModifier,
-						appComponent: oAppComponent,
-						view: FlUtils.getViewForControl(oControl)
-					};
+					mPropertyBag.view = FlUtils.getViewForControl(oControl);
 					const mControl = ChangesUtils.getControlIfTemplateAffected(oFlexObject, oControl, mPropertyBag);
 					bTemplateAffected = mControl.bTemplateAffected;
 					oChangeHandler = await ChangesUtils.getChangeHandler({
@@ -590,8 +589,7 @@ sap.ui.define([
 		aChanges.slice(0).reverse().forEach((oChange) => {
 			if (oChange.getState() === States.LifecycleState.DELETED) {
 				oChange.condenserState = "delete";
-			}
-			if (oChange.canBeCondensed()) {
+			} else if (oChange.canBeCondensed()) {
 				aCondensableChanges.push(oChange);
 			} else {
 				aNotCondensableChanges.push(oChange);
