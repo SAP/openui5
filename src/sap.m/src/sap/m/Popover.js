@@ -2118,7 +2118,6 @@ sap.ui.define([
 		 */
 		Popover.prototype._getContentDimensionsCss = function (oPosParams) {
 			var oCSS = {},
-				iActualContentHeight = oPosParams._$content[0].getBoundingClientRect().height,
 				iMaxContentWidth = this._getMaxContentWidth(oPosParams),
 				iMaxContentHeight = this._getMaxContentHeight(oPosParams);
 
@@ -2126,15 +2125,7 @@ sap.ui.define([
 			iMaxContentHeight = Math.max(iMaxContentHeight, 0);
 
 			oCSS["max-width"] = iMaxContentWidth + "px";
-			// When Popover can fit into the current screen size, don't set the height on the content div.
-			// This can fix the flashing scroll bar problem when content size gets bigger after it's opened.
-			// When position: absolute is used on the scroller div, the height has to be kept otherwise content div has 0 height.
-			if (this._getActualContentHeight() || (iActualContentHeight > iMaxContentHeight)) {
-				oCSS["height"] = Math.min(iMaxContentHeight, iActualContentHeight) + "px";
-			} else {
-				oCSS["height"] = "";
-				oCSS["max-height"] = iMaxContentHeight + "px";
-			}
+			oCSS["max-height"] = iMaxContentHeight + "px";
 
 			return oCSS;
 		};
