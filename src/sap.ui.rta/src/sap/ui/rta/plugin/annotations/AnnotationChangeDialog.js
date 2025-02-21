@@ -124,6 +124,8 @@ sap.ui.define([
 			originalValue: oProperty.currentValue
 		}));
 
+		aProperties.sort((oProperty1, oProperty2) => oProperty1.propertyName.localeCompare(oProperty2.propertyName));
+
 		const aExistingChanges = PersistenceWriteAPI._getAnnotationChanges({
 			control: oControl
 		});

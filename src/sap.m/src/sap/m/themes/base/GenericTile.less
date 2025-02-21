@@ -6,7 +6,7 @@
 .sapMGT {
 	display: inline-block;
 	text-decoration: none;
-	border-radius: 0.25rem;
+	border-radius: var(--sapTile_BorderCornerRadius);
 	position: relative;
 	outline: none;
 	box-sizing: border-box;
@@ -945,7 +945,7 @@
 
 .sapMGTOverlay {
 	background-color: var(--sapTile_Background);
-	border-radius: 0.125rem;
+	border-radius: var(--sapTile_BorderCornerRadius);
 }
 
 .sapMGTOverlayMixin(@offset: 0px, @z-index: 0) {
@@ -971,7 +971,8 @@
 			.sapMGTOverlayMixin();
 			display: block;
 			content: '';
-			background-color: fade(@sapUiTileBackground, 60);
+			background-color: var(--sapTile_Background);
+			opacity: 0.7;
 		}
 	}
 
@@ -1190,7 +1191,8 @@
 			.sapMGTOverlayMixin();
 			display: block;
 			content: '';
-			background-color: fade(@sapUiTileBackground, 60);
+			background-color: var(--sapTile_Background);
+			opacity: 0.7;
 			border-radius: 0.125rem;
 		}
 	}
@@ -1633,7 +1635,8 @@ html[dir=rtl] .sapMGTLineMode {
 /* OVERLAYS AND HELPERS */
 .sapMGTOverlay {
 	.sapMGTOverlayMixin();
-	opacity: 0.8;
+		background-color: var(--sapTile_Background);
+		opacity: 0.7;
 }
 
 .sapMGT .sapMGTFocusDiv {
@@ -1920,11 +1923,11 @@ html[data-sap-ui-browser*='ff'] {
 
 		.sapMText {
 			line-height: 1rem;
-			font-size: 0.875rem;
+			font-size: var(--sapFontSize);
 		}
 
 		.sapMGTSubHdrTxt .sapMText {
-			font-size: 0.875rem;
+			font-size: var(--sapFontSize);
 		}
 
 		.sapMGTHdrIconImage {
@@ -2097,14 +2100,14 @@ html[data-sap-ui-browser*='ff'] {
 					position: initial;
 					margin-right: 0;
 					margin-left: 1rem;
-					font-size: 0.875rem;
+					font-size: var(--sapFontSize);
 					margin-top: 1rem;
 				}
 			}
 
 			.sapMTileCntFtrTxt {
 				margin: 0 1rem 1rem 1rem;
-				font-size: 0.875rem;
+				font-size: var(--sapFontSize);
 				bottom: 0;
 			}
 		}
@@ -2185,7 +2188,7 @@ html[data-sap-ui-browser*='ff'] {
 
 			.sapMText {
 				line-height: 1rem;
-				font-size: 0.875rem;
+				font-size: var(--sapFontSize);
 				font-weight: bold;
 			}
 		}
@@ -2410,7 +2413,7 @@ html[data-sap-ui-browser*='ff'] {
 }
 
 .sapMGTHdrContent.sapMGTOneByOne > .sapMGTHdrTxt > .sapMText {
-	font-size: 0.875rem;
+	font-size: var(--sapFontSize);
 	color: var(--sapContent_ContrastTextColor);
 	text-align: center !important;
 	white-space: initial;
@@ -2580,7 +2583,7 @@ html[data-sap-ui-browser*='ff'] {
 			}
 
 			.sapMGTSystemInfoText {
-				font-size: 0.75rem;
+				font-size: var(--sapFontSmallSize);
 				position: relative;
 				display: inline-block;
 				word-break: break-word;
@@ -2591,7 +2594,7 @@ html[data-sap-ui-browser*='ff'] {
 			}
 
 			.sapMGTSystemInfoText.sapMGTSeperatorPresent {
-				font-size: 0.75rem;
+				font-size: var(--sapFontSmallSize);
 				position: relative;
 				display: inline-block;
 
@@ -2630,7 +2633,7 @@ html[data-sap-ui-browser*='ff'] {
 		line-height: 1rem;
 
 		.sapMText {
-			font-size: 0.875rem;
+			font-size:var(--sapFontSize);
 			color: var(--sapContent_LabelColor);
 		}
 	}
@@ -2677,7 +2680,7 @@ html[data-sap-ui-browser*='ff'] {
 }
 
 .sapMGTTwoByHalf  > .TwoByHalf > .sapMGTHdrTxt > .sapMText {
-	font-size: 0.875rem;
+	font-size: var(--sapFontSize);
 	color: var(--sapTile_TitleTextColor);
 }
 

@@ -113,10 +113,15 @@ sap.ui.define([
 				assert.strictEqual(aFormElements.length, 2, "then for each property a form element is created");
 				assert.strictEqual(
 					aFormElements[0].getLabel(),
-					"My Test Label",
-					"then the property is correctly labeled"
+					"My Other Test Label",
+					"then the properties are properly sorted"
 				);
-				const aVisibleFields = aFormElements[0].getFields().filter((oField) => oField.getVisible());
+				assert.strictEqual(
+					aFormElements[1].getLabel(),
+					"My Test Label",
+					"then the properties are properly sorted"
+				);
+				const aVisibleFields = aFormElements[1].getFields().filter((oField) => oField.getVisible());
 				assert.strictEqual(
 					aVisibleFields.length,
 					1,
@@ -177,14 +182,14 @@ sap.ui.define([
 						serviceUrl: "testServiceUrl",
 						properties: [
 							{
-								propertyName: "My Test Label",
-								annotationPath: "path/to/test/label",
-								currentValue: oTextArrangementTypes.TextOnly
-							},
-							{
 								propertyName: "My Other Test Label",
 								annotationPath: "path/to/second/test/label",
 								currentValue: oTextArrangementTypes.IDFirst
+							},
+							{
+								propertyName: "My Test Label",
+								annotationPath: "path/to/test/label",
+								currentValue: oTextArrangementTypes.TextOnly
 							}
 						],
 						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
@@ -213,7 +218,7 @@ sap.ui.define([
 			const fnAfterSecondOpen = () => {
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
 				const aFormElements = oList.getFormElements();
-				const [oSelect] = aFormElements[0].getFields().filter((oField) => oField.getVisible());
+				const [oSelect] = aFormElements[1].getFields().filter((oField) => oField.getVisible());
 				assert.strictEqual(
 					oSelect.getSelectedKey(),
 					oTextArrangementTypes.TextOnly,
@@ -418,7 +423,7 @@ sap.ui.define([
 			const fnAfterOpen = () => {
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
 				const aFormElements = oList.getFormElements();
-				const aVisibleFields = aFormElements[1].getFields().filter((oField) => oField.getVisible());
+				const aVisibleFields = aFormElements[0].getFields().filter((oField) => oField.getVisible());
 				assert.strictEqual(
 					aVisibleFields.length,
 					1,
@@ -482,7 +487,7 @@ sap.ui.define([
 			const fnAfterOpen = () => {
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
 				const aFormElements = oList.getFormElements();
-				const aVisibleFields = aFormElements[0].getFields().filter((oField) => oField.getVisible());
+				const aVisibleFields = aFormElements[1].getFields().filter((oField) => oField.getVisible());
 				assert.strictEqual(
 					aVisibleFields.length,
 					1,

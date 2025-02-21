@@ -278,7 +278,7 @@ sap.ui.define([
 			key: "ShowDetails",
 			state: [{
 				name: "ResponsiveTable",
-				showDetails: mSettings.showDetails || null
+				showDetails: mSettings.showDetails
 			}],
 			applyAbsolute: true
 		});

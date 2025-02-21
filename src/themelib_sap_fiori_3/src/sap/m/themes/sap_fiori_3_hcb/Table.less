@@ -7,12 +7,12 @@
 
 .sapMListTblHeader,
 .sapMListTblFooter {
-	background: @sapUiListBackground;
+	background: var(--sapList_Background);
 }
 
 .sapMListTbl {
 	/* HCB Additional Style */
-	border: 1px solid @sapUiListHeaderBorderColor;
+	border: 1px solid var(--sapList_HeaderBorderColor);
 }
 
 .sapMSticky .sapMTB-Info-CTX.sapMTB.sapMListInfoTBar {
@@ -22,11 +22,11 @@
 
 /* table column header */
 .sapMListTbl th {
-	border-bottom: 0.125rem solid @sapUiListHeaderBorderColor;
+	border-bottom: 0.125rem solid var(--sapList_HeaderBorderColor);
 }
 
-// to ensure that the bottom focus outline is visible on the table header row,
-// the <th> bottom border color is made transparent
+/* to ensure that the bottom focus outline is visible on the table header row, */
+/* the <th> bottom border color is made transparent */
 .sapMLIBFocusable:not(.sapMTableRowCustomFocus):focus > .sapMTableTH {
 	border-bottom-color: transparent;
 }
@@ -41,5 +41,5 @@
 
 /* table footer */
 .sapMListTblFooter > td {
-	border-top: 0.125rem solid @sapUiListTableFooterBorder;
+	border-top: 0.125rem solid var(--sapList_TableFooterBorder);
 }

@@ -1,0 +1,47 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:core="sap.ui.core"
+		height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" subSectionLayout="TitleOnLeft">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<breadcrumbs>
+					<m:Breadcrumbs>
+						<m:Link text="Page 1 a very long link"/>
+						<m:Link text="Page 2 long link"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
+
+				<heading>
+					<m:FlexBox fitContainer="true" alignItems="Center">
+						<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiTinyMarginEnd"/>
+						<m:Title text="Denise Smith" wrapping="true"/>
+					</m:FlexBox>
+				</heading>
+
+				<actions>
+					<m:OverflowToolbarButton type="Emphasized" icon="sap-icon://pull-down" tooltip="pull-down" text="show section"/>
+					<m:OverflowToolbarButton type="Emphasized" icon="sap-icon://show" tooltip="show" text="show state"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+		<sections>
+			<ObjectPageSection id="testSection" title="Anchor1">
+				<ObjectPageSubSection id="testSubSection" title="Anchor summary">
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
+	</ObjectPageLayout>
+</mvc:View>
+

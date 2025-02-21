@@ -410,8 +410,8 @@ sap.ui.define([
 				sAction = "setShowDetails";
 				sExpectedName = "ResponsiveTable";
 			} else if (counter === 2) {
-				bExpectedValue = null;
-				sAction = "resetShowDetails";
+				bExpectedValue = false;
+				sAction = "setShowDetails";
 				sExpectedName = "ResponsiveTable";
 			}
 
@@ -459,6 +459,141 @@ sap.ui.define([
 		this.oTable.getCurrentState.restore();
 	});
 
+	QUnit.test("Add a new column to the table", async function(assert) {
+		const oColumn = new Column({
+			header: "Column F",
+			hAlign: "Begin",
+			template: new Text({
+				text: "{test}"
+			}),
+			extendedSettings: new ResponsiveColumnSettings({
+				importance: "High"
+			})
+		});
+		this.oTable.addColumn(oColumn);
+		const oType = this.oTable.getType();
+
+		// Initial state
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		assert.ok(oType._oShowDetailsButton.getVisible(), "Show Details button is visible since table has popins");
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are initially hidden");
+
+		// Case 1: Adding a new column that will not be hidden in the popin
+		this.oTable._bUserPersonalizationActive = true; // Emulate personalization
+		sinon.stub(oColumn, "getInnerColumn").returns({
+			getImportance: function() {
+				return "High";
+			}
+		});
+		oType._onColumnInsert(oColumn);
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are not shown");
+
+		// Case 2: Adding a new column that will be hidden in the popin
+		oColumn.getInnerColumn.returns({
+			getImportance: function() {
+				return "Low";
+			}
+		});
+		oType._onColumnInsert(oColumn);
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are shown");
+
+		// Case 3: Adding a new column that will not be hidden in the popin, but state stays as before
+		oColumn.getInnerColumn.returns({
+			getImportance: function() {
+				return "High";
+			}
+		});
+		oType._onColumnInsert(oColumn);
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are still shown");
+
+		oColumn.getInnerColumn.restore();
+	});
+
+	QUnit.test("Switch variant (emulation)", async function(assert) {
+		const oVariant = new VariantManagement("mdc_test_vm", {
+			"for": ["table_test"]
+		});
+		this.oTable.setVariant(oVariant);
+
+		const fnGetCurrentStateStub = sinon.stub(this.oTable, "getCurrentState");
+		const oType = this.oTable.getType();
+
+		// Initial state
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		this.oTable._oTable.setContextualWidth("600px");
+		await nextUIUpdate();
+		assert.ok(oType._oShowDetailsButton.getVisible(), "Show Details button is visible since table has popins");
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are initially hidden");
+
+		// State (none) => State (showDetails: true)
+		fnGetCurrentStateStub.returns({
+			"xConfig": {
+				"aggregations": {
+					"type": {
+						"ResponsiveTable": {
+							"showDetails": true
+						}
+					}
+				}
+			}
+		});
+		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are shown");
+
+		// State (showDetails: true) => State (showDetails: false)
+		fnGetCurrentStateStub.returns({
+			"xConfig": {
+				"aggregations": {
+					"type": {
+						"ResponsiveTable": {
+							"showDetails": false
+						}
+					}
+				}
+			}
+		});
+		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are now hidden");
+
+		// State (showDetails=false) => State (showDetails=true)
+		fnGetCurrentStateStub.returns({
+			"xConfig": {
+				"aggregations": {
+					"type": {
+						"ResponsiveTable": {
+							"showDetails": true
+						}
+					}
+				}
+			}
+		});
+		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are now shown again");
+
+		// State (showDetails=true) => State (none)
+		fnGetCurrentStateStub.returns({});
+		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		await nextUIUpdate();
+
+		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are now hidden as default");
+
+		fnGetCurrentStateStub.restore();
+	});
+
 	QUnit.test("State is applied (emulation)", async function(assert) {
 		const oType = this.oTable.getType();
 		const oVariant = new VariantManagement("mdc_test_vm", {
@@ -480,7 +615,7 @@ sap.ui.define([
 		});
 
 		const fnOnModificationsSpy = sinon.spy(oType, "onModifications");
-		const fnToggleShowDetailsSpy = sinon.spy(oType, "_toggleShowDetails");
+		const fnSetShowDetailsState = sinon.spy(oType, "_setShowDetailsState");
 
 		await TableQUnitUtils.waitForBinding(this.oTable);
 		this.oTable._oTable.setContextualWidth("600px");
@@ -492,8 +627,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(fnOnModificationsSpy.calledOnce, "onModifications is called");
-		assert.ok(fnToggleShowDetailsSpy.calledOnce, "_toggleShowDetails is called");
-		assert.ok(fnToggleShowDetailsSpy.calledWith(false), "_toggleShowDetails is called with false");
+		assert.ok(fnSetShowDetailsState.calledOnce, "_setShowDetailsState is called");
+		assert.ok(fnSetShowDetailsState.calledWith(true), "_setShowDetailsState is called with true");
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are now shown");
 
 		fnGetCurrentStateStub.returns({
@@ -512,8 +647,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(fnOnModificationsSpy.calledTwice, "onModifications is called");
-		assert.ok(fnToggleShowDetailsSpy.calledTwice, "_toggleShowDetails is called");
-		assert.ok(fnToggleShowDetailsSpy.calledWith(true), "_toggleShowDetails is called with false");
+		assert.ok(fnSetShowDetailsState.calledTwice, "_setShowDetailsState is called");
+		assert.ok(fnSetShowDetailsState.calledWith(false), "_setShowDetailsState is called with false");
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are now hidden");
 	});
 

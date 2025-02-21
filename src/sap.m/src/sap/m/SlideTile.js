@@ -156,23 +156,23 @@ sap.ui.define([
 		this._oInvisibleText = new InvisibleText(this.getId() + "-ariaText");
 		this._oLeftScroll = new Button({
 			icon : "sap-icon://navigation-left-arrow",
-			tooltip: this._oRb.getText("SLIDETILE_PREVIOUS_BUTTON"),
 			type: ButtonType.Transparent,
 			ariaDescribedBy: this._oInvisibleText,
 			press: () => {
 				this._scrollToNextTile(true,true,null,true);
 				this._setInvisibleText(this._getPrefixText());
-			}
+			},
+			tooltip: this._oRb.getText("SLIDETILE_PREVIOUS")
 		});
 		this._oRightScroll = new Button({
 			icon : "sap-icon://navigation-right-arrow",
 			type: ButtonType.Transparent,
-			tooltip: this._oRb.getText("SLIDETILE_NEXT_BUTTON"),
 			ariaDescribedBy: this._oInvisibleText,
 			press: () => {
 				this._scrollToNextTile(true,false,null,true);
 				this._setInvisibleText(this._getPrefixText());
-			}
+			},
+			tooltip: this._oRb.getText("SLIDETILE_NEXT")
 		});
 		this._tabKeyPressedTile = false;
 		this._tabKeyPressedButton = false;

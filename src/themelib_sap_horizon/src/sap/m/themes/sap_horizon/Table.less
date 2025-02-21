@@ -4,7 +4,7 @@
 /* ============================ */
 
 @_sap_m_Table_SelNavColWidth: 2.75rem;
-@_sap_m_Table_CustomFocusMargin: 0px;
+@_sap_m_Table_CustomFocusMargin: 0;
 
 .sapMListBGTransparent .sapMListTblHeader,
 .sapMListBGTransparent .sapMListTblFooter {
@@ -13,12 +13,12 @@
 
 .sapMListBGTranslucent .sapMListTblHeader,
 .sapMListBGTranslucent .sapMListTblFooter {
-	background-color: @sapUiListBackground;
+	background-color: var(--sapList_Background);
 }
 
 .sapMListBGSolid .sapMListTblHeader,
 .sapMListBGSolid .sapMListTblFooter {
-	background-color: @sapUiListBackground;
+	background-color: var(--sapList_Background);
 }
 
 /* make the focus visible on all sides */
@@ -27,6 +27,6 @@
 }
 
 .sapMListTblDummyCell:last-child {
-	background-color: @sapUiListBackground;
-	border-left-color: @sapUiListTableFixedBorderColor;
+	background-color: var(--sapList_Background);
+	border-left-color: var(--sapList_TableFixedBorderColor);
 }
