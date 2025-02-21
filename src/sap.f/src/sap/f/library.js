@@ -468,10 +468,13 @@ sap.ui.define([
 	/**
 	 * Sets the accessibility role for the <code>sap.f.GridContainer</code> item.
 	 *
+	 * **Note:** This method is automatically called by the <code>sap.f.GridContainer</code> control.
+	 *
 	 * @function
 	 * @name sap.f.IGridContainerItem.setGridItemRole
 	 * @param {string} sRole The accessibility role for the <code>sap.f.GridContainer</code> item
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.f.GridContainer
 	 */
 
 	/**
