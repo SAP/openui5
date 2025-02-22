@@ -97,6 +97,9 @@ sap.ui.define([
 	 *
 	 * All rows have the same height and all columns have the same width. Their sizes can be configured with the use of the <code>layout</code> aggregation and <code>{@link sap.f.GridContainerSettings}</code>.
 	 *
+	 * **Note:** To ensure better keyboard and accessibility support,
+	 * child items should implement <code>sap.f.IGridContainerItem</code> interface.
+	 *
 	 * <h3>Usage</h3>
 	 *
 	 * <i>When to use</i>

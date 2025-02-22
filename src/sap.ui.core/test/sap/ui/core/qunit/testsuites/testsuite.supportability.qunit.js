@@ -24,6 +24,10 @@ sap.ui.define([], function() {
 				}
 			},
 
+			"performance/Measurement": {
+				title: "sap.ui.performance.Measurement"
+			},
+
 			"performance/trace/FESR": {
 				title: "sap.ui.performance.FESR"
 			},

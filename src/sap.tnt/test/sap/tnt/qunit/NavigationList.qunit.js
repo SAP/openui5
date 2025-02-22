@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
 	'sap/tnt/NavigationListGroup',
+	'sap/tnt/NavigationListMenuItem',
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/test/utils/waitForThemeApplied"
 ], function(
@@ -32,6 +33,7 @@ sap.ui.define([
 	NavigationList,
 	NavigationListItem,
 	NavigationListGroup,
+	NavigationListMenuItem,
 	nextUIUpdate,
 	waitForThemeApplied
 ) {
@@ -324,13 +326,11 @@ sap.ui.define([
 		beforeEach: async function () {
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
 		},
-		afterEach: async function () {
+		afterEach: function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
-
-			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -366,7 +366,7 @@ sap.ui.define([
 		assert.notOk(this.navigationList.$().hasClass('sapTntNLCollapsed'), "expanded mode is ok");
 
 		this.navigationList.setExpanded(false);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.ok(this.navigationList.$().hasClass('sapTntNLCollapsed'), "collapsed mode is ok");
 	});
@@ -375,7 +375,7 @@ sap.ui.define([
 		assert.notOk(this.navigationList.getItems()[2].getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "sapTntNLIItemsContainerHidden class is not set");
 
 		this.navigationList.getItems()[2].setExpanded(false);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.ok(this.navigationList.getItems()[2].getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "sapTntNLIItemsContainerHidden class is set");
 	});
@@ -399,7 +399,7 @@ sap.ui.define([
 				]
 			});
 		oNL.placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oItem.getDomRef("a").title, oItem.getTooltip());
@@ -407,7 +407,6 @@ sap.ui.define([
 
 		// Clean up
 		oNL.destroy();
-		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.test("Tooltips when collapsed", async function (assert) {
@@ -430,7 +429,7 @@ sap.ui.define([
 				]
 			});
 		oNL.placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		// Act
 		oItem.$().trigger("tap");
@@ -443,7 +442,6 @@ sap.ui.define([
 
 		// Clean up
 		oNL.destroy();
-		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.module("Lifecycle");
@@ -466,7 +464,7 @@ sap.ui.define([
 				]
 			});
 		oNL.placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		// Act
 		oItem.$().trigger("tap");
@@ -478,7 +476,6 @@ sap.ui.define([
 
 		// Clean up
 		oSpy.restore();
-		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.module("Tab navigation and ARIA settings", {
@@ -486,13 +483,16 @@ sap.ui.define([
 			this.navigationList = getNavigationList('rootChild1');
 			oPage.addContent(this.navigationList);
 
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
+
+			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			await nextUIUpdate(); // no fake timer active in afterEach
+			await clearPendingUIUpdates(this.clock);
+			this.clock.restore();
 		}
 	});
 
@@ -632,13 +632,11 @@ sap.ui.define([
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
 		},
-		afterEach: async function () {
+		afterEach: function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
-
-			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -668,7 +666,7 @@ sap.ui.define([
 		assert.equal(secondLevelItemAnchorElement.getAttribute("role"), 'treeitem', "The anchor is with correct role");
 
 		this.navigationList.setExpanded(false);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		groupItem = this.navigationList.getItems()[0];
 		groupItemAnchorElement = groupItem.getDomRef().getElementsByTagName("a")[0];
@@ -679,13 +677,11 @@ sap.ui.define([
 		beforeEach: async function () {
 			this.navigationList = getNavigationList();
 
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
 		},
-		afterEach: async function () {
+		afterEach: function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
-
-			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -793,7 +789,7 @@ sap.ui.define([
 		});
 
 		navigationList.placeAt("qunit-fixture");
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		const item = new NavigationListItem({ key: "itemKey" });
 		const parentItem = new NavigationListItem({
@@ -808,7 +804,7 @@ sap.ui.define([
 		assert.ok(true, "There is no error");
 
 		// act
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(navigationList.getSelectedItem() , item, "selectedItem is successfully set");
@@ -816,7 +812,6 @@ sap.ui.define([
 
 		// clean up
 		navigationList.destroy();
-		await clearPendingUIUpdates(this.clock);
 	});
 
 	QUnit.module('selectedKey property', {
@@ -829,20 +824,19 @@ sap.ui.define([
 	});
 
 	QUnit.test('api', async function (assert) {
-
 		this.navigationList = getNavigationList('child1');
 		oPage.addContent(this.navigationList);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 1', 'initial selection is correct');
 
 		this.navigationList.setSelectedKey('child3');
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 3', 'selection is correct');
 
 		this.navigationList.setSelectedKey('');
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.notOk(this.navigationList._selectedItem,'selection is removed');
 	});
@@ -853,7 +847,7 @@ sap.ui.define([
 		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
 		oPage.addContent(this.navigationList);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.notOk(this.navigationList._selectedItem, 'no initial selection');
 
@@ -871,13 +865,16 @@ sap.ui.define([
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
+
+			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
 
-			await nextUIUpdate(); // no fake timer active in afterEach
+			await clearPendingUIUpdates(this.clock);
+			this.clock.restore();
 		}
 	});
 
@@ -1228,13 +1225,14 @@ sap.ui.define([
 			this.navigationList = getNavigationList(undefined, true);
 			oPage.addContent(this.navigationList);
 
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
+			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: async function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
-
-			await nextUIUpdate(); // no fake timer active in afterEach
+			await clearPendingUIUpdates(this.clock);
+			this.clock.restore();
 		}
 	});
 
@@ -1316,6 +1314,7 @@ sap.ui.define([
 
 		assert.notOk(oAttachOverflowItemPressSpy.called, "Press event is not fired on the overflow item");
 
+		await nextUIUpdate(this.clock);
 		menuDomRef = document.querySelector(".sapUiMnu");
 
 		var bIsExternalLinkRendered = menuDomRef.children[0].children[4].classList.contains("sapUiMnuItmExternalLink");
@@ -1353,6 +1352,9 @@ sap.ui.define([
 		const oSelectedItem = items[4];
 		this.navigationList._selectItem({ item: oSelectedItem});
 
+		// Assert
+		assert.ok(menu.isDestroyed(), "overflow menu is destroyed");
+
 		menu = this.navigationList._createOverflowMenu();
 
 		const aExpectedMenuItemsAfterSelection = items.reduce((aResult, oItem) => {
@@ -1375,15 +1377,16 @@ sap.ui.define([
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
 		assert.ok(menuDomRef, "overflow menu is shown");
 
-		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(2)"));
+		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(3)"));
 		const oMenuNavigationItem = menu.getItems()[2]._navItem;
 		const oAttachItemPressSpy = this.spy(oMenuNavigationItem, "_firePress");
 
 		assert.notOk(oAttachItemPressSpy.called, "press event is not fired on the parent item in the overflow");
 
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
+		await nextUIUpdate(this.clock);
 
-		const oMenuSubNavigationItem = menu.getItems()[2].getItems()[2]._navItem;
+		const oMenuSubNavigationItem = menu.getItems()[3].getItems()[2]._navItem;
 		const oAttachSubItemPressSpy = this.spy(oMenuSubNavigationItem, "_firePress");
 
 		const initiallySelectedImId = this.navigationList.getSelectedItem().sId;
@@ -1393,17 +1396,17 @@ sap.ui.define([
 		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
 
 		assert.ok(oAttachSubItemPressSpy.called, "press event is fired on the sub item in the overflow menu");
-
-		menu.destroy();
 	});
 
-	QUnit.test("Click on external link item in the overflow", function (assert) {
+	QUnit.test("Click on external link item in the overflow", async function (assert) {
+		this.stub(NavigationListMenuItem.prototype, "_openUrl", function () { });
+		this.clock.restore();
 
 		// Arrange
 		var navListDomRef = this.navigationList.getDomRef(),
 			overflowItemDomRef = navListDomRef.querySelector(".sapTntNLOverflow"),
 			items = this.navigationList.getItems(),
-			sCurrHref = window.location.href,iInitialHeight = 50;
+			iInitialHeight = 50;
 			navListDomRef.style.height = `${iInitialHeight}px`;
 
 		this.navigationList._updateOverflowItems();
@@ -1415,15 +1418,20 @@ sap.ui.define([
 
 		// Act
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
+		await nextUIUpdate(this.clock);
+
 		var menuDomRef = document.querySelector(".sapUiMnu"),
+			item = menuDomRef.children[0].children[4],
 			anchor = menuDomRef.children[0].children[4].querySelector("a");
 
 		assert.ok(anchor, "Anchor tag is rendered");
 
-		anchor.click();
+		// Act
+		const event = new jQuery.Event("click", { target: item });
+		jQuery(item).trigger(event);
 
 		// Assert
-		assert.strictEqual(window.location.href, sCurrHref, "Default action when clicking on anchor tag is prevented.");
+		assert.ok(event.isDefaultPrevented(), "Default action when clicking on anchor tag is prevented.");
 	});
 
 	QUnit.module("Navigation List Group", {
@@ -1431,20 +1439,18 @@ sap.ui.define([
 			this.navigationList = getNavigationList();
 			oPage.addContent(this.navigationList);
 
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
 		},
-		afterEach: async function () {
+		afterEach: function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
-
-			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
 	QUnit.test("On Collapsed NL, only the group children are visible", async function (assert) {
 		// arrange
 		this.navigationList.setExpanded(false);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		const oNavigationListGroup = this.navigationList.getItems()[5],
 			aExpectedVisibleItems = oNavigationListGroup.getItems().map((oItem) => oItem.getDomRef()),
@@ -1456,7 +1462,7 @@ sap.ui.define([
 
 	QUnit.test("On Expanded NL, the group title is also visible", async function (assert) {
 		this.navigationList.setExpanded(true);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		const oNavigationListGroup = this.navigationList.getItems()[5],
 			aExpectedVisibleItems = oNavigationListGroup.getItems().map((oItem) => oItem.getDomRef()),
@@ -1468,7 +1474,6 @@ sap.ui.define([
 
 	QUnit.test("Groups can be collapsed and expanded to show/hide children", async function (assert) {
 		// arrange
-		this.clock.restore(); // use real timeouts for this test
 		const done = assert.async();
 
 		const oNavigationListGroup = this.navigationList.getItems()[5],
@@ -1478,13 +1483,13 @@ sap.ui.define([
 		assert.strictEqual(oDomRef.querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), false, "the children are visible");
 		QUnitUtils.triggerEvent("tap", oDomRef.querySelector(".sapTntNLI"));
 
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		setTimeout(async () => {
 			assert.strictEqual(oNavigationListGroup.getExpanded(), false, "expanded is set to false");
 			assert.strictEqual(oDomRef.querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), true, "the children are not visible");
 
-			await nextUIUpdate(this.clock);
+			await nextUIUpdate();
 			done();
 		}, 500);
 
@@ -1492,7 +1497,7 @@ sap.ui.define([
 
 	QUnit.test("When a group is in the Overflow, its children are directly placed in the overflow", async function (assert) {
 		this.navigationList.setExpanded(false);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		const oNavListDomRef = this.navigationList.getDomRef(),
 			oNavigationListGroup = this.navigationList.getItems()[5],
@@ -1517,13 +1522,11 @@ sap.ui.define([
 			this.navigationList = getSecondNavigationList();
 			oPage.addContent(this.navigationList);
 
-			await nextUIUpdate(); // no fake timer active in beforeEach
+			await nextUIUpdate();
 		},
-		afterEach: async function () {
+		afterEach: function () {
 			this.navigationList.destroy();
 			this.navigationList = null;
-
-			await nextUIUpdate(); // no fake timer active in afterEach
 		}
 	});
 
@@ -1533,12 +1536,12 @@ sap.ui.define([
 		const oSelectableItem = this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLI");
 		QUnitUtils.triggerEvent("tap", oSelectableItem);
 
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.ok(oSelectableItem.classList.contains("sapTntNLISelected"), "sapTntNLISelected class is set when item has selectable = false");
 
 		QUnitUtils.triggerEvent("tap", oNonSelectableItem);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.notOk(oNonSelectableItem.classList.contains("sapTntNLISelected"), "sapTntNLISelected class is not set when item has selectable = false");
 	});
@@ -1551,24 +1554,28 @@ sap.ui.define([
 		assert.notOk(oDefaultItem.classList.contains("sapTntNLIAction"), "sapTntNLIAction class is not set when item has design = Default");
 	});
 
-	QUnit.test("Press event", function (assert) {
-		this.navigationList.getItems().forEach(async (item) => {
-			const oAttachPressSpy = this.spy(item, "firePress");
-			QUnitUtils.triggerEvent("tap", item.getDomRef().querySelector(".sapTntNLI"));
-			await nextUIUpdate(this.clock);
-			assert.ok(oAttachPressSpy.called, "press event is fired");
-		});
+	QUnit.test("Press event", async function (assert) {
+		await Promise.all(
+			this.navigationList.getItems().map(async (item) => {
+				const oAttachPressSpy = this.spy(item, "firePress");
+				QUnitUtils.triggerEvent("tap", item.getDomRef().querySelector(".sapTntNLI"));
+				await nextUIUpdate();
+				assert.ok(oAttachPressSpy.called, "press event is fired");
+			})
+		);
 	});
 
-	QUnit.test("Press event on child items", function (assert) {
-		this.navigationList.getItems().forEach(async (item) => {
-			const oAttachPressSpy = this.spy(item, "firePress");
-			if (item.getItems().length) {
-				QUnitUtils.triggerEvent("tap", item.getItems()[0].getDomRef());
-				await nextUIUpdate(this.clock);
-				assert.notOk(oAttachPressSpy.calledOnce, "press event is not fired on parent item if child item is pressed");
-			}
-		});
+	QUnit.test("Press event on child items", async function (assert) {
+		await Promise.all(
+			this.navigationList.getItems().map(async (item) => {
+				const oAttachPressSpy = this.spy(item, "firePress");
+				if (item.getItems().length) {
+					QUnitUtils.triggerEvent("tap", item.getItems()[0].getDomRef());
+					await nextUIUpdate();
+					assert.notOk(oAttachPressSpy.calledOnce, "press event is not fired on parent item if child item is pressed");
+				}
+			})
+		);
 	});
 
 

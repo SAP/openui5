@@ -41,8 +41,6 @@ sap.ui.define([
 		CTX_SETTINGS: 110,
 		// IFrame ranks go up 1 by 1 for each possible child target
 		CTX_CREATE_SIBLING_IFRAME: 130,
-		// Annotation ranks go up 1 by 1 for each action
-		CTX_ANNOTATION: 140,
 		// Variant types are mutually exclusive
 		CTX_VARIANT_SET_TITLE: 200,
 		CTX_COMP_VARIANT_RENAME: 200,
@@ -54,7 +52,9 @@ sap.ui.define([
 		CTX_COMP_VARIANT_MANAGE: 230,
 		CTX_VARIANT_SWITCH_SUBMENU: 240,
 		CTX_COMP_VARIANT_SWITCH: 240,
-		CTX_COMP_VARIANT_CONTENT: 250
+		CTX_COMP_VARIANT_CONTENT: 250,
+		// Annotation ranks go up 1 by 1 for each action
+		CTX_ANNOTATION: 300
 	};
 
 	function _handleEditableByPlugin(mPropertyBag, aPromises, oSourceElementOverlay) {

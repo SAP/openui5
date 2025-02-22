@@ -200,7 +200,6 @@ sap.ui.define([
 			this._oMappingApplied = {};
 
 			//lazy loading
-			this._bLazyLoading = false; //by default, no lazy loading so we can use it out of an objectPageLayout
 			this._bConnected = false;   //indicates connectToModels function has been called
 			this._oUpdatedModels = {};
 			this._oParentObjectPageSubSection = null; // the parent ObjectPageSubSection
@@ -209,8 +208,6 @@ sap.ui.define([
 		};
 
 		BlockBase.prototype.onBeforeRendering = function () {
-			var oParentObjectPageLayout;
-
 			this._applyMapping();
 
 			if (!this.getMode() || this.getMode() === "") {
@@ -223,10 +220,6 @@ sap.ui.define([
 			}
 
 			this._applyFormAdjustment();
-
-			//TODO: for iconTabBar mode, specify lazyLoading for selectedTab only?
-			oParentObjectPageLayout = this._getObjectPageLayout();
-			this._bLazyLoading = oParentObjectPageLayout && (oParentObjectPageLayout.getEnableLazyLoading() || oParentObjectPageLayout.getUseIconTabBar());
 		};
 
 		BlockBase.prototype.onAfterRendering = function () {
@@ -248,7 +241,6 @@ sap.ui.define([
 			Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
 
 			if (oParent?.isA("sap.uxap.ObjectPageSubSection")) {
-				this._bLazyLoading = true;
 				this._oParentObjectPageSubSection = oParent;
 			}
 		};
@@ -362,13 +354,6 @@ sap.ui.define([
 
 			if (this.getMode() !== sMode) {
 				this.setProperty("mode", sMode, false);
-
-				// Update the this._bLazyLoading here: setMode is called by ObjectPageSubSection in onBeforeRendering,
-				// as at this point enableLazyLoading property of OPL is already set.
-				// onBeforeRendering of BlockBase is still not called! That's why this._bLazyLoading may not be in a valid state
-				// (previously set as true in setParent function, as it is placed in ObjectPageSubSection).
-				// If this._bLazyLoading is not updated at this point and enableLazyLoading=false, view will never be selected, binding will never be updated.
-				this._updateLazyLoad();
 
 				//if Lazy loading is enabled, and if the block is not connected
 				//delay the view creation (will be done in connectToModels function)
@@ -779,7 +764,7 @@ sap.ui.define([
 			if (!this._bConnected) {
 				Log.debug("BlockBase :: Connecting block to the UI5 model tree");
 				this._bConnected = true;
-				if (this._bLazyLoading) {
+				if (this._getObjectPageLayout()?._isLazyLoadingEffectivelyEnabled()) {
 					//if lazy loading is enabled, the view has not been created during the setMode
 					//so create it now
 					var sMode = this.getMode();
@@ -858,16 +843,10 @@ sap.ui.define([
 		 * @private
 		 */
 		BlockBase.prototype._shouldLazyLoad = function () {
-			return !!this._oParentObjectPageSubSection && this._bLazyLoading && !this._bConnected;
-		};
-
-		/**
-		 * Updates this._bLazyLoading property.
-		 * @private
-		 */
-		BlockBase.prototype._updateLazyLoad = function () {
-			var oParentObjectPageLayout = this._getObjectPageLayout(this._oParentObjectPageSubSection);
-			this._bLazyLoading = oParentObjectPageLayout && (oParentObjectPageLayout.getEnableLazyLoading() || oParentObjectPageLayout.getUseIconTabBar());
+			var oParentObjectPageLayout = this._getObjectPageLayout(this._oParentObjectPageSubSection),
+				vLazyLoad = oParentObjectPageLayout?._isLazyLoadingEffectivelyEnabled(),
+				bDelayLoading = vLazyLoad === true || vLazyLoad === undefined; // delay loading until the value of the "enableLazyLoading" property of ObjectPage is known
+			return !!this._oParentObjectPageSubSection && bDelayLoading && !this._bConnected;
 		};
 
 		/**
