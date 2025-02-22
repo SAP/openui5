@@ -104,7 +104,7 @@ sap.ui.define([
 		assert.strictEqual(aMenuItems[0].text, "My Action Title", "then the menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is correct");
 		assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
-		assert.strictEqual(aMenuItems[0].rank, 140, "then the menu item rank is correct");
+		assert.strictEqual(aMenuItems[0].rank, 300, "then the menu item rank is correct");
 	});
 
 	QUnit.test("When an overlay has multiple annotation actions in the designtime metadata", async function(assert) {
@@ -146,13 +146,13 @@ sap.ui.define([
 		assert.strictEqual(aMenuItems[0].text, sActionTitle1, "then the first menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "pathToAnnonationChange1Icon", "then the first menu item icon is correct");
 		assert.strictEqual(aMenuItems[0].enabled, false, "then the first menu item is disabled");
-		assert.strictEqual(aMenuItems[0].rank, 140, "then the first menu item rank is correct");
+		assert.strictEqual(aMenuItems[0].rank, 300, "then the first menu item rank is correct");
 
 		assert.strictEqual(aMenuItems[1].id, "CTX_ANNOTATION1", "then the second menu item id is correct");
 		assert.strictEqual(aMenuItems[1].text, sActionTitle2, "then the second menu item text is correct");
 		assert.strictEqual(aMenuItems[1].icon, "pathToAnnonationChange2Icon", "then the second menu item icon is correct");
 		assert.strictEqual(aMenuItems[1].enabled, true, "then the second menu item is enabled");
-		assert.strictEqual(aMenuItems[1].rank, 141, "then the second menu item rank is correct");
+		assert.strictEqual(aMenuItems[1].rank, 301, "then the second menu item rank is correct");
 	});
 
 	QUnit.test("When an overlay has an annotation action in the designtime metadata but the control has no stable ID", function(assert) {
@@ -216,7 +216,7 @@ sap.ui.define([
 		assert.strictEqual(aMenuItems[0].text, "My Action Title", "then the menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is set to the default value");
 		assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
-		assert.strictEqual(aMenuItems[0].rank, 140, "then the menu item rank is correct");
+		assert.strictEqual(aMenuItems[0].rank, 300, "then the menu item rank is correct");
 	});
 
 	QUnit.test("When the dialog returns changes", async function(assert) {

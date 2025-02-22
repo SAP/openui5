@@ -26,11 +26,10 @@ sap.ui.define([
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.rta.contextBased.Page", {
-		async onInit() {
-			ContextBasedAdaptationsAPI.clearInstances();
+		onInit() {
 			this.oRolesModel = new JSONModel();
-			await this.oRolesModel.loadData("./model/roles.json", "");
 			this.sandbox = sinon.createSandbox();
+			this.bDataInitialized = false;
 			this.oToolbar = new Adaptation({
 				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 				rtaInformation: {
@@ -40,36 +39,42 @@ sap.ui.define([
 					rootControl: new Control()
 				}
 			});
-			this.oManageAdaptationsDialog = new ManageAdapationsDialog({ toolbar: this.oToolbar });
-			this.oAddAdaptationsDialog = new AddAdaptationDialog({ toolbar: this.oToolbar });
-			var oTempAdaptationsModel = new JSONModel();
-			await oTempAdaptationsModel.loadData("./model/adaptations.json", "");
-			var aAdaptations = oTempAdaptationsModel.getProperty("/adaptations");
-			this.oModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 		},
 		onManageAdaptations() {
-			setStubsWithData.call(this);
-			this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			(async () => {
+				await setStubsWithData.call(this);
+				this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			})();
 		},
 		onManageAdaptationsWithOnlyOneAdaptation() {
-			setStubsWithData.call(this, "./model/onlyOneAdaptation.json");
-			this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			(async () => {
+				await setStubsWithData.call(this, "./model/onlyOneAdaptation.json");
+				this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			})();
 		},
 		onManageAdaptationsWithTwoAdaptations() {
-			setStubsWithData.call(this, "./model/twoAdaptations.json");
-			this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			(async () => {
+				await setStubsWithData.call(this, "./model/twoAdaptations.json");
+				this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			})();
 		},
 		onManageAdaptationsWithBackendError() {
-			setStubWithError.call(this);
-			this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			(async () => {
+				await setStubWithError.call(this);
+				this.oManageAdaptationsDialog.openManageAdaptationDialog();
+			})();
 		},
 		onAddAdaptation() {
-			setStubsWithData.call(this);
-			this.oAddAdaptationsDialog.openAddAdaptationDialog();
+			(async () => {
+				await setStubsWithData.call(this);
+				this.oAddAdaptationsDialog.openAddAdaptationDialog();
+			})();
 		},
 		onAddAdaptationWithBackendError() {
-			setStubWithError.call(this);
-			this.oAddAdaptationsDialog.openAddAdaptationDialog();
+			(async () => {
+				await setStubWithError.call(this);
+				this.oAddAdaptationsDialog.openAddAdaptationDialog();
+			})();
 		}
 	});
 
@@ -83,7 +88,22 @@ sap.ui.define([
 		this.removeStub = this.sandbox.stub(ContextBasedAdaptationsAPI, "remove");
 	}
 
-	function setStubsWithData(sAdaptationsDataPath) {
+	async function initData() {
+		if (!this.bDataInitialized) {
+			ContextBasedAdaptationsAPI.clearInstances();
+			await this.oRolesModel.loadData("./model/roles.json", "");
+			this.oManageAdaptationsDialog = new ManageAdapationsDialog({ toolbar: this.oToolbar });
+			this.oAddAdaptationsDialog = new AddAdaptationDialog({ toolbar: this.oToolbar });
+			const oTempAdaptationsModel = new JSONModel();
+			await oTempAdaptationsModel.loadData("./model/adaptations.json", "");
+			const aAdaptations = oTempAdaptationsModel.getProperty("/adaptations");
+			this.oModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
+			this.bDataInitialized = true;
+		}
+	}
+
+	async function setStubsWithData(sAdaptationsDataPath) {
+		await initData.call(this);
 		this.sandbox.restore();
 		initStubs.call(this);
 		this.getContextsStub.callsFake(function(args) {

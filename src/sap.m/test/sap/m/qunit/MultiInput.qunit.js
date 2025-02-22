@@ -1073,18 +1073,6 @@ sap.ui.define([
 		assert.strictEqual(token.getId(), document.activeElement.id ,"Token got focused");
 	});
 
-	QUnit.test("test remove via live change", async function(assert) {
-		var token1 = new Token({selected:true});
-		var token2 = new Token({selected:true});
-		var token3 = new Token({selected:true});
-		this.multiInput1.setTokens([token1, token2, token3]);
-		await nextUIUpdate();
-
-		this.multiInput1.fireLiveChange();
-
-		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
-	});
-
 	QUnit.test("keyboard - ctrl + A with focused token", async function(assert) {
 		var token1 = new Token();
 		var token2 = new Token();
@@ -1492,6 +1480,41 @@ sap.ui.define([
 
 		oMI.destroy();
 	});
+
+	QUnit.test("selected tokens should be deleted on livechange", async function (assert) {
+		var oMI = new MultiInput({
+			tokens: [
+				new Token({ text: "Token 1"}),
+				new Token({ text: "Token 2"}),
+				new Token({ text: "Token 3"})
+			]
+		}).placeAt("content");
+
+		await nextUIUpdate();
+
+		var oSpy = this.spy(oMI, "fireTokenUpdate");
+
+		oMI.focus();
+
+		// select all tokens
+		qutils.triggerEvent("keydown", oMI.getAggregation("tokenizer").getFocusDomRef(), {
+			which: KeyCodes.A,
+			ctrlKey: true
+		});
+
+		await nextUIUpdate();
+
+		// fire live-change to simulate real input
+		oMI.fireLiveChange();
+
+		await nextUIUpdate();
+
+		assert.strictEqual(oMI.getTokens().length, 0, "All Tokens should be deleted");
+		assert.ok(oSpy.called, "Fire Token Update is called");
+
+		oMI.destroy();
+	});
+
 
 	QUnit.test("onsapdelete when MultiInput has value", async function(assert) {
 		var oSpy = this.spy(Tokenizer.prototype, "onsapdelete");
