@@ -1635,6 +1635,117 @@ sap.ui.define([
 		assert.strictEqual(bAvatarVisible.getVisible(), false, "avatar is not visible when visible property is set to false");
 	});
 
+	QUnit.test("Icon src for Mobile SDK", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.iconFitType"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"title": "Company Details",
+						"items": [
+							{
+								"icon": {
+									"src": "/images/grass.jpg",
+									"fitType": "Contain"
+								}
+							}
+						]
+					}]
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oStaticConfiguration = oContent.getStaticConfiguration();
+
+		var aItems = oStaticConfiguration.groups[0].items;
+		assert.equal(aItems.length, 1, "Should have 1 item.");
+
+		var item0 = aItems[0];
+		assert.equal(item0.icon.src, this.oCard.getBaseUrl() + "images/grass.jpg", "item 0: src format correct");
+	});
+
+
+
+	QUnit.test("Image src (binding) for Mobile SDK", async function (assert) {
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "card.explorer.object.image",
+				"type": "card",
+				"title": "Sample of an Object Card with Image",
+				"applicationVersion": {
+					"version": "1.0.0"
+				},
+				"tags": {
+					"keywords": [
+						"Object",
+						"Card",
+						"Sample"
+					]
+				}
+			},
+			"sap.ui": {
+				"technology": "UI5",
+				"icons": {
+					"icon": "sap-icon://switch-classes"
+				}
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"firstName": "Donna",
+						"lastName": "Moore",
+						"position": "Sales Executive",
+						"photo": "./images/workingWithTablet.jpg"
+					}
+				},
+				"header": {
+					"title": "Donna Moore",
+					"subTitle": "Complete your time recording",
+					"visible": false
+				},
+				"content": {
+					"groups": [
+						{
+							"items": [
+								{
+									"type": "Image",
+									"src": "{photo}",
+									"fullWidth": false
+								}
+							]
+						}
+					]
+				},
+				"footer": {
+					"actionsStrip": [
+						{
+							"text": "Send Reminder",
+							"buttonType": "Accept"
+						}
+					]
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oStaticConfiguration = oContent.getStaticConfiguration();
+
+		var aItems = oStaticConfiguration.groups[0].items;
+		assert.equal(aItems[0].src, this.oCard.getBaseUrl() + "./images/workingWithTablet.jpg", "item 0: src format correct");
+	});
+
 	QUnit.test("Group title is not rendered when missing from manifest", async function (assert) {
 		this.oCard.setManifest({
 			"sap.app": {
@@ -1770,6 +1881,61 @@ sap.ui.define([
 		oAvatarGroup.getItems().forEach(function (oItem) {
 			assert.ok(oItem.getDomRef(), "Item " + oItem.getId() + " should be rendered");
 		});
+	});
+
+	QUnit.test("Avatar group with template - Icon src for Mobile SDK", async function (assert) {
+		// Arrange
+		var oCardData = {
+			team: [
+				{
+					"iconSrc": "/images/grass.jpg"
+				},
+				{
+					"iconSrc": "/images/grass.jpg"
+				},
+				{
+					"iconSrc": "/some/invalid/path.jpg"
+				}
+			]
+		};
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.avatarGroup"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": oCardData
+				},
+				"content": {
+					"groups": [{
+						"items": [{
+							"label": "Team",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{iconSrc}",
+									"initials": "{name}"
+								}
+							}
+						}]
+					}]
+				}
+			}
+		});
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oStaticConfiguration = oContent.getStaticConfiguration();
+
+		var aItems = oStaticConfiguration.groups[0].items[0].items;
+		assert.equal(aItems[0].icon.src, this.oCard.getBaseUrl() + "images/grass.jpg", "item 0: src format correct");
+		assert.equal(aItems[1].icon.src, this.oCard.getBaseUrl() + "images/grass.jpg", "item 1: src format correct");
+		assert.equal(aItems[2].icon.src, this.oCard.getBaseUrl() + "some/invalid/path.jpg", "item 2: src format correct");
 	});
 
 	QUnit.test("Properties of item template for avatars are correctly bound", async function (assert) {
@@ -3183,6 +3349,21 @@ sap.ui.define([
 			assert.notOk(this.getParent().getDomRef().classList.contains("sapUiIntImgWithOverlayLoaded"), "There is no animation.");
 			done();
 		});
+	});
+
+	QUnit.test("Image and Overlay - Image src for Mobile SDK", async function (assert) {
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oContent = this.oCard.getAggregation("_content"),
+			oStaticConfiguration = oContent.getStaticConfiguration();
+
+		var aItems = oStaticConfiguration.groups[0].items;
+		assert.equal(aItems[0].src, this.oCard.getBaseUrl() + "images/grass.jpg", "item 0: src format correct");
+		assert.equal(aItems[1].src, this.oCard.getBaseUrl() + "images/grass.jpg", "item 1: src format correct");
+		assert.equal(aItems[2].src, this.oCard.getBaseUrl() + "images/grass.jpg", "item 2: src format correct");
+		assert.equal(aItems[3].src, this.oCard.getBaseUrl() + "images/grass.jpg", "item 3: src format correct");
+		assert.equal(aItems[4].src, this.oCard.getBaseUrl() + "some/invalid/path.jpg", "item 4: src format correct");
 	});
 
 	QUnit.test("Image fails to load, fallback image is loaded", async function (assert) {

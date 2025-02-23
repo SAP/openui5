@@ -233,6 +233,20 @@ sap.ui.define([
 			sObjectContentPath;
 
 		if (!this.getBindingContext()) {
+			if (oConfiguration && oConfiguration.groups) {
+				oConfiguration.groups.forEach(function (oGroup) {
+					if (oGroup.items) {
+						oGroup.items.forEach(function (oItem) {
+							if (oItem.icon && oItem.icon.src) {
+								oItem.icon.src = this._oIconFormatter.formatSrc(oItem.icon.src);
+							}
+							if (oItem.src) {
+								oItem.src = this._oIconFormatter.formatSrc(oItem.src);
+							}
+						}.bind(this));
+					}
+				}.bind(this));
+			}
 			return oConfiguration;
 		} else {
 			sObjectContentPath = this.getBindingContext().getPath();
@@ -302,6 +316,10 @@ sap.ui.define([
 
 		if (oItem.icon && oItem.icon.src) {
 			oResolvedGroupItem.icon.src = this._oIconFormatter.formatSrc(BindingResolver.resolveValue(oItem.icon.src, this));
+		}
+
+		if (oItem.src) {
+			oResolvedGroupItem.src = this._oIconFormatter.formatSrc(BindingResolver.resolveValue(oItem.src, this));
 		}
 
 		return oResolvedGroupItem;
