@@ -26660,4 +26660,102 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		await this.waitForChanges(assert);
 		FieldHelp.getInstance().deactivate();
 	});
+
+	//*********************************************************************************************
+	// Scenario: When FieldHelpUtil.setDocumentationRef is called on an element which also has a property bound to an
+	// OData property with field help, the resulting field help for the control is *only* the field help set through
+	// FieldHelpUtil.setDocumentationRef. The field help for the OData property is not shown.
+	// This test covers the case that FieldHelpUtil.setDocumentationRef is called *before* field help activation.
+	// JIRA: CPOUI5MODELS-1879
+	QUnit.test("FieldHelpUtil.setDocumentationRef on control with binding, before activation", async function (assert) {
+		const sView = `
+<FlexBox binding="{/SalesOrderSet(\'1\')}">
+	<Label labelFor="note" text="Label for Note" />
+	<Text id="note" text="{Note}" />
+</FlexBox>`;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				Note : "Note 1"
+			})
+			.expectValue("note", "Note 1");
+
+		await this.createView(assert, sView);
+
+		FieldHelpUtil.setDocumentationRef(this.oView.byId("note"),
+			"urn:sap-com:documentation:key?=type=DTEL&id=FOO&origin=BAR"
+		);
+		const {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+
+		// code under test
+		FieldHelp.getInstance().activate(fnResolve);
+
+		const aHotspots = await oFieldHelpUpdatePromise;
+		const oExpectedHotspot = {
+			backendHelpKey : {
+				id : "FOO",
+				origin : "BAR",
+				type : "DTEL"
+			},
+			hotspotId : this.oView.createId("note"),
+			labelText : "Label for Note"
+		};
+		assert.deepEqual(aHotspots, [oExpectedHotspot], "field help hotspot, only field help from setDocumentationRef");
+
+		await this.waitForChanges(assert);
+		FieldHelp.getInstance().deactivate();
+	});
+
+	//*********************************************************************************************
+	// Scenario: When FieldHelpUtil.setDocumentationRef is called on an element which also has a property bound to an
+	// OData property with field help, the resulting field help for the control is *only* the field help set through
+	// FieldHelpUtil.setDocumentationRef. The field help for the OData property is not shown.
+	// This test covers the case that FieldHelpUtil.setDocumentationRef is called *after* field help activation.
+	// JIRA: CPOUI5MODELS-1879
+	QUnit.test("FieldHelpUtil.setDocumentationRef on control with binding, after activation", async function (assert) {
+		const sView = `
+<FlexBox binding="{/SalesOrderSet(\'1\')}">
+	<Label labelFor="note" text="Label for Note" />
+	<Text id="note" text="{Note}" />
+</FlexBox>`;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				Note : "Note 1"
+			})
+			.expectValue("note", "Note 1");
+
+		await this.createView(assert, sView);
+
+		let {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+		const fnUpdateHotspots = (aHotspots) => fnResolve(aHotspots);
+
+		// code under test
+		FieldHelp.getInstance().activate(fnUpdateHotspots);
+
+		let aHotspots = await oFieldHelpUpdatePromise;
+		const oExpectedHotspot = {
+			backendHelpKey : {
+				id : "NOTE",
+				origin : "MyOrigin",
+				type : "DTEL"
+			},
+			hotspotId : this.oView.createId("note"),
+			labelText : "Label for Note"
+		};
+		assert.deepEqual(aHotspots, [oExpectedHotspot], "field help hotspot, field help from binding");
+
+		({promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers());
+
+		// code under test
+		FieldHelpUtil.setDocumentationRef(this.oView.byId("note"),
+			"urn:sap-com:documentation:key?=type=DTEL&id=FOO&origin=BAR"
+		);
+
+		aHotspots = await oFieldHelpUpdatePromise;
+		Object.assign(oExpectedHotspot.backendHelpKey, {id: "FOO", origin: "BAR"});
+		assert.deepEqual(aHotspots, [oExpectedHotspot], "field help hotspot, only field help from setDocumentationRef");
+		await this.waitForChanges(assert);
+		FieldHelp.getInstance().deactivate();
+	});
 });

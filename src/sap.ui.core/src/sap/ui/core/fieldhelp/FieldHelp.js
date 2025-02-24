@@ -503,7 +503,11 @@ sap.ui.define([
 					return;
 				}
 				const oURNSet = new Set();
-				Object.values(this.#mDocuRefControlToFieldHelp[sControlID]).forEach((aURNs) => {
+				const aDocuRefsForControl = this.#mDocuRefControlToFieldHelp[sControlID][undefined];
+				const aDocuRefs = aDocuRefsForControl
+					? [aDocuRefsForControl]
+					: Object.values(this.#mDocuRefControlToFieldHelp[sControlID]);
+				aDocuRefs.forEach((aURNs) => {
 					aURNs.forEach(oURNSet.add.bind(oURNSet)); // add to the Set to filter duplicates
 				});
 				Array.from(oURNSet).forEach((sURN) => {
