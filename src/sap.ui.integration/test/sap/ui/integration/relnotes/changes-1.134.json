@@ -3,6 +3,16 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "ba7c32f47e2acb3cc795ec4f7c3391030e165dad",
+        "type": "FIX",
+        "text": " Integration Cards: Header's avatar \"alt\" is now correctly announced"
+      },
+      {
+        "id": "4d7b9ba493cdc1ab239b1e137211977c665867d9",
+        "type": "FIX",
+        "text": " Integration Cards: Card overflow enum is imported properly"
+      },
+      {
         "id": "8f1f4a5935b7542aafc0485573cf721ce42b1b38",
         "type": "FEATURE",
         "text": " Integration Cards: Better styling for Adaptive Card's selectable containers"

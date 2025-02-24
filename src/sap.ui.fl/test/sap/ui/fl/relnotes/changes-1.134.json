@@ -1,0 +1,12 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "d7b095700df655b2a8a3d02562cc37cf24cf9d68",
+        "type": "FIX",
+        "text": ": sap.ui.fl: Do not set custom flex property in flp about info dialog if adaptationId is undefined"
+      }
+    ]
+  }
+}

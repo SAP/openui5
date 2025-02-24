@@ -3,6 +3,46 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "246bb82bd77514000243b4c35fdecef211c3cca1",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: TokenUpdate event is now fired upon token removal via input"
+      },
+      {
+        "id": "e8d93326217b376233d0f52d72c74b14af607f7d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: The calendar week configuration has been properly applied"
+      },
+      {
+        "id": "7b2a0b2c3d4bbf26b3fde365943f85780bd1755c",
+        "type": "FEATURE",
+        "text": " We've now introduced the uploadProgress and uploadTerminated events for uploadItem within the UploadSetwithTable plugin"
+      },
+      {
+        "id": "36cba1f0b10fb2565cef8b3f8f00b003f88affcd",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: Improvements based on user-testing now implemented"
+      },
+      {
+        "id": "fc021c3b335b5a5b65008a91d6284fd8402a60ac",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed cell borders and text selection"
+      },
+      {
+        "id": "565b5ce598af212eedc0b28bfccafce831271af1",
+        "type": "FIX",
+        "text": " We've now addressed the height issue that occurred with different zooming levels in the FilePreviewDialog"
+      },
+      {
+        "id": "896c8da4ade91cfe67b980c7e425e602f91fdf29",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: Improvements based on user-testing now implemented"
+      },
+      {
+        "id": "a17319c2f69502eeb954d03fa6816c8a7383b432",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Remove \"Units of Time\" dropdown for singular option"
+      },
+      {
         "id": "a43cc1feebac91cd6a55ad761e023f0717da1e16",
         "type": "FEATURE",
         "text": " MDCTable: Add \"Show/Hide Details\" state to P13n"
@@ -26,6 +66,11 @@
         "id": "411d4f9391b09134dce0d70fa58915ba30253d43",
         "type": "FIX",
         "text": "sap.m.Tokenizer: n-more popover is now not created on initial rendering"
+      },
+      {
+        "id": "3edea5240826240de5ebcff1b5577877846d52b7",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Ensured element in checks"
       }
     ]
   }

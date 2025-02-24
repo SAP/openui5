@@ -1,0 +1,17 @@
+{
+  "1.134.0": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "a5074447782417172c416dc1a6a09fdb3a12a702",
+        "type": "FIX",
+        "text": " Integration cards: Rounded corners focus is now displayed correctly"
+      },
+      {
+        "id": "fce5dd94fd9336e0376c6b9be22168ba894ac07c",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Condensed styles fixed"
+      }
+    ]
+  }
+}

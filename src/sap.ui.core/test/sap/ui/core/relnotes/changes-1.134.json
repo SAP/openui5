@@ -3,6 +3,11 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "c0678a1b74296686f7019a86f748cac3ab5c2710",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#format: Fix wrong number of decimals in scientific notation"
+      },
+      {
         "id": "28ccb291baa8526c48736b7be73e32ff4ea0e0f6",
         "type": "FIX",
         "text": " ui5loader: make sap.ui.loader.config visible again in SDK"

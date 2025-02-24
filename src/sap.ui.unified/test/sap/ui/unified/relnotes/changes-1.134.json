@@ -3,6 +3,11 @@
     "date": "February 2025",
     "notes": [
       {
+        "id": "e8d93326217b376233d0f52d72c74b14af607f7d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: The calendar week configuration has been properly applied"
+      },
+      {
         "id": "fa523f9dc834faf3d263437abd8d755bb5c5f12b",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: Drag and drop interaction adjusted"

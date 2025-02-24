@@ -6,6 +6,11 @@
         "id": "15b48eebe575b90b396820da3c72afbc2d65ae9a",
         "type": "FIX",
         "text": " UI5 2.0: failing tests fixed"
+      },
+      {
+        "id": "ed5fb579e961098a175915c9b48e43409f4cd710",
+        "type": "FIX",
+        "text": " Demo Kit: 'Borrowed from' links fixed"
       }
     ]
   }
