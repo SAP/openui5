@@ -4,7 +4,7 @@ metadata:
 type: application
 framework:
   name: OpenUI5
-  version: "1.130.5" #MainVersion#
+  version: "1.130.6-SNAPSHOT" #MainVersion#
   libraries:
     - name: sap.ui.core
     - name: themelib_sap_horizon
