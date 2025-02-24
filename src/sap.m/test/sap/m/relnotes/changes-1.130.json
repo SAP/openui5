@@ -205,5 +205,15 @@
         "text": " We now ensure that the Uploadset illustrated message properties are correctly updated when they are bound with a model"
       }
     ]
+  },
+  "1.130.5": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "b813268668b8bf17e56cf68400d74b1bbe18c85a",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: The calendar week configuration has been properly applied"
+      }
+    ]
   }
 }

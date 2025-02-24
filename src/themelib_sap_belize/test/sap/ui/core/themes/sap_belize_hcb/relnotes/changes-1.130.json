@@ -18,5 +18,15 @@
         "text": " Integration Cards: New pagination experience"
       }
     ]
+  },
+  "1.130.5": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "f33c3044e9c704d173791797433d51ce58a7677d",
+        "type": "FIX",
+        "text": " InputListItem: Wrapping behavior in Belize"
+      }
+    ]
   }
 }
