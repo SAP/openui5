@@ -4,21 +4,26 @@ sap.ui.define(function () {
 	return {
 		name: "Demo Apps and Tutorials in sap.ui.documentation",
 		defaults: {
+			group: "Demo Apps",
+			ui5: {
+				libs: "sap.ui.documentation"
+			},
 			qunit: {
 				version: 2
 			}
 		},
 
 		tests: {
-			// demo apps formatters
-			"test-resources/sap/ui/documentation/sdk/qunit/demoapps/unit/unitTests": {
-				group: "Demo Apps",
-				page: "test-resources/sap/ui/documentation/sdk/qunit/demoapps/unit/unitTests.qunit.html"
-			},
 			// demo apps cells and download
-			"test-resources/sap/ui/documentation/sdk/qunit/demoapps/integration/opaTests": {
-				group: "Demo Apps",
-				page: "test-resources/sap/ui/documentation/sdk/qunit/demoapps/integration/opaTests.qunit.html"
+			"demoapps/integration/opaTests": {
+				title: "Integration tests for Demo Kit Demo Apps",
+				ui5: {
+					animation: false
+				}
+			},
+			// demo apps formatters
+			"demoapps/unit/unitTests": {
+				title: "Unit tests for Demo Kit Demo Apps"
 			}
 		}
 	};
