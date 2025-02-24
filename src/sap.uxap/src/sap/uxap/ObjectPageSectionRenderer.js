@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 		}
 
 		sTitle = oControl._getTitle();
-		bTitleVisible = oControl._isTitleVisible();
+		bTitleVisible = oControl.getTitleVisible();
 		bTitleAriaHidden = !oControl._isTitleAriaVisible();
 
 		oRm.openStart("section", oControl)

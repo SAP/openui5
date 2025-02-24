@@ -67,6 +67,18 @@ sap.ui.define([
 				titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
 				/**
+				 * Defines the actual visibility of the title of <code>ObjectPageSectionBase</code>.
+				 *
+				 * <b>Note:</b> This property is read-only. The <code>ObjectPageSectionBase</code> updates it, according to internal rules, based on UX specifications.
+				 * You can only read the value of <code>titleVisible</code> property and use it in your binding to determine the aria-levels of the inner Controls.
+				 *
+				 * <b>Note:</b> This is a downported feature introduced in version 1.121.0
+				 * @since 1.120.27
+				 * @protected
+				 */
+				titleVisible: {type: "boolean", group: "Appearance", defaultValue: true},
+
+				/**
 				 * Invisible ObjectPageSectionBase are not rendered
 				 */
 				visible: {type: "boolean", group: "Appearance", defaultValue: true},
@@ -150,6 +162,23 @@ sap.ui.define([
 			this._oInvisibleText.destroy();
 			this._oInvisibleText = null;
 		}
+	};
+
+	ObjectPageSectionBase.prototype.setShowTitle = function (bShow) {
+		this.setProperty("showTitle", bShow);
+
+		this.setTitleVisible();
+
+		return this;
+	};
+
+	/**
+	 * Sets title visibility
+	 * @param {boolean} bVisible
+	 * @protected
+	 */
+	ObjectPageSectionBase.prototype.setTitleVisible = function (bVisible) {
+		return this.setProperty("titleVisible", this._isTitleVisible(), true);
 	};
 
 	ObjectPageSectionBase.prototype._getGrid = function () {
@@ -400,10 +429,8 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype._getAriaLabelledByText = function () {
 		// Each section should be labelled as:
-		// 'titleName' - if the section has a title
-		// 'Section' - if it does not have a title or its hidden (for example, showTitle=false)
-		var sTitle = this._getShouldLabelTitle() && this._getTitle();
-		return sTitle || this.getSectionText();
+		// 'titleName' - no matter if the section has a title or not
+		return this._getTitle();
 	};
 
 	ObjectPageSectionBase.prototype._getInvisibleText = function () {
@@ -454,6 +481,7 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
 		if (bValue != this._bInternalTitleVisible) {
 			this._bInternalTitleVisible = bValue;
+			this.setTitleVisible();
 			if (bInvalidate) {
 				this.invalidate();
 			}
@@ -638,6 +666,7 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype._updateShowHideState = function (bHide) {
 		var oObjectPage = this._getObjectPageLayout();
 		this._isHidden = bHide;
+		this.setTitleVisible();
 		this.$().children(this._sContainerSelector).toggle(!bHide);
 		if (oObjectPage) {
 			oObjectPage._requestAdjustLayout();
@@ -675,11 +704,13 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype._applyImportanceRules = function (sCurrentLowestImportanceLevelToShow) {
 		this._sCurrentLowestImportanceLevelToShow = sCurrentLowestImportanceLevelToShow;
+		this.setTitleVisible();
 
 		if (this.getDomRef()) {
 			this._updateShowHideState(this._shouldBeHidden());
 		} else {
 			this._isHidden = this._shouldBeHidden();
+			this.setTitleVisible();
 		}
 	};
 
