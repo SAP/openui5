@@ -483,12 +483,16 @@ sap.ui.define([
 	};
 
 	BaseHeader.prototype.isFocusable = function() {
+		if (!this.getProperty("focusable")) {
+			return false;
+		}
+
 		const oParent = this.getParent();
 		if (oParent && oParent.isA("sap.f.CardBase") && oParent.isRoleListItem()) {
 			return this.isInteractive();
 		}
 
-		return this.getProperty("focusable");
+		return true;
 	};
 
 	BaseHeader.prototype._isInsideToolbar = function(oElement) {

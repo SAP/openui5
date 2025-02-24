@@ -192,6 +192,24 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</f:layoutData>
 			</f:Card>
+			<w:Card
+					displayVariant="TileStandard"
+					height="176px"
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="2" rows="2" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+					displayVariant="TileStandard"
+					height="176px"
+					action=".onCardAction"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample2.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="2" rows="2" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>
