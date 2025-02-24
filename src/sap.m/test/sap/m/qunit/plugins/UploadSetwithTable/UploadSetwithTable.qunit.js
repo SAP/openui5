@@ -772,6 +772,22 @@ sap.ui.define([
 		const oContext = oTable?._oTable?.getItems()[0]?.getBindingContext();
 		oUploadSetwithTablePlugin.renameItem(oContext);
 		oTable.destroy();
+
+	});
+
+	QUnit.test("Plugin works with multiple Responsive Table", async function (assert) {
+		this.oTable = await createResponsiveTable();
+		this.oTable1 = await createResponsiveTable();
+
+		this.oTable.addDependent(new UploadSetwithTable());
+		this.oTable1.addDependent(new UploadSetwithTable());
+
+		this.oUploadSetwithTablePlugin = this.oTable?.getDependents()?.find((oPlugin) => oPlugin.isA("sap.m.plugins.UploadSetwithTable"));
+		this.oUploadSetwithTablePlugin1 = this.oTable1?.getDependents()?.find((oPlugin) => oPlugin.isA("sap.m.plugins.UploadSetwithTable"));
+
+		assert.ok(this.oUploadSetwithTablePlugin, "UploadSetwithTable plugin is available as table's dependent.");
+		assert.ok(this.oUploadSetwithTablePlugin1, "UploadSetwithTable plugin is available as table's dependent.");
+		assert.notEqual(this.oUploadSetwithTablePlugin, this.oUploadSetwithTablePlugin1, "UploadSetwithTable plugin is different for different tables");
 	});
 
 
