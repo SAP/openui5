@@ -257,5 +257,18 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * Checks whether the theme is a SAP delivered standard theme or not.
+	 *
+	 * @param {string} sTheme Name of the theme to check
+	 * @returns {boolean} true if the theme is a standard theme, false otherwise
+	 * @private
+	 * @ui5-restricted sap.ui.core.Theming, sap.ui.core.theming.ThemeManager
+	 * @since 1.135
+	 */
+	ThemeHelper.isStandardTheme = function(sTheme) {
+		return sTheme.startsWith("sap_") || sTheme === "base";
+	};
+
 	return ThemeHelper;
 });

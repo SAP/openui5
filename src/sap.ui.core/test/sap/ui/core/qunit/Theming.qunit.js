@@ -3,6 +3,9 @@
 sap.ui.define([
 	"sap/base/config",
 	"sap/base/Event",
+	"sap/base/Log",
+	"sap/base/config/GlobalConfigurationProvider",
+	"sap/base/util/Deferred",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Control",
 	"sap/ui/core/Theming",
@@ -11,6 +14,9 @@ sap.ui.define([
 ], function (
 	BaseConfig,
 	BaseEvent,
+	Log,
+	GlobalConfigurationProvider,
+	Deferred,
 	URLConfigurationProvider,
 	Control,
 	Theming,
@@ -20,6 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	var oURLConfigurationProviderStub,
+		oGlobalConfigurationProviderStub,
 		mConfigStubValues,
 		mEventCalls,
 		bThemeManagerNotActive = !!globalThis["sap-ui-test-config"].themeManagerNotActive;
@@ -454,5 +461,152 @@ sap.ui.define([
 
 		ignoreEvent = false;
 		Theming.notifyContentDensityChanged();
+	});
+
+	QUnit.module("Favicon", {
+		before: function() {
+			Theming.setTheme("sap_horizon");
+			return themeApplied();
+		},
+		beforeEach: function(assert) {
+			const that = this;
+			this.sDefaultFaviconPath = sap.ui.require.toUrl("sap/ui/core/themes/base/icons/favicon.ico");
+			this.oRequireStub = sinon.stub(sap.ui, "require");
+			this.parametersDeferred = new Deferred();
+			this.mobileDeferred = new Deferred();
+			this.oRequireStub.callsFake(function(aModules, callback) {
+				let wrappedCallback;
+				if (aModules[0] === "sap/ui/core/theming/Parameters" && callback) {
+					wrappedCallback = function(module) {
+						that.Parameters = module;
+						that.sThemingServiceFaviconPath = "http://my.theming.service/my/custom/favicon.ico";
+						that.oParametersGetStub ??= sinon.stub(that.Parameters, "get").returns(that.sThemingServiceFaviconPath);
+						BaseConfig._.invalidate();
+						that.parametersDeferred.resolve(that.Parameters);
+						callback.apply(this, arguments);
+					};
+				} else if (aModules[0] === "sap/ui/util/Mobile" && callback) {
+					wrappedCallback = function(module) {
+						that.Mobile = module;
+						that.oMobileSetIconsSpy ??= sinon.spy(that.Mobile, "setIcons");
+						that.mobileDeferred.resolve(that.Mobile);
+						callback.apply(this, arguments);
+					};
+				} else {
+					wrappedCallback = callback;
+				}
+				that.oRequireStub.wrappedMethod.call(this, aModules, wrappedCallback);
+			});
+			mConfigStubValues = {};
+			oGlobalConfigurationProviderStub = sinon.stub(GlobalConfigurationProvider, "get");
+			oGlobalConfigurationProviderStub.callsFake(function(sKey) {
+				return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oGlobalConfigurationProviderStub.wrappedMethod.call(this, sKey);
+			});
+		},
+		afterEach: function(assert) {
+			oGlobalConfigurationProviderStub.restore();
+			this.oRequireStub.restore();
+			this.oMobileSetIconsSpy?.restore();
+			this.oParametersGetStub?.restore();
+		}
+	});
+
+	QUnit.test("getFavicon", async function(assert) {
+		assert.expect(bThemeManagerNotActive ? 9 : 10);
+
+		const oLogSpy = sinon.spy(Log, "error");
+
+		assert.strictEqual(await Theming.getFavicon(), undefined, "getFavicon should return 'undefined' since no favicon is configured");
+
+		mConfigStubValues = {
+			"sapUiFavicon": true
+		};
+		BaseConfig._.invalidate();
+
+		assert.strictEqual(await Theming.getFavicon(), this.sDefaultFaviconPath,
+			`getFavicon should return path '${this.sDefaultFaviconPath}' to default favicon, since favicon is set to 'true' and the theme is a SAP standard theme`);
+		assert.notOk(this.Parameters, "Parameters module should not be loaded since it's only needed in combination with custom theme");
+
+		Theming.setTheme("my_custom_theme");
+
+		// "sap/base/util/Mobile" is expected to be loaded after the favicon is set to a truthy value and a themeApplied event has occured
+		await this.mobileDeferred.promise;
+
+		assert.ok(!!this.Mobile, "Mobile module should be available after themeApplied, in case a favicon is configured (independed whether ThemeManager is active or not)");
+		assert.strictEqual(!!this.Parameters, !bThemeManagerNotActive, "Parameters module should be available depending whether ThemeManager is active or not");
+
+		if (!bThemeManagerNotActive) {
+			assert.strictEqual(await Theming.getFavicon(), this.sThemingServiceFaviconPath,
+				`getFavicon should return path '${this.sThemingServiceFaviconPath}' to custom favicon since favicon is set to 'true' and there is an explicit favicon configured for the custom theme`);
+		}
+
+		Theming.setTheme("sap_horizon");
+		await themeApplied();
+
+		mConfigStubValues = {
+			"sapUiFavicon": true
+		};
+		BaseConfig._.invalidate();
+
+		assert.strictEqual(await Theming.getFavicon(), this.sDefaultFaviconPath,
+			`getFavicon should return path '${this.sDefaultFaviconPath}' to default favicon since favicon is set to 'true' and theme is a standard theme`);
+
+		const sFaviconPath = "/path/to/my/favicon.ico";
+		mConfigStubValues = {
+			"sapUiFavicon": sFaviconPath
+		};
+		BaseConfig._.invalidate();
+
+		assert.strictEqual(await Theming.getFavicon(), sFaviconPath, `getFavicon should return configured path '${sFaviconPath}}' for favicon`);
+
+		mConfigStubValues = {
+			"sapUiFavicon": "http://my.absolute.url/to/my/favicon.ico"
+		};
+		BaseConfig._.invalidate();
+
+		assert.strictEqual(await Theming.getFavicon(), this.sDefaultFaviconPath,
+			`getFavicon should return path '${this.sDefaultFaviconPath}' to default favicon since an absolute URL is configured but absolute URLs are not allowed`);
+		assert.ok(oLogSpy.calledWith("Absolute URLs are not allowed for favicon. The configured favicon will be ignored.", undefined, "sap.ui.core.theming.Theming"),
+			"Log should be called with the correct message");
+		oLogSpy.restore();
+	});
+
+	QUnit.test("setFavicon", async function(assert) {
+		assert.expect(bThemeManagerNotActive ? 9 : 10);
+		await Theming.setFavicon();
+
+		assert.strictEqual(await Theming.getFavicon(), undefined, "favicon should be 'undefined' when 'setFavicon' is called with 'undefined'");
+		assert.notOk(this.Mobile, "'sap/base/util/Mobile' should not be loaded when 'setFavicon' is called with a falsy value");
+
+		Theming.setFavicon(true);
+
+		// "sap/base/util/Mobile" is expected to be loaded after the favicon is set to a truthy value
+		await this.mobileDeferred.promise;
+
+		assert.notOk(this.Parameters, "Parameters module should not be loaded because it's only needed in combination with custom theme");
+		assert.ok(!!this.Mobile, "Mobile module should be available after themeApplied, in case a favicon is configured (independed whether ThemeManager is active or not)");
+		assert.ok(this.oMobileSetIconsSpy.calledWith({ favicon: this.sDefaultFaviconPath }),
+			`setIcons should be called with '${this.sDefaultFaviconPath}' because there is no favicon derived from Parameters module`);
+
+		// Set a custom theme and wait for parameterswhich should be loaded to check for favicon from custom theme
+		Theming.setTheme("my_custom_theme");
+		if (!bThemeManagerNotActive) {
+			await this.parametersDeferred.promise;
+		}
+
+		assert.strictEqual(!!this.Parameters, !bThemeManagerNotActive, "Parameters module should be available depending whether ThemeManager is active or not");
+		if (!bThemeManagerNotActive) {
+			await Theming.setFavicon(true);
+			assert.ok(this.oMobileSetIconsSpy.calledWith({ favicon: this.sThemingServiceFaviconPath }),
+				`setIcons should be called with '${this.sThemingServiceFaviconPath}' from custom theme`);
+		}
+
+		await Theming.setFavicon("/path/to/my/favicon.ico");
+		assert.ok(this.oMobileSetIconsSpy.calledWith({ favicon: "/path/to/my/favicon.ico" }), "setIcons should not be called when 'setFavicon' is called with a falsy value");
+
+		await Theming.setFavicon("http://my.absolute.url/to/my/favicon.ico").catch((error) => {
+			assert.ok(error instanceof TypeError, "TypeError should be thrown when trying to set an absolute URL as favicon");
+			assert.strictEqual(error.message, "Path to favicon must be relative to the current origin", "Error message should be correct");
+		});
 	});
 });

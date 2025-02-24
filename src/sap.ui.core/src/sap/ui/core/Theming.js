@@ -27,6 +27,8 @@ sap.ui.define([
 
 	const oWritableConfig = BaseConfig.getWritableInstance();
 	const oEventing = new Eventing();
+	// Remember the initial favicon path in case there was already a favicon provided
+	const sInitialFaviconPath = document.querySelector("link[rel=icon]")?.getAttribute("href");
 	let oThemeManager;
 
 	/**
@@ -246,6 +248,91 @@ sap.ui.define([
 				}
 				mChanges["themeRoots"].forceUpdate = bForceUpdate && sThemeName === Theming.getTheme();
 				fireChange(mChanges);
+			}
+		},
+
+		/**
+		 * Derives the favicon path based on the configuration and the current theme.
+		 *
+		 * @returns {Promise<string>} The favicon path
+		 * @private
+		 * @since 1.135
+		 */
+		getFavicon: async () => {
+			const sDefaultFavicon = sInitialFaviconPath || sap.ui.require.toUrl("sap/ui/core/themes/base/icons/favicon.ico");
+			const sFaviconFromConfig = oWritableConfig.get({
+				name: "sapUiFavicon",
+				type: (vValue) => {
+					const sValue = vValue.toString();
+					if (["", "false"].includes(sValue.toLowerCase())) {
+						return false;
+					} else if (["x", "true"].includes(sValue.toLowerCase())) {
+						return true;
+					}
+					if (!vValue || (new URL(vValue, window.location.origin)).href.startsWith(window.location.origin)) {
+						return sValue;
+					} else {
+						Log.error("Absolute URLs are not allowed for favicon. The configured favicon will be ignored.", undefined, "sap.ui.core.theming.Theming");
+						return true;
+					}
+				}
+			});
+
+			if (!sFaviconFromConfig) {
+				return sFaviconFromConfig;
+			}
+
+			if (typeof sFaviconFromConfig === "string") {
+				return sFaviconFromConfig;
+			} else if (oThemeManager && !ThemeHelper.isStandardTheme(Theming.getTheme())) {
+				const sFaviconPath = await new Promise((res) => {
+					sap.ui.require(["sap/ui/core/theming/Parameters"], (Parameters) => {
+						const sFavicon = Parameters.get({
+							name: "sapUiFavicon",
+							_restrictedParseUrls: true,
+							callback: (sFavicon) => {
+								res(sFavicon);
+							}
+						});
+						if (sFavicon !== undefined) {
+							res(sFavicon);
+						}
+					});
+				});
+				return sFaviconPath || sDefaultFavicon;
+			}
+			return sDefaultFavicon;
+		},
+
+		/**
+		 * Sets the favicon. The path must be relative to the current origin. Absolute URLs are not allowed.
+		 *
+		 * @param {string|boolean|undefined} vFavicon A string containing a specific relative path to the favicon,
+		 *											'true' to use a favicon from custom theme or the default favicon in case no custom favicon is maintained,
+		 *											'false' or undefined to disable the favicon
+		 * @returns {Promise<undefined>} A promise that resolves when the favicon has been set with undefined
+		 * @public
+		 * @since 1.135
+		 */
+		setFavicon: async (vFavicon) => {
+			if (typeof vFavicon === "string" && !(new URL(vFavicon, window.location.origin)).href.startsWith(window.location.origin)) {
+				throw new TypeError("Path to favicon must be relative to the current origin");
+			}
+
+			oWritableConfig.set("sapUiFavicon", vFavicon);
+			const sNewFaviconPath = await Theming.getFavicon();
+
+			if (sNewFaviconPath) {
+				await new Promise((res, rej) => {
+					sap.ui.require(["sap/ui/util/Mobile"], (Mobile) => {
+						Mobile.setIcons({
+							favicon: sNewFaviconPath
+						});
+						res();
+					}, rej);
+				});
+			} else {
+				document.querySelector("link[rel=icon]")?.remove();
 			}
 		},
 
@@ -545,6 +632,16 @@ sap.ui.define([
 		}
 		return sPath;
 	}
+
+	Theming.attachApplied(() => {
+		Theming.getFavicon().then((favicon) => {
+			if (favicon) {
+				sap.ui.require(["sap/ui/util/Mobile"], (Mobile) => {
+					Mobile.setIcons({ favicon });
+				});
+			}
+		});
+	});
 
 	return Theming;
 });
