@@ -1,14 +1,11 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/layout/sample/tests/actions/formTests",
 	"sap/ui/layout/sample/tests/assertions/formTests"
-], async function (Core, Opa5, opaTest, Actions, Assertions) {
+], function (Opa5, opaTest, Actions, Assertions) {
 	"use strict";
-
-	await Core.ready();
 
 	var urlParams = new URLSearchParams(window.location.search);
 	var sSampleName = urlParams.get("component");
