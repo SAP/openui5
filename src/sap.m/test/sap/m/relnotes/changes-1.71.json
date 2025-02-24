@@ -3957,5 +3957,20 @@
         "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
       }
     ]
+  },
+  "1.71.70": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "8f2c207dd4ee35f5a5dd63ecebd9c3513cc2ac59",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: User input not overridden"
+      },
+      {
+        "id": "0907209484f0cf20f30617a98f1a2c96c7b43df0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Test page loads correctly"
+      }
+    ]
   }
 }

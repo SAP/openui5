@@ -1582,5 +1582,15 @@
         "text": " sap/ui/core/.library: Remove wrong component for sap/ui/core/util/MockServer"
       }
     ]
+  },
+  "1.71.70": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "b5a1990c24ab6594b17364e6fd3de49893f5f9a9",
+        "type": "FIX",
+        "text": " sap/base/util/now: Migrate performance.timing"
+      }
+    ]
   }
 }
