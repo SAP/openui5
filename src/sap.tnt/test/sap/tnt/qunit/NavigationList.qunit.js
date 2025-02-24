@@ -1391,6 +1391,10 @@ sap.ui.define([
 
 		const initiallySelectedImId = this.navigationList.getSelectedItem().sId;
 		menu = Element.closestTo(document.querySelector(".sapUiMnu"));
+
+		assert.ok(menu.getItems()[2].getDomRef().querySelector(".sapUiMnuItmSbMnu").classList.contains("sapTntNLIExpandIcon"), "correct class is added to the expand icon in the menu item");
+		assert.notOk(menu.getItems()[7].getDomRef().querySelector(".sapUiMnuItmSbMnu").classList.contains("sapTntNLIExpandIcon"), "correct class is added to the expand icon in the menu item");
+
 		menu.openSubmenu(menu.getItems()[2]);
 		QUnitUtils.triggerEvent("click",  document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[2]);
 		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
@@ -1534,6 +1538,9 @@ sap.ui.define([
 
 		const oNonSelectableItem = this.navigationList.getItems()[0].getDomRef().querySelector(".sapTntNLI");
 		const oSelectableItem = this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLI");
+		const oActionItem = this.navigationList.getItems()[2].getDomRef().querySelector(".sapTntNLI");
+		const oDefaultItem = this.navigationList.getItems()[3].getDomRef().querySelector(".sapTntNLI");
+
 		QUnitUtils.triggerEvent("tap", oSelectableItem);
 
 		await nextUIUpdate();
@@ -1544,6 +1551,11 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.notOk(oNonSelectableItem.classList.contains("sapTntNLISelected"), "sapTntNLISelected class is not set when item has selectable = false");
+
+		assert.ok(oSelectableItem.classList.contains("sapTntNLITwoClickAreas"), "sapTntNLITwoClickAreas class is set when item has selectable = true");
+		assert.notOk(oNonSelectableItem.classList.contains("sapTntNLITwoClickAreas"), "sapTntNLITwoClickAreas class is not set when item has selectable = false");
+		assert.notOk(oActionItem.classList.contains("sapTntNLITwoClickAreas"), "sapTntNLITwoClickAreas class is not set when item is with design='Action'");
+		assert.notOk(oDefaultItem.classList.contains("sapTntNLITwoClickAreas"), "sapTntNLITwoClickAreas class is not set when item has no children");
 	});
 
 	QUnit.test("Design Action", function (assert) {

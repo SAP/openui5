@@ -24,6 +24,7 @@
 @_sap_tnt_NavigationList_ItemFocusBorderOffset: 1px;
 @_sap_tnt_NavigationList_ItemFocusBorderRadius: @_sap_tnt_NavigationList_ItemBorderRadius;
 @_sap_tnt_NavigationList_Collapsed_SelectedItemBackground: ~"0 100% / 100% 0.125rem" no-repeat linear-gradient(0deg, @sapUiListSelectionBorderColor, @sapUiListSelectionBorderColor), @sapUiListSelectionBackgroundColor;
+@_sap_tnt_NavigationList_Collapsed_SelectedItemBackgroundHover: @_sap_tnt_NavigationList_Collapsed_SelectedItemBackground;
 @_sap_tnt_NavigationList_Collapsed_SelectedItemBackgroundRTL: @_sap_tnt_NavigationList_Collapsed_SelectedItemBackground;
 @_sap_tnt_NavigationList_SelectedItemBorderColor: @sapUiListSelectionBorderColor;
 @_sap_tnt_NavigationList_SelectedBorderStyleColor: solid @_sap_tnt_NavigationList_SelectedItemBorderColor;
@@ -38,6 +39,7 @@
 @_sap_tnt_NavigationList_GroupIconMarginLeft: 0;
 @_sap_tnt_NavigationList_GroupIconMarginRight: 0;
 @_sap_tnt_NavigationList_GroupTextWeight: unset;
+@_sap_tnt_NavigationList_GroupPadding: 0.5rem;
 @_sap_tnt_NavigationList_GroupBottomMarginInPopup: 0;
 @_sap_tnt_NavigationList_Padding: 0;
 @_sap_tnt_NavigationList_PaddingFixed: 0;
@@ -60,7 +62,13 @@
 @_sap_tnt_NavigationList_ExpandIconWidth: 2rem;
 @_sap_tnt_NavigationList_ExpandIconMarginRight: 0;
 @_sap_tnt_NavigationList_ExpandIconMarginLeft: 0;
+@_sap_tnt_NavigationList_ExpandIconPaddingLeft: 0;
 @_sap_tnt_NavigationList_ExpandIconFontSize: 0.875rem;
+@_sap_tnt_NavigationList_ActionItemBorderHover: none;
+@_sap_tnt_NavigationList_ActionItemBorderPosition: auto;
+@_sap_tnt_NavigationList_ActionItemBorderHeight: 100%;
+@_sap_tnt_NavigationList_ActionItemBorderPaddingLeft: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPadding;
+@_sap_tnt_NavigationList_ActionItemBorder: @sapUiButtonBorderWidth solid @sapUiButtonBorderColor;
 
 .sapTntNL {
 	margin: 0;
@@ -167,7 +175,7 @@
 }
 
 // defines the styles for border when selected, border when hovering (hover used in high contrast themes)
-.sapTntNL li .sapTntNLI:not(.sapTntNLIDisabled) {
+.sapTntNL li .sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIAction) {
 	&.sapTntNLISelected::before {
 		border: @_sap_tnt_NavigationList_SelectedBorderStyleColor;
 		border-width: @_sap_tnt_NavigationList_SelectedBorderWidth;
@@ -177,7 +185,7 @@
 	&:active,
 	.sapTntNLPopover &:last-child:hover,
 	.sapTntNLPopover &:last-child:active {
-		&:not(.sapTntNLISelected)::before {
+		&:not(.sapTntNLISelected):not(.sapTntNLIAction):before {
 			border: @_sap_tnt_NavigationList_HoverBorderStyleColor;
 			border-width: @_sap_tnt_NavigationList_HoverBorderWidth;
 		}
@@ -203,6 +211,10 @@
 	.sapTntNLCollapsed & {
 		border-width: @_sap_tnt_NavigationList_Collapsed_GroupBorderWidth;
 	}
+}
+
+.sapTntNLIFirstLevel.sapTntNLIAction::before {
+	border: none;
 }
 
 // When a group is expanded, defines the border of the group and of its last item
@@ -279,10 +291,12 @@
 }
 
 .sapTntNL .sapTntNLIExpandIcon,
+.sapUiMnuItmSbMnu.sapTntNLIExpandIcon,
 .sapTntNLIExternalLinkIcon {
 	min-width: @_sap_tnt_NavigationList_ExpandIconWidth;
 	margin-right: @_sap_tnt_NavigationList_ExpandIconMarginRight;
 	margin-left: @_sap_tnt_NavigationList_ExpandIconMarginLeft;
+	padding-left: @_sap_tnt_NavigationList_ExpandIconPaddingLeft;
 	font-size: @_sap_tnt_NavigationList_ExpandIconFontSize;
 
 	pointer-events: all;
@@ -291,6 +305,10 @@
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
 	user-select: none;
+}
+
+.sapTntNLI.sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapTntNLIExpandIcon {
+	margin-left: 1rem;
 }
 
 .sapTntNLIItemsContainer.sapTntNLIItemsContainerHidden {
@@ -332,6 +350,10 @@
 				display: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusTextDisplay;
 			}
 
+			.sapTntNLIText:last-child {
+				padding-right: 1rem;
+			}
+
 			.sapTntNLIExternalLinkIcon,
 			.sapTntNLIExpandIcon {
 				display: @_sap_tnt_NavigationList_Collapsed_HoverOrFocusTextDisplay;
@@ -343,6 +365,24 @@
 
 			.sapUiIcon:first-of-type {
 				padding-left: 0;
+			}
+		}
+
+		&.sapTntNLIAction {
+			[tabindex]:not(:focus):hover {
+				border: @_sap_tnt_NavigationList_ActionItemBorderHover;
+
+				//border should be considered for the positioning in Horizon - the following styles are used to keep the icon in the same position when the border is added
+				top: @_sap_tnt_NavigationList_ActionItemBorderPosition;
+				bottom: @_sap_tnt_NavigationList_ActionItemBorderPosition;
+				left: @_sap_tnt_NavigationList_ActionItemBorderPosition;
+				height: @_sap_tnt_NavigationList_ActionItemBorderHeight;
+				padding-left: @_sap_tnt_NavigationList_ActionItemBorderPaddingLeft;
+			}
+
+			[tabindex]:focus {
+				padding-left: @_sap_tnt_NavigationList_ActionItemBorderPaddingLeft;
+				outline: @_sap_tnt_NavigationList_ActionItemBorder;
 			}
 		}
 	}
@@ -360,9 +400,9 @@
 .sapTntNLIActive .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled),
 .sapTntNLCollapsed.sapTntNLIFirstLevel.sapTntNLISelected,
 .sapTntNL .sapTntNLGroup.sapTntNLI:not(.sapTntNLIDisabled):active,
-.sapTntNL .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled):active,
-.sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled):active,
-.sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled).sapTntNLIActive {
+.sapTntNL .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIAction):active,
+.sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIAction):active,
+.sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIAction).sapTntNLIActive {
 	background: @sapUiListActiveBackground;
 
 	&::before {
@@ -399,6 +439,11 @@
 	bottom: 0.125rem;
 	left: 0.25rem;;
 }
+
+.sapTntNLIAction {
+	border: @_sap_tnt_NavigationList_ActionItemBorder;
+}
+
 .sapTntNLIAction .sapMText,
 .sapTntNLIAction .sapUiIcon {
 	color: @sapButton_Lite_TextColor;
@@ -408,6 +453,16 @@
 	.sapTntNLISelectionIndicator {
 		margin: 0 0.5rem;
 	}
+}
+
+.sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapUiIcon:last-of-type {
+	border-left: 0.0625rem solid @sapTextColor;
+	height: @sapUiElementCondensedHeight;
+	line-height: @sapUiElementCondensedHeight;
+}
+
+.sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapUiIcon:last-of-type::before {
+	line-height: @sapUiElementCondensedHeight;
 }
 
 .sapTntNLISecondLevel .sapTntNLISelectionIndicator {
@@ -428,13 +483,17 @@
 	background: @_sap_tnt_NavigationList_Collapsed_SelectedItemBackground;
 }
 
+.sapTntNLCollapsed .sapTntNLISelected:not(.sapTntNLIDisabled):not(.sapTntNLINoHoverEffect):hover {
+	background: @_sap_tnt_NavigationList_Collapsed_SelectedItemBackgroundHover;
+}
+
 html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 	background: @_sap_tnt_NavigationList_Collapsed_SelectedItemBackgroundRTL;
 }
 
 .sapTntNLGroup {
-	padding-inline-start: 0.5rem;
-	padding-inline-end: 0.5rem;
+	padding-inline-start: 1rem;
+	padding-inline-end: @_sap_tnt_NavigationList_GroupPadding;
 	border-radius: @_sap_tnt_NavigationList_ItemBorderRadius;
 	transition: @_sap_tnt_NavigationList_ItemTransition;
 	color: @sapUiContentLabelColor;
@@ -468,7 +527,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 }
 
 .sapTntNLSeparator {
-	min-height: 0.5rem;
+	min-height: 0.625rem;
 }
 
 .sapTntNL > .sapTntNLSeparator:last-child {
@@ -568,7 +627,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 			height: 100%;
 			padding-inline-start: 0.5rem;
 			padding-inline-end: 0;
-			min-width: inherit;
+			min-width: @_sap_tnt_NavigationList_ExpandIconWidth;
 			min-height: inherit;
 
 			&:empty {
@@ -577,7 +636,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 
 			.sapUiIconMirrorInRTL::after {
 				content: "\e1ed";
-				font-size: 0.75rem;
+				font-size: @_sap_tnt_NavigationList_ExpandIconFontSize;
 				color: @_sap_tnt_NavigationList_IconColor;
 			}
 		}
@@ -606,7 +665,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 			display: flex;
 			align-items: center;
 			height: @_sap_tnt_NavigationList_ItemHeight;
-			padding-inline: 0.5rem;
+			padding-inline: 1rem 0.375rem;
 			border-radius: @_sap_tnt_NavigationList_ItemBorderRadius;
 			transition: @_sap_tnt_NavigationList_ItemTransition;
 			font-size: @sapMFontMediumSize;
@@ -634,6 +693,14 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 				margin-bottom: 0.1875rem;
 				border: @_sap_tnt_NavigationList_ItemBorderStyleColor;
 				border-width: @_sap_tnt_NavigationList_ItemBorderWidth;
+			}
+
+			.sapTntNLIExpandIcon {
+				margin: 0;
+			}
+
+			.sapTntNLIExternalLinkIcon {
+				margin-right: 0;
 			}
 		}
 	}
@@ -685,10 +752,6 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 	align-items: center;
 	box-sizing: border-box;
 	color: @_sap_tnt_NavigationList_ExpandIconColor;
-
-	.sapTntNLIExternalLinkIcon::before {
-		margin-left: 0.8rem;
-	}
 }
 
 /* Compact size */

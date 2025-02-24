@@ -479,6 +479,10 @@ sap.ui.define([
 			oRM.class("sapTntNLIWithExpander");
 		}
 
+		if (bSelectable && aItems.length) {
+			oRM.class("sapTntNLITwoClickAreas");
+		}
+
 		const oLinkAriaProps = {};
 
 		if (this.getAriaHasPopup() !== AriaHasPopup.None) {

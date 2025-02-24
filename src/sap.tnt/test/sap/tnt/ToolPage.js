@@ -328,6 +328,12 @@ sap.ui.define([
 			}
 			],
 			fixedNavigation: [{
+				title: 'Quick Create',
+				icon: 'sap-icon://write-new',
+				ariaHasPopup: "Dialog",
+				design: "Action",
+				selectable: false
+			}, {
 				title: 'Fixed Item 1',
 				icon: 'sap-icon://employee',
 				key: 'fixeditem',
@@ -388,7 +394,9 @@ sap.ui.define([
 						icon: '{icon}',
 						key: '{key}',
 						href: '{href}',
-						target: '{target}'
+						target: '{target}',
+						ariaHasPopup: '{ariaHasPopup}',
+						design: '{design}'
 					}),
 					path: '/fixedNavigation'
 				}
