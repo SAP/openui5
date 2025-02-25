@@ -38,4 +38,4 @@ function() {
 	};
 
 	return module;
-}, true);
+});
