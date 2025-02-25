@@ -894,11 +894,11 @@ sap.ui.define([
 			return;
 		}
 
-		const oCharacterRegex = new RegExp(/[@#$]/);
+		const oCharacterRegex = new RegExp(/[@#$\[\]\/\\<>|?*:;,"{}]/);
 		if (oCharacterRegex.test(sValue)) {
 			oInput.setShowValueStateMessage(true);
 			oInput.setProperty("valueState", "Error", true);
-			oInput.setValueStateText(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SPLC_VALIDATION_ERROR_MESSAGE", ['@#$']));
+			oInput.setValueStateText(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SPLC_VALIDATION_ERROR_MESSAGE", ['@#$[]/\<>|?*:;,"{}']));
 		} else {
 			oInput.setShowValueStateMessage(false);
 			oInput.setProperty("valueState", "None", true);
