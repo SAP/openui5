@@ -52,7 +52,10 @@ sap.ui.define([
 								CAUTION_variantIndependent: true
 							},
 							remove: null,
-							reveal: null
+							reveal: null,
+							combine: {
+								CAUTION_variantIndependent: true
+							}
 						}
 					};
 				}
