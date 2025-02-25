@@ -203,7 +203,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("because the variant is in the PUBLIC layer, but the user is not authorized to edit it (no key user nor author)", function(assert) {
+		QUnit.test("because the variant is in the PUBLIC layer, but the user is not authorized to edit it (no key user nor author)", async function(assert) {
 			sandbox.stub(InitialStorage, "loadFlexData").resolves({
 				...StorageUtils.getEmptyFlexDataResponse(),
 				changes: [],
@@ -239,16 +239,16 @@ sap.ui.define([
 				content: {someKey: "someValue"}
 			};
 
-			return FlexState.initialize({
+			await FlexState.initialize({
 				reference: sReference,
 				reInitialize: true
-			}).then(() => {
-				const oSettingsInstance = Settings.getInstanceOrUndef();
-				sandbox.stub(oSettingsInstance, "getUserId").returns("SANTA");
-				sandbox.stub(oSettingsInstance, "isKeyUser").returns(false);
-
-				return callCatchAndExpectMessage(assert, "the user is not authorized to edit the PUBLIC variant (no author nor key user)", mPropertyBag);
 			});
+
+			const oSettingsInstance = await Settings.getInstance();
+			sandbox.stub(oSettingsInstance, "getUserId").returns("SANTA");
+			sandbox.stub(oSettingsInstance, "isKeyUser").returns(false);
+
+			return callCatchAndExpectMessage(assert, "the user is not authorized to edit the PUBLIC variant (no author nor key user)", mPropertyBag);
 		});
 	});
 

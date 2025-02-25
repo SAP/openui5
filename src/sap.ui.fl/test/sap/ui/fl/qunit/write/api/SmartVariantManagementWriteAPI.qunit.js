@@ -700,7 +700,8 @@ sap.ui.define([
 						changes: [],
 						standardVariants: [],
 						defaultVariants: []
-					}
+					},
+					settings: {}
 				});
 
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
@@ -795,7 +796,10 @@ sap.ui.define([
 					isVersioningEnabled() {
 						return false;
 					},
-					getUserId() {}
+					getUserId() {},
+					isVariantAuthorNameAvailable() {
+						return false;
+					}
 				});
 				return SmartVariantManagementApplyAPI.loadVariants({
 					control: oControl,
