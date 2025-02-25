@@ -200,6 +200,10 @@ sap.ui.define([
 			variantsToBeDeleted: aVariantsToBeDeleted
 		} = oVariantModel._collectModelChanges(sVMReference, Layer.USER, oEvent);
 
+		if (!aConfigurationChangesContent.length && !aVariantsToBeDeleted.length) {
+			return;
+		}
+
 		if (aConfigurationChangesContent.some((oChange) => {
 			return oChange.visible === false
 			&& oChange.variantReference === oVariantModel.getCurrentVariantReference(sVMReference);
