@@ -3,19 +3,16 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Control",
 	"./TimePickerClockRenderer",
 	"sap/ui/Device",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(AnimationMode, Control, TimePickerClockRenderer, Device, ControlBehavior, jQuery) {
+	function(Control, TimePickerClockRenderer, Device, ControlBehavior, jQuery) {
 		"use strict";
 
-		var ANIMATION_DURATION_MAX = 200,	// total animation duration, without the delay before firing the event
-			ANIMATION_DELAY_EVENT = 100,	// delay before firing the event
-			LONG_TOUCH_DURATION = 1000;		// duration for long-touch interaction
+		var LONG_TOUCH_DURATION = 1000;		// duration for long-touch interaction
 
 		/**
 		 * Constructor for a new <code>TimePickerClock</code>.
@@ -43,42 +40,49 @@ sap.ui.define([
 					 * If set to <code>true</code>, the clock is interactive.
 					 */
 					enabled : {type : "boolean", group : "Misc", defaultValue : true},
+
 					/**
 					 * Minimum item value for the outer circle.
 					 */
 					itemMin: {type: "int", group: "Data", defaultValue: -1},
+
 					/**
 					 * Maximum item value for the outer circle.
 					 */
 					itemMax: {type: "int", group: "Data", defaultValue: -1},
-					/**
-					 * If set to <code>true</code>, an inner circle is displayed. The first item value of the inner circle will be itemMax + 1
-					 */
-					innerItems: {type: "boolean", group: "Appearance", defaultValue: false},
+
 					/**
 					 * Label of the clock dial - for example, 'Hours', 'Minutes', or 'Seconds'.
 					 */
 					label: {type: "string", group: "Appearance", defaultValue: null},
+
 					/**
 					 * If set to <code>true</code>, a surrounding circle with markers (dots) will be displayed
 					 * (for example, on the 'Minutes' clock-dial, markers represent minutes)
 					 */
 					fractions: {type: "boolean", group: "Appearance", defaultValue: true},
+
 					/**
-					 * If provided, this will replace the last item displayed. If there is only one (outer) circle,
-					 * the last item from outer circle will be replaced; if there is an inner circle too, the last
-					 * item of inner circle will be replaced. Usually, the last item '24' is replaced with '0'.
+					 * If provided, this will replace the last item displayed. Usually, the last item '24' or '60' is replaced with '0'.
 					 * Do not replace the last item if <code>support2400</code> is set to <code>true</code>.
 					 */
 					lastItemReplacement: {type: "int", group: "Data", defaultValue: -1},
+
 					/**
 					 * Prepend with zero flag. If <code>true</code>, values less than 10 will be prepend with 0.
 					 */
 					prependZero: {type: "boolean", group: "Appearance", defaultValue: false},
+
 					/**
 					 * The currently selected value of the clock.
 					 */
 					selectedValue: {type: "int", group: "Data", defaultValue: -1},
+
+					/**
+					 * The currently hovered value of the clock.
+					 */
+					hoveredValue: {type: "int", group: "Data", defaultValue: -1},
+
 					/**
 					 * The step for displaying of one unit of items.
 					 * 1 means 1/60 of the circle.
@@ -86,6 +90,7 @@ sap.ui.define([
 					 * For hours the display step must be set to 1.
 					 */
 					displayStep: {type: "int", group: "Data", defaultValue: 5},
+
 					/**
 					 * The step for selection of items.
 					 * 1 means 1 unit:
@@ -93,6 +98,7 @@ sap.ui.define([
 					 * - if the clock displays minutes/seconds - 1 unit = 1 minute/second
 					 */
 					valueStep: {type: "int", group: "Data", defaultValue: 1},
+
 					/**
 					 * Allows to set a value of 24:00, used to indicate the end of the day.
 					 * Works only with HH or H formats. Don't use it together with am/pm.
@@ -108,7 +114,24 @@ sap.ui.define([
 					 *
 					 * - on both device types, if there is a keyboard attached: 24 or 00 can be typed directly.
 					 */
-					support2400: {type: "boolean", group: "Misc", defaultValue: false}
+					support2400: {type: "boolean", group: "Misc", defaultValue: false},
+
+					/**
+					 * When set to <code>true</code>, the clock will be displayed without the animation.
+					 */
+					skipAnimation: {type: "boolean", group: "Misc", defaultValue: false},
+
+					/**
+					 * When set to <code>true</code>, the clock will fade in from transparent to full opacity, otherwise it will be hidden.
+					 * If the skipAnimation property is set to <code>true</code>, the clock will fade in without the animation, otherwise
+					 * the fade in will be animated.
+					 */
+					fadeIn: {type: "boolean", group: "Misc", defaultValue: false},
+
+					/**
+					 * When set to <code>true</code>, the clock will fade out to transparent
+					 */
+					fadeOut: {type: "boolean", group: "Misc", defaultValue: false}
 				},
 				events: {
 					/**
@@ -145,8 +168,7 @@ sap.ui.define([
 		 */
 		TimePickerClock.prototype.init = function() {
 			this._onMouseWheel = this._onMouseWheel.bind(this);
-			this._iHoveredValue = -1;
-			this._iPrevHoveredValue = -1;
+			this._bFinalChange = false;
 		};
 
 		/**
@@ -195,7 +217,6 @@ sap.ui.define([
 			this.invalidate();
 		};
 
-
 		/**
 		 * Value setter.
 		 *
@@ -204,7 +225,7 @@ sap.ui.define([
 		 */
 		TimePickerClock.prototype.setSelectedValue = function(iValue) {
 			var iReplacement = this.getLastItemReplacement(),
-				iMaxValue = this.getItemMax() * (this.getInnerItems() ? 2 : 1);
+				iMaxValue = this.getItemMax();
 
 			if (!this.getSupport2400())	{
 				if (iValue === 0) {
@@ -216,11 +237,11 @@ sap.ui.define([
 			}
 
 			this.setProperty("selectedValue", iValue);
-			this.fireChange({value: iValue, stringValue: this._getStringValue(iValue), finalChange: false});
+			this.fireChange({value: iValue, stringValue: this._getStringValue(iValue), finalChange: this._bFinalChange});
+			this._bFinalChange = false;
 
 			return this;
 		};
-
 
 		/**
 		 * Value getter.
@@ -229,10 +250,9 @@ sap.ui.define([
 		 */
 		TimePickerClock.prototype.getSelectedValue = function() {
 			var iValue = this.getProperty("selectedValue"),
-				iReplacement = this.getLastItemReplacement(),
-				iMaxValue = this.getItemMax() * (this.getInnerItems() ? 2 : 1);
+				iReplacement = this.getLastItemReplacement();
 
-			if (this.getSupport2400() && this._get24HoursVisible() && iValue === iMaxValue && iReplacement !== -1)	{
+			if (this.getSupport2400() && this._get24HoursVisible() && iValue === this.getItemMax() && iReplacement !== -1)	{
 				iValue = iReplacement;
 			}
 
@@ -386,12 +406,7 @@ sap.ui.define([
 		 * @private
 		 */
 		 TimePickerClock.prototype._onMouseOut = function(oEvent) {
-			var sId = this.getId(),
-				oNumber = document.getElementById(sId + "-" + this._iHoveredValue);
-
-			oNumber && oNumber.classList.remove("sapMTPCNumberHover");
-			this._iHoveredValue = -1;
-			this._iPrevHoveredValue = -1;
+			this.setHoveredValue(-1);
 		};
 
 		/**
@@ -403,9 +418,8 @@ sap.ui.define([
 		 TimePickerClock.prototype.modifyValue = function(bIncreaseValue) {
 			var iSelectedValue = this.getSelectedValue(),
 				iReplacementValue = this.getLastItemReplacement(),
-				bInnerItems = this.getInnerItems(),
 				iMin = this.getItemMin(),
-				iMax = this.getItemMax() * (bInnerItems ? 2 : 1),
+				iMax = this.getItemMax(),
 				iStep = this.getValueStep(),
 				iNewSelectedValue;
 
@@ -463,7 +477,7 @@ sap.ui.define([
 		 */
 		TimePickerClock.prototype._onTouchStart = function(oEvent) {
 			this._cancelTouchOut = false;
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || (oEvent.type === "mousedown" && oEvent.button !== 0) || this.getFadeOut()) {
 				return;
 			}
 
@@ -487,10 +501,9 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._onTouchMove = function(oEvent) {
-			var sId,
-				iDisplayStep,
-				oNumber;
-
+			if (this.getFadeOut()) {
+				return;
+			}
 			oEvent.preventDefault();
 			if (this._mouseOrTouchDown) {
 				this._x = oEvent.type === "touchmove" ? oEvent.touches[0].pageX : oEvent.pageX;
@@ -511,18 +524,6 @@ sap.ui.define([
 				this._x = oEvent.pageX;
 				this._y = oEvent.pageY;
 				this._calculatePosition(this._x, this._y);
-				iDisplayStep = this.getDisplayStep();
-				if (iDisplayStep > 1) {
-					this._iHoveredValue = Math.round(this._iHoveredValue / iDisplayStep) * iDisplayStep;
-				}
-				if (this.getEnabled() && this._iHoveredValue !== this._iPrevHoveredValue) {
-					sId = this.getId();
-					oNumber = document.getElementById(sId + "-" + this._iPrevHoveredValue);
-					oNumber && oNumber.classList.remove("sapMTPCNumberHover");
-					this._iPrevHoveredValue = this._iHoveredValue;
-					oNumber = document.getElementById(sId + "-" + this._iPrevHoveredValue);
-					oNumber && oNumber.classList.add("sapMTPCNumberHover");
-				}
 			}
 		};
 
@@ -533,10 +534,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._onTouchEnd = function(oEvent) {
-			var oAnimationMode = ControlBehavior.getAnimationMode(),
-				bSkipAnimation = oAnimationMode === AnimationMode.none || oAnimationMode === AnimationMode.minimal;
-
-			if (!this._mouseOrTouchDown) {
+			if (!this._mouseOrTouchDown || this.getFadeOut()) {
 				return;
 			}
 
@@ -552,7 +550,8 @@ sap.ui.define([
 			}
 
 			if (!this._cancelTouchOut) {
-				this._changeValueAnimation(this._iSelectedValue, bSkipAnimation);
+				this._bFinalChange = true;
+				this.setSelectedValue(this._iSelectedValue);
 			}
 		};
 
@@ -583,18 +582,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns real maximum value of the clock items depending on existing of inner items.
-		 *
-		 * @returns {int} The real maximum value
-		 * @private
-		 */
-		TimePickerClock.prototype._getMaxValue = function() {
-			var iItemMax = this.getItemMax();
-
-			return this.getInnerItems() ? iItemMax * 2 : iItemMax;
-		};
-
-		/**
 		 * Toggles 24 and 0 values when a clock has <code>support2400</code> property set.
 		 *
 		 * @param {boolean} bSkipSelection Whether to skip the setting of the toggled value
@@ -616,53 +603,22 @@ sap.ui.define([
 		};
 
 		/**
-		 * Does the animation between the old and the new value of the clock. Can be skipped with setting the second parameter to true.
+		 * Returns the number of items in the clock.
 		 *
-		 * @param {int} iNewValue the new value that must be set
-		 * @param {boolean} bSkipAnimation whether to skip the animation
 		 * @private
 		 */
-		TimePickerClock.prototype._changeValueAnimation = function(iNewValue, bSkipAnimation) {
-			var iOldValue = this._iMovSelectedValue,
-				bInnerItems = this.getInnerItems(),
-				iMax = this.getItemMax() * (bInnerItems ? 2 : 1),
-				iPath1,
-				iPath2,
-				iDelay,
-				iFirstSelected = iOldValue,
-				iLastSelected = iNewValue,
-				iDirection = 1;
+		TimePickerClock.prototype._getItemsCount = function(bForceRealCount) {
+			return this.getItemMax() - this.getItemMin() + 1;
+		};
 
-			if (!bSkipAnimation) {
-				// do the animation here
-				if (iFirstSelected < iLastSelected) {
-					iPath1 = iLastSelected - iFirstSelected;
-					iPath2 = iMax - iPath1;
-					if (iPath2 < iPath1) {
-						iFirstSelected += iMax;
-						iDirection = -1;
-					}
-				} else {
-					iPath1 = iFirstSelected - iLastSelected;
-					iPath2 = iMax - iPath1;
-					if (iPath2 < iPath1) {
-						iLastSelected += iMax;
-					} else {
-						iDirection = -1;
-					}
-				}
-
-				if (iFirstSelected === iLastSelected) {
-					iDelay = 0;
-				} else {
-					iDelay = Math.ceil(ANIMATION_DURATION_MAX / Math.abs(iFirstSelected - iLastSelected));
-				}
-				this._animationInProgress = true;
-				_selectNextNumber(this, iFirstSelected, iLastSelected, iDirection, iMax, iNewValue, iDelay, this.getSupport2400(), this._get24HoursVisible());
-			} else {
-				this.setSelectedValue(iNewValue);
-				this.fireChange({value: iNewValue, stringValue: this._getStringValue(iNewValue), finalChange: true});
-			}
+		/**
+		 * Returns the angle step for the clock.
+		 *
+		 * @private
+		 */
+		TimePickerClock.prototype._getAngleStep = function(bForceRealAngle) {
+			const iItemsCount = this._getItemsCount();
+			return iItemsCount === 12 ? 6 : 360 / this._getItemsCount();
 		};
 
 		/**
@@ -671,8 +627,13 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._calculateDimensions = function() {
-			var oCover = this._getClockCoverContainerDomRef(),
-				scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+			const oCover = this._getClockCoverContainerDomRef();
+
+			if (!oCover) {
+				return;
+			}
+
+			const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
 				scrollTop = window.pageYOffset || document.documentElement.scrollTop,
 				iRadius = Math.round(oCover.offsetHeight / 2),
 				iDotHeight = jQuery('.sapMTPCDot').first().outerHeight(true),
@@ -685,10 +646,8 @@ sap.ui.define([
 				'centerY': iRadius,
 				'dotHeight': iDotHeight,
 				'numberHeight': iNumberHeight,
-				'outerMax': iRadius,
-				'outerMin': iRadius - iNumberHeight,
-				'innerMax': iRadius - iNumberHeight - 1,
-				'innerMin': iRadius - iNumberHeight * 2 - 1,
+				'radiusMax': iRadius,
+				'radiusMin': iRadius - iNumberHeight * 1.6 - 1,
 				'offsetX': oOffset.left + scrollLeft,
 				'offsetY': oOffset.top + scrollTop
 			};
@@ -704,19 +663,16 @@ sap.ui.define([
 		TimePickerClock.prototype._calculatePosition = function(iX, iY) {
 			var iItemMax = this.getItemMax(),
 				iReplacement = this.getLastItemReplacement(),
-				iStep = this.getValueStep(),
+				iValueStep = this.getValueStep(),
 				iDx = iX - this._dimensionParameters.offsetX + 1 - this._dimensionParameters.radius,
 				iDy = iY - this._dimensionParameters.offsetY + 1 - this._dimensionParameters.radius,
 				iMod = iDx >= 0 ? 0 : 180,
 				iAngle = (Math.atan(iDy / iDx) * 180 / Math.PI) + 90 + iMod,
-				iAngleStep = 360 / iItemMax * iStep,
-				bInnerItems = this.getInnerItems(),
+				iAngleStep = this._getAngleStep(true),
 				iRadius = Math.sqrt(iDx * iDx + iDy * iDy),
-				iFinalAngle = Math.round((iAngle === 0 ? 360 : iAngle) / iAngleStep) * iAngleStep,
-				bIsOuter = iRadius <= this._dimensionParameters.outerMax && iRadius > (bInnerItems ? this._dimensionParameters.outerMin : this._dimensionParameters.innerMin),
-				bIsInner = bInnerItems && iRadius <= this._dimensionParameters.innerMax && iRadius > this._dimensionParameters.innerMin,
-				bIsOuterHover = iRadius <= this._dimensionParameters.outerMax && iRadius > this._dimensionParameters.outerMin,
-				bIsInnerHover = bIsInner,
+				iFinalAngle = Math.round((iAngle === 0 ? 360 : iAngle) / iAngleStep / iValueStep) * iAngleStep * iValueStep,
+				bIsInActiveZone = iRadius <= this._dimensionParameters.radiusMax && iRadius > this._dimensionParameters.radiusMin,
+				iMultiplier = 360 / this._getItemsCount() / iAngleStep,
 				bSupport2400 = this.getSupport2400(),
 				bIs24HoursVisible = this._get24HoursVisible();
 
@@ -725,10 +681,10 @@ sap.ui.define([
 			}
 
 			// selected item calculations
-			if (bIsInner || bIsOuter) {
-				this._iSelectedValue = (iFinalAngle / iAngleStep) * iStep;
-				if (bIsInner) {
-					this._iSelectedValue += iItemMax;
+			if (bIsInActiveZone) {
+				this._iSelectedValue = Math.round((iFinalAngle / iAngleStep / iMultiplier / iValueStep)) * iValueStep;
+				if (this._iSelectedValue === 0 && iReplacement === -1) {
+					this._iSelectedValue = iItemMax;
 				}
 				if (bSupport2400 && !bIs24HoursVisible && this._iSelectedValue === 24) {
 					this._iSelectedValue = 0;
@@ -737,16 +693,12 @@ sap.ui.define([
 				this._iSelectedValue = -1;
 			}
 
-			// hover simulation calculations
-			if (bIsInnerHover || bIsOuterHover) {
-				this._iHoveredValue = bSupport2400 && !bIs24HoursVisible && this._iSelectedValue === 0 ? 24 : this._iSelectedValue;
-			} else {
-				this._iHoveredValue = -1;
-			}
-
-			if (this._iSelectedValue === this._getMaxValue() && iReplacement !== -1) {
+			if (this._iSelectedValue === iItemMax && iReplacement !== -1) {
 				this._iSelectedValue = iReplacement;
 			}
+
+			// hover simulation calculations
+			this.setHoveredValue(bIsInActiveZone ? this._iSelectedValue : -1);
 		};
 
 		/**
@@ -764,50 +716,6 @@ sap.ui.define([
 
 			return this;
 		};
-
-		/**
-		 * Does the animation between old and new selected values.
-		 *
-		 * @param {sap.m.TimePickerClock} oClock clock object
-		 * @param {int} iFirstSelected first/current value to move from
-		 * @param {int} iLastSelected last value to move to
-		 * @param {int} iDirection direction of the animation
-		 * @param {int} iMax max clock value
-		 * @param {int} iNewValue new value
-		 * @param {int} iDelay delay of the single step
-		 * @param {boolean} bSupport2400 <code>true</code> when the clock has <code>support2400</code> property set
-		 * @param {boolean} bIs24HoursVisible is "24" visible or not
-		 */
-		function _selectNextNumber(oClock, iFirstSelected, iLastSelected, iDirection, iMax, iNewValue, iDelay, bSupport2400, bIs24HoursVisible) {
-			var iCurrent;
-
-			if (iFirstSelected === iLastSelected) {
-				oClock._animationInProgress = false;
-			}
-
-			iCurrent = iFirstSelected > iMax ? iFirstSelected - iMax : iFirstSelected;
-			if (bSupport2400) {
-				if (iCurrent === 24 && !bIs24HoursVisible) {
-					iCurrent = 0;
-				} else if (iCurrent === 0 && bIs24HoursVisible) {
-					iCurrent = 24;
-				}
-			}
-
-			oClock.setSelectedValue(iCurrent);
-
-			if (iFirstSelected !== iLastSelected) {
-				iFirstSelected += iDirection;
-				setTimeout(function() {
-					_selectNextNumber(oClock, iFirstSelected, iLastSelected, iDirection, iMax, iNewValue, iDelay, bSupport2400, bIs24HoursVisible);
-				}, iDelay);
-			} else {
-				// the new value is set, fire event
-				setTimeout(function() {
-					oClock.fireChange({value: iNewValue, stringValue: oClock._getStringValue(iNewValue), finalChange: true});
-				}, ANIMATION_DELAY_EVENT);
-			}
-		}
 
 		return TimePickerClock;
 

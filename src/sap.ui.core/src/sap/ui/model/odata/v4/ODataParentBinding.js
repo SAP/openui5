@@ -643,7 +643,7 @@ sap.ui.define([
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
-	 * @since 1.61
+	 * @since 1.61.0
 	 */
 	ODataParentBinding.prototype.destroy = function () {
 		this.mAggregatedQueryOptions = undefined;

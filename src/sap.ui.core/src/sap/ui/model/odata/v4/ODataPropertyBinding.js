@@ -557,7 +557,7 @@ sap.ui.define([
 	 *   determined, or rejected in case of an error
 	 *
 	 * @public
-	 * @since 1.69
+	 * @since 1.69.0
 	 */
 	ODataPropertyBinding.prototype.requestValue = function () {
 		var that = this;

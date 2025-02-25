@@ -168,6 +168,11 @@ sap.ui.define([
 		// Submenu column
 		rm.openStart("div");
 		rm.class("sapUiMnuItmSbMnu");
+
+		if (oSubMenu) {
+			rm.class("sapTntNLIExpandIcon");
+		}
+
 		rm.openEnd();
 		if (oSubMenu) {
 			rm.openStart("div");

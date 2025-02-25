@@ -1864,7 +1864,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see #changeHttpHeaders
-	 * @since 1.71
+	 * @since 1.71.0
 	 */
 	ODataModel.prototype.getHttpHeaders = function (bIncludeContextId) {
 		var mHeadersCopy = Object.assign({}, this.mHeaders);

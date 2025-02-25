@@ -176,11 +176,12 @@ sap.ui.define([
 
 		if (this._oWatermark) {
 			// check whether the user scrolled into the area of the watermark node, which is the
-			// last guaranteed node of the loaded page; remove nodes that are not under the
-			// watermark (that means their group IDs don't start with the watermark's group ID),
-			// because there are missing nodes in between -> avoids jumping rows
-			for (i = aNodes.length - 1; i >= 0; i -= 1) {
-				if (aNodes[i].groupID.startsWith(this._oWatermark.groupID)) {
+			// last guaranteed node of the loaded page; remove nodes that are after the last element
+			// of the watermark node (that means their absolute node indices are greater than the
+			// absolute node index of the last known element below the watermark node), because
+			// there are missing nodes in between -> avoids jumping rows
+			for (i = 0; i < aNodes.length; i += 1) {
+				if (aNodes[i].absoluteNodeIndex > this._oWatermark.lastWatermarkNodeIndex) {
 					aNodes.length = i + 1;
 					break;
 				}
@@ -379,6 +380,7 @@ sap.ui.define([
 	 */
 	AnalyticalTreeBindingAdapter.prototype._loadChildContexts = function (oNode, oRecursionDetails) {
 		var oNodeState = oNode.nodeState;
+		const bBundledMode = this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled);
 
 		// make sure the children array gets at least the requested length
 		var iMaxGroupSize = this.getGroupSize(oNode.context, oNode.level);
@@ -417,7 +419,7 @@ sap.ui.define([
 			//if we are in the autoexpand mode "bundled", suppress additional requests during the tree traversal
 			//paging is handled differently
 			var bSupressRequest = false;
-			if (oNode.autoExpand >= 0 && this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled)) {
+			if (oNode.autoExpand >= 0 && bBundledMode) {
 				bSupressRequest = true;
 				iRequestedLength = Math.max(0, iMaxGroupSize);
 			}
@@ -533,10 +535,10 @@ sap.ui.define([
 
 		// add up the sum of all sub-tree magnitudes
 		// if we run in autoexpand mode, we need to take the full length of the children array
-		iMaxGroupSize = this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled) ? oNode.children.length : iMaxGroupSize;
+		iMaxGroupSize = bBundledMode ? oNode.children.length : iMaxGroupSize;
 		oNode.magnitude += Math.max(iMaxGroupSize || 0, 0);
 
-		if (!iMaxGroupSize && !this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled)) {
+		if (!iMaxGroupSize && !bBundledMode) {
 			Log.warning("AnalyticalTreeBindingAdapter: iMaxGroupSize(" + iMaxGroupSize + ") is undefined for node '" + oNode.groupID + "'!");
 		}
 
@@ -550,20 +552,54 @@ sap.ui.define([
 		// Determine a Watermark node for auto expand paging:
 		// Find the first node for which the group length is not final.
 		// ONLY consider nodes with an autoExpand level to become a watermark node (autoExpand != -1)
-		if (this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled) && oNode.autoExpand != -1) {
+		if (bBundledMode && oNode.autoExpand != -1) {
 			if (!this._oWatermark && !oNode.isLeaf && !this.mFinalLength[oNode.groupID]) {
-				//this._oWatermark = oNode;
+				const iLastWatermarkNodeIndex = this._getIndexBeforeFirstMissingNode(oNode);
+				let iStartIndex = oNode.children.length;
+				let sNodeInfo = "WATERMARK: at '" + oNode.groupID  + "' (" + oNode.absoluteNodeIndex
+					+ ") and start index " + iStartIndex + " with last complete node index " + iLastWatermarkNodeIndex;
+				if (iStartIndex === 0) {
+					// if there are no children loaded yet, move the watermark to the parent node to avoid
+					// many requests, for this node and its following siblings, fetching the node's content with
+					// single requests with $top > 10000
+					iStartIndex = oNode.positionInParent;
+					oNode = oNode.parent;
+					sNodeInfo += " --> moved to '" + oNode.groupID + "' (" + oNode.absoluteNodeIndex
+						+ ") and start index " + iStartIndex;
+				}
 				this._oWatermark = {
 					groupID: oNode.groupID,
 					context: oNode.context,
 					absoluteNodeIndex: oNode.absoluteNodeIndex,
-					startIndex: oNode.children.length,
+					startIndex: iStartIndex,
 					level: oNode.level,
-					autoExpand: oNode.autoExpand
+					autoExpand: oNode.autoExpand,
+					lastWatermarkNodeIndex: iLastWatermarkNodeIndex
 				};
+				Log.debug(sNodeInfo, undefined, sClassName);
 			}
 		}
+	};
 
+	/**
+	 * Gets the absolute node index of the node in the subtree of the given node that is just before the first missing
+	 * node.
+	 *
+	 * @param {Object} oNode The current node
+	 * @returns {int} The absolute node index of the node just before the first missing node
+	 * @private
+	 */
+	AnalyticalTreeBindingAdapter.prototype._getIndexBeforeFirstMissingNode = function (oNode) {
+		let iIndex = oNode.absoluteNodeIndex;
+		oNode.children.some((oChildNode) => {
+			iIndex = oChildNode.isLeaf
+				? oChildNode.absoluteNodeIndex
+				: this._getIndexBeforeFirstMissingNode(oChildNode);
+
+			return !oChildNode.isLeaf && !this.mFinalLength[oChildNode.groupID];
+		});
+
+		return iIndex;
 	};
 
 	/*
@@ -629,13 +665,15 @@ sap.ui.define([
 			if (this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled) && this._oWatermark && (typeof sGroupIDforCollapsingNode == "string" && sGroupIDforCollapsingNode.length > 0 && this._oWatermark.groupID.startsWith(sGroupIDforCollapsingNode))) {
 				// move the watermark node to the parent of the collapsed node, because the auto-expand paging starting point needs to be moved
 				if (oNode && oNode.parent) {
+					const oSiblingNode = oNode.parent.children[oNode.positionInParent + 1]; // may not yet be available
 					this._oWatermark = {
 						groupID: oNode.parent.groupID,
 						context: oNode.parent.context,
 						absoluteNodeIndex: oNode.parent.absoluteNodeIndex,
 						startIndex: oNode.positionInParent + 1, //+1 is the next (right) sibling of the collapsed node
 						level: oNode.parent.level,
-						autoExpand: oNode.parent.autoExpand
+						autoExpand: oNode.parent.autoExpand,
+						lastWatermarkNodeIndex: this._getIndexBeforeFirstMissingNode(oSiblingNode ?? oNode)
 					};
 				}
 

@@ -92,6 +92,7 @@ sap.ui.define([], function () {
 	 * Implements <a href="https://promisesaplus.com">Promises/A+</a> except "2.2.4. onFulfilled or
 	 * onRejected must not be called until the execution context stack contains only platform code."
 	 * @private
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 *
 	 * @param {function} fnExecutor
@@ -179,6 +180,7 @@ sap.ui.define([], function () {
 		 * simply use {@link #unwrap} instead.
 		 *
 		 * @private
+		 * @since 1.53.0
 		 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 		 */
 		this.caught = function () {
@@ -198,6 +200,7 @@ sap.ui.define([], function () {
 		 *   reason if it is already rejected, or the wrapped thenable if it is still pending
 		 *
 		 * @private
+		 * @since 1.53.0
 		 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 		 */
 		this.getResult = function () {
@@ -211,6 +214,7 @@ sap.ui.define([], function () {
 		 *   Whether this {@link sap.ui.base.SyncPromise} is fulfilled
 		 *
 		 * @private
+		 * @since 1.53.0
 		 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 		 */
 		this.isFulfilled = function () {
@@ -224,6 +228,7 @@ sap.ui.define([], function () {
 		 *   Whether this {@link sap.ui.base.SyncPromise} is still pending
 		 *
 		 * @private
+		 * @since 1.53.0
 		 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 		 */
 		this.isPending = function () {
@@ -237,6 +242,7 @@ sap.ui.define([], function () {
 		 *   Whether this {@link sap.ui.base.SyncPromise} is rejected
 		 *
 		 * @private
+		 * @since 1.53.0
 		 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 		 */
 		this.isRejected = function () {
@@ -267,6 +273,7 @@ sap.ui.define([], function () {
 	 *
 	 * @private
 	 * @see #then
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.prototype.catch = function (fnOnRejected) {
@@ -285,6 +292,7 @@ sap.ui.define([], function () {
 	 *
 	 * @private
 	 * @see #then
+	 * @since 1.59.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.prototype.finally = function (fnOnFinally) {
@@ -319,6 +327,7 @@ sap.ui.define([], function () {
 	 *   corresponding callback function is given
 	 *
 	 * @private
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.prototype.then = function (fnOnFulfilled, fnOnRejected) {
@@ -349,6 +358,7 @@ sap.ui.define([], function () {
 	 * @return {string} A string description of this {@link sap.ui.base.SyncPromise}
 	 *
 	 * @private
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.prototype.toString = function () {
@@ -372,6 +382,7 @@ sap.ui.define([], function () {
 	 *
 	 * @private
 	 * @see #getResult
+	 * @since 1.57.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.prototype.unwrap = function () {
@@ -393,6 +404,7 @@ sap.ui.define([], function () {
 	 *   The {@link sap.ui.base.SyncPromise}
 	 *
 	 * @private
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.all = function (aValues) {
@@ -438,6 +450,7 @@ sap.ui.define([], function () {
 	 *   See above
 	 *
 	 * @private
+	 * @since 1.72.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.isThenable = function (vValue) {
@@ -466,6 +479,7 @@ sap.ui.define([], function () {
 	 *   <code>true</code> if it just became "caught"
 	 *
 	 * @private
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 
@@ -478,6 +492,7 @@ sap.ui.define([], function () {
 	 *   The {@link sap.ui.base.SyncPromise}
 	 *
 	 * @private
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.reject = function (vReason) {
@@ -498,6 +513,7 @@ sap.ui.define([], function () {
 	 *   The {@link sap.ui.base.SyncPromise}
 	 *
 	 * @private
+	 * @since 1.53.0
 	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 	SyncPromise.resolve = function (vResult) {
@@ -526,9 +542,9 @@ sap.ui.define([], function () {
 	 * @property {function} reject - A function that rejects the promise
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 * @see sap.ui.base.SyncPromise.withResolvers
 	 * @since 1.133.0
+	 * @ui5-restricted sap.ui.core (Lib),sap.m,sap.ui.comp,sap.ui.dt,sap.ui.mdc
 	 */
 
 	/**
