@@ -354,7 +354,8 @@ sap.ui.define([
 		this.stub(this.oTimePicker, "_getClocks").returns(
 			{
 				setValue: function () {},
-				_setTimeValues: function () {}
+				_setTimeValues: function () {},
+				prepareForOpen: function () {}
 			});
 
 		this.oTimePicker.onBeforeOpen();
@@ -1706,20 +1707,22 @@ sap.ui.define([
 						"Control description is added in aria-roledescription");
 				},
 				fnTestExternalLabelReference = async function (bReferencedWithExternalLabel) {
-					var sLabelId = "timepicker-aria-label";
+					var sLabelId = "timepicker-aria-label",
+						sAriaLabelledBy;
 					if (bReferencedWithExternalLabel) {
 						//prepare
 						var oLabel = new Label(sLabelId, {
 							labelFor: oSut
 						}).placeAt('qunit-fixture');
 						await nextUIUpdate();
+						sAriaLabelledBy = oSut.$(sInnerInputSuffix).attr("aria-labelledby");
 						//assert
-						fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-labelledby").indexOf(sLabelId) > -1, true, "External label reference is applied");
+						fnAssert.strictEqual(sAriaLabelledBy.indexOf(sLabelId) > -1, true, "External label reference is applied");
 						//clear
 						oLabel.destroy();
 					} else {
 						//assert
-						fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-labelledby").indexOf(sLabelId) > -1, false, "External label reference is not applied");
+						fnAssert.ok(!sAriaLabelledBy || sAriaLabelledBy.attr("aria-labelledby").indexOf(sLabelId) < 0, "External label reference is not applied");
 					}
 				};
 

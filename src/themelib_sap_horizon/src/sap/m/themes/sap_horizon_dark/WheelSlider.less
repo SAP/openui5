@@ -5,7 +5,7 @@
 
 @_sap_m_TimePicker_ItemColor: darken(@sapUiListBackground, 3);
 @_sap_m_TimePicker_ItemHoverColor: darken(@sapUiListBackground, 6);
-@_sap_m_TimePicker_ItemBorderColor: @sapUiListBackground;
+@_sap_m_TimePicker_ItemBorderColor: var(--sapList_Background);
 
 .sapMWS:not(:last-child),
 .sapMWS.sapMWSExpanded:not(:last-child) {
@@ -13,51 +13,64 @@
 }
 
 .sapMWS {
+
 	.sapMWSLabel,
 	.sapMWSInner {
 		width: 3rem;
 		height: 2.875rem;
+
 		.sapMWSItem,
 		.sapMWSSelectionFrame {
 			width: 3rem;
 			height: 2.875rem;
 		}
+
 		.sapMWSItem {
 			border-radius: 0.25rem;
-			background: @sapUiActive;
+			background: var(--sapActiveColor);
 			border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+
 			&:hover {
 				background: darken(@sapUiSelected, 10);
 			}
 		}
 	}
+
 	&.sapMWSExpanded {
+
 		.sapMWSInner {
+
 			.sapMWSItem {
 				background: @_sap_m_TimePicker_ItemColor;
 				border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
+
 				&:hover {
 					background: @_sap_m_TimePicker_ItemHoverColor;
 				}
-				&:active {
-					background: @sapUiActive;
-					color: @sapUiContentContrastTextColor;
-				}
 
+				&:active {
+					background: var(--sapActiveColor);
+					color: var(--sapContent_ContrastTextColor);
+				}
 			}
+
 			.sapMWSSelectionFrame {
-				border: 0.125rem solid @sapUiSelected;
+				border: 0.125rem solid var(--sapSelectedColor);
 				border-radius: 0.25rem;
 				outline:none;
+
 				&:hover {
+
 					+ ul > li.sapMWSItem.sapMWSItemSelected {
 						background: @_sap_m_TimePicker_ItemHoverColor;
 					}
 				}
+
 				&:active {
+
 					& + ul > li.sapMWSItem.sapMWSItemSelected {
-						background: @sapUiActive;
-						color: @sapUiContentContrastTextColor;
+						background: var(--sapActiveColor);
+						color: var(--sapContent_ContrastTextColor);
 					}
 				}
 			}
@@ -66,42 +79,52 @@
 }
 
 .sapUiSizeCompact .sapMWS {
+
 	.sapMWSLabel,
 	.sapMWSInner {
+		width: 3rem;
+		height: 2rem;
+
 		.sapMWSItem,
 		.sapMWSSelectionFrame,
 		.sapMWSExpanded {
 			width: 3rem;
 		}
-		width: 3rem;
-		height: 2rem;
 	}
 }
 
 .sap-phone {
+
 	.sapMWS {
+
 		.sapMWSLabel,
 		.sapMWSInner {
 			width: 3rem;
 			height: 2.875rem;
+
 			.sapMWSItem,
 			.sapMWSSelectionFrame {
 				width: 3rem;
 				height: 2.875rem;
 			}
+
 			.sapMWSItem {
 				border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
 			}
 		}
+
 		&.sapMWSExpanded {
+
 			.sapMWSInner {
+
 				.sapMWSItem {
 					background: @_sap_m_TimePicker_ItemColor;
 					border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
 					width: 3rem;
 				}
+
 				.sapMWSSelectionFrame {
-					outline: 0.125rem solid @sapUiSelected;
+					outline: 0.125rem solid var(--sapSelectedColor);
 					outline-offset: -0.188rem;
 				}
 			}

@@ -302,13 +302,13 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets a far customer line item as contained in the server response.
+	 * Gets a "FAR" customer line item as contained in the server response.
 	 *
 	 * @param {string} sCompanyCode The company code
 	 * @param {string} [sCustomer] The customer
 	 * @param {string} [sAccountingDocument] The accounting document ID
 	 * @param {string} [sAccountingDocumentItem] The accounting document item ID
-	 * @returns {object} A far customer line item as contained in the server response
+	 * @returns {object} A "FAR" customer line item as contained in the server response
 	 */
 	function getFarCustomerLineItem(sCompanyCode, sCustomer, sAccountingDocument,
 			sAccountingDocumentItem) {
@@ -1122,16 +1122,16 @@ sap.ui.define([
 				delete oActualRequest["sideEffects"];
 				delete oActualRequest["fnRequest"];
 				that.iRequestNo += 1;
-				if (oExpectedRequest.abortId) {
-					oRequestHandle.sExpectedAbortId = oExpectedRequest.abortId;
-					that.oAbortHelperMock ??= that.mock(oAbortHelper);
-					that.oAbortHelperMock.expects("abortCalled")
-						.withExactArgs(oRequestHandle.sExpectedAbortId)
-						.never();
-					 // abortId must not influence deepEqual(oActualRequest, oExpectedRequest...) below
-					delete oExpectedRequest.abortId;
-				}
 				if (oExpectedRequest) {
+					if (oExpectedRequest.abortId) {
+						oRequestHandle.sExpectedAbortId = oExpectedRequest.abortId;
+						that.oAbortHelperMock ??= that.mock(oAbortHelper);
+						that.oAbortHelperMock.expects("abortCalled")
+							.withExactArgs(oRequestHandle.sExpectedAbortId)
+							.never();
+						 // abortId must not influence deepEqual(oActualRequest, oExpectedRequest...) below
+						delete oExpectedRequest.abortId;
+					}
 					oExpectedResponse = oExpectedRequest.response;
 
 					if (oExpectedResponse === NO_CONTENT) {
@@ -9044,7 +9044,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						+ "&$top=0&$inlinecount=allpages"
 				}, {__count : "140", results : []})
 				// for simplicity the character of the dimension value defines the level and the
-				// number the poisition within that level
+				// number the position within that level
 				.expectRequest({ // first level request
 					encodeRequestUri : false,
 					requestUri : "Items?"
@@ -9265,7 +9265,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						+ "&$top=0&$inlinecount=allpages"
 				}, {__count : "140", results : []})
 				// for simplicity the character of the dimension value defines the level and the
-				// number the poisition within that level
+				// number the position within that level
 				.expectRequest({ // first level request
 					encodeRequestUri : false,
 					requestUri : "Items?"
@@ -9385,6 +9385,141 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: An analytical table has one expanded node. Initially many nodes of the first level
+	// are loaded. The first node has many children, so that there are some grouping nodes with no
+	// children loaded yet. Ensure when scrolling down to avoid that for each grouping node a single
+	// request is sent to load the children.
+	// SNOW: DINC0398109
+	QUnit.test("AnalyticalBinding: Avoid sequential loading of child nodes (watermark)", async function (assert) {
+		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
+		const sView = '\
+<t:AnalyticalTable id="table" threshold="1" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text wrapping="false" text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text wrapping="false" text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text wrapping="false" text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
+</t:AnalyticalTable>';
+
+		await this.createView(assert, sView, oModel);
+		const oTable = this.oView.byId("table");
+		this.expectHeadRequest()
+			.expectRequest({ // count request
+				batchNo : 1,
+				encodeRequestUri : false,
+				requestUri : "Items?$select=CompanyCode,Customer&$top=0&$inlinecount=allpages"
+			}, {__count : "140", results : []})
+			.expectRequest({ // first level request
+				batchNo : 1,
+				encodeRequestUri : false,
+				requestUri : "Items?$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+					+ "&$orderby=CompanyCode%20asc&$top=4"
+			}, {
+				results : [
+					getFarCustomerLineItem("Code0"),
+					getFarCustomerLineItem("Code1"),
+					getFarCustomerLineItem("Code2"),
+					getFarCustomerLineItem("Code3")
+				]
+			})
+			.expectRequest({ // leaf request
+				batchNo : 1,
+				encodeRequestUri : false,
+				requestUri : "Items?"
+					+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+					+ "&$orderby=CompanyCode%20asc&$top=6"
+			}, {
+				results : [
+					getFarCustomerLineItem("Code0", "Customer0"),
+					getFarCustomerLineItem("Code0", "Customer1"),
+					getFarCustomerLineItem("Code0", "Customer2"),
+					getFarCustomerLineItem("Code0", "Customer3"),
+					getFarCustomerLineItem("Code1", "Customer0"),
+					getFarCustomerLineItem("Code2", "Customer0")
+				]
+			});
+
+		// bind it lately otherwise table resets numberOfExpandedLevels to 0
+		oTable.bindRows({
+			path : "/Items",
+			parameters : {
+				numberOfExpandedLevels : 1,
+				provideGrandTotals : false,
+				useBatchRequests : true
+			}
+		});
+		await this.waitForChanges(assert);
+		assert.deepEqual(getTableContent(oTable), [
+			["Code0", "", "1"],
+			["Code0", "Customer0", "1"],
+			["Code0", "Customer1", "1"],
+			["Code0", "Customer2", "1"]
+		]);
+
+		// scroll down to trigger a paging request
+		this.expectRequest({ // request all children ($top > 10000) of the watermark node ("Code2")
+				batchNo : 2,
+				encodeRequestUri : false,
+				requestUri : "Items?"
+					+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=(CompanyCode%20eq%20%27Code2%27)"
+					+ "&$orderby=CompanyCode%20asc&$skip=1&$top=10004&$inlinecount=allpages"
+			}, {
+				__count : "1",
+				results : []
+			})
+			.expectRequest({ // next chunk of first level entries
+				batchNo : 3,
+				encodeRequestUri : false,
+				requestUri : "Items?$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=((((CompanyCode%20gt%20%27Code3%27))))"
+					+ "&$orderby=CompanyCode%20asc&$top=4"
+			}, {
+				results : [
+					getFarCustomerLineItem("Code4"),
+					getFarCustomerLineItem("Code5"),
+					getFarCustomerLineItem("Code6"),
+					getFarCustomerLineItem("Code7")
+				]
+			})
+			.expectRequest({ // leaf entries after the watermark
+				batchNo : 3,
+				encodeRequestUri : false,
+				requestUri : "Items?"
+					+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=((((CompanyCode%20ge%20%27Code3%27))))"
+					+ "&$orderby=CompanyCode%20asc&$top=6"
+			}, {
+				__count : "1",
+				results : [
+					getFarCustomerLineItem("Code3", "Customer0"),
+					getFarCustomerLineItem("Code3", "Customer1"),
+					getFarCustomerLineItem("Code4", "Customer0"),
+					getFarCustomerLineItem("Code4", "Customer1"),
+					getFarCustomerLineItem("Code4", "Customer2"),
+					getFarCustomerLineItem("Code4", "Customer3")
+				]
+			});
+
+		oTable.setFirstVisibleRow(7);
+
+		await this.waitForChanges(assert);
+		assert.deepEqual(getTableContent(oTable), [
+			["Code2", "", "1"],
+			["Code2", "Customer0", "1"],
+			["Code3", "", "1"],
+			["Code3", "Customer0", "1"]
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: An analytical table is expanded to level 2. The entries in front of the watermark
 	// node are displayed properly
 	// BCP: 2270125832
@@ -9422,7 +9557,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						+ "&$top=0&$inlinecount=allpages"
 				}, {__count : "140", results : []})
 				// for simplicity the character of the dimension value defines the level and the
-				// number the poisition within that level
+				// number the position within that level
 				.expectRequest({ // first level request
 					encodeRequestUri : false,
 					requestUri : "Items?"

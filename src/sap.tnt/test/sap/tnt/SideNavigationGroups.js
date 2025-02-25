@@ -40,7 +40,7 @@ sap.ui.define([
 						new NavigationListItem({ text: "Example", icon: "sap-icon://example" }),
 						new NavigationListItem({ text: "Heatmap Chart", icon: "sap-icon://heatmap-chart" }),
 						new NavigationListItem({
-							text: "Machine",
+							text: "Machine some more text to truncate",
 							icon: "sap-icon://machine",
 							items: [
 								new NavigationListItem({ text: "Supply Chain" }),

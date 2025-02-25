@@ -2476,6 +2476,9 @@ sap.ui.define([
 							}
 						}
 					}
+				} else if (typeof vResponse === "object" && "@odata.count" in vResponse) {
+					throw new Error('Unexpected "@odata.count" in response for ' + vRequest.method
+						+ " " + vRequest.url);
 				}
 				if (!rCountUrl.test(vRequest.url) && rCollection.test(vRequest.url)) {
 					// collection response expected (Note: d.results is V2)
@@ -31843,7 +31846,6 @@ sap.ui.define([
 			that.expectRequest("EMPLOYEES"
 					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
 					+ "&$select=DrillState,ID,MANAGER_ID,Name&$skip=2&$top=2", {
-					"@odata.count" : "5",
 					value : [{
 						DrillState : "leaf",
 						ID : "4",

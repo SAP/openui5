@@ -99,7 +99,7 @@ sap.ui.define([
 						/**
 						 * The file whose upload has just been terminated.
 						 */
-						item: {type: "sap.m.upload.UploadSetItem"}
+						item: {type: "sap.m.upload.UploadItem"}
 					}
 				}
 				}
