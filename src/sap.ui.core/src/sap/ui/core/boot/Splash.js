@@ -11,15 +11,15 @@
 sap.ui.define([
 	"sap/base/config",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Core",
 	"sap/ui/dom/_ready"
 ], (
 	config,
 	LoaderExtensions,
-	Core,
 	_ready
 ) => {
 	"use strict";
+
+	let oSplashDiv;
 
 	/**
 	 * Paint splash
@@ -43,13 +43,7 @@ sap.ui.define([
 				const splashDiv = document.createElement("div");
 				splashDiv.insertAdjacentHTML("beforeend", sSplash);
 				document.body.append(splashDiv);
-				return splashDiv;
-			}).then((splashDiv) => {
-				sap.ui.require(["sap/ui/core/Rendering"], (Rendering) => {
-					Rendering.addPrerenderingTask(() => {
-						document.body.removeChild(splashDiv);
-					});
-				});
+				oSplashDiv = splashDiv;
 			});
 		}
 	}
@@ -58,6 +52,18 @@ sap.ui.define([
 		run: () => {
 			return _ready().then(() => {
 				_splash();
+			});
+		},
+		beforeReady: (context) => {
+			return context.then(() => {
+				return new Promise((resolve, reject) => {
+					sap.ui.require(["sap/ui/core/Rendering"], (Rendering) => {
+						Rendering.addPrerenderingTask(() => {
+							document.body.removeChild(oSplashDiv);
+						});
+						resolve();
+					}, reject);
+				});
 			});
 		}
 	};

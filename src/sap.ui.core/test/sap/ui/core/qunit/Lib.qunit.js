@@ -241,8 +241,6 @@ sap.ui.define([
 			}, "an object as i18n section should be returned 1:1");
 	});
 
-
-
 	QUnit.module("Static methods");
 
 	QUnit.test("Static method '_get'", function(assert) {

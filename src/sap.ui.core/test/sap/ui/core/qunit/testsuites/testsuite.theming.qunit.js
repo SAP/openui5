@@ -124,24 +124,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				}
 			},
 
-			"ThemingWoThemeManager": {
-				title: "sap.ui.core.Theming w/o sap.ui.core.theming.ThemeManager",
-				ui5: {
-					theme: "", // Note: this is intentionally an empty string, regression test for theme defaulting
-					themeRoots: {
-						"theme_with_initial_themeRoot": "/somewhere/outside"
-					}
-				},
-				testConfig: {
-					themeManagerNotActive: true
-				},
-				qunit: {
-					reorder: false
-				},
-				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
-				module: "testdata/core/Theming.qunit"
-			},
-
 			"Theming_default_and_fallback": {
 				title: "sap.ui.core.Theming - defaulting and fallbacks",
 				ui5: {// Note: deprecated and deleted theme: used for fallback test!
@@ -149,20 +131,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				qunit: {
 					reorder: false
 				}
-			},
-
-			"Theming_default_and_fallback_wo_ThemeManager": {
-				title: "sap.ui.core.Theming - defaulting and fallbacks",
-				ui5: {// Note: deprecated and deleted theme: used for fallback test!
-				},
-				testConfig: {
-					themeManagerNotActive: true
-				},
-				qunit: {
-					reorder: false
-				},
-				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
-				module: "testdata/core/Theming_default_and_fallback.qunit"
 			},
 
 			ThemeManagerPreloadCss: {

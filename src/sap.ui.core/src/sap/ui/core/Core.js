@@ -5,12 +5,17 @@ sap.ui.define([
 	"sap/base/config",
 	"sap/base/util/Deferred",
 	"sap/ui/Global",
-	"sap/ui/core/boot/loadBootManifest"
+	"sap/ui/core/Lib",
+	"sap/ui/core/boot/loadBootManifest",
+	"sap/ui/core/boot/Splash",
+	"sap/ui/core/theming/ThemeManager"
 ], (
 	config,
 	Deferred,
 	Global,
-	loadBootManifest
+	Lib,
+	loadBootManifest,
+	Splash /*, ThemeManager needed for early css loading*/
 ) => {
 	"use strict";
 
@@ -81,13 +86,16 @@ sap.ui.define([
 	// freeze since it is exposed as a property on the Core and must not be changed at runtime
 	Object.freeze(Core.buildinfo);
 
+	const aBeforeReady = [];
+	let pContentLoaded;
+
 	//Helper for loading tasks from manifest
 	function loadTasks(aTasks) {
 		aTasks = aTasks || [];
 		return new Promise((resolve, reject) => {
 			sap.ui.require(aTasks, function() {
 				resolve(Array.from(arguments));
-			},reject);
+			}, reject);
 		});
 	}
 
@@ -95,13 +103,25 @@ sap.ui.define([
 	function executeTasks(aTasks, context) {
 		return Promise.all(
 			aTasks.map((task) => {
-				return task.run(context);
+				aBeforeReady.push(task?.beforeReady);
+				return task?.run?.(context);
 			})
 		);
 	}
 
-	// bootstrap sequence
-	// load manifest
+	function loadCoreLibrary() {
+		// load library & content - Lib relies on the config
+		pContentLoaded = sap.ui.loader._.loadJSResourceAsync("sap/ui/core/library-content.js", true);
+
+		aBeforeReady.push(() => {
+			return Lib.load({
+				name: "sap.ui.core"
+			});
+		});
+		return Lib._load({ name: "sap.ui.core" }, { preloadOnly: true });
+	}
+
+	// load manifest & bootstrap sequence
 	loadBootManifest().then((oManifest) => {
 		oBootManifest = oManifest;
 		// load config providers
@@ -123,6 +143,12 @@ sap.ui.define([
 			return loadTasks(["sap/ui/core/boot/config"]);
 		});
 	}).then(() => {
+		//executeSplash and pass libLoaded promise to register prerendering task
+		return Promise.all([
+			executeTasks([Splash]),
+			loadCoreLibrary()
+		]);
+	}).then(() => {
 		return loadTasks(oBootManifest.preBoot);
 	}).then((aTasks) => {
 		// execute pre boot tasks
@@ -139,6 +165,12 @@ sap.ui.define([
 	}).then((aTasks) => {
 		// execute post boot tasks
 		return executeTasks(aTasks);
+	}).then(() => {
+		return Promise.all(
+			aBeforeReady.map((fnBeforeReady) => {
+				return fnBeforeReady?.(pContentLoaded);
+			})
+		);
 	}).then(() => {
 		pReady.resolve();
 		bReady = true;

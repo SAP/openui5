@@ -204,12 +204,8 @@ sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 
 			"CalendarClassLoadingWithCustomBootTaskAndPreload": {
 				group: "Calendar Class",
-				title: "Test Page for Bootstrap with a Custom Boot Task",
-				ui5: {
-					libs: "sap.ui.core",
-					preload: "async"
-				},
-				bootManifest: "boot/calendarcustomboot.json@test-resources/sap/ui/core/qunit/bootstrap"
+				page: "test-resources/sap/ui/core/qunit/bootstrap/CalendarClassLoadingWithCustomBootTaskAndPreload.qunit.html",
+				title: "Test Page for Bootstrap with a Custom Boot Task"
 			},
 
 			"ControlBehavior": {
