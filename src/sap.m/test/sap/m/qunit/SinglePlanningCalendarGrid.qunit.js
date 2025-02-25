@@ -183,6 +183,82 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 	});
 
+	QUnit.test("_calculateVisibleAppointments returns the correct appointments", function (assert) {
+		// Arrange
+		const aAppointments = [
+			new CalendarAppointment({
+				title: "App0",
+				startDate: UI5Date.getInstance(2018, 6, 12, 3, 30, 0),
+				endDate: UI5Date.getInstance(2018, 6, 12, 4, 0, 0)
+			}),
+			new CalendarAppointment({
+				title: "App1",
+				startDate: UI5Date.getInstance(2018, 6, 11, 11, 30, 0),
+				endDate: UI5Date.getInstance(2018, 6, 11, 15, 0, 0)
+			}),
+			new CalendarAppointment({
+				title: "App2",
+				startDate: UI5Date.getInstance(2018, 6, 12, 7, 0, 0),
+				endDate: UI5Date.getInstance(2018, 6, 12, 15, 30, 0)
+			}),
+			new CalendarAppointment({
+				title: "App3",
+				startDate: UI5Date.getInstance(2018, 6, 12, 18, 0, 0),
+				endDate: UI5Date.getInstance(2018, 6, 12, 22, 30, 0)
+			}),
+			new CalendarAppointment({
+				title: "App4",
+				startDate: UI5Date.getInstance(2018, 6, 12, 12, 0, 0),
+				endDate: UI5Date.getInstance(2018, 6, 12, 20, 30, 0)
+			}),
+			new CalendarAppointment({
+				title: "App5",
+				startDate: UI5Date.getInstance(2018, 6, 11, 15, 0, 0),
+				endDate: UI5Date.getInstance(2018, 6, 13, 17, 0, 0)
+			}),
+			new CalendarAppointment({
+				title: "App6",
+				startDate: UI5Date.getInstance(2018, 6, 23, 8, 0, 0),
+				endDate: UI5Date.getInstance(2018, 6, 23, 8, 5, 0)
+			}),
+			new CalendarAppointment({
+				title: "App7",
+				startDate: UI5Date.getInstance(2018, 6, 12, 14, 0, 0),
+				endDate: UI5Date.getInstance(2018, 6, 13, 8, 0, 0)
+			}),
+			new CalendarAppointment({
+				title: "App8",
+				startDate: UI5Date.getInstance(2018, 6, 11, 23, 0, 0),
+				endDate: UI5Date.getInstance(2018, 6, 12, 9, 0, 0)
+			})
+		],
+		aExpectedVisibleAppointments = [
+			aAppointments[5],
+			aAppointments[8],
+			aAppointments[2],
+			aAppointments[4],
+			aAppointments[7],
+			aAppointments[3]
+		],
+		oGrid = new SinglePlanningCalendarGrid(),
+		oGridStartDate = UI5Date.getInstance(2018, 6, 12),
+		sFormattedStartDate = oGrid._getDateFormatter().format(oGridStartDate);
+
+		oGrid.setStartHour(8);
+		oGrid.setEndHour(20);
+		oGrid.setFullDay(false);
+
+		// Act
+		const aVisibleAppointments = oGrid._calculateVisibleAppointments(aAppointments, oGridStartDate, 1)[sFormattedStartDate];
+
+		// Assert
+		assert.equal(aVisibleAppointments.length, aExpectedVisibleAppointments.length, "There should be 6 visible appointments");
+		assert.deepEqual(aVisibleAppointments, aExpectedVisibleAppointments, "The correct appointments are returned in the correct order");
+
+		// Clean
+		oGrid.destroy();
+	});
+
 	QUnit.test("_getVisibleStartHour returns the proper start hour", function (assert) {
 		// Prepare
 		var oGrid = new SinglePlanningCalendarGrid();

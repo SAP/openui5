@@ -1790,10 +1790,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Distributes the appointments and the all-day appointments in clusters by their date grid.
-		 *
+		 * Separates regular appointments from all-day blockers
 		 * @param {Array} aAppointments the appointments in the corresponding aggregation
-		 * @returns {object} the clustered appointments - regular and all-day
+		 * @returns {object} a map with separated regular appointments and all-day appointments (blockers)
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._createAppointmentsMap = function (aAppointments) {
@@ -1801,64 +1800,67 @@ sap.ui.define([
 
 			return aAppointments.reduce(function (oMap, oAppointment) {
 				var oAppStartDate = oAppointment.getStartDate(),
-					oAppEndDate = oAppointment.getEndDate(),
-					oCurrentAppCalStartDate,
-					oCurrentAppCalEndDate,
-					sDay;
+					oAppEndDate = oAppointment.getEndDate();
 
 				if (!oAppStartDate || !oAppEndDate) {
 					return oMap;
 				}
 
-				if (!that.isAllDayAppointment(oAppStartDate, oAppEndDate)) {
-					oCurrentAppCalStartDate = CalendarDate.fromLocalJSDate(oAppStartDate);
-					oCurrentAppCalEndDate = CalendarDate.fromLocalJSDate(oAppEndDate);
-
-					while (oCurrentAppCalStartDate.isSameOrBefore(oCurrentAppCalEndDate)) {
-						sDay = that._getDateFormatter().format(oCurrentAppCalStartDate.toLocalJSDate());
-
-						if (!oMap.appointments[sDay]) {
-							oMap.appointments[sDay] = [];
-						}
-
-						oMap.appointments[sDay].push(oAppointment);
-
-						oCurrentAppCalStartDate.setDate(oCurrentAppCalStartDate.getDate() + 1);
-					}
-				} else {
+				if (that.isAllDayAppointment(oAppStartDate, oAppEndDate)) {
 					oMap.blockers.push(oAppointment);
+				} else {
+					oMap.appointments.push(oAppointment);
 				}
 
 				return oMap;
-			}, { appointments: {}, blockers: []});
+			}, { appointments: [], blockers: []});
 		};
 
 		/**
 		 * Selects the clusters of appointments which are in the visual port of the grid.
 		 *
-		 * @param {object} oAppointments the appointments in the corresponding aggregation
+		 * @param {sap.m.CalendarAppointment[]} aAppointments the appointments in the corresponding aggregation
 		 * @param {Date} oStartDate the start date of the grid
 		 * @param {int} iColumns the number of columns to be displayed in the grid
 		 * @returns {object} the clusters of appointments in the visual port of the grid
 		 * @private
 		 */
-		SinglePlanningCalendarGrid.prototype._calculateVisibleAppointments = function (oAppointments, oStartDate, iColumns) {
-			var oVisibleAppointments = {},
-				oCalDate,
-				sDate,
-				fnIsVisiblePredicate;
+		SinglePlanningCalendarGrid.prototype._calculateVisibleAppointments = function (aAppointments, oStartDate, iColumns) {
+			const oViewStart = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate());
+			const oViewEnd = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + iColumns - 1);
 
-			for (var i = 0; i < iColumns; i++) {
-				oCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i);
-				sDate = this._getDateFormatter().format(oCalDate.toLocalJSDate());
-				fnIsVisiblePredicate = this._isAppointmentFitInVisibleHours(oCalDate);
+			const oVisibleAppointments = {};
 
-				if (oAppointments[sDate]) {
-					oVisibleAppointments[sDate] = oAppointments[sDate]
-						.filter(fnIsVisiblePredicate, this)
-						.sort(this._sortAppointmentsByStartHourCallBack);
+			aAppointments.forEach( (oAppointment) => {
+				const oAppointmentStart = CalendarDate.fromLocalJSDate(oAppointment.getStartDate());
+				const oAppointmentEnd = CalendarDate.fromLocalJSDate(oAppointment.getEndDate());
+
+				// Skip if the appointment doesn't overlaps with the view range
+				if (!(oAppointmentEnd.isSameOrAfter(oViewStart) && oAppointmentStart.isSameOrBefore(oViewEnd))) {
+					return;
 				}
-			}
+
+				const oCurrentDate = new CalendarDate(oViewStart.getYear(), oViewStart.getMonth(), oViewStart.getDate());
+
+				while (oCurrentDate.isSameOrBefore(oViewEnd)) {
+					const sFormattedDate = this._getDateFormatter().format(oCurrentDate.toLocalJSDate());
+					const fnInVisibleHours = this._isAppointmentFitInVisibleHours(oCurrentDate);
+					const bAppInVisibleHours = fnInVisibleHours.call(this, oAppointment);
+
+					if (CalendarUtils._isBetween(oCurrentDate, oAppointmentStart, oAppointmentEnd, true)
+						&& bAppInVisibleHours) {
+
+						if (!oVisibleAppointments[sFormattedDate]) {
+							oVisibleAppointments[sFormattedDate] = [];
+						}
+						oVisibleAppointments[sFormattedDate].push(oAppointment);
+					}
+					if (oVisibleAppointments[sFormattedDate]){
+						oVisibleAppointments[sFormattedDate].sort(this._sortAppointmentsByStartHourCallBack);
+					}
+					oCurrentDate.setDate(oCurrentDate.getDate() + 1);
+				}
+			});
 
 			return oVisibleAppointments;
 		};
