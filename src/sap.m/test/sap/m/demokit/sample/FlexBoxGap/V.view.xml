@@ -1,0 +1,48 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout">
+	<VBox>
+		<Panel headerText="Gap">
+			<FlexBox alignItems="Start" gap="30px" width="170px" wrap="Wrap">
+				<Button text="1" type="Emphasized" />
+				<Button text="2" type="Reject" />
+				<Button text="3" type="Accept" />
+				<Button text="4" type="Emphasized" />
+				<Button text="5" type="Reject" />
+				<Button text="6" type="Accept" />
+				<Button text="7" type="Emphasized" />
+				<Button text="8" type="Reject" />
+				<Button text="9" type="Accept" />
+			</FlexBox>
+		</Panel>
+
+		<Panel headerText="Column gap">
+			<FlexBox alignItems="Start" columnGap="30px" width="170px" wrap="Wrap">
+				<Button text="1" type="Emphasized" />
+				<Button text="2" type="Reject" />
+				<Button text="3" type="Accept" />
+				<Button text="4" type="Emphasized" />
+				<Button text="5" type="Reject" />
+				<Button text="6" type="Accept" />
+				<Button text="7" type="Emphasized" />
+				<Button text="8" type="Reject" />
+				<Button text="9" type="Accept" />
+			</FlexBox>
+		</Panel>
+
+		<Panel headerText="Row gap">
+			<FlexBox alignItems="Start" rowGap="30px" width="100px" wrap="Wrap">
+				<Button text="1" type="Emphasized" />
+				<Button text="2" type="Reject" />
+				<Button text="3" type="Accept" />
+				<Button text="4" type="Emphasized" />
+				<Button text="5" type="Reject" />
+				<Button text="6" type="Accept" />
+				<Button text="7" type="Emphasized" />
+				<Button text="8" type="Reject" />
+				<Button text="9" type="Accept" />
+			</FlexBox>
+		</Panel>
+	</VBox>
+</mvc:View>
