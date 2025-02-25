@@ -22,6 +22,8 @@ sap.ui.define([
 	class FieldHelpUtil {
 		/**
 		 * Sets the field help information for the given element as <code>sap-ui-DocumentationRef</code> custom data.
+		 * Note that field help inferred from data bindings of control properties is overwritten by this method unless
+		 * an empty array is given in parameter <code>vDocumentationRefs</code>.
 		 *
 		 * @param {sap.ui.core.Element} oElement
 		 *   The element on which to set the field help

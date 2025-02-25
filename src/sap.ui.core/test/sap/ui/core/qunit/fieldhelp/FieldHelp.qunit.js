@@ -571,10 +571,6 @@ sap.ui.define([
 			backendHelpKey: {id: "~customId2", origin: "~origin2", type: "~customType2"},
 			hotspotId: "~element1",
 			labelText: "~sLabel1"
-		}, {
-			backendHelpKey: {id: "~customId3", type: "~customType3"},
-			hotspotId: "~element1",
-			labelText: "~sLabel1"
 		}]);
 
 		oElement1Mock.expects("getId").withExactArgs().returns("~element1");
@@ -596,10 +592,6 @@ sap.ui.define([
 			labelText: "~sLabel0"
 		}, {
 			backendHelpKey: {id: "~customId4", origin: "~origin4", type: "~customType4"},
-			hotspotId: "~element1",
-			labelText: "~sLabel1"
-		}, {
-			backendHelpKey: {id: "~customId3", type: "~customType3"},
 			hotspotId: "~element1",
 			labelText: "~sLabel1"
 		}]);
