@@ -3,15 +3,6 @@
 /* Base theme                   */
 /* ============================ */
 
-@_sap_m_Table_SelNavColWidth: 3rem;
-@_sap_m_Table_CustomFocusMargin: 1px;
-@sapUiElementLineHeightSticky13: @sapUiElementLineHeight * 2;
-@sapUiElementLineHeightSticky15: (@sapUiElementLineHeight * 2) + 2rem;
-@sapUiSizeCompactElementLineHeightSticky15: (@sapUiElementLineHeight * 2) + 1.2rem;
-@sapUiSizeCompactElementLineHeightSticky14: @sapUiElementLineHeight + 1.25rem;
-@sapUiSizeCompactElementLineHeightSticky13: @sapUiElementLineHeight + 1.95rem;
-@sapUiSizeCompactElementLineHeightSticky12: 2rem;
-
 .sapMListTbl {
 	width: 100%;
 	border-collapse: separate;
@@ -186,7 +177,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 .sapMListTblSelCol,
 .sapMListTblHasNav .sapMListTblNavCol {
-	width: @_sap_m_Table_SelNavColWidth;
+	width: 3rem;
 }
 
 .sapMLIB.sapMListTblRow {
@@ -277,7 +268,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 .sapMSticky13 .sapMGHLI {
 	z-index: 3;
-	top: @sapUiElementLineHeightSticky13;
+	top: ~"calc(var(--sapElement_LineHeight) * 2)";
 }
 
 /* busyIndicator should not block the toolbars if <table> is set busy */
@@ -287,44 +278,44 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 .sapMSticky15 .sapMGHLI {
 	z-index: 3;
-	top: @sapUiElementLineHeightSticky15;
+	top:  ~"calc(var(--sapElement_LineHeight) * 2 + 2rem)";
 }
 
 .sapUiSizeCompact {
 
 	& .sapMSticky12 .sapMGHLI {
-		top: @sapUiSizeCompactElementLineHeightSticky12;
+		top: 2rem;
 
 		/* only first child needs 1px more which prevents (tiny) double borders through stacking the following groupHeaders */
 		&:first-child {
-			top: @sapUiSizeCompactElementLineHeightSticky12 + 0.0625rem;
+			top: 2rem + 0.0625rem;
 		}
 	}
 
 	& .sapMSticky13 .sapMGHLI {
-		top: @sapUiSizeCompactElementLineHeightSticky13;
+		top:  ~"calc(var(--sapElement_LineHeight) + 1.95rem)";
 
 		/* only first child needs 2px more which prevents (tiny) double borders through stacking the following groupHeaders */
 		&:first-child {
-			top: @sapUiSizeCompactElementLineHeightSticky13 + 0.125rem;
+			top: ~"calc(var(--sapElement_LineHeight) + 1.95rem + 0.125rem )";
 		}
 	}
 
 	& .sapMSticky14 .sapMGHLI {
-		top: @sapUiSizeCompactElementLineHeightSticky14;
+		top:  ~"calc(var(--sapElement_LineHeight) + 1.25rem)";
 
 		/* only first child needs 1px more which prevents (tiny) double borders through stacking the following groupHeaders */
 		&:first-child {
-			top: @sapUiSizeCompactElementLineHeightSticky14 + 0.0625rem;
+			top: ~"calc(var(--sapElement_LineHeight) + 1.25rem + 0.0625rem)" ;
 		}
 	}
 
 	& .sapMSticky15 .sapMGHLI {
-		top: @sapUiSizeCompactElementLineHeightSticky15;
+		top: ~"calc(var(--sapElement_LineHeight) * 2 + 1.2rem)";
 
 		/* only first child needs 2px more which prevents (tiny) double borders through stacking the following groupHeaders */
 		&:first-child {
-			top: @sapUiSizeCompactElementLineHeightSticky15 + 0.125rem;
+			top:  ~"calc(var(--sapElement_LineHeight) * 2 + 1.2rem + 0.125rem)";
 		}
 	}
 }
@@ -515,7 +506,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 		bottom: 1px; /* mimics outline-offset: -1px */
 		border-top: @_sap_m_ListItemBase_Focus_Outline;
 		border-bottom: @_sap_m_ListItemBase_Focus_Outline;
-		margin-right: @_sap_m_Table_CustomFocusMargin; /* make the focus border clearly visible on all sides */
+		margin-right: 1px; /* make the focus border clearly visible on all sides */
 	}
 
 	.sapMListTblHasPopin > &:not(.sapMGHLI) > :not(.sapMListTblCellNoData, .sapMListTblDummyCell:last-child, .sapMListTblNavigatedCell)::before {
@@ -531,13 +522,13 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	& > .sapMTblFirstVisibleCell::before,
 	& + .sapMListTblSubRow > .sapMTblFirstVisibleCell::before {
 		border-left: @_sap_m_ListItemBase_Focus_Outline;
-		margin-left: @_sap_m_Table_CustomFocusMargin; /* mimics outline-offset */
+		margin-left: 1px; /* mimics outline-offset */
 	}
 
 	& > .sapMTblLastVisibleCell::before,
 	& + .sapMListTblSubRow > .sapMTblLastVisibleCell::before {
 		border-right: @_sap_m_ListItemBase_Focus_Outline;
-		margin-right: @_sap_m_Table_CustomFocusMargin; /* mimics outline-offset */
+		margin-right: 1px; /* mimics outline-offset */
 	}
 }
 
