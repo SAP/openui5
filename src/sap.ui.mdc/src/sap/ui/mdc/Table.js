@@ -1739,9 +1739,13 @@ sap.ui.define([
 			this._oManagedObjectModel.setProperty("/@custom/activeP13nModes", createActiveP13nModesMap(this));
 			this._updateAdaptation();
 
-			const oDelegate = this.getControlDelegate();
-			if (oDelegate.preInit) { // not used in the table, but is overridden in FE
-				oDelegate.preInit(this);
+			/**
+			 * @deprecated As of version 1.134.
+			 */
+			if (this.getControlDelegate().preInit) {
+				// Not used in the table, but is overridden in FE. In FE, it's tightly coupled to the CreationRow, which has been deprecated in
+				// version 1.124. Therefore, this hook should also be deprecated.
+				this.getControlDelegate().preInit(this);
 			}
 
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
