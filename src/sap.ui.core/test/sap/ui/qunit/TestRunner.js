@@ -330,8 +330,11 @@
 				return Promise.reject();
 			}
 			const oDeferred = new Deferred();
+			if (this.getUrlParameter("hidepassed") !== null) {
+				sTestPage += (sTestPage.includes("?") ? "&" : "?") + "hidepassed";
+			}
 			// we could make this configurable
-			const frame =  h("iframe", {style: {height: "1024px", width: "1280px"}, src: sTestPage});
+			const frame = h("iframe", {style: {height: "1024px", width: "1280px"}, src: sTestPage});
 			const framediv = h("div", {style: {
 				height: "400px",
 				width: "100%",
