@@ -10,13 +10,14 @@ sap.ui.require([
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/collapseAll",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/createEdit",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/expandAll",
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/collapseAll_expandTo3",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/pageExpandCollapse",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/recursiveHierarchyBasics",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/sideEffectsRefresh",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/opaQunit"
-], function (Core, Helper, Main, collapseAll, createEdit, expandAll, pageExpandCollapse,
-		recursiveHierarchyBasics, sideEffectsRefresh, SandboxModel, opaTest) {
+], function (Core, Helper, Main, collapseAll, createEdit, expandAll, collapseAll_expandTo3,
+		pageExpandCollapse, recursiveHierarchyBasics, sideEffectsRefresh, SandboxModel, opaTest) {
 	"use strict";
 
 	Core.ready().then(function () {
@@ -85,6 +86,16 @@ sap.ui.require([
 				Main.setTreeTable(bTreeTable);
 
 				collapseAll(Given, When, Then);
+			});
+		});
+
+		//*****************************************************************************
+		[false, true].forEach(function (bTreeTable) {
+			const sTitle = "collapse all, expandTo:3; w/ TreeTable: " + bTreeTable;
+			opaTest(sTitle, function (Given, When, Then) {
+				Main.setTreeTable(bTreeTable);
+
+				collapseAll_expandTo3(Given, When, Then);
 			});
 		});
 
