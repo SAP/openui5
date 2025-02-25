@@ -649,92 +649,92 @@ sap.ui.define([
 			sinon.assert.notCalled(mSpies.requireSync);
 		}
 	},
-		/**
-		 * @deprecated
-		 */
-		{
-			testDescription: "core:require in XMLView with binding ($control, $controller) contexts in formatter functions - (future = false)",
-			viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter",
-			settings: {
-				async: {
-					create: createView,
-					spies: {
-						error: [Log, "error"],
-						fatal: [Log, "fatal"]
-					}
+	/**
+	 * @deprecated
+	 */
+	{
+		testDescription: "core:require in XMLView with binding ($control, $controller) contexts in formatter functions - (future = false)",
+		viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter",
+		settings: {
+			async: {
+				create: createView,
+				spies: {
+					error: [Log, "error"],
+					fatal: [Log, "fatal"]
 				}
-			},
-			future: false,
-			runAssertions: async function (oView, mSpies, assert, bAsync) {
-				const oErrorSpy = mSpies.error;
-				const oFatalSpy = mSpies.fatal;
-				oView.placeAt("qunit-fixture");
-				await nextUIUpdate();
-
-				const oButton1 = oView.byId("btn_1");
-				oButton1.firePress();
-
-				const oButton2 = oView.byId("btn_2");
-				assert.equal(oButton2.getText(), "$controller", "'$controller' shouldn't be resolved without a binding.");
-				assert.equal(oErrorSpy.getCall(0).args[0], "[FUTURE FATAL] formatter function $controller.formatter not found!", "'$controller.formatter': Correct Error Log shown.");
-				assert.equal(oFatalSpy.getCall(0).args[0], "[FUTURE FATAL] core:require in XMLView contains an invalid identifier: '$InvalidAlias' on Node: App. Keys that begin with '$' are reserved by the framework.", "'core:require': Correct Error Log shown when invalid alias is defined.");
-
-				oView.destroy();
 			}
 		},
-		{
-			testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid $controller usage in XML view (future=true)",
-			viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalid$controllerUsage",
-			settings: {
-				async: {
-					create: createView
-				}
-			},
-			future: true,
-			onRejection: function (assert, oError) {
-				assert.ok(oError.message.includes("formatter function $controller.formatter not found!"), "Correct error message is shown.");
-			}
-		},
+		future: false,
+		runAssertions: async function (oView, mSpies, assert, bAsync) {
+			const oErrorSpy = mSpies.error;
+			const oFatalSpy = mSpies.fatal;
+			oView.placeAt("qunit-fixture");
+			await nextUIUpdate();
 
-		{
-			testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid alias defined (future=true)",
-			viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalidAlias",
-			settings: {
-				async: {
-					create: createView
-				}
-			},
-			future: true,
-			onRejection: function (assert, oError) {
-				assert.ok(oError.message.includes("core:require in XMLView contains an invalid identifier: '$invalidAlias' on Node: App. Keys that begin with '$' are reserved by the framework."), "Correct error message is shown.");
+			const oButton1 = oView.byId("btn_1");
+			oButton1.firePress();
+
+			const oButton2 = oView.byId("btn_2");
+			assert.equal(oButton2.getText(), "$controller", "'$controller' shouldn't be resolved without a binding.");
+			assert.equal(oErrorSpy.getCall(0).args[0], "[FUTURE FATAL] formatter function $controller.formatter not found!", "'$controller.formatter': Correct Error Log shown.");
+			assert.equal(oFatalSpy.getCall(0).args[0], "[FUTURE FATAL] core:require in XMLView contains an invalid identifier: '$InvalidAlias' on Node: App. Keys that begin with '$' are reserved by the framework.", "'core:require': Correct Error Log shown when invalid alias is defined.");
+
+			oView.destroy();
+		}
+	},
+	{
+		testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid $controller usage in XML view (future=true)",
+		viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalid$controllerUsage",
+		settings: {
+			async: {
+				create: createView
 			}
 		},
-		{
-			testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid argument provided to .bind()",
-			viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalidArgument",
-			settings: {
-				async: {
-					create: createView
-				}
-			},
-			onRejection: function (assert, oError) {
-				assert.ok(oError, "Invalid arguments provided to '.bind()' should throw an Error.");
-				assert.ok(oError.message.includes("Error in formatter 'Helper.formatter': Unknown argument 'invalidArgument' passed to '.bind()' call."), "Correct error message is shown.");
+		future: true,
+		onRejection: function (assert, oError) {
+			assert.ok(oError.message.includes("formatter function $controller.formatter not found!"), "Correct error message is shown.");
+		}
+	},
+
+	{
+		testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid alias defined (future=true)",
+		viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalidAlias",
+		settings: {
+			async: {
+				create: createView
 			}
 		},
-		{
-			testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid argument with leading '$' provided to .bind()",
-			viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalid$Argument",
-			settings: {
-				async: {
-					create: createView
-				}
-			},
-			onRejection: function (assert, oError) {
-				assert.ok(oError, "Invalid arguments provided to '.bind()' should throw an Error.");
-				assert.ok(oError.message.includes("Error in formatter 'Helper.formatter.bind($invalidArgument)': The argument '$invalidArgument' used in the '.bind()' call starts with '$', which is only allowed for framework-reserved variables. Please rename the variable so that it doesn't start with '$'."), "Correct error message is shown.");
+		future: true,
+		onRejection: function (assert, oError) {
+			assert.ok(oError.message.includes("core:require in XMLView contains an invalid identifier: '$invalidAlias' on Node: App. Keys that begin with '$' are reserved by the framework."), "Correct error message is shown.");
+		}
+	},
+	{
+		testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid argument provided to .bind()",
+		viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalidArgument",
+		settings: {
+			async: {
+				create: createView
 			}
-		}].forEach(function (oConfig) {
+		},
+		onRejection: function (assert, oError) {
+			assert.ok(oError, "Invalid arguments provided to '.bind()' should throw an Error.");
+			assert.ok(oError.message.includes("Error in formatter 'Helper.formatter': Unknown argument 'invalidArgument' passed to '.bind()' call."), "Correct error message is shown.");
+		}
+	},
+	{
+		testDescription: "Error-Handling: core:require in XMLView with binding formatter functions - invalid argument with leading '$' provided to .bind()",
+		viewName: ".view.XMLTemplateProcessorAsync_require_bind_formatter_invalid$Argument",
+		settings: {
+			async: {
+				create: createView
+			}
+		},
+		onRejection: function (assert, oError) {
+			assert.ok(oError, "Invalid arguments provided to '.bind()' should throw an Error.");
+			assert.ok(oError.message.includes("Error in formatter 'Helper.formatter.bind($invalidArgument)': The argument '$invalidArgument' used in the '.bind()' call starts with '$', which is only allowed for framework-reserved variables. Please rename the variable so that it doesn't start with '$'."), "Correct error message is shown.");
+		}
+	}].forEach(function (oConfig) {
 		// Run async variant
 		QUnit.test(oConfig.testDescription + " - async", function(assert) {
 			var that = this,

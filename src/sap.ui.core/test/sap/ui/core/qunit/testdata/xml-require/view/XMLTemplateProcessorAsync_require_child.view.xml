@@ -1,3 +1,4 @@
 <mvc:XMLView height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<!-- ui5lint-disable-next-line no-globals // global 'Box' is used as true positive in test -->
 	<Button press="Box.show('MessageBox')"></Button>
 </mvc:XMLView>

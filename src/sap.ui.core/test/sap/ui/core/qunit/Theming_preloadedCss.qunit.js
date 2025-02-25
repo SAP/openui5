@@ -1,4 +1,5 @@
 /* globals QUnit */
+/* ui5lint-disable prefer-test-starter -- test scenario needs to control the bootstrap */
 sap.ui.require(["sap/base/Log"], (Log) => {
 	"use strict";
 
