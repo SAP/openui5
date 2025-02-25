@@ -77,4 +77,4 @@ sap.ui.define([
 	};
 
 	return FlexControllerFactory;
-}, true);
+});

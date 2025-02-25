@@ -27,4 +27,4 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.transport.TransportSelection} a new instance of <code>sap.ui.fl.transport.TransportSelection</code>.
 	 */
 	return TransportSelection;
-}, true);
+});
