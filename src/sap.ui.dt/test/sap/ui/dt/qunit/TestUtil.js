@@ -57,4 +57,4 @@ sap.ui.define([
 			return this.oHorizontalLayout;
 		}
 	};
-}, true);
+});
