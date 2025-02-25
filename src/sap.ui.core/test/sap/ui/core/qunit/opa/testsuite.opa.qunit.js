@@ -20,16 +20,13 @@ sap.ui.define([
 		},
 		tests: {
 			"qunitPause": {
-				title: "QUnit Page for qunitPause",
-				module: "./qunitPause.qunit"
+				title: "QUnit Page for qunitPause"
 			},
 			"actions/Action": {
-				title: "QUnit Page for sap.ui.test.actions.Action",
-				module: "./actions/Action.qunit"
+				title: "QUnit Page for sap.ui.test.actions.Action"
 			},
 			"actions/DnD": {
 				title: "QUnit Page for sap.ui.test.actions.Drag and sap.ui.test.actions.Drop",
-				module: "./actions/DnD.qunit",
 				loader: {
 					paths: {
 						"sap/f/sample": "test-resources/sap/f/demokit/sample",
@@ -44,8 +41,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.ui.test.actions.EnterText",
 				qunit: {
 					testTimeout: 5000
-				},
-				module: "./actions/EnterText.qunit"
+				}
 			},
 			/**
 			 * @deprecated As of version 1.120, as QUnit 1.x is no longer supported in UI5 2.0
@@ -87,7 +83,6 @@ sap.ui.define([
 			},
 			"actions/Scroll": {
 				title: "QUnit Page for sap.ui.test.actions.Scroll",
-				module: "./actions/Scroll.qunit",
 				loader: {
 					paths: {
 						"sap/uxap/sample": "test-resources/sap/uxap/demokit/sample",
@@ -110,8 +105,7 @@ sap.ui.define([
 					paths: {
 						"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
 					}
-				},
-				module: "./autowaiter/autoWaiter.qunit"
+				}
 			},
 			"sap/ui/core/demokit/sample/matcher/BindingPath/testsuite.qunit.html": {
 				page: "test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/testsuite.qunit.html",
@@ -229,8 +223,7 @@ sap.ui.define([
 					paths: {
 						"samples" : "test-resources/sap/ui/core/samples/"
 					}
-				},
-				module: "./launchers/componentLauncher.qunit"
+				}
 			},
 			"launchers/iFrameLauncher": {
 				title: "QUnit Page for sap.ui.test.launchers.iFrameLauncher",
@@ -238,101 +231,78 @@ sap.ui.define([
 					paths: {
 						"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
 					}
-				},
-				module: "./launchers/iFrameLauncher.qunit"
+				}
 			},
 			"matchers/AggregationContainsPropertyEquals": {
-				title: "QUnit Page for sap.ui.test.matchers.AggregationContainsPropertyEqual",
-				module: "./matchers/AggregationContainsPropertyEquals.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.AggregationContainsPropertyEqual"
 			},
 			"matchers/AggregationEmpty": {
-				title: "QUnit Page for sap.ui.test.matchers.AggregationEmpty",
-				module: "./matchers/AggregationEmpty.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.AggregationEmpty"
 			},
 			"matchers/AggregationFilled": {
-				title: "QUnit Page for sap.ui.test.matchers.AggregationFilled",
-				module: "./matchers/AggregationFilled.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.AggregationFilled"
 			},
 			"matchers/AggregationLengthEquals": {
-				title: "QUnit Page for AggregationLengthEquals",
-				module: "./matchers/AggregationLengthEquals.qunit"
+				title: "QUnit Page for AggregationLengthEquals"
 			},
 			"matchers/Ancestor": {
-				title: "QUnit Page for sap.ui.test.matchers.Ancestor",
-				module: "./matchers/Ancestor.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.Ancestor"
 			},
 			"matchers/BindingPath": {
-				title: "QUnit Page for sap.ui.test.matchers.BindingPath",
-				module: "./matchers/BindingPath.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.BindingPath"
 			},
 			"matchers/Descendant": {
-				title: "QUnit Page for sap.ui.test.matchers.Descendant",
-				module: "./matchers/Descendant.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.Descendant"
 			},
 			"matchers/I18NText": {
-				title: "QUnit Page for sap.ui.test.matchers.I18NText",
-				module: "./matchers/I18NText.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.I18NText"
 			},
 			"matchers/Interactable": {
 				title: "QUnit Page for sap.ui.test.matchers.Interactable",
-				module: "./matchers/Interactable.qunit",
 				autostart: false
 			},
 			"matchers/LabelFor": {
-				title: "QUnit Page for sap.ui.test.matchers.LabelFor",
-				module: "./matchers/LabelFor.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.LabelFor"
 			},
 			"matchers/MatcherFactory": {
-				title: "QUnit Page for sap.ui.test.matchers.MatcherFactory",
-				module: "./matchers/MatcherFactory.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.MatcherFactory"
 			},
 			"matchers/Properties": {
-				title: "QUnit Page for sap.ui.test.matchers.Properties",
-				module: "./matchers/Properties.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.Properties"
 			},
 			"matchers/PropertyStrictEquals": {
-				title: "QUnit Page for sap.ui.test.matchers.PropertyStrictEquals",
-				module: "./matchers/PropertyStrictEquals.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.PropertyStrictEquals"
 			},
 			"matchers/Sibling": {
-				title: "QUnit Page for sap.ui.test.matchers.Sibling",
-				module: "./matchers/Sibling.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.Sibling"
 			},
 			"matchers/Visible": {
-				title: "QUnit Page for sap.ui.test.matchers.Visible",
-				module: "./matchers/Visible.qunit"
+				title: "QUnit Page for sap.ui.test.matchers.Visible"
 			},
 			"matchers/_Busy": {
-				title: "QUnit Page for sap.ui.test.matchers._Busy",
-				module: "./matchers/_Busy.qunit"
+				title: "QUnit Page for sap.ui.test.matchers._Busy"
 			},
 			"matchers/_Editable": {
-				title: "QUnit Page for sap.ui.test.matchers._Editable",
-				module: "./matchers/_Editable.qunit"
+				title: "QUnit Page for sap.ui.test.matchers._Editable"
 			},
 			"matchers/_Enabled": {
-				title: "QUnit Page for sap.ui.test.matchers._Enabled",
-				module: "./matchers/_Enabled.qunit"
+				title: "QUnit Page for sap.ui.test.matchers._Enabled"
 			},
 			"matchers/_Visitor": {
-				title: "QUnit Page for sap.ui.test.matchers._Visitor",
-				module: "./matchers/_Visitor.qunit"
+				title: "QUnit Page for sap.ui.test.matchers._Visitor"
 			},
 			"Opa": {
 				title: "QUnit Page for sap.ui.test.Opa",
 				qunit: {
 					// needed for tests that unload OPA
 					reorder: false
-				},
-				module: "./Opa.qunit"
+				}
 			},
 			"opa5/_ParameterValidator": {
-				title: "QUnit Page for sap.ui.test.Opa5 - _ParameterValidator",
-				module: "./opa5/_ParameterValidator.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 - _ParameterValidator"
 			},
 			"opa5/actions": {
-				title: "QUnit Page for sap.ui.test.Opa5 - Actions",
-				module: "./opa5/actions.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 - Actions"
 			},
 			"opa5/autoWait": {
 				title: "QUnit Page for sap.ui.test.Opa5 - autoWait",
@@ -340,12 +310,10 @@ sap.ui.define([
 					paths: {
 						"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
 					}
-				},
-				module: "./opa5/autoWait.qunit"
+				}
 			},
 			"opa5/basics": {
-				title: "QUnit Page for sap.ui.test.Opa5 - Basics",
-				module: "./opa5/basics.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 - Basics"
 			},
 			"opa5/component": {
 				title: "QUnit Page for sap.ui.test.Opa5 - Component",
@@ -353,20 +321,16 @@ sap.ui.define([
 					paths: {
 						"samples" : "test-resources/sap/ui/core/samples/"
 					}
-				},
-				module: "./opa5/component.qunit"
+				}
 			},
 			"opa5/iFrame": {
-				title: "QUnit Page for sap.ui.test.Opa5 - iFrame common tests",
-				module: "./opa5/iFrame.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 - iFrame common tests"
 			},
 			"opa5/iFrameLogging": {
-				title: "QUnit Page for sap.ui.test.Opa5 - iFrame logging",
-				module: "./opa5/iFrameLogging.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 - iFrame logging"
 			},
 			"opa5/matchersInFrame": {
-				title: "QUnit Page for sap.ui.test.Opa5 - matchers in iFrame",
-				module: "./opa5/matchersInFrame.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 - matchers in iFrame"
 			},
 			"opa5/launchers": {
 				title: "QUnit Page for sap.ui.test.Opa5 - Launchers",
@@ -374,16 +338,13 @@ sap.ui.define([
 					paths: {
 						"samples" : "test-resources/sap/ui/core/samples/"
 					}
-				},
-				module: "./opa5/launchers.qunit"
+				}
 			},
 			"opa5/logging": {
-				title: "QUnit Page for sap.ui.test.Opa5 - Logging",
-				module: "./opa5/logging.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 - Logging"
 			},
 			"opa5/matchers": {
 				title: "QUnit Page for sap.ui.test.Opa5 - Matchers",
-				module: "./opa5/matchers.qunit",
 				// in sinon v4, there is a timing issue in "Should execute a matcher and pass its value to success if no control is searched"
 				sinon: {
 					version: 1,
@@ -391,23 +352,19 @@ sap.ui.define([
 				}
 			},
 			"Opa5Extensions": {
-				title: "QUnit Page for sap.ui.test.Opa5",
-				module: "./Opa5Extensions.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5"
 			},
 			"Opa5PageObject": {
-				title: "QUnit Page for sap.ui.test.Opa5 Page Objects",
-				module: "./Opa5PageObject.qunit"
+				title: "QUnit Page for sap.ui.test.Opa5 Page Objects"
 			},
 			"OpaIntegration": {
-				title: "QUnit Page for sap.ui.test.Opa",
-				module: "./OpaIntegration.qunit"
+				title: "QUnit Page for sap.ui.test.Opa"
 			},
 			"OpaPlugin": {
 				title: "QUnit Page for sap.ui.test.OpaPlugin",
 				ui5: {
 					libs: ["sap.m"]
 				},
-				module: "./OpaPlugin.qunit",
 				loader: {
 					paths: {
 						"fixture": "test-resources/sap/ui/core/qunit/opa/fixture/"
@@ -415,56 +372,43 @@ sap.ui.define([
 				}
 			},
 			"opaQunit": {
-				title: "QUnit Page for sap.ui.test.opaQunit",
-				module: "./opaQunit.qunit"
+				title: "QUnit Page for sap.ui.test.opaQunit"
 			},
 			"pipelines/ActionPipeline": {
-				title: "QUnit Page for sap.ui.test.pipelines.ActionPipeline",
-				module: "./pipelines/ActionPipeline.qunit"
+				title: "QUnit Page for sap.ui.test.pipelines.ActionPipeline"
 			},
 			"pipelines/MatcherPipeline": {
-				title: "QUnit Page for sap.ui.test.pipelines.MatcherPipeline",
-				module: "./pipelines/MatcherPipeline.qunit"
+				title: "QUnit Page for sap.ui.test.pipelines.MatcherPipeline"
 			},
 			"pipelines/PipelineFactory": {
-				title: "QUnit Page for sap.ui.test.pipelines.PipelineFactory",
-				module: "./pipelines/PipelineFactory.qunit"
+				title: "QUnit Page for sap.ui.test.pipelines.PipelineFactory"
 			},
 			"_ControlFinder": {
-				title: "QUnit Page for sap.ui.test._ControlFinder",
-				module: "./_ControlFinder.qunit"
+				title: "QUnit Page for sap.ui.test._ControlFinder"
 			},
 			"_LogCollector": {
-				title: "QUnit Page for sap.ui.test._LogCollector",
-				module: "./_LogCollector.qunit"
+				title: "QUnit Page for sap.ui.test._LogCollector"
 			},
 			"_OpaLogger": {
-				title: "QUnit Page for sap.ui.test._OpaLogger",
-				module: "./_OpaLogger.qunit"
+				title: "QUnit Page for sap.ui.test._OpaLogger"
 			},
 			"_OpaUriParameterParser": {
-				title: "QUnit Page for sap.ui.test._OpaUriParameterParser",
-				module: "./_OpaUriParameterParser.qunit"
+				title: "QUnit Page for sap.ui.test._OpaUriParameterParser"
 			},
 			"_UsageReport": {
-				title: "QUnit Page for sap.ui.test._UsageReport",
-				module: "./_UsageReport.qunit"
+				title: "QUnit Page for sap.ui.test._UsageReport"
 			},
 			"RecordReplay": {
-				title: "QUnit Page for sap.ui.test.RecordReplay",
-				module: "./RecordReplay.qunit"
+				title: "QUnit Page for sap.ui.test.RecordReplay"
 			},
 			"selectors/selectors": {
-				title: "QUnit Page for sap.ui.test.selectors",
-				module: "./selectors/selectors.qunit"
+				title: "QUnit Page for sap.ui.test.selectors"
 			},
 			"_BrowserLogCollector": {
-				title: "QUnit Page for sap.ui.test._BrowserLogCollector",
-				module: "./_BrowserLogCollector.qunit"
+				title: "QUnit Page for sap.ui.test._BrowserLogCollector"
 			},
 			"OpaBuilder": {
-				title: "QUnit Page for sap.ui.test.OpaBuilder",
-				module: "./OpaBuilder.qunit"
+				title: "QUnit Page for sap.ui.test.OpaBuilder"
 			}
 		}
 	};
@@ -472,20 +416,29 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.120, as QUnit 1.x is no longer supported in UI5 2.0
 	 */
-	Object.keys(oTestSuite.tests).forEach(function (name) {
+	for (const [name, testConfig] of Object.entries(oTestSuite.tests)) {
 		// do not clone tests that specify their own HTML page
-		if (oTestSuite.tests[name].page) {
-			return;
+		if (testConfig.page) {
+			continue;
 		}
 
-		oTestSuite.tests[name + "1"] = merge({}, oTestSuite.tests[name], {qunit: { version: 1 }});
-		oTestSuite.tests[name + "2"] = merge({}, oTestSuite.tests[name], {qunit: { version: 2 }});
+		oTestSuite.tests[name + "1"] = merge({}, testConfig, {
+			module: testConfig.module ?? `./${name}.qunit`,
+			qunit: {
+				version: 1
+			}
+		});
+		if (testConfig.title) {
+			oTestSuite.tests[name + "1"].title = testConfig.title + " (QUnit 1)";
+		}
+		oTestSuite.tests[name + "2"] = merge({}, testConfig, {
+			module: testConfig.module ?? `./${name}.qunit`,
+			qunit: {
+				version: 2
+			}
+		});
 		delete oTestSuite.tests[name];
-
-		if ( oTestSuite.tests[name + "1"].title ) {
-			oTestSuite.tests[name + "1"].title = oTestSuite.tests[name + "1"].title + " (QUnit 1)";
-		}
-	});
+	}
 
 	return oTestSuite;
 });

@@ -1,15 +1,6 @@
-/* global QUnit */
-
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/core/Core",
+sap.ui.define([
 	"sap/ui/testrecorder/qunit/integration/AllJourneys"
-], async function(Core) {
+], function() {
 	'use strict';
-
-	await Core.ready();
-
-	QUnit.start();
 });
 
