@@ -29,6 +29,8 @@
 				<CheckBox id="preloadManifests" selected="true" />
 				<Label text="Number of cards" />
 				<Input id="numberOfCards" width="4rem" type="Number" value="{/numberOfCards}" />
+				<Label text="Delay Loading Placeholder" />
+				<CheckBox id="delayLoading"></CheckBox>
 				<Label text="dataMode to 'Active'"/>
 				<CheckBox id="dataMode"></CheckBox>
 				<Button text="Start loading" type="Emphasized" press=".onFormSubmit" />

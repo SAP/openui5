@@ -56,6 +56,11 @@ sap.ui.define([
 			if (oCard.getManifest() && (!oCard.getCardHeader() || oCard._getActualDataMode() !== CardDataMode.Active)) {
 				oRm.attr("tabindex", "0");
 			}
+
+			const oLoadingProvider = oCard.getAggregation("_loadingProvider");
+			if (oLoadingProvider.getDelayed()) {
+				oRm.class("sapFCardLoadingDelayed");
+			}
 		},
 
 		renderCardAppId: function (oRm, oCard) {

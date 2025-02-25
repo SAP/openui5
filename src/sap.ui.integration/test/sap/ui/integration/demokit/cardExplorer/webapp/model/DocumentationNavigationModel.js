@@ -142,6 +142,12 @@ sap.ui.define([
 						title: 'Manifest Parameters',
 						target: 'learnDetail',
 						key: 'manifestParameters'
+					},
+					{
+						title: 'Loading Placeholders',
+						target: 'learnDetail',
+						key: 'loadingPlaceholders',
+						experimental: true
 					}
 				]
 			},
