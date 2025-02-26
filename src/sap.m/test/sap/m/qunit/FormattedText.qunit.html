@@ -85,6 +85,13 @@
 			strictEqual($a[0].style.position, "static", "inline style for position is replaced with 'static'");
 			setText('<a style="position:fixed;">"' + sFT + '</a>');
 			strictEqual($a[0].style.position, "static", "inline style for position is replaced with 'static'");
+			setText('The <strong style="color: red">best</strong><span style="opacity: 0">Invisible Text</span>');
+			ok(oFT.getDomRef().querySelector("strong").getAttribute("style").indexOf("color: red") !== -1, "Style attribute value is not removed");
+			ok(oFT.getDomRef().querySelector("span").getAttribute("style").indexOf("opacity: 0") !== -1, "Style attribute value is not removed");
+			oFT.setDisableStyleAttribute(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oFT.getDomRef().querySelector("strong").getAttribute("style").indexOf("color: red") === -1, "Style attribute value is removed");
+			assert.ok(oFT.getDomRef().querySelector("span").getAttribute("style").indexOf("opacity: 0") === -1, "Style attribute value is removed");
 		});
 
 		test("css classes", function() {
