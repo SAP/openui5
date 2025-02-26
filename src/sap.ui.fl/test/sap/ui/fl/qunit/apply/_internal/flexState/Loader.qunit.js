@@ -80,13 +80,15 @@ sap.ui.define([
 							]
 						}
 					}, {
-						fileName: "4c",
+						fileName: "4c", // Invalid file name (id must not start with number)
 						selector: "ProductDetail--GeneralForm--generalForm",
 						dependentSelector: {
 							movedElements: [
 								"ProductDetail--GeneralForm--productLabel"
 							]
 						}
+					}, {
+						fileName: "some_appDescr_change_without_selector"
 					}
 				],
 				variantDependentControlChanges: [],
@@ -187,7 +189,7 @@ sap.ui.define([
 
 				return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
 					var aChanges = oResult.changes.changes;
-					assert.equal(aChanges.length, 3, "three changes are loaded");
+					assert.strictEqual(aChanges.length, 4, "four changes are loaded");
 					assert.equal(aChanges[0].fileName, "c1", "the file name of the first change is correct - MUST BE THE SAME");
 					assert.deepEqual(aChanges[0].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
@@ -241,8 +243,8 @@ sap.ui.define([
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
-				var aChanges = oResult.changes.changes;
-				assert.equal(aChanges.length, 3, "three changes are loaded");
+				const aChanges = oResult.changes.changes;
+				assert.strictEqual(aChanges.length, 4, "four changes are loaded");
 				assert.equal(aChanges[0].fileName, "c1", "the file name of the first change is correct");
 				assert.deepEqual(aChanges[0].selector, {
 					id: "ProductDetail--GeneralForm--generalForm",
