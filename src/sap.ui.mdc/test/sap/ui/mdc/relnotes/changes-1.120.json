@@ -200,5 +200,15 @@
         "text": " Tables: Announce required state of columns with 'custom' label controls"
       }
     ]
+  },
+  "1.120.27": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "83fef3d532451b21dff5c7927c5117aa03773a4b",
+        "type": "FIX",
+        "text": " ValueHelp: Search field not cleared on reopen"
+      }
+    ]
   }
 }

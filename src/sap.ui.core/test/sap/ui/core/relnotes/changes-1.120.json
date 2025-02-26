@@ -943,5 +943,20 @@
         "text": " sap/base/util/now: Migrate performance.timing"
       }
     ]
+  },
+  "1.120.27": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "4b59308b0e749081a7a2ec9e5caf9b0237feebe8",
+        "type": "FIX",
+        "text": " SAP-icons: fix icon 'eam-work-order' in v5"
+      },
+      {
+        "id": "9ad13cde3a3a72d3431225187d11892996f8d909",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/*: use string value for sap-cancel-on-close"
+      }
+    ]
   }
 }

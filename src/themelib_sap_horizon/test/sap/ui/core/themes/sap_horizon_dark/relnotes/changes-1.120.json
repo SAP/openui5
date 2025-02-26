@@ -296,5 +296,15 @@
         "text": " sap.m.ObjectStatus inverted has correct style when placed in HBox"
       }
     ]
+  },
+  "1.120.27": {
+    "date": "February 2025",
+    "notes": [
+      {
+        "id": "4b59308b0e749081a7a2ec9e5caf9b0237feebe8",
+        "type": "FIX",
+        "text": " SAP-icons: fix icon 'eam-work-order' in v5"
+      }
+    ]
   }
 }
