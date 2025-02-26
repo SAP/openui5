@@ -444,6 +444,41 @@ sap.ui.define([
 		oNL.destroy();
 	});
 
+	QUnit.test("Items in popover have 'sapTntNLIInPopover' class", async function (assert) {
+		// Arrange
+		const oNestedItem = new NavigationListItem({
+			text: "nestedItem"
+		});
+		const oItem = new NavigationListItem({
+			text: "item1",
+			items: [
+				oNestedItem
+			]
+		});
+		const oNL = new NavigationList({
+			expanded: false,
+			items: [
+				oItem
+			]
+		});
+
+		oNL.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		oItem.$().trigger("tap");
+		const oItemInPopover = oNL._oPopover.getContent()[0].getItems()[0];
+		const oNestedItemInPopover = oNL._oPopover.getContent()[0].getItems()[0].getItems()[0];
+
+		// Assert
+		assert.ok(oItemInPopover.getDomRef().firstElementChild.classList.contains("sapTntNLIInPopover"), "'sapTntNLIInPopover' should be set");
+		assert.ok(oNestedItemInPopover.getDomRef().classList.contains("sapTntNLIInPopover"), "'sapTntNLIInPopover' should be set");
+
+		// Clean up
+		oNL.destroy();
+		await clearPendingUIUpdates();
+	});
+
 	QUnit.module("Lifecycle");
 
 	QUnit.test("Popover is destroyed when NavigationList is destroyed", async function (assert) {
@@ -1590,6 +1625,78 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.module("Unselectable parent items in collapsed Side Navigation", {
+		beforeEach: async function () {
+			this.unselectableParentItem = new NavigationListItem({
+				text: 'Unselectable Parent',
+				selectable: false,
+				items: [
+					new NavigationListItem({
+						text: 'Child 1'
+					}),
+					new NavigationListItem({
+						text: 'Child 2'
+					})
+				]
+			});
+
+			this.navigationList = new NavigationList({
+				expanded: false,
+				items: [
+					this.unselectableParentItem
+				]
+			});
+			oPage.addContent(this.navigationList);
+
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.navigationList.destroy();
+		}
+	});
+
+	QUnit.test("Unselectable parent interaction", function (assert) {
+		// Act
+		QUnitUtils.triggerEvent("tap", this.unselectableParentItem.getFocusDomRef());
+
+		// Assert
+		assert.notOk(this.unselectableParentItem.getDomRef().classList.contains("sapTntNLISelected"), "Unselectable parent item should not be selected");
+		assert.ok(this.navigationList._oPopover.isOpen(), "Popover is opened");
+
+		const itemInPopover = this.navigationList._oPopover.getContent()[0].getItems()[0];
+		const focusableDomRefs = itemInPopover._getFocusDomRefs();
+
+		// Assert
+		assert.strictEqual(focusableDomRefs.length, 2, "There are 2 focusable elements in the popover");
+		assert.ok(focusableDomRefs[0].textContent.includes("Child 1"), "First focusable element is the first child item");
+		assert.ok(focusableDomRefs[1].textContent.includes("Child 2"), "Second focusable element is the second child item");
+
+		// Act
+		QUnitUtils.triggerEvent("tap", itemInPopover.getFocusDomRef());
+
+		// Assert
+		assert.ok(this.navigationList._oPopover.isOpen(), "Popover is still opened");
+	});
+
+	QUnit.test("Unselectable parent interaction in overflow", function (assert) {
+		// Arrange
+		this.navigationList.getDomRef().style.height = "10px";
+		this.navigationList._updateOverflowItems();
+
+		QUnitUtils.triggerEvent("tap", this.navigationList._getOverflowItem().getDomRef());
+
+		const overflowMenu = this.navigationList.getDependents()[0];
+		const itemInOverflowMenu = document.querySelector(".sapUiMnu").querySelector(".sapUiMnuItm");
+
+		// Assert
+		assert.ok(overflowMenu.isOpen(), "Overflow menu should be open");
+
+		// Act
+		QUnitUtils.triggerEvent("click", itemInOverflowMenu);
+
+		// Assert
+		assert.ok(overflowMenu.isOpen(), "Overflow menu should still be open");
+	});
 
 	return waitForThemeApplied();
 });

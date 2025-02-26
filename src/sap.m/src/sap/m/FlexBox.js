@@ -149,7 +149,29 @@ function(
 				 *
 				 * @since 1.38.5
 				 */
-				backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: BackgroundDesign.Transparent}
+				backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: BackgroundDesign.Transparent},
+
+				/**
+				 * The size of the gap between columns and rows.
+				 * It serves as a shorthand property for <code>rowGap</code> and <code>columnGap</code> properties. If either of the properties is set, the <code>gap</code> value will have lower priority and will be overwritten.
+				 *
+				 * @since 1.134
+				 */
+				gap: {type: "sap.ui.core.CSSGapShortHand", group: "Appearance", defaultValue: ""},
+
+				/**
+				 * The size of the gap between rows.
+				 *
+				 * @since 1.134
+				 */
+				rowGap: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
+
+				/**
+				 * The size of the gap between columns.
+				 *
+				 * @since 1.134
+				 */
+				columnGap: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""}
 			},
 			defaultAggregation : "items",
 			aggregations : {

@@ -988,6 +988,69 @@ sap.ui.define([
 		assert.ok(oItemVisibilityChangeSpy.calledOnce, "_onItemVisibilityChange method is called once");
 	});
 
+	QUnit.module("Gap between items", {
+		beforeEach: async function() {
+			this.oBoxConfig = {};
+			this.vItemTemplates = 3;
+			this.vItemConfigs = [
+				{
+					content: "<div class='items'>1</div>",
+					layoutData: new FlexItemData({})
+				},
+				{
+					content: "<div class='items'>2</div>",
+					layoutData: new FlexItemData({})
+				},
+				{
+					content: "<div class='items'>3</div>",
+					layoutData: new FlexItemData({})
+				}
+			];
+			this.oBox = getFlexBoxWithItems(this.oBoxConfig, this.vItemTemplates, this.vItemConfigs);
+
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+
+			await nextUIUpdate();
+		},
+		afterEach: async function() {
+			this.oBox.destroy();
+			this.oBox = null;
+			await nextUIUpdate();
+		}
+	});
+
+	QUnit.test("Gap", async function(assert) {
+		this.oBox.setGap("20px");
+
+		await nextUIUpdate();
+
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("gap"), "20px", "Items should have 20px gap between each other.");
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("row-gap"), "20px", "There should have 20px gap between each row.");
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("column-gap"), "20px", "There should have 20px gap between each column.");
+	});
+
+	QUnit.test("Row gap", async function(assert) {
+		this.oBox.setGap("10px");
+		this.oBox.setRowGap("20px");
+
+		await nextUIUpdate();
+
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("gap"), "20px 10px", "Items should have 20px and 10px gap between each other.");
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("row-gap"), "20px", "There should have 20px gap between each row.");
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("column-gap"), "10px", "There should have 10px gap between each column.");
+	});
+
+	QUnit.test("Column gap", async function(assert) {
+		this.oBox.setGap("10px");
+		this.oBox.setColumnGap("20px");
+
+		await nextUIUpdate();
+
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("gap"), "10px 20px", "Items should have 10 and 20px gap between each other.");
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("row-gap"), "10px", "There should have 10px gap between each row.");
+		assert.equal(window.getComputedStyle(this.oBox.getDomRef()).getPropertyValue("column-gap"), "20px", "There should have 20px gap between each column.");
+	});
+
 	// let test starter wait for style sheet
 	return pStyleLoaded;
 });

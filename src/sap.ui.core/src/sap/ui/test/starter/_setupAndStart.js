@@ -7,7 +7,7 @@
  *            nor must it be required by code outside this package.
  */
 
-/*global QUnit, sinon, */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/base/config",
@@ -170,6 +170,12 @@ sap.ui.define([
 		if ( oSinonConfig != null ) {
 			pSinon = pAfterLoader.then(function() {
 				return requireP(oSinonConfig.module);
+			}).then(function([sinonModule]) {
+				// If the sinon module provides an export, we also apply it globally
+				// to make it available to the tests and the sinon-qunit-bridge.
+				if (sinonModule) {
+					globalThis.sinon = sinonModule;
+				}
 			});
 
 			if ( oConfig.sinon.qunitBridge && pQUnit ) {
@@ -189,7 +195,10 @@ sap.ui.define([
 					pSinonQUnitBridge
 				]).then(function() {
 					// copy only settings that are listed in sinon.defaultConfig
-					sinon.config = copyFiltered(sinon.config || {}, oConfig.sinon, sinon.defaultConfig);
+					// Note: newer versions of sinon do not support config / defaultConfig anymore
+					if (typeof sinon.defaultConfig === "object") {
+						sinon.config = copyFiltered(sinon.config || {}, oConfig.sinon, sinon.defaultConfig);
+					}
 					return arguments;
 				});
 			}

@@ -192,6 +192,85 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when growing is triggered by scrolling after reopening 'Add Contexts' Dialog", async function(assert) {
+			function delayForRendering() {
+				return new Promise((resolve) => { setTimeout(resolve);});
+			}
+
+			// Wait until data was loaded from mock data after scrolling
+			function scrollListToEnd(oList) {
+				return new Promise((resolve) => {
+					oList.attachEvent("updateFinished", (oEvent) => {
+						if (oEvent.getParameters().actual >= 100) {resolve();}
+					});
+					oList.scrollToIndex(-1);
+				});
+			}
+
+			// Setup Mock Data
+			const oRolesFirstCall = {
+				values: [],
+				lastHitReached: false
+			};
+
+			const oRolesSecondCall = {
+				values: [],
+				lastHitReached: true
+			};
+
+			for (let i = 0; i < 120; i++) {
+				const oNewRole = {
+					id: `ROLE${i}`,
+					description: `Test Role ${i}`
+				};
+				(i < 100 ? oRolesFirstCall : oRolesSecondCall).values.push(oNewRole);
+			}
+
+			const oConnectorCall = sandbox.stub(WriteStorage, "getContexts");
+			const aMockData = [oRolesFirstCall, oRolesSecondCall, oRolesFirstCall, oRolesSecondCall];
+			aMockData.forEach((oRoles, index) => oConnectorCall.onCall(index).resolves(oRoles));
+
+			oController.oContextsModel = new JSONModel({});
+			oController.oSelectedContextsModel = new JSONModel({selected: []});
+
+			sandbox.stub(oController, "getView").returns({
+				addDependent() {},
+				getId() {return "dialog1";}
+			});
+			sandbox.stub(oController, "formatTooltip").returnsArg(0);
+
+			// Open the 'Add Context' Dialog for the first time
+			await oController.onAddContextsHandler();
+			const oSelectedRoles = Element.getElementById("dialog1--selectContexts");
+			const oSelectedRolesDialog = Element.getElementById("dialog1--selectContexts-dialog");
+			const oSelectedRolesList = Element.getElementById("dialog1--selectContexts-list");
+			assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
+
+			// Mocking parent view is skipping setting the model correctly, need to be done for rendering items
+			oSelectedRoles.setModel(oController.oContextsModel, "contexts");
+			// Scroll to the end to trigger a new page
+			await scrollListToEnd(oSelectedRolesList);
+			assert.strictEqual(oConnectorCall.callCount, 2, "then the back end request was sent twice");
+			const oSelectedItem = oSelectedRolesList.getItems()[10];
+			oSelectedRolesList.setSelectedItem(oSelectedItem);
+			assert.strictEqual(oSelectedRolesList.getSelectedItems().length, 1, "then item was selected");
+
+			// Reopen the 'Add Context' Dialog, durations are set to 0 to skip animations
+			oSelectedRolesDialog.oPopup.setDurations(0, 0);
+			await oSelectedRolesDialog.close();
+			await oController.onAddContextsHandler();
+			await delayForRendering();
+
+			// Scroll to the end to trigger a new page
+			assert.strictEqual(oConnectorCall.callCount, 3, "then the back end request was sent once after reopening");
+			assert.strictEqual(oSelectedRolesList.getSelectedItems().length, 0, "then previous selection was cleared");
+			await scrollListToEnd(oSelectedRolesList);
+
+			// Check if paging is working after reopening
+			assert.strictEqual(oConnectorCall.callCount, 4, "then the back end request was sent twice after reopening");
+			return oSelectedRolesDialog.destroy();
+		});
+
 		QUnit.test("when searching for new contexts", function(assert) {
 			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(this.oRoles);
 			oController.oContextsModel = new JSONModel({});

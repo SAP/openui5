@@ -49,6 +49,7 @@ sap.ui.define([
 		  "sap.ui.core.BarColor",
 		  "sap.ui.core.BusyIndicatorSize",
 		  "sap.ui.core.CSSColor",
+		  "sap.ui.core.CSSGapShortHand",
 		  "sap.ui.core.CSSSize",
 		  "sap.ui.core.CSSSizeShortHand",
 		  "sap.ui.core.Collision",
@@ -885,6 +886,34 @@ sap.ui.define([
 			 }
 		 },
 		 DataType.getType('string')
+	 );
+
+	 /**
+	  * @classdesc A string type that represents a short hand CSS gap.
+	  *
+	  * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/gap}
+	  * @since 1.134
+	  * @public
+	  * @namespace
+	  */
+	 thisLib.CSSGapShortHand = DataType.createType("sap.ui.core.CSSGapShortHand", {
+			 isValid: function (vValue) {
+				 var bResult = true,
+					 aValues = vValue.split(/\s+/);
+
+				 aValues.forEach(function (sValue) {
+					 if (!thisLib.CSSSize.isValid(sValue)) {
+						 bResult = false;
+					 }
+				 });
+
+				 return bResult;
+			 },
+			 parseValue: function (sValue) {
+				 return sValue.trim().split(/\s+/).join(" ");
+			 }
+		 },
+		 DataType.getType("string")
 	 );
 
 

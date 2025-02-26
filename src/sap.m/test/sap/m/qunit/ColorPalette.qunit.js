@@ -2177,4 +2177,44 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Misc", function() {
+
+		QUnit.test("Selected color value is set to the internal color picker too", function (assert) {
+			// Prepare
+			var aTestColors = [
+					{ color: "red", expected: { r: 255, g: 0, b: 0, a: 1 } },
+					{ color: "#ffffff", expected: { r: 255, g: 255, b: 255, a: 1 } },
+					{ color: "rgb(10, 20, 30)", expected: {r: 10, g: 20, b: 30, a: 1} },
+					{ color: "rgba(40, 50, 60, 0.5)", expected: {r: 40, g: 50, b: 60, a: 0.5} },
+					{ color: "hsl(120, 100%, 50%)", expected: {r: 0, g: 255, b: 0, a: 1} },
+					{ color: "hsla(60, 60%, 30%, 0.75)", expected: {r: 122, g: 122, b: 31, a: 0.75} }
+				],
+				oColorPalette = new ColorPalette({
+					showMoreColorsButton: true,
+					showRecentColorsSection: true
+				}).placeAt("qunit-fixture"),
+				oColorPicker;
+
+			// Prepare
+			oColorPicker = oColorPalette._getColorPicker();
+			oColorPicker._createLayout();
+			oColorPicker._updateControlVisualState();
+
+			// Act
+			for (var i = 0; i < aTestColors.length; i++) {
+				oColorPalette.setSelectedColor(aTestColors[i].color);
+				oColorPalette.setColorPickerSelectedColor(oColorPalette.getSelectedColor());
+				oColorPicker._updateColorString();
+				assert.equal(oColorPicker.Color.r, aTestColors[i].expected.r, "R color component is set properly for color " + aTestColors[i].color);
+				assert.equal(oColorPicker.Color.g, aTestColors[i].expected.g, "G color component is set properly for color " + aTestColors[i].color);
+				assert.equal(oColorPicker.Color.b, aTestColors[i].expected.b, "B color component is set properly for color " + aTestColors[i].color);
+				assert.equal(oColorPicker.Color.a, aTestColors[i].expected.a, "Alpha component is set properly for color " + aTestColors[i].color);
+			}
+
+			// Cleanup
+			oColorPalette.destroy();
+		});
+
+	});
+
 });

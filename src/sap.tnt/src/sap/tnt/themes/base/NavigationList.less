@@ -140,6 +140,14 @@
 		}
 	}
 
+	&.sapTntNLIFirstLevel.sapTntNLIInPopover.sapTntNLIUnselectable {
+		cursor: default;
+
+		span {
+			cursor: text;
+		}
+	}
+
 	.sapMText {
 		color: @sapUiListTextColor;
 	}
@@ -392,7 +400,7 @@
 	}
 }
 
-.sapTntNLI:not(.sapTntNLIDisabled):hover {
+.sapTntNLI:not(.sapTntNLIDisabled, .sapTntNLIFirstLevel.sapTntNLIInPopover.sapTntNLIUnselectable):hover {
 	background-color: @sapUiListHoverBackground;
 }
 
@@ -400,7 +408,7 @@
 .sapTntNLIActive .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled),
 .sapTntNLCollapsed.sapTntNLIFirstLevel.sapTntNLISelected,
 .sapTntNL .sapTntNLGroup.sapTntNLI:not(.sapTntNLIDisabled):active,
-.sapTntNL .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIAction):active,
+.sapTntNL .sapTntNLIFirstLevel.sapTntNLI:not(.sapTntNLIDisabled, .sapTntNLIInPopover.sapTntNLIUnselectable):not(.sapTntNLIAction):active,
 .sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIAction):active,
 .sapTntNL .sapTntNLISecondLevel.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIAction).sapTntNLIActive {
 	background: @sapUiListActiveBackground;
@@ -534,14 +542,17 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 	display: none;
 }
 
-.sapTntNL [tabindex]:focus::after {
-	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
-	position: absolute;
-	content: "";
-	inset: @_sap_tnt_NavigationList_ItemFocusBorderOffset;
-	z-index: 2;
-	pointer-events: none;
-	border-radius: @_sap_tnt_NavigationList_ItemFocusBorderRadius;
+.sapTntNL .sapTntNLI:not(.sapTntNLIFirstLevel.sapTntNLIInPopover.sapTntNLIUnselectable) {
+	&[tabindex]:focus::after,
+	[tabindex]:focus::after {
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		position: absolute;
+		content: "";
+		inset: @_sap_tnt_NavigationList_ItemFocusBorderOffset;
+		z-index: 2;
+		pointer-events: none;
+		border-radius: @_sap_tnt_NavigationList_ItemFocusBorderRadius;
+	}
 }
 
 // NavigationList with icons

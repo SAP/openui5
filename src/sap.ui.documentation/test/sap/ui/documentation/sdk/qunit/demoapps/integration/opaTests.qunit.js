@@ -1,18 +1,13 @@
-/* global QUnit, sinon */
+/* global sinon */
 
-QUnit.config.autostart = false;
-
-sap.ui.require([
-	"sap/ui/core/Core",
+sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/actions/Press"
-], async function (Core, opaTest, Opa5, Properties, Ancestor, Press) {
+], function (opaTest, Opa5, Properties, Ancestor, Press) {
 	"use strict";
-
-	await Core.ready();
 
 	var sViewName = "DemoApps";
 
@@ -222,6 +217,4 @@ sap.ui.require([
 			});
 		});
 	});
-
-	QUnit.start();
 });
