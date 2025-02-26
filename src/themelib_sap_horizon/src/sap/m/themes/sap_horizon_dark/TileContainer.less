@@ -8,7 +8,7 @@
 }
 
 .sapMTC .sapMTCScroller:focus::before {
-	border: 1px dotted @sapUiContentFocusColor;
+	border: 1px dotted var(--sapContent_FocusColor);
 	position: absolute;
 	top: -1px;
 	bottom: -1px;
@@ -18,17 +18,18 @@
 
 .sapMTC .sapMTile,
 .sapMTC .sapMCustomTile {
+
 	&:focus {
 		outline: none;
 
 		&::before {
-			content: "";
+			content: '';
 			position: absolute;
 			left: -0.1875rem;
 			right: -0.1875rem;
 			top: -0.1875rem;
 			bottom: -0.1875rem;
-			border: 0.125rem solid @sapUiContentFocusColor;
+			border: 0.125rem solid var(--sapContent_FocusColor);
 			border-radius: 0.125rem;
 		}
 	}
