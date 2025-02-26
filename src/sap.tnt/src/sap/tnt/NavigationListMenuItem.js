@@ -83,7 +83,7 @@ sap.ui.define([
 
 	IconPool.insertFontFaceStyle(); //Ensure Icon Font is loaded
 
-		NavigationListMenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
+	NavigationListMenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo) {
 		var rm = oRenderManager,
 			oSubMenu = oItem.getSubmenu(),
 			bIsEnabled = oItem.getEnabled(),

@@ -307,8 +307,10 @@ sap.ui.define([
 					oSelectedItemDomRef?.focus();
 				}
 
-				oMenu.close();
-				oMenu.destroy();
+				if (oNavigationItem.getSelectable() || !oMenuItem.getItems().length) {
+					oMenu.close();
+					oMenu.destroy();
+				}
 			},
 			closed: function () {
 				opener.getDomRef().querySelector(".sapTntNLI").classList.remove("sapTntNLIActive");
