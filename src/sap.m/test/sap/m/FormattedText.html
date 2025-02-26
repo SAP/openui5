@@ -44,6 +44,11 @@
 		height: "auto"
 	}).addStyleClass("oft");
 
+	var oFTD = new sap.m.FormattedText("FormattedTextDS", {
+		htmlText: htmlText,
+		disableStyleAttribute: true
+	}).addStyleClass("oft");
+
 	var oTextArea = new sap.m.TextArea({
 		value:htmlText,
 		width: "100%",
@@ -62,7 +67,8 @@
 		content : new sap.m.VBox({ items: [
 			oTextArea,
 			oButton1,
-			oFT
+			oFT,
+			oFTD
 		]})
 	});
 

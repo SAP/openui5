@@ -117,7 +117,12 @@ function(
 					/**
 					 *  Optional height of the control in CSS units.
 					 */
-					height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
+					height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+
+					/**
+					 * Disables rendering of the <code>style</code> attribute in the <code>FormattedText</code>.
+					 */
+					disableStyleAttribute : {type : "boolean", group : "Appearance", defaultValue : false}
 				}
 			}
 		});
@@ -316,9 +321,13 @@ function(
 					null,
 					false
 				),
-				oCurrentNode = oWalker.nextNode();
+				oCurrentNode = oWalker.nextNode(),
+				bDisableStyle = this.getDisableStyleAttribute();
 
 			while (oCurrentNode) {
+				if (bDisableStyle) {
+					oCurrentNode.removeAttribute("style");
+				}
 				oCurrentNode.style.setProperty("position", "static", "important");
 				oCurrentNode = oWalker.nextNode();
 			}
