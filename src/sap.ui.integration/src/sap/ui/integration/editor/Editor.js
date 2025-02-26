@@ -859,10 +859,11 @@ sap.ui.define([
 					}
 					oRm.close("div");
 				}
-				if (oControl.isFieldReady()) {
+				if (oControl.isFieldReady() && !oControl.isReady()) {
 					oControl.fireUIReady();
 					if (oControl._aFieldDataReadyPromise.length > 0) {
 						Promise.all(oControl._aFieldDataReadyPromise).then(function () {
+							oControl._aFieldDataReadyPromise = [];
 							oControl._ready = true;
 							oControl.fireReady();
 						});

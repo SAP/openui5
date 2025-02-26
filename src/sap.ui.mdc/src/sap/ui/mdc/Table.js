@@ -1744,11 +1744,6 @@ sap.ui.define([
 			this._oManagedObjectModel.setProperty("/@custom/activeP13nModes", createActiveP13nModesMap(this));
 			this._updateAdaptation();
 
-			const oDelegate = this.getControlDelegate();
-			if (oDelegate.preInit) { // not used in the table, but is overridden in FE
-				oDelegate.preInit(this);
-			}
-
 			// The table type might be switched while the necessary libs, modules are being loaded; hence the below checks
 			if (!this._oTable && oType.constructor === this._getType().constructor) {
 				return this._createContent();

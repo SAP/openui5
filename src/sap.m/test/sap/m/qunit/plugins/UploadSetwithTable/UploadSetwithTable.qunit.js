@@ -22,10 +22,10 @@ sap.ui.define([
 	"sap/ui/model/type/Boolean",
 	"sap/ui/base/Event",
 	"sap/m/upload/UploadItem",
+	"sap/m/upload/UploadItemConfiguration",
 	"sap/m/Dialog",
-	"sap/m/upload/FilePreviewDialog",
-	"sap/m/upload/UploadItemConfiguration"
-], function(Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem, Dialog, FilePreviewDialog, UploadItemConfiguration) {
+	"sap/m/upload/FilePreviewDialog"
+], function(Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem, UploadItemConfiguration, Dialog, FilePreviewDialog) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -702,6 +702,78 @@ sap.ui.define([
 		// assert
 		assert.ok(oActionPlaceholderControl?.hasStyleClass("customStyleClass"), "Custom class customClass1 is added to the action control");
 
+		oTable.destroy();
+	});
+
+	// Write to test if file rename dialog validates the characters for valid filename
+	QUnit.test("Plugin to validate file name characters", async function (assert) {
+
+		const done = assert.async();
+
+		// arrange
+		const oTable = await createMDCTable();
+
+		const oRow = new UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			rowConfiguration: oRow
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+		await nextUIUpdate();
+
+		//act
+		const oComputedItem = new UploadItem({
+			fileName: "Invoice summary.do",
+			mediaType: "application/msword",
+			fileSize: 200
+		});
+		this.stub(oUploadSetwithTablePlugin, "getItemForContext").returns(oComputedItem);
+		const oDialog = oUploadSetwithTablePlugin._getFileRenameDialog(oComputedItem);
+
+		oDialog.attachAfterOpen(() => {
+
+			const oInput = oDialog.getContent()[1];
+			const oApplyBtn = oDialog.getBeginButton();
+
+			// assert
+
+			oInput.setValue(`Invoice summary@#$[]/\<>|?*:;,"{}`);
+			oInput.fireLiveChange({
+				value: oInput.getValue()
+			});
+
+			// assert inoput should have error state
+			assert.ok(oInput.getValueState() === "Error", "Input value state is set to error when invalid characters are entered for file rename");
+
+			oApplyBtn.firePress();
+
+			assert.ok(oDialog.isOpen(), "Dialog box must not close when invalid characters are entered when renaming the file and applying the change");
+
+			oInput.setValue("Invoice summary-extended");
+			oInput.fireLiveChange({
+				value: oInput.getValue()
+			});
+
+			// assert input should not have error state
+			assert.ok(oInput.getValueState() === "None", "Input value state is set to none when valid characters are entered");
+
+			oDialog.close();
+			done();
+		});
+		this.stub(oUploadSetwithTablePlugin, "_getFileRenameDialog").callsFake(function () {
+			oDialog.open();
+			return oDialog;
+		});
+		const oContext = oTable?._oTable?.getItems()[0]?.getBindingContext();
+		oUploadSetwithTablePlugin.renameItem(oContext);
 		oTable.destroy();
 	});
 

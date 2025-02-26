@@ -103,7 +103,11 @@ sap.ui.define([
 				hasPersoConnector() {
 					return false;
 				},
-				getUserId() {}
+				getUserId() {},
+
+				isVariantAuthorNameAvailable() {
+					return false;
+				}
 			});
 		},
 		async afterEach() {

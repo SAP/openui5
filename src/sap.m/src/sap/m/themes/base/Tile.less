@@ -5,33 +5,30 @@
 
 .sapMTile {
 	display: inline-block;
-	-webkit-transition-property: transform3d;
-	-webkit-transition-duration: 0.2s;
 	transition-property: transform3d;
 	transition-duration: 0.2s;
 	width: 12rem;
 	height: 14rem;
 	margin: 0.5rem;
 	-webkit-touch-callout: none;
-	background-color: @sapUiTileBackground;
-	border: 1px solid @sapUiTileBorderColor;
+	background-color: var(--sapTile_Background);
+	border: 1px solid var(--sapTile_BorderColor);
 	border-radius: 0.125rem;
 	box-shadow: @sapUiShadowLevel0;
-	/*margin:0.6em;*/ /* in case of some behavior problems uncomment this line, it was comment because the margin causes the blurring of the focus rectangle in IE9*/
 }
 
-.sapMTile * {   /* FIXME!!! (star rule with any-parent selector...) */
+.sapMTile * { /* FIXME!!! (star rule with any-parent selector...) */
 	-webkit-user-select: none;
 	-webkit-user-drag: none;
-	-moz-user-select:  -moz-none;
+	-moz-user-select: -moz-none;
 }
 
 .sapMTCEditable .sapMTile {
 	background-color: fade(@sapUiTileBackground, 50);
 }
 
-.sapMTile.sapMTileActive{
-	background: @sapUiHighlight;
+.sapMTile.sapMTileActive {
+	background: var(--sapHighlightColor);
 }
 
 html.sap-phone .sapMTile {
@@ -52,9 +49,8 @@ html.sap-phone .sapMTileContent {
 }
 
 .sapMTileDrag {
-	opacity : 0.8;
-	z-index : 10;
-	-webkit-transition-property : none;
+	opacity: 0.8;
+	z-index: 10;
 	transition-property: none;
 }
 
@@ -63,11 +59,11 @@ html.sap-phone .sapMTileContent {
 }
 
 .sapMTile:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline: 1px dotted var(--sapContent_FocusColor);
 	position: relative;
 }
 
 .sapMTile .sapMTileDrag {
-	opacity : 0.6;
-	box-shadow: 0px 1px 3px fade(@sapUiContentShadowColor,60);
+	opacity: 0.6;
+	box-shadow: 0 1px 3px fade(@sapUiContentShadowColor,60);
 }

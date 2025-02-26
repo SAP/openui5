@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/m/Text",
-	"codeUnterTest/model/formatter",
+	"sap/ui/documentation/sdk/model/formatter",
 	"../helper/FakeI18nModel"
 ], function (Text, formatter, FakeI18n) {
 	"use strict";

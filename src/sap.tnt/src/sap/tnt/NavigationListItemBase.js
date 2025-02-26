@@ -458,5 +458,9 @@ sap.ui.define([
 		return true;
 	};
 
+	NavigationListItemBase.prototype._isInsidePopover = function () {
+		return !!this.getNavigationList()?.hasStyleClass("sapTntNLPopup");
+	};
+
 	return NavigationListItemBase;
 });

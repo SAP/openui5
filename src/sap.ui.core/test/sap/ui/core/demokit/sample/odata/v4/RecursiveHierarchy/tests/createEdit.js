@@ -139,6 +139,17 @@ sap.ui.define([
 		- 5.1 Omicron
 			* 5.1.10`);
 
+		scrollToRow(9, "Scroll to 5.1.10");
+		checkTable("After scroll to 5.1.10", `
+			* 5.1.10
+			* 5.1.1 Pi
+			* 5.1.2 Rho
+			* 5.1.3 Sigma
+			* 5.1.4 Tau
+			* 5.1.5 Upsilon
+			* 5.1.6 Phi
+			* 5.1.7 Chi`);
+
 		scrollToRow(11, "Scroll to bottom");
 		checkTable("After scroll to bottom", `
 			* 5.1.2 Rho
