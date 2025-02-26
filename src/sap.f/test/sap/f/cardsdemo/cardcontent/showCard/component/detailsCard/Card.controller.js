@@ -45,6 +45,15 @@ sap.ui.define([
 
 		onBookPress: function () {
 			MessageToast.show("Your booking has been submitted.");
+		},
+
+		onChangeSizePress: function () {
+			const oContainer = this.getView().byId("container");
+
+			const iWidth = Math.floor(Math.random() * 2000) + 300;
+			const iHeight = Math.floor(Math.random() * 1000) + 200;
+			oContainer.setWidth(iWidth + "px");
+			oContainer.setHeight(iHeight + "px");
 		}
 
 	});
