@@ -21,9 +21,15 @@
 			class="sapUiMediumMargin">
 			<f:header>
 				<card:Header
-					title="Some title"
+					title="Some title that should wrap"
 					subtitle="Some long subtitle"
-					iconSrc="sap-icon://accept" />
+					iconSrc="sap-icon://accept">
+					<card:toolbar>
+						<Toolbar style="Clear">
+							<Button text="Press Me"/>
+						</Toolbar>
+					</card:toolbar>
+				</card:Header>
 			</f:header>
 			<f:content>
 				<List items="{listItems>/ProductCollection}" headerText="Products" class="sapUiSmallMarginBottom">
