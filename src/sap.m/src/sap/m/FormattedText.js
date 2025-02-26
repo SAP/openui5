@@ -141,7 +141,12 @@ function(
 					 *
 					 * @since 1.86.0
 					 */
-					textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin}
+					textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
+
+					/**
+					 * Disables rendering of the <code>style</code> attribute in the <code>FormattedText</code>.
+					 */
+					disableStyleAttribute : {type : "boolean", group : "Appearance", defaultValue : false}
 				},
 				aggregations: {
 
@@ -356,9 +361,13 @@ function(
 					oDomRef,
 					NodeFilter.SHOW_ELEMENT
 				),
-				oCurrentNode = oWalker.nextNode();
+				oCurrentNode = oWalker.nextNode(),
+				bDisableStyle = this.getDisableStyleAttribute();
 
 			while (oCurrentNode) {
+				if (bDisableStyle) {
+					oCurrentNode.removeAttribute("style");
+				}
 				oCurrentNode.style.setProperty("position", "static", "important");
 				oCurrentNode = oWalker.nextNode();
 			}

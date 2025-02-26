@@ -143,6 +143,30 @@ sap.ui.define([
 		assert.strictEqual($FormattedText[0].style["text-align"], "center", "a::class is rendered correctly");
 	});
 
+	QUnit.test("disableStyleAttribute property", function(assert) {
+		// prepare
+		var oFormattedText = new FormattedText({
+			htmlText: 'The <strong style="color: red">best</strong><span style="opacity: 0">Invisible Text</span>'
+		}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oFormattedText.getDomRef().querySelector("strong").getAttribute("style").indexOf("color: red") !== -1, "Style attribute value is not removed");
+		assert.ok(oFormattedText.getDomRef().querySelector("span").getAttribute("style").indexOf("opacity: 0") !== -1, "Style attribute value is not removed");
+
+		// act
+		oFormattedText.setDisableStyleAttribute(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oFormattedText.getDomRef().querySelector("strong").getAttribute("style").indexOf("color: red") === -1, "Style attribute value is removed");
+		assert.ok(oFormattedText.getDomRef().querySelector("span").getAttribute("style").indexOf("opacity: 0") === -1, "Style attribute value is removed");
+
+		// cleanup
+		oFormattedText.destroy();
+	});
+
 	QUnit.module("_setUseLimitedRenderingRules restricted method", {
 		beforeEach: function () {
 			this.oFT = new FormattedText();
