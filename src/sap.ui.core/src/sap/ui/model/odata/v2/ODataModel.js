@@ -7787,9 +7787,8 @@ sap.ui.define([
 	 * @property {string} message Error message returned by the 503 HTTP status response
 	 * @property {Date} retryAfter The earliest point in time the request may be repeated
 	 *
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
-	 * @since 1.127.0
+	 * @public
+	 * @since 1.134.0
 	 */
 
 	/**
@@ -7812,9 +7811,8 @@ sap.ui.define([
 	 * @param {function(module:sap/ui/model/odata/v2/RetryAfterError):Promise<undefined>} fnRetryAfter
 	 *   A "Retry-After" handler
 	 *
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
-	 * @since 1.127.0
+	 * @public
+	 * @since 1.134.0
 	 */
 	ODataModel.prototype.setRetryAfterHandler = function (fnRetryAfter) {
 		this.fnRetryAfter = fnRetryAfter;
