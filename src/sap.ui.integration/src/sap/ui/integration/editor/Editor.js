@@ -864,8 +864,11 @@ sap.ui.define([
 					if (oControl._aFieldDataReadyPromise.length > 0) {
 						Promise.all(oControl._aFieldDataReadyPromise).then(function () {
 							oControl._aFieldDataReadyPromise = [];
-							oControl._ready = true;
-							oControl.fireReady();
+							// check ready status again since this is in async promise
+							if (!oControl.isReady()) {
+								oControl._ready = true;
+								oControl.fireReady();
+							}
 						});
 					} else {
 						oControl._ready = true;
