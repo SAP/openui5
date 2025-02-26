@@ -260,9 +260,27 @@ sap.ui.define([
 			"application/vnd.openxmlformats-officedocument.wordprocessingml.document": "sap-icon://doc-attachment",
 			"application/rtf": "sap-icon://doc-attachment",
 			"application/pdf": "sap-icon://pdf-attachment",
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "sap-icon://excel-attachment",
-			"application/vnd.ms-excel": "sap-icon://excel-attachment",
+
+			// excel mime types
+			// 97 - 2003 (.xls)
 			"application/msexcel": "sap-icon://excel-attachment",
+			"application/vnd.ms-excel": "sap-icon://excel-attachment",
+			// 2007 and later (.xlsx)
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "sap-icon://excel-attachment",
+			//      macro enabled (.xlsm)
+			"application/vnd.ms-excel.sheet.macroEnabled.12": "sap-icon://excel-attachment",
+			//      template files (.xltx)
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.template": "sap-icon://excel-attachment",
+			//      macro enabled template files (.xltm)
+			"application/vnd.ms-excel.template.macroEnabled.12": "sap-icon://excel-attachment",
+			//      binary workbook files (.xlsb)
+			"application/vnd.ms-excel.sheet.binary.macroEnabled.12": "sap-icon://excel-attachment",
+			//      add-in files (.xlam)
+			"application/vnd.ms-excel.addin.macroEnabled.12": "sap-icon://excel-attachment",
+
+			//Google Sheets document
+			"application/vnd.google-apps.spreadsheet": "sap-icon://excel-attachment",
+
 			"application/vnd.ms-powerpoint": "sap-icon://ppt-attachment",
 			"application/vnd.openxmlformats-officedocument.presentationml.presentation": "sap-icon://ppt-attachment",
 			"application/vnd.openxmlformats-officedocument.presentationml.slideshow": "sap-icon://ppt-attachment",
