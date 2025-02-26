@@ -94,4 +94,4 @@ sap.ui.define([
 	window.startRtaConstructorOnly = Util.startRtaConstructorOnly;
 
 	return Util;
-}, true);
+});

@@ -344,4 +344,4 @@ function(
 	};
 
 	return BindingsExtractor;
-}, true);
+});

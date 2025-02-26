@@ -181,4 +181,4 @@ sap.ui.define([
 	window.startDesignTime = Util.startDesignTime;
 
 	return Util;
-}, true);
+});
