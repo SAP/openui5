@@ -308,7 +308,6 @@ sap.ui.define([
 		QUnit.test("when loadFlexData is called with <NO CHANGES> as cache key", function(assert) {
 			var oSendRequestStub = sandbox.stub(InitialUtils, "sendRequest");
 			const expectedDefaultFlexDataResponse = StorageUtils.getEmptyFlexDataResponse();
-			expectedDefaultFlexDataResponse.info = { allContextsProvided: true };
 			return LrepConnector.loadFlexData({cacheKey: "<NO CHANGES>"}).then(function(oResponse) {
 				assert.equal(oSendRequestStub.callCount, 0, "no request was sent");
 				assert.propEqual(oResponse, expectedDefaultFlexDataResponse, "the function returns no data");
