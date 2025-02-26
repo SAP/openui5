@@ -12916,30 +12916,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test(sMethod + ": Select All", function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oBinding).expects("checkTransient").withExactArgs();
-		this.mock(oBinding.oHeaderContext).expects("isSelected").atLeast(1) // due to #toString
-			.withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").never();
-		this.mock(_Helper).expects("checkGroupId").never();
-		this.mock(oBinding).expects("_getAllExistingContexts").never();
-		this.mock(oBinding).expects("lockGroup").never();
-		this.mock(oBinding.oCache).expects("requestFilteredOrderedPredicates").never();
-
-		assert.throws(function () {
-			// code under test
-			oBinding[sMethod]("~sGroupId~");
-		}, new Error('Unsupported "Select All": /EMPLOYEES;selected'));
-	});
-
-	//*********************************************************************************************
 	QUnit.test(sMethod + ": pending changes", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
-		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(false);
+		this.mock(oBinding.oHeaderContext).expects("isSelected")
+			.exactly(sMethod === "requestSelectedContexts" ? 1 : 0)
+			.withExactArgs().returns(false);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
 		this.mock(_Helper).expects("checkGroupId").never();
 		this.mock(oBinding).expects("_getAllExistingContexts").never();
@@ -12980,6 +12963,25 @@ sap.ui.define([
 		}
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("requestSelectedContexts: Select All", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(oBinding.oHeaderContext).expects("isSelected").atLeast(1) // due to #toString
+			.withExactArgs().returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").never();
+		this.mock(_Helper).expects("checkGroupId").never();
+		this.mock(oBinding).expects("_getAllExistingContexts").never();
+		this.mock(oBinding).expects("lockGroup").never();
+		this.mock(oBinding.oCache).expects("requestFilteredOrderedPredicates").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSelectedContexts("~sGroupId~");
+		}, new Error('Unsupported "Select All": /EMPLOYEES;selected'));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("requestSelectedContexts: ask server", async function (assert) {
@@ -13024,41 +13026,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSelectionValidation: deselect", async function (assert) {
+[false, true].forEach((bSelectAll) => {
+	QUnit.test("requestSelectedContexts: Select All = " + bSelectAll, async function (assert) {
 		const oBinding
 			= this.bindList("TEAM_2_EMPLOYEES", this.oModel.createBindingContext("/TEAMS('23')"));
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
-		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("~sGroupId~");
+		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs()
+			.returns(bSelectAll);
 		const oContextIn42 = {
 			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('42')",
 			getPath : function () { return this.sPath; },
-			isSelected : () => true,
+			isSelected : () => !bSelectAll,
 			setSelected : mustBeMocked
 		};
 		const oContextIn43 = {
 			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('43')",
 			getPath : function () { return this.sPath; },
-			isSelected : () => true,
+			isSelected : () => !bSelectAll,
 			setSelected : mustBeMocked
 		};
 		const oContextOut = {
 			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('n/a')",
 			getPath : function () { return this.sPath; },
-			isSelected : () => true,
+			isSelected : () => !bSelectAll,
 			setSelected : mustBeMocked
 		};
-		this.mock(oContextOut).expects("setSelected").withExactArgs(false);
-		const oContextUnselected = {
+		this.mock(oContextOut).expects("setSelected").withExactArgs(bSelectAll);
+		const oContextNoException = {
 			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('not/selected')",
 			getPath : function () { return this.sPath; },
-			isSelected : () => false,
+			isSelected : () => bSelectAll,
 			setSelected : mustBeMocked
 		};
 		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
-			.returns([oContextIn42, oContextOut, oContextIn43, oContextUnselected]);
+			.returns([oContextIn42, oContextOut, oContextIn43, oContextNoException]);
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~sGroupId~")
 			.returns("~oGroupLock~");
 		this.mock(oBinding.oCache).expects("requestFilteredOrderedPredicates")
@@ -13072,6 +13076,7 @@ sap.ui.define([
 
 		assert.ok(oPromise instanceof Promise);
 		assert.strictEqual(await oPromise, undefined, "without a defined result");
+	});
 	});
 });
 
