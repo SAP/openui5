@@ -76735,10 +76735,13 @@ make root = ${bMakeRoot}`;
 	// it no longer matches the filter. First call ODLB#requestSelectedContexts to see that the one
 	// is not returned but others are updated. Then call ODLB#requestSelectionValidation and
 	// #refresh to have the selection validated and the one context which is no longer matching the
-	// filter deselected.
+	// filter deselected. Do it w/ & w/o auto-$expand/$select.
 	// JIRA: CPOUI5ODATAV4-2851
-	QUnit.test("CPOUI5ODATAV4-2851", async function (assert) {
-		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+[false, true].forEach((bAutoExpandSelect) => {
+	const sTitle = "CPOUI5ODATAV4-2851: auto-$expand/$select = " + bAutoExpandSelect;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : bAutoExpandSelect});
 		const sView = `
 <Table id="table" items="{
 	filters: {path: 'LifecycleStatus', operator: 'EQ', value1: 'N'},
@@ -76748,6 +76751,10 @@ make root = ${bMakeRoot}`;
 		$filter : 'SalesOrderID ge \\'1\\'',
 		$orderby : 'Note desc',
 		$search : 'lorem ipsum',
+		${bAutoExpandSelect
+			? ""
+			: "$select : 'LifecycleStatus,Note,SalesOrderID',"
+			+ "$expand : {SO_2_BP : {$select : 'BusinessPartnerID'}},"}
 		$$clearSelectionOnFilter : true
 	},
 	path: '/SalesOrderList',
@@ -76797,12 +76804,14 @@ make root = ${bMakeRoot}`;
 		oContext1.setSelected(true);
 		oContext2.setSelected(true);
 
-		this.expectRequest("SalesOrderList('3')?custom=foo&$select=NoteLanguage", {
-				NoteLanguage : "EN"
-			})
-			.expectChange("noteLanguage", "EN");
+		if (bAutoExpandSelect) {
+			this.expectRequest("SalesOrderList('3')?custom=foo&$select=NoteLanguage", {
+					NoteLanguage : "EN"
+				})
+				.expectChange("noteLanguage", "EN");
 
-		this.oView.byId("form").setBindingContext(oContext2);
+			this.oView.byId("form").setBindingContext(oContext2);
+		}
 
 		await this.waitForChanges(assert, "form bound to oContext2");
 
@@ -76819,7 +76828,7 @@ make root = ${bMakeRoot}`;
 		]);
 
 		this.expectRequest({
-				batchNo : 4,
+				batchNo : bAutoExpandSelect ? 4 : 3,
 				url : "SalesOrderList?custom=foo&$expand=SO_2_BP($select=BusinessPartnerID)"
 					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
 						+ " and (SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3')"
@@ -76834,14 +76843,16 @@ make root = ${bMakeRoot}`;
 				]
 			})
 			.expectChange("note", [,, "Notiz X (aktualisiert)"])
-			.expectChange("bp", [,, "42"])
-			.expectRequest({
-				batchNo : 5,
-				url : "SalesOrderList('3')?custom=foo&$select=NoteLanguage"
-			}, {
-				NoteLanguage : "DE"
-			})
-			.expectChange("noteLanguage", "DE");
+			.expectChange("bp", [,, "42"]);
+		if (bAutoExpandSelect) {
+			this.expectRequest({
+					batchNo : 5,
+					url : "SalesOrderList('3')?custom=foo&$select=NoteLanguage"
+				}, {
+					NoteLanguage : "DE"
+				})
+				.expectChange("noteLanguage", "DE");
+		}
 
 		const [aContexts] = await Promise.all([
 			// code under test
@@ -76855,7 +76866,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oContext2.isSelected(), true);
 
 		this.expectRequest({ // ODLB#requestSelectionValidation
-				batchNo : 6,
+				batchNo : bAutoExpandSelect ? 6 : 4,
 				url : "SalesOrderList?custom=foo"
 					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
 						+ " and (SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3')"
@@ -76868,13 +76879,14 @@ make root = ${bMakeRoot}`;
 				]
 			})
 			.expectRequest({ // ODLB#refreshKeptElements via "refresh"
-					batchNo : 6,
+					batchNo : bAutoExpandSelect ? 6 : 4,
 					url : "SalesOrderList?custom=foo"
 					+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3'"
-					+ "&$select=LifecycleStatus,Note,NoteLanguage,SalesOrderID"
+					+ "&$select=LifecycleStatus,Note" + (bAutoExpandSelect ? ",NoteLanguage" : "")
+						+ ",SalesOrderID"
 					+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$top=3"
 			}, {
-				value : [
+				value : [ // Note: w/o auto-$expand/$select, NoteLanguage is not needed here
 					{SalesOrderID : "1", Note : "Z", NoteLanguage : "n/a", LifecycleStatus : "N",
 						SO_2_BP : {BusinessPartnerID : "0"}},
 					{SalesOrderID : "2", Note : "Y", NoteLanguage : "n/a", LifecycleStatus : "P",
@@ -76884,7 +76896,7 @@ make root = ${bMakeRoot}`;
 				]
 			})
 			.expectRequest({ // "table refresh"
-				batchNo : 6,
+				batchNo : bAutoExpandSelect ? 6 : 4,
 				url : "SalesOrderList?custom=foo&$count=true"
 					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
 					+ "&$orderby=LifecycleStatus,Note desc&$search=lorem ipsum"
@@ -76921,6 +76933,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oContext1.isSelected(), false); // no longer selected
 		assert.strictEqual(oContext2.isSelected(), true); // still selected
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Dependent ContextBinding below a dependent ListBinding, below of an absolute
