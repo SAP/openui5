@@ -257,4 +257,4 @@ sap.ui.define([
 	};
 
 	return AppVariantManager;
-}, true);
+});

@@ -39,6 +39,7 @@
 .sapFAvatarColorTileIcon {
 	background-color: var(--sapTile_Background);
 	color: var(--sapTile_IconColor);
+	border: 0.0625rem solid var(--sapAvatar_Lite_BorderColor);
 
 	.sapFAvatarInitialsHolder {
 		color: currentColor;
@@ -48,21 +49,33 @@
 .sapFAvatarColorPlaceholder {
 	background-color: var(--sapContent_ImagePlaceholderBackground);
 	color: var(--sapContent_ImagePlaceholderForegroundColor);
+	border: 0.0625rem solid var(--sapAvatar_Lite_BorderColor);
 
 	.sapFAvatarInitialsHolder {
 		color: currentColor;
 	}
 }
 
+.sapFAvatarColorTransparent {
+	background-color: var(--sapAvatar_Lite_Background);
+	border: 0.0625rem solid var(--sapAvatar_Lite_BorderColor);
+}
+
 .generateColor (@accentIndex) {
 	@css-selector: ~"sapFAvatarColorAccent@{accentIndex}"; // Create the css selector string
 	@background-param: ~"sapUiAvatar@{accentIndex}Background"; // Build the color param which is a sapUiAccent
 	@color-param: ~"sapUiAvatar@{accentIndex}TextColor";
+	@hover-color: ~"sapUiAvatar@{accentIndex}HoverBackground";
 
 	// Build the real CSS selector.
 	// The output would be something like this: .sapFAvatar.sapFAvatarColorAccent6 {background-color: #0092d1;}
 	.@{css-selector} {
 		background-color: @@background-param;
+		&.sapFAvatarImage.sapFAvatarFocusable:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover,
+		&.sapFAvatarFocusable:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
+			background-color: @@hover-color;
+			box-shadow: @_sap_m_Avatar_Hover_Box_Shadow_Offset var(--sapAvatar_Hover_BorderColor);
+		}
 	}
 
 	.@{css-selector}.sapFAvatarIcon,

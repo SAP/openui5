@@ -372,6 +372,16 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("when calling 'handleManageEvent' without parameters", async function(assert) {
+			sandbox.stub(this.oModel, "_collectModelChanges").returns({
+				changes: [],
+				variantsToBeDeleted: []
+			});
+			const oSaveStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges");
+			await VariantManager.handleManageEvent({}, {}, this.oModel);
+			assert.strictEqual(oSaveStub.callCount, 0, "then no changes were saved");
+		});
+
 		QUnit.test("when calling 'handleSaveEvent' with parameter from SaveAs button and default/execute box checked", async function(assert) {
 			const aChanges = createChanges(sReference);
 			const sCopyVariantName = "variant1";
