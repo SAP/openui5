@@ -1,7 +1,8 @@
 sap.ui.define([
 	'sap/ui/test/Opa5',
+	"sap/ui/test/matchers/I18NText",
 	'sap/ui/test/actions/Press'
-], function (Opa5, Press) {
+], function (Opa5, I18NText, Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -55,6 +56,21 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "No resourcesTab button found"
 					});
+				},
+
+				iPressTheAcceptAllCookiesButton: function() {
+					var oWindow = Opa5.getWindow();
+
+					return this.waitFor({
+						check: function () {
+							return !!oWindow.document.getElementById("truste-consent-button");
+						},
+						success: function () {
+							var oBtn = oWindow.document.getElementById("truste-consent-button");
+							simulateClick(oBtn);
+						},
+						errorMessage: "Accept All button not found"
+					});
 				}
 
 			},
@@ -68,9 +84,32 @@ sap.ui.define([
 						},
 						errorMessage: "The App page was not displayed"
 					});
+				},
+
+				iShouldSeeTheCookiePreferencesBlackbar: function () {
+					return this.waitFor({
+						check: function () {
+							var oWindow = Opa5.getWindow();
+							return !!oWindow.document.getElementById("consent_blackbar");
+						},
+						success: function () {
+							Opa5.assert.ok(true, "The Cookie Preferences blackbar was successfully displayed");
+						},
+						errorMessage: "The Cookie Preferences blackbar was not displayed"
+					});
 				}
 			}
 		}
 	});
+
+	// utils
+	function simulateClick (element) {
+		var event = new MouseEvent('click', {
+			view: window,
+			bubbles: true,
+			cancelable: true
+		});
+		element.dispatchEvent(event);
+	}
 
 });

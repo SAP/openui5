@@ -1,7 +1,7 @@
-sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
+sap.ui.define(['sap/ui/test/Opa5', './BaseArrangement'], function (Opa5, BaseArrangement) {
 	"use strict";
 
-	return Opa5.extend("sap.ui.documentation.sdk.test.arrangement.WellcomeJourneyArrangement", {
+	return BaseArrangement.extend("sap.ui.documentation.sdk.test.arrangement.WellcomeJourneyArrangement", {
 		iStartMyApp : function (sAdditionalUrlParameters) {
 			var appRootURL = "../index.html";
 
@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 				appRootURL = window["sap-ui-documentation-test-config"].appRootURL;
 			}
 			sAdditionalUrlParameters = sAdditionalUrlParameters || "";
-			return this.iStartMyAppInAFrame(appRootURL + "?sap-ui-language=en&sap-ui-animation=false&serverDelay=0" + sAdditionalUrlParameters);
+			return this.iStartMyAppInAFrame(appRootURL + "?sap-ui-language=en&sap-ui-animation=false&serverDelay=0&" + sAdditionalUrlParameters);
 		}
 	});
 });
