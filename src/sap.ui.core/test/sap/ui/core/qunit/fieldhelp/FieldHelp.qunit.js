@@ -681,10 +681,10 @@ sap.ui.define([
 			"urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1"
 		]);
 
-		this.mock(Element).expects("getElementById").withExactArgs("~HeaderElement").exactly(4).returns(oHeaderElement);
+		this.mock(Element).expects("getElementById").withExactArgs("~HeaderElement").returns(oHeaderElement);
 		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oHeaderElement))
-			.exactly(4).returns(["~sLabel"]);
-		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().atLeast(1)
+			.returns(["~sLabel"]);
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs()
 			.returns({"~element0": "~HeaderElement", "~element1": "~HeaderElement", "~element2": "~HeaderElement"});
 
 		// code under test - field helps of the 3 controls are shown for the header element due to the mapping
@@ -704,13 +704,13 @@ sap.ui.define([
 		const oFieldHelp = new FieldHelp();
 		const oFieldHelpMock = this.mock(oFieldHelp);
 		const oElement0 = {getId() {}};
-		this.mock(oElement0).expects("getId").withExactArgs().returns("~element0");
+		this.mock(oElement0).expects("getId").withExactArgs().returns("element0ID");
 		const oUpdateHotspotsPromise = Promise.resolve();
 		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		const sURNElement0 = "urn:sap-com:documentation:key?=type=~customType0&id=~customId0";
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [sURNElement0]);
 		const oElement1 = {getId() {}};
-		this.mock(oElement1).expects("getId").withExactArgs().returns("~element1");
+		this.mock(oElement1).expects("getId").withExactArgs().returns("element1ID");
 		const oUpdateHotspotsPromise1 = Promise.resolve();
 		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise1);
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, undefined, [
@@ -718,21 +718,22 @@ sap.ui.define([
 		]);
 
 		const oElementMock = this.mock(Element);
-		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().returns({});
-		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs()
+			.returns({"element0ID": "element0DisplayID"});
+		oElementMock.expects("getElementById").withExactArgs("element0DisplayID").returns(oElement0);
 		const oLabelEnablementMock = this.mock(LabelEnablement);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns([]);
 		this.oLogMock.expects("error")
-			.withExactArgs("Cannot find a label for control '~element0'; ignoring field help",
-				`{"undefined":["${sURNElement0}"]}`, sClassName);
-		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
-		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel"]);
+			.withExactArgs("Cannot find a label for control 'element0DisplayID'; ignoring field help",
+				sURNElement0, sClassName);
+		oElementMock.expects("getElementById").withExactArgs("element1ID").returns(oElement1);
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["label"]);
 
 		// code under test - only the control which has a label is added to the internal data structure
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
 			backendHelpKey: {id: "~customId1", type: "~customType1"},
-			hotspotId: "~element1",
-			labelText: "~sLabel"
+			hotspotId: "element1ID",
+			labelText: "label"
 		}]);
 
 		return Promise.all([oUpdateHotspotsPromise, oUpdateHotspotsPromise1]);
