@@ -17,9 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/Overlay",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/Utils",
 	"sap/ui/layout/form/Form",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -41,9 +39,7 @@ sap.ui.define([
 	Popup,
 	ZIndexManager,
 	Overlay,
-	FlSettings,
 	PersistenceWriteAPI,
-	FlUtils,
 	Form,
 	nextUIUpdate,
 	RuntimeAuthoring,
@@ -88,61 +84,6 @@ sap.ui.define([
 			return oOverlay.getElement() === oElement;
 		});
 		return bResult;
-	}
-
-	function stubBefore(bPersistenceAPI, bAppComponentForControl, bSettingsInstance) {
-		if (bPersistenceAPI) {
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
-				isResetEnabled: true,
-				isPublishEnabled: true,
-				allContextsProvided: true
-			});
-		}
-		if (bAppComponentForControl) {
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComp);
-		}
-		if (bSettingsInstance) {
-			var oSettings = {
-				isVersioningEnabled() {
-					return false;
-				},
-				isProductiveSystem() {
-					return true;
-				},
-				isCustomerSystem() {
-					return false;
-				},
-				isAppVariantSaveAsEnabled() {
-					return true;
-				},
-				isVariantAdaptationEnabled() {
-					return false;
-				},
-				isKeyUserTranslationEnabled() {
-					return false;
-				},
-				isSystemWithTransports() {
-					return false;
-				},
-				isPublicLayerAvailable() {
-					return false;
-				},
-				isContextBasedAdaptationEnabled() {
-					return false;
-				},
-				isLocalResetEnabled() {
-					return false;
-				},
-				isPublishAvailable() {
-					return false;
-				},
-				isSeenFeaturesAvailable() {
-					return false;
-				}
-			};
-			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);
-			sandbox.stub(FlSettings, "getInstanceOrUndef").returns(oSettings);
-		}
 	}
 
 	function spyBefore() {
@@ -239,8 +180,6 @@ sap.ui.define([
 
 	QUnit.module("Given RTA instance is initialized", {
 		async beforeEach() {
-			stubBefore(true/* bPersistenceAPI */);
-
 			// mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
@@ -668,7 +607,6 @@ sap.ui.define([
 	// when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach() {
-			stubBefore(true/* bPersistenceAPI */, true/* bAppComponentForControl */, true/* bSettingsInstance */);
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
 			});
@@ -733,8 +671,6 @@ sap.ui.define([
 	// Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
 		beforeEach(assert) {
-			stubBefore(true/* bPersistenceAPI */, true/* bAppComponentForControl */);
-
 			this.oDialog = new Dialog("testDialog");
 			oView.addDependent(this.oDialog);
 			this.oButton = createDialogOpenButton.call(this);
@@ -820,8 +756,6 @@ sap.ui.define([
 
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach(assert) {
-			stubBefore(true/* bPersistenceAPI */);
-
 			// mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")

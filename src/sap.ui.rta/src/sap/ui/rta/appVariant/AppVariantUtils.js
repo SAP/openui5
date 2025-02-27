@@ -383,10 +383,6 @@ sap.ui.define([
 		});
 	};
 
-	AppVariantUtils.isS4HanaCloud = function(oSettings) {
-		return oSettings.isAtoEnabled() && oSettings.isAtoAvailable();
-	};
-
 	AppVariantUtils.copyId = function(sId) {
 		var textArea = document.createElement("textarea");
 		textArea.value = sId;

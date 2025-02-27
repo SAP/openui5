@@ -1,29 +1,29 @@
 /* global QUnit  */
 
 sap.ui.define([
-	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/fl/registry/Settings",
+	"sap/base/Log",
+	"sap/m/MessageBox",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/write/api/AppVariantWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
-	"sap/base/Log",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/m/MessageBox",
+	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	AppVariantUtils,
-	Settings,
+	Log,
+	MessageBox,
+	FlexRuntimeInfoAPI,
+	AppVariantFactory,
+	WriteUtils,
+	AppVariantWriteAPI,
+	ChangesWriteAPI,
 	Layer,
 	FlUtils,
-	WriteUtils,
-	AppVariantFactory,
-	Log,
-	ChangesWriteAPI,
-	AppVariantWriteAPI,
-	MessageBox,
+	AppVariantUtils,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -647,14 +647,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When buildSuccessInfo() method is called for S/4HANA on Premise", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 
 			return AppVariantFactory.prepareCreate({
@@ -671,14 +664,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When buildSuccessInfo() method is called for S/4HANA Cloud", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 
 			return AppVariantFactory.prepareCreate({
@@ -695,14 +681,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When buildFinalSuccessInfoS4HANACloud() method is called for S/4HANA Cloud after catalog assignment finished succesfully", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 			AppVariantUtils.buildFinalSuccessInfoS4HANACloud();
 			assert.equal(oGetText.callCount, 1, "then the getText() method is called once");
@@ -748,7 +727,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setTitle", this.oAppComponent).then(function(oDescrChange) {
@@ -768,7 +746,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setSubTitle", this.oAppComponent).then(function(oSubtitleInlineChange) {
@@ -788,7 +765,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setDescription", this.oAppComponent).then(function(oDescriptionInlineChange) {
@@ -805,7 +781,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", this.oAppComponent).then(function(oIconInlineChange) {
@@ -837,7 +812,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
@@ -859,7 +833,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", this.oAppComponent).then(function(oCreateInboundInlineChange) {
@@ -891,7 +864,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
@@ -923,7 +895,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
@@ -945,7 +916,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
@@ -962,7 +932,6 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves({});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", this.oAppComponent).then(function(oRemoveAllInboundsExceptOneInlineChange) {
