@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/f/cards/NumericSideIndicator",
 	"sap/m/library",
 	"sap/m/Button",
+	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/qunit/QUnitUtils",
@@ -14,14 +15,14 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/Lib"
-],
-function (
+], (
 	Card,
 	CardHeader,
 	CardNumericHeader,
 	CardNumericSideIndicator,
 	mLibrary,
 	Button,
+	Control,
 	DateFormat,
 	UniversalDate,
 	QUnitUtils,
@@ -29,7 +30,7 @@ function (
 	KeyCodes,
 	UI5Date,
 	Library
-) {
+) => {
 	"use strict";
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
@@ -43,7 +44,8 @@ function (
 
 	QUnit.test("NumericHeader renderer", async function (assert) {
 		// Arrange
-		var oHeader = new CardNumericHeader({ title: "Title", number: "{Number}" });
+		const oHeader = new CardNumericHeader({ title: "Title", number: "{Number}" });
+
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate();
@@ -56,7 +58,7 @@ function (
 
 	QUnit.test("Numeric Header indicator truncation", async function (assert) {
 		// Arrange
-		var sSampleNumber = "1234567812345678",
+		const sSampleNumber = "1234567812345678",
 			oHeader = new CardNumericHeader({
 				number: sSampleNumber
 			});
@@ -76,20 +78,19 @@ function (
 	QUnit.test("Numeric Header unitOfMeasurement truncation", async function (assert) {
 		// Arrange
 		this.clock = sinon.useFakeTimers();
-		var oHeader = new CardNumericHeader({
+		const oHeader = new CardNumericHeader({
 				subtitle: "Lorem",
 				unitOfMeasurement: "EUR EUR EUR"
 			}),
 			oCard = new Card({
 				width: "300px",
 				header: oHeader
-			}),
-			iWidth;
+			});
 
 		oCard.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate(this.clock);
 
-		iWidth = oHeader.$("unitOfMeasurement").width();
+		const iWidth = oHeader.$("unitOfMeasurement").width();
 
 		// Act - set long subtitle so that there is no place for unitOfMeasurement
 		oHeader.setSubtitle("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a libero nec risus egestas lacinia nec ac metus.");
@@ -166,7 +167,7 @@ function (
 
 	QUnit.test("Default Header avatar default color", async function (assert) {
 		// Arrange
-		var oHeader = new CardHeader({
+		const oHeader = new CardHeader({
 				iconSrc: "sap-icon://accept"
 			});
 
@@ -175,7 +176,6 @@ function (
 		await nextUIUpdate();
 
 		// Assert
-
 		assert.strictEqual(oHeader._getAvatar().getBackgroundColor(), AvatarColor.Transparent, "Default background of avatar is 'Transparent'");
 
 		// Clean up
@@ -185,11 +185,10 @@ function (
 	QUnit.test("Header and NumericHeader dataTimestamp", async function (assert) {
 		// Arrange
 		this.clock = sinon.useFakeTimers();
-		var oNow = UI5Date.getInstance(),
+		const oNow = UI5Date.getInstance(),
 			oNowUniversalDate = new UniversalDate(oNow),
 			oDateFormat = DateFormat.getDateTimeInstance({relative: true}),
 			sTextNow = Library.getResourceBundleFor("sap.f").getText("CARD_HEADER_DATETIMESTAMP_NOW"),
-			sText1Minute,
 			oHeader = new CardHeader({
 				dataTimestamp: oNow.toISOString()
 			}),
@@ -209,7 +208,7 @@ function (
 		// Act - wait 1 minute
 		this.clock.tick(60100);
 
-		sText1Minute = oDateFormat.format(oNowUniversalDate);
+		const sText1Minute = oDateFormat.format(oNowUniversalDate);
 
 		// Assert
 		assert.strictEqual(oHeader.getAggregation("_dataTimestamp").getText(), sText1Minute, "DataTimestamp is updated after 1m for Header");
@@ -232,7 +231,7 @@ function (
 
 	QUnit.test("Side Indicator \"state\" property ", async function (assert) {
 		// Arrange
-		var oHeader = new CardNumericHeader({
+		const oHeader = new CardNumericHeader({
 			sideIndicators: new CardNumericSideIndicator({
 				number: "5",
 				state: "Error"
@@ -254,11 +253,11 @@ function (
 
 	QUnit.test("Numeric Header's \"sideIndicatorsAlignment\" property ", async function (assert) {
 		// Arrange
-		var oHeader = new CardNumericHeader({
+		const oHeader = new CardNumericHeader({
 			sideIndicatorsAlignment: "End",
 			number: 5
 		});
-		var oNumericIndicators = oHeader._getNumericIndicators();
+		const oNumericIndicators = oHeader._getNumericIndicators();
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
@@ -274,7 +273,7 @@ function (
 
 	QUnit.test("Default Header with iconVisibility false", async function (assert) {
 		// Arrange
-		var oHeader = new CardHeader({
+		const oHeader = new CardHeader({
 			iconSrc: "sap-icon://accept",
 			iconVisible: false
 		});
@@ -378,7 +377,7 @@ function (
 
 	QUnit.test("Press is fired on Enter keydown for numeric header", async function (assert) {
 		// Arrange
-		var oHeader = new CardNumericHeader({ title: "Title" }),
+		const oHeader = new CardNumericHeader({ title: "Title" }),
 			oCard = new Card({
 				header: oHeader
 			}),
@@ -400,7 +399,7 @@ function (
 
 	QUnit.test("Press is fired on Space keyup for numeric header", async function (assert) {
 		// Arrange
-		var oHeader = new CardNumericHeader({ title: "Title" }),
+		const oHeader = new CardNumericHeader({ title: "Title" }),
 			oCard = new Card({
 				header: oHeader
 			}),
@@ -422,7 +421,7 @@ function (
 
 	QUnit.test("Press event is NOT fired when Enter or Space is pressed on the toolbar", async function (assert) {
 		// Arrange
-		var oToolbar = new Button(),
+		const oToolbar = new Button(),
 			oHeader = new CardNumericHeader({
 				title: "Title",
 				toolbar: oToolbar
@@ -504,7 +503,7 @@ function (
 
 	QUnit.test("Press is NOT fired when the toolbar is tapped", async function (assert) {
 		// Arrange
-		var oToolbar = new Button(),
+		const oToolbar = new Button(),
 			oHeader = new CardNumericHeader({
 				title: "Title",
 				toolbar: oToolbar
@@ -592,7 +591,7 @@ function (
 		oHeader.placeAt(DOM_RENDER_LOCATION);
 		await nextUIUpdate();
 
-		var oTitleDomRef = oHeader.getDomRef().querySelector(".sapFCardTitle");
+		const oTitleDomRef = oHeader.getDomRef().querySelector(".sapFCardTitle");
 		assert.strictEqual(oTitleDomRef.getAttribute("role"), "heading", "Card title's role is correct.");
 		assert.strictEqual(oTitleDomRef.getAttribute("aria-level"), "3", "Card title's heading level is correct.");
 
@@ -634,6 +633,82 @@ function (
 
 		// Assert
 		assert.ok(oHeader.$("focusable").attr("aria-labelledby").indexOf("mainIndicator") > -1, "'aria-labelledby' contains main indicator id");
+
+		// Clean up
+		oHeader.destroy();
+	});
+
+	QUnit.module("Error in header", {
+		beforeEach: function () {
+			this.Error = Control.extend("Error", {
+				renderer: {
+					apiVersion: 2,
+					render: function (oRm, oControl) {
+						oRm.openStart("div", oControl).openEnd().close("div");
+					}
+				}
+			});
+		}
+	});
+
+	QUnit.test("Error in Default Header", async function (assert) {
+		// Arrange
+		const oHeader = new CardHeader({
+			title: "Title",
+			subtitle: "Subtitle",
+			statusText: "Status",
+			iconSrc: "sap-icon://accept",
+			toolbar: new Button()
+		});
+		const oError = new this.Error();
+
+		oHeader.setAggregation("_error", oError);
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oError.getDomRef(), "Error is rendered.");
+		assert.notOk(oHeader.getAggregation("_title").getDomRef(), "Title shouldn't be rendered.");
+		assert.notOk(oHeader.getAggregation("_subtitle").getDomRef(), "Subtitle shouldn't be rendered.");
+		assert.notOk(oHeader.getDomRef("status"), "Status shouldn't be rendered.");
+		assert.notOk(oHeader.getAggregation("_avatar").getDomRef(), "Icon shouldn't be rendered.");
+		assert.notOk(oHeader.getToolbar().getDomRef(), "Toolbar shouldn't be rendered.");
+
+		// Clean up
+		oHeader.destroy();
+	});
+
+	QUnit.test("Error in Numeric Header", async function (assert) {
+		// Arrange
+		const oHeader = new CardNumericHeader({
+			title: "Title",
+			subtitle: "Subtitle",
+			statusText: "Status",
+			iconSrc: "sap-icon://accept",
+			toolbar: new Button(),
+			number: "5",
+			details: "Details",
+			sideIndicators: [
+				new CardNumericSideIndicator({
+					number: "5"
+				})
+			]
+		});
+		const oError = new this.Error();
+
+		oHeader.setAggregation("_error", oError);
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oError.getDomRef(), "Error is rendered.");
+		assert.notOk(oHeader.getAggregation("_title").getDomRef(), "Title shouldn't be rendered.");
+		assert.notOk(oHeader.getAggregation("_subtitle").getDomRef(), "Subtitle shouldn't be rendered.");
+		assert.notOk(oHeader.getDomRef("status"), "Status shouldn't be rendered.");
+		assert.notOk(oHeader.getAggregation("_avatar").getDomRef(), "Icon shouldn't be rendered.");
+		assert.notOk(oHeader.getToolbar().getDomRef(), "Toolbar shouldn't be rendered.");
+		assert.notOk(oHeader.getAggregation("_numericIndicators").getDomRef(), "Numeric indicators shouldn't be rendered.");
+		assert.notOk(oHeader.getAggregation("_details").getDomRef(), "Details shouldn't be rendered.");
 
 		// Clean up
 		oHeader.destroy();
