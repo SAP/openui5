@@ -32,10 +32,10 @@ var YamlHighlightRules = function () {
                 token: "keyword.operator",
                 regex: "-\\s*(?=[{])"
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
             }, {
-                token: "string",
+                token: "string", // multi line string start
                 regex: /[|>][-+\d]*(?:$|\s+(?:$|#))/,
                 onMatch: function (val, state, stack, line) {
                     line = line.replace(/ #.*/, "");
@@ -61,13 +61,13 @@ var YamlHighlightRules = function () {
                 },
                 next: "mlString"
             }, {
-                token: "string",
+                token: "string", // single quoted string
                 regex: "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: /(\b|[+\-\.])[\d_]+(?:(?:\.[\d_]*)?(?:[eE][+\-]?[\d_]+)?)(?=[^\d-\w]|$)$/
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // other number
                 regex: /[+\-]?\.inf\b|NaN\b|0x[\dA-Fa-f_]+|0b[10_]+/
             }, {
                 token: "constant.language.boolean",

@@ -168,34 +168,34 @@ var RakuHighlightRules = function () {
     this.$rules = {
         "start": [
             {
-                token: "comment.block",
+                token: "comment.block", // Embedded Comments - Parentheses
                 regex: "#[`|=]\\(.*\\)"
             }, {
-                token: "comment.block",
+                token: "comment.block", // Embedded Comments - Brackets
                 regex: "#[`|=]\\[.*\\]"
             }, {
-                token: "comment.doc",
+                token: "comment.doc", // Multiline Comments
                 regex: "^=(?:begin)\\b",
                 next: "block_comment"
             }, {
-                token: "string.unquoted",
+                token: "string.unquoted", // q Heredocs
                 regex: "q[x|w]?\\:to/END/;",
                 next: "qheredoc"
             }, {
-                token: "string.unquoted",
+                token: "string.unquoted", // qq Heredocs
                 regex: "qq[x|w]?\\:to/END/;",
                 next: "qqheredoc"
             },
             regexp,
             qstrings,
             {
-                token: "string.quoted.double",
+                token: "string.quoted.double", // Double Quoted String
                 regex: '"',
                 next: "qqstring"
             },
             word_quoting,
             {
-                token: ["keyword", "text", "variable.module"],
+                token: ["keyword", "text", "variable.module"], // use - Module Names, Pragmas, etc.
                 regex: "(use)(\\s+)((?:" + moduleName + "\\.?)*)"
             },
             hex,
@@ -208,7 +208,7 @@ var RakuHighlightRules = function () {
             ops_char,
             constants_unicode,
             {
-                token: "comment",
+                token: "comment", // Sigle Line Comments
                 regex: "#.*$"
             }, {
                 token: "lparen",

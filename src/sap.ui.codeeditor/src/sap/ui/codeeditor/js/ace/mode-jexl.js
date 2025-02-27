@@ -23,20 +23,20 @@ var JexlHighlightRules = function () {
                 token: "comment",
                 regex: "##.*$"
             }, {
-                token: "comment",
+                token: "comment", // multi line comment
                 regex: "\\/\\*",
                 next: "comment"
             }, {
                 token: ["comment", "text"],
                 regex: "(#pragma)(\\s.*$)"
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
-                token: "string",
+                token: "string", // multi line string
                 regex: "`",
                 push: [
                     {
@@ -47,7 +47,7 @@ var JexlHighlightRules = function () {
                         regex: "`",
                         next: "pop"
                     }, {
-                        token: "lparen",
+                        token: "lparen", //interpolation
                         regex: "\\${",
                         push: [
                             {
@@ -63,10 +63,10 @@ var JexlHighlightRules = function () {
                     }
                 ]
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: /0(?:[xX][0-9a-fA-F][0-9a-fA-F_]*|[bB][01][01_]*)[LlSsDdFfYy]?\b/
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: /[+-]?\d[\d_]*(?:(?:\.[\d_]*)?(?:[eE][+-]?[\d_]+)?)?[LlSsDdFfYy]?\b/
             }, {
                 token: "constant.language.boolean",
