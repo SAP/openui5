@@ -110,6 +110,43 @@ sap.ui.define([
 		assert.equal(aItems[2].getCells()[0].getItems()[0].getText(), "Test2");
 	});
 
+	QUnit.test("check drag & drop eventhandler for dragging elements without multiselect control", function(assert) {
+
+		// Setup Fake drop event
+		const oDropItem = this.oActionToolbarPanel._oListControl.getItems()[0];
+		const oDragItem = this.oActionToolbarPanel._oListControl.getItems()[2];
+
+		oDragItem.getMultiSelectControl()?.setEnabled(false);
+		sinon.stub(oDragItem, "getMultiSelectControl").returns(null);
+
+		const oFakeSession = {
+			getDropControl: function() {
+				return oDropItem;
+			},
+			getDragControl: function() {
+				return oDragItem;
+			},
+			setIndicatorConfig: sinon.stub(),
+			setDropControl: sinon.stub(),
+			getDropPosition: sinon.stub()
+		};
+
+		const oFakeEvent = new Event("fakeDropEvent", this.oActionToolbarPanel, {
+			dragSession: oFakeSession,
+			draggedControl: oDragItem,
+			droppedControl: oDropItem
+		});
+
+		// fire event for drag and drop
+		this.oActionToolbarPanel._onRearrange(oFakeEvent);
+
+		// Test results: no repositioning
+		const aItems = this.oActionToolbarPanel._oListControl.getItems();
+		assert.equal(aItems[0].getCells()[0].getItems()[0].getText(), "Test");
+		assert.equal(aItems[1].getCells()[0].getItems()[0].getText(), "Test3");
+		assert.equal(aItems[2].getCells()[0].getItems()[0].getText(), "Test2");
+	});
+
 	QUnit.test("disables 'Clear All' button correctly without disabled elements", function(assert) {
 		// arrange
 		this.oActionToolbarPanel.setMessageStrip(null);
