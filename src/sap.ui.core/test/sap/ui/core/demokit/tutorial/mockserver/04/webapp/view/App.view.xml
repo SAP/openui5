@@ -3,7 +3,8 @@
 	displayBlock="true"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	core:require="{DateTime: 'sap/ui/model/type/DateTime'}">
 	<Shell>
 		<App>
 			<Page title="{i18n>headerText}">
@@ -13,7 +14,6 @@
 				<List id="list" items="{/FindUpcomingMeetups}" noDataText="{i18n>noDataText}">
 					<items>
 						<ObjectListItem
-							core:require="{DateTime: 'sap/ui/model/type/DateTime'}"
 							number="{
 								path: 'EventDate',
 								type: 'DateTime',

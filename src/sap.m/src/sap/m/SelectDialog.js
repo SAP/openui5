@@ -115,6 +115,8 @@ function(
 	 * selected count (if present) and search, will work for currently loaded items only.
 	 * To make sure that all items in the list are loaded at once and the above features works properly,
 	 * we recommend setting the <code>growing</code> property to <code>false</code>.
+	 * <b>Note: </b>The default size limit for entries used for list bindings is set to 100.
+	 * To change this behavior, you can adjust the size limit by using <code>sap.ui.model.Model.prototype.setSizeLimit</code>; see {@link sap.ui.model.Model#setSizeLimit}.
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
 	 * <li> On phones, the select dialog takes up the whole screen. </li>
@@ -162,7 +164,7 @@ function(
 			 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound.
 			 * <b>Note:</b> Growing property, must not be used together with two-way binding.
 			 * <b>Note:</b> If the property is set to <code>true</code>, selected count (if present) and search, will work for currently loaded items only.
-				 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
+			 * To make sure that all items in the list are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
 			 * @since 1.56
 			 */
 			growing : {type : "boolean", group : "Behavior", defaultValue : true},

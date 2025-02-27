@@ -4344,8 +4344,6 @@ sap.ui.define([
 	 * Note: Data for all selected contexts is reread from the server, even if it is already
 	 * available on the client. Any data updates are reflected on the UI but no order is changed.
 	 *
-	 * Note: This is only supported if the model uses the <code>autoExpandSelect</code> parameter.
-	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
 	 *   used, see {@link #getGroupId}. Valid values are <code>undefined</code>, '$auto', '$auto.*',
@@ -4412,9 +4410,9 @@ sap.ui.define([
 
 	/**
 	 * Validates the selected contexts against the list binding's filter criteria and removes the
-	 * selection from contexts that no longer match.
-	 *
-	 * Note: This is only supported if the model uses the <code>autoExpandSelect</code> parameter.
+	 * selection from contexts that no longer match. If the binding's header context is selected
+	 * ("Select All"), the same is done with contexts that are deselected. Thus, in any case, the
+	 * exceptions are validated.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
@@ -4433,7 +4431,6 @@ sap.ui.define([
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> the binding is part of a {@link #create deep create} because it is relative to a
 	 *       {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
-	 *     <li> the binding's header context is selected ("Select All"),
 	 *     <li> there are pending changes,
 	 *     <li> the given group ID is invalid.
 	 *   </ul>
@@ -4450,16 +4447,14 @@ sap.ui.define([
 		}
 		this.checkSuspended();
 		this.checkTransient();
-		if (this.oHeaderContext.isSelected()) {
-			throw new Error('Unsupported "Select All": ' + this.oHeaderContext);
-		}
 		if (this.hasPendingChanges()) {
 			throw new Error("Unsupported pending changes");
 		}
 		_Helper.checkGroupId(sGroupId);
 
+		const bSelectAll = this.oHeaderContext.isSelected();
 		const aSelectedContexts = this._getAllExistingContexts()
-			.filter((oContext) => oContext.isSelected());
+			.filter((oContext) => oContext.isSelected() !== bSelectAll);
 		const iStartOfPredicate = this.getResolvedPath().length;
 		const aPredicatesIn = aSelectedContexts
 			.map((oContext) => oContext.getPath().slice(iStartOfPredicate));
@@ -4473,7 +4468,7 @@ sap.ui.define([
 				const oPredicates = new Set(aPredicatesOut);
 				aSelectedContexts.forEach((oContext) => {
 					if (!oPredicates.has(oContext.getPath().slice(iStartOfPredicate))) {
-						oContext.setSelected(false);
+						oContext.setSelected(bSelectAll);
 					}
 				});
 			});

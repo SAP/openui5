@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/restricted/_uniqWith",
 	"sap/base/util/deepEqual"
-], function(
+],
+function(
 	ElementUtil,
 	OverlayRegistry,
 	isPlainObject,

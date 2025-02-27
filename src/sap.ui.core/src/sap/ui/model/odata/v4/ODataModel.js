@@ -2924,9 +2924,8 @@ sap.ui.define([
 	 * @param {function(Error):Promise<undefined>} fnRetryAfter
 	 *   A "Retry-After" handler
 	 *
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @since 1.129.0
+	 * @public
+	 * @since 1.134.0
 	 */
 	ODataModel.prototype.setRetryAfterHandler = function (fnRetryAfter) {
 		this.fnRetryAfter = fnRetryAfter;

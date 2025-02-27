@@ -11,15 +11,6 @@ sap.ui.define([
 	var bTreeTable,
 		sViewName = "sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy";
 
-	function getDetails(sId) {
-		const sIsIdText = "with ID " + sId;
-		const fnMatch = function (oControl) {
-			return oControl.getBindingContext()?.getProperty("ID") === sId;
-		};
-
-		return [sIsIdText, fnMatch];
-	}
-
 	function getTableAsString(oTable, bCheckName, bCheckAge) {
 		let sResult = "";
 
@@ -76,8 +67,9 @@ sap.ui.define([
 	}
 
 	function pressButtonInRow(sId, rButtonId, sText, sComment) {
-		const [sIsIdText, fnMatch] = getDetails(sId);
-		pressButton.call(this, rButtonId, fnMatch, `'${sText}' ${sIsIdText}. ${sComment}`);
+		pressButton.call(this, rButtonId, function (oControl) {
+				return oControl.getBindingContext().getProperty("ID") === sId;
+			}, `'${sText}' with ID ${sId}. ${sComment}`);
 	}
 
 	Opa5.createPageObjects({
@@ -149,11 +141,11 @@ sap.ui.define([
 				},
 				toggleExpand : function (sId, sComment) {
 					if (bTreeTable) {
-						const [sIsIdText, fnMatch] = getDetails(sId);
 						this.waitFor({
 							actions : function (oTable) {
-								const iRow = oTable.getRows().find(fnMatch).getBindingContext()
-									.getIndex();
+								const iRow = oTable.getRows().find(function (oControl) {
+									return oControl.getBindingContext().getProperty("ID") === sId;
+								}).getBindingContext().getIndex();
 
 								if (oTable.isExpanded(iRow)) {
 									oTable.collapse(iRow);
@@ -162,11 +154,11 @@ sap.ui.define([
 								}
 							},
 							controlType : getTableType(),
-							errorMessage : `Could not press button 'Expand' ${sIsIdText}`,
+							errorMessage : `Could not press button 'Expand' with ID ${sId}`,
 							id : getTableId(),
 							success : function () {
 								Opa5.assert.ok(true,
-									`Pressed button 'Expand' ${sIsIdText}. ${sComment}`);
+									`Pressed button 'Expand' with ID ${sId}. ${sComment}`);
 							},
 							viewName : sViewName
 						});

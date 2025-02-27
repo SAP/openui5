@@ -33,24 +33,25 @@ sap.ui.define([
 				mFlexData.variantChanges,
 				mFlexData.variantDependentControlChanges,
 				mFlexData.variantManagementChanges
-			].forEach(function(aFlexItems) {
-				aFlexItems.forEach(function(oFlexItem) {
-					if (!oFlexItem.selector.idIsLocal) {
-						oFlexItem.selector = getIdIsLocalTrueObject(oFlexItem.selector);
+			]
+			.flat()
+			.filter((oFlexObject) => (
+				oFlexObject.selector
+				&& !oFlexObject.selector.idIsLocal
+			))
+			.forEach(function(oFlexObject) {
+				oFlexObject.selector = getIdIsLocalTrueObject(oFlexObject.selector);
 
-						if (oFlexItem.dependentSelector) {
-							Object.keys(oFlexItem.dependentSelector).forEach(function(sCategory) {
-								if (Array.isArray(oFlexItem.dependentSelector[sCategory])) {
-									oFlexItem.dependentSelector[sCategory] =
-										oFlexItem.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
-								} else {
-									oFlexItem.dependentSelector[sCategory] =
-										getIdIsLocalTrueObject(oFlexItem.dependentSelector[sCategory]);
-								}
-							});
+				if (oFlexObject.dependentSelector) {
+					Object.keys(oFlexObject.dependentSelector).forEach((sCategory) => {
+						const vDependentSelector = oFlexObject.dependentSelector[sCategory];
+						if (Array.isArray(vDependentSelector)) {
+							oFlexObject.dependentSelector[sCategory] = vDependentSelector.map(getIdIsLocalTrueObject);
+						} else {
+							oFlexObject.dependentSelector[sCategory] = getIdIsLocalTrueObject(vDependentSelector);
 						}
-					}
-				});
+					});
+				}
 			});
 		}
 
