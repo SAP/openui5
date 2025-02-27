@@ -80,7 +80,7 @@ sap.ui.define([
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						errorMessage : `Could not create new child below node ${sId}`,
-						id : bTreeTable ? /createInTreeTable/ : /create/,
+						id : bTreeTable ? /createInTreeTable/ : /create\b/,
 						matchers : function (oControl) {
 							return oControl.getBindingContext().getProperty("ID") === sId;
 						},
@@ -96,7 +96,7 @@ sap.ui.define([
 						actions : new EnterText({clearTextFirst : true, text : sName}),
 						controlType : "sap.m.Input",
 						errorMessage : `Could not edit name of node with ID ${sId}`,
-						id : bTreeTable ? /nameInTreeTable/ : /name/,
+						id : bTreeTable ? /nameInTreeTable/ : /name\b/,
 						matchers : function (oControl) {
 							return oControl.getBindingContext().getProperty("ID") === sId;
 						},
@@ -135,7 +135,7 @@ sap.ui.define([
 				},
 				refreshKeepingTreeState : function (sComment) {
 					pressButton.call(this,
-						bTreeTable ? "sideEffectsRefreshTreeTable" : "sideEffectsRefresh", null,
+						bTreeTable ? /sideEffectsRefreshTreeTable/ : /sideEffectsRefresh\b/, null,
 						`'Refresh (keeping tree state)'. ${sComment}`
 					);
 				},
@@ -168,13 +168,13 @@ sap.ui.define([
 				},
 				expandAll : function (sId, sComment) {
 					pressButtonInRow.call(this, sId,
-						bTreeTable ? /expandAllTreeTable/ : /expandAll/,
+						bTreeTable ? /expandAllTreeTable/ : /expandAll\b/,
 						"Expand Levels", sComment
 					);
 				},
 				collapseAll : function (sId, sComment) {
 					pressButtonInRow.call(this, sId,
-						bTreeTable ? /collapseAllTreeTable/ : /collapseAll/,
+						bTreeTable ? /collapseAllTreeTable/ : /collapseAll\b/,
 						"Collapse All", sComment
 					);
 				}
