@@ -62,7 +62,7 @@ sap.ui.define([
 				if (oDataSources.hasOwnProperty(property)) {
 					dataSource = oDataSources[property];
 
-					// do we have a mock url in the app descriptor
+					// do we have a mock url in the manifest
 					if (dataSource.settings && dataSource.settings.localUri) {
 						if (typeof dataSource.type === "undefined" || dataSource.type === "OData") {
 							oMockServer = new MockServer({
@@ -368,4 +368,3 @@ sap.ui.define([
 		}
 	});
 });
-

@@ -11,9 +11,9 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",
-	"sap/ui/rta/command/AppDescriptorCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/CompositeCommand",
+	"sap/ui/rta/command/ManifestCommand",
 	"sap/ui/rta/plugin/AddXMLAtExtensionPoint",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -27,17 +27,17 @@ sap.ui.define([
 	Layer,
 	nextUIUpdate,
 	AddXMLAtExtensionPointCommand,
-	AppDescriptorCommand,
 	CommandFactory,
 	CompositeCommand,
+	ManifestCommand,
 	AddXMLAtExtensionPointPlugin,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
-	var sXmlString =
+	const sXmlString =
 	'<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 		'<Panel id="panel">' +
 			"<content>" +
@@ -271,10 +271,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when handler is called for the view overlay, without fragmentHandler function in the propertyBag defined", function(assert) {
-			var fnDone = assert.async(2);
-			var oPropertyBag = {};
+			const fnDone = assert.async(2);
+			const oPropertyBag = {};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function(oEvent) {
-				var oCommand = oEvent.getParameters().command;
+				const oCommand = oEvent.getParameters().command;
 				assert.ok(
 					oCommand instanceof CompositeCommand,
 					"then the plugin fired the elementModified event with the CompositeCommand"
@@ -284,30 +284,30 @@ sap.ui.define([
 					"then the CompositeCommand contains AddXMLAtExtensionPointCommand"
 				);
 				assert.ok(
-					oCommand.getCommands()[1] instanceof AppDescriptorCommand,
-					"then the CompositeCommand contains AppDescriptorCommand"
+					oCommand.getCommands()[1] instanceof ManifestCommand,
+					"then the CompositeCommand contains ManifestCommand"
 				);
 				assert.strictEqual(
 					oCommand.getCommands()[0].getFragmentPath(),
 					this.sInitialFragmentPath,
 					"then the returned command contains the fragment path from the initial fragmentHandler function"
 				);
-				var mManifestParameters = { flexExtensionPointEnabled: true };
+				const mManifestParameters = { flexExtensionPointEnabled: true };
 				assert.deepEqual(
 					oCommand.getCommands()[1].getParameters(),
 					mManifestParameters,
-					"then the CompositeCommand contains AppDescriptorCommand"
+					"then the CompositeCommand contains ManifestCommand"
 				);
 				fnDone();
 			}.bind(this));
-			var oViewOverlay = OverlayRegistry.getOverlay(this.oXmlView);
+			const oViewOverlay = OverlayRegistry.getOverlay(this.oXmlView);
 			this.oAddXmlAtExtensionPointPlugin.handler([oViewOverlay], oPropertyBag)
 			.then(function() {
 				assert.strictEqual(this.oFragmentHandlerStub.callCount, 1,
 					"then the fragment handler function is called once");
 				assert.strictEqual(this.oFragmentHandlerStub.firstCall.args[0], oViewOverlay,
 					"then the fragment handler function is called with panel overlay as first parameter");
-				var aPassedExtensionPointObjects = this.oFragmentHandlerStub.firstCall.args[1];
+				const aPassedExtensionPointObjects = this.oFragmentHandlerStub.firstCall.args[1];
 				assert.ok(Array.isArray(aPassedExtensionPointObjects),
 					"then the fragment handler function is called with array of ExtensionPointInformation as second parameter");
 				assert.deepEqual(aPassedExtensionPointObjects.map(function(oExtensionPoint) { return oExtensionPoint.name; }),
@@ -318,18 +318,18 @@ sap.ui.define([
 		});
 
 		QUnit.test("when handler is called for the panel overlay, with fragmentHandler function in the propertyBag defined", function(assert) {
-			var fnDone = assert.async(2);
-			var sSecondFragmentPath = "sap/ui/.../fragment/SecondFragment";
-			var oSecondFragmentHandlerStub = sandbox.stub().resolves({
+			const fnDone = assert.async(2);
+			const sSecondFragmentPath = "sap/ui/.../fragment/SecondFragment";
+			const oSecondFragmentHandlerStub = sandbox.stub().resolves({
 				extensionPointName: "EP2",
 				fragmentPath: sSecondFragmentPath,
 				fragment: "fragment/SecondFragment"
 			});
-			var oPropertyBag = {
+			const oPropertyBag = {
 				fragmentHandler: oSecondFragmentHandlerStub
 			};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function(oEvent) {
-				var oCommand = oEvent.getParameters().command;
+				const oCommand = oEvent.getParameters().command;
 				assert.ok(
 					oCommand instanceof CompositeCommand,
 					"then the plugin fired the elementModified event with the CompositeCommand"
@@ -339,19 +339,19 @@ sap.ui.define([
 					"then the CompositeCommand contains AddXMLAtExtensionPointCommand"
 				);
 				assert.ok(
-					oCommand.getCommands()[1] instanceof AppDescriptorCommand,
-					"then the CompositeCommand contains AppDescriptorCommand"
+					oCommand.getCommands()[1] instanceof ManifestCommand,
+					"then the CompositeCommand contains ManifestCommand"
 				);
 				assert.strictEqual(
 					oCommand.getCommands()[0].getFragmentPath(),
 					sSecondFragmentPath,
 					"then the returned command contains the fragment path from the passed as property fragmentHandler function"
 				);
-				var mManifestParameters = { flexExtensionPointEnabled: true };
+				const mManifestParameters = { flexExtensionPointEnabled: true };
 				assert.deepEqual(
 					oCommand.getCommands()[1].getParameters(),
 					mManifestParameters,
-					"then the CompositeCommand contains AppDescriptorCommand"
+					"then the CompositeCommand contains ManifestCommand"
 				);
 				fnDone();
 			});
@@ -372,11 +372,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when handler is called with fragmentHandler function returning a map but no extensionPoint is selected", function(assert) {
-			var oBrokenFragmentHandlerStub = sandbox.stub().resolves({
+			const oBrokenFragmentHandlerStub = sandbox.stub().resolves({
 				fragmentPath: "sap/ui/.../fragment/SecondFragment",
 				fragment: "fragment/SecondFragment"
 			});
-			var oPropertyBag = {
+			const oPropertyBag = {
 				fragmentHandler: oBrokenFragmentHandlerStub
 			};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function() {
@@ -390,12 +390,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when handler is called with fragmentHandler function returning map without valid fragmentPath", function(assert) {
-			var oBrokenFragmentHandlerStub = sandbox.stub().resolves({
+			const oBrokenFragmentHandlerStub = sandbox.stub().resolves({
 				extensionPointName: "EP2",
 				fragmentPath: ["invalidValue"],
 				fragment: "fragment/SecondFragment"
 			});
-			var oPropertyBag = {
+			const oPropertyBag = {
 				fragmentHandler: oBrokenFragmentHandlerStub
 			};
 			this.oAddXmlAtExtensionPointPlugin.attachElementModified(function() {

@@ -68,7 +68,7 @@ sap.ui.define([
 		if (bRevert) {
 			const aChangesToRevert = aCustomerChanges.concat(aUserChangesChanges).reverse()
 			.filter((oChange) => {
-				// skip descriptor changes
+				// skip manifest changes
 				return !oChange.isA("sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange");
 			});
 			await Reverter.revertMultipleChanges(aChangesToRevert, {

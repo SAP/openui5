@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("Given a list of libraries that needs to be added to the app descriptor...", {
+	QUnit.module("Given a list of libraries that needs to be added to the manifest...", {
 		before() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 		},
@@ -48,12 +48,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling command factory for AddLibrary ...", function(assert) {
-			var done = assert.async();
-			var oAddLibraryCommand;
+			const done = assert.async();
+			let oAddLibraryCommand;
 
-			var oMockDescriptorChange = {
+			const oMockManifestChange = {
 				store() {
-					assert.ok(true, "the descriptor change was submitted");
+					assert.ok(true, "the manifest change was submitted");
 					oAddLibraryCommand.execute()
 					.then(function() {
 						assert.ok(
@@ -63,14 +63,14 @@ sap.ui.define([
 				}
 			};
 
-			var oMockAddLibraryInlineChange = {
+			const oMockAddLibraryInlineChange = {
 				mockName: "mocked"
 			};
 
-			this.createDescriptorInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
+			this.createManifestInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
 				assert.equal(mPropertyBag.changeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' method");
 				assert.equal(mPropertyBag.content.libraries, this.mLibraries, "libraries are properly passed to the 'create_ui5_addLibraries' method");
-				this.createDescriptorInlineChangeStub.restore();
+				this.createManifestInlineChangeStub.restore();
 				return Promise.resolve(oMockAddLibraryInlineChange);
 			}.bind(this));
 
@@ -82,7 +82,7 @@ sap.ui.define([
 
 				this.createNewChangeStub.restore();
 
-				return Promise.resolve(oMockDescriptorChange);
+				return Promise.resolve(oMockManifestChange);
 			}.bind(this));
 
 			return CommandFactory.getCommandFor(this.oButton, "addLibrary", {

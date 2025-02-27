@@ -7,7 +7,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var mConfig = {
+	let mConfig = {
 		name: "sap.ui.rta",
 		defaults: {
 			group: "Default",
@@ -102,10 +102,10 @@ sap.ui.define([
 			},
 
 			// Commands
-			"command/appDescriptor/AddLibrary": {
+			"command/manifest/AddLibrary": {
 				group: "Command",
 				coverage: {
-					only: ["sap/ui/rta/command/appDescriptor/AddLibrary"]
+					only: ["sap/ui/rta/command/manifest/AddLibrary"]
 				}
 			},
 			"command/compVariant/CompVariantContent": {
@@ -183,10 +183,10 @@ sap.ui.define([
 					}
 				}
 			},
-			"command/AppDescriptorCommand": {
+			"command/ManifestCommand": {
 				group: "Command",
 				coverage: {
-					only: ["sap/ui/rta/command/AppDescriptorCommand"]
+					only: ["sap/ui/rta/command/ManifestCommand"]
 				}
 			},
 			"command/BaseCommand": {
@@ -903,8 +903,8 @@ sap.ui.define([
 		}
 	};
 
-	var bCompAvailable = false;
-	var oXhr = new XMLHttpRequest();
+	let bCompAvailable = false;
+	const oXhr = new XMLHttpRequest();
 	oXhr.onreadystatechange = function() {
 		if (this.readyState === 4) {
 			switch (this.status) {
