@@ -105,10 +105,12 @@ var supportedModes = {
     AQL: ["aql"],
     AsciiDoc: ["asciidoc|adoc"],
     ASL: ["dsl|asl|asl.json"],
+    Assembly_ARM32: ["s"],
     Assembly_x86: ["asm|a"],
     Astro: ["astro"],
     AutoHotKey: ["ahk"],
     BatchFile: ["bat|cmd"],
+    Basic: ["bas|bak"],
     BibTeX: ["bib"],
     C_Cpp: ["cpp|c|cc|cxx|h|hh|hpp|ino"],
     C9Search: ["c9search_results"],
@@ -158,7 +160,7 @@ var supportedModes = {
     Haskell_Cabal: ["cabal"],
     haXe: ["hx"],
     Hjson: ["hjson"],
-    HTML: ["html|htm|xhtml|vue|we|wpy"],
+    HTML: ["html|htm|xhtml|we|wpy"],
     HTML_Elixir: ["eex|html.eex"],
     HTML_Ruby: ["erb|rhtml|html.erb"],
     INI: ["ini|conf|cfg|prefs"],
@@ -167,7 +169,7 @@ var supportedModes = {
     Jack: ["jack"],
     Jade: ["jade|pug"],
     Java: ["java"],
-    JavaScript: ["js|jsm|jsx|cjs|mjs"],
+    JavaScript: ["js|jsm|cjs|mjs"],
     JEXL: ["jexl"],
     JSON: ["json"],
     JSON5: ["json5"],
@@ -275,11 +277,13 @@ var supportedModes = {
     Verilog: ["v|vh|sv|svh"],
     VHDL: ["vhd|vhdl"],
     Visualforce: ["vfp|component|page"],
+    Vue: ["vue"],
     Wollok: ["wlk|wpgm|wtest"],
     XML: ["xml|rdf|rss|wsdl|xslt|atom|mathml|mml|xul|xbl|xaml"],
     XQuery: ["xq"],
     YAML: ["yaml|yml"],
-    Zeek: ["zeek|bro"]
+    Zeek: ["zeek|bro"],
+    Zig: ["zig"]
 };
 var nameOverrides = {
     ObjectiveC: "Objective-C",
@@ -329,7 +333,8 @@ var themeData = [
     ["Dawn"],
     ["Dreamweaver"],
     ["Eclipse"],
-    ["GitHub"],
+    ["GitHub Light Default"],
+    ["GitHub (Legacy)", "github", "light"],
     ["IPlastic"],
     ["Solarized Light"],
     ["TextMate"],
@@ -338,6 +343,7 @@ var themeData = [
     ["Kuroir"],
     ["KatzenMilch"],
     ["SQL Server", "sqlserver", "light"],
+    ["CloudEditor", "cloud_editor", "light"],
     ["Ambiance", "ambiance", "dark"],
     ["Chaos", "chaos", "dark"],
     ["Clouds Midnight", "clouds_midnight", "dark"],
@@ -362,7 +368,8 @@ var themeData = [
     ["Tomorrow Night 80s", "tomorrow_night_eighties", "dark"],
     ["Twilight", "twilight", "dark"],
     ["Vibrant Ink", "vibrant_ink", "dark"],
-    ["GitHub Dark", "github_dark", "dark"]
+    ["GitHub Dark", "github_dark", "dark"],
+    ["CloudEditor Dark", "cloud_editor_dark", "dark"]
 ];
 exports.themesByName = {};
 exports.themes = themeData.map(function (data) {

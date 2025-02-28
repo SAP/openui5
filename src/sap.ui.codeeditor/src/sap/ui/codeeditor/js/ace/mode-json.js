@@ -5,29 +5,29 @@ var JsonHighlightRules = function () {
     this.$rules = {
         "start": [
             {
-                token: "variable",
+                token: "variable", // single line
                 regex: '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]\\s*(?=:)'
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: '"',
                 next: "string"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "0[xX][0-9a-fA-F]+\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
             }, {
                 token: "constant.language.boolean",
                 regex: "(?:true|false)\\b"
             }, {
-                token: "text",
+                token: "text", // single quoted strings are not allowed
                 regex: "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
-                token: "comment",
+                token: "comment", // comments are not allowed, but who cares?
                 regex: "\\/\\/.*$"
             }, {
-                token: "comment.start",
+                token: "comment.start", // comments are not allowed, but who cares?
                 regex: "\\/\\*",
                 next: "comment"
             }, {
@@ -58,7 +58,7 @@ var JsonHighlightRules = function () {
         ],
         "comment": [
             {
-                token: "comment.end",
+                token: "comment.end", // comments are not allowed, but who cares?
                 regex: "\\*\\/",
                 next: "start"
             }, {

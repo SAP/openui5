@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
+sap.ui.define(['sap/ui/test/Opa5', './BaseArrangement'], function (Opa5, BaseArrangement) {
 	"use strict";
 
 	function addSaveForLater() {
@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 		window.history.replaceState("dummy", {}, window.location.pathname + window.location.search + sStateToAdd + window.location.hash);
 	}
 
-	return Opa5.extend("sap.ui.documentation.sdk.test.arrangement.WelcomeJourneyArrangement", {
+	return BaseArrangement.extend("sap.ui.documentation.sdk.test.arrangement.WelcomeJourneyArrangement", {
 		iStartMyApp : function () {
 			return this.iStartMyUIComponent({
 				componentConfig: {

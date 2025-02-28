@@ -283,6 +283,7 @@ CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIn
 
 	oRm.openStart("div", sId);
 	oRm.class("sapUiCalendarRowAppsInt");
+	oRm.style("position", "relative");
 	oRm.style("width", iWidth + "%");
 
 	if (iInterval >= iDaysLength && (oRow.getIntervalType() === CalendarIntervalType.OneMonth || oRow.getIntervalType() === "OneMonth")){
@@ -309,6 +310,10 @@ CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIn
 	oRm.openEnd(); // div element
 
 	if (aFilteredItemsForCurrentHours.length) {
+		oRm.openStart("div");
+		oRm.class("sapUiCalendarRowAppsIntNoWork");
+		oRm.openEnd();
+
 		RecurrenceUtils.getWorkingAndNonWorkingSegments(oCellStartDate, aFilteredItemsForCurrentHours).forEach((oHourParts) => {
 			if (oHourParts.type === "working") {
 				this.renderWorkingParts(oRm, oHourParts.duration);
@@ -316,6 +321,8 @@ CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIn
 				this.renderNonWorkingParts(oRm, oHourParts.duration);
 			}
 		});
+
+		oRm.close("div");
 	}
 
 	if (bShowIntervalHeaders) {

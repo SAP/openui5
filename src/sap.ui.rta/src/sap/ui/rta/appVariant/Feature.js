@@ -3,25 +3,25 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
-	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/rta/util/showMessageBox",
+	"sap/base/util/merge",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/EventBus",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/base/util/merge"
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/rta/util/showMessageBox"
 ], function(
-	FlexUtils,
-	AppVariantUtils,
-	showMessageBox,
+	merge,
 	BusyIndicator,
 	EventBus,
-	Settings,
+	FlexRuntimeInfoAPI,
 	AppVariantFactory,
 	FeaturesAPI,
-	merge
+	FlexUtils,
+	AppVariantUtils,
+	showMessageBox
 ) {
 	"use strict";
 
@@ -33,10 +33,6 @@ sap.ui.define([
 
 	var fnGetDescriptor = function() {
 		return FlexUtils.getAppDescriptor(oRootControlRunningApp);
-	};
-
-	var fnGetFlexSettings = function() {
-		return Settings.getInstance();
 	};
 
 	var fnS4HanaRemoveBrowserCloseWarning = function() {
@@ -280,9 +276,9 @@ sap.ui.define([
 					}
 				};
 
-				var fnTriggerSuccessMessage = function(oSettings) {
+				var fnTriggerSuccessMessage = function() {
 					fnResetDirtyFlag();
-					bIsS4HanaCloud = AppVariantUtils.isS4HanaCloud(oSettings);
+					bIsS4HanaCloud = FlexRuntimeInfoAPI.isAtoEnabled();
 					// Shows the success message and closes the current app (if 'Save As' triggered from UI adaptation toolbar)
 					// or opens the app variant overview list (if 'Save As' triggered from App variant overview List)
 					var oSuccessInfo = AppVariantUtils.buildSuccessInfo(oAppVariantSaveClosure.id, bSaveAsFromRta, bIsS4HanaCloud);
@@ -333,7 +329,6 @@ sap.ui.define([
 					.then(fnAddChangesToPersistence) // Adds the descriptor inline changes to the persistence
 					.then(fnCreateAppVariant) // Creates the application variant and saves it to the layered repository
 					.then(fnClearRTACommandStack)
-					.then(fnGetFlexSettings)
 					.then(fnTriggerSuccessMessage)
 					.then(fnTriggerPlatformDependentFlow.bind(this)).then(resolve)
 					.catch(function(oError) {
@@ -383,8 +378,8 @@ sap.ui.define([
 						return oAppVariantManager.showSuccessMessage(oSuccessInfo);
 					};
 
-					var fnTriggerS4HanaPolling = function(oSettings) {
-						bIsS4HanaCloud = AppVariantUtils.isS4HanaCloud(oSettings);
+					var fnTriggerS4HanaPolling = function() {
+						bIsS4HanaCloud = FlexRuntimeInfoAPI.isAtoEnabled();
 						if (bIsS4HanaCloud) {
 							var oIAMResponse;
 							return fnS4HanaAddBrowserCloseWarning(bCurrentlyAdapting)
@@ -416,8 +411,7 @@ sap.ui.define([
 						AppVariantUtils.navigateToFLPHomepage();
 					}
 
-					return fnGetFlexSettings()
-					.then(fnTriggerS4HanaPolling.bind(this))
+					return fnTriggerS4HanaPolling.call(this)
 					.then(fnDeleteAppVariant)
 					.then(fnDeleteSuccessMessage)
 					.then(fnTriggerS4HanaRefresh.bind(this))

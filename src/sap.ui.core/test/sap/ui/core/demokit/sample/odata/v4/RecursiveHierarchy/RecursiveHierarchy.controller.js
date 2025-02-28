@@ -81,7 +81,9 @@ sap.ui.define([
 				const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
 					|| oUriParameters.get("visibleRowCount");
-				const sThreshold = oUriParameters.get("threshold") || "0";
+				const sThreshold = TestUtils.retrieveData( // controlled by OPA
+						"sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold")
+					|| oUriParameters.get("threshold") || "0";
 				const sFirstVisibleRow = oUriParameters.get("firstVisibleRow") || "0";
 
 				const oTable = this.byId("table");

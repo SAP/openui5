@@ -109,6 +109,7 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.IconTabFilter",
 						actions: new Press(),
+						visible: false,
 						matchers: [
 							new PropertyStrictEquals({
 								name: "Text",
@@ -125,6 +126,7 @@ sap.ui.define([
 				iShouldSeeEditedNotification: function() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
+						visible: false,
 						matchers: [
 							new PropertyStrictEquals({
 								name: "icon",

@@ -504,10 +504,10 @@ sap.ui.define([
 		 *
 		 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 		 *
-		 * @returns {Date|module:sap/ui/core/date/UI5Date} the value of property <code>dateValue</code>
+		 * @returns {Date|module:sap/ui/core/date/UI5Date|null} the value of property <code>dateValue</code>
 		 * @public
 		 * @name sap.m.DateRangeSelection#getDateValue
-		 * @function
+		 * @method
 		 */
 
 		/**
@@ -517,7 +517,7 @@ sap.ui.define([
 		 *
 		 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 		 *
-		 * @param {Date|module:sap/ui/core/date/UI5Date} oDateValue New value for property <code>dateValue</code>
+		 * @param {Date|module:sap/ui/core/date/UI5Date|null} oDateValue New value for property <code>dateValue</code>
 		 * @returns {this} Reference to <code>this</code> for method chaining
 		 * @public
 		 */
@@ -545,10 +545,10 @@ sap.ui.define([
 		 *
 		 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 		 *
-		 * @returns {Date|module:sap/ui/core/date/UI5Date} the value of property <code>secondDateValue</code>
+		 * @returns {Date|module:sap/ui/core/date/UI5Date|null} the value of property <code>secondDateValue</code>
 		 * @public
 		 * @name sap.m.DateRangeSelection#getSecondDateValue
-		 * @function
+		 * @method
 		 */
 
 		/**
@@ -558,7 +558,7 @@ sap.ui.define([
 		 *
 		 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 		 *
-		 * @param {Date|module:sap/ui/core/date/UI5Date} oSecondDateValue New value for property <code>dateValue</code>
+		 * @param {Date|module:sap/ui/core/date/UI5Date|null} oSecondDateValue New value for property <code>dateValue</code>
 		 * @returns {this} Reference to <code>this</code> for method chaining
 		 * @public
 		 */

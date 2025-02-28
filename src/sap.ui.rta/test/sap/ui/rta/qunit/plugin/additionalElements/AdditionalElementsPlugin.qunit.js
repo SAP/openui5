@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/utils/nextUIUpdate",
@@ -49,7 +48,6 @@ sap.ui.define([
 	DelegateMediatorAPI,
 	FieldExtensibility,
 	ChangesWriteAPI,
-	Settings,
 	VerticalLayout,
 	JSONModel,
 	nextUIUpdate,
@@ -84,8 +82,6 @@ sap.ui.define([
 
 	// ensure a model specific delegate exists for a model not used anywhere else
 	const SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
-
-	sinon.stub(Settings, "getInstance").resolves(new Settings({}));
 
 	const DEFAULT_MANIFEST = {
 		"sap.app": {

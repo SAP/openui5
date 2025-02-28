@@ -15,9 +15,11 @@ sap.ui.require([
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/recursiveHierarchyBasics",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/sideEffectsRefresh",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils"
 ], function (Core, Helper, Main, collapseAll, createEdit, expandAll, collapseAll_expandTo3,
-		pageExpandCollapse, recursiveHierarchyBasics, sideEffectsRefresh, SandboxModel, opaTest) {
+		pageExpandCollapse, recursiveHierarchyBasics, sideEffectsRefresh, SandboxModel, opaTest,
+		TestUtils) {
 	"use strict";
 
 	Core.ready().then(function () {
@@ -27,77 +29,100 @@ sap.ui.require([
 				SandboxModel.reset();
 			});
 
+[false, true].forEach(function (bTreeTable) {
+	["0", "10"].forEach((sThreshold) => {
 		//*****************************************************************************
-		[false, true].forEach(function (bTreeTable) {
-			var sTitle = "page, expand, collapse; w/ TreeTable: " + bTreeTable;
-
+		{
+			const sTitle = "page, expand, collapse; w/ TreeTable: " + bTreeTable
+				+ ", threshold: " + sThreshold;
 			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+					sThreshold);
 				Main.setTreeTable(bTreeTable);
 
 				pageExpandCollapse(Given, When, Then);
 			});
-		});
+		}
 
 		//*****************************************************************************
-		[false, true].forEach(function (bTreeTable) {
-			var sTitle = "create, edit; w/ TreeTable: " + bTreeTable;
-
+		{
+			const sTitle = "create, edit; w/ TreeTable: " + bTreeTable
+				+ ", threshold: " + sThreshold;
 			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+					sThreshold);
 				Main.setTreeTable(bTreeTable);
 
 				createEdit(Given, When, Then);
 			});
-		});
+		}
 
 		//*****************************************************************************
-		[false, true].forEach(function (bTreeTable) {
-			const sTitle = "recursive hierarchy basics; w/ TreeTable: " + bTreeTable;
+		{
+			const sTitle = "recursive hierarchy basics; w/ TreeTable: " + bTreeTable
+				+ ", threshold: " + sThreshold;
 			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+					sThreshold);
 				Main.setTreeTable(bTreeTable);
 
 				recursiveHierarchyBasics(Given, When, Then);
 			});
-		});
+		}
 
 		//*****************************************************************************
-		[false, true].forEach(function (bTreeTable) {
-			const sTitle = "side-effects refresh; w/ TreeTable: " + bTreeTable;
+		{
+			const sTitle = "side-effects refresh; w/ TreeTable: " + bTreeTable
+				+ ", threshold: " + sThreshold;
 			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+					sThreshold);
 				Main.setTreeTable(bTreeTable);
 
 				sideEffectsRefresh(Given, When, Then);
 			});
-		});
+		}
 
 		//*****************************************************************************
-		[false, true].forEach(function (bTreeTable) {
-			const sTitle = "expandAll; w/ TreeTable: " + bTreeTable;
+		{
+			const sTitle = "expandAll; w/ TreeTable: " + bTreeTable
+				+ ", threshold: " + sThreshold;
 			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+					sThreshold);
 				Main.setTreeTable(bTreeTable);
 
 				expandAll(Given, When, Then);
 			});
-		});
+		}
 
 		//*****************************************************************************
-		[false, true].forEach(function (bTreeTable) {
-			const sTitle = "collapseAll; w/ TreeTable: " + bTreeTable;
+		{
+			const sTitle = "collapseAll; w/ TreeTable: " + bTreeTable
+				+ ", threshold: " + sThreshold;
 			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+					sThreshold);
 				Main.setTreeTable(bTreeTable);
 
 				collapseAll(Given, When, Then);
 			});
-		});
+		}
 
 		//*****************************************************************************
-		[false, true].forEach(function (bTreeTable) {
-			const sTitle = "collapse all, expandTo:3; w/ TreeTable: " + bTreeTable;
+		{
+			const sTitle = "collapse all, expandTo:3; w/ TreeTable: " + bTreeTable
+				+ ", threshold: " + sThreshold;
 			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+					sThreshold);
 				Main.setTreeTable(bTreeTable);
 
 				collapseAll_expandTo3(Given, When, Then);
 			});
-		});
+		}
+	});
+});
 
 		QUnit.start();
 	});

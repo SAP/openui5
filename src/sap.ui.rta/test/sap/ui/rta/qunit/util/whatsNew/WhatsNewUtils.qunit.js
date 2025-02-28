@@ -1,13 +1,11 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
 	"sap/ui/rta/util/whatsNew/WhatsNewUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Settings,
-	FeaturesAPI,
+	FlexRuntimeInfoAPI,
 	WhatsNewFeatures,
 	WhatsNewUtils,
 	sinon
@@ -34,11 +32,8 @@ sap.ui.define([
 				}
 			}
 		];
-		const oSettings = {
-			isAtoEnabled: () => true,
-			getSystem: () => "test"
-		};
-		sandbox.stub(Settings, "getInstanceOrUndef").returns(oSettings);
+		sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
+		sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns("test");
 		const sActualURL = WhatsNewUtils.getLearnMoreURL(sPath, aFeatureCollection);
 		assert.strictEqual(sActualURL, aFeatureCollection[0].documentationUrls.s4HanaCloudUrl, "Returned URL should be correct");
 	});
@@ -55,11 +50,8 @@ sap.ui.define([
 				}
 			}
 		];
-		const oSettings = {
-			isAtoEnabled: () => false,
-			getSystem: () => "test"
-		};
-		sandbox.stub(Settings, "getInstanceOrUndef").returns(oSettings);
+		sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
+		sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns("test");
 		const sActualURL = WhatsNewUtils.getLearnMoreURL(sPath, aFeatureCollection);
 		assert.strictEqual(sActualURL, aFeatureCollection[0].documentationUrls.s4HanaOnPremUrl, "Returned URL should be correct");
 	});
@@ -76,11 +68,8 @@ sap.ui.define([
 				}
 			}
 		];
-		const oSettings = {
-			isAtoEnabled: () => undefined,
-			getSystem: () => undefined
-		};
-		sandbox.stub(Settings, "getInstanceOrUndef").returns(oSettings);
+		sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(undefined);
+		sandbox.stub(FlexRuntimeInfoAPI, "getSystem").returns(undefined);
 		const sActualURL = WhatsNewUtils.getLearnMoreURL(sPath, aFeatureCollection);
 		assert.strictEqual(sActualURL, aFeatureCollection[0].documentationUrls.btpUrl, "Returned URL should be correct");
 	});

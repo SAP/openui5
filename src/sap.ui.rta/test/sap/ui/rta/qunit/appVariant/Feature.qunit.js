@@ -1,40 +1,40 @@
 /* global QUnit  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/rta/appVariant/Utils",
-	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/rta/appVariant/AppVariantManager",
-	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
-	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
-	"sap/ui/rta/command/Stack",
-	"sap/ui/core/Control",
 	"sap/base/Log",
+	"sap/m/MessageBox",
+	"sap/ui/core/Control",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/m/MessageBox",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/appVariant/AppVariantManager",
+	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/appVariant/Utils",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	sinon,
-	RtaAppVariantFeature,
-	AppVariantOverviewUtils,
-	AppVariantUtils,
-	AppVariantManager,
-	AppVariantFactory,
-	FeaturesAPI,
-	Settings,
-	Layer,
-	FlUtils,
-	Stack,
-	Control,
 	Log,
+	MessageBox,
+	Control,
+	FlexRuntimeInfoAPI,
+	AppVariantFactory,
 	AppVariantWriteAPI,
 	ChangesWriteAPI,
-	MessageBox,
+	FeaturesAPI,
+	Layer,
+	FlUtils,
+	AppVariantManager,
+	AppVariantUtils,
+	RtaAppVariantFeature,
+	AppVariantOverviewUtils,
+	Stack,
+	sinon,
 	RtaQunitUtils
 ) {
 	"use strict";
@@ -65,15 +65,8 @@ sap.ui.define([
 		sandbox.stub(FlUtils, "getUshellContainer").returns(oUshellContainerStub);
 	}
 
-	function simulateSystemConfig(bIsAtoAvailable, bIsAtoEnabled) {
-		sandbox.stub(Settings, "getInstance").resolves(
-			new Settings({
-				isKeyUser: true,
-				isAtoAvailable: bIsAtoAvailable,
-				isAtoEnabled: bIsAtoEnabled,
-				isProductiveSystem: false
-			})
-		);
+	function simulateSystemConfig(bIsAtoEnabled) {
+		sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(bIsAtoEnabled);
 	}
 
 	function handleShowMessageDialog() {
@@ -271,7 +264,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, false, "then the 'i' button is visible");
@@ -294,7 +287,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, true, "then the 'i' button is visible");
@@ -328,7 +321,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, true, "then the 'i' button is visible");
@@ -375,7 +368,7 @@ sap.ui.define([
 			var oRootControl = new Control();
 			var oStack = new Stack();
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, true, "then the 'i' button is visible");
@@ -418,7 +411,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onGetOverview() is called while deletion of key user app variant triggered closeOverviewDialog", function(assert) {
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			const oMockedDescriptorData = {
 				"sap.app": {
@@ -466,7 +459,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called and failed", function(assert) {
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -503,7 +496,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with published catalogs", function(assert) {
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -536,7 +529,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with unpublished catalogs", function(assert) {
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
 
@@ -567,14 +560,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana on Premise", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			simulateSystemConfig(false);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -597,14 +583,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana on Premise from currently adapting app variant", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			simulateSystemConfig(false);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -629,7 +608,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud from currently adapting app variant", function(assert) {
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(AppVariantFactory, "load").resolves({response: JSON.stringify(oDescriptor)});
@@ -695,7 +674,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
@@ -741,14 +720,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			simulateSystemConfig(false);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
@@ -799,7 +771,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
@@ -855,7 +827,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
@@ -910,7 +882,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
@@ -964,7 +936,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
@@ -1021,7 +993,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
-			simulateSystemConfig(false, false);
+			simulateSystemConfig(false);
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
@@ -1078,7 +1050,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
@@ -1135,7 +1107,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
@@ -1195,7 +1167,7 @@ sap.ui.define([
 				messageKey: "MSG_SAVE_APP_VARIANT_FAILED"
 			};
 
-			simulateSystemConfig(true, true);
+			simulateSystemConfig(true);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);

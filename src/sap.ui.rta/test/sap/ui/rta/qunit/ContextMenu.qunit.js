@@ -2,44 +2,44 @@
 
 sap.ui.define([
 	"qunit/RtaQunitUtils",
-	"sap/ui/events/KeyCodes",
+	"sap/m/Button",
+	"sap/m/Page",
+	"sap/ui/core/Element",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/util/IFrame",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
-	"sap/ui/fl/registry/Settings",
-	"sap/m/Page",
-	"sap/m/Button",
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
-	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/test/utils/nextUIUpdate",
-	"sap/ui/core/Element"
+	"sap/uxap/ObjectPageSubSection"
 ], function(
 	RtaQunitUtils,
-	KeyCodes,
+	Button,
+	Page,
+	Element,
 	OverlayRegistry,
 	DtUtil,
+	KeyCodes,
 	PropertyChange,
 	IFrame,
 	ChangesWriteAPI,
+	FeaturesAPI,
 	FieldExtensibility,
-	Settings,
-	Page,
-	Button,
+	nextUIUpdate,
+	QUnitUtils,
 	RuntimeAuthoring,
 	sinon,
 	ObjectPageLayout,
 	ObjectPageSection,
-	ObjectPageSubSection,
-	QUnitUtils,
-	nextUIUpdate,
-	Element
+	ObjectPageSubSection
 ) {
 	"use strict";
 
@@ -91,14 +91,8 @@ sap.ui.define([
 					fnDone();
 				}
 			}.bind(this));
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled() {
-					return true;
-				},
-				isLocalResetEnabled() {
-					return true;
-				}
-			});
+			sandbox.stub(FeaturesAPI, "isVariantAdaptationEnabled").returns(true);
+			sandbox.stub(FeaturesAPI, "isLocalResetEnabled").returns(true);
 		},
 		beforeEach() {
 			return DtUtil.waitForSynced(this.oRta._oDesignTime)();

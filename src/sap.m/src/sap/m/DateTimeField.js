@@ -225,11 +225,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Getter for property <code>dateValue</code>.
+	 *
+	 * The date and time in DateTimeField as UI5Date or JavaScript Date object.
+	 *
+	 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
+	 *
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|null} the value of property <code>dateValue</code>
+	 * @public
+	 * @name sap.m.DateTimeField#getDateValue
+	 * @method
+	 */
+
+	/**
 	 * Setter for property <code>dateValue</code>.
 	 *
 	 * The date and time in DateTimeField as UI5Date or JavaScript Date object.
 	 *
-	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate A date instance
+	 * @param {Date|module:sap/ui/core/date/UI5Date|null} oDate A date instance
 	 * @returns {this} Reference to <code>this</code> for method chaining
 	 * @public
 	 */

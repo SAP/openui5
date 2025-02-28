@@ -8,7 +8,7 @@ var DocCommentHighlightRules = function () {
                 token: "comment.doc.tag",
                 regex: "@\\w+(?=\\s|$)"
             }, DocCommentHighlightRules.getTagRule(), {
-                defaultToken: "comment.doc",
+                defaultToken: "comment.doc.body",
                 caseInsensitive: true
             }
         ]
@@ -23,14 +23,14 @@ DocCommentHighlightRules.getTagRule = function (start) {
 };
 DocCommentHighlightRules.getStartRule = function (start) {
     return {
-        token: "comment.doc",
-        regex: "\\/\\*(?=\\*)",
+        token: "comment.doc", // doc comment
+        regex: /\/\*\*(?!\/)/,
         next: start
     };
 };
 DocCommentHighlightRules.getEndRule = function (start) {
     return {
-        token: "comment.doc",
+        token: "comment.doc", // closing comment
         regex: "\\*\\/",
         next: start
     };
@@ -97,7 +97,7 @@ var JavaHighlightRules = function () {
             },
             DocCommentHighlightRules.getStartRule("doc-start"),
             {
-                token: "comment",
+                token: "comment", // multi line comment
                 regex: "\\/\\*",
                 next: "comment"
             },
@@ -131,7 +131,7 @@ var JavaHighlightRules = function () {
                         token: "text",
                         regex: "\\s+"
                     }, {
-                        regex: "",
+                        regex: "", // exit if there is anything else
                         next: "start"
                     }]
             },
@@ -139,7 +139,7 @@ var JavaHighlightRules = function () {
         ],
         "comment": [
             {
-                token: "comment",
+                token: "comment", // closing comment
                 regex: "\\*\\/",
                 next: "start"
             }, {
@@ -180,10 +180,10 @@ var JavaHighlightRules = function () {
                     }
                 ]
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }
         ],
@@ -245,10 +245,10 @@ var JavaHighlightRules = function () {
         ],
         "constants": [
             {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: /0(?:[xX][0-9a-fA-F][0-9a-fA-F_]*|[bB][01][01_]*)[LlSsDdFfYy]?\b/
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: /[+-]?\d[\d_]*(?:(?:\.[\d_]*)?(?:[eE][+-]?[\d_]+)?)?[LlSsDdFfYy]?\b/
             }, {
                 token: "constant.language.boolean",
@@ -270,7 +270,7 @@ var JavaHighlightRules = function () {
                 token: "entity.name.function",
                 regex: identifierRe + "(?=\\()"
             }, {
-                token: keywordMapper,
+                token: keywordMapper, // TODO: Unicode escape sequences
                 regex: identifierRe + "\\b"
             }, {
                 token: "keyword.operator",
@@ -346,10 +346,10 @@ var DroolsHighlightRules = function () {
     }, "identifier");
     var stringRules = function () {
         return [{
-                token: "string",
+                token: "string", // single line
                 regex: '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
             }, {
-                token: "string",
+                token: "string", // single line
                 regex: "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }];
     };
@@ -360,14 +360,14 @@ var DroolsHighlightRules = function () {
             },
             DocCommentHighlightRules.getStartRule("doc-start"),
             {
-                token: "comment",
+                token: "comment", // multi line comment
                 regex: "\\/\\*",
                 next: blockCommentRules
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // hex
                 regex: "0[xX][0-9a-fA-F]+\\b"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
             }, {
                 token: "constant.language.boolean",
@@ -377,7 +377,7 @@ var DroolsHighlightRules = function () {
     var blockCommentRules = function (returnRule) {
         return [
             {
-                token: "comment.block",
+                token: "comment.block", // closing comment
                 regex: "\\*\\/",
                 next: returnRule
             }, {
