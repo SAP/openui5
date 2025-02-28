@@ -172,6 +172,17 @@ sap.ui.define([
 					"xx-designMode": true
 				}
 			},
+			"command/ExtendControllerCommand": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/ExtendControllerCommand"]
+				},
+				ui5: {
+					resourceroots: {
+						"rta/test": "test-resources/sap/ui/rta/"
+					}
+				}
+			},
 			"command/AnnotationCommand": {
 				group: "Command",
 				coverage: {
@@ -544,6 +555,17 @@ sap.ui.define([
 				group: "Plugin",
 				coverage: {
 					only: ["sap/ui/rta/plugin/DragDrop"]
+				}
+			},
+			"plugin/ExtendControllerPlugin": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/ExtendControllerPlugin"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
 				}
 			},
 			"plugin/LocalReset": {

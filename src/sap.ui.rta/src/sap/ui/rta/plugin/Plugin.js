@@ -38,6 +38,7 @@ sap.ui.define([
 		CTX_UNGROUP_FIELDS: 100,
 		CTX_ADDXML_AT_EXTENSIONPOINT: 105,
 		CTX_ADDXML: 106,
+		CTX_EXTEND_CONTROLLER: 107,
 		// Settings ranks go up 1 by 1 for each setting
 		CTX_SETTINGS: 110,
 		// IFrame ranks go up 1 by 1 for each possible child target
