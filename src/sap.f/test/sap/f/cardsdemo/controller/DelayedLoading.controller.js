@@ -121,6 +121,8 @@ sap.ui.define([
 				oContainer = this.byId("cardsContainer"),
 				bPreloadManifests = this.byId("preloadManifests").getSelected(),
 				bDataModeActive = this.byId("dataMode").getSelected(),
+				bDelayLoading = this.byId("delayLoading").getSelected(),
+				iMinDelay = parseInt(this.byId("loadingMinSeconds").getValue()) || 0,
 				oSample;
 
 			oContainer.destroyItems();
@@ -142,7 +144,9 @@ sap.ui.define([
 				} else { // manifest as url
 					oCard.setManifest(sap.ui.require.toUrl("sap/f/cardsdemo/" + oSample.manifest));
 				}
-
+				if (bDelayLoading) {
+					oCard.setManifestChanges([{ "/sap.card/configuration/loadingPlaceholders/delay": iMinDelay * 1000 }]);
+				}
 				oContainer.addItem(oCard);
 			}
 		},

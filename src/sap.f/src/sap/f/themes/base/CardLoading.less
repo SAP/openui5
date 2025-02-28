@@ -75,7 +75,7 @@
 			}
 		}
 
-		.sapFCardHeaderItemBinded::after {
+		&:not(.sapFCardLoadingDelayed).sapFCardHeaderItemBinded::after {
 			.sapFCardLoadingShimmerMixin();
 			content: "";
 			position: absolute;
@@ -119,7 +119,7 @@
 	}
 
 	&.sapFCardPreview .sapFCardFilter,
-	.sapFCardFilterLoading {
+	&:not(.sapFCardLoadingDelayed) .sapFCardFilterLoading {
 		position: relative;
 		&::after {
 			.sapFCardLoadingShimmerMixin();
@@ -216,7 +216,7 @@
 		}
 	}
 
-	.sapFCardLoadingShimmer {
+	&:not(.sapFCardLoadingDelayed) .sapFCardLoadingShimmer {
 		.sapFCardLoadingShimmerMixin();
 	}
 

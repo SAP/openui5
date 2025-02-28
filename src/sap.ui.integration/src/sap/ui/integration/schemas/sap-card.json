@@ -159,6 +159,16 @@
         "componentData": {
           "description": "[Experimental] Object which will be passed to the component as 'componentData'",
           "type": "object"
+        },
+        "loadingPlaceholders": {
+          "description": "[Experimental] Object which will represent the loading placeholder of the card",
+          "type": "object",
+          "properties": {
+            "delay": {
+              "description": "The delay of the loading placeholder",
+              "type": "number"
+            }
+          }
         }
       }
     },

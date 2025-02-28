@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/Destinations",
-	"sap/ui/integration/util/LoadingProvider",
+	"sap/ui/integration/util/DelayedLoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingResolver",
@@ -65,7 +65,7 @@ sap.ui.define([
 	fLibrary,
 	library,
 	Destinations,
-	LoadingProvider,
+	DelayedLoadingProvider,
 	HeaderFactory,
 	ContentFactory,
 	BindingResolver,
@@ -597,7 +597,7 @@ sap.ui.define([
 	Card.prototype.init = function () {
 		CardBase.prototype.init.call(this);
 
-		this.setAggregation("_loadingProvider", new LoadingProvider());
+		this.setAggregation("_loadingProvider", new DelayedLoadingProvider());
 
 		this._oIntegrationRb = Library.getResourceBundleFor("sap.ui.integration");
 		this._iModelSizeLimit = DEFAULT_MODEL_SIZE_LIMIT;
@@ -1911,6 +1911,7 @@ sap.ui.define([
 
 		this._applyModelSizeLimit();
 
+		this._applyLoadingDelay();
 		this._applyServiceManifestSettings();
 		this._applyFilterBarManifestSettings();
 		this._applyDataManifestSettings();
@@ -2216,6 +2217,14 @@ sap.ui.define([
 		}
 
 		this.fireEvent("_footerReady");
+	};
+
+	Card.prototype._applyLoadingDelay = function () {
+		const iLoadingDelay = parseInt(this.getManifestEntry("/sap.card/configuration/loadingPlaceholders/delay"));
+		if (!iLoadingDelay){
+			return;
+		}
+		this.getAggregation("_loadingProvider").applyDelay(iLoadingDelay);
 	};
 
 	/**
