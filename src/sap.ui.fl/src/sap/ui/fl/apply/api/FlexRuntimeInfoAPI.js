@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/InitialFlexAPI",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/VersionInfo"
@@ -25,6 +26,7 @@ sap.ui.define([
 	FlexConfiguration,
 	FlexInfoSession,
 	InitialFlexAPI,
+	Settings,
 	Layer,
 	Utils,
 	VersionInfo
@@ -245,6 +247,39 @@ sap.ui.define([
 				connector: sConnector,
 				version: oVersion.version
 			};
+		},
+
+		/**
+		 * Checks if the Settings are available and if so returns if the system is a customer system
+		 *
+		 * @returns {boolean} A boolean that indicates if the system is a customer system
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		isCustomerSystem() {
+			return Settings.getInstanceOrUndef()?.isCustomerSystem();
+		},
+
+		/**
+		 * Checks if the Settings are available and if so returns if the system is an ATO enabled system
+		 *
+		 * @returns {boolean} A boolean that indicates if the system is an ATO enabled system
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		isAtoEnabled() {
+			return Settings.getInstanceOrUndef()?.isAtoEnabled();
+		},
+
+		/**
+		 * Checks if the Settings are available and if so returns the system information
+		 *
+		 * @returns {string} System ID of the connected back end or undefined (when property <code>system</code> does not exist in the flex settings file)
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		getSystem() {
+			return Settings.getInstanceOrUndef()?.getSystem();
 		}
 	};
 

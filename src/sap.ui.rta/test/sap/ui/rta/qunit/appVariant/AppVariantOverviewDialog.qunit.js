@@ -1,20 +1,20 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
-	"sap/ui/rta/appVariant/Utils",
-	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
+	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	AppVariantOverviewDialog,
-	AppVariantOverviewUtils,
-	AppVariantUtils,
-	FlUtils,
+	FlexRuntimeInfoAPI,
 	AppVariantWriteAPI,
-	Settings,
+	FlUtils,
+	AppVariantOverviewDialog,
+	AppVariantUtils,
+	AppVariantOverviewUtils,
 	sinon
 ) {
 	"use strict";
@@ -35,14 +35,7 @@ sap.ui.define([
 	}
 
 	function simulateOnPremSystemConfig() {
-		sandbox.stub(Settings, "getInstance").resolves(
-			new Settings({
-				isKeyUser: true,
-				isAtoAvailable: false,
-				isAtoEnabled: false,
-				isProductiveSystem: false
-			})
-		);
+		sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 	}
 
 	QUnit.module("Given that a AppVariantOverviewDialog is available and getAppVariantOverview method is filled", {

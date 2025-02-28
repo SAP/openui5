@@ -145,13 +145,13 @@ var ShHighlightRules = function () {
                 token: "support.function",
                 regex: fileDescriptor
             }, {
-                token: "string",
+                token: "string", // ' string
                 start: "'", end: "'"
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // float
                 regex: floatNumber
             }, {
-                token: "constant.numeric",
+                token: "constant.numeric", // integer
                 regex: integer + "\\b"
             }, {
                 token: keywordMapper,

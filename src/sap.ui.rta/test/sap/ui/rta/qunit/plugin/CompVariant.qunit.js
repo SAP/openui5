@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CompVariant",
@@ -32,7 +31,6 @@ sap.ui.define([
 	SmartVariantManagementApplyAPI,
 	ContextSharingAPI,
 	SmartVariantManagementWriteAPI,
-	Settings,
 	Layer,
 	CommandFactory,
 	CompVariant,
@@ -86,7 +84,6 @@ sap.ui.define([
 			});
 		},
 		async beforeEach(assert) {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
 				commandFactory: new CommandFactory()
@@ -489,7 +486,6 @@ sap.ui.define([
 			});
 		},
 		async beforeEach(assert) {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
 				commandFactory: new CommandFactory()

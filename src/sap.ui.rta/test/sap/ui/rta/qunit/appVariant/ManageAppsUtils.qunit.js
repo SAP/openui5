@@ -1,22 +1,22 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/appVariant/Utils",
-	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/base/i18n/ResourceBundle",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/base/i18n/ResourceBundle",
+	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	AppVariantOverviewUtils,
-	AppVariantUtils,
+	ResourceBundle,
+	FlexRuntimeInfoAPI,
+	AppVariantWriteAPI,
 	Layer,
 	FlUtils,
-	Settings,
-	AppVariantWriteAPI,
-	ResourceBundle,
+	AppVariantUtils,
+	AppVariantOverviewUtils,
 	sinon
 ) {
 	"use strict";
@@ -58,14 +58,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
@@ -96,14 +89,7 @@ sap.ui.define([
 				appVarStatus: "U"
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
@@ -137,14 +123,7 @@ sap.ui.define([
 				appVarStatus: "R"
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
@@ -177,14 +156,7 @@ sap.ui.define([
 				hasStartableIntent: false
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
@@ -220,14 +192,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
@@ -264,14 +229,7 @@ sap.ui.define([
 				appVarStatus: "E"
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
@@ -311,14 +269,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.params, undefined, "then the params property does not exist");
@@ -356,14 +307,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
@@ -391,14 +335,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
 			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
@@ -469,14 +406,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
@@ -502,14 +432,7 @@ sap.ui.define([
 
 			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes) {
 				assert.equal(aAppVariantOverviewAttributes.length, 0, "then the result contains no app variant entries");
@@ -537,14 +460,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
 			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
@@ -613,14 +529,7 @@ sap.ui.define([
 				async: true
 			});
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
 			.then(function(aParams) {
@@ -733,14 +642,7 @@ sap.ui.define([
 
 			AppVariantUtils.setNewAppVariantId(null);
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
 			.then(function(aParams) {
@@ -834,14 +736,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 

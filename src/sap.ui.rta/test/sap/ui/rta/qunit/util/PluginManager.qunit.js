@@ -1,14 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Settings,
+	FeaturesAPI,
 	Layer,
 	CreateContainerPlugin,
 	SettingsPlugin,
@@ -22,20 +22,8 @@ sap.ui.define([
 	QUnit.module("Given PluginManager exists", {
 		beforeEach() {
 			this.oPluginManager = new PluginManager();
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled() {
-					return true;
-				},
-				isVersioningEnabled(sLayer) {
-					if (sLayer === Layer.USER) {
-						return true;
-					}
-					return false;
-				},
-				isLocalResetEnabled() {
-					return true;
-				}
-			});
+			sandbox.stub(FeaturesAPI, "isVariantAdaptationEnabled").returns(true);
+			sandbox.stub(FeaturesAPI, "isLocalResetEnabled").returns(true);
 		},
 		afterEach() {
 			this.oPluginManager.destroy();
@@ -185,27 +173,15 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with local reset unavailable", function(assert) {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled() {
-					return true;
-				},
-				isLocalResetEnabled() {
-					return false;
-				}
-			});
+			sandbox.stub(FeaturesAPI, "isVariantAdaptationEnabled").returns(true);
+			sandbox.stub(FeaturesAPI, "isLocalResetEnabled").returns(false);
 			const oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER}).localReset;
 			assert.equal(oDefaultLocalResetPlugin, undefined, "then the localReset plugin is not available");
 		});
 
 		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with local reset available", function(assert) {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled() {
-					return true;
-				},
-				isLocalResetEnabled() {
-					return true;
-				}
-			});
+			sandbox.stub(FeaturesAPI, "isVariantAdaptationEnabled").returns(true);
+			sandbox.stub(FeaturesAPI, "isLocalResetEnabled").returns(true);
 			const oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER});
 			assert.notEqual(oDefaultLocalResetPlugin, undefined, "then the localReset plugin is available");
 		});

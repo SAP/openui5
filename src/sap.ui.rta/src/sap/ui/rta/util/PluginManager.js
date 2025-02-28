@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/ToolHooks",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
@@ -34,7 +34,7 @@ sap.ui.define([
 	ManagedObject,
 	ContextMenuPlugin,
 	ToolHooksPlugin,
-	Settings,
+	FeaturesAPI,
 	Layer,
 	CommandFactory,
 	AdditionalElementsPlugin,
@@ -183,8 +183,7 @@ sap.ui.define([
 
 			this._mDefaultPlugins.stretch = new StretchPlugin();
 
-			var oSettings = Settings.getInstanceOrUndef();
-			if (oSettings && oSettings.isVariantAdaptationEnabled()) {
+			if (FeaturesAPI.isVariantAdaptationEnabled()) {
 				this._mDefaultPlugins.compVariant = new CompVariantPlugin({
 					commandFactory: this._oCommandFactory
 				});
@@ -202,8 +201,7 @@ sap.ui.define([
 
 			if (
 				oFlexSettings.layer === Layer.CUSTOMER
-				&& oSettings
-				&& oSettings.isLocalResetEnabled()
+				&& FeaturesAPI.isLocalResetEnabled()
 			) {
 				this._mDefaultPlugins.localReset = new LocalResetPlugin({
 					commandFactory: this._oCommandFactory

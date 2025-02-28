@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
@@ -75,7 +74,6 @@ sap.ui.define([
 	VersionsAPI,
 	TranslationAPI,
 	Layer,
-	Settings,
 	FlexUtils,
 	JSONModel,
 	Measurement,
@@ -485,7 +483,7 @@ sap.ui.define([
 				oRootControl,
 				this.fnOnPersonalizationChangeCreation
 			);
-			await checkFlexEnabled.call(this);
+			checkFlexEnabled.call(this);
 
 			this._sStatus = STARTED;
 			RuntimeAuthoring.disableRestart(this.getLayer());
@@ -928,10 +926,10 @@ sap.ui.define([
 		});
 	}
 
-	async function checkFlexEnabled() {
+	function checkFlexEnabled() {
 		const sUriParam = new URLSearchParams(window.location.search).get("sap-ui-rta-skip-flex-validation");
-		const oSettings = await Settings.getInstance();
-		if (!oSettings.isCustomerSystem() && sUriParam !== "true") {
+		const bIsCustomerSystem = FlexRuntimeInfoAPI.isCustomerSystem();
+		if (!bIsCustomerSystem && sUriParam !== "true") {
 			validateFlexEnabled(this);
 		}
 	}

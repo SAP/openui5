@@ -27,7 +27,10 @@ sap.ui.define([
 			}
 		}),
 		viewNamespace: "sap.ui.documentation.sdk.view.",
-		autoWait: true
+		autoWait: true,
+		appParams:  {
+			"sap-ui-xx-tracking": true
+		}
 	});
 });
 

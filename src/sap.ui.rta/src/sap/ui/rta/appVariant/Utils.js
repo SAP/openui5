@@ -2,19 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Utils",
 	"sap/base/i18n/ResourceBundle",
+	"sap/ui/core/IconPool",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/ui/core/IconPool"
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/appVariant/AppVariantUtils"
 ], function(
-	AppVariantUtils,
-	Settings,
-	FlUtils,
 	ResourceBundle,
+	IconPool,
+	FlexRuntimeInfoAPI,
 	AppVariantWriteAPI,
-	IconPool
+	FlUtils,
+	AppVariantUtils
 ) {
 	"use strict";
 
@@ -191,32 +191,29 @@ sap.ui.define([
 		// Calculate current status of application required for Overview Dialog
 		oAppVariantAttributes.currentStatus = this._calculateCurrentStatus(oAppVariantInfo.appId, oAppVariantInfo.appVarStatus);
 
-		var bIsS4HanaCloud;
-		return Settings.getInstance().then(function(oSettings) {
-			bIsS4HanaCloud = AppVariantUtils.isS4HanaCloud(oSettings);
-			// Populate the app variant attributes with the cloud system information
-			oAppVariantAttributes.isS4HanaCloud = bIsS4HanaCloud;
+		const bIsS4HanaCloud = FlexRuntimeInfoAPI.isAtoEnabled();
+		// Populate the app variant attributes with the cloud system information
+		oAppVariantAttributes.isS4HanaCloud = bIsS4HanaCloud;
 
-			var oPreparedObject = {
-				isKeyUser: bKeyUser,
-				isOriginal: oAppVariantInfo.isOriginal,
-				isS4HanaCloud: bIsS4HanaCloud,
-				appVarStatus: oAppVariantInfo.appVarStatus
-			};
+		var oPreparedObject = {
+			isKeyUser: bKeyUser,
+			isOriginal: oAppVariantInfo.isOriginal,
+			isS4HanaCloud: bIsS4HanaCloud,
+			appVarStatus: oAppVariantInfo.appVarStatus
+		};
 
-			if (oAppVariantInfo.hasStartableIntent) {
-				oPreparedObject.startWith = oAppVariantInfo.startWith;
-				return this._getNavigationInfo(oPreparedObject).then(function(oNavigationObject) {
-					oAppVariantAttributes = { ...oAppVariantAttributes, ...oNavigationObject };
-					return oAppVariantAttributes;
-				});
-			}
+		if (oAppVariantInfo.hasStartableIntent) {
+			oPreparedObject.startWith = oAppVariantInfo.startWith;
+			return this._getNavigationInfo(oPreparedObject).then(function(oNavigationObject) {
+				oAppVariantAttributes = { ...oAppVariantAttributes, ...oNavigationObject };
+				return oAppVariantAttributes;
+			});
+		}
 
-			oAppVariantAttributes.adaptUIButtonEnabled = false;
-			var oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
-			oAppVariantAttributes = { ...oAppVariantAttributes, ...oDeleteButtonProperties };
-			return Promise.resolve(oAppVariantAttributes);
-		}.bind(this));
+		oAppVariantAttributes.adaptUIButtonEnabled = false;
+		var oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
+		oAppVariantAttributes = { ...oAppVariantAttributes, ...oDeleteButtonProperties };
+		return Promise.resolve(oAppVariantAttributes);
 	};
 
 	Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {

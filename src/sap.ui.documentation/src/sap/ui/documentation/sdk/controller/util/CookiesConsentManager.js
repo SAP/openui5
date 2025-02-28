@@ -20,6 +20,7 @@ sap.ui.define(
         "use strict";
 
         const TRUST_ARC = {
+            CONSENT_PREFERENCES_ORIGIN: "https://consent-pref.trustarc.com",
             BASE_URL: "https://consent.trustarc.com/notice",
             URL_QUERY: "?domain=ui5.sap.com&c=teconsent&gtm=1&pcookie&js=nj&noticeType=bb&pn=1-0&privacypolicylink=https%3A%2F%2Fwww.sap.com%2Fabout%2Flegal%2Fprivacy.html&text=true&gtm=1",
             get COMPLETE_URL() {

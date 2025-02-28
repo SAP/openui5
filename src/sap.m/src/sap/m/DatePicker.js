@@ -358,7 +358,7 @@ sap.ui.define([
 	 * @returns {string} the value of property <code>displayFormat</code>
 	 * @public
 	 * @name sap.m.DatePicker#getDisplayFormat
-	 * @function
+	 * @method
 	 */
 
 	/**
@@ -375,7 +375,7 @@ sap.ui.define([
 	 * @returns {string} the value of property <code>valueFormat</code>
 	 * @public
 	 * @name sap.m.DatePicker#getValueFormat
-	 * @function
+	 * @method
 	 */
 
 	/**
@@ -383,10 +383,10 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 	 *
-	 * @returns {Date|module:sap/ui/core/date/UI5Date} the value of property <code>dateValue</code>
+	 * @returns {Date|module:sap/ui/core/date/UI5Date|null} the value of property <code>dateValue</code>
 	 * @public
 	 * @name sap.m.DatePicker#getDateValue
-	 * @function
+	 * @method
 	 */
 
 	DatePicker.prototype.init = function() {

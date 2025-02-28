@@ -1,9 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 16">
-<g stroke-width="2" stroke="blue" shape-rendering="geometricPrecision">
-<circle fill="none" cx="8" cy="8" r="7" stroke-linejoin="round"/>
-<polyline points="8 11 8 8"/>
-<polyline points="9 8 6 8"/>
-<line x1="10" y1="11" x2="6" y2="11"/>
-<rect x="8" y="5" width="0.01" height="0.01"/>
+<g stroke-width="2" stroke="darkorange" shape-rendering="geometricPrecision">
+<polygon stroke-linejoin="round" fill="none" points="8 1 15 15 1 15 8 1"/>
+<rect x="8" y="12" width="0.01" height="0.01"/>
+<line x1="8" y1="6" x2="8" y2="10"/>
 </g>
 </svg>

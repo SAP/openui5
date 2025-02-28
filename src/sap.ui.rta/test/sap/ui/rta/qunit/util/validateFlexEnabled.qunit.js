@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/Util",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/util/validateFlexEnabled",
@@ -21,7 +21,7 @@ sap.ui.define([
 	ComponentContainer,
 	Lib,
 	DtUtil,
-	Settings,
+	FlexRuntimeInfoAPI,
 	VerticalLayout,
 	nextUIUpdate,
 	validateFlexEnabled,
@@ -100,8 +100,8 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			stubMessageBoxAndLog();
+			sandbox.stub(FlexRuntimeInfoAPI, "isCustomerSystem");
 
-			sandbox.stub(Settings.prototype, "isCustomerSystem").returns(false);
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent
@@ -211,8 +211,8 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			stubMessageBoxAndLog();
+			sandbox.stub(FlexRuntimeInfoAPI, "isCustomerSystem");
 
-			sandbox.stub(Settings.prototype, "isCustomerSystem").returns(false);
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent
@@ -303,8 +303,8 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			stubMessageBoxAndLog();
+			sandbox.stub(FlexRuntimeInfoAPI, "isCustomerSystem");
 
-			sandbox.stub(Settings.prototype, "isCustomerSystem").returns(false);
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent

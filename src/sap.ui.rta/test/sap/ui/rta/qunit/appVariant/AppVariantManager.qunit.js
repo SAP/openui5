@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
@@ -31,7 +30,6 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	AppVariantFactory,
 	WriteUtils,
-	Settings,
 	Layer,
 	FlUtils,
 	Control,
@@ -169,7 +167,6 @@ sap.ui.define([
 				currentRunningInbound: "customer.savedAsAppVariant",
 				addNewInboundRequired: bAddNewInboundRequired
 			}));
-			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
@@ -282,14 +279,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			var oResponse = {
 				VariantId: "customer.TestId",
@@ -314,14 +304,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			var oResponse = {
 				IAMId: "IAMId",
@@ -344,14 +327,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment and response is failed", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").returns(Promise.reject("Error"));
 
@@ -383,14 +359,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment and response is failed", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").returns(Promise.reject("Error"));
 
@@ -422,14 +391,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana Cloud ('Save As' is triggered from RTA Toolbar)", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
@@ -444,14 +406,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana on premise ('Save As' is triggered from RTA Toolbar)", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
@@ -466,14 +421,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana Cloud ('Save As' is triggered from app variant overview list)", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: true,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
@@ -490,14 +438,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana on premise ('Save As' is triggered from app variant overview list)", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: true,
-					isAtoAvailable: false,
-					isAtoEnabled: false,
-					isProductiveSystem: false
-				})
-			);
+			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
