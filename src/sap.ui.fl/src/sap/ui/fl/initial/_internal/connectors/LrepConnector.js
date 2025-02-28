@@ -122,7 +122,12 @@ sap.ui.define([
 		 */
 		loadFlexData(mPropertyBag) {
 			if (mPropertyBag.cacheKey === "<NO CHANGES>") {
-				return Promise.resolve({ ...StorageUtils.getEmptyFlexDataResponse(), info: { allContextsProvided: true } });
+				/**
+				 * Currently LREP filters changes context-depended for cache key calculation and
+				 * can not provide the correct allContextsProvided value. Therefore, no assumption can be made
+				 * about the presence of changes in the response.
+				 */
+				return Promise.resolve({ ...StorageUtils.getEmptyFlexDataResponse() });
 			}
 
 			var mParameters = _pick(mPropertyBag, ["version", "allContexts", "adaptationId"]);
