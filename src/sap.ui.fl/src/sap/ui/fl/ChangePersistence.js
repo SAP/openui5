@@ -118,15 +118,21 @@ sap.ui.define([
 		this._deleteNotSavedChanges(aAllChanges, aCondensedChanges, bAlreadyDeletedViaCondense);
 	}
 
-	function getAllRelevantChangesForCondensing(aDirtyChanges, aDraftFilenames, bCondenseAnyLayer, sLayer) {
+	function getAllRelevantChangesForCondensing(aDirtyChanges, aDraftFilenames, bCondenseAnyLayer, sLayer, sReference) {
 		if (!aDirtyChanges.length && !bCondenseAnyLayer) {
 			return [];
 		}
-		var aPersistedAndSameLayerChanges = FlexState.getFlexObjectsDataSelector().get({reference: this._mComponent.name})
+
+		// Only consider changes that are persisted, on the same layer, part of the current draft (if applicable)
+		// and have the same reference (relevant for app variants)
+		const aRelevantChanges = FlexState.getFlexObjectsDataSelector().get({reference: sReference})
 		.filter(function(oChange) {
 			// CompVariants are currently saved separately and should not be part of the condense request
 			// TODO: Remove CompVariant special handling todos#5
 			if (oChange instanceof CompVariant) {
+				return false;
+			}
+			if (oChange.getFlexObjectMetadata().reference !== sReference) {
 				return false;
 			}
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
@@ -135,7 +141,7 @@ sap.ui.define([
 			return oChange.getState() === States.LifecycleState.PERSISTED
 				&& LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
 		});
-		return aPersistedAndSameLayerChanges.concat(aDirtyChanges);
+		return aRelevantChanges.concat(aDirtyChanges);
 	}
 
 	function checkLayerAndSingleTransportRequest(aDirtyChanges) {
@@ -209,14 +215,15 @@ sap.ui.define([
 		bCondenseAnyLayer,
 		sLayer
 	) {
-		const aDirtyChanges = aChanges || FlexObjectState.getDirtyFlexObjects(this._mComponent.name);
+		const sReference = this._mComponent.name;
+		const aDirtyChanges = aChanges || FlexObjectState.getDirtyFlexObjects(sReference);
 		const sCurrentLayer = aDirtyChanges.length && aDirtyChanges[0].getLayer() || sLayer;
-		const aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(
-			this,
+		const aRelevantChangesForCondensing = getAllRelevantChangesForCondensing(
 			aDirtyChanges,
 			aDraftFilenames,
 			bCondenseAnyLayer,
-			sCurrentLayer
+			sCurrentLayer,
+			sReference
 		);
 		const bIsCondensingEnabled = (
 			isBackendCondensingEnabled()
