@@ -193,9 +193,9 @@ sap.ui.define([
 					title: 'Child Item 3'
 				}]
 			}, {
-				title: 'Root Item',
+				title: 'Root Item with hidden expander',
 				icon: 'sap-icon://action-settings',
-				expanded: false,
+				hasExpander: false,
 				items: [{
 					title: 'Child Item 1'
 				}, {
@@ -365,6 +365,7 @@ sap.ui.define([
 						icon: '{icon}',
 						enabled: '{enabled}',
 						expanded: '{expanded}',
+						hasExpander: '{hasExpander}',
 						selectable: '{selectable}',
 						key: '{key}',
 						href: '{href}',
