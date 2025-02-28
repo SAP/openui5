@@ -32,7 +32,7 @@ sap.ui.define([
 	ChangeAnnotation.applyChange = function(oChange) {
 		return {
 			path: oChange.getContent().annotationPath,
-			value: oChange.getContent().value
+			value: oChange.getText("annotationText") || oChange.getContent().value
 		};
 	};
 
@@ -50,10 +50,15 @@ sap.ui.define([
 	 * @param {string} oSpecificChangeInfo.content.value - Value of the annotation to be changed
 	 */
 	ChangeAnnotation.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-		oChange.setContent({
-			annotationPath: oSpecificChangeInfo.content.annotationPath,
-			value: oSpecificChangeInfo.content.value
-		});
+		const oNewContent = {
+			annotationPath: oSpecificChangeInfo.content.annotationPath
+		};
+		if (oSpecificChangeInfo.content.text) {
+			oChange.setText("annotationText", oSpecificChangeInfo.content.text);
+		} else {
+			oNewContent.value = oSpecificChangeInfo.content.value;
+		}
+		oChange.setContent(oNewContent);
 	};
 
 	/**
