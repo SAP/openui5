@@ -389,9 +389,7 @@ sap.ui.define([
 		}
 
 		this._aWeekNumbers = aDisplayedDates.reduce(function (aWeekNumbers, oDay) {
-			var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType(), calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
-
-			var iWeekNumber = Number(oDateFormat.format(oDay.toUTCJSDate(), true));
+			var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay, this.getPrimaryCalendarType(), sLocale, this.getCalendarWeekNumbering(), this._getFirstWeekDay());
 
 			if (!aWeekNumbers.length || aWeekNumbers[aWeekNumbers.length - 1].number !== iWeekNumber) {
 				aWeekNumbers.push({

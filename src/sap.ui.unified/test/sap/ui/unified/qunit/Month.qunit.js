@@ -154,7 +154,7 @@ sap.ui.define([
 
 			var iWeekNumber = oMonth._calculateWeekNumber(oDate);
 			// Assert
-			assert.strictEqual(iWeekNumber, "6", "Week number is calculated correctly");
+			assert.strictEqual(iWeekNumber, 6, "Week number is calculated correctly");
 
 			// Clean
 			oMonth.destroy();
@@ -1394,7 +1394,7 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(
-				oHandleWeekSelectionBySingleIntervalSpy.calledWith("2", oStartDateInBounds, oMaxDate),
+				oHandleWeekSelectionBySingleIntervalSpy.calledWith(2, oStartDateInBounds, oMaxDate),
 				"Single interval selection called when inside the min/max constraints"
 			);
 
@@ -1416,7 +1416,7 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(
-				oHandleWeekSelectionByMultipleDaysSpy.calledWith("2", oStartDateInBounds, oMaxDate),
+				oHandleWeekSelectionByMultipleDaysSpy.calledWith(2, oStartDateInBounds, oMaxDate),
 				"Week selection by multiple day selection called when inside the min/max constraints"
 			);
 

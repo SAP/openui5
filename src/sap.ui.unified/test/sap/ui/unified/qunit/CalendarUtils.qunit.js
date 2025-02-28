@@ -188,16 +188,13 @@ sap.ui.define([
 		var iWeekNumber_enUS,
 			iWeekNumber_enUS_custom,
 			oDate,
-			oLocale,
-			oLocaleData;
+			iFirstDayOfWeek = 0;
 
 		oDate = UI5Date.getInstance(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
-		oLocale = new Locale('en-US');
-		oLocaleData = LocaleData.getInstance(oLocale);
 
 		// act
-		iWeekNumber_enUS = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US-x-sapufmt', oLocaleData);
-		iWeekNumber_enUS_custom = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-US', oLocaleData);
+		iWeekNumber_enUS = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDate), CalendarType.Gregorian, 'en-US-x-sapufmt', undefined, iFirstDayOfWeek);
+		iWeekNumber_enUS_custom = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDate), CalendarType.Gregorian, 'en-US', undefined, iFirstDayOfWeek);
 
 		// assert
 		assert.strictEqual(iWeekNumber_enUS, 47, "The week is 47 for 17.11.2016 when locale is en-US-x-sapufmt");
@@ -208,39 +205,38 @@ sap.ui.define([
 		// prepare
 		var oDateLastWeek = UI5Date.getInstance(2020, 11, 31, 6);
 		var oDateFirstWeek = UI5Date.getInstance(2021, 0, 1, 6);
-		var oLocale = new Locale('en');
-		var oLocaleData = LocaleData.getInstance(oLocale);
+		var iFirstDayOfWeek = 0;
 
 		this.stub(Formatting, "getLanguageTag").callsFake(function () {
 			return new LanguageTag("en-GB");
 		});
 
 		// act
-		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(oDateLastWeek, 2020, 'en', oLocaleData);
-		var iWeekNumberFirstWeek = CalendarUtils.calculateWeekNumber(oDateFirstWeek, 2021, 'en', oLocaleData);
+		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDateLastWeek), CalendarType.Gregorian, 'en', undefined , iFirstDayOfWeek);
+		var iWeekNumberFirstWeek = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDateFirstWeek), CalendarType.Gregorian, 'en', undefined , iFirstDayOfWeek);
 
 		// assert
-		assert.strictEqual(iWeekNumberLastWeek, 53, "The week is 53 for 31.12.2020 when locale is en");
-		assert.strictEqual(iWeekNumberFirstWeek, 53, "The week is 53 for 01.01.2021 when locale is en");
+		assert.strictEqual(iWeekNumberLastWeek, 1, "The week is 1 for 31.12.2020 when locale is en");
+		assert.strictEqual(iWeekNumberFirstWeek, 1, "The week is 1 for 01.01.2021 when locale is en");
 	});
 
 	QUnit.test("Week number for the turn of the year when locale is en_US", function(assert) {
 		// prepare
 		var oDateLastWeek = UI5Date.getInstance(2020, 11, 31, 6);
 		var oDateFirstWeek = UI5Date.getInstance(2021, 0, 1, 6);
-		var oLocale = new Locale('en_US');
-		var oLocaleData = LocaleData.getInstance(oLocale);
+		var iFirstDayOfWeek = 0;
 
 		this.stub(Formatting, "getLanguageTag").callsFake(function () {
 			return new LanguageTag("en-US");
 		});
 
 		// act
-		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(oDateLastWeek, 2020, 'en_US', oLocaleData);
-		var iWeekNumberFirstWeek = CalendarUtils.calculateWeekNumber(oDateFirstWeek, 2021, 'en_US', oLocaleData);
+		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDateLastWeek), CalendarType.Gregorian, 'en_US', undefined , iFirstDayOfWeek);
+		var iWeekNumberFirstWeek = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDateFirstWeek), CalendarType.Gregorian, 'en_US', undefined , iFirstDayOfWeek);
+
 
 		// assert
-		assert.strictEqual(iWeekNumberLastWeek, 53, "The week is 53 for 31.12.2020 when locale is en_US");
+		assert.strictEqual(iWeekNumberLastWeek, 1, "The week is 1 for 31.12.2020 when locale is en_US");
 		assert.strictEqual(iWeekNumberFirstWeek, 1, "The week is 1 for 01.01.2021 when locale is en_US");
 	});
 
@@ -248,16 +244,16 @@ sap.ui.define([
 		// prepare
 		var oDateLastWeek = UI5Date.getInstance(2020, 11, 31, 6);
 		var oDateFirstWeek = UI5Date.getInstance(2021, 0, 1, 6);
-		var oLocale = new Locale('de');
-		var oLocaleData = LocaleData.getInstance(oLocale);
+		var iFirstDayOfWeek = 0;
 
 		this.stub(Formatting, "getLanguageTag").callsFake(function () {
 			return new LanguageTag("de");
 		});
 
 		// act
-		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(oDateLastWeek, 2020, 'de', oLocaleData);
-		var iWeekNumberFirstWeek = CalendarUtils.calculateWeekNumber(oDateFirstWeek, 2021, 'de', oLocaleData);
+		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDateLastWeek), CalendarType.Gregorian, 'de', undefined , iFirstDayOfWeek);
+		var iWeekNumberFirstWeek = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDateFirstWeek), CalendarType.Gregorian, 'de', undefined , iFirstDayOfWeek);
+
 
 		// assert
 		assert.strictEqual(iWeekNumberLastWeek, 53, "The week is 53 for 31.12.2020 when locale is de");
@@ -268,15 +264,12 @@ sap.ui.define([
 		// prepare
 		var iWeekNumber,
 			oDate,
-			oLocale,
-			oLocaleData;
+			iFirstDayOfWeek = 0;
 
 		oDate = UI5Date.getInstance(Date.UTC(2016, 10, 17, 0)); // 17.11.2016
-		oLocale = new Locale('en-GB');
-		oLocaleData = LocaleData.getInstance(oLocale);
 
 		// act
-		iWeekNumber = CalendarUtils.calculateWeekNumber(oDate, 2016, 'en-GB', oLocaleData);
+		iWeekNumber = CalendarUtils.calculateWeekNumber(CalendarDate.fromLocalJSDate(oDate), CalendarType.Gregorian, 'en-GB', undefined , iFirstDayOfWeek);
 
 		// assert
 		assert.strictEqual(iWeekNumber, 46, "The week is 46 for 17.11.2016 when locale is en-GB");

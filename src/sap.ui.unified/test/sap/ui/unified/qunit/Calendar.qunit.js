@@ -352,6 +352,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("week number with calendarWeekNumbering calculation", function(assert) {
+		Localization.setLanguage("de-DE");
 		// ISO_8601
 		this.oCal1.focusDate(UI5Date.getInstance(2011, 0, 10));
 		this.oCal1.setCalendarWeekNumbering("ISO_8601");
@@ -401,15 +402,18 @@ sap.ui.define([
 
 		// Prepare
 		oCore.applyChanges();
+
 		this.oCal122 = new Calendar("Cal122",{
 			calendarWeekNumbering: "WesternTraditional",
 			width: "400px"
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 
+
 		// Act
 		this.oCal122.focusDate(UI5Date.getInstance(2011, 0, 10));
 		oCore.applyChanges();
+
 		aMonths = jQuery("#Cal122-content").children(".sapUiCalMonthView");
 		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
 
@@ -439,6 +443,7 @@ sap.ui.define([
 	QUnit.test("week number calculation", function(assert) {
 		// en-US
 		this.oCal1.focusDate(UI5Date.getInstance(2011, 0, 10));
+
 		oCore.applyChanges();
 		var aMonths = jQuery("#Cal1-content").children(".sapUiCalMonthView"),
 			aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
