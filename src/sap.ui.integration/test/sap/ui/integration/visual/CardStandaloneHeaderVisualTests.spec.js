@@ -19,7 +19,6 @@ describe("sap.ui.integration.CardStandaloneHeaderVisualTests", function () {
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
-
 	it("Cloned Default Header", function () {
 		aDefaultCardIds.forEach((cardId) => {
 			utils.takePictureOfElement({
@@ -38,6 +37,37 @@ describe("sap.ui.integration.CardStandaloneHeaderVisualTests", function () {
 		});
 	});
 
+	it("Cloned Focused Default Header", function () {
+		const cardId = "card1";
+		const locator = {
+			controlType: "sap.ui.integration.cards.Header",
+			viewNamespace: "sap.f.cardsdemo.view.",
+			viewName: "ClonedHeader",
+			id: /.*-header-standalone/,
+			ancestor: {
+				id: `iHeaderContainer-${cardId}`,
+				viewNamespace: "sap.f.cardsdemo.view.",
+				viewName: "ClonedHeader"
+			}
+		};
+
+		const header = utils.getElement({
+			control: {
+				...locator,
+				interaction: "focus"
+			}
+		});
+
+		header.click();
+
+		utils.takePictureOfElement({
+			control: {
+				...locator,
+				interaction: "root"
+			}
+		}, `Cloned_Focused_Default_Header_${cardId}`);
+	});
+
 	it("Cloned Numeric Header", function () {
 		aNumericCardIds.forEach((cardId) => {
 			utils.takePictureOfElement({
@@ -54,6 +84,37 @@ describe("sap.ui.integration.CardStandaloneHeaderVisualTests", function () {
 				}
 			}, `Cloned_Numeric_Header_${cardId}`);
 		});
+	});
+
+	it("Cloned Focused Numeric Header", function () {
+		const cardId = "kpicard2";
+		const locator = {
+			controlType: "sap.ui.integration.cards.NumericHeader",
+			viewNamespace: "sap.f.cardsdemo.view.",
+			viewName: "ClonedHeader",
+			id: /.*-header-standalone/,
+			ancestor: {
+				id: `iNumericHeaderContainer-${cardId}`,
+				viewNamespace: "sap.f.cardsdemo.view.",
+				viewName: "ClonedHeader"
+			}
+		};
+
+		const header = utils.getElement({
+			control: {
+				...locator,
+				interaction: "focus"
+			}
+		});
+
+		header.click();
+
+		utils.takePictureOfElement({
+			control: {
+				...locator,
+				interaction: "root"
+			}
+		}, `Cloned_Focused_Numeric_Header_${cardId}`);
 	});
 
 	it("sap.f.Headers", function () {
