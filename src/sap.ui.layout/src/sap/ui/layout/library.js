@@ -829,6 +829,7 @@ sap.ui.define([
 	 * @since 1.60.0
 	 * @extends sap.ui.core.CSSSizeShortHand
 	 * @public
+	 * @deprecated since 1.135 use {@link sap.ui.core.CSSGapShortHand} instead
 	 * @namespace
 	 * @final
 	 */
