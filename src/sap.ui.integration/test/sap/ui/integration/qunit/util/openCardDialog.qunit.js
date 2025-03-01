@@ -191,6 +191,116 @@ sap.ui.define([
 		assert.strictEqual(oContentListRef.getAttribute("aria-labelledby"), oHeader.getTitleId(), "List content has correct aria-labelledby attribute");
 	});
 
+	QUnit.test("Resize after open", async function (assert) {
+		// Act
+		const oData = [];
+		for (let i = 0; i < 100; i++) {
+			oData.push({ title: "Item" + i });
+		}
+		const oDialog = openCardDialog(
+			this.oCard,
+			{
+				manifest: {
+					"sap.app": {
+						id: "test.card.resize",
+						type: "card"
+					},
+					"sap.card": {
+						type: "List",
+						data: {
+							name: "testModel",
+							json: oData.slice(0, 1) // 1 item
+						},
+						header: {
+							title: "Resize test"
+						},
+						content: {
+							data: {
+								path: "testModel>/"
+							},
+							item: {
+								title: "{testModel>title}"
+							}
+						}
+					}
+				}
+			}
+		);
+
+		await nextDialogAfterOpenEvent(oDialog);
+		await nextUIUpdate();
+
+		const iHeight1 = oDialog.getDomRef().getBoundingClientRect().height;
+
+		// Act
+		const oCard = oDialog.getContent()[0];
+		oCard.getModel("testModel").setData(oData); // 100 items
+
+		await nextUIUpdate();
+
+		// Assert - height increases
+		const iHeight2 = oDialog.getDomRef().getBoundingClientRect().height;
+		assert.ok(iHeight1 < iHeight2, "The dialog height has increased.");
+	});
+
+	QUnit.test("Do not shrink if list content gets smaller", async function (assert) {
+		// Act
+		const oData = [];
+		for (let i = 0; i < 100; i++) {
+			oData.push({ title: "Item" + i });
+		}
+		const oDialog = openCardDialog(
+			this.oCard,
+			{
+				manifest: {
+					"sap.app": {
+						id: "test.card.resize",
+						type: "card"
+					},
+					"sap.card": {
+						type: "List",
+						data: {
+							name: "testModel",
+							json: oData // 100 items
+						},
+						header: {
+							title: "Resize test"
+						},
+						content: {
+							data: {
+								path: "testModel>/"
+							},
+							item: {
+								title: "{testModel>title}"
+							}
+						}
+					}
+				}
+			}
+		);
+
+		await nextDialogAfterOpenEvent(oDialog);
+		await nextUIUpdate();
+
+		const iHeight1 = oDialog.getDomRef().getBoundingClientRect().height;
+
+		// Act
+		const oCard = oDialog.getContent()[0];
+		oCard.getModel("testModel").setData(oData.slice(0, 1)); // 1 item
+
+		await nextUIUpdate();
+
+		// Assert - height stays the same
+		const iHeight2 = oDialog.getDomRef().getBoundingClientRect().height;
+		assert.strictEqual(iHeight2, iHeight1, "The dialog height has not changed when content is less.");
+
+		// Assert - no scrollbar
+		const iContentSectionHeight = oCard.getDomRef("contentSection").getBoundingClientRect().height;
+		const iContentHeight = oCard.getCardContent().getDomRef().getBoundingClientRect().height;
+
+		assert.ok(iContentHeight <= iContentSectionHeight, "The content has no scrollbar when not needed.");
+	});
+
 	QUnit.test("After manifest changes", async function (assert) {
 		// Act
 		const oDialog = openCardDialog(
@@ -198,7 +308,8 @@ sap.ui.define([
 			{
 				manifest: {
 					"sap.app": {
-						id: "test.card"
+						id: "test.card",
+						type: "card"
 					},
 					"sap.card": {
 						type: "Table",

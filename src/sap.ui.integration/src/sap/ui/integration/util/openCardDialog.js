@@ -60,15 +60,6 @@ sap.ui.define([
 		});
 	}
 
-	function _enableResizing(oDialog, oChildCard) {
-		// We can not set the contentHeight during resize as the dialog "jumps" if invalidated then.
-		// So it needs to be done after open.
-		oDialog.attachAfterOpen(() => {
-			oChildCard.setHeight("100%");
-			oDialog.setContentHeight(oDialog.getDomRef("cont").offsetHeight + "px");
-		});
-	}
-
 	function _setDialogHeader(oDialog, oChildCard) {
 		const oHeader = oChildCard.getCardHeader();
 		if (!oHeader) {
@@ -151,7 +142,6 @@ sap.ui.define([
 
 		if (!Device.system.phone) {
 			_addAnimationDelegate(oDialog, oParentCard);
-			_enableResizing(oDialog, oChildCard);
 		}
 
 		oChildCard.attachManifestReady(() => {

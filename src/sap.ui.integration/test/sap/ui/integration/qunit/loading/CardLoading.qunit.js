@@ -2362,6 +2362,52 @@ sap.ui.define([
 			assert.strictEqual(oLogSpy.calledWithExactly(sinon.match("The manifest is not ready"), "sap.ui.integration.widgets.Card"), false, "Error for early usage of manifest was not reported");
 		});
 
+		async function assertPlaceholderDelay(assert, oManifest) {
+			var done = assert.async();
+			var oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			const delayedLoadingApplied = sinon.spy(oCard.getAggregation("_loadingProvider"), "applyDelay");
+
+			oCard.setManifest(oManifest);
+			oCard.setManifestChanges([{ "/sap.card/configuration/loadingPlaceholders/delay": 100 }]);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			const oLoadingProvider = oCard.getAggregation("_loadingProvider"),
+				bDelay = oLoadingProvider.getDelayed();
+
+			assert.ok(oCard.getDomRef().classList.contains("sapFCardLoadingDelayed"), "Card has the delayed loading class");
+			assert.ok(bDelay, "Loading placeholder should be delayed");
+			assert.ok(delayedLoadingApplied.called, "Loading placeholder gets the delay applied");
+			assert.ok(delayedLoadingApplied.calledWith(100), "Loading placeholder gets the correct delay");
+
+			setTimeout(() => {
+				assert.notOk(oCard.getDomRef().classList.contains("sapFCardLoadingDelayed"), "Card has the delayed loading class removed.");
+				oCard.destroy();
+				done();
+			}, 200);
+		}
+
+		QUnit.module("Loading placeholders delay for different card types");
+
+		[
+			{ type: "AdaptiveCard", manifest: oManifest_AdaptiveCard },
+			{ type: "Calendar", manifest: oManifest_Calendar_CardLevel },
+			{ type: "List", manifest: oManifest_List_CardLevel },
+			{ type: "Object", manifest: oManifest_ObjectCard },
+			{ type: "Table", manifest: oManifest_TableCard_WithCardLevelData },
+			{ type: "WebPage", manifest: oManifest_WebPageCard }
+		].forEach(function (oCase) {
+
+			QUnit.test("Card type: '" + oCase.type + "' has '" + oCase.placeholder + "' placeholder delayed", async function (assert) {
+				await assertPlaceholderDelay(assert, oCase.manifest);
+			});
+		});
+
 		var oPromiseVizModule =  Library.load("sap.viz").then(function () {
 			QUnit.module("Analytical Loading", {
 				beforeEach: function () {

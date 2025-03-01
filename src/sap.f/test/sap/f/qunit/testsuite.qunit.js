@@ -51,6 +51,16 @@ sap.ui.define(function () {
 				}
 			},
 
+			"cards/CardHeaders": {
+				coverage: {
+					only: [
+						"sap/f/cards/BaseHeader",
+						"sap/f/cards/Header",
+						"sap/f/cards/NumericHeader"
+					]
+				}
+			},
+
 			"cards/util/addTooltipIfTruncated": {},
 
 			"cards/CardBadgeCustomData": {

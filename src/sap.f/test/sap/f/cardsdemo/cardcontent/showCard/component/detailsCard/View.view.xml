@@ -4,7 +4,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	width="100%">
-	<VBox justifyContent="SpaceBetween" class="sapUiSmallMargin">
+	<VBox id="container" justifyContent="SpaceBetween" class="sapUiSmallMargin">
+		<Button text="Change Size" press=".onChangeSizePress" class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
 		<HBox justifyContent="SpaceBetween" renderType="Bare">
 			<ComboBox
 				class="sapUiSmallMarginEnd"

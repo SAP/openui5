@@ -461,7 +461,7 @@ sap.ui.define([
 		 *   Maps a control ID having a field help information to the control ID at which it shall be displayed
 		 */
 		_getFieldHelpDisplayMapping() {
-			const mControlIDToFieldHelpDisplayControlID = {};
+			const mControlIDToDisplayControlID = {};
 			for (const sControlID in this.#mDocuRefControlToFieldHelp) {
 				const oControl = Element.getElementById(sControlID);
 				if (!oControl) { // control has been destroyed, cleanup internal data structure
@@ -477,10 +477,10 @@ sap.ui.define([
 					oTempControl = oTempControl.getParent();
 				} while (!sFieldHelpDisplayControlId && oTempControl);
 				if (sFieldHelpDisplayControlId) {
-					mControlIDToFieldHelpDisplayControlID[sControlID] = sFieldHelpDisplayControlId;
+					mControlIDToDisplayControlID[sControlID] = sFieldHelpDisplayControlId;
 				}
 			}
-			return mControlIDToFieldHelpDisplayControlID;
+			return mControlIDToDisplayControlID;
 		}
 
 		/**
@@ -489,20 +489,13 @@ sap.ui.define([
 		 * @returns {module:sap/ui/core/fieldhelp/FieldHelpInfo[]} The array of field help hotspots
 		 */
 		_getFieldHelpHotspots() {
-			const mControlIDToFieldHelpDisplayControlID = this._getFieldHelpDisplayMapping();
-			const oFieldHelpDisplayControlIDToAddedURNs = {};
+			const mControlIDToDisplayControlID = this._getFieldHelpDisplayMapping();
+			const mDisplayControlIDToURNs = new Map();
 			const aFieldHelpHotspots = [];
 			Object.keys(this.#mDocuRefControlToFieldHelp).forEach((sControlID) => {
-				const sControlIDToDisplayFieldHelp = mControlIDToFieldHelpDisplayControlID[sControlID] || sControlID;
-				const oControl = Element.getElementById(sControlIDToDisplayFieldHelp);
-				const sLabel = LabelEnablement._getLabelTexts(oControl)[0];
-				if (!sLabel) {
-					Log.error(`Cannot find a label for control '${sControlID}'; ignoring field help`,
-						JSON.stringify(this.#mDocuRefControlToFieldHelp[sControlID]), sClassName);
-
-					return;
-				}
-				const oURNSet = new Set();
+				const sDisplayControlID = mControlIDToDisplayControlID[sControlID] || sControlID;
+				const oURNSet = mDisplayControlIDToURNs.get(sDisplayControlID)
+					?? mDisplayControlIDToURNs.set(sDisplayControlID, new Set()).get(sDisplayControlID);
 				const aDocuRefsForControl = this.#mDocuRefControlToFieldHelp[sControlID][undefined];
 				const aDocuRefs = aDocuRefsForControl
 					? [aDocuRefsForControl]
@@ -510,13 +503,17 @@ sap.ui.define([
 				aDocuRefs.forEach((aURNs) => {
 					aURNs.forEach(oURNSet.add.bind(oURNSet)); // add to the Set to filter duplicates
 				});
-				Array.from(oURNSet).forEach((sURN) => {
-					if (oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp]?.[sURN]) {
-						return; // already added for another control
-					}
+			});
 
-					oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp] ??= {};
-					oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp][sURN] = true;
+			for (const [sDisplayControlID, oURNSet] of mDisplayControlIDToURNs) {
+				const oControl = Element.getElementById(sDisplayControlID);
+				const sLabel = LabelEnablement._getLabelTexts(oControl)[0];
+				if (!sLabel) {
+					Log.error(`Cannot find a label for control '${sDisplayControlID}'; ignoring field help`,
+						Array.from(oURNSet).join(), sClassName);
+					continue;
+				}
+				for (const sURN of oURNSet) {
 					const oParameters = new URLSearchParams(sURN.slice(sURNPrefix.length));
 					const sOrigin = oParameters.get("origin");
 					aFieldHelpHotspots.push({
@@ -525,11 +522,11 @@ sap.ui.define([
 							type: oParameters.get("type"),
 							...(sOrigin && {origin: sOrigin})
 						},
-						hotspotId: sControlIDToDisplayFieldHelp,
+						hotspotId: sDisplayControlID,
 						labelText: sLabel
 					});
-				});
-			});
+				}
+			}
 
 			return aFieldHelpHotspots;
 		}
