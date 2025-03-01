@@ -32,7 +32,8 @@ describe("sap.ui.integration.CardStandaloneHeaderVisualTests", function () {
 							id: `iHeaderContainer-${cardId}`,
 							viewNamespace: "sap.f.cardsdemo.view.",
 							viewName: "ClonedHeader"
-					}
+					},
+					interaction: "root"
 				}
 			}, `Cloned_Default_Header_${cardId}`);
 		});
@@ -50,7 +51,8 @@ describe("sap.ui.integration.CardStandaloneHeaderVisualTests", function () {
 							id: `iNumericHeaderContainer-${cardId}`,
 							viewNamespace: "sap.f.cardsdemo.view.",
 							viewName: "ClonedHeader"
-					}
+					},
+					interaction: "root"
 				}
 			}, `Cloned_Numeric_Header_${cardId}`);
 		});

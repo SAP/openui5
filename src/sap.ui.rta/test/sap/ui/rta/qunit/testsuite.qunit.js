@@ -741,6 +741,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/hasStableId"]
 				}
 			},
+			"util/isReuseComponent": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/isReuseComponent"]
+				}
+			},
 			"util/validateFlexEnabled": {
 				group: "util",
 				coverage: {

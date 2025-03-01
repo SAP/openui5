@@ -10,11 +10,11 @@
 	}
 }
 
-.sapMDialog.sapUiIntCardDialog.sapUiIntCardDialogAnimate {
-	transition: opacity 0.4s, left 0.4s, top 0.4s;
-}
+.sapMDialog.sapUiIntCardDialog {
 
-.sapUiIntCardDialog {
+	&.sapUiIntCardDialogAnimate {
+		transition: opacity 0.4s, left 0.4s, top 0.4s;
+	}
 
 	.sapMDialogSection,
 	.sapMDialogScroll,
@@ -22,6 +22,12 @@
 	.sapUiIntCard {
 		/* allows scrolling inside the card content instead of dialog content */
 		max-height: inherit;
+	}
+
+	.sapUiIntCard,
+	.sapMDialogScrollCont {
+		/* allows resizing */
+		height: 100%;
 	}
 
 	.sapFCardHeader {

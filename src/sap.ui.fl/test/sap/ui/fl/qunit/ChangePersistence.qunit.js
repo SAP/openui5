@@ -119,7 +119,8 @@ sap.ui.define([
 				changeType: "addField",
 				selector: {id: "control1"},
 				content: {},
-				originalLanguage: "DE"
+				originalLanguage: "DE",
+				reference: sReference
 			},
 			oCustomContent1
 		);
@@ -132,7 +133,8 @@ sap.ui.define([
 				changeType: "addField",
 				selector: {id: "control1"},
 				content: {},
-				originalLanguage: "DE"
+				originalLanguage: "DE",
+				reference: sReference
 			},
 			oCustomContent2
 		);
@@ -832,6 +834,45 @@ sap.ui.define([
 			assert.notOk(
 				this.oCondenserStub.getCalls()[0].args[1].includes(oCompVariant),
 				"the condenser was called without the CompVariant"
+			);
+		});
+
+		QUnit.test("Persisted flex objects with a different reference should not be part of the condense process", async function(assert) {
+			// Example scenario: Changes from base app inside adaptation project
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: () => true,
+				hasPersoConnector: () => false,
+				isPublicLayerAvailable: () => false,
+				getUserId: () => "USER_123"
+			});
+
+			addTwoChanges(
+				sReference,
+				this.oComponentInstance,
+				Layer.CUSTOMER,
+				Layer.CUSTOMER
+			);
+			const aPersistedChanges = addTwoChanges(
+				sReference,
+				this.oComponentInstance,
+				Layer.CUSTOMER,
+				Layer.CUSTOMER,
+				{ fileName: "ChangeFileName2", reference: "anotherReference" },
+				{ fileName: "ChangeFileName3", reference: "anotherReference" }
+			);
+			aPersistedChanges.forEach((oChange) => oChange.setState(States.LifecycleState.PERSISTED));
+
+			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			assert.strictEqual(
+				this.oCondenserStub.getCalls()[0].args[1].length,
+				2,
+				"the condenser was called with the correct amount of changes"
+			);
+			assert.notOk(
+				this.oCondenserStub.getCalls()[0].args[1].some((oChange) => (
+					oChange.getDefinition().reference === "anotherReference"
+				)),
+				"the condenser was called without the changes from the other reference"
 			);
 		});
 

@@ -52,7 +52,6 @@ sap.ui.define([
 		BaseContent.prototype.init.apply(this, arguments);
 		this._oAwaitingPromise = null;
 		this._fMinHeight = 0;
-		this._bIsFirstRendering = true;
 	};
 
 	/**
@@ -65,11 +64,9 @@ sap.ui.define([
 	};
 
 	BaseListContent.prototype.onAfterRendering = function () {
-		if (!this._bIsFirstRendering) {
+		if (this.isReady() && this.getCardInstance()?.isReady()) {
 			this._keepHeight();
 		}
-
-		this._bIsFirstRendering = false;
 	};
 
 	BaseListContent.prototype.onDataChanged = function () {
@@ -103,10 +100,16 @@ sap.ui.define([
 			return;
 		}
 
-		var fCurrentHeight = this.getDomRef().getBoundingClientRect().height;
-
+		const fCurrentHeight = this.getDomRef().getBoundingClientRect().height;
 		if (fCurrentHeight > this._fMinHeight) {
 			this._fMinHeight = fCurrentHeight;
+		}
+
+		// should not exceed the card content section height in cases where content is overflowing
+		const oContainer = this.getCardInstance()?.getDomRef("contentSection");
+		const fContainerHeight = oContainer?.getBoundingClientRect().height;
+		if (fContainerHeight && this._fMinHeight > fContainerHeight) {
+			this._fMinHeight = fContainerHeight;
 		}
 
 		if (this._fMinHeight) {

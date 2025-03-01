@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="utf-8">
+	<title>Loading Placeholders</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Loading Placeholders</h1>
+			<p>
+				Loading placeholders inform the user that a card is performing a background task, such as fetching data from the backend.
+			</p>
+
+			<h2 id="properties">Loading Placeholder Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>delay</td>
+						<td>Integer</td>
+						<td>No</td>
+						<td>
+							The delay in milliseconds, after which the loading placeholders will show up. This delay applies only for the initial loading.
+						</td>
+						<td>1.56.0</td>
+						<td>1.134</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="examples">Example</h2>
+			<p>An example of a card with delay of the loading placeholder:</p>
+			<pre class="lang-json">
+{
+	"sap.card": {
+		"type": "List",
+		"configuration" : {
+			<mark>"loadingPlaceholders": {
+				"delay": 2000
+			}</mark>
+		},
+		"header": {
+			"title": "Some title",
+			"subTitle": "Date: {parameters>/TODAY_ISO}"
+		},
+		...
+	}
+}</pre>
+		</div>
+	</div>
+</body>
+
+</html>

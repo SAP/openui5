@@ -40,7 +40,7 @@ sap.ui.define([], function () {
 
 		this.renderMainPart(oRm, oHeader);
 
-		if (bHasNumericPart) {
+		if (bHasNumericPart && !oError) {
 			this.renderNumericPart(oRm, oHeader);
 		}
 

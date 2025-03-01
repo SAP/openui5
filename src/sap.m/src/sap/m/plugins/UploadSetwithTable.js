@@ -409,6 +409,9 @@ sap.ui.define([
 			this.getConfig("setModelName", this.getControl());
 		}
 	};
+	UploadSetwithTable.prototype.init = function () {
+		setPluginBaseConfigs();	// Set PluginBase configurations
+	};
 
 	UploadSetwithTable.prototype.onActivate = function (oControl) {
 
@@ -1654,422 +1657,399 @@ sap.ui.define([
 		}
 	};
 
-
-	PluginBase.setConfigs({
-	 "sap.ui.mdc.Table": {
-		_oPluginInstance: null,
-		_oControlInstance: null,
-		_sModelName: undefined,
-		_bIsTableBound: false,
-		setPluginInstance: function(oPlugin) {
-			this._oPluginInstance = oPlugin;
-		},
-		getPluginInstance: function() {
-			return this._oPluginInstance;
-		},
-		setControlInstance: function(oControl) {
-			this._oControlInstance = oControl;
-		},
-		getControlInstance: function() {
-			return this._oControlInstance;
-		},
-		setPluginDefaultSettings: function() {
-			const oPlugin = this.getPluginInstance();
-			if (oPlugin.getUploadEnabled()) {
-				this.setDragDropConfig();
-			}
-			this.setDefaultIllustrations();
-		},
-		setIsTableBound: function(oControl) {
-			const oTable = oControl?._oTable;
-			if (oTable && (oTable?.getBinding("rows") || oTable?.getBinding("items"))) {
-				this._bIsTableBound = true;
-			} else {
-				this._bIsTableBound = false;
-			}
-		},
-		getIsTableBound: function() {
-			return this._bIsTableBound;
-		},
-		setModelName: function(oControl) {
-			const oTable = oControl?._oTable;
-			if (oTable?.isA("sap.m.Table")) {
-				this._sModelName = oTable?.getBindingInfo("items")?.model;
-			} else if (oTable?.isA("sap.ui.table.Table")) {
-				this._sModelName = oTable?.getBindingInfo("rows")?.model;
-			}
-		},
-		getModelName: function() {
-			return this._sModelName;
-		},
-		// Set Drag and Drop configuration for the table when upload plugin is activated.
-		setDragDropConfig: function () {
-			// Loading MDC library's Drag and Drop configuration for the table.
-			sap.ui.require(["sap/ui/mdc/table/DragDropConfig"], (MDCDragDropConfig) => {
-
+	function setPluginBaseConfigs() {
+		PluginBase.setConfigs({
+		 "sap.ui.mdc.Table": {
+			_oPluginInstance: null,
+			_oControlInstance: null,
+			_sModelName: undefined,
+			_bIsTableBound: false,
+			setPluginInstance: function(oPlugin) {
+				this._oPluginInstance = oPlugin;
+			},
+			getPluginInstance: function() {
+				return this._oPluginInstance;
+			},
+			setControlInstance: function(oControl) {
+				this._oControlInstance = oControl;
+			},
+			getControlInstance: function() {
+				return this._oControlInstance;
+			},
+			setPluginDefaultSettings: function() {
+				const oPlugin = this.getPluginInstance();
+				if (oPlugin.getUploadEnabled()) {
+					this.setDragDropConfig();
+				}
+				this.setDefaultIllustrations();
+			},
+			setIsTableBound: function(oControl) {
+				const oTable = oControl?._oTable;
+				if (oTable && (oTable?.getBinding("rows") || oTable?.getBinding("items"))) {
+					this._bIsTableBound = true;
+				} else {
+					this._bIsTableBound = false;
+				}
+			},
+			getIsTableBound: function() {
+				return this._bIsTableBound;
+			},
+			setModelName: function(oControl) {
+				const oTable = oControl?._oTable;
+				if (oTable?.isA("sap.m.Table")) {
+					this._sModelName = oTable?.getBindingInfo("items")?.model;
+				} else if (oTable?.isA("sap.ui.table.Table")) {
+					this._sModelName = oTable?.getBindingInfo("rows")?.model;
+				}
+			},
+			getModelName: function() {
+				return this._sModelName;
+			},
+			// Set the drag and drop configuration for the table when the upload plugin is activated.
+			setDragDropConfig: function () {
+				// Loading MDC library's Drag and Drop configuration for the table.
+				sap.ui.require(["sap/ui/mdc/table/DragDropConfig"], (MDCDragDropConfig) => {
+					const oPlugin = this.getPluginInstance();
+					const oControl = this.getControlInstance();
+					const oDragDropConfig = oPlugin._oDragDropConfig = new MDCDragDropConfig({
+						droppable: true
+					});
+					oDragDropConfig.attachDrop(oPlugin._onDropFile.bind(oPlugin));
+					oControl.addDragDropConfig(oDragDropConfig);
+				}, () => {
+					Log.error("Failed to load MDC library for Drag and Drop configuration.");
+				});
+			},
+			resetDragDropConfig: function() {
 				const oPlugin = this.getPluginInstance();
 				const oControl = this.getControlInstance();
-				const oDragDropConfig = oPlugin._oDragDropConfig = new MDCDragDropConfig({
-					droppable: true
+				if (oPlugin && oControl && oPlugin._oDragDropConfig) {
+					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+					oPlugin._oDragDropConfig = null;
+				}
+			},
+			// Set the default illustrations for the table when no data is available and only when the upload plugin is activated.
+			setDefaultIllustrations: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				const oNoDataIllustration = oPlugin?.getNoDataIllustration();
+				if (oControl && oPlugin) {
+					if (!oNoDataIllustration) {
+						oPlugin._illustratedMessage = oPlugin._getDefaultNoDataIllustration();
+					} else {
+						oPlugin._illustratedMessage = oNoDataIllustration;
+					}
+					oControl.setNoData(oPlugin._illustratedMessage);
+			}
+			},
+			cleanupPluginInstanceSettings: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				// remove nodata aggregations added from plugin activation.
+				if (oControl) {
+					oControl.setNoData(null);
+				}
+				if (oPlugin) {
+					oPlugin.setPreviewDialog(null);
+					oPlugin._illustratedMessage = null;
+				}
+				if (oPlugin._oDragDropConfig && oControl) {
+					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+					oPlugin._oDragDropConfig = null;
+				}
+			},
+			// Handles the preview of the passed context. Requires access to all the contexts of inner table to setup the preview along with carousel.
+			openFilePreview: async function(oBindingContext) {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				const oRowConfiguration = oPlugin.getRowConfiguration();
+				const oContexts = this.getTableContexts(oControl?._oTable);
+				let aUploadSetItems = [];
+				if (oContexts?.length) {
+					aUploadSetItems = await oPlugin.getItemsMap(oContexts, oRowConfiguration);
+					const oPreviewUploaditem = aUploadSetItems.find((oItem) => oItem?.data("path") === oBindingContext.getPath());
+					if (oPreviewUploaditem) {
+						oPlugin._initiateFilePreview(oPreviewUploaditem, aUploadSetItems);
+					}
+				}
+			},
+			// Handles the download of the file through the passed context.
+			download: async function(mDownloadInfo) {
+				const {oBindingContext, bAskForLocation} = mDownloadInfo;
+				const oPlugin = this.getPluginInstance();
+				const oItem = await oPlugin.getItemForContext(oBindingContext);
+				if (oItem && oItem.getUrl()) {
+					return oPlugin._initiateFileDownload(oItem, bAskForLocation);
+				}
+				return false;
+			},
+			getTableContexts: function(oTable) {
+				if (oTable?.isA("sap.m.Table")) {
+					return oTable.getBinding("items").getCurrentContexts();
+				} else if (oTable?.isA("sap.ui.table.Table")) {
+					return oTable?.getBinding("rows")?.getCurrentContexts();
+				}
+				return null;
+			}
+		 },
+		 "sap.m.Table": {
+			_oPluginInstance: null,
+			_oControlInstance: null,
+			_sModelName: undefined,
+			_bIsTableBound: false,
+			setPluginInstance: function(oPlugin) {
+				this._oPluginInstance = oPlugin;
+			},
+			getPluginInstance: function() {
+				return this._oPluginInstance;
+			},
+			setControlInstance: function(oControl) {
+				this._oControlInstance = oControl;
+			},
+			getControlInstance: function() {
+				return this._oControlInstance;
+			},
+			setPluginDefaultSettings: function() {
+				const oPlugin = this.getPluginInstance();
+				if (oPlugin.getUploadEnabled()) {
+					this.setDragDropConfig();
+				}
+				this.setDefaultIllustrations();
+			},
+			setIsTableBound: function(oControl) {
+				if (oControl?.getBinding("items")) {
+					this._bIsTableBound = true;
+				} else {
+					this._bIsTableBound = false;
+				}
+			},
+			getIsTableBound: function() {
+				return this._bIsTableBound;
+			},
+			setModelName: function(oControl) {
+				if (oControl?.isA("sap.m.Table")) {
+					this._sModelName = oControl?.getBindingInfo("items")?.model;
+				}
+			},
+			getModelName: function() {
+				return this._sModelName;
+			},
+			// Set the drag and drop configuration for the table when upload plugin is activated.
+			setDragDropConfig: function () {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
+					sourceAggregation: "items",
+					targetAggregation: "items"
 				});
-
-				oDragDropConfig.attachDrop(oPlugin._onDropFile.bind(oPlugin));
-				oControl.addDragDropConfig(oDragDropConfig);
-
-			}, () => {
-				Log.error("Failed to load MDC library for Drag and Drop configuration.");
-			});
-		},
-		resetDragDropConfig: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-			if (oPlugin && oControl && oPlugin._oDragDropConfig) {
-				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
-				oPlugin._oDragDropConfig = null;
-			}
-		},
-		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
-		setDefaultIllustrations: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-			const oNoDataIllustration = oPlugin?.getNoDataIllustration();
-
-			if (oControl && oPlugin) {
-				if (!oNoDataIllustration) {
-					oPlugin._illustratedMessage = oPlugin._getDefaultNoDataIllustration();
-				} else {
-					oPlugin._illustratedMessage = oNoDataIllustration;
+				var oDropConfig = oPlugin._oDropConfig = new DropInfo({
+					dropEffect:"Move",
+					dropPosition:"OnOrBetween",
+					dragEnter: [oPlugin?._onDragEnterFile, oPlugin],
+					drop: [oPlugin?._onDropFile, oPlugin]
+				});
+				oControl?.addDragDropConfig(oDragDropConfig);
+				oControl?.addDragDropConfig(oDropConfig);
+			},
+			resetDragDropConfig: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				if (oPlugin && oControl) {
+					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+					oControl.removeDragDropConfig(oPlugin._oDropConfig);
+					oPlugin._oDragDropConfig = null;
+					oPlugin._oDropConfig = null;
 				}
-				oControl.setNoData(oPlugin._illustratedMessage);
-		}
-		},
-		cleanupPluginInstanceSettings: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			// remove nodata aggregations added from plugin activation.
-			if (oControl) {
-				oControl.setNoData(null);
-			}
-			if (oPlugin) {
-				oPlugin.setPreviewDialog(null);
-				oPlugin._illustratedMessage = null;
-			}
-
-			if (oPlugin._oDragDropConfig && oControl) {
-				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
-				oPlugin._oDragDropConfig = null;
-			}
-		},
-		// Handles preview of the context passed. Requires access to all the contexts of inner table to setup the preview along with carousel.
-		openFilePreview: async function(oBindingContext) {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			const oRowConfiguration = oPlugin.getRowConfiguration();
-			const oContexts = this.getTableContexts(oControl?._oTable);
-			let aUploadSetItems = [];
-			if (oContexts?.length) {
-				aUploadSetItems = await oPlugin.getItemsMap(oContexts, oRowConfiguration);
+			},
+			// Set default illustrations for the table when no data is available. Set only when the upload plugin is activated.
+			setDefaultIllustrations: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				const oNoDataIllustration = oPlugin?.getNoDataIllustration();
+				if (oControl && oPlugin) {
+					if (!oNoDataIllustration) {
+						oPlugin._illustratedMessage = oPlugin._getDefaultNoDataIllustration();
+					} else {
+						oPlugin._illustratedMessage = oNoDataIllustration;
+					}
+					oControl.setNoData(oPlugin._illustratedMessage);
+                                }
+			},
+			cleanupPluginInstanceSettings: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				// remove nodata aggregations added from plugin activation.
+				if (oControl) {
+					oControl.setNoData(null);
+				}
+				if (oPlugin) {
+					oPlugin.setPreviewDialog(null);
+					oPlugin._illustratedMessage = null;
+				}
+				if (oPlugin._oDragDropConfig && oControl) {
+					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+					oPlugin._oDragDropConfig = null;
+				}
+			},
+			// Handles preview of the passed context. Requires access to all the contexts of inner table to setup the preview along with carousel.
+			openFilePreview: async function(oBindingContext) {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				const oRowConfiguration = oPlugin.getRowConfiguration();
+				const oContexts = this.getTableContexts(oControl);
+				let aUploadSetItems = [];
+				if (oContexts?.length) {
+					aUploadSetItems = await oPlugin.getItemsMap(oContexts, oRowConfiguration);
+				}
 				const oPreviewUploaditem = aUploadSetItems.find((oItem) => oItem?.data("path") === oBindingContext.getPath());
-
 				if (oPreviewUploaditem) {
 					oPlugin._initiateFilePreview(oPreviewUploaditem, aUploadSetItems);
 				}
+			},
+			// Handles download of the file through the passed context.
+			download: async function(mDownloadInfo) {
+				const {oBindingContext, bAskForLocation} = mDownloadInfo;
+				const oPlugin = this.getPluginInstance();
+				const oItem = await oPlugin.getItemForContext(oBindingContext);
+				if (oItem && oItem.getUrl()) {
+					return oPlugin._initiateFileDownload(oItem, bAskForLocation);
+				}
+				return false;
+			},
+			getTableContexts: function(oTable) {
+				return oTable?.getBinding("items")?.getCurrentContexts() || null;
 			}
-
-		},
-		// Handles download of the file through the context passed.
-		download: async function(mDownloadInfo) {
-			const {oBindingContext, bAskForLocation} = mDownloadInfo;
-			const oPlugin = this.getPluginInstance();
-			const oItem = await oPlugin.getItemForContext(oBindingContext);
-			if (oItem && oItem.getUrl()) {
-				return oPlugin._initiateFileDownload(oItem, bAskForLocation);
-			}
-			return false;
-		},
-		getTableContexts: function(oTable) {
-			if (oTable?.isA("sap.m.Table")) {
-				return oTable.getBinding("items").getCurrentContexts();
-			} else if (oTable?.isA("sap.ui.table.Table")) {
-				return oTable?.getBinding("rows")?.getCurrentContexts();
-			}
-			return null;
-		}
-	 },
-	 "sap.m.Table": {
-		_oPluginInstance: null,
-		_oControlInstance: null,
-		_sModelName: undefined,
-		_bIsTableBound: false,
-		setPluginInstance: function(oPlugin) {
-			this._oPluginInstance = oPlugin;
-		},
-		getPluginInstance: function() {
-			return this._oPluginInstance;
-		},
-		setControlInstance: function(oControl) {
-			this._oControlInstance = oControl;
-		},
-		getControlInstance: function() {
-			return this._oControlInstance;
-		},
-		setPluginDefaultSettings: function() {
-			const oPlugin = this.getPluginInstance();
-			if (oPlugin.getUploadEnabled()) {
-				this.setDragDropConfig();
-			}
-			this.setDefaultIllustrations();
-		},
-		setIsTableBound: function(oControl) {
-			if (oControl?.getBinding("items")) {
-				this._bIsTableBound = true;
-			} else {
-				this._bIsTableBound = false;
-			}
-		},
-		getIsTableBound: function() {
-			return this._bIsTableBound;
-		},
-		setModelName: function(oControl) {
-			if (oControl?.isA("sap.m.Table")) {
-				this._sModelName = oControl?.getBindingInfo("items")?.model;
-			}
-		},
-		getModelName: function() {
-			return this._sModelName;
-		},
-		// Set Drag and Drop configuration for the table when upload plugin is activated.
-		setDragDropConfig: function () {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
-				sourceAggregation: "items",
-				targetAggregation: "items"
-			});
-			var oDropConfig = oPlugin._oDropConfig = new DropInfo({
-				dropEffect:"Move",
-				dropPosition:"OnOrBetween",
-				dragEnter: [oPlugin?._onDragEnterFile, oPlugin],
-				drop: [oPlugin?._onDropFile, oPlugin]
-			});
-			oControl?.addDragDropConfig(oDragDropConfig);
-			oControl?.addDragDropConfig(oDropConfig);
-		},
-		resetDragDropConfig: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-			if (oPlugin && oControl) {
-				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
-				oControl.removeDragDropConfig(oPlugin._oDropConfig);
-				oPlugin._oDragDropConfig = null;
-				oPlugin._oDropConfig = null;
-			}
-		},
-		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
-		setDefaultIllustrations: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-			const oNoDataIllustration = oPlugin?.getNoDataIllustration();
-
-			if (oControl && oPlugin) {
-				if (!oNoDataIllustration) {
-					oPlugin._illustratedMessage = oPlugin._getDefaultNoDataIllustration();
+		 },
+		 "sap.ui.table.Table": {
+			_oPluginInstance: null,
+			_oControlInstance: null,
+			_sModelName: undefined,
+			_bIsTableBound: false,
+			setPluginInstance: function(oPlugin) {
+				this._oPluginInstance = oPlugin;
+			},
+			getPluginInstance: function() {
+				return this._oPluginInstance;
+			},
+			setControlInstance: function(oControl) {
+				this._oControlInstance = oControl;
+			},
+			getControlInstance: function() {
+				return this._oControlInstance;
+			},
+			setPluginDefaultSettings: function() {
+				const oPlugin = this.getPluginInstance();
+				if (oPlugin.getUploadEnabled()) {
+					this.setDragDropConfig();
+				}
+				this.setDefaultIllustrations();
+			},
+			setIsTableBound: function(oControl) {
+				if (oControl?.getBinding("rows")) {
+					this._bIsTableBound = true;
 				} else {
-					oPlugin._illustratedMessage = oNoDataIllustration;
+					this._bIsTableBound = false;
 				}
-				oControl.setNoData(oPlugin._illustratedMessage);
-		}
-		},
-		cleanupPluginInstanceSettings: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			// remove nodata aggregations added from plugin activation.
-			if (oControl) {
-				oControl.setNoData(null);
-			}
-			if (oPlugin) {
-				oPlugin.setPreviewDialog(null);
-				oPlugin._illustratedMessage = null;
-			}
-
-			if (oPlugin._oDragDropConfig && oControl) {
-				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
-				oPlugin._oDragDropConfig = null;
-			}
-		},
-		// Handles preview of the context passed. Requires access to all the contexts of inner table to setup the preview along with carousel.
-		openFilePreview: async function(oBindingContext) {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			const oRowConfiguration = oPlugin.getRowConfiguration();
-			const oContexts = this.getTableContexts(oControl);
-			let aUploadSetItems = [];
-			if (oContexts?.length) {
-				aUploadSetItems = await oPlugin.getItemsMap(oContexts, oRowConfiguration);
-			}
-
-			const oPreviewUploaditem = aUploadSetItems.find((oItem) => oItem?.data("path") === oBindingContext.getPath());
-
-			if (oPreviewUploaditem) {
-				oPlugin._initiateFilePreview(oPreviewUploaditem, aUploadSetItems);
-			}
-		},
-		// Handles download of the file through the context passed.
-		download: async function(mDownloadInfo) {
-			const {oBindingContext, bAskForLocation} = mDownloadInfo;
-			const oPlugin = this.getPluginInstance();
-			const oItem = await oPlugin.getItemForContext(oBindingContext);
-			if (oItem && oItem.getUrl()) {
-				return oPlugin._initiateFileDownload(oItem, bAskForLocation);
-			}
-			return false;
-		},
-		getTableContexts: function(oTable) {
-			return oTable?.getBinding("items")?.getCurrentContexts() || null;
-		}
-	 },
-	 "sap.ui.table.Table": {
-		_oPluginInstance: null,
-		_oControlInstance: null,
-		_sModelName: undefined,
-		_bIsTableBound: false,
-		setPluginInstance: function(oPlugin) {
-			this._oPluginInstance = oPlugin;
-		},
-		getPluginInstance: function() {
-			return this._oPluginInstance;
-		},
-		setControlInstance: function(oControl) {
-			this._oControlInstance = oControl;
-		},
-		getControlInstance: function() {
-			return this._oControlInstance;
-		},
-		setPluginDefaultSettings: function() {
-			const oPlugin = this.getPluginInstance();
-			if (oPlugin.getUploadEnabled()) {
-				this.setDragDropConfig();
-			}
-			this.setDefaultIllustrations();
-		},
-		setIsTableBound: function(oControl) {
-			if (oControl?.getBinding("rows")) {
-				this._bIsTableBound = true;
-			} else {
-				this._bIsTableBound = false;
-			}
-		},
-		getIsTableBound: function() {
-			return this._bIsTableBound;
-		},
-		setModelName: function(oControl) {
-			if (oControl?.isA("sap.ui.table.Table")) {
-				this._sModelName = oControl?.getBindingInfo("rows")?.model;
-			}
-		},
-		getModelName: function() {
-			return this._sModelName;
-		},
-		// Set Drag and Drop configuration for the table when upload plugin is activated.
-		setDragDropConfig: function () {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
-				sourceAggregation: "rows",
-				targetAggregation: "rows"
-			});
-			var oDropConfig = oPlugin._oDropConfig = new DropInfo({
-				dropEffect:"Move",
-				dropPosition:"OnOrBetween",
-				dragEnter: [oPlugin?._onDragEnterFile, oPlugin],
-				drop: [oPlugin?._onDropFile, oPlugin]
-			});
-			oControl?.addDragDropConfig(oDragDropConfig);
-			oControl?.addDragDropConfig(oDropConfig);
-		},
-		resetDragDropConfig: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-			if (oPlugin && oControl) {
-				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
-				oControl.removeDragDropConfig(oPlugin._oDropConfig);
-				oPlugin._oDragDropConfig = null;
-				oPlugin._oDropConfig = null;
-			}
-		},
-		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
-		setDefaultIllustrations: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-			const oNoDataIllustration = oPlugin?.getNoDataIllustration();
-
-			if (oControl && oPlugin) {
-				if (!oNoDataIllustration) {
-					oPlugin._illustratedMessage = oPlugin._getDefaultNoDataIllustration();
-				} else {
-					oPlugin._illustratedMessage = oNoDataIllustration;
+			},
+			getIsTableBound: function() {
+				return this._bIsTableBound;
+			},
+			setModelName: function(oControl) {
+				if (oControl?.isA("sap.ui.table.Table")) {
+					this._sModelName = oControl?.getBindingInfo("rows")?.model;
 				}
-				oControl.setNoData(oPlugin._illustratedMessage);
-		}
-		},
-		cleanupPluginInstanceSettings: function() {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			// remove nodata aggregations added from plugin activation.
-			if (oControl) {
-				oControl.setNoData(null);
-			}
-			if (oPlugin) {
-				oPlugin.setPreviewDialog(null);
-				oPlugin._illustratedMessage = null;
-			}
-
-			if (oPlugin._oDragDropConfig && oControl) {
-				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
-				oPlugin._oDragDropConfig = null;
-			}
-		},
-		// Handles preview of the context passed. Requires access to all the contexts of inner table to setup the preview along with carousel.
-		openFilePreview: async function(oBindingContext) {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-
-			const oRowConfiguration = oPlugin.getRowConfiguration();
-			const oContexts = this.getTableContexts(oControl);
-			let aUploadSetItems = [];
-			if (oContexts?.length) {
-				aUploadSetItems = await oPlugin.getItemsMap(oContexts, oRowConfiguration);
-
-				const oPreviewUploaditem = aUploadSetItems.find((oItem) => oItem?.data("path") === oBindingContext.getPath());
-
-				if (oPreviewUploaditem) {
-					oPlugin._initiateFilePreview(oPreviewUploaditem, aUploadSetItems);
+			},
+			getModelName: function() {
+				return this._sModelName;
+			},
+			// Set the drag and drop configuration for the table when upload plugin is actived.
+			setDragDropConfig: function () {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
+					sourceAggregation: "rows",
+					targetAggregation: "rows"
+				});
+				var oDropConfig = oPlugin._oDropConfig = new DropInfo({
+					dropEffect:"Move",
+					dropPosition:"OnOrBetween",
+					dragEnter: [oPlugin?._onDragEnterFile, oPlugin],
+					drop: [oPlugin?._onDropFile, oPlugin]
+				});
+				oControl?.addDragDropConfig(oDragDropConfig);
+				oControl?.addDragDropConfig(oDropConfig);
+			},
+			resetDragDropConfig: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				if (oPlugin && oControl) {
+					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+					oControl.removeDragDropConfig(oPlugin._oDropConfig);
+					oPlugin._oDragDropConfig = null;
+					oPlugin._oDropConfig = null;
 				}
+			},
+			// Set the default illustrations for the table when no data is available. Set only when the upload plugin is activated.
+			setDefaultIllustrations: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				const oNoDataIllustration = oPlugin?.getNoDataIllustration();
+				if (oControl && oPlugin) {
+					if (!oNoDataIllustration) {
+						oPlugin._illustratedMessage = oPlugin._getDefaultNoDataIllustration();
+					} else {
+						oPlugin._illustratedMessage = oNoDataIllustration;
+					}
+					oControl.setNoData(oPlugin._illustratedMessage);
+                                }
+			},
+			cleanupPluginInstanceSettings: function() {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				// remove nodata aggregations added from plugin activation.
+				if (oControl) {
+					oControl.setNoData(null);
+				}
+				if (oPlugin) {
+					oPlugin.setPreviewDialog(null);
+					oPlugin._illustratedMessage = null;
+				}
+				if (oPlugin._oDragDropConfig && oControl) {
+					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+					oPlugin._oDragDropConfig = null;
+				}
+			},
+			// Handles preview of the passed context. Requires access to all the contexts of inner table to setup the preview along with carousel.
+			openFilePreview: async function(oBindingContext) {
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				const oRowConfiguration = oPlugin.getRowConfiguration();
+				const oContexts = this.getTableContexts(oControl);
+				let aUploadSetItems = [];
+				if (oContexts?.length) {
+					aUploadSetItems = await oPlugin.getItemsMap(oContexts, oRowConfiguration);
+					const oPreviewUploaditem = aUploadSetItems.find((oItem) => oItem?.data("path") === oBindingContext.getPath());
+					if (oPreviewUploaditem) {
+						oPlugin._initiateFilePreview(oPreviewUploaditem, aUploadSetItems);
+					}
+				}
+			},
+			// Handles download of the file through the context passed.
+			download: async function(mDownloadInfo) {
+				const {oBindingContext, bAskForLocation} = mDownloadInfo;
+				const oPlugin = this.getPluginInstance();
+				const oItem = await oPlugin.getItemForContext(oBindingContext);
+				if (oItem && oItem.getUrl()) {
+					return oPlugin._initiateFileDownload(oItem, bAskForLocation);
+				}
+				return false;
+			},
+			getTableContexts: function(oTable) {
+				return oTable?.getBinding("rows")?.getCurrentContexts() || null;
 			}
-
-		},
-		// Handles download of the file through the context passed.
-		download: async function(mDownloadInfo) {
-			const {oBindingContext, bAskForLocation} = mDownloadInfo;
-			const oPlugin = this.getPluginInstance();
-			const oItem = await oPlugin.getItemForContext(oBindingContext);
-			if (oItem && oItem.getUrl()) {
-				return oPlugin._initiateFileDownload(oItem, bAskForLocation);
-			}
-			return false;
-		},
-		getTableContexts: function(oTable) {
-			return oTable?.getBinding("rows")?.getCurrentContexts() || null;
-		}
-	 }
-	}, UploadSetwithTable);
+		 }
+		}, UploadSetwithTable);
+	}
 
 	return UploadSetwithTable;
 });
