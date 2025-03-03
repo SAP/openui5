@@ -26758,4 +26758,30 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		await this.waitForChanges(assert);
 		FieldHelp.getInstance().deactivate();
 	});
+
+	//*********************************************************************************************
+	// Scenario: When calling ODataModel#createEntry with an absolute path and a transient context it must not be
+	// treated as a deep create and the context can be ignored.
+	// SNOW: CS20250009324956
+	QUnit.test("createEntry: ignore transient context if path is absolute", async function (assert) {
+		const oModel = createSalesOrdersModel({useBatch : false});
+		const sView = '\
+<FlexBox id="objectPage">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+</FlexBox>';
+
+		await this.createView(assert, sView, oModel);
+
+		const oTransientContext = oModel.createEntry("/SalesOrderSet");
+
+		// code under test
+		const oCreatedContext = oModel.createEntry("/BusinessPartnerSet", {
+			context: oTransientContext,
+			properties : {BusinessPartnerID : "42"}
+		});
+
+		this.expectValue("id", "42");
+		this.oView.byId("objectPage").bindElement({path : oCreatedContext.getPath()});
+		await this.waitForChanges(assert);
+	});
 });
