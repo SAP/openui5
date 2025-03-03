@@ -1,0 +1,12 @@
+{
+  "1.134.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "502cce1f9fb77aa51666be5a28ea9e59e5d66e40",
+        "type": "FEATURE",
+        "text": " sap.m.FlexBox: gap, rowGap, and columnGap properties are now added"
+      }
+    ]
+  }
+}

@@ -1,7 +1,12 @@
 {
   "1.134.0": {
-    "date": "February 2025",
+    "date": "March 2025",
     "notes": [
+      {
+        "id": "3f8f42c062990a848812c8f099d337477fe12749",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Adjustment class added for table"
+      },
       {
         "id": "84e1ba98207d3484bdebd9f75bd2b385051fa687",
         "type": "FIX",

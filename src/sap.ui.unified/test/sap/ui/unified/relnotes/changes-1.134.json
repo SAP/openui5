@@ -1,7 +1,17 @@
 {
   "1.134.0": {
-    "date": "February 2025",
+    "date": "March 2025",
     "notes": [
+      {
+        "id": "9ab6cdb9ca911ae023791f62e830e5c120f38908",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarRow: Scroll issue fix"
+      },
+      {
+        "id": "87672fb8faa0a199586277d3f8cdbd2890c1c163",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: The selected color is now set in ColorPicker"
+      },
       {
         "id": "e8d93326217b376233d0f52d72c74b14af607f7d",
         "type": "FIX",

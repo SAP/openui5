@@ -1,7 +1,22 @@
 {
   "1.134.0": {
-    "date": "February 2025",
+    "date": "March 2025",
     "notes": [
+      {
+        "id": "f6d7ac7174e2fcd4e6826bd1de1c9d5c08cd7ba2",
+        "type": "FIX",
+        "text": " Integration Cards: Fix resizing when card is in a dialog"
+      },
+      {
+        "id": "5c0a57d506fd1cc1938cd1d0f96713ce2cc3da02",
+        "type": "FIX",
+        "text": " Integration Cards: Error in the header is now properly displayed when there is no content"
+      },
+      {
+        "id": "7e3bc5c284edf858c3f62ccf79878cf3590d430e",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Hide title announcement"
+      },
       {
         "id": "ba7c32f47e2acb3cc795ec4f7c3391030e165dad",
         "type": "FIX",

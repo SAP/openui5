@@ -1,7 +1,12 @@
 {
   "1.134.0": {
-    "date": "February 2025",
+    "date": "March 2025",
     "notes": [
+      {
+        "id": "7cc0ea1f3745db71dd53d2160963d40a080d3eb5",
+        "type": "FIX",
+        "text": " sap.ui.fl - Missing Growing after reopening ContextVisibility"
+      },
       {
         "id": "d7b095700df655b2a8a3d02562cc37cf24cf9d68",
         "type": "FIX",

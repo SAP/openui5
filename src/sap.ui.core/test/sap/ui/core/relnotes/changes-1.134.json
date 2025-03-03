@@ -1,7 +1,22 @@
 {
   "1.134.0": {
-    "date": "February 2025",
+    "date": "March 2025",
     "notes": [
+      {
+        "id": "502cce1f9fb77aa51666be5a28ea9e59e5d66e40",
+        "type": "FEATURE",
+        "text": " sap.m.FlexBox: gap, rowGap, and columnGap properties are now added"
+      },
+      {
+        "id": "f5d2a42bde45457f6f75c35ff1ca3d5ce97b0b01",
+        "type": "FIX",
+        "text": " sap/ui/model/analytics/AnalyticalBinding: avoid multiple leaf requests caused by watermark"
+      },
+      {
+        "id": "b1737b071382d5298a33d26f3d137cdce4834bf9",
+        "type": "FIX",
+        "text": " Test Starter: Improve sinon compatibility"
+      },
       {
         "id": "c0678a1b74296686f7019a86f748cac3ab5c2710",
         "type": "FIX",

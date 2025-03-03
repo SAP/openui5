@@ -1,7 +1,47 @@
 {
   "1.134.0": {
-    "date": "February 2025",
+    "date": "March 2025",
     "notes": [
+      {
+        "id": "1cb3b15d3de41942560e07388594ba368f9a91fa",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Updated documentation for DateValue"
+      },
+      {
+        "id": "c6bd5ef972fd7f1c88475d12af9ea476551f6ffd",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      },
+      {
+        "id": "932bb63e9b85a4016844e35145c21c534740d813",
+        "type": "FIX",
+        "text": " We've now mapped the correct UploadSetwithTable Plugin instance when multiple sap.m.Table instances are initialised"
+      },
+      {
+        "id": "502cce1f9fb77aa51666be5a28ea9e59e5d66e40",
+        "type": "FEATURE",
+        "text": " sap.m.FlexBox: gap, rowGap, and columnGap properties are now added"
+      },
+      {
+        "id": "66c0fcc61af5a202ae367110899fdc0a80268df1",
+        "type": "FIX",
+        "text": " We've now updated the character list used for file rename validation in the UploadSetwithTable plugin"
+      },
+      {
+        "id": "4dbfe8bbac424209ebda5a454850391fc417ae7e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Optimize appointment loading"
+      },
+      {
+        "id": "87672fb8faa0a199586277d3f8cdbd2890c1c163",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: The selected color is now set in ColorPicker"
+      },
+      {
+        "id": "ad958dde2abf6593f9f0a7ec67741f0e7530997c",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: Improvements based on user-testing now implemented"
+      },
       {
         "id": "246bb82bd77514000243b4c35fdecef211c3cca1",
         "type": "FIX",
