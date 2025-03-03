@@ -4,11 +4,13 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/DesignTime",
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialog",
 	"sap/ui/rta/plugin/Plugin"
 ], function(
 	BaseLog,
+	DesignTime,
 	DtUtil,
 	AnnotationChangeDialog,
 	Plugin
@@ -106,6 +108,12 @@ sap.ui.define([
 	 * @private
 	 */
 	AnnotationPlugin.prototype._isEditable = function(oElementOverlay) {
+		// Currently annotation changes are not supported for developers,
+		// because the changes are not guaranteed to be loaded in time to be properly applied
+		if (DesignTime.isDesignModeEnabled()) {
+			return false;
+		}
+
 		const oActions = this.getAction(oElementOverlay);
 
 		if (oActions) {
