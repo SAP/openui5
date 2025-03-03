@@ -2923,7 +2923,9 @@ sap.ui.define([
 [true, false].forEach(function (bSubmitModeIsAuto) {
 	[null, "[{code : 42}]"].forEach(function (sMessage) {
 		[false, true].forEach(function (bHasChanges) {
-	const sTitle = "sendBatch(...), message=" + sMessage + ", bHasChanges=" + bHasChanges;
+			[undefined, true].forEach(function (bContinueOnError) {
+	const sTitle = "sendBatch(...), message=" + sMessage + ", bHasChanges=" + bHasChanges
+		+ ", bContinueOnError=" + bContinueOnError;
 	QUnit.test(sTitle, function (assert) {
 		var oBatchRequest = {
 				body : "~body~",
@@ -2948,6 +2950,10 @@ sap.ui.define([
 
 		if (!bHasChanges) {
 			mExpectedBatchHeaders["sap-cancel-on-close"] = "true";
+		}
+		if (bContinueOnError) {
+			aBatchRequests.bContinueOnError = true;
+			mExpectedBatchHeaders.Prefer = "odata.continue-on-error";
 		}
 
 		this.mock(oRequestor).expects("getGroupSubmitMode")
@@ -2981,6 +2987,7 @@ sap.ui.define([
 					"Unexpected 'sap-messages' response header for batch request");
 			});
 	});
+			});
 		});
 	});
 });
@@ -4801,6 +4808,19 @@ sap.ui.define([
 });
 
 	//*****************************************************************************************
+	QUnit.test("setContinueOnError", function (assert) {
+		const oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+		const aRequests = [];
+		this.mock(oRequestor).expects("getOrCreateBatchQueue").withExactArgs("groupId")
+			.returns(aRequests);
+
+		// code under test
+		oRequestor.setContinueOnError("groupId");
+
+		assert.strictEqual(aRequests.bContinueOnError, true);
+	});
+
+	//*****************************************************************************************
 	QUnit.test("setSessionContext: SAP-Http-Session-Timeout=null", function (assert) {
 		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
@@ -5340,7 +5360,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("mergeGetRequests", function (assert) {
+[undefined, true].forEach((bContinueOnError) => {
+	QUnit.test("mergeGetRequests: bContinueOnError=" + bContinueOnError, function (assert) {
 		var oClone1 = {},
 			oClone6 = {},
 			oClone9 = {$expand : {np2 : null}},
@@ -5405,6 +5426,7 @@ sap.ui.define([
 			});
 
 		aRequests.iChangeSet = 1;
+		aRequests.bContinueOnError = bContinueOnError;
 		oHelperMock.expects("clone").withExactArgs(sinon.match.same(aRequests[1].$queryOptions))
 			.returns(oClone1);
 		oHelperMock.expects("aggregateExpandSelect")
@@ -5454,6 +5476,10 @@ sap.ui.define([
 
 		assert.strictEqual(aMergedRequests.length, 8);
 		assert.strictEqual(aMergedRequests.iChangeSet, aRequests.iChangeSet);
+		assert.strictEqual(aMergedRequests.bContinueOnError, bContinueOnError);
+		if (!bContinueOnError) {
+			assert.notOk("bContinueOnError" in aMergedRequests, "on demand!");
+		}
 		assert.strictEqual(aMergedRequests[0], aRequests[0]);
 		assert.strictEqual(aMergedRequests[1], aRequests[1]);
 		assert.strictEqual(aMergedRequests[2], aRequests[2]);
@@ -5472,6 +5498,7 @@ sap.ui.define([
 				"unchanged #" + i);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("addQueryString", function (assert) {
