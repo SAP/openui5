@@ -1662,7 +1662,7 @@ sap.ui.define([
 					assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
 					assert.deepEqual(oValueHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {isDefaultHelp: true}}, "base delegate used on ValueHelp");
 					oFieldEditSingle.focus();
-					assert.equal(oPopover.getTitle(), "", "no title on typeahead");
+					assert.equal(oPopover.getTitle(), "Test", "title on typeahead");
 
 					aContent = oFieldDisplay.getAggregation("_content");
 					oContent = aContent?.length > 0 && aContent[0];

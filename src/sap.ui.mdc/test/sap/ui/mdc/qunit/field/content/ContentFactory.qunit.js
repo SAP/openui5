@@ -551,7 +551,9 @@ sap.ui.define([
 						this.oContentFactory.updateDefaultValueHelpTitle(oCreatedControl, oDefalutHelp.updateTitle);
 						if (oDefalutHelp.updateTitle) { // test only if supported
 							assert.equal(oContainer.getTitle(), oDefalutHelp.updateTitle, "Title updated on Container for ContentType '" + sContentTypeName + ": Content");
-							assert.equal(oContent.getLabel(), oDefalutHelp.updateTitle, "Label updated on Content for ContentType '" + sContentTypeName + ": Content");
+							if (oContent.getLabel) {
+								assert.equal(oContent.getLabel(), oDefalutHelp.updateTitle, "Label updated on Content for ContentType '" + sContentTypeName + ": Content");
+							}
 						}
 					}
 				});
@@ -576,7 +578,7 @@ sap.ui.define([
 					[], // EditOperator BT
 					["sap.ui.mdc.field.FieldInput"] // EditForHelp
 				],
-				defaultHelp: {typeahead: "sap.ui.mdc.valuehelp.Popover", content: "sap.ui.mdc.valuehelp.content.Bool", updateTitle: ""}
+				defaultHelp: {typeahead: "sap.ui.mdc.valuehelp.Popover", content: "sap.ui.mdc.valuehelp.content.Bool", updateTitle: "Update"}
 			},
 			{
 				contentType: DateContent,
