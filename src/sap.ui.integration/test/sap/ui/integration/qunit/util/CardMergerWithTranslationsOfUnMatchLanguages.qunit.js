@@ -40,6 +40,9 @@ sap.ui.define([
 		}
 	};
 	var _oTextsOfString1 = {
+		"en-US": {
+			"/sap.card/configuration/parameters/stringParameter/value": "String1 en-US"
+		},
 		"cy-GB": {
 			"/sap.card/configuration/parameters/stringParameter/value": "String1 cy-GB"
 		},
@@ -63,6 +66,9 @@ sap.ui.define([
 		}
 	};
 	var _oTextsOfString2 = {
+		"en-US": {
+			"/sap.card/configuration/parameters/stringParameter/value": "String2 en-US"
+		},
 		"ms-MY": {
 			"/sap.card/configuration/parameters/stringParameter/value": "String2 ms-MY"
 		},
@@ -103,6 +109,7 @@ sap.ui.define([
 		"string1": {
 			"default": "string1",
 			"cy-GB": "String1 cy-GB",
+			"en": "String1 en-US",
 			"da": "String1 da-DK",
 			"hi": "String1 hi-IN",
 			"hu": "String1 hu-HU",
@@ -112,6 +119,7 @@ sap.ui.define([
 		},
 		"string2": {
 			"default": "string2",
+			"en": "String2 en-US",
 			"ms": "String2 ms-MY",
 			"nl": "String2 nl-NL",
 			"nb-NO": "String2 nb-NO",
@@ -123,6 +131,7 @@ sap.ui.define([
 		"string1string2NoTransValue": {
 			"default": "string2",
 			"cy-GB": "String1 cy-GB",
+			"en": "String1 en-US",
 			"da": "String1 da-DK",
 			"hi": "String1 hi-IN",
 			"hu": "String1 hu-HU",
@@ -134,6 +143,7 @@ sap.ui.define([
 			"default": "string2",
 			"cy-GB": "String1 cy-GB",
 			"da": "String1 da-DK",
+			"en": "String2 en-US",
 			"hi": "String1 hi-IN",
 			"hu": "String1 hu-HU",
 			"id": "String1 id-ID",
