@@ -1192,6 +1192,15 @@ sap.ui.define([
 					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
+			/**
+			 * @deprecated As of 1.124, replaced by the artifacts in {@link sap.m.p13n}.
+			 */
+			P13nPanel: {
+				title: "Test Page for sap.m.P13nPanel",
+				sinon: {
+					useFakeTimers: false
+				}
+			},
 			P13nSelectionPanel: {
 				title: "Test Page for sap.m.P13nSelectionPanel",
 				sinon: {
@@ -1283,6 +1292,9 @@ sap.ui.define([
 				sinon: {
 					useFakeTimers: true
 				}
+			},
+			PullToRefresh: {
+				title: "Test Page for sap.m.PullToRefresh"
 			},
 			PullToRefresh_desktop: {
 				title: "Test Page for sap.m.PullToRefresh on Desktop"
