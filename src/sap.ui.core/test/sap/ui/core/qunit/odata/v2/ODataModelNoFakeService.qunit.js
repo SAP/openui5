@@ -3587,7 +3587,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("createEntry: fallback to default groupId and changeSetId", function (assert) {
+[undefined, {isTransient () {}}].forEach((oTransientContext, i) => {
+	QUnit.test("createEntry: fallback to default groupId and changeSetId: " + i, function (assert) {
 		var fnAfterContextActivated,
 			oCreatedContext = {fetchActivated : function () {}},
 			oEntityMetadata = {entityType : "~entityType"},
@@ -3619,6 +3620,9 @@ sap.ui.define([
 			},
 			oRequest = {};
 
+		if (oTransientContext) {
+			this.mock(oTransientContext).expects("isTransient").never();
+		}
 		this.mock(oModel).expects("_isCanonicalRequestNeeded")
 			.withExactArgs(undefined)
 			.returns("~bCanonical");
@@ -3678,7 +3682,7 @@ sap.ui.define([
 			}});
 
 		// code under test
-		ODataModel.prototype.createEntry.call(oModel, "/~path", {properties : {}});
+		ODataModel.prototype.createEntry.call(oModel, "/~path", {properties : {}, context : oTransientContext});
 
 		this.mock(oCreatedContext).expects("fetchActivated").withExactArgs()
 			.returns({then : function (fnFunc) {
@@ -3697,6 +3701,7 @@ sap.ui.define([
 		// code under test
 		fnAfterContextActivated();
 	});
+});
 
 	//*********************************************************************************************
 [undefined, "~expand"].forEach(function (sExpand) {
