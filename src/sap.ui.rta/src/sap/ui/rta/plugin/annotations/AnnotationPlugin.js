@@ -125,6 +125,10 @@ sap.ui.define([
 	 * @public
 	 */
 	AnnotationPlugin.prototype.isEnabled = function(aElementOverlays) {
+		if (aElementOverlays.length !== 1) {
+			return false;
+		}
+
 		const oElementOverlay = aElementOverlays[0];
 		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
 		const oActions = this.getAction(oResponsibleElementOverlay);
