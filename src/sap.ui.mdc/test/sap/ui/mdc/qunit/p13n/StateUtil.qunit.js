@@ -1045,8 +1045,68 @@ sap.ui.define([
 
 		await applyState(true);
 		await applyState(false);
+	});
 
-		this.oTable.setType("Table");
+	QUnit.test("call 'diffState' to see the expected change difference for show details state", async function(assert) {
+		this.oTable.setType(new ResponsiveTableType({
+			showDetailsButton: true
+		}));
+		await this.oTable.initialized();
+
+		let oOldState = {};
+		let oNewState = {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						ResponsiveTable: {
+							showDetails: true
+						}
+					}
+				}
+			}
+		};
+
+		let oDiff = await StateUtil.diffState(this.oTable, oOldState, oNewState);
+		assert.deepEqual(oDiff, {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						ResponsiveTable: {
+							showDetails: true
+						}
+					}
+				}
+			}
+		}, "The diff should be the same as the new state");
+
+		oOldState = Object.assign({}, oNewState);
+		oNewState = {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						ResponsiveTable: {
+							showDetails: false
+						}
+					}
+				}
+			}
+		};
+
+		oDiff = await StateUtil.diffState(this.oTable, oOldState, oNewState);
+		assert.deepEqual(oDiff, {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						ResponsiveTable: {
+							showDetails: false
+						}
+					}
+				}
+			}
+		}, "The diff should be the same as the new state");
+
+		oDiff = await StateUtil.diffState(this.oTable, oOldState, oOldState);
+		assert.deepEqual(oDiff, { supplementaryConfig: {} }, "The diff should be empty");
 	});
 
 	QUnit.module("API tests for Table with V4 Analytics", {

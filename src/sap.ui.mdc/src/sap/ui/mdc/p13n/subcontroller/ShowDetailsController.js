@@ -4,8 +4,10 @@
 
 sap.ui.define([
 	"sap/m/p13n/SelectionController",
-	"sap/ui/mdc/enums/TableType"
-], (BaseController, TableType) => {
+	"sap/ui/mdc/enums/TableType",
+	'sap/m/p13n/modules/xConfigAPI',
+	"sap/base/util/merge"
+], (BaseController, TableType, xConfigAPI, merge) => {
 	"use strict";
 
 	/**
@@ -88,6 +90,35 @@ sap.ui.define([
 			};
 		}
 		return {};
+	};
+
+	/**
+	 * Transforms an array of show details changes to the state object representation
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.p13n
+	 * @param {object[]} aChanges An array of show details changes
+	 * @returns {object} The show details state
+	 */
+	ShowDetailsController.prototype.changesToState = function(aChanges) {
+		let oState = {};
+		const oControl = aChanges.length && aChanges[0].selectorElement;
+
+		aChanges.forEach((oChange) => {
+			const oChangeContent = merge({}, oChange.changeSpecificData.content);
+			const oXSettings = {
+				name: oChangeContent.name,
+				controlMeta: {
+					aggregation: "type"
+				},
+				property: "showDetails",
+				value: oChangeContent.value
+			};
+
+			oState = xConfigAPI.createAggregationConfig(oControl, oXSettings, oState);
+		});
+
+		return oState;
 	};
 
 	ShowDetailsController.prototype.sanityCheck = function(oState) {
