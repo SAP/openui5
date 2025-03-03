@@ -81,13 +81,14 @@ sap.ui.define([
 			if (oProperty.originalValue === oProperty.currentValue) {
 				return null;
 			}
-			return {
+			const oChangeSpecificData = {
 				serviceUrl: oModelData.serviceUrl,
 				content: {
-					annotationPath: oProperty.annotationPath,
-					value: oProperty.currentValue
+					annotationPath: oProperty.annotationPath
 				}
 			};
+			oChangeSpecificData.content[oModelData.valueType === AnnotationTypes.StringType ? "text" : "value"] = oProperty.currentValue;
+			return oChangeSpecificData;
 		})
 		.filter(Boolean);
 		this._fnResolveAfterClose(aChanges);

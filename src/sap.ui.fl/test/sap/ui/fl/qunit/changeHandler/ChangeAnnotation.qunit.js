@@ -55,6 +55,26 @@ sap.ui.define([
 				uniqueKey: "somePath_myChangeType"
 			}, "getCondenserInfo returns the correct result");
 		});
+
+		QUnit.test("with translatable texts", function(assert) {
+			ChangeAnnotation.completeChangeContent(this.oAnnotationChange, {
+				content: {
+					annotationPath: "somePath",
+					value: "someValue",
+					text: "someTextValue"
+				}
+			});
+			assert.deepEqual(this.oAnnotationChange.getContent(), {
+				annotationPath: "somePath"
+			}, "content was set correctly");
+			assert.strictEqual(this.oAnnotationChange.getText("annotationText"), "someTextValue", "text was set correctly");
+
+			const oApplyChangeResult = ChangeAnnotation.applyChange(this.oAnnotationChange);
+			assert.deepEqual(oApplyChangeResult, {
+				path: "somePath",
+				value: "someTextValue"
+			}, "applyChange returns the correct result");
+		});
 	});
 
 	QUnit.done(function() {

@@ -141,7 +141,7 @@ sap.ui.define([
 			description: sAnnotationDescription,
 			properties: aProperties, // all properties
 			changedProperties: aProperties.filter(({ annotationPath }) => aChangedAnnotations.includes(annotationPath)),
-			propertiesToDisplay: aProperties, // switches dynamcially between all properties and changed properties
+			propertiesToDisplay: aProperties, // switches dynamically between all properties and changed properties
 			showChangedPropertiesOnly: false,
 			filterText: sFilterText,
 			possibleValues: aPossibleValues,
