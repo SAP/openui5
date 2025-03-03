@@ -4,6 +4,8 @@
 sap.ui.define([
 	"./SelectionPlugin",
 	"./PluginBase",
+	"./SelectionModelSelection",
+	"./BindingSelection",
 	"../library",
 	"../utils/TableUtils",
 	"sap/ui/core/Icon",
@@ -12,6 +14,8 @@ sap.ui.define([
 ], function(
 	SelectionPlugin,
 	PluginBase,
+	SelectionModelSelectionPlugin,
+	BindingSelectionPlugin,
 	library,
 	TableUtils,
 	Icon,
@@ -24,9 +28,10 @@ sap.ui.define([
 	const SelectionMode = library.SelectionMode;
 
 	/**
-	 * Constructs an instance of sap.ui.table.plugins.MultiSelectionPlugin
+	 * Constructs an instance of sap.ui.table.plugins.MultiSelectionPlugin.
 	 *
-	 * @class Implements a plugin to enable a special multi-selection behavior:
+	 * @class
+	 * Implements a plugin to enable a special multi-selection behavior:
 	 * <ul>
 	 *   <li>Select All checkbox for selecting rows up to the set limit.<br>If the number of selected rows is smaller than the limit,
 	 *       all these rows can be selected at once with a single operation. If there are more rows than the limit,
@@ -42,13 +47,15 @@ sap.ui.define([
 	 * This plugin is intended for server-side models and multi-selection mode. Range selections, including Select All, only work properly if the
 	 * count is known. Make sure the model/binding is configured to request the count from the service.
 	 * For ease of use, client-side models and single selection are also supported.
-	 *
 	 * @extends sap.ui.table.plugins.SelectionPlugin
-	 * @constructor
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
 	 * @public
 	 * @since 1.64
-	 * @author SAP SE
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
+	 *
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
 	const MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata: {
@@ -130,12 +137,22 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.onActivate = function(oTable) {
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
-		this.oInnerSelectionPlugin = oTable._createLegacySelectionPlugin();
+		this.oInnerSelectionPlugin = createInnerSelectionPlugin(oTable);
 		this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
+		attachToBinding(this, oTable.getBinding());
 		oTable.addAggregation("_hiddenDependents", this.oInnerSelectionPlugin);
 		oTable.setProperty("selectionMode", this.getSelectionMode());
 		updateHeaderSelectorIcon(this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
 	};
+
+	function createInnerSelectionPlugin(oTable) {
+		if (oTable.isA(["sap.ui.table.TreeTable", "sap.ui.table.AnalyticalTable"])) {
+			return new BindingSelectionPlugin();
+		} else {
+			return new SelectionModelSelectionPlugin();
+		}
+	}
 
 	/**
 	 * @inheritDoc
@@ -143,12 +160,10 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
 		oTable.setProperty("selectionMode", SelectionMode.None);
-		detachFromBinding(this, this.getTableBinding());
-
-		if (this.oInnerSelectionPlugin) {
-			this.oInnerSelectionPlugin.destroy();
-			this.oInnerSelectionPlugin = null;
-		}
+		detachFromBinding(this, oTable.getBinding());
+		this.oInnerSelectionPlugin?.destroy();
+		delete this.oInnerSelectionPlugin;
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
 	};
 
 	MultiSelectionPlugin.prototype.setSelected = function(oRow, bSelected, mConfig) {
@@ -377,7 +392,7 @@ sap.ui.define([
 			}
 		}
 
-		return TableUtils.loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function() {
+		return TableUtils.loadContexts(oPlugin.getControl().getBinding(), iGetContextsStartIndex, iGetContextsLength).then(function() {
 			return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 		});
 	}
@@ -398,7 +413,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
-		const oTable = this.getTable();
+		const oTable = this.getControl();
 		const sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
@@ -457,7 +472,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
-		const oTable = this.getTable();
+		const oTable = this.getControl();
 		const sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
@@ -656,32 +671,23 @@ sap.ui.define([
 		return 0;
 	};
 
-	MultiSelectionPlugin.prototype.onTableRowsBound = function(oBinding) {
-		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+	function onTableRowsBound(oBinding) {
 		attachToBinding(this, oBinding);
-	};
+	}
 
 	function attachToBinding(oPlugin, oBinding) {
-		if (oBinding) {
-			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
-		}
+		oBinding?.attachChange(onBindingChange, oPlugin);
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
-		if (oBinding) {
-			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
-		}
+		oBinding?.detachChange(onBindingChange, oPlugin);
+	}
+
+	function onBindingChange(oEvent) {
+		updateHeaderSelectorIcon(this);
 	}
 
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {
-		updateHeaderSelectorIcon(this);
-	};
-
-	/**
-	 * Handler for change events of the binding.
-	 * @private
-	 */
-	MultiSelectionPlugin.prototype._onBindingChange = function() {
 		updateHeaderSelectorIcon(this);
 	};
 

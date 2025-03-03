@@ -28,6 +28,7 @@ sap.ui.define([
 	"./rowmodes/Fixed",
 	"./rowmodes/Interactive",
 	"./rowmodes/Auto",
+	"./plugins/SelectionPlugin",
 	"./plugins/SelectionModelSelection",
 	"./menus/ContextMenu",
 	"sap/ui/thirdparty/jquery",
@@ -60,6 +61,7 @@ sap.ui.define([
 	FixedRowMode,
 	InteractiveRowMode,
 	AutoRowMode,
+	SelectionPlugin,
 	SelectionModelSelectionPlugin,
 	ContextMenu,
 	jQuery,
@@ -1127,7 +1129,6 @@ sap.ui.define([
 			}
 		}
 
-		this._initLegacySelectionPlugin(); // Doing it at the end can eliminate the need to create a legacy selection plugin.
 		initDefaultRowMode(this);
 		Control.prototype.applySettings.call(this, mSettings, oScope);
 	};
@@ -1812,11 +1813,11 @@ sap.ui.define([
 						+ " Your setting was defaulted to selection mode 'MultiToggle'", this);
 		}
 
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			Log.error("If a selection plugin is applied to the table, the selection mode is controlled by the plugin.", this);
 		} else {
 			this.setProperty("selectionMode", sSelectionMode);
-			this._getSelectionPlugin().setSelectionMode(sSelectionMode);
+			_private(this).oLegacySelectionPlugin?.setSelectionMode(sSelectionMode);
 		}
 
 		return this;
@@ -3251,18 +3252,13 @@ sap.ui.define([
 	 * Notifies the selection listeners about the changed rows.
 	 * @private
 	 */
-	Table.prototype._onSelectionChanged = function(oEvent) {
-		this._updateSelection();
-
-		// If a selection plugin is applied to the table, the "rowSelectionChange" event should not be fired.
-		if (this._hasSelectionPlugin()) {
-			return;
-		}
-
-		const oSelectionPlugin = this._getSelectionPlugin();
+	function onLegacySelectionChanged(oEvent) {
+		const oSelectionPlugin = _private(this).oLegacySelectionPlugin;
 		const aRowIndices = oEvent.getParameter("rowIndices");
 		const bSelectAll = oEvent.getParameter("selectAll");
 		const iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : oSelectionPlugin.getSelectedIndex();
+
+		this._updateSelection();
 
 		/**
 		* @deprecated As of Version 1.69
@@ -3278,7 +3274,7 @@ sap.ui.define([
 			selectAll: bSelectAll,
 			userInteraction: this._iSourceRowIndex !== undefined
 		});
-	};
+	}
 
 	/**
 	 * Returns the context of a row by its index. Please note that for server-based models like OData,
@@ -3323,7 +3319,7 @@ sap.ui.define([
 	 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices}
 	 */
 	Table.prototype.getSelectedIndex = function() {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#getSelectedIndex must not be called if a selection plugin is applied.");
 		}
 
@@ -3342,12 +3338,12 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.setSelectedIndex = function(iIndex) {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#setSelectedIndex must not be called if a selection plugin is applied.");
 		}
 
-		this._getSelectionPlugin().setSelectedIndex(iIndex);
-		return this;
+		_private(this).oLegacySelectionPlugin?.setSelectedIndex(iIndex);
+		return this.setProperty("selectedIndex", iIndex, true);
 	};
 
 	/**
@@ -3361,7 +3357,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.clearSelection = function() {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#clearSelection must not be called if a selection plugin is applied.");
 		}
 
@@ -3383,7 +3379,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.selectAll = function() {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#selectAll must not be called if a selection plugin is applied.");
 		}
 
@@ -3405,7 +3401,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.getSelectedIndices = function() {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#getSelectedIndices must not be called if a selection plugin is applied.");
 		}
 
@@ -3425,7 +3421,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#addSelectionInterval must not be called if a selection plugin is applied.");
 		}
 
@@ -3446,7 +3442,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#setSelectionInterval must not be called if a selection plugin is applied.");
 		}
 
@@ -3467,7 +3463,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#removeSelectionInterval must not be called if a selection plugin is applied.");
 		}
 
@@ -3487,7 +3483,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Table.prototype.isIndexSelected = function(iIndex) {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#isIndexSelected must not be called if a selection plugin is applied.");
 		}
 
@@ -4081,107 +4077,64 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getSelectionPlugin = function() {
-		const oSelectionPlugin = this._oSelectionPlugin || this._oLegacySelectionPlugin;
-
-		// Temporary fix for the Support Assistant hacks. Support Assistant should implement a selection plugin.
-		// TODO: Before we recommend to implement a selection plugin -> Complete BLI CPOUIFTEAMB-1464
-		if (typeof this._getSelectedIndicesCount === "function" && oSelectionPlugin.getSelectedCount !== this._getSelectedIndicesCount) {
-			oSelectionPlugin.getSelectedCount = this._getSelectedIndicesCount;
-			["isIndexSelected", "setSelectedIndex", "getSelectedIndex", "getSelectedIndices", "setSelectionInterval", "addSelectionInterval",
-			 "removeSelectionInterval", "selectAll", "clearSelection"].forEach(function(sMethodName) {
-				oSelectionPlugin[sMethodName] = this[sMethodName];
-			}.bind(this));
-		}
-
-		return oSelectionPlugin;
-	};
-
-	/**
-	 * Checks whether a selection plugin is applied to the table. Returns <code>false</code> if no selection plugin is applied to the table and a
-	 * legacy selection plugin is used.
-	 *
-	 * @return {boolean} Whether a selection plugin is applied.
-	 * @private
-	 */
-	Table.prototype._hasSelectionPlugin = function() {
-		return this._oSelectionPlugin != null;
-	};
-
-	function getMainSelectionPlugin(oTable) {
-		const aSelectionPlugins = oTable.getDependents().filter((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
+		let oSelectionPlugin = SelectionPlugin.findOn(this);
+		let oLegacySelectionPlugin = _private(this).oLegacySelectionPlugin;
 
 		/**
 		 * @deprecated As of version 1.120
 		 */
-		aSelectionPlugins.unshift(...oTable.getPlugins());
-
-		return aSelectionPlugins[0];
-	}
-
-	/**
-	 * Initializes the selection plugin used by the table. Attaches event listeners.
-	 * The first plugin of type <code>sap.ui.table.plugins.SelectionPlugin</code> in the <code>plugins</code> aggregation is used by the table. If no
-	 * selection plugin is applied, a legacy selection plugin is created.
-	 *
-	 * @private
-	 */
-	Table.prototype._initSelectionPlugin = function() {
-		const oSelectionPlugin = getMainSelectionPlugin(this);
-
-		if (this.isDestroyed() || this.isDestroyStarted()) {
-			return;
+		if (this.getPlugins().length > 0) {
+			oSelectionPlugin = this.getPlugins()[0];
 		}
 
-		if (oSelectionPlugin) {
-			this._destroyLegacySelectionPlugin();
-			detachSelectionPlugin(this, this._oSelectionPlugin);
-			attachSelectionPlugin(this, oSelectionPlugin);
-			this._oSelectionPlugin = oSelectionPlugin;
-		} else {
-			this._initLegacySelectionPlugin();
-			detachSelectionPlugin(this, this._oSelectionPlugin);
-			delete this._oSelectionPlugin;
-		}
-	};
+		if (oSelectionPlugin && oLegacySelectionPlugin) {
+			delete _private(this).oLegacySelectionPlugin;
+			oLegacySelectionPlugin.destroy();
+		} else if (!oSelectionPlugin && !oLegacySelectionPlugin && !this.isDestroyed()) {
+			oLegacySelectionPlugin = this._createLegacySelectionPlugin();
+			_private(this).oLegacySelectionPlugin = oLegacySelectionPlugin;
+			oLegacySelectionPlugin.setSelectionMode(this.getSelectionMode());
+			oLegacySelectionPlugin.setSelectedIndex(this.getProperty("selectedIndex"));
+			oLegacySelectionPlugin.attachSelectionChange(onLegacySelectionChanged, this);
+			this.addAggregation("_hiddenDependents", oLegacySelectionPlugin);
 
-	/**
-	 * Initializes a legacy selection plugin, if no selection plugin is set.
-	 *
-	 * @private
-	 */
-	Table.prototype._initLegacySelectionPlugin = function() {
-		if (this._oLegacySelectionPlugin || getMainSelectionPlugin(this)) {
-			// No legacy selection plugin needs to be created if it already exists, or if a selection plugin is set.
-			return;
+			// Temporary fix for the Support Assistant hacks. Support Assistant should implement a selection plugin.
+			// TODO: Before we recommend to implement a selection plugin -> Complete BLI CPOUIFTEAMB-1464
+			if (typeof this._getSelectedIndicesCount === "function" && oLegacySelectionPlugin.getSelectedCount !== this._getSelectedIndicesCount) {
+				oLegacySelectionPlugin.getSelectedCount = this._getSelectedIndicesCount;
+				[
+					"isIndexSelected", "setSelectedIndex", "getSelectedIndex", "getSelectedIndices", "setSelectionInterval", "addSelectionInterval",
+					"removeSelectionInterval", "selectAll", "clearSelection"
+				].forEach((sMethodName) => {
+					oLegacySelectionPlugin[sMethodName] = this[sMethodName];
+				});
+				this._onSelectionChanged = onLegacySelectionChanged.bind(this);
+			}
 		}
 
-		this._oLegacySelectionPlugin = this._createLegacySelectionPlugin();
-		this.addAggregation("_hiddenDependents", this._oLegacySelectionPlugin);
-		attachSelectionPlugin(this, this._oLegacySelectionPlugin);
-	};
-
-	Table.prototype._destroyLegacySelectionPlugin = function() {
-		if (this._oLegacySelectionPlugin && !this._oLegacySelectionPlugin.isDestroyStarted()) {
-			this._oLegacySelectionPlugin.destroy();
-			delete this._oLegacySelectionPlugin;
-		}
+		return oSelectionPlugin || oLegacySelectionPlugin;
 	};
 
 	Table.prototype._createLegacySelectionPlugin = function() {
 		return new SelectionModelSelectionPlugin();
 	};
 
-	function attachSelectionPlugin(oTable, oSelectionPlugin) {
-		if (oSelectionPlugin && oSelectionPlugin.getMetadata().hasEvent("selectionChange")) {
-			oSelectionPlugin.attachSelectionChange(oTable._onSelectionChanged, oTable);
-		}
-	}
+	Table.prototype._onSelectionPluginChange = function() {
+		let oSelectionPlugin = SelectionPlugin.findOn(this);
 
-	function detachSelectionPlugin(oTable, oSelectionPlugin) {
-		if (oSelectionPlugin && oSelectionPlugin.getMetadata().hasEvent("selectionChange")) {
-			oSelectionPlugin.detachSelectionChange(oTable._onSelectionChanged, oTable);
+		/**
+		 * @deprecated As of version 1.120
+		 */
+		if (this.getPlugins().length > 0) {
+			oSelectionPlugin = this.getPlugins()[0];
 		}
-	}
+
+		if (_private(this).oSelectionPlugin !== oSelectionPlugin) {
+			_private(this).oSelectionPlugin?.detachSelectionChange(this._updateSelection, this);
+			oSelectionPlugin?.attachSelectionChange(this._updateSelection, this);
+			_private(this).oSelectionPlugin = oSelectionPlugin;
+		}
+	};
 
 	Table.prototype._getDefaultContextMenu = function() {
 		let oDefaultContextMenu = this.getAggregation("_hiddenDependents").find((oElement) => oElement.isA("sap.ui.table.menus.ContextMenu"));
@@ -4388,13 +4341,13 @@ sap.ui.define([
 	 * @deprecated As of version 1.115
 	 */
 	Table.prototype._enableLegacyMultiSelection = function() {
-		if (this._hasSelectionPlugin()) {
+		if (SelectionPlugin.findOn(this)) {
 			throw new Error("Unsupported operation: sap.ui.table.Table#_enableLegacyMultiSelection must not be called"
 							+ " if a selection plugin is applied.");
 		}
 
 		this._legacyMultiSelection = function(iIndex, oEvent) {
-			if (this._hasSelectionPlugin()) {
+			if (SelectionPlugin.findOn(this)) {
 				throw new Error("Unsupported operation: The legacy multi selection is not supported if a selection plugin is applied");
 			}
 
@@ -4416,9 +4369,7 @@ sap.ui.define([
 
 	/**
 	 * Sets constraints on the row counts of the table. May impact the result of the row count computation in the row modes.
-	 * The setter for the hidden property may only be used indirectly by plugins and may not be used otherwise.
 	 *
-	 * @see sap.ui.table.plugins.PluginBase#setRowCountConstraints
 	 * @param {object} mConstraints Row count constraints
 	 * @private
 	 */

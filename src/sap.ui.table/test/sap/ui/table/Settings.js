@@ -25,9 +25,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/core/message/MessageType",
 	"sap/ui/layout/form/SimpleForm",
 	// layout used for SimpleForm
-	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Column",
+	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/table/plugins/ODataV4Selection",
 	"sap/ui/table/RowAction",
@@ -67,9 +67,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	Title,
 	MessageType,
 	SimpleForm,
-	ResponsiveGridLayout,
 	JSONModel,
 	Column,
+	SelectionPlugin,
 	MultiSelectionPlugin,
 	ODataV4Selection,
 	RowAction,
@@ -500,8 +500,10 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						NONE: {
 							text: "None",
 							action: function(oTable) {
-								if (oTable._hasSelectionPlugin()) {
-									oTable._getSelectionPlugin().setSelectionMode("None");
+								const oSelectionPlugin = SelectionPlugin.findOn(oTable);
+
+								if (oSelectionPlugin) {
+									oSelectionPlugin.setEnabled(false);
 								} else {
 									oTable.setSelectionMode("None");
 								}
@@ -510,8 +512,11 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						SINGLE: {
 							text: "Single",
 							action: function(oTable) {
-								if (oTable._hasSelectionPlugin()) {
-									oTable._getSelectionPlugin().setSelectionMode("Single");
+								const oSelectionPlugin = SelectionPlugin.findOn(oTable);
+
+								if (oSelectionPlugin) {
+									oSelectionPlugin.setEnabled(true);
+									oSelectionPlugin.setSelectionMode("Single");
 								} else {
 									oTable.setSelectionMode("Single");
 								}
@@ -520,8 +525,11 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						MULTITOGGLE: {
 							text: "MultiToggle",
 							action: function(oTable) {
-								if (oTable._hasSelectionPlugin()) {
-									oTable._getSelectionPlugin().setSelectionMode("MultiToggle");
+								const oSelectionPlugin = SelectionPlugin.findOn(oTable);
+
+								if (oSelectionPlugin) {
+									oSelectionPlugin.setEnabled(true);
+									oSelectionPlugin.setSelectionMode("MultiToggle");
 								} else {
 									oTable.setSelectionMode("MultiToggle");
 								}

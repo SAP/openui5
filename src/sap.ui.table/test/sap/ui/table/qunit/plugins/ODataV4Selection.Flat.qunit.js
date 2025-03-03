@@ -58,26 +58,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Enable/Disable", async function(assert) {
-		const oActivateSpy = this.spy(this.oSelectionPlugin, "activate");
-		const oDeactivateSpy = this.spy(this.oSelectionPlugin, "deactivate");
 		const oFireSelectionChange = this.spy(this.oSelectionPlugin, "fireSelectionChange");
 
 		this.oTable.getRows()[0].getBindingContext().setSelected(true);
 		this.oSelectionPlugin.setEnabled(false);
-		assert.ok(!this.oSelectionPlugin.getEnabled(), "Plugin is disabled");
-		assert.ok(oDeactivateSpy.calledOnce, "#deactivate call");
 		assert.strictEqual(this.oTable.getSelectionMode(), "None", "Table selection mode");
 		assert.ok(this.oTable.getRows()[0].getBindingContext().isSelected(), "Context selected state");
-
-		await this.oTable.qunit.whenRenderingFinished();
+		await TableQUnitUtils.wait(10);
 		assert.equal(oFireSelectionChange.callCount, 0, "#fireSelectionChange call");
 
 		oFireSelectionChange.resetHistory();
 		this.oSelectionPlugin.setEnabled(true);
 		assert.ok(this.oSelectionPlugin.getEnabled(), "Plugin is enabled");
-		assert.ok(oActivateSpy.calledOnce, "#deactivate call");
 		assert.strictEqual(this.oTable.getSelectionMode(), "MultiToggle", "Table selection mode");
-
 		await TableQUnitUtils.wait(10);
 		assert.equal(oFireSelectionChange.callCount, 0, "#fireSelectionChange call");
 
@@ -108,46 +101,6 @@ sap.ui.define([
 		this.oSelectionPlugin.setSelectionMode("Single");
 		assert.strictEqual(this.oTable.getSelectionMode(), "Single", "Selection mode of the table is updated");
 		assert.equal(oClearSelection.callCount, 1, "#clearSelection call");
-	});
-
-	QUnit.module("Change binding or model instance", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
-			this.oSelectionPlugin = this.oTable.getDependents()[0];
-			return this.oTable.qunit.whenRenderingFinished();
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("Apply plugin after setting unsupported model", function(assert) {
-		const oModel = this.oTable.getModel();
-		const oModelIsAStub = this.stub(oModel, "isA");
-
-		oModelIsAStub.withArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
-		this.oSelectionPlugin.destroy();
-		this.oSelectionPlugin = new ODataV4Selection();
-		assert.throws(() => {
-			this.oTable.addDependent(this.oSelectionPlugin);
-		},
-			new Error("This plugin only works with a sap.ui.model.odata.v4.ODataModel."),
-			"Error thrown when applying plugin to table with unsupported model"
-		);
-	});
-
-	QUnit.test("Change to unsupported model", function(assert) {
-		const oModel = this.oTable.getModel();
-		const oModelIsAStub = this.stub(oModel, "isA");
-
-		oModelIsAStub.withArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
-		this.oTable.setModel();
-		assert.throws(() => {
-			this.oTable.setModel(oModel);
-		},
-			new Error("This plugin only works with a sap.ui.model.odata.v4.ODataModel."),
-			"Error thrown when changing model to unsupported model"
-		);
 	});
 
 	QUnit.test("Unbind", async function(assert) {
@@ -213,6 +166,154 @@ sap.ui.define([
 		this.oTable.bindRows("MyRelativePath");
 		assert.ok(this.oSelectionPlugin.isActive(), "Active state");
 		assert.notOk(this.oTable.getBinding().getHeaderContext(), "Header context");
+	});
+
+	QUnit.module("Validation during activation", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+			this.oSelectionPlugin = this.oTable.getDependents()[0];
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Apply plugin when the table is not bound", function(assert) {
+		this.oTable.removeDependent(this.oSelectionPlugin);
+		this.oTable.unbindRows();
+		this.oTable.addDependent(this.oSelectionPlugin);
+		assert.ok(true, "No Error thrown");
+	});
+
+	QUnit.test("Apply plugin when the table is bound to an unsupported model", function(assert) {
+		this.stub(this.oTable.getModel(), "isA")
+			.withArgs("sap.ui.model.odata.v4.ODataModel")
+			.returns(false);
+
+		this.oTable.removeDependent(this.oSelectionPlugin);
+		assert.throws(
+			() => { this.oTable.addDependent(this.oSelectionPlugin); },
+			new Error("Model must be sap.ui.model.odata.v4.ODataModel")
+		);
+	});
+
+	QUnit.test("Enable plugin when the table is bound to an unsupported model", function(assert) {
+		this.stub(this.oTable.getModel(), "isA")
+			.withArgs("sap.ui.model.odata.v4.ODataModel")
+			.returns(false);
+
+		this.oSelectionPlugin.setEnabled(false);
+		assert.throws(
+			() => { this.oSelectionPlugin.setEnabled(true); },
+			new Error("Model must be sap.ui.model.odata.v4.ODataModel")
+		);
+	});
+
+	QUnit.test("Change to unsupported model", function(assert) {
+		const oModel = this.oTable.getModel();
+
+		this.oTable.setModel();
+		this.stub(oModel, "isA")
+			.withArgs("sap.ui.model.odata.v4.ODataModel")
+			.returns(false);
+		assert.throws(
+			() => { this.oTable.setModel(oModel); },
+			new Error("Model must be sap.ui.model.odata.v4.ODataModel")
+		);
+	});
+
+	QUnit.test("Apply plugin when the header context is selected", function(assert) {
+		this.oTable.removeDependent(this.oSelectionPlugin);
+		this.oTable.getBinding().getHeaderContext().setSelected(true);
+
+		assert.throws(
+			() => { this.oTable.addDependent(this.oSelectionPlugin); },
+			new Error("Header context must not be selected")
+		);
+	});
+
+	QUnit.test("Enable plugin when the header context is selected", function(assert) {
+		this.oSelectionPlugin.setEnabled(false);
+		this.oTable.getBinding().getHeaderContext().setSelected(true);
+
+		assert.throws(
+			() => { this.oSelectionPlugin.setEnabled(true); },
+			new Error("Header context must not be selected")
+		);
+	});
+
+	QUnit.test("Apply plugin when multiple contexts are selected in selection mode 'Single'", function(assert) {
+		this.oSelectionPlugin.setSelectionMode("Single");
+		this.oTable.removeDependent(this.oSelectionPlugin);
+
+		for (const oContext of this.oTable.getBinding().getCurrentContexts().slice(0, 2)) {
+			oContext.setSelected(true);
+		}
+
+		assert.throws(
+			() => { this.oTable.addDependent(this.oSelectionPlugin); },
+			new Error("Multiple contexts selected. Cannot select more than one context in selection mode 'Single'")
+		);
+	});
+
+	QUnit.test("Enable plugin when multiple contexts are selected in selection mode 'Single'", function(assert) {
+		this.oSelectionPlugin.setSelectionMode("Single");
+		this.oSelectionPlugin.setEnabled(false);
+
+		for (const oContext of this.oTable.getBinding().getCurrentContexts().slice(0, 2)) {
+			oContext.setSelected(true);
+		}
+
+		assert.throws(
+			() => { this.oSelectionPlugin.setEnabled(true); },
+			new Error("Multiple contexts selected. Cannot select more than one context in selection mode 'Single'")
+		);
+	});
+
+	QUnit.test("Apply plugin when a context is selected that is not allowed to be selected", function(assert) {
+		const oContext = this.oTable.getRows()[0].getBindingContext();
+
+		this.oTable.removeDependent(this.oSelectionPlugin);
+		oContext.setSelected(true);
+		this.stub(oContext, "getProperty").withArgs("@$ui5.node.isTotal").returns(true);
+		assert.throws(
+			() => { this.oTable.addDependent(this.oSelectionPlugin); },
+			new Error(`Context ${oContext} is not allowed to be selected`),
+			"Sum"
+		);
+
+		this.oTable.removeDependent(this.oSelectionPlugin);
+		oContext.getProperty.restore();
+		this.stub(oContext, "getProperty").withArgs("@$ui5.node.isExpanded").returns(true);
+		assert.throws(
+			() => { this.oTable.addDependent(this.oSelectionPlugin); },
+			new Error(`Context ${oContext} is not allowed to be selected`),
+			"Group Header"
+		);
+	});
+
+	QUnit.test("Enable plugin when a context is selected that is not allowed to be selected", function(assert) {
+		const oContext = this.oTable.getRows()[0].getBindingContext();
+
+		this.oSelectionPlugin.setEnabled(false);
+		oContext.setSelected(true);
+		this.stub(oContext, "getProperty").withArgs("@$ui5.node.isTotal").returns(true);
+
+		assert.throws(
+			() => { this.oSelectionPlugin.setEnabled(true); },
+			new Error(`Context ${oContext} is not allowed to be selected`),
+			"Sum"
+		);
+
+		this.oSelectionPlugin.setEnabled(false);
+		oContext.getProperty.restore();
+		this.stub(oContext, "getProperty").withArgs("@$ui5.node.isExpanded").returns(true);
+		assert.throws(
+			() => { this.oSelectionPlugin.setEnabled(true); },
+			new Error(`Context ${oContext} is not allowed to be selected`),
+			"Group Header"
+		);
 	});
 
 	QUnit.module("Selection API", {
@@ -521,14 +622,6 @@ sap.ui.define([
 		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[1]), false, "#isSelected (Row 2)");
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
 
-		this.oTable.getBinding().getHeaderContext().setSelected(true);
-		this.oSelectionChangeHandler.resetHistory();
-		this.oSelectionPlugin.clearSelection();
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Header context was selected: selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Header context was selected: Selected contexts");
-		assert.ok(this.oTable.getBinding().getHeaderContext().isSelected(), "Header context was selected: Header context selected state");
-
 		aRows[1].getBindingContext().setSelected(true);
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 		this.oSelectionChangeHandler.resetHistory();
@@ -761,9 +854,9 @@ sap.ui.define([
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Toggle selection: Selected contexts");
 
 		this.oSelectionChangeHandler.resetHistory();
+		this.oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		oClearSelection.resetHistory();
 		oEvent.setMarked.resetHistory();
-		this.oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		this.oSelectionPlugin.onKeyboardShortcut("clear", oEvent);
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Clear selection: selectionChange event");
@@ -846,82 +939,88 @@ sap.ui.define([
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Selected contexts");
 
 		this.oSelectionChangeHandler.resetHistory();
-		aRows[1].getBindingContext().setSelected(true);
-		aRows[2].getBindingContext().setSelected(true);
+		assert.throws(
+			() => { aRows[1].getBindingContext().setSelected(true); },
+			new Error("Multiple contexts selected. Cannot select more than one context in selection mode 'Single'"),
+			"Selecting a second context throws an error"
+		);
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[0]), false, "#isSelected (Row 1)");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[0]), true, "#isSelected (Row 1)");
 		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[1]), false, "#isSelected (Row 2)");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[2]), true, "#isSelected (Row 3)");
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Selected contexts");
+	});
+
+	QUnit.test("Context#setSelected on a context that is not allowed to be selected", async function(assert) {
+		const oRow = this.oTable.getRows()[0];
+		const oContext = oRow.getBindingContext();
+
+		oContext.setSelected(true);
+		const sContext = oContext.toString();
+		oContext.setSelected(false);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+		this.oSelectionChangeHandler.resetHistory();
+
+		this.stub(oContext, "getProperty").withArgs("@$ui5.node.isTotal").returns(true);
+		assert.throws(
+			() => {
+				oContext.setSelected(true);
+			},
+			new Error(`Context ${sContext} is not allowed to be selected`),
+			"Sum: Selecting the context throws an error"
+		);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Sum: selectionChange event");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(oRow), false, "Sum: #isSelected (Row)");
+		assert.equal(oContext.isSelected(), false, "Sum: Context selected state");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Sum: Selected contexts");
+
+		oContext.getProperty.restore();
+		this.stub(oContext, "getProperty").withArgs("@$ui5.node.isExpanded").returns(true);
+		this.oSelectionChangeHandler.resetHistory();
+		assert.throws(
+			() => { oContext.setSelected(true); },
+			new Error(`Context ${sContext} is not allowed to be selected`),
+			"Group Header: Selecting the context throws an error"
+		);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Group Header: selectionChange event");
+		assert.strictEqual(this.oSelectionPlugin.isSelected(oRow), false, "Group Header: #isSelected (Row)");
+		assert.equal(oContext.isSelected(), false, "Group Header: Context selected state");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Group Header: Selected contexts");
 	});
 
 	QUnit.test("HeaderContext#setSelected", async function(assert) {
 		const oHeaderContext = this.oTable.getBinding().getHeaderContext();
-
-		oHeaderContext.setSelected(true);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.ok(this.oTable.getRows().every((oRow) => {
-			return this.oSelectionPlugin.isSelected(oRow);
-		}), "Every row is selected");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, this.oTable.getBinding().getAllCurrentContexts().length,
-			"Selected contexts");
-
-		this.oSelectionChangeHandler.resetHistory();
-		oHeaderContext.setSelected(false);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.ok(this.oTable.getRows().every((oRow) => {
-			return !this.oSelectionPlugin.isSelected(oRow);
-		}), "No row is selected");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
-
-		this.oSelectionChangeHandler.resetHistory();
-		this.oSelectionPlugin.setEnabled(false);
-		oHeaderContext.setSelected(true);
-		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Plugin disabled: selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Plugin disabled: Selected contexts");
-		assert.equal(oHeaderContext.isSelected(), true, "Plugin disabled: HeaderContext selected state");
-
-		this.oSelectionChangeHandler.resetHistory();
-		this.oSelectionPlugin.setEnabled(true);
-		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Plugin enabled: selectionChange event");
-		assert.equal(oHeaderContext.isSelected(), true, "Plugin enabled: HeaderContext selected state");
-	});
-
-	QUnit.test("HeaderContext#setSelected(true) -> Context#setSelected(false)", async function(assert) {
 		const aRows = this.oTable.getRows();
 
-		this.oTable.getBinding().getHeaderContext().setSelected(true);
-		aRows[0].getBindingContext().setSelected(false);
+		aRows[0].getBindingContext().setSelected(true);
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[0]), false, "#isSelected (Row 1)");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[1]), true, "#isSelected (Row 2)");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, this.oTable.getBinding().getAllCurrentContexts().length - 1,
-			"Selected contexts");
-	});
+		this.oSelectionChangeHandler.resetHistory();
+		assert.throws(
+			() => { oHeaderContext.setSelected(true); },
+			new Error("Header context must not be selected"),
+			"Selecting the header context throws an error"
+		);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "HeaderContext selected: selectionChange event");
+		assert.equal(oHeaderContext.isSelected(), false, "HeaderContext selected: HeaderContext selected state");
+		assert.ok(this.oTable.getRows().every((oRow) => {
+			return !this.oSelectionPlugin.isSelected(oRow);
+		}), "HeaderContext selected: No row is selected");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "HeaderContext selected: Selected contexts");
 
-	QUnit.test("HeaderContext#setSelected in selection mode 'Single'", async function(assert) {
-		const oHeaderContext = this.oTable.getBinding().getHeaderContext();
-
-		this.oSelectionPlugin.setSelectionMode("Single");
-		oHeaderContext.setSelected(true);
-		await TableQUnitUtils.wait(10);
-		assert.equal(oHeaderContext.isSelected(), false, "HeaderContext selected state");
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
-
-		this.oTable.getRows()[0].getBindingContext().setSelected(true);
+		aRows[0].getBindingContext().setSelected(true);
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 		this.oSelectionChangeHandler.resetHistory();
 		oHeaderContext.setSelected(false);
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "HeaderContext deselected: selectionChange event");
+		assert.equal(oHeaderContext.isSelected(), false, "HeaderContext selected: HeaderContext selected state");
+		assert.ok(this.oTable.getRows().every((oRow) => {
+			return !this.oSelectionPlugin.isSelected(oRow);
+		}), "HeaderContext deselected: No row is selected");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "HeaderContext deselected: Selected contexts");
 
 		this.oSelectionChangeHandler.resetHistory();
 		this.oSelectionPlugin.setEnabled(false);
@@ -930,12 +1029,6 @@ sap.ui.define([
 		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Plugin disabled: selectionChange event");
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Plugin disabled: Selected contexts");
 		assert.equal(oHeaderContext.isSelected(), true, "Plugin disabled: HeaderContext selected state");
-
-		this.oSelectionChangeHandler.resetHistory();
-		this.oSelectionPlugin.setEnabled(true);
-		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Plugin enabled: selectionChange event");
-		assert.equal(oHeaderContext.isSelected(), false, "Plugin enabled: HeaderContext selected state");
 	});
 
 	QUnit.module("Header selector icon", {
@@ -1033,16 +1126,6 @@ sap.ui.define([
 
 		this.assertHeaderSelector({
 			src: IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon),
-			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
-		});
-	});
-
-	QUnit.test("Selecting the HeaderContext", async function(assert) {
-		this.oTable.getBinding().getHeaderContext().setSelected(true);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-
-		this.assertHeaderSelector({
-			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
 			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
 		});
 	});

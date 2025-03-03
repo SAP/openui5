@@ -125,69 +125,6 @@ sap.ui.define([
 		assert.notOk(this.oPlugin.isActive(), "Not active");
 	});
 
-	QUnit.test("Activate", function(assert) {
-		this.oTable.addDependent(this.oPlugin);
-		this.oPlugin.deactivate();
-
-		this.oPluginMock.expects("onActivate").once().withExactArgs(this.oTable);
-		this.oPluginMock.expects("onDeactivate").never();
-
-		this.oPlugin.activate();
-
-		assert.ok(this.oPlugin.isActive(), "Active");
-	});
-
-	QUnit.test("Deactivate", function(assert) {
-		this.oTable.addDependent(this.oPlugin);
-
-		this.oPluginMock.expects("onActivate").never();
-		this.oPluginMock.expects("onDeactivate").once().withExactArgs(this.oTable);
-
-		this.oPlugin.deactivate();
-
-		assert.notOk(this.oPlugin.isActive(), "Not active");
-	});
-
-	QUnit.module("Row count constraints", {
-		beforeEach: function() {
-			this.oPlugin = new TestPlugin();
-			this.oTable = TableQUnitUtils.createTable({
-				dependents: [this.oPlugin],
-				rowMode: new FixedRowMode()
-			});
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("Set constraints", function(assert) {
-		const oTableInvalidate = this.spy(this.oTable, "invalidate");
-
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
-		assert.deepEqual(this.oTable.getRowMode().getRowCountConstraints(), {fixedTop: true, fixedBottom: true}, "RowMode#getRowCountConstraints");
-		assert.equal(oTableInvalidate.callCount, 1, "Table#invalidate called once");
-	});
-
-	QUnit.test("Change constraints", function(assert) {
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
-		this.oPlugin.setRowCountConstraints({fixedTop: false});
-		assert.deepEqual(this.oTable.getRowMode().getRowCountConstraints(), {fixedTop: false}, "RowMode#getRowCountConstraints");
-	});
-
-	QUnit.test("Change row mode", function(assert) {
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
-		this.oTable.getRowMode().destroy();
-		this.oTable.setRowMode(new FixedRowMode());
-		assert.deepEqual(this.oTable.getRowMode().getRowCountConstraints(), {fixedTop: true, fixedBottom: true}, "RowMode#getRowCountConstraints");
-	});
-
-	QUnit.test("Table does not support constraints on rows", function(assert) {
-		this.stub(this.oTable, "_setRowCountConstraints");
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
-		assert.deepEqual(this.oTable.getRowMode().getRowCountConstraints(), {}, "RowMode#getRowCountConstraints");
-	});
-
 	/*The following tests should become obsolte when sap.ui.table.plugins.PluginBase inherits in future from sap.m.plugins.PluginBase.*/
 
 	QUnit.module("Static getPlugin", {

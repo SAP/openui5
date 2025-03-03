@@ -46,8 +46,7 @@ sap.ui.define([
 			/** @deprecated As of version 1.119, see the <code>rowMode</code> aggregation of <code>sap.ui.table.Table</code> for more details. */
 			"sap.ui.table.VisibleRowCountMode",
 			/** @deprecated As of version 1.120, replaced by <code>sap.ui.model.TreeAutoExpandMode</code> */
-			"sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
-			"sap.ui.table.plugins.SelectionMode"
+			"sap.ui.table.TreeAutoExpandMode" /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
 		],
 		interfaces: [],
 		controls: [
@@ -408,29 +407,6 @@ sap.ui.define([
 	if (!thisLib.plugins) {
 		thisLib.plugins = {};
 	}
-
-	/**
-	 * Mode of a selection plugin
-	 *
-	 * @version ${version}
-	 * @enum {string}
-	 * @private
-	 */
-	thisLib.plugins.SelectionMode = {
-		/**
-		 * Only one row can be selected at a time.
-		 * @public
-		 */
-		Single: "Single",
-
-		/**
-		 * Multiple rows can be selected.
-		 * @public
-		 */
-		MultiToggle: "MultiToggle"
-	};
-
-	DataType.registerEnum("sap.ui.table.plugins.SelectionMode", thisLib.plugins.SelectionMode);
 
 	//factory for table to create labels and textviews to be overwritten by commons and mobile library
 	/**
