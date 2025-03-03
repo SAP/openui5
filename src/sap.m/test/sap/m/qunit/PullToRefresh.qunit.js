@@ -1,40 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Test Page for sap.m.PullToRefresh</title>
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m">
-</script>
+/*global QUnit */
+sap.ui.define([
+	"sap/m/App",
+	"sap/m/library",
+	"sap/m/List",
+	"sap/m/Page",
+	"sap/m/PullToRefresh",
+	"sap/m/StandardListItem",
+	"sap/ui/core/Lib",
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
+], async function(App, mobileLibrary, List, Page, PullToRefresh, StandardListItem, Library, nextUIUpdate, jQuery) {
+	"use strict";
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	// shortcut for sap.m.ListType
+	const {ListType} = mobileLibrary;
 
-<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-<script>
-
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-	function addItems(list, nItems){
+	function addItems(list, nItems) {
 		var n = list.getItems().length + 1;
-		for(var i = 0; i < nItems; i++){
+		for (var i = 0; i < nItems; i++) {
 			list.addItem(
-				new sap.m.StandardListItem({
+				new StandardListItem({
 					title: "List item " + (n + i),
-					type: sap.m.ListType.Navigation
+					type: ListType.Navigation
 				})
 			);
 		}
 	}
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-	var oApp = new sap.m.App("p2RApp", {initialPage:"page1"});
+	var oRb = Library.getResourceBundleFor("sap.m");
+	var oApp = new App("p2RApp", {initialPage:"page1"});
 
 	var sPullDwn = oRb.getText("PULL2REFRESH_PULLDOWN"),
 		sRelease = oRb.getText("PULL2REFRESH_RELEASE"),
@@ -42,10 +36,10 @@
 		sLoading = oRb.getText("PULL2REFRESH_LOADING");
 	var sDescription = "pull to refresh";
 
-	var oList =  new sap.m.List("oList", {inset : false});
+	var oList =  new List("oList", {inset : false});
 	addItems(oList, 15);
 
-	var oP2R = new sap.m.PullToRefresh({
+	var oP2R = new PullToRefresh({
 		description: sDescription,
 		refresh: function(){
 			oP2R.setDescription(sRefresh);
@@ -54,17 +48,16 @@
 
 	oP2R._bTouchMode = true;
 
-	var oPage1 = new sap.m.Page("page1", {
+	var oPage1 = new Page("page1", {
 		title: "PullToRefresh Control",
 		enableScrolling: true,
 		content : [ oP2R, oList ]
 	});
 
 	oApp.addPage(oPage1);
-	oApp.placeAt("content");
+	oApp.placeAt("qunit-fixture");
 
-	// TEST functions
-	qutils.delayTestStart(2000);
+	await nextUIUpdate();
 
 	QUnit.module("Properties");
 	QUnit.test("Default values", function(assert) {
@@ -94,7 +87,7 @@
 		assert.ok(!($P2R.hasClass("sapLoading")), "Loading class is not set");
 	});
 
-// Test pull to refresh functionality
+	// Test pull to refresh functionality
 	QUnit.module("Behavior");
 
 	QUnit.test("Pull Down", function(assert) {
@@ -164,16 +157,4 @@
 			done();
 		}
 	});
-
-</script>
-
-</head>
-<body id="body" class="sapUiBody">
-<h1 id="qunit-header">QUnit tests: sap.m.PullToRefresh</h1>
-	<h2 id="qunit-banner"></h2>
-	<div id="content"></div>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-</body>
-</html>
+});
