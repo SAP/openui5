@@ -820,7 +820,9 @@ function(
 		const oItem = this.getItems().find((oItem) => oItem.getBindingContext(sModelName) === oContext);
 
 		if (!oItem) {
-			Log.warning("Selecting a context that is not related to a visible item does not affect the list selection", this);
+			if (oContext.isSelected()) {
+				Log.warning("Selecting a context that is not related to an existing item does not affect the list selection", this);
+			}
 			return;
 		}
 
