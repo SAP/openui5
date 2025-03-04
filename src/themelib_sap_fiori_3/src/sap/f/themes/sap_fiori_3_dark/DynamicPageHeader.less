@@ -8,14 +8,14 @@
 }
 
 .sapFDynamicPageHeader.sapFDynamicPageHeaderTranslucent {
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 }
 
 .sapFDynamicPageHeader.sapFDynamicPageHeaderTransparent {
 	background: transparent;
 }
 
-.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton:before {
+.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton::before {
 	display: none;
 }
 
