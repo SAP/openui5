@@ -1,0 +1,50 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:tnt="sap.tnt">
+
+	<ResponsivePopover
+		id="respPopover"
+		placement="Bottom"
+		verticalScrolling="false"
+		ariaDescribedBy="sn-description"
+		ariaLabelledBy="sn-label">
+
+		<core:InvisibleText id="sn-label" text="Main navigation"/>
+		<core:InvisibleText id="sn-description" text="This is the main navigation. It contains navigation items that may have child items. Activating a navigation item opens a new page or dialog within this browser window or gives access to the child items. Navigation items can be grouped, too."/>
+
+		<tnt:SideNavigation id="sideNav" width="17rem" itemSelect=".onItemSelect" selectedKey="home" design="Plain">
+			<tnt:NavigationList>
+				<tnt:NavigationListItem text="Home" icon="sap-icon://home" key="home"/>
+				<tnt:NavigationListItem text="Favorites" icon="sap-icon://favorite-list" key="page1"/>
+				<tnt:NavigationListItem text="Recent Applications for user role" icon="sap-icon://history" key="page2"/>
+
+				<tnt:NavigationListGroup text="Business Areas for selected user role" expanded="false">
+					<tnt:NavigationListItem text="Manufacturing management" icon="sap-icon://wrench" expanded="false" selectable="false">
+						<tnt:NavigationListItem text="Inventory Management" key="page3"/>
+						<tnt:NavigationListItem text="Quality Control" key="page4"/>
+					</tnt:NavigationListItem>
+					<tnt:NavigationListItem text="Sales" icon="sap-icon://multiple-line-chart" key="page5" expanded="true">
+						<tnt:NavigationListItem text="Manage Sales Accounts" key="page6"/>
+						<tnt:NavigationListItem text="Sales Order" key="page7"/>
+						<tnt:NavigationListItem text="Sales Overview" key="page8"/>
+					</tnt:NavigationListItem>
+					<tnt:NavigationListItem text="Customer Service" icon="sap-icon://customer-and-contacts" key="page9"/>
+					<tnt:NavigationListItem text="Finance" icon="sap-icon://customer-financial-fact-sheet" expanded="false" key="page10">
+						<tnt:NavigationListItem text="Payroll Management" key="page11"/>
+						<tnt:NavigationListItem text="Tax Management" key="page12"/>
+					</tnt:NavigationListItem>
+					<tnt:NavigationListItem text="Employee Services" icon="sap-icon://employee" selectable="false" href="https://www.sap.com" target="_blank"/>
+				</tnt:NavigationListGroup>
+			</tnt:NavigationList>
+
+			<tnt:fixedItem>
+				<tnt:NavigationList>
+					<tnt:NavigationListItem text="Create" icon="sap-icon://write-new" selectable="false" design="Action" ariaHasPopup="Dialog" press=".onQuickActionPress" />
+					<tnt:NavigationListItem text="App Finder" icon="sap-icon://widgets" selectable="false" href="https://openui5.hana.ondemand.com/demoapps" target="_blank"/>
+					<tnt:NavigationListItem text="Legal" icon="sap-icon://compare" selectable="false" href="https://www.sap.com/about/legal/impressum.html" target="_blank"/>
+				</tnt:NavigationList>
+			</tnt:fixedItem>
+		</tnt:SideNavigation>
+	</ResponsivePopover>
+</core:FragmentDefinition>

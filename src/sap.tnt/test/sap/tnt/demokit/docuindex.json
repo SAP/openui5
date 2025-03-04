@@ -53,7 +53,8 @@
 				"samples": [
 					"sap.tnt.sample.SideNavigation",
 					"sap.tnt.sample.SideNavigationUnselectableParents",
-					"sap.tnt.sample.SideNavigationActions"
+					"sap.tnt.sample.SideNavigationActions",
+					"sap.tnt.sample.SideNavigationOverlayMode"
 				]
 			},
 			{
@@ -113,6 +114,11 @@
 				"id": "sap.tnt.sample.SideNavigationActions",
 				"name": "Side Navigation - Actions",
 				"description": "SideNavigation with a quick create action button."
+			},
+			{
+				"id": "sap.tnt.sample.SideNavigationOverlayMode",
+				"name": "Side Navigation Overlay Mode",
+				"description": "SideNavigation in a responsive popover."
 			},
 			{
 				"id": "sap.tnt.sample.ToolHeader",

@@ -33,7 +33,8 @@ sap.ui.define([
 		types: [
 			"sap.tnt.IllustratedMessageType",
 			"sap.tnt.RenderMode",
-			"sap.tnt.NavigationListItemDesign"
+			"sap.tnt.NavigationListItemDesign",
+			"sap.tnt.SideNavigationDesign"
 		],
 		interfaces: [
 			"sap.tnt.IToolHeader"
@@ -103,9 +104,32 @@ sap.ui.define([
 		Action: "Action"
 	};
 
+	/**
+	 * Available options for the Side Navigation design.
+	 * @public
+	 * @enum {string}
+	 * @since 1.134.0
+	 * @experimental Behavior might change.
+	 */
+	thisLib.SideNavigationDesign = {
+
+		/**
+		 * Side Navigation has a shadow and border.
+		 * @public
+		 */
+		Decorated: "Decorated",
+
+		/**
+		 * Side Navigation without any shadow or border.
+		 * @public
+		 */
+		Plain: "Plain"
+	};
+
 	// Register all above defined enums.
 	DataType.registerEnum("sap.tnt.RenderMode", thisLib.RenderMode);
 	DataType.registerEnum("sap.tnt.NavigationListItemDesign", thisLib.NavigationListItemDesign);
+	DataType.registerEnum("sap.tnt.SideNavigationDesign", thisLib.SideNavigationDesign);
 
 
 	/**
