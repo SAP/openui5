@@ -839,5 +839,25 @@
         "text": " sap.m.DynamicDateRange: align current week calculations"
       }
     ]
+  },
+  "1.96.38": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "ce4c8b9637fa2466e018789b28b66b979199efda",
+        "type": "FIX",
+        "text": " IconPool: Add more mime-type mappings for MS Excel files"
+      },
+      {
+        "id": "d4936f74965f2f62512405b91546663f792a358d",
+        "type": "FIX",
+        "text": " SAP-icons: fix icon 'eam-work-order' in v5"
+      },
+      {
+        "id": "f24f58de6b7368512b4f6e0e001b173f0020e35b",
+        "type": "FIX",
+        "text": " sap/base/util/now: Migrate performance.timing"
+      }
+    ]
   }
 }
