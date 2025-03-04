@@ -1412,9 +1412,9 @@ sap.ui.define([
 
 	QUnit.test("All selected dates are visible in Month, Year & YearRange (multiple selection)", function(assert) {
 		const oSelectedDates = [
-			new DateRange({ startDate: UI5Date.getInstance(2024, 1, 14) }),
-			new DateRange({ startDate: UI5Date.getInstance(2024, 3, 3) }),
-			new DateRange({ startDate: UI5Date.getInstance(2023, 6, 10) }),
+			new DateRange({ startDate: UI5Date.getInstance(2025, 1, 14) }),
+			new DateRange({ startDate: UI5Date.getInstance(2025, 3, 3) }),
+			new DateRange({ startDate: UI5Date.getInstance(2024, 6, 10) }),
 			new DateRange({ startDate: UI5Date.getInstance(1993, 11, 24) })
 		];
 		const oStartDate = oSelectedDates[0].getStartDate();
@@ -1440,7 +1440,7 @@ sap.ui.define([
 
 		const aSelectedYears = oCal.getAggregation("yearPicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
 		assert.strictEqual(aSelectedYears.length, 2, "Two years are selected in the year picker");
-		assert.strictEqual(aSelectedYears[0].innerText, "2023", "2023 is selected in the year picker");
+		assert.strictEqual(aSelectedYears[0].innerText, "2024", "2024 is selected in the year picker");
 
 		// Check YearRangePicker
 		oCal._showYearRangePicker();
@@ -1448,7 +1448,7 @@ sap.ui.define([
 
 		const aSelectedYearRanges = oCal.getAggregation("yearRangePicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
 		assert.strictEqual(aSelectedYearRanges.length, 2, "Two year ranges are selected in the year range picker");
-		assert.strictEqual(aSelectedYearRanges[0].innerText, "1974\u2009\u2013\u20091993", "1974 - 1993 is selected in the year range picker");
+		assert.strictEqual(aSelectedYearRanges[0].innerText, "1975\u2009\u2013\u20091994", "1975 - 1994 is selected in the year range picker");
 
 		// Clean up
 		oCal.destroy();
@@ -1788,7 +1788,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(oNextPageSpy.calledOnce, "YearRangePicker nextPage is called");
 		assert.ok(oTogglePrevNexYearPicker.called, "Calendar _togglePrevNexYearPicker is called");
-		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), UI5Date.getInstance(2090, 0, 1), "Year picker page is updated correctly");
+		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), UI5Date.getInstance(2070, 0, 1), "Year picker page is updated correctly");
 
 		// Clean
 		oCal.destroy();
@@ -1819,7 +1819,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(oPreviousPageSpy.calledOnce, "YearRangePicker previousPage is called");
 		assert.ok(oTogglePrevNexYearPicker.called, "Calendar _togglePrevNexYearPicker is called");
-		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), UI5Date.getInstance(1730, 0, 1), "Year picker page is updated correctly");
+		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), UI5Date.getInstance(1750, 0, 1), "Year picker page is updated correctly");
 
 		// Clean
 		oCal.destroy();
