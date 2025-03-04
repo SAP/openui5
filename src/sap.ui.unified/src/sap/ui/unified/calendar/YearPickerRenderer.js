@@ -115,15 +115,15 @@ sap.ui.define([
 			oRm.openStart("div", sId + "-y" + sYyyymmdd);
 			oRm.class("sapUiCalItem");
 
-			bApplySelection = oYP._fnShouldApplySelection(oFirstDate);
-			bApplySelectionBetween = oYP._fnShouldApplySelectionBetween(oFirstDate);
+			bApplySelection = oYP._isYearSelected(oFirstDate);
+			bApplySelectionBetween = oYP._isYearInsideSelectionRange(oFirstDate);
 
 			if (bApplySelection) {
 				oRm.class("sapUiCalItemSel");
 				mAccProps["selected"] = true;
 			}
 
-			if (bApplySelectionBetween) {
+			if (bApplySelectionBetween && !bApplySelection) {
 				oRm.class("sapUiCalItemSelBetween");
 				mAccProps["selected"] = true;
 			}
