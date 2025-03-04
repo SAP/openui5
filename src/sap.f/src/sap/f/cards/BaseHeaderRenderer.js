@@ -70,6 +70,8 @@ sap.ui.define([], function () {
 
 		if (oHeader.isFocusable()) {
 			oRm.attr("tabindex", "0");
+		} else if (bRenderAsLink) {
+			oRm.attr("tabindex", "-1");
 		}
 
 		if (oHeader.isInteractive()) {
