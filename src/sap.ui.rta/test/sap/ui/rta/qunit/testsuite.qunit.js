@@ -501,6 +501,17 @@ sap.ui.define([
 					}
 				}
 			},
+			"plugin/AddXMLPlugin": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/AddXMLPlugin"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
+				}
+			},
 			"plugin/Combine": {
 				group: "Plugin",
 				coverage: {
