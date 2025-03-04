@@ -870,7 +870,7 @@ sap.ui.define([
 			);
 			assert.notOk(
 				this.oCondenserStub.getCalls()[0].args[1].some((oChange) => (
-					oChange.getDefinition().reference === "anotherReference"
+					oChange.getFlexObjectMetadata().reference === "anotherReference"
 				)),
 				"the condenser was called without the changes from the other reference"
 			);
