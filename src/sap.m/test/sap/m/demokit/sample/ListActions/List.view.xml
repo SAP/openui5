@@ -1,0 +1,45 @@
+<mvc:View
+	controllerName="sap.m.sample.ListActions.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		id="list"
+		items="{/ProductCollection}"
+		mode="MultiSelect"
+		itemActionCount="2"
+		itemActionPress=".onItemActionPress">
+		<headerToolbar>
+			<OverflowToolbar>
+				<Title text="Products" level="H2"/>
+				<ToolbarSpacer/>
+				<Text
+					text="Item Action Count: "/>
+				<Slider
+					min="0"
+					max="2"
+					value="2"
+					width="150px"
+					enableTickmarks="true"
+					change=".onSliderChange" />
+			</OverflowToolbar>
+		</headerToolbar>
+		<StandardListItem
+			title="{Name}"
+			description="{ProductId}"
+			icon="{ProductPicUrl}"
+			counter="{Quantity}"
+			type="Navigation">
+			<ListItemAction
+				text="Add to Cart"
+				icon="sap-icon://cart"/>
+			<ListItemAction
+				text="Bookmark"
+				icon="sap-icon://bookmark"/>
+			<ListItemAction
+				type="Edit" />
+			<ListItemAction
+				type="Delete" />
+		</StandardListItem>
+	</List>
+</mvc:View>

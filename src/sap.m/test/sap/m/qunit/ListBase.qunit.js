@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/Input",
 	"sap/m/InputListItem",
-	"sap/m/Label",
+	"sap/m/ListItemAction",
 	"sap/m/library",
 	"sap/m/List",
 	"sap/m/ListBase",
@@ -45,7 +45,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 			App, Button, Column, ColumnListItem, CustomListItem, GroupHeaderListItem, GrowingEnablement,
-			IllustratedMessage, Input, InputListItem, Label, library, List, ListBase, Menu, MenuItem,
+			IllustratedMessage, Input, InputListItem, ListItemAction, library, List, ListBase, Menu, MenuItem,
 			MessageToast, Page, ScrollContainer, StandardListItem, Table, Text, Title,
 			Toolbar, ToolbarSpacer, VBox, DataStateIndicator, Device, Element, InvisibleMessage,
 			Library, coreLibrary, Theming, KeyCodes, VerticalLayout, Filter, FilterOperator,
@@ -4198,6 +4198,142 @@ sap.ui.define([
 			$noData.focus();
 			sLabelledBy = $noData.attr("aria-labelledby");
 			assert.equal(Element.getElementById(sLabelledBy).getText(), "Test", "Accessbility text is set correctly");
+		});
+
+		QUnit.module("Actions", {
+			beforeEach: async function() {
+				this.oItem1 = new StandardListItem({
+					title: "Item 1",
+					actions: [
+						new ListItemAction({
+							type: "Edit"
+						}),
+						new ListItemAction({
+							type: "Delete"
+						})
+					]
+				});
+				this.oList = new List({
+					items: [this.oItem1]
+				}).placeAt("qunit-fixture");
+				await nextUIUpdate();
+			},
+			afterEach: function() {
+				this.oList.destroy();
+			}
+		});
+
+		QUnit.test("Rendering", async function(assert) {
+			const oAction1 = this.oItem1.getActions()[0];
+			const oAction2 = this.oItem1.getActions()[1];
+			assert.notOk(this.oItem1.getDomRef("actions"), "By default no actions are rendered");
+
+			this.oList.setItemActionCount(2);
+			await nextUIUpdate();
+
+			const $Actions = this.oItem1.$("actions").children();
+			const $FirstAction = $Actions.first();
+			const $SecondAction = $Actions.last();
+			const oFirstAction = Element.getElementById(oAction1.getId() + "-edit");
+			const oSecondAction = Element.getElementById(oAction2.getId() + "-delete");
+			assert.equal($FirstAction.attr("id"), oFirstAction.getId(), "First action edit is rendered");
+			assert.equal($SecondAction.attr("id"), oSecondAction.getId(), "Second action delete is rendered");
+			assert.equal(oFirstAction.getIcon(), "sap-icon://edit", "First action edit has correct icon");
+			assert.equal(oFirstAction.getTooltip_AsString(), "Edit", "First action edit has correct tooltup");
+			assert.equal(oSecondAction.getIcon(), "sap-icon://decline", "Second action delete has correct icon");
+			assert.equal(oSecondAction.getTooltip_AsString(), "Delete", "Second action delete has correct tooltup");
+
+			this.oList.attachItemActionPress((oEvent) => {
+				assert.step(oEvent.getParameter("action").getType());
+			});
+
+			$FirstAction.trigger("tap");
+			$SecondAction.trigger("tap");
+			qutils.triggerKeydown($FirstAction[0], "ENTER");
+			qutils.triggerKeydown($SecondAction[0], "ENTER");
+			qutils.triggerEvent("keydown", this.oItem1.getDomRef(), {code: "KeyE", ctrlKey: true});
+			qutils.triggerKeydown(this.oItem1.getDomRef(), "DELETE");
+			const aSteps = ["Edit", "Delete", "Edit", "Delete", "Edit", "Delete"];
+
+			this.oItem1.setType("Detail");
+			await nextUIUpdate();
+			assert.notOk(this.oItem1.getDomRef("imgDet"), "Detail type is not rendered since custom actions active");
+
+			this.oList.setItemActionCount(-1);
+			await nextUIUpdate();
+			assert.ok(this.oItem1.getDomRef("imgDet"), "Detail type is rendered since custom actions are disabled");
+
+			this.oItem1.addAction(new ListItemAction({
+				icon: "sap-icon://add",
+				text: "Add"
+			}));
+			this.oList.setItemActionCount(1);
+			await nextUIUpdate();
+
+			const $Overflow = this.oItem1.$("overflow");
+			assert.ok($Overflow[0], "Overflow button is rendered");
+			assert.notOk($Overflow[0].nextSibling || $Overflow[0].previousSibling, "Overflow button is the only rendered action");
+			$Overflow.trigger("tap");
+			await nextUIUpdate();
+			await timeout(400);
+
+			const oMenu = Element.getElementById(jQuery(".sapMMenu").attr("id"));
+			assert.ok(oMenu, "Overflow menu is rendered");
+			assert.equal(oMenu.getItems()[0].getText(), "Edit", "First action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[0].getIcon(), "sap-icon://edit", "First action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[1].getText(), "Delete", "Second action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[1].getIcon(), "sap-icon://decline", "Second action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[2].getText(), "Add", "Third action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[2].getIcon(), "sap-icon://add", "Third action is rendered in the overflow menu");
+
+			oMenu.getItems()[2].$().trigger("click");
+			aSteps.push("Custom");
+
+			this.oList.setItemActionCount(2);
+			await nextUIUpdate();
+			assert.equal($Overflow[0].previousSibling.id, oFirstAction.getId(), "First action is rendered before overflow button");
+			assert.notOk($Overflow[0].nextSibling, "Overflow button is the last rendered action");
+			$Overflow.trigger("tap");
+			await nextUIUpdate();
+			await timeout(400);
+
+			assert.equal(oMenu.getItems()[0].getText(), "Delete", "First action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[0].getIcon(), "sap-icon://decline", "First action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[1].getText(), "Add", "Second action is rendered in the overflow menu");
+			assert.equal(oMenu.getItems()[1].getIcon(), "sap-icon://add", "Second action is rendered in the overflow menu");
+
+			oMenu.getItems()[0].$().trigger("click");
+			aSteps.push("Delete");
+			assert.verifySteps(aSteps, "Correct actions are triggered");
+
+			this.oItem1.setType("Navigation");
+			this.oList.setMode("Delete");
+			await nextUIUpdate();
+			assert.ok(this.oItem1.getDomRef("imgNav"), "Navigation type is rendered this is independent from custom actions");
+			assert.notOk(this.oItem1.getDomRef("imgDel"), "Delete mode button is not rendered since custom actions active");
+			assert.notOk(this.oList.getDomRef("listUl").classList.contains("sapMListModeDelete"), "Delete mode class is not added to the list");
+
+			this.oList.setItemActionCount(0);
+			await nextUIUpdate();
+			assert.notOk(this.oItem1.getDomRef("actions"), "Actions are not rendered anymore");
+			assert.ok(this.oItem1.getDomRef("imgNav"), "Navigation type is still rendered");
+			assert.notOk(this.oItem1.getDomRef("imgDel"), "Delete mode button still not rendered");
+			assert.notOk(this.oList.getDomRef("listUl").classList.contains("sapMListModeDelete"), "Delete mode class is also not added to the list");
+
+			this.oList.setItemActionCount(-1);
+			await nextUIUpdate();
+			assert.notOk(this.oItem1.getDomRef("actions"), "Actions are still not rendered");
+			assert.ok(this.oItem1.getDomRef("imgNav"), "Navigation type is still rendered, it is independent of custom actions");
+			assert.ok(this.oItem1.getDomRef("imgDel"), "Delete mode button is now rendered since custom actions disabled");
+			assert.ok(this.oList.getDomRef("listUl").classList.contains("sapMListModeDelete"), "Delete mode class is added to the list");
+
+			this.oItem1.setType("Detail");
+			await nextUIUpdate();
+			assert.ok(this.oItem1.getDomRef("imgDet"), "Details action is rendered, since custom actions are disabled");
+
+			this.oList.setItemActionCount(0);
+			await nextUIUpdate();
+			assert.notOk(this.oItem1.getDomRef("imgDet"), "Details action is not rendered, since custom actions are enabled");
 		});
 	}
 );

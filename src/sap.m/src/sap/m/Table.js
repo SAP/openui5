@@ -1245,41 +1245,35 @@ sap.ui.define([
 	 * Returns the sum of internal columns that are created by the table like "Mode" & "Type" as a float value.
 	 * This is required for accurately calculating the <code>minScreenWidth</code> property of the columns when the <code>autoPopinMode=true</code>.
 	 *
-	 * @param {sap.m.ColumnListItem[]} aItems - table items
 	 * @returns {float} initial accumulated width
 	 * @private
 	 */
-	Table.prototype._getInitialAccumulatedWidth = function(aItems) {
+	Table.prototype._getInitialAccumulatedWidth = function() {
+		// check if compact mode is enabled
+		const bCompact = this.$().closest(".sapUiSizeCompact").length > 0;
+		const iThemeDensityWidth = bCompact ? 2 : 3;
+
 		// check if table has inset
-		var iInset = this.getInset() ? 4 : 0;
+		const iInset = this.getInset() ? 4 : 0;
 
-		var $this = this.$(),
-			iThemeDensityWidth = 3;
-
-		if ($this.closest(".sapUiSizeCompact").length || jQuery(document.body).hasClass("sapUiSizeCompact")) {
-			iThemeDensityWidth = 2;
-		} else {
-			var bThemeDensityWidthFound = false;
-			$this.find(".sapMTableTH[aria-hidden=true]:not(.sapMListTblHighlightCol):not(.sapMListTblDummyCell):not(.sapMListTblNavigatedCol)").get().forEach(function(oTH) {
-				var iWidth = jQuery(oTH).width();
-				if (!bThemeDensityWidthFound && iWidth > 0) {
-					iThemeDensityWidth = iWidth / parseFloat(library.BaseFontSize);
-					bThemeDensityWidthFound = true;
-				}
-			});
-		}
+		// check if item types are rendered
+		const iTypeWidth = this.doItemsNeedTypeColumn() ? iThemeDensityWidth : 0;
 
 		// check if selection control is available
-		var iSelectionWidth = ListBaseRenderer.ModeOrder[this.getMode()] ? iThemeDensityWidth : 0;
+		let iModeWidth = ListBaseRenderer.ModeOrder[this.getMode()] ? iThemeDensityWidth : 0;
 
-		// check if actions are available on the item
-		var iActionWidth = aItems.some(function(oItem) {
-			var sType = oItem.getType();
-			return sType === "Detail" || sType === "DetailAndActive" || sType === "Navigation";
-		}) ? iThemeDensityWidth : 0;
+		// check item actions
+		let iItemActionWidth = 0;
+		const iItemActionCount = this._getItemActionCount();
+		if (iItemActionCount > -1) {
+			iItemActionWidth = iItemActionCount * (bCompact ? 2.5 : 2.75);
+			if (this.getMode() === "Delete") {
+				iModeWidth = 0;
+			}
+		}
 
 		// borders = ~0.25rem
-		return iInset + iSelectionWidth + iActionWidth + 0.25;
+		return iInset + iTypeWidth + iModeWidth + iItemActionWidth + 0.25;
 	};
 
 	/**

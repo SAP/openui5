@@ -299,7 +299,18 @@ function(
 				 *
 				 * @since 1.93
 				 */
-				multiSelectMode : {type: "sap.m.MultiSelectMode", group: "Behavior", defaultValue: MultiSelectMode.Default}
+				multiSelectMode : {type: "sap.m.MultiSelectMode", group: "Behavior", defaultValue: MultiSelectMode.Default},
+
+				/**
+				 * Defines the maximum number of item actions.
+				 *
+				 * If the number of item actions exceeds the <code>itemActionCount</code> property value, an overflow button will appear, providing access to the additional actions.
+				 *
+				 * <b>Note:</b> Only values between <code>0-2</code> enables the use of the new <code>actions</code> aggregation. When enabled, the {@link sap.m.ListMode Delete} mode and the {@link sap.m.ListType Detail} list item type have no effect. Instead, dedicated actions of {@link sap.m.ListItemActionType type} <code>Delete</code> or <code>Edit</code> should be used.
+				 *
+				 * @since 1.137
+				 */
+				itemActionCount : {type : "int", group: "Misc", defaultValue: -1}
 			},
 			defaultAggregation : "items",
 			aggregations : {
@@ -576,6 +587,25 @@ function(
 					parameters : {
 						/**
 						 * Item in which the context menu was opened.
+						 */
+						listItem : {type : "sap.m.ListItemBase"}
+					}
+				},
+
+				/**
+				 * Fired when an item action is pressed.
+				 * @since 1.137
+				 */
+				itemActionPress: {
+					parameters: {
+
+						/**
+						 * The list item action that fired the event
+						 */
+						itemAction : {type : "sap.m.ListItemAction"},
+
+						/**
+						 * The list item in which the action was performed
 						 */
 						listItem : {type : "sap.m.ListItemBase"}
 					}
@@ -1794,6 +1824,17 @@ function(
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
 		}
+	};
+
+	ListBase.prototype._getItemActionCount = function() {
+		return Math.min(2, Math.max(-1, this.getItemActionCount()));
+	};
+
+	ListBase.prototype._onItemActionPress = function(oItem, oAction) {
+		this.fireItemActionPress({
+			listItem: oItem,
+			action: oAction
+		});
 	};
 
 	/**

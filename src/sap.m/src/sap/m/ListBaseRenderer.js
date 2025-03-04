@@ -151,7 +151,9 @@ sap.ui.define(["sap/m/library", "sap/ui/core/library", "sap/ui/Device", "sap/ui/
 		rm.class("sapMListShowSeparators" + oControl.getShowSeparators());
 
 		// modes
-		rm.class("sapMListMode" + oControl.getMode());
+		if (oControl._getItemActionCount() === -1 || oControl.getMode() !== "Delete") {
+			rm.class("sapMListMode" + oControl.getMode());
+		}
 
 		// navigated indicator
 		if (oControl._iItemNeedsNavigated) {
