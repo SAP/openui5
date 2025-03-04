@@ -2252,7 +2252,7 @@ sap.ui.define([
 				},
 				"content": {
 					"item": {
-						"title": "{ formatter: '' }"
+						"title": "{invalidProperty}"
 					}
 				}
 			}
@@ -2270,9 +2270,7 @@ sap.ui.define([
 					"groups": [
 						{
 							"items": [
-								{
-									"title": {}
-								}
+								{}
 							]
 						}
 					]
