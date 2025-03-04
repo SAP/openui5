@@ -17,6 +17,8 @@ sap.ui.define([
 
 	var rBatch = /\/\$batch($|\?)/,
 		rContentId = /(?:^|\r\n)Content-Id\s*:\s*(\S+)/i,
+		rEndsWithJSON = /\.json$/i,
+		rEndsWithXML = /\.xml$/i,
 		rHeaderLine = /^(.*)?:\s*(.*)$/,
 		sJson = "application/json;charset=UTF-8;IEEE754Compatible=true",
 		mMessageForPath = {}, // a cache for files, see useFakeServer
@@ -35,10 +37,38 @@ sap.ui.define([
 		rNonReadableChars = /[ "[\]{}]/g,
 		rNonReadableEscaped = /%(20|22|5B|5D|7B|7D)/gi,
 		rMethod = /^\w+ /,
+		rResourcesAndOptionalCacheBusterToken = /(^|\/)resources\/(~[-a-zA-Z0-9_.]*~\/)?/,
 		TestUtils;
 
 	if (bRealOData) {
 		document.title += " (real OData)";
+	}
+
+	/**
+	 * Builds a server-absolute path from a path relative to test-resources and strips off the cache
+	 * buster token.
+	 *
+	 * @param {string} sPath - The relative path
+	 * @returns {string} - The resulting server-absolute path
+	 */
+	function absolutePath(sPath) {
+		return sap.ui.require.toUrl(sPath)
+			.replace(rResourcesAndOptionalCacheBusterToken, "$1test-resources/") + "/";
+	}
+
+	/**
+	 * Gets the content type from the given resource name.
+	 * @param {string} sName The resource name
+	 * @returns {string} The content type
+	 */
+	function contentType(sName) {
+		if (rEndsWithXML.test(sName)) {
+			return "application/xml";
+		}
+		if (rEndsWithJSON.test(sName)) {
+			return sJson;
+		}
+		return "application/x-octet-stream";
 	}
 
 	/**
@@ -304,6 +334,56 @@ sap.ui.define([
 		},
 
 		/**
+		 * Gets a Promise that resolves if all sources have been loaded asynchronously.
+		 * The <code>message</code> property of the response object is set with the source's content
+		 * and the <code>source</code> property is deleted from the response object.
+		 *
+		 * @param {map} mFixture
+		 *   The fixture for {@link sap.ui.test.TestUtils.useFakeServer}; it is modified during the
+		 *   call
+		 * @param {object[]} [aRegExps]
+		 *   The regular expression array for {@link sap.ui.test.TestUtils.useFakeServer}; it is
+		 *   modified during the call
+		 * @param {string} [sBase="sap/ui/core/qunit/odata/v4/data"]
+		 *   The base path for {@link sap.ui.test.TestUtils.useFakeServer}
+		 * @returns {Promise}
+		 *   A Promise that resolves with <code>undefined</code> when all sources are loaded;
+		 *   rejects with an error if at least one source cannot be loaded
+		 *
+		 * @public
+		 */
+		requestAllSources : function (mFixture, aRegExps, sBase) {
+			sBase = absolutePath(sBase || "sap/ui/core/qunit/odata/v4/data");
+			const mSource2Promise = new Map();
+
+			function addResponse(vResponse) {
+				if (Array.isArray(vResponse)) {
+					vResponse.forEach(addResponse);
+				} else if (vResponse.source) {
+					let oPromise = mSource2Promise.get(vResponse.source);
+					if (!oPromise) {
+						oPromise = fetch(sBase + vResponse.source)
+							.then((oResponse) => oResponse.text());
+						mSource2Promise.set(vResponse.source, oPromise);
+					}
+					oPromise.then((sMessage) => {
+						vResponse.message = sMessage;
+						vResponse.headers ??= {};
+						vResponse.headers["Content-Type"] ||= contentType(vResponse.source);
+						delete vResponse.source;
+					});
+				}
+			}
+
+			Object.values(mFixture).forEach(addResponse);
+			aRegExps?.forEach((oRegExpFixture) => {
+				addResponse(oRegExpFixture.response);
+			});
+
+			return Promise.all(Array.from(mSource2Promise.values())).then(() => {});
+		},
+
+		/**
 		 * Activates a sinon fake server in the given sandbox. The fake server responds to those
 		 * requests given in the fixture, and to all DELETE, MERGE, PATCH, and POST requests
 		 * regardless of the path. It is automatically restored when the sandbox is restored.
@@ -463,17 +543,6 @@ sap.ui.define([
 					}
 				}
 				return mUrls;
-			}
-
-			// calculates the content type from the given resource name
-			function contentType(sName) {
-				if (/\.xml$/.test(sName)) {
-					return "application/xml";
-				}
-				if (/\.json$/.test(sName)) {
-					return sJson;
-				}
-				return "application/x-octet-stream";
 			}
 
 			/*
@@ -870,8 +939,7 @@ sap.ui.define([
 			}
 
 			// ensure to always search the fake data in test-resources, remove cache buster token
-			sBase = sap.ui.require.toUrl(sBase)
-				.replace(/(^|\/)resources\/(~[-a-zA-Z0-9_.]*~\/)?/, "$1test-resources/") + "/";
+			sBase = absolutePath(sBase);
 			return setupServer();
 		},
 
