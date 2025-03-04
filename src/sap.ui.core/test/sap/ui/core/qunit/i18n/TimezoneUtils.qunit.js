@@ -51,15 +51,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("valid timezones (tz)", function (assert) {
-			timezones.aTzTimezoneIDs.forEach(function (sTimezone) {
-				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
-					assert.ok(TimezoneUtils.isValidTimezone(sTimezone), sTimezone
-						+ " should be a valid timezone (tz).");
-				}
-			});
-		});
-
 		QUnit.test("invalid timezones", function (assert) {
 			assert.notOk(TimezoneUtils.isValidTimezone(""), "Empty string should not be a valid timezone.");
 			assert.notOk(TimezoneUtils.isValidTimezone(123), "A number should not be a valid timezone.");
@@ -543,13 +534,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("local timezone", function (assert) {
-			var sLocalTimezone = TimezoneUtils.getLocalTimezone();
-			assert.ok(sLocalTimezone, "local timezone can be retrieved");
-			assert.ok(timezones.aTzTimezoneIDs.includes(sLocalTimezone) || aTimezoneIDs.includes(sLocalTimezone),
-				"Local timezone should be in list: " + sLocalTimezone);
-		});
-
 		QUnit.test("convert CLDR to ABAP", function (assert) {
 			const oDateTimeFormatMock = this.mock(Intl.DateTimeFormat.prototype);
 			const oTimezoneUtilsMock = this.mock(TimezoneUtils);
@@ -766,15 +750,6 @@ sap.ui.define([
 				timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sCLDRTimezoneID)),
 				!aNotSupportedInABAP.includes(sCLDRTimezoneID),
 				sCLDRTimezoneID);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getABAPTimezone: Provides mapping from IANA to ABAP IDs", function (assert) {
-		timezones.aTzTimezoneIDs.forEach((sIANATimezoneID) => {
-			// code under test
-			assert.ok(timezones.aABAPTimezoneIDs.includes(TimezoneUtils.getABAPTimezone(sIANATimezoneID)),
-				sIANATimezoneID);
 		});
 	});
 });

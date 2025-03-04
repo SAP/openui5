@@ -107,6 +107,18 @@ sap.ui.define([
 		assert.strictEqual(aMenuItems[0].rank, 300, "then the menu item rank is correct");
 	});
 
+	QUnit.test("When multiple editable overlays are selected", function(assert) {
+		sandbox.stub(this.oAnnotationPlugin, "_isEditableByPlugin").returns(true);
+		assert.strictEqual(
+			this.oAnnotationPlugin.isAvailable([this.oButtonOverlay, this.oLayoutOverlay]),
+			true, "then isAvailable returns true"
+		);
+		assert.strictEqual(
+			this.oAnnotationPlugin.isEnabled([this.oButtonOverlay, this.oLayoutOverlay]),
+			false, "then isEnabled returns false"
+		);
+	});
+
 	QUnit.test("When an overlay has multiple annotation actions in the designtime metadata", async function(assert) {
 		const sActionTitle1 = "My Action Title 1";
 		const sActionTitle2 = "My Action Title 2";

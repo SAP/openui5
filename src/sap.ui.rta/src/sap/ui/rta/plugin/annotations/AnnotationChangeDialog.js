@@ -65,8 +65,7 @@ sap.ui.define([
 	 * @property {string} possibleValues.key - Key of the option
 	 * @property {string} possibleValues.text - Text of the option
 	 * @property {string} [preSelectedProperty] - Name of the property that should be filtered for initially
-	 * @private
-	 * @ui5-restricted
+	 * @public
 	 */
 
 	/**
@@ -74,8 +73,7 @@ sap.ui.define([
 	 * @property {sap.ui.core.Control} oControl - Control for which the annotation change is made
 	 * @property {string} sAnnotation - Annotation name
 	 * @returns {sap.ui.rta.plugin.annotations.AnnotationChangeInfo} - Annotation change info
-	 * @private
-	 * @ui5-restricted
+	 * @public
 	 */
 
 	/**
@@ -87,8 +85,7 @@ sap.ui.define([
 	 * @property {string} content.annotationPath - Path of the property
 	 * @property {string} content.value - New value
 	 * @property {string} serviceUrl - Url of the OData service
-	 * @private
-	 * @ui5-restricted
+	 * @public
 	 */
 
 	/**
@@ -144,7 +141,7 @@ sap.ui.define([
 			description: sAnnotationDescription,
 			properties: aProperties, // all properties
 			changedProperties: aProperties.filter(({ annotationPath }) => aChangedAnnotations.includes(annotationPath)),
-			propertiesToDisplay: aProperties, // switches dynamcially between all properties and changed properties
+			propertiesToDisplay: aProperties, // switches dynamically between all properties and changed properties
 			showChangedPropertiesOnly: false,
 			filterText: sFilterText,
 			possibleValues: aPossibleValues,

@@ -511,16 +511,9 @@ sap.ui.define([
 			};
 			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);
 			assert.strictEqual(aChanges.length, 1, "One change was returned");
-			assert.strictEqual(
-				aChanges[0].content.annotationPath,
-				"path/to/test/label",
-				"then the correct path was returned"
-			);
-			assert.strictEqual(
-				aChanges[0].content.value,
-				"Bye",
-				"then the correct value was returned"
-			);
+			assert.strictEqual(aChanges[0].content.annotationPath, "path/to/test/label", "then the correct path was returned");
+			assert.strictEqual(aChanges[0].content.value, undefined, "then the correct value was returned");
+			assert.strictEqual(aChanges[0].content.text, "Bye", "then the correct text was returned");
 		});
 	});
 
