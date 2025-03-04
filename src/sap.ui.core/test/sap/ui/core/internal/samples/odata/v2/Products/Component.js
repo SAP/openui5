@@ -7,13 +7,20 @@
  * OData service.
  */
 sap.ui.define([
+	"./FakeServer",
 	"sap/ui/core/UIComponent"
-], function (UIComponent) {
+], function (FakeServer, UIComponent) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.Products.Component", {
+		constructor : function() {
+			// start the fake server before super constructor is called and models are created
+			FakeServer.start();
+			UIComponent.apply(this, arguments);
+		},
+
 		exit: function () {
-			this.getModel().restoreSandbox();
+			FakeServer.stop();
 		},
 
 		metadata : {
