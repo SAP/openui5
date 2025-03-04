@@ -50,19 +50,31 @@
 		font-size: @sapMFontHeader5Size;
 	}
 
+	.sapMMsgViewSubtitleText {
+		display: block;
+		margin: 0 0 1rem 2.5rem;
+		font-family: var(--sapFontFamily);
+		color: var(--sapContent_LabelColor);
+		font-size: var(--sapFontSize);
+	}
+
 	.sapMMsgViewItem {
 		padding-left: 0;
 
 		&.sapMSLIWithDescription {
-			height: 3.3125rem;
+			min-height: 3.3125rem;
 		}
 		&:not(.sapMSLIWithDescription) {
-			height: 2.75rem;
+			min-height: 2.75rem;
 		}
 
 		.sapMSLIImgIcon {
 			margin-left: 0;
 		}
+	}
+
+	.sapMSLI {
+		height: auto !important;
 	}
 
 	.sapMSLIDescription {
@@ -95,6 +107,10 @@
 
 	.sapMSLIDescIcon .sapMSLIDescription {
 		margin-top: 0.125rem;
+	}
+
+	.sapMSLIDiv {
+		padding: 0 !important;
 	}
 
 	.sapMSLIInfo {
