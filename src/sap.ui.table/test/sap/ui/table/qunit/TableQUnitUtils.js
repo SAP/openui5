@@ -408,7 +408,7 @@ sap.ui.define([
 
 		function waitForRowsUpdatedAndFinalDomUpdates() {
 			return oTable.qunit.whenNextRowsUpdated().then(function(mParameters) {
-				if (oTable._hasPendingRequests()) {
+				if (oTable._isWaitingForData()) {
 					return TableQUnitUtils.nextEvent("dataReceived", oTable.getBinding());
 				} else {
 					return waitForFinalDOMUpdates().then(function() {
