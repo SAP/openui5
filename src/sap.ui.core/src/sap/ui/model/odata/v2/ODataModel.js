@@ -7430,7 +7430,8 @@ sap.ui.define([
 			vProperties = mParameters.properties;
 			sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId = mParameters.changeSetId;
-			oContext  = mParameters.context;
+			// ignore context if path is absolute
+			oContext  = sPath.startsWith("/") ? undefined : mParameters.context;
 			fnSuccess = mParameters.success;
 			fnError   = mParameters.error;
 			fnCreated = mParameters.created;
