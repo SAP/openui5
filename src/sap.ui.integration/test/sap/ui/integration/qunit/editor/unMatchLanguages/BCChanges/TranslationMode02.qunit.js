@@ -135,7 +135,7 @@ sap.ui.define([
 			"th": "String2 th-TH"
 		},
 		"string1string2": {
-			"default_in_en": "StringParameter Value Trans in i18n",
+			"default_in_en": "StringParameter Value Trans in i18n en",
 			"cy-GB": "String1 cy-GB",
 			"da": "String1 da-DK",
 			"hi": "String1 hi-IN",
@@ -171,7 +171,7 @@ sap.ui.define([
 			"th": "String2 th-TH"
 		},
 		"string1string2": {
-			"default_in_en": "StringParameter Value Trans in i18n",
+			"default_in_en": "StringParameter Value Trans in i18n en",
 			"cy-GB": "String1 cy-GB1",
 			"da": "String1 da",
 			"hi": "String1 hi-IN",

@@ -236,6 +236,25 @@ function loadLanguages() {
 				}
 				oLanguageSelect.add(oOption);
 			}
+			var _oLanguageMapping = {
+				"ar_SA": "ar-SA",
+				"bg_BG": "bg-BG",
+				"cs_CZ": "cs-CZ",
+				"da_DK": "da",
+				"de_CH": "de-CH",
+				"de_DE": "de-DE",
+				"el_GR": "el-GR",
+				"en_US": "en"
+			};
+			for (var sLanguage in _oLanguageMapping) {
+				var oOption = document.createElement("OPTION");
+				oOption.text =  sLanguage + "/" + _oLanguageMapping[sLanguage];
+				oOption.value = sLanguage;
+				if (sLanguage === sCurrentLanguage) {
+					oOption.selected = true;
+				}
+				oLanguageSelect.add(oOption);
+			}
 		}
 		var oTranslationLanguageSelectForOnlyMode = document.getElementById("translationLanguageSelectForOnlyMode");
 		if (oTranslationLanguageSelectForOnlyMode) {
