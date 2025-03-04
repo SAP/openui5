@@ -12878,9 +12878,8 @@ sap.ui.define([
 	});
 });
 
-["requestSelectedContexts", "requestSelectionValidation"].forEach((sMethod) => {
 	//*********************************************************************************************
-	QUnit.test(sMethod + ": $$sharedRequest", function (assert) {
+	QUnit.test("requestSelectedContexts: $$sharedRequest", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES", null, [], [], {$$sharedRequest : true});
 		this.mock(oBinding).expects("checkSuspended").withExactArgs().never();
 		this.mock(oBinding).expects("checkTransient").withExactArgs().never();
@@ -12893,12 +12892,12 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding[sMethod]("~sGroupId~");
+			oBinding.requestSelectedContexts("~sGroupId~");
 		}, new Error("Unsupported $$sharedRequest at " + oBinding));
 	});
 
 	//*********************************************************************************************
-	QUnit.test(sMethod + ": $$aggregation", function (assert) {
+	QUnit.test("requestSelectedContexts: $$aggregation", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES", null, [], [], {$$aggregation : {}});
 		this.mock(oBinding).expects("checkSuspended").withExactArgs().never();
 		this.mock(oBinding).expects("checkTransient").withExactArgs().never();
@@ -12911,18 +12910,16 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding[sMethod]("~sGroupId~");
+			oBinding.requestSelectedContexts("~sGroupId~");
 		}, new Error("Unsupported $$aggregation at " + oBinding));
 	});
 
 	//*********************************************************************************************
-	QUnit.test(sMethod + ": pending changes", function (assert) {
+	QUnit.test("requestSelectedContexts: pending changes", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
-		this.mock(oBinding.oHeaderContext).expects("isSelected")
-			.exactly(sMethod === "requestSelectedContexts" ? 1 : 0)
-			.withExactArgs().returns(false);
+		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
 		this.mock(_Helper).expects("checkGroupId").never();
 		this.mock(oBinding).expects("_getAllExistingContexts").never();
@@ -12931,12 +12928,12 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding[sMethod]("~sGroupId~");
+			oBinding.requestSelectedContexts("~sGroupId~");
 		}, new Error("Unsupported pending changes"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test(sMethod + ": no selection", async function (assert) {
+	QUnit.test("requestSelectedContexts: no selection", async function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
@@ -12953,16 +12950,11 @@ sap.ui.define([
 		this.mock(oBinding.oCache).expects("requestFilteredOrderedPredicates").never();
 
 		// code under test
-		const oPromise = oBinding[sMethod]("~sGroupId~");
+		const oPromise = oBinding.requestSelectedContexts("~sGroupId~");
 
 		assert.ok(oPromise instanceof Promise);
-		if (sMethod === "requestSelectedContexts") {
-			assert.deepEqual(await oPromise, []);
-		} else {
-			assert.strictEqual(await oPromise, undefined, "without a defined result");
-		}
+		assert.deepEqual(await oPromise, []);
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("requestSelectedContexts: Select All", function (assert) {
@@ -13023,60 +13015,6 @@ sap.ui.define([
 
 		assert.ok(oPromise instanceof Promise);
 		assert.deepEqual(await oPromise, [oContextIn43, oContextIn42]);
-	});
-
-	//*********************************************************************************************
-[false, true].forEach((bSelectAll) => {
-	QUnit.test("requestSelectedContexts: Select All = " + bSelectAll, async function (assert) {
-		const oBinding
-			= this.bindList("TEAM_2_EMPLOYEES", this.oModel.createBindingContext("/TEAMS('23')"));
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oBinding).expects("checkTransient").withExactArgs();
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
-		this.mock(_Helper).expects("checkGroupId").withExactArgs("~sGroupId~");
-		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs()
-			.returns(bSelectAll);
-		const oContextIn42 = {
-			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('42')",
-			getPath : function () { return this.sPath; },
-			isSelected : () => !bSelectAll,
-			setSelected : mustBeMocked
-		};
-		const oContextIn43 = {
-			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('43')",
-			getPath : function () { return this.sPath; },
-			isSelected : () => !bSelectAll,
-			setSelected : mustBeMocked
-		};
-		const oContextOut = {
-			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('n/a')",
-			getPath : function () { return this.sPath; },
-			isSelected : () => !bSelectAll,
-			setSelected : mustBeMocked
-		};
-		this.mock(oContextOut).expects("setSelected").withExactArgs(bSelectAll);
-		const oContextNoException = {
-			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('not/selected')",
-			getPath : function () { return this.sPath; },
-			isSelected : () => bSelectAll,
-			setSelected : mustBeMocked
-		};
-		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
-			.returns([oContextIn42, oContextOut, oContextIn43, oContextNoException]);
-		this.mock(oBinding).expects("lockGroup").withExactArgs("~sGroupId~")
-			.returns("~oGroupLock~");
-		this.mock(oBinding.oCache).expects("requestFilteredOrderedPredicates")
-			.withExactArgs(["('42')", "('n/a')", "('43')"], "~oGroupLock~", /*bSelectKeysOnly*/true)
-			.returns(new Promise((resolve) => {
-				setTimeout(() => resolve(["('43')", "('42')"]), 1);
-			}));
-
-		// code under test
-		const oPromise = oBinding.requestSelectionValidation("~sGroupId~");
-
-		assert.ok(oPromise instanceof Promise);
-		assert.strictEqual(await oPromise, undefined, "without a defined result");
-	});
 	});
 });
 

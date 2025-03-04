@@ -76726,10 +76726,9 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: Select some contexts in a filtered and sorted list, change data for one so that
-	// it no longer matches the filter. First call ODLB#requestSelectedContexts to see that the one
-	// is not returned but others are updated. Then call ODLB#requestSelectionValidation and
-	// #refresh to have the selection validated and the one context which is no longer matching the
-	// filter deselected. Do it w/ & w/o auto-$expand/$select. Dito for "Select All".
+	// it no longer matches the filter. Call ODLB#requestSelectedContexts to see that the one
+	// is not returned but others are updated. Do it w/ & w/o auto-$expand/$select. Dito for
+	// "Select All".
 	// JIRA: CPOUI5ODATAV4-2851
 [false, true].forEach((bAutoExpandSelect) => {
 	[false, true].forEach((bSelectAll) => {
@@ -76815,7 +76814,7 @@ make root = ${bMakeRoot}`;
 			this.oView.byId("form").setBindingContext(oContext3);
 		}
 
-		await this.waitForChanges(assert, "form bound to oContext2");
+		await this.waitForChanges(assert, "form bound to oContext3");
 
 		this.expectRequest({
 				method : "PATCH",
@@ -76868,77 +76867,6 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(oContext2.isSelected(), true, "selection state is unchanged");
 			assert.strictEqual(oContext3.isSelected(), true);
 		}
-
-		const iBatchNo = this.iBatchNo + 1; // don't care about exact no., but use thrice below
-		this.expectRequest({ // ODLB#requestSelectionValidation
-				batchNo : iBatchNo,
-				url : "SalesOrderList?custom=foo"
-					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
-						+ " and (SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3')"
-					+ "&$orderby=LifecycleStatus,Note desc&$search=lorem ipsum"
-					+ "&$select=SalesOrderID&$top=3"
-			}, {
-				value : [
-					{SalesOrderID : "1"},
-					{SalesOrderID : "3"}
-				]
-			})
-			.expectRequest({ // ODLB#refreshKeptElements via "refresh"
-					batchNo : iBatchNo,
-					url : "SalesOrderList?custom=foo"
-					+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3'"
-					+ "&$select=LifecycleStatus,Note" + (bAutoExpandSelect ? ",NoteLanguage" : "")
-						+ ",SalesOrderID"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$top=3"
-			}, {
-				value : [ // Note: w/o auto-$expand/$select, NoteLanguage is not needed here
-					{SalesOrderID : "1", Note : "Z", NoteLanguage : "n/a", LifecycleStatus : "N",
-						SO_2_BP : {BusinessPartnerID : "0"}},
-					{SalesOrderID : "2", Note : "Y", NoteLanguage : "n/a", LifecycleStatus : "P",
-						SO_2_BP : {BusinessPartnerID : "0"}},
-					{SalesOrderID : "3", Note : "X", NoteLanguage : bSelectAll ? "EN" : "DE",
-						LifecycleStatus : "N",
-						SO_2_BP : {BusinessPartnerID : bSelectAll ? "0" : "42"}}
-				]
-			})
-			.expectChange("note", ["Z", "Y", "X"])
-			.expectRequest({ // "table refresh"
-				batchNo : iBatchNo,
-				url : "SalesOrderList?custom=foo&$count=true"
-					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
-					+ "&$orderby=LifecycleStatus,Note desc&$search=lorem ipsum"
-					+ "&$select=LifecycleStatus,Note,SalesOrderID"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID)&$skip=0&$top=100"
-			}, {
-				"@odata.count" : "3",
-				value : [
-					{SalesOrderID : "1", Note : "Z", LifecycleStatus : "N",
-						SO_2_BP : {BusinessPartnerID : "0"}},
-					{SalesOrderID : "3", Note : "X", LifecycleStatus : "N",
-						SO_2_BP : {BusinessPartnerID : bSelectAll ? "0" : "42"}},
-					{SalesOrderID : "4", Note : "W", LifecycleStatus : "N",
-						SO_2_BP : {BusinessPartnerID : "0"}}
-				]
-			})
-			.expectChange("selected", [, bSelectAll ? "Yes" : "No"])
-			.expectChange("selected", [, bSelectAll ? "No" : "Yes", null])
-			.expectChange("id", [, "3", "4"])
-			.expectChange("note", [, "X", "W"])
-			.expectChange("status", [, "N"]);
-		if (!bSelectAll) {
-			this.expectChange("bp", [, "42", "0"]);
-		}
-
-		await Promise.all([
-			// code under test
-			oListBinding.requestSelectionValidation(),
-			oListBinding.requestRefresh(),
-			this.waitForChanges(assert, "requestSelectionValidation")
-		]);
-
-		assert.strictEqual(oContext1.isSelected(), !bSelectAll); // still selected
-		assert.strictEqual(oContext2.getModel(), undefined, "destroyed");
-		assert.strictEqual(oContext3.isSelected(), !bSelectAll); // still selected
 	});
 	});
 });
