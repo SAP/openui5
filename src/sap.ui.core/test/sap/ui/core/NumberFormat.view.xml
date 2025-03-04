@@ -1,5 +1,10 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form"
-	displayBlock="true">
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	displayBlock="true"
+	core:require="{LocaleType: 'local/LocaleType', FloatType: 'sap/ui/model/type/Float'}">
 	<App autoFocus="false">
 		<Page title="NumberFormat" enableScrolling="false">
 			<HBox fitContainer="true">
@@ -9,32 +14,19 @@
 					</layoutData>
 					<content>
 						<form:SimpleForm layout="ResponsiveGridLayout" columnsL="1" width="100%" editable="true">
-
-
 							<core:Title text="Output" />
-
 							<Image width="30px" height="20px"
-									src="{
-										parts: ['/locale'],
-										formatter: '.formatImageSrc'}" />
-
+								src="{parts: ['/locale'], formatter: '.formatImageSrc'}" />
 							<Label text="" />
 							<Input class="large largeinput"
-									value="{
-										parts: ['/number', '/currency', '/unit', '/type', '/formatOptions', '/locale'],
-										formatter: '.genericFormat'
-									}"
-									change=".genericParse"
-							/>
-
-
+								value="{
+									parts: ['/number', '/currency', '/unit', '/type', '/formatOptions', '/locale'],
+									formatter: '.genericFormat'
+								}"
+								change=".genericParse" />
 							<core:Title text="Input" />
-
 							<Label text="Format Options" />
-							<TextArea id="formatOptions" class="large" rows="6"
-								liveChange=".onFormatOptionChange"
-							/>
-
+							<TextArea id="formatOptions" class="large" rows="6" liveChange=".onFormatOptionChange" />
 							<Label text="Type" />
 							<Select selectedKey="{/type}" change=".onTypeChange">
 								<core:Item key="Integer" text="Integer" />
@@ -43,55 +35,37 @@
 								<core:Item key="Unit" text="Unit" />
 								<core:Item key="Currency" text="Currency" />
 							</Select>
-
 							<Label text="Sample" />
 							<Select selectedKey="{/sample}" items="{/samples}" change=".onSampleChange">
 								<core:Item key="{key}" text="{text}" />
 							</Select>
-
 							<Label text="Number" />
-							<Input class="large largeinput"
-									core:require="{FloatType: 'sap/ui/model/type/Float'}"
-									value="{
-											path: '/number',
-											type: 'FloatType',
-											formatOptions: {
-												groupingEnabled: false,
-												groupingSeparator: ',',
-												decimalSeparator: '.',
-												parseAsString: true
-											}
-										}"
-									liveChange=".onNumberLiveChange" />
-
-							<Label text="Currency"
-									visible="{= ${/type} === 'Currency'}" />
-							<Input class="large largeinput"
-									value="{/currency}"
-									visible="{= ${/type} === 'Currency'}"
-									change=".onCurrencyChange"
-									liveChange=".onCurrencyLiveChange" />
-
-							<Label text="UnitCode"
-									visible="{= ${/type} === 'Unit'}" />
-							<Input class="large largeinput"
-									showSuggestion="true"
-									suggestionItems="{/cldrEntries}"
-									value="{/unit}"
-									visible="{= ${/type} === 'Unit'}"
-									change=".onUnitCodeChange"
-									liveChange=".onUnitCodeLiveChange" >
+							<Input class="large largeinput" liveChange=".onNumberLiveChange"
+								value="{
+									path: '/number',
+									type: 'FloatType',
+									formatOptions: {
+										groupingEnabled: false,
+										groupingSeparator: ',',
+										decimalSeparator: '.',
+										parseAsString: true
+									}
+								}" />
+							<Label text="Currency" visible="{= ${/type} === 'Currency'}" />
+							<Input class="large largeinput" value="{/currency}" visible="{= ${/type} === 'Currency'}"
+								change=".onCurrencyChange" liveChange=".onCurrencyLiveChange" />
+							<Label text="UnitCode" visible="{= ${/type} === 'Unit'}" />
+							<Input class="large largeinput" showSuggestion="true" suggestionItems="{/cldrEntries}"
+								value="{/unit}" visible="{= ${/type} === 'Unit'}" change=".onUnitCodeChange"
+								liveChange=".onUnitCodeLiveChange">
 								<suggestionItems>
 									<core:Item text="{name}" />
 								</suggestionItems>
 							</Input>
-
 							<Label text="Locale" />
-							<Input class="large largeinput"
-									showSuggestion="true"
-									suggestionItems="{/localesSuggestions}"
-									value= "{path: '/locale', type: 'local.LocaleType'}"
-									change=".onLocaleChange" >
+							<Input class="large largeinput" showSuggestion="true"
+								suggestionItems="{/localesSuggestions}" value= "{path: '/locale', type: 'LocaleType'}"
+								change=".onLocaleChange">
 								<suggestionItems>
 									<SuggestionItem icon="{path: 'name', formatter: '.formatLocaleIcon'}" text="{name}" />
 								</suggestionItems>
@@ -99,20 +73,17 @@
 						</form:SimpleForm>
 					</content>
 				</ScrollContainer>
-
 				<ScrollContainer width="400px" height="100%" horizontal="false" vertical="true">
 					<layoutData>
 						<FlexItemData baseSize="400px" />
 					</layoutData>
 					<content>
 						<List items="{/locales}">
-							<LocaleListItem xmlns="local"
-									locale="{}"
-									text="{
-										parts: ['/number', '/currency', '/unit', '/formatOptions', '/type', ''],
-										formatter: '.formatLocaleText'
-									}"
-							/>
+							<LocaleListItem xmlns="local" locale="{}"
+								text="{
+									parts: ['/number', '/currency', '/unit', '/formatOptions', '/type', ''],
+									formatter: '.formatLocaleText'
+								}" />
 						</List>
 					</content>
 				</ScrollContainer>

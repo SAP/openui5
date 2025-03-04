@@ -521,10 +521,13 @@ sap.ui.define([
 				this.byId("SO_2_SCHDL").getSelectedContexts().length > 0);
 		},
 
-		onSaveSalesOrder : function () {
+		onSaveSalesOrder : function (bContinueOnError) {
 			var sGroupId = "SalesOrderUpdateGroup";
 
 			this.requestSideEffects(sGroupId, "SO_2_SCHDL");
+			if (bContinueOnError) {
+				this.getView().getModel().setContinueOnError(sGroupId);
+			}
 			this.submitBatch(sGroupId);
 		},
 

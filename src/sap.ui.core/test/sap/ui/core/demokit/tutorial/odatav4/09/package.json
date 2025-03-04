@@ -5,7 +5,7 @@
   "author": "SAP SE",
   "description": "UI5 Demo App - ODataV4 Tutorial",
   "scripts": {
-    "start": "ui5 serve --open 'index.html'"
+    "start": "ui5 serve --open index.html"
   },
   "devDependencies": {
     "@ui5/cli": "^4"

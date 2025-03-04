@@ -1335,6 +1335,10 @@ sap.ui.define([
 				}
 			},
 
+			PullToRefresh: {
+				title: "Test Page for sap.m.PullToRefresh"
+			},
+
 			PullToRefresh_desktop: {
 				title: "Test Page for sap.m.PullToRefresh on Desktop"
 			},

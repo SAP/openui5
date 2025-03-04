@@ -469,6 +469,34 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("ODataModel#setContinueOnError", async function (assert) {
+		const oModel = new ODataModel({serviceUrl : sSampleServiceUrl});
+		const oBinding = oModel.bindContext("/SalesOrderList('0500000001')");
+		const oContext = oBinding.getBoundContext();
+
+		await oContext.requestObject();
+
+		// code under test
+		oModel.setContinueOnError("group");
+
+		this.oLogMock.expects("error")
+			.withArgs("Failed to update path /SalesOrderList('0500000001')/Note");
+
+		await Promise.all([
+			oContext.setProperty("Note", "RAISE_ERROR", "group").then(function () {
+				assert.ok(false,
+					"PATCH must *fail* before GET, else continue-on-error makes no difference");
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Property `Note` value `RAISE_ERROR` not allowed!");
+			}),
+			// Note: no "HTTP request was not processed because the previous request failed"
+			oContext.requestSideEffects(["SalesOrderID"], "group"),
+			oModel.submitBatch("group")
+		]);
+	});
+
+	//*****************************************************************************************
 	// integration tests serialization/deserialization
 	// --------------------------------------------
 	[{

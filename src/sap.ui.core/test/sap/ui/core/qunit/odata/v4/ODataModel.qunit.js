@@ -3512,6 +3512,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setContinueOnError", function () {
+		const oModel = this.createModel();
+		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("groupId");
+		this.mock(oModel.oRequestor).expects("setContinueOnError").withExactArgs("groupId");
+
+		// code under test
+		oModel.setContinueOnError("groupId");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchKeyPredicate", function (assert) {
 		var oModel = this.createModel(),
 			mTypeForMetaPathExpected;

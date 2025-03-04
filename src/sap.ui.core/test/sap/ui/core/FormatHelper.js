@@ -239,46 +239,6 @@ sap.ui.define([
 		}
 	});
 
-	var LocaleType = SimpleType.extend("local.LocaleType", {
-		constructor: function() {
-			SimpleType.call(this);
-			this.sName = "LocaleType";
-		},
-		parseValue: function(sValue) {
-			var oLocale;
-			try {
-				oLocale = new Locale(sValue);
-			} catch (e) {
-				throw new ParseException("Not a valid locale: " + e.message);
-			}
-			return oLocale.toString();
-		},
-		formatValue: function(oValue) {
-			return new Locale(oValue).toString();
-		},
-		validateValue: function(sValue) {
-			if ( aLocales.includes(sValue) ) {
-				return true;
-			}
-			var oLocale = new Locale(sValue);
-			if ( oLocale.getRegion() && aLocales.includes(oLocale.getLanguage() + "-" + oLocale.getRegion()) ) {
-				return true;
-			}
-
-			// As the list of locales above (aLocales) is not complete, but "curated", the best we can do
-			// is to check for a locale with the same language. Regions might differ, but CLDR will fall
-			// back to the language then, so basic support should exist.
-			if ( aLocales.some(
-					function(oCandidate) {
-						return (new Locale(oCandidate).getLanguage()) === oLocale.getLanguage();
-					}) ) {
-				return true;
-			}
-
-			throw new ValidateException("'" + sValue + "' is not a supported locale");
-		}
-	});
-
 	var HashParams = CompositeType.extend("HashParams", {
 		constructor: function(aParams, oSupportedOptions) {
 			CompositeType.apply(this, arguments);
@@ -396,7 +356,6 @@ sap.ui.define([
 		locales: aLocales,
 		territories: aTerritories,
 		LocaleListItem: LocaleListItem,
-		Options: Options,
-		LocaleType: LocaleType
+		Options: Options
 	};
 });
