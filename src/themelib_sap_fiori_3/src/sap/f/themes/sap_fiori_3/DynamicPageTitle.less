@@ -1,8 +1,7 @@
 /* ======================================= */
 /* CSS for control sap.f/DynamicPageTitle  */
-/* Fiori 3 theme                           */
+/* Quartz Light theme                      */
 /* ======================================= */
-
 
 .sapFDynamicPageTitle {
 	padding: 0.5rem 2rem;
@@ -14,19 +13,21 @@
 }
 
 .sapFDynamicPage-Std-Tablet {
+
 	.sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
 		padding: 0.5rem 2rem;
 	}
 
-	// Needed because on some high-end phones in landscape mode,
-	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	/* Needed because on some high-end phones in landscape mode,
+	the width of the viewport is bigger than 600 (Tablet breakpoint). */
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
 		padding: 0 2rem;
 	}
 }
 
 .sapFDynamicPage-Std-Phone {
+
 	.sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
@@ -39,7 +40,7 @@
 }
 
 .sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent {
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 }
 
 .sapFDynamicPageTitle.sapFDynamicPageTitleTransparent {
@@ -51,8 +52,10 @@
 }
 
 .sapFDynamicPageNavigation .sapFDynamicPageTitleWrapper {
+
 	&.sapFDynamicPageTitleSnapped,
 	&.sapFDynamicPageTitleOnly {
+
 		& > .sapFDynamicPageTitle {
 			box-shadow: none;
 		}
