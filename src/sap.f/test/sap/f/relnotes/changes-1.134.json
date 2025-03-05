@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "6dd1c5a52582d2de179d99d671eb1bc178d06cc0",
+        "type": "FIX",
+        "text": " sap.f.Card: Visualization of header with Toolbar is improved"
+      },
+      {
         "id": "f6d7ac7174e2fcd4e6826bd1de1c9d5c08cd7ba2",
         "type": "FIX",
         "text": " Integration Cards: Fix resizing when card is in a dialog"

@@ -3,6 +3,16 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "b2375ec2027969add1f93e31be356e2c17aacfeb",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel#createEntry: ignore transient context if path is absolute"
+      },
+      {
+        "id": "b6bc47888ae3d08be31917a01506f199515cbd1a",
+        "type": "FIX",
+        "text": " IconPool: Add more mime-type mappings for MS Excel files"
+      },
+      {
         "id": "502cce1f9fb77aa51666be5a28ea9e59e5d66e40",
         "type": "FEATURE",
         "text": " sap.m.FlexBox: gap, rowGap, and columnGap properties are now added"

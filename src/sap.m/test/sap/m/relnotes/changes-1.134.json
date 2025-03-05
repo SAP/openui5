@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "29c96f3af01363616504e895ff5acfb919d794e5",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Selected dates are now visible in all pickers"
+      },
+      {
         "id": "1cb3b15d3de41942560e07388594ba368f9a91fa",
         "type": "FIX",
         "text": " sap.m.DateRangeSelection: Updated documentation for DateValue"
