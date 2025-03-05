@@ -36,10 +36,11 @@
 }
 
 .sapMTextArea.sapMInputBaseReadonly .sapMInputBaseReadonlyWrapper {
-	border: @sapUiFieldBorderWidth dashed @sapUiFieldReadOnlyBorderColor;
+	border: var(--sapField_BorderWidth) dashed var(--sapField_ReadOnly_BorderColor);
 }
 
 .sapMFocus.sapMTextArea.sapMInputBase.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+
 	&::before {
 		top: 1px;
 		left: 1px;

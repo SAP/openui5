@@ -393,6 +393,13 @@
 				outline: @_sap_tnt_NavigationList_ActionItemBorder;
 			}
 		}
+
+		&.sapTntNLITwoClickAreas:not(.sapTntNLIWithExpander) {
+			[tabindex]:hover,
+			[tabindex]:focus {
+				padding-right: 1rem;
+			}
+		}
 	}
 
 	.sapTntNLI:not(.sapTntNLIDisabled):not(.sapTntNLIActive) [tabindex]:hover {

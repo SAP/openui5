@@ -107,15 +107,15 @@ MonthPickerRenderer.render = function(oRm, oMP){
 		oRm.openStart("div", sId + "-m" + (iCurrentMonth));
 		oRm.class("sapUiCalItem");
 
-		bApplySelection = oMP._fnShouldApplySelection(oCurrentDate);
-		bApplySelectionBetween = oMP._fnShouldApplySelectionBetween(oCurrentDate);
+		bApplySelection = oMP._isMonthSelected(oCurrentDate);
+		bApplySelectionBetween = oMP._isMonthInsideSelectionRange(oCurrentDate);
 
 		if (bApplySelection) {
 			oRm.class("sapUiCalItemSel");
 			mAccProps["selected"] = true;
 		}
 
-		if (bApplySelectionBetween) {
+		if (bApplySelectionBetween && !bApplySelection) {
 			oRm.class("sapUiCalItemSelBetween");
 			mAccProps["selected"] = true;
 		}

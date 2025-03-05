@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/MetadataPropagationUtil",
 	"sap/ui/dt/OverlayUtil",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -27,6 +28,7 @@ sap.ui.define([
 	ElementUtil,
 	MetadataPropagationUtil,
 	OverlayUtil,
+	FlexRuntimeInfoAPI,
 	Version,
 	Layer,
 	FlexLayerUtils,
@@ -426,6 +428,14 @@ sap.ui.define([
 			return fnCallback();
 		}
 		return undefined;
+	};
+
+	/**
+	 * Checks if the system is an S4Hana Cloud system
+	 * @return {boolean} <code>true</code> if the system is an S4HANA Cloud system
+	 */
+	Utils.isS4HanaCloud = function() {
+		return FlexRuntimeInfoAPI.isAtoEnabled() && FlexRuntimeInfoAPI.getSystem();
 	};
 
 	/**

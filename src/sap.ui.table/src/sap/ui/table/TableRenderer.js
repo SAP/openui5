@@ -93,7 +93,7 @@ sap.ui.define([
 			rm.class("sapUiTableRowNavIndicator");
 		}
 
-		if (TableUtils.isNoDataVisible(oTable) && !oTable._hasPendingRequests()) {
+		if (TableUtils.isNoDataVisible(oTable) && !oTable._isWaitingForData()) {
 			rm.class("sapUiTableEmpty"); // no data!
 		}
 

@@ -1410,6 +1410,195 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("All selected dates are visible in Month, Year & YearRange (multiple selection)", function(assert) {
+		const oSelectedDates = [
+			new DateRange({ startDate: UI5Date.getInstance(2024, 1, 14) }),
+			new DateRange({ startDate: UI5Date.getInstance(2024, 3, 3) }),
+			new DateRange({ startDate: UI5Date.getInstance(2023, 6, 10) }),
+			new DateRange({ startDate: UI5Date.getInstance(1993, 11, 24) })
+		];
+		const oStartDate = oSelectedDates[0].getStartDate();
+		const oCal = new Calendar({
+			selectedDates: oSelectedDates,
+			initialFocusedDate: oStartDate,
+			singleSelection: false
+		}).placeAt("qunit-fixture");
+
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Check MonthPicker
+		oCal._showMonthPicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const aSelectedMonths = oCal.getAggregation("monthPicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedMonths.length, 2, "Two months are selected in the month picker");
+		assert.strictEqual(aSelectedMonths[0].innerText, "February", "February is selected in the month picker");
+
+		// Check YearPicker
+		oCal._showYearPicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const aSelectedYears = oCal.getAggregation("yearPicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedYears.length, 2, "Two years are selected in the year picker");
+		assert.strictEqual(aSelectedYears[0].innerText, "2023", "2023 is selected in the year picker");
+
+		// Check YearRangePicker
+		oCal._showYearRangePicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const aSelectedYearRanges = oCal.getAggregation("yearRangePicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedYearRanges.length, 2, "Two year ranges are selected in the year range picker");
+		assert.strictEqual(aSelectedYearRanges[0].innerText, "1974\u2009\u2013\u20091993", "1974 - 1993 is selected in the year range picker");
+
+		// Clean up
+		oCal.destroy();
+	});
+
+	QUnit.test("Only the first selected date is visible in Month, Year & YearRange (single selection)", function(assert) {
+		const oSelectedDates = [
+			new DateRange({ startDate: UI5Date.getInstance(2024, 3, 14) }),
+			new DateRange({ startDate: UI5Date.getInstance(2024, 1, 3) }),
+			new DateRange({ startDate: UI5Date.getInstance(2023, 6, 10) }),
+			new DateRange({ startDate: UI5Date.getInstance(1993, 11, 24) })
+		];
+		const oStartDate = oSelectedDates[0].getStartDate();
+		const oCal = new Calendar({
+			selectedDates: oSelectedDates,
+			initialFocusedDate: oStartDate
+		}).placeAt("qunit-fixture");
+
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Check MonthPicker
+		oCal._showMonthPicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const aSelectedMonths = oCal.getAggregation("monthPicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedMonths.length, 1, "Month is selected in the month picker");
+		assert.strictEqual(aSelectedMonths[0].innerText, "April", "April is selected in the month picker");
+
+		// Check YearPicker
+		oCal._showYearPicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const aSelectedYears = oCal.getAggregation("yearPicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedYears.length, 1, "One year selected in the year picker");
+		assert.strictEqual(aSelectedYears[0].innerText, "2024", "2024 is selected in the year picker");
+
+		// Check YearRangePicker
+		oCal._showYearRangePicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const aSelectedYearRanges = oCal.getAggregation("yearRangePicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedYearRanges.length, 1, "One year range is selected in the year range picker");
+		assert.strictEqual(aSelectedYearRanges[0].innerText, "2014\u2009\u2013\u20092033", "2014 - 2033 is selected in the year range picker");
+
+		// Clean up
+		oCal.destroy();
+	});
+
+	QUnit.test("Selected date ranges are visible in MonthPicker", function(assert) {
+		// Arrange
+		const oSelectedDates = [
+			new DateRange({
+				startDate: UI5Date.getInstance(2024, 1, 14),
+				endDate: UI5Date.getInstance(2024, 5, 1)
+			})
+		];
+		const oStartDate = oSelectedDates[0].getStartDate();
+		const oCal = new Calendar({
+			selectedDates: oSelectedDates,
+			initialFocusedDate: oStartDate,
+			intervalSelection: true
+		}).placeAt("qunit-fixture");
+
+		// Act
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		oCal._showMonthPicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Assert
+		const aSelectedMonths = oCal.getAggregation("monthPicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedMonths.length, 2, "Two months are selected in the month picker");
+		assert.strictEqual(aSelectedMonths[1].innerText, "June", "June is selected in the month picker");
+
+		const aSelectedMonthsBetween = oCal.getAggregation("monthPicker").getDomRef().querySelectorAll(".sapUiCalItemSelBetween");
+		assert.strictEqual(aSelectedMonthsBetween.length, 3, "Three months are 'selected between' in the month picker");
+		assert.strictEqual(aSelectedMonthsBetween[0].innerText, "March", "March is 'selected between in the month picker");
+
+		// Clean up
+		oCal.destroy();
+	});
+
+	QUnit.test("Selected date ranges are visible in YearPicker", function(assert) {
+		// Arrange
+		const oSelectedDates = [
+			new DateRange({
+				startDate: UI5Date.getInstance(2020, 1, 14),
+				endDate: UI5Date.getInstance(2024, 5, 1)
+			})
+		];
+		const oStartDate = oSelectedDates[0].getStartDate();
+		const oCal = new Calendar({
+			selectedDates: oSelectedDates,
+			initialFocusedDate: oStartDate,
+			intervalSelection: true
+		}).placeAt("qunit-fixture");
+
+		// Act
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Assert
+		oCal._showYearPicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		const aSelectedYears = oCal.getAggregation("yearPicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedYears.length, 2, "Two years are selected in the year picker");
+		assert.strictEqual(aSelectedYears[0].innerText, "2020", "2020 is selected in the year picker");
+
+		const aSelectedYearsBetween = oCal.getAggregation("yearPicker").getDomRef().querySelectorAll(".sapUiCalItemSelBetween");
+		assert.strictEqual(aSelectedYearsBetween.length, 3, "Three years are 'selected between' in the year picker");
+		assert.strictEqual(aSelectedYearsBetween[2].innerText, "2023", "2023 is 'selected between in the year picker");
+
+		// Clean up
+		oCal.destroy();
+	});
+
+	QUnit.test("Selected date ranges are visible in YearRangePicker", function(assert) {
+		// Arrange
+		const oSelectedDates = [
+			new DateRange({
+				startDate: UI5Date.getInstance(1975, 1, 14),
+				endDate: UI5Date.getInstance(2024, 5, 1)
+			})
+		];
+		const oStartDate = oSelectedDates[0].getStartDate();
+		const oCal = new Calendar({
+			selectedDates: oSelectedDates,
+			initialFocusedDate: oStartDate,
+			intervalSelection: true
+		}).placeAt("qunit-fixture");
+
+		// Act
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		oCal._showYearPicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		oCal._showYearRangePicker();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Assert
+		const aSelectedYearRanges = oCal.getAggregation("yearRangePicker").getDomRef().querySelectorAll(".sapUiCalItemSel");
+		assert.strictEqual(aSelectedYearRanges.length, 2, "Two years are selected in the year picker");
+		assert.strictEqual(aSelectedYearRanges[0].innerText, "1965\u2009\u2013\u20091984", "1965 - 1984 is selected in the year picker");
+
+		const aSelectedYearRangesBetween = oCal.getAggregation("yearRangePicker").getDomRef().querySelectorAll(".sapUiCalItemSelBetween");
+		assert.strictEqual(aSelectedYearRangesBetween.length, 1, "One year is 'selected between' in the year picker");
+		assert.strictEqual(aSelectedYearRangesBetween[0].innerText, "1985\u2009\u2013\u20092004", "1985 - 2004 is 'selected between in the year picker");
+
+		// Clean up
+		oCal.destroy();
+	});
+
 	QUnit.test("YearRangePicker min/max dates are set correctly", function (assert) {
 		// Prepare
 		var oCal = new Calendar({

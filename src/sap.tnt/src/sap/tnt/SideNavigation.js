@@ -14,6 +14,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// shortcut for SideNavigationDesign in sap.tnt library
+	const SideNavigationDesign = library.SideNavigationDesign;
+
 	/**
 	 * Constructor for a new <code>SideNavigation</code>.
 	 *
@@ -27,7 +30,8 @@ sap.ui.define([
 	 * <li>The flexible part adapts its size to the fixed one.</li>
 	 * <li>The flexible part has a scrollbar when the content is larger than the available space.</li>
 	 * </ul>
-	 *<b>Note:</b> In order for the <code>SideNavigation</code> to stretch properly, its parent layout control should only be the <code>sap.tnt.ToolPage</code>.
+	 * <b>Note:</b> In order for the <code>SideNavigation</code> to stretch properly, its parent layout control should only be the <code>sap.tnt.ToolPage</code>.
+	 * <b>Note:</b> If used outside the intended parent layout <code>sap.tnt.ToolPage</code>, for example inside a <code>sap.m.ResponsivePopover</code> to achieve a Side Navigation Overlay Mode, the application developer should set the <code>design</code> property to <code>Plain</code>.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -64,7 +68,14 @@ sap.ui.define([
 				 * Specifies an optional <code>aria-label</code> that can be used by the screen readers.
 				 * @since 1.98
 				 */
-				ariaLabel: { type: "string", group: "Accessibility", defaultValue: null }
+				ariaLabel: { type: "string", group: "Accessibility", defaultValue: null },
+				/**
+				 * Specifies whether the control should have own container styling, such as a box-shadow and border, or not.
+				 * <b>Note:</b> This property has to be set to <code>Plain</code> when the control is used inside a <code>sap.m.ResponsivePopover</code> to achieve a Side Navigation Overlay Mode.
+				 * @since 1.134
+				 * @experimental
+				 */
+				design: { type: "sap.tnt.SideNavigationDesign", group: "Appearance", defaultValue: SideNavigationDesign.Decorated }
 			},
 			defaultAggregation: "item",
 			aggregations: {

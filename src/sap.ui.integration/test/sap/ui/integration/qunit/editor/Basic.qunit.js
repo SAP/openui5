@@ -1306,7 +1306,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n en", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1341,7 +1341,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n en", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3225,7 +3225,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.equal(oField.getAggregation("_field").getText(), "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getText(), "StringParameter Value Trans in i18n en", "Field: Value from Translate change");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");

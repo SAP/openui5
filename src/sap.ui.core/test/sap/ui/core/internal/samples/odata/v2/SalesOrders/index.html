@@ -4,13 +4,13 @@
 	<meta charset="UTF-8">
 	<title>Example for OData V2 Sales Orders (UI5 GWSAMPLE_BASIC)</title>
 
-	<!-- ensure that MockServer can load mock data in the explored app and standalone -->
+	<!-- ensure that fake server can load mock data in the explored app and standalone -->
 	<base href="../../../../../../../../../">
 
 	<script id="sap-ui-bootstrap"
 			src="resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m"
-			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-on-init="module:sap/ui/core/internal/samples/odata/v2/SalesOrders/FakeServer"
 			data-sap-ui-resource-roots='{
 				"sap.ui.core.internal.samples.odata.v2.SalesOrders" :
 					"test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders"

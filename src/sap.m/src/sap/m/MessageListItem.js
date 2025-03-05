@@ -63,6 +63,7 @@ sap.ui.define([
 
 			if (!oLink && this.getActiveTitle()) {
 				oLink = new Link({
+					wrapping: true,
 					press: [this.fireActiveTitlePress, this],
 					reactiveAreaMode: ReactiveAreaMode.Overlay
 				});

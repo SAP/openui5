@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/Table",
 	"sap/ui/model/Filter",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/table/rowmodes/Fixed"
 ], function(
 	TableQUnitUtils,
 	Table,
 	Filter,
-	Element
+	Element,
+	Fixed
 ) {
 	"use strict";
 
@@ -232,7 +234,7 @@ sap.ui.define([
 			const oTable = this.getTable();
 
 			assert.deepEqual({
-				pendingRequests: oTable._hasPendingRequests(),
+				pendingRequests: oTable._isWaitingForData(),
 				busy: oTable.getBusy()
 			}, mExpectation, sMessage);
 		},
@@ -334,6 +336,38 @@ sap.ui.define([
 				}
 			}
 		});
+	});
+
+	QUnit.test("Scroll to available contexts", async function(assert) {
+		const oTable = await TableQUnitUtils.createTable({
+			enableBusyIndicator: true,
+			columns: [TableQUnitUtils.createTextColumn()],
+			threshold: 5,
+			scrollThreshold: 10,
+			rows: {
+				path: "/Products"
+			},
+			rowMode: new Fixed({
+				rowCount: 5
+			})
+		});
+
+		await oTable.qunit.whenRenderingFinished();
+		await TableQUnitUtils.wait(10); // Wait for the busy state to be set to false
+
+		const oScrollExtension = oTable._getScrollExtension();
+		const oDataRequestedSpy = sinon.spy(oTable.getBinding("rows"), "fireDataRequested");
+		const oSetBusySpy = sinon.spy(oTable, "setBusy");
+
+		assert.equal(oTable.getBusy(), false, "The table is not busy");
+
+		oScrollExtension.scrollVertically(true, true);
+		await TableQUnitUtils.nextEvent("dataRequested", oTable.getBinding("rows"));
+
+		assert.ok(oDataRequestedSpy.calledOnce, "DataRequested event was fired");
+		assert.ok(oSetBusySpy.notCalled, "setBusy was not called");
+
+		oSetBusySpy.restore();
 	});
 
 	QUnit.test("Refresh the binding after 'dataReceived'", function(assert) {
@@ -538,7 +572,13 @@ sap.ui.define([
 				path: "/Products",
 				events: {
 					dataRequested: function() {
-						that.assertState(assert, "On 'dataRequested'", {pendingRequests: true, busy: true});
+						if (!bScrolled) {
+							that.assertState(assert, "On 'dataRequested'", {pendingRequests: true, busy: true});
+						} else {
+							// Subsequent dataRequested events assume that the internal state does not expect more data to be loaded
+							// If so, the busy state is applied after the dataRequested event - see Table#_getRowContexts
+							that.assertState(assert, "On 'dataRequested'", {pendingRequests: false, busy: false});
+						}
 					},
 					dataReceived: function() {
 						that.assertState(assert, "On 'dataReceived'", {pendingRequests: false, busy: true});

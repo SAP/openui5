@@ -13,36 +13,34 @@
 	}
 }
 
-.sapMPersoDialog{
-	color: @sapUiBaseText;
-  }
+.sapMPersoDialog {
+	color: var(--sapTextColor);
+}
 
 .sapMPersoDialog .sapMLIB.sapMLIBSelected,
 .sapMPersoDialog .sapMLIB.sapMLIBSelected > td {
-background-color: transparent;
+	background-color: transparent;
 }
 
 .sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected,
 .sapMPersoDialog .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow,
 .sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected:last-child {
-	//Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling
-	//box-shadow: inset 0px -0.0625rem @sapUiListHoverBackground;
+	/* Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling */
+	/* box-shadow: inset 0px -0.0625rem @sapUiListHoverBackground; */
 }
-
 
 .sapMPersoDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMPersoDialogItemSelected,
 .sapMPersoDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMPersoDialogItemSelected:focus,
 .sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected,
-.sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected:focus
-{
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected:focus {
 	background-color: @sapUiListSelectionHoverBackground;
-	//Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling
-	//box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+	/* Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling */
+	/* box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor; */
 }
 
 .sapMPersoDialog .sapMLIBActive .sapMText,
 .sapMPersoDialog .sapMLIBActive .sapMListTblCell .sapMText {
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 }
 
 .sapMPersoDialog .sapMLIBActive .sapMCbBg,
@@ -52,7 +50,7 @@ background-color: transparent;
 }
 
 .sapMPersoDialog .sapMLIBActive .sapMCbBg.sapMCbMarkChecked::before {
-	color: @sapUiSelected;
+	color: var(--sapSelectedColor);
 }
 
 html.sap-desktop .sapMPersoDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover,
@@ -61,18 +59,21 @@ html.sap-desktop .sapMPersoDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapM
 }
 
 .sapMPersoDialogFixedBar {
+
 	.sapMPersoDialogSelectAllCb > .sapMCbLabel {
 		font-size: 1.125rem;
 	}
 }
+
 .sapUiSizeCompact .sapMPersoDialogFixedBar {
+
 	.sapMPersoDialogSelectAllCb > .sapMCbLabel {
 		font-size: 0.975rem;
 	}
 }
 
 .sapUiSizeCompact .sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar > :first-child {
-    margin-left: 1rem;
+	margin-left: 1rem;
 }
 
 .sapMPersoDialogLI .sapMILILabel {
@@ -83,20 +84,19 @@ html.sap-desktop .sapMPersoDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapM
 	min-width: 5.875rem;
 }
 
-.sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar{
+.sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar {
 	padding-left: 0;
-	border-bottom: 2px solid @sapUiListHeaderBorderColor;
+	border-bottom: 2px solid var(--sapList_HeaderBorderColor);
 }
 
-.sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar > :first-child{
+.sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar > :first-child {
 	margin-left: 1rem;
 }
 
-.sapMPersoDialogLIHeader{
+.sapMPersoDialogLIHeader {
 	border-bottom: 0;
 }
 
-
-html.sap-tablet:not(.sap-combi) .sapMPersoDialog{
+html.sap-tablet:not(.sap-combi) .sapMPersoDialog {
 	min-width: 20rem;
 }

@@ -214,9 +214,9 @@ sap.ui.define([
 		this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
 		this.oMessagePopover.attachLongtextLoaded(function () {
-			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[1].getContent().indexOf("h2") >= 1, true, "There should be an h2 tag");
-			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[1].getContent().indexOf("<script"), -1, "There should be no script tag in the html");
-			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[1].getContent().indexOf("embed"), -1, "There should be no embed tag in the html");
+			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[2].getContent().indexOf("h2") >= 1, true, "There should be an h2 tag");
+			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[2].getContent().indexOf("<script"), -1, "There should be no script tag in the html");
+			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[2].getContent().indexOf("embed"), -1, "There should be no embed tag in the html");
 			doneLongtextLoaded();
 			assert.ok(this.oMessagePopover._oMessageView.getItems()[2].getDescription().indexOf("&") >= 0, "Item's description should not be sanitized");
 		}, this);
@@ -878,7 +878,7 @@ sap.ui.define([
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 
-		assert.strictEqual(this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type");
+		assert.strictEqual(this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getType(), "Inactive", "The first item should be inactive type");
 	});
 
 	QUnit.test("aria-labelledby attribute", function (assert) {
@@ -1466,7 +1466,6 @@ sap.ui.define([
 			var oMessageModel = oMessagePopover.getModel("messageSummary");
 			oMessageModel.setData(aMessages);
 
-			oMessagePopover.navigateBack();
 		};
 
 		const that = this;
@@ -1490,9 +1489,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		await oChangeToWarningBtn.firePress();
-
-		assert.strictEqual(oMessagePopover._oMessageView._oMessageIcon.getSrc(), IconPool.getIconURI("alert"), "Icon should be warning");
-		assert.strictEqual(oMessagePopover._oMessageView._detailsPage.getContent()[0].getText(), sWarningText, "Text should be warning");
+		assert.strictEqual(oMessagePopover._oMessageView._oLists.all.getItems()[0].getTitle(), sWarningText, "Text should be warning");
+		assert.strictEqual(oMessagePopover._oMessageView._oLists.all.getItems()[0].getIcon(), IconPool.getIconURI("alert"), "Icon should be warning");
 		runAllTimersAndRestore(this.clock, true);
 		oButton.destroy();
 		oMessagePopover.destroy();

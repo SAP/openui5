@@ -3576,115 +3576,120 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createEntry: fallback to default groupId and changeSetId", function (assert) {
-		var fnAfterContextActivated,
-			oCreatedContext = {fetchActivated : function () {}},
-			oEntityMetadata = {entityType : "~entityType"},
-			fnMetadataLoaded,
-			oModel = {
-				mChangedEntities : {},
-				mDeferredGroups : {},
-				oMetadata : {
-					_getEntitySetByType : function () {},
-					_getEntityTypeByPath : function () {},
-					_isCollection : function () {},
-					isLoaded : function () {},
-					loaded : function () {}
+	[undefined, {isTransient () {}}].forEach((oTransientContext, i) => {
+		QUnit.test("createEntry: fallback to default groupId and changeSetId: " + i, function (assert) {
+			var fnAfterContextActivated,
+				oCreatedContext = {fetchActivated : function () {}},
+				oEntityMetadata = {entityType : "~entityType"},
+				fnMetadataLoaded,
+				oModel = {
+					mChangedEntities : {},
+					mDeferredGroups : {},
+					oMetadata : {
+						_getEntitySetByType : function () {},
+						_getEntityTypeByPath : function () {},
+						_isCollection : function () {},
+						isLoaded : function () {},
+						loaded : function () {}
+					},
+					mRequests : "~mRequests",
+					_addEntity : function () {},
+					_createRequest : function () {},
+					_createRequestUrlWithNormalizedPath : function () {},
+					_getRefreshAfterChange : function () {},
+					_isCanonicalRequestNeeded : function () {},
+					_isTransitionMessagesOnly : function () {},
+					_normalizePath : function () {},
+					_processRequestQueueAsync : function () {},
+					_pushToRequestQueue : function () {},
+					_resolveGroup : function () {},
+					getContext : function () {},
+					getForeignKeysFromReferentialConstraints() {},
+					resolveDeep : function () {}
 				},
-				mRequests : "~mRequests",
-				_addEntity : function () {},
-				_createRequest : function () {},
-				_createRequestUrlWithNormalizedPath : function () {},
-				_getRefreshAfterChange : function () {},
-				_isCanonicalRequestNeeded : function () {},
-				_isTransitionMessagesOnly : function () {},
-				_normalizePath : function () {},
-				_processRequestQueueAsync : function () {},
-				_pushToRequestQueue : function () {},
-				_resolveGroup : function () {},
-				getContext : function () {},
-				getForeignKeysFromReferentialConstraints() {},
-				resolveDeep : function () {}
-			},
-			oRequest = {};
+				oRequest = {};
 
-		this.mock(oModel).expects("_isCanonicalRequestNeeded")
-			.withExactArgs(undefined)
-			.returns("~bCanonical");
-		this.mock(oModel).expects("_normalizePath")
-			.withExactArgs("/~path", undefined, "~bCanonical")
-			.returns("/~sNormalizedPath");
-		this.mock(oModel).expects("resolveDeep")
-			.withExactArgs("/~path", undefined)
-			.returns("~sDeepPath");
-		this.mock(oModel.oMetadata).expects("_isCollection")
-			.withExactArgs("~sDeepPath")
-			.returns(false);
-		this.mock(ODataUtils).expects("_createUrlParamsArray")
-			.withExactArgs(undefined)
-			.returns("~aUrlParams");
-		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
-		// function create()
-		this.mock(oModel).expects("_resolveGroup")
-			.withExactArgs("/~sNormalizedPath")
-			.returns({changeSetId : "~defaultChangeSetId", groupId : "~defaultGroupId"});
-		this.mock(oModel).expects("_getRefreshAfterChange")
-			.withExactArgs(undefined, "~defaultGroupId")
-			.returns("~bRefreshAfterChange");
-		this.mock(oModel).expects("_isTransitionMessagesOnly").withExactArgs("~defaultGroupId").returns(false);
-		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
-			.withExactArgs("/~sNormalizedPath")
-			.returns(oEntityMetadata);
-		this.mock(oModel).expects("getForeignKeysFromReferentialConstraints")
-			.withExactArgs("/~sNormalizedPath")
-			.returns({});
-		this.mock(oModel.oMetadata).expects("_getEntitySetByType")
-			.withExactArgs(sinon.match.same(oEntityMetadata))
-			.returns({name : "~entitySetName"});
-		this.mock(oModel).expects("_addEntity").callsFake(function (oEntity0) {
-				assert.strictEqual(oEntity0.__metadata.created.changeSetId, "~defaultChangeSetId");
-				assert.strictEqual(oEntity0.__metadata.created.groupId, "~defaultGroupId");
+			if (oTransientContext) {
+				this.mock(oTransientContext).expects("isTransient").never();
+			}
+			this.mock(oModel).expects("_isCanonicalRequestNeeded")
+				.withExactArgs(undefined)
+				.returns("~bCanonical");
+			this.mock(oModel).expects("_normalizePath")
+				.withExactArgs("/~path", undefined, "~bCanonical")
+				.returns("/~sNormalizedPath");
+			this.mock(oModel).expects("resolveDeep")
+				.withExactArgs("/~path", undefined)
+				.returns("~sDeepPath");
+			this.mock(oModel.oMetadata).expects("_isCollection")
+				.withExactArgs("~sDeepPath")
+				.returns(false);
+			this.mock(ODataUtils).expects("_createUrlParamsArray")
+				.withExactArgs(undefined)
+				.returns("~aUrlParams");
+			this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+			// function create()
+			this.mock(oModel).expects("_resolveGroup")
+				.withExactArgs("/~sNormalizedPath")
+				.returns({changeSetId : "~defaultChangeSetId", groupId : "~defaultGroupId"});
+			this.mock(oModel).expects("_getRefreshAfterChange")
+				.withExactArgs(undefined, "~defaultGroupId")
+				.returns("~bRefreshAfterChange");
+			this.mock(oModel).expects("_isTransitionMessagesOnly").withExactArgs("~defaultGroupId").returns(false);
+			this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+				.withExactArgs("/~sNormalizedPath")
+				.returns(oEntityMetadata);
+			this.mock(oModel).expects("getForeignKeysFromReferentialConstraints")
+				.withExactArgs("/~sNormalizedPath")
+				.returns({});
+			this.mock(oModel.oMetadata).expects("_getEntitySetByType")
+				.withExactArgs(sinon.match.same(oEntityMetadata))
+				.returns({name : "~entitySetName"});
+			this.mock(oModel).expects("_addEntity").callsFake(function (oEntity0) {
+					assert.strictEqual(oEntity0.__metadata.created.changeSetId, "~defaultChangeSetId");
+					assert.strictEqual(oEntity0.__metadata.created.groupId, "~defaultGroupId");
 
-				return "~sKey";
-			});
-		this.mock(oModel).expects("_createRequestUrlWithNormalizedPath")
-			.withExactArgs("/~sNormalizedPath", "~aUrlParams", undefined)
-			.returns("~sUrl");
-		this.mock(oModel).expects("_createRequest")
-			.withExactArgs("~sUrl", "~sDeepPath", "POST", {}, sinon.match(function (oEntity0) {
-				assert.strictEqual(oEntity0.__metadata.created.changeSetId, "~defaultChangeSetId");
-				assert.strictEqual(oEntity0.__metadata.created.groupId, "~defaultGroupId");
+					return "~sKey";
+				});
+			this.mock(oModel).expects("_createRequestUrlWithNormalizedPath")
+				.withExactArgs("/~sNormalizedPath", "~aUrlParams", undefined)
+				.returns("~sUrl");
+			this.mock(oModel).expects("_createRequest")
+				.withExactArgs("~sUrl", "~sDeepPath", "POST", {}, sinon.match(function (oEntity0) {
+					assert.strictEqual(oEntity0.__metadata.created.changeSetId, "~defaultChangeSetId");
+					assert.strictEqual(oEntity0.__metadata.created.groupId, "~defaultGroupId");
 
-				return true;
-			}))
-			.returns(oRequest);
-		this.mock(oModel).expects("getContext")
-			.withExactArgs("/~sKey", "~sDeepPath", sinon.match.object, undefined, undefined)
-			.returns(oCreatedContext);
-		this.mock(oModel.oMetadata).expects("loaded").withExactArgs()
-			.returns({then : function (fnFunc) {
-				fnMetadataLoaded = fnFunc;
-			}});
+					return true;
+				}))
+				.returns(oRequest);
+			this.mock(oModel).expects("getContext")
+				.withExactArgs("/~sKey", "~sDeepPath", sinon.match.object, undefined, undefined)
+				.returns(oCreatedContext);
+			this.mock(oModel.oMetadata).expects("loaded").withExactArgs()
+				.returns({then : function (fnFunc) {
+					fnMetadataLoaded = fnFunc;
+				}});
 
-		// code under test
-		ODataModel.prototype.createEntry.call(oModel, "/~path", {properties : {}});
+			// code under test
+			ODataModel.prototype.createEntry.call(oModel, "/~path", {properties : {}, context : oTransientContext});
 
-		this.mock(oCreatedContext).expects("fetchActivated").withExactArgs()
-			.returns({then : function (fnFunc) {
-				fnAfterContextActivated = fnFunc;
-			}});
+			this.mock(oCreatedContext).expects("fetchActivated").withExactArgs()
+				.returns({then : function (fnFunc) {
+					fnAfterContextActivated = fnFunc;
+				}});
 
-		// code under test
-		fnMetadataLoaded();
+			// code under test
+			fnMetadataLoaded();
 
-		this.mock(oModel).expects("_pushToRequestQueue")
-			.withExactArgs("~mRequests", "~defaultGroupId", "~defaultChangeSetId",
-				sinon.match.same(oRequest), sinon.match.func, undefined, sinon.match.object,
-				"~bRefreshAfterChange");
-		this.mock(oModel).expects("_processRequestQueueAsync").withExactArgs("~mRequests");
+			this.mock(oModel).expects("_pushToRequestQueue")
+				.withExactArgs("~mRequests", "~defaultGroupId", "~defaultChangeSetId",
+					sinon.match.same(oRequest), sinon.match.func, undefined, sinon.match.object,
+					"~bRefreshAfterChange");
+			this.mock(oModel).expects("_processRequestQueueAsync").withExactArgs("~mRequests");
 
-		// code under test
-		fnAfterContextActivated();
+			// code under test
+			fnAfterContextActivated();
+		});
 	});
 
 	//*********************************************************************************************

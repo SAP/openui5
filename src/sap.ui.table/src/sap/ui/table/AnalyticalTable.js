@@ -909,11 +909,11 @@ sap.ui.define([
 		Table.prototype._onBindingDataReceived.apply(this, arguments);
 	};
 
-	AnalyticalTable.prototype._hasPendingRequests = function() {
+	AnalyticalTable.prototype._isWaitingForData = function() {
 		if (_private(this).hasOwnProperty("bPendingRequest")) {
 			return _private(this).bPendingRequest;
 		} else {
-			return Table.prototype._hasPendingRequests.apply(this, arguments);
+			return Table.prototype._isWaitingForData.apply(this, arguments);
 		}
 	};
 

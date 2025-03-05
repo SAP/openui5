@@ -33,7 +33,7 @@ sap.ui.define([
 	var Utils = { };
 
 	/**
-	 * Currently WZ language list does not match the one used by Card Editor
+	 * Currently language list of WZ Advanced Edition does not match the one used by Card Editor
 	 * Need to mapping the different languages
 	 * key/value:  language_code_in_WZ/language_code_in_CE
 	 * NOTES: skip the languages which does not match between Card Editor and UI5, eg: cy-GB/cy, nb-NO/no, sr-RS/sh
@@ -41,6 +41,7 @@ sap.ui.define([
 	Utils.languageMapping = {
 		//"cy": "cy-GB",
 		"da-DK": "da",
+		"en-US": "en",
 		"hi-IN": "hi",
 		"hu-HU": "hu",
 		"id-ID": "id",
@@ -62,10 +63,27 @@ sap.ui.define([
 		return Utils.languageMapping[language] || language;
 	};
 
+	/**
+	 * Replace underline to dash of language codes in translation texts of changes
+	 * @returns {object} translation texts
+	 */
+	Utils.formatLanguageCodesInTranslationTexts = function(oTexts) {
+		var oFormattedTexts;
+		if (oTexts) {
+			oFormattedTexts = {};
+			Object.keys(oTexts).forEach(function(sLanguage) {
+				var sFormattedLanguage = sLanguage.replaceAll('_', '-');
+				oFormattedTexts[sFormattedLanguage] = oTexts[sLanguage];
+			});
+		}
+		return oFormattedTexts;
+	};
+
 	Utils.mapLanguagesInManifestChanges = function(oManifestChanges) {
 		if (typeof oManifestChanges === "object") {
 			oManifestChanges.forEach(function (oChange) {
 				if (oChange.texts) {
+					oChange.texts = Utils.formatLanguageCodesInTranslationTexts(oChange.texts);
 					for (var [sLanguage, sMappingLanguage] of Object.entries(Utils.languageMapping)) {
 						if (oChange.texts[sLanguage]) {
 							var oTranslations = deepClone(oChange.texts[sLanguage], 500);

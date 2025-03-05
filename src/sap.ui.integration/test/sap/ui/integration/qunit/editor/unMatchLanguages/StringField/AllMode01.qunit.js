@@ -91,7 +91,7 @@ sap.ui.define([
 	var _sManifestPath = "/sap.card/configuration/parameters/stringParameter/value";
 	var _oExpectedValuesOfChangesWithTransFormat = {
 		"string1": {
-			"default_in_en": "StringParameter Value Trans in i18n",
+			"default_in_en": "StringParameter Value Trans in i18n en",
 			"cy-GB": "String1 cy-GB",
 			"da": "String1 da",
 			"hi": "String1 hi",
@@ -101,7 +101,7 @@ sap.ui.define([
 			"th": "String1 th"
 		},
 		"string2": {
-			"default_in_en": "StringParameter Value Trans in i18n",
+			"default_in_en": "StringParameter Value Trans in i18n en",
 			"ms": "String2 ms",
 			"nl": "String2 nl",
 			"nb-NO": "String2 nb-NO",
@@ -111,7 +111,7 @@ sap.ui.define([
 			"th": "String2 th"
 		},
 		"string1string2": {
-			"default_in_en": "StringParameter Value Trans in i18n",
+			"default_in_en": "StringParameter Value Trans in i18n en",
 			"cy-GB": "String1 cy-GB",
 			"da": "String1 da",
 			"hi": "String1 hi",
@@ -423,7 +423,7 @@ sap.ui.define([
 								assert.equal(oLanguageItems1.length, 48, "oTranslationPopover Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var sLanguageKey = oLanguageItems1[i].getCustomData()[0].getKey();
-									var sExpectedValue = "StringParameter Value Trans in i18n";
+									var sExpectedValue = _oExpectedValuesOfChangesWithTransFormat["string1"]["default_in_en"];
 									if (aLanguageMappingValues.indexOf(sLanguageKey) > -1) {
 										sExpectedValue = "StringParameter Value Trans in i18n " + sLanguageKey;
 									}

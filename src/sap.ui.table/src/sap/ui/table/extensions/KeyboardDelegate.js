@@ -246,7 +246,7 @@ sap.ui.define([
 	}
 
 	function waitForData(oTable) {
-		if (oTable._hasPendingRequests()) {
+		if (oTable._isWaitingForData()) {
 			return waitForRowsUpdated(oTable).then(function() {
 				return waitForData(oTable);
 			});

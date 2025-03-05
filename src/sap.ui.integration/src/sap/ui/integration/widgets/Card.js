@@ -2119,6 +2119,7 @@ sap.ui.define([
 		if (oPrevHeader) {
 			oPrevHeader.setToolbar(null); // ensure that actionsToolbar won't be destroyed
 			oPrevHeader.destroy();
+			this._bMimicPressAttached = false;
 		}
 
 		var oHeader = this.createHeader();
@@ -2140,6 +2141,10 @@ sap.ui.define([
 			oHeader.attachEvent("_ready", function () {
 				this.fireEvent("_headerReady");
 			}.bind(this));
+		}
+
+		if (this._shouldMimicHeaderAction()) {
+			this._mimicHeaderAction(oHeader);
 		}
 	};
 
@@ -3274,6 +3279,66 @@ sap.ui.define([
 		const bIsInteractive = CardBase.prototype.isInteractive.apply(this, arguments);
 
 		return bIsInteractive && this.getProperty("interactive");
+	};
+
+	/**
+	 * @override
+	 */
+	Card.prototype.isMouseInteractionDisabled = function() {
+		return this._shouldMimicHeaderAction();
+	};
+
+	/**
+	 * Checks if the header action must be mimicked by the card.
+	 * @private
+	 * @returns {boolean} Whether the header action should be mimicked.
+	 */
+	Card.prototype._shouldMimicHeaderAction = function () {
+		if (!this._isManifestReady) {
+			return false;
+		}
+
+		const oCardActions = this.getManifestEntry("/sap.card/actions");
+		const oHeaderActions = this.getManifestEntry("/sap.card/header/actions");
+		const bIsListItem = this.isRoleListItem();
+
+		if (bIsListItem && !oCardActions && oHeaderActions)	{
+			return true;
+		}
+
+		return false;
+	};
+
+	/**
+	 * Attaches the press event of the header to the card.
+	 * @private
+	 * @param {Object} oHeader The header.
+	 */
+	Card.prototype._mimicHeaderAction = function (oHeader) {
+		// header must be clickable, but not focusable
+		oHeader.setProperty("focusable", false);
+
+		// card must invalidate to update the mouse interactivity
+		this.invalidate();
+
+		oHeader.addEventDelegate({
+			onBeforeRendering: () => {
+				this.setProperty("interactive", oHeader.getInteractive());
+
+				if (!oHeader.getInteractive()) {
+					return;
+				}
+
+				if (!this._bMimicPressAttached) {
+					this.attachPress((oEvent) => {
+						oHeader.firePress({
+							originalEvent: oEvent.getParameter("originalEvent")
+						});
+					});
+					this._bMimicPressAttached = true;
+				}
+			}
+		});
 	};
 
 	/**

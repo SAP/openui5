@@ -228,6 +228,7 @@ sap.ui.define([
 		assert.ok(deepEqual(Utils.languageMapping, {
 			//"cy": "cy-GB",
 			"da-DK": "da",
+			"en-US": "en",
 			"hi-IN": "hi",
 			"hu-HU": "hu",
 			"id-ID": "id",
