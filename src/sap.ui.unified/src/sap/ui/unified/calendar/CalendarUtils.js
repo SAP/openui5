@@ -20,9 +20,10 @@ sap.ui.define([
 	'./CalendarDate',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
+	'sap/ui/core/format/DateFormat',
 	"sap/ui/core/date/UI5Date"
 ],
-	function(Formatting, Localization, CalendarType, UniversalDate, CalendarDate, Locale, LocaleData, UI5Date) {
+	function(Formatting, Localization, CalendarType, UniversalDate, CalendarDate, Locale, LocaleData, DateFormat, UI5Date) {
 		"use strict";
 
 		// Static class
@@ -145,64 +146,43 @@ sap.ui.define([
 		};
 
 		/**
-		 * Calculates the week number for a date
-		 * @param {Date} oDate date to get week number
-		 * @param {int} iYear year for the week number. (In en-US the week number for the last Days in December depends on the year.)
-		 * @param {string} sLocale used locale
-		 * @param {sap.ui.core.LocaleData} oLocaleData locale date for used locale
-		 * @return {int} week number
+		 * Calculates the week number corresponding to a date object.
+		 *
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDate Date of the week.
+		 * @param {string} sCalendarType The calendar type. If there is no calendar type provided, it will be taken from the Configuration.
+		 * @param {string} sLocale The locale of the calendar.
+		 * @param {string} sCalendarWeekNumbering The type of calendar week numbering.
+		 * @param {int} iFirstDayOfWeek The start week day number.
+		 *
+		 * @returns {int} Week number
 		 * @private
 		 */
-		CalendarUtils.calculateWeekNumber = function (oDate, iYear, sLocale, oLocaleData) {
+		CalendarUtils.calculateWeekNumber = function (oDate, sCalendarType, sLocale, sCalendarWeekNumbering, iFirstDayOfWeek) {
+			const oLocale = new Locale(sLocale);
+			const oLocaleData = LocaleData.getInstance(oLocale);
+			const iLocaleMinimalDaysInFirstWeek = oLocaleData.getMinimalDaysInFirstWeek();
 
-			var iWeekNum = 0;
-			var iWeekDay = 0;
-			var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+			const oDateFormat = DateFormat.getInstance({
+				pattern: "w",
+				calendarType: sCalendarType,
+				firstDayOfWeek: iFirstDayOfWeek,
+				minimalDaysInFirstWeek: iLocaleMinimalDaysInFirstWeek,
+				calendarWeekNumbering: sCalendarWeekNumbering
+			}, oLocale);
 
-			var bFirstDayStartsFirstWeek = oLocaleData.firstDayStartsFirstWeek();
+			const iWeekNumber = oDateFormat.format(oDate.toLocalJSDate());
 
-			// split week algorithm
-			if (bFirstDayStartsFirstWeek) {
-				/*
-				 * in US the week starts with Sunday
-				 * The first week of the year starts with January 1st. But Dec. 31 is still in the last year
-				 * So the week beginning in December and ending in January has 2 week numbers
-				 */
-				var oJanFirst = new UniversalDate(oDate.getTime());
-				oJanFirst.setUTCFullYear(iYear, 0, 1);
-				iWeekDay = oJanFirst.getUTCDay();
+			return Number(iWeekNumber);
+		};
 
-				//get the date for the same weekday like jan 1.
-				var oCheckDate = new UniversalDate(oDate.getTime());
-				oCheckDate.setUTCDate(oCheckDate.getUTCDate() - oCheckDate.getUTCDay() + iWeekDay);
-
-				iWeekNum = Math.round((oCheckDate.getTime() - oJanFirst.getTime()) / 86400000 / 7) + 1;
-
-			} else {
-				// normally the first week of the year is the one where the first Thursday of the year is
-				// find Thursday of this week
-				// if the checked day is before the 1. day of the week use a day of the previous week to check
-				var oThursday = new UniversalDate(oDate.getTime());
-				oThursday.setUTCDate(oThursday.getUTCDate() - iFirstDayOfWeek);
-				iWeekDay = oThursday.getUTCDay();
-				oThursday.setUTCDate(oThursday.getUTCDate() - iWeekDay + 4);
-
-				var oFirstDayOfYear = new UniversalDate(oThursday.getTime());
-				oFirstDayOfYear.setUTCMonth(0, 1);
-				iWeekDay = oFirstDayOfYear.getUTCDay();
-				var iAddDays = 0;
-				if (iWeekDay > 4) {
-					iAddDays = 7; // first day of year is after Thursday, so first Thursday is in the next week
-				}
-				var oFirstThursday = new UniversalDate(oFirstDayOfYear.getTime());
-				oFirstThursday.setUTCDate(1 - iWeekDay + 4 + iAddDays);
-
-				iWeekNum = Math.round((oThursday.getTime() - oFirstThursday.getTime()) / 86400000 / 7) + 1;
-
-			}
-
-			return iWeekNum;
-
+		/**
+		 * Returns the last week's date based on that week's start date.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oWeekStartDate Week's start date
+		 * @returns {sap.ui.unified.calendar.CalendarDate} Last week's date
+		 * @private
+		 */
+		CalendarUtils._getLastWeekDate = function (oWeekStartDate) {
+			return new CalendarDate(oWeekStartDate).setDate(oWeekStartDate.getDate() + 6);
 		};
 
 		/**
