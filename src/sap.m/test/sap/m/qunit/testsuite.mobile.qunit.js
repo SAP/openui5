@@ -931,6 +931,9 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			/**
+			 * @deprecated As of 1.124, replaced by the artifacts in {@link sap.m.p13n}.
+			 */
 			P13nConditionPanel: {
 				title: "Test Page for sap.m.P13nConditionPanel",
 				ui5: {
@@ -1177,6 +1180,9 @@ sap.ui.define([
 					useFakeTimers: false
 				}
 			},
+			/**
+			 * @deprecated As of 1.124, replaced by the artifacts in {@link sap.m.p13n}.
+			 */
 			P13nFilterPanel: {
 				title: "Test Page for sap.m.P13nFilterPanel",
 				ui5: {
@@ -1201,6 +1207,9 @@ sap.ui.define([
 					useFakeTimers: false
 				}
 			},
+			/**
+			 * @deprecated As of 1.124, replaced by the artifacts in {@link sap.m.p13n}.
+			 */
 			P13nSelectionPanel: {
 				title: "Test Page for sap.m.P13nSelectionPanel",
 				sinon: {
@@ -1217,6 +1226,9 @@ sap.ui.define([
 					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
+			/**
+			 * @deprecated As of 1.124, replaced by the artifacts in {@link sap.m.p13n}.
+			 */
 			P13nOperationsHelper: {
 				title: "Test Page for sap.m.P13nOperationsHelper"
 			},
