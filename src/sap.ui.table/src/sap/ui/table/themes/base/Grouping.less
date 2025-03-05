@@ -8,7 +8,7 @@
 @_sap_ui_table_Grouping_GroupIconHeightCondensed: @_sap_ui_table_RowHeightCondensed;
 @_sap_ui_table_Grouping_GroupHeaderBackground: @sapUiListTableGroupHeaderBackground;
 @_sap_ui_table_Grouping_GroupHeaderFadingWidth: 40px;
-@_sap_ui_table_Grouping_GroupOutlineWidth: @sapUiContentFocusWidth;
+@_sap_ui_table_Grouping_GroupOutlineWidth: var(--sapContent_FocusWidth);
 @_sap_ui_table_Grouping_GroupIconBorderWidth: @_sap_ui_table_BaseBorderWidth;
 @_sap_ui_table_Grouping_GroupIconFontSize: @sapMFontMediumSize;
 
@@ -29,7 +29,7 @@
 	}
 
 	&:focus {
-		outline: @_sap_ui_table_Grouping_GroupOutlineWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		outline: @_sap_ui_table_Grouping_GroupOutlineWidth var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		outline-offset: -2px;
 	}
 }
@@ -45,7 +45,7 @@
 	bottom: @_sap_ui_table_Grouping_GroupOutlineWidth;
 	white-space: nowrap;
 	font-weight: normal;
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	padding-right: @_sap_ui_table_Grouping_GroupHeaderFadingWidth;
@@ -66,9 +66,9 @@
 
 .sapUiTableGroupIcon::before,
 .sapUiTableTreeIcon::before {
-	font-family: "SAP-icons";
+	font-family: var(--sapContent_IconFontFamily);
 	font-size: @_sap_ui_table_Grouping_TreeIconFontSize;
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 
 	.sapUiSizeCozy & {
 		font-size: @_sap_ui_table_Grouping_TreeIconFontSizeCozy;
@@ -102,6 +102,7 @@
 }
 
 html[dir=rtl] {
+
 	.sapUiTableGroupIcon.sapUiTableGroupIconClosed::before,
 	.sapUiTableTreeIcon.sapUiTableTreeIconNodeClosed::before {
 		content: '\e067';
@@ -116,24 +117,26 @@ html[dir=rtl] {
 	box-shadow: inset @_sap_ui_table_Grouping_GroupHeaderFadingWidth 0 @_sap_ui_table_Grouping_GroupHeaderFadingWidth / 2 -@_sap_ui_table_Grouping_GroupHeaderFadingWidth / 2 @color;
 }
 
-// Fading effect for overlapping
+/* Fading effect for overlapping */
 .sapUiTableGroupIcon::after {
 	display: none;
 	position: absolute;
-	content: "";
+	content: '';
 	width: @_sap_ui_table_Grouping_GroupHeaderFadingWidth;
 	top: 1px;
 	bottom: 1px;
 	right: 0;
+
 	.sapUiTableGroupHeaderFading(@_sap_ui_table_Grouping_GroupHeaderBackground);
 }
 
 .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell:focus {
+
 	& .sapUiTableGroupIcon {
 		outline-width: @_sap_ui_table_Grouping_GroupOutlineWidth;
-		outline-style: @sapUiContentFocusStyle;
+		outline-style: var(--sapContent_FocusStyle);
 		outline-offset: 0;
-		outline-color: @sapUiContentFocusColor;
+		outline-color: var(--sapContent_FocusColor);
 
 		.sapUiSizeCondensed & {
 			outline-width: 0.0625rem;
@@ -154,13 +157,15 @@ html[dir=rtl] {
 	left: var(--CalculatedGroupIndent, 0);
 }
 
-// Override row background and cell borders in group header rows.
+/* Override row background and cell borders in group header rows. */
 .sapUiTableGroupHeaderRow {
+
 	&.sapUiTableRow {
 		background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
 	}
 
 	> .sapUiTableCell {
+
 		&.sapUiTableRowSelectionCell,
 		&.sapUiTableDataCell {
 			border-right-color: transparent;
@@ -173,6 +178,7 @@ html[dir=rtl] {
 }
 
 .sapUiTableGroupMode .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell {
+
 	> .sapUiTableGroupIcon {
 		display: flex;
 		align-items: center;
@@ -186,7 +192,7 @@ html[dir=rtl] {
 
 .sapUiTableGroupMode .sapUiTableGroupHeaderRow.sapUiTableRowHvr,
 .sapUiTableGroupMode .sapUiTableRowHvr .sapUiTableGroupIcon {
-	background-color: @sapUiListHoverBackground;
+	background-color: var(--sapList_Hover_Background);
 }
 
 .sapUiTableGroupMode .sapUiTableRowHvr .sapUiTableGroupIcon::after {
@@ -205,7 +211,7 @@ html[dir=rtl] {
 	box-sizing: border-box;
 	width: 0;
 	margin-left: -0px;
-	background-color: @sapUiListBackground;
+	background-color: var(--sapList_Background);
 	pointer-events: none;
 }
 
@@ -219,7 +225,7 @@ html[dir=rtl] {
 
 .sapUiTableGroupHeaderRow > .sapUiTableContentCell {
 	box-sizing: border-box;
-	border-bottom: 1px solid @sapList_TableGroupHeaderBorderColor;
+	border-bottom: 1px solid var(--sapList_TableGroupHeaderBorderColor);
 }
 
 .sapUiTableGroupHeaderRow:first-child > .sapUiTableContentCell {
