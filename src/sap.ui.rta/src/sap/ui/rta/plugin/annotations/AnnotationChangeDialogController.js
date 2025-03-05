@@ -87,7 +87,8 @@ sap.ui.define([
 					annotationPath: oProperty.annotationPath
 				}
 			};
-			oChangeSpecificData.content[oModelData.valueType === AnnotationTypes.StringType ? "text" : "value"] = oProperty.currentValue;
+			oChangeSpecificData.content[oModelData.valueType === AnnotationTypes.StringType ? "text" : "value"] =
+			oModelData.objectAsKey ? JSON.parse(oProperty.currentValue) : oProperty.currentValue;
 			return oChangeSpecificData;
 		})
 		.filter(Boolean);

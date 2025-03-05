@@ -33,6 +33,15 @@ sap.ui.define([
 	 */
 	const AnnotationChangeDialog = ManagedObject.extend("sap.ui.rta.plugin.annotations.AnnotationChangeDialog");
 
+	function replaceObjectKeysWithStrings(aDelegateProperties, aPossibleValues) {
+		aPossibleValues.forEach((oPossibleValue) => {
+			oPossibleValue.key = JSON.stringify(oPossibleValue.key);
+		});
+		aDelegateProperties.forEach((oProperty) => {
+			oProperty.currentValue = JSON.stringify(oProperty.currentValue);
+		});
+	}
+
 	AnnotationChangeDialog.prototype._createDialog = async function() {
 		this._oController = new AnnotationChangeDialogController();
 		const oDialog = await Fragment.load({
@@ -116,6 +125,14 @@ sap.ui.define([
 			possibleValues: aPossibleValues,
 			preSelectedProperty: sPreSelectedPropertyKey
 		} = oDelegate.getAnnotationsChangeInfo(oControl, sAnnotation);
+
+		// the key could be an object which does not work as property for the Select control
+		// therefore the key must be stringified and later parsed
+		const bObjectAsKey = !!aPossibleValues?.some((oPossibleValue) => typeof oPossibleValue.key === "object");
+		if (bObjectAsKey) {
+			replaceObjectKeysWithStrings(aDelegateProperties, aPossibleValues);
+		}
+
 		const aProperties = aDelegateProperties.map((oProperty) => ({
 			...oProperty,
 			originalValue: oProperty.currentValue
@@ -137,6 +154,7 @@ sap.ui.define([
 			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).propertyName
 			: "";
 		this.oChangeAnnotationModel.setData({
+			objectAsKey: bObjectAsKey,
 			title: sAnnotationTitle,
 			description: sAnnotationDescription,
 			properties: aProperties, // all properties
