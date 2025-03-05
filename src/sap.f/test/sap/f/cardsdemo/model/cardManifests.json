@@ -73,8 +73,8 @@
 			},
 			"sap.card": {
 				"header": {
-					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
-					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"title": "This Line is the Title of Card and a very very very very very very very very very very very very very very very very very very long one",
+					"subTitle": " Thi is a Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
 					"icon": {
 						"text": "GK"
 					},
@@ -92,9 +92,9 @@
 			},
 			"sap.card": {
 				"header": {
-					"title": "This Line is the Title of sap.f.Card and a very very very very very very very very very very very very very very very very very very long one",
+					"title": "This Line is the Title of Card and a very very very very very very very very very very very very very very very very very very long one",
 					"titleMaxLines": 1,
-					"subTitle": " Thi is a sap.f.Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"subTitle": " Thi is a Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
 					"subTitleMaxLines": 1,
 					"icon": {
 						"text": "GK"

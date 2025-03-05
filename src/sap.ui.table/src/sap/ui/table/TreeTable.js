@@ -458,8 +458,8 @@ sap.ui.define([
 			Table.prototype._onBindingDataReceived.apply(this, arguments);
 		};
 
-		TreeTable.prototype._hasPendingRequests = function() {
-			return _private(this).bPendingRequest;
+		TreeTable.prototype._isWaitingForData = function() {
+			return _private(this).bPendingRequest && Table.prototype._isWaitingForData.apply(this);
 		};
 
 		return TreeTable;

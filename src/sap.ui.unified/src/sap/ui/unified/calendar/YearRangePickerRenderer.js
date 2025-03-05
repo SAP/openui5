@@ -97,8 +97,8 @@ sap.ui.define([
 			oRm.openStart("div", sId + "-y" + sYyyymmdd);
 			oRm.class("sapUiCalItem");
 
-			bApplySelection = oYRP._fnShouldApplySelection(oFirstDate);
-			bApplySelectionBetween = oYRP._fnShouldApplySelectionBetween(oFirstDate);
+			bApplySelection = oYRP._isYearSelected(oFirstDate);
+			bApplySelectionBetween = oYRP._isYearInsideSelectionRange(oFirstDate);
 
 			if (bApplySelection) {
 				oRm.class("sapUiCalItemSel");

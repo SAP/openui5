@@ -182,9 +182,9 @@ sap.ui.define([
 				doneUrlValidated = [assert.async(), assert.async()];
 
 		this.oMessageView.attachLongtextLoaded(function () {
-			assert.strictEqual(this.oMessageView._detailsPage.getContent()[1].getContent().indexOf("h2") >= 1, true, "There should be an h2 tag");
-			assert.strictEqual(this.oMessageView._detailsPage.getContent()[1].getContent().indexOf("<script"), -1, "There should be no script tag in the html");
-			assert.strictEqual(this.oMessageView._detailsPage.getContent()[1].getContent().indexOf("embed"), -1, "There should be no embed tag in the html");
+			assert.strictEqual(this.oMessageView._detailsPage.getContent()[2].getContent().indexOf("h2") >= 1, true, "There should be an h2 tag");
+			assert.strictEqual(this.oMessageView._detailsPage.getContent()[2].getContent().indexOf("<script"), -1, "There should be no script tag in the html");
+			assert.strictEqual(this.oMessageView._detailsPage.getContent()[2].getContent().indexOf("embed"), -1, "There should be no embed tag in the html");
 			doneLongtextLoaded();
 			assert.ok(this.oMessageView.getItems()[2].getDescription().indexOf("&") >= 0, "Item's description should not be sanitized");
 		}, this);
@@ -412,7 +412,7 @@ sap.ui.define([
 		oItems = this.oMessageView._oLists.all.getItems();
 
 		// assert
-		assert.strictEqual(oItems[5].getType(), "Navigation", "The first item should be navigation type");
+		assert.strictEqual(oItems[5].getType(), "Inactive", "The first item should be inactive type");
 		assert.ok(focusSpy.called, "_restoreFocus should be called");
 		assert.ok(restoreItemTypeSpy.called, "_restoreItemsType should be called");
 		assert.ok(setItemTypeSpy.called, "_setItemType should be called");
@@ -719,7 +719,7 @@ sap.ui.define([
 		assert.notOk(oNavigateStub.called, "Navigation to details has not been triggered");
 	});
 
-	QUnit.test("Contains only one message with long title should stay go details view", async function (assert) {
+	QUnit.test("Contains only one message with long title should stay in list view", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 		var oNavigateStub = this.stub(this.oMessageView, "_navigateToDetails");
 		this.oMessageView.addItem(new MessageItem({
@@ -728,7 +728,7 @@ sap.ui.define([
 		this.oDialog.open();
 		await nextUIUpdate(this.clock);
 
-		assert.ok(oNavigateStub.called, "Navigation to details had been triggered");
+		assert.notOk(oNavigateStub.called, "Navigation to details had not been triggered");
 
 		this.oMessageView.navigateBack();
 		this.clock.tick(500);
@@ -815,8 +815,9 @@ sap.ui.define([
 
 		oItems = this.oMessageView._oLists.all.getItems();
 
-		assert.strictEqual(oItems[0].getType(), "Navigation", "The first item should be navigation type");
-		assert.strictEqual(oItems[1].getType(), "Navigation", "The second item should be navigation type");
+
+		assert.strictEqual(oItems[0].getType(), "Inactive", "The first item should be inactive type");
+		assert.strictEqual(oItems[1].getType(), "Inactive", "The second item should be inactive type");
 		assert.strictEqual(oItems[2].getType(), "Inactive", "The third item should be inactive type");
 	});
 
@@ -1325,7 +1326,7 @@ sap.ui.define([
 		oItem.setDescription("Test");
 		await nextUIUpdate();
 
-		assert.strictEqual(oMessageView._detailsPage.getContent()[1].getText(), oItem.getDescription(), "Description should be changed");
+		assert.strictEqual(oMessageView._detailsPage.getContent()[2].getText(), oItem.getDescription(), "Description should be changed");
 		assert.strictEqual(oMessageView._navContainer.getCurrentPage(), oMessageView._detailsPage, "Details page should be visible");
 		assert.strictEqual(oSpy.callCount, 1, "Navigation should be performed once");
 

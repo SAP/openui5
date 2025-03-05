@@ -194,6 +194,99 @@ sap.ui.define([
 			oCard.destroy();
 		});
 
+		QUnit.test("Header link is not focusable when card is listitem", async function (assert) {
+			// Act
+			const oCard = new Card({
+				semanticRole: "ListItem",
+				displayVariant: CardDisplayVariant.TileStandard,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources",
+				manifest: {
+					"sap.app": {
+						"id": "test.card.tile.notfocusable",
+						"type": "card"
+					},
+					"sap.card": {
+						"type": "Object",
+						"data":	{
+							"json": {
+								"url": "http://www.sap.com",
+								"target": "_blank"
+							}
+						},
+						"header": {
+							"title": "Test",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{url}",
+										"target": "{target}"
+									}
+								}
+							]
+						},
+						"content": { }
+					}
+				}
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			// Assert
+			const oLink = oCard.getCardHeader().getFocusDomRef();
+			assert.strictEqual(oLink.getAttribute("tabindex"), "-1", "Header is not focusable");
+		});
+
+		QUnit.test("Numeric header link is not focusable when card is listitem", async function (assert) {
+			// Act
+			const oCard = new Card({
+				semanticRole: "ListItem",
+				displayVariant: CardDisplayVariant.TileStandard,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources",
+				manifest: {
+					"sap.app": {
+						"id": "test.card.tile.notfocusable",
+						"type": "card"
+					},
+					"sap.card": {
+						"type": "Object",
+						"data":	{
+							"json": {
+								"url": "http://www.sap.com/",
+								"target": "_blank"
+							}
+						},
+						"header": {
+							"type": "Numeric",
+							"title": "Test",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{url}",
+										"target": "{target}"
+									}
+								}
+							]
+						},
+						"content": { }
+					}
+				}
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			// Assert
+			const oLink = oCard.getCardHeader().getFocusDomRef();
+			assert.strictEqual(oLink.getAttribute("tabindex"), "-1", "Header is not focusable");
+
+			oCard.destroy();
+		});
+
 	}
 );
 

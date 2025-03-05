@@ -44,12 +44,13 @@
 }
 
 .sapMTextAreaWithCounter {
+
 	& .sapMTextAreaCounter {
 		float:right;
 		overflow: hidden;
-		font-family: @sapUiFontFamily;
-		font-size: @sapMFontSmallSize;
-		color: @sapUiContentLabelColor;
+		font-family: var(--sapFontFamily);
+		font-size: var(--sapFontSmallSize);
+		color: var(--sapContent_LabelColor);
 		padding: 0.3725rem 0.125rem 0.5rem;
 	}
 
@@ -75,7 +76,7 @@
 	line-height: 1.4;
 	visibility: hidden;
 	word-break: break-word;
-	font-size: @sapFontSize;
+	font-size: var(--sapFontSize);
 }
 
 .sapMInputBase.sapMTextArea {
@@ -94,45 +95,54 @@
 }
 
 .sapMInputBase.sapMTextArea {
-	.sapMTextAreaInner, .sapMTextAreaMirror {
+
+	.sapMTextAreaInner,
+	.sapMTextAreaMirror {
 		padding: @_sapMTextAreaPadding;
 	}
+
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
 		padding: @_sapMTextAreaContentWrapperValueStateErrorWarningPadding;
 
-		.sapMTextAreaInner, .sapMTextAreaMirror {
+		.sapMTextAreaInner,
+		.sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateErrorWarningPadding;
 		}
 	}
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
 		padding: @_sapMTextAreaContentWrapperValueStateSuccessPadding;
 
-		.sapMTextAreaInner, .sapMTextAreaMirror {
+		.sapMTextAreaInner,
+		.sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateSuccessPadding;
 		}
 	}
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
 		padding: @_sapMTextAreaContentWrapperValueStateInformationPadding;
 
-		.sapMTextAreaInner, .sapMTextAreaMirror {
+		.sapMTextAreaInner,
+		.sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateInformationPadding;
 		}
 	}
 }
 
 .sapMInputBase.sapMTextArea.sapMInputBaseReadonly:not(.sapMInputBaseDisabled) {
-	.sapMTextAreaInner, .sapMTextAreaMirror {
+
+	.sapMTextAreaInner,
+	.sapMTextAreaMirror {
 		padding: @_sapMTextAreaReadonlyPadding;
 	}
 }
 
 .sapMFocus.sapMTextArea {
+
 	& .sapMInputBaseContentWrapper {
 		outline: none;
 
 		.sapMInputBaseInner {
-			outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 			outline-offset: -2px;
 		}
 	}
@@ -140,40 +150,56 @@
 
 /**** Compact Size ****/
 .sapUiSizeCompact {
+
 	.sapMInputBase.sapMTextArea {
 		min-height: 1.625rem;
 		margin: 0.1875rem 0;
 	}
 
 	.sapMTextAreaWithCounter {
+
 		& .sapMTextAreaCounter {
 			padding-top: 0.3125rem;
 		}
 	}
+
 	.sapMInputBase.sapMTextArea.sapMInputBaseReadonly:not(.sapMInputBaseDisabled) {
-		.sapMTextAreaInner, .sapMTextAreaMirror {
+
+		.sapMTextAreaInner,
+		.sapMTextAreaMirror {
 			padding: @_sapMTextAreaReadonlyPadding_Compact;
 		}
 	}
 }
 
 .sapUiSizeCompact .sapMInputBase.sapMTextArea {
-	.sapMTextAreaInner, .sapMTextAreaMirror {
+
+	.sapMTextAreaInner,
+	.sapMTextAreaMirror {
 		padding: @_sapMTextAreaPadding_Compact;
 	}
+
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
-		.sapMTextAreaInner, .sapMTextAreaMirror {
+
+		.sapMTextAreaInner,
+		.sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateErrorWarningPadding_Compact;
 		}
 	}
+
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
-		.sapMTextAreaInner, .sapMTextAreaMirror {
+
+		.sapMTextAreaInner,
+		.sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateSuccessPadding_Compact;
 		}
 	}
+
 	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
-		.sapMTextAreaInner, .sapMTextAreaMirror {
+
+		.sapMTextAreaInner,
+		.sapMTextAreaMirror {
 			padding: @_sapMTextAreaValueStateInformationPadding_Compact;
 		}
 	}
@@ -184,8 +210,10 @@
 	as the textarea. Otherwise, words could break differently and this would lead to inconsistent height.
 	For some reason iOS devices need wider padding on left & right in order to have this consistency.
  */
-html.sap-tablet, html.sap-phone {
-	&[data-sap-ui-os*="iOS"] .sapMInputBase.sapMTextArea .sapMTextAreaMirror {
+html.sap-tablet,
+html.sap-phone {
+
+	&[data-sap-ui-os*='iOS'] .sapMInputBase.sapMTextArea .sapMTextAreaMirror {
 		padding-left: 15px;
 		padding-right: 15px;
 	}

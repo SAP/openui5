@@ -391,7 +391,7 @@ sap.ui.define([
 			assert.strictEqual(this.MP._extractMonth(oCalItem), 11, "December is the extracted month");
 		});
 
-		QUnit.test("_fnShouldApplySelection", function(assert) {
+		QUnit.test("_isMonthSelected", function(assert) {
 			// arrange
 			var oSep_01_2019 = UI5Date.getInstance(2019, 8, 1),
 				oNov_01_2019 = UI5Date.getInstance(2019, 10, 1),
@@ -404,27 +404,26 @@ sap.ui.define([
 
 			// act & assert
 			assert.equal(
-				this.MP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oSep_01_2019)),
+				this.MP._isMonthSelected(CalendarDate.fromLocalJSDate(oSep_01_2019)),
 				true,
 				"is correct with the start date"
 			);
 			assert.equal(
-				this.MP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oNov_01_2019)),
+				this.MP._isMonthSelected(CalendarDate.fromLocalJSDate(oNov_01_2019)),
 				false,
 				"is correct with a date between"
 			);
 			assert.equal(
-				this.MP._fnShouldApplySelection(CalendarDate.fromLocalJSDate(oDec_01_2019)),
+				this.MP._isMonthSelected(CalendarDate.fromLocalJSDate(oDec_01_2019)),
 				true,
 				"is correct with the end date"
 			);
 		});
 
-		QUnit.test("_fnShouldApplySelectionBetween", function(assert) {
+		QUnit.test("_isMonthInsideSelectionRange", function(assert) {
 			// arrange
 			var oSep_01_2019 = UI5Date.getInstance(2019, 8, 1),
 				oOct_01_2019 = UI5Date.getInstance(2019, 9, 1),
-				oNov_01_2019 = UI5Date.getInstance(2019, 10, 1),
 				oDec_01_2019 = UI5Date.getInstance(2019, 11, 1);
 
 			this.MP.addSelectedDate(new DateRange({
@@ -434,23 +433,18 @@ sap.ui.define([
 
 			// act & assert
 			assert.equal(
-				this.MP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oSep_01_2019)),
-				false,
+				this.MP._isMonthInsideSelectionRange(CalendarDate.fromLocalJSDate(oSep_01_2019)),
+				true,
 				"is correct with the start date"
 			);
 			assert.equal(
-				this.MP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oOct_01_2019)),
+				this.MP._isMonthInsideSelectionRange(CalendarDate.fromLocalJSDate(oOct_01_2019)),
 				true,
 				"is correct with a date between"
 			);
 			assert.equal(
-				this.MP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oNov_01_2019)),
+				this.MP._isMonthInsideSelectionRange(CalendarDate.fromLocalJSDate(oDec_01_2019)),
 				true,
-				"is correct with another date between"
-			);
-			assert.equal(
-				this.MP._fnShouldApplySelectionBetween(CalendarDate.fromLocalJSDate(oDec_01_2019)),
-				false,
 				"is correct with the end date"
 			);
 		});

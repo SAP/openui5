@@ -106,6 +106,10 @@ sap.ui.define([
 
 			if (bIsInteractive) {
 				oRm.class("sapFCardInteractive");
+
+				if (oCard.isMouseInteractionDisabled()) {
+					oRm.class("sapFCardDisableMouseInteraction");
+				}
 			}
 		}
 

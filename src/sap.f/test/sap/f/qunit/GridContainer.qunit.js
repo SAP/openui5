@@ -2113,4 +2113,43 @@ function(
 		assert.strictEqual(document.activeElement, oLastItemWrapper, "Focus should be moved to the last grid item");
 	});
 
+	QUnit.module("non sap.f.IGridContainerItem children", {
+		beforeEach: function () {
+			var oSettings = new GridContainerSettings({columns: 6, rowSize: "80px", columnSize: "80px", gap: "16px"});
+
+			this.oButton = new Button({
+				text: "Button 2"
+			});
+
+			this.oGrid = new GridContainer({
+				layout: oSettings,
+				items: [
+					new Button({ text: "Button 1" }),
+					this.oButton
+				]
+			});
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
+		},
+		afterEach: function () {
+			delete this.oButton;
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("Press on wrapper should transfer events to the inner control", function (assert) {
+		// Arrange
+		var oItemWrapper = this.oGrid.getDomRef("listUl").children[1],
+			oAttachPressSpy = this.spy(this.oButton, "firePress");
+
+		oItemWrapper.focus();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		// Act
+		qutils.triggerKeydown(oItemWrapper, KeyCodes.ENTER, false, false, false);
+
+		// Assert
+		assert.strictEqual(oAttachPressSpy.callCount, 1, "Button is pressed");
+	});
 });

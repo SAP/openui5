@@ -81,10 +81,21 @@ sap.ui.define([
 			months : {type : "int", group : "Appearance", defaultValue : 12},
 
 			/**
-			 * If set, interval selection is allowed
+			 * Determines if an interval of dates can be selected.
+			 *
+			 * <b>Note:</b> This property should be set to <code>false</code> if <code>_singleSelection</code> is set to <code>false</code>, as selecting multiple intervals is not supported.
 			 * @since 1.74
 			 */
 			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Determines if a single date or single interval, when <code>intervalSelection</code> is set to <code>true</code>, can be selected.
+			 *
+			 * <b>Note:</b> This property should be set to <code>true</code> if <code>intervalSelection</code> is set to <code>true</code>, as selecting multiple intervals is not supported.
+			 * @private
+			 * @since 1.134.0
+			 */
+			_singleSelection : {type : "boolean", group : "Behavior", defaultValue : true,  visibility: "hidden"},
 
 			/**
 			 * number of months in each row
@@ -1034,65 +1045,82 @@ sap.ui.define([
 	}
 
 	/**
-	 * Determines if a given date is the same as selected start or end date
+	 * Determines if any of the <code>selectedDates</code> fall within a given month.
+	 * <b>Note:</b> If <code>intervalSelection</code> is set to <code>true</code>, the month is selected if it contains the start or end of the interval.
 	 *
 	 * @private
-	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate First date of the month
+	 * @returns {boolean} Returns <code>true</code> if the current month contains any selected dates
 	 */
-	MonthPicker.prototype._fnShouldApplySelection = function(oCurrentDate) {
-		var oSelectedDates = this._getSelectedDates()[0],
-			oStartDate, oEndDate;
-
-		if (!oSelectedDates) {
+	MonthPicker.prototype._isMonthSelected = function(oCurrentDate) {
+		const aSelectedDateRanges = this.getSelectedDates();
+		if (!(aSelectedDateRanges && aSelectedDateRanges.length)) {
 			return false;
 		}
 
-		oStartDate = oSelectedDates.getStartDate();
-		oEndDate = oSelectedDates.getEndDate();
-
-		if (oStartDate) {
-			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
-			oStartDate.setDate(1);
-		}
+		const oDateRange = aSelectedDateRanges[0];
+		const oStartDate = oDateRange.getStartDate();
+		const oEndDate = oDateRange.getEndDate();
 
 		if (this.getIntervalSelection() && oStartDate && oEndDate) {
-			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
-			oEndDate.setDate(1);
-			if (oCurrentDate.isSame(oStartDate) || oCurrentDate.isSame(oEndDate)) {
-				return true;
-			}
-		} else if (oStartDate && oCurrentDate.isSame(oStartDate)) {
-			return true;
+			const oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
+			const oCalEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
+
+			return CalendarUtils._isSameMonthAndYear(oCurrentDate, oCalStartDate) || CalendarUtils._isSameMonthAndYear(oCurrentDate, oCalEndDate);
 		}
-		return false;
+
+		const fnHasDateInMonth = (oDateRange) => {
+			const oStartDate = oDateRange.getStartDate();
+
+			if (oStartDate) {
+				const oSelectedDate = CalendarDate.fromLocalJSDate(oDateRange.getStartDate(), this._getPrimaryCalendarType());
+
+				return CalendarUtils._isSameMonthAndYear(oCurrentDate, oSelectedDate);
+			}
+			return false;
+		};
+
+		if (this.getProperty("_singleSelection")) {
+			return fnHasDateInMonth(oDateRange);
+		}
+
+		return aSelectedDateRanges.some(fnHasDateInMonth);
+
 	};
 
 	/**
-	 * Determines if a given date is between the selected start and end date
+	 * Determines if a given month falls within the selected range.
 	 *
 	 * @private
-	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate First date of the month
+	 * @returns {boolean} Returns <code>true</code> if the current month is between the start and end of the selected interval
 	 */
-	MonthPicker.prototype._fnShouldApplySelectionBetween = function(oCurrentDate) {
-		var oSelectedDates = this._getSelectedDates()[0],
-			oStartDate, oEndDate;
-
-		if (!oSelectedDates) {
+	MonthPicker.prototype._isMonthInsideSelectionRange = function(oCurrentDate) {
+		const aSelectedDateRanges = this.getSelectedDates();
+		if (!(aSelectedDateRanges && aSelectedDateRanges.length)) {
 			return false;
 		}
-		oStartDate = oSelectedDates.getStartDate();
-		oEndDate = oSelectedDates.getEndDate();
 
-		if (this.getIntervalSelection() && oStartDate && oEndDate) {
-			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
-			oStartDate.setDate(1);
-			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
-			oEndDate.setDate(1);
-			if (CalendarUtils._isBetween(oCurrentDate, oStartDate, oEndDate)) {
-				return true;
-			}
+		const oDateRange = aSelectedDateRanges[0];
+		if (!oDateRange) {
+			return false;
 		}
 
+		if (this.getIntervalSelection()) {
+			const oStartDate = oDateRange.getStartDate();
+			const oEndDate = oDateRange.getEndDate();
+
+			if (!oStartDate || !oEndDate) {
+				return false;
+			}
+
+			const oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
+			const oCalEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
+			oCalStartDate.setDate(1);
+			oCalEndDate.setDate(CalendarUtils._daysInMonth(oCalEndDate));
+
+			return CalendarUtils._isBetween(oCurrentDate, oCalStartDate, oCalEndDate, true);
+		}
 		return false;
 	};
 

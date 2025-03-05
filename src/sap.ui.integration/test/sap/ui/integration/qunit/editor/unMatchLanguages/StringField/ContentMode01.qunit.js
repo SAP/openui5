@@ -59,7 +59,7 @@ sap.ui.define([
 	};
 	var _oExpectedValuesOfChangesWithTransFormat = {
 		"string1": {
-			"default_in_en": "StringParameter Value Trans in i18n",
+			"default_in_en": "StringParameter Value Trans in i18n en",
 			"cy-GB": "String1 cy-GB",
 			"da": "String1 da",
 			"hi": "String1 hi",

@@ -988,4 +988,114 @@ sap.ui.define([
 			"foo?ExpandLevels=%5B%7BNodeId:%221%22,Level:0%7D%5D"
 		);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestAllSources", async function (assert) {
+		// code under test
+		let oResult = TestUtils.requestAllSources({});
+
+		assert.ok(oResult instanceof Promise);
+		assert.strictEqual(await oResult, undefined);
+
+		const oFixture = {
+			url0 : {}, // no source
+			url1 : {source : "path/a.json"},
+			url2 : {
+				source : "b.JsOn", // ignore case of file extension
+				headers : {x : "y"}
+			},
+			url3 : [
+				{},
+				{source : "path/a.json"}, // not requested twice
+				{source : "c.xml"}
+			]
+		};
+		const aRegExp = [{
+			regExp : /regexp0/,
+			response : {} // no source
+		}, {
+			regExp : /regexp1/,
+			response : {source : "d.xml"}
+		}, {
+			regExp : /regexp2/,
+			response : [
+				{},
+				{source : "path/a.json"}, // not requested twice
+				{source : "e.txt"} // unknown file extension
+			]
+		}];
+		const oWindowMock = this.mock(window);
+		oWindowMock.expects("fetch")
+			.withExactArgs("test-resources/foo/bar/path/a.json")
+			.resolves({text : () => "content of path/a.json"});
+		oWindowMock.expects("fetch")
+			.withExactArgs("test-resources/foo/bar/b.JsOn")
+			.resolves({text : () => "content of b.JsOn"});
+		oWindowMock.expects("fetch")
+			.withExactArgs("test-resources/foo/bar/c.xml")
+			.resolves({text : () => "content of c.xml"});
+		oWindowMock.expects("fetch")
+			.withExactArgs("test-resources/foo/bar/d.xml")
+			.resolves({text : () => "content of d.xml"});
+		oWindowMock.expects("fetch")
+			.withExactArgs("test-resources/foo/bar/e.txt")
+			.resolves({text : () => "content of e.txt"});
+
+		// code under test
+		oResult = TestUtils.requestAllSources(oFixture, aRegExp, "foo/bar");
+
+		assert.ok(oResult instanceof Promise);
+		assert.strictEqual(await oResult, undefined);
+		assert.strictEqual(oFixture.url1.source, undefined);
+		assert.strictEqual(oFixture.url1.message, "content of path/a.json");
+		assert.deepEqual(oFixture.url1.headers, {
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		});
+		assert.strictEqual(oFixture.url2.source, undefined);
+		assert.strictEqual(oFixture.url2.message, "content of b.JsOn");
+		assert.deepEqual(oFixture.url2.headers, {
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
+			x : "y"
+		});
+		assert.strictEqual(oFixture.url3[1].source, undefined);
+		assert.strictEqual(oFixture.url3[1].message, "content of path/a.json");
+		assert.deepEqual(oFixture.url3[1].headers, {
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		});
+		assert.strictEqual(oFixture.url3[2].source, undefined);
+		assert.strictEqual(oFixture.url3[2].message, "content of c.xml");
+		assert.deepEqual(oFixture.url3[2].headers, {"Content-Type" : "application/xml"});
+		assert.strictEqual(aRegExp[1].response.source, undefined);
+		assert.strictEqual(aRegExp[1].response.message, "content of d.xml");
+		assert.deepEqual(aRegExp[1].response.headers, {"Content-Type" : "application/xml"});
+		assert.strictEqual(aRegExp[2].response[1].source, undefined);
+		assert.strictEqual(aRegExp[2].response[1].message, "content of path/a.json");
+		assert.deepEqual(aRegExp[2].response[1].headers, {
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+		});
+		assert.strictEqual(aRegExp[2].response[2].source, undefined);
+		assert.strictEqual(aRegExp[2].response[2].message, "content of e.txt");
+		assert.deepEqual(aRegExp[2].response[2].headers, {
+			"Content-Type" : "application/x-octet-stream"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestAllSources: default base, rejects", async function (assert) {
+		const oFixture = {
+			url1 : {source : "path/a.json"}
+		};
+		const oError = new Error("failed intentionally");
+		this.mock(window).expects("fetch")
+			.withExactArgs("test-resources/sap/ui/core/qunit/odata/v4/data/path/a.json")
+			.rejects(oError);
+
+		try {
+			// code under test
+			await TestUtils.requestAllSources(oFixture);
+			assert.ok(false, "unexpected success");
+		} catch (oError0) {
+			assert.strictEqual(oError0, oError);
+		}
+	});
 });

@@ -220,17 +220,6 @@ sap.ui.define([
 		DateRangeSelection.prototype._createPopupContent = function() {
 			DatePicker.prototype._createPopupContent.apply(this, arguments);
 
-			var oCalendar = this._getCalendar();
-
-			if (oCalendar instanceof CustomMonthPicker) {
-				oCalendar._getMonthPicker().setIntervalSelection(true);
-			}
-
-			if (oCalendar instanceof CustomYearPicker) {
-				oCalendar._getYearPicker().setIntervalSelection(true);
-				oCalendar._getYearRangePicker().setIntervalSelection(true);
-			}
-
 			this._getCalendar().detachWeekNumberSelect(this._handleWeekSelect, this);
 			this._getCalendar().attachWeekNumberSelect(this._handleWeekSelect, this);
 			this._getCalendar().getSelectedDates()[0].setStartDate(this._oDateRange.getStartDate());

@@ -379,6 +379,15 @@ sap.ui.define([
 				sinon: false
 			},
 
+			"util/CardMergerWithTranslationsOfUnderlineLanguages": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CardMerger"
+					]
+				},
+				sinon: false
+			},
+
 			"util/CardObserver": {
 				coverage: {
 					only: [
@@ -2941,6 +2950,226 @@ sap.ui.define([
 			},
 
 			"editor/i18nAsObject/MultiLanguages02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AdminMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AdminMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/ContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/ContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/ContentMode03": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/ContentMode04": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode03": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode04": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode05": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode06": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode07": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/TranslationMode08": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode03": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode04": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode05": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode06": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode07": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+
+			"editor/underlineLanguages/AllMode08": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [

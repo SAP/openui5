@@ -304,6 +304,9 @@ sap.ui.define([
 	 * @param {object} oEvent event
 	 */
 	CardBase.prototype.ontap = function (oEvent) {
+		if (this.isMouseInteractionDisabled()) {
+			return;
+		}
 		this._handleTapOrSelect(oEvent);
 	};
 
@@ -351,6 +354,12 @@ sap.ui.define([
 		return null;
 	};
 
+	/**
+	 * Checks if the card is interactive.
+	 * @private
+	 * @ui5-restricted sap.f.CardRenderer
+	 * @returns {boolean} Whether the card is interactive.
+	 */
 	CardBase.prototype.isInteractive = function() {
 		const bIsInteractive = this.hasListeners("press");
 
@@ -358,6 +367,16 @@ sap.ui.define([
 			Log.error("The full card cannot be interactive if the 'semanticRole' is not 'ListItem' or the control is not placed inside a sap.f.GridContainer", this);
 		}
 		return bIsInteractive;
+	};
+
+	/**
+	 * Checks if the card should be fully interactive with the mouse.
+	 * @private
+	 * @ui5-restricted sap.f.CardRenderer
+	 * @returns {boolean} False if the card should not be fully interactive with the mouse.
+	 */
+	CardBase.prototype.isMouseInteractionDisabled = function() {
+		return false;
 	};
 
 	/**

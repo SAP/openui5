@@ -871,6 +871,78 @@ sap.ui.define([
 
 			oActionSpy.restore();
 		});
+
+		QUnit.test("Action on header level is transfered to card level", async function (assert) {
+			const oActionSpy = sinon.spy(CardActions, "fireAction");
+			const oCard = this.oCard;
+
+			oCard.setManifest({
+				"_version": "1.14.0",
+				"sap.app": {
+					"id": "list.card",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Object",
+					"header": {
+						"data": {
+							"request": {
+								"url": "./headerData.json"
+							}
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": "{enabled}",
+								"parameters": {
+									"url": "{url}"
+								}
+							}
+						],
+						"title": "Action on header transfered to card"
+					},
+					"content": {
+						"groups": [
+							{
+								"title": "Group 1",
+								"items": []
+							}
+						]
+					}
+				}
+			});
+
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			//Act - Header is clickable and not focusable
+			const oHeader = oCard.getCardHeader();
+			qutils.triggerMouseEvent(oHeader.getFocusDomRef(), "tap");
+
+			// Assert
+			assert.strictEqual(oActionSpy.callCount, 1, "Card header is clicked and action event is fired");
+			assert.strictEqual(oActionSpy.args[0][0].source, oHeader, "Header is the source of the event");
+			assert.strictEqual(oHeader.getFocusDomRef().getAttribute("tabindex"), null, "Header is not focusable");
+
+			// Act - Card is not clickable
+			oActionSpy.reset();
+			qutils.triggerMouseEvent(oCard.getFocusDomRef(), "tap");
+
+			// Assert
+			assert.strictEqual(oActionSpy.callCount, 0, "Card can not be clicked");
+			assert.ok(oCard.getDomRef().classList.contains("sapFCardDisableMouseInteraction"), "Card has disabled mouse interaction.");
+
+			// Act - Card can be focused and activated with Enter
+			oActionSpy.reset();
+			qutils.triggerKeydown(oCard.getFocusDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.strictEqual(oActionSpy.callCount, 1, "Card is activated with ENTER");
+			assert.strictEqual(oActionSpy.args[0][0].source, oHeader, "Header is the source of the event, not the card.");
+			assert.ok(oCard.getFocusDomRef().hasAttribute("tabindex"), "Card is focusable");
+
+			oActionSpy.restore();
+		});
 	}
 
 	return runTests;

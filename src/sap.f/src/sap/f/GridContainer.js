@@ -1098,5 +1098,33 @@ sap.ui.define([
 		Theming.detachApplied(this._handleThemeAppliedBound);
 	};
 
+	/**
+	 * Keyboard handling of [keydown], [keyup], [enter], [space] keys
+	 * Stops propagation to avoid triggering the listeners for the same keys of the parent control (the AnchorBar)
+	 */
+	["onkeypress", "onkeyup", "onkeydown", "onsapenter", "onsapselect", "onsapspace"].forEach(function (sName) {
+		GridContainer.prototype[sName] = function (oEvent) {
+			if (!oEvent.target?.classList.contains("sapFGCFocusable")) {
+				return;
+			}
+
+			if (sName === "onsapspace") {
+				// prevent page scrolling
+				oEvent.preventDefault();
+			}
+
+			var oItem = Element.closestTo(oEvent.target.firstChild);
+
+			if (oItem) {
+				var oFocusDomRef = oItem.getFocusDomRef(),
+					oFocusControl = Element.closestTo(oFocusDomRef);
+
+				if (oFocusControl && oFocusControl[sName]) {
+					oFocusControl[sName].call(oFocusControl, oEvent);
+				}
+			}
+		};
+	});
+
 	return GridContainer;
 });

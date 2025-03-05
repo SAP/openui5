@@ -69,12 +69,14 @@ sap.ui.define([
 			type: "Information",
 			title: "Information message (Long) 2",
 			description: "Just some text description",
+			subtitle: "Subtitle example",
 			longtextUrl: "./SampleHTML.html",
 			active: true
 		}, {
 			type: "Information",
 			title: "Information message (Long Title) - Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmodtempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodoconsequat.",
 			description: "Just some text description",
+			subtitle: "Subtitle text- Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmodtempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,quis nostrud.",
 			longtextUrl: "./SampleHTML.html",
 			active: true
 		}],
@@ -120,6 +122,7 @@ sap.ui.define([
 	var oMessageTemplate = new MessageItem({
 		type: "{type}",
 		title: "{title}",
+		subtitle: "{subtitle}",
 		description: "{description}",
 		longtextUrl: "{longtextUrl}",
 		markupDescription: "{markupDescription}",

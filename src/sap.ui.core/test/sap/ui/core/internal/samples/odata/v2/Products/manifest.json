@@ -42,8 +42,7 @@
 					"metadataUrlParams" : {"customMeta" : "'custom/meta'"},
 					"serviceUrlParams" : {"customService" : "'custom/service'"}
 				},
-				"type" : "sap.ui.core.internal.samples.odata.v2.Products.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type" : "sap.ui.model.odata.v2.ODataModel"
 			}
 		},
 		"rootView" : {

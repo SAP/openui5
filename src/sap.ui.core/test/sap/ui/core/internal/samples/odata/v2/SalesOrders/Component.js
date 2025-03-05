@@ -8,13 +8,13 @@
  * @version @version@
  */
 sap.ui.define([
+	"./FakeServer",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/message/MessageType",
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/MessageScope"
-], function (Messaging, UIComponent, MessageType, XMLView, JSONModel, MessageScope) {
+], function (FakeServer, Messaging, UIComponent, MessageType, JSONModel, MessageScope) {
 	"use strict";
 	var aItemFilter = [{
 			icon : "",
@@ -43,15 +43,15 @@ sap.ui.define([
 		}];
 
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Component", {
-		constructor : function(mParameters) {
+		constructor : function() {
 			var sInlineCreationRows =
 					new URLSearchParams(window.location.search).get("inlineCreationRows");
-
+			// start the fake server before super constructor is called and models are created
+			FakeServer.start();
 			UIComponent.apply(this, arguments);
 			if (sInlineCreationRows) { // overwrite component configuration if URL parameter is used
 				this.setInlineCreationRows(parseInt(sInlineCreationRows) || 0);
 			}
-
 			this.setModel(new JSONModel({
 				inlineCreationRows : this.getInlineCreationRows(),
 				itemFilter : aItemFilter,
@@ -76,19 +76,14 @@ sap.ui.define([
 			version : "1.0"
 		},
 
-		createContent : function () {
-			const oModel = this.getModel();
-			return oModel.ready.then(() => { // only create view when component model's mock data is loaded
-				oModel.setDeferredGroups(["changes", "FixQuantity"]);
-				oModel.setMessageScope(MessageScope.BusinessObject);
-				return XMLView.create({
-					viewName : "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main"
-				});
-			});
+		init : function () {
+			UIComponent.prototype.init.apply(this, arguments);
+			this.getModel().setDeferredGroups(["changes", "FixQuantity"]);
+			this.getModel().setMessageScope(MessageScope.BusinessObject);
 		},
 
 		exit : function () {
-			this.getModel().restoreSandbox();
+			FakeServer.stop();
 		}
 	});
 });

@@ -1,7 +1,7 @@
-/* ================================ */
+/* ========================================= */
 /* CSS for control sap.m/SuggestionsPopover  */
-/* Base theme                       */
-/* ================================ */
+/* Base theme                                */
+/* ========================================= */
 
 @_sap_m_SuggestionsPopover_ItemMinHeight: 2.5rem;
 @_sap_m_SuggestionsPopover_ItemMinHeightCompact: 2rem;
@@ -14,12 +14,13 @@
 @_sap_m_SuggestionsPopover_TabularGroupItemHeightCompact: 2rem;
 
 .sapMSuggestionsPopover {
+
 	.sapMListUl > .sapMLIB.sapMSLIWrapping {
 		min-height: @_sap_m_SuggestionsPopover_ItemMinHeight;
 	}
 
 	.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
-		padding: 0.25rem 0rem;
+		padding: 0.25rem 0;
 	}
 
 	.sapMListUl > .sapMLIB.sapMGHLI {
@@ -44,7 +45,7 @@
 
 div.sapMSuggestionsPopover {
 	border: none;
-	box-shadow: @sapUiContentShadow1;
+	box-shadow: var(--sapContent_Shadow1);
 }
 
 .sapMSuggestionsPopover.sapMPopover.sapMSuggestionPopoverDefaultWidth {
@@ -60,6 +61,7 @@ div.sapMSuggestionsPopover {
 }
 
 .sapUiSizeCompact {
+
 	.sapMSuggestionsPopover,
 	&.sapMSuggestionsPopover {
 
@@ -102,12 +104,12 @@ div.sapMSuggestionsPopover {
 
 .sapMSuggestionsPopover .sapMDLIValue {
 	font-size: @sapMFontMediumSize;
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 	padding-right: 1rem;
 }
 
 .sapMSuggestionsPopover .sapMLIBActive .sapMDLIValue {
-	color: @sapUiListActiveTextColor;
+	color: var(--sapList_Active_TextColor);
 }
 
 .sapMSuggestionsPopover .sapMDLILabel {
@@ -119,27 +121,27 @@ div.sapMSuggestionsPopover {
 }
 
 div.sapMSuggestionsPopover .sapMSuggestionsPopoverValueState {
-	font-size: @sapMFontSmallSize;
+	font-size: var(--sapFontSmallSize);
 	line-height: normal;
 	padding: 0.5625rem 1rem;
 
 	&.sapMSuggestionsPopoverErrorState {
-		background: @sapUiErrorBG;
-		color: @sapUiBaseText;
+		background: var(--sapErrorBackground);
+		color: var(--sapTextColor);
 	}
 
 	&.sapMSuggestionsPopoverInformationState {
-		background: @sapUiInformationBG;
+		background: var(--sapInformationBackground);
 	}
 
 	&.sapMSuggestionsPopoverSuccessState {
-		background: @sapUiSuccessBG;
-		color: @sapUiBaseText;
+		background: var(--sapSuccessBackground);
+		color: var(--sapTextColor);
 	}
 
 	&.sapMSuggestionsPopoverWarningState {
-		background: @sapUiWarningBG;
-		color: @sapUiBaseText;
+		background: var(--sapWarningBackground);
+		color: var(--sapTextColor);
 	}
 
 	.sapMSuggestionsPopoverTitle.sapMTitle {

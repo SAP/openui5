@@ -77,10 +77,21 @@ sap.ui.define([
 			years : {type : "int", group : "Appearance", defaultValue : 20},
 
 			/**
-			 * If set, interval selection is allowed
+			 * Determines if an interval of dates can be selected.
+			 *
+			 * <b>Note:</b> This property should be set to <code>false</code> if <code>_singleSelection</code> is set to <code>false</code>, as selecting multiple intervals is not supported.
 			 * @since 1.74
 			 */
 			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Determines if a single date or single interval, when <code>intervalSelection</code> is set to <code>true</code>, can be selected.
+			 *
+			 * <b>Note:</b> This property should be set to <code>true</code> if <code>intervalSelection</code> is set to <code>true</code>, as selecting multiple intervals is not supported.
+			 * @private
+			 * @since 1.134
+			 */
+			_singleSelection : {type : "boolean", group : "Behavior", defaultValue : true,  visibility: "hidden"},
 
 			/**
 			 * number of years in each row
@@ -701,8 +712,8 @@ sap.ui.define([
 				sYyyymmdd = $DomRef.attr("data-sap-year-start");
 				var oCurrentDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this._getPrimaryCalendarType());
 
-				var bApplySelection = this._fnShouldApplySelection(oCurrentDate);
-				var bApplySelectionBetween = this._fnShouldApplySelectionBetween(oCurrentDate);
+				var bApplySelection = this._isYearSelected(oCurrentDate);
+				var bApplySelectionBetween = this._isYearInsideSelectionRange(oCurrentDate);
 
 				if (bApplySelection) {
 					$DomRef.addClass("sapUiCalItemSel");
@@ -917,65 +928,80 @@ sap.ui.define([
 
 
 	/**
-	 * Determines if a given date is the same as selected start or end date
+	 * Determines if any of the <code>selectedDates</code> fall within a given year.
+	 * <b>Note:</b> If <code>intervalSelection</code> is set to <code>true</code>, the year is selected if it contains the start or end of the interval.
 	 *
 	 * @private
-	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate First date of the year
+	 * @returns {boolean} Returns <code>true</code> if the current year contains any selected dates
 	 */
-	YearPicker.prototype._fnShouldApplySelection = function(oCurrentDate) {
-		var oSelectedDates = this._getSelectedDates()[0],
-			oStartDate, oEndDate;
-
-		if (!oSelectedDates) {
+	YearPicker.prototype._isYearSelected = function(oCurrentDate) {
+		const aSelectedDateRanges = this.getSelectedDates();
+		if (!(aSelectedDateRanges && aSelectedDateRanges.length)) {
 			return false;
 		}
 
-		oStartDate = oSelectedDates.getStartDate();
-		oEndDate = oSelectedDates.getEndDate();
-
-		if (oStartDate) {
-			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
-			oStartDate.setMonth(0, 1);
-		}
+		const oDateRange = aSelectedDateRanges[0];
+		const oStartDate = oDateRange.getStartDate();
+		const oEndDate = oDateRange.getEndDate();
 
 		if (this.getIntervalSelection() && oStartDate && oEndDate) {
-			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
-			oEndDate.setMonth(0, 1);
-			if (oCurrentDate.isSame(oStartDate) || oCurrentDate.isSame(oEndDate)) {
-				return true;
-			}
-		} else if (oStartDate && oCurrentDate.isSame(oStartDate)) {
-			return true;
+			const oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
+			const oCalEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
+
+			return oCurrentDate.getYear() === oCalStartDate.getYear() || oCurrentDate.getYear() === oCalEndDate.getYear();
 		}
-		return false;
+
+		const fnHasDateInYear = (oDateRange) => {
+			const oStartDate = oDateRange.getStartDate();
+
+			if (!oStartDate) {
+				return false;
+			}
+
+			const oSelectedDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
+			return oCurrentDate.getYear() === oSelectedDate.getYear();
+		};
+
+		if (this.getProperty("_singleSelection")) {
+			return fnHasDateInYear(oDateRange);
+		}
+
+		return aSelectedDateRanges.some(fnHasDateInYear);
 	};
 
 	/**
-	 * Determines if a given date is between the selected start and end date
-	 *
+	 * Determines if a given year falls within the selected range.
 	 * @private
-	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oCurrentDate First date of the year
+	 * @returns {boolean} Returns <code>true</code> if the current year is between the start and end of the selected interval
 	 */
-	YearPicker.prototype._fnShouldApplySelectionBetween = function(oCurrentDate) {
-		var oSelectedDates = this._getSelectedDates()[0],
-			oStartDate, oEndDate;
-
-		if (!oSelectedDates) {
+	YearPicker.prototype._isYearInsideSelectionRange = function(oCurrentDate) {
+		const aSelectedDateRanges = this.getSelectedDates();
+		if (!(aSelectedDateRanges && aSelectedDateRanges.length)) {
 			return false;
 		}
-		oStartDate = oSelectedDates.getStartDate();
-		oEndDate = oSelectedDates.getEndDate();
 
-		if (this.getIntervalSelection() && oStartDate && oEndDate) {
-			oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
-			oStartDate.setMonth(0, 1);
-			oEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
-			oEndDate.setMonth(0, 1);
-			if (CalendarUtils._isBetween(oCurrentDate, oStartDate, oEndDate)) {
-				return true;
-			}
+		const oDateRange = aSelectedDateRanges[0];
+		if (!oDateRange) {
+			return false;
 		}
 
+		if (this.getIntervalSelection()) {
+			const oStartDate = oDateRange.getStartDate();
+			const oEndDate = oDateRange.getEndDate();
+
+			if (!oStartDate || !oEndDate) {
+				return false;
+			}
+
+			const oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
+			const oCalEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
+			oCalStartDate.setMonth(0, 1);
+			oCalEndDate.setMonth(0, 1);
+
+			return CalendarUtils._isBetween(oCurrentDate, oCalStartDate, oCalEndDate, true);
+		}
 		return false;
 	};
 
