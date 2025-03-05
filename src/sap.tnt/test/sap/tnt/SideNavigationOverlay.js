@@ -1,193 +1,207 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/mvc/Controller',
-	"sap/ui/Device",
-	'sap/ui/core/Fragment',
-	"sap/tnt/SideNavigation",
-	"sap/tnt/NavigationList",
-	"sap/tnt/NavigationListItem",
-	"sap/m/ResponsivePopover",
-	"sap/tnt/NavigationListGroup",
-	"sap/m/Dialog",
-	"sap/m/Button",
-	"sap/m/Text",
-	"sap/ui/core/InvisibleText"
-], function (jQuery, Controller, Device, Fragment, SideNavigation, NavigationList, NavigationListItem, ResponsivePopover, NavigationListGroup, Dialog, Button, Text, InvisibleText) {
+	"sap/ui/core/mvc/XMLView"
+], async function (XMLView) {
 	"use strict";
 
-	var cController = Controller.extend("myView.Template", {
-		onInit: function (oEvent) {
-			this.oInvText = new InvisibleText({id: this.oView.getId() + "-ariaText", text: "Main Navigation"}).toStatic();
+	sap.ui.define("myView/Template.controller", [
+		"sap/m/Button",
+		"sap/m/Dialog",
+		"sap/m/ResponsivePopover",
+		"sap/m/Text",
+		"sap/tnt/NavigationList",
+		"sap/tnt/NavigationListGroup",
+		"sap/tnt/NavigationListItem",
+		"sap/tnt/SideNavigation",
+		"sap/ui/Device",
+		"sap/ui/core/InvisibleText",
+		"sap/ui/core/mvc/Controller"
+	], function(
+		Button,
+		Dialog,
+		ResponsivePopover,
+		Text,
+		NavigationList,
+		NavigationListGroup,
+		NavigationListItem,
+		SideNavigation,
+		Device,
+		InvisibleText,
+		Controller
+	) {
+		return Controller.extend("myView.Template", {
+			onInit: function (oEvent) {
+				this.oInvText = new InvisibleText({id: this.oView.getId() + "-ariaText", text: "Main Navigation"}).toStatic();
 
-			this.oInvDescText = new InvisibleText({id: this.oView.getId() + "-ariaDescText", text: "This is the main navigation. It contains navigation items that may have child items. Activating a navigation item opens a new page or dialog within this browser window or gives access to the child items. Navigation items can be grouped, too."}).toStatic();
+				this.oInvDescText = new InvisibleText({id: this.oView.getId() + "-ariaDescText", text: "This is the main navigation. It contains navigation items that may have child items. Activating a navigation item opens a new page or dialog within this browser window or gives access to the child items. Navigation items can be grouped, too."}).toStatic();
 
-			this.oSideNav = new SideNavigation({
-				selectedKey: "page3",
-				design: "Plain",
-				itemSelect: this.onItemSelect.bind(this),
-				item: new NavigationList("NL", {
-					items: [
-					new NavigationListItem({  key: "page1", text: "Home", icon: "sap-icon://home" }),
-					new NavigationListGroup({
-
-						text: "New",
+				this.oSideNav = new SideNavigation({
+					selectedKey: "page3",
+					design: "Plain",
+					itemSelect: this.onItemSelect.bind(this),
+					item: new NavigationList("NL", {
 						items: [
-							new NavigationListItem({  key: "page2", text: "Cards", icon: "sap-icon://card" }),
-							new NavigationListItem({ text: "Building", icon: "sap-icon://building" })
-						]
-					}),
-					new NavigationListGroup({
-						text: "Recently used with a long overflowing title",
-						items: [
-							new NavigationListItem({ text: "Example", icon: "sap-icon://example" }),
-							new NavigationListItem({ text: "Heatmap Chart", icon: "sap-icon://heatmap-chart" }),
-							new NavigationListItem({
-								text: "Machine",
-								icon: "sap-icon://machine",
-								items: [
-									new NavigationListItem({ text: "Supply Chain" }),
-									new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
-									new NavigationListItem({ text: "Schematics" })
-								]
-							})
-						]
-					}),
-					new NavigationListItem({ key: "page3", text: "People", icon: "sap-icon://people-connected" }),
-					new NavigationListItem({ key: "page4", text: "Overview Chart", icon: "sap-icon://overview-chart" }),
-					new NavigationListItem({ text: "Managing My Area", icon: "sap-icon://kpi-managing-my-area" }),
-					new NavigationListItem({ text: "Curriculum", icon: "sap-icon://curriculum" }),
-					new NavigationListItem({ text: "Flight", icon: "sap-icon://flight" }),
-					new NavigationListItem({ text: "Radar Chart", icon: "sap-icon://multiple-radar-chart" }),
-					new NavigationListItem({ text: "Lateness", icon: "sap-icon://lateness" }),
-					new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
+						new NavigationListItem({  key: "page1", text: "Home", icon: "sap-icon://home" }),
+						new NavigationListGroup({
 
-					new NavigationListItem({ text: "Map", icon: "sap-icon://map-2" }),
-					new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
+							text: "New",
+							items: [
+								new NavigationListItem({  key: "page2", text: "Cards", icon: "sap-icon://card" }),
+								new NavigationListItem({ text: "Building", icon: "sap-icon://building" })
+							]
+						}),
+						new NavigationListGroup({
+							text: "Recently used with a long overflowing title",
+							items: [
+								new NavigationListItem({ text: "Example", icon: "sap-icon://example" }),
+								new NavigationListItem({ text: "Heatmap Chart", icon: "sap-icon://heatmap-chart" }),
+								new NavigationListItem({
+									text: "Machine",
+									icon: "sap-icon://machine",
+									items: [
+										new NavigationListItem({ text: "Supply Chain" }),
+										new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
+										new NavigationListItem({ text: "Schematics" })
+									]
+								})
+							]
+						}),
+						new NavigationListItem({ key: "page3", text: "People", icon: "sap-icon://people-connected" }),
+						new NavigationListItem({ key: "page4", text: "Overview Chart", icon: "sap-icon://overview-chart" }),
+						new NavigationListItem({ text: "Managing My Area", icon: "sap-icon://kpi-managing-my-area" }),
+						new NavigationListItem({ text: "Curriculum", icon: "sap-icon://curriculum" }),
+						new NavigationListItem({ text: "Flight", icon: "sap-icon://flight" }),
+						new NavigationListItem({ text: "Radar Chart", icon: "sap-icon://multiple-radar-chart" }),
+						new NavigationListItem({ text: "Lateness", icon: "sap-icon://lateness" }),
+						new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
 
-					new NavigationListItem({ text: "Nutrition Activity", icon: "sap-icon://nutrition-activity" }),
-					new NavigationListItem({ text: "Box", icon: "sap-icon://sap-box" }),
-					new NavigationListItem({ text: "Pool", icon: "sap-icon://pool" }),
-					new NavigationListGroup({
-						text: "Restricted",
-						enabled: false,
-						items: [
-							new NavigationListItem({ text: "Scissors", icon: "sap-icon://scissors" }),
-							new NavigationListItem({ text: "Running", icon: "sap-icon://physical-activity" })
-						]
-					}),
-					new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
-					new NavigationListItem({ text: "Passenger Train", icon: "sap-icon://passenger-train" }),
-					new NavigationListItem({
-						text: "Mileage",
-						icon: "sap-icon://mileage",
-						items: [
-							new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
-							new NavigationListItem({ text: "Driven" }),
-							new NavigationListItem({ text: "Walked" }),
-							new NavigationListItem({ selectable: false, href: "https://sap.com", text: "No Target Link", press: this.onItemSelect.bind(this), icon: "sap-icon://attachment" })
+						new NavigationListItem({ text: "Map", icon: "sap-icon://map-2" }),
+						new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
 
-						]
-					})
-				]
-					}),
-				fixedItem: new NavigationList({
-						items: [
-							new NavigationListItem({
-								ariaHasPopup:"Dialog",
-								id:"quickCreate",
-								press: this.onQuickActionPress.bind(this),
-								design:"Action",
-								selectable: false,
-								text: "Quick Create",
-								icon:"sap-icon://write-new"
-							}),
-							new NavigationListItem({
-								text: "Managing My Area",
-								icon:"sap-icon://kpi-managing-my-area"
-							}),
-							new NavigationListItem({
-								text: "Flight",
-								icon:"sap-icon://flight"
-							})
-						]
-					})
-			});
-		},
+						new NavigationListItem({ text: "Nutrition Activity", icon: "sap-icon://nutrition-activity" }),
+						new NavigationListItem({ text: "Box", icon: "sap-icon://sap-box" }),
+						new NavigationListItem({ text: "Pool", icon: "sap-icon://pool" }),
+						new NavigationListGroup({
+							text: "Restricted",
+							enabled: false,
+							items: [
+								new NavigationListItem({ text: "Scissors", icon: "sap-icon://scissors" }),
+								new NavigationListItem({ text: "Running", icon: "sap-icon://physical-activity" })
+							]
+						}),
+						new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
+						new NavigationListItem({ text: "Passenger Train", icon: "sap-icon://passenger-train" }),
+						new NavigationListItem({
+							text: "Mileage",
+							icon: "sap-icon://mileage",
+							items: [
+								new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", press: this.onItemSelect.bind(this), text: "External Link", icon: "sap-icon://attachment" }),
+								new NavigationListItem({ text: "Driven" }),
+								new NavigationListItem({ text: "Walked" }),
+								new NavigationListItem({ selectable: false, href: "https://sap.com", text: "No Target Link", press: this.onItemSelect.bind(this), icon: "sap-icon://attachment" })
 
-		onItemSelect: function (oEvent) {
-			var oItem = oEvent.getParameter("item");
-			var sKey = oItem.getKey();
-
-			if (sKey && oItem.getSelectable()) {
-				this.byId("pageContainer").to(this.byId(sKey));
-			}
-
-			if (this._oPopover.isOpen()) {
-				this._oPopover.close();
-			}
-		},
-
-		onQuickActionPress: function () {
-			if (!this.oDefaultDialog) {
-				this.oDefaultDialog = new Dialog({
-					title: "Create Item",
-					type: "Message",
-					content: new Text({
-						text: "Create New Navigation List Item"
-					}),
-					beginButton: new Button({
-						type: "Emphasized",
-						text: "Create",
-						press: function () {
-							this.oDefaultDialog.close();
-						}.bind(this)
-					}),
-					endButton: new Button({
-						text: "Cancel",
-						press: function () {
-							this.oDefaultDialog.close();
-						}.bind(this)
-					})
+							]
+						})
+					]
+						}),
+					fixedItem: new NavigationList({
+							items: [
+								new NavigationListItem({
+									ariaHasPopup:"Dialog",
+									id:"quickCreate",
+									press: this.onQuickActionPress.bind(this),
+									design:"Action",
+									selectable: false,
+									text: "Quick Create",
+									icon:"sap-icon://write-new"
+								}),
+								new NavigationListItem({
+									text: "Managing My Area",
+									icon:"sap-icon://kpi-managing-my-area"
+								}),
+								new NavigationListItem({
+									text: "Flight",
+									icon:"sap-icon://flight"
+								})
+							]
+						})
 				});
-				this.getView().addDependent(this.oDefaultDialog);
-			}
-			this.oDefaultDialog.open();
+			},
 
-			if (this._oPopover.isOpen()) {
-				//itemPressed event on side navigation will be good to close the popover for externalLinks, selections and actions
-				this._oPopover.close();
-			}
-		},
+			onItemSelect: function (oEvent) {
+				var oItem = oEvent.getParameter("item");
+				var sKey = oItem.getKey();
 
-		onToggleSideNav: function (oEvent) {
-			if (!this._oPopover) {
-				this._oPopover = new ResponsivePopover({
-					ariaLabelledBy: this.oInvText.getId(),
-					ariaDescribedBy: this.oInvDescText.getId(),
-					placement: "Bottom",
-					showHeader: false,
-					content: this.oSideNav,
-					verticalScrolling: false
-				});
-				this._oPopover.setShowHeader(Device.system.phone);
-			}
+				if (sKey && oItem.getSelectable()) {
+					this.byId("pageContainer").to(this.byId(sKey));
+				}
 
-			if (this._oPopover.isOpen()) {
-				this._oPopover.close();
-			} else {
-				this._oPopover.openBy(oEvent.getSource());
+				if (this._oPopover.isOpen()) {
+					this._oPopover.close();
+				}
+			},
+
+			onQuickActionPress: function () {
+				if (!this.oDefaultDialog) {
+					this.oDefaultDialog = new Dialog({
+						title: "Create Item",
+						type: "Message",
+						content: new Text({
+							text: "Create New Navigation List Item"
+						}),
+						beginButton: new Button({
+							type: "Emphasized",
+							text: "Create",
+							press: function () {
+								this.oDefaultDialog.close();
+							}.bind(this)
+						}),
+						endButton: new Button({
+							text: "Cancel",
+							press: function () {
+								this.oDefaultDialog.close();
+							}.bind(this)
+						})
+					});
+					this.getView().addDependent(this.oDefaultDialog);
+				}
+				this.oDefaultDialog.open();
+
+				if (this._oPopover.isOpen()) {
+					//itemPressed event on side navigation will be good to close the popover for externalLinks, selections and actions
+					this._oPopover.close();
+				}
+			},
+
+			onToggleSideNav: function (oEvent) {
+				if (!this._oPopover) {
+					this._oPopover = new ResponsivePopover({
+						ariaLabelledBy: this.oInvText.getId(),
+						ariaDescribedBy: this.oInvDescText.getId(),
+						placement: "Bottom",
+						showHeader: false,
+						content: this.oSideNav,
+						verticalScrolling: false
+					});
+					this._oPopover.setShowHeader(Device.system.phone);
+				}
+
+				if (this._oPopover.isOpen()) {
+					this._oPopover.close();
+				} else {
+					this._oPopover.openBy(oEvent.getSource());
+				}
 			}
-		}
+		});
 	});
 
-	var oView = sap.ui.xmlview({
-		viewContent: `
-			<mvc:View 
-				height="100%" 
-				controllerName="myView.Template" 
-				xmlns:core="sap.ui.core" 
-				xmlns:mvc="sap.ui.core.mvc" 
-				xmlns="sap.m" 
+	var oView = await XMLView.create({
+		definition: `
+			<mvc:View
+				height="100%"
+				controllerName="myView.Template"
+				xmlns:core="sap.ui.core"
+				xmlns:mvc="sap.ui.core.mvc"
+				xmlns="sap.m"
 				xmlns:tnt="sap.tnt">
 				<App>
 					<Page id="myPage" title="Side Navigation Example"  enableScrolling="true" class="sapUiResponsivePadding--header">
@@ -201,7 +215,7 @@ sap.ui.define([
 						</customHeader>
 						<content>
 							<HBox fitContainer="true" renderType="Bare">
-								<VBox renderType="Bare" class="sideNavContianer">	
+								<VBox renderType="Bare" class="sideNavContianer">
 								</VBox>
 								<VBox renderType="Bare">
 									<NavContainer id="pageContainer" initialPage="page3">
@@ -249,6 +263,4 @@ sap.ui.define([
 		`
 	});
 	oView.placeAt('content');
-
-	return cController;
 });
