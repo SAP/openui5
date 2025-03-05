@@ -1288,7 +1288,7 @@ sap.ui.define([
 				// handle triggered "Save" button
 				// Include special handling for PUBLIC variant which requires changing of all the dirty changes to PUBLIC layer before saving.
 				aNewVariantDirtyChanges = this._getDirtyChangesFromVariantChanges(aSourceVariantChanges);
-				if (this.getVariant(sSourceVariantReference, sVariantManagementReference).layer === Layer.PUBLIC) {
+				if (this.getVariant(sSourceVariantReference, sVariantManagementReference).instance.getLayer() === Layer.PUBLIC) {
 					aNewVariantDirtyChanges.forEach(function(oChange) {
 						oChange.getDefinition().layer = Layer.PUBLIC;
 					});

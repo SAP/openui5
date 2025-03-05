@@ -1552,7 +1552,12 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "getVariant")
 				.callThrough()
 				.withArgs(mArgs)
-				.returns({layer: Layer.PUBLIC});
+				.returns({instance: createVariant({
+					fileName: "variant0",
+					title: "foo",
+					variantManagementReference: "variantMgmtId1",
+					layer: Layer.PUBLIC
+				})});
 			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant");
 			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "setVariantProperties");
 			var fnSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
