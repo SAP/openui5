@@ -2386,7 +2386,10 @@ sap.ui.define([
 
 		this.setProperty("_currentPicker", CURRENT_PICKERS.YEAR_RANGE_PICKER);
 
-		oRangeMidDate.setYear(oRangeMidDate.getYear() + Math.floor(oYearRangePicker.getRangeSize() / 2));
+		oYearRangePicker.getColumns() % 2 !== 0 ?
+			oRangeMidDate.setYear(oRangeMidDate.getYear() + Math.floor(oYearRangePicker.getRangeSize() / 2)) :
+			oRangeMidDate.setYear(oRangeMidDate.getYear());
+
 		oYearRangePicker.setDate(oRangeMidDate.toLocalJSDate());
 		this._togglePrevNexYearPicker();
 	};
@@ -2624,13 +2627,9 @@ sap.ui.define([
 
 	Calendar.prototype._adjustYearRangeDisplay = function() {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
-			sLang = Localization.getLanguage().toLocaleLowerCase(),
 			sPrimaryCalendarType = this._getPrimaryCalendarType(),
 			sSecondaryCalendarType = this._getSecondaryCalendarType(),
-			bKorean = sLang == "ko" || sLang == "ko-kr",
-			bJapaneseCalendar = sPrimaryCalendarType === CalendarType.Japanese || sSecondaryCalendarType === CalendarType.Japanese,
-			bGregorianCalendar = sPrimaryCalendarType === CalendarType.Gregorian
-				&& (sSecondaryCalendarType === CalendarType.Gregorian || !sSecondaryCalendarType);
+			bJapaneseCalendar = sPrimaryCalendarType === CalendarType.Japanese || sSecondaryCalendarType === CalendarType.Japanese;
 
 		if (!this._getSucessorsPickerPopup()) {
 			// An evaluation about the count of year cells that could fit in the sap.ui.unified.calendar.YearRangePicker
@@ -2641,12 +2640,9 @@ sap.ui.define([
 			if (bJapaneseCalendar) {
 				oYearRangePicker.setColumns(1);
 				oYearRangePicker.setYears(4);
-			} else if (bKorean || !bGregorianCalendar) {
+			} else {
 				oYearRangePicker.setColumns(2);
 				oYearRangePicker.setYears(8);
-			} else if (bGregorianCalendar) {
-				oYearRangePicker.setColumns(3);
-				oYearRangePicker.setYears(9);
 			}
 		}
 	};
