@@ -1,0 +1,17 @@
+{
+  "1.134.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "08e77ceabfbc6dedefeba1ea0fe26c3f170131a5",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Padding for parent item with hidden expand icon fixed"
+      },
+      {
+        "id": "0a5076f253e9ca77cdbaca260f2cb69dbebf7cb6",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Overlay mode is now added"
+      }
+    ]
+  }
+}
