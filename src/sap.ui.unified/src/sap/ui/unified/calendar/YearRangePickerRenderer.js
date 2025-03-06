@@ -63,8 +63,12 @@ sap.ui.define([
 			bApplySelectionBetween,
 			mAccProps, sYyyymmdd, i;
 
-		oFirstDate.setYear(oFirstDate.getYear() - Math.floor(oYRP.getRangeSize() / 2));
-		oFirstDate.setYear(oFirstDate.getYear() - Math.floor(iYears / 2) * oYRP.getRangeSize());
+		if (oYRP.getColumns() % 2 !== 0) {
+			oFirstDate.setYear(oFirstDate.getYear() - Math.floor(oYRP.getRangeSize() / 2));
+			oFirstDate.setYear(oFirstDate.getYear() - Math.floor(iYears / 2) * oYRP.getRangeSize());
+		} else {
+			oFirstDate.setYear(oFirstDate.getYear() - (iYears / 2) * oYRP.getRangeSize());
+		}
 
 		if (oFirstDate.getYear() < oMinYear) {
 			oFirstDate.setYear(oMinYear);

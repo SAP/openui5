@@ -1178,7 +1178,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(true, "There is no thrown error and year range picker is opened");
-		assert.deepEqual(oCalendar._getYearRangePicker()._iSelectedIndex, 8, "Focus is correct");
+		assert.deepEqual(oCalendar._getYearRangePicker()._iSelectedIndex, 7, "Focus is correct");
 
 		// act
 		oCalendar._selectYearRange();
