@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/core/Lib",
-	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
+	"sap/ui/fl/apply/_internal/changes/descriptor/InlineApplier",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -24,8 +24,8 @@ sap.ui.define([
 	Log,
 	Component,
 	Lib,
-	AppDescriptorApplier,
 	ApplyStrategyFactory,
+	InlineApplier,
 	ChangesApplier,
 	FlexState,
 	ManifestUtils,
@@ -198,7 +198,7 @@ sap.ui.define([
 		// manifest descriptor changes for ABAP mixed mode can only be applied in this hook,
 		// because at this point all libs have been loaded (in contrast to the first Component(s) 'onPreprocessManifest' hook),
 		// but the manifest is still adaptable
-		return AppDescriptorApplier.applyChangesIncludedInManifest(oManifest, ApplyStrategyFactory.getRuntimeStrategy());
+		return InlineApplier.applyChanges(oManifest, ApplyStrategyFactory.getRuntimeStrategy());
 	}
 
 	// the current sinon version used in UI5 does not support stubbing the constructor
