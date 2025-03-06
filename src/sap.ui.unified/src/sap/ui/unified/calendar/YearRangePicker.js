@@ -117,12 +117,18 @@ sap.ui.define([
 		// check if first date is outside of min and max date
 		var iYears = this.getYears();
 		var oMaxStartYear = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
+		const iPageSize = iYears * this.getRangeSize();
 
 		if (!oMaxStartYear.isSame(CalendarUtils._maxDate(this._getPrimaryCalendarType()))) {
 			return oDate;
 		}
 
-		oMaxStartYear.setYear(oMaxStartYear.getYear() - Math.floor(iYears / 2) * this.getRangeSize() + 1 - Math.floor(this.getRangeSize() / 2));
+		if (this.getColumns() % 2 === 0) {
+			oMaxStartYear.setYear(oMaxStartYear.getYear() - iPageSize / 2 + 1);
+		} else {
+			Math.floor(iYears / 2) * this.getRangeSize() + 1 - Math.floor(this.getRangeSize() / 2);
+		}
+
 		if (oDate.isAfter(oMaxStartYear) && oDate.getYear() != oMaxStartYear.getYear()) {
 			oDate = new CalendarDate(oMaxStartYear, this._getPrimaryCalendarType());
 			oDate.setMonth(0, 1);
@@ -137,35 +143,49 @@ sap.ui.define([
 
 	YearRangePicker.prototype._updatePage = function (bForward, iSelectedIndex, bFireEvent){
 
-		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oFirstDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this._getPrimaryCalendarType()),
-			iYears = this.getYears(),
-			iYearRangeSize = this.getRangeSize();
+		const aDomRefs = this._oItemNavigation.getItemDomRefs();
+		const oFirstDateInCurrentPage = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(aDomRefs[0].getAttribute("data-sap-year-start")), this._getPrimaryCalendarType());
+		const iYears = this.getYears();
+		const iYearRangeSize = this.getRangeSize();
+		const oFirstDateInNextPage = new CalendarDate(oFirstDateInCurrentPage, this._getPrimaryCalendarType());
+		const iPageSize = iYears * iYearRangeSize;
+		const iHalfYearForPage = this.getColumns() % 2 === 0 ? iPageSize / 2 :  Math.floor(iYears / 2) * iYearRangeSize + Math.floor(iYearRangeSize / 2);
+		let oMiddleDateInNextPage;
 
 		if (bForward) {
-			var oMaxDate = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
-			oMaxDate.setYear(oMaxDate.getYear() - iYears * iYearRangeSize + 1);
-			if (oFirstDate.isBefore(oMaxDate)) {
-				oFirstDate.setYear(oFirstDate.getYear() + iYears * iYearRangeSize + Math.floor(iYearRangeSize / 2) + Math.floor(iYears / 2) * iYearRangeSize);
-				oFirstDate = this._checkFirstDate(oFirstDate);
+			const oMaxDate = new CalendarDate(this._oMaxDate, this._getPrimaryCalendarType());
+			oMaxDate.setYear(oMaxDate.getYear() - iPageSize + 1);
+			if (oFirstDateInCurrentPage.isBefore(oMaxDate)) {
+
+				oFirstDateInNextPage.setYear(oFirstDateInCurrentPage.getYear() + iPageSize);
+				const oLastDateInNextPage = new CalendarDate(oFirstDateInNextPage, this._getPrimaryCalendarType());
+				oLastDateInNextPage.setYear(oFirstDateInNextPage.getYear() + iPageSize);
+
+				if (oLastDateInNextPage.isAfter(oMaxDate)) {
+					oFirstDateInNextPage.setYear(oMaxDate.getYear());
+				}
+				oMiddleDateInNextPage = new CalendarDate(oFirstDateInNextPage, this._getPrimaryCalendarType());
+				oMiddleDateInNextPage.setYear(oFirstDateInNextPage.getYear() + iHalfYearForPage);
 			} else {
 				return;
 			}
 		} else {
-			if (oFirstDate.isAfter(this._oMinDate)) {
-				oFirstDate.setYear(oFirstDate.getYear() - iYears * iYearRangeSize);
-				if (oFirstDate.isBefore(this._oMinDate)) {
-					oFirstDate = new CalendarDate(this._oMinDate, this._getPrimaryCalendarType());
+			if (oFirstDateInCurrentPage.isAfter(this._oMinDate)) {
+				const oMinDate = new CalendarDate(this._oMinDate, this._getPrimaryCalendarType());
+
+				oFirstDateInNextPage.setYear(oFirstDateInCurrentPage.getYear() -  iPageSize);
+				if (oFirstDateInNextPage.isBefore(oMinDate)) {
+					oFirstDateInNextPage.setYear(oMinDate.getYear());
 				}
-				oFirstDate.setYear(oFirstDate.getYear() + Math.floor(iYears / 2) * iYearRangeSize + Math.floor(iYearRangeSize / 2));
-				oFirstDate = this._checkFirstDate(oFirstDate);
+				oMiddleDateInNextPage = new CalendarDate(oFirstDateInNextPage, this._getPrimaryCalendarType());
+				oMiddleDateInNextPage.setYear(oFirstDateInNextPage.getYear() + iHalfYearForPage);
 			} else {
 				return;
 			}
 		}
 
 		this._iSelectedIndex = iSelectedIndex;
-		this.setProperty("_middleDate", oFirstDate);
+		this.setProperty("_middleDate", oMiddleDateInNextPage);
 
 		if (bFireEvent) {
 			this.firePageChange();

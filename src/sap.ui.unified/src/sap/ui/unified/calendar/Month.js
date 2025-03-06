@@ -1680,27 +1680,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Month.prototype._calculateWeekNumber = function (oDate) {
-		var oLocale = new Locale(this._getLocale());
-		var oEndDate = this._getLastWeekDate(oDate);
-		var oLocaleData = this._getLocaleData();
-		var oDateFormat;
-		var iWeekNumber;
 
-		oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this._getPrimaryCalendarType(), calendarWeekNumbering: this._getCalendarWeekNumbering()}, oLocale);
-
-		const bIsRegionUS = oLocaleData.firstDayStartsFirstWeek();
-
-		const bStartsInFirstMonth = this._getDate().getMonth() === 0;
-		const bEndsInFirstMonth = oEndDate.getMonth() === 0;
-		const bEndsInSecondMonth = oEndDate.getMonth() === 1;
-
-		if (bStartsInFirstMonth && bIsRegionUS && (bEndsInFirstMonth || bEndsInSecondMonth)) {
-			iWeekNumber = oDateFormat.format(oEndDate.toLocalJSDate());
-		} else {
-			iWeekNumber = oDateFormat.format(oDate.toLocalJSDate());
-		}
-
-		return iWeekNumber;
+		return CalendarUtils.calculateWeekNumber(oDate, this._getPrimaryCalendarType(), this._getLocale(), this._getCalendarWeekNumbering(), this._getFirstDayOfWeek());
 	};
 
 	/**
