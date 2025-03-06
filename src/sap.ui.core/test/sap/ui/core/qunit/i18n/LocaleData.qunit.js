@@ -611,6 +611,7 @@ sap.ui.define([
 		var oCurrencySymbols = oLocaleData.getCurrencySymbols();
 
 		assert.strictEqual(oCurrencySymbols["BTC"], "Ƀ", "Custom currency symbol map contains the Bitcoin icon");
+		Formatting.setCustomCurrencies();
 	});
 
 	// ABAP timezone IDs not supported by CLDR (yet).
@@ -1708,5 +1709,35 @@ sap.ui.define([
 		const oCustomeLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
 		// code under test
 		assert.strictEqual(oCustomeLocaleData.getDecimalFormat, LocaleData.prototype.getCompactDecimalPattern);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllCurrencyDigits, no custom currencies", function(assert) {
+		const oLocaleData = LocaleData.getInstance(Formatting.getLanguageTag());
+
+		// code under test
+		const mCurrencyCodesToDigits = oLocaleData.getAllCurrencyDigits();
+
+		assert.notStrictEqual(oLocaleData.mData.currencyDigits, mCurrencyCodesToDigits);
+		assert.deepEqual(oLocaleData.mData.currencyDigits, mCurrencyCodesToDigits);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllCurrencyDigits, with custom currencies", function(assert) {
+		const oLocaleData = LocaleData.getInstance(Formatting.getLanguageTag());
+		oLocaleData.mData.currencyDigits = {"DEFAULT": 2, "FOO": "~cldrFOO", "BAR": 1};
+		Formatting.setCustomCurrencies({
+			BAR: {digits: "~customBAR"},
+			BAZ: {},
+			DEFAULT: {digits: "~customDEFAULT"},
+			FOO: {}
+		});
+
+		// code under test
+		assert.deepEqual(oLocaleData.getAllCurrencyDigits(), {
+			DEFAULT: "~customDEFAULT",
+			FOO: "~cldrFOO",
+			BAR: "~customBAR"
+		});
 	});
 });
