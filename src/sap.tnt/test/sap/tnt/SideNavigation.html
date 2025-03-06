@@ -298,7 +298,7 @@
 				})
 			}).placeAt("col-1-content");
 
-			var sideNavigationWithBinding = new sap.tnt.SideNavigation({
+			var sideNavigationWithBinding2 = new sap.tnt.SideNavigation({
 				item: new sap.tnt.NavigationList({
 					items: {
 						template: new sap.tnt.NavigationListItem({
@@ -327,7 +327,7 @@
 						path: '/fixedNavigation'
 					}
 				})
-			}).setModel(model).placeAt('col-1-content');
+			}).setModel(model).placeAt('col-1-2-content');
 
 			var sideNavigation = new sap.tnt.SideNavigation({
 				expanded: false,
@@ -359,11 +359,11 @@
 				})
 			}).setModel(model).placeAt('col-2-content');
 
-			var sideNavigationNoIcons = new sap.tnt.SideNavigation({
+			var sideNavigationNoIcons = new sap.tnt.SideNavigation("sideNavigationNoIcons", {
 				expanded: true,
 				item: new sap.tnt.NavigationList({
 					items: new sap.tnt.NavigationListItem({
-						text: 'Root Item',
+						text: 'Root Item without icon',
 						items: [
 							new sap.tnt.NavigationListItem({
 								text: 'Child Item 1'
@@ -412,6 +412,13 @@
 			new sap.m.Button({
 				text: 'toggle expanded property',
 				press: function () {
+					sideNavigationWithBinding2.setExpanded(!sideNavigationWithBinding2.getExpanded());
+				}
+			}).placeAt('col-1-2-header');
+
+			new sap.m.Button({
+				text: 'toggle expanded property',
+				press: function () {
 					sideNavigation.setExpanded(!sideNavigation.getExpanded());
 				}
 			}).placeAt('col-2-header');
@@ -433,6 +440,10 @@
 		<div>
 			<div id="col-1-header"></div>
 			<div id="col-1-content" class="col-1-content"></div>
+		</div>
+		<div>
+			<div id="col-1-2-header"></div>
+			<div id="col-1-2-content" class="col-1-content"></div>
 		</div>
 		<div>
 			<div id="col-2-header"></div>
