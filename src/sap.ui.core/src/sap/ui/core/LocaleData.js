@@ -21,35 +21,35 @@ sap.ui.define([
 
 	var rCIgnoreCase = /c/i,
 		rEIgnoreCase = /e/i,
-		/**
-		 * With the upgrade of the CLDR to version 41 some unit keys have changed.
-		 * For compatibility reasons this map is used for formatting units.
-		 * It maps a legacy unit key to its renamed key.
-		 *
-		 * @deprecated As of version 1.122.0, this map is no longer maintained and stays for compatibility reasons
-		 *   only. Reason for the depreciation: The assumption of homogeneous unit keys in the CLDR data has been proven
-		 *   wrong. Additionally, it is unclear if, those CLDR unit keys are actually used. Implementing a complex logic
-		 *   to maintain potentially unused entries did not seem reasonable. Therefore, it was decided to deprecate this
-		 *   feature.
-		 *   This map was last updated with CLDR V43, in 1.119.0.
-		 * @private
-		 */
-		mLegacyUnit2CurrentUnit = {
-			"acceleration-meter-per-second-squared": "acceleration-meter-per-square-second",
-			"concentr-milligram-per-deciliter": "concentr-milligram-ofglucose-per-deciliter",
-			"concentr-part-per-million": "concentr-permillion",
-			"consumption-liter-per-100kilometers": "consumption-liter-per-100-kilometer",
-			"mass-metric-ton": "mass-tonne",
-			"pressure-millimeter-of-mercury": "pressure-millimeter-ofhg",
-			"pressure-pound-per-square-inch": "pressure-pound-force-per-square-inch",
-			"pressure-inch-hg": "pressure-inch-ofhg",
-			"torque-pound-foot": "torque-pound-force-foot"
-		},
 		rNumberInScientificNotation = /^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/,
 		rTrailingZeroes = /0+$/;
 	const rFallbackPatternTextParts = /(.*)?\{[0|1]}(.*)?\{[0|1]}(.*)?/;
 	const rOnlyZeros = /^0+$/;
 	const aSupportedWidths = ["narrow", "abbreviated", "wide"];
+	/**
+	 * With the upgrade of the CLDR to version 41 some unit keys have changed.
+	 * For compatibility reasons this map is used for formatting units.
+	 * It maps a legacy unit key to its renamed key.
+	 *
+	 * @deprecated As of version 1.122.0, this map is no longer maintained and stays for compatibility reasons
+	 *   only. Reason for the depreciation: The assumption of homogeneous unit keys in the CLDR data has been proven
+	 *   wrong. Additionally, it is unclear if, those CLDR unit keys are actually used. Implementing a complex logic
+	 *   to maintain potentially unused entries did not seem reasonable. Therefore, it was decided to deprecate this
+	 *   feature.
+	 *   This map was last updated with CLDR V43, in 1.119.0.
+	 * @private
+	 */
+	const mLegacyUnit2CurrentUnit = {
+		"acceleration-meter-per-second-squared": "acceleration-meter-per-square-second",
+		"concentr-milligram-per-deciliter": "concentr-milligram-ofglucose-per-deciliter",
+		"concentr-part-per-million": "concentr-permillion",
+		"consumption-liter-per-100kilometers": "consumption-liter-per-100-kilometer",
+		"mass-metric-ton": "mass-tonne",
+		"pressure-millimeter-of-mercury": "pressure-millimeter-ofhg",
+		"pressure-pound-per-square-inch": "pressure-pound-force-per-square-inch",
+		"pressure-inch-hg": "pressure-inch-ofhg",
+		"torque-pound-foot": "torque-pound-force-foot"
+	};
 
 	/**
 	 * The locale data cache. Maps a locale ID, formatted as either the language_region (e.g. "ar_SA"),
@@ -1888,18 +1888,21 @@ sap.ui.define([
 		 * Note: Does not take unit mapping into consideration.
 		 *
 		 * @param {string} sUnit unit name, e.g. "duration-hour"
-		 * @return {Object<string,string>}
+		 * @return {Object<string, string>|undefined}
 		 *  The unit format pattern for the given unit name as a map from a pattern key like
-		 *  <code>"unitPattern-count-other"</code> to the corresponding pattern
+		 *  <code>"unitPattern-count-other"</code> to the corresponding pattern or <code>undefined</code> if no
+		 *  corresponding pattern is found
 		 * @public
 		 * @since 1.54
 		 */
 		getUnitFormat: function (sUnit) {
 			var oResult = this._get("units", "short", sUnit);
 
+			/** @deprecated As of version 1.122.0, reason mLegacyUnit2CurrentUnit */
 			if (!oResult && mLegacyUnit2CurrentUnit[sUnit]) {
 				oResult = this._get("units", "short", mLegacyUnit2CurrentUnit[sUnit]);
 			}
+
 			return oResult;
 		},
 

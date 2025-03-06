@@ -1965,6 +1965,7 @@ sap.ui.define([
 		assert.deepEqual(oFormat.parse(sValue), [42, "myUnit"]);
 	});
 
+	/** @deprecated As of version 1.122.0, legacy unit mapping deprecated */
 	//*********************************************************************************************
 [
 	{
