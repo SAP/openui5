@@ -371,7 +371,7 @@ sap.ui.define([
 						vResponse.headers ??= {};
 						vResponse.headers["Content-Type"] ||= contentType(vResponse.source);
 						delete vResponse.source;
-					});
+					}, () => { /* Caller is responsible for error handling, see Promise.all */ });
 				}
 			}
 
