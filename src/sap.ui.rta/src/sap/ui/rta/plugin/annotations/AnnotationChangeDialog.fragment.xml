@@ -9,7 +9,7 @@
 		resizable="false"
 		draggable="true"
 		contentWidth="50rem"
-		contentHeight="25rem"
+		contentHeight="{= ${/singleRename} === true ? 'auto' : '25rem'}"
 		title="{/title}"
 		class="sapUiContentPadding"
 	>
@@ -30,7 +30,11 @@
 					id="sapUiRtaChangeAnnotationDialog_description"
 					visible="{= ${/description}.length > 0}"
 					text="{/description}"/>
-				<HBox fitContainer="true">
+				<HBox
+					id="sapUiRtaChangeAnnotationDialog_filterHBox"
+					fitContainer="true"
+					visible="{= ${/singleRename} === false}"
+				>
 					<SearchField
 						id="sapUiRtaChangeAnnotationDialog_propertiesFilter"
 						placeholder="{i18n>ANNOTATION_CHANGE_DIALOG_PROPERTY_SEARCH}"

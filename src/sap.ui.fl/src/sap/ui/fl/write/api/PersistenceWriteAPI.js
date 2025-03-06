@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/apply/_internal/flexObjects/AnnotationChange",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
@@ -27,7 +27,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	DescriptorChangeTypes,
 	FlexCustomData,
-	AnnotationChange,
+	UIChange,
 	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
@@ -275,10 +275,10 @@ sap.ui.define([
 			if (isDescriptorChange(oFlexObject)) {
 				return oFlexObject.store();
 			}
-			if (oFlexObject instanceof AnnotationChange) {
-				return FlexObjectManager.addDirtyFlexObjects(sFlexReference, [oFlexObject])?.[0];
+			if (oFlexObject instanceof UIChange) {
+				return UIChangeManager.addDirtyChanges(sFlexReference, [oFlexObject], oAppComponent)?.[0];
 			}
-			return UIChangeManager.addDirtyChanges(sFlexReference, [oFlexObject], oAppComponent)?.[0];
+			return FlexObjectManager.addDirtyFlexObjects(sFlexReference, [oFlexObject])?.[0];
 		}
 
 		if (mPropertyBag.change && mPropertyBag.flexObjects) {
@@ -299,17 +299,17 @@ sap.ui.define([
 		}
 
 		const aUIChanges = [];
-		const aAnnotationChanges = [];
+		const aFlexObjects = [];
 
 		mPropertyBag.flexObjects.forEach((oFlexObject) => {
-			if (oFlexObject instanceof AnnotationChange) {
-				aAnnotationChanges.push(oFlexObject);
-			} else {
+			if (oFlexObject instanceof UIChange) {
 				aUIChanges.push(oFlexObject);
+			} else {
+				aFlexObjects.push(oFlexObject);
 			}
 		});
 
-		const aAddedFlexObjects = FlexObjectManager.addDirtyFlexObjects(sFlexReference, aAnnotationChanges);
+		const aAddedFlexObjects = FlexObjectManager.addDirtyFlexObjects(sFlexReference, aFlexObjects);
 		const aAddedUIChanges = UIChangeManager.addDirtyChanges(sFlexReference, aUIChanges, oAppComponent);
 
 		// Ensure that the added changes are returned in the same order as they were passed

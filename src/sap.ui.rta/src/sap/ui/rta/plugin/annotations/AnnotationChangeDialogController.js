@@ -94,6 +94,7 @@ sap.ui.define([
 			return oChangeSpecificData;
 		})
 		.filter(Boolean);
+
 		this._fnResolveAfterClose(aChanges);
 	};
 
