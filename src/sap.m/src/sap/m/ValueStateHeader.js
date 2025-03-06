@@ -63,7 +63,7 @@ sap.ui.define(
 				apiVersion: 2,
 				render: function (oRM, oControl) {
 					var mapValueStateToClass = {
-						None: "",
+						None: "sapMValueStateHeaderNone",
 						Error: "sapMValueStateHeaderError",
 						Warning: "sapMValueStateHeaderWarning",
 						Success: "sapMValueStateHeaderSuccess",

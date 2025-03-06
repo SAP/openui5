@@ -262,4 +262,15 @@ describe('sap.m.MultiComboBox', function() {
 		defaultMultiComboBoxArrow.click();
 		element(by.id("compactMode")).click();
 	});
+
+	it("should visualize popover correctly when having long valueStateText", function() {
+		var arrow = element(by.id("longHeader-arrow"));
+		arrow.click();
+
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.SPACE).perform();
+
+		expect(takeScreenshot()).toLookAs("long_vsh_text");
+	});
 });
