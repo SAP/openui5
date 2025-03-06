@@ -154,6 +154,7 @@ sap.ui.define([
 		} else {
 			this.updateInvisibleTextLabelValue();
 		}
+		this._getObjectPageLayout()?._setSectionInfoIsDirty(true);
 	};
 
 	ObjectPageSectionBase.prototype.exit = function () {

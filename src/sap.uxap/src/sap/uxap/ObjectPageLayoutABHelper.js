@@ -79,7 +79,10 @@ sap.ui.define([
 			}.bind(this));
 
 			oAnchorBar.addEventDelegate({
-				onAfterRendering: oObjectPageLayout._adjustTitlePositioning.bind(oObjectPageLayout)
+				onAfterRendering: function() {
+					oObjectPageLayout._adjustTitlePositioning();
+					this._clearAnchorBarFixedHeight(oAnchorBar);
+				}.bind(this)
 			});
 
 			if (bUpperCaseAnchors) {
@@ -90,6 +93,20 @@ sap.ui.define([
 		}
 
 		return oAnchorBar;
+	};
+
+	ABHelper.prototype._fixAnchorBarHeight = function (oAnchorBar) {
+		var oAnchorBarParentNode = oAnchorBar.getDomRef()?.parentNode;
+		if (oAnchorBarParentNode) {
+			oAnchorBarParentNode.style.height = oAnchorBarParentNode.clientHeight + "px";
+		}
+	};
+
+	ABHelper.prototype._clearAnchorBarFixedHeight = function (oAnchorBar) {
+		var oAnchorBarParentNode = oAnchorBar.getDomRef()?.parentNode;
+		if (oAnchorBarParentNode) {
+			oAnchorBarParentNode.style.height = "auto";
+		}
 	};
 
 	/**
@@ -169,7 +186,9 @@ sap.ui.define([
 	};
 
 	ABHelper.prototype.resetControl = function () {
-		this._getAnchorBar().destroyItems();
+		var oAnchorBar = this._getAnchorBar();
+		this._fixAnchorBarHeight(oAnchorBar);
+		oAnchorBar.destroyItems();
 	};
 
 	ABHelper.prototype.selectAnchorForSection = function (sId) {

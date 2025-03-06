@@ -3455,6 +3455,7 @@ function(
 
 
 		// Act - scroll to snap the header
+		oObjectPage._setSectionInfoIsDirty(false);
 		oObjectPage._onScroll({ target: { scrollTop: oObjectPage._getSnapPosition() + 1} });
 		// Assert
 		assert.strictEqual(oObjectPage._getHeaderContentDomRef(),
