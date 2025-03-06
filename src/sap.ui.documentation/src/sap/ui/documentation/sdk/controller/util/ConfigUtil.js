@@ -22,7 +22,8 @@ sap.ui.define([
 
 		"COOKIE_NAMES": {
 			"APPROVAL_REQUESTED": "dk_approval_requested",
-			"ALLOW_FUNCTIONAL_COOKIES": "dk_allow_functional_cookies"
+			"ALLOW_FUNCTIONAL_COOKIES": "dk_allow_functional_cookies",
+			"CONFIGURATION_APPEARANCE": "appearance"
 		},
 
 		"LOCAL_STORAGE_NAMES": {
@@ -86,6 +87,10 @@ sap.ui.define([
 
 		removeLocalStorageItem: function (sItem) {
 			window.localStorage.removeItem(sItem);
+		},
+
+		unsetCookie: function (sCookieName) {
+			document.cookie = `${sCookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 		},
 
 		_getMasterTargetName: function(sRouteName) {
