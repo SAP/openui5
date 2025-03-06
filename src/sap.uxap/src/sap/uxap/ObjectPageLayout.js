@@ -710,6 +710,9 @@ sap.ui.define([
 		this._initRangeSet();
 		this._attachMediaContainerWidthChange(this._onMediaRangeChange,
 			this, ObjectPageLayout.MEDIA_RANGESET_NAME);
+		this._oHeaderContentDelegate = {
+			onBeforeRendering: this._setSectionInfoIsDirty.bind(this, true)
+		};
 	};
 
 	/**
@@ -2028,8 +2031,6 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._requestAdjustLayoutAndUxRules = function (bImmediate) {
-		this._setSectionInfoIsDirty(true);
-
 		if (!this._oUxRulesTask) {
 			this._oUxRulesTask = new ThrottledTask(
 				this._adjustLayoutAndUxRules, //function to execute
@@ -3774,7 +3775,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._moveAnchorBarToContentArea = function () {
 		if (!this._shouldPreserveHeaderInTitleArea()) {
 			var iScrollTopBeforeAppend = this._$opWrapper.scrollTop();
-			this._$anchorBar.css("height", "auto").append(this._$stickyAnchorBar.children()); //TODO: css auto redundant?
+			this._$anchorBar.append(this._$stickyAnchorBar.children());
 			// ensure that appending the anchorBar does not change the scrollTop, as it may happen in certain cases (if another part of content freshly rerendered (BCP: 1870365138)
 			this._$opWrapper.scrollTop(iScrollTopBeforeAppend);
 
@@ -3922,6 +3923,7 @@ sap.ui.define([
 
 			if (oOldHeaderContent) {
 				oOldHeaderContent.destroy();
+				oOldHeaderContent.removeEventDelegate(this._oHeaderContentDelegate);
 			}
 
 			oNewHeaderContent = fnHeaderContentClass.createInstance(
@@ -3932,6 +3934,7 @@ sap.ui.define([
 				this.getId() + "-OPHeaderContent"
 			);
 
+			oNewHeaderContent.addEventDelegate(this._oHeaderContentDelegate);
 			oNewHeaderContent.getContent().forEach(this._replaceHeaderContentParent, this);
 
 			this.setAggregation("_headerContent", oNewHeaderContent, true);
