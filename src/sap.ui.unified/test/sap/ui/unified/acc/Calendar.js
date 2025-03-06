@@ -2,11 +2,12 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Label",
 	"sap/m/Page",
+	"sap/m/ScrollContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/library"
-], function(App, Label, Page, VerticalLayout, Calendar, DateRange, coreLibrary) {
+], function(App, Label, Page, ScrollContainer, VerticalLayout, Calendar, DateRange, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -35,12 +36,16 @@ sap.ui.define([
 		ariaLabelledBy: oWithMultipleMonthsLabel
 	});
 
-	var oPageLayout = new VerticalLayout({
+	var oPageLayout = new ScrollContainer({
 		content: [
-			oSingleDaySelectionLabel.addStyleClass("sapUiSmallMarginTopBottom"),
-			oSingleDaySelectionCalendar,
-			oWithMultipleMonthsLabel.addStyleClass("sapUiSmallMarginTopBottom"),
-			oWithMultipleMonthsCalendar
+			new VerticalLayout({
+				content: [
+					oSingleDaySelectionLabel.addStyleClass("sapUiSmallMarginTopBottom"),
+					oSingleDaySelectionCalendar,
+					oWithMultipleMonthsLabel.addStyleClass("sapUiSmallMarginTopBottom"),
+					oWithMultipleMonthsCalendar
+				]
+			})
 		]
 	}).addStyleClass("sapUiContentPadding");
 

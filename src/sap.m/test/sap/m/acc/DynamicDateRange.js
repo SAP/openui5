@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/m/DynamicDate",
 	"sap/m/Label",
 	"sap/m/Page",
+	"sap/m/ScrollContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library"
-], function(App, DynamicDateRange, DynamicDate, Label, Page, VerticalLayout, JSONModel, coreLibrary) {
+], function(App, DynamicDateRange, DynamicDate, Label, Page, ScrollContainer, VerticalLayout, JSONModel, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -25,57 +26,64 @@ sap.ui.define([
 		}
 	}
 
-	var oPageLayout = new VerticalLayout({
+	var oPageLayout = new ScrollContainer({
 		content: [
-			new Label({
-				text: "Choose a date",
-				labelFor: "DDR1",
-				wrapping: true
-			}),
-			new DynamicDateRange("DDR1", {
-				standardOptions: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "LASTWEEKSINCLUDED", "LASTWEEKS", "LASTMONTHSINCLUDED", "TODAYFROMTO"],
-				value: {
-					path: '/val1',
-					type: new DynamicDate()
-				},
-				change: handleValueChange
-			}),
-			new Label({
-				text: "Choose a date",
-				labelFor: "DDR2",
-				wrapping: true
-			}),
-			new DynamicDateRange("DDR2",{
-				standardOptions: ["DATE", "TODAY", "LASTDAYS","DATETOYEAR", "LASTQUARTERS", "TODAYFROMTO", "SPECIFICMONTH", "SPECIFICMONTHINYEAR","FIRSTDAYWEEK",
-					"LASTDAYWEEK", "FIRSTDAYMONTH", "LASTDAYMONTH", "FIRSTDAYQUARTER", "LASTDAYQUARTER", "FIRSTDAYYEAR","LASTDAYYEAR"
-					],
-				value: {
-					path: '/val2',
-					type: new DynamicDate({
-						date: {
-							style: "short"
+			new VerticalLayout({
+				content: [
+					new Label({
+						text: "Choose a date",
+						labelFor: "DDR1",
+						wrapping: true
+					}),
+					new DynamicDateRange("DDR1", {
+						width: "500px",
+						standardOptions: ["DATE", "TODAY", "LASTDAYS", "LASTQUARTERS", "LASTWEEKSINCLUDED", "LASTWEEKS", "LASTMONTHSINCLUDED", "TODAYFROMTO"],
+						value: {
+							path: '/val1',
+							type: new DynamicDate()
 						},
-						month: {
-							pattern: "MMM"
+						change: handleValueChange
+					}),
+					new Label({
+						text: "Choose a date",
+						labelFor: "DDR2",
+						wrapping: true
+					}),
+					new DynamicDateRange("DDR2",{
+						width: "500px",
+						standardOptions: ["DATE", "TODAY", "LASTDAYS","DATETOYEAR", "LASTQUARTERS", "TODAYFROMTO", "SPECIFICMONTH", "SPECIFICMONTHINYEAR","FIRSTDAYWEEK",
+							"LASTDAYWEEK", "FIRSTDAYMONTH", "LASTDAYMONTH", "FIRSTDAYQUARTER", "LASTDAYQUARTER", "FIRSTDAYYEAR","LASTDAYYEAR"
+							],
+						value: {
+							path: '/val2',
+							type: new DynamicDate({
+								date: {
+									style: "short"
+								},
+								month: {
+									pattern: "MMM"
+								},
+								"int": {
+									minIntegerDigits: 2
+								}
+							})
 						},
-						"int": {
-							minIntegerDigits: 2
-						}
+						change: handleValueChange
+					}),
+					new Label({
+						text: "Choose a date",
+						labelFor: "DDR3",
+						wrapping: true
+					}),
+					new DynamicDateRange("DDR3", {
+						width: "500px",
+						enableGroupHeaders: false,
+						change: handleValueChange
 					})
-				},
-				change: handleValueChange
-			}),
-			new Label({
-				text: "Choose a date",
-				labelFor: "DDR3",
-				wrapping: true
-			}),
-			new DynamicDateRange("DDR3", {
-				enableGroupHeaders: false,
-				change: handleValueChange
-			})
+				]
+			}).addStyleClass("sapUiContentPadding")
 		]
-	}).addStyleClass("sapUiContentPadding");
+	});
 
 	var oModel = new JSONModel({
 		val1: {

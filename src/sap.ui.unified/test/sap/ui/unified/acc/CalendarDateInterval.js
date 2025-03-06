@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarDateInterval",
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/m/ScrollContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date"
@@ -11,6 +12,7 @@ sap.ui.define([
 	CalendarDateInterval,
 	App,
 	Page,
+	ScrollContainer,
 	VerticalLayout,
 	coreLibrary,
 	UI5Date
@@ -48,28 +50,32 @@ sap.ui.define([
 	});
 
 	var oApp = new App();
-	var oPageLayout = new VerticalLayout({
+	var oPageLayout = new ScrollContainer({
 		content: [
-			new Label({
-				text: "Single selection",
-				labelFor: "Cal1",
-				wrapping: true
-			}),
-			oCal,
-			new Label({
-				text: "Single interval selection",
-				labelFor: "Cal2",
-				wrapping: true
-			}),
-			oCal2,
-			new Label({
-				text: "Multiple selection",
-				labelFor: "Cal3",
-				wrapping: true
-			}),
-			oCal3
+			new VerticalLayout({
+				content: [
+					new Label({
+						text: "Single selection",
+						labelFor: "Cal1",
+						wrapping: true
+					}),
+					oCal,
+					new Label({
+						text: "Single interval selection",
+						labelFor: "Cal2",
+						wrapping: true
+					}),
+					oCal2,
+					new Label({
+						text: "Multiple selection",
+						labelFor: "Cal3",
+						wrapping: true
+					}),
+					oCal3
+				]
+			}).addStyleClass("sapUiContentPadding")
 		]
-	}).addStyleClass("sapUiContentPadding");
+	});
 
 	var oPage = new Page({
 		title: "CalendarDateInterval Accessibility Test Page",

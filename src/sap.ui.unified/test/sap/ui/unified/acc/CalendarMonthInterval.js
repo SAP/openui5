@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarMonthInterval",
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/m/ScrollContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date"
@@ -11,6 +12,7 @@ sap.ui.define([
 	CalendarMonthInterval,
 	App,
 	Page,
+	ScrollContainer,
 	VerticalLayout,
 	coreLibrary,
 	UI5Date
@@ -59,13 +61,17 @@ sap.ui.define([
 		pickerPopup: true
 	});
 
-	var oPageLayout = new VerticalLayout({
+	var oPageLayout = new ScrollContainer({
 		content: [
-			oLabel1, oCalendar1,
-			oLabel2, oCalendar2,
-			oLabel3, oCalendar3
+			new VerticalLayout({
+				content: [
+					oLabel1, oCalendar1,
+					oLabel2, oCalendar2,
+					oLabel3, oCalendar3
+				]
+			}).addStyleClass("sapUiContentPadding")
 		]
-	}).addStyleClass("sapUiContentPadding");
+	});
 
 	var oApp = new App();
 	var oPage = new Page({
