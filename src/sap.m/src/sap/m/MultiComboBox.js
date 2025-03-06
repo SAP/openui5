@@ -385,27 +385,20 @@ function(
 	 * @param {jquery.Event} oEvent The event object
 	 * @private
 	 */
-	MultiComboBox.prototype.handleDownEvent = function (oEvent) {
+	MultiComboBox.prototype.handleDownEvent = function(oEvent){
 		if (!this.isOpen()) {
 			return;
 		}
 
 		var oSrcControl = oEvent.srcControl,
 			oSrcDomRef = oSrcControl && oSrcControl.getDomRef(),
-			bFocusInInput = containsOrEquals(this.getDomRef(), oSrcDomRef),
-			oValueStateHeader = this.getPicker().getCustomHeader(),
-			oValueStateHeaderDom = oValueStateHeader && oValueStateHeader.getDomRef();
+			bFocusInInput = containsOrEquals(this.getDomRef(), oSrcDomRef);
 
 		oEvent.setMarked();
 		// note: Prevent document scrolling when Down key is pressed
 		oEvent.preventDefault();
 
-		if (bFocusInInput && this.getValueState() != ValueState.None) {
-			this._handleFormattedTextNav();
-			return;
-		}
-
-		if ((bFocusInInput || containsOrEquals(oValueStateHeaderDom, oSrcDomRef)) && this.getShowSelectAll()) {
+		if (bFocusInInput && this.getShowSelectAll()) {
 			this.focusSelectAll();
 			return;
 		}
@@ -440,12 +433,6 @@ function(
 		oEvent.setMarked();
 		// note: Prevent document scrolling when Home key is pressed
 		oEvent.preventDefault();
-
-		if (this.getValueState() !== ValueState.None) {
-			this._handleFormattedTextNav();
-			oEvent.stopPropagation(true);
-			return;
-		}
 
 		if (this.getShowSelectAll()) {
 			this.focusSelectAll();
@@ -496,38 +483,6 @@ function(
 		ComboBoxBase.prototype._handlePopupOpenAndItemsLoad.apply(this, arguments);
 	};
 
-	/**
-	 * Generates an event delegate for keyboard navigation for <code>sap.m.FormattedText</code> value state header.
-	 * If the focus is on the formatted text value state message:
-	 *  - pressing the Up arrow key will move the focus to the input,
-	 *  - pressing the Down arrow key - will select the first selectable item.
-	 *
-	 * @param {object} oValueStateHeader The value state header.
-	 * @param {array} aValueStateLinks The links in <code>sap.m.FormattedText</code> value state message.
-	 * @returns {object} Delegate for navigation and focus handling for <code>sap.m.ValueStateHeader</code> containing <code>sap.m.FormattedText</code> message with links.
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._valueStateNavDelegate = function(oValueStateHeader, aValueStateLinks) {
-		return {
-			onsapdown: this.handleDownEvent,
-			onsapup: this.focus,
-			onsapend: this.handleEndEvent,
-			onfocusout: function(oEvent) {
-				// Links should not be tabbable after the focus is moved outside of the value state header
-				oValueStateHeader.removeStyleClass("sapMFocusable");
-
-				// Check if the element getting the focus is outside the value state header
-				if (!oValueStateHeader.getDomRef().contains(oEvent.relatedTarget)) {
-					aValueStateLinks.forEach(function(oLink) {
-						oLink.getDomRef().setAttribute("tabindex", "-1");
-					});
-				}
-			},
-			onsapshow: this.close,
-			onsaphide: this.close
-		};
-	};
 
 	/**
 	 * Event delegate for the last link in the <code>sap.m.FormattedText</code> value state message.
@@ -549,56 +504,70 @@ function(
 	/**
 	 * Event delegate that Handles the arrow navigation of the links in the value state header
 	 *
+	 * @param {object} oValueStateHeader Value state header control
+	 * @param {array} aValueStateLinks Array of links
+	 * @returns {object} The event delegate object
 	 * @private
 	 */
-	MultiComboBox.prototype._formattedTextLinksNav = {
-		onsapup: this.focus,
-		onsapdown: this.handleDownEvent
+	MultiComboBox.prototype._formattedTextLinksNav = function(oValueStateHeader, aValueStateLinks){
+		return {
+			onsapup: this.focus,
+			onsapdown: this.handleDownEvent,
+			onfocusout: function(oEvent) {
+				// Check if the element getting the focus is outside the value state header
+				if (oValueStateHeader && oValueStateHeader.getDomRef() && !oValueStateHeader.getDomRef().contains(oEvent.relatedTarget)) {
+					aValueStateLinks.forEach(function(oLink) {
+						oLink.getDomRef().setAttribute("tabindex", "-1");
+					});
+				}
+			},
+			onfocusin: function() {
+				aValueStateLinks.forEach(function(oLink) {
+					oLink.getDomRef().setAttribute("tabindex", "0");
+				});
+			}
+		};
 	};
 
 	/**
-	 * Handles the focus and the navigation of the value state header
-	 * when <code>sap.m.Link</code> is present in the value state message.
+	 * Handles the focus and navigation of value state header links
+	 * when <code>sap.m.Link</code> elements are present in the value state message
 	 *
 	 * @private
 	 */
-	MultiComboBox.prototype._handleFormattedTextNav = function() {
-		var	oCustomHeader = this.getPicker().getCustomHeader(),
-			aValueStateLinks = this.getValueStateLinks(),
-			oLastValueStateLink = aValueStateLinks ? aValueStateLinks[aValueStateLinks.length - 1] : null,
-			oFirstValueStateLink = aValueStateLinks ? aValueStateLinks[0] : null;
+	MultiComboBox.prototype._handleFormattedTextNav = function () {
+		var oCustomHeader = this.getPicker().getCustomHeader();
+		var aValueStateLinks = this.getValueStateLinks();
 
-		if (!oCustomHeader.getDomRef()  || oCustomHeader.getDomRef() === document.activeElement) {
+		if (!oCustomHeader.getDomRef() || aValueStateLinks.length === 0) {
 			return;
 		}
 
-		if (!this.oValueStateNavDelegate) {
-			this.oValueStateNavDelegate = this._valueStateNavDelegate(oCustomHeader, aValueStateLinks);
-			oCustomHeader.addEventDelegate(this.oValueStateNavDelegate, this);
+		const oLastValueStateLink = aValueStateLinks[aValueStateLinks.length - 1];
+		const oFirstValueStateLink =  aValueStateLinks[0];
+
+		oFirstValueStateLink.focus();
+		const oSuggestionPopover = this._getSuggestionsPopover();
+
+		if (!this.bSetLinksDelegates || !oSuggestionPopover.getValueStateLinksDelegateInitialized()) {
+			this.bSetLinksDelegates = true;
+
+			aValueStateLinks.forEach(function(oLink) {
+				oLink.addEventDelegate(this._formattedTextLinksNav(oCustomHeader, aValueStateLinks), this);
+			}, this);
+
+			const oMoveFocusBackToInput = {
+				onsaptabprevious: function (oEvent) {
+					oEvent.preventDefault();
+					this.getFocusDomRef().focus();
+				}
+			};
+
+			oLastValueStateLink.addEventDelegate(this._closePickerDelegate, this);
+			oFirstValueStateLink.addEventDelegate(oMoveFocusBackToInput, this);
+
+			oSuggestionPopover.setValueStateLinksDelegateInitialized(true);
 		}
-
-		// Make the value state header focusable and focus it
-		oCustomHeader.getDomRef().setAttribute("tabindex", "-1");
-		oCustomHeader.addStyleClass("sapMFocusable");
-		oCustomHeader.focus();
-
-		// Linka should not be part of the tab chain when the focus is out of the value state header
-		// (on the items list or on the input) and the opposite when the header is focused.
-		aValueStateLinks.forEach(function(oLink) {
-			oLink.getDomRef().setAttribute("tabindex", "0");
-			oLink.addEventDelegate(this._formattedTextLinksNav, this);
-		}, this);
-
-		this.oMoveFocusBackToVSHeader = !this.oMoveFocusBackToVSHeader ? {
-			onsaptabprevious: function(oEvent) {
-				oEvent.preventDefault();
-				oCustomHeader.focus();
-				oCustomHeader.addStyleClass("sapMFocusable");
-			}
-		} : this.oMoveFocusBackToVSHeader;
-
-		oLastValueStateLink && oLastValueStateLink.addEventDelegate(this._closePickerDelegate, this);
-		oFirstValueStateLink && oFirstValueStateLink.addEventDelegate(this.oMoveFocusBackToVSHeader, this);
 	};
 
 	/**
@@ -921,6 +890,16 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
+		if (this.areHotKeysPressed(oEvent) && this.isOpen()) {
+			// Override the ComboBoxBase onkeydown method to prevent the default behavior
+			// of the ComboBoxBase when the hotkeys are pressed
+			// The default behavior would execute SuggestionsPopover handleKeyboardNavigation method
+			// that will select (not focus) the first list item and this is not a desired behavior for the MultiComboBox
+			this._handleFormattedTextNav();
+
+			return;
+		}
+
 		var bEditable = this.getEditable(),
 			oTokenizer = this.getAggregation("tokenizer"),
 			iTokensCount = oTokenizer.getTokens().length;
@@ -1437,8 +1416,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterOpen = function() {
-		var oDomRef = this.getFocusDomRef(),
-			aValueStateLinks = this.getValueStateLinks();
+		var oDomRef = this.getFocusDomRef();
 
 		oDomRef && this.getFocusDomRef().setAttribute("aria-expanded", "true");
 		this._bPickerIsOpening = false;
@@ -1448,17 +1426,6 @@ function(
 			this.getPicker().setInitialFocus(this);
 		}
 
-		// If there are links in the value state take the links out of
-		// the tab chain by default. They will be tabbable only if the focus in the value state message
-		aValueStateLinks.forEach(function(oLink) {
-			oLink.addDelegate({
-				onAfterRendering: function() {
-					if (this.getFocusDomRef()) {
-						this.getFocusDomRef().setAttribute("tabindex", "-1");
-					}
-				}
-			}, oLink);
-		});
 
 		// close error message when the list is open, otherwise the list can be covered by the message
 		this.closeValueStateMessage();
@@ -1956,6 +1923,10 @@ function(
 						}, this);
 					}
 				}
+
+				if (this.areHotKeysPressed(oEvent)) {
+					this._handleFormattedTextNav(oEvent);
+				}
 			},
 
 			onmousedown: function(oEvent) {
@@ -2032,8 +2003,6 @@ function(
 
 				if (this.getShowSelectAll()) {
 					this.focusSelectAll();
-				} else if (this.getValueState() !== ValueState.None) {
-					this._handleFormattedTextNav();
 				} else {
 					this.focus();
 				}
@@ -3808,11 +3777,6 @@ function(
 			onsapdown: this.handleDownEvent,
 			onsapup: function (oEvent) {
 				oEvent.preventDefault();
-				if (this.getValueState() !== ValueState.None) {
-					this._handleFormattedTextNav();
-					return;
-				}
-
 				this.getFocusDomRef().focus();
 			},
 			onsaphome: this.handleHomeEvent,

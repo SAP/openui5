@@ -2,13 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/m/library', 'sap/ui/core/Configuration'],
-	function(InvisibleText, Renderer, InputBaseRenderer, library, Configuration) {
+sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/m/library', 'sap/ui/core/Configuration', 'sap/ui/core/library'],
+	function(InvisibleText, Renderer, InputBaseRenderer, library, Configuration, coreLibrary) {
 	"use strict";
 
 
 	// shortcut for sap.m.InputType
 	var InputType = library.InputType;
+
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -161,6 +163,12 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			}
 		}
 
+		if (oControl.getShowSuggestion()
+			&& oControl.getValueStateLinksForAcc().length
+			&& oControl.getValueState() !== ValueState.Error) {
+			append(oControl.getValueStateLinksShortcutsId());
+		}
+
 		return sAriaDescribedBy;
 
 	};
@@ -186,6 +194,13 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			mAccessibilityState["haspopup"] = "listbox";
 		}
 
+		if (oControl.getShowSuggestion()
+			&& oControl.getValueStateLinksForAcc().length
+			&& oControl.getValueState() === ValueState.Error) {
+			mAccessibilityState.errormessage = mAccessibilityState.errormessage
+				? `${mAccessibilityState.errormessage} ${oControl.getValueStateLinksShortcutsId()}`
+				: oControl.getValueStateLinksShortcutsId();
+		}
 
 		return mAccessibilityState;
 

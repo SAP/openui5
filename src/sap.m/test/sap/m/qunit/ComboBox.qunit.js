@@ -10098,6 +10098,76 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("aria-describedby for value state with links contains announcement for the value state links shortcut", function (assert) {
+		const oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+		var oComboBox = new ComboBox({
+			valueState: ValueState.Warning,
+			formattedValueStateText: oFormattedValueStateText,
+			items: [
+				new Item({
+					key: "DZ",
+					text: "Algeria"
+				})]
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		const oAccDomRef = document.getElementById(oComboBox.getValueStateLinksShortcutsId());
+		const aDescribedBy = oComboBox.getFocusDomRef().getAttribute("aria-describedby").split(" ");
+		const bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) { return sId === oComboBox.getValueStateLinksShortcutsId();});
+		const sSingleLink = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+
+		assert.ok(oComboBox.getDomRef().contains(oAccDomRef),"Accessibility DOM for links shortcuts announcement is created");
+		assert.strictEqual(oAccDomRef.innerText, sSingleLink, "Links shortcuts announcement is as expected" );
+		assert.ok(bDescribedByContainsAccForLinks, "Accessibility DOM for links shortcuts announcement is added to aria-describedby");
+
+		oComboBox.destroy();
+	});
+
+	QUnit.test("aria-errormessage for value state with links contains announcement for the value state links shortcut", function (assert) {
+		const oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing %%0 and %%1",
+			controls: [new Link({
+				text: "link 1",
+				href: "#"
+			}),
+			new Link({
+				text: "link 2",
+				href: "#"
+			})]
+		});
+		var oComboBox = new ComboBox({
+			valueState: ValueState.Error,
+			formattedValueStateText: oFormattedValueStateText,
+			items: [
+				new Item({
+					key: "DZ",
+					text: "Algeria"
+				})]
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		const oAccDomRef = document.getElementById(oComboBox.getValueStateLinksShortcutsId());
+		const aErrormessage = oComboBox.getFocusDomRef().getAttribute("aria-errormessage").split(" ");
+		const bErrormessageContainsAccForLinks = aErrormessage.some(function (sId) { return sId === oComboBox.getValueStateLinksShortcutsId();});
+		const sMultipleLink = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+
+		assert.ok(oComboBox.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
+		assert.strictEqual(oAccDomRef.innerText, sMultipleLink, "Links shortcuts announcement is as expected" );
+		assert.ok(bErrormessageContainsAccForLinks, "Accessibility DOM for links shortcuts announcement is added to aria-errormessage");
+
+		oComboBox.destroy();
+	});
+
 	QUnit.module("Integration");
 
 	QUnit.test("Propagate Items to the list", function (assert) {
@@ -12265,7 +12335,7 @@ sap.ui.define([
 		assert.strictEqual(document.querySelectorAll("#" + oFormattedValueStateText.getId() + " a").length, 1, "Value state message link in suggestion popover header is displayed");
 	});
 
-	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on value state header", function (assert) {
+	QUnit.test("Arrow up when the first item is selected and there is VSH should place focus on the input", function (assert) {
 		// Act
 		this.oErrorComboBox.focus();
 		this.clock.tick();
@@ -12277,11 +12347,11 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Assert
-		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "Pseudo focus is on value state header");
-		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
+		assert.ok(this.oErrorComboBox.getDomRef().classList.contains("sapMFocus"), "Focus is on the input");
+		assert.notOk(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), "No aria-activedescendant attribute is set");
 	});
 
-	QUnit.test("Arrow down when the formatted state value text is selected should set the first item", function (assert) {
+	QUnit.test("When focus on the input, pressing CTRL+ALT+F8 focuses the first link in the Value State Header", function (assert) {
 		// Act
 		this.oErrorComboBox.focus();
 		this.clock.tick();
@@ -12289,31 +12359,66 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
 
-		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F8, false, true, true);
 		this.clock.tick();
 
+		const aLinks = this.oErrorComboBox._getSuggestionsPopover().getValueStateLinks();
+
+		// Assert
+		assert.ok(document.activeElement, aLinks[0].getDomRef(), "The real focus is on the first link in the value state header");
+	});
+
+	QUnit.test("When focus is on a list item, pressing CTRL+ALT+F8 focuses the first link in the Value State Header", function (assert) {
+		// Act
+		this.oErrorComboBox.focus();
+		this.clock.tick();
+
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick();
+
+		// Select the first list item
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
+
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F8, false, true, true);
+		this.clock.tick();
+
+		const aLinks = this.oErrorComboBox._getSuggestionsPopover().getValueStateLinks();
+
+		// Assert
+		assert.ok(document.activeElement, aLinks[0].getDomRef(), "The real focus is on the first link in the value state header");
+	});
+
+	QUnit.test("Arrow down when the visible focus is on the input should move it to the first list item", function (assert) {
+		// Act
+		this.oErrorComboBox.open();
+		this.clock.tick(500);
+		oCore.applyChanges();
+
+		// Select the first list item
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
 		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Aria attribute of input is the ID of selected item");
 	});
 
-	QUnit.test("Arrow down when the visible focus is on the input should move it to the Value State Header", function (assert) {
+	QUnit.test("Arrow down when the there is autocompleted item should focus the next item", function (assert) {
 		// Act
-		this.oErrorComboBox.open();
-		this.clock.tick(500);
+		this.oErrorComboBox.focus();
+		this.oErrorComboBox.getFocusDomRef().value = "A";
+		qutils.triggerEvent("input", this.oErrorComboBox.getFocusDomRef());
+
 		oCore.applyChanges();
 
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "The visual pseudo focus is on the first item");
-		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
+		assert.ok(this.oErrorComboBox._getList().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
 	});
 
 	QUnit.test("Tapping on the input shoould apply the visual focus", function (assert) {
@@ -12517,10 +12622,7 @@ sap.ui.define([
 		assert.ok(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is on the input field");
 	});
 
-	QUnit.test("onsaphome should move the visual focus on the value state header if links exists", function (assert) {
-		// Arrange
-		var	oValueStateHeader;
-
+	QUnit.test("onsaphome should move the visual focus on the first list item regardless the value state header with links", function (assert) {
 		// Act
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
@@ -12529,38 +12631,23 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.HOME);
 		this.clock.tick();
 
-		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
-
 		// Assert
-		assert.ok(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on the value state header");
-		assert.notOk(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
-		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
-	});
+		assert.ok(ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Aria attribute of input is the ID of selected item");
+		});
 
 	QUnit.test("onsapdown on a link in a value state header message should move the visual focus to the first suggested item", function (assert) {
-		// Arrange
-		var	oValueStateHeader;
-
 		// Act
-		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-		this.clock.tick();
-		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		this.clock.tick();
-		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.TAB);
-		this.clock.tick();
-
-		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
-
-		// Assert
-		assert.strictEqual(oValueStateHeader.getFormattedText().getControls()[0].getDomRef(), document.activeElement, "The link in the value state header has the real focus");
-
-		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.oErrorComboBox.open();
+		this.clock.tick(1000);
+		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F8, false, true, true);
+		this.clock.tick(500);
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 		this.clock.tick();
 
 		// Assert
-		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not on the value state header");
 		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
-		assert.ok(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+		assert.ok(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the second item");
 	});
 
 	QUnit.test("When the FormattedText in the value state header is focused onsapend should move the focus to the last item", function (assert) {
