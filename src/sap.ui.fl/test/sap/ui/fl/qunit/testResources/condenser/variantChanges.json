@@ -1,0 +1,252 @@
+[
+	{
+		"changeType": "setDefault",
+		"content": {
+			"defaultVariant": "variant1"
+		},
+		"creation": "2019-10-01T00:00:00.000Z",
+		"fileName": "id_1570000000000_1_setDefault",
+		"fileType": "ctrl_variant_management_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variantManagementControl1"
+		}
+	},
+	{
+		"changeType": "setDefault",
+		"content": {
+			"defaultVariant": "variant2"
+		},
+		"creation": "2019-10-02T00:00:00.000Z",
+		"fileName": "id_1570000000000_2_setDefault",
+		"fileType": "ctrl_variant_management_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variantManagementControl1"
+		}
+	},
+	{
+		"changeType": "setDefault",
+		"content": {
+			"defaultVariant": "variant3"
+		},
+		"creation": "2019-10-03T00:00:00.000Z",
+		"fileName": "id_1570000000000_3_setDefault",
+		"fileType": "ctrl_variant_management_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variantManagementControl2"
+		}
+	},
+	{
+		"changeType": "setDefault",
+		"content": {
+			"defaultVariant": "variant4"
+		},
+		"creation": "2019-10-04T00:00:00.000Z",
+		"fileName": "id_1570000000000_4_setDefault",
+		"fileType": "ctrl_variant_management_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variantManagementControl2"
+		}
+	},
+	{
+		"changeType": "setDefault",
+		"content": {
+			"defaultVariant": "variant5"
+		},
+		"creation": "2019-10-05T00:00:00.000Z",
+		"fileName": "id_1570000000000_5_setDefault",
+		"fileType": "ctrl_variant_management_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variantManagementControl3"
+		}
+	},
+	{
+		"changeType": "setVisible",
+		"content": {
+			"visible": false
+		},
+		"creation": "2019-10-01T00:00:00.000Z",
+		"fileName": "id_1570000000000_1_setVisible",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	},
+	{
+		"changeType": "setVisible",
+		"content": {
+			"visible": false
+		},
+		"creation": "2019-10-02T00:00:00.000Z",
+		"fileName": "id_1570000000000_2_setVisible",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant2"
+		}
+	},
+	{
+		"changeType": "setVisible",
+		"content": {
+			"visible": true
+		},
+		"creation": "2019-10-03T00:00:00.000Z",
+		"fileName": "id_1570000000000_3_setVisible",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	},
+	{
+		"changeType": "setFavorite",
+		"content": {
+			"favorite": false
+		},
+		"creation": "2019-10-01T00:00:00.000Z",
+		"fileName": "id_1570000000000_1_setFavorite",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	},
+	{
+		"changeType": "setFavorite",
+		"content": {
+			"favorite": true
+		},
+		"creation": "2019-10-02T00:00:00.000Z",
+		"fileName": "id_1570000000000_2_setFavorite",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	},
+	{
+		"changeType": "setFavorite",
+		"content": {
+			"favorite": false
+		},
+		"creation": "2019-10-03T00:00:00.000Z",
+		"fileName": "id_1570000000000_3_setFavorite",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	},
+	{
+		"changeType": "setTitle",
+		"creation": "2019-10-01T00:00:00.000Z",
+		"fileName": "id_1570000000000_1_setTitle",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		},
+		"texts": {
+			"title": {
+				"value": "New Text Variant 1"
+			}
+		}
+	},
+	{
+		"changeType": "setTitle",
+		"creation": "2019-10-02T00:00:00.000Z",
+		"fileName": "id_1570000000000_2_setTitle",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant2"
+		},
+		"texts": {
+			"title": {
+					"value": "New Text Variant 2"
+			}
+		}
+	},
+	{
+		"changeType": "setTitle",
+		"creation": "2019-10-03T00:00:00.000Z",
+		"fileName": "id_1570000000000_3_setTitle",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		},
+		"texts": {
+			"title": {
+				"value": "Even newer Text Variant 1"
+			}
+		}
+	},
+	{
+		"changeType": "setContexts",
+		"content": {
+			"contexts": {
+				"role": ["keyUser"]
+			}
+		},
+		"creation": "2019-10-01T00:00:00.000Z",
+		"fileName": "id_1570000000000_1_setContexts",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	},
+	{
+		"changeType": "setContexts",
+		"content": {
+			"contexts": {
+				"role": ["keyUser", "admin"]
+			}
+		},
+		"creation": "2019-10-02T00:00:00.000Z",
+		"fileName": "id_1570000000000_2_setContexts",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	},
+	{
+		"changeType": "setContexts",
+		"content": {
+			"contexts": {
+				"role": []
+			}
+		},
+		"creation": "2019-10-03T00:00:00.000Z",
+		"fileName": "id_1570000000000_3_setContexts",
+		"fileType": "ctrl_variant_change",
+		"layer": "CUSTOMER",
+		"reference": "sap.ui.fl.qunit.test",
+		"selector": {
+			"id": "variant1"
+		}
+	}
+]

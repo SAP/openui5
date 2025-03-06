@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantModel",
@@ -37,7 +36,6 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
-	InitialStorage,
 	Version,
 	Settings,
 	VariantModel,
@@ -2128,7 +2126,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Given at least one restricted FLVariants and at least one unrestricted FLVariant are present", async function(assert) {
+		QUnit.test("Given at least one restricted and one unrestricted FLVariant are present", async function(assert) {
 			var oFLVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateFLVariants.json"),

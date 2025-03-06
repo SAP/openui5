@@ -59,14 +59,12 @@ sap.ui.define([
 	}
 
 	function createSetVisibleChange(sVariantReference) {
-		return FlexObjectFactory.createUIChange({
+		return FlexObjectFactory.createVariantChange({
 			id: "setVisibleChange",
 			layer: Layer.CUSTOMER,
 			changeType: "setVisible",
 			fileType: "ctrl_variant_change",
-			selector: {
-				id: sVariantReference || "customVariant"
-			},
+			variantId: sVariantReference || "customVariant",
 			content: {
 				visible: false
 			}
@@ -161,38 +159,32 @@ sap.ui.define([
 
 		QUnit.test("when there are variant changes", function(assert) {
 			const aVariantChanges = [
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setTitleChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setTitle",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: sStandardVariantReference
-					},
+					variantId: sStandardVariantReference,
 					texts: {
 						title: { value: "Renamed variant" }
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setExecuteOnSelectChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setExecuteOnSelect",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: sStandardVariantReference
-					},
+					variantId: sStandardVariantReference,
 					content: {
 						executeOnSelect: true
 					}
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setContextsChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setContexts",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: sStandardVariantReference
-					},
+					variantId: sStandardVariantReference,
 					content: {
 						contexts: { role: ["ADMIN"], country: ["DE"] }
 					}
@@ -250,7 +242,7 @@ sap.ui.define([
 					variantManagementReference: "fooVM",
 					fileName: "fooCustomVariant2"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange11",
 					layer: Layer.CUSTOMER,
 					changeType: "setDefault",
@@ -261,7 +253,7 @@ sap.ui.define([
 					content: {
 						defaultVariant: "customVariant"
 					}
-				}), FlexObjectFactory.createUIChange({
+				}), FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange12",
 					layer: Layer.CUSTOMER,
 					changeType: "setDefault",
@@ -272,7 +264,7 @@ sap.ui.define([
 					content: {
 						defaultVariant: sVariantManagementReference
 					}
-				}), FlexObjectFactory.createUIChange({
+				}), FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange21",
 					layer: Layer.CUSTOMER,
 					changeType: "setDefault",
@@ -283,7 +275,7 @@ sap.ui.define([
 					content: {
 						defaultVariant: "fooCustomVariant"
 					}
-				}), FlexObjectFactory.createUIChange({
+				}), FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange22",
 					layer: Layer.CUSTOMER,
 					changeType: "setDefault",
@@ -339,14 +331,12 @@ sap.ui.define([
 
 		QUnit.test("when there is an invalid variant change", function(assert) {
 			stubFlexObjectsSelector([
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "changeWithSomeInvalidChangeType",
 					layer: Layer.CUSTOMER,
 					changeType: "someInvalidChangeType",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: sStandardVariantReference
-					}
+					variantId: sStandardVariantReference
 				})
 			]);
 			assert.throws(
@@ -373,14 +363,12 @@ sap.ui.define([
 					variantReference: sVariantManagementReference,
 					fileName: "XYZ"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setTitleChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setTitle",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: "XYZ"
-					},
+					variantId: "XYZ",
 					texts: {
 						title: { value: "XYZ" }
 					}
@@ -389,14 +377,12 @@ sap.ui.define([
 					variantReference: sVariantManagementReference,
 					fileName: "abc"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setTitleChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setTitle",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: "abc"
-					},
+					variantId: "abc",
 					texts: {
 						title: { value: "abc" }
 					}
@@ -405,14 +391,12 @@ sap.ui.define([
 					variantReference: sVariantManagementReference,
 					fileName: "DEF"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setTitleChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setTitle",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: "DEF"
-					},
+					variantId: "DEF",
 					texts: {
 						title: { value: "DEF" }
 					}
@@ -517,7 +501,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variants are set to favorite = false (default and non-default)", function(assert) {
-			const oVariantManagementChange = FlexObjectFactory.createUIChange({
+			const oVariantManagementChange = FlexObjectFactory.createVariantManagementChange({
 				id: "setDefaultVariantChange",
 				layer: Layer.USER,
 				changeType: "setDefault",
@@ -529,26 +513,22 @@ sap.ui.define([
 					defaultVariant: "variant2"
 				}
 			});
-			const oVariantSetFavoriteDefaultVariant = FlexObjectFactory.createUIChange({
+			const oVariantSetFavoriteDefaultVariant = FlexObjectFactory.createVariantChange({
 				id: "setFavoriteChangeOnDefaultVariant",
 				layer: Layer.CUSTOMER,
 				changeType: "setFavorite",
 				fileType: "ctrl_variant_change",
-				selector: {
-					id: "variant2"
-				},
+				variantId: "variant2",
 				content: {
 					favorite: false
 				}
 			});
-			const oVariantSetFavoriteNonDefaultVariant = FlexObjectFactory.createUIChange({
+			const oVariantSetFavoriteNonDefaultVariant = FlexObjectFactory.createVariantChange({
 				id: "setFavoriteChangeOnNonDefaultVariant",
 				layer: Layer.CUSTOMER,
 				changeType: "setFavorite",
 				fileType: "ctrl_variant_change",
-				selector: {
-					id: "variant1"
-				},
+				variantId: "variant1",
 				content: {
 					favorite: false
 				}
@@ -597,7 +577,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when updateType 'addFlexObject' with variant related updated object is provided", function(assert) {
-			const oUIChange = FlexObjectFactory.createUIChange({
+			const oUIChange = FlexObjectFactory.createVariantChange({
 				id: "someVariantChange",
 				layer: Layer.CUSTOMER,
 				variantReference: sStandardVariantReference,
@@ -815,12 +795,12 @@ sap.ui.define([
 		{
 			flexObjects: {
 				variantChanges: [
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						variantReference: sVariantManagementReference,
 						id: "someVariantChange",
 						fileType: "ctrl_variant_change",
 						changeType: "setTitle",
-						selector: { id: sStandardVariantReference}
+						variantId: sStandardVariantReference
 					})
 				]
 			},
@@ -941,14 +921,14 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				variantReference: sDeletedVariant
 			});
-			const oSetTitleChange = FlexObjectFactory.createUIChange({
+			const oSetTitleChange = FlexObjectFactory.createVariantChange({
 				variantReference: sVariantManagementReference,
 				id: "someVariantChange",
 				fileType: "ctrl_variant_change",
 				changeType: "setTitle",
-				selector: { id: sDeletedVariant}
+				variantId: sDeletedVariant
 			});
-			const oSetDefaultChange = FlexObjectFactory.createUIChange({
+			const oSetDefaultChange = FlexObjectFactory.createVariantManagementChange({
 				id: "setDefaultVariantChange",
 				layer: Layer.CUSTOMER,
 				changeType: "setDefault",
@@ -1129,7 +1109,7 @@ sap.ui.define([
 					variantReference: sVariantManagementReference,
 					fileName: "anotherCustomVariant"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setDefault",
@@ -1153,7 +1133,7 @@ sap.ui.define([
 		QUnit.test("when the variant that was set as default was removed and there is no key user default variant", function(assert) {
 			stubFlexObjectsSelector([
 				// Default variant was set via perso change but is no longer available, e.g. because of version switch
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange",
 					layer: Layer.USER,
 					changeType: "setDefault",
@@ -1191,7 +1171,7 @@ sap.ui.define([
 					variantReference: sVariantManagementReference,
 					fileName: "EndUserDefaultVariant"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setDefault",
@@ -1204,7 +1184,7 @@ sap.ui.define([
 					}
 				}),
 				// End user sets the other variant as default
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantManagementChange({
 					id: "setDefaultVariantChange",
 					layer: Layer.USER,
 					changeType: "setDefault",
@@ -1366,14 +1346,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when retrieving the variant changes for a variant", function(assert) {
-			const oCtrlVariantChange = FlexObjectFactory.createUIChange({
+			const oCtrlVariantChange = FlexObjectFactory.createVariantChange({
 				id: "someCtrlVariantChange",
 				layer: Layer.CUSTOMER,
 				changeType: "setTitle",
 				fileType: "ctrl_variant_change",
-				selector: {
-					id: "customVariant"
-				}
+				variantId: "customVariant"
 			});
 			stubFlexObjectsSelector([
 				createVariant({
@@ -1478,7 +1456,7 @@ sap.ui.define([
 					variantManagementReference: "someOtherVM"
 				})
 			);
-			const oSetDefaultVariantChange = FlexObjectFactory.createUIChange({
+			const oSetDefaultVariantChange = FlexObjectFactory.createVariantManagementChange({
 				id: "someSetDefaultVariantChange",
 				layer: Layer.CUSTOMER,
 				changeType: "setDefault",
@@ -1490,7 +1468,7 @@ sap.ui.define([
 					defaultVariant: "customVariant"
 				}
 			});
-			const oSetDefaultVariantChange2 = FlexObjectFactory.createUIChange({
+			const oSetDefaultVariantChange2 = FlexObjectFactory.createVariantManagementChange({
 				id: "someSetDefaultVariantChange2",
 				layer: Layer.CUSTOMER,
 				changeType: "setDefault",
@@ -1626,14 +1604,12 @@ sap.ui.define([
 					changeType: "foo",
 					variantReference: "variant2"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setTitleChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setTitle",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant2"
-					},
+					variantId: "variant2",
 					texts: {
 						title: { value: "Renamed variant" }
 					}
@@ -1655,14 +1631,12 @@ sap.ui.define([
 					variantReference: "variant2"
 				}),
 				createSetVisibleChange("variant2"),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					id: "setTitleChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setTitle",
 					fileType: "ctrl_variant_change",
-					selector: {
-						id: "variant2"
-					},
+					variantId: "variant2",
 					texts: {
 						title: { value: "Renamed variant" }
 					}
