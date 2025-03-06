@@ -11,17 +11,17 @@ sap.ui.define([
 	"use strict";
 
 	const oTextArrangementTypes = {
-		TextOnly: "TextOnly",
-		TextFirst: "TextFirst",
-		IDOnly: "IDOnly",
-		IDFirst: "IDFirst"
+		TextOnly: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly"},
+		TextFirst: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"},
+		IDOnly: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/IDOnly"},
+		IDFirst: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/IDFirst"}
 	};
 
 	const oTextArrangementLabels = {
-		[oTextArrangementTypes.TextOnly]: "Text Only",
-		[oTextArrangementTypes.TextFirst]: "Text First",
-		[oTextArrangementTypes.IDOnly]: "ID Only",
-		[oTextArrangementTypes.IDFirst]: "ID First"
+		TextOnly: "Text Only",
+		TextFirst: "Text First",
+		IDOnly: "ID Only",
+		IDFirst: "ID First"
 	};
 
 	const oTestDelegate = {
@@ -41,7 +41,7 @@ sap.ui.define([
 					}
 				],
 				possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
-					key: sKey,
+					key: oTextArrangementTypes[sKey],
 					text: oTextArrangementLabels[sKey]
 				}))
 			};
@@ -56,13 +56,12 @@ sap.ui.define([
 					title: () => "Change Text Arrangement",
 					type: AnnotationTypes.ValueListType,
 					delegate: oTestDelegate
-
 				},
-				potatoChange: {
-					changeType: "anotherChange_Test",
-					title: () => "Another Annotation Action",
+				label: {
+					changeType: "label_Test",
+					title: () => "Change Label",
 					icon: "sap-icon://endoscopy",
-					type: AnnotationTypes.ValueListType,
+					type: AnnotationTypes.StringType,
 					delegate: oTestDelegate
 				}
 			}
