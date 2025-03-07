@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/m/Image",
 	"sap/base/Log",
+	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
@@ -32,6 +33,7 @@ sap.ui.define([
 	RtaUtils,
 	Image,
 	Log,
+	Core,
 	sinon,
 	nextUIUpdate
 ) {
@@ -156,6 +158,28 @@ sap.ui.define([
 				});
 				this.oToolbar.destroy();
 			}.bind(this));
+		});
+		QUnit.test("when buildControls is called and image dimensions are 0", async function(assert) {
+			this.oToolbar = new Fiori({
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			sinon.stub(this.oToolbar._oFioriHeader, "$")
+			.returns({find: () => jQuery("<div>")});
+
+			await this.oToolbar.onFragmentLoaded();
+			this.oToolbar.show();
+			assert.strictEqual(
+				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getWidth(),
+				"0px",
+				"Image should have a width of 0px"
+			);
+			assert.strictEqual(
+				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getHeight(),
+				"0px",
+				"Image should have a height of 0px"
+			);
+			this.oToolbar.destroy();
 		});
 	});
 
