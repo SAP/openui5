@@ -93,7 +93,6 @@ sap.ui.define([
 		this._oContentText = new Text(this.getId() + "-content-text", {
 			maxLines : 2
 		});
-		this._oContentText.cacheLineHeight = false;
 		this.setAggregation("_contentTextAgr", this._oContentText, true);
 		this.setTooltip("{AltText}");
 	};

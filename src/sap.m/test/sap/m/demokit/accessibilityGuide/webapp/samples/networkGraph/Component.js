@@ -3,6 +3,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 	return UIComponent.extend("sap.m.sample.networkGraph.Component", {
 		metadata: {
+			manifest: "json",
 			rootView: {
 				"viewName": "sap.m.sample.networkGraph.NetworkGraph",
 				"type": "XML",

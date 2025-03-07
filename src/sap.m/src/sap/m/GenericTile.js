@@ -370,20 +370,16 @@ sap.ui.define([
 
 		this._oTitle = new Text(this.getId() + "-title");
 		this._oTitle.addStyleClass("sapMGTTitle");
-		this._oTitle.cacheLineHeight = false;
 		this.setAggregation("_titleText", this._oTitle, true);
 
 
 		this._oAppShortcut = new Text(this.getId() + "-appShortcut");
-		this._oAppShortcut.cacheLineHeight = false;
 		this.addDependent(this._oAppShortcut);
 
 		this._oSystemInfo = new Text(this.getId() + "-systemInfo");
-		this._oSystemInfo.cacheLineHeight = false;
 		this.addDependent(this._oSystemInfo);
 
 		this._oSubTitle = new Text(this.getId() + "-subTitle");
-		this._oSubTitle.cacheLineHeight = false;
 		this.addDependent(this._oSubTitle);
 
 		this._sFailedToLoad = this._oRb.getText("INFOTILE_CANNOT_LOAD_TILE");
@@ -392,7 +388,7 @@ sap.ui.define([
 		this._oFailedText = new Text(this.getId() + "-failed-txt", {
 			maxLines: 2
 		});
-		this._oFailedText.cacheLineHeight = false;
+
 		this._oFailedText.addStyleClass("sapMGTFailed");
 		this.setAggregation("_failedMessageText", this._oFailedText, true);
 
