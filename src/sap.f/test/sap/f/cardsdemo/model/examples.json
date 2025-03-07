@@ -172,6 +172,12 @@
 		"group": "Header and Footer"
 	},
 	{
+		"title": "Header Info Section",
+		"description": "Example page for Card with Info Section",
+		"route": "headerInfoSection",
+		"group": "Header and Footer"
+	},
+	{
 		"title": "Cloned Header",
 		"description": "Example page for sap.f.cards.Header outside a card and cloned Default and Numeric Headers from integration cards",
 		"route": "clonedHeader",

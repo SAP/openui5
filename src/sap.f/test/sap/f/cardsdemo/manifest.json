@@ -130,6 +130,11 @@
 					"target": "numericHeader"
 				},
 				{
+					"pattern": "headerInfoSection",
+					"name": "headerInfoSection",
+					"target": "headerInfoSection"
+				},
+				{
 					"pattern": "clonedHeader",
 					"name": "clonedHeader",
 					"target": "clonedHeader"
@@ -419,6 +424,11 @@
 				"numericHeader": {
 					"id": "numericHeader",
 					"name": "NumericHeader",
+					"level": 1
+				},
+				"headerInfoSection": {
+					"id": "headerInfoSection",
+					"name": "HeaderInfoSection",
 					"level": 1
 				},
 				"clonedHeader": {

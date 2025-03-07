@@ -34,6 +34,12 @@ sap.ui.define([
 						title: 'Numeric',
 						target: 'learnDetail',
 						key: 'numeric'
+					},
+					{
+						title: 'Info Section',
+						target: 'learnDetail',
+						key: 'infoSection',
+						experimental: true
 					}
 				]
 			},

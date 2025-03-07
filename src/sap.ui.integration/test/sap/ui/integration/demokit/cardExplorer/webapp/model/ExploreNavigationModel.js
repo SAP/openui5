@@ -2135,6 +2135,47 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'headerInfoSection',
+						target: 'exploreSamples',
+						title: 'Header Info Section',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Basic',
+								key: 'basic',
+								files: [
+									{
+										url: '/samples/headerInfoSection/basic/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Advanced Layout',
+								key: 'advancedLayout',
+								files: [
+									{
+										url: '/samples/headerInfoSection/advancedLayout/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Numeric Header',
+								key: 'numeric',
+								files: [
+									{
+										url: '/samples/headerInfoSection/numeric/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							}
+						]
+					},
+					{
 						key: 'extension',
 						target: 'exploreSamples',
 						title: 'Extension',

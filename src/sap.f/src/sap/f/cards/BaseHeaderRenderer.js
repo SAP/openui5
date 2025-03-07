@@ -40,6 +40,10 @@ sap.ui.define([], function () {
 
 		this.renderMainPart(oRm, oHeader);
 
+		if (!oError) {
+			this._renderInfoSections(oRm, oHeader);
+		}
+
 		if (bHasNumericPart && !oError) {
 			this.renderNumericPart(oRm, oHeader);
 		}
@@ -285,6 +289,23 @@ sap.ui.define([], function () {
 			.openEnd();
 
 		oRm.renderControl(oToolbar);
+
+		oRm.close("div");
+	};
+
+	BaseHeaderRenderer._renderInfoSections = function (oRm, oHeader) {
+		const aInfoSections = oHeader.getInfoSection();
+		if (!aInfoSections.length) {
+			return;
+		}
+
+		oRm.openStart("div")
+			.class("sapFCardHeaderInfoSection")
+			.openEnd();
+
+		aInfoSections.forEach((oContent) => {
+			oRm.renderControl(oContent);
+		});
 
 		oRm.close("div");
 	};

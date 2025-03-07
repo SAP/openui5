@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Numeric Header</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="infoSection">
+				Info Section
+			</h1>
+			<div class="messageStripWarning">
+				Experimental feature since version 1.136. The API may change.
+			</div>
+			<p>
+				Info Section is a flexible block inside the header which can hold various other components,
+				like a time stamp, rating, statuses, etc. <br />
+				<b>Note:</b> Currently only items of type "Status" are available.
+			</p>
+			<h2 id="properties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>rows</td>
+						<td><a href="#infoSectionRowApi">InfoSectionRow[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							An array of rows.
+						</td>
+						<td>1.73.0</td>
+						<td>1.136</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="infoSectionRowApi">Info Section Row</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>columns</td>
+						<td><a href="#infoSectionColumnApi">InfoSectionColumn[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							An array of columns.
+						</td>
+						<td>1.73.0</td>
+						<td>1.136</td>
+					</tr>
+					<tr>
+						<td>justifyContent</td>
+						<td>string</td>
+						<td>SpaceBetween</td>
+						<td>No</td>
+						<td>
+							Defines how the space is distributed between and around the items or columns.
+							Possible values are:
+							<ul>
+								<li>"SpaceBetween"</li>
+								<li>"Start"</li>
+								<li>"End"</li>
+							</ul>
+						</td>
+						<td>1.73.0</td>
+						<td>1.136</td>
+					</tr>
+					<tr>
+						<td>items</td>
+						<td><a href="#infoSectionItemApi">InfoSectionItem[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							An array of items.
+						</td>
+						<td>1.73.0</td>
+						<td>1.136</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="infoSectionColumnApi">Info Section Column</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>rows</td>
+						<td><a href="#infoSectionRowApi">InfoSectionRow[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							An array of rows.
+						</td>
+						<td>1.73.0</td>
+						<td>1.136</td>
+					</tr>
+					<tr>
+						<td>items</td>
+						<td><a href="#infoSectionItemApi">InfoSectionItem[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>
+							An array of items.
+						</td>
+						<td>1.73.0</td>
+						<td>1.136</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="infoSectionItemApi">Info Section Item</h2>
+			<div class="tableWrapper">
+					<table>
+						<tr>
+							<th>Property</th>
+							<th>Type</th>
+							<th>Default Value</th>
+							<th>Required</th>
+							<th>Description</th>
+							<th>Schema Version</th>
+							<th>Since</th>
+						</tr>
+						<tr>
+							<td>type</td>
+							<td>string</td>
+							<td>"Status"</td>
+							<td>false</td>
+							<td>
+								Represents the type of the object <br />
+								<b>Note:</b> Currently only items of type "Status" are available.
+							</td>
+							<td>1.73.0</td>
+							<td>1.136</td>
+						</tr>
+						<tr>
+							<td>visible</td>
+							<td>boolean</td>
+							<td>true</td>
+							<td>No</td>
+							<td>
+								Visibility of the item
+							</td>
+							<td>1.73.0</td>
+							<td>1.136</td>
+						</tr>
+						<tr>
+							<td>value</td>
+							<td>string</td>
+							<td></td>
+							<td>false</td>
+							<td>
+								The value of the field
+							</td>
+							<td>1.73.0</td>
+							<td>1.136</td>
+						</tr>
+						<tr>
+							<td>state</td>
+							<td><a data-demokit-href="#/api/sap.ui.core.ValueState">sap.ui.core.ValueState</a></td>
+							<td></td>
+							<td>false</td>
+							<td>
+								The semantic state of the status.
+							</td>
+							<td>1.73.0</td>
+							<td>1.136</td>
+						</tr>
+						<tr>
+							<td>inverted</td>
+							<td>boolean</td>
+							<td>false</td>
+							<td>No</td>
+							<td>
+								If set to true, the background color of the item is inverted.
+							</td>
+							<td>1.73.0</td>
+							<td>1.136</td>
+						</tr>
+						<tr>
+							<td>showStateIcon</td>
+							<td>boolean</td>
+							<td>false</td>
+							<td>No</td>
+							<td>
+								Defines if a state icon is shown.
+							</td>
+							<td>1.73.0</td>
+							<td>1.136</td>
+						</tr>
+						<tr>
+							<td>customStateIcon</td>
+							<td>string</td>
+							<td>false</td>
+							<td>No</td>
+							<td>
+								The custom state icon. If it is set,
+								then <code>showStateIcon</code> property should be set to true.
+							</td>
+							<td>1.73.0</td>
+							<td>1.136</td>
+						</tr>
+					</table>
+				</div>
+
+			<h2 id="example">Example</h2>
+			<pre class="lang-json">"header": {
+	"title": "Project Cloud Transformation",
+	"subTitle": "Revenue",
+	"unitOfMeasurement": "EUR",
+	"infoSection": {
+	"rows": [
+	  {
+		"items": [
+		  {
+			"type": "Status",
+			"value": "On Track",
+			"state": "Success",
+			"inverted": true,
+			"showStateIcon": true
+		  },
+		  {
+			"type": "Status",
+			"value": "OKR Relevant",
+			"state": "None",
+			"inverted": true,
+			"showStateIcon": true
+		  },
+		  {
+			"type": "Status",
+			"value": "Goal Template Available",
+			"state": "Information",
+			"inverted": true,
+			"showStateIcon": true
+		  }
+		]
+	  }
+	]
+  }
+}</pre>
+
+			<a href="../../../index.html#/explore/headerInfoSection" target="_parent" class="try-button">Try It Out</a>
+		</div>
+	</div>
+</body>
+
+</html>
