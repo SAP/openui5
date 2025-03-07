@@ -22,17 +22,17 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 
 	const oTextArrangementTypes = {
-		TextOnly: "TextOnly",
-		TextFirst: "TextFirst",
-		IDOnly: "IDOnly",
-		IDFirst: "IDFirst"
+		TextOnly: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly"},
+		TextFirst: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"},
+		IDOnly: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/IDOnly"},
+		IDFirst: {EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/IDFirst"}
 	};
 
 	const oTextArrangementLabels = {
-		[oTextArrangementTypes.TextOnly]: "Text Only",
-		[oTextArrangementTypes.TextFirst]: "Text First",
-		[oTextArrangementTypes.IDOnly]: "ID Only",
-		[oTextArrangementTypes.IDFirst]: "ID First"
+		TextOnly: "Text Only",
+		TextFirst: "Text First",
+		IDOnly: "ID Only",
+		IDFirst: "ID First"
 	};
 
 	async function openDialog(sandbox, oActionConfig, fnAfterOpen) {
@@ -75,7 +75,7 @@ sap.ui.define([
 							}
 						],
 						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
-							key: sKey,
+							key: oTextArrangementTypes[sKey],
 							text: oTextArrangementLabels[sKey]
 						}))
 					};
@@ -130,7 +130,7 @@ sap.ui.define([
 				const oSelect = aVisibleFields[0];
 				assert.strictEqual(
 					oSelect.getSelectedKey(),
-					oTextArrangementTypes.TextOnly,
+					JSON.stringify(oTextArrangementTypes.TextOnly),
 					"then the correct value is set"
 				);
 				assert.ok(
@@ -157,7 +157,7 @@ sap.ui.define([
 				"path/to/test/label",
 				"then the correct annotationPath was returned"
 			);
-			assert.strictEqual(
+			assert.deepEqual(
 				aChanges[0].content.value,
 				oTextArrangementTypes.TextFirst,
 				"then the correct value was returned"
@@ -193,7 +193,7 @@ sap.ui.define([
 							}
 						],
 						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
-							key: sKey,
+							key: oTextArrangementTypes[sKey],
 							text: oTextArrangementLabels[sKey]
 						}))
 					};
@@ -221,7 +221,7 @@ sap.ui.define([
 				const [oSelect] = aFormElements[1].getFields().filter((oField) => oField.getVisible());
 				assert.strictEqual(
 					oSelect.getSelectedKey(),
-					oTextArrangementTypes.TextOnly,
+					JSON.stringify(oTextArrangementTypes.TextOnly),
 					"then the initial value is displayed on second open"
 				);
 				// Select item and switch back to initial value
@@ -281,7 +281,7 @@ sap.ui.define([
 							}
 						],
 						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
-							key: sKey,
+							key: oTextArrangementTypes[sKey],
 							text: oTextArrangementLabels[sKey]
 						})),
 						preSelectedProperty: "path/to/second/test/label"
@@ -356,7 +356,7 @@ sap.ui.define([
 							}
 						],
 						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
-							key: sKey,
+							key: oTextArrangementTypes[sKey],
 							text: oTextArrangementLabels[sKey]
 						}))
 					};

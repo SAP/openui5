@@ -15,6 +15,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
+	"sap/ui/fl/apply/_internal/flexObjects/VariantChange",
+	"sap/ui/fl/apply/_internal/flexObjects/VariantManagementChange",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -33,6 +35,8 @@ sap.ui.define([
 	States,
 	UIChange,
 	UpdatableChange,
+	VariantChange,
+	VariantManagementChange,
 	Settings,
 	Layer,
 	LayerUtils,
@@ -47,7 +51,9 @@ sap.ui.define([
 		APP_DESCRIPTOR_CHANGE: AppDescriptorChange,
 		ANNOTATION_CHANGE: AnnotationChange,
 		UI_CHANGE: UIChange,
-		UPDATABLE_CHANGE: UpdatableChange
+		UPDATABLE_CHANGE: UpdatableChange,
+		VARIANT_CHANGE: VariantChange,
+		VARIANT_MANAGEMENT_CHANGE: VariantManagementChange
 	};
 
 	function cloneIfObject(oValue) {
@@ -67,6 +73,10 @@ sap.ui.define([
 			return FLEX_OBJECT_TYPES.ANNOTATION_CHANGE;
 		} else if (oNewFileContent.fileType === "change" && oNewFileContent.changeType === "defaultVariant") {
 			return FLEX_OBJECT_TYPES.UPDATABLE_CHANGE;
+		} else if (oNewFileContent.fileType === "ctrl_variant_change") {
+			return FLEX_OBJECT_TYPES.VARIANT_CHANGE;
+		} else if (oNewFileContent.fileType === "ctrl_variant_management_change") {
+			return FLEX_OBJECT_TYPES.VARIANT_MANAGEMENT_CHANGE;
 		}
 		return FLEX_OBJECT_TYPES.UI_CHANGE;
 	}
@@ -169,6 +179,22 @@ sap.ui.define([
 		mProperties.isChangeOnStandardVariant = mPropertyBag.isChangeOnStandardVariant;
 		mProperties.fileType = mPropertyBag.fileType || "change";
 		return new UIChange(mProperties);
+	};
+
+	FlexObjectFactory.createVariantChange = function(mPropertyBag) {
+		mPropertyBag.packageName ||= "$TMP";
+		const mProperties = createBasePropertyBag(mPropertyBag);
+		mProperties.variantId = mPropertyBag.variantId || mPropertyBag.selector?.id;
+		mProperties.fileType = mPropertyBag.fileType || "ctrl_variant_change";
+		return new VariantChange(mProperties);
+	};
+
+	FlexObjectFactory.createVariantManagementChange = function(mPropertyBag) {
+		mPropertyBag.packageName ||= "$TMP";
+		const mProperties = createBasePropertyBag(mPropertyBag);
+		mProperties.selector = mPropertyBag.selector;
+		mProperties.fileType = mPropertyBag.fileType || "ctrl_variant_management_change";
+		return new VariantManagementChange(mProperties);
 	};
 
 	FlexObjectFactory.createAppDescriptorChange = function(mPropertyBag) {

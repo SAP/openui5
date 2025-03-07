@@ -56,13 +56,11 @@ sap.ui.define([
 			(window.matchMedia('(prefers-color-scheme: dark)').matches ||
 			window.matchMedia('(prefers-color-scheme: light)').matches));
 
-		this._oConsentManager.checkUserAcceptsToPersistDisplaySettings(function(bAccepts) {
-			if (bAccepts && this._aConfiguration.length > 0) {
-				ThemePicker._applyCookiesConfiguration(this._aConfiguration);
-			} else {
-				ThemePicker._applyDefaultConfiguration(this._aConfiguration);
-			}
-		}.bind(this));
+		if (this._oConfigUtil.getCookieValue(CONFIGURATION_APPEARANCE)) {
+			ThemePicker._applyCookiesConfiguration(this._aConfiguration);
+		} else {
+			ThemePicker._applyDefaultConfiguration(this._aConfiguration);
+		}
 
 	};
 

@@ -187,7 +187,7 @@ sap.ui.define([
 						executeOnSelect: true,
 						contexts: { role: [], country: [] }
 					}),
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantManagementChange({
 						id: "setDefaultVariantChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setDefault",
@@ -199,26 +199,22 @@ sap.ui.define([
 							defaultVariant: "variant1"
 						}
 					}),
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						id: "setFavoriteChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setFavorite",
 						fileType: "ctrl_variant_change",
-						selector: {
-							id: "variant1"
-						},
+						variantId: "variant1",
 						content: {
 							favorite: false
 						}
 					}),
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						id: "setExecuteOnSelectChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setExecuteOnSelect",
 						fileType: "ctrl_variant_change",
-						selector: {
-							id: "variant1"
-						},
+						variantId: "variant1",
 						content: {
 							executeOnSelect: true
 						}
@@ -284,7 +280,7 @@ sap.ui.define([
 			FlexObjectManager.addDirtyFlexObjects(
 				this.oModel.sFlexReference,
 				[
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantManagementChange({
 						id: "setDefaultVariantChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setDefault",
@@ -306,14 +302,12 @@ sap.ui.define([
 			FlexObjectManager.addDirtyFlexObjects(
 				this.oModel.sFlexReference,
 				[
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						id: "setFavoriteChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setFavorite",
 						fileType: "ctrl_variant_change",
-						selector: {
-							id: "variant1"
-						},
+						variantId: "variant1",
 						content: {
 							favorite: true
 						}
@@ -333,14 +327,12 @@ sap.ui.define([
 			FlexObjectManager.addDirtyFlexObjects(
 				this.oModel.sFlexReference,
 				[
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						id: "setExecuteOnSelectChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setExecuteOnSelect",
 						fileType: "ctrl_variant_change",
-						selector: {
-							id: "variant1"
-						},
+						variantId: "variant1",
 						content: {
 							executeOnSelect: false
 						}
@@ -350,14 +342,12 @@ sap.ui.define([
 			FlexObjectManager.addDirtyFlexObjects(
 				this.oModel.sFlexReference,
 				[
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						id: "setTitleChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setTitle",
 						fileType: "ctrl_variant_change",
-						selector: {
-							id: "variant1"
-						},
+						variantId: "variant1",
 						texts: {
 							title: { value: "variant B1" }
 						}
@@ -367,14 +357,12 @@ sap.ui.define([
 			FlexObjectManager.addDirtyFlexObjects(
 				this.oModel.sFlexReference,
 				[
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						id: "setVisibleChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setVisible",
 						fileType: "ctrl_variant_change",
-						selector: {
-							id: "variant1"
-						},
+						variantId: "variant1",
 						content: {
 							visible: false
 						}
@@ -384,14 +372,12 @@ sap.ui.define([
 			FlexObjectManager.addDirtyFlexObjects(
 				this.oModel.sFlexReference,
 				[
-					FlexObjectFactory.createUIChange({
+					FlexObjectFactory.createVariantChange({
 						id: "setContextsChange",
 						layer: Layer.CUSTOMER,
 						changeType: "setContexts",
 						fileType: "ctrl_variant_change",
-						selector: {
-							id: "variant1"
-						},
+						variantId: "variant1",
 						content: {
 							contexts: { role: ["ADMINISTRATOR1"], country: ["DE1"] }
 						}
@@ -1374,7 +1360,7 @@ sap.ui.define([
 					"then only one change is saved since the rest is dirty and directly removed from FlexState"
 				);
 				assert.strictEqual(
-					aChanges[0].getSelector().id,
+					aChanges[0].getVariantId(),
 					"variant2",
 					"then only the PUBLIC variant is hidden via setVisible"
 				);

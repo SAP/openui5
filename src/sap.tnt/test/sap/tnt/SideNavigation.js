@@ -301,7 +301,7 @@ sap.ui.define([
 	  })
   }).placeAt("col-1-content");
 
-  var sideNavigationWithBinding = new SideNavigation({
+  var sideNavigationWithBinding2 = new SideNavigation({
 	  item: new NavigationList({
 		  items: {
 			  template: new NavigationListItem({
@@ -330,7 +330,7 @@ sap.ui.define([
 			  path: '/fixedNavigation'
 		  }
 	  })
-  }).setModel(model).placeAt('col-1-content');
+  }).setModel(model).placeAt('col-1-2-content');
 
   var sideNavigation = new SideNavigation({
 	  expanded: false,
@@ -362,11 +362,11 @@ sap.ui.define([
 	  })
   }).setModel(model).placeAt('col-2-content');
 
-  var sideNavigationNoIcons = new SideNavigation({
+  var sideNavigationNoIcons = new SideNavigation("sideNavigationNoIcons", {
 	  expanded: true,
 	  item: new NavigationList({
 		  items: new NavigationListItem({
-			  text: 'Root Item',
+			  text: 'Root Item without icon',
 			  items: [
 				  new NavigationListItem({
 					  text: 'Child Item 1'
@@ -411,6 +411,13 @@ sap.ui.define([
 		  sideNavigationWithBinding.setExpanded(!sideNavigationWithBinding.getExpanded());
 	  }
   }).placeAt('col-1-header');
+
+  new Button({
+	  text: 'toggle expanded property',
+	  press: function () {
+		  sideNavigationWithBinding2.setExpanded(!sideNavigationWithBinding2.getExpanded());
+	  }
+  }).placeAt('col-1-2-header');
 
   new Button({
 	  text: 'toggle expanded property',

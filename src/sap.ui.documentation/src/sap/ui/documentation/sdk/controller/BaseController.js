@@ -54,6 +54,8 @@ sap.ui.define([
 					bundleName: "sap.ui.documentation.messagebundle"
 				});
 
+				this._oConfigUtil = this.getOwnerComponent().getConfigUtil();
+
 				this.setModel(oMessageBundle, "i18n");
 				// Load <code>versionInfo</code> to ensure the <code>versionData</code> model is loaded.
 				if (Device.system.phone || Device.system.tablet) {
@@ -301,6 +303,11 @@ sap.ui.define([
 							this._getVersionName().then(oTracker.start.bind(oTracker));
 						} else {
 							oTracker.stop();
+						}
+					}.bind(this));
+					oConsentManager.checkUserAcceptsToPersistDisplaySettings(function(bAccepts) {
+						if (!bAccepts) {
+							this._oConfigUtil.unsetCookie(this._oConfigUtil.COOKIE_NAMES.CONFIGURATION_APPEARANCE);
 						}
 					}.bind(this));
 				}.bind(this));
