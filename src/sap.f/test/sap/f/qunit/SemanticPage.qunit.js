@@ -1129,8 +1129,10 @@ function (
 		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
 			// Assert
 			assert.strictEqual(oShareMenuButton.getVisible(), true, "Share menu button is shown");
+			this.oSemanticPage.destroy();
 			done();
-		}});
+
+		}.bind(this)});
 	});
 
 
