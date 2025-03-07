@@ -119,8 +119,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         tileContent: [oNVConfS]
     });
     oGenericTile1.addStyleClass("sapUiTinyMargin");
-    oGenericTile1.bindProperty("width", "/width", function (sValue) {
-        return sValue + "px";
+    oGenericTile1.bindProperty("width", {
+        path: "/width",
+        formatter: function (sValue) {
+            return sValue + "px";
+        }
     });
 
     var oNumCnt2x1 = new sap.m.NumericContent("numeric-cont-2x1", {
@@ -157,8 +160,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         tileContent: [oTc2x1]
     });
     oGenericTile2.addStyleClass("sapUiTinyMargin");
-    oGenericTile2.bindProperty("width", "/width", function (sValue) {
-        return sValue + "px";
+    oGenericTile2.bindProperty("width", {
+        path: "/width",
+        formatter: function (sValue) {
+            return sValue + "px";
+        }
     });
 
 
@@ -189,8 +195,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
         }
     });
     oGenericTile3.addStyleClass("sapUiTinyMargin");
-    oGenericTile3.bindProperty("width", "/width", function (sValue) {
-        return sValue + "px";
+    oGenericTile3.bindProperty("width", {
+        path: "/width",
+        formatter: function (sValue) {
+            return sValue + "px";
+        }
     });
 
     var oFeedTileContent = new sap.m.TileContent("feed-tile-cont-2x1", {
@@ -264,13 +273,19 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/thirdparty/jquery"], functi
     });
 
     oGenericTile5.addStyleClass("sapUiTinyMargin");
-    oGenericTile5.bindProperty("width", "/width", function (sValue) {
-        return sValue + "px";
+    oGenericTile5.bindProperty("width", {
+        path: "/width",
+        formatter: function (sValue) {
+            return sValue + "px";
+        }
     });
 
     oGenericTile4.addStyleClass("sapUiTinyMargin");
-    oGenericTile4.bindProperty("width", "/width", function (sValue) {
-        return sValue + "px";
+    oGenericTile4.bindProperty("width", {
+        path: "/width",
+        formatter: function (sValue) {
+            return sValue + "px";
+        }
     });
 
     var oTitleInput = new sap.m.Input("title-value", {

@@ -43,7 +43,10 @@ sap.ui.define([
 			for (i = 0; i < 7; i++){
 				oInput = new Input();
 				oInput.setModel(this.oModel);
-				oInput.bindProperty(sName, "/clients/member/" + i + "/" + property, null, sMode);
+				oInput.bindProperty(sName, {
+					path: "/clients/member/" + i + "/" + property,
+					mode: sMode
+				});
 				aInputs.push(oInput);
 			}
 

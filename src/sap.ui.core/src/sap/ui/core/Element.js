@@ -1973,10 +1973,12 @@ sap.ui.define([
 	 *
 	 * There's no difference between <code>bindElement</code> and {@link sap.ui.base.ManagedObject#bindObject}.
 	 *
-	 * @param {string|sap.ui.base.ManagedObject.ObjectBindingInfo} vPath the binding path or an object with more detailed binding options
+	 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo|string} vBindingInfo A <code>BindingInfo</code> object or just the path, if no further properties are required
 	 * @param {object} [mParameters] map of additional parameters for this binding.
 	 * Only taken into account when <code>vPath</code> is a string. In that case it corresponds to <code>mParameters</code> of {@link sap.ui.base.ManagedObject.ObjectBindingInfo}.
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
+	 *
+	 * Providing 'parameters' as positional parameter is deprecated as of 1.135.0. Provide them as part of a <code>BindingInfo</code> object instead.
 	 *
 	 * @returns {this} reference to the instance itself
 	 * @public
