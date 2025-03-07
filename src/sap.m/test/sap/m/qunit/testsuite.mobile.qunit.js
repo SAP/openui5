@@ -981,14 +981,6 @@ sap.ui.define([
 				title: "Test Page for sap.m.OverflowToolbarMenuButton"
 			},
 
-			P13nConditionPanel: {
-				title: "Test Page for sap.m.P13nConditionPanel",
-				ui5: {
-					language: "en", // one test depends on locale specific date formatting
-					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
-				}
-			},
-
 			"p13n.AbstractContainer": {
 				title: "Test Page for sap.m.p13n.AbstractContainer",
 				module: "test-resources/sap/m/qunit/p13n/AbstractContainer.qunit",
@@ -1227,24 +1219,6 @@ sap.ui.define([
 			"p13n.Smoke": {
 				title: "Test Page for sap.m.p13n Demokit samples",
 				page: "test-resources/sap/m/qunit/p13n/smoke/testsuite.qunit.html"
-			},
-
-			P13nFilterPanel: {
-				title: "Test Page for sap.m.P13nFilterPanel",
-				ui5: {
-					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
-				}
-			},
-
-			P13nSelectionPanel: {
-				title: "Test Page for sap.m.P13nSelectionPanel",
-				sinon: {
-					useFakeTimers: false
-				}
-			},
-
-			P13nOperationsHelper: {
-				title: "Test Page for sap.m.P13nOperationsHelper"
 			},
 
 			PDFViewer: {

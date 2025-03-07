@@ -492,5 +492,9 @@ sap.ui.define([
 		return this.isSuccessfullyApplied();
 	};
 
+	UIChange.prototype.canBeVisualized = function() {
+		return this.getSelector() && !isEmptyObject(this.getSelector());
+	};
+
 	return UIChange;
 });

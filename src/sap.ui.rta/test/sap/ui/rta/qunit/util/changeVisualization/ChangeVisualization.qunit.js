@@ -442,13 +442,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("With changes that have no selector", async function(assert) {
-			const oMockChange1 = createMockChange("changeWithNoSelectorFunction");
-			oMockChange1.getSelector = undefined;
 			const oMockChange2 = createMockChange("changeWithUndefinedSelector");
 			sandbox.stub(oMockChange2, "getSelector").returns(undefined);
 			const oMockChange3 = createMockChange("changeWithEmptySelector");
 			sandbox.stub(oMockChange3, "getSelector").returns({});
-			this.aMockChanges = [oMockChange1, oMockChange2, oMockChange3];
+			this.aMockChanges = [oMockChange2, oMockChange3];
 
 			prepareChanges(this.aMockChanges);
 			await startVisualization(this.oRta);
@@ -464,7 +462,7 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				aVisualizationData.sortedChanges.relevantHiddenChanges.length,
-				3,
+				2,
 				"then the changes are in the relevantHiddenChanges category"
 			);
 			assert.strictEqual(

@@ -246,13 +246,13 @@ sap.ui.define([
 
 		QUnit.test("getAllApplicableUIChanges", function(assert) {
 			FlexState.addDirtyFlexObjects(sReference, [
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantManagementChange({
 					fileName: "setDefaultChange",
 					fileType: "ctrl_variant_management_change",
 					selector: { id: "foo"},
 					changeType: "setDefault"
 				}),
-				FlexObjectFactory.createUIChange({
+				FlexObjectFactory.createVariantChange({
 					fileName: "setFavoriteChange",
 					fileType: "ctrl_variant_change",
 					changeType: "setFavorite"

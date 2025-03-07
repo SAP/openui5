@@ -468,6 +468,26 @@ function(
 		await nextUIUpdate();
 	});
 
+	QUnit.test("updates the sectionInfoIsDirty flag", async function(assert) {
+		var oPage = this.oObjectPage,
+			oSection1 = oPage.getSections()[0],
+			oSpy = this.spy(oPage, "_setSectionInfoIsDirty"),
+			done = assert.async();
+
+		oPage.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oSection1.addEventDelegate({
+			onBeforeRendering: function() {
+				assert.ok(oSpy.calledOnceWith(true), "sectionInfoIsDirty is set");
+				done();
+			}
+		});
+
+		oSpy.resetHistory();
+		oSection1.invalidate();
+	});
+
 	QUnit.module("update content size", {
 		beforeEach: function (assert) {
 			var done = assert.async();

@@ -519,8 +519,8 @@ sap.ui.define([
 			if (oChange.getVariantReference()) {
 				return oChange.getVariantReference();
 			}
-		} else if (sFileType === "ctrl_variant_change" && oChange.getSelector().id) {
-			return oChange.getSelector().id;
+		} else if (sFileType === "ctrl_variant_change") {
+			return oChange.getVariantId();
 		}
 		return undefined;
 	}
@@ -605,14 +605,14 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Returns an array of copied FlexObjects
 	 */
 	function copyChanges(aChanges, mFileNames, sContextBasedAdaptationId) {
-		var aCopiedFlexObjects = [];
+		const aCopiedFlexObjects = [];
 		aChanges.forEach(function(oChange) {
-			var oCopiedChange = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId());
-			var oCopiedChangeContent = oCopiedChange.getContent();
-			var oCopiedChangeSelector = oCopiedChange.getSelector();
+			const oCopiedChange = FlexObjectFactory.createFromFileContent(oChange.cloneFileContentWithNewId());
+			const oCopiedChangeContent = oCopiedChange.getContent();
 			if (oChange.getFileType() === "change") {
 				if (oChange.getSelector().variantId) {
 					// selector of a change links to a CompVariant
+					const oCopiedChangeSelector = oCopiedChange.getSelector();
 					oCopiedChangeSelector.variantId = getNewVariantId(mFileNames, oCopiedChange.getSelector().variantId);
 					oCopiedChange.setSelector(oCopiedChangeSelector);
 				} else if (oChange.getContent().defaultVariantName) {
@@ -632,9 +632,8 @@ sap.ui.define([
 						return;
 					}
 				}
-			} else if (oChange.getFileType() === "ctrl_variant_change" && oChange.getSelector().id) {
-				oCopiedChangeSelector.id = getNewVariantId(mFileNames, oCopiedChange.getSelector().id);
-				oCopiedChange.setSelector(oCopiedChangeSelector);
+			} else if (oChange.getFileType() === "ctrl_variant_change") {
+				oCopiedChange.setVariantId(getNewVariantId(mFileNames, oCopiedChange.getVariantId()));
 			} else if (oChange.getFileType() === "ctrl_variant_management_change" && oChange.getContent().defaultVariant) {
 				oCopiedChangeContent.defaultVariant = getNewVariantId(mFileNames, oCopiedChange.getContent().defaultVariant);
 				oCopiedChange.setContent(oCopiedChangeContent);

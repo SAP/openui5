@@ -448,6 +448,7 @@
 
 
 .sapTntSideNavigationNotExpanded .sapTntNLIFirstLevel.sapTntNLIWithExpander .sapUiIcon:first-of-type::after {
+	font-family: SAP-icons;
 	content: @_sap_tnt_NavigationList_NavigationIndicator;
 	font-size: 0.75rem;
 	position: relative;
@@ -580,7 +581,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 // NavigationList without icons
 .sapTntNL.sapTntNLNoIcons:not(.sapTntNLPopup) {
 
-	.sapTntNLIFirstLevel {
+	.sapTntNLIFirstLevel .sapMText {
 		padding-left: @_sap_tnt_NavigationList_NoIconsGroupPadding;
 	}
 

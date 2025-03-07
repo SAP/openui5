@@ -13,13 +13,44 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const sChangeType = "myChangeType";
+
+	function completeAndApplyChange(assert, oChange, sPath, vValue) {
+		assert.deepEqual(oChange.getContent(), {}, "initial content is empty");
+		ChangeAnnotation.completeChangeContent(oChange, {
+			content: {
+				annotationPath: sPath,
+				value: vValue,
+				unknownProperty: "someUnknownProperty"
+			}
+		});
+		assert.deepEqual(oChange.getContent(), {
+			annotationPath: sPath,
+			value: vValue
+		}, "content was set correctly");
+
+		const oApplyChangeResult = ChangeAnnotation.applyChange(oChange);
+		assert.deepEqual(oApplyChangeResult, {
+			path: sPath,
+			value: vValue
+		}, "applyChange returns the correct result");
+
+		const oDummyAppComponent = {foo: "bar"};
+		const oCondenserInfo = ChangeAnnotation.getCondenserInfo(oChange, {appComponent: oDummyAppComponent});
+		assert.deepEqual(oCondenserInfo, {
+			affectedControl: oDummyAppComponent,
+			classification: Classification.LastOneWins,
+			uniqueKey: `${sPath}_${sChangeType}`
+		}, "getCondenserInfo returns the correct result");
+	}
+
 	QUnit.module("sap.ui.fl.changeHandler.ChangeAnnotation", {
 		beforeEach() {
 			this.oAnnotationChange = new AnnotationChange({
 				serviceUrl: "someServiceUrl",
 				layer: Layer.CUSTOMER,
 				flexObjectMetadata: {
-					changeType: "myChangeType"
+					changeType: sChangeType
 				}
 			});
 		},
@@ -27,33 +58,12 @@ sap.ui.define([
 			this.oAnnotationChange.destroy();
 		}
 	}, function() {
-		QUnit.test("completeChangeContent / applyChange / getCondenserInfo", function(assert) {
-			assert.deepEqual(this.oAnnotationChange.getContent(), {}, "initial content is empty");
-			ChangeAnnotation.completeChangeContent(this.oAnnotationChange, {
-				content: {
-					annotationPath: "somePath",
-					value: "someValue",
-					unknownProperty: "someUnknownProperty"
-				}
-			});
-			assert.deepEqual(this.oAnnotationChange.getContent(), {
-				annotationPath: "somePath",
-				value: "someValue"
-			}, "content was set correctly");
+		QUnit.test("completeChangeContent / applyChange / getCondenserInfo with value of type string", function(assert) {
+			completeAndApplyChange(assert, this.oAnnotationChange, "somePath", "someValue");
+		});
 
-			const oApplyChangeResult = ChangeAnnotation.applyChange(this.oAnnotationChange);
-			assert.deepEqual(oApplyChangeResult, {
-				path: "somePath",
-				value: "someValue"
-			}, "applyChange returns the correct result");
-
-			const oDummyAppComponent = {foo: "bar"};
-			const oCondenserInfo = ChangeAnnotation.getCondenserInfo(this.oAnnotationChange, {appComponent: oDummyAppComponent});
-			assert.deepEqual(oCondenserInfo, {
-				affectedControl: oDummyAppComponent,
-				classification: Classification.LastOneWins,
-				uniqueKey: "somePath_myChangeType"
-			}, "getCondenserInfo returns the correct result");
+		QUnit.test("completeChangeContent / applyChange / getCondenserInfo with value of type object", function(assert) {
+			completeAndApplyChange(assert, this.oAnnotationChange, "somePath", {EnumMember: "com.sap.TextArrangementType/TextOnly"});
 		});
 
 		QUnit.test("with translatable texts", function(assert) {
