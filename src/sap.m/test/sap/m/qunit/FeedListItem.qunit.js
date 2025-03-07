@@ -176,7 +176,8 @@ sap.ui.define([
 		timestamp: "{timestamp}",
 		maxCharacters: "{maxCharacters}",
 		senderPress: fnOpenPopup,
-		iconPress: fnOpenPopup
+		iconPress: fnOpenPopup,
+		disableStyleAttribute : "{disableStyleAttribute}"
 	});
 
 	function bindFeedListData(data, itemTemplate, list) {
@@ -269,6 +270,26 @@ sap.ui.define([
 			text: "Thisisaerynnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongvvaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylong",
 			timestamp: "Jul 02, 2014",
 			maxCharacters: 20
+		}, {
+			sender: "Trail",
+			text: "Lorem <strong>ipsum dolor sit amet</strong>, <em>consetetur sadipscing elitr</em>, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, <a class='_class' id='xyz' href='http://www.sap.com'>sed diam voluptua</a>. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod <strong>tempor invidunt ut labore et dolore magna</strong> aliquyam erat, sed diam voluptua. <em>At vero eos et accusam et justo</em> duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, <u>sed diam nonumy eirmod tempor invidunt ut labore</u> et dolore magna aliquyam erat, sed diam voluptua. <strong>At vero eos et accusam</strong> et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod <a href='//www.sap.com'>tempor invidunt</a> ut labore et dolore magna aliquyam erat, sed diam voluptua. <em>At vero eos et accusam</em> et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
+			timestamp: "Jul 02, 2014"
+		},
+		{
+			text: "This FeedListItem with custom htmml text <p style='color:red'>This is a paragraph with red color</p>",
+			sender: "Christine Noah",
+			senderActive: true,
+			iconActive: true,
+			timestamp: "Nov 23, 2012",
+			disableStyleAttribute: true
+		},
+		{
+			text: "This FeedListItem with custom htmml text <p style='color:red'>This is a paragraph with red color</p>",
+			sender: "Christine Noah",
+			senderActive: true,
+			iconActive: true,
+			timestamp: "Nov 23, 2012",
+			disableStyleAttribute: false
 		}]
 	};
 
@@ -304,6 +325,12 @@ sap.ui.define([
 		assert.ok(oFeedList.getItems()[0].$("info").length === 1, "info should be rendered");
 		assert.ok(oFeedList.getItems()[0].$("maxCharacters").length === 0, "maxCharacters is nothing to be rendered");
 		assert.ok(oFeedList.getItems()[8].$().find('*').hasClass("sapUiSelectable"), "Item should have class sapUiSelectable");
+		assert.notOk(oFeedList.getItems()[11].getDisableStyleAttribute(), "FeedListItem should have disableStyleAttribute set to false by default");
+		assert.notOk(oFeedList.getItems()[11].getAggregation("_text").getDisableStyleAttribute(), "FormattedText should have disableStyleAttribute set to false by default");
+		assert.ok(oFeedList.getItems()[12].getDisableStyleAttribute(), "FeedListItem should have disableStyleAttribute set to true");
+		assert.ok(oFeedList.getItems()[12].getAggregation("_text").getDisableStyleAttribute(), "FormattedText should have disableStyleAttribute set to true");
+		assert.notOk(oFeedList.getItems()[13].getDisableStyleAttribute(), "FeedListItem should have disableStyleAttribute set to false");
+		assert.notOk(oFeedList.getItems()[13].getAggregation("_text").getDisableStyleAttribute(), "FormattedText should have disableStyleAttribute set to false");
 	});
 
 	QUnit.test("The convertLinksToAnchorTags property is set by default to LinkConversion.None", function (assert) {
