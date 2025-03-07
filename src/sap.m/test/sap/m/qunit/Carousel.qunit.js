@@ -1949,7 +1949,6 @@ sap.ui.define([
 	QUnit.test("aria-selected should be set correctly", function (assert) {
 		// Assert
 		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
-		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("role"), "option", "Role of a carousel item should be option");
 		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-posinset"), "1", "Posinset should be 1");
 		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-setsize"), "3", "Setsize should be 3");
 		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-hidden"), "false", "Displayed page should have aria-hidden = false");
@@ -1964,6 +1963,16 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
 		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-posinset"), "2", "Posinset should be 2");
 		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-hidden"), "false", "Displayed page should have aria-hidden = false");
+	});
+
+	QUnit.test("Carousel should have correct roles", function (assert) {
+		// Assert
+		assert.strictEqual(document.getElementById("crsl").getAttribute("role"), "list", "Role of a carousel should be list");
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("role"), "listitem", "Role of a carousel item should be listitem");
+
+		const oRb = Library.getResourceBundleFor("sap.m");
+		const sExpectedRoleDescription = oRb.getText("CAROUSEL_ARIA_ROLE_DESCRIPTION");
+		assert.strictEqual(document.getElementById("crsl").getAttribute("aria-roledescription"), sExpectedRoleDescription, "Displayed page should have correct aria-roledescription");
 	});
 
 	QUnit.test("Dummy area", function (assert) {
