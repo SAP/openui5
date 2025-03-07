@@ -14024,6 +14024,57 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestSeparateProperties: ETag changed", async function (assert) {
+		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
+		oCache.aElements.$byPredicate = {
+			"(0)" : {"@odata.etag" : "etag0"},
+			"(1)" : {"@odata.etag" : "etag1"}
+		};
+		oCache.setSeparate(["foo"]);
+		const fnSeparateReceived = this.spy();
+
+		this.mock(oCache).expects("fetchTypes").withExactArgs().resolves("~types~");
+		this.mock(oCache).expects("getResourcePathWithQuery")
+			.withExactArgs("~iStart~", "~iEnd~", "foo").returns("~path~");
+		this.mock(oCache.oRequestor).expects("lockGroup")
+			.withExactArgs("$single", sinon.match.same(oCache)).returns("~lock~");
+		const oResponse = {
+			value : [
+				{"@odata.etag" : "AnotherETag"},
+				{"@odata.etag" : "etag1"}
+			]
+		};
+		this.mock(oCache.oRequestor).expects("request")
+			.withExactArgs("GET", "~path~", "~lock~").resolves(oResponse);
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResponse), "~types~", undefined, undefined,
+				"~iStart~");
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oResponse.value[0]), "predicate").returns("(0)");
+		this.oLogMock.expects("error")
+			.withExactArgs("ETag changed: SalesOrders(0)", "~path~", sClassName);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oResponse.value[1]), "predicate").returns("(1)");
+		oHelperMock.expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "(1)",
+				sinon.match.same(oCache.aElements.$byPredicate["(1)"]),
+				sinon.match.same(oResponse.value[1]), ["foo"]);
+
+		// code under test
+		await oCache.requestSeparateProperties("~iStart~", "~iEnd~",
+			/*oMainPromise*/Promise.resolve(), fnSeparateReceived);
+
+		// wait until processing is completed (note that the promise returned by
+		// requestSeparateProperties resolves at an undefined point in time)
+		await oCache.mSeparateProperty2ReadRequests.foo[0].promise;
+
+		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {foo : []});
+		sinon.assert.callCount(fnSeparateReceived, 1);
+		sinon.assert.calledWithExactly(fnSeparateReceived, "foo", "~iStart~", "~iEnd~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestSeparateProperties: separate failed",
 			async function (assert) {
 		const oCache = _Cache.create(this.oRequestor, "SalesOrders");

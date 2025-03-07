@@ -78625,6 +78625,95 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: The response of a $$separate request contains an entity where the ETag of a
+	// $$separate's source entity (EMPLOYEES) does not match with the entity's ETag of the
+	// previously loaded main list request. As a result an error is logged and the corresponding
+	// $$separate data for EMPLOYEE_2_TEAM is not imported. Other entities of the $$separate
+	// response with matching ETags are still processed. The missing data is tried to be fetched
+	// with a subsequent late property request. If it also returns a changed ETag, the data is not
+	// imported and an error is reported.
+	// JIRA: CPOUI5ODATAV4-2780
+[false, true].forEach(function (bLatePropertyEtagConflict) {
+	const sTitle = "$$separate: ETag conflict for source entity; late property request "
+		+ (bLatePropertyEtagConflict ? "w/" : "w/o") + " ETag conflict";
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table growing="true" growingThreshold="2" id="table"
+		items="{
+			path : '/EMPLOYEES',
+			parameters : {
+				$$separate : ['EMPLOYEE_2_TEAM']
+			}
+		}">
+	<Text id="name" text="{Name}"/>
+	<Text id="team" text="{EMPLOYEE_2_TEAM/Name}"/>
+</Table>`;
+
+		this.oLogMock.expects("error")
+			.withExactArgs("ETag changed: EMPLOYEES('0')",
+				"EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID&$skip=0&$top=2",
+				"sap.ui.model.odata.v4.lib._Cache");
+		this.expectRequest({
+				batchNo : 1,
+				url : "EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+					+ "&$skip=0&$top=2"
+			}, {
+				value : [{
+					"@odata.etag" : "conflict",
+					EMPLOYEE_2_TEAM : {Name : "n/a", Team_Id : "A"},
+					ID : "0"
+				}, {
+					"@odata.etag" : "etag1",
+					EMPLOYEE_2_TEAM : {Name : "Team B", Team_Id : "B"},
+					ID : "1"
+				}]
+			})
+			.expectRequest({
+				batchNo : 2,
+				url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=2"
+			}, {
+				value : [{
+					"@odata.etag" : "etag0",
+					ID : "0",
+					Name : "Employee 0"
+				}, {
+					"@odata.etag" : "etag1",
+					ID : "1",
+					Name : "Employee 1"
+				}]
+			})
+			.expectChange("name", ["Employee 0", "Employee 1"])
+			.expectChange("team", [, "Team B"])
+			.expectRequest({ // late property request
+				batchNo : 3,
+				url : "EMPLOYEES('0')?$select=EMPLOYEE_2_TEAM"
+					+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)"
+			}, {
+				"@odata.etag" : bLatePropertyEtagConflict ? "conflict" : "etag0",
+				EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"}
+			})
+			.expectChange("team", [bLatePropertyEtagConflict ? null : "Team A"]);
+		if (bLatePropertyEtagConflict) {
+			const sErrorMessage = "GET EMPLOYEES('0')?$select="
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id): ETag changed";
+			this.oLogMock.expects("error")
+				.withExactArgs("Failed to read path /EMPLOYEES('0')/EMPLOYEE_2_TEAM/Name",
+					sinon.match(sErrorMessage), sODPrB);
+			this.expectMessage({
+					message : sErrorMessage,
+					persistent : true,
+					technical : true,
+					type : "Error"
+				});
+		}
+
+		await this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: If a text property is bound, the field help for the corresponding ID property is
 	// provided instead of the field help for the text property itself. The test covers the
 	// following cases:
