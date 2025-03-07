@@ -304,13 +304,13 @@ sap.ui.define([
 			});
 		};
 		var fnWithNativePromise = function () {
-			return new Promise(function (resolve) {
-				setTimeout(function () {
-					resolve();
-				}, 200);
-			}).then(function () {
-				assert.ok(mResult.jQueryDone, "Should wait for native promise to complete after jQueryPromise");
-				mResult.nativeDone = true;
+			var oDeferred = new $.Deferred();
+			Promise.resolve().then(() => {
+			  setTimeout(() => oDeferred.resolve(), 200);
+			});
+			return oDeferred.promise().then(function () {
+			  assert.ok(mResult.jQueryDone, "Should wait for native promise to complete after jQueryPromise");
+			  mResult.nativeDone = true;
 			});
 		};
 
