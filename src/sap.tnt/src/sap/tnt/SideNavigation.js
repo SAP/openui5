@@ -73,7 +73,7 @@ sap.ui.define([
 				 * Specifies whether the control should have own container styling, such as a box-shadow and border, or not.
 				 * <b>Note:</b> This property has to be set to <code>Plain</code> when the control is used inside a <code>sap.m.ResponsivePopover</code> to achieve a Side Navigation Overlay Mode.
 				 * @since 1.134
-				 * @experimental
+				 * @experimental Since 1.134
 				 */
 				design: { type: "sap.tnt.SideNavigationDesign", group: "Appearance", defaultValue: SideNavigationDesign.Decorated }
 			},
