@@ -145,9 +145,12 @@ html[dir=rtl] {
 	}
 }
 
+.sapUiTableGroupHeaderRow > .sapUiTableCell:focus::before {
+	z-index: 2;
+}
+
 .sapUiTableGroupHeaderRow > .sapUiTableCell.sapUiTableCellFirst:focus::before,
 .sapUiTableGroupMode .sapUiTableRowIndented > .sapUiTableCell.sapUiTableCellFirst:focus::before {
-	z-index: 2;
 	left: var(--CalculatedGroupIndent, 0);
 }
 
