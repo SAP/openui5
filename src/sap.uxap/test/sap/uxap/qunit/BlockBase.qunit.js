@@ -197,18 +197,11 @@ function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, O
 					sPageProperties = objectToString(oOptions.pageProperties),
 					sBlockProperties = objectToString(oOptions.blockProperties);
 
-				Controller.extend("myapp.controller.Main", {
-					onInit: function () {
-						this.getView().setModel(new JSONModel(oJSONModelData), "viewModel");
-					}
-				});
-
 				return XMLView.create({
 					definition: `<mvc:View
 						xmlns:mvc="sap.ui.core.mvc"
 						xmlns="sap.uxap"
 						xmlns:opblock="sap.uxap.testblocks.objectpageblock"
-						controllerName="myapp.controller.Main"
 						height="100%">
 						<ObjectPageLayout ${sPageProperties}>
 							<sections>
@@ -222,6 +215,7 @@ function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, O
 					</mvc:View>`
 				}).then(function(oView) {
 					this.oView = oView;
+					this.oView.setModel(new JSONModel(oJSONModelData), "viewModel");
 					return oView;
 				}.bind(this));
 			};

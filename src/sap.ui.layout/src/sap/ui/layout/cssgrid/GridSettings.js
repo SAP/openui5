@@ -55,7 +55,7 @@ sap.ui.define([
 				/**
 				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-gap MDN web docs: grid-gap}
 				 */
-				gridGap: { type: "sap.ui.layout.cssgrid.CSSGridGapShortHand", defaultValue: "" },
+				gridGap: { type: "sap.ui.core.CSSGapShortHand", defaultValue: "" },
 
 				/**
 				 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows MDN web docs: grid-auto-rows}

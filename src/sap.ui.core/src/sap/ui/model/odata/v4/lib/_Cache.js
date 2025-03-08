@@ -3781,6 +3781,9 @@ sap.ui.define([
 		// types are needed for selecting the key properties, see #getQueryString called by
 		// #getResourcePathWithQuery
 		const mTypeForMetaPath = await this.fetchTypes();
+		// This function resolves at no defined point in time as it is not (yet) relevant for the
+		// function caller. This may changes in the future. The completion of each separate property
+		// can be observed with the below oReadRange.promise
 		this.aSeparateProperties.forEach(async (sProperty) => {
 			let fnResolve;
 			let fnReject;
@@ -3799,8 +3802,8 @@ sap.ui.define([
 			oReadRange.promise.catch(() => { /* avoid "Uncaught (in promise)" */ });
 			try {
 				this.mSeparateProperty2ReadRequests[sProperty].push(oReadRange);
-				const oResult = await this.oRequestor.request("GET",
-					this.getResourcePathWithQuery(iStart, iEnd, sProperty),
+				const sReadUrl = this.getResourcePathWithQuery(iStart, iEnd, sProperty);
+				const oResult = await this.oRequestor.request("GET", sReadUrl,
 					this.oRequestor.lockGroup("$single", this));
 
 				let bMainFailed;
@@ -3825,8 +3828,13 @@ sap.ui.define([
 					const sPredicate = _Helper.getPrivateAnnotation(oSeparateData, "predicate");
 					const oElement = this.aElements.$byPredicate[sPredicate];
 					if (oElement) {
-						_Helper.updateSelected(this.mChangeListeners, sPredicate, oElement,
-							oSeparateData, [sProperty]);
+						if (oElement["@odata.etag"] === oSeparateData["@odata.etag"]) {
+							_Helper.updateSelected(this.mChangeListeners, sPredicate, oElement,
+								oSeparateData, [sProperty]);
+						} else {
+							Log.error(`ETag changed: ${this.sResourcePath + sPredicate}`,
+								sReadUrl, sClassName);
+						}
 					}
 				}
 				fnResolve();

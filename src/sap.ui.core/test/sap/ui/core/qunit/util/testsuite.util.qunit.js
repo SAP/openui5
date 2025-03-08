@@ -5,10 +5,22 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/UTILS",
 		defaults: {
 			qunit: {
+				versions: {
+					"2.18": {
+						module: "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18",
+						css: "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.css"
+					}
+				},
 				version: 2,
 				reorder: false
 			},
 			sinon: {
+				versions: {
+					"14.0": {
+						module: "test-resources/sap/ui/core/qunit/thirdparty/sinon-14.0",
+						bridge: "sap/ui/qunit/sinon-qunit-bridge"
+					}
+				},
 				version: 4,
 				qunitBridge: true,
 				useFakeTimers: false
@@ -110,6 +122,12 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			SyncPromise: {
 				coverage: {
 					only: "sap/ui/base/SyncPromise"
+				},
+				qunit: {
+					version: "2.18"
+				},
+				sinon: {
+					version: "14.0"
 				}
 			},
 
@@ -119,12 +137,24 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				module: [
 					"test-resources/sap/ui/test/qunit/TestUtils.qunit"
-				]
+				],
+				qunit: {
+					version: "2.18"
+				},
+				sinon: {
+					version: "14.0"
+				}
 			},
 
 			XMLPreprocessor: {
 				coverage: {
 					only: "sap/ui/core/util/XMLPreprocessor"
+				},
+				qunit: {
+					version: "2.18"
+				},
+				sinon: {
+					version: "14.0"
 				}
 			}
 		}

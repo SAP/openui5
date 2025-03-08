@@ -765,18 +765,6 @@ sap.ui.define([
 	 );
 
 	 /**
-	  * @classdesc A string type that represents a short hand CSS grid gap.
-	  *
-	  * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/gap}
-	  * @since 1.60.0
-	  * @extends sap.ui.core.CSSSizeShortHand
-	  * @public
-	  * @namespace
-	  * @final
-	  */
-	 thisLib.cssgrid.CSSGridGapShortHand = DataType.createType("sap.ui.layout.cssgrid.CSSGridGapShortHand", {}, DataType.getType("sap.ui.core.CSSGapShortHand"));
-
-	 /**
 	  * @classdesc A string type that represents one or two grid lines. Used to define the position and size of a single grid item.
 	  *
 	  * Valid values:
