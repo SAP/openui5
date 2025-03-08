@@ -7,11 +7,9 @@
 		id="respPopover"
 		placement="Bottom"
 		verticalScrolling="false"
-		ariaDescribedBy="sn-description"
 		ariaLabelledBy="sn-label">
 
 		<core:InvisibleText id="sn-label" text="Main navigation"/>
-		<core:InvisibleText id="sn-description" text="This is the main navigation. It contains navigation items that may have child items. Activating a navigation item opens a new page or dialog within this browser window or gives access to the child items. Navigation items can be grouped, too."/>
 
 		<tnt:SideNavigation id="sideNav" width="17rem" itemSelect=".onItemSelect" selectedKey="home" design="Plain">
 			<tnt:NavigationList>

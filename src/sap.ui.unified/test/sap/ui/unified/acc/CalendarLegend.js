@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Label",
 	"sap/m/Page",
+	"sap/m/ScrollContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateRange",
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/library"
-], function(App, Label, Page, VerticalLayout, Calendar, DateRange, DateTypeRange, CalendarLegend, CalendarLegendItem, UI5Date, coreLibrary) {
+], function(App, Label, Page, ScrollContainer, VerticalLayout, Calendar, DateRange, DateTypeRange, CalendarLegend, CalendarLegendItem, UI5Date, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -65,13 +66,17 @@ sap.ui.define([
 		specialDates: oSpecialDate
 	});
 
-	var oPageLayout = new VerticalLayout({
+	var oPageLayout = new ScrollContainer({
 		content: [
-			oSingleDaySelectionLabel.addStyleClass("sapUiSmallMarginTopBottom"),
-			oSingleDaySelectionCalendar,
-			oCalendarLegend
+			new VerticalLayout({
+				content: [
+					oSingleDaySelectionLabel.addStyleClass("sapUiSmallMarginTopBottom"),
+					oSingleDaySelectionCalendar,
+					oCalendarLegend
+				]
+			}).addStyleClass("sapUiContentPadding")
 		]
-	}).addStyleClass("sapUiContentPadding");
+	});
 
 	var oApp = new App();
 	var oPage = new Page({
