@@ -5,13 +5,13 @@
 /* eslint-disable quotes */
 /* global QUnit,sinon */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/gherkin/opa5TestHarness",
 	"sap/ui/test/gherkin/StepDefinitions",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
 	"sap/m/Label",
-	"gherkin/testHarnessTests"
+	"./testHarnessTests"
 ], function(opa5TestHarness, StepDefinitions, opaTest, Opa5, Label, testHarnessTests) {
 	'use strict';
 
