@@ -1,3 +1,4 @@
+/* ui5lint-disable prefer-test-starter -- test wants to control bootstrap and therefore can't use tst starter */
 /* global QUnit */
 sap.ui.define(["sap/ui/Device"], function (Device) {
 	"use strict";
