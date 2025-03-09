@@ -1,3 +1,4 @@
+/*ui5lint-disable prefer-test-starter -- tests minimal setup for qunitPause and therefore can't use test starter */
 /*global QUnit */
 QUnit.config.autostart = false;
 
