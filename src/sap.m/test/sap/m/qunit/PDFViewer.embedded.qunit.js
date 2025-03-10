@@ -290,11 +290,13 @@ sap.ui.define([
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		var getHeaderInfoStub = sinon.spy(oPdfViewer, "_getHeaderInfo");
+		var oErrorEvent = sinon.spy(oPdfViewer, "_fireErrorEvent");
 		oPdfViewer._onLoadListener({});
 
 		TestUtils.wait(1000)()
 			.then(function()  {
 				assert.ok(getHeaderInfoStub.calledOnce, "getHeaderInfo should be invoked");
+				assert.ok(oErrorEvent.calledOnce, "Event is called");
 				getHeaderInfoStub.restore();
 				fnDone();
 			});
