@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/Device",
 	"sap/ui/test/utils/nextUIUpdate",
-	"my/hints/lib/MyControl"
+	"my/hints/lib/MyControl",
+	"sap/ui/qunit/QUnitUtils"
 ], function(
 	Component,
 	ShortcutHintsMixin,
 	Fragment,
 	Device,
 	nextUIUpdate,
-	MyControl
+	MyControl,
+	qutils
 ) {
 	"use strict";
 
@@ -43,6 +45,7 @@ sap.ui.define([
 				"The correct DOM node is registered to show a shortcut");
 		});
 	});
+
 	QUnit.test("ShortcutHintsMixin instances is not created for mobile phone", function(assert){
 		// arrange
 		var oMyControl = new MyControl({ myEvent: function() { } });
@@ -306,6 +309,33 @@ sap.ui.define([
 				"no native tooltip");
 			assert.equal(oButton3.getDomRef().getAttribute('aria-keyshortcuts'),
 				"Ctrl+S", "has hint accessibility");
+		});
+	});
+
+	QUnit.test("mouseover / mouseout adding / removing empty native tooltip", function(assert) {
+		return waitForViewReady().then(async function(oView) {
+			var oButton1 = oView.byId("b1"); //icon-only
+			var oButton2 = oView.byId("b2"); //text with user tooltip
+			var oButton3 = oView.byId("b3"); //icon-only with user tooltip
+
+			//render
+			oView.placeAt('qunit-fixture');
+			await nextUIUpdate();
+
+			qutils.triggerEvent("mouseover", oButton1.getId());
+			assert.equal(oButton1.getDomRef().getAttribute('title'), "");
+			qutils.triggerEvent("mouseout", oButton1.getId());
+			assert.ok(!oButton1.getDomRef().getAttribute('title'), "title attribute was removed onmouseout");
+
+			qutils.triggerEvent("mouseover", oButton2.getId());
+			assert.equal(oButton2.getDomRef().getAttribute('title'), "");
+			qutils.triggerEvent("mouseout", oButton2.getId());
+			assert.ok(!oButton2.getDomRef().getAttribute('title'), "title attribute was removed onmouseout");
+
+			qutils.triggerEvent("mouseover", oButton3.getId());
+			assert.equal(oButton3.getDomRef().getAttribute('title'), "");
+			qutils.triggerEvent("mouseout", oButton3.getId());
+			assert.ok(!oButton3.getDomRef().getAttribute('title'), "title attribute was removed onmouseout");
 		});
 	});
 });
