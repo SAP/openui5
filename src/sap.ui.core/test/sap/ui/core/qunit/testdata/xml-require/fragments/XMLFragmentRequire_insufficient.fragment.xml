@@ -1,6 +1,6 @@
 <!--
-	This fragment only require sap/m/MessageBox and make it available with
-	variable Box. The "badButton" tries to use the "Toast" variable which
+	This fragment only requires sap/m/MessageBox and makes it available with
+	variable Box. The "badButton" tries to use the "Toast" variable instead, which
 	is not available for this fragment.
 
 	Processing this fragment should throw an error regarding the missing
@@ -12,6 +12,7 @@
 	<Text id="xmlDialogTxt" text="test" />
 	<buttons>
 		<Button id="button1" text="Close" press="Box.show('Do you really want to close?')" />
+		<!-- ui5lint-disable-next-line no-globals // global 'Toast' is used as true positive in test -->
 		<Button id="button2" text="Toast" press="Toast.show('This is a toast')" />
 	</buttons>
 </Dialog>

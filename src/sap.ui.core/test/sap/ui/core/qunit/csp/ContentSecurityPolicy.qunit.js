@@ -28,20 +28,18 @@ sap.ui.define([
 				// the browser completely ignores the header and won't report violations
 				if (sCsp || (sCspReportOnly && sCspReportOnly.indexOf("report-uri") !== -1)) {
 					// Check for reported CSP violations
-					Core.ready().then(function() {
-						assert.ok(window["ui5-core-csp-violations"].length === 0,
-							"Found " + window["ui5-core-csp-violations"].length + " CSP violation(s)"
+					assert.ok(window["ui5-core-csp-violations"].length === 0,
+						"Found " + window["ui5-core-csp-violations"].length + " CSP violation(s)"
+					);
+					window["ui5-core-csp-violations"].forEach(function(oViolation) {
+						assert.ok(
+							false,
+							oViolation.sourceFile + ":" + oViolation.lineNumber + ":" +
+							oViolation.columnNumber + ": " +
+							oViolation.effectiveDirective + " - " + oViolation.blockedURI
 						);
-						window["ui5-core-csp-violations"].forEach(function(oViolation) {
-							assert.ok(
-								false,
-								oViolation.sourceFile + ":" + oViolation.lineNumber + ":" +
-								oViolation.columnNumber + ": " +
-								oViolation.effectiveDirective + " - " + oViolation.blockedURI
-							);
-						});
-						done();
 					});
+					done();
 				} else {
 					// Fail test as headers are not set as required
 					oReq.abort();
