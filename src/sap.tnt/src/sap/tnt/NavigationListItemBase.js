@@ -336,6 +336,12 @@ sap.ui.define([
 
 		if (this.getEnabled() && !(oEvent.srcControl.isA("sap.ui.core.Icon")) && !this._isOverflow && !(!this.getNavigationList().getExpanded() && this.getItems().length)) {
 			this._firePress(oParams);
+
+			const oNavList = this.getNavigationList();
+			if (oNavList) {
+				oNavList._itemPressHandler(oParams);
+			}
+
 			oEvent.stopPropagation();
 		}
 
