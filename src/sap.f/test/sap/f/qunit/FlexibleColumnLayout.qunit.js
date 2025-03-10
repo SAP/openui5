@@ -1078,44 +1078,12 @@ function (
 		// arrange
 		var fnDone = assert.async();
 
-		this.oFCL = oFactory.createFCL({
-			layout: LT.TwoColumnsBeginExpanded
-		});
-
 		// act
 		this.oFCL.setLayout(LT.EndColumnFullScreen);
 
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
 			// assert
 			assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
-			fnDone();
-		}.bind(this));
-	});
-
-	//BCP: 1980006195
-	QUnit.test("Columns with width 0 should have the sapFFCLColumnHidden class applied", function(assert){
-		// arrange
-		var fnDone = assert.async();
-
-		this.oFCL = oFactory.createFCL({
-			layout: LT.MidColumnFullScreen
-		});
-
-
-		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
-			// assert
-			assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-			assert.ok(this.oFCL._$columns["begin"].hasClass('sapFFCLColumnHidden'));
-			assert.notOk(this.oFCL._$columns["mid"].hasClass('sapFFCLColumnHidden'));
-			assert.ok(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'));
-
-			// act
-			this.oFCL._afterColumnResize("end", 100);
-
-			// assert
-			assert.notOk(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'),
-				"When width is updated, 'sapFFCLColumnHidden' class should be removed");
-
 			fnDone();
 		}.bind(this));
 	});
@@ -1139,11 +1107,41 @@ function (
 		oConfiguration.setAnimationMode(sOriginalAnimationMode);
 	});
 
+	QUnit.module("Column without width");
+
+	//BCP: 1980006195
+	QUnit.test("Columns with width 0 should have the sapFFCLColumnHidden class applied", function(assert){
+		// arrange
+		var fnDone = assert.async();
+		this.oFCL = oFactory.createFCL({
+			layout: LT.MidColumnFullScreen
+		});
+
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
+			// assert
+			assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
+			assert.ok(this.oFCL._$columns["begin"].hasClass('sapFFCLColumnHidden'));
+			assert.notOk(this.oFCL._$columns["mid"].hasClass('sapFFCLColumnHidden'));
+			assert.ok(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'));
+
+			// act
+			this.oFCL._afterColumnResize("end", 100);
+
+			// assert
+			assert.notOk(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'),
+				"When width is updated, 'sapFFCLColumnHidden' class should be removed");
+
+			this.oFCL.destroy();
+			fnDone();
+		}.bind(this));
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
 		},
 		afterEach: function () {
+			this.oFCL.destroy();
 			this.oFCL = null;
 		}
 	});
