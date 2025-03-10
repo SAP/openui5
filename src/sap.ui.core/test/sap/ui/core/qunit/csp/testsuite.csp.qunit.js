@@ -11,7 +11,8 @@ sap.ui.define(function() {
 			},
 			qunit: {
 				version: 2
-			}
+			},
+			sinon: false
 		},
 		tests: {
 			ContentSecurityPolicy: {

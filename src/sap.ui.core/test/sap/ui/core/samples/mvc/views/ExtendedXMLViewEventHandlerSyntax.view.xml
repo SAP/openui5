@@ -1,14 +1,19 @@
 <mvc:View controllerName="mvctest.controller.ExtendedXMLViewEventHandlerSyntax"
-		xmlns="sap.m" xmlns:layout="sap.ui.layout" xmlns:core="sap.ui.core"
-		xmlns:mvc="sap.ui.core.mvc">
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		core:require="{
+			Log: 'sap/base/Log',
+			Toast: 'sap/m/MessageToast'
+		}">
 
 	<Button
-		text="Zero-code console.log (press and check!)"
-		press="console.log('### This log statement was written without any controller code. ###')" />
+		text="Zero-code logging (press and check!)"
+		press="Log.error('### This log statement was written without any controller code. ###')" />
 
 	<Button
-		text="Global function"
-		press="sap.m.MessageToast.show('Directly shown from View')" />
+		text="Imported function"
+		press="Toast.show('Directly shown from View')" />
 
 	<Button
 		text="Function in Extension with parameter"
