@@ -7,7 +7,7 @@
 /* Variables */
 /* ========================================================================== */
 
-@_sap_m_IconTabBar_TextColor: var(--sapGroup_TitleTextColor);
+@_sap_m_IconTabBar_TextColor: var(--sapTab_TextColor);
 @_sap_m_IconTabBar_TextShadow: @sapUiShadowText;
 @_sap_m_IconTabBar_DisabledOpacity: var(--sapContent_DisabledOpacity);
 @_sap_m_IconTabBar_Separator_Icon: var(--sapContent_NonInteractiveIconColor);
@@ -16,12 +16,11 @@
 @_sap_m_IconTabBar_Arrow_SubItem_Left_Padding: 0.375rem;
 @_sap_m_IconTabBar_More_Button_Border_Radius: inherit;
 @_sap_m_IconTabBar_HeaderMinHeight: 2.75rem;
-@_sap_m_IconTabBar_TextHoverColor: var(--sapContent_Selected_ForegroundColor);
+@_sap_m_IconTabBar_TextHoverColor: var(--sapTab_Selected_TextColor);
 
 /* ==================== Cozy size ==================== */
 
 /* Content arrow */
-@_sap_m_IconTabBar_ContentArrowBorderWidth: 0.125rem;
 @_sap_m_IconTabBar_ContentArrowHeight: 0.625rem;
 
 /* Inline mode */
@@ -146,7 +145,6 @@
 
 /* =========== Shell =========== */
 @_sap_m_IconTabBar_ShellHeaderShadow: var(--sapShell_Shadow);
-@_sap_m_IconTabBar_ShellContentArrowHeight: 0.1875rem;
 @_sap_m_IconTabBar_ShellTextColor: var(--sapShell_Navigation_TextColor);
 @_sap_m_IconTabBar_ShellSelectedTextColor: var(--sapShell_Navigation_Selected_TextColor);
 @_sap_m_IconTabBar_ShellButtonOutlineColor: contrast(@sapUiShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapUiContentContrastTextThreshold);
@@ -580,9 +578,12 @@
 /* ------------------------------------------------ */
 
 .sapMITBContentArrow {
-	border-bottom: @_sap_m_IconTabBar_ContentArrowBorderWidth solid transparent;
 	box-sizing: border-box;
 	height: 1rem;
+	
+	&::after {
+		height: var(--sapTab_Selected_Indicator_Dimension);
+	}
 }
 
 /* ------------------------------------------------ */
@@ -1381,7 +1382,7 @@ html[dir=rtl] {
 
 	.sapMITBSelected .sapMITBContentArrow::after {
 		background: var(--sapShell_Navigation_SelectedColor);
-		height: @_sap_m_IconTabBar_ShellContentArrowHeight;
+		height: var(--sapTab_Selected_Indicator_Dimension);
 	}
 
 	.sapMITBFilterDefault {
