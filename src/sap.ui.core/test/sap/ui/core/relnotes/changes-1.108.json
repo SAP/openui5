@@ -692,5 +692,20 @@
         "text": " sap/base/util/now: Migrate performance.timing"
       }
     ]
+  },
+  "1.108.40": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "d343c55e755fd50c6369d39917d68232df73319b",
+        "type": "FIX",
+        "text": " IconPool: Add more mime-type mappings for MS Excel files"
+      },
+      {
+        "id": "7c5e658c8f90aff5f9bc5bedf1aa7d461c43b3e7",
+        "type": "FIX",
+        "text": " SAP-icons: fix icon 'eam-work-order' in v5"
+      }
+    ]
   }
 }

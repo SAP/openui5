@@ -1831,5 +1831,30 @@
         "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
       }
     ]
+  },
+  "1.108.40": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "61f31303fcbdfcfc9b6b5e2e74df7937e252526c",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      },
+      {
+        "id": "9d753e317f5a59d59f5776846f7463c853057e59",
+        "type": "FIX",
+        "text": " ColumnResizer: Resizer should not be visible when table is busy"
+      },
+      {
+        "id": "7c5e658c8f90aff5f9bc5bedf1aa7d461c43b3e7",
+        "type": "FIX",
+        "text": " SAP-icons: fix icon 'eam-work-order' in v5"
+      },
+      {
+        "id": "fef808f62104497a17c88a106d607ab32b9155e0",
+        "type": "FIX",
+        "text": " sap.m.Input: preserve value after rerendering of password field"
+      }
+    ]
   }
 }

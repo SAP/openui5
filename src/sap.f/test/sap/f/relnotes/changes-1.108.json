@@ -285,5 +285,15 @@
         "text": " sap.f.DynamicPage: Fixed failure to expand the header"
       }
     ]
+  },
+  "1.108.40": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "6d3345606dc4eb43f369cb231c34eabfdd4e1327",
+        "type": "FIX",
+        "text": " sap.m.DynamicPage: blank space on snap is no longer visible"
+      }
+    ]
   }
 }

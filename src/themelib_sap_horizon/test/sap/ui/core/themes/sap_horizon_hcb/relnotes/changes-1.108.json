@@ -551,5 +551,15 @@
         "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used"
       }
     ]
+  },
+  "1.108.40": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "7c5e658c8f90aff5f9bc5bedf1aa7d461c43b3e7",
+        "type": "FIX",
+        "text": " SAP-icons: fix icon 'eam-work-order' in v5"
+      }
+    ]
   }
 }
