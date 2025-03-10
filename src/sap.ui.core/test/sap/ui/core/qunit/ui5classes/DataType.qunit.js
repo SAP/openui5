@@ -941,7 +941,7 @@ sap.ui.define([
 		assert.ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
 		assert.ok(type instanceof DataType, "type is a DataType");
 		assert.equal(type.getName(), 'sap.ui.core.Popup.Dock', "type name");
-		assert.equal(type.getDefaultValue(), "begin top", "default value");
+		assert.equal(type.getDefaultValue(), "BeginTop", "default value");
 		assert.equal(type.getBaseType().getName(), "string", "base type is string");
 		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
 		assert.ok(type.isEnumType(), "type should be marked as enum");

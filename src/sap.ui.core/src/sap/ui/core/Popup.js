@@ -409,91 +409,91 @@ sap.ui.define([
 		 * @public
 		 * @type {string}
 		 */
-		BeginTop      : "begin top",
+		BeginTop      : "BeginTop",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		BeginCenter   : "begin center",
+		BeginCenter   : "BeginCenter",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		BeginBottom   : "begin bottom",
+		BeginBottom   : "BeginBottom",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		LeftTop      : "left top",
+		LeftTop      : "LeftTop",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		LeftCenter   : "left center",
+		LeftCenter   : "LeftCenter",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		LeftBottom   : "left bottom",
+		LeftBottom   : "LeftBottom",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		CenterTop    : "center top",
+		CenterTop    : "CenterTop",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		CenterCenter : "center center",
+		CenterCenter : "CenterCenter",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		CenterBottom : "center bottom",
+		CenterBottom : "CenterBottom",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		RightTop     : "right top",
+		RightTop     : "RightTop",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		RightCenter  : "right center",
+		RightCenter  : "RightCenter",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		RightBottom  : "right bottom",
+		RightBottom  : "RightBottom",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		EndTop     : "end top",
+		EndTop     : "EndTop",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		EndCenter  : "end center",
+		EndCenter  : "EndCenter",
 
 		/**
 		 * @public
 		 * @type {string}
 		 */
-		EndBottom  : "end bottom"
+		EndBottom  : "EndBottom"
 	};
 
 	DataType.registerEnum("sap.ui.core.Popup.Dock", Popup.Dock);
@@ -1547,17 +1547,61 @@ sap.ui.define([
 	};
 
 
-	Popup.prototype._createPosition = function(my, at, of, offset, collision, within) {
-		// check if new jQuery-UI (>1.9) offset is used
-		var bNewOffset = false;
-		if (my && (my.indexOf("+") >= 0 || my.indexOf("-") >= 0)) {
-			bNewOffset = true;
-			if (offset && offset != "0 0") {
-				Log.warning("offset used in my and in offset, the offset value will be ignored", "sap.ui.core.Popup", "setPosition");
+	function convertDockEnum(sValue) {
+		const rFormat = /^([A-Z][a-z]+){2}$/;
+
+		if (rFormat.test(sValue)) {
+			return sValue.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+		} else {
+			return sValue;
+		}
+	}
+
+	function createPositionParam(oPosition) {
+		if (!jQuery.ui.version) {
+			// only jquery-ui-position.js loaded, not jquery-ui-core.js, so no version info available
+			if (Popup._bNewOffset == null) {
+				// check whether the jQuery UI version is new (no more offset parameter) or not
+				Popup._bNewOffset = true;
+				var $Div = jQuery(document.createElement("div"));
+				$Div.position({
+					of: window,
+					using: function(position, data) {
+						// the data parameter to the using callback was introduced together with the replacement for 'offset'
+						Popup._bNewOffset = (data !== undefined);
+					}
+				});
 			}
-			offset = null;
 		}
 
+		const oPositionParam = Object.assign({}, oPosition);
+
+		if (typeof oPositionParam.my === "string") {
+			oPositionParam.my = convertDockEnum(oPositionParam.my);
+		}
+
+		if (typeof oPositionParam.at === "string") {
+			oPositionParam.at = convertDockEnum(oPositionParam.at);
+		}
+
+		if (Popup._bNewOffset || Version(jQuery.ui.version).compareTo("1.8.23") > 0) {
+			if (oPositionParam.offset && oPositionParam.offset != "0 0") {
+				// convert offset to my
+				const aMy = oPositionParam.my.split(" ");
+				const aOffset = oPositionParam.offset.split(" ");
+				var aSign = [parseInt(aOffset[0]) < 0 ? "" : "+", parseInt(aOffset[1]) < 0 ? "" : "+"]; // no "-" sign because already in number of offset
+
+				oPositionParam.my = aMy[0] + aSign[0] + aOffset[0] + " " + aMy[1] + aSign[1] + aOffset[1];
+				delete oPositionParam.offset;
+			}
+		}
+
+		return oPositionParam;
+	}
+
+
+	Popup.prototype._createPosition = function(my, at, of, offset, collision, within) {
+		// check if new jQuery-UI (>1.9) offset is used
 		var oPosition = extend({}, this._oDefaultPosition, {
 			my: my || this._oDefaultPosition.my, // to use default my if empty string
 			at: at || this._oDefaultPosition.at, // to use default at if empty string
@@ -1572,63 +1616,7 @@ sap.ui.define([
 
 		this._bOwnWithin = !!within;
 
-		if ( !jQuery.ui.version) {
-			// only jquery-ui-position.js loaded, not jquery-ui-core.js, so no version info available
-			if ( Popup._bNewOffset == null ) {
-				// check whether the jQuery UI version is new (no more offset parameter) or not
-				Popup._bNewOffset = true;
-				var $Div = jQuery(document.createElement("div"));
-				$Div.position({
-					of: window,
-					using: function(position, data) {
-						// the data parameter to the using callback was introduced together with the replacement for 'offset'
-						Popup._bNewOffset = (data !== undefined);
-					}
-				});
-			}
-		}
-
-		var aMy = [];
-		var aOffset = [];
-
-		if ( Popup._bNewOffset || Version(jQuery.ui.version).compareTo("1.8.23") > 0) {
-			if (offset && offset != "0 0") {
-				// convert offset to my
-				aMy = oPosition.my.split(" ");
-				aOffset = offset.split(" ");
-				var aSign = [parseInt(aOffset[0]) < 0 ? "" : "+", parseInt(aOffset[1]) < 0 ? "" : "+"]; // no "-" sign because already in numer of offset
-
-				oPosition.my = aMy[0] + aSign[0] + aOffset[0] + " " + aMy[1] + aSign[1] + aOffset[1];
-				oPosition.offset = null;
-			}
-		} else if (bNewOffset) {
-			// new offset used with old jQuery version -> convert into offset property
-			aMy = oPosition.my.split(" ");
-			aOffset = ["",""];
-			var iIndex = aMy[0].indexOf("+");
-			if (iIndex < 0) {
-				iIndex = aMy[0].indexOf("-");
-			}
-			if (iIndex >= 0) {
-				aOffset[0] = aMy[0].slice(iIndex);
-				aMy[0] = aMy[0].slice(0, iIndex);
-			}
-
-			iIndex = aMy[1].indexOf("+");
-			if (iIndex < 0) {
-				iIndex = aMy[1].indexOf("-");
-			}
-			if (iIndex >= 0) {
-				aOffset[1] = aMy[1].slice(iIndex);
-				aMy[1] = aMy[1].slice(0, iIndex);
-			}
-
-			oPosition.my = aMy[0] + " " + aMy[1];
-			oPosition.offset = aOffset[0] + " " + aOffset[1];
-		}
-
 		return oPosition;
-
 	};
 
 	Popup.prototype._getPositionOffset = function() {
@@ -1671,8 +1659,11 @@ sap.ui.define([
 		var bRtl = Localization.getRTL();
 		var $Ref = this._$();
 
+		// convert the oPosition to the jquery format
+		const oPositionParam = createPositionParam(oPosition);
+
 		if ($Ref.length) {
-			var oAt = oPosition.at;
+			var oAt = oPositionParam.at;
 			var oDomRef = $Ref.get(0);
 
 			if (typeof (oAt) === "string") {
@@ -1681,8 +1672,8 @@ sap.ui.define([
 				// reset the 'left' and 'right' position CSS to avoid changing the DOM size by setting both 'left' and 'right'.
 				oDomRef.style.left = "";
 				oDomRef.style.right = "";
-				$Ref.position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
-				this._fixPositioning(oPosition, bRtl);
+				$Ref.position(this._resolveReference(this._convertPositionRTL(oPositionParam, bRtl))); // must be visible, so browsers can calculate its offset!
+				this._fixPositioning(oPositionParam, bRtl);
 			} else if (CSSSize.isValid(oAt.left) && CSSSize.isValid(oAt.top)) {
 				$Ref.css({
 					"left" : oAt.left,
@@ -1711,7 +1702,7 @@ sap.ui.define([
 
 			// remember given position for later redraws
 			this._oLastPosition = oPosition;
-			this._oLastOfRect = this._calcOfRect(oPosition.of);
+			this._oLastOfRect = this._calcOfRect(oPositionParam.of);
 		}
 	};
 

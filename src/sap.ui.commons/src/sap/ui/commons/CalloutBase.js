@@ -21,13 +21,6 @@ sap.ui.define([
 	function(jQuery, library, TooltipBase, CalloutBaseRenderer, Popup, ControlEvents, KeyCodes, Configuration) {
 	"use strict";
 
-
-
-	// shortcut for sap.ui.core.Popup.Dock
-	var Dock = Popup.Dock;
-
-
-
 	/**
 	 * Constructor for a new CalloutBase.
 	 *
@@ -106,7 +99,7 @@ sap.ui.define([
 		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
 		// override the default position and offset of TooltipBase:
-		this.setPosition(Dock.BeginBottom, Dock.BeginTop);
+		this.setPosition("begin bottom", "begin top");
 
 		// listen to global events outside of the callout to close it when needed
 		this.fAnyEventHandlerProxy = jQuery.proxy(this.onAnyEvent, this);
@@ -614,8 +607,8 @@ sap.ui.define([
 	 */
 	CalloutBase.prototype.setPosition = function(myPosition, atPosition){
 
-		var myPos = myPosition || Dock.BeginBottom;
-		var atPos = atPosition || Dock.BeginTop;
+		var myPos = myPosition || "begin bottom";
+		var atPos = atPosition || "begin top";
 
 		var myX = 0, myY = 0, atX = 0, atY = 0, gap = 5;
 
