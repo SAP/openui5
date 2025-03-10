@@ -2580,6 +2580,14 @@ sap.ui.define([
 		return this;
 	};
 
+
+	/**
+	 * Set the appointment reduced height property to the appointments in the calendar
+	 * @param {boolean} bAppointmentsReducedHeight - if set to true, the appointments will have a reduced height
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 * @deprecated Since version 1.119. Please use the <code>appointmentHeight</code> with value "Automatic" property instead.
+	 */
 	PlanningCalendar.prototype.setAppointmentsReducedHeight = function(bAppointmentsReducedHeight){
 
 		this.setProperty("appointmentsReducedHeight", bAppointmentsReducedHeight, true);
@@ -3935,7 +3943,7 @@ sap.ui.define([
 		/**
 		 * @deprecated As of version 1.119
 		 */
-		oRowTimeline.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
+		oRowTimeline.setProperty("appointmentsReducedHeight", this.getAppointmentsReducedHeight());
 		oRowTimeline.setAppointmentRoundWidth(this.getAppointmentRoundWidth());
 		oRowTimeline.setLegend(this.getLegend());
 		oRowTimeline.setAppointmentsVisualization(this.getAppointmentsVisualization());
