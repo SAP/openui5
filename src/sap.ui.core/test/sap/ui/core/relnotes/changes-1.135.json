@@ -1,0 +1,17 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "80bf577585bc6578c3a03317cc7c243ee5efd058",
+        "type": "FIX",
+        "text": " sap.ui.core.ShortcutHintsMixin: shows correctly the tooltip on mouseover"
+      },
+      {
+        "id": "5473591e67f06ab2a5212fa26bec8be24def3232",
+        "type": "FIX",
+        "text": " sap.ui.test: Fix failing test on 2.0"
+      }
+    ]
+  }
+}

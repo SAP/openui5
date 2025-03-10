@@ -1,0 +1,12 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "b56e75216ddfbca9d91c5ff1d2c03cbdc4157338",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Header padding fixed"
+      }
+    ]
+  }
+}

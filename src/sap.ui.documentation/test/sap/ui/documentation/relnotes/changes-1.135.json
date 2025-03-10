@@ -1,0 +1,12 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "5cbe5af5cb150c425cc1b21c5697b5f4acd454b1",
+        "type": "FIX",
+        "text": " Demo Kit: Datatables improved"
+      }
+    ]
+  }
+}

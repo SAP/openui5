@@ -1,0 +1,22 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "b56e75216ddfbca9d91c5ff1d2c03cbdc4157338",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Header padding fixed"
+      },
+      {
+        "id": "5549c5c57536cd74e8ec3f477c2993cb0ed1b0ce",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Incorrect selectedSection prevented"
+      },
+      {
+        "id": "e5dcbc60e8c5fb5f18b42a91db65192bd48fe440",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Fix failing QUnit on 2.0"
+      }
+    ]
+  }
+}

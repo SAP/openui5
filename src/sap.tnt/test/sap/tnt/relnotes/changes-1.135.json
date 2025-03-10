@@ -1,0 +1,17 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "ce673c5ba07b3a84b0313fe82cbefe6abe0b28cc",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: documentation is adjusted for Overlay mode sample"
+      },
+      {
+        "id": "397fee52c4e44a435a4d3070033bf440137ef29f",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Selected state without icon is fixed"
+      }
+    ]
+  }
+}
