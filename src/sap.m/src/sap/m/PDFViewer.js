@@ -427,7 +427,7 @@ sap.ui.define([
 							1. If embed tag is present.
 							2. If ContentType = "application/pdf" / "application/x-google-chrome-pdf".
 							3. If Browser PDFPlugin is enabled.
-						else the ErrorEvent will be triggered, It will also be triggered if an invalid path is proveded as src for the iframe and LoadingError IllustratedMessage is displayed.
+						else the ErrorEvent will be triggered, It will also be triggered if an invalid path is proveded as src for the iframe and LoadingError MessagePage is displayed.
 					*/
 					if (bContinue && PDFViewerRenderer._isSupportedMimeType(sCurrentContentType) && PDFViewerRenderer._isPdfPluginEnabled()) {
 						this._fireLoadedEvent();
@@ -442,19 +442,19 @@ sap.ui.define([
 						/*	LoadedEvent will be triggered if all the below criteria matches
 								1. If ContentType = "application/pdf" / "application/x-google-chrome-pdf".
 								2. If Browser PDFPlugin is enabled.
-							else the ErrorEvent will be triggered and LoadingError IllustratedMessage is displayed.
+							else the ErrorEvent will be triggered and LoadingError MessagePage is displayed.
 						*/
 						if (PDFViewerRenderer._isSupportedMimeType(sCurrentContentType) && PDFViewerRenderer._isPdfPluginEnabled()) {
 							this._fireLoadedEvent();
 						} else {
 							this._fireErrorEvent(oEvent.target);
 						}
-					}).catch(function(e) {
-						//If Head Request fails ErrorEvent will be triggered and LoadingError IllustratedMessage is displayed.
+					}.bind(this)).catch(function(e) {
+						//If Head Request fails ErrorEvent will be triggered and LoadingError MessagePage is displayed.
 						this._fireErrorEvent(oEvent.target);
 						Log.fatal(e);
 						this.fireEvent("sourceValidationFailed", {}, true);
-					});
+					}.bind(this));
 				}
 			} catch (error) {
 				//Generic Error Handling
