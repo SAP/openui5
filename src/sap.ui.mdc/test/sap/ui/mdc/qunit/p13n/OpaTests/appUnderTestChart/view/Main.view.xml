@@ -13,6 +13,7 @@
 						 horizontal="true"
 						 vertical="true">
 			<fl:VariantManagement id="IDVariantManagementOfAppUnderTestChart" for="IDChartOfAppUnderTestChart"/>
+			<Button id="rtaBtn" text="Start RTA" press="onPressRTA"/>
 			<VBox>
 				<items>
 					<mdc:Chart id="IDChartOfAppUnderTestChart"

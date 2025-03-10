@@ -8,16 +8,20 @@ sap.ui.define([
 
 	return {
 		actions: {
-			settings: {
-				"sap.ui.mdc": {
-					name: "filterbar.ADAPT_TITLE",
-					handler: function (oControl, mPropertyBag) {
-						//CHECK: move metadata finalizing to Engine?
-						return oControl.initializedWithMetadata().then(() => {
-							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
-						});
-					}
-				}
+			settings: function(oControl) {
+				const bImplicitPersistence = Engine.getInstance()._determineModification(oControl).payload.hasPP;
+				return {
+					"sap.ui.mdc": {
+						name: "filterbar.ADAPT_TITLE",
+						handler: function (oControl, mPropertyBag) {
+							//CHECK: move metadata finalizing to Engine?
+							return oControl.initializedWithMetadata().then(() => {
+								return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
+							});
+						}
+					},
+					CAUTION_variantIndependent: bImplicitPersistence
+				};
 			}
 		},
 		aggregations: {

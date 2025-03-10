@@ -50,7 +50,7 @@ sap.ui.define([
 		opaTestOrSkip("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 			//insert application
 			Given.iStartMyAppInAFrame({
-				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+				source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Implicit',
 				autoWait: true
 			});
 			When.iLookAtTheScreen();
@@ -62,8 +62,6 @@ sap.ui.define([
 			Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
 				"name", "foundingYear", "modifiedBy", "createdAt"
 			]);
-
-			Then.theVariantManagementIsDirty(false);
 		});
 
 		// ----------------------------------------------------------------
@@ -82,7 +80,7 @@ sap.ui.define([
 			When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
 			Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS0");
 
 			Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -101,41 +99,6 @@ sap.ui.define([
 			Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
 				"name", "foundingYear", "modifiedBy", "createdAt"
 			]);
-
-			//check dirty flag
-			Then.theVariantManagementIsDirty(false);
-		});
-
-		// ----------------------------------------------------------------
-		// Enter a filter value and cancel the Dialog --> variant should not be dirty
-		// ----------------------------------------------------------------
-		opaTestOrSkip("Open and cancel the filter dialog to check if the values have been discarded", function (Given, When, Then) {
-			//Reopen the dialog
-			//as the Table overlay is still marked as selected, we need to click it twice..
-			When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-			When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-			Then.onPageWithRTA.iShouldSeetheContextMenu();
-			Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
-
-			//Add two filters --> PRESS CANCEL
-			When.onTheMDCTable.iPersonalizeFilter(sTableID, [
-				{key : "Founding Year", values: ["1989"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
-				{key : "Country", values: ["DE"], inputControl: "IDTableOfInternalSampleApp_01--filter--countryOfOrigin_code"}
-			], function(sControl, oSettings) {
-				//the third parameter can optionally be used to open the perso dialog in a different way than the standard settings icon
-				//--> since the above call already opened the settings dialog via RTA actions, just return the open dialog in RTA
-				return this.waitFor({
-					controlType: "sap.m.Dialog",
-					searchOpenDialogs: true,
-					success: function(aDialogs) {
-						oSettings.success.call(this, aDialogs[0]);
-					}
-				});
-			}, true /** This flag will trigger cancel instead of "OK" */);
-
-			//The dialog has been cancelled --> no changes
-			Then.theVariantManagementIsDirty(false);
 		});
 
 		// ----------------------------------------------------------------
@@ -148,7 +111,7 @@ sap.ui.define([
 			When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
 			Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS0");
 
 			//Add two filters & confirm
 			When.onTheMDCTable.iPersonalizeFilter(sTableID, [
@@ -165,10 +128,6 @@ sap.ui.define([
 					}
 				});
 			});
-
-			//The dialog has been confirmed --> the variant should be dirty
-			Then.theVariantManagementIsDirty(true);
-
 		});
 
 		// ----------------------------------------------------------------
@@ -182,7 +141,7 @@ sap.ui.define([
 
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
 			Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS0");
 
 			Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -221,7 +180,7 @@ sap.ui.define([
 			When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
 			Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS0");
 
 			Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -259,7 +218,7 @@ sap.ui.define([
 			When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
 			Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS0");
 
 			Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
@@ -322,7 +281,7 @@ sap.ui.define([
 			When.iClickOnOverlayForControl("sap.ui.mdc.Table");
 			Then.onPageWithRTA.iShouldSeetheContextMenu();
 			Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(3);
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS0");
 			Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
 
 			Then.iShouldSeeP13nItems(aTableItems);
@@ -370,6 +329,23 @@ sap.ui.define([
 			//Just to check that runtime Dialog opens again (no more overlays)
 			When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
+			//Select table items
+			Then.iShouldSeeP13nItem("regionOfOrigin_code", 0, true);
+			Then.iShouldSeeP13nItem("Breakout Year", 1, true);
+			Then.iShouldSeeP13nItem("Country", 2, true);
+			Then.iShouldSeeP13nItem("Name", 3, true);
+			Then.iShouldSeeP13nItem("Founding Year", 4, true);
+			Then.iShouldSeeP13nItem("Changed By", 5, true);
+			Then.iShouldSeeP13nItem("Created On", 6, true);
+			Then.iShouldSeeP13nItem("artistUUID", 7, false);
+			Then.iShouldSeeP13nItem("Changed On", 8, false);
+			Then.iShouldSeeP13nItem("City of Origin", 9, false);
+			Then.iShouldSeeP13nItem("City of Origin + Text", 10, false);
+			Then.iShouldSeeP13nItem("Country + Text", 11, false);
+			Then.iShouldSeeP13nItem("Created (Complex)", 12, false);
+			Then.iShouldSeeP13nItem("Created By", 13, false);
+			Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
+
 			//close Dialog
 			When.iPressDialogOk();
 			Then.thePersonalizationDialogShouldBeClosed();
@@ -379,7 +355,5 @@ sap.ui.define([
 			Then.iTeardownMyAppFrame();
 		});
 	};
-
-
 
 });

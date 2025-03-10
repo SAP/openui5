@@ -11,15 +11,19 @@ sap.ui.define([
 		name: "{name}",
 		description: "{description}",
 		actions: {
-			settings: {
-				"sap.ui.mdc": {
-					name: "p13nDialog.VIEW_SETTINGS",
-					handler: function (oControl, mPropertyBag) {
-						return oControl.finalizePropertyHelper().then(() => {
-							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getActiveP13nModes());
-						});
-					}
-				}
+			settings: function(oControl) {
+				const bImplicitPersistence = Engine.getInstance()._determineModification(oControl).payload.hasPP;
+				return {
+					"sap.ui.mdc": {
+						name: "p13nDialog.VIEW_SETTINGS",
+						handler: function (oControl, mPropertyBag) {
+							return oControl.finalizePropertyHelper().then(() => {
+								return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, oControl.getActiveP13nModes());
+							});
+						}
+					},
+					CAUTION_variantIndependent: bImplicitPersistence
+				};
 			}
 		},
 		properties: {},

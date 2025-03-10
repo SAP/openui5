@@ -59,7 +59,7 @@ sap.ui.define([
 		// open Personalization dialog
 		// ----------------------------------------------------------------
 		opaTestOrSkip("When I press on RTA settings icon the personalization dialog appears", function (Given, When, Then) {
-			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS0");
 			When.iChangeAdaptFiltersView("sap-icon://group-2");
 			Then.iShouldSeeP13nFilterItem({
 				itemText: "cityOfOrigin_city",
