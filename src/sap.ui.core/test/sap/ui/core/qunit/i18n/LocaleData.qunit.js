@@ -365,7 +365,7 @@ sap.ui.define([
 	{sUnit: "acceleration-meter-per-square-second", oReturn: "m/s²"},
 	{sUnit: "fooBar", oReturn: undefined}
 ].forEach(function (oFixture, i) {
-	QUnit.test("getUnitFormat without legacy unit mapping " + i, function(assert) {
+	QUnit.test("getUnitFormat " + i, function(assert) {
 		var oLocaleData = LocaleData.getInstance(new Locale("en"));
 
 		this.mock(oLocaleData).expects("_get")
@@ -376,6 +376,7 @@ sap.ui.define([
 	});
 });
 
+	/** @deprecated As of version 1.122.0, legacy unit mapping deprecated */
 	//*********************************************************************************************
 	QUnit.test("getUnitFormat with legacy unit mapping", function(assert) {
 		var oLocaleData = LocaleData.getInstance(new Locale("en")),
@@ -391,6 +392,7 @@ sap.ui.define([
 		assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared"), "~unitFormat");
 	});
 
+	/** @deprecated As of version 1.122.0, legacy unit mapping deprecated */
 	//*********************************************************************************************
 	QUnit.test("getUnitFormat legacy unit found without mapping", function(assert) {
 		var oLocaleData = LocaleData.getInstance(new Locale("en"));
@@ -432,6 +434,7 @@ sap.ui.define([
 		assert.notOk(oLocaleData.getUnitFormat("CAT"), "not found as it does not take mapping into consideration");
 		assert.equal(oLocaleData.getUnitFromMapping("CAT"), "cats", "cats is the respective mapping");
 		assert.equal(oLocaleData.getResolvedUnitFormat("CAT").displayName, "kittens", "kittens is the displayName");
+		/** @deprecated As of version 1.122.0, legacy unit mapping deprecated */
 		assert.strictEqual(oLocaleData.getUnitFromMapping("fooBar"), "acceleration-meter-per-second-squared",
 			"Mapped legacy unit to custom unit returns custom unit");
 		assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared").displayName, "fooBar",
