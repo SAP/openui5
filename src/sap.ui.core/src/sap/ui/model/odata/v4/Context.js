@@ -852,6 +852,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @public
+	 * @see #requestCanonicalPath
 	 * @since 1.39.0
 	 */
 	Context.prototype.getCanonicalPath = _Helper.createGetMethod("fetchCanonicalPath", true);
@@ -1633,6 +1634,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @public
+	 * @see #getCanonicalPath
 	 * @since 1.39.0
 	 */
 	Context.prototype.requestCanonicalPath = _Helper.createRequestMethod("fetchCanonicalPath");
