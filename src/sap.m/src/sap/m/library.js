@@ -199,6 +199,7 @@ sap.ui.define([
 			"sap.m.UploadState",
 			"sap.m.UploadType",
 			"sap.m.ValueColor",
+                        /** @deprecated since 1.120 */
 			"sap.m.ValueCSSColor",
 			"sap.m.VerticalPlacementType",
 			"sap.m.WrappingType",
@@ -2859,6 +2860,7 @@ sap.ui.define([
 	 * @final
 	 * @namespace
 	 * @public
+	 * @deprecated As of version 1.120, the concept has been discarded.
 	 */
 	thisLib.ValueCSSColor = DataType.createType("sap.m.ValueCSSColor", {
 		isValid : function (vValue) {
