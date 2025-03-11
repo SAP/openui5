@@ -168,12 +168,13 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 }
 
 .sapMPageWithHeader {
-
-	&.sapFShellBar-CTX > section {
+	.sapMPageHeader:has(.sapFShellBar) + section,
+	.sapMPageHeader:has([ui5-shellbar]) + section {
 		top: 2.75rem;
 	}
 
-	&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+	&.sapMPageWithSubHeader .sapMPageSubHeader:has(.sapFShellBar) + section,
+	&.sapMPageWithSubHeader .sapMPageSubHeader:has([ui5-shellbar]) + section {
 		top: 5.5rem;
 	}
 }
@@ -229,12 +230,13 @@ html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
 	}
 
 	.sapMPageWithHeader {
-
-		&.sapFShellBar-CTX > section {
+		.sapMPageHeader:has(.sapFShellBar) + section,
+		.sapMPageHeader:has([ui5-shellbar]) + section {
 			top: 2.75rem;
 		}
 
-		&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+		&.sapMPageWithSubHeader .sapMPageSubHeader:has(.sapFShellBar) + section,
+		&.sapMPageWithSubHeader .sapMPageSubHeader:has([ui5-shellbar]) + section {
 			top: 5.25rem;
 		}
 	}

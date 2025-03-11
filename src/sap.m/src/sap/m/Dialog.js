@@ -645,6 +645,10 @@ function(
 				oHeader._setRootAriaLevel("2");
 			}
 
+			[this._getAnyHeader(), this.getSubHeader(), this._getAnyFooter()].forEach(function (oControl) {
+				oControl?.addStyleClass("sapMIBar-CTX");
+			});
+
 			this._oAriaDescribedbyText.setText(this._getAriaDescribedByText());
 		};
 

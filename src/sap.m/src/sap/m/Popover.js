@@ -729,6 +729,9 @@ sap.ui.define([
 				oHeader.setTitleAlignment(this.getTitleAlignment());
 			}
 
+			[oHeader, this.getSubHeader(), this.getFooter()].forEach(function (oControl) {
+				oControl?.addStyleClass("sapMIBar-CTX");
+			});
 		};
 
 		/**
