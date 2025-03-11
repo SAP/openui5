@@ -828,8 +828,9 @@ sap.ui.define([
 			}
 
 			return this._retrievePromise("open").then(function () {
-				oNextContent.onShow(bInitial);
-				return oNextContent;
+				return oNextContent.onShow(bInitial).then(() => {
+					return oNextContent;
+				});
 			});
 		}.bind(this));
 	};

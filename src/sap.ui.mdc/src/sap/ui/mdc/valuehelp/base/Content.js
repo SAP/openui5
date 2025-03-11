@@ -297,7 +297,7 @@ sap.ui.define([
 	 * Called if the content will be shown.
 	 *
 	 * @param {boolean} bInitial Indicates, if the content is shown for the first time since it's container opened.
-	 * @returns {string} Item ID. ID of the initial selected item if it belongs to the value of the field.
+	 * @returns {Promise<string>} Promise returning Item ID. ID of the initial selected item if it belongs to the value of the field.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
@@ -305,6 +305,8 @@ sap.ui.define([
 		this._bVisible = true;
 		this.handleConditionsUpdate();
 		//this.handleFilterValueUpdate();
+
+		return Promise.resolve(null);
 	};
 
 	/**

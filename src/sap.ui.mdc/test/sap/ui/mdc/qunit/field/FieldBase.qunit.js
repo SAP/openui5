@@ -4064,7 +4064,7 @@ sap.ui.define([
 		sinon.spy(oContent, "onsapnext");
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
-		assert.ok(oValueHelp.navigate.calledWith(1), "navigate called");
+		assert.ok(oValueHelp.navigate.calledWith(0), "navigate called");
 		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
@@ -4125,7 +4125,7 @@ sap.ui.define([
 		const oContent = aContent && aContent.length > 0 && aContent[0];
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
-		assert.ok(oValueHelp.navigate.calledWith(1), "navigate called");
+		assert.ok(oValueHelp.navigate.calledWith(0), "navigate called");
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.ok(oValueHelp.navigate.calledWith(-1), "navigate called");
@@ -5216,7 +5216,7 @@ sap.ui.define([
 			assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 			assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
 			const oAriaAttributes = oField.getProperty("_ariaAttributes");
-			assert.equal(oAriaAttributes.aria.activedescendant, "myItem", "Aria-activedescendant");
+			assert.notOk(oAriaAttributes.aria.activedescendant, "Aria-activedescendant not set");
 
 			oField.setDisplay(FieldDisplay.Value); // destroys and creates new content
 			oCore.applyChanges();

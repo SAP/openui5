@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",
 	"sap/m/library",
+	"sap/m/ScrollContainer",
 	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/strings/whitespaceReplacer"
 ], function (
 		ValueHelpDelegate,
@@ -26,23 +28,26 @@ sap.ui.define([
 		ParseException,
 		FormatException,
 		mLibrary,
+		ScrollContainer,
 		coreLibrary,
+		nextUIUpdate,
 		whitespaceReplacer
 	) {
 	"use strict";
 
 	let oFixedList;
 	let bIsOpen = true;
+	let oScrollContainer = null;
 
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
-			return null;
+			return oScrollContainer;
 		},
 		isOpen: function() {
-			return bIsOpen;
+			return !!oScrollContainer?.getDomRef() && bIsOpen; // only open if rendered
 		},
 		isOpening: function() {
-			return bIsOpen;
+			return !!oScrollContainer && bIsOpen;
 		},
 		isTypeahead: function () {
 			return true;
@@ -60,7 +65,25 @@ sap.ui.define([
 		oFixedList.destroy();
 		oFixedList = null;
 		bIsOpen = true;
+		if (oScrollContainer) {
+			oScrollContainer.getContent.restore();
+			oScrollContainer.destroy();
+			oScrollContainer = null;
+			delete oContainer.getUIAreaForContent;
+		}
 	};
+
+	async function _renderScrollContainer(oList) {
+
+		oScrollContainer = new ScrollContainer(); // to test scrolling
+		sinon.stub(oScrollContainer, "getContent").returns([oList]); // to render List
+		oContainer.getUIAreaForContent = function() {
+			return oScrollContainer.getUIArea();
+		};
+		oScrollContainer.placeAt("content"); // render ScrollContainer
+		await nextUIUpdate();
+
+	}
 
 	QUnit.module("basic features", {
 		beforeEach: function() {
@@ -102,8 +125,9 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				const sItemId = oFixedList.onShow(); // to update selection and scroll
+			oContent.then(async function(oContent) {
+				await _renderScrollContainer(oContent);
+				const sItemId = await oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 				assert.equal(oFixedList.getDisplayContent(), oContent, "sap.m.List stored in displayContent");
@@ -169,8 +193,8 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
+			oContent.then(async function(oContent) {
+				await oFixedList.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 				assert.equal(oContent.getItems().length, 5, "Number of items");
@@ -228,8 +252,8 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
+			oContent.then(async function(oContent) {
+				await oFixedList.onShow(); // to update selection and scroll
 				assert.equal(oContent.getItems().length, 2, "Number of items");
 				let oItem = oContent.getItems()[0];
 				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
@@ -276,8 +300,8 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
+			oContent.then(async function(oContent) {
+				await oFixedList.onShow(); // to update selection and scroll
 				assert.equal(oContent.getItems().length, 3, "Number of items");
 				let oItem = oContent.getItems()[0];
 				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
@@ -581,12 +605,12 @@ sap.ui.define([
 	function _checkNavigatedItem(assert, oContent, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
 
 		const aItems = oContent.getItems();
-		assert.ok(oContent.hasStyleClass("sapMListFocus"), "List has style class sapMListFocus");
+		assert.equal(oContent.hasStyleClass("sapMListFocus"), bIsOpen, "List has style class sapMListFocus");
 
 		for (let i = 0; i < aItems.length; i++) {
 			const oItem = aItems[i];
 			if (i === iSelectedIndex) {
-				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
+				assert.equal(oItem.hasStyleClass("sapMLIBFocused"), bIsOpen, "Item" + i + " is focused");
 				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
 					assert.ok(oItem.getSelected(), "Item" + i + " is selected");
 				}
@@ -634,14 +658,23 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				// oFixedList.onShow(); // to update selection and scroll
+			oContent.then(async function(oContent) {
+				await _renderScrollContainer(oContent);
+				// await oFixedList.onShow(); // to update selection and scroll
 				oFixedList.navigate(1);
 				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 				// no previout item
 				oFixedList.navigate(-1);
-				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
+				_checkNavigatedItem(assert, oContent, -1, 0, Condition.createItemCondition("I1", "Item 1"), true);
+
+				// no previous item - leaveFocus
+				oFixedList.navigate(-1);
+				_checkNavigatedItem(assert, oContent, -1, 0, Condition.createItemCondition("I1", "Item 1"), true);
+
+				// back to last item after leaveFocus
+				oFixedList.navigate(0);
+				_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 				// next item of selected one
 				oFixedList.navigate(1);
@@ -746,7 +779,8 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
+			oContent.then(async function(oContent) {
+				await _renderScrollContainer(oContent);
 				oFixedList.navigate(1);
 				_checkNavigatedItem(assert, oContent, 4, 4, Condition.createItemCondition("I2", "My Item   2"), false);
 
