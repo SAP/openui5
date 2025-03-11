@@ -1589,7 +1589,9 @@ sap.ui.define([
 					"If-Match" : oChildNode,
 					Prefer : "return=minimal"
 				}, {});
-			sChildPath = "$0";
+			// Note: "$-1" references the previous request. Requests with the same path could
+			// possibly be merged, but it is not allowed to invoke several moves at the same time
+			sChildPath = "$-1";
 		}
 
 		let oPromise = SyncPromise.all([
