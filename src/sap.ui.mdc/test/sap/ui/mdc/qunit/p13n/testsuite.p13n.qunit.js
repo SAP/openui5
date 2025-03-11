@@ -201,17 +201,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"PersonalizationTableRTA_Explicit": {
-				group: "Table UI Test",
-				autostart: false,
-				module: "./OpaTests/P13nOpa.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				}
-			},
-			"PersonalizationTableRTA_Implicit": {
+			"PersonalizationTableRTA": {
 				group: "Table UI Test",
 				autostart: false,
 				module: "./OpaTests/P13nOpa.qunit",
