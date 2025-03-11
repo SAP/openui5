@@ -223,7 +223,7 @@ sap.ui.define([
 		};
 
 		BlockBase.prototype.onAfterRendering = function () {
-			var oParentObjectPageLayout = this._getObjectPageLayout();
+			var oParentObjectPageLayout = this._getObjectPageLayout(this._oParentObjectPageSubSection);
 
 			if (oParentObjectPageLayout) {
 				oParentObjectPageLayout._requestAdjustLayout();
@@ -730,7 +730,7 @@ sap.ui.define([
 		 * Setter for the visibility of the block.
 		 */
 		BlockBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
-			var oParentObjectPageLayout = this._getObjectPageLayout();
+			var oParentObjectPageLayout = this._getObjectPageLayout(this._oParentObjectPageSubSection);
 
 			if (bValue === this.getVisible()) {
 				return this;
@@ -764,7 +764,7 @@ sap.ui.define([
 			if (!this._bConnected) {
 				Log.debug("BlockBase :: Connecting block to the UI5 model tree");
 				this._bConnected = true;
-				if (this._getObjectPageLayout()?._isLazyLoadingEffectivelyEnabled()) {
+				if (this._getObjectPageLayout(this._oParentObjectPageSubSection)?._isLazyLoadingEffectivelyEnabled()) {
 					//if lazy loading is enabled, the view has not been created during the setMode
 					//so create it now
 					var sMode = this.getMode();
