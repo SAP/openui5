@@ -582,11 +582,6 @@
 			}
 		},
 		{
-			"control": "sap.m.StandardTile",
-			"url": "./StandardTile.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
 			"control": "sap.m.StepInput",
 			"url": "./StepInput.html",
 			"appComponent": "CA-UI5-CTR-BAL",
