@@ -29,8 +29,8 @@ sap.ui.require([
 				SandboxModel.reset();
 			});
 
-[false, true].forEach(function (bTreeTable) {
-	["0", "10"].forEach((sThreshold) => {
+	[false, true].forEach(function (bTreeTable) {
+		const sThreshold = bTreeTable ? "10" : "0";
 		//*****************************************************************************
 		{
 			const sTitle = "page, expand, collapse; w/ TreeTable: " + bTreeTable
@@ -122,7 +122,6 @@ sap.ui.require([
 			});
 		}
 	});
-});
 
 		QUnit.start();
 	});
