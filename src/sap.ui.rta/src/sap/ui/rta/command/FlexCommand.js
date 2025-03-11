@@ -100,33 +100,32 @@ sap.ui.define([
 	 * (in some cases element of a command is unstable, so change needs to be created and stored upfront)
 	 * @override
 	 */
-	FlexCommand.prototype.prepare = function(mFlexSettings, sVariantManagementReference, sCommand) {
-		var oSelector;
-		if (!this.getSelector() && mFlexSettings && mFlexSettings.templateSelector) {
-			oSelector = {
-				id: mFlexSettings.templateSelector,
-				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(Element.getElementById(mFlexSettings.templateSelector))
-			};
-			this.setSelector(oSelector);
-		} else if (!this.getSelector() && this.getElement()) {
-			oSelector = {
-				id: this.getElement().getId(),
-				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(this.getElement())
-			};
-			this.setSelector(oSelector);
-		}
+	FlexCommand.prototype.prepare = async function(mFlexSettings, sVariantManagementReference, sCommand) {
+		try {
+			let oSelector;
+			if (!this.getSelector() && mFlexSettings && mFlexSettings.templateSelector) {
+				oSelector = {
+					id: mFlexSettings.templateSelector,
+					appComponent: this.getAppComponent(),
+					controlType: FlUtils.getControlType(Element.getElementById(mFlexSettings.templateSelector))
+				};
+				this.setSelector(oSelector);
+			} else if (!this.getSelector() && this.getElement()) {
+				oSelector = {
+					id: this.getElement().getId(),
+					appComponent: this.getAppComponent(),
+					controlType: FlUtils.getControlType(this.getElement())
+				};
+				this.setSelector(oSelector);
+			}
 
-		return this._createChange(mFlexSettings, sVariantManagementReference, sCommand)
-		.then(function(oChange) {
+			const oChange = await this._createChange(mFlexSettings, sVariantManagementReference, sCommand);
 			this._oPreparedChange = oChange;
 			return true;
-		}.bind(this))
-		.catch(function(oError) {
+		} catch (oError) {
 			Log.error(oError.message || oError.name);
 			return false;
-		});
+		}
 	};
 
 	/**
@@ -192,18 +191,23 @@ sap.ui.define([
 	 * @returns {Promise.<object>} Change object wrapped in a promise.
 	 * @private
 	 */
-	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference, sCommand) {
+	FlexCommand.prototype._createChangeFromData = async function(
+		mChangeSpecificData,
+		mFlexSettings,
+		sVariantManagementReference,
+		sCommand
+	) {
 		if (mFlexSettings) {
 			mChangeSpecificData = merge({}, mChangeSpecificData, mFlexSettings);
 		}
 		mChangeSpecificData.jsOnly = this.getJsOnly();
-		var oModel = this.getAppComponent().getModel(ControlVariantApplyAPI.getVariantModelName());
-		var sVariantReference;
+		const oModel = this.getAppComponent().getModel(ControlVariantApplyAPI.getVariantModelName());
+		let sVariantReference;
 		if (oModel && sVariantManagementReference) {
 			sVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 		}
 		if (sVariantReference && !this.getVariantIndependent()) {
-			var mVariantObj = {
+			const mVariantObj = {
 				variantManagementReference: sVariantManagementReference,
 				variantReference: sVariantReference,
 				isChangeOnStandardVariant: sVariantManagementReference === sVariantReference
@@ -212,22 +216,29 @@ sap.ui.define([
 		}
 		mChangeSpecificData.command = sCommand;
 		mChangeSpecificData.generator = mFlexSettings.generator || rtaLibrary.GENERATOR_NAME;
-		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
-		.then(function(oChange) {
-			// originalSelector is only present when making a change on/inside a template; the selector does not work with the JS propagation hook (the template has no parent),
-			// therefore the selector is changed to the parent (already the selector of the command) and the original selector saved as dependent.
-			// Also 'boundAggregation' property gets saved in the change content
-			// ATTENTION! the change gets applied as soon as the parent is available, so there might be possible side effects with lazy loading
-			if (mFlexSettings && mFlexSettings.originalSelector) {
-				oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
-				oChange.setSelector({
-					...oChange.getSelector(),
-					...JsControlTreeModifier.getSelector(this.getSelector().id, this.getAppComponent())
-				});
-				oChange.setContent({ ...oChange.getContent(), ...mFlexSettings.content });
-			}
-			return oChange;
-		}.bind(this));
+		const oChange = await ChangesWriteAPI.create({
+			changeSpecificData: mChangeSpecificData,
+			selector: this._validateControlForChange(mFlexSettings)
+		});
+		// originalSelector is only present when making a change on/inside a template;
+		// the selector does not work with the JS propagation hook (the template has no parent),
+		// therefore the selector is changed to the parent (already the selector of the command)
+		// and the original selector saved as dependent.
+		// Also 'boundAggregation' property gets saved in the change content
+		// ATTENTION! the change gets applied as soon as the parent is available, so there might be possible side effects with lazy loading
+		if (mFlexSettings && mFlexSettings.originalSelector) {
+			oChange.addDependentControl(
+				mFlexSettings.originalSelector,
+				"originalSelector",
+				{modifier: JsControlTreeModifier, appComponent: this.getAppComponent()}
+			);
+			oChange.setSelector({
+				...oChange.getSelector(),
+				...JsControlTreeModifier.getSelector(this.getSelector().id, this.getAppComponent())
+			});
+			oChange.setContent({ ...oChange.getContent(), ...mFlexSettings.content });
+		}
+		return oChange;
 	};
 
 	/**

@@ -118,7 +118,7 @@
 				<mdc:Field id="F16" value="SAP" additionalValue="http://www.sap.com" dataType="Link" editMode="Display" press="handlePress"></mdc:Field>
 -->
 				<m:Label text="type Boolean"></m:Label>
-				<mdc:Field id="F22" value="{path:'Important', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"></mdc:Field>
+				<mdc:Field id="F22" value="{path:'Important', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" label="type Boolean"></mdc:Field>
 
 				<m:Label text="type Boolean in display mode"></m:Label>
 				<mdc:Field id="F23" value="{Important}" dataType="Edm.Boolean" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}' display="Description" editMode="Display" change="handleChange" submit="handleSubmit"></mdc:Field>

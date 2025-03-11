@@ -113,6 +113,20 @@ sap.ui.define([
 		return oAction;
 	}
 
+	function configureExtendControllerCommand(oElement, mSettings, oDesignTimeMetadata) {
+		var vAction;
+		if (oDesignTimeMetadata) {
+			vAction = oDesignTimeMetadata.getAction(mSettings.name, oElement);
+		}
+		// the change type is not configurable via designtime
+		// it can also not be disabled with 'not-adaptable' or null
+		var oAction = vAction || {};
+		Object.assign(oAction, {
+			changeType: mSettings.name
+		});
+		return oAction;
+	}
+
 	function adjustSelectorForCommand(mSettings) {
 		mSettings.element = Element.getElementById(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
@@ -302,6 +316,11 @@ sap.ui.define([
 		addXMLAtExtensionPoint: {
 			clazz: "sap/ui/rta/command/AddXMLAtExtensionPoint",
 			configure: configureAddXmlCommand,
+			adjustForBinding: adjustSelectorForCommand
+		},
+		codeExt: {
+			clazz: "sap/ui/rta/command/ExtendControllerCommand",
+			configure: configureExtendControllerCommand,
 			adjustForBinding: adjustSelectorForCommand
 		},
 		createContainer: {

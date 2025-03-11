@@ -14,8 +14,6 @@ sap.ui.define([
  "sap/ui/core/Control",
  "sap/ui/core/Locale",
  "sap/ui/util/openWindow",
- // library dependency
- "sap/ui/core/library",
  "sap/base/strings/capitalize",
  "sap/ui/thirdparty/jquery",
  "sap/base/assert",
@@ -31,7 +29,6 @@ sap.ui.define([
  "./IllustratedMessageSize",
  "./IllustratedMessageType",
  "./upload/UploaderHttpRequestMethod",
- "sap/ui/core/theming/Parameters",
  "sap/ui/core/LocaleData",
  // referenced here to enable the Support feature
  "./Support"
@@ -45,7 +42,6 @@ sap.ui.define([
 	 Control,
 	 Locale,
 	 openWindow,
-	 CoreLibrary,
 	 capitalize,
 	 jQuery,
 	 assert,
@@ -61,7 +57,6 @@ sap.ui.define([
 	 IllustratedMessageSize,
 	 IllustratedMessageType,
 	 UploaderHttpRequestMethod,
-	 Parameters,
 	 LocaleData
 	) {
 	 "use strict";
@@ -194,7 +189,6 @@ sap.ui.define([
 		  "sap.m.UploadState",
 		  "sap.m.UploadType",
 		  "sap.m.ValueColor",
-		  "sap.m.ValueCSSColor",
 		  "sap.m.VerticalPlacementType",
 		  "sap.m.WrappingType",
 		  "sap.m.SinglePlanningCalendarSelectionMode",
@@ -2762,33 +2756,6 @@ sap.ui.define([
 		 None : "None"
 
 	 };
-
-	 /**
-	  * @classdesc A string type that represents CSS color values, sap.m.ValueColor or less parameter values.
-	  *
-	  * Allowed values are {@link sap.ui.core.CSSColor}, {@link sap.m.ValueColor} or a less parameter name (string).
-	  * In case the less parameter color cannot be determined, the validation fails. You need to check if less parameters are supported on control level.
-	  * An empty string is also allowed and has the same effect as setting no color.
-	  *
-	  * @final
-	  * @namespace
-	  * @public
-	  */
-	 thisLib.ValueCSSColor = DataType.createType("sap.m.ValueCSSColor", {
-		 isValid : function (vValue) {
-			 var bResult = thisLib.ValueColor.hasOwnProperty(vValue);
-			 if (bResult) {
-				 return bResult;
-			 } else { // seems to be a less parameter or sap.ui.core.CSSColor
-				 bResult = CoreLibrary.CSSColor.isValid(vValue);
-				 if (bResult) {
-					 return bResult;
-				 } else {
-					 return CoreLibrary.CSSColor.isValid(Parameters.get(vValue));
-				 }
-			 }
-		 }
-	 }, DataType.getType("string"));
 
 	 /**
 	  * @classdesc A string type that represents column ratio.

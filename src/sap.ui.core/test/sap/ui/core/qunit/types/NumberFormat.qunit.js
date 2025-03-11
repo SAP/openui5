@@ -91,90 +91,90 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sDecimal: "0", iSummand: 5, sResult: "5"},
-	{sDecimal: "0", iSummand: 1, sResult: "1"},
-	{sDecimal: "0", iSummand: -1, sResult: "-1"},
-	{sDecimal: "0", iSummand: -5, sResult: "-5"},
-	{sDecimal: "1", iSummand: 5, sResult: "6"},
-	{sDecimal: "1", iSummand: 1, sResult: "2"},
-	{sDecimal: "1", iSummand: -1, sResult: "0"},
-	{sDecimal: "1", iSummand: -5, sResult: "-4"},
-	{sDecimal: "9", iSummand: 5, sResult: "14"},
-	{sDecimal: "9", iSummand: 1, sResult: "10"},
-	{sDecimal: "9", iSummand: -1, sResult: "8"},
-	{sDecimal: "9", iSummand: -5, sResult: "4"},
-	{sDecimal: "10", iSummand: 5, sResult: "15"},
-	{sDecimal: "10", iSummand: 1, sResult: "11"},
-	{sDecimal: "10", iSummand: -1, sResult: "9"},
-	{sDecimal: "10", iSummand: -5, sResult: "5"},
-	{sDecimal: "-1", iSummand: 5, sResult: "4"},
-	{sDecimal: "-1", iSummand: 1, sResult: "0"},
-	{sDecimal: "-1", iSummand: -1, sResult: "-2"},
-	{sDecimal: "-1", iSummand: -5, sResult: "-6"},
-	{sDecimal: "-9", iSummand: 5, sResult: "-4"},
-	{sDecimal: "-9", iSummand: 1, sResult: "-8"},
-	{sDecimal: "-9", iSummand: -1, sResult: "-10"},
-	{sDecimal: "-9", iSummand: -5, sResult: "-14"},
-	{sDecimal: "-10", iSummand: 5, sResult: "-5"},
-	{sDecimal: "-10", iSummand: 1, sResult: "-9"},
-	{sDecimal: "-10", iSummand: -1, sResult: "-11"},
-	{sDecimal: "-10", iSummand: -5, sResult: "-15"},
-	{sDecimal: "0.123456", iSummand: 5, sResult: "5.123456"},
-	{sDecimal: "-0.123456", iSummand: 5, sResult: "4.876544"},
-	{sDecimal: "0.123456", iSummand: -5, sResult: "-4.876544"},
-	{sDecimal: "-0.123456", iSummand: -5, sResult: "-5.123456"},
-	{sDecimal: "5.123456", iSummand: 5, sResult: "10.123456"},
-	{sDecimal: "-5.123456", iSummand: 5, sResult: "-0.123456"},
-	{sDecimal: "5.123456", iSummand: -5, sResult: "0.123456"},
-	{sDecimal: "-5.123456", iSummand: -5, sResult: "-10.123456"},
-	{sDecimal: "-4.123456", iSummand: 5, sResult: "0.876544"},
-	{sDecimal: "4.123456", iSummand: -5, sResult: "-0.876544"},
-	{sDecimal: "-2.123456", iSummand: 5, sResult: "2.876544"},
-	{sDecimal: "2.123456", iSummand: -5, sResult: "-2.876544"}
-].forEach((oFixture) => {
-	const {sDecimal, iSummand, sResult} = oFixture;
-	QUnit.test(`add: (${sDecimal}) + (${iSummand}) = ${sResult}`, function (assert) {
-		// code under test
-		assert.strictEqual(NumberFormat.add(sDecimal, iSummand), sResult);
+	[
+		{sDecimal: "0", iSummand: 5, sResult: "5"},
+		{sDecimal: "0", iSummand: 1, sResult: "1"},
+		{sDecimal: "0", iSummand: -1, sResult: "-1"},
+		{sDecimal: "0", iSummand: -5, sResult: "-5"},
+		{sDecimal: "1", iSummand: 5, sResult: "6"},
+		{sDecimal: "1", iSummand: 1, sResult: "2"},
+		{sDecimal: "1", iSummand: -1, sResult: "0"},
+		{sDecimal: "1", iSummand: -5, sResult: "-4"},
+		{sDecimal: "9", iSummand: 5, sResult: "14"},
+		{sDecimal: "9", iSummand: 1, sResult: "10"},
+		{sDecimal: "9", iSummand: -1, sResult: "8"},
+		{sDecimal: "9", iSummand: -5, sResult: "4"},
+		{sDecimal: "10", iSummand: 5, sResult: "15"},
+		{sDecimal: "10", iSummand: 1, sResult: "11"},
+		{sDecimal: "10", iSummand: -1, sResult: "9"},
+		{sDecimal: "10", iSummand: -5, sResult: "5"},
+		{sDecimal: "-1", iSummand: 5, sResult: "4"},
+		{sDecimal: "-1", iSummand: 1, sResult: "0"},
+		{sDecimal: "-1", iSummand: -1, sResult: "-2"},
+		{sDecimal: "-1", iSummand: -5, sResult: "-6"},
+		{sDecimal: "-9", iSummand: 5, sResult: "-4"},
+		{sDecimal: "-9", iSummand: 1, sResult: "-8"},
+		{sDecimal: "-9", iSummand: -1, sResult: "-10"},
+		{sDecimal: "-9", iSummand: -5, sResult: "-14"},
+		{sDecimal: "-10", iSummand: 5, sResult: "-5"},
+		{sDecimal: "-10", iSummand: 1, sResult: "-9"},
+		{sDecimal: "-10", iSummand: -1, sResult: "-11"},
+		{sDecimal: "-10", iSummand: -5, sResult: "-15"},
+		{sDecimal: "0.123456", iSummand: 5, sResult: "5.123456"},
+		{sDecimal: "-0.123456", iSummand: 5, sResult: "4.876544"},
+		{sDecimal: "0.123456", iSummand: -5, sResult: "-4.876544"},
+		{sDecimal: "-0.123456", iSummand: -5, sResult: "-5.123456"},
+		{sDecimal: "5.123456", iSummand: 5, sResult: "10.123456"},
+		{sDecimal: "-5.123456", iSummand: 5, sResult: "-0.123456"},
+		{sDecimal: "5.123456", iSummand: -5, sResult: "0.123456"},
+		{sDecimal: "-5.123456", iSummand: -5, sResult: "-10.123456"},
+		{sDecimal: "-4.123456", iSummand: 5, sResult: "0.876544"},
+		{sDecimal: "4.123456", iSummand: -5, sResult: "-0.876544"},
+		{sDecimal: "-2.123456", iSummand: 5, sResult: "2.876544"},
+		{sDecimal: "2.123456", iSummand: -5, sResult: "-2.876544"}
+	].forEach((oFixture) => {
+		const {sDecimal, iSummand, sResult} = oFixture;
+		QUnit.test(`add: (${sDecimal}) + (${iSummand}) = ${sResult}`, function (assert) {
+			// code under test
+			assert.strictEqual(NumberFormat.add(sDecimal, iSummand), sResult);
+		});
 	});
-});
 	//*********************************************************************************************
-[
-	// either maxFractionDigits or decimals is undefined -> take decimals
-	{oFormatOptions: {maxFractionDigits: undefined, decimals: "~decimals"}, iResult: "~decimals"},
-	{oFormatOptions: {maxFractionDigits: 1, decimals: undefined}, iResult: undefined},
-	// one of the the numeric values < 0 -> take decimals
-	{oFormatOptions: {maxFractionDigits: -1, decimals: 5}, iResult: 5},
-	{oFormatOptions: {maxFractionDigits: 2, decimals: -5}, iResult: -5},
-	// the minimum of the 2 numeric values
-	{oFormatOptions: {maxFractionDigits: 0, decimals: 1}, iResult: 0},
-	{oFormatOptions: {maxFractionDigits: Infinity, decimals: 24}, iResult: 24},
-	{oFormatOptions: {maxFractionDigits: 42, decimals: Infinity}, iResult: 42}
-].forEach(({oFormatOptions, iResult}) => {
-	QUnit.test(`getMaximumDecimals, formatOptions: ${JSON.stringify(oFormatOptions)}`, function (assert) {
-		// code under test
-		assert.strictEqual(NumberFormat.getMaximumDecimals(oFormatOptions), iResult);
+	[
+		// either maxFractionDigits or decimals is undefined -> take decimals
+		{oFormatOptions: {maxFractionDigits: undefined, decimals: "~decimals"}, iResult: "~decimals"},
+		{oFormatOptions: {maxFractionDigits: 1, decimals: undefined}, iResult: undefined},
+		// one of the the numeric values < 0 -> take decimals
+		{oFormatOptions: {maxFractionDigits: -1, decimals: 5}, iResult: 5},
+		{oFormatOptions: {maxFractionDigits: 2, decimals: -5}, iResult: -5},
+		// the minimum of the 2 numeric values
+		{oFormatOptions: {maxFractionDigits: 0, decimals: 1}, iResult: 0},
+		{oFormatOptions: {maxFractionDigits: Infinity, decimals: 24}, iResult: 24},
+		{oFormatOptions: {maxFractionDigits: 42, decimals: Infinity}, iResult: 42}
+	].forEach(({oFormatOptions, iResult}) => {
+		QUnit.test(`getMaximumDecimals, formatOptions: ${JSON.stringify(oFormatOptions)}`, function (assert) {
+			// code under test
+			assert.strictEqual(NumberFormat.getMaximumDecimals(oFormatOptions), iResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[-1, 0].forEach(function (iGroupingSize) {
-	QUnit.test("invalid groupingSize: " + iGroupingSize, function(assert) {
-		this.oLogMock.expects("error")
-			.withExactArgs("Grouping requires the 'groupingSize' format option to be a positive number, but it is '"
-				+ iGroupingSize + "' instead.");
-		const oIntegerInstance = NumberFormat.getIntegerInstance({groupingEnabled: true, groupingSize: iGroupingSize});
-		assert.strictEqual(oIntegerInstance.format(12345), "", "integer with groupingSize: '" + iGroupingSize + "'");
+	[-1, 0].forEach(function (iGroupingSize) {
+		QUnit.test("invalid groupingSize: " + iGroupingSize, function(assert) {
+			this.oLogMock.expects("error")
+				.withExactArgs("Grouping requires the 'groupingSize' format option to be a positive number, but it is '"
+					+ iGroupingSize + "' instead.");
+			const oIntegerInstance = NumberFormat.getIntegerInstance({groupingEnabled: true, groupingSize: iGroupingSize});
+			assert.strictEqual(oIntegerInstance.format(12345), "", "integer with groupingSize: '" + iGroupingSize + "'");
 
-		this.oLogMock.expects("error")
-			.withExactArgs("Grouping requires the 'groupingSize' format option to be a positive number, but it is '"
-				+ iGroupingSize + "' instead.");
-		// float instance has groupingEnabled: true by default
-		const oFloatInstance = NumberFormat.getFloatInstance({groupingSize: iGroupingSize});
-		assert.strictEqual(oFloatInstance.format(12345), "", "float with groupingSize: '" + iGroupingSize + "'");
+			this.oLogMock.expects("error")
+				.withExactArgs("Grouping requires the 'groupingSize' format option to be a positive number, but it is '"
+					+ iGroupingSize + "' instead.");
+			// float instance has groupingEnabled: true by default
+			const oFloatInstance = NumberFormat.getFloatInstance({groupingSize: iGroupingSize});
+			assert.strictEqual(oFloatInstance.format(12345), "", "float with groupingSize: '" + iGroupingSize + "'");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Constructor call leads to error", function(assert) {
@@ -992,23 +992,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach((bAsNumber) => {
-	QUnit.test("float with rounding - number as string: " + !bAsNumber, function (assert) {
-		const oFloatInstanceWithPreserveDecimals = NumberFormat.getFloatInstance({preserveDecimals: true});
-		const oDefaultFloat = NumberFormat.getFloatInstance();
+	[false, true].forEach((bAsNumber) => {
+		QUnit.test("float with rounding - number as string: " + !bAsNumber, function (assert) {
+			const oFloatInstanceWithPreserveDecimals = NumberFormat.getFloatInstance({preserveDecimals: true});
+			const oDefaultFloat = NumberFormat.getFloatInstance();
 
 
-		// 123456789.12345679
-		assert.strictEqual(oDefaultFloat.format(getNumber("123456789.12345679", bAsNumber)), "123,456,789.12345679");
-		assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(getNumber("123456789.12345679", bAsNumber)),
-			"123,456,789.12345679");
+			// 123456789.12345679
+			assert.strictEqual(oDefaultFloat.format(getNumber("123456789.12345679", bAsNumber)), "123,456,789.12345679");
+			assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(getNumber("123456789.12345679", bAsNumber)),
+				"123,456,789.12345679");
 
-		// 0.9999999999999999
-		assert.strictEqual(oDefaultFloat.format(getNumber("0.9999999999999999", bAsNumber)), "0.9999999999999999");
-		assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(getNumber("0.9999999999999999", bAsNumber)),
-			"0.9999999999999999");
+			// 0.9999999999999999
+			assert.strictEqual(oDefaultFloat.format(getNumber("0.9999999999999999", bAsNumber)), "0.9999999999999999");
+			assert.strictEqual(oFloatInstanceWithPreserveDecimals.format(getNumber("0.9999999999999999", bAsNumber)),
+				"0.9999999999999999");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("float with big numbers and maxIntegerDigits", function (assert) {
@@ -1244,85 +1244,85 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	number: ".1230", others: "0.123"
-}, {
-	number: ".1234", [AWAY_FROM_ZERO]: "0.124", [CEILING]: "0.124", others: "0.123"
-}, {
-	number: ".1235", [FLOOR]: "0.123", [HALF_FLOOR]: "0.123", [HALF_TOWARDS_ZERO]: "0.123", [TOWARDS_ZERO]: "0.123",
-	others: "0.124"
-}, {
-	number: ".1239", [FLOOR]: "0.123", [TOWARDS_ZERO]: "0.123", others: "0.124"
-}, {
-	number: "2.1999", [FLOOR]: "2.199", [TOWARDS_ZERO]: "2.199", others: "2.2"
-}, {
-	number: "2.0001", [AWAY_FROM_ZERO]: "2.001", [CEILING]: "2.001", others: "2"
-}, {
-	number: "2.11", others: "2.11"
-}, {
-	number: "2", others: "2"
-}, {
-	number: "2.0", others: "2"
-}, {
-	number: "2.00000", others: "2"
-}, {
-	number: "-.1230", others: "-0.123"
-}, {
-	number: "-.1234", [AWAY_FROM_ZERO]: "-0.124", [FLOOR]: "-0.124", others: "-0.123"
-}, {
-	number: "-.1235", [AWAY_FROM_ZERO]: "-0.124", [FLOOR]: "-0.124", [HALF_AWAY_FROM_ZERO]: "-0.124",
-	[HALF_FLOOR]: "-0.124", others: "-0.123"
-}, {
-	number: "-.1236", [CEILING]: "-0.123", [TOWARDS_ZERO]: "-0.123", [HALF_AWAY_FROM_ZERO]: "-0.124",
-	[HALF_FLOOR]: "-0.124", others: "-0.124"
-}, {
-	number: "-0.0001", [AWAY_FROM_ZERO]: "-0.001", [FLOOR]: "-0.001", others: "0"
-}, {
-	number: "-.0000000004", [AWAY_FROM_ZERO]: "-0.001", [FLOOR]: "-0.001", others: "0"
-}, {
-	number: ".0000000004", [AWAY_FROM_ZERO]: "0.001", [CEILING]: "0.001", others: "0"
-}, { // famous test cases for problematic rounding in Javascript
-	number: "35.855", maxFractionDigits: 2, [FLOOR]: "35.85", [HALF_FLOOR]: "35.85", [HALF_TOWARDS_ZERO]: "35.85",
-	[TOWARDS_ZERO]: "35.85", others: "35.86"
-}, {
-	number: "1.005", maxFractionDigits: 2, [FLOOR]: "1", [HALF_FLOOR]: "1", [HALF_TOWARDS_ZERO]: "1",
-	[TOWARDS_ZERO]: "1", others: "1.01"
-}, {
-	number: "-35.855", maxFractionDigits: 2, [CEILING]: "-35.85", [HALF_CEILING]: "-35.85",
-	[HALF_TOWARDS_ZERO]: "-35.85", [TOWARDS_ZERO]: "-35.85", others: "-35.86"
-}, {
-	number: "-1.005", maxFractionDigits: 2, [CEILING]: "-1", [HALF_CEILING]: "-1", [HALF_TOWARDS_ZERO]: "-1",
-	[TOWARDS_ZERO]: "-1", others: "-1.01"
-}, {
-	number: "+7.0001e+2", others: "700.01" //SNOW: DINC0062642
-}, { // maxFractionDigits: 0
-	number: "-.567", maxFractionDigits: 0, [CEILING]: "0", [TOWARDS_ZERO]: "0", others: "-1"
-}, {
-	number: "-.456", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "-1", [FLOOR]: "-1", others: "0"
-}, {
-	number: ".456", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "1", [CEILING]: "1", others: "0"
-}, {
-	number: ".567", maxFractionDigits: 0, [FLOOR]: "0", [TOWARDS_ZERO]: "0", others: "1"
-}, {
-	number: "-2.3456e2", maxFractionDigits: 0, [CEILING]: "-234", [TOWARDS_ZERO]: "-234", others: "-235"
-}, {
-	number: "-2.3456e1", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "-24", [FLOOR]: "-24", others: "-23"
-}, {
-	number: "2.3456e1", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "24", [CEILING]: "24", others: "23"
-}, {
-	number: "2.3456e2", maxFractionDigits: 0, [FLOOR]: "234", [TOWARDS_ZERO]: "234", others: "235"
-}].forEach(({number: sNumber, maxFractionDigits: iMaxDigits = 3, ...mRoundingResults}) => {
-	Object.keys(NumberFormat.RoundingMode).forEach((sRoundingMode) => {
-	QUnit.test(`Float format rounding (${iMaxDigits} digits): ${sRoundingMode}, number: ${sNumber}`, function (assert) {
-		const oFormat = NumberFormat.getFloatInstance({maxFractionDigits: iMaxDigits, roundingMode: sRoundingMode});
-		const sResult = mRoundingResults[sRoundingMode] || mRoundingResults.others;
-		// code under test
-		assert.strictEqual(oFormat.format(getNumber(sNumber, true)), sResult, "as number");
-		// code under test
-		assert.strictEqual(oFormat.format(getNumber(sNumber, false)), sResult, "as string");
+	[{
+		number: ".1230", others: "0.123"
+	}, {
+		number: ".1234", [AWAY_FROM_ZERO]: "0.124", [CEILING]: "0.124", others: "0.123"
+	}, {
+		number: ".1235", [FLOOR]: "0.123", [HALF_FLOOR]: "0.123", [HALF_TOWARDS_ZERO]: "0.123", [TOWARDS_ZERO]: "0.123",
+		others: "0.124"
+	}, {
+		number: ".1239", [FLOOR]: "0.123", [TOWARDS_ZERO]: "0.123", others: "0.124"
+	}, {
+		number: "2.1999", [FLOOR]: "2.199", [TOWARDS_ZERO]: "2.199", others: "2.2"
+	}, {
+		number: "2.0001", [AWAY_FROM_ZERO]: "2.001", [CEILING]: "2.001", others: "2"
+	}, {
+		number: "2.11", others: "2.11"
+	}, {
+		number: "2", others: "2"
+	}, {
+		number: "2.0", others: "2"
+	}, {
+		number: "2.00000", others: "2"
+	}, {
+		number: "-.1230", others: "-0.123"
+	}, {
+		number: "-.1234", [AWAY_FROM_ZERO]: "-0.124", [FLOOR]: "-0.124", others: "-0.123"
+	}, {
+		number: "-.1235", [AWAY_FROM_ZERO]: "-0.124", [FLOOR]: "-0.124", [HALF_AWAY_FROM_ZERO]: "-0.124",
+		[HALF_FLOOR]: "-0.124", others: "-0.123"
+	}, {
+		number: "-.1236", [CEILING]: "-0.123", [TOWARDS_ZERO]: "-0.123", [HALF_AWAY_FROM_ZERO]: "-0.124",
+		[HALF_FLOOR]: "-0.124", others: "-0.124"
+	}, {
+		number: "-0.0001", [AWAY_FROM_ZERO]: "-0.001", [FLOOR]: "-0.001", others: "0"
+	}, {
+		number: "-.0000000004", [AWAY_FROM_ZERO]: "-0.001", [FLOOR]: "-0.001", others: "0"
+	}, {
+		number: ".0000000004", [AWAY_FROM_ZERO]: "0.001", [CEILING]: "0.001", others: "0"
+	}, { // famous test cases for problematic rounding in Javascript
+		number: "35.855", maxFractionDigits: 2, [FLOOR]: "35.85", [HALF_FLOOR]: "35.85", [HALF_TOWARDS_ZERO]: "35.85",
+		[TOWARDS_ZERO]: "35.85", others: "35.86"
+	}, {
+		number: "1.005", maxFractionDigits: 2, [FLOOR]: "1", [HALF_FLOOR]: "1", [HALF_TOWARDS_ZERO]: "1",
+		[TOWARDS_ZERO]: "1", others: "1.01"
+	}, {
+		number: "-35.855", maxFractionDigits: 2, [CEILING]: "-35.85", [HALF_CEILING]: "-35.85",
+		[HALF_TOWARDS_ZERO]: "-35.85", [TOWARDS_ZERO]: "-35.85", others: "-35.86"
+	}, {
+		number: "-1.005", maxFractionDigits: 2, [CEILING]: "-1", [HALF_CEILING]: "-1", [HALF_TOWARDS_ZERO]: "-1",
+		[TOWARDS_ZERO]: "-1", others: "-1.01"
+	}, {
+		number: "+7.0001e+2", others: "700.01" //SNOW: DINC0062642
+	}, { // maxFractionDigits: 0
+		number: "-.567", maxFractionDigits: 0, [CEILING]: "0", [TOWARDS_ZERO]: "0", others: "-1"
+	}, {
+		number: "-.456", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "-1", [FLOOR]: "-1", others: "0"
+	}, {
+		number: ".456", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "1", [CEILING]: "1", others: "0"
+	}, {
+		number: ".567", maxFractionDigits: 0, [FLOOR]: "0", [TOWARDS_ZERO]: "0", others: "1"
+	}, {
+		number: "-2.3456e2", maxFractionDigits: 0, [CEILING]: "-234", [TOWARDS_ZERO]: "-234", others: "-235"
+	}, {
+		number: "-2.3456e1", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "-24", [FLOOR]: "-24", others: "-23"
+	}, {
+		number: "2.3456e1", maxFractionDigits: 0, [AWAY_FROM_ZERO]: "24", [CEILING]: "24", others: "23"
+	}, {
+		number: "2.3456e2", maxFractionDigits: 0, [FLOOR]: "234", [TOWARDS_ZERO]: "234", others: "235"
+	}].forEach(({number: sNumber, maxFractionDigits: iMaxDigits = 3, ...mRoundingResults}) => {
+		Object.keys(NumberFormat.RoundingMode).forEach((sRoundingMode) => {
+		QUnit.test(`Float format rounding (${iMaxDigits} digits): ${sRoundingMode}, number: ${sNumber}`, function (assert) {
+			const oFormat = NumberFormat.getFloatInstance({maxFractionDigits: iMaxDigits, roundingMode: sRoundingMode});
+			const sResult = mRoundingResults[sRoundingMode] || mRoundingResults.others;
+			// code under test
+			assert.strictEqual(oFormat.format(getNumber(sNumber, true)), sResult, "as number");
+			// code under test
+			assert.strictEqual(oFormat.format(getNumber(sNumber, false)), sResult, "as string");
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("float format with rounding mode: CEILING (via legacy all lower case letters: ceiling)",
@@ -1370,36 +1370,36 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	sIntegerPart: "2",
-	sNumberToCheck: "2"
-}, {
-	sIntegerPart: "2",
-	sFractionPart: "4",
-	sNumberToCheck: "2.4"
-}, {
-	sIntegerPart: "2",
-	oShortFormat: {magnitude: 1000},
-	sNumberToCheck: "2c+3"
-}, {
-	sIntegerPart: "2",
-	sFractionPart: "4",
-	oShortFormat: {magnitude: 1000000},
-	sNumberToCheck: "2.4c+6"
-}].forEach(function (oFixture, i) {
-	QUnit.test("_getPluralCategory #" + i, function (assert) {
-		var oFormat = NumberFormat.getInstance();
+	[{
+		sIntegerPart: "2",
+		sNumberToCheck: "2"
+	}, {
+		sIntegerPart: "2",
+		sFractionPart: "4",
+		sNumberToCheck: "2.4"
+	}, {
+		sIntegerPart: "2",
+		oShortFormat: {magnitude: 1000},
+		sNumberToCheck: "2c+3"
+	}, {
+		sIntegerPart: "2",
+		sFractionPart: "4",
+		oShortFormat: {magnitude: 1000000},
+		sNumberToCheck: "2.4c+6"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_getPluralCategory #" + i, function (assert) {
+			var oFormat = NumberFormat.getInstance();
 
-		this.mock(oFormat.oLocaleData).expects("getPluralCategory")
-			.withExactArgs(oFixture.sNumberToCheck)
-			.returns("~result");
+			this.mock(oFormat.oLocaleData).expects("getPluralCategory")
+				.withExactArgs(oFixture.sNumberToCheck)
+				.returns("~result");
 
-		// code under test
-		assert.strictEqual(
-			oFormat._getPluralCategory(oFixture.sIntegerPart, oFixture.sFractionPart, oFixture.oShortFormat),
-			"~result");
+			// code under test
+			assert.strictEqual(
+				oFormat._getPluralCategory(oFixture.sIntegerPart, oFixture.sFractionPart, oFixture.oShortFormat),
+				"~result");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Unit format default formatting", function (assert) {
@@ -1716,28 +1716,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[// integrative tests for NumberFormat#getMaximumDecimals
-	{iDecimals: 3, iMaxFractionDigits: 4, iValue: 1234.5678, sExpected: "1,234.568 Cats"},
-	{iDecimals: 3, iMaxFractionDigits: 2, iValue: 1234.567, sExpected: "1,234.57 Cats"},
-	{iDecimals: undefined, iMaxFractionDigits: 1, iValue: 1234.56789, sExpected: "1,234.6 Cats"},
-	{iDecimals: 1, iMaxFractionDigits: undefined, iValue: 1234.56789, sExpected: "1,234.6 Cats"}
-].forEach(({iDecimals, iMaxFractionDigits, iValue, sExpected}, i) => {
-	QUnit.test("Unit formatOptions: take min of maxFractionDigits and decimals: " + i, function (assert) {
-		const oFormatOptions = {
-			customUnits: {cats: {"unitPattern-count-other": "{0} Cats", decimals: iDecimals}},
-			maxFractionDigits: iMaxFractionDigits
-		};
-		this.mock(NumberFormat).expects("getMaximumDecimals")
-			.withExactArgs(sinon.match((oFormatOptions0) =>
-				( oFormatOptions0.maxFractionDigits === (iMaxFractionDigits || 99) // undefined defaulted to 99
-					&& oFormatOptions0.customUnits.cats.decimals === iDecimals )
-			))
-			.callThrough();
+	[// integrative tests for NumberFormat#getMaximumDecimals
+		{iDecimals: 3, iMaxFractionDigits: 4, iValue: 1234.5678, sExpected: "1,234.568 Cats"},
+		{iDecimals: 3, iMaxFractionDigits: 2, iValue: 1234.567, sExpected: "1,234.57 Cats"},
+		{iDecimals: undefined, iMaxFractionDigits: 1, iValue: 1234.56789, sExpected: "1,234.6 Cats"},
+		{iDecimals: 1, iMaxFractionDigits: undefined, iValue: 1234.56789, sExpected: "1,234.6 Cats"}
+	].forEach(({iDecimals, iMaxFractionDigits, iValue, sExpected}, i) => {
+		QUnit.test("Unit formatOptions: take min of maxFractionDigits and decimals: " + i, function (assert) {
+			const oFormatOptions = {
+				customUnits: {cats: {"unitPattern-count-other": "{0} Cats", decimals: iDecimals}},
+				maxFractionDigits: iMaxFractionDigits
+			};
+			this.mock(NumberFormat).expects("getMaximumDecimals")
+				.withExactArgs(sinon.match((oFormatOptions0) =>
+					( oFormatOptions0.maxFractionDigits === (iMaxFractionDigits || 99) // undefined defaulted to 99
+						&& oFormatOptions0.customUnits.cats.decimals === iDecimals )
+				))
+				.callThrough();
 
-		// code under test
-		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(iValue, "cats"), sExpected);
+			// code under test
+			assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(iValue, "cats"), sExpected);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("Unit parse custom pattern", function (assert) {
@@ -1964,59 +1964,6 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oFormat.parse(sValue), [42, "myUnit"]);
 	});
-
-	//*********************************************************************************************
-[
-	{
-		sUnit: "acceleration-meter-per-square-second",
-		sLegacyUnit: "acceleration-meter-per-second-squared",
-		sUnitSymbol: "m/s²"
-	},
-	{
-		sUnit: "concentr-milligram-ofglucose-per-deciliter",
-		sLegacyUnit: "concentr-milligram-per-deciliter",
-		sUnitSymbol: "mg/dL"
-	},
-	{
-		sUnit: "concentr-permillion",
-		sLegacyUnit: "concentr-part-per-million",
-		sUnitSymbol: "ppm"
-	},
-	{
-		sUnit: "consumption-liter-per-100-kilometer",
-		sLegacyUnit: "consumption-liter-per-100kilometers",
-		sUnitSymbol: "L/100 km"
-	},
-	{
-		sUnit: "pressure-millimeter-ofhg",
-		sLegacyUnit: "pressure-millimeter-of-mercury",
-		sUnitSymbol: "mmHg"
-	},
-	{
-		sUnit: "pressure-pound-force-per-square-inch",
-		sLegacyUnit: "pressure-pound-per-square-inch",
-		sUnitSymbol: "psi"
-	},
-	{
-		sUnit: "pressure-inch-ofhg",
-		sLegacyUnit: "pressure-inch-hg",
-		sUnitSymbol: "inHg"
-	},
-	{
-		sUnit: "torque-pound-force-foot",
-		sLegacyUnit: "torque-pound-foot",
-		sUnitSymbol: "lbf\u22C5ft"
-	}
-].forEach(function (oFixture, i) {
-	QUnit.test("Format and parse units using legacy unit mapping " + i, function (assert) {
-		var oFormat = NumberFormat.getUnitInstance({}, new Locale("en")),
-			sFormatOutput = oFormat.format(3, oFixture.sLegacyUnit);
-
-		assert.strictEqual(sFormatOutput, "3 " + oFixture.sUnitSymbol);
-		assert.deepEqual(oFormat.parse(sFormatOutput), [3, oFixture.sUnit]);
-
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("#format: uses correct plural rule", function (assert) {
@@ -4036,897 +3983,897 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{strictGroupingValidation: false}, {strictGroupingValidation: true}].forEach(function (oOptions) {
-	QUnit.test("Integer with groupingEnabled=true (de-DE) with strictGroupingValidation="
-			+ oOptions.strictGroupingValidation, function (assert) {
-		var oIntegerFormat = NumberFormat.getIntegerInstance(Object.assign({groupingEnabled: true}, oOptions),
+	[{strictGroupingValidation: false}, {strictGroupingValidation: true}].forEach(function (oOptions) {
+		QUnit.test("Integer with groupingEnabled=true (de-DE) with strictGroupingValidation="
+				+ oOptions.strictGroupingValidation, function (assert) {
+			var oIntegerFormat = NumberFormat.getIntegerInstance(Object.assign({groupingEnabled: true}, oOptions),
+					new Locale("de-DE"));
+
+			// format
+			assert.deepEqual(oIntegerFormat.format(1234), "1.234", "Format to '1.234'");
+
+			// valid numbers
+			assert.deepEqual(oIntegerFormat.parse("1.234"), 1234, "Parse '1.234'");
+			assert.deepEqual(oIntegerFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+
+			// spacing/plus sign
+			assert.deepEqual(oIntegerFormat.parse("1. 234"), 1234, "Parse '1. 234'");
+			assert.deepEqual(oIntegerFormat.parse("1 .234"), 1234, "Parse '1 .234'");
+			assert.deepEqual(oIntegerFormat.parse("+1 .234"), 1234, "Parse '+1 .234'");
+			assert.deepEqual(oIntegerFormat.parse("+1.234"), 1234, "Parse '+1.234'");
+
+			// scientific notation
+			assert.deepEqual(oIntegerFormat.parse("1.234e+0"), 1234, "parse 1.234e+0");
+			assert.deepEqual(oIntegerFormat.parse("1.234e+1"), 12340, "parse 1.234e+1");
+			assert.deepEqual(oIntegerFormat.parse("1234e+0"), 1234, "parse 1234e+0");
+			assert.deepEqual(oIntegerFormat.parse("1234e+1"), 12340, "parse 1234e+1");
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oIntegerFormat.parse("1.23.456"), NaN, "Parse '1.23.456'");
+				assert.deepEqual(oIntegerFormat.parse("1.23.45"), NaN, "Parse '1.23.45'");
+				assert.deepEqual(oIntegerFormat.parse("1.234.56"), NaN, "Parse '1.234.56'");
+			} else {
+				// tolerated by default, because of multiple grouping separators
+				assert.deepEqual(oIntegerFormat.parse("1.23.456"), 123456, "Parse '1.23.456'");
+				assert.deepEqual(oIntegerFormat.parse("1.23.45"), 12345, "Parse '1.23.45'");
+				assert.deepEqual(oIntegerFormat.parse("1.234.56"), 123456, "Parse '1.234.56'");
+			}
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oIntegerFormat.parse("1.23"), NaN, "Parse '1.23'");
+			assert.deepEqual(oIntegerFormat.parse("1.2345"), NaN, "Parse '1.2345'");
+
+			// invalid, because integer contains decimal separator
+			assert.deepEqual(oIntegerFormat.parse("1,234"), NaN, "Parse '1,234'");
+			assert.deepEqual(oIntegerFormat.parse("1.234,567"), NaN, "Parse '1.234,567'");
+			assert.deepEqual(oIntegerFormat.parse("1.23,45"), NaN, "Parse '1.23,45'");
+			assert.deepEqual(oIntegerFormat.parse("1.23.45,67"), NaN, "Parse '1.23.45,67'");
+			assert.deepEqual(oIntegerFormat.parse("1.23.456,78"), NaN, "Parse '1.23.456,78'");
+			assert.deepEqual(oIntegerFormat.parse("1.234.56,78"), NaN, "Parse '1.234.56,78'");
+			assert.deepEqual(oIntegerFormat.parse("1.2345,67"), NaN, "Parse '1.2345,67'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Integer with groupingEnabled=true and style=long (de-DE) with strictGroupingValidation="
+				+ oOptions.strictGroupingValidation, function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oIntegerFormat = NumberFormat.getIntegerInstance(
+					Object.assign({groupingEnabled: true, style: "long"},oOptions),
+					oLocale);
+
+			// format
+			assert.deepEqual(oIntegerFormat.format(1200), "1,2 Tausend", "Format to '1,2 Tausend'");
+			assert.deepEqual(oIntegerFormat.format(1200000), "1,2 Millionen", "Format to '1,2 Millionen'");
+
+			// valid numbers
+			assert.deepEqual(oIntegerFormat.parse("+1,2 Tausend"), 1200, "Parse '+1,2 Tausend'");
+			assert.deepEqual(oIntegerFormat.parse("1234 Tausend"), 1234000, "Parse '1234 Tausend'");
+
+			assert.deepEqual(oIntegerFormat.parse("1.234 Tausend"), 1234000, "Parse '1.234 Tausend'");
+			assert.deepEqual(oIntegerFormat.parse("+1.234 Tausend"), 1234000, "Parse '+1.234 Tausend'");
+			assert.deepEqual(oIntegerFormat.parse("1. 234 Tausend"), 1234000, "Parse '1. 234 Tausend'");
+			assert.deepEqual(oIntegerFormat.parse("1 .234 Tausend"), 1234000, "Parse '1 .234 Tausend'");
+			assert.deepEqual(oIntegerFormat.parse("+1 .234 Tausend"), 1234000, "Parse '+1 .234 Tausend'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oIntegerFormat.parse("1.2 Tausend"), NaN, "Parse '1.2 Tausend'");
+			assert.deepEqual(oIntegerFormat.parse("1.23 Tausend"), NaN, "Parse '1.23 Tausend'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Integer with groupingEnabled=true and parseAsString=true (de-DE) with strictGroupingValidation="
+				+ oOptions.strictGroupingValidation, function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oIntegerFormat = NumberFormat.getIntegerInstance(
+					Object.assign({groupingEnabled: true, parseAsString: true}, oOptions),
+					oLocale);
+
+			// format
+			assert.deepEqual(oIntegerFormat.format(-12345), "-12.345", "Format to '-12.345'");
+
+			// valid numbers
+			assert.deepEqual(oIntegerFormat.parse("-01"),"-1", "can parse -01");
+			assert.deepEqual(oIntegerFormat.parse("01"), "1", "can parse 01");
+
+			// leading zeros
+			assert.deepEqual(oIntegerFormat.parse("00012.345"), "12345", "can parse 00012.345");
+			assert.deepEqual(oIntegerFormat.parse("-00012.345"), "-12345", "can parse -00012.345");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oIntegerFormat.parse("1.23"), NaN, "Parse '1.23'");
+			assert.deepEqual(oIntegerFormat.parse("1.2345"), NaN, "Parse '1.2345'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Percent (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oPercentInstance = NumberFormat.getPercentInstance(oOptions, oLocale);
+
+			// format
+			assert.deepEqual(oPercentInstance.format(0.01), "1\xa0%", "Format to 1\xa0%");
+			assert.deepEqual(oPercentInstance.format(1234), "123.400\xa0%", "Format to 1.234\xa0%");
+			assert.deepEqual(oPercentInstance.format(-12345.6789), "-1.234.567,89\xa0%", "Format to -12.345,67");
+
+			// valid numbers
+			assert.deepEqual(oPercentInstance.parse("1\xa0%"), 0.01, "can parse 1\xa0%");
+			assert.deepEqual(oPercentInstance.parse("1.234\xa0%"), 12.34, "Parse '1.234\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1.234.567\xa0%"), 12345.67, "Parse '1.234.567\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1.234,56\xa0%"), 12.3456, "Parse '1.234,56\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1.234.567,89\xa0%"), 12345.6789, "Parse '1.234.567,89\xa0%'");
+
+			// spacing/plus sign
+			assert.deepEqual(oPercentInstance.parse("1.234 %"), 12.34, "Parse '1.234 %'");
+			assert.deepEqual(oPercentInstance.parse("1.234%"), 12.34, "Parse '1.234%'");
+			assert.deepEqual(oPercentInstance.parse("1. 234\xa0%"), 12.34, "Parse '1. 234\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1 .234\xa0%"), 12.34, "Parse '1 .234\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("+1 .234\xa0%"), 12.34, "Parse '+1 .234\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("+1.234\xa0%"), 12.34, "Parse '+1.234\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("+1.234,56\xa0%"), 12.3456, "Parse '+1.234,56\xa0%'");
+
+			// scientific
+			assert.deepEqual(oPercentInstance.parse("1.234e+0\xa0%"), 12.34, "parse 1.234e+0");
+			assert.deepEqual(oPercentInstance.parse("1.234e+1\xa0%"), 123.40, "parse 1.234e+1");
+			assert.deepEqual(oPercentInstance.parse("1234e+0\xa0%"), 12.34, "parse 1234e+0");
+			assert.deepEqual(oPercentInstance.parse("1234e+1\xa0%"), 123.40, "parse 1234e+1");
+			assert.deepEqual(oPercentInstance.parse("1.234,56e+0\xa0%"), 12.3456, "parse 1.234,56e+0");
+			assert.deepEqual(oPercentInstance.parse("1.234,56e+1\xa0%"), 123.456, "parse 1.234,56e+1");
+
+			// leading zeros
+			assert.deepEqual(oPercentInstance.parse("-01\xa0%"), -0.01, "can parse -01");
+			assert.deepEqual(oPercentInstance.parse("01\xa0%"), 0.01, "can parse 01");
+			assert.deepEqual(oPercentInstance.parse("-01,2\xa0%"),-0.012, "can parse -01,2");
+			assert.deepEqual(oPercentInstance.parse("01,2\xa0%"), 0.012, "can parse 01,2");
+			assert.deepEqual(oPercentInstance.parse("-00010001,2\xa0%"), -100.012, "can parse -000001,2");
+			assert.deepEqual(oPercentInstance.parse("00010001,2\xa0%"), 100.012, "can parse 000001,2");
+			assert.deepEqual(oPercentInstance.parse("00012.345,67\xa0%"), 123.4567, "can parse with leading zeros");
+			assert.deepEqual(oPercentInstance.parse("-00012.345,67\xa0%"), -123.4567, "can parse with leading zeros");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oPercentInstance.parse("1.23\xa0%"), NaN, "Parse '1.23\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1.2345\xa0%"), NaN, "Parse '1.2345\xa0%'");
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oPercentInstance.parse("1.23.45\xa0%"), NaN, "Parse '1.23.45\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.23.456\xa0%"), NaN, "Parse '1.23.456\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.234.56\xa0%"), NaN, "Parse '1.234.56\xa0%'");
+
+				assert.deepEqual(oPercentInstance.parse("1.23,45\xa0%"), NaN, "Parse '1.23,45\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.23.45,67\xa0%"), NaN, "Parse '1.23.45,67\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.23.456,78\xa0%"), NaN, "Parse '1.23.456,78\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.234.56,78\xa0%"), NaN, "Parse '1.234.56,78\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.2345,67\xa0%"), NaN, "Parse '1.2345,67\xa0%'");
+			} else {
+				// tolerated, because of multiple grouping separators
+				assert.deepEqual(oPercentInstance.parse("1.23.45\xa0%"), 123.45, "Parse '1.23.45\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.23.456\xa0%"), 1234.56, "Parse '1.23.456\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.234.56\xa0%"), 1234.56, "Parse '1.234.56\xa0%'");
+
+				// tolerated, because decimal separator is present
+				assert.deepEqual(oPercentInstance.parse("1.23,45\xa0%"), 1.2345, "Parse '1.23,45\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.23.45,67\xa0%"), 123.4567, "Parse '1.23.45,67\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.23.456,78\xa0%"), 1234.5678, "Parse '1.23.456,78\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.234.56,78\xa0%"), 1234.5678, "Parse '1.234.56,78\xa0%'");
+				assert.deepEqual(oPercentInstance.parse("1.2345,67\xa0%"), 123.4567, "Parse '1.2345,67\xa0%'");
+			}
+
+			// invalid mix of decimal and grouping separators
+			assert.deepEqual(oPercentInstance.parse("5,001.234,56\xa0%"), NaN, "Parse '5,001.234,56\xa0%'");
+
+			// invalid reversal of decimal and grouping separator
+			assert.deepEqual(oPercentInstance.parse("5,001.234\xa0%"), NaN, "Parse '5,001.234\xa0%'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Percent with style=long (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
+				function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oPercentInstance = NumberFormat.getPercentInstance(Object.assign({style: "long"}, oOptions), oLocale);
+
+			// format
+			assert.deepEqual(oPercentInstance.format(12000), "1.200 Tausend\xa0%", "Format to 1,2 Tausend");
+			assert.deepEqual(oPercentInstance.format(12000000), "1.200 Millionen\xa0%", "Format to 1,2 Millionen");
+
+			// valid numbers
+			assert.deepEqual(oPercentInstance.parse("1.234 Tausend\xa0%"), 12340, "Parse '1.234 Tausend\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("+1,2 Tausend\xa0%"), 12, "Parse '+1,2 Tausend\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1234 Tausend\xa0%"), 12340, "Parse '1234 Tausend\xa0%'");
+
+			// spacing/plus sign
+			assert.deepEqual(oPercentInstance.parse("1. 234 Tausend\xa0%"), 12340, "Parse '1. 234 Tausend\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1 .234 Tausend\xa0%"), 12340, "Parse '1 .234 Tausend\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("+1 .234 Tausend\xa0%"), 12340, "Parse '+1 .234 Tausend\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("+1.234 Tausend\xa0%"), 12340, "Parse '+1.234 Tausend\xa0%'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oPercentInstance.parse("1.2 Tausend\xa0%"), NaN, "Parse '1.2 Tausend\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1.23 Tausend\xa0%"), NaN, "Parse '1.23 Tausend\xa0%'");
+			assert.deepEqual(oPercentInstance.parse("1.2345 Tausend\xa0%"), NaN, "Parse '1.2345 Tausend\xa0%'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Float (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oFloatFormat = NumberFormat.getFloatInstance(oOptions, oLocale);
+
+			// format
+			assert.deepEqual(oFloatFormat.format(1234), "1.234", "Format to '1.234'");
+
+			// valid numbers
+			assert.deepEqual(oFloatFormat.parse("0"), 0, "Parse '0'");
+			assert.deepEqual(oFloatFormat.parse("0,3"), 0.3, "Parse '0,3'");
+			assert.deepEqual(oFloatFormat.parse("0,34"), 0.34, "Parse '0,34'");
+			assert.deepEqual(oFloatFormat.parse("0,345"), 0.345, "Parse '0,345'");
+			assert.deepEqual(oFloatFormat.parse("-0,345"), -0.345, "Parse '-0,345'");
+			assert.deepEqual(oFloatFormat.parse(",345"), 0.345, "Parse ',345'");
+			assert.deepEqual(oFloatFormat.parse("-,345"), -0.345, "Parse '-,345'");
+
+			assert.deepEqual(oFloatFormat.parse("1.234"), 1234, "Parse '1.234'");
+			assert.deepEqual(oFloatFormat.parse("-234.567"), -234567, "Parse '-234.567'");
+			assert.deepEqual(oFloatFormat.parse("234.567"), 234567, "Parse '234.567'");
+			assert.deepEqual(oFloatFormat.parse("00234.567"), 234567, "Parse '00234.567'");
+			assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+			assert.deepEqual(oFloatFormat.parse("1.234,56"), 1234.56, "Parse '1.234,56'");
+			assert.deepEqual(oFloatFormat.parse("1.234.567,89"), 1234567.89, "Parse '1.234.567,89'");
+			assert.deepEqual(oFloatFormat.parse("1.234.567.891"), 1234567891, "Parse '1.234.567.891'");
+
+			// tolerated, despite incomplete grouping, because decimal separator is present
+			assert.deepEqual(oFloatFormat.parse("1.234567,89"), 1234567.89, "Parse '1.234567,89'");
+			assert.deepEqual(oFloatFormat.parse("1234.567,89"), 1234567.89, "Parse '1234.567,89'");
+			assert.deepEqual(oFloatFormat.parse("1.337 234.567,89"), 1337234567.89, "Parse '1.337 234.567,89'");
+			assert.deepEqual(oFloatFormat.parse("12.345 671 337,89"), 12345671337.89, "Parse '12.345 671 337,89'");
+			assert.deepEqual(oFloatFormat.parse("12345.671337,89"), 12345671337.89, "Parse '12345.671337,89'");
+
+			// spacing/plus sign
+			assert.deepEqual(oFloatFormat.parse("1. 234"), 1234, "Parse '1. 234'");
+			assert.deepEqual(oFloatFormat.parse("1 .234"), 1234, "Parse '1 .234'");
+			assert.deepEqual(oFloatFormat.parse("+1 .234"), 1234, "Parse '+1 .234'");
+			assert.deepEqual(oFloatFormat.parse("+1.234"), 1234, "Parse '+1.234'");
+			assert.deepEqual(oFloatFormat.parse("+1.234,56"), 1234.56, "Parse '+1.234,56'");
+
+			// scientific
+			assert.deepEqual(oFloatFormat.parse("1.234e+0"), 1234, "parse 1.234e+0");
+			assert.deepEqual(oFloatFormat.parse("1.234e+1"), 12340, "parse 1.234e+1");
+			assert.deepEqual(oFloatFormat.parse("1234e+0"), 1234, "parse 1234e+0");
+			assert.deepEqual(oFloatFormat.parse("1234e+1"), 12340, "parse 1234e+1");
+			assert.deepEqual(oFloatFormat.parse("1.234,56e+0"), 1234.56, "parse 1.234,56e+0");
+			assert.deepEqual(oFloatFormat.parse("1.234,56e+1"), 12345.6, "parse 1.234,56e+1");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("1.23"), NaN, "Parse '1.23'");
+			assert.deepEqual(oFloatFormat.parse("1.2345"), NaN, "Parse '1.2345'");
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oFloatFormat.parse("1.23.45"), NaN, "Parse '1.23.45'");
+				assert.deepEqual(oFloatFormat.parse("1.23.456"), NaN, "Parse '1.23.456'");
+				assert.deepEqual(oFloatFormat.parse("1.234.56"), NaN, "Parse '1.234.56'");
+				assert.deepEqual(oFloatFormat.parse("1.2.3.4"), NaN, "Parse '1.2.3.4'");
+				assert.deepEqual(oFloatFormat.parse("1.2.3"), NaN, "Parse '1.2.3'");
+
+				assert.deepEqual(oFloatFormat.parse("12.34.56.7.891"), NaN, "Parse '12.34.56.7.891'");
+				assert.deepEqual(oFloatFormat.parse("1234.56.7.891"), NaN, "Parse '1234.56.7.891'");
+				assert.deepEqual(oFloatFormat.parse("1.23.4.567.891"), NaN, "Parse '1.23.4.567.891'");
+				assert.deepEqual(oFloatFormat.parse("1 234.567 89.1"), NaN, "Parse '1 234.567 89.1'");
+
+				assert.deepEqual(oFloatFormat.parse("1.23,45"), NaN, "Parse '1.23,45'");
+				assert.deepEqual(oFloatFormat.parse("1.23.45,67"), NaN, "Parse '1.23.45,67'");
+				assert.deepEqual(oFloatFormat.parse("1.23.456,78"), NaN, "Parse '1.23.456,78'");
+				assert.deepEqual(oFloatFormat.parse("1.234.56,78"), NaN, "Parse '1.234.56,78'");
+				assert.deepEqual(oFloatFormat.parse("1.2345,67"), NaN, "Parse '1.2345,67'");
+			} else {
+				// tolerated, because of multiple grouping separators
+				assert.deepEqual(oFloatFormat.parse("1.23.45"), 12345, "Parse '1.23.45'");
+				assert.deepEqual(oFloatFormat.parse("1.23.456"), 123456, "Parse '1.23.456'");
+				assert.deepEqual(oFloatFormat.parse("1.234.56"), 123456, "Parse '1.234.56'");
+				assert.deepEqual(oFloatFormat.parse("1.2.3.4"), 1234, "Parse '1.2.3.4'");
+				assert.deepEqual(oFloatFormat.parse("1.2.3"), 123, "Parse '1.2.3'");
+
+				// expectation 1.234.567.891
+				assert.deepEqual(oFloatFormat.parse("12.34.56.7.891"), 1234567891, "Parse '12.34.56.7.891'");
+				assert.deepEqual(oFloatFormat.parse("1234.56.7.891"), 1234567891, "Parse '1234.56.7.891'");
+				assert.deepEqual(oFloatFormat.parse("1.23.4.567.891"), 1234567891, "Parse '1.23.4.567.891'");
+				assert.deepEqual(oFloatFormat.parse("1 234.567 89.1"), 1234567891, "Parse '1 234.567 89.1'");
+
+				// tolerated, despite wrong grouping
+				assert.deepEqual(oFloatFormat.parse("1.23,45"), 123.45, "Parse '1.23,45'");
+				assert.deepEqual(oFloatFormat.parse("1.23.45,67"), 12345.67, "Parse '1.23.45,67'");
+				assert.deepEqual(oFloatFormat.parse("1.23.456,78"), 123456.78, "Parse '1.23.456,78'");
+				assert.deepEqual(oFloatFormat.parse("1.234.56,78"), 123456.78, "Parse '1.234.56,78'");
+				assert.deepEqual(oFloatFormat.parse("1.2345,67"), 12345.67, "Parse '1.2345,67'");
+			}
+
+			// right grouping
+			// One grouping separator is present, at least one is missing and no decimal separator is present.
+			assert.deepEqual(oFloatFormat.parse("1 234.234 567"), NaN, "Parse '1234.234567'");
+			assert.deepEqual(oFloatFormat.parse("1.234 234 567"), NaN, "Parse '1.234234567'");
+
+			// 2 grouping separators are present, the one at the most right place is missing
+			assert.deepEqual(oFloatFormat.parse("1.234.234 567"), 1234234567, "Parse '1.234234567'");
+
+			// invalid position for grouping separator
+			assert.deepEqual(oFloatFormat.parse("-.234.567"), NaN, "Parse '-.234.567'");
+			// grouping separator missing, gut the most right one is at the correct position
+			assert.deepEqual(oFloatFormat.parse("1234234.567"), 1234234567, "Parse '1234234.567'");
+			assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("1 23.4567 891"), NaN, "Parse '1 23.4567 891'");
+			assert.deepEqual(oFloatFormat.parse("1 2.34567 891"), NaN, "Parse '1 2.34567 891'");
+			assert.deepEqual(oFloatFormat.parse("1 23456.7 891"), NaN, "Parse '1 23456.7 891'");
+
+			// invalid mix of decimal and grouping separators
+			assert.deepEqual(oFloatFormat.parse("5,001.234,56"), NaN, "Parse '5,001.234,56'");
+
+			// invalid reversal of decimal and grouping separator
+			assert.deepEqual(oFloatFormat.parse("5,001.234"), NaN, "Parse '5,001.234'");
+
+			// leading zeros
+			assert.deepEqual(oFloatFormat.parse(".345"), NaN, "Parse '.345'");
+			assert.deepEqual(oFloatFormat.parse("-.345"), NaN, "Parse '-.345'");
+			assert.deepEqual(oFloatFormat.parse("0.345"), NaN, "Parse '0.345'");
+			assert.deepEqual(oFloatFormat.parse("-0.345"), NaN, "Parse '-0.345'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Float groupingEnabled=false (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
+				function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingEnabled: false}, oOptions), oLocale);
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oFloatFormat.parse("1.2.3"), NaN, "Parse '1.2.3'");
+			} else {
+				// tolerated, because of multiple grouping separators
+				assert.deepEqual(oFloatFormat.parse("1.2.3"), 123, "Parse '1.2.3'");
+			}
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Float with style=long (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
+				function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({style: "long"}, oOptions), oLocale);
+
+			// format
+			assert.deepEqual(oFloatFormat.format(1200), "1,2 Tausend", "Format to '1,2 Tausend'");
+			assert.deepEqual(oFloatFormat.format(1200000), "1,2 Millionen", "Format to '1,2 Millionen'");
+
+			// valid numbers
+			assert.deepEqual(oFloatFormat.parse("1234 Tausend"), 1234000, "Parse '1234 Tausend'");
+
+			// spacing/plus sign
+			assert.deepEqual(oFloatFormat.parse("+1,2 Tausend"), 1200, "Parse '+1,2 Tausend'");
+			assert.deepEqual(oFloatFormat.parse("1.234 Tausend"), 1234000, "Parse '1.234 Tausend'");
+			assert.deepEqual(oFloatFormat.parse("+1.234 Tausend"), 1234000, "Parse '+1.234 Tausend'");
+			assert.deepEqual(oFloatFormat.parse("1. 234 Tausend"), 1234000, "Parse '1. 234 Tausend'");
+			assert.deepEqual(oFloatFormat.parse("1 .234 Tausend"), 1234000, "Parse '1 .234 Tausend'");
+			assert.deepEqual(oFloatFormat.parse("+1 .234 Tausend"), 1234000, "Parse '+1 .234 Tausend'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("1.2 Tausend"), NaN, "Parse '1.2 Tausend'");
+			assert.deepEqual(oFloatFormat.parse("1.23 Tausend"), NaN, "Parse '1.23 Tausend'");
+			assert.deepEqual(oFloatFormat.parse("1.2345 Tausend"), NaN, "Parse '1.2345 Tausend'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Float with parseAsString=true (de-DE) with strictGroupingValidation="
+				+ oOptions.strictGroupingValidation, function (assert) {
+			var oLocale = new Locale("de-DE");
+			var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({parseAsString: true}, oOptions), oLocale);
+			// format
+			assert.deepEqual(oFloatFormat.format(-12345.67), "-12.345,67", "Format to '-12.345,67'");
+
+			// leading zeros
+			assert.deepEqual(oFloatFormat.parse("-01"),"-1", "can parse -01");
+			assert.deepEqual(oFloatFormat.parse("01"), "1", "can parse 01");
+			assert.deepEqual(oFloatFormat.parse("-01,2"),"-1.2", "can parse -01,2");
+			assert.deepEqual(oFloatFormat.parse("01,2"), "1.2", "can parse 01,2");
+			assert.deepEqual(oFloatFormat.parse("-00010001,2"),"-10001.2", "can parse -000001,2");
+			assert.deepEqual(oFloatFormat.parse("00010001,2"), "10001.2", "can parse 000001,2");
+			assert.deepEqual(oFloatFormat.parse("00012.345,67"), "12345.67", "can parse '00012.345,67'");
+			assert.deepEqual(oFloatFormat.parse("-00012.345,67"), "-12345.67", "can parse -00012,345.67");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("-01.2"), NaN, "Parse '-01.2'");
+			assert.deepEqual(oFloatFormat.parse("-01.23"), NaN, "Parse '-01.23'");
+			assert.deepEqual(oFloatFormat.parse("-01.2345"), NaN, "Parse '-01.2345'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Float (en-GB) with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {
+			var oLocale = new Locale("en-GB");
+			var oFloatFormat = NumberFormat.getFloatInstance(oOptions, oLocale);
+
+			// format
+			assert.deepEqual(oFloatFormat.format(1234), "1,234", "Format to '1,234'");
+
+			// valid numbers
+			assert.deepEqual(oFloatFormat.parse("1,234"), 1234, "Parse '1,234'");
+			assert.deepEqual(oFloatFormat.parse("1,234,567"), 1234567, "Parse '1,234,567'");
+			assert.deepEqual(oFloatFormat.parse("1,234.56"), 1234.56, "Parse '1,234.56'");
+			assert.deepEqual(oFloatFormat.parse("1,234,567.89"), 1234567.89, "Parse '1,234,567.89'");
+
+			// scientific
+			assert.deepEqual(oFloatFormat.parse("1,234e+0"), 1234, "parse 1.234e+0");
+			assert.deepEqual(oFloatFormat.parse("1,234e+1"), 12340, "parse 1.234e+1");
+			assert.deepEqual(oFloatFormat.parse("1234e+0"), 1234, "parse 1234e+0");
+			assert.deepEqual(oFloatFormat.parse("1234e+1"), 12340, "parse 1234e+1");
+			assert.deepEqual(oFloatFormat.parse("1,234.56e+0"), 1234.56, "parse 1.234,56e+0");
+			assert.deepEqual(oFloatFormat.parse("1,234.56e+1"), 12345.6, "parse 1.234,56e+1");
+			assert.deepEqual(oFloatFormat.parse("1234E+1"), 12340, "parse 1234E+1");
+			assert.deepEqual(oFloatFormat.parse("1,234E+0"), 1234, "parse 1.234E+0");
+			assert.deepEqual(oFloatFormat.parse("1,234.56E+0"), 1234.56, "parse 1.234,56E+0");
+			assert.deepEqual(oFloatFormat.parse("1,234.56E+1"), 12345.6, "parse 1.234,56E+1");
+
+			// spacing/plus sign
+			assert.deepEqual(oFloatFormat.parse("1, 234"), 1234, "Parse '1, 234'");
+			assert.deepEqual(oFloatFormat.parse("1 ,234"), 1234, "Parse '1 ,234'");
+			assert.deepEqual(oFloatFormat.parse("+1 ,234"), 1234, "Parse '+1 ,234'");
+			assert.deepEqual(oFloatFormat.parse("+1,234"), 1234, "Parse '+1,234'");
+			assert.deepEqual(oFloatFormat.parse("+1,234.56"), 1234.56, "Parse '+1,234.56'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("1,23"), NaN, "Parse '1,23'");
+			assert.deepEqual(oFloatFormat.parse("1,2345"), NaN, "Parse '1,2345'");
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oFloatFormat.parse("1,23,45"), NaN, "Parse '1,23,45'");
+				assert.deepEqual(oFloatFormat.parse("1,23,456"), NaN, "Parse '1,23,456'");
+				assert.deepEqual(oFloatFormat.parse("1,234,56"), NaN, "Parse '1,234,56'");
+
+				assert.deepEqual(oFloatFormat.parse("1,23.45"), NaN, "Parse '1,23.45'");
+				assert.deepEqual(oFloatFormat.parse("1,23,45.67"), NaN, "Parse '1,23,45.67'");
+				assert.deepEqual(oFloatFormat.parse("1,23,456.78"), NaN, "Parse '1,23,456.78'");
+				assert.deepEqual(oFloatFormat.parse("1,234,56.78"), NaN, "Parse '1,234,56.78'");
+				assert.deepEqual(oFloatFormat.parse("1,2345.67"), NaN, "Parse '1,2345.67'");
+			} else {
+				// tolerated, because of multiple grouping separators
+				assert.deepEqual(oFloatFormat.parse("1,23,45"), 12345, "Parse '1,23,45'");
+				assert.deepEqual(oFloatFormat.parse("1,23,456"), 123456, "Parse '1,23,456'");
+				assert.deepEqual(oFloatFormat.parse("1,234,56"), 123456, "Parse '1,234,56'");
+
+				// tolerated, because decimal separator is present
+				assert.deepEqual(oFloatFormat.parse("1,23.45"), 123.45, "Parse '1,23.45'");
+				assert.deepEqual(oFloatFormat.parse("1,23,45.67"), 12345.67, "Parse '1,23,45.67'");
+				assert.deepEqual(oFloatFormat.parse("1,23,456.78"), 123456.78, "Parse '1,23,456.78'");
+				assert.deepEqual(oFloatFormat.parse("1,234,56.78"), 123456.78, "Parse '1,234,56.78'");
+				assert.deepEqual(oFloatFormat.parse("1,2345.67"), 12345.67, "Parse '1,2345.67'");
+			}
+
+			// invalid mix of decimal and grouping separators
+			assert.deepEqual(oFloatFormat.parse("5.001,234.56"), NaN, "Parse '5.001,234.56'");
+
+			// invalid reversal of decimal and grouping separator
+			assert.deepEqual(oFloatFormat.parse("5.001,234"), NaN, "Parse '5.001,234'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Float with style=long (en-GB) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
+				function (assert) {
+			var oLocale = new Locale("en-GB");
+			var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({style: "long"}, oOptions), oLocale);
+
+			// format with style long, to see how the default formatted string looks like which serves as input for parse
+			// note that, unless the maximum unit is used, it is not possible to have a formatted string containing grouping
+			// separators.
+			assert.deepEqual(oFloatFormat.format(1200), "1.2 thousand", "Format to '1.2 thousand'");
+			assert.deepEqual(oFloatFormat.format(1200000), "1.2 million", "Format to '1.2 million'");
+			assert.deepEqual(oFloatFormat.format(1.2e+12), "1.2 trillion", "Format to '1.2 trillion'");
+			assert.deepEqual(oFloatFormat.format(1200e+12), "1,200 trillion", "Format to '1,200 trillion'");
+
+			// valid numbers
+			assert.deepEqual(oFloatFormat.parse("1,200 trillion"), 1200e+12, "Parse '1,200 trillion'");
+			assert.deepEqual(oFloatFormat.parse("1,234 trillion"), 1234e+12, "Parse '1,234 trillion'");
+			assert.deepEqual(oFloatFormat.parse("1234 trillion"), 1234e+12, "Parse '1234 trillion'");
+
+			// spacing/plus sign
+			assert.deepEqual(oFloatFormat.parse("1, 234 trillion"), 1234e+12, "Parse '1, 234 trillion'");
+			assert.deepEqual(oFloatFormat.parse("1 ,234 trillion"), 1234e+12, "Parse '1 ,234 trillion'");
+			assert.deepEqual(oFloatFormat.parse("+1 ,234 trillion"), 1234e+12, "Parse '+1 ,234 trillion'");
+			assert.deepEqual(oFloatFormat.parse("+1,234 trillion"), 1234e+12, "Parse '+1,234 trillion'");
+			assert.deepEqual(oFloatFormat.parse("+1.2 trillion"), 1.2e+12, "Parse '+1.2 trillion'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("1,2 trillion"), NaN, "Parse '1,2 trillion'");
+			assert.deepEqual(oFloatFormat.parse("1,23 trillion"), NaN, "Parse '1,23 trillion'");
+			assert.deepEqual(oFloatFormat.parse("1,2345 trillion"), NaN, "Parse '1,2345 trillion'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Float with parseAsString=true (en-GB) with strictGroupingValidation="
+				+ oOptions.strictGroupingValidation, function (assert) {
+			var oLocale = new Locale("en-GB");
+			var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({parseAsString: true}, oOptions), oLocale);
+
+			// format
+			assert.deepEqual(oFloatFormat.format(-12345.67), "-12,345.67", "Format to '-12,345.67'");
+
+			// leading zeros
+			assert.deepEqual(oFloatFormat.parse("-01"),"-1", "can parse -01");
+			assert.deepEqual(oFloatFormat.parse("01"), "1", "can parse 01");
+			assert.deepEqual(oFloatFormat.parse("-01.2"),"-1.2", "can parse -01,2");
+			assert.deepEqual(oFloatFormat.parse("01.2"), "1.2", "can parse 01,2");
+			assert.deepEqual(oFloatFormat.parse("-00010001.2"),"-10001.2", "can parse -000001,2");
+			assert.deepEqual(oFloatFormat.parse("00010001.2"), "10001.2", "can parse 000001,2");
+			assert.deepEqual(oFloatFormat.parse("00012,345.67"), "12345.67", "can parse '00012,345.67'");
+			assert.deepEqual(oFloatFormat.parse("-00012,345.67"), "-12345.67", "can parse '-00012,345.67'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("-01,2"), NaN, "Parse '-01,2'");
+			assert.deepEqual(oFloatFormat.parse("-01,23"), NaN, "Parse '-01,23'");
+			assert.deepEqual(oFloatFormat.parse("-01,2345"), NaN, "Parse '-01,2345'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Special cases Float with strictGroupingValidation=" + oOptions.strictGroupingValidation,
+				function (assert) {
+			var oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("de-DE"));
+			assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
+
+			// invalid syntax
+			assert.deepEqual(oFloatFormat.parse("123,456,789.21"), NaN, "Parse '123,456,789.21'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oFloatFormat.parse("1111.111"), 1111111, "Parse '1111.111'");
+			assert.deepEqual(oFloatFormat.parse("111.111"), 111111, "Parse '111.111'");
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oFloatFormat.parse("1.."), NaN, "Parse '1..'");
+				assert.deepEqual(oFloatFormat.parse("1..2"), NaN, "Parse '1..2'");
+				assert.deepEqual(oFloatFormat.parse("1..2.."), NaN, "Parse '1..2..'");
+				assert.deepEqual(oFloatFormat.parse("1..2..3"), NaN, "Parse '1..2..3'");
+				assert.deepEqual(oFloatFormat.parse("1.11.11...11"), NaN, "Parse '1.11.11...11'");
+				assert.deepEqual(oFloatFormat.parse("1.11.11.11"), NaN, "Parse '1.11.11.11'");
+				assert.deepEqual(oFloatFormat.parse("1.1111.11"), NaN, "Parse '1.1111.11'");
+			} else {
+				// tolerated, because of multiple grouping separators
+				assert.deepEqual(oFloatFormat.parse("1.."), 1, "Parse '1..'");
+				assert.deepEqual(oFloatFormat.parse("1..2"), 12, "Parse '1..2'");
+				assert.deepEqual(oFloatFormat.parse("1..2.."), 12, "Parse '1..2..'");
+				assert.deepEqual(oFloatFormat.parse("1..2..3"), 123, "Parse '1..2..3'");
+				assert.deepEqual(oFloatFormat.parse("1.11.11...11"), 1111111, "Parse '1.11.11...11'");
+				assert.deepEqual(oFloatFormat.parse("1.11.11.11"), 1111111, "Parse '1.11.11.11'");
+				assert.deepEqual(oFloatFormat.parse("1.1111.11"), 1111111, "Parse '1.1111.11'");
+			}
+
+			assert.deepEqual(oFloatFormat.parse("1111.111.111"), 1111111111, "Parse '1111.111.111'");
+			assert.deepEqual(oFloatFormat.parse("1.111.111111"), 1111111111, "Parse '1.111.111111'");
+
+			// not tolerated, because invalid number syntax (in combination with grouping separator)
+			assert.deepEqual(oFloatFormat.parse(".0."), NaN, "Parse '.0.'");
+			assert.deepEqual(oFloatFormat.parse("."), NaN, "Parse '.'");
+			assert.deepEqual(oFloatFormat.parse("..1"), NaN, "Parse '..1'");
+			assert.deepEqual(oFloatFormat.parse("0."), NaN, "Parse '0.'");
+			assert.deepEqual(oFloatFormat.parse(".0"), NaN, "Parse '.0'");
+			assert.deepEqual(oFloatFormat.parse("0.."), NaN, "Parse '0..'");
+			assert.deepEqual(oFloatFormat.parse("0.123."), NaN, "Parse '0.123.'");
+			assert.deepEqual(oFloatFormat.parse("0.123"), NaN, "Parse '0.123'");
+			assert.deepEqual(oFloatFormat.parse("-.123"), NaN, "Parse '-.123'");
+			assert.deepEqual(oFloatFormat.parse(".123"), NaN, "Parse '.123'");
+			assert.deepEqual(oFloatFormat.parse("123."), NaN, "Parse '123.'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oFloatFormat.parse("1."), NaN, "Parse '1.'");
+			assert.deepEqual(oFloatFormat.parse("11."), NaN, "Parse '11.'");
+			assert.deepEqual(oFloatFormat.parse("1.1"), NaN, "Parse '1.1'");
+			assert.deepEqual(oFloatFormat.parse("11.11"), NaN, "Parse '11.11'");
+			assert.deepEqual(oFloatFormat.parse("111.11"), NaN, "Parse '111.11'");
+			assert.deepEqual(oFloatFormat.parse("111.1111"), NaN, "Parse '111.1111'");
+
+			// tolerated, despite incomplete grouping
+			assert.deepEqual(oFloatFormat.parse("1111.111,11"), 1111111.11, "Parse '1111.111,11'");
+
+			// space characters are allowed by default!!
+			assert.deepEqual(oFloatFormat.parse("12\xa03\xa04\xa0567"), 1234567, "Parse '12\xa03\xa04\xa0567'");
+			assert.deepEqual(oFloatFormat.parse("123456\u202F7"), 1234567, "Parse '123456\u202F7'");
+			assert.deepEqual(oFloatFormat.parse("12 3 4 567"), 1234567, "Parse '12 3 4 567'");
+			assert.deepEqual(oFloatFormat.parse(" 12 3 4 567 "), 1234567, "Parse ' 12 3 4 567 '");
+			assert.deepEqual(oFloatFormat.parse(" 1234567 "), 1234567, "Parse ' 1234567 '");
+
+			// empty custom groupingSeparator (not officially supported)
+			oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingSeparator: ""}, oOptions),
+				new Locale("de-DE"));
+			assert.deepEqual(oFloatFormat.parse("1234567"), 1234567, "Parse '1234567'");
+			assert.deepEqual(oFloatFormat.parse("1234567,89"), 1234567.89, "Parse '1234567,89'");
+			assert.deepEqual(oFloatFormat.parse("123.456"), NaN, "Parse '123.456'");
+
+			// custom groupingSeparator is the same as the decimal separator (not officially supported)
+			oFloatFormat = NumberFormat.getFloatInstance(
+				Object.assign({groupingSeparator: ".", decimalSeparator: "."}, oOptions),
 				new Locale("de-DE"));
 
-		// format
-		assert.deepEqual(oIntegerFormat.format(1234), "1.234", "Format to '1.234'");
+			this.oLogMock.expects("error")
+				.withExactArgs("The grouping and decimal separator both have the same value '.'. They must be different"
+					+ " from each other such that values can be parsed correctly.")
+				.exactly(3);
 
-		// valid numbers
-		assert.deepEqual(oIntegerFormat.parse("1.234"), 1234, "Parse '1.234'");
-		assert.deepEqual(oIntegerFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
-
-		// spacing/plus sign
-		assert.deepEqual(oIntegerFormat.parse("1. 234"), 1234, "Parse '1. 234'");
-		assert.deepEqual(oIntegerFormat.parse("1 .234"), 1234, "Parse '1 .234'");
-		assert.deepEqual(oIntegerFormat.parse("+1 .234"), 1234, "Parse '+1 .234'");
-		assert.deepEqual(oIntegerFormat.parse("+1.234"), 1234, "Parse '+1.234'");
-
-		// scientific notation
-		assert.deepEqual(oIntegerFormat.parse("1.234e+0"), 1234, "parse 1.234e+0");
-		assert.deepEqual(oIntegerFormat.parse("1.234e+1"), 12340, "parse 1.234e+1");
-		assert.deepEqual(oIntegerFormat.parse("1234e+0"), 1234, "parse 1234e+0");
-		assert.deepEqual(oIntegerFormat.parse("1234e+1"), 12340, "parse 1234e+1");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oIntegerFormat.parse("1.23.456"), NaN, "Parse '1.23.456'");
-			assert.deepEqual(oIntegerFormat.parse("1.23.45"), NaN, "Parse '1.23.45'");
-			assert.deepEqual(oIntegerFormat.parse("1.234.56"), NaN, "Parse '1.234.56'");
-		} else {
-			// tolerated by default, because of multiple grouping separators
-			assert.deepEqual(oIntegerFormat.parse("1.23.456"), 123456, "Parse '1.23.456'");
-			assert.deepEqual(oIntegerFormat.parse("1.23.45"), 12345, "Parse '1.23.45'");
-			assert.deepEqual(oIntegerFormat.parse("1.234.56"), 123456, "Parse '1.234.56'");
-		}
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oIntegerFormat.parse("1.23"), NaN, "Parse '1.23'");
-		assert.deepEqual(oIntegerFormat.parse("1.2345"), NaN, "Parse '1.2345'");
-
-		// invalid, because integer contains decimal separator
-		assert.deepEqual(oIntegerFormat.parse("1,234"), NaN, "Parse '1,234'");
-		assert.deepEqual(oIntegerFormat.parse("1.234,567"), NaN, "Parse '1.234,567'");
-		assert.deepEqual(oIntegerFormat.parse("1.23,45"), NaN, "Parse '1.23,45'");
-		assert.deepEqual(oIntegerFormat.parse("1.23.45,67"), NaN, "Parse '1.23.45,67'");
-		assert.deepEqual(oIntegerFormat.parse("1.23.456,78"), NaN, "Parse '1.23.456,78'");
-		assert.deepEqual(oIntegerFormat.parse("1.234.56,78"), NaN, "Parse '1.234.56,78'");
-		assert.deepEqual(oIntegerFormat.parse("1.2345,67"), NaN, "Parse '1.2345,67'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Integer with groupingEnabled=true and style=long (de-DE) with strictGroupingValidation="
-			+ oOptions.strictGroupingValidation, function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oIntegerFormat = NumberFormat.getIntegerInstance(
-				Object.assign({groupingEnabled: true, style: "long"},oOptions),
-				oLocale);
-
-		// format
-		assert.deepEqual(oIntegerFormat.format(1200), "1,2 Tausend", "Format to '1,2 Tausend'");
-		assert.deepEqual(oIntegerFormat.format(1200000), "1,2 Millionen", "Format to '1,2 Millionen'");
-
-		// valid numbers
-		assert.deepEqual(oIntegerFormat.parse("+1,2 Tausend"), 1200, "Parse '+1,2 Tausend'");
-		assert.deepEqual(oIntegerFormat.parse("1234 Tausend"), 1234000, "Parse '1234 Tausend'");
-
-		assert.deepEqual(oIntegerFormat.parse("1.234 Tausend"), 1234000, "Parse '1.234 Tausend'");
-		assert.deepEqual(oIntegerFormat.parse("+1.234 Tausend"), 1234000, "Parse '+1.234 Tausend'");
-		assert.deepEqual(oIntegerFormat.parse("1. 234 Tausend"), 1234000, "Parse '1. 234 Tausend'");
-		assert.deepEqual(oIntegerFormat.parse("1 .234 Tausend"), 1234000, "Parse '1 .234 Tausend'");
-		assert.deepEqual(oIntegerFormat.parse("+1 .234 Tausend"), 1234000, "Parse '+1 .234 Tausend'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oIntegerFormat.parse("1.2 Tausend"), NaN, "Parse '1.2 Tausend'");
-		assert.deepEqual(oIntegerFormat.parse("1.23 Tausend"), NaN, "Parse '1.23 Tausend'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Integer with groupingEnabled=true and parseAsString=true (de-DE) with strictGroupingValidation="
-			+ oOptions.strictGroupingValidation, function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oIntegerFormat = NumberFormat.getIntegerInstance(
-				Object.assign({groupingEnabled: true, parseAsString: true}, oOptions),
-				oLocale);
-
-		// format
-		assert.deepEqual(oIntegerFormat.format(-12345), "-12.345", "Format to '-12.345'");
-
-		// valid numbers
-		assert.deepEqual(oIntegerFormat.parse("-01"),"-1", "can parse -01");
-		assert.deepEqual(oIntegerFormat.parse("01"), "1", "can parse 01");
-
-		// leading zeros
-		assert.deepEqual(oIntegerFormat.parse("00012.345"), "12345", "can parse 00012.345");
-		assert.deepEqual(oIntegerFormat.parse("-00012.345"), "-12345", "can parse -00012.345");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oIntegerFormat.parse("1.23"), NaN, "Parse '1.23'");
-		assert.deepEqual(oIntegerFormat.parse("1.2345"), NaN, "Parse '1.2345'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Percent (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oPercentInstance = NumberFormat.getPercentInstance(oOptions, oLocale);
-
-		// format
-		assert.deepEqual(oPercentInstance.format(0.01), "1\xa0%", "Format to 1\xa0%");
-		assert.deepEqual(oPercentInstance.format(1234), "123.400\xa0%", "Format to 1.234\xa0%");
-		assert.deepEqual(oPercentInstance.format(-12345.6789), "-1.234.567,89\xa0%", "Format to -12.345,67");
-
-		// valid numbers
-		assert.deepEqual(oPercentInstance.parse("1\xa0%"), 0.01, "can parse 1\xa0%");
-		assert.deepEqual(oPercentInstance.parse("1.234\xa0%"), 12.34, "Parse '1.234\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1.234.567\xa0%"), 12345.67, "Parse '1.234.567\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1.234,56\xa0%"), 12.3456, "Parse '1.234,56\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1.234.567,89\xa0%"), 12345.6789, "Parse '1.234.567,89\xa0%'");
-
-		// spacing/plus sign
-		assert.deepEqual(oPercentInstance.parse("1.234 %"), 12.34, "Parse '1.234 %'");
-		assert.deepEqual(oPercentInstance.parse("1.234%"), 12.34, "Parse '1.234%'");
-		assert.deepEqual(oPercentInstance.parse("1. 234\xa0%"), 12.34, "Parse '1. 234\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1 .234\xa0%"), 12.34, "Parse '1 .234\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("+1 .234\xa0%"), 12.34, "Parse '+1 .234\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("+1.234\xa0%"), 12.34, "Parse '+1.234\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("+1.234,56\xa0%"), 12.3456, "Parse '+1.234,56\xa0%'");
-
-		// scientific
-		assert.deepEqual(oPercentInstance.parse("1.234e+0\xa0%"), 12.34, "parse 1.234e+0");
-		assert.deepEqual(oPercentInstance.parse("1.234e+1\xa0%"), 123.40, "parse 1.234e+1");
-		assert.deepEqual(oPercentInstance.parse("1234e+0\xa0%"), 12.34, "parse 1234e+0");
-		assert.deepEqual(oPercentInstance.parse("1234e+1\xa0%"), 123.40, "parse 1234e+1");
-		assert.deepEqual(oPercentInstance.parse("1.234,56e+0\xa0%"), 12.3456, "parse 1.234,56e+0");
-		assert.deepEqual(oPercentInstance.parse("1.234,56e+1\xa0%"), 123.456, "parse 1.234,56e+1");
-
-		// leading zeros
-		assert.deepEqual(oPercentInstance.parse("-01\xa0%"), -0.01, "can parse -01");
-		assert.deepEqual(oPercentInstance.parse("01\xa0%"), 0.01, "can parse 01");
-		assert.deepEqual(oPercentInstance.parse("-01,2\xa0%"),-0.012, "can parse -01,2");
-		assert.deepEqual(oPercentInstance.parse("01,2\xa0%"), 0.012, "can parse 01,2");
-		assert.deepEqual(oPercentInstance.parse("-00010001,2\xa0%"), -100.012, "can parse -000001,2");
-		assert.deepEqual(oPercentInstance.parse("00010001,2\xa0%"), 100.012, "can parse 000001,2");
-		assert.deepEqual(oPercentInstance.parse("00012.345,67\xa0%"), 123.4567, "can parse with leading zeros");
-		assert.deepEqual(oPercentInstance.parse("-00012.345,67\xa0%"), -123.4567, "can parse with leading zeros");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oPercentInstance.parse("1.23\xa0%"), NaN, "Parse '1.23\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1.2345\xa0%"), NaN, "Parse '1.2345\xa0%'");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oPercentInstance.parse("1.23.45\xa0%"), NaN, "Parse '1.23.45\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.23.456\xa0%"), NaN, "Parse '1.23.456\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.234.56\xa0%"), NaN, "Parse '1.234.56\xa0%'");
-
-			assert.deepEqual(oPercentInstance.parse("1.23,45\xa0%"), NaN, "Parse '1.23,45\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.23.45,67\xa0%"), NaN, "Parse '1.23.45,67\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.23.456,78\xa0%"), NaN, "Parse '1.23.456,78\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.234.56,78\xa0%"), NaN, "Parse '1.234.56,78\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.2345,67\xa0%"), NaN, "Parse '1.2345,67\xa0%'");
-		} else {
-			// tolerated, because of multiple grouping separators
-			assert.deepEqual(oPercentInstance.parse("1.23.45\xa0%"), 123.45, "Parse '1.23.45\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.23.456\xa0%"), 1234.56, "Parse '1.23.456\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.234.56\xa0%"), 1234.56, "Parse '1.234.56\xa0%'");
-
-			// tolerated, because decimal separator is present
-			assert.deepEqual(oPercentInstance.parse("1.23,45\xa0%"), 1.2345, "Parse '1.23,45\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.23.45,67\xa0%"), 123.4567, "Parse '1.23.45,67\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.23.456,78\xa0%"), 1234.5678, "Parse '1.23.456,78\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.234.56,78\xa0%"), 1234.5678, "Parse '1.234.56,78\xa0%'");
-			assert.deepEqual(oPercentInstance.parse("1.2345,67\xa0%"), 123.4567, "Parse '1.2345,67\xa0%'");
-		}
-
-		// invalid mix of decimal and grouping separators
-		assert.deepEqual(oPercentInstance.parse("5,001.234,56\xa0%"), NaN, "Parse '5,001.234,56\xa0%'");
-
-		// invalid reversal of decimal and grouping separator
-		assert.deepEqual(oPercentInstance.parse("5,001.234\xa0%"), NaN, "Parse '5,001.234\xa0%'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Percent with style=long (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
-			function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oPercentInstance = NumberFormat.getPercentInstance(Object.assign({style: "long"}, oOptions), oLocale);
-
-		// format
-		assert.deepEqual(oPercentInstance.format(12000), "1.200 Tausend\xa0%", "Format to 1,2 Tausend");
-		assert.deepEqual(oPercentInstance.format(12000000), "1.200 Millionen\xa0%", "Format to 1,2 Millionen");
-
-		// valid numbers
-		assert.deepEqual(oPercentInstance.parse("1.234 Tausend\xa0%"), 12340, "Parse '1.234 Tausend\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("+1,2 Tausend\xa0%"), 12, "Parse '+1,2 Tausend\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1234 Tausend\xa0%"), 12340, "Parse '1234 Tausend\xa0%'");
-
-		// spacing/plus sign
-		assert.deepEqual(oPercentInstance.parse("1. 234 Tausend\xa0%"), 12340, "Parse '1. 234 Tausend\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1 .234 Tausend\xa0%"), 12340, "Parse '1 .234 Tausend\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("+1 .234 Tausend\xa0%"), 12340, "Parse '+1 .234 Tausend\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("+1.234 Tausend\xa0%"), 12340, "Parse '+1.234 Tausend\xa0%'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oPercentInstance.parse("1.2 Tausend\xa0%"), NaN, "Parse '1.2 Tausend\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1.23 Tausend\xa0%"), NaN, "Parse '1.23 Tausend\xa0%'");
-		assert.deepEqual(oPercentInstance.parse("1.2345 Tausend\xa0%"), NaN, "Parse '1.2345 Tausend\xa0%'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Float (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oFloatFormat = NumberFormat.getFloatInstance(oOptions, oLocale);
-
-		// format
-		assert.deepEqual(oFloatFormat.format(1234), "1.234", "Format to '1.234'");
-
-		// valid numbers
-		assert.deepEqual(oFloatFormat.parse("0"), 0, "Parse '0'");
-		assert.deepEqual(oFloatFormat.parse("0,3"), 0.3, "Parse '0,3'");
-		assert.deepEqual(oFloatFormat.parse("0,34"), 0.34, "Parse '0,34'");
-		assert.deepEqual(oFloatFormat.parse("0,345"), 0.345, "Parse '0,345'");
-		assert.deepEqual(oFloatFormat.parse("-0,345"), -0.345, "Parse '-0,345'");
-		assert.deepEqual(oFloatFormat.parse(",345"), 0.345, "Parse ',345'");
-		assert.deepEqual(oFloatFormat.parse("-,345"), -0.345, "Parse '-,345'");
-
-		assert.deepEqual(oFloatFormat.parse("1.234"), 1234, "Parse '1.234'");
-		assert.deepEqual(oFloatFormat.parse("-234.567"), -234567, "Parse '-234.567'");
-		assert.deepEqual(oFloatFormat.parse("234.567"), 234567, "Parse '234.567'");
-		assert.deepEqual(oFloatFormat.parse("00234.567"), 234567, "Parse '00234.567'");
-		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
-		assert.deepEqual(oFloatFormat.parse("1.234,56"), 1234.56, "Parse '1.234,56'");
-		assert.deepEqual(oFloatFormat.parse("1.234.567,89"), 1234567.89, "Parse '1.234.567,89'");
-		assert.deepEqual(oFloatFormat.parse("1.234.567.891"), 1234567891, "Parse '1.234.567.891'");
-
-		// tolerated, despite incomplete grouping, because decimal separator is present
-		assert.deepEqual(oFloatFormat.parse("1.234567,89"), 1234567.89, "Parse '1.234567,89'");
-		assert.deepEqual(oFloatFormat.parse("1234.567,89"), 1234567.89, "Parse '1234.567,89'");
-		assert.deepEqual(oFloatFormat.parse("1.337 234.567,89"), 1337234567.89, "Parse '1.337 234.567,89'");
-		assert.deepEqual(oFloatFormat.parse("12.345 671 337,89"), 12345671337.89, "Parse '12.345 671 337,89'");
-		assert.deepEqual(oFloatFormat.parse("12345.671337,89"), 12345671337.89, "Parse '12345.671337,89'");
-
-		// spacing/plus sign
-		assert.deepEqual(oFloatFormat.parse("1. 234"), 1234, "Parse '1. 234'");
-		assert.deepEqual(oFloatFormat.parse("1 .234"), 1234, "Parse '1 .234'");
-		assert.deepEqual(oFloatFormat.parse("+1 .234"), 1234, "Parse '+1 .234'");
-		assert.deepEqual(oFloatFormat.parse("+1.234"), 1234, "Parse '+1.234'");
-		assert.deepEqual(oFloatFormat.parse("+1.234,56"), 1234.56, "Parse '+1.234,56'");
-
-		// scientific
-		assert.deepEqual(oFloatFormat.parse("1.234e+0"), 1234, "parse 1.234e+0");
-		assert.deepEqual(oFloatFormat.parse("1.234e+1"), 12340, "parse 1.234e+1");
-		assert.deepEqual(oFloatFormat.parse("1234e+0"), 1234, "parse 1234e+0");
-		assert.deepEqual(oFloatFormat.parse("1234e+1"), 12340, "parse 1234e+1");
-		assert.deepEqual(oFloatFormat.parse("1.234,56e+0"), 1234.56, "parse 1.234,56e+0");
-		assert.deepEqual(oFloatFormat.parse("1.234,56e+1"), 12345.6, "parse 1.234,56e+1");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("1.23"), NaN, "Parse '1.23'");
-		assert.deepEqual(oFloatFormat.parse("1.2345"), NaN, "Parse '1.2345'");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oFloatFormat.parse("1.23.45"), NaN, "Parse '1.23.45'");
-			assert.deepEqual(oFloatFormat.parse("1.23.456"), NaN, "Parse '1.23.456'");
-			assert.deepEqual(oFloatFormat.parse("1.234.56"), NaN, "Parse '1.234.56'");
-			assert.deepEqual(oFloatFormat.parse("1.2.3.4"), NaN, "Parse '1.2.3.4'");
-			assert.deepEqual(oFloatFormat.parse("1.2.3"), NaN, "Parse '1.2.3'");
-
-			assert.deepEqual(oFloatFormat.parse("12.34.56.7.891"), NaN, "Parse '12.34.56.7.891'");
-			assert.deepEqual(oFloatFormat.parse("1234.56.7.891"), NaN, "Parse '1234.56.7.891'");
-			assert.deepEqual(oFloatFormat.parse("1.23.4.567.891"), NaN, "Parse '1.23.4.567.891'");
-			assert.deepEqual(oFloatFormat.parse("1 234.567 89.1"), NaN, "Parse '1 234.567 89.1'");
-
-			assert.deepEqual(oFloatFormat.parse("1.23,45"), NaN, "Parse '1.23,45'");
-			assert.deepEqual(oFloatFormat.parse("1.23.45,67"), NaN, "Parse '1.23.45,67'");
-			assert.deepEqual(oFloatFormat.parse("1.23.456,78"), NaN, "Parse '1.23.456,78'");
-			assert.deepEqual(oFloatFormat.parse("1.234.56,78"), NaN, "Parse '1.234.56,78'");
-			assert.deepEqual(oFloatFormat.parse("1.2345,67"), NaN, "Parse '1.2345,67'");
-		} else {
-			// tolerated, because of multiple grouping separators
-			assert.deepEqual(oFloatFormat.parse("1.23.45"), 12345, "Parse '1.23.45'");
-			assert.deepEqual(oFloatFormat.parse("1.23.456"), 123456, "Parse '1.23.456'");
-			assert.deepEqual(oFloatFormat.parse("1.234.56"), 123456, "Parse '1.234.56'");
-			assert.deepEqual(oFloatFormat.parse("1.2.3.4"), 1234, "Parse '1.2.3.4'");
-			assert.deepEqual(oFloatFormat.parse("1.2.3"), 123, "Parse '1.2.3'");
-
-			// expectation 1.234.567.891
-			assert.deepEqual(oFloatFormat.parse("12.34.56.7.891"), 1234567891, "Parse '12.34.56.7.891'");
-			assert.deepEqual(oFloatFormat.parse("1234.56.7.891"), 1234567891, "Parse '1234.56.7.891'");
-			assert.deepEqual(oFloatFormat.parse("1.23.4.567.891"), 1234567891, "Parse '1.23.4.567.891'");
-			assert.deepEqual(oFloatFormat.parse("1 234.567 89.1"), 1234567891, "Parse '1 234.567 89.1'");
-
-			// tolerated, despite wrong grouping
-			assert.deepEqual(oFloatFormat.parse("1.23,45"), 123.45, "Parse '1.23,45'");
-			assert.deepEqual(oFloatFormat.parse("1.23.45,67"), 12345.67, "Parse '1.23.45,67'");
-			assert.deepEqual(oFloatFormat.parse("1.23.456,78"), 123456.78, "Parse '1.23.456,78'");
-			assert.deepEqual(oFloatFormat.parse("1.234.56,78"), 123456.78, "Parse '1.234.56,78'");
-			assert.deepEqual(oFloatFormat.parse("1.2345,67"), 12345.67, "Parse '1.2345,67'");
-		}
-
-		// right grouping
-		// One grouping separator is present, at least one is missing and no decimal separator is present.
-		assert.deepEqual(oFloatFormat.parse("1 234.234 567"), NaN, "Parse '1234.234567'");
-		assert.deepEqual(oFloatFormat.parse("1.234 234 567"), NaN, "Parse '1.234234567'");
-
-		// 2 grouping separators are present, the one at the most right place is missing
-		assert.deepEqual(oFloatFormat.parse("1.234.234 567"), 1234234567, "Parse '1.234234567'");
-
-		// invalid position for grouping separator
-		assert.deepEqual(oFloatFormat.parse("-.234.567"), NaN, "Parse '-.234.567'");
-		// grouping separator missing, gut the most right one is at the correct position
-		assert.deepEqual(oFloatFormat.parse("1234234.567"), 1234234567, "Parse '1234234.567'");
-		assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("1 23.4567 891"), NaN, "Parse '1 23.4567 891'");
-		assert.deepEqual(oFloatFormat.parse("1 2.34567 891"), NaN, "Parse '1 2.34567 891'");
-		assert.deepEqual(oFloatFormat.parse("1 23456.7 891"), NaN, "Parse '1 23456.7 891'");
-
-		// invalid mix of decimal and grouping separators
-		assert.deepEqual(oFloatFormat.parse("5,001.234,56"), NaN, "Parse '5,001.234,56'");
-
-		// invalid reversal of decimal and grouping separator
-		assert.deepEqual(oFloatFormat.parse("5,001.234"), NaN, "Parse '5,001.234'");
-
-		// leading zeros
-		assert.deepEqual(oFloatFormat.parse(".345"), NaN, "Parse '.345'");
-		assert.deepEqual(oFloatFormat.parse("-.345"), NaN, "Parse '-.345'");
-		assert.deepEqual(oFloatFormat.parse("0.345"), NaN, "Parse '0.345'");
-		assert.deepEqual(oFloatFormat.parse("-0.345"), NaN, "Parse '-0.345'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Float groupingEnabled=false (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
-			function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingEnabled: false}, oOptions), oLocale);
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oFloatFormat.parse("1.2.3"), NaN, "Parse '1.2.3'");
-		} else {
-			// tolerated, because of multiple grouping separators
-			assert.deepEqual(oFloatFormat.parse("1.2.3"), 123, "Parse '1.2.3'");
-		}
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Float with style=long (de-DE) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
-			function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({style: "long"}, oOptions), oLocale);
-
-		// format
-		assert.deepEqual(oFloatFormat.format(1200), "1,2 Tausend", "Format to '1,2 Tausend'");
-		assert.deepEqual(oFloatFormat.format(1200000), "1,2 Millionen", "Format to '1,2 Millionen'");
-
-		// valid numbers
-		assert.deepEqual(oFloatFormat.parse("1234 Tausend"), 1234000, "Parse '1234 Tausend'");
-
-		// spacing/plus sign
-		assert.deepEqual(oFloatFormat.parse("+1,2 Tausend"), 1200, "Parse '+1,2 Tausend'");
-		assert.deepEqual(oFloatFormat.parse("1.234 Tausend"), 1234000, "Parse '1.234 Tausend'");
-		assert.deepEqual(oFloatFormat.parse("+1.234 Tausend"), 1234000, "Parse '+1.234 Tausend'");
-		assert.deepEqual(oFloatFormat.parse("1. 234 Tausend"), 1234000, "Parse '1. 234 Tausend'");
-		assert.deepEqual(oFloatFormat.parse("1 .234 Tausend"), 1234000, "Parse '1 .234 Tausend'");
-		assert.deepEqual(oFloatFormat.parse("+1 .234 Tausend"), 1234000, "Parse '+1 .234 Tausend'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("1.2 Tausend"), NaN, "Parse '1.2 Tausend'");
-		assert.deepEqual(oFloatFormat.parse("1.23 Tausend"), NaN, "Parse '1.23 Tausend'");
-		assert.deepEqual(oFloatFormat.parse("1.2345 Tausend"), NaN, "Parse '1.2345 Tausend'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Float with parseAsString=true (de-DE) with strictGroupingValidation="
-			+ oOptions.strictGroupingValidation, function (assert) {
-		var oLocale = new Locale("de-DE");
-		var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({parseAsString: true}, oOptions), oLocale);
-		// format
-		assert.deepEqual(oFloatFormat.format(-12345.67), "-12.345,67", "Format to '-12.345,67'");
-
-		// leading zeros
-		assert.deepEqual(oFloatFormat.parse("-01"),"-1", "can parse -01");
-		assert.deepEqual(oFloatFormat.parse("01"), "1", "can parse 01");
-		assert.deepEqual(oFloatFormat.parse("-01,2"),"-1.2", "can parse -01,2");
-		assert.deepEqual(oFloatFormat.parse("01,2"), "1.2", "can parse 01,2");
-		assert.deepEqual(oFloatFormat.parse("-00010001,2"),"-10001.2", "can parse -000001,2");
-		assert.deepEqual(oFloatFormat.parse("00010001,2"), "10001.2", "can parse 000001,2");
-		assert.deepEqual(oFloatFormat.parse("00012.345,67"), "12345.67", "can parse '00012.345,67'");
-		assert.deepEqual(oFloatFormat.parse("-00012.345,67"), "-12345.67", "can parse -00012,345.67");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("-01.2"), NaN, "Parse '-01.2'");
-		assert.deepEqual(oFloatFormat.parse("-01.23"), NaN, "Parse '-01.23'");
-		assert.deepEqual(oFloatFormat.parse("-01.2345"), NaN, "Parse '-01.2345'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Float (en-GB) with strictGroupingValidation=" + oOptions.strictGroupingValidation, function (assert) {
-		var oLocale = new Locale("en-GB");
-		var oFloatFormat = NumberFormat.getFloatInstance(oOptions, oLocale);
-
-		// format
-		assert.deepEqual(oFloatFormat.format(1234), "1,234", "Format to '1,234'");
-
-		// valid numbers
-		assert.deepEqual(oFloatFormat.parse("1,234"), 1234, "Parse '1,234'");
-		assert.deepEqual(oFloatFormat.parse("1,234,567"), 1234567, "Parse '1,234,567'");
-		assert.deepEqual(oFloatFormat.parse("1,234.56"), 1234.56, "Parse '1,234.56'");
-		assert.deepEqual(oFloatFormat.parse("1,234,567.89"), 1234567.89, "Parse '1,234,567.89'");
-
-		// scientific
-		assert.deepEqual(oFloatFormat.parse("1,234e+0"), 1234, "parse 1.234e+0");
-		assert.deepEqual(oFloatFormat.parse("1,234e+1"), 12340, "parse 1.234e+1");
-		assert.deepEqual(oFloatFormat.parse("1234e+0"), 1234, "parse 1234e+0");
-		assert.deepEqual(oFloatFormat.parse("1234e+1"), 12340, "parse 1234e+1");
-		assert.deepEqual(oFloatFormat.parse("1,234.56e+0"), 1234.56, "parse 1.234,56e+0");
-		assert.deepEqual(oFloatFormat.parse("1,234.56e+1"), 12345.6, "parse 1.234,56e+1");
-		assert.deepEqual(oFloatFormat.parse("1234E+1"), 12340, "parse 1234E+1");
-		assert.deepEqual(oFloatFormat.parse("1,234E+0"), 1234, "parse 1.234E+0");
-		assert.deepEqual(oFloatFormat.parse("1,234.56E+0"), 1234.56, "parse 1.234,56E+0");
-		assert.deepEqual(oFloatFormat.parse("1,234.56E+1"), 12345.6, "parse 1.234,56E+1");
-
-		// spacing/plus sign
-		assert.deepEqual(oFloatFormat.parse("1, 234"), 1234, "Parse '1, 234'");
-		assert.deepEqual(oFloatFormat.parse("1 ,234"), 1234, "Parse '1 ,234'");
-		assert.deepEqual(oFloatFormat.parse("+1 ,234"), 1234, "Parse '+1 ,234'");
-		assert.deepEqual(oFloatFormat.parse("+1,234"), 1234, "Parse '+1,234'");
-		assert.deepEqual(oFloatFormat.parse("+1,234.56"), 1234.56, "Parse '+1,234.56'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("1,23"), NaN, "Parse '1,23'");
-		assert.deepEqual(oFloatFormat.parse("1,2345"), NaN, "Parse '1,2345'");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oFloatFormat.parse("1,23,45"), NaN, "Parse '1,23,45'");
-			assert.deepEqual(oFloatFormat.parse("1,23,456"), NaN, "Parse '1,23,456'");
-			assert.deepEqual(oFloatFormat.parse("1,234,56"), NaN, "Parse '1,234,56'");
-
-			assert.deepEqual(oFloatFormat.parse("1,23.45"), NaN, "Parse '1,23.45'");
-			assert.deepEqual(oFloatFormat.parse("1,23,45.67"), NaN, "Parse '1,23,45.67'");
-			assert.deepEqual(oFloatFormat.parse("1,23,456.78"), NaN, "Parse '1,23,456.78'");
-			assert.deepEqual(oFloatFormat.parse("1,234,56.78"), NaN, "Parse '1,234,56.78'");
-			assert.deepEqual(oFloatFormat.parse("1,2345.67"), NaN, "Parse '1,2345.67'");
-		} else {
-			// tolerated, because of multiple grouping separators
-			assert.deepEqual(oFloatFormat.parse("1,23,45"), 12345, "Parse '1,23,45'");
-			assert.deepEqual(oFloatFormat.parse("1,23,456"), 123456, "Parse '1,23,456'");
-			assert.deepEqual(oFloatFormat.parse("1,234,56"), 123456, "Parse '1,234,56'");
-
-			// tolerated, because decimal separator is present
-			assert.deepEqual(oFloatFormat.parse("1,23.45"), 123.45, "Parse '1,23.45'");
-			assert.deepEqual(oFloatFormat.parse("1,23,45.67"), 12345.67, "Parse '1,23,45.67'");
-			assert.deepEqual(oFloatFormat.parse("1,23,456.78"), 123456.78, "Parse '1,23,456.78'");
-			assert.deepEqual(oFloatFormat.parse("1,234,56.78"), 123456.78, "Parse '1,234,56.78'");
-			assert.deepEqual(oFloatFormat.parse("1,2345.67"), 12345.67, "Parse '1,2345.67'");
-		}
-
-		// invalid mix of decimal and grouping separators
-		assert.deepEqual(oFloatFormat.parse("5.001,234.56"), NaN, "Parse '5.001,234.56'");
-
-		// invalid reversal of decimal and grouping separator
-		assert.deepEqual(oFloatFormat.parse("5.001,234"), NaN, "Parse '5.001,234'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Float with style=long (en-GB) with strictGroupingValidation=" + oOptions.strictGroupingValidation,
-			function (assert) {
-		var oLocale = new Locale("en-GB");
-		var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({style: "long"}, oOptions), oLocale);
-
-		// format with style long, to see how the default formatted string looks like which serves as input for parse
-		// note that, unless the maximum unit is used, it is not possible to have a formatted string containing grouping
-		// separators.
-		assert.deepEqual(oFloatFormat.format(1200), "1.2 thousand", "Format to '1.2 thousand'");
-		assert.deepEqual(oFloatFormat.format(1200000), "1.2 million", "Format to '1.2 million'");
-		assert.deepEqual(oFloatFormat.format(1.2e+12), "1.2 trillion", "Format to '1.2 trillion'");
-		assert.deepEqual(oFloatFormat.format(1200e+12), "1,200 trillion", "Format to '1,200 trillion'");
-
-		// valid numbers
-		assert.deepEqual(oFloatFormat.parse("1,200 trillion"), 1200e+12, "Parse '1,200 trillion'");
-		assert.deepEqual(oFloatFormat.parse("1,234 trillion"), 1234e+12, "Parse '1,234 trillion'");
-		assert.deepEqual(oFloatFormat.parse("1234 trillion"), 1234e+12, "Parse '1234 trillion'");
-
-		// spacing/plus sign
-		assert.deepEqual(oFloatFormat.parse("1, 234 trillion"), 1234e+12, "Parse '1, 234 trillion'");
-		assert.deepEqual(oFloatFormat.parse("1 ,234 trillion"), 1234e+12, "Parse '1 ,234 trillion'");
-		assert.deepEqual(oFloatFormat.parse("+1 ,234 trillion"), 1234e+12, "Parse '+1 ,234 trillion'");
-		assert.deepEqual(oFloatFormat.parse("+1,234 trillion"), 1234e+12, "Parse '+1,234 trillion'");
-		assert.deepEqual(oFloatFormat.parse("+1.2 trillion"), 1.2e+12, "Parse '+1.2 trillion'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("1,2 trillion"), NaN, "Parse '1,2 trillion'");
-		assert.deepEqual(oFloatFormat.parse("1,23 trillion"), NaN, "Parse '1,23 trillion'");
-		assert.deepEqual(oFloatFormat.parse("1,2345 trillion"), NaN, "Parse '1,2345 trillion'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Float with parseAsString=true (en-GB) with strictGroupingValidation="
-			+ oOptions.strictGroupingValidation, function (assert) {
-		var oLocale = new Locale("en-GB");
-		var oFloatFormat = NumberFormat.getFloatInstance(Object.assign({parseAsString: true}, oOptions), oLocale);
-
-		// format
-		assert.deepEqual(oFloatFormat.format(-12345.67), "-12,345.67", "Format to '-12,345.67'");
-
-		// leading zeros
-		assert.deepEqual(oFloatFormat.parse("-01"),"-1", "can parse -01");
-		assert.deepEqual(oFloatFormat.parse("01"), "1", "can parse 01");
-		assert.deepEqual(oFloatFormat.parse("-01.2"),"-1.2", "can parse -01,2");
-		assert.deepEqual(oFloatFormat.parse("01.2"), "1.2", "can parse 01,2");
-		assert.deepEqual(oFloatFormat.parse("-00010001.2"),"-10001.2", "can parse -000001,2");
-		assert.deepEqual(oFloatFormat.parse("00010001.2"), "10001.2", "can parse 000001,2");
-		assert.deepEqual(oFloatFormat.parse("00012,345.67"), "12345.67", "can parse '00012,345.67'");
-		assert.deepEqual(oFloatFormat.parse("-00012,345.67"), "-12345.67", "can parse '-00012,345.67'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("-01,2"), NaN, "Parse '-01,2'");
-		assert.deepEqual(oFloatFormat.parse("-01,23"), NaN, "Parse '-01,23'");
-		assert.deepEqual(oFloatFormat.parse("-01,2345"), NaN, "Parse '-01,2345'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Special cases Float with strictGroupingValidation=" + oOptions.strictGroupingValidation,
-			function (assert) {
-		var oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("de-DE"));
-		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
-
-		// invalid syntax
-		assert.deepEqual(oFloatFormat.parse("123,456,789.21"), NaN, "Parse '123,456,789.21'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oFloatFormat.parse("1111.111"), 1111111, "Parse '1111.111'");
-		assert.deepEqual(oFloatFormat.parse("111.111"), 111111, "Parse '111.111'");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oFloatFormat.parse("1.."), NaN, "Parse '1..'");
-			assert.deepEqual(oFloatFormat.parse("1..2"), NaN, "Parse '1..2'");
-			assert.deepEqual(oFloatFormat.parse("1..2.."), NaN, "Parse '1..2..'");
-			assert.deepEqual(oFloatFormat.parse("1..2..3"), NaN, "Parse '1..2..3'");
-			assert.deepEqual(oFloatFormat.parse("1.11.11...11"), NaN, "Parse '1.11.11...11'");
-			assert.deepEqual(oFloatFormat.parse("1.11.11.11"), NaN, "Parse '1.11.11.11'");
-			assert.deepEqual(oFloatFormat.parse("1.1111.11"), NaN, "Parse '1.1111.11'");
-		} else {
-			// tolerated, because of multiple grouping separators
-			assert.deepEqual(oFloatFormat.parse("1.."), 1, "Parse '1..'");
-			assert.deepEqual(oFloatFormat.parse("1..2"), 12, "Parse '1..2'");
-			assert.deepEqual(oFloatFormat.parse("1..2.."), 12, "Parse '1..2..'");
-			assert.deepEqual(oFloatFormat.parse("1..2..3"), 123, "Parse '1..2..3'");
-			assert.deepEqual(oFloatFormat.parse("1.11.11...11"), 1111111, "Parse '1.11.11...11'");
-			assert.deepEqual(oFloatFormat.parse("1.11.11.11"), 1111111, "Parse '1.11.11.11'");
-			assert.deepEqual(oFloatFormat.parse("1.1111.11"), 1111111, "Parse '1.1111.11'");
-		}
-
-		assert.deepEqual(oFloatFormat.parse("1111.111.111"), 1111111111, "Parse '1111.111.111'");
-		assert.deepEqual(oFloatFormat.parse("1.111.111111"), 1111111111, "Parse '1.111.111111'");
-
-		// not tolerated, because invalid number syntax (in combination with grouping separator)
-		assert.deepEqual(oFloatFormat.parse(".0."), NaN, "Parse '.0.'");
-		assert.deepEqual(oFloatFormat.parse("."), NaN, "Parse '.'");
-		assert.deepEqual(oFloatFormat.parse("..1"), NaN, "Parse '..1'");
-		assert.deepEqual(oFloatFormat.parse("0."), NaN, "Parse '0.'");
-		assert.deepEqual(oFloatFormat.parse(".0"), NaN, "Parse '.0'");
-		assert.deepEqual(oFloatFormat.parse("0.."), NaN, "Parse '0..'");
-		assert.deepEqual(oFloatFormat.parse("0.123."), NaN, "Parse '0.123.'");
-		assert.deepEqual(oFloatFormat.parse("0.123"), NaN, "Parse '0.123'");
-		assert.deepEqual(oFloatFormat.parse("-.123"), NaN, "Parse '-.123'");
-		assert.deepEqual(oFloatFormat.parse(".123"), NaN, "Parse '.123'");
-		assert.deepEqual(oFloatFormat.parse("123."), NaN, "Parse '123.'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oFloatFormat.parse("1."), NaN, "Parse '1.'");
-		assert.deepEqual(oFloatFormat.parse("11."), NaN, "Parse '11.'");
-		assert.deepEqual(oFloatFormat.parse("1.1"), NaN, "Parse '1.1'");
-		assert.deepEqual(oFloatFormat.parse("11.11"), NaN, "Parse '11.11'");
-		assert.deepEqual(oFloatFormat.parse("111.11"), NaN, "Parse '111.11'");
-		assert.deepEqual(oFloatFormat.parse("111.1111"), NaN, "Parse '111.1111'");
-
-		// tolerated, despite incomplete grouping
-		assert.deepEqual(oFloatFormat.parse("1111.111,11"), 1111111.11, "Parse '1111.111,11'");
-
-		// space characters are allowed by default!!
-		assert.deepEqual(oFloatFormat.parse("12\xa03\xa04\xa0567"), 1234567, "Parse '12\xa03\xa04\xa0567'");
-		assert.deepEqual(oFloatFormat.parse("123456\u202F7"), 1234567, "Parse '123456\u202F7'");
-		assert.deepEqual(oFloatFormat.parse("12 3 4 567"), 1234567, "Parse '12 3 4 567'");
-		assert.deepEqual(oFloatFormat.parse(" 12 3 4 567 "), 1234567, "Parse ' 12 3 4 567 '");
-		assert.deepEqual(oFloatFormat.parse(" 1234567 "), 1234567, "Parse ' 1234567 '");
-
-		// empty custom groupingSeparator (not officially supported)
-		oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingSeparator: ""}, oOptions),
-			new Locale("de-DE"));
-		assert.deepEqual(oFloatFormat.parse("1234567"), 1234567, "Parse '1234567'");
-		assert.deepEqual(oFloatFormat.parse("1234567,89"), 1234567.89, "Parse '1234567,89'");
-		assert.deepEqual(oFloatFormat.parse("123.456"), NaN, "Parse '123.456'");
-
-		// custom groupingSeparator is the same as the decimal separator (not officially supported)
-		oFloatFormat = NumberFormat.getFloatInstance(
-			Object.assign({groupingSeparator: ".", decimalSeparator: "."}, oOptions),
-			new Locale("de-DE"));
-
-		this.oLogMock.expects("error")
-			.withExactArgs("The grouping and decimal separator both have the same value '.'. They must be different"
-				+ " from each other such that values can be parsed correctly.")
-			.exactly(3);
-
-		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
-		assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oFloatFormat.parse("12.34.567"), NaN, "Parse '12.34.567'");
-		} else {
-			// tolerated, despite wrong grouping, because of multiple grouping separators
-			assert.deepEqual(oFloatFormat.parse("12.34.567"), 1234567, "Parse '12.34.567'");
-		}
-
-		// if custom groupingSeparator is a space character, then restrictive validity checks cannot be applied,
-		// because all space characters are allowed
-		oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingSeparator: "\xa0"}, oOptions),
-			new Locale("de-DE"));
-		assert.deepEqual(oFloatFormat.parse("1\xa0234\xa0567"), 1234567, "Parse '1\xa0234\xa0567'");
-		assert.deepEqual(oFloatFormat.parse("1234\xa0567"), 1234567, "Parse '1234\xa0567'");
-		assert.deepEqual(oFloatFormat.parse("123456\xa07"), 1234567, "Parse '123456\xa07'");
-		assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
-
-		// \u202F (NNBSP) is default e.g. for French (fr.json)
-		oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("fr-FR"));
-		assert.deepEqual(oFloatFormat.parse("1\u202F234\u202F567"), 1234567, "Parse '1\u202F234\u202F567'");
-		assert.deepEqual(oFloatFormat.parse("1234\u202F567"), 1234567, "Parse '1234\u202F567'");
-		assert.deepEqual(oFloatFormat.parse("123456\u202F7"), 1234567, "Parse '123456\u202F7'");
-		assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
-
-		// \xa0 (NBSP) is default e.g. for Finish (fi.json)
-		oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("fi"));
-		assert.deepEqual(oFloatFormat.parse("1\xa0234\xa0567"), 1234567, "Parse '1\xa0234\xa0567'");
-		assert.deepEqual(oFloatFormat.parse("1234\xa0567"), 1234567, "Parse '1234\xa0567'");
-		assert.deepEqual(oFloatFormat.parse("123456\xa07"), 1234567, "Parse '123456\xa07'");
-		assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
-
-		// ’ (apostrophe) is default e.g. for Italian Switzerland (it_CH.json)
-		oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("it_CH"));
-		assert.deepEqual(oFloatFormat.parse("1’234’567"), 1234567, "Parse '1’234’567'");
-		assert.deepEqual(oFloatFormat.parse("1234’567.89"), 1234567.89, "Parse '1234’567.89'");
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oFloatFormat.parse("1234’567"), 1234567, "Parse '1234’567'");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oFloatFormat.parse("1’23’45’67"), NaN, "Parse '1’23’45’67'");
-		} else {
-			// tolerated, because of multiple grouping separators
-			assert.deepEqual(oFloatFormat.parse("1’23’45’67"), 1234567, "Parse '1’23’45’67'");
-		}
-
-		// custom groupingSize
-		oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingSize: 4}, oOptions), new Locale("de-DE"));
-		assert.deepEqual(oFloatFormat.parse("123.4567"), 1234567, "Parse '123.4567'");
-
-		// wrong grouping
-		if (oOptions.strictGroupingValidation) {
-			assert.deepEqual(oFloatFormat.parse("1.234.567"), NaN, "Parse '1.234.567'");
-		} else {
-			// tolerated, because of multiple grouping separators
 			assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
-		}
-		assert.deepEqual(oFloatFormat.parse("1234.567"), NaN, "Parse '1234.567'");
+			assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
 
-		// custom plus/minusSign
-		oFloatFormat = NumberFormat.getFloatInstance(Object.assign({
-			plusSign: ":",
-			minusSign: "_"
-		}, oOptions), new Locale("de-DE"));
-		assert.deepEqual(oFloatFormat.parse(":1.234.567"), 1234567, "Parse ':1.234.567'");
-		assert.deepEqual(oFloatFormat.parse("_1.234.567"), -1234567, "Parse '_1.234.567'");
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oFloatFormat.parse("12.34.567"), NaN, "Parse '12.34.567'");
+			} else {
+				// tolerated, despite wrong grouping, because of multiple grouping separators
+				assert.deepEqual(oFloatFormat.parse("12.34.567"), 1234567, "Parse '12.34.567'");
+			}
 
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oFloatFormat.parse(":1234.567"), 1234567, "Parse ':1234.567'");
-		assert.deepEqual(oFloatFormat.parse("_1234.567"), -1234567, "Parse '_1234.567'");
+			// if custom groupingSeparator is a space character, then restrictive validity checks cannot be applied,
+			// because all space characters are allowed
+			oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingSeparator: "\xa0"}, oOptions),
+				new Locale("de-DE"));
+			assert.deepEqual(oFloatFormat.parse("1\xa0234\xa0567"), 1234567, "Parse '1\xa0234\xa0567'");
+			assert.deepEqual(oFloatFormat.parse("1234\xa0567"), 1234567, "Parse '1234\xa0567'");
+			assert.deepEqual(oFloatFormat.parse("123456\xa07"), 1234567, "Parse '123456\xa07'");
+			assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
 
-		// right grouping, exactly one is present but the one at the most right place is missing
-		assert.deepEqual(oFloatFormat.parse(":1.234 567"), NaN, "Parse ':1.234567'");
-		assert.deepEqual(oFloatFormat.parse("_1.234 567"), NaN, "Parse '_1.234567'");
+			// \u202F (NNBSP) is default e.g. for French (fr.json)
+			oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("fr-FR"));
+			assert.deepEqual(oFloatFormat.parse("1\u202F234\u202F567"), 1234567, "Parse '1\u202F234\u202F567'");
+			assert.deepEqual(oFloatFormat.parse("1234\u202F567"), 1234567, "Parse '1234\u202F567'");
+			assert.deepEqual(oFloatFormat.parse("123456\u202F7"), 1234567, "Parse '123456\u202F7'");
+			assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
+
+			// \xa0 (NBSP) is default e.g. for Finish (fi.json)
+			oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("fi"));
+			assert.deepEqual(oFloatFormat.parse("1\xa0234\xa0567"), 1234567, "Parse '1\xa0234\xa0567'");
+			assert.deepEqual(oFloatFormat.parse("1234\xa0567"), 1234567, "Parse '1234\xa0567'");
+			assert.deepEqual(oFloatFormat.parse("123456\xa07"), 1234567, "Parse '123456\xa07'");
+			assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
+
+			// ’ (apostrophe) is default e.g. for Italian Switzerland (it_CH.json)
+			oFloatFormat = NumberFormat.getFloatInstance(oOptions, new Locale("it_CH"));
+			assert.deepEqual(oFloatFormat.parse("1’234’567"), 1234567, "Parse '1’234’567'");
+			assert.deepEqual(oFloatFormat.parse("1234’567.89"), 1234567.89, "Parse '1234’567.89'");
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oFloatFormat.parse("1234’567"), 1234567, "Parse '1234’567'");
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oFloatFormat.parse("1’23’45’67"), NaN, "Parse '1’23’45’67'");
+			} else {
+				// tolerated, because of multiple grouping separators
+				assert.deepEqual(oFloatFormat.parse("1’23’45’67"), 1234567, "Parse '1’23’45’67'");
+			}
+
+			// custom groupingSize
+			oFloatFormat = NumberFormat.getFloatInstance(Object.assign({groupingSize: 4}, oOptions), new Locale("de-DE"));
+			assert.deepEqual(oFloatFormat.parse("123.4567"), 1234567, "Parse '123.4567'");
+
+			// wrong grouping
+			if (oOptions.strictGroupingValidation) {
+				assert.deepEqual(oFloatFormat.parse("1.234.567"), NaN, "Parse '1.234.567'");
+			} else {
+				// tolerated, because of multiple grouping separators
+				assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+			}
+			assert.deepEqual(oFloatFormat.parse("1234.567"), NaN, "Parse '1234.567'");
+
+			// custom plus/minusSign
+			oFloatFormat = NumberFormat.getFloatInstance(Object.assign({
+				plusSign: ":",
+				minusSign: "_"
+			}, oOptions), new Locale("de-DE"));
+			assert.deepEqual(oFloatFormat.parse(":1.234.567"), 1234567, "Parse ':1.234.567'");
+			assert.deepEqual(oFloatFormat.parse("_1.234.567"), -1234567, "Parse '_1.234.567'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oFloatFormat.parse(":1234.567"), 1234567, "Parse ':1234.567'");
+			assert.deepEqual(oFloatFormat.parse("_1234.567"), -1234567, "Parse '_1234.567'");
+
+			// right grouping, exactly one is present but the one at the most right place is missing
+			assert.deepEqual(oFloatFormat.parse(":1.234 567"), NaN, "Parse ':1.234567'");
+			assert.deepEqual(oFloatFormat.parse("_1.234 567"), NaN, "Parse '_1.234567'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Special cases Unit with strictGroupingValidation=" + oOptions.strictGroupingValidation,
+				function (assert) {
+			// en locale
+			var oUnitFormat = NumberFormat.getUnitInstance(oOptions, new Locale("en"));
+
+			assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89 gal Imp.",
+				"Format to '1,234,567.89 gal Imp.'");
+
+			// formatted
+			assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1,234,567.89 gal Imp.'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oUnitFormat.parse("1234,567 gal Imp."), [1234567, "volume-gallon-imperial"],
+				"Parse '1234,567 gal Imp.'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oUnitFormat.parse("123,4567 gal Imp."), null, "Parse '123,4567 gal Imp.'");
+
+			assert.deepEqual(oUnitFormat.parse("1234567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1234567.89 gal Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1234,567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1234,567.89 gal Imp.'");
+
+			// de locale
+			oUnitFormat = NumberFormat.getUnitInstance(oOptions, new Locale("de"));
+
+			assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1.234.567,89 Imp. gal",
+				"Format to '1.234.567,89 Imp. gal'");
+
+			// formatted
+			assert.deepEqual(oUnitFormat.parse("1.234.567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1.234.567,89 Imp. gal'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oUnitFormat.parse("1234.567 Imp. gal"), [1234567, "volume-gallon-imperial"],
+				"Parse '1234.567 Imp. gal'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oUnitFormat.parse("123.4567 Imp. gal"), null, "Parse '123.4567 Imp. gal'");
+
+			assert.deepEqual(oUnitFormat.parse("1234567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1234567,89 Imp. gal'");
+			assert.deepEqual(oUnitFormat.parse("1234.567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1234.567,89 Imp. gal'");
+
+			// ar (RTL)
+			oUnitFormat = NumberFormat.getUnitInstance(oOptions, new Locale("ar"));
+
+			assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89 غالون إمبراطوري",
+				"Format to '1,234,567.89 غالون إمبراطوري'");
+			assert.strictEqual(oUnitFormat.format(1234567.89, "volume-fluid-ounce-imperial"),
+				"1,234,567.89 أونصة سائلة إمبراطورية", "Format to '1,234,567.89 أونصة سائلة إمبراطورية'");
+
+			// formatted
+			assert.deepEqual(oUnitFormat.parse("1,234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1,234,567.89 غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1,234,567.89 أونصة سائلة إمبراطورية"),
+				[1234567.89, "volume-fluid-ounce-imperial"], "Parse '1,234,567.89 أونصة سائلة إمبراطورية'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oUnitFormat.parse("1234,567 غالون إمبراطوري"), [1234567, "volume-gallon-imperial"],
+				"Parse '1234,567 غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1234,567 أونصة سائلة إمبراطورية"),
+				[1234567, "volume-fluid-ounce-imperial"], "Parse '1234,567 أونصة سائلة إمبراطورية'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oUnitFormat.parse("123,4567 غالون إمبراطوري"), null, "Parse '123,4567 غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("123,4567 أونصة سائلة إمبراطورية"), null,
+				"Parse '123,4567 أونصة سائلة إمبراطورية'");
+
+			assert.deepEqual(oUnitFormat.parse("1234567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1234567.89 غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1234567.89 أونصة سائلة إمبراطورية"),
+				[1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234567.89 أونصة سائلة إمبراطورية'");
+			assert.deepEqual(oUnitFormat.parse("1234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"],
+				"Parse '1234,567.89 غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1234,567.89 أونصة سائلة إمبراطورية"),
+				[1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234,567.89 أونصة سائلة إمبراطورية'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Special cases Unit style=short with strictGroupingValidation=" + oOptions.strictGroupingValidation,
+				function (assert) {
+			// en locale
+			var oUnitFormat = NumberFormat.getUnitInstance(Object.assign({style: "short"}, oOptions), new Locale("en"));
+
+			assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1.2T gal Imp.",
+				"Format to '1.2T gal Imp.'");
+			assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1,234,567T gal Imp.",
+				"Format to '1,234,567T gal Imp.'");
+
+			// formatted
+			assert.deepEqual(oUnitFormat.parse("1.2T gal Imp."), [1.2e+12, "volume-gallon-imperial"],
+				"Parse '1.2T gal Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1,234,567T gal Imp."), [1234567e+12, "volume-gallon-imperial"],
+				"Parse '1,234,567T gal Imp.'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oUnitFormat.parse("1234,567T gal Imp."), [1234567e+12, "volume-gallon-imperial"],
+				"Parse '1234,567T gal Imp.'");
+
+			assert.deepEqual(oUnitFormat.parse("123,4567T gal Imp."), null, "Parse '123,4567T gal Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1234567T gal Imp."), [1234567e+12, "volume-gallon-imperial"],
+				"Parse '1234567T gal Imp.'");
+
+			// de locale
+			oUnitFormat = NumberFormat.getUnitInstance(Object.assign({style: "short"}, oOptions), new Locale("de"));
+
+			assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1,2\xa0Bio. Imp. gal",
+				"Format to '1,2\xa0Bio. Imp. gal'");
+			assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1.234.567\xa0Bio. Imp. gal",
+				"Format to '1.234.567\xa0Bio. Imp. gal'");
+
+			// formatted
+			assert.deepEqual(oUnitFormat.parse("1,2\xa0Bio. Imp. gal"), [1.2e+12, "volume-gallon-imperial"],
+				"Parse '1,2\xa0Bio. Imp. gal'");
+			assert.deepEqual(oUnitFormat.parse("1.234.567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"],
+				"Parse '1.234.567\xa0Bio. Imp. gal'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oUnitFormat.parse("1234.567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"],
+				"Parse '1234.567\xa0Bio. Imp. gal'");
+
+			// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+			assert.deepEqual(oUnitFormat.parse("123.4567\xa0Bio. Imp. gal"), null, "Parse '123.4567\xa0Bio. Imp. gal'");
+
+			assert.deepEqual(oUnitFormat.parse("1234567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"],
+				"Parse '1234567\xa0Bio. Imp. gal'");
+
+			// ar (RTL)
+			oUnitFormat = NumberFormat.getUnitInstance(Object.assign({style: "short"}, oOptions), new Locale("ar"));
+
+			assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1.2\xa0ترليون غالون إمبراطوري",
+				"Format to '1.2\xa0ترليون غالون إمبراطوري'");
+			assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"),
+				"1,234,567\xa0ترليون غالون إمبراطوري", "Format to '1,234,567\xa0ترليون غالون إمبراطوري'");
+			assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-fluid-ounce-imperial"),
+				"1.2\xa0ترليون أونصة سائلة إمبراطورية", "Format to '1.2\xa0ترليون أونصة سائلة إمبراطورية'");
+			assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-fluid-ounce-imperial"),
+				"1,234,567\xa0ترليون أونصة سائلة إمبراطورية",
+				"Format to '1,234,567\xa0ترليون أونصة سائلة إمبراطورية'");
+
+			// formatted
+			assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون غالون إمبراطوري"), [1.2e+12, "volume-gallon-imperial"],
+				"Parse '1.2\xa0ترليون غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون غالون إمبراطوري"),
+				[1234567e+12, "volume-gallon-imperial"], "Parse '1,234,567\xa0ترليون غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون أونصة سائلة إمبراطورية"),
+				[1.2e+12, "volume-fluid-ounce-imperial"], "Parse '1.2\xa0ترليون أونصة سائلة إمبراطورية'");
+			assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون أونصة سائلة إمبراطورية"),
+				[1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1,234,567\xa0ترليون أونصة سائلة إمبراطورية'");
+
+			assert.deepEqual(oUnitFormat.parse("1,2\xa0ترليون غالون إمبراطوري"), null,
+				"Parse '1,2\xa0ترليون غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1,234567\xa0ترليون أونصة سائلة إمبراطورية"), null,
+				"Parse '1,234567\xa0ترليون أونصة سائلة إمبراطورية'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oUnitFormat.parse("1234,567\xa0ترليون غالون إمبراطوري"),
+				[1234567e+12, "volume-gallon-imperial"], "Parse '1234,567\xa0ترليون غالون إمبراطوري'");
+
+			assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون غالون إمبراطوري"),
+				[1234567e+12, "volume-gallon-imperial"], "Parse '1234567\xa0ترليون غالون إمبراطوري'");
+			assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون أونصة سائلة إمبراطورية"),
+				[1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1234567\xa0ترليون أونصة سائلة إمبراطورية'");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("Special cases Unit showNumber/showMeasure with strictGroupingValidation="
+				+ oOptions.strictGroupingValidation, function (assert) {
+			// showMeasure: true
+			var oUnitFormat = NumberFormat.getUnitInstance(Object.assign({showNumber: false}, oOptions), new Locale("en"));
+
+			// format
+			assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "gal Imp.",
+				"Format to 'gal Imp.'");
+
+			// parse
+			assert.deepEqual(oUnitFormat.parse("gal Imp."), [undefined, "volume-gallon-imperial"], "Parse 'gal Imp.'");
+			assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), null, "Parse '1,234,567.89 gal Imp.'");
+
+			// showMeasure: false
+			oUnitFormat = NumberFormat.getUnitInstance(Object.assign({showMeasure: false}, oOptions), new Locale("en"));
+
+			// format
+			assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89",
+				"Format to '1,234,567.89'");
+
+			// parse
+			assert.deepEqual(oUnitFormat.parse("1,234,567.89"), [1234567.89, undefined], "Parse '1,234,567.89'");
+			assert.deepEqual(oUnitFormat.parse("1234,567.89"), [1234567.89, undefined], "Parse '1234,567.89'");
+
+			// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+			assert.deepEqual(oUnitFormat.parse("1234,567"), [1234567, undefined], "Parse '1234,567'");
+
+			assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), null, "Parse '1,234,567.89 gal Imp.'");
+		});
 	});
-
-	//*********************************************************************************************
-	QUnit.test("Special cases Unit with strictGroupingValidation=" + oOptions.strictGroupingValidation,
-			function (assert) {
-		// en locale
-		var oUnitFormat = NumberFormat.getUnitInstance(oOptions, new Locale("en"));
-
-		assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89 gal Imp.",
-			"Format to '1,234,567.89 gal Imp.'");
-
-		// formatted
-		assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1,234,567.89 gal Imp.'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oUnitFormat.parse("1234,567 gal Imp."), [1234567, "volume-gallon-imperial"],
-			"Parse '1234,567 gal Imp.'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oUnitFormat.parse("123,4567 gal Imp."), null, "Parse '123,4567 gal Imp.'");
-
-		assert.deepEqual(oUnitFormat.parse("1234567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1234567.89 gal Imp.'");
-		assert.deepEqual(oUnitFormat.parse("1234,567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1234,567.89 gal Imp.'");
-
-		// de locale
-		oUnitFormat = NumberFormat.getUnitInstance(oOptions, new Locale("de"));
-
-		assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1.234.567,89 Imp. gal",
-			"Format to '1.234.567,89 Imp. gal'");
-
-		// formatted
-		assert.deepEqual(oUnitFormat.parse("1.234.567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1.234.567,89 Imp. gal'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oUnitFormat.parse("1234.567 Imp. gal"), [1234567, "volume-gallon-imperial"],
-			"Parse '1234.567 Imp. gal'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oUnitFormat.parse("123.4567 Imp. gal"), null, "Parse '123.4567 Imp. gal'");
-
-		assert.deepEqual(oUnitFormat.parse("1234567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1234567,89 Imp. gal'");
-		assert.deepEqual(oUnitFormat.parse("1234.567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1234.567,89 Imp. gal'");
-
-		// ar (RTL)
-		oUnitFormat = NumberFormat.getUnitInstance(oOptions, new Locale("ar"));
-
-		assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89 غالون إمبراطوري",
-			"Format to '1,234,567.89 غالون إمبراطوري'");
-		assert.strictEqual(oUnitFormat.format(1234567.89, "volume-fluid-ounce-imperial"),
-			"1,234,567.89 أونصة سائلة إمبراطورية", "Format to '1,234,567.89 أونصة سائلة إمبراطورية'");
-
-		// formatted
-		assert.deepEqual(oUnitFormat.parse("1,234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1,234,567.89 غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1,234,567.89 أونصة سائلة إمبراطورية"),
-			[1234567.89, "volume-fluid-ounce-imperial"], "Parse '1,234,567.89 أونصة سائلة إمبراطورية'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oUnitFormat.parse("1234,567 غالون إمبراطوري"), [1234567, "volume-gallon-imperial"],
-			"Parse '1234,567 غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1234,567 أونصة سائلة إمبراطورية"),
-			[1234567, "volume-fluid-ounce-imperial"], "Parse '1234,567 أونصة سائلة إمبراطورية'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oUnitFormat.parse("123,4567 غالون إمبراطوري"), null, "Parse '123,4567 غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("123,4567 أونصة سائلة إمبراطورية"), null,
-			"Parse '123,4567 أونصة سائلة إمبراطورية'");
-
-		assert.deepEqual(oUnitFormat.parse("1234567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1234567.89 غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1234567.89 أونصة سائلة إمبراطورية"),
-			[1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234567.89 أونصة سائلة إمبراطورية'");
-		assert.deepEqual(oUnitFormat.parse("1234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"],
-			"Parse '1234,567.89 غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1234,567.89 أونصة سائلة إمبراطورية"),
-			[1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234,567.89 أونصة سائلة إمبراطورية'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Special cases Unit style=short with strictGroupingValidation=" + oOptions.strictGroupingValidation,
-			function (assert) {
-		// en locale
-		var oUnitFormat = NumberFormat.getUnitInstance(Object.assign({style: "short"}, oOptions), new Locale("en"));
-
-		assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1.2T gal Imp.",
-			"Format to '1.2T gal Imp.'");
-		assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1,234,567T gal Imp.",
-			"Format to '1,234,567T gal Imp.'");
-
-		// formatted
-		assert.deepEqual(oUnitFormat.parse("1.2T gal Imp."), [1.2e+12, "volume-gallon-imperial"],
-			"Parse '1.2T gal Imp.'");
-		assert.deepEqual(oUnitFormat.parse("1,234,567T gal Imp."), [1234567e+12, "volume-gallon-imperial"],
-			"Parse '1,234,567T gal Imp.'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oUnitFormat.parse("1234,567T gal Imp."), [1234567e+12, "volume-gallon-imperial"],
-			"Parse '1234,567T gal Imp.'");
-
-		assert.deepEqual(oUnitFormat.parse("123,4567T gal Imp."), null, "Parse '123,4567T gal Imp.'");
-		assert.deepEqual(oUnitFormat.parse("1234567T gal Imp."), [1234567e+12, "volume-gallon-imperial"],
-			"Parse '1234567T gal Imp.'");
-
-		// de locale
-		oUnitFormat = NumberFormat.getUnitInstance(Object.assign({style: "short"}, oOptions), new Locale("de"));
-
-		assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1,2\xa0Bio. Imp. gal",
-			"Format to '1,2\xa0Bio. Imp. gal'");
-		assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1.234.567\xa0Bio. Imp. gal",
-			"Format to '1.234.567\xa0Bio. Imp. gal'");
-
-		// formatted
-		assert.deepEqual(oUnitFormat.parse("1,2\xa0Bio. Imp. gal"), [1.2e+12, "volume-gallon-imperial"],
-			"Parse '1,2\xa0Bio. Imp. gal'");
-		assert.deepEqual(oUnitFormat.parse("1.234.567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"],
-			"Parse '1.234.567\xa0Bio. Imp. gal'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oUnitFormat.parse("1234.567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"],
-			"Parse '1234.567\xa0Bio. Imp. gal'");
-
-		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
-		assert.deepEqual(oUnitFormat.parse("123.4567\xa0Bio. Imp. gal"), null, "Parse '123.4567\xa0Bio. Imp. gal'");
-
-		assert.deepEqual(oUnitFormat.parse("1234567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"],
-			"Parse '1234567\xa0Bio. Imp. gal'");
-
-		// ar (RTL)
-		oUnitFormat = NumberFormat.getUnitInstance(Object.assign({style: "short"}, oOptions), new Locale("ar"));
-
-		assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1.2\xa0ترليون غالون إمبراطوري",
-			"Format to '1.2\xa0ترليون غالون إمبراطوري'");
-		assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"),
-			"1,234,567\xa0ترليون غالون إمبراطوري", "Format to '1,234,567\xa0ترليون غالون إمبراطوري'");
-		assert.strictEqual(oUnitFormat.format(1.2e+12, "volume-fluid-ounce-imperial"),
-			"1.2\xa0ترليون أونصة سائلة إمبراطورية", "Format to '1.2\xa0ترليون أونصة سائلة إمبراطورية'");
-		assert.strictEqual(oUnitFormat.format(1234567e+12, "volume-fluid-ounce-imperial"),
-			"1,234,567\xa0ترليون أونصة سائلة إمبراطورية",
-			"Format to '1,234,567\xa0ترليون أونصة سائلة إمبراطورية'");
-
-		// formatted
-		assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون غالون إمبراطوري"), [1.2e+12, "volume-gallon-imperial"],
-			"Parse '1.2\xa0ترليون غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون غالون إمبراطوري"),
-			[1234567e+12, "volume-gallon-imperial"], "Parse '1,234,567\xa0ترليون غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون أونصة سائلة إمبراطورية"),
-			[1.2e+12, "volume-fluid-ounce-imperial"], "Parse '1.2\xa0ترليون أونصة سائلة إمبراطورية'");
-		assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون أونصة سائلة إمبراطورية"),
-			[1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1,234,567\xa0ترليون أونصة سائلة إمبراطورية'");
-
-		assert.deepEqual(oUnitFormat.parse("1,2\xa0ترليون غالون إمبراطوري"), null,
-			"Parse '1,2\xa0ترليون غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1,234567\xa0ترليون أونصة سائلة إمبراطورية"), null,
-			"Parse '1,234567\xa0ترليون أونصة سائلة إمبراطورية'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oUnitFormat.parse("1234,567\xa0ترليون غالون إمبراطوري"),
-			[1234567e+12, "volume-gallon-imperial"], "Parse '1234,567\xa0ترليون غالون إمبراطوري'");
-
-		assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون غالون إمبراطوري"),
-			[1234567e+12, "volume-gallon-imperial"], "Parse '1234567\xa0ترليون غالون إمبراطوري'");
-		assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون أونصة سائلة إمبراطورية"),
-			[1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1234567\xa0ترليون أونصة سائلة إمبراطورية'");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Special cases Unit showNumber/showMeasure with strictGroupingValidation="
-			+ oOptions.strictGroupingValidation, function (assert) {
-		// showMeasure: true
-		var oUnitFormat = NumberFormat.getUnitInstance(Object.assign({showNumber: false}, oOptions), new Locale("en"));
-
-		// format
-		assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "gal Imp.",
-			"Format to 'gal Imp.'");
-
-		// parse
-		assert.deepEqual(oUnitFormat.parse("gal Imp."), [undefined, "volume-gallon-imperial"], "Parse 'gal Imp.'");
-		assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), null, "Parse '1,234,567.89 gal Imp.'");
-
-		// showMeasure: false
-		oUnitFormat = NumberFormat.getUnitInstance(Object.assign({showMeasure: false}, oOptions), new Locale("en"));
-
-		// format
-		assert.strictEqual(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89",
-			"Format to '1,234,567.89'");
-
-		// parse
-		assert.deepEqual(oUnitFormat.parse("1,234,567.89"), [1234567.89, undefined], "Parse '1,234,567.89'");
-		assert.deepEqual(oUnitFormat.parse("1234,567.89"), [1234567.89, undefined], "Parse '1234,567.89'");
-
-		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
-		assert.deepEqual(oUnitFormat.parse("1234,567"), [1234567, undefined], "Parse '1234,567'");
-
-		assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), null, "Parse '1,234,567.89 gal Imp.'");
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("NumberFormat#format uses LocaleData#convertToDecimal", function (assert) {
@@ -4939,49 +4886,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["getIntegerInstance", "getFloatInstance", "getPercentInstance"].forEach((sInstanceGetter) => {
-	["", 0, NaN, null].forEach((vEmptyString) => {
-		[true, false].forEach((bParseAsString) => {
-	const sTitle = `Parse empty string: ${sInstanceGetter} with showNumber=false, emptyString=${vEmptyString}`
-		+ ` and parseAsString=${bParseAsString}`;
-	// eslint-disable-next-line max-nested-callbacks
-	QUnit.test(sTitle, function (assert) {
-		const oFormat = NumberFormat[sInstanceGetter]({
-			emptyString: vEmptyString,
-			parseAsString: bParseAsString,
-			showNumber: false
-		});
+	["getIntegerInstance", "getFloatInstance", "getPercentInstance"].forEach((sInstanceGetter) => {
+		["", 0, NaN, null].forEach((vEmptyString) => {
+			[true, false].forEach((bParseAsString) => {
+		const sTitle = `Parse empty string: ${sInstanceGetter} with showNumber=false, emptyString=${vEmptyString}`
+			+ ` and parseAsString=${bParseAsString}`;
+		// eslint-disable-next-line max-nested-callbacks
+		QUnit.test(sTitle, function (assert) {
+			const oFormat = NumberFormat[sInstanceGetter]({
+				emptyString: vEmptyString,
+				parseAsString: bParseAsString,
+				showNumber: false
+			});
 
-		// code under test - combination showNumber=false and empty user input does not make sense -> return null
-		assert.strictEqual(oFormat.parse(""), null);
-	});
+			// code under test - combination showNumber=false and empty user input does not make sense -> return null
+			assert.strictEqual(oFormat.parse(""), null);
+		});
+			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-["de-DE", "ar"].forEach((sLocale) => {
-	QUnit.test("format option 'decimalPadding' with locale: " + sLocale, function (assert) {
-		const oLocale = new Locale(sLocale);
-		const oFloatFormat = NumberFormat.getFloatInstance({decimalPadding: 5}, oLocale);
-		let sSeparator = oFloatFormat.oLocaleData.getNumberSymbol("decimal");
+	["de-DE", "ar"].forEach((sLocale) => {
+		QUnit.test("format option 'decimalPadding' with locale: " + sLocale, function (assert) {
+			const oLocale = new Locale(sLocale);
+			const oFloatFormat = NumberFormat.getFloatInstance({decimalPadding: 5}, oLocale);
+			let sSeparator = oFloatFormat.oLocaleData.getNumberSymbol("decimal");
 
-		// code under test
-		assert.strictEqual(oFloatFormat.format(42.12), "42" + sSeparator + "12" + "\u2007\u2007\u2007");
-		assert.strictEqual(oFloatFormat.format(42.12345), "42"  + sSeparator + "12345");
-		assert.strictEqual(oFloatFormat.format(42), "42" + "\u2008\u2007\u2007\u2007\u2007\u2007");
-		assert.strictEqual(oFloatFormat.format(-42), "-42" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+			// code under test
+			assert.strictEqual(oFloatFormat.format(42.12), "42" + sSeparator + "12" + "\u2007\u2007\u2007");
+			assert.strictEqual(oFloatFormat.format(42.12345), "42"  + sSeparator + "12345");
+			assert.strictEqual(oFloatFormat.format(42), "42" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+			assert.strictEqual(oFloatFormat.format(-42), "-42" + "\u2008\u2007\u2007\u2007\u2007\u2007");
 
-		const oUnitFormat = NumberFormat.getUnitInstance({decimalPadding: 5, showMeasure: false}, oLocale);
-		sSeparator = oUnitFormat.oLocaleData.getNumberSymbol("decimal");
+			const oUnitFormat = NumberFormat.getUnitInstance({decimalPadding: 5, showMeasure: false}, oLocale);
+			sSeparator = oUnitFormat.oLocaleData.getNumberSymbol("decimal");
 
-		// code under test
-		assert.strictEqual(oUnitFormat.format(42.12, "mass-gram"), "42" + sSeparator + "12" + "\u2007\u2007\u2007");
-		assert.strictEqual(oUnitFormat.format(42.12345, "mass-gram"), "42"  + sSeparator + "12345");
-		assert.strictEqual(oUnitFormat.format(4, "mass-gram"), "4" + "\u2008\u2007\u2007\u2007\u2007\u2007");
-		assert.strictEqual(oUnitFormat.format(-4, "mass-gram"), "-4" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+			// code under test
+			assert.strictEqual(oUnitFormat.format(42.12, "mass-gram"), "42" + sSeparator + "12" + "\u2007\u2007\u2007");
+			assert.strictEqual(oUnitFormat.format(42.12345, "mass-gram"), "42"  + sSeparator + "12345");
+			assert.strictEqual(oUnitFormat.format(4, "mass-gram"), "4" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+			assert.strictEqual(oUnitFormat.format(-4, "mass-gram"), "-4" + "\u2008\u2007\u2007\u2007\u2007\u2007");
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("checkDecimalPadding throws error", function (assert) {
@@ -5021,91 +4968,91 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	aCheckDecimalPaddingArgs: [],
-	oDefaultOptions: NumberFormat.oDefaultFloatFormat,
-	sGetter: "getFloatInstance",
-	sType: "float"
-}, {
-	aCheckDecimalPaddingArgs: [false],
-	oDefaultOptions: NumberFormat.oDefaultIntegerFormat,
-	sGetter: "getIntegerInstance",
-	sType: "integer"
-}, {
-	aCheckDecimalPaddingArgs: [true, true],
-	oDefaultOptions: NumberFormat.oDefaultUnitFormat,
-	sGetter: "getUnitInstance",
-	sType: "unit"
-}, {
-	aCheckDecimalPaddingArgs: [true, true],
-	oDefaultOptions: NumberFormat.oDefaultCurrencyFormat,
-	sGetter: "getCurrencyInstance",
-	sType: "currency"
-}, {
-	aCheckDecimalPaddingArgs: [false],
-	oDefaultOptions: NumberFormat.oDefaultPercentFormat,
-	sGetter: "getPercentInstance",
-	sType: "percent"
-}].forEach(({aCheckDecimalPaddingArgs, oDefaultOptions, sGetter, sType}) => {
-	QUnit.test(sGetter, function (assert) {
-		this.mock(NumberFormat).expects("checkDecimalPadding").withExactArgs("~oOptions", ...aCheckDecimalPaddingArgs);
-		const oNumberFormat = {
-			oOriginalFormatOptions: {
-				foo: "~foo~fromOriginalFormatOptions",
-				bar: "~bar~fromOriginalFormatOptions",
-				maxIntegerDigits: "~maxIntegerDigits~fromOriginalFormatOptions",
+	[{
+		aCheckDecimalPaddingArgs: [],
+		oDefaultOptions: NumberFormat.oDefaultFloatFormat,
+		sGetter: "getFloatInstance",
+		sType: "float"
+	}, {
+		aCheckDecimalPaddingArgs: [false],
+		oDefaultOptions: NumberFormat.oDefaultIntegerFormat,
+		sGetter: "getIntegerInstance",
+		sType: "integer"
+	}, {
+		aCheckDecimalPaddingArgs: [true, true],
+		oDefaultOptions: NumberFormat.oDefaultUnitFormat,
+		sGetter: "getUnitInstance",
+		sType: "unit"
+	}, {
+		aCheckDecimalPaddingArgs: [true, true],
+		oDefaultOptions: NumberFormat.oDefaultCurrencyFormat,
+		sGetter: "getCurrencyInstance",
+		sType: "currency"
+	}, {
+		aCheckDecimalPaddingArgs: [false],
+		oDefaultOptions: NumberFormat.oDefaultPercentFormat,
+		sGetter: "getPercentInstance",
+		sType: "percent"
+	}].forEach(({aCheckDecimalPaddingArgs, oDefaultOptions, sGetter, sType}) => {
+		QUnit.test(sGetter, function (assert) {
+			this.mock(NumberFormat).expects("checkDecimalPadding").withExactArgs("~oOptions", ...aCheckDecimalPaddingArgs);
+			const oNumberFormat = {
+				oOriginalFormatOptions: {
+					foo: "~foo~fromOriginalFormatOptions",
+					bar: "~bar~fromOriginalFormatOptions",
+					maxIntegerDigits: "~maxIntegerDigits~fromOriginalFormatOptions",
+					...(sGetter === "getCurrencyInstance" && {
+						trailingCurrencyCode: "~trailingCurrencyCode~fromOriginalFormatOptions"
+					})
+				},
+				getLocaleFormatOptions() {},
 				...(sGetter === "getCurrencyInstance" && {
-					trailingCurrencyCode: "~trailingCurrencyCode~fromOriginalFormatOptions"
+					_defineCustomCurrencySymbols() {},
+					showTrailingCurrencyCode() {}
 				})
-			},
-			getLocaleFormatOptions() {},
-			...(sGetter === "getCurrencyInstance" && {
-				_defineCustomCurrencySymbols() {},
-				showTrailingCurrencyCode() {}
-			})
-		};
-		this.mock(NumberFormat).expects("createInstance").withExactArgs("~oOptions", "~oLocale").returns(oNumberFormat);
-		const oLocaleFormatOptions = {
-			bar: "~bar~fromLocaleFormatOptions",
-			maxFractionDigits: "~maxFractionDigits~fromLocaleFormatOptions"
-		};
-		this.mock(oNumberFormat).expects("getLocaleFormatOptions").withExactArgs(sType).returns(oLocaleFormatOptions);
-		if (oNumberFormat._defineCustomCurrencySymbols) {
-			this.mock(oNumberFormat).expects("_defineCustomCurrencySymbols").withExactArgs();
-			this.mock(oNumberFormat).expects("showTrailingCurrencyCode").withExactArgs().returns("~trailingCurrency");
-		}
+			};
+			this.mock(NumberFormat).expects("createInstance").withExactArgs("~oOptions", "~oLocale").returns(oNumberFormat);
+			const oLocaleFormatOptions = {
+				bar: "~bar~fromLocaleFormatOptions",
+				maxFractionDigits: "~maxFractionDigits~fromLocaleFormatOptions"
+			};
+			this.mock(oNumberFormat).expects("getLocaleFormatOptions").withExactArgs(sType).returns(oLocaleFormatOptions);
+			if (oNumberFormat._defineCustomCurrencySymbols) {
+				this.mock(oNumberFormat).expects("_defineCustomCurrencySymbols").withExactArgs();
+				this.mock(oNumberFormat).expects("showTrailingCurrencyCode").withExactArgs().returns("~trailingCurrency");
+			}
 
-		// code under test
-		assert.strictEqual(NumberFormat[sGetter]("~oOptions", "~oLocale"), oNumberFormat);
-
-		assert.notStrictEqual(oNumberFormat.oFormatOptions, oNumberFormat.oOriginalFormatOptions);
-		assert.notStrictEqual(oNumberFormat.oFormatOptions, oDefaultOptions);
-		assert.notStrictEqual(oNumberFormat.oFormatOptions, oLocaleFormatOptions);
-		const oExpectedFormatOptions = extend({}, oDefaultOptions);
-		oExpectedFormatOptions.foo = "~foo~fromOriginalFormatOptions";
-		oExpectedFormatOptions.bar = "~bar~fromOriginalFormatOptions";
-		oExpectedFormatOptions.maxIntegerDigits = "~maxIntegerDigits~fromOriginalFormatOptions";
-		oExpectedFormatOptions.maxFractionDigits = "~maxFractionDigits~fromLocaleFormatOptions";
-		oExpectedFormatOptions.parseAsString = oDefaultOptions.parseAsString;
-		if (oNumberFormat.showTrailingCurrencyCode) {
-			oExpectedFormatOptions.trailingCurrencyCode = "~trailingCurrency";
-		}
-		assert.deepEqual(oNumberFormat.oFormatOptions, oExpectedFormatOptions);
-	});
-
-	QUnit.test(sGetter + ": checkDecimalPadding fails", function (assert) {
-		const oError = new Error("Expected error");
-		this.mock(NumberFormat).expects("checkDecimalPadding")
-			.withExactArgs("~oFormatOptions", ...aCheckDecimalPaddingArgs)
-			.throws(oError);
-		this.mock(NumberFormat).expects("createInstance").never();
-
-		assert.throws(() => {
 			// code under test
-			NumberFormat[sGetter]("~oFormatOptions");
-		}, oError);
+			assert.strictEqual(NumberFormat[sGetter]("~oOptions", "~oLocale"), oNumberFormat);
+
+			assert.notStrictEqual(oNumberFormat.oFormatOptions, oNumberFormat.oOriginalFormatOptions);
+			assert.notStrictEqual(oNumberFormat.oFormatOptions, oDefaultOptions);
+			assert.notStrictEqual(oNumberFormat.oFormatOptions, oLocaleFormatOptions);
+			const oExpectedFormatOptions = extend({}, oDefaultOptions);
+			oExpectedFormatOptions.foo = "~foo~fromOriginalFormatOptions";
+			oExpectedFormatOptions.bar = "~bar~fromOriginalFormatOptions";
+			oExpectedFormatOptions.maxIntegerDigits = "~maxIntegerDigits~fromOriginalFormatOptions";
+			oExpectedFormatOptions.maxFractionDigits = "~maxFractionDigits~fromLocaleFormatOptions";
+			oExpectedFormatOptions.parseAsString = oDefaultOptions.parseAsString;
+			if (oNumberFormat.showTrailingCurrencyCode) {
+				oExpectedFormatOptions.trailingCurrencyCode = "~trailingCurrency";
+			}
+			assert.deepEqual(oNumberFormat.oFormatOptions, oExpectedFormatOptions);
+		});
+
+		QUnit.test(sGetter + ": checkDecimalPadding fails", function (assert) {
+			const oError = new Error("Expected error");
+			this.mock(NumberFormat).expects("checkDecimalPadding")
+				.withExactArgs("~oFormatOptions", ...aCheckDecimalPaddingArgs)
+				.throws(oError);
+			this.mock(NumberFormat).expects("createInstance").never();
+
+			assert.throws(() => {
+				// code under test
+				NumberFormat[sGetter]("~oFormatOptions");
+			}, oError);
+		});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getCurrencyInstance: style 'long' is formatted as 'short'; integrative", function (assert) {
@@ -5114,158 +5061,158 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sType: "float"},
-	{iMaxFractionDigits: 0, bGroupingEnabled: false, sType: "integer"},
-	{sType: "unit"},
-	{sPatternGetter: "getPercentPattern", sType: "percent"}
-].forEach(({bGroupingEnabled, iMaxFractionDigits = 99, sPatternGetter = "getDecimalPattern", sType}) => {
-	QUnit.test("getLocaleFormatOptions: " + sType, function (assert) {
-		const oLocaleData = {getNumberSymbol() {}};
-		oLocaleData[sPatternGetter] = () => {};
-		const oLocalDataMock = this.mock(oLocaleData);
-		oLocalDataMock.expects(sPatternGetter).withExactArgs().returns("~pattern");
-		const oOptions = {};
-		this.mock(NumberFormat).expects("parseNumberPattern").withExactArgs("~pattern").returns(oOptions);
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("plusSign").returns("~plus");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("minusSign").returns("~minus");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("decimal").returns("~decimal");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("group").returns("~group");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("percentSign").returns("~percent");
-		const oNumberFormat = {oLocaleData};
-
-		// code under test
-		const oLocaleFormatOptions = NumberFormat.prototype.getLocaleFormatOptions.call(oNumberFormat, sType);
-
-		assert.strictEqual(oLocaleFormatOptions, oOptions);
-		assert.deepEqual(oLocaleFormatOptions, {
-			decimalSeparator: "~decimal",
-			groupingSeparator: "~group",
-			maxFractionDigits: iMaxFractionDigits,
-			minFractionDigits: 0,
-			minusSign: "~minus",
-			pattern: "~pattern",
-			percentSign: "~percent",
-			plusSign: "~plus",
-			...(bGroupingEnabled !== undefined && {groupingEnabled: bGroupingEnabled})
-		});
-	});
-});
-
-	//*********************************************************************************************
-[{
-	sContext: "standard"
-}, {
-	sContext: "sap-standard",
-	bShowTrailingCurrencyCode: true
-}, {
-	sContext: "standard",
-	oOriginalFormatOptions: {}
-}, {
-	sContext: "sap-standard",
-	bShowTrailingCurrencyCode: true,
-	oOriginalFormatOptions: {}
-}, {
-	sContext: "~currencyContext",
-	oOriginalFormatOptions: {currencyContext: "~currencyContext"}
-}, {
-	sContext: "sap-~currencyContext",
-	bShowTrailingCurrencyCode: true,
-	oOriginalFormatOptions: {currencyContext: "~currencyContext"}
-}].forEach(({sContext, oOriginalFormatOptions, bShowTrailingCurrencyCode = false}, i) => {
-	QUnit.test("getLocaleFormatOptions: currency, #" + i, function (assert) {
-		const oLocaleData = {
-			getCurrencyPattern() {},
-			getNumberSymbol() {}
-		};
-		const oLocalDataMock = this.mock(oLocaleData);
-		oLocalDataMock.expects("getCurrencyPattern").withExactArgs(sContext).returns("~pattern");
-		const oOptions = {};
-		this.mock(NumberFormat).expects("parseNumberPattern").withExactArgs("~pattern").returns(oOptions);
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("plusSign").returns("~plus");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("minusSign").returns("~minus");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("decimal").returns("~decimal");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("group").returns("~group");
-		oLocalDataMock.expects("getNumberSymbol").withExactArgs("percentSign").returns("~percent");
-		const oNumberFormat = {
-			oLocaleData,
-			oOriginalFormatOptions,
-			showTrailingCurrencyCode() {}
-		};
-		this.mock(oNumberFormat).expects("showTrailingCurrencyCode").withExactArgs().returns(bShowTrailingCurrencyCode);
-
-		// code under test
-		const oLocaleFormatOptions = NumberFormat.prototype.getLocaleFormatOptions.call(oNumberFormat, "currency");
-
-		assert.strictEqual(oLocaleFormatOptions, oOptions);
-		assert.deepEqual(oLocaleFormatOptions, {
-			decimalSeparator: "~decimal",
-			groupingSeparator: "~group",
-			maxFractionDigits: undefined,
-			minFractionDigits: undefined,
-			minusSign: "~minus",
-			pattern: "~pattern",
-			percentSign: "~percent",
-			plusSign: "~plus"
-		});
-	});
-});
-
-	//*********************************************************************************************
-[
-	{iGetTrailingCurrencyCodeCount: 1, oOriginalFormatOptions: undefined, bResult: "~fromFormatting"},
-	{iGetTrailingCurrencyCodeCount: 1, oOriginalFormatOptions: {}, bResult: "~fromFormatting"},
-	{oOriginalFormatOptions: {trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: "~trailingCurrencyCode"},
-	{oOriginalFormatOptions: {pattern: "~foo", trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: false},
-	{oOriginalFormatOptions: {currencyCode: false, trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: false},
-	{
-		oOriginalFormatOptions: {currencyCode: "~foo", trailingCurrencyCode: "~trailingCurrencyCode"},
-		bResult: "~trailingCurrencyCode"
-	}
-].forEach(({oOriginalFormatOptions, bResult, iGetTrailingCurrencyCodeCount = 0}) => {
-	QUnit.test("showTrailingCurrencyCode: no format options", function (assert) {
-		this.mock(Formatting).expects("getTrailingCurrencyCode").withExactArgs()
-			.exactly(iGetTrailingCurrencyCodeCount)
-			.returns("~fromFormatting");
-
-		// code under test
-		assert.strictEqual(NumberFormat.prototype.showTrailingCurrencyCode.call({oOriginalFormatOptions}), bResult);
-	});
-});
-
-	//*********************************************************************************************
-["getCurrencyInstance", "getUnitInstance"].forEach((sInstanceGetter) => {
 	[
-		{resultCurrencyOrUnit: NaN},
-		{parseAsString: true, resultCurrencyOrUnit: "NaN"},
-		{parseAsString: false, resultCurrencyOrUnit: NaN},
-		{emptyString: "", resultCurrencyOrUnit: ""},
-		{emptyString: "", parseAsString: true, resultCurrencyOrUnit: ""},
-		{emptyString: "", parseAsString: false, resultCurrencyOrUnit: ""},
-		{emptyString: NaN, resultCurrencyOrUnit: NaN},
-		{emptyString: NaN, parseAsString: true, resultCurrencyOrUnit: "NaN"},
-		{emptyString: NaN, parseAsString: false, resultCurrencyOrUnit: NaN},
-		{emptyString: null, resultCurrencyOrUnit: null},
-		{emptyString: null, parseAsString: true, resultCurrencyOrUnit: null},
-		{emptyString: null, parseAsString: false, resultCurrencyOrUnit: null},
-		{emptyString: 0, resultCurrencyOrUnit: 0},
-		{emptyString: 0, parseAsString: true, resultCurrencyOrUnit: "0"},
-		{emptyString: 0, parseAsString: false, resultCurrencyOrUnit: 0}
-	].forEach((oFixture) => {
-	const sTitle = `Parse empty string: ${sInstanceGetter} with showNumber=false, `
-			+ ` emptyString=${oFixture.emptyString} and parseAsString=${oFixture.parseAsString}`;
-	QUnit.test(sTitle, function (assert) {
-		const oFormat = NumberFormat[sInstanceGetter]({
-			...(oFixture.hasOwnProperty("parseAsString") && {parseAsString: oFixture.parseAsString}),
-			...(oFixture.hasOwnProperty("emptyString") && {emptyString: oFixture.emptyString}),
-			showNumber: false
-		});
+		{sType: "float"},
+		{iMaxFractionDigits: 0, bGroupingEnabled: false, sType: "integer"},
+		{sType: "unit"},
+		{sPatternGetter: "getPercentPattern", sType: "percent"}
+	].forEach(({bGroupingEnabled, iMaxFractionDigits = 99, sPatternGetter = "getDecimalPattern", sType}) => {
+		QUnit.test("getLocaleFormatOptions: " + sType, function (assert) {
+			const oLocaleData = {getNumberSymbol() {}};
+			oLocaleData[sPatternGetter] = () => {};
+			const oLocalDataMock = this.mock(oLocaleData);
+			oLocalDataMock.expects(sPatternGetter).withExactArgs().returns("~pattern");
+			const oOptions = {};
+			this.mock(NumberFormat).expects("parseNumberPattern").withExactArgs("~pattern").returns(oOptions);
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("plusSign").returns("~plus");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("minusSign").returns("~minus");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("decimal").returns("~decimal");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("group").returns("~group");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("percentSign").returns("~percent");
+			const oNumberFormat = {oLocaleData};
 
-		// code under test
-		assert.deepEqual(oFormat.parse(""), [undefined, oFixture.resultCurrencyOrUnit]);
+			// code under test
+			const oLocaleFormatOptions = NumberFormat.prototype.getLocaleFormatOptions.call(oNumberFormat, sType);
+
+			assert.strictEqual(oLocaleFormatOptions, oOptions);
+			assert.deepEqual(oLocaleFormatOptions, {
+				decimalSeparator: "~decimal",
+				groupingSeparator: "~group",
+				maxFractionDigits: iMaxFractionDigits,
+				minFractionDigits: 0,
+				minusSign: "~minus",
+				pattern: "~pattern",
+				percentSign: "~percent",
+				plusSign: "~plus",
+				...(bGroupingEnabled !== undefined && {groupingEnabled: bGroupingEnabled})
+			});
+		});
 	});
+
+	//*********************************************************************************************
+	[{
+		sContext: "standard"
+	}, {
+		sContext: "sap-standard",
+		bShowTrailingCurrencyCode: true
+	}, {
+		sContext: "standard",
+		oOriginalFormatOptions: {}
+	}, {
+		sContext: "sap-standard",
+		bShowTrailingCurrencyCode: true,
+		oOriginalFormatOptions: {}
+	}, {
+		sContext: "~currencyContext",
+		oOriginalFormatOptions: {currencyContext: "~currencyContext"}
+	}, {
+		sContext: "sap-~currencyContext",
+		bShowTrailingCurrencyCode: true,
+		oOriginalFormatOptions: {currencyContext: "~currencyContext"}
+	}].forEach(({sContext, oOriginalFormatOptions, bShowTrailingCurrencyCode = false}, i) => {
+		QUnit.test("getLocaleFormatOptions: currency, #" + i, function (assert) {
+			const oLocaleData = {
+				getCurrencyPattern() {},
+				getNumberSymbol() {}
+			};
+			const oLocalDataMock = this.mock(oLocaleData);
+			oLocalDataMock.expects("getCurrencyPattern").withExactArgs(sContext).returns("~pattern");
+			const oOptions = {};
+			this.mock(NumberFormat).expects("parseNumberPattern").withExactArgs("~pattern").returns(oOptions);
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("plusSign").returns("~plus");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("minusSign").returns("~minus");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("decimal").returns("~decimal");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("group").returns("~group");
+			oLocalDataMock.expects("getNumberSymbol").withExactArgs("percentSign").returns("~percent");
+			const oNumberFormat = {
+				oLocaleData,
+				oOriginalFormatOptions,
+				showTrailingCurrencyCode() {}
+			};
+			this.mock(oNumberFormat).expects("showTrailingCurrencyCode").withExactArgs().returns(bShowTrailingCurrencyCode);
+
+			// code under test
+			const oLocaleFormatOptions = NumberFormat.prototype.getLocaleFormatOptions.call(oNumberFormat, "currency");
+
+			assert.strictEqual(oLocaleFormatOptions, oOptions);
+			assert.deepEqual(oLocaleFormatOptions, {
+				decimalSeparator: "~decimal",
+				groupingSeparator: "~group",
+				maxFractionDigits: undefined,
+				minFractionDigits: undefined,
+				minusSign: "~minus",
+				pattern: "~pattern",
+				percentSign: "~percent",
+				plusSign: "~plus"
+			});
+		});
 	});
-});
+
+	//*********************************************************************************************
+	[
+		{iGetTrailingCurrencyCodeCount: 1, oOriginalFormatOptions: undefined, bResult: "~fromFormatting"},
+		{iGetTrailingCurrencyCodeCount: 1, oOriginalFormatOptions: {}, bResult: "~fromFormatting"},
+		{oOriginalFormatOptions: {trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: "~trailingCurrencyCode"},
+		{oOriginalFormatOptions: {pattern: "~foo", trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: false},
+		{oOriginalFormatOptions: {currencyCode: false, trailingCurrencyCode: "~trailingCurrencyCode"}, bResult: false},
+		{
+			oOriginalFormatOptions: {currencyCode: "~foo", trailingCurrencyCode: "~trailingCurrencyCode"},
+			bResult: "~trailingCurrencyCode"
+		}
+	].forEach(({oOriginalFormatOptions, bResult, iGetTrailingCurrencyCodeCount = 0}) => {
+		QUnit.test("showTrailingCurrencyCode: no format options", function (assert) {
+			this.mock(Formatting).expects("getTrailingCurrencyCode").withExactArgs()
+				.exactly(iGetTrailingCurrencyCodeCount)
+				.returns("~fromFormatting");
+
+			// code under test
+			assert.strictEqual(NumberFormat.prototype.showTrailingCurrencyCode.call({oOriginalFormatOptions}), bResult);
+		});
+	});
+
+	//*********************************************************************************************
+	["getCurrencyInstance", "getUnitInstance"].forEach((sInstanceGetter) => {
+		[
+			{resultCurrencyOrUnit: NaN},
+			{parseAsString: true, resultCurrencyOrUnit: "NaN"},
+			{parseAsString: false, resultCurrencyOrUnit: NaN},
+			{emptyString: "", resultCurrencyOrUnit: ""},
+			{emptyString: "", parseAsString: true, resultCurrencyOrUnit: ""},
+			{emptyString: "", parseAsString: false, resultCurrencyOrUnit: ""},
+			{emptyString: NaN, resultCurrencyOrUnit: NaN},
+			{emptyString: NaN, parseAsString: true, resultCurrencyOrUnit: "NaN"},
+			{emptyString: NaN, parseAsString: false, resultCurrencyOrUnit: NaN},
+			{emptyString: null, resultCurrencyOrUnit: null},
+			{emptyString: null, parseAsString: true, resultCurrencyOrUnit: null},
+			{emptyString: null, parseAsString: false, resultCurrencyOrUnit: null},
+			{emptyString: 0, resultCurrencyOrUnit: 0},
+			{emptyString: 0, parseAsString: true, resultCurrencyOrUnit: "0"},
+			{emptyString: 0, parseAsString: false, resultCurrencyOrUnit: 0}
+		].forEach((oFixture) => {
+		const sTitle = `Parse empty string: ${sInstanceGetter} with showNumber=false, `
+				+ ` emptyString=${oFixture.emptyString} and parseAsString=${oFixture.parseAsString}`;
+		QUnit.test(sTitle, function (assert) {
+			const oFormat = NumberFormat[sInstanceGetter]({
+				...(oFixture.hasOwnProperty("parseAsString") && {parseAsString: oFixture.parseAsString}),
+				...(oFixture.hasOwnProperty("emptyString") && {emptyString: oFixture.emptyString}),
+				showNumber: false
+			});
+
+			// code under test
+			assert.deepEqual(oFormat.parse(""), [undefined, oFixture.resultCurrencyOrUnit]);
+		});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getCurrencySymbolOrCode: currency code", function (assert) {
@@ -5313,201 +5260,201 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "USD"},
-	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "$"},
-	{sCurrencyCode: undefined, sCurrencyCodeOrSymbol: undefined}
-].forEach(({sCurrencyCode, sCurrencyCodeOrSymbol}, i) => {
-	[false, true].forEach((bNegative) => {
-		[false, true].forEach((bCurrencyCode) => {
-			["standard", "accounting"].forEach((sCurrencyContext) => {
-				[false, true].forEach((bTrailingCurrencyCode) => {
-	const sTitle = "format: (currency) calls getCurrencySymbolOrCode, getCurrencyPattern, _composeCurrencyResult"
-		+ " (showNumber: true); negative: " + bNegative + "; currencyCode: " + bCurrencyCode
-		+ " context: " + sCurrencyContext + "; trailing currency code: " + bTrailingCurrencyCode + "; #" + i;
-	QUnit.test(sTitle, function (assert) {
-		const oFormatOptions = {
-			currencyCode: bCurrencyCode,
-			currencyContext: sCurrencyContext,
-			minusSign: "~minusSign",
-			trailingCurrencyCode: bTrailingCurrencyCode
-		};
-		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
-		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
-			.withExactArgs(sCurrencyCode, bCurrencyCode)
-			.returns(sCurrencyCodeOrSymbol);
-		this.mock(oCurrencyFormat).expects("getCurrencyPattern")
-			.withExactArgs(sCurrencyContext, bCurrencyCode && bTrailingCurrencyCode, sCurrencyCode ? true : undefined,
-				sCurrencyCodeOrSymbol, bNegative)
-			.returns("~pattern");
-		this.mock(NumberFormat).expects("_composeCurrencyResult")
-			.withExactArgs("~pattern", bNegative ? "~minusSign1.23" : "1.23", sCurrencyCodeOrSymbol, "~minusSign",
-				bNegative)
-			.returns("~result");
+	[
+		{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "USD"},
+		{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "$"},
+		{sCurrencyCode: undefined, sCurrencyCodeOrSymbol: undefined}
+	].forEach(({sCurrencyCode, sCurrencyCodeOrSymbol}, i) => {
+		[false, true].forEach((bNegative) => {
+			[false, true].forEach((bCurrencyCode) => {
+				["standard", "accounting"].forEach((sCurrencyContext) => {
+					[false, true].forEach((bTrailingCurrencyCode) => {
+		const sTitle = "format: (currency) calls getCurrencySymbolOrCode, getCurrencyPattern, _composeCurrencyResult"
+			+ " (showNumber: true); negative: " + bNegative + "; currencyCode: " + bCurrencyCode
+			+ " context: " + sCurrencyContext + "; trailing currency code: " + bTrailingCurrencyCode + "; #" + i;
+		QUnit.test(sTitle, function (assert) {
+			const oFormatOptions = {
+				currencyCode: bCurrencyCode,
+				currencyContext: sCurrencyContext,
+				minusSign: "~minusSign",
+				trailingCurrencyCode: bTrailingCurrencyCode
+			};
+			const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions);
+			this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
+				.withExactArgs(sCurrencyCode, bCurrencyCode)
+				.returns(sCurrencyCodeOrSymbol);
+			this.mock(oCurrencyFormat).expects("getCurrencyPattern")
+				.withExactArgs(sCurrencyContext, bCurrencyCode && bTrailingCurrencyCode, sCurrencyCode ? true : undefined,
+					sCurrencyCodeOrSymbol, bNegative)
+				.returns("~pattern");
+			this.mock(NumberFormat).expects("_composeCurrencyResult")
+				.withExactArgs("~pattern", bNegative ? "~minusSign1.23" : "1.23", sCurrencyCodeOrSymbol, "~minusSign",
+					bNegative)
+				.returns("~result");
 
-		// code under test
-		assert.strictEqual(oCurrencyFormat.format(bNegative ? "-1.23" : "1.23", sCurrencyCode), "~result");
-	});
+			// code under test
+			assert.strictEqual(oCurrencyFormat.format(bNegative ? "-1.23" : "1.23", sCurrencyCode), "~result");
+		});
+					});
 				});
 			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{sCurrencyCode: "INR", sCurrencyCodeOrSymbol: "INR"},
-	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "USD"},
-	{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "$"},
-	{sCurrencyCode: undefined, sCurrencyCodeOrSymbol: undefined}
-].forEach(({sCurrencyCode, sCurrencyCodeOrSymbol}, i) => {
-	[false, true].forEach((bNegative) => {
-		[false, true].forEach((bTrailingCurrencyCode) => {
-	const sTitle = "format: (currency) calls getCompactPattern; negative: " + bNegative
-		+ "; trailing currency code: " + bTrailingCurrencyCode + "; #" + i;
-	QUnit.test(sTitle, function (assert) {
-		const oFormatOptions = {style: "short", minusSign: "~minusSign", trailingCurrencyCode: bTrailingCurrencyCode};
-		const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions, new Locale("en-IN"));
+	[
+		{sCurrencyCode: "INR", sCurrencyCodeOrSymbol: "INR"},
+		{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "USD"},
+		{sCurrencyCode: "USD", sCurrencyCodeOrSymbol: "$"},
+		{sCurrencyCode: undefined, sCurrencyCodeOrSymbol: undefined}
+	].forEach(({sCurrencyCode, sCurrencyCodeOrSymbol}, i) => {
+		[false, true].forEach((bNegative) => {
+			[false, true].forEach((bTrailingCurrencyCode) => {
+		const sTitle = "format: (currency) calls getCompactPattern; negative: " + bNegative
+			+ "; trailing currency code: " + bTrailingCurrencyCode + "; #" + i;
+		QUnit.test(sTitle, function (assert) {
+			const oFormatOptions = {style: "short", minusSign: "~minusSign", trailingCurrencyCode: bTrailingCurrencyCode};
+			const oCurrencyFormat = NumberFormat.getCurrencyInstance(oFormatOptions, new Locale("en-IN"));
 
-		this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
-			.withExactArgs(sCurrencyCode, true)
-			.returns(sCurrencyCodeOrSymbol);
-		const sValue = bNegative ? "-12345.67" : "12345.67";
-		const bIndianCurrency = sCurrencyCode === "INR";
-		this.mock(oCurrencyFormat).expects("getShortenedFormat")
-			.withExactArgs(sValue, sinon.match.object, bIndianCurrency)
-			.returns({decimals: 1, formatString: "\xa400K", key: "~sPowerOfTen", magnitude: 1000,
-				valueSubString: "00K"});
-		this.mock(oCurrencyFormat).expects("_getPluralCategory").withExactArgs("12", "").returns("~sPluralCategory");
-		this.mock(oCurrencyFormat).expects("getCompactPattern")
-			.withExactArgs("currency", "short", "~sPowerOfTen", "~sPluralCategory", bTrailingCurrencyCode,
-				bIndianCurrency, sCurrencyCode ? true : undefined, sCurrencyCodeOrSymbol, bNegative)
-			.returns("~compactPattern");
-		this.mock(NumberFormat).expects("_composeCurrencyResult")
-			.withExactArgs("~compactPattern", bNegative ? "~minusSign12" : "12", sCurrencyCodeOrSymbol, "~minusSign",
-				bNegative)
-			.returns("~result");
+			this.mock(oCurrencyFormat).expects("getCurrencySymbolOrCode")
+				.withExactArgs(sCurrencyCode, true)
+				.returns(sCurrencyCodeOrSymbol);
+			const sValue = bNegative ? "-12345.67" : "12345.67";
+			const bIndianCurrency = sCurrencyCode === "INR";
+			this.mock(oCurrencyFormat).expects("getShortenedFormat")
+				.withExactArgs(sValue, sinon.match.object, bIndianCurrency)
+				.returns({decimals: 1, formatString: "\xa400K", key: "~sPowerOfTen", magnitude: 1000,
+					valueSubString: "00K"});
+			this.mock(oCurrencyFormat).expects("_getPluralCategory").withExactArgs("12", "").returns("~sPluralCategory");
+			this.mock(oCurrencyFormat).expects("getCompactPattern")
+				.withExactArgs("currency", "short", "~sPowerOfTen", "~sPluralCategory", bTrailingCurrencyCode,
+					bIndianCurrency, sCurrencyCode ? true : undefined, sCurrencyCodeOrSymbol, bNegative)
+				.returns("~compactPattern");
+			this.mock(NumberFormat).expects("_composeCurrencyResult")
+				.withExactArgs("~compactPattern", bNegative ? "~minusSign12" : "12", sCurrencyCodeOrSymbol, "~minusSign",
+					bNegative)
+				.returns("~result");
 
-		// code under test
-		assert.strictEqual(oCurrencyFormat.format(sValue, sCurrencyCode), "~result");
-	});
+			// code under test
+			assert.strictEqual(oCurrencyFormat.format(sValue, sCurrencyCode), "~result");
+		});
+			});
 		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{sPattern: "~Pattern'.'", sResult: "~Pattern."},
-	{sPattern: undefined, sResult: undefined}
-].forEach(({sPattern, sResult}, i) => {
-	QUnit.test("getCompactPattern: no currency type case - #" + i, function (assert) {
-		const oNumberFormat = {
-			oLocaleData: {getCompactDecimalPattern() {}}
-		};
+	[
+		{sPattern: "~Pattern'.'", sResult: "~Pattern."},
+		{sPattern: undefined, sResult: undefined}
+	].forEach(({sPattern, sResult}, i) => {
+		QUnit.test("getCompactPattern: no currency type case - #" + i, function (assert) {
+			const oNumberFormat = {
+				oLocaleData: {getCompactDecimalPattern() {}}
+			};
 
-		this.mock(oNumberFormat.oLocaleData).expects("getCompactDecimalPattern")
-			.withExactArgs("~sStyle", "~sPowerOfTen", "~sPluralCategory")
-			.returns(sPattern);
+			this.mock(oNumberFormat.oLocaleData).expects("getCompactDecimalPattern")
+				.withExactArgs("~sStyle", "~sPowerOfTen", "~sPluralCategory")
+				.returns(sPattern);
 
-		// code under test
-		assert.strictEqual(
-			NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "~noCurrencyType", "~sStyle", "~sPowerOfTen",
-				"~sPluralCategory"),
-			sResult);
-	});
-});
-
-[
-	{bIndianCurrency: false, bTrailingCurrencyCode: false, sStyle: "~sStyle"},
-	{bIndianCurrency: true, bTrailingCurrencyCode: false, sStyle: "~sStyle-indian"},
-	{bIndianCurrency: false, bTrailingCurrencyCode: true, sStyle: "sap-short"},
-	{bIndianCurrency: true, bTrailingCurrencyCode: true, sStyle: "sap-short-indian"}
-].forEach(({bIndianCurrency, bTrailingCurrencyCode, sStyle}, i) => {
-	//*********************************************************************************************
-	[{
-		sPattern: undefined,
-		sResult: undefined
-	}, {
-		sPattern: "~Pattern'.'",
-		bIsAlphaNextToNumber: false,
-		sResult: "~Pattern."
-	}, {
-		sPattern: "~Pattern'.'",
-		bIsAlphaNextToNumber: true,
-		sAlphaNextToNumberPattern: "~AlphaNextToNumberPattern'.'",
-		sResult: "~AlphaNextToNumberPattern."
-	}, {
-		sPattern: "~Pattern'.'",
-		bIsAlphaNextToNumber: true,
-		sAlphaNextToNumberPattern: undefined,
-		sResult: "~Pattern."
-	}].forEach(({sPattern, bIsAlphaNextToNumber, sAlphaNextToNumberPattern, sResult}, i) => {
-	QUnit.test("getCompactPattern: currency case with measure; " + sStyle + "; #" + i, function (assert) {
-		const oNumberFormat = {
-			oLocaleData: {getCompactCurrencyPattern() {}}
-		};
-		const oLocaleDataMock = this.mock(oNumberFormat.oLocaleData);
-		oLocaleDataMock.expects("getCompactCurrencyPattern")
-			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory")
-			.returns(sPattern);
-		this.mock(NumberFormat).expects("isAlphaNextToNumber")
-			.withExactArgs(sPattern, "~sCurrency", "~bNegative")
-			.returns(bIsAlphaNextToNumber);
-		oLocaleDataMock.expects("getCompactCurrencyPattern")
-			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "alphaNextToNumber")
-			.exactly(bIsAlphaNextToNumber ? 1 : 0)
-			.returns(sAlphaNextToNumberPattern);
-
-		// code under test
-		assert.strictEqual(
-			NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "currency", "~sStyle", "~sPowerOfTen",
-				"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency, true, "~sCurrency", "~bNegative"),
-			sResult);
-	});
+			// code under test
+			assert.strictEqual(
+				NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "~noCurrencyType", "~sStyle", "~sPowerOfTen",
+					"~sPluralCategory"),
+				sResult);
+		});
 	});
 
-	//*********************************************************************************************
-	[{
-		sPattern: undefined,
-		sDecimalPattern: "~DecimalPattern'.'",
-		sResult: "~DecimalPattern."
-	}, {
-		sPattern: undefined,
-		sDecimalPattern: undefined,
-		sResult: undefined
-	}, {
-		sPattern: "~Pattern'.'",
-		sResult: "~Pattern."
-	}].forEach(({sPattern, sDecimalPattern, sResult}, i) => {
-	QUnit.test("getCompactPattern: currency case without measure; " + sStyle + "; #" + i, function (assert) {
-		const oNumberFormat = {
-			oLocaleData: {
-				getCompactCurrencyPattern() {},
-				getCompactDecimalPattern() {}
+	[
+		{bIndianCurrency: false, bTrailingCurrencyCode: false, sStyle: "~sStyle"},
+		{bIndianCurrency: true, bTrailingCurrencyCode: false, sStyle: "~sStyle-indian"},
+		{bIndianCurrency: false, bTrailingCurrencyCode: true, sStyle: "sap-short"},
+		{bIndianCurrency: true, bTrailingCurrencyCode: true, sStyle: "sap-short-indian"}
+	].forEach(({bIndianCurrency, bTrailingCurrencyCode, sStyle}, i) => {
+		//*********************************************************************************************
+		[{
+			sPattern: undefined,
+			sResult: undefined
+		}, {
+			sPattern: "~Pattern'.'",
+			bIsAlphaNextToNumber: false,
+			sResult: "~Pattern."
+		}, {
+			sPattern: "~Pattern'.'",
+			bIsAlphaNextToNumber: true,
+			sAlphaNextToNumberPattern: "~AlphaNextToNumberPattern'.'",
+			sResult: "~AlphaNextToNumberPattern."
+		}, {
+			sPattern: "~Pattern'.'",
+			bIsAlphaNextToNumber: true,
+			sAlphaNextToNumberPattern: undefined,
+			sResult: "~Pattern."
+		}].forEach(({sPattern, bIsAlphaNextToNumber, sAlphaNextToNumberPattern, sResult}, i) => {
+		QUnit.test("getCompactPattern: currency case with measure; " + sStyle + "; #" + i, function (assert) {
+			const oNumberFormat = {
+				oLocaleData: {getCompactCurrencyPattern() {}}
+			};
+			const oLocaleDataMock = this.mock(oNumberFormat.oLocaleData);
+			oLocaleDataMock.expects("getCompactCurrencyPattern")
+				.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory")
+				.returns(sPattern);
+			this.mock(NumberFormat).expects("isAlphaNextToNumber")
+				.withExactArgs(sPattern, "~sCurrency", "~bNegative")
+				.returns(bIsAlphaNextToNumber);
+			oLocaleDataMock.expects("getCompactCurrencyPattern")
+				.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "alphaNextToNumber")
+				.exactly(bIsAlphaNextToNumber ? 1 : 0)
+				.returns(sAlphaNextToNumberPattern);
+
+			// code under test
+			assert.strictEqual(
+				NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "currency", "~sStyle", "~sPowerOfTen",
+					"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency, true, "~sCurrency", "~bNegative"),
+				sResult);
+		});
+		});
+
+		//*********************************************************************************************
+		[{
+			sPattern: undefined,
+			sDecimalPattern: "~DecimalPattern'.'",
+			sResult: "~DecimalPattern."
+		}, {
+			sPattern: undefined,
+			sDecimalPattern: undefined,
+			sResult: undefined
+		}, {
+			sPattern: "~Pattern'.'",
+			sResult: "~Pattern."
+		}].forEach(({sPattern, sDecimalPattern, sResult}, i) => {
+		QUnit.test("getCompactPattern: currency case without measure; " + sStyle + "; #" + i, function (assert) {
+			const oNumberFormat = {
+				oLocaleData: {
+					getCompactCurrencyPattern() {},
+					getCompactDecimalPattern() {}
+				}
+			};
+			this.mock(oNumberFormat.oLocaleData).expects("getCompactCurrencyPattern")
+				.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "noCurrency")
+				.returns(sPattern);
+			let sExpectedDecimalStyle;
+			switch (sStyle) {
+				case "sap-short": sExpectedDecimalStyle = "short"; break;
+				case "sap-short-indian": sExpectedDecimalStyle = "short-indian"; break;
+				default: sExpectedDecimalStyle = sStyle;
 			}
-		};
-		this.mock(oNumberFormat.oLocaleData).expects("getCompactCurrencyPattern")
-			.withExactArgs(sStyle, "~sPowerOfTen", "~sPluralCategory", "noCurrency")
-			.returns(sPattern);
-		let sExpectedDecimalStyle;
-		switch (sStyle) {
-			case "sap-short": sExpectedDecimalStyle = "short"; break;
-			case "sap-short-indian": sExpectedDecimalStyle = "short-indian"; break;
-			default: sExpectedDecimalStyle = sStyle;
-		}
-		this.mock(oNumberFormat.oLocaleData).expects("getCompactDecimalPattern")
-			.withExactArgs(sExpectedDecimalStyle, "~sPowerOfTen", "~sPluralCategory")
-			.exactly(sPattern ? 0 : 1)
-			.returns(sDecimalPattern);
+			this.mock(oNumberFormat.oLocaleData).expects("getCompactDecimalPattern")
+				.withExactArgs(sExpectedDecimalStyle, "~sPowerOfTen", "~sPluralCategory")
+				.exactly(sPattern ? 0 : 1)
+				.returns(sDecimalPattern);
 
-		// code under test
-		assert.strictEqual(
-			NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "currency", "~sStyle", "~sPowerOfTen",
-				"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency, false, "~sCurrency", "~bNegative"),
-			sResult);
+			// code under test
+			assert.strictEqual(
+				NumberFormat.prototype.getCompactPattern.call(oNumberFormat, "currency", "~sStyle", "~sPowerOfTen",
+					"~sPluralCategory", bTrailingCurrencyCode, bIndianCurrency, false, "~sCurrency", "~bNegative"),
+				sResult);
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("getShortenedFormat: calls getCompactPattern", function (assert) {
@@ -5530,221 +5477,221 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{sPattern: undefined, sCurrency: "$", bResult: false},
-	{sPattern: "\xa4#,##0.00", sCurrency: undefined, bResult: false},
-	{sPattern: "\xa4#,##0.00", sCurrency: "$", bResult: false},
-	{sPattern: "\xa4#,##0.00", sCurrency: "USD", bResult: true},
-	{sPattern: "\xa4#,##0.00", sCurrency: "RD$", bResult: false},
-	{sPattern: "\xa4 #,##0.00", sCurrency: "USD", bResult: false},
-	{sPattern: "#,##0.00\xa4", sCurrency: "$", bResult: false},
-	{sPattern: "#,##0.00\xa4", sCurrency: "USD", bResult: true},
-	{sPattern: "#,##0.00\xa4", sCurrency: "RD$", bResult: true},
-	{sPattern: "#,##0.00 \xa4", sCurrency: "RD$", bResult: false},
-	{sPattern: "#,##0.00\xa4", sCurrency: "$XY", bResult: false},
-	{sPattern: "#,##0.00 \xa4", sCurrency: "$XY", bResult: false},
-	{sPattern: "\xa4#,##0.00;(\xa4#,##0.0)", sCurrency: "USD", bNegative: true, bResult: true},
-	{sPattern: "\xa4#,##0.00;(\xa4#,##0.0)", sCurrency: "$", bNegative: true, bResult: false},
-	{sPattern: "\xa4#,##0.00", sCurrency: "USD", bNegative: true, bResult: false},
-	{sPattern: "\xa4 #,##0.00;(\xa4#,##0.0)", sCurrency: "USD", bNegative: true, bResult: true},
-	{sPattern: "\xa4#,##0.00;(\xa4 #,##0.0)", sCurrency: "USD", bNegative: true, bResult: false},
-	{sPattern: "\u061c#,##0.00\u202b\xa4\u200e\u202c", sCurrency: "USD", bResult: true}
-].forEach(({sPattern, sCurrency, bNegative = false, bResult}, i) => {
-	QUnit.test("isAlphaNextToNumber: #" + i, function (assert) {
-		// code under test
-		assert.strictEqual(NumberFormat.isAlphaNextToNumber(sPattern, sCurrency, bNegative), bResult);
+	[
+		{sPattern: undefined, sCurrency: "$", bResult: false},
+		{sPattern: "\xa4#,##0.00", sCurrency: undefined, bResult: false},
+		{sPattern: "\xa4#,##0.00", sCurrency: "$", bResult: false},
+		{sPattern: "\xa4#,##0.00", sCurrency: "USD", bResult: true},
+		{sPattern: "\xa4#,##0.00", sCurrency: "RD$", bResult: false},
+		{sPattern: "\xa4 #,##0.00", sCurrency: "USD", bResult: false},
+		{sPattern: "#,##0.00\xa4", sCurrency: "$", bResult: false},
+		{sPattern: "#,##0.00\xa4", sCurrency: "USD", bResult: true},
+		{sPattern: "#,##0.00\xa4", sCurrency: "RD$", bResult: true},
+		{sPattern: "#,##0.00 \xa4", sCurrency: "RD$", bResult: false},
+		{sPattern: "#,##0.00\xa4", sCurrency: "$XY", bResult: false},
+		{sPattern: "#,##0.00 \xa4", sCurrency: "$XY", bResult: false},
+		{sPattern: "\xa4#,##0.00;(\xa4#,##0.0)", sCurrency: "USD", bNegative: true, bResult: true},
+		{sPattern: "\xa4#,##0.00;(\xa4#,##0.0)", sCurrency: "$", bNegative: true, bResult: false},
+		{sPattern: "\xa4#,##0.00", sCurrency: "USD", bNegative: true, bResult: false},
+		{sPattern: "\xa4 #,##0.00;(\xa4#,##0.0)", sCurrency: "USD", bNegative: true, bResult: true},
+		{sPattern: "\xa4#,##0.00;(\xa4 #,##0.0)", sCurrency: "USD", bNegative: true, bResult: false},
+		{sPattern: "\u061c#,##0.00\u202b\xa4\u200e\u202c", sCurrency: "USD", bResult: true}
+	].forEach(({sPattern, sCurrency, bNegative = false, bResult}, i) => {
+		QUnit.test("isAlphaNextToNumber: #" + i, function (assert) {
+			// code under test
+			assert.strictEqual(NumberFormat.isAlphaNextToNumber(sPattern, sCurrency, bNegative), bResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	sCurrencyPattern: "~pattern",
-	sExpectedAlternative: "noCurrency",
-	sResult: "~pattern",
-	bShowMeasure: false
-},{
-	sCurrencyPattern: "~pattern",
-	bIsAlphaNextToNumber: false,
-	sResult: "~pattern",
-	bShowMeasure: true
-},{
-	sAlphaNextToNumberPattern: "~alpahNextToNumberPattern",
-	sCurrencyPattern: "~pattern",
-	bIsAlphaNextToNumber: true,
-	sResult: "~alpahNextToNumberPattern",
-	bShowMeasure: true
-},{
-	sAlphaNextToNumberPattern: undefined,
-	sCurrencyPattern: "~pattern",
-	bIsAlphaNextToNumber: true,
-	sResult: "~pattern",
-	bShowMeasure: true
-}].forEach(({sAlphaNextToNumberPattern, sCurrencyPattern, sExpectedAlternative, bIsAlphaNextToNumber, sResult,
-		bShowMeasure}, i) => {
-	[true, false].forEach((bShowTrailingCurrencyCode) => {
-	QUnit.test("getCurrencyPattern: #" + i + "; trailing currency: " + bShowTrailingCurrencyCode, function (assert) {
-		const sContext = bShowTrailingCurrencyCode ? "sap-~sContext" : "~sContext";
-		const oNumberFormat = {
-			oLocaleData: {
-				getCurrencyPattern() {}
-			}
-		};
-		const oLocaleDataMock = this.mock(oNumberFormat.oLocaleData);
-		oLocaleDataMock.expects("getCurrencyPattern")
-			.withExactArgs(sContext, sExpectedAlternative)
-			.returns(sCurrencyPattern);
-		this.mock(NumberFormat).expects("isAlphaNextToNumber")
-			.withExactArgs(sCurrencyPattern, "~sCurrency", "~bNegative")
-			.exactly(bShowMeasure ? 1 : 0)
-			.returns(bIsAlphaNextToNumber);
-		oLocaleDataMock.expects("getCurrencyPattern")
-			.withExactArgs(sContext, "alphaNextToNumber")
-			.exactly(bIsAlphaNextToNumber ? 1 : 0)
-			.returns(sAlphaNextToNumberPattern);
+	[{
+		sCurrencyPattern: "~pattern",
+		sExpectedAlternative: "noCurrency",
+		sResult: "~pattern",
+		bShowMeasure: false
+	},{
+		sCurrencyPattern: "~pattern",
+		bIsAlphaNextToNumber: false,
+		sResult: "~pattern",
+		bShowMeasure: true
+	},{
+		sAlphaNextToNumberPattern: "~alpahNextToNumberPattern",
+		sCurrencyPattern: "~pattern",
+		bIsAlphaNextToNumber: true,
+		sResult: "~alpahNextToNumberPattern",
+		bShowMeasure: true
+	},{
+		sAlphaNextToNumberPattern: undefined,
+		sCurrencyPattern: "~pattern",
+		bIsAlphaNextToNumber: true,
+		sResult: "~pattern",
+		bShowMeasure: true
+	}].forEach(({sAlphaNextToNumberPattern, sCurrencyPattern, sExpectedAlternative, bIsAlphaNextToNumber, sResult,
+			bShowMeasure}, i) => {
+		[true, false].forEach((bShowTrailingCurrencyCode) => {
+		QUnit.test("getCurrencyPattern: #" + i + "; trailing currency: " + bShowTrailingCurrencyCode, function (assert) {
+			const sContext = bShowTrailingCurrencyCode ? "sap-~sContext" : "~sContext";
+			const oNumberFormat = {
+				oLocaleData: {
+					getCurrencyPattern() {}
+				}
+			};
+			const oLocaleDataMock = this.mock(oNumberFormat.oLocaleData);
+			oLocaleDataMock.expects("getCurrencyPattern")
+				.withExactArgs(sContext, sExpectedAlternative)
+				.returns(sCurrencyPattern);
+			this.mock(NumberFormat).expects("isAlphaNextToNumber")
+				.withExactArgs(sCurrencyPattern, "~sCurrency", "~bNegative")
+				.exactly(bShowMeasure ? 1 : 0)
+				.returns(bIsAlphaNextToNumber);
+			oLocaleDataMock.expects("getCurrencyPattern")
+				.withExactArgs(sContext, "alphaNextToNumber")
+				.exactly(bIsAlphaNextToNumber ? 1 : 0)
+				.returns(sAlphaNextToNumberPattern);
 
-		// code under test
-		assert.strictEqual(
-			NumberFormat.prototype.getCurrencyPattern.call(oNumberFormat, "~sContext", bShowTrailingCurrencyCode,
-				bShowMeasure, "~sCurrency", "~bNegative"),
-			sResult);
+			// code under test
+			assert.strictEqual(
+				NumberFormat.prototype.getCurrencyPattern.call(oNumberFormat, "~sContext", bShowTrailingCurrencyCode,
+					bShowMeasure, "~sCurrency", "~bNegative"),
+				sResult);
+		});
+		});
 	});
-	});
-});
 
 	//*********************************************************************************************
-[{
-	sPattern: "\xa4\xa0#,##0.00;(\xa4\xa0#,##0.00)",
-	sResult: "~currency\xa0~amount"
-}, {
-	sAmount: "~minusSign~amount",
-	sPattern: "\xa4\xa0#,##0.00;(\xa4\xa0#,##0.00)",
-	bNegative: true,
-	sResult: "(~currency\xa0~amount)"
-}, {
-	sAmount: "-~amount",
-	sPattern: "\xa4#,##0.00",
-	sMinusSign: "-",
-	bNegative: true,
-	sResult: "~currency\ufeff-~amount"
-}, {
-	sAmount: "~minusSign~amount",
-	sPattern: "\u200f#,##0.00\xa0\u202b\xa4\u200e\u202c;\u200f-#,##0.00\xa0\u202b\xa4\u200e\u202c",
-	bNegative: true,
-	sResult: "\u200f~minusSign~amount\xa0\u202b~currency\u200e\u202c"
-}, {
-	sAmount: "-~amount",
-	sPattern: "\xa4\xa0#,##0.00;\xa4-#,##0.00",
-	sMinusSign: "-",
-	bNegative: true,
-	sResult: "~currency\ufeff-~amount"
-}, {
-	sAmount: "~minusSign~amount",
-	sPattern: "\xa4\u061c#,##0.00",
-	bNegative: true,
-	sResult: "~currency\u061c~minusSign~amount"
-}].forEach(({sAmount = "~amount", sMinusSign = "~minusSign", bNegative = false, sPattern, sResult}, i) => {
-	QUnit.test("_composeCurrencyResult: #" + i, function (assert) {
+	[{
+		sPattern: "\xa4\xa0#,##0.00;(\xa4\xa0#,##0.00)",
+		sResult: "~currency\xa0~amount"
+	}, {
+		sAmount: "~minusSign~amount",
+		sPattern: "\xa4\xa0#,##0.00;(\xa4\xa0#,##0.00)",
+		bNegative: true,
+		sResult: "(~currency\xa0~amount)"
+	}, {
+		sAmount: "-~amount",
+		sPattern: "\xa4#,##0.00",
+		sMinusSign: "-",
+		bNegative: true,
+		sResult: "~currency\ufeff-~amount"
+	}, {
+		sAmount: "~minusSign~amount",
+		sPattern: "\u200f#,##0.00\xa0\u202b\xa4\u200e\u202c;\u200f-#,##0.00\xa0\u202b\xa4\u200e\u202c",
+		bNegative: true,
+		sResult: "\u200f~minusSign~amount\xa0\u202b~currency\u200e\u202c"
+	}, {
+		sAmount: "-~amount",
+		sPattern: "\xa4\xa0#,##0.00;\xa4-#,##0.00",
+		sMinusSign: "-",
+		bNegative: true,
+		sResult: "~currency\ufeff-~amount"
+	}, {
+		sAmount: "~minusSign~amount",
+		sPattern: "\xa4\u061c#,##0.00",
+		bNegative: true,
+		sResult: "~currency\u061c~minusSign~amount"
+	}].forEach(({sAmount = "~amount", sMinusSign = "~minusSign", bNegative = false, sPattern, sResult}, i) => {
+		QUnit.test("_composeCurrencyResult: #" + i, function (assert) {
 
-		// code under test
-		assert.strictEqual(
-			NumberFormat._composeCurrencyResult(sPattern, sAmount, "~currency", sMinusSign, bNegative),
-			sResult
-		);
+			// code under test
+			assert.strictEqual(
+				NumberFormat._composeCurrencyResult(sPattern, sAmount, "~currency", sMinusSign, bNegative),
+				sResult
+			);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[{
-	oFormatOptions: {currencyCode: false, currencyContext: "accounting"},
-	sLocale: "en-US",
-	sExpectedResult: "($1,234,567.89)"
-}, {
-	oFormatOptions: {currencyContext: "accounting", showMeasure: false},
-	sLocale: "en-US",
-	sExpectedResult: "(1,234,567.89)"
-}, {
-	oFormatOptions: {showMeasure: false},
-	sLocale: "en-US",
-	sValue: "1234567.89",
-	sExpectedResult: "1,234,567.89"
-}, {
-	oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
-	sLocale: "en-US",
-	sExpectedResult: "(1,234,567.89\u00a0USD)"
-}, {
-	oFormatOptions: {currencyCode: false, style: "short"},
-	sExpectedResult: "$\ufeff-1.2M"
-}, {
-	oFormatOptions: {currencyCode: false, style: "short"},
-	sCurrency: "INR",
-	sExpectedResult: "\u20b9\ufeff-12 Lk"
-}, {
-	oFormatOptions: {style: "short", trailingCurrencyCode: false},
-	sExpectedResult: "USD\ufeff-1.2M"
-}, {
-	oFormatOptions: {style: "short", trailingCurrencyCode: false},
-	sCurrency: "INR",
-	sExpectedResult: "INR\ufeff-12 Lk"
-}, {
-	oFormatOptions: {style: "short", trailingCurrencyCode: true},
-	sExpectedResult: "-1.2M\u00a0USD"
-}, {
-	oFormatOptions: {style: "short", trailingCurrencyCode: true},
-	sCurrency: "INR",
-	sExpectedResult: "-12 Lk\u00a0INR"
-}, {
-	oFormatOptions: {currencyCode: false, currencyContext: "accounting"},
-	sCurrency: "INR",
-	sExpectedResult: "(\u20b91,234,567.89)"
-}, {
-	oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
-	sExpectedResult: "(1,234,567.89\u00a0USD)"
-}, {
-	oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
-	sCurrency: "INR",
-	sExpectedResult: "(1,234,567.89\u00a0INR)"
-}].forEach(({oFormatOptions, sLocale = "en-IN", sValue = "-1234567.89", sCurrency = "USD", sExpectedResult}, i) => {
-	QUnit.test("format: considering noCurrency/alphaNextToNumber alternatives - integrative; #" + i, function (assert) {
-		const oFormat = NumberFormat.getCurrencyInstance(oFormatOptions, new Locale(sLocale));
+	[{
+		oFormatOptions: {currencyCode: false, currencyContext: "accounting"},
+		sLocale: "en-US",
+		sExpectedResult: "($1,234,567.89)"
+	}, {
+		oFormatOptions: {currencyContext: "accounting", showMeasure: false},
+		sLocale: "en-US",
+		sExpectedResult: "(1,234,567.89)"
+	}, {
+		oFormatOptions: {showMeasure: false},
+		sLocale: "en-US",
+		sValue: "1234567.89",
+		sExpectedResult: "1,234,567.89"
+	}, {
+		oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
+		sLocale: "en-US",
+		sExpectedResult: "(1,234,567.89\u00a0USD)"
+	}, {
+		oFormatOptions: {currencyCode: false, style: "short"},
+		sExpectedResult: "$\ufeff-1.2M"
+	}, {
+		oFormatOptions: {currencyCode: false, style: "short"},
+		sCurrency: "INR",
+		sExpectedResult: "\u20b9\ufeff-12 Lk"
+	}, {
+		oFormatOptions: {style: "short", trailingCurrencyCode: false},
+		sExpectedResult: "USD\ufeff-1.2M"
+	}, {
+		oFormatOptions: {style: "short", trailingCurrencyCode: false},
+		sCurrency: "INR",
+		sExpectedResult: "INR\ufeff-12 Lk"
+	}, {
+		oFormatOptions: {style: "short", trailingCurrencyCode: true},
+		sExpectedResult: "-1.2M\u00a0USD"
+	}, {
+		oFormatOptions: {style: "short", trailingCurrencyCode: true},
+		sCurrency: "INR",
+		sExpectedResult: "-12 Lk\u00a0INR"
+	}, {
+		oFormatOptions: {currencyCode: false, currencyContext: "accounting"},
+		sCurrency: "INR",
+		sExpectedResult: "(\u20b91,234,567.89)"
+	}, {
+		oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
+		sExpectedResult: "(1,234,567.89\u00a0USD)"
+	}, {
+		oFormatOptions: {currencyContext: "accounting", trailingCurrencyCode: true},
+		sCurrency: "INR",
+		sExpectedResult: "(1,234,567.89\u00a0INR)"
+	}].forEach(({oFormatOptions, sLocale = "en-IN", sValue = "-1234567.89", sCurrency = "USD", sExpectedResult}, i) => {
+		QUnit.test("format: considering noCurrency/alphaNextToNumber alternatives - integrative; #" + i, function (assert) {
+			const oFormat = NumberFormat.getCurrencyInstance(oFormatOptions, new Locale(sLocale));
 
-		// code under test
-		assert.strictEqual(oFormat.format(sValue, sCurrency), sExpectedResult);
+			// code under test
+			assert.strictEqual(oFormat.format(sValue, sCurrency), sExpectedResult);
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{sValue: "0E-10", sResult: "0.00"}, // see DINC0325193
-	{sValue: "0E+10", sResult: "0.00"},
-	{sValue: "0.1E-4", sResult: "0.00001"},
-	{sValue: "1.234567E+3", sResult: "1,234.567"},
-	{sValue: "1.2E+3", sResult: "1,200.00"},
-	{sValue: "0.1E-4", bPreserveDecimals: false, sResult: "0.00"},
-	{sValue: "1.234567E+3", bPreserveDecimals: false, sResult: "1,234.57"}
-].forEach(({sValue, bPreserveDecimals = true, sResult}) => {
-	QUnit.test("format: Currency wit E-notation: " + sValue, function (assert) {
-		const oFormat = NumberFormat.getCurrencyInstance({preserveDecimals: bPreserveDecimals});
+	[
+		{sValue: "0E-10", sResult: "0.00"}, // see DINC0325193
+		{sValue: "0E+10", sResult: "0.00"},
+		{sValue: "0.1E-4", sResult: "0.00001"},
+		{sValue: "1.234567E+3", sResult: "1,234.567"},
+		{sValue: "1.2E+3", sResult: "1,200.00"},
+		{sValue: "0.1E-4", bPreserveDecimals: false, sResult: "0.00"},
+		{sValue: "1.234567E+3", bPreserveDecimals: false, sResult: "1,234.57"}
+	].forEach(({sValue, bPreserveDecimals = true, sResult}) => {
+		QUnit.test("format: Currency wit E-notation: " + sValue, function (assert) {
+			const oFormat = NumberFormat.getCurrencyInstance({preserveDecimals: bPreserveDecimals});
 
-		// code under test
-		assert.strictEqual(oFormat.format(sValue, "USD"), sResult + "\xa0USD");
+			// code under test
+			assert.strictEqual(oFormat.format(sValue, "USD"), sResult + "\xa0USD");
+		});
 	});
-});
 
 	//*********************************************************************************************
-[
-	{sValue: "0E-10", sResult: "0.000"}, // see DINC0325193
-	{sValue: "0E+10", sResult: "0.000"},
-	{sValue: "0.1E-4", sResult: "0.00001"},
-	{sValue: "1.234567E+3", sResult: "1,234.567"},
-	{sValue: "1.2E+3", sResult: "1,200.000"},
-	{sValue: "0.1E-4", bPreserveDecimals: false, sResult: "0.000"},
-	{sValue: "1.2345678E+3", bPreserveDecimals: false, sResult: "1,234.568"}
-].forEach(({sValue, bPreserveDecimals = true, sResult}) => {
-	QUnit.test("format: Unit wit E-notation: " + sValue, function (assert) {
-		const oFormat = NumberFormat.getUnitInstance({decimals: 3, preserveDecimals: bPreserveDecimals});
+	[
+		{sValue: "0E-10", sResult: "0.000"}, // see DINC0325193
+		{sValue: "0E+10", sResult: "0.000"},
+		{sValue: "0.1E-4", sResult: "0.00001"},
+		{sValue: "1.234567E+3", sResult: "1,234.567"},
+		{sValue: "1.2E+3", sResult: "1,200.000"},
+		{sValue: "0.1E-4", bPreserveDecimals: false, sResult: "0.000"},
+		{sValue: "1.2345678E+3", bPreserveDecimals: false, sResult: "1,234.568"}
+	].forEach(({sValue, bPreserveDecimals = true, sResult}) => {
+		QUnit.test("format: Unit wit E-notation: " + sValue, function (assert) {
+			const oFormat = NumberFormat.getUnitInstance({decimals: 3, preserveDecimals: bPreserveDecimals});
 
-		// code under test
-		assert.strictEqual(oFormat.format(sValue, "mass-kilogram"), sResult + " kg");
+			// code under test
+			assert.strictEqual(oFormat.format(sValue, "mass-kilogram"), sResult + " kg");
+		});
 	});
-});
 });
