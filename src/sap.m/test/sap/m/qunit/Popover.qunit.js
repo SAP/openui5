@@ -1757,15 +1757,14 @@ sap.ui.define([
 		assert.equal(iMaxContentHeight, 410, "Popover maxContentHeight should be equal to the documentHeight minus header, subheader, footer height; top and bottom margins, borders and content margins");
 	});
 
-	QUnit.test("_getContentDimensionsCss should return max-width, max-height computed right and empty height if the Popover can fit on the screen", function (assert){
+	QUnit.test("_getContentDimensionsCss should return max-width and max-height computed right", function (assert){
 		var stubPopoverMaxContentWidth = sinon.stub(this.oPopover, "_getMaxContentWidth").returns(500),
 			stubPopoverMaxContentHeight = sinon.stub(this.oPopover, "_getMaxContentHeight").returns(400),
 			oElement = document.createElement("div"),
 			stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
 			oExpectedDimensions = {
 				"max-width": "500px",
-				"max-height": "400px",
-				"height": ""
+				"max-height": "400px"
 			};
 
 		var oContentDimensions = this.oPopover._getContentDimensionsCss({
@@ -1779,7 +1778,7 @@ sap.ui.define([
 		stubjQueryHeight.restore();
 	});
 
-	QUnit.test("_getContentDimensionsCss should return max-width and height if the Popover can fit on the screen and have contentHeight property set", function (assert){
+	QUnit.test("_getContentDimensionsCss should return max-width and max-height if the Popover can fit on the screen and have contentHeight property set", function (assert){
 		this.oPopover.setContentHeight("500px");
 		var stubPopoverMaxContentWidth = sinon.stub(this.oPopover, "_getMaxContentWidth").returns(400),
 			stubPopoverMaxContentHeight = sinon.stub(this.oPopover, "_getMaxContentHeight").returns(400),
@@ -1787,7 +1786,7 @@ sap.ui.define([
 			stubjQueryHeight = sinon.stub(oElement, "getBoundingClientRect").returns({ height: 300 }),
 			oExpectedDimensions = {
 				"max-width": "400px",
-				"height": "300px"
+				"max-height": "400px"
 			};
 
 		var oContentDimensions = this.oPopover._getContentDimensionsCss({

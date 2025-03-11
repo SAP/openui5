@@ -300,10 +300,8 @@
 							press=".onRefreshSalesOrderDetails"/-->
 						<Button icon="sap-icon://calendar" id="showSalesOrderSchedules"
 							press=".onSalesOrderSchedules" tooltip="Show sales order schedules"/>
-						<Button icon="sap-icon://save" id="saveSalesOrder"
-							press=".onSaveSalesOrder()" tooltip="Save sales order"/>
-						<Button icon="sap-icon://upload-to-cloud" press=".onSaveSalesOrder(true)"
-							tooltip="Save sales order (w/ continue-on-error)"/>
+						<Button icon="sap-icon://save" id="saveSalesOrder" press=".onSaveSalesOrder"
+							tooltip="Save sales order"/>
 						<Button id="cancelSalesOrderChanges" icon="sap-icon://sys-cancel-2"
 							press=".onCancelSalesOrderChanges"
 							tooltip="Cancel sales order changes"/>

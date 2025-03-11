@@ -86,7 +86,7 @@ sap.ui.define([
 				dialog: false,
 				control: undefined,
 				updateTitle: function(oValueHelp, sTitle) {
-					// no title needed for boolean help (just dropdown)
+					oValueHelp.getTypeahead().setTitle(sTitle); // on phone mode, title is shown
 				}
 			},
 			defineConditions: {
