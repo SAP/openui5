@@ -5,13 +5,8 @@ sap.ui.define(function() {
 		name: "TestSuite for sap.ui.core: NOT-YET-GTP testcase CORE/GHERKIN",
 		defaults: {
 			title: "QUnit Page for sap.ui.test.gherkin.{name}",
-			/*
-			 * Note: technically, all tests here work with qunit-2 and sinon-4.
-			 * But the two test-harnesses have hard-coded dependencies to qunit-1, so we stick to
-			 * the older versions until the behavior of the harnesses has been clarified
-			 */
 			qunit: {
-				version: 1,
+				version: 2,
 				noglobals: true
 			},
 			sinon: {
@@ -21,23 +16,22 @@ sap.ui.define(function() {
 				branchTracking: true
 			},
 			ui5: {
-				animation: false,
-				compatVersion: "edge"
+				animationMode: "minimal"
 			}
 		},
 		tests: {
 			"dataTableUtils": {},
 			"GherkinTestGenerator": {},
 			"opa5TestHarness": {
-				page: "test-resources/sap/ui/core/qunit/gherkin/opa5TestHarness.qunit.html?sap-ui-log-level=info&sap-ui-animation=false",
-				qunit: {
-					noglobals: false
+				uriParams: {
+					// required as the test wants to check log messages of level INFO
+					"sap-ui-log-level": "INFO"
 				}
 			},
 			"qUnitTestHarness": {
-				page: "test-resources/sap/ui/core/qunit/gherkin/qUnitTestHarness.qunit.html?sap-ui-log-level=info&sap-ui-animation=false",
-				qunit: {
-					noglobals: false
+				uriParams: {
+					// required as the test wants to check log messages of level INFO
+					"sap-ui-log-level": "INFO"
 				}
 			},
 			"simpleGherkinParser": {},
