@@ -3,18 +3,18 @@
  */
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/ui/rta/command/AppDescriptorCommand"
+	"sap/ui/rta/command/ManifestCommand"
 ], function(
 	Lib,
-	AppDescriptorCommand
+	ManifestCommand
 ) {
 	"use strict";
 
 	/**
-	 * Implementation of a command for Add Library change on App Descriptor
+	 * Implementation of a command for Add Library change on Manifest
 	 *
 	 * @class
-	 * @extends sap.ui.rta.command.AppDescriptorCommand
+	 * @extends sap.ui.rta.command.ManifestCommand
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -22,9 +22,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.49
-	 * @alias sap.ui.rta.command.appDescriptor.AddLibrary
+	 * @alias sap.ui.rta.command.manifest.AddLibrary
 	 */
-	var AddLibrary = AppDescriptorCommand.extend("sap.ui.rta.command.appDescriptor.AddLibrary", {
+	const AddLibrary = ManifestCommand.extend("sap.ui.rta.command.manifest.AddLibrary", {
 		metadata: {
 			library: "sap.ui.rta",
 			events: {}
@@ -40,10 +40,10 @@ sap.ui.define([
 	 * @return {Promise} resolved if libraries could be loaded; rejected if not
 	 */
 	AddLibrary.prototype.execute = function() {
-		var aPromises = [];
+		const aPromises = [];
 
 		if (this.getParameters().libraries) {
-			var aLibraries = Object.keys(this.getParameters().libraries);
+			const aLibraries = Object.keys(this.getParameters().libraries);
 			aLibraries.forEach(function(sLibrary) {
 				aPromises.push(Lib.load({name: sLibrary}));
 			});

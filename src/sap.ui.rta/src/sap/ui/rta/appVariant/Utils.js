@@ -18,15 +18,15 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var Utils = {};
+	const Utils = {};
 
-	var sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp`;
-	var oI18n = ResourceBundle.create({
+	const sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp`;
+	const oI18n = ResourceBundle.create({
 		url: `${sModulePath}/i18n/i18n.properties`
 	});
 
 	Utils._checkNavigationSupported = function(oNavigationParams) {
-		var oUShellContainer = FlUtils.getUshellContainer();
+		const oUShellContainer = FlUtils.getUshellContainer();
 		return oUShellContainer.getServiceAsync("Navigation")
 		.then(function(oNavigationService) {
 			return oNavigationService.getLinks([oNavigationParams]);
@@ -50,7 +50,7 @@ sap.ui.define([
 
 	Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus) {
 		// Get the id of a new created app variant
-		var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
+		const sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
 
 		if (sAppVarStatus === "R") {
 			return oI18n.getText("MAA_OPERATION_IN_PROGRESS");
@@ -63,7 +63,7 @@ sap.ui.define([
 	};
 
 	Utils._checkMenuItemOptions = function(oPreparedObject, bAdaptUIButtonEnabled) {
-		var oAppVarObject = {};
+		const oAppVarObject = {};
 
 		if (oPreparedObject.isKeyUser) {
 			if (oPreparedObject.isOriginal) {
@@ -110,21 +110,19 @@ sap.ui.define([
 	};
 
 	Utils._getNavigationInfo = function(oPreparedObject) {
-		var oNavigationObject = {};
+		let oNavigationObject = {};
 
-		var sSemanticObject = oPreparedObject.startWith.semanticObject;
-		var sAction = oPreparedObject.startWith.action;
-		var oParams = oPreparedObject.startWith.parameters;
+		const sSemanticObject = oPreparedObject.startWith.semanticObject;
+		const sAction = oPreparedObject.startWith.action;
+		const oParams = oPreparedObject.startWith.parameters;
 
-		var oNavigationParams = {
+		const oNavigationParams = {
 			semanticObject: sSemanticObject,
 			action: sAction,
 			params: oParams
 		};
 
 		return this._checkNavigationSupported(oNavigationParams).then(function(aResult) {
-			var oDeleteButtonProperties;
-
 			if (aResult[0].length && oPreparedObject.isKeyUser) {
 				oNavigationObject.adaptUIButtonEnabled = true;
 
@@ -136,7 +134,7 @@ sap.ui.define([
 				oNavigationObject.adaptUIButtonEnabled = false;
 			}
 
-			oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, oNavigationObject.adaptUIButtonEnabled);
+			const oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, oNavigationObject.adaptUIButtonEnabled);
 
 			oNavigationObject.semanticObject = sSemanticObject;
 			oNavigationObject.action = sAction;
@@ -172,9 +170,9 @@ sap.ui.define([
 	};
 
 	Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo, bKeyUser) {
-		var oAppVariantAttributes;
+		let oAppVariantAttributes;
 		// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
-		var sIconUrl = oAppVariantInfo.iconUrl;
+		const sIconUrl = oAppVariantInfo.iconUrl;
 		if (sIconUrl && IconPool.isIconURI(sIconUrl)) {
 			// eslint-disable-next-line prefer-destructuring
 			oAppVariantInfo.iconText = sIconUrl.split("//")[1];
@@ -195,7 +193,7 @@ sap.ui.define([
 		// Populate the app variant attributes with the cloud system information
 		oAppVariantAttributes.isS4HanaCloud = bIsS4HanaCloud;
 
-		var oPreparedObject = {
+		const oPreparedObject = {
 			isKeyUser: bKeyUser,
 			isOriginal: oAppVariantInfo.isOriginal,
 			isS4HanaCloud: bIsS4HanaCloud,
@@ -211,16 +209,16 @@ sap.ui.define([
 		}
 
 		oAppVariantAttributes.adaptUIButtonEnabled = false;
-		var oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
+		const oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
 		oAppVariantAttributes = { ...oAppVariantAttributes, ...oDeleteButtonProperties };
 		return Promise.resolve(oAppVariantAttributes);
 	};
 
 	Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {
 		// Customer* means the layer can be either CUSTOMER or CUSTOMER_BASE. This layer determination takes place in backend.
-		var sLayer = bKeyUser ? "CUSTOMER*" : "VENDOR";
+		const sLayer = bKeyUser ? "CUSTOMER*" : "VENDOR";
 
-		var mPropertyBag = {
+		const mPropertyBag = {
 			selector: {
 				appId: sReferenceAppId
 			},
@@ -228,8 +226,8 @@ sap.ui.define([
 		};
 
 		return AppVariantWriteAPI.listAllAppVariants(mPropertyBag).then(function(oResult) {
-			var aAppVariantOverviewInfo = [];
-			var aAppVariantInfo;
+			const aAppVariantOverviewInfo = [];
+			let aAppVariantInfo;
 			if (oResult.response && oResult.response.items) {
 				aAppVariantInfo = oResult.response.items;
 			} else {
@@ -248,7 +246,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	Utils.getDescriptor = function(mPropertyBag) {
+	Utils.getManifest = function(mPropertyBag) {
 		return AppVariantWriteAPI.getManifest(mPropertyBag).then(function(oResult) {
 			return oResult.response;
 		});

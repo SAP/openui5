@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Implementation of a command template for App Descriptor changes
+	 * Implementation of a command template for manifest changes
 	 *
 	 * @class
 	 * @extends sap.ui.rta.command.BaseCommand
@@ -24,9 +24,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.49
-	 * @alias sap.ui.rta.command.AppDescriptorCommand
+	 * @alias sap.ui.rta.command.ManifestCommand
 	 */
-	var AppDescriptorCommand = BaseCommand.extend("sap.ui.rta.command.AppDescriptorCommand", {
+	const ManifestCommand = BaseCommand.extend("sap.ui.rta.command.ManifestCommand", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
@@ -54,17 +54,17 @@ sap.ui.define([
 	});
 
 	/**
-	 * For app descriptor commands to take effect usually the app needs to be restarted as server-side processing is involved.
+	 * For manifest commands to take effect usually the app needs to be restarted as server-side processing is involved.
 	 */
-	AppDescriptorCommand.prototype.needsReload = true;
+	ManifestCommand.prototype.needsReload = true;
 
 	/**
-	 * Prepare the app descriptor change, setting the layer.
+	 * Prepare the manifest change, setting the layer.
 	 * @param  {object} mFlexSettings - Map of flex settings
 	 * @param  {string} mFlexSettings.layer - Layer where the change is applied
 	 * @returns {boolean} <code>true</true>
 	 */
-	AppDescriptorCommand.prototype.prepare = function(mFlexSettings) {
+	ManifestCommand.prototype.prepare = function(mFlexSettings) {
 		this.setLayer(mFlexSettings.layer);
 		return true;
 	};
@@ -73,19 +73,19 @@ sap.ui.define([
 	 * Retrieves the prepared change for e.g. undo execution.
 	 * @return {sap.ui.fl.apply._internal.flexObjects.UIChange} Returns change after being created and stored
 	 */
-	AppDescriptorCommand.prototype.getPreparedChange = function() {
+	ManifestCommand.prototype.getPreparedChange = function() {
 		return this._oPreparedChange;
 	};
 
-	AppDescriptorCommand.prototype.setCompositeId = function(sCompositeId) {
+	ManifestCommand.prototype.setCompositeId = function(sCompositeId) {
 		this._sCompositeId = sCompositeId;
 	};
 
 	/**
-	 * Create the change for the app descriptor and adds it to the Flex Persistence.
+	 * Create the change for the manifest and adds it to the Flex Persistence.
 	 * @return {Promise} Returns Promise resolving after change has been created and stored
 	 */
-	AppDescriptorCommand.prototype.createAndStoreChange = function() {
+	ManifestCommand.prototype.createAndStoreChange = function() {
 		return AppVariantInlineChangeFactory.createDescriptorInlineChange({
 			changeType: this.getChangeType(),
 			content: this.getParameters(),
@@ -94,19 +94,19 @@ sap.ui.define([
 				compositeCommand: this._sCompositeId || ""
 			}
 		})
-		.then(function(oAppDescriptorChangeContent) {
+		.then(function(oManifestChangeContent) {
 			return new DescriptorChangeFactory().createNew(
 				this.getReference(),
-				oAppDescriptorChangeContent,
+				oManifestChangeContent,
 				this.getLayer(),
 				this.getAppComponent(),
-				"sap.ui.rta.AppDescriptorCommand"
+				"sap.ui.rta.ManifestCommand"
 			);
 		}.bind(this))
-		.then(function(oAppDescriptorChange) {
-			var oChange = oAppDescriptorChange.store();
+		.then(function(oManifestChange) {
+			const oChange = oManifestChange.store();
 			this._oPreparedChange = oChange;
 		}.bind(this));
 	};
-	return AppDescriptorCommand;
+	return ManifestCommand;
 });

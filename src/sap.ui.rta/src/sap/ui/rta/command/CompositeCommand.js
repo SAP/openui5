@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.CompositeCommand
 	 */
-	var CompositeCommand = BaseCommand.extend("sap.ui.rta.command.CompositeCommand", {
+	const CompositeCommand = BaseCommand.extend("sap.ui.rta.command.CompositeCommand", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {},
@@ -46,14 +46,14 @@ sap.ui.define([
 	 * @returns {Promise} empty resolved promise or rejected promise
 	 */
 	CompositeCommand.prototype.execute = function() {
-		var aPromises = [];
+		const aPromises = [];
 		this._forEachCommand(function(oCommand) {
 			aPromises.push(oCommand.execute.bind(oCommand));
 		});
 		return FlUtils.execPromiseQueueSequentially(aPromises, true)
 
 		.catch(function(e) {
-			var aCommands = this.getCommands();
+			const aCommands = this.getCommands();
 			aCommands.forEach(function(oCommand) {
 				if (oCommand instanceof FlexCommand) {
 					this.removeCommand(oCommand);
@@ -69,7 +69,7 @@ sap.ui.define([
 	};
 
 	CompositeCommand.prototype.undo = function() {
-		var aPromises = [];
+		const aPromises = [];
 		this._forEachCommandInReverseOrder(function(oCommand) {
 			aPromises.push(oCommand.undo.bind(oCommand));
 		});
@@ -77,28 +77,28 @@ sap.ui.define([
 	};
 
 	CompositeCommand.prototype._forEachCommand = function(fnDo) {
-		var aCommands = this.getCommands();
+		const aCommands = this.getCommands();
 		aCommands.forEach(fnDo, this);
 	};
 
 	CompositeCommand.prototype._forEachCommandInReverseOrder = function(fnDo) {
-		var aCommands = this.getCommands();
-		for (var i = aCommands.length - 1; i >= 0; i--) {
+		const aCommands = this.getCommands();
+		for (let i = aCommands.length - 1; i >= 0; i--) {
 			fnDo.call(this, aCommands[i]);
 		}
 	};
 
 	CompositeCommand.prototype._addCompositeIdToChange = function(oCommand) {
 		this._sCompositeId ||= FlUtils.createDefaultFileName("composite");
-		var oPreparedChange = oCommand.getPreparedChange && oCommand.getPreparedChange();
+		const oPreparedChange = oCommand.getPreparedChange && oCommand.getPreparedChange();
 		if (oPreparedChange) {
-			var oChangeSupportInformation = oPreparedChange.getSupportInformation();
+			const oChangeSupportInformation = oPreparedChange.getSupportInformation();
 			if (!oChangeSupportInformation.compositeCommand) {
 				oChangeSupportInformation.compositeCommand = this._sCompositeId;
 				oPreparedChange.setSupportInformation(oChangeSupportInformation);
 			}
 		} else if (oCommand.setCompositeId) {
-			// relevant for app descriptor commands
+			// relevant for manifest commands
 			oCommand.setCompositeId(this._sCompositeId);
 		}
 	};

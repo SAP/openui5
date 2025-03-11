@@ -53,7 +53,7 @@ sap.ui.define([
 	 * @since 1.78
 	 * @alias sap.ui.rta.plugin.AddXMLAtExtensionPoint
 	 */
-	var AddXMLAtExtensionPoint = Plugin
+	const AddXMLAtExtensionPoint = Plugin
 	.extend("sap.ui.rta.plugin.AddXMLAtExtensionPoint", /** @lends sap.ui.rta.plugin.AddXMLAtExtensionPoint.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
@@ -67,14 +67,14 @@ sap.ui.define([
 		}
 	});
 
-	var FLEX_CHANGE_TYPE = "addXMLAtExtensionPoint";
-	var APP_DESCRIPTOR_CHANGE_TYPE = "appdescr_ui5_setFlexExtensionPointEnabled";
+	const FLEX_CHANGE_TYPE = "addXMLAtExtensionPoint";
+	const MANIFEST_CHANGE_TYPE = "appdescr_ui5_setFlexExtensionPointEnabled";
 
 	function getExtensionPointList(oElement) {
-		var oElementId = oElement.getId();
+		const oElementId = oElement.getId();
 		// determine a list of extension points for the given element. In case the element is a view
 		// all extension points available for the view are returned
-		var aExtensionPointInfo = ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId});
+		const aExtensionPointInfo = ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId});
 		return aExtensionPointInfo.length
 			? aExtensionPointInfo
 			: values(ExtensionPointRegistryAPI.getExtensionPointInfoByViewId({viewId: oElementId}));
@@ -93,7 +93,7 @@ sap.ui.define([
 		return oView && FlUtils.checkControlId(oView);
 	}
 
-	AddXMLAtExtensionPoint.prototype.bAppDescriptorCommandAlreadyAvailable = false;
+	AddXMLAtExtensionPoint.prototype.bManifestCommandAlreadyAvailable = false;
 
 	/**
 	 * Check if the given overlay is editable. A stable ID is not required for this,
@@ -105,7 +105,7 @@ sap.ui.define([
 	 */
 	AddXMLAtExtensionPoint.prototype._isEditable = function(oOverlay) {
 		if (isDesignMode()) {
-			var oElement = oOverlay.getElement();
+			const oElement = oOverlay.getElement();
 			return this.hasChangeHandler(FLEX_CHANGE_TYPE, oElement).then(function(bHasChangeHandler) {
 				return bHasChangeHandler && hasExtensionPoints(oElement) && checkViewId(oOverlay);
 			});
@@ -126,20 +126,20 @@ sap.ui.define([
 
 	AddXMLAtExtensionPoint.prototype.isAvailable = function(aOverlays) {
 		if (isDesignMode()) {
-			var oElement = aOverlays[0].getElement();
+			const oElement = aOverlays[0].getElement();
 			return hasExtensionPoints(oElement);
 		}
 		return false;
 	};
 
 	function handleAddXmlAtExtensionPointCommand(oElement, mExtensionData, oCompositeCommand) {
-		var sExtensionPointName = mExtensionData.extensionPointName;
-		var oView = FlUtils.getViewForControl(oElement);
-		var mExtensionPointReference = {
+		const sExtensionPointName = mExtensionData.extensionPointName;
+		const oView = FlUtils.getViewForControl(oElement);
+		const mExtensionPointReference = {
 			name: sExtensionPointName,
 			view: oView
 		};
-		var mExtensionPointSettings = {
+		const mExtensionPointSettings = {
 			fragment: mExtensionData.fragment,
 			fragmentPath: mExtensionData.fragmentPath
 		};
@@ -154,36 +154,36 @@ sap.ui.define([
 		});
 	}
 
-	function handleAppDescriptorChangeCommand(oElement, oCompositeCommand) {
-		// without appDescriptor change when the FlexExtensionPointEnabled flag is already set
-		var bFlexExtensionPointHandlingEnabled = ManifestUtils.isFlexExtensionPointHandlingEnabled(oElement);
-		if (bFlexExtensionPointHandlingEnabled || this.bAppDescriptorCommandAlreadyAvailable) {
+	function handleManifestChangeCommand(oElement, oCompositeCommand) {
+		// without manifest change when the FlexExtensionPointEnabled flag is already set
+		const bFlexExtensionPointHandlingEnabled = ManifestUtils.isFlexExtensionPointHandlingEnabled(oElement);
+		if (bFlexExtensionPointHandlingEnabled || this.bManifestCommandAlreadyAvailable) {
 			return Promise.resolve();
 		}
 
-		var oComponent = FlUtils.getAppComponentForControl(oElement);
-		var sReference = oComponent.getManifestEntry("sap.app").id;
+		const oComponent = FlUtils.getAppComponentForControl(oElement);
+		const sReference = oComponent.getManifestEntry("sap.app").id;
 		return this.getCommandFactory().getCommandFor(
 			oElement,
-			"appDescriptor",
+			"manifest",
 			{
 				reference: sReference,
 				appComponent: oComponent,
-				changeType: APP_DESCRIPTOR_CHANGE_TYPE,
+				changeType: MANIFEST_CHANGE_TYPE,
 				parameters: { flexExtensionPointEnabled: true },
 				texts: {}
 			}
 		)
-		.then(function(oAppDescriptorCommand) {
-			this.bAppDescriptorCommandAlreadyAvailable = true;
-			return oCompositeCommand.addCommand(oAppDescriptorCommand);
+		.then(function(oManifestCommand) {
+			this.bManifestCommandAlreadyAvailable = true;
+			return oCompositeCommand.addCommand(oManifestCommand);
 		}.bind(this));
 	}
 
 	function handleCompositeCommand(aElementOverlays, mExtensionData) {
-		var oCompositeCommand;
-		var oOverlay = aElementOverlays[0];
-		var oElement = oOverlay.getElement();
+		let oCompositeCommand;
+		const oOverlay = aElementOverlays[0];
+		const oElement = oOverlay.getElement();
 
 		return this.getCommandFactory().getCommandFor(oElement, "composite")
 
@@ -196,9 +196,9 @@ sap.ui.define([
 			return handleAddXmlAtExtensionPointCommand.call(this, oElement, mExtensionData, oCompositeCommand);
 		}.bind(this))
 
-		// App Descriptor Change
+		// Manifest Change
 		.then(function() {
-			return handleAppDescriptorChangeCommand.call(this, oElement, oCompositeCommand);
+			return handleManifestChangeCommand.call(this, oElement, oCompositeCommand);
 		}.bind(this))
 
 		.then(function() {
@@ -216,13 +216,13 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype.handler = function(aElementOverlays, mPropertyBag) {
 		return Promise.resolve()
 		.then(function() {
-			var fnFragmentHandler = mPropertyBag.fragmentHandler || this.getFragmentHandler();
+			const fnFragmentHandler = mPropertyBag.fragmentHandler || this.getFragmentHandler();
 			if (!fnFragmentHandler) {
 				return Promise.reject("Fragment handler function is not available in the handler");
 			}
-			var oOverlay = aElementOverlays[0];
-			var oElement = oOverlay.getElement();
-			var aExtensionPointInfos = getExtensionPointList(oElement);
+			const oOverlay = aElementOverlays[0];
+			const oElement = oOverlay.getElement();
+			const aExtensionPointInfos = getExtensionPointList(oElement);
 			return fnFragmentHandler(oOverlay, aExtensionPointInfos);
 		}.bind(this))
 
