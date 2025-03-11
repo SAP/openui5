@@ -435,14 +435,16 @@ sap.ui.define([
 		assert.equal(oLocaleData.getUnitFromMapping("CAT"), "cats", "cats is the respective mapping");
 		assert.equal(oLocaleData.getResolvedUnitFormat("CAT").displayName, "kittens", "kittens is the displayName");
 		/** @deprecated As of version 1.122.0, legacy unit mapping deprecated */
-		assert.strictEqual(oLocaleData.getUnitFromMapping("fooBar"), "acceleration-meter-per-second-squared",
-			"Mapped legacy unit to custom unit returns custom unit");
-		assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared").displayName, "fooBar",
-			"Custom legacy unit returns custom unit");
-		assert.strictEqual(oLocaleData.getUnitFromMapping("concentr-milligram-per-deciliter"), undefined,
-			"Legacy unit is not found in custom unit mapping");
-		assert.strictEqual(oLocaleData.getUnitFormat("concentr-milligram-per-deciliter").displayName, "mg/dL",
-			"Legacy unit is mapped to new unit in CLDR");
+		(function() {
+			assert.strictEqual(oLocaleData.getUnitFromMapping("fooBar"), "acceleration-meter-per-second-squared",
+				"Mapped legacy unit to custom unit returns custom unit");
+			assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared").displayName, "fooBar",
+				"Custom legacy unit returns custom unit");
+			assert.strictEqual(oLocaleData.getUnitFromMapping("concentr-milligram-per-deciliter"), undefined,
+				"Legacy unit is not found in custom unit mapping");
+			assert.strictEqual(oLocaleData.getUnitFormat("concentr-milligram-per-deciliter").displayName, "mg/dL",
+				"Legacy unit is mapped to new unit in CLDR");
+		}());
 	});
 
 	QUnit.test("Unit Mappings", function(assert) {
