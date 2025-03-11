@@ -251,9 +251,9 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	/**
 	 * Gets all additional transitive dependencies for the given list of libraries.
 	 * Returns a new array.
-	 * @param {string[]} aLibraries a list of libraries for which the transitive
+	 * @param {object[]} aLibraries a list of libraries for which the transitive
 	 * dependencies will be extracted from the loaded version info
-	 * @returns {string[]} the list of all transitive dependencies for the given initial
+	 * @returns {object[]} the list of all transitive dependencies for the given initial
 	 * list of libraries
 	 * @static
 	 * @private
@@ -263,15 +263,30 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 
 		transformVersionInfo();
 
-		if (mKnownLibs) {
-			var mClosure = aLibraries.reduce(function(all, lib) {
-				all[lib] = true;
-				return Object.assign(all, mKnownLibs[lib]);
-			}, {});
-			aLibraries = Object.keys(mClosure);
+		const closure = Object.create(null);
+
+		function addLibDependency(name, lazy) {
+			if (closure[name] == null ) {
+				closure[name] = {name, ...lazy && {lazy}};
+			} else {
+				if (closure[name].lazy && !lazy) {
+					delete closure[name].lazy;
+				}
+			}
 		}
 
-		return aLibraries;
+		for (const {name, lazy} of aLibraries) {
+			addLibDependency(name, lazy);
+			if (mKnownLibs?.[name]) {
+				for (const depName in mKnownLibs[name]) {
+					// Dependencies in `mKnownLibs` are always eager.
+					// They only inherit lazyness from the entry in aLibraries
+					addLibDependency(depName, lazy);
+				}
+			}
+		}
+
+		return Object.values(closure);
 	};
 
 	/**
