@@ -926,7 +926,11 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.$$clearSelectionOnFilter]
 	 *   Whether the selection state of the list binding is cleared when a filter is changed; this
 	 *   includes dynamic filters, '$filter', '$search', and <code>$$aggregation.search</code>.
-	 *   Supported since 1.120.13.
+	 *   Supported since 1.120.13. Since 1.135.0, the selection state is validated when reloading
+	 *   the list binding's data. The
+	 *   {@link sap.ui.model.odata.v4.Context#isSelected selection states of contexts} which no
+	 *   longer match the current filter are reset. <b>Note:</b> The selection state is not
+	 *   validated if the <code>$$aggregation</code> parameter is used.
 	 * @param {boolean} [mParameters.$$getKeepAliveContext]
 	 *   Whether this binding is considered for a match when {@link #getKeepAliveContext} is called;
 	 *   only the value <code>true</code> is allowed. Must not be combined with <code>$apply</code>,
