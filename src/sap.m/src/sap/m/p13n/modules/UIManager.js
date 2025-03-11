@@ -68,6 +68,7 @@ sap.ui.define([
 	 * @param {function} [mSettings.reset] Custom reset handling to opt out the default reset which will trigger a reset for all open tabs.
 	 * @param {function} [mSettings.close] Event handler once the Popup has been closed
 	 * @param {string} [mSettings.activePanel] Key of active panel that is opened initially
+	 * @param {boolean} [mSettings.refreshPropertyHelper] Determines if the property helper should be refreshed
 	 *
 	 * @returns {Promise} Promise resolving in the <code>sap.m.p13n.Popup</code> instance.
 	 */
@@ -152,11 +153,11 @@ sap.ui.define([
 		}
 	};
 
-	UIManager.prototype.create = function(oControl, vPanelKeys) {
+	UIManager.prototype.create = function(oControl, vPanelKeys, mSettings) {
 		const aPanelKeys = vPanelKeys instanceof Array ? vPanelKeys : [vPanelKeys];
 		const that = this;
 
-		return this.oAdaptationProvider.initAdaptation(oControl, aPanelKeys)
+		return this.oAdaptationProvider.initAdaptation(oControl, aPanelKeys, mSettings.refreshPropertyHelper)
 			.then(() => {
 				const vSettings = this.oAdaptationProvider.getUISettings(oControl, aPanelKeys);
 
