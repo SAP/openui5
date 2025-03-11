@@ -123,7 +123,6 @@
 				"category": "Metadata-Driven Controls (sap.ui.mdc)",
 				"since": "1.116",
 				"samples": [
-					"sap.ui.mdc.demokit.sample.TableFilterBarJson",
 					"sap.ui.mdc.demokit.sample.table.TableJson",
 					"sap.ui.mdc.demokit.sample.table.TableTypes",
 					"sap.ui.mdc.demokit.sample.table.TablePropertyInfos",
