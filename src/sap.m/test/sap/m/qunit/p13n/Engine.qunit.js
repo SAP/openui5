@@ -844,6 +844,8 @@ sap.ui.define([
 
 	QUnit.test("Check 'getRTASettingsActionHandler' - Promise reject when using VM + PP ", async function(assert){
 
+		var done = assert.async();
+
 		var oPP = new PersistenceProvider({
 			"for": [this.oControl.getId()]
 		});
@@ -852,8 +854,13 @@ sap.ui.define([
 
 		await nextUIUpdate();
 
-		const oSettingsPromise = Engine.getInstance().getRTASettingsActionHandler(this.oControl, {}, "Test");
-		assert.ok(oSettingsPromise instanceof Promise, "Using PP in RTA should be allowed.");
+		Engine.getInstance().getRTASettingsActionHandler(this.oControl, {}, "Test").then(function(){
+			//Promise does not resolve
+		}, function(sErr){
+			assert.ok(sErr, "XOR VM or PP, providing both is prohibited in RTA.");
+			oPP.destroy();
+			done();
+		});
 	});
 
 
