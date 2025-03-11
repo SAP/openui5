@@ -161,7 +161,7 @@ html.sap-phone .sapUiFormCL > .sapUiFormCLContent > .sapUiFormCLContainer:not(:l
 	visibility: hidden;
 }
 
-.sapUiFormCLElement > div {
+.sapUiFormCLElement > * {
 	float: left;
 	padding: 0 0.25rem;
 	box-sizing: border-box;
@@ -241,14 +241,15 @@ html[data-sap-ui-browser^="sf"] .sapUiFormEdit .sapUiFormCLElement {
 
 /* display mode */
 /* in display only mode add padding to controls as they don't have one */
-.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > div{
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > *{
 	padding-top: 0.25rem;
 	padding-bottom: 0.25rem;
 	font-size: 1px; /* as browser adds some px to text to meet font-size */
+	margin: 0; /* As <dd> would add a margin */
 }
 
-.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > div .sapUiIcon:not(.sapMBtnIcon),
-.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > div .sapMCbBg{
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > * .sapUiIcon:not(.sapMBtnIcon),
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > * .sapMCbBg{
 	font-size: @sapUiFontSize; /* to set default font size on icons */
 }
 
