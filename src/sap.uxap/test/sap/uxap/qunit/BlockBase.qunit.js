@@ -488,6 +488,31 @@ function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, O
 		});
 	});
 
+	QUnit.test("Update bindings when 'moreBlocks' are shown", function (assert) {
+		// Arrange
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+			oFirstSubSection = this.oObjectPageInfoView.byId("firstSubSection"),
+			oBlock = oFirstSubSection.getMoreBlocks()[0],
+			oUpdateBindingsSpy = this.spy(oBlock, "updateBindings"),
+			oSelectViewSpy = this.spy(oBlock, "_selectView"),
+			done = assert.async();
+
+		this.oObjectPageInfoView.placeAt('qunit-fixture');
+		nextUIUpdate.runSync();
+
+		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Act - press ShowMore Button
+			oFirstSubSection._getSeeMoreButton().firePress();
+
+			// Assert
+			assert.ok(oUpdateBindingsSpy.calledOnce, "updateBindings is called for BlockBase in 'moreBlocks' aggregation of first SubSection");
+			assert.ok(oSelectViewSpy.calledOnce, "_selectView is called for BlockBase in 'moreBlocks' aggregation of first SubSection");
+
+			done();
+		});
+
+	});
+
 	// utils:
 	function objectToString(obj) {
 		return Object.entries(obj)
