@@ -2151,6 +2151,31 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		oObjectPage.destroy();
 	});
 
+	QUnit.test("Subsection getEffectiveTitleLevel should return correct title level", async function(assert) {
+		// arrange
+		var sTitleLevel = TitleLevel.H4,
+			oSubSection = new ObjectPageSubSectionClass({
+				title: "Title",
+				titleLevel: sTitleLevel,
+				showTitle: true,
+				blocks: [new Text({ text: "test" })]
+			}),
+			oObjectPage = new ObjectPageLayout({
+				sections: new ObjectPageSection({
+					subSections: [
+						oSubSection
+					]
+				})
+			});
+		oObjectPage.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oSubSection.getEffectiveTitleLevel(), sTitleLevel, "Title level should be the same as the set one");
+
+		// clean up
+		oObjectPage.destroy();
+	});
 
 	QUnit.module("See more / see less", {
 		beforeEach: async function() {
