@@ -16,7 +16,7 @@ sap.ui.define([
 		iGenerationCounter = 0,
 		oModule,
 		// index of virtual context used for auto-$expand/$select
-		iVIRTUAL = -9007199254740991/*Number.MIN_SAFE_INTEGER*/,
+		iVIRTUAL = Number.MIN_SAFE_INTEGER, // -9007199254740991
 		/**
 		 * @alias sap.ui.model.odata.v4.Context
 		 * @author SAP SE

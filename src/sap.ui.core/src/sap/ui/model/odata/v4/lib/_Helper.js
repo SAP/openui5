@@ -1160,20 +1160,30 @@ sap.ui.define([
 		 * Fires a change event to all listeners for the given path in mChangeListeners.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
-		 * @param {string} sPropertyPath The path
-		 * @param {any} vValue The value to report to the listeners
-		 * @param {boolean} bForceUpdate Whether a listener should force an update
+		 * @param {string} sPropertyPath The path (must not end with a slash)
+		 * @param {any} vValue The value to report to the listeners (unless within an array)
+		 * @param {boolean} [bForceUpdate] Whether a listener should force an update
+		 * @param {boolean} [bInArray] Whether listeners within an array should also be called
 		 *
 		 * @public
 		 */
-		fireChange : function (mChangeListeners, sPropertyPath, vValue, bForceUpdate) {
-			var aListeners = mChangeListeners[sPropertyPath],
-				i;
-
-			if (aListeners) {
-				for (i = 0; i < aListeners.length; i += 1) {
-					aListeners[i].onChange(vValue, bForceUpdate);
+		fireChange : function (mChangeListeners, sPropertyPath, vValue, bForceUpdate, bInArray) {
+			function inform(aChangeListeners, vValue0) {
+				for (let i = 0; i < aChangeListeners.length; i += 1) {
+					aChangeListeners[i].onChange(vValue0, bForceUpdate);
 				}
+			}
+
+			if (sPropertyPath in mChangeListeners) {
+				inform(mChangeListeners[sPropertyPath], vValue);
+			}
+
+			if (bInArray) {
+				sPropertyPath += "/";
+				Object.keys(mChangeListeners)
+					.filter((sPath) => sPath.startsWith(sPropertyPath))
+					// Note: omit vValue here - listener will fetch value itself
+					.forEach((sPathInArray) => inform(mChangeListeners[sPathInArray]));
 			}
 		},
 
@@ -2812,7 +2822,8 @@ sap.ui.define([
 				} else if (Array.isArray(vSourceProperty)) {
 					// copy complete collection
 					oTarget[sProperty] = vSourceProperty;
-					_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
+					_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty,
+						/*bForceUpdate*/false, /*bInArray*/true);
 				} else if (vSourceProperty && typeof vSourceProperty === "object") {
 					vTargetProperty = oTarget[sProperty]
 						= _Helper.updateAll(mChangeListeners, sPropertyPath, vTargetProperty || {},
@@ -2868,7 +2879,8 @@ sap.ui.define([
 					if (Array.isArray(vNewProperty)) {
 						// copy complete collection
 						oOldObject[sProperty] = vNewProperty;
-						_Helper.fireChange(mChangeListeners, sPropertyPath, vNewProperty);
+						_Helper.fireChange(mChangeListeners, sPropertyPath, vNewProperty,
+							/*bForceUpdate*/false, /*bInArray*/true);
 					} else if (vNewProperty && typeof vNewProperty === "object") {
 						if (vOldProperty) {
 							// a structural property was modified
@@ -3141,9 +3153,10 @@ sap.ui.define([
 					} else if (Array.isArray(vSourceProperty)) {
 						// copy complete collection; transient entity collections from a deep
 						// create are handled elsewhere
-						if (!(vTargetProperty && vTargetProperty.$postBodyCollection)) {
+						if (!vTargetProperty?.$postBodyCollection) {
 							oTarget[sProperty] = vSourceProperty;
-							_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
+							_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty,
+								/*bForceUpdate*/false, /*bInArray*/true);
 						}
 					} else if (vSourceProperty && typeof vSourceProperty === "object"
 							&& !sProperty.includes("@")) {
