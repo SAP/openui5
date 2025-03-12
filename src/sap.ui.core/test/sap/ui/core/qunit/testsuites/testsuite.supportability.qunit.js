@@ -4,6 +4,12 @@ sap.ui.define([], function() {
 	return {
 		name: "TestSuite for Topic: Supportability",
 		defaults: {
+			qunit: {
+				version: 2
+			},
+			sinon: {
+				version: 4
+			},
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
@@ -37,18 +43,29 @@ sap.ui.define([], function() {
 			},
 
 			"performance/trace/FESR_integrationEnv_available": {
-				page: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit.html?sap-ui-fesr=true&sap-ui-fesr-env=MST:N",
-				title: "sap.ui.performance.trace.FESR: Integration environment provided"
+				title: "sap.ui.performance.trace.FESR: Integration environment provided",
+				uriParams: {
+					"sap-ui-fesr": "true",
+					"sap-ui-fesr-env": "MST:N"
+				},
+				module: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit"
 			},
 
 			"performance/trace/FESR_integrationEnv_available_exceeding": {
-				page: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit.html?sap-ui-fesr=true&sap-ui-fesr-env=myVeryLongNameForIntegrationEnvironment",
-				title: "sap.ui.performance.trace.FESR: Integration environment provided"
+				title: "sap.ui.performance.trace.FESR: Integration environment provided",
+				uriParams: {
+					"sap-ui-fesr": "true",
+					"sap-ui-fesr-env": "myVeryLongNameForIntegrationEnvironment"
+				},
+				module: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit"
 			},
 
 			"performance/trace/FESR_integrationEnv_notAvailable": {
-				page: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit.html?sap-ui-fesr=true",
-				title: "sap.ui.performance.trace.FESR: Integration environment not provided"
+				title: "sap.ui.performance.trace.FESR: Integration environment not provided",
+				uriParams: {
+					"sap-ui-fesr": "true"
+				},
+				module: "test-resources/sap/ui/core/qunit/performance/trace/FESR_integrationEnv.qunit"
 			},
 
 			"performance/trace/InitFESR_metatag": {
@@ -81,8 +98,10 @@ sap.ui.define([], function() {
 			},
 
 			"performance/trace/InitFESR_urlparam": {
-				page: "test-resources/sap/ui/core/qunit/performance/trace/InitFESR_urlparam.qunit.html?sap-ui-fesr=true",
-				title: "sap.ui.performance.trace.FESR: Activation of FESR via url-param"
+				title: "sap.ui.performance.trace.FESR: Activation of FESR via url-param",
+				uriParams: {
+					"sap-ui-fesr": "true"
+				}
 			},
 
 			"performance/trace/Interaction": {
@@ -93,12 +112,6 @@ sap.ui.define([], function() {
 							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
 						}
 					}
-				},
-				qunit: {
-					version: 2
-				},
-				sinon: {
-					version: 4
 				},
 				title: "sap.ui.performance.Interaction"
 			},

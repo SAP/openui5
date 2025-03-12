@@ -102,7 +102,7 @@ sap.ui.define([
 		});
 	}
 
-	function stubAppDescriptorChanges(oRta, bExist) {
+	function stubManifestChanges(oRta, bExist) {
 		// we don't want to start RTA for these tests, so just setting the otherwise not set property,
 		// that sinon cannot stub until it was set.
 		oRta._oSerializer = {
@@ -113,8 +113,8 @@ sap.ui.define([
 		};
 	}
 
-	function whenNoAppDescriptorChangesExist(oRta) {
-		stubAppDescriptorChanges(oRta, false);
+	function whenNoManifestChangesExist(oRta) {
+		stubManifestChanges(oRta, false);
 	}
 
 	function cleanInfoSessionStorage() {
@@ -132,7 +132,7 @@ sap.ui.define([
 				rootControl: oComp,
 				showToolbars: false
 			});
-			whenNoAppDescriptorChangesExist(this.oRta);
+			whenNoManifestChangesExist(this.oRta);
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 		},
 		afterEach() {
@@ -661,7 +661,7 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, false);
 			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
 			this.oContextBasedAdaptationsAPILoadStub = sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [{id: "12345"}, DEFAULT_ADAPTATION]});
-			this.oFlexUtilsGetAppDescriptor = sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			this.oFlexUtilsGetManifest = sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 			sandbox.stub(FlexUtils, "getUShellService").callThrough().withArgs("AppLifeCycle").resolves({
 				getCurrentApplication() {
 					return {
@@ -680,7 +680,7 @@ sap.ui.define([
 
 		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", async function(assert) {
 			stubCBA.call(this);
-			this.oFlexUtilsGetAppDescriptor.returns({"sap.app": {id: "1"}, "sap.ovp": {}});
+			this.oFlexUtilsGetManifest.returns({"sap.app": {id: "1"}, "sap.ovp": {}});
 
 			await this.oRta.start();
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), false, "then the 'Context Based Adaptation' Menu Button is not enabled");
@@ -769,7 +769,7 @@ sap.ui.define([
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
 		});
 
-		QUnit.test("when save is triggered via the toolbar with an appdescriptor change", async function(assert) {
+		QUnit.test("when save is triggered via the toolbar with an manifest change", async function(assert) {
 			let fnResolve;
 			const oPromise = new Promise(function(resolve) {
 				fnResolve = resolve;

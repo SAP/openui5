@@ -25,19 +25,19 @@ sap.ui.define([
 	"use strict";
 
 	function evaluateTemplateBinding(oElementOverlay) {
-		var mBoundControl = ElementUtil.getAggregationInformation(oElementOverlay.getElement());
+		const mBoundControl = ElementUtil.getAggregationInformation(oElementOverlay.getElement());
 		if (mBoundControl.elementId) {
 			// check for additional binding
-			var oBoundControlOverlay = OverlayRegistry.getOverlay(mBoundControl.elementId);
-			var oParentElementOverlay = oBoundControlOverlay.getParentElementOverlay();
-			var bAdditionalBinding = oParentElementOverlay ?
+			const oBoundControlOverlay = OverlayRegistry.getOverlay(mBoundControl.elementId);
+			const oParentElementOverlay = oBoundControlOverlay.getParentElementOverlay();
+			const bAdditionalBinding = oParentElementOverlay ?
 				!!ElementUtil.getAggregationInformation(oParentElementOverlay.getElement()).templateId : false;
 
 			if (bAdditionalBinding) {
 				throw DtUtil.createError("CommandFactory#evaluateTemplateBinding", "Multiple template bindings are not supported", "sap.ui.rta");
 			}
 
-			var sTemplateId = ElementUtil.extractTemplateId(mBoundControl);
+			const sTemplateId = ElementUtil.extractTemplateId(mBoundControl);
 			if (sTemplateId) {
 				return {
 					templateSelector: mBoundControl.elementId,
@@ -54,10 +54,10 @@ sap.ui.define([
 	// For the Move Action the UI control is already moved while the corresponding object in the binding template is in the source position.
 	// Therefore we have to overwrite the index of the control in the stack with the source index (iIndex) to determine the needed template object.
 	function getTemplateElementId(vElementOrId, iIndex) {
-		var oElement = (typeof vElementOrId === "string") ? Element.getElementById(vElementOrId) : vElementOrId;
-		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+		const oElement = (typeof vElementOrId === "string") ? Element.getElementById(vElementOrId) : vElementOrId;
+		const oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElementOverlay) {
-			var mBoundControl = ElementUtil.getAggregationInformation(oElement);
+			const mBoundControl = ElementUtil.getAggregationInformation(oElement);
 			if (typeof iIndex === "number") {
 				mBoundControl.stack[0].index = iIndex;
 			}
@@ -73,9 +73,9 @@ sap.ui.define([
 	}
 
 	function configureActionCommand(oCommand, vAction) {
-		var sChangeType;
-		var bJsOnly = false;
-		var bVariantIndependent = false;
+		let sChangeType;
+		let bJsOnly = false;
+		let bVariantIndependent = false;
 
 		if (typeof vAction === "string") {
 			sChangeType = vAction;
@@ -100,13 +100,13 @@ sap.ui.define([
 	}
 
 	function configureAddXmlCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var vAction;
+		let vAction;
 		if (oDesignTimeMetadata) {
 			vAction = oDesignTimeMetadata.getAction(mSettings.name, oElement);
 		}
 		// the change type is not configurable via designtime
 		// it can also not be disabled with 'not-adaptable' or null
-		var oAction = vAction || {};
+		const oAction = vAction || {};
 		Object.assign(oAction, {
 			changeType: mSettings.name
 		});
@@ -133,8 +133,8 @@ sap.ui.define([
 	}
 
 	function configureCreateContainerCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oNewAddedElement = mSettings.element || Element.getElementById(mSettings.element.id);
-		var oAction = oDesignTimeMetadata.getActionDataFromAggregations("createContainer", oNewAddedElement)[0];
+		const oNewAddedElement = mSettings.element || Element.getElementById(mSettings.element.id);
+		const oAction = oDesignTimeMetadata.getActionDataFromAggregations("createContainer", oNewAddedElement)[0];
 		return oAction;
 	}
 
@@ -146,14 +146,14 @@ sap.ui.define([
 	}
 
 	function configureMoveCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oMovedElement = mSettings.movedElements[0].element || Element.getElementById(mSettings.movedElements[0].id);
-		var oAction = oDesignTimeMetadata.getAction("move", oMovedElement);
+		const oMovedElement = mSettings.movedElements[0].element || Element.getElementById(mSettings.movedElements[0].id);
+		const oAction = oDesignTimeMetadata.getAction("move", oMovedElement);
 		return oAction;
 	}
 
 	function adjustMoveCommand(mSettings) {
-		var aTemplateMovedElements = mSettings.movedElements.map(function(oMovedElement) {
-			var oMovedElementInTemplate = Element.getElementById(getTemplateElementId(oMovedElement.element, oMovedElement.sourceIndex));
+		const aTemplateMovedElements = mSettings.movedElements.map(function(oMovedElement) {
+			const oMovedElementInTemplate = Element.getElementById(getTemplateElementId(oMovedElement.element, oMovedElement.sourceIndex));
 			evaluateResult(oMovedElementInTemplate);
 			return oMovedElementInTemplate;
 		});
@@ -173,8 +173,8 @@ sap.ui.define([
 	}
 
 	function configureRenameCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oRenamedElement = mSettings.renamedElement;
-		var oAction = oDesignTimeMetadata.getAction("rename", oRenamedElement);
+		const oRenamedElement = mSettings.renamedElement;
+		const oAction = oDesignTimeMetadata.getAction("rename", oRenamedElement);
 		return oAction;
 	}
 
@@ -186,13 +186,13 @@ sap.ui.define([
 	}
 
 	function configureRemoveCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oRemovedElement = mSettings.removedElement;
+		let oRemovedElement = mSettings.removedElement;
 		if (!oRemovedElement) {
 			oRemovedElement = oElement;
 		} else if (!(oRemovedElement instanceof ManagedObject)) {
 			throw new Error("No valid 'removedElement' found");
 		}
-		var oAction = oDesignTimeMetadata.getAction("remove", oRemovedElement);
+		const oAction = oDesignTimeMetadata.getAction("remove", oRemovedElement);
 		return oAction;
 	}
 
@@ -204,8 +204,8 @@ sap.ui.define([
 	}
 
 	function configureCombineCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oCombineElement = mSettings.source;
-		var oAction = oDesignTimeMetadata.getAction("combine", oCombineElement);
+		const oCombineElement = mSettings.source;
+		const oAction = oDesignTimeMetadata.getAction("combine", oCombineElement);
 		return oAction;
 	}
 
@@ -214,7 +214,7 @@ sap.ui.define([
 		evaluateResult(mSettings.element);
 		mSettings.source = Element.getElementById(getTemplateElementId(mSettings.source));
 		evaluateResult(mSettings.source);
-		var aTemplateCombineElements = mSettings.combineElements.map(function(oCombineField) {
+		const aTemplateCombineElements = mSettings.combineElements.map(function(oCombineField) {
 			oCombineField = Element.getElementById(getTemplateElementId(oCombineField));
 			evaluateResult(oCombineField);
 			return oCombineField;
@@ -223,8 +223,8 @@ sap.ui.define([
 	}
 
 	function configureSplitCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oSplitElement = mSettings.source;
-		var oAction = oDesignTimeMetadata.getAction("split", oSplitElement);
+		const oSplitElement = mSettings.source;
+		const oAction = oDesignTimeMetadata.getAction("split", oSplitElement);
 		return oAction;
 	}
 
@@ -238,7 +238,7 @@ sap.ui.define([
 	}
 
 	function configureAddDelegatePropertyCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oNewAddedElement = mSettings.element;
+		const oNewAddedElement = mSettings.element;
 		return oDesignTimeMetadata.getAction("add", oNewAddedElement, "delegate");
 	}
 
@@ -250,8 +250,8 @@ sap.ui.define([
 	}
 
 	function configureRevealCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oRevealedElement = mSettings.element;
-		var oAction = oDesignTimeMetadata.getAction("reveal", oRevealedElement);
+		const oRevealedElement = mSettings.element;
+		const oAction = oDesignTimeMetadata.getAction("reveal", oRevealedElement);
 		return oAction;
 	}
 
@@ -269,9 +269,9 @@ sap.ui.define([
 	}
 
 	function configureCustomAddCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oAddAction = oDesignTimeMetadata.getAction("add", mSettings.element);
+		const oAddAction = oDesignTimeMetadata.getAction("add", mSettings.element);
 		if (oAddAction && oAddAction.custom && typeof oAddAction.custom.getItems === "function") {
-			var oAction = {
+			const oAction = {
 				...oAddAction.custom,
 				changeOnRelevantContainer: mSettings.changeOnRelevantContainer,
 				changeType: mSettings.changeType
@@ -294,7 +294,7 @@ sap.ui.define([
 		return "propertyChange";
 	}
 
-	var mCommands = { 	// Command names lower camel case
+	const mCommands = { 	// Command names lower camel case
 		composite: {
 			clazz: "sap/ui/rta/command/CompositeCommand",
 			noSelector: true
@@ -393,11 +393,16 @@ sap.ui.define([
 			clazz: "sap/ui/rta/command/Settings"
 		},
 		addLibrary: {
-			clazz: "sap/ui/rta/command/appDescriptor/AddLibrary",
+			clazz: "sap/ui/rta/command/manifest/AddLibrary",
 			noSelector: true
 		},
+		// left for compatibility reasons
 		appDescriptor: {
-			clazz: "sap/ui/rta/command/AppDescriptorCommand",
+			clazz: "sap/ui/rta/command/ManifestCommand",
+			noSelector: true
+		},
+		manifest: {
+			clazz: "sap/ui/rta/command/ManifestCommand",
 			noSelector: true
 		},
 		annotation: {
@@ -423,24 +428,24 @@ sap.ui.define([
 	};
 
 	function getCommandFor(vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings, sVariantManagementReference) {
-		var oCommand;
+		let oCommand;
 		sCommand = sCommand[0].toLowerCase() + sCommand.slice(1); // first char of command name is lower case
-		var mCommand = mCommands[sCommand];
-		var mAllFlexSettings = mFlexSettings;
+		const mCommand = mCommands[sCommand];
+		let mAllFlexSettings = mFlexSettings;
 
 		if (!mCommand) {
 			return Promise.reject(DtUtil.createError("CommandFactory#getCommandFor", `Command '${sCommand}' doesn't exist, check typing`, "sap.ui.rta"));
 		}
 
 		return new Promise(function(fnResolve) {
-			var sClassName = mCommand.clazz;
+			const sClassName = mCommand.clazz;
 			sap.ui.require([sClassName], function(Command) {
 				fnResolve(Command);
 			});
 		})
 
 		.then(function(Command) {
-			var bIsUiElement = vElement instanceof ManagedObject;
+			const bIsUiElement = vElement instanceof ManagedObject;
 
 			// only sap.ui.rta.command.FlexCommand requires a selector property
 			if (!mCommand.noSelector && !bIsUiElement) {
@@ -453,12 +458,12 @@ sap.ui.define([
 				name: sCommand
 			};
 
-			var oAction;
+			let oAction;
 			if (mCommand.configure) {
 				oAction = mCommand.configure(vElement, mSettings, oDesignTimeMetadata);
 			}
 
-			var oElementOverlay;
+			let oElementOverlay;
 			if (bIsUiElement) {
 				oElementOverlay = OverlayRegistry.getOverlay(vElement);
 			}
@@ -471,7 +476,7 @@ sap.ui.define([
 				oElementOverlay = OverlayRegistry.getOverlay(vElement);
 			}
 
-			var mTemplateSettings;
+			let mTemplateSettings;
 			if (oElementOverlay && vElement.sParentAggregationName) {
 				mTemplateSettings = evaluateTemplateBinding(oElementOverlay);
 			}
@@ -485,7 +490,7 @@ sap.ui.define([
 
 			oCommand = new Command(mSettings);
 
-			var bSuccessfullyConfigured = true; // configuration is optional
+			let bSuccessfullyConfigured = true; // configuration is optional
 			if (mCommand.configure) {
 				bSuccessfullyConfigured = configureActionCommand(oCommand, oAction);
 			}
@@ -517,7 +522,7 @@ sap.ui.define([
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.CommandFactory
 	 */
-	var CommandFactory = ManagedObject.extend("sap.ui.rta.command.CommandFactory", {
+	const CommandFactory = ManagedObject.extend("sap.ui.rta.command.CommandFactory", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
@@ -579,7 +584,7 @@ sap.ui.define([
 		};
 
 		if (mFlexSettings.scenario || mFlexSettings.baseId) {
-			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
+			const sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
 			mFlexSettings.rootNamespace = sLRepRootNamespace;
 			mFlexSettings.namespace = `${sLRepRootNamespace}changes/`;
 		}

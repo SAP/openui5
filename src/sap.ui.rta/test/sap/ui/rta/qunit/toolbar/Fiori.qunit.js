@@ -3,6 +3,7 @@
 sap.ui.define([
 	"../RtaQunitUtils",
 	"sap/m/Button",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/layout/VerticalLayout",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	Button,
+	Element,
 	Lib,
 	VersionsAPI,
 	VerticalLayout,
@@ -154,6 +156,30 @@ sap.ui.define([
 				});
 				this.oToolbar.destroy();
 			}.bind(this));
+		});
+		QUnit.test("when buildControls is called and image dimensions are 0", async function(assert) {
+			this.oToolbar = new Fiori({
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			sinon.stub(this.oToolbar._oFioriHeader.getDomRef(), "querySelector")
+			.callThrough()
+			.withArgs("#shell-header-icon")
+			.returns(document.createElement("div"));
+
+			await this.oToolbar.onFragmentLoaded();
+			this.oToolbar.show();
+			assert.strictEqual(
+				Element.getElementById(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getWidth(),
+				"0px",
+				"Image should have a width of 0px"
+			);
+			assert.strictEqual(
+				Element.getElementById(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getHeight(),
+				"0px",
+				"Image should have a height of 0px"
+			);
+			this.oToolbar.destroy();
 		});
 	});
 

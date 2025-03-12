@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/rta/command/AppDescriptorCommand",
+	"sap/ui/rta/command/ManifestCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Settings",
 	"sap/ui/rta/command/Stack",
@@ -31,7 +31,7 @@ sap.ui.define([
 	ChangesWriteAPI,
 	PropertyChange,
 	VerticalLayout,
-	AppDescriptorCommand,
+	ManifestCommand,
 	CommandFactory,
 	SettingsCommand,
 	Stack,
@@ -504,9 +504,9 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change,", function(assert) {
+		QUnit.test("when the handle settings function is called and the handler returns a change object with a manifest change,", function(assert) {
 			const done = assert.async();
-			const mAppDescriptorChange = {
+			const mManifestChange = {
 				appComponent: oMockedAppComponent,
 				changeSpecificData: {
 					appDescriptorChangeType: "appDescriptorChangeType",
@@ -525,7 +525,7 @@ sap.ui.define([
 				isEnabled: true,
 				handler() {
 					return new Promise(function(resolve) {
-						resolve([mAppDescriptorChange]);
+						resolve([mManifestChange]);
 					});
 				}
 			});
@@ -533,23 +533,23 @@ sap.ui.define([
 			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
 				const oCompositeCommand = oEvent.getParameter("command");
 				assert.ok(oCompositeCommand, "Composite command is created");
-				const oAppDescriptorCommand = oCompositeCommand.getCommands()[0];
-				assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... which contains an App Descriptor command...");
-				assert.strictEqual(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
-				assert.strictEqual(oAppDescriptorCommand.getReference(), "someName", "with the correct reference");
+				const oManifestCommand = oCompositeCommand.getCommands()[0];
+				assert.ok(oManifestCommand instanceof ManifestCommand, "... which contains a Manifest command...");
+				assert.strictEqual(oManifestCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
+				assert.strictEqual(oManifestCommand.getReference(), "someName", "with the correct reference");
 				assert.strictEqual(
-					oAppDescriptorCommand.getChangeType(),
-					mAppDescriptorChange.changeSpecificData.appDescriptorChangeType,
+					oManifestCommand.getChangeType(),
+					mManifestChange.changeSpecificData.appDescriptorChangeType,
 					"with the correct change type"
 				);
 				assert.strictEqual(
-					oAppDescriptorCommand.getParameters(),
-					mAppDescriptorChange.changeSpecificData.content.parameters,
+					oManifestCommand.getParameters(),
+					mManifestChange.changeSpecificData.content.parameters,
 					"with the correct parameters"
 				);
 				assert.strictEqual(
-					oAppDescriptorCommand.getTexts(),
-					mAppDescriptorChange.changeSpecificData.content.texts,
+					oManifestCommand.getTexts(),
+					mManifestChange.changeSpecificData.content.texts,
 					"with the correct texts"
 				);
 
@@ -558,9 +558,9 @@ sap.ui.define([
 			return this.oSettingsPlugin.handler([oButtonOverlay], { eventItem: {}, contextElement: this.oButton });
 		});
 
-		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change and a flex change,", function(assert) {
+		QUnit.test("when the handle settings function is called and the handler returns a change object with a manifest change and a flex change,", function(assert) {
 			const done = assert.async();
-			const mAppDescriptorChange = {
+			const mManifestChange = {
 				appComponent: oMockedAppComponent,
 				changeSpecificData: {
 					appDescriptorChangeType: "appDescriptorChangeType",
@@ -590,7 +590,7 @@ sap.ui.define([
 				isEnabled: true,
 				handler() {
 					return new Promise(function(resolve) {
-						resolve([mAppDescriptorChange, mSettingsChange]);
+						resolve([mManifestChange, mSettingsChange]);
 					});
 				}
 			});
@@ -598,24 +598,24 @@ sap.ui.define([
 			this.oSettingsPlugin.attachEventOnce("elementModified", function(oEvent) {
 				const oCompositeCommand = oEvent.getParameter("command");
 				assert.ok(oCompositeCommand, "Composite command is created");
-				const oAppDescriptorCommand = oCompositeCommand.getCommands()[0];
+				const oManifestCommand = oCompositeCommand.getCommands()[0];
 				const oFlexCommand = oCompositeCommand.getCommands()[1];
-				assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... containing an App Descriptor command");
-				assert.strictEqual(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
-				assert.strictEqual(oAppDescriptorCommand.getReference(), "someName", "with the correct reference");
+				assert.ok(oManifestCommand instanceof ManifestCommand, "... containing a Manifest command");
+				assert.strictEqual(oManifestCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
+				assert.strictEqual(oManifestCommand.getReference(), "someName", "with the correct reference");
 				assert.strictEqual(
-					oAppDescriptorCommand.getChangeType(),
-					mAppDescriptorChange.changeSpecificData.appDescriptorChangeType,
+					oManifestCommand.getChangeType(),
+					mManifestChange.changeSpecificData.appDescriptorChangeType,
 					"with the correct change type"
 				);
 				assert.strictEqual(
-					oAppDescriptorCommand.getParameters(),
-					mAppDescriptorChange.changeSpecificData.content.parameters,
+					oManifestCommand.getParameters(),
+					mManifestChange.changeSpecificData.content.parameters,
 					"with the correct parameters"
 				);
 				assert.strictEqual(
-					oAppDescriptorCommand.getTexts(),
-					mAppDescriptorChange.changeSpecificData.content.texts,
+					oManifestCommand.getTexts(),
+					mManifestChange.changeSpecificData.content.texts,
 					"with the correct texts"
 				);
 				assert.ok(oFlexCommand instanceof SettingsCommand, "... and a (flex) SettingsCommand");

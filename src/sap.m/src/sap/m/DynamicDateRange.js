@@ -586,6 +586,7 @@ sap.ui.define([
 			};
 
 			this._oInput._getValueHelpIcon().setDecorative(bValueHelpDecorative);
+			this._oInput._getValueHelpIcon().setTooltip(oResourceBundle.getText("OPEN_PICKER_TEXT"));
 
 			this._oInput.addDelegate(this._onBeforeInputRenderingDelegate, this);
 

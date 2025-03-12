@@ -31,11 +31,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-	var COMPONENT_NAME = "someName";
-	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
+	const sandbox = sinon.createSandbox();
+	const COMPONENT_NAME = "someName";
+	const oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
-	var oData = {
+	const oData = {
 		variantMgmtId1: {
 			defaultVariant: "variant0",
 			variants: [
@@ -107,11 +107,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when two commands get undone, redone and saved while the element of one command is not available", function(assert) {
-			var oInput3 = new Input("input3");
-			var oRemoveChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
-			var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
-			var oSettingsCommand2;
+			const oInput3 = new Input("input3");
+			const oRemoveChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
+			const oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			let oSettingsCommand2;
 
 			return CommandFactory.getCommandFor(this.oInput1, "Settings", {
 				changeType: "hideControl"
@@ -168,9 +168,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a command with an already persisted change gets executed and saved", function(assert) {
-			var oInput = new Input("input");
-			var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oInput = new Input("input");
+			const oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 
 			return CommandFactory.getCommandFor(oInput, "Settings", {
 				changeType: "hideControl"
@@ -196,8 +196,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory", function(assert) {
-			var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
@@ -229,7 +229,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory, but one is relevant for runtime only", function(assert) {
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -253,7 +253,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 'remove' command for a destroyed control", function(assert) {
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -263,7 +263,7 @@ sap.ui.define([
 			.then(function() {
 				this.oInput1.destroy();
 
-				var aCommands = this.oCommandStack.getAllExecutedCommands();
+				const aCommands = this.oCommandStack.getAllExecutedCommands();
 				assert.strictEqual(aCommands[0].getElement(), undefined, "then oInput1 cannot be found");
 				assert.strictEqual(aCommands[0].getSelector().id, "input1", "then oRemoveCommand1 selector was set");
 
@@ -277,8 +277,8 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 'remove' command and 2 App Descriptor 'add library' commands", function(assert) {
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+		QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 'remove' command and 2 manifest 'add library' commands", function(assert) {
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -324,11 +324,11 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Execute and undo a composite command with 1 'remove' command and 1 App Descriptor 'add library' command and execute another remove command", function(assert) {
-			var oRemoveCommand;
-			var oAddLibraryCommand;
-			var oCompositeCommand;
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+		QUnit.test("Execute and undo a composite command with 1 'remove' command and 1 manifest 'add library' command and execute another remove command", function(assert) {
+			let oRemoveCommand;
+			let oAddLibraryCommand;
+			let oCompositeCommand;
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
@@ -381,8 +381,8 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Execute 1 'remove' command and 1 App Descriptor 'add library' command, undo the 'add library' command and call saveCommands", function(assert) {
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+		QUnit.test("Execute 1 'remove' command and 1 manifest 'add library' command, undo the 'add library' command and call saveCommands", function(assert) {
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -415,10 +415,10 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Execute undo and redo on 1 App Descriptor 'add library' command and call saveCommands", function(assert) {
-			var oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
-			var oCreateAndStoreChangeSpy;
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+		QUnit.test("Execute undo and redo on 1 manifest 'add library' command and call saveCommands", function(assert) {
+			const oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
+			let oCreateAndStoreChangeSpy;
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 				reference: COMPONENT_NAME,
@@ -439,17 +439,17 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(oCreateAndStoreChangeSpy.callCount, 1, "now app descriptor change got created directly after execute");
+				assert.equal(oCreateAndStoreChangeSpy.callCount, 1, "now manifest change got created directly after execute");
 				return this.oCommandStack.undo();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(oDeleteChangeSpy.callCount, 1, "now app descriptor change got removed directly after undo");
+				assert.equal(oDeleteChangeSpy.callCount, 1, "now manifest change got removed directly after undo");
 				return this.oCommandStack.redo();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(oCreateAndStoreChangeSpy.callCount, 2, "now app descriptor change got created directly after redo");
+				assert.equal(oCreateAndStoreChangeSpy.callCount, 2, "now manifest change got created directly after redo");
 				return this.oSerializer.saveCommands({saveAsDraft: false});
 			}.bind(this))
 
@@ -460,8 +460,8 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Execute 1 'remove' command and 1 App Descriptor 'add library' command, undo the 'add library' command and call saveCommands which rejects", function(assert) {
-			var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").rejects();
+		QUnit.test("Execute 1 'remove' command and 1 manifest 'add library' command, undo the 'add library' command and call saveCommands which rejects", function(assert) {
+			const oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").rejects();
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
@@ -505,7 +505,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute 1 'remove' command and save in a system where versioning is disabled and condensing param is true", function(assert) {
-			var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+			const oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
@@ -520,7 +520,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute 1 'remove' command and save in a system where versioning is enabled", function(assert) {
-			var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
+			const oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -547,7 +547,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when needs restart is asked for app descriptor commands and a normal commands", function(assert) {
+		QUnit.test("when needs restart is asked for manifest commands and a normal commands", function(assert) {
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -576,7 +576,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when needs restart is asked for undone app descriptor commands and a normal commands", function(assert) {
+		QUnit.test("when needs restart is asked for undone manifest commands and a normal commands", function(assert) {
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -608,7 +608,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute 1 'Remove' command and 1 'ControlVariantSwitch' command and save commands", function(assert) {
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			return CommandFactory.getCommandFor(this.oInput1, "switch", {
 				targetVariantReference: "variantReference",
 				sourceVariantReference: "variantReference"
@@ -632,7 +632,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute 1 'Remove' command, 1 'ControlVariantSwitch' command, undo and call saveCommands", function(assert) {
-			var oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oSaveChangeSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
@@ -658,9 +658,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 2 remove commands created via CommandFactory and these are booked for a new app variant whose id is different from the id of the current running app", function(assert) {
-			var oRemoveCommand1;
-			var oRemoveCommand2;
-			var oRemoveStub;
+			let oRemoveCommand1;
+			let oRemoveCommand2;
+			let oRemoveStub;
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
@@ -681,9 +681,9 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				var aUIChanges = [oRemoveCommand1.getPreparedChange(), oRemoveCommand2.getPreparedChange()];
+				const aUIChanges = [oRemoveCommand1.getPreparedChange(), oRemoveCommand2.getPreparedChange()];
 				aUIChanges.forEach(function(oChange) {
-					var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+					const oFlexObjectMetadata = oChange.getFlexObjectMetadata();
 					oFlexObjectMetadata.namespace = "APP_VARIANT_NAMESPACE";
 					oFlexObjectMetadata.reference = "APP_VARIANT_REFERENCE";
 					oChange.setFlexObjectMetadata(oFlexObjectMetadata);
@@ -705,9 +705,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with bRemoveChanges = true", function(assert) {
-			var oRemoveCommand1;
-			var oRemoveCommand2;
-			var oRemoveStub;
+			let oRemoveCommand1;
+			let oRemoveCommand2;
+			let oRemoveStub;
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
@@ -728,9 +728,9 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				var aUIChanges = [oRemoveCommand1.getPreparedChange(), oRemoveCommand2.getPreparedChange()];
+				const aUIChanges = [oRemoveCommand1.getPreparedChange(), oRemoveCommand2.getPreparedChange()];
 				aUIChanges.forEach(function(oChange) {
-					var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+					const oFlexObjectMetadata = oChange.getFlexObjectMetadata();
 					oFlexObjectMetadata.namespace = "APP_VARIANT_NAMESPACE";
 					oFlexObjectMetadata.reference = "APP_VARIANT_REFERENCE";
 					oChange.setFlexObjectMetadata(oFlexObjectMetadata);

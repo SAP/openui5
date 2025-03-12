@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("Given the parameters required to create an app descriptor change...", {
+	QUnit.module("Given the parameters required to create an manifest change...", {
 		before() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 		},
@@ -63,19 +63,19 @@ sap.ui.define([
 			this.oButton.destroy();
 		}
 	}, function() {
-		QUnit.test("when calling command factory for a generic app descriptor change type ...", function(assert) {
-			var done = assert.async();
-			var fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+		QUnit.test("when calling command factory for a generic manifest change type ...", function(assert) {
+			const done = assert.async();
+			const fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
 
-			var oMockDescriptorInlineChange = {
+			const oMockManifestInlineChange = {
 				mockName: "mocked"
 			};
 
-			var oMockDescriptorChange = {
+			const oMockManifestChange = {
 				store() {
-					assert.ok(true, "the descriptor change was submitted");
-					var mPassedSettings = fnAssertSpy.getCall(0).args[0];
-					var bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
+					assert.ok(true, "the manifest change was submitted");
+					const mPassedSettings = fnAssertSpy.getCall(0).args[0];
+					const bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
 						return sKey === "selector";
 					});
 					assert.notOk(bHasSelector, "the selector is not part of the passed settings");
@@ -84,27 +84,27 @@ sap.ui.define([
 				}
 			};
 
-			this.createDescriptorInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
+			this.createManifestInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
 				assert.strictEqual(mPropertyBag.changeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' function");
 				assert.strictEqual(mPropertyBag.content, this.mParameters, "parameters are properly passed to the 'createDescriptorInlineChange' function");
 				assert.strictEqual(mPropertyBag.texts, this.mTexts, "texts are properly passed to the 'createDescriptorInlineChange' function");
-				this.createDescriptorInlineChangeStub.restore();
-				return Promise.resolve(oMockDescriptorInlineChange);
+				this.createManifestInlineChangeStub.restore();
+				return Promise.resolve(oMockManifestInlineChange);
 			}.bind(this));
 
 			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oInlineChange, sLayer, oAppComponent, sGenerator) {
 				assert.strictEqual(sReference, this.sReference, "reference is properly passed to createNew function");
-				assert.strictEqual(oInlineChange.mockName, oMockDescriptorInlineChange.mockName, "Inline Change is properly passed to createNew function");
+				assert.strictEqual(oInlineChange.mockName, oMockManifestInlineChange.mockName, "Inline Change is properly passed to createNew function");
 				assert.strictEqual(sLayer, this.sLayer, "layer is properly passed to createNew function");
 				assert.strictEqual(oAppComponent, this.oMockedAppComponent, "App Component is properly passed to createNew function");
-				assert.strictEqual(sGenerator, "sap.ui.rta.AppDescriptorCommand", "the generator is properly passed to createNew function");
+				assert.strictEqual(sGenerator, "sap.ui.rta.ManifestCommand", "the generator is properly passed to createNew function");
 
 				this.createNewChangeStub.restore();
 
-				return Promise.resolve(oMockDescriptorChange);
+				return Promise.resolve(oMockManifestChange);
 			}.bind(this));
 
-			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+			return CommandFactory.getCommandFor(this.oButton, "manifest", {
 				reference: this.sReference,
 				parameters: this.mParameters,
 				texts: this.mTexts,
@@ -112,10 +112,10 @@ sap.ui.define([
 				appComponent: this.oMockedAppComponent
 			}, {}, {layer: this.sLayer})
 
-			.then(function(oAppDescriptorCommand) {
-				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
-				assert.ok(oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
-				oAppDescriptorCommand.createAndStoreChange();
+			.then(function(oManifestCommand) {
+				assert.ok(oManifestCommand, "Manifest command exists for element");
+				assert.ok(oManifestCommand.needsReload, "Manifest commands need restart to be applied");
+				oManifestCommand.createAndStoreChange();
 			})
 
 			.catch(function(oError) {
@@ -123,9 +123,9 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when calling command factory for a addLibraries app descriptor and adding composite command id ...", function(assert) {
-			var sCompositeCommandId = "my-fancy-new-composite-command";
-			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+		QUnit.test("when calling command factory for a addLibraries manifest and adding composite command id ...", function(assert) {
+			const sCompositeCommandId = "my-fancy-new-composite-command";
+			return CommandFactory.getCommandFor(this.oButton, "manifest", {
 				reference: this.sReference,
 				parameters: {
 					libraries: {}
@@ -134,12 +134,12 @@ sap.ui.define([
 				changeType: "create_ui5_addLibraries",
 				appComponent: this.oMockedAppComponent
 			}, {}, {layer: this.sLayer})
-			.then(function(oAppDescriptorCommand) {
-				oAppDescriptorCommand.setCompositeId(sCompositeCommandId);
-				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
-				return oAppDescriptorCommand.createAndStoreChange()
+			.then(function(oManifestCommand) {
+				oManifestCommand.setCompositeId(sCompositeCommandId);
+				assert.ok(oManifestCommand, "Manifest command exists for element");
+				return oManifestCommand.createAndStoreChange()
 				.then(function() {
-					var oStoredChange = oAppDescriptorCommand.getPreparedChange();
+					const oStoredChange = oManifestCommand.getPreparedChange();
 					assert.strictEqual(oStoredChange.getSupportInformation().compositeCommand, sCompositeCommandId, "then composite command id is attached to the change definition");
 				});
 			})
@@ -149,7 +149,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling command factory for a change with long name without mocks ...", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 			this.sChangeType = "appdescr_ui_generic_app_changePageConfiguration";
 			this.mParameters = {
 				parentPage: {component: "dummy", entitySet: "dummy"},
@@ -160,22 +160,22 @@ sap.ui.define([
 				}
 			};
 
-			var oAppDescrCmd;
-			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+			let oManifestCmd;
+			return CommandFactory.getCommandFor(this.oButton, "manifest", {
 				reference: this.sReference,
 				parameters: this.mParameters,
 				texts: this.mTexts,
 				changeType: this.sChangeType,
 				appComponent: this.oMockedAppComponent
 			}, {}, {layer: this.sLayer})
-			.then(function(oAppDescriptorCommand) {
-				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
-				assert.ok(oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
-				oAppDescrCmd = oAppDescriptorCommand;
-				return oAppDescriptorCommand.createAndStoreChange();
+			.then(function(oManifestCommand) {
+				assert.ok(oManifestCommand, "Manifest command exists for element");
+				assert.ok(oManifestCommand.needsReload, "Manifest commands need restart to be applied");
+				oManifestCmd = oManifestCommand;
+				return oManifestCommand.createAndStoreChange();
 			})
 			.then(function() {
-				const oChange = oAppDescrCmd.getPreparedChange();
+				const oChange = oManifestCmd.getPreparedChange();
 				assert.ok(oChange, "the prepared change is available");
 				assert.deepEqual(oChange.getContent(), this.mParameters, "the stored change contains the parameters");
 				assert.ok(oChange.getId().length <= 64, "the fileName is shortened to not exceed the LREP limit");

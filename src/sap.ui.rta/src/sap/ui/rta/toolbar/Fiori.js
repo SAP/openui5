@@ -79,8 +79,9 @@ function(
 				this.getControl("iconBox").addItem(
 					new Image(`${this.getId()}_fragment--sapUiRta_icon`, {
 						src: sLogoPath,
-						width: iWidth ? `${iWidth}px` : iWidth,
-						height: iHeight ? `${iHeight}px` : iHeight
+						// type check required cause of image could have zero width and height
+						width: typeof iWidth === "number" ? `${iWidth}px` : iWidth,
+						height: typeof iHeight === "number" ? `${iHeight}px` : iHeight
 					})
 				);
 			}
