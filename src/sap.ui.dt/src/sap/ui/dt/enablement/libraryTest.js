@@ -139,8 +139,11 @@ sap.ui.define([
 							} else if (Object.keys(mActions[sAction]).length) {
 								assert.strictEqual(typeof mActions[sAction], "object", `${sControlName} defines ${sAction} with multiple action definitions`);
 								Object.keys(mActions[sAction]).forEach((sKey) => {
-									const oValue = mActions[sAction][sKey];
-									assert.strictEqual(typeof oValue.handler, "function", `${sControlName} defines ${sAction} action with ${sKey} with handler function`);
+									if (typeof mActions[sAction][sKey] === "object") {
+										assert.strictEqual(typeof mActions[sAction][sKey].handler, "function", `${sControlName} defines ${sAction} action with ${sKey} with handler function`);
+									} else {
+										assert.strictEqual(typeof mActions[sAction][sKey], "function", `${sControlName} defines ${sAction} action with ${sKey} as function`);
+									}
 								});
 							}
 						} else {
