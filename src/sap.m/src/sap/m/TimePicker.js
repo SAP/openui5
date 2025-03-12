@@ -452,6 +452,7 @@ function(
 				noTabStop: true,
 				decorative: !Device.support.touch || Device.system.desktop ? true : false,
 				useIconTooltip: false,
+				tooltip: this._oResourceBundle.getText("OPEN_PICKER_TEXT"),
 				alt: this._oResourceBundle.getText("OPEN_PICKER_TEXT")
 			});
 

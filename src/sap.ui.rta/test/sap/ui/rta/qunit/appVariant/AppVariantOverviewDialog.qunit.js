@@ -19,10 +19,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	function stubUshellContainer(iNumberOfTargetMappings) {
-		var oUshellContainerStub = {
+		const oUshellContainerStub = {
 			getServiceAsync() {
 				return Promise.resolve({
 					getLinks() {
@@ -107,13 +107,13 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app with two app variants and all app variants have no target mapping assigned,", function(assert) {
-			var done = assert.async();
-			var oReferenceAppMockedDescriptor = {
+			const done = assert.async();
+			const oReferenceAppMockedManifest = {
 				"sap.app": {
 					id: "id1"
 				}
 			};
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedManifest);
 			stubUshellContainer(0);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog("appVariantOverviewTest", {
@@ -144,13 +144,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app with two app variants and all app variants have one target mapping assigned,", function(assert) {
-			var done = assert.async();
-			var oReferenceAppMockedDescriptor = {
+			const done = assert.async();
+			const oReferenceAppMockedManifest = {
 				"sap.app": {
 					id: "id1"
 				}
 			};
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedManifest);
 			stubUshellContainer(1);
 
 			this.oAppVariantOverviewDialog = new AppVariantOverviewDialog("appVariantOverviewTest", {
@@ -193,15 +193,15 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app and a key user has already created app variants based on an original app,", function(assert) {
-			var done = assert.async();
-			var oReferenceAppMockedDescriptor = {
+			const done = assert.async();
+			const oReferenceAppMockedManifest = {
 				"sap.app": {
 					id: "id1"
 				}
 			};
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedManifest);
 
-			var aAppVariantOverviewAttributes = [
+			const aAppVariantOverviewAttributes = [
 				{
 					appId: "id1",
 					title: "title1",
@@ -251,16 +251,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("when AppVariant Overview Dialog gets opened from an original app and there are no app variants based on an original app,", function(assert) {
-			var done = assert.async();
-			var oReferenceAppMockedDescriptor = {
+			const done = assert.async();
+			const oReferenceAppMockedManifest = {
 				"sap.app": {
 					id: "id1"
 				}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedManifest);
 
-			var aAppVariantOverviewAttributes = [
+			const aAppVariantOverviewAttributes = [
 				{
 					appId: "id1",
 					title: "title1",
@@ -288,16 +288,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("when AppVariant Overview Dialog gets opened from an app variant,", function(assert) {
-			var done = assert.async();
-			var oReferenceAppMockedDescriptor = {
+			const done = assert.async();
+			const oReferenceAppMockedManifest = {
 				"sap.app": {
 					id: "id3"
 				}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedManifest);
 
-			var aAppVariantOverviewAttributes = [
+			const aAppVariantOverviewAttributes = [
 				{
 					appId: "id1",
 					title: "title1",
@@ -344,16 +344,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app, original app has one new created app variant,", function(assert) {
-			var done = assert.async();
-			var oReferenceAppMockedDescriptor = {
+			const done = assert.async();
+			const oReferenceAppMockedManifest = {
 				"sap.app": {
 					id: "id1"
 				}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oReferenceAppMockedManifest);
 
-			var aAppVariantOverviewAttributes = [
+			const aAppVariantOverviewAttributes = [
 				{
 					appId: "id1",
 					title: "title1",

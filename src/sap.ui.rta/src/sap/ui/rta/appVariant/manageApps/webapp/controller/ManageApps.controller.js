@@ -34,19 +34,19 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var _sIdRunningApp;
-	var _bKeyUser;
-	var _sLayer;
-	var _oCrossAppNavService;
-	var sModulePath;
-	var oI18n;
+	let _sIdRunningApp;
+	let _bKeyUser;
+	let _sLayer;
+	let _oCrossAppNavService;
+	let sModulePath;
+	let oI18n;
 
 	return Controller.extend("sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps", {
 		onInit() {
 			_sIdRunningApp = this.getOwnerComponent().getIdRunningApp();
 			_bKeyUser = this.getOwnerComponent().getIsOverviewForKeyUser();
 			_sLayer = this.getOwnerComponent().getLayer();
-			var oUShellContainer = FlUtils.getUshellContainer();
+			const oUShellContainer = FlUtils.getUshellContainer();
 
 			if (!oI18n) {
 				this._createResourceBundle();
@@ -77,7 +77,7 @@ sap.ui.define([
 			}.bind(this))
 			.catch(function(oError) {
 				AppVariantUtils.closeOverviewDialog();
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
+				const oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
 				oErrorInfo.overviewDialog = true;
 				BusyIndicator.hide();
 				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
@@ -98,15 +98,15 @@ sap.ui.define([
 		},
 
 		_highlightNewCreatedAppVariant(aAppVariantOverviewAttributes) {
-			var oTable = this.byId("Table1");
+			const oTable = this.byId("Table1");
 			if (!oTable) {
 				return Promise.resolve();
 			}
 			oTable.focus();
 
-			aAppVariantOverviewAttributes.forEach(function(oAppVariantDescriptor, index) {
-				if (oAppVariantDescriptor.currentStatus === oI18n.getText("MAA_NEW_APP_VARIANT")
-					|| oAppVariantDescriptor.currentStatus === oI18n.getText("MAA_OPERATION_IN_PROGRESS")
+			aAppVariantOverviewAttributes.forEach(function(oAppVariantManifest, index) {
+				if (oAppVariantManifest.currentStatus === oI18n.getText("MAA_NEW_APP_VARIANT")
+					|| oAppVariantManifest.currentStatus === oI18n.getText("MAA_OPERATION_IN_PROGRESS")
 				) {
 					if (oTable.getItems().length >= index) {
 						oTable.getItems()[index].focus();
@@ -118,11 +118,11 @@ sap.ui.define([
 		},
 
 		_arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes) {
-			var aAdaptingAppAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
+			const aAdaptingAppAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
 				return oAppVariantProperty.appId === _sIdRunningApp;
 			});
 
-			var oAdaptingAppAttributes = aAdaptingAppAttributes[0];
+			const oAdaptingAppAttributes = aAdaptingAppAttributes[0];
 			if (oAdaptingAppAttributes && oAdaptingAppAttributes.appVarStatus !== "R") {
 				oAdaptingAppAttributes.currentStatus = oI18n.getText("MAA_CURRENTLY_ADAPTING");
 			}
@@ -133,11 +133,11 @@ sap.ui.define([
 
 			aAppVariantOverviewAttributes.unshift(oAdaptingAppAttributes);
 
-			var aReferenceAppAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
+			const aReferenceAppAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
 				return oAppVariantProperty.isOriginal;
 			});
 
-			var oReferenceAppAttributes = aReferenceAppAttributes[0];
+			const oReferenceAppAttributes = aReferenceAppAttributes[0];
 
 			aAppVariantOverviewAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
 				return !oAppVariantProperty.isOriginal;
@@ -147,11 +147,11 @@ sap.ui.define([
 
 			// Bind the app variant overview to JSON model
 
-			var oModelData = {
+			const oModelData = {
 				appVariants: aAppVariantOverviewAttributes
 			};
 
-			var oModel = Model.createModel(oModelData);
+			const oModel = Model.createModel(oModelData);
 			this.getView().setModel(oModel);
 
 			return Promise.resolve(aAppVariantOverviewAttributes);
@@ -214,8 +214,8 @@ sap.ui.define([
 		},
 
 		onMenuAction(oEvent) {
-			var oItem = oEvent.getParameter("item");
-			var sItemPath = "";
+			let oItem = oEvent.getParameter("item");
+			let sItemPath = "";
 
 			while (oItem instanceof MenuItem) {
 				sItemPath = `${oItem.getText()} > ${sItemPath}`;
@@ -240,11 +240,11 @@ sap.ui.define([
 		},
 
 		handleUiAdaptation(oEvent) {
-			var sSemanticObject = this.getModelProperty("semanticObject", oEvent.getSource().getBindingContext());
-			var sAction = this.getModelProperty("action", oEvent.getSource().getBindingContext());
-			var oParams = this.getModelProperty("params", oEvent.getSource().getBindingContext());
+			const sSemanticObject = this.getModelProperty("semanticObject", oEvent.getSource().getBindingContext());
+			const sAction = this.getModelProperty("action", oEvent.getSource().getBindingContext());
+			const oParams = this.getModelProperty("params", oEvent.getSource().getBindingContext());
 
-			var oNavigationParams;
+			let oNavigationParams;
 			if (sSemanticObject && sAction && oParams) {
 				oNavigationParams = {
 					target: {
@@ -269,23 +269,23 @@ sap.ui.define([
 		},
 
 		copyId(oEvent) {
-			var sCopiedId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
+			const sCopiedId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
 			AppVariantUtils.copyId(sCopiedId);
 			MessageToast.show(oI18n.getText("MAA_COPY_ID_SUCCESS"));
 		},
 
 		deleteAppVariant(oEvent) {
-			var oInfo = {};
+			const oInfo = {};
 			if (!oI18n) {
 				this._createResourceBundle();
 			}
-			var sMessage = oI18n.getText("MSG_APP_VARIANT_DELETE_CONFIRMATION");
+			const sMessage = oI18n.getText("MSG_APP_VARIANT_DELETE_CONFIRMATION");
 			oInfo.text = sMessage;
 			oInfo.deleteAppVariant = true;
 
-			var sAppVarId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
-			var sCurrentStatus = this.getModelProperty("currentStatus", oEvent.getSource().getBindingContext());
-			var bCurrentlyAdapting = sCurrentStatus === oI18n.getText("MAA_CURRENTLY_ADAPTING");
+			const sAppVarId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
+			const sCurrentStatus = this.getModelProperty("currentStatus", oEvent.getSource().getBindingContext());
+			const bCurrentlyAdapting = sCurrentStatus === oI18n.getText("MAA_CURRENTLY_ADAPTING");
 
 			return AppVariantUtils.showRelevantDialog(oInfo)
 			.then(function() {

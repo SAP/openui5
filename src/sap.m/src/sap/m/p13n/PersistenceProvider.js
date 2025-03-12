@@ -25,10 +25,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Provides the mode setting for the <code>PersistenceProvider</code>.
-				 * Allowed options are {@link sap.ui.mdc.enum.PersistenceMode}.
-				 *
-				 * <b>Note:</b> The <code>PersistenceMode</code> option must not be changed after changes have already been made and persisted for a control instance.
-				 * For example, changing the mode from <code>Global</code> to <code>Auto</code> might result in an incompatible mix of different types of changes.
+				 * Allowed options are {@link sap.ui.mdc.enum.PersistenceMode}
 				 */
 				mode: {
 					type: "sap.m.p13n.enums.PersistenceMode",
@@ -65,14 +62,12 @@ sap.ui.define([
 	/**
 	 * Set the mode for the <code>PersistenceProvider</code>.
 	 *
-	 * @param {sap.m.p13n.enums.PersistenceMode} sValue The configuration for the persistence mode
+	 * @param {sap.m.p13n.enums.PersistenceMode} sValue
 	 * @returns {this}
 	 * @override
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 *
-	 * @returns {sap.m.p13n.PersistenceProvider} The <code>PersistenceProvider</code> instance
 	 */
 	PersistenceProvider.prototype.setMode = function(sValue) {
 

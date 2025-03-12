@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
 		beforeEach() {
@@ -44,7 +44,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with some missing properties (Key user view) on S4/Hana Cloud", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				isOriginal: true,
@@ -74,8 +74,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'U'", function(assert) {
-			var oAppVariantInfo = {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app let status 'U'", function(assert) {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				originLayer: Layer.VENDOR,
@@ -97,7 +97,7 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
-				assert.equal(oAppVariantAttributes.appVarStatus, "U", "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, "U", "then the right app let status is set");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
 				assert.equal(
 					oAppVariantAttributes.delAppVarButtonVisibility,
@@ -112,8 +112,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'R'", function(assert) {
-			var oAppVariantInfo = {
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app let status 'R'", function(assert) {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				originLayer: Layer.VENDOR,
@@ -132,7 +132,7 @@ sap.ui.define([
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonVisibility, true, "then the button Adapt UI is available");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
-				assert.equal(oAppVariantAttributes.appVarStatus, "R", "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, "R", "then the right app let status is set");
 				assert.equal(
 					oAppVariantAttributes.delAppVarButtonVisibility,
 					true,
@@ -147,7 +147,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has no target mappings", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				originLayer: Layer.VENDOR,
@@ -164,7 +164,7 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
-				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app let status is set");
 				assert.equal(
 					oAppVariantAttributes.delAppVarButtonVisibility,
 					true,
@@ -179,7 +179,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has target mappings", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				originLayer: Layer.VENDOR,
@@ -200,7 +200,7 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, true, "then the button Adapt UI is enabled");
-				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, undefined, "then the right app let status is set");
 				assert.equal(
 					oAppVariantAttributes.delAppVarButtonVisibility,
 					true,
@@ -215,7 +215,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with status 'Error'", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				originLayer: Layer.VENDOR,
@@ -237,7 +237,7 @@ sap.ui.define([
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is not enabled");
-				assert.equal(oAppVariantAttributes.appVarStatus, "E", "then the right app var status is set");
+				assert.equal(oAppVariantAttributes.appVarStatus, "E", "then the right app let status is set");
 				assert.equal(
 					oAppVariantAttributes.delAppVarButtonVisibility,
 					true,
@@ -252,7 +252,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters (Key user view) in on prem system", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				subTitle: "subTitle1",
@@ -284,7 +284,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as an object (Key user view) on cloud system", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				subTitle: "subTitle1",
@@ -315,7 +315,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as a string (Key user view) in on prem system", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				subTitle: "subTitle1",
@@ -343,7 +343,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called but the ushell container fails to retrieve the Navigation service", function(assert) {
-			var oAppVariantInfo = {
+			const oAppVariantInfo = {
 				appId: "id1",
 				title: "title1",
 				subTitle: "subTitle1",
@@ -378,7 +378,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present (Key user view) on S4 cloud system", function(assert) {
-			var oResult = {
+			const oResult = {
 				response: {
 					items: [
 						{
@@ -408,7 +408,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
+			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
@@ -426,11 +426,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which is laid in the customer layer (SAP developer view) on cloud system", function(assert) {
-			var oResult = {
+			const oResult = {
 				response: {}
 			};
 
-			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
+			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
@@ -441,7 +441,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverview() method is called on a reference app (currently adapting) which also has intent information present (SAP developer view) on prem system", function(assert) {
-			var oResult = {
+			const oResult = {
 				response: {
 					items: [
 						{
@@ -462,7 +462,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
-			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
+			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
@@ -478,7 +478,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which has no intent information present (Key user view) on cloud system", function(assert) {
-			var oResult = {
+			const oResult = {
 				response: {
 					items: [
 						{
@@ -521,10 +521,10 @@ sap.ui.define([
 				}
 			};
 
-			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
+			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 			AppVariantUtils.setNewAppVariantId("id1");
 
-			var oResourceBundlePromise = ResourceBundle.create({
+			const oResourceBundlePromise = ResourceBundle.create({
 				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
 				async: true
 			});
@@ -533,8 +533,8 @@ sap.ui.define([
 
 			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
 			.then(function(aParams) {
-				var aAppVariantOverviewAttributes = aParams[0];
-				var oResourceBundle = aParams[1];
+				const aAppVariantOverviewAttributes = aParams[0];
+				const oResourceBundle = aParams[1];
 
 				assert.ok(
 					aAppVariantOverviewAttributes,
@@ -604,7 +604,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When getAppVariantOverview() method is called with current status 'Operation in Process'", function(assert) {
-			var oResult = {
+			const oResult = {
 				response: {
 					items: [
 						{
@@ -633,9 +633,9 @@ sap.ui.define([
 				}
 			};
 
-			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
+			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
-			var oResourceBundlePromise = ResourceBundle.create({
+			const oResourceBundlePromise = ResourceBundle.create({
 				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
 				async: true
 			});
@@ -646,8 +646,8 @@ sap.ui.define([
 
 			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
 			.then(function(aParams) {
-				var aAppVariantOverviewAttributes = aParams[0];
-				var oResourceBundle = aParams[1];
+				const aAppVariantOverviewAttributes = aParams[0];
+				const oResourceBundle = aParams[1];
 
 				assert.ok(
 					aAppVariantOverviewAttributes,
@@ -710,7 +710,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which is also a reference app and has intent information present (Key user view) on cloud system", function(assert) {
-			var oResult = {
+			const oResult = {
 				response: {
 					items: [
 						{
@@ -738,7 +738,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
+			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
@@ -751,8 +751,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When getDescriptor() method is called", function(assert) {
-			var oResult = {
+		QUnit.test("When getManifest() method is called", function(assert) {
+			const oResult = {
 				response: {
 					"sap.app": {
 						id: "testId"
@@ -760,11 +760,11 @@ sap.ui.define([
 				}
 			};
 
-			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "getManifest").resolves(oResult);
+			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "getManifest").resolves(oResult);
 
-			return AppVariantOverviewUtils.getDescriptor("testIdDescriptorUrl").then(function(oDescriptor) {
-				assert.ok(oDescriptor, "then the descriptor of the app is returned");
-				assert.strictEqual(oDescriptor["sap.app"].id, "testId", "then the id of the descriptor is right");
+			return AppVariantOverviewUtils.getManifest("testIdDescriptorUrl").then(function(oManifest) {
+				assert.ok(oManifest, "then the descriptor of the app is returned");
+				assert.strictEqual(oManifest["sap.app"].id, "testId", "then the id of the descriptor is right");
 				assert.ok(sendRequestStub.calledOnce, "then the sendRequest is called once");
 			});
 		});

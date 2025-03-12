@@ -140,7 +140,7 @@ sap.ui.define([
 		});
 	};
 
-	Settings.prototype._handleAppDescriptorChangeCommand = function(mChange, oElement, oCompositeCommand) {
+	Settings.prototype._handleManifestChangeCommand = function(mChange, oElement, oCompositeCommand) {
 		var mChangeSpecificData = mChange.changeSpecificData;
 		var oComponent = mChange.appComponent;
 		var mManifest = oComponent.getManifest();
@@ -148,7 +148,7 @@ sap.ui.define([
 
 		return this.getCommandFactory().getCommandFor(
 			oElement,
-			"appDescriptor",
+			"manifest",
 			{
 				reference: sReference,
 				appComponent: oComponent,
@@ -157,8 +157,8 @@ sap.ui.define([
 				texts: mChangeSpecificData.content.texts
 			}
 		)
-		.then(function(oAppDescriptorCommand) {
-			return oCompositeCommand.addCommand(oAppDescriptorCommand);
+		.then(function(oManifestCommand) {
+			return oCompositeCommand.addCommand(oManifestCommand);
 		});
 	};
 
@@ -177,9 +177,9 @@ sap.ui.define([
 				// Flex Change
 				if (mChangeSpecificData.changeType) {
 					return () => this._handleFlexChangeCommand(mChange, aElementOverlays, oCompositeCommand, oSettingsAction);
-				// App Descriptor Change
+				// Manifest Change
 				} else if (mChangeSpecificData.appDescriptorChangeType) {
-					return () => this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
+					return () => this._handleManifestChangeCommand(mChange, oElement, oCompositeCommand);
 				}
 				return undefined;
 			}, this);

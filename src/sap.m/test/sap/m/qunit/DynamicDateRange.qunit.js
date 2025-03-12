@@ -1545,7 +1545,7 @@ sap.ui.define([
 
 		// act
 		// assert
-		assert.notOk(oIconOne.getTooltip(), "icon has no tooltip");
+		assert.strictEqual(oIconOne.getTooltip(), Library.getResourceBundleFor("sap.m").getText("OPEN_PICKER_TEXT"), "icon has tooltip");
 		assert.ok(oIconOne.getDecorative(), "icon is decorative");
 		assert.notOk(oIconOne.getUseIconTooltip(), "icon doesn't have default tooltip");
 		assert.strictEqual(oIconOne.getAlt(), Library.getResourceBundleFor("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");

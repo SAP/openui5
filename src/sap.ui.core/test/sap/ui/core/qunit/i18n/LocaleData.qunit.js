@@ -404,12 +404,6 @@ sap.ui.define([
 		assert.notOk(oLocaleData.getUnitFormat("CAT"), "not found as it does not take mapping into consideration");
 		assert.equal(oLocaleData.getUnitFromMapping("CAT"), "cats", "cats is the respective mapping");
 		assert.equal(oLocaleData.getResolvedUnitFormat("CAT").displayName, "kittens", "kittens is the displayName");
-		assert.strictEqual(oLocaleData.getUnitFormat("acceleration-meter-per-second-squared").displayName, "fooBar",
-			"Custom legacy unit returns custom unit");
-		assert.strictEqual(oLocaleData.getUnitFromMapping("concentr-milligram-per-deciliter"), undefined,
-			"Legacy unit is not found in custom unit mapping");
-		assert.strictEqual(oLocaleData.getUnitFormat("concentr-milligram-per-deciliter").displayName, "mg/dL",
-			"Legacy unit is mapped to new unit in CLDR");
 	});
 
 	QUnit.test("Unit Mappings", function(assert) {

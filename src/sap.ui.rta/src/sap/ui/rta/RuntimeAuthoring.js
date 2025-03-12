@@ -555,7 +555,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {boolean} bSkipSave - Stop RTA with or w/o saving changes
-	 * @param {boolean} bSkipRestart - Stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/app descriptor changes
+	 * @param {boolean} bSkipRestart - Stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/manifest changes
 	 * @param {boolean} bSkipUnsavedChangesPrompt - Stop RTA without showing the "save changes" prompt to the user (e.g. closing of annotation dialog)
 	 * @returns {Promise} Resolves with undefined
 	 */
@@ -1562,7 +1562,7 @@ sap.ui.define([
 
 	/**
 	 * Delete all changes for current layer and root control's component.
-	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved
+	 * In case of Base Applications (no App Variants) the manifest Changes and UI Changes are saved
 	 * in different Flex Persistence instances, the changes for both places will be deleted. For App Variants
 	 * all the changes are saved in one place.
 	 *

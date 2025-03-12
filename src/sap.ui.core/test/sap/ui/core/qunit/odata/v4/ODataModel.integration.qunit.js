@@ -1605,15 +1605,18 @@ sap.ui.define([
 		 * Creates a V4 OData model for <code>TEA_BUSI</code>.
 		 *
 		 * @param {object} [mModelParameters] Map of parameters for model construction
+		 * @param {map} [mAdditionalFixture]
+		 *   The additional fixture. See {@link sap.ui.test.TestUtils.useFakeServer}
 		 * @returns {sap.ui.model.odata.v4.ODataModel} The model
 		 */
-		createTeaBusiModel : function (mModelParameters) {
-			return this.createModel(sTeaBusi, mModelParameters, {
-					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
-						: {source : "odata/v4/data/metadata.xml"},
+		createTeaBusiModel : function (mModelParameters, mAdditionalFixture) {
+			return this.createModel(sTeaBusi, mModelParameters, Object.assign({
+					[sTeaBusi + "$metadata"] : {source : "odata/v4/data/metadata.xml"},
 					"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
-						: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
-				});
+						: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
+					"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata"
+						: {source : "odata/v4/data/metadata_tea_busi_supplier.xml"}
+				}, mAdditionalFixture));
 		},
 
 		/**
@@ -1624,7 +1627,7 @@ sap.ui.define([
 		 */
 		createTeaBusiModel123 : function (mModelParameters) {
 			return this.createModel(sTeaBusi + "?sap-client=123", mModelParameters, {
-					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=123"
+					[sTeaBusi + "$metadata?sap-client=123"]
 						: {source : "odata/v4/data/metadata.xml"},
 					"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=123"
 						: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
@@ -5644,8 +5647,7 @@ sap.ui.define([
 			that = this;
 
 		oModel = this.createModel(sTeaBusi + "?c1=a&c2=b", {}, {
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
-				: {source : "odata/v4/data/metadata.xml"},
+			[sTeaBusi + "$metadata?c1=a&c2=b"] : {source : "odata/v4/data/metadata.xml"},
 			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?c1=a&c2=b"
 				: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
 		});
@@ -19261,8 +19263,7 @@ sap.ui.define([
 		{text : "Business Suite"},
 		function () {
 			return this.createModel(sTeaBusi + "?c1=a&c2=b", {}, {
-					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?c1=a&c2=b"
-						: {source : "odata/v4/data/metadata.xml"}
+					[sTeaBusi + "$metadata?c1=a&c2=b"] : {source : "odata/v4/data/metadata.xml"}
 				});
 		}
 	);
@@ -56839,14 +56840,9 @@ sap.ui.define([
 	// cross-service references.
 	// JIRA: CPOUI5ODATAV4-2637
 	QUnit.test("CPOUI5ODATAV4-2637: setAnnotationChangePromise", async function (assert) {
-		const oModel = this.createModel(sTeaBusi, {
+		const oModel = this.createTeaBusiModel({
 			annotationURI : sTeaBusi + "annotations_tea_busi.xml"
 		}, {
-			[sTeaBusi + "$metadata"] : {source : "odata/v4/data/metadata.xml"},
-			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
-				: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
-			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata"
-				: {source : "odata/v4/data/metadata_tea_busi_supplier.xml"},
 			[sTeaBusi + "annotations_tea_busi.xml"]
 				: {source : "odata/v4/data/annotations_tea_busi.xml"}
 		});
@@ -64291,8 +64287,8 @@ sap.ui.define([
 				"sap-language" : "EN"
 			}
 		}, {
-			"HEAD /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/?sap-client=279" : {},
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=EN"
+			[`HEAD ${sTeaBusi}?sap-client=279`] : {},
+			[sTeaBusi + "$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=EN"]
 				: {source : "odata/v4/data/metadata.xml"},
 			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=EN"
 				: {source : "odata/v4/data/metadata_tea_busi_product.xml"}

@@ -107,7 +107,7 @@ sap.ui.define([
 		sendXHR: true,
 		value: "",
 		additionalData: "abc=123&test=456",
-		icon: "sap-icon://save",
+		icon: "sap-icon://download",
 		iconOnly: true
 	});
 
