@@ -1,58 +1,12 @@
-/* ============================================================ */
-/* CSS for control sap.ui.integration.controls/ObjectStatus     */
-/* Base theme                                                   */
-/* ============================================================ */
+/* ============================================================= */
+/* CSS for control sap.ui.integration.controls/sapUiIntObjStatus */
+/* Base theme                                                    */
+/* ============================================================= */
 
-.sapUiIntObjStatus .sapMObjStatusWrapper {
-	display: inline;
-}
-
-.sapUiIntCard .sapMObjStatus {
-	&.sapMObjStatusShowIcon {
-		&::before {
-			display: inline;
-			font-size: 1rem;
-			line-height: 1;
-			font-family: 'SAP-icons';
-			padding-inline-end: 0.25rem;
-		}
-
-		.sapMObjStatusText {
-			display: inline;
-		}
-
-		&.sapMObjStatusError::before {
-			color: @sapUiNegativeElement;
-			content: "\e1ec";
-		}
-
-		&.sapMObjStatusWarning::before {
-			color: @sapUiCriticalElement;
-			content: "\e053";
-		}
-
-		&.sapMObjStatusSuccess::before {
-			color: @sapUiPositiveElement;
-			content: "\e1c1";
-		}
-
-		&.sapMObjStatusInformation::before {
-			color: @sapUiInformativeElement;
-			content: "\e289";
-		}
-	}
-
-	&:not(.sapMObjStatusShowCustomIcon) .sapMObjStatusIcon {
-		display: none
-	}
-
-	&.sapMObjStatusShowCustomIcon {
-		.sapMObjStatusIcon {
-			display: inline;
-		}
-
-		.sapMObjStatusText {
-			display: inline;
-		}
+.sapMObjStatus.sapUiIntObjStatus:not(.sapMObjStatusInverted) {
+	.sapMObjStatusText,
+	.sapMObjStatusWrapper {
+		display: inline;
+		vertical-align: top;
 	}
 }

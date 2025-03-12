@@ -1098,7 +1098,6 @@ sap.ui.define([
 		assert.equal(aGroups[0].getItems()[9].getShowStateIcon(), oData.showErrorStateIcon, "Should have correct status icon value.");
 		assert.equal(aGroups[0].getItems()[10].getShowStateIcon(), oData.showWarningStateIcon, "Should have correct status icon value.");
 		assert.equal(aGroups[0].getItems()[11].getIcon(), oData.CustomSuccessStateIcon, "Should have correct custom status icon value.");
-		assert.ok(aGroups[0].getItems()[11].hasStyleClass("sapMObjStatusShowCustomIcon"), "Should have correct class for custom state icon");
 
 		// Group 2 assertions
 		assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");

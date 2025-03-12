@@ -330,7 +330,7 @@ sap.ui.define([
 			.setText(this.getInfo())
 			.setState(this.getInfoState())
 			.setShowStateIcon(this.getShowInfoStateIcon())
-			.setIcon(this.getCustomInfoStatusIcon());
+			.setCustomIcon(this.getCustomInfoStatusIcon());
 
 		return oObjectStatus;
 	};
