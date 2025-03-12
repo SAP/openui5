@@ -3,32 +3,32 @@
 /* Horizon theme                  */
 /* ============================== */
 
-/*TBD: Adjustments for sapUiTableTreeIcon might be obsolete when Icon is adjusted*/
+/*TBD: Adjustments for sapUiTableTreeIcon might be obsolete when Icon is adjusted */
 
 .sapUiTableTreeIcon {
-    border-radius: @sapUiButtonBorderCornerRadius;
-    box-sizing: border-box;
-    margin-right: 2px;
+	border-radius: var(--sapButton_BorderCornerRadius);
+	box-sizing: border-box;
+	margin-right: 2px;
 }
 
 .sapUiSizeCompact .sapUiTableTreeIcon {
-    height: @_sap_ui_table_BaseSizeCondensed;
+	height: @_sap_ui_table_BaseSizeCondensed;
 }
 
 .sapUiTableTreeIcon:active::before {
-    color: @sapUiButtonActiveTextColor;
+	color: var(--sapButton_Active_TextColor);
 }
 
 .sapUiTableTreeIcon:hover {
-    color: @sapUiButtonHoverTextColor;
-    border: 1px solid @sapUiButtonHoverBorderColor;
-    background: @sapUiButtonHoverBackground;
+	color: var(--sapButton_Hover_TextColor);
+	border: 1px solid var(--sapButton_Hover_BorderColor);
+	background: var(--sapButton_Hover_Background);
 }
 
 .sapUiTableTreeIcon:active {
-    border: 1px solid @sapUiButtonActiveBorderColor;
+	border: 1px solid var(--sapButton_Active_BorderColor);
 }
 
 .sapUiTableTreeIcon:active:focus {
-    outline: none;
+	outline: none;
 }
