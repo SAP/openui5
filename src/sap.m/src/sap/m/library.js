@@ -2525,6 +2525,27 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Interface for controls placed in the <code>content</code> aggregation of <code>{@link sap.m.Toolbar}</code> or <code>{@link sap.m.OverflowToolbar}</code>,
+	 * which need to indicate whether they are interactive or not.
+	 *
+	 * Controls that implement this interface should have the following method:
+	 * <code>_getToolbarInteractive</code> - returns boolean value that shows whether the control is interactive or not
+	 *
+	 * @name sap.m.IToolbarInteractiveControl
+	 * @interface
+	 * @public
+	 */
+
+	/**
+	 * Returns whether the control is interactive or not.
+	 *
+	 * @function
+	 * @name sap.m.IToolbarInteractiveControl._getToolbarInteractive
+	 * @returns {boolean} Whether it is an interactive Control
+	 * @private
+	 */
+
+	/**
 	 *
 	 * Interface for controls which can have special behavior inside <code>sap.m.OverflowToolbar</code>.
 	 * Controls that implement this interface must provide a <code>getOverflowToolbarConfig</code> method
