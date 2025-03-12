@@ -31,13 +31,16 @@ sap.ui.define([
 			property: "position"
 		}),
 		addSort: xConfigHandler.createHandler({
-			property: "sortConditions"
+			property: "sortConditions",
+			revertProperties: ["descending"]
 		}),
 		removeSort: xConfigHandler.createHandler({
-			property: "sortConditions"
+			property: "sortConditions",
+			revertProperties: ["descending"]
 		}),
 		moveSort: xConfigHandler.createHandler({
-			property: "sortConditions"
+			property: "sortConditions",
+			revertProperties: ["descending"]
 		}),
 		addCondition: xConfigHandler.createHandler({
 			property: "filterConditions"
