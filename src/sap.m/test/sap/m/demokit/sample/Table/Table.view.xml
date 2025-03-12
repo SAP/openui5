@@ -2,6 +2,7 @@
 	controllerName="sap.m.sample.Table.Table"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
+	xmlns:p="sap.m.plugins"
 	xmlns="sap.m">
 	<Table id="idProductsTable"
 		inset="false"
@@ -50,6 +51,9 @@
 			<Column
 				width="12em">
 				<Text text="Product" />
+				<dependents>
+					<p:ColumnAIAction press="onAIActionPress"></p:ColumnAIAction>
+				</dependents>
 			</Column>
 			<Column
 				minScreenWidth="Tablet"

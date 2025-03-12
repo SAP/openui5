@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/core/Control",
-	"sap/ui/mdc/enums/TableType"
+	"sap/ui/mdc/enums/TableType",
+	"sap/m/plugins/PluginBase"
 ], (
 	GridTableType,
 	ResponsiveTableType,
@@ -25,7 +26,8 @@ sap.ui.define([
 	ManagedObjectModel,
 	BindingMode,
 	Control,
-	TableType
+	TableType,
+	PluginBase
 ) => {
 	"use strict";
 
@@ -207,6 +209,11 @@ sap.ui.define([
 			p13nWidth: null
 		});
 		this._oManagedObjectModel.setDefaultBindingMode(BindingMode.OneWay);
+		this._oInnerColumnReady = Promise.withResolvers();
+	};
+
+	Column.prototype.getColumnAIActionPluginOwner = function() {
+		return this._oInnerColumn || this._oInnerColumnReady.promise;
 	};
 
 	Column.prototype.getInnerColumn = function() {
@@ -310,6 +317,7 @@ sap.ui.define([
 		oColumn.setModel(this._oSettingsModel, "$columnSettings");
 		oColumn.setHeaderMenu(oTable.getId() + "-columnHeaderMenu");
 
+		this._oInnerColumnReady.resolve();
 		return oColumn;
 	};
 
@@ -483,6 +491,10 @@ sap.ui.define([
 		this._connectToTable();
 	};
 
+	Column.prototype._getAIAction = function() {
+		return PluginBase.getPlugin(this, "sap.m.plugins.ColumnAIAction");
+	};
+
 	Column.prototype._connectToTable = function() {
 		const oTable = this.getTable();
 
@@ -490,11 +502,13 @@ sap.ui.define([
 			return;
 		}
 
+		this._getAIAction()?.setEnabled(true);
 		this._calculateColumnWidth();
 		this._readP13nValues();
 	};
 
-	Column.prototype._disconnectFromTable = function(oTable = this.getTable()) {
+	Column.prototype._disconnectFromTable = function() {
+		this._getAIAction()?.setEnabled(false);
 		this._oInnerColumn?.destroy();
 		delete this._oInnerColumn;
 	};
@@ -537,7 +551,7 @@ sap.ui.define([
 
 	Column.prototype.exit = function() {
 		this._disconnectFromTable();
-
+		this._oInnerColumnReady = null;
 		[
 			"_oManagedObjectModel",
 			"_oSettingsModel",

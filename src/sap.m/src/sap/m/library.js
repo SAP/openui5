@@ -494,6 +494,7 @@ sap.ui.define([
 			"sap.m.ViewSettingsFilterItem",
 			"sap.m.ViewSettingsItem",
 			"sap.m.plugins.CellSelector",
+			"sap.m.plugins.ColumnAIAction",
 			"sap.m.plugins.ColumnResizer",
 			"sap.m.plugins.CopyProvider",
 			"sap.m.plugins.DataStateIndicator",

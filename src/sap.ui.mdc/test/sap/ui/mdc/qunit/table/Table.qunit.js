@@ -38,6 +38,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/m/plugins/PluginBase",
 	"sap/m/plugins/ColumnResizer",
+	"sap/m/plugins/ColumnAIAction",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
@@ -91,6 +92,7 @@ sap.ui.define([
 	ControlPersonalizationWriteAPI,
 	PluginBase,
 	ColumnResizer,
+	ColumnAIAction,
 	Message,
 	Theming,
 	ThemeParameters,
@@ -5309,6 +5311,17 @@ sap.ui.define([
 					header: "a",
 					propertyKey: "a",
 					required: true
+				}),
+				new Column({
+					id: "column_withoutAIAction",
+					header: "AIColumn",
+					propertyKey: "columnAIAction"
+				}),
+				new Column({
+					id: "column_withAIAction",
+					header: "AIColumn",
+					propertyKey: "columnAIAction",
+					dependents: new ColumnAIAction()
 				})
 			]
 		}, [{
@@ -5422,6 +5435,11 @@ sap.ui.define([
 					minWidth: 1
 				}
 			}
+		}, {
+			key: "columnAIAction",
+			label: "AI Action",
+			dataType: "Edm.String",
+			constraints: {maxLength: 5}
 		}]);
 		await this.oTable.initialized();
 		this.oTable.placeAt("qunit-fixture");
@@ -5481,6 +5499,9 @@ sap.ui.define([
 
 		// 12th column. required "*" is added to column
 		assert.ok(check("Yes*", parseFloat(getInnerColumnWidth(aColumns[12])) - fPadding - 0.125 /* subtract padding from marker */), "Heaeder has correct width when using 'required' property");
+
+		// ai action columns
+		assert.ok(parseFloat(getInnerColumnWidth(aColumns[13])) < parseFloat(getInnerColumnWidth(aColumns[14])), "AIAction column is wider than no AIAction column");
 	});
 
 	QUnit.test("Column widths; TreeTableType", async function(assert) {
