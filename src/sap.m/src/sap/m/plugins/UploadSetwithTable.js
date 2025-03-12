@@ -26,8 +26,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/m/Text",
-	"sap/m/VBox"
-], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, TextField, VBox) {
+	"sap/m/VBox",
+	"sap/ui/model/BindingMode"
+], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, TextField, VBox, BindingMode) {
 	"use strict";
 
 	/**
@@ -734,7 +735,7 @@ sap.ui.define([
 			return;
 		}
 		if (oBindingContext) {
-			const oItem = await this.getItemForContext(oBindingContext);
+			const oItem = await this.getItemForContext(oBindingContext, true);
 			const oDialog = this._getFileRenameDialog(oItem);
 			oDialog.open();
 		}
@@ -1616,9 +1617,9 @@ sap.ui.define([
 		const {property, propertyPath, modelName} = mBindingInfo;
 
 		return new Promise((resolve, reject) => {
-			let oBindingInfo = {
+			const oBindingInfo = {
 				path: modelName ? `${modelName}>${propertyPath}` : propertyPath,
-				mode: sap.ui.model.BindingMode.TwoWay,
+				mode: createStaticBinding ? BindingMode.OneWay : BindingMode.TwoWay,
 				events: {
 					change: function () {
 						oItem?.getBinding(property)?.detachChange((oEvent) => {
@@ -1628,7 +1629,6 @@ sap.ui.define([
 					}
 				}
 			};
-			oBindingInfo = createStaticBinding ? Object.assign(oBindingInfo, {value: mBindingInfo?.value}) : oBindingInfo;
 
 			oItem.bindProperty(property, oBindingInfo);
 		});

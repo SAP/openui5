@@ -702,6 +702,80 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	QUnit.test("File rename must trigger itemRenamed event and must not trigger model updates", async function (assert) {
+
+		const done = assert.async();
+
+		// arrange
+		const oTable = await createMDCTable();
+
+		const oRow = new sap.m.upload.UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			rowConfiguration: oRow
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+		await nextUIUpdate();
+
+		//act
+		const oComputedItem = new sap.m.upload.UploadItem({
+			fileName: "Invoice summary.doc",
+			mediaType: "application/msword",
+			fileSize: 200
+		});
+		this.stub(oUploadSetwithTablePlugin, "getItemForContext").returns(oComputedItem);
+		const oDialog = oUploadSetwithTablePlugin._getFileRenameDialog(oComputedItem);
+
+		const oInvalidateSpy = this.spy(oComputedItem, "invalidate");
+		const oItemRenamedEventSpy = this.spy(oUploadSetwithTablePlugin, "fireItemRenamed");
+
+		function fnRenamedHandler() {
+			assert.ok(oItemRenamedEventSpy.called , "Item renamed event is fired successfully");
+			assert.ok(oInvalidateSpy.notCalled, "Item model is not updated");
+			done();
+		}
+
+		oDialog.attachAfterOpen(() => {
+
+			oUploadSetwithTablePlugin.attachItemRenamed(fnRenamedHandler);
+
+			const oInput = oDialog.getContent()[1];
+			const oApplyBtn = oDialog.getBeginButton();
+
+			// assert
+
+			oInput.setValue(`Invoice summary test`);
+			oInput.fireLiveChange({
+				value: oInput.getValue()
+			});
+
+			oApplyBtn.firePress();
+
+			// assert input should not have error state
+			assert.ok(oInput.getValueState() === "None", "Input value state is set to none when valid characters are entered");
+
+			oDialog.close();
+			// done();
+		});
+		this.stub(oUploadSetwithTablePlugin, "_getFileRenameDialog").callsFake(function () {
+			oDialog.open();
+			return oDialog;
+		});
+
+		const oContext = oTable?._oTable?.getItems()[0]?.getBindingContext();
+		oUploadSetwithTablePlugin.renameItem(oContext);
+		oTable.destroy();
+
+	});
+
 	QUnit.module("Plugin properties & aggregations", {
 		beforeEach: function() {
 			this.oTable = null;
