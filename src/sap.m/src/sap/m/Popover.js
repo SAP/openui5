@@ -519,12 +519,15 @@ sap.ui.define([
 					// otherwise it messes the initial scrolling setting of scrollenablement in RTL mode
 					that._storeScrollPosition();
 				}
+
+				that._preventDocumentElementScrolling();
 				that._clearCSSStyles();
 
 				//calculate the best placement of the popover if placementType is horizontal,  vertical or auto
 				var iPlacePos = that._placements.indexOf(that.getPlacement());
 				if (iPlacePos > 3 && !that._bPosCalced) {
 					that._calcPlacement();
+					that._restoreDocumentElementScrolling();
 					return;
 				}
 
@@ -538,6 +541,7 @@ sap.ui.define([
 				// if the openBy dom reference is null there's no need to continue the reposition the popover
 				if (!oPosition.of) {
 					Log.warning("sap.m.Popover: in function applyPosition, the openBy element doesn't have any DOM output. " + that);
+					that._restoreDocumentElementScrolling();
 					return;
 				}
 
@@ -548,6 +552,7 @@ sap.ui.define([
 						oPosition.of = oOf;
 					} else {
 						Log.warning("sap.m.Popover: in function applyPosition, the openBy element's DOM is already detached from DOM tree and can't be found again by the same id. " + that);
+						that._restoreDocumentElementScrolling();
 						return;
 					}
 				}
@@ -559,6 +564,7 @@ sap.ui.define([
 					&& $popoverWithinArea.height() == that._initialWindowDimensions.height
 					&& (oRect.top + oRect.height <= 0 || oRect.top >= $popoverWithinArea.height() || oRect.left + oRect.width <= 0 || oRect.left >= $popoverWithinArea.width())) {
 					that.close();
+					that._restoreDocumentElementScrolling();
 					return;
 				}
 
@@ -579,6 +585,8 @@ sap.ui.define([
 
 				//register the content resize handler
 				that._registerContentResizeHandler(oScrollDomRef);
+
+				that._restoreDocumentElementScrolling();
 			};
 
 			// when popup's close method is called by autoclose handler, the beforeClose event also needs to be fired.
@@ -799,6 +807,7 @@ sap.ui.define([
 				this._headerTitle.destroy();
 				this._headerTitle = null;
 			}
+
 		};
 		/* =========================================================== */
 		/*                   end: lifecycle methods                    */
@@ -917,7 +926,10 @@ sap.ui.define([
 					} else {
 						// Save current focused element to restore the focus after closing the dialog
 						that._oPreviousFocus = Popup.getCurrentFocusInfo();
+						that._preventDocumentElementScrolling();
 						oPopup.open();
+						that._restoreDocumentElementScrolling();
+
 						// delegate must be added after calling open on popup because popup should position the content first and then focus can be reset
 						that.addDelegate(that._oRestoreFocusDelegate, that);
 						//if popover shouldn't be managed by Instance Manager
@@ -2972,6 +2984,25 @@ sap.ui.define([
 				this._bDocumentListenersAdded = false;
 
 				document.removeEventListener("keydown", this._fnHandleDocumentKeydown);
+			}
+		};
+
+		/*
+		 * Helps to prevent temporary appearance of a scrollbar in documentElement during Popover calculations.
+		 */
+		Popover.prototype._preventDocumentElementScrolling = function () {
+			const bDocumentElementHasVerticalScrollbar = document.documentElement.scrollHeight > document.documentElement.clientHeight;
+
+			if (!bDocumentElementHasVerticalScrollbar) {
+				this._sDocumentElementOverflow = document.documentElement.style.overflow;
+				document.documentElement.style.overflow = "hidden";
+			}
+		};
+
+		Popover.prototype._restoreDocumentElementScrolling = function () {
+			if (this._sDocumentElementOverflow !== undefined) {
+				document.documentElement.style.overflow = this._sDocumentElementOverflow;
+				delete this._sDocumentElementOverflow;
 			}
 		};
 
