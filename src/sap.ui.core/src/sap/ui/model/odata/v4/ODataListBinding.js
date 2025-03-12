@@ -3626,13 +3626,14 @@ sap.ui.define([
 	 * Moves the given (child) node to the given parent, just before the given next sibling. An
 	 * expanded (child) node is silently collapsed before and expanded after the move. A collapsed
 	 * parent is automatically expanded; so is a leaf. The (child) node is added to the parent at
-	 * its proper position ("in place") and simply "persisted". Specifying a next sibling always
-	 * leads to a subsequent side-effects refresh within the same $batch, but still the moved
-	 * (child) node's index is updated to the new position.
+	 * its proper position ("in place") and simply "persisted". If needed, a subsequent side-effects
+	 * refresh within the same $batch is requested, but still the moved (child) node's index is
+	 * updated to the new position.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
 	 * @param {sap.ui.model.odata.v4.Context|null} oParentContext - The new parent's context
 	 * @param {sap.ui.model.odata.v4.Context|null} [oSiblingContext] - The next sibling's context
+	 * @param {boolean} [bCopy] - Whether the node should be copied instead of moved
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
@@ -3641,7 +3642,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.move = function (oChildContext, oParentContext, oSiblingContext) {
+	ODataListBinding.prototype.move = function (oChildContext, oParentContext, oSiblingContext,
+			bCopy) {
 		/*
 		 * Sets the <code>iIndex</code> of every context instance inside the given range. Allows for
 		 * start greater than end and swaps both in that case.
@@ -3679,7 +3681,7 @@ sap.ui.define([
 			: oChildContext.getPath().slice(1);
 		const bUpdateSiblingIndex = oSiblingContext?.isEffectivelyKeptAlive();
 		const {promise : oPromise, refresh : bRefresh} = this.oCache.move(oGroupLock, sChildPath,
-			sParentPath, sSiblingPath, sNonCanonicalChildPath, bUpdateSiblingIndex);
+			sParentPath, sSiblingPath, sNonCanonicalChildPath, bUpdateSiblingIndex, bCopy);
 
 		if (bRefresh) {
 			return SyncPromise.all([

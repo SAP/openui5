@@ -1485,7 +1485,9 @@ sap.ui.define([
 	 * a PATCH request for "<parent navigation>@odata.bind". A <code>null</code> parent turns the
 	 * child into a root. The optional sibling path invokes an action for moving the (child) node
 	 * before the given sibling (or with <code>null</code> to the last sibling position) by sending
-	 * a POST request for the "ChangeNextSiblingAction".
+	 * a POST request for the "ChangeNextSiblingAction". If the optional parameter
+	 * <code>bCopy</code> is set, it invokes an action for copying the (child) node by sending a
+	 * POST request for the "CopyAction".
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
@@ -1500,6 +1502,8 @@ sap.ui.define([
 	 *   <code>sSiblingPath</code> is given
 	 * @param {boolean} [bRequestSiblingRank]
 	 *   Whether to request the next sibling's rank and return its new index
+	 * @param {boolean} [bCopy]
+	 *   Whether the node should be copied instead of moved
 	 * @returns {{promise : sap.ui.base.SyncPromise<function():number|number[]>, refresh : boolean}}
 	 *   An object with two properties:
 	 *   - <code>promise</code>: A promise which is resolved when the move is finished, or rejected
@@ -1517,7 +1521,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath, sSiblingPath,
-			sNonCanonicalChildPath, bRequestSiblingRank) {
+			sNonCanonicalChildPath, bRequestSiblingRank, bCopy) {
 		let bRefreshNeeded = !this.bUnifiedCache;
 
 		const sChildPredicate = sChildPath.slice(sChildPath.indexOf("("));
@@ -1577,6 +1581,17 @@ sap.ui.define([
 			}
 		};
 
+		let oCopyActionPromise;
+		if (bCopy) {
+			bRefreshNeeded = true;
+			oCopyActionPromise = this.oRequestor.request("POST", sChildPath + "/"
+					+ this.oAggregation.$Actions.CopyAction, oGroupLock.getUnlockedCopy(), {
+					"If-Match" : oChildNode,
+					Prefer : "return=minimal"
+				}, {});
+			sChildPath = "$0";
+		}
+
 		let oPromise = SyncPromise.all([
 			this.oRequestor.request("PATCH", sChildPath, oGroupLock, {
 					"If-Match" : oChildNode,
@@ -1585,10 +1600,11 @@ sap.ui.define([
 				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ }),
 			invokeNextSibling(),
 			this.requestRank(oChildNode, oGroupLock, bRefreshNeeded),
-			bRequestSiblingRank && this.requestRank(oSiblingNode, oGroupLock, true)
+			bRequestSiblingRank && this.requestRank(oSiblingNode, oGroupLock, true),
+			oCopyActionPromise
 		]);
 
-		if (bRefreshNeeded) {
+		if (bRefreshNeeded) { // side-effects refresh needed
 			oPromise = oPromise.then(([,, iRank, iSiblingRank]) => {
 				return () => { // Note: caller MUST wait for side-effects refresh first
 					return [
@@ -1640,7 +1656,7 @@ sap.ui.define([
 
 				return [iResult, iNewIndex, iCount];
 			});
-		} // else: side-effects refresh needed, nothing to do here!
+		}
 
 		return {promise : oPromise, refresh : bRefreshNeeded};
 	};
