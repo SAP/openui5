@@ -354,6 +354,10 @@ sap.ui.define([
 
 		return Promise.resolve(
 			oEditUrlPromise.then(function (sEditUrl) {
+				if (oGroupLock && that.oModel.getMetaModel().isAddressViaNavigationPath()) {
+					sEditUrl = that.getPath().slice(1);
+				}
+
 				return that.oBinding.delete(oGroupLock, sEditUrl, that, /*oETagEntity*/null,
 					bDoNotRequestCount, function () {
 						that.oDeletePromise = null;
@@ -595,6 +599,9 @@ sap.ui.define([
 						oCache.setInactive(sEntityPath, that.bInactive);
 					}
 
+					const sEditUrl = oMetaModel.isAddressViaNavigationPath()
+						? oResult.entityPath.slice(1)
+						: oResult.editUrl;
 					const fnSetUpsertPromise = _Helper.hasPathSuffix(that.sPath, sEntityPath)
 						? that.setCreated.bind(that)
 						: null;
@@ -602,7 +609,7 @@ sap.ui.define([
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
 					// returned Promise is rejected -> no patch events
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
-						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
+						bSkipRetry ? undefined : errorCallback, sEditUrl, sEntityPath,
 						// Note: use that.oModel intentionally, fails if already destroyed!
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent,

@@ -57047,6 +57047,66 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: With annotation "AddressViaNavigationPath", the deep path is used for PATCH and
+	// DELETE instead of the canonical path.
+	// JIRA: CPOUI5ODATAV4-2899
+	QUnit.test("CPOUI5ODATAV4-2899: AddressViaNavigationPath", async function (assert) {
+		const oModel = this.createTeaBusiModel({
+			annotationURI : sTeaBusi + "annotations_tea_busi.xml",
+			autoExpandSelect : true
+		}, {
+			[sTeaBusi + "annotations_tea_busi.xml"]
+				: {source : "odata/v4/data/annotations_tea_busi.xml"}
+		});
+		const sView = `
+<FlexBox id="form" binding="{/TEAMS('42')/TEAM_2_EMPLOYEES('1')}">
+	<Input id="salary" value="{SALARY/MONTHLY_BASIC_SALARY_AMOUNT}"/>
+	<Text id="salaryCurrency" text="{SALARY/BASIC_SALARY_CURR}"/>
+</FlexBox>`;
+
+		this.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('1')"
+				+ "?$select=ID,SALARY/BASIC_SALARY_CURR,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+				ID : "1",
+				SALARY : {
+					BASIC_SALARY_CURR : "EUR",
+					MONTHLY_BASIC_SALARY_AMOUNT : "1234"
+				}
+			})
+			.expectChange("salary", "1,234");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("salary", "1,234.89")
+			.expectRequest({
+				method : "PATCH",
+				payload : {
+					SALARY : {
+						BASIC_SALARY_CURR : "EUR",
+						MONTHLY_BASIC_SALARY_AMOUNT : "1234.89"
+					}
+				},
+				url : "TEAMS('42')/TEAM_2_EMPLOYEES('1')"
+			}, {/* response does not matter here */});
+
+		// code under test
+		this.oView.byId("salary").getBinding("value").setValue("1234.89");
+
+		await this.waitForChanges(assert, "PATCH salary");
+
+		this.expectChange("salary", null)
+			.expectRequest({
+				method : "DELETE",
+				url : "TEAMS('42')/TEAM_2_EMPLOYEES('1')"
+			}); // 204 No Content
+
+		await Promise.all([
+			// code under test
+			this.oView.byId("form").getBindingContext().delete(),
+			this.waitForChanges(assert, "DELETE worker")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Annotation changes are applied to root service's metadata, annotation files, and
 	// cross-service references.
 	// JIRA: CPOUI5ODATAV4-2637

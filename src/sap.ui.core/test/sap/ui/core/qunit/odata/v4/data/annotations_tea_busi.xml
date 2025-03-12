@@ -2,6 +2,9 @@
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:DataServices>
 		<Schema Namespace="foo">
+			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.Container">
+				<Annotation Term="com.sap.vocabularies.Common.v1.AddressViaNavigationPath"/>
+			</Annotations>
 			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT/ID">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Equipment ID"/>
 				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="Name">
