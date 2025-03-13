@@ -124,7 +124,7 @@ sap.ui.define([
 			properties: aDelegateProperties,
 			possibleValues: aPossibleValues,
 			preSelectedProperty: sPreSelectedPropertyKey
-		} = oDelegate.getAnnotationsChangeInfo(oControl, sAnnotation);
+		} = await oDelegate.getAnnotationsChangeInfo(oControl, sAnnotation);
 
 		// the key could be an object which does not work as property for the Select control
 		// therefore the key must be stringified and later parsed
