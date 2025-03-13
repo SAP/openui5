@@ -568,9 +568,9 @@ sap.ui.define([
 	/**
 	 * Initialize support mode based on configuration
 	 */
-	Support.initializeSupportMode = function(aSettings, bAsync) {
+	Support.initializeSupportMode = function(aSettings) {
 		if (aSettings.indexOf("true") > -1 || aSettings.indexOf("viewinfo") > -1) {
-			Support._initializeSupportInfo(bAsync);
+			Support._initializeSupportInfo();
 		}
 	};
 
@@ -578,7 +578,7 @@ sap.ui.define([
 	 * Initialize Support Info Store This is only done if getSupportMode on configuration is true or viewinfo.
 	 * @private
 	 */
-	Support._initializeSupportInfo = function(bAsync) {
+	Support._initializeSupportInfo = function() {
 		var aSupportInfos = [],
 			aSupportInfosBreakpoints = [],
 			aSupportXMLModifications = [],
