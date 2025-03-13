@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.2.8
-// * data:{"sModified":"2024-12-12T10:42:39Z"}
+// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+// * Theming Engine 14.2.35
+// * data:{"sModified":"2025-03-05T13:13:33Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_belize_plus/base.less (Version 11.24.0) *******************/
+/******************* FILE /Base/baseLib/sap_belize_plus/base.less (Version 11.27.1) *******************/
 
 @sapHighlightColor: lighten(saturate(@sapBrandColor, 40), 30);
 @sapBaseColor: @sapPrimary1;
@@ -171,59 +171,69 @@
 @sapIndicationColor_1_Hover_Background: lighten(@sapIndicationColor_1, 5);
 @sapIndicationColor_1_Active_Background: lighten(@sapIndicationColor_1, 10);
 @sapIndicationColor_1b: #5e0303;
+@sapIndicationColor_1b_TextColor: lighten(saturate(@sapIndicationColor_1b, 4), 44);
 @sapIndicationColor_1b_Hover_Background: lighten(@sapIndicationColor_1b, 5);
 @sapIndicationColor_2: #ffbbbb;
 @sapIndicationColor_2_TextColor: contrast(@sapIndicationColor_2_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapIndicationColor_2_Hover_Background: lighten(@sapIndicationColor_2, 5);
 @sapIndicationColor_2_Active_Background: lighten(@sapIndicationColor_2, 10);
 @sapIndicationColor_2b: #7d0000;
+@sapIndicationColor_2b_TextColor: lighten(@sapIndicationColor_2b, 53);
 @sapIndicationColor_2b_Hover_Background: lighten(@sapIndicationColor_2b, 5);
 @sapIndicationColor_3: #fabd64;
 @sapIndicationColor_3_TextColor: contrast(@sapIndicationColor_3_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapIndicationColor_3_Hover_Background: lighten(@sapIndicationColor_3, 3);
 @sapIndicationColor_3_Active_Background: lighten(@sapIndicationColor_3, 6);
-@sapIndicationColor_3b: #662b00;
+@sapIndicationColor_3b: #640;
+@sapIndicationColor_3b_TextColor: lighten(@sapIndicationColor_3b, 40);
 @sapIndicationColor_3b_Hover_Background: lighten(@sapIndicationColor_3b, 5);
 @sapIndicationColor_4: #abe2ab;
 @sapIndicationColor_4_TextColor: contrast(@sapIndicationColor_4_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapIndicationColor_4_Hover_Background: lighten(@sapIndicationColor_4, 5);
 @sapIndicationColor_4_Active_Background: lighten(@sapIndicationColor_4, 10);
-@sapIndicationColor_4b: #044a18;
+@sapIndicationColor_4b: #1b4a04;
+@sapIndicationColor_4b_TextColor: lighten(desaturate(@sapIndicationColor_4b, 21), 57);
 @sapIndicationColor_4b_Hover_Background: lighten(@sapIndicationColor_4b, 5);
 @sapIndicationColor_5: #91c8f6;
 @sapIndicationColor_5_TextColor: contrast(@sapIndicationColor_5_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapIndicationColor_5_Hover_Background: lighten(@sapIndicationColor_5, 5);
 @sapIndicationColor_5_Active_Background: lighten(@sapIndicationColor_5, 10);
 @sapIndicationColor_5b: #024594;
+@sapIndicationColor_5b_TextColor: lighten(saturate(@sapIndicationColor_5b, 3), 54);
 @sapIndicationColor_5b_Hover_Background: lighten(@sapIndicationColor_5b, 5);
 @sapIndicationColor_6: #7fc6c6;
 @sapIndicationColor_6_TextColor: contrast(@sapIndicationColor_6_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapIndicationColor_6_Hover_Background: lighten(@sapIndicationColor_6, 5);
 @sapIndicationColor_6_Active_Background: lighten(@sapIndicationColor_6, 10);
 @sapIndicationColor_6b: #00454e;
+@sapIndicationColor_6b_TextColor: lighten(desaturate(@sapIndicationColor_6b, 21), 51);
 @sapIndicationColor_6b_Hover_Background: lighten(@sapIndicationColor_6b, 5);
 @sapIndicationColor_7: #b995e0;
 @sapIndicationColor_7_TextColor: contrast(@sapIndicationColor_7_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapIndicationColor_7_Hover_Background: lighten(@sapIndicationColor_7, 5);
 @sapIndicationColor_7_Active_Background: lighten(@sapIndicationColor_7, 10);
 @sapIndicationColor_7b: #2702c2;
+@sapIndicationColor_7b_TextColor: lighten(saturate(@sapIndicationColor_7b, 12), 48);
 @sapIndicationColor_7b_Hover_Background: lighten(@sapIndicationColor_7b, 5);
 @sapIndicationColor_8: #e269c9;
 @sapIndicationColor_8_TextColor: contrast(@sapIndicationColor_8_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapIndicationColor_8_Hover_Background: lighten(@sapIndicationColor_8, 5);
 @sapIndicationColor_8_Active_Background: lighten(@sapIndicationColor_8, 10);
 @sapIndicationColor_8b: #4c005b;
+@sapIndicationColor_8b_TextColor: lighten(@sapIndicationColor_8b, 59);
 @sapIndicationColor_8b_Hover_Background: lighten(@sapIndicationColor_8b, 5);
 @sapIndicationColor_9: #f2f2f2;
 @sapIndicationColor_9_Hover_Background: lighten(@sapIndicationColor_9, 5);
 @sapIndicationColor_9_Active_Background: lighten(@sapIndicationColor_9, 10);
 @sapIndicationColor_9b: #1d232a;
+@sapIndicationColor_9b_TextColor: lighten(desaturate(@sapIndicationColor_9b, 18), 81);
 @sapIndicationColor_9b_BorderColor: lighten(@sapIndicationColor_9b, 16);
 @sapIndicationColor_9b_Hover_Background: lighten(@sapIndicationColor_9b, 5);
 @sapIndicationColor_10: #d8d8d8;
 @sapIndicationColor_10_Hover_Background: lighten(@sapIndicationColor_10, 5);
 @sapIndicationColor_10_Active_Background: lighten(@sapIndicationColor_10, 10);
 @sapIndicationColor_10b: #373737;
+@sapIndicationColor_10b_TextColor: lighten(@sapIndicationColor_10b, 63);
 @sapIndicationColor_10b_Hover_Background: lighten(@sapIndicationColor_10b, 5);
 @sapLegend_WorkingBackground: lighten(@sapList_Background, 8);
 @sapLegend_NonWorkingBackground: lighten(@sapList_Background, 2);
