@@ -1727,7 +1727,7 @@ sap.ui.define([
 		const oLocaleData = LocaleData.getInstance(Formatting.getLanguageTag());
 		oLocaleData.mData.currencyDigits = {"DEFAULT": 2, "FOO": "~cldrFOO", "BAR": 1};
 		Formatting.setCustomCurrencies({
-			BAR: {digits: "~customBAR"},
+			BAR: {digits: 0},
 			BAZ: {},
 			DEFAULT: {digits: "~customDEFAULT"},
 			FOO: {}
@@ -1737,7 +1737,8 @@ sap.ui.define([
 		assert.deepEqual(oLocaleData.getAllCurrencyDigits(), {
 			DEFAULT: "~customDEFAULT",
 			FOO: "~cldrFOO",
-			BAR: "~customBAR"
+			BAR: 0
 		});
+		Formatting.setCustomCurrencies();
 	});
 });
