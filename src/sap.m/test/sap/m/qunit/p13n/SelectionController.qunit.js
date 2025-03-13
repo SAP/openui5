@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/p13n/SelectionController",
 	"sap/m/p13n/MetadataHelper",
 	"sap/m/p13n/modules/xConfigAPI",
-	"sap/m/p13n/enums/ProcessingStrategy"
-], function (Control, SelectionController, MetadataHelper, xConfigAPI, ProcessingStrategy) {
+	"sap/m/p13n/enums/ProcessingStrategy",
+	"sap/ui/thirdparty/sinon"
+], function (Control, SelectionController, MetadataHelper, xConfigAPI, ProcessingStrategy, sinon) {
 	"use strict";
 
 	const simulateRemoveItem = function(aArray, sKey, sKeyName) {
@@ -870,6 +871,33 @@ sap.ui.define([
 		assert.deepEqual(aTarget, data.changedState);
 	});
 
+	QUnit.test("check 'mixInfoAndState' has 'isRedundant' property", function(assert){
+		// arrange
+		const oHelper = this.initHelper();
+
+		// act
+		const aResult = this.oSelectionController.mixInfoAndState(oHelper);
+
+		// assert
+		assert.equal(aResult.items.length, oHelper.getProperties().length, "All properties are returned");
+		assert.equal(aResult.items.filter((oItem) => "isRedundant" in oItem).length, oHelper.getProperties().length, "All properties have isRedundant property");
+	});
+
+	QUnit.test("check 'prepareAdaptationData' has 'isRedundant' property", function(assert){
+		// arrange
+		const oHelper = this.initHelper();
+
+		const oSpy = sinon.spy(oHelper, "getRedundantProperties");
+
+		// act
+		const aResult = this.oSelectionController.prepareAdaptationData(oHelper);
+
+		// assert
+		assert.equal(aResult.items.length, oHelper.getProperties().length, "All properties are returned");
+		assert.equal(aResult.items.filter((oItem) => "isRedundant" in oItem).length, oHelper.getProperties().length, "All properties have isRedundant property");
+		assert.ok(oSpy.called, "getRedundantProperties is called");
+	});
+
 	QUnit.module("FlexUtil API 'getPropertySetterchanges' tests",{
 		initHelper: function() {
 
@@ -1000,5 +1028,4 @@ sap.ui.define([
 		oControl1.destroy();
 		oControl2.destroy();
 	});
-
 });

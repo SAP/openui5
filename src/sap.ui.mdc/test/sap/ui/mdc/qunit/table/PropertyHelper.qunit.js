@@ -237,7 +237,7 @@ sap.ui.define([
 				})
 			});
 
-			this.oPropertyHelper = new PropertyHelper([{
+			this.aPropertiesConfig = [{
 				key: "propA",
 				label: "Property A",
 				dataType: "String",
@@ -263,7 +263,24 @@ sap.ui.define([
 				label: "Property C",
 				dataType: "String",
 				exportSettings: null,
-				clipboardSettings: null
+				clipboardSettings: null,
+				text: "propB"
+			}, {
+				key: "propD",
+				path: "propDPath",
+				label: "Property D",
+				dataType: "String",
+				exportSettings: null,
+				clipboardSettings: null,
+				text: "propB"
+			}, {
+				key: "propE",
+				path: "propEPath",
+				label: "Property E",
+				dataType: "String",
+				exportSettings: null,
+				clipboardSettings: null,
+				text: "propA"
 			}, {
 				key: "complexPropA",
 				label: "Complex Property A",
@@ -342,7 +359,9 @@ sap.ui.define([
 				exportSettings: {
 					property: "propAPath"
 				}
-			}]);
+			}];
+
+			this.oPropertyHelper = new PropertyHelper(this.aPropertiesConfig);
 			this.aProperties = this.oPropertyHelper.getProperties();
 
 			this.oColumnPropA = new Column({
@@ -428,6 +447,7 @@ sap.ui.define([
 			PropertyHelper.prototype.getParent.restore();
 			this.oPropertyHelper.destroy();
 			this.aProperties = null;
+			this.aPropertiesConfig = null;
 			this.oColumnPropA.destroy();
 			this.oColumnPropB.destroy();
 			this.oColumnPropC.destroy();
@@ -575,6 +595,42 @@ sap.ui.define([
 			],
 			template: "{0} {1} {2}"
 		}, "Expected column export settings returned");
+	});
+
+	QUnit.test("getRedundantProperties without duplicates", function(assert) {
+		// arrange
+		const oAffectedProperty = this.aPropertiesConfig.find((oProperty) => oProperty.key === "propD");
+		oAffectedProperty.text = "";
+
+		const oPropertyHelper = new PropertyHelper(this.aPropertiesConfig);
+		const oSimplePropertyA = oPropertyHelper.getProperty("propA");
+		const oSimplePropertyB = oPropertyHelper.getProperty("propB");
+
+		// act
+		const aRedundantProperties = oPropertyHelper.getRedundantProperties();
+
+		const aPropertiesWithText = oPropertyHelper.getProperties().filter((oProperty) => oProperty.text);
+		// assert
+		assert.ok(aPropertiesWithText.length == 2, "Returns an array");
+		assert.ok(Array.isArray(aRedundantProperties), "Returns an array");
+		assert.equal(aRedundantProperties.length, 2, "Returns an array with two items");
+		assert.deepEqual(aRedundantProperties[0], oSimplePropertyB, "Returns an array with two items");
+		assert.deepEqual(aRedundantProperties[1], oSimplePropertyA, "Returns an array with two items");
+	});
+
+	QUnit.test("getRedundantProperties with duplicates", function(assert) {
+		// arrange
+		const oSimplePropertyA = this.oPropertyHelper.getProperty("propA");
+		const oSimplePropertyB = this.oPropertyHelper.getProperty("propB");
+
+		// act
+		const aRedundantProperties = this.oPropertyHelper.getRedundantProperties();
+
+		// assert
+		assert.ok(Array.isArray(aRedundantProperties), "Returns an array");
+		assert.equal(aRedundantProperties.length, 2, "Returns an array with two items");
+		assert.deepEqual(aRedundantProperties[0], oSimplePropertyB, "Returns an array with two items");
+		assert.deepEqual(aRedundantProperties[1], oSimplePropertyA, "Returns an array with two items");
 	});
 
 	QUnit.module("Property", {

@@ -1986,6 +1986,15 @@ sap.ui.define([
 			"Manipulations of the returned metadata information do not affect the property helper");
 	});
 
+	QUnit.test("getRedundantProperties", function(assert) {
+		// act
+		const aRedundantProperties = this.oPropertyHelper.getRedundantProperties();
+
+		// assert
+		assert.ok(Array.isArray(aRedundantProperties), "Returns an array");
+		assert.equal(aRedundantProperties.length, 0, "Returns an empty array");
+	});
+
 	QUnit.module("Property", {
 		beforeEach: function() {
 			this.oPropertyHelper = new PropertyHelper([{

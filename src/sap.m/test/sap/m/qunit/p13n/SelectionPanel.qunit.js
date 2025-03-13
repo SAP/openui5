@@ -663,18 +663,21 @@ sap.ui.define([
 		oBundle = oPanel.oResourceBundle;
 
 		// Assert
+		const oModel = oPanel.getModel(oPanel.LOCALIZATION_MODEL);
+		const sShowSelected = oModel.getProperty("/showSelectedText");
 		assert.strictEqual(oBundle.sLocale, sOriginalLanguage, "Returned the already loaded bundle");
-		assert.strictEqual(oPanel._oShowSelectedButton.getText(), "Show Selected", "showSelected text is correctly initialized");
 		assert.strictEqual(oPanel.getFieldColumn(), "Field", "fieldColumn value is correctly initialized");
+		assert.strictEqual(sShowSelected, "Show Selected", "showSelected text is correctly initialized");
 
 		// Act
 		Localization.setLanguage(sChangedLanguage);
 		oBundle = oPanel.oResourceBundle;
 
 		// Assert
+		const sShowSelectedTranslated = oModel.getProperty("/showSelectedText");
 		assert.equal(oSpy.called, true, "_updateLocalizationTexts called after Localization.setLanguage");
 		assert.strictEqual(oBundle.sLocale, sChangedLanguage, "Returned the newly loaded bundle");
-		assert.strictEqual(oPanel._oShowSelectedButton.getText(), "Auswahl einblenden", "showSelected text is correctly initialized");
 		assert.strictEqual(oPanel.getFieldColumn(), "Feld", "fieldColumn value is correctly translated");
+		assert.strictEqual(sShowSelectedTranslated, "Auswahl einblenden", "showSelected text is correctly initialized");
 	});
 });

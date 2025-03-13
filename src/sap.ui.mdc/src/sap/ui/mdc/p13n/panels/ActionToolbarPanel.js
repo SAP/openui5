@@ -241,7 +241,7 @@ sap.ui.define([
 		return this;
 	};
 
-	ActionToolbarPanel.prototype._filterList = function(bShowSelected, sSarch) {
+	ActionToolbarPanel.prototype._filterList = function(bShowSelected, sSearch, bHideDescriptions) {
 		SelectionPanel.prototype._filterList.apply(this, arguments);
 		this._updateItemEnableState();
 	};
