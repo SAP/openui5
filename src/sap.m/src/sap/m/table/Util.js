@@ -547,7 +547,7 @@ sap.ui.define([
 
 		oDetailsList.bindItems({
 			...mSettings.itemsBindingInfo,
-			templateShareable: false,
+			templateShareable: true,
 			template: oItemsTemplate
 		});
 
