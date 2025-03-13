@@ -184,10 +184,15 @@
 		icon: "sap-icon://nutrition-activity",
 		number: "1.684,00",
 		numberUnit: "Euro",
-		showMarkers: true,
-		markFlagged: true,
-		markFavorite: true,
 		numberState: "Success",
+		markers: [
+			new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Flagged
+			}),
+			new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Favorite
+			})
+		],
 		attributes: [
 			new sap.m.ObjectAttribute({
 				title: "Manufacturer",

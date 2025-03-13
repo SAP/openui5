@@ -163,6 +163,9 @@ sap.ui.define([
 		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
 	});
 
+	/**
+	 * @deprecated Since version 1.135
+	*/
 	QUnit.test("Clamp title height when theme is ready", function(assert) {
 		//Arrange
 		this.spy(Text.prototype, "clampHeight");

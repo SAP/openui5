@@ -1839,6 +1839,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @returns {boolean} true or false
+	 * @deprecated Since version 1.135
 	 */
 	GenericTile.prototype._isHeaderTextTruncated = function () {
 		var oDom, iMaxHeight, $Header, iWidth;
