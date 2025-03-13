@@ -124,7 +124,7 @@ sap.ui.define([
 				/**
 				 * Fired when an item is pressed.
 				 */
-				itemPressed: {
+				itemPress: {
 					parameters: {
 						/**
 						 * The pressed item.
@@ -307,13 +307,15 @@ sap.ui.define([
 				const oMenuItem = oEvent.getParameter("item");
 				const oNavigationItem = oMenuItem._navItem;
 
+				oNavigationItem._firePress({
+					item: oNavigationItem
+				});
+
 				if (oNavigationItem.getSelectable()) {
 					this._selectItem({
 						item: oNavigationItem
 					});
-					oNavigationItem._firePress({
-						item: oNavigationItem
-					});
+
 					const oSelectedItemDomRef = this.getDomRef().querySelector(".sapTntNLISelected [tabindex]");
 					oSelectedItemDomRef?.focus();
 				}
@@ -478,11 +480,6 @@ sap.ui.define([
 	NavigationList.prototype._selectItem = function (oParams) {
 		this.fireItemSelect(oParams);
 		this.setSelectedItem(oParams.item);
-	};
-
-
-	NavigationList.prototype._itemPressHandler = function (oParams) {
-		this.fireItemPressed(oParams);
 	};
 
 	NavigationList.prototype._findItemByKey = function (sKey) {

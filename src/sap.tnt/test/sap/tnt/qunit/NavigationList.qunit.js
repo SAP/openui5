@@ -1233,6 +1233,44 @@ sap.ui.define([
 		oStub.restore();
 	});
 
+	QUnit.test("Press event on items in popover", async function (assert) {
+		const unselectableParentItem = new NavigationListItem({
+			text: 'Unselectable Parent',
+			selectable: false,
+			items: [
+				new NavigationListItem({
+					text: 'Child 1'
+				}),
+				new NavigationListItem({
+					text: 'Child 2'
+				})
+			]
+		});
+
+		const navigationList = new NavigationList({
+			expanded: false,
+			items: [
+				unselectableParentItem
+			]
+		});
+		oPage.addContent(navigationList);
+		await nextUIUpdate(this.clock);
+
+		// Act
+		QUnitUtils.triggerEvent("tap", unselectableParentItem.getFocusDomRef());
+		await nextUIUpdate(this.clock);
+
+		const itemInPopover = navigationList._oPopover.getContent()[0].getItems()[0];
+		const oAttachPressSpy = this.spy(itemInPopover, "firePress");
+
+		// Act
+		QUnitUtils.triggerEvent("tap", itemInPopover.getDomRef().querySelector(".sapTntNLI"));
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(oAttachPressSpy.called, "press event is fired on the popover item");
+	});
+
 	QUnit.test("Click on item with 'href' set", function (assert) {
 		// Arrange
 		var anchor = Element.getElementById("groupItem3").getDomRef().querySelector("a"),
@@ -1412,11 +1450,15 @@ sap.ui.define([
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
 		assert.ok(menuDomRef, "overflow menu is shown");
 
-		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(3)"));
 		const oMenuNavigationItem = menu.getItems()[2]._navItem;
 		const oAttachItemPressSpy = this.spy(oMenuNavigationItem, "_firePress");
+		const oAttachItemPressedSpy = this.spy(this.navigationList, "fireItemPress");
 
-		assert.notOk(oAttachItemPressSpy.called, "press event is not fired on the parent item in the overflow");
+		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(3)"));
+		await nextUIUpdate(this.clock);
+
+		assert.ok(oAttachItemPressSpy.called, "press event is fired on the parent item in the overflow");
+		assert.strictEqual(oAttachItemPressedSpy.callCount, 1, "itemPress event is fired if the parent item in the overflow is clicked");
 
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
 		await nextUIUpdate(this.clock);
@@ -1435,6 +1477,8 @@ sap.ui.define([
 		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
 
 		assert.ok(oAttachSubItemPressSpy.called, "press event is fired on the sub item in the overflow menu");
+		assert.strictEqual(oAttachItemPressedSpy.callCount, 2, "itemPress event is fired if the sub item in the overflow is clicked");
+
 	});
 
 	QUnit.test("Click on external link item in the overflow", async function (assert) {

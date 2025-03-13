@@ -116,7 +116,7 @@ sap.ui.define([
 				/**
 				 * Fired when an item is pressed.
 				 */
-				itemPressed: {
+				itemPress: {
 					parameters: {
 						/**
 						 * The pressed item.
@@ -135,8 +135,8 @@ sap.ui.define([
 			oObject.attachItemSelect(this._itemSelectionHandler.bind(this));
 		}
 
-		if (oObject && oObject.attachItemPressed) {
-			oObject.attachItemPressed(this._itemPressHandler.bind(this));
+		if (oObject && oObject.attachItemPress) {
+			oObject.attachItemPress(this._itemPressHandler.bind(this));
 		}
 
 		return Control.prototype.setAggregation.apply(this, arguments);
@@ -283,7 +283,7 @@ sap.ui.define([
 	SideNavigation.prototype._itemPressHandler = function (oEvent) {
 		const oItem = oEvent.getParameter("item");
 
-		this.fireItemPressed({
+		this.fireItemPress({
 			item: oItem
 		});
 	};

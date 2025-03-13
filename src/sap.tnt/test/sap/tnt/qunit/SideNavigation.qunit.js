@@ -309,35 +309,35 @@ sap.ui.define([
 		this.sideNavigation.getFixedItem().addItem(oFixedItemSelectable);
 		await nextUIUpdate(this.clock);
 
-		const oAttachItemPressedSpy = this.spy(this.sideNavigation, "fireItemPressed");
+		const oAttachItemPressedSpy = this.spy(this.sideNavigation, "fireItemPress");
 
 		//click on simple selectable item
 		const oActionItem = this.sideNavigation.getDomRef().querySelector("#simpleSelectableItem");
 		QUnitUtils.triggerEvent("tap", oActionItem.querySelector(".sapTntNLI"));
 		await nextUIUpdate(this.clock);
 
-		assert.strictEqual(oAttachItemPressedSpy.callCount, 1, "itemPressed event is fired if selectable item is clicked");
+		assert.strictEqual(oAttachItemPressedSpy.callCount, 1, "itemPress event is fired if selectable item is clicked");
 
 		//click on unselectable parent item
 		const oParentUnselectable = this.sideNavigation.getDomRef().querySelector("#parentUnselectable");
 		QUnitUtils.triggerEvent("tap", oParentUnselectable.querySelector(".sapTntNLI"));
 		await nextUIUpdate(this.clock);
 
-		assert.strictEqual(oAttachItemPressedSpy.callCount, 2, "itemPressed event is fired if unselectable parent item is clicked");
+		assert.strictEqual(oAttachItemPressedSpy.callCount, 2, "itemPress event is fired if unselectable parent item is clicked");
 
 		//click on selectable parent item
 		const oParentSelectable = this.sideNavigation.getDomRef().querySelector("#parentSelectable");
 		QUnitUtils.triggerEvent("tap", oParentSelectable.querySelector(".sapTntNLI"));
 		await nextUIUpdate(this.clock);
 
-		assert.strictEqual(oAttachItemPressedSpy.callCount, 3, "itemPressed event is fired if selectable parent item is clicked");
+		assert.strictEqual(oAttachItemPressedSpy.callCount, 3, "itemPress event is fired if selectable parent item is clicked");
 
 		//click on child item
 		const oChildItem = this.sideNavigation.getDomRef().querySelector("#parentSelectable #child");
 		QUnitUtils.triggerEvent("tap", oChildItem);
 		await nextUIUpdate(this.clock);
 
-		assert.strictEqual(oAttachItemPressedSpy.callCount, 4, "itemPressed event is fired if child item is clicked");
+		assert.strictEqual(oAttachItemPressedSpy.callCount, 4, "itemPress event is fired if child item is clicked");
 	});
 
 	QUnit.module('SelectedKey', {
