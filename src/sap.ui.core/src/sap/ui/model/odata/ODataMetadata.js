@@ -1211,7 +1211,10 @@ sap.ui.define([
 				} // else: then the first part is neither a complex type nor a navigation property -> return undefined
 			} else if (!oPropertyMetadata.type.toLowerCase().startsWith("edm.")) {
 				var oNameInfo = this._splitName(oPropertyMetadata.type);
-				oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", oNameInfo.name, oNameInfo.namespace), aParts[1]);
+				oPropertyMetadata = this._getPropertyMetadata(
+					this._getObjectMetadata("complexType", oNameInfo.name, oNameInfo.namespace),
+					aParts.slice(1).join("/")
+				);
 			} // else: the rest of the path is not relevant as it may be a metadata path, e.g. @sap:label
 		}
 
