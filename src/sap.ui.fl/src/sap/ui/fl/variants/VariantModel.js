@@ -487,7 +487,8 @@ sap.ui.define([
 			adaptationId: mPropertyBag.adaptationId,
 			reference: oSourceVariant.getFlexObjectMetadata().reference,
 			generator: mPropertyBag.generator,
-			variantManagementReference: mPropertyBag.variantManagementReference
+			variantManagementReference: mPropertyBag.variantManagementReference,
+			executeOnSelection: mPropertyBag.executeOnSelection
 		};
 		if (mPropertyBag.layer === Layer.VENDOR) {
 			mProperties.user = "SAP";
