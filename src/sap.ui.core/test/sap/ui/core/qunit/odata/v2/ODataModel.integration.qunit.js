@@ -26784,4 +26784,53 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.oView.byId("objectPage").bindElement({path : oCreatedContext.getPath()});
 		await this.waitForChanges(assert);
 	});
+
+	//*********************************************************************************************
+	// Scenario: A table is filtered with a path with nested complex type properties, i.e.
+	// <complexTypeProperty>/<complexTypeProperty>/<property>. The filter value must be formatted according to the
+	// type of the property.
+	// SNOW: CS20250009430159
+	QUnit.test("Filter via a nested complex type property", async function (assert) {
+		const oModel = createSpecialCasesModel();
+		const sView = `
+<t:Table id="Table" visibleRowCount="2">
+	<Text id="processModelID" text="{ID}" />
+	<Text id="userID" text="{AdminInfo/CreatedBy/ID}" />
+</t:Table>`;
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectHeadRequest()
+			.expectRequest({
+				requestUri: "ProcessModels?$skip=0&$top=102&$filter=AdminInfo/CreatedBy/ID%20eq%20%27Foo%27",
+				encodeRequestUri: false
+			}, {
+				results: [{
+					__metadata: {uri: "/ProcessModels('1')", type: "special.cases.ProcessModel"},
+					ID: "1",
+					AdminInfo: {
+						__metadata: {type: "special.cases.AdministrationInfo"},
+						CreatedBy: {
+							__metadata: {type: "special.cases.UserInfo"},
+							ID: "Foo"
+						}
+					}
+				}]
+			});
+
+		const oTable = this.oView.byId("Table");
+
+		// code under test
+		oTable.bindRows({
+			path: "/ProcessModels",
+			filters: [new Filter("AdminInfo/CreatedBy/ID", FilterOperator.EQ, "Foo")]
+		});
+
+		await this.waitForChanges(assert);
+
+		assert.deepEqual(getTableContent(oTable), [
+			["1", "Foo"],
+			["", ""]
+		]);
+	});
 });
