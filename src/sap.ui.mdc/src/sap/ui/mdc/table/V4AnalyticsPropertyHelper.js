@@ -51,7 +51,7 @@ sap.ui.define([
 						valueIfNotAllowed: false
 					}
 				},
-				additionalProperties: {type: "PropertyReference[]"}
+				additionalProperties: {type: "PropertyReference[]"} // TODO: Rename to "contextDefiningProperties"
 			});
 		}
 	});
@@ -65,79 +65,145 @@ sap.ui.define([
 		if (oProperty.groupable && oProperty.extension?.technicallyGroupable === false) {
 			PropertyHelperBase.throwInvalidPropertyError("A property cannot be groupable when not technically groupable.", oProperty);
 		}
+
 		if (oProperty.aggregatable && oProperty.extension?.technicallyAggregatable === false) {
 			PropertyHelperBase.throwInvalidPropertyError("A property cannot be aggregatable when not technically aggregatable.", oProperty);
 		}
 
-		const bGroupable = (oProperty.groupable || oProperty.extension?.technicallyGroupable) === true;
-		const bAggregatable = (oProperty.aggregatable || oProperty.extension?.technicallyAggregatable) === true;
+		// TODO: Throw if two properties have the same text property
 
-		if (oProperty.isKey) {
-			if (!bGroupable) {
-				PropertyHelperBase.reportInvalidProperty("A key property must be technically groupable.", oProperty);
-			}
-			if (bAggregatable) {
-				PropertyHelperBase.throwInvalidPropertyError("A key property must not be technically aggregatable.", oProperty);
-			}
+		validateKeyProperty(oProperty);
+		validateAdditionalProperties(oProperty, aProperties);
+	};
+
+	function validateKeyProperty(oProperty) {
+		if (!oProperty.isKey) {
+			return;
 		}
 
-		const aAdditionalProperties = oProperty.extension?.additionalProperties ?? [];
+		const bTechnicallyGroupable = (oProperty.groupable || oProperty.extension?.technicallyGroupable) === true;
+		const bTechnicallyAggregatable = (oProperty.aggregatable || oProperty.extension?.technicallyAggregatable) === true;
 
-		if (!bGroupable && !bAggregatable && aAdditionalProperties.length > 0) {
+		if (!bTechnicallyGroupable) {
+			// Key properties must be requested if aggregation on leaf-level is disabled. Non-groupable properties can't be requested.
+			PropertyHelperBase.reportInvalidProperty("A key property must be technically groupable.", oProperty);
+		}
+
+		if (bTechnicallyAggregatable) {
+			// Key properties must be requested by adding them to $$aggregation.group if aggregation on leaf-level is disabled. If totals need to be
+			// requested for an aggregatable property, it must be in $$aggregation.aggregate, and therefore can't be in $$aggregation.group.
+			PropertyHelperBase.throwInvalidPropertyError("A key property must not be technically aggregatable.", oProperty);
+		}
+	}
+
+	function validateAdditionalProperties(oProperty, aProperties) {
+		const aAdditionalPropertiesKeys = oProperty.extension?.additionalProperties ?? [];
+
+		if (aAdditionalPropertiesKeys.length === 0) {
+			return;
+		}
+
+		const bTechnicallyGroupable = (oProperty.groupable || oProperty.extension?.technicallyGroupable) === true;
+		const bTechnicallyAggregatable = (oProperty.aggregatable || oProperty.extension?.technicallyAggregatable) === true;
+
+		if (!bTechnicallyGroupable && !bTechnicallyAggregatable) {
+			// Non-goupable and non-aggregatable properties can't be requested. There's no proper handling for additional properties in that case.
 			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain property keys if the property is neither"
 				+ " technically groupable nor technically aggregatable.", oProperty);
 		}
 
-		if (bGroupable && !bAggregatable) {
-			if (aAdditionalProperties.length > 1) {
-				PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' contains more than one property.", oProperty);
+		if (bTechnicallyGroupable && bTechnicallyAggregatable) {
+			// It is not clear whether to treat the additional properties in the context of the group or the aggregate. Could also depend on whether
+			// the property is visually grouped or totals are requested for it. Might require a concept.
+			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain property keys if the property is both"
+				+ " technically groupable and technically aggregatable.", oProperty);
+		}
+
+		if (oProperty.groupable) {
+			// There is no concept for additional properties in case of visual grouping.
+			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain property keys if the property is groupable.",
+				oProperty);
+		}
+
+		if (aAdditionalPropertiesKeys.includes(oProperty.text)) {
+			// It can't be decided whether to treat the property as the text or an additional property.
+			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain the text.", oProperty);
+		}
+
+		if (aAdditionalPropertiesKeys.includes(oProperty.unit)) {
+			// It can't be decided whether to treat the property as the unit or an additional property.
+			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain the unit.", oProperty);
+		}
+
+		const sPropertyKey = oProperty.key || oProperty.name;
+		let bSkipNestingCheck = false;
+
+		for (const oCurrentProperty of aProperties) {
+			const sCurrentPropertyKey = oCurrentProperty.key || oCurrentProperty.name;
+
+			if (oCurrentProperty.text === sPropertyKey) {
+				if (aAdditionalPropertiesKeys.some((sKey) => sKey !== sCurrentPropertyKey)) {
+					// The Text is requested together with the ID, where ID is the "leading" property. If the Text has additional properties, these
+					// must also be requested. The ID must contain the additional properties, not the Text.
+					PropertyHelperBase.throwInvalidPropertyError("This property is the text of another property, and therefore 'additionalProperties'"
+						+ " must not contain other properties than the related ID.", oProperty);
+				}
+				bSkipNestingCheck = true; // No need for the deep nesting check. This Text property only references the ID.
 			}
-			if (aAdditionalProperties.length === 1) {
-				if (!aProperties.some((oOtherProperty) => {
-					const getKey = (oProperty) => oProperty.key || oProperty.name;
-					return oProperty.extension.additionalProperties[0] === getKey(oOtherProperty) && oOtherProperty.text === getKey(oProperty);
-				})) {
-					PropertyHelperBase.throwInvalidPropertyError("The property in 'additionalProperties' does not reference this property in"
-						+ " 'text'.", oProperty);
+
+			if (oCurrentProperty.unit === sPropertyKey) {
+				// The unit is requested together with the amount. If the unit has additional properties, these must also be requested. They are
+				// therefore also additional properties of the amount. There is no propery handling for such a relationship.
+				PropertyHelperBase.throwInvalidPropertyError("An additional property must not reference this property in 'unit'.", oProperty);
+			}
+
+			if (aAdditionalPropertiesKeys.includes(sCurrentPropertyKey)) {
+				if ((oCurrentProperty.extension?.additionalProperties || []).includes(sPropertyKey)) {
+					// There is no proper handling for bi-directional dependencies.
+					PropertyHelperBase.throwInvalidPropertyError("An additional property must not reference this property in 'additionalProperties'.",
+						oProperty);
+				}
+
+				const bTechnicallyGroupable = (oCurrentProperty.groupable || oCurrentProperty.extension?.technicallyGroupable) === true;
+				if (!bTechnicallyGroupable) {
+					// Additional properties are supposed to be requested. Addition properties that can't be requested are a configuration issue and
+					// should not be ignored.
+					PropertyHelperBase.throwInvalidPropertyError("An additional property must be technically groupable.", oProperty);
+				}
+
+				const bTechnicallyAggregatable = (oCurrentProperty.aggregatable || oCurrentProperty.extension?.technicallyAggregatable) === true;
+				if (bTechnicallyAggregatable) {
+					// If an additional property is aggregatable, totals could be requested for it, which requires it to be an aggregate. A meaningful
+					// treatment as an additional property is then no longer possible, since it cannot be part of the grouping at the same time.
+					PropertyHelperBase.throwInvalidPropertyError("An additional property must not be technically aggregatable.", oProperty);
 				}
 			}
 		}
 
-		if (aAdditionalProperties.length > 0) {
-			if (aAdditionalProperties.includes(oProperty.text)) {
-				PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain the text.", oProperty);
-			}
-			if (aAdditionalProperties.includes(oProperty.unit)) {
-				PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain the unit.", oProperty);
-			}
+		if (bSkipNestingCheck) {
+			return;
 		}
 
-		const oAllAdditionalProperties = new Set(aAdditionalProperties);
-		for (const sAdditionalPropertyKey of oAllAdditionalProperties) {
+		const oAllKeysOfAdditionalProperties = new Set(aAdditionalPropertiesKeys);
+		for (const sAdditionalPropertyKey of oAllKeysOfAdditionalProperties) {
 			const oAdditionalProperty = aProperties.find((oProperty) => {
-				return oProperty.key === sAdditionalPropertyKey || oProperty.name === sAdditionalPropertyKey;
+				return (oProperty.key || oProperty.name) === sAdditionalPropertyKey;
 			});
-			const aAdditionalAdditionalProperties = oAdditionalProperty.extension?.additionalProperties ?? [];
-			for (const sAdditionalAdditionalPropertyKey of aAdditionalAdditionalProperties) {
-				oAllAdditionalProperties.add(sAdditionalAdditionalPropertyKey);
+			for (const sAdditionalPropertyKey of oAdditionalProperty.extension?.additionalProperties ?? []) {
+				oAllKeysOfAdditionalProperties.add(sAdditionalPropertyKey);
 			}
 		}
-		if (oAllAdditionalProperties.difference(new Set(aAdditionalProperties)).size > 0) {
+		if (oAllKeysOfAdditionalProperties.difference(new Set(aAdditionalPropertiesKeys)).size > 0) {
+			// Deeply nested additional properties are not supported. The user is expected to list all additional properties in the dependency chain.
 			PropertyHelperBase.throwInvalidPropertyError("All nested additional properties must be listed at root level.", oProperty);
 		}
-	};
+	}
 
 	/**
 	 * @inheritDoc
 	 */
 	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
-
-		// TODO: Don't do that for aggregatable properties - the additionalProperties are meant to be the context-defining properties of the
-		//       CustomAggregate.
-		if (!PropertyHelperBase.isPropertyComplex(oProperty) && oProperty.extension.additionalProperties.length > 0) {
-			oProperty.groupable = false;
-		}
 
 		Object.defineProperty(oProperty, "getAggregatableProperties", {
 			value: function() {

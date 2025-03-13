@@ -183,6 +183,7 @@ sap.ui.define([
 		}
 
 		// TODO: Throw if an aggregatable-only property has a text and if a groupable-only property has a unit?
+		// TODO: Throw if a text property has a text and if a unit property has a unit?
 	};
 
 	/**
