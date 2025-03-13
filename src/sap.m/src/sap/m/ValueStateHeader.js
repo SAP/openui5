@@ -63,7 +63,7 @@ sap.ui.define(
 				apiVersion: 2,
 				render: function (oRM, oControl) {
 					var mapValueStateToClass = {
-						None: "",
+						None: "sapMValueStateHeaderNone",
 						Error: "sapMValueStateHeaderError",
 						Warning: "sapMValueStateHeaderWarning",
 						Success: "sapMValueStateHeaderSuccess",
@@ -134,7 +134,9 @@ sap.ui.define(
 
 					// schedule reposition after the list layout has been adjusted
 					setTimeout(function () {
-						oPopup._fnOrientationChange();
+						if (oPopup._getOpenByDomRef()) {
+							oPopup._fnOrientationChange();
+						}
 					}, 0);
 				}
 			};
@@ -155,7 +157,10 @@ sap.ui.define(
 				// schedule reposition after header rendering
 				if (oPopup.isA("sap.m.Popover")) {
 					setTimeout(function () {
-						oPopup._fnOrientationChange();
+						if (oPopup._getOpenByDomRef()) {
+							oPopup._fnOrientationChange();
+							oPopup.oPopup._applyPosition();
+						}
 					}, 0);
 				}
 			}

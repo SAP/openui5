@@ -1082,7 +1082,6 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype.updateValueState = function(sValueState, vValueStateText, bShowValueStateMessage) {
-		var bShow = bShowValueStateMessage && sValueState !== ValueState.None;
 		vValueStateText = vValueStateText || ValueStateSupport.getAdditionalText(sValueState);
 		if (!this._oPopover) {
 			return this;
@@ -1103,7 +1102,7 @@ sap.ui.define([
 
 		// adjust ValueStateHeader visibility
 		if (this._oValueStateHeader) {
-			this._oValueStateHeader.setVisible(bShow);
+			this._oValueStateHeader.setValueState(bShowValueStateMessage ? sValueState : ValueState.None);
 		}
 
 		this._alignValueStateStyles(sValueState);
