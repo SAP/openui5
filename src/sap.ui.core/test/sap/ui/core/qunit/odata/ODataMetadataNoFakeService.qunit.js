@@ -139,6 +139,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_getPropertyMetadata: nested complex type property", function (assert) {
+		var oMetadata = {
+				_getObjectMetadata: function () {},
+				_getPropertyMetadata: function () {},
+				_splitName: function () {}
+			},
+			oEntityType = {property: [{name: "~complex0", type: "~complexType0"}]};
+
+		this.mock(oMetadata).expects("_splitName")
+			.withExactArgs("~complexType0")
+			.returns({name: "~complexType0Name", namespace: "~namespace"});
+		this.mock(oMetadata).expects("_getObjectMetadata")
+			.withExactArgs("complexType", "~complexType0Name", "~namespace")
+			.returns("~oComplexType0");
+		this.mock(oMetadata).expects("_getPropertyMetadata")
+			.withExactArgs("~oComplexType0", "~complex1/~property")
+			.returns("~oComplexTypePropertyMetadata");
+
+		// code under test
+		assert.strictEqual(
+			ODataMetadata.prototype._getPropertyMetadata.call(oMetadata, oEntityType, "~complex0/~complex1/~property"),
+			"~oComplexTypePropertyMetadata");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_getPropertyMetadata: complex type property addressed via navigation properties", function (assert) {
 		var oMetadata = {
 				_getEntityTypeByNavProperty: function () {},
