@@ -122,7 +122,6 @@ sap.ui.define([
 			this._oScroller = oParent && oParent.getScrollDelegate ? oParent.getScrollDelegate() : null;
 
 			if (this._oScroller) {
-				this._oScroller.setBounce(true);
 				this._oScroller.setPullDown(this.getVisible() ? this : null);
 			}
 		}
