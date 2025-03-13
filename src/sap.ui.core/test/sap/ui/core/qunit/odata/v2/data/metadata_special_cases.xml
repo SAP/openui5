@@ -128,6 +128,19 @@
 					FromRole="FromRole_assoc_1"
 					ToRole="ToRole_assoc_1"/>
 			</EntityType>
+			<EntityType Name="ProcessModel">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"/>
+				<Property Name="AdminInfo" Type="special.cases.AdministrationInfo" Nullable="false"/>
+			</EntityType>
+			<ComplexType Name="AdministrationInfo">
+				<Property Name="CreatedBy" Type="special.cases.UserInfo" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="UserInfo">
+				<Property Name="ID" Type="Edm.String"/>
+			</ComplexType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -183,6 +196,7 @@
 					EntityType="special.cases.C_BPAdditionalCustomerType" sap:content-version="1"/>
 				<EntitySet Name="C_BusinessPartnerCustomer"
 					EntityType="special.cases.C_BusinessPartnerCustomerType" sap:content-version="1"/>
+				<EntitySet Name="ProcessModels" EntityType="special.cases.ProcessModel"/>
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"
