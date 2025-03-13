@@ -1403,6 +1403,31 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a language dependent map of ISO 4217 currency codes to the number of digits from the CLDR. The map
+		 * only contains currency codes for which the number of digits deviates from the value with the key
+		 * <code>DEFAULT</code>. If custom currencies are defined, they are merged into the map overwriting the CLDR
+		 * values including the default value if a custom default value is set.
+		 *
+		 * @returns {Object<string, number>} The map of currency codes to the number of digits
+		 * @private
+		 * @ui5-restricted sap.ui.export.Spreadsheet
+		 * @since 1.135
+		 */
+		getAllCurrencyDigits() {
+			const mCurrencyDigits = {...this._get("currencyDigits")};
+			const mCustomCurrencies = this._get("currency");
+			if (mCustomCurrencies) {
+				for (const sCurrencyCode in mCustomCurrencies) {
+					if (mCustomCurrencies[sCurrencyCode].digits) {
+						mCurrencyDigits[sCurrencyCode] = mCustomCurrencies[sCurrencyCode].digits;
+					}
+				}
+			}
+
+			return mCurrencyDigits;
+		},
+
+		/**
 		 * Returns the currency symbol for the specified currency, if no symbol is found the ISO 4217 currency code is returned.
 		 *
 		 * @param {string} sCurrency ISO 4217 currency code
@@ -1834,7 +1859,7 @@ sap.ui.define([
 		 * }
 		 *
 		 * @param {string} sUnit unit name, e.g. "duration-hour" or "my"
-		 * @return {Object<string,string>}
+		 * @return {Object<string, string>}
 		 *   The unit format pattern for the given unit name as a map from a pattern key like
 		 *   <code>"unitPattern-count-other"</code> to the corresponding pattern
 		 * @public
@@ -1872,7 +1897,7 @@ sap.ui.define([
 		 *
 		 * Note: Does not take unit mapping into consideration.
 		 *
-		 * @return {Object<string,Object<string,string>>} The unit format patterns as a map from a unit key to a map
+		 * @return {Object<string, Object<string, string>>} The unit format patterns as a map from a unit key to a map
 		 *   from a pattern key like <code>"unitPattern-count-other"</code> to the corresponding pattern
 		 * @public
 		 * @since 1.54

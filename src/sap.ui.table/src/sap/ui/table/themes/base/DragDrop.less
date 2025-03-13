@@ -3,13 +3,14 @@
 /* Base theme                     */
 /* ============================== */
 
-@_sap_ui_table_DragDrop_ColumnDnDHighlightColor: @sapUiListHighlightColor;
+@_sap_ui_table_DragDrop_ColumnDnDHighlightColor: var(--sapList_HighlightColor);
 @_sap_ui_table_DragDrop_ReorderIndicatorWidth: 2px;
 
 .sapUiTableDragDrop {
 	cursor: move;
 
-	.sapUiTableCCnt, .sapUiTableColRsz {
+	.sapUiTableCCnt,
+	.sapUiTableColRsz {
 		pointer-events: none;
 	}
 
@@ -29,8 +30,8 @@
 	width: auto;
 	max-width: 200px;
 	cursor: pointer;
-	border: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
-	background-color: @sapUiListHeaderBackground;
+	border: @_sap_ui_table_BaseBorderWidth solid var(--sapList_BorderColor);
+	background-color: var(--sapList_HeaderBackground);
 	box-shadow: @sapUiShadowLevel2;
 }
 
@@ -63,7 +64,7 @@ html[dir=rtl] .sapUiTableColReorderIndicator {
 	display: block;
 }
 
-html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
+html[data-sap-ui-animation^='on'] .sapUiTableColReorderIndicator {
 	transition-property: left;
 	transition-duration: 100ms;
 }
@@ -88,7 +89,7 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 .sapUiTableColReorderIndicatorArrow::before {
 	position: absolute;
 	top: 0;
-	content: " ";
+	content: ' ';
 }
 
 .sapUiTableColReorderIndicatorArrow::after {
@@ -97,7 +98,7 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	border-radius: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	top: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	left: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
-	background-color: @sapUiListHeaderBackground;
+	background-color: var(--sapList_HeaderBackground);
 }
 
 .sapUiTableColReorderIndicatorArrow::before {
@@ -112,14 +113,14 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 }
 
 .sapUiTableColReorderFade::after {
-	content: " ";
+	content: ' ';
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: -1px;
 	z-index: 3;
-	background-color: @sapUiListHoverBackground;
+	background-color: var(--sapList_Hover_Background);
 	opacity: 0.5;
 	box-sizing: border-box;
 }
@@ -128,10 +129,10 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 
 .sapUiTableColRsz {
 	position: absolute;
-	top: 0px;
+	top: 0;
 	width: 5px;
 	margin-left: -4px;
-	bottom: 0px;
+	bottom: 0;
 	cursor: col-resize;
 	z-index: 3;
 	box-sizing: border-box;
@@ -168,14 +169,14 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: @sapContent_ForegroundColor;
-	border-top: solid 0.0625rem @sapGroup_ContentBorderColor;
-	border-bottom: solid 0.0625rem @sapGroup_ContentBorderColor;
+	background-color: var(--sapContent_ForegroundColor);
+	border-top: solid 0.0625rem var(--sapGroup_ContentBorderColor);
+	border-bottom: solid 0.0625rem var(--sapGroup_ContentBorderColor);
 
 	.sapUiTableHeightResizerDecorationBefore {
 		width: 4rem;
 		height: 1rem;
-		background-image: linear-gradient(to left, @sapGroup_ContentBorderColor, transparent);
+		background-image: linear-gradient(to left, var(--sapGroup_ContentBorderColor), transparent);
 		background-size: 100% 0.0625rem;
 		background-repeat: no-repeat;
 		background-position: center;
@@ -184,14 +185,14 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	.sapUiTableHeightResizerDecorationAfter {
 		width: 4rem;
 		height: 1rem;
-		background-image: linear-gradient(to right, @sapGroup_ContentBorderColor, transparent);
+		background-image: linear-gradient(to right, var(--sapGroup_ContentBorderColor), transparent);
 		background-size: 100% 0.0625rem;
 		background-repeat: no-repeat;
 		background-position: center;
 	}
 
 	.sapUiTableHeightResizerGrip {
-		color: @sapButton_Lite_TextColor;
+		color: var(--sapButton_Lite_TextColor);
 		height: 1.5rem;
 		line-height: 1.5rem;
 		width: 2rem;
@@ -203,15 +204,16 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 			box-sizing: border-box;
 			width: 1.625rem;
 			height: 1.5rem;
-			line-height: 1.5rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth;
+			line-height: ~"calc(1.5rem - var(--sapButton_BorderWidth) - var(--sapButton_BorderWidth))";
 			margin-left: 3px;
-			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
-			border-radius: @sapUiButtonBorderCornerRadius;
-			background: @sapUiButtonLiteBackground;
+			border: var(--sapButton_BorderWidth) solid var(--sapButton_Lite_BorderColor);
+			border-radius: var(--sapButton_BorderCornerRadius);
+			background: var(--sapButton_Lite_Background);
 		}
 	}
 
 	&:hover {
+
 		.sapUiTableHeightResizerDecorationBefore,
 		.sapUiTableHeightResizerDecorationAfter {
 			flex-grow: 1;
@@ -219,8 +221,8 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 		}
 
 		.sapUiTableHeightResizerGripIcon {
-			background: @sapUiButtonLiteBackground;
-			border-color: @sapUiButtonLiteBorderColor;
+			background: var(--sapButton_Lite_Background);
+			border-color: var(--sapButton_Lite_BorderColor);
 		}
 	}
 
@@ -229,24 +231,26 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 	}
 
 	&:focus::after {
-		content: "";
+		content: '';
 		display: block;
 		position: absolute;
 		top: 0;
 		right: 0;
 		bottom: 0;
 		left: 0;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	}
 
 	&.sapUiTableHeightResizerActive {
+
 		.sapUiTableHeightResizerDecorationBefore {
 			flex-grow: 1;
-			background-image: linear-gradient(to left, @sapContent_Selected_ForegroundColor, @sapContent_Selected_ForegroundColor);
+			background-image: linear-gradient(to left, var(--sapContent_Selected_ForegroundColor), var(--sapContent_Selected_ForegroundColor));
 		}
+
 		.sapUiTableHeightResizerDecorationAfter {
 			flex-grow: 1;
-			background-image: linear-gradient(to right, @sapContent_Selected_ForegroundColor, @sapContent_Selected_ForegroundColor);
+			background-image: linear-gradient(to right, var(--sapContent_Selected_ForegroundColor), var(--sapContent_Selected_ForegroundColor));
 		}
 	}
 }
@@ -284,22 +288,21 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
 		background-color: @sapUiDragAndDropActiveBorderColor;
 		border-radius: 0.125rem;
 
 		> div {
 			font-size: @sapMFontMediumSize;
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 
 			.sapUiSizeCozy &,
 			.sapUiSizeCozy& {
-				font-size: @sapMFontLargeSize;
+				font-size: var(--sapFontLargeSize);
 			}
 
 			.sapUiSizeCondensed &,
 			.sapUiSizeCondensed& {
-				font-size: @sapMFontSmallSize;
+				font-size: var(--sapFontSmallSize);
 			}
 		}
 	}

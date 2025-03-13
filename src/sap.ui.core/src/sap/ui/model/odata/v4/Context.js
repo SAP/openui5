@@ -354,6 +354,10 @@ sap.ui.define([
 
 		return Promise.resolve(
 			oEditUrlPromise.then(function (sEditUrl) {
+				if (oGroupLock && that.oModel.getMetaModel().isAddressViaNavigationPath()) {
+					sEditUrl = that.getPath().slice(1);
+				}
+
 				return that.oBinding.delete(oGroupLock, sEditUrl, that, /*oETagEntity*/null,
 					bDoNotRequestCount, function () {
 						that.oDeletePromise = null;
@@ -595,6 +599,9 @@ sap.ui.define([
 						oCache.setInactive(sEntityPath, that.bInactive);
 					}
 
+					const sEditUrl = oMetaModel.isAddressViaNavigationPath()
+						? oResult.entityPath.slice(1)
+						: oResult.editUrl;
 					const fnSetUpsertPromise = _Helper.hasPathSuffix(that.sPath, sEntityPath)
 						? that.setCreated.bind(that)
 						: null;
@@ -602,7 +609,7 @@ sap.ui.define([
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
 					// returned Promise is rejected -> no patch events
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
-						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sEntityPath,
+						bSkipRetry ? undefined : errorCallback, sEditUrl, sEntityPath,
 						// Note: use that.oModel intentionally, fails if already destroyed!
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent,
@@ -1452,6 +1459,8 @@ sap.ui.define([
 	 * its {@link #getIndex index} becomes <code>undefined</code>.
 	 *
 	 * @param {object} oParameters - A parameter object
+	 * @param {boolean} [oParameters.copy]
+	 *   Whether the node should be copied instead of moved (@experimental as of version 1.135.0)
 	 * @param {sap.ui.model.odata.v4.Context|null} [oParameters.nextSibling]
 	 *   The next sibling's context, or <code>null</code> to turn this node into the last sibling.
 	 *   Omitting the sibling moves this node to a position determined by the server.
@@ -1476,7 +1485,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.125.0
 	 */
-	Context.prototype.move = function ({nextSibling : oNextSibling, parent : oParent} = {}) {
+	Context.prototype.move = function (
+			{copy : bCopy, nextSibling : oNextSibling, parent : oParent} = {}) {
 		if (oNextSibling === undefined && oParent === undefined) {
 			return Promise.resolve(); // "no move happens"
 		}
@@ -1487,11 +1497,11 @@ sap.ui.define([
 			&& (oParent.iIndex === undefined || oParent.isDeleted() || oParent.isTransient())) {
 			throw new Error("Cannot move to " + oParent);
 		}
-		if (this.isAncestorOf(oParent)) {
+		if (!bCopy && this.isAncestorOf(oParent)) {
 			throw new Error("Unsupported parent context: " + oParent);
 		}
 
-		return Promise.resolve(this.oBinding.move(this, oParent, oNextSibling));
+		return Promise.resolve(this.oBinding.move(this, oParent, oNextSibling, bCopy));
 	};
 
 	/**

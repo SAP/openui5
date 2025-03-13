@@ -212,6 +212,10 @@
 				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" Nullable="false"/>
 				<Parameter Name="NextSibling" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__NextSiblingWorker" Nullable="true"/>
 			</Action>
+			<Action Name="__FAKE__AcCopy" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" Nullable="false"/>
+				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" Nullable="false"/>
+			</Action>
 			<Function Name="FuGetEmployeeAges">
 				<ReturnType Type="Collection(Edm.Int16)" Nullable="false"/>
 			</Function>
@@ -416,6 +420,8 @@
 				<Annotation Qualifier="OrgChart" Term="Hierarchy.RecursiveHierarchyActions">
 					<Record>
 						<PropertyValue Property="ChangeNextSiblingAction" String="com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling"/>
+						<!-- PropertyValue Property="ChangeSiblingForRootsSupported" Bool="true"/ -->
+						<PropertyValue Property="CopyAction" String="com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"/>
 					</Record>
 				</Annotation>
 			</Annotations>

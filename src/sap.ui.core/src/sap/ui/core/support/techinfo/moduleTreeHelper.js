@@ -170,6 +170,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function (jQuery) {
 				oTree.nodes.push(oChildNode);
 			}
 
+			// Sort nodes alphabetically by its text property. In addition placing nodes with a subtree first
+			// This is to have the debug list first show folders and then files
+			oTree.nodes.sort((oNode1, oNode2) => {
+				if (oNode1.nodes.length && !oNode2.nodes.length) {
+					return -1;
+				} else if (!oNode1.nodes.length && oNode2.nodes.length) {
+					return 1;
+				} else {
+					return oNode1.text.localeCompare(oNode2.text);
+				}
+			});
+
 			return iSelectionDepth;
 		},
 

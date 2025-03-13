@@ -2654,6 +2654,22 @@ sap.ui.define([
 		= _Helper.createGetMethod("fetchValueListType", true);
 
 	/**
+	 * Tells whether this metadata model's service prefers requests to use a resource path with
+	 * navigation properties instead of a canonical path, thus reflecting the object composition.
+	 * See "com.sap.vocabularies.Common.v1.AddressViaNavigationPath" for more details.
+	 *
+	 * @returns {boolean|undefined}
+	 *   <code>true</code> if the "com.sap.vocabularies.Common.v1.AddressViaNavigationPath" tag is
+	 *   present, <code>undefined</code> if it is missing or metadata is not (yet) available
+	 *
+	 * @public
+	 * @since 1.135.0
+	 */
+	ODataMetaModel.prototype.isAddressViaNavigationPath = function () {
+		return this.getObject("/@com.sap.vocabularies.Common.v1.AddressViaNavigationPath");
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}

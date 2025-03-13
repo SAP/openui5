@@ -173,6 +173,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the effectively applied title level. Could be different than "titleLevel" property, according to internal UX rules.
+	 * @protected
+	 * @returns {string} the effective title level
+	 */
+	ObjectPageSectionBase.prototype.getEffectiveTitleLevel = function () {
+		return this._getTitleLevel();
+	};
+
+	/**
 	 * Sets title visibility
 	 * @param {boolean} bVisible
 	 * @protected

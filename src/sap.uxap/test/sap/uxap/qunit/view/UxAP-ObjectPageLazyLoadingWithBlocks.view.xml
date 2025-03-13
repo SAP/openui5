@@ -10,9 +10,12 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="Section1">
-				<ObjectPageSubSection title="Section1SubSection1">
+			<ObjectPageSection id="firstSection" title="Section1">
+				<ObjectPageSubSection id="firstSubSection" title="Section1SubSection1">
 					<opblock:EmploymentBlockJob/>
+					<moreBlocks>
+						<opblock:EmploymentBlockJob/>
+					</moreBlocks>
 				</ObjectPageSubSection>
 				<ObjectPageSubSection title="Section1SubSection2">
 					<opblock:EmploymentBlockJob/>

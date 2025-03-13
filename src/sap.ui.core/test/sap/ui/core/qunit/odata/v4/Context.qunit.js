@@ -1334,13 +1334,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{transient : false, groupId : "myGroup"},
+	{transient : false, groupId : "myGroup", isAddressViaNavigationPath : false},
+	{transient : false, groupId : "myGroup", isAddressViaNavigationPath : true},
 	{transient : true, groupId : "myGroup"},
 	{transient : true, groupId : null},
 	{transient : true, groupId : null, hierarchy : true}
 ].forEach(function (oFixture) {
 	QUnit.test("delete: success " + JSON.stringify(oFixture), function (assert) {
-		var oBinding = {
+		var oMetaModel = {
+				isAddressViaNavigationPath : mustBeMocked
+			},
+			oModel = {
+				getMetaModel : () => oMetaModel
+			},
+			oBinding = {
 				checkSuspended : function () {},
 				delete : function () {},
 				getHeaderContext : function () {},
@@ -1348,10 +1355,14 @@ sap.ui.define([
 				onKeepAliveChanged : function () {},
 				mParameters : {}
 			},
-			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')", 42,
+			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42,
 				oFixture.transient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
 			oDeletePromise,
 			oExpectation,
+			// eslint-disable-next-line no-nested-ternary
+			sExpectedEditUrl = oFixture.transient
+				? undefined
+				: (oFixture.isAddressViaNavigationPath ? "Foo/Bar('42')" : "Bar('23')"),
 			bSelected = !!oFixture.groupId;
 
 		if (oFixture.hierarchy) {
@@ -1367,9 +1378,12 @@ sap.ui.define([
 			.withExactArgs().returns(SyncPromise.resolve("/Bar('23')"));
 		this.mock(oBinding).expects("lockGroup").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs("myGroup", true, true).returns("~oGroupLock~");
+		this.mock(oMetaModel).expects("isAddressViaNavigationPath")
+			.exactly("isAddressViaNavigationPath" in oFixture ? 1 : 0)
+			.withExactArgs().returns(oFixture.isAddressViaNavigationPath);
 		oExpectation = this.mock(oBinding).expects("delete")
-			.withExactArgs(oFixture.transient ? null : "~oGroupLock~",
-				oFixture.transient ? undefined : "Bar('23')", sinon.match.same(oContext), null,
+			.withExactArgs(oFixture.transient ? null : "~oGroupLock~", sExpectedEditUrl,
+				sinon.match.same(oContext), null,
 				oFixture.transient ? true : "~bDoNotRequestCount~", sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve()));
 
@@ -1409,7 +1423,12 @@ sap.ui.define([
 			oGroupLock = {
 				unlock : function () {}
 			},
-			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')");
+			oModel = {
+				getMetaModel : () => ({
+					isAddressViaNavigationPath : () => false
+				})
+			},
+			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')");
 
 		this.mock(_Helper).expects("isDataAggregation")
 			.withExactArgs("~mParameters~").returns(false);
@@ -2401,17 +2420,20 @@ sap.ui.define([
 [null, Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23)].forEach((oParent) => {
 	[undefined, null, Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('24')", 24)]
 		.forEach((oSibling) => {
-	QUnit.test(`move: parent=${oParent}, nextSibling=${oSibling}`, function (assert) {
+			[false, true].forEach((bCopy) => {
+				const sTitle = `move: copy=${bCopy}, parent=${oParent}, nextSibling=${oSibling}`;
+
+	QUnit.test(sTitle, function (assert) {
 		const oBinding = {
 			move : mustBeMocked
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
-		this.mock(oContext).expects("isAncestorOf")
+		this.mock(oContext).expects("isAncestorOf").exactly(bCopy ? 0 : 1)
 			.withExactArgs(sinon.match.same(oParent)).returns(false);
 		let bResolved = false;
 		this.mock(oBinding).expects("move")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent),
-				sinon.match.same(oSibling))
+				sinon.match.same(oSibling), bCopy)
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bResolved = true;
@@ -2420,13 +2442,14 @@ sap.ui.define([
 			}));
 
 		// code under test
-		const oPromise = oContext.move({nextSibling : oSibling, parent : oParent});
+		const oPromise = oContext.move({copy : bCopy, nextSibling : oSibling, parent : oParent});
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise.then(function () {
 			assert.ok(bResolved, "not too soon");
 		});
 	});
+		});
 	});
 });
 
@@ -2453,7 +2476,8 @@ sap.ui.define([
 		this.mock(oContext).expects("isAncestorOf").withExactArgs(sinon.match.same(oParent))
 			.returns(false);
 		this.mock(oBinding).expects("move")
-			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent), undefined)
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent), undefined,
+				undefined)
 			.returns(SyncPromise.reject("~error~"));
 
 		// code under test
@@ -3571,7 +3595,8 @@ sap.ui.define([
 			bInactive,
 			oMetaModel = {
 				fetchUpdateData : function () {},
-				getUnitOrCurrencyPath : function () {}
+				getUnitOrCurrencyPath : function () {},
+				isAddressViaNavigationPath : () => false
 			},
 			oModel = {
 				getMetaModel : function () {
@@ -3620,7 +3645,7 @@ sap.ui.define([
 				that.mock(oMetaModel).expects("fetchUpdateData")
 					.withExactArgs("some/relative/path", sinon.match.same(oContext), false)
 					.returns(SyncPromise.resolve({
-						editUrl : "/edit/url",
+						editUrl : "edit/url",
 						entityPath : "/entity/path",
 						propertyPath : "property/path"
 					}));
@@ -3664,7 +3689,7 @@ sap.ui.define([
 					.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
 				that.mock(oCache).expects("update")
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
-						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "/edit/url",
+						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "edit/url",
 						"helper/path", "unit/or/currency/path",
 						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func,
 						/*fnIsKeepAlive*/sinon.match.func,
@@ -3726,7 +3751,8 @@ sap.ui.define([
 			oMetaModel = {
 				fetchUpdateData : function () {},
 				getReducedPath : function () {},
-				getUnitOrCurrencyPath : function () {}
+				getUnitOrCurrencyPath : function () {},
+				isAddressViaNavigationPath : () => false
 			},
 			oModel = {
 				getMetaModel : function () {
@@ -3736,7 +3762,7 @@ sap.ui.define([
 			},
 			oContext = Context.create(oModel, {}, "/context/path"),
 			oFetchUpdateDataResult = {
-				editUrl : "/edit/url",
+				editUrl : "edit/url",
 				entityPath : "/entity/path",
 				propertyPath : "property/path"
 			},
@@ -3784,7 +3810,7 @@ sap.ui.define([
 
 				that.mock(oCache).expects("update")
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
-						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
+						/*fnErrorCallback*/sinon.match.func, "edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
 						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
 						/*fnSetUpsertPromise*/null)
@@ -3811,7 +3837,8 @@ sap.ui.define([
 			oMetaModel = {
 				fetchUpdateData : function () {},
 				getReducedPath : function () {},
-				getUnitOrCurrencyPath : function () {}
+				getUnitOrCurrencyPath : function () {},
+				isAddressViaNavigationPath : () => false
 			},
 			oModel = {
 				bAutoExpandSelect : true,
@@ -3823,7 +3850,7 @@ sap.ui.define([
 			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			oFetchUpdateDataResult = {
-				editUrl : "/edit/url",
+				editUrl : "edit/url",
 				entityPath : "/entity/path",
 				propertyPath : "property/path"
 			},
@@ -3868,7 +3895,7 @@ sap.ui.define([
 
 				that.mock(oCache).expects("update")
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
-						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
+						/*fnErrorCallback*/sinon.match.func, "edit/url", "helper/path",
 						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
 						/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
 						/*fnSetUpsertPromise*/null)
@@ -3891,7 +3918,7 @@ sap.ui.define([
 				sPath : "binding/path"
 			},
 			oFetchUpdateDataResult = {
-				editUrl : "/edit/url",
+				editUrl : "edit/url",
 				entityPath : "/entity/path",
 				propertyPath : "property/path"
 			},
@@ -3945,7 +3972,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [SyncPromise.resolve(), undefined].forEach(function (vValue) {
-	QUnit.test("doSetProperty: invocation of ODB#doSetProperty", function () {
+	[false, true].forEach((bAddressViaNavigationPath) => {
+		const sTitle = "doSetProperty: invocation of ODB#doSetProperty; exceptional case = "
+			+ !!vValue + ", AddressViaNavigationPath = " + bAddressViaNavigationPath;
+
+		if (vValue && bAddressViaNavigationPath) {
+			return;
+		}
+
+	QUnit.test(sTitle, function () {
 		var oBinding = {
 				oContext : {},
 				doSetProperty : function () {},
@@ -3954,14 +3989,15 @@ sap.ui.define([
 				sPath : "binding/path"
 			},
 			oFetchUpdateDataResult = {
-				editUrl : "/edit/url",
+				editUrl : "edit/url",
 				entityPath : "/entity/path",
 				propertyPath : "property/path"
 			},
 			oGroupLock = {},
 			oMetaModel = {
 				fetchUpdateData : function () {},
-				getUnitOrCurrencyPath : function () {}
+				getUnitOrCurrencyPath : function () {},
+				isAddressViaNavigationPath : mustBeMocked
 			},
 			oModel = {
 				bAutoExpandSelect : false,
@@ -4006,12 +4042,13 @@ sap.ui.define([
 					that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
 						.withExactArgs("/resolved/data/path")
 						.returns("unit/or/currency/path");
-
+					that.mock(oMetaModel).expects("isAddressViaNavigationPath").withExactArgs()
+						.returns(bAddressViaNavigationPath);
 					that.mock(oCache).expects("update")
 						.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 							/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func,
-							"/edit/url", "helper/path", "unit/or/currency/path",
-							sinon.match.same(bPatchWithoutSideEffects),
+							bAddressViaNavigationPath ? "entity/path" : "edit/url", "helper/path",
+							"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
 							/*fnPatchSent*/sinon.match.func, /*fnIsKeepAlive*/sinon.match.func,
 							/*fnSetUpsertPromise*/null)
 						.resolves();
@@ -4022,6 +4059,7 @@ sap.ui.define([
 
 		// code under test
 		return oContext.doSetProperty("/some/absolute/path", "new value", oGroupLock, bSkipRetry);
+	});
 	});
 });
 

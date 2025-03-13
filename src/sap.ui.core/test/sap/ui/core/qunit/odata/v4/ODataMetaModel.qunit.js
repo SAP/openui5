@@ -5784,6 +5784,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("isAddressViaNavigationPath", function (assert) {
+		this.oMetaModelMock.expects("getObject")
+			.withExactArgs("/@com.sap.vocabularies.Common.v1.AddressViaNavigationPath")
+			.returns("~result~");
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.isAddressViaNavigationPath(), "~result~");
+	});
+
+	//*********************************************************************************************
 	["ValueList", "ValueListMapping"].forEach(function (sValueList) {
 		QUnit.test("fetchValueListMappings: " + sValueList + ", property", function (assert) {
 			var oAnnotations = {},
