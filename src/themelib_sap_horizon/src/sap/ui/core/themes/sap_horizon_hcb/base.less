@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.2.8
-// * data:{"sModified":"2024-12-12T10:42:40Z"}
+// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+// * Theming Engine 14.2.35
+// * data:{"sModified":"2025-03-05T13:13:33Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_horizon_hcb/base.less (Version 11.24.0) *******************/
+/******************* FILE /Base/baseLib/sap_horizon_hcb/base.less (Version 11.27.1) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -159,6 +159,10 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapCompanyLogo: none;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapFavicon: @sapShell_Favicon;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -2801,6 +2805,30 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapTab_Neutral_TextColor: @sapTextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapTab_Neutral_ForegroundColor: @sapHC_StandardForeground;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapTab_Neutral_IconColor: contrast(@sapTab_Background, @sapHC_StandardForeground, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapTab_Neutral_Selected_TextColor: @sapContent_Selected_ForegroundColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapTab_Neutral_Selected_IconColor: contrast(@sapTab_Neutral_Selected_Background, @sapTextColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapTab_Neutral_Selected_Background: @sapSelectedColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapTile_Background: @sapBackgroundColor;
 
 // [Tags "!Protected"]
@@ -2963,6 +2991,9 @@
 @sapIndicationColor_1_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_1_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_1_Selected_TextColor: @sapIndicationColor_1_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_1b: @sapIndicationColor_1;
 @sapIndicationColor_1b_TextColor: @sapTextColor;
 @sapIndicationColor_1b_Background: @sapBackgroundColor;
@@ -2997,6 +3028,9 @@
 @sapIndicationColor_2_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_2_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_2_Selected_TextColor: @sapIndicationColor_2_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_2b: @sapIndicationColor_2;
 @sapIndicationColor_2b_TextColor: @sapTextColor;
 @sapIndicationColor_2b_Background: @sapBackgroundColor;
@@ -3031,6 +3065,9 @@
 @sapIndicationColor_3_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_3_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_3_Selected_TextColor: @sapIndicationColor_3_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_3b: @sapIndicationColor_3;
 @sapIndicationColor_3b_TextColor: @sapTextColor;
 @sapIndicationColor_3b_Background: @sapBackgroundColor;
@@ -3065,6 +3102,9 @@
 @sapIndicationColor_4_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_4_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_4_Selected_TextColor: @sapIndicationColor_4_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_4b: @sapIndicationColor_4;
 @sapIndicationColor_4b_TextColor: @sapTextColor;
 @sapIndicationColor_4b_Background: @sapBackgroundColor;
@@ -3099,6 +3139,9 @@
 @sapIndicationColor_5_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_5_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_5_Selected_TextColor: @sapIndicationColor_5_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_5b: @sapIndicationColor_5;
 @sapIndicationColor_5b_TextColor: @sapTextColor;
 @sapIndicationColor_5b_Background: @sapBackgroundColor;
@@ -3133,6 +3176,9 @@
 @sapIndicationColor_6_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_6_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_6_Selected_TextColor: @sapIndicationColor_6_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_6b: @sapIndicationColor_6;
 @sapIndicationColor_6b_TextColor: @sapTextColor;
 @sapIndicationColor_6b_Background: @sapBackgroundColor;
@@ -3167,6 +3213,9 @@
 @sapIndicationColor_7_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_7_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_7_Selected_TextColor: @sapIndicationColor_7_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_7b: @sapIndicationColor_7;
 @sapIndicationColor_7b_TextColor: @sapTextColor;
 @sapIndicationColor_7b_Background: @sapBackgroundColor;
@@ -3201,6 +3250,9 @@
 @sapIndicationColor_8_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_8_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_8_Selected_TextColor: @sapIndicationColor_8_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_8b: @sapIndicationColor_8;
 @sapIndicationColor_8b_TextColor: @sapTextColor;
 @sapIndicationColor_8b_Background: @sapBackgroundColor;
@@ -3235,6 +3287,9 @@
 @sapIndicationColor_9_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_9_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_9_Selected_TextColor: @sapIndicationColor_9_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_9b: @sapIndicationColor_9;
 @sapIndicationColor_9b_TextColor: @sapTextColor;
 @sapIndicationColor_9b_Background: @sapBackgroundColor;
@@ -3269,6 +3324,9 @@
 @sapIndicationColor_10_Selected_Background: @sapButton_Selected_Background;
 @sapIndicationColor_10_Selected_BorderColor: @sapButton_Selected_BorderColor;
 @sapIndicationColor_10_Selected_TextColor: @sapIndicationColor_10_TextColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapIndicationColor_10b: @sapIndicationColor_10;
 @sapIndicationColor_10b_TextColor: @sapTextColor;
 @sapIndicationColor_10b_Background: @sapBackgroundColor;
