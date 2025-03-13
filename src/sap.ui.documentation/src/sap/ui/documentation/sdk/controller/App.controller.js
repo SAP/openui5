@@ -301,9 +301,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oMasterView,
-				sMasterViewId,
-				bPhone = Device.system.phone,
+			var bPhone = Device.system.phone,
 				sRouteName = oEvent.getParameter("name"),
 				sTabId = this.oRouter.getRoute(sRouteName)._oConfig.target[0] + "Tab",
 				oTabToSelect = this._oView.byId(sTabId),
@@ -317,9 +315,10 @@ sap.ui.define([
 			oViewModel.setProperty("/bHasMaster", bHasMaster);
 
 			if (bPhone && bHasMaster) { // on phone we need the id of the master view (for navigation)
-				oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
-				sMasterViewId = oMasterView && oMasterView.getId();
-				oViewModel.setProperty("/sMasterViewId", sMasterViewId);
+				this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName).then(function(oMasterView) {
+					var sMasterViewId = oMasterView?.getId();
+					oViewModel.setProperty("/sMasterViewId", sMasterViewId);
+				});
 			}
 
 			// hide master on route change
