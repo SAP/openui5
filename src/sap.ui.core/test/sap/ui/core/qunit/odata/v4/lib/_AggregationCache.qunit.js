@@ -5014,27 +5014,38 @@ sap.ui.define([
 
 [undefined, "~iRank~"].forEach((vRank, i) => {
 	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	function test(self, assert, oCache, sParent = null, fnAssert = () => {}) {
+	function test(self, assert, oCache, sParent = null, fnAssert = () => {}, bCopy = false) {
 		const oChildNode = {
 			"@$ui5.context.isTransient" : "n/a"
 		};
 		oCache.aElements.$byPredicate["('23')"] = oChildNode;
-		self.mock(self.oRequestor).expects("request")
-			.withExactArgs("PATCH", "Foo('23')", "~oGroupLock~", {
+		const oGroupLock = {getUnlockedCopy : mustBeMocked};
+		self.mock(oGroupLock).expects("getUnlockedCopy").exactly(bCopy ? 1 : 0)
+			.withExactArgs().returns("~oGroupLockCopy~");
+		const oRequestorMock = self.mock(self.oRequestor);
+		oRequestorMock.expects("request").exactly(bCopy ? 1 : 0)
+			.withExactArgs("POST", "Foo('23')/copy.Action", "~oGroupLockCopy~", {
+					"If-Match" : sinon.match.same(oChildNode),
+					Prefer : "return=minimal"
+				}, {})
+			.returns("E");
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", bCopy ? "$0" : "Foo('23')", sinon.match.same(oGroupLock), {
 					"If-Match" : sinon.match.same(oChildNode),
 					Prefer : "return=minimal"
 				}, {"myParent@odata.bind" : sParent},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.returns("A");
 		self.mock(oCache).expects("requestRank")
-			.withExactArgs(sinon.match.same(oChildNode), "~oGroupLock~", true)
+			.withExactArgs(sinon.match.same(oChildNode), sinon.match.same(oGroupLock), true)
 			.returns("C");
-		self.mock(SyncPromise).expects("all").withExactArgs(["A", undefined, "C", undefined])
+		self.mock(SyncPromise).expects("all")
+			.withExactArgs(["A", undefined, "C", undefined, bCopy ? "E" : undefined])
 			.returns(SyncPromise.resolve([,, vRank]));
 
 		const {promise : oSyncPromise, refresh : bRefresh}
 			// code under test
-			= oCache.move("~oGroupLock~", "Foo('23')", sParent);
+			= oCache.move(oGroupLock, "Foo('23')", sParent, undefined, "n/a", undefined, bCopy);
 
 		const fnGetRank = oSyncPromise.getResult();
 		assert.strictEqual(typeof fnGetRank, "function");
@@ -5051,6 +5062,25 @@ sap.ui.define([
 
 		fnAssert(oChildNode);
 	}
+
+	//*********************************************************************************************
+	QUnit.test(`move: refresh needed (copy) #${i}`, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "n/a", "", {}, {
+				$Actions : {CopyAction : "copy.Action"},
+				$ParentNavigationProperty : "myParent",
+				expandTo : Number.MAX_SAFE_INTEGER,
+				hierarchyQualifier : "X"
+			});
+		assert.strictEqual(oCache.bUnifiedCache, true);
+		const oTreeStateMock = this.mock(oCache.oTreeState);
+		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('23')").returns(false);
+		oTreeStateMock.expects("isOutOfPlace").withExactArgs(undefined).returns(false);
+		oTreeStateMock.expects("deleteOutOfPlace").never();
+		oTreeStateMock.expects("expand").never();
+		this.mock(_Helper).expects("hasPrivateAnnotation").never();
+
+		test(this, assert, oCache, null, undefined, true);
+	});
 
 	//*********************************************************************************************
 	QUnit.test(`move: refresh needed (no unified cache yet) #${i}`, function (assert) {
@@ -5219,7 +5249,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oSiblingNode), sinon.match.same(oGroupLock), true)
 			.returns("D");
 		this.mock(SyncPromise).expects("all")
-			.withExactArgs(["A", "B", "C", bRequestSiblingRank && "D"])
+			.withExactArgs(["A", "B", "C", bRequestSiblingRank && "D", undefined])
 			.returns(SyncPromise.resolve([,, vRank, "~iSiblingRank~"]));
 
 		const {promise : oSyncPromise, refresh : bRefresh}

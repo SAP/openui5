@@ -66,6 +66,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const DOM_RENDER_LOCATION = "content";
+
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
@@ -722,6 +724,82 @@ sap.ui.define([
 		testCase(150, 100, 50, 50, 200, 200, PlacementType.Left);
 		testCase(100, 50, 50, 50, 200, 200, PlacementType.Bottom);
 		testCase(100, 150, 50, 50, 200, 200, PlacementType.Top);
+	});
+
+	QUnit.test("Redundant scrollbar doesn't appear on the documentElement during position calculation", async function (assert) {
+		// Arrange
+		this.clock.restore();
+		const done = assert.async();
+		const oDomRenderLocation = document.getElementById(DOM_RENDER_LOCATION);
+		const sCurrentRenderLocationHeight = oDomRenderLocation.style.height;
+		const oPopover = new Popover({
+			content: [
+				new HTML({ content: "<div style='height: 10000px;'></div>" })
+			]
+		});
+		const oOpener = new Button({ text: "Open Popover" });
+		oOpener.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+		oDomRenderLocation.style.height = "";
+
+		// Assert
+		assert.ok(document.documentElement.scrollHeight <= document.documentElement.clientHeight, "The documentElement should NOT have a scrollbar");
+
+		const sCurrentOverflow = document.documentElement.style.overflow;
+
+		oPopover._beforeAdjustPositionAndArrowHook = function () {
+			// Assert
+			assert.strictEqual(document.documentElement.style.overflow, "hidden", "The documentElement should have an overflow style");
+		};
+
+		oPopover.attachAfterOpen(() => {
+			// Assert
+			assert.strictEqual(document.documentElement.style.overflow, sCurrentOverflow, "The documentElement should NOT have an overflow style");
+
+			// Clean up
+			oPopover.destroy();
+			oOpener.destroy();
+			oDomRenderLocation.style.height = sCurrentRenderLocationHeight;
+			done();
+		});
+
+		// Act
+		oPopover.openBy(oOpener);
+	});
+
+	QUnit.test("If there is already a scrollbar on the documentElement, it is preserved during position calculation", async function (assert) {
+		// Arrange
+		this.clock.restore();
+		const done = assert.async();
+		const oPopover = new Popover({
+			content: [
+				new HTML({ content: "<div style='height: 10000px;'></div>" })
+			]
+		});
+		const oOpener = new Button({ text: "Open Popover" });
+		oOpener.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(document.documentElement.scrollHeight > document.documentElement.clientHeight, "The documentElement should have a scrollbar");
+
+		oPopover._beforeAdjustPositionAndArrowHook = function () {
+			// Assert
+			assert.strictEqual(document.documentElement.style.overflow, "", "The documentElement should NOT have an overflow style");
+		};
+
+		oPopover.attachAfterOpen(() => {
+			// Assert
+			assert.strictEqual(document.documentElement.style.overflow, "", "The documentElement should NOT have an overflow style");
+
+			// Clean up
+			oPopover.destroy();
+			oOpener.destroy();
+			done();
+		});
+
+		// Act
+		oPopover.openBy(oOpener);
 	});
 
 	QUnit.module("Property Setter", {

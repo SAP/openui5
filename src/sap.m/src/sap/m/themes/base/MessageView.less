@@ -64,21 +64,14 @@
 	.sapMMsgViewItem {
 		padding-left: 0;
 
-		&.sapMSLIWithDescription {
-			min-height: 3.3125rem;
-		}
-
-		&:not(.sapMSLIWithDescription) {
-			min-height: 2.75rem;
-		}
-
 		.sapMSLIImgIcon {
 			margin-left: 0;
 		}
 	}
 
-	.sapMSLI {
-		height: auto !important;
+	.sapMMsgViewItem.sapMSLI.sapMSLIWrapping .sapMLIBContent .sapUiIcon {
+		align-self: center;
+		margin-top: 0;
 	}
 
 	.sapMSLIDescription {
@@ -108,10 +101,6 @@
 
 	.sapMSLIDescIcon .sapMSLIDescription {
 		margin-top: 0.125rem;
-	}
-
-	.sapMSLIDiv {
-		padding: 0 !important;
 	}
 
 	.sapMSLIInfo {
@@ -169,25 +158,12 @@
 		left: -8px;
 	}
 
-	.sapMMsgViewItem {
-		padding-left: 0;
-
-		&.sapMSLIWithDescription {
-			height: 3.25rem;
-		}
+	.sapMMsgViewItem.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+		padding: 0;
 	}
 
 	.sapMMsgViewItemActive .sapMLnk {
 		font-size: var(--sapFontHeader6Size);
-	}
-
-	.sapMMsgViewItem:not(.sapMSLIWithDescription) {
-		height: 2rem;
-	}
-
-	.sapMMsgViewItem:not(.sapMSLIWithDescription) .sapMLIBImgNav.sapUiIcon {
-		height: 2rem;
-		line-height: 2rem;
 	}
 
 	.sapMMsgViewItem .sapMLIBImgNav.sapUiIcon {

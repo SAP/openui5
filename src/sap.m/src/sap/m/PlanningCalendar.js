@@ -2540,6 +2540,7 @@ sap.ui.define([
 		return this;
 	};
 
+
 	PlanningCalendar.prototype.setAppointmentHeight = function(sAppointmentHeight) {
 		var aRows = this.getRows(),
 			i;

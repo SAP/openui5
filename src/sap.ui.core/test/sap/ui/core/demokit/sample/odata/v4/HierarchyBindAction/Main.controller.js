@@ -127,9 +127,10 @@ sap.ui.define([
 			}
 		},
 
-		onMove : function (oEvent, vNextSibling) {
-			this._vNextSibling = vNextSibling;
+		onMove : function (oEvent, vNextSibling, bCopy) {
 			this._oNode = oEvent.getSource().getBindingContext();
+			this._vNextSibling = vNextSibling;
+			this._bCopy = bCopy;
 			const oSelectDialog = this.byId("moveDialog");
 			oSelectDialog.setBindingContext(this._oNode);
 			const oListBinding = oSelectDialog.getBinding("items");
@@ -158,6 +159,7 @@ sap.ui.define([
 					});
 				} else {
 					await this._oNode.move({
+						copy : this._bCopy,
 						nextSibling : this._vNextSibling,
 						parent : oParent
 					});

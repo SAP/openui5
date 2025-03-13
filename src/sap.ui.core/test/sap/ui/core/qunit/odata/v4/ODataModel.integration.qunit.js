@@ -47755,6 +47755,174 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Copy a node
+	// with children to a different parent. Observe how the index of the copied node is updated.
+	// JIRA: CPOUI5ODATAV4-2902
+	QUnit.test("Recursive Hierarchy: copy", async function (assert) {
+		const sBaseUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+			+ ",Levels=2)";
+		const sListUrl = sBaseUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+			+ "&$count=true&$skip=0&$top=10";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="10">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text id="id" text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 9 Zeta
+		// 0 Alpha
+		//   1 Beta (copied to Zeta)
+		//     1.1 Gamma
+		//     1.2 Delta
+		//   2 Epsilon
+		this.expectRequest(sListUrl, {
+				"@odata.count" : "4",
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "9",
+					Name : "Zeta"
+				}, {
+					DescendantCount : "2",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Epsilon"
+				}]
+			})
+			.expectChange("id", ["9", "0", "1", "2"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('9')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')"
+		], [
+			[undefined, 1, "9", "Zeta"],
+			[true, 1, "0", "Alpha"],
+			[false, 2, "1", "Beta"],
+			[undefined, 2, "2", "Epsilon"]
+		]);
+		const oListBinding = oTable.getBinding("rows");
+		const [oZeta, oAlpha, oBeta, oEpsilon] = oListBinding.getCurrentContexts();
+
+		this.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {},
+				url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"
+			}, {})
+			.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
+				},
+				url : "$0"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 2,
+				url : sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank"
+			}, {
+				value : [{ // Note: Beta's position did change
+					LimitedRank : "3" // Edm.Int64
+				}]
+			})
+			.expectRequest({
+				batchNo : 2,
+				url : sListUrl
+			}, {
+				"@odata.count" : "5",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "9",
+					Name : "Zeta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "collapsed",
+					ID : "_1",
+					Name : "Copy of Beta"
+				}, {
+					DescendantCount : "2",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Epsilon"
+				}]
+			})
+			.expectChange("id", [, "_1", "0", "1", "2"]);
+
+		await Promise.all([
+			// code under test
+			oBeta.move({copy : true, parent : oZeta}),
+			this.waitForChanges(assert, "copy 1 (Beta) to 9 (Zeta)")
+		]);
+
+		checkTable("after copy 1 (Beta) to 9 (Zeta)", assert, oTable, [
+			oZeta,
+			"/EMPLOYEES('_1')",
+			oAlpha,
+			oBeta,
+			oEpsilon
+		], [
+			[true, 1, "9", "Zeta"],
+			[false, 2, "_1", "Copy of Beta"],
+			[true, 1, "0", "Alpha"],
+			[false, 2, "1", "Beta"],
+			[undefined, 2, "2", "Epsilon"]
+		]);
+
+		assert.strictEqual(oBeta.getIndex(), 3, "Beta is now at index 3");
+	});
+
+	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	// JIRA: CPOUI5UISERVICESV3-1220
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
@@ -56833,6 +57001,66 @@ sap.ui.define([
 			delete mMetaData.$Annotations;
 			assert.notOk(JSON.stringify(mMetaData).includes("@"), "no inline annotations");
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: With annotation "AddressViaNavigationPath", the deep path is used for PATCH and
+	// DELETE instead of the canonical path.
+	// JIRA: CPOUI5ODATAV4-2899
+	QUnit.test("CPOUI5ODATAV4-2899: AddressViaNavigationPath", async function (assert) {
+		const oModel = this.createTeaBusiModel({
+			annotationURI : sTeaBusi + "annotations_tea_busi.xml",
+			autoExpandSelect : true
+		}, {
+			[sTeaBusi + "annotations_tea_busi.xml"]
+				: {source : "odata/v4/data/annotations_tea_busi.xml"}
+		});
+		const sView = `
+<FlexBox id="form" binding="{/TEAMS('42')/TEAM_2_EMPLOYEES('1')}">
+	<Input id="salary" value="{SALARY/MONTHLY_BASIC_SALARY_AMOUNT}"/>
+	<Text id="salaryCurrency" text="{SALARY/BASIC_SALARY_CURR}"/>
+</FlexBox>`;
+
+		this.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('1')"
+				+ "?$select=ID,SALARY/BASIC_SALARY_CURR,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+				ID : "1",
+				SALARY : {
+					BASIC_SALARY_CURR : "EUR",
+					MONTHLY_BASIC_SALARY_AMOUNT : "1234"
+				}
+			})
+			.expectChange("salary", "1,234");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("salary", "1,234.89")
+			.expectRequest({
+				method : "PATCH",
+				payload : {
+					SALARY : {
+						BASIC_SALARY_CURR : "EUR",
+						MONTHLY_BASIC_SALARY_AMOUNT : "1234.89"
+					}
+				},
+				url : "TEAMS('42')/TEAM_2_EMPLOYEES('1')"
+			}, {/* response does not matter here */});
+
+		// code under test
+		this.oView.byId("salary").getBinding("value").setValue("1234.89");
+
+		await this.waitForChanges(assert, "PATCH salary");
+
+		this.expectChange("salary", null)
+			.expectRequest({
+				method : "DELETE",
+				url : "TEAMS('42')/TEAM_2_EMPLOYEES('1')"
+			}); // 204 No Content
+
+		await Promise.all([
+			// code under test
+			this.oView.byId("form").getBindingContext().delete(),
+			this.waitForChanges(assert, "DELETE worker")
+		]);
 	});
 
 	//*********************************************************************************************
