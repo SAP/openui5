@@ -123,6 +123,19 @@ sap.ui.define([
 		},
 		restore: function() {
 			this.server.restore();
+		},
+		updateExisitingDocument: function(oFileObject) {
+			const items = this.oModel.getProperty("/items");
+			const oExistingfileObjectData = items.find(function(item){
+				return item.id === oFileObject.id;
+			});
+			if (oExistingfileObjectData) {
+				oExistingfileObjectData.fileName = oFileObject.fileName;
+				oExistingfileObjectData.url = oFileObject.url;
+				oExistingfileObjectData.fileSize = oFileObject.fileSize;
+				oExistingfileObjectData.mediaType = oFileObject.mediaType;
+				this.oModel.setData({items: items});
+			}
 		}
 	});
 }, true);
