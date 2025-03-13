@@ -292,10 +292,10 @@ sap.ui.define([
 	}
 
 	function updateRuntimePersistence(sReference, oStorageResponse, oRuntimePersistence) {
-		var aFlexObjects = oRuntimePersistence.flexObjects.slice();
-		var iInitialFlexObjectsLength = aFlexObjects.length;
-		var bUpdate;
-		var aChangeDefinitions = [];
+		const aFlexObjects = oRuntimePersistence.flexObjects.slice();
+		const iInitialFlexObjectsLength = aFlexObjects.length;
+		const aChangeDefinitions = [];
+		let bUpdate;
 
 		each(oStorageResponse.changes, function(sKey, vValue) {
 			prepareChangeDefinitions(sKey, vValue).forEach(function(oChangeDef) {
@@ -306,9 +306,9 @@ sap.ui.define([
 		_mInstances[sReference].runtimePersistence = {
 			...oRuntimePersistence,
 			flexObjects: aChangeDefinitions.map(function(oChangeDef) {
-				var iObjectIndex;
+				let iObjectIndex;
 				// Only keep FlexObjects found in the storage change definitions
-				var oExistingFlexObject = aFlexObjects.find(function(oFlexObject, iIndex) {
+				const oExistingFlexObject = aFlexObjects.find(function(oFlexObject, iIndex) {
 					iObjectIndex = iIndex;
 					return oFlexObject.getId() === oChangeDef.fileName;
 				});
@@ -321,6 +321,16 @@ sap.ui.define([
 					}
 					return oExistingFlexObject;
 				}
+
+				// The backend creates new changes in some scenarios (e.g. context filtering of FlVariants),
+				// which are not known to the runtimePersistence before
+				if (
+					oChangeDef.fileType === "ctrl_variant_change"
+					&& oChangeDef.fileName.endsWith("flVariant_contextFiltering_setVisible")
+				) {
+					return FlexObjectFactory.createFromFileContent(oChangeDef, null, true);
+				}
+
 				// If unknown change definitions are found, throw error (storage does not create flex objects)
 				const sErrorText = "Error updating runtime persistence: storage returned unknown flex objects";
 				Log.error(sErrorText);
