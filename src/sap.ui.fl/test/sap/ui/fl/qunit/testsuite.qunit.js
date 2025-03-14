@@ -383,6 +383,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/Applier"]
 				}
 			},
+			"apply/_internal/changes/descriptor/InlineApplier": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/InlineApplier"]
+				}
+			},
 			"apply/_internal/changes/descriptor/ApplyStrategyFactory": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
