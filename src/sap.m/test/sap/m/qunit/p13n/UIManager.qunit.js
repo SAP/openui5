@@ -2,8 +2,10 @@
 sap.ui.define([
     "sap/m/p13n/modules/AdaptationProvider",
     "sap/m/p13n/modules/UIManager",
-    "sap/ui/core/Control"
-], function (AdaptationProvider, UIManager, Control) {
+    "sap/ui/core/Control",
+    "sap/m/p13n/Popup",
+    "sap/ui/thirdparty/sinon"
+], function (AdaptationProvider, UIManager, Control, P13nPopup, sinon) {
 	"use strict";
 
 	QUnit.module("Basics", {
@@ -107,6 +109,103 @@ sap.ui.define([
         popup._getContainer().fireAfterViewSwitch({
             target: "Test"
         });
+    });
+
+    QUnit.test("'show' method with activePanel setting calls Popup.open with activePanel", async function(assert){
+        // arrange
+        const done = assert.async();
+        const sActivePanel = "ActivePanel";
+        const aPanelKeys = ["Test", sActivePanel];
+        const mSettings = {
+            activePanel: sActivePanel,
+            source: "anysource"
+        };
+        const oPopupOpenSpy = sinon.spy(P13nPopup.prototype, "open");
+
+        // act
+        const oPopup = await this.oUIManager.show(this.oControl, aPanelKeys, structuredClone(mSettings));
+
+        // assert
+        assert.ok(oPopupOpenSpy.calledWith(mSettings.source, mSettings), "Popup.open was called with the correct parameters");
+
+        // clean up
+        oPopup.getParent().fireClose();
+        oPopupOpenSpy.restore();
+        done();
+    });
+
+    QUnit.test("'show' method without activePanel setting does not add activePanel setting", async function(assert){
+        // arrange
+        const done = assert.async();
+        const sActivePanel = "ActivePanel";
+        const aPanelKeys = ["Test", sActivePanel];
+        const mSettings = {
+            source: "anysource"
+        };
+        const oPopupOpenSpy = sinon.spy(P13nPopup.prototype, "open");
+
+        // act
+        const oPopup = await this.oUIManager.show(this.oControl, aPanelKeys, structuredClone(mSettings));
+
+        // assert
+        assert.ok(oPopupOpenSpy.calledWith(mSettings.source, mSettings), "Popup.open was called with the correct parameters");
+
+        // clean up
+        oPopup.getParent().fireClose();
+        oPopupOpenSpy.restore();
+        done();
+    });
+
+    QUnit.test("'show' method with activePanel removes parameter when panel not existing", async function(assert){
+        // arrange
+        const done = assert.async();
+        const sActivePanel = "ActivePanel";
+        const aPanelKeys = ["Test"];
+        const mSettings = {
+            activePanel: sActivePanel,
+            source: "anysource"
+        };
+        const mExpectedSettings = {
+            source: "anysource"
+        };
+        const oPopupOpenSpy = sinon.spy(P13nPopup.prototype, "open");
+
+        // act
+        const oPopup = await this.oUIManager.show(this.oControl, aPanelKeys, structuredClone(mSettings));
+
+        // assert
+        assert.ok(oPopupOpenSpy.calledWith(mSettings.source, mExpectedSettings), "Popup.open was called with the correct parameters");
+
+        // clean up
+        oPopup.getParent().fireClose();
+        oPopupOpenSpy.restore();
+        done();
+    });
+
+    QUnit.test("'show' method with activePanel removes parameter when only one panel exists", async function(assert){
+        // arrange
+        const done = assert.async();
+        const sActivePanel = "ActivePanel";
+        const aPanelKeys = [sActivePanel];
+        const mSettings = {
+            activePanel: sActivePanel,
+            source: "anysource"
+        };
+        const mExpectedSettings = {
+            source: "anysource"
+        };
+        const oPopupOpenSpy = sinon.spy(P13nPopup.prototype, "open");
+
+        // act
+        const oPopup = await this.oUIManager.show(this.oControl, aPanelKeys, structuredClone(mSettings));
+
+        // assert
+        assert.ok(oPopupOpenSpy.calledWith(mSettings.source, mExpectedSettings), "Popup.open was called with the correct parameters");
+
+        // clean up
+        oPopup.getParent().fireClose();
+        oPopupOpenSpy.restore();
+        done();
     });
 
 });

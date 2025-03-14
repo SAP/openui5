@@ -139,8 +139,11 @@ sap.ui.define([
 							oP13nContainer.addPanel(oPanel, aPanelKeys[iIndex]);
 						});
 
+						if (mSettings?.activePanel && (!aPanelKeys.includes(mSettings.activePanel) || aPanelKeys.length < 2)) {
+							delete mSettings.activePanel;
+						}
 						oControl.addDependent(oP13nContainer);
-						oP13nContainer.open(mSettings.source, mSettings, mSettings?.activePanel);
+						oP13nContainer.open(mSettings.source, mSettings);
 						return oP13nContainer._oPopup;
 
 					});
