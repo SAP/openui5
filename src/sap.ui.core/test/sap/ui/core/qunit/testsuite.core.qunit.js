@@ -58,15 +58,6 @@ sap.ui.define(function() {
 			},
 			Hyphenation: {
 				title: "sap.ui.core.hyphenation.Hyphenation"
-			},
-			"support/usage/EventBroadcaster": {
-				title: "Event Broadcaster"
-			},
-			"support/RuleEngineOpaExtension": {
-				title: "Rule Engine OPA Extension"
-			},
-			"support/plugins/ControlTree": {
-				title: "Control Tree Support Plugin"
 			}
 		}
 	};
