@@ -18,9 +18,12 @@
 			</h2>
 
 <pre class="lang-js">
-new sap.m.Text({
+// Text required from "sap/m/Text"
+// EmptyIndicatorMode required from "sap/m/library"
+
+new Text({
 	text: "",
-	emptyIndicatorMode: sap.m.EmptyIndicatorMode.On
+	emptyIndicatorMode: EmptyIndicatorMode.On
 })
 </pre>
 
@@ -35,78 +38,87 @@ new sap.m.Text({
 			</h2>
 
 <pre class="lang-js">
-new sap.m.Table({
-	headerToolbar: new sap.m.OverflowToolbar({
+// Table required from "sap/m/Table"
+// OverflowToolbar required from "sap/m/OverflowToolbar"
+// Title required from "sap/m/Title"
+// Column required from "sap/m/Column"
+// Text required from "sap/m/Text"
+// ColumnListItem required from "sap/m/ColumnListItem"
+// Link required from "sap/m/Link"
+// ObjectIdentifier required from "sap/m/ObjectIdentifier"
+
+new Table({
+	headerToolbar: new OverflowToolbar({
 		content: [
-			new sap.m.Title({
+			new Title({
 				text: "Products",
 				level: "H2"
 			})
 		]
 	}),
 	columns: [
-		new sap.m.Column({
-			header: new sap.m.Text({
+		new Column({
+			header: new Text({
 				text: "Product Name"
 			})
 		}),
-		new sap.m.Column({
-			header: new sap.m.Text({
+		new Column({
+			header: new Text({
 				text: "Supplier Name"
 			})
 		}),
-		new sap.m.Column({
-			header: new sap.m.Text({
+		new Column({
+			header: new Text({
 				text: "Description"
 			})
 		})
 	],
 	items: [
-		new sap.m.ColumnListItem({
+		new ColumnListItem({
 			cells: [
-				new sap.m.Link({
+				new Link({
 					text: "",
 					href: "",
 					<mark>visible: false</mark>,
 					tooltip: "Audio/Video Cable Kit - 4m"
 				}),
-				new sap.m.ObjectIdentifier({
+				new ObjectIdentifier({
 					title: "Titanium",
 					titleActive: true
 				}),
-				new sap.m.Text({
+				new Text({
 					text: "Quality cables for notebooks and projectors"
 				})
 			]
 		}),
-		new sap.m.ColumnListItem({
+		new ColumnListItem({
 			cells: [
-				new sap.m.Link({
+				new Link({
 					text: "Blaster Extreme",
 					href: ""
 				}),
-				new sap.m.ObjectIdentifier({
+				new ObjectIdentifier({
 					title: "",
 					titleActive: true,
 					<mark>visible: false</mark>,
 					tooltip: "Speaker Experts"
 				}),
-				new sap.m.Text({
+				new Text({
 					text: "PC multimedia speakers - 10 Watt (Total) - 2-way"
 				})
 			]
 		}),
-		new sap.m.ColumnListItem({
+		new ColumnListItem({
 			cells: [
-				new sap.m.Link({
+				new Link({
 					text: "Copymaster",
 					href: ""
 				}),
-				new sap.m.ObjectIdentifier({
+				new ObjectIdentifier({
 					title: "Alpha Printers",
 					titleActive: true
 				}),
-				new sap.m.Text({
+				new Text({
 					text: "",
 					<mark>visible: false</mark>,
 					tooltip: "Copymaster"
