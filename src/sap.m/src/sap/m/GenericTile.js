@@ -1872,7 +1872,7 @@ sap.ui.define([
 			}
 		} else {
 			oDom = this.getAggregation("_titleText").getDomRef("inner");
-			iMaxHeight = this.getAggregation("_titleText").getClampHeight(oDom);
+			iMaxHeight = 0;
 			return (iMaxHeight < oDom.scrollHeight);
 		}
 	};

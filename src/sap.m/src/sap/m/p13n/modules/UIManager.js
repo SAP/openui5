@@ -58,7 +58,7 @@ sap.ui.define([
 	 * @param {string|string[]} vPanelKeys The affected panels that should be added to the <code>sap.m.p13n.Popup</code>
 	 * @param {object} mSettings The settings object for the personalization
 	 * @param {string} [mSettings.title] The title for the <code>sap.m.p13n.Popup</code> control
-	 * @param {sap.ui.core.Control} [mSettings.source] The source contro to be used by the <code>sap.m.p13n.Popup</code> control (only necessary in case the mode is set to <code>ResponsivePopover</code>)
+	 * @param {sap.ui.core.Control} [mSettings.source] The source control to be used by the <code>sap.m.p13n.Popup</code> control (only required if the mode is set to <code>ResponsivePopover</code>)
 	 * @param {sap.m.P13nPopupMode} [mSettings.mode] The mode to be used by the <code>sap.m.p13n.Popup</code> control
 	 * @param {sap.ui.core.CSSSize} [mSettings.contentHeight] Height configuration for the related popup container
 	 * @param {sap.ui.core.CSSSize} [mSettings.contentWidth] Width configuration for the related popup container
@@ -67,6 +67,8 @@ sap.ui.define([
 	 * (Note: only takes effect if the button is shown via <code>showReset</code>)
 	 * @param {function} [mSettings.reset] Custom reset handling to opt out the default reset which will trigger a reset for all open tabs.
 	 * @param {function} [mSettings.close] Event handler once the Popup has been closed
+	 * @param {string} [mSettings.activePanel] Key of active panel that is opened initially
+	 * @param {boolean} [mSettings.refreshPropertyHelper] Determines if the property helper should be refreshed
 	 *
 	 * @returns {Promise} Promise resolving in the <code>sap.m.p13n.Popup</code> instance.
 	 */
@@ -138,7 +140,7 @@ sap.ui.define([
 						});
 
 						oControl.addDependent(oP13nContainer);
-						oP13nContainer.open(mSettings.source, mSettings);
+						oP13nContainer.open(mSettings.source, mSettings, mSettings?.activePanel);
 						return oP13nContainer._oPopup;
 
 					});
@@ -151,11 +153,11 @@ sap.ui.define([
 		}
 	};
 
-	UIManager.prototype.create = function(oControl, vPanelKeys) {
+	UIManager.prototype.create = function(oControl, vPanelKeys, mSettings) {
 		const aPanelKeys = vPanelKeys instanceof Array ? vPanelKeys : [vPanelKeys];
 		const that = this;
 
-		return this.oAdaptationProvider.initAdaptation(oControl, aPanelKeys)
+		return this.oAdaptationProvider.initAdaptation(oControl, aPanelKeys, mSettings.refreshPropertyHelper)
 			.then(() => {
 				const vSettings = this.oAdaptationProvider.getUISettings(oControl, aPanelKeys);
 

@@ -480,6 +480,15 @@ sap.ui.define([
 				oRm.renderControl(Element.getElementById(oControl.getControl()));
 				oRm.close("div");
 			}
+		},
+		addAriaLabelledBy: function(vAriaLabelledBy) {
+			const oControl = Element.getElementById(this.getControl());
+			oControl?.addAriaLabelledBy?.(vAriaLabelledBy);
+			return this;
+		},
+		getAriaLabelledBy: function() {
+			const oControl = Element.getElementById(this.getControl());
+			return oControl?.getAriaLabelledBy?.() || [];
 		}
 	});
 

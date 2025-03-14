@@ -501,6 +501,11 @@ sap.ui.define([
 		assert.deepEqual(oPopover2, oPopover, "Popover instance is reused");
 		assert.deepEqual(oDetailsList2, oDetailsList, "List instance is reused");
 		// Item template should not be reused in case multiple columns are reusing the multi-unit popover
-		assert.equal(oDetailsListBindingInfo2.template.getContent()[0].getId(), oTemplate2.getId(), "Item template is not reused");
+		assert.equal(oDetailsListBindingInfo2.template.getContent()[0].getId(), oTemplate2.getId(),
+					"Item template is not reused between different columns");
+
+		mSettings.listItemContentTemplate = oTemplate;
+		await Util.createOrUpdateMultiUnitPopover(oPopover, mSettings);
+		assert.ok(oPopover.getContent()[0].getBindingInfo("items").template.getContent()[0].getId(), oTemplate.getId(), "Item template is reused");
 	});
 });

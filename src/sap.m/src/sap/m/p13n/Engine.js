@@ -713,7 +713,8 @@ sap.ui.define([
 		this._setModificationHandler(oControl, oTemporaryRTAHandler);
 
 		this.uimanager.show(oControl, aKeys, {
-			showReset: false
+			showReset: false,
+			refreshPropertyHelper: true
 		}).then((oContainer) => {
 			const oCustomHeader = oContainer.getCustomHeader();
 			if (oCustomHeader) {
@@ -887,18 +888,18 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} vControl The registered control instance
 	 * @param {string|string[]} aKeys The key for the related controller
-	 * @param {Object[]} aCustomInfo A custom set of propertyinfos as base to create the UI
+	 * @param {boolean | undefined} bRefreshPropertyHelper A custom set of propertyinfos as base to create the UI
 	 *
 	 * @returns {Promise} A Promise resolving after the adaptation housekeeping has been initialized
 	 */
-	Engine.prototype.initAdaptation = function(vControl, aKeys) {
+	Engine.prototype.initAdaptation = function(vControl, aKeys, bRefreshPropertyHelper) {
 		this.verifyController(vControl, aKeys);
 
 		//1) Cache property helper
 		const oRegistryEntry = this._getRegistryEntry(vControl);
 		const oControl = Engine.getControlInstance(vControl);
 
-		if (oRegistryEntry.helper) {
+		if (!bRefreshPropertyHelper && oRegistryEntry.helper) {
 			return Promise.resolve(oRegistryEntry.helper);
 		}
 

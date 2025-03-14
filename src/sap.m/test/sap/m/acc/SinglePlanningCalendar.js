@@ -805,8 +805,20 @@ sap.ui.define([
 		],
 
 		appointmentSelect: function (oEvent) {
-			var oAppointment = oEvent.getParameter("appointment");
-			MessageToast.show("AppointmentSelect event fired: " + oAppointment.getTitle());
+			var oAppointment = oEvent.getParameter("appointment"),
+				aAppointments = oEvent.getParameter("appointments"),
+				sText = "",
+				i;
+
+			if (oAppointment) {
+				sText = oAppointment.getTitle();
+			} else if (aAppointments.length) {
+				for (i = 1; i < aAppointments.length; i++) {
+					sText = sText + aAppointments[i].getTitle() + " ";
+				}
+			}
+
+			MessageToast.show("AppointmentSelect event fired: " + sText);
 		},
 		enableAppointmentsDragAndDrop: true,
 		enableAppointmentsResize: true,

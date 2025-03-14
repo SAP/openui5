@@ -154,22 +154,20 @@ sap.ui.define([
 	};
 
 	var handleAppointmentSelect = function (oEvent) {
-		var oInput = Element.getElementById("I1"),
-			oAppointment = oEvent.getParameter("appointment"),
-			aAppointments,
-			sValue,
+		var oAppointment = oEvent.getParameter("appointment"),
+			aAppointments = oEvent.getParameter("appointments"),
+			sText = "",
 			i;
 
 		if (oAppointment) {
-			oInput.setValue("Appointment selected: " + oAppointment.getId());
-		} else {
-			aAppointments = oEvent.getParameter("appointments");
-			sValue = aAppointments.length + " Appointments selected: ";
+			sText = oAppointment.getTitle();
+		} else if (aAppointments.length) {
 			for (i = 1; i < aAppointments.length; i++) {
-				sValue = sValue + aAppointments[i].getId() + " ";
+				sText = sText + aAppointments[i].getTitle() + " ";
 			}
-			oInput.setValue(sValue);
 		}
+
+		MessageToast.show("AppointmentSelect event fired: " + sText);
 		setEventLog("'appointmentSelect' for appointment: " + (oAppointment ? oAppointment.getTitle() : "<no app>"));
 	};
 

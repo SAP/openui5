@@ -463,18 +463,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the third-party code editor instance
-	 * <b>Caution:</b> Using the third-party code editor instance introduces a dependency to that internal editor. Future changes in the internal editor might lead to undefined behavior, so it should only be used in justified cases.
-	 * @returns {object} the internal third-party code editor instance
-	 * @private
-	 * @ui5-restricted
-	 * @deprecated As of version 1.121, use the public <code>CodeEditor.prototype.getAceEditor</code> instead.
-	 */
-	CodeEditor.prototype.getInternalEditorInstance = function() {
-		return this._oEditor;
-	};
-
-	/**
 	 * Returns the internal instance of the third-party Ace code editor.
 	 *
 	 * <b>Note:</b> This control is based on third-party open-source software, and there might be incompatible changes introduced by the code owner in their future releases.

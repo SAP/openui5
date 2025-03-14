@@ -16,6 +16,9 @@
 (function(__global) {
 	"use strict";
 
+	// remember original setTimeout for task splitting to avoid clashes using sinon.useFakeTimers()
+	const setTimeout = __global.setTimeout;
+
 	/*
 	 * Helper function that removes any query and/or hash parts from the given URL.
 	 *
