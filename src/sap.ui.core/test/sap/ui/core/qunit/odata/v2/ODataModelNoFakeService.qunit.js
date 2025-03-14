@@ -8935,4 +8935,66 @@ sap.ui.define([
 		// code under test
 		ODataModel.prototype.setChangeBatchGroups.call(oModel, {"*" : {batchGroupId : "~groupId"}});
 	});
+
+	//*********************************************************************************************
+[{
+	sMetadataUrl: "~metadataUrl",
+	vAnnotationURI: undefined,
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl",
+	vAnnotationURI: "~annotationURI",
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl/~cachebuster~/",
+	vAnnotationURI: "~annotationURI",
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl?sap-context-token=foo",
+	vAnnotationURI: "~annotationURI",
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl",
+	vAnnotationURI: "~annotationURI/~cachebuster~/",
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl",
+	vAnnotationURI: "~annotationURI?sap-context-token=foo",
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl?sap-context-token=foo",
+	vAnnotationURI: ["~annotationURI?sap-context-token=foo", "~annotationURI2"],
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl/~cachebuster~/",
+	vAnnotationURI: "~annotationURI?sap-context-token=foo",
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl/~cachebuster~/",
+	vAnnotationURI: "~annotationURI/~cachebuster~/",
+	bCaching: false
+}, {
+	sMetadataUrl: "~metadataUrl?sap-context-token=foo",
+	vAnnotationURI: "~annotationURI?sap-context-token=foo",
+	bCaching: true
+}, {
+	sMetadataUrl: "~metadataUrl?sap-context-token=foo",
+	vAnnotationURI: "~annotationURI/~cachebuster~/",
+	bCaching: true
+}, {
+	sMetadataUrl: "~metadataUrl?sap-context-token",
+	vAnnotationURI: "~annotationURI?sap-context-token",
+	bCaching: true
+}, {
+	sMetadataUrl: "~metadataUrl/sap-context-token/foo",
+	vAnnotationURI: "~annotationURI/sap-context-token/foo",
+	bCaching: true
+}].forEach(({sMetadataUrl, vAnnotationURI, bCaching}, i) => {
+	QUnit.test("_cacheSupported: #" + i, function (assert) {
+		const oModel = {sAnnotationURI: vAnnotationURI};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._cacheSupported.call(oModel, sMetadataUrl), bCaching);
+	});
+});
 });
