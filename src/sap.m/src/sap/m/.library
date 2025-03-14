@@ -43,7 +43,7 @@
     </packaging>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="DOMPurify" displayName="purify.js" npmName="dompurify" version="3.1.7" hash="5d8f06a0c610536e2003a609560457c4" homepage="https://github.com/cure53/DOMPurify/" id="73554900106100137292">
+        <lib name="DOMPurify" displayName="purify.js" npmName="dompurify" version="3.2.4" hash="f5e3f0b315448da532b33fe120eaf725" homepage="https://github.com/cure53/DOMPurify/" id="73554900106100137292">
             <license url="https://github.com/cure53/DOMPurify/blob/main/LICENSE" type="Apache-2.0" />
             <copyright>Mario Heiderich</copyright>
             <pattern>sap/m/_thirdparty/purify.js</pattern>
