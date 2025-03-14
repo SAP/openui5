@@ -4195,6 +4195,9 @@ sap.ui.define([
 		fnError.restore();
 	});
 
+	/**
+	 * @deprecated As of version 1.125
+	 */
 	QUnit.test("#autoResizeColumn", function(assert) {
 		const oColumn = this.oTable.getColumns()[0];
 		const assertAutoResizeCalled = (bCalled) => {
