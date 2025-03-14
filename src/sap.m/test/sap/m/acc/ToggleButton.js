@@ -15,13 +15,13 @@ sap.ui.define([
 		content : [
 			new Label("D1", {text: "General description", wrapping: true}),
 			new Label("L1", { text: "Regular", wrapping: true }),
-			new ToggleButton({ text: "Logged", ariaLabelledBy: ["L1"], ariaDescribedBy: ["D1"] }),
+			new ToggleButton({ text: "Logged", ariaLabelledBy: ["D1", "L1"] }),
 			new Label("L2", { text: "Disabled", wrapping: true }),
-			new ToggleButton({ text: "Logged", enabled: false, ariaLabelledBy: ["L1"], ariaDescribedBy: ["D1"] }),
+			new ToggleButton({ text: "Logged", enabled: false, ariaLabelledBy: ["D1", "L2"] }),
 			new Label("L3", { text: "Disabled and pressed", wrapping: true }),
-			new ToggleButton({ text: "Logged", pressed: true, enabled: false, ariaLabelledBy: ["L1"], ariaDescribedBy: ["D1"] }),
+			new ToggleButton({ text: "Logged", pressed: true, enabled: false, ariaLabelledBy: ["D1", "L3"] }),
 			new Label("L4", { text: "Icon only", wrapping: true }),
-			new ToggleButton({ icon: "sap-icon://log", pressed: true, tooltip: "Logged", ariaLabelledBy: ["L1"], ariaDescribedBy: ["D1"] })
+			new ToggleButton({ icon: "sap-icon://log", pressed: true, tooltip: "Logged", ariaLabelledBy: ["D1", "L4"] })
 		]
 	}).addStyleClass("sapUiContentPadding");
 
