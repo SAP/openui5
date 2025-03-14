@@ -575,6 +575,22 @@ sap.ui.define([
 		};
 
 		/**
+		 * Displays the first available clock and focus its buttom.
+		 * @private
+		 */
+		TimePickerClocks.prototype._showFirstClock = function() {
+			var aButtons = this.getAggregation("_buttons"),
+				iActiveClock = 0;
+
+			if (aButtons && aButtons[iActiveClock])	{
+				aButtons[iActiveClock].setPressed(true);
+				this._switchClock(iActiveClock, true);
+				aButtons[iActiveClock].focus();
+				this._activeClock = iActiveClock;
+			}
+		};
+
+		/**
 		 * An instance of a callback that is called after accepting the selected value.
 		 *
 		 * @private
