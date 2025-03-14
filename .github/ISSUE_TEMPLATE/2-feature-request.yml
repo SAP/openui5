@@ -1,0 +1,34 @@
+name: Feature Request
+description: Request a new feature for OpenUI5
+type: Feature
+body:
+  - type: markdown
+    attributes:
+      value: | 
+        Please have a look at our [contributing guidelines](https://github.com/SAP/openui5/blob/main/CONTRIBUTING.md#request-features) on requesting features to be added to OpenUI5.
+  - type: textarea
+    id: background-information
+    attributes:
+      label: Why are you proposing this feature?
+      description: A clear and concise description of the underlying scenario to be covered and whats's missing in OpenUI5. Provide any relevant background information that helps explain why this feature would be beneficial.
+      placeholder: A clear and concise description of the underlying scenario to be covered and whats's missing in OpenUI5. Provide any relevant background information that helps explain why this feature would be beneficial.
+    validations:
+      required: true
+  - type: textarea
+    id: possible-solution
+    attributes:
+      label: How should a possible solution look like?
+      description: A clear and concise description of what you want to happen.
+      placeholder: A clear and concise description of what you want to happen.
+  - type: textarea
+    id: alternative-solution
+    attributes:
+      label: Are there alternative approaches?
+      description: A clear and concise description of any alternative solutions or features you've considered.
+      placeholder: A clear and concise description of any alternative solutions or features you've considered.
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Any further information you would like to share?
+      description: Add any other context or screenshots about the feature request here.
+      placeholder: Add any other context or screenshots about the feature request here.
