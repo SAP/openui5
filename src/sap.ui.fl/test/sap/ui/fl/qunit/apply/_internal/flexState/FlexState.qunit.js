@@ -1544,6 +1544,54 @@ sap.ui.define([
 				fnDone();
 			});
 		});
+
+		QUnit.test("An unknown object is returned from storage, that is allowed to be returned", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: this.sComponentId
+			});
+			const oNewChange = FlexObjectFactory.createFromFileContent({
+				fileName: "change1",
+				fileType: "change"
+			});
+			FlexState.addDirtyFlexObjects(sReference, [oNewChange]);
+
+			// The new change is returned together with an unknown change
+			this.oLoadFlexDataStub.resolves(merge(
+				{},
+				mEmptyResponse,
+				{
+					changes: {
+						changes: [{
+							fileName: "change1",
+							fileType: "change"
+						}],
+						variantChanges: [{
+							fileName: "change2_flVariant_contextFiltering_setVisible",
+							fileType: "ctrl_variant_change",
+							content: {
+								visible: false,
+								createdByReset: false
+							}
+						}]
+					}
+				}
+			));
+
+			await FlexState.update({
+				reference: sReference,
+				componentId: this.sComponentId,
+				manifest: {},
+				componentData: {}
+			});
+
+			const aChanges = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
+			assert.strictEqual(
+				aChanges.length,
+				2,
+				"then both objects are added to the persistence"
+			);
+		});
 	});
 
 	QUnit.module("FlexState.updateWithDataProvided", {

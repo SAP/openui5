@@ -6,10 +6,11 @@ sap.ui.define([
 	"sap/ui/core/ElementRegistry",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/p13n/SelectionPanel",
+	"sap/m/p13n/SortPanel",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/sinon"
-], function(P13nPopup, Button, Control, ElementRegistry, nextUIUpdate, SelectionPanel, JSONModel, Localization, sinon) {
+], function(P13nPopup, Button, Control, ElementRegistry, nextUIUpdate, SelectionPanel, SortPanel, JSONModel, Localization, sinon) {
 	"use strict";
 
 	QUnit.module("p13n.Popup API tests", {
@@ -69,7 +70,7 @@ sap.ui.define([
 		assert.ok(this.oPopup._oPopup.isA("sap.m.ResponsivePopover"), "Popup is a ResponsivePopover");
 	});
 
-	QUnit.test("Check 'open' width custom width & height settings (Dialog mode)", function(assert) {
+	QUnit.test("Check 'open' with custom width & height settings (Dialog mode)", function(assert) {
 
 		var oOpenSettings = {
 			contentWidth: "30rem",
@@ -80,6 +81,65 @@ sap.ui.define([
 
 		assert.equal(this.oPopup._oPopup.getContentHeight(), oOpenSettings.contentHeight, "Content height propagated");
 		assert.equal(this.oPopup._oPopup.getContentWidth(), oOpenSettings.contentWidth, "Content width propagated");
+	});
+
+	QUnit.test("Check 'open' without activePanel settings parameter opens first panel", function(assert) {
+		// arrange
+		const oCustomSelectionPanel = new SelectionPanel({
+			title: "My SelectionPanel"
+		});
+		const oCustomSortPanel = new SortPanel({
+			title: "My SortPanel"
+		});
+
+		const sSelectionPanelKey = "customSelection";
+		const sSortPanelKey = "customSort";
+
+		this.oPopup.addPanel(oCustomSelectionPanel, sSelectionPanelKey);
+		this.oPopup.addPanel(oCustomSortPanel, sSortPanelKey);
+
+		// act
+		this.oPopup.open(this.oSource, {});
+
+		// assert
+		assert.equal(this.oPopup._oContainer.getCurrentViewKey(), sSelectionPanelKey, "SelectionPanel is initially shown");
+	});
+
+	QUnit.test("Check 'open' with activePanel settings parameter opens correct view", function(assert) {
+		// arrange
+		const oCustomSelectionPanel = new SelectionPanel({
+			title: "My SelectionPanel"
+		});
+		const oCustomSortPanel = new SortPanel({
+			title: "My SortPanel"
+		});
+
+		const sSelectionPanelKey = "customSelection";
+		const sSortPanelKey = "customSort";
+
+		this.oPopup.addPanel(oCustomSelectionPanel, sSelectionPanelKey);
+		this.oPopup.addPanel(oCustomSortPanel, sSortPanelKey);
+
+		// act
+		this.oPopup.open(this.oSource, { activePanel: sSortPanelKey });
+
+		// assert
+		assert.equal(this.oPopup._oContainer.getCurrentViewKey(), sSortPanelKey, "SortPanel is currently shown");
+	});
+
+	QUnit.test("Check '_getContainer' with parameter does not call switchView", function(assert) {
+		// arrange
+		assert.equal(this.oPopup._oContainer, undefined, "Container does not exist");
+		this.oPopup._getContainer();
+		assert.ok(this.oPopup._oContainer, "Container exists");
+
+		const oSwitchViewSpy = sinon.spy(this.oPopup._oContainer, "switchView");
+
+		// act
+		this.oPopup._getContainer(true);
+
+		// assert
+		assert.ok(oSwitchViewSpy.notCalled, "SortPanel is currently shown");
 	});
 
 	QUnit.test("Check 'open' width custom width & height settings (ResponsivePopover mode)", function(assert) {
@@ -137,6 +197,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check propagation of compact style class", function(assert) {
+
 
 		const oControlWithCompactStyle = new Control();
 

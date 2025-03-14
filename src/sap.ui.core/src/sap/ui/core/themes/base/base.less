@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.2.8
-// * data:{"sModified":"2024-12-12T10:42:39Z"}
+// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+// * Theming Engine 14.2.35
+// * data:{"sModified":"2025-03-05T13:13:33Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.24.0) *******************/
+/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.27.1) *******************/
 
 
 // [Label "Brand Color"]
@@ -87,6 +87,14 @@
 // [Category "Image"]
 // [Type "image"]
 @sapCompanyLogo: @sapDefault_URI;
+
+// [Label "Favicon"]
+// [Description "The URI to the favorite or shortcut icon displayed."]
+// [Tags "Base", "URI", "Image", "Protected"]
+// [Protected "true"]
+// [Category "Image"]
+// [Type "image"]
+@sapFavicon: @sapDefault_URI;
 
 // [Label "Background Image/Gradient"]
 // [Description "The gradient or the URI to the image which is shown as background."]
@@ -1347,6 +1355,7 @@
 // [Protected "true"]
 // [Category "Shadow"]
 // [Type "boxShadow"]
+// [TranslationKey "sapShell_Information_HdShadow"]
 @sapContent_Information_HeaderShadow: @sapDefault_Shadow;
 
 // [Label "Light Font Family"]
@@ -4399,6 +4408,7 @@
 // [Protected "true"]
 // [Category "Button", "Token"]
 // [Type "borderRadius"]
+// [TranslationKey "sapButton_TokenBrdRd"]
 @sapButton_TokenBorderCornerRadius: @sapDefault_BorderStyle;
 
 // [Label "Token Border Border Thickness"]
@@ -4407,6 +4417,7 @@
 // [Protected "true"]
 // [Category "Button", "Token"]
 // [Type "borderWidth"]
+// [TranslationKey "sapButton_Selected_TokenBrdWdth"]
 @sapButton_Selected_TokenBorderWidth: @sapDefault_BorderStyle;
 
 // [Label "Read Only Token Background Color"]
@@ -4415,6 +4426,7 @@
 // [Protected "true"]
 // [Category "Button", "Token"]
 // [Type "color"]
+// [TranslationKey "sapButton_ReadOnly_TokenBg"]
 @sapButton_ReadOnly_TokenBackground: @sapDefault_Color;
 
 // [Label "Button Segment Border Corner Radius"]
@@ -4423,6 +4435,7 @@
 // [Protected "true"]
 // [Category "Button", "Standard"]
 // [Type "borderRadius"]
+// [TranslationKey "sapButton_Segment_BrdRd"]
 @sapButton_Segment_BorderCornerRadius: @sapDefault_BorderStyle;
 
 // [Label "Field Background Color"]
@@ -4864,6 +4877,7 @@
 // [Protected "true"]
 // [Category "Input", "Standard"]
 // [Type "color"]
+// [TranslationKey "sapField_Selector_Hover_Bg"]
 @sapField_Selector_Hover_Background: @sapDefault_Color;
 
 // [Label "Selector Invalid Field Hover Background Color"]
@@ -4872,6 +4886,7 @@
 // [Protected "true"]
 // [Category "Input", "Invalid"]
 // [Type "color"]
+// [TranslationKey "sapField_Selector_Hover_InvBg"]
 @sapField_Selector_Hover_InvalidBackground: @sapDefault_Color;
 
 // [Label "Selector Warning Field Hover Background Color"]
@@ -4880,6 +4895,7 @@
 // [Protected "true"]
 // [Category "Input", "Warning"]
 // [Type "color"]
+// [TranslationKey "sapField_Selector_Hover_WarnBg"]
 @sapField_Selector_Hover_WarningBackground: @sapDefault_Color;
 
 // [Label "Selector Success Field Hover Background Color"]
@@ -4888,6 +4904,7 @@
 // [Protected "true"]
 // [Category "Input", "Success"]
 // [Type "color"]
+// [TranslationKey "sapField_Selector_Hover_SuccBg"]
 @sapField_Selector_Hover_SuccessBackground: @sapDefault_Color;
 
 // [Label "Selector Information Field Hover Background Color"]
@@ -4896,6 +4913,7 @@
 // [Protected "true"]
 // [Category "Input", "Information"]
 // [Type "color"]
+// [TranslationKey "sapField_Selector_Hover_InfBg"]
 @sapField_Selector_Hover_InformationBackground: @sapDefault_Color;
 
 // [Label "Picker Border Color"]
@@ -5266,6 +5284,7 @@
 // [Protected "true"]
 // [Category "List"]
 // [Type "borderWidth"]
+// [TranslationKey "sapList_TableFixedColBrdWdth"]
 @sapList_TableFixedColumnBorderWidth: @sapDefault_Dimension;
 
 // [Label "Table Fixed Row Border Thickness"]
@@ -5274,6 +5293,7 @@
 // [Protected "true"]
 // [Category "List"]
 // [Type "borderWidth"]
+// [TranslationKey "sapList_TableFixedRowBrdWdth"]
 @sapList_TableFixedRowBorderWidth: @sapDefault_Dimension;
 
 // [Label "Message Border Width"]
@@ -5323,6 +5343,7 @@
 // [Protected "true"]
 // [Category "Message"]
 // [Type "color"]
+// [TranslationKey "sapMessage_Button_Hover_Bg"]
 @sapMessage_Button_Hover_Background: @sapDefault_Color;
 
 // [Label "Popover Border Corner Radius"]
@@ -6008,6 +6029,7 @@
 // [Protected "true"]
 // [Category "Tab"]
 // [Type "dimension"]
+// [TranslationKey "sapTab_Selected_Indicator_Dim"]
 @sapTab_Selected_Indicator_Dimension: @sapDefault_Dimension;
 
 // [Label "Tab Positive Text Color"]
@@ -6040,6 +6062,7 @@
 // [Protected "true"]
 // [Category "Tab", "Positive"]
 // [Type "color"]
+// [TranslationKey "sapTab_Positive_Selected_TxtClr"]
 @sapTab_Positive_Selected_TextColor: @sapDefault_Color;
 
 // [Label "Tab Positive Selected Icon Color"]
@@ -6048,6 +6071,7 @@
 // [Protected "true"]
 // [Category "Tab", "Positive"]
 // [Type "color"]
+// [TranslationKey "sapTab_Positive_Selected_IcoClr"]
 @sapTab_Positive_Selected_IconColor: @sapDefault_Color;
 
 // [Label "Tab Positive Selected Background Color"]
@@ -6056,6 +6080,7 @@
 // [Protected "true"]
 // [Category "Tab", "Positive"]
 // [Type "color"]
+// [TranslationKey "sapTab_Positive_Selected_Bg"]
 @sapTab_Positive_Selected_Background: @sapDefault_Color;
 
 // [Label "Tab Negative Text Color"]
@@ -6088,6 +6113,7 @@
 // [Protected "true"]
 // [Category "Tab", "Negative"]
 // [Type "color"]
+// [TranslationKey "sapTab_Negative_Selected_TxtClr"]
 @sapTab_Negative_Selected_TextColor: @sapDefault_Color;
 
 // [Label "Tab Negative Selected Icon Color"]
@@ -6096,6 +6122,7 @@
 // [Protected "true"]
 // [Category "Tab", "Negative"]
 // [Type "color"]
+// [TranslationKey "sapTab_Negative_Selected_IcoClr"]
 @sapTab_Negative_Selected_IconColor: @sapDefault_Color;
 
 // [Label "Tab Negative Selected Background Color"]
@@ -6104,6 +6131,7 @@
 // [Protected "true"]
 // [Category "Tab", "Negative"]
 // [Type "color"]
+// [TranslationKey "sapTab_Negative_Selected_Bg"]
 @sapTab_Negative_Selected_Background: @sapDefault_Color;
 
 // [Label "Tab Critical Text Color"]
@@ -6136,6 +6164,7 @@
 // [Protected "true"]
 // [Category "Tab", "Critical"]
 // [Type "color"]
+// [TranslationKey "sapTab_Critical_Selected_TxtClr"]
 @sapTab_Critical_Selected_TextColor: @sapDefault_Color;
 
 // [Label "Tab Critical Selected Icon Color"]
@@ -6144,6 +6173,7 @@
 // [Protected "true"]
 // [Category "Tab", "Critical"]
 // [Type "color"]
+// [TranslationKey "sapTab_Critical_Selected_IcoClr"]
 @sapTab_Critical_Selected_IconColor: @sapDefault_Color;
 
 // [Label "Tab Critical Selected Background Color"]
@@ -6152,7 +6182,59 @@
 // [Protected "true"]
 // [Category "Tab", "Critical"]
 // [Type "color"]
+// [TranslationKey "sapTab_Critical_Selected_Bg"]
 @sapTab_Critical_Selected_Background: @sapDefault_Color;
+
+// [Label "Tab Neutral Text Color"]
+// [Description "The text color of tabs indicating a neutral state."]
+// [Tags "Base", "Tab", "Color", "Semantic", "Protected"]
+// [Protected "true"]
+// [Category "Tab", "Neutral"]
+// [Type "color"]
+@sapTab_Neutral_TextColor: @sapDefault_Color;
+
+// [Label "Tab Neutral Foreground Color"]
+// [Description "The color of foreground elements of tabs indicating a neutral state, e.g. buttons or selection bars."]
+// [Tags "Base", "Tab", "Color", "Semantic", "Protected"]
+// [Protected "true"]
+// [Category "Tab", "Neutral"]
+// [Type "color"]
+@sapTab_Neutral_ForegroundColor: @sapDefault_Color;
+
+// [Label "Tab Neutral Icon Color"]
+// [Description "The icon color of tabs indicating a neutral state."]
+// [Tags "Base", "Tab", "Color", "Semantic", "Protected"]
+// [Protected "true"]
+// [Category "Tab", "Neutral"]
+// [Type "color"]
+@sapTab_Neutral_IconColor: @sapDefault_Color;
+
+// [Label "Tab Neutral Selected Text Color"]
+// [Description "The text color of selected tabs indicating a neutral state."]
+// [Tags "Base", "Tab", "Color", "Semantic", "Protected"]
+// [Protected "true"]
+// [Category "Tab", "Neutral"]
+// [Type "color"]
+// [TranslationKey "sapTab_Neutral_Selected_TxtClr"]
+@sapTab_Neutral_Selected_TextColor: @sapDefault_Color;
+
+// [Label "Tab Neutral Selected Icon Color"]
+// [Description "The icon color of selected tabs indicating a neutral state."]
+// [Tags "Base", "Tab", "Color", "Semantic", "Protected"]
+// [Protected "true"]
+// [Category "Tab", "Neutral"]
+// [Type "color"]
+// [TranslationKey "sapTab_Neutral_Selected_IcoClr"]
+@sapTab_Neutral_Selected_IconColor: @sapDefault_Color;
+
+// [Label "Tab Neutral Selected Background Color"]
+// [Description "The background color of selected tabs indicating a neutral state."]
+// [Tags "Base", "Tab", "Color", "Semantic", "Protected"]
+// [Protected "true"]
+// [Category "Tab", "Neutral"]
+// [Type "color"]
+// [TranslationKey "sapTab_Neutral_Selected_Bg"]
+@sapTab_Neutral_Selected_Background: @sapDefault_Color;
 
 // [Label "Tile Background Color"]
 // [Description "The background color of tiles and cards."]
@@ -6264,6 +6346,7 @@
 // [Protected "true"]
 // [Category "Tile"]
 // [Type "color"]
+// [TranslationKey "sapTile_Active_ContentBg"]
 @sapTile_Active_ContentBackground: @sapDefault_Color;
 
 // [Label "Accent Color 1"]
@@ -8260,6 +8343,7 @@
 // [Protected "true"]
 // [Category "Chart", "Choropleth"]
 // [Type "color"]
+// [TranslationKey "sapChart_ChoroplethRg_Bg"]
 @sapChart_ChoroplethRegion_Background: @sapDefault_Color;
 
 // [Label "Color for Chart Choropleth Region Border Color"]
@@ -8268,6 +8352,7 @@
 // [Protected "true"]
 // [Category "Chart", "Choropleth"]
 // [Type "color"]
+// [TranslationKey "sapChart_ChoroplethRg_BrdClr"]
 @sapChart_ChoroplethRegion_BorderColor: @sapDefault_Color;
 
 // [Label "Text Color for Cart Data"]
@@ -8444,6 +8529,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_P3_TxtClr"]
 @sapChart_Sequence_1_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Plus 3"]
@@ -8452,6 +8538,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_P3_TxtShadow"]
 @sapChart_Sequence_1_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 1 Plus 2"]
@@ -8468,6 +8555,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_P2_TxtClr"]
 @sapChart_Sequence_1_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Plus 2"]
@@ -8476,6 +8564,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_P2_TxtShadow"]
 @sapChart_Sequence_1_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 1 Plus 1"]
@@ -8492,6 +8581,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_P1_TxtClr"]
 @sapChart_Sequence_1_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Plus 1"]
@@ -8500,6 +8590,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_P1_TxtShadow"]
 @sapChart_Sequence_1_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 1"]
@@ -8548,6 +8639,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_M1_TxtClr"]
 @sapChart_Sequence_1_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Minus 1"]
@@ -8556,6 +8648,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_M1_TxtShadow"]
 @sapChart_Sequence_1_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 1 Minus 2"]
@@ -8572,6 +8665,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_M2_TxtClr"]
 @sapChart_Sequence_1_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Minus 2"]
@@ -8580,6 +8674,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_M2_TxtShadow"]
 @sapChart_Sequence_1_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 1 Minus 3"]
@@ -8596,6 +8691,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_M3_TxtClr"]
 @sapChart_Sequence_1_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Minus 3"]
@@ -8604,6 +8700,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_M3_TxtShadow"]
 @sapChart_Sequence_1_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 1 Minus 4"]
@@ -8620,6 +8717,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_M4_TxtClr"]
 @sapChart_Sequence_1_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Minus 4"]
@@ -8628,6 +8726,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_M4_TxtShadow"]
 @sapChart_Sequence_1_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 1 Minus 5"]
@@ -8644,6 +8743,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_1_M5_TxtClr"]
 @sapChart_Sequence_1_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 1 Minus 5"]
@@ -8652,6 +8752,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_1_M5_TxtShadow"]
 @sapChart_Sequence_1_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2 Plus 3"]
@@ -8668,6 +8769,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_P3_TxtClr"]
 @sapChart_Sequence_2_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Plus 3"]
@@ -8676,6 +8778,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_P3_TxtShadow"]
 @sapChart_Sequence_2_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2 Plus 2"]
@@ -8692,6 +8795,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_P2_TxtClr"]
 @sapChart_Sequence_2_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Plus 2"]
@@ -8700,6 +8804,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_P2_TxtShadow"]
 @sapChart_Sequence_2_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2 Plus 1"]
@@ -8716,6 +8821,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_P1_TxtClr"]
 @sapChart_Sequence_2_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Plus 1"]
@@ -8724,6 +8830,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_P1_TxtShadow"]
 @sapChart_Sequence_2_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2"]
@@ -8772,6 +8879,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_M1_TxtClr"]
 @sapChart_Sequence_2_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Minus 1"]
@@ -8780,6 +8888,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_M1_TxtShadow"]
 @sapChart_Sequence_2_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2 Minus 2"]
@@ -8796,6 +8905,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_M2_TxtClr"]
 @sapChart_Sequence_2_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Minus 2"]
@@ -8804,6 +8914,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_M2_TxtShadow"]
 @sapChart_Sequence_2_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2 Minus 3"]
@@ -8820,6 +8931,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_M3_TxtClr"]
 @sapChart_Sequence_2_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Minus 3"]
@@ -8828,6 +8940,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_M3_TxtShadow"]
 @sapChart_Sequence_2_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2 Minus 4"]
@@ -8844,6 +8957,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_M4_TxtClr"]
 @sapChart_Sequence_2_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Minus 4"]
@@ -8852,6 +8966,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_M4_TxtShadow"]
 @sapChart_Sequence_2_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 2 Minus 5"]
@@ -8868,6 +8983,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_2_M5_TxtClr"]
 @sapChart_Sequence_2_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 2 Minus 5"]
@@ -8876,6 +8992,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_2_M5_TxtShadow"]
 @sapChart_Sequence_2_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3 Plus 3"]
@@ -8892,6 +9009,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_P3_TxtClr"]
 @sapChart_Sequence_3_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Plus 3"]
@@ -8900,6 +9018,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_P3_TxtShadow"]
 @sapChart_Sequence_3_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3 Plus 2"]
@@ -8916,6 +9035,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_P2_TxtClr"]
 @sapChart_Sequence_3_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Plus 2"]
@@ -8924,6 +9044,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_P2_TxtShadow"]
 @sapChart_Sequence_3_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3 Plus 1"]
@@ -8940,6 +9061,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_P1_TxtClr"]
 @sapChart_Sequence_3_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Plus 1"]
@@ -8948,6 +9070,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_P1_TxtShadow"]
 @sapChart_Sequence_3_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3"]
@@ -8996,6 +9119,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_M1_TxtClr"]
 @sapChart_Sequence_3_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Minus 1"]
@@ -9004,6 +9128,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_M1_TxtShadow"]
 @sapChart_Sequence_3_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3 Minus 2"]
@@ -9020,6 +9145,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_M2_TxtClr"]
 @sapChart_Sequence_3_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Minus 2"]
@@ -9028,6 +9154,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_M2_TxtShadow"]
 @sapChart_Sequence_3_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3 Minus 3"]
@@ -9044,6 +9171,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_M3_TxtClr"]
 @sapChart_Sequence_3_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Minus 3"]
@@ -9052,6 +9180,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_M3_TxtShadow"]
 @sapChart_Sequence_3_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3 Minus 4"]
@@ -9068,6 +9197,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_M4_TxtClr"]
 @sapChart_Sequence_3_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Minus 4"]
@@ -9076,6 +9206,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_M4_TxtShadow"]
 @sapChart_Sequence_3_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 3 Minus 5"]
@@ -9092,6 +9223,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_3_M5_TxtClr"]
 @sapChart_Sequence_3_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 3 Minus 5"]
@@ -9100,6 +9232,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_3_M5_TxtShadow"]
 @sapChart_Sequence_3_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4 Plus 3"]
@@ -9116,6 +9249,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_P3_TxtClr"]
 @sapChart_Sequence_4_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Plus 3"]
@@ -9124,6 +9258,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_P3_TxtShadow"]
 @sapChart_Sequence_4_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4 Plus 2"]
@@ -9140,6 +9275,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_P2_TxtClr"]
 @sapChart_Sequence_4_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Plus 2"]
@@ -9148,6 +9284,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_P2_TxtShadow"]
 @sapChart_Sequence_4_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4 Plus 1"]
@@ -9164,6 +9301,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_P1_TxtClr"]
 @sapChart_Sequence_4_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Plus 1"]
@@ -9172,6 +9310,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_P1_TxtShadow"]
 @sapChart_Sequence_4_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4"]
@@ -9220,6 +9359,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_M1_TxtClr"]
 @sapChart_Sequence_4_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Minus 1"]
@@ -9228,6 +9368,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_M1_TxtShadow"]
 @sapChart_Sequence_4_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4 Minus 2"]
@@ -9244,6 +9385,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_M2_TxtClr"]
 @sapChart_Sequence_4_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Minus 2"]
@@ -9252,6 +9394,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_M2_TxtShadow"]
 @sapChart_Sequence_4_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4 Minus 3"]
@@ -9268,6 +9411,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_M3_TxtClr"]
 @sapChart_Sequence_4_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Minus 3"]
@@ -9276,6 +9420,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_M3_TxtShadow"]
 @sapChart_Sequence_4_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4 Minus 4"]
@@ -9292,6 +9437,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_M4_TxtClr"]
 @sapChart_Sequence_4_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Minus 4"]
@@ -9300,6 +9446,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_M4_TxtShadow"]
 @sapChart_Sequence_4_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 4 Minus 5"]
@@ -9316,6 +9463,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_4_M5_TxtClr"]
 @sapChart_Sequence_4_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 4 Minus 5"]
@@ -9324,6 +9472,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_4_M5_TxtShadow"]
 @sapChart_Sequence_4_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5 Plus 3"]
@@ -9340,6 +9489,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_P3_TxtClr"]
 @sapChart_Sequence_5_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Plus 3"]
@@ -9348,6 +9498,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_P3_TxtShadow"]
 @sapChart_Sequence_5_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5 Plus 2"]
@@ -9364,6 +9515,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_P2_TxtClr"]
 @sapChart_Sequence_5_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Plus 2"]
@@ -9372,6 +9524,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_P2_TxtShadow"]
 @sapChart_Sequence_5_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5 Plus 1"]
@@ -9388,6 +9541,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_P1_TxtClr"]
 @sapChart_Sequence_5_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Plus 1"]
@@ -9396,6 +9550,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_P1_TxtShadow"]
 @sapChart_Sequence_5_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5"]
@@ -9444,6 +9599,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_M1_TxtClr"]
 @sapChart_Sequence_5_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Minus 1"]
@@ -9452,6 +9608,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_M1_TxtShadow"]
 @sapChart_Sequence_5_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5 Minus 2"]
@@ -9468,6 +9625,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_M2_TxtClr"]
 @sapChart_Sequence_5_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Minus 2"]
@@ -9476,6 +9634,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_M2_TxtShadow"]
 @sapChart_Sequence_5_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5 Minus 3"]
@@ -9492,6 +9651,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_M3_TxtClr"]
 @sapChart_Sequence_5_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Minus 3"]
@@ -9500,6 +9660,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_M3_TxtShadow"]
 @sapChart_Sequence_5_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5 Minus 4"]
@@ -9516,6 +9677,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_M4_TxtClr"]
 @sapChart_Sequence_5_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Minus 4"]
@@ -9524,6 +9686,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_M4_TxtShadow"]
 @sapChart_Sequence_5_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 5 Minus 5"]
@@ -9540,6 +9703,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_5_M5_TxtClr"]
 @sapChart_Sequence_5_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 5 Minus 5"]
@@ -9548,6 +9712,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_5_M5_TxtShadow"]
 @sapChart_Sequence_5_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6 Plus 3"]
@@ -9564,6 +9729,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_P3_TxtClr"]
 @sapChart_Sequence_6_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Plus 3"]
@@ -9572,6 +9738,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_P3_TxtShadow"]
 @sapChart_Sequence_6_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6 Plus 2"]
@@ -9588,6 +9755,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_P2_TxtClr"]
 @sapChart_Sequence_6_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Plus 2"]
@@ -9596,6 +9764,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_P2_TxtShadow"]
 @sapChart_Sequence_6_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6 Plus 1"]
@@ -9612,6 +9781,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_P1_TxtClr"]
 @sapChart_Sequence_6_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Plus 1"]
@@ -9620,6 +9790,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_P1_TxtShadow"]
 @sapChart_Sequence_6_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6"]
@@ -9668,6 +9839,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_M1_TxtClr"]
 @sapChart_Sequence_6_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Minus 1"]
@@ -9676,6 +9848,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_M1_TxtShadow"]
 @sapChart_Sequence_6_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6 Minus 2"]
@@ -9692,6 +9865,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_M2_TxtClr"]
 @sapChart_Sequence_6_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Minus 2"]
@@ -9700,6 +9874,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_M2_TxtShadow"]
 @sapChart_Sequence_6_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6 Minus 3"]
@@ -9716,6 +9891,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_M3_TxtClr"]
 @sapChart_Sequence_6_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Minus 3"]
@@ -9724,6 +9900,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_M3_TxtShadow"]
 @sapChart_Sequence_6_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6 Minus 4"]
@@ -9740,6 +9917,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_M4_TxtClr"]
 @sapChart_Sequence_6_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Minus 4"]
@@ -9748,6 +9926,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_M4_TxtShadow"]
 @sapChart_Sequence_6_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 6 Minus 5"]
@@ -9764,6 +9943,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_6_M5_TxtClr"]
 @sapChart_Sequence_6_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 6 Minus 5"]
@@ -9772,6 +9952,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_6_M5_TxtShadow"]
 @sapChart_Sequence_6_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7 Plus 3"]
@@ -9788,6 +9969,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_P3_TxtClr"]
 @sapChart_Sequence_7_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Plus 3"]
@@ -9796,6 +9978,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_P3_TxtShadow"]
 @sapChart_Sequence_7_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7 Plus 2"]
@@ -9812,6 +9995,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_P2_TxtClr"]
 @sapChart_Sequence_7_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Plus 2"]
@@ -9820,6 +10004,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_P2_TxtShadow"]
 @sapChart_Sequence_7_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7 Plus 1"]
@@ -9836,6 +10021,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_P1_TxtClr"]
 @sapChart_Sequence_7_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Plus 1"]
@@ -9844,6 +10030,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_P1_TxtShadow"]
 @sapChart_Sequence_7_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7"]
@@ -9892,6 +10079,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_M1_TxtClr"]
 @sapChart_Sequence_7_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Minus 1"]
@@ -9900,6 +10088,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_M1_TxtShadow"]
 @sapChart_Sequence_7_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7 Minus 2"]
@@ -9916,6 +10105,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_M2_TxtClr"]
 @sapChart_Sequence_7_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Minus 2"]
@@ -9924,6 +10114,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_M2_TxtShadow"]
 @sapChart_Sequence_7_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7 Minus 3"]
@@ -9940,6 +10131,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_M3_TxtClr"]
 @sapChart_Sequence_7_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Minus 3"]
@@ -9948,6 +10140,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_M3_TxtShadow"]
 @sapChart_Sequence_7_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7 Minus 4"]
@@ -9964,6 +10157,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_M4_TxtClr"]
 @sapChart_Sequence_7_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Minus 4"]
@@ -9972,6 +10166,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_M4_TxtShadow"]
 @sapChart_Sequence_7_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 7 Minus 5"]
@@ -9988,6 +10183,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_7_M5_TxtClr"]
 @sapChart_Sequence_7_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 7 Minus 5"]
@@ -9996,6 +10192,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_7_M5_TxtShadow"]
 @sapChart_Sequence_7_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8 Plus 3"]
@@ -10012,6 +10209,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_P3_TxtClr"]
 @sapChart_Sequence_8_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Plus 3"]
@@ -10020,6 +10218,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_P3_TxtShadow"]
 @sapChart_Sequence_8_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8 Plus 2"]
@@ -10036,6 +10235,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_P2_TxtClr"]
 @sapChart_Sequence_8_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Plus 2"]
@@ -10044,6 +10244,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_P2_TxtShadow"]
 @sapChart_Sequence_8_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8 Plus 1"]
@@ -10060,6 +10261,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_P1_TxtClr"]
 @sapChart_Sequence_8_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Plus 1"]
@@ -10068,6 +10270,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_P1_TxtShadow"]
 @sapChart_Sequence_8_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8"]
@@ -10116,6 +10319,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_M1_TxtClr"]
 @sapChart_Sequence_8_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Minus 1"]
@@ -10124,6 +10328,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_M1_TxtShadow"]
 @sapChart_Sequence_8_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8 Minus 2"]
@@ -10140,6 +10345,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_M2_TxtClr"]
 @sapChart_Sequence_8_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Minus 2"]
@@ -10148,6 +10354,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_M2_TxtShadow"]
 @sapChart_Sequence_8_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8 Minus 3"]
@@ -10164,6 +10371,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_M3_TxtClr"]
 @sapChart_Sequence_8_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Minus 3"]
@@ -10172,6 +10380,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_M3_TxtShadow"]
 @sapChart_Sequence_8_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8 Minus 4"]
@@ -10188,6 +10397,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_M4_TxtClr"]
 @sapChart_Sequence_8_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Minus 4"]
@@ -10196,6 +10406,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_M4_TxtShadow"]
 @sapChart_Sequence_8_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 8 Minus 5"]
@@ -10212,6 +10423,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_8_M5_TxtClr"]
 @sapChart_Sequence_8_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 8 Minus 5"]
@@ -10220,6 +10432,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_8_M5_TxtShadow"]
 @sapChart_Sequence_8_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9 Plus 3"]
@@ -10236,6 +10449,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_P3_TxtClr"]
 @sapChart_Sequence_9_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Plus 3"]
@@ -10244,6 +10458,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_P3_TxtShadow"]
 @sapChart_Sequence_9_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9 Plus 2"]
@@ -10260,6 +10475,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_P2_TxtClr"]
 @sapChart_Sequence_9_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Plus 2"]
@@ -10268,6 +10484,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_P2_TxtShadow"]
 @sapChart_Sequence_9_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9 Plus 1"]
@@ -10284,6 +10501,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_P1_TxtClr"]
 @sapChart_Sequence_9_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Plus 1"]
@@ -10292,6 +10510,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_P1_TxtShadow"]
 @sapChart_Sequence_9_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9"]
@@ -10340,6 +10559,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_M1_TxtClr"]
 @sapChart_Sequence_9_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Minus 1"]
@@ -10348,6 +10568,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_M1_TxtShadow"]
 @sapChart_Sequence_9_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9 Minus 2"]
@@ -10364,6 +10585,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_M2_TxtClr"]
 @sapChart_Sequence_9_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Minus 2"]
@@ -10372,6 +10594,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_M2_TxtShadow"]
 @sapChart_Sequence_9_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9 Minus 3"]
@@ -10388,6 +10611,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_M3_TxtClr"]
 @sapChart_Sequence_9_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Minus 3"]
@@ -10396,6 +10620,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_M3_TxtShadow"]
 @sapChart_Sequence_9_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9 Minus 4"]
@@ -10412,6 +10637,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_M4_TxtClr"]
 @sapChart_Sequence_9_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Minus 4"]
@@ -10420,6 +10646,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_M4_TxtShadow"]
 @sapChart_Sequence_9_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 9 Minus 5"]
@@ -10436,6 +10663,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_9_M5_TxtClr"]
 @sapChart_Sequence_9_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 9 Minus 5"]
@@ -10444,6 +10672,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_9_M5_TxtShadow"]
 @sapChart_Sequence_9_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10 Plus 3"]
@@ -10460,6 +10689,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_P3_TxtClr"]
 @sapChart_Sequence_10_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Plus 3"]
@@ -10468,6 +10698,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_P3_TxtShadow"]
 @sapChart_Sequence_10_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10 Plus 2"]
@@ -10484,6 +10715,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_P2_TxtClr"]
 @sapChart_Sequence_10_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Plus 2"]
@@ -10492,6 +10724,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_P2_TxtShadow"]
 @sapChart_Sequence_10_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10 Plus 1"]
@@ -10508,6 +10741,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_P1_TxtClr"]
 @sapChart_Sequence_10_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Plus 1"]
@@ -10516,6 +10750,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_P1_TxtShadow"]
 @sapChart_Sequence_10_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10"]
@@ -10548,6 +10783,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_BrdClr"]
 @sapChart_Sequence_10_BorderColor: @sapDefault_Color;
 
 // [Label "Chart Color Sequence 10 Minus 1"]
@@ -10564,6 +10800,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_M1_TxtClr"]
 @sapChart_Sequence_10_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Minus 1"]
@@ -10572,6 +10809,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_M1_TxtShadow"]
 @sapChart_Sequence_10_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10 Minus 2"]
@@ -10588,6 +10826,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_M2_TxtClr"]
 @sapChart_Sequence_10_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Minus 2"]
@@ -10596,6 +10835,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_M2_TxtShadow"]
 @sapChart_Sequence_10_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10 Minus 3"]
@@ -10612,6 +10852,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_M3_TxtClr"]
 @sapChart_Sequence_10_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Minus 3"]
@@ -10620,6 +10861,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_M3_TxtShadow"]
 @sapChart_Sequence_10_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10 Minus 4"]
@@ -10636,6 +10878,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_M4_TxtClr"]
 @sapChart_Sequence_10_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Minus 4"]
@@ -10644,6 +10887,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_M4_TxtShadow"]
 @sapChart_Sequence_10_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 10 Minus 5"]
@@ -10660,6 +10904,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_10_M5_TxtClr"]
 @sapChart_Sequence_10_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 10 Minus 5"]
@@ -10668,6 +10913,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_10_M5_TxtShadow"]
 @sapChart_Sequence_10_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11 Plus 3"]
@@ -10684,6 +10930,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_P3_TxtClr"]
 @sapChart_Sequence_11_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Plus 3"]
@@ -10692,6 +10939,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_P3_TxtShadow"]
 @sapChart_Sequence_11_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11 Plus 2"]
@@ -10708,6 +10956,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_P2_TxtClr"]
 @sapChart_Sequence_11_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Plus 2"]
@@ -10716,6 +10965,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_P2_TxtShadow"]
 @sapChart_Sequence_11_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11 Plus 1"]
@@ -10732,6 +10982,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_P1_TxtClr"]
 @sapChart_Sequence_11_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Plus 1"]
@@ -10740,6 +10991,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_P1_TxtShadow"]
 @sapChart_Sequence_11_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11"]
@@ -10772,6 +11024,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_BrdClr"]
 @sapChart_Sequence_11_BorderColor: @sapDefault_Color;
 
 // [Label "Chart Color Sequence 11 Minus 1"]
@@ -10788,6 +11041,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_M1_TxtClr"]
 @sapChart_Sequence_11_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Minus 1"]
@@ -10796,6 +11050,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_M1_TxtShadow"]
 @sapChart_Sequence_11_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11 Minus 2"]
@@ -10812,6 +11067,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_M2_TxtClr"]
 @sapChart_Sequence_11_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Minus 2"]
@@ -10820,6 +11076,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_M2_TxtShadow"]
 @sapChart_Sequence_11_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11 Minus 3"]
@@ -10836,6 +11093,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_M3_TxtClr"]
 @sapChart_Sequence_11_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Minus 3"]
@@ -10844,6 +11102,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_M3_TxtShadow"]
 @sapChart_Sequence_11_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11 Minus 4"]
@@ -10860,6 +11119,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_M4_TxtClr"]
 @sapChart_Sequence_11_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Minus 4"]
@@ -10868,6 +11128,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_M4_TxtShadow"]
 @sapChart_Sequence_11_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 11 Minus 5"]
@@ -10884,6 +11145,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_11_M5_TxtClr"]
 @sapChart_Sequence_11_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 11 Minus 5"]
@@ -10892,6 +11154,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_11_M5_TxtShadow"]
 @sapChart_Sequence_11_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12 Plus 3"]
@@ -10908,6 +11171,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_P3_TxtClr"]
 @sapChart_Sequence_12_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Plus 3"]
@@ -10916,6 +11180,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_P3_TxtShadow"]
 @sapChart_Sequence_12_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12 Plus 2"]
@@ -10932,6 +11197,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_P2_TxtClr"]
 @sapChart_Sequence_12_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Plus 2"]
@@ -10940,6 +11206,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_P2_TxtShadow"]
 @sapChart_Sequence_12_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12 Plus 1"]
@@ -10956,6 +11223,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_P1_TxtClr"]
 @sapChart_Sequence_12_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Plus 1"]
@@ -10964,6 +11232,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_P1_TxtShadow"]
 @sapChart_Sequence_12_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12"]
@@ -10996,6 +11265,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_BrdClr"]
 @sapChart_Sequence_12_BorderColor: @sapDefault_Color;
 
 // [Label "Chart Color Sequence 12 Minus 1"]
@@ -11012,6 +11282,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_M1_TxtClr"]
 @sapChart_Sequence_12_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Minus 1"]
@@ -11020,6 +11291,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_M1_TxtShadow"]
 @sapChart_Sequence_12_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12 Minus 2"]
@@ -11036,6 +11308,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_M2_TxtClr"]
 @sapChart_Sequence_12_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Minus 2"]
@@ -11044,6 +11317,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_M2_TxtShadow"]
 @sapChart_Sequence_12_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12 Minus 3"]
@@ -11060,6 +11334,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_M3_TxtClr"]
 @sapChart_Sequence_12_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Minus 3"]
@@ -11068,6 +11343,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_M3_TxtShadow"]
 @sapChart_Sequence_12_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12 Minus 4"]
@@ -11084,6 +11360,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_M4_TxtClr"]
 @sapChart_Sequence_12_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Minus 4"]
@@ -11092,6 +11369,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_M4_TxtShadow"]
 @sapChart_Sequence_12_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 12 Minus 5"]
@@ -11108,6 +11386,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_12_M5_TxtClr"]
 @sapChart_Sequence_12_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 12 Minus 5"]
@@ -11116,6 +11395,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_12_M5_TxtShadow"]
 @sapChart_Sequence_12_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad' Plus 3"]
@@ -11132,6 +11412,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_P3_TxtClr"]
 @sapChart_Sequence_Bad_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Plus 3"]
@@ -11140,6 +11421,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_P3_TxtShadow"]
 @sapChart_Sequence_Bad_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad' Plus 2"]
@@ -11156,6 +11438,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_P2_TxtClr"]
 @sapChart_Sequence_Bad_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Plus 2"]
@@ -11164,6 +11447,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_P2_TxtShadow"]
 @sapChart_Sequence_Bad_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad' Plus 1"]
@@ -11180,6 +11464,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_P1_TxtClr"]
 @sapChart_Sequence_Bad_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Plus 1"]
@@ -11188,6 +11473,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_P1_TxtShadow"]
 @sapChart_Sequence_Bad_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad'"]
@@ -11212,6 +11498,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_TxtShadow"]
 @sapChart_Sequence_Bad_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Border Color Sequence 'Bad'"]
@@ -11220,6 +11507,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_BrdClr"]
 @sapChart_Sequence_Bad_BorderColor: @sapDefault_Color;
 
 // [Label "Chart Color Sequence 'Bad' Minus 1"]
@@ -11236,6 +11524,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_M1_TxtClr"]
 @sapChart_Sequence_Bad_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Minus 1"]
@@ -11244,6 +11533,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_M1_TxtShadow"]
 @sapChart_Sequence_Bad_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad' Minus 2"]
@@ -11260,6 +11550,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_M2_TxtClr"]
 @sapChart_Sequence_Bad_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Minus 2"]
@@ -11268,6 +11559,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_M2_TxtShadow"]
 @sapChart_Sequence_Bad_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad' Minus 3"]
@@ -11284,6 +11576,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_M3_TxtClr"]
 @sapChart_Sequence_Bad_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Minus 3"]
@@ -11292,6 +11585,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_M3_TxtShadow"]
 @sapChart_Sequence_Bad_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad' Minus 4"]
@@ -11308,6 +11602,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_M4_TxtClr"]
 @sapChart_Sequence_Bad_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Minus 4"]
@@ -11316,6 +11611,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_M4_TxtShadow"]
 @sapChart_Sequence_Bad_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Bad' Minus 5"]
@@ -11332,6 +11628,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Bad_M5_TxtClr"]
 @sapChart_Sequence_Bad_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Bad' Minus 5"]
@@ -11340,6 +11637,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Bad_M5_TxtShadow"]
 @sapChart_Sequence_Bad_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical' Plus 3"]
@@ -11348,6 +11646,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_P3"]
 @sapChart_Sequence_Critical_Plus3: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Plus 3"]
@@ -11356,6 +11655,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_P3_TxtClr"]
 @sapChart_Sequence_Critical_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Plus 3"]
@@ -11364,6 +11664,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_P3_TxtShadow"]
 @sapChart_Sequence_Critical_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical' Plus 2"]
@@ -11372,6 +11673,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_P2"]
 @sapChart_Sequence_Critical_Plus2: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Plus 2"]
@@ -11380,6 +11682,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_P2_TxtClr"]
 @sapChart_Sequence_Critical_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Plus 2"]
@@ -11388,6 +11691,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_P2_TxtShadow"]
 @sapChart_Sequence_Critical_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical' Plus 1"]
@@ -11396,6 +11700,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_P1"]
 @sapChart_Sequence_Critical_Plus1: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Plus 1"]
@@ -11404,6 +11709,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_P1_TxtClr"]
 @sapChart_Sequence_Critical_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Plus 1"]
@@ -11412,6 +11718,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_P1_TxtShadow"]
 @sapChart_Sequence_Critical_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical'"]
@@ -11428,6 +11735,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_TxtClr"]
 @sapChart_Sequence_Critical_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical'"]
@@ -11436,6 +11744,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_TxtShadow"]
 @sapChart_Sequence_Critical_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Border Color Sequence 'Critical'"]
@@ -11444,6 +11753,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_BrdClr"]
 @sapChart_Sequence_Critical_BorderColor: @sapDefault_Color;
 
 // [Label "Chart Color Sequence 'Critical' Minus 1"]
@@ -11452,6 +11762,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M1"]
 @sapChart_Sequence_Critical_Minus1: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Minus 1"]
@@ -11460,6 +11771,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M1_TxtClr"]
 @sapChart_Sequence_Critical_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Minus 1"]
@@ -11468,6 +11780,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_M1_TxtShadow"]
 @sapChart_Sequence_Critical_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical' Minus 2"]
@@ -11476,6 +11789,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M2"]
 @sapChart_Sequence_Critical_Minus2: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Minus 2"]
@@ -11484,6 +11798,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M2_TxtClr"]
 @sapChart_Sequence_Critical_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Minus 2"]
@@ -11492,6 +11807,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_M2_TxtShadow"]
 @sapChart_Sequence_Critical_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical' Minus 3"]
@@ -11500,6 +11816,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M3"]
 @sapChart_Sequence_Critical_Minus3: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Minus 3"]
@@ -11508,6 +11825,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M3_TxtClr"]
 @sapChart_Sequence_Critical_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Minus 3"]
@@ -11516,6 +11834,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_M3_TxtShadow"]
 @sapChart_Sequence_Critical_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical' Minus 4"]
@@ -11524,6 +11843,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M4"]
 @sapChart_Sequence_Critical_Minus4: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Minus 4"]
@@ -11532,6 +11852,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M4_TxtClr"]
 @sapChart_Sequence_Critical_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Minus 4"]
@@ -11540,6 +11861,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_M4_TxtShadow"]
 @sapChart_Sequence_Critical_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Critical' Minus 5"]
@@ -11548,6 +11870,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M5"]
 @sapChart_Sequence_Critical_Minus5: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence 'Critical' Minus 5"]
@@ -11556,6 +11879,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Crit_M5_TxtClr"]
 @sapChart_Sequence_Critical_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Critical' Minus 5"]
@@ -11564,6 +11888,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Crit_M5_TxtShadow"]
 @sapChart_Sequence_Critical_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good' Plus 3"]
@@ -11580,6 +11905,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_P3_TxtClr"]
 @sapChart_Sequence_Good_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Plus 3"]
@@ -11588,6 +11914,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_P3_TxtShadow"]
 @sapChart_Sequence_Good_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good' Plus 2"]
@@ -11604,6 +11931,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_P2_TxtClr"]
 @sapChart_Sequence_Good_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Plus 2"]
@@ -11612,6 +11940,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_P2_TxtShadow"]
 @sapChart_Sequence_Good_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good' Plus 1"]
@@ -11628,6 +11957,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_P1_TxtClr"]
 @sapChart_Sequence_Good_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Plus 1"]
@@ -11636,6 +11966,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_P1_TxtShadow"]
 @sapChart_Sequence_Good_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good'"]
@@ -11652,6 +11983,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_TxtClr"]
 @sapChart_Sequence_Good_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good'"]
@@ -11660,6 +11992,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_TxtShadow"]
 @sapChart_Sequence_Good_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Border Color Sequence 'Good'"]
@@ -11668,6 +12001,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_BrdClr"]
 @sapChart_Sequence_Good_BorderColor: @sapDefault_Color;
 
 // [Label "Chart Color Sequence 'Good' Minus 1"]
@@ -11684,6 +12018,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_M1_TxtClr"]
 @sapChart_Sequence_Good_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Minus 1"]
@@ -11692,6 +12027,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_M1_TxtShadow"]
 @sapChart_Sequence_Good_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good' Minus 2"]
@@ -11708,6 +12044,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_M2_TxtClr"]
 @sapChart_Sequence_Good_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Minus 2"]
@@ -11716,6 +12053,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_M2_TxtShadow"]
 @sapChart_Sequence_Good_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good' Minus 3"]
@@ -11732,6 +12070,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_M3_TxtClr"]
 @sapChart_Sequence_Good_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Minus 3"]
@@ -11740,6 +12079,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_M3_TxtShadow"]
 @sapChart_Sequence_Good_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good' Minus 4"]
@@ -11756,6 +12096,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_M4_TxtClr"]
 @sapChart_Sequence_Good_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Minus 4"]
@@ -11764,6 +12105,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_M4_TxtShadow"]
 @sapChart_Sequence_Good_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Good' Minus 5"]
@@ -11780,6 +12122,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Good_M5_TxtClr"]
 @sapChart_Sequence_Good_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Good' Minus 5"]
@@ -11788,6 +12131,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Good_M5_TxtShadow"]
 @sapChart_Sequence_Good_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence Neutral Plus 3"]
@@ -11804,6 +12148,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_P3_TxtClr"]
 @sapChart_Sequence_Neutral_Plus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Plus 3"]
@@ -11812,6 +12157,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_P3_TxtShadow"]
 @sapChart_Sequence_Neutral_Plus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence Neutral Plus 2"]
@@ -11828,6 +12174,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_P2_TxtClr"]
 @sapChart_Sequence_Neutral_Plus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Plus 2"]
@@ -11836,6 +12183,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_P2_TxtShadow"]
 @sapChart_Sequence_Neutral_Plus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence Neutral Plus 1"]
@@ -11852,6 +12200,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_P1_TxtClr"]
 @sapChart_Sequence_Neutral_Plus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Plus 1"]
@@ -11860,6 +12209,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_P1_TxtShadow"]
 @sapChart_Sequence_Neutral_Plus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence 'Neutral'"]
@@ -11876,6 +12226,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_TxtClr"]
 @sapChart_Sequence_Neutral_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral'"]
@@ -11884,6 +12235,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_TxtShadow"]
 @sapChart_Sequence_Neutral_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Border Color Sequence 'Neutral'"]
@@ -11892,6 +12244,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_BrdClr"]
 @sapChart_Sequence_Neutral_BorderColor: @sapDefault_Color;
 
 // [Label "Chart Color Sequence Neutral Minus 1"]
@@ -11900,6 +12253,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M1"]
 @sapChart_Sequence_Neutral_Minus1: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence Neutral Minus 1"]
@@ -11908,6 +12262,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M1_TxtClr"]
 @sapChart_Sequence_Neutral_Minus1_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Minus 1"]
@@ -11916,6 +12271,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_M1_TxtShadow"]
 @sapChart_Sequence_Neutral_Minus1_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence Neutral Minus 2"]
@@ -11924,6 +12280,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M2"]
 @sapChart_Sequence_Neutral_Minus2: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence Neutral Minus 2"]
@@ -11932,6 +12289,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M2_TxtClr"]
 @sapChart_Sequence_Neutral_Minus2_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Minus 2"]
@@ -11940,6 +12298,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_M2_TxtShadow"]
 @sapChart_Sequence_Neutral_Minus2_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence Neutral Minus 3"]
@@ -11948,6 +12307,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M3"]
 @sapChart_Sequence_Neutral_Minus3: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence Neutral Minus 3"]
@@ -11956,6 +12316,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M3_TxtClr"]
 @sapChart_Sequence_Neutral_Minus3_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Minus 3"]
@@ -11964,6 +12325,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_M3_TxtShadow"]
 @sapChart_Sequence_Neutral_Minus3_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence Neutral Minus 4"]
@@ -11972,6 +12334,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M4"]
 @sapChart_Sequence_Neutral_Minus4: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence Neutral Minus 4"]
@@ -11980,6 +12343,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M4_TxtClr"]
 @sapChart_Sequence_Neutral_Minus4_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Minus 4"]
@@ -11988,6 +12352,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_M4_TxtShadow"]
 @sapChart_Sequence_Neutral_Minus4_TextShadow: @sapDefault_Shadow;
 
 // [Label "Chart Color Sequence Neutral Minus 5"]
@@ -11996,6 +12361,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M5"]
 @sapChart_Sequence_Neutral_Minus5: @sapDefault_Color;
 
 // [Label "Chart Text Color Sequence Neutral Minus 5"]
@@ -12004,6 +12370,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "color"]
+// [TranslationKey "sapChart_Seq_Neut_M5_TxtClr"]
 @sapChart_Sequence_Neutral_Minus5_TextColor: @sapDefault_Color;
 
 // [Label "Chart Text Shadow Sequence 'Neutral' Minus 5"]
@@ -12012,6 +12379,7 @@
 // [Protected "true"]
 // [Category "Chart", "Sequence"]
 // [Type "boxShadow"]
+// [TranslationKey "sapChart_Seq_Neut_M5_TxtShadow"]
 @sapChart_Sequence_Neutral_Minus5_TextShadow: @sapDefault_Shadow;
 
 // [Tags "SapInternal", "Base", "URI", "Font", "Protected"]
@@ -12955,13 +13323,13 @@ fill: @sapBaseColor !important;
 }
 .sapCss_SvgIconBase();
 /*</SAP_FREETEXT_LESS>*/// /**
-// * Copyright (c) 2012-2024 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.2.8
-// * data:{"sModified":"2024-12-12T10:42:39Z"}
+// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+// * Theming Engine 14.2.35
+// * data:{"sModified":"2025-03-05T13:13:33Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.24.0) *******************/
+/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.27.1) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -13115,6 +13483,7 @@ fill: @sapBaseColor !important;
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapCompanyLogo: none;
+@sapFavicon: @sapShell_Favicon;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -15753,6 +16122,12 @@ fill: @sapBaseColor !important;
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapTab_Critical_Selected_Background: @sapSelectedColor;
+@sapTab_Neutral_TextColor: @sapTextColor;
+@sapTab_Neutral_ForegroundColor: @sapHC_StandardForeground;
+@sapTab_Neutral_IconColor: contrast(@sapTab_Background, @sapHC_StandardForeground, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+@sapTab_Neutral_Selected_TextColor: @sapContent_Selected_ForegroundColor;
+@sapTab_Neutral_Selected_IconColor: contrast(@sapTab_Neutral_Selected_Background, @sapTextColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+@sapTab_Neutral_Selected_Background: @sapSelectedColor;
 
 // [Tags "!Protected"]
 // [Protected "!true"]

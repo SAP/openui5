@@ -1,9 +1,10 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/m/Button",
+	"sap/m/IllustratedMessageSize",
+	"sap/m/SegmentedButton",
 	"sap/m/ComboBox",
 	"sap/m/Dialog",
-	"sap/m/IllustratedMessageSize",
 	"sap/m/library",
 	"sap/m/IllustratedMessageType",
 	"sap/m/table/columnmenu/ActionItem",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickActionContainer",
 	"sap/ui/Device",
 	"sap/ui/core/Item",
+	"sap/ui/core/Element",
 	"sap/ui/core/StaticArea",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/qunit/QUnitUtils",
@@ -20,9 +22,10 @@ sap.ui.define([
 	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Button,
+	IllustratedMessageSize,
+	SegmentedButton,
 	ComboBox,
 	Dialog,
-	IllustratedMessageSize,
 	library,
 	IllustratedMessageType,
 	ActionItem,
@@ -32,6 +35,7 @@ sap.ui.define([
 	QuickActionContainer,
 	Device,
 	CoreItem,
+	Element,
 	StaticArea,
 	containsOrEquals,
 	QUnitUtils,
@@ -772,6 +776,52 @@ sap.ui.define([
 
 		assert.notOk(this.oColumnMenu._oBtnOk.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["confirm"]["visible"]);
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: async function() {
+			this.oColumnMenu = new Menu({
+				quickActions: [
+					new QuickAction({label: sText, content: new SegmentedButton()}),
+					new QuickAction({label: sText, content: new Button({text: sText})})
+				],
+				items: [
+					new ActionItem({label: sText, press: function() {}}),
+					new Item({label: sText, content: new Button({text: sText})})
+				]
+			});
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oColumnMenu.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("ARIA label for quick actions", async function(assert) {
+		const checkARIA = (oItem, sExpectedControl) => {
+			assert.equal(oItem.getLabel(), sText, "Quick action has correct label");
+			const oAssociativeControl = oItem.getContent()[0];
+			assert.ok(oAssociativeControl.isA("sap.m.table.columnmenu.AssociativeControl"), "Quick action content is an AssociativeControl");
+
+			const oControl = Element.getElementById(oAssociativeControl.getControl());
+			assert.ok(oControl.isA(sExpectedControl), `Control is a ${sExpectedControl}`);
+
+			const aAriaLabbeledBy = oControl.getAriaLabelledBy();
+			assert.ok(aAriaLabbeledBy.length, "Segmented Button has aria-labelledby");
+
+			const oLabelRef = this.oColumnMenu.getDomRef().querySelector(`#${aAriaLabbeledBy[0]}`);
+			assert.equal(oLabelRef.innerText, sText, "Segmented Button references correct label");
+		};
+
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		const aActionItems = this.oColumnMenu._oQuickGenericList.getItems();
+		checkARIA(aActionItems[0], "sap.m.SegmentedButton");
+		checkARIA(aActionItems[1], "sap.m.Button");
 	});
 
 	QUnit.module("Control tree", {

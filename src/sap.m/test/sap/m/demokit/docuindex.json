@@ -533,19 +533,6 @@
 				]
 			},
 			{
-				"id": "sap.m.upload.UploadSet",
-				"name": "Upload Set",
-				"category": "Action",
-				"since": "1.62",
-				"samples": [
-					"sap.m.sample.UploadSet",
-					"sap.m.sample.UploadSetCustomUploader",
-					"sap.m.sample.UploadSetGroupingSortingFiltering",
-					"sap.m.sample.UploadSetDirectoryUploads",
-					"sap.m.sample.UploadSetCloudUpload"
-				]
-			},
-			{
 				"id": "sap.m.GenericTag",
 				"name": "Generic Tag",
 				"category": "Action",
@@ -3543,31 +3530,6 @@
 				"id": "sap.m.sample.TitleToolBar",
 				"name": "Placing a Title in OverflowToolbar/Toolbar",
 				"description": "The sap.m.Title control can be used to place a title inside an OverflowToolbar/Toolbar."
-			},
-			{
-				"id": "sap.m.sample.UploadSet",
-				"name": "Upload Set",
-				"description": "This sample shows an Upload Set control with a list of files to be uploaded and actions you can perform on them."
-			},
-			{
-				"id": "sap.m.sample.UploadSetCustomUploader",
-				"name": "Upload Set with Custom Uploader",
-				"description": "Shows how to customize the Upload Set control using a custom uploader."
-			},
-			{
-				"id": "sap.m.sample.UploadSetGroupingSortingFiltering",
-				"name": "Upload Set with Grouping, Sorting and Filtering Feature",
-				"description": "Shows the UploadSet with grouping, sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
-			},
-			{
-				"id": "sap.m.sample.UploadSetDirectoryUploads",
-				"name": "Upload Set Directory Uploads",
-				"description": "Shows the UploadSet with directory uploads enabled. Toolbar offer modes to switch between directory or file uploads."
-			},
-			{
-				"id": "sap.m.sample.UploadSetCloudUpload",
-				"name": "Upload Set - Upload files from cloud",
-				"description": "Shows the UploadSet with the cloudFilePicker set as enabled. Now, files can be uploaded from cloud with the integrated cloudFilePicker control."
 			},
 			{
 				"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple",

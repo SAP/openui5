@@ -60,7 +60,7 @@ sap.ui.define([
 		QUnit.test("When the dialog is opened", async function(assert) {
 			const oTestDelegate = {
 				getAnnotationsChangeInfo: () => {
-					return {
+					return Promise.resolve({
 						serviceUrl: "testServiceUrl",
 						properties: [
 							{
@@ -78,7 +78,7 @@ sap.ui.define([
 							key: oTextArrangementTypes[sKey],
 							text: oTextArrangementLabels[sKey]
 						}))
-					};
+					});
 				}
 			};
 			const oActionConfig = {

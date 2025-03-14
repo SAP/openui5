@@ -1372,34 +1372,17 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the number of digits of the specified currency.
+		 * Returns the number of digits of the given currency considering a custom currency first and falling
+		 * back to the CLDR data if no custom currency is defined.
 		 *
-		 * @param {string} sCurrency ISO 4217 currency code
-		 * @returns {int} digits of the currency
+		 * @param {string} sCurrency The ISO 4217 currency code
+		 * @returns {int} The number of digits for the given currency
 		 * @public
 		 * @since 1.21.1
 		 */
 		getCurrencyDigits: function(sCurrency) {
-
-			// try to lookup currency digits from custom currencies
-			var mCustomCurrencies = this._get("currency");
-			if (mCustomCurrencies) {
-				if (mCustomCurrencies[sCurrency] && mCustomCurrencies[sCurrency].hasOwnProperty("digits")) {
-					return mCustomCurrencies[sCurrency].digits;
-				} else if (mCustomCurrencies["DEFAULT"] && mCustomCurrencies["DEFAULT"].hasOwnProperty("digits")) {
-					return mCustomCurrencies["DEFAULT"].digits;
-				}
-			}
-
-			var iDigits = this._get("currencyDigits", sCurrency);
-			if (iDigits == null) {
-				iDigits = this._get("currencyDigits", "DEFAULT");
-
-				if (iDigits == null) {
-					iDigits = 2; // default
-				}
-			}
-			return iDigits;
+			const mCurrencyDigits = this.getAllCurrencyDigits();
+			return mCurrencyDigits[sCurrency] ?? mCurrencyDigits["DEFAULT"];
 		},
 
 		/**
@@ -1418,7 +1401,7 @@ sap.ui.define([
 			const mCustomCurrencies = this._get("currency");
 			if (mCustomCurrencies) {
 				for (const sCurrencyCode in mCustomCurrencies) {
-					if (mCustomCurrencies[sCurrencyCode].digits) {
+					if (mCustomCurrencies[sCurrencyCode].digits !== undefined) {
 						mCurrencyDigits[sCurrencyCode] = mCustomCurrencies[sCurrencyCode].digits;
 					}
 				}

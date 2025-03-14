@@ -2269,25 +2269,6 @@ sap.ui.define([
 		return this.getAggregation("creationRow");
 	};
 
-	/**
-	 * Triggers automatic resizing of a column to the widest content.
-	 *
-	 * See {@link sap.ui.table.Column#autoResize} for details about the auto-resize feature.
-	 *
-	 * @param {int} iColIndex The index of the column in the list of visible columns.
-	 * @function
-	 * @public
-	 * @deprecated As of version 1.125, replaced by {@link sap.ui.table.Column#autoResize}
-	 */
-	Table.prototype.autoResizeColumn = function(iColIndex) {
-		const aVisibleColumns = this._getVisibleColumns();
-		const oColumn = aVisibleColumns[iColIndex];
-
-		if (oColumn?.getResizable() && oColumn?.getAutoResizable()) {
-			oColumn.autoResize();
-		}
-	};
-
 	// =============================================================================
 	// EVENT HANDLING & CLEANUP
 	// =============================================================================
