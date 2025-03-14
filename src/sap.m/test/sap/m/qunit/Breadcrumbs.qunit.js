@@ -427,6 +427,28 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 	});
 
+	QUnit.test("Breadcrumbs in OverflowToolbar's Popover", function (assert) {
+		// Arrange
+		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, "Loooooooooooooooooooooooooong current location text");
+		var oOFT = new OverflowToolBar({
+				content: [new Text({text: "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonooooooooong"}),
+					this.oStandardBreadCrumbsControl]
+			}),
+			oSpy = this.spy(oOFT, "_onInvalidationEventFired");
+
+		helpers.renderObject(oOFT);
+
+		// Act
+		oOFT._getOverflowButton().firePress();
+
+		// Assert
+		assert.ok(oSpy.notCalled, "Invalidation event is not fired for the OFT");
+		assert.strictEqual(this.oStandardBreadCrumbsControl._bInOverflow, true, "_bInOverflow is true when Breadcrumbs is in the Popover of OFT");
+
+		// Clean up
+		oOFT.destroy();
+	});
+
 	QUnit.test("Breadcrumbs in OverflowToolbar - config", function (assert) {
 		// Arrange
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, "Current location text");
@@ -440,6 +462,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		assert.strictEqual(oOFTConfig.invalidationEvents.length, 1, "Breadcrumbs have one invalidation event");
 		assert.strictEqual(oOFTConfig.invalidationEvents[0], "_minWidthChange", "Invalidation event is '_minWidthChange'");
 		assert.strictEqual(typeof oOFTConfig.onAfterExitOverflow, "function", "Breadcrumbs have onAfterExitOverflow function implementation");
+		assert.strictEqual(typeof oOFTConfig.onBeforeEnterOverflow, "function", "Breadcrumbs have onBeforeEnterOverflow function implementation");
 	});
 
 	QUnit.test("Breadcrumbs in OverflowToolbar - reseting control", function (assert) {
