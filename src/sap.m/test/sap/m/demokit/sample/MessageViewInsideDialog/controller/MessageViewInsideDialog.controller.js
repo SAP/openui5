@@ -6,11 +6,12 @@ sap.ui.define([
 	'sap/m/Link',
 	'sap/m/MessageItem',
 	'sap/m/MessageView',
+	'sap/m/MessageToast',
 	'sap/m/Button',
 	'sap/m/Dialog',
 	'sap/m/Bar',
 	'sap/m/Title'
-], function(Controller, IconPool, coreLibrary, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Title) {
+], function(Controller, IconPool, coreLibrary, JSONModel, Link, MessageItem, MessageView, MessageToast, Button, Dialog, Bar, Title) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -30,6 +31,7 @@ sap.ui.define([
 			var oMessageTemplate = new MessageItem({
 				type: '{type}',
 				title: '{title}',
+				activeTitle: '{activeTitle}',
 				description: '{description}',
 				subtitle: '{subtitle}',
 				counter: '{counter}',
@@ -56,7 +58,7 @@ sap.ui.define([
 				counter: 1
 			}, {
 				type: 'Error',
-				title: 'Error message',
+				title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris ',
 				description: 'Second Error message description',
 				subtitle: 'Example of subtitle',
 				counter: 2
@@ -64,7 +66,14 @@ sap.ui.define([
 				type: 'Information',
 				title: 'Information message',
 				description: 'First Information message description',
+				subtitle: 'Example of long subtitle lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris ',
+				counter: 1
+			}, {
+				type: 'Success',
+				title: 'Success message with active title',
+				description: 'Second Success message description',
 				subtitle: 'Example of subtitle',
+				activeTitle: true,
 				counter: 1
 			}];
 
@@ -80,6 +89,9 @@ sap.ui.define([
 				items: {
 					path: "/",
 					template: oMessageTemplate
+				},
+				activeTitlePress: function () {
+					MessageToast.show('Active title pressed');
 				}
 			});
 
