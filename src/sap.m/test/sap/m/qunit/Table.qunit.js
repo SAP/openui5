@@ -1407,8 +1407,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test for saptabnext", async function(assert) {
-		const sut = createSUT(true);
-		const oColumn = sut.getColumns()[0];
+		const sut = createVarietyTable();
+		let oColumn = sut.getColumns()[0];
 		const fnForwardTab = sinon.spy(sut, "forwardTab");
 		oColumn.setFooter(new Label({text: "Greetings"}));
 		sut.placeAt("qunit-fixture");
@@ -1417,28 +1417,120 @@ sap.ui.define([
 		// forwardTab on tblHeader
 		const $tblHeader = sut.$("tblHeader").trigger("focus");
 		qutils.triggerKeydown($tblHeader, KeyCodes.TAB);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called because the header contains interactive elements");
+
+		oColumn = sut.getColumns()[3];
+		oColumn.setHeader(new Label({text: "Web Site"}));
+		await nextUIUpdate();
+		$tblHeader.trigger("focus");
+		qutils.triggerKeydown($tblHeader, KeyCodes.TAB);
 		assert.ok(fnForwardTab.getCall(0).calledWith(true), "forwardTab is called on the header");
 
 		// forwardTab on tblFooter
 		const $tblFooter = sut.$("tblFooter").trigger("focus");
 		qutils.triggerKeydown($tblFooter, KeyCodes.TAB);
 		assert.ok(fnForwardTab.getCall(1).calledWith(true), "forwardTab is called on the footer");
+		fnForwardTab.reset();
 
+		// default formsMode = true
+		const oFirstItem = sut.getItems()[0];
+		qutils.triggerKeydown(oFirstItem.getDomRef(), KeyCodes.TAB);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first item");
+
+		qutils.triggerKeydown(oFirstItem.getTabbables().get(-1), KeyCodes.TAB);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the last interactive element of the first item");
+
+		const oLastItem = sut.getItems()[2];
+		qutils.triggerKeydown(oLastItem.getTabbables().get(-1), KeyCodes.TAB);
+		assert.ok(fnForwardTab.getCall(0).calledWith(true), "forwardTab is called on the last interactive element of the last item");
+		fnForwardTab.reset();
+
+		// formsMode = false
+		sut.setFormsMode(false);
+		qutils.triggerKeydown(oFirstItem.getDomRef(), KeyCodes.TAB);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first item");
+
+		qutils.triggerKeydown(oFirstItem.getTabbables().get(0), KeyCodes.TAB);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first interactive element of the first item");
+
+		qutils.triggerKeydown(oFirstItem.getTabbables().get(-1), KeyCodes.TAB);
+		assert.ok(fnForwardTab.getCall(0).calledWith(true), "forwardTab is called on the last interactive element of the first item");
+
+		fnForwardTab.restore();
 		sut.destroy();
 	});
 
 	QUnit.test("Test for onsaptabprevious", async function(assert) {
-		const sut = createSUT(true, false, "MultiSelect");
+		const sut = createVarietyTable();
+		const fnForwardTab = sinon.spy(sut, "forwardTab");
 		sut.setGrowing(true);
 		sut.setGrowingThreshold(5);
 		sut.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		const $tblHeader = sut.$("tblHeader").trigger("focus");
 		// shift-tab on header row
+		const $tblHeader = sut.$("tblHeader").trigger("focus");
 		qutils.triggerKeydown($tblHeader, KeyCodes.TAB, true, false, false);
 		assert.equal(document.activeElement, sut.$("before")[0]);
 
+		// shift-tab on footer row
+		const $tblFooter = sut.$("tblFooter").trigger("focus");
+		qutils.triggerKeydown($tblFooter, KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.getCall(1).calledWith(false), "forwardTab is called on the footer");
+
+		// default formsMode = true
+		const oFirstItem = sut.getItems()[0];
+		qutils.triggerKeydown(oFirstItem.getDomRef(), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.getCall(0).calledWith(false), "forwardTab is called on the first item");
+
+		const oLastItem = sut.getItems()[2];
+		qutils.triggerKeydown(oLastItem.getDomRef(), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.getCall(1).calledWith(false), "forwardTab is called on the last item");
+		fnForwardTab.reset();
+
+		qutils.triggerKeydown(oLastItem.getTabbables().get(-1), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the last interactive element of the last item");
+
+		qutils.triggerKeydown(oLastItem.getTabbables().get(0), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first interactive element of the last item");
+
+		qutils.triggerKeydown(oFirstItem.getTabbables().get(0), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first interactive element of the first item");
+
+		qutils.triggerKeydown(sut.getColumns()[3].getHeader().getDomRef(), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the interactive element in the header");
+		assert.equal(document.activeElement, $tblHeader[0], "focus is on the header");
+
+		sut.getColumns()[3].setHeader(new Label({text: "Web Site"}));
+		await nextUIUpdate();
+
+		qutils.triggerKeydown(oFirstItem.getTabbables().get(0), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first interactive element of the first item");
+		assert.equal(document.activeElement, oFirstItem.getDomRef(), "focus is on the first item");
+
+		// formsMode = false
+		sut.setFormsMode(false);
+		qutils.triggerKeydown(oFirstItem.getDomRef(), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.getCall(0).calledWith(false), "forwardTab is called on the first item");
+
+		qutils.triggerKeydown(oLastItem.getDomRef(), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.getCall(1).calledWith(false), "forwardTab is called on the last item");
+		fnForwardTab.reset();
+
+		qutils.triggerKeydown(oLastItem.getTabbables().get(-1), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the last interactive element of the last item");
+
+		qutils.triggerKeydown(oLastItem.getTabbables().get(0), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first interactive element of the last item");
+
+		assert.equal(document.activeElement, oLastItem.getDomRef(), "focus is on the last item");
+
+		qutils.triggerKeydown(oFirstItem.getTabbables().get(0), KeyCodes.TAB, true, false, false);
+		assert.ok(fnForwardTab.notCalled, "forwardTab is not called on the first interactive element of the first item");
+
+		assert.equal(document.activeElement, oFirstItem.getDomRef(), "focus is on the first item");
+
+		$tblHeader.trigger("focus");
 		// trigger onsaptabnext
 		qutils.triggerKeydown($tblHeader, KeyCodes.TAB);
 		assert.equal(document.activeElement, sut.$("after")[0]);
@@ -1468,11 +1560,11 @@ sap.ui.define([
 
 		assert.ok(sut.getDomRef("overlay"), "Overlay is rendered for the visible table");
 
-		sut.getItems()[0].focus();
+		oFirstItem.focus();
 		if (Device.browser.firefox) {
 			// it looks like FF does not trigger the focus event because of the overlay
 			sut.onfocusin(jQuery.Event("focusin", {
-				target: sut.getItems()[0].getDomRef()
+				target: oFirstItem.getDomRef()
 			}));
 		}
 		assert.equal(document.activeElement, sut.getDomRef("overlay"));
@@ -1907,6 +1999,9 @@ sap.ui.define([
 							height: 48
 						};
 					}
+				},
+				contains: function() {
+					return false;
 				}
 			};
 		});
@@ -2044,13 +2139,7 @@ sap.ui.define([
 			};
 		});
 
-		this.stub(sut, "getDomRef", function() {
-			return {
-				querySelector: function() {
-					return oHeaderDomRef;
-				}
-			};
-		});
+		this.stub(sut.getDomRef(), "querySelector").returns(oHeaderDomRef);
 
 		const oFocusedItem = sut.getItems()[2];
 		const oFocusedItemDomRef = oFocusedItem.getDomRef();
@@ -2165,6 +2254,9 @@ sap.ui.define([
 					} else if (sSelector === ".sapMListInfoTBarContainer") {
 						return oInfoToolbarContainer;
 					}
+				},
+				contains: function() {
+					return false;
 				}
 			};
 		});
@@ -4247,9 +4339,10 @@ sap.ui.define([
 		assert.equal(this.oTable.getDomRef("tblHeadModeCol").getAttribute("aria-label"), this.oRB.getText("TABLE_ROW_ACTION"));
 	});
 
-
-	QUnit.test("Up/Down/Home/End/PageUp/PageDown/AltUp/AltDown", function(assert) {
+	QUnit.test("Up/Down/Home/End/PageUp/PageDown/AltUp/AltDown", async function(assert) {
 		const oTable = this.oTable;
+		oTable.getColumns()[3].setHeader(new Label({text: "Web Site"}));
+		await nextUIUpdate();
 
 		oTable.focus();
 		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
@@ -4285,7 +4378,7 @@ sap.ui.define([
 		assert.equal(document.activeElement, oTable.getDomRef("tblHeader"), "Focus is on the header row");
 
 		qutils.triggerKeydown(document.activeElement, "TAB");
-		assert.equal(document.activeElement, oTable.getDomRef("after"), "Focus is left the table");
+		assert.equal(document.activeElement, oTable.getDomRef("after"), "Focus has left the table");
 	});
 
 	QUnit.test("Left/Right/Up/Down/End/Home/F2/F7/Enter", function(assert) {

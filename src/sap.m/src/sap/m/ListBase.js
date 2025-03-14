@@ -258,10 +258,23 @@ function(
 				rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
 
 				/**
-				 * Defines keyboard handling behavior of the control.
+				 * Defines the keyboard mode of the control.
+				 *
+				 * In combination with the <code>formsMode</code>, it defines the keyboard handling behavior of the control.
 				 * @since 1.38.0
 				 */
-				keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : "Navigation" },
+				keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : "Navigation"},
+
+				/**
+				 * Defines whether the forms mode is used.
+				 *
+				 * In combination with the <code>keyboardMode</code>, it defines the keyboard handling behavior of the control.
+				 *
+				 * The forms-mode-based editing moves the focus among all interactive elements within all list items. To leave the <code>sap.m.List</code> or <code>sap.m.Table</code> control, the user needs to use the F6 key.
+				 * In non-forms mode, the focus leaves the <code>sap.m.List</code> or <code>sap.m.Table</code> control after reaching the last interactive element of the current item.
+				 * @since 1.135
+				 */
+				formsMode : {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
 				 * Defines the section of the control that remains fixed at the top of the page during vertical scrolling as long as the control is in the viewport.
@@ -2427,17 +2440,60 @@ function(
 		this.$(bForward ? "after" : "before").trigger("focus");
 	};
 
-	// move focus out of the list
-	ListBase.prototype.onsaptabnext = ListBase.prototype.onsaptabprevious = function(oEvent) {
+	ListBase.prototype.onsaptabnext = function(oEvent) {
 		if (oEvent.isMarked() || oEvent.target.id == this.getId("trigger")) {
 			return;
 		}
 
-		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable") ||
-			oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").get(oEvent.type == "saptabnext" ? -1 : 0)) {
-			this.forwardTab(oEvent.type == "saptabnext");
+		const $Target = jQuery(oEvent.target);
+		const oDomRef = $Target.closest(".sapMLIBFocusable,.sapMTblCellFocusable")[0];
+		if (!oDomRef) {
+			return;
+		}
+
+		const oControl = Element.closestTo(oDomRef);
+		const aTabbables = oControl.getTabbables ? oControl.getTabbables() : $Target.closest(".sapMLIBFocusable").find(":sapTabbable");
+		const bFormsMode = this.getFormsMode();
+
+		if ((aTabbables.length === 0 && oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) ||
+				(!bFormsMode && oEvent.target === aTabbables.get(-1)) ||
+				oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").get(-1)) {
+			this.forwardTab(true);
 			oEvent.setMarked();
 		}
+	};
+
+	ListBase.prototype.onsaptabprevious = function(oEvent) {
+		if (oEvent.isMarked() || oEvent.target.id == this.getId("trigger")) {
+			return;
+		}
+
+		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) {
+			this.forwardTab(false);
+			oEvent.setMarked();
+			return;
+		}
+
+		const $Target = jQuery(oEvent.target);
+		const oDomRef = $Target.closest(".sapMLIBFocusable,.sapMTblCellFocusable")[0];
+		if (!oDomRef) {
+			return;
+		}
+
+		const oControl = Element.closestTo(oDomRef);
+		const aTabbables = oControl.getTabbables ? oControl.getTabbables() : $Target.closest(".sapMLIBFocusable").find(":sapTabbable");
+		const bFormsMode = this.getFormsMode();
+
+		if ((!bFormsMode && oEvent.target === aTabbables.get(0)) ||
+				(bFormsMode && oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").get(0))) {
+			this._getRelevantFocusableItem($Target).focus();
+			oEvent.preventDefault();
+			oEvent.setMarked();
+		}
+	};
+
+	ListBase.prototype._getRelevantFocusableItem = function($Target) {
+		return $Target.closest(".sapMLIBFocusable");
 	};
 
 	// navigate to previous or next section according to current focus position
@@ -2623,6 +2679,10 @@ function(
 
 	// Handles focus to reposition the focus to correct place
 	ListBase.prototype.onfocusin = function(oEvent) {
+		if (this.getNavigationRoot()?.contains(oEvent.target)) {
+			this.getDomRef("after").setAttribute("tabindex", "-1");
+		}
+
 		// ignore self focus
 		if (this._bIgnoreFocusIn) {
 			this._bIgnoreFocusIn = false;
@@ -2674,6 +2734,10 @@ function(
 	};
 
 	ListBase.prototype.onsapfocusleave = function(oEvent) {
+		if (!this.getNavigationRoot()?.contains(document.activeElement)) {
+			this.getDomRef("after").setAttribute("tabindex", "0");
+		}
+
 		if (this._oItemNavigation &&
 			!this.bAnnounceDetails &&
 			!this.getNavigationRoot().contains(document.activeElement)) {
