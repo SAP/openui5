@@ -4277,7 +4277,7 @@ sap.ui.define([
 			await nextUIUpdate();
 			await timeout(400);
 
-			const oMenu = Element.getElementById(jQuery(".sapMMenu").attr("id"));
+			const oMenu = Element.getElementById(jQuery(".sapMMenu").attr("id").replace("-rp-popover", ""));
 			assert.ok(oMenu, "Overflow menu is rendered");
 			assert.equal(oMenu.getItems()[0].getText(), "Edit", "First action is rendered in the overflow menu");
 			assert.equal(oMenu.getItems()[0].getIcon(), "sap-icon://edit", "First action is rendered in the overflow menu");

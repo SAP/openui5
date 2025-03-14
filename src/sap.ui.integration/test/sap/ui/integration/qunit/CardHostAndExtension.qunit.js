@@ -377,7 +377,7 @@ function (
 			oToolbar = oHeader.getToolbar();
 
 		setTimeout(function () {
-			oToolbar.getAggregation("_actionsMenu")._getVisualParent().getItems()[0].$().trigger("click");
+			oToolbar.getAggregation("_actionsMenu").getItems()[0].$().trigger("click");
 
 			// Assert
 			assert.ok(oSpyEnabled.called, "Host action is fired if host action is enabled.");
@@ -500,7 +500,7 @@ function (
 
 		setTimeout(function () {
 			// Assert
-			oToolbar.getAggregation("_actionsMenu")._getVisualParent().getItems()[0].$().trigger("click");
+			oToolbar.getAggregation("_actionsMenu").getItems()[0].$().trigger("click");
 			assert.ok(oWindowOpenStub.calledWith("https://www.sap.com"), "Action triggered with host 'url' parameter");
 
 			//Cleanup
@@ -650,8 +650,8 @@ function (
 
 		setTimeout(function () {
 			// Act
-			oActionMenu._getVisualParent().getItems()[0].$().trigger("click");
-			oActionMenu._getVisualParent().getItems()[0].getSubmenu().getItems()[0].$().trigger("click");
+			oActionMenu.getItems()[0].$().trigger("click");
+			oActionMenu.getItems()[0].getItems()[0].$().trigger("click");
 			// Assert
 			assert.ok(oStub.calledOnce, "Press event is fired on the nested item");
 			done();

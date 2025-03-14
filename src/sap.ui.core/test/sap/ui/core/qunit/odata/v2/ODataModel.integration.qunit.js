@@ -407,7 +407,7 @@ sap.ui.define([
 		var oDocument;
 
 		oDocument = XMLHelper.parse(
-			'<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" \
+			'<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" \
 				xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes">'
 			+ sViewXML
 			+ '</mvc:View>',
@@ -16849,7 +16849,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		<Text id="salesOrderID" text="{SalesOrderID}"/>\
 		<Text id="note" text="{Note}"/>\
 		<Select items="{path : \'ToLineItems\', templateShareable : true}">\
-			<MenuItem text="{Note}" />\
+			<core:Item text="{Note}" />\
 		</Select>\
 		<Text id="name" text="{ToBusinessPartner/CompanyName}"/>\
 	</t:Table>\
@@ -18450,7 +18450,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oRequestPromise = new Promise(function (resolve) { fnResolve = resolve; }),
 			sView = '\
 <Select id="salesOrderList" items="{/SalesOrderSet}">\
-	<MenuItem text="{SalesOrderID}" />\
+	<core:Item text="{SalesOrderID}" />\
 </Select>\
 <FlexBox id="objectPage">\
 	<Text id="customer" text="{CustomerName}"/>\
@@ -22365,7 +22365,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="salesOrderPage">\
 	<Input id="note_input" value="{Note}"/>\
 	<Select id="lineItemsList" items="{ToLineItems}">\
-		<MenuItem text="{ProductID}" />\
+		<core:Item text="{ProductID}" />\
 	</Select>\
 </FlexBox>',
 			that = this;
@@ -24569,7 +24569,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <FlexBox id="form" binding="{/SalesOrderSet('1')}">
 	<Label labelFor="select" text="Currency" />
 	<Select id="select" selectedKey="{CurrencyCode}" items="{/VH_CurrencySet}">
-		<MenuItem key="{Waers}" text="{Ltext}" />
+		<core:Item key="{Waers}" text="{Ltext}" />
 	</Select>
 </FlexBox>`;
 

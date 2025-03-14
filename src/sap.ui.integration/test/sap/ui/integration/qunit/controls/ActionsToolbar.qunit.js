@@ -177,7 +177,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			// Act 3
-			oToolbar.getAggregation("_actionsMenu")._getVisualParent().getItems()[0].$().trigger("click");
+			oToolbar.getAggregation("_actionsMenu").getItems()[0].$().trigger("click");
 
 			// Assert
 			assert.ok(oStub.calledOnce, "Press event is fired");
@@ -514,8 +514,8 @@ sap.ui.define([
 
 		setTimeout(function () {
 			// Act
-			oActionMenu._getVisualParent().getItems()[0].$().trigger("click");
-			oActionMenu._getVisualParent().getItems()[0].getSubmenu().getItems()[0].$().trigger("click");
+			oActionMenu.getItems()[0].$().trigger("click");
+			oActionMenu.getItems()[0].getItems()[0].$().trigger("click");
 			// Assert
 			assert.ok(oStub.calledOnce, "Press event is fired on the nested item");
 			done();

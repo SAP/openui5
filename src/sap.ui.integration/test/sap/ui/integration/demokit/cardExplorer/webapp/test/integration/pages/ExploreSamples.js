@@ -30,7 +30,7 @@ sap.ui.define([
 						success: function (oMenuBtn) {
 							return this.waitFor({
 								viewName: sViewName,
-								controlType: "sap.ui.unified.MenuItem",
+								controlType: "sap.m.MenuItem",
 								actions: new Press(),
 								matchers: {
 									ancestor: oMenuBtn,

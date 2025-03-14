@@ -5,17 +5,17 @@
 // Provides control sap.ui.unified.MenuItem.
 sap.ui.define([
 	'sap/ui/core/IconPool',
-	'sap/ui/unified/MenuItem',
-	'sap/ui/unified/library',
+	'sap/m/MenuItem',
 	'sap/ui/core/library',
 	'sap/ui/core/Icon',
 	"sap/ui/util/defaultLinkTypes",
 	"sap/ui/util/openWindow",
-	"sap/ui/events/KeyCodes"],
+	"sap/ui/events/KeyCodes",
+	"./NavigationListMenuItemRenderer"
+	],
 	function (
 		IconPool,
 		MenuItem,
-		library,
 		coreLibrary,
 		Icon,
 		defaultLinkTypes,
@@ -83,131 +83,6 @@ sap.ui.define([
 
 	IconPool.insertFontFaceStyle(); //Ensure Icon Font is loaded
 
-	NavigationListMenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo) {
-		var rm = oRenderManager,
-			oSubMenu = oItem.getSubmenu(),
-			bIsEnabled = oItem.getEnabled(),
-			oIcon,
-			bIsExternalLink = this.getHref() && this.getTarget() === "_blank";
-
-		rm.openStart("li", oItem);
-
-		if (this.getHref()) {
-			rm.class("sapUiMnuItmExternalLink");
-		}
-
-		if (oItem.getVisible()) {
-			rm.attr("tabindex", "0");
-		}
-
-		rm.class("sapUiMnuItm");
-		if (oInfo.iItemNo == 1) {
-			rm.class("sapUiMnuItmFirst");
-		} else if (oInfo.iItemNo == oInfo.iTotalItems) {
-			rm.class("sapUiMnuItmLast");
-		}
-		if (!oMenu.checkEnabled(oItem)) {
-			rm.class("sapUiMnuItmDsbl");
-		}
-		if (oItem.getStartsSection()) {
-			rm.class("sapUiMnuItmSepBefore");
-		}
-
-		if (oItem.getTooltip_AsString()) {
-			rm.attr("title", oItem.getTooltip_AsString());
-		}
-
-		// ARIA
-		if (oInfo.bAccessible) {
-			rm.accessibilityState(oItem, {
-				role: "menuitem",
-				disabled: !bIsEnabled,
-				posinset: oInfo.iItemNo,
-				setsize: oInfo.iTotalItems,
-				labelledby: { value: this.getId() + "-txt", append: true }
-			});
-			if (oSubMenu) {
-				rm.attr("aria-haspopup", coreLibrary.aria.HasPopup.Menu.toLowerCase());
-				rm.attr("aria-owns", oSubMenu.getId());
-			}
-		}
-
-		// Left border
-		rm.openEnd();
-
-		// External link "a" tag
-		if (this.getHref()) {
-			this._renderLinkTag(rm);
-		}
-
-		if (oItem.getIcon() && oItem._getIcon) {
-			// icon/check column
-			rm.openStart("div");
-			rm.class("sapUiMnuItmIco");
-			rm.openEnd();
-
-			oIcon = oItem._getIcon(oItem);
-			rm.renderControl(oIcon);
-
-			rm.close("div");
-		}
-
-		// Text column
-		rm.openStart("div", this.getId() + "-txt");
-		rm.class("sapUiMnuItmTxt");
-		rm.openEnd();
-		rm.text(oItem.getText());
-		rm.close("div");
-
-		// Shortcut column
-		rm.openStart("div", this.getId() + "-scuttxt");
-		rm.class("sapUiMnuItmSCut");
-		rm.openEnd();
-		rm.close("div");
-
-		// Submenu column
-		rm.openStart("div");
-		rm.class("sapUiMnuItmSbMnu");
-
-		if (oSubMenu) {
-			rm.class("sapTntNLIExpandIcon");
-		}
-
-		rm.openEnd();
-		if (oSubMenu) {
-			rm.openStart("div");
-			rm.class("sapUiIconMirrorInRTL");
-			rm.openEnd();
-			rm.close("div");
-		}
-		rm.close("div");
-
-		// External link icon
-		if (bIsExternalLink) {
-			const oIcon = this._getExternalLinkIcon();
-			rm.renderControl(oIcon);
-		}
-
-		// End of external link "a" tag
-		if (this.getHref()) {
-			rm.close("a");
-		}
-
-		rm.close("li");
-	};
-
-	NavigationListMenuItem.prototype.hover = function(bHovered, oMenu){
-		this.$().toggleClass("sapUiMnuItmHov", bHovered);
-	};
-
-	NavigationListMenuItem.prototype.focus = function(oMenu){
-		if (this.getVisible()) {
-			this.$().trigger("focus");
-		} else {
-			oMenu.focus();
-		}
-	};
-
 	/**
 	 * Handles click event.
 	 *
@@ -234,15 +109,12 @@ sap.ui.define([
 				item: oNavigationItem
 			});
 
-			const oSelectedItemDomRef = oNavigationList.getDomRef().querySelector(".sapTntNLISelected [tabindex]");
-			oSelectedItemDomRef?.focus();
-		}
-
-		const oMenu = this._oMenu;
-
-		if (oNavigationItem.getSelectable() || !oNavigationItem.getItems().length) {
+			const oMenu = this._oMenu;
 			oMenu.close();
 			oMenu.destroy();
+
+			const oSelectedItemDomRef = oNavigationList.getDomRef().querySelector(".sapTntNLISelected [tabindex]");
+			oSelectedItemDomRef?.focus();
 		}
 	};
 
@@ -309,38 +181,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Renders opening tag of anchor element.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRM renderer instance
-	 * @private
+	 * @override
 	 */
-	NavigationListMenuItem.prototype._renderLinkTag = function (oRM) {
-		const sHref = this.getHref(),
-			sTarget = this.getTarget(),
-			bDisabled = this.getEnabled();
+	NavigationListMenuItem.prototype._createPopover = function () {
+		const oPopover = MenuItem.prototype._createPopover.apply(this, arguments);
+		oPopover.addStyleClass("sapMSubmenu");
+		oPopover.addStyleClass("sapTntNLMenu");
 
-		oRM.openStart("a", `${this.getId()}-a`);
-
-		const sTooltip = this.getTooltip_AsString() || this.getText();
-
-		if (sTooltip) {
-			oRM.attr("title", sTooltip);
-		}
-
-		if (!bDisabled) {
-			oRM.attr("tabindex", "-1");
-		}
-
-		if (sHref) {
-			oRM.attr("href", sHref);
-		}
-
-		if (sTarget) {
-			oRM.attr("target", sTarget)
-				.attr("rel", defaultLinkTypes("", sTarget));
-		}
-
-		oRM.openEnd();
+		return oPopover;
 	};
 
 	return NavigationListMenuItem;
