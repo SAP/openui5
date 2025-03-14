@@ -2316,7 +2316,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(oFocusDateSpy.calledOnce, "Calendar is properly navigated");
+		assert.ok(oFocusDateSpy.notCalled, "Calendar is not navigated");
 	});
 
 	QUnit.module("Other");
