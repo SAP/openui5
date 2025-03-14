@@ -1091,8 +1091,9 @@ sap.ui.define([
 	QUnit.test("Auto close behavior when the menu is open within a dialog", function(assert) {
 		const oButton1 = new Button();
 		const oButton2 = new Button();
+		const oButton3 = new Button();
 		const oDialog = new Dialog({
-			content: [oButton1, oButton2]
+			content: [oButton1, oButton2, oButton3]
 		});
 
 		const clock = sinon.useFakeTimers();
@@ -1107,6 +1108,14 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu.isOpen());
 
 		oButton2.focus();
+		clock.tick(1000);
+		assert.notOk(this.oColumnMenu.isOpen());
+
+		this.oColumnMenu.openBy(oButton2);
+		clock.tick(500);
+		assert.ok(this.oColumnMenu.isOpen());
+
+		QUnitUtils.triggerEvent("mousedown", oButton3.getId());
 		clock.tick(1000);
 		clock.restore();
 		assert.notOk(this.oColumnMenu.isOpen());
