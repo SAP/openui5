@@ -152,6 +152,27 @@
 				]
 			},
 			{
+				"kind": "typedef",
+				"name": "sap.ui.core.mvc.ControllerExtension.Overrides",
+				"basename": "Overrides",
+				"resource": "sap/ui/core/mvc/ControllerExtension.js",
+				"module": "sap/ui/core/mvc/ControllerExtension",
+				"export": "Overrides",
+				"visibility": "public",
+				"type": {
+					"kind": "NativeTSTypeExpression",
+					"type": "{[key: string]: any} & Partial<Pick<(typeof Controller)[\"prototype\"], \"onAfterRendering\" | \"onBeforeRendering\" | \"onExit\" | \"onInit\">>"
+				},
+				"description": "The type of the `overrides` property"
+			},
+			{
+				"esmOnly": true,
+				"name": "sap.ui.core.mvc.ControllerExtension.Overrides",
+				"type": {
+					"type": "{[key: string]: any} & Partial<Pick<(typeof import(\"sap/ui/core/mvc/Controller\").default)[\"prototype\"], \"onAfterRendering\" | \"onBeforeRendering\" | \"onExit\" | \"onInit\">>"
+				}
+			},
+			{
 				"name": "sap.ui.core.mvc.ControllerExtension",
 				"methods": [
 					{
@@ -224,6 +245,17 @@
 							},
 							"description": "An instance of the given <code>ControllerExtension</code>. <b>NOTE:</b> this is only a dummy return type for proper usage in TypeScript. This method does not actually return an instance of <code>ControllerExtension</code>, but only throws an error at runtime. The sole purpose of this method is to mimic the actual runtime behavior where a *class* is given when a controller is defined, but an *instance* is present in each controller instance."
 						}
+					}
+				],
+				"properties": [
+					{
+						"name": "overrides",
+						"static": true,
+						"visibility": "public",
+						"optional": true,
+						"readonly": true,
+						"type": "sap.ui.core.mvc.ControllerExtension.Overrides",
+						"description": "The <code>overrides</code> definition object, which is used to specify methods of the base class to override. The names of this object's properties are method names like <code>onInit</code> and the values are the respective implementation."
 					}
 				]
 			},
