@@ -946,6 +946,60 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("The time picker's first clock is active aften each popover open", async function(assert) {
+		var oDTP = new DateTimePicker({
+				value: "14/09/2021 15:00:00",
+				displayFormat: "dd/MM/yyyy h:mm:ss a",
+				valueFormat: "dd/MM/yyyy HH:mm:ss"
+			}),
+			oClocks,
+			aClocks,
+			aButtons;
+
+		// arrange
+		oDTP.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// act
+		oDTP._createPopup();
+		oDTP._createPopupContent();
+		await nextUIUpdate();
+		oDTP._openPopup();
+		await nextUIUpdate();
+		oClocks = oDTP._oClocks;
+		aClocks = oClocks.getAggregation("_clocks");
+		aButtons = oClocks.getAggregation("_buttons");
+
+		// assert
+		assert.strictEqual(oClocks._activeClock, 0, "the time picker's active clock is initially set properly");
+		assert.ok(aButtons[0].getPressed(), "the time picker's first button is selected");
+		assert.notOk(aButtons[1].getPressed(), "the time picker's second button is not selected");
+		assert.notOk(aButtons[2].getPressed(), "the time picker's third button is not selected");
+		assert.ok(aClocks[0].getDomRef().classList.contains("sapMTPCFadeIn"), "the time picker's first clock is displayed");
+		assert.notOk(aClocks[1].getDomRef().classList.contains("sapMTPCFadeIn"), "the time picker's second clock is not displayed");
+		assert.notOk(aClocks[2].getDomRef().classList.contains("sapMTPCFadeIn"), "the time picker's third clock is not displayed");
+
+		// act - select another clock, close the DTP and open it again
+		qutils.triggerEvent("click", aButtons[2].getId());
+		await nextUIUpdate();
+		qutils.triggerKeydown("DTP-Cancel", KeyCodes.ENTER, false, false, false);
+		await nextUIUpdate();
+		oDTP._openPopup();
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oClocks._activeClock, 0, "the time picker's active clock is initially set properly");
+		assert.ok(aButtons[0].getPressed(), "the time picker's first button is selected");
+		assert.notOk(aButtons[1].getPressed(), "the time picker's second button is not selected");
+		assert.notOk(aButtons[2].getPressed(), "the time picker's third button is not selected");
+		assert.ok(aClocks[0].getDomRef().classList.contains("sapMTPCFadeIn"), "the time picker's first clock is displayed");
+		assert.notOk(aClocks[1].getDomRef().classList.contains("sapMTPCFadeIn"), "the time picker's second clock is not displayed");
+		assert.notOk(aClocks[2].getDomRef().classList.contains("sapMTPCFadeIn"), "the time picker's third clock is not displayed");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Private");
 
 	QUnit.test("_selectFocusedDateValue should remove all selectedDates from the calendar and select the focused date", function (assert) {
