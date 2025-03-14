@@ -2,7 +2,8 @@
 
 sap.ui.define([
 	"sap/m/Button",
-	"sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/m/MessageBox",
+	"sap/m/Popover",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/Adaptation",
@@ -20,11 +22,11 @@ sap.ui.define([
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
-	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
-	RtaQunitUtils,
+	MessageBox,
+	Popover,
 	Lib,
 	FlexState,
 	FlexRuntimeInfoAPI,
@@ -35,6 +37,7 @@ sap.ui.define([
 	VerticalLayout,
 	JSONModel,
 	AppVariantFeature,
+	RtaQunitUtils,
 	ManageAdaptations,
 	SaveAsAdaptation,
 	Adaptation,
@@ -42,7 +45,6 @@ sap.ui.define([
 	ReloadManager,
 	RuntimeAuthoring,
 	Utils,
-	MessageBox,
 	sinon
 ) {
 	"use strict";
@@ -135,6 +137,37 @@ sap.ui.define([
 				assert.strictEqual(this.oToolbar.getControl("save").getTooltip(), "Save Draft", "then with versioning enabled tooltip on save button is correct");
 				this.oToolbar.destroy();
 			}.bind(this));
+		});
+
+		QUnit.test("when versioning is available and changes need a hard reload", async function(assert) {
+			assert.expect(5);
+			this.oToolbarControlsModel.setProperty("/changesNeedHardReload", true);
+			this.oVersionsModel = new JSONModel({
+				versioningEnabled: true
+			});
+
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+
+			await this.oToolbar._pFragmentLoaded;
+			this.oToolbar.setModel(this.oVersionsModel, "versions");
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+
+			assert.strictEqual(this.oToolbar.getControl("versionButton").getVisible(), false, "then the version button is not visible");
+			assert.strictEqual(this.oToolbar.getControl("hardReloadButton").getVisible(), true, "then the hard reload buttons are visible");
+			assert.strictEqual(this.oToolbar.getControl("hardReloadInfoButton").getVisible(), true, "then the hard reload buttons are visible");
+
+			const oOpenPopoverStub = sandbox.stub(Popover.prototype, "openBy");
+			this.oToolbar.getControl("hardReloadInfoButton").firePress();
+			assert.strictEqual(oOpenPopoverStub.callCount, 1, "then the popover is opened");
+
+			this.oToolbar.attachEventOnce("saveAndReload", () => {
+				assert.ok(true, "then the save and reload event is fired");
+			});
+			this.oToolbar.getControl("hardReloadButton").firePress();
+
+			this.oToolbar.destroy();
 		});
 	});
 
@@ -696,6 +729,7 @@ sap.ui.define([
 				displayedVersion: Version.Number.Draft
 			});
 			this.oControlsModel = new JSONModel({
+				changesNeedHardReload: false,
 				restore: {
 					visible: true
 				},

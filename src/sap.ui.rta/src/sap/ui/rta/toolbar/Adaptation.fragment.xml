@@ -20,14 +20,32 @@
 						class="sapUiRtaVersionButton"
 						icon="sap-icon://megamenu"
 						iconFirst="false"
-						visible="{= (${versions>/versioningEnabled} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+						visible="{= (${versions>/versioningEnabled} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation' &amp;&amp; ${controls>/changesNeedHardReload} === false)}"
 						text="{parts: [{path: 'versions>/versions'}, {path: 'versions>/displayedVersion'}], formatter: '.formatVersionButtonText'}"
-						tooltip="{parts: [{path: 'versions>/versions'}, {path: 'versions>/displayedVersion'}], formatter: '.formatVersionButtonText'}"
+						tooltip="{i18n>TOL_SHOW_VERSION_HISTORY}"
 						press=".showVersionHistory">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
 				</Button>
+				<Button
+					id="sapUiRta_hardReloadButton"
+					type="Attention"
+					visible="{= ${controls>/changesNeedHardReload} === true}"
+					text="{i18n>SAVE_AND_RELOAD}"
+					iconFirst="true"
+					icon="sap-icon://refresh"
+					press=".saveAndReloadApp"
+				/>
+				<Button
+					id="sapUiRta_hardReloadInfoButton"
+					type="Attention"
+					visible="{= ${controls>/changesNeedHardReload} === true}"
+					press=".showHardReloadInfoPopover"
+					icon="sap-icon://question-mark"
+					class="sapUiNoMarginBeginEnd sapUiRtaHardReloadInfoButton"
+					tooltip="{i18n>TOL_SHOW_HARD_RELOAD_INFO}"
+				/>
 				<toolbar:OverflowToolbarButton
 						id="sapUiRta_activate"
 						icon="sap-icon://activate"
@@ -65,7 +83,7 @@
 						id="sapUiRta_modeSwitcher"
 						selectionChange=".modeChange"
 						selectedKey="{controls>/modeSwitcher}"
-						width="auto" >
+						width="100%" >
 					<items>
 						<SegmentedButtonItem
 								id="sapUiRta_adaptationSwitcherButton"

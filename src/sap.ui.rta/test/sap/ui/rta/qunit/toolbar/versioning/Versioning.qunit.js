@@ -276,7 +276,7 @@ sap.ui.define([
 	function checkFormatting(assert, mProperties) {
 		var oVersionButton = this.oToolbar.getControl("versionButton");
 		assert.strictEqual(oVersionButton.getText(), mProperties.versionText, "the text is set");
-		assert.strictEqual(oVersionButton.getTooltip(), mProperties.versionText, "the tooltip is set");
+		assert.strictEqual(oVersionButton.getTooltip(), this.oTextResources.getText("TOL_SHOW_VERSION_HISTORY"), "the tooltip is set");
 		assert.strictEqual(oVersionButton.hasStyleClass(ACTIVE_ACCENT_COLOR), mProperties.bActiveStyleClass, "the active style class is not set");
 		assert.strictEqual(oVersionButton.hasStyleClass(DRAFT_ACCENT_COLOR), mProperties.bDraft, "the draft style class is set");
 		var oDiscardButton = this.oToolbar.getControl("discardDraft");

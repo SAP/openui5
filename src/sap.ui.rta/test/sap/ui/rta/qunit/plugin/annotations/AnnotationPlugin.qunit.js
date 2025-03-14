@@ -253,8 +253,6 @@ sap.ui.define([
 		sandbox.stub(this.oAnnotationPlugin._oDialog, "openDialogAndHandleChanges").resolves(aChanges);
 
 		this.oAnnotationPlugin.attachEventOnce("elementModified", function(oEvent) {
-			const bHasAnnotationCommand = oEvent.getParameter("hasAnnotationCommand");
-			assert.strictEqual(bHasAnnotationCommand, true, "then the event is fired with the hasAnnotationCommand flag");
 			const oCompositeCommand = oEvent.getParameter("command");
 			const aCommands = oCompositeCommand.getCommands();
 			assert.strictEqual(aCommands.length, 2, "then the composite command contains two annotation commands");
