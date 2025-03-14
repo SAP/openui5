@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/ObjectStatus",
 	"sap/m/Select",
 	"sap/m/Text",
+	"sap/m/Title",
 	"sap/m/Toolbar",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Item",
@@ -34,6 +35,7 @@ sap.ui.define([
 	ObjectStatus,
 	Select,
 	Text,
+	Title,
 	Toolbar,
 	Icon,
 	Item,
@@ -89,8 +91,9 @@ sap.ui.define([
 
 	// create table with supported sap.m controls
 	const oTable = new Table();
-
-	oTable.setTitle("Tango");
+	const oTitle = new Title({text: "Tango", titleStyle: "H3"});
+	oTable.addExtension(oTitle);
+	oTable.addAriaLabelledBy(oTitle);
 	oTable.setFooter("Sierra");
 	oTable.setSelectionMode(SelectionMode.MultiToggle);
 
