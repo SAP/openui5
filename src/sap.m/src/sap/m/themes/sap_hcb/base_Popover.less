@@ -7,6 +7,7 @@
 @_sap_m_Popover_Scroll_Width_Buffer: 20px;
 @_sap_m_Popover_ArrowOffset: 0.5rem; /* Arrow offset from the Popover's corners */
 @_sap_m_Popover_CompactArrowOffset: @_sap_m_Popover_ArrowOffset; /* Arrow offset from the Popover's corners in compact mode */
+@_sap_m_Popover_OpacityTransitionDuration: 0.2s;
 
 /* shared mixin for arrow shadow*/
 .sapMPopoverArrAfterShadow(@horizontalShadow, @verticalShadow) {
@@ -120,14 +121,6 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 
 .sapMPopoverCont:focus {
 	outline: none;
-}
-
-.sapMPopover.sapMPopoverTransparent {
-	opacity: 0;
-}
-
-.sapMPopover.sapMPopoverOpaque {
-	opacity: 1;
 }
 
 /* disable margin according to the header and footer availability */

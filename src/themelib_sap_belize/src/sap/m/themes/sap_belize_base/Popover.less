@@ -9,6 +9,7 @@
 @_sap_m_Popover_ArrowOffset: 0.5rem; /* Arrow offset from the Popover's corners */
 @_sap_m_Popover_CompactArrowOffset: @_sap_m_Popover_ArrowOffset; /* Arrow offset from the Popover's corners in compact mode */
 @_sap_m_Popover_ThickShadowSize: 0.0625rem;
+@_sap_m_Popover_OpacityTransitionDuration: 0.2s;
 
 /* shared mixin for arrow shadow*/
 .sapMPopoverArrAfterShadow(@horizontalShadow, @verticalShadow) {
@@ -129,17 +130,9 @@
 	outline: none;
 }
 
-.sapMPopover.sapMPopoverTransparent {
-	opacity: 0;
-}
-
-html[data-sap-ui-animation='on'] .sapMPopover.sapMPopoverTransparent {
+html[data-sap-ui-animation='on'] .sapMPopover.sapMPopoverOpacityTransition {
 	-webkit-transition: opacity 0.2s linear;
 	transition: opacity 0.2s linear;
-}
-
-.sapMPopover.sapMPopoverOpaque {
-	opacity: 1;
 }
 
 /* disable margin according to the header and footer availability */
