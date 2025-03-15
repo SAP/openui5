@@ -695,6 +695,12 @@ sap.ui.define([
 
 	};
 
+	ColumnLayout.prototype.invalidateEditableChange = function() {
+
+		return true; // display-mode renders <dl>
+
+	};
+
 	return ColumnLayout;
 
 });

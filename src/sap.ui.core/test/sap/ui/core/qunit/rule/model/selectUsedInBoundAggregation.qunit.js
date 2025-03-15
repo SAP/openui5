@@ -208,7 +208,10 @@ sap.ui.define([
 			useBatch: false
 		});
 		oVBox.setModel(oModel);
-		oVBox.bindElement("/SalesOrderSet('42')", bUse$select ? {select: "SalesOrderID"} : undefined);
+		oVBox.bindElement({
+			path: "/SalesOrderSet('42')",
+			parameters: bUse$select ? {select: "SalesOrderID"} : undefined
+		});
 		oVBox.bindProperty("visible", "/visibility");
 
 		// code under test
@@ -235,7 +238,10 @@ sap.ui.define([
 		const oVBox = new VBox();
 		const oModel = new ODataV4Model({serviceUrl: "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"});
 		oVBox.setModel(oModel);
-		oVBox.bindElement("/EMPLOYEES('42')", bUse$select ? {$select: "ID"} : undefined);
+		oVBox.bindElement({
+			path: "/EMPLOYEES('42')",
+			parameters: bUse$select ? {$select: "ID"} : undefined
+		});
 
 		// code under test
 		return RuleAnalyzer.analyze({type: "global"}, [{libName: "sap.ui.core", ruleId: sRuleId}]).then(() => {

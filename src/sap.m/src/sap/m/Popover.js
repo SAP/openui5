@@ -2444,7 +2444,7 @@ sap.ui.define([
 			}
 		};
 
-		Popover.prototype._animation = function (fnAnimationCb, $Ref) {
+		Popover.prototype._onAnimationEnd = function (fnAnimationCb, $Ref, iDuration) {
 			var vTimeout = null;
 			var fnTransitionEnd = function () {
 				$Ref.off("webkitTransitionEnd transitionend");
@@ -2457,7 +2457,7 @@ sap.ui.define([
 
 			$Ref.on("webkitTransitionEnd transitionend", fnTransitionEnd);
 
-			vTimeout = setTimeout(fnTransitionEnd, this._getAnimationDuration());
+			vTimeout = setTimeout(fnTransitionEnd, iDuration); // make sure the callback is called even if the event isn't fired
 		};
 
 
@@ -2468,30 +2468,40 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.dt.plugin.MiniMenu
 		 */
 		Popover.prototype._getAnimationDuration = function () {
-			return 300;
+			return this._fOpacityTransitionDuration;
 		};
 
 		Popover.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
+			const iOpenAnimationDuration = this._getAnimationDuration();
 			var that = this;
 
 			setTimeout(function () {
 				$Ref.css("opacity", 1);
 				that._includeScrollWidth();
-				that._animation(function () {
+				setTimeout(() => {
 					if (!that.oPopup || that.oPopup.getOpenState() !== OpenState.OPENING) {
 						return;
 					}
 					fnOpened();
-				}, $Ref);
+				}, iOpenAnimationDuration);
 			}, Device.browser.firefox ? 50 : 0);
 		};
 
 		Popover.prototype._closeAnimation = function ($Ref, iRealDuration, fnClosed) {
-			$Ref.addClass("sapMPopoverTransparent");
-			this._animation(function () {
-				fnClosed();
-				$Ref.removeClass("sapMPopoverTransparent");
-			}, $Ref);
+			const iCloseAnimationDuration = this._getAnimationDuration();
+
+			// start animation
+			$Ref.css("opacity", 0);
+			$Ref.addClass("sapMPopoverOpacityTransition");
+
+			this._onAnimationEnd(
+				() => {
+					fnClosed();
+					$Ref.removeClass("sapMPopoverOpacityTransition");
+				},
+				$Ref,
+				iCloseAnimationDuration
+			);
 		};
 
 		Popover.prototype._getInitialFocusId = function () {
@@ -2698,6 +2708,13 @@ sap.ui.define([
 					this._fThickShadowSize = Rem.toPx(sValue);
 				}
 			}) || "0.0625rem");
+
+			this._fOpacityTransitionDuration = parseFloat(Parameters.get({
+				name: "_sap_m_Popover_OpacityTransitionDuration",
+				callback: (sValue) => {
+					this._fOpacityTransitionDuration = parseFloat(sValue) * 1000;
+				}
+			}) || "0.2s") * 1000;
 		};
 
 		/**

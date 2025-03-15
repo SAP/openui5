@@ -49,7 +49,10 @@ sap.ui.define([
 			this.aTextFields = constTestData.clients.map((entry, i) => {
 				var oTextField = new Input();
 				oTextField.setModel(this.oModel);
-				oTextField.bindProperty(sName, "/clients/" + i + "/" + sProperty, null, sMode);
+				oTextField.bindProperty(sName, {
+					path: "/clients/" + i + "/" + sProperty,
+					mode: sMode
+				});
 				return oTextField;
 			});
 

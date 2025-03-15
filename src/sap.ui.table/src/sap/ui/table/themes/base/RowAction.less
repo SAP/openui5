@@ -17,10 +17,10 @@
 	height: @_sap_ui_table_RowActionItemSize;
 	width: @_sap_ui_table_RowActionItemSize;
 	line-height: @_sap_ui_table_RowActionItemSize;
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 	font-size: 1rem;
 
-	// If the first action item is hidden, move the second item to the position where it would be if the first item wasn't hidden.
+	/* If the first action item is hidden, move the second item to the position where it would be if the first item wasn't hidden. */
 	.sapUiTableAction > .sapUiTableActionHidden + & {
 		margin-left: @_sap_ui_table_RowActionItemSize;
 

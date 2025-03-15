@@ -1735,7 +1735,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getAnimationDuration", function (assert) {
-		assert.strictEqual(Popover.prototype._getAnimationDuration(), 300, "Default Duration should be 300");
+		const fExpectedDuration = parseFloat(Parameters.get({
+			name: "_sap_m_Popover_OpacityTransitionDuration"
+		})) * 1000;
+
+		assert.strictEqual(this.oPopover._getAnimationDuration(), fExpectedDuration, "Default Duration should be correct");
 	});
 
 	QUnit.test("_applyPosition should be called with two parameters from check docking", function (assert){

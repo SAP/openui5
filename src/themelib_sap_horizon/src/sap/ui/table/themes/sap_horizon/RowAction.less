@@ -1,31 +1,31 @@
 /* ======================================= */
 /* CSS for control sap.ui.table/RowAction  */
-/* Horizon theme                              */
+/* Morning Horizon theme                   */
 /* ======================================= */
 
-/*TBD: Adjustments for sapUiTableActionIcon might be obsolete when Icon is adjusted*/
+/*TBD: Adjustments for sapUiTableActionIcon might be obsolete when Icon is adjusted */
 
 .sapUiTableActionIcon {
-	border-radius: @sapUiButtonBorderCornerRadius;
+	border-radius: var(--sapButton_BorderCornerRadius);
 	box-sizing: border-box;
-	color: @sapUiButtonLiteTextColor;
+	color: var(--sapButton_Lite_TextColor);
 }
 
 .sapUiTableActionIcon:hover {
-	border: 1px solid @sapUiButtonHoverBorderColor;
-	background: @sapUiButtonHoverBackground;
+	border: 1px solid var(--sapButton_Hover_BorderColor);
+	background: var(--sapButton_Hover_Background);
 }
 
 .sapUiTableActionIcon:active {
-	color: @sapUiButtonActiveTextColor;
-	border: 1px solid @sapUiButtonActiveBorderColor;
+	color: var(--sapButton_Active_TextColor);
+	border: 1px solid var(--sapButton_Active_BorderColor);
 }
 
 .sapUiTableActionIcon.sapUiIcon:focus {
-	outline-width: @sapUiContentFocusWidth;
-	outline-style: @sapUiContentFocusStyle;
-	outline-color: @sapUiContentFocusColor;
-	outline-offset: -@sapUiContentFocusWidth;
+	outline-width: var(--sapContent_FocusWidth);
+	outline-style: var(--sapContent_FocusStyle);
+	outline-color: var(--sapContent_FocusColor);
+	outline-offset: ~"calc(var(--sapContent_FocusWidth) * -1)";
 }
 
 .sapUiTableActionIcon:active:focus {

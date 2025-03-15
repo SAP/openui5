@@ -38,7 +38,10 @@ sap.ui.define([
 				maxLength: 5
 			});
 			var oInput = this.oInput;
-			oInput.bindValue("/test", oType);
+			oInput.bindValue({
+				path: "/test",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachValidationError(handler);
 			function handler(oEvent) {
@@ -65,7 +68,10 @@ sap.ui.define([
 			var done = assert.async();
 			var oType = new TypeInteger();
 			var oInput = this.oInput;
-			oInput.bindValue("/visibleItems", oType);
+			oInput.bindValue({
+				path: "/visibleItems",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachParseError(handler);
 			function handler(oEvent) {
@@ -91,10 +97,16 @@ sap.ui.define([
 			var done = assert.async();
 			var oType = new TypeString();
 			var oRating = new RatingIndicator();
-			oRating.bindValue("/rating", oType);
+			oRating.bindValue({
+				path: "/rating",
+				type: oType
+			});
 			this.placeAt(oRating);
 			var oInput = this.oInput;
-			oInput.bindValue("/rating", oType);
+			oInput.bindValue({
+				path: "/rating",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachFormatError(handler);
 			function handler(oEvent) {
@@ -121,7 +133,10 @@ sap.ui.define([
 			var done = assert.async();
 			var oType = new TypeString();
 			var oInput = this.oInput;
-			oInput.bindValue("/test", oType);
+			oInput.bindValue({
+				path: "/test",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachValidationSuccess(handler);
 			function handler(oEvent) {
@@ -146,7 +161,10 @@ sap.ui.define([
 			var done = assert.async();
 			var oType = new TypeInteger();
 			var oInput = this.oInput;
-			oInput.bindValue("/visibleItems", oType);
+			oInput.bindValue({
+				path: "/visibleItems",
+				type: oType
+			});
 			var bSuccess = false;
 			var iEventCount = 0;
 			this.oParent.attachParseError(handler);
@@ -189,7 +207,10 @@ sap.ui.define([
 				maxLength: 5
 			});
 			var oInput = this.oInput;
-			oInput.bindValue("/test", oType);
+			oInput.bindValue({
+				path: "/test",
+				type: oType
+			});
 			var iEventCount = 0;
 			var bSuccess = false;
 			this.oParent.attachParseError(handler);
@@ -229,7 +250,10 @@ sap.ui.define([
 			var done = assert.async();
 			var oType = new TypeString();
 			var oInput = this.oInput;
-			oInput.bindValue("/test", oType);
+			oInput.bindValue({
+				path: "/test",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachValidationSuccess(handler);
 			oInput.attachValidationSuccess(handler);
@@ -261,7 +285,10 @@ sap.ui.define([
 				maxLength: 5
 			});
 			var oInput = this.oInput;
-			oInput.bindValue("/test", oType);
+			oInput.bindValue({
+				path: "/test",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachValidationError(handler);
 			oInput.attachValidationError(handler);
@@ -296,7 +323,10 @@ sap.ui.define([
 				maxLength: 5
 			});
 			var oInput = this.oInput;
-			oInput.bindValue("/test", oType);
+			oInput.bindValue({
+				path: "/test",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachValidationError(handler);
 			oInput.attachValidationError(handler);
@@ -328,7 +358,10 @@ sap.ui.define([
 			var done = assert.async();
 			var oType = new TypeInteger();
 			var oInput = this.oInput;
-			oInput.bindValue("/visibleItems", oType);
+			oInput.bindValue({
+				path: "/visibleItems",
+				type: oType
+			});
 			var bSuccess = false;
 			oInput.attachParseError(handler);
 			this.oParent.attachParseError(handler);
@@ -358,10 +391,16 @@ sap.ui.define([
 			var done = assert.async();
 			var oType = new TypeString();
 			var oRating = new RatingIndicator();
-			oRating.bindValue("/rating", oType);
+			oRating.bindValue({
+				path: "/rating",
+				type: oType
+			});
 			this.placeAt(oRating);
 			var oInput = this.oInput;
-			oInput.bindValue("/rating", oType);
+			oInput.bindValue({
+				path: "/rating",
+				type: oType
+			});
 			var bSuccess = false;
 			this.oParent.attachFormatError(handler);
 			oInput.attachFormatError(handler);
