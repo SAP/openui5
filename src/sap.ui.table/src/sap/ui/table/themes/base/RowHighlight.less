@@ -3,25 +3,25 @@
 /* Base theme                         */
 /* ================================== */
 
-@_sap_ui_table_RowHighlight_SuccessColor: @sapUiSuccessBorder;
-@_sap_ui_table_RowHighlight_ErrorColor: @sapUiErrorBorder;
-@_sap_ui_table_RowHighlight_WarningColor: @sapUiWarningBorder;
-@_sap_ui_table_RowHighlight_InformationColor: @sapUiInformationBorder;
-@_sap_ui_table_RowHighlight_Indication01Color: @sapUiIndication1;
-@_sap_ui_table_RowHighlight_Indication02Color: @sapUiIndication2;
-@_sap_ui_table_RowHighlight_Indication03Color: @sapUiIndication3;
-@_sap_ui_table_RowHighlight_Indication04Color: @sapUiIndication4;
-@_sap_ui_table_RowHighlight_Indication05Color: @sapUiIndication5;
-@_sap_ui_table_RowHighlight_Indication06Color: @sapUiIndication6;
-@_sap_ui_table_RowHighlight_Indication07Color: @sapUiIndication7;
-@_sap_ui_table_RowHighlight_Indication08Color: @sapUiIndication8;
-@_sap_ui_table_RowHighlight_Indication09Color: @sapUiIndication9;
-@_sap_ui_table_RowHighlight_Indication10Color: @sapUiIndication10;
+@_sap_ui_table_RowHighlight_SuccessColor: var(--sapSuccessBorderColor);
+@_sap_ui_table_RowHighlight_ErrorColor: var(--sapErrorBorderColor);
+@_sap_ui_table_RowHighlight_WarningColor: var(--sapWarningBorderColor);
+@_sap_ui_table_RowHighlight_InformationColor: var(--sapInformationBorderColor);
+@_sap_ui_table_RowHighlight_Indication01Color: var(--sapIndicationColor_1);
+@_sap_ui_table_RowHighlight_Indication02Color: var(--sapIndicationColor_2);
+@_sap_ui_table_RowHighlight_Indication03Color: var(--sapIndicationColor_3);
+@_sap_ui_table_RowHighlight_Indication04Color: var(--sapIndicationColor_4);
+@_sap_ui_table_RowHighlight_Indication05Color: var(--sapIndicationColor_5);
+@_sap_ui_table_RowHighlight_Indication06Color: var(--sapIndicationColor_6);
+@_sap_ui_table_RowHighlight_Indication07Color: var(--sapIndicationColor_7);
+@_sap_ui_table_RowHighlight_Indication08Color: var(--sapIndicationColor_8);
+@_sap_ui_table_RowHighlight_Indication09Color: var(--sapIndicationColor_9);
+@_sap_ui_table_RowHighlight_Indication10Color: var(--sapIndicationColor_10);
 
 .sapUiTableRowHighlight {
 	height: 100%;
 	width: @_sap_ui_table_RowHighlightIndicatorWidth;
-	border-right: @_sap_ui_table_RowHighlightBorderRightWidth solid @sapUiListBackground;
+	border-right: @_sap_ui_table_RowHighlightBorderRightWidth solid var(--sapList_Background);
 
 	&.sapUiTableRowHighlightNone {
 		border-right-color: transparent;

@@ -4,8 +4,8 @@ sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	"sap/base/Log",
 	"sap/ui/core/Lib",
-	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
+	"sap/ui/fl/apply/_internal/changes/descriptor/InlineApplier",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -21,8 +21,8 @@ sap.ui.define([
 	RtaQunitUtils,
 	Log,
 	Lib,
-	AppDescriptorApplier,
 	ApplyStrategyFactory,
+	InlineApplier,
 	FlexObjectFactory,
 	FlexState,
 	ManifestUtils,
@@ -69,7 +69,7 @@ sap.ui.define([
 			};
 			this.oInitializeStub = sandbox.stub(FlexState, "initialize");
 			this.oGetStrategyStub = sandbox.stub(ApplyStrategyFactory, "getRuntimeStrategy").returns("foobar");
-			this.oApplyManifestChangesStub = sandbox.stub(AppDescriptorApplier, "applyChangesIncludedInManifest");
+			this.oApplyManifestChangesStub = sandbox.stub(InlineApplier, "applyChanges");
 		},
 		afterEach() {
 			sandbox.restore();

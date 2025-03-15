@@ -19337,7 +19337,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectValue("companyName", "SAP");
 
 			// ODataContextBinding must be created first!
-			oObjectPage.bindObject("", {select : "BusinessPartnerID,CompanyName"});
+			oObjectPage.bindObject({
+				path: "",
+				parameters: {
+					select : "BusinessPartnerID,CompanyName"
+				}
+			});
 			oContext = oModel.createEntry("/BusinessPartnerSet", {
 				properties : {CompanyName : "SAP"}
 			});

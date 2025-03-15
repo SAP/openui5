@@ -7635,6 +7635,8 @@ sap.ui.define([
 		assert.strictEqual(aReadOnlyContent[0].getItems().length, 2, "The list has 2 items.");
 
 		oReadOnlyPopover.close();
+		this.clock.tick(200);
+
 		oMCB.setEditable(true);
 		await nextUIUpdate(this.clock);
 

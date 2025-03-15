@@ -1,0 +1,90 @@
+{
+	"_version": "1.9.0",
+	"sap.app": {
+		"id": "sap.ui.sample",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.8.19-SNAPSHOT"
+		},
+		"title": "Sample Title",
+		"sourceTemplate": {
+			"id": "ui5template.smarttemplate",
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui.generic.app": {
+		"pages": [
+			{
+				"entitySet": "SEPMRA_C_PD_Product",
+				"component": {
+					"name": "sap.suite.ui.generic.template.ListReport",
+					"list": true,
+					"settings": {
+						"gridTable": false,
+						"multiSelect": true,
+						"smartVariantManagement": true,
+						"tableSettings": {
+							"addCardToInsightsHidden": false
+						}
+					}
+				},
+				"pages": [
+					{
+						"entitySet": "SEPMRA_C_PD_Product",
+						"component": {
+							"name": "sap.suite.ui.generic.template.ObjectPage",
+							"settings": {
+								"editableHeaderContent": false
+							}
+						},
+						"pages": [
+							{
+								"navigationProperty": "to_CollaborativeReviewPost",
+								"entitySet": "SEPMRA_C_PD_ReviewPost",
+								"component": {
+									"name": "sap.suite.ui.generic.template.ObjectPage"
+								}
+							}
+						],
+						"embeddedComponents": {
+							"storageBinOverview": {
+								"id": "storageBinOverview",
+								"componentUsage": "storagebintable",
+								"title": "Inventory Information",
+								"settings": {}
+							}
+						}
+					}
+				]
+			}
+		]
+	},
+	"$sap.ui.fl.changes": {
+		"descriptor": [
+			{
+				"changeType":"appdescr_app_setTitle",
+				"content": {},
+				"selector": {},
+				"layer": "CUSTOMER",
+				"texts": {
+					"sap.ui.sample_sap.app.title": {
+						"type": "XTIT",
+						"maxLength": 20,
+						"comment": "example",
+						"value": {
+							"": "Default Title - by app_setTitle_ran",
+							"en": "English Title - by app_setTitle",
+							"de": "Deutscher Titel - by app_setTitle",
+							"en_US": "English Title in en_US - by app_setTitle"
+						}
+					}
+				}
+			},
+			{
+				"changeType": "appdescr_not_implemented_change",
+				"content": {}
+			}
+		]
+	}
+}

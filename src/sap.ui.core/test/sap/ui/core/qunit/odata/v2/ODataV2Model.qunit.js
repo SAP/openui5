@@ -2090,7 +2090,12 @@ sap.ui.define([
 		oModel.setUseBatch(true);
 		oModel.setDeferredGroups(["test"]);
 		oLabel.setModel(oModel);
-		oLabel.bindElement("/Categories(2)", {groupId:"test"});
+		oLabel.bindElement({
+			path: "/Categories(2)",
+			parameters: {
+				groupId:"test"
+			}
+		});
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.setBindingContext();

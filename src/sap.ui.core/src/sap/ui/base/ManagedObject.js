@@ -3116,27 +3116,26 @@ sap.ui.define([
 	 *
 	 * Also see {@link topic:91f05e8b6f4d1014b6dd926db0e91070 Context Binding} in the documentation.
 	 *
-	 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo} oBindingInfo
-	 *            Binding info
+	 * As of 1.135, providing 'parameters' as positional parameter is deprecated. Provide them as part of a <code>BindingInfo</code> object instead.
+	 *
+	 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo|string} vBindingInfo
+	 *            A <code>BindingInfo</code> object or just the path, if no further properties are required
 	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
-	ManagedObject.prototype.bindObject = function(oBindingInfo) {
-		var sModelName,
-			sPath;
+	ManagedObject.prototype.bindObject = function(vBindingInfo) {
+		var sModelName;
 
 		// support legacy notation (sPath, mParameters)
-		if (typeof oBindingInfo == "string") {
-			sPath = oBindingInfo;
-			oBindingInfo = {
-				path: sPath,
-				parameters: arguments[1]
+		if (typeof vBindingInfo == "string") {
+			vBindingInfo = {
+				path: vBindingInfo
 			};
 		}
 
-		oBindingInfo = BindingInfo.createObject(oBindingInfo);
-		sModelName = oBindingInfo.model;
+		vBindingInfo = BindingInfo.createObject(vBindingInfo);
+		sModelName = vBindingInfo.model;
 
 		// if old binding exists, clean it up
 		if ( this.getObjectBinding(sModelName) ) {
@@ -3146,11 +3145,11 @@ sap.ui.define([
 			// is not available yet and wasn't available before -> no change of contexts
 		}
 
-		this.mObjectBindingInfos[sModelName] = oBindingInfo;
+		this.mObjectBindingInfos[sModelName] = vBindingInfo;
 
 		// if the models are already available, create the binding
-		if (BindingInfo.isReady(oBindingInfo, this)) {
-			this._bindObject(oBindingInfo);
+		if (BindingInfo.isReady(vBindingInfo, this)) {
+			this._bindObject(vBindingInfo);
 		}
 
 		return this;
@@ -3336,16 +3335,18 @@ sap.ui.define([
 	 *
 	 * Also see {@link topic:91f0652b6f4d1014b6dd926db0e91070 Property Binding} in the documentation.
 	 *
+	 * Providing a type, formatter, or bindingMode as a positional parameter is deprecated as of 1.135.0. Provide them as part of a <code>BindingInfo</code> object instead.
+	 *
 	 * @param {string} sName
 	 *            Name of a public property to bind; public aggregations of cardinality 0..1 that have an alternative,
 	 *            simple type (e.g. "string" or "int") can also be bound with this method
-	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo
-	 *            Binding information
+	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo|string} vBindingInfo
+	 *            A <code>BindingInfo</code> object or just the path, if no further properties are required
 	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
-	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo, /* undocumented, old API only: */ _vFormat, _sMode) {
+	ManagedObject.prototype.bindProperty = function(sName, vBindingInfo) {
 		var oProperty = this.getMetadata().getPropertyLikeSetting(sName);
 
 		// check whether property or alternative type on aggregation exists
@@ -3354,14 +3355,11 @@ sap.ui.define([
 		}
 
 		// old API compatibility (sName, sPath, _vFormat, _sMode)
-		if (typeof oBindingInfo == "string") {
-			oBindingInfo = {
+		if (typeof vBindingInfo == "string") {
+			vBindingInfo = {
 				parts: [ {
-					path: oBindingInfo,
-					type: BaseObject.isObjectA(_vFormat, "sap.ui.model.Type") ? _vFormat : undefined,
-					mode: _sMode
-				} ],
-				formatter: typeof _vFormat === 'function' ? _vFormat : undefined
+					path: vBindingInfo
+				} ]
 			};
 		}
 
@@ -3370,18 +3368,18 @@ sap.ui.define([
 			this.unbindProperty(sName, true);
 		}
 
-		oBindingInfo = BindingInfo.createProperty(oBindingInfo);
+		vBindingInfo = BindingInfo.createProperty(vBindingInfo);
 
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
-		this.mBindingInfos[sName] = oBindingInfo;
+		this.mBindingInfos[sName] = vBindingInfo;
 
 		if (this._observer) {
-			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "property");
+			this._observer.bindingChange(this, sName, "prepare", vBindingInfo, "property");
 		}
 
 		// if the models are already available, create the binding
-		if (BindingInfo.isReady(oBindingInfo, this)) {
-			this._bindProperty(sName, oBindingInfo);
+		if (BindingInfo.isReady(vBindingInfo, this)) {
+			this._bindProperty(sName, vBindingInfo);
 		}
 		return this;
 	};
@@ -3582,21 +3580,20 @@ sap.ui.define([
 	 * For more information on the <code>oBindingInfo.key</code> property and its usage, see
 	 * {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 Extended Change Detection}.
 	 *
+	 * Providing sorters and/or filters as positional parameters is deprecated as of 1.135.0. Provide them as part of a <code>BindingInfo</code> object instead.
+	 *
 	 * @param {string} sName
 	 *            Name of a public aggregation to bind
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo
-	 *            Binding info
-	 *
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo|string} vBindingInfo
+	 *            A <code>BindingInfo</code> object or just the path, if no further properties are required
+	 * @param {sap.ui.base.ManagedObject|function(string, sap.ui.model.Context):sap.ui.base.ManagedObject} [vTemplate]
+	 * 		 	  The template to clone for each item in the aggregation; either a template <code>Element</code> or a factory function must be given
 	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
-	ManagedObject.prototype.bindAggregation = function(sName, oBindingInfo) {
-		var sPath,
-			oTemplate,
-			aSorters,
-			aFilters,
-			oMetadata = this.getMetadata(),
+	ManagedObject.prototype.bindAggregation = function(sName, vBindingInfo, vTemplate) {
+		var oMetadata = this.getMetadata(),
 			oAggregationInfo = oMetadata.getAggregation(sName);
 
 		// check whether aggregation exists
@@ -3608,25 +3605,23 @@ sap.ui.define([
 		}
 
 		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
-		if (typeof oBindingInfo == "string") {
-			sPath = arguments[1];
-			oTemplate = arguments[2];
-			aSorters = arguments[3];
-			aFilters = arguments[4];
-			oBindingInfo = {path: sPath, sorter: aSorters, filters: aFilters};
+		if (typeof vBindingInfo == "string") {
+			vBindingInfo = {
+				path: vBindingInfo
+			};
 			// allow either to pass the template or the factory function as 3rd parameter
-			if (oTemplate instanceof ManagedObject) {
-				oBindingInfo.template = oTemplate;
-			} else if (typeof oTemplate === "function") {
-				oBindingInfo.factory = oTemplate;
+			if (vTemplate instanceof ManagedObject) {
+				vBindingInfo.template = vTemplate;
+			} else if (typeof vTemplate === "function") {
+				vBindingInfo.factory = vTemplate;
 			}
 		}
 
-		oBindingInfo[BindingInfo.OriginalParent] ??= this;
+		vBindingInfo[BindingInfo.OriginalParent] ??= this;
 
 		var oForwarder = oMetadata.getAggregationForwarder(sName);
 		if (oForwarder && oForwarder.forwardBinding) {
-			oForwarder.getTarget(this).bindAggregation(oForwarder.targetAggregationName, oBindingInfo);
+			oForwarder.getTarget(this).bindAggregation(oForwarder.targetAggregationName, vBindingInfo);
 			return this;
 		}
 
@@ -3635,50 +3630,50 @@ sap.ui.define([
 			this.unbindAggregation(sName);
 		}
 
-		if (oBindingInfo.template) {
+		if (vBindingInfo.template) {
 			// set default for templateShareable
-			if ( oBindingInfo.template._sapui_candidateForDestroy ) {
+			if ( vBindingInfo.template._sapui_candidateForDestroy ) {
 				// template became active again, we should no longer consider to destroy it
 				Log.warning(
 					"A binding template that is marked as 'candidate for destroy' is reused in a binding. " +
 					"You can use 'templateShareable:true' to fix this issue for all bindings that are affected " +
 					"(The template is used in aggregation '" + sName + "' of object '" + this.getId() + "'). " +
 					"For more information, see documentation under 'Aggregation Binding'.");
-				delete oBindingInfo.template._sapui_candidateForDestroy;
+				delete vBindingInfo.template._sapui_candidateForDestroy;
 			}
-			if (oBindingInfo.templateShareable === undefined) {
-				oBindingInfo.templateShareable = MAYBE_SHAREABLE_OR_NOT;
+			if (vBindingInfo.templateShareable === undefined) {
+				vBindingInfo.templateShareable = MAYBE_SHAREABLE_OR_NOT;
 			}
 		}
-		oBindingInfo = BindingInfo.createAggregation(oBindingInfo, oAggregationInfo._doesNotRequireFactory);
+		vBindingInfo = BindingInfo.createAggregation(vBindingInfo, oAggregationInfo._doesNotRequireFactory);
 
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
-		this.mBindingInfos[sName] = oBindingInfo;
+		this.mBindingInfos[sName] = vBindingInfo;
 
-		if (!(oBindingInfo.template || oBindingInfo.factory)) {
+		if (!(vBindingInfo.template || vBindingInfo.factory)) {
 			throw new Error("Missing template or factory function for aggregation " + sName + " of " + this + " !");
 		}
 
-		if (oBindingInfo.factory) {
+		if (vBindingInfo.factory) {
 			// unwrap factory if alread wrapped (e.g. bindingInfo is shared)
-			var fnOriginalFactory = oBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] || oBindingInfo.factory;
+			var fnOriginalFactory = vBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] || vBindingInfo.factory;
 
 			// wrap runWithOwner() call around the original factory function
 			var sOwnerId = this._sOwnerId;
-			oBindingInfo.factory = function(sId, oContext) {
+			vBindingInfo.factory = function(sId, oContext) {
 				// bind original factory with the two arguments: id and bindingContext
 				return ManagedObject.runWithOwner(fnOriginalFactory.bind(null, sId, oContext), sOwnerId);
 			};
-			oBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] = fnOriginalFactory;
+			vBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] = fnOriginalFactory;
 		}
 
 		if (this._observer) {
-			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "aggregation");
+			this._observer.bindingChange(this, sName, "prepare", vBindingInfo, "aggregation");
 		}
 
 		// if the model is already available create the binding
-		if (BindingInfo.isReady(oBindingInfo, this)) {
-			this._bindAggregation(sName, oBindingInfo);
+		if (BindingInfo.isReady(vBindingInfo, this)) {
+			this._bindAggregation(sName, vBindingInfo);
 		}
 		return this;
 	};

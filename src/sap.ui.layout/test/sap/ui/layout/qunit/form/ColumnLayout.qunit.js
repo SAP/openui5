@@ -1335,7 +1335,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("rendering (editable)", async function(assert) {
+		sinon.spy(oForm, "invalidate");
 		oForm.setEditable(true);
+		assert.ok(oForm.invalidate.calledOnce, "Form invalidated");
 		await nextUIUpdate();
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();

@@ -1207,6 +1207,7 @@ sap.ui.define([
 	};
 
 	function _handleAfterOpen(oEvent){
+		this._oClocks._showFirstClock();
 		this._oCalendar.focus();
 
 		Device.media.attachHandler(this._handleWindowResize, this);

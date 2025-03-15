@@ -31,7 +31,7 @@ sap.ui.define([
 
 		oFilterField.bindProperty("conditions", {
 			path: oFilterBar._getConditionModelName() + ">/conditions/" + IdentifierUtil.getPropertyKey(oProperty)
-		}, true);
+		});
 
 		const aValues = oProperty.filterConditions;
 		if (aValues && (aValues.length > 0)) {
