@@ -96,7 +96,7 @@
 	}
 
 	// enable non blocking loader
-	globalThis["sap-ui-config"].xxMaxLoaderTaskDuration = 1;
+	globalThis["sap-ui-config"].xxMaxLoaderTaskDuration = 0;
 
 	let sBaseUrl, rBootScripts, aScripts, i;
 
