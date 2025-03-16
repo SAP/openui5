@@ -2215,6 +2215,9 @@ sap.ui.define([
 
 		assert.ok(oLink.getAriaLabelledBy().length, "Link should be labeled");
 		assert.strictEqual(oLink.getAriaLabelledBy()[0], oLabel.getId(), "Link should be labeled by the correct label");
+
+		const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+		assert.strictEqual(document.getElementById(aIds[0]).innerText, oResourceBundle.getText("ARIA_DESCRIPTION_CARD_TYPE_OBJECT"), "aria text for card type is correct.");
 	});
 
 	QUnit.test("Actionable controls with missing label", async function (assert) {

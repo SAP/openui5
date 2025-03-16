@@ -28,6 +28,7 @@ sap.ui.define([
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const AvatarColor = mLibrary.AvatarColor;
 	const pIfMicrochartsAvailable = Library.load("sap.suite.ui.microchart");
+	const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 	function testWithMicrochart(assert, oCard, oManifest, fnTest) {
 		const done = assert.async();
@@ -837,6 +838,8 @@ sap.ui.define([
 		var oManifestData = oManifest_ListCard["sap.card"].content.data.json;
 
 		// Assert
+		const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+		assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_LIST"), "aria text for card type is correct.");
 		assert.equal(oList.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId(), "Should have correct aria label");
 		assert.ok(document.getElementById(oList.getAriaLabelledBy()[0]), "The element used for aria-labelledBy exists.");
 
