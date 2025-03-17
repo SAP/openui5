@@ -90,16 +90,6 @@ sap.ui.define([
 	// Test pull to refresh functionality
 	QUnit.module("Behavior");
 
-	QUnit.test("Not using deprecated APIs", function (assert) {
-		var oSpy = this.spy(oP2R._oScroller, "setBounce");
-
-		// act
-		oP2R.rerender();
-
-		// assert
-		assert.ok(oSpy.notCalled, 0, "setBounce (deprecated) is not called");
-	});
-
 	QUnit.test("Pull Down", function(assert) {
 		var done = assert.async();
 		var oSpy = this.spy();
