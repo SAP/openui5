@@ -7,7 +7,6 @@
 /* Variables overriding */
 /* ========================================================================== */
 
-@_sap_m_IconTabBar_TextColor: var(--sapTextColor);
 @_sap_m_IconTabBar_TextShadow: none;
 @_sap_m_IconTabBar_Separator_Font_Size: var(--sapFontLargeSize);
 @_sap_m_IconTabBar_More_Button_Focus_Offset: -0.3125rem;
@@ -17,7 +16,6 @@
 /* ==================== Cozy size ==================== */
 
 /* Content arrow */
-@_sap_m_IconTabBar_ContentArrowBorderWidth: 0.1875rem;
 @_sap_m_IconTabBar_ContentArrowHeight: 0.875rem;
 
 /* Inline mode */
@@ -135,8 +133,7 @@
 /* Variables */
 /* ========================================================================== */
 
-@_sap_m_IconTabBar_TextHoverColor: var(--sapContent_Selected_ForegroundColor);
-@_sap_m_IconTabBar_SelectedTextColor: var(--sapContent_Selected_ForegroundColor);
+@_sap_m_IconTabBar_SelectedTextColor: var(--sapTab_Selected_Background);
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 @_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
 @_sap_m_IconTabBar_HeaderFocusBorderTopOffset: -4px;
@@ -171,6 +168,7 @@
 .sapMITH {
 
 	z-index: 1; /* shows the bottom shadow of the ITHeader over the content of the ITB */
+
 	.sapMITBHead {
 		padding-top: 0.875rem;
 	}
@@ -208,7 +206,7 @@
 	.sapMITBSelected {
 
 		.sapMITBContentArrow::after {
-			background: var(--sapContent_Selected_ForegroundColor);
+			background: var(--sapTab_ForegroundColor);
 		}
 	}
 
@@ -324,7 +322,6 @@
 }
 
 .sapMITBContentArrow {
-	border-bottom: none;
 	position: relative;
 
 	/* creates border bottom with rounded top corners */
@@ -334,7 +331,6 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		height: @_sap_m_IconTabBar_ContentArrowBorderWidth;
 		border-radius: 0.125rem 0.125rem 0 0;
 	}
 }
@@ -392,7 +388,7 @@
 	.sapMITBFilterDefault.sapMITBSelected {
 
 		.sapMITBText {
-			color: var(--sapContent_Selected_ForegroundColor);
+			color: var(--sapTab_Selected_TextColor);
 		}
 
 		.sapMITBFilterExpandBtnSeparator {
@@ -407,99 +403,98 @@
 	.sapMITBFilterNeutral {
 
 		.sapMITBText {
-			color: var(--sapNeutralTextColor);
+			color: var(--sapTab_Neutral_TextColor);
 		}
 
 		.sapMITBFilterWrapper:hover .sapMITBText {
-			color: var(--sapNeutralTextColor);
+			color: var(--sapTab_Neutral_TextColor);
 		}
 
-		.sapMITBFilterExpandBtn:hover{
+		.sapMITBFilterExpandBtn:hover {
 
-			.sapUiIcon {
-				color: var(--sapNeutralTextColor);
+			.sapMITBFilterExpandIcon {
+				color: var(--sapTab_Neutral_TextColor);
 			}
 		}
 
 		&.sapMITBSelected .sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapNeutralTextColor);
+			border-color: var(--sapTab_Neutral_TextColor);
 		}
 	}
 
 	.sapMITBFilterPositive {
 
 		.sapMITBText {
-			color: var(--sapPositiveTextColor);
+			color: var(--sapTab_Positive_TextColor);
 		}
 
 		.sapMITBFilterWrapper:hover .sapMITBText {
-			color: var(--sapPositiveTextColor);
+			color: var(--sapTab_Positive_TextColor);
 		}
 
-		.sapMITBFilterExpandBtn:hover{
+		.sapMITBFilterExpandBtn:hover {
 
 			.sapUiIcon {
-				color: var(--sapPositiveTextColor) !important;
+				color: var(--sapTab_Positive_TextColor) !important;
 			}
 		}
 
 		&.sapMITBSelected .sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapPositiveTextColor);
+			border-color: var(--sapTab_Positive_TextColor);
 		}
 	}
 
 	.sapMITBFilterNegative {
 
 		.sapMITBText {
-			color: var(--sapNegativeTextColor);
+			color: var(--sapTab_Negative_TextColor);
 		}
 
 		.sapMITBFilterWrapper:hover .sapMITBText {
-			color: var(--sapNegativeTextColor);
+			color: var(--sapTab_Negative_TextColor);
 		}
 
-		.sapMITBFilterExpandBtn:hover{
+		.sapMITBFilterExpandBtn:hover {
 
-			.sapUiIcon {
-				color: var(--sapNegativeTextColor);
+			.sapMITBFilterExpandIcon {
+				color: var(--sapTab_Negative_TextColor);
 			}
 		}
 
 		&.sapMITBSelected .sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapNegativeTextColor);
+			border-color: var(--sapTab_Negative_TextColor);
 		}
 	}
 
 	.sapMITBFilterCritical {
 
 		.sapMITBText {
-			color: var(--sapCriticalTextColor);
+			color: var(--sapTab_Critical_TextColor);
 		}
 
 		.sapMITBFilterWrapper:hover .sapMITBText {
-			color: var(--sapCriticalTextColor);
+			color: var(--sapTab_Critical_TextColor);
 		}
 
-		.sapMITBFilterExpandBtn:hover{
+		.sapMITBFilterExpandBtn:hover {
 
 			.sapUiIcon {
-				color: var(--sapCriticalTextColor);
+				color: var(--sapTab_Critical_TextColor);
 			}
 		}
 
 		&.sapMITBSelected .sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapCriticalTextColor);
+			border-color: var(--sapTab_Critical_TextColor);
 		}
 	}
 }
 
 .sapMITBFilterIcon {
-	border: 2px solid var(--sapContent_Selected_ForegroundColor);
+	border: 0.125rem solid var(--sapTab_ForegroundColor);
 }
 
 .sapMITBFilterDefault {
-	border-color: var(--sapContent_Selected_ForegroundColor);
-	color: var(--sapContent_Selected_ForegroundColor);
+	color: var(--sapTab_IconColor);
 
 	.sapMITBFilterExpandBtnSeparator {
 		border-color: var(--sapTextColor);
@@ -510,55 +505,59 @@
 	}
 }
 
+.sapMITBTab .sapMITBFilterIcon {
+	background-color: var(--sapTab_Background);
+}
+
 .sapMITBFilterNeutral {
-	color: var(--sapNeutralElementColor);
-	border-color: var(--sapNeutralElementColor);
+	color: var(--sapTab_Neutral_IconColor);
+	border-color: var(--sapTab_Neutral_ForegroundColor);
 
 	.sapMITBFilterExpandBtnSeparator {
-		border-color: var(--sapNeutralTextColor);
+		border-color: var(--sapTab_Neutral_TextColor);
 	}
 
 	.sapMITBFilterExpandIcon.sapUiIcon {
-		color: var(--sapNeutralTextColor);
+		color: var(--sapTab_Neutral_TextColor);
 	}
 }
 
 .sapMITBFilterPositive {
-	color: var(--sapPositiveElementColor);
-	border-color: var(--sapPositiveElementColor);
+	color: var(--sapTab_Positive_IconColor);
+	border-color: var(--sapTab_Positive_ForegroundColor);
 
 	.sapMITBFilterExpandBtnSeparator {
-		border-color: var(--sapPositiveTextColor);
+		border-color: var(--sapTab_Positive_TextColor);
 	}
 
 	.sapMITBFilterExpandIcon.sapUiIcon {
-		color: var(--sapPositiveTextColor);
+		color: var(--sapTab_Positive_TextColor);
 	}
 }
 
 .sapMITBFilterNegative:not(.sapMITBTextOnly) {
-	color: var(--sapNegativeElementColor);
-	border-color: var(--sapNegativeElementColor);
+	color: var(--sapTab_Negative_IconColor);
+	border-color: var(--sapTab_Negative_ForegroundColor);
 
 	.sapMITBFilterExpandBtnSeparator {
-		border-color: var(--sapNegativeTextColor);
+		border-color: var(--sapTab_Negative_TextColor);
 	}
 
 	.sapMITBFilterExpandIcon.sapUiIcon {
-		color: var(--sapNegativeTextColor);
+		color: var(--sapTab_Negative_TextColor);
 	}
 }
 
 .sapMITBFilterCritical {
-	color: var(--sapCriticalElementColor);
-	border-color: var(--sapCriticalElementColor);
+	color: var(--sapTab_Critical_IconColor);
+	border-color: var(--sapTab_Critical_ForegroundColor);
 
 	.sapMITBFilterExpandBtnSeparator {
-		border-color: var(--sapCriticalTextColor);
+		border-color: var(--sapTab_Critical_TextColor);
 	}
 
 	.sapMITBFilterExpandIcon.sapUiIcon {
-		color: var(--sapCriticalTextColor);
+		color: var(--sapTab_Critical_TextColor);
 	}
 }
 
@@ -567,28 +566,60 @@
 	.sapMITBFilterNeutral {
 
 		.sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapNeutralElementColor);
+			border-color: var(--sapTab_Neutral_TextColor);
+		}
+
+		&.sapMITBItem.sapMITBFilterWithItems  .sapMITBFilterExpandIcon.sapUiIcon {
+			color: var(--sapTab_Neutral_TextColor);
 		}
 	}
 
 	.sapMITBFilterPositive {
 
 		.sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapPositiveElementColor);
+			border-color: var(--sapTab_Positive_TextColor);
 		}
+
+		&.sapMITBItem.sapMITBFilterWithItems  .sapMITBFilterExpandIcon.sapUiIcon {
+			color: var(--sapTab_Positive_TextColor);
+		}
+	}
+
+	.sapMITBSelected .sapMITBFilterPositive {
+		background: var(--sapTab_Positive_Selected_Background);
+		color: var(--sapTab_Positive_Selected_IconColor);
 	}
 
 	.sapMITBFilterNegative {
 
 		.sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapNegativeElementColor);
+			border-color: var(--sapTab_Negative_TextColor);
+		}
+
+		&.sapMITBItem.sapMITBFilterWithItems  .sapMITBFilterExpandIcon.sapUiIcon {
+			color: var(--sapTab_Negative_TextColor);
 		}
 	}
+
+	.sapMITBSelected .sapMITBFilterNegative {
+		background: var(--sapTab_Negative_Selected_Background);
+		color: var(--sapTab_Negative_Selected_IconColor);
+	}
+
 	.sapMITBFilterCritical {
 
 		.sapMITBFilterExpandBtnSeparator {
-			border-color: var(--sapCriticalElementColor);
+			border-color: var(--sapTab_Critical_TextColor);
 		}
+
+		&.sapMITBItem.sapMITBFilterWithItems  .sapMITBFilterExpandIcon.sapUiIcon {
+			color: var(--sapTab_Critical_TextColor);
+		}
+	}
+
+	.sapMITBSelected .sapMITBFilterCritical {
+		background: var(--sapTab_Critical_Selected_Background);
+		color: var(--sapTab_Critical_Selected_IconColor);
 	}
 }
 
@@ -599,44 +630,24 @@
 	}
 
 	&.sapMITBFilterNeutral .sapMITBContentArrow::after {
-		background: var(--sapNeutralElementColor);
+		background: var(--sapTab_Neutral_ForegroundColor);
 	}
 
 	&.sapMITBFilterPositive .sapMITBContentArrow::after {
-		background: var(--sapPositiveElementColor);
+		background: var(--sapTab_Positive_ForegroundColor);
 	}
 
 	&.sapMITBFilterNegative .sapMITBContentArrow::after {
-		background: var(--sapNegativeElementColor);
+		background: var(--sapTab_Negative_ForegroundColor);
 	}
 
 	&.sapMITBFilterCritical .sapMITBContentArrow::after {
-		background: var(--sapCriticalElementColor);
+		background: var(--sapTab_Critical_ForegroundColor);
 	}
 
 	.sapMITBFilterDefault {
 		background: @_sap_m_IconTabBar_SelectedTextColor;
-		color: var(--sapContent_ContrastIconColor);
-	}
-
-	.sapMITBFilterNeutral {
-		background: var(--sapNeutralElementColor);
-		color: var(--sapContent_ContrastIconColor);
-	}
-
-	.sapMITBFilterPositive {
-		background: var(--sapPositiveElementColor);
-		color: var(--sapContent_ContrastIconColor);
-	}
-
-	.sapMITBFilterNegative {
-		background: var(--sapNegativeElementColor);
-		color: var(--sapContent_ContrastIconColor);
-	}
-
-	.sapMITBFilterCritical {
-		background: var(--sapCriticalElementColor);
-		color: var(--sapContent_ContrastIconColor);
+		color: var(--sapTab_Selected_IconColor);
 	}
 }
 
@@ -747,6 +758,7 @@ html.sap-desktop {
 	.sapMITH.sapUiSizeCompact {
 
 		.sapMITBItem:focus.sapMITBAll {
+
 			&::after {
 				bottom: 1.3rem;
 				top: 0.125rem;
@@ -776,10 +788,11 @@ html.sap-desktop {
 
 			.sapMITBItem {
 
-				&:active{
+				&:active {
 					background-color: @_sap_m_IconTabBar_Overflow_BackgroundColorPressed;
 					border: 1px solid @_sap_m_IconTabBar_Overflow_BorderColorPressed;
 				}
+
 				&:active::after {
 					/* when overflow is pressed, hide the focus */
 					border-color: transparent;
@@ -826,6 +839,7 @@ html.sap-desktop {
 .sapMITBFilter .sapMITBText {
 	font-weight: bold;
 }
+
 /* ------------------------------------------------ */
 /* Shell overrides */
 /* ------------------------------------------------ */
@@ -857,7 +871,7 @@ html.sap-desktop {
 		color: var(--sapShell_Navigation_SelectedColor);
 	}
 
-	.sapMITBSelected:not(sapMITBDisabled) .sapMITBContentArrow::after {
+	.sapMITBSelected:not(.sapMITBDisabled) .sapMITBContentArrow::after {
 		background: var(--sapShell_Navigation_SelectedColor);
 	}
 
