@@ -695,7 +695,7 @@ sap.ui.define([
 
 		// Removes the horizontal spacing of the grid, which is needed for
 		// suport of Table inside ObjectPageSubSection scenario
-		if (oParent && oParent.hasStyleClass("sapUiTableOnObjectPageAdjustmentsForSection")) {
+		if (oParent && oParent.hasStyleClass("sapUiTableOnObjectPageAdjustmentsForSection") && !this.hasStyleClass("sapUiAdjustedSectionSubsectionWithoutTable")) {
 			this.getAggregation("_grid").setProperty("hSpacing", 0);
 		}
 	};
