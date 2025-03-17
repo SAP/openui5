@@ -1899,7 +1899,7 @@ sap.ui.define([
 				]
 			},
 			/**
- 			 * @deprecated As of version 1.129, replaced by {@link sap.m.plugins.UploadSetwithTable}
+ 			 * @deprecated As of version 1.129
 			 */
 			UploadSet: {
 				title: "Test Page for sap.m.upload.UploadSet",
@@ -1915,12 +1915,16 @@ sap.ui.define([
 					"./upload/UploadSetItem.qunit",
 					"./upload/UploadSetRestrictions.qunit",
 					"./upload/UploadSetToolbar.qunit",
-					"./upload/UploadSetOpenFileDialog.qunit"
+					"./upload/UploadSetOpenFileDialog.qunit",
+					"./upload/FilePreviewDialog.qunit"
 				]
 			},
 			VBox: {
 				title: "QUnit Page for sap.m.VBox"
 			},
+			/**
+ 			 * @deprecated As of version 1.135
+			 */
 			ValueCSSColor: {
 				title: "Test Page for sap.m.ValueCSSColor",
 				ui5: {

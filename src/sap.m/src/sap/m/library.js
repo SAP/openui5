@@ -199,7 +199,7 @@ sap.ui.define([
 			"sap.m.UploadState",
 			"sap.m.UploadType",
 			"sap.m.ValueColor",
-                        /** @deprecated since 1.120 */
+            /** @deprecated since 1.135 */
 			"sap.m.ValueCSSColor",
 			"sap.m.VerticalPlacementType",
 			"sap.m.WrappingType",
@@ -485,7 +485,6 @@ sap.ui.define([
 			"sap.m.upload.Uploader",
 			"sap.m.upload.UploaderTableItem",
 			"sap.m.upload.UploadSetItem",
-			"sap.m.upload.FilePreviewDialog",
 			"sap.m.VariantItem",
 			"sap.m.ViewSettingsCustomItem",
 			"sap.m.ViewSettingsCustomTab",
@@ -2881,7 +2880,7 @@ sap.ui.define([
 	 * @final
 	 * @namespace
 	 * @public
-	 * @deprecated As of version 1.120, the concept has been discarded.
+	 * @deprecated As of version 1.135, the concept has been discarded.
 	 */
 	thisLib.ValueCSSColor = DataType.createType("sap.m.ValueCSSColor", {
 		isValid : function (vValue) {
@@ -6712,6 +6711,7 @@ sap.ui.define([
 	DataType.registerEnum("sap.m.UploadState", thisLib.UploadState);
 	DataType.registerEnum("sap.m.UploadType", thisLib.UploadType);
 	DataType.registerEnum("sap.m.ValueColor", thisLib.ValueColor);
+	/** @deprecated since 1.135 */
 	DataType.registerEnum("sap.m.ValueCSSColor", thisLib.ValueCSSColor);
 	DataType.registerEnum("sap.m.VerticalPlacementType", thisLib.VerticalPlacementType);
 	DataType.registerEnum("sap.m.WrappingType", thisLib.WrappingType);
