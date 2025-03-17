@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialog",
 	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/thirdparty/sinon-4",
@@ -12,6 +13,7 @@ sap.ui.define([
 	Element,
 	FlexObjectFactory,
 	PersistenceWriteAPI,
+	JSONModel,
 	AnnotationChangeDialog,
 	AnnotationTypes,
 	sinon,
@@ -150,7 +152,10 @@ sap.ui.define([
 				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 				oSaveButton.firePress();
 			};
+
+			const oModelRefreshSpy = sandbox.spy(JSONModel.prototype, "refresh");
 			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);
+			assert.ok(oModelRefreshSpy.calledWith(true), "then the model is fully refreshed when the dialog is opened");
 			assert.strictEqual(aChanges.length, 1, "then one change was returned");
 			assert.strictEqual(
 				aChanges[0].content.annotationPath,
