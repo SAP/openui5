@@ -621,7 +621,7 @@ sap.ui.define([
 
 		this._updateLegendParent();
 		if (this.getInitialFocusedDate()) {
-			this.focusDate(this.getInitialFocusedDate());
+			this._oFocusedDate = CalendarDate.fromLocalJSDate(this.getInitialFocusedDate(), this._getPrimaryCalendarType());
 		}
 	};
 
