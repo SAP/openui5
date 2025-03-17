@@ -7,11 +7,12 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/I18NText"
-], function (Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText) {
+	"sap/ui/test/matchers/I18NText",
+	"require"
+], function (Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, require) {
 	"use strict";
 
-	var sTestPageURL = sap.ui.require.toUrl("static/TechnicalInfoTestbench.html");
+	var sTestPageURL = require.toUrl("./fixture/TechnicalInfoTestbench.html");
 
 	Opa5.extendConfig({
 		autoWait : true

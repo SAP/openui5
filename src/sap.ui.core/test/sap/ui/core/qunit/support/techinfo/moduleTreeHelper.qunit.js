@@ -3,7 +3,7 @@
  * ${copyright}
  */
 
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/support/techinfo/moduleTreeHelper"
 ], function (moduleTreeHelper) {
 	"use strict";
@@ -22,7 +22,7 @@ sap.ui.require([
 					"loaded": null,
 					"content": {}
 				},
-				"sap/ui/core/Configuration": {
+				"sap/ui/core/Configuration.js": {
 					"name": "sap/ui/core/Configuration.js",
 					"state": 4,
 					"group": null,
@@ -56,7 +56,7 @@ sap.ui.require([
 					"ui": {
 						"Device.js": false,
 						"core": {
-							"Configuration": false,
+							"Configuration.js": false,
 							"Locale.js": false
 						}
 					},
@@ -94,7 +94,7 @@ sap.ui.require([
 											"text": "core",
 											"nodes": [
 												{
-													"text": "Configuration",
+													"text": "Configuration.js",
 													"nodes": [],
 													"selected": false
 												}, {
@@ -232,7 +232,7 @@ sap.ui.require([
 		// module branch wildcard
 		window["sap-ui-debug"] = "sap/ui/c*";
 		this.oHierarchy.sap.ui.core[""] = true;
-		this.oHierarchy.sap.ui.core["Configuration"] = true;
+		this.oHierarchy.sap.ui.core["Configuration.js"] = true;
 		this.oHierarchy.sap.ui.core["Locale.js"] = true;
 		this.oHierarchy.sap.m["Text.js"] = false;
 		moduleTreeHelper.modulesToHierarchy({modules: this.oModules}, oHierarchy);
@@ -252,31 +252,53 @@ sap.ui.require([
 		assert.deepEqual(oTree.depth, 4, "The modules have been converted to a tree correctly");
 	});
 
-	QUnit.test("Should convert module tree to module hierarchy", function(assert) {
-		var oHierarchy;
-
+	QUnit.test("Should convert module tree to module hierarchy (nothing selected)", function(assert) {
 		// nothing selected
-		oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
+		var oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
 		assert.deepEqual(oHierarchy, this.oHierarchy, "The modules have been converted to a hierarchy correctly");
+	});
 
-		// root node selected in tree
-		this.oTree.tree.selected = true;
-		this.oHierarchy[""] = true;
-		oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
+	QUnit.test("Should convert module tree to module hierarchy (select all)", function(assert) {
+		this.oHierarchy[""] =
+		this.oHierarchy.sap[""] =
+		this.oHierarchy.sap.m[""] =
+		this.oHierarchy.sap.m["Button.js"] =
+		this.oHierarchy.sap.m["Text.js"] =
+		this.oHierarchy.sap.ui[""] =
+		this.oHierarchy.sap.ui["Device.js"] =
+		this.oHierarchy.sap.ui.core[""] =
+		this.oHierarchy.sap.ui.core["Configuration.js"] =
+		this.oHierarchy.sap.ui.core["Locale.js"] = true;
+
+		// select all
+		moduleTreeHelper.recursiveSelect(this.oTree.tree, true);
+		var oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
 		assert.deepEqual(oHierarchy, this.oHierarchy, "The modules have been converted to a hierarchy correctly");
-		this.oTree.tree.selected = false;
-		delete this.oHierarchy[""];
+	});
+
+	QUnit.test("Should convert module tree to module hierarchy (namespace selected)", function(assert) {
+		this.oHierarchy.sap.ui.core[""] =
+		this.oHierarchy.sap.ui.core["Configuration.js"] =
+		this.oHierarchy.sap.ui.core["Locale.js"] = true;
 
 		// namespace selected in tree
-		this.oTree.tree.nodes[0].nodes[0].selected = true;
-		this.oHierarchy.sap.ui[""] = true;
-		oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
-		assert.deepEqual(oHierarchy, this.oHierarchy, "The modules have been converted to a hierarchy correctly");
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[1].nodes[0], true);
 
+		var oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
+		assert.deepEqual(oHierarchy, this.oHierarchy, "The modules have been converted to a hierarchy correctly");
+	});
+
+	QUnit.test("Should convert module tree to module hierarchy (namespace and module selected)", function(assert) {
 		// namespace and module selected in tree
-		this.oTree.tree.nodes[0].nodes[0].nodes[0].selected = true;
-		this.oHierarchy.sap.ui["Device.js"] = true;
-		oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
+		this.oHierarchy.sap.m["Button.js"] =
+		this.oHierarchy.sap.ui.core[""] =
+		this.oHierarchy.sap.ui.core["Configuration.js"] =
+		this.oHierarchy.sap.ui.core["Locale.js"] = true;
+
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[0].nodes[0], true);
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[1].nodes[0], true);
+
+		var oHierarchy = moduleTreeHelper.toHierarchy(this.oTree.tree);
 		assert.deepEqual(oHierarchy, this.oHierarchy, "The modules have been converted to a hierarchy correctly");
 	});
 
@@ -288,32 +310,37 @@ sap.ui.require([
 		assert.strictEqual(sDebug, false, "The modules have been converted to a debug string correctly");
 
 		// root node selected in tree
-		this.oTree.tree.selected = true;
+		moduleTreeHelper.recursiveSelect(this.oTree.tree, true);
 		sDebug = moduleTreeHelper.toDebugInfo(this.oTree.tree);
 		assert.strictEqual(sDebug, true, "The modules have been converted to a debug string correctly");
-		this.oTree.tree.selected = false;
+		moduleTreeHelper.recursiveSelect(this.oTree.tree, false);
 
 		// namespace selected in tree
-		this.oTree.tree.nodes[0].nodes[0].selected = true;
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[1], true);
 		sDebug = moduleTreeHelper.toDebugInfo(this.oTree.tree);
 		assert.strictEqual(sDebug, "sap/ui/", "The modules have been converted to a debug string correctly");
+		moduleTreeHelper.recursiveSelect(this.oTree.tree, false);
 
 		// namespace and module selected in tree
-		this.oTree.tree.nodes[0].nodes[0].nodes[0].selected = true;
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[1], true);
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[1].nodes[0], true);
 		sDebug = moduleTreeHelper.toDebugInfo(this.oTree.tree);
 		assert.strictEqual(sDebug, "sap/ui/", "The modules have been converted to a debug string correctly");
+		moduleTreeHelper.recursiveSelect(this.oTree.tree, false);
 
 		// several namespace selected in tree
-		this.oTree.tree.nodes[0].nodes[0].nodes[0].selected = true;
-		this.oTree.tree.nodes[0].nodes[1].selected = true;
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[0], true);
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[1].nodes[0], true);
 		sDebug = moduleTreeHelper.toDebugInfo(this.oTree.tree);
-		assert.strictEqual(sDebug, "sap/ui/,sap/m/", "The modules have been converted to a debug string correctly");
-		this.oTree.tree.nodes[0].nodes[1].selected = false;
+		assert.strictEqual(sDebug, "sap/m/,sap/ui/core/", "The modules have been converted to a debug string correctly");
+		moduleTreeHelper.recursiveSelect(this.oTree.tree, false);
 
 		// several namespace and files selected in tree
-		this.oTree.tree.nodes[0].nodes[1].nodes[1].selected = true;
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[0].nodes[1], true);
+		moduleTreeHelper.recursiveSelect(this.oTree.tree.nodes[0].nodes[1], true);
 		sDebug = moduleTreeHelper.toDebugInfo(this.oTree.tree);
-		assert.strictEqual(sDebug, "sap/ui/,sap/m/Text.js", "The modules have been converted to a debug string correctly");
+		assert.strictEqual(sDebug, "sap/m/Text.js,sap/ui/", "The modules have been converted to a debug string correctly");
+		moduleTreeHelper.recursiveSelect(this.oTree.tree, false);
 	});
 
 	QUnit.test("Should convert a glob pattern to a partial JS regexp.", function(assert) {
