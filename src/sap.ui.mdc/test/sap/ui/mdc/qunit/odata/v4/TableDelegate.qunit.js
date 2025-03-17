@@ -429,77 +429,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Analytical features", {
-		defaultPropertyInfos: [{
-			key: "Country",
-			path: "CountryPath",
-			label: "Country",
-			dataType: "String",
-			text: "CountryText",
-			extension: {
-				technicallyGroupable: true
-			}
-		}, {
-			key: "CountryText",
-			path: "CountryTextPath",
-			label: "CountryText",
-			dataType: "String",
-			extension: {
-				technicallyGroupable: true
-			}
-		}, {
-			key: "Region",
-			path: "RegionPath",
-			label: "Region",
-			dataType: "String",
-			text: "RegionText",
-			extension: {
-				technicallyGroupable: true
-			}
-		}, {
-			key: "RegionText",
-			path: "RegionTextPath",
-			label: "RegionText",
-			dataType: "String",
-			extension: {
-				technicallyGroupable: true,
-				additionalProperties: ["Region"]
-			}
-		}, {
-			key: "SalesAmount",
-			path: "SalesAmountPath",
-			label: "SalesAmount",
-			dataType: "String",
-			unit: "Currency",
-			extension: {
-				technicallyAggregatable: true
-			}
-		}, {
-			key: "Currency",
-			path: "CurrencyPath",
-			label: "Currency",
-			dataType: "String"
-		}, {
-			key: "SalesAmountInLocalCurrency",
-			path: "SalesAmountInLocalCurrencyPath",
-			label: "SalesAmountInLocalCurrency",
-			dataType: "String",
-			unit: "Currency",
-			extension: {
-				technicallyAggregatable: true,
-				additionalProperties: ["Country", "Region"]
-			}
-		}],
 		afterEach: function() {
 			this.oTable?.destroy();
 		},
-		initTable: async function(
-			mSettings,
-			aVisibleProperties = ["Country", "Region", "SalesAmount"],
-			oDelegatePayload = {}
-		) {
+		initTable: async function(mSettings, aVisibleProperties = [], oDelegatePayload = {}) {
 			const oPayload = {
 				collectionPath: "/Products",
-				propertyInfo: this.defaultPropertyInfos,
 				...oDelegatePayload
 			};
 			this.oTable = new Table({
@@ -526,21 +461,6 @@ sap.ui.define([
 			await this.oTable.initialized();
 			this.observe$$aggregation();
 		},
-		addColumns: function(aPropertyKeys) {
-			for (const sPropertyKey of aPropertyKeys) {
-				const oProperty = this.oTable.getPropertyHelper().getProperty(sPropertyKey);
-				this.oTable.addColumn(new Column({
-					header: oProperty.label,
-					propertyKey: sPropertyKey,
-					template: new Text({text: `{${oProperty.path}}`})
-				}));
-			}
-		},
-		removeColumns: function(aPropertyKeys) {
-			for (const sPropertyKey of aPropertyKeys) {
-				this.oTable.getColumns().find((oColumn) => oColumn.getPropertyKey() === sPropertyKey).destroy();
-			}
-		},
 		observe$$aggregation: function() {
 			const that = this;
 
@@ -562,12 +482,29 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Leaf-level aggregation disabled", async function(assert) {
+	QUnit.test("No visible columns", async function(assert) {
 		await this.initTable(undefined, undefined, {
-			propertyInfo: this.defaultPropertyInfos.concat([{
+			propertyInfo: [{
 				key: "ID",
 				path: "IDPath",
-				label: "ID",
+				label: "ID Label",
+				dataType: "String",
+				isKey: true,
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({});
+	});
+
+	QUnit.test("Leaf-level aggregation disabled", async function(assert) {
+		await this.initTable(undefined, ["Country"], {
+			propertyInfo: [{
+				key: "ID",
+				path: "IDPath",
+				label: "ID Label",
 				dataType: "String",
 				isKey: true,
 				extension: {
@@ -576,7 +513,7 @@ sap.ui.define([
 			}, {
 				key: "CustomerID",
 				path: "CustomerIDPath",
-				label: "CustomerID",
+				label: "CustomerID Label",
 				dataType: "String",
 				isKey: true,
 				text: "CustomerText",
@@ -586,80 +523,114 @@ sap.ui.define([
 			}, {
 				key: "CustomerText",
 				path: "CustomerTextPath",
-				label: "CustomerText",
+				label: "CustomerText Label",
 				dataType: "String",
 				extension: {
 					technicallyGroupable: true
 				}
-			}
-			])
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
 		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
-			aggregate: {
-				SalesAmountPath: {unit: "CurrencyPath"}
-			},
+			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
 				IDPath: {},
 				CustomerIDPath: {},
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {}
 			},
 			groupLevels: []
 		});
 	});
 
 	QUnit.test("Leaf-level aggregation enabled", async function(assert) {
-		await this.initTable(undefined, undefined, {
+		await this.initTable(undefined, ["Country"], {
 			aggregationConfiguration: {
 				leafLevel: true
 			},
-			propertyInfo: this.defaultPropertyInfos.concat([{
+			propertyInfo: [{
 				key: "ID",
 				path: "IDPath",
-				label: "ID",
+				label: "ID Label",
 				dataType: "String",
 				isKey: true,
 				extension: {
 					technicallyGroupable: true
 				}
-			}])
+			}, {
+				key: "CustomerID",
+				path: "CustomerIDPath",
+				label: "CustomerID Label",
+				dataType: "String",
+				isKey: true,
+				text: "CustomerText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CustomerText",
+				path: "CustomerTextPath",
+				label: "CustomerText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
 		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
-			aggregate: {
-				SalesAmountPath: {unit: "CurrencyPath"}
-			},
+			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {}
 			},
 			groupLevels: []
 		});
 	});
 
-	QUnit.test("Add and remove group levels", async function(assert) {
+	QUnit.test("Add and remove group conditions", async function(assert) {
 		await this.initTable({
 			groupConditions: {
 				groupLevels: [{
 					name: "Country"
 				}]
 			}
+		}, ["Country"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
 		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
-			aggregate: {
-				SalesAmountPath: {unit: "CurrencyPath"}
-			},
+			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {}
 			},
 			groupLevels: ["CountryPath"]
 		});
@@ -667,25 +638,85 @@ sap.ui.define([
 		this.oTable.setGroupConditions();
 		await this.oTable.rebind();
 		this.verify$$aggregation({
-			aggregate: {
-				SalesAmountPath: {unit: "CurrencyPath"}
-			},
+			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {}
 			},
 			groupLevels: []
 		});
 	});
 
-	QUnit.test("Add and remove totals", async function(assert) {
+	QUnit.test("Group condition for invisible property", async function(assert) {
+		await this.initTable({
+			groupConditions: {
+				groupLevels: [{
+					name: "Country"
+				}]
+			}
+		}, ["Region"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {},
+				RegionPath: {}
+			},
+			groupLevels: ["CountryPath"]
+		});
+	});
+
+	QUnit.test("Add and remove aggregate conditions", async function(assert) {
 		await this.initTable({
 			aggregateConditions: {
 				SalesAmount: {}
 			}
-		}, ["Country", "Region", "SalesAmount", "Currency"]);
+		}, ["SalesAmount", "Country", "Currency"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyAggregatable: true
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String"
+			}]
+		});
 		const oV4AggregationPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
 		sinon.spy(oV4AggregationPlugin, "declareColumnsHavingTotals");
 
@@ -700,15 +731,14 @@ sap.ui.define([
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {}
 			},
 			groupLevels: []
 		});
 		assert.equal(this.oTable._oTable.getRowMode().getFixedBottomRowCount(), 1, "Fixed bottom row count");
 		assert.ok(oV4AggregationPlugin.declareColumnsHavingTotals.calledOnceWithExactly([
-			this.oTable.getColumns()[2].getInnerColumn(),
-			this.oTable.getColumns()[3].getInnerColumn()
+			this.oTable.getColumns()[0].getInnerColumn(),
+			this.oTable.getColumns()[2].getInnerColumn()
 		]), "V4AggregationPlugin#declareColumnsHavingTotals call");
 
 		oV4AggregationPlugin.declareColumnsHavingTotals.resetHistory();
@@ -721,8 +751,7 @@ sap.ui.define([
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {}
 			},
 			groupLevels: []
 		});
@@ -730,7 +759,43 @@ sap.ui.define([
 		assert.ok(oV4AggregationPlugin.declareColumnsHavingTotals.calledOnceWithExactly([]), "V4AggregationPlugin#declareColumnsHavingTotals call");
 	});
 
-	QUnit.test("Group levels and totals", async function(assert) {
+	QUnit.test("Aggregate condition for invisible property", async function(assert) {
+		await this.initTable({
+			aggregateConditions: {
+				SalesAmount: {}
+			}
+		}, ["Country"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				extension: {
+					technicallyAggregatable: true
+				}
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Group and aggregate conditions with invisible text and unit", async function(assert) {
 		await this.initTable({
 			aggregateConditions: {
 				SalesAmount: {}
@@ -740,6 +805,39 @@ sap.ui.define([
 					name: "Country"
 				}]
 			}
+		}, ["Country", "SalesAmount"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				text: "CountryText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CountryText",
+				path: "CountryTextPath",
+				label: "CountryText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyAggregatable: true
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String"
+			}]
 		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
@@ -749,15 +847,82 @@ sap.ui.define([
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {additionally: ["CountryTextPath"]}
+			},
+			groupLevels: ["CountryPath"]
+		});
+	});
+
+	QUnit.test("Group and aggregate conditions with visible text and unit", async function(assert) {
+		await this.initTable({
+			aggregateConditions: {
+				SalesAmount: {}
+			},
+			groupConditions: {
+				groupLevels: [{
+					name: "Country"
+				}]
+			}
+		}, ["Country", "CountryText", "SalesAmount", "Currency"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				text: "CountryText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CountryText",
+				path: "CountryTextPath",
+				label: "CountryText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyAggregatable: true
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String"
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath", grandTotal: true, subtotals: true}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]}
 			},
 			groupLevels: ["CountryPath"]
 		});
 	});
 
 	QUnit.test("$search binding parameter", async function(assert) {
-		await this.initTable();
+		await this.initTable(undefined, ["Country"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
 		sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo").callsFake(function(oTable, oBindingInfo) {
 			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
 			oBindingInfo.parameters["$search"] = "SomeSearchText";
@@ -766,14 +931,11 @@ sap.ui.define([
 
 		assert.notOk("$search" in this.oTable._oTable.getBindingInfo("rows").parameters, "$search in the binding info");
 		this.verify$$aggregation({
-			aggregate: {
-				SalesAmountPath: {unit: "CurrencyPath"}
-			},
+			aggregate: {},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
 			group: {
-				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				CountryPath: {}
 			},
 			groupLevels: [],
 			search: "SomeSearchText"
@@ -784,38 +946,70 @@ sap.ui.define([
 
 	QUnit.test("#getInResultPropertyKeys", async function(assert) {
 		await this.initTable(undefined, ["Country"], {
-			propertyInfo: this.defaultPropertyInfos.concat([{
-				key: "NewSalesAmount",
-				path: "NewSalesAmountPath",
-				label: "NewSalesAmount",
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
 				dataType: "String",
+				text: "CountryText",
 				extension: {
-					technicallyAggregatable: true,
-					additionalProperties: ["City"]
+					technicallyGroupable: true
 				}
 			}, {
-				key: "City",
-				path: "CityPath",
-				label: "City",
+				key: "CountryText",
+				path: "CountryTextPath",
+				label: "CountryText Label",
 				dataType: "String",
 				extension: {
 					technicallyGroupable: true
 				}
 			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				text: "RegionText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "RegionText",
+				path: "RegionTextPath",
+				label: "RegionText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["Region"]
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String"
+			}, {
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyAggregatable: true,
+					additionalProperties: ["Country", "Region"]
+				}
+			}, {
 				key: "NotGroupableAndNotAggregatable",
 				path: "NotGroupableAndNotAggregatablePath",
-				label: "NotGroupableAndNotAggregatable",
+				label: "NotGroupableAndNotAggregatable Label",
 				dataType: "String"
-			}])
+			}]
 		});
 		sinon.stub(this.oTable.getControlDelegate(), "getInResultPropertyKeys").returns([
-			"Region", "SalesAmountInLocalCurrency", "NewSalesAmount", "NotGroupableAndNotAggregatable"
+			"Region", "SalesAmount", "NotGroupableAndNotAggregatable"
 		]);
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {
-				SalesAmountInLocalCurrencyPath: {},
-				NewSalesAmountPath: {}
+				SalesAmountPath: {}
 			},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
@@ -829,7 +1023,62 @@ sap.ui.define([
 	});
 
 	QUnit.test("ID+Text; Both properties visible", async function(assert) {
-		await this.initTable(undefined, ["Country", "CountryText", "Region", "RegionText"]);
+		await this.initTable(undefined, ["Country", "CountryText", "Region", "RegionText"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				text: "CountryText",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["NeededForCountry"]
+				}
+			}, {
+				key: "CountryText",
+				path: "CountryTextPath",
+				label: "CountryText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				text: "RegionText",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["NeededForRegion"]
+				}
+			}, {
+				key: "RegionText",
+				path: "RegionTextPath",
+				label: "RegionText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["Region"]
+				}
+			}, {
+				key: "NeededForCountry",
+				path: "NeededForCountryPath",
+				label: "NeededForCountry Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "NeededForRegion",
+				path: "NeededForRegionPath",
+				label: "NeededForRegion Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {},
@@ -837,14 +1086,71 @@ sap.ui.define([
 			subtotalsAtBottomOnly: true,
 			group: {
 				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				RegionPath: {additionally: ["RegionTextPath"]},
+				NeededForCountryPath: {},
+				NeededForRegionPath: {}
 			},
 			groupLevels: []
 		});
 	});
 
 	QUnit.test("ID+Text; Only ID is visible", async function(assert) {
-		await this.initTable(undefined, ["Country", "Region"]);
+		await this.initTable(undefined, ["Country", "Region"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				text: "CountryText",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["NeededForCountry"]
+				}
+			}, {
+				key: "CountryText",
+				path: "CountryTextPath",
+				label: "CountryText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				text: "RegionText",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["NeededForRegion"]
+				}
+			}, {
+				key: "RegionText",
+				path: "RegionTextPath",
+				label: "RegionText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["Region"]
+				}
+			}, {
+				key: "NeededForCountry",
+				path: "NeededForCountryPath",
+				label: "NeededForCountry Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "NeededForRegion",
+				path: "NeededForRegionPath",
+				label: "NeededForRegion Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {},
@@ -852,14 +1158,71 @@ sap.ui.define([
 			subtotalsAtBottomOnly: true,
 			group: {
 				CountryPath: {additionally: ["CountryTextPath"]},
-				RegionPath: {additionally: ["RegionTextPath"]}
+				RegionPath: {additionally: ["RegionTextPath"]},
+				NeededForCountryPath: {},
+				NeededForRegionPath: {}
 			},
 			groupLevels: []
 		});
 	});
 
 	QUnit.test("ID+Text; Only Text is visible", async function(assert) {
-		await this.initTable(undefined, ["CountryText", "RegionText"]);
+		await this.initTable(undefined, ["CountryText", "RegionText"], {
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				text: "CountryText",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["NeededForCountry"]
+				}
+			}, {
+				key: "CountryText",
+				path: "CountryTextPath",
+				label: "CountryText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				text: "RegionText",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["NeededForRegion"]
+				}
+			}, {
+				key: "RegionText",
+				path: "RegionTextPath",
+				label: "RegionText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["Region"]
+				}
+			}, {
+				key: "NeededForCountry",
+				path: "NeededForCountryPath",
+				label: "NeededForCountry Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "NeededForRegion",
+				path: "NeededForRegionPath",
+				label: "NeededForRegion Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {},
@@ -867,18 +1230,89 @@ sap.ui.define([
 			subtotalsAtBottomOnly: true,
 			group: {
 				CountryTextPath: {}, // The Text property has no dependency to the ID property
-				RegionPath: {additionally: ["RegionTextPath"]}
+				RegionPath: {additionally: ["RegionTextPath"]},
+				NeededForRegionPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Groupable property with additional properties", async function(assert) {
+		await this.initTable(undefined, ["MyGroupableProperty"], {
+			propertyInfo: [{
+				key: "MyGroupableProperty",
+				path: "MyGroupablePropertyPath",
+				label: "MyGroupableProperty Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["Country", "Region"]
+				}
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				MyGroupablePropertyPath: {},
+				CountryPath: {},
+				RegionPath: {}
 			},
 			groupLevels: []
 		});
 	});
 
 	QUnit.test("Aggregatable property with additional properties", async function(assert) {
-		await this.initTable(undefined, ["SalesAmountInLocalCurrency"]);
+		await this.initTable(undefined, ["MyAggregatableProperty"], {
+			propertyInfo: [{
+				key: "MyAggregatableProperty",
+				path: "MyAggregatablePropertyPath",
+				label: "MyAggregatableProperty Label",
+				dataType: "String",
+				extension: {
+					technicallyAggregatable: true,
+					additionalProperties: ["Country", "Region"]
+				}
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({
 			aggregate: {
-				SalesAmountInLocalCurrencyPath: {unit: "CurrencyPath"}
+				MyAggregatablePropertyPath: {}
 			},
 			grandTotalAtBottomOnly: true,
 			subtotalsAtBottomOnly: true,
