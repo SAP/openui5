@@ -2292,5 +2292,26 @@
         "text": " We've now adapted to the chrome://flags/#pdf-oopif flag that is introduced to rectify the pdfViewer issues"
       }
     ]
+  },
+  "1.84.50": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "9064356ea3c20c0c2624aa729f1a2ed6b99758c7",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Reposition ValueStateHeader when long text is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380052154"
+          }
+        ]
+      },
+      {
+        "id": "6b1de9d29870ace81f25e188115eb5190b1eac0c",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      }
+    ]
   }
 }

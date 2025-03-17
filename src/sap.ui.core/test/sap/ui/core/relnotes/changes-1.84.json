@@ -850,5 +850,15 @@
         "text": " sap.m.DynamicDateRange: align current week calculations"
       }
     ]
+  },
+  "1.84.50": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "ba2b18e13d02159476c7cbe67a6182fc59511669",
+        "type": "FIX",
+        "text": " sap/base/util/now: Migrate performance.timing"
+      }
+    ]
   }
 }

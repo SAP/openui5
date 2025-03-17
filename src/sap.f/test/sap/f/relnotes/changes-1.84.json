@@ -288,5 +288,15 @@
         ]
       }
     ]
+  },
+  "1.84.50": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "12e8aaaa1e73b0b424d07b397c3743444375a8ad",
+        "type": "FIX",
+        "text": " sap.f.SemanticPage: fix unstable QUnit test"
+      }
+    ]
   }
 }
