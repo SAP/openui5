@@ -3396,7 +3396,8 @@ QUnit.test("App shortcut and System info only rendered in OneByOne", async funct
 	await nextUIUpdate();
 	assert.notEqual(this.oGenericTile._oAppShortcut.getDomRef(), null);
 	assert.notEqual(this.oGenericTile._oSystemInfo.getDomRef(), null);
-
+	assert.equal(this.oGenericTile.$().find(".sapMGTTInfo").css("margin-bottom"),"6.4px","Sufficient Height applied");
+	assert.equal(this.oGenericTile.$().find(".sapMGTTInfo").css("background-color"), "rgb(245, 246, 247)", "Non active background color has been applied");
 	this.oGenericTile.setFrameType("OneByHalf");
 	await nextUIUpdate();
 
