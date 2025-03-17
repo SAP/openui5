@@ -335,7 +335,7 @@ sap.ui.define([
 		});
 
 		oTokenizer.placeAt("qunit-fixture");
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		oTokenizer.onfocusin(oFakeEvent);
 		this.clock.tick();
@@ -642,7 +642,7 @@ sap.ui.define([
 		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
 		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
 
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		var oToken = oTokenizer.getTokens()[1];
 
@@ -690,7 +690,7 @@ sap.ui.define([
 		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
 		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
 
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		var oToken = oTokenizer.getTokens()[1];
 
@@ -753,7 +753,7 @@ sap.ui.define([
 		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
 		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
 
-		await nextUIUpdate();
+		await nextUIUpdate(this.clock);
 
 		var oToken = oTokenizer.getTokens()[1];
 		oToken.focus();
