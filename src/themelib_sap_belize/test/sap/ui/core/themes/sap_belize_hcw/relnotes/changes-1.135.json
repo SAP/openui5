@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "d6256c4ee315f5934725b2111fbe9db7965b32d8",
+        "type": "FIX",
+        "text": " sap.m.Popover: Closing animation is now working properly"
+      },
+      {
         "id": "b56e75216ddfbca9d91c5ff1d2c03cbdc4157338",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Header padding fixed"

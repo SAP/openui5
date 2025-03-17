@@ -1,0 +1,12 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "5ae210be54421e4fcca9abe8634bc810febabcf4",
+        "type": "FEATURE",
+        "text": " ColumnLayout: render as <dl> in display mode"
+      }
+    ]
+  }
+}

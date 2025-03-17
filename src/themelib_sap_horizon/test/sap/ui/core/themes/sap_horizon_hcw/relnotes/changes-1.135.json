@@ -6,6 +6,11 @@
         "id": "b56e75216ddfbca9d91c5ff1d2c03cbdc4157338",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Header padding fixed"
+      },
+      {
+        "id": "9a1faecd659fe88d8fcabdf8d347d1acfcec1feb",
+        "type": "FIX",
+        "text": "sap.m.Token: Readonly text color is now correct"
       }
     ]
   }

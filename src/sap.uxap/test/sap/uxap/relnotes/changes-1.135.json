@@ -3,6 +3,16 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "a29c11c86834eddcd66314097b9d826e70d2e6bc",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Fix not showing \"moreBlocks\""
+      },
+      {
+        "id": "b90be7bc5e9a28c2bcb21ca4604ab7a143bc576a",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSectionBase: API for effective title level"
+      },
+      {
         "id": "b56e75216ddfbca9d91c5ff1d2c03cbdc4157338",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Header padding fixed"

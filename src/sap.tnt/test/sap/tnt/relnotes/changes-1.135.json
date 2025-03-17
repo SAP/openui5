@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "c10074d524f6e67a6043bc8a4ab90c8ad6e20a70",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: visual test is fixed"
+      },
+      {
         "id": "ce673c5ba07b3a84b0313fe82cbefe6abe0b28cc",
         "type": "FIX",
         "text": " sap.tnt.SideNavigation: documentation is adjusted for Overlay mode sample"

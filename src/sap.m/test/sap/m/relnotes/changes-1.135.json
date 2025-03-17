@@ -1,0 +1,42 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "7c26fbf280882b249887db89460cfa361d8a8c15",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: TimePicker part now is properly initialized"
+      },
+      {
+        "id": "f3ad5b4690549ed152fac838216c41be6b0638a4",
+        "type": "FEATURE",
+        "text": " List: formsMode keyboard interaction refinements"
+      },
+      {
+        "id": "d6256c4ee315f5934725b2111fbe9db7965b32d8",
+        "type": "FIX",
+        "text": " sap.m.Popover: Closing animation is now working properly"
+      },
+      {
+        "id": "ed13a99adf69232a572bed0f11a51071dab0a059",
+        "type": "FIX",
+        "text": " sap.m.PullToRefresh: Fix failing test on 2.0"
+      },
+      {
+        "id": "ba60e539f91bfa4135c0b25120b8ab29a223ee62",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove warning message"
+      },
+      {
+        "id": "6786274305d54b1884833a2c22d318ca7e7180ae",
+        "type": "FIX",
+        "text": " sap.m.Popover: Scrolling issue in popover with overflowing content is now resolved"
+      },
+      {
+        "id": "f1aa0723baea4d3fc430cd9b831462b7621914c9",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Enable typing with virtual keyboard on Mac"
+      }
+    ]
+  }
+}
