@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/core/Element", "sap/ui/support/library", "sap/ui/support/supportRules/Constants"],
-	function(deepExtend, BaseObject, Element, library, constants) {
+sap.ui.define(["sap/base/util/deepExtend", "sap/ui/core/Element", "sap/ui/support/library", "sap/ui/support/supportRules/Constants"],
+	function(deepExtend, Element, library, constants) {
 		"use strict";
 		/**
 		 * Issues stored in the IssueManager.
@@ -414,12 +414,12 @@ sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/core/El
 		};
 
 		/**
-		 * @class
 		 * The IssueManagerFacade allows rule developers to add new issues.
 		 *
 		 * <h3>Usage</h3>
 		 * The IssueManagerFacade is passed as first argument to all rule check functions.
 		 *
+		 * @class
 		 * @name sap.ui.support.IssueManagerFacade
 		 * @param {object} oRule Rule for the IssueManagerFacade
 		 * @hideconstructor
