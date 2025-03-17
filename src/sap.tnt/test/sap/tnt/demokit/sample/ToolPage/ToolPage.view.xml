@@ -73,6 +73,7 @@
 		<tnt:sideContent>
 			<tnt:SideNavigation
 				expanded="true"
+				itemPressed=".onItemPressed"
 				selectedKey="{/selectedKey}"
 				itemSelect=".onItemSelect">
 				<tnt:NavigationList items="{path: '/navigation'}">
