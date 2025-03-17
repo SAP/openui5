@@ -36,7 +36,8 @@
 
 			Controller
 			<pre class="lang-js">
-var oHost = new sap.ui.integration.Host({
+// Host required from "sap/ui/integration/Host"
+const oHost = new Host({
 	resolveDestination: function(sDestinationName, oCard) {
 		switch (sDestinationName) {
 			case "Northwind":

@@ -82,8 +82,7 @@ ShowMessageExtension.prototype._handleAction = function (oEvent) {
 		return;
 	}
 
-	var oActionParams = oEvent.getParameter("parameters");
-	var pExecuteAction;
+	const oActionParams = oEvent.getParameter("parameters");
 
 	if (oActionParams.method === "addToFavorites") {
 		this._addItemToFavorites(oActionParams.id);
