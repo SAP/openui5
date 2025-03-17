@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/f/cards/util/CardBadgeEnabler",
 	"sap/f/library",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
 ], function (
 	Control,
 	InvisibleText,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Library,
 	CardBadgeEnabler,
 	library,
-	Log
+	Log,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -298,6 +300,39 @@ sap.ui.define([
 		return sTitleId;
 	};
 
+	CardBase.prototype.onkeydown = function (oEvent) {
+
+		if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)
+			&& !oEvent.ctrlKey && !oEvent.metaKey) {
+
+			if (oEvent.which === KeyCodes.ENTER) {
+				this._handleTap(oEvent);
+			}
+
+			if (oEvent.which === KeyCodes.SPACE) {
+				// To prevent the browser scrolling.
+				oEvent.preventDefault();
+			}
+
+			if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+				this._bPressedEscapeOrShift = true;
+			}
+		}
+
+	};
+
+	CardBase.prototype.onkeyup = function (oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			if (!this._bPressedEscapeOrShift) {
+				this._handleTap(oEvent);
+			}
+		}
+
+		if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			this._bPressedEscapeOrShift = false;
+		}
+	};
+
 	/**
 	 * Listens for ontap event
 	 *
@@ -307,24 +342,16 @@ sap.ui.define([
 		if (this.isMouseInteractionDisabled()) {
 			return;
 		}
-		this._handleTapOrSelect(oEvent);
+		this._handleTap(oEvent);
 	};
 
-	/**
-	 * Listens for onsapselect event
-	 *
-	 * @param {object} oEvent event
-	 */
-	CardBase.prototype.onsapselect = function (oEvent) {
-		this._handleTapOrSelect(oEvent);
-	};
 
 	/**
 	 * Handles interaction logic
 	 *
 	 * @param {object} oEvent event
 	 */
-	CardBase.prototype._handleTapOrSelect = function (oEvent) {
+	CardBase.prototype._handleTap = function (oEvent) {
 		if (!this.isInteractive() ||
 			oEvent.isMarked() ||
 			!this.isRoleListItem()) {
@@ -338,7 +365,9 @@ sap.ui.define([
 		this.firePress({
 			originalEvent: oEvent
 		});
+
 		oEvent.preventDefault();
+		oEvent.stopPropagation();
 	};
 
 	/**
