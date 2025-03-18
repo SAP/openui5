@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "328910976e18a9536b7c7d3aec1fe5f326ce8516",
+        "type": "FIX",
+        "text": " We've now updated the character list used for file rename validation in the UploadSetwithTable plugin"
+      },
+      {
         "id": "29c96f3af01363616504e895ff5acfb919d794e5",
         "type": "FEATURE",
         "text": " sap.ui.unified.Calendar: Selected dates are now visible in all pickers"

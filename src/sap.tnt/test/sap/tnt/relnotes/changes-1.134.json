@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "fc632f189054409acfe1c53428ba84b1c20bd94f",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Selected state without icon is fixed"
+      },
+      {
         "id": "08e77ceabfbc6dedefeba1ea0fe26c3f170131a5",
         "type": "FIX",
         "text": " sap.tnt.SideNavigation: Padding for parent item with hidden expand icon fixed"
