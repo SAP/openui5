@@ -18,7 +18,7 @@ sap.ui.define([
 	"use strict";
 
 	async function timeout(iDuration) {
-		await new Promise(function(resolve) {
+		await new Promise(function (resolve) {
 			window.setTimeout(resolve, iDuration);
 		});
 	}
@@ -145,10 +145,10 @@ sap.ui.define([
 					"data": {
 						"json": {
 							"items": [
-								{"title": "Item 1"},
-								{"title": "Item 2"},
-								{"title": "Item 3"},
-								{"title": "Item 4"}
+								{ "title": "Item 1" },
+								{ "title": "Item 2" },
+								{ "title": "Item 3" },
+								{ "title": "Item 4" }
 							]
 						}
 					},
@@ -253,10 +253,10 @@ sap.ui.define([
 					"data": {
 						"json": {
 							"items": [
-								{"title": "Item 1"},
-								{"title": "Item 2"},
-								{"title": "Item 3"},
-								{"title": "Item 4"}
+								{ "title": "Item 1" },
+								{ "title": "Item 2" },
+								{ "title": "Item 3" },
+								{ "title": "Item 4" }
 							]
 						}
 					},
@@ -367,10 +367,10 @@ sap.ui.define([
 					"data": {
 						"json": {
 							"items": [
-								{"title": "Item 1"},
-								{"title": "Item 2"},
-								{"title": "Item 3"},
-								{"title": "Item 4"}
+								{ "title": "Item 1" },
+								{ "title": "Item 2" },
+								{ "title": "Item 3" },
+								{ "title": "Item 4" }
 							]
 						}
 					},
@@ -1183,6 +1183,103 @@ sap.ui.define([
 
 			// Assert
 			assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+		});
+
+		QUnit.test("F7 keyboard handling", async function (assert) {
+			this.oCard.setManifest({
+				"_version": "1.14.0",
+				"sap.app": {
+					"id": "list.card",
+					"type": "card",
+					"applicationVersion": {
+						"version": "1.0.0"
+					}
+				},
+				"sap.ui": {
+					"technology": "UI5",
+					"icons": {
+						"icon": "sap-icon://list"
+					}
+				},
+				"sap.card": {
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {
+							"url": "https://sap.com",
+							"target": "_blank"
+						}
+					}],
+					"type": "List",
+					"data": {
+						"json": {
+							"items": [
+								{ "title": "Item 1" },
+								{ "title": "Item 2" },
+								{ "title": "Item 3" },
+								{ "title": "Item 4" }
+							]
+						}
+					},
+					"header": {
+						"actions": [{
+							"type": "Navigation",
+							"parameters": {
+								"url": "https://sap.com",
+								"target": "_blank"
+							}
+						}],
+						"title": "Action on card level and header level",
+						"subTitle": "sematicRole - listitem"
+					},
+					"content": {
+						"data": {
+							"path": "/items"
+						},
+						"item": {
+							"title": "{title}"
+						},
+						"maxItems": 4
+					}
+				}
+			});
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			const oContent = this.oCard.getCardContent(),
+				oHeader = this.oCard.getCardHeader(),
+				aItems = oContent.getInnerList().getItems(),
+				oCardDomRef = this.oCard.getDomRef();
+
+			this.oCard.focus();
+			assert.strictEqual(document.activeElement, oCardDomRef);
+
+			qutils.triggerEvent("keydown", oCardDomRef, { code: "F7" });
+			assert.strictEqual(oHeader.getFocusDomRef(), document.activeElement, "The header is correctly focused");
+
+			qutils.triggerEvent("keydown", document.activeElement, { code: "F7" });
+			assert.strictEqual(this.oCard.getFocusDomRef(), document.activeElement, "The card is focused");
+
+			qutils.triggerEvent("keydown", document.activeElement, { code: "F7" });
+			assert.strictEqual(oHeader.getFocusDomRef(), document.activeElement, "The header is correctly focused again");
+
+			aItems[0].focus();
+			assert.strictEqual(aItems[0].getDomRef(), document.activeElement, "The first list item is correctly focused");
+
+			qutils.triggerEvent("keydown", document.activeElement, { code: "F7" });
+			assert.strictEqual(this.oCard.getFocusDomRef(), document.activeElement, "The card is focused");
+
+			qutils.triggerEvent("keydown", document.activeElement, { code: "F7" });
+			assert.strictEqual(aItems[0].getFocusDomRef(), document.activeElement, "The first list item is correctly focused again");
+
+			aItems[1].focus();
+			assert.strictEqual(aItems[1].getFocusDomRef(), document.activeElement, "The second list item is correctly focused");
+
+			qutils.triggerEvent("keydown", document.activeElement, { code: "F7" });
+			assert.strictEqual(this.oCard.getFocusDomRef(), document.activeElement, "The card is focused");
+
+			qutils.triggerEvent("keydown", document.activeElement, { code: "F7" });
+			assert.strictEqual(aItems[1].getFocusDomRef(), document.activeElement, "The second list item is correctly focused again");
 		});
 	}
 

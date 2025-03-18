@@ -9,7 +9,9 @@ sap.ui.define([
 	"sap/f/cards/util/CardBadgeEnabler",
 	"sap/f/library",
 	"sap/base/Log",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
 ], function (
 	Control,
 	InvisibleText,
@@ -253,7 +255,10 @@ sap.ui.define([
 		this._hideBadge();
 	};
 
-	CardBase.prototype.onfocusin = function () {
+	CardBase.prototype.onfocusin = function (oEvent) {
+		if (oEvent.target !== this.getDomRef()) {
+			this.oLastFocusedElement = oEvent.target;
+		}
 		this._startBadgeHiding();
 	};
 
@@ -342,6 +347,11 @@ sap.ui.define([
 
 	CardBase.prototype.onkeydown = function (oEvent) {
 
+		if (oEvent.code === "F7") {
+			this._handleF7Key(oEvent);
+			return;
+		}
+
 		if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)
 			&& !oEvent.ctrlKey && !oEvent.metaKey) {
 
@@ -385,7 +395,6 @@ sap.ui.define([
 		this._handleTap(oEvent);
 	};
 
-
 	/**
 	 * Handles interaction logic
 	 *
@@ -405,6 +414,31 @@ sap.ui.define([
 		this.firePress({
 			originalEvent: oEvent
 		});
+
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+	};
+
+	/**
+	 * Handler for F7 key
+	 * @param {Object} oEvent - key object
+	 * @private
+	 */
+	CardBase.prototype._handleF7Key = function (oEvent) {
+		if (!this.isInteractive() || !this.isRoleListItem()) {
+			return;
+		}
+
+		const oTarget = oEvent.target;
+		const $FirstFocusableItem = this.$().firstFocusableDomRef();
+
+		if (oTarget !== this.getDomRef()) {
+			this.getDomRef().focus();
+		} else if (this.oLastFocusedElement && !$FirstFocusableItem.classList.contains("sapMListUl")) { // to prevent the list from getting the F7 event and trap the focus
+			this.oLastFocusedElement.focus();
+		} else if ($FirstFocusableItem) {
+			$FirstFocusableItem.focus();
+		}
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
