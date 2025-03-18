@@ -83,26 +83,26 @@ sap.ui.define([
 
 	 /*
 	 * restricted for sap.fe (there's no way to make a property of a type private, therefore it's defined outside of the typedef)
+	 * TODO: Rename to "contextDefiningProperties" before making it public.
 	 * property {string[]} [extension.additionalProperties]
-	 *   Properties that are loaded in addition if this property is loaded. These properties must be technically groupable, otherwise they can't be
-	 *   loaded. All nested additional properties must be listed at root level. For example, if property A references B and B references C, A must
-	 *   also reference C.
-	 *   This attribute is only taken into account if the <code>Aggregate</code> or <code>Group</code> <code>p13nMode</code> is enabled and the
-	 *   table type is {@link sap.ui.mdc.table.GridTableType GridTable}.
+	 *   Properties that are loaded in addition if this property is loaded.
 	 *   These properties are not considered for any other functionality, such as export or column width calculation, for example.
+	 *   This attribute is only taken into account if data aggregation is enabled.
 	 *
 	 *   The following restrictions apply:
 	 *   <ul>
 	 *     <li>If the property is neither technically groupable nor technically aggregatable, it must not reference additional properties.</li>
-	 * 	   <li>If the property is technically groupable but not technically aggregatable, not more than one additional property must be referenced.
-	 *         The additional property must be the property that is referencing this property in its <code>text</code> attribute (bidirectional
-	 *         reference).
-	 *         Regardless of the <code>groupable</code> attribute, the property cannot be grouped via the UI. This might change. If this change is not
-	 *         desired, set <code>groupable</code> to <code>false</code> explicitly.
-	 * 	       Do not group this property via API, for example, with the <code>StateUtil</code>.</li>
-	 *     <li>If the property is both technically groupable and technically aggregatable, it must reference only properties that are related to the
-	 * 	       <code>CustomAggregate</code>.</li>
+	 *     <li>If the property is both technically groupable and technically aggregatable, it must not reference additional properties.</li>
+	 *     <li>If the property is the text of another property, it must not reference any properties other than its ID property.</li>
+	 *     <li>If the property is the unit of another property, it must not reference additional properties.</li>
+	 *     <li>If the property is groupable, it must not reference additional properties.</li>
+	 *     <li>Do not group this property via API, for example, with the <code>StateUtil</code>.</li>
 	 *     <li>Properties that are referenced via <code>text</code> or <code>unit</code> must not be repeated here.</li>
+	 *     <li>There must be no bi-directional references. For example, if property A references B, B must not reference A.</li>
+	 *     <li>All nested additional properties must be listed at root level. For example, if property A references B and B references C, A must also
+	 *         reference C.</li>
+	 *     <li>Additional properties must be technically groupable.</li>
+	 *     <li>Additional properties must not be technically aggregatable.</li>
 	 *   </ul>
 	 */
 
@@ -866,11 +866,13 @@ sap.ui.define([
 		const oPropertyHelper = oTable.getPropertyHelper();
 		const mGroup = {};
 
-		// Skip the text property if it depends on the ID property. The ID property must be added to the aggregation instead.
-		const oIDProperty = oPropertyHelper.getProperty(oProperty.extension.additionalProperties[0]);
-		if (oIDProperty) {
-			addGroupablePropertyTo$$Aggregation(mAggregation, oTable, oIDProperty);
-			return;
+		// Skip the Text property if it depends on the ID property. The ID property must be added to the aggregation instead.
+		if (oProperty.extension.additionalProperties.length === 1) {
+			const oAdditionalProperty = oPropertyHelper.getProperty(oProperty.extension.additionalProperties[0]);
+			if (oAdditionalProperty.text === oProperty.key) { // The additional property is the ID property of this Text property.
+				addGroupablePropertyTo$$Aggregation(mAggregation, oTable, oAdditionalProperty);
+				return;
+			}
 		}
 
 		mAggregation.group[oProperty.path] = mGroup;
@@ -878,6 +880,11 @@ sap.ui.define([
 		const oTextProperty = oPropertyHelper.getProperty(oProperty.text);
 		if (oTextProperty) {
 			mGroup.additionally = [oTextProperty.path];
+		}
+
+		for (const sAdditionalPropertyKey of oProperty.extension.additionalProperties) {
+			const oAdditionalProperty = oPropertyHelper.getProperty(sAdditionalPropertyKey);
+			mAggregation.group[oAdditionalProperty.path] = {};
 		}
 	}
 
@@ -928,10 +935,10 @@ sap.ui.define([
 			mAggregation.group[sPath].additionally?.forEach((sPath) => oAllAdditionalPropertyPaths.add(sPath));
 		}
 
-		// If the table is visually grouped by a property (the property is in groupLevels), its additional properties also need to be available in the
-		// group header context. For this, they need to be in "additionally" of the grouped property and therefore have to be removed from "group".
-		// If that leads to missing (additional) properties, the issue is unsupported nesting of additional properties. If X has additional property
-		// Y, and Y has additional property Z, then Z must be an additional property of X as well.
+		// If the table is visually grouped by a property (the property is in groupLevels), its additional properties, for example the Text property,
+		// also need to be available in the group header context. To achieve this, they must be in "additionally" of the grouped property and then
+		// they must not also be present as a separate key in “group” (binding restriction).
+		// If that leads to issues, the PropertyInfo is incorrect. Additional properties are supposed to be in a 1:1 relation.
 		for (const sPath of oAllAdditionalPropertyPaths) {
 			if (sPath in mAggregation.group) {
 				delete mAggregation.group[sPath];

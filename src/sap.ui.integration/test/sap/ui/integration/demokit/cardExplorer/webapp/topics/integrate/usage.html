@@ -29,15 +29,18 @@
 			</p>
 			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="./mycardbundle/manifest.json" width="400px" height="auto"/&gt;
+	&lt;w:Card manifest="./mycardbundle/manifest.json" width="400px"/&gt;
 &lt;/mvc:View&gt;
 </pre>
 			<p>
 				<b>Consumption in JS</b>
 			</p>
 			<pre class="lang-js">
-var oCard = new sap.ui.integration.widgets.Card();
-oCard.setManifest("./mycardbundle/manifest.json");
+// Card required from "sap/ui/integration/widgets/Card"
+const oCard = new Card({
+	manifest: "./mycardbundle/manifest.json",
+	width: "400px"
+});
 someContainer.addContent(oCard);
 </pre>
 
@@ -53,14 +56,15 @@ someContainer.addContent(oCard);
 			</p>
 			<pre class="lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
-	&lt;w:Card manifest="{myModel>/manifestObject}" baseUrl="./mycardbundle/" width="400px" height="auto"/&gt;
+	&lt;w:Card manifest="{myModel>/manifestObject}" baseUrl="./mycardbundle/" width="400px"/&gt;
 &lt;/mvc:View&gt;
 </pre>
 			<p>
 				<b>Consumption in JS</b>
 			</p>
 			<pre class="lang-js">
-var oManifest = {
+// Card required from "sap/ui/integration/widgets/Card"
+const oManifest = {
 	"sap.app": {
 		"i18n": "i18n/i18n.properties",
 		"type": "card",
@@ -76,9 +80,10 @@ var oManifest = {
 		}
 	}
 };
-var oCard = new sap.ui.integration.widgets.Card();
-oCard.setManifest(oManifest);
-oCard.setBaseUrl("./mycardbundle/");
+const oCard = new Card({
+	manifest: oManifest,
+	baseUrl: "./mycardbundle/"
+});
 someContainer.addContent(oCard);
 </pre>
 

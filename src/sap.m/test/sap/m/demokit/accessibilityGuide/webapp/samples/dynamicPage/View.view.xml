@@ -160,7 +160,6 @@
 				<Button icon="sap-icon://message-popup"
 						text="{/messagesLength}"
 						type="Emphasized"
-						press="onMessageButtonPress"
 						visible="{= !!${/messagesLength}}"/>
 				<ToolbarSpacer/>
 				<Button type="Accept" text="Accept"/>

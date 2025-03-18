@@ -206,11 +206,11 @@
 			<pre class="lang-js">
 sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 
-	var SampleExtension = Extension.extend("card.explorer.cardWithExtension.SampleExtension");
+	const SampleExtension = Extension.extend("card.explorer.cardWithExtension.SampleExtension");
 
 	SampleExtension.prototype.myGetDataMethod = function () {
-		var oData1 = { user: "John" }; // this data can be fetched from data service
-		var oData2 = { user: "Peter" }; // this data can be fetched from another data service
+		const oData1 = { user: "John" }; // this data can be fetched from data service
+		const oData2 = { user: "Peter" }; // this data can be fetched from another data service
 
 		// in the end data from both data services is combined into a single array
 		return Promise.resolve([oData1, oData2]);

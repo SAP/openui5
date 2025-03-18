@@ -210,6 +210,7 @@ sap.ui.define([
 		const NavigationListClass = oList.getMetadata().getClass().prototype.constructor;
 		const oListForPopup = new NavigationListClass({
 			itemSelect: this.onPopupItemSelect.bind(this),
+			itemPressed: this.onPopupItemPressed.bind(this),
 			items: oItemForList
 		}).addStyleClass("sapTntNLPopup");
 
@@ -234,6 +235,21 @@ sap.ui.define([
 			oRealItem = Element.getElementById(oItemInPopup.getKey());
 
 		oRealItem._selectItem();
+	};
+	/**
+	 * Handles popup item press.
+	 *
+	 * @param {sap.ui.base.Event} oEvent itemPressed event
+	 * @private
+	 */
+	NavigationListItem.prototype.onPopupItemPressed = function (oEvent) {
+		const oItemInPopup = oEvent.getParameter("item"),
+			oRealItem = Element.getElementById(oItemInPopup.getKey());
+
+		const oNavList = this.getNavigationList();
+		if (oNavList) {
+			oNavList._itemPressHandler({ item: oRealItem });
+		}
 	};
 
 	/**

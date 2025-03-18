@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/ui/core/Lib",
 	"sap/ui/test/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], async function(App, mobileLibrary, List, Page, PullToRefresh, StandardListItem, Library, nextUIUpdate, jQuery, Core) {
+	"sap/ui/thirdparty/jquery"
+], async function(App, mobileLibrary, List, Page, PullToRefresh, StandardListItem, Library, nextUIUpdate, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -90,16 +89,6 @@ sap.ui.define([
 
 	// Test pull to refresh functionality
 	QUnit.module("Behavior");
-
-	QUnit.test("Not using deprecated APIs", function (assert) {
-		var oSpy = this.spy(oP2R._oScroller, "setBounce");
-
-		// act
-		oP2R.invalidate();
-
-		// assert
-		assert.ok(oSpy.notCalled, 0, "setBounce (deprecated) is not called");
-	});
 
 	QUnit.test("Pull Down", function(assert) {
 		var done = assert.async();

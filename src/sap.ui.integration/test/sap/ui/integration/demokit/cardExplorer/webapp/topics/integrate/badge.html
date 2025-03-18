@@ -70,8 +70,8 @@
 			<br>
 			Controller:
 			<pre class="lang-js">
-var model = new sap.ui.model.json.JSONModel();
-model.setData({
+// JSONModel required from "sap/ui/model/json/JSONModel"
+const model = new JSONModel({
 	badgeText: "New"
 });
 this.getView().setModel(model);

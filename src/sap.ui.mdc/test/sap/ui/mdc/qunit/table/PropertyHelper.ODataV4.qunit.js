@@ -25,8 +25,8 @@ sap.ui.define([
 				}
 			}]);
 		}, new Error("Invalid property definition: A property cannot be groupable when not technically groupable."
-			+ '\n{"key":"prop","label":"Property","dataType":"String","groupable":true,"extension":{"technicallyGroupable":false}}'
-		));
+			+ '\n{"key":"prop","label":"Property","dataType":"String","groupable":true,"extension":{"technicallyGroupable":false}}')
+		);
 	});
 
 	QUnit.test("aggregatable=true and technicallyAggregatable=false", function(assert) {
@@ -41,8 +41,8 @@ sap.ui.define([
 				}
 			}]);
 		}, new Error("Invalid property definition: A property cannot be aggregatable when not technically aggregatable."
-			+ '\n{"key":"prop","label":"Property","dataType":"String","aggregatable":true,"extension":{"technicallyAggregatable":false}}'
-		));
+			+ '\n{"key":"prop","label":"Property","dataType":"String","aggregatable":true,"extension":{"technicallyAggregatable":false}}')
+		);
 	});
 
 	QUnit.test("isKey=true and technicallyGroupable=false", function(assert) {
@@ -54,8 +54,8 @@ sap.ui.define([
 				isKey: true
 			}]);
 		}, new Error("Invalid property definition: A key property must be technically groupable."
-			+ '\n{"key":"prop","label":"Property","dataType":"String","isKey":true}'
-		));
+			+ '\n{"key":"prop","label":"Property","dataType":"String","isKey":true}')
+		);
 	});
 
 	QUnit.test("isKey=true and technicallyAggregatable=true", function(assert) {
@@ -73,11 +73,11 @@ sap.ui.define([
 			}]);
 		}, new Error("Invalid property definition: A key property must not be technically aggregatable."
 			+ '\n{"key":"prop","label":"Property","dataType":"String","isKey":true,"groupable":true,"aggregatable":false,'
-			+ '"extension":{"technicallyAggregatable":true}}'
-		));
+			+ '"extension":{"technicallyAggregatable":true}}')
+		);
 	});
 
-	QUnit.test("additionalProperties is not empty and technicallyGroupable=false & technicallyAggregatable=false", function(assert) {
+	QUnit.test("additionalProperties and technicallyGroupable=false & technicallyAggregatable=false", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
 				key: "prop",
@@ -93,56 +93,52 @@ sap.ui.define([
 			}]);
 		}, new Error("Invalid property definition: 'additionalProperties' must not contain property keys if the property is neither technically"
 			+ " groupable nor technically aggregatable."
-			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String","extension":{"additionalProperties":["prop"]}}'
-		));
+			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String","extension":{"additionalProperties":["prop"]}}')
+		);
 	});
 
-	QUnit.test("additionalProperties contains more than one property and technicallyGroupable=true & technicallyAggregatable=false", function(assert) {
+	QUnit.test("additionalProperties and technicallyGroupable=true & technicallyAggregatable=true", function(assert) {
 		assert.throws(function() {
 			new PropertyHelper([{
-				key: "idPropertyA",
-				label: "ID Property A",
-				dataType: "String",
-				text: "textProperty"
-			}, {
-				key: "idPropertyB",
-				label: "ID Property B",
-				dataType: "String",
-				text: "textProperty"
-			}, {
-				key: "textProperty",
-				label: "Text Property",
-				dataType: "String",
-				extension: {
-					additionalProperties: ["idPropertyA", "idPropertyB"],
-					technicallyGroupable: true
-				}
-			}]);
-		}, new Error("Invalid property definition: 'additionalProperties' contains more than one property."
-			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String",'
-			+ '"extension":{"additionalProperties":["idPropertyA","idPropertyB"],"technicallyGroupable":true}}'
-		));
-	});
-
-	QUnit.test("additionalProperties do not have id<->text relation and technicallyGroupable=true & technicallyAggregatable=false", function(assert) {
-		assert.throws(function() {
-			new PropertyHelper([{
-				key: "idProperty",
-				label: "ID Property",
+				key: "prop",
+				label: "Property",
 				dataType: "String"
 			}, {
 				key: "textProperty",
 				label: "Text Property",
 				dataType: "String",
 				extension: {
-					additionalProperties: ["idProperty"],
-					technicallyGroupable: true
+					technicallyGroupable: true,
+					technicallyAggregatable: true,
+					additionalProperties: ["prop"]
 				}
 			}]);
-		}, new Error("Invalid property definition: The property in 'additionalProperties' does not reference this property in 'text'."
-			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String",'
-			+ '"extension":{"additionalProperties":["idProperty"],"technicallyGroupable":true}}'
-		));
+		}, new Error("Invalid property definition: 'additionalProperties' must not contain property keys if the property is both technically"
+			+ " groupable and technically aggregatable."
+			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String","extension":{"technicallyGroupable":true,'
+			+ '"technicallyAggregatable":true,"additionalProperties":["prop"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties and groupable=true", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "contextDefiningProperty",
+				label: "Context-defining Property",
+				dataType: "String"
+			}, {
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				groupable: true,
+				extension: {
+					additionalProperties: ["contextDefiningProperty"]
+				}
+			}]);
+		}, new Error("Invalid property definition: 'additionalProperties' must not contain property keys if the property is groupable."
+			+ '\n{"key":"prop","label":"Property","dataType":"String","groupable":true,'
+			+ '"extension":{"additionalProperties":["contextDefiningProperty"]}}')
+		);
 	});
 
 	QUnit.test("additionalProperties contains the text", function(assert) {
@@ -151,24 +147,20 @@ sap.ui.define([
 				key: "idProperty",
 				label: "ID Property",
 				dataType: "String",
-				groupable: true,
 				text: "textProperty",
 				extension: {
+					technicallyGroupable: true,
 					additionalProperties: ["textProperty"]
 				}
 			}, {
 				key: "textProperty",
 				label: "Text Property",
-				dataType: "String",
-				text: "idProperty", // Required to support the test case at the time of writing
-				extension: {
-					additionalProperties: ["idProperty"]
-				}
+				dataType: "String"
 			}]);
 		}, new Error("Invalid property definition: 'additionalProperties' must not contain the text."
-			+ '\n{"key":"idProperty","label":"ID Property","dataType":"String","groupable":true,"text":"textProperty",'
-			+ '"extension":{"additionalProperties":["textProperty"]}}'
-		));
+			+ '\n{"key":"idProperty","label":"ID Property","dataType":"String","text":"textProperty",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["textProperty"]}}')
+		);
 	});
 
 	QUnit.test("additionalProperties contains the unit", function(assert) {
@@ -177,9 +169,9 @@ sap.ui.define([
 				key: "idProperty",
 				label: "ID Property",
 				dataType: "String",
-				aggregatable: true,
 				unit: "unitProperty",
 				extension: {
+					technicallyGroupable: true,
 					additionalProperties: ["unitProperty"]
 				}
 			}, {
@@ -188,9 +180,311 @@ sap.ui.define([
 				dataType: "String"
 			}]);
 		}, new Error("Invalid property definition: 'additionalProperties' must not contain the unit."
-			+ '\n{"key":"idProperty","label":"ID Property","dataType":"String","aggregatable":true,"unit":"unitProperty",'
-			+ '"extension":{"additionalProperties":["unitProperty"]}}'
-		));
+			+ '\n{"key":"idProperty","label":"ID Property","dataType":"String","unit":"unitProperty",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["unitProperty"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties of a text property", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "idProperty",
+				label: "ID Property",
+				dataType: "String",
+				text: "textProperty",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "textProperty",
+				label: "Text Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["idProperty", "prop"]
+				}
+			}]);
+		}, new Error("Invalid property definition: This property is the text of another property, and therefore 'additionalProperties' must not"
+			+ " contain other properties than the related ID."
+			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["idProperty","prop"]}}')
+		);
+
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "idProperty",
+				label: "ID Property",
+				dataType: "String",
+				text: "textProperty"
+			}, {
+				key: "textProperty",
+				label: "Text Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["prop"]
+				}
+			}]);
+		}, new Error("Invalid property definition: This property is the text of another property, and therefore 'additionalProperties' must not"
+			+ " contain other properties than the related ID."
+			+ '\n{"key":"textProperty","label":"Text Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["prop"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties of a unit property", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "amountProperty",
+				label: "Amount Property",
+				dataType: "String",
+				unit: "unitProperty"
+			}, {
+				key: "unitProperty",
+				label: "Unit Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["prop"]
+				}
+			}]);
+		}, new Error("Invalid property definition: An additional property must not reference this property in 'unit'."
+			+ '\n{"key":"unitProperty","label":"Unit Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["prop"]}}')
+		);
+
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "amountProperty",
+				label: "Amount Property",
+				dataType: "String",
+				unit: "unitProperty",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "unitProperty",
+				label: "Unit Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["amountProperty"]
+				}
+			}]);
+		}, new Error("Invalid property definition: An additional property must not reference this property in 'unit'."
+			+ '\n{"key":"unitProperty","label":"Unit Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["amountProperty"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties of a unit property", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "prop",
+				label: "Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "amountProperty",
+				label: "Amount Property",
+				dataType: "String",
+				unit: "unitProperty"
+			}, {
+				key: "unitProperty",
+				label: "Unit Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["prop"]
+				}
+			}]);
+		}, new Error("Invalid property definition: An additional property must not reference this property in 'unit'."
+			+ '\n{"key":"unitProperty","label":"Unit Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["prop"]}}')
+		);
+
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "amountProperty",
+				label: "Amount Property",
+				dataType: "String",
+				unit: "unitProperty",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "unitProperty",
+				label: "Unit Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["amountProperty"]
+				}
+			}]);
+		}, new Error("Invalid property definition: An additional property must not reference this property in 'unit'."
+			+ '\n{"key":"unitProperty","label":"Unit Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["amountProperty"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties of a property that is both a unit and a text", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "idProperty",
+				label: "ID Property",
+				dataType: "String",
+				text: "unitAndTextProperty"
+			}, {
+				key: "amountProperty",
+				label: "Amount Property",
+				dataType: "String",
+				unit: "unitAndTextProperty",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "unitAndTextProperty",
+				label: "Unit and Text Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["amountProperty"]
+				}
+			}]);
+		}, new Error("Invalid property definition: This property is the text of another property, and therefore 'additionalProperties' must not"
+			+ " contain other properties than the related ID."
+			+ '\n{"key":"unitAndTextProperty","label":"Unit and Text Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["amountProperty"]}}')
+		);
+
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "idProperty",
+				label: "ID Property",
+				dataType: "String",
+				text: "unitAndTextProperty",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "amountProperty",
+				label: "Amount Property",
+				dataType: "String",
+				unit: "unitAndTextProperty"
+			}, {
+				key: "unitAndTextProperty",
+				label: "Unit and Text Property",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["idProperty"]
+				}
+			}]);
+		}, new Error("Invalid property definition: An additional property must not reference this property in 'unit'."
+			+ '\n{"key":"unitAndTextProperty","label":"Unit and Text Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["idProperty"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties with bi-directional references", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "propA",
+				label: "Property A",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "propB",
+				label: "Property B",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["propA", "propC"]
+				}
+			}, {
+				key: "propC",
+				label: "Property C",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["propB"]
+				}
+			}]);
+		}, new Error("Invalid property definition: An additional property must not reference this property in 'additionalProperties'."
+			+ '\n{"key":"propB","label":"Property B","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["propA","propC"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties that are technicallyGroupable=false", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "propA",
+				label: "Property A",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["propB"]
+				}
+			}, {
+				key: "propB",
+				label: "Property B",
+				dataType: "String"
+			}]);
+		}, new Error("Invalid property definition: An additional property must be technically groupable."
+			+ '\n{"key":"propA","label":"Property A","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["propB"]}}')
+		);
+	});
+
+	QUnit.test("additionalProperties that are technicallyAggregatable=true", function(assert) {
+		assert.throws(function() {
+			new PropertyHelper([{
+				key: "propA",
+				label: "Property A",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["propB"]
+				}
+			}, {
+				key: "propB",
+				label: "Property B",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					technicallyAggregatable: true
+				}
+			}]);
+		}, new Error("Invalid property definition: An additional property must not be technically aggregatable."
+			+ '\n{"key":"propA","label":"Property A","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["propB"]}}')
+		);
 	});
 
 	QUnit.test("additionalProperties nesting", function(assert) {
@@ -199,35 +493,38 @@ sap.ui.define([
 				key: "prop",
 				label: "Property",
 				dataType: "String",
-				aggregatable: true,
 				extension: {
+					technicallyGroupable: true,
 					additionalProperties: ["additionalPropA", "additionalPropB"] // Is missing additionalPropC
 				}
 			}, {
 				key: "additionalPropA",
 				label: "Additional Property A",
 				dataType: "String",
-				aggregatable: true,
 				extension: {
+					technicallyGroupable: true,
 					additionalProperties: ["additionalPropB"]
 				}
 			}, {
 				key: "additionalPropB",
 				label: "Additional Property B",
 				dataType: "String",
-				aggregatable: true,
 				extension: {
+					technicallyGroupable: true,
 					additionalProperties: ["additionalPropC"]
 				}
 			}, {
 				key: "additionalPropC",
 				label: "Additional Property C",
-				dataType: "String"
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
 			}]);
 		}, new Error("Invalid property definition: All nested additional properties must be listed at root level."
-			+ '\n{"key":"prop","label":"Property","dataType":"String","aggregatable":true,'
-			+ '"extension":{"additionalProperties":["additionalPropA","additionalPropB"]}}'
-		));
+			+ '\n{"key":"prop","label":"Property","dataType":"String",'
+			+ '"extension":{"technicallyGroupable":true,"additionalProperties":["additionalPropA","additionalPropB"]}}')
+		);
 	});
 
 	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
@@ -243,8 +540,7 @@ sap.ui.define([
 				aggregatable: true
 			}]).destroy();
 		}, new Error("Invalid property definition: Complex property contains invalid attribute 'aggregatable'."
-			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"aggregatable":true}'
-		)
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"aggregatable":true}')
 		);
 	});
 
@@ -263,8 +559,7 @@ sap.ui.define([
 				}
 			}]).destroy();
 		}, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.technicallyGroupable'."
-			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"technicallyGroupable":false}}'
-		)
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"technicallyGroupable":false}}')
 		);
 	});
 
@@ -283,8 +578,7 @@ sap.ui.define([
 				}
 			}]).destroy();
 		}, new Error("Invalid property definition: Complex property contains invalid attribute 'extension.technicallyAggregatable'."
-			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"technicallyAggregatable":false}}'
-		)
+			+ '\n{"key":"complexProp","label":"ComplexProperty","propertyInfos":["prop"],"extension":{"technicallyAggregatable":false}}')
 		);
 	});
 
@@ -479,27 +773,5 @@ sap.ui.define([
 		assert.deepEqual(oComplexProperty.getAggregatableProperties(), [], "After destruction");
 
 		oPropertyHelper.destroy();
-	});
-
-	QUnit.test("groupable with additionalProperties", function(assert) {
-		const oPropertyHelper = new PropertyHelper([{
-			key: "idProperty",
-			label: "ID Property",
-			dataType: "String",
-			text: "textProperty"
-		}, {
-			key: "textProperty",
-			label: "Text Property",
-			dataType: "String",
-			extension: {
-				additionalProperties: ["idProperty"]
-			},
-			groupable: true
-			}]);
-
-		const oProperty = oPropertyHelper.getProperty("textProperty");
-
-		assert.strictEqual(oProperty.groupable, false, "groupable");
-		assert.strictEqual(oProperty.extension.technicallyGroupable, true, "technicallyGroupable");
 	});
 });

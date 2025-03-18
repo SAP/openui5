@@ -14,12 +14,12 @@ sap.ui.define([
 	var coreInstance = null;
 
 	/**
-	 * @class
 	 * The CoreFacade interface allows rule developers to access the metadata, models, UI areas and components of the Core.
 	 *
 	 * <h3>Usage</h3>
 	 * The CoreFacade is passed as second argument to all rule check functions.
 	 *
+	 * @class
 	 * @name sap.ui.support.CoreFacade
 	 * @param {object} oCore Core object as available in core plugins
 	 * @hideconstructor
@@ -28,36 +28,29 @@ sap.ui.define([
 	function CoreFacade(oCore) {
 		coreInstance = oCore;
 
-		return /** @lends sap.ui.support.CoreFacade.prototype */ {
-			/**
-			 * Gets the Metadata from the Core object.
-			 * @public
-			 */
-			getMetadata: function () {
-				return coreInstance.getMetadata();
-			},
-			/**
-			 * Gets the UI areas from the Core object.
-			 * @public
-			 */
-			getUIAreas: function () {
-				return UIAreaRegistry.all();
-			},
-			/**
-			 * Gets the Components from the Core object.
-			 * @public
-			 */
-			getComponents: function () {
-				return ComponentRegistry.all();
-			},
-			/**
-			 * Gets the Models from the Core object.
-			 * @public
-			 */
-			getModels: function () {
-				return coreInstance.oModels;
+		return (
+			/** @lends sap.ui.support.CoreFacade.prototype */ {
+				/**
+				 * Gets the UI areas from the Core object.
+				 *
+				 * @public
+				 * @returns {Object<sap.ui.core.ID,sap.ui.core.UIArea>} Object with all UIAreas, keyed by their ID
+				 */
+				getUIAreas: function () {
+					return UIAreaRegistry.all();
+				},
+
+				/**
+				 * Gets the Components from the Core object.
+				 *
+				 * @public
+				 * @returns {Object<sap.ui.core.ID,sap.ui.core.Component>} Object with all components, keyed by their ID
+				 */
+				getComponents: function () {
+					return ComponentRegistry.all();
+				}
 			}
-		};
+		);
 	}
 
 	return CoreFacade;

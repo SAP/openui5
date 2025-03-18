@@ -3074,40 +3074,6 @@ sap.ui.define([
 		fnError.restore();
 	});
 
-	QUnit.test("#autoResizeColumn", function(assert) {
-		const oColumn = this.oTable.getColumns()[0];
-		const assertAutoResizeCalled = (bCalled) => {
-			const sMessage = ` - resizable=${oColumn.getResizable()}, autoResizable=${oColumn.getAutoResizable()}, visible=${oColumn.getVisible()}`;
-
-			if (bCalled) {
-				assert.ok(oColumn.autoResize.calledOnceWithExactly(), "Column#autoResize called once with correct parameters" + sMessage);
-			} else {
-				assert.ok(oColumn.autoResize.notCalled, "Column#autoResize not called" + sMessage);
-			}
-
-			oColumn.autoResize.resetHistory();
-		};
-
-		sinon.spy(oColumn, "autoResize");
-
-		oColumn.setResizable(false);
-		oColumn.setAutoResizable(false);
-		this.oTable.autoResizeColumn(0);
-		assertAutoResizeCalled(false);
-
-		oColumn.setAutoResizable(true);
-		this.oTable.autoResizeColumn(0);
-		assertAutoResizeCalled(false);
-
-		oColumn.setResizable(true);
-		this.oTable.autoResizeColumn(0);
-		assertAutoResizeCalled(true);
-
-		oColumn.setVisible(false);
-		this.oTable.autoResizeColumn(0);
-		assertAutoResizeCalled(false);
-	});
-
 	QUnit.test("#getFocusInfo, #applyFocusInfo", function(assert) {
 		assert.strictEqual(this.oTable.getFocusInfo().id, this.oTable.getId(), "Table has focus");
 		assert.ok(this.oTable.applyFocusInfo(this.oTable.getFocusInfo()), "Focus is applied on the table");

@@ -116,6 +116,7 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/odata/v4/testsuite.odatav4.qunit.html"},
 
 			opa: {},
+			support: {},
 			types: {},
 			util: {},
 			rule: {},

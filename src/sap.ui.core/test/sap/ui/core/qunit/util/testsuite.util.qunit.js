@@ -57,39 +57,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 
 			Serializer: {},
-			"support/SupportTool": {},
-			"support/TechnicalInfo": {},
-
-			"support/TechnicalInfo.opa": {
-				loader: {
-					map: {
-						// Opa _XHRWaiter requires sap/ui/thirdparty/sinon, redirect to sinon-4
-						'sap/ui/test/autowaiter': {
-							'sap/ui/thirdparty/sinon': 'sap/ui/thirdparty/sinon-4'
-						}
-					}
-				},
-				ui5: {
-					libs: "sap.m",
-					language: "EN"
-				}
-			},
-
-			"support/TechnicalInfoDebugModules.opa": {
-				loader: {
-					map: {
-						// Opa _XHRWaiter requires sap/ui/thirdparty/sinon, redirect to sinon-4
-						'sap/ui/test/autowaiter': {
-							'sap/ui/thirdparty/sinon': 'sap/ui/thirdparty/sinon-4'
-						}
-					}
-				},
-				ui5: {
-					libs: "sap.m",
-					language: "EN"
-				}
-			},
-
 			PasteHelper: {},
 			ResponsivePaddingsEnablement: {},
 

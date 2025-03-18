@@ -7,13 +7,9 @@
 	position: relative;
 	display: inline-block;
 	margin: 0;
-	-webkit-margin-before: 0;
-	-webkit-margin-after: 0;
-	-webkit-margin-start: 0;
-	-webkit-margin-end: 0;
 	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiGroupTitleTextColor;
-	font-family: @sapUiFontHeaderFamily;
+	color: var(--sapGroup_TitleTextColor);
+	font-family: var(--sapFontHeaderFamily);
 	box-sizing: border-box;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -37,53 +33,46 @@
 /* Level Styling */
 
 /* Level Auto*/
-
 .sapMTitleStyleAuto {
-	font-size: @sapMFontHeader5Size;
+	font-size: var(--sapFontHeader5Size);
 }
 
 .sapMTB > .sapMTitleStyleAuto {
-	font-size: @sapUiGroupTitleFontSize;
+	font-size: var(--sapGroup_Title_FontSize);
 }
 
 /* Level H1 */
-
 .sapMTitleStyleH1 {
-	font-size: @sapMFontHeader1Size;
+	font-size: var(--sapFontHeader1Size);
 }
 
 /* Level H2 */
-
 .sapMTitleStyleH2 {
-	font-size: @sapMFontHeader2Size;
+	font-size: var(--sapFontHeader2Size);
 }
 
 /* Level H3 */
-
 .sapMTitleStyleH3 {
-	font-size: @sapMFontHeader3Size;
+	font-size: var(--sapFontHeader3Size);
 }
 
 /* Level H4 */
-
 .sapMTitleStyleH4 {
-	font-size: @sapMFontHeader4Size;
+	font-size: var(--sapFontHeader4Size);
 }
 
 /* Level H5 */
-
 .sapMTitleStyleH5 {
-	font-size: @sapMFontHeader5Size;
+	font-size: var(--sapFontHeader5Size);
 }
 
 /* Level H6 */
-
 .sapMTitleStyleH6 {
-	font-size: @sapMFontHeader6Size;
+	font-size: var(--sapFontHeader6Size);
 }
 
 .sapMIBar-CTX .sapMTitle {
-	color: @sapUiPageHeaderTextColor;
+	color: var(--sapPageHeader_TextColor);
 	text-shadow: @sapUiShadowText;
 }
 
@@ -92,7 +81,7 @@
 }
 
 .sapMIBar-CTX.sapMFooter-CTX .sapMTitle {
-	color: @sapUiPageFooterTextColor;
+	color: var(--sapPageFooter_TextColor);
 	text-shadow: @sapUiShadowText;
 }
 

@@ -10,6 +10,7 @@ sap.ui.define([
   "sap/m/library",
   "sap/m/Input",
   "sap/m/ObjectHeader",
+  "sap/m/ObjectMarker",
   "sap/m/ObjectAttribute",
   "sap/m/ObjectStatus",
   "sap/ui/layout/form/SimpleForm",
@@ -28,6 +29,7 @@ sap.ui.define([
   mobileLibrary,
   Input,
   ObjectHeader,
+  ObjectMarker,
   ObjectAttribute,
   ObjectStatus,
   SimpleForm,
@@ -36,6 +38,9 @@ sap.ui.define([
   Mobile
 ) {
   "use strict";
+
+  // shortcut for sap.m.ObjectMarkerType
+  const ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
   // shortcut for sap.m.FlexAlignItems
   const FlexAlignItems = mobileLibrary.FlexAlignItems;
@@ -205,10 +210,15 @@ sap.ui.define([
 	  icon: "sap-icon://nutrition-activity",
 	  number: "1.684,00",
 	  numberUnit: "Euro",
-	  showMarkers: true,
-	  markFlagged: true,
-	  markFavorite: true,
 	  numberState: "Success",
+	  markers: [
+		  new ObjectMarker({
+			  type: ObjectMarkerType.Flagged
+		  }),
+		  new ObjectMarker({
+			  type: ObjectMarkerType.Favorite
+		  })
+	  ],
 	  attributes: [
 		  new ObjectAttribute({
 			  title: "Manufacturer",
