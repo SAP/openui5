@@ -3,7 +3,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/Log"], function(Log) {
+sap.ui.define([
+	"sap/ui/fl/changeHandler/Base"
+], function(
+	ChangeHandlerBase
+) {
 	"use strict";
 
 	/**
@@ -30,13 +34,11 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			.then(function(aCells) {
 				// ColumnListItem and GroupHeaderListItem are only allowed for the tables items aggregation.
 				if (!aCells) {
-					Log.warning("Aggregation cells to move not found");
-					return Promise.reject();
+					return ChangeHandlerBase.markAsNotApplicable("Aggregation cells to move not found", true);
 				}
 
 				if (iSourceIndex < 0 || iSourceIndex >= aCells.length) {
-					Log.warning("Move cells in table item called with invalid index: " + iSourceIndex);
-					return Promise.reject();
+					return ChangeHandlerBase.markAsNotApplicable("Move cells in table item called with invalid index: " + iSourceIndex, true);
 				}
 
 				var oMovedCell = aCells[iSourceIndex];
@@ -91,8 +93,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			.then(function(aRetrievedColumns){
 				aColumns = aRetrievedColumns;
 				if (oTargetSource !== oTable) {
-					Log.warning("Moving columns between different tables is not yet supported.");
-					return Promise.reject(false);
+					return ChangeHandlerBase.markAsNotApplicable("Moving columns between different tables is not yet supported", true);
 				}
 				// Fetch the information about the movedElements together with the source and target index.
 				return oChangeContent.movedElements.reduce(function (oPreviousPromise, mMovedElement) {
@@ -106,8 +107,10 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 							oMovedElement = oModifier.bySelector(mMovedElement.selector, oAppComponent, oView);
 							if (!oMovedElement) {
 								sMovedElementId = mMovedElement.selector && mMovedElement.selector.id;
-								Log.warning("The table column with id: '" + sMovedElementId + "' stored in the change is not found and the move operation cannot be applied");
-								return Promise.reject();
+								return ChangeHandlerBase.markAsNotApplicable(
+									"The column with id: '" + sMovedElementId + "' stored in the change is not found and the move operation cannot be applied",
+									true
+								);
 							}
 							iCurrentIndexInAggregation = aColumns.indexOf(oMovedElement);
 							iStoredSourceIndexInChange = mMovedElement.sourceIndex;
