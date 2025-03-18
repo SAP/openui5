@@ -1,31 +1,37 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/util/deepExtend",
 	"sap/m/changeHandler/MoveTableColumns",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/mvc/XMLView",
-	"sap/base/util/deepExtend",
+	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
+	deepExtend,
 	MoveTableColumnsChangeHandler,
+	XMLView,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	UIComponent,
 	ComponentContainer,
+	UIComponent,
+	Base,
 	JSONModel,
 	createAndAppendDiv,
 	nextUIUpdate,
-	XMLView,
-	deepExtend,
+	sinon,
 	FlexTestAPI
 ) {
 	'use strict';
 	createAndAppendDiv("content");
+
+	var sandbox = sinon.createSandbox();
 
 	var oXmlString = [
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
@@ -337,6 +343,7 @@ sap.ui.define([
 			assert.ok(this.fnUpdateAggregationSpy.notCalled, "updateAggregation is not called, aggregations are only moved");
 			this.fnUpdateAggregationSpy.restore();
 			this.fnUpdateAggregationSpy = null;
+			sandbox.restore();
 		}
 	});
 
@@ -393,5 +400,37 @@ sap.ui.define([
 				"column in items aggregation has been moved successfully"
 			);
 		}.bind(this));
+	});
+
+	function checkMarkAsNotApplicable(oChangeDefinition, assert) {
+		var oMarkAsNotApplicableSpy = sandbox.stub(Base, "markAsNotApplicable").resolves();
+		return FlexTestAPI.createFlexObject({
+			changeSpecificData: oChangeDefinition,
+			selector: this.oTable
+		}).then(function(oChange) {
+			this.oChange = oChange;
+		}.bind(this))
+		.then(function() {
+			return this.oChangeHandler.applyChange(this.oChange, this.oTable, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+		}.bind(this))
+		.then(function() {
+			assert.ok(oMarkAsNotApplicableSpy.calledOnce, "markAsNotApplicable has been called");
+		});
+	}
+
+	QUnit.test('not applicable change - not found column', function(assert) {
+		var oChangeDefinition = createChangeDefinition();
+		oChangeDefinition.movedElements[0].id = "comp---view--column3";
+		return checkMarkAsNotApplicable.call(this, oChangeDefinition, assert);
+	});
+
+	QUnit.test('not applicable change - different table', function(assert) {
+		var oChangeDefinition = createChangeDefinition();
+		oChangeDefinition.target.id = "comp---view--myTable2";
+		return checkMarkAsNotApplicable.call(this, oChangeDefinition, assert);
 	});
 });
