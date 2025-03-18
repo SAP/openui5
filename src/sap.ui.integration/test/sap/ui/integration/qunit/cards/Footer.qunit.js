@@ -58,6 +58,22 @@ sap.ui.define([
 		assert.ok(this.oFooter._hasBinding(), "Check for bindings should be positive");
 	});
 
+	QUnit.test("Footer with empty configuration during loading", async function (assert) {
+		// Arrange
+		const oFooter = this.oFooter;
+		const oCard = this.oCard;
+
+		// Act
+		oCard.showLoadingPlaceholders();
+		oFooter.setShowCloseButton(true);
+		oFooter.placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(true, "There must be no errros thrown.");
+	});
+
 	QUnit.module("Footer actions strip", {
 		beforeEach: function () {
 			this.oCard = new Card();

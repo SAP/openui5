@@ -252,7 +252,7 @@ sap.ui.define([
 		var oConfiguration = BindingHelper.createBindingInfos(this.getConfiguration(), this.getCardInstance().getBindingNamespaces());
 
 		// to do: if more precise check is needed search recursively
-		return (oConfiguration.actionsStrip || []).some(function (oButtonConfig) {
+		return (oConfiguration?.actionsStrip || []).some(function (oButtonConfig) {
 			for (var sKey in oButtonConfig) {
 				if (BindingHelper.isBindingInfo(oButtonConfig[sKey])) {
 					return true;
