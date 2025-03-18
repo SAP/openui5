@@ -1131,7 +1131,7 @@ sap.ui.define([
 			return undefined;
 		}
 		return sBindingParameterPath.split("/").map((sSegment, i) => {
-			return sSegment.slice(0, sSegment.lastIndexOf("("))
+			return sSegment.slice(0, sSegment.indexOf("("))
 				+ (i ? sPredicate : sPartnerPredicate);
 		}).join("/");
 	};
