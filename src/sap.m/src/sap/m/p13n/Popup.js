@@ -232,14 +232,14 @@ sap.ui.define([
 			});
 		}
 
-		if (mSettings?.activePanel) {
-			this._getContainer(true).switchView(mSettings.activePanel);
-		}
-
 		if (this.getMode() === "Dialog") {
 			this._oPopup.open();
 		} else {
 			this._oPopup.openBy(oSource);
+		}
+
+		if (mSettings?.activePanel) {
+			this._getContainer(true).switchView(mSettings.activePanel);
 		}
 
 		const oParent = this.getParent();
