@@ -29,7 +29,7 @@
 				</tnt:ToolHeader>
 			</tnt:header>
 			<tnt:sideContent>
-				<tnt:SideNavigation id="sideNavigation" selectedKey="{/selectedKey}" itemSelect="onSideNavigationItemSelect">
+				<tnt:SideNavigation id="sideNavigation" selectedKey="{/selectedKey}" itemSelect="onSideNavigationItemSelect" width="17.5rem">
 					<tnt:NavigationList items="{path: '/navigation'}">
 						<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" icon="{icon}" enabled="{enabled}" visible="{= !${hidden}}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}">
 							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}" visible="{= !${hidden}}">
