@@ -1,13 +1,18 @@
+/* ======================================== */
+/* CSS for control sap.f/ProductSwitchItem  */
+/* Base theme                               */
+/* ======================================== */
+
 .sapFPSItemContainer {
-	border-radius: @sapUiElementBorderCornerRadius;
-	background: @sapUiListBackground;
+	border-radius: var(--sapElement_BorderCornerRadius);
+	background: var(--sapUiListBackground);
 	padding: 0.5rem;
 	width: 11.25rem;
 	height: 7rem;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 	box-sizing: border-box;
 	text-decoration: none;
 	cursor: pointer;
@@ -20,8 +25,8 @@
 	}
 
 	.sapFPSItemMainTitle {
-		font-size: @sapMFontHeader6Size;
-		color: @sapUiGroupTitleTextColor;
+		font-size: var(--sapFontHeader6Size);
+		color: var(--sapGroup_TitleTextColor);
 	}
 
 	.sapFPSItemIconPlaceholder {
@@ -42,15 +47,15 @@
 	}
 
 	.sapFPSItemSubTitle {
-		font-size: @sapMFontSmallSize;
+		font-size: var(--sapFontSmallSize);
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
-		color: @sapUiContentLabelColor;
+		color: var(--sapContent_LabelColor);
 	}
 
 	&:hover {
-		background: @sapUiListHoverBackground;
+		background: var(--sapList_Hover_Background);
 	}
 
 	&.sapFPSItemActive,
@@ -58,19 +63,19 @@
 	&:active,
 	&.sapFPSItemSelected:active,
 	&.sapFPSItemSelected:hover:active {
-		background: @sapUiListActiveBackground;
-		color: @sapUiListActiveTextColor;
+		background: var(--sapList_Active_Background);
+		color: var(--sapList_Active_TextColor);
 		border: none;
 
 		.sapFPSItemMainTitle,
 		.sapFPSItemSubTitle {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 
 	&.sapFPSItemSelected:not(:active) {
-		background: @sapUiListSelectionBackgroundColor;
-		border: 0.125rem solid @sapUiListSelectionBorderColor;
+		background: var(--sapList_SelectionBackgroundColor);
+		border: 0.125rem solid var(--sapList_SelectionBorderColor);
 		padding: 0.375rem;;
 	}
 }
@@ -102,13 +107,14 @@
 		cursor: pointer;
 		font-size: 1.25rem;
 		width: 3rem;
-		color: @sapUiContentNonInteractiveIconColor;
+		color: var(--sapContent_NonInteractiveIconColor);
 	}
 
 	&.sapFPSItemActive,
 	&:active {
+
 		.sapUiIcon {
-			color: @sapUiListActiveTextColor;
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 
@@ -125,15 +131,13 @@
 
 	&.sapFPSItemSelected {
 		border: none;
-		border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+		border-bottom: 0.0625rem solid var(--sapList_SelectionBorderColor);
 	}
 }
 
 .sapFPSItemContainer:focus {
-	outline-width: @sapUiContentFocusWidth;
-	outline-color: @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: -2px;
-	outline-style: @sapUiContentFocusStyle;
 }
 
 .sapFPSItemContainer.sapFPSItemSelected:focus {
@@ -143,16 +147,12 @@
 .sapFPSItemSelected.sapFPSItemActive:focus,
 .sapFPSItemActive:focus,
 .sapFPSItemContainer:active:focus {
-	outline-color: @sapUiContentContrastFocusColor;
+	outline-color: var(--sapContent_ContrastFocusColor);
 	outline-offset: -2px;
 }
 
 .sapUiMedia-Std-Phone .sapFPSItemContainer.sapFPSItemSelected:focus {
 	outline-offset: -2px;
-}
-
-html[data-sap-ui-browser^="ed"].sap-desktop .sapFPSItemContainer:focus {
-	outline-style: dashed;
 }
 
 html[dir="rtl"].sapUiMedia-Std-Phone .sapFPSItemContainer .sapFPSItemTitle {
