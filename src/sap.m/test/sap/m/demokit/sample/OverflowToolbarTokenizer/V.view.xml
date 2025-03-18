@@ -1,0 +1,194 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"	
+	controllerName="sap.m.sample.OverflowToolbarTokenizer.C">
+
+	<Toolbar>
+		<OverflowToolbarTokenizer
+			id="toolbarTokenizer"
+			width="50%"
+			labelText="Tokenizer in sap.m.Toolbar:"
+			tokenDelete=".onTokenDelete">
+			<tokens>
+				<Token text="Token 1" key="0001" />
+				<Token text="Token 2" key="0002" />
+				<Token text="Token 3" key="0003" />
+			</tokens>
+		</OverflowToolbarTokenizer>
+		<Text text="Enter a token to add:" width="150px"/>
+		<Input id="NewTokenInput" width="200px" />
+		<Button text="Add Token" press=".onAddToken" />
+	</Toolbar>
+
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Label text="OverflowToolbar with Tokenizer">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" />
+			</layoutData>
+		</Label>
+		
+		<OverflowToolbar
+			id="otbFilter"
+			width="auto">
+			<content>
+				<Button
+					icon="sap-icon://notes" 
+					text="Notes">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>					
+				</Button>
+				<OverflowToolbarTokenizer
+					id="overflowToolbarTokenizer"
+					width="75%"
+					labelText="Filter by:"
+					tokenDelete=".onTokenDelete">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="High" />
+					</layoutData>
+					<tokens>
+						<Token text="Token 1" key="0001" />
+						<Token text="Token 2" key="0002" />
+						<Token text="Token 3" key="0003" />
+						<Token text="Token 4" key="0004" />
+						<Token text="Token 5" key="0005" />
+						<Token text="Token 6" key="0006" />
+						<Token text="Token 7" key="0007" />
+						<Token text="Token 8" key="0008" />
+					</tokens>
+				</OverflowToolbarTokenizer>
+				<ToolbarSpacer />
+			</content>
+		</OverflowToolbar>
+
+		<Label text="Tokenizer with max-width in OverflowToolbar"/>
+		<OverflowToolbar
+			id="otbMaxWidth"
+			width="100%">
+			<content>
+				<Button icon="sap-icon://add" text="Add custom criteria" type="Transparent">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Button>
+				<OverflowToolbarTokenizer
+					id="tokenizerMaxWidth"
+					width="45%"
+					maxWidth="85%"
+					labelText="Random label text:"
+					tokenDelete=".onTokenDelete">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="High" />
+					</layoutData>
+					<tokens>
+						<Token text="Token 1" key="0001" />
+						<Token text="Token 2" key="0002" />
+						<Token text="Token 3" key="0003" />
+						<Token text="Token 4" key="0004" />
+						<Token text="Token 5" key="0005" />
+						<Token text="Token 1" key="0006" />
+						<Token text="Token 2" key="0007" />
+						<Token text="Token 3" key="0008" />
+					</tokens>
+				</OverflowToolbarTokenizer>
+				<Title text="Title with Icon" level="H1">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Title>
+				<core:Icon src="sap-icon://collaborate" />
+				<ToolbarSpacer />
+				<Text text="Just a Simple Text">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Text>
+				<Button text="Accept" type="Accept">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Button>
+			</content>
+		</OverflowToolbar>
+
+		<Label text="Complex OverflowToolbar with input controls" width="100%"/>
+		<OverflowToolbar
+			id="otbComplex"
+			width="100%"
+			ariaHasPopup="dialog"
+			tooltip="This is a bar with tokenizer">
+			<content>
+				<core:Icon src="sap-icon://collaborate" />
+				<Label text="Input controls">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Label>
+				<Button text="Regular Button">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Button>
+				<ToggleButton text="Toggle me">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</ToggleButton>
+				<Input placeholder="Input" width="200px">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</Input>
+				<DateTimePicker placeholder="DateTimePicker" width="200px">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</DateTimePicker>
+				<DateRangeSelection placeholder="DateRangeSelection" width="200px">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</DateRangeSelection>
+				<RadioButton text="Option a" groupName="a">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</RadioButton>
+				<RadioButton text="Option b" groupName="a">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</layoutData>
+				</RadioButton>
+				<OverflowToolbarTokenizer
+					id="tokenizerShowItems"
+					width="35%"
+					labelText="Show items:"
+					tokenDelete=".onTokenDelete">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="High" />
+					</layoutData>
+					<tokens>
+						<Token text="Token 1" key="0001" />
+						<Token text="Token 2" key="0002" />
+						<Token text="Token 3" key="0003" />
+						<Token text="Token 4 - long text example" key="0004" />
+						<Token text="Token 5" key="0005" />
+					</tokens>
+				</OverflowToolbarTokenizer>
+				<SegmentedButton>
+					<items>
+						<SegmentedButtonItem text="Left Button" />
+						<SegmentedButtonItem icon="sap-icon://notes" tooltip="Notes" />
+						<SegmentedButtonItem text="Disabled Button" enabled="false" />
+						<SegmentedButtonItem text="Right Button" />
+					</items>
+				</SegmentedButton>
+				<ToolbarSpacer />
+				<Title text="Example Title" level="H1" />
+			</content>
+		</OverflowToolbar>
+
+	</l:VerticalLayout>
+</mvc:View>

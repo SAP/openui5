@@ -911,6 +911,9 @@ sap.ui.define([
 			OverflowToolbarMenuButton: {
 				title: "Test Page for sap.m.OverflowToolbarMenuButton"
 			},
+			OverflowToolbarTokenizer: {
+				title: "Test Page for sap.m.OverflowToolbarTokenizer"
+			},
 			/**
 			 * @deprecated as of version 1.98
 			 */

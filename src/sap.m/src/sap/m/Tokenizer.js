@@ -54,6 +54,8 @@ sap.ui.define([
 	"use strict";
 
 	var CSS_CLASS_NO_CONTENT_PADDING = "sapUiNoContentPadding";
+	var CSS_CLASS_TOKENIZER_POPUP = "sapMTokenizerTokensPopup";
+
 	var RenderMode = library.TokenizerRenderMode;
 	var PlacementType = library.PlacementType;
 	var ListMode = library.ListMode;
@@ -89,7 +91,6 @@ sap.ui.define([
 	 */
 	var Tokenizer = Control.extend("sap.m.Tokenizer", /** @lends sap.m.Tokenizer.prototype */ {
 		metadata : {
-
 			library : "sap.m",
 			properties : {
 
@@ -128,7 +129,12 @@ sap.ui.define([
 				/**
 				 * Defines the count of hidden tokens if any. If this property is set to 0, the n-More indicator will not be shown.
 				 */
-				hiddenTokensCount: {type : "int", group : "Misc", defaultValue : 0, visibility: "hidden"}
+				hiddenTokensCount: {type : "int", group : "Misc", defaultValue : 0,  visibility: "hidden"},
+
+				/**
+				 * The ID of the opener of the tokens popup.
+				 */
+				opener: { type: "string", multiple: false, visibility: "hidden" }
 
 			},
 			defaultAggregation : "tokens",
@@ -357,7 +363,11 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype._handleNMoreIndicatorPress = function () {
 		this._bIsOpenedByNMoreIndicator = true;
-		this._togglePopup(this.getTokensPopup());
+		this._togglePopup(this.getTokensPopup(), this._getEffectiveOpener());
+	};
+
+	Tokenizer.prototype._getEffectiveOpener = function() {
+		return document.getElementById(this.getProperty("opener")) || this.getDomRef();
 	};
 
 	/**
@@ -451,7 +461,7 @@ sap.ui.define([
 	/**
 	 * Handles token press from the List.
 	 *
-	 * @param oEvent
+	 * @param {sap.ui.base.Event} oEvent object
 	 * @private
 	 */
 	 Tokenizer.prototype._handleListItemPress = function (oEvent) {
@@ -466,12 +476,39 @@ sap.ui.define([
 		}
 	};
 
+	Tokenizer.prototype.focusFirstTokenItem = function () {
+		const oTokenList = this._getTokensList();
+		const aTokenListItems = oTokenList.getItems();
+
+
+		if (aTokenListItems.length) {
+			aTokenListItems[0].focus();
+		}
+	};
+
+	Tokenizer.prototype._handleTokenizerAfterOpen = function (oEvent) {
+		this.focusFirstTokenItem();
+		this.setRenderMode(RenderMode.Loose);
+		this.fireRenderModeChange({
+			renderMode: RenderMode.Loose
+		});
+};
+
+	Tokenizer.prototype.addPopupClasses = function(oPopup) {
+		if (oPopup.hasStyleClass(CSS_CLASS_TOKENIZER_POPUP)) {
+			return;
+		}
+
+		oPopup.addStyleClass(CSS_CLASS_TOKENIZER_POPUP);
+		oPopup.addStyleClass(CSS_CLASS_NO_CONTENT_PADDING);
+	};
+
 	/**
 	 * Returns N-More Popover/Dialog.
 	 *
 	 * @private
 	 * @ui5-restricted sap.m.MultiInput, sap.m.MultiComboBox
-	 * @returns {sap.m.ResponsivePopover}
+	 * @returns {sap.m.ResponsivePopover} The popover containing the tokens
 	 */
 	Tokenizer.prototype.getTokensPopup = function () {
 		var oTokenList = this._getTokensList();
@@ -542,20 +579,10 @@ sap.ui.define([
 				});
 			}, this)
 			.attachAfterClose(this.afterPopupClose, this)
-			.attachAfterOpen(function () {
-				var aTokenListItems = oTokenList.getItems();
-				this.setRenderMode(RenderMode.Loose);
-				this.fireRenderModeChange({
-					renderMode: "Loose"
-				});
-				if (aTokenListItems.length) {
-					aTokenListItems[0].focus();
-				}
-			}, this);
+			.attachAfterOpen(this._handleTokenizerAfterOpen, this);
 
 		this.addDependent(this._oPopup);
-		this._oPopup.addStyleClass(CSS_CLASS_NO_CONTENT_PADDING);
-		this._oPopup.addStyleClass("sapMTokenizerTokensPopup");
+		this.addPopupClasses(this._oPopup);
 
 		if (Device.system.phone) {
 			this._oPopup.setEndButton(new Button({
@@ -599,8 +626,9 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.m.MultiInput, sap.m.MultiComboBox
 	 */
-	Tokenizer.prototype._togglePopup = function (oPopover, oOpener) {
-		var oOpenBy = oOpener || this.getDomRef(),
+	Tokenizer.prototype._togglePopup = function () {
+		var oOpenBy = this._getEffectiveOpener(),
+			oPopover = this.getTokensPopup(),
 			oPopoverIsOpen = oPopover.isOpen(),
 			bEditable = this.getEditable();
 
@@ -673,7 +701,7 @@ sap.ui.define([
 	Tokenizer.prototype._getPixelWidth = function ()  {
 		var sMaxWidth = this.getMaxWidth(),
 			iTokenizerWidth,
-			oDomRef = this.getDomRef(),
+			oDomRef = this.getFocusDomRef(),
 			iPaddingLeft;
 
 		if (!oDomRef) {
@@ -804,7 +832,7 @@ sap.ui.define([
 		}
 
 		if (iHiddenTokensCount) {
-			var sLabelKey = "MULTIINPUT_SHOW_MORE_TOKENS";
+			let sLabelKey = "MULTIINPUT_SHOW_MORE_TOKENS";
 
 			if (iHiddenTokensCount === this._getVisibleTokens().length) {
 				if (iHiddenTokensCount === 1) {
@@ -882,7 +910,7 @@ sap.ui.define([
 
 	Tokenizer.prototype._registerResizeHandler = function(){
 		if (!this._sResizeHandlerId) {
-			this._sResizeHandlerId = ResizeHandler.register(this.getDomRef(), this._handleResize.bind(this));
+			this._sResizeHandlerId = ResizeHandler.register(this, this._handleResize.bind(this));
 		}
 	};
 
@@ -1058,12 +1086,14 @@ sap.ui.define([
 			return;
 		}
 
-		if (sRenderMode === RenderMode.Narrow) {
-			this._adjustTokensVisibility();
-		} else {
+		if (sRenderMode === RenderMode.Loose) {
 			this._setHiddenTokensCount(0);
 			this._showAllTokens();
+
+			return;
 		}
+
+		this._adjustTokensVisibility();
 	};
 
 	/**
@@ -1412,7 +1442,8 @@ sap.ui.define([
 			renderMode: "Loose"
 		});
 
-		this._bFocusFirstToken = oEvent.srcControl === this.getTokens()[0];
+		const oFirstToken = this.getTokens()[0];
+		this._bFocusFirstToken = oEvent.srcControl === oFirstToken;
 
 		if (!this._bFocusFirstToken && !this._bTokenToBeDeleted) {
 			this._ensureTokenVisible(oEvent.srcControl);
@@ -1637,7 +1668,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	Tokenizer.prototype.checkFocus = function() {
-		var bIsFocusInPopover = containsOrEquals(this.getTokensPopup().getDomRef(),  document.activeElement);
+		var oTokensPopup = this._oPopup && this._oPopup.getDomRef();
+		var bIsFocusInPopover = containsOrEquals(oTokensPopup,  document.activeElement);
+
 		return (this.getDomRef() && containsOrEquals(this.getDomRef(), document.activeElement)) ||  bIsFocusInPopover;
 	};
 
