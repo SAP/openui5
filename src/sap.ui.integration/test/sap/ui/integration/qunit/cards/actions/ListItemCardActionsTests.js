@@ -21,6 +21,97 @@ sap.ui.define([
 		});
 	}
 
+	function setListCardManifest(oCard) {
+		oCard.setManifest({
+			"_version": "1.14.0",
+			"sap.app": {
+				"id": "list.card",
+				"type": "card",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui": {
+				"technology": "UI5",
+				"icons": {
+					"icon": "sap-icon://list"
+				}
+			},
+			"sap.card": {
+				"actions": [{
+					"type": "Navigation",
+					"parameters": {
+						"url": "https://sap.com",
+						"target": "_blank"
+					}
+				}],
+				"type": "List",
+				"data": {
+					"json": {
+						"items": [
+							{ "title": "Item 1" },
+							{ "title": "Item 2" },
+							{ "title": "Item 3" },
+							{ "title": "Item 4" }
+						]
+					}
+				},
+				"header": {
+					"actions": [{
+						"type": "Navigation",
+						"parameters": {
+							"url": "https://sap.com",
+							"target": "_blank"
+						}
+					}],
+					"title": "Action on card level and header level",
+					"subTitle": "sematicRole - listitem"
+				},
+				"content": {
+					"data": {
+						"path": "/items"
+					},
+					"item": {
+						"title": "{title}"
+					},
+					"maxItems": 4
+				},
+				"footer": {
+					"actionsStrip": [
+						{
+							"type": "ToolbarSpacer"
+						},
+						{
+							"type": "Link",
+							"text": "Agenda",
+							"icon": "sap-icon://action",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{agendaUrl}"
+									}
+								}
+							]
+						},
+						{
+							"text": "Approve",
+							"overflowPriority": "High",
+							"actions": [
+								{
+									"type": "Custom",
+									"parameters": {
+										"method": "approve"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		});
+	}
+
 	function runTests() {
 		QUnit.test("List Card with action on card level", async function (assert) {
 			const oActionSpy = sinon.spy(CardActions, "fireAction");
@@ -942,6 +1033,147 @@ sap.ui.define([
 			assert.ok(oCard.getFocusDomRef().hasAttribute("tabindex"), "Card is focusable");
 
 			oActionSpy.restore();
+		});
+
+		QUnit.test("Enter event should fire press on keydown", async function (assert) {
+			setListCardManifest(this.oCard);
+			const pressSpy = this.spy(this.oCard, "firePress");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+			const pressHeaderSpy = sinon.spy(this.oCard.getCardHeader(), "firePress");
+
+			// Action
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.equal(pressSpy.callCount, 1, "Press event should be fired once on");
+
+			pressSpy.resetHistory();
+			pressSpy.reset();
+
+			// Action
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.ENTER, false, false, true);
+
+			// Assert
+			assert.equal(pressSpy.callCount, 0, "Press event was not fired for Ctrl+ENTER");
+
+			pressSpy.resetHistory();
+			pressSpy.reset();
+
+			qutils.triggerKeydown(this.oCard.getCardHeader().getFocusDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.equal(pressHeaderSpy.callCount, 1, "Press event should be fired once on header");
+		});
+
+		QUnit.test("Enter event should not fire press on keyup", async function (assert) {
+			setListCardManifest(this.oCard);
+			const pressSpy = this.spy(this.oCard, "firePress");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+			const pressHeaderSpy = sinon.spy(this.oCard.getCardHeader(), "firePress");
+
+			// Action
+			qutils.triggerKeyup(this.oCard.getDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.equal(pressSpy.callCount, 0, "Press event should not be fired on card");
+
+			pressSpy.resetHistory();
+			pressSpy.reset();
+
+			// Action
+			qutils.triggerKeyup(this.oCard.getDomRef(), KeyCodes.ENTER);
+
+			// Assert
+			assert.equal(pressHeaderSpy.callCount, 0, "Press event should not be fired on header");
+		});
+
+		QUnit.test("Space event should not fire press on keydown", async function (assert) {
+			setListCardManifest(this.oCard);
+			var pressSpy = this.spy(this.oCard, "firePress");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+			const pressHeaderSpy = sinon.spy(this.oCard.getCardHeader(), "firePress");
+
+			// Action
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.SPACE);
+
+			// Assert
+			assert.equal(pressSpy.callCount, 0, "Press event should not be fired on card");
+
+
+			pressSpy.resetHistory();
+			pressSpy.reset();
+
+			// Action
+			qutils.triggerKeydown(this.oCard.getCardHeader().getFocusDomRef(), KeyCodes.SPACE);
+
+			// Assert
+			assert.equal(pressHeaderSpy.callCount, 0, "Press event should not be fired on");
+		});
+
+		QUnit.test("Space event should fire press on keyup", async function (assert) {
+			setListCardManifest(this.oCard);
+			const pressSpy = this.spy(this.oCard, "firePress");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			const pressHeaderSpy = sinon.spy(this.oCard.getCardHeader(), "firePress");
+
+			// Action
+			qutils.triggerKeyup(this.oCard.getDomRef(), KeyCodes.SPACE);
+
+			// Assert
+			assert.equal(pressSpy.callCount, 1, "Press event should be fired once on card");
+
+
+			pressSpy.resetHistory();
+			pressSpy.reset();
+
+			// Action
+			qutils.triggerKeyup(this.oCard.getCardHeader().getFocusDomRef(), KeyCodes.SPACE);
+
+			// Assert
+			assert.equal(pressHeaderSpy.callCount, 1, "Press event should be fired once on header");
+		});
+
+		QUnit.test("Space event should not fire press if SHIFT is pressed and released after the Space is released", async function (assert) {
+			setListCardManifest(this.oCard);
+			const pressSpy = this.spy(this.oCard, "firePress");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Action
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.SHIFT);
+			qutils.triggerKeyup(this.oCard.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(this.oCard.getDomRef(), KeyCodes.SHIFT);
+
+			// Assert
+			assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+		});
+
+		QUnit.test("Space event should not fire press if ESCAPE is pressed and released after the Space is released", async function (assert) {
+			setListCardManifest(this.oCard);
+			const pressSpy = this.spy(this.oCard, "firePress");
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Action
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeydown(this.oCard.getDomRef(), KeyCodes.ESCAPE);
+			qutils.triggerKeyup(this.oCard.getDomRef(), KeyCodes.SPACE);
+			qutils.triggerKeyup(this.oCard.getDomRef(), KeyCodes.ESCAPE);
+
+			// Assert
+			assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
 		});
 	}
 
