@@ -25,6 +25,7 @@ sap.ui.define([
 	// The ranks define the order of the plugin actions in the context menu
 	const CONTEXT_MENU_RANKS = {
 		CTX_RENAME: 10,
+		CTX_ANNOTATION_CHANGE_SINGLE_LABEL: 12,
 		CTX_ADD_ELEMENTS_AS_SIBLING: 20,
 		CTX_ADD_ELEMENTS_AS_CHILD: 25,
 		CTX_ADD_ELEMENTS_CHILD_AND_SIBLING: 30,
