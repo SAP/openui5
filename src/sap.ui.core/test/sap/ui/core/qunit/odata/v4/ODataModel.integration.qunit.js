@@ -77169,6 +77169,243 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// Scenario: Create 3 sales orders, one that stays transient, one that gets persisted but does
+	// not match the binding's filter, and one that gets persisted and matches the bindings's
+	// filter. Select these 3 sales orders. Then do either a "refresh", a "requestSideEffects"
+	// (side-effects refresh), a "sort" or a "changeParameters" and check that the selection is as
+	// expected. In case of a side-effects refresh "created persisted" entries remain "created
+	// persisted", but in other cases they become "persisted". As a result all created keep the
+	// selection (no validation request). For all non-created entries the selection status depends
+	// on whether the entry matches the binding's filter.
+	// JIRA: CPOUI5ODATAV4-2915
+["refresh", "requestSideEffects", "sort", "changeParameters"].forEach((sMethod) => {
+	QUnit.test(`CPOUI5ODATAV4-2915: Selection Validation via ${sMethod} in combination with create`,
+			async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{
+		path : '/SalesOrderList',
+		parameters : {$$clearSelectionOnFilter : true, $search : 'foo'}
+	}">
+	<Text id="id" text="{SalesOrderID}"/>
+	<Text id="note" text="{Note}"/>
+	<Text id="selected" text="{@$ui5.context.isSelected}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=100", {
+				value : [
+					{Note : "SO 1 (foo)", SalesOrderID : "1"}
+				]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("note", ["SO 1 (foo)"])
+			.expectChange("selected", [null]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("id", ["", "1"])
+			.expectChange("note", ["SO 2 (n/a) - transient", "SO 1 (foo)"])
+			.expectChange("selected", [, null]);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+		// create a transient sales order; selection is never validated
+		const oContextSO2 = oListBinding.create({Note : "SO 2 (n/a) - transient"},
+			/*bSkipRefresh*/true, /*bAtEnd*/false, /*bInactive*/true);
+
+		await this.waitForChanges(assert, "Create transient sales order");
+
+		this.expectChange("id", [, "", "1"])
+			.expectChange("note", [
+				"SO 3 (bar) - created persisted",
+				"SO 2 (n/a) - transient",
+				"SO 1 (foo)"
+			])
+			.expectChange("selected", [,, null])
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {Note : "SO 3 (bar) - created persisted"}
+			}, {
+				Note : "SO 3 (bar) - created persisted",
+				SalesOrderID : "3"
+			})
+			.expectChange("id", ["3"]);
+
+		// create a persisted sales order that doesn't match the filter; use bInactive true to
+		// ensure that created entries stay at the top of the table when calling requestSideEffects
+		const oContextSO3 = oListBinding.create({}, /*bSkipRefresh*/true, /*bAtEnd*/false,
+			/*bInactive*/true);
+		oContextSO3.setProperty("Note", "SO 3 (bar) - created persisted");
+
+		await Promise.all([
+			oContextSO3.created(),
+			this.waitForChanges(assert, "Create persisted sales order - SalesOrderList('3')")
+		]);
+
+		this.expectChange("id", ["", "3", "", "1"])
+			.expectChange("note", [
+				"SO 4 (foo) - created persisted",
+				"SO 3 (bar) - created persisted",
+				"SO 2 (n/a) - transient",
+				"SO 1 (foo)"
+			])
+			.expectChange("selected", [,,, null])
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {Note : "SO 4 (foo) - created persisted"}
+			}, {
+				Note : "SO 4 (foo) - created persisted",
+				SalesOrderID : "4"
+			})
+			.expectChange("id", ["4"]);
+
+		// create another persisted sales order that matches the filter
+		const oContextSO4 = oListBinding.create({}, /*bSkipRefresh*/true, /*bAtEnd*/false,
+			/*bInactive*/true);
+		oContextSO4.setProperty("Note", "SO 4 (foo) - created persisted");
+
+		await Promise.all([
+			oContextSO4.created(),
+			this.waitForChanges(assert, "Create persisted sales order - SalesOrderList('4')")
+		]);
+
+		this.expectChange("selected", ["Yes", "Yes", "Yes"]);
+
+		oContextSO2.setSelected(true);
+		oContextSO3.setSelected(true);
+		oContextSO4.setSelected(true);
+
+		await this.waitForChanges(assert, "Select created entries");
+
+		checkTable("State after selecting sales orders", assert, oTable, [
+			"/SalesOrderList('4')",
+			"/SalesOrderList('3')",
+			"/SalesOrderList($uid=...)",
+			"/SalesOrderList('1')"
+		], [
+			["4", "SO 4 (foo) - created persisted", "Yes"],
+			["3", "SO 3 (bar) - created persisted", "Yes"],
+			["", "SO 2 (n/a) - transient", "Yes"],
+			["1", "SO 1 (foo)", ""]
+		]);
+
+		if (sMethod !== "requestSideEffects") {
+			// side-effects refresh keeps position of all created entries regardless of the filter,
+			// therefore no validation for created entries is needed
+			this.expectRequest({ // ODLB#validateSelection
+					batchNo : 4,
+					url : "SalesOrderList?$filter=SalesOrderID eq '4' or SalesOrderID eq '3'"
+						+ "&$search=foo&$select=SalesOrderID&$top=2"
+				}, { // SalesOrderList('3') doesn't match $search
+					value : [{SalesOrderID : "4"}]
+				});
+		}
+		if (sMethod === "refresh" || sMethod === "requestSideEffects") {
+			this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
+					batchNo : 4,
+					url : "SalesOrderList?$select=Note,SalesOrderID"
+						+ "&$filter=SalesOrderID eq '3' or SalesOrderID eq '4'&$top=2"
+				}, {
+					value : [
+						{Note : "SO 3 (bar) - created persisted", SalesOrderID : "3"},
+						{Note : "SO 4 (foo) - created persisted", SalesOrderID : "4"}
+					]
+				});
+		}
+		if (sMethod === "requestSideEffects") {
+			this.expectRequest({ // "refresh"
+					batchNo : 4,
+					url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+						+ "&$filter=not (SalesOrderID eq '3' or SalesOrderID eq '4')"
+						+ "&$skip=0&$top=99"
+				}, {
+					value : [
+						{Note : "SO 1 (foo)", SalesOrderID : "1"}
+					]
+				});
+		} else {
+			this.expectRequest({ // "refresh"
+					batchNo : 4,
+					url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+						+ (sMethod === "sort" || sMethod === "changeParameters"
+							? "&$orderby=SalesOrderID" : "")
+						+ "&$skip=0&$top=99"
+				}, {
+					value : [
+						{Note : "SO 1 (foo)", SalesOrderID : "1"},
+						{Note : "SO 4 (foo) - created persisted", SalesOrderID : "4"}
+					]
+				})
+				.expectChange("id", ["", "1", "4"])
+				.expectChange("note", [
+					"SO 2 (n/a) - transient",
+					"SO 1 (foo)",
+					"SO 4 (foo) - created persisted"
+				])
+				//TODO: "SO 3" is deselected, but expectChange computes the wrong index because
+				// Context#getIndex returns an unexpected value for (created persisted) contexts
+				// which are currently not part of aContexts
+				.expectChange("selected", "No", -1)
+				.expectChange("selected", [, null]);
+		}
+
+		let oPromise;
+		switch (sMethod) {
+			case "refresh":
+				oPromise = oListBinding.requestRefresh();
+				break;
+			case "requestSideEffects":
+				oPromise = oListBinding.getHeaderContext().requestSideEffects([""]);
+				break;
+			case "sort":
+				oListBinding.sort(new Sorter("SalesOrderID"));
+				break;
+			default:
+				oListBinding.changeParameters({$orderby : "SalesOrderID"});
+		}
+
+		await Promise.all([
+			oPromise,
+			this.waitForChanges(assert, sMethod)
+		]);
+
+		if (sMethod === "requestSideEffects") {
+			checkTable("Final state", assert, oTable, [
+				"/SalesOrderList('4')",
+				"/SalesOrderList('3')",
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList('1')"
+			], [
+				["4", "SO 4 (foo) - created persisted", "Yes"],
+				["3", "SO 3 (bar) - created persisted", "Yes"],
+				["", "SO 2 (n/a) - transient", "Yes"],
+				["1", "SO 1 (foo)", ""]
+			]);
+		} else {
+			checkTable("Final state", assert, oTable, [
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList('1')",
+				"/SalesOrderList('4')"
+			], [
+				["", "SO 2 (n/a) - transient", "Yes"],
+				["1", "SO 1 (foo)", ""],
+				["4", "SO 4 (foo) - created persisted", "Yes"]
+			]);
+		}
+		checkSelected(assert, oContextSO2, true);
+		if (sMethod === "requestSideEffects") {
+			checkSelected(assert, oContextSO3, true);
+		} else {
+			assert.strictEqual(oContextSO3.getBinding(), undefined, "destroyed");
+		}
+		checkSelected(assert, oContextSO4, true);
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Select some contexts in a filtered and sorted list, change data for one so that
 	// it no longer matches the filter. Call ODLB#requestSelectedContexts to see that the one
 	// is not returned but others are updated. Do it w/ & w/o auto-$expand/$select. Dito for
