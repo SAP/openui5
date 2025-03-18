@@ -428,7 +428,7 @@ sap.ui.define([
 		}
 
 		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
-			if (!containsOrEquals(this.getDomRef(), oEvent.target) && !containsOrEquals(StaticArea.getDomRef(), oEvent.target) && !isInControlTree(this, Element.closestTo(oEvent.target))) {
+			if (!containsOrEquals(this.getDomRef(), oEvent.target) && !containsOrEquals(this._oPopover.getDomRef(), oEvent.target) && !isInControlTree(this, Element.closestTo(oEvent.target))) {
 				this.close();
 			}
 		}

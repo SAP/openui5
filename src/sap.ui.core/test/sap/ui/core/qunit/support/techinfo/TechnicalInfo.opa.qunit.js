@@ -8,11 +8,12 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/I18NText",
-	"sap/ui/model/resource/ResourceModel"
-], function (Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, ResourceModel) {
+	"sap/ui/model/resource/ResourceModel",
+	"require"
+], function (Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, ResourceModel, require) {
 	"use strict";
 
-	var sTestPageURL = sap.ui.require.toUrl("static/TechnicalInfoTestbench.html"),
+	var sTestPageURL = require.toUrl("./fixture/TechnicalInfoTestbench.html"),
 		sOpenUI5NightlyKey = "https://sdk.openui5.org/nightly/resources/sap/ui/support/";
 
 	Opa5.extendConfig({

@@ -120,6 +120,17 @@ sap.ui.define([
 						 */
 						item: { type: "sap.ui.core.Item" }
 					}
+				},
+				/**
+				 * Fired when an item is pressed.
+				 */
+				itemPressed: {
+					parameters: {
+						/**
+						 * The pressed item.
+						 */
+						item: { type: "sap.ui.core.Item" }
+					}
 				}
 			}
 		},
@@ -467,6 +478,11 @@ sap.ui.define([
 	NavigationList.prototype._selectItem = function (oParams) {
 		this.fireItemSelect(oParams);
 		this.setSelectedItem(oParams.item);
+	};
+
+
+	NavigationList.prototype._itemPressHandler = function (oParams) {
+		this.fireItemPressed(oParams);
 	};
 
 	NavigationList.prototype._findItemByKey = function (sKey) {

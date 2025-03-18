@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/m/Dialog",
+	"sap/m/MessageToast",
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/tnt/library"
-], function (Device, Controller, JSONModel, Popover, Button, Dialog, Text, library, tntLibrary) {
+], function (Device, Controller, JSONModel, Popover, Button, Dialog, MessageToast, Text, library, tntLibrary) {
 	"use strict";
 
 	var ButtonType = library.ButtonType,
@@ -26,6 +27,12 @@ sap.ui.define([
 		onItemSelect: function (oEvent) {
 			var oItem = oEvent.getParameter("item");
 			this.byId("pageContainer").to(this.getView().createId(oItem.getKey()));
+		},
+
+		onItemPressed: function (oEvent) {
+			const oItem = oEvent.getParameter("item"),
+				sText = oItem.getText();
+			MessageToast.show(`Fired itemPressed, item: ${sText}`);
 		},
 
 		handleUserNamePress: function (event) {

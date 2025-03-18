@@ -64,13 +64,13 @@ sap.ui.define([
 		WrappingType = library.WrappingType,
 		URLHelper = library.URLHelper,
 		DEFAULT_BG_COLOR;
-		//Loading the default background color asynchronously if the given color is not initially loaded
-		DEFAULT_BG_COLOR = Parameters.get({
-			name: "sapLegendColor9",
-			callback: function (params) {
-				DEFAULT_BG_COLOR = params;
-			}
-		});
+	//Loading the default background color asynchronously if the given color is not initially loaded
+	DEFAULT_BG_COLOR = Parameters.get({
+		name: "sapLegendColor9",
+		callback: function (params) {
+			DEFAULT_BG_COLOR = params;
+		}
+	});
 
 	var DEVICE_SET = "GenericTileDeviceSet";
 	var keyPressed = {};
@@ -513,11 +513,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-		GenericTile.prototype.onThemeChanged = function() {
-		if (this.getDomRef() && this.getRenderOnThemeChange()) {
-			this.invalidate();
-		}
-	};
+	GenericTile.prototype.onThemeChanged = function() {
+	if (this.getDomRef() && this.getRenderOnThemeChange()) {
+		this.invalidate();
+	}
+};
 
 	/**
 	 * Creates the content specific for the given scope in order for it to be rendered, if it does not exist already.
@@ -943,11 +943,11 @@ sap.ui.define([
 	 * @private
 	 */
 
-	 GenericTile.prototype._handleResizeOnTile = function () {
-		if (this._isIconMode() && this.getFrameType() === FrameType.OneByOne) {
-				this._handleResizeOnIconTile();
-		}
-	};
+	GenericTile.prototype._handleResizeOnTile = function () {
+	   if (this._isIconMode() && this.getFrameType() === FrameType.OneByOne) {
+			   this._handleResizeOnIconTile();
+	   }
+   };
 
 	/**
 	 *Adjusts the alignment inside the IconMode tiles when its width is getting changed
@@ -1709,28 +1709,28 @@ sap.ui.define([
 	 * @returns {string} Text for the size description
 	 * @private
 	 */
-	 GenericTile.prototype._getSizeDescription = function () {
-		var sText = "",
-			frameType = this.getFrameType();
-		if (this.getMode() === GenericTileMode.LineMode) {
-			var bIsLink = this.getUrl() && !this._isInActionScope() && this.getState() !== LoadState.Disabled;
-			var bHasPress = this.hasListeners("press");
-			if (bIsLink || bHasPress) {
-				sText = "GENERIC_TILE_LINK";
-			} else {
-				sText = "GENERIC_TILE_LINE_SIZE";
-			}
-		} else if (frameType === FrameType.OneByHalf) {
-			sText = "GENERIC_TILE_FLAT_SIZE";
-		} else if (frameType === FrameType.TwoByHalf) {
-			sText = "GENERIC_TILE_FLAT_WIDE_SIZE";
-		} else if (frameType === FrameType.TwoByOne) {
-			sText = "GENERIC_TILE_WIDE_SIZE";
-		} else if (frameType === FrameType.OneByOne) {
-			sText = "GENERIC_TILE_ROLE_DESCRIPTION";
-		}
-		return this._oRb.getText(sText);
-	};
+	GenericTile.prototype._getSizeDescription = function () {
+	   var sText = "",
+		   frameType = this.getFrameType();
+	   if (this.getMode() === GenericTileMode.LineMode) {
+		   var bIsLink = this.getUrl() && !this._isInActionScope() && this.getState() !== LoadState.Disabled;
+		   var bHasPress = this.hasListeners("press");
+		   if (bIsLink || bHasPress) {
+			   sText = "GENERIC_TILE_LINK";
+		   } else {
+			   sText = "GENERIC_TILE_LINE_SIZE";
+		   }
+	   } else if (frameType === FrameType.OneByHalf) {
+		   sText = "GENERIC_TILE_FLAT_SIZE";
+	   } else if (frameType === FrameType.TwoByHalf) {
+		   sText = "GENERIC_TILE_FLAT_WIDE_SIZE";
+	   } else if (frameType === FrameType.TwoByOne) {
+		   sText = "GENERIC_TILE_WIDE_SIZE";
+	   } else if (frameType === FrameType.OneByOne) {
+		   sText = "GENERIC_TILE_ROLE_DESCRIPTION";
+	   }
+	   return this._oRb.getText(sText);
+   };
 
 	/**
 	 * Returns text for tooltip or null.
@@ -1822,9 +1822,9 @@ sap.ui.define([
 	 * @return {boolean} true if the tile is in action scope,IconMode and in TwoByHalf frameType
 	 * @private
 	 */
-	 GenericTile.prototype._isActionMoreButtonVisibleIconMode = function (oEvent)  {
-		return (this.getScope() === GenericTileScope.ActionMore || this.getScope() === GenericTileScope.Actions) && this._isIconModeOfTypeTwoByHalf() && oEvent.target.id.indexOf("-action-more") > -1;
-	};
+	GenericTile.prototype._isActionMoreButtonVisibleIconMode = function (oEvent)  {
+	   return (this.getScope() === GenericTileScope.ActionMore || this.getScope() === GenericTileScope.Actions) && this._isIconModeOfTypeTwoByHalf() && oEvent.target.id.indexOf("-action-more") > -1;
+   };
 
 	/**
 	 * Generates text for failed state.
@@ -1851,29 +1851,6 @@ sap.ui.define([
 			return true;
 		} else {
 			return false;
-		}
-	};
-
-	/**
-	 * Returns true if header text is truncated, otherwise false.
-	 *
-	 * @private
-	 * @returns {boolean} true or false
-	 */
-	GenericTile.prototype._isHeaderTextTruncated = function () {
-		var oDom, iMaxHeight, $Header, iWidth;
-		if (this.getMode() === GenericTileMode.LineMode) {
-			$Header = this.$("hdr-text");
-			if ($Header.length > 0) {
-				iWidth = Math.ceil($Header[0].getBoundingClientRect().width);
-				return ($Header[0] && iWidth < $Header[0].scrollWidth);
-			} else {
-				return false;
-			}
-		} else {
-			oDom = this.getAggregation("_titleText").getDomRef("inner");
-			iMaxHeight = 0;
-			return (iMaxHeight < oDom.scrollHeight);
 		}
 	};
 
@@ -2032,36 +2009,36 @@ sap.ui.define([
 	 * @returns {string} Returns the icon hidden aggregation
 	 * @private
 	 */
-	 GenericTile.prototype._generateIconAggregation = function (oIcon) {
-		var sAggregation = "";
-		this._oIcon = IconPool.createControlByURI({
-			size: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
-			useIconTooltip: false,
-			src: oIcon
-		});
-		if (!this._oIcon) {
-			this._oIcon = IconPool.createControlByURI({
-				height: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
-				width: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
-				useIconTooltip: false,
-				src: oIcon
-			}, Image).addStyleClass("sapMPointer").addStyleClass("sapMGTTileIcon");
-		}
-		this._oIcon.addStyleClass("sapMPointer").addStyleClass("sapMGTTileIcon");
+	GenericTile.prototype._generateIconAggregation = function (oIcon) {
+	   var sAggregation = "";
+	   this._oIcon = IconPool.createControlByURI({
+		   size: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
+		   useIconTooltip: false,
+		   src: oIcon
+	   });
+	   if (!this._oIcon) {
+		   this._oIcon = IconPool.createControlByURI({
+			   height: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
+			   width: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
+			   useIconTooltip: false,
+			   src: oIcon
+		   }, Image).addStyleClass("sapMPointer").addStyleClass("sapMGTTileIcon");
+	   }
+	   this._oIcon.addStyleClass("sapMPointer").addStyleClass("sapMGTTileIcon");
 
-		//Add Icon or Image as hidden Aggregation
-		if (this._oIcon instanceof Image) {
-			sAggregation = "_tileIconImage";
-		} else if (this._oIcon instanceof Icon) {
-			sAggregation = "_tileIcon";
-		}
+	   //Add Icon or Image as hidden Aggregation
+	   if (this._oIcon instanceof Image) {
+		   sAggregation = "_tileIconImage";
+	   } else if (this._oIcon instanceof Icon) {
+		   sAggregation = "_tileIcon";
+	   }
 
-		if (sAggregation) {
-			this.setAggregation(sAggregation, this._oIcon);
-		}
+	   if (sAggregation) {
+		   this.setAggregation(sAggregation, this._oIcon);
+	   }
 
-		return sAggregation;
-	};
+	   return sAggregation;
+   };
 
 	/**
 	 * Checks if Current Tile is in IconMode, FrameType is OneByOne or TwoByHalf, backgroundColor, TileIcon Properties are set.
@@ -2085,9 +2062,9 @@ sap.ui.define([
 	 * @returns {boolean} - true if Navigate Action Button is enabled
 	 * @private
 	 */
-GenericTile.prototype._isNavigateActionEnabled = function() {
-		return this.getMode() === GenericTileMode.ArticleMode && this.getUrl() && this.getEnableNavigationButton();
-	};
+	GenericTile.prototype._isNavigateActionEnabled = function() {
+			return this.getMode() === GenericTileMode.ArticleMode && this.getUrl() && this.getEnableNavigationButton();
+		};
 
 	/**
 	 * Applies new dimensions for the GenericTile if it is inscribed inside a GridContainer

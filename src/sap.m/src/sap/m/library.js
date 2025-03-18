@@ -444,7 +444,6 @@ sap.ui.define([
 		  "sap.m.TileInfo",
 		  "sap.m.upload.FilePreviewDialog",
 		  "sap.m.upload.UploaderTableItem",
-		  "sap.m.upload.FilePreviewDialog",
 		  "sap.m.VariantItem",
 		  "sap.m.ViewSettingsCustomItem",
 		  "sap.m.ViewSettingsCustomTab",
@@ -6148,7 +6147,6 @@ sap.ui.define([
 	 DataType.registerEnum("sap.m.UploadState", thisLib.UploadState);
 	 DataType.registerEnum("sap.m.UploadType", thisLib.UploadType);
 	 DataType.registerEnum("sap.m.ValueColor", thisLib.ValueColor);
-	 DataType.registerEnum("sap.m.ValueCSSColor", thisLib.ValueCSSColor);
 	 DataType.registerEnum("sap.m.VerticalPlacementType", thisLib.VerticalPlacementType);
 	 DataType.registerEnum("sap.m.WrappingType", thisLib.WrappingType);
 	 DataType.registerEnum("sap.m.SinglePlanningCalendarSelectionMode", thisLib.SinglePlanningCalendarSelectionMode);

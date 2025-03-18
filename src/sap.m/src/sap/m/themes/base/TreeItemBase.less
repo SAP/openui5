@@ -4,21 +4,21 @@
 /* =================================== */
 
 .sapMTreeItemBase {
-	min-height: @sapUiElementHeight;
-	font-family: @sapUiFontFamily;
+	min-height: var(--sapElement_Height);
+	font-family: var(--sapFontFamily);
 	font-size: @sapMFontMediumSize;
 	padding-left: 0;
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 	padding-top: 0.25rem;
 	padding-bottom: 0.25rem;
 }
 
 .sapMTreeItemBaseExpander {
-	width: @sapUiElementLineHeight;
-	height: @sapUiElementHeight;
-	line-height: @sapUiElementHeight;
+	width: var(--sapElement_LineHeight);
+	height: var(--sapElement_Height);
+	line-height: var(--sapElement_Height);
 	font-size: 1rem;
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 	flex-shrink: 0;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .sapMLIBActive .sapMTreeItemBaseExpander {
-	color: @sapUiListActiveTextColor;
+	color: var(--sapList_Active_TextColor);
 }
 
 .sapMListHighlight .sapMTreeItemBaseExpander {
@@ -36,7 +36,7 @@
 }
 
 .sapMTreeItemBaseChildren {
-	background-color: @sapUiListAlternatingBackground;
+	background-color: var(--sapList_AlternatingBackground);
 	border-bottom-color: transparent;
 }
 

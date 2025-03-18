@@ -1919,13 +1919,6 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.VBox"
 			},
 
-			ValueCSSColor: {
-				title: "Test Page for sap.m.ValueCSSColor",
-				ui5: {
-					language: "en"
-				}
-			},
-
 			ValueStateMessage: {
 				title: "Test page for sap.m.delegate.ValueStateMessage",
 				sinon: {

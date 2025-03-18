@@ -16,9 +16,6 @@
 (function(__global) {
 	"use strict";
 
-	// remember original setTimeout for task splitting to avoid clashes using sinon.useFakeTimers()
-	const setTimeout = __global.setTimeout;
-
 	/*
 	 * Helper function that removes any query and/or hash parts from the given URL.
 	 *
@@ -395,6 +392,9 @@
 		}
 	}
 
+	// remember original setTimeout for task splitting to avoid clashes using sinon.useFakeTimers()
+	const nativeSetTimeout = __global.setTimeout;
+
 	function waitForNextTask() {
 		if ( pWaitForNextTask == null ) {
 			/**
@@ -407,7 +407,7 @@
 					oNextTaskMessageChannel.port2.start();
 				}
 				oNextTaskMessageChannel.port2.addEventListener("message", function() {
-					setTimeout(function() {
+					nativeSetTimeout(function() {
 						pWaitForNextTask = null;
 						iMaxTaskTime = Date.now() + iMaxTaskDuration;
 						resolve();

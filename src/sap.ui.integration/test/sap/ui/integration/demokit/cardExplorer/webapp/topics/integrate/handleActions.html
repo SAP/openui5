@@ -43,16 +43,16 @@ sap.ui.define([
 
 	return Controller.extend("hostController", {
 		onInit: function () {
-			var oHost = new Host({
+			const oHost = new Host({
 				action: this.onAction.bind(this)
 			});
 			this.byId("card1").setHost(oHost);
 			this.byId("card2").setHost(oHost);
 		},
 		onAction: function (oEvent) {
-			var sType = oEvent.getParameter("type"); // The type of the action. One of "Navigation", "Submit", "Custom", etc.
-			var oParameters = oEvent.getParameter("parameters"); // The action parameters. The different actions types have different parameters
-			var bHandled = false; // Flag indicating if the action is handled
+			const sType = oEvent.getParameter("type"); // The type of the action. One of "Navigation", "Submit", "Custom", etc.
+			const oParameters = oEvent.getParameter("parameters"); // The action parameters. The different actions types have different parameters
+			const bHandled = false; // Flag indicating if the action is handled
 
 			if (sType === integrationLibrary.CardActionType.Navigation) {
 				// handle Navigation action
@@ -88,26 +88,27 @@ sap.ui.define([
 			</p>
 			<p>
 				This example shows how intent-based navigation can be handled in the context of SAP Fiori Launchpad,
-				with the help of <a data-demokit-href="#/api/sap.ushell.services.CrossApplicationNavigation" target="_blank">sap.ushell.services.CrossApplicationNavigation</a>.
+				with the help of <a data-demokit-href="#/api/sap.ushell.services.Navigation" target="_blank">sap.ushell.services.Navigation</a>.
 			</p>
 			<pre class="lang-js">
 ...
+// Container required from "sap/ushell/Container"
 onAction: function (oEvent) {
-	var sType = oEvent.getParameter("type");
+	const sType = oEvent.getParameter("type");
 
 	// handle Navigation action
 	if (sType !== integrationLibrary.CardActionType.Navigation) {
 		return;
 	}
 
-	var oParameters = oEvent.getParameter("parameters");
+	const oParameters = oEvent.getParameter("parameters");
 
 	if (oParameters.ibnTarget) {
 		oEvent.preventDefault(); // as the action will be handled by the host, prevent its default behavior
 
 		// possible variant how to perform intent-based navigation
-		sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (CrossApplicationNavigationService) {
-			CrossApplicationNavigationService.toExternal({
+		Container.getServiceAsync("Navigation").then(function (NavigationService) {
+			NavigationService.navigate({
 				target: oParameters.ibnTarget,
 				params: oParameters.ibnParams
 			});

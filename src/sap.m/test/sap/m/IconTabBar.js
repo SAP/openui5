@@ -1121,7 +1121,6 @@ sap.ui.define([
 						icon: "sap-icon://attachment",
 						count: "50 / 934679035648 long counter",
 						design: IconTabFilterDesign.Horizontal,
-						iconColor: IconColor.Negative,
 						text: "Short text",
 						key: "key3"
 					}),
@@ -1361,25 +1360,25 @@ sap.ui.define([
 				headerMode: "Inline",
 				items: [
 					new IconTabFilter({
-						text: "Tab1",
+						text: "Tab1 Neutral",
 						iconColor: IconColor.Neutral
 					}),
 					new IconTabSeparator(),
 					new IconTabFilter({
-						text: "Tab2",
+						text: "Tab2 Critical",
 						iconColor: IconColor.Critical
 					}),
 					new IconTabFilter({
-						text: "Tab3",
+						text: "Tab3 Positive",
 						iconColor: IconColor.Positive
 					}),
 					new IconTabFilter({
-						text: "Tab4",
+						text: "Tab4 Default",
 						iconColor: IconColor.Default
 					}),
 					new IconTabFilter({
-						text: "Tab5",
-						iconColor: IconColor.Positive
+						text: "Tab5 Negative",
+						iconColor: IconColor.Negative
 					})
 				]
 			}),

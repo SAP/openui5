@@ -206,7 +206,9 @@ sap.ui.define([
 		}
 
 		this._configureKeyboardHandling();
-		this._setMinWidth();
+		if (!this._bInOverflow) {
+			this._setMinWidth();
+		}
 
 		this.bRenderingPhase = false;
 	};
@@ -878,13 +880,19 @@ sap.ui.define([
 				return "Medium";
 			},
 			invalidationEvents: ["_minWidthChange"],
+			onBeforeEnterOverflow: this._onBeforeEnterOverflow.bind(this),
 			onAfterExitOverflow: this._onAfterExitOverflow.bind(this)
 		};
 
 		return oConfig;
 	};
 
+	Breadcrumbs.prototype._onBeforeEnterOverflow = function () {
+		this._bInOverflow = true;
+	};
+
 	Breadcrumbs.prototype._onAfterExitOverflow = function () {
+		this._bInOverflow = false;
 		this._resetControl();
 	};
 

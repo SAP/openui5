@@ -209,7 +209,7 @@ sap.ui.define(
 								return {
 									key: sFile,
 									name: sFile,
-									editable: !!(sFile.endsWith(".xml") || sFile.endsWith(".js")
+									editable: !!(sFile.endsWith(".xml") || sFile.endsWith(".js") || sFile === "manifest.json"
 										|| (aAdditionalEditableFiles && aAdditionalEditableFiles.indexOf(sFile) > -1)),
 									url: sap.ui.require.toUrl((oSample.id).replace(/\./g, "/")) + "/" + sFile
 								};

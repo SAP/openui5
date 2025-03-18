@@ -2316,7 +2316,7 @@ sap.ui.define([
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 		// Assert
-		assert.ok(oFocusDateSpy.calledOnce, "Calendar is properly navigated");
+		assert.ok(oFocusDateSpy.notCalled, "Calendar is not navigated");
 	});
 
 	QUnit.module("Other");

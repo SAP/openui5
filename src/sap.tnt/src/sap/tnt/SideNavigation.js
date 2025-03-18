@@ -108,6 +108,17 @@ sap.ui.define([
 						 */
 						item: { type: "sap.ui.core.Item" }
 					}
+				},
+				/**
+				 * Fired when an item is pressed.
+				 */
+				itemPressed: {
+					parameters: {
+						/**
+						 * The pressed item.
+						 */
+						item: { type: "sap.ui.core.Item" }
+					}
 				}
 			}
 		},
@@ -118,6 +129,10 @@ sap.ui.define([
 	SideNavigation.prototype.setAggregation = function (aggregationName, oObject) {
 		if (oObject && oObject.attachItemSelect) {
 			oObject.attachItemSelect(this._itemSelectionHandler.bind(this));
+		}
+
+		if (oObject && oObject.attachItemPressed) {
+			oObject.attachItemPressed(this._itemPressHandler.bind(this));
 		}
 
 		return Control.prototype.setAggregation.apply(this, arguments);
@@ -257,6 +272,14 @@ sap.ui.define([
 		this.setSelectedItem(oItem);
 
 		this.fireItemSelect({
+			item: oItem
+		});
+	};
+
+	SideNavigation.prototype._itemPressHandler = function (oEvent) {
+		const oItem = oEvent.getParameter("item");
+
+		this.fireItemPressed({
 			item: oItem
 		});
 	};

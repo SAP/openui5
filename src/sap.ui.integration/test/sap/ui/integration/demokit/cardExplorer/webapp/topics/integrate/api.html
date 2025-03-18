@@ -128,10 +128,10 @@ onConfigurationChangeLog: function (oEvent) {
 
 					<b>When using UI5</b>
 					<pre class="lang-js">
-var oCard = new Card();
+const oCard = new Card();
 // This manifest expects a city parameter to render a card with information for that city.
 oCard.setManifest("./manifest.json");
-var oParameters = {
+const oParameters = {
 	"city": "Walldorf, DE"
 };
 oCard.setParameters(oParameters);
@@ -139,10 +139,10 @@ oCard.setParameters(oParameters);
 
 					<b>When using &lt;ui-integration-card&gt; custom element</b>
 					<pre class="lang-js">
-var parameters = {
+const parameters = {
 	"city": "Walldorf, DE"
 };
-var card = document.createElement("ui-integration-card");
+const card = document.createElement("ui-integration-card");
 card.setAttribute("id", "myCard");
 card.setAttribute("manifest", "./some/location/my/card/manifest.json");
 card.setAttribute("parameters", JSON.stringify(parameters));
@@ -171,7 +171,7 @@ document.body.appendChild(card);
 					<b>When using UI5</b>
 					<pre class="lang-js">
 // Make card inactive for 10 seconds
-var oCard = Element.getElementById("myCard");
+const oCard = Element.getElementById("myCard");
 oCard.setDataMode("Inactive");
 setTimeout(function () {
 	oCard.setDataMode("Active");
@@ -181,10 +181,10 @@ setTimeout(function () {
 					<b>When using &lt;ui-integration-card&gt; custom element</b>
 					<pre class="lang-js">
 // Make card inactive for 10 seconds
-var card = document.getElementById("myCard");
-card.dataset.mode = "Inactive";
+const card = document.getElementById("myCard");
+card.dataMode = "Inactive";
 setTimeout(function () {
-	card.dataset.mode = "Inactive";
+	card.dataMode = "Active";
 }, 10000);
 </pre>
 
@@ -209,7 +209,7 @@ oCard.refresh();
 					<b>When using &lt;ui-integration-card&gt; custom element</b>
 					<pre class="lang-js">
 customElements.whenDefined("ui-integration-card").then(function () {
-	var oCard = document.getElementById("myCard");
+	const oCard = document.getElementById("myCard");
 	oCard.refresh();
 });
 </pre>
@@ -232,7 +232,7 @@ oCard.refreshData();
 			<b>When using &lt;ui-integration-card&gt; custom element</b>
 			<pre class="lang-js">
 customElements.whenDefined("ui-integration-card").then(function () {
-	var oCard = document.getElementById("myCard");
+	const oCard = document.getElementById("myCard");
 	oCard.refreshData();
 });
 </pre>

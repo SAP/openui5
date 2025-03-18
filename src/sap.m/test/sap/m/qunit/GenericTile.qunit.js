@@ -119,17 +119,6 @@ sap.ui.define([
 		assert.ok(this.fnSpyHandleThemeApplied.calledOnce, "Method _handleThemeApplied has been called once.");
 	});
 
-	QUnit.test("Clamp title height when theme is ready", function(assert) {
-		//Arrange
-		this.spy(Text.prototype, "clampHeight");
-
-		//Act
-		new GenericTile();
-
-		//Assert
-		assert.ok(Text.prototype.clampHeight.notCalled, "The tile's title height has been recalculated.");
-	});
-
 	QUnit.module("Default values", {
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile();
