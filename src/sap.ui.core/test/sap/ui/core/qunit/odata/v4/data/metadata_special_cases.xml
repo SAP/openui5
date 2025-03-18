@@ -123,6 +123,8 @@
 				<Property Name="RegionName" Type="Edm.String"/>
 				<Property Name="RegionID" Type="Edm.Int16"/>
 				<Property Name="ZIP" Type="Edm.String" MaxLength="5" />
+				<Property Name="GeoFence" Type="Edm.GeographyPolygon"/>
+				<Property Name="GeoLocation" Type="Edm.GeographyPoint"/>
 			</ComplexType>
 			<ComplexType Name="ComplexKey">
 				<Property Name="P1" Type="Edm.String"/>
