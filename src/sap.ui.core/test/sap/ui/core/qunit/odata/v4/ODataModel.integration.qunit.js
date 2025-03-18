@@ -48061,7 +48061,7 @@ make root = ${bMakeRoot}`;
 				payload : {
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
 				},
-				url : "$0"
+				url : "$-1" // Note: "$-1" references the previous request
 			}) // 204 No Content
 			.expectRequest({
 				batchNo : 2,

@@ -292,7 +292,11 @@ sap.ui.define([
 				if (iChangeSetIndex !== undefined && sUrl[0] === "$") {
 					// adjust URL if it starts with a Content-ID reference by adding the change set
 					// index
-					sUrl = sUrl.replace(rContentIdReference, "$&." + iChangeSetIndex);
+					if (sUrl === "$-1") { // reference the previous request
+						sUrl = "$" + (iRequestIndex - 1) + "." + iChangeSetIndex;
+					} else {
+						sUrl = sUrl.replace(rContentIdReference, "$&." + iChangeSetIndex);
+					}
 				}
 
 				aRequestBody = aRequestBody.concat(

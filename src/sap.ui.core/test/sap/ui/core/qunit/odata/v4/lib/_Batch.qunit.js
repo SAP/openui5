@@ -345,6 +345,13 @@ sap.ui.define([
 				},
 				body : oNewEmployeeBody
 			}, {
+				method : "PATCH",
+				url : "$-1",
+				headers : {
+					"Content-Type" : "application/json"
+				},
+				body : {AGE : 18}
+			}, {
 				method : "DELETE",
 				// Note: This is unrealistic as key predicates use encodeURIComponent and entity set
 				// names cannot contain a dollar, but still we should not confuse it with a
@@ -362,7 +369,7 @@ sap.ui.define([
 				}
 			}
 		],
-		$ContentIDs : [["0.0", "1.0"], ["0.1", "1.1", "2.1", "3.1"]],
+		$ContentIDs : [["0.0", "1.0"], ["0.1", "1.1", "2.1", "3.1", "4.1"]],
 		body : "--batch_id-1450426018742-911\r\n"
 		+ "Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-912\r\n"
 		+ "\r\n"
@@ -429,6 +436,15 @@ sap.ui.define([
 		+ "Content-Type:application/http\r\n"
 		+ "Content-Transfer-Encoding:binary\r\n"
 		+ "Content-ID:3.1\r\n"
+		+ "\r\n"
+		+ "PATCH $2.1 HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ "{\"AGE\":18}\r\n"
+		+ "--changeset_id-1450426018742-913\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:4.1\r\n"
 		+ "\r\n"
 		+ "DELETE $TEAMS('$1') HTTP/1.1\r\n"
 		+ "Content-Type:application/json\r\n"
