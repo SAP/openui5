@@ -44,7 +44,7 @@ sap.ui.define([
 	 */
 	var NavigationListMenuItem = MenuItem.extend("sap.tnt.NavigationListMenuItem", /** @lends sap.ui.unified.MenuItem.prototype */ { metadata : {
 
-		library : "sap.ui.unified",
+		library : "sap.tnt",
 		properties : {
 			/**
 			 * Defines the text which should be displayed on the item.

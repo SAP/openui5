@@ -2,7 +2,7 @@
 	"selectedKey": "page2",
 	"navigation": [
 		{
-			"title": "Root Item",
+			"title": "Root Item 1",
 			"icon": "sap-icon://employee",
 			"expanded": true,
 			"key": "root1",
@@ -18,133 +18,133 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 2",
 			"icon": "sap-icon://building",
 			"key": "root2"
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 3",
 			"icon": "sap-icon://card",
 			"expanded": false,
 			"items": [
 				{
-					"title": "Child Item"
+					"title": "Child Item 1"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 2"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 3"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 4"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 5"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 6"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 7"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 8"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 9"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 10"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 11"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 12"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 13"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 14"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 15"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 16"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 17"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 18"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 19"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 20"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 21"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 22"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 23"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 24"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 25"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 26"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 27"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 28"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 29"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 30"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 31"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 32"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 33"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 34"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 35"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 36"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 37"
 				},
 				{
-					"title": "Child Item"
+					"title": "Child Item 38"
 				}
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 4",
 			"icon": "sap-icon://action",
 			"expanded": false,
 			"items": [
@@ -160,7 +160,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 5",
 			"icon": "sap-icon://action-settings",
 			"expanded": false,
 			"items": [
@@ -176,7 +176,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 6",
 			"icon": "sap-icon://activate",
 			"expanded": false,
 			"items": [
@@ -192,7 +192,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 7",
 			"icon": "sap-icon://activities",
 			"expanded": false,
 			"items": [
@@ -208,7 +208,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 8",
 			"icon": "sap-icon://add",
 			"expanded": false,
 			"items": [
@@ -224,7 +224,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 9",
 			"icon": "sap-icon://arobase",
 			"expanded": false,
 			"items": [
@@ -240,7 +240,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 10",
 			"icon": "sap-icon://attachment",
 			"expanded": false,
 			"items": [
@@ -256,7 +256,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 11",
 			"icon": "sap-icon://badge",
 			"expanded": false,
 			"items": [
@@ -272,7 +272,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 12",
 			"icon": "sap-icon://basket",
 			"expanded": false,
 			"items": [
@@ -288,7 +288,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 13",
 			"icon": "sap-icon://bed",
 			"expanded": false,
 			"items": [
@@ -304,7 +304,7 @@
 			]
 		},
 		{
-			"title": "Root Item",
+			"title": "Root Item 14",
 			"icon": "sap-icon://bookmark",
 			"expanded": false,
 			"items": [
