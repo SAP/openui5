@@ -897,6 +897,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
+		before : function () {
+			Messaging.removeAllMessages(); // for #expectMessage, we should have a clean start
+		},
+
 		beforeEach : function (assert) {
 			if (iTestTimeout) {
 				assert.timeout(iTestTimeout);
