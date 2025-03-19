@@ -26838,4 +26838,66 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			["", ""]
 		]);
 	});
+
+	//*********************************************************************************************
+	// Scenario: The value of a composite binding should be parsed to 0 instead of null for empty values, if
+	// the numeric type part (i.e. the amount) does have the parseEmtpyValueToZero=true format option and the
+	// constraint nullable=false.
+	// SNOW: DINC0414289, DINC0424927
+[
+	{sType: "Currency", sCode: "EUR", sCustomizingPath: "requestCurrencyCodes", sRequestPath: "SAP__Currencies"},
+	{sType: "Unit", sCode: "KG", sCustomizingPath: "requestUnitsOfMeasure", sRequestPath: "SAP__UnitsOfMeasure"}
+].forEach(({sType, sCode, sCustomizingPath, sRequestPath}) => {
+	QUnit.test(`odata.type.${sType}: Parse empty value to 0 instead of null`, async function (assert) {
+		const oModel = createSalesOrdersModel({defaultBindingMode: "TwoWay"});
+		const sView = `
+	<FlexBox id="form" binding="{/SalesOrderSet('1')}">
+		<Input id="grossAmount"
+			value="{
+				formatOptions: {showMeasure: false},
+				parts: [{
+					constraints: {scale: 'variable', nullable: false},
+					formatOptions: {parseEmptyValueToZero: true},
+					path: 'GrossAmount',
+					type: 'sap.ui.model.odata.type.Decimal'
+				}, {
+					path: 'CurrencyCode',
+					type: 'sap.ui.model.odata.type.String'
+				}, {
+					mode: 'OneTime',
+					path: '/##@@${sCustomizingPath}',
+					targetType: 'any'
+				}],
+				mode: 'TwoWay',
+				type: 'sap.ui.model.odata.type.${sType}'
+			}"
+		/>
+	</FlexBox>`;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+					GrossAmount: "50",
+					CurrencyCode: sCode
+			})
+			.expectRequest(`${sRequestPath}?sap-language=EN&$skip=0&$top=5000`, {
+				results: [{
+					...(sType === "Unit" ? {ExternalCode: sCode} : {CurrencyCode: sCode}),
+					DecimalPlaces: 2,
+					ISOCode: sCode,
+					Text: "FooBar"
+				}]
+			})
+			.expectValue("grossAmount", "50.00");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectValue("grossAmount", "0.00")
+			.expectValue("grossAmount", "0.00");
+
+		// code under test
+		this.oView.byId("grossAmount").setValue("");
+
+		await this.waitForChanges(assert);
+	});
+});
 });
