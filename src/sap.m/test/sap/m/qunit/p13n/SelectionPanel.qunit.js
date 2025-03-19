@@ -244,6 +244,7 @@ sap.ui.define([
 		//Arrange
 		this.oSelectionPanel.setP13nData(this.getTestData());
 		var oUpdateEnableOfMoveButtonsSpy = sinon.spy(this.oSelectionPanel, "_updateEnableOfMoveButtons");
+		var oAddMoveButtonsSpy = sinon.spy(this.oSelectionPanel, "_addMoveButtons");
 
 		var oClearAllCell = this.oSelectionPanel.getAggregation("_content").getItems()[0].getDomRef("tblHeadModeCol");
 
@@ -256,7 +257,7 @@ sap.ui.define([
 		//Assert
 		//Focus was set to "false"
 		assert.ok(oUpdateEnableOfMoveButtonsSpy.calledWith(sinon.match.any, false), "Focus was not changed");
-		assert.ok(this.oSelectionPanel._oHoveredItem === undefined, "No hovered item set");
+		assert.ok(oAddMoveButtonsSpy.notCalled, "Focus was not changed");
 		assert.equal(oFocusedControl, oNewFocusedControl, "Focused control stayed the same");
 	});
 
@@ -280,7 +281,7 @@ sap.ui.define([
 		assert.ok(!oHoveredItem.getCells()[1].getItems()[0].getVisible(), "active icon is not visible");
 	});
 
-	QUnit.test("Check '_handleActivated' for deselction and icon", function(assert){
+	QUnit.test("Check '_handleActivated' for deselection and icon", function(assert){
 		this.oSelectionPanel.setP13nData(this.getTestData());
 
 		var oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
@@ -309,6 +310,101 @@ sap.ui.define([
 		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveUpButton()) === -1, "Move Up Button found");
 		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveDownButton()) === -1, "Move Down Button found");
 		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oSelectionPanel._getMoveBottomButton()) === -1, "Move Bottom Button found");
+	});
+
+	QUnit.test("Check '_handleActivated' (remove buttons) works for new hovered item", function(assert){
+		// arrange
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		const oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
+
+		const oSpyRemoveButtons = sinon.spy(this.oSelectionPanel, "_removeMoveButtons");
+
+		// act
+		this.oSelectionPanel._oHoveredItem = this.oSelectionPanel._oListControl.getItems()[0];
+		this.oSelectionPanel._handleActivated(oHoveredItem);
+
+		// assert
+		assert.ok(oSpyRemoveButtons.called, "Buttons were removed");
+
+		// cleanup
+		oSpyRemoveButtons.restore();
+	});
+
+	QUnit.test("Check '_handleActivated' (remove buttons) works for deselected item", function(assert){
+		// arrange
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		const oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
+
+		const oSpyRemoveButtons = sinon.spy(this.oSelectionPanel, "_removeMoveButtons");
+		const oSpyGetMultiSelectControl = sinon.stub(oHoveredItem, "getMultiSelectControl").returns({
+			getEnabled: () => true,
+			getSelected: () => false
+		});
+
+		// act
+		this.oSelectionPanel._oHoveredItem = oHoveredItem;
+		this.oSelectionPanel._handleActivated(oHoveredItem);
+
+		// assert
+		assert.ok(oSpyRemoveButtons.called, "Buttons were removed");
+
+		// cleanup
+		oSpyRemoveButtons.restore();
+		oSpyGetMultiSelectControl.restore();
+	});
+
+	QUnit.test("Check '_handleActivated' (early return) does not add buttons or update variables", function(assert){
+		// arrange
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		const oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
+
+		const oSpyRemoveButtons = sinon.spy(this.oSelectionPanel, "_removeMoveButtons");
+		const oSpyGetMultiSelectControl = sinon.stub(oHoveredItem, "getMultiSelectControl").returns({
+			getEnabled: () => true,
+			getSelected: () => false
+		});
+
+		// act
+		this.oSelectionPanel._oHoveredItem = oHoveredItem;
+		this.oSelectionPanel._oLastSelectedItem = this.oSelectionPanel._oListControl.getItems()[0];
+		this.oSelectionPanel._handleActivated(oHoveredItem);
+
+		// assert
+		assert.ok(oSpyRemoveButtons.called, "Buttons were removed");
+		assert.ok(this.oSelectionPanel._oLastSelectedItem != null, "Last selected item was not updated");
+
+		// cleanup
+		oSpyRemoveButtons.restore();
+		oSpyGetMultiSelectControl.restore();
+	});
+
+	QUnit.test("Check '_handleActivated' (add buttons) skip add for deselected checkbox", function(assert){
+		// oHoveredItem.getMultiSelectControl()?.getEnabled() && oHoveredItem.getMultiSelectControl()?.getSelected()
+
+		// arrange
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		const oHoveredItem = this.oSelectionPanel._oListControl.getItems()[1];
+
+		const oSpyRemoveButtons = sinon.spy(this.oSelectionPanel, "_removeMoveButtons");
+		const oSpyAddButtons = sinon.spy(this.oSelectionPanel, "_addMoveButtons");
+		const oSpygetMultiSelectControl = sinon.stub(oHoveredItem, "getMultiSelectControl").returns({
+			getEnabled: () => true,
+			getSelected: () => false
+		});
+
+		// act
+		this.oSelectionPanel._oHoveredItem = oHoveredItem; // hover update, neccessary to skip early return
+		this.oSelectionPanel._handleActivated(oHoveredItem);
+
+		// assert
+		assert.ok(oSpyRemoveButtons.called, "Buttons were not removed redundantly");
+		assert.ok(this._oLastSelectedItem == null, "Last selected item was updated");
+		assert.ok(oSpyAddButtons.notCalled, "Buttons were not added redundantly");
+
+		// cleanup
+		oSpyRemoveButtons.restore();
+		oSpyAddButtons.restore();
+		oSpygetMultiSelectControl.restore();
 	});
 
 	QUnit.test("Check 'enableReorder'", function(assert){
