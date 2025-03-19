@@ -309,6 +309,33 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Don't cancel replaced open promise", (assert) => {
+		const fnDone = assert.async();
+		const onBeforeShowStub = sinon.stub(oContent, "onBeforeShow").callsFake(() => {
+			return Promise.reject();
+		});
+		sinon.spy(oPopover, "_cancelPromise");
+		oPopover.open(Promise.resolve(), true, true);
+		setTimeout(() => {
+			assert.ok(oPopover._cancelPromise.calledOnce, "Promise was cancelled.");
+			oPopover.close();
+			oPopover._cancelPromise.resetHistory();
+			onBeforeShowStub.callsFake(() => {
+				oPopover._addPromise("open");
+				return Promise.reject();
+			});
+			oPopover.open(Promise.resolve(), true, true);
+			setTimeout(() => {
+				assert.notOk(oPopover._cancelPromise.calledOnce, "Promise was not cancelled.");
+				onBeforeShowStub.restore();
+				oPopover._cancelPromise.restore();
+				fnDone();
+			}, 0);
+
+		}, 0);
+
+	});
+
 	QUnit.test("open with footer toolbar", (assert) => {
 
 		sinon.stub(oContent, "isFocusInHelp").returns(true); // test if initial focus is not set to field
