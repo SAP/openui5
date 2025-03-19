@@ -102,6 +102,7 @@ sap.ui.define([
 
 	function _openDialog(oChildCard, oParentCard, oParameters) {
 		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
+		oChildCard.setDataMode(CardDataMode.Active); // the opened card is processed before the dialog is opened and should be active
 		oChildCard.addStyleClass("sapUiIntCardDialogCard");
 
 		oParentCard.setBusy(true).setBusyIndicatorDelay(750);
@@ -177,10 +178,7 @@ sap.ui.define([
 		if (oParameters._cardId) {
 			oChildCard = Element.getElementById(oParameters._cardId);
 		} else {
-			oChildCard = oParentCard._createChildCard({
-				dataMode: CardDataMode.Active,
-				...oParameters
-			});
+			oChildCard = oParentCard._createChildCard(oParameters);
 		}
 
 		return _openDialog(oChildCard, oParentCard, oParameters);
