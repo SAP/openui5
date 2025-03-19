@@ -1401,7 +1401,7 @@ sap.ui.define([
 	 * the controls personalization to be part of its persistence.
 	 *
 	 * @typedef {object} sap.ui.mdc.State
-	 * @property {sap.ui.mdc.State.XCondition} [filter] Describes the filter conditions
+	 * @property {Object.<string, sap.ui.mdc.State.XCondition[]>} [filter] Describes the filter conditions
 	 * @property {sap.ui.mdc.State.Items[]} [items] Describes the filter fields
 	 * @property {sap.ui.mdc.State.Sorters[]} [sorters] Describes the sorter fields
 	 * @property {sap.ui.mdc.State.GroupLevels[]} [groupLevels] Describes the grouped fields
