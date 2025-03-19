@@ -169,6 +169,8 @@ sap.ui.define([
 		if (sFilterText) {
 			this._oController.filterProperties(sFilterText);
 		}
+		// Ensure that the model is fully refreshed before opening the dialog
+		this.oChangeAnnotationModel.refresh(true);
 		const aChangedProperties = await this._openDialog();
 		this._oDialog.close();
 		return aChangedProperties;

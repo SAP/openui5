@@ -223,6 +223,18 @@ html[data-sap-ui-browser^='cr'] .sapFCard {
 .sapFCard.sapFCardInteractive:not(.sapFCardDisableMouseInteraction):hover {
 	box-shadow: var(--sapContent_Shadow2);
 	cursor: pointer;
+
+	.sapMText,
+	.sapMLabel,
+	.sapMTitle,
+	.sapFCardNumericIndicators .sapUiIcon {
+		cursor: pointer;
+	}
+
+	.sapMLIB:not(.sapMLIBActionable) .sapMText,
+	.sapMListTblHeader  .sapMText {
+		cursor: text;
+	}
 }
 
 /* Todo HC should use the active background: --sapTile_Hover_Background */

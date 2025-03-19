@@ -1201,6 +1201,8 @@ sap.ui.define([
 	 * The properties can also be defined in the descriptor. These properties can
 	 * be overwritten by the local properties of that function.
 	 *
+	 * Synchronous Component creation is deprecated as of 1.135.0.
+	 *
 	 * @param {string|object} vUsage ID of the component usage or the configuration object that creates the component
 	 * @param {string} vUsage.usage ID of component usage
 	 * @param {string} [vUsage.id] ID of the nested component that is prefixed with <code>autoPrefixId</code>
@@ -1226,7 +1228,7 @@ sap.ui.define([
 			var sUsageId;
 			if (typeof vUsage === "object") {
 				sUsageId = vUsage.usage;
-				["id", "async", "settings", "componentData"].forEach(function(sName) {
+				["id", /* deprecated since 1.135.0 */ "async", "settings", "componentData"].forEach(function(sName) {
 					if (vUsage[sName] !== undefined) {
 						mConfig[sName] = vUsage[sName];
 					}

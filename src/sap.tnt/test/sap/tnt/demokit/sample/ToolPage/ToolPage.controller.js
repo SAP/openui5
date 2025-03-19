@@ -29,10 +29,10 @@ sap.ui.define([
 			this.byId("pageContainer").to(this.getView().createId(oItem.getKey()));
 		},
 
-		onItemPressed: function (oEvent) {
+		onItemPress: function (oEvent) {
 			const oItem = oEvent.getParameter("item"),
 				sText = oItem.getText();
-			MessageToast.show(`Fired itemPressed, item: ${sText}`);
+			MessageToast.show(`Fired itemPress, item: ${sText}`);
 		},
 
 		handleUserNamePress: function (event) {

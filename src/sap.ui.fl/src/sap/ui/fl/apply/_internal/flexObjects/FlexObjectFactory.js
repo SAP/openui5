@@ -253,6 +253,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.reference] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata}
 	 * @param {string} [mPropertyBag.generator] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.SupportInformation}
 	 * @param {object} [mPropertyBag.authors] - Map of user IDs to full names
+	 * @param {boolean} [mPropertyBag.executeOnSelection] - Apply automatically the content of the variant
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant} Variant instance
 	 */
 	FlexObjectFactory.createFlVariant = function(mPropertyBag) {
@@ -262,6 +263,7 @@ sap.ui.define([
 		mProperties.variantManagementReference = mPropertyBagClone.variantManagementReference;
 		mProperties.variantReference = mPropertyBagClone.variantReference;
 		mProperties.contexts = mPropertyBagClone.contexts;
+		mProperties.executeOnSelection = mPropertyBagClone.executeOnSelection;
 		mProperties.texts = {
 			variantName: {
 				value: mPropertyBagClone.variantName,

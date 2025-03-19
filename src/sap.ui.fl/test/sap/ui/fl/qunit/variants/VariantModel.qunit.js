@@ -1536,7 +1536,8 @@ sap.ui.define([
 				title: "variant A Copy",
 				contexts: {
 					role: ["testRole2"]
-				}
+				},
+				executeOnSelection: true
 			};
 
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
@@ -1546,6 +1547,7 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 2, "both changes were copied");
+			assert.strictEqual(oDuplicateVariant.instance.getExecuteOnSelection(), true, "apply automatically is true");
 			assert.strictEqual(
 				oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName,
 				"change0",
@@ -1581,6 +1583,7 @@ sap.ui.define([
 			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.USER, "the layer is correct");
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variant0", "the variantReference is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getExecuteOnSelection(), false, "apply automatically is false");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
 			assert.strictEqual(
 				oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName,

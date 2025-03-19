@@ -1418,6 +1418,63 @@ sap.ui.define([
 				assert.strictEqual(mRootScope0, mRootScope);
 				// still caching
 				assert.strictEqual(that.oMetaModel.fetchEntityContainer(), oSyncPromise);
+
+				const aGeographyTypes = [
+					"Edm.GeographyLineString",
+					"Edm.GeographyMultiLineString",
+					"Edm.GeographyMultiPoint",
+					"Edm.GeographyMultiPolygon",
+					"Edm.GeographyPoint",
+					"Edm.GeographyPolygon"
+				];
+				assert.deepEqual(Object.keys(mRootScope), [
+					"$Annotations",
+					"Edm.Geography",
+					...aGeographyTypes,
+					"Edm.Geometry",
+					...aGeographyTypes.map((sName) => sName.replace("Geography", "Geometry"))
+				]);
+				assert.deepEqual(mRootScope["Edm.Geography"], {
+					$kind : "ComplexType",
+					$Abstract : true,
+					$OpenType : true,
+					bbox : {
+						$kind : "Property",
+						$Type : "Edm.Double",
+						$isCollection : true
+					},
+					type : {
+						$kind : "Property",
+						$Nullable : false,
+						$Type : "Edm.String"
+					}
+				});
+				assert.deepEqual(mRootScope["Edm.Geography"], mRootScope["Edm.Geometry"]);
+				aGeographyTypes.forEach((sGeographyName) => {
+					assert.deepEqual(mRootScope[sGeographyName], {
+						$kind : "ComplexType",
+						$OpenType : true,
+						bbox : {
+							$kind : "Property",
+							$Type : "Edm.Double",
+							$isCollection : true
+						},
+						coordinates : {
+							$kind : "Property",
+							$Nullable : false,
+							$Type : "Edm.Double",
+							$isCollection : true
+						},
+						type : {
+							$kind : "Property",
+							$Nullable : false,
+							$Type : "Edm.String"
+						}
+					}, sGeographyName);
+					const sGeometryName = sGeographyName.replace("Geography", "Geometry");
+					assert.deepEqual(mRootScope[sGeographyName], mRootScope[sGeometryName],
+						sGeometryName);
+				});
 			});
 		});
 	});
@@ -3224,6 +3281,33 @@ sap.ui.define([
 				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
 			})
 		]);
+	});
+
+	//*********************************************************************************************
+	[Context.VIRTUAL, 42].forEach((iIndex) => {
+		QUnit.test("fetchUI5Type: within a collection @" + iIndex, function (assert) {
+			var sPath = "/EMPLOYEES/0/Address/GeoLocation/coordinates/" + iIndex,
+				that = this;
+
+			this.oMetaModelMock.expects("fetchObject").thrice()
+				.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+				.returns(SyncPromise.resolve({ // e.g. inside Edm.GeographyPoint
+					$isCollection : true,
+					$Type : "Edm.Double"
+				}));
+
+			return Promise.all([
+				// code under test
+				this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+					assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Double");
+					assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
+				}),
+				// code under test
+				this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+					assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Double");
+				})
+			]);
+		});
 	});
 
 	//*********************************************************************************************

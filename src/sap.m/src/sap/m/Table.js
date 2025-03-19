@@ -1090,14 +1090,6 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype._getRelevantFocusableItem = function($Target) {
-		let $Item = $Target.closest(".sapMLIBFocusable");
-		if (!$Item.length) {
-			$Item = $Target.closest(".sapMListTblSubRow").prev();
-		}
-		return $Item;
-	};
-
 	/**
 	 * Sets the focus on the stored focus DOM reference.
 	 *

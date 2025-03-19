@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Page",
 	"sap/m/Panel",
+	"sap/m/ListBase",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
@@ -76,6 +77,7 @@ sap.ui.define([
 	Toolbar,
 	Page,
 	Panel,
+	ListBase,
 	Filter,
 	FilterOperator,
 	FormattedText,
@@ -4584,6 +4586,75 @@ sap.ui.define([
 
 		//Clean up
 		oAnnounceSpy.restore();
+		oInput.destroy();
+	});
+
+	QUnit.test("Check if aria-labelledby attribute is set on the focused item", async function(assert) {
+		const oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					hAlign: "Left",
+					header: new Label({ text: "Name" })
+				}),
+				new Column({
+					hAlign: "Center",
+					header: new Label({ text: "Qty" })
+				}),
+				new Column({
+					hAlign: "Center",
+					header: new Label({ text: "Value" })
+				}),
+				new Column({
+					hAlign: "Right",
+					header: new Label({ text: "Price" })
+				})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [
+						new Label({ text: "Product1" }),
+						new Label({ text: "10 EA" }),
+						new Label({ text: "15.00 EUR" }),
+						new Label({ text: "10.00 EUR" })
+					]
+				}),
+				new ColumnListItem({
+					cells: [
+						new Label({ text: "Product2" }),
+						new Label({ text: "9 EA" }),
+						new Label({ text: "25.00 EUR" }),
+						new Label({ text: "20.00 EUR" })
+					]
+				}),
+				new ColumnListItem({
+					cells: [
+						new Label({ text: "Product3" }),
+						new Label({ text: "8 EA" }),
+						new Label({ text: "35.00 EUR" }),
+						new Label({ text: "30.00 EUR" })
+					]
+				})
+			]
+		});
+
+		oInput.placeAt("content");
+		this.clock = sinon.useFakeTimers();
+		await nextUIUpdate(this.clock);
+
+		oInput._$input.trigger("focus").val("P").trigger("input");
+		this.clock.tick(500);
+
+		const oSelectedItem = oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].$();
+		const oPopup = oInput._getSuggestionsPopover().getPopover();
+		assert.ok(oPopup.isOpen(), "Suggestion Popup is open");
+
+		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
+		assert.ok(oSelectedItem.hasClass("sapMLIBSelected"), "First item selected after pressing ARROW_DOWN");
+		assert.ok(oSelectedItem.hasClass("sapMLIBFocused"), "First item has the 'focused' style");
+
+		const ariaLabelledBy = oSelectedItem.attr('aria-labelledby');
+		assert.ok(ariaLabelledBy, "aria-labelledby is present on the selected item");
 		oInput.destroy();
 	});
 
