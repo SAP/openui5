@@ -38,7 +38,7 @@
 @_sap_tnt_NavigationList_GroupBottomMarginInPopup: 0;
 @_sap_tnt_NavigationList_Padding: 0;
 @_sap_tnt_NavigationList_PaddingCompact: 0;
-@_sap_tnt_NavigationList_ParentPopupPadding: 0;
+@_sap_tnt_NavigationList_PopupPadding: 0;
 @_sap_tnt_NavigationList_ParentPopupBorderRadius: @sapUiPopoverBorderCornerRadius;
 @_sap_tnt_NavigationList_PopupItemPadding: 0 1rem;
 @_sap_tnt_NavigationList_PopupIconWidth: 1rem;
@@ -209,7 +209,7 @@
 }
 
 .sapTntNLPopover .sapTntNLPopup.sapTntNL {
-	padding: @_sap_tnt_NavigationList_ParentPopupPadding;
+	padding: @_sap_tnt_NavigationList_PopupPadding;
 
 	.sapTntNLI.sapTntNLIFirstLevel {
 		margin-bottom: @_sap_tnt_NavigationList_GroupBottomMarginInPopup;
@@ -478,7 +478,7 @@
 	box-shadow: @_sap_tnt_NavigationList_PopupBoxShadow;
 
 	&:not(.sapUiSubmenu) {
-		padding: @_sap_tnt_NavigationList_ParentPopupPadding;
+		padding: @_sap_tnt_NavigationList_PopupPadding;
 		border-radius: @_sap_tnt_NavigationList_ParentPopupBorderRadius;
 	}
 
