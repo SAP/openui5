@@ -1015,6 +1015,15 @@ function(
 		}
 	};
 
+	Input.prototype.getValueStateLinksForAcc = function(){
+		const oFormattedText = this._getFormattedValueStateText();
+		if (!oFormattedText){
+			return [];
+		}
+		return oFormattedText.getControls();
+	};
+
+
 	/**
 	 * Gets <code>sap.m.FormattedText</code> aggregation based on its current parent.
 	 * If the SuggestionPopover is open that is the <code>sap.m.ValueStateHeader</code>, otherwise is the Input itself.
@@ -1034,7 +1043,6 @@ function(
 			return InputBase.prototype.getFormattedValueStateText.call(this);
 		}
 	};
-
 
 	/**
 	 * Updates and synchronizes the <code>selectedRow</code> association and <code>selectedKey</code> properties.
@@ -1848,6 +1856,13 @@ function(
 		// disable the typeahead feature for android devices due to an issue on android soft keyboard, which always returns keyCode 229
 		this._bBackspaceOrDelete = (oEvent.which === KeyCodes.BACKSPACE) || (oEvent.which === KeyCodes.DELETE);
 		this._bDoTypeAhead = !Device.os.android && this.getAutocomplete() && !this._bBackspaceOrDelete;
+
+		if (this.areHotKeysPressed(oEvent) && this._isSuggestionsPopoverOpen()) {
+			var oSuggestionsPopover = this._getSuggestionsPopover();
+			oSuggestionsPopover.setValueStateActiveState(true);
+			oSuggestionsPopover._handleValueStateLinkNav(this, oEvent);
+			oSuggestionsPopover.updateFocus(this, null);
+		}
 	};
 
 	Input.prototype.onkeyup = function (oEvent) {
@@ -1966,7 +1981,7 @@ function(
 	/**
 	 * Applies Suggestion Accessibility
 	 *
-	 * Adds the aria-desribedby text with the number of available suggestions.
+	 * Adds the aria-describedby text with the number of available suggestions.
 	 *
 	 * @param {int} iNumItems
 	 * @private
@@ -3310,7 +3325,6 @@ function(
 	 */
 	Input.prototype._openSuggestionsPopover = function () {
 		this.closeValueStateMessage();
-		this._updateSuggestionsPopoverValueState();
 		this._getSuggestionsPopover().getPopover().open();
 	};
 

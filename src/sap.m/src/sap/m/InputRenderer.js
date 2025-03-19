@@ -2,13 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/ControlBehavior", 'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/m/library'],
-	function(Localization, ControlBehavior, InvisibleText, Renderer, InputBaseRenderer, library) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/ControlBehavior", 'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/m/library', 'sap/ui/core/library'],
+	function(Localization, ControlBehavior, InvisibleText, Renderer, InputBaseRenderer, library, coreLibrary) {
 	"use strict";
 
 
 	// shortcut for sap.m.InputType
 	var InputType = library.InputType;
+
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -151,6 +153,12 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/ControlBehavior", 'sap
 			}
 		}
 
+		if (oControl.getShowSuggestion()
+			&& oControl.getValueStateLinksForAcc().length
+			&& oControl.getValueState() !== ValueState.Error) {
+			append(oControl.getValueStateLinksShortcutsId());
+		}
+
 		return sAriaDescribedBy;
 
 	};
@@ -176,6 +184,13 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/ControlBehavior", 'sap
 			mAccessibilityState["haspopup"] = "dialog";
 		}
 
+		if (oControl.getShowSuggestion()
+			&& oControl.getValueStateLinksForAcc().length
+			&& oControl.getValueState() === ValueState.Error) {
+			mAccessibilityState.errormessage = mAccessibilityState.errormessage
+				? `${mAccessibilityState.errormessage} ${oControl.getValueStateLinksShortcutsId()}`
+				: oControl.getValueStateLinksShortcutsId();
+		}
 
 		return mAccessibilityState;
 

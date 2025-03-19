@@ -554,6 +554,24 @@ sap.ui.define([
 		};
 
 		/**
+		 * The function handles keydown events for the <code>ComboBoxBase</code> component
+		 * and delegates initial processing to <code>ComboBoxTextField</code>
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		ComboBoxBase.prototype.onkeydown = function (oEvent) {
+			ComboBoxTextField.prototype.onkeydown.apply(this, arguments);
+
+			var oSuggestionsPopover = this._getSuggestionsPopover();
+			if (this.areHotKeysPressed(oEvent) && oSuggestionsPopover && oSuggestionsPopover.isOpen()) {
+				oSuggestionsPopover.setValueStateActiveState(true);
+				oSuggestionsPopover._handleValueStateLinkNav(this, oEvent);
+				oSuggestionsPopover.updateFocus(this, null);
+			}
+		};
+
+		/**
 		 * Sets the value property of the control.
 		 *
 		 * @param {string} sValue The new value
@@ -957,7 +975,7 @@ sap.ui.define([
 				bNewValueState = this.getValueState() !== oSuggestionsPopover._getValueStateHeader().getValueState(),
 				oNewFormattedValueStateText = this.getFormattedValueStateText(),
 				sValueStateText = this.getValueStateText(),
-				bShouldPopoverBeUpdated = oNewFormattedValueStateText || bNewValueState;
+				bShouldPopoverBeUpdated = (oNewFormattedValueStateText !== null) || bNewValueState;
 
 			/* If open and no new FormattedText or value state is set to the Input then this is called
 			onBeforeClose of the SuggestionsPopover. Switch the value state aggregation's
@@ -1580,6 +1598,22 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets <code>sap.m.FormattedText</code> aggregation based on its current parent.
+		 * If the SuggestionPopover is open, the parent is <code>sap.m.ValueStateHeader</code>;
+		 * otherwise, the parent is the <code>InputBase</code> itself.
+		 *
+		 * @private
+		 * @returns {sap.m.FormattedText} Aggregation used for value state message that can contain links.
+		 */
+		ComboBoxBase.prototype._getFormattedValueStateText = function() {
+			if (this.isOpen()) {
+				return this._getSuggestionsPopover()._getValueStateHeader().getFormattedText();
+			} else {
+				return ComboBoxTextField.prototype.getFormattedValueStateText.call(this);
+			}
+		};
+
+		/**
 		 * Should be overwritten in children classes to apply control specific filtering over the items.
 		 *
 		 * @since 1.64
@@ -1587,6 +1621,14 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		ComboBoxBase.prototype.applyShowItemsFilters = function () {};
+
+		ComboBoxBase.prototype.getValueStateLinksForAcc = function(){
+			const oFormattedText = this._getFormattedValueStateText();
+			if (!oFormattedText){
+				return [];
+			}
+			return oFormattedText.getControls();
+		};
 
 		return ComboBoxBase;
 	});

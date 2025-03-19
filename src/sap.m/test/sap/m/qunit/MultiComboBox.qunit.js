@@ -5834,6 +5834,78 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("aria-describedby for value state with links contains announcement for the value state links shortcut", async function (assert) {
+		const oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+		var oMultiComboBox = new MultiComboBox({
+			valueState: ValueState.Warning,
+			formattedValueStateText: oFormattedValueStateText,
+			items: [
+				new Item({
+					key: "DZ",
+					text: "Algeria"
+				})]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		await nextUIUpdate();
+
+		const oAccDomRef = document.getElementById(oMultiComboBox.getValueStateLinksShortcutsId());
+		const aDescribedBy = oMultiComboBox.getFocusDomRef().getAttribute("aria-describedby").split(" ");
+		const bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) { return sId === oMultiComboBox.getValueStateLinksShortcutsId();});
+		const sSingleLink = Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+
+		assert.ok(oMultiComboBox.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
+		assert.strictEqual(oAccDomRef.innerText, sSingleLink, "Links shortcuts announcement is as expected" );
+		assert.ok(bDescribedByContainsAccForLinks, "Accessibility DOM for links shortcuts announcement is added to aria-describedby");
+
+		oFormattedValueStateText.destroy();
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("aria-errormessage for value state with links contains announcement for the value state links shortcut", async function (assert) {
+		const oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing %%0 and %%1",
+			controls: [new Link({
+				text: "link 1",
+				href: "#"
+			}),
+			new Link({
+				text: "link 2",
+				href: "#"
+			})]
+		});
+		var oMultiComboBox = new MultiComboBox({
+			valueState: ValueState.Error,
+			formattedValueStateText: oFormattedValueStateText,
+			items: [
+				new Item({
+					key: "DZ",
+					text: "Algeria"
+				})]
+		});
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		await nextUIUpdate();
+
+		const oAccDomRef = document.getElementById(oMultiComboBox.getValueStateLinksShortcutsId());
+		const aErrormessage = oMultiComboBox.getFocusDomRef().getAttribute("aria-errormessage").split(" ");
+		const bErrormessageContainsAccForLinks = aErrormessage.some(function (sId) { return sId === oMultiComboBox.getValueStateLinksShortcutsId();});
+		const sMultipleLink = Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+
+		assert.ok(oMultiComboBox.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
+		assert.strictEqual(oAccDomRef.innerText, sMultipleLink, "Links shortcuts announcement is as expected" );
+		assert.ok(bErrormessageContainsAccForLinks, "Accessibility DOM for links shortcuts announcement is added to aria-errormessage");
+
+		oFormattedValueStateText.destroy();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("MultiComboBox with accessibility=false", async function(assert) {
 		var oMultiComboBox = new MultiComboBox();
 		this.stub(Configuration, "getAccessibility").returns(false);
@@ -6296,12 +6368,7 @@ sap.ui.define([
 		// Act
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
 
-		// Act
-		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
-		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 
@@ -6316,12 +6383,6 @@ sap.ui.define([
 		this.clock.tick(500);
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
-
-		// Act
-		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
-		this.clock.tick(500);
-		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
 
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
@@ -6373,8 +6434,6 @@ sap.ui.define([
 		// Act
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
-		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
 
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.END);
@@ -6386,19 +6445,7 @@ sap.ui.define([
 		qutils.triggerKeydown(document.activeElement, KeyCodes.HOME);
 		this.clock.tick(500);
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
-
-		// Act
-		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
-		this.clock.tick(500);
-		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
-
-		// Act
-		qutils.triggerKeydown(document.activeElement, KeyCodes.HOME);
-		this.clock.tick(500);
-		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
 
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
@@ -7789,12 +7836,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Desktop: Basic interaction", async function (assert) {
-		var oSystem = {
-			desktop : true,
-			phone : false,
-			tablet : false
-		},
-		oMultiComboBox = new MultiComboBox({
+		const oMultiComboBox = new MultiComboBox({
 			items : [new Item({
 				key : "DZ",
 				text : "Algeria"
@@ -7805,7 +7847,12 @@ sap.ui.define([
 				key : "AU",
 				text : "Australia"
 			})]
-		}), oInputDomRef,
+		});
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		}, oInputDomRef,
 			oFakeEvent = {
 				target: {
 					value: "A"
@@ -7814,7 +7861,8 @@ sap.ui.define([
 				setMarked: function () {}
 			};
 
-		this.stub(Device, "system").value(oSystem);
+		var oSystemStub = this.stub(Device, "system");
+		oSystemStub.value(oSystem);
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
@@ -7840,6 +7888,7 @@ sap.ui.define([
 		assert.strictEqual(oInputDomRef.value, "Algeria", "Correct value autocompleted when navigating with arrow from list item to input field.");
 
 		// cleanup
+		oSystemStub.restore();
 		oMultiComboBox.destroy();
 		this.clock.tick(500);
 	});
@@ -8502,7 +8551,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("onkeydown should focus the formatted value state header if the current focus is on the input", function(assert) {
+	QUnit.test("onkeydown should focus the first item if the current focus is on the input", function(assert) {
 		this.clock = sinon.useFakeTimers();
 		// Act
 		this.oMultiComboBox.open();
@@ -8513,7 +8562,44 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The formatted value state message is focused");
+		assert.strictEqual(ListHelpers.getListItem(this.oMultiComboBox.getFirstItem()).getDomRef(), document.activeElement, "The formatted value state message is focused");
+	});
+
+	QUnit.test("CTRL+ALT+F8 should focus the first link in the VSH if the current focus is on the input", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		// Act
+		this.oMultiComboBox.open();
+		this.clock.tick();
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.F8, false, true, true);
+		this.clock.tick();
+
+		const oLink = this.oMultiComboBox._getSuggestionsPopover().getValueStateLinks()[0];
+
+		// Assert
+		assert.strictEqual(oLink.getDomRef(), document.activeElement, "The first link in the formatted value state message is focused");
+	});
+
+
+	QUnit.test("CTRL+ALT+F8 should focus the first link in the VSH if the current focus is on an item", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		// Act
+		this.oMultiComboBox.open();
+		this.clock.tick();
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.F8, false, true, true);
+		this.clock.tick();
+
+		const oLink = this.oMultiComboBox._getSuggestionsPopover().getValueStateLinks()[0];
+
+		// Assert
+		assert.strictEqual(oLink.getDomRef(), document.activeElement, "The first link in the formatted value state message is focused");
 	});
 
 	QUnit.test("tab key pressed on the last link in the value state message should close the picker", function(assert) {
@@ -8530,17 +8616,17 @@ sap.ui.define([
 		assert.ok(!this.oMultiComboBox.isOpen(), "Popover is closed");
 	});
 
-	QUnit.test("when the focus is on the first item it should go to the value state header containing a link on arrow up", function(assert) {
+	QUnit.test("when the focus is on the first item it should go to the input regardless the value state header containing links", function(assert) {
 		// Act
 		this.oMultiComboBox.getFocusDomRef().focus();
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
 		qutils.triggerKeydown(ListHelpers.getListItem(this.oMultiComboBox.getItems()[0]).getDomRef(), KeyCodes.ARROW_UP);
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "Value state header is focused");
+		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "Value state header is focused");
 	});
 
-	QUnit.test("Value state header containing links should be focusable but not part of the tab chain", function(assert) {
+	QUnit.test("Value state header containing links - links should be focusable", function(assert) {
 		this.clock = sinon.useFakeTimers();
 		// Act
 		this.oMultiComboBox.open();
@@ -8549,9 +8635,11 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 
+		const aLinks = this.oMultiComboBox._getSuggestionsPopover().getValueStateLinks();
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().attr("tabindex"), "-1", "Value state message is focusable but not part of the tab chain");
-		assert.ok(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().hasClass("sapMFocusable"), "sapMFocusable class is applied to the value state header");
+		aLinks.forEach(function(oLink) {
+			assert.strictEqual(oLink.getDomRef().getAttribute("tabindex"), "0", "Value state link should be focusable");
+		});
 	});
 
 	QUnit.test("when the suggestions popover is opened CTRL+A should select/deselect all items and create tokens", async function(assert) {

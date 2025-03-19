@@ -78,17 +78,10 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 			}
 
 			var oFocusedItem = oSuggestionPopover.getFocusedListItem();
-			var bValueStateFocused = oSuggestionPopover.getValueStateActiveState();
 
 			// If the picker is not opened, no active descendant should be set
 			// If there is no focused element in the picker, no active descendant should be set
-			if (!bOpen || (!oFocusedItem && !bValueStateFocused)) {
-				return;
-			}
-
-			// If the value state is focused, set the active descendant in order to read out the value state header
-			if (bValueStateFocused) {
-				oRm.attr("aria-activedescendant", oControl._getFormattedValueStateText().getId());
+			if (!bOpen || (!oFocusedItem)) {
 				return;
 			}
 

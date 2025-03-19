@@ -1,9 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
-	function (ComboBoxTextFieldRenderer, Renderer) {
+sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function (ComboBoxTextFieldRenderer, Renderer, coreLibrary) {
 		"use strict";
+
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * ComboBoxBase renderer.
@@ -20,6 +22,18 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 		 */
 		ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE = "sapMComboBoxBase";
 
+		ComboBoxBaseRenderer.getAriaDescribedBy = function(oControl) {
+			let sAriaDescribedBy = ComboBoxTextFieldRenderer.getAriaDescribedBy.apply(this, arguments);
+
+			if (oControl.getValueStateLinksForAcc().length && oControl.getValueState() !== ValueState.Error) {
+				sAriaDescribedBy =  sAriaDescribedBy
+					? `${sAriaDescribedBy} ${oControl.getValueStateLinksShortcutsId()}`
+					: oControl.getValueStateLinksShortcutsId();
+			}
+
+			return sAriaDescribedBy;
+		};
+
 		/**
 		 * Retrieves the accessibility state of the control.
 		 * To be overwritten by subclasses.
@@ -34,6 +48,13 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
 			if (oPicker) {
 				mAccessibilityState.controls = oPicker.getId();
 			}
+
+			if (oControl.getValueStateLinksForAcc().length && oControl.getValueState() === ValueState.Error) {
+				mAccessibilityState.errormessage = mAccessibilityState.errormessage
+				? `${mAccessibilityState.errormessage} ${oControl.getValueStateLinksShortcutsId()}`
+				: oControl.getValueStateLinksShortcutsId();
+			}
+
 			return mAccessibilityState;
 		};
 
