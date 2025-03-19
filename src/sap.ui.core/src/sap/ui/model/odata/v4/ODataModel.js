@@ -1019,6 +1019,14 @@ sap.ui.define([
 	 * is also supported (since 1.130.0) for complex types and collections thereof; for entity
 	 * types, use {@link #bindContext} instead.
 	 *
+	 * Since 1.135.0, the binding may also point to an array element inside a collection of
+	 * primitive type, for example in the context of geography locations. Let's assume
+	 * "GeoLocation" is a structural property of type "Edm.GeographyPoint", then "coordinates" is a
+	 * structural property of type "Collection(Edm.Double)":
+	 * <pre>
+	 * &lt;Text id="longitude" text="{Address/GeoLocation/coordinates/0}"/>
+	 * </pre>
+	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]

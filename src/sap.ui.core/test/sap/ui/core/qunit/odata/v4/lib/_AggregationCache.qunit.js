@@ -5030,7 +5030,7 @@ sap.ui.define([
 				}, {})
 			.returns("E");
 		oRequestorMock.expects("request")
-			.withExactArgs("PATCH", bCopy ? "$0" : "Foo('23')", sinon.match.same(oGroupLock), {
+			.withExactArgs("PATCH", bCopy ? "$-1" : "Foo('23')", sinon.match.same(oGroupLock), {
 					"If-Match" : sinon.match.same(oChildNode),
 					Prefer : "return=minimal"
 				}, {"myParent@odata.bind" : sParent},

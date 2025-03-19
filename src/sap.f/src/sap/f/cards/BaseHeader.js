@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Text",
 	"sap/f/cards/util/addTooltipIfTruncated",
+	"sap/base/Log",
 	"./BaseHeaderRenderer"
 ], function(
 	Control,
@@ -24,6 +25,7 @@ sap.ui.define([
 	mLibrary,
 	Text,
 	addTooltipIfTruncated,
+	Log,
 	BaseHeaderRenderer
 ) {
 	"use strict";
@@ -259,22 +261,34 @@ sap.ui.define([
 	};
 
 	BaseHeader.prototype.onkeydown = function (oEvent) {
-		if (oEvent.key !== "Enter" && oEvent.keyCode !== KeyCodes.ENTER) {
-			return;
+
+		if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)
+			&& !oEvent.ctrlKey && !oEvent.metaKey) {
+
+			if (oEvent.which === KeyCodes.SPACE) {
+				// To prevent the browser scrolling.
+				oEvent.preventDefault();
+			}
+			if (oEvent.which === KeyCodes.ENTER) {
+				this._handleTap(oEvent);
+			}
+
+			if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+				this._bPressedEscapeOrShift = true;
+			}
 		}
 
-		if (!this._hasModifierKeys(oEvent)) {
-			this._handleTap(oEvent);
-		}
 	};
 
 	BaseHeader.prototype.onkeyup = function (oEvent) {
-		if (oEvent.key !== " " && oEvent.keyCode !== KeyCodes.SPACE) {
-			return;
+		if (oEvent.which === KeyCodes.SPACE) {
+			if (!this._bPressedEscapeOrShift && !this._hasModifierKeys(oEvent)) {
+				this._handleTap(oEvent);
+			}
 		}
 
-		if (!this._hasModifierKeys(oEvent)) {
-			this._handleTap(oEvent);
+		if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			this._bPressedEscapeOrShift = false;
 		}
 	};
 
@@ -538,7 +552,7 @@ sap.ui.define([
 	};
 
 	BaseHeader.prototype._hasModifierKeys = function (oEvent) {
-		return oEvent.shiftKey || oEvent.altKey || oEvent.ctrlKey || oEvent.metaKey;
+		return oEvent.altKey || oEvent.ctrlKey || oEvent.metaKey;
 	};
 
 	return BaseHeader;

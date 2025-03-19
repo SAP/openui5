@@ -58,6 +58,39 @@ sap.ui.define([
 		oBooleanType,
 		mCodeListUrl2Promise = {},
 		DEBUG = Log.Level.DEBUG,
+		oGeoJSON = {
+			$kind : "ComplexType",
+			$OpenType : true,
+			bbox : {
+				$kind : "Property",
+				$Type : "Edm.Double",
+				$isCollection : true
+			},
+			type : {
+				$kind : "Property",
+				$Nullable : false,
+				$Type : "Edm.String"
+			}
+		},
+		oGeometry = {
+			...oGeoJSON, // "$BaseType" : "GeoJSON",
+			coordinates : {
+				$kind : "Property",
+				$Nullable : false,
+				$Type : "Edm.Double",
+				$isCollection : true
+			}
+		},
+		mEdmScope = {
+			"Edm.Geography" : {...oGeoJSON, $Abstract : true},
+			"Edm.GeographyLineString" : oGeometry,
+			"Edm.GeographyMultiLineString" : oGeometry,
+			"Edm.GeographyMultiPoint" : oGeometry,
+			"Edm.GeographyMultiPolygon" : oGeometry,
+			"Edm.GeographyPoint" : oGeometry,
+			"Edm.GeographyPolygon" : oGeometry
+			// Note: same for "Edm.Geometry*", see end of file
+		},
 		aInt64Names = ["$count", "@$ui5.node.groupLevelCount", "@$ui5.node.level"],
 		oInt64Type,
 		rLeftBraces = /\$\(/g,
@@ -1089,7 +1122,7 @@ sap.ui.define([
 			if (!bPrefetch) {
 				aPromises.push(this.oModel._requestAnnotationChanges());
 				this.oMetadataPromise = SyncPromise.all(aPromises).then(function (aMetadata) {
-					var mScope = aMetadata[0];
+					var mScope = Object.assign(aMetadata[0], mEdmScope);
 
 					that.aAnnotationChanges = aMetadata.pop();
 					that._mergeAnnotations(mScope, aMetadata.slice(1));
@@ -1783,7 +1816,7 @@ sap.ui.define([
 				return oProperty["$ui5.type"];
 			}
 
-			if (oProperty.$isCollection) {
+			if (oProperty.$isCollection && !rNumber.test(sLastSegment)) {
 				Log.warning("Unsupported collection type, using " + oType.getName(), sPath,
 					sODataMetaModel);
 			} else {
@@ -3699,6 +3732,11 @@ sap.ui.define([
 	ODataMetaModel.clearCodeListsCache = function () {
 		mCodeListUrl2Promise = {};
 	};
+
+	Object.keys(mEdmScope).forEach((sGeographyName) => {
+		const sGeometryName = sGeographyName.replace("Geography", "Geometry");
+		mEdmScope[sGeometryName] = mEdmScope[sGeographyName];
+	});
 
 	return ODataMetaModel;
 });

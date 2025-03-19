@@ -287,7 +287,8 @@ sap.ui.define([
 				newVariantReference: sNewVariantReference,
 				generator: mParameters.generator,
 				additionalVariantChanges: [],
-				adaptationId: getAdaptationId(sVariantChangeLayer, oAppComponent, oVariantModel.sFlexReference)
+				adaptationId: getAdaptationId(sVariantChangeLayer, oAppComponent, oVariantModel.sFlexReference),
+				executeOnSelection: mParameters.execute
 			};
 
 			var oBaseChangeProperties = {
@@ -308,17 +309,6 @@ sap.ui.define([
 					selector: JsControlTreeModifier.getSelector(sVariantManagementReference, mPropertyBag.appComponent)
 				}, oBaseChangeProperties);
 				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createVariantManagementChange(mPropertyBagSetDefault));
-			}
-			if (mParameters.execute) {
-				var mPropertyBagSetExecute = merge({
-					changeType: "setExecuteOnSelect",
-					content: {
-						executeOnSelect: true
-					},
-					fileType: "ctrl_variant_change",
-					variantId: mPropertyBag.newVariantReference
-				}, oBaseChangeProperties);
-				mPropertyBag.additionalVariantChanges.push(FlexObjectFactory.createVariantChange(mPropertyBagSetExecute));
 			}
 
 			const aCopiedVariantDirtyChanges = await VariantManager.copyVariant(mPropertyBag);
@@ -412,6 +402,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.sourceVariantReference - <code>variantReference</code> of the source variant
 	 * @param {string} mPropertyBag.generator - Information about who created the change
 	 * @param {object} mPropertyBag.contexts - Context structure containing roles and countries
+	 * @param {boolean} mPropertyBag.executeOnSelection - Apply automatically the content of the variant
 	 * @param {sap.ui.core.Control} oControl - Control instance to fetch the variant model
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Resolves with dirty changes created during variant copy
 	 * @private

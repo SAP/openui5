@@ -610,30 +610,48 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fireChange: no listeners", function () {
 		// code under test
-		_Helper.fireChange({}, "path/to/property", {});
+		_Helper.fireChange({}, "path/to/property");
+
+		// code under test (addt'l args must not make any difference)
+		_Helper.fireChange({}, "path/to/property", "n/a", true, true);
 	});
 
 	//*********************************************************************************************
-[undefined, true].forEach(function (bForceUpdate) {
-	QUnit.test("fireChange: multiple listeners, forceUpdate:" + bForceUpdate, function () {
-		var oChangeListener0 = {onChange : function () {}},
-			oChangeListener1 = {onChange : function () {}},
-			oChangeListener2 = {onChange : function () {}},
-			vValue = {};
+	QUnit.test("fireChange: multiple listeners", function () {
+		var oChangeListener0 = {onChange : mustBeMocked},
+			oChangeListener1 = {onChange : mustBeMocked},
+			oChangeListener2 = {onChange : mustBeMocked},
+			oDoNotCall = {onChange : mustBeMocked};
 
-		this.mock(oChangeListener0).expects("onChange").withExactArgs(sinon.match.same(vValue),
-			bForceUpdate);
-		this.mock(oChangeListener1).expects("onChange").withExactArgs(sinon.match.same(vValue),
-			bForceUpdate);
-		this.mock(oChangeListener2).expects("onChange").withExactArgs(sinon.match.same(vValue),
-			bForceUpdate);
+		this.mock(oChangeListener0).expects("onChange").withExactArgs("~vValue~", "~bForceUpdate~");
+		this.mock(oChangeListener1).expects("onChange").withExactArgs("~vValue~", "~bForceUpdate~");
+		this.mock(oChangeListener2).expects("onChange").withExactArgs("~vValue~", "~bForceUpdate~");
 
 		// code under test
 		_Helper.fireChange({
-				"path/to/property" : [oChangeListener0, oChangeListener1, oChangeListener2]
-			}, "path/to/property", vValue, bForceUpdate);
+				"path/to/property" : [oChangeListener0, oChangeListener1, oChangeListener2],
+				"path/to/property/1" : [oDoNotCall]
+			}, "path/to/property", "~vValue~", "~bForceUpdate~");
 	});
-});
+
+	//*********************************************************************************************
+	QUnit.test("fireChange: within an array", function () {
+		var oChangeListener0 = {onChange : mustBeMocked},
+			oChangeListener1 = {onChange : mustBeMocked},
+			oChangeListener2 = {onChange : mustBeMocked},
+			oChangeListener3 = {onChange : mustBeMocked};
+
+		this.mock(oChangeListener0).expects("onChange").withExactArgs("~vValue~", "~bForceUpdate~");
+		this.mock(oChangeListener1).expects("onChange").withExactArgs("~vValue~", "~bForceUpdate~");
+		this.mock(oChangeListener2).expects("onChange").withExactArgs(undefined, "~bForceUpdate~");
+		this.mock(oChangeListener3).expects("onChange").withExactArgs(undefined, "~bForceUpdate~");
+
+		// code under test
+		_Helper.fireChange({
+				"path/to/property" : [oChangeListener0, oChangeListener1],
+				"path/to/property/42" : [oChangeListener2, oChangeListener3]
+			}, "path/to/property", "~vValue~", "~bForceUpdate~", /*bInArray*/true);
+	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRemove) {
@@ -965,7 +983,8 @@ sap.ui.define([
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~0~",
 			"SO_2_BP/__CT__FAKE__Message", sinon.match.same(oCacheData.__CT__FAKE__Message));
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~0~",
-			"SO_2_BP/__CT__FAKE__Message/__FAKE__Messages", sinon.match.same(aMessages));
+			"SO_2_BP/__CT__FAKE__Message/__FAKE__Messages", sinon.match.same(aMessages),
+			/*bForceUpdate*/false, /*bInArray*/true);
 
 		// code under test
 		_Helper.updateExisting("~mChangeListeners~0~", "SO_2_BP", oCacheData, {
@@ -981,7 +1000,8 @@ sap.ui.define([
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~1~",
 			"SO_2_BP/__CT__FAKE__Message", sinon.match.same(oCacheData.__CT__FAKE__Message));
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~1~",
-			"SO_2_BP/__CT__FAKE__Message/__FAKE__Messages", sinon.match.same(aNoMessages));
+			"SO_2_BP/__CT__FAKE__Message/__FAKE__Messages", sinon.match.same(aNoMessages),
+			/*bForceUpdate*/false, /*bInArray*/true);
 
 		// code under test
 		_Helper.updateExisting("~mChangeListeners~1~", "SO_2_BP", oCacheData, {
@@ -1571,7 +1591,14 @@ sap.ui.define([
 			set(oCacheValue, sName, sOld);
 			set(oNewValue, sName, sNew);
 			set(oUpdatedValue, sName, sUpdated);
-			if (bFire) {
+			if (bFire === 1) {
+				oHelperMock.expects("fireChange")
+					.withExactArgs("~mChangeListener~", "base/path/" + sName, sUpdated, false,
+						/*bInArray*/true);
+				oHelperMock.expects("fireChange")
+					.withExactArgs("~mChangeListener~", "base/path/nested/" + sName, sUpdated,
+						/*bForceUpdate*/false, /*bInArray*/true);
+			} else if (bFire) {
 				oHelperMock.expects("fireChange")
 					.withExactArgs("~mChangeListener~", "base/path/" + sName, sUpdated);
 				oHelperMock.expects("fireChange")
@@ -1591,7 +1618,7 @@ sap.ui.define([
 		selected("toNull", "old", null, null, true);
 		selected("unchanged", "same", "same", "same");
 		selected("editing", "protected", "protected", "protected");
-		selected("collection", [], ["a", "b"], ["a", "b"], true);
+		selected("collection", [], ["a", "b"], ["a", "b"], /*bFire && bInArray*/1);
 		property("unselected", "keep", "new", "keep");
 		property("unselectedCollection", ["a", "b"], [], ["a", "b"]);
 		property("@odata.etag", "old", "new3", "new3", true);
@@ -1737,7 +1764,8 @@ sap.ui.define([
 
 		oOldValue.transient.$postBodyCollection = true;
 		this.mock(_Helper).expects("fireChange")
-			.withExactArgs("~mChangeListener~", "upcoming", sinon.match.same(oNewValue.upcoming));
+			.withExactArgs("~mChangeListener~", "upcoming", sinon.match.same(oNewValue.upcoming),
+				/*bForceUpdate*/false, /*bInArray*/true);
 
 		// code under test
 		_Helper.updateSelected("~mChangeListener~", "", oOldValue, oNewValue);
@@ -1976,7 +2004,8 @@ sap.ui.define([
 			oTarget = {};
 
 		this.mock(_Helper).expects("fireChange")
-			.withExactArgs("~mChangeListeners~", "path/array", sinon.match.same(oSource.array));
+			.withExactArgs("~mChangeListeners~", "path/array", sinon.match.same(oSource.array),
+				/*bForceUpdate*/false, /*bInArray*/true);
 
 		// code under test
 		_Helper.updateAll("~mChangeListeners~", "path", oTarget, oSource);

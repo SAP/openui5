@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
@@ -13,8 +14,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/jquery"
-], function (Log, ManagedObject, TypeString, ODataMetaModel, ODataModel, ValueListType, _Batch,
-		_Helper, _Requestor, TestUtils, jQuery) {
+], function (Log, ManagedObject, Messaging, TypeString, ODataMetaModel, ODataModel, ValueListType,
+		_Batch, _Helper, _Requestor, TestUtils, jQuery) {
 	"use strict";
 
 	var oDepartmentsBody = {
@@ -494,6 +495,8 @@ sap.ui.define([
 			oContext.requestSideEffects(["SalesOrderID"], "group"),
 			oModel.submitBatch("group")
 		]);
+
+		Messaging.removeAllMessages();
 	});
 
 	//*****************************************************************************************

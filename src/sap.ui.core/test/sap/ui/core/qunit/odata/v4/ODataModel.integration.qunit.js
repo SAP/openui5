@@ -894,6 +894,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
+		before : function () {
+			Messaging.removeAllMessages(); // for #expectMessage, we should have a clean start
+		},
+
 		beforeEach : function (assert) {
 			if (iTestTimeout) {
 				assert.timeout(iTestTimeout);
@@ -7487,6 +7491,98 @@ sap.ui.define([
 		</FlexBox>\
 	</FlexBox>\
 </FlexBox>');
+
+	//*********************************************************************************************
+	// Scenario: Display the two coordinates of an Edm.GeographyPoint along with other (optional)
+	// properties.
+	// JIRA: CPOUI5ODATAV4-2877
+	// RFC: 7946
+	QUnit.test("CPOUI5ODATAV4-2877: Edm.GeographyPoint", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox binding="{/Artists(ArtistID='42',IsActiveEntity=true)/Address/GeoLocation}">
+	<Text id="bbox" text="{= JSON.stringify(%{bbox}) }"/>
+	<Text id="west" text="{bbox/0}"/>
+	<Text id="south" text="{bbox/1}"/>
+	<Text id="east" text="{bbox/2}"/>
+	<Text id="north" text="{bbox/3}"/>
+	<Text id="longitude" text="{coordinates/0}"/>
+	<Text id="latitude" text="{coordinates/1}"/>
+	<Text id="type" text="{type}"/>
+</FlexBox>`;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/Address/GeoLocation"
+				+ "?$select=bbox,coordinates,type", {
+				bbox : [12, 56, 13, 57],
+				coordinates : [12.34, 56.78/*, no altitude here*/],
+				type : "Point"
+			})
+			.expectChange("bbox", "[12,56,13,57]")
+			.expectChange("west", "12")
+			.expectChange("south", "56")
+			.expectChange("east", "13")
+			.expectChange("north", "57")
+			.expectChange("longitude", "12.34") // "easting"
+			.expectChange("latitude", "56.78") // "northing"
+			.expectChange("type", "Point");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/Address/GeoLocation"
+				+ "?$select=bbox", {
+				bbox : [12.3, 56.7, 12.4, 56.8]
+			})
+			.expectChange("bbox", "[12.3,56.7,12.4,56.8]")
+			.expectChange("west", "12.3")
+			.expectChange("south", "56.7")
+			.expectChange("east", "12.4")
+			.expectChange("north", "56.8");
+
+		await Promise.all([
+			// code under test
+			this.oView.byId("bbox").getBindingContext().requestSideEffects(["bbox"]),
+			this.waitForChanges(assert, "side effect")
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Display some coordinates of an Edm.GeographyPolygon.
+	// JIRA: CPOUI5ODATAV4-2877
+	// RFC: 7946
+	QUnit.test("CPOUI5ODATAV4-2877: Edm.GeographyPolygon", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox binding="{/Artists(ArtistID='42',IsActiveEntity=true)/Address/GeoFence}">
+	<Text id="bbox" text="{= JSON.stringify(%{bbox}) }"/>
+	<Text id="west" text="{bbox/0}"/>
+	<Text id="south" text="{bbox/1}"/>
+	<Text id="east" text="{bbox/2}"/>
+	<Text id="north" text="{bbox/3}"/>
+	<Text id="longitude" text="{coordinates/0/0}"/>
+	<Text id="latitude" text="{coordinates/0/1}"/>
+	<Text id="type" text="{type}"/>
+</FlexBox>`;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/Address/GeoFence"
+				+ "?$select=bbox,coordinates,type", {
+				bbox : [12, 56, 13, 57],
+				coordinates : [
+					[12.34, 56.78/*, no altitude here*/]
+					//, ...
+				],
+				type : "Polygon"
+			})
+			.expectChange("bbox", "[12,56,13,57]")
+			.expectChange("west", "12")
+			.expectChange("south", "56")
+			.expectChange("east", "13")
+			.expectChange("north", "57")
+			.expectChange("longitude", "12.34") // "easting"
+			.expectChange("latitude", "56.78") // "northing"
+			.expectChange("type", "Polygon");
+
+		await this.createView(assert, sView, oModel);
+	});
 
 	//*********************************************************************************************
 	// Scenario: Allow setting complex type parameters of operations via property binding
@@ -47850,7 +47946,7 @@ sap.ui.define([
 				payload : {
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
 				},
-				url : "$0"
+				url : "$-1" // Note: "$-1" references the previous request
 			}) // 204 No Content
 			.expectRequest({
 				batchNo : 2,

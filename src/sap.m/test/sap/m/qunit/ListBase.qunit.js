@@ -1687,6 +1687,17 @@ sap.ui.define([
 		await testFocus(-1, true);
 	});
 
+	/********************************************************************************/
+	QUnit.module("Internal methods", {
+		beforeEach: function() {
+			oList = new List();
+		},
+		afterEach: function() {
+			oList.destroy();
+		}
+	});
+	/********************************************************************************/
+
 	QUnit.module("KeyboardHandling", {
 		beforeEach: function() {
 			oList = new List();
@@ -1726,11 +1737,11 @@ sap.ui.define([
 		oList.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		assert.strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "0", "After dummy element is at the tab chain");
 		oList.focus();
+
 		assert.strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "-1", "Before dummy element is not at the tab chain");
 		assert.strictEqual(oList.getNavigationRoot().getAttribute("tabindex"), "0", "Navigation root is at the tab chain");
-		assert.strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "-1", "After dummy element is not at the tab chain");
+		assert.strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "0", "After dummy element is at the tab chain");
 		assert.strictEqual(oList.getDomRef("after").getAttribute("role"), "none", "After dummy element has role=none");
 
 		if (!document.hasFocus()) {
@@ -1839,10 +1850,7 @@ sap.ui.define([
 
 		// tab key
 		qutils.triggerKeydown(oListItem.getFocusDomRef(), "TAB", false, false, false);
-		assert.strictEqual(fnSpy.callCount, 0, "Tab is not forwarded when focus is on the row");
-
-		qutils.triggerKeydown(oInput.getFocusDomRef(), "TAB", false, false, false);
-		assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on the last interactive element");
+		assert.strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on the item");
 		assert.strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
 		fnSpy.resetHistory();
 
@@ -2034,7 +2042,7 @@ sap.ui.define([
 	});
 
 	if (document.hasFocus()) {
-		QUnit.test("KeyboardMode", async function(assert) {
+		QUnit.test("KeybordMode", async function(assert) {
 			const fnDetailPressSpy = this.spy(),
 				fnItemPressSpy = this.spy(),
 				fnPressSpy = this.spy(),
@@ -2067,7 +2075,7 @@ sap.ui.define([
 			qutils.triggerKeydown(oListItem1.getFocusDomRef(), "TAB", true, false, false);
 			assert.strictEqual(document.activeElement, oList.getDomRef('before'), "Focus is forwarded before the table");
 
-			oInput2.focus();
+			oListItem1.focus();
 			qutils.triggerKeydown(document.activeElement, "TAB");
 			assert.strictEqual(document.activeElement, oList.getDomRef("after"), "Focus is forwarded after the table");
 
@@ -3606,7 +3614,13 @@ sap.ui.define([
 			};
 		});
 
-		this.stub(sut.getDomRef(), "querySelector").returns(oHeaderDomRef);
+		this.stub(sut, "getDomRef").callsFake(function() {
+			return {
+				querySelector: function() {
+					return oHeaderDomRef;
+				}
+			};
+		});
 
 		const oFocusedItem = sut.getItems()[1];
 		const oFocusedItemDomRef = oFocusedItem.getDomRef();
