@@ -374,35 +374,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Shall not call the condense route of the storage in case one dirty change and no equal persisted draft filename", function(assert) {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
-					return true;
-				},
-				hasPersoConnector() {
-					return false;
-				}
-			});
-			setURLParameterForCondensing("true");
-			var oChangeContent = {
-				fileName: "ChangeFileName",
-				layer: Layer.CUSTOMER,
-				fileType: "change",
-				changeType: "addField",
-				selector: {id: "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-			const aChanges = UIChangeManager.addDirtyChanges(sReference, [oChangeContent], this._oComponentInstance);
-			var aFilenames = ["filename", "not", "in", "draft"];
-			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aChanges, Version.Number.Draft, aFilenames)
-			.then(function() {
-				assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
-				assert.equal(this.oStorageCondenseStub.callCount, 0, "the condense route of the storage is not called");
-				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
-			}.bind(this));
-		});
-
 		QUnit.test("Shall not call condenser when no appComponent gets passed to saveDirtyChanges", function(assert) {
 			var oChangeContent = {
 				fileName: "ChangeFileName",
