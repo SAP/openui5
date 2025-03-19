@@ -1,11 +1,11 @@
 // /**
-// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.2.35
-// * data:{"sModified":"2025-03-05T13:13:33Z"}
+// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 15.0.1
+// * data:{"sModified":"2025-03-20T15:24:52Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.27.1) *******************/
+/******************* FILE /Base/baseLib/baseTheme/base.less (Version 11.28.2) *******************/
 
 
 // [Label "Brand Color"]
@@ -534,7 +534,7 @@
 // [Label "Placeholder Loading Background Color"]
 // [Description "The background color of placeholder loading."]
 // [TranslationKey "sapContent_PlaceholderloadBg"]
-// [Tags "Base", "Content", "Color", "Protected"]
+// [Tags "Base", "Content", "Color", "Protected", "Busy"]
 // [Protected "true"]
 // [Category "Busy"]
 // [Type "color"]
@@ -543,7 +543,7 @@
 // [Label "Placeholder Loading Gradient"]
 // [Description "The gradient values of placeholder loading."]
 // [TranslationKey "sapContent_PlaceholderloadGrad"]
-// [Tags "Base", "Content", "Color", "Protected"]
+// [Tags "Base", "Content", "Color", "Protected", "Busy"]
 // [Protected "true"]
 // [Category "Busy"]
 // [Type "color"]
@@ -585,7 +585,7 @@
 
 // [Label "Busy Color"]
 // [Description "Color of the busy indicator."]
-// [Tags "Base", "Content", "Color", "Protected"]
+// [Tags "Base", "Content", "Color", "Protected", "Busy"]
 // [Protected "true"]
 // [Category "Busy"]
 // [Type "color"]
@@ -593,7 +593,7 @@
 
 // [Label "Focus Color"]
 // [Description "The color of the focus."]
-// [Tags "Base", "Content", "Color", "Protected"]
+// [Tags "Base", "Content", "Color", "Protected", "Focus"]
 // [Protected "true"]
 // [Category "Focus"]
 // [Type "color"]
@@ -601,7 +601,7 @@
 
 // [Label "Focus Style"]
 // [Description "The style of the focus."]
-// [Tags "Base", "Content", "Protected"]
+// [Tags "Base", "Content", "Protected", "Focus"]
 // [Protected "true"]
 // [Category "Focus"]
 // [Type "borderStyle"]
@@ -609,7 +609,7 @@
 
 // [Label "Focus Width"]
 // [Description "The width of the focus."]
-// [Tags "Base", "Content", "Protected"]
+// [Tags "Base", "Content", "Protected", "Focus"]
 // [Protected "true"]
 // [Category "Focus"]
 // [Type "borderWidth"]
@@ -617,7 +617,7 @@
 
 // [Label "Focus Contrast Color"]
 // [Description "The alternative focus color."]
-// [Tags "Base", "Content", "Color", "Protected"]
+// [Tags "Base", "Content", "Color", "Protected", "Focus"]
 // [Protected "true"]
 // [Category "Focus"]
 // [Type "color"]
@@ -5884,7 +5884,7 @@
 
 // [Label "Object Header Background Color"]
 // [Description "The background color of object headers."]
-// [Tags "Base", "Page", "Color", "Protected"]
+// [Tags "Base", "Page", "Color", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "color"]
@@ -5893,7 +5893,7 @@
 // [Label "Object Header Hover Background Color"]
 // [Description "The hover state background color of object headers."]
 // [TranslationKey "sapObjectHeader_Hvr_Bg"]
-// [Tags "Base", "Page", "Color", "Protected"]
+// [Tags "Base", "Page", "Color", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "color"]
@@ -5901,7 +5901,7 @@
 
 // [Label "Object Header Border Color"]
 // [Description "The border color of object layout headers."]
-// [Tags "Base", "Page", "Color", "Protected"]
+// [Tags "Base", "Page", "Color", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "color"]
@@ -5910,7 +5910,7 @@
 // [Label "Object Header Title Text Color"]
 // [Description "The text color of object header titles."]
 // [TranslationKey "sapObjectHeader_TtlTxtClr"]
-// [Tags "Base", "Page", "Color", "Protected"]
+// [Tags "Base", "Page", "Color", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "color"]
@@ -5918,7 +5918,7 @@
 
 // [Label "Object Header Title Font Size"]
 // [Description "The font size of object header titles."]
-// [Tags "Base", "Page", "Dimension", "Protected"]
+// [Tags "Base", "Page", "Dimension", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "fontSizes"]
@@ -5927,7 +5927,7 @@
 // [Label "Object Header Snapped Title Font Size"]
 // [Description "The font size of snapped object header titles."]
 // [TranslationKey "sapObjectHeader_TtlSnFntSz"]
-// [Tags "Base", "Page", "Dimension", "Protected"]
+// [Tags "Base", "Page", "Dimension", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "fontSizes"]
@@ -5936,7 +5936,7 @@
 // [Label "Object Header Title Font Family"]
 // [Description "The font family of object header titles."]
 // [TranslationKey "sapObjectHeader_TtlFntFmly"]
-// [Tags "Base", "Page", "Font", "Protected"]
+// [Tags "Base", "Page", "Font", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "fontFamilies"]
@@ -5945,7 +5945,7 @@
 // [Label "Object Header Subtitle Text Color"]
 // [Description "The text color of object header subtitles."]
 // [TranslationKey "sapObjectHeader_SubttlTxtClr"]
-// [Tags "Base", "Page", "Color", "Protected"]
+// [Tags "Base", "Page", "Color", "Protected", "ObjectHeader"]
 // [Protected "true"]
 // [Category "ObjectHeader"]
 // [Type "color"]
@@ -13323,13 +13323,13 @@ fill: @sapBaseColor !important;
 }
 .sapCss_SvgIconBase();
 /*</SAP_FREETEXT_LESS>*/// /**
-// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company and Theming Base Content contributors. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
-// * Theming Engine 14.2.35
-// * data:{"sModified":"2025-03-05T13:13:33Z"}
+// * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company. All rights reserved.
+// * Theming Engine 15.0.1
+// * data:{"sModified":"2025-03-20T15:24:53Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.27.1) *******************/
+/******************* FILE /Base/baseLib/sap_belize_hcw/base.less (Version 11.28.2) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
