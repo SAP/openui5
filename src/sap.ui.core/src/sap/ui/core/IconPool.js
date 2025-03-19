@@ -265,18 +265,17 @@ sap.ui.define([
 			"application/vnd.ms-excel": "sap-icon://excel-attachment",
 			// 2007 and later (.xlsx)
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "sap-icon://excel-attachment",
-			//      macro enabled (.xlsm)
-			"application/vnd.ms-excel.sheet.macroEnabled.12": "sap-icon://excel-attachment",
-			//      template files (.xltx)
+			// macro enabled (.xlsm)
+			"application/vnd.ms-excel.sheet.macroenabled.12": "sap-icon://excel-attachment",
+			// template files (.xltx)
 			"application/vnd.openxmlformats-officedocument.spreadsheetml.template": "sap-icon://excel-attachment",
-			//      macro enabled template files (.xltm)
-			"application/vnd.ms-excel.template.macroEnabled.12": "sap-icon://excel-attachment",
-			//      binary workbook files (.xlsb)
-			"application/vnd.ms-excel.sheet.binary.macroEnabled.12": "sap-icon://excel-attachment",
-			//      add-in files (.xlam)
-			"application/vnd.ms-excel.addin.macroEnabled.12": "sap-icon://excel-attachment",
-
-			//Google Sheets document
+			// macro enabled template files (.xltm)
+			"application/vnd.ms-excel.template.macroenabled.12": "sap-icon://excel-attachment",
+			// binary workbook files (.xlsb)
+			"application/vnd.ms-excel.sheet.binary.macroenabled.12": "sap-icon://excel-attachment",
+			// add-in files (.xlam)
+			"application/vnd.ms-excel.addin.macroenabled.12": "sap-icon://excel-attachment",
+			// Google Sheets document
 			"application/vnd.google-apps.spreadsheet": "sap-icon://excel-attachment",
 
 			"application/vnd.ms-powerpoint": "sap-icon://ppt-attachment",
@@ -333,7 +332,11 @@ sap.ui.define([
 		 * @since 1.25.0
 		 */
 		IconPool.getIconForMimeType = function (sMimeType) {
-			return mIconForMimeType[sMimeType] || "sap-icon://document";
+			if (!sMimeType) {
+				sMimeType = "";
+			}
+
+			return mIconForMimeType[sMimeType.toLowerCase()] || "sap-icon://document";
 		};
 
 		return IconPool;
