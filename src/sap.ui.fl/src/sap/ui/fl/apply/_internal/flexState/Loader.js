@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/registry/Settings"
 ], function(
 	ObjectPath,
 	ManagedObject,
 	ManifestUtils,
 	ApplyStorage,
+	StorageUtils,
 	Settings
 ) {
 	"use strict";
@@ -59,11 +61,7 @@ sap.ui.define([
 	}
 
 	function filterInvalidFileNames(mFlexData) {
-		[
-			"appDescriptorChanges", "annotationChanges", "changes",
-			"comp.changes", "comp.changes", "comp.defaultVariants", "comp.standardVariants",
-			"variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"
-		].forEach(function(vKey) {
+		StorageUtils.getAllFlexObjectNamespaces().forEach(function(vKey) {
 			const aFlexItems = ObjectPath.get(vKey, mFlexData);
 			if (aFlexItems) {
 				ObjectPath.set(vKey, aFlexItems.filter((oFlexItem) => {
@@ -94,11 +92,40 @@ sap.ui.define([
 	}
 
 	function getSideId(oComponentData) {
-		if (oComponentData
-			&& oComponentData.startupParameters
-			&& Array.isArray(oComponentData.startupParameters.hcpApplicationId)) {
+		if (oComponentData?.startupParameters && Array.isArray(oComponentData.startupParameters.hcpApplicationId)) {
 			return oComponentData.startupParameters.hcpApplicationId[0];
 		}
+	}
+
+	/**
+	 * Removes the changes that should be deactivated and the deactivate changes from the Flex Data.
+	 * This is the equivalent of deleting changes from the backend.
+	 * Example Scenario: When creating an annotation rename change, any control based rename changes should be removed.
+	 * But Developer changes can't be deleted from the backend, so they are deactivated.
+	 *
+	 * @param {object} mFlexData - Flex Data as returned from the Storage
+	 * @returns {object} Flex Data without the deactivate and deactivated changes
+	 */
+	function applyDeactivateChanges(mFlexData) {
+		const sDeactivateChangeType = "deactivateChanges";
+		const aToBeDeactivatedIds = mFlexData.changes.map((oChange) => {
+			if (oChange.changeType === sDeactivateChangeType) {
+				return [oChange.fileName, ...oChange.content.changeIds];
+			}
+		})
+		.flat()
+		.filter(Boolean);
+
+		// Filter all changes that should be deactivated (also already includes the id of the deactivate changes)
+		if (aToBeDeactivatedIds.length) {
+			StorageUtils.getAllFlexObjectNamespaces().forEach(function(vKey) {
+				const aFlexItems = ObjectPath.get(vKey, mFlexData);
+				if (aFlexItems.length) {
+					ObjectPath.set(vKey, aFlexItems.filter((oFlexItem) => !aToBeDeactivatedIds.includes(oFlexItem.fileName)), mFlexData);
+				}
+			});
+		}
+		return mFlexData;
 	}
 
 	/**
@@ -155,6 +182,7 @@ sap.ui.define([
 				allContexts: mPropertyBag.allContexts,
 				adaptationId: mPropertyBag.adaptationId
 			})
+			.then(applyDeactivateChanges.bind())
 			.then(filterInvalidFileNames.bind())
 			.then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest)))
 			.then(formatFlexData);

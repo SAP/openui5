@@ -53,7 +53,8 @@ sap.ui.define([
 		UI_CHANGE: UIChange,
 		UPDATABLE_CHANGE: UpdatableChange,
 		VARIANT_CHANGE: VariantChange,
-		VARIANT_MANAGEMENT_CHANGE: VariantManagementChange
+		VARIANT_MANAGEMENT_CHANGE: VariantManagementChange,
+		FLEX_OBJECT: FlexObject
 	};
 
 	function cloneIfObject(oValue) {
@@ -77,6 +78,8 @@ sap.ui.define([
 			return FLEX_OBJECT_TYPES.VARIANT_CHANGE;
 		} else if (oNewFileContent.fileType === "ctrl_variant_management_change") {
 			return FLEX_OBJECT_TYPES.VARIANT_MANAGEMENT_CHANGE;
+		} else if (oNewFileContent.changeType === "deactivateChanges") {
+			return FLEX_OBJECT_TYPES.FLEX_OBJECT;
 		}
 		return FLEX_OBJECT_TYPES.UI_CHANGE;
 	}
@@ -167,6 +170,11 @@ sap.ui.define([
 			oFlexObject.setProperty("state", States.LifecycleState.PERSISTED);
 		}
 		return oFlexObject;
+	};
+
+	FlexObjectFactory.createFlexObject = function(mPropertyBag) {
+		const mProperties = createBasePropertyBag({...mPropertyBag, ...{packageName: mPropertyBag.packageName || "$TMP"}});
+		return new FlexObject(mProperties);
 	};
 
 	FlexObjectFactory.createUIChange = function(mPropertyBag) {

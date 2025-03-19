@@ -136,10 +136,10 @@ sap.ui.define([
 		});
 
 		[true, false].forEach((bCBA) => {
-			const sName = "when create is called ";
+			const sName = "when create is called";
 			const sCBASuffix = bCBA ? " and ContextBasedAdaptations available" : "";
 
-			QUnit.test(`${sName}with a control or selector object${sCBASuffix}`, function(assert) {
+			QUnit.test(`${sName} with a control or selector object${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const oControl = new Element("controlId");
 				const mPropertyBag = {
@@ -165,7 +165,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(`${sName}with an extension point selector${sCBASuffix}`, function(assert) {
+			QUnit.test(`${sName} with an extension point selector${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {changeType: "addXMLAtExtensionPoint", name: "foo"},
@@ -196,7 +196,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(`${sName}with a component${sCBASuffix}`, function(assert) {
+			QUnit.test(`${sName} with a component${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {changeType: "changeSpecificData"},
@@ -219,7 +219,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(`${sName}with an annotation change${sCBASuffix}`, async function(assert) {
+			QUnit.test(`${sName} with an annotation change${sCBASuffix}`, async function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					annotationChange: true,
@@ -236,6 +236,29 @@ sap.ui.define([
 				assert.deepEqual(oFlexObject.getContent(), {
 					annotationPath: "annotationPath",
 					value: "value"
+				}, "the content is set correctly");
+				assert.strictEqual(
+					oFlexObject.getAdaptationId(),
+					bCBA ? "adaptationId" : undefined,
+					"the adaptation Id is added to the change if needed"
+				);
+			});
+
+			QUnit.test(`${sName} with a deactivation change${sCBASuffix}`, function(assert) {
+				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
+				const mPropertyBag = {
+					changeSpecificData: {
+						changeType: "deactivateChanges",
+						content: {
+							changeIds: ["changeId1", "changeId2"]
+						}
+					},
+					selector: this.vSelector
+				};
+				const oFlexObject = ChangesWriteAPI.create(mPropertyBag);
+				assert.strictEqual(oFlexObject.getChangeType(), "deactivateChanges", "the correct change was created");
+				assert.deepEqual(oFlexObject.getContent(), {
+					changeIds: ["changeId1", "changeId2"]
 				}, "the content is set correctly");
 				assert.strictEqual(
 					oFlexObject.getAdaptationId(),

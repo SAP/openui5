@@ -320,6 +320,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns all flex object namespaces
+	 * @returns {string[]} List of all flex object namespaces
+	 */
+	StorageUtils.getAllFlexObjectNamespaces = function() {
+		return [
+			"appDescriptorChanges", "annotationChanges", "changes",
+			"comp.changes", "comp.changes", "comp.defaultVariants", "comp.standardVariants",
+			"variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"
+		];
+	};
+
+	/**
 	 * Internal function to identify if storage response has flex objects
 	 *
 	 * @param {object} oResponse Storage response
