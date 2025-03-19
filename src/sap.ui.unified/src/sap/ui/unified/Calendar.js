@@ -1155,6 +1155,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bEnabled Indicates if <code>intervalSelection</code> should be enabled
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	Calendar.prototype.setIntervalSelection = function(bEnabled){
 		const oMonthPicker = this._getMonthPicker();
@@ -1182,6 +1183,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bEnabled Indicates if <code>singleSelection</code> should be enabled
 	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
 	 */
 	Calendar.prototype.setSingleSelection = function(bEnabled){
 		const oMonthPicker = this._getMonthPicker();
