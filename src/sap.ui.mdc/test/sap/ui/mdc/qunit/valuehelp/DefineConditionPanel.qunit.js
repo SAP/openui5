@@ -1791,7 +1791,13 @@ sap.ui.define([
 							assert.equal(oField3.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set");
 							// assert.equal(oField3.getValueHelp(), null, "valueHelp on field is NOT set");
 
-							fnDone();
+
+							_setModelConditions([]);
+							assert.notOk(oField1.getValueHelp(), "valueHelp on default field is removed");
+							setTimeout(() => { // as row update is async
+								assert.equal(oField1.getValueHelp(), "MyTestValueHelp", "valueHelp on field is set again");
+								fnDone();
+							},0);
 						}, 0);
 					}, 0);
 				}, 0);
