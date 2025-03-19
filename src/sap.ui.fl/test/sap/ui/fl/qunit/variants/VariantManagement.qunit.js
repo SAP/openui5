@@ -153,7 +153,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("fl settings is called", function(assert) {
-			assert.equal(this.fnSettingsGetInstanceSpy.callCount, 1, "fl settings is called once");
+			assert.equal(this.fnSettingsGetInstanceSpy.callCount, 2, "fl settings is called");
 		});
 
 		QUnit.test("Check property 'updateVariantInURL'", function(assert) {

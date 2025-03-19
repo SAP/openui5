@@ -350,7 +350,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when the VariantModel is initialized
 	 */
 	VariantModel.prototype.initialize = function() {
-		return Promise.resolve()
+		return Settings.getInstance()
 			.then(function() {
 				var oUShellContainer = Utils.getUshellContainer();
 				if (oUShellContainer) {
