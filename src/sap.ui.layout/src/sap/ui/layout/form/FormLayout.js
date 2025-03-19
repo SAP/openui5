@@ -1022,6 +1022,61 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Checks if the <code>Form</code> contains <code>FormContainers</code> that have a <code>Title</code>, <code>Toolbar</code> or <code>AriaLabelledBy</code>.
+	 *
+	 * This is used to determine the role for screenreader support
+	 *
+	 * @param {sap.ui.layout.form.Form} oForm Form
+	 * @return {boolean} <code>true</code> if there is a container with own label
+	 * @private
+	 * @since 1.120.28
+	 */
+	FormLayout.prototype.hasLabelledContainers = function(oForm) {
+
+		const aContainers = oForm.getFormContainers();
+		let bResult = false;
+
+		for (let i = 0; i < aContainers.length; i++) {
+			if (this.isContainerLabelled(aContainers[i])) {
+				bResult = true;
+				break;
+			}
+		}
+
+		return bResult;
+
+	};
+
+	/**
+	 * Checks if the <code>FormContainer</code> has a <code>Title</code>, <code>Toolbar</code> or <code>AriaLabelledBy</code>.
+	 *
+	 * This is used to determine the role for screenreader support
+	 *
+	 * @param {sap.ui.layout.form.FormContainer} oContainer FormContainer
+	 * @return {boolean} <code>true</code> if the <code>FormContainer</code> is labelled
+	 * @private
+	 * @since 1.120.28
+	 */
+	FormLayout.prototype.isContainerLabelled = function(oContainer) {
+
+		return !!oContainer.getTitle() || !!oContainer.getToolbar() || oContainer.getAriaLabelledBy().length > 0 || oContainer.getExpandable();
+
+	};
+
+	/**
+	 * Defines if the rendering of the layout depends on the <code>editable</code> property.
+	 *
+	 * @return {boolean} <code>true</code> if the switching <code>editable</code> must trigger re-rendering
+	 * @private
+	 * @since 1.120.28
+	 */
+	FormLayout.prototype.invalidateEditableChange = function() {
+
+		return false;
+
+	};
+
 	return FormLayout;
 
 });

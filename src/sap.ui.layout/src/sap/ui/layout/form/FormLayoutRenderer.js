@@ -95,7 +95,7 @@ sap.ui.define([
 		var oToolbar = oContainer.getToolbar();
 		var oTitle = oContainer.getTitle();
 
-		rm.openStart("section", oContainer);
+		rm.openStart("div", oContainer);
 		rm.class("sapUiFormContainer");
 
 		if (oToolbar) {
@@ -108,7 +108,7 @@ sap.ui.define([
 			rm.attr('title', oContainer.getTooltip_AsString());
 		}
 
-		this.writeAccessibilityStateContainer(rm, oContainer);
+		this.writeAccessibilityStateContainer(rm, oContainer, oLayout.isContainerLabelled(oContainer) ? "form" : "");
 
 		rm.openEnd();
 
@@ -274,38 +274,52 @@ sap.ui.define([
 
 	};
 
-	/*
+	/**
 	 * Writes the accessibility attributes for FormContainers.
-	 * @param {sap.ui.core.RenderManager} rm
-	 * @param {sap.ui.layout.form.FormContainer} oContainer
+	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code> to write accessibility attributes
+	 * @param {string} sRole if set the given role is rendered, if no role given the DOM node needs no role (e.g. Container has no title)
 	 */
-	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer){
+	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer, sRole){
 
-		var mAriaProps = {};
-		var oTitle = oContainer.getTitle();
-		var oToolbar = oContainer.getToolbar();
-		if (oToolbar) {
-			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
-				// no aria-label -> use Title of Toolbar
-				var sToolbarTitleID = FormHelper.getToolbarTitle(oToolbar); // FormHelper must already be initialized by FormLayout
-				mAriaProps["labelledby"] = {value: sToolbarTitleID, append: true};
-			}
-		} else if (oTitle) {
-			var sId = "";
-			if (typeof oTitle == "string") {
-				sId = oContainer.getId() + "--title";
-			} else {
-				sId = oTitle.getId();
-			}
-			mAriaProps["labelledby"] = {value: sId, append: true};
+		const mAriaProps = {};
+		const sTitleID = this.getTitleId(oContainer);
+		if (sTitleID) {
+			mAriaProps["labelledby"] = {value: sTitleID, append: true};
 		}
 
-		if (mAriaProps["labelledby"] || oContainer.getAriaLabelledBy().length > 0) {
-			// if no title or label do not set role because of JAWS 18 issues
-			mAriaProps["role"] = "form";
+		if (sRole) {
+			mAriaProps["role"] = sRole;
 		}
 
 		rm.accessibilityState(oContainer, mAriaProps);
+
+	};
+
+	/**
+	 * Determines the ID if the title of Form or Container used for aria-labelledby
+	 * @param {sap.ui.layout.form.Form|sap.ui.layout.form.FormContainer} oContainer <code>Form</code> or <code>FormContainer</code> to determine the ID of it's title
+	 * @returns {string} title ID
+	 */
+	FormLayoutRenderer.getTitleId = function(oContainer){
+
+		const oTitle = oContainer.getTitle();
+		const oToolbar = oContainer.getToolbar();
+		let sID = "";
+		if (oToolbar) {
+			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
+				// no aria-label -> use Title of Toolbar
+				sID = FormHelper.getToolbarTitle(oToolbar); // FormHelper must already be initialized by FormLayout
+			}
+		} else if (oTitle) {
+			if (typeof oTitle == "string") {
+				sID = oContainer.getId() + "--title";
+			} else {
+				sID = oTitle.getId();
+			}
+		}
+
+		return sID;
 
 	};
 
