@@ -85,7 +85,7 @@ sap.ui.define([
 	 * @param {string} mMetaConfig.property The property name (such as <code>width</code> or <code>label</code>)
 	 * @param {string} mMetaConfig.aggregation The aggregation name
 	 * @param {string} mMetaConfig.operation The operation to be executed by the handler (add, remove, move, set)
-	 * @param {string[]} mMetaConfig.revertProperties Properties that are added additionally to the revert data of a change
+	 * @param {string[]} mMetaConfig.additionalProperties Property names of the change content that are added to the revert data
 	 *
 	 * @returns {object} The created changehandler object
 	 */
@@ -120,9 +120,9 @@ sap.ui.define([
 									key: oChangeContent.key
 								};
 
-								mMetaConfig.revertProperties?.forEach((sProperty) => {
-									if (oChangeContent[sProperty] !== undefined) {
-										oRevertData[sProperty] = oChangeContent[sProperty];
+								mMetaConfig.additionalProperties?.forEach((vProperty) => {
+									if (typeof vProperty === "string" && oChangeContent[vProperty] !== undefined) {
+										oRevertData[vProperty] = oChangeContent[vProperty];
 									}
 								});
 
@@ -137,8 +137,8 @@ sap.ui.define([
 									oRevertData.value = null;
 								}
 
-								if (!oPriorAggregationConfig || !(oPriorAggregationConfig?.aggregations?.[sAffectedAggregation]?.length > 0)) {
-									const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
+								if ((!oPriorAggregationConfig || !(oPriorAggregationConfig?.aggregations?.[sAffectedAggregation]?.length > 0)) && typeof mMetaConfig.getCurrentState == "function") {
+									const aCurrentState = await mMetaConfig.getCurrentState?.(oControl, oPriorAggregationConfig, sAffectedAggregation, oChange, mPropertyBag);
 									if (aCurrentState) {
 										const oStateItem = aCurrentState?.find((oItem, iIndex) => {
 											return oItem.key === oChangeContent.key;
