@@ -1149,15 +1149,18 @@ sap.ui.define([
 
 		// accessibility role
 		assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("TABLE_ROLE_DESCRIPTION"), "Accessilitiy role correctly set");
-		assert.equal(sut.getFocusDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("TABLE_ROLE_DESCRIPTION"), "Accessilitiy role description correctly set");
+		assert.equal(sut.getFocusDomRef().getAttribute("aria-roledescription"), oResourceBundle.getText("TABLE_ROLE_DESCRIPTION"),
+			"Accessilitiy role description correctly set");
 
 		// _setHeaderAnnouncement() test
-		const $tblHeader = sut.$("tblHeader").trigger("focus");
+		let $tblHeader = sut.$("tblHeader").trigger("focus");
 		let oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
-		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name " + oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") +  " . Color . Number .", "Text correctly assigned for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . Name " +
+			oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") +  " . Color . Number .", "Custom announcement for header with required content");
 		assert.ok(oColumnHeader.hasListeners("_change"), "Property change event handler is added");
 		assert.ok(oColumnHeader._isInColumnHeaderContext , "Label is marked as column header label");
-		assert.equal(oColumn.$().attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
+		assert.equal(oColumn.$().attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"),
+			"Required state added as aria-describedby");
 
 		oColumnHeader.setRequired(false);
 		assert.notOk(oColumn.$().attr("aria-describedby"), "Label is not required any more so aria-describedby is removed");
@@ -1167,16 +1170,43 @@ sap.ui.define([
 		assert.ok(!oColumnHeader._isInColumnHeaderContext , "Label is not marked as column header label");
 		assert.ok(oColumn.getHeader().hasListeners("_change"), "Property change event handler is added for the new column header");
 
+		sut.setMode("MultiSelect");
+		$tblHeader = sut.$("tblHeader").trigger("focus");
+		oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . Select All Rows . Name . Color . Number .",
+			"Custom announcement for column header in MultiSelect mode");
+
+		sut.selectAll();
+		$tblHeader = sut.$("tblHeader").trigger("focus");
+		oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . All Selected . Name . Color . Number .",
+			"Custom announcement for column header when all items are selected");
+
+		sut.setMultiSelectMode("ClearAll");
+		$tblHeader = sut.$("tblHeader").trigger("focus");
+		oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . " +
+			oResourceBundle.getText("TABLE_DESELECT_ALL_ROWS") + " . Name . Color . Number .",
+			"Custom announcement for column header when multiSelectMode is ClearAll");
+
+		sut.removeSelections();
+		$tblHeader = sut.$("tblHeader").trigger("focus");
+		oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . " +
+			oResourceBundle.getText("TABLE_DESELECT_ALL_ROWS") + " " + oResourceBundle.getText("CONTROL_DISABLED") + " . Name . Color . Number .",
+			"Custom announcement for column header when all items are deselected");
+
 		// _setFooterAnnouncment() test
 		const $tblFooter = sut.$("tblFooter").trigger("focus");
 		oInvisibleText = document.getElementById($tblFooter.attr("aria-labelledby"));
-		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings", "Text correctly assigned for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings",
+			"Custom announcement for footer");
 
 		// noDataText test
 		oBinding.filter([new Filter("name", "Contains", "xxx")]);
 		await nextUIUpdate();
 		sut.$("nodata").trigger("focus");
-		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Custom announcement for NoData");
 
 		sut.destroy();
 	});
@@ -1195,7 +1225,7 @@ sap.ui.define([
 
 		const $tblHeader = sut.$("tblHeader").trigger("focus");
 		const oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
-		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Column A " + oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") + " .", "Text correctly assigned for screen reader announcement");
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . Column A " + oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") + " .", "Text correctly assigned for screen reader announcement");
 		assert.equal(oColumn.$().attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
 
 		sut.destroy();
