@@ -992,32 +992,32 @@ sap.ui.define([
 	* Creates an inline change of change type <code>appdescr_fe_addNewPage</code>.
 	*
 	* @param {object} mPropertyBag Parameters of the change type
-	* @param {string} mPropertyBag.changeType Inline change type of an app variant
-	* @param {object} mPropertyBag.sourcePage Source page details
-	* @param {string} mPropertyBag.sourcePage.id ID of the source page
-	* @param {string} mPropertyBag.sourcePage.navigationSource Navigation source of the source page
-	* @param {object} mPropertyBag.targetPage Target page details
-	* @param {string} mPropertyBag.targetPage.id ID of the target page
-	* @param {string} mPropertyBag.targetPage.type Type of the target page
-	* @param {string} mPropertyBag.targetPage.name Name of the target page component
-	* @param {string} mPropertyBag.targetPage.routePattern Route pattern for navigation
-	* @param {object} mPropertyBag.targetPage.settings Additional settings for the target page
+	* @param {string} mPropertyBag.content.changeType Inline change type of an app variant
+	* @param {object} mPropertyBag.content.sourcePage Source page details
+	* @param {string} mPropertyBag.content.sourcePage.id ID of the source page
+	* @param {string} mPropertyBag.content.sourcePage.navigationSource Navigation source of the source page
+	* @param {object} mPropertyBag.content.targetPage Target page details
+	* @param {string} mPropertyBag.content.targetPage.id ID of the target page
+	* @param {string} mPropertyBag.content.targetPage.type Type of the target page
+	* @param {string} mPropertyBag.content.targetPage.name Name of the target page component
+	* @param {string} mPropertyBag.content.targetPage.routePattern Route pattern for navigation
+	* @param {object} mPropertyBag.content.targetPage.settings Additional settings for the target page
 	*
 	* @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
 	*
 	* @private
 	*/
 	AppVariantInlineChangeFactory.create_fe_addNewPage = function(mPropertyBag) {
-		Utils.checkParameterAndType(mPropertyBag.sourcePage, "id", "string");
-		Utils.checkParameterAndType(mPropertyBag.sourcePage, "navigationSource", "string");
-		Utils.checkParameterAndType(mPropertyBag.targetPage, "id", "string");
-		Utils.checkParameterAndType(mPropertyBag.targetPage, "type", "string");
-		Utils.checkParameterAndType(mPropertyBag.targetPage, "name", "string");
-		Utils.checkParameterAndType(mPropertyBag.targetPage, "routePattern", "string");
-		Utils.checkParameterAndType(mPropertyBag.targetPage, "settings", "object");
-		Utils.checkParameterAndType(mPropertyBag.targetPage.settings, "contextPath", "string");
-		Utils.checkParameterAndType(mPropertyBag.targetPage.settings, "pageLayout", "string");
-		Utils.checkParameterAndType(mPropertyBag.targetPage.settings, "controlConfiguration", "object");
+		Utils.checkParameterAndType(mPropertyBag.content.sourcePage, "id", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.sourcePage, "navigationSource", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage, "id", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage, "type", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage, "name", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage, "routePattern", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage, "settings", "object");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage.settings, "contextPath", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage.settings, "pageLayout", "string");
+		Utils.checkParameterAndType(mPropertyBag.content.targetPage.settings, "controlConfiguration", "object");
 		return _createAppVariantInlineChange(mPropertyBag);
 	};
 
