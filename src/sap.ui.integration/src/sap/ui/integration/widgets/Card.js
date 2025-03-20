@@ -3424,7 +3424,7 @@ sap.ui.define([
 		this.invalidate();
 
 		oHeader.addEventDelegate({
-			onBeforeRendering: () => {
+			onAfterRendering: () => {
 				this.setProperty("interactive", oHeader.getInteractive());
 
 				if (!oHeader.getInteractive()) {
