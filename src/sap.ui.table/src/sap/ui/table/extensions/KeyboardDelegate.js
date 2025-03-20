@@ -877,7 +877,6 @@ sap.ui.define([
 		const iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(oTable);
 		const oRow = oTable.getRows()[iFocusedRowIndex];
 		const iAbsoluteRowIndex = oRow.getIndex();
-		const oSelectionPlugin = oTable._getSelectionPlugin();
 
 		/**
 		 * Contains information that are used when the range selection mode is active.
@@ -889,7 +888,7 @@ sap.ui.define([
 		 */
 		oTable._oRangeSelection = {
 			startIndex: iAbsoluteRowIndex,
-			selected: oSelectionPlugin.isSelected(oRow)
+			selected: oRow._isSelected()
 		};
 	}
 

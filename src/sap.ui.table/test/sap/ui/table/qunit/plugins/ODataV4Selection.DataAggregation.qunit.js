@@ -67,7 +67,7 @@ sap.ui.define([
 	QUnit.test("#getSelectedContexts", async function(assert) {
 		const aRows = this.oTable.getRows();
 
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "No contexts selected");
+		assert.deepEqual(this.oSelectionPlugin.getSelectedContexts(), [], "No contexts selected");
 
 		aRows[3].getBindingContext().expand();
 		await this.oTable.qunit.whenNextRenderingFinished();
@@ -83,10 +83,8 @@ sap.ui.define([
 		this.oTable.setFirstVisibleRow(11);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		aRows[0].getBindingContext().setSelected(true); // Group header row
-		aRows[4].getBindingContext().setSelected(true); // Sum row
-		aRows[2].getBindingContext().setSelected(true); // Leaf row
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Only contexts of leaf rows are returned");
+		aRows[3].getBindingContext().setSelected(true);
+		assert.deepEqual(this.oSelectionPlugin.getSelectedContexts(), [aRows[3].getBindingContext()]);
 	});
 
 	QUnit.test("#setSelected", async function(assert) {

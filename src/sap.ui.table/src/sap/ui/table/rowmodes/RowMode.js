@@ -499,8 +499,6 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.getRowCountConstraints = function() {
-		// TODO: Add a type definition for a protected type "rowCountConstraints" in the library file to document the return value
-		//  RowMode#getRowCountConstraints + PluginBase#setRowCountConstraints
 		const oTable = this.getTable();
 		return oTable ? oTable.getProperty("rowCountConstraints") || {} : {};
 	};

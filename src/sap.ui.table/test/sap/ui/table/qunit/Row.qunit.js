@@ -187,18 +187,48 @@ sap.ui.define([
 
 	QUnit.test("_setSelected", function(assert) {
 		const oRow = this.oTable.getRows()[0];
+		const oSelectionPlugin = new TableQUnitUtils.TestSelectionPlugin();
 
-		this.assertRowStyleUnselected(assert, oRow);
+		this.oTable.addDependent(oSelectionPlugin);
+		sinon.spy(oSelectionPlugin, "setSelected");
+
 		oRow._setSelected(true);
-		assert.deepEqual(this.oTable.getSelectedIndices(), [], "Styling the row as selected should not actually perform selection");
-		this.assertRowStyleSelected(assert, oRow);
-		oRow._setSelected(true);
-		this.assertRowStyleSelected(assert, oRow);
-		this.oTable.setSelectedIndex(0);
+		assert.ok(oSelectionPlugin.setSelected.calledOnceWithExactly(oRow, true), "SelectionPlugin#setSelected");
+
+		oSelectionPlugin.setSelected.resetHistory();
 		oRow._setSelected(false);
-		assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Styling the row as unselected should not actually perform deselection");
+		assert.ok(oSelectionPlugin.setSelected.calledOnceWithExactly(oRow, false), "SelectionPlugin#setSelected");
+	});
+
+	QUnit.test("_isSelected", function(assert) {
+		const oRow = this.oTable.getRows()[0];
+		const oSelectionPlugin = new TableQUnitUtils.TestSelectionPlugin();
+
+		this.oTable.addDependent(oSelectionPlugin);
+		sinon.stub(oSelectionPlugin, "isSelected").withArgs(oRow).returns(true);
+
+		assert.deepEqual(oRow._isSelected(), true);
+
+		oSelectionPlugin.isSelected.withArgs(oRow).returns(false);
+		assert.deepEqual(oRow._isSelected(), false);
+	});
+
+	QUnit.test("_updateSelection", function(assert) {
+		const oRow = this.oTable.getRows()[0];
+		const oSelectionPlugin = new TableQUnitUtils.TestSelectionPlugin();
+
+		this.oTable.addDependent(oSelectionPlugin);
+
+		sinon.stub(oSelectionPlugin, "isSelected").withArgs(oRow).returns(false);
+		oRow._updateSelection();
 		this.assertRowStyleUnselected(assert, oRow);
-		oRow._setSelected(false);
+
+		oSelectionPlugin.isSelected.withArgs(oRow).returns(true);
+		oRow._updateSelection();
+		this.assertRowStyleSelected(assert, oRow);
+
+		oSelectionPlugin.isSelected.withArgs(oRow).returns(false);
+		oRow._updateSelection();
 		this.assertRowStyleUnselected(assert, oRow);
 	});
 

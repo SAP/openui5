@@ -4922,12 +4922,10 @@ sap.ui.define([
 
 		function expectLegacyPlugin() {
 			assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelSelection"), "The legacy selection plugin is used");
-			assert.strictEqual(oTable._hasSelectionPlugin(), false, "Table#_hasSelectionPlugin returns \"false\"");
 		}
 
 		function expectAppliedPlugin(oAppliedPlugin) {
 			assert.strictEqual(oTable._getSelectionPlugin(), oAppliedPlugin, "The applied selection plugin is used");
-			assert.strictEqual(oTable._hasSelectionPlugin(), true, "Table#_hasSelectionPlugin returns \"true\"");
 		}
 
 		expectLegacyPlugin();
@@ -4963,7 +4961,6 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(oTable._getSelectionPlugin(), this.oTestPlugin, "The selection plugin set to the table is used");
-		assert.ok(oTable._hasSelectionPlugin(), "Table#_hasSelectionPlugin returns \"true\"");
 		assert.ok(Table.prototype._createLegacySelectionPlugin.notCalled, "No legacy selection plugin was created on init");
 
 		Table.prototype._createLegacySelectionPlugin.restore();
@@ -4975,12 +4972,10 @@ sap.ui.define([
 
 		function expectLegacyPlugin() {
 			assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelSelection"), "The legacy selection plugin is used");
-			assert.strictEqual(oTable._hasSelectionPlugin(), false, "Table#_hasSelectionPlugin returns \"false\"");
 		}
 
 		function expectAppliedPlugin(oAppliedPlugin) {
 			assert.strictEqual(oTable._getSelectionPlugin(), oAppliedPlugin, "The applied selection plugin is used");
-			assert.strictEqual(oTable._hasSelectionPlugin(), true, "Table#_hasSelectionPlugin returns \"true\"");
 		}
 
 		expectLegacyPlugin();
@@ -5008,13 +5003,22 @@ sap.ui.define([
 		oTable.destroyDependents();
 		expectLegacyPlugin();
 
+		this.spy(Table.prototype, "_createLegacySelectionPlugin");
 		this.oTestPlugin = new this.TestSelectionPlugin(); // The old one was destroyed.
 		oTable = new Table({
 			dependents: [this.oTestPlugin]
 		});
 
 		assert.strictEqual(oTable._getSelectionPlugin(), this.oTestPlugin, "The selection plugin set to the table is used");
-		assert.ok(oTable._hasSelectionPlugin(), "Table#_hasSelectionPlugin returns \"true\"");
+		assert.ok(Table.prototype._createLegacySelectionPlugin.notCalled, "No legacy selection plugin was created on init");
+	});
+
+	QUnit.test("Initialization if plugin activation fails", function(assert) {
+		this.stub(this.oTestPlugin, "onActivate").throws();
+		try {
+			this.oTable.addDependent(this.oTestPlugin);
+		} catch { /* The error is expected. We want to test what happens after the error */ }
+		assert.strictEqual(this.oTable._getSelectionPlugin(), this.oTestPlugin, "The applied selection plugin is used");
 	});
 
 	QUnit.test("Set selection mode", function(assert) {
