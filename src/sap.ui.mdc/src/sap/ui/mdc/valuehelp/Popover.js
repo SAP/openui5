@@ -262,9 +262,13 @@ sap.ui.define([
 		}.bind(this)).then(function () {
 			this._openContainerByTarget(oPopover);
 		}.bind(this)).catch(function (oError) {
-			this._cancelPromise(oOpenPromise);
-			if (oError && oError instanceof Error) { // Re-throw actual errors
-				throw oError;
+			const oCurrentOpenPromise = this._retrievePromise("open");
+			const bCancelOpen = oOpenPromise === oCurrentOpenPromise; // only cancel if open promise is still the same (may change if valuehelp is opened again in another context)
+			if (bCancelOpen) {
+				this._cancelPromise(oOpenPromise);
+				if (oError && oError instanceof Error) { // Re-throw actual errors
+					throw oError;
+				}
 			}
 		}.bind(this));
 	};
