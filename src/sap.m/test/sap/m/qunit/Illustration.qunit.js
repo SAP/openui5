@@ -134,12 +134,16 @@ function (
 			symbols: [
 				"TestSymbol"
 			],
-			collections: [{
-				prefix: "v5/",
-				mappings: {
+			config: {
+				themePath: {
+					"sap_horizon": "v5/"
+				}
+			},
+			pathSymbolsConfig: {
+				"v5/": {
 					"TestSymbol": "TestSymbol_fiori3"
 				}
-			}]
+			}
 		};
 
 		// Act

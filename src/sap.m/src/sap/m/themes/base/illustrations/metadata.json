@@ -1,0 +1,66 @@
+{
+	"pathSymbolsConfig": {
+		"root" : {
+			"BeforeSearch" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoActivities" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoData" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoEntries" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoMail" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoNotifications" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoSavedItems" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"NoTasks" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"SuccessBalloon" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"SuccessCheckMark" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"UnableToLoad" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			},
+			"UnableToUpload" :  {
+				"sizeReplacement": {
+					"Dot": "Spot"
+				}
+			}
+		}
+	}
+}
