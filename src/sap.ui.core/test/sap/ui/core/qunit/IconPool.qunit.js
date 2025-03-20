@@ -173,6 +173,8 @@ sap.ui.define([
 		assert.equal(IconPool.getIconForMimeType("application/vnd.ms-excel.sheet.macroenabled.12"), "sap-icon://excel-attachment", "Should return 'excel-attachment' icon URI for xlsm files.");
 		assert.equal(IconPool.getIconForMimeType("application/vnd.ms-excel.sheet.macroEnabled.12"), "sap-icon://excel-attachment", "Should return 'excel-attachment' icon URI for xlsm files (case insensitive).");
 		assert.equal(IconPool.getIconForMimeType("text/x-foo-bar"), "sap-icon://document", "Should return 'document' icon URI as fallback.");
+		assert.equal(IconPool.getIconForMimeType(undefined), "sap-icon://document", "Should return 'document' icon URI for nullish mime type");
+		assert.equal(IconPool.getIconForMimeType(null), "sap-icon://document", "Should return 'document' icon URI for nullish mime type");
 	});
 
 	QUnit.test("getIconInfo with sap-icon://undefined/wrench", function(assert) {
