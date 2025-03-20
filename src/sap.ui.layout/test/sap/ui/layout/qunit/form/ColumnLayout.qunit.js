@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/m/Link",
+	"sap/m/Title",
 	"sap/ui/core/Core"
 ],
 	function(
@@ -37,6 +38,7 @@ sap.ui.define([
 		Label,
 		Text,
 		Link,
+		mTitle,
 		oCore
 	) {
 	"use strict";
@@ -68,7 +70,7 @@ sap.ui.define([
 		oControl = undefined;
 	}
 
-	function initForm() {
+	function initForm(bEditable) {
 		oColumnLayout = new ColumnLayout("CL1");
 		oLabel1 = new Label("L1", {text: "Label 1"});
 		oField1 = new Text("T1", {text: "Text 1"});
@@ -83,7 +85,7 @@ sap.ui.define([
 
 		oForm = new Form("F1", {
 			layout: oColumnLayout,
-			editable: false,
+			editable: bEditable,
 			formContainers: aFormContainers
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -176,11 +178,15 @@ sap.ui.define([
 		}
 	}
 
-	function checkElementClasses(assert, $Node, iNode, bLabel, sID, iSC, bSB, iSS, iLC, bLB, iLS) {
+	function checkElementClasses(assert, $Node, iNode, bLabel, sID, iSC, bSB, iSS, iLC, bLB, iLS, bEditable) {
 		if (bLabel) {
 			assert.ok($Node.hasClass("sapUiFormElementLbl"), iNode + ". child is label node");
+			const sNode = bEditable ? "div" : "dt";
+			assert.ok($Node.is(sNode), "label node is " + sNode);
 		} else {
 			assert.notOk($Node.hasClass("sapUiFormElementLbl"), iNode + ". child is no label node");
+			const sNode = bEditable ? "div" : "dd";
+			assert.ok($Node.is(sNode), "field node is " + sNode);
 		}
 
 		assert.equal($Node.children()[0].id, sID, sID + " is content of " + iNode + ". child node");
@@ -190,7 +196,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("layout rendering", {
-		beforeEach: initForm,
+		beforeEach: () => {initForm(false);},
 		afterEach: afterTest
 	});
 
@@ -355,7 +361,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("container rendering", {
-		beforeEach: initForm,
+		beforeEach: () => {initForm(false);},
 		afterEach: afterTest
 	});
 
@@ -369,6 +375,9 @@ sap.ui.define([
 		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
 		assert.equal($Container.children().length, 1, "only one DOM node in Container");
 		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
+		assert.ok(jQuery($Container.children()[0]).is("dl"), "content node for Container is <dl>");
+		assert.notOk($Container.attr("role"), "no role set");
+		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set on Form");
 
 		oDomRef = window.document.getElementById("FE1");
 		assert.ok(oDomRef, "Element rendered");
@@ -385,7 +394,7 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
 	});
 
-	QUnit.test("Title", function(assert) {
+	QUnit.test("One container - Title", function(assert) {
 		var oTitle = new Title("Title1", {text: "Title"});
 		oFormContainer1.setTitle(oTitle);
 		oCore.applyChanges();
@@ -394,19 +403,28 @@ sap.ui.define([
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
 		assert.equal($Container.children()[0].id, "Title1", "Title rendered");
 		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
+		assert.equal(jQuery($Container.children()[1]).attr("aria-Labelledby"), oTitle.getId(), "content node has aria-labelledby");
+		assert.notOk($Container.attr("role"), "no role set on Container");
+		assert.notOk($Container.attr("aria-Labelledby"), "Container has no aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
 	});
 
-	QUnit.test("Toolbar", function(assert) {
+	QUnit.test("One container - Toolbar", function(assert) {
 		var oTitle = new Title("Title1", {text: "Title"});
-		var oToolbar = new Toolbar("TB1");
+		var oTitle2 = new mTitle("Title2", {text: "Title 2"});
+		var oToolbar = new Toolbar("TB1", {content: [oTitle2]});
 		oFormContainer1.setTitle(oTitle);
 		oFormContainer1.setToolbar(oToolbar);
 		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
-		assert.equal($Container.children()[0].id, "TB1", "Title rendered");
+		assert.equal($Container.children()[0].id, "TB1", "Toolbar rendered");
 		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "region", "role \"region\" set on Container");
+		assert.equal($Container.attr("aria-Labelledby"), oTitle2.getId(), "Container has aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
 	});
 
 	QUnit.test("Expand", function(assert) {
@@ -446,11 +464,14 @@ sap.ui.define([
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsM1"), "M: Layout has 1 column");
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsL2"), "L: Layout has 2 columns");
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsXL2"), "XL: Layout has 2 columns");
+		assert.notOk($Container.attr("role"), "no role set on Container");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
 		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
+		assert.notOk($Container.attr("role"), "no role set on Container");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 	});
 
@@ -486,6 +507,53 @@ sap.ui.define([
 		var $Container = jQuery("#FC2");
 		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
 		checkContainerClasses(assert, $Container, 2, 1, true, false, 1, true, false, 2, true, false, 2, true, false);
+	});
+
+	QUnit.test("Two container - Title", function(assert) {
+		var oTitle = new Title("Title1", {text: "Title"});
+		oFormContainer2 = addContainer("FC2");
+		oFormContainer2.setTitle(oTitle);
+		oCore.applyChanges();
+
+		var $Container = jQuery("#FC1");
+		assert.equal($Container.children().length, 1, "one DOM node in Container");
+		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.notOk($Container.attr("role"), "no role set on Container");
+		assert.notOk($Container.attr("aria-Labelledby"), "Container has no aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+
+		$Container = jQuery("#FC2");
+		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
+		assert.equal($Container.children()[0].id, "Title1", "Title rendered");
+		assert.equal($Container.children()[1].id, "FC2-content", "content node for Container rendered");
+		assert.equal(jQuery($Container.children()[1]).attr("aria-Labelledby"), oTitle.getId(), "content node has aria-labelledby");
+		assert.notOk($Container.attr("role"), "no role set on Container");
+		assert.notOk($Container.attr("aria-Labelledby"), "Container has no aria-labelledby");
+	});
+
+	QUnit.test("Two container - Toolbar", function(assert) {
+		var oTitle = new mTitle("Title2", {text: "Title 2"});
+		var oToolbar = new Toolbar("TB1", {content: [oTitle]});
+		oFormContainer2 = addContainer("FC2");
+		oFormContainer2.setToolbar(oToolbar);
+		oCore.applyChanges();
+
+		var $Container = jQuery("#FC1");
+		assert.equal($Container.children().length, 1, "one DOM node in Container");
+		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.notOk($Container.attr("role"), "no role set on Container");
+		assert.notOk($Container.attr("aria-Labelledby"), "Container has no aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+
+		$Container = jQuery("#FC2");
+		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
+		assert.equal($Container.children()[0].id, "TB1", "Toolbar rendered");
+		assert.equal($Container.children()[1].id, "FC2-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "region", "role \"region\" set on Container");
+		assert.equal($Container.attr("aria-Labelledby"), oTitle.getId(), "Container has aria-labelledby");
 	});
 
 	QUnit.test("Three containers - default columns", function(assert) {
@@ -744,8 +812,136 @@ sap.ui.define([
 		assert.equal(oDom.id, "FC1", "Dom for FormContainer returned");
 	});
 
+	// check the different rendering in edit mode (only test related to this are needed)
+	QUnit.module("container rendering (editable)", {
+		beforeEach: () => {initForm(true);},
+		afterEach: afterTest
+	});
+
+	QUnit.test("One container - default columns", function(assert) {
+		var oDomRef = window.document.getElementById("CL1");
+		assert.ok(oDomRef, "Layout rendered");
+
+		oDomRef = window.document.getElementById("FC1");
+		assert.ok(oDomRef, "Container rendered");
+		var $Container = jQuery("#FC1");
+		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
+		assert.equal($Container.children().length, 1, "only one DOM node in Container");
+		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
+		assert.ok(jQuery($Container.children()[0]).is("div"), "content node for Container is <div>");
+		assert.notOk($Container.attr("role"), "no role set");
+		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set on Form");
+
+		oDomRef = window.document.getElementById("FE1");
+		assert.ok(oDomRef, "Element rendered");
+		assert.equal(jQuery("#FE1").parent().attr("id"), "FC1-content", "Container content node is parent of Element");
+
+		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 2, true, false, 2, true, false);
+	});
+
+	QUnit.test("One container - Title", function(assert) {
+		var oTitle = new Title("Title1", {text: "Title"});
+		oFormContainer1.setTitle(oTitle);
+		oCore.applyChanges();
+
+		var $Container = jQuery("#FC1");
+		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
+		assert.equal($Container.children()[0].id, "Title1", "Title rendered");
+		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal($Container.attr("aria-Labelledby"), oTitle.getId(), "Container has aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+	});
+
+	QUnit.test("One container - Toolbar", function(assert) {
+		var oTitle = new Title("Title1", {text: "Title"});
+		var oTitle2 = new mTitle("Title2", {text: "Title 2"});
+		var oToolbar = new Toolbar("TB1", {content: [oTitle2]});
+		oFormContainer1.setTitle(oTitle);
+		oFormContainer1.setToolbar(oToolbar);
+		oCore.applyChanges();
+
+		var $Container = jQuery("#FC1");
+		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
+		assert.equal($Container.children()[0].id, "TB1", "Toolbar rendered");
+		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal($Container.attr("aria-Labelledby"), oTitle2.getId(), "Container has aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+	});
+
+	QUnit.test("Two containers - default columns", function(assert) {
+		oFormContainer2 = addContainer("FC2");
+
+		var oDomRef = window.document.getElementById("FC1");
+		assert.ok(oDomRef, "Container1 rendered");
+		var $Container = jQuery("#FC1");
+		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
+		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsM1"), "M: Layout has 1 column");
+		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsL2"), "L: Layout has 2 columns");
+		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsXL2"), "XL: Layout has 2 columns");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
+
+		oDomRef = window.document.getElementById("FC2");
+		assert.ok(oDomRef, "Container2 rendered");
+		$Container = jQuery("#FC2");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
+	});
+
+	QUnit.test("Two container - Title", function(assert) {
+		var oTitle = new Title("Title1", {text: "Title"});
+		oFormContainer2 = addContainer("FC2");
+		oFormContainer2.setTitle(oTitle);
+		oCore.applyChanges();
+
+		var $Container = jQuery("#FC1");
+		assert.equal($Container.children().length, 1, "one DOM node in Container");
+		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.notOk($Container.attr("aria-Labelledby"), "Container has no aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+
+		$Container = jQuery("#FC2");
+		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
+		assert.equal($Container.children()[0].id, "Title1", "Title rendered");
+		assert.equal($Container.children()[1].id, "FC2-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal($Container.attr("aria-Labelledby"), oTitle.getId(), "Container has aria-labelledby");
+	});
+
+	QUnit.test("Two container - Toolbar", function(assert) {
+		var oTitle = new mTitle("Title2", {text: "Title 2"});
+		var oToolbar = new Toolbar("TB1", {content: [oTitle]});
+		oFormContainer2 = addContainer("FC2");
+		oFormContainer2.setToolbar(oToolbar);
+		oCore.applyChanges();
+
+		var $Container = jQuery("#FC1");
+		assert.equal($Container.children().length, 1, "one DOM node in Container");
+		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.notOk($Container.attr("aria-Labelledby"), "Container has no aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+
+		$Container = jQuery("#FC2");
+		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
+		assert.equal($Container.children()[0].id, "TB1", "Toolbar rendered");
+		assert.equal($Container.children()[1].id, "FC2-content", "content node for Container rendered");
+		assert.notOk(jQuery($Container.children()[1]).attr("aria-Labelledby"), "content node has no aria-labelledby");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal($Container.attr("aria-Labelledby"), oTitle.getId(), "Container has aria-labelledby");
+	});
+
 	QUnit.module("element rendering", {
-		beforeEach: initForm,
+		beforeEach: () => {initForm(false);},
 		afterEach: afterTest
 	});
 
@@ -753,8 +949,8 @@ sap.ui.define([
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 2, "Element has 2 child nodes");
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0, false);
 		assert.ok(jQuery("#T1").attr("style").indexOf("100%") > 0, "Control width set to 100%");
 	});
 
@@ -764,7 +960,7 @@ sap.ui.define([
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 1, "Element has 1 child nodes");
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, false, "T1", 12, false, 0, 12, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, false, "T1", 12, false, 0, 12, false, 0, false);
 	});
 
 	QUnit.test("Label with two fields", function(assert) {
@@ -774,9 +970,9 @@ sap.ui.define([
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 3, "Element has 3 child nodes");
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 6, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 6, false, 0, 4, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 6, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 6, false, 0, 4, false, 0, false);
 	});
 
 	QUnit.test("Label with three fields", function(assert) {
@@ -787,10 +983,10 @@ sap.ui.define([
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 4, "Element has 4 child nodes");
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 4, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 4, false, 0, 2, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 4, false, 0, 2, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 4, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 4, false, 0, 2, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 4, false, 0, 2, false, 0, false);
 	});
 
 	QUnit.test("Label with 10 fields", function(assert) {
@@ -808,16 +1004,16 @@ sap.ui.define([
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 11, "Element has 11 child nodes");
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 3, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[4]), 5, false, "T4", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[5]), 6, false, "T5", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[6]), 7, false, "T6", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[7]), 8, false, "T7", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[8]), 9, false, "T8", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[9]), 10, false, "T9", 1, false, 0, 4, true, 4);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 3, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[4]), 5, false, "T4", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[5]), 6, false, "T5", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[6]), 7, false, "T6", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[7]), 8, false, "T7", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[8]), 9, false, "T8", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[9]), 10, false, "T9", 1, false, 0, 4, true, 4, false);
 		checkElementClasses(assert, jQuery(aChildren[10]), 11, false, "T10", 1, false, 0, 4, false, 0);
 	});
 
@@ -841,22 +1037,22 @@ sap.ui.define([
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 16, "Element has 16 child nodes");
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[4]), 5, false, "T4", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[5]), 6, false, "T5", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[6]), 7, false, "T6", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[7]), 8, false, "T7", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[8]), 9, false, "T8", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[9]), 10, false, "T9", 1, false, 0, 2, true, 4);
-		checkElementClasses(assert, jQuery(aChildren[10]), 11, false, "T10", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[11]), 12, false, "T11", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[12]), 13, false, "T12", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[13]), 14, false, "T13", 4, true, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[14]), 15, false, "T14", 4, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[15]), 16, false, "T15", 4, false, 0, 1, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[4]), 5, false, "T4", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[5]), 6, false, "T5", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[6]), 7, false, "T6", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[7]), 8, false, "T7", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[8]), 9, false, "T8", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[9]), 10, false, "T9", 1, false, 0, 2, true, 4, false);
+		checkElementClasses(assert, jQuery(aChildren[10]), 11, false, "T10", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[11]), 12, false, "T11", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[12]), 13, false, "T12", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[13]), 14, false, "T13", 4, true, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[14]), 15, false, "T14", 4, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[15]), 16, false, "T15", 4, false, 0, 1, false, 0, false);
 	});
 
 	QUnit.test("ColumnElementData on label", function(assert) {
@@ -866,8 +1062,8 @@ sap.ui.define([
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 5, false, 0, 12, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 7, false, 0, 12, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 5, false, 0, 12, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 7, false, 0, 12, false, 0, false);
 	});
 
 	QUnit.test("ColumnElementData on label with -1", function(assert) {
@@ -877,8 +1073,8 @@ sap.ui.define([
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0, false);
 	});
 
 	QUnit.test("ColumnElementData on field", function(assert) {
@@ -889,9 +1085,9 @@ sap.ui.define([
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 11, false, 0, 7, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 11, false, 0, 7, false, 0, false);
 	});
 
 	QUnit.test("ColumnElementData on label and field", function(assert) {
@@ -903,14 +1099,14 @@ sap.ui.define([
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 3, false, 0, 3, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 5, false, 0, 5, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 3, false, 0, 3, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 5, false, 0, 5, false, 0, false);
 
 		oLayoutData.setCellsLarge(10).setCellsSmall(10);
 		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 10, true, 0, 10, true, 0);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 10, true, 0, 10, true, 0, false);
 	});
 
 	QUnit.test("ColumnElementData on label and fields", function(assert) {
@@ -928,10 +1124,10 @@ sap.ui.define([
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 3, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 11, false, 0, 8, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 5, true, 0, 5, true, 3);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 3, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 11, false, 0, 8, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 5, true, 0, 5, true, 3, false);
 
 		oLayoutData.setCellsLarge(10).setCellsSmall(5);
 		oLayoutData = oLabel1.getLayoutData();
@@ -939,9 +1135,9 @@ sap.ui.define([
 		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 11, false, 0, 8, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 5, true, 2, 10, true, 0);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 11, false, 0, 8, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 1, false, 0, 1, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "T3", 5, true, 2, 10, true, 0, false);
 	});
 
 	QUnit.test("Tooltip", function(assert) {
@@ -973,6 +1169,81 @@ sap.ui.define([
 
 		assert.ok(oException, "exception fired");
 		oToolbar.destroy();
+	});
+
+	QUnit.module("element rendering (editable)", {
+		beforeEach: () => {initForm(true);},
+		afterEach: afterTest
+	});
+
+	QUnit.test("Label with one field", function(assert) {
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		assert.equal(aChildren.length, 2, "Element has 2 child nodes");
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, true);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 12, false, 0, 8, false, 0, true);
+		assert.ok(jQuery("#T1").attr("style").indexOf("100%") > 0, "Control width set to 100%");
+	});
+
+	QUnit.test("One field without label", function(assert) {
+		oFormElement1.destroyLabel();
+		oCore.applyChanges();
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		assert.equal(aChildren.length, 1, "Element has 1 child nodes");
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, false, "T1", 12, false, 0, 12, false, 0, true);
+	});
+
+	QUnit.test("Label with two fields", function(assert) {
+		oFormElement1.addField(new Text("T2", {text: "Text2"}));
+		oCore.applyChanges();
+
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		assert.equal(aChildren.length, 3, "Element has 3 child nodes");
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, true);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 6, false, 0, 4, false, 0, true);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "T2", 6, false, 0, 4, false, 0, true);
+	});
+
+	var myTypeCheck = function(vTypeName) {
+		if (vTypeName === "sap.ui.core.ISemanticFormContent") {
+			return true;
+		} else {
+			return this.getMetadata().isA(vTypeName);
+		}
+	};
+	Link.prototype.isA = myTypeCheck;
+
+	QUnit.module("semantic element rendering", {
+		beforeEach: function() {
+			Link.prototype.getFormRenderAsControl = function() {return true;}; // TODO: remove after Link supports this
+			Link.prototype.getFormObservingProperties = function() {return ["text"];};
+			oColumnLayout = new ColumnLayout("CL1");
+			oLabel1 = new Label("L1", {text: "Label 1"});
+			oField1 = new Link("Link1", {text: "Text 1"});
+			oField2 = new Link("Link2", {text: "Text2"});
+			oFormElement1 = new SemanticFormElement("FE1",{
+				label: oLabel1,
+				fields: [oField1, oField2]
+			});
+			oFormContainer1 = new FormContainer("FC1",{
+				formElements: [ oFormElement1 ]
+			});
+			var aFormContainers = [oFormContainer1];
+
+			oForm = new Form("F1", {
+				layout: oColumnLayout,
+				editable: false,
+				formContainers: aFormContainers
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			delete Link.prototype.getFormRenderAsControl;
+			delete Link.prototype.getFormObservingProperties;
+			afterTest();
+		}
 	});
 
 	QUnit.test("getLayoutDataForDelimiter", function(assert) {
@@ -1042,46 +1313,6 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	var myTypeCheck = function(vTypeName) {
-		if (vTypeName === "sap.ui.core.ISemanticFormContent") {
-			return true;
-		} else {
-			return this.getMetadata().isA(vTypeName);
-		}
-	};
-	Link.prototype.isA = myTypeCheck;
-
-	QUnit.module("semantic element rendering", {
-		beforeEach: function() {
-			Link.prototype.getFormRenderAsControl = function() {return true;}; // TODO: remove after Link supports this
-			Link.prototype.getFormObservingProperties = function() {return ["text"];};
-			oColumnLayout = new ColumnLayout("CL1");
-			oLabel1 = new Label("L1", {text: "Label 1"});
-			oField1 = new Link("Link1", {text: "Text 1"});
-			oField2 = new Link("Link2", {text: "Text2"});
-			oFormElement1 = new SemanticFormElement("FE1",{
-				label: oLabel1,
-				fields: [oField1, oField2]
-			});
-			oFormContainer1 = new FormContainer("FC1",{
-				formElements: [ oFormElement1 ]
-			});
-			var aFormContainers = [oFormContainer1];
-
-			oForm = new Form("F1", {
-				layout: oColumnLayout,
-				editable: false,
-				formContainers: aFormContainers
-			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
-		},
-		afterEach: function() {
-			delete Link.prototype.getFormRenderAsControl;
-			delete Link.prototype.getFormObservingProperties;
-			afterTest();
-		}
-	});
-
 	QUnit.test("renderControlsForSemanticElement", function(assert) {
 		assert.ok(oColumnLayout.renderControlsForSemanticElement(), "control rendering supported");
 	});
@@ -1090,8 +1321,8 @@ sap.ui.define([
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 2, "Element has 2 child nodes");
-		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0);
-		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "Link1", 12, false, 0, 8, false, 0);
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, false);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "Link1", 12, false, 0, 8, false, 0, false);
 
 		var aContent = jQuery(aChildren[1]).children();
 		assert.equal(aContent.length, 3, "Cell has 3 content nodes");
@@ -1101,6 +1332,20 @@ sap.ui.define([
 
 		assert.ok(jQuery("#Link1").attr("style").indexOf("100%") > 0 && jQuery("#Link1").attr("style").indexOf("max-width") >= 0, "Control max-width set to 100%");
 		assert.ok(jQuery("#Link2").attr("style").indexOf("100%") > 0 && jQuery("#Link2").attr("style").indexOf("max-width") >= 0, "Control max-width set to 100%");
+	});
+
+	QUnit.test("rendering (editable)", function(assert) {
+		sinon.spy(oForm, "invalidate");
+		oForm.setEditable(true);
+		assert.ok(oForm.invalidate.calledOnce, "Form invalidated");
+		oCore.applyChanges();
+		var $Element = jQuery("#FE1");
+		var aChildren = $Element.children();
+		assert.equal(aChildren.length, 4, "Element has 4 child nodes");
+		checkElementClasses(assert, jQuery(aChildren[0]), 1, true, "L1", 12, false, 0, 4, false, 0, true);
+		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "Link1", 11, false, 0, 4, false, 0, true);
+		checkElementClasses(assert, jQuery(aChildren[2]), 3, false, "FE1-delimiter-0", 1, false, 0, 1, false, 0, true);
+		checkElementClasses(assert, jQuery(aChildren[3]), 4, false, "Link2", 11, true, 0, 3, false, 0, true);
 	});
 
 });

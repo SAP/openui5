@@ -537,24 +537,25 @@ sap.ui.require([
 				formElements: [
 					new FormElement({
 						label: "Label 1",
-						fields: [new Text({text: "Text 1"})]
+						fields: [new Text({text: "Text 1"}), new Text({text: "another Text 1"})]
 					}),
 					new FormElement({
 						label: "Label 2",
-						fields: [new Text({text: "Text 2"})]
+						fields: [new Text({text: "Text 2"}), new Text({text: "another Text 2"})]
 					}),
 					new FormElement({
 						label: "Label 3",
-						fields: [new Text({text: "Text 3"})]
+						fields: [new Text({text: "Text 3"}), new Text({text: "another Text 3"})]
 					}),
 					new FormElement({
 						label: "Label 4",
-						fields: [new Text({text: "Text 4"})]
+						fields: [new Text({text: "Text 4"}), new Text({text: "another Text 4"})]
 					})
 				]
 			}),
 			new FormContainer("C10",{
 				title: "Container 4",
+				expandable: true,
 				formElements: [
 					new FormElement({
 						label: "Label 1",
