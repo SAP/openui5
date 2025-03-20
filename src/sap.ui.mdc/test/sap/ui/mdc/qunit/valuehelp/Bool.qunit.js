@@ -15,7 +15,9 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/Boolean", // use odata type because of language dependent text
 	"sap/m/library",
-	"sap/ui/core/library"
+	"sap/m/ScrollContainer",
+	"sap/ui/core/library",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (
 		ValueHelpDelegate,
 		Bool,
@@ -27,20 +29,23 @@ sap.ui.define([
 		FormatException,
 		BooleanType,
 		mLibrary,
-		coreLibrary
+		ScrollContainer,
+		coreLibrary,
+		nextUIUpdate
 	) {
 	"use strict";
 
 	let oBool;
 	let oType;
 	let bIsOpen = true;
+	let oScrollContainer = null;
 
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
-			return null;
+			return oScrollContainer;
 		},
 		isOpen: function() {
-			return bIsOpen;
+			return !!oScrollContainer?.getDomRef() && bIsOpen; // only open if rendered
 		},
 		invalidate: function () {},
 		getValueHelpDelegate: function () {}
@@ -52,7 +57,25 @@ sap.ui.define([
 		oType.destroy();
 		oType = undefined;
 		bIsOpen = true;
+		if (oScrollContainer) {
+			oScrollContainer.getContent.restore();
+			oScrollContainer.destroy();
+			oScrollContainer = null;
+			delete oContainer.getUIAreaForContent;
+		}
 	};
+
+	async function _renderScrollContainer(oList) {
+
+		oScrollContainer = new ScrollContainer(); // to test scrolling
+		sinon.stub(oScrollContainer, "getContent").returns([oList]); // to render List
+		oContainer.getUIAreaForContent = function() {
+			return oScrollContainer.getUIArea();
+		};
+		oScrollContainer.placeAt("content"); // render ScrollContainer
+		await nextUIUpdate();
+
+	}
 
 	QUnit.module("basic features", {
 		beforeEach: function() {
@@ -100,8 +123,9 @@ sap.ui.define([
 
 		if (oContent) {
 			const fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oBool.onShow(); // to update selection and scroll
+			oContent.then(async function(oContent) {
+				await _renderScrollContainer(oContent);
+				await oBool.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 				assert.equal(oBool.getDisplayContent(), oContent, "sap.m.List stored in displayContent");

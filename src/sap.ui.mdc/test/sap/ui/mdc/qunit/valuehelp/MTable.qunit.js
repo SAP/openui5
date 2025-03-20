@@ -32,6 +32,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/FocusHandler",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/p13n/Engine",
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment"
 ], function (
@@ -62,6 +64,8 @@ sap.ui.define([
 		KeyCodes,
 		coreLibrary,
 		oCore,
+		FocusHandler,
+		nextUIUpdate,
 		Engine,
 		createAppEnvironment
 	) {
@@ -79,13 +83,14 @@ sap.ui.define([
 	let bIsOpen = true;
 	let bIsTypeahead = true;
 	let iMaxConditions = -1;
+	let oScrollContainer = null;
 
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
-			return null;
+			return oScrollContainer;
 		},
 		isOpen: function() {
-			return bIsOpen;
+			return !bIsTypeahead || !!oScrollContainer?.getDomRef() && bIsOpen; // in typeahead only open if rendered
 		},
 		isOpening: function() {
 			return false;
@@ -184,6 +189,13 @@ sap.ui.define([
 		bIsOpen = true;
 		bIsTypeahead = true;
 		iMaxConditions = -1;
+		if (oScrollContainer) {
+			oScrollContainer.getContent.restore();
+			oScrollContainer.destroy();
+			oScrollContainer = null;
+			delete oContainer.getUIAreaForContent;
+		}
+		FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 	};
 
 	const _fakeV4Binding = function (oListBinding) {
@@ -196,6 +208,18 @@ sap.ui.define([
 		oListBinding.resume = function() {};
 	};
 
+	async function _renderScrollContainer() {
+
+		oScrollContainer = new ScrollContainer(); // to test scrolling
+		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render Table
+		oContainer.getUIAreaForContent = function() {
+			return oScrollContainer.getUIArea();
+		};
+		oScrollContainer.placeAt("content"); // render ScrollContainer
+		await nextUIUpdate();
+
+	}
+
 	QUnit.module("Typeahead", {
 		beforeEach: function() {
 			bIsTypeahead = true;
@@ -205,7 +229,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("getContent for typeahead", function(assert) {
+	QUnit.test("getContent for typeahead", async function(assert) {
 
 		let iSelect = 0;
 		let aConditions;
@@ -223,7 +247,7 @@ sap.ui.define([
 		const oContent = oMTable.getContent();
 
 		if (oContent) {
-			oMTable.onShow(); // to update selection and scroll
+			await oMTable.onShow(); // to update selection and scroll
 			assert.ok(oContent, "Content returned");
 			assert.equal(oContent, oTable, "Content is given Table");
 			assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
@@ -325,12 +349,13 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Filtering without $search", function(assert) {
+	QUnit.test("Filtering without $search", async function(assert) {
 
 		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
 
 		sinon.spy(oListBinding, "filter");
+		await _renderScrollContainer();
 		oMTable.onBeforeShow(); // filtering should happen only if open
 		oMTable._bContentBound = true;
 
@@ -368,9 +393,9 @@ sap.ui.define([
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
 		const fnDone = assert.async();
-		oMTable.onBeforeShow(true).then(function() {
+		oMTable.onBeforeShow(true).then(async function() {
 			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable), "ValueHelpDelegate.getFilterConditions called");
-			oMTable.onShow(true); // to trigger filtering
+			await oMTable.onShow(true); // to trigger filtering
 			// compare arguments of filter as Filter object is changed during filtering
 			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
 			assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
@@ -389,8 +414,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Filtering using $search", function(assert) {
+	QUnit.test("Filtering using $search", async function(assert) {
 
+		await _renderScrollContainer();
 		let iTypeaheadSuggested = 0;
 		let oCondition;
 		let sFilterValue;
@@ -421,11 +447,11 @@ sap.ui.define([
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
 		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
+		setTimeout(async function(){ // as waiting for Promise
 			// as JSOM-Model does not support $search all items are returned, but test for first of result
 			const oTable = oMTable.getTable();
 			const aItems = oTable.getItems();
-			const sShownItemId = oMTable.onShow(); // to update selection and scroll
+			const sShownItemId = await oMTable.onShow(); // to update selection and scroll
 			assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
 			assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
 			assert.equal(sFilterValue, "X", "typeaheadSuggested event filterValue");
@@ -442,7 +468,7 @@ sap.ui.define([
 	});
 
 	// Delegate seems to already be loaded in this test?
-	/* QUnit.test("Filtering waiting for delegate", function(assert) {
+	/* QUnit.test("Filtering waiting for delegate", async function(assert) {
 
 		var fnResolve;
 		var oPromise = new Promise(function(fResolve) {
@@ -455,7 +481,7 @@ sap.ui.define([
 		sinon.spy(oListBinding, "filter");
 		var oCondition = Condition.createCondition(OperatorName.EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		oMTable.setProperty("inConditions", {inValue: [oCondition]});
-		oMTable.onShow(); // to trigger filtering
+		await oMTable.onShow(); // to trigger filtering
 
 		// compare arguments of filter as Filter object is changed during filtering
 		assert.notOk(oListBinding.filter.called, "ListBinding filter not called before Delegate finished");
@@ -1091,8 +1117,8 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getItemForValue: _oFirstItemResult", (assert) => {
-		const fnDone = assert.async();
+	QUnit.test("getItemForValue: _oFirstItemResult", async (assert) => {
+		await _renderScrollContainer();
 		const sFilterValue = "IR";
 		const oExpectedResultItem = {
 			text: "FirstItemResult", key: "IR", additionalText: "Not in the Model"
@@ -1118,13 +1144,11 @@ sap.ui.define([
 		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 		if (oPromise) {
-			oPromise.then(function(oItem) {
+			return oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, oExpectedResultItem, "Correct value returned");
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-			}).finally(function() {
-				fnDone();
 			});
 		}
 	});
@@ -1140,28 +1164,33 @@ sap.ui.define([
 	let sNavigateItemId;
 	let bNavigateLeaveFocus;
 
-	function _checkNavigatedItem(assert, oTable, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
+	async function _checkNavigatedItem(assert, oTable, bOpen, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
 
+		await new Promise((resolve) => {setTimeout(resolve, 10);}); // as item-selection is updated async
 		const aItems = oTable.getItems();
-		assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
+		if (!bLeaveFocus) { // as visual focus is removed from Field or by closing (as last item still selected Field should decide to focus or close)
+			assert.equal(oTable.hasStyleClass("sapMListFocus"), bOpen && iNavigatedIndex >= 0, "Table has style class sapMListFocus");
+		}
 
-		for (let i = 0; i < aItems.length; i++) {
-			const oItem = aItems[i];
-			if (i === iSelectedIndex) {
-				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
-				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
-					assert.ok(oItem.getSelected(), "Item" + i + " is selected");
-				}
-			} else {
-				assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " not focused");
-				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
-					assert.notOk(oItem.getSelected(), "Item" + i + " not selected");
+		if (bOpen) { // on closed table it doesn't matter
+			for (let i = 0; i < aItems.length; i++) {
+				const oItem = aItems[i];
+				if (i === iSelectedIndex) {
+					assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
+					if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+						assert.ok(oItem.getSelected(), "Item" + i + " is selected");
+					}
+				} else {
+					assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " not focused");
+					if (!oItem.isA("sap.m.GroupHeaderListItem")) {
+						assert.notOk(oItem.getSelected(), "Item" + i + " not selected");
+					}
 				}
 			}
 		}
 
 		assert.equal(iNavigate, 1, "Navigated Event fired");
-		if (!bLeaveFocus) {
+		if (!bLeaveFocus && iNavigatedIndex >= 0) {
 			if (bIsOpen) {
 				assert.ok(oTable.scrollToIndex.calledWith(iNavigatedIndex), "Table scrolled to item");
 			}
@@ -1184,17 +1213,10 @@ sap.ui.define([
 
 	}
 
-	QUnit.test("navigate", function(assert) {
+	QUnit.test("navigate", async function(assert) {
 
 		bIsOpen = true; // test for open navigation (for closed is tested later)
-		const oScrollContainer = new ScrollContainer(); // to test scrolling
-		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer.getUIAreaForContent = function() {
-			return oScrollContainer.getUIArea();
-		};
-		oScrollContainer.placeAt("content"); // render ScrollContainer
-		oCore.applyChanges();
-		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
+		await _renderScrollContainer();
 		sinon.spy(oTable, "scrollToIndex");
 
 		iNavigate = 0;
@@ -1209,45 +1231,41 @@ sap.ui.define([
 		});
 
 		oMTable.setConditions([]);
-		oMTable.onShow(); // to update selection and scroll
+		await oMTable.onShow(); // to update selection and scroll
 		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
+		await _checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 		// no previous item
 		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
+		await _checkNavigatedItem(assert, oTable, true, -1, 0, Condition.createItemCondition("I1", "Item 1"), true);
+
+		// no previous item - leaveFocus
+		oMTable.navigate(-1);
+		await _checkNavigatedItem(assert, oTable, true, -1, 0, Condition.createItemCondition("I1", "Item 1"), true);
+
+		// back to last item after leaveFocus
+		oMTable.navigate(0);
+		await _checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 		// next item of selected one
 		oMTable.navigate(1);
-		_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
+		await _checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
 		oTable.getItems()[1].setSelected(false); // initialize
 		oMTable.onConnectionChange(); // simulate new assignment
 		oMTable.setConditions([]);
 
 		// no item selected -> navigate to last
 		oMTable.navigate(-1);
-		_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
+		await _checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false);
 
 		oMTable.onHide();
 		assert.notOk(oTable.hasStyleClass("sapMListFocus"), "Table removed style class sapMListFocus");
 
-		oScrollContainer.getContent.restore();
-		oScrollContainer.destroy();
-		delete oContainer.getUIAreaForContent;
-		oContainer.getScrollDelegate.restore();
-
 	});
 
-	QUnit.test("navigate for multi-value", function(assert) {
+	QUnit.test("navigate for multi-value", async function(assert) {
 
-		const oScrollContainer = new ScrollContainer(); // to test scrolling
-		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer.getUIAreaForContent = function() {
-			return oScrollContainer.getUIArea();
-		};
-		oScrollContainer.placeAt("content"); // render ScrollContainer
-		oCore.applyChanges();
-		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
+		await _renderScrollContainer();
 
 		oTable.setMode(ListMode.MultiSelect);
 		oMTable.setConfig({
@@ -1280,7 +1298,7 @@ sap.ui.define([
 		});
 
 		oMTable.setConditions([]);
-		oMTable.onShow(); // to update selection and scroll
+		await oMTable.onShow(); // to update selection and scroll
 		oMTable.navigate(1);
 		assert.ok(oTable.focus.called, "Table focused");
 		assert.equal(iNavigate, 0, "Navigated Event not fired");
@@ -1305,14 +1323,9 @@ sap.ui.define([
 		assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
 		assert.equal(iConfirm, 1, "confirm event fired");
 
-		oScrollContainer.getContent.restore();
-		oScrollContainer.destroy();
-		delete oContainer.getUIAreaForContent;
-		oContainer.getScrollDelegate.restore();
-
 	});
 
-	QUnit.test("navigate grouped table with async ListBinding (closed)", function(assert) {
+	QUnit.test("navigate grouped table with async ListBinding (closed)", async function(assert) {
 
 		bIsOpen = false; // test for closed navigation (for open is tested later)
 		oModel.setData({
@@ -1347,42 +1360,37 @@ sap.ui.define([
 		_fakeV4Binding();
 
 		oMTable.navigate(1);
-		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
-			let oItem = oTable.getItems()[0];
-			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
-			oItem = oTable.getItems()[3];
-			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
+		await _checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+		let oItem = oTable.getItems()[0];
+		assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
+		oItem = oTable.getItems()[3];
+		assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
 
-			// next item
-			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+		// next item
+		oMTable.navigate(1);
+		await _checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
-			// next item (ignoring group header)
-			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+		// next item (ignoring group header)
+		oMTable.navigate(1);
+		await _checkNavigatedItem(assert, oTable, false, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
 
-			// previous item (ignoring group header)
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+		// previous item (ignoring group header)
+		oMTable.navigate(-1);
+		await _checkNavigatedItem(assert, oTable, false, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
-			// previous item
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+		// previous item
+		oMTable.navigate(-1);
+		await _checkNavigatedItem(assert, oTable, false, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
-			// no previous item
-			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), true);
+		// no previous item
+		oMTable.navigate(-1);
+		await _checkNavigatedItem(assert, oTable, false, -1, 1, Condition.createItemCondition("I1", "Item 1"), true);
 
-			oMTable.onConnectionChange(); // simulate new assignment
-
-			fnDone();
-		}, 0);
+		oMTable.onConnectionChange(); // simulate new assignment
 
 	});
 
-	QUnit.test("navigate grouped table with async ListBinding (open)", function(assert) {
+	QUnit.test("navigate grouped table with async ListBinding (open)", async function(assert) {
 
 		oModel.setData({
 			items: [
@@ -1397,14 +1405,7 @@ sap.ui.define([
 
 		_fakeV4Binding(oListBinding);
 
-		const oScrollContainer = new ScrollContainer(); // to test scrolling
-		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
-		oContainer.getUIAreaForContent = function() {
-			return oScrollContainer.getUIArea();
-		};
-		oScrollContainer.placeAt("content"); // render ScrollContainer
-		oCore.applyChanges();
-		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
+		await _renderScrollContainer();
 		sinon.spy(oTable, "scrollToIndex");
 
 		_fakeV4Binding();
@@ -1422,15 +1423,15 @@ sap.ui.define([
 
 
 		oMTable.setConditions([]);
-		oMTable.onShow(); // to simulate Open
+		await oMTable.onShow(); // to simulate Open
 		oModel.checkUpdate(true); // force model update
 		sinon.stub(oListBinding, "getLength").onFirstCall().returns(undefined); // to fake pending binding
 		oListBinding.getLength.callThrough();
 
 		oMTable.navigate(1);
 		const fnDone = assert.async();
-		setTimeout( function(){ // as waiting for Promise
-			_checkNavigatedItem(assert, oTable, 0, 0, undefined, false);
+		setTimeout(async function(){ // as waiting for Promise
+			await _checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
 			let oItem = oTable.getItems()[0];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 			oItem = oTable.getItems()[3];
@@ -1438,46 +1439,42 @@ sap.ui.define([
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			await _checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			await _checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
 			// next item (group header)
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 3, 3, undefined, false);
+			await _checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
 
 			// next item
 			oMTable.navigate(1);
-			_checkNavigatedItem(assert, oTable, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
+			await _checkNavigatedItem(assert, oTable, true, 4, 4, Condition.createItemCondition("I2", "Item 2"), false);
 
 			// previous item (group header)
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 3, 3, undefined, false);
+			await _checkNavigatedItem(assert, oTable, true, 3, 3, undefined, false);
 
 			// previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
+			await _checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "Item 3"), false);
 
 			// previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
+			await _checkNavigatedItem(assert, oTable, true, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
 
 			// previous item (group header)
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 0, 0, undefined, false);
+			await _checkNavigatedItem(assert, oTable, true, 0, 0, undefined, false);
 
 			// no previous item
 			oMTable.navigate(-1);
-			_checkNavigatedItem(assert, oTable, 0, 0, undefined, true);
+			await _checkNavigatedItem(assert, oTable, true, -1, 0, undefined, true);
 
 			oMTable.onHide();
 
-			oScrollContainer.getContent.restore();
-			oScrollContainer.destroy();
-			delete oContainer.getUIAreaForContent;
-			oContainer.getScrollDelegate.restore();
 			fnDone();
 		}, 0);
 
@@ -1593,8 +1590,8 @@ sap.ui.define([
 
 		if (oContent) {
 			var fnDone = assert.async();
-			oContent.then(function(oContent) {
-				oMTable.onShow(); // to update selection and scroll
+			oContent.then(async function(oContent) {
+				await oMTable.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
 				assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");

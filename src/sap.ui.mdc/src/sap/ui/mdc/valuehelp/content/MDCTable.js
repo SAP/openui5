@@ -327,7 +327,7 @@ sap.ui.define([
 	};
 
 	MDCTable.prototype.onShow = function () {
-		FilterableListContent.prototype.onShow.apply(this, arguments);
+		return FilterableListContent.prototype.onShow.apply(this, arguments);
 	};
 
 	MDCTable.prototype.onBeforeShow = function (bInitial) {

@@ -234,7 +234,7 @@ sap.ui.define([
 			iClosed++;
 		});
 
-		sinon.stub(oContent, "onShow").returns("MyItem");
+		sinon.stub(oContent, "onShow").returns(Promise.resolve("MyItem"));
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "_openContainerByTarget");
 		oContent.getContentHeight = function () {

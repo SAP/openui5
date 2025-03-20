@@ -880,10 +880,12 @@ sap.ui.define([
 				if (oValueHelp.isNavigationEnabled(iStep) && // if open let ValueHelp decide if and how to navigate
 					(!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) { // for Currenncy/Unit field navigate only in part with valueHelp
 					// if only type-ahead but no real value help, only navigate if open
+					const oContent = this.getControlForSuggestion();
+					const bFocusInField = oContent.hasStyleClass("sapMFocus");
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
 					oValueHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-					oValueHelp.navigate(iStep);
+					oValueHelp.navigate(oValueHelp.isOpen() && bFocusInField && iStep === 1 ? 0 : iStep); // on first navigation just initial selected item should be navigated
 				}
 			}
 		}
@@ -2780,8 +2782,10 @@ sap.ui.define([
 			const aConditions = this.getConditions();
 			_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 			oValueHelp.toggleOpen(!!bOpenAsTypeahed);
+			const bIsFocusInHelp = oValueHelp.isFocusInHelp();
+			this._bFocusOnValueHelp = !!oEvent.getSource && !bIsFocusInHelp; // show focus on dropdown if opened via F4 (set it only after really opened)
 			const oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
-			if (!oValueHelp.isFocusInHelp()) {
+			if (!bIsFocusInHelp) {
 				// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
 				if (oContent.bValueHelpRequested) {
 					oContent.bValueHelpRequested = false; // TODO: need API
@@ -3049,7 +3053,7 @@ sap.ui.define([
 
 		const oCondition = oEvent.getParameter("condition");
 		const sFilterValue = oEvent.getParameter("filterValue");
-		const sItemId = oEvent.getParameter("itemId");
+		// const sItemId = oEvent.getParameter("itemId");
 		const oContent = this.getControlForSuggestion();
 		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
 
@@ -3094,7 +3098,7 @@ sap.ui.define([
 				oContent.selectText(oAutocomplete.selectionStart, oAutocomplete.selectionEnd);
 
 				oContentFactory.updateConditionType();
-				_setAriaAttributes.call(this, true, sItemId); // TODO: check if still open?
+				_setAriaAttributes.call(this, true, null); // as visual focus stays in Field - no connection to item
 			}
 		}
 
@@ -3123,16 +3127,24 @@ sap.ui.define([
 		const aConditions = this.getConditions();
 		_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 
+		if (_isFocused.call(this)) { // restore focus visualization
+			oContent.addStyleClass("sapMFocus");
+		}
+		delete this._bFocusOnValueHelp; // only used while opening
+
 	}
 
 	function _handleValueHelpOpened(oEvent) {
 
 		let sItemId;
-		if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead
-			sItemId = oEvent.getParameter("itemId");
+		if (this._bFocusOnValueHelp) {
+			if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead
+				sItemId = oEvent.getParameter("itemId");
+			}
 		}
 		_setAriaAttributes.call(this, true, sItemId);
 		_setShowValueStateMessage.call(this, false);
+		delete this._bFocusOnValueHelp; // only used while opening
 
 		// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
 
