@@ -69,7 +69,7 @@
 				<m:Text text="{Hierarchy}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="27em">
+		<Column width="31em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false }"
@@ -79,17 +79,19 @@
 						tooltip="Create New Child (filtered out)"/>
 					<m:Button icon="sap-icon://up" press=".onMoveUp" tooltip="Move Up"/>
 					<m:Button icon="sap-icon://down" press=".onMoveDown" tooltip="Move Down"/>
-					<m:Button icon="sap-icon://move" press=".onMove($event, null)"
+					<m:Button icon="sap-icon://move" press=".onMove($event, '')"
 						tooltip="Move To Parent..."/>
-					<m:Button icon="sap-icon://copy" press=".onMove($event, null, true)"
+					<m:Button icon="sap-icon://copy" press=".onMove($event, '', true)"
 						tooltip="Copy To Parent..."/>
 					<m:Button icon="sap-icon://map" press=".onMove($event, '?')"
 						tooltip="Move Just Before Sibling..."/>
 					<m:Button icon="sap-icon://arrow-bottom" press=".onMove($event, null)"
 						tooltip="Move As Last Child Of..."/>
 					<m:Button enabled="{= %{@$ui5.node.level} > 1 }" icon="sap-icon://back-to-top"
-						press=".onMakeRoot($event, null)" tooltip="Make Root"/>
-					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
+						press=".onMakeRoot($event, false)" tooltip="Make Root"/>
+					<m:Button enabled="{= %{@$ui5.node.level} > 1 }" icon="sap-icon://slim-arrow-up"
+						press=".onMakeRoot($event, false, true)" tooltip="Copy To Root"/>
+					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, true)"
 						tooltip="Make Last Root"/>
 					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"

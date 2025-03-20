@@ -18,6 +18,8 @@
 @_sap_tnt_NavigationList_ItemBorderRadius: 0;
 @_sap_tnt_NavigationList_ItemBottomMargin: 0;
 @_sap_tnt_NavigationList_ItemBottomMarginCompact: 0;
+@_sap_tnt_NavigationList_ItemBottomMarginInPopup: 0;
+@_sap_tnt_NavigationList_ItemBottomMarginInOverflowPopup: 0.1875rem;
 @_sap_tnt_NavigationList_ItemTransition: none;
 @_sap_tnt_NavigationList_NoIconsGroupPadding: 1rem;
 @_sap_tnt_NavigationList_NoIconsNestedItemPadding: 1rem;
@@ -40,15 +42,11 @@
 @_sap_tnt_NavigationList_GroupIconMarginRight: 0;
 @_sap_tnt_NavigationList_GroupTextWeight: unset;
 @_sap_tnt_NavigationList_GroupPadding: 0.5rem;
-@_sap_tnt_NavigationList_GroupBottomMarginInPopup: 0;
+@_sap_tnt_NavigationList_ParentItemBottomMarginInPopup: 0;
 @_sap_tnt_NavigationList_Padding: 0;
 @_sap_tnt_NavigationList_PaddingFixed: 0;
-@_sap_tnt_NavigationList_ParentPopupPadding: 0;
-@_sap_tnt_NavigationList_ParentPopupBorderRadius: @sapUiPopoverBorderCornerRadius;
+@_sap_tnt_NavigationList_PopupPadding: 0;
 @_sap_tnt_NavigationList_PopupItemPadding: 0 1rem;
-@_sap_tnt_NavigationList_PopupIconWidth: 1rem;
-@_sap_tnt_NavigationList_PopupBoxShadow: @sapUiContentShadow2;
-@_sap_tnt_NavigationList_PopupArrowBoxShadow: @sapUiContentShadow2;
 @_sap_tnt_NavigationList_PopupTitleTextSize: @sapMFontMediumSize;
 @_sap_tnt_NavigationList_PopupTitleLineHeight: normal;
 @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPadding: 0;
@@ -247,10 +245,17 @@
 }
 
 .sapTntNLPopover .sapTntNLPopup.sapTntNL {
-	padding: @_sap_tnt_NavigationList_ParentPopupPadding;
+	padding: @_sap_tnt_NavigationList_PopupPadding;
 
-	.sapTntNLI.sapTntNLIFirstLevel {
-		margin-bottom: @_sap_tnt_NavigationList_GroupBottomMarginInPopup;
+	.sapTntNLI {
+
+		&.sapTntNLIFirstLevel {
+			margin-bottom: @_sap_tnt_NavigationList_ParentItemBottomMarginInPopup;
+		}
+
+		&:not(:last-child) {
+			margin-bottom: @_sap_tnt_NavigationList_ItemBottomMarginInPopup;
+		}
 	}
 }
 
@@ -271,30 +276,20 @@
 		-moz-user-select: none; /* Firefox all */
 		user-select: none;
 	}
-
-	img.sapTntNLIIcon {
-		height: 1.125rem;
-		width: 1.125rem;
-		padding: 0.6875rem 0.9375rem;
-	}
 }
 
 .sapTntNLIHidden {
 	display: none;
 }
 
-.sapTntNLPopup {
-	span.sapTntNLIIcon {
-		width: @_sap_tnt_NavigationList_PopupIconWidth;
-		min-width: @_sap_tnt_NavigationList_PopupIconWidth;
-		visibility: hidden;
+.sapTntNLPopup .sapTntNLI {
+
+	a {
+		padding-left: 1rem;
 	}
 
-	img.sapTntNLIIcon {
-		width: @_sap_tnt_NavigationList_PopupIconWidth;
-		min-width: @_sap_tnt_NavigationList_PopupIconWidth;
-		visibility: hidden;
-		padding: 0;
+	.sapTntNLIIcon {
+		display: none;
 	}
 }
 
@@ -564,18 +559,14 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 }
 
 // NavigationList with icons
-.sapTntNL:not(.sapTntNLNoIcons) {
-	span.sapTntNLIIcon {
-		min-width: @_sap_tnt_NavigationList_GroupIconWidth;
-	}
+.sapTntNL:not(.sapTntNLNoIcons) span.sapTntNLIIcon {
+	min-width: @_sap_tnt_NavigationList_GroupIconWidth;
 }
 
-.sapTntNL:not(.sapTntNLNoIcons):not(.sapTntNLCollapsed) {
-	span.sapTntNLIIcon {
-		min-width: @_sap_tnt_NavigationList_GroupIconWidthExpanded;
-		margin-left: @_sap_tnt_NavigationList_GroupIconMarginLeft;
-		margin-right: @_sap_tnt_NavigationList_GroupIconMarginRight
-	}
+.sapTntNL:not(.sapTntNLNoIcons):not(.sapTntNLCollapsed) span.sapTntNLIIcon {
+	min-width: @_sap_tnt_NavigationList_GroupIconWidthExpanded;
+	margin-left: @_sap_tnt_NavigationList_GroupIconMarginLeft;
+	margin-right: @_sap_tnt_NavigationList_GroupIconMarginRight
 }
 
 // NavigationList without icons
@@ -591,31 +582,10 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 	}
 }
 
-.sapTntNLPopover {
-	&.sapMPopover {
-		box-shadow: @_sap_tnt_NavigationList_PopupBoxShadow;
-		border-radius: @_sap_tnt_NavigationList_ParentPopupBorderRadius;
-
-		.sapMPopoverCont {
-			border-radius: @_sap_tnt_NavigationList_ParentPopupBorderRadius;
-		}
-	}
-
-	.sapMPopoverArr:after {
-		box-shadow: @_sap_tnt_NavigationList_PopupArrowBoxShadow;
-	}
-}
-
 .sapTntNLMenu.sapUiMnu {
-	box-shadow: @_sap_tnt_NavigationList_PopupBoxShadow;
 
 	&:not(.sapUiSubmenu) {
-		padding: @_sap_tnt_NavigationList_ParentPopupPadding;
-		border-radius: @_sap_tnt_NavigationList_ParentPopupBorderRadius;
-	}
-
-	&.sapUiSubmenu {
-		padding: 0.5rem;
+		padding: @_sap_tnt_NavigationList_PopupPadding;
 	}
 
 	.sapUiMnuItmSbMnu:empty {
@@ -709,7 +679,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 			outline-offset: 0;
 
 			&:not(:last-child) {
-				margin-bottom: 0.1875rem;
+				margin-bottom: @_sap_tnt_NavigationList_ItemBottomMarginInOverflowPopup;
 				border: @_sap_tnt_NavigationList_ItemBorderStyleColor;
 				border-width: @_sap_tnt_NavigationList_ItemBorderWidth;
 			}
@@ -732,26 +702,30 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 }
 
 .sapTntNLMenu.sapUiMnu.sapUiSubmenu {
-	.sapUiMnuLst {
-		.sapUiMnuItm {
-			.sapUiMnuItmIco {
-				position: relative !important;
-				width: auto;
-				.sapUiIcon {
-					color: @_sap_tnt_NavigationList_IconColor;
-					display: block;
-				}
+	padding: 0.5rem;
+
+	.sapUiMnuLst .sapUiMnuItm {
+		padding-inline: 1rem;
+
+		.sapUiMnuItmIco {
+			position: relative !important;
+			width: auto;
+
+			.sapUiIcon {
+				color: @_sap_tnt_NavigationList_IconColor;
+				display: block;
 			}
-			.sapTntNLIExtLinkOverflowIcon {
-				color: @_sap_tnt_NavigationList_ExpandIconColor;
-				padding-left: 0.5rem;
-				font-size: 0.875rem;
-				pointer-events: all;
-				outline: none;
-				-webkit-user-select: none;  /* Chrome all / Safari all */
-				-moz-user-select: none;     /* Firefox all */
-				user-select: none;
-			}
+		}
+
+		.sapTntNLIExtLinkOverflowIcon {
+			color: @_sap_tnt_NavigationList_ExpandIconColor;
+			padding-left: 0.5rem;
+			font-size: 0.875rem;
+			pointer-events: all;
+			outline: none;
+			-webkit-user-select: none;  /* Chrome all / Safari all */
+			-moz-user-select: none;     /* Firefox all */
+			user-select: none;
 		}
 	}
 }
@@ -795,10 +769,6 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 
 	.sapTntNL.sapTntNLPopup span.sapTntNLIIcon {
 		padding: 0.5rem 0;
-	}
-
-	.sapTntNL img.sapTntNLIIcon {
-	  padding: 0.5rem 0.4375rem;
 	}
 
 	.sapTntNLPopup span.sapTntNLIIcon {

@@ -315,7 +315,7 @@ sap.ui.define([
 	function checkTheme() {
 		var sThemeName = Theming.getTheme();
 		var sPath = ThemeManager._getThemePath("sap.ui.core", sThemeName) + "custom.css";
-		var bIsStandardTheme = sThemeName.indexOf("sap_") === 0 || sThemeName === "base";
+		var bIsStandardTheme = ThemeHelper.isStandardTheme(Theming.getTheme());
 		var res = true;
 
 		var aFailedLibs = [];

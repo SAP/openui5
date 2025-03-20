@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/openCardDialog",
 	"sap/ui/integration/util/DataProvider",
+	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextDialogAfterOpenEvent"
@@ -19,6 +20,7 @@ sap.ui.define([
 	Card,
 	openCardDialog,
 	DataProvider,
+	RequestDataProvider,
 	nextUIUpdate,
 	nextCardReadyEvent,
 	nextDialogAfterOpenEvent
@@ -189,6 +191,92 @@ sap.ui.define([
 
 		const oContentListRef = oCard.getCardContent().getInnerList().getDomRef("listUl");
 		assert.strictEqual(oContentListRef.getAttribute("aria-labelledby"), oHeader.getTitleId(), "List content has correct aria-labelledby attribute");
+	});
+
+	QUnit.test("Only single data request must be executed", async function (assert) {
+		// Act
+		const fnSpy = this.spy(RequestDataProvider.prototype, "getData");
+		const oDialog = openCardDialog(
+			this.oCard,
+			{
+				manifest: {
+					"sap.app": {
+						id: "test.card.dataRequest",
+						type: "card"
+					},
+					"sap.card": {
+						type: "List",
+						header: {
+							title: "Data Request Test"
+						},
+						data: {
+							request: {
+								url: "items.json"
+							}
+						},
+						content: {
+							item: {
+								title: "{Name}"
+							}
+						}
+					}
+				}
+			}
+		);
+
+		await nextDialogAfterOpenEvent(oDialog);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(fnSpy.callCount, 1, "Only single data request was executed.");
+
+		fnSpy.restore();
+	});
+
+	QUnit.test("Refresh the child card", async function (assert) {
+		// Act
+		const fnSpy = this.spy(RequestDataProvider.prototype, "getData");
+		const oDialog = openCardDialog(
+			this.oCard,
+			{
+				manifest: {
+					"sap.app": {
+						id: "test.card.dataRequestWithRefresh",
+						type: "card"
+					},
+					"sap.card": {
+						type: "List",
+						header: {
+							title: "Data Request Test"
+						},
+						data: {
+							request: {
+								url: "items.json"
+							}
+						},
+						content: {
+							item: {
+								title: "{Name}"
+							}
+						}
+					}
+				}
+			}
+		);
+
+		await nextDialogAfterOpenEvent(oDialog);
+		await nextUIUpdate();
+
+		const oChildCard = oDialog.getContent()[0];
+		oChildCard.refresh();
+
+		await nextCardReadyEvent(oChildCard);
+
+		// Assert
+		assert.strictEqual(fnSpy.callCount, 2, "Two data requests were executed after explicit refresh.");
+
+		// Clean up
+		fnSpy.restore();
 	});
 
 	QUnit.test("Resize after open", async function (assert) {

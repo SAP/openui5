@@ -18,7 +18,7 @@
 			//hide the fallback icon
 		}
 
-		.sapFCardHeaderImage .sapFCardHeaderItemBinded::after {
+		.sapFCardHeaderMainPart .sapFCardHeaderImage .sapFCardHeaderItemBinded::after {
 			max-height: 2rem;
 			max-width: 2rem;
 			margin-top: 0.5rem;
@@ -41,15 +41,15 @@
 			margin-top: 0.3rem;
 		}
 
-		.sapFCardHeaderTextSecondLine .sapFCardHeaderItemBinded::after,
-		.sapFCardSubtitle.sapFCardHeaderItemBinded::after,
-		.sapFCardHeaderDetailsWrapper .sapFCardHeaderItemBinded::after,
-		.sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded::after,
-		.sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded.sapMText::after {
+		.sapFCardHeaderMainPart .sapFCardHeaderTextSecondLine .sapFCardHeaderItemBinded::after,
+		.sapFCardHeaderMainPart .sapFCardSubtitle.sapFCardHeaderItemBinded::after,
+		.sapFCardNumericHeaderNumericPart .sapFCardHeaderDetailsWrapper .sapFCardHeaderItemBinded::after,
+		.sapFCardNumericHeaderNumericPart .sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded::after,
+		.sapFCardNumericHeaderNumericPart .sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded.sapMText::after {
 			max-height: 0.6rem;
 		}
 
-		.sapFCardNumericIndicatorsMain .sapFCardHeaderItemBinded::after {
+		.sapFCardNumericHeaderNumericPart .sapFCardNumericIndicatorsMain .sapFCardHeaderItemBinded::after {
 			margin-top: 0.5rem;
 			width: 80%;
 		}
@@ -75,7 +75,7 @@
 			}
 		}
 
-		&:not(.sapFCardLoadingDelayed).sapFCardHeaderItemBinded::after {
+		&:not(.sapFCardLoadingDelayed) .sapFCardHeaderItemBinded::after {
 			.sapFCardLoadingShimmerMixin();
 			content: "";
 			position: absolute;

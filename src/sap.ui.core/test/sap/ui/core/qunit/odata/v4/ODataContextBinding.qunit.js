@@ -2172,13 +2172,15 @@ sap.ui.define([
 		oBinding.oContext = oContext;
 		oBinding.oOperation.bAdditionalQueryOptionsForRVC = true;
 		this.mock(oBinding).expects("hasReturnValueContext").withExactArgs().returns(true);
+		// Note: key predicate can contain brackets
 		this.mock(oContext).expects("getPath").withExactArgs()
-			.returns("/Teams('42')/TEAM_2_EMPLOYEES('1')");
+			.returns("/Teams('42')/TEAM_2_EMPLOYEES('(1)')");
 		const oResponseEntity = {"~partner~" : "~oKeyProperties~"};
 		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs(oResponseEntity, "predicate")
 			.returns("('11')");
-		this.mock(_Helper).expects("getMetaPath").withExactArgs("Teams('42')/TEAM_2_EMPLOYEES('1')")
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("Teams('42')/TEAM_2_EMPLOYEES('(1)')")
 			.returns("Teams/TEAM_2_EMPLOYEES");
 		const oMetaModel = {getObject : mustBeMocked};
 		this.mock(this.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);

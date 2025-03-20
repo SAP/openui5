@@ -77,13 +77,19 @@ sap.ui.define([
 		});
 	};
 
-	ODataV4ValueHelpDelegate.checkListBindingPending = function(oValueHelp, oListBinding, iRequestedItems) {
+	ODataV4ValueHelpDelegate.checkListBindingPending = async function(oValueHelp, oListBinding, iRequestedItems) {
 		if (!oListBinding || oListBinding.isSuspended()) {
 			return false;
 		}
-		return oListBinding.requestContexts(0, iRequestedItems).then(function(aContexts) {
+		try {
+			const aContexts = await oListBinding.requestContexts(0, iRequestedItems);
 			return aContexts.length === 0;
-		});
+		} catch (error) {
+			if (error.canceled) {
+				return false;
+			}
+			throw error;
+		}
 	};
 
 	ODataV4ValueHelpDelegate.isFilteringCaseSensitive = function(oValueHelp, oContent) {

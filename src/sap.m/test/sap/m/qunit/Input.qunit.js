@@ -4895,6 +4895,140 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
+	QUnit.test("Value State - Aria-describedby for value state links announcement when state is not Error", async function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Warning",
+			showSuggestion: true
+		});
+
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing %%0 %%1",
+			controls: [new Link({
+				text: "multiple",
+				href: "#"
+			}),
+			new Link({
+				text: "links",
+				href: "#"
+			})]
+		});
+
+		oInputWithValueState.setFormattedValueStateText(oFormattedValueStateText);
+		oInputWithValueState.placeAt("content");
+		await nextUIUpdate();
+
+		let oAccDomRef = document.getElementById(oInputWithValueState.getValueStateLinksShortcutsId());
+		let aDescribedBy = oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby").split(' ');
+		let bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) {
+			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
+		});
+
+		const sMultipleLinksText = Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+
+		//Assert
+		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
+		assert.strictEqual(oAccDomRef.innerText, sMultipleLinksText, "Links shortcuts announcement is as expected" );
+		assert.ok(bDescribedByContainsAccForLinks, "Area-describedby for input contains the links shortcuts element ID");
+
+		oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing %%0",
+			controls: [new Link({
+				text: "links",
+				href: "#"
+			})]
+		});
+		oInputWithValueState.setFormattedValueStateText(oFormattedValueStateText);
+		await nextUIUpdate();
+
+		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateLinksShortcutsId());
+		aDescribedBy = oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby").split(' ');
+		bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) {
+			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
+		});
+		const sSingleLink = Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+
+		//Assert
+		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
+		assert.strictEqual(oAccDomRef.innerText, sSingleLink, "Links shortcuts announcement is as expected" );
+		assert.ok(bDescribedByContainsAccForLinks, "Area-describedby for input contains the link shortcuts element ID");
+
+		// Remove formatted value state with link(s)
+		oInputWithValueState.setFormattedValueStateText(null);
+		await nextUIUpdate();
+
+		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateLinksShortcutsId());
+		aDescribedBy = oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby").split(' ');
+		bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) {
+			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
+		});
+
+		assert.notOk(oInputWithValueState.getDomRef().contains(oAccDomRef), "No acc DOM for links is created");
+		assert.notOk(bDescribedByContainsAccForLinks, "Area-describedby for input does not contain links shortcuts element ID");
+
+		//Clean up
+		oFormattedValueStateText.destroy();
+		oInputWithValueState.destroy();
+	});
+
+	QUnit.test("Value State - Aria-describedby and aria-errormessage for value state links announcement when state is Error", async function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Error",
+			showSuggestion: true
+		});
+
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing %%0 %%1",
+			controls: [new Link({
+				text: "multiple",
+				href: "#"
+			}),
+			new Link({
+				text: "links",
+				href: "#"
+			})]
+		});
+
+		oInputWithValueState.setFormattedValueStateText(oFormattedValueStateText);
+		oInputWithValueState.placeAt("content");
+		await nextUIUpdate();
+
+		let oAccDomRef = document.getElementById(oInputWithValueState.getValueStateLinksShortcutsId());
+		let aDescribedBy = oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby");
+		let aErrorMessages = oInputWithValueState.getFocusDomRef().getAttribute("aria-errormessage").split(' ');
+		let bErrorMessageConainsAccForLinks = aErrorMessages.some(function (sId) {
+			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
+		});
+
+		const sMultipleLinksText = Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+
+		//Assert
+		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
+		assert.strictEqual(oAccDomRef.innerText, sMultipleLinksText, "Links shortcuts announcement is as expected" );
+		assert.notOk(aDescribedBy, "Area-describedby for input does not exist");
+		assert.ok(bErrorMessageConainsAccForLinks, "Area-errormessage for input contains the links shortcuts element ID");
+
+		// Remove formatted value state with link(s)
+		oInputWithValueState.setFormattedValueStateText(null);
+		await nextUIUpdate();
+
+		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateLinksShortcutsId());
+		aDescribedBy = oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby");
+		aErrorMessages = oInputWithValueState.getFocusDomRef().getAttribute("aria-errormessage").split(' ');
+		bErrorMessageConainsAccForLinks = aErrorMessages.some(function (sId) {
+			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
+		});
+
+		assert.notOk(oInputWithValueState.getDomRef().contains(oAccDomRef), "No acc DOM for links is created");
+		assert.notOk(aDescribedBy, "Area-describedby for input does not exist");
+		assert.notOk(bErrorMessageConainsAccForLinks, "Area-errormessage for input does not contain the links shortcuts element ID");
+
+		//Clean up
+		oFormattedValueStateText.destroy();
+		oInputWithValueState.destroy();
+	});
+
 	QUnit.test("Value State - A static aria-errormessage attribute should be added to the control when the value state is error", async function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
@@ -4937,6 +5071,116 @@ sap.ui.define([
 		assert.strictEqual(oAccDomRef.getAttribute("aria-live"), null, "Acc live-region is correctly removed to avoid double speech output on user changed state");
 
 		//Clean up
+		oInputWithValueState.destroy();
+	});
+
+	QUnit.test("Value State - Dynamic announcement of value state Error with formatted text and links", async function(assert) {
+		const oAnnounceSpy = this.spy(InvisibleMessage.getInstance(), "announce");
+
+		var oInputWithValueState = new Input({
+			valueState: "Warning",
+			showSuggestion: true
+		});
+
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Formatted message with no links"
+		});
+
+
+		oInputWithValueState.setFormattedValueStateText(oFormattedValueStateText);
+		oInputWithValueState.placeAt("content");
+		await nextUIUpdate();
+
+		oInputWithValueState.onfocusin();
+
+		let oNewFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: [new Link({
+				text: "multiple",
+				href: "#"
+			})]
+		});
+
+		oInputWithValueState.setValueState("Error");
+		oInputWithValueState.setFormattedValueStateText(oNewFormattedValueStateText);
+		await nextUIUpdate();
+
+		const sText = Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+
+		assert.strictEqual(oAnnounceSpy.callCount, 1, "Invisible message is announced once");
+		assert.notEqual(oAnnounceSpy.getCalls()[0].args[0].indexOf(sText), -1, "Announced text contains links shortcuts announcement");
+
+		oNewFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message without links"
+		});
+
+		oInputWithValueState.setFormattedValueStateText(oNewFormattedValueStateText);
+		await nextUIUpdate();
+
+		assert.strictEqual(oAnnounceSpy.callCount, 2, "Invisible message is announced twice");
+		assert.equal(oAnnounceSpy.getCalls()[1].args[0].indexOf(sText), -1, "Announced text does not contain links shortcuts announcement");
+
+		oAnnounceSpy.restore();
+		oNewFormattedValueStateText.destroy();
+		oFormattedValueStateText.destroy();
+		oInputWithValueState.destroy();
+	});
+
+	QUnit.test("Value State - When value state has formatted text with links and Input has suggestions, aria-describedby for links announcement is rendered in the suggestions popover header", async function(assert) {
+		//Arrange
+		var oInputWithValueState = new Input({
+			valueState: "Warning",
+			showSuggestion: true
+		});
+
+		let oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message containing a %%0",
+			controls: [new Link({
+				text: "link",
+				href: "#"
+			})]
+		});
+
+		oInputWithValueState.setFormattedValueStateText(oFormattedValueStateText);
+		oInputWithValueState.placeAt("content");
+		await nextUIUpdate();
+
+		// Act
+		oInputWithValueState._getSuggestionsPopover().getPopover().open();
+		const oPopupDom = oInputWithValueState._getSuggestionsPopover().getPopover().getDomRef();
+
+		// Assert
+		assert.strictEqual(oPopupDom.getAttribute("aria-describedby"), oInputWithValueState.getValueStateLinksShortcutsId(), "Suggestions popover contains aria-describedby");
+
+		// Act
+		oFormattedValueStateText = new FormattedText({
+			htmlText: "Value state message no links"
+		});
+		oInputWithValueState.setFormattedValueStateText(oFormattedValueStateText);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oPopupDom.getAttribute("aria-describedby"), "Suggestions popover does not contain aria-describedby");
+
+		// Act
+		oFormattedValueStateText = new FormattedText({
+			htmlText: "New value state message containing %%0 %%1",
+			controls: [new Link({
+				text: "multiple",
+				href: "#"
+			}),
+			new Link({
+				text: "links",
+				href: "#"
+			})]
+		});
+		oInputWithValueState.setFormattedValueStateText(oFormattedValueStateText);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oPopupDom.getAttribute("aria-describedby"), oInputWithValueState.getValueStateLinksShortcutsId(), "Suggestions popover contains aria-describedby");
+
+		oFormattedValueStateText.destroy();
 		oInputWithValueState.destroy();
 	});
 
@@ -7634,12 +7878,21 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		await nextUIUpdate(this.clock);
 
 		this.oInput._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(1000);
 
-		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		await nextUIUpdate(this.clock);
+		const oNewFormattedValueStateText = new FormattedText({
+			htmlText: "New value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+
+		this.oInput.setFormattedValueStateText(oNewFormattedValueStateText);
+		this.clock.tick(1000);
 		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
