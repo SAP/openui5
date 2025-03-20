@@ -288,10 +288,13 @@ function(
 
 		this.setAggregation("tokenizer", oTokenizer);
 
+		// Predefine the afterPopupClose function because in the standalone tokenizer the n-more popup
+		// closes when the focus is lost and the tokenizer goes to Narrow mode
+		// The tokenizer should stay in Loose mode when the focus goes to the input
+		oTokenizer.afterPopupClose = this._onAfterCloseTokensPicker.bind(this);
+
 		oTokenizer.getTokensPopup()
 			.attachBeforeOpen(this._onBeforeOpenTokensPicker.bind(this))
-			.attachAfterClose(this._onAfterCloseTokensPicker.bind(this))
-
 			/* Prevent closing of n more popover when input is clicked */
 			._getPopup().setExtraContent([oTokenizer, this]);
 

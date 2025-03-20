@@ -4089,6 +4089,47 @@ sap.ui.define([
 		assert.notOk(this.multiInput._iTokenizerResizeHandler, "Deregister Tokenizer's resize handler");
 	});
 
+	QUnit.test("When n-more is expanded, writing text in the input closes the n-more popover but does not collapse the tokenizer", async function(assert){
+		this.clock = sinon.useFakeTimers();
+
+		const oMultiInput = new MultiInput();
+		oMultiInput.setWidth("200px");
+		oMultiInput.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		oMultiInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+
+		const oTokenizer = oMultiInput.getAggregation("tokenizer");
+
+		// Setup
+		const oTokenizerSpy = this.spy(oTokenizer, "setRenderMode");
+
+		// Act: Click on n-more
+		oMultiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		let oPicker = oMultiInput.getAggregation("tokenizer").getTokensPopup();
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(oPicker.isOpen(), "Popover is open after clicking on n-more");
+		assert.ok(oTokenizerSpy.calledOnce, "setRenderMode should be triggered");
+		assert.strictEqual(oTokenizerSpy.getCalls()[0].args[0], "Loose" , "Tokenizer should be in Loose mode");
+
+		oMultiInput._$input.trigger("click").val("A").trigger("input");
+		this.clock.tick(500);
+
+		oPicker = oMultiInput.getAggregation("tokenizer").getTokensPopup();
+
+		assert.notOk(oPicker.isOpen(), "Popover is not open after typing in the input");
+		assert.notOk(oTokenizerSpy.calledTwice, "setRenderMode should not be triggered");
+
+		oTokenizerSpy.restore();
+		oMultiInput.destroy();
+	});
+
 	QUnit.module("Destroyers");
 
 	QUnit.test("Destroy properly internal lists", async function (assert) {
