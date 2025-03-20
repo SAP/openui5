@@ -222,7 +222,13 @@ sap.ui.define([
 	function _setConditions(vKey, sValue) {
 
 		const oCondition = this.createCondition(vKey, sValue);
-		this.setProperty("conditions", [oCondition], true);
+		const aOldConditions = this.getConditions();
+
+		if (deepEqual([oCondition], aOldConditions)) {
+			_updateSelection.call(this); // as selection might be changed
+		} else {
+			this.setProperty("conditions", [oCondition], true);
+		}
 
 		return oCondition;
 
@@ -280,6 +286,7 @@ sap.ui.define([
 			const aConditions = this.getConditions();
 			let vSelectedKey;
 			let bFirstFilterItemSelected = false;
+			const bIsOpen = this.getParent().isOpen();
 
 			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ /*oOperator.name*/ )) {
 				vSelectedKey = aConditions[0].values[0];
@@ -293,11 +300,17 @@ sap.ui.define([
 					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
 						// conditions given -> use them to show selected items
 						oListItem.setSelected(true);
-					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && this._sHighlightId === oListItem.getId()) {
+						if (bIsOpen && !oListItem.hasStyleClass("sapMLIBFocused")) { // to also update acc-descriptions
+							oList.setFakeFocus(oListItem);
+						}
+				} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && this._sHighlightId === oListItem.getId()) {
 						oListItem.setSelected(true);
 						bFirstFilterItemSelected = true;
 					} else {
 						oListItem.setSelected(false);
+						if (bIsOpen && oListItem.hasStyleClass("sapMLIBFocused")) { // to also update acc-descriptions
+							oList.setFakeFocus();
+						}
 					}
 				}
 			});
@@ -401,7 +414,17 @@ sap.ui.define([
 	};
 
 	FixedList.prototype.handleConditionsUpdate = function(oChanges) {
-		_updateSelection.call(this);
+		if (this._iNavigateIndex >= 0 && !this._bConditionSetByNavigate) { // if conditions updated initialize navigation
+			const aConditions = this.getConditions();
+			const oList = _getList.call(this);
+			const oItem = oList.getSelectedItem();
+			const oOriginalItem = oItem && _getOriginalItem.call(this, oItem);
+			if (aConditions.length !== 1 || !_getKey.call(this, oOriginalItem) === aConditions[0].values[0]) {
+				this._iNavigateIndex = -1;
+			}
+		}
+
+		_updateSelection.call(this); // no async handling needed here as 1. no multiple calls triggered in a direct chain and 2. no aria-issues, as List don't set aria-selected
 	};
 
 	FixedList.prototype.handleFilterValueUpdate = function(oChanges) {
@@ -512,12 +535,10 @@ sap.ui.define([
 		const oItem = aItems[iSelectedIndex];
 		if (oItem) {
 			const bUseFirstMatch = this.getUseFirstMatch(); // if item for first match is selected, navigate to it needs to fire the event
-			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus) || iStep === 0) { // new item or already shown item is navigated again (focus set on dropdown)
+			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus) || (this._iNavigateIndex !== iSelectedIndex && !bLeaveFocus)) { // new item or already selected or highlighted item is navigated (focus set on dropdown)
 				let oOriginalItem, vKey, vDescription;
 
 				this._iNavigateIndex = iSelectedIndex;
-
-				oItem.setSelected(true); // does nothing for GroupHeader
 
 				if (bIsOpen) {
 					oList.scrollToIndex(iSelectedIndex); // only possible if open
@@ -526,13 +547,17 @@ sap.ui.define([
 				}
 
 				if (oItem.isA("sap.m.GroupHeaderListItem")) {
+					this._bConditionSetByNavigate = true;
 					this.setProperty("conditions", [], true); // no condition navigated
+					delete this._bConditionSetByNavigate;
 					this.fireNavigated({ condition: undefined, itemId: oItem.getId(), leaveFocus: false });
 				} else {
 					oOriginalItem = _getOriginalItem.call(this, oItem);
 					vKey = _getKey.call(this, oOriginalItem);
 					vDescription = _getText.call(this, oOriginalItem);
+					this._bConditionSetByNavigate = true;
 					const oCondition = _setConditions.call(this, vKey, vDescription);
+					delete this._bConditionSetByNavigate;
 					const oValueHelpDelegate = this.getValueHelpDelegate();
 					const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false, caseSensitive: bCaseSensitive });
@@ -542,6 +567,7 @@ sap.ui.define([
 					this.fireVisualFocusSet();
 				}
 			} else if (bLeaveFocus) {
+				this._iNavigateIndex = -1; // initialize navigation but keep coditions to show last navigated one as selected
 				this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus });
 			}
 		}
@@ -550,33 +576,35 @@ sap.ui.define([
 
 	FixedList.prototype.onShow = function(bInitial) {
 
-		ListContent.prototype.onShow.apply(this, arguments);
+		return ListContent.prototype.onShow.apply(this, arguments).then(() => {
+			// scroll to selected item
+			const oList = _getList.call(this);
+			let sItemId;
 
-		// scroll to selected item
-		const oList = _getList.call(this);
-		let sItemId;
+			if (!oList) {
+				return null; // TODO: should not happen? Create List?
+			}
 
-		if (!oList) {
-			return null; // TODO: should not happen? Create List?
-		}
+			const oSelectedItem = oList.getSelectedItem();
+			if (oSelectedItem) {
+				const iSelectedIndex = oList.indexOfItem(oSelectedItem);
+				oList.scrollToIndex(iSelectedIndex);
+				sItemId = oSelectedItem.getId();
+			}
 
-		const oSelectedItem = oList.getSelectedItem();
-		if (oSelectedItem) {
-			const iSelectedIndex = oList.indexOfItem(oSelectedItem);
-			oList.scrollToIndex(iSelectedIndex);
-			sItemId = oSelectedItem.getId();
-		}
+			const aRelevantContexts = this.getListBinding()?.getCurrentContexts();
+			const iItems = aRelevantContexts?.length;
 
-		const aRelevantContexts = this.getListBinding()?.getCurrentContexts();
-		const iItems = aRelevantContexts?.length;
-
-		return {itemId: sItemId, items: iItems};
+			return {itemId: sItemId, items: iItems};
+		});
 
 	};
 
 	FixedList.prototype.onHide = function() {
 
 		this.removeVisualFocus();
+		const oList = _getList.call(this);
+		oList?.setFakeFocus(); // to add it again if reopened
 
 		this._iNavigateIndex = -1; // initialize after closing
 
@@ -654,8 +682,10 @@ sap.ui.define([
 	};
 
 	FixedList.prototype.setHighlightId = function (sItemId) {
-		this._sHighlightId = sItemId;
-		_updateSelection.call(this);
+		if (this._sHighlightId !== sItemId) {
+			this._sHighlightId = sItemId;
+			_updateSelection.call(this);
+		}
 	};
 
 	FixedList.prototype.destroyItems = function () {

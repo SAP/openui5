@@ -3,10 +3,13 @@
  */
 
 sap.ui.define([
-	'sap/m/Input', 'sap/ui/mdc/field/FieldInputRenderer'
+	'sap/m/Input',
+	'sap/ui/mdc/field/FieldInputRenderer',
+	'sap/ui/base/ManagedObjectObserver'
 ], (
 	Input,
-	FieldInputRenderer
+	FieldInputRenderer,
+	ManagedObjectObserver
 ) => {
 	"use strict";
 
@@ -46,6 +49,43 @@ sap.ui.define([
 		},
 		renderer: FieldInputRenderer
 	});
+
+	FieldInput.prototype.init = function() {
+
+		Input.prototype.init.apply(this, arguments);
+
+		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			properties: ["ariaAttributes"]
+		});
+
+	};
+
+	FieldInput.prototype.exit = function() {
+
+		Input.prototype.exit.apply(this, arguments);
+
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
+
+	};
+
+	function _observeChanges(oChanges) {
+
+		if (oChanges.name === "ariaAttributes") {
+			// set aria-activedescendant directly to prevent anouncement of old one
+			if (oChanges.current.aria?.activedescendant !== oChanges.old.aria?.activedescendant) {
+				const oDomRef = this.getFocusDomRef();
+				if (!oChanges.current.aria?.activedescendant) {
+					oDomRef.removeAttribute("aria-activedescendant");
+				} else {
+					oDomRef.setAttribute("aria-activedescendant", oChanges.current.aria.activedescendant);
+				}
+			}
+		}
+
+	}
 
 	return FieldInput;
 
