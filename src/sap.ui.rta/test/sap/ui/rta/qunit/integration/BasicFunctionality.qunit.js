@@ -115,8 +115,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
 				assert.ok(this.oRta.getToolbar().getControl('publish').getEnabled(), "Transport button of RTA is enabled again");
-				// pushAndExecute fires modified twice!
-				assert.strictEqual(iFiredCounter, 4, "undoRedoStackModified event of RTA is fired twice");
+				assert.strictEqual(iFiredCounter, 3, "undoRedoStackModified event of RTA is fired thrice");
 			}.bind(this))
 
 			.catch(function (oError) {
