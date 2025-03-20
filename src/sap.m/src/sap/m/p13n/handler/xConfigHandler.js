@@ -84,6 +84,7 @@ sap.ui.define([
 	 * @param {boolean} mMetaConfig.aggregationBased Defines whether the aggregation space or the property space should be used in the xConfig object
 	 * @param {string} mMetaConfig.property The property name (such as <code>width</code> or <code>label</code>)
 	 * @param {string} mMetaConfig.operation The operation to be executed by the handler (add, remove, move, set)
+	 * @param {string[]} mMetaConfig.additionalProperties Property names of the change content that are added to the revert data
 	 *
 	 * @returns {object} The created changehandler object
 	 */
@@ -110,12 +111,19 @@ sap.ui.define([
 								propertyBag: mPropertyBag
 							})
 							.then(async (oPriorAggregationConfig) => {
+								const oChangeContent = oChange.getContent();
 								const sOperation = getOperationType(oChange.getChangeType());
 								sAffectedAggregation = oChange.getContent().targetAggregation;
 
 								const oRevertData = {
 									key: oChange.getContent().key
 								};
+
+								mMetaConfig.additionalProperties?.forEach((vProperty) => {
+									if (typeof vProperty === "string" && oChangeContent[vProperty] !== undefined) {
+										oRevertData[vProperty] = oChangeContent[vProperty];
+									}
+								});
 
 								if (sChangePersistenceIdentifier) {
 									oRevertData.persistenceIdentifier = sChangePersistenceIdentifier;
@@ -128,8 +136,8 @@ sap.ui.define([
 									oRevertData.value = null;
 								}
 
-								if (!oPriorAggregationConfig || !(oPriorAggregationConfig?.aggregations?.[sAffectedAggregation]?.length > 0)) {
-									const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
+								if ((!oPriorAggregationConfig || !(oPriorAggregationConfig?.aggregations?.[sAffectedAggregation]?.length > 0)) && typeof mMetaConfig.getCurrentState == "function") {
+									const aCurrentState = await mMetaConfig.getCurrentState?.(oControl, oPriorAggregationConfig, sAffectedAggregation, oChange, mPropertyBag);
 									if (aCurrentState) {
 										const oStateItem = aCurrentState.find((oItem, iIndex) => {
 											return oItem.key === oChange.getContent().key;

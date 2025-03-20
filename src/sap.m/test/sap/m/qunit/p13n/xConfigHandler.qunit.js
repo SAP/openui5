@@ -97,6 +97,77 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Check #createHandler with 'additionalProperties' adds to revert data", async function (assert) {
+		const done = assert.async();
+
+		const oHandler = xConfigHandler.createHandler({
+			aggregationBased: true,
+			property: "visible",
+			operation: "add",
+			additionalProperties: ["descending"]
+		});
+
+		const oChangeContent = {
+			descending: true,
+			anotherProperty: false
+		};
+
+		this.oUIChange.setContent(oChangeContent);
+
+		await oHandler.changeHandler.applyChange(this.oUIChange, this.oControl, this.oPropertyBag);
+		const oRevertData = this.oUIChange.getRevertData();
+		assert.deepEqual(oRevertData.descending, oChangeContent.descending, "Revert data contains sort information");
+		this.oUIChange.setContent({});
+		done();
+	});
+
+	QUnit.test("Check #createHandler with 'additionalProperties' does not add to revert data", async function (assert) {
+		const done = assert.async();
+
+		const oHandler = xConfigHandler.createHandler({
+			aggregationBased: true,
+			property: "visible",
+			operation: "add",
+			additionalProperties: ["descending"]
+		});
+
+		const oChangeContent = {
+			anotherProperty: false
+		};
+
+		this.oUIChange.setContent(oChangeContent);
+
+		await oHandler.changeHandler.applyChange(this.oUIChange, this.oControl, this.oPropertyBag);
+		const oRevertData = this.oUIChange.getRevertData();
+		assert.notOk(oRevertData.descending, "Revert data contains sort information");
+		this.oUIChange.setContent({});
+		done();
+	});
+
+	QUnit.test("Check #createHandler with 'additionalProperties' does not add to revert data when missing in additionalProperties", async function (assert) {
+		const done = assert.async();
+
+		const oHandler = xConfigHandler.createHandler({
+			aggregationBased: true,
+			property: "visible",
+			operation: "add",
+			additionalProperties: []
+		});
+
+		const oChangeContent = {
+			descending: true,
+			anotherProperty: false
+		};
+
+		this.oUIChange.setContent(oChangeContent);
+
+		await oHandler.changeHandler.applyChange(this.oUIChange, this.oControl, this.oPropertyBag);
+		const oRevertData = this.oUIChange.getRevertData();
+		assert.notOk(oRevertData.descending, "Revert data contains sort information");
+		this.oUIChange.setContent({});
+		done();
+	});
+
 	QUnit.test("Check #createHandler 'completeChangeContent'", function (assert) {
 		const oHandler = xConfigHandler.createHandler({
 			aggregationBased: true,
@@ -189,11 +260,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check correct revert object creation (no existing state, item based change)", function (assert) {
+		function getCurrentItemState(oControl, oPriorAggregationConfig, sAffectedAggregation, oChange, mPropertyBag) {
+			return xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
+		}
 
 		const oHandler = xConfigHandler.createHandler({
 			aggregationBased: true,
 			property: "visible",
-			operation: "add"
+			operation: "add",
+			getCurrentState: getCurrentItemState
 		});
 
 		this.createChangeObject({

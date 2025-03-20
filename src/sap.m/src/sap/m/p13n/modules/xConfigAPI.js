@@ -119,8 +119,6 @@ sap.ui.define([
 			aCurrentState.sort((a,b) => a.position - b.position);
 			aCurrentState.map((o) => delete o.position);
 		} else {
-
-
 			await aAggregationItems.reduce(async (pAccum, oItem, iIndex) => {
 				const pCurrentAccum = await pAccum; //synchronize async loop
 				const aCustomData = await modifier.getAggregation(oItem, "customData");
@@ -147,6 +145,24 @@ sap.ui.define([
 		}
 
 		return aCurrentState;
+	};
+
+	xConfigAPI.getCurrentSortState = async function (oControl, oModificationPayload, oConfig, sPropertyName) {
+		const changeType = oModificationPayload?.changeType;
+		if (!oModificationPayload.propertyBag || !changeType || changeType.indexOf("Sort") === -1) {
+			return;
+		}
+		const aCurrentState = [];
+		if (oConfig?.properties?.[sPropertyName] !== undefined && Object.keys(oConfig.properties[sPropertyName]).length > 0) {
+			oConfig.properties[sPropertyName].forEach((oItem, iIndex) => {
+				aCurrentState.push({ key: oItem.key, position: iIndex });
+			});
+			aCurrentState
+				.sort((a, b) => a.position - b.position)
+				.map((o) => delete o.position);
+		}
+
+		return await Promise.resolve(aCurrentState);
 	};
 
 	/**
