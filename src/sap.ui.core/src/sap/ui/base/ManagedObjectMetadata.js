@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/base/strings/capitalize',
 	'sap/base/strings/escapeRegExp',
 	'sap/base/util/merge',
-	'sap/base/util/isPlainObject'
+	'sap/base/util/isPlainObject',
+	"sap/ui/core/Supportability"
 ], function(
 	DataType,
 	Metadata,
@@ -24,7 +25,8 @@ sap.ui.define([
 	capitalize,
 	escapeRegExp,
 	merge,
-	isPlainObject
+	isPlainObject,
+	Supportability
 ) {
 	"use strict";
 
@@ -1811,6 +1813,9 @@ sap.ui.define([
 	 * Returns a promise that resolves if the designtime preload of a library is loaded for the given oMetadata
 	 * object is loaded.
 	 *
+	 * @param {object} oMetadata The metadata to load the designtime for
+	 * @returns {Promise<object>} A promise that resolves with the designtime library when the preload is loaded
+	 *
 	 * @private
 	 */
 	function preloadDesigntimeLibrary(oMetadata) {
@@ -1818,11 +1823,10 @@ sap.ui.define([
 			sap.ui.require(["sap/ui/core/Lib"], function (Library) {
 				//preload the designtime data for the library
 				var sLibrary = oMetadata.getLibraryName(),
-					sPreload = Library.getPreloadMode(),
 					oLibrary = Library.all()[sLibrary];
 				if (oLibrary && oLibrary.designtime) {
 					var oPromise;
-					if (sPreload === "async" || sPreload === "sync") {
+					if (!Supportability.isPreloadDisabled()) {
 						//ignore errors _loadJSResourceAsync is true here, do not break if there is no preload.
 						oPromise = sap.ui.loader._.loadJSResourceAsync(oLibrary.designtime.replace(/\.designtime$/, "-preload.designtime.js"), true);
 					} else {

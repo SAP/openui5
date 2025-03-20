@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Component",
 	"sap/ui/core/Supportability"
 ], function(
 	sinon,
 	StaticFileConnector,
 	Log,
 	LoaderExtensions,
-	Component,
 	Supportability
 ) {
 	"use strict";
@@ -105,7 +103,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given componentPreload is 'off'", function(assert) {
-			sandbox.stub(Component, "getComponentPreloadMode").returns("off");
+			sandbox.stub(Supportability, "isPreloadDisabled").returns(true);
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", componentName: "test.app.not.preloaded"}).then(function() {

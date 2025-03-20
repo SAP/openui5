@@ -26,80 +26,6 @@ sap.ui.define([
 	// Rule Definitions
 	//**********************************************************
 	/**
-	 * Checks whether the preload configuration was set correctly to async
-	 */
-	var oPreloadAsyncCheck = {
-		id: "preloadAsyncCheck",
-		audiences: [Audiences.Application],
-		categories: [Categories.Performance],
-		enabled: true,
-		minversion: "1.58",
-		title: "Preload Configuration",
-		description: "Checks whether the preload configuration was set correctly to async",
-		resolution: "Please execute this rule to get a specific solution based on the application's preload mode configuration.",
-		resolutionurls: [
-			{
-				text: "Performance: Speed Up Your App",
-				href: "https://sdk.openui5.org/topic/408b40efed3c416681e1bd8cdd8910d4"
-			},
-			{
-				text: "Best Practices for Loading Modules Asynchronously",
-				href: "https://sdk.openui5.org/topic/00737d6c1b864dc3ab72ef56611491c4"
-			},
-			{
-				text: "Is Your Application Ready for Asynchronous Loading?",
-				href: "https://sdk.openui5.org/topic/493a15aa978d4fe9a67ea9407166eb01"
-			}
-		]
-	};
-
-	oPreloadAsyncCheck.check = function(oIssueManager, oCoreFacade) {
-		// Check for debug mode
-		var bIsDebug = Supportability.isDebugModeEnabled();
-		if (bIsDebug) {
-			return;
-		}
-		// Check for FLP scenario
-		var oUshellLib = Library.all()["sap.ushell"];
-		if (oUshellLib) {
-			return;
-		}
-
-		var vPreloadMode = Library.getPreloadMode(),
-			bLoaderIsAsync = sap.ui.loader.config().async;
-
-		var sDetails = "It is recommended to use the configuration option " +
-			"'data-sap-ui-async=\"true\"' instead of 'data-sap-ui-preload=\"async\"'. " +
-			"With this option single modules and preload files will be loaded asynchronously. " +
-			"Note: Enabling this behaviour requires intensive testing of the application.";
-
-		// "data-sap-ui-preload" attribute is set to async and could be replaced with "data-sap-ui-async" (recommended).
-		if (vPreloadMode === "async" && !bLoaderIsAsync) {
-			oPreloadAsyncCheck.resolution = "Please replace 'data-sap-ui-preload=\"async\"' with 'data-sap-ui-async=\"true\"' " +
-				"in the bootstrap script, as it implicitly sets the loading behaviour of preload files to be asynchronous.";
-			oIssueManager.addIssue({
-				severity: Severity.High,
-				details: sDetails,
-				context: {
-					id: "WEBPAGE"
-				}
-			});
-		// "data-sap-ui-preload" attribute is set to any value, but not async.
-		} else if (vPreloadMode !== "async" && !bLoaderIsAsync) {
-			oPreloadAsyncCheck.resolution = "Please configure 'data-sap-ui-async=\"true\"' in the bootstrap script, " +
-				"as it implicitly sets the loading behaviour of preload files to be asynchronous. " +
-				"In case you have already configured the 'data-sap-ui-preload' option, you should remove it.";
-			oIssueManager.addIssue({
-				severity: Severity.High,
-				details: sDetails,
-				context: {
-					id: "WEBPAGE"
-				}
-			});
-		}
-	};
-
-	/**
 	 * Checks whether all requests for SAPUI5 repository resources contain a cache buster token
 	 * It checks the requests under ICF node "/sap/bc/ui5_ui5/"
 	 */
@@ -430,7 +356,6 @@ sap.ui.define([
 	};
 
 	return [
-		oPreloadAsyncCheck,
 		oCacheBusterToken,
 		oLibraryUsage,
 		oLazyComponents,

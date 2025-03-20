@@ -62,6 +62,18 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns whether loading of component/library preload is disabled.
+		 *
+		 * @return {boolean} Whether loading of component/library preload is disabled
+		 * @private
+		 * @ui5-restricted sap.ui.core, sap.ui.fl
+		 * @since 2.0.0
+		 */
+		isPreloadDisabled() {
+			return this.isDebugModeEnabled() || !globalThis["sap-ui-optimized"];
+		},
+
+		/**
 		 * Flag if statistics are requested.
 		 *
 		 * Flag set by TechnicalInfo Popup will also be checked.

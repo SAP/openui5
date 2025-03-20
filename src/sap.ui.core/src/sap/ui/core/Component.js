@@ -27,8 +27,8 @@ sap.ui.define([
 	'sap/base/strings/camelize',
 	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
-	'sap/ui/core/mvc/ViewType',
 	'sap/ui/core/ComponentRegistry',
+	'sap/ui/core/Supportability',
 	'sap/ui/core/util/_LocalizationHelper'
 ], function(
 	Manifest,
@@ -54,8 +54,8 @@ sap.ui.define([
 	camelize,
 	_UrlResolver,
 	VersionInfo,
-	ViewType,
 	ComponentRegistry,
+	Supportability,
 	_LocalizationHelper
 ) {
 	"use strict";
@@ -502,22 +502,6 @@ sap.ui.define([
 
 		var oComponent = getCustomizingComponent(vObject);
 		return oComponent ? oComponent._getManifestEntry(sPath, true) : undefined;
-	};
-
-	/**
-	 * Currently active preload mode for components or falsy value.
-	 *
-	 * @returns {string} component preload mode
-	 * @private
-	 * @ui5-restricted sap.ui.core, sap.ui.fl
-	 * @since 1.120.0
-	 */
-	Component.getComponentPreloadMode = function() {
-		return BaseConfig.get({
-			name: "sapUiXxComponentPreload",
-			type: BaseConfig.Type.String,
-			external: true
-		}) || Library.getPreloadMode();
 	};
 
 	/**
@@ -2585,7 +2569,7 @@ sap.ui.define([
 		var aActiveTerminologies = mOptions.activeTerminologies,
 			sName = oConfig.name,
 			sUrl = oConfig.url,
-			bComponentPreload = /^(sync|async)$/.test(Component.getComponentPreloadMode()),
+			bComponentPreload = !Supportability.isPreloadDisabled(),
 			vManifest = oConfig.manifest,
 			bManifestFirst,
 			sManifestUrl,
@@ -2783,7 +2767,6 @@ sap.ui.define([
 		function preload(sComponentName) {
 
 			var sController = sComponentName + '.Component',
-				http2 = Library.isDepCacheEnabled(),
 				sPreloadName,
 				oTransitiveDependencies,
 				aLibs,
@@ -2812,7 +2795,7 @@ sap.ui.define([
 					// load library preload for every transitive dependency
 					return Library._load( aLibs, { preloadOnly: true } ).catch(errorLogging(oTransitiveDependencies.library, true));
 				} else {
-					sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
+					sPreloadName = `${sController.replace(/\./g, "/")}-preload.js`; // URN
 					return sap.ui.loader._.loadJSResourceAsync(sPreloadName).catch(errorLogging(sPreloadName, true));
 				}
 			} else {

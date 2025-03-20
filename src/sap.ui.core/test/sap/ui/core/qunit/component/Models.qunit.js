@@ -1726,8 +1726,6 @@ sap.ui.define([
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
-			// enable async preloading
-			this.oConfigurationGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("");
 
 			//setup fake server
 			var oManifest = this.oManifest = {
@@ -1842,7 +1840,6 @@ sap.ui.define([
 			this.restoreModels();
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
-			this.oConfigurationGetPreloadStub.restore();
 			this.oServer.restore();
 			this.restoreGetUriParameters();
 			ComponentHooks.onComponentLoaded.deregister();
