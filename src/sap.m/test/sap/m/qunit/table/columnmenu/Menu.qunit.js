@@ -1,6 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/m/Button",
+	"sap/m/Input",
 	"sap/m/SegmentedButton",
 	"sap/m/ComboBox",
 	"sap/m/Dialog",
@@ -21,6 +22,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Button,
+	Input,
 	SegmentedButton,
 	ComboBox,
 	Dialog,
@@ -322,27 +324,6 @@ sap.ui.define([
 		assert.ok(oDestroyItemContainerSpy.calledOnce);
 	});
 
-	QUnit.test("Quick action list and item container are destroyed before the popover opens", function(assert) {
-		this.createMenu(true, true, true, true);
-		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu._oQuickGenericList);
-		assert.ok(this.oColumnMenu._oItemsContainer);
-
-		const oDestroyQuickActionListSpy = sinon.spy(this.oColumnMenu._oQuickGenericList, "destroy");
-		const oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
-		const clock = sinon.useFakeTimers();
-		this.oColumnMenu._oPopover.close();
-
-		assert.ok(oDestroyQuickActionListSpy.notCalled);
-		assert.ok(oDestroyItemContainerSpy.notCalled);
-		clock.tick(500);
-		clock.restore();
-
-		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(oDestroyQuickActionListSpy.calledOnce);
-		assert.ok(oDestroyItemContainerSpy.calledOnce);
-	});
-
 	QUnit.test("Check hidden header and footer in default view", async function(assert) {
 		this.createMenu(false, true);
 		this.oColumnMenu.openBy(this.oButton);
@@ -458,7 +439,7 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[2].getId());
 	});
 
-	QUnit.test("Check focus when quick actions are reused in menus", async function(assert) {
+	QUnit.test("Reusing quick actions in menus", async function(assert) {
 		const oMenu = new Menu({
 			quickActions: [
 				new QuickAction({
@@ -475,21 +456,19 @@ sap.ui.define([
 				})
 			]
 		});
-		const oReuseQuickAction = new QuickAction({label: sText, content: new Button({text: sText})});
-		const oReuseQuickActionContainer = new QuickActionContainer();
+		const oInput = new Input({text: sText});
+		const oReuseQuickAction = new QuickAction({label: sText, content: oInput});
 
 		this.oButton.attachPress(function() {
 			oMenu.removeAllAggregation("_quickActions");
-			oReuseQuickActionContainer.addQuickAction(oReuseQuickAction);
-			oMenu.addAggregation("_quickActions", oReuseQuickActionContainer);
+			oMenu.addAggregation("_quickActions", oReuseQuickAction);
 			oMenu.openBy(this);
 		});
 		this.oButton.addDependent(oMenu);
 
 		this.oButton1.attachPress(function() {
 			oMenu1.removeAllAggregation("_quickActions");
-			oReuseQuickActionContainer.addQuickAction(oReuseQuickAction);
-			oMenu1.addAggregation("_quickActions", oReuseQuickActionContainer);
+			oMenu1.addAggregation("_quickActions", oReuseQuickAction);
 			oMenu1.openBy(this);
 		});
 		this.oButton1.addDependent(oMenu1);
@@ -498,11 +477,22 @@ sap.ui.define([
 		const clock = sinon.useFakeTimers();
 		this.oButton.firePress();
 		clock.tick(1000);
-		assert.ok(containsOrEquals(oMenu.getDomRef(), document.activeElement));
+		assert.ok(oInput.getDomRef(), "Input is rendered");
+		assert.ok(containsOrEquals(oMenu.getDomRef(), oInput.getDomRef()), "Input is rendered inside the first Menu");
+		assert.ok(containsOrEquals(oInput.getDomRef(), document.activeElement), "Focus is on the input field");
+
+		const oRemoveDependentSpy = sinon.spy(oMenu, "removeDependent");
+		const oActionsList = oMenu._oQuickGenericList;
+		oMenu.close();
+		assert.ok(oRemoveDependentSpy.calledOnceWithExactly(oActionsList), "QuickActionList is removed from the menu");
+		oRemoveDependentSpy.restore();
+		assert.notOk(oInput.getDomRef(), "Input is not rendered");
 
 		this.oButton1.firePress();
 		clock.tick(1000);
-		assert.ok(containsOrEquals(oMenu1.getDomRef(), document.activeElement));
+		assert.ok(oInput.getDomRef(), "Input is rendered");
+		assert.ok(containsOrEquals(oMenu1.getDomRef(), oInput.getDomRef()), "Input is rendered inside the second Menu");
+		assert.ok(containsOrEquals(oInput.getDomRef(), document.activeElement), "Focus is on the input field");
 		clock.restore();
 	});
 
