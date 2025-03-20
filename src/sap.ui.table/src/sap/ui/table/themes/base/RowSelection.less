@@ -8,20 +8,21 @@
 @_sap_ui_table_RowSelection_CheckBoxBorderWidth: 0.125rem;
 @_sap_ui_table_RowSelection_CheckBoxBorderRadius: 0;
 @_sap_ui_table_RowSelection_CheckBoxBorderRadiusCozy: 0.125rem;
-@_sap_ui_table_RowSelection_CheckBoxBorderColor: @sapUiFieldBorderColor;
-@_sap_ui_table_RowSelection_CheckBoxBorderColorHovered: @sapUiFieldHoverBorderColor;
+@_sap_ui_table_RowSelection_CheckBoxBorderColor: var(--sapField_BorderColor);
+@_sap_ui_table_RowSelection_CheckBoxBorderColorHovered: var(--sapField_Hover_BorderColor);
 @_sap_ui_table_RowSelection_CheckBoxIconSize: 0.625rem;
 @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy: 1rem;
-@_sap_ui_table_RowSelection_CheckBoxIconColor: @sapUiSelected;
+@_sap_ui_table_RowSelection_CheckBoxIconColor: var(--sapSelectedColor);
 
 .sapUiTableSelectAllCheckBox,
 .sapUiTableRowSelectionCell {
+
 	&::after {
 		content: '';
 		position: absolute;
 		border: @_sap_ui_table_RowSelection_CheckBoxBorderWidth solid @_sap_ui_table_RowSelection_CheckBoxBorderColor;
-		background-color: @sapUiFieldBackground;
-		font-family: "SAP-icons";
+		background-color: var(--sapField_Background);
+		font-family: var(--sapContent_IconFontFamily);
 		text-align: center;
 		color: @_sap_ui_table_RowSelection_CheckBoxIconColor;
 		box-sizing: border-box;
@@ -75,6 +76,7 @@
 			left: @_sap_ui_table_RowHighlightWidth;
 		}
 	}
+
 	&:hover::after {
 		border-color: @_sap_ui_table_RowSelection_CheckBoxBorderColorHovered;
 	}
@@ -92,6 +94,7 @@
 	.sapUiTableGroupHeaderRow > &,
 	.sapUiTableRowHidden > &,
 	.sapUiTableSummaryRow > & {
+
 		.sapUiTableSelModeMultiToggle & {
 			display: none;
 		}
@@ -108,6 +111,7 @@
 	}
 
 	.sapUiTableRowSel & {
+
 		.sapUiTableSelModeMultiToggle & {
 			content: '\e05b';
 		}
@@ -140,10 +144,11 @@
 	}
 
 	&:active {
-		// The active state background color and text color should not be applied if column reordering is in progress.
+
+		/* The active state background color and text color should not be applied if column reordering is in progress. */
 		.sapUiTable:not(.sapUiTableDragDrop) & {
-			background-color: @sapUiListActiveBackground;
-			color: @sapUiListActiveTextColor;
+			background-color: var(--sapList_Active_Background);
+			color: var(--sapList_Active_TextColor);
 		}
 	}
 }
