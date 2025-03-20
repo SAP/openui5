@@ -408,6 +408,10 @@ function(
 			return oSupportInfo;
 		});
 
+		if ((typeof vName === "object" && vName.fragmentName?.startsWith("module:")) || (typeof vName === "string" && vName.startsWith("module:"))) {
+			throw new Error(`sap.ui.fragment(): module name syntax '${vName.fragmentName || vName}' is not supported.`);
+		}
+
 		return fragmentFactory(vName, vType, oController);
 	};
 
@@ -509,7 +513,7 @@ function(
 	 *  });
 	 * });
 	 *
-	 * @example <caption>Creating an XML fragments</caption>
+	 * @example <caption>Creating an XML fragment</caption>
 	 * sap.ui.require(["sap/ui/core/Fragment"], async (Fragment) => {
 	 *  const myFrag = await Fragment.load({
 	 *    type: "XML",
@@ -517,15 +521,15 @@ function(
 	 *  });
 	 * });
      *
-	 * @example <caption>Creating an JS fragments</caption>
+	 * @example <caption>Creating a JS fragment</caption>
 	 * sap.ui.require(["sap/ui/core/Fragment"], async (Fragment) => {
 	 *  const myFrag = await Fragment.load({
-     *    name: "my.sample.AsyncButton",
+     *    name: "module:my/sample/AsyncButton",
 	 *    type: "JS",
 	 *  });
 	 * });
 	 *
-	 * @example <caption>Creating an HTML fragments (deprecated)</caption>
+	 * @example <caption>Creating an HTML fragment (deprecated)</caption>
 	 * sap.ui.require(["sap/ui/core/Fragment"], async (Fragment) => {
 	 *  const myFrag = await Fragment.load({
 	 *    type: "HTML",
@@ -537,12 +541,13 @@ function(
 	 * The containing view should be the View instance into which the fragment content will be inserted manually.
 	 *
 	 * @param {object} mOptions options map
-	 * @param {string} [mOptions.name] must be supplied if no <code>definition</code> parameter is given. The fragment name must correspond to an XML fragment which
-	 *    can be loaded via the module system
-	 *    (fragmentName + suffix <code>.fragment.<i>&lt;typeExtension></i></code>) and which contains the fragment definition.
+	 * @param {string} [mOptions.name] Must be provided if no <code>definition</code> parameter is given. The fragment name must correspond to an XML fragment which
+	 *    can be loaded via the module system and must contain the fragment definition. It can be specified either in dot notation
+	 *    (fragmentName + suffix <code>.fragment.<i>&lt;typeExtension></i></code>) or, for JS fragments, in module name syntax (<code>module:my/sample/AsyncButton</code>).
 	 *    If <code>mOptions.controller</code> is supplied, the (event handler) methods referenced in the fragment will be called on that controller.
 	 *    Note that fragments may require a controller to be given and certain methods to be implemented by it.
-	 * @param {string} [mOptions.type=XML] the fragment type, e.g. <code>"XML"</code>, <code>"JS"</code>, or <code>"HTML"</code> (type <code>"HTML"</code> is deprecated). Default is <code>"XML"</code>
+	 * @param {string} [mOptions.type=XML] the fragment type, e.g. <code>"XML"</code>, <code>"JS"</code>, or <code>"HTML"</code> (type <code>"HTML"</code> is deprecated). Default is <code>"XML"</code>.
+	 * If the fragment name is given in module name syntax (e.g., <code>module:my/sample/AsyncButton</code>) the type must be omitted.
 	 * @param {string} [mOptions.definition] definition of the fragment content. When this property is supplied, the <code>name</code> parameter must not be used. If both are supplied, the definition has priority.
 	 * Please see the above example on how to use the <code>definition</code> parameter.
 	 * @param {string} [mOptions.id] the ID of the fragment
@@ -553,6 +558,7 @@ function(
 	 * @static
 	 * @since 1.58
 	 * @returns {Promise<sap.ui.core.Control|sap.ui.core.Control[]>} a <code>Promise</code> resolving with the resulting control (array) after fragment parsing and instantiation
+	 * @throws {TypeError}  If the fragment name is given in module name syntax and a fragment type is provided.
 	 */
 	Fragment.load = function(mOptions) {
 		var mParameters = Object.assign({}, mOptions);
@@ -562,7 +568,17 @@ function(
 			delete mParameters.name;
 		}
 
-		mParameters.type = mParameters.type || "XML";
+		// Sanity check and default fragment type handling
+		if (mParameters.name?.startsWith("module:")) {
+			if (mParameters.type) {
+				throw new TypeError(`Invalid arguments: If the fragment name is given in module name syntax the type must be omitted. Found type: '${mParameters.type}'.`);
+			} else {
+				mParameters.type = "JS";
+			}
+		} else {
+			mParameters.type ??= "XML";
+		}
+
 		mParameters.async = true;
 
 		/**
@@ -903,7 +919,14 @@ function(
 
 	Fragment.registerType("JS", {
 		load: function(mSettings) {
-			var sFragmentPath = mSettings.fragmentName.replace(/\./g, "/") + ".fragment";
+			let sFragmentPath;
+			// Handle module: syntax
+			if (mSettings.fragmentName.startsWith("module:")) {
+				sFragmentPath = mSettings.fragmentName.substring(7);
+			} else {
+				// Handle dot-separated syntax
+				sFragmentPath = mSettings.fragmentName.replace(/\./g, "/") + ".fragment";
+			}
 			return new Promise(function(resolve, reject) {
 				sap.ui.require([sFragmentPath], function(content) {
 					resolve(content);

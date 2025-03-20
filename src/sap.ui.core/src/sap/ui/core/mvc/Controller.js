@@ -276,8 +276,8 @@ sap.ui.define([
 		 * @ui5-transform-hint replace-param bAsync true
 		 */
 		function loadControllerClass(sName, sViewId, bAsync) {
-			if (!sName) {
-				throw new Error("Controller name ('sName' parameter) is required");
+			if (typeof sName !== "string") {
+				throw new Error("Controller name ('sName' parameter) is required and must be typeof 'string'");
 			}
 
 			/**
@@ -294,7 +294,14 @@ sap.ui.define([
 				}
 			}
 
-			const sControllerName = sName.replace(/\./g, "/") + ".controller";
+			let sControllerName;
+
+			if (sName.startsWith("module:")) {
+				sControllerName = sName.substring(7);
+			} else {
+				sControllerName = sName.replace(/\./g, "/") + ".controller";
+			}
+
 			let ControllerClass = sap.ui.require(sControllerName);
 			/** @deprecated */
 			ControllerClass ??= resolveClass(ControllerClass);
@@ -503,7 +510,8 @@ sap.ui.define([
 		 *
 		 * @param {object} mOptions  A map containing the controller configuration options.
 		 * @param {string} mOptions.name The controller name that corresponds to a JS module that can be loaded
-	 	 * via the module system (mOptions.name + suffix ".controller.js")
+	 	 * via the module system (mOptions.name + suffix ".controller.js"). It can be specified either in dot notation (<code>my.sample.Controller</code>) or
+	 	 * in module name syntax (<code>module:my/sample/Controller</code>).
 		 * @return {Promise<sap.ui.core.mvc.Controller>} the Promise resolves with a new instance of the controller
 		 * @public
 		 * @static
@@ -551,6 +559,10 @@ sap.ui.define([
 					};
 				});
 			}
+			if (sName.startsWith("module:")) {
+				throw new Error(`sap.ui.controller(): module name syntax '${sName}' is not supported.`);
+			}
+
 			return controllerFactory(sName, oControllerImpl, sViewId, bAsync);
 		};
 
@@ -828,12 +840,13 @@ sap.ui.define([
 		 * }.bind(this));
 		 *
 		 * @param {object} mOptions Options regarding fragment loading
-		 * @param {string} mOptions.name The Fragment name, which must correspond to a Fragment which can be loaded via the module system
-		 *    (fragmentName + suffix ".fragment.[typeextension]") and which contains the Fragment definition.
+		 * @param {string} mOptions.name The fragment name, which must correspond to a fragment which can be loaded via the module system (mOptions.name + suffix ".fragment.[typeextension]") and must contain the fragment definition.
+		 * It can be specified either in dot notation (<code>my.sample.myFragment</code>) or, for JS fragments, in module name syntax (<code>module:my/sample/myFragment</code>).
 		 * @param {boolean} [mOptions.addToDependents=true] Whether the fragment content should be added to the <code>dependents</code> aggregation of the view
 		 * @param {boolean} [mOptions.autoPrefixId=true] Whether the IDs of the fragment content will be prefixed by the view ID
-		 * @param {string} [mOptions.id] the ID of the Fragment
-		 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML"
+		 * @param {string} [mOptions.id] the ID of the fragment
+		 * @param {string} [mOptions.type=XML] the fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML".
+	 	 * If the fragment name is given in module name syntax (e.g., <code>module:my/sample/myFragment</code>) the type must be omitted.
 		 * @returns {Promise<sap.ui.core.Control|sap.ui.core.Control[]>} A Promise that resolves with the fragment content
 		 *
 		 * @since 1.93
