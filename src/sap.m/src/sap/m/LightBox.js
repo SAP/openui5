@@ -427,6 +427,8 @@ sap.ui.define([
 	 * @private
 	 */
 	LightBox.prototype._fnPopupOpened = function() {
+		this.$().firstFocusableDomRef()?.focus();
+
 		this._onResize();
 
 		jQuery("#sap-ui-blocklayer-popup").on("click", function() {
