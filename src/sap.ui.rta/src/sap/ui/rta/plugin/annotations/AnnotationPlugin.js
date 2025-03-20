@@ -7,12 +7,14 @@ sap.ui.define([
 	"sap/ui/base/DesignTime",
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialog",
+	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/rta/plugin/Plugin"
 ], function(
 	BaseLog,
 	DesignTime,
 	DtUtil,
 	AnnotationChangeDialog,
+	AnnotationTypes,
 	Plugin
 ) {
 	"use strict";
@@ -57,7 +59,7 @@ sap.ui.define([
 	}
 
 	function getActionIcon(oAnnotationAction) {
-		const sDefaultIcon = "sap-icon://request";
+		const sDefaultIcon = oAnnotationAction.type === AnnotationTypes.StringType ? "sap-icon://edit" : "sap-icon://request";
 		const sActionIcon = oAnnotationAction.icon;
 		if (!sActionIcon) {
 			return sDefaultIcon;
@@ -95,7 +97,8 @@ sap.ui.define([
 			}
 		});
 
-	const sPluginId = "CTX_ANNOTATION";
+	const sPluginIdDefault = "CTX_ANNOTATION";
+	const sPluginIdSingleLabelChange = "CTX_ANNOTATION_CHANGE_SINGLE_LABEL";
 
 	AnnotationPlugin.prototype.init = function(...aArgs) {
 		Plugin.prototype.init.apply(this, aArgs);
@@ -203,14 +206,16 @@ sap.ui.define([
 
 		const aMenuItems = [];
 		if (oAnnotationActionMap) {
-			const iRank = this.getRank(sPluginId);
-
 			if (this._isEditableByPlugin(oResponsibleElementOverlay) === undefined) {
 				// The responsibleElement editableByPlugin state was not evaluated yet e.g. because it
 				// has no visible geometry, thus evaluateEditable now
 				await this.evaluateEditable([oResponsibleElementOverlay], { onRegistration: false });
 			}
 			Object.values(oAnnotationActionMap).forEach(function(oAction, iIndex) {
+				const sPluginId = oAction.type === AnnotationTypes.StringType && oAction.singleRename
+					? sPluginIdSingleLabelChange
+					: sPluginIdDefault;
+				const iRank = this.getRank(sPluginId);
 				if (
 					this.isAvailable([oResponsibleElementOverlay])
 				) {
@@ -220,7 +225,7 @@ sap.ui.define([
 					}
 
 					aMenuItems.push({
-						id: sPluginId + iIndex,
+						id: sPluginId,
 						rank: iRank + iIndex,
 						text: sActionText,
 						icon: getActionIcon(oAction),
