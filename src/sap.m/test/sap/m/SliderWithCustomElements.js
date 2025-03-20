@@ -5,10 +5,9 @@ sap.ui.define([
   "sap/m/App",
   "sap/ui/core/Element",
   "sap/m/Slider",
-  "sap/m/SliderTooltipBaseRenderer",
-  "sap/base/Log",
-  "sap/ui/thirdparty/jquery"
-], function(IconPool, SliderTooltipBase, Page, App, Element, Slider, SliderTooltipBaseRenderer, Log, jQuery) {
+  "sap/ui/thirdparty/jquery",
+  "sap/m/SliderTooltipBaseRenderer"
+], function(IconPool, SliderTooltipBase, Page, App, Element, Slider, jQuery, SliderTooltipBaseRenderer) {
   "use strict";
   // Note: the HTML page 'SliderWithCustomElements.html' loads this module via data-sap-ui-on-init
 
@@ -52,10 +51,10 @@ sap.ui.define([
 	  visible: true,
 	  enabled: true,
 	  liveChange: function(oControlEvent) {
-		  Log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+		  jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
 	  },
 	  change : function(oControlEvent) {
-		  Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+		  jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 	  }
   });
 
@@ -163,10 +162,10 @@ sap.ui.define([
 			  visible: true,
 			  enabled: true,
 			  liveChange: function(oControlEvent) {
-				  Log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				  jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			  },
 			  change : function(oControlEvent) {
-				  Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				  jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			  }
 		  }).addStyleClass("slider-margin"),
 
@@ -183,10 +182,10 @@ sap.ui.define([
 			  visible: true,
 			  enabled: true,
 			  liveChange: function(oControlEvent) {
-				  Log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				  jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			  },
 			  change : function(oControlEvent) {
-				  Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				  jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			  }
 		  }).addStyleClass("slider-margin");
 

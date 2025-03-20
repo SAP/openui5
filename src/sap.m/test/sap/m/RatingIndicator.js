@@ -23,9 +23,9 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/Table",
 	"sap/m/VBox",
-	"sap/m/library",
-	"sap/base/Log"
-], async function(Core, IconPool, Item, JSONModel, App, Bar, Button, CheckBox, Column, ColumnListItem, ComboBox, HBox, Input, InputListItem, FlexItemData, Label, List, Page, RatingIndicator, Select, Table, VBox, mobileLibrary, Log) {
+	"jquery.sap.global",
+	"sap/m/library"
+], async function(Core, IconPool, Item, JSONModel, App, Bar, Button, CheckBox, Column, ColumnListItem, ComboBox, HBox, Input, InputListItem, FlexItemData, Label, List, Page, RatingIndicator, Select, Table, VBox, jQuery, mobileLibrary) {
 	"use strict";
 
 	// shortcut for sap.m.InputType
@@ -266,12 +266,12 @@ sap.ui.define([
 			value: 2.5,
 			iconSize: "1.375rem",
 			liveChange: function(oControlEvent) {
-				Log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
 				oLabel3.setText(" " + oControlEvent.getParameter("value") + " out of " + oRating3.getMaxValue());
 				oLabel3.removeStyleClass('changeEvent');
 			},
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 				oLabel3.setText(" " + oControlEvent.getParameter("value") + " out of " + oRating3.getMaxValue());
 				oLabel3.addStyleClass('changeEvent');
 			}
@@ -292,7 +292,7 @@ sap.ui.define([
 			maxValue: 5,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			}
 		});
 
@@ -420,7 +420,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("process"),
 			iconUnselected: IconPool.getIconURI("attachment"),
@@ -436,7 +436,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("querstromzerspaner"),
 			iconUnselected: IconPool.getIconURI("monstertruckdriver"),
@@ -452,7 +452,7 @@ sap.ui.define([
 			enabled: false,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("favorite"),
 			iconUnselected: IconPool.getIconURI("unfavorite"),
@@ -468,7 +468,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Full,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("favorite"),
 			iconUnselected: IconPool.getIconURI("unfavorite"),
@@ -484,7 +484,7 @@ sap.ui.define([
 			enabled: false,
 			visualMode: RatingIndicatorVisualMode.Full,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("favorite"),
 			iconUnselected: IconPool.getIconURI("unfavorite")
@@ -500,7 +500,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: "images/candy_v_46x46.png",
 			iconUnselected: "images/candy_x_46x46.png",
@@ -517,7 +517,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: "images/candy_v_46x46.png",
 			iconUnselected: "images/candy_x_46x46.png",
@@ -534,7 +534,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: "images/candy_v_46x46.png",
 			iconUnselected: "images/candy_x_46x46.png",
@@ -550,7 +550,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("nutrition-activity"),
 			iconUnselected: "images/wounds_doc@2.png",
@@ -567,7 +567,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("physical-activity"),
 			iconUnselected: IconPool.getIconURI("media-play"),
@@ -584,7 +584,7 @@ sap.ui.define([
 			enabled: true,
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			},
 			iconSelected: IconPool.getIconURI("umbrella"),
 			iconUnselected: IconPool.getIconURI("drill-up"),
@@ -602,7 +602,7 @@ sap.ui.define([
 			iconHovered: IconPool.getIconURI("accept"),
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			}
 		});
 
@@ -617,7 +617,7 @@ sap.ui.define([
 			iconHovered: IconPool.getIconURI("accept"),
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			}
 		});
 
@@ -632,7 +632,7 @@ sap.ui.define([
 			iconHovered: IconPool.getIconURI("accept"),
 			visualMode: RatingIndicatorVisualMode.Half,
 			change : function(oControlEvent) {
-				Log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
 			}
 		});
 
