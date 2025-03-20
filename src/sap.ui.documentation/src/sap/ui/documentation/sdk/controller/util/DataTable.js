@@ -84,7 +84,7 @@ sap.ui.define([
 		this.oDomTable = oTable;
 		this.oConfig = this.getConfig(sId, oConfig);
 		// create datatable
-		var API = $(oTable)
+		var API = $("#" + sId)
 			.DataTable(
 				Object.assign(
 					this.oConfig,
