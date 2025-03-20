@@ -23,6 +23,9 @@ sap.ui.define([
 	// shortcut for sap.m.DialogType
 	var DialogType = mobileLibrary.DialogType;
 
+	// shortcut for sap.m.FlexRendertype
+	var FlexRendertype = mobileLibrary.FlexRendertype;
+
 	var _buttonWidth = "200px",
 		oSimpleDialog = new Dialog({
 			title: "Simple Dialog",
@@ -145,10 +148,12 @@ sap.ui.define([
 				contentMiddle: [
 					new HBox({
 						width: "100%",
+						renderType: FlexRendertype.Bare,
 						items: [
 							new Label({
 								text: "Search Text:",
-								labelFor: "sf1"
+								labelFor: "sf1",
+								width: "100px"
 							}).addStyleClass("sapUiTinyMarginEnd"),
 							new SearchField("sf1", {
 								layoutData: new FlexItemData({
