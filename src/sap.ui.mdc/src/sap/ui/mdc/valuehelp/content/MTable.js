@@ -232,13 +232,7 @@ sap.ui.define([
 		this._addPromise("applyFilters", oFilterApplicationPromise); // cancels and replaces existing ones
 
 
-		return oFilterApplicationPromise.catch((oError) => {
-			if (oError.canceled) {
-				Log.error("sap.ui.mdc.ValueHelp - Error during applyFilters:", oError.message);
-				return;
-			}
-			throw oError;
-		}).finally(() => {
+		return oFilterApplicationPromise.finally(() => {
 			const oLatestApplyFiltersPromise = this._retrievePromise("applyFilters");
 			oLatestApplyFiltersPromise?.getInternalPromise().then((bApplyFilters) => {
 				this._handleFirstMatchSuggest(this._oTable.getItems());

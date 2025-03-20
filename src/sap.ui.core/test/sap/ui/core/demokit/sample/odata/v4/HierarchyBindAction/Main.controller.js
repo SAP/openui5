@@ -113,11 +113,12 @@ sap.ui.define([
 			}, this);
 		},
 
-		onMakeRoot : async function (oEvent, vNextSibling) {
+		onMakeRoot : async function (oEvent, bLastSibling, bCopy) {
 			try {
 				this.getView().setBusy(true);
 				await oEvent.getSource().getBindingContext().move({
-					nextSibling : vNextSibling,
+					copy : bCopy,
+					nextSibling : bLastSibling ? null : undefined,
 					parent : null
 				});
 			} catch (oError) {
@@ -129,7 +130,7 @@ sap.ui.define([
 
 		onMove : function (oEvent, vNextSibling, bCopy) {
 			this._oNode = oEvent.getSource().getBindingContext();
-			this._vNextSibling = vNextSibling;
+			this._vNextSibling = vNextSibling === "" ? undefined : vNextSibling;
 			this._bCopy = bCopy;
 			const oSelectDialog = this.byId("moveDialog");
 			oSelectDialog.setBindingContext(this._oNode);

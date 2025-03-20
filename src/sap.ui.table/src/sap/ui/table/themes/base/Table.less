@@ -11,21 +11,21 @@
 @_sap_ui_table_Table_FooterPaddingRight: 1rem;
 @_sap_ui_table_Table_TableHeaderBorderWidth: @_sap_ui_table_BaseBorderWidth;
 
-// Can be used in other themes to add styles for which there are no style definitions in the base theme and therefore no theme parameters.
+/* Can be used in other themes to add styles for which there are no style definitions in the base theme and therefore no theme parameters. */
 ._sap_ui_table_Table_TitleContainer() {}
 ._sap_ui_table_Table_ExtensionContainer() {}
 ._sap_ui_table_Table_GridContainer() {}
 
-/*******************************************************************************
+/**********************************************
  * MAIN TABLE SECTIONS (First Level Elements)
- ******************************************************************************/
+ **********************************************/
 
 .sapUiTable {
-	font-family: @sapUiDesktopFontFamily;
-	color: @sapUiListTextColor;
+	font-family: var(--sapFontFamily);
+	color: var(--sapList_TextColor);
 	position: relative;
 	box-sizing: border-box;
-	z-index: 0; // Define stacking context to avoid conflicts with other controls
+	z-index: 0; /* Define stacking context to avoid conflicts with other controls */
 }
 
 .sapUiTableBefore {
@@ -37,7 +37,7 @@
 	align-items: center;
 	padding-left: @_sap_ui_table_Table_HeaderPaddingLeft;
 	padding-right: @_sap_ui_table_Table_HeaderPaddingRight;
-	background-color: @sapUiGroupTitleBackground;
+	background-color: var(--sapGroup_TitleBackground);
 	min-height: @_sap_ui_table_Table_HeaderHeight;
 
 	> * {
@@ -48,14 +48,15 @@
 }
 
 .sapUiTableHdrTitle {
-	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader4Size;
+	font-family: var(--sapFontHeaderFamily);
+	font-size: var(--sapFontHeader4Size);
 	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiGroupTitleTextColor;
+	color: var(--sapGroup_TitleTextColor);
 }
 
 .sapUiTableTbr,
 .sapUiTableExt {
+
 	._sap_ui_table_Table_ExtensionContainer();
 }
 
@@ -65,20 +66,21 @@
 	overflow: hidden; /* avoid scrollbar for column resize handlers */
 	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
-	border-top: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
-	background-color: @sapBackgroundColor;
+	border-top: @_sap_ui_table_BaseBorderWidth solid var(--sapList_BorderColor);
+	background-color: var(--sapBackgroundColor);
+
 	._sap_ui_table_Table_GridContainer();
 }
 
 .sapUiTableFtr {
 	display: flex;
 	align-items: center;
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
-	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
-	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
+	border-left: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
+	border-right: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
 	box-sizing: border-box;
 	min-height: @_sap_ui_table_Table_FooterHeight;
-	background-color: @sapUiListBackground;
+	background-color: var(--sapList_Background);
 	padding-left: @_sap_ui_table_Table_FooterPaddingLeft;
 	padding-right: @_sap_ui_table_Table_FooterPaddingLeft;
 	font-weight: bold;
@@ -89,9 +91,9 @@
 }
 
 .sapUiTablePlaceholder {
-	background-color: @sapUiListBackground;
+	background-color: var(--sapList_Background);
 	box-sizing: border-box;
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
 }
 
 .sapUiTableOuterAfter,
@@ -99,9 +101,9 @@
 	display: none;
 }
 
-/*******************************************************************************
+/**********************************************
  * OTHERS
- ******************************************************************************/
+ **********************************************/
 
 .sapUiTableNoOpacity {
 	opacity: 0;
@@ -115,22 +117,22 @@
 	display: inline-block;
 }
 
-// Hide table during transition, because shrinked width causes growing rows
+/* Hide table during transition, because shrinked width causes growing rows */
 .sapMNavItemFlipping .sapUiTable {
 	opacity: 0;
 }
 
 .sapUiTable .sapUiLocalBusyIndicator {
-	z-index: 11; // The BusyIndicator deserves to be on top!
+	z-index: 11; /* The BusyIndicator deserves to be on top! */
 }
 
 .sapUiTableHidden {
 	display: none;
 }
 
-/*******************************************************************************
+/**********************************************
  * OVERLAY / NODATA AREA
- ******************************************************************************/
+ **********************************************/
 
 .sapUiTableCtrlEmptyMsg {
 	position: absolute;
@@ -158,12 +160,12 @@
 }
 
 .sapUiTableCtrlEmpty {
-	background-color: @sapUiListBackground;
+	background-color: var(--sapList_Background);
 	font-size: @sapMFontMediumSize;
-	z-index: 10; // Makes sure that the NoData overlays the rows. For example, sapUiTableRowActionScr also has a z-index.
+	z-index: 10; /* Makes sure that the NoData overlays the rows. For example, sapUiTableRowActionScr also has a z-index. */
 
 	.sapUiSizeCozy & {
-		font-size: @sapMFontLargeSize;
+		font-size: var(--sapFontLargeSize);
 	}
 }
 
@@ -179,6 +181,7 @@
 }
 
 .sapUiTableEmpty {
+
 	.sapUiTableCtrlEmpty {
 		display: block;
 	}
@@ -191,10 +194,10 @@
 .sapUiTableOverlayArea:focus,
 .sapUiTableCtrlEmpty:focus,
 .sapUiTableCnt > .sapUiLocalBusyIndicator:focus {
-	outline-width: @sapUiContentFocusWidth;
-	outline-style: @sapUiContentFocusStyle;
+	outline-width: var(--sapContent_FocusWidth);
+	outline-style: var(--sapContent_FocusStyle);
 	outline-offset: -3px;
-	outline-color: @sapUiContentFocusColor;
+	outline-color: var(--sapContent_FocusColor);
 }
 
 .sapUiTable.sapUiTableOverlay {
@@ -242,20 +245,20 @@
 
 }
 
-/*******************************************************************************
+/**********************************************
  * COLUMN HEADERS
- ******************************************************************************/
+ **********************************************/
 
 .sapUiTableColHdrCnt {
 	display: none;
 	position: relative;
-	background-color: @sapUiListHeaderBackground;
+	background-color: var(--sapList_HeaderBackground);
 	max-width: 100%;
 	overflow: hidden;
 	white-space: nowrap;
 	min-height: @_sap_ui_table_ColumnHeaderHeight;
-	border-bottom: @_sap_ui_table_Table_TableHeaderBorderWidth solid @sapList_HeaderBorderColor;
-	color: @sapUiListTextColor;
+	border-bottom: @_sap_ui_table_Table_TableHeaderBorderWidth solid var(--sapList_HeaderBorderColor);
+	color: var(--sapList_TextColor);
 }
 
 .sapUiTableCHdr .sapUiTableColHdrCnt {
@@ -264,7 +267,7 @@
 
 .sapUiSizeCozy .sapUiTableColHdrCnt {
 	min-height: @_sap_ui_table_ColumnHeaderHeightCozy;
-	border-bottom-color: @sapUiListHeaderBorderColor;
+	border-bottom-color: var(--sapList_HeaderBorderColor);
 }
 
 .sapUiTableColHdrScr {
@@ -288,9 +291,9 @@
 	min-height: @_sap_ui_table_ColumnHeaderHeightCozy;
 }
 
-/*******************************************************************************
+/**********************************************
  * ROW HEADERS
- ******************************************************************************/
+  **********************************************/
 
 .sapUiTableRowHdrScr {
 	display: none;
@@ -320,6 +323,7 @@
 }
 
 .sapUiSizeCondensed {
+
 	.sapUiTableRowHdrScr {
 		min-height: @_sap_ui_table_RowHeightCondensed;
 	}
@@ -334,6 +338,7 @@
 }
 
 .sapUiSizeCozy {
+
 	.sapUiTableRowHdrScr {
 		min-height: @_sap_ui_table_RowHeightCozy;
 	}
@@ -351,11 +356,12 @@
 	font-size: 0;
 }
 
-/*******************************************************************************
+/**********************************************
  * Row Actions
- ******************************************************************************/
+ **********************************************/
 
-.sapUiTableRowActionScr, .sapUiTableRowWithAction {
+.sapUiTableRowActionScr,
+.sapUiTableRowWithAction {
 	display: none;
 	position: absolute;
 	top: 0;
@@ -363,6 +369,7 @@
 	box-sizing: border-box;
 	z-index: 4; /* Ensure Action Area before Resize/Reorder bars*/
 	touch-action: pan-x; /* for touch scrolling, vertical only */
+
 	.sapUiTableRActFlexible & {
 		right: auto;
 	}
@@ -371,19 +378,21 @@
 .sapUiTableRAct,
 .sapUiTableRActS,
 .sapUiTableRowNavIndicator {
-	& .sapUiTableRowActionScr, & .sapUiTableRowWithAction {
+
+	& .sapUiTableRowActionScr,
+	& .sapUiTableRowWithAction {
 		display: block;
 	}
 }
 
-/*******************************************************************************
+/**********************************************
  * INNER TABLE
- ******************************************************************************/
+ **********************************************/
 
 .sapUiTableCCnt {
 	position: relative;
 	overflow: hidden;
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
 }
 
 .sapUiTableCtrlCnt {
@@ -425,7 +434,8 @@
 
 /* disable horizontal touch move behavior on fixed table rows
    horizontal scrolling is done by the scroll extension */
-.sapUiTableCtrlRowFixed, .sapUiTableCtrlRowFixedBottom {
+.sapUiTableCtrlRowFixed,
+.sapUiTableCtrlRowFixedBottom {
 	touch-action: pan-y;
 }
 
@@ -439,6 +449,7 @@
 }
 
 .sapUiTableRowSelectors:not(.sapUiTableRowHighlights) {
+
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
 		margin-left: @_sap_ui_table_RowSelectorWidth;
@@ -446,6 +457,7 @@
 }
 
 .sapUiTableRowHighlights:not(.sapUiTableRowSelectors) {
+
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
 		margin-left: @_sap_ui_table_RowHighlightWidth;
@@ -453,6 +465,7 @@
 }
 
 .sapUiTableRowSelectors.sapUiTableRowHighlights {
+
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
 		margin-left: calc(@_sap_ui_table_RowSelectorWidth ~"+" @_sap_ui_table_RowHighlightWidth);
@@ -465,6 +478,7 @@
 	.sapUiTableRowSelectors {
 
 		&:not(.sapUiTableRowHighlights) {
+
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
 				margin-left: @_sap_ui_table_RowSelectorWidthCozy;
@@ -476,6 +490,7 @@
 	.sapUiTableRowSelectors {
 
 		&.sapUiTableRowHighlights {
+
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
 				margin-left: calc(@_sap_ui_table_RowSelectorWidthCozy ~"+" @_sap_ui_table_RowHighlightWidth);
@@ -490,6 +505,7 @@
 	.sapUiTableRowSelectors {
 
 		&:not(.sapUiTableRowHighlights) {
+
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
 				margin-left: @_sap_ui_table_RowSelectorWidthCondensed;
@@ -501,6 +517,7 @@
 	.sapUiTableRowSelectors {
 
 		&.sapUiTableRowHighlights {
+
 			.sapUiTableCtrlScr,
 			.sapUiTableCtrlScrFixed {
 				margin-left: calc(@_sap_ui_table_RowSelectorWidthCondensed ~"+" @_sap_ui_table_RowHighlightWidth);

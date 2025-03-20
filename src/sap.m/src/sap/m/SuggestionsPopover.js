@@ -62,6 +62,8 @@ sap.ui.define([
 
 			this._sOldValueState = ValueState.None;
 
+			this._sAreaDescribedById = null;
+
 			// Apply Mixin depending on the Device
 			if (Device.system.phone) {
 				SuggestionsPopoverDialogMixin.apply(SuggestionsPopover.prototype);
@@ -139,6 +141,11 @@ sap.ui.define([
 		oPopover.addStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER);
 		oPopover.addStyleClass(CSS_CLASS_NO_CONTENT_PADDING);
 		oPopover.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
+
+		this._sAreaDescribedById = oParent.getValueStateLinksShortcutsId();
+		if (oParent.getValueStateLinksForAcc().length > 0){
+			oPopover.addAriaDescribedBy(this._sAreaDescribedById);
+		}
 
 		if (oList) {
 			this.addContent(oList);
@@ -300,7 +307,7 @@ sap.ui.define([
 		}
 
 		// if the focus is on the list, return the next item
-		if (!bFocusInInput && !this.getValueStateActiveState() && !bTypeAhead) {
+		if (!bFocusInInput && !bTypeAhead) {
 			// if the focus is on the last item, it should remain there
 			if (iSelectedItemIndex === aSelectableItems.length - 1) {
 				return aSelectableItems[iSelectedItemIndex];
@@ -308,22 +315,6 @@ sap.ui.define([
 			return aSelectableItems[iSelectedItemIndex + 1];
 		}
 
-		if (bFocusInInput && bHasValueStateHeader && !bTypeAhead) {
-			this.setValueStateActiveState(true);
-			return undefined;
-		}
-
-		// if the focus is on the value state header, return the first selectable item
-		// otherwise focus on the value state header
-		if (this.getValueStateActiveState() && !bTypeAhead) {
-			this.setValueStateActiveState(false);
-			return  aSelectableItems[0];
-		}
-
-		if (bHasValueStateHeader && this.getValueStateActiveState() && bTypeAhead) {
-			this.setValueStateActiveState(false);
-			return aSelectableItems[0];
-		}
 
 		// if the focus is on the last item, it should remain there
 		if (iSelectedItemIndex === aSelectableItems.length - 1 && bTypeAhead) {
@@ -348,13 +339,6 @@ sap.ui.define([
 		if (iSelectedItemIndex > 0) {
 			return aSelectableItems[iSelectedItemIndex - 1];
 		}
-
-		// if we have a value state header and the above cases are not fullfiled, the VSH state should be toggled since:
-		// - we are on the first item in the list - the focus should go to the VSH
-		// - the focus is currently on the VSH - the focus should go to the input field
-		if (bHasValueStateHeader) {
-			this.setValueStateActiveState(!this.getValueStateActiveState());
-		}
 	};
 
 	/**
@@ -362,11 +346,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype.handleEnd = function(aSelectableItems, bHasValueStateHeader) {
-		// if the focus is on the VSH, we should remove the active state
-		if (bHasValueStateHeader) {
-			this.setValueStateActiveState(false);
-		}
+	SuggestionsPopover.prototype.handleEnd = function(aSelectableItems) {
 
 		return aSelectableItems.length && aSelectableItems[aSelectableItems.length - 1];
 	};
@@ -376,12 +356,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype.handleHome = function(aSelectableItems, bHasValueStateHeader) {
-		// if a VSH is present, Home key should move the focus to it
-		if (bHasValueStateHeader) {
-			this.setValueStateActiveState(true);
-			return;
-		}
+	SuggestionsPopover.prototype.handleHome = function(aSelectableItems) {
 
 		// if no VSH is present, Home key should move the focus to the first item in the list
 		return aSelectableItems.length && aSelectableItems[0];
@@ -392,11 +367,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype.handlePageDown = function(aSelectableItems, iSelectedItemIndex, bHasValueStateHeader) {
-		// if the focus is on the VSH, we should remove the active state
-		if (bHasValueStateHeader) {
-			this.setValueStateActiveState(false);
-		}
+	SuggestionsPopover.prototype.handlePageDown = function(aSelectableItems, iSelectedItemIndex) {
 
 		return aSelectableItems[Math.min(aSelectableItems.length - 1, iSelectedItemIndex + 10)];
 	};
@@ -406,20 +377,13 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	SuggestionsPopover.prototype.handlePageUp = function(aSelectableItems, iSelectedItemIndex, bHasValueStateHeader) {
+	SuggestionsPopover.prototype.handlePageUp = function(aSelectableItems, iSelectedItemIndex) {
 		// if there is an item one page up, return the item
 		if (iSelectedItemIndex - 10 >= 0) {
 			return aSelectableItems[iSelectedItemIndex - 10];
 		}
 
-		// if there isn't an item one page up and a VSH is present,
-		// Page Up should focus the VSH
-		if (bHasValueStateHeader) {
-			this.setValueStateActiveState(true);
-			return;
-		}
-
-		// if a VSH is not present, always focus on the first item in the list
+		// always focus on the first item in the list
 		return aSelectableItems[0];
 	};
 
@@ -433,15 +397,12 @@ sap.ui.define([
 	SuggestionsPopover.prototype.updateFocus = function(oParent, oItem) {
 		var oList = this.getItemsContainer(),
 			oPreviousFocusedItem = this.getFocusedListItem(),
-			oValueStateHeader = this._getValueStateHeader(),
-			bHasTabularSuggestions = oParent._hasTabularSuggestions?.() ?? false,
-			bHasValueStateHeader = oValueStateHeader && (oValueStateHeader.getValueState() !== ValueState.None);
+			bHasTabularSuggestions = oParent._hasTabularSuggestions?.() ?? false;
 
 		// remove focus from everywhere
 		oList && oList.removeStyleClass("sapMListFocus");
 		oPreviousFocusedItem && !bHasTabularSuggestions && oPreviousFocusedItem.removeStyleClass("sapMLIBFocused");
 		oParent.hasStyleClass("sapMFocus") && oParent.removeStyleClass("sapMFocus");
-		bHasValueStateHeader && oValueStateHeader.removeStyleClass("sapMPseudoFocus");
 
 		// add it only where necessary
 		if (oItem) {
@@ -449,8 +410,6 @@ sap.ui.define([
 			bHasTabularSuggestions && oList.setFakeFocus(oItem);
 			oList.addStyleClass("sapMListFocus");
 			this.updateListDataAttributes(oList);
-		} else if (this.getValueStateActiveState()) {
-			oValueStateHeader.addStyleClass("sapMPseudoFocus");
 		} else {
 			oParent.addStyleClass("sapMFocus");
 		}
@@ -529,10 +488,7 @@ sap.ui.define([
 	 * @param {sap.m.GroupHeaderListItem | sap.m.StandardListItem | sap.m.ColumnListItem} oItem The selected item
 	 */
 	SuggestionsPopover.prototype.updateAriaActiveDescendant = function (oParent, oItem) {
-		var	oInputDomRef = oParent.getFocusDomRef(),
-			oValueStateHeader = this._getValueStateHeader(),
-			oFormattedText = oValueStateHeader && oValueStateHeader.getFormattedText(),
-			sValueStateId;
+		var	oInputDomRef = oParent.getFocusDomRef();
 
 		if (oParent.hasStyleClass("sapMFocus")) {
 			oInputDomRef.removeAttribute("aria-activedescendant");
@@ -542,11 +498,6 @@ sap.ui.define([
 		if (oItem) {
 			oInputDomRef.setAttribute("aria-activedescendant", oItem.getId());
 			return;
-		}
-
-		if (this.getValueStateActiveState()) {
-			sValueStateId = oFormattedText ? oFormattedText.getId() : oValueStateHeader.getId();
-			oInputDomRef.setAttribute("aria-activedescendant", sValueStateId);
 		}
 	};
 
@@ -633,8 +584,11 @@ sap.ui.define([
 		// Set the value state text
 		if (oValueStateHeader && typeof vValueStateText === "string") {
 			oValueStateHeader.setText(vValueStateText);
+			this.updateAriaDescribedBy();
 		} else if (oValueStateHeader && typeof vValueStateText === "object") {
 			oValueStateHeader.setFormattedText(vValueStateText);
+			const aLinks = vValueStateText !== null ? oValueStateHeader.getFormattedText().getControls() : [];
+			this.updateAriaDescribedBy(aLinks);
 		}
 
 		// adjust ValueStateHeader visibility
@@ -647,15 +601,34 @@ sap.ui.define([
 		return this;
 	};
 
+	SuggestionsPopover.prototype.updateAriaDescribedBy = function (aControls) {
+		if (!this.getPopover()) {
+			return;
+		}
+
+		const aAriaDescribedBy = this.getPopover().getAriaDescribedBy();
+		const aLinks = aControls || [];
+
+		if (aAriaDescribedBy.some((id) => id === this._sAreaDescribedById) && aLinks.length === 0) {
+			// remove aria-describedby if there are no value state links
+			this.getPopover().removeAriaDescribedBy(this._sAreaDescribedById);
+		} else if (!aAriaDescribedBy.some((id) => id === this._sAreaDescribedById) && aLinks.length > 0) {
+			// add aria-describedby if there are value state links
+			this.getPopover().addAriaDescribedBy(this._sAreaDescribedById);
+		}
+	};
+
 	/**
 	 * Handles value state link navigation
 	 *
 	 * @param {sap.ui.core.Control} oParent The input control that instantiates this suggestions popover
 	 * @param {jQuery.Event} oEvent The event object
-	 * @private
+	 * @protected
 	 */
 	SuggestionsPopover.prototype._handleValueStateLinkNav = function(oParent, oEvent) {
-		if (!this.getValueStateActiveState() || (this.getValueStateActiveState() && document.activeElement.tagName === "A")) {
+		if (!this.getValueStateActiveState()
+				|| (this.getValueStateActiveState() && document.activeElement.tagName === "A")
+				|| this.getValueStateLinks().length === 0) {
 			return;
 		}
 
@@ -665,10 +638,12 @@ sap.ui.define([
 		// Prevent from closing right away
 		oEvent.preventDefault();
 
-		// Move the real focus on the first link and remove the pseudo one from the
-		// Formatted Text value state header
+		if (this.getFocusedListItem()) {
+			this.getFocusedListItem().removeStyleClass("sapMLIBFocused");
+		}
+
+		// Move the real focus on the first link
 		aValueStateLinks[0].focus();
-		this._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
 
 		aValueStateLinks.forEach(function(oLink) {
 			oLink.addDelegate({
@@ -703,7 +678,7 @@ sap.ui.define([
 			onsaptabprevious: function(oEvent) {
 				oEvent.preventDefault();
 				oParent.getFocusDomRef().focus();
-				this._getValueStateHeader().addStyleClass("sapMPseudoFocus");
+				this.setValueStateActiveState(false);
 				oParent.removeStyleClass("sapMFocus");
 			}
 		}, this);
