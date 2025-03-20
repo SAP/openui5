@@ -315,7 +315,6 @@ sap.ui.define([
 			 */
 			_processApiIndexAndLoadApiJson: function (aData) {
 				var oEntityData,
-					oMasterController,
 					sTopicId = this._sTopicid;
 
 				// Cache api-index data
@@ -342,8 +341,9 @@ sap.ui.define([
 
 					// If target symbol is deprecated - all deprecated records should be shown in the tree
 					if (oEntityData.deprecated || oEntityData.bAllContentDeprecated) {
-						oMasterController = this.getOwnerComponent().getConfigUtil().getMasterView("apiId").getController();
-						oMasterController.selectDeprecatedSymbol(this._sTopicid);
+						this.getOwnerComponent().getConfigUtil().getMasterView("apiId").then(function(oMasterView) {
+							oMasterView.getController().selectDeprecatedSymbol(this._sTopicid);
+						}.bind(this));
 					}
 
 					oEntityData.nodes = this._filterEntityByVisibilityInApiJsonData(oEntityData.nodes);
