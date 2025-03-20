@@ -70,6 +70,8 @@ sap.ui.define([
 	 * @property {string} properties.annotationPath - Path of the property
 	 * @property {string} properties.propertyName - Name of the property
 	 * @property {string} properties.currentValue - Current value of the property
+	 * @property {string} [properties.label] - Label of the property. If not given, the property name is used
+	 * @property {string} [properties.tooltip] - Tooltip of the property
 	 * @property {object[]} possibleValues - Array of possible values for value list type properties
 	 * @property {string} possibleValues.key - Key of the option
 	 * @property {string} possibleValues.text - Text of the option
@@ -135,10 +137,11 @@ sap.ui.define([
 
 		const aProperties = aDelegateProperties.map((oProperty) => ({
 			...oProperty,
-			originalValue: oProperty.currentValue
+			originalValue: oProperty.currentValue,
+			label: oProperty.label || oProperty.propertyName
 		}));
 
-		aProperties.sort((oProperty1, oProperty2) => oProperty1.propertyName.localeCompare(oProperty2.propertyName));
+		aProperties.sort((oProperty1, oProperty2) => oProperty1.label.localeCompare(oProperty2.label));
 
 		const aExistingChanges = PersistenceWriteAPI._getAnnotationChanges({
 			control: oControl
@@ -151,7 +154,7 @@ sap.ui.define([
 		this._oDialog ||= await this._createDialog();
 
 		const sFilterText = sPreSelectedPropertyKey
-			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).propertyName
+			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).label
 			: "";
 		this.oChangeAnnotationModel.setData({
 			objectAsKey: bObjectAsKey,

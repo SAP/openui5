@@ -68,12 +68,14 @@ sap.ui.define([
 							{
 								propertyName: "My Test Label",
 								annotationPath: "path/to/test/label",
-								currentValue: oTextArrangementTypes.TextOnly
+								currentValue: oTextArrangementTypes.TextOnly,
+								label: "My Special Test Label"
 							},
 							{
 								propertyName: "My Other Test Label",
 								annotationPath: "path/to/second/test/label",
-								currentValue: oTextArrangementTypes.IDFirst
+								currentValue: oTextArrangementTypes.IDFirst,
+								tooltip: "My Other Test Tooltip"
 							}
 						],
 						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
@@ -114,14 +116,24 @@ sap.ui.define([
 				);
 				assert.strictEqual(aFormElements.length, 2, "then for each property a form element is created");
 				assert.strictEqual(
-					aFormElements[0].getLabel(),
+					aFormElements[0].getLabel().getText(),
 					"My Other Test Label",
 					"then the properties are properly sorted"
 				);
 				assert.strictEqual(
-					aFormElements[1].getLabel(),
-					"My Test Label",
+					aFormElements[1].getLabel().getText(),
+					"My Special Test Label",
 					"then the properties are properly sorted"
+				);
+				assert.strictEqual(
+					aFormElements[0].getLabel().getTooltip(),
+					"My Other Test Tooltip",
+					"then the tooltips are set"
+				);
+				assert.strictEqual(
+					aFormElements[1].getLabel().getTooltip(),
+					null,
+					"then the tooltips are set"
 				);
 				const aVisibleFields = aFormElements[1].getFields().filter((oField) => oField.getVisible());
 				assert.strictEqual(
@@ -473,12 +485,14 @@ sap.ui.define([
 							{
 								propertyName: "My Test Label",
 								annotationPath: "path/to/test/label",
-								currentValue: "Hello"
+								currentValue: "Hello",
+								tooltip: "My Test Tooltip"
 							},
 							{
 								propertyName: "My Other Test Label",
 								annotationPath: "path/to/second/test/label",
-								currentValue: "World"
+								currentValue: "World",
+								label: "My special Test Label"
 							}
 						]
 					};
