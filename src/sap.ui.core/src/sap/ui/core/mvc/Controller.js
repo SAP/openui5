@@ -486,7 +486,7 @@ sap.ui.define([
 							return oController;
 						});
 					}, function(err){
-						future.errorThrows("Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + ".", { suffix: "Extension provider is ignored." });
+						future.errorThrows("Controller Extension Provider: Error '" + err + "' thrown in " + sRegisteredExtensionProvider + ".", { suffix: "Extension provider is ignored." });
 						return oController;
 					});
 			} else {
@@ -908,7 +908,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		Controller._sExtensionProvider = null;
+		let sRegisteredExtensionProvider = null;
 
 
 		/**
@@ -995,7 +995,8 @@ sap.ui.define([
 		 * @public
 		 */
 		Controller.registerExtensionProvider = function(sExtensionProvider) {
-			Controller._sExtensionProvider = sExtensionProvider;
+			// remember the provider name for future error messages
+			sRegisteredExtensionProvider = sExtensionProvider;
 			ControllerExtensionProvider.registerExtensionProvider(sExtensionProvider);
 		};
 

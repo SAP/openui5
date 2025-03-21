@@ -539,7 +539,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			//ObjectPath.set("sample.ExtensionProvider", null);
-			Controller._sExtensionProvider = null;
 			this.view.destroy();
 			this.view = null;
 		}
