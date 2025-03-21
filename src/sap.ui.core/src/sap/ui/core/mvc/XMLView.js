@@ -601,9 +601,28 @@ sap.ui.define([
 		};
 
 		XMLView.prototype.getControllerName = function() {
+			if (this._controllerModuleName) {
+				Log.error(`Controller name is specified using module syntax: '${this._controllerModule}'. Use #getControllerModuleName() instead.`);
+				return undefined;
+			}
+
 			return this._controllerName;
 		};
 
+		XMLView.prototype._getControllerName = function() {
+			return this._controllerName;
+		};
+
+		XMLView.prototype.getControllerModuleName = function() {
+			if (this._controllerName) {
+				return this._controllerName.replace(/\./g, "/") + ".controller";
+			}
+			return this._controllerModuleName.substring(7);
+		};
+
+		XMLView.prototype._getControllerModuleName = function() {
+			return this._controllerModuleName;
+		};
 
 		XMLView.prototype.isSubView = function() {
 			return this._oContainingView != this;

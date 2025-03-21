@@ -24,29 +24,32 @@ sap.ui.define([
 		IDFirst: "ID First"
 	};
 
-	const oTestDelegate = {
-		getAnnotationsChangeInfo: () => {
-			return {
-				serviceUrl: "testServiceUrl",
-				properties: [
-					{
-						propertyName: "My Test Label",
-						annotationPath: "path/to/test/label",
-						currentValue: oTextArrangementTypes.TextOnly
-					},
-					{
-						propertyName: "My Other Test Label",
-						annotationPath: "path/to/second/test/label",
-						currentValue: oTextArrangementTypes.IDFirst
-					}
-				],
-				possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
-					key: oTextArrangementTypes[sKey],
-					text: oTextArrangementLabels[sKey]
-				}))
-			};
-		}
-	};
+	function createDelegate(bSingleAction) {
+		return {
+			getAnnotationsChangeInfo: () => {
+				return {
+					serviceUrl: "testServiceUrl",
+					properties: [
+						{
+							propertyName: "My Test Label",
+							annotationPath: "path/to/test/label",
+							currentValue: oTextArrangementTypes.TextOnly
+						},
+						{
+							propertyName: "My Other Test Label",
+							annotationPath: "path/to/second/test/label",
+							currentValue: oTextArrangementTypes.IDFirst
+						}
+					],
+					preSelectedProperty: bSingleAction && "path/to/test/label",
+					possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
+						key: oTextArrangementTypes[sKey],
+						text: oTextArrangementLabels[sKey]
+					}))
+				};
+			}
+		};
+	}
 
 	return {
 		actions: {
@@ -55,14 +58,28 @@ sap.ui.define([
 					changeType: "textArrangement_Test",
 					title: () => "Change Text Arrangement",
 					type: AnnotationTypes.ValueListType,
-					delegate: oTestDelegate
+					delegate: createDelegate()
 				},
 				label: {
-					changeType: "label_Test",
+					changeType: "labelChange_Test",
 					title: () => "Change Label",
+					type: AnnotationTypes.StringType,
+					delegate: createDelegate()
+				},
+				textArrangementSingle: {
+					changeType: "textArrangement_Test",
+					title: () => "Change Text Arrangement - Single",
+					type: AnnotationTypes.ValueListType,
+					delegate: createDelegate(true)
+				},
+				labelSingle: {
+					changeType: "anotherChange_Test",
+					title: () => "Change Label - Single",
 					icon: "sap-icon://endoscopy",
 					type: AnnotationTypes.StringType,
-					delegate: oTestDelegate
+					delegate: createDelegate(true),
+					controlBasedRenameChangeType: "rename",
+					singleRename: true
 				}
 			}
 		}

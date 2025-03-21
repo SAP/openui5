@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/EventBus",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/StaticArea"
-], function(Log, IllustratedMessageType, EventBus, jQuery, StaticArea) {
+	"sap/ui/core/StaticArea",
+	"sap/ui/core/Theming"
+], function(Log, IllustratedMessageType, EventBus, jQuery, StaticArea, Theming) {
 	"use strict";
 
 	/**
@@ -18,7 +19,6 @@ sap.ui.define([
 		SAP_ILLUSTRATION_SET_NAME = 'sapIllus',
 		SAP_ILLUSTRATION_SET_PATH = sap.ui.require.toUrl("sap/m/themes/base/illustrations/"),
 		SAP_ILLUSTRATION_SET_SYMBOLS = Object.keys(IllustratedMessageType);
-
 	/*
 	 * A map of registered sets
 	 * key: set name
@@ -32,13 +32,6 @@ sap.ui.define([
 	 */
 
 	var oSetRegistry = Object.create(null);
-
-	oSetRegistry[SAP_ILLUSTRATION_SET_NAME] = {
-		sPath: SAP_ILLUSTRATION_SET_PATH,
-		aSymbols: SAP_ILLUSTRATION_SET_SYMBOLS,
-		bIsPending: false,
-		aCollections: []
-	};
 
 	var aSymbolsInDOM = [], // Array with IDs of the symbols which are already in the DOM
 		oAssetRegistry = Object.create(null), // Object with IDs of the assets which are loaded or being loaded
@@ -124,6 +117,46 @@ sap.ui.define([
 		IllustrationPool._requireSVG(sSet, sAssetId, sInstanceId, sIdPrefix);
 	};
 
+	IllustrationPool._extractAssetMetadataConfig = function(sSet, sSize, sSymbol) {
+		var oMetadata = IllustrationPool.getIllustrationSetMetadata(sSet),
+			sIdPrefix = IllustrationPool._getThemePath(oMetadata),
+			oPathConfig = oMetadata && oMetadata.oPathSymbolsConfig && oMetadata.oPathSymbolsConfig[sIdPrefix] && oMetadata.oPathSymbolsConfig[sIdPrefix][sSymbol],
+			oRootConfig = oMetadata && oMetadata.oPathSymbolsConfig && oMetadata.oPathSymbolsConfig["root"] && oMetadata.oPathSymbolsConfig["root"][sSymbol],
+			oSymbolConfig = oPathConfig || oRootConfig, // if there is no path config, fallback to root config (if available)
+			sSizeSubstitute = sSize,
+			sSymbolSubstitute = sSymbol;
+
+			if (oSymbolConfig) {
+				sSizeSubstitute = IllustrationPool._getSizeSubstitute(oSymbolConfig, sSize);
+				sSymbolSubstitute = IllustrationPool._getSymbolSubstitute(oSymbolConfig, sSymbol);
+			}
+
+		return {
+			sIdPrefix: oPathConfig ? sIdPrefix : "",
+			sAssetId: `${sSet}-${sSizeSubstitute}-${sSymbolSubstitute}`
+		};
+	};
+
+	IllustrationPool._getSymbolSubstitute = function(oSymbolConfig, sSymbol) {
+
+		if (typeof oSymbolConfig === 'string') {
+			sSymbol = oSymbolConfig;
+		} else {
+			sSymbol = oSymbolConfig["symbolReplacement"] || sSymbol;
+		}
+
+		return sSymbol;
+	};
+
+	IllustrationPool._getSizeSubstitute = function(oSymbolConfig, sSize) {
+
+		if (typeof oSymbolConfig === 'object') {
+			sSize = oSymbolConfig["sizeReplacement"][sSize] || sSize;
+		}
+
+		return sSize;
+	};
+
 	/**
 	 * Returns the metadata of an Illustration Set.
 	 * The metadata contains the names of the symbols and the theme mappings.
@@ -176,20 +209,22 @@ sap.ui.define([
 	 * @param {string} oConfig.setURI URL Path of the Illustration Set
 	 * @param {boolean} bLoadAllResources whether or not all of the assets for the Illustration Set
 	 * should be loaded once the metadata is loaded
+	 * @param {array} aOptionalSymbols optional array containing the Illustration Set symbols
 	 * @static
 	 * @public
 	 */
-	IllustrationPool.registerIllustrationSet = function(oConfig, bLoadAllResources) {
+	IllustrationPool.registerIllustrationSet = async function(oConfig, bLoadAllResources, aOptionalSymbols) {
 		var sName = oConfig.setFamily,
 			sPath = oConfig.setURI;
 
 		if (oSetRegistry[sName]) {
 			if (oSetRegistry[sName].bIsPending) {
 				Log.warning("Illustration Set is currently being loaded.");
+				return await oSetRegistry[sName].oPromise;
 			} else {
 				Log.warning("Illustration Set already registered.");
 			}
-			return;
+			return Promise.resolve();
 		}
 
 		// add trailing slash if necessary for more convenience
@@ -201,7 +236,7 @@ sap.ui.define([
 		oSetRegistry[sName].sPath = sPath;
 		oSetRegistry[sName].bIsPending = true;
 
-		IllustrationPool._loadMetadata(sName, sPath, bLoadAllResources);
+		await IllustrationPool._loadMetadata(sName, sPath, bLoadAllResources, aOptionalSymbols);
 	};
 
 	/**
@@ -254,20 +289,21 @@ sap.ui.define([
 	 * @param {string} sName the name of the Illustration Set for which the metadata is being loaded
 	 * @param {string} sPath the path of the Illustration Set for which the metadata is being loaded
 	 * @param {boolean} bLoadAllResources whether or not all of the assets for the Illustration Set should be loaded
+	 * @param {array} aOptionalSymbols optional array containing the Illustration Set symbols
 	 * @return {Promise} Promise which resolves when the metadata is loaded
 	 * @static
 	 * @private
 	 */
-	IllustrationPool._loadMetadata = function(sName, sPath, bLoadAllResources) {
+	IllustrationPool._loadMetadata = async function(sName, sPath, bLoadAllResources, aOptionalSymbols) {
 		var sMetadataPath = sPath + "metadata.json";
 
-		return new Promise(function (fnResolve) {
+		oSetRegistry[sName].oPromise = new Promise(function (fnResolve) {
 			jQuery.ajax(sMetadataPath, {
 				type: "GET",
 				dataType: "json",
 				success: function (oMetadataJSON) {
 					Log.info("Metadata for illustration set (" + sName + ") successfully loaded");
-					IllustrationPool._metadataLoaded(sName, oMetadataJSON, bLoadAllResources);
+					IllustrationPool._metadataLoaded(sName, oMetadataJSON, bLoadAllResources, aOptionalSymbols);
 					fnResolve(oMetadataJSON); // passing the json in the resolve for testing purposes
 				},
 				error: function (jqXHR, sStatus) {
@@ -279,6 +315,8 @@ sap.ui.define([
 				}
 			});
 		});
+
+		return await oSetRegistry[sName].oPromise;
 	};
 
 	/**
@@ -287,16 +325,19 @@ sap.ui.define([
 	 * @param {string} sName the name of the Illustration Set for which the metadata is loaded
 	 * @param {object} oMetadataJSON the loaded metadata object
 	 * @param {boolean} bLoadAllResources whether or not all of the assets for the Illustration Set should be loaded
+	 * @param {array} aOptionalSymbols optional array containing the Illustration Set symbols
 	 * @static
 	 * @private
 	 */
-	IllustrationPool._metadataLoaded = function(sName, oMetadataJSON, bLoadAllResources) {
-		var aSymbols = oMetadataJSON.symbols,
-			aCollections = oMetadataJSON.collections,
+	IllustrationPool._metadataLoaded = function(sName, oMetadataJSON, bLoadAllResources, aOptionalSymbols) {
+		var aSymbols = aOptionalSymbols || oMetadataJSON.symbols,
+			oThemePathMap = oMetadataJSON.config && oMetadataJSON.config.themePath,
+			oPathSymbolsConfig = oMetadataJSON.pathSymbolsConfig,
 			bHasPatterns = oMetadataJSON.requireCustomPatterns;
 
 		oSetRegistry[sName].aSymbols = aSymbols;
-		oSetRegistry[sName].aCollections = aCollections;
+		oSetRegistry[sName].oThemePathMap = oThemePathMap;
+		oSetRegistry[sName].oPathSymbolsConfig = oPathSymbolsConfig;
 
 		// Load the patterns (if available) as soon as possible, since they can be used in any of the symbols.
 		if (bHasPatterns) {
@@ -308,6 +349,15 @@ sap.ui.define([
 		}
 
 		oSetRegistry[sName].bIsPending = false;
+		oSetRegistry[sName].oPromise = null;
+	};
+
+	IllustrationPool._registerDefaultSet = async function () {
+		const oDefaultSet = {
+			setFamily: SAP_ILLUSTRATION_SET_NAME,
+			setURI: SAP_ILLUSTRATION_SET_PATH
+		};
+		await IllustrationPool.registerIllustrationSet(oDefaultSet, false, SAP_ILLUSTRATION_SET_SYMBOLS);
 	};
 
 	/**
@@ -337,6 +387,7 @@ sap.ui.define([
 	 * @param {string} sSet the name of the Illustration Set for which the asset is being loaded
 	 * @param {string} sId the ID of the asset being loaded
 	 * @param {string} sInstanceId the ID of the Illustration instance which is requiring the asset
+	 * @param {string} sIdPrefix The prefix of the path of the asset being loaded. Used to store the asset ID in the DOM pool, so it can be distinguished from other assets with the same ID.
 	 * @return {Promise} Promise which resolves when the SVG asset is loaded
 	 * @static
 	 * @private
@@ -421,6 +472,21 @@ sap.ui.define([
 			}
 		}
 	};
+
+	/**
+	 * Gets the theme path prefix (if present) of the Illustration based on the current theme and the set's metadata.
+	 * @param {Object} oMetadata The set's metadata
+	 * @returns {string} the needed path prefix
+	 * @private
+	 */
+	IllustrationPool._getThemePath = function (oMetadata) {
+		var sCurrentTheme = Theming.getTheme(),
+			oThemePathObj = oMetadata && oMetadata.oThemePathMap,
+			sPrefix = (oThemePathObj && oThemePathObj[sCurrentTheme]) || "";
+
+		return sPrefix;
+	};
+
 
 	return IllustrationPool;
 

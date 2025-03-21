@@ -346,7 +346,7 @@ sap.ui.define([
 	 * Called if the content will be shown.
 	 *
 	 * @param {boolean} bInitial Indicates, if the content is shown for the first time since it's container opened.
-	 * @returns {object} Object containing <code>itemId</code> and <code>items</code> where <code>itemId</code> is the ID of the initial selected item if it belongs to the value of the field and <code>items</code> is the number of found items (if it can be determined).
+	 * @returns {Promise<object>} Promise returning Object containing <code>itemId</code> and <code>items</code> where <code>itemId</code> is the ID of the initial selected item if it belongs to the value of the field and <code>items</code> is the number of found items (if it can be determined).
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
@@ -354,7 +354,7 @@ sap.ui.define([
 		this._bVisible = true;
 		this.handleConditionsUpdate();
 
-		return {};
+		return Promise.resolve({});
 	};
 
 	/**

@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
-	"sap/ui/core/util/MockServer",
 	"sap/ui/core/IconPool"
 ], function(
 	TableQUnitUtils,
@@ -22,28 +21,11 @@ sap.ui.define([
 	qutils,
 	Sorter,
 	Filter,
-	MockServer,
 	IconPool
 ) {
 	"use strict";
 
-	const sServiceURI = "/service/";
 	const SelectionMode = library.SelectionMode;
-
-	function startMockServer() {
-		MockServer.config({
-			autoRespond: true
-		});
-
-		const oMockServer = new MockServer({
-			rootUri: sServiceURI
-		});
-
-		const sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
-		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", sURLPrefix + "/mockdata/");
-		oMockServer.start();
-		return oMockServer;
-	}
 
 	QUnit.module("Basics", {
 		beforeEach: function() {
@@ -85,9 +67,8 @@ sap.ui.define([
 
 	QUnit.test("Initialization", function(assert) {
 		const oMultiSelectionPlugin = new MultiSelectionPlugin();
-		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
 		assert.equal(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has no icon");
-
 	});
 
 	QUnit.test("Add to and remove from table", function(assert) {
@@ -98,7 +79,7 @@ sap.ui.define([
 		assert.notEqual(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has an icon");
 
 		this.oTable.removeDependent(oMultiSelectionPlugin);
-		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
 		assert.notEqual(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has an icon");
 	});
 
@@ -106,16 +87,11 @@ sap.ui.define([
 		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 
 		this.oTable.addDependent(oMultiSelectionPlugin);
-
-		const oInternalPluginDestroySpy = sinon.spy(oMultiSelectionPlugin.oInnerSelectionPlugin, "destroy");
+		const oInnerSelectionPlugin = oMultiSelectionPlugin.oInnerSelectionPlugin;
 
 		oMultiSelectionPlugin.destroy();
-		assert.ok(oInternalPluginDestroySpy.calledOnce, "The internal default selection plugin was destroyed");
-		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The reference to the internal default selection plugin was cleared");
-
-		this.oTable.addDependent(new MultiSelectionPlugin());
-		this.oTable.destroyDependents();
-		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelSelection"), "The table has a legacy selection plugin");
+		assert.ok(oInnerSelectionPlugin.isDestroyed(), "The internal default selection plugin is destroyed");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The reference to the internal default selection plugin is cleared");
 	});
 
 	QUnit.test("#getRenderConfig", function(assert) {
@@ -284,71 +260,8 @@ sap.ui.define([
 			"Plugin found on dependents aggregation via MultiSelectionPlugin.findOn");
 	});
 
-	QUnit.module("Deselect All button", {
-		beforeEach: function() {
-			this.oMockServer = startMockServer();
-			this.oTable = TableQUnitUtils.createTable({
-				dependents: [
-					new MultiSelectionPlugin()
-				]
-			});
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-			this.oMockServer.destroy();
-		}
-	});
-
-	QUnit.test("Enable/Disable", function(assert) {
-		const oTable = this.oTable;
-		let $SelectAll;
-		const oSelectionPlugin = oTable._getSelectionPlugin();
-		const oIcon = oSelectionPlugin.getAggregation("icon");
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			$SelectAll = oTable.$("selall");
-			assert.ok($SelectAll.attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
-			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
-
-			assert.ok(!oIcon.getUseIconTooltip(), "DeselectAll icon has no tooltip");
-			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
-			assert.strictEqual($SelectAll.attr("aria-disabled"), "true", "Aria-Disabled set to true");
-			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "DeselectAll icon has the correct css class applied");
-
-			oTable.bindRows({path: "/"});
-			oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(10));
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oTable.getBinding().getLength() > 0, "After bindRows: Table has data");
-			assert.strictEqual($SelectAll.attr("role"), "button", "role attribute is set to button");
-			assert.notOk($SelectAll.attr("aria-disabled"), "After bindRows: aria-disabled is undefined");
-			assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After bindRows: Select All is enabled");
-			assert.ok($SelectAll.hasClass("sapUiTableSelAllVisible"), "After bindRows: Select All is visible");
-
-			assert.ok(!oIcon.getUseIconTooltip(), "SelectAll icon has no tooltip");
-			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
-			assert.strictEqual($SelectAll.attr("aria-disabled"), undefined, "Aria-Disabled is undefined");
-			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "AllSelected icon has the correct css class applied");
-		}).then(function() {
-			return new Promise(function(resolve) {
-				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-					assert.notOk($SelectAll.attr("aria-disabled"), "After rows are selected: aria-disabled is undefined");
-					assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After rows are selected: Deselect All is enabled");
-					oTable.unbindRows();
-					resolve();
-				});
-				oSelectionPlugin.setSelectedIndex(0);
-			});
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok($SelectAll.attr("aria-disabled"), "After unbindRows: aria-disabled is set to true");
-			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After unbindRows: Deselect All is disabled");
-		});
-	});
-
 	QUnit.module("_internalTrigger selectionChange event parameter", {
 		beforeEach: async function() {
-			this.oMockServer = startMockServer();
 			this.oMultiSelectionPlugin = new MultiSelectionPlugin();
 			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/"},
@@ -359,7 +272,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			this.oMockServer.destroy();
 		}
 	});
 
@@ -395,9 +307,68 @@ sap.ui.define([
 		this.oTable.getBinding().filter(new Filter({path: "something", operator: "EQ", value1: "something"}));
 	});
 
+	QUnit.module("Header selector", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				dependents: [
+					new MultiSelectionPlugin()
+				],
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Enable/Disable", function(assert) {
+		const oTable = this.oTable;
+		let $SelectAll;
+		const oSelectionPlugin = oTable._getSelectionPlugin();
+		const oIcon = oSelectionPlugin.getAggregation("icon");
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			$SelectAll = oTable.$("selall");
+			assert.ok($SelectAll.attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
+			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
+
+			assert.ok(!oIcon.getUseIconTooltip(), "DeselectAll icon has no tooltip");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon is correct");
+			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
+			assert.strictEqual($SelectAll.attr("aria-disabled"), "true", "Aria-Disabled set to true");
+			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "DeselectAll icon has the correct css class applied");
+
+			oTable.bindRows({path: "/"});
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oTable.getBinding().getLength() > 0, "After bindRows: Table has data");
+			assert.strictEqual($SelectAll.attr("role"), "button", "role attribute is set to button");
+			assert.notOk($SelectAll.attr("aria-disabled"), "After bindRows: aria-disabled is undefined");
+			assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After bindRows: Select All is enabled");
+			assert.ok($SelectAll.hasClass("sapUiTableSelAllVisible"), "After bindRows: Select All is visible");
+
+			assert.ok(!oIcon.getUseIconTooltip(), "SelectAll icon has no tooltip");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon icon is correct");
+			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
+			assert.strictEqual($SelectAll.attr("aria-disabled"), undefined, "Aria-Disabled is undefined");
+			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "AllSelected icon has the correct css class applied");
+		}).then(function() {
+			return new Promise(function(resolve) {
+				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
+					assert.notOk($SelectAll.attr("aria-disabled"), "After rows are selected: aria-disabled is undefined");
+					assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After rows are selected: Deselect All is enabled");
+					oTable.unbindRows();
+					resolve();
+				});
+				oSelectionPlugin.setSelectedIndex(0);
+			});
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok($SelectAll.attr("aria-disabled"), "After unbindRows: aria-disabled is set to true");
+			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After unbindRows: Deselect All is disabled");
+		});
+	});
+
 	QUnit.module("Multi selection behavior", {
 		beforeEach: function() {
-			this.oMockServer = startMockServer();
 			this.oTable = TableQUnitUtils.createTable({
 				dependents: [
 					new MultiSelectionPlugin()
@@ -411,7 +382,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			this.oMockServer.destroy();
 		}
 	});
 
@@ -1335,7 +1305,7 @@ sap.ui.define([
 	QUnit.test("Limit notification", function(assert) {
 		const iLimit = 5;
 		const oTable = this.oTable;
-		const oSelectionPlugin = this.oTable._oSelectionPlugin;
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 		let oPopoverOpenBySpy;
 		let oPopoverCloseSpy;
 

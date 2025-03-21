@@ -271,7 +271,11 @@ sap.ui.define([
 		for ( i = 0; i < xmlNode.attributes.length; i++) {
 			attr = xmlNode.attributes[i];
 			if (VIEW_SPECIAL_ATTRIBUTES.includes(attr.name)) {
-				oView["_" + attr.name] = attr.value;
+				if (attr.name === "controllerName" && attr.value.startsWith("module:")) {
+					oView["_controllerModuleName"] = attr.value;
+				} else {
+					oView["_" + attr.name] = attr.value;
+				}
 			}
 		}
 	};

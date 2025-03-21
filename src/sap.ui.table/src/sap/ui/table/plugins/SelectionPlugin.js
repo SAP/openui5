@@ -2,34 +2,29 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Element",
 	"./PluginBase"
 ], function(
-	Element,
 	PluginBase
 ) {
-
 	"use strict";
 
 	/**
-	 * Constructs an instance of sap.ui.table.plugins.SelectionPlugin
-	 *
-	 * The following restrictions apply:
-	 * <ul>
-	 *   <li>Do not create subclasses of the <code>SelectionPlugin</code>. The API is subject to change.
-	 *       <b>Note:</b> Subclasses provided by the UI5 framework that are not explicitly marked as experimental or restricted in any other way can
-	 *       be used on a regular basis.</li>
-	 * </ul>
-	 *
 	 * @abstract
-	 * @class Implements the selection methods for a table.
+	 * @class
+	 * Base class for the selection plugins. A selection plugin is responsible for the selection behavior of the table. It handles the selection state
+	 * and provides information about the selection state to the table. The subclass is also responsible for firing the <code>selectionChange</code>
+	 * event when the selection is changed.
+	 *
+	 * Do not add more than one selection plugin to a table.
 	 * @extends sap.ui.core.Element
+	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 *
 	 * @public
 	 * @since 1.64
-	 * @experimental As of version 1.64
 	 * @alias sap.ui.table.plugins.SelectionPlugin
+	 *
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
 	const SelectionPlugin = PluginBase.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
@@ -39,40 +34,26 @@ sap.ui.define([
 			/**
 			 * Indicates whether this plugin is enabled.
 			 */
-			enabled: {type: "boolean", defaultValue: true} // TODO: Should be in PluginBase, which is still private for the time being
+			enabled: {type: "boolean", defaultValue: true} // TODO: Inherited from private PluginBase. Remove once PluginBase is public.
 		},
 		events: {
 			/**
 			 * This event is fired when the selection is changed.
 			 */
-			selectionChange: {
-				parameters: {
-				}
-			}
+			selectionChange: {}
 		}
     }});
 
 	SelectionPlugin.findOn = PluginBase.findOn;
 
 	SelectionPlugin.prototype.setParent = function(oParent) {
-		const oTable = this.getTable();
+		const oOldParent = this.getParent();
 
 		PluginBase.prototype.setParent.apply(this, arguments);
-		(oParent || oTable)._initSelectionPlugin();
-	};
 
-	SelectionPlugin.prototype.exit = function() {
-		PluginBase.prototype.exit.apply(this, arguments);
-		this.getTable()?._initSelectionPlugin();
-	};
-
-	SelectionPlugin.prototype.setEnabled = function(bEnabled) {
-		this.setProperty("enabled", bEnabled, true);
-
-		if (this.getEnabled()) {
-			this.activate();
-		} else {
-			this.deactivate();
+		oOldParent?._onSelectionPluginChange();
+		if (oOldParent !== oParent) {
+			oParent?._onSelectionPluginChange();
 		}
 
 		return this;
@@ -102,7 +83,7 @@ sap.ui.define([
 
 	/**
 	 * This hook is called when a keyboard shortcut relevant for selection is pressed.
-	 * TODO: Document parameter to that possible values are clear
+	 * TODO: Document type parameter to that possible values are clear
 	 * TODO: Also provide the event object?
 	 *
 	 * @param {string} sType Type of the keyboard shortcut.
@@ -113,6 +94,12 @@ sap.ui.define([
 
 	/**
 	 * Changes the selection state of a row.
+	 *
+	 * TODO: mConfig was a quick solution. Replace parameterization with dedicated methods? This signature looks like there could also be a
+	 * range deselection. Table isn't requesting it, yet, maybe it will one day.
+	 * Plugins need to remember the last selected row/context/index. The table should not need to. In simple words: The table should just tell the
+	 * plugin that the user wants to select a range to the given row (pressed shift+click on a row) and the plugin should handle the rest. A plugin
+	 * might even ignore the request to select a range (if it cannot do it) and select just the row.
 	 *
 	 * @param {sap.ui.table.Row} oRow Instance of the row
 	 * @param {boolean} bSelected The new selection state
@@ -141,6 +128,10 @@ sap.ui.define([
 
 	/**
 	 * Returns the number of selected rows.
+	 *
+	 * TODO: Only used for the row drag ghost. Replace with getSelectedContexts() (getSelectedContexts().length)? Useful in integration scenarios.
+	 * Check if this is possible with our index-based selection plugins. And if not, does that need to impact the modern interface? Legacy alternative
+	 * possible?
 	 *
 	 * @returns {int} The number of selected rows
 	 * @abstract

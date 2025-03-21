@@ -17,12 +17,15 @@ sap.ui.define([
 	const SelectionMode = library.SelectionMode;
 
 	/**
-	 * Constructs an instance of sap.ui.table.plugins.SelectionModelSelection
+	 * Constructs an instance of sap.ui.table.plugins.SelectionModelSelection.
 	 *
-	 * @class Implements the selection methods for a Table
+	 * @class
+	 * Implements the selection methods for a Table
 	 * @extends sap.ui.table.plugins.SelectionPlugin
+	 *
+	 * @author SAP SE
 	 * @version ${version}
-	 * @constructor
+	 *
 	 * @private
 	 * @alias sap.ui.table.plugins.SelectionModelSelection
 	 */
@@ -66,11 +69,8 @@ sap.ui.define([
 	 */
 	SelectionModelSelection.prototype.exit = function() {
 		SelectionPlugin.prototype.exit.apply(this, arguments);
-
-		if (this.oSelectionModel) {
-			this.oSelectionModel.destroy();
-			this.oSelectionModel = null;
-		}
+		this.oSelectionModel?.destroy();
+		delete this.oSelectionModel;
 	};
 
 	/**
@@ -79,7 +79,10 @@ sap.ui.define([
 	SelectionModelSelection.prototype.onActivate = function(oTable) {
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
 		this.oSelectionModel.attachSelectionChanged(onSelectionChange, this);
+		attachToBinding(this, oTable.getBinding());
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, onTotalRowCountChanged, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, onTableUnbindRows, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
 		this._iTotalRowCount = oTable._getTotalRowCount();
 	};
 
@@ -88,10 +91,12 @@ sap.ui.define([
 	 */
 	SelectionModelSelection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		this.oSelectionModel.detachSelectionChanged(onSelectionChange, this);
-		this.oSelectionModel.clearSelection();
-		detachFromBinding(this, this.getTableBinding());
+		this.oSelectionModel?.detachSelectionChanged(onSelectionChange, this);
+		this.oSelectionModel?.clearSelection();
+		detachFromBinding(this, oTable.getBinding());
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, onTotalRowCountChanged, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.UnbindRows, onTableUnbindRows, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
 	};
 
 	SelectionModelSelection.prototype.setSelected = function(oRow, bSelected, mConfig) {
@@ -123,14 +128,14 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: "toggle",
-				visible: TableUtils.hasSelectAll(this.getTable()),
+				visible: TableUtils.hasSelectAll(this.getControl()),
 				selected: this.getSelectableCount() > 0 && this.getSelectableCount() === this.getSelectedCount()
 			}
 		};
 	};
 
 	function toggleSelectAll(oPlugin) {
-		const oTable = oPlugin.getTable();
+		const oTable = oPlugin.getControl();
 		let bSelectAll;
 
 		if (oPlugin.getSelectionMode() !== SelectionMode.MultiToggle) {
@@ -228,7 +233,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	SelectionModelSelection.prototype.getSelectableCount = function() {
-		const oBinding = this.getTableBinding();
+		const oBinding = this.getControl().getBinding();
 		return oBinding ? oBinding.getLength() : 0;
 	};
 
@@ -338,27 +343,19 @@ sap.ui.define([
 	 * @private
 	 */
 	SelectionModelSelection.prototype._getHighestSelectableIndex = function() {
-		const oBinding = this.getTableBinding();
+		const oBinding = this.getControl().getBinding();
 		return oBinding ? oBinding.getLength() - 1 : -1;
 	};
 
-	/**
-	 * @inheritDoc
-	 */
-	SelectionModelSelection.prototype.onTableRowsBound = function(oBinding) {
-		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+	function onTableRowsBound(oBinding) {
 		attachToBinding(this, oBinding);
-	};
+	}
 
-	/**
-	 * @inheritDoc
-	 */
-	SelectionModelSelection.prototype.onTableUnbindRows = function() {
-		SelectionPlugin.prototype.onTableUnbindRows.apply(this, arguments);
+	function onTableUnbindRows() {
 		this._bSuppressSelectionChangeEvent = true;
 		this.clearSelection();
 		delete this._bSuppressSelectionChangeEvent;
-	};
+	}
 
 	function onSelectionChange(oEvent) {
 		const aRowIndices = oEvent.getParameter("rowIndices");
@@ -374,15 +371,11 @@ sap.ui.define([
 	}
 
 	function attachToBinding(oPlugin, oBinding) {
-		if (oBinding) {
-			oBinding.attachChange(onBindingChange, oPlugin);
-		}
+		oBinding?.attachChange(onBindingChange, oPlugin);
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
-		if (oBinding) {
-			oBinding.detachChange(onBindingChange, oPlugin);
-		}
+		oBinding?.detachChange(onBindingChange, oPlugin);
 	}
 
 	function onBindingChange(oEvent) {
@@ -396,7 +389,7 @@ sap.ui.define([
 	}
 
 	function onTotalRowCountChanged() {
-		const iTotalRowCount = this.getTable()._getTotalRowCount();
+		const iTotalRowCount = this.getControl()._getTotalRowCount();
 
 		// If rows are added or removed, the index-based selection of the SelectionModel is invalid and needs to be cleared.
 		// Changes from 0 are ignored for compatibility, so it is possible to select something before the initial rows update is done.

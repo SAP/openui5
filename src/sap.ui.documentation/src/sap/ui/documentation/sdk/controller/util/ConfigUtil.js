@@ -40,14 +40,19 @@ sap.ui.define([
 			return !!bIsSplitView;
 		},
 
+		/**
+		 * Obtains the master view
+		 * @param {string} sRouteName
+		 * @returns {Promise<sap.ui.core.mvc.View>} The master view
+		 */
 		getMasterView: function(sRouteName) {
 			var sMasterTargetName = this._getMasterTargetName(sRouteName),
 				sTargetConfig = this._getTargetConfig(sMasterTargetName),
 				sViewName = sTargetConfig.viewName;
 
-				sViewName = "sap.ui.documentation.sdk.view." + capitalize(sViewName, 0);
+			sViewName = "sap.ui.documentation.sdk.view." + capitalize(sViewName, 0);
 
-				return this._oComponent.getRouter().getView(sViewName, "XML");
+			return this._oComponent.getRouter().getViews().getView({viewName: sViewName, type: "XML"});
 		},
 
 		setCookie: function (sCookieName, sValue) {

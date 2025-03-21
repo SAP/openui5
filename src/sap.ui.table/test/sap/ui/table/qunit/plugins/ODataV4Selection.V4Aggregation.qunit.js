@@ -81,7 +81,7 @@ sap.ui.define([
 	QUnit.test("#getSelectedContexts", async function(assert) {
 		const aRows = this.oTable.getRows();
 
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "No contexts selected");
+		assert.deepEqual(this.oSelectionPlugin.getSelectedContexts(), [], "No contexts selected");
 
 		aRows[2].expand();
 		await this.oTable.qunit.whenNextRenderingFinished();
@@ -97,10 +97,8 @@ sap.ui.define([
 		this.oTable.setFirstVisibleRow(11);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		aRows[0].getBindingContext().setSelected(true); // Group header row
-		aRows[4].getBindingContext().setSelected(true); // Sum row
-		aRows[2].getBindingContext().setSelected(true); // Leaf row
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Only contexts of leaf rows are returned");
+		aRows[2].getBindingContext().setSelected(true);
+		assert.deepEqual(this.oSelectionPlugin.getSelectedContexts(), [aRows[2].getBindingContext()]);
 	});
 
 	QUnit.test("#setSelected", async function(assert) {
@@ -156,26 +154,13 @@ sap.ui.define([
 		this.oTable.setFirstVisibleRow(11);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		aRows[0].getBindingContext().setSelected(true); // Group header row
-		aRows[4].getBindingContext().setSelected(true); // Sum row
-		await TableQUnitUtils.wait(10);
-		this.oSelectionChangeHandler.resetHistory();
-		this.oSelectionPlugin.clearSelection();
-		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Only group and sum row selected: selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Only group and sum row selected: Selected contexts");
-		assert.ok(aRows[0].getBindingContext().isSelected(), "Only group and sum row selected: Group header row is still selected");
-		assert.ok(aRows[4].getBindingContext().isSelected(), "Only group and sum row selected: Sum row is still selected");
-
-		this.oSelectionPlugin.setSelected(aRows[2], true); // Leaf row
+		this.oSelectionPlugin.setSelected(aRows[2], true);
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 		this.oSelectionChangeHandler.resetHistory();
 		this.oSelectionPlugin.clearSelection();
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Leaf row selected: selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Leaf row selected: Selected contexts");
-		assert.ok(aRows[0].getBindingContext().isSelected(), "Leaf row selected: Group header row is still selected");
-		assert.ok(aRows[4].getBindingContext().isSelected(), "Leaf row selected: Sum row is still selected");
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
 	});
 
 	QUnit.test("#onHeaderSelectorPress", async function(assert) {
@@ -274,92 +259,28 @@ sap.ui.define([
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Deselect leaf row: Selected contexts");
 
 		this.oSelectionChangeHandler.resetHistory();
-		aRows[0].getBindingContext().setSelected(true);
-		aRows[4].getBindingContext().setSelected(true);
+		assert.throws(
+			() => {
+				aRows[0].getBindingContext().setSelected(true);
+			},
+			"Select group header row"
+		);
+		assert.equal(aRows[0].getBindingContext().isSelected(), false, "Select group header row: Context selected state");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Select group header row: Selected contexts");
 		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Select group header and sum row: selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[2]), true, "Select group header and sum row: #isSelected (Row 3)");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Select group header and sum row: Selected contexts");
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Select group header row: selectionChange event");
 
 		this.oSelectionChangeHandler.resetHistory();
-		aRows[0].getBindingContext().setSelected(false);
-		aRows[4].getBindingContext().setSelected(false);
+		assert.throws(
+			() => {
+				aRows[4].getBindingContext().setSelected(true);
+			},
+			"Select sum row"
+		);
+		assert.equal(aRows[4].getBindingContext().isSelected(), false, "Select group header row: Context selected state");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Select group header row: Selected contexts");
 		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Deselect group header and sum row: selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[2]), true, "Deselect group header and sum row: #isSelected (Row 3)");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Deselect group header and sum row: Selected contexts");
-	});
-
-	QUnit.test("Context#setSelected in selection mode 'Single'", async function(assert) {
-		const aRows = this.oTable.getRows();
-
-		this.oSelectionPlugin.setSelectionMode("Single");
-
-		aRows[2].getBindingContext().setSelected(true); // Leaf row
-		aRows[0].getBindingContext().setSelected(true); // Group header row
-		aRows[3].getBindingContext().setSelected(true); // Leaf row
-		aRows[4].getBindingContext().setSelected(true); // Sum row
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Select group header, sum, and leaf row: selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[0]), false, "Select group header, sum, and leaf row: #isSelected (Row 1)");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[1]), false, "Select group header, sum, and leaf row: #isSelected (Row 2)");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[2]), false, "Select group header, sum, and leaf row: #isSelected (Row 3)");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[3]), true, "Select group header, sum, and leaf row: #isSelected (Row 4)");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[4]), false, "Select group header, sum, and leaf row: #isSelected (Row 5)");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Select group header, sum, and leaf row: Selected contexts");
-
-		this.oSelectionChangeHandler.resetHistory();
-		aRows[0].getBindingContext().setSelected(false);
-		aRows[4].getBindingContext().setSelected(false);
-		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Deselect group header and sum row: selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[3]), true, "Deselect group header and sum row: #isSelected (Row 4)");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Deselect group header and sum row: Selected contexts");
-
-		this.oSelectionChangeHandler.resetHistory();
-		aRows[0].getBindingContext().setSelected(true);
-		aRows[4].getBindingContext().setSelected(true);
-		await TableQUnitUtils.wait(10);
-		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Select group header and sum row: selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[3]), true, "Select group header and sum row: #isSelected (Row 3)");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 1, "Select group header and sum row: Selected contexts");
-	});
-
-	QUnit.test("HeaderContext#setSelected", async function(assert) {
-		const aRows = this.oTable.getRows();
-
-		this.oTable.getBinding().getHeaderContext().setSelected(true);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[2]), true, "#isSelected (Row 3)");
-		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[3]), true, "#isSelected (Row 4)");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 2, "Selected contexts");
-
-		this.oSelectionChangeHandler.resetHistory();
-		this.oTable.getBinding().getHeaderContext().setSelected(false);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.ok(this.oTable.getRows().every((oRow) => {
-			return !this.oSelectionPlugin.isSelected(oRow);
-		}), "No row is selected");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
-	});
-
-	QUnit.test("HeaderContext#setSelected in selection mode 'Single'", async function(assert) {
-		this.oSelectionPlugin.setSelectionMode("Single");
-		this.oTable.getBinding().getHeaderContext().setSelected(true);
-		await TableQUnitUtils.wait(10);
-		assert.equal(this.oTable.getBinding().getHeaderContext().isSelected(), false, "HeaderContext selected state");
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
-
-		this.oTable.getRows()[2].getBindingContext().setSelected(true);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		this.oSelectionChangeHandler.resetHistory();
-		this.oTable.getBinding().getHeaderContext().setSelected(false);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		assert.equal(this.oSelectionChangeHandler.callCount, 1, "selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
+		assert.equal(this.oSelectionChangeHandler.callCount, 1, "Select sum row: selectionChange event");
 	});
 
 	QUnit.module("Header selector icon", {

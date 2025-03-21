@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/annotations/AnnotationPlugin",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Log,
@@ -19,8 +20,9 @@ sap.ui.define([
 	VerticalLayout,
 	CommandFactory,
 	AnnotationPlugin,
-	RtaQunitUtils,
+	AnnotationTypes,
 	sinon,
+	RtaQunitUtils,
 	jQuery
 ) {
 	"use strict";
@@ -100,7 +102,7 @@ sap.ui.define([
 		assert.strictEqual(this.oAnnotationPlugin.isAvailable([this.oButtonOverlay]), true, "then isAvailable returns true");
 		assert.strictEqual(this.oAnnotationPlugin.isEnabled([this.oButtonOverlay]), true, "then isEnabled returns true");
 		assert.strictEqual(this.oAnnotationPlugin._isEditable(this.oButtonOverlay), true, "then _isEditable returns true");
-		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION0", "then the menu item id is correct");
+		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION", "then the menu item id is correct");
 		assert.strictEqual(aMenuItems[0].text, "My Action Title", "then the menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is correct");
 		assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
@@ -136,6 +138,19 @@ sap.ui.define([
 						title: "TITLE_I18N_KEY",
 						isEnabled: () => true,
 						icon: "pathToAnnonationChange2Icon"
+					},
+					annotationChange3: {
+						changeType: "myChangeType3",
+						title: "TITLE_I18N_KEY",
+						isEnabled: () => true,
+						type: AnnotationTypes.StringType
+					},
+					annotationChange4: {
+						changeType: "myChangeType4",
+						title: "TITLE_I18N_KEY",
+						isEnabled: () => true,
+						type: AnnotationTypes.StringType,
+						singleRename: true
 					}
 				}
 			}
@@ -153,18 +168,30 @@ sap.ui.define([
 		assert.strictEqual(this.oAnnotationPlugin._isEditable(this.oButtonOverlay), true, "then _isEditable returns true");
 
 		const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
-		assert.strictEqual(aMenuItems.length, 2, "then two menu items are returned");
-		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION0", "then the first menu item id is correct");
+		assert.strictEqual(aMenuItems.length, 4, "then two menu items are returned");
+		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION", "then the first menu item id is correct");
 		assert.strictEqual(aMenuItems[0].text, sActionTitle1, "then the first menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "pathToAnnonationChange1Icon", "then the first menu item icon is correct");
 		assert.strictEqual(aMenuItems[0].enabled, false, "then the first menu item is disabled");
 		assert.strictEqual(aMenuItems[0].rank, 300, "then the first menu item rank is correct");
 
-		assert.strictEqual(aMenuItems[1].id, "CTX_ANNOTATION1", "then the second menu item id is correct");
+		assert.strictEqual(aMenuItems[1].id, "CTX_ANNOTATION", "then the second menu item id is correct");
 		assert.strictEqual(aMenuItems[1].text, sActionTitle2, "then the second menu item text is correct");
 		assert.strictEqual(aMenuItems[1].icon, "pathToAnnonationChange2Icon", "then the second menu item icon is correct");
 		assert.strictEqual(aMenuItems[1].enabled, true, "then the second menu item is enabled");
 		assert.strictEqual(aMenuItems[1].rank, 301, "then the second menu item rank is correct");
+
+		assert.strictEqual(aMenuItems[2].id, "CTX_ANNOTATION", "then the third menu item id is correct");
+		assert.strictEqual(aMenuItems[2].text, sActionTitle2, "then the third menu item text is correct");
+		assert.strictEqual(aMenuItems[2].icon, "sap-icon://edit", "then the third menu item icon is correct");
+		assert.strictEqual(aMenuItems[2].enabled, true, "then the third menu item is enabled");
+		assert.strictEqual(aMenuItems[2].rank, 302, "then the third menu item rank is correct");
+
+		assert.strictEqual(aMenuItems[3].id, "CTX_ANNOTATION_CHANGE_SINGLE_LABEL", "then the fourth menu item id is correct");
+		assert.strictEqual(aMenuItems[3].text, sActionTitle2, "then the third menu item text is correct");
+		assert.strictEqual(aMenuItems[3].icon, "sap-icon://edit", "then the third menu item icon is correct");
+		assert.strictEqual(aMenuItems[3].enabled, true, "then the third menu item is enabled");
+		assert.strictEqual(aMenuItems[3].rank, 15, "then the third menu item rank is correct");
 	});
 
 	QUnit.test("When an overlay has an annotation action in the designtime metadata but the control has no stable ID", function(assert) {
@@ -224,7 +251,7 @@ sap.ui.define([
 		assert.strictEqual(this.oAnnotationPlugin._isEditable(this.oButtonOverlay), true, "then _isEditable returns true");
 
 		const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
-		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION0", "then the menu item id is correct");
+		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION", "then the menu item id is correct");
 		assert.strictEqual(aMenuItems[0].text, "My Action Title", "then the menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is set to the default value");
 		assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");

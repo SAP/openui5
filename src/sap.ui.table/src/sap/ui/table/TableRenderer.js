@@ -623,7 +623,7 @@ sap.ui.define([
 	};
 
 	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
-		const bRowSelected = oTable._getSelectionPlugin().isSelected(oRow);
+		const bRowSelected = oRow._isSelected();
 
 		rm.openStart("div");
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "RowAddon");
@@ -1015,8 +1015,6 @@ sap.ui.define([
 			return;
 		}
 
-		const oSelectionPlugin = oTable._getSelectionPlugin();
-
 		if (bFixedTable) {
 			rm.openStart("tr", oRow.getId() + "-fixed");
 			rm.attr("data-sap-ui-related", oRow.getId());
@@ -1037,7 +1035,7 @@ sap.ui.define([
 
 		if (oRow.isContentHidden()) {
 			rm.class("sapUiTableRowHidden");
-		} else if (oSelectionPlugin.isSelected(oRow)) {
+		} else if (oRow._isSelected()) {
 			rm.class("sapUiTableRowSel");
 		}
 
@@ -1060,7 +1058,7 @@ sap.ui.define([
 
 		rm.openEnd();
 
-		const bSelected = !oRow.isEmpty() && oSelectionPlugin.isSelected(oRow); //see TableRenderer.renderRowAddon
+		const bSelected = !oRow.isEmpty() && oRow._isSelected(); //see TableRenderer.renderRowAddon
 		const aCells = oRow.getCells();
 
 		for (let cell = 0, count = aCells.length; cell < count; cell++) {

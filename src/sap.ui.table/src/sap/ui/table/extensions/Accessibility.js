@@ -1375,8 +1375,7 @@ sap.ui.define([
 
 		if (!oRow.isEmpty() && !oRow.isGroupHeader() && !oRow.isSummary()) {
 			const mKeyboardTexts = this.getKeyboardTexts();
-			const oTable = this.getTable();
-			const bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
+			const bIsSelected = oRow._isSelected();
 
 			if ($Ref.row) {
 				$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).add(

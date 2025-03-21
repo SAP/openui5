@@ -51,13 +51,13 @@ sap.ui.define([
 
 	const oContainer = { //to fake Container
 		getScrollDelegate() {
-			return null;
+			return oScrollContainer;
 		},
 		isOpen() {
-			return bIsOpen;
+			return !!oScrollContainer?.getDomRef() && bIsOpen; // only open if rendered
 		},
 		isOpening() {
-			return bIsOpen;
+			return !!oScrollContainer && bIsOpen;
 		},
 		isTypeahead() {
 			return true;
@@ -145,8 +145,9 @@ sap.ui.define([
 
 		const oContent = oFixedList.getContent();
 
-		return oContent?.then((oContent) => {
-			const oShowResult = oFixedList.onShow(); // to update selection and scroll
+		return oContent?.then(async (oContent) => {
+			await _renderScrollContainer(oContent);
+			const oShowResult = await oFixedList.onShow(); // to update selection and scroll
 			assert.ok(oContent, "Content returned");
 			assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 			assert.notOk(oContent.hasStyleClass("sapMListFocus"), "List has no style class sapMListFocus");
@@ -175,7 +176,7 @@ sap.ui.define([
 			assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
 			assert.ok(oItem.getSelected(), "Item1 selected");
 			assert.ok(oItem.hasStyleClass("sapMComboBoxNonInteractiveItem"), "Item1 has style class sapMComboBoxNonInteractiveItem");
-			assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item is not focused");
+			assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item is focused");
 			assert.equal(oShowResult?.itemId, oItem.getId(), "OnShow returns selected itemId");
 			assert.equal(oShowResult?.items, 3, "OnShow returns number of items");
 			oItem = oContent.getItems()[2];
@@ -210,8 +211,8 @@ sap.ui.define([
 
 		const oContent = oFixedList.getContent();
 
-		return oContent?.then((oContent) => {
-			oFixedList.onShow(true); // to update selection and scroll
+		return oContent?.then(async (oContent) => {
+			await oFixedList.onShow(true); // to update selection and scroll
 			oFixedList.setVisualFocus(); // fake focus
 
 			assert.ok(oContent, "Content returned");
@@ -266,8 +267,8 @@ sap.ui.define([
 		oFixedList.setFilterValue("i");
 		const oContent = oFixedList.getContent();
 
-		return oContent?.then((oContent) => {
-			oFixedList.onShow(); // to update selection and scroll
+		return oContent?.then(async (oContent) => {
+			await oFixedList.onShow(); // to update selection and scroll
 			assert.equal(oContent.getItems().length, 2, "Number of items");
 			let oItem = oContent.getItems()[0];
 			assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
@@ -640,13 +641,21 @@ sap.ui.define([
 
 		return oContent?.then(async (oContent) => {
 			await _renderScrollContainer(oContent);
-			// oFixedList.onShow(); // to update selection and scroll
+			// await oFixedList.onShow(); // to update selection and scroll
 			oFixedList.navigate(1);
 			_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 			// no previout item
 			oFixedList.navigate(-1);
-			_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), true);
+			_checkNavigatedItem(assert, oContent, -1, 0, Condition.createItemCondition("I1", "Item 1"), true);
+
+			// no previous item - leaveFocus
+			oFixedList.navigate(-1);
+			_checkNavigatedItem(assert, oContent, -1, 0, Condition.createItemCondition("I1", "Item 1"), true);
+
+			// back to last item after leaveFocus
+			oFixedList.navigate(0);
+			_checkNavigatedItem(assert, oContent, 0, 0, Condition.createItemCondition("I1", "Item 1"), false);
 
 			// next item of selected one
 			oFixedList.navigate(1);
@@ -965,8 +974,8 @@ sap.ui.define([
 
 		const oContent = oFixedList.getContent();
 
-		return oContent?.then((oContent) => {
-			const oShowResult = oFixedList.onShow(); // to update selection and scroll
+		return oContent?.then(async (oContent) => {
+			const oShowResult = await oFixedList.onShow(); // to update selection and scroll
 			assert.ok(oContent, "Content returned");
 			assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
 			assert.equal(oContent.getItems().length, 3, "Number of items");
@@ -1012,8 +1021,8 @@ sap.ui.define([
 		oFixedList.setFilterValue("2024");
 		const oContent = oFixedList.getContent();
 
-		return oContent?.then((oContent) => {
-			oFixedList.onShow(); // to update selection and scroll
+		return oContent?.then(async (oContent) => {
+			await oFixedList.onShow(); // to update selection and scroll
 			assert.equal(oContent.getItems().length, 1, "Number of items");
 			const oItem = oContent.getItems()[0];
 			assert.equal(oItem.getLabel(), "2024-12-13", "Item0 label");

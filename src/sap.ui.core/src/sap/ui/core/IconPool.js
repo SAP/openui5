@@ -347,7 +347,7 @@ sap.ui.define([
 		 * @since 1.25.0
 		 */
 		IconPool.getIconForMimeType = function (sMimeType) {
-			return mIconForMimeType[sMimeType.toLowerCase()] || "sap-icon://document";
+			return mIconForMimeType[sMimeType?.toLowerCase()] || "sap-icon://document";
 		};
 
 		return IconPool;

@@ -421,8 +421,7 @@ sap.ui.define([
 			if (fnDoSelect) {
 				fnDoSelect(oRow);
 			} else {
-				const oSelectionPlugin = oTable._getSelectionPlugin();
-				oSelectionPlugin.setSelected(oRow, typeof bSelect === "boolean" ? bSelect : !oSelectionPlugin.isSelected(oRow));
+				oRow._setSelected(bSelect ?? !oRow._isSelected());
 			}
 
 			delete oTable._iSourceRowIndex;

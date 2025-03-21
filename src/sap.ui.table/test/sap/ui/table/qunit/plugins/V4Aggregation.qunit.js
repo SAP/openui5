@@ -385,12 +385,12 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Plugin deactivation", function(assert) {
+	QUnit.test("Disable plugin", function(assert) {
 		this.oPlugin.declareColumnsHavingTotals([
 			this.oTable.getColumns()[2]
 		]);
 		this.resetSpies();
-		this.oPlugin.deactivate();
+		this.oPlugin.setEnabled(false);
 		this.assertColumnCellVisibilitySettings(assert);
 	});
 });

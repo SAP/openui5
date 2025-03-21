@@ -193,7 +193,7 @@ sap.ui.define([
 
 	RowCountConstraintsTest.test("Force fixed rows if row count too low", function(assert) {
 		this.oRowMode.setRowCount(1);
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
+		this.oTable._setRowCountConstraints({fixedTop: true, fixedBottom: true});
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 0, 1, 0);

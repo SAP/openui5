@@ -64,14 +64,12 @@ sap.ui.define([
 		 */
 		_handleClickSelection: function(oEvent, $Cell, oTable) {
 			TableUtils.toggleRowSelection(oTable, $Cell, null, function(oRow) {
-				const oSelectionPlugin = oTable._getSelectionPlugin();
-
 				if (oEvent.shiftKey) { // Range
-					oSelectionPlugin.setSelected(oRow, true, {range: true});
+					oTable._getSelectionPlugin().setSelected(oRow, true, {range: true});
 				} else if (oTable._legacyMultiSelection) {
 					oTable._legacyMultiSelection(oRow.getIndex(), oEvent);
 				} else {
-					oSelectionPlugin.setSelected(oRow, !oSelectionPlugin.isSelected(oRow));
+					oRow._setSelected(!oRow._isSelected());
 				}
 			});
 		}

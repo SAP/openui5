@@ -173,9 +173,8 @@ sap.ui.define([
 				return;
 			}
 
-			const bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
 			const mKeyboardTexts = oTable._getAccExtension().getKeyboardTexts();
-			const sText = bIsSelected ? mKeyboardTexts.rowDeselect : mKeyboardTexts.rowSelect;
+			const sText = oRow._isSelected() ? mKeyboardTexts.rowDeselect : mKeyboardTexts.rowSelect;
 
 			_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow.isEmpty() ? "" : sText, ["sapUiTableAriaRowSel"]);
 		},

@@ -102,7 +102,7 @@ sap.ui.define([
 		this._bSelectionIsUpdating = false;
 	};
 
-	MDCTable.prototype.handleConditionsUpdate = function() {
+	MDCTable.prototype.handleConditionsUpdate = function(oChanges) {
 		if (!this._bIgnoreNextConditionChange) {
 			// When new conditions are set from outside (connected control or dialog tokenizer) we have to sync all the table selection once
 			this._setTableSelectionState();
@@ -325,7 +325,7 @@ sap.ui.define([
 	};
 
 	MDCTable.prototype.onShow = function() {
-		FilterableListContent.prototype.onShow.apply(this, arguments);
+		return FilterableListContent.prototype.onShow.apply(this, arguments);
 	};
 
 	MDCTable.prototype.onBeforeShow = function(bInitial) {

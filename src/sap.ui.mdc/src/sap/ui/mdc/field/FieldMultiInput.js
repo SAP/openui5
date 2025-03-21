@@ -5,15 +5,18 @@
 sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/m/MultiInput',
+	'sap/m/Tokenizer',
 	'sap/ui/mdc/field/FieldMultiInputRenderer',
 	'sap/ui/Device',
-	'sap/m/Tokenizer'
+	'sap/ui/base/ManagedObjectObserver'
 ], (
 	Element,
 	MultiInput,
+	Tokenizer,
 	FieldMultiInputRenderer,
 	Device,
-	Tokenizer
+	ManagedObjectObserver
+
 ) => {
 	"use strict";
 
@@ -80,6 +83,21 @@ sap.ui.define([
 			return Tokenizer.prototype._handleNMoreIndicatorPress.apply(this, arguments);
 
 		};
+
+		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
+
+		this._oObserver.observe(this, {
+			properties: ["ariaAttributes"]
+		});
+
+	};
+
+	FieldMultiInput.prototype.exit = function() {
+
+		MultiInput.prototype.exit.apply(this, arguments);
+
+		this._oObserver.disconnect();
+		this._oObserver = undefined;
 
 	};
 
@@ -238,6 +256,22 @@ sap.ui.define([
 				fnUpdate();
 			}
 
+		}
+
+	}
+
+	function _observeChanges(oChanges) {
+
+		if (oChanges.name === "ariaAttributes") {
+			// set aria-activedescendant directly to prevent anouncement of old one
+			if (oChanges.current.aria?.activedescendant !== oChanges.old.aria?.activedescendant) {
+				const oDomRef = this.getFocusDomRef();
+				if (!oChanges.current.aria?.activedescendant) {
+					oDomRef.removeAttribute("aria-activedescendant");
+				} else {
+					oDomRef.setAttribute("aria-activedescendant", oChanges.current.aria.activedescendant);
+				}
+			}
 		}
 
 	}

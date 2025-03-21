@@ -613,6 +613,43 @@ sap.ui.define([
 		assert.equal(type.isValid([42]), false, "isValid([42])");
 	});
 
+	QUnit.test("CSSGapShortHand", function (assert) {
+		var oType = DataType.getType("sap.ui.core.CSSGapShortHand");
+
+		assert.ok(!!oType, "type 'sap.ui.core.CSSGapShortHand' exists");
+		assert.ok(oType instanceof DataType, "type is a DataType");
+		assert.equal(oType.getBaseType().getName(), "string", "base type is string");
+		assert.equal(oType.getPrimitiveType().getName(), "string", "primitive type is string");
+
+		[
+			"0.5px 0.5rem",
+			"   5px    1px	",
+			"5px",
+			"0px",
+			"5%",
+			""
+		].forEach((sValue) => {
+			assert.ok(oType.isValid(sValue), "should be a valid value");
+		});
+
+		[
+			"10remm 10rem 10pxxx",
+			5,
+			0,
+			true,
+			false,
+			undefined,
+			null,
+			[],
+			{},
+			5.6,
+			"a",
+			"test"
+		].forEach((sValue) => {
+			assert.notOk(oType.isValid(sValue), "should be an invalid value");
+		});
+	});
+
 	QUnit.test("CSSSize", function (assert) {
 		var type = DataType.getType("sap.ui.core.CSSSize");
 		assert.ok(!!type, "type 'sap.ui.core.CSSSize' exists");
