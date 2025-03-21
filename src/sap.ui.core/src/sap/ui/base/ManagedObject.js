@@ -490,7 +490,7 @@ sap.ui.define([
 			this.aDelegates = [];
 			this.aBeforeDelegates = [];
 			this.iSuppressInvalidate = 0;
-			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
+			this.oPropagatedProperties = defaultPropagatedProperties;
 			this.mSkipPropagation = {};
 			this._bIsOwnerActive = true;
 
@@ -503,7 +503,7 @@ sap.ui.define([
 			this.mObjectBindingInfos = {};
 
 			// contextual settings
-			this._oContextualSettings = ManagedObject._defaultContextualSettings;
+			this._oContextualSettings = defaultContextualSettings;
 
 			// apply the owner id if defined
 			this._sOwnerId = ManagedObject._sOwnerId;
@@ -2743,7 +2743,7 @@ sap.ui.define([
 
 			this.oParent = null;
 			this.sParentAggregationName = null;
-			var oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
+			var oPropagatedProperties = defaultPropagatedProperties;
 
 			/* In case of a 'move' - remove/add controls synchronously in an aggregation -
 			 * we should not propagate synchronously when setting the parent to null.
@@ -2767,7 +2767,7 @@ sap.ui.define([
 				}
 			}
 
-			this._oContextualSettings = ManagedObject._defaultContextualSettings;
+			this._oContextualSettings = defaultContextualSettings;
 			if (!this._bIsBeingDestroyed) {
 				Promise.resolve().then(function() {
 					// if object is being destroyed or parent is set again (move) no propagation is needed
@@ -2850,7 +2850,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype._applyContextualSettings = function(oContextualSettings) {
-		oContextualSettings = oContextualSettings || ManagedObject._defaultContextualSettings;
+		oContextualSettings = oContextualSettings || defaultContextualSettings;
 		if (this._oContextualSettings !== oContextualSettings) {
 			this._oContextualSettings = oContextualSettings;
 			this._propagateContextualSettings();
@@ -4288,7 +4288,7 @@ sap.ui.define([
 		return this;
 	};
 
-	ManagedObject._oEmptyPropagatedProperties = {oModels:{}, oBindingContexts:{}, aPropagationListeners:[]};
+	const defaultPropagatedProperties = {oModels:{}, oBindingContexts:{}, aPropagationListeners:[]};
 
 	function _hasAsRealChild(oParent, oChild) {
 		return !oChild.aAPIParentInfos || oChild.aAPIParentInfos[0].parent === oParent;
@@ -4850,7 +4850,7 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.updateFieldHelp = undefined;
 
-	ManagedObject._defaultContextualSettings = {};
+	const defaultContextualSettings = {};
 
 	return ManagedObject;
 

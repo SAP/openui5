@@ -23,6 +23,8 @@ sap.ui.define([
 
 	var ComponentLifecycle = library.ComponentLifecycle;
 
+	// retrieve default propagated properties from a fresh MO (which then is garbage collected)
+	const { oPropagatedProperties: defaultPropagatedProperties } = new ManagedObject();
 
 	/**
 	 * Constructor for a new ComponentContainer.
@@ -225,7 +227,7 @@ sap.ui.define([
 					oOldComponent.destroy();
 				} else {
 					// cleanup the propagated properties in case of not destroying the component
-					oComponentContainer._propagateProperties(true, oOldComponent, ManagedObject._oEmptyPropagatedProperties, true);
+					oComponentContainer._propagateProperties(true, oOldComponent, defaultPropagatedProperties, true);
 				}
 			}
 			// set the new component

@@ -2768,6 +2768,11 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Retrieve default propagated properties from a fresh MO (which then is garbage collected)
+	 * @deprecated As of 1.118, as it needs to be removed together with setModel
+	 */
+	const { oPropagatedProperties: defaultPropagatedProperties } = new ManagedObject();
 
 	/**
 	 * Sets or unsets a model for the given model name.
@@ -2799,7 +2804,7 @@ sap.ui.define([
 		if (!oModel && this.oModels[sName]) {
 			delete this.oModels[sName];
 			if (isEmptyObject(that.oModels) && isEmptyObject(that.oBindingContexts)) {
-				oProperties = ManagedObject._oEmptyPropagatedProperties;
+				oProperties = defaultPropagatedProperties;
 			} else {
 				oProperties = {
 					oModels: Object.assign({}, that.oModels),
