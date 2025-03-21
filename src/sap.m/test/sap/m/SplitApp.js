@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/m/App",
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/m/Button",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/m/SplitApp",
 	"sap/ui/Device",
 	"sap/base/Log"
-], function(Input, Label, Button, Page, PageAccessibleLandmarkInfo, mobileLibrary, coreLibrary, Bar, List, StandardListItem, SplitApp, Device, Log) {
+], function(App, Input, Label, Button, Page, PageAccessibleLandmarkInfo, mobileLibrary, library, Bar, List, StandardListItem, SplitApp, Device, Log) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -26,9 +27,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = mobileLibrary.PageBackgroundDesign;
-
-	// shortcut for sap.ui.core.AccessibleLandmarkRole
-	var AccessibleLandmarkRole = coreLibrary.AccessibleLandmarkRole;
 
 	function generateDetailPage2Content() {
 		var aContent = [];
@@ -79,8 +77,9 @@ sap.ui.define([
 		showNavButton: Device.system.phone,
 		navButtonText: "Back",
 		landmarkInfo: new PageAccessibleLandmarkInfo({
-			subHeaderRole: AccessibleLandmarkRole.Banner,
-			subHeaderLabel: "Detail 1"
+			rootLabel: "Detail 1",
+			headerLabel: "Detail 1 Header",
+			footerLabel: "Detail 1 Footer"
 		}),
 		navButtonPress: function() {
 			oSplitApp.backDetail();
@@ -135,6 +134,10 @@ sap.ui.define([
 
 	var oDetailDetailPage = new Page("detailDetail", {
 		title: "Detail Detail",
+		landmarkInfo: new PageAccessibleLandmarkInfo({
+			rootLabel: "Detail Detail",
+			headerLabel: "Detail Detail Header"
+		}),
 		backgroundDesign: PageBackgroundDesign.Solid,
 		content: [
 			new Label({
@@ -180,7 +183,8 @@ sap.ui.define([
 		showNavButton: true,
 		navButtonText: "Back",
 		landmarkInfo: new PageAccessibleLandmarkInfo({
-			contentLabel: "Detail 2"
+			rootLabel: "Detail 2",
+			headerLabel: "Detail 2 Header"
 		}),
 		navButtonPress: function() {
 			oSplitApp.backDetail();
@@ -203,6 +207,11 @@ sap.ui.define([
 
 	var oMasterPage = new Page("master", {
 		title: "Master",
+		landmarkInfo: new PageAccessibleLandmarkInfo({
+			rootLabel: "Master",
+			headerLabel: "Master Header",
+			footerLabel: "Master Footer"
+		}),
 		backgroundDesign: PageBackgroundDesign.List,
 		icon: "images/SAPUI5.jpg",
 		content: [
@@ -260,6 +269,11 @@ sap.ui.define([
 	var oMasterPage2 = new Page("master2", {
 		title: "Master 2",
 		backgroundDesign: PageBackgroundDesign.List,
+		landmarkInfo: new PageAccessibleLandmarkInfo({
+			rootLabel: "Master 2",
+			headerLabel: "Master 2 Header",
+			footerLabel: "Master 2 Footer"
+		}),
 		showNavButton: true,
 		navButtonPress: function() {
 			oSplitApp.backMaster();
@@ -325,5 +339,16 @@ sap.ui.define([
 		oSplitApp.setDefaultTransitionNameDetail("fade");
 	}
 
-	oSplitApp.placeAt("body");
+	var oPage = new Page("page", {
+		title: "SplitApp Test Page",
+		titleLevel: library.TitleLevel.H1,
+		content: oSplitApp
+	});
+
+	var oApp = new App("myApp", {
+		initialPage: "page",
+		pages: [oPage]
+	});
+
+	oApp.placeAt("body");
 });
