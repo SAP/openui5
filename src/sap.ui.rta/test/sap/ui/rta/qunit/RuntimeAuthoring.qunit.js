@@ -350,30 +350,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when handleElementModified is called when an annotation change was created", async function(assert) {
-			const done = assert.async();
-			const oAnnotationPlugin = this.oRta.getPlugins().annotation;
-
-			const oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart").resolves();
-			const oStackPushAndExecuteStub = sandbox.stub(this.oCommandStack, "pushAndExecute").resolves();
-			sandbox.stub(this.oRta, "stop").callsFake((bSkipSave, bSkipRestart, bSkipPrompt) => {
-				assert.ok(
-					oEnableRestartStub.calledWith(this.oRta.getLayer(), this.oRta.getRootControlInstance()),
-					"then restart was enabled"
-				);
-				assert.strictEqual(oStackPushAndExecuteStub.calledOnce, true, "then the command was pushed and executed");
-				assert.strictEqual(bSkipPrompt, true, "then stop was called with skipPrompt");
-				assert.strictEqual(bSkipSave, false, "then stop was called with skipSave false");
-				assert.strictEqual(bSkipRestart, false, "then stop was called with skipRestart false");
-				done();
-			});
-
-			oAnnotationPlugin.fireElementModified({
-				hasAnnotationCommand: true
-			});
-			await nextUIUpdate();
-		});
-
 		QUnit.test("when saving RTA without exiting,", function(assert) {
 			var fnDone = assert.async();
 			var oCVizUpdateSpy = sandbox.spy(ChangeVisualization.prototype, "updateAfterSave");

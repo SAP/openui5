@@ -1053,6 +1053,8 @@ sap.ui.define([
 					"/translation/enabled",
 					this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange
 				);
+				const bChangesNeedHardReload = this._bSavedChangesNeedReload || await this._oSerializer.needsReload();
+				this._oToolbarControlsModel.setProperty("/changesNeedHardReload", bChangesNeedHardReload);
 			}
 			this.fireUndoRedoStackModified();
 		} catch (e) {
@@ -1113,6 +1115,28 @@ sap.ui.define([
 				this.redo().then(oEvent.stopPropagation.bind(oEvent));
 			}
 		}
+	}
+
+	async function saveAndReload() {
+		if (this.canSave()) {
+			const sAction = await Utils.showMessageBox("warning", "MSG_SAVE_AND_RELOAD_DIALOG", {
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.OK
+			});
+			if (sAction === MessageBox.Action.CANCEL) {
+				return;
+			}
+		}
+		await this.save();
+		if (this._oVersionsModel.getProperty("/versioningEnabled")) {
+			await VersionsAPI.loadDraftForApplication({
+				control: this.getRootControlInstance(),
+				layer: this.getLayer()
+			});
+		}
+		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
+		await this.stop(true, true, true);
+		ReloadManager.reloadPage();
 	}
 
 	function saveOnly(oEvent) {
@@ -1458,6 +1482,7 @@ sap.ui.define([
 			? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
 			: function() {};
 		oProperties.save = saveOnly.bind(this);
+		oProperties.saveAndReload = saveAndReload.bind(this);
 
 		let oToolbar;
 		if (Utils.isOriginalFioriToolbarAccessible()) {
@@ -1483,7 +1508,9 @@ sap.ui.define([
 		});
 		this.bPersistedDataTranslatable = false;
 
+		const bChangesNeedHardReload = this._bSavedChangesNeedReload || await this._oSerializer.needsReload();
 		this._oToolbarControlsModel = new JSONModel({
+			changesNeedHardReload: bChangesNeedHardReload,
 			modeSwitcher: this.getMode(),
 			undo: {
 				enabled: false
@@ -1697,14 +1724,6 @@ sap.ui.define([
 
 		this._pElementModified = this._pElementModified.then(function() {
 			this.getPluginManager().handleStopCutPaste();
-
-			// Executed annotation commands will stop RTA and trigger a save + reload in RTA mode
-			if (oEvent.getParameter("hasAnnotationCommand")) {
-				this._pElementModified = Promise.resolve();
-				RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
-				return this.getCommandStack().pushAndExecute(oCommand)
-				.then(this.stop.bind(this, false, false, /* bSkipUnsavedChangesPrompt = */true));
-			}
 
 			if (oCommand instanceof BaseCommand) {
 				if (sNewControlID) {

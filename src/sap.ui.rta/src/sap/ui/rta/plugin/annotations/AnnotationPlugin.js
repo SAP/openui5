@@ -36,8 +36,7 @@ sap.ui.define([
 
 		if (oCompositeCommand.getCommands().length > 0) {
 			this.fireElementModified({
-				command: oCompositeCommand,
-				hasAnnotationCommand: true
+				command: oCompositeCommand
 			});
 		}
 	}
