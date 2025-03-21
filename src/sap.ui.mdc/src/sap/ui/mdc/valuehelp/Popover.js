@@ -608,11 +608,18 @@ sap.ui.define([
 		}
 	};
 
-	Popover.prototype.closeContainer = function() {
+	Popover.prototype.closeContainer = function(bDoNotRestoreFocus) {
 
 		Container.prototype.closeContainer.apply(this, arguments);
 		const oPopover = this.getAggregation("_container");
 		if (oPopover) {
+			if (bDoNotRestoreFocus) {
+				if (Device.system.phone) {
+					oPopover.oPopup._oPreviousFocus = null; // TODO - find real solution
+				} else {
+					oPopover._oPreviousFocus = null; // TODO - find real solution
+				}
+			}
 			oPopover.close();
 		}
 
@@ -679,7 +686,11 @@ sap.ui.define([
 
 		const oPopover = this.getAggregation("_container");
 		if (oPopover) {
-			oPopover._oPreviousFocus = null; // TODO - find real solution
+			if (Device.system.phone) {
+				oPopover.oPopup._oPreviousFocus = null; // TODO - find real solution
+			} else {
+				oPopover._oPreviousFocus = null; // TODO - find real solution
+			}
 		}
 
 		Container.prototype.handleClosed.apply(this, arguments);

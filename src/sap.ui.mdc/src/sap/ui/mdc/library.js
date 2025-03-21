@@ -420,6 +420,7 @@ sap.ui.define([
 	 *
 	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContainer.close
 	 * @function
+	 * @param {boolean} bDoNotRestoreFocus If set, closing must not restore the focus on the field
 	 * @public
 	 */
 
