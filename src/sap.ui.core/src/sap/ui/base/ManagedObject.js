@@ -42,10 +42,10 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for the sap.ui.core.ID type
-	var IDType;
+	const IDType = DataType.getType("sap.ui.core.ID");
 
 	// Binding info factory symbol
-	var BINDING_INFO_FACTORY_SYMBOL = Symbol("bindingInfoFactory");
+	const BINDING_INFO_FACTORY_SYMBOL = Symbol("bindingInfoFactory");
 
 	/**
 	 * Constructs and initializes a managed object with the given <code>sId</code> and settings.
@@ -469,11 +469,9 @@ sap.ui.define([
 			if (!sId) {
 				sId = this.getMetadata().uid();
 			} else {
-				var preprocessor = ManagedObject._fnIdPreprocessor;
-				sId = (preprocessor ? preprocessor.call(this, sId) : sId);
-				var oType = IDType || (IDType = DataType.getType("sap.ui.core.ID"));
-				if (!oType.isValid(sId)) {
-					throw new Error("\"" + sId + "\" is not a valid ID.");
+				sId = (fnCurrentIdPreprocessor ? fnCurrentIdPreprocessor.call(this, sId) : sId);
+				if (!IDType.isValid(sId)) {
+					throw new Error(`"${sId}" is not a valid ID.`);
 				}
 			}
 			this.sId = sId;
@@ -1136,7 +1134,7 @@ sap.ui.define([
 	 * @type {function(string):string}
 	 * @private
 	 */
-	ManagedObject._fnIdPreprocessor = null;
+	let fnCurrentIdPreprocessor = null;
 
 	/**
 	 * A global preprocessor for the settings of a ManagedObject (used internally).
@@ -1150,7 +1148,7 @@ sap.ui.define([
 	 * @type {function}
 	 * @private
 	 */
-	ManagedObject._fnSettingsPreprocessor = null;
+	let fnCurrentSettingsPreprocessor = null;
 
 	/**
 	 * Activates the given ID and settings preprocessors, executes the given function
@@ -1159,8 +1157,8 @@ sap.ui.define([
 	 * When a preprocessor is not defined in <code>oPreprocessors</code>, then the currently
 	 * active preprocessor is temporarily deactivated while <code>fn</code> is executed.
 	 *
-	 * See the <code>_fnIdPreprocessor</code> and <code>_fnSettingsPreprocessor</code>
-	 * members in this class for a detailed description of the preprocessors.
+	 * See the <code>fnCurrentIdPreprocessor</code> and <code>fnCurrentSettingsPreprocessor</code>
+	 * local variables in this class for a detailed description of the preprocessors.
 	 *
 	 * This method is intended for internal use in the sap/ui/base and sap/ui/core packages only.
 	 *
@@ -1177,18 +1175,16 @@ sap.ui.define([
 		assert(typeof fn === "function", "fn must be a function");
 		assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
 
-		var oOldPreprocessors = { id : this._fnIdPreprocessor, settings : this._fnSettingsPreprocessor };
-		oPreprocessors = oPreprocessors || {};
+		const aOldPreprocessors = [fnCurrentIdPreprocessor, fnCurrentSettingsPreprocessor];
 
-		this._fnIdPreprocessor = oPreprocessors.id;
-		this._fnSettingsPreprocessor = oPreprocessors.settings;
+		fnCurrentIdPreprocessor = oPreprocessors?.id;
+		fnCurrentSettingsPreprocessor = oPreprocessors?.settings;
 
 		try {
 			return fn.call(oThisArg);
 		} finally {
 			// always restore old preprocessor settings
-			this._fnIdPreprocessor = oOldPreprocessors.id;
-			this._fnSettingsPreprocessor = oOldPreprocessors.settings;
+			[fnCurrentIdPreprocessor, fnCurrentSettingsPreprocessor] = aOldPreprocessors;
 		}
 
 	};
@@ -1246,7 +1242,6 @@ sap.ui.define([
 		var that = this,
 			oMetadata = this.getMetadata(),
 			mValidKeys = oMetadata.getJSONKeys(), // UID names required, they're part of the documented contract of applySettings
-			preprocessor = ManagedObject._fnSettingsPreprocessor,
 			sKey, oValue, oKeyInfo;
 
 		// add all given objects to the given aggregation. nested arrays are flattened
@@ -1274,7 +1269,7 @@ sap.ui.define([
 		}
 
 		// call the preprocessor if it has been defined
-		preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
+		fnCurrentSettingsPreprocessor?.call(this, mSettings);
 
 
 		//process metadataContext
