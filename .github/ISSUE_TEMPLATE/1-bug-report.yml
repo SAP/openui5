@@ -1,3 +1,4 @@
+---
 name: Bug Report
 description: Report a bug in OpenUI5
 type: Bug
@@ -5,55 +6,69 @@ body:
   - type: markdown
     attributes:
       value: | 
-        Please have a look at our [contributing guidelines](https://github.com/SAP/openui5/blob/main/CONTRIBUTING.md#report-bugs) on reporting issues. 
-        For issues concerning SAPUI5 and not reproducible with OpenUI5 alone, please contact SAP customer support instead.
-  - type: textarea
-    id: expected-behavior
-    attributes:
-      label: What is the expected behavior?
-      description: Tell us what you expect to happen.
-      placeholder: Tell us what you expect to happen.
-    validations:
-      required: true
-  - type: textarea
-    id: current-behavior
-    attributes:
-      label: What is the current behavior?
-      description: Tell us what you see.
-      placeholder: Tell us what you see.
-    validations:
-      required: true
+        Please have a look at our [contributing guidelines](https://github.com/SAP/openui5/blob/main/CONTRIBUTING.md#report-bugs) on reporting issues.
+
+        > [!IMPORTANT]
+        > For issues concerning **SAPUI5** (e.g. *SAP Fiori elements* or *Smart Controls*) and not reproducible with the OpenUI5 code alone, please **contact SAP customer support instead.** Accordingly, the *minimal reproducible example* (MRE) below should use only OpenUI5 (e.g. `https://sdk.openui5.org/...`) and avoid `https://ui5.sap.com` or `https://sapui5.hana.ondemand.com`.
+
+        > [!TIP]
+        > You can easily create an MRE using:
+        > - An online JavaScript code-sharing platform like [JSBin](https://jsbin.com/neyagus/edit?html,js,output), [Plunker](https://embed.plnkr.co/16J1TFICxbqETCzaxuZ0?preview=README), etc.
+        > - One of our [Demo Kit samples](https://sdk.openui5.org/nightly/#/controls) with any necessary code modifications.
+        > - A fork of our [OpenUI5 sample app](https://github.com/SAP/openui5-sample-app).
+        > 
+        > Alternatively, share a version of your existing project that has been stripped down to a minimum sufficient to reproduce the issue.  
+        > Please do not share real business data or other sensitive information.
   - type: textarea
     id: steps-to-reproduce
     attributes:
-      label: How we can reproduce the issue?
-      description: Please provide detailed steps on how we can reproduce your issue.
-      placeholder: Provide a minimal reproducible example via a URL (if possible) or consider forking our [sample app](https://github.com/SAP/openui5-sample-app) to reproduce it
+      label: What is the issue and how can we reproduce it?
+      description: |
+        To help us understand and resolve the issue efficiently, please provide a **minimal reproducible example** (required) and steps that clearly illustrate the unexpected behavior.
+      value: |
+        1. Open the sample https:// ...
+        2. Click on ...
+        3. ... --> **Issue:** ...
+        
+        #### Error:
+        > ...
+        
+        #### Expected behavior:
+        ...
     validations:
       required: true
   - type: input
     id: version-OpenUI5
     attributes:
-      label: OpenUI5 version
-      description: Your exact OpenUI5 version
-      placeholder: e.g. 1.120.25
+      label: Which OpenUI5 version is your project targeting?
+      description: Share your target OpenUI5 version(s) where the issue is still reproducible. A list of maintained OpenUI5 versions can be found at https://sdk.openui5.org/versionoverview.html.
     validations:
       required: true
-  - type: input
-    id: operating-system
-    attributes:
-      label: Operating System
-      description: Your operating system, including the version
-      placeholder: e.g. macOS 15.3.2
-  - type: input
-    id: browsers
-    attributes:
-      label: Browser
-      description: Your browser, including the version
-      placeholder: e.g. Mozilla Firefox 136.0.1
   - type: textarea
-    id: logs
+    id: issue-env
     attributes:
-      label: Log Output / Stack Trace
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for you to use backticks.
-      render: shell
+      label: Is the issue device- or browser-specific?
+      description: |
+        If so, specify all environments you have tested and whether the issue could be observed in them.
+        See also the [list of browser-platform combinations supported by OpenUI5](https://sdk.openui5.org/nightly/#/topic/74b59efa0eef48988d3b716bd0ecc933).
+      placeholder: |
+        Yes, tested with:
+        - Device: ...
+        - Touch-enabled: YES|NO
+        - Chromium browser Chrome|Edge|etc. (Version ...): OK|FAIL
+        - Firefox (Version ...): OK|FAIL
+        - Safari (Version ...): OK|FAIL
+  - type: checkboxes
+    id: issue-checked
+    attributes:
+      label: Confirmation
+      description: |
+        To avoid duplicates and ensure efficient issue resolution, please double-check:
+        - Whether a similar issue has been reported or discussed already either in this OpenUI5 repository or at community sites like [Stack Overflow](https://stackoverflow.com/search?tab=active&q=%5bsapui5%5d%20is%3aquestion&searchOn=3).
+        - Whether your project aligns with documented best practices and [compatibility guidelines](https://sdk.openui5.org/nightly/#/topic/9638e4fce1bd45f4bebf7c219672908c).
+      options:
+        - label: I have searched the existing issues and reviewed the relevant documentation as well as the API reference.
+          required: true
+        - label: I am not disclosing any internal or sensitive information.
+          required: true
+...
