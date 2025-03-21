@@ -71,7 +71,7 @@ sap.ui.define([
 		aDeepCreateParametersAllowlist = ["context", "properties"],
 		mMessageType2Severity = {},
 		aRequestSideEffectsParametersAllowList = ["groupId", "urlParameters"];
-	const rCacheBusterSegment = /\/~[\w\-]+~[A-Z0-9]?/;
+	const rCacheBusterSegment = /\/~[\w\-]+~[A-Z0-9]?\//;
 
 	mMessageType2Severity[MessageType.Error] = 0;
 	mMessageType2Severity[MessageType.Warning] = 1;
@@ -8499,23 +8499,48 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check if Caching is supported. All URLs must at least provide a 'sap-context-token' query
-	 * parameter or a valid cache buster token segment.
+	 * Checks if the given URL contains a sap-context-token URL parameter with a value.
+	 *
+	 * @param {string} sUrl The URL to check
+	 * @returns {boolean} Whether the given URL contains a sap-context-token parameter with a value
+	 *
+	 * @private
+	 */
+	ODataModel.hasContextToken = function (sUrl) {
+		const sParams = sUrl.split("?")[1];
+		return sParams
+			? !!new URLSearchParams(sParams).get("sap-context-token")
+			: false;
+	};
+
+	/**
+	 * Returns whether each of the given annotation URIs is cacheable.
+	 *
+	 * @param {string[]} aAnnotationURIs The annotation URIs
+	 * @returns {boolean} Whether the given annotation URIs are cacheable
+	 *
+	 * @private
+	 */
+	ODataModel.isAnnotationsCacheable = function (aAnnotationURIs) {
+		return aAnnotationURIs.every((sURI) => ODataModel.hasContextToken(sURI) || rCacheBusterSegment.test(sURI));
+	};
+
+	/**
+	 * Checks for the given metadata URL and the annotation URIs of this model if caching of metadata and annotations
+	 * is supported.
 	 *
 	 * @param {string} sMetadataUrl The metadata URL
 	 * @returns {boolean} Whether caching is supported
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._cacheSupported = function(sMetadataUrl) {
-		const bCacheMetadata = sMetadataUrl.includes("sap-context-token");
+	ODataModel.prototype._cacheSupported = function (sMetadataUrl) {
 		if (this.sAnnotationURI && !Array.isArray(this.sAnnotationURI)) {
 			this.sAnnotationURI = [this.sAnnotationURI];
 		}
 		const aAnnotationURIs = this.sAnnotationURI ?? [];
 
-		return bCacheMetadata
-			&& aAnnotationURIs.every((sUrl) => sUrl.includes("sap-context-token") || rCacheBusterSegment.test(sUrl));
+		return ODataModel.hasContextToken(sMetadataUrl) && ODataModel.isAnnotationsCacheable(aAnnotationURIs);
 	};
 
 	/**
