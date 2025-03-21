@@ -77045,6 +77045,130 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// Scenario: Select some entries in the table and call one of the following APIs:
+	// ODLB#requestRefresh, Context#requestSideEffects (side-effects refresh), ODLB#sort and
+	// ODLB#changeParameters. Within the same $batch request a selection validation request is
+	// contained. If there are entries that do not match any more to the current filter / search,
+	// the selection state of them is reset.
+	// The same applies if these methods are called on a suspended binding and the binding gets
+	// resumed.
+	// JIRA: CPOUI5ODATAV4-2915
+["refresh", "requestSideEffects", "sort", "changeParameters"].forEach((sMethod) => {
+	[false, true].forEach((bSuspend) => {
+		const sTitle = "CPOUI5ODATAV4-2915: Selection Validation via " + sMethod
+			+ ", suspend=" + bSuspend;
+		if (sMethod === "requestSideEffects" && bSuspend) {
+			return; // not supported
+		}
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" growing="true" growingThreshold="3" items="{
+		path : '/SalesOrderList',
+		parameters : {$$clearSelectionOnFilter : true, $search : 'foo'}
+	}">
+	<Text id="id" text="{SalesOrderID}"/>
+	<Text id="note" text="{Note}"/>
+	<Text id="selected" text="{@$ui5.context.isSelected}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=3", {
+				value : [
+					{Note : "SO 1", SalesOrderID : "1"},
+					{Note : "SO 2", SalesOrderID : "2"},
+					{Note : "SO 3", SalesOrderID : "3"}
+				]
+			})
+			.expectChange("id", ["1", "2", "3"])
+			.expectChange("note", ["SO 1", "SO 2", "SO 3"])
+			.expectChange("selected", [null, null, null]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("selected", ["Yes",, "Yes"]);
+
+		const oListBinding = this.oView.byId("table").getBinding("items");
+		const [oContext1,, oContext3] = oListBinding.getAllCurrentContexts();
+		oContext1.setSelected(true);
+		oContext3.setSelected(true);
+
+		await this.waitForChanges(assert, "de-/select '1' and '3'");
+
+		this.expectRequest({ // ODLB#validateSelection
+				batchNo : 2,
+				url : "SalesOrderList?$filter=SalesOrderID eq '1' or SalesOrderID eq '3'"
+					+ "&$search=foo&$select=SalesOrderID&$top=2"
+			}, {
+				value : [
+					{SalesOrderID : "1"}
+					// SalesOrder('3') no longer matches $search
+				]
+			});
+		if (sMethod === "refresh" || sMethod === "requestSideEffects") {
+			this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
+					batchNo : 2,
+					url : "SalesOrderList?$select=Note,SalesOrderID"
+						+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '3'&$top=2"
+				}, {
+					value : [
+						{Note : "SO 1", SalesOrderID : "1"},
+						{Note : "SO 3", SalesOrderID : "3"}
+					]
+				});
+		}
+		this.expectRequest({ // "refresh"
+				batchNo : 2,
+				url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+					+ (sMethod === "sort" || sMethod === "changeParameters"
+						? "&$orderby=SalesOrderID" : "")
+					+ "&$skip=0&$top=3"
+			}, {
+				value : [
+					{Note : "SO 1", SalesOrderID : "1"},
+					{Note : "SO 2", SalesOrderID : "2"},
+					{Note : "SO 4", SalesOrderID : "4"}
+				]
+			})
+			.expectChange("selected", [,, "No"])
+			.expectChange("id", [,, "4"])
+			.expectChange("note", [,, "SO 4"])
+			.expectChange("selected", [,, null]);
+
+		if (bSuspend) {
+			oListBinding.suspend();
+		}
+		let oPromise;
+		switch (sMethod) {
+			case "refresh":
+				oPromise = oListBinding.requestRefresh();
+				break;
+			case "requestSideEffects":
+				oPromise = oListBinding.getHeaderContext().requestSideEffects([""]);
+				break;
+			case "sort":
+				oListBinding.sort(new Sorter("SalesOrderID"));
+				break;
+			default:
+				oListBinding.changeParameters({$orderby : "SalesOrderID"});
+		}
+		if (bSuspend) {
+			oListBinding.resume();
+		}
+
+		await Promise.all([
+			oPromise,
+			this.waitForChanges(assert, sMethod)
+		]);
+
+		assert.strictEqual(oContext1.isSelected(), true);
+		assert.strictEqual(oContext3.getBinding(), undefined, "destroyed");
+	});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Select some contexts in a filtered and sorted list, change data for one so that
 	// it no longer matches the filter. Call ODLB#requestSelectedContexts to see that the one
 	// is not returned but others are updated. Do it w/ & w/o auto-$expand/$select. Dito for

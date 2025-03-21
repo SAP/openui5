@@ -3,13 +3,18 @@
  */
 
 sap.ui.define([
+	"sap/m/MessageBox",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
-	"sap/ui/core/sample/common/Controller"
-], function (coreLibrary, Messaging, Controller) {
+	"sap/ui/core/sample/common/Controller",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter"
+], function (MessageBox, coreLibrary, Messaging, Controller, Filter, FilterOperator, Sorter) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
+	const SortOrder = coreLibrary.SortOrder;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Products.Main", {
 		/* The number of POST requests which are not yet completed */
@@ -19,7 +24,7 @@ sap.ui.define([
 		 * Enable add button if and only if creation row has no invalid user input (and it was not
 		 * yet used).
 		 */
-		enableAddButton : function () {
+		enableAddButton() {
 			var that = this;
 
 			function isOK(oContent) {
@@ -36,7 +41,7 @@ sap.ui.define([
 		/*
 		 * "Add" button's event handler: add new row to table.
 		 */
-		onAdd : function () {
+		onAdd() {
 			var oContext = this.byId("newEntry").getBindingContext(),
 				oNewEntry = oContext.getObject();
 
@@ -57,7 +62,7 @@ sap.ui.define([
 		/*
 		 * "Clear row" button's event handler: clear creation row.
 		 */
-		onClearRow : function () {
+		onClearRow() {
 			var aContents = this.byId("newEntry").getContent();
 
 			// remove invalid user input, including the corresponding messages
@@ -90,7 +95,7 @@ sap.ui.define([
 		 *     <li> {boolean} success
 		 *   </ul>
 		 */
-		onCreateCompleted : function () {
+		onCreateCompleted() {
 			this.iCreates -= 1;
 			if (this.iCreates === 0) {
 				this.byId("ProductList").setBusy(false);
@@ -101,22 +106,47 @@ sap.ui.define([
 		 * Event handler is called when a POST request for a created entity is sent to the server.
 		 * Used to lock the "Products" table to avoid modifications while POST request is running.
 		 */
-		onCreateSent : function () {
+		onCreateSent() {
 			if (this.iCreates === 0) {
 				this.byId("ProductList").setBusy(true);
 			}
 			this.iCreates += 1;
 		},
 
-		onExit : function () {
+		/**
+		 * Deletes the selected products.
+		 */
+		onDelete() {
+			this.byId("ProductList").getBinding("items").getAllCurrentContexts()
+				.forEach((oContext) => {
+					if (oContext.isSelected()) {
+						oContext.delete();
+					}
+				});
+		},
+
+		onExit() {
 			this.getView().getModel("ui").destroy();
 			return Controller.prototype.onExit.apply(this, arguments);
+		},
+
+		/**
+		 * Filters the product list by the currency code entered in the input field.
+		 *
+		 * @param {sap.ui.base.Event} oEvent The event object
+		 */
+		onFilter(oEvent) {
+			const sValue = oEvent.getParameter("value");
+			const aFilter = sValue
+				? [new Filter("CurrencyCode", FilterOperator.EQ, sValue)]
+				: [];
+			this.byId("ProductList").getBinding("items").filter(aFilter);
 		},
 
 		/*
 		 * Controller's initialization.
 		 */
-		onInit : function () {
+		onInit() {
 			this.initMessagePopover("messagesButton");
 
 			// set up hidden list binding for creation row
@@ -126,20 +156,83 @@ sap.ui.define([
 			this.setNewEntryContext();
 		},
 
+		/**
+		 * Refreshes the products table.
+		 */
+		onRefresh() {
+			this.byId("ProductList").getBinding("items").refresh();
+		},
+
+		/**
+		 * Refreshes the products table but all created products keep their position. Filters and
+		 * sorters are not applied for created products.
+		 */
+		onRefreshKeepingPositionOfCreated() {
+			this.byId("ProductList").getBinding("items").getHeaderContext()
+				.requestSideEffects([""]);
+		},
+
+		/**
+		 * Requests the selected contexts in the expected order and shows them in a message box.
+		 */
+		async onRequestSelectedContexts() {
+			const aContexts = await this.byId("ProductList").getBinding("items")
+				.requestSelectedContexts();
+			MessageBox.information(
+				aContexts.map((oContext) => oContext.getPath()).join("\n") || "none",
+				{title : "Selected Products"});
+		},
+
 		/*
 		 * Event handler for resetting changes in the products table. Can be used to remove all
 		 * created products that could not be saved successfully (for example if product ID is not
 		 * unique).
 		 */
-		onResetChanges : function () {
+		onResetChanges() {
 			this.byId("ProductList").getBinding("items").resetChanges();
+		},
+
+		/**
+		 * Shows a message box with the selected products.
+		 */
+		onShowSelection() {
+			const aSelected = this.byId("ProductList").getBinding("items").getAllCurrentContexts()
+				.filter((oContext) => oContext.isSelected());
+			MessageBox.information((aSelected.join("\n") || "none"),
+				{title : "Selected Items"});
+		},
+
+		/**
+		 * Sorts the product list by product ID.
+		 *
+		 * @param {string} sProperty The property to sort by
+		 */
+		onSort(sProperty) {
+			const oTable = this.byId("ProductList");
+			const oSortColumn = this.byId("column" + sProperty);
+			oTable.getColumns().forEach((oColumn) => {
+				if (oColumn === oSortColumn) {
+					const sCurrentOrder = oColumn.getSortIndicator();
+					if (sCurrentOrder === SortOrder.Ascending) {
+						oColumn.setSortIndicator(SortOrder.None);
+						oTable.getBinding("items").sort();
+					} else {
+						const bSortDescending = sCurrentOrder === SortOrder.None;
+						oColumn.setSortIndicator(
+							bSortDescending ? SortOrder.Descending : SortOrder.Ascending);
+						oTable.getBinding("items").sort(new Sorter(sProperty, bSortDescending));
+					}
+				} else {
+					oColumn.setSortIndicator(SortOrder.None);
+				}
+			});
 		},
 
 		/*
 		 * Helper function to create a new "creation row": creates a new transient row in the
 		 * hidden list binding and shows it in the creation row.
 		 */
-		setNewEntryContext : function () {
+		setNewEntryContext() {
 			var oContext = this.oListBinding.create({
 					// mandatory properties for new entity which are not available on UI
 					Category : "Notebooks",

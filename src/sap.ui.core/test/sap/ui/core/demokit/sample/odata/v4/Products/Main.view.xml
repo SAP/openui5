@@ -4,6 +4,7 @@
 	template:require="{AnnotationHelper : 'sap/ui/model/odata/v4/AnnotationHelper'}"
 	xmlns="sap.m"
 	xmlns:ce="sap.ui.codeeditor"
+	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
@@ -12,10 +13,14 @@
 	<App>
 	<Page id="page" floatingFooter="true" showHeader="false">
 	<VBox>
-		<HBox>
+		<Toolbar>
 			<ToggleButton icon="sap-icon://syntax" press=".onSourceCode"
 				text="Source Code after Templating"/>
-		</HBox>
+			<ToolbarSpacer/>
+			<Link text="Unit Codes" target="unitCodes" href="{ui>/sUnitUrl}"/>
+			<Link text="Currency Codes" target="currencyCodes"
+				href="{ui>/sCurrencyUrl}"/>
+		</Toolbar>
 		<Panel expandable="false" visible="{ui>/bCodeVisible}"
 			headerText="Source Code after Templating" width="auto" class="sapUiResponsiveMargin">
 			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/sCode}"/>
@@ -28,8 +33,12 @@
 						createSent : '.onCreateSent'
 					},
 					path : '/ProductList',
-					parameters : {$count : true, $select : ['Messages']}}"
-				mode="SingleSelectMaster">
+					parameters : {
+						$$clearSelectionOnFilter : true,
+						$count : true,
+						$select : ['Messages']
+					}}"
+				mode="MultiSelect">
 				<headerToolbar>
 					<Toolbar>
 						<Title level="H1" text="Products"/>
@@ -37,23 +46,48 @@
 						<Button id="resetChanges" icon="sap-icon://sys-cancel-2"
 							press=".onResetChanges" text="Reset Changes"
 							tooltip="Reset Products Changes"/>
-						<Link text="Unit Codes" target="unitCodes" href="{ui>/sUnitUrl}"/>
-						<Link text="Currency Codes" target="currencyCodes"
-							href="{ui>/sCurrencyUrl}"/>
-						<Button icon="sap-icon://message-popup" id="messagesButton"
-							press=".onToggleMessagePopover" text="{ui>/iMessages}"
-							tooltip="Show messages"
-							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+						<Button icon="sap-icon://refresh" press=".onRefresh" tooltip="Refresh"/>
+						<Button icon="sap-icon://synchronize"
+							press=".onRefreshKeepingPositionOfCreated"
+							tooltip="Refresh (keeping position of created products)"/>
+						<Input change=".onFilter" placeholder="Filter by Currency" width="10em"/>
+						<Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+						<Button icon="sap-icon://multi-select" press=".onShowSelection"
+							tooltip="Show Selection"/>
+						<Button icon="sap-icon://activity-items" press=".onRequestSelectedContexts"
+							tooltip="Request selected contexts"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
+					<Column width="4em">
+						<Label text="Status"/>
+					</Column>
 					<template:repeat list="{lineItem>}" var="field">
-						<Column>
-							<Label text="{field>@@label}"/>
+						<Column id="{= 'column' + ${field>Value/$Path}}">
+							<template:if test="{= ${field>Value/$Path} === 'Name' }">
+								<template:then>
+									<!-- Sorting by Name is not supported by the service -->
+									<Label text="{field>@@label}"/>
+								</template:then>
+								<template:else>
+									<Button text="{field>@@label}"
+										press=".onSort('{field>Value/$Path}')"/>
+								</template:else>
+							</template:if>
 						</Column>
 					</template:repeat>
 				</columns>
-				<ColumnListItem>
+				<ColumnListItem selected="{@$ui5.context.isSelected}">
+					<core:Icon src="{= %{@$ui5.context.isTransient}
+							? 'sap-icon://sys-add'
+							: (%{@$ui5.context.isTransient} === false
+								? 'sap-icon://accept'
+								: 'sap-icon://cloud')
+						}"
+						tooltip="{= %{@$ui5.context.isTransient}
+							? 'Transient'
+							: (%{@$ui5.context.isTransient} === false ? 'Persisted' : 'From Server')
+						}"/>
 					<template:repeat list="{lineItem>}" var="field">
 						<template:if test="{= ${field>Value/$Path@com.sap.vocabularies.Common.v1.FieldControl/$EnumMember}
 							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly' }">
@@ -94,6 +128,13 @@
 			</form:SimpleForm>
 		</template:with>
 	</VBox>
+	<footer>
+		<OverflowToolbar>
+			<Button icon="sap-icon://message-popup" id="messagesButton"
+				press=".onToggleMessagePopover" text="{ui>/iMessages}"
+				tooltip="Show messages" type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+		</OverflowToolbar>
+	</footer>
 	</Page>
 	</App>
 	</template:alias>
