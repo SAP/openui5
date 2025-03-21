@@ -2544,6 +2544,10 @@ sap.ui.define([
 			qutils.triggerKeydown(document.activeElement, "", true, true, true);
 			assert.notOk(oList._mRangeSelection, "rangeSelection object not created (SHIFT + ALT + CTRL)");
 
+			oList.onItemContextMenu(oList.getVisibleItems()[0]);
+			assert.notOk(oList._mRangeSelection, "rangeSelection object not created (SHIFT + F10)");
+
+
 			// trigger shift keydown so that oList._mRangeSelection object is available
 			qutils.triggerKeydown(document.activeElement, "", true, false, false);
 			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
