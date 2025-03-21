@@ -3343,7 +3343,11 @@ sap.ui.define([
 		}
 
 		_private(this).oLegacySelectionPlugin?.setSelectedIndex(iIndex);
-		return this.setProperty("selectedIndex", iIndex, true);
+
+		/** @deprecated As of version 1.69 */
+		this.setProperty("selectedIndex", iIndex, true);
+
+		return this;
 	};
 
 	/**
