@@ -108,7 +108,8 @@ sap.ui.define([
 									"[5/" + iCount + "]");
 							}
 							Opa5.assert.strictEqual(aControls[0].getText(),
-								iCount + " Sales Order Line Items", "Count in title is " + iCount);
+								iCount + " Sales Order Line Items (0 selected)",
+								"Count in title is " + iCount);
 						},
 						viewName : sObjectPage
 					});

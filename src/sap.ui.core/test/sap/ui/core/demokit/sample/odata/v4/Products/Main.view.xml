@@ -41,7 +41,8 @@
 				mode="MultiSelect">
 				<headerToolbar>
 					<Toolbar>
-						<Title level="H1" text="Products"/>
+						<Title level="H1"
+							text="Products (Selected: {header>$selectionCount}, Rows: {header>$count})"/>
 						<ToolbarSpacer/>
 						<Button id="resetChanges" icon="sap-icon://sys-cancel-2"
 							press=".onResetChanges" text="Reset Changes"
@@ -57,6 +58,7 @@
 							tooltip="Show Selection"/>
 						<Button icon="sap-icon://activity-items" press=".onRequestSelectedContexts"
 							tooltip="Request selected contexts"/>
+						<CheckBox selected="{header>@$ui5.context.isSelected}" text="Select All"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
@@ -78,7 +80,7 @@
 						</Column>
 					</template:repeat>
 				</columns>
-				<ColumnListItem selected="{@$ui5.context.isSelected}">
+				<ColumnListItem>
 					<core:Icon src="{= %{@$ui5.context.isTransient}
 							? 'sap-icon://sys-add'
 							: (%{@$ui5.context.isTransient} === false
@@ -112,7 +114,7 @@
 				</ColumnListItem>
 			</Table>
 			<form:SimpleForm ariaLabelledBy="newEntryTitle" editable="true" id="newEntry"
-					layout="ResponsiveGridLayout">
+					layout="ColumnLayout">
 				<form:toolbar>
 					<Toolbar>
 						<Title id="newEntryTitle" level="H1" text="New Entry"/>
@@ -128,6 +130,11 @@
 				</template:repeat>
 			</form:SimpleForm>
 		</template:with>
+
+		<FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
+			&lt;ul>
+				&lt;li> &lt;code>logAsWarning&lt;/code> Whether to log 'selectionChanged' events as warnings, not info; either present or missing
+				&lt;li> &lt;code>clearSelectionOnFilter=false&lt;/code> Value for '$$clearSelectionOnFilter', default is 'true'"/>
 	</VBox>
 	<footer>
 		<OverflowToolbar>

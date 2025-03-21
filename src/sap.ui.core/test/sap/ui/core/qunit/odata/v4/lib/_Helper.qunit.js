@@ -609,8 +609,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fireChange: no listeners", function () {
-		// code under test
-		_Helper.fireChange({}, "path/to/property");
+		// code under test (addt'l args must not make any difference)
+		_Helper.fireChange(undefined, "path/to/property", "n/a", true, true);
 
 		// code under test (addt'l args must not make any difference)
 		_Helper.fireChange({}, "path/to/property", "n/a", true, true);

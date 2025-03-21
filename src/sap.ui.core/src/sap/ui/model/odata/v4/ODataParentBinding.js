@@ -870,7 +870,8 @@ sap.ui.define([
 			}
 
 			if (bDependsOnOperation || sReducedChildMetaPath === "$count"
-					|| sReducedChildMetaPath.endsWith("/$count")) {
+					|| sReducedChildMetaPath.endsWith("/$count")
+					|| sReducedChildMetaPath === "$selectionCount") {
 				return sReducedPath;
 			}
 

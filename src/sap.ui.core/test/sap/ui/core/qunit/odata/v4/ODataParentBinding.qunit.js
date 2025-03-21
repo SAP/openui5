@@ -1576,7 +1576,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-["$count", "EMPLOYEE_2_EQUIPMENTS/$count"].forEach(function (sChildPath) {
+["$count", "EMPLOYEE_2_EQUIPMENTS/$count", "$selectionCount"].forEach(function (sChildPath) {
 	QUnit.test("fetchIfChildCanUseCache: " + sChildPath, function (assert) {
 		var oMetaModel = {
 				getReducedPath : function () {}
