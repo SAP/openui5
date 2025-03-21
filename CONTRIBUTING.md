@@ -3,7 +3,10 @@
 You want to contribute to OpenUI5? Welcome! Please read this document to understand what you can do:
  * [Help Others](#help-others)
  * [Analyze Issues](#analyze-issues)
- * [Report an Issue](#report-an-issue)
+ * [Report Bugs](#report-bugs)
+ * [Request Features](#request-features)
+ * [Report Security Issues](#report-security-issues)
+ * [Know Our Process for Handling Issues](#know-our-process-for-handling-issues)
  * [Contribute Code](#contribute-code)
 
 ## Help Others
@@ -17,8 +20,7 @@ Go to [the Github issue tracker](https://github.com/SAP/openui5/issues?state=ope
 
 Additional work may be further information, or a minimized jsbin example or gist, or it might be a hint that helps understanding the issue. Maybe you can even find and [contribute](#contribute-code) a bugfix?
 
-
-## Report an Issue
+## Report Bugs
 
 If you find a bug - behavior of UI5 code contradicting its specification - you are welcome to report it.
 We can only handle well-reported, actual bugs, so please follow the guidelines below and use forums like [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) for support questions or when in doubt whether the issue is an actual bug.
@@ -45,7 +47,7 @@ These eight requirements are the mandatory base of a good bug report:
    * issues caused by the usage of non-public UI5 methods. Only the public methods listed in the API documentation may be used.
    * something that behaves just different from what you expected. A bug is when something behaves different than specified. When in doubt, ask in a forum.
    * something you do not get to work properly. Use a support forum like stackoverflow to request help.
-   * feature requests. Well, this is arguable: critical or easy-to-do enhancement suggestions are welcome, but we do not want to use the issue tracker as wishlist.
+   * feature requests. For more information, see [Request Features](#request-features).
 2. No duplicate: you have searched the issue tracker to make sure the bug has not yet been reported
 3. Good summary: the summary should be specific to the issue
 4. Current bug: the bug can be reproduced in the most current version (state the tested version!)
@@ -64,21 +66,17 @@ These eight requirements are the mandatory base of a good bug report:
    * this may not always be possible and sometimes be overkill, but it always helps analyzing a bug
 8. Only one bug per report: open different tickets for different issues
 
-You are encouraged to use [this template](ISSUE_TEMPLATE.md).
+You are encouraged to use [this template](.github/ISSUE_TEMPLATE/bug-report.md).
 
 Please report bugs in English, so all users can understand them.
 
 If the bug appears to be a regression introduced in a new version of UI5, try to find the closest versions between which it was introduced and take special care to make sure the issue is not caused by your application's usage of any internal method which changed its behavior.
 
+## Request Features
 
-### Issue handling process
+You have an idea for enhancing existing OpenUI5 functionality? Then we'd suggest you create a feature request. As you might guess, OpenUI5 receives many feature requests each year, far more than the OpenUI5 team could possibly tackle. Only create a feature request if you think that the missing feature is critical or an easy-to-do enhancement. Please be considerate and don't mistake the issue tracker for a wishlist.
 
-When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "in progress" label), close it if it is not an issue, or ask for more details. In-progress issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes.
-
-An issue that is about a real bug is closed as soon as the fix is committed. The closing comment explains which patch version(s) of UI5 will contain the fix.
-
-
-### Reporting Security Issues
+## Report Security Issues
 
 We take security issues in our projects seriously. We appreciate your efforts to responsibly disclose your findings.
 
@@ -89,20 +87,28 @@ Please do not report security issues directly on GitHub but using one of the cha
 
 Please also refer to the general [SAP security information page](https://www.sap.com/about/trust-center/security/incident-management.html).
 
+## Know Our Process for Handling Issues
+
+When you report an issue, a committer will look at it and either confirm it (by labeling it "in progress"), close it (if it is not considered an issue), or ask you for more details. In-progress issues are then either assigned to a committer in GitHub, reported in our internal issue-handling system, or left open as "contribution welcome" for easy or non-urgent fixes.
+
+An issue that concerns a real bug is closed once a fix has been committed. The closing comment explains which patch version(s) of UI5 will contain the fix.
+
 ### Usage of Labels
 
 Github offers labels to categorize issues. We defined the following labels so far:
 
-Labels for issue categories:
- * bug: this issue is a bug in the code
+General issue types:
+ * Bug: This issue is caused by a bug in the code.
+ * Feature: This is not a bug report but a feature request.
+
+Specific issue categories for OpenUI5:
  * documentation: this issue is about wrong documentation
- * enhancement: this is not a bug report, but an enhancement request
 
 Status of open issues:
  * unconfirmed: this report needs confirmation whether it is really a bug (no label; this is the default status)
  * in progress: this issue has been triaged and is now being handled, e.g. because it looks like an actual bug
  * author action: the author is required to provide information
- * contribution welcome: this fix/enhancement is something we would like to have and you are invited to contribute it
+ * contribution welcome: this bug fix/feature request is something we would like to have and you are invited to contribute it
 
 Status/resolution of closed issues:
  * fixed: a fix for the issue was provided
@@ -113,13 +119,11 @@ Status/resolution of closed issues:
 
 The labels can only be set and modified by committers.
 
-
 ### Issue Reporting Disclaimer
 
 We want to improve the quality of UI5 and good bug reports are welcome! But our capacity is limited, so we cannot handle questions or consultation requests and we cannot afford to ask for required details. So we reserve the right to close or to not process insufficient bug reports in favor of those which are very cleanly documented and easy to reproduce. Even though we would like to solve each well-documented issue, there is always the chance that it won't happen - remember: OpenUI5 is Open Source and comes without warranty.
 
 Bug report analysis support is very welcome! (e.g. pre-analysis or proposing solutions)
-
 
 ## Contribute Code
 
@@ -129,7 +133,7 @@ There are three important things to know:
 
 1.  You must be aware of the Apache License (which describes contributions) and **agree to the Developer Certificate of Origin**. This is common practice in all major Open Source projects. To make this process as simple as possible, we are using *[CLA assistant](https://cla-assistant.io/)*. CLA assistant is an open source tool that integrates with GitHub very well and enables a one-click-experience for accepting the DCO. See the respective section below for details.
 2.  There are **several requirements regarding code style, quality, and product standards** which need to be met (we also have to follow them). The respective section below gives more details on the coding guidelines.
-3.  **Not all proposed contributions can be accepted**. Some features may e.g. just fit a third-party add-on better. The code must fit the overall direction of OpenUI5 and really improve it, so there should be some "bang for the byte". For most bug fixes this is a given, but major feature implementation first need to be discussed with one of the OpenUI5 committers (the top 20 or more of the [Contributors List](https://github.com/SAP/openui5/graphs/contributors)), possibly one who touched the related code recently. The more effort you invest, the better you should clarify in advance whether the contribution fits: the best way would be to just open an enhancement ticket in the issue tracker to discuss the feature you plan to implement (make it clear you intend to contribute). We will then forward the proposal to the respective code owner, this avoids disappointment.
+3.  **Not all proposed contributions can be accepted**. Some features may e.g. just fit a third-party add-on better. The code must fit the overall direction of OpenUI5 and really improve it, so there should be some "bang for the byte". For most bug fixes this is a given, but major feature implementation first need to be discussed with one of the OpenUI5 committers (the top 20 or more of the [Contributors List](https://github.com/SAP/openui5/graphs/contributors)), possibly one who touched the related code recently. The more effort you invest, the better you should clarify in advance whether the contribution fits: the best way would be to just open a feature request in the issue tracker to discuss the feature you plan to implement (make it clear you intend to contribute). We will then forward the proposal to the respective code owner, this avoids disappointment.
 
 
 ### Developer Certificate of Origin (DCO)
