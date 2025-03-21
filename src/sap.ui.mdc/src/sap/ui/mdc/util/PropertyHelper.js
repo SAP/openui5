@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/Log",
 	"sap/ui/core/Lib",
-	"sap/base/util/deepEqual",
-	"sap/ui/mdc/util/PropertyHelperUtil"
+	"sap/base/util/deepEqual"
 ], (
 	BaseObject,
 	DataType,
@@ -18,8 +17,7 @@ sap.ui.define([
 	isPlainObject,
 	Log,
 	Lib,
-	deepEqual,
-	PropertyHelperUtil
+	deepEqual
 ) => {
 	"use strict";
 
@@ -288,13 +286,7 @@ sap.ui.define([
 	}
 
 	function reportInvalidProperty(sMessage, oProperty) {
-		const sAdditionalInfo = stringifyPlainObject(oProperty);
-		// implementation for this flag is within PropertyHelperMixin#_checkValidationExceptions
-		if (PropertyHelperUtil.bValidationException) {
-			throw new Error(`Invalid property definition: ${sMessage} ${sAdditionalInfo ? `\n${sAdditionalInfo}` : ""}.`);
-		} else {
-			throwInvalidPropertyError(sMessage, oProperty);
-		}
+		throwInvalidPropertyError(sMessage, oProperty);
 	}
 
 	function throwInvalidPropertyError(sMessage, oProperty) {
