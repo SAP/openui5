@@ -4,12 +4,13 @@ sap.ui.define([
 	'sap/ui/core/Fragment',
 	'sap/ui/core/Element',
 	'sap/ui/core/ElementRegistry',
+	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/mvc/Controller',
 	'sap/base/future',
 	'sap/base/Log',
 	'sap/ui/test/utils/nextUIUpdate'
-], function(Component, Fragment, Element, ElementRegistry, XMLView, Controller, future, Log, nextUIUpdate) {
+], function(Component, Fragment, Element, ElementRegistry, View, XMLView, Controller, future, Log, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Controller.create API");
@@ -29,6 +30,46 @@ sap.ui.define([
 				done();
 			});
 		});
+	});
+
+	QUnit.test("Controller.create via 'module:' Syntax", async function(assert) {
+		const oController = await Controller.create({
+			name: "module:testdata/mvc/ControllerCreateTest.controller"
+		});
+
+		assert.ok(oController, "Controller is created");
+		assert.equal(oController.double(8), 16, "Controller implementation was correctly returned.");
+		oController.destroy();
+	});
+
+	QUnit.test("'module:' Syntax - getControllerModuleName() API", async function(assert) {
+		const oXMLView = await XMLView.create({
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='module:testdata/mvc/ControllerCreateTest.controller'>" +
+				"</mvc:View>"
+		});
+		assert.ok(oXMLView, "oXMLView is created");
+		assert.ok(oXMLView.getController(), "Controller is created");
+		assert.equal(oXMLView.getControllerModuleName(), "testdata/mvc/ControllerCreateTest.controller", "getControllerModuleName() returns correct module name.");
+
+		// The following: If a module name is specified, calling getControllerName() should trigger an error log and return undefined.
+		const oLogSpy = sinon.spy(Log, "error");
+		const sExpectedLogMessage = `Controller name is specified using module syntax: '${oXMLView._controllerModule}'. Use #getControllerModuleName() instead.`;
+		assert.notOk(oXMLView.getControllerName(), "getControllerName() returns 'undefined' correctly.");
+		assert.equal(oLogSpy.callCount, 1, "Error logged correctly after getControllerName() call");
+		assert.ok(oLogSpy.getCall(0).calledWith(sExpectedLogMessage), "Correct error log displayed.");
+		oLogSpy.restore();
+		oXMLView.destroy();
+	});
+
+	QUnit.test("'dot'-Syntax - getControllerModuleName() API", async function(assert) {
+		const oXMLView = await XMLView.create({
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='testdata.mvc.ControllerCreateTest'>" +
+				"</mvc:View>"
+		});
+		assert.ok(oXMLView, "oXMLView is created");
+		assert.ok(oXMLView.getController(), "Controller is created");
+		assert.equal(oXMLView.getControllerModuleName(), "testdata/mvc/ControllerCreateTest.controller", "getControllerModuleName() returns correct module name.");
+		oXMLView.destroy();
 	});
 
 	QUnit.module("ControllerExtensionTests");
@@ -447,21 +488,53 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Controller.loadFragment - JSFragment with 'module:' Syntax", async function(assert) {
+		assert.expect(2);
+
+		var pFragmentReady;
+
+		sap.ui.define("my/Controller9", function() {
+			return Controller.extend("my.Controller9", {
+				onInit: function() {
+					 pFragmentReady = this.loadFragment({
+						name: "module:testdata/fragments/JSFragment",
+						id: "myJSFragment",
+						autoPrefixId: false
+					}).then(function(oButton) {
+						oButton.firePress();
+						return oButton;
+					});
+				},
+				doSomething: function() {
+					assert.ok("Connected", "Button in JSFragment loaded correctly");
+				}
+			});
+		});
+
+		const oXMLView = await XMLView.create({
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='module:my/Controller9'>" +
+				"</mvc:View>"
+		});
+		const oButton = await pFragmentReady;
+		assert.equal(oButton.getId(), "myJSFragment--btnInJsFragment", "Fragment content is prefixed by the given ID.");
+		oXMLView.destroy();
+	});
+
 	QUnit.module("Controller Lifecycle-Hooks");
 
 	QUnit.test("onInit Shouldn't return any values (future=true)", async (assert) => {
 		future.active = true;
-		sap.ui.define("my/Controller10.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
-			return Controller.extend("my.Controller10", {
+		sap.ui.define("my/Controller11.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			return Controller.extend("my.Controller11", {
 				onInit: function() {
 					return "onInit returns a String value";
 				}
 			});
 		});
 
-		const expectedMessage = "my.Controller10: The registered Event Listener 'onInit' must not have a return value.";
+		const expectedMessage = "my.Controller11: The registered Event Listener 'onInit' must not have a return value.";
 		const oController = await Controller.create({
-			name: "my.Controller10"
+			name: "my.Controller11"
 		});
 		await assert.rejects(XMLView.create({
 			viewName: "example.mvc.asyncHooks",
@@ -474,8 +547,8 @@ sap.ui.define([
 	QUnit.test("onExit Shouldn't return any values (future=true)", async (assert) => {
 		future.active = true;
 		let oOnExitPromise;
-		sap.ui.define("my/Controller11.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
-			return Controller.extend("my.Controller11", {
+		sap.ui.define("my/Controller12.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			return Controller.extend("my.Controller12", {
 				onExit: function() {
 					const oPromise = Promise.reject(new Error("onExit returns rejected Promise."));
 					oOnExitPromise = oPromise;
@@ -484,9 +557,9 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "my.Controller11: The registered Event Listener 'onExit' must not have a return value.";
+		const expectedMessage = "my.Controller12: The registered Event Listener 'onExit' must not have a return value.";
 		const oController = await Controller.create({
-			name: "my.Controller11"
+			name: "my.Controller12"
 		});
 		const oView = await XMLView.create({
 			viewName: "example.mvc.asyncHooks",
@@ -507,8 +580,8 @@ sap.ui.define([
 	QUnit.test("onBeforeRendering Shouldn't return any values (future=true)", async (assert) => {
 		future.active = true;
 
-		sap.ui.define("my/Controller12.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
-			return Controller.extend("my.Controller12", {
+		sap.ui.define("my/Controller13.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			return Controller.extend("my.Controller13", {
 				onBeforeRendering: async function() {
 					const oPromise = Promise.resolve("async onBeforeRendering returns resolved Promise.");
 					await oPromise;
@@ -516,9 +589,9 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "my.Controller12: The registered Event Listener 'onBeforeRendering' must not have a return value.";
+		const expectedMessage = "my.Controller13: The registered Event Listener 'onBeforeRendering' must not have a return value.";
 		const oController = await Controller.create({
-			name: "my.Controller12"
+			name: "my.Controller13"
 		});
 		const oView = await XMLView.create({
 			viewName: "example.mvc.asyncHooks",
@@ -535,8 +608,8 @@ sap.ui.define([
 	QUnit.test("onAfterRendering Shouldn't return any values (future=true)", async (assert) => {
 		future.active = true;
 		let oOnAfterRenderingPromise;
-		sap.ui.define("my/Controller13.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
-			return Controller.extend("my.Controller13", {
+		sap.ui.define("my/Controller14.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
+			return Controller.extend("my.Controller14", {
 				onAfterRendering: function() {
 					const oPromise = Promise.reject(new Error("async onAfterRendering returns rejected Promise."));
 					oOnAfterRenderingPromise =  oPromise;
@@ -545,9 +618,9 @@ sap.ui.define([
 			});
 		});
 
-		const expectedMessage = "my.Controller13: The registered Event Listener 'onAfterRendering' must not have a return value.";
+		const expectedMessage = "my.Controller14: The registered Event Listener 'onAfterRendering' must not have a return value.";
 		const oController = await Controller.create({
-			name: "my.Controller13"
+			name: "my.Controller14"
 		});
 		const oView = await XMLView.create({
 			viewName: "example.mvc.asyncHooks",

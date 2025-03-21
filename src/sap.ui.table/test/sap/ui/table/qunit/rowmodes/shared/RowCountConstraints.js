@@ -10,14 +10,9 @@ sap.ui.define([
 	const QUnit = TableQUnitUtils.createQUnitTestCollector();
 
 	QUnit.module("Row count constraints", {
-		before: function() {
-			this.TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
-		},
 		beforeEach: function() {
-			this.oPlugin = new this.TestPlugin();
 			this.oTable = TableQUnitUtils.createTable({
 				rows: {path: "/"},
-				dependents: [this.oPlugin],
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				columns: [TableQUnitUtils.createTextColumn()]
 			});
@@ -29,7 +24,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Force fixed rows", function(assert) {
-		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
+		this.oTable._setRowCountConstraints({fixedTop: true, fixedBottom: true});
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 1, 8, 1);
@@ -39,7 +34,7 @@ sap.ui.define([
 	QUnit.test("Disable fixed rows", function(assert) {
 		this.oRowMode.setFixedTopRowCount(2);
 		this.oRowMode.setFixedBottomRowCount(2);
-		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
+		this.oTable._setRowCountConstraints({fixedTop: false, fixedBottom: false});
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 0, 10, 0);
@@ -51,10 +46,10 @@ sap.ui.define([
 
 		this.oRowMode.setFixedTopRowCount(2);
 		this.oRowMode.setFixedBottomRowCount(2);
-		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
+		this.oTable._setRowCountConstraints({fixedTop: false, fixedBottom: false});
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			that.oPlugin.setRowCountConstraints({fixedTop: false});
+			that.oTable._setRowCountConstraints({fixedTop: false});
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertRenderedRows(assert, that.oTable, 0, 8, 2);
 		});

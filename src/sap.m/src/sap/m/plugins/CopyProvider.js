@@ -697,7 +697,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 				oTable.attachRowsUpdated(fnHandler, oListener);
 			},
 			detachSelectionChange: function(oTable, fnHandler, oListener) {
-				oTable._getSelectionPlugin().detachSelectionChange(fnHandler, oListener);
+				oTable._getSelectionPlugin()?.detachSelectionChange(fnHandler, oListener);
 				oTable.detachRowsUpdated(fnHandler, oListener);
 			}
 		}

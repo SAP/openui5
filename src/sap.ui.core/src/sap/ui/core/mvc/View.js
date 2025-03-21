@@ -127,15 +127,19 @@ sap.ui.define([
 	 *
 	 *
 	 * <h3>Other Methods</h3>
-	 * Besides <code>createContent</code>, there are two other methods that a view can implement:
-	 * Method {@link #getControllerName getControllerName} defines the name of the controller that should
+	 * Besides <code>createContent</code>, there are other methods that a view can implement:
+	 * <ul>
+	 * <li>Method {@link #getControllerName getControllerName} defines the name of the controller that should
 	 * be instantiated and used for the view. The name must be in class name notation (dot notation),
 	 * without the <code>".controller"</code> suffix. The suffix will be added by the framework when
-	 * loading the module containing the controller.
-	 *
-	 * {@link #getAutoPrefixId getAutoPrefixId} defines whether the IDs of controls created during
+	 * loading the module containing the controller.</li>
+	 * <li>Method {@link #getControllerModuleName getControllerModuleName} defines the module name of the controller that
+	 * should be loaded for the view. Unlike <code>getControllerName</code>, the name must be in <code>sap.ui.define/sap.ui.require</code>
+	 * syntax (slash-separated name without '.js' suffix).</li>
+	 * <li>{@link #getAutoPrefixId getAutoPrefixId} defines whether the IDs of controls created during
 	 * the execution of <code>createContent</code> will be prefixed with the ID of the view automatically.
-	 * The default implementation of this method returns <code>false</code>.
+	 * The default implementation of this method returns <code>false</code>.</li>
+	 * </ul>
 	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
@@ -432,10 +436,11 @@ sap.ui.define([
 			var oController = mSettings.controller,
 				sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName();
 
-			if (!oController && oThis.getControllerName) {
+			if (!oController) {
 				oThis.bControllerIsViewManaged = true;
+
 				// get optional default controller name
-				var defaultController = oThis.getControllerName();
+				let defaultController = oThis._getControllerModuleName() || oThis._getControllerName();
 				if (defaultController) {
 					// check for controller replacement
 					var Component = sap.ui.require("sap/ui/core/Component");
@@ -450,7 +455,7 @@ sap.ui.define([
 					}
 					oController = Controller.create({name: defaultController, _viewId: oThis.sId});
 				}
-			} else if (oController) {
+			} else {
 				oThis.bControllerIsViewManaged = false;
 				// if passed controller is not extended yet we need to do it.
 				var sOwnerId = ManagedObject._sOwnerId;
@@ -626,6 +631,14 @@ sap.ui.define([
 	 */
 	View.prototype.getController = function() {
 		return this.oController;
+	};
+
+	View.prototype._getControllerName = function(){
+		return this.getControllerName?.();
+	};
+
+	View.prototype._getControllerModuleName = function(){
+		return this.getControllerModuleName?.();
 	};
 
 	/**
@@ -915,6 +928,18 @@ sap.ui.define([
 	 * @return {string} the name of the controller
 	 * @public
 	 * @name sap.ui.core.mvc.View#getControllerName
+	 * @function
+	 */
+
+	/**
+	 * An optional method that views can implement to return the controller's module name in <code>sap.ui.define/sap.ui.require</code>
+	 * syntax (slash-separated name without '.js' suffix).
+	 * If no controller instance is provided at the time of View instantiation AND this method exists, the View attempts to load and
+	 * instantiate the controller and to connect it to itself.
+	 *
+	 * @return {string} Name of the module name from which to load the view definition.
+	 * @public
+	 * @name sap.ui.core.mvc.View#getControllerModuleName
 	 * @function
 	 */
 

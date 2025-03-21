@@ -1691,6 +1691,7 @@ sap.ui.define([
 		let oValue0Field = aGridContent[iIndex];
 		let oValue1Field;
 		if (oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
+			oValue0Field.setValueHelp?.(_operatorSupportsValueHelp(oCondition.operator) && this._getValueHelp());
 			if (oCondition.values.length > 0) {
 				oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/0/");
 				oValue0Field.setBindingContext(oValueBindingContext, "$this");

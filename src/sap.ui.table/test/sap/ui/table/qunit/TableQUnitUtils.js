@@ -206,7 +206,7 @@ sap.ui.define([
 
 	// If the table is unbound during initial rendering, it does not fire any rowsUpdated events. Handled in waitForFullRendering.
 	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RowsUnbound] = function() {
-		if (!this.getTable().getDomRef()) {
+		if (!this.getControl().getDomRef()) {
 			this.fireRenderingTriggered();
 		}
 	};

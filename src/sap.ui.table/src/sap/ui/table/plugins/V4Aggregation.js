@@ -11,22 +11,31 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructs an instance of sap.ui.table.plugins.V4Aggregation
+	 * @class
+	 * Integrates the aggregation information of the {@link sap.ui.model.odata.v4.ODataListBinding} and the table. The table is enabled to visualize
+	 * group levels and sums according to that information. See {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details.
 	 *
-	 * @class TODO
-	 * @extends sap.ui.table.plugins.PluginBase
+	 * This plugin only works in combination with a <code>sap.ui.model.odata.v4.ODataModel</code>. Do not add it to a table that is bound to another
+	 * model.
+	 * @extends sap.ui.core.Element
+	 *
 	 * @author SAP SE
 	 * @version ${version}
+	 *
 	 * @private
-	 * @since 1.76
-	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.table.plugins.V4Aggregation
+	 *
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
 	const V4Aggregation = PluginBase.extend("sap.ui.table.plugins.V4Aggregation", /** @lends sap.ui.table.plugins.V4Aggregation.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
+				/**
+				 * Indicates whether this plugin is enabled.
+				 */
+				enabled: {type: "boolean", defaultValue: true}, // TODO: Inherited from private PluginBase. Remove once PluginBase is public.
+
 				/**
 				 * If the formatter returns undefined, the default group header title is set.
 				 *
@@ -52,22 +61,10 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	V4Aggregation.prototype.activate = function() {
-		const oBinding = this.getTableBinding();
-
-		if (oBinding && !oBinding.isA("sap.ui.model.odata.v4.ODataListBinding")) {
-			return;
-		}
-
-		PluginBase.prototype.activate.apply(this, arguments);
-	};
-
-	/**
-	 * @override
-	 * @inheritDoc
-	 */
 	V4Aggregation.prototype.onActivate = function(oTable) {
+		validateBinding(oTable.getBinding());
 		TableUtils.Grouping.setToDefaultGroupMode(oTable);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, validateBinding);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
@@ -82,28 +79,14 @@ sap.ui.define([
 			oColumn._setCellContentVisibilitySettings();
 		}
 		TableUtils.Grouping.setToDefaultFlatMode(oTable);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, validateBinding);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 	};
 
-	/**
-	 * @override
-	 * @inheritDoc
-	 */
-	V4Aggregation.prototype.onTableRowsBound = function(oBinding) {
-		// TODO: Check whether the plugin is correctly (de)activated in all possible cases and write tests.
-		//  For example:
-		//   - if the plugin is not active because there is no ODataV4 model yet, it won't be activated if that model is added later
-		//   - on unbind
-		//  Consider calling binding-related hooks also on inactive plugins for this purpose (check usage in selection plugins).
-		if (!oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
-			this.deactivate();
-		}
-	};
-
 	V4Aggregation.prototype.declareColumnsHavingTotals = function(aColumnsWithTotals) {
-		const aColumns = this.getTable()?.getColumns() ?? [];
+		const aColumns = this.getControl()?.getColumns() ?? [];
 
 		for (const oColumn of aColumns) {
 			const bHasTotals = aColumnsWithTotals.includes(oColumn);
@@ -114,6 +97,16 @@ sap.ui.define([
 			});
 		}
 	};
+
+	function validateBinding(oBinding) {
+		if (!oBinding) {
+			return;
+		}
+
+		if (!oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
+			throw new Error("Model must be sap.ui.model.odata.v4.ODataModel");
+		}
+	}
 
 	function updateRowState(oState) {
 		const iLevel = oState.context.getProperty("@$ui5.node.level");
@@ -135,7 +128,7 @@ sap.ui.define([
 		}
 
 		if (bIsGroupHeader) {
-			const sGroupHeaderPath = this.getTableBinding().getAggregation().groupLevels[iLevel - 1];
+			const sGroupHeaderPath = oState.context.getBinding().getAggregation().groupLevels[iLevel - 1];
 			const fnCustomGroupHeaderFormatter = this.getGroupHeaderFormatter();
 
 			if (fnCustomGroupHeaderFormatter) {

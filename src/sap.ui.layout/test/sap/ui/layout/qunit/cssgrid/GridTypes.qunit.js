@@ -41,30 +41,6 @@ sap.ui.define([
 				"test"
 			]
 		},
-		"CSSGridGapShortHand": {
-			validValues: [
-				"0.5px 0.5rem",
-				"   5px    1px	",
-				"5px",
-				"0px",
-				"5%",
-				""
-			],
-			invalidValues: [
-				"10remm 10rem 10pxxx",
-				5,
-				0,
-				true,
-				false,
-				undefined,
-				null,
-				[],
-				{},
-				5.6,
-				"a",
-				"test"
-			]
-		},
 		"CSSGridLine": {
 			validValues: [
 				"",

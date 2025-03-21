@@ -345,10 +345,16 @@ sap.ui.define([
 	 */
 	Row.prototype._updateSelection = function() {
 		const oTable = this.getTable();
-		const bIsSelected = oTable._getSelectionPlugin().isSelected(this);
+		const bSelected = this._isSelected();
 
-		this._setSelected(bIsSelected);
+		if (bSelected) {
+			this.addStyleClass("sapUiTableRowSel");
+		} else {
+			this.removeStyleClass("sapUiTableRowSel");
+		}
+
 		oTable._getAccExtension().updateSelectionStateOfRow(this);
+		oTable._getSyncExtension?.().syncRowSelection(oTable.indexOfRow(this), bSelected);
 	};
 
 	Row.prototype.setRowBindingContext = function(oContext, oTable) {
@@ -607,25 +613,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the visual selected state of the row.
+	 * Sets the selected state of the row.
 	 *
 	 * @param {boolean} bSelected Whether the row should be selected.
 	 * @private
 	 */
 	Row.prototype._setSelected = function(bSelected) {
-		const oTable = this.getTable();
+		this.getTable()._getSelectionPlugin().setSelected(this, bSelected);
+	};
 
-		if (bSelected) {
-			this.addStyleClass("sapUiTableRowSel");
-		} else {
-			this.removeStyleClass("sapUiTableRowSel");
-		}
-
-		if (oTable) {
-			TableUtils.dynamicCall(oTable._getSyncExtension, function(oSyncExtension) {
-				oSyncExtension.syncRowSelection(oTable.indexOfRow(this), bSelected);
-			}, this);
-		}
+	/**
+	 * Checks if the row is selected.
+	 *
+	 * @returns {boolean} Whether the row is selected.
+	 * @private
+	 */
+	Row.prototype._isSelected = function() {
+		return this.getTable()._getSelectionPlugin().isSelected(this);
 	};
 
 	/**
@@ -643,11 +647,7 @@ sap.ui.define([
 			this.removeStyleClass("sapUiTableRowHvr");
 		}
 
-		if (oTable) {
-			TableUtils.dynamicCall(oTable._getSyncExtension, function(oSyncExtension) {
-				oSyncExtension.syncRowHover(oTable.indexOfRow(this), bHovered);
-			}, this);
-		}
+		oTable._getSyncExtension?.().syncRowHover(oTable.indexOfRow(this), bHovered);
 	};
 
 	/**

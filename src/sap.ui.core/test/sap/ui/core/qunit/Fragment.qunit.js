@@ -920,4 +920,73 @@ sap.ui.define([
 			);
 		});
 	});
+
+	QUnit.module("'module:' Syntax");
+
+	QUnit.test("JS Fragment as Dialog", async function(assert) {
+		const done = assert.async();
+		const oDialog = await Fragment.load({
+			fragmentName: "module:testdata/fragments/JSFragmentDialog.fragment",
+			type: "JS",
+			controller: {
+				closeDialog: function() {
+					Element.getElementById("jsDialog").close();
+				}
+			}
+		});
+		assert.ok(!document.getElementById("jsDialog"), "Fragment should not yet be rendered");
+
+		oDialog.open();
+		assert.ok(document.getElementById("jsDialog"), "Fragment should be rendered now");
+
+		window.setTimeout(function() {
+			assert.ok(oDialog.isOpen(), "Dialog should be open now");
+
+			triggerClickEvent("jsDialogBtn"); // close dialog
+
+			window.setTimeout(function() {
+				assert.ok(!oDialog.isOpen(), "Dialog should be closed now");
+				oDialog.destroy();
+
+				done();
+			}, 600);
+		}, 600);
+	});
+
+	QUnit.test("XMLView with JSFragment (declaratively)", async function(assert) {
+		try {
+			const oXmlView = await View.create({
+				viewName: "testdata.fragments.XMLViewWithJSFragment",
+				type: ViewType.XML
+			});
+			oXmlView.placeAt("content3");
+			await nextUIUpdate();
+
+			assert.ok(oXmlView.getDomRef(), "XMLView should be rendered");
+
+			// trigger button provided by JS Fragment
+			oXmlView.byId("jsInXml--btnInJsFragment").firePress();
+			oXmlView.destroy();
+		} catch (error) {
+			assert.notOk(error, "View creation must be successful");
+		}
+	});
+
+	QUnit.test("Error-handling: Wrong module name", async function(assert) {
+		try {
+			//Wrong module name, exists as 'JSFragmentDialog.fragment.js' on the file system
+			await Fragment.load({
+				fragmentName: "module:testdata/fragments/JSFragmentDialog",
+				type: "JS",
+				controller: {
+					closeDialog: function() {
+						Element.getElementById("jsDialog").close();
+					}
+				}
+			});
+		} catch (error) {
+			assert.equal(error.name, "ModuleError", "ModuleError occured as expected.");
+			assert.ok(error.message.includes("failed to load 'testdata/fragments/JSFragmentDialog.js'"), "Correct error message occured.");
+		}
+	});
 });

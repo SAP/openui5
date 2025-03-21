@@ -36,9 +36,7 @@ sap.ui.define([
 	 types: [
 	  "sap.ui.table.RowActionType",
 	  "sap.ui.table.SelectionBehavior",
-	  "sap.ui.table.SelectionMode",
-	  /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
-	  "sap.ui.table.plugins.SelectionMode"
+	  "sap.ui.table.SelectionMode"
 	 ],
 	 interfaces: [],
 	 controls: [
@@ -242,29 +240,6 @@ sap.ui.define([
  if (!thisLib.plugins) {
 	 thisLib.plugins = {};
  }
-
- /**
-  * Mode of a selection plugin
-  *
-  * @version ${version}
-  * @enum {string}
-  * @private
-  */
- thisLib.plugins.SelectionMode = {
-	 /**
-	  * Only one row can be selected at a time.
-	  * @public
-	  */
-	 Single: "Single",
-
-	 /**
-	  * Multiple rows can be selected.
-	  * @public
-	  */
-	 MultiToggle: "MultiToggle"
- };
-
- DataType.registerEnum("sap.ui.table.plugins.SelectionMode", thisLib.plugins.SelectionMode);
 
  //factory for table to create labels and textviews to be overwritten by commons and mobile library
  /* -------------------------------------- */

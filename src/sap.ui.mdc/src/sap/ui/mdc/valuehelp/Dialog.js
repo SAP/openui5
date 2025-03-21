@@ -856,20 +856,20 @@ sap.ui.define([
 			}
 
 			return this._retrievePromise("open").then(() => {
-				oNextContent.onShow(bInitial);
+				return oNextContent.onShow(bInitial).then(() => {
+					if (bCollectiveSearchChange) {
+						const oNextDisplayContent = oNextContent.getDisplayContent();
+						const oEventDelegate = {
+							onAfterRendering: () => {
+								this._oGroupSelect.focus();
+								oNextDisplayContent.removeEventDelegate(oEventDelegate);
+							}
+						};
+						oNextDisplayContent?.addEventDelegate(oEventDelegate);
+					}
 
-				if (bCollectiveSearchChange) {
-					const oNextDisplayContent = oNextContent.getDisplayContent();
-					const oEventDelegate = {
-						onAfterRendering: () => {
-							this._oGroupSelect.focus();
-							oNextDisplayContent.removeEventDelegate(oEventDelegate);
-						}
-					};
-					oNextDisplayContent?.addEventDelegate(oEventDelegate);
-				}
-
-				return oNextContent;
+					return oNextContent;
+				});
 			});
 		});
 	};

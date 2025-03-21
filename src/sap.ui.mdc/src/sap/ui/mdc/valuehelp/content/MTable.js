@@ -117,6 +117,7 @@ sap.ui.define([
 			const aItems = oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
+			const bIsOpen = this.getParent().isOpen();
 
 			aItems.forEach((oItem) => {
 				const oItemContext = this._getListItemBindingContext(oItem);
@@ -129,12 +130,16 @@ sap.ui.define([
 				// special focus handling for dropdown boxes - in some cases visual (not real) focus must be in item
 				if (this.isTypeahead()) { // only happens in typeahead dropdown (on Dialog real focus must stay there)
 					if (this.isSingleSelect()) {
-						if (oTable.indexOfItem(oItem) === this._iNavigateIndex) { // navigated item is shown selected and focused
-							oItem.addStyleClass("sapMLIBFocused");
+						if (oTable.indexOfItem(oItem) === this._iNavigateIndex || oItem.getSelected()) { // navigated or selected item is shown selected and focused
+							if (bIsOpen && !oItem.hasStyleClass("sapMLIBFocused")) {
+								oTable.setFakeFocus(oItem);
+							}
 						} else if (oItem.getId() === this._sHighlightId) { // matching item of typeahead is shown selected, but focus stays in field
 							oItem.addStyleClass("sapMLIBSelected").updateSelectedDOM(true, oItem.$()); // as StyleClassSupport don't recognizes DOM changes
 						} else {
-							oItem.removeStyleClass("sapMLIBFocused");
+							if (bIsOpen && oItem.hasStyleClass("sapMLIBFocused")) {
+								oTable.setFakeFocus(); // as navigation could be removed in closed state
+							}
 							if (!oItem.getSelected() && oItem.hasStyleClass("sapMLIBSelected")) {
 								oItem.removeStyleClass("sapMLIBSelected").updateSelectedDOM(false, oItem.$()); // as StyleClassSupport don't recognizes DOM changes
 							}
@@ -145,6 +150,36 @@ sap.ui.define([
 				}
 			});
 		}
+
+		_stopUpdateSelectionAsync.call(this); // if called sync. Async-call is not needed anymore
+	}
+
+	function _updateSelectionAsync() {
+
+		// prevent multiple selection updates if called directly in one task (update highlightId and Conditions....)
+		if (!this._oUpdateSelectionPromise && !this.isDestroyed()) {
+			this._oUpdateSelectionPromise = new Promise((resolve) => {
+				this._iUpdateSelectionTimeout = setTimeout(() => {
+					if (!this.isDestroyed()) {
+						_updateSelection.call(this);
+					}
+					resolve();
+				}, 0);
+			});
+		}
+
+		return this._oUpdateSelectionPromise;
+
+	}
+
+	function _stopUpdateSelectionAsync() {
+
+		if (this._iUpdateSelectionTimeout) { // if called sync. Async-call is not needed anymore
+			clearTimeout(this._iUpdateSelectionTimeout);
+			this._iUpdateSelectionTimeout = null;
+			delete this._oUpdateSelectionPromise;
+		}
+
 	}
 
 	MTable.prototype.onBeforeShow = function(bInitial) {
@@ -176,7 +211,7 @@ sap.ui.define([
 		// only announce updates for MTable in dialog if user triggers applyFilters
 		this._bAnnounceTableUpdate = !this.isTypeahead() && this.isContainerOpen();
 
-		if (this._iNavigateIndex >= 0) { // initialize navigation
+		if (this._iNavigateIndex >= 0 && this.getParent().isOpen()) { // initialize navigation (only if filter updated while open)
 			this._iNavigateIndex = -1;
 			this.removeVisualFocus(); // on new items it needs to be determined if there is a focusable item
 			if (this.isSingleSelect()) {
@@ -295,18 +330,21 @@ sap.ui.define([
 	};
 
 	MTable.prototype._handleUpdateFinished = function() {
-		_updateSelection.apply(this);
-		this._updateHeaderText(true);
+		if (this.getParent().isOpen()) { // if not open header and selection are updated in onShow
+			this._updateHeaderText(true);
 
-		if (this._bScrollToSelectedItem) {
-			const oTable = this._getTable();
-			if (oTable && this.isTypeahead() && this.isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
-				const oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
-				if (oSelectedItem) {
-					this._handleScrolling(oSelectedItem);
+			_updateSelectionAsync.apply(this).then(() => {
+				if (this._bScrollToSelectedItem) {
+					const oTable = this._getTable();
+					if (oTable && this.isTypeahead() && this.isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+						const oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
+						if (oSelectedItem) {
+							this._handleScrolling(oSelectedItem);
+						}
+					}
+					this._bScrollToSelectedItem = false;
 				}
-			}
-			this._bScrollToSelectedItem = false;
+			});
 		}
 	};
 
@@ -349,36 +387,39 @@ sap.ui.define([
 			}
 		}
 
-		const oResult = FilterableListContent.prototype.onShow.apply(this, arguments);
+		this._updateHeaderText(); // to have initial text sync
 
-		const bSingleSelect = this.isSingleSelect();
-		if (oTable && this.isTypeahead()) {
-			if (bSingleSelect) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
-				let oSelectedItem;
-				if (this._iNavigateIndex >= 0) {
-					oSelectedItem = oTable.getItems()[this._iNavigateIndex];
-				} else if (this._sHighlightId) {
-					oSelectedItem = oTable.getItems().find((oItem) => oItem.getId() === this._sHighlightId);
-				} else {
-					oSelectedItem = oTable.getSelectedItem();
-				}
-				if (oSelectedItem) {
-					this._handleScrolling(oSelectedItem);
-					oResult.itemId = oSelectedItem.getId();
-				} else {
-					this._bScrollToSelectedItem = true;
+		return FilterableListContent.prototype.onShow.apply(this, arguments).then((oResult) => {
+			return Promise.resolve(this._oUpdateSelectionPromise).then(() => { // wrap in Promise to handle no running async selection update
+				const bSingleSelect = this.isSingleSelect();
+				if (oTable && this.isTypeahead()) {
+					if (bSingleSelect) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+						let oSelectedItem;
+						if (this._iNavigateIndex >= 0) {
+							oSelectedItem = oTable.getItems()[this._iNavigateIndex];
+						} else if (this._sHighlightId) {
+							oSelectedItem = oTable.getItems().find((oItem) => oItem.getId() === this._sHighlightId);
+						} else {
+							oSelectedItem = oTable.getSelectedItem();
+						}
+						if (oSelectedItem) {
+							this._handleScrolling(oSelectedItem);
+							oResult.itemId = oSelectedItem.getId();
+						} else {
+							this._bScrollToSelectedItem = true;
 
-					if (oTable.getItems().length === 0 && oTable.getShowNoData()) { // if no items return no-data text to announce it on field
-						oResult.itemId = oTable.getId("nodata-text");
+							if (oTable.getItems().length === 0 && oTable.getShowNoData()) { // if no items return no-data text to announce it on field
+								oResult.itemId = oTable.getId("nodata-text");
+							}
+						}
 					}
+
+					oResult.items = _getItemCount.call(this);
 				}
-			}
 
-			oResult.items = _getItemCount.call(this);
-		}
-
-		this._updateHeaderText();
-		return oResult;
+				return oResult;
+			});
+		});
 	};
 
 	MTable.prototype.onHide = function() {
@@ -386,6 +427,7 @@ sap.ui.define([
 		const oTable = this.getTable();
 		if (oTable) {
 			this.removeVisualFocus();
+			oTable?.setFakeFocus(); // to add it again if reopened
 			if (oTable.hasStyleClass("sapMComboBoxList")) {
 				oTable.removeStyleClass("sapMComboBoxList");
 			}
@@ -398,7 +440,17 @@ sap.ui.define([
 	};
 
 	MTable.prototype.handleConditionsUpdate = function(oChanges) {
-		_updateSelection.call(this);
+		if (this._iNavigateIndex >= 0 && !this._bConditionSetByNavigate) { // if conditions updated initialize navigation
+			const aConditions = this.getConditions();
+			const oTable = this._getTable();
+			const aItems = oTable.getItems();
+			const oItemContext = this._getListItemBindingContext(aItems[this._iNavigateIndex]);
+			if (!this._isContextSelected(oItemContext, aConditions)) {
+				this._iNavigateIndex = -1;
+			}
+		}
+
+		_updateSelectionAsync.call(this);
 	};
 
 	MTable.prototype.getContent = function() {
@@ -675,8 +727,9 @@ sap.ui.define([
 		if (!bIsOpen && this._iNavigateIndex < 0 && !this._bNavigateInitialize) {
 			this._bNavigateInitialize = true;
 			this.onBeforeShow(true).then(() => { // to determine intial filters, update bindings and load data
-				this.onShow(true, false);
-				this.navigate(iStep);
+				this.onShow(true).then((oResult) => {
+					this.navigate(iStep);
+				});
 			});
 			return;
 		}
@@ -781,9 +834,11 @@ sap.ui.define([
 		} else if (bEndReached && this._oShowAllItemsButton) { // got to "show all items"
 			if (oSelectedItem) {
 				oSelectedItem.setSelected(false);
-				oSelectedItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMLIBSelected");
+				oTable.setFakeFocus();
+				oSelectedItem.removeStyleClass("sapMLIBSelected");
 			}
 			this._iNavigateIndex = -1;
+			this.setProperty("conditions", [], true);
 			this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: false });
 			this._oShowAllItemsButton.focus();
 			return;
@@ -792,41 +847,39 @@ sap.ui.define([
 		const oItem = aItems[iSelectedIndex];
 		if (oItem) {
 
-			let oCondition;
-			if (oItem !== oSelectedItem || iStep === 0) { // new item or already shown item is navigated again (focus set on dropdown)
+			if (oItem !== oSelectedItem || (this._iNavigateIndex !== iSelectedIndex && !bLeaveFocus)) { // new item or already selected or highlighted item is navigated (focus set on dropdown)
+				let oCondition;
+				const aConditions = [];
+				const oValueHelpDelegate = this.getValueHelpDelegate();
+				const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
+
 				this._iNavigateIndex = iSelectedIndex;
-				if (bSingleSelect) {
-					oItem.setSelected(true);
-				}
 
 				// in case of a single value field fake the focus on the new selected item to update the screenreader invisible text
 				if (bIsOpen) {
 					this._handleScrolling(oItem);
 					oTable.setFakeFocus(oItem);
-				}
-
-				if (oItem.isA("sap.m.GroupHeaderListItem")) {
-					if (bSingleSelect) {
-						this.setProperty("conditions", [], true); // no condition navigated
-					}
-					this.fireNavigated({ condition: undefined, itemId: oItem.getId(), leaveFocus: false });
-				} else {
-					const oItemContext = this._getListItemBindingContext(oItem);
-					const oValues = this.getItemFromContext(oItemContext);
-					const oValueHelpDelegate = this.getValueHelpDelegate();
-					const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
-					oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
-					if (bSingleSelect) {
-						this.setProperty("conditions", [oCondition], true);
-					}
-					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false, caseSensitive: bCaseSensitive });
-				}
-				if (bIsOpen) {
 					this.setVisualFocus(); // to show focus outline on navigated item
 					this.fireVisualFocusSet();
 				}
 
+				if (!oItem.isA("sap.m.GroupHeaderListItem")) { // for GroupHeader no condition navigated
+					const oItemContext = this._getListItemBindingContext(oItem);
+					const oValues = this.getItemFromContext(oItemContext);
+					oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
+					aConditions.push(oCondition);
+				}
+				if (bSingleSelect) {
+					this._bConditionSetByNavigate = true;
+					this.setProperty("conditions", aConditions, true); // update item-selection async to do it after Field sets aria-activedescendant to new item to prevent reading of old item
+					_updateSelectionAsync.call(this); // as condition property might be set to the previous value what don't trigger Observer
+					delete this._bConditionSetByNavigate;
+				}
+				this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false, caseSensitive: bCaseSensitive });
 			} else if (bLeaveFocus) {
+				if (bSingleSelect) { // in multiSelection navigation only in closed mode possible - so no focus issues will happen
+					this._iNavigateIndex = -1; // initialize navigation but keep coditions to show last navigated one as selected
+				}
 				this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus });
 			}
 		}
@@ -881,6 +934,7 @@ sap.ui.define([
 
 		const oTable = this.getTable();
 		oTable?.removeStyleClass("sapMListFocus");
+		// don't remove FakeFocus here as focus can be moved to field, but selected item is still visible
 
 	};
 
@@ -1153,6 +1207,8 @@ sap.ui.define([
 	};
 
 	MTable.prototype.exit = function() {
+		_stopUpdateSelectionAsync.call(this); // if destroyed Async-call is not needed anymore
+
 		Common.cleanup(this, [
 			"_sTableWidth",
 			"_oTable",
@@ -1171,8 +1227,10 @@ sap.ui.define([
 	};
 
 	MTable.prototype.setHighlightId = function (sHighlightId) {
-		this._sHighlightId = sHighlightId;
-		_updateSelection.call(this);
+		if (this._sHighlightId !== sHighlightId) {
+			this._sHighlightId = sHighlightId;
+			_updateSelectionAsync.call(this);
+		}
 	};
 
 	MTable.prototype.clone = function(sIdSuffix, aLocalIds) {

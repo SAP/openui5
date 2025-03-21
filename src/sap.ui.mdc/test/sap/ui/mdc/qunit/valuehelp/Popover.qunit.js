@@ -249,7 +249,7 @@ sap.ui.define([
 			iClosed++;
 		});
 
-		sinon.stub(oContent, "onShow").returns({itemId: "MyItem", items: 3});
+		sinon.stub(oContent, "onShow").returns(Promise.resolve({itemId: "MyItem", items: 3}));
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "handleClose");
 		sinon.spy(oPopover, "_openContainerByTarget");
@@ -1044,7 +1044,7 @@ sap.ui.define([
 			iClosed++;
 		});
 
-		sinon.stub(oContent, "onShow").returns({itemId: "MyItem", items: 3});
+		sinon.stub(oContent, "onShow").returns(Promise.resolve({itemId: "MyItem", items: 3}));
 		sinon.spy(oContent, "onHide");
 		sinon.spy(oPopover, "_openContainerByTarget");
 		oContent.getContentHeight = () => {

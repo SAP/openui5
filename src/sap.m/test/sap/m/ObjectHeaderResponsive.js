@@ -25,7 +25,7 @@ sap.ui.define([
   "sap/m/ProgressIndicator",
   "sap/m/HeaderContainer",
   "sap/m/Page",
-  "jquery.sap.mobile"
+  "sap/ui/Device"
 ], function(
   Library,
   NumberFormat,
@@ -53,12 +53,9 @@ sap.ui.define([
   ProgressIndicator,
   HeaderContainer,
   Page,
-  jQuery
+  Device
 ) {
   "use strict";
-
-  // shortcut for jQuery.device.is
-  const is = jQuery.device.is;
 
   // shortcut for sap.ui.core.TextAlign
   const TextAlign = coreLibrary.TextAlign;
@@ -1507,7 +1504,7 @@ sap.ui.define([
   // create and add a page with icon tab bar
   var detail = new Page("detail", {
 	  title:"ObjectHeader (Responsive)",
-	  showNavButton: is.phone,
+	  showNavButton: Device.system.phone,
 	  navButtonPress: function() {
 		  app.backMaster();
 	  },

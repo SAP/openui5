@@ -1448,8 +1448,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("TreeBindingProxy", {
-		beforeEach: function() {
-			this.oTable = new AnalyticalTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
+				models: new ODataModelV2(sServiceURI),
+				columns: [
+					createColumn({grouped: true, name: "CostCenter"})
+				],
+				rows: {
+					path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"
+				}
+			});
 			this.oProxy = this.oTable._oProxy;
 		},
 		afterEach: function() {
@@ -1475,21 +1483,6 @@ sap.ui.define([
 		const fnIsExpandedSpy = sinon.spy(this.oProxy, "isExpanded");
 		const fnGetContextByIndexSpy = sinon.spy(this.oProxy, "getContextByIndex");
 		const fnGetNodeByIndexSpy = sinon.spy(this.oProxy, "getNodeByIndex");
-
-		// Stub oTable.getBinding
-		const fnGetBinding = sinon.stub(this.oTable, "getBinding");
-		fnGetBinding.returns({
-			getMetadata: function() {
-				return {
-					getName: function() {
-						return undefined;
-					}
-				};
-			},
-			getNodes: function() {
-				return [];
-			}
-		});
 
 		// _getContexts
 		assert.equal(this.oTable._getContexts(0).length, 0, "TreeTable has no contexts");
@@ -1532,8 +1525,6 @@ sap.ui.define([
 		fnIsExpandedSpy.restore();
 		fnGetContextByIndexSpy.restore();
 		fnGetNodeByIndexSpy.restore();
-
-		fnGetBinding.restore();
 	});
 
 	QUnit.module("Hide/Show table and suspend/resume binding with ODataV2", {

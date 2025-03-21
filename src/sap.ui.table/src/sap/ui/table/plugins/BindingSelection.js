@@ -17,10 +17,13 @@ sap.ui.define([
 	/**
 	 * Constructs an instance of sap.ui.table.plugins.BindingSelection
 	 *
-	 * @class Implements the selection methods for TreeTable and AnalyticalTable
+	 * @class
+	 * Implements the selection methods for TreeTable and AnalyticalTable
 	 * @extends sap.ui.table.plugins.SelectionPlugin
+	 *
+	 * @author SAP SE
 	 * @version ${version}
-	 * @constructor
+
 	 * @private
 	 * @alias sap.ui.table.plugins.BindingSelection
 	 */
@@ -54,9 +57,23 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
+	BindingSelection.prototype.onActivate = function(oTable) {
+		SelectionPlugin.prototype.onActivate.apply(this, arguments);
+		attachToBinding(this, oTable.getBinding());
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
 	BindingSelection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		detachFromBinding(this, this.getTableBinding());
+		detachFromBinding(this, oTable.getBinding());
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
+	};
+
+	BindingSelection.prototype.getTableBinding = function() {
+		return this.getControl()?.getBinding();
 	};
 
 	BindingSelection.prototype.setSelected = function(oRow, bSelected, mConfig) {
@@ -88,14 +105,14 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: "toggle",
-				visible: TableUtils.hasSelectAll(this.getTable()),
+				visible: TableUtils.hasSelectAll(this.getControl()),
 				selected: this.getSelectableCount() > 0 && this.getSelectableCount() === this.getSelectedCount()
 			}
 		};
 	};
 
 	function toggleSelectAll(oPlugin) {
-		const oTable = oPlugin.getTable();
+		const oTable = oPlugin.getControl();
 		let bSelectAll;
 
 		if (oPlugin.getSelectionMode() !== SelectionMode.MultiToggle) {
@@ -390,46 +407,29 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @inheritDoc
-	 */
-	BindingSelection.prototype.onTableRowsBound = function(oBinding) {
-		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+	function onTableRowsBound(oBinding) {
 		attachToBinding(this, oBinding);
-	};
+	}
 
 	function attachToBinding(oPlugin, oBinding) {
-		if (oBinding) {
-			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
-			if (oBinding.attachSelectionChanged) {
-				oBinding.attachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
-			}
-		}
+		oBinding?.attachChange(onBindingChange, oPlugin);
+		oBinding?.attachSelectionChanged?.(onBindingSelectionChange, oPlugin);
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
-		if (oBinding) {
-			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
-			if (oBinding.detachSelectionChanged) {
-				oBinding.detachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
-			}
-		}
+		oBinding?.detachChange(onBindingChange, oPlugin);
+		oBinding?.detachSelectionChanged?.(onBindingSelectionChange, oPlugin);
 	}
 
-	/**
-	 *
-	 * @param {sap.ui.base.Event} oEvent Binding change event
-	 * @private
-	 */
-	BindingSelection.prototype._onBindingChange = function(oEvent) {
+	function onBindingChange(oEvent) {
 		const sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 
 		if (sReason === "sort" || sReason === "filter") {
 			this.clearSelection();
 		}
-	};
+	}
 
-	BindingSelection.prototype._onSelectionChange = function(oEvent) {
+	function onBindingSelectionChange(oEvent) {
 		const aRowIndices = oEvent.getParameter("rowIndices");
 		const bSelectAll = oEvent.getParameter("selectAll");
 
@@ -437,7 +437,7 @@ sap.ui.define([
 			rowIndices: aRowIndices,
 			selectAll: bSelectAll
 		});
-	};
+	}
 
 	return BindingSelection;
 });
