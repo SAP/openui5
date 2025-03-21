@@ -115,13 +115,29 @@ sap.ui.define([
 	}
 
 	async function asyncLayoutTest(assert, sLayout, fnTest) {
+		oFormLayout = oForm.getLayout(); // as might loadud right now
 		if (oFormLayout) {
+			await nextUIUpdate();
+			if (oSimpleForm.getDomRef()) { // only test if SimpleForm is rendered
+				assert.ok(oForm.getDomRef(), "Form rendered");
+			}
+
 			return await fnTest(assert, sLayout);
 		} else {
+			await nextUIUpdate();
+			if (oSimpleForm.getDomRef()) { // only test if SimpleForm is rendered
+				assert.notOk(oForm.getDomRef(), "Form not rendered (as no Layout)");
+			}
+
 			// wait until Layout is loaded
 			return new Promise((Resolve) => {
 				sap.ui.require([sLayout], async (aModules) => {
 					oFormLayout = oForm.getLayout();
+					await nextUIUpdate();
+					if (oSimpleForm.getDomRef()) { // only test if SimpleForm is rendered
+						assert.ok(oForm.getDomRef(), "Form rendered");
+					}
+
 					await fnTest(assert, sLayout);
 					Resolve();
 				});

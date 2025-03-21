@@ -31,7 +31,9 @@ sap.ui.define([],
 			.style("width", oControl.getWidth())
 			.openEnd(); // div element
 		var oForm = oControl.getAggregation("form");
-		oRm.renderControl(oForm);
+		if (oForm.getLayout()) { // render Form after Layout is loaded
+			oRm.renderControl(oForm);
+		}
 		oRm.close("div");
 		oControl._bChangedByMe = false;
 
