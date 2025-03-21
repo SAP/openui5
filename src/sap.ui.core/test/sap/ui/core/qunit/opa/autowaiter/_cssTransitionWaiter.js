@@ -215,22 +215,32 @@ sap.ui.define([
 			checkStartDetected = function () {
 				assert.ok(_autoWaiter.hasToWait(), "transition waiter detects transition in progress");
 				assert.strictEqual(oLogCollector.getAndClearLog().match(oTransitionLogRegExp).length, 1);
-				jQuery(document.body).off("webkitTransitionRun transitionrun", checkStartDetected);
 			},
 
 			checkWaitingEnded = function () {
 				assert.ok(!_autoWaiter.hasToWait(), "transition waiter no longer waits");
 				assert.ok(!oLogCollector.getAndClearLog().match(oTransitionLogRegExp));
 				fnDone();
-			};
+			},
 
-		jQuery(document.body).on("webkitTransitionRun transitionrun", checkStartDetected);
+			waitForTransitionStart = function () {
+				return new Promise(function (resolve) {
+					var onTransitionStart = function () {
+						jQuery(document.body).off("webkitTransitionStart transitionstart", onTransitionStart);
+						resolve();
+					};
+					jQuery(document.body).on("webkitTransitionStart transitionstart", onTransitionStart);
+				});
+			};
 
 		// Act
 		setTimeout(triggerTransition, 100);
-		setTimeout(checkStartDetected, 200);
-		setTimeout(abortTransition, 400);
-		setTimeout(checkWaitingEnded, 1200);
+		waitForTransitionStart()
+			.then(function() {
+				checkStartDetected();
+				setTimeout(abortTransition, 100);
+				setTimeout(checkWaitingEnded, 1200);
+			});
 	});
 
 	QUnit.module("TransitionWaiter - FlexibleColumnLayout", {
