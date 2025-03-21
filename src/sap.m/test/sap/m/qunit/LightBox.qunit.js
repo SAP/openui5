@@ -7,8 +7,14 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(LightBox, LightBoxItem, Library, qutils, KeyCodes, library, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(LightBox,
+			LightBoxItem,
+			Library,
+			qutils,
+			KeyCodes,
+			library,
+			nextUIUpdate) {
 		'use strict';
 
 		// shortcut for sap.m.LightBoxLoadingStates
@@ -155,7 +161,7 @@ sap.ui.define([
 			assert.strictEqual(this.LightBox._oPopup.isOpen(), false, 'The lightbox should not be open because no image source is set.');
 		});
 
-		QUnit.test('Opening a lightbox with image source', function(assert) {
+		QUnit.test('Opening a lightbox with image source', async function(assert) {
 
 			// arrange
 			var done = assert.async(),
@@ -166,7 +172,7 @@ sap.ui.define([
 				oLightBoxPopup = this.LightBox._oPopup;
 
 			oImageContent.setImageSrc(sImageSource);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			oNativeImage.onload = function () {
 				fnOnload.apply(oNativeImage, arguments);
@@ -245,7 +251,7 @@ sap.ui.define([
 			assert.strictEqual(actualResult, expectedResult, 'The result should be "ERROR"');
 		});
 
-		QUnit.test("LightBox is visible on a scrolled-down page", function (assert) {
+		QUnit.test("LightBox is visible on a scrolled-down page", async function (assert) {
 			// arrange
 			var OFFSET = 5000;
 			document.body.style.paddingTop = OFFSET + "px"; // create a scrollbar and scroll down
@@ -258,7 +264,7 @@ sap.ui.define([
 				fnOnload = oNativeImage.onload;
 
 			oImageContent.setImageSrc(sImageSource);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			setTimeout(function () {
 			// oNativeImage.onload = function () {
@@ -307,14 +313,14 @@ sap.ui.define([
 		});
 
 
-		QUnit.test('ACC state', function(assert) {
+		QUnit.test('ACC state', async function(assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
 				done = assert.async();
 
 			oImageContent.setImageSrc(sImageSource);
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.LightBox.open();
 
@@ -337,14 +343,14 @@ sap.ui.define([
 			assert.ok(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is added to ACC info.");
 		});
 
-		QUnit.test('ESC should close LightBox', function(assert) {
+		QUnit.test('ESC should close LightBox', async function(assert) {
 			// arrange
 			var done = assert.async();
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg';
 
 			oImageContent.setImageSrc(sImageSource);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// act
 			this.LightBox.open();
@@ -359,14 +365,14 @@ sap.ui.define([
 			}.bind(this), 500);
 		});
 
-		QUnit.test('InvisibleText of LightBox', function(assert) {
+		QUnit.test('InvisibleText of LightBox', async function(assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
 				done = assert.async();
 
 			oImageContent.setImageSrc(sImageSource);
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.LightBox.open();
 
@@ -382,7 +388,7 @@ sap.ui.define([
 			}.bind(this), LIGHTBOX_OPEN_TIME);
 		});
 
-		QUnit.test("LightBox should have accessibility attribute aria-modal set to true", function(assert) {
+		QUnit.test("LightBox should have accessibility attribute aria-modal set to true", async function(assert) {
 			// arrange
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
@@ -390,7 +396,7 @@ sap.ui.define([
 
 			oImageContent.setImageSrc(sImageSource);
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// act
 			this.LightBox.open();
@@ -400,6 +406,26 @@ sap.ui.define([
 				assert.strictEqual(this.LightBox._oPopup.getContent().$().attr('aria-modal'), "true", 'aria-modal attribute is true');
 				done();
 			}.bind(this), LIGHTBOX_OPEN_TIME);
+		});
+
+		QUnit.test('Initial Focus', async function(assert) {
+			var oImageContent = this.LightBox.getImageContent()[0],
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
+				done = assert.async();
+
+			oImageContent.setImageSrc(sImageSource);
+
+			await nextUIUpdate();
+
+			this.LightBox.open();
+
+			setTimeout(function () {
+				var oCloseButtonDomRef = this.LightBox._oPopup.getContent().getDomRef().querySelector(".sapMBtn");
+
+				assert.ok(oCloseButtonDomRef.matches(":focus"), 'The close button should be focused');
+
+				done();
+			}.bind(this), 2 * LIGHTBOX_OPEN_TIME);
 		});
 
 		//================================================================================
@@ -421,12 +447,12 @@ sap.ui.define([
 		});
 
 
-		QUnit.test('sapMLightBoxTopCornersRadius class - big image', function(assert) {
+		QUnit.test('sapMLightBoxTopCornersRadius class - big image', async function(assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg'; // big image
 
 			oImageContent.setImageSrc(sImageSource);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var done = assert.async();
 
@@ -444,12 +470,12 @@ sap.ui.define([
 			}.bind(this), 100);
 		});
 
-		QUnit.test('sapMLightBoxTopCornersRadius class - small image', function (assert) {
+		QUnit.test('sapMLightBoxTopCornersRadius class - small image', async function (assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/150x150.jpg'; // small image
 
 			oImageContent.setImageSrc(sImageSource);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var done = assert.async();
 
@@ -466,12 +492,12 @@ sap.ui.define([
 			}.bind(this), 100);
 		});
 
-		QUnit.test('sapMLightBoxTopCornersRadius class - horizontal image', function (assert) {
+		QUnit.test('sapMLightBoxTopCornersRadius class - horizontal image', async function (assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/320x150.jpg'; // horizontal image
 
 			oImageContent.setImageSrc(sImageSource);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var done = assert.async();
 
@@ -488,12 +514,12 @@ sap.ui.define([
 			}.bind(this), 100);
 		});
 
-		QUnit.test('sapMLightBoxTopCornersRadius class - vertical image', function (assert) {
+		QUnit.test('sapMLightBoxTopCornersRadius class - vertical image', async function (assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/150x288.jpg'; // vertical image
 
 			oImageContent.setImageSrc(sImageSource);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var done = assert.async();
 
@@ -526,12 +552,12 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test('image source', function(assert) {
+		QUnit.test('image source', async function(assert) {
 			var done = assert.async();
 
 			// Act
 			this.LightBox.open();
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
@@ -567,12 +593,12 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test('image could not be loaded', function(assert) {
+		QUnit.test('image could not be loaded', async function(assert) {
 			var done = assert.async();
 
 			// Act
 			this.LightBox.open();
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {
