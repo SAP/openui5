@@ -233,6 +233,7 @@ sap.ui.define([
 
 	RtaQunitUtils.createToolbarControlsModel = function() {
 		return new JSONModel({
+			changesNeedHardReload: false,
 			modeSwitcher: "adaptation",
 			undo: {
 				enabled: false

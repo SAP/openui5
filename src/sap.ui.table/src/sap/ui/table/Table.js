@@ -2891,7 +2891,8 @@ sap.ui.define([
 		}
 
 		_private(this).oLegacySelectionPlugin?.setSelectedIndex(iIndex);
-		return this.setProperty("selectedIndex", iIndex, true);
+
+		return this;
 	};
 
 	/**

@@ -36,8 +36,7 @@ sap.ui.define([
 
 		if (oCompositeCommand.getCommands().length > 0) {
 			this.fireElementModified({
-				command: oCompositeCommand,
-				hasAnnotationCommand: true
+				command: oCompositeCommand
 			});
 		}
 	}
@@ -188,7 +187,7 @@ sap.ui.define([
 				vError,
 				"AnnotationPlugin#handler",
 				"Error occurred during handler execution",
-				"sap.ui.rta.plugin.annotations.annotationplugin"
+				"sap.ui.rta.plugin.annotations.AnnotationPlugin"
 			);
 		}
 	};
@@ -211,7 +210,7 @@ sap.ui.define([
 				// has no visible geometry, thus evaluateEditable now
 				await this.evaluateEditable([oResponsibleElementOverlay], { onRegistration: false });
 			}
-			Object.values(oAnnotationActionMap).forEach(function(oAction, iIndex) {
+			Object.entries(oAnnotationActionMap).forEach(function([sKey, oAction], iIndex) {
 				const sPluginId = oAction.type === AnnotationTypes.StringType && oAction.singleRename
 					? sPluginIdSingleLabelChange
 					: sPluginIdDefault;
@@ -225,7 +224,7 @@ sap.ui.define([
 					}
 
 					aMenuItems.push({
-						id: sPluginId,
+						id: `${sPluginId}_${sKey}`,
 						rank: iRank + iIndex,
 						text: sActionText,
 						icon: getActionIcon(oAction),

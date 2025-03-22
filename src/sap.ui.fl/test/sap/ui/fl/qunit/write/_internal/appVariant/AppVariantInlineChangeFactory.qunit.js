@@ -2074,20 +2074,22 @@ sap.ui.define([
 		QUnit.test("appdescr_fe_addNewPage", function(assert) {
 			return AppVariantInlineChangeFactory.create_fe_addNewPage({
 				changeType: "appdescr_fe_addNewPage",
-				sourcePage: {
-					id: "SalesOrderList",
-					navigationSource: "_Item"
-				},
-				targetPage: {
-					id: "SalesOrderItemObjectPage",
-					type: "Component",
-					name: "sap.fe.templates.ObjectPage",
-					routePattern: "SalesOrder({key})/to_extendedNode({key2})",
-					settings: {
-						contextPath: "/SalesOrder/_Item",
-						pageLayout: "Tab",
-						controlConfiguration: {
-							controlConfig: "here"
+				content: {
+					sourcePage: {
+						id: "SalesOrderList",
+						navigationSource: "_Item"
+					},
+					targetPage: {
+						id: "SalesOrderItemObjectPage",
+						type: "Component",
+						name: "sap.fe.templates.ObjectPage",
+						routePattern: "SalesOrder({key})/to_extendedNode({key2})",
+						settings: {
+							contextPath: "/SalesOrder/_Item",
+							pageLayout: "Tab",
+							controlConfiguration: {
+								controlConfig: "here"
+							}
 						}
 					}
 				}

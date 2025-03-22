@@ -9880,64 +9880,67 @@ sap.ui.define([
 		});
 	});
 
-	[{
-		sMetadataUrl: "~metadataUrl",
-		vAnnotationURI: undefined,
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl",
-		vAnnotationURI: "~annotationURI",
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl/~cachebuster~/",
-		vAnnotationURI: "~annotationURI",
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl?sap-context-token=foo",
-		vAnnotationURI: "~annotationURI",
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl",
-		vAnnotationURI: "~annotationURI/~cachebuster~/",
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl",
-		vAnnotationURI: "~annotationURI?sap-context-token=foo",
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl?sap-context-token=foo",
-		vAnnotationURI: ["~annotationURI?sap-context-token=foo", "~annotationURI2"],
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl/~cachebuster~/",
-		vAnnotationURI: "~annotationURI?sap-context-token=foo",
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl/~cachebuster~/",
-		vAnnotationURI: "~annotationURI/~cachebuster~/",
-		bCaching: false
-	}, {
-		sMetadataUrl: "~metadataUrl?sap-context-token=foo",
-		vAnnotationURI: "~annotationURI?sap-context-token=foo",
-		bCaching: true
-	}, {
-		sMetadataUrl: "~metadataUrl?sap-context-token=foo",
-		vAnnotationURI: "~annotationURI/~cachebuster~/",
-		bCaching: true
-	}, {
-		sMetadataUrl: "~metadataUrl?sap-context-token",
-		vAnnotationURI: "~annotationURI?sap-context-token",
-		bCaching: true
-	}, {
-		sMetadataUrl: "~metadataUrl/sap-context-token/foo",
-		vAnnotationURI: "~annotationURI/sap-context-token/foo",
-		bCaching: true
-	}].forEach(({sMetadataUrl, vAnnotationURI, bCaching}, i) => {
-		QUnit.test("_cacheSupported: #" + i, function (assert) {
-			const oModel = {sAnnotationURI: vAnnotationURI};
+	[
+		{sUrl: "~url", bResult: false},
+		{sUrl: "~url/~cachebuster~/", bResult: false},
+		{sUrl: "~url/sap-context-token/", bResult: false},
+		{sUrl: "~url?sap-context-token", bResult: false},
+		{sUrl: "~url?sap-context-token=foo", bResult: true}
+	].forEach(({sUrl, bResult, i}) => {
+		QUnit.test("hasContextToken #" + i, function (assert) {
+			// code under test
+			assert.strictEqual(ODataModel.hasContextToken(sUrl), bResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{aAnnotationURIs: [], bResult: true},
+		{aAnnotationURIs: ["~annotationURI?sap-context-token=foo"], bResult: true},
+		{aAnnotationURIs: ["path/~cacheBusterSegment~/resource"], bResult: true},
+		{aAnnotationURIs: ["~annotationURI"], bResult: false},
+		{aAnnotationURIs: ["~annotationURI1?sap-context-token=foo", "~annotationURI2"], bResult: false},
+		{aAnnotationURIs: ["path/~cacheBusterSegment~/resource", "~annotationURI2"], bResult: false},
+		{aAnnotationURIs: ["path/~cacheBusterSegment~/resource", "~annotationURI2?sap-context-token=foo"], bResult: true}
+	].forEach(({aAnnotationURIs, bResult}, i) => {
+		QUnit.test("isAnnotationsCacheable #" + i, function (assert) {
+			const oModelMock = this.mock(ODataModel);
+			for (const sAnnotationURI of aAnnotationURIs) {
+				oModelMock.expects("hasContextToken").withExactArgs(sAnnotationURI).callThrough();
+			}
 
 			// code under test
-			assert.strictEqual(ODataModel.prototype._cacheSupported.call(oModel, sMetadataUrl), bCaching);
+			assert.strictEqual(ODataModel.isAnnotationsCacheable(aAnnotationURIs), bResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{bMetadataCacheable: false, bAnnotationsCacheable: false, bResult: false},
+		{bMetadataCacheable: false, bAnnotationsCacheable: true, bResult: false},
+		{bMetadataCacheable: true, bAnnotationsCacheable: false, bResult: false},
+		{bMetadataCacheable: true, bAnnotationsCacheable: true, bResult: true}
+	].forEach(({bMetadataCacheable, bAnnotationsCacheable, bResult}, i) => {
+		[
+			{vAnnotationURI: undefined},
+			{vAnnotationURI: "~annotationURI", aExpectedAnnotationURI: ["~annotationURI"]},
+			{vAnnotationURI: ["~annotationURI1", "~annotationURI2"]}
+		].forEach(({vAnnotationURI, aExpectedAnnotationURI}, j) => {
+		QUnit.test(`_cacheSupported #(${i}, ${j})`, function (assert) {
+			aExpectedAnnotationURI ??= vAnnotationURI;
+			const oModel = {sAnnotationURI: vAnnotationURI};
+			const oModelMock = this.mock(ODataModel);
+			oModelMock.expects("hasContextToken").withExactArgs("~metadataURL").returns(bMetadataCacheable);
+			oModelMock.expects("isAnnotationsCacheable")
+				.withExactArgs(aExpectedAnnotationURI ?? [])
+				.exactly(bMetadataCacheable ? 1 : 0)
+				.returns(bAnnotationsCacheable);
+
+			// code under test
+			assert.strictEqual(ODataModel.prototype._cacheSupported.call(oModel, "~metadataURL"), bResult);
+
+			assert.deepEqual(oModel.sAnnotationURI, aExpectedAnnotationURI);
+		});
 		});
 	});
 });

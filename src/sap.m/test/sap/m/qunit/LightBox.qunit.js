@@ -8,7 +8,13 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(LightBox, LightBoxItem, Library, qutils, KeyCodes, library, nextUIUpdate) {
+], function(LightBox,
+			LightBoxItem,
+			Library,
+			qutils,
+			KeyCodes,
+			library,
+			nextUIUpdate) {
 		'use strict';
 
 		// shortcut for sap.m.LightBoxLoadingStates
@@ -245,7 +251,7 @@ sap.ui.define([
 			assert.strictEqual(actualResult, expectedResult, 'The result should be "ERROR"');
 		});
 
-		QUnit.test("LightBox is visible on a scrolled-down page", async function(assert) {
+		QUnit.test("LightBox is visible on a scrolled-down page", async function (assert) {
 			// arrange
 			var OFFSET = 5000;
 			document.body.style.paddingTop = OFFSET + "px"; // create a scrollbar and scroll down
@@ -402,6 +408,26 @@ sap.ui.define([
 			}.bind(this), LIGHTBOX_OPEN_TIME);
 		});
 
+		QUnit.test('Initial Focus', async function(assert) {
+			var oImageContent = this.LightBox.getImageContent()[0],
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
+				done = assert.async();
+
+			oImageContent.setImageSrc(sImageSource);
+
+			await nextUIUpdate();
+
+			this.LightBox.open();
+
+			setTimeout(function () {
+				var oCloseButtonDomRef = this.LightBox._oPopup.getContent().getDomRef().querySelector(".sapMBtn");
+
+				assert.ok(oCloseButtonDomRef.matches(":focus"), 'The close button should be focused');
+
+				done();
+			}.bind(this), 2 * LIGHTBOX_OPEN_TIME);
+		});
+
 		//================================================================================
 		// LightBox sapMLightBoxTopCornersRadius class
 		//================================================================================
@@ -444,7 +470,7 @@ sap.ui.define([
 			}.bind(this), 100);
 		});
 
-		QUnit.test('sapMLightBoxTopCornersRadius class - small image', async function(assert) {
+		QUnit.test('sapMLightBoxTopCornersRadius class - small image', async function (assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/150x150.jpg'; // small image
 
@@ -466,7 +492,7 @@ sap.ui.define([
 			}.bind(this), 100);
 		});
 
-		QUnit.test('sapMLightBoxTopCornersRadius class - horizontal image', async function(assert) {
+		QUnit.test('sapMLightBoxTopCornersRadius class - horizontal image', async function (assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/320x150.jpg'; // horizontal image
 
@@ -488,7 +514,7 @@ sap.ui.define([
 			}.bind(this), 100);
 		});
 
-		QUnit.test('sapMLightBoxTopCornersRadius class - vertical image', async function(assert) {
+		QUnit.test('sapMLightBoxTopCornersRadius class - vertical image', async function (assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/150x288.jpg'; // vertical image
 

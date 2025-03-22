@@ -4,6 +4,7 @@
  */
 sap.ui.define([
 	"sap/m/Input",
+	"sap/m/Label",
 	"sap/m/Select",
 	"sap/m/Switch",
 	"sap/ui/core/mvc/Controller",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/annotations/AnnotationTypes"
 ], function(
 	Input,
+	Label,
 	Select,
 	Switch,
 	Controller,
@@ -48,7 +50,7 @@ sap.ui.define([
 	AnnotationChangeDialogController.prototype.filterProperties = function(sQuery) {
 		const aFilters = [];
 		if (sQuery && sQuery.length > 0) {
-			const filter = new Filter("propertyName", FilterOperator.Contains, sQuery);
+			const filter = new Filter("label", FilterOperator.Contains, sQuery);
 			aFilters.push(filter);
 		}
 
@@ -150,7 +152,10 @@ sap.ui.define([
 
 		return new FormElement({
 			id: sId,
-			label: "{propertyName}",
+			label: new Label({
+				text: "{= ${label} || ${propertyName}}",
+				tooltip: "{tooltip}"
+			}),
 			fields: [
 				createEditorField.call(this, sValueType)
 			]

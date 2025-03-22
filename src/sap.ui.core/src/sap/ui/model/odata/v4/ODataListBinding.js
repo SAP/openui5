@@ -1518,6 +1518,7 @@ sap.ui.define([
 					sGroupId = this.getGroupId(); // reset via a side-effects refresh
 					oOldCache.resetOutOfPlace();
 				}
+				this.validateSelection(oOldCache, sGroupId);
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
 				oOldCache.reset(aKeepAlivePredicates, sGroupId, mQueryOptions,
@@ -4340,8 +4341,7 @@ sap.ui.define([
 	/**
 	 * Requests selected contexts matching the binding's filters and ordered by its sorters. A
 	 * context which is selected but no longer part of this list binding's collection (that is,
-	 * which doesn't match the filters) is not returned but still shown as selected on the UI
-	 * (see {@link #requestSelectionValidation}).
+	 * which doesn't match the filters) is not returned but still shown as selected on the UI.
 	 *
 	 * Note: Data for all selected contexts is reread from the server, even if it is already
 	 * available on the client. Any data updates are reflected on the UI but no order is changed.
@@ -5167,6 +5167,46 @@ sap.ui.define([
 					}))
 			};
 		}
+	};
+
+	/**
+	 * Validates the selected contexts against the list binding's filter criteria and removes the
+	 * selection from contexts that no longer match.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Cache} oCache
+	 *   The cache to be used
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.validateSelection = function (oCache, sGroupId) {
+		if (!this.mParameters.$$clearSelectionOnFilter || "$$aggregation" in this.mParameters
+			|| this.oHeaderContext.isSelected()) {
+			return;
+		}
+
+		const aSelectedContexts = this._getAllExistingContexts()
+			.filter((oContext) => oContext.isSelected());
+
+		if (!aSelectedContexts.length) {
+			return;
+		}
+
+		const iStartOfPredicate = this.getResolvedPath().length;
+		const aPredicatesIn = aSelectedContexts
+			.map((oContext) => oContext.getPath().slice(iStartOfPredicate));
+		oCache.requestFilteredOrderedPredicates(aPredicatesIn, this.lockGroup(sGroupId), true)
+			.then((aPredicatesOut) => {
+				const oPredicates = new Set(aPredicatesOut);
+				aSelectedContexts.forEach((oContext) => {
+					if (!oPredicates.has(oContext.getPath().slice(iStartOfPredicate))) {
+						oContext.setSelected(false);
+					}
+				});
+			}, (oError) => {
+				this.oModel.reportError("Failed to validate selection", sClassName, oError);
+			});
 	};
 
 	//*********************************************************************************************

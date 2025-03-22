@@ -39,9 +39,6 @@ sap.ui.define([
 			backgroundDesign: BackgroundDesign.Transparent,
 			layout: SimpleFormLayout.ResponsiveGridLayout,
 			content: [
-				new Title({ // this starts a new group
-					text: "Editable Form"
-				}),
 				new Label({
 					text: 'Label1'
 				}),
@@ -111,6 +108,12 @@ sap.ui.define([
 					text: '69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt' +
 					' eu felis. In hac habitasse platea dictumst. 69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit.' +
 					' Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst.'
+				})
+			],
+			title: [
+				new Title({ // this starts a new group
+					text: "Editable Form",
+					level: "H3"
 				})
 			]
 		});
@@ -228,6 +231,7 @@ sap.ui.define([
 		id: "block-layout-demo",
 		masterPages: [new Page({
 			title: "Navigation",
+			titleLevel: "H1",
 			content: [new List({items: aMasterPageItems})]
 		})],
 		detailPages: aDetailPages

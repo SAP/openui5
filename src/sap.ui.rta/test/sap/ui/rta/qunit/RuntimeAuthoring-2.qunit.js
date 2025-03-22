@@ -4,6 +4,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/base/util/isEmptyObject",
 	"sap/m/Button",
+	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
@@ -15,25 +16,31 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/appVariant/Utils",
+	"sap/ui/rta/command/AnnotationCommand",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/plugin/Stretch",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
 	isEmptyObject,
 	Button,
+	MessageBox,
 	MessageToast,
 	Page,
 	ComponentContainer,
@@ -45,20 +52,25 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	FlexInfoSession,
 	Version,
+	ChangesWriteAPI,
 	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
+	PersistenceWriteAPI,
 	TranslationAPI,
 	VersionsAPI,
 	Layer,
 	FlexUtils,
 	AppVariantUtils,
 	AppVariantFeature,
+	Utils,
+	AnnotationCommand,
 	BaseCommand,
 	Stack,
 	Stretch,
 	ReloadManager,
 	RuntimeAuthoring,
+	RtaUtils,
 	sinon
 ) {
 	"use strict";
@@ -504,22 +516,23 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when RTA gets started", async function(assert) {
 			await this.oRta.start();
-			assert.equal(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
+			assert.strictEqual(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/modeSwitcher"), "adaptation", "then the mode is initially set to 'Adaptation'");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/redo/enabled"), false, "then the redo is disabled");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/undo/enabled"), false, "then the undo is disabled");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the restore is disabled");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the translation button is disabled");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), false, "then the translation button is not visible");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/visualizationButton/visible"), true, "then the visualization button is visible");
-			assert.equal(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/modeSwitcher"), "adaptation", "then the mode is initially set to 'Adaptation'");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/redo/enabled"), false, "then the redo is disabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/undo/enabled"), false, "then the undo is disabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the restore is disabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the translation button is disabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), false, "then the translation button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/visualizationButton/visible"), true, "then the visualization button is visible");
+			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/changesNeedHardReload"), false, "then no changes need a hard reload");
 
 			const oExpectedSettings = {
 				flexSettings: this.oFlexSettings,
@@ -806,6 +819,85 @@ sap.ui.define([
 				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "the translation button is still enabled");
 				assert.strictEqual(this.oRta.bPersistedDataTranslatable, true, "the serialize function was called once");
 			}.bind(this));
+		});
+
+		QUnit.test("when a change needing a hard reload is made", async function(assert) {
+			const done = assert.async();
+			await this.oRta.start();
+			// annotation plugin creates changes that needs a hard reload
+			const oAnnotationCommand = new AnnotationCommand({
+				selector: {
+					appComponent: {}
+				}
+			});
+			const oAnnotationPlugin = this.oRta.getPlugins().annotation;
+			sandbox.stub(oAnnotationCommand, "execute").resolves();
+			sandbox.stub(ChangesWriteAPI, "create").returns({});
+			sandbox.stub(PersistenceWriteAPI, "add");
+			sandbox.stub(PersistenceWriteAPI, "save").resolves();
+			sandbox.stub(PersistenceWriteAPI, "hasDirtyChanges").returns(true);
+
+			this.oRta.attachEventOnce("undoRedoStackModified", async () => {
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/changesNeedHardReload"), true, "then the flag is set");
+
+				this.oRta.attachEventOnce("undoRedoStackModified", () => {
+					assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/changesNeedHardReload"), true, "then the flag is set");
+					done();
+				});
+				await this.oRta.stop(false, true, true);
+			});
+
+			oAnnotationPlugin.fireElementModified({command: oAnnotationCommand});
+		});
+
+		function waitForSaveAndReloadEventHandler(oReloadStub) {
+			oReloadStub.reset();
+			return new Promise((resolve) => {
+				oReloadStub.callsFake(() => {
+					resolve();
+				});
+			});
+		}
+
+		QUnit.test("when saveAndReload is triggered via the toolbar with unsaved changes", async function(assert) {
+			await this.oRta.start();
+
+			sandbox.stub(this.oRta, "canSave").returns(true);
+			const oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
+			const oReloadStub = sandbox.stub(ReloadManager, "reloadPage");
+			const oSaveStub = sandbox.stub(this.oRta, "save").resolves();
+			const oStopStub = sandbox.stub(this.oRta, "stop").resolves();
+			const oLoadDraftStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves();
+			sandbox.stub(RtaUtils, "showMessageBox")
+			.onCall(0).resolves(MessageBox.Action.CANCEL)
+			.onCall(1).resolves(MessageBox.Action.OK)
+			.onCall(2).resolves(MessageBox.Action.OK);
+
+			this.oRta.getToolbar().fireSaveAndReload();
+			assert.strictEqual(oSaveStub.callCount, 0, "the save function was not called");
+			assert.strictEqual(oEnableRestartStub.callCount, 0, "the enableRestart function was not called");
+			assert.strictEqual(oReloadStub.callCount, 0, "the reloadPage function was not called");
+			assert.strictEqual(oStopStub.callCount, 0, "the stop function was not called");
+			assert.strictEqual(oLoadDraftStub.callCount, 0, "the loadDraftForApplication function was not called");
+
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+			this.oRta.getToolbar().fireSaveAndReload();
+			await waitForSaveAndReloadEventHandler(oReloadStub);
+			assert.strictEqual(oSaveStub.callCount, 1, "the save function was called once");
+			assert.strictEqual(oEnableRestartStub.callCount, 1, "the enableRestart function was called once");
+			assert.strictEqual(oReloadStub.callCount, 1, "the reloadPage function was called once");
+			assert.strictEqual(oStopStub.callCount, 1, "the stop function was called once");
+			assert.strictEqual(oLoadDraftStub.callCount, 1, "the loadDraftForApplication function was called once");
+
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", false);
+			this.oRta.getToolbar().fireSaveAndReload();
+			await waitForSaveAndReloadEventHandler(oReloadStub);
+			assert.strictEqual(oSaveStub.callCount, 2, "the save function was called again");
+			assert.strictEqual(oEnableRestartStub.callCount, 2, "the enableRestart function was called again");
+			// due to the reset in waitForSaveAndReloadEventHandler, the callCount is 1 again
+			assert.strictEqual(oReloadStub.callCount, 1, "the reloadPage function was called again");
+			assert.strictEqual(oStopStub.callCount, 2, "the stop function was called again");
+			assert.strictEqual(oLoadDraftStub.callCount, 1, "the loadDraftForApplication function was not called again");
 		});
 	});
 
