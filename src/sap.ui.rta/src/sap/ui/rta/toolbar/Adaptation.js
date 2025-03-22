@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"./AdaptationRenderer",
 	"sap/base/Log",
 	"sap/m/MessageBox",
+	"sap/m/MessageStrip",
+	"sap/m/Popover",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
@@ -16,17 +18,20 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
 	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
+	"sap/ui/rta/toolbar/AdaptationRenderer",
+	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/util/whatsNew/WhatsNewOverview",
 	"sap/ui/rta/Utils"
 ], function(
-	AdaptationRenderer,
 	Log,
 	MessageBox,
+	MessageStrip,
+	Popover,
+	MessageType,
 	BusyIndicator,
 	Element,
 	Fragment,
@@ -37,11 +42,12 @@ sap.ui.define([
 	JSONModel,
 	Measurement,
 	AppVariantFeature,
-	Base,
 	ManageAdaptations,
 	SaveAsAdaptation,
 	Translation,
 	Versioning,
+	AdaptationRenderer,
+	Base,
 	WhatsNewOverview,
 	Utils
 ) {
@@ -83,7 +89,8 @@ sap.ui.define([
 				switchVersion: {},
 				switchAdaptation: {},
 				deleteAdaptation: {},
-				openChangeCategorySelectionPopover: {}
+				openChangeCategorySelectionPopover: {},
+				saveAndReload: {}
 			}
 		}
 	});
@@ -240,6 +247,23 @@ sap.ui.define([
 		return this.getExtension("versioning", Versioning).openActivateVersionDialog(sDisplayedVersion);
 	};
 
+	Adaptation.prototype.showHardReloadInfoPopover = function(oEvent) {
+		this._oHardReloadInfoPopover ||= new Popover({
+			placement: "Bottom",
+			content: [
+				new MessageStrip({
+					text: this.getTextResources().getText("MSG_HARD_RELOAD_INFO"),
+					type: MessageType.Warning,
+					showIcon: true
+				})
+			],
+			showHeader: false,
+			contentWidth: "18rem"
+		});
+		this.addDependent(this._oHardReloadInfoPopover);
+		this._oHardReloadInfoPopover.openBy(oEvent.getSource());
+	};
+
 	Adaptation.prototype.showActionsMenu = function(oEvent) {
 		var oButton = oEvent.getSource();
 		if (!this._oActionsMenuFragment) {
@@ -324,7 +348,9 @@ sap.ui.define([
 				formatVersionButtonText: this.formatVersionButtonText.bind(this),
 				showVersionHistory: this.showVersionHistory.bind(this),
 				showActionsMenu: this.showActionsMenu.bind(this),
-				showFeedbackForm: this.showFeedbackForm.bind(this)
+				showFeedbackForm: this.showFeedbackForm.bind(this),
+				showHardReloadInfoPopover: this.showHardReloadInfoPopover.bind(this),
+				saveAndReloadApp: this.eventHandler.bind(this, "SaveAndReload")
 			}
 		});
 	};

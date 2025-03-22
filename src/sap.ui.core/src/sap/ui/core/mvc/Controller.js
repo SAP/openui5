@@ -410,7 +410,7 @@ sap.ui.define([
 					return oController;
 				});
 			}, function(err){
-			throw new Error("Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + ".");
+			throw new Error("Controller Extension Provider: Error '" + err + "' thrown in " + sRegisteredExtensionProvider + ".");
 		});
 	};
 
@@ -754,7 +754,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Controller._sExtensionProvider = null;
+	let sRegisteredExtensionProvider = null;
 
 
 	/**
@@ -841,7 +841,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Controller.registerExtensionProvider = function(sExtensionProvider) {
-		Controller._sExtensionProvider = sExtensionProvider;
+		// remember the provider name for future error messages
+		sRegisteredExtensionProvider = sExtensionProvider;
 		ControllerExtensionProvider.registerExtensionProvider(sExtensionProvider);
 	};
 

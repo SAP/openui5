@@ -19,7 +19,9 @@ sap.ui.define([
 	"./LightBoxRenderer",
 	"sap/m/BusyIndicator",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/units/Rem"
+	"sap/ui/dom/units/Rem",
+	/* jQuery Plugin "firstFocusableDomRef"*/
+	"sap/ui/dom/jquery/Focusable"
 ], function (
 	library,
 	Control,
@@ -427,6 +429,9 @@ sap.ui.define([
 	 * @private
 	 */
 	LightBox.prototype._fnPopupOpened = function() {
+		// jQuery Plugin "firstFocusableDomRef"
+		this.$().firstFocusableDomRef()?.focus();
+
 		this._onResize();
 
 		jQuery("#sap-ui-blocklayer-popup").on("click", function() {

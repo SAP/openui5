@@ -102,7 +102,7 @@ sap.ui.define([
 		assert.strictEqual(this.oAnnotationPlugin.isAvailable([this.oButtonOverlay]), true, "then isAvailable returns true");
 		assert.strictEqual(this.oAnnotationPlugin.isEnabled([this.oButtonOverlay]), true, "then isEnabled returns true");
 		assert.strictEqual(this.oAnnotationPlugin._isEditable(this.oButtonOverlay), true, "then _isEditable returns true");
-		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION", "then the menu item id is correct");
+		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION_annotationChange1", "then the menu item id is correct");
 		assert.strictEqual(aMenuItems[0].text, "My Action Title", "then the menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is correct");
 		assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
@@ -131,13 +131,13 @@ sap.ui.define([
 						changeType: "myChangeType",
 						title: () => sActionTitle1,
 						isEnabled: false,
-						icon: "pathToAnnonationChange1Icon"
+						icon: "pathToAnnotationChange1Icon"
 					},
 					annotationChange2: {
 						changeType: "myChangeType2",
 						title: "TITLE_I18N_KEY",
 						isEnabled: () => true,
-						icon: "pathToAnnonationChange2Icon"
+						icon: "pathToAnnotationChange2Icon"
 					},
 					annotationChange3: {
 						changeType: "myChangeType3",
@@ -169,25 +169,25 @@ sap.ui.define([
 
 		const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
 		assert.strictEqual(aMenuItems.length, 4, "then two menu items are returned");
-		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION", "then the first menu item id is correct");
+		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION_annotationChange1", "then the first menu item id is correct");
 		assert.strictEqual(aMenuItems[0].text, sActionTitle1, "then the first menu item text is correct");
-		assert.strictEqual(aMenuItems[0].icon, "pathToAnnonationChange1Icon", "then the first menu item icon is correct");
+		assert.strictEqual(aMenuItems[0].icon, "pathToAnnotationChange1Icon", "then the first menu item icon is correct");
 		assert.strictEqual(aMenuItems[0].enabled, false, "then the first menu item is disabled");
 		assert.strictEqual(aMenuItems[0].rank, 300, "then the first menu item rank is correct");
 
-		assert.strictEqual(aMenuItems[1].id, "CTX_ANNOTATION", "then the second menu item id is correct");
+		assert.strictEqual(aMenuItems[1].id, "CTX_ANNOTATION_annotationChange2", "then the second menu item id is correct");
 		assert.strictEqual(aMenuItems[1].text, sActionTitle2, "then the second menu item text is correct");
-		assert.strictEqual(aMenuItems[1].icon, "pathToAnnonationChange2Icon", "then the second menu item icon is correct");
+		assert.strictEqual(aMenuItems[1].icon, "pathToAnnotationChange2Icon", "then the second menu item icon is correct");
 		assert.strictEqual(aMenuItems[1].enabled, true, "then the second menu item is enabled");
 		assert.strictEqual(aMenuItems[1].rank, 301, "then the second menu item rank is correct");
 
-		assert.strictEqual(aMenuItems[2].id, "CTX_ANNOTATION", "then the third menu item id is correct");
+		assert.strictEqual(aMenuItems[2].id, "CTX_ANNOTATION_annotationChange3", "then the third menu item id is correct");
 		assert.strictEqual(aMenuItems[2].text, sActionTitle2, "then the third menu item text is correct");
 		assert.strictEqual(aMenuItems[2].icon, "sap-icon://edit", "then the third menu item icon is correct");
 		assert.strictEqual(aMenuItems[2].enabled, true, "then the third menu item is enabled");
 		assert.strictEqual(aMenuItems[2].rank, 302, "then the third menu item rank is correct");
 
-		assert.strictEqual(aMenuItems[3].id, "CTX_ANNOTATION_CHANGE_SINGLE_LABEL", "then the fourth menu item id is correct");
+		assert.strictEqual(aMenuItems[3].id, "CTX_ANNOTATION_CHANGE_SINGLE_LABEL_annotationChange4", "then the fourth menu item id is correct");
 		assert.strictEqual(aMenuItems[3].text, sActionTitle2, "then the third menu item text is correct");
 		assert.strictEqual(aMenuItems[3].icon, "sap-icon://edit", "then the third menu item icon is correct");
 		assert.strictEqual(aMenuItems[3].enabled, true, "then the third menu item is enabled");
@@ -251,7 +251,7 @@ sap.ui.define([
 		assert.strictEqual(this.oAnnotationPlugin._isEditable(this.oButtonOverlay), true, "then _isEditable returns true");
 
 		const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
-		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION", "then the menu item id is correct");
+		assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION_annotationChange1", "then the menu item id is correct");
 		assert.strictEqual(aMenuItems[0].text, "My Action Title", "then the menu item text is correct");
 		assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is set to the default value");
 		assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
@@ -282,8 +282,6 @@ sap.ui.define([
 		sandbox.stub(this.oAnnotationPlugin._oDialog, "openDialogAndHandleChanges").resolves(aChanges);
 
 		this.oAnnotationPlugin.attachEventOnce("elementModified", function(oEvent) {
-			const bHasAnnotationCommand = oEvent.getParameter("hasAnnotationCommand");
-			assert.strictEqual(bHasAnnotationCommand, true, "then the event is fired with the hasAnnotationCommand flag");
 			const oCompositeCommand = oEvent.getParameter("command");
 			const aCommands = oCompositeCommand.getCommands();
 			assert.strictEqual(aCommands.length, 2, "then the composite command contains two annotation commands");

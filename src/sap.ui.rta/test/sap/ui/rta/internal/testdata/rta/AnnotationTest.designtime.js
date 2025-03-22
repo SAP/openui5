@@ -31,14 +31,17 @@ sap.ui.define([
 					serviceUrl: "testServiceUrl",
 					properties: [
 						{
-							propertyName: "My Test Label",
+							propertyName: "TechnicalName",
 							annotationPath: "path/to/test/label",
-							currentValue: oTextArrangementTypes.TextOnly
+							currentValue: oTextArrangementTypes.TextOnly,
+							tooltip: "My Test Tooltip"
 						},
 						{
-							propertyName: "My Other Test Label",
+							propertyName: "MyOtherTechnicalName",
 							annotationPath: "path/to/second/test/label",
-							currentValue: oTextArrangementTypes.IDFirst
+							currentValue: oTextArrangementTypes.IDFirst,
+							label: "My Other Test Label",
+							tooltip: "My Other Test Tooltip"
 						}
 					],
 					preSelectedProperty: bSingleAction && "path/to/test/label",

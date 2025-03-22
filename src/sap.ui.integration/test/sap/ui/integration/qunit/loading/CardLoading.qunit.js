@@ -2371,7 +2371,7 @@ sap.ui.define([
 			const delayedLoadingApplied = sinon.spy(oCard.getAggregation("_loadingProvider"), "applyDelay");
 
 			oCard.setManifest(oManifest);
-			oCard.setManifestChanges([{ "/sap.card/configuration/loadingPlaceholders/delay": 100 }]);
+			oCard.setManifestChanges([{ "/sap.card/configuration/loadingPlaceholders/delay": 300 }]);
 			oCard.placeAt(DOM_RENDER_LOCATION);
 
 			await nextCardReadyEvent(oCard);
@@ -2383,13 +2383,13 @@ sap.ui.define([
 			assert.ok(oCard.getDomRef().classList.contains("sapFCardLoadingDelayed"), "Card has the delayed loading class");
 			assert.ok(bDelay, "Loading placeholder should be delayed");
 			assert.ok(delayedLoadingApplied.called, "Loading placeholder gets the delay applied");
-			assert.ok(delayedLoadingApplied.calledWith(100), "Loading placeholder gets the correct delay");
+			assert.ok(delayedLoadingApplied.calledWith(300), "Loading placeholder gets the correct delay");
 
 			setTimeout(() => {
 				assert.notOk(oCard.getDomRef().classList.contains("sapFCardLoadingDelayed"), "Card has the delayed loading class removed.");
 				oCard.destroy();
 				done();
-			}, 200);
+			}, 400);
 		}
 
 		QUnit.module("Loading placeholders delay for different card types");
@@ -2403,7 +2403,7 @@ sap.ui.define([
 			{ type: "WebPage", manifest: oManifest_WebPageCard }
 		].forEach(function (oCase) {
 
-			QUnit.test("Card type: '" + oCase.type + "' has '" + oCase.placeholder + "' placeholder delayed", async function (assert) {
+			QUnit.test("Card type: '" + oCase.type + "' has placeholder delayed", async function (assert) {
 				await assertPlaceholderDelay(assert, oCase.manifest);
 			});
 		});
