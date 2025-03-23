@@ -424,6 +424,10 @@ sap.ui.define([
 					};
 				}
 			}
+
+			// static inheritance (https://tc39.es/ecma262/, 15.7.14, #8), null not supported!
+			Object.setPrototypeOf(fnClass, fnBaseClass);
+
 			// create prototype chain
 			fnClass.prototype = Object.create(fnBaseClass.prototype);
 			fnClass.prototype.constructor = fnClass;
@@ -432,19 +436,25 @@ sap.ui.define([
 		} else {
 			// default constructor does nothing
 			fnClass = fnClass || function() { };
+
+			// static inheritance (https://tc39.es/ecma262/, 15.7.14, #7)
+			Object.setPrototypeOf(fnClass, Function.prototype);
+
 			// enforce correct baseType
 			delete oClassInfo.metadata.baseType;
 		}
 		oClassInfo.constructor = fnClass;
 
-		// add metadata
-		var oMetadata = new FNMetaImpl(sClassName, oClassInfo);
+		// add static and instance methods to retrieve class metadata
+		const oMetadata = new FNMetaImpl(sClassName, oClassInfo);
 		fnClass.getMetadata = fnClass.prototype.getMetadata = function() {
 			return oMetadata;
 		};
 
-		// enrich function
-		if ( !fnClass.getMetadata().isFinal() ) {
+		// add `extend` method if class is not final
+		if ( fnClass.getMetadata().isFinal() ) {
+			fnClass.extend = undefined; // hides the inherited extend call
+		} else {
 			fnClass.extend = function(sSCName, oSCClassInfo, fnSCMetaImpl) {
 				return Metadata.createClass(fnClass, sSCName, oSCClassInfo, fnSCMetaImpl || FNMetaImpl);
 			};
