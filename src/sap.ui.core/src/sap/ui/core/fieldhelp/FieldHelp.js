@@ -90,12 +90,12 @@ sap.ui.define([
 		#fnUpdateHotspotsCallback = null;
 
 		/**
-		 * Maps a control ID to an object mapping a control property to a back-end help key URNs.
+		 * Maps a control ID to an object mapping a control property to an array of back-end help key URNs.
 		 *
 		 * @default {}
 		 * @type {Object<string, Object<string, string[]>>}
 		 */
-		#mDocuRefControlToFieldHelp = {};
+		mDocuRefControlToFieldHelp = {};
 
 		/**
 		 * A Promise that resolves when all hotspot updates are done.
@@ -462,10 +462,10 @@ sap.ui.define([
 		 */
 		_getFieldHelpDisplayMapping() {
 			const mControlIDToDisplayControlID = {};
-			for (const sControlID in this.#mDocuRefControlToFieldHelp) {
+			for (const sControlID in this.mDocuRefControlToFieldHelp) {
 				const oControl = Element.getElementById(sControlID);
 				if (!oControl) { // control has been destroyed, cleanup internal data structure
-					delete this.#mDocuRefControlToFieldHelp[sControlID];
+					delete this.mDocuRefControlToFieldHelp[sControlID];
 					continue;
 				}
 
@@ -492,14 +492,14 @@ sap.ui.define([
 			const mControlIDToDisplayControlID = this._getFieldHelpDisplayMapping();
 			const mDisplayControlIDToURNs = new Map();
 			const aFieldHelpHotspots = [];
-			Object.keys(this.#mDocuRefControlToFieldHelp).forEach((sControlID) => {
+			Object.keys(this.mDocuRefControlToFieldHelp).forEach((sControlID) => {
 				const sDisplayControlID = mControlIDToDisplayControlID[sControlID] || sControlID;
 				const oURNSet = mDisplayControlIDToURNs.get(sDisplayControlID)
 					?? mDisplayControlIDToURNs.set(sDisplayControlID, new Set()).get(sDisplayControlID);
-				const aDocuRefsForControl = this.#mDocuRefControlToFieldHelp[sControlID][undefined];
+				const aDocuRefsForControl = this.mDocuRefControlToFieldHelp[sControlID][undefined];
 				const aDocuRefs = aDocuRefsForControl
 					? [aDocuRefsForControl]
-					: Object.values(this.#mDocuRefControlToFieldHelp[sControlID]);
+					: Object.values(this.mDocuRefControlToFieldHelp[sControlID]);
 				aDocuRefs.forEach((aURNs) => {
 					aURNs.forEach(oURNSet.add.bind(oURNSet)); // add to the Set to filter duplicates
 				});
@@ -546,13 +546,13 @@ sap.ui.define([
 		 */
 		_setFieldHelpDocumentationRefs(oElement, sControlProperty, aDocumentationRefs) {
 			const sControlID = oElement.getId();
-			this.#mDocuRefControlToFieldHelp[sControlID] ||= {};
+			this.mDocuRefControlToFieldHelp[sControlID] ||= {};
 			if (aDocumentationRefs.length > 0) {
-				this.#mDocuRefControlToFieldHelp[sControlID][sControlProperty] = aDocumentationRefs;
+				this.mDocuRefControlToFieldHelp[sControlID][sControlProperty] = aDocumentationRefs;
 			} else {
-				delete this.#mDocuRefControlToFieldHelp[sControlID][sControlProperty];
-				if (Object.keys(this.#mDocuRefControlToFieldHelp[sControlID]).length === 0) {
-					delete this.#mDocuRefControlToFieldHelp[sControlID];
+				delete this.mDocuRefControlToFieldHelp[sControlID][sControlProperty];
+				if (Object.keys(this.mDocuRefControlToFieldHelp[sControlID]).length === 0) {
+					delete this.mDocuRefControlToFieldHelp[sControlID];
 				}
 			}
 			this._updateHotspots().catch(() => {/* avoid uncaught in Promise; do nothing */});
@@ -704,7 +704,7 @@ sap.ui.define([
 		 */
 		deactivate() {
 			this.#bActive = false;
-			this.#mDocuRefControlToFieldHelp = {};
+			this.mDocuRefControlToFieldHelp = {};
 			this.#fnUpdateHotspotsCallback = null;
 			this.#mMetaModel2TextMappingPromise.clear();
 			this.#mMetamodel2TextPropertyInfo.clear();
