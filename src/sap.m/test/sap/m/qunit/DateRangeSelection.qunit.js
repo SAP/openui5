@@ -535,6 +535,38 @@ sap.ui.define([
 		oDateRangeSelection.destroy();
 	});
 
+	QUnit.test("Using the same delimiter and separator for the date components", function(assert) {
+		//arrange
+		var oFirstDate = UI5Date.getInstance(2019, 1, 17);
+		var oSecondDate = UI5Date.getInstance(2019, 1, 18);
+		var sFirstDate = `${oFirstDate.getDate()}-${oFirstDate.getMonth() + 1}-${oFirstDate.getFullYear()}`;
+		var sSecondDate = `${oSecondDate.getDate()}-${oSecondDate.getMonth() + 1}-${oSecondDate.getFullYear()}`;
+		var oDateRangeSelection = new DateRangeSelection({
+				displayFormat: "dd-MM-yyyy",
+				displayFormatType: CalendarType.Gregorian,
+				delimiter:'-',
+				dateValue: UI5Date.getInstance(2019,0,17),
+				secondDateValue: UI5Date.getInstance(2019,0,18)
+			});
+		var aDates;
+
+		// act
+		aDates = oDateRangeSelection._splitValueByDelimiter(sFirstDate + String.fromCharCode(45) + sSecondDate);
+		//assert
+		assert.strictEqual(aDates.length, 6, "When the same symbol is used as both the delimiter and separator, an array of all the date components is obtained");
+
+		// act
+		aDates = oDateRangeSelection._parseValue(sFirstDate + String.fromCharCode(45) + sSecondDate);
+
+		//assert
+		assert.strictEqual(aDates.length, 2, "When the same symbol is used as both the delimiter and separator, the array contains only two dates");
+		assert.ok(CalendarDate.fromLocalJSDate(oFirstDate).isSame(CalendarDate.fromLocalJSDate(aDates[0]), "The first date is correctly parsed"));
+		assert.ok(CalendarDate.fromLocalJSDate(oSecondDate).isSame(CalendarDate.fromLocalJSDate(aDates[1]), "The second date is correctly parsed"));
+
+		//clean
+		oDateRangeSelection.destroy();
+	});
+
 	QUnit.test("weekNumberSelect applies new selection", function(assert) {
 		// Arrange
 		var oDateRangeSelection = new DateRangeSelection({
