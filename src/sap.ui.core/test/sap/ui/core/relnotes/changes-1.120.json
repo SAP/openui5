@@ -958,5 +958,30 @@
         "text": " sap/ui/model/odata/*: use string value for sap-cancel-on-close"
       }
     ]
+  },
+  "1.120.28": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "3dc1d9ee5f055c628400442084ebef00079a6e85",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#__getPropertyMetadata: fix nested complex type properties"
+      },
+      {
+        "id": "a366bd7d1af1ee1f8c37ab7db567de96782bec36",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel: no caching of metadata with cache buster segment"
+      },
+      {
+        "id": "f2fbc5244b49c414e9ba3597c759e1a7c6c06c8e",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel#createEntry: ignore transient context if path is absolute"
+      },
+      {
+        "id": "da4a8ca6cd28da4f9a97bf43d5939df7a305529e",
+        "type": "FIX",
+        "text": " IconPool: Add more mime-type mappings for MS Excel files"
+      }
+    ]
   }
 }

@@ -18,5 +18,15 @@
         "text": " ColumnLayout: keep breakpoint classes stable on invalidation"
       }
     ]
+  },
+  "1.120.28": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "995948b2d890ab52e50e61d1f17e7facc7ef2ff0",
+        "type": "FIX",
+        "text": " ColumnLayout: render as <dl> in display mode"
+      }
+    ]
   }
 }

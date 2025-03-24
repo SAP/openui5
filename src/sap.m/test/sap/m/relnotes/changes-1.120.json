@@ -1126,5 +1126,30 @@
         "text": " sap.m.Bar: Add role \"toolbar\" depending of the content"
       }
     ]
+  },
+  "1.120.28": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "d070847a7d29e6dc6c1152024bb5130c07decc77",
+        "type": "FIX",
+        "text": " sap.m.Input: Speech output for table suggestions is now enhanced"
+      },
+      {
+        "id": "6566fbb075d931701eff9579ed41981358ef4f3d",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Enable typing with virtual keyboard on Mac"
+      },
+      {
+        "id": "0df841fd74849b8e83c864166bc0b598293defc8",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      },
+      {
+        "id": "cb9656af10dc6f961a57aed2a726ca7be84f7066",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Appointments text is resized depending of the scale factor now"
+      }
+    ]
   }
 }

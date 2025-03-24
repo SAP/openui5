@@ -210,5 +210,20 @@
         "text": " ValueHelp: Search field not cleared on reopen"
       }
     ]
+  },
+  "1.120.28": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "7a8cef0834522a182de0b0ccf8e5b1b7d532fd9a",
+        "type": "FIX",
+        "text": " MDC.ValueHelp: Popover promise handling improvements"
+      },
+      {
+        "id": "089b090aa5686f79509e8aed71be7329b66d60b5",
+        "type": "FIX",
+        "text": " Field: Typeahed - announce table headers on arrow navigation"
+      }
+    ]
   }
 }

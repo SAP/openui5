@@ -265,5 +265,15 @@
         "text": " sap.m.DynamicPage: blank space on snap is no longer visible"
       }
     ]
+  },
+  "1.120.28": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "28eab1297716e25437c372a67bb0e4c9c173671d",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fix failing QUnit test"
+      }
+    ]
   }
 }
