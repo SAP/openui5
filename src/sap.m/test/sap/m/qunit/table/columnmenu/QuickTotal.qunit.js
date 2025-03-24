@@ -74,7 +74,7 @@ sap.ui.define([
 		let oQuickTotalItem = this.oQuickTotal.getItems()[0];
 		let sLabel = oQuickTotalItem.getLabel();
 		assert.equal(sLabel, "A", "The label of the first QuickTotalItem is correct");
-		let oContent = oQuickTotalItem.getContent();
+		let oContent = this.oQuickTotal.getEffectiveQuickActions()[0].getContent()[0];
 		assert.ok(oContent, "The first QuickTotalItem has content");
 		assert.ok(oContent.isA("sap.m.Switch"), "The content of the first QuickTotalItem is a Switch");
 		assert.ok(!oContent.getState(), "The first switch is off");
@@ -82,7 +82,7 @@ sap.ui.define([
 		oQuickTotalItem = this.oQuickTotal.getItems()[1];
 		sLabel = oQuickTotalItem.getLabel();
 		assert.equal(sLabel, "B", "The label of the second QuickTotalItem is correct");
-		oContent = oQuickTotalItem.getContent();
+		oContent = this.oQuickTotal.getEffectiveQuickActions()[1].getContent()[0];
 		assert.ok(oContent, "The second QuickTotalItem has content");
 		assert.ok(oContent.isA("sap.m.Switch"), "The content of the second QuickTotalItem is a Switch");
 		assert.ok(oContent.getState(), "The second switch is on");
@@ -90,7 +90,7 @@ sap.ui.define([
 
 	QUnit.test("QuickTotalItem setTotaled", function(assert) {
 		const oQuickTotalItem = this.oQuickTotal.getItems()[0];
-		const oSwitch = oQuickTotalItem.getContent();
+		const oSwitch = this.oQuickTotal.getEffectiveQuickActions()[0].getContent()[0];
 
 		assert.notOk(oSwitch.getState(), "The initial state of the switch is correct");
 		oQuickTotalItem.setTotaled(true);
@@ -140,7 +140,7 @@ sap.ui.define([
 		oMenu.openBy(this.oButton);
 
 		const oQuickTotal = oMenu.getAggregation("quickActions")[0];
-		const oSwitch = oQuickTotal.getItems()[0].getContent();
+		const oSwitch = oQuickTotal.getEffectiveQuickActions()[0].getContent()[0];
 
 		oQuickTotal.attachChange(function(oEvent) {
 			assert.ok(true, "Change event has been fired");
