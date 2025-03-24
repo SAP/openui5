@@ -357,10 +357,8 @@ sap.ui.define([
 			// make sure tests can check the spy independently
 			this.oEPSpy.resetHistory();
 		},
-		after: function() {
-			// unload provider, so that subsequent async tests can reload the module again
-			// needed to test the loading of the provider class
-			sap.ui.loader._.unloadResources("testdata/customizing/customer/ext/ExtensionPointProvider.js", false, true);
+		_after: function() {
+			ExtensionPoint.registerExtensionProvider(null);
 		}
 	});
 
@@ -396,15 +394,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-
-	// matches if the "view" property in the EP info object for flex is of type "sap.ui.core.mvc.View"
-	const oViewClassMatcher = sinon.match((v) => {return v?.getMetadata().isA("sap.ui.core.mvc.View");});
-
-	// matches the control against the given ID
-	const idMatcher = (sId) => {
-		return sinon.match((v) => {return v?.getId() === sId;});
-	};
-
 	/**
 	 * Asserts if we made the correct calls to the registered ExtensionPointProvider.
 	 * This includes information about the targetControl, closestBindingCarrier,
@@ -413,6 +402,9 @@ sap.ui.define([
 	 * @param {function} assert the QUnit assert function
 	 */
 	function assertExtensionPointProviderSpies(assert, oView) {
+
+		// matches if the "view" property in the EP info object for flex is of type "sap.ui.core.mvc.View"
+		const oViewClassMatcher = sinon.match((v) => {return v?.getMetadata().isA("sap.ui.core.mvc.View");});
 
 		// inspect EP Provider calls
 		assert.equal(this.oEPSpy.getCalls().length, 21, "21 Calls to the EP Provider");
@@ -540,6 +532,11 @@ sap.ui.define([
 	 * @param {function} assert the QUnit assert function
 	 */
 	function assertNestedViewExtensionPoints(assert) {
+		// matches the control against the given ID
+		const idMatcher = (sId) => {
+			return sinon.match((v) => {return v?.getId() === sId;});
+		};
+
 		// EP_In_Product_Table_Column - 1st
 		assert.ok(this.oEPSpy.calledWith(sinon.match({
 			name: "EP_In_Product_Table_Column",

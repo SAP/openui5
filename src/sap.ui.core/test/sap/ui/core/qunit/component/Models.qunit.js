@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/deepExtend",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentHooks",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Localization,
 	ResourceBundle,
 	deepExtend,
+	LoaderExtensions,
 	URLConfigurationProvider,
 	Component,
 	ComponentHooks,
@@ -2024,11 +2026,6 @@ sap.ui.define([
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 			// enable async preloading
 			this.oConfigurationGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("");
-
-			// unload not existing module to prevent different logs
-			// depending on cached 404 response or not
-			// (see "class-not-loaded" model in manifest below)
-			privateLoaderAPI.unloadResources("sap/ui/sample/model/MyModel.js", false, true);
 
 			//setup fake server
 			var oManifest = this.oManifest = {
@@ -4317,6 +4314,7 @@ sap.ui.define([
 
 			await this.spyModels();
 			this.oLogSpy = sinon.spy(Log, "error");
+			this.oResolveUI5UrlSpy = sinon.spy(LoaderExtensions, "resolveUI5Url");
 
 			sap.ui.loader.config({
 				paths: {
@@ -4329,19 +4327,11 @@ sap.ui.define([
 		afterEach: function(assert) {
 			this.restoreModels();
 			this.oLogSpy.restore();
+			this.oResolveUI5UrlSpy.restore();
 
 			this.oComponent.destroy();
 
 			this.restoreGetUriParameters();
-
-			// To keep reusing the same component for async and sync path tests,
-			// we need to unload the Component and remove the leftovers from the ComponentMetadata.
-			// This way all tests start fresh and actually load the Component again.
-			var TestComponent = sap.ui.require("testdata/v2models/ui5Urls/Component");
-			if ( TestComponent ) {
-				delete TestComponent.getMetadata()._oManifest;
-			}
-			privateLoaderAPI.unloadResources('testdata/v2models/ui5Urls/Component.js', true, true, true);
 
 			// remove the previous path-configs/resource-roots
 			sap.ui.loader.config({
@@ -4363,6 +4353,10 @@ sap.ui.define([
 			"test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/resourceRoots/subfolder",
 			"Resource-roots is now defined."
 		);
+
+		// check the number of resolved ui5:// URLs (see manifest.json why 8 are expected)
+		assert.strictEqual(LoaderExtensions.resolveUI5Url.callCount, 8,
+			"Expected number of ui5:// URLs have been resolved");
 
 		// sap.ui.model.odata.ODataModel
 		sinon.assert.callCount(this.modelSpy.odataV2, 2);
@@ -4392,35 +4386,35 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.test("ASYNC: Resolve annotation urls; Manifest first;", function(assert) {
+	QUnit.test("ASYNC: Resolve annotation urls; Manifest first;", async function(assert) {
 		// stub uri parameters with sap-client and sap-server
 		this.stubGetUriParameters();
 
-		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot",
+			"[precondition] Resource-roots not defined yet.");
 
-		return Component.create({
+		this.oComponent = await Component.create({
 			name: "testdata.v2models.ui5Urls"
-		}).then(function(oComponent) {
-			this.oComponent = oComponent;
-			fnAssert.call(this, assert);
-		}.bind(this));
+		});
+
+		fnAssert.call(this, assert);
 	});
 
-	QUnit.test("ASYNC: Resolve annotation urls; Manifest last;", function(assert) {
+	QUnit.test("ASYNC: Resolve annotation urls; Manifest last;", async function(assert) {
 		// stub uri parameters with sap-client and sap-server
 		this.stubGetUriParameters();
 
-		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
+		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot",
+			"[precondition] Resource-roots not defined yet.");
 
 		// manifest-last   =>   Component metadata says manifest: "json", so the manifest is loaded later
 		// url resolution triggered during manifest init
 		// Manifest model init is triggered afterwards during Component constructor, at this time all URLs have been resolved
-		return Component.create({
+		this.oComponent = await Component.create({
 			name: "testdata.v2models.ui5Urls",
 			manifest: false
-		}).then(function(oComponent) {
-			this.oComponent = oComponent;
-			fnAssert.call(this, assert);
-		}.bind(this));
+		});
+
+		fnAssert.call(this, assert);
 	});
 });
