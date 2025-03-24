@@ -735,18 +735,12 @@ function(
 		var bTablet = this.isPlatformTablet(),
 			oControl = core.byId(oEvent.relatedControlId),
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
-			sOldValue = this.getValue(),
 			oPicker = this.getPicker(),
 			oTokenizer = this.getAggregation("tokenizer");
 
 		// If focus target is outside of picker and the picker is fully opened
 		if (!this._bPickerIsOpening && (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef))) {
-			this.setValue(null);
 
-			// fire change event only if the value of the MCB is not empty
-			if (sOldValue) {
-				this.fireChangeEvent("", { value: sOldValue });
-			}
 
 			// if the focus is outside the MultiComboBox, the tokenizer should be collapsed
 			if (!jQuery.contains(this.getDomRef(), document.activeElement)) {
@@ -2353,6 +2347,20 @@ function(
 		}
 
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
+
+		var sOldValue = this.getValue(),
+			oPicker = this.getPicker(),
+			oFocusTarget = oEvent.relatedTarget;
+
+		// If focus target is outside of picker and the picker is fully opened
+		if (!this._bPickerIsOpening && !containsOrEquals(oPicker?.getDomRef(), oFocusTarget)) {
+		this.setValue(null);
+
+			// fire change event only if the value of the MCB is not empty
+			if (sOldValue) {
+				this.fireChangeEvent("", { value: sOldValue });
+			}
+		}
 	};
 
 	/**
