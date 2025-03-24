@@ -17,6 +17,8 @@ sap.ui.define([
 	'sap/tnt/SideNavigation',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
+	'sap/ui/core/HTML',
+	'sap/base/Log',
 	'sap/ui/qunit/utils/nextUIUpdate',
 	'sap/ui/qunit/utils/waitForThemeApplied'
 ], function (
@@ -37,6 +39,8 @@ sap.ui.define([
 	SideNavigation,
 	NavigationList,
 	NavigationListItem,
+	HTML,
+	Log,
 	nextUIUpdate,
 	waitForThemeApplied
 ) {
@@ -705,6 +709,33 @@ sap.ui.define([
 		assert.strictEqual(this.toolPage.getSideContent().getExpanded(), true, "SideContent should be expanded in Phone mode");
 
 		oDeviceStub.restore();
+	});
+
+	QUnit.module("Header and subheader restrictions");
+
+	QUnit.test("There are no restrictions for header and subheader", async function (assert) {
+		const oToolPage = new ToolPage({
+			header: new HTML({content: "<div><h1 id='test-header'>Header</h1></div>"}),
+			subHeader: new HTML({content: "<div><h2 id='test-subheader'>Sub Header</h2></div>"})
+		});
+
+		const oLogSpyError = this.spy(Log, "error");
+		const oLogSpyWarning = this.spy(Log, "warning");
+
+		oPage.addContent(oToolPage);
+
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(document.getElementById("test-header"), "The header is rendered.");
+		assert.ok(document.getElementById("test-header"), "The subheader is rendered.");
+
+		assert.ok(oLogSpyError.notCalled, "There are no errors logged.");
+		assert.ok(oLogSpyWarning.notCalled, "There are no warnings logged.");
+
+		oToolPage.destroy();
+		oLogSpyError.restore();
+		oLogSpyWarning.restore();
 	});
 
 	return waitForThemeApplied();
