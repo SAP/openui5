@@ -420,14 +420,11 @@ sap.ui.define([
 
 			_enableDataTable: function (oTable) {
 				var sTableId = oTable.id,
-					oConfig = Object.assign(this._getDataTableConfig(sTableId), { responsive: true, layout: {
-						topStart: {
-							buttons: ['colvis', 'pageLength']
-						}}}),
+					oConfig = Object.assign(this._getDataTableConfig(sTableId)),
 					oDataTable;
 
 				if (oConfig) {
-					oDataTable = jQuery('#' + sTableId).DataTable(oConfig);
+					oDataTable = new DataTable().init(sTableId, oTable, oConfig);
 					this._getDataTableHelper().addDatatable(oDataTable);
 				}
 
