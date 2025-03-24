@@ -2,7 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+	"sap/ui/fl/descriptorRelated/api/DescriptorChange",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
@@ -11,7 +13,9 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Layer,
+	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
+	DescriptorChange,
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
@@ -23,18 +27,18 @@ sap.ui.define([
 
 	QUnit.module("Given the parameters required to create an manifest change...", {
 		before() {
-			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
+			this.sReference = "appReference";
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, this.sReference);
 		},
 		after() {
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
 		},
 		beforeEach() {
-			this.sReference = "appReference";
 			this.mFlexSettings = {
 				layer: Layer.CUSTOMER
 			};
-			this.sChangeType = "dummyChangeType";
+			this.sChangeType = "appdescr_ovp_addNewCard";
 
 			this.mParameters = {
 				dataSource: {
@@ -71,17 +75,16 @@ sap.ui.define([
 				mockName: "mocked"
 			};
 
-			const oMockManifestChange = {
-				store() {
-					assert.ok(true, "the manifest change was submitted");
-					const mPassedSettings = fnAssertSpy.getCall(0).args[0];
-					const bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
-						return sKey === "selector";
-					});
-					assert.notOk(bHasSelector, "the selector is not part of the passed settings");
-					fnAssertSpy.restore();
-					done();
-				}
+			const oMockManifestChange = new DescriptorChange({});
+			oMockManifestChange.store = function() {
+				assert.ok(true, "the manifest change was submitted");
+				const mPassedSettings = fnAssertSpy.getCall(0).args[0];
+				const bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
+					return sKey === "selector";
+				});
+				assert.notOk(bHasSelector, "the selector is not part of the passed settings");
+				fnAssertSpy.restore();
+				done();
 			};
 
 			this.createManifestInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
@@ -95,8 +98,7 @@ sap.ui.define([
 			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oInlineChange, sLayer, oAppComponent, sGenerator) {
 				assert.strictEqual(sReference, this.sReference, "reference is properly passed to createNew function");
 				assert.strictEqual(oInlineChange.mockName, oMockManifestInlineChange.mockName, "Inline Change is properly passed to createNew function");
-				assert.strictEqual(sLayer, this.sLayer, "layer is properly passed to createNew function");
-				assert.strictEqual(oAppComponent, this.oMockedAppComponent, "App Component is properly passed to createNew function");
+				assert.strictEqual(sLayer, this.mFlexSettings.layer, "layer is properly passed to createNew function");
 				assert.strictEqual(sGenerator, "sap.ui.rta.ManifestCommand", "the generator is properly passed to createNew function");
 
 				this.createNewChangeStub.restore();
@@ -110,7 +112,67 @@ sap.ui.define([
 				texts: this.mTexts,
 				changeType: this.sChangeType,
 				appComponent: this.oMockedAppComponent
-			}, {}, {layer: this.sLayer})
+			}, {}, {layer: this.mFlexSettings.layer})
+
+			.then(function(oManifestCommand) {
+				assert.ok(oManifestCommand, "App Descriptor command exists for element");
+				assert.ok(oManifestCommand.needsReload, "App Descriptor commands need restart to be applied");
+				oManifestCommand.createAndStoreChange();
+			})
+
+			.catch(function(oError) {
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
+			});
+		});
+
+		QUnit.test("when calling command factory for a generic app descriptor change type and context based adaptation enabled", function(assert) {
+			const done = assert.async();
+			const fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
+			const sAdataptionId = "adaptationId";
+			sinon.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
+			sinon.stub(ContextBasedAdaptationsAPI, "getDisplayedAdaptationId").returns(sAdataptionId);
+
+			const oMockDescriptorInlineChange = {
+				mockName: "mocked"
+			};
+
+			const oMockDescriptorChange = new DescriptorChange({});
+			oMockDescriptorChange.store = function() {
+				assert.ok(true, "the descriptor change was submitted");
+				const mPassedSettings = fnAssertSpy.getCall(0).args[0];
+				const bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
+					return sKey === "selector";
+				});
+				assert.notOk(bHasSelector, "the selector is not part of the passed settings");
+				fnAssertSpy.restore();
+				done();
+			};
+
+			this.createDescriptorInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
+				assert.strictEqual(mPropertyBag.changeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' function");
+				assert.strictEqual(mPropertyBag.content, this.mParameters, "parameters are properly passed to the 'createDescriptorInlineChange' function");
+				assert.strictEqual(mPropertyBag.texts, this.mTexts, "texts are properly passed to the 'createDescriptorInlineChange' function");
+				assert.strictEqual(mPropertyBag.adaptationId, sAdataptionId, "adaptationId is properly passed to the 'createDescriptorInlineChange' function");
+				this.createDescriptorInlineChangeStub.restore();
+				return Promise.resolve(oMockDescriptorInlineChange);
+			}.bind(this));
+
+			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oInlineChange, sLayer, _, sGenerator) {
+				assert.strictEqual(sReference, this.sReference, "reference is properly passed to createNew function");
+				assert.strictEqual(oInlineChange.mockName, oMockDescriptorInlineChange.mockName, "Inline Change is properly passed to createNew function");
+				assert.strictEqual(sLayer, this.mFlexSettings.layer, "layer is properly passed to createNew function");
+				assert.strictEqual(sGenerator, "sap.ui.rta.ManifestCommand", "the generator is properly passed to createNew function");
+				this.createNewChangeStub.restore();
+				return Promise.resolve(oMockDescriptorChange);
+			}.bind(this));
+
+			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+				reference: this.sReference,
+				parameters: this.mParameters,
+				texts: this.mTexts,
+				changeType: this.sChangeType,
+				appComponent: this.oMockedAppComponent
+			}, {}, {layer: this.mFlexSettings.layer})
 
 			.then(function(oManifestCommand) {
 				assert.ok(oManifestCommand, "Manifest command exists for element");
@@ -131,7 +193,7 @@ sap.ui.define([
 					libraries: {}
 				},
 				texts: this.mTexts,
-				changeType: "create_ui5_addLibraries",
+				changeType: "appdescr_ui5_addLibraries",
 				appComponent: this.oMockedAppComponent
 			}, {}, {layer: this.sLayer})
 			.then(function(oManifestCommand) {
@@ -145,6 +207,30 @@ sap.ui.define([
 			})
 			.catch(function(oError) {
 				assert.ok(false, `catch must never be called - Error: ${oError}`);
+			});
+		});
+
+		QUnit.test("when calling command factory for a addLibraries manifest and adding composite command id ...", function(assert) {
+			const sCompositeCommandId = "my-fancy-new-composite-command";
+			return CommandFactory.getCommandFor(this.oButton, "manifest", {
+				reference: this.sReference,
+				parameters: {
+					libraries: {}
+				},
+				texts: this.mTexts,
+				changeType: "create_ui5_addLibraries",
+				appComponent: this.oMockedAppComponent
+			}, {}, {layer: this.sLayer})
+			.then(function(oManifestCommand) {
+				oManifestCommand.setCompositeId(sCompositeCommandId);
+				assert.ok(oManifestCommand, "Manifest command exists for element");
+				return oManifestCommand.createAndStoreChange();
+			}).catch((oError) => {
+				assert.strictEqual(
+					oError.message,
+					"With the given changeSpecificData, no manifest change could be created.",
+					"then an error is thrown"
+				);
 			});
 		});
 

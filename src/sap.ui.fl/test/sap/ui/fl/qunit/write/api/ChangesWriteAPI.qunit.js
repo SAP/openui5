@@ -137,9 +137,9 @@ sap.ui.define([
 
 		[true, false].forEach((bCBA) => {
 			const sName = "when create is called";
-			const sCBASuffix = bCBA ? " and ContextBasedAdaptations available" : "";
+			const sCBASuffix = bCBA ? "and ContextBasedAdaptations available" : "";
 
-			QUnit.test(`${sName} with a control or selector object${sCBASuffix}`, function(assert) {
+			QUnit.test(`${sName} with a control or selector object ${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const oControl = new Element("controlId");
 				const mPropertyBag = {
@@ -165,7 +165,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(`${sName} with an extension point selector${sCBASuffix}`, function(assert) {
+			QUnit.test(`${sName} with an extension point selector ${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {changeType: "addXMLAtExtensionPoint", name: "foo"},
@@ -196,7 +196,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(`${sName} with a component${sCBASuffix}`, function(assert) {
+			QUnit.test(`${sName} with a component ${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {changeType: "changeSpecificData"},
@@ -219,7 +219,7 @@ sap.ui.define([
 				});
 			});
 
-			QUnit.test(`${sName} with an annotation change${sCBASuffix}`, async function(assert) {
+			QUnit.test(`${sName} with an annotation change ${sCBASuffix}`, async function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					annotationChange: true,
@@ -244,7 +244,41 @@ sap.ui.define([
 				);
 			});
 
-			QUnit.test(`${sName} with a deactivation change${sCBASuffix}`, function(assert) {
+			QUnit.test(`${sName} with descriptor change ${sCBASuffix}`, async function(assert) {
+				const sChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+				const mPropertyBag = {
+					selector: this.vSelector,
+					changeSpecificData: {
+						changeType: sChangeType,
+						content: {
+							card: {
+								"customer.acard": {}
+							}
+						},
+						texts: {
+							text1: "text1"
+						},
+						reference: "reference",
+						layer: Layer.CUSTOMER
+					}
+				};
+				mPropertyBag.selector.getManifest = function() {};
+				sandbox.stub(FlexUtils, "getAppDescriptor").returns(mPropertyBag.selector.appComponent.getManifest());
+				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
+
+				const oDescriptorChange = await ChangesWriteAPI.create(mPropertyBag);
+				assert.strictEqual(
+					oDescriptorChange._mChangeFile.adaptationId,
+					bCBA ? "adaptationId" : undefined,
+					"the adaptation Id is added to the change if needed"
+				);
+				assert.strictEqual(
+					oDescriptorChange._oInlineChange._getChangeType(), sChangeType,
+					"then the correct descriptor change type was created"
+				);
+			});
+
+			QUnit.test(`${sName} with a deactivation change ${sCBASuffix}`, function(assert) {
 				sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(bCBA);
 				const mPropertyBag = {
 					changeSpecificData: {

@@ -67,7 +67,7 @@ sap.ui.define([
 	var ChangesWriteAPI = /** @lends sap.ui.fl.write.api.ChangesWriteAPI */ {};
 
 	function createDescriptorChange(mPropertyBag) {
-		var sLayer;
+		let sLayer;
 		if (mPropertyBag.changeSpecificData.layer) {
 			// Smart business must pass the layer as a part of ChangeSpecificData
 			// If not passed, layer CUSTOMER will be set
@@ -84,10 +84,24 @@ sap.ui.define([
 			oInlineChange.texts = mPropertyBag.changeSpecificData.texts;
 		}
 
+		if (mPropertyBag.changeSpecificData.support) {
+			oInlineChange.support = {
+				compositeCommand: mPropertyBag.changeSpecificData.support.compositeCommand || ""
+			};
+		}
+
+		if (mPropertyBag.changeSpecificData.adaptationId) {
+			oInlineChange.adaptationId = mPropertyBag.changeSpecificData.adaptationId;
+		}
+
 		return AppVariantInlineChangeFactory.createDescriptorInlineChange(oInlineChange)
 		.then((oAppDescriptorChangeContent) => {
 			return new DescriptorChangeFactory().createNew(
-				mPropertyBag.changeSpecificData.reference, oAppDescriptorChangeContent, sLayer, mPropertyBag.selector
+				mPropertyBag.changeSpecificData.reference,
+				oAppDescriptorChangeContent,
+				sLayer,
+				undefined,
+				mPropertyBag.generator
 			);
 		})
 		.catch((oError) => {
@@ -149,35 +163,41 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information
+	 * @param {string} mPropertyBag.changeSpecificData.changeType - Type of the change
+	 * @param {string} mPropertyBag.changeSpecificData.layer - Layer in which the change should be created
+	 * @param {string} mPropertyBag.changeSpecificData.reference - Flex reference of the application
 	 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code> and internally since flex changes are always local when they are created.
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Managed object or selector object
 	 *
-	 * @returns {Promise|sap.ui.fl.apply._internal.flexObjects.FlexObject} Returns the FlexObject directly In case of a controller extension,
-	 * otherwise the FlexObject is wrapped in a promise
+	 * @returns {Promise|sap.ui.fl.apply._internal.flexObjects.FlexObject} Returns the FlexObject directly in case of a controller extension,
+	 * otherwise the FlexObject is wrapped in a promise.
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
 	ChangesWriteAPI.create = function(mPropertyBag) {
-		if (mPropertyBag.changeSpecificData.changeType === "codeExt") {
-			return FlexObjectFactory.createControllerExtensionChange(mPropertyBag.changeSpecificData);
+		const { changeSpecificData: oChangeSpecificData, selector: oSelector } = mPropertyBag;
+
+		if (oChangeSpecificData.changeType === "codeExt") {
+			return FlexObjectFactory.createControllerExtensionChange(oChangeSpecificData);
 		}
 
-		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector.view || mPropertyBag.selector);
-		const sReference = mPropertyBag.selector.appId || ManifestUtils.getFlexReferenceForControl(oAppComponent);
-		mPropertyBag.appComponent = oAppComponent;
-		mPropertyBag.changeSpecificData.reference = sReference;
-
-		if (DescriptorChangeTypes.getChangeTypes().includes(mPropertyBag.changeSpecificData.changeType)) {
-			return createDescriptorChange(mPropertyBag);
+		mPropertyBag.appComponent = Utils.getAppComponentForSelector(oSelector.view || oSelector);
+		if (oSelector?.appId || ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent)) {
+			oChangeSpecificData.reference = oSelector?.appId || ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
 		}
 
 		const mContextBasedAdaptationBag = {
-			layer: mPropertyBag.changeSpecificData.layer,
-			control: oAppComponent,
-			reference: sReference
+			layer: oChangeSpecificData.layer,
+			control: mPropertyBag.appComponent,
+			reference: oChangeSpecificData.reference
 		};
+
 		if (ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag)) {
-			mPropertyBag.changeSpecificData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+			oChangeSpecificData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+		}
+
+		if (DescriptorChangeTypes.getChangeTypes().includes(oChangeSpecificData.changeType)) {
+			return createDescriptorChange(mPropertyBag);
 		}
 
 		if (mPropertyBag.changeSpecificData.changeType === "deactivateChanges") {
@@ -189,24 +209,25 @@ sap.ui.define([
 		}
 
 		// if a component instance is passed only a base change is created
-		if (mPropertyBag.selector instanceof Component) {
-			return Promise.resolve(FlexObjectFactory.createUIChange(mPropertyBag.changeSpecificData));
+		if (oSelector instanceof Component) {
+			return Promise.resolve(FlexObjectFactory.createUIChange(oChangeSpecificData));
 		}
 
 		// if a extension point selector is passed a change with an extension point selector is created
-		if (mPropertyBag.selector.name && mPropertyBag.selector.view) {
-			mPropertyBag.changeSpecificData.selector = {
-				name: mPropertyBag.selector.name,
-				viewSelector: JsControlTreeModifier.getSelector(mPropertyBag.selector.view.getId(), oAppComponent)
+		if (oSelector.name && oSelector.view) {
+			oChangeSpecificData.selector = {
+				name: oSelector.name,
+				viewSelector: JsControlTreeModifier.getSelector(oSelector.view.getId(), mPropertyBag.appComponent)
 			};
 			return createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag);
 		}
 
 		// in other cases if a control instance or selector is passed then change handler's completeChangeContent() is called
-		const sControlId = mPropertyBag.selector.id || mPropertyBag.selector.getId();
-		mPropertyBag.changeSpecificData.selector ||= {};
-		Object.assign(mPropertyBag.changeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, oAppComponent));
-		mPropertyBag.controlType = mPropertyBag.selector.controlType || Utils.getControlType(mPropertyBag.selector);
+		const sControlId = oSelector.id || oSelector.getId();
+		oChangeSpecificData.selector ||= {};
+		Object.assign(oChangeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, mPropertyBag.appComponent));
+
+		mPropertyBag.controlType = oSelector.controlType || Utils.getControlType(oSelector);
 		return createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag);
 	};
 
